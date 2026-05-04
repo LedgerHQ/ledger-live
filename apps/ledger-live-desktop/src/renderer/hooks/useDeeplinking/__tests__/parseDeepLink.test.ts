@@ -130,6 +130,17 @@ describe("parseDeepLink", () => {
       });
     });
 
+    it("creates borrow route", () => {
+      const parsed = parseDeepLink("ledgerwallet://borrow?action=open");
+      const route = createRoute(parsed);
+
+      expect(route).toEqual({
+        type: "borrow",
+        path: "",
+        search: "?action=open",
+      });
+    });
+
     it("creates myledger route", () => {
       const parsed = parseDeepLink("ledgerwallet://myledger?installApp=bitcoin");
       const route = createRoute(parsed);

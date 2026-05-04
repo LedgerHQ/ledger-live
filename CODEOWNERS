@@ -175,7 +175,7 @@ apps/ledger-live-desktop/src/renderer/screens/earn/                  					@ledge
 apps/ledger-live-desktop/src/renderer/screens/exchange/              					@ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/screens/stake/                 					@ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/screens/swapWeb/               					@ledgerhq/ptx
-apps/ledger-live-desktop/src/renderer/families/evm/StakeFlowModal							@ledgerhq/ptx
+apps/ledger-live-desktop/src/renderer/families/evm/StakeFlowModal					    @ledgerhq/ptx
 apps/ledger-live-mobile/src/families/evm/StakingDrawer/              					@ledgerhq/ptx
 apps/ledger-live-mobile/src/actions/earn.ts                          					@ledgerhq/ptx
 apps/ledger-live-mobile/src/actions/swap.ts                          					@ledgerhq/ptx
@@ -196,14 +196,17 @@ libs/ledgerjs/packages/types-live/src/swap.ts                        					@ledge
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/buy.handler.ts      @ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/earn.handler.ts     @ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/swap.handler.ts     @ledgerhq/ptx
+apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/borrow.handler.ts   @ledgerhq/ptx
 apps/ledger-live-mobile/src/mvvm/features/Card/                                         @ledgerhq/ptx
 apps/ledger-live-desktop/src/mvvm/features/Card/                                        @ledgerhq/ptx
 apps/ledger-live-mobile/src/mvvm/features/Swap/                                         @ledgerhq/ptx
 apps/ledger-live-mobile/src/mvvm/features/Stake/                                        @ledgerhq/ptx
-apps/ledger-live-desktop/src/mvvm/features/PtxInfoDialog/                                @ledgerhq/ptx
-apps/ledger-live-desktop/src/mvvm/features/ActionConfirmationDialog/                     @ledgerhq/ptx
+apps/ledger-live-desktop/src/mvvm/features/PtxInfoDialog/                               @ledgerhq/ptx
+apps/ledger-live-desktop/src/mvvm/features/ActionConfirmationDialog/                    @ledgerhq/ptx
 apps/ledger-live-mobile/src/mvvm/features/Borrow/                                       @ledgerhq/ptx
 apps/ledger-live-mobile/src/mvvm/features/Portfolio/components/PortfolioBorrowSection   @ledgerhq/ptx
+apps/ledger-live-desktop/src/mvvm/features/Borrow							            @ledgerhq/ptx
+apps/ledger-live-desktop/src/mvvm/features/Portfolio/components/BorrowEntryPoint        @ledgerhq/ptx
 
 # Wallet API team > coin-integration
 **/PlatformAppProviderWrapper.tsx                        @ledgerhq/coin-integration
