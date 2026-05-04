@@ -8,9 +8,7 @@ describe("navigateBackToSwapTab", () => {
     parentNavigation,
   }: {
     routeNames?: string[];
-    parentNavigation?:
-      | { dispatch: jest.Mock; goBack: jest.Mock; canGoBack?: jest.Mock }
-      | undefined;
+    parentNavigation?: { dispatch: jest.Mock; goBack: jest.Mock } | undefined;
   }) => {
     const dispatch = jest.fn();
     const goBack = jest.fn();
@@ -51,17 +49,12 @@ describe("navigateBackToSwapTab", () => {
     expect(goBack).not.toHaveBeenCalled();
   });
 
-  it("should pop the parent navigator in Wallet40 to preserve the back animation", () => {
+  it("should reset root navigation through Main and Swap in Wallet40", () => {
     const parentDispatch = jest.fn();
     const parentGoBack = jest.fn();
-    const parentCanGoBack = jest.fn(() => true);
     const { navigation, dispatch } = createNavigation({
       routeNames: [ScreenName.SwapHistory],
-      parentNavigation: {
-        dispatch: parentDispatch,
-        goBack: parentGoBack,
-        canGoBack: parentCanGoBack,
-      },
+      parentNavigation: { dispatch: parentDispatch, goBack: parentGoBack },
     });
 
     navigateBackToSwapTab({
@@ -70,30 +63,6 @@ describe("navigateBackToSwapTab", () => {
     });
 
     expect(dispatch).not.toHaveBeenCalled();
-    expect(parentDispatch).not.toHaveBeenCalled();
-    expect(parentGoBack).toHaveBeenCalledTimes(1);
-  });
-
-  it("should fall back to a root reset in Wallet40 when the parent cannot go back", () => {
-    const parentDispatch = jest.fn();
-    const parentGoBack = jest.fn();
-    const parentCanGoBack = jest.fn(() => false);
-    const { navigation, dispatch } = createNavigation({
-      routeNames: [ScreenName.SwapHistory],
-      parentNavigation: {
-        dispatch: parentDispatch,
-        goBack: parentGoBack,
-        canGoBack: parentCanGoBack,
-      },
-    });
-
-    navigateBackToSwapTab({
-      navigation,
-      shouldDisplayWallet40MainNav: true,
-    });
-
-    expect(dispatch).not.toHaveBeenCalled();
-    expect(parentGoBack).not.toHaveBeenCalled();
     expect(parentDispatch).toHaveBeenCalledWith(
       CommonActions.reset({
         index: 0,
@@ -110,6 +79,7 @@ describe("navigateBackToSwapTab", () => {
         ],
       }),
     );
+    expect(parentGoBack).not.toHaveBeenCalled();
   });
 
   it("should reset root navigation to Swap in legacy flow", () => {
