@@ -122,6 +122,7 @@ function renderEnsureAppReadyStateDetails(state: EnsureAppReadyState): React.Rea
                 ? DeviceDeprecationScreens.warningScreen
                 : DeviceDeprecationScreens.clearSigningScreen
             }
+            displayClearSigningWarning={state.decision.screenSequence.includes("clearSigning")}
           />
         </>
       );
