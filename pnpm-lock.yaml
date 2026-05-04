@@ -1603,7 +1603,7 @@ importers:
         version: 1.17.1(@ledgerhq/device-management-kit@1.3.0(rxjs@7.8.2))
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
-        version: 2.0.1(@ledgerhq/lumen-design-core@0.1.12)(@ledgerhq/lumen-ui-rnative@0.1.26(aaef53925dd57879e30bd9df42ba0adb))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+        version: 2.0.1(@ledgerhq/lumen-design-core@0.1.12)(@ledgerhq/lumen-ui-rnative@0.1.26(9ba305d014d43256a265428c13fe6bf5))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/cryptoassets
@@ -1687,7 +1687,7 @@ importers:
         version: 0.1.12
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.26(aaef53925dd57879e30bd9df42ba0adb)
+        version: 0.1.26(9ba305d014d43256a265428c13fe6bf5)
       '@ledgerhq/native-ui':
         specifier: workspace:^
         version: link:../../libs/ui/packages/native
@@ -1714,13 +1714,13 @@ importers:
         version: 5.1.1
       '@react-native-firebase/app':
         specifier: 22.2.0
-        version: 22.2.0(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0)))(expo@53.0.25(4b2c01f5a47d338b1c9e7803e0aed015))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+        version: 22.2.0(a2411d401a6e1c94adbccaa92f9e834b)
       '@react-native-firebase/messaging':
         specifier: 22.2.0
-        version: 22.2.0(@react-native-firebase/app@22.2.0(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0)))(expo@53.0.25(4b2c01f5a47d338b1c9e7803e0aed015))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(expo@53.0.25(4b2c01f5a47d338b1c9e7803e0aed015))
+        version: 22.2.0(@react-native-firebase/app@22.2.0(a2411d401a6e1c94adbccaa92f9e834b))(expo@53.0.25(@babel/core@7.28.5)(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))
       '@react-native-firebase/remote-config':
         specifier: 22.2.0
-        version: 22.2.0(@react-native-firebase/app@22.2.0(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0)))(expo@53.0.25(4b2c01f5a47d338b1c9e7803e0aed015))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))
+        version: 22.2.0(@react-native-firebase/app@22.2.0(a2411d401a6e1c94adbccaa92f9e834b))
       '@react-native-masked-view/masked-view':
         specifier: 0.2.9
         version: 0.2.9(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
@@ -1798,25 +1798,25 @@ importers:
         version: 2.30.0
       expo:
         specifier: 'catalog:'
-        version: 53.0.25(4b2c01f5a47d338b1c9e7803e0aed015)
+        version: 53.0.25(@babel/core@7.28.5)(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       expo-crypto:
         specifier: 'catalog:'
-        version: 14.1.5(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(expo@53.0.25(4b2c01f5a47d338b1c9e7803e0aed015))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+        version: 14.1.5(4a4fa364a565f69495ba54c8703b3b64)
       expo-file-system:
         specifier: 'catalog:'
-        version: 18.1.11(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(expo@53.0.25(4b2c01f5a47d338b1c9e7803e0aed015))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+        version: 18.1.11(4a4fa364a565f69495ba54c8703b3b64)
       expo-haptics:
         specifier: 'catalog:'
-        version: 14.1.4(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(expo@53.0.25(4b2c01f5a47d338b1c9e7803e0aed015))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+        version: 14.1.4(4a4fa364a565f69495ba54c8703b3b64)
       expo-image-loader:
         specifier: 'catalog:'
-        version: 5.0.0(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(expo@53.0.25(4b2c01f5a47d338b1c9e7803e0aed015))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+        version: 5.0.0(4a4fa364a565f69495ba54c8703b3b64)
       expo-image-manipulator:
         specifier: 'catalog:'
-        version: 13.1.7(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(expo@53.0.25(4b2c01f5a47d338b1c9e7803e0aed015))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+        version: 13.1.7(4a4fa364a565f69495ba54c8703b3b64)
       expo-keep-awake:
         specifier: 'catalog:'
-        version: 14.1.4(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(expo@53.0.25(4b2c01f5a47d338b1c9e7803e0aed015))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+        version: 14.1.4(4a4fa364a565f69495ba54c8703b3b64)
       expo-modules-autolinking:
         specifier: 'catalog:'
         version: 2.1.14(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
@@ -5752,6 +5752,9 @@ importers:
 
   libs/coin-modules/coin-sui:
     dependencies:
+      '@0no-co/graphql.web':
+        specifier: ^1.0.11
+        version: 1.0.11(graphql@16.13.2)
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 2.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
@@ -5796,7 +5799,7 @@ importers:
         version: 9.1.2
       gql.tada:
         specifier: ^1.9.2
-        version: 1.9.2(typescript@6.0.2)
+        version: 1.9.2(graphql@16.13.2)(typescript@6.0.2)
       lodash:
         specifier: 4.17.21
         version: 4.17.21
@@ -5807,6 +5810,9 @@ importers:
       '@faker-js/faker':
         specifier: ^8.4.1
         version: 8.4.1
+      '@gql.tada/internal':
+        specifier: 1.0.9
+        version: 1.0.9(graphql@16.13.2)(typescript@6.0.2)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../ledgerjs/packages/devices
@@ -5831,6 +5837,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      graphql:
+        specifier: ^16.13.2
+        version: 16.13.2
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)
@@ -5840,6 +5849,9 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.51.0
+      prettier:
+        specifier: 3.2.5
+        version: 3.2.5
 
   libs/coin-modules/coin-tezos:
     dependencies:
@@ -12565,6 +12577,7 @@ packages:
   '@0no-co/graphqlsp@1.12.16':
     resolution: {integrity: sha512-B5pyYVH93Etv7xjT6IfB7QtMBdaaC07yjbhN6v8H7KgFStMkPvi+oWYBTibMFRMY89qwc9H8YixXg8SXDVgYWw==}
     peerDependencies:
+      graphql: ^15.5.0 || ^16.0.0 || ^17.0.0
       typescript: ^5.0.0
 
   '@aashutoshrathi/word-wrap@1.2.6':
@@ -16350,6 +16363,7 @@ packages:
     peerDependencies:
       '@gql.tada/svelte-support': 1.0.2
       '@gql.tada/vue-support': 1.0.2
+      graphql: ^15.5.0 || ^16.0.0 || ^17.0.0
       typescript: ^5.0.0 || ^6.0.0
     peerDependenciesMeta:
       '@gql.tada/svelte-support':
@@ -23626,7 +23640,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: '*'
+      rxjs: ^5.5.10
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -27324,7 +27338,6 @@ packages:
     peerDependencies:
       '@expo/dom-webview': '*'
       '@expo/metro-runtime': '*'
-      expo-modules-autolinking: '*'
       expo-modules-core: '*'
       react: 19.0.0
       react-native: '*'
@@ -27333,8 +27346,6 @@ packages:
       '@expo/dom-webview':
         optional: true
       '@expo/metro-runtime':
-        optional: true
-      expo-modules-autolinking:
         optional: true
       expo-modules-core:
         optional: true
@@ -33146,6 +33157,7 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
+
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -37341,7 +37353,7 @@ snapshots:
     optionalDependencies:
       graphql: 16.13.2
 
-  '@0no-co/graphqlsp@1.12.16(typescript@6.0.2)':
+  '@0no-co/graphqlsp@1.12.16(graphql@16.13.2)(typescript@6.0.2)':
     dependencies:
       '@gql.tada/internal': 1.0.9(graphql@16.13.2)(typescript@6.0.2)
       graphql: 16.13.2
@@ -44417,9 +44429,9 @@ snapshots:
       react: 19.0.0
       react-native: 0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0)
 
-  '@gql.tada/cli-utils@1.7.3(typescript@6.0.2)':
+  '@gql.tada/cli-utils@1.7.3(graphql@16.13.2)(typescript@6.0.2)':
     dependencies:
-      '@0no-co/graphqlsp': 1.12.16(typescript@6.0.2)
+      '@0no-co/graphqlsp': 1.12.16(graphql@16.13.2)(typescript@6.0.2)
       '@gql.tada/internal': 1.0.9(graphql@16.13.2)(typescript@6.0.2)
       graphql: 16.13.2
       typescript: 6.0.2
@@ -44428,11 +44440,6 @@ snapshots:
     dependencies:
       '@0no-co/graphql.web': 1.0.11(graphql@16.13.2)
       graphql: 16.13.2
-      typescript: 6.0.2
-
-  '@gql.tada/internal@1.0.9(typescript@6.0.2)':
-    dependencies:
-      '@0no-co/graphql.web': 1.0.11
       typescript: 6.0.2
 
   '@graphql-tools/merge@8.4.2(graphql@16.13.2)':
@@ -45444,12 +45451,12 @@ snapshots:
       react-dom: 19.0.0(react@19.0.0)
       react-native: 0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.0.0)
 
-  '@ledgerhq/crypto-icons@2.0.1(@ledgerhq/lumen-design-core@0.1.12)(@ledgerhq/lumen-ui-rnative@0.1.26(aaef53925dd57879e30bd9df42ba0adb))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)':
+  '@ledgerhq/crypto-icons@2.0.1(@ledgerhq/lumen-design-core@0.1.12)(@ledgerhq/lumen-ui-rnative@0.1.26(9ba305d014d43256a265428c13fe6bf5))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)':
     dependencies:
       react: 19.0.0
     optionalDependencies:
       '@ledgerhq/lumen-design-core': 0.1.12
-      '@ledgerhq/lumen-ui-rnative': 0.1.26(aaef53925dd57879e30bd9df42ba0adb)
+      '@ledgerhq/lumen-ui-rnative': 0.1.26(9ba305d014d43256a265428c13fe6bf5)
       react-native: 0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0)
 
   '@ledgerhq/cryptoassets-evm-signatures@13.5.2':
@@ -45784,15 +45791,15 @@ snapshots:
     transitivePeerDependencies:
       - react-dom
 
-  '@ledgerhq/lumen-ui-rnative@0.1.26(aaef53925dd57879e30bd9df42ba0adb)':
+  '@ledgerhq/lumen-ui-rnative@0.1.26(9ba305d014d43256a265428c13fe6bf5)':
     dependencies:
       '@gorhom/bottom-sheet': 5.2.6(beb07f7799bea5989bf46dbe8fcef3d9)
       '@ledgerhq/lumen-design-core': 0.1.12
       '@ledgerhq/lumen-utils-shared': 0.1.3(react@19.0.0)
       '@sbaiahmed1/react-native-blur': 4.5.5(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       '@types/react': 19.0.14
-      expo: 53.0.25(4b2c01f5a47d338b1c9e7803e0aed015)
-      expo-haptics: 14.1.4(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(expo@53.0.25(4b2c01f5a47d338b1c9e7803e0aed015))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+      expo: 53.0.25(@babel/core@7.28.5)(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+      expo-haptics: 14.1.4(4a4fa364a565f69495ba54c8703b3b64)
       i18next: 23.10.1
       react: 19.0.0
       react-i18next: 14.1.3(i18next@23.10.1)(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
@@ -48079,25 +48086,25 @@ snapshots:
 
   '@react-native-community/slider@5.1.1': {}
 
-  '@react-native-firebase/app@22.2.0(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0)))(expo@53.0.25(4b2c01f5a47d338b1c9e7803e0aed015))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)':
+  '@react-native-firebase/app@22.2.0(a2411d401a6e1c94adbccaa92f9e834b)':
     dependencies:
       firebase: 11.3.1(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0)))
       react: 19.0.0
       react-native: 0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0)
     optionalDependencies:
-      expo: 53.0.25(4b2c01f5a47d338b1c9e7803e0aed015)
+      expo: 53.0.25(@babel/core@7.28.5)(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
     transitivePeerDependencies:
       - '@react-native-async-storage/async-storage'
 
-  '@react-native-firebase/messaging@22.2.0(@react-native-firebase/app@22.2.0(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0)))(expo@53.0.25(4b2c01f5a47d338b1c9e7803e0aed015))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(expo@53.0.25(4b2c01f5a47d338b1c9e7803e0aed015))':
+  '@react-native-firebase/messaging@22.2.0(@react-native-firebase/app@22.2.0(a2411d401a6e1c94adbccaa92f9e834b))(expo@53.0.25(@babel/core@7.28.5)(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))':
     dependencies:
-      '@react-native-firebase/app': 22.2.0(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0)))(expo@53.0.25(4b2c01f5a47d338b1c9e7803e0aed015))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+      '@react-native-firebase/app': 22.2.0(a2411d401a6e1c94adbccaa92f9e834b)
     optionalDependencies:
-      expo: 53.0.25(4b2c01f5a47d338b1c9e7803e0aed015)
+      expo: 53.0.25(@babel/core@7.28.5)(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
 
-  '@react-native-firebase/remote-config@22.2.0(@react-native-firebase/app@22.2.0(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0)))(expo@53.0.25(4b2c01f5a47d338b1c9e7803e0aed015))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))':
+  '@react-native-firebase/remote-config@22.2.0(@react-native-firebase/app@22.2.0(a2411d401a6e1c94adbccaa92f9e834b))':
     dependencies:
-      '@react-native-firebase/app': 22.2.0(@react-native-async-storage/async-storage@2.1.2(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0)))(expo@53.0.25(4b2c01f5a47d338b1c9e7803e0aed015))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+      '@react-native-firebase/app': 22.2.0(a2411d401a6e1c94adbccaa92f9e834b)
 
   '@react-native-masked-view/masked-view@0.2.9(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)':
     dependencies:
@@ -59748,14 +59755,14 @@ snapshots:
       jest-mock: 30.2.0
       jest-util: 30.2.0
 
-  expo-asset@11.1.7(e1114795ff87aff5695f1e215fda36c2):
+  expo-asset@11.1.7(5016f5ad50984dc7067476777bc39ad2):
     dependencies:
       '@expo/image-utils': 0.7.6
-      expo: 53.0.25(4b2c01f5a47d338b1c9e7803e0aed015)
+      expo: 53.0.25(@babel/core@7.28.5)(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       react: 19.0.0
       react-native: 0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0)
     optionalDependencies:
-      expo-constants: 17.1.8(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(expo@53.0.25(4b2c01f5a47d338b1c9e7803e0aed015))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+      expo-constants: 17.1.8(4a4fa364a565f69495ba54c8703b3b64)
       expo-modules-core: 2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
 
   expo-asset@11.1.7(expo-constants@17.1.8)(expo-modules-core@2.5.0)(expo@53.0.25(@babel/core@7.28.5)(expo-modules-core@2.5.0)(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.0.0))(react@19.0.0))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.0.0))(react@19.0.0):
@@ -59768,11 +59775,11 @@ snapshots:
       expo-constants: 17.1.8(expo-modules-core@2.5.0)(expo@53.0.25(@babel/core@7.28.5)(expo-modules-core@2.5.0)(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.0.0))(react@19.0.0))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.0.0))(react@19.0.0)
       expo-modules-core: 2.5.0(expo-constants@17.1.8)(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.0.0))(react@19.0.0)
 
-  expo-constants@17.1.8(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(expo@53.0.25(4b2c01f5a47d338b1c9e7803e0aed015))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0):
+  expo-constants@17.1.8(4a4fa364a565f69495ba54c8703b3b64):
     dependencies:
       '@expo/config': 11.0.13
       '@expo/env': 1.0.7
-      expo: 53.0.25(4b2c01f5a47d338b1c9e7803e0aed015)
+      expo: 53.0.25(@babel/core@7.28.5)(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       react-native: 0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0)
     optionalDependencies:
       expo-modules-core: 2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
@@ -59792,21 +59799,29 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  expo-crypto@14.1.5(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(expo@53.0.25(4b2c01f5a47d338b1c9e7803e0aed015))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0):
+  expo-crypto@14.1.5(4a4fa364a565f69495ba54c8703b3b64):
     dependencies:
       base64-js: 1.5.1
-      expo: 53.0.25(4b2c01f5a47d338b1c9e7803e0aed015)
+      expo: 53.0.25(@babel/core@7.28.5)(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
     optionalDependencies:
       expo-modules-core: 2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       react: 19.0.0
       react-native: 0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0)
 
-  expo-file-system@18.1.11(e1114795ff87aff5695f1e215fda36c2):
+  expo-file-system@18.1.11(4a4fa364a565f69495ba54c8703b3b64):
     dependencies:
-      expo: 53.0.25(4b2c01f5a47d338b1c9e7803e0aed015)
+      expo: 53.0.25(@babel/core@7.28.5)(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       react-native: 0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0)
     optionalDependencies:
-      expo-constants: 17.1.8(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(expo@53.0.25(4b2c01f5a47d338b1c9e7803e0aed015))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+      expo-modules-core: 2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+      react: 19.0.0
+
+  expo-file-system@18.1.11(5016f5ad50984dc7067476777bc39ad2):
+    dependencies:
+      expo: 53.0.25(@babel/core@7.28.5)(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+      react-native: 0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0)
+    optionalDependencies:
+      expo-constants: 17.1.8(4a4fa364a565f69495ba54c8703b3b64)
       expo-modules-core: 2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       react: 19.0.0
 
@@ -59819,21 +59834,13 @@ snapshots:
       expo-modules-core: 2.5.0(expo-constants@17.1.8)(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.0.0))(react@19.0.0)
       react: 19.0.0
 
-  expo-file-system@18.1.11(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(expo@53.0.25(4b2c01f5a47d338b1c9e7803e0aed015))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0):
+  expo-font@13.3.2(5016f5ad50984dc7067476777bc39ad2):
     dependencies:
-      expo: 53.0.25(4b2c01f5a47d338b1c9e7803e0aed015)
-      react-native: 0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0)
-    optionalDependencies:
-      expo-modules-core: 2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
-      react: 19.0.0
-
-  expo-font@13.3.2(e1114795ff87aff5695f1e215fda36c2):
-    dependencies:
-      expo: 53.0.25(4b2c01f5a47d338b1c9e7803e0aed015)
+      expo: 53.0.25(@babel/core@7.28.5)(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       fontfaceobserver: 2.3.0
       react: 19.0.0
     optionalDependencies:
-      expo-constants: 17.1.8(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(expo@53.0.25(4b2c01f5a47d338b1c9e7803e0aed015))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+      expo-constants: 17.1.8(4a4fa364a565f69495ba54c8703b3b64)
       expo-modules-core: 2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       react-native: 0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0)
 
@@ -59847,45 +59854,53 @@ snapshots:
       expo-modules-core: 2.5.0(expo-constants@17.1.8)(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.0.0))(react@19.0.0)
       react-native: 0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.0.0)
 
-  expo-haptics@14.1.4(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(expo@53.0.25(4b2c01f5a47d338b1c9e7803e0aed015))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0):
+  expo-haptics@14.1.4(4a4fa364a565f69495ba54c8703b3b64):
     dependencies:
-      expo: 53.0.25(4b2c01f5a47d338b1c9e7803e0aed015)
+      expo: 53.0.25(@babel/core@7.28.5)(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
     optionalDependencies:
       expo-modules-core: 2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       react: 19.0.0
       react-native: 0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0)
 
-  expo-image-loader@5.0.0(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(expo@53.0.25(4b2c01f5a47d338b1c9e7803e0aed015))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0):
+  expo-image-loader@5.0.0(4a4fa364a565f69495ba54c8703b3b64):
     dependencies:
-      expo: 53.0.25(4b2c01f5a47d338b1c9e7803e0aed015)
+      expo: 53.0.25(@babel/core@7.28.5)(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
     optionalDependencies:
       expo-modules-core: 2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       react: 19.0.0
       react-native: 0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0)
 
-  expo-image-loader@5.1.0(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(expo@53.0.25(4b2c01f5a47d338b1c9e7803e0aed015))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0):
+  expo-image-loader@5.1.0(4a4fa364a565f69495ba54c8703b3b64):
     dependencies:
-      expo: 53.0.25(4b2c01f5a47d338b1c9e7803e0aed015)
+      expo: 53.0.25(@babel/core@7.28.5)(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
     optionalDependencies:
       expo-modules-core: 2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       react: 19.0.0
       react-native: 0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0)
 
-  expo-image-manipulator@13.1.7(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(expo@53.0.25(4b2c01f5a47d338b1c9e7803e0aed015))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0):
+  expo-image-manipulator@13.1.7(4a4fa364a565f69495ba54c8703b3b64):
     dependencies:
-      expo: 53.0.25(4b2c01f5a47d338b1c9e7803e0aed015)
-      expo-image-loader: 5.1.0(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(expo@53.0.25(4b2c01f5a47d338b1c9e7803e0aed015))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+      expo: 53.0.25(@babel/core@7.28.5)(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+      expo-image-loader: 5.1.0(4a4fa364a565f69495ba54c8703b3b64)
     optionalDependencies:
       expo-modules-core: 2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       react: 19.0.0
       react-native: 0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0)
 
-  expo-keep-awake@14.1.4(e1114795ff87aff5695f1e215fda36c2):
+  expo-keep-awake@14.1.4(4a4fa364a565f69495ba54c8703b3b64):
     dependencies:
-      expo: 53.0.25(4b2c01f5a47d338b1c9e7803e0aed015)
+      expo: 53.0.25(@babel/core@7.28.5)(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       react: 19.0.0
     optionalDependencies:
-      expo-constants: 17.1.8(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(expo@53.0.25(4b2c01f5a47d338b1c9e7803e0aed015))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+      expo-modules-core: 2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+      react-native: 0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0)
+
+  expo-keep-awake@14.1.4(5016f5ad50984dc7067476777bc39ad2):
+    dependencies:
+      expo: 53.0.25(@babel/core@7.28.5)(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+      react: 19.0.0
+    optionalDependencies:
+      expo-constants: 17.1.8(4a4fa364a565f69495ba54c8703b3b64)
       expo-modules-core: 2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       react-native: 0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0)
 
@@ -59898,13 +59913,35 @@ snapshots:
       expo-modules-core: 2.5.0(expo-constants@17.1.8)(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.0.0))(react@19.0.0)
       react-native: 0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.0.0)
 
-  expo-keep-awake@14.1.4(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(expo@53.0.25(4b2c01f5a47d338b1c9e7803e0aed015))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0):
+  expo-modules-autolinking@2.1.14(expo-constants@17.1.8(4a4fa364a565f69495ba54c8703b3b64))(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0):
     dependencies:
-      expo: 53.0.25(4b2c01f5a47d338b1c9e7803e0aed015)
-      react: 19.0.0
+      '@expo/spawn-async': 1.7.2
+      chalk: 4.1.2
+      commander: 7.2.0
+      find-up: 5.0.0
+      glob: 10.4.5
+      require-from-string: 2.0.2
+      resolve-from: 5.0.0
     optionalDependencies:
+      expo-constants: 17.1.8(4a4fa364a565f69495ba54c8703b3b64)
       expo-modules-core: 2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+      react: 19.0.0
       react-native: 0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0)
+
+  expo-modules-autolinking@2.1.14(expo-constants@17.1.8)(expo-modules-core@2.5.0)(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.0.0))(react@19.0.0):
+    dependencies:
+      '@expo/spawn-async': 1.7.2
+      chalk: 4.1.2
+      commander: 7.2.0
+      find-up: 5.0.0
+      glob: 10.4.5
+      require-from-string: 2.0.2
+      resolve-from: 5.0.0
+    optionalDependencies:
+      expo-constants: 17.1.8(expo-modules-core@2.5.0)(expo@53.0.25(@babel/core@7.28.5)(expo-modules-core@2.5.0)(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.0.0))(react@19.0.0))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.0.0))(react@19.0.0)
+      expo-modules-core: 2.5.0(expo-constants@17.1.8)(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.0.0))(react@19.0.0)
+      react: 19.0.0
+      react-native: 0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.0.0)
 
   expo-modules-autolinking@2.1.14(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0):
     dependencies:
@@ -59935,7 +59972,7 @@ snapshots:
       react: 19.0.0
       react-native: 0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0)
 
-  expo@53.0.25(4b2c01f5a47d338b1c9e7803e0aed015):
+  expo@53.0.25(@babel/core@7.28.5)(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native-webview@13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0):
     dependencies:
       '@babel/runtime': 7.28.4
       '@expo/cli': 0.24.23
@@ -59945,17 +59982,17 @@ snapshots:
       '@expo/metro-config': 0.20.18
       '@expo/vector-icons': 14.0.4
       babel-preset-expo: 13.2.4(@babel/core@7.28.5)
-      expo-asset: 11.1.7(e1114795ff87aff5695f1e215fda36c2)
-      expo-constants: 17.1.8(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(expo@53.0.25(4b2c01f5a47d338b1c9e7803e0aed015))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
-      expo-file-system: 18.1.11(e1114795ff87aff5695f1e215fda36c2)
-      expo-font: 13.3.2(e1114795ff87aff5695f1e215fda36c2)
-      expo-keep-awake: 14.1.4(e1114795ff87aff5695f1e215fda36c2)
+      expo-asset: 11.1.7(5016f5ad50984dc7067476777bc39ad2)
+      expo-constants: 17.1.8(4a4fa364a565f69495ba54c8703b3b64)
+      expo-file-system: 18.1.11(5016f5ad50984dc7067476777bc39ad2)
+      expo-font: 13.3.2(5016f5ad50984dc7067476777bc39ad2)
+      expo-keep-awake: 14.1.4(5016f5ad50984dc7067476777bc39ad2)
+      expo-modules-autolinking: 2.1.14(expo-constants@17.1.8(4a4fa364a565f69495ba54c8703b3b64))(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       react: 19.0.0
       react-native: 0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0)
       react-native-edge-to-edge: 1.6.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       whatwg-url-without-unicode: 8.0.0-3
     optionalDependencies:
-      expo-modules-autolinking: 2.1.14(expo-modules-core@2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       expo-modules-core: 2.5.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
       react-native-webview: 13.16.0(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
     transitivePeerDependencies:
@@ -59981,6 +60018,7 @@ snapshots:
       expo-file-system: 18.1.11(expo-constants@17.1.8)(expo-modules-core@2.5.0)(expo@53.0.25(@babel/core@7.28.5)(expo-modules-core@2.5.0)(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.0.0))(react@19.0.0))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.0.0))(react@19.0.0)
       expo-font: 13.3.2(expo-constants@17.1.8)(expo-modules-core@2.5.0)(expo@53.0.25(@babel/core@7.28.5)(expo-modules-core@2.5.0)(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.0.0))(react@19.0.0))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.0.0))(react@19.0.0)
       expo-keep-awake: 14.1.4(expo-constants@17.1.8)(expo-modules-core@2.5.0)(expo@53.0.25(@babel/core@7.28.5)(expo-modules-core@2.5.0)(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.0.0))(react@19.0.0))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.0.0))(react@19.0.0)
+      expo-modules-autolinking: 2.1.14(expo-constants@17.1.8)(expo-modules-core@2.5.0)(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.0.0))(react@19.0.0)
       react: 19.0.0
       react-native: 0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.0.0)
       react-native-edge-to-edge: 1.6.0(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@15.1.0(typescript@6.0.2))(@types/react@19.0.14)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@19.0.0))(react@19.0.0)
@@ -61125,21 +61163,9 @@ snapshots:
   gql.tada@1.9.2(graphql@16.13.2)(typescript@6.0.2):
     dependencies:
       '@0no-co/graphql.web': 1.0.11(graphql@16.13.2)
-      '@0no-co/graphqlsp': 1.12.16(typescript@6.0.2)
-      '@gql.tada/cli-utils': 1.7.3(typescript@6.0.2)
+      '@0no-co/graphqlsp': 1.12.16(graphql@16.13.2)(typescript@6.0.2)
+      '@gql.tada/cli-utils': 1.7.3(graphql@16.13.2)(typescript@6.0.2)
       '@gql.tada/internal': 1.0.9(graphql@16.13.2)(typescript@6.0.2)
-      typescript: 6.0.2
-    transitivePeerDependencies:
-      - '@gql.tada/svelte-support'
-      - '@gql.tada/vue-support'
-      - graphql
-
-  gql.tada@1.9.2(typescript@6.0.2):
-    dependencies:
-      '@0no-co/graphql.web': 1.0.11
-      '@0no-co/graphqlsp': 1.12.16(typescript@6.0.2)
-      '@gql.tada/cli-utils': 1.7.3(typescript@6.0.2)
-      '@gql.tada/internal': 1.0.9(typescript@6.0.2)
       typescript: 6.0.2
     transitivePeerDependencies:
       - '@gql.tada/svelte-support'

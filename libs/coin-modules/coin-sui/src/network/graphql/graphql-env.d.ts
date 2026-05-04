@@ -6,6 +6,10 @@ export type introspection_types = {
     kind: "OBJECT";
     name: "Address";
     fields: {
+      balances: {
+        name: "balances";
+        type: { kind: "OBJECT"; name: "BalanceConnection"; ofType: null };
+      };
       dynamicField: {
         name: "dynamicField";
         type: { kind: "OBJECT"; name: "DynamicField"; ofType: null };
@@ -13,6 +17,51 @@ export type introspection_types = {
       objects: {
         name: "objects";
         type: { kind: "OBJECT"; name: "MoveObjectConnection"; ofType: null };
+      };
+    };
+  };
+  Balance: {
+    kind: "OBJECT";
+    name: "Balance";
+    fields: {
+      coinType: { name: "coinType"; type: { kind: "OBJECT"; name: "MoveType"; ofType: null } };
+      totalBalance: {
+        name: "totalBalance";
+        type: { kind: "SCALAR"; name: "BigInt"; ofType: null };
+      };
+      addressBalance: {
+        name: "addressBalance";
+        type: { kind: "SCALAR"; name: "BigInt"; ofType: null };
+      };
+    };
+  };
+  BalanceConnection: {
+    kind: "OBJECT";
+    name: "BalanceConnection";
+    fields: {
+      pageInfo: {
+        name: "pageInfo";
+        type: {
+          kind: "NON_NULL";
+          name: never;
+          ofType: { kind: "OBJECT"; name: "PageInfo"; ofType: null };
+        };
+      };
+      nodes: {
+        name: "nodes";
+        type: {
+          kind: "NON_NULL";
+          name: never;
+          ofType: {
+            kind: "LIST";
+            name: never;
+            ofType: {
+              kind: "NON_NULL";
+              name: never;
+              ofType: { kind: "OBJECT"; name: "Balance"; ofType: null };
+            };
+          };
+        };
       };
     };
   };
@@ -134,6 +183,20 @@ export type introspection_types = {
               ofType: { kind: "OBJECT"; name: "MoveObject"; ofType: null };
             };
           };
+        };
+      };
+    };
+  };
+  MoveType: {
+    kind: "OBJECT";
+    name: "MoveType";
+    fields: {
+      repr: {
+        name: "repr";
+        type: {
+          kind: "NON_NULL";
+          name: never;
+          ofType: { kind: "SCALAR"; name: "String"; ofType: null };
         };
       };
     };

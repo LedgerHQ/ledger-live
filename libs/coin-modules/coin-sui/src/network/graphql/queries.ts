@@ -123,3 +123,24 @@ export const BATCH_RATES_15 = graphql(`
 `);
 
 export type BatchRates15Result = ResultOf<typeof BATCH_RATES_15>;
+
+/** All coin balances owned by an address; cursor-paginated. */
+export const ALL_BALANCES_BY_OWNER = graphql(`
+  query GetAllBalances($owner: SuiAddress!, $limit: Int, $cursor: String) {
+    address(address: $owner) {
+      balances(first: $limit, after: $cursor) {
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+        nodes {
+          coinType {
+            repr
+          }
+          totalBalance
+          addressBalance
+        }
+      }
+    }
+  }
+`);

@@ -1,4 +1,4 @@
-import { SuiGraphQLClient } from "@mysten/sui/graphql";
+import { createSuiGraphQLClient } from "./graphql/client";
 import coinConfig from "../config";
 import { mist } from "../constants";
 import { GRAPHQL_MAINNET_URL, STAKES_PAGE_SIZE } from "./graphql/constants";
@@ -10,6 +10,7 @@ import {
   bindMockNextGraphQLClient,
   expectActive,
   fakeBalance,
+  fakeBalancesPage,
   fakeStakeNode,
   fakeStakesPage,
   fakeSystemStateQuery,
@@ -24,8 +25,8 @@ const unexpectedJsonRpc = jest.fn(() => {
   throw new Error("JSON-RPC client invoked on GraphQL test path");
 });
 
-jest.mock("@mysten/sui/graphql", () => ({
-  SuiGraphQLClient: jest.fn(),
+jest.mock("./graphql/client", () => ({
+  createSuiGraphQLClient: jest.fn(),
 }));
 
 jest.mock("@mysten/sui/jsonRpc", () => ({
@@ -45,11 +46,11 @@ jest.mock("@mysten/sui/jsonRpc", () => ({
   getJsonRpcFullnodeUrl: jest.fn().mockReturnValue("https://mockapi.sui.io"),
 }));
 
-const SuiGraphQLClientMock = SuiGraphQLClient as unknown as jest.Mock;
-const mockNext = bindMockNextGraphQLClient(SuiGraphQLClientMock);
+const factoryMock = createSuiGraphQLClient as unknown as jest.Mock;
+const mockNext = bindMockNextGraphQLClient(factoryMock);
 
 beforeEach(() => {
-  SuiGraphQLClientMock.mockReset();
+  factoryMock.mockReset();
   unexpectedJsonRpc.mockClear();
   // Default-on: every test in this suite needs the GraphQL branch.
   coinConfig.setCoinConfig(() => ({
@@ -62,16 +63,15 @@ beforeEach(() => {
 describe("getAllBalancesCached on GraphQL transport", () => {
   it("should remap addressBalance to fundsInAddressBalance", async () => {
     // GIVEN
-    const client = mockNext({
-      listBalances: jest.fn().mockResolvedValueOnce({
-        balances: [
+    const query = jest
+      .fn()
+      .mockResolvedValueOnce(
+        fakeBalancesPage([
           fakeBalance("0x2::sui::SUI", mist(1), mist(0.4)),
           fakeBalance("0x9::usdc::USDC", "500000"),
-        ],
-        hasNextPage: false,
-        cursor: null,
-      }),
-    });
+        ]),
+      );
+    mockNext({ query });
     const owner = addr("11");
 
     // WHEN
@@ -94,25 +94,22 @@ describe("getAllBalancesCached on GraphQL transport", () => {
         fundsInAddressBalance: "0",
       },
     ]);
-    expect(client.listBalances).toHaveBeenCalledTimes(1);
-    expect(client.listBalances).toHaveBeenCalledWith({ owner, cursor: null });
+    expect(query).toHaveBeenCalledTimes(1);
+    expect(query.mock.calls[0][0].variables).toEqual({ owner, cursor: null });
   });
 
   it("should paginate until hasNextPage is false", async () => {
     // GIVEN
-    const listBalances = jest
+    const query = jest
       .fn()
-      .mockResolvedValueOnce({
-        balances: [fakeBalance("0xA::a::A", "1")],
-        hasNextPage: true,
-        cursor: "cursor1",
-      })
-      .mockResolvedValueOnce({
-        balances: [fakeBalance("0xB::b::B", "2")],
-        hasNextPage: false,
-        cursor: null,
-      });
-    mockNext({ listBalances });
+      .mockResolvedValueOnce(
+        fakeBalancesPage([fakeBalance("0xA::a::A", "1")], {
+          hasNextPage: true,
+          endCursor: "cursor1",
+        }),
+      )
+      .mockResolvedValueOnce(fakeBalancesPage([fakeBalance("0xB::b::B", "2")]));
+    mockNext({ query });
     const owner = addr("22");
 
     // WHEN
@@ -121,33 +118,30 @@ describe("getAllBalancesCached on GraphQL transport", () => {
     // THEN
     expect(result).toHaveLength(2);
     expect(result.map(b => b.coinType)).toEqual(["0xA::a::A", "0xB::b::B"]);
-    expect(listBalances).toHaveBeenCalledTimes(2);
-    expect(listBalances).toHaveBeenNthCalledWith(1, { owner, cursor: null });
-    expect(listBalances).toHaveBeenNthCalledWith(2, { owner, cursor: "cursor1" });
+    expect(query).toHaveBeenCalledTimes(2);
+    expect(query.mock.calls[0][0].variables).toEqual({ owner, cursor: null });
+    expect(query.mock.calls[1][0].variables).toEqual({ owner, cursor: "cursor1" });
   });
 
   describe("cursor-expiry retry", () => {
-    it("should restart pagination from page 1 when a next-page listBalances throws cursor-expired", async () => {
+    it("should restart pagination from page 1 when a next-page query throws cursor-expired", async () => {
       // GIVEN
       const owner = addr("aa");
       const expired = new Error("Pagination cursor outside the available range");
-      const listBalances = jest
+      const query = jest
         .fn()
         // 1. initial: 1 balance, hasNextPage: true
-        .mockResolvedValueOnce({
-          balances: [fakeBalance("0x2::sui::SUI", "100")],
-          hasNextPage: true,
-          cursor: "stale",
-        })
+        .mockResolvedValueOnce(
+          fakeBalancesPage([fakeBalance("0x2::sui::SUI", "100")], {
+            hasNextPage: true,
+            endCursor: "stale",
+          }),
+        )
         // 2. next page (cursor: "stale") → throws cursor-expired
         .mockRejectedValueOnce(expired)
         // 3. retry: fresh page 1, hasNextPage: false
-        .mockResolvedValueOnce({
-          balances: [fakeBalance("0x2::sui::SUI", "200")],
-          hasNextPage: false,
-          cursor: null,
-        });
-      mockNext({ listBalances });
+        .mockResolvedValueOnce(fakeBalancesPage([fakeBalance("0x2::sui::SUI", "200")]));
+      mockNext({ query });
 
       // WHEN
       const result = await getAllBalancesCached(owner, "sui-graphql-balance-cursor-expiry");
@@ -163,10 +157,10 @@ describe("getAllBalancesCached on GraphQL transport", () => {
           fundsInAddressBalance: "0",
         },
       ]);
-      expect(listBalances).toHaveBeenCalledTimes(3);
-      expect(listBalances).toHaveBeenNthCalledWith(1, { owner, cursor: null });
-      expect(listBalances).toHaveBeenNthCalledWith(2, { owner, cursor: "stale" });
-      expect(listBalances).toHaveBeenNthCalledWith(3, { owner, cursor: null });
+      expect(query).toHaveBeenCalledTimes(3);
+      expect(query.mock.calls[0][0].variables).toEqual({ owner, cursor: null });
+      expect(query.mock.calls[1][0].variables).toEqual({ owner, cursor: "stale" });
+      expect(query.mock.calls[2][0].variables).toEqual({ owner, cursor: null });
     });
   });
 });
@@ -245,7 +239,7 @@ describe("getCheckpoint on GraphQL transport", () => {
       /digest-based lookups are not supported on the GraphQL transport/i,
     );
     // Guard runs before withGraphQLApi — no client should be constructed.
-    expect(SuiGraphQLClientMock).not.toHaveBeenCalled();
+    expect(factoryMock).not.toHaveBeenCalled();
   });
 
   it("should propagate the server's error message", async () => {

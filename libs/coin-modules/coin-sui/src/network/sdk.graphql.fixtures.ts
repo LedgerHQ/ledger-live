@@ -7,18 +7,33 @@ export type { FakeValidator } from "./graphql/fixtures";
 /** Test-only convenience: replicates a single byte across all 32 address bytes. */
 export const addr = (byte: string) => "0x" + byte.repeat(32);
 
-/** One `Address.balances.nodes` row; mirrors `balance` into `coinBalance` to match real wire shape. */
+/** One `Address.balances.nodes` row in wire shape. */
 export const fakeBalance = (coinType: string, balance: string, addressBalance: string = "0") => ({
-  coinType,
-  balance,
-  coinBalance: balance,
+  coinType: { repr: coinType },
+  totalBalance: balance,
   addressBalance,
 });
+
+/** Wire envelope for `ALL_BALANCES_BY_OWNER`; matches the response `getAllBalancesCachedGraphQL` parses. */
+export function fakeBalancesPage(
+  balances: ReadonlyArray<ReturnType<typeof fakeBalance>>,
+  page: { hasNextPage?: boolean; endCursor?: string | null } = {},
+) {
+  return {
+    data: {
+      address: {
+        balances: {
+          pageInfo: { hasNextPage: page.hasNextPage ?? false, endCursor: page.endCursor ?? null },
+          nodes: balances,
+        },
+      },
+    },
+  };
+}
 
 /** Subset of `SuiGraphQLClient` the dual-path tests stub. */
 export type MockGraphQLClient = {
   query: jest.Mock;
-  listBalances: jest.Mock;
 };
 
 /** Stub the next `new SuiGraphQLClient(...)` and return the stub for call-history assertions. */
@@ -26,7 +41,6 @@ export function bindMockNextGraphQLClient(ctorMock: jest.Mock) {
   return (impl: Partial<MockGraphQLClient> = {}): MockGraphQLClient => {
     const client: MockGraphQLClient = {
       query: impl.query ?? jest.fn(),
-      listBalances: impl.listBalances ?? jest.fn(),
     };
     ctorMock.mockImplementationOnce(() => client);
     return client;

@@ -151,6 +151,7 @@
     "format:check": "oxfmt src --check"
   },
   "dependencies": {
+    "@0no-co/graphql.web": "^1.0.11",
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
@@ -171,6 +172,7 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",
+    "@gql.tada/internal": "1.0.9",
     "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@swc/core": "catalog:",
@@ -179,8 +181,10 @@
     "@types/jest": "catalog:",
     "@types/lodash": "^4.14.191",
     "@types/node": "catalog:",
+    "graphql": "^16.13.2",
     "jest": "catalog:",
     "oxfmt": "catalog:",
-    "oxlint": "catalog:"
+    "oxlint": "catalog:",
+    "prettier": "3.2.5"
   }
 }

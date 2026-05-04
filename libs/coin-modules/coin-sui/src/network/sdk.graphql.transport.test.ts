@@ -1,17 +1,17 @@
-import { SuiGraphQLClient } from "@mysten/sui/graphql";
+import { createSuiGraphQLClient } from "./graphql/client";
 import coinConfig from "../config";
 import { fetcher } from "./fetcher";
 import { GRAPHQL_MAINNET_URL } from "./graphql/constants";
 import { getAllBalancesCached, getCheckpoint, isGraphQLEnabled } from "./sdk";
-import { bindMockNextGraphQLClient } from "./sdk.graphql.fixtures";
+import { bindMockNextGraphQLClient, fakeBalancesPage } from "./sdk.graphql.fixtures";
 
 // JSON-RPC stays mocked — any caller leaking onto it fails loudly via this proxy.
 const unexpectedJsonRpc = jest.fn(() => {
   throw new Error("JSON-RPC client invoked on GraphQL test path");
 });
 
-jest.mock("@mysten/sui/graphql", () => ({
-  SuiGraphQLClient: jest.fn(),
+jest.mock("./graphql/client", () => ({
+  createSuiGraphQLClient: jest.fn(),
 }));
 
 jest.mock("@mysten/sui/jsonRpc", () => ({
@@ -31,11 +31,11 @@ jest.mock("@mysten/sui/jsonRpc", () => ({
   getJsonRpcFullnodeUrl: jest.fn().mockReturnValue("https://mockapi.sui.io"),
 }));
 
-const SuiGraphQLClientMock = SuiGraphQLClient as unknown as jest.Mock;
-const mockNext = bindMockNextGraphQLClient(SuiGraphQLClientMock);
+const factoryMock = createSuiGraphQLClient as unknown as jest.Mock;
+const mockNext = bindMockNextGraphQLClient(factoryMock);
 
 beforeEach(() => {
-  SuiGraphQLClientMock.mockReset();
+  factoryMock.mockReset();
   unexpectedJsonRpc.mockClear();
   coinConfig.setCoinConfig(() => ({
     node: { url: GRAPHQL_MAINNET_URL },
@@ -116,43 +116,25 @@ describe("unwrapGraphQL: error envelope handling", () => {
 // ---- SuiAddress normalisation ----
 
 describe("SuiAddress normalisation at GraphQL entry points", () => {
-  it("should pad short addresses to canonical 32-byte form before querying", async () => {
-    // GIVEN
-    // `0x1` is a short, valid Sui address; the GraphQL `SuiAddress!`
-    // scalar requires full 32-byte canonical form.
-    const listBalances = jest.fn().mockResolvedValueOnce({
-      balances: [],
-      hasNextPage: false,
-      cursor: null,
-    });
-    mockNext({ listBalances });
-
-    // WHEN
-    await getAllBalancesCached("0x1", "sui-graphql-norm-1");
-
-    // THEN
-    const expected = "0x" + "0".repeat(63) + "1";
-    expect(listBalances).toHaveBeenCalledWith({ owner: expected, cursor: null });
-  });
-
-  it("should lowercase mixed-case addresses before querying", async () => {
-    // GIVEN
-    const listBalances = jest.fn().mockResolvedValueOnce({
-      balances: [],
-      hasNextPage: false,
-      cursor: null,
-    });
-    mockNext({ listBalances });
-    const mixed = "0xABCDEF" + "0".repeat(58); // 64 hex chars after `0x`
-
-    // WHEN
-    await getAllBalancesCached(mixed, "sui-graphql-norm-2");
-
-    // THEN
-    expect(listBalances).toHaveBeenCalledWith({
-      owner: mixed.toLowerCase(),
-      cursor: null,
-    });
+  // The GraphQL `SuiAddress!` scalar requires full 32-byte canonical form.
+  test.each([
+    {
+      name: "pad short addresses to canonical 32-byte form",
+      input: "0x1",
+      expected: "0x" + "0".repeat(63) + "1",
+      key: "sui-graphql-norm-1",
+    },
+    {
+      name: "lowercase mixed-case addresses",
+      input: "0xABCDEF" + "0".repeat(58),
+      expected: ("0xABCDEF" + "0".repeat(58)).toLowerCase(),
+      key: "sui-graphql-norm-2",
+    },
+  ])("should $name before querying", async ({ input, expected, key }) => {
+    const query = jest.fn().mockResolvedValueOnce(fakeBalancesPage([]));
+    mockNext({ query });
+    await getAllBalancesCached(input, key);
+    expect(query.mock.calls[0][0].variables).toEqual({ owner: expected, cursor: null });
   });
 });
 

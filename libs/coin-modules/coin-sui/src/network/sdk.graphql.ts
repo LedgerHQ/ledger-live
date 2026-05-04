@@ -1,10 +1,11 @@
 import { log } from "@ledgerhq/logs";
 import { CoinBalance, Checkpoint, DelegatedStake } from "@mysten/sui/jsonRpc";
-import { SuiGraphQLClient } from "@mysten/sui/graphql";
 import { normalizeSuiAddress } from "@mysten/sui/utils";
+import { createSuiGraphQLClient, type SuiGraphQLClient } from "./graphql/client";
 import coinConfig from "../config";
-import { fetcher, inferNetworkFromUrl } from "./fetcher";
+import { fetcher } from "./fetcher";
 import {
+  ALL_BALANCES_BY_OWNER,
   BATCH_RATES_15,
   CHECKPOINT_BY_SEQUENCE,
   EXCHANGE_RATE_AT_EPOCH,
@@ -43,11 +44,7 @@ export async function withGraphQLApi<T>(
   signal?: AbortSignal,
 ): Promise<T> {
   const url = coinConfig.getCoinConfig(currencyId).node.url;
-  const api = new SuiGraphQLClient({
-    url,
-    network: inferNetworkFromUrl(url),
-    fetch: fetcher,
-  });
+  const api = createSuiGraphQLClient({ url, fetch: fetcher });
   return execute(api, signal);
 }
 
@@ -390,22 +387,34 @@ export const getAllBalancesCachedGraphQL = async (
     source: "balances",
     ...(signal && { signal }),
     fetchPage: async cursor => {
-      const res = await api.listBalances({
-        owner: ownerAddr,
-        cursor,
+      const res = await api.query({
+        query: ALL_BALANCES_BY_OWNER,
+        variables: { owner: ownerAddr, cursor },
         ...(signal && { signal }),
       });
+      const conn = unwrapGraphQL("ListBalances", res).address?.balances;
       return {
-        items: res.balances.map(b => ({
-          // long → short coin type; consumers compare against `DEFAULT_COIN_TYPE`.
-          coinType: shortenCoinType(b.coinType),
-          coinObjectCount: 0,
-          totalBalance: b.balance,
-          lockedBalance: {},
-          fundsInAddressBalance: b.addressBalance,
-        })),
-        endCursor: res.cursor,
-        hasNextPage: res.hasNextPage,
+        // Drop nodes with no `coinType.repr` — the schema marks `Balance.coinType` nullable,
+        // and a missing identifier would surface as a malformed entry downstream.
+        // `BigInt`-typed wire fields are nullable; "0" matches the JSON-RPC contract
+        // that downstream stringly-typed maths assumes.
+        items: (conn?.nodes ?? []).flatMap(b => {
+          const repr = b.coinType?.repr;
+          return repr
+            ? [
+                {
+                  // long → short coin type; consumers compare against `DEFAULT_COIN_TYPE`.
+                  coinType: shortenCoinType(repr),
+                  coinObjectCount: 0,
+                  totalBalance: b.totalBalance ?? "0",
+                  lockedBalance: {},
+                  fundsInAddressBalance: b.addressBalance ?? "0",
+                },
+              ]
+            : [];
+        }),
+        endCursor: conn?.pageInfo.endCursor ?? null,
+        hasNextPage: conn?.pageInfo.hasNextPage ?? false,
       };
     },
   });
