@@ -76,14 +76,8 @@ export default class AddAccountDrawer extends CommonPage {
     const accountCount = await countElementsById(this.accountItemRegExp());
     if (accountCount > 1) {
       await tapById(this.deselectAllButtonId);
-      await tapById(this.accountItemRegExp(), index);
-    } else {
-      // Skip tap if the VM already auto-selected the account (tapping would deselect it).
-      const continueAttrs = await getAttributesOfElement(this.continueButtonId);
-      if (!continueAttrs.enabled) {
-        await tapById(this.accountItemRegExp(), 0);
-      }
     }
+    await tapById(this.accountItemRegExp(), index);
     const accountId = await this.expectAccountDiscovery(currencyName, currencyId, index);
     await this.finishAccountsDiscovery();
     return accountId;

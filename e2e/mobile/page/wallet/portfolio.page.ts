@@ -451,18 +451,20 @@ export default class PortfolioPage {
     await tapById(this.transferBottomSheetBankTransferButton);
   }
 
+  private async checkSectionVisible(sectionId: string, isEmptyPortfolio: boolean) {
+    const scrollViewId = isEmptyPortfolio ? this.emptyPortfolioListId : this.accountsListView;
+    await scrollToId(sectionId, scrollViewId);
+    await detoxExpect(getElementById(sectionId)).toBeVisible();
+  }
+
   @Step("Check cryptos list section is visible")
   async checkCryptosListSectionVisible(isEmptyPortfolio = false) {
-    const scrollViewId = isEmptyPortfolio ? this.emptyPortfolioListId : this.accountsListView;
-    await scrollToId(this.portfolioCryptosListId, scrollViewId);
-    await detoxExpect(getElementById(this.portfolioCryptosListId)).toBeVisible();
+    await this.checkSectionVisible(this.portfolioCryptosListId, isEmptyPortfolio);
   }
 
   @Step("Check stablecoins list section is visible")
   async checkStablecoinsListSectionVisible(isEmptyPortfolio = false) {
-    const scrollViewId = isEmptyPortfolio ? this.emptyPortfolioListId : this.accountsListView;
-    await scrollToId(this.portfolioStablecoinsListId, scrollViewId);
-    await detoxExpect(getElementById(this.portfolioStablecoinsListId)).toBeVisible();
+    await this.checkSectionVisible(this.portfolioStablecoinsListId, isEmptyPortfolio);
   }
 
   @Step("Check add account CTA is visible")
@@ -471,25 +473,23 @@ export default class PortfolioPage {
     await detoxExpect(getElementById(this.addAccountCta)).toBeVisible();
   }
 
-  @Step("Check total asset item count equals expected")
-  async checkTotalAssetItemCount(expected: number, assetType: "crypto" | "stablecoin") {
-    const assetContainer = getElementByIdWithAncestorIds(
-      this.assetItemRegExp,
-      assetType === "crypto" ? this.portfolioCryptosListId : this.portfolioStablecoinsListId,
-    );
-    const count = await countElements(assetContainer);
+  @Step("Check total asset item count on page")
+  async checkTotalAssetItemCount(expected: number) {
+    const count = await countElements(element(by.id(this.assetItemRegExp)));
     jestExpect(count).toBe(expected);
   }
 
-  @Step("Check total asset items does not exceed max")
-  async checkMaxTotalAssetItems(max: number) {
-    const count = await countElementsById(this.assetItemRegExp);
-    jestExpect(count).toBeLessThanOrEqual(max);
+  @Step("Tap first asset item (wallet 4.0) and return its currency name")
+  async tapFirstAssetItemW40(): Promise<string> {
+    const testId = await getIdByRegexp(this.assetItemRegExp, 0);
+    const currencyName = testId.replace("assetItem-", "");
+    await tapByElement(getElementById(this.assetItemRegExp, 0));
+    return currencyName;
   }
 
-  @Step("Tap first asset item (wallet 4.0)")
-  async tapFirstAssetItemW40() {
-    await tapByElement(getElementById(this.assetItemRegExp, 0));
+  @Step("Check asset is visible on page")
+  async checkAssetVisible(currencyName: string) {
+    await detoxExpect(getElementById(`assetItem-${currencyName}`)).toExist();
   }
 
   @Step("Tap cryptos section title")
@@ -504,16 +504,19 @@ export default class PortfolioPage {
     await tapById(this.stablecoinsSectionHeaderId);
   }
 
+  private async checkListPageVisible(listId: string) {
+    await waitForElementById(listId);
+    await detoxExpect(getElementById(listId)).toBeVisible();
+  }
+
   @Step("Check full crypto list page is visible")
   async checkCryptoListPageVisible() {
-    await waitForElementById(this.cryptoListId);
-    await detoxExpect(getElementById(this.cryptoListId)).toBeVisible();
+    await this.checkListPageVisible(this.cryptoListId);
   }
 
   @Step("Check full stablecoin list page is visible")
   async checkStablecoinListPageVisible() {
-    await waitForElementById(this.stablecoinListId);
-    await detoxExpect(getElementById(this.stablecoinListId)).toBeVisible();
+    await this.checkListPageVisible(this.stablecoinListId);
   }
 
   @Step("Scroll to the top of the portfolio page")

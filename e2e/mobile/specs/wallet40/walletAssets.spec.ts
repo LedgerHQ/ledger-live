@@ -1,13 +1,5 @@
 import { WALLET_40_FEATURE_FLAGS } from "../../utils/constants";
 
-// to-do remove llmAccountListUI when wallet 4.0 is default
-const FEATURE_FLAGS = {
-  ...WALLET_40_FEATURE_FLAGS,
-  llmAccountListUI: {
-    enabled: true,
-  },
-};
-
 const TAGS = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
 
 describe("Wallet 4.0 - Portfolio-Asset/Address - Onboard without accounts", () => {
@@ -18,7 +10,7 @@ describe("Wallet 4.0 - Portfolio-Asset/Address - Onboard without accounts", () =
     await app.init({
       userdata: "skip-onboarding",
       speculosApp: currency.speculosApp,
-      featureFlags: FEATURE_FLAGS,
+      featureFlags: WALLET_40_FEATURE_FLAGS,
     });
     await app.portfolio.waitForPortfolioPageToLoad();
   });
@@ -29,12 +21,11 @@ describe("Wallet 4.0 - Portfolio-Asset/Address - Onboard without accounts", () =
   it("should display 4 cryptos, 2 stablecoins and an Add account CTA", async () => {
     await app.portfolio.checkCryptosListSectionVisible(true);
     await app.portfolio.checkStablecoinsListSectionVisible(true);
-    await app.portfolio.checkTotalAssetItemCount(4, "crypto");
-    await app.portfolio.checkTotalAssetItemCount(2, "stablecoin");
+    await app.portfolio.checkTotalAssetItemCount(6);
     await app.portfolio.checkAddAccountCtaVisible();
   });
 
-  it("should redirect to the asset market page when selecting an asset", async () => {
+  it("should redirect to the correct asset market page when selecting an asset", async () => {
     await app.portfolio.tapFirstAssetItemW40();
     await app.market.expectMarketDetailPage();
     await app.market.leaveMarketDetailPage();
@@ -42,13 +33,13 @@ describe("Wallet 4.0 - Portfolio-Asset/Address - Onboard without accounts", () =
   });
 });
 
-describe("Wallet 4.0 - Portfolio-Asset/Address - With one account", () => {
+describe("Wallet 4.0 - Portfolio-Asset/Address - With fewer accounts than section minimum (padding)", () => {
   const tmsLinks = ["B2CQA-4841"];
 
   beforeAll(async () => {
     await app.init({
-      userdata: "speculos-tests-app",
-      featureFlags: FEATURE_FLAGS,
+      userdata: "wallet40-btc-only",
+      featureFlags: WALLET_40_FEATURE_FLAGS,
     });
     await app.portfolio.waitForPortfolioPageToLoad();
   });
@@ -56,9 +47,11 @@ describe("Wallet 4.0 - Portfolio-Asset/Address - With one account", () => {
   tmsLinks.forEach(link => $TmsLink(link));
   TAGS.forEach(tag => $Tag(tag));
 
-  it("should display cryptos and stablecoins sections when user has accounts", async () => {
+  it("should pad cryptos to 4 and stablecoins to 2 with default assets when user has fewer accounts than minimum", async () => {
     await app.portfolio.checkCryptosListSectionVisible();
     await app.portfolio.checkStablecoinsListSectionVisible();
+    await app.portfolio.checkTotalAssetItemCount(6);
+    await app.portfolio.checkAssetVisible("Bitcoin");
   });
 });
 
@@ -68,18 +61,7 @@ describe("Wallet 4.0 - Portfolio-Asset/Address - Open the app with accounts", ()
   beforeAll(async () => {
     await app.init({
       userdata: "wallet40-many-stablecoins",
-      // aggregatedAssets: false shows individual assets per network instead of aggregated,
-      // which is needed to have >6 items per section and verify the cap.
-      featureFlags: {
-        ...FEATURE_FLAGS,
-        lwmWallet40: {
-          ...WALLET_40_FEATURE_FLAGS.lwmWallet40,
-          params: {
-            ...WALLET_40_FEATURE_FLAGS.lwmWallet40.params,
-            aggregatedAssets: false,
-          },
-        },
-      },
+      featureFlags: WALLET_40_FEATURE_FLAGS,
     });
     await app.portfolio.waitForPortfolioPageToLoad();
   });
@@ -87,19 +69,21 @@ describe("Wallet 4.0 - Portfolio-Asset/Address - Open the app with accounts", ()
   tmsLinks.forEach(link => $TmsLink(link));
   TAGS.forEach(tag => $Tag(tag));
 
-  it("should cap cryptos at 6 and display only cryptos when clicking the cryptos section title", async () => {
+  it("should cap cryptos at 6, show only cryptos when clicking section title, and list all 6 crypto assets", async () => {
     await app.portfolio.scrollToTopOfPortfolioPage();
     await app.portfolio.checkCryptosListSectionVisible();
-    await app.portfolio.checkTotalAssetItemCount(6, "crypto");
+    await app.portfolio.checkAssetVisible("Ethereum");
+    await app.portfolio.checkAssetVisible("Bitcoin");
     await app.portfolio.tapCryptosSectionTitle();
     await app.portfolio.checkCryptoListPageVisible();
     await app.common.goToPreviousPage();
     await app.portfolio.waitForPortfolioPageToLoad();
   });
 
-  it("should cap stablecoins at 6 and display only stablecoins when clicking the stablecoins section title", async () => {
+  it("should cap stablecoins at 6, show only stablecoins when clicking section title, and list all stablecoin assets", async () => {
     await app.portfolio.checkStablecoinsListSectionVisible();
-    await app.portfolio.checkTotalAssetItemCount(6, "stablecoin");
+    await app.portfolio.checkAssetVisible("Tether USD");
+    await app.portfolio.checkAssetVisible("USD Coin");
     await app.portfolio.tapStablecoinsSectionTitle();
     await app.portfolio.checkStablecoinListPageVisible();
     await app.common.goToPreviousPage();

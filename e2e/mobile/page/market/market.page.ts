@@ -1,3 +1,4 @@
+import { element, by, waitFor } from "detox";
 import { Step } from "jest-allure2-reporter/api";
 import { openDeeplink } from "../../helpers/commonHelpers";
 
@@ -25,6 +26,12 @@ export default class MarketPage {
     await detoxExpect(this.starButton()).toBeVisible();
   }
 
+  @Step("Expect market detail page for asset")
+  async expectMarketDetailPageForAsset(currencyName: string) {
+    await this.expectMarketDetailPage();
+    await detoxExpect(element(by.text(currencyName))).toBeVisible();
+  }
+
   @Step("Expect market list header left")
   async goBackToPortfolio() {
     await tapByElement(this.marketListHeaderLeft());
@@ -32,7 +39,10 @@ export default class MarketPage {
 
   @Step("Leave market detail page")
   async leaveMarketDetailPage() {
-    await tapByElement(this.assetDetailBackBtn());
+    await waitFor(element(by.id("market-back-btn")))
+      .toBeVisible()
+      .withTimeout(5000);
+    await element(by.id("market-back-btn")).tap();
   }
 
   @Step("Search for asset")
