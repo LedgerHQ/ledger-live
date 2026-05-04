@@ -88,25 +88,31 @@ export class AccountsPage extends AppPage {
     await expect(this.visibleAccountsList).toHaveCount(count, { timeout });
   }
 
+  private async getReduxAccountIds(): Promise<string[]> {
+    return this.page.evaluate(() => {
+      const store = window.__STORE__;
+      if (!store?.getState) return [];
+      const state: { accounts?: { id?: string }[] } = store.getState();
+      return (
+        state.accounts
+          ?.map(account => account.id)
+          .filter((accountId): accountId is string => Boolean(accountId)) ?? []
+      );
+    });
+  }
+
   /**
    * Waits until the in-app Redux store has the expected number of accounts.
    * Use after Ledger Sync / bridge merges (CI can show the success screen before all rows exist).
    */
   @step("Expect Redux accounts length to be $0")
   async expectReduxAccountsLength(count: number) {
-    await expect
-      .poll(
-        async () =>
-          this.page.evaluate(() => {
-            const store = // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-              (globalThis as { __STORE__?: { getState?: () => { accounts?: unknown[] } } })
-                .__STORE__;
-            if (!store?.getState) return -1;
-            return store.getState().accounts?.length ?? 0;
-          }),
-        { timeout: 60_000 },
-      )
-      .toBe(count);
+    await expect.poll(async () => (await this.getReduxAccountIds()).length).toBe(count);
+  }
+
+  @step("Expect Redux account ids to be $0")
+  async expectReduxAccountIds(expectedAccountIds: string[]) {
+    await expect.poll(async () => await this.getReduxAccountIds()).toEqual(expectedAccountIds);
   }
 
   @step("Expect crypto account row for $0 to be visible")

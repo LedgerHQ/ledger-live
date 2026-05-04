@@ -4,7 +4,6 @@ import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { CLI } from "tests/utils/cliUtils";
-import { expect } from "@playwright/test";
 import { LedgerSyncCliHelper } from "tests/utils/ledgerSyncCliUtils";
 import { accountNames, accounts } from "tests/testdata/ledgerSyncTestData";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
@@ -14,6 +13,7 @@ const firstAccountId = accounts[0].id;
 const firstAccountName = accountNames[firstAccountId];
 const secondAccountId = accounts[1].id;
 const secondAccountName = accountNames[secondAccountId];
+const renamedSecondAccountName = `${secondAccountName}_renamed`;
 
 function setupSeed() {
   const prevSeed = getEnv("SEED");
@@ -92,61 +92,66 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
 
       // Success copy can appear before the watch loop finishes importing every descriptor (retries use backoff).
       await app.accounts.expectReduxAccountsLength(2);
+      await app.accounts.expectReduxAccountIds([firstAccountId, secondAccountId]);
 
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.expectAccountsCount(2, 60_000);
+      await app.accounts.expectCryptoAccountRowVisible(firstAccountName);
+      await app.accounts.expectCryptoAccountRowVisible(secondAccountName);
 
       await app.accounts.navigateToAccountByName(firstAccountName);
       await app.account.expectAccountVisibility(firstAccountName);
       await app.account.deleteAccount();
+      await app.accounts.expectReduxAccountIds([secondAccountId]);
+      await app.accounts.expectAccountAbsence(firstAccountName);
+
       await app.accounts.navigateToAccountByName(secondAccountName);
       await app.account.expectAccountVisibility(secondAccountName);
-      await app.account.renameAccount(secondAccountName + "_renamed");
+      await app.account.renameAccount(renamedSecondAccountName);
+      await app.account.expectAccountVisibility(renamedSecondAccountName);
 
-      if (await app.layout.topbarSynchronizeButton.isEnabled()) {
-        // trigger sync if not triggered automatically
-        await app.layout.syncAccounts();
-      }
-
-      expect(await LedgerSyncCliHelper.checkSynchronizationSuccess(page, app)).toBeDefined();
+      await app.layout.syncAccountsIfAvailable();
+      await LedgerSyncCliHelper.checkSynchronizationSuccess(page, app);
 
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.expectReduxAccountsLength(1);
+      await app.accounts.expectReduxAccountIds([secondAccountId]);
       await app.accounts.expectAccountsCount(1, 60_000);
+      await app.accounts.expectCryptoAccountRowVisible(renamedSecondAccountName);
+      await app.accounts.expectAccountAbsence(firstAccountName);
 
       const pulledData = await CLI.ledgerSync({
         ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
         ...LedgerSyncCliHelper.ledgerSyncPullDataArgs,
       });
 
-      const parsedData = LedgerSyncCliHelper.parseData(pulledData);
+      LedgerSyncCliHelper.expectPulledDataToMatchAccountChanges(pulledData, {
+        deletedAccountId: firstAccountId,
+        remainingAccountId: secondAccountId,
+        expectedRemainingAccountName: renamedSecondAccountName,
+      });
 
       await app.mainNavigation.openSettings();
       await app.settings.openManageLedgerSync();
       await app.ledgerSync.manageInstances();
+      await app.ledgerSync.expectCLIMemberVisible();
       await app.ledgerSync.removeCLIMember();
       await app.speculos.removeMemberFromLedgerSync();
       await app.ledgerSync.expectMemberRemoval();
+      await app.ledgerSync.expectCLIMemberRemoved();
       await app.drawer.closeDrawer();
 
       await app.mainNavigation.openSettings();
       await app.settings.openManageLedgerSync();
+      await app.ledgerSync.manageInstances();
+      await app.ledgerSync.expectCLIMemberRemoved();
+      await app.drawer.closeDrawer();
+      await app.ledgerSync.expectLedgerSyncManagementVisible();
+
       await app.ledgerSync.destroyTrustchain();
       await app.ledgerSync.expectBackupDeletion();
       await app.drawer.closeDrawer();
-
-      expect(
-        await LedgerSyncCliHelper.checkAccountDeletion(parsedData, firstAccountId),
-        "Account should not be present",
-      ).toBeUndefined();
-      expect(
-        LedgerSyncCliHelper.isAccountRenamedCorrectly(
-          parsedData,
-          secondAccountId,
-          secondAccountName + "_renamed",
-        ),
-        "Account should be renamed correctly",
-      ).toBeDefined();
+      await app.settings.expectLedgerSyncSettingsEntryPoint();
     },
   );
 });

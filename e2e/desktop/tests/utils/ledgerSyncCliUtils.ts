@@ -1,7 +1,7 @@
 import { CLI } from "tests/utils/cliUtils";
 import { activateLedgerSync } from "@ledgerhq/live-common/e2e/speculos";
 import { accountNames, accounts } from "tests/testdata/ledgerSyncTestData";
-import { Page } from "@playwright/test";
+import { expect, Page, Response } from "@playwright/test";
 import { Application } from "tests/page";
 import { getEnv } from "@ledgerhq/live-env";
 import invariant from "invariant";
@@ -38,6 +38,31 @@ interface LedgerOutput {
   rootId?: string;
   walletSyncEncryptionKey?: string;
   applicationPath?: string;
+}
+
+interface LedgerSyncAccountData {
+  id?: string;
+  currencyId?: string;
+  index?: number;
+}
+
+interface LedgerSyncPulledData {
+  updateEvent?: {
+    data?: {
+      accounts?: LedgerSyncAccountData[];
+      accountNames?: Record<string, string>;
+    };
+  };
+}
+
+interface ExpectedSyncedAccountData {
+  deletedAccountId: string;
+  remainingAccountId: string;
+  expectedRemainingAccountName: string;
+}
+
+function isLedgerOutput(output: unknown): output is LedgerOutput {
+  return typeof output === "object" && output !== null;
 }
 
 export class LedgerSyncCliHelper {
@@ -83,8 +108,8 @@ export class LedgerSyncCliHelper {
     cloudSyncApiBaseUrl: LedgerSyncCliHelper.cloudSyncApiBaseUrl,
   };
 
-  private static updateKeysAndArgs(output: LedgerOutput) {
-    if (!output) return;
+  private static updateKeysAndArgs(output: unknown) {
+    if (!isLedgerOutput(output)) return;
     LedgerSyncCliHelper.updateKeyRingCredentials(output);
     LedgerSyncCliHelper.updateSyncArgs(output);
   }
@@ -114,16 +139,17 @@ export class LedgerSyncCliHelper {
     }
   }
 
-  static parseData(pulledData: string | void) {
+  static parseData(pulledData: string | void): LedgerSyncPulledData {
     invariant(pulledData, "Ledger Sync: pulledData is undefined");
     try {
-      return JSON.parse(pulledData);
+      const parsedData: LedgerSyncPulledData = JSON.parse(pulledData);
+      return parsedData;
     } catch (error) {
       throw new Error(`Failed to parse pulledData: ${error}`);
     }
   }
 
-  static getCloudSyncResponse(page: Page) {
+  static getCloudSyncResponse(page: Page): Promise<Response> {
     return new Promise(resolve => {
       page.on("response", response => {
         if (
@@ -138,7 +164,7 @@ export class LedgerSyncCliHelper {
 
   static async initializeLedgerKeyRingProtocol() {
     return CLI.ledgerKeyRingProtocol({ initMemberCredentials: true }).then(output => {
-      LedgerSyncCliHelper.updateKeysAndArgs(output as LedgerOutput);
+      LedgerSyncCliHelper.updateKeysAndArgs(output);
       return output;
     });
   }
@@ -148,7 +174,7 @@ export class LedgerSyncCliHelper {
       getKeyRingTree: true,
       ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
     }).then(out => {
-      LedgerSyncCliHelper.updateKeysAndArgs(out as LedgerOutput);
+      LedgerSyncCliHelper.updateKeysAndArgs(out);
       return out;
     });
     await activateLedgerSync();
@@ -169,23 +195,75 @@ export class LedgerSyncCliHelper {
     });
   }
 
-  static checkSynchronizationSuccess(page: Page, app: Application) {
-    app.layout.waitForAccountsSyncToBeDone();
-    return LedgerSyncCliHelper.getCloudSyncResponse(page);
+  static async checkSynchronizationSuccess(page: Page, app: Application): Promise<Response> {
+    const cloudSyncResponse = LedgerSyncCliHelper.getCloudSyncResponse(page);
+    await app.layout.waitForAccountsSyncToBeDone();
+    return cloudSyncResponse;
   }
 
-  static checkAccountDeletion(parsedData: any, accountId: string): any {
-    return parsedData.updateEvent.data.accounts?.find(
-      (account: { id: string }) => account.id === accountId,
+  private static findSyncedAccount(
+    parsedData: LedgerSyncPulledData,
+    accountId: string,
+  ): LedgerSyncAccountData | undefined {
+    return parsedData.updateEvent?.data?.accounts?.find(account => account.id === accountId);
+  }
+
+  private static getSyncedAccountIds(parsedData: LedgerSyncPulledData): string[] {
+    return (
+      parsedData.updateEvent?.data?.accounts
+        ?.map(account => account.id)
+        .filter((accountId): accountId is string => Boolean(accountId)) ?? []
     );
   }
 
-  static isAccountRenamedCorrectly(
-    parsedData: any,
+  private static getSyncedAccountName(
+    parsedData: LedgerSyncPulledData,
+    accountId: string,
+  ): string | undefined {
+    return parsedData.updateEvent?.data?.accountNames?.[accountId];
+  }
+
+  private static isAccountDeleted(parsedData: LedgerSyncPulledData, accountId: string): boolean {
+    return !LedgerSyncCliHelper.findSyncedAccount(parsedData, accountId);
+  }
+
+  private static isAccountRenamedCorrectly(
+    parsedData: LedgerSyncPulledData,
     accountId: string,
     expectedName: string,
   ): boolean {
-    const data = parsedData.updateEvent.data;
-    return data.accountNames?.[accountId] === expectedName;
+    return LedgerSyncCliHelper.getSyncedAccountName(parsedData, accountId) === expectedName;
+  }
+
+  static expectPulledDataToMatchAccountChanges(
+    pulledData: string | void,
+    {
+      deletedAccountId,
+      remainingAccountId,
+      expectedRemainingAccountName,
+    }: ExpectedSyncedAccountData,
+  ) {
+    const parsedData = LedgerSyncCliHelper.parseData(pulledData);
+
+    expect(
+      LedgerSyncCliHelper.getSyncedAccountIds(parsedData),
+      "Backend data should only contain the remaining account",
+    ).toEqual([remainingAccountId]);
+    expect(
+      LedgerSyncCliHelper.isAccountDeleted(parsedData, deletedAccountId),
+      "Deleted account should not be present in backend accounts",
+    ).toBe(true);
+    expect(
+      LedgerSyncCliHelper.getSyncedAccountName(parsedData, remainingAccountId),
+      "Backend account name should match the renamed account",
+    ).toBe(expectedRemainingAccountName);
+    expect(
+      LedgerSyncCliHelper.isAccountRenamedCorrectly(
+        parsedData,
+        remainingAccountId,
+        expectedRemainingAccountName,
+      ),
+      "Account should be renamed correctly",
+    ).toBe(true);
   }
 }
