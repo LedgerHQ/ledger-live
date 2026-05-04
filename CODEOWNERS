@@ -201,8 +201,10 @@ apps/ledger-live-mobile/src/mvvm/features/Card/                                 
 apps/ledger-live-desktop/src/mvvm/features/Card/                                        @ledgerhq/ptx
 apps/ledger-live-mobile/src/mvvm/features/Swap/                                         @ledgerhq/ptx
 apps/ledger-live-mobile/src/mvvm/features/Stake/                                        @ledgerhq/ptx
-apps/ledger-live-desktop/src/mvvm/features/PtxInfoDialog/                               @ledgerhq/ptx
-apps/ledger-live-desktop/src/mvvm/features/ActionConfirmationDialog/                    @ledgerhq/ptx
+apps/ledger-live-desktop/src/mvvm/features/PtxInfoDialog/                                @ledgerhq/ptx
+apps/ledger-live-desktop/src/mvvm/features/ActionConfirmationDialog/                     @ledgerhq/ptx
+apps/ledger-live-desktop/src/mvvm/features/LiveAppModal/                                 @ledgerhq/ptx
+apps/ledger-live-mobile/src/mvvm/features/LiveAppModal/                                  @ledgerhq/ptx
 apps/ledger-live-mobile/src/mvvm/features/Borrow/                                       @ledgerhq/ptx
 apps/ledger-live-mobile/src/mvvm/features/Portfolio/components/PortfolioBorrowSection   @ledgerhq/ptx
 apps/ledger-live-desktop/src/mvvm/features/Borrow							            @ledgerhq/ptx
