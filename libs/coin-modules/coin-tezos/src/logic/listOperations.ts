@@ -399,6 +399,21 @@ function resolveTargetAddress(operation: ConvertibleOperation): string | undefin
   return undefined;
 }
 
+// finalize_unstake's protocol sender is the gas payer (anyone may call it),
+// not the staker; map staking ops from the staker's perspective so the op
+// stays visible in their wallet.
+function resolveStakingAddresses(op: APIStakingType): {
+  senders: string[];
+  recipients: string[];
+} {
+  const stakerAddr = op.staker?.address ?? op.sender?.address;
+  const bakerAddr = op.baker?.address;
+  const stakerArr = stakerAddr ? [stakerAddr] : [];
+  const bakerArr = bakerAddr ? [bakerAddr] : [];
+  if (op.action === "finalize") return { senders: bakerArr, recipients: stakerArr };
+  return { senders: stakerArr, recipients: bakerArr };
+}
+
 function resolveNormalizedType(
   operation: ConvertibleOperation,
   address: string,
@@ -452,12 +467,17 @@ function convertOperation(
     : sender?.address;
 
   const targetAddress = resolveTargetAddress(operation);
-  const recipients = targetAddress ? [targetAddress] : [];
-  if (!targetAddress && !isAPIRevealType(operation)) {
+  // reveal has no target by design; staking resolves senders/recipients separately.
+  if (!targetAddress && !isAPIRevealType(operation) && !isAPIStakingType(operation)) {
     log("coin:tezos", "(logic/operations): No target address found for operation", operation);
   }
 
-  const senders = sender?.address ? [sender.address] : [];
+  const { senders, recipients } = isAPIStakingType(operation)
+    ? resolveStakingAddresses(operation)
+    : {
+        senders: sender?.address ? [sender.address] : [],
+        recipients: targetAddress ? [targetAddress] : [],
+      };
 
   const amount =
     isAPIRevealType(operation) || isAPIDelegationType(operation) ? 0n : BigInt(operation.amount);
