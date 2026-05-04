@@ -9,3 +9,7 @@ export const AleoFeeRecordInsufficientBalance = createCustomErrorClass(
 export const AleoApiConfigurationResetError = createCustomErrorClass(
   "AleoApiConfigurationResetError",
 );
+export const AleoTooManyRecordsSelected = createCustomErrorClass("AleoTooManyRecordsSelected");
+export const AleoAmountTooLargeForTransaction = createCustomErrorClass(
+  "AleoAmountTooLargeForTransaction",
+);

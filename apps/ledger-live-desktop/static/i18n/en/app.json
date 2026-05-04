@@ -7433,6 +7433,14 @@
       "title": "Select a valid private record for the amount.",
       "description": "Choose one of your available private records to fund the transfer amount."
     },
+    "AleoTooManyRecordsSelected": {
+      "title": "Too many private records selected",
+      "description": "You can use at most {{count}} private records per transaction."
+    },
+    "AleoAmountTooLargeForTransaction": {
+      "title": "Amount too large for one transaction",
+      "description": "Your private records can't cover this amount in a single transaction. Try a smaller amount."
+    },
     "AleoFeeRecordRequired": {
       "title": "Another private record is required to cover the network fee.",
       "description": "Top up your balance if needed. One private record is used for the transfer amount, and you must have another record that can cover the network fee."
