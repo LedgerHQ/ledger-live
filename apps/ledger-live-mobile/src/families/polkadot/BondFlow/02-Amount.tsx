@@ -17,7 +17,7 @@ import { useTheme } from "@react-navigation/native";
 import type { Transaction as PolkadotTransaction } from "@ledgerhq/live-common/families/polkadot/types";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { isFirstBond } from "@ledgerhq/live-common/families/polkadot/logic";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { urls } from "~/utils/urls";
@@ -80,7 +80,7 @@ export default function PolkadotBondAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account, parentAccount } = useAccountScreen(route);
   invariant(account, "account is required");
-  const bridge = getAccountBridge(account, parentAccount);
+  const bridge = useAccountBridge<PolkadotTransaction>(account, parentAccount);
   const mainAccount = getMainAccount(account, parentAccount) as PolkadotAccount;
   const [maxSpendable, setMaxSpendable] = useState<BigNumber | null>(null);
   const [infoModalOpen, setInfoModalOpen] = useState<boolean>();
@@ -102,7 +102,7 @@ export default function PolkadotBondAmount({ navigation, route }: Props) {
   useEffect(() => {
     if (!account) return;
     let cancelled = false;
-    getAccountBridge(account, parentAccount)
+    bridge
       .estimateMaxSpendable({
         account,
         parentAccount,
@@ -116,7 +116,7 @@ export default function PolkadotBondAmount({ navigation, route }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [account, parentAccount, debouncedTransaction]);
+  }, [account, parentAccount, debouncedTransaction, bridge]);
   const onChange = useCallback(
     (amount: BigNumber) => {
       if (!amount.isNaN()) {
@@ -130,7 +130,6 @@ export default function PolkadotBondAmount({ navigation, route }: Props) {
     [setTransaction, transaction, bridge],
   );
   const toggleUseAllAmount = useCallback(() => {
-    const bridge = getAccountBridge(account, parentAccount);
     if (!transaction) return;
     setTransaction(
       bridge.updateTransaction(transaction, {
@@ -138,7 +137,7 @@ export default function PolkadotBondAmount({ navigation, route }: Props) {
         useAllAmount: !transaction.useAllAmount,
       }),
     );
-  }, [setTransaction, account, parentAccount, transaction]);
+  }, [setTransaction, bridge, transaction]);
   const onContinue = useCallback(() => {
     navigation.navigate(ScreenName.PolkadotBondSelectDevice, {
       accountId: account.id,

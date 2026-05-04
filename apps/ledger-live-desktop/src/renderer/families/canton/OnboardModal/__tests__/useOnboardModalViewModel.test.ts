@@ -104,7 +104,6 @@ describe("useOnboardModalViewModel", () => {
     expect(typeof result.current.onOnboardAccount).toBe("function");
     expect(typeof result.current.onRetryOnboardAccount).toBe("function");
     expect(typeof result.current.onAddAccounts).toBe("function");
-    expect(typeof result.current.onAddMore).toBe("function");
     expect(typeof result.current.transitionTo).toBe("function");
   });
 

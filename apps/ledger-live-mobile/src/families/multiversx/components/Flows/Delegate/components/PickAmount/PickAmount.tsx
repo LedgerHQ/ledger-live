@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { View, Keyboard, TouchableOpacity, TouchableWithoutFeedback, Platform } from "react-native";
 import { Trans } from "~/context/Locale";
 import { BigNumber } from "bignumber.js";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { denominate } from "@ledgerhq/live-common/families/multiversx/helpers";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
@@ -34,7 +34,7 @@ const PickAmount = (props: PickAmountPropsType) => {
 
   const unit = useAccountUnit(account);
   const { locale } = useSettings();
-  const bridge = getAccountBridge(account);
+  const bridge = useAccountBridge<Transaction>(account);
   const transaction = route.params.transaction as Transaction;
 
   const [maxSpendable, setMaxSpendable] = useState(new BigNumber(0));
@@ -45,7 +45,6 @@ const PickAmount = (props: PickAmountPropsType) => {
    */
 
   const getMaxSpendable = useCallback(() => {
-    const bridge = getAccountBridge(account);
     const fetchMaxSpendable = async () => {
       const amount = await bridge.estimateMaxSpendable({
         account,
@@ -59,7 +58,7 @@ const PickAmount = (props: PickAmountPropsType) => {
     };
 
     fetchMaxSpendable();
-  }, [account, transaction]);
+  }, [account, transaction, bridge]);
 
   /*
    * Handle the ration selection callback.

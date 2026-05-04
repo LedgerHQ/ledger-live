@@ -101,8 +101,12 @@ export class AccountPage extends AppPage {
   }
 
   @step("Click on last operation and return status")
-  async clickOnLastOperationAndReturnStatus() {
+  async clickOnLastOperationAndReturnStatus(): Promise<string> {
     const status = await this.operationStatus.first().textContent();
+    if (!status) {
+      throw new Error("Expected operation status to be defined");
+    }
+
     await this.operationRows.first().click();
     return status;
   }
@@ -147,6 +151,14 @@ export class AccountPage extends AppPage {
     await this.scrollToOperations();
     await expect(this.lastOperation).toBeVisible();
     await expect(this.operationList).not.toBeEmpty();
+  }
+
+  @step("Expect funded account details for $0")
+  async expectFundedAccountDetails(accountName: string): Promise<string> {
+    await this.expectAccountVisibility(accountName);
+    await this.expectAccountBalance();
+    await this.expectLastOperationsVisibility();
+    return this.clickOnLastOperationAndReturnStatus();
   }
 
   @step("Expect token Account to be visible")

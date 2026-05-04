@@ -8,12 +8,15 @@ import { genAccount } from "@ledgerhq/live-common/mock/account";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import { useExportOperationsCsv } from "./useExportOperationsCsv";
+import type { BridgeSyncState } from "@ledgerhq/live-common/bridge/react/types";
 
 const mockSync = jest.fn();
+const mockSyncState = jest.fn();
 const mockAccountsOpToCSV = jest.fn().mockReturnValue("csv-data");
 
 jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
   useBridgeSync: () => mockSync,
+  useBridgeSyncState: () => mockSyncState(),
 }));
 
 jest.mock("@ledgerhq/live-countervalues-react", () => ({
@@ -115,6 +118,7 @@ function mockSaveDialogThenExport(fileSaved: boolean) {
 describe("useExportOperationsCsv", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockSyncState.mockReturnValue({});
   });
 
   it("should return initial state", () => {
@@ -147,13 +151,6 @@ describe("useExportOperationsCsv", () => {
     expect(mockSync).toHaveBeenCalledTimes(1);
   });
 
-  it("should set isLoading when selected accounts have incomplete operations", () => {
-    const account = makeAccount("1", 5);
-    account.operationsCount = 10;
-    const { result } = setupHook({ accounts: [account] });
-    expect(result.current.isLoading).toBe(true);
-  });
-
   it("should not set isLoading when selected accounts have all operations", () => {
     const account = makeAccount("1", 5);
     account.operationsCount = account.operations.length;
@@ -161,12 +158,76 @@ describe("useExportOperationsCsv", () => {
     expect(result.current.isLoading).toBe(false);
   });
 
-  it("should set isLoading when a subAccount has incomplete operations", () => {
-    const account = makeAccount("1", 5);
-    account.operationsCount = account.operations.length;
-    account.subAccounts = [makeTokenAccount(account.id, 10)];
-    const { result } = setupHook({ accounts: [account] });
+  it("should set isLoading when selected account is syncing", () => {
+    const account = makeAccount("1", 0);
+    const { rerender, result } = setupHook({ accounts: [account], checkedIds: [account.id] });
+
+    const syncState: BridgeSyncState = {};
+    syncState[account.id] = { pending: true, error: null };
+    mockSyncState.mockReturnValueOnce(syncState);
+
+    rerender();
     expect(result.current.isLoading).toBe(true);
+
+    mockSyncState.mockReturnValueOnce({});
+
+    rerender();
+    expect(result.current.isLoading).toBe(false);
+  });
+
+  it("should set isLoading when selected account sub accounts is syncing", () => {
+    const account = makeAccount("1", 0);
+    account.subAccounts = [makeTokenAccount(account.id, 0)];
+
+    const { rerender, result } = setupHook({ accounts: [account], checkedIds: [account.id] });
+
+    const syncState: BridgeSyncState = {};
+    syncState[account.subAccounts[0].id] = { pending: true, error: null };
+    mockSyncState.mockReturnValueOnce(syncState);
+
+    rerender();
+    expect(result.current.isLoading).toBe(true);
+
+    mockSyncState.mockReturnValueOnce({});
+
+    rerender();
+    expect(result.current.isLoading).toBe(false);
+  });
+
+  it("should not set isLoading when selected account is not syncing (another account is syncing)", () => {
+    const account = makeAccount("1", 0);
+    const account2 = makeAccount("2", 0);
+    account2.subAccounts = [makeTokenAccount(account2.id, 0)];
+
+    const { rerender, result } = setupHook({
+      accounts: [account, account2],
+      checkedIds: [account.id],
+    });
+
+    const syncState: BridgeSyncState = {};
+    syncState[account2.id] = { pending: true, error: null };
+    mockSyncState.mockReturnValueOnce(syncState);
+
+    rerender();
+    expect(result.current.isLoading).toBe(false);
+  });
+
+  it("should not set isLoading when selected account is not syncing (another account sub account is syncing)", () => {
+    const account = makeAccount("1", 0);
+    const account2 = makeAccount("2", 0);
+    account2.subAccounts = [makeTokenAccount(account2.id, 0)];
+
+    const { rerender, result } = setupHook({
+      accounts: [account, account2],
+      checkedIds: [account.id],
+    });
+
+    const syncState: BridgeSyncState = {};
+    syncState[account2.subAccounts[0].id] = { pending: true, error: null };
+    mockSyncState.mockReturnValueOnce(syncState);
+
+    rerender();
+    expect(result.current.isLoading).toBe(false);
   });
 
   it("should export CSV successfully and call onSuccess", async () => {

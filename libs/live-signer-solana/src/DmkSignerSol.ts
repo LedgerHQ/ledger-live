@@ -164,12 +164,14 @@ export class DmkSignerSol implements SolanaSigner {
     txBuffer: Uint8Array,
     resolution?: Resolution | undefined,
   ): Promise<SolanaSignature> {
-    const transactionResolutionContext = resolution
-      ? this._toTransactionResolutionContext(resolution)
-      : undefined;
     const { observable } = this.dmkSigner.signTransaction(path, txBuffer, {
-      transactionResolutionContext,
       skipOpenApp: true,
+      transactionResolutionContext: resolution
+        ? this._toTransactionResolutionContext(resolution)
+        : undefined,
+      delayed: resolution?.delayed,
+      solanaRPCURL: resolution?.solanaRPCURL,
+      fetchBlockhash: resolution?.fetchBlockhash,
     });
     return new Promise<SolanaSignature>((resolve, reject) => {
       observable.subscribe({

@@ -15,7 +15,7 @@ const swaps = [
   {
     fromAccount: Account.ETH_1,
     toAccount: Account.BTC_NATIVE_SEGWIT_1,
-    xrayTicket: "B2CQA-2750, B2CQA-3135, B2CQA-620, B2CQA-3450",
+    xrayTicket: "B2CQA-2750, B2CQA-3135, B2CQA-620",
     tag: [
       "@NanoSP",
       "@LNS",
@@ -50,7 +50,23 @@ const swaps = [
   {
     fromAccount: Account.ETH_1,
     toAccount: TokenAccount.ETH_USDT_1,
-    xrayTicket: "B2CQA-2749, B2CQA-3450",
+    xrayTicket: "B2CQA-2749",
+    tag: [
+      "@NanoSP",
+      "@LNS",
+      "@NanoX",
+      "@Stax",
+      "@Flex",
+      "@NanoGen5",
+      "@swapSmoke",
+      "@ethereum",
+      "@family-evm",
+    ],
+  },
+  {
+    fromAccount: TokenAccount.ETH_USDT_1,
+    toAccount: Account.ETH_1,
+    xrayTicket: "B2CQA-2752, B2CQA-2048",
     tag: [
       "@NanoSP",
       "@LNS",
@@ -66,7 +82,7 @@ const swaps = [
   {
     fromAccount: Account.BTC_NATIVE_SEGWIT_1,
     toAccount: TokenAccount.ETH_USDT_1,
-    xrayTicket: "B2CQA-2746, B2CQA-3450",
+    xrayTicket: "B2CQA-2746",
     tag: [
       "@NanoSP",
       "@LNS",
@@ -83,7 +99,7 @@ const swaps = [
   {
     fromAccount: TokenAccount.ETH_USDT_1,
     toAccount: Account.BTC_NATIVE_SEGWIT_1,
-    xrayTicket: "B2CQA-2753, B2CQA-3450",
+    xrayTicket: "B2CQA-2753",
     tag: [
       "@NanoSP",
       "@LNS",
@@ -96,12 +112,48 @@ const swaps = [
       "@family-evm",
       "@bitcoin",
       "@family-bitcoin",
+    ],
+  },
+  {
+    fromAccount: TokenAccount.ETH_USDT_1,
+    toAccount: Account.SOL_1,
+    xrayTicket: "B2CQA-2751",
+    tag: [
+      "@NanoSP",
+      "@LNS",
+      "@NanoX",
+      "@Stax",
+      "@Flex",
+      "@NanoGen5",
+      "@swapSmoke",
+      "@ethereum",
+      "@family-evm",
+      "@solana",
+      "@family-solana",
+    ],
+  },
+  {
+    fromAccount: Account.ETH_1,
+    toAccount: Account.SOL_1,
+    xrayTicket: "B2CQA-2748",
+    tag: [
+      "@NanoSP",
+      "@LNS",
+      "@NanoX",
+      "@Stax",
+      "@Flex",
+      "@NanoGen5",
+      "@swapSmoke",
+      "@solana",
+      "@family-solana",
+      "@family-evm",
+      "@ethereum",
     ],
   },
   {
     fromAccount: Account.SOL_1,
     toAccount: Account.ETH_1,
-    xrayTicket: "B2CQA-2775, B2CQA-3450",
+    xrayTicket: "B2CQA-2775",
     tag: [
       "@NanoSP",
       "@LNS",
@@ -116,9 +168,27 @@ const swaps = [
     ],
   },
   {
-    fromAccount: Account.SOL_1,
-    toAccount: Account.BTC_NATIVE_SEGWIT_1,
-    xrayTicket: "B2CQA-2776, B2CQA-3450",
+    fromAccount: Account.ETH_1,
+    toAccount: Account.DOT_1,
+    xrayTicket: "B2CQA-3017",
+    tag: [
+      "@NanoSP",
+      "@LNS",
+      "@NanoX",
+      "@Stax",
+      "@Flex",
+      "@NanoGen5",
+      "@swapSmoke",
+      "@family-evm",
+      "@ethereum",
+      "@polkadot",
+      "@family-polkadot",
+    ],
+  },
+  {
+    fromAccount: Account.BTC_NATIVE_SEGWIT_1,
+    toAccount: Account.SOL_1,
+    xrayTicket: "B2CQA-2747",
     tag: [
       "@NanoSP",
       "@LNS",
@@ -134,9 +204,45 @@ const swaps = [
     ],
   },
   {
+    fromAccount: Account.SOL_1,
+    toAccount: Account.BTC_NATIVE_SEGWIT_1,
+    xrayTicket: "B2CQA-2776",
+    tag: [
+      "@NanoSP",
+      "@LNS",
+      "@NanoX",
+      "@Stax",
+      "@Flex",
+      "@NanoGen5",
+      "@swapSmoke",
+      "@solana",
+      "@family-solana",
+      "@bitcoin",
+      "@family-bitcoin",
+    ],
+  },
+  {
+    fromAccount: Account.BTC_NATIVE_SEGWIT_1,
+    toAccount: Account.LTC_1,
+    xrayTicket: "B2CQA-3078",
+    tag: [
+      "@NanoSP",
+      "@LNS",
+      "@NanoX",
+      "@Stax",
+      "@Flex",
+      "@NanoGen5",
+      "@swapSmoke",
+      "@bitcoin",
+      "@family-bitcoin",
+      "@litecoin",
+      "@family-litecoin",
+    ],
+  },
+  {
     fromAccount: TokenAccount.ETH_USDC_1,
     toAccount: Account.BTC_NATIVE_SEGWIT_1,
-    xrayTicket: "B2CQA-2832, B2CQA-3450, B2CQA-3281",
+    xrayTicket: "B2CQA-2832, B2CQA-3281",
     tag: [
       "@NanoSP",
       "@LNS",
@@ -151,9 +257,25 @@ const swaps = [
     ],
   },
   {
+    fromAccount: TokenAccount.ETH_USDC_1,
+    toAccount: Account.ETH_1,
+    xrayTicket: "B2CQA-2830, B2CQA-3281",
+    tag: [
+      "@NanoSP",
+      "@LNS",
+      "@NanoX",
+      "@Stax",
+      "@Flex",
+      "@NanoGen5",
+      "@swapSmoke",
+      "@ethereum",
+      "@family-evm",
+    ],
+  },
+  {
     fromAccount: Account.XRP_1,
-    toAccount: Account.BTC_NATIVE_SEGWIT_1,
-    xrayTicket: "B2CQA-3077, B2CQA-3450, B2CQA-3281",
+    toAccount: TokenAccount.ETH_USDC_1,
+    xrayTicket: "B2CQA-3075, B2CQA-3281",
     tag: [
       "@NanoSP",
       "@LNS",
@@ -163,6 +285,23 @@ const swaps = [
       "@NanoGen5",
       "@xrp",
       "@family-xrp",
+      "@ethereum",
+      "@family-evm",
+    ],
+  },
+  {
+    fromAccount: Account.XRP_1,
+    toAccount: Account.BTC_NATIVE_SEGWIT_1,
+    xrayTicket: "B2CQA-3077, B2CQA-3281",
+    tag: [
+      "@NanoSP",
+      "@LNS",
+      "@NanoX",
+      "@Stax",
+      "@Flex",
+      "@NanoGen5",
+      "@ripple",
+      "@family-xrp",
       "@bitcoin",
       "@family-bitcoin",
     ],
@@ -171,7 +310,7 @@ const swaps = [
   // {
   //   fromAccount: Account.APTOS_1,
   //   toAccount: Account.SOL_1,
-  //   xrayTicket: "B2CQA-3081, B2CQA-3450, B2CQA-3281",
+  //   xrayTicket: "B2CQA-3081, B2CQA-3281",
   //   tag: ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@aptos", "@solana", "@family-solana","@family-aptos"],
   // },
   {
@@ -185,7 +324,7 @@ const swaps = [
       "@Flex",
       "@NanoGen5",
       "@hedera",
-      "@xrp",
+      "@ripple",
       "@family-xrp",
       "@family-hedera",
     ],
@@ -269,14 +408,14 @@ for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
           description: xrayTicket,
         },
       },
-      async ({ app, electronApp, speculos }) => {
+      async ({ app, speculos }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
         const swap = new Swap(fromAccount, toAccount, minAmount);
 
-        await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
-        const provider = await app.swap.selectExchangeWithoutKyc(electronApp, swap);
+        await performSwapUntilQuoteSelectionStep(app, swap, minAmount);
+        const provider = await app.swap.selectExchangeWithoutKyc(swap);
         swap.setProvider(provider);
         await app.swap.ensureTokenApproval(fromAccount, provider, minAmount);
 
@@ -284,13 +423,13 @@ for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
           if (provider.app !== exchangeApp) {
             await speculos.relaunch(provider.app.name);
           }
-          await app.swap.clickExchangeButton(electronApp);
-          await app.swap.clickExecuteSwapButton(electronApp);
+          await app.swap.clickExchangeButton();
+          await app.swap.clickExecuteSwapButton();
           await app.swap.clickContinueButton();
           await app.speculos.verifyAmountsAndAcceptSwap(swap, minAmount);
           await app.swap.expectTransactionSentToasterToBeVisible();
         } else {
-          await app.swap.clickExchangeButton(electronApp);
+          await app.swap.clickExchangeButton();
           await app.speculos.verifyAmountsAndAcceptSwap(swap, minAmount);
           await app.swapDrawer.verifyExchangeCompletedTextContent(
             swap.accountToCredit.currency.name,

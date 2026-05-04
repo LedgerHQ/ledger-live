@@ -122,7 +122,7 @@ export const getFee =
     // Setup accounts and bridge
     const fromParentAccount = getParentAccount(fromAccount, accounts);
     let mainAccount = getMainAccount(fromAccount, fromParentAccount);
-    const bridge = getAccountBridge(fromAccount, fromParentAccount);
+    const bridge = await getAccountBridge(fromAccount, fromParentAccount);
 
     if (mainAccount.currency.id === "bitcoin") {
       try {

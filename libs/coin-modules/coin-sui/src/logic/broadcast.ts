@@ -14,7 +14,9 @@ export async function broadcast(
   let params: ExecuteTransactionBlockParams;
   if (typeof transaction === "string") {
     const { rawTx, signature, success } = extractTxAndSignature(transaction);
-    if (!success) return "";
+    if (!success) {
+      throw new Error("sui: invalid serialized transaction payload for broadcast");
+    }
 
     params = {
       transactionBlock: rawTx,
@@ -24,10 +26,27 @@ export async function broadcast(
       },
     };
   } else {
-    params = transaction;
+    params = {
+      ...transaction,
+      options: {
+        ...(transaction.options ?? {}),
+        showEffects: true,
+      },
+    };
   }
   const result = await suiAPI.executeTransactionBlock(params, currencyId);
-  return result?.digest ?? "";
+  if (!result?.digest) {
+    throw new Error("sui: broadcast returned no transaction digest");
+  }
+  const status = result.effects?.status;
+  if (status?.status === "failure") {
+    const detail =
+      "error" in status && typeof status.error === "string" && status.error.length > 0
+        ? status.error
+        : "transaction execution failed";
+    throw new Error(`sui: broadcast execution failed: ${detail}`);
+  }
+  return result.digest;
 }
 
 function extractTxAndSignature(transaction: string): {

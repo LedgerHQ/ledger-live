@@ -13,6 +13,7 @@ import type {
   AleoAccount,
   AleoUnspentRecord,
   AleoDecryptedRecordResponse,
+  AleoCoinConfig,
   TransactionPrivate,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/aleo/types";
@@ -21,11 +22,18 @@ import { useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 import i18n from "~/renderer/i18n/init";
 import type { StepProps } from "~/renderer/modals/Send/types";
 import StepRecordPicker from "./StepRecordPicker";
+import { getAleoCurrencyConfig } from "../../../shared/utils";
 import { ALEO_ACCOUNT_1 } from "../../../__mocks__/account.mock";
+import { mockAleoCoinConfig } from "../../../__mocks__/config.mock";
 
 jest.mock("~/renderer/hooks/useAccountUnit");
 jest.mock("~/renderer/hooks/useDateFormatter");
 jest.mock("@ledgerhq/live-common/currencies/index");
+jest.mock("../../../shared/utils", () => ({
+  getAleoCurrencyConfig: jest.fn(),
+}));
+
+const mockGetAleoCurrencyConfig = jest.mocked(getAleoCurrencyConfig);
 
 const mockUseDateFormatter = jest.mocked(useDateFormatter);
 
@@ -93,8 +101,8 @@ describe("StepRecordPicker", () => {
     fees: new BigNumber(0),
     useAllAmount: false,
     properties: {
+      amountRecordCommitments: [],
       feeRecordCommitment: null,
-      amountRecordCommitment: null,
     },
   };
 
@@ -135,6 +143,8 @@ describe("StepRecordPicker", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    // default: manual strategy — picker renders normally
+    mockGetAleoCurrencyConfig.mockReturnValue(mockAleoCoinConfig);
     mockUseAccountUnit.mockReturnValue({
       code: "ALEO",
       name: "Aleo",
@@ -286,7 +296,7 @@ describe("StepRecordPicker", () => {
     expect(updateTransaction).toHaveBeenCalledTimes(1);
     const updaterFn = updateTransaction.mock.calls[0][0];
     const result = updaterFn(privateTransaction);
-    expect(result.properties?.amountRecordCommitment).toBe(record2.commitment);
+    expect(result.properties?.amountRecordCommitments).toEqual([record2.commitment]);
     expect(result.properties?.feeRecordCommitment).toBeNull();
   });
 
@@ -308,7 +318,7 @@ describe("StepRecordPicker", () => {
     expect(updateTransaction).toHaveBeenCalledTimes(1);
     const updaterFn = updateTransaction.mock.calls[0][0];
     const result = updaterFn(privateTransaction);
-    expect(result.properties?.amountRecordCommitment).toBe(record1.commitment);
+    expect(result.properties?.amountRecordCommitments).toEqual([record1.commitment]);
     expect(result.properties?.feeRecordCommitment).toBeNull();
   });
 
@@ -617,5 +627,34 @@ describe("StepRecordPicker", () => {
 
     expect(screen.getByTestId("aleo-empty-records-alert")).toBeInTheDocument();
     expect(screen.queryByRole("button")).not.toBeInTheDocument();
+  });
+
+  it("should render nothing when recordPickingStrategy is auto", () => {
+    const autoConfig: AleoCoinConfig = { ...mockAleoCoinConfig, recordPickingStrategy: "auto" };
+    mockGetAleoCurrencyConfig.mockReturnValue(autoConfig);
+
+    const { container } = render(
+      <StepRecordPicker
+        {...defaultProps}
+        account={mockAleoAccount}
+        transaction={privateTransaction}
+      />,
+    );
+
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it("should render the record picker when recordPickingStrategy is manual", () => {
+    mockGetAleoCurrencyConfig.mockReturnValue(mockAleoCoinConfig);
+
+    render(
+      <StepRecordPicker
+        {...defaultProps}
+        account={mockAleoAccount}
+        transaction={privateTransaction}
+      />,
+    );
+
+    expect(screen.getAllByRole("button")).toHaveLength(2);
   });
 });

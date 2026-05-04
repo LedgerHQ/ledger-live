@@ -1,3 +1,5 @@
+import { DeviceModelId } from "@ledgerhq/devices";
+import { UpdateYourApp } from "@ledgerhq/errors";
 import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
 import Sui from "../src/Sui";
 
@@ -47,4 +49,26 @@ test("getPublicKey (rejected by user)", async () => {
   await expect(sui.getPublicKey("44'/784'/0'/0'/0'", false)).rejects.toThrow(
     new Error("Ledger device: Condition of use not satisfied (denied by the user?) (0x6985)"),
   );
+});
+
+// Regression: the wrapper's resolution-branch version check used to call
+// `this.getVersion()`, which is gated by the same `decorateAppAPIMethods`
+// lock as `signTransaction`. The re-entrant call self-deadlocked with
+// "Ledger Device is busy (lock signTransaction)" before any sign APDU
+// could leave the host. Routing the read through `super.getVersion()`
+// bypasses the instance-level decoration and reaches the prototype directly.
+test("signTransaction surfaces UpdateYourApp on outdated firmware without self-deadlocking on the API lock", async () => {
+  const transport = await openTransportReplayer(
+    RecordStore.fromString(`
+      => 0000000021007f9c9e31ac8256ca2f258583df262dbc7d6f68f2a03043d5c99a4ae5a7396ce9
+      <= 010104009000
+    `),
+  );
+  const sui = new Sui(transport);
+  await expect(
+    sui.signTransaction("44'/784'/0'/0'/0'", new Uint8Array([0]), undefined, {
+      deviceModelId: DeviceModelId.nanoX,
+      certificateSignatureKind: "prod",
+    }),
+  ).rejects.toThrow(UpdateYourApp);
 });

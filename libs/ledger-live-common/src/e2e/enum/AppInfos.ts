@@ -80,4 +80,6 @@ export class AppInfos {
   static readonly ONE_INCH = new AppInfos("One Inch");
 
   static readonly MINA = new AppInfos("Mina");
+
+  static readonly CONCORDIUM = new AppInfos("Concordium");
 }

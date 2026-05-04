@@ -31,9 +31,9 @@ export const HelpListItem = memo(
       </ListItemLeading>
       <ListItemTrailing>
         {trailing === "externalLink" ? (
-          <ExternalLink size={24} color="base" />
+          <ExternalLink size={24} color="muted" />
         ) : (
-          <ChevronRight size={24} color="base" />
+          <ChevronRight size={24} color="muted" />
         )}
       </ListItemTrailing>
     </ListItem>

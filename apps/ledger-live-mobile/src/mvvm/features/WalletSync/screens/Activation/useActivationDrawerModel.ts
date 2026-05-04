@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from "~/context/hooks";
 import { blockPasswordLock } from "~/actions/appstate";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { openRebornBuyDeviceDrawer } from "~/reducers/rebornBuyDeviceDrawer";
+import { useQueuedDrawerContext } from "LLM/components/QueuedDrawer/QueuedDrawersContext";
 
 type Props = {
   isOpen: boolean;
@@ -30,6 +31,7 @@ type NavigationProps = BaseComposite<
 const useActivationDrawerModel = ({ isOpen, startingStep, handleClose }: Props) => {
   const { onClickTrack } = useLedgerSyncAnalytics();
   const { currentStep, setCurrentStep } = useCurrentStep();
+  const { closeAllDrawers } = useQueuedDrawerContext();
 
   const dispatch = useDispatch();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
@@ -74,27 +76,32 @@ const useActivationDrawerModel = ({ isOpen, startingStep, handleClose }: Props) 
 
   const onQrCodeScanned = () => setCurrentStep(Steps.PinInput);
 
-  const resetStep = () => setCurrentStep(startingStep);
-  const resetOption = () => setCurrentOption(Options.SCAN);
   const goBackToPreviousStep = () => setCurrentStep(getPreviousStep(currentStep));
 
   const onCloseDrawer = () => {
     dispatch(blockPasswordLock(false));
-    resetStep();
-    resetOption();
+    setCurrentStep(startingStep);
+    setCurrentOption(Options.SCAN);
     handleClose();
   };
 
-  const onCreateKey = useCallback(() => {
+  const navigateToWalletSyncActivationProcess = () => {
+    onCloseDrawer();
+    closeAllDrawers();
+    navigation.navigate(NavigatorName.WalletSync, {
+      screen: ScreenName.WalletSyncActivationProcess,
+    });
+  };
+
+  const onCreateKey = () => {
     if (readOnlyModeEnabled) {
-      handleClose();
+      onCloseDrawer();
+      closeAllDrawers();
       dispatch(openRebornBuyDeviceDrawer());
     } else {
-      navigation.navigate(NavigatorName.WalletSync, {
-        screen: ScreenName.WalletSyncActivationProcess,
-      });
+      navigateToWalletSyncActivationProcess();
     }
-  }, [readOnlyModeEnabled, handleClose, dispatch, navigation]);
+  };
 
   const { url, error, isLoading, pinCode } = useQRCodeHost({
     currentOption,
@@ -114,6 +121,7 @@ const useActivationDrawerModel = ({ isOpen, startingStep, handleClose }: Props) 
     currentOption,
     setCurrentOption,
     onCreateKey,
+    navigateToWalletSyncActivationProcess,
   };
 };
 

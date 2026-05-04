@@ -2,6 +2,7 @@ import { useCallback, useMemo } from "react";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { GestureResponderEvent } from "react-native";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { useNonBlacklistedDistribution } from "~/hooks/useNonBlacklistedDistribution";
 import { useRefreshAccountsOrdering } from "~/actions/general";
 import { NavigatorName, ScreenName } from "~/const";
@@ -33,10 +34,12 @@ const useAssetsListViewModel = ({
 }: Props) => {
   const hideEmptyTokenAccount = useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
   const navigation = useNavigation<NavigationProp>();
+  const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("mobile");
 
   const filteredDistribution = useNonBlacklistedDistribution({
     showEmptyAccounts: true,
     hideEmptyTokenAccount,
+    groupBy: shouldDisplayAggregatedAssets ? "asset" : undefined,
   });
 
   const refreshAccountsOrdering = useRefreshAccountsOrdering();

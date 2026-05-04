@@ -14,7 +14,6 @@ jest.mock("LLM/features/NotificationsPrompt/hooks/useNotifications", () => ({
   }),
 }));
 
-import SendValidationSuccess from "~/screens/SendFunds/07-ValidationSuccess";
 import { PendingOperation as SwapPendingOperation } from "~/screens/Swap/SubScreens/PendingOperation";
 import CosmosValidationSuccess from "~/families/cosmos/DelegationFlow/04-ValidationSuccess";
 
@@ -36,33 +35,6 @@ const INITIAL_STATE = {
 describe("Push Notification Opt-In on Success Screens", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-  });
-
-  it("should trigger notification drawer with 'send' after SEND success", async () => {
-    const sendParams = {
-      accountId: MOCK_ACCOUNT.id,
-      result: {
-        id: "op-123",
-        hash: "0x123abc",
-        type: "OUT",
-        accountId: MOCK_ACCOUNT.id,
-      },
-    };
-
-    render(
-      <Stack.Navigator>
-        <Stack.Screen name={ScreenName.SendValidationSuccess}>
-          {props => <SendValidationSuccess {...props} route={{ params: sendParams } as never} />}
-        </Stack.Screen>
-      </Stack.Navigator>,
-      INITIAL_STATE,
-    );
-
-    await waitFor(() => {
-      expect(screen.getByTestId("validate-success-screen")).toBeOnTheScreen();
-    });
-
-    expect(mockTryTriggerPushNotificationDrawerAfterAction).toHaveBeenCalledWith("send");
   });
 
   it("should trigger notification drawer with 'swap' after SWAP success", async () => {

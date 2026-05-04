@@ -42,8 +42,7 @@ const Earn = () => {
   const devMode = useSelector(developerModeSelector);
   const earnFlag = useFeature("ptxEarnLiveApp");
   const earnManifestId = earnFlag?.enabled ? earnFlag.params?.manifest_id : DEFAULT_MANIFEST_ID;
-  const earnUiFlag = useFeature("ptxEarnUi");
-  const earnUiVersion = earnUiFlag?.params?.value ?? "v1";
+  const earnUiVersion = useFeature("ptxEarnUi")?.params?.value ?? "v1";
   const localManifest = useLocalLiveAppManifest(earnManifestId);
   const remoteManifest = useRemoteLiveAppManifest(earnManifestId);
   const manifest = localManifest || remoteManifest;

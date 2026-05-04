@@ -65,6 +65,32 @@ export function runDelegateTest(delegation: DelegateType, tmsLinks: string[], ta
   });
 }
 
+export function runDelegateDefaultValidatorTest(
+  delegation: DelegateType,
+  tmsLinks: string[],
+  tags: string[],
+) {
+  tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  tags.forEach(tag => $Tag(tag));
+  describe("Delegate - default validator", () => {
+    beforeAll(async () => {
+      await beforeAllFunction(delegation);
+    });
+
+    it(`Defaults to ${delegation.provider} on ${delegation.account.currency.name}`, async () => {
+      const currencyId =
+        getCurrencyManagerApp(delegation.account.currency.id) ?? delegation.account.currency.id;
+
+      await app.portfolio.goToAccounts(delegation.account.currency.name);
+      await app.common.goToAccountByName(delegation.account.accountName);
+      await app.account.tapEarn();
+
+      await app.stake.dismissDelegationStart(currencyId);
+      await app.stake.expectProvider(currencyId, delegation.provider);
+    });
+  });
+}
+
 export async function runLockCelo(
   delegation: DelegateType,
   tmsLinks: string[],

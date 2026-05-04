@@ -28,6 +28,7 @@ describe("submitTransaction function", () => {
     global.fetch = jest.fn().mockResolvedValueOnce({
       ok: false,
       status: 500,
+      text: async () => "",
     });
 
     const transactionDetails = {
@@ -35,7 +36,7 @@ describe("submitTransaction function", () => {
     };
 
     await expect(submitTransaction(JSON.stringify(transactionDetails))).rejects.toThrow(
-      "Failed to submit transaction. Status: 500",
+      "kaspa: broadcast failed with status 500",
     );
   });
 
@@ -47,7 +48,7 @@ describe("submitTransaction function", () => {
     };
 
     await expect(submitTransaction(JSON.stringify(transactionDetails))).rejects.toThrow(
-      "Error submitting transaction: Error: Network error",
+      "Network error",
     );
   });
 });

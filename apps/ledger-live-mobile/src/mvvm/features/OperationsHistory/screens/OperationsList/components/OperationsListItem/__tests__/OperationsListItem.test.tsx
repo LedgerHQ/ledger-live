@@ -1,6 +1,7 @@
 import React from "react";
 import BigNumber from "bignumber.js";
-import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import type { AccountLike, Operation } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { render } from "@tests/test-renderer";
@@ -41,13 +42,14 @@ function buildOperation(overrides: Partial<Operation>): Operation {
   };
 }
 
-function renderItem(operation: Operation, accountByAddress = emptyMap) {
+function renderItem(operation: Operation, accountByAddress = emptyMap, isPending = false) {
   return render(
     <OperationsListItem
       operation={operation}
       account={account}
       parentAccount={undefined}
       accountByAddress={accountByAddress}
+      isPending={isPending}
     />,
   );
 }
@@ -86,7 +88,9 @@ describe("OperationsListItem", () => {
     const counterpartyName = `${bitcoin.name} ${counterpartyAccount.index + 1}`;
 
     it("should show internal account name instead of address for an incoming transfer", () => {
-      const accountByAddress = new Map([[counterpartyAccount.freshAddress, counterpartyAccount]]);
+      const accountByAddress = new Map([
+        [`${bitcoin.id}:${counterpartyAccount.freshAddress}`, counterpartyAccount],
+      ]);
       const operation = buildOperation({
         type: "IN",
         value: new BigNumber(1),
@@ -100,7 +104,9 @@ describe("OperationsListItem", () => {
     });
 
     it("should show internal account name instead of address for an outgoing transfer", () => {
-      const accountByAddress = new Map([[counterpartyAccount.freshAddress, counterpartyAccount]]);
+      const accountByAddress = new Map([
+        [`${bitcoin.id}:${counterpartyAccount.freshAddress}`, counterpartyAccount],
+      ]);
       const operation = buildOperation({
         type: "OUT",
         value: new BigNumber(1),
@@ -111,6 +117,68 @@ describe("OperationsListItem", () => {
 
       expect(getByText(`To ${counterpartyName}`)).toBeVisible();
       expect(queryByText(new RegExp(counterpartyAccount.freshAddress.slice(0, 6)))).toBeNull();
+    });
+  });
+
+  describe("cross-chain EVM accounts", () => {
+    // EVM chains share addresses across networks (Base, OP Mainnet, Ethereum all use the same 0x address).
+    // An account on chain B keyed as "chainB:0xAddr" must NOT be returned when looking up "chainA:0xAddr".
+    it("should show raw address when the counterparty account is on a different chain", () => {
+      const ethereum = getCryptoCurrencyById("ethereum");
+      const sharedAddress = "0x1234567890abcdef1234567890abcdef12345678";
+      const ethAccount = {
+        ...genAccount("eth-cross-chain", { currency: ethereum }),
+        freshAddress: sharedAddress,
+      };
+      const ethAccountName = `${ethereum.name} ${ethAccount.index + 1}`;
+      // Map contains the Ethereum account — but the operation's account (and its lookup key) is Bitcoin
+      const accountByAddress = new Map([[`${ethereum.id}:${sharedAddress}`, ethAccount]]);
+      const operation = buildOperation({
+        type: "IN",
+        value: new BigNumber(1),
+        senders: [sharedAddress],
+      });
+
+      const { queryByText, getByText } = renderItem(operation, accountByAddress);
+
+      expect(queryByText(ethAccountName)).toBeNull();
+      expect(getByText(/From 0x1234/)).toBeVisible();
+    });
+  });
+
+  describe("token account operations", () => {
+    // For TokenAccount, getAccountCurrency returns the token id (e.g. "ethereum/erc20/usd_coin"),
+    // but the map is built from parent Account objects and keyed by the parent chain currency id
+    // (e.g. "ethereum"). The lookup must use mainAccount.currency.id to match correctly.
+    it("should resolve counterparty account name for an incoming token transfer", () => {
+      const ethereum = getCryptoCurrencyById("ethereum");
+      const ownerEthAccount = genAccount("eth-owner-token", { currency: ethereum });
+      const tokenAccount = genTokenAccount(0, ownerEthAccount, usdcToken);
+      const counterpartyEthAccount = genAccount("eth-counterparty-token", { currency: ethereum });
+      const counterpartyName = `${ethereum.name} ${counterpartyEthAccount.index + 1}`;
+
+      // Map is keyed by parent chain currency id — as built by useOperationsListViewModel
+      const accountByAddress = new Map([
+        [`${ethereum.id}:${counterpartyEthAccount.freshAddress}`, counterpartyEthAccount],
+      ]);
+      const operation = buildOperation({
+        type: "IN",
+        value: new BigNumber(1),
+        senders: [counterpartyEthAccount.freshAddress],
+      });
+
+      const { getByText, queryByText } = render(
+        <OperationsListItem
+          operation={operation}
+          account={tokenAccount}
+          parentAccount={ownerEthAccount}
+          accountByAddress={accountByAddress}
+          isPending={false}
+        />,
+      );
+
+      expect(getByText(`From ${counterpartyName}`)).toBeVisible();
+      expect(queryByText(new RegExp(counterpartyEthAccount.freshAddress.slice(0, 6)))).toBeNull();
     });
   });
 
@@ -153,17 +221,40 @@ describe("OperationsListItem", () => {
     });
   });
 
-  it("should not navigate when the operation is optimistic", async () => {
+  it("should navigate to operation details when the operation is failed", async () => {
+    const operation = buildOperation({
+      type: "IN",
+      value: new BigNumber(1),
+      senders: ["s"],
+      hasFailed: true,
+    });
+    const { getByText, user } = renderItem(operation);
+    await user.press(getByText("Received"));
+    expect(track).toHaveBeenCalledWith("transaction_clicked", { transaction: "IN" });
+    expect(mockNavigate).toHaveBeenCalledWith(ScreenName.OperationDetails, {
+      accountId: account.id,
+      parentId: undefined,
+      operation,
+      key: operation.id,
+    });
+  });
+
+  it("should navigate to operation details when the operation is optimistic (pending)", async () => {
     const operation = buildOperation({
       type: "IN",
       value: new BigNumber(1),
       senders: ["s"],
       blockHeight: null,
     });
-    const { getByText, user } = renderItem(operation);
+    const { getByText, user } = renderItem(operation, emptyMap, true);
     await user.press(getByText("Received"));
-    expect(track).not.toHaveBeenCalled();
-    expect(mockNavigate).not.toHaveBeenCalled();
+    expect(track).toHaveBeenCalledWith("transaction_clicked", { transaction: "IN" });
+    expect(mockNavigate).toHaveBeenCalledWith(ScreenName.OperationDetails, {
+      accountId: account.id,
+      parentId: undefined,
+      operation,
+      key: operation.id,
+    });
   });
 
   it("should pass parentId when parentAccount is provided", async () => {
@@ -175,6 +266,7 @@ describe("OperationsListItem", () => {
         account={account}
         parentAccount={parentAccount}
         accountByAddress={emptyMap}
+        isPending={false}
       />,
     );
     await user.press(getByText("Received"));

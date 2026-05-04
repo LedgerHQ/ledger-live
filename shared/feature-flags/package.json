@@ -7,10 +7,10 @@
   "types": "src/index.ts",
   "sideEffects": false,
   "scripts": {
-    "build": "tsc",
     "typecheck": "tsc --noEmit",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@reduxjs/toolkit": "catalog:",

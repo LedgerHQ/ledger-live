@@ -26,7 +26,7 @@ export async function getDeviceTransactionConfig(arg: {
 }): Promise<Array<DeviceTransactionField>> {
   const mainAccount = getMainAccount(arg.account, arg.parentAccount);
   const family = mainAccount.currency.family;
-  const f = loadDeviceTxConfigForFamily(family);
+  const f = await loadDeviceTxConfigForFamily(family);
   if (!f) return [];
   return await f(arg);
 }

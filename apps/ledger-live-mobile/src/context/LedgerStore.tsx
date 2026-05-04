@@ -45,7 +45,7 @@ import {
   restoreTokensToCache,
   PERSISTENCE_VERSION,
 } from "@ledgerhq/cryptoassets/cal-client/persistence";
-import { setAllOverrides, setBannerVisible } from "@shared/feature-flags";
+import { setAllOverrides, setBannerVisible, type PartialFeatures } from "@shared/feature-flags";
 import { initIdentities } from "../helpers/identities";
 
 interface Props {
@@ -192,7 +192,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
           settingsData["overriddenFeatureFlags"] !== null
             ? (settingsData["overriddenFeatureFlags"] as Record<string, unknown>)
             : undefined;
-        const filteredOverrides: Parameters<typeof setAllOverrides>[0] = rawOverrides
+        const filteredOverrides: PartialFeatures = rawOverrides
           ? Object.fromEntries(Object.entries(rawOverrides).filter(([, v]) => v !== undefined))
           : {};
         const hasLegacyOverrides = Object.keys(filteredOverrides).length > 0;

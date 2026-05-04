@@ -25,12 +25,12 @@ type UseDeviceIntentExecutorOptions<JobState, Input, ExtraProps> = {
   StateMachineClass?: StateMachineConstructor<JobState, Input, ExtraProps>;
 };
 
-export function useDeviceIntentExecutor<JobState, Input, ExtraProps>(
-  props: DeviceIntentExecutorProps<JobState, Input, ExtraProps>,
+export function useDeviceIntentExecutor<JobState, Input, ExtraProps, InitInput>(
+  props: DeviceIntentExecutorProps<JobState, Input, ExtraProps, InitInput>,
   {
     StateMachineClass = DefaultDeviceIntentExecutorStateMachine,
   }: UseDeviceIntentExecutorOptions<JobState, Input, ExtraProps> = {},
-): DeviceIntentExecutorHookState<JobState, Input, ExtraProps> | null {
+): DeviceIntentExecutorHookState<JobState, Input, ExtraProps, InitInput> | null {
   // ---- 1. Refs for props ----
 
   // -- Callback refs --
@@ -49,12 +49,12 @@ export function useDeviceIntentExecutor<JobState, Input, ExtraProps>(
   // The SM is created once when `enabled` becomes true, using these refs to
   // read current prop values at creation time. Subsequent prop changes are
   // dispatched as SM events by the combined props->actions effect (section 6),
-  // not by recreating the SM. This keeps `enabled` as the only dependency of
-  // the SM lifecycle effect.
+  // not by recreating the SM. This keeps `enabled` and the injected
+  // `StateMachineClass` as the only dependencies of the SM lifecycle effect.
   const deviceConnectionParamsRef = useRef(props.deviceConnectionParams);
   deviceConnectionParamsRef.current = props.deviceConnectionParams;
-  const requiredDeviceContextRef = useRef(props.requiredDeviceContext);
-  requiredDeviceContextRef.current = props.requiredDeviceContext;
+  const deviceInitializationInputRef = useRef(props.deviceInitializationInput);
+  deviceInitializationInputRef.current = props.deviceInitializationInput;
   const intentRef = useRef(props.intent);
   intentRef.current = props.intent;
   const intentComponentExtraPropsRef = useRef(props.intentComponentExtraProps);
@@ -85,10 +85,6 @@ export function useDeviceIntentExecutor<JobState, Input, ExtraProps>(
     smRef.current?.deviceContextInitialized(ctx);
   }, []);
 
-  const onInitializationError = useCallback((error: unknown) => {
-    smRef.current?.initializationError(error);
-  }, []);
-
   const onRetry = useCallback(() => {
     smRef.current?.retry();
   }, []);
@@ -99,7 +95,7 @@ export function useDeviceIntentExecutor<JobState, Input, ExtraProps>(
   // effect (section 6). Declared here so the lifecycle effect can sync them
   // when creating a new SM, preventing the props->actions effect from firing
   // spuriously on the same render.
-  const prevContextRef = useRef(props.requiredDeviceContext);
+  const prevInitializationInputRef = useRef(props.deviceInitializationInput);
   const prevIntentRef = useRef(props.intent);
 
   useEffect(() => {
@@ -115,12 +111,11 @@ export function useDeviceIntentExecutor<JobState, Input, ExtraProps>(
 
     // Sync prev-value refs so the props->actions effect doesn't dispatch
     // events for props that were already used to create the SM.
-    prevContextRef.current = requiredDeviceContextRef.current;
+    prevInitializationInputRef.current = deviceInitializationInputRef.current;
     prevIntentRef.current = intentRef.current;
 
     const sm = new StateMachineClass({
       deviceConnectionParams: deviceConnectionParamsRef.current,
-      requiredDeviceContext: requiredDeviceContextRef.current,
       intent: intentRef.current,
       listeners: {
         onExecutorStateChanged: state => {
@@ -158,7 +153,7 @@ export function useDeviceIntentExecutor<JobState, Input, ExtraProps>(
       sm.stop();
       smRef.current = null;
     };
-  }, [props.enabled]);
+  }, [props.enabled, StateMachineClass]);
 
   // ---- 5. Device disconnection monitoring effect ----
 
@@ -176,9 +171,9 @@ export function useDeviceIntentExecutor<JobState, Input, ExtraProps>(
   }, [connectionResult]);
 
   // ---- 6. Props -> SM actions: combined effect ----
-  // A single effect watches both requiredDeviceContext and intent. When both
-  // change in the same render, context is dispatched first to ensure the SM
-  // transitions safely (from idle: setRequiredContext -> deviceInitialization,
+  // A single effect watches both deviceInitializationInput and intent. When both
+  // change in the same render, reinitialize is dispatched first to ensure the SM
+  // transitions safely (from idle: reinitialize -> deviceInitialization,
   // then setIntent is absorbed as a self-transition that updates the stored
   // intent).
 
@@ -186,20 +181,23 @@ export function useDeviceIntentExecutor<JobState, Input, ExtraProps>(
     const sm = smRef.current;
     if (!sm) return;
 
-    const contextChanged = props.requiredDeviceContext !== prevContextRef.current;
+    const initializationInputChanged =
+      props.deviceInitializationInput !== prevInitializationInputRef.current;
     const intentChanged = props.intent !== prevIntentRef.current;
 
-    prevContextRef.current = props.requiredDeviceContext;
+    prevInitializationInputRef.current = props.deviceInitializationInput;
     prevIntentRef.current = props.intent;
 
-    // Context MUST be dispatched before intent.
-    // From idle: setRequiredContext -> deviceInitialization, then
+    // Reinitialize MUST be dispatched before intent.
+    // From idle: reinitialize -> deviceInitialization, then
     //   setIntent is absorbed as a self-transition (updates stored intent).
     // From other states: the SM handles or drops each event per its
     //   transition table.
-    if (contextChanged) sm.setRequiredContext(props.requiredDeviceContext);
+    if (initializationInputChanged) {
+      sm.reinitialize();
+    }
     if (intentChanged) sm.setIntent(props.intent);
-  }, [props.requiredDeviceContext, props.intent]);
+  }, [props.deviceInitializationInput, props.intent]);
 
   // ---- 7. Cancel intent effect ----
 
@@ -219,9 +217,9 @@ export function useDeviceIntentExecutor<JobState, Input, ExtraProps>(
 
   if (!props.enabled) return null;
 
-  return deriveHookState<JobState, Input, ExtraProps>(executorState, {
+  return deriveHookState<JobState, Input, ExtraProps, InitInput>(executorState, {
     deviceConnectionParams: props.deviceConnectionParams,
-    requiredDeviceContext: props.requiredDeviceContext,
+    deviceInitializationInput: props.deviceInitializationInput,
     connectionResult,
     latestJobState,
     intentComponent: props.intent.component,
@@ -230,7 +228,6 @@ export function useDeviceIntentExecutor<JobState, Input, ExtraProps>(
     onConnected,
     onConnectionError,
     onContextInitialized,
-    onInitializationError,
     onRetry,
     onUserCancel: props.onUserCancel,
   });

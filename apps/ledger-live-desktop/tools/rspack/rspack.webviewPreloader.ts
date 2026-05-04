@@ -1,7 +1,13 @@
 import path from "path";
 import { rspack, type RspackOptions } from "@rspack/core";
 import { commonConfig, rootFolder } from "./rspack.common";
-import { buildMainEnv, buildDotEnvDefine, DOTENV_FILE } from "./utils";
+import {
+  buildMainEnv,
+  buildDotEnvDefine,
+  DOTENV_FILE,
+  getRsdoctorPlugin,
+  isRsdoctorEnabled,
+} from "./utils";
 
 /**
  * Creates the rspack configuration for the webview preloader script
@@ -27,8 +33,9 @@ export function createWebviewPreloaderConfig(
         type: "commonjs2",
       },
     },
-    devtool: "source-map",
+    devtool: isRsdoctorEnabled() ? false : "source-map",
     plugins: [
+      ...getRsdoctorPlugin("webviewPreloader"),
       new rspack.DefinePlugin({
         ...buildMainEnv(mode, argv),
         ...buildDotEnvDefine(DOTENV_FILE),

@@ -9,6 +9,9 @@ export {
   getValidatorExplorerUrl,
   getUnbondingPeriodDays,
   hasUnbondingPeriod,
+  getCachedValidators,
+  prefetchValidators,
+  clearValidatorsCache,
 } from "./validators";
 export {
   mapDelegations,
@@ -23,3 +26,9 @@ export {
   getRedelegationCompletionDate,
   parseAmountStringToNumber,
 } from "./logic";
+export {
+  assignFromAccountRaw,
+  assignToAccountRaw,
+  fromStakingResourcesRaw,
+  toStakingResourcesRaw,
+} from "./serialization";

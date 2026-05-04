@@ -34,6 +34,7 @@ export default {
   coverageReporters: ["json", ["lcov", { projectRoot: "../../../../" }], "json-summary", "text"],
   reporters: [
     "default",
+    ...(process.env.CI ? ["github-actions"] : []),
     [
       "jest-sonar",
       {

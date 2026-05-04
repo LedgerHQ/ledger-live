@@ -3,6 +3,7 @@ module.exports = {
   collectCoverageFrom: [
     "src/**/*.ts",
     "!src/**/*.test.ts",
+    "!src/**/*.integ.test.ts",
     "!src/**/*.spec.ts",
     "!src/test/**/*.ts",
   ],
@@ -19,9 +20,10 @@ module.exports = {
       },
     ],
   },
-  testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts"],
+  testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts", "\\.integ\\.test\\.ts$"],
   reporters: [
     "default",
+    ...(process.env.CI ? ["github-actions"] : []),
     ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
   ],
   // setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],

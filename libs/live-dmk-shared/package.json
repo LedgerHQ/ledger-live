@@ -32,6 +32,7 @@
     "test:coverage": "jest --coverage"
   },
   "dependencies": {
+    "@ledgerhq/context-module": "catalog:",
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",

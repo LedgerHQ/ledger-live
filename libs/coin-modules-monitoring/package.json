@@ -10,8 +10,8 @@
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
     "typecheck": "tsc --project ./tsconfig.json --noEmit --customConditions node",
-    "start": "node lib/cli.js",
-    "start:debug": "node --inspect-brk lib/cli.js"
+    "start": "node --import ./register.mjs lib/cli.js",
+    "start:debug": "node --import ./register.mjs --inspect-brk lib/cli.js"
   },
   "dependencies": {
     "@datadog/datadog-api-client": "^1.40",

@@ -33,10 +33,25 @@
   "exports": {
     "./lib/*": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
+    "./ZCash": {
+      "react-native": "./src/stubs/ZCash.native.ts",
+      "@ledgerhq/source": "./src/ZCash.ts",
+      "types": "./lib/ZCash.d.ts",
+      "require": "./lib/ZCash.js",
+      "default": "./lib-es/ZCash.js"
+    },
+    "./ZCashNative": {
+      "react-native": "./src/stubs/ZCashNative.native.ts",
+      "@ledgerhq/source": "./src/ZCashNative.ts",
+      "types": "./lib/ZCashNative.d.ts",
+      "require": "./lib/ZCashNative.js",
+      "default": "./lib-es/ZCashNative.js"
+    },
     "./*": {
       "@ledgerhq/source": "./src/*.ts",
+      "types": "./lib/*.d.ts",
       "require": "./lib/*.js",
-      "import": "./lib-es/*.js"
+      "default": "./lib-es/*.js"
     },
     "./package.json": "./package.json"
   },
@@ -72,6 +87,7 @@
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/zcash-decrypt": "0.2.0",
+    "@ledgerhq/zcash-utils": "catalog:",
     "bignumber.js": "^9.1.2",
     "rxjs": "catalog:"
   }

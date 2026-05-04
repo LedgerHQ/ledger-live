@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import {
   createNativeStackNavigator,
   NativeStackNavigationOptions,
@@ -24,7 +24,9 @@ import UnfreezeNavigator from "./UnfreezeNavigator";
 import ClaimRewardsNavigator from "./ClaimRewardsNavigator";
 import ExchangeLiveAppNavigator from "./ExchangeLiveAppNavigator";
 import { CardLiveAppNavigator } from "LLM/features/Card";
+import BorrowLiveAppNavigator from "./BorrowLiveAppNavigator";
 import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
+import { useWallet40Theme } from "LLM/hooks/useWallet40Theme";
 import PlatformExchangeNavigator from "./PlatformExchangeNavigator";
 import AccountSettingsNavigator from "./AccountSettingsNavigator";
 import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
@@ -93,14 +95,13 @@ import MyWalletNavigator from "LLM/features/MyWallet/Navigator";
 import DiscoverNavigator from "./DiscoverNavigator";
 import AddAccountsV2Navigator from "LLM/features/Accounts/Navigator";
 import DeviceSelectionNavigator from "LLM/features/DeviceSelection/Navigator";
+import AssetDetailNavigator from "LLM/features/AssetDetail/Navigator";
 import AssetsListNavigator from "LLM/features/Assets/Navigator";
 import AnalyticsNavigator from "LLM/features/Analytics/Navigator";
 import OperationsHistoryNavigator from "LLM/features/OperationsHistory/Navigator";
 import FeesNavigator from "./FeesNavigator";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 import SignRawTransactionNavigator from "./SignRawTransactionNavigator";
-import { useNotifications } from "LLM/features/NotificationsPrompt";
-import { AppState } from "react-native";
 
 const Stack = createNativeStackNavigator<BaseNavigatorStackParamList>();
 
@@ -173,6 +174,7 @@ export default function BaseNavigator() {
     }>
   >();
   const { colors } = useTheme();
+  const { backgroundColor } = useWallet40Theme("mobile");
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   const nativeStackScreenOptions: Partial<NativeStackNavigationOptions> = stackNavigationConfig;
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
@@ -180,28 +182,6 @@ export default function BaseNavigator() {
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector) && isAccountsEmpty;
   const web3hub = useFeature("web3hub");
   const llmAccountListUI = useFeature("llmAccountListUI");
-
-  const { initPushNotificationsData, tryTriggerPushNotificationDrawerAfterInactivity } =
-    useNotifications();
-
-  useEffect(() => {
-    // This feature requires the user to be past onboarding, that's why it lives in the BaseNavigator for onboarded users only
-    initPushNotificationsData().then(tryTriggerPushNotificationDrawerAfterInactivity);
-
-    // No dependency because we only want to run it once.
-    // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    // This catches when the user is redirected back from toggling on notifications in the os settings
-    const subscription = AppState.addEventListener("change", nextAppState => {
-      if (nextAppState === "active") {
-        initPushNotificationsData();
-      }
-    });
-
-    return () => subscription.remove();
-  }, [initPushNotificationsData]);
 
   return (
     <>
@@ -606,6 +586,33 @@ export default function BaseNavigator() {
           }}
         />
         <Stack.Screen
+          name={NavigatorName.Borrow}
+          component={BorrowLiveAppNavigator}
+          options={props => {
+            return {
+              headerShown: true,
+              closable: false,
+              headerLeft: () => (
+                <NavigationHeaderBackButton
+                  onPress={nav => {
+                    nav.navigate(NavigatorName.Borrow, {
+                      screen: ScreenName.Borrow,
+                      params: {
+                        ...props.route?.params?.params,
+                        action: "go-back",
+                      },
+                    });
+                  }}
+                />
+              ),
+              headerTitle: t("borrow.title"),
+              headerRight: () => null,
+              headerStyle: { backgroundColor },
+              contentStyle: { backgroundColor },
+            };
+          }}
+        />
+        <Stack.Screen
           name={NavigatorName.NoFundsFlow}
           component={NoFundsFlowNavigator}
           options={{
@@ -679,6 +686,12 @@ export default function BaseNavigator() {
             options={{ headerShown: false }}
           />
         )}
+
+        <Stack.Screen
+          name={NavigatorName.AssetDetail}
+          component={AssetDetailNavigator}
+          options={{ headerShown: false }}
+        />
 
         <Stack.Screen
           name={NavigatorName.Analytics}

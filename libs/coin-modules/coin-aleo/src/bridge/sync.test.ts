@@ -7,6 +7,7 @@ import { getBalance, lastBlock, listOperations } from "../logic";
 import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import { getMockedAccount, mockAleoResources } from "../__tests__/fixtures/account.fixture";
 import { AleoAccount } from "../types";
+import { AleoApiConfigurationResetError } from "../errors";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
 import { getMockedRecord } from "../__tests__/fixtures/api.fixture";
 import { accessProvableApi, fetchAllOwnedRecords, patchPublicOperations } from "../network/utils";
@@ -74,7 +75,7 @@ describe("sync.ts", () => {
       operations: [],
       nextCursor: null,
     });
-    mockAccessProvableApi.mockResolvedValue(null);
+    mockAccessProvableApi.mockResolvedValue(mockAleoResources.provableApi);
     mockFetchAllOwnedRecords.mockResolvedValue([]);
     mockListPrivateOperations.mockResolvedValue({ operations: [], consumedRecordTags: new Set() });
     mockGetPrivateBalance.mockResolvedValue({ balance: new BigNumber(0), unspentRecords: [] });
@@ -442,25 +443,25 @@ describe("sync.ts", () => {
       ).resolves.toBeNull();
     });
 
-    it("should return null when accessProvableApi throws and aleoResources is undefined", async () => {
+    it("should rethrow when accessProvableApi throws a non-reset error and there is no prior provableApi", async () => {
       mockAccessProvableApi.mockRejectedValueOnce(new Error("boom"));
       const { aleoResources: _aleoResources, ...accountWithNoResources } = mockInitialAccount;
 
-      // catch falls back to undefined ?? null → provableApi=null → private sync skipped
-      const result = await performPrivateSync(
-        {
-          index: mockAccount.index,
-          derivationPath: mockAccount.freshAddressPath,
-          address: mockAccount.freshAddress,
-          currency: mockCurrency,
-          derivationMode: mockDerivationMode,
-          initialAccount: accountWithNoResources,
-        },
-        mockSyncConfig,
-        [],
-      );
-
-      expect(result).toBeNull();
+      // catch only falls back to existing config; with no prior provableApi the error is rethrown
+      await expect(
+        performPrivateSync(
+          {
+            index: mockAccount.index,
+            derivationPath: mockAccount.freshAddressPath,
+            address: mockAccount.freshAddress,
+            currency: mockCurrency,
+            derivationMode: mockDerivationMode,
+            initialAccount: accountWithNoResources,
+          },
+          mockSyncConfig,
+          [],
+        ),
+      ).rejects.toThrow("boom");
     });
 
     it("should store the updated provableApi returned by accessProvableApi in aleoResources", async () => {
@@ -514,22 +515,24 @@ describe("sync.ts", () => {
       expect(mockGetPrivateBalance).not.toHaveBeenCalled();
     });
 
-    it("should skip private sync when accessProvableApi returns null", async () => {
-      mockAccessProvableApi.mockResolvedValue(null);
-      const result = await performPrivateSync(
-        {
-          index: mockAccount.index,
-          derivationPath: mockAccount.freshAddressPath,
-          address: mockAccount.freshAddress,
-          currency: mockCurrency,
-          derivationMode: mockDerivationMode,
-          initialAccount: mockInitialAccount,
-        },
-        mockSyncConfig,
-        [],
-      );
+    it("should re-throw AleoApiConfigurationResetError from accessProvableApi", async () => {
+      mockAccessProvableApi.mockRejectedValueOnce(new AleoApiConfigurationResetError());
 
-      expect(result).toBeNull();
+      await expect(
+        performPrivateSync(
+          {
+            index: mockAccount.index,
+            derivationPath: mockAccount.freshAddressPath,
+            address: mockAccount.freshAddress,
+            currency: mockCurrency,
+            derivationMode: mockDerivationMode,
+            initialAccount: mockInitialAccount,
+          },
+          mockSyncConfig,
+          [],
+        ),
+      ).rejects.toThrow("AleoApiConfigurationResetError");
+
       expect(mockFetchAllOwnedRecords).not.toHaveBeenCalled();
       expect(mockListPrivateOperations).not.toHaveBeenCalled();
       expect(mockGetPrivateBalance).not.toHaveBeenCalled();
@@ -1001,10 +1004,22 @@ describe("sync.ts", () => {
       await expect(firstValueFrom(shape$)).rejects.toThrow("rpc down");
     });
 
-    it("createPrivateSyncObservable emits nothing and completes when provableApi returns null", async () => {
-      mockAccessProvableApi.mockResolvedValue(null);
-      const emissions = await collectAll(createPrivateSyncObservable(baseInfo, mockSyncConfig, []));
-      expect(emissions).toHaveLength(0);
+    it("createPrivateSyncObservable emits a provableApi reset and errors when accessProvableApi throws AleoApiConfigurationResetError", async () => {
+      mockAccessProvableApi.mockRejectedValueOnce(new AleoApiConfigurationResetError());
+      const emissions: Partial<AleoAccount>[] = [];
+
+      await expect(
+        new Promise<void>((resolve, reject) =>
+          createPrivateSyncObservable(baseInfo, mockSyncConfig, []).subscribe({
+            next: v => emissions.push(v),
+            complete: resolve,
+            error: reject,
+          }),
+        ),
+      ).rejects.toThrow("AleoApiConfigurationResetError");
+
+      expect(emissions).toHaveLength(1);
+      expect(emissions[0].aleoResources?.provableApi).toBeNull();
     });
 
     it("createPrivateSyncObservable errors when performPrivateSync throws", async () => {
@@ -1031,8 +1046,9 @@ describe("sync.ts", () => {
       expect(emissions[0]).toMatchObject({ blockHeight: 100 });
     });
 
-    it("private-only sync (SYNC_TYPE_SHIELDED) emits zero values when provableApi is not ready", async () => {
-      mockAccessProvableApi.mockResolvedValue(null);
+    it("private-only sync (SYNC_TYPE_SHIELDED) emits a provableApi reset and errors when accessProvableApi throws AleoApiConfigurationResetError", async () => {
+      mockAccessProvableApi.mockRejectedValueOnce(new AleoApiConfigurationResetError());
+      const emissions: Partial<AleoAccount>[] = [];
 
       const { syncs } = buildSyncObservables(baseInfo, {
         paginationConfig: {},
@@ -1040,11 +1056,18 @@ describe("sync.ts", () => {
       });
 
       expect(syncs).toHaveLength(1);
-      const emissions = await collectAll(syncs[0]);
-      expect(emissions).toHaveLength(0); // private sync skipped → null → no emission
+
+      await expect(
+        new Promise<void>((resolve, reject) =>
+          syncs[0].subscribe({ next: v => emissions.push(v), complete: resolve, error: reject }),
+        ),
+      ).rejects.toThrow("AleoApiConfigurationResetError");
+
+      expect(emissions).toHaveLength(1);
+      expect(emissions[0].aleoResources?.provableApi).toBeNull();
     });
 
-    it("private-only sync (SYNC_TYPE_SHIELDED) emits a progress update when scanner is configured but not fully synced", async () => {
+    it("private-only sync (SYNC_TYPE_SHIELDED) emits zero values when scanner is configured but not fully synced", async () => {
       // Account with provableApi already configured (has aleoResources)
       const accountWithProvableApi: AleoAccount = {
         ...getMockedAccount(),
@@ -1071,13 +1094,8 @@ describe("sync.ts", () => {
 
       expect(syncs).toHaveLength(1);
       const emissions = await collectAll(syncs[0]);
-      // Should emit exactly one partial update carrying the refreshed provableApi
-      expect(emissions).toHaveLength(1);
-      expect(emissions[0].aleoResources?.provableApi?.scannerStatus?.percentage).toBe(75);
-      expect(emissions[0].aleoResources?.provableApi?.scannerStatus?.synced).toBe(false);
-      // operations are preserved so makeSync (shouldMergeOps: false) does not wipe them
-      expect(emissions[0].operations).toEqual(accountWithProvableApi.operations);
-      expect(emissions[0].balance).toBeUndefined();
+      // performPrivateSync returns null when scanner is not ready → no subscriber.next call
+      expect(emissions).toHaveLength(0);
     });
 
     it("combined sync (SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED) does NOT emit progress when scanner is not ready", async () => {
@@ -1122,8 +1140,12 @@ describe("sync.ts", () => {
     });
 
     it("should handle undefined operations in private-only sync path", async () => {
-      mockAccessProvableApi.mockResolvedValue(null);
       const accountWithNoOps = { ...mockInitialAccount, operations: undefined as any };
+
+      mockAccessProvableApi.mockResolvedValue({
+        ...mockAleoResources.provableApi!,
+        scannerStatus: { percentage: 100, synced: true },
+      });
 
       const { syncs } = buildSyncObservables(
         { ...baseInfo, initialAccount: accountWithNoOps },
@@ -1132,7 +1154,7 @@ describe("sync.ts", () => {
 
       expect(syncs).toHaveLength(1);
       const emissions = await collectAll(syncs[0]);
-      expect(emissions).toHaveLength(0); // provableApi null → skipped
+      expect(emissions).toHaveLength(1); // progress update emitted; no crash despite undefined ops
     });
 
     it("public+private sync emits public result first, then private result", async () => {
@@ -1146,7 +1168,19 @@ describe("sync.ts", () => {
         unspentRecords: [],
       });
 
-      const { syncs } = buildSyncObservables(baseInfo, {
+      // Combined sync only runs private when account has been synced before (lastPrivateSyncDate set)
+      const syncedBaseInfo = {
+        ...baseInfo,
+        initialAccount: {
+          ...mockInitialAccount,
+          aleoResources: {
+            ...mockInitialAccount.aleoResources!,
+            lastPrivateSyncDate: new Date("2024-01-01"),
+          },
+        },
+      };
+
+      const { syncs } = buildSyncObservables(syncedBaseInfo, {
         paginationConfig: {},
         syncType: SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED,
       });
@@ -1154,8 +1188,7 @@ describe("sync.ts", () => {
       expect(syncs).toHaveLength(1);
       const [first, second] = await collectAll(syncs[0]);
 
-      // first emission: public result (no lastPrivateSyncDate yet)
-      expect(first.aleoResources?.lastPrivateSyncDate).toBeNull();
+      // first emission: public result
       expect(first.blockHeight).toBe(100);
 
       // second emission: private result (has lastPrivateSyncDate, updated balance)
@@ -1196,10 +1229,22 @@ describe("sync.ts", () => {
       // Make one of the private sub-calls throw
       mockFetchAllOwnedRecords.mockRejectedValue(new Error("Scanner unavailable"));
 
-      const shape$ = makeGetAccountShape()(
-        { ...baseInfo },
-        { paginationConfig: {}, syncType: SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED },
-      );
+      // Combined sync only runs private when account has been privately synced before
+      const infoWithSyncedAccount = {
+        ...baseInfo,
+        initialAccount: {
+          ...mockInitialAccount,
+          aleoResources: {
+            ...mockInitialAccount.aleoResources!,
+            lastPrivateSyncDate: new Date("2024-01-01"),
+          },
+        },
+      };
+
+      const shape$ = makeGetAccountShape()(infoWithSyncedAccount, {
+        paginationConfig: {},
+        syncType: SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED,
+      });
 
       const emissions: Partial<AleoAccount>[] = [];
       await expect(

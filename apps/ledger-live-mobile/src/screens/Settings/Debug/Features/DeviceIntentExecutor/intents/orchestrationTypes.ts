@@ -1,4 +1,5 @@
-import type { Intent, RequiredDeviceContext } from "@ledgerhq/device-intent";
+import type { Intent } from "@ledgerhq/device-intent";
+import type { ConnectAppDeviceInitializationInput } from "LLM/components/device-intent-executor/types";
 import type {
   GetAddressLegacyWithDeviceDemoIntent,
   GetAddressLegacyWithDeviceDemoIntentExtraProps,
@@ -59,7 +60,7 @@ type PhaseOf<P extends string, I, EP extends AnyDemoExtraProps> = {
   phase: P;
   intent: I;
   extraProps: EP;
-  requiredContext: RequiredDeviceContext;
+  deviceInitializationInput: ConnectAppDeviceInitializationInput;
 };
 
 export type DemoPhase =

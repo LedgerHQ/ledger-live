@@ -1,36 +1,26 @@
 import BigNumber from "bignumber.js";
 import React from "react";
-import { Subject } from "rxjs";
 import { act, fireEvent, render, screen } from "tests/testSetup";
 import * as currencies from "@ledgerhq/live-common/currencies/index";
 import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
 import { PRIVATE_BALANCE_PLACEHOLDER } from "./constants";
+import { useAleoPrivateSync } from "./hooks/useAleoPrivateSync";
 import { ALEO_ACCOUNT_1 } from "./__mocks__/account.mock";
 
 jest.mock("~/renderer/hooks/useAccountUnit");
 jest.mock("@ledgerhq/live-common/currencies/index");
-jest.mock("@ledgerhq/live-common/bridge/impl");
-jest.mock("~/renderer/actions/accounts", () => ({
-  ...jest.requireActual("~/renderer/actions/accounts"),
-  updateAccountWithUpdater: jest
-    .fn()
-    .mockImplementation((accountId: string, updater: (a: unknown) => unknown) => ({
-      type: "UPDATE_ACCOUNT",
-      payload: { accountId, updater },
-    })),
-}));
-
-const { getAccountBridge } = jest.requireMock("@ledgerhq/live-common/bridge/impl");
+jest.mock("./hooks/useAleoPrivateSync");
 
 const mockUseAccountUnit = jest.mocked(useAccountUnit);
+const mockUseAleoPrivateSync = jest.mocked(useAleoPrivateSync);
 
 describe("AccountBalanceSummaryFooter", () => {
   const mockSpendableBalance = BigNumber(100);
   const mockTransparentBalance = BigNumber(60);
-  let syncSubject: Subject<(acc: AleoAccount) => AleoAccount>;
-  let mockSync: jest.Mock;
+  let mockStart: jest.Mock;
+  let mockStop: jest.Mock;
   const mockAccount: AleoAccount = {
     ...ALEO_ACCOUNT_1,
     spendableBalance: mockSpendableBalance,
@@ -46,6 +36,17 @@ describe("AccountBalanceSummaryFooter", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
+    mockStart = jest.fn();
+    mockStop = jest.fn();
+
+    mockUseAleoPrivateSync.mockReturnValue({
+      isSyncing: false,
+      progress: 0,
+      error: null,
+      start: mockStart,
+      stop: mockStop,
+    });
+
     mockUseAccountUnit.mockReturnValue({
       code: "ALEO",
       name: "Aleo",
@@ -57,14 +58,9 @@ describe("AccountBalanceSummaryFooter", () => {
       .mockImplementation((_unit, value, _formatConfig) => {
         return value ? `formatted: ${value.toString()}` : PRIVATE_BALANCE_PLACEHOLDER;
       });
-
-    syncSubject = new Subject();
-    mockSync = jest.fn().mockReturnValue(syncSubject.asObservable());
-    getAccountBridge.mockReturnValue({ sync: mockSync });
   });
 
   afterEach(() => {
-    if (!syncSubject.closed) syncSubject.complete();
     jest.useRealTimers();
   });
 
@@ -102,10 +98,37 @@ describe("AccountBalanceSummaryFooter", () => {
   });
 
   describe("sync button", () => {
-    it("should show 'Start sync' button when account is not yet synced", () => {
+    it("should show 'Start sync' button when account is not yet synced and hook is idle", () => {
       render(<AccountBalanceSummaryFooter account={mockAccount} />);
 
       expect(screen.getByRole("button", { name: "Start sync" })).toBeInTheDocument();
+    });
+
+    it("should pass autoStart: true to the hook for an unsynced account", () => {
+      render(<AccountBalanceSummaryFooter account={mockAccount} />);
+
+      expect(mockUseAleoPrivateSync).toHaveBeenCalledWith(
+        expect.objectContaining({ autoStart: true }),
+      );
+    });
+
+    it("should pass autoStart: false to the hook for an already-synced account", () => {
+      const syncedAccount: AleoAccount = {
+        ...mockAccount,
+        aleoResources: {
+          transparentBalance: mockTransparentBalance,
+          privateBalance: null,
+          unspentPrivateRecords: [],
+          lastPrivateSyncDate: new Date(),
+          provableApi: { scannerStatus: { synced: true, percentage: 100 } },
+        },
+      };
+
+      render(<AccountBalanceSummaryFooter account={syncedAccount} />);
+
+      expect(mockUseAleoPrivateSync).toHaveBeenCalledWith(
+        expect.objectContaining({ autoStart: false }),
+      );
     });
 
     it("should show 'Sync again' button when account is already synced", () => {
@@ -125,49 +148,58 @@ describe("AccountBalanceSummaryFooter", () => {
       expect(screen.getByRole("button", { name: "Sync again" })).toBeInTheDocument();
     });
 
-    it("should show 'Stop sync' button after clicking 'Start sync'", async () => {
-      render(<AccountBalanceSummaryFooter account={mockAccount} />);
-
-      await act(async () => {
-        fireEvent.click(screen.getByRole("button", { name: "Start sync" }));
+    it("should show 'Stop sync' button when the hook reports isSyncing: true", () => {
+      mockUseAleoPrivateSync.mockReturnValue({
+        isSyncing: true,
+        progress: 0,
+        error: null,
+        start: mockStart,
+        stop: mockStop,
       });
+
+      render(<AccountBalanceSummaryFooter account={mockAccount} />);
 
       expect(screen.getByRole("button", { name: "Stop sync" })).toBeInTheDocument();
     });
 
-    it("should return to 'Start sync' button after clicking 'Stop sync'", async () => {
+    it("should call start() when the sync button is clicked in idle state", async () => {
       render(<AccountBalanceSummaryFooter account={mockAccount} />);
 
       await act(async () => {
         fireEvent.click(screen.getByRole("button", { name: "Start sync" }));
       });
+
+      expect(mockStart).toHaveBeenCalledTimes(1);
+    });
+
+    it("should call stop() when Stop sync is clicked", async () => {
+      mockUseAleoPrivateSync.mockReturnValue({
+        isSyncing: true,
+        progress: 0,
+        error: null,
+        start: mockStart,
+        stop: mockStop,
+      });
+
+      render(<AccountBalanceSummaryFooter account={mockAccount} />);
 
       await act(async () => {
         fireEvent.click(screen.getByRole("button", { name: "Stop sync" }));
       });
 
-      expect(screen.getByRole("button", { name: "Start sync" })).toBeInTheDocument();
+      expect(mockStop).toHaveBeenCalledTimes(1);
     });
 
-    it("should display sync progress percentage while syncing", async () => {
+    it("should display sync progress percentage while syncing", () => {
+      mockUseAleoPrivateSync.mockReturnValue({
+        isSyncing: true,
+        progress: 37,
+        error: null,
+        start: mockStart,
+        stop: mockStop,
+      });
+
       render(<AccountBalanceSummaryFooter account={mockAccount} />);
-
-      await act(async () => {
-        fireEvent.click(screen.getByRole("button", { name: "Start sync" }));
-      });
-
-      await act(async () => {
-        syncSubject.next(() => ({
-          ...mockAccount,
-          aleoResources: {
-            transparentBalance: mockTransparentBalance,
-            privateBalance: null,
-            unspentPrivateRecords: [],
-            lastPrivateSyncDate: null,
-            provableApi: { scannerStatus: { synced: false, percentage: 37 } },
-          },
-        }));
-      });
 
       expect(screen.getByText("37%")).toBeInTheDocument();
     });
@@ -185,37 +217,60 @@ describe("AccountBalanceSummaryFooter", () => {
         provableApi: { scannerStatus: { synced: true, percentage: 100 } },
       },
     };
-    const completeUpdater = () => completedAccount;
 
     it("should still show 'Stop sync' and progress immediately after sync completes at 100%", () => {
       jest.useFakeTimers();
-      render(<AccountBalanceSummaryFooter account={mockAccount} />);
 
+      // Start with sync running at 100%
+      mockUseAleoPrivateSync.mockReturnValue({
+        isSyncing: true,
+        progress: 100,
+        error: null,
+        start: mockStart,
+        stop: mockStop,
+      });
+      const { rerender } = render(<AccountBalanceSummaryFooter account={mockAccount} />);
+
+      // Simulate sync completion: hook transitions to isSyncing: false
+      mockUseAleoPrivateSync.mockReturnValue({
+        isSyncing: false,
+        progress: 100,
+        error: null,
+        start: mockStart,
+        stop: mockStop,
+      });
       act(() => {
-        fireEvent.click(screen.getByRole("button", { name: "Start sync" }));
+        rerender(<AccountBalanceSummaryFooter account={mockAccount} />);
       });
 
-      act(() => {
-        syncSubject.next(completeUpdater);
-        syncSubject.complete();
-      });
-
-      // delay hasn't elapsed yet — still showing running state with 100%
+      // Delay hasn't elapsed yet — still showing running state with 100%
       expect(screen.getByRole("button", { name: "Stop sync" })).toBeInTheDocument();
       expect(screen.getByText("100%")).toBeInTheDocument();
     });
 
     it("should transition to 'Sync again' after the 200ms finish delay elapses", () => {
       jest.useFakeTimers();
+
+      // Start with sync running at 100%
+      mockUseAleoPrivateSync.mockReturnValue({
+        isSyncing: true,
+        progress: 100,
+        error: null,
+        start: mockStart,
+        stop: mockStop,
+      });
       const { rerender } = render(<AccountBalanceSummaryFooter account={mockAccount} />);
 
-      act(() => {
-        fireEvent.click(screen.getByRole("button", { name: "Start sync" }));
+      // Simulate sync completion
+      mockUseAleoPrivateSync.mockReturnValue({
+        isSyncing: false,
+        progress: 100,
+        error: null,
+        start: mockStart,
+        stop: mockStop,
       });
-
       act(() => {
-        syncSubject.next(completeUpdater);
-        syncSubject.complete();
+        rerender(<AccountBalanceSummaryFooter account={mockAccount} />);
       });
 
       // Simulate the Redux store updating the account prop after the sync completed

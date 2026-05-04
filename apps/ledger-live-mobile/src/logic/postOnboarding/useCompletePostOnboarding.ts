@@ -6,22 +6,31 @@ import { postOnboardingSetFinished } from "@ledgerhq/live-common/postOnboarding/
 import { NavigatorName } from "~/const";
 import { useNotifications } from "LLM/features/NotificationsPrompt";
 
+export type CompletePostOnboardingOptions = {
+  readonly skipPortfolioNavigation?: boolean;
+};
+
 export function useCompletePostOnboarding() {
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
   const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
 
-  const closePostOnboarding = useCallback(() => {
-    tryTriggerPushNotificationDrawerAfterAction("onboarding");
+  const closePostOnboarding = useCallback(
+    (options?: CompletePostOnboardingOptions) => {
+      tryTriggerPushNotificationDrawerAfterAction("onboarding");
 
-    dispatch(postOnboardingSetFinished());
+      dispatch(postOnboardingSetFinished());
 
-    navigation.navigate(NavigatorName.Main, {
-      screen: NavigatorName.Portfolio,
-      params: { screen: NavigatorName.WalletTab },
-    });
-  }, [dispatch, navigation, tryTriggerPushNotificationDrawerAfterAction]);
+      if (!options?.skipPortfolioNavigation) {
+        navigation.navigate(NavigatorName.Main, {
+          screen: NavigatorName.Portfolio,
+          params: { screen: NavigatorName.WalletTab },
+        });
+      }
+    },
+    [dispatch, navigation, tryTriggerPushNotificationDrawerAfterAction],
+  );
 
   return closePostOnboarding;
 }

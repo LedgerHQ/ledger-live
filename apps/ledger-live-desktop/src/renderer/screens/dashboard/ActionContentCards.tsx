@@ -58,10 +58,14 @@ const ActionContentCards = ({ variant }: { variant: ABTestingVariants }) => {
             label: slide.mainCta,
             action: () => onClick(slide.id, slide.link, index),
           },
-          dismiss: {
-            label: slide.secondaryCta,
-            action: () => onDismiss(slide.id, index),
-          },
+          ...(slide.secondaryCta
+            ? {
+                dismiss: {
+                  label: slide.secondaryCta,
+                  action: () => onDismiss(slide.id, index),
+                },
+              }
+            : {}),
         }}
       />
     </LogContentCardWrapper>

@@ -18,10 +18,7 @@ import {
 import { BigNumber } from "bignumber.js";
 import coinConfig from "../config";
 import { patchHermesTypedArraysIfNeeded, unpatchHermesTypedArrays } from "../polyfill";
-import {
-  StellarBroadcastFailedError,
-  type StellarDecodedResultXdr,
-} from "../types/errors";
+import { StellarBroadcastFailedError, type StellarDecodedResultXdr } from "../types/errors";
 import {
   type BalanceAsset,
   type NetworkInfo,
@@ -80,8 +77,11 @@ type HorizonSubmitErrorBody = {
 
 function isHorizonSubmitErrorBody(data: unknown): data is HorizonSubmitErrorBody {
   return !!(
-    data && typeof data === "object" && "extras" in data &&
-    typeof data.extras === "object" && data.extras !== null &&
+    data &&
+    typeof data === "object" &&
+    "extras" in data &&
+    typeof data.extras === "object" &&
+    data.extras !== null &&
     "result_codes" in data.extras &&
     data.extras.result_codes !== undefined &&
     typeof data.extras.result_codes === "object"
@@ -108,10 +108,10 @@ function getHorizonBodyFromSubmitFailure(error: unknown): HorizonSubmitErrorBody
 
 function decodeTransactionResultFields(resultXdrBase64: string | undefined):
   | {
-    feeChargedStroops?: string;
-    resultXdrSwitchName?: string;
-    decodedResultXdr: StellarDecodedResultXdr;
-  }
+      feeChargedStroops?: string;
+      resultXdrSwitchName?: string;
+      decodedResultXdr: StellarDecodedResultXdr;
+    }
   | undefined {
   if (!resultXdrBase64) {
     return undefined;
@@ -137,7 +137,8 @@ function makeBroadcastFailedError(body: HorizonSubmitErrorBody, cause: Error): E
   const horizonTransactionCode = extras?.result_codes?.transaction ?? "";
   const horizonOperationCodes = extras?.result_codes?.operations;
   const documentationSummary =
-    (horizonTransactionCode && HORIZON_TRANSACTION_RESULT_CODE_DOCUMENTATION[horizonTransactionCode]) ||
+    (horizonTransactionCode &&
+      HORIZON_TRANSACTION_RESULT_CODE_DOCUMENTATION[horizonTransactionCode]) ||
     "Unknown transaction result code.";
   const decodedResult = decodeTransactionResultFields(extras?.result_xdr);
   const feeChargedStroops = decodedResult?.feeChargedStroops;
@@ -145,9 +146,7 @@ function makeBroadcastFailedError(body: HorizonSubmitErrorBody, cause: Error): E
   const decodedResultXdr = decodedResult?.decodedResultXdr;
   const envelopeXdr = extras?.envelope_xdr ?? "";
   const message =
-    body.detail ||
-    body.title ||
-    `Transaction submission failed (${body.status ?? "unknown"}).`;
+    body.detail || body.title || `Transaction submission failed (${body.status ?? "unknown"}).`;
 
   return new StellarBroadcastFailedError(
     message,
@@ -178,25 +177,79 @@ function getServer(): Horizon.Server {
   return server;
 }
 
-// Due to the inconsistency between the axios version (1.6.5) used by `stellar-sdk`
-// and the version (0.26.1) used by `@ledgerhq/live-network/network`, it is not possible to use the interceptors
-// provided by `@ledgerhq/live-network/network`.
-Horizon.AxiosClient.interceptors.request.use(config => {
-  if (!coinConfig.getCoinConfig().enableNetworkLogs) {
+// Tracks request start times for response-duration logging.
+// WeakMap avoids mutating the feaxios request config (whose type doesn't include `metadata`).
+const requestStartTimes = new WeakMap<object, number>();
+
+let interceptorsRegistered = false;
+
+/**
+ * Register logging and URL-fix interceptors on Horizon.AxiosClient.
+ * Must be called once after coinConfig is initialised (i.e. inside createApi).
+ *
+ * Logging is gated on coinConfig.enableNetworkLogs (driven by the ENABLE_NETWORK_LOGS env var).
+ * Horizon.AxiosClient uses feaxios internally, so we type the callbacks via the inferred
+ * InterceptorManager types rather than importing live-network's axios-typed interceptors.
+ */
+export function registerHorizonInterceptors(): void {
+  if (interceptorsRegistered) return;
+  interceptorsRegistered = true;
+
+  Horizon.AxiosClient.interceptors.request.use(config => {
+    let enableNetworkLogs = false;
+    try {
+      enableNetworkLogs = !!coinConfig.getCoinConfig().enableNetworkLogs;
+    } catch {
+      return config;
+    }
+    if (enableNetworkLogs) {
+      const { baseURL, url, method = "", data } = config;
+      log("network", `${method} ${baseURL ?? ""}${url}`, { data });
+      requestStartTimes.set(config, Date.now());
+    }
     return config;
-  }
+  });
 
-  const { url, method, data } = config;
-  log("network", `${method} ${url}`, { data });
-  return config;
-});
+  Horizon.AxiosClient.interceptors.response.use(response => {
+    let enableNetworkLogs = false;
+    try {
+      enableNetworkLogs = !!coinConfig.getCoinConfig().enableNetworkLogs;
+    } catch {
+      // coinConfig not initialised on this instance; skip logging and leave URLs untouched
+    }
+    if (enableNetworkLogs) {
+      // response.config is typed as `any` in stellar-sdk's HttpClientResponse
+      const startTime = requestStartTimes.get(response.config) ?? 0;
+      requestStartTimes.delete(response.config);
+      log(
+        "network-success",
+        `${response.status} ${response.config?.method ?? ""} ${response.config?.baseURL ?? ""}${response.config?.url ?? ""} (${(Date.now() - startTime).toFixed(0)}ms)`,
+        { data: response.data },
+      );
+    }
 
-// This function allows to fix the URL, because the url returned by the Stellar SDK is not the correct one.
-// It replaces the host of the URL returned with the host of the explorer.
-function useConfigHost(url: string): string {
-  const u = new URL(url);
-  u.host = new URL(coinConfig.getCoinConfig().explorer.url).host;
-  return u.toString();
+    // FIXME: workaround for the Stellar SDK not using the correct URL: the "next" URL
+    // included in server responses points to the node itself instead of our reverse proxy...
+    // (https://github.com/stellar/js-stellar-sdk/issues/637)
+    const next_href = response?.data?._links?.next?.href;
+    if (next_href) {
+      response.data._links.next.href = useConfigHostAndProtocol(next_href);
+    }
+    response?.data?._embedded?.records?.forEach((r: any) => {
+      const href = r.transaction?._links?.ledger?.href;
+      if (href) r.transaction._links.ledger.href = useConfigHostAndProtocol(href);
+    });
+
+    return response;
+  });
+}
+
+// It replaces the host and the protocol of the URL returned with the original ones.
+export function useConfigHostAndProtocol(url: string): string {
+  const originalUrl = new URL(coinConfig.getCoinConfig().explorer.url);
+  // URL.protocol setter silently fails when changing between special (https://) and
+  // non-special (injected://) schemes, so reconstruct via string replacement instead.
+  return url.replace(/^[^:]+:\/\/[^/]+/, `${originalUrl.protocol}//${originalUrl.host}`);
 }
 
 const getMinimumBalance = (account: Horizon.ServerApi.AccountRecord): BigNumber => {
@@ -211,30 +264,6 @@ export async function getAccountSpendableBalance(
   const { recommendedFee } = await fetchBaseFee();
   return BigNumber.max(balance.minus(minimumBalance).minus(recommendedFee), 0);
 }
-
-Horizon.AxiosClient.interceptors.response.use(response => {
-  if (coinConfig.getCoinConfig().enableNetworkLogs) {
-    const { url, method } = response.config;
-    log("network-success", `${response.status} ${method} ${url}`, { data: response.data });
-  }
-
-  // FIXME: workaround for the Stellar SDK not using the correct URL: the "next" URL
-  // included in server responses points to the node itself instead of our reverse proxy...
-  // (https://github.com/stellar/js-stellar-sdk/issues/637)
-
-  const next_href = response?.data?._links?.next?.href;
-
-  if (next_href) {
-    response.data._links.next.href = useConfigHost(next_href);
-  }
-
-  response?.data?._embedded?.records?.forEach((r: any) => {
-    const href = r.transaction?._links?.ledger?.href;
-    if (href) r.transaction._links.ledger.href = useConfigHost(href);
-  });
-
-  return response;
-});
 
 export async function fetchBaseFee(): Promise<{
   baseFee: number;

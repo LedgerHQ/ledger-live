@@ -8,6 +8,7 @@ import { useFlowWizard } from "../../../../FlowWizard/FlowWizardContext";
 import type { SendFlowOperationResult, SendFlowStep } from "@ledgerhq/live-common/flows/send/types";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
 import { track, trackPage } from "~/renderer/analytics/segment";
+import { getSendFlowTrackingProperties } from "../../../utils/tracking";
 
 function getConfirmationStatus(
   operation: SendFlowOperationResult,
@@ -35,6 +36,10 @@ export function useConfirmationViewModel() {
   const { close, status: statusActions, operation } = useSendFlowActions();
   const { state } = useSendFlowData();
   const { account, parentAccount } = state.account;
+  const sendFlowTrackingProperties = useMemo(
+    () => getSendFlowTrackingProperties(account, parentAccount),
+    [account, parentAccount],
+  );
 
   const status = useMemo(
     () => getConfirmationStatus(state.operation, state.account.currency),
@@ -55,7 +60,7 @@ export function useConfirmationViewModel() {
       track("send_modal", {
         button: "view details",
         page: "step confirmation",
-        flow: "send",
+        ...sendFlowTrackingProperties,
       });
       setDrawer(OperationDetails, {
         operationId: concernedOperation.id,
@@ -63,7 +68,7 @@ export function useConfirmationViewModel() {
         parentId: parentAccount?.id,
       });
     }
-  }, [close, account, concernedOperation, parentAccount]);
+  }, [close, account, concernedOperation, parentAccount, sendFlowTrackingProperties]);
 
   const onRetry = useCallback(() => {
     operation.onRetry();
@@ -72,11 +77,9 @@ export function useConfirmationViewModel() {
   }, [navigation, operation, statusActions]);
 
   const onClose = useCallback(() => {
-    trackPage("send_modal", "step confirmation", {
-      flow: "send",
-    });
+    trackPage("Modal send - step confirmation", null, sendFlowTrackingProperties);
     close();
-  }, [close]);
+  }, [close, sendFlowTrackingProperties]);
 
   return {
     status,

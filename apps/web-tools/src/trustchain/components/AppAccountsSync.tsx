@@ -32,7 +32,6 @@ import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import { listSupportedCurrencies } from "@ledgerhq/ledger-wallet-framework/currencies/support";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/color";
-import { getValidCryptoIconSize } from "@ledgerhq/live-common/helpers/cryptoIconSize";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { Loading } from "./Loading";
 import { TrustchainEjected } from "@ledgerhq/ledger-key-ring-protocol/errors";
@@ -386,7 +385,7 @@ function AccountRow({
   const ledgerId = currency.id;
   const ticker = currency.ticker;
   const network = currency.type === "TokenCurrency" ? currency.parentCurrency.id : undefined;
-  const validSize = getValidCryptoIconSize(20);
+  const validSize = 20;
 
   return (
     <li className="flex items-center px-16 py-6 border-b border-base">
@@ -409,7 +408,12 @@ function AccountRow({
       <span className="flex-1" />
       <code className="body-4 pr-10 text-muted">{account.freshAddressPath}</code>
       <span>
-        <Button size="sm" appearance="transparent" type="button" onClick={() => removeAccount(account.id)}>
+        <Button
+          size="sm"
+          appearance="transparent"
+          type="button"
+          onClick={() => removeAccount(account.id)}
+        >
           Remove
         </Button>
       </span>

@@ -4207,6 +4207,349 @@
       },
       {
         "data": {
+          "id": "js:2:solana:FDaDTiZbkXh5H5mdfsW3UHVME15qgMPAcKE7JowzU61Z:solanaSub",
+          "seedIdentifier": "osucnJziv4a9QevwbAYTDFfieRooM2in2vKzELWgFUU",
+          "used": true,
+          "derivationMode": "solanaSub",
+          "index": 0,
+          "freshAddress": "FDaDTiZbkXh5H5mdfsW3UHVME15qgMPAcKE7JowzU61Z",
+          "freshAddressPath": "44'/501'/0'",
+          "blockHeight": 415077724,
+          "creationDate": "2026-04-14T14:36:24.000Z",
+          "operationsCount": 3,
+          "operations": [
+            {
+              "id": "js:2:solana:FDaDTiZbkXh5H5mdfsW3UHVME15qgMPAcKE7JowzU61Z:solanaSub-2xugY7eKkw3Vu7R6aowWDfAAHjcUg34cGPkCQsPWXqzAxPmXjNwgskiJxAMKVDjkUb7LbkwaYKKFjL6qGwSg1gsh-OUT",
+              "hash": "2xugY7eKkw3Vu7R6aowWDfAAHjcUg34cGPkCQsPWXqzAxPmXjNwgskiJxAMKVDjkUb7LbkwaYKKFjL6qGwSg1gsh",
+              "type": "OUT",
+              "senders": ["FDaDTiZbkXh5H5mdfsW3UHVME15qgMPAcKE7JowzU61Z"],
+              "recipients": ["CACV4oEhLDnCQWKDe2Ym27TJkWPW5STVrbSEkHhfUyt9"],
+              "accountId": "js:2:solana:FDaDTiZbkXh5H5mdfsW3UHVME15qgMPAcKE7JowzU61Z:solanaSub",
+              "blockHash": "GQDfmakba48Tor7A6medp2rUdJfCNEvHDaGAru7sDLZB",
+              "blockHeight": 415077692,
+              "extra": {},
+              "date": "2026-04-23T06:56:45.000Z",
+              "value": "69642880",
+              "fee": "5000",
+              "transactionSequenceNumber": "3",
+              "hasFailed": false
+            },
+            {
+              "id": "js:2:solana:FDaDTiZbkXh5H5mdfsW3UHVME15qgMPAcKE7JowzU61Z:solanaSub-3KKfCb1NRjBzE7yEjZY2zmokuxbL6MfuhSLzikiaaUB3Sx3A9ynCQTfHHWkUeZQXf4duizeM5eZRDPvvJboVaC4c-DELEGATE",
+              "hash": "3KKfCb1NRjBzE7yEjZY2zmokuxbL6MfuhSLzikiaaUB3Sx3A9ynCQTfHHWkUeZQXf4duizeM5eZRDPvvJboVaC4c",
+              "type": "DELEGATE",
+              "senders": [],
+              "recipients": [],
+              "accountId": "js:2:solana:FDaDTiZbkXh5H5mdfsW3UHVME15qgMPAcKE7JowzU61Z:solanaSub",
+              "blockHash": "3rJXBAvmPef2ajkoF8cJS1ggh3hqCAM2Au9hdrnUvfhy",
+              "blockHeight": 413185159,
+              "extra": {
+                "stake": {
+                  "address": "26pV97Ce83ZQ6Kz9XT4td8tdoUFPTng8Fb8gPyc53dJx",
+                  "amount": "13847237"
+                }
+              },
+              "date": "2026-04-14T14:48:29.000Z",
+              "value": "5000",
+              "fee": "5000",
+              "transactionSequenceNumber": "2",
+              "hasFailed": false
+            },
+            {
+              "id": "js:2:solana:FDaDTiZbkXh5H5mdfsW3UHVME15qgMPAcKE7JowzU61Z:solanaSub-3jTijHSo8EF4m3BAwutVwFf4AgdAro4iXPtstj4W4hV4aputssrEQBL6eeNKtYY1GXaZPZPxGxSJ5C4MMtXV1vwJ-IN",
+              "hash": "3jTijHSo8EF4m3BAwutVwFf4AgdAro4iXPtstj4W4hV4aputssrEQBL6eeNKtYY1GXaZPZPxGxSJ5C4MMtXV1vwJ",
+              "type": "IN",
+              "senders": ["HWjmoUNYckccg9Qrwi43JTzBcGcM1nbdAtATf9GXmz16"],
+              "recipients": ["FDaDTiZbkXh5H5mdfsW3UHVME15qgMPAcKE7JowzU61Z"],
+              "accountId": "js:2:solana:FDaDTiZbkXh5H5mdfsW3UHVME15qgMPAcKE7JowzU61Z:solanaSub",
+              "blockHash": "9BSZcbcTaf59a3ri5mzJujuKmyPDXofGT92rmZHDjJaE",
+              "blockHeight": 413183327,
+              "extra": { "memo": "68d906a4-ad39-4e28-b400-ebabeb9605dc" },
+              "date": "2026-04-14T14:36:24.000Z",
+              "value": "146870647",
+              "fee": "0",
+              "transactionSequenceNumber": "1",
+              "hasFailed": false
+            }
+          ],
+          "pendingOperations": [],
+          "currencyId": "solana",
+          "balance": "77232851",
+          "spendableBalance": "62479650",
+          "balanceHistoryCache": {
+            "HOUR": {
+              "latestDate": 1776924000000,
+              "balances": [[146875731, 193]]
+            },
+            "DAY": {
+              "latestDate": 1776895200000,
+              "balances": [10084, [146875731, 9]]
+            },
+            "WEEK": {
+              "latestDate": 1776549600000,
+              "balances": [10084, 146875731]
+            }
+          },
+          "subAccounts": [],
+          "solanaResources": {
+            "stakes": "[{\"stakeAccAddr\":\"EdfLUuCU3rcZmfpZCNDMxwiEjh5RGLmxKDjhPdSN2A9S\",\"stakeAccBalance\":13852321,\"rentExemptReserve\":2282880,\"hasStakeAuth\":true,\"hasWithdrawAuth\":true,\"delegation\":{\"stake\":11569441,\"voteAccAddr\":\"26pV97Ce83ZQ6Kz9XT4td8tdoUFPTng8Fb8gPyc53dJx\"},\"activation\":{\"state\":\"active\",\"active\":11569441,\"inactive\":0},\"withdrawable\":0}]",
+            "unstakeReserve": "10000"
+          },
+          "swapHistory": [
+            {
+              "status": "finished",
+              "provider": "nearintents",
+              "operationId": "js:2:solana:FDaDTiZbkXh5H5mdfsW3UHVME15qgMPAcKE7JowzU61Z:solanaSub-2xugY7eKkw3Vu7R6aowWDfAAHjcUg34cGPkCQsPWXqzAxPmXjNwgskiJxAMKVDjkUb7LbkwaYKKFjL6qGwSg1gsh-OUT",
+              "swapId": "1172570f-5a02-43b9-83fc-cad47bfd12f3",
+              "receiverAccountId": "js:2:ethereum:0x70AAEEe70118a065ddF84dF6669b496A447C8CcC:",
+              "tokenId": "ethereum/erc20/usd_tether__erc20_",
+              "fromAmount": "69637880",
+              "toAmount": "5623953.000000000000000000000000000000000106324",
+              "finalAmount": "5.611443"
+            },
+            {
+              "status": "finished",
+              "provider": "nearintents",
+              "operationId": "js:2:solana:FDaDTiZbkXh5H5mdfsW3UHVME15qgMPAcKE7JowzU61Z:solanaSub-2xugY7eKkw3Vu7R6aowWDfAAHjcUg34cGPkCQsPWXqzAxPmXjNwgskiJxAMKVDjkUb7LbkwaYKKFjL6qGwSg1gsh-OUT",
+              "swapId": "1172570f-5a02-43b9-83fc-cad47bfd12f3",
+              "receiverAccountId": "js:2:ethereum:0x70AAEEe70118a065ddF84dF6669b496A447C8CcC:+ethereum%2Ferc20%2Fusd~!underscore!~tether~!underscore!~~!underscore!~erc20~!underscore!~",
+              "tokenId": "js:2:ethereum:0x70AAEEe70118a065ddF84dF6669b496A447C8CcC:+ethereum%2Ferc20%2Fusd~!underscore!~tether~!underscore!~~!underscore!~erc20~!underscore!~",
+              "fromAmount": "69637880",
+              "toAmount": "5622578",
+              "finalAmount": "5.611443"
+            }
+          ],
+          "nfts": [],
+          "name": "Solana 1",
+          "starred": false
+        },
+        "version": 1
+      },
+      {
+        "data": {
+          "id": "js:2:ethereum:0x70AAEEe70118a065ddF84dF6669b496A447C8CcC:",
+          "seedIdentifier": "04dd737a62348f4a5a2796c4ec0fb105540bda2700f2c50d261f9871ee47d5cd17a021ee71eced12dd40c01e8a2d5e3d0d82d4642f4842eaff184e316c2ea36b09",
+          "used": true,
+          "derivationMode": "",
+          "index": 0,
+          "freshAddress": "0x70AAEEe70118a065ddF84dF6669b496A447C8CcC",
+          "freshAddressPath": "44'/60'/0'/0/0",
+          "blockHeight": 24941026,
+          "syncHash": "0x7df36e3c",
+          "creationDate": "2026-04-14T11:04:47.000Z",
+          "operationsCount": 6,
+          "operations": [
+            {
+              "id": "js:2:ethereum:0x70AAEEe70118a065ddF84dF6669b496A447C8CcC:-0x11f89ca19ac66ec1ee08398fb8a739d97d01e94a110e5e29d6bbd0b0624a9222-NONE",
+              "hash": "0x11f89ca19ac66ec1ee08398fb8a739d97d01e94a110e5e29d6bbd0b0624a9222",
+              "type": "NONE",
+              "senders": ["0x2CfF890f0378a11913B6129B2E97417a2c302680"],
+              "recipients": ["0xdAC17F958D2ee523a2206206994597C13D831ec7"],
+              "accountId": "js:2:ethereum:0x70AAEEe70118a065ddF84dF6669b496A447C8CcC:",
+              "blockHash": "0x6d7852e35ce3a368cd697214ea164c564e1a711d98b2eac7c916d9107dd83ecd",
+              "blockHeight": 24940994,
+              "extra": {
+                "feePayer": "0x2CfF890f0378a11913B6129B2E97417a2c302680"
+              },
+              "date": "2026-04-23T06:57:23.000Z",
+              "value": "0",
+              "fee": "15355125512020",
+              "transactionSequenceNumber": "563460",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x70AAEEe70118a065ddF84dF6669b496A447C8CcC:-0x02a778b6f6eaf01a731a9bc68f87ee4c9876029734b0e108c121e692c5d9e322-OUT",
+              "hash": "0x02a778b6f6eaf01a731a9bc68f87ee4c9876029734b0e108c121e692c5d9e322",
+              "type": "OUT",
+              "senders": ["0x70AAEEe70118a065ddF84dF6669b496A447C8CcC"],
+              "recipients": ["0x111111125421cA6dc452d289314280a0f8842A65"],
+              "accountId": "js:2:ethereum:0x70AAEEe70118a065ddF84dF6669b496A447C8CcC:",
+              "blockHash": "0xbde3e00a6c5497277a4635ca1417d888ddb86fa6794d57ffe98888c06cdc61da",
+              "blockHeight": 24935505,
+              "extra": {
+                "feePayer": "0x70AAEEe70118a065ddF84dF6669b496A447C8CcC"
+              },
+              "date": "2026-04-22T12:35:35.000Z",
+              "value": "2771295571724114",
+              "fee": "685915571724114",
+              "transactionSequenceNumber": "3",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x70AAEEe70118a065ddF84dF6669b496A447C8CcC:-0x344dedc0d049b6e54ff07ffa36b30c89e8cde2c0b82900b8549dd31ab932592f-OUT",
+              "hash": "0x344dedc0d049b6e54ff07ffa36b30c89e8cde2c0b82900b8549dd31ab932592f",
+              "type": "OUT",
+              "senders": ["0x70AAEEe70118a065ddF84dF6669b496A447C8CcC"],
+              "recipients": ["0x177Eb008ee3ee6A798a2d90BaCF5Fa3F30B3C400"],
+              "accountId": "js:2:ethereum:0x70AAEEe70118a065ddF84dF6669b496A447C8CcC:",
+              "blockHash": "0xf5f0e81225e05315042fa122204895b5a1077f288e23ab1fd9dc2ea3275568a1",
+              "blockHeight": 24878642,
+              "extra": {
+                "feePayer": "0x70AAEEe70118a065ddF84dF6669b496A447C8CcC"
+              },
+              "date": "2026-04-14T14:30:47.000Z",
+              "value": "5441305599662000",
+              "fee": "7385599662000",
+              "transactionSequenceNumber": "2",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x70AAEEe70118a065ddF84dF6669b496A447C8CcC:-0x6de8aa99caa4901aa138749e45d83d5bcae110447443d826c279ccd7dc6a0851-OUT",
+              "hash": "0x6de8aa99caa4901aa138749e45d83d5bcae110447443d826c279ccd7dc6a0851",
+              "type": "OUT",
+              "senders": ["0x70AAEEe70118a065ddF84dF6669b496A447C8CcC"],
+              "recipients": ["0x30B904f8D49A1F991AB8Edc794facfe5b8F1f541"],
+              "accountId": "js:2:ethereum:0x70AAEEe70118a065ddF84dF6669b496A447C8CcC:",
+              "blockHash": "0x0039989065bc7a3195606f33b5989133164da3d465de8ebf2c1551fd3050a045",
+              "blockHeight": 24878630,
+              "extra": {
+                "feePayer": "0x70AAEEe70118a065ddF84dF6669b496A447C8CcC"
+              },
+              "date": "2026-04-14T14:28:23.000Z",
+              "value": "9015166308801000",
+              "fee": "15166308801000",
+              "transactionSequenceNumber": "1",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x70AAEEe70118a065ddF84dF6669b496A447C8CcC:-0x40d77d3fb5a039e192669d7b987299523f3f716fd8c6ad960f5a8d551322cb8b-OUT",
+              "hash": "0x40d77d3fb5a039e192669d7b987299523f3f716fd8c6ad960f5a8d551322cb8b",
+              "type": "OUT",
+              "senders": ["0x70AAEEe70118a065ddF84dF6669b496A447C8CcC"],
+              "recipients": ["0xD37BbE5744D730a1d98d8DC97c42F0Ca46aD7146"],
+              "accountId": "js:2:ethereum:0x70AAEEe70118a065ddF84dF6669b496A447C8CcC:",
+              "blockHash": "0x7d93d54eea8c01e590fa814050118bab1390dc71caaf46d7a2085ef6ba4d5b66",
+              "blockHeight": 24878607,
+              "extra": {
+                "feePayer": "0x70AAEEe70118a065ddF84dF6669b496A447C8CcC"
+              },
+              "date": "2026-04-14T14:23:47.000Z",
+              "value": "5026977910119983",
+              "fee": "26977910119983",
+              "transactionSequenceNumber": "0",
+              "hasFailed": false,
+              "internalOperations": []
+            },
+            {
+              "id": "js:2:ethereum:0x70AAEEe70118a065ddF84dF6669b496A447C8CcC:-0xfdceadde2b75c38215686e105c448772e685db7b78c26ccb78be158a2f5c7357-IN",
+              "hash": "0xfdceadde2b75c38215686e105c448772e685db7b78c26ccb78be158a2f5c7357",
+              "type": "IN",
+              "senders": ["0x04F479967bBc039E060d6292e5dE86f249291bbc"],
+              "recipients": ["0x70AAEEe70118a065ddF84dF6669b496A447C8CcC"],
+              "accountId": "js:2:ethereum:0x70AAEEe70118a065ddF84dF6669b496A447C8CcC:",
+              "blockHash": "0x67c79bbca66402b6f3832ca13fa0aed98e75c710df352d5f012536737626b6f5",
+              "blockHeight": 24877616,
+              "extra": {
+                "feePayer": "0x04F479967bBc039E060d6292e5dE86f249291bbc"
+              },
+              "date": "2026-04-14T11:04:47.000Z",
+              "value": "25000000000000000",
+              "fee": "5848438050000",
+              "transactionSequenceNumber": "150",
+              "hasFailed": false,
+              "internalOperations": []
+            }
+          ],
+          "pendingOperations": [],
+          "currencyId": "ethereum",
+          "balance": "2745254609692903",
+          "spendableBalance": "2745254609692903",
+          "balanceHistoryCache": {
+            "HOUR": {
+              "latestDate": 1776927600000,
+              "balances": [
+                [5516550181417017, 174],
+                [2745254609692903, 19]
+              ]
+            },
+            "DAY": {
+              "latestDate": 1776895200000,
+              "balances": [0, [5516550181417017, 8], 2745254609692903]
+            },
+            "WEEK": {
+              "latestDate": 1776549600000,
+              "balances": [0, 5516550181417017]
+            }
+          },
+          "xpub": "0x70AAEEe70118a065ddF84dF6669b496A447C8CcC",
+          "subAccounts": [
+            {
+              "type": "TokenAccountRaw",
+              "id": "js:2:ethereum:0x70AAEEe70118a065ddF84dF6669b496A447C8CcC:+ethereum%2Ferc20%2Fusd~!underscore!~tether~!underscore!~~!underscore!~erc20~!underscore!~",
+              "parentId": "js:2:ethereum:0x70AAEEe70118a065ddF84dF6669b496A447C8CcC:",
+              "tokenId": "ethereum/erc20/usd_tether__erc20_",
+              "balance": "10561287",
+              "spendableBalance": "10561287",
+              "creationDate": "2026-04-22T12:35:35.000Z",
+              "operationsCount": 2,
+              "operations": [
+                {
+                  "id": "js:2:ethereum:0x70AAEEe70118a065ddF84dF6669b496A447C8CcC:+ethereum%2Ferc20%2Fusd~!underscore!~tether~!underscore!~~!underscore!~erc20~!underscore!~-0x11f89ca19ac66ec1ee08398fb8a739d97d01e94a110e5e29d6bbd0b0624a9222-IN",
+                  "hash": "0x11f89ca19ac66ec1ee08398fb8a739d97d01e94a110e5e29d6bbd0b0624a9222",
+                  "type": "IN",
+                  "senders": ["0x2CfF890f0378a11913B6129B2E97417a2c302680"],
+                  "recipients": ["0x70AAEEe70118a065ddF84dF6669b496A447C8CcC"],
+                  "accountId": "js:2:ethereum:0x70AAEEe70118a065ddF84dF6669b496A447C8CcC:+ethereum%2Ferc20%2Fusd~!underscore!~tether~!underscore!~~!underscore!~erc20~!underscore!~",
+                  "blockHash": "0x6d7852e35ce3a368cd697214ea164c564e1a711d98b2eac7c916d9107dd83ecd",
+                  "blockHeight": 24940994,
+                  "extra": {
+                    "feePayer": "0x2CfF890f0378a11913B6129B2E97417a2c302680"
+                  },
+                  "date": "2026-04-23T06:57:23.000Z",
+                  "value": "5611443",
+                  "fee": "15355125512020",
+                  "transactionSequenceNumber": "563460",
+                  "hasFailed": false,
+                  "contract": "0xdAC17F958D2ee523a2206206994597C13D831ec7"
+                },
+                {
+                  "id": "js:2:ethereum:0x70AAEEe70118a065ddF84dF6669b496A447C8CcC:+ethereum%2Ferc20%2Fusd~!underscore!~tether~!underscore!~~!underscore!~erc20~!underscore!~-0x02a778b6f6eaf01a731a9bc68f87ee4c9876029734b0e108c121e692c5d9e322-IN",
+                  "hash": "0x02a778b6f6eaf01a731a9bc68f87ee4c9876029734b0e108c121e692c5d9e322",
+                  "type": "IN",
+                  "senders": ["0x111111125421cA6dc452d289314280a0f8842A65"],
+                  "recipients": ["0x70AAEEe70118a065ddF84dF6669b496A447C8CcC"],
+                  "accountId": "js:2:ethereum:0x70AAEEe70118a065ddF84dF6669b496A447C8CcC:+ethereum%2Ferc20%2Fusd~!underscore!~tether~!underscore!~~!underscore!~erc20~!underscore!~",
+                  "blockHash": "0xbde3e00a6c5497277a4635ca1417d888ddb86fa6794d57ffe98888c06cdc61da",
+                  "blockHeight": 24935505,
+                  "extra": {
+                    "feePayer": "0x70AAEEe70118a065ddF84dF6669b496A447C8CcC"
+                  },
+                  "date": "2026-04-22T12:35:35.000Z",
+                  "value": "4949844",
+                  "fee": "685915571724114",
+                  "transactionSequenceNumber": "3",
+                  "hasFailed": false,
+                  "contract": "0xdAC17F958D2ee523a2206206994597C13D831ec7"
+                }
+              ],
+              "pendingOperations": [],
+              "swapHistory": [],
+              "balanceHistoryCache": {
+                "HOUR": {
+                  "latestDate": 1776927600000,
+                  "balances": [0, [4949844, 18], 10561287]
+                },
+                "DAY": {
+                  "latestDate": 1776895200000,
+                  "balances": [0, 4949844]
+                },
+                "WEEK": { "latestDate": 1776549600000, "balances": [0] }
+              },
+              "starred": false
+            }
+          ],
+          "swapHistory": [],
+          "name": "Ethereum 1",
+          "starred": false
+        },
+        "version": 1
+      },
+      {
+        "data": {
           "id": "js:2:ethereum:0x8526F50A2FA870B1B7b91cc054aa06799dAc0110:",
           "seedIdentifier": "044f3fc95e14212014bf7b772dc6e5493537c4c48b3465cc6b80aaaedb7e3d9a9912b92625050df4e4afef8bd7999c596da0670463a366e53ba6f4cde2320e2719",
           "used": true,

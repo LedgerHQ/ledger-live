@@ -16,6 +16,7 @@ jest.mock("LLM/components/TopBar/useTopBarViewModel", () => ({
 
 const mockNavigate = jest.fn();
 const mockOnMyLedgerPress = jest.fn();
+const mockOnMyWalletPress = jest.fn();
 const noop = jest.fn();
 
 const mockedUseNavigation = jest.mocked(useNavigation);
@@ -28,7 +29,7 @@ describe("useSwapTopBarHeaderViewModel", () => {
     mockedUseNavigation.mockImplementation(() => ({ navigate: mockNavigate }));
     mockedUseTopBarViewModel.mockImplementation(() => ({
       onMyLedgerPress: mockOnMyLedgerPress,
-      onMyWalletPress: noop,
+      onMyWalletPress: mockOnMyWalletPress,
       shouldDisplayMyWallet: false,
       shouldDisplayOperationsList: false,
       onDiscoverPress: noop,
@@ -52,6 +53,35 @@ describe("useSwapTopBarHeaderViewModel", () => {
     const { result } = renderHook(() => useSwapTopBarHeaderViewModel());
 
     expect(result.current.onMyLedgerPress).toBe(mockOnMyLedgerPress);
+  });
+
+  it("should forward My Wallet fields from top bar view model", () => {
+    mockedUseTopBarViewModel.mockImplementation(() => ({
+      onMyLedgerPress: mockOnMyLedgerPress,
+      onMyWalletPress: mockOnMyWalletPress,
+      shouldDisplayMyWallet: true,
+      shouldDisplayOperationsList: false,
+      onDiscoverPress: noop,
+      onNotificationsPress: noop,
+      onSettingsPress: noop,
+      onTransactionHistoryPress: noop,
+      hasUnreadNotifications: true,
+      hasAccounts: false,
+      isSyncError: false,
+      isSyncPending: false,
+      listOfErrorAccountNames: "",
+      syncAccessibilityLabel: "Synchronize",
+      isSyncDrawerOpen: false,
+      openSyncDrawer: noop,
+      closeSyncDrawer: noop,
+      onTryRefresh: noop,
+    }));
+
+    const { result } = renderHook(() => useSwapTopBarHeaderViewModel());
+
+    expect(result.current.onMyWalletPress).toBe(mockOnMyWalletPress);
+    expect(result.current.shouldDisplayMyWallet).toBe(true);
+    expect(result.current.hasUnreadNotifications).toBe(true);
   });
 
   it("should track and navigate to swap history when onSwapHistoryPress is called", () => {

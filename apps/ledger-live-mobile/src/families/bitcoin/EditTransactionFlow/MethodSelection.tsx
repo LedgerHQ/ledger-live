@@ -13,7 +13,7 @@ import type {
 import { isOldestBitcoinPendingOperation } from "@ledgerhq/ledger-wallet-framework/operation";
 import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 import { getEnv } from "@ledgerhq/live-env";
@@ -100,7 +100,7 @@ function MethodSelectionComponent({ navigation, route }: Props) {
 
   const isOldestEditableOperation = isOldestBitcoinPendingOperation(mainAccount, operation.date);
 
-  const bridge: AccountBridge<BtcTransaction> = getAccountBridge(account, parentAccount as Account);
+  const bridge = useAccountBridge<BtcTransaction>(account, parentAccount as Account);
 
   const onSelect = useCallback(
     async (option: EditType) => {

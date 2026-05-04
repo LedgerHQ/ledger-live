@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Divider } from "@ledgerhq/lumen-ui-react";
-import { ToggleRow } from "./ToggleRow";
+import { DeveloperToggleRow } from "../../components/DeveloperToggleRow";
 
 interface TourSectionProps {
   readonly hasSeenTour: boolean;
@@ -22,7 +22,7 @@ export const TourSection = ({
         {t("settings.developer.walletFeaturesDevTool.tourState")}
       </span>
       <Divider />
-      <ToggleRow
+      <DeveloperToggleRow
         name="wallet-feature-has-seen-tour"
         label="Has Seen Wallet V4 Tour"
         selected={hasSeenTour}

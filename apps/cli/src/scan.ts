@@ -248,9 +248,10 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
       map(fromAccountRaw),
       prepareCurrency((a: any) => a.currency),
       concatMap((account: Account) =>
-        getAccountBridge(account, null)
-          .sync(account, syncConfig)
-          .pipe(reduce((a, f: (arg: any) => any) => f(a), account)),
+        defer(() => Promise.resolve(getAccountBridge(account, null))).pipe(
+          mergeMap(bridge => bridge.sync(account, syncConfig)),
+          reduce((a, f: (arg: any) => any) => f(a), account),
+        ),
       ),
     ) as Observable<Account>;
   }
@@ -372,9 +373,10 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
         ).pipe(
           prepareCurrency((a: Account) => a.currency),
           concatMap((account: Account) =>
-            getAccountBridge(account, null)
-              .sync(account, syncConfig)
-              .pipe(reduce((a: Account, f: any) => f(a), account)),
+            defer(() => Promise.resolve(getAccountBridge(account, null))).pipe(
+              mergeMap(bridge => bridge.sync(account, syncConfig)),
+              reduce((a: Account, f: any) => f(a), account),
+            ),
           ),
         );
       }
@@ -383,12 +385,16 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
       // otherwise we just scan for accounts
       return concat(
         of(currency).pipe(prepareCurrency((a: any) => a)),
-        getCurrencyBridge(currency).scanAccounts({
-          currency,
-          deviceId: device || "",
-          scheme: scheme && asDerivationMode(scheme),
-          syncConfig,
-        }),
+        defer(() => Promise.resolve(getCurrencyBridge(currency))).pipe(
+          mergeMap(bridge =>
+            bridge.scanAccounts({
+              currency,
+              deviceId: device || "",
+              scheme: scheme && asDerivationMode(scheme),
+              syncConfig,
+            }),
+          ),
+        ),
       ).pipe(
         filter((e: any) => e.type === "discovered"),
         map(e => e.account),

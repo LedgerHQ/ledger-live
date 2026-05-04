@@ -23,6 +23,12 @@ export type AdditionalProviderConfig = SwapProviderConfig & { type: "DEX" | "CEX
 
 export type ProviderConfig = CEXProviderConfig | DEXProviderConfig;
 
+/**
+ * Shape actually produced by `fetchAndMergeProviderData` (CAL base config merged with
+ * CDN extras). Callers should prefer this alias over re-spelling the intersection.
+ */
+export type MergedProviderConfig = ProviderConfig & Partial<AdditionalProviderConfig>;
+
 const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & Partial<AdditionalProviderConfig>> = {
   changelly: {
     name: "Changelly",

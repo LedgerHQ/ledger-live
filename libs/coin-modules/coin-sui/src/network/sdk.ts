@@ -47,7 +47,7 @@ import type {
   SuiValidator,
   Transaction as TransactionType,
 } from "../types";
-import { ensureAddressFormat } from "../utils";
+import { ensureAddressFormat, normalizeSuiAddressForComparison } from "../utils";
 import { getCurrentSuiPreloadData } from "./preload-data";
 
 type AsyncApiFunction<T> = (api: SuiJsonRpcClient) => Promise<T>;
@@ -216,6 +216,16 @@ export function isSettlementTransaction(tx: SuiTransactionBlockResponse): boolea
 }
 
 /**
+ * Accumulator events report `ty` as `0x2::balance::Balance<INNER>`, while
+ * `BalanceChange.coinType` uses the bare `INNER` form. Normalise to the inner
+ * coin type so the two can be compared and merged.
+ */
+function stripBalanceWrapper(ty: string): string {
+  const m = ty.match(/^0x2::balance::Balance<(.+)>$/);
+  return m ? m[1] : ty;
+}
+
+/**
  * SIP-58: Merge accumulator events from `effects.accumulatorEvents` into the
  * standard `balanceChanges` array so that deposits to address balances (which
  * may not appear in coin-object-level balance changes) are visible in the
@@ -235,10 +245,11 @@ export function getUnifiedBalanceChanges(tx: SuiTransactionBlockResponse): Balan
   for (const evt of accEvents) {
     if (!("integer" in evt.value)) continue;
 
+    const coinType = stripBalanceWrapper(evt.ty);
     const amount = evt.operation === "merge" ? evt.value.integer : `-${evt.value.integer}`;
     const alreadyCovered = base.some(
       bc =>
-        bc.coinType === evt.ty &&
+        bc.coinType === coinType &&
         typeof bc.owner !== "string" &&
         "AddressOwner" in bc.owner &&
         bc.owner.AddressOwner === evt.address,
@@ -246,7 +257,7 @@ export function getUnifiedBalanceChanges(tx: SuiTransactionBlockResponse): Balan
 
     if (!alreadyCovered) {
       extra.push({
-        coinType: evt.ty,
+        coinType,
         owner: { AddressOwner: evt.address },
         amount,
       });
@@ -363,6 +374,7 @@ export const getOperationAmount = (
   transaction: SuiTransactionBlockResponse,
   coinType: string,
 ): BigNumber => {
+  const normalizedAddress = normalizeSuiAddressForComparison(address);
   const changes = getUnifiedBalanceChanges(transaction);
   let amount = new BigNumber(0);
   if (changes.length === 0) return amount;
@@ -378,7 +390,7 @@ export const getOperationAmount = (
     if (
       typeof balanceChange.owner !== "string" &&
       "AddressOwner" in balanceChange.owner &&
-      balanceChange.owner.AddressOwner === address
+      normalizeSuiAddressForComparison(balanceChange.owner.AddressOwner) === normalizedAddress
     ) {
       if (balanceChange.amount[0] === "-") {
         amount = balanceChange.coinType === coinType ? amount.minus(balanceChange.amount) : amount;
@@ -443,7 +455,7 @@ export const getOperationExtra = (
  * Extract date from transaction
  */
 export const getOperationDate = (transaction: SuiTransactionBlockResponse): Date => {
-  return new Date(parseInt(transaction.timestampMs!));
+  return new Date(Number(transaction.timestampMs ?? 0));
 };
 
 /**
@@ -1177,17 +1189,23 @@ export const getCoinsForAmount = async (
 };
 
 /**
- * Check whether the sender has any real SUI coin objects to use as gas payment.
- * When no coin objects exist (all funds are in address balance), the caller
- * should set `tx.setGasPayment([])` so the network uses the address balance.
+ * Check whether the sender should fund gas from a real SUI coin object
+ * (vs. from the SIP-58 address balance via `setGasPayment([])`).
+ *
+ * Post SIP-58 the RPC's `getCoins` returns synthetic "fake coin" objects
+ * representing address-balance reservations alongside real coins, so we cannot
+ * rely on its result to decide. Instead we read `fundsInAddressBalance` from
+ * `getAllBalances`: if any address-balance funds exist, prefer them for gas —
+ * this avoids picking a real coin object that may be too small for the auto-
+ * computed gas budget.
  */
 async function hasGasCoinObjects(api: SuiJsonRpcClient, address: string): Promise<boolean> {
-  const response = await api.getCoins({
-    owner: address,
-    coinType: DEFAULT_COIN_TYPE,
-    limit: 1,
-  });
-  return response.data.length > 0;
+  const balances = await api.getAllBalances({ owner: address });
+  const sui = balances.find(b => b.coinType === DEFAULT_COIN_TYPE);
+  if (!sui) return false;
+  const addressBalance = BigInt(sui.fundsInAddressBalance ?? "0");
+  if (addressBalance > 0n) return false;
+  return BigInt(sui.totalBalance) > 0n;
 }
 
 /**
@@ -1253,18 +1271,25 @@ const createTransactionForDelegate = async (
     const sender = ensureAddressFormat(address);
     tx.setSender(sender);
 
-    if (!(await hasGasCoinObjects(api, sender))) {
+    const senderHasGasCoins = await hasGasCoinObjects(api, sender);
+    if (!senderHasGasCoins) {
       tx.setGasPayment([]);
     }
 
     const { amount } = transaction;
-    const coins = tx.splitCoins(tx.gas, [BigInt(amount.toFixed())]);
+    // When gas is paid from the SIP-58 address balance (`setGasPayment([])`),
+    // `tx.gas` is sized only for the auto-computed gas budget, so we can't
+    // split the stake amount out of it. Resolve it via `coinWithBalance`,
+    // which the SDK turns into a FundsWithdrawal sized for the stake amount.
+    const stakeCoin = senderHasGasCoins
+      ? tx.splitCoins(tx.gas, [BigInt(amount.toFixed())])[0]
+      : coinWithBalance({ balance: BigInt(amount.toFixed()) })(tx);
 
     tx.moveCall({
       target: "0x3::sui_system::request_add_stake",
       arguments: [
         tx.object(SUI_SYSTEM_STATE_OBJECT_ID),
-        coins,
+        stakeCoin,
         tx.pure.address(transaction.recipient),
       ],
     });
@@ -1370,8 +1395,16 @@ const createTransactionForOthers = async (
         })(tx);
         tx.transferObjects([coin], transaction.recipient);
       }
-    } else {
+    } else if (senderHasGasCoins) {
       const [coin] = tx.splitCoins(tx.gas, [BigInt(transaction.amount.toFixed())]);
+      tx.transferObjects([coin], transaction.recipient);
+    } else {
+      // SIP-58 native SUI path: gas is paid from address balance via
+      // `setGasPayment([])`, so the gas reservation is sized only for fees.
+      // We can't split the transfer amount out of `tx.gas`; instead resolve
+      // the transfer via `coinWithBalance`, which the SDK turns into a
+      // FundsWithdrawal sized for the transfer amount itself.
+      const coin = coinWithBalance({ balance: BigInt(transaction.amount.toFixed()) })(tx);
       tx.transferObjects([coin], transaction.recipient);
     }
 

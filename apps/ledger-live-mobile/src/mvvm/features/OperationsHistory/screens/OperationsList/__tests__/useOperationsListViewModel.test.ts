@@ -1,5 +1,8 @@
 import { act } from "@testing-library/react-native";
 import { renderHook } from "@tests/test-renderer";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import type { State } from "~/reducers/types";
 import { useOperationsListViewModel } from "../useOperationsListViewModel";
 
 // ─── Hook behaviours — mock needed because useOperationsV1 uses selectors ───
@@ -46,5 +49,36 @@ describe("useOperationsListViewModel", () => {
     act(() => result.current.onEndReached());
 
     expect(mockUseOperationsV1.mock.calls.length).toBe(callsBefore);
+  });
+
+  describe("accountByAddress", () => {
+    // EVM chains share the same address format — Base, OP Mainnet, and Ethereum accounts
+    // all have identical 0x addresses. The map must key by currencyId:address so that
+    // accounts on different chains coexist without overwriting each other.
+    it("gives each EVM account its own entry when multiple chains share the same address", () => {
+      const sharedAddress = "0xabcdef1234567890abcdef1234567890abcdef12";
+      const ethereum = getCryptoCurrencyById("ethereum");
+      const bitcoin = getCryptoCurrencyById("bitcoin");
+      const ethAccount = {
+        ...genAccount("eth-shared-addr", { currency: ethereum }),
+        freshAddress: sharedAddress,
+      };
+      const btcAccount = {
+        ...genAccount("btc-shared-addr", { currency: bitcoin }),
+        freshAddress: sharedAddress,
+      };
+
+      const { result } = renderHook(() => useOperationsListViewModel(), {
+        overrideInitialState: (state: State) => ({
+          ...state,
+          accounts: { ...state.accounts, active: [ethAccount, btcAccount] },
+        }),
+      });
+
+      const map = result.current.accountByAddress;
+      expect(map.size).toBe(2);
+      expect(map.get(`${ethereum.id}:${sharedAddress}`)).toBe(ethAccount);
+      expect(map.get(`${bitcoin.id}:${sharedAddress}`)).toBe(btcAccount);
+    });
   });
 });

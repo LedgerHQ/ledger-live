@@ -3,7 +3,55 @@
 
 import yoctoSpinner from "yocto-spinner";
 import type { Spinner } from "yocto-spinner";
-export { colors, writeStdout } from "@bunli/utils";
+import { colors, writeStdout as bunliWriteStdout } from "@bunli/utils";
+export { colors };
+
+type Writer = (chunk: string) => void;
+
+let stdoutWriter: Writer | null = null;
+let stderrWriter: Writer | null = null;
+
+export function installOutputCapture(writers: { stdout?: Writer; stderr?: Writer }): () => void {
+  const previousStdout = stdoutWriter;
+  const previousStderr = stderrWriter;
+  stdoutWriter = writers.stdout ?? null;
+  stderrWriter = writers.stderr ?? null;
+  return () => {
+    stdoutWriter = previousStdout;
+    stderrWriter = previousStderr;
+  };
+}
+
+export function writeStdout(message: string): void {
+  if (stdoutWriter) {
+    stdoutWriter(message.endsWith("\n") ? message : `${message}\n`);
+    return;
+  }
+  bunliWriteStdout(message);
+}
+
+export function writeStderr(message: string): void {
+  if (stderrWriter) {
+    stderrWriter(message);
+    return;
+  }
+  process.stderr.write(message);
+}
+
+let activeSpinner: Spinner | null = null;
+
+export function isAgentEnvironment(): boolean {
+  return Boolean(
+    process.env.CLAUDECODE ||
+    process.env.CLAUDE_CODE ||
+    process.env.CURSOR_AGENT ||
+    process.env.CODEX_ENABLED ||
+    process.env.GEMINI_CLI ||
+    process.env.OPENCODE ||
+    process.env.AMP_CURRENT_THREAD_ID ||
+    process.env.AGENT === "amp",
+  );
+}
 
 /**
  * Returns true when running in an interactive terminal.
@@ -15,17 +63,7 @@ export { colors, writeStdout } from "@bunli/utils";
  *  - AI agent env vars: same signals used by @bunli/plugin-ai-detect
  */
 export function isInteractive(): boolean {
-  if (
-    process.env.CLAUDECODE ||
-    process.env.CLAUDE_CODE ||
-    process.env.CURSOR_AGENT ||
-    process.env.CODEX_ENABLED ||
-    process.env.GEMINI_CLI ||
-    process.env.OPENCODE ||
-    process.env.AMP_CURRENT_THREAD_ID ||
-    process.env.AGENT === "amp"
-  )
-    return false;
+  if (isAgentEnvironment()) return false;
   return process.stderr.isTTY === true;
 }
 
@@ -46,7 +84,11 @@ const noopSpinner: Spinner = new Proxy({} as Spinner, {
 
 export function spinner(text: string): Spinner {
   if (!isInteractive()) return noopSpinner;
-  return yoctoSpinner({ text, stream: process.stderr }).start();
+  if (activeSpinner?.isSpinning) {
+    activeSpinner.stop();
+  }
+  activeSpinner = yoctoSpinner({ text, stream: process.stderr }).start();
+  return activeSpinner;
 }
 
 export async function withSpinner<T>(

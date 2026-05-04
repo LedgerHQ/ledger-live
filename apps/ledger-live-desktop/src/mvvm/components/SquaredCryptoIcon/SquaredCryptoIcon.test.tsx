@@ -21,56 +21,47 @@ describe("SquaredCryptoIcon", () => {
     ticker: "ETH",
   };
 
-  it("should render CryptoIcon with correct radius for each size", () => {
-    const sizeToRadiusMap: Record<string, string> = {
-      "16px": "4px",
-      "20px": "5px",
-      "24px": "6px",
-      "32px": "8px",
-      "40px": "10px",
-      "48px": "12px",
-      "56px": "14px",
-    };
-
-    Object.entries(sizeToRadiusMap).forEach(([size, expectedRadius]) => {
+  it.each<CryptoIconSize>([16, 20, 24, 32, 40, 48, 56])(
+    "should render CryptoIcon with shape='square' for size %s",
+    size => {
       mockedCryptoIcon.mockClear();
 
-      render(<SquaredCryptoIcon {...defaultProps} size={size as CryptoIconSize} />);
+      render(<SquaredCryptoIcon {...defaultProps} size={size} />);
 
       expect(mockedCryptoIcon).toHaveBeenCalledWith(
         expect.objectContaining({
           size,
-          overridesRadius: expectedRadius,
+          shape: "square",
           ledgerId: "ethereum",
           ticker: "ETH",
         }),
         undefined,
       );
-    });
-  });
+    },
+  );
 
-  it("should use 48px as default size with 12px radius", () => {
+  it("should use 48 as default size with square shape", () => {
     render(<SquaredCryptoIcon {...defaultProps} />);
 
     expect(mockedCryptoIcon).toHaveBeenCalledWith(
       expect.objectContaining({
-        size: "48px",
-        overridesRadius: "12px",
+        size: 48,
+        shape: "square",
       }),
       undefined,
     );
   });
 
   it("should forward additional props to CryptoIcon", () => {
-    render(<SquaredCryptoIcon {...defaultProps} size="32px" network="polygon" />);
+    render(<SquaredCryptoIcon {...defaultProps} size={32} network="polygon" />);
 
     expect(mockedCryptoIcon).toHaveBeenCalledWith(
       expect.objectContaining({
         ledgerId: "ethereum",
         ticker: "ETH",
-        size: "32px",
+        size: 32,
         network: "polygon",
-        overridesRadius: "8px",
+        shape: "square",
       }),
       undefined,
     );

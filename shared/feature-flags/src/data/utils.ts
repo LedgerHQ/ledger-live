@@ -1,11 +1,11 @@
 import semver from "semver";
-import { type ResolutionConfig } from "../config";
 import { FEATURE_FLAGS_DEFAULTS } from "../constants";
 import {
   type Feature,
   type FeatureId,
   type FeatureFlagsState,
   type PartialFeatures,
+  type ResolutionConfig,
   FeatureIdSchema,
 } from "./schema";
 

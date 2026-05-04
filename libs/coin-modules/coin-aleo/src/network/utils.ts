@@ -2,6 +2,7 @@ import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
+import { AleoApiConfigurationResetError } from "../errors";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import {
   AMOUNT_ARG_INDEX,
@@ -17,6 +18,7 @@ import type {
   EnrichedPrivateRecord,
   AleoPrivateRecord,
   AleoOperation,
+  AleoTransition,
 } from "../types";
 import { parseMicrocredits } from "../logic/utils";
 import { apiClient } from "./api";
@@ -132,18 +134,21 @@ export async function fetchAllOwnedRecords({
   unspent,
   start,
   resultsPerPage = DEFAULT_RECORDS_PAGE_SIZE,
+  signal,
 }: {
   currency: CryptoCurrency;
   uuid: string;
   unspent?: boolean;
   start?: number;
   resultsPerPage?: number;
+  signal?: AbortSignal;
 }): Promise<AleoPrivateRecord[]> {
   const allRecords: AleoPrivateRecord[] = [];
   let page = 0;
   let hasMore = true;
 
   while (hasMore) {
+    signal?.throwIfAborted();
     const records = await apiClient.getAccountOwnedRecords({
       currency,
       uuid,
@@ -151,6 +156,12 @@ export async function fetchAllOwnedRecords({
       ...(typeof start === "number" && { start }),
       resultsPerPage,
       page,
+      programs: [PROGRAM_ID.CREDITS],
+      functions: [
+        EXPLORER_TRANSFER_TYPES.PRIVATE,
+        EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE,
+        EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC,
+      ],
     });
 
     allRecords.push(...records);
@@ -173,13 +184,10 @@ export async function fetchAllOwnedRecords({
  * @param viewKey - The view key for the account
  * @param provableApi - Existing Provable API credentials and state, or null for initial setup
  *
- * @returns A Promise resolving to updated ProvableApi credentials, or null if access needs to be reset
+ * @returns A Promise resolving to updated ProvableApi credentials
  *
- * @throws {Error} Re-throws any errors except 422 that should trigger uuid rotation
- *
- * @remarks
- * When null is returned, the caller should clear stored Provable API credentials
- * and allow the user to re-initialize access from scratch.
+ * @throws {AleoApiConfigurationResetError} When the scanner status endpoint returns 422 — the UUID is no longer valid and registration must restart
+ * @throws {Error} Re-throws any other errors from underlying API calls
  */
 
 export async function accessProvableApi({
@@ -190,7 +198,7 @@ export async function accessProvableApi({
   currency: CryptoCurrency;
   viewKey: string;
   provableApi: ProvableApi | null;
-}): Promise<ProvableApi | null> {
+}): Promise<ProvableApi> {
   let uuid = provableApi?.uuid;
   let synced: boolean | undefined = provableApi?.scannerStatus?.synced ?? false;
   let percentage: number | undefined = provableApi?.scannerStatus?.percentage ?? 0;
@@ -219,7 +227,7 @@ export async function accessProvableApi({
     status = await apiClient.getRecordScannerStatus(currency, uuid);
   } catch (error) {
     if (error instanceof LedgerAPI4xx && error.status === 422) {
-      return null;
+      throw new AleoApiConfigurationResetError();
     }
     throw error;
   }
@@ -232,6 +240,172 @@ export async function accessProvableApi({
   return {
     uuid,
     scannerStatus: { synced, percentage },
+  };
+}
+
+type EnrichedRecordData = Pick<EnrichedPrivateRecord, "sender" | "recipient" | "value">;
+type AleoTransitionInputWithValue = AleoTransition["inputs"][number] & { value: string };
+
+// PUBLIC_TO_PRIVATE where sender is this address is already captured as a public OUT op.
+function shouldSkipPublicToPrivateRecord(rawRecord: AleoPrivateRecord, address: string): boolean {
+  return (
+    rawRecord.function_name === EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE &&
+    rawRecord.sender === address
+  );
+}
+
+function getRecordTransition(
+  details: EnrichedPrivateRecord["details"],
+  rawRecord: AleoPrivateRecord,
+  transactionId: string,
+): AleoTransition | null {
+  const recordTransition = details.execution?.transitions[rawRecord.transition_index];
+
+  if (!recordTransition) {
+    log(
+      "aleo/sync",
+      `enrichPrivateRecord: transition at index ${rawRecord.transition_index} not found for tx ${transactionId}`,
+    );
+    return null;
+  }
+
+  return recordTransition;
+}
+
+function hasValueField(
+  input: AleoTransition["inputs"][number] | null,
+): input is AleoTransitionInputWithValue {
+  return Boolean(input && "value" in input);
+}
+
+function getTransferArguments(
+  recordTransition: AleoTransition,
+  transactionId: string,
+): {
+  recipientArgument: AleoTransitionInputWithValue;
+  amountArgument: AleoTransitionInputWithValue;
+} | null {
+  if (recordTransition.inputs.length <= AMOUNT_ARG_INDEX) {
+    log(
+      "aleo/sync",
+      `enrichPrivateRecord: transition has only ${recordTransition.inputs.length} inputs, expected at least ${AMOUNT_ARG_INDEX + 1} for tx ${transactionId}`,
+    );
+    return null;
+  }
+
+  // Recipient and amount are contract function arguments, so their inputs must have a `value` field.
+  // Other input (missing `value` field) would indicate unexpected API data.
+  // In that case we skip processing rather than crash.
+  const recipientInput = recordTransition.inputs[RECIPIENT_ARG_INDEX] ?? null;
+  const amountInput = recordTransition.inputs[AMOUNT_ARG_INDEX] ?? null;
+
+  if (!hasValueField(recipientInput) || !hasValueField(amountInput)) {
+    log("aleo/sync", `enrichPrivateRecord: invalid transition arguments for tx ${transactionId}`);
+    return null;
+  }
+
+  return {
+    recipientArgument: recipientInput,
+    amountArgument: amountInput,
+  };
+}
+
+async function enrichOutgoingRecord({
+  currency,
+  rawRecord,
+  recordTransition,
+  transactionId,
+  viewKey,
+  address,
+}: {
+  currency: CryptoCurrency;
+  rawRecord: AleoPrivateRecord;
+  recordTransition: AleoTransition;
+  transactionId: string;
+  viewKey: string;
+  address: string;
+}): Promise<EnrichedRecordData | null> {
+  const transferArguments = getTransferArguments(recordTransition, transactionId);
+  if (!transferArguments) {
+    return null;
+  }
+
+  const { recipientArgument, amountArgument } = transferArguments;
+
+  if (rawRecord.function_name === EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC) {
+    // The recipient and amount stay public for private-to-public transfers,
+    // so we can build the outgoing operation directly from the transition inputs.
+    if (recipientArgument.value === address) {
+      return null;
+    }
+
+    return {
+      sender: address,
+      recipient: recipientArgument.value,
+      value: new BigNumber(parseMicrocredits(amountArgument.value)),
+    };
+  }
+
+  const [recipientData, amountData] = await Promise.all([
+    sdkClient.decryptCiphertext({
+      currency,
+      ciphertext: recipientArgument.value,
+      tpk: recordTransition.tpk,
+      viewKey,
+      programId: rawRecord.program_name,
+      functionName: rawRecord.function_name,
+      outputIndex: RECIPIENT_ARG_INDEX,
+    }),
+    sdkClient.decryptCiphertext({
+      currency,
+      ciphertext: amountArgument.value,
+      tpk: recordTransition.tpk,
+      viewKey,
+      programId: rawRecord.program_name,
+      functionName: rawRecord.function_name,
+      outputIndex: AMOUNT_ARG_INDEX,
+    }),
+  ]);
+
+  return {
+    sender: address,
+    recipient: recipientData.plaintext,
+    value: new BigNumber(parseMicrocredits(amountData.plaintext)),
+  };
+}
+
+async function enrichIncomingRecord({
+  currency,
+  rawRecord,
+  transactionId,
+  viewKey,
+  address,
+}: {
+  currency: CryptoCurrency;
+  rawRecord: AleoPrivateRecord;
+  transactionId: string;
+  viewKey: string;
+  address: string;
+}): Promise<EnrichedRecordData | null> {
+  const outputRecord = await sdkClient.decryptRecord({
+    currency,
+    ciphertext: rawRecord.record_ciphertext,
+    viewKey,
+  });
+  const microcredits = outputRecord.data?.microcredits;
+
+  if (!microcredits) {
+    log(
+      "aleo/sync",
+      `enrichPrivateRecord: microcredits missing in decrypted record for tx ${transactionId}`,
+    );
+    return null;
+  }
+
+  return {
+    sender: rawRecord.sender,
+    recipient: address,
+    value: new BigNumber(parseMicrocredits(microcredits)),
   };
 }
 
@@ -249,99 +423,38 @@ export async function enrichPrivateRecord({
   const transactionId = rawRecord.transaction_id.trim();
   const details = await apiClient.getTransactionById(currency, transactionId);
 
-  // PUBLIC_TO_PRIVATE where sender is this address is already captured as a public OUT op
-  if (
-    rawRecord.function_name === EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE &&
-    rawRecord.sender === address
-  ) {
+  if (shouldSkipPublicToPrivateRecord(rawRecord, address)) {
     return null;
   }
 
-  const recordTransition = details.execution?.transitions[rawRecord.transition_index];
+  const recordTransition = getRecordTransition(details, rawRecord, transactionId);
   if (!recordTransition) {
-    log(
-      "aleo/sync",
-      `enrichPrivateRecord: transition at index ${rawRecord.transition_index} not found for tx ${transactionId}`,
-    );
     return null;
   }
 
-  let recipient = "";
-  let sender = "";
-  let value: BigNumber;
-
-  if (rawRecord.sender === address) {
-    if (recordTransition.inputs.length <= AMOUNT_ARG_INDEX) {
-      log(
-        "aleo/sync",
-        `enrichPrivateRecord: transition has only ${recordTransition.inputs.length} inputs, expected at least ${AMOUNT_ARG_INDEX + 1} for tx ${transactionId}`,
-      );
-      return null;
-    }
-
-    // Recipient and amount are contract function arguments, so their inputs must have a `value` field.
-    // Other input (missing `value` field) would indicate unexpected API data.
-    // In that case we skip processing rather than crash.
-    const recipientInput = recordTransition.inputs[RECIPIENT_ARG_INDEX] ?? null;
-    const amountInput = recordTransition.inputs[AMOUNT_ARG_INDEX] ?? null;
-    const recipientArgument = recipientInput && "value" in recipientInput ? recipientInput : null;
-    const amountArgument = amountInput && "value" in amountInput ? amountInput : null;
-
-    if (!recipientArgument || !amountArgument) {
-      log("aleo/sync", `enrichPrivateRecord: invalid transition arguments for tx ${transactionId}`);
-      return null;
-    }
-
-    if (rawRecord.function_name === EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC) {
-      if (recipientArgument.value === address) return null;
-      sender = address;
-      recipient = recipientArgument.value;
-      value = new BigNumber(parseMicrocredits(amountArgument.value));
-    } else {
-      const [recipientData, amountData] = await Promise.all([
-        sdkClient.decryptCiphertext({
+  const enrichedRecordData =
+    rawRecord.sender === address
+      ? await enrichOutgoingRecord({
           currency,
-          ciphertext: recipientArgument.value,
-          tpk: recordTransition.tpk,
+          rawRecord,
+          recordTransition,
+          transactionId,
           viewKey,
-          programId: rawRecord.program_name,
-          functionName: rawRecord.function_name,
-          outputIndex: RECIPIENT_ARG_INDEX,
-        }),
-        sdkClient.decryptCiphertext({
+          address,
+        })
+      : await enrichIncomingRecord({
           currency,
-          ciphertext: amountArgument.value,
-          tpk: recordTransition.tpk,
+          rawRecord,
+          transactionId,
           viewKey,
-          programId: rawRecord.program_name,
-          functionName: rawRecord.function_name,
-          outputIndex: AMOUNT_ARG_INDEX,
-        }),
-      ]);
-      sender = address;
-      recipient = recipientData.plaintext;
-      value = new BigNumber(parseMicrocredits(amountData.plaintext));
-    }
-  } else {
-    const outputRecord = await sdkClient.decryptRecord({
-      currency,
-      ciphertext: rawRecord.record_ciphertext,
-      viewKey,
-    });
-    const microcredits = outputRecord.data?.microcredits;
-    if (!microcredits) {
-      log(
-        "aleo/sync",
-        `enrichPrivateRecord: microcredits missing in decrypted record for tx ${transactionId}`,
-      );
-      return null;
-    }
-    sender = rawRecord.sender;
-    recipient = address;
-    value = new BigNumber(parseMicrocredits(microcredits));
+          address,
+        });
+
+  if (!enrichedRecordData) {
+    return null;
   }
 
-  return { rawRecord, details, sender, recipient, value };
+  return { rawRecord, details, ...enrichedRecordData };
 }
 
 function splitPublicAndSemiPublicOperations(

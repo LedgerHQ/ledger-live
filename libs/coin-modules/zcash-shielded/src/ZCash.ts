@@ -7,7 +7,8 @@ import type {
   RawTransaction,
   ShieldedTransaction,
   SyncEstimatedTime,
-  ZcashPrivateInfo,
+  ShieldedSyncResult,
+  SyncShieldedArgs,
 } from "./types";
 import { ZCASH_LOG_TYPE } from "./constants";
 
@@ -16,12 +17,6 @@ import { ZCASH_LOG_TYPE } from "./constants";
  */
 
 export { ZCASH_JSON_RPC_SERVER_MAINNET, ZCASH_JSON_RPC_SERVER_TESTNET } from "./constants";
-
-type SyncShieldedArgs = {
-  startBlockHeight: number;
-  viewingKey: string;
-  maxBatchSize: number;
-};
 
 export class ZCash {
   jsonRpcClient: JsonRpcClient;
@@ -87,7 +82,7 @@ export class ZCash {
         const tx = await this.jsonRpcClient.getRawTransaction(txId);
 
         // 3. call decryptTransaction for each tx hash containing orchard actions
-        if (tx?.orchard.actions.length) {
+        if (tx?.orchard?.actions?.length) {
           const decryptedTx = await this.decryptTransaction(tx, viewingKey);
 
           if (decryptedTx) {
@@ -183,9 +178,9 @@ export class ZCash {
    *    viewingKey: string
    *    maxBatchSize: number
    * }} args, Block, the UFVK - unified full viewing key, and max batch size.
-   * @returns {Observable<Partial<ZcashPrivateInfo>>} the current synced shielded context.
+   * @returns {Observable<ShieldedSyncResult>} the current synced shielded context.
    */
-  syncShielded(args: SyncShieldedArgs): Observable<Partial<ZcashPrivateInfo>> {
+  syncShielded(args: SyncShieldedArgs): Observable<ShieldedSyncResult> {
     return new Observable((subscriber): TeardownLogic => {
       this._syncShieldedObsFunc(args)(subscriber).then(
         () => subscriber.complete(),
@@ -195,12 +190,13 @@ export class ZCash {
   }
 
   _syncShieldedObsFunc(args: SyncShieldedArgs) {
-    return async (subscriber: Subscriber<Partial<ZcashPrivateInfo>>) => {
+    return async (subscriber: Subscriber<ShieldedSyncResult>) => {
       const { startBlockHeight, viewingKey, maxBatchSize } = args;
-      const syncedShielded: Partial<ZcashPrivateInfo> = {
-        transactions: [],
-        syncState: "running",
+      const syncedShielded = {
+        processedBlocks: 0,
+        remainingBlocks: 0,
         lastProcessedBlock: startBlockHeight,
+        transactions: [] as ShieldedTransaction[],
       };
 
       // 0. validate args
@@ -250,17 +246,15 @@ export class ZCash {
         const shieldedTxs = await this.findShieldedTxsInBlock({ block, viewingKey });
 
         // 5. update syncedShielded's context: list of shielded transactions and counters
-        syncedShielded.transactions?.push(...shieldedTxs);
+        syncedShielded.transactions.push(...shieldedTxs);
+        syncedShielded.processedBlocks++;
+        syncedShielded.remainingBlocks = endBlockHeight - blockHeight;
         syncedShielded.lastProcessedBlock = block.height;
 
-        const processedBlockCount = blockHeight - startBlockHeight + 1;
-        const shouldEmit =
-          processedBlockCount % maxBatchSize === 0 || blockHeight === endBlockHeight;
-
-        if (shouldEmit) {
+        if (!(syncedShielded.processedBlocks % maxBatchSize) || blockHeight === endBlockHeight) {
           subscriber.next({
             ...syncedShielded,
-            transactions: [...(syncedShielded.transactions ?? [])],
+            transactions: [...syncedShielded.transactions],
           });
         }
       }

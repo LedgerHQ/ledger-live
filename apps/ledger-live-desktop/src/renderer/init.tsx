@@ -38,9 +38,11 @@ import { lock, setOSDarkMode } from "~/renderer/actions/application";
 import {
   languageSelector,
   sentryLogsSelector,
+  trackingEnabledSelector,
   hideEmptyTokenAccountsSelector,
   filterTokenOperationsZeroAmountSelector,
 } from "~/renderer/reducers/settings";
+import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
 import ReactRoot from "~/renderer/ReactRoot";
 import AppError from "~/renderer/AppError";
 import { expectOperatingSystemSupportStatus } from "~/support/os";
@@ -55,6 +57,7 @@ import { setupRecentAddressesStore } from "./recentAddresses";
 import { startAnalytics } from "./analytics/segment";
 import { initIdentities } from "~/renderer/helpers/identities";
 import { setAllOverrides, setBannerVisible } from "@shared/feature-flags";
+import { initHistory } from "~/renderer/reducers/history";
 
 const rootNode = document.getElementById("react-root");
 
@@ -173,6 +176,8 @@ async function init() {
   const initialSettings = (await getKey("app", "settings")) || {};
   startAnalytics(store);
 
+  liveBlindSigningReporter.setConsentSource(() => trackingEnabledSelector(store.getState()));
+
   // Build settings to load, ensuring hasCompletedOnboarding is false after a hard reset
   const settingsToLoad = { ...initialSettings };
   if (wasHardReset) {
@@ -244,6 +249,11 @@ async function init() {
     ) {
       store.dispatch(setBannerVisible(initialSettings["featureFlagsButtonVisible"]));
     }
+  }
+
+  const historyState = await getKey("app", "history");
+  if (historyState) {
+    store.dispatch(initHistory(historyState));
   }
 
   const initialCountervalues = await getKey("app", "countervalues");

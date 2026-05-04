@@ -72,7 +72,7 @@ export const AssetListItem = ({
       data-testid={`asset-item-ticker-${ticker.toLowerCase()}`}
     >
       <ListItemLeading>
-        <CryptoIcon size="48px" ledgerId={id} ticker={ticker} />
+        <CryptoIcon size={48} ledgerId={id} ticker={ticker} />
         <ListItemContent>
           <ListItemTitle>{name}</ListItemTitle>
           <ListItemDescription className="flex gap-6">

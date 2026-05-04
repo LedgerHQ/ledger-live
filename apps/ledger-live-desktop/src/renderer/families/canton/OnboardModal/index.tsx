@@ -10,7 +10,8 @@ import type { UserProps, StepProps, StepId } from "./types";
 import { StepId as StepIdEnum } from "./types";
 export type { UserProps } from "./types";
 
-function OnboardModalView(viewModel: ReturnType<typeof useOnboardModalViewModel>) {
+export default function OnboardModal(props: UserProps) {
+  const viewModel = useOnboardModalViewModel(props);
   const {
     device,
     currency,
@@ -26,13 +27,11 @@ function OnboardModalView(viewModel: ReturnType<typeof useOnboardModalViewModel>
     isReonboarding,
     transitionTo,
     onAddAccounts,
-    onAddMore,
     onOnboardAccount,
     onRetryOnboardAccount,
   } = viewModel;
 
   invariant(device, "device is required");
-  invariant(currency, "currency is required");
   invariant(creatableAccount, "creatableAccount is required");
 
   const steps: Step<StepId, StepProps>[] = useMemo(
@@ -73,7 +72,6 @@ function OnboardModalView(viewModel: ReturnType<typeof useOnboardModalViewModel>
     error,
     isReonboarding,
     onAddAccounts,
-    onAddMore,
     onOnboardAccount,
     onRetryOnboardAccount,
   };
@@ -104,8 +102,4 @@ function OnboardModalView(viewModel: ReturnType<typeof useOnboardModalViewModel>
       )}
     />
   );
-}
-
-export default function OnboardModal(props: UserProps) {
-  return <OnboardModalView {...useOnboardModalViewModel(props)} />;
 }

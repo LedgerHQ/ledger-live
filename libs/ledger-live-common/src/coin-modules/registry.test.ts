@@ -17,6 +17,7 @@ import {
   loadIsEditableOperationForFamily,
   loadIsStuckOperationForFamily,
   loadGetStuckAccountAndOperationForFamily,
+  loadSignerForFamily,
 } from "./registry";
 import type { CoinModuleLoader, FamilySetup, TransactionModule } from "./types";
 
@@ -63,6 +64,7 @@ const allLoaders: LoaderEntry[] = [
   { loaderKey: "loadIsEditableOperation", fn: loadIsEditableOperationForFamily },
   { loaderKey: "loadIsStuckOperation", fn: loadIsStuckOperationForFamily },
   { loaderKey: "loadGetStuckAccountAndOperation", fn: loadGetStuckAccountAndOperationForFamily },
+  { loaderKey: "loadSigner", fn: loadSignerForFamily },
 ];
 
 describe.each(allLoaders)("$fn.name", ({ loaderKey, fn, required }) => {

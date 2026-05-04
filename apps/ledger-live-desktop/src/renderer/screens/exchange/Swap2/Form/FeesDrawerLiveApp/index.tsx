@@ -1,5 +1,5 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { Button, Divider, Flex } from "@ledgerhq/react-ui";
@@ -47,7 +47,7 @@ export default function FeesDrawerLiveApp({
   const mainAccount = getMainAccount(account, parentAccount);
   const isPreparingRef = useRef(false);
 
-  const bridge = getAccountBridge(mainAccount, parentAccount);
+  const bridge = useAccountBridge<Transaction>(mainAccount, parentAccount);
   const { amount: amountError, gasPrice: gasPriceError } = transactionStatus.errors;
 
   const handleSetTransaction = useCallback(

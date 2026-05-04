@@ -22,6 +22,18 @@ import { deepMergeCryptoAssets } from "../utils/deepMergeCryptoAssets";
 
 const ALLOWED_DADA_HOSTS = new Set(["dada.api.ledger.com", "dada.api.ledger-test.com"]);
 
+type SettledResult<T> = { status: "fulfilled"; value: T } | { status: "rejected"; reason: unknown };
+
+function allSettled<T>(promises: Promise<T>[]): Promise<SettledResult<T>[]> {
+  return Promise.all(
+    promises.map(p =>
+      p
+        .then(value => ({ status: "fulfilled" as const, value }))
+        .catch(reason => ({ status: "rejected" as const, reason })),
+    ),
+  );
+}
+
 function assertDadaApiUrl(url: URL): void {
   if (!ALLOWED_DADA_HOSTS.has(url.hostname)) {
     throw new Error(`Blocked request to untrusted host: ${url.hostname}`);
@@ -211,7 +223,7 @@ export const assetsDataApi = createApi({
             return { data: emptyAssetsData() };
           }
 
-          const results = await Promise.allSettled(
+          const results = await allSettled(
             chunks.map(chunkIds =>
               fetchAssetsPage(baseUrl, { ...queryArg, currencyIds: chunkIds }),
             ),
@@ -220,13 +232,12 @@ export const assetsDataApi = createApi({
           const responses = results.flatMap(r => (r.status === "fulfilled" ? [r.value] : []));
 
           if (responses.length === 0) {
-            const firstError = results.find(
-              (r): r is PromiseRejectedResult => r.status === "rejected",
-            );
+            const firstError = results.find(r => r.status === "rejected");
+            const reason = firstError?.status === "rejected" ? firstError.reason : undefined;
             return {
               error: {
                 status: "FETCH_ERROR",
-                error: firstError?.reason?.message ?? "All DADA chunks failed",
+                error: reason instanceof Error ? reason.message : "All DADA chunks failed",
               },
             };
           }

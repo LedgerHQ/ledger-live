@@ -38,24 +38,50 @@ describe("broadcast", () => {
     it("should not call executeTransactionBlock if format is not hex", async () => {
       const mockTransaction = "000g1234567890abcdef";
 
-      const result = await broadcast(mockTransaction);
-
-      expect(result).toBe("");
+      await expect(broadcast(mockTransaction)).rejects.toThrow(
+        "sui: invalid serialized transaction payload for broadcast",
+      );
       expect(suiAPI.executeTransactionBlock).toHaveBeenCalledTimes(0);
     });
 
     it("should not call executeTransactionBlock if format is incorrect", async () => {
       const mockTransaction = "000a1";
 
-      const result = await broadcast(mockTransaction);
-
-      expect(result).toBe("");
+      await expect(broadcast(mockTransaction)).rejects.toThrow(
+        "sui: invalid serialized transaction payload for broadcast",
+      );
       expect(suiAPI.executeTransactionBlock).toHaveBeenCalledTimes(0);
     });
   });
 
   describe("with ExecuteTransactionBlockParams input", () => {
-    it("should directly use provided params", async () => {
+    it("should forward params with showEffects forced so execution status is always available", async () => {
+      const mockParams = {
+        transactionBlock: "test-block",
+        signature: "test-signature",
+        options: {
+          showInput: true,
+          showEffects: false,
+        },
+      };
+
+      const result = await broadcast(mockParams);
+
+      expect(result).toBe("test-digest");
+      expect(suiAPI.executeTransactionBlock).toHaveBeenCalledWith(
+        {
+          transactionBlock: "test-block",
+          signature: "test-signature",
+          options: {
+            showInput: true,
+            showEffects: true,
+          },
+        },
+        undefined,
+      );
+    });
+
+    it("should throw when executeTransactionBlock returns no digest", async () => {
       const mockParams = {
         transactionBlock: "test-block",
         signature: "test-signature",
@@ -64,10 +90,38 @@ describe("broadcast", () => {
         },
       };
 
-      const result = await broadcast(mockParams);
+      jest.mocked(suiAPI.executeTransactionBlock).mockResolvedValueOnce(
+        // @ts-expect-error digest omitted on purpose (LIVE-27548 empty-response guard)
+        {},
+      );
 
-      expect(result).toBe("test-digest");
-      expect(suiAPI.executeTransactionBlock).toHaveBeenCalledWith(mockParams, undefined);
+      await expect(broadcast(mockParams)).rejects.toThrow(
+        "sui: broadcast returned no transaction digest",
+      );
+    });
+
+    it("should throw when RPC returns digest but execution status is failure", async () => {
+      const mockParams = {
+        transactionBlock: "test-block",
+        signature: "test-signature",
+        options: {
+          showEffects: true,
+        },
+      };
+
+      jest.mocked(suiAPI.executeTransactionBlock).mockResolvedValueOnce({
+        digest: "4fwBGMM9Nfc8rbiGfcn7469cvrqetYgik6pLiVCYg4Ud",
+        effects: {
+          status: {
+            status: "failure",
+            error: "InsufficientCoinBalance in command 0",
+          },
+        },
+      } as Awaited<ReturnType<typeof suiAPI.executeTransactionBlock>>);
+
+      await expect(broadcast(mockParams)).rejects.toThrow(
+        "sui: broadcast execution failed: InsufficientCoinBalance in command 0",
+      );
     });
   });
 });

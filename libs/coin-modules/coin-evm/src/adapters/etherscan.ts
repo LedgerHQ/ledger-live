@@ -28,6 +28,7 @@ import {
   EtherscanInternalTransaction,
 } from "../types";
 import { buildSmartContractDetails, safeEncodeEIP55 } from "../utils";
+import { NON_VALUE_TRANSFER_CALL_TYPES } from "./nonValueTransferCallTypes";
 
 /**
  * Helper to safely convert a value to BigNumber, defaulting to 0 if invalid.
@@ -274,6 +275,18 @@ export const etherscanERC1155EventToOperations = (
 };
 
 /**
+ * `delegatecall`/`staticcall`/`callcode` cannot move native ETH, but both Blockscout and
+ * Etherscan still report a non-zero `value` on those entries (it's the `msg.value` inherited
+ * from the enclosing frame). Blockscout exposes the discriminator via `callType`, Etherscan
+ * folds it into `type` — this helper hides that quirk from both call sites.
+ */
+function isNonValueTransferInternalTx(
+  it: Pick<EtherscanInternalTransaction, "callType" | "type">,
+): boolean {
+  return NON_VALUE_TRANSFER_CALL_TYPES.has((it.callType || it.type || "").toLowerCase());
+}
+
+/**
  * Adapter to convert an internal transaction
  * on etherscan APIs into LL Operations
  */
@@ -282,6 +295,9 @@ export const etherscanInternalTransactionToOperations = (
   internalTx: EtherscanInternalTransaction,
   index = 0,
 ): Operation[] => {
+  // Phantom IN/OUT guard; `isInternalTransactionValid` applies the same filter on the `getBlock` path.
+  if (isNonValueTransferInternalTx(internalTx)) return [];
+
   const { hash, blockNumber, isError } = internalTx;
   const { xpubOrAddress: address } = decodeAccountId(accountId);
 
@@ -321,13 +337,28 @@ export const etherscanInternalTransactionToOperations = (
 
 const NATIVE_ASSET = { type: "native" } as const;
 
+/**
+ * Validates an internal tx for the `getBlock` path. The same non-value-transferring filter
+ * is also applied at the entrypoint of `etherscanInternalTransactionToOperations`
+ * (the `listOperations` path) — see `isNonValueTransferInternalTx`.
+ */
 function isInternalTransactionValid(it: EtherscanInternalTransaction): boolean {
-  return it.isError === "0" && BigInt(it.value) > 0n && !!it.from && !!it.to;
+  if (it.isError !== "0") return false;
+  if (BigInt(it.value) <= 0n) return false;
+  if (!it.from || !it.to) return false;
+  if (isNonValueTransferInternalTx(it)) return false;
+  return true;
 }
 
 /**
  * Converts valid internal transactions to BlockOperations grouped by transaction hash.
- * Skips internal txs with isError === "1" or value === "0".
+ * Skips internal txs that:
+ *   - failed (`isError === "1"`) or report a non-positive `value`;
+ *   - are missing `from` or `to`;
+ *   - have a `callType` (Blockscout) or `type` (Etherscan) in
+ *     `NON_VALUE_TRANSFER_CALL_TYPES` — those opcodes (`delegatecall`,
+ *     `staticcall`, `callcode`) inherit `msg.value` from their enclosing frame
+ *     but cannot move native ETH.
  */
 export function internalTxsToOperationsByHash(
   internalTxs: EtherscanInternalTransaction[],

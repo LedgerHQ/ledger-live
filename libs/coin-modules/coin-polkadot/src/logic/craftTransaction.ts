@@ -34,7 +34,7 @@ export type CreateExtrinsicArg = {
 type ExtrinsicParams = {
   name: PalletMethodName;
   pallet: "staking" | "balances";
-  args: Record<string, string | string[] | number | null | undefined>;
+  args: Record<string, string | string[] | number | null | undefined | boolean>;
 };
 
 const getExtrinsicParams = ({
@@ -53,10 +53,10 @@ const getExtrinsicParams = ({
       // Construct a balance transfer transaction offline.
       return {
         pallet: "balances",
-        name: useAllAmount ? "transferAllowDeath" : "transferKeepAlive",
+        name: useAllAmount ? "transferAll" : "transferKeepAlive",
         args: {
           dest: recipient,
-          value: amount.toString(),
+          ...(useAllAmount ? { keepAlive: false } : { value: amount.toString() }),
         },
       };
 

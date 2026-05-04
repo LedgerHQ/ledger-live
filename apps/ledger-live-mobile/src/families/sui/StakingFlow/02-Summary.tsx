@@ -1,9 +1,9 @@
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useLedgerFirstShuffledValidatorsSui } from "@ledgerhq/live-common/families/sui/react";
-import { SuiValidator } from "@ledgerhq/live-common/families/sui/types";
+import { SuiValidator, Transaction as SuiTransaction } from "@ledgerhq/live-common/families/sui/types";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Text, Icons } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
@@ -45,7 +45,7 @@ export default function StakingSummary({ navigation, route }: Props) {
   const validators = useLedgerFirstShuffledValidatorsSui("");
   const chosenValidator = validator || validators[0];
   const mainAccount = getMainAccount(account, parentAccount);
-  const bridge = getAccountBridge(account, undefined);
+  const bridge = useAccountBridge<SuiTransaction>(account, undefined);
 
   const { transaction, updateTransaction, setTransaction, status, bridgePending, bridgeError } =
     useBridgeTransaction(() => {

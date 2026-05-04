@@ -101,6 +101,7 @@ export function AnalyticsConsentDrawerView(props: AnalyticsConsentDrawerViewProp
             type="drawer"
             phase={phase}
             refreshSource={false}
+            mandatory
           />
           {sheetChrome}
         </>

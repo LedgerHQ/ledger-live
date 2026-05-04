@@ -8,7 +8,7 @@ import { useDispatch } from "~/context/hooks";
 import useExportLogs from "~/components/useExportLogs";
 import { urls } from "~/utils/urls";
 import { track } from "~/analytics";
-import { ScreenName } from "~/const";
+import { MY_WALLET_HELP_TRACKING_PAGE_NAME } from "../../constants";
 
 export function useMyWalletHelpViewModel() {
   const chatbotSupportFeature = useFeature("llmChatbotSupport");
@@ -25,27 +25,27 @@ export function useMyWalletHelpViewModel() {
   const [isClearCacheDrawerOpen, setIsClearCacheDrawerOpen] = useState(false);
 
   const onLedgerSupportPress = useCallback(() => {
-    track("button_clicked", { button: "LedgerSupport", page: ScreenName.MyWalletHelp });
+    track("button_clicked", { button: "LedgerSupport", page: MY_WALLET_HELP_TRACKING_PAGE_NAME });
     Linking.openURL(isChatbotEnabled ? localizedChatbotUrl : localizedFaqUrl);
   }, [isChatbotEnabled, localizedChatbotUrl, localizedFaqUrl]);
 
   const onLedgerAcademyPress = useCallback(() => {
-    track("button_clicked", { button: "LedgerAcademy", page: ScreenName.MyWalletHelp });
+    track("button_clicked", { button: "LedgerAcademy", page: MY_WALLET_HELP_TRACKING_PAGE_NAME });
     Linking.openURL(localizedAcademyUrl);
   }, [localizedAcademyUrl]);
 
   const onSaveLogsPress = useCallback(() => {
-    track("button_clicked", { button: "SaveLogs", page: ScreenName.MyWalletHelp });
+    track("button_clicked", { button: "SaveLogs", page: MY_WALLET_HELP_TRACKING_PAGE_NAME });
     exportLogs();
   }, [exportLogs]);
 
   const onLedgerStatusPress = useCallback(() => {
-    track("button_clicked", { button: "LedgerStatus", page: ScreenName.MyWalletHelp });
+    track("button_clicked", { button: "LedgerStatus", page: MY_WALLET_HELP_TRACKING_PAGE_NAME });
     Linking.openURL(urls.resources.status);
   }, []);
 
   const onClearCachePress = useCallback(() => {
-    track("button_clicked", { button: "ClearCache", page: ScreenName.MyWalletHelp });
+    track("button_clicked", { button: "ClearCache", page: MY_WALLET_HELP_TRACKING_PAGE_NAME });
     setIsClearCacheDrawerOpen(true);
   }, []);
 
