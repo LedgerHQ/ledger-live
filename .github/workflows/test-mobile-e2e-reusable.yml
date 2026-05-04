@@ -869,6 +869,7 @@ jobs:
           allure-results-path: ios-test-artifacts
           platform: iOS
       - name: Aggregate test results
+        if: ${{ !cancelled() }}
         id: aggregate
         uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@develop
         with:
@@ -886,7 +887,7 @@ jobs:
           status_11: ${{ needs.detox-tests-ios.outputs.status_11 }}
           status_12: ${{ needs.detox-tests-ios.outputs.status_12 }}
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-        if: ${{ github.event_name == 'schedule' || inputs.generate_ai_artifacts == true }}
+        if: ${{ !cancelled() && (github.event_name == 'schedule' || inputs.generate_ai_artifacts == true) }}
         with:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
@@ -894,13 +895,13 @@ jobs:
           sparse-checkout: e2e/mobile/scripts
           path: repo
       - name: Build iOS AI artifact
-        if: ${{ github.event_name == 'schedule' || inputs.generate_ai_artifacts == true }}
+        if: ${{ !cancelled() && (github.event_name == 'schedule' || inputs.generate_ai_artifacts == true) }}
         env:
           ARTIFACTS: ios-test-artifacts
           OUT: ios-ai
         run: bash repo/e2e/mobile/scripts/build-ai-artifact.sh
       - name: Upload iOS AI artifact
-        if: ${{ github.event_name == 'schedule' || inputs.generate_ai_artifacts == true }}
+        if: ${{ !cancelled() && (github.event_name == 'schedule' || inputs.generate_ai_artifacts == true) }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: ios-ai-analysis
@@ -941,6 +942,7 @@ jobs:
           allure-results-path: android-test-artifacts
           platform: android
       - name: Aggregate test results
+        if: ${{ !cancelled() }}
         id: aggregate
         uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@develop
         with:
@@ -958,7 +960,7 @@ jobs:
           status_11: ${{ needs.detox-tests-android.outputs.status_11 }}
           status_12: ${{ needs.detox-tests-android.outputs.status_12 }}
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-        if: ${{ github.event_name == 'schedule' || inputs.generate_ai_artifacts == true }}
+        if: ${{ !cancelled() && (github.event_name == 'schedule' || inputs.generate_ai_artifacts == true) }}
         with:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
@@ -966,13 +968,13 @@ jobs:
           sparse-checkout: e2e/mobile/scripts
           path: repo
       - name: Build Android AI artifact
-        if: ${{ github.event_name == 'schedule' || inputs.generate_ai_artifacts == true }}
+        if: ${{ !cancelled() && (github.event_name == 'schedule' || inputs.generate_ai_artifacts == true) }}
         env:
           ARTIFACTS: android-test-artifacts
           OUT: android-ai
         run: bash repo/e2e/mobile/scripts/build-ai-artifact.sh
       - name: Upload Android AI artifact
-        if: ${{ github.event_name == 'schedule' || inputs.generate_ai_artifacts == true }}
+        if: ${{ !cancelled() && (github.event_name == 'schedule' || inputs.generate_ai_artifacts == true) }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: android-ai-analysis
@@ -1049,7 +1051,7 @@ jobs:
     name: "Test Mobile E2E > Slack Report"
     runs-on: ubuntu-22.04
     needs: [allure-report-android, allure-report-ios]
-    if: ${{ !cancelled() && (needs.allure-report-ios.outputs.report-url || needs.allure-report-android.outputs.report-url) }}
+    if: ${{ !cancelled() && (needs.allure-report-ios.outputs.finalStatus || needs.allure-report-android.outputs.finalStatus) }}
     env:
       IOS_STATUS: ${{ needs.allure-report-ios.outputs.finalStatus }}
       IOS_REPORT_URL: ${{ needs.allure-report-ios.outputs.report-url }}
