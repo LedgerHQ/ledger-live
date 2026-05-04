@@ -118,6 +118,36 @@
       "description": "Global npm minimum release age",
       "matchDatasources": ["npm"],
       "minimumReleaseAge": "2 days"
+    },
+    {
+      "description": "E2E Playwright and Allure linked updates",
+      "matchManagers": ["npm"],
+      "groupName": "e2e playwright and allure",
+      "matchPackageNames": [
+        "@playwright/test",
+        "playwright",
+        "allure-js-commons",
+        "allure-playwright",
+        "allure-commandline"
+      ],
+      "commitMessagePrefix": "chore(e2e):",
+      "labels": ["dependencies", "e2e"],
+      "reviewers": ["team:qaa"],
+      "assignees": ["team:qaa"]
+    },
+    {
+      "description": "E2E Detox and Allure linked updates",
+      "matchManagers": ["npm"],
+      "groupName": "e2e detox and allure",
+      "matchPackageNames": [
+        "detox",
+        "detox-allure2-adapter",
+        "jest-allure2-reporter"
+      ],
+      "commitMessagePrefix": "chore(e2e):",
+      "labels": ["dependencies", "e2e"],
+      "reviewers": ["team:qaa"],
+      "assignees": ["team:qaa"]
     }
   ],
   "prConcurrentLimit": 10,

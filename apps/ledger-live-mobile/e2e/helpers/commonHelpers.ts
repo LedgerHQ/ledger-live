@@ -38,7 +38,7 @@ export async function launchApp() {
     launchArgs: {
       wsPort: port,
       detoxURLBlacklistRegex:
-        '\\(".*sdk.*.braze.*",".*.googleapis.com/.*",".*clients3.google.com.*",".*tron.coin.ledger.com/wallet/getBrokerage.*"\\)',
+        '\\(".*sdk.*.braze.*",".*.googleapis.com/.*",".*clients3.google.com.*",".*optimism.*",".*tron.coin.ledger.com/wallet/getBrokerage.*"\\)',
       mock: getEnv("MOCK") ? getEnv("MOCK") : "1",
       IS_TEST: true,
     },

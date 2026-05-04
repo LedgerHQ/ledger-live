@@ -20,7 +20,7 @@ jest.mock("@ledgerhq/ledger-wallet-framework/currencies/support", () => ({
 }));
 
 describe("prepareSignTransaction", () => {
-  it("returns a Transaction for platform", () => {
+  it("returns a Transaction for platform", async () => {
     // Given
     const parentAccount = createAccount("12");
     const childAccount = createTokenAccount("22", "js:2:ethereum:0x012:");
@@ -46,7 +46,7 @@ describe("prepareSignTransaction", () => {
     // When
     const tx = createPlatformTransaction();
 
-    const { liveTx } = getPlatformTransactionSignFlowInfos(tx);
+    const { liveTx } = await getPlatformTransactionSignFlowInfos(tx);
 
     const result = prepareSignTransaction(childAccount, parentAccount, liveTx);
 
@@ -54,7 +54,7 @@ describe("prepareSignTransaction", () => {
     expect(result).toEqual(expectedResult);
   });
 
-  it("returns a Transaction for wallet-api", () => {
+  it("returns a Transaction for wallet-api", async () => {
     // Given
     const parentAccount = createAccount("12");
     const childAccount = createTokenAccount("22", "js:2:ethereum:0x012:");
@@ -80,7 +80,7 @@ describe("prepareSignTransaction", () => {
     // When
     const tx = createWalletAPITransaction();
 
-    const { liveTx } = getWalletAPITransactionSignFlowInfos({
+    const { liveTx } = await getWalletAPITransactionSignFlowInfos({
       walletApiTransaction: tx,
       account: childAccount,
     });

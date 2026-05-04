@@ -4,12 +4,17 @@ import type {
   CoinModuleLoader,
   DeviceTransactionConfigFn,
   FamilySetup,
+  GetStuckAccountAndOperationFn,
+  IsEditableOperationFn,
+  IsStuckOperationFn,
   MockAccountModule,
   MockBridgeModule,
   PlatformAdapterModule,
   TransactionModule,
+  ValidateAddressFn,
   WalletApiAdapterModule,
 } from "./types";
+import type { Account } from "@ledgerhq/types-live";
 
 const loaders = new Map<string, CoinModuleLoader>();
 
@@ -27,6 +32,15 @@ export function getRegisteredFamilies(): string[] {
   return [...loaders.keys()];
 }
 
+/**
+ * Loads the family setup (message signer, etc.) for the given coin family.
+ *
+ * @remarks
+ * This function is currently synchronous but will become `async` in a future
+ * migration step (part of the async loader series — LIVE-28411).
+ * Callers should already `await` this call so that no further changes are
+ * needed once the function signature is updated.
+ */
 export const loadSetupForFamily = (family: string): FamilySetup =>
   getLoader(family).loadSetup();
 
@@ -37,10 +51,28 @@ export const loadDeviceTxConfigForFamily = (
   family: string,
 ): DeviceTransactionConfigFn | undefined => loaders.get(family)?.loadDeviceTxConfig?.();
 
+/**
+ * Loads the Wallet API adapter module for the given coin family.
+ *
+ * @remarks
+ * This function is currently synchronous but will become `async` in a future
+ * migration step (part of the async loader series — LIVE-28411).
+ * Callers should already `await` this call so that no further changes are
+ * needed once the function signature is updated.
+ */
 export const loadWalletApiAdapterForFamily = (
   family: string,
 ): WalletApiAdapterModule | undefined => loaders.get(family)?.loadWalletApiAdapter?.();
 
+/**
+ * Loads the platform adapter module for the given coin family.
+ *
+ * @remarks
+ * This function is currently synchronous but will become `async` in a future
+ * migration step (part of the async loader series — LIVE-28411).
+ * Callers should already `await` this call so that no further changes are
+ * needed once the function signature is updated.
+ */
 export const loadPlatformAdapterForFamily = (
   family: string,
 ): PlatformAdapterModule | undefined => loaders.get(family)?.loadPlatformAdapter?.();
@@ -53,3 +85,31 @@ export const loadMockBridgeForFamily = (family: string): MockBridgeModule | unde
 
 export const loadMockAccountForFamily = (family: string): MockAccountModule | undefined =>
   loaders.get(family)?.loadMockAccount?.();
+
+export const loadIsAccountEmptyForFamily = (
+  family: string,
+): ((account: Account) => boolean) | undefined => loaders.get(family)?.loadIsAccountEmpty?.();
+
+export const loadGetVotesCountForFamily = (
+  family: string,
+): ((account: Account) => number) | undefined => loaders.get(family)?.loadGetVotesCount?.();
+
+export const loadClearAccountForFamily = (
+  family: string,
+): ((account: Account) => void) | undefined => loaders.get(family)?.loadClearAccount?.();
+
+export const loadValidateAddressForFamily = (family: string): ValidateAddressFn | undefined =>
+  loaders.get(family)?.loadValidateAddress?.();
+
+export const loadIsEditableOperationForFamily = (
+  family: string,
+): IsEditableOperationFn | undefined => loaders.get(family)?.loadIsEditableOperation?.();
+
+export const loadIsStuckOperationForFamily = (
+  family: string,
+): IsStuckOperationFn | undefined => loaders.get(family)?.loadIsStuckOperation?.();
+
+export const loadGetStuckAccountAndOperationForFamily = (
+  family: string,
+): GetStuckAccountAndOperationFn | undefined =>
+  loaders.get(family)?.loadGetStuckAccountAndOperation?.();

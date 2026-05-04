@@ -1,5 +1,21 @@
 # @ledgerhq/psbtv2
 
+## 0.5.0
+
+### Minor Changes
+
+- [#16402](https://github.com/LedgerHQ/ledger-live/pull/16402) [`b7cdf0e`](https://github.com/LedgerHQ/ledger-live/commit/b7cdf0e7c6faca170af3bfed9042165c74517ae4) Thanks [@Justkant](https://github.com/Justkant)! - chore: update bitcoinjs-lib and bip32 dependencies across multiple packages
+
+  This is helpful for the wallet-cli and bun usage to avoid some of the native bindings that would come with tiny-secp
+
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#16402](https://github.com/LedgerHQ/ledger-live/pull/16402) [`b7cdf0e`](https://github.com/LedgerHQ/ledger-live/commit/b7cdf0e7c6faca170af3bfed9042165c74517ae4) Thanks [@Justkant](https://github.com/Justkant)! - chore: update bitcoinjs-lib and bip32 dependencies across multiple packages
+
+  This is helpful for the wallet-cli and bun usage to avoid some of the native bindings that would come with tiny-secp
+
 ## 0.4.0
 
 ### Minor Changes

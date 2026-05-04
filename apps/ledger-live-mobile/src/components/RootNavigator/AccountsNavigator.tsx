@@ -78,22 +78,6 @@ function handleAccountsCryptoBackPress(
   nav.goBack();
 }
 
-function AccountsCryptoNavBarLeading() {
-  const navigation = useNavigation<NavType>();
-  const route = useRoute();
-  const onPress = useCallback(
-    (nav: NavType) => {
-      handleAccountsCryptoBackPress(nav, () => navigation.getState(), route.name);
-    },
-    [navigation, route.name],
-  );
-  return <NavigationHeaderBackButton onPress={onPress} />;
-}
-
-function renderAccountsCryptoNavBarLeading() {
-  return <AccountsCryptoNavBarLeading />;
-}
-
 export default function AccountsNavigator() {
   const { colors } = useTheme();
   const { theme: lumenTheme } = useLumenTheme();
@@ -121,9 +105,6 @@ export default function AccountsNavigator() {
     return {
       ...stackNavConfigV4Expanded,
       title: t("cryptoAddresses.title"),
-      lumenNavBar: {
-        renderLeading: renderAccountsCryptoNavBarLeading,
-      },
     };
   }, [stackNavConfigV4Expanded, t]);
 
@@ -138,31 +119,33 @@ export default function AccountsNavigator() {
         (cryptoRoute.params?.variant ?? "all") === "stablecoin"
           ? t("crypto.stablecoinTitle")
           : t("crypto.title"),
-      lumenNavBar: {
-        renderLeading: renderAccountsCryptoNavBarLeading,
-      },
     }),
     [stackNavConfigV4Expanded, t],
   );
 
   return (
-    <Stack.Navigator screenOptions={stackNavConfig}>
+    <Stack.Navigator>
       <Stack.Screen
         name={ScreenName.Accounts}
         component={readOnlyModeEnabled ? ReadOnlyAccounts : Accounts}
         options={{
+          ...stackNavConfig,
           headerShown: false,
         }}
       />
       <Stack.Screen
         name={ScreenName.Account}
         component={readOnlyModeEnabled ? ReadOnlyAccount : Account}
-        options={{ headerShown: false }}
+        options={{
+          ...stackNavConfig,
+          headerShown: false,
+        }}
       />
       <Stack.Screen
         name={ScreenName.Assets}
         component={readOnlyModeEnabled ? ReadOnlyAssets : Assets}
         options={{
+          ...stackNavConfig,
           headerShown: false,
         }}
       />
@@ -171,6 +154,7 @@ export default function AccountsNavigator() {
           name={ScreenName.AccountsList}
           component={AccountsList}
           options={{
+            ...stackNavConfig,
             headerTitle: "",
             headerLeft: () => <NavigationHeaderBackButton onPress={onPressBack} />,
             headerRight: () => <AccountsListHeaderRight />,
@@ -191,6 +175,7 @@ export default function AccountsNavigator() {
         name={ScreenName.Asset}
         component={readOnlyModeEnabled ? ReadOnlyAsset : Asset}
         options={{
+          ...stackNavConfig,
           headerShown: false,
         }}
       />

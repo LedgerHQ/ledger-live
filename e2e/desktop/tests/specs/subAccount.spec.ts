@@ -623,7 +623,6 @@ test.describe("Send token (subAccount) - e2e ", () => {
       await app.drawer.closeDrawer();
       if (process.env.DISABLE_TRANSACTION_BROADCAST !== "1") {
         await app.mainNavigation.openTargetFromMainNavigation("accounts");
-        await app.accounts.clickSyncBtnForAccount(getParentAccountName(tx.accountToCredit));
         await app.accounts.navigateToAccountByName(getParentAccountName(tx.accountToCredit));
         await app.account.navigateToTokenInAccount(tx.accountToDebit);
         await app.account.expectAccountBalance();

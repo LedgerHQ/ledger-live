@@ -23,9 +23,9 @@ export interface ERC20TokenAccount {
 export interface ERC20TokenTransfer {
   token_id: number;
   token_evm_address: string;
-  sender_evm_address: string;
+  sender_evm_address: string | null;
   sender_account_id: number | null;
-  receiver_evm_address: string;
+  receiver_evm_address: string | null;
   receiver_account_id: number | null;
   payer_account_id: number;
   amount: number;

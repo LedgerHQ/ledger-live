@@ -14,7 +14,6 @@ import type {
   TronOperation,
   TronOperationMode,
   TronResources,
-  TronTransactionInfo,
 } from "../types";
 
 const parentTx = [
@@ -231,13 +230,11 @@ export const defaultTronResources: TronResources = {
   unwithdrawnReward: new BigNumber(0),
   lastWithdrawnRewardDate: undefined,
   lastVotedDate: undefined,
-  cacheTransactionInfoById: {},
 };
 
 export async function getTronResources(
   acc: AccountInfo & { address: string },
   txs?: TrongridTxInfo[],
-  cacheTransactionInfoById: Record<string, TronTransactionInfo> = {},
 ): Promise<TronResources> {
   const encodedAddress = encode58Check(acc.address);
   const tronNetworkInfo = await getTronAccountNetwork(encodedAddress);
@@ -268,7 +265,6 @@ export async function getTronResources(
     bandwidth,
     unwithdrawnReward,
     lastVotedDate,
-    cacheTransactionInfoById,
   };
 }
 

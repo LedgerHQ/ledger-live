@@ -60,6 +60,7 @@ function getDefault() {
     syncPhase: "synced" as SyncPhase,
     isBalanceLoading: false,
     isColdStart: false,
+    isCvPending: false,
     allAccounts: [] as never[],
     listOfErrorAccountNames: "",
     areAllAccountsUpToDate: true,

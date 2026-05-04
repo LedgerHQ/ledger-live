@@ -9,16 +9,23 @@ import { track } from "~/analytics";
 import { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 import { useCurrencySettingsForAccount } from "LLM/hooks/useCurrencySettingsForAccount";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
+import { useMaybeAccountName } from "~/reducers/wallet";
 
 type Params = {
   operation: Operation;
   account: AccountLike;
   parentAccount: Account | undefined;
+  accountByAddress: Map<string, AccountLike>;
 };
 
 type AmountColorType = "base" | "success" | "warning";
 
-export function useOperationsListItemViewModel({ operation, account, parentAccount }: Params) {
+export function useOperationsListItemViewModel({
+  operation,
+  account,
+  parentAccount,
+  accountByAddress,
+}: Params) {
   const navigation = useNavigation<BaseNavigation>();
 
   const unit = useAccountUnit(account);
@@ -42,6 +49,11 @@ export function useOperationsListItemViewModel({ operation, account, parentAccou
     ? formatAddress(address, { prefixLength: 6, suffixLength: 4 })
     : "";
 
+  const counterpartyAccount = address ? accountByAddress.get(address) : undefined;
+  const counterpartyAccountName = useMaybeAccountName(counterpartyAccount);
+  // For send/receive: prefer the counterparty's account name, fall back to the raw address
+  const counterpartyLabel = counterpartyAccountName ?? formattedAddress;
+
   let amountColor: AmountColorType = "warning";
   if (isOutgoing) amountColor = "base";
   else if (isConfirmed) amountColor = "success";
@@ -55,12 +67,14 @@ export function useOperationsListItemViewModel({ operation, account, parentAccou
       key: operation.id,
     });
   }, [operation, account.id, parentAccount?.id, navigation]);
+  const accountName = useMaybeAccountName(account);
 
   return {
+    accountName,
+    counterpartyLabel,
     operationType,
     isOutgoing,
     isASendOrReceive,
-    formattedAddress,
     currency,
     unit,
     amount,

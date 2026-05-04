@@ -1,4 +1,4 @@
-import { fetchAllAssetsByCategory } from "../api";
+import { fetchAllAssetsByCategory, buildAssetsQueryParams } from "../api";
 import { AssetCategory } from "../types";
 import type { RawApiResponse } from "../../entities";
 import { getEnv } from "@ledgerhq/live-env";
@@ -52,6 +52,53 @@ const defaultArgs = {
   product: "lld" as const,
   version: "1.0.0",
 };
+
+const baseQueryArg = { product: "lld" as const, version: "1.0.0" };
+
+describe("buildAssetsQueryParams", () => {
+  it.each([
+    {
+      scenario: "standard IDs unchanged",
+      input: ["ethereum/erc20/usdc", "ton/jetton/some_address", "bitcoin"],
+      expected: ["ethereum/erc20/usdc", "ton/jetton/some_address", "bitcoin"],
+    },
+    {
+      scenario: "Stellar lowercased",
+      input: ["stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN"],
+      expected: ["stellar/asset/usdc:ga5zsejyb37jrc5avcia5mop4rhtm335x2kgx3ihojapp5re34k4kzvn"],
+    },
+    {
+      scenario: "MultiversX renamed to elrond",
+      input: ["multiversx/esdt/USDC-c76f1f"],
+      expected: ["elrond/esdt/USDC-c76f1f"],
+    },
+    {
+      scenario: "mixed array transformed independently",
+      input: [
+        "ethereum/erc20/usdc",
+        "stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
+        "multiversx/esdt/USDC-c76f1f",
+        "bitcoin",
+      ],
+      expected: [
+        "ethereum/erc20/usdc",
+        "stellar/asset/usdc:ga5zsejyb37jrc5avcia5mop4rhtm335x2kgx3ihojapp5re34k4kzvn",
+        "elrond/esdt/USDC-c76f1f",
+        "bitcoin",
+      ],
+    },
+  ])("should transform currencyIds: $scenario", ({ input, expected }) => {
+    const params = buildAssetsQueryParams({ ...baseQueryArg, currencyIds: input });
+    expect(params.currencyIds).toEqual(expected);
+  });
+
+  it("should omit currencyIds when empty or not provided", () => {
+    expect(
+      buildAssetsQueryParams({ ...baseQueryArg, currencyIds: [] }).currencyIds,
+    ).toBeUndefined();
+    expect(buildAssetsQueryParams(baseQueryArg).currencyIds).toBeUndefined();
+  });
+});
 
 describe("fetchAllAssetsByCategory", () => {
   afterEach(() => {

@@ -9,6 +9,7 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.CountervalueSettings]: undefined;
   [ScreenName.RegionSettings]: undefined;
   [ScreenName.GeneralSettings]: undefined;
+  [ScreenName.AnalyticsPreferencesSettings]: { initialTogglesOff?: boolean } | undefined;
   [ScreenName.AccountsSettings]: undefined;
   [ScreenName.AboutSettings]: undefined;
   [ScreenName.NotificationsSettings]: undefined;

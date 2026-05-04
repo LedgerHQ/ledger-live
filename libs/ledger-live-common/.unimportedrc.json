@@ -4,7 +4,7 @@
     "src/account/index.ts",
     "src/account/serialization.ts",
     "src/analytics/featureFlagHelpers/wallet40.ts",
-    "src/analyticsConsentUtils.ts",
+    "src/analyticsConsent/index.ts",
     "src/apps/filtering.ts",
     "src/apps/formatting.ts",
     "src/apps/hw.ts",
@@ -280,11 +280,11 @@
     "src/postOnboarding/actions.ts",
     "src/postOnboarding/hooks/index.ts",
     "src/postOnboarding/hooks/usePostOnboardingEntryPointVisibleOnWallet.ts",
+    "src/postOnboarding/hooks/usePostOnboardingPortfolioWidgetVisibility.ts",
     "src/postOnboarding/hooks/useStartPostOnboardingCallback.ts",
     "src/postOnboarding/logic/shouldRedirectToPostOnboardingOrRecoverUpsell.ts",
     "src/postOnboarding/PostOnboardingProvider.ts",
     "src/postOnboarding/reducer.ts",
-    "src/privacyConsent.ts",
     "src/promise.ts",
     "src/range.ts",
     "src/react.tsx",
@@ -329,7 +329,8 @@
     "src/cmc-client/index.ts",
     "src/cmc-client/__mocks__/fearAndGreed.mock.ts",
     "src/wallet-api/validation/validateUrl.ts",
-    "src/wallet-api/validation/validateInfoDialogParams.ts"
+    "src/wallet-api/validation/validateInfoDialogParams.ts",
+    "src/wallet-api/validation/actionDialogParams.ts"
   ],
   "extensions": [".ts", ".js", ".jsx", ".tsx"],
   "ignorePatterns": [
@@ -344,6 +345,7 @@
     "**/fixtures/**"
   ],
   "ignoreUnimported": [
+    "src/coin-modules/non-regression-entry.ts",
     "src/bridge/generic-alpaca/alpaca/local/canton.ts",
     "src/bridge/generic-alpaca/alpaca/local/evm.ts",
     "src/bridge/generic-alpaca/alpaca/local/solana.ts",
@@ -464,6 +466,8 @@
     "src/families/evm/descriptor/index.ts",
     "src/families/evm/descriptor/send/descriptor.ts",
     "src/families/evm/descriptor/send/fees.ts",
+    "src/families/evm/staking/logic.ts",
+    "src/families/evm/staking/types.ts",
     "src/families/evm/getTokenAllowance.ts",
     "src/families/evm/waitForConfirmation.ts",
     "src/families/filecoin/descriptor/index.ts",

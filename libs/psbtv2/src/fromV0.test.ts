@@ -1,5 +1,9 @@
-import { Psbt, payments, ECPair, networks } from "bitcoinjs-lib";
+import ecc from "@bitcoinerlab/secp256k1";
+import { Psbt, payments, networks } from "bitcoinjs-lib";
+import { ECPairFactory } from "ecpair";
 import { PsbtV2 } from "./psbtv2";
+
+const ECPair = ECPairFactory(ecc);
 
 describe("PsbtV2.fromV0", () => {
   describe("Basic Conversion", () => {
@@ -13,7 +17,6 @@ describe("PsbtV2.fromV0", () => {
         "hex",
       );
       psbtv0.addInput({
-        //@ts-expect-error TransactionInput interface is not declared correctly in bip174 lib
         hash: prevTxId,
         index: 0,
         witnessUtxo: {
@@ -58,7 +61,6 @@ describe("PsbtV2.fromV0", () => {
       psbtv0.setLocktime(500000);
 
       psbtv0.addInput({
-        //@ts-expect-error TransactionInput interface is not declared correctly in bip174 lib
         hash: Buffer.alloc(32, 0),
         index: 0,
         witnessUtxo: {
@@ -82,7 +84,6 @@ describe("PsbtV2.fromV0", () => {
       psbtv0.setVersion(1);
 
       psbtv0.addInput({
-        //@ts-expect-error TransactionInput interface is not declared correctly in bip174 lib
         hash: Buffer.alloc(32, 0),
         index: 0,
         witnessUtxo: {
@@ -105,7 +106,6 @@ describe("PsbtV2.fromV0", () => {
       const psbtv0 = new Psbt({ network: networks.testnet });
 
       psbtv0.addInput({
-        //@ts-expect-error TransactionInput interface is not declared correctly in bip174 lib
         hash: Buffer.alloc(32, 0),
         index: 0,
         witnessUtxo: {
@@ -134,7 +134,6 @@ describe("PsbtV2.fromV0", () => {
       // Add 3 inputs
       for (let i = 0; i < 3; i++) {
         psbtv0.addInput({
-          //@ts-expect-error TransactionInput interface is not declared correctly in bip174 lib
           hash: Buffer.alloc(32, i),
           index: i,
           witnessUtxo: {
@@ -166,7 +165,6 @@ describe("PsbtV2.fromV0", () => {
       const psbtv0 = new Psbt({ network: networks.testnet });
 
       psbtv0.addInput({
-        //@ts-expect-error TransactionInput interface is not declared correctly in bip174 lib
         hash: Buffer.alloc(32, 0),
         index: 0,
         witnessUtxo: {
@@ -199,7 +197,6 @@ describe("PsbtV2.fromV0", () => {
 
       const script = Buffer.from("0014" + "aa".repeat(20), "hex");
       psbtv0.addInput({
-        //@ts-expect-error TransactionInput interface is not declared correctly in bip174 lib
         hash: Buffer.alloc(32, 0),
         index: 0,
         witnessUtxo: {
@@ -240,7 +237,6 @@ describe("PsbtV2.fromV0", () => {
       );
 
       psbtv0.addInput({
-        //@ts-expect-error TransactionInput interface is not declared correctly in bip174 lib
         hash: Buffer.alloc(32, 1),
         index: 0,
         nonWitnessUtxo: prevTx,
@@ -266,7 +262,6 @@ describe("PsbtV2.fromV0", () => {
       const redeemScript = Buffer.from("0014" + "00".repeat(20), "hex");
 
       psbtv0.addInput({
-        //@ts-expect-error TransactionInput interface is not declared correctly in bip174 lib
         hash: Buffer.alloc(32, 0),
         index: 0,
         witnessUtxo: {
@@ -292,7 +287,6 @@ describe("PsbtV2.fromV0", () => {
       const psbtv0 = new Psbt({ network: networks.testnet });
 
       psbtv0.addInput({
-        //@ts-expect-error TransactionInput interface is not declared correctly in bip174 lib
         hash: Buffer.alloc(32, 0),
         index: 0,
         witnessUtxo: {
@@ -320,7 +314,6 @@ describe("PsbtV2.fromV0", () => {
       const masterFingerprint = Buffer.from("12345678", "hex");
 
       psbtv0.addInput({
-        //@ts-expect-error TransactionInput interface is not declared correctly in bip174 lib
         hash: Buffer.alloc(32, 0),
         index: 0,
         witnessUtxo: {
@@ -362,7 +355,6 @@ describe("PsbtV2.fromV0", () => {
       const masterFingerprint = Buffer.from("87654321", "hex");
 
       psbtv0.addInput({
-        //@ts-expect-error TransactionInput interface is not declared correctly in bip174 lib
         hash: Buffer.alloc(32, 0),
         index: 0,
         witnessUtxo: {
@@ -401,7 +393,6 @@ describe("PsbtV2.fromV0", () => {
       const psbtv0 = new Psbt({ network: networks.testnet });
 
       psbtv0.addInput({
-        //@ts-expect-error TransactionInput interface is not declared correctly in bip174 lib
         hash: Buffer.alloc(32, 0),
         index: 0,
         witnessUtxo: {
@@ -431,11 +422,14 @@ describe("PsbtV2.fromV0", () => {
 
       // Create a real keypair for signing
       const keyPair = ECPair.makeRandom({ network: networks.testnet });
-      const pubkey = keyPair.publicKey;
+      const pubkey = Buffer.from(keyPair.publicKey);
+      const signer = {
+        publicKey: pubkey,
+        sign: (hash: Buffer) => Buffer.from(keyPair.sign(hash)),
+      };
       const p2wpkh = payments.p2wpkh({ pubkey, network: networks.testnet });
 
       psbtv0.addInput({
-        //@ts-expect-error TransactionInput interface is not declared correctly in bip174 lib
         hash: Buffer.alloc(32, 0),
         index: 0,
         witnessUtxo: {
@@ -450,7 +444,7 @@ describe("PsbtV2.fromV0", () => {
       });
 
       // Actually sign the input
-      psbtv0.signInput(0, keyPair);
+      psbtv0.signInput(0, signer);
 
       const psbtv2 = PsbtV2.fromV0(psbtv0.toBuffer(), true);
 
@@ -468,7 +462,6 @@ describe("PsbtV2.fromV0", () => {
       const finalScriptSig = Buffer.from("47" + "00".repeat(71) + "21" + "00".repeat(33), "hex");
 
       psbtv0.addInput({
-        //@ts-expect-error TransactionInput interface is not declared correctly in bip174 lib
         hash: Buffer.alloc(32, 0),
         index: 0,
         nonWitnessUtxo: Buffer.from(
@@ -513,7 +506,6 @@ describe("PsbtV2.fromV0", () => {
       );
 
       psbtv0.addInput({
-        //@ts-expect-error TransactionInput interface is not declared correctly in bip174 lib
         hash: Buffer.alloc(32, 0),
         index: 0,
         witnessUtxo: {
@@ -541,7 +533,6 @@ describe("PsbtV2.fromV0", () => {
       const psbtv0 = new Psbt({ network: networks.testnet });
 
       psbtv0.addInput({
-        //@ts-expect-error TransactionInput interface is not declared correctly in bip174 lib
         hash: Buffer.from(
           "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef",
           "hex",

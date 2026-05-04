@@ -70,7 +70,18 @@ describe("useSideBarViewModel", () => {
       noAccounts: false,
       totalStarredAccounts: 0,
       active: "home",
+      isMyWalletEnabled: false,
     });
+  });
+
+  it("should expose My Wallet state when enabled", () => {
+    const { result } = renderViewModel(
+      withFeatureFlags({
+        lwdWallet40: { enabled: true, params: { myWallet: true } },
+      }),
+    );
+
+    expect(result.current.isMyWalletEnabled).toBe(true);
   });
 
   describe("collapse", () => {

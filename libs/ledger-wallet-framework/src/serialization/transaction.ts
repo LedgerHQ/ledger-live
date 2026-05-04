@@ -65,6 +65,7 @@ export const fromTransactionStatusRawCommon = (
   amount: new BigNumber(ts.amount),
   totalSpent: new BigNumber(ts.totalSpent),
   recipientIsReadOnly: ts.recipientIsReadOnly,
+  feeCurrencyAccountId: ts.feeCurrencyAccountId,
 });
 
 export const toTransactionStatusRawCommon = (
@@ -76,4 +77,5 @@ export const toTransactionStatusRawCommon = (
   amount: ts.amount.toString(),
   totalSpent: ts.totalSpent.toString(),
   recipientIsReadOnly: ts.recipientIsReadOnly,
+  feeCurrencyAccountId: ts.feeCurrencyAccountId,
 });

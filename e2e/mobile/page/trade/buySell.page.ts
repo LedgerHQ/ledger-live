@@ -220,7 +220,7 @@ export default class BuySellPage {
   async handleSellFlow(buySell: BuySell, paymentMethod: string, provider: BuySellProvider) {
     await this.expectSellScreenToBeVisible();
     await this.chooseAssetIfNotSelected(buySell.crypto);
-    await this.tapSellPercentageButton("50%");
+    await this.tapSellPercentageButton("75%");
     await this.chooseCountryIfNotSelected(buySell.fiat);
     await this.tapSeeQuotes();
     await this.selectPaymentMethod(paymentMethod);

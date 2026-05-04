@@ -21,10 +21,24 @@ export const initPostOnboarding: ActionCreator<{
   payload: { deviceModelId, actionsIds },
 });
 
+export const addPostOnboardingAction: ActionCreator<{
+  actionId: PostOnboardingActionId;
+}> = ({ actionId }) => ({
+  type: `${actionTypePrefix}ADD_ACTION`,
+  payload: { actionId },
+});
+
 export const setPostOnboardingActionCompleted: ActionCreator<{
   actionId: PostOnboardingActionId;
 }> = ({ actionId }) => ({
   type: `${actionTypePrefix}SET_ACTION_COMPLETED`,
+  payload: { actionId },
+});
+
+export const removePostOnboardingActionCompleted: ActionCreator<{
+  actionId: PostOnboardingActionId;
+}> = ({ actionId }) => ({
+  type: `${actionTypePrefix}REMOVE_ACTION_COMPLETED`,
   payload: { actionId },
 });
 

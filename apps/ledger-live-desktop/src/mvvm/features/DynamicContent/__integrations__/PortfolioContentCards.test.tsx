@@ -6,7 +6,6 @@ import { BottomCarouselContentCards } from "../components/BottomCarouselContentC
 import { ClassicCard, logCardDismissal, logContentCardClick } from "@braze/web-sdk";
 import { track } from "~/renderer/analytics/segment";
 import { LocationContentCard } from "~/types/dynamicContent";
-import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
 import { CONTENT_BANNER_ACTION_CARD_CLOSE_LABEL } from "../components/ContentBannerActionCard/types";
 
 let mockShouldDisplayBrazePlacement = false;
@@ -144,7 +143,7 @@ describe("PortfolioContentCards", () => {
           shareAnalytics: true,
           sharePersonalizedRecommandations: true,
           lastAnalyticsConsentDate: new Date().toISOString(),
-          privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+          privacyPolicyVersion: 1,
         },
       },
     });
@@ -256,7 +255,7 @@ describe("PortfolioContentCards", () => {
           shareAnalytics: true,
           sharePersonalizedRecommandations: true,
           lastAnalyticsConsentDate: new Date().toISOString(),
-          privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+          privacyPolicyVersion: 1,
         },
       },
     });
@@ -305,7 +304,7 @@ describe("PortfolioContentCards", () => {
           shareAnalytics: true,
           sharePersonalizedRecommandations: true,
           lastAnalyticsConsentDate: new Date().toISOString(),
-          privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+          privacyPolicyVersion: 1,
         },
       },
     });
@@ -328,7 +327,7 @@ describe("BottomCarouselContentCards", () => {
           shareAnalytics: true,
           sharePersonalizedRecommandations: true,
           lastAnalyticsConsentDate: new Date().toISOString(),
-          privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+          privacyPolicyVersion: 1,
         },
       },
     });

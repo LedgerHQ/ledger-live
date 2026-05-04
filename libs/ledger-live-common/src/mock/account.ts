@@ -121,7 +121,6 @@ export function genAccount(id: number | string, opts: GenAccountOptions = {}): A
             unwithdrawnReward: BigNumber(0),
             lastWithdrawnRewardDate: null,
             lastVotedDate: null,
-            cacheTransactionInfoById: {},
           };
           break;
         case "cardano":

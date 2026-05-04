@@ -1,8 +1,7 @@
 import { act, renderHook, waitFor } from "@tests/test-renderer";
+import subDays from "date-fns/subDays";
 import { NavigatorName, ScreenName } from "~/const";
 import { track, updateIdentify } from "~/analytics";
-import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
-import * as analyticsConsentUtils from "@ledgerhq/live-common/analyticsConsentUtils";
 import {
   ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
   ANALYTICS_CONSENT_DRAWER_FLOW,
@@ -10,11 +9,8 @@ import {
 } from "../hooks/useAnalyticsConsentDrawerViewModel";
 import { withConsentDrawerOpeningFresh, withConsentDrawerState } from "./helpers";
 
-const { needsConsentRenewal: realNeedsConsentRenewal } = jest.requireActual<
-  typeof import("@ledgerhq/live-common/analyticsConsentUtils")
->("@ledgerhq/live-common/analyticsConsentUtils");
-
-const YEAR_MS = 365 * 24 * 60 * 60 * 1000;
+/** Fixed clock so `needsConsentRenewal` / consent ISO strings are deterministic. */
+const FIXED_NOW = new Date("2024-01-15T12:00:00.000Z");
 
 const drawerEventPayload = {
   page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
@@ -31,31 +27,15 @@ jest.mock("@react-navigation/native", () => ({
 }));
 
 describe("useAnalyticsConsentDrawerViewModel", () => {
-  let needsConsentRenewalSpy: jest.SpiedFunction<typeof analyticsConsentUtils.needsConsentRenewal>;
-
-  /** When the third arg is omitted, use this value instead of production `CONSENT_RENEWAL_INTERVAL_MS`. */
-  function stubNeedsConsentRenewalDefaultInterval(renewalIntervalMsWhenOmitted: number | null) {
-    needsConsentRenewalSpy.mockImplementation((consentDateIso, now = Date.now(), interval) =>
-      realNeedsConsentRenewal(
-        consentDateIso,
-        now,
-        interval !== undefined ? interval : renewalIntervalMsWhenOmitted,
-      ),
-    );
-  }
-
-  beforeAll(() => {
-    needsConsentRenewalSpy = jest.spyOn(analyticsConsentUtils, "needsConsentRenewal");
-  });
-
-  afterAll(() => {
-    needsConsentRenewalSpy.mockRestore();
-  });
-
   beforeEach(() => {
+    jest.useFakeTimers();
+    jest.setSystemTime(FIXED_NOW);
     jest.clearAllMocks();
     mockUseIsFocused.mockReturnValue(true);
-    stubNeedsConsentRenewalDefaultInterval(null);
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
   });
 
   describe("when the drawer should stay closed", () => {
@@ -87,13 +67,14 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
     });
 
     it("should keep drawer closed when consent exists and time-based renewal is disabled (old consent date)", async () => {
-      const oldIso = new Date(Date.now() - YEAR_MS - 86_400_000).toISOString();
+      const oldIso = subDays(FIXED_NOW, 365).toISOString();
       const { result } = renderHook(() => useAnalyticsConsentDrawerViewModel(), {
         overrideInitialState: withConsentDrawerState({
           analyticsEnabled: false,
           personalizedRecommendationsEnabled: false,
-          privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+          privacyPolicyVersion: 1,
           consentDate: oldIso,
+          analyticsOptInParams: { consentValidityDays: 730 },
         }),
       });
       await waitFor(() => {
@@ -134,7 +115,7 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
       expect(s.analyticsEnabled).toBe(true);
       expect(s.personalizedRecommendationsEnabled).toBe(true);
       expect(s.hasSeenAnalyticsOptInPrompt).toBe(true);
-      expect(s.analyticsConsentInfo.privacyPolicyVersion).toBe(CURRENT_PRIVACY_POLICY_VERSION);
+      expect(s.analyticsConsentInfo.privacyPolicyVersion).toBe(1);
       expect(s.analyticsConsentInfo.consentDate).not.toBeNull();
       expect(result.current.phase).toBe("closed");
       expect(track).toHaveBeenCalledWith(
@@ -142,7 +123,7 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
         {
           button: "analytics_consent_opt_in",
           page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
-          privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+          privacyPolicyVersion: 1,
         },
         true,
       );
@@ -172,14 +153,14 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
         {
           button: "analytics_consent_opt_out",
           page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
-          privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+          privacyPolicyVersion: 1,
         },
         false,
       );
       expect(track).toHaveBeenCalledWith("drawer_closed", drawerEventPayload);
     });
 
-    it("should navigate to General settings and close when onSetPreferences is called", async () => {
+    it("should navigate to analytics preferences and close when onSetPreferences is called", async () => {
       const { result } = renderHook(() => useAnalyticsConsentDrawerViewModel(), {
         overrideInitialState: withConsentDrawerOpeningFresh(),
       });
@@ -193,7 +174,8 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
 
       expect(result.current.phase).toBe("closed");
       expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Settings, {
-        screen: ScreenName.GeneralSettings,
+        screen: ScreenName.AnalyticsPreferencesSettings,
+        params: { initialTogglesOff: true },
       });
       expect(track).toHaveBeenCalledWith("button_clicked", {
         button: "analytics_consent_set_preferences",
@@ -225,7 +207,7 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
         overrideInitialState: withConsentDrawerState({
           analyticsEnabled: true,
           personalizedRecommendationsEnabled: true,
-          privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+          privacyPolicyVersion: 1,
           consentDate: null,
         }),
       });
@@ -240,7 +222,7 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
         overrideInitialState: withConsentDrawerState({
           analyticsEnabled: true,
           personalizedRecommendationsEnabled: true,
-          privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+          privacyPolicyVersion: 1,
           consentDate: null,
         }),
       });
@@ -262,7 +244,7 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
         {
           button: "analytics_consent_opt_in",
           page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
-          privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+          privacyPolicyVersion: 1,
         },
         true,
       );
@@ -275,7 +257,7 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
         overrideInitialState: withConsentDrawerState({
           analyticsEnabled: true,
           personalizedRecommendationsEnabled: true,
-          privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+          privacyPolicyVersion: 1,
           consentDate: null,
         }),
       });
@@ -296,7 +278,7 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
         {
           button: "analytics_consent_opt_out",
           page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
-          privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+          privacyPolicyVersion: 1,
         },
         true,
       );
@@ -310,7 +292,7 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
         overrideInitialState: withConsentDrawerState({
           analyticsEnabled: true,
           personalizedRecommendationsEnabled: true,
-          privacyPolicyVersion: Math.max(0, CURRENT_PRIVACY_POLICY_VERSION - 1),
+          privacyPolicyVersion: 0,
           consentDate: new Date().toISOString(),
         }),
       });
@@ -324,7 +306,7 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
         overrideInitialState: withConsentDrawerState({
           analyticsEnabled: true,
           personalizedRecommendationsEnabled: true,
-          privacyPolicyVersion: Math.max(0, CURRENT_PRIVACY_POLICY_VERSION - 1),
+          privacyPolicyVersion: 0,
           consentDate: new Date().toISOString(),
         }),
       });
@@ -338,31 +320,53 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
 
       expect(result.current.phase).toBe("closed");
       expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
-      expect(store.getState().settings.analyticsConsentInfo.privacyPolicyVersion).toBe(
-        CURRENT_PRIVACY_POLICY_VERSION,
-      );
+      expect(store.getState().settings.analyticsConsentInfo.privacyPolicyVersion).toBe(1);
       expect(updateIdentify).toHaveBeenCalled();
       expect(track).toHaveBeenCalledWith("button_clicked", {
         button: "analytics_consent_privacy_got_it",
         page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
-        privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+        privacyPolicyVersion: 1,
       });
       expect(track).toHaveBeenCalledWith("drawer_closed", drawerEventPayload);
     });
+
+    it("should treat date-style flag policyVersion as current for privacy ack", async () => {
+      const dateStyleFlagPolicyVersion = 20260531;
+      const storedPrivacyPolicyVersion = dateStyleFlagPolicyVersion - 1;
+      const { result, store } = renderHook(() => useAnalyticsConsentDrawerViewModel(), {
+        overrideInitialState: withConsentDrawerState({
+          analyticsEnabled: true,
+          personalizedRecommendationsEnabled: true,
+          privacyPolicyVersion: storedPrivacyPolicyVersion,
+          consentDate: new Date().toISOString(),
+          analyticsOptInParams: {
+            policyVersion: dateStyleFlagPolicyVersion,
+            consentValidityDays: 365,
+          },
+        }),
+      });
+      await waitFor(() => {
+        expect(result.current.phase).toBe("privacy");
+      });
+
+      await act(async () => {
+        await result.current.onPrivacyGotIt();
+      });
+
+      expect(store.getState().settings.analyticsConsentInfo.privacyPolicyVersion).toBe(
+        dateStyleFlagPolicyVersion,
+      );
+    });
   });
 
-  describe("when yearly time-based renewal applies (needsConsentRenewal forced to 365d)", () => {
-    beforeEach(() => {
-      stubNeedsConsentRenewalDefaultInterval(YEAR_MS);
-    });
-
+  describe("when time-based renewal applies (consent older than validity window)", () => {
     it("should open consentFresh when consent is stale by time and analytics is off", async () => {
-      const oldIso = new Date(Date.now() - YEAR_MS - 86_400_000).toISOString();
+      const oldIso = subDays(FIXED_NOW, 366).toISOString();
       const { result } = renderHook(() => useAnalyticsConsentDrawerViewModel(), {
         overrideInitialState: withConsentDrawerState({
           analyticsEnabled: false,
           personalizedRecommendationsEnabled: false,
-          privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+          privacyPolicyVersion: 1,
           consentDate: oldIso,
         }),
       });
@@ -372,12 +376,12 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
     });
 
     it("should open consentReconfirm when consent is stale by time even if both toggles are on (renewal first)", async () => {
-      const oldIso = new Date(Date.now() - YEAR_MS - 86_400_000).toISOString();
+      const oldIso = subDays(FIXED_NOW, 366).toISOString();
       const { result } = renderHook(() => useAnalyticsConsentDrawerViewModel(), {
         overrideInitialState: withConsentDrawerState({
           analyticsEnabled: true,
           personalizedRecommendationsEnabled: true,
-          privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+          privacyPolicyVersion: 1,
           consentDate: oldIso,
         }),
       });

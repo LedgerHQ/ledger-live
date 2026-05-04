@@ -9,6 +9,7 @@ import { NavigationContainerEventMap } from "@react-navigation/native";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { useWallet40Theme } from "LLM/hooks/useWallet40Theme";
 import MarketWalletTabNavigator from "LLM/features/Market/WalletTabNavigator";
+import { PortfolioBalanceSync } from "LLM/features/Portfolio/components/PortfolioBalanceSync";
 import {
   Portfolio as NewPortfolio,
   ReadOnlyPortfolio as NewReadOnlyPortfolio,
@@ -77,6 +78,7 @@ export default function WalletTabNavigator() {
 
   return (
     <WalletTabNavigatorScrollManager currentRouteName={currentRouteName}>
+      <PortfolioBalanceSync />
       <Box flexGrow={1} bg={backgroundColor}>
         {shouldHideTabs && <WalletTabBackgroundGradient />}
         <WalletTab.Navigator

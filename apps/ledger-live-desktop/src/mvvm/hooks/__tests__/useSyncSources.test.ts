@@ -22,6 +22,7 @@ const fakeSyncSourcesReturn: liveCommon.SyncSourcesState = {
   hasCvOrBridgeError: false,
   hasWalletSyncError: false,
   triggerRefresh: jest.fn(),
+  cvPending: false,
 };
 
 describe("useSyncSources (desktop wrapper)", () => {

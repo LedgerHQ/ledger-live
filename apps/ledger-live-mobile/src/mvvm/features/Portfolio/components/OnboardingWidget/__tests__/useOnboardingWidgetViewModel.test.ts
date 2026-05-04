@@ -1,6 +1,6 @@
 import type { Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
 import BigNumber from "bignumber.js";
-import { renderHook } from "@tests/test-renderer";
+import { renderHook, waitFor } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { type Account, PostOnboardingActionId } from "@ledgerhq/types-live";
 import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
@@ -30,7 +30,7 @@ describe("useOnboardingWidgetViewModel", () => {
     { completed: 0, total: 4, expectedArcStep: 0, expectedTotal: 5, expectedLabel: "1/5" },
   ])(
     "should return stepper currentStep $expectedArcStep, total $expectedTotal, label $expectedLabel when $completed of $total actions completed",
-    ({ completed, total, expectedArcStep, expectedTotal, expectedLabel }) => {
+    async ({ completed, total, expectedArcStep, expectedTotal, expectedLabel }) => {
       const actions = Array.from({ length: total }, (_, i) => makeAction(i < completed));
       mockedUsePostOnboardingHubState.mockReturnValue({
         deviceModelId: DeviceModelId.nanoX,
@@ -41,13 +41,15 @@ describe("useOnboardingWidgetViewModel", () => {
 
       const { result } = renderHook(() => useOnboardingWidgetViewModel());
 
+      await waitFor(() => expect(result.current.loading).toBe(false));
+
       expect(result.current.currentStep).toBe(expectedArcStep);
       expect(result.current.totalSteps).toBe(expectedTotal);
       expect(result.current.stepperLabel).toBe(expectedLabel);
     },
   );
 
-  it("treats syncAccounts as completed when Ledger Sync is active, matching the hub row", () => {
+  it("treats syncAccounts as completed when Ledger Sync is active, matching the hub row", async () => {
     mockedUsePostOnboardingHubState.mockReturnValue({
       deviceModelId: DeviceModelId.nanoX,
       actionsState: [
@@ -77,12 +79,14 @@ describe("useOnboardingWidgetViewModel", () => {
       }),
     });
 
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
     expect(result.current.totalSteps).toBe(2);
     expect(result.current.stepperLabel).toBe("2/2");
     expect(result.current.currentStep).toBe(2);
   });
 
-  it("treats assets transfer as completed when accounts have a positive balance (hub parity)", () => {
+  it("treats assets transfer as completed when accounts have a positive balance (hub parity)", async () => {
     mockedUsePostOnboardingHubState.mockReturnValue({
       deviceModelId: DeviceModelId.nanoX,
       actionsState: [
@@ -108,6 +112,34 @@ describe("useOnboardingWidgetViewModel", () => {
         accounts: { ...s.accounts, active: [accountWithFunds] },
       }),
     });
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    expect(result.current.totalSteps).toBe(2);
+    expect(result.current.stepperLabel).toBe("2/2");
+    expect(result.current.currentStep).toBe(2);
+  });
+
+  it("treats recover as completed when storage state returns true", async () => {
+    mockedUsePostOnboardingHubState.mockReturnValue({
+      deviceModelId: DeviceModelId.nanoX,
+      actionsState: [
+        {
+          id: PostOnboardingActionId.recover,
+          completed: false,
+          getIsAlreadyCompleted: async () => true,
+          Icon: () => null,
+          title: "",
+          titleCompleted: "",
+        },
+      ],
+      lastActionCompleted: null,
+      postOnboardingInProgress: true,
+    });
+
+    const { result } = renderHook(() => useOnboardingWidgetViewModel());
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
 
     expect(result.current.totalSteps).toBe(2);
     expect(result.current.stepperLabel).toBe("2/2");

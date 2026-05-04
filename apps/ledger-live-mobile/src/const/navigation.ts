@@ -1,5 +1,6 @@
 export enum ScreenName {
   Analytics = "Analytics",
+  AnalyticsPreferencesSettings = "AnalyticsPreferencesSettings",
   AboutSettings = "AboutSettings",
   Account = "Account",
   Accounts = "Accounts",
@@ -109,6 +110,7 @@ export enum ScreenName {
   MyLedgerChooseDevice = "MyLedgerChooseDevice",
   MyLedgerDevice = "MyLedgerDevice",
   MyWallet = "MyWallet",
+  MyWalletHelp = "MyWalletHelp",
   NotificationsSettings = "NotificationsSettings",
   OperationDetails = "OperationDetails",
   PasswordAdd = "PasswordAdd",

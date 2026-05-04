@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import {
@@ -6,6 +6,7 @@ import {
   getFeesCurrency,
   getFeesUnit,
   getMainAccount,
+  findSubAccountById,
 } from "@ledgerhq/live-common/account/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -64,6 +65,10 @@ const StepSummary = (props: StepProps) => {
   const unit = useMaybeAccountUnit(account);
   const accountName = useMaybeAccountName(account);
   const lldMemoTag = useFeature("lldMemoTag");
+  const feeCurrencyAccount = useMemo(() => {
+    if (!mainAccount || !status.feeCurrencyAccountId) return null;
+    return findSubAccountById(mainAccount, status.feeCurrencyAccountId) ?? null;
+  }, [mainAccount, status.feeCurrencyAccountId]);
 
   if (!account || !mainAccount || !transaction) {
     return null;
@@ -73,7 +78,8 @@ const StepSummary = (props: StepProps) => {
   const txInputs = "txInputs" in status ? status.txInputs : undefined;
   const { feeTooHigh, tooManyUtxos } = warnings;
   const currency = getAccountCurrency(account);
-  const feesCurrency = getFeesCurrency(mainAccount);
+
+  const feesCurrency = getFeesCurrency(feeCurrencyAccount ?? mainAccount);
   const feesUnit = getFeesUnit(feesCurrency);
   const utxoLag = txInputs ? txInputs.length >= WARN_FROM_UTXO_COUNT : null;
   const hasNonEmptySubAccounts =

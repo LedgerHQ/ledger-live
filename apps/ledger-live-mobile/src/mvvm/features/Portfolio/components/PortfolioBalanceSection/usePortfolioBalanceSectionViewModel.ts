@@ -20,7 +20,12 @@ export const usePortfolioBalanceSectionViewModel = ({
   const { toggleDiscreetMode } = useToggleDiscreetMode();
   const { shouldDisplayBalanceRefreshRework } = useWalletFeaturesConfig("mobile");
 
-  const { portfolio, balanceAvailable: rawBalanceAvailable, syncPhase } = usePortfolioBalance();
+  const {
+    portfolio,
+    balanceAvailable: rawBalanceAvailable,
+    syncPhase,
+    isCvPending,
+  } = usePortfolioBalance();
 
   const { countervalueChange, balanceHistory } = portfolio;
   const lastItem = balanceHistory[balanceHistory.length - 1];
@@ -37,14 +42,17 @@ export const usePortfolioBalanceSectionViewModel = ({
   // immediately so the cached value is shown at cold start instead of a skeleton.
   const effectiveRawBalanceAvailable = rawBalanceAvailable || effectiveLatestBalance > 0;
 
-  const { balanceAvailable, displayedBalance } = useBalanceSyncState({
+  const {
+    balanceAvailable,
+    displayedBalance,
+    isLoading: effectiveIsLoading,
+  } = useBalanceSyncState({
     rawBalanceAvailable: effectiveRawBalanceAvailable,
     syncPhase,
     latestBalance: effectiveLatestBalance,
     shouldFreezeOnSync: shouldDisplayBalanceRefreshRework,
+    cvPending: shouldDisplayBalanceRefreshRework ? isCvPending : undefined,
   });
-
-  const effectiveIsLoading = syncPhase === "syncing";
 
   const state: PortfolioBalanceState = useMemo(() => {
     if (isReadOnlyMode) {

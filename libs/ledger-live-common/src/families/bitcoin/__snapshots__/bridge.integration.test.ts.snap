@@ -3,18 +3,18 @@
 exports[`bitcoin currency bridge scanAccounts bitcoin seed 1 1`] = `
 [
   {
-    "balance": "0",
+    "balance": "9623",
     "bitcoinResources": {},
     "currencyId": "bitcoin",
     "derivationMode": "native_segwit",
-    "freshAddress": "bc1qhh568mfmwu7ymvwhu5e4mttpfg4ehxfpvhjs64",
-    "freshAddressPath": "84'/0'/0'/0/27",
+    "freshAddress": "bc1qc9fmckeq2fq6p7px07ytrrka84q4yselrpa3hh",
+    "freshAddressPath": "84'/0'/0'/0/28",
     "id": "js:2:bitcoin:xpub6DEHKg8fgKcb5iYGPLtpBYD9gm7nvym3wwhHVnH3TtogvJGTcApj71K8iTpL7CzdZWAxwyjkZEFUrnLK24zKqgj3EVH7Vg1CD1ujibwiHuy:native_segwit",
     "index": 0,
-    "operationsCount": 65,
+    "operationsCount": 66,
     "pendingOperations": [],
     "seedIdentifier": "04985c77e031db7909b5bab541828faac7719bc3ac205907da16f379e693eb012217195cbb49c53854d1bfec204470abc73ab4fb51338653e5236c6a6ae57d3442",
-    "spendableBalance": "0",
+    "spendableBalance": "9623",
     "swapHistory": [],
     "syncHash": undefined,
     "used": true,
@@ -1285,6 +1285,29 @@ exports[`bitcoin currency bridge scanAccounts bitcoin seed 1 2`] = `
       "transactionSequenceNumber": "0",
       "type": "IN",
       "value": "20000",
+    },
+    {
+      "accountId": "js:2:bitcoin:xpub6DEHKg8fgKcb5iYGPLtpBYD9gm7nvym3wwhHVnH3TtogvJGTcApj71K8iTpL7CzdZWAxwyjkZEFUrnLK24zKqgj3EVH7Vg1CD1ujibwiHuy:native_segwit",
+      "blockHash": "0000000000000000000003e6da5e3bc76e86a52925f8886fde8551efb93be395",
+      "blockHeight": 944351,
+      "extra": {
+        "inputs": [
+          "e075442bfee00b6b4d5972dd326fc9adb2f9c2d2fed932b6db47f20beb7050c0-1",
+        ],
+      },
+      "fee": "881",
+      "hasFailed": false,
+      "hash": "c7475945e05430d6e0ec2c5015d989e4f0ee64c6ad6e758e82c1e49ee2b2c70f",
+      "id": "js:2:bitcoin:xpub6DEHKg8fgKcb5iYGPLtpBYD9gm7nvym3wwhHVnH3TtogvJGTcApj71K8iTpL7CzdZWAxwyjkZEFUrnLK24zKqgj3EVH7Vg1CD1ujibwiHuy:native_segwit-c7475945e05430d6e0ec2c5015d989e4f0ee64c6ad6e758e82c1e49ee2b2c70f-IN",
+      "recipients": [
+        "bc1qhh568mfmwu7ymvwhu5e4mttpfg4ehxfpvhjs64",
+      ],
+      "senders": [
+        "1C6XJtNXiuXvk4oUAVMkKF57CRpaTrN5Ra",
+      ],
+      "transactionSequenceNumber": "0",
+      "type": "IN",
+      "value": "9623",
     },
     {
       "accountId": "js:2:bitcoin:xpub6DEHKg8fgKcb5iYGPLtpBYD9gm7nvym3wwhHVnH3TtogvJGTcApj71K8iTpL7CzdZWAxwyjkZEFUrnLK24zKqgj3EVH7Vg1CD1ujibwiHuy:native_segwit",

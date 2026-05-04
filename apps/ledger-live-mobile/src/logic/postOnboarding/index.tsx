@@ -5,12 +5,14 @@ import {
   buyCryptoMock,
   customImageMock,
   syncAccountsMock,
+  recoverMock,
 } from "./mockActions";
 import {
   assetsTransferAction,
   customImageAction,
   buyCryptoAction,
   syncAccountsAction,
+  recoverAction,
 } from "./actions";
 
 /**
@@ -21,10 +23,12 @@ const postOnboardingActions: { [id in PostOnboardingActionId]?: PostOnboardingAc
   buyCryptoMock,
   customImageMock,
   syncAccountsMock,
+  recoverMock,
   customImage: customImageAction,
   assetsTransfer: assetsTransferAction,
   buyCrypto: buyCryptoAction,
   syncAccounts: syncAccountsAction,
+  recover: recoverAction,
 };
 
 /**
@@ -35,6 +39,7 @@ const staxPostOnboardingActionsMock: PostOnboardingAction[] = [
   buyCryptoMock,
   syncAccountsMock,
   customImageMock,
+  recoverMock,
 ];
 
 const staxPostOnboardingActions: PostOnboardingAction[] = [
@@ -42,6 +47,7 @@ const staxPostOnboardingActions: PostOnboardingAction[] = [
   buyCryptoAction,
   syncAccountsAction,
   customImageAction,
+  recoverAction,
 ];
 
 /**
@@ -52,6 +58,7 @@ const europaPostOnboardingActionsMock: PostOnboardingAction[] = [
   buyCryptoMock,
   syncAccountsMock,
   customImageMock,
+  recoverMock,
 ];
 
 const europaPostOnboardingActions: PostOnboardingAction[] = [
@@ -59,6 +66,7 @@ const europaPostOnboardingActions: PostOnboardingAction[] = [
   buyCryptoAction,
   syncAccountsAction,
   customImageAction,
+  recoverAction,
 ];
 
 /**
@@ -69,6 +77,7 @@ const apexPostOnboardingActionsMock: PostOnboardingAction[] = [
   buyCryptoMock,
   syncAccountsMock,
   customImageMock,
+  recoverMock,
 ];
 
 const apexPostOnboardingActions: PostOnboardingAction[] = [
@@ -76,6 +85,7 @@ const apexPostOnboardingActions: PostOnboardingAction[] = [
   buyCryptoAction,
   syncAccountsAction,
   customImageAction,
+  recoverAction,
 ];
 
 export function getPostOnboardingAction(

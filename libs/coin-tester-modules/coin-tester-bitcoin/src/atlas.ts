@@ -1,48 +1,25 @@
 import chalk from "chalk";
 import * as compose from "docker-compose";
 
-const cwd = `${__dirname}/docker`;
-
-const delay = (timing: number): Promise<void> =>
-  new Promise(resolve => setTimeout(resolve, timing));
-
 export const spawnAtlas = async (): Promise<void> => {
   console.log("Starting atlas...");
   await compose.upAll({
-    cwd,
+    cwd: `${__dirname}/docker`,
     log: Boolean(process.env.DEBUG),
-    env: {
-      ...process.env,
-    },
+    env: process.env,
+    commandOptions: ["--wait"],
   });
 
-  const checkAtlasLogs = async (): Promise<void> => {
-    const { out } = await compose.logs("atlas", {
-      cwd,
-      env: {
-        ...process.env,
-      },
-    });
-
-    if (out.includes("Started Atlas Bitcoin")) {
-      console.log(chalk.bgBlueBright(" -  ATLAS READY ✅  - "));
-      return;
-    }
-
-    await delay(200);
-    return checkAtlasLogs();
-  };
-
-  await checkAtlasLogs();
+  console.log(chalk.bgBlueBright(" -  ATLAS READY ✅  - "));
 };
 
 export const killAtlas = async (): Promise<void> => {
   console.log("Stopping atlas...");
   await compose.down({
-    cwd,
+    cwd: `${__dirname}/docker`,
     log: Boolean(process.env.DEBUG),
     env: process.env,
-    commandOptions: ["--remove-orphans", "-v"],
+    commandOptions: ["--remove-orphans", "--volumes"],
   });
 };
 

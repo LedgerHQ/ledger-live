@@ -22,7 +22,7 @@ const jestAllure2ReporterOptions = {
   },
 };
 
-const transformIncludePatterns = ["ky"];
+const transformIncludePatterns = ["ky", "@mysten+ledgerjs-hw-app-sui"];
 
 const detoxAllure2AdapterOptions = {
   deviceLogs: false,
@@ -36,7 +36,7 @@ module.exports = async () => ({
   rootDir: "..",
   maxWorkers: process.env.JEST_MAX_WORKERS ? parseInt(process.env.JEST_MAX_WORKERS, 10) : 1,
   transform: {
-    "^.+\\.(js|jsx)?$": "babel-jest",
+    "^.+\\.m?jsx?$": "babel-jest",
     "^.+\\.(ts|tsx)?$": [
       "@swc/jest",
       {

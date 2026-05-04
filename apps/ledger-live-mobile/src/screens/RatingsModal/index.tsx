@@ -8,7 +8,7 @@ import Disappointed from "./Disappointed";
 import DisappointedForm from "./DisappointedForm";
 import DisappointedDone from "./DisappointedDone";
 import { DimensionValue, LayoutChangeEvent } from "react-native";
-import getOrCreateUser from "~/user";
+import { userIdSelector } from "@ledgerhq/client-ids/store";
 import { trackingEnabledSelector } from "~/reducers/settings";
 import { useSelector } from "~/context/hooks";
 
@@ -53,19 +53,9 @@ const RatingsModal = () => {
     closeModal();
   }, [handleInitNotNow, closeModal]);
 
-  const [equipmentId, setEquipmentId] = useState<string | null>(null);
-
   const trackingEnabled = useSelector(trackingEnabledSelector);
-
-  useEffect(() => {
-    if (trackingEnabled) {
-      getOrCreateUser().then(({ user }) => {
-        setEquipmentId(user.id);
-      });
-    } else {
-      setEquipmentId(null);
-    }
-  }, [trackingEnabled]);
+  const userId = useSelector(userIdSelector);
+  const equipmentId = trackingEnabled ? userId.exportUserIdForUserLogs() : null;
 
   const component = useMemo(() => {
     const components = {

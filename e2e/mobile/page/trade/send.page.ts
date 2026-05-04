@@ -6,25 +6,30 @@ export default class SendPage {
   summaryAmountId = "send-summary-amount";
   summaryMemoTagId = "summary-memo-tag";
   validationEnsId = "device-validation-domain";
-  recipientContinueButtonId = "recipient-continue-button";
+  recipientContinueEnabledButtonId = "enabled-recipient-continue-button";
+  recipientContinueDisabledButtonId = "disabled-recipient-continue-button";
+  amountContinueEnabledButtonId = "enabled-amount-continue-button";
+  amountContinueDisabledButtonId = "disabled-amount-continue-button";
+  summaryContinueEnabledButtonId = "enabled-summary-continue-button";
+  summaryContinueDisabledButtonId = "disabled-summary-continue-button";
   recipientInputId = "recipient-input";
   recipientErrorId = "send-recipient-error";
   memoTagInputId = "memo-tag-input";
   memoTagDrawerTitleId = "memo-tag-drawer-title";
-  memoTagIgnoreButtonId = "memo-tag-ignore-button";
+  memoTagIgnoreButtonId = "enabled-memo-tag-ignore-button";
   amountInputId = "amount-input";
   amountErrorId = "send-amount-error";
   summaryErrorId = "insufficient-fee-error";
-  highFeeConfirmButtonID = "confirmation-modal-confirm-button";
+  highFeeConfirmButtonID = "enabled-confirmation-modal-confirm-button";
 
   summaryRecipient = () => getElementById("send-summary-recipient");
   summaryRecipientEns = () => getElementById("send-summary-recipient-ens");
   summaryMemoTag = () => getElementById(this.summaryMemoTagId);
   getStep1HeaderTitle = () => getElementById("send-header-step1-title");
   amountMaxSwitch = () => getElementById("send-amount-max-switch");
-  amountContinueButton = () => getElementById("amount-continue-button");
+  amountContinueButton = () => getElementById(this.amountContinueEnabledButtonId);
   summaryWarning = () => getElementById("send-summary-warning");
-  summaryContinueButton = () => getElementById("summary-continue-button");
+  summaryContinueButton = () => getElementById(this.summaryContinueEnabledButtonId);
   feeStrategy = (fee: string) => getElementByText(fee);
 
   @Step("Navigate to send screen")
@@ -62,8 +67,8 @@ export default class SendPage {
 
   @Step("Continue to next step and skip memo tag if needed")
   async recipientContinue(memoTag?: string) {
-    await waitForElementById(this.recipientContinueButtonId);
-    await tapById(this.recipientContinueButtonId);
+    await waitForElementById(this.recipientContinueEnabledButtonId);
+    await tapById(this.recipientContinueEnabledButtonId);
 
     if (memoTag === "noTag") {
       await waitForElementById(this.memoTagDrawerTitleId);
@@ -89,11 +94,13 @@ export default class SendPage {
       await detoxExpect(errElem).not.toBeVisible();
     }
 
-    const contBtn = getElementById(this.recipientContinueButtonId);
+    const enabledBtn = getElementById(this.recipientContinueEnabledButtonId);
+    const disabledBtn = getElementById(this.recipientContinueDisabledButtonId);
     if (continueButtonVisible) {
-      await detoxExpect(contBtn).toBeVisible();
+      await detoxExpect(enabledBtn).toBeVisible();
     } else {
-      await detoxExpect(contBtn).not.toBeVisible();
+      await detoxExpect(enabledBtn).not.toBeVisible();
+      await detoxExpect(disabledBtn).toBeVisible();
     }
   }
 
@@ -105,7 +112,7 @@ export default class SendPage {
     } else {
       await detoxExpect(errElem).toHaveText(expectedWarningMessage);
     }
-    const contBtn = getElementById(this.recipientContinueButtonId);
+    const contBtn = getElementById(this.recipientContinueEnabledButtonId);
     await detoxExpect(contBtn).toBeVisible();
   }
 
@@ -149,8 +156,10 @@ export default class SendPage {
   async expectSendAmountError(errorMessage: string) {
     const errElem = getElementById(this.amountErrorId);
     await detoxExpect(errElem).toHaveText(errorMessage);
-    const contBtn = this.amountContinueButton();
-    await detoxExpect(contBtn).not.toBeVisible();
+    const enabledBtn = this.amountContinueButton();
+    const disabledBtn = getElementById(this.amountContinueDisabledButtonId);
+    await detoxExpect(enabledBtn).not.toBeVisible();
+    await detoxExpect(disabledBtn).toBeVisible();
   }
 
   @Step("Set amount and continue")
@@ -193,8 +202,10 @@ export default class SendPage {
   async expectSendSummaryError(errorMessage: RegExp) {
     const err = await getTextOfElement(this.summaryErrorId);
     jestExpect(err).toMatch(errorMessage);
-    const btn = this.summaryContinueButton();
-    await detoxExpect(btn).not.toBeVisible();
+    const enabledBtn = this.summaryContinueButton();
+    const disabledBtn = getElementById(this.summaryContinueDisabledButtonId);
+    await detoxExpect(enabledBtn).not.toBeVisible();
+    await detoxExpect(disabledBtn).toBeVisible();
   }
 
   @Step("Expect warning in summary")

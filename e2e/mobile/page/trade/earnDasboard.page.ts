@@ -7,7 +7,6 @@ export default class EarnDashboardPage {
   amountAvailableAssetsText = "Amount available to earn";
   amountAvailableToEarnBalanceCard = "Amount available to earn-balance-card";
   assetsTitleId = "assets-title-text";
-  earnButtonSelector = '[data-testid^="stake-"][data-testid$="-button"]';
   getAssetsPlaceholderHero = "get-assets-placeholder-hero";
   rewardsPotentialBalanceCard = "Rewards you could earn-balance-card";
   rewardsPotentialText = "Rewards you could earn";
@@ -22,6 +21,7 @@ export default class EarnDashboardPage {
   totalRewardsBalanceCard = "Total rewards-balance-card";
   totalRewardsText = "Total rewards";
 
+  earnButtonSelector = (ticker: string) => `[data-testid$="${ticker}-stake-button"]`;
   stakingProviderTitle = (providerName: string) => `staking-provider-${providerName}-title`;
   assetsTitleText = (withStaking: boolean) =>
     withStaking ? "Deposited assets" : "Available assets";
@@ -38,8 +38,8 @@ export default class EarnDashboardPage {
   };
 
   @Step("Click on earn button")
-  async clickEarnCurrencyButton() {
-    const elem = getWebElementByCssSelector(this.earnButtonSelector);
+  async clickEarnCurrencyButton(account: Account) {
+    const elem = getWebElementByCssSelector(this.earnButtonSelector(account.currency.ticker));
     await tapWebElementByElement(elem);
   }
 
@@ -119,7 +119,7 @@ export default class EarnDashboardPage {
     const rowsContent = await getWebElementsText(this.tableEarnMoreSelector);
     const normalizedText = normalizeText(rowsContent.join(" "));
     jestExpect(normalizedText).toContain(`${account.accountName} ${account.currency.ticker}`);
-    const earnButton = getWebElementByCssSelector(this.earnButtonSelector);
+    const earnButton = getWebElementByCssSelector(this.earnButtonSelector(account.currency.ticker));
     await detoxExpect(earnButton).toExist();
     await detoxExpect(earnButton).toHaveText("Earn");
   }

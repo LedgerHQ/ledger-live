@@ -80,7 +80,6 @@ const shouldRefreshValidators = (
 
 export const preload = async (currency: CryptoCurrency): Promise<PolkadotPreloadData> => {
   await loadPolkadotCrypto();
-  await polkadotAPI.getRegistry(currency); // ensure registry is already in cache.
   let minimumBondBalance;
   let currentStakingProgress;
   try {

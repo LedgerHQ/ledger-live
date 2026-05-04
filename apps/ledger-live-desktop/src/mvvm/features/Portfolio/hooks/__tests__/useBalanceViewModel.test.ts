@@ -84,9 +84,13 @@ describe("useBalanceViewModel", () => {
     expect(mockUsePortfolioBalance).toHaveBeenCalledWith({ legacyRange: true });
   });
 
-  it("should return isLoading true when syncPhase is syncing", () => {
+  it("should return isLoading true while CVS is pending (iCvPending=true)", () => {
     mockUsePortfolioBalance.mockReturnValue(
-      makePortfolioBalanceReturn({ syncPhase: "syncing", isBalanceLoading: true }),
+      makePortfolioBalanceReturn({
+        syncPhase: "syncing",
+        isBalanceLoading: true,
+        isCvPending: true,
+      }),
     );
 
     const { result } = renderHook(() => useBalanceViewModel(), { initialState });
@@ -108,11 +112,10 @@ describe("useBalanceViewModel", () => {
     expect(result.current.isLoading).toBe(false);
   });
 
-  it("should freeze balance during syncing and unfreeze when synced", () => {
+  it("should freeze balance while CVS is pending and animate once CVS settles", () => {
     mockUsePortfolioBalance.mockReturnValue(
       makePortfolioBalanceReturn({
         syncPhase: "synced",
-        isBalanceLoading: false,
         portfolio: { ...defaultPortfolio, balanceHistory: [{ date: new Date(), value: 1500 }] },
       }),
     );
@@ -120,112 +123,81 @@ describe("useBalanceViewModel", () => {
     const { result, rerender } = renderHook(() => useBalanceViewModel(), { initialState });
     expect(result.current.balance).toBe(1500);
 
+    // CVS fetch starts — balance frozen
     mockUsePortfolioBalance.mockReturnValue(
       makePortfolioBalanceReturn({
         syncPhase: "syncing",
-        isBalanceLoading: true,
+        isCvPending: true,
         portfolio: { ...defaultPortfolio, balanceHistory: [{ date: new Date(), value: 2000 }] },
       }),
     );
     rerender();
     expect(result.current.balance).toBe(1500);
 
+    // CVS settles — balance animates; bridge sync continues (syncPhase still syncing)
     mockUsePortfolioBalance.mockReturnValue(
       makePortfolioBalanceReturn({
-        syncPhase: "synced",
-        isBalanceLoading: false,
+        syncPhase: "syncing",
+        isCvPending: false,
         portfolio: { ...defaultPortfolio, balanceHistory: [{ date: new Date(), value: 2000 }] },
       }),
     );
     rerender();
     expect(result.current.balance).toBe(2000);
-  });
 
-  it("should keep balance frozen during settle guard period (isBalanceLoading false, syncPhase still syncing)", () => {
-    mockUsePortfolioBalance.mockReturnValue(
-      makePortfolioBalanceReturn({
-        syncPhase: "synced",
-        isBalanceLoading: false,
-        portfolio: { ...defaultPortfolio, balanceHistory: [{ date: new Date(), value: 1500 }] },
-      }),
-    );
-
-    const { result, rerender } = renderHook(() => useBalanceViewModel(), { initialState });
-    expect(result.current.balance).toBe(1500);
-
-    // Syncing starts
+    // Balance continues to update per-batch after CVS settles
     mockUsePortfolioBalance.mockReturnValue(
       makePortfolioBalanceReturn({
         syncPhase: "syncing",
-        isBalanceLoading: true,
-        portfolio: { ...defaultPortfolio, balanceHistory: [{ date: new Date(), value: 2500 }] },
+        isCvPending: false,
+        portfolio: { ...defaultPortfolio, balanceHistory: [{ date: new Date(), value: 2300 }] },
       }),
     );
     rerender();
-    expect(result.current.balance).toBe(1500);
-
-    // isBalanceLoading goes false but syncPhase stays syncing (settle guard)
-    mockUsePortfolioBalance.mockReturnValue(
-      makePortfolioBalanceReturn({
-        syncPhase: "syncing",
-        isBalanceLoading: false,
-        portfolio: { ...defaultPortfolio, balanceHistory: [{ date: new Date(), value: 2500 }] },
-      }),
-    );
-    rerender();
-    expect(result.current.balance).toBe(1500);
-
-    // Guard expires → syncPhase becomes synced → balance animates to new value
-    mockUsePortfolioBalance.mockReturnValue(
-      makePortfolioBalanceReturn({
-        syncPhase: "synced",
-        isBalanceLoading: false,
-        portfolio: { ...defaultPortfolio, balanceHistory: [{ date: new Date(), value: 2500 }] },
-      }),
-    );
-    rerender();
-    expect(result.current.balance).toBe(2500);
+    expect(result.current.balance).toBe(2300);
   });
 
-  it("should keep balanceAvailable false until sync settles (no shimmer gap after skeleton)", () => {
+  it("should keep balanceAvailable false until CVS settles (no shimmer gap after skeleton)", () => {
     mockUsePortfolioBalance.mockReturnValue(
       makePortfolioBalanceReturn({
         balanceAvailable: false,
         isColdStart: true,
         syncPhase: "syncing",
         isBalanceLoading: true,
+        isCvPending: true,
       }),
     );
 
     const { result, rerender } = renderHook(() => useBalanceViewModel(), { initialState });
     expect(result.current.balanceAvailable).toBe(false);
 
-    // CV data arrives: rawBalanceAvailable goes true, but sync is still settling
+    // Balance data available but CVS still pending — skeleton stays
     mockUsePortfolioBalance.mockReturnValue(
       makePortfolioBalanceReturn({
         balanceAvailable: true,
         isColdStart: false,
         syncPhase: "syncing",
-        isBalanceLoading: false,
+        isBalanceLoading: true,
+        isCvPending: true,
         portfolio: { ...defaultPortfolio, balanceHistory: [{ date: new Date(), value: 1200 }] },
       }),
     );
     rerender();
     expect(result.current.balanceAvailable).toBe(false);
 
-    // Sync settles → balanceAvailable becomes true, balance animates with no shimmer gap
+    // CVS settles → balance unlocks immediately, bridge sync continues
     mockUsePortfolioBalance.mockReturnValue(
       makePortfolioBalanceReturn({
         balanceAvailable: true,
         isColdStart: false,
-        syncPhase: "synced",
+        syncPhase: "syncing",
         isBalanceLoading: false,
+        isCvPending: false,
         portfolio: { ...defaultPortfolio, balanceHistory: [{ date: new Date(), value: 1200 }] },
       }),
     );
     rerender();
     expect(result.current.balanceAvailable).toBe(true);
-    expect(result.current.isLoading).toBe(false);
   });
 
   it("should return shouldDisplayBalanceRefreshRework false when flag is disabled", () => {

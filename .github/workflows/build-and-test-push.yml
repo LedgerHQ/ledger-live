@@ -59,6 +59,8 @@ jobs:
     name: "Build Web Tools"
     uses: LedgerHQ/ledger-live/.github/workflows/build-web-tools-reusable.yml@develop
     secrets: inherit
+    with:
+      vercel-production: ${{ github.ref_name == 'develop' && 'true' || 'false' }}
 
   test-cli:
     name: "Test CLI"

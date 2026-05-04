@@ -54,16 +54,12 @@ export async function listOperations(
   // Fetch native and TRC20 transactions in parallel from TronGrid.
   // Both endpoints are queried with the same timestamp bounds to ensure
   // we can properly merge and sort them chronologically.
-  const { nativeTxs, trc20Txs } = await fetchTronAccountTxsPage(
-    address,
-    {},
-    {
-      limit,
-      minTimestamp: fetchMinTimestamp,
-      maxTimestamp: fetchMaxTimestamp,
-      order,
-    },
-  );
+  const { nativeTxs, trc20Txs } = await fetchTronAccountTxsPage(address, {
+    limit,
+    minTimestamp: fetchMinTimestamp,
+    maxTimestamp: fetchMaxTimestamp,
+    order,
+  });
 
   // TronGrid occasionally returns an empty page for a valid cursor (transient API failure).
   // A cursor is only issued when TronGrid indicated hasNextPage=true, so 0 results here

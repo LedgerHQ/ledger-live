@@ -1331,6 +1331,10 @@
     }
   },
   "postOnboarding" : {
+    "widget" : {
+      "title" : "Schließe nun die Wallet-Einrichtung ab",
+      "subtitle" : "Beginne mit Einzahlungen in deine Wallet."
+    },
     "postOnboardingScreen" : {
       "title" : "Wie geht es weiter?",
       "titleCompleted" : "Alles eingerichtet! \nLerne jetzt dein Portfolio kennen.",
@@ -2313,7 +2317,8 @@
         "banner" : "Maximaler Auszahlungsbetrag ist",
         "fees" : "Weitere Informationen zu Gebühren",
         "standard" : "Standart",
-        "advanced" : "Advanced"
+        "advanced" : "Advanced",
+        "feeCurrency" : "Gebührenwährung"
       },
       "summary" : {
         "title" : "Zusammenfassung"
@@ -4187,6 +4192,64 @@
         "eigenlayer_points" : "Eigenlayer-Punkte",
         "validator" : "Validatorbelohnungen"
       }
+    },
+    "evmStaking" : {
+      "delegation" : {
+        "emptyState" : {
+          "description" : "Du kannst {{currencyTicker}}-Prämien erhalten, indem du deine Assets delegierst.",
+          "delegation" : "Prämien verdienen"
+        },
+        "claimRewards" : "Prämien beanspruchen",
+        "header" : "Delegierung(en)",
+        "noRewards" : "Keine Prämien verfügbar",
+        "delegate" : "Hinzufügen",
+        "undelegate" : "Delegierung aufheben",
+        "redelegate" : "Erneut delegieren",
+        "redelegateDisabledTooltip" : "Du kannst für <0>{{days}}</0> wieder redelegieren.",
+        "redelegateMaxDisabledTooltip" : "Du kannst nicht mehr als <0>7</0> Validatoren auf einmal redelegieren",
+        "undelegateDisabledTooltip" : "Du kannst die Delegierung nicht für mehr als <0>7</0> Validatoren gleichzeitig aufheben",
+        "reward" : "Prämien beanspruchen",
+        "activeTooltip" : "Delegierte Beträge generieren Prämien",
+        "inactiveTooltip" : "Nicht-delegierte Beträge generieren keine Prämien",
+        "minSafeWarning" : "Zu niedriges Guthaben",
+        "flow" : {
+          "title" : "Delegieren",
+          "steps" : {
+            "starter" : {
+              "description" : "Du kannst Prämien verdienen, indem du deine {{currencyTicker}}-Assets an einen Validator delegierst.",
+              "bullet" : ["Du behältst das Eigentum an delegierten Assets", "Delegiere mit deinem Ledger-Gerät", "Vermögenswerte sind nach nach Aufhebung der Delegierung verfügbar"],
+              "warning" : {
+                "description" : "Wähle deinen Validator mit Bedacht: Ein Teil deiner delegierten Assets kann unwiderruflich verloren gehen, wenn sich der Validator nicht angemessen verhält."
+              }
+            },
+            "amount" : {
+              "title" : "Betrag"
+            },
+            "validator" : {
+              "title" : "Validatoren"
+            },
+            "connectDevice" : {
+              "title" : "Gerät"
+            },
+            "confirmation" : {
+              "title" : "Bestätigung",
+              "success" : {
+                "title" : "Du hast deine Assets erfolgreich delegiert",
+                "text" : "Dein Guthaben wird aktualisiert, sobald die Transaktion durch das Blockchain-Netzwerk bestätigt wurde.",
+                "cta" : "Details anzeigen"
+              },
+              "broadcastError" : "Deine Transaktion ist möglicherweise fehlgeschlagen. Bitte warte einen Moment und prüfe vor einem erneuten Versuch zunächst den Transaktionsverlauf."
+            }
+          }
+        }
+      },
+      "redelegation" : {
+        "header" : "Redelegierung(en)"
+      },
+      "undelegation" : {
+        "header" : "Aufgehobene Delegierung(en)",
+        "inactiveTooltip" : "Beträge mit aufgehobener Delegierung generieren keine Prämien."
+      }
     }
   },
   "graph" : {
@@ -4441,6 +4504,8 @@
     "delegated" : "Delegiert",
     "completionDate" : "Datum der Fertigstellung",
     "rewards" : "Prämien",
+    "sourceValidator" : "Quell-Validator",
+    "destinationValidator" : "Ziel-Validator",
     "duration" : "Dauer",
     "durationJustStarted" : "Gerade begonnen",
     "durationDays" : "{{count}} Tag",
@@ -4608,24 +4673,7 @@
       },
       "analyticsConsentOptInQa" : {
         "rowTitle" : "Opt-in-Zustimmung für Analysen (QA)",
-        "rowDesc" : "Überprüfe die gespeicherte Version der Datenschutzeinwilligung und das Zustimmungsdatum; simuliere veraltete Zustände für das Zustimmungsfenster der Portfolioanalyse.",
-        "title" : "Opt-in-Einwilligung für Analysen – QA",
-        "readSection" : "Aktuelle Einstellungen (schreibgeschützt)",
-        "storedPrivacyVersion" : "Gespeicherte Version der Datenschutzrichtlinie: {{version}}",
-        "currentPrivacyVersion" : "Aktuelle Version der Datenschutzrichtlinie der App: {{version}}",
-        "consentDate" : "Datum der Einwilligung (roh): {{value}}",
-        "inlineOutdatePrivacyVersion" : "Veraltete Version",
-        "inlineRemoveConsentDate" : "Datum entfernen",
-        "actionResetForConsentFresh" : "Zurücksetzen für neue Einwilligung (Einwilligungsdaten löschen, Analyse und Personalisierung deaktivieren)",
-        "modalPreviewSection" : "Erwartetes Modal für Portfolio (Startseite)",
-        "modalPreviewNoModalUserOk" : "Kein Modalfenster. Die Version der Datenschutzrichtlinie und das Datum der Zustimmung sind in Ordnung: nichts zu erneuern oder erneut zu bestätigen.",
-        "modalPreviewNoModalFeatureOff" : "Kein Modal. Das Analyse-Opt-in-Feature Flag ist deaktiviert.",
-        "modalPreviewNoModalOnboarding" : "Kein Modal. Das Onboarding ist noch nicht vollständig.",
-        "modalPreviewFresh" : "Erstmaliges Einwilligungsmodal (Consent Fresh). Die Erneuerung der Einwilligung ist erforderlich (fehlendes oder ungültiges Einwilligungsdatum) und die Freigabeanalyse ist deaktiviert, z. B. keine gespeicherte Datenschutzbestätigung/kein Zustimmungsdatum bei deaktivierter Analyse.",
-        "modalPreviewReconfirm" : "Bestätige das Zustimmungsfenster noch einmal. Die Erneuerung der Einwilligung ist erforderlich und „Analysen teilen“ ist aktiviert — der Nutzer erhält den Ablauf „Erneut bestätigen/Weiter oder Stoppen“ anstelle des ersten Textes.",
-        "modalPreviewPrivacy" : "Datenschutz-Update-Fenster. Die gespeicherte Version der Datenschutzrichtlinie ist veraltet (niedriger als die der App), und die Erneuerung der Zustimmung wird nicht blockiert – der Benutzer sieht zuerst den Schritt zur Aktualisierung der Datenschutzrichtlinie.",
-        "modalPreviewGoToHome" : "Öffne die Portfolio-Startseite, um das Dialogfenster zu sehen, wenn es angezeigt werden soll.",
-        "note" : "Entferne die Datum-Zustimmung auf null. Die veraltete Version senkt die Version der gespeicherten Datenschutzrichtlinie unter die aktuelle Version der App. „Reset“ (Zurücksetzen) löscht die Metadaten der Zustimmung und deaktiviert Analysen und Personalisierung, um das frische Zustimmungsmodal anzuzeigen. Die zeitbasierte Erneuerung bleibt deaktiviert, solange CONSENT_RENEWAL_INTERVAL_MS in live-common null ist."
+        "rowDesc" : "Überprüfe die gespeicherte Version der Datenschutzeinwilligung und das Zustimmungsdatum; simuliere veraltete Zustände für das Zustimmungsfenster der Portfolioanalyse."
       },
       "brazeTools" : {
         "title" : "Braze-Tools",
@@ -8275,7 +8323,10 @@
       },
       "editName" : "Name bearbeiten",
       "emptyState" : "Noch keine Krypto-Adresse",
-      "emptySearchState" : "Es wurden keine Konten gefunden, die deiner Suche entsprechen"
+      "emptySearchState" : "Es wurden keine Konten gefunden, die deiner Suche entsprechen",
+      "assetCount_zero" : "{{count}} Assets",
+      "assetCount_one" : "{{count}} Assets",
+      "assetCount_other" : "{{count}} Assets"
     },
     "editName" : {
       "title" : "Adressnamen bearbeiten",
@@ -8552,5 +8603,17 @@
       "errorDescription" : "Beim Exportieren deines Transaktionsverlaufs ist ein Fehler aufgetreten. Bitte versuche es noch einmal.",
       "tryAgain" : "Wiederholen"
     }
+  },
+  "myWallet" : {
+    "actionsList" : {
+      "help" : "Hilfe",
+      "recover" : "[L] Recover",
+      "refer" : "Empfehlung"
+    },
+    "myLedger" : {
+      "title" : "My Ledger",
+      "description" : "Verwalte dein Ledger-Gerät"
+    },
+    "explore" : "Alle Ledger-Geräte entdecken"
   }
 }

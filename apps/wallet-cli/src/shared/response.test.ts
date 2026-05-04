@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { makeEnvelope, makeErrorEnvelope } from "./response";
+import { makeEnvelope } from "./response";
 
 describe("makeEnvelope", () => {
   it("returns a success envelope with expected fields", () => {
@@ -30,30 +30,5 @@ describe("makeEnvelope", () => {
     const result = makeEnvelope("send", "ethereum:main", { txHash: "0xabc", fee: "1000" });
     expect(result.txHash).toBe("0xabc");
     expect(result.fee).toBe("1000");
-  });
-});
-
-describe("makeErrorEnvelope", () => {
-  it("returns an error envelope with expected fields", () => {
-    const result = makeErrorEnvelope("balances", "something went wrong");
-    expect(result.status).toBe("error");
-    expect(result.command).toBe("balances");
-    expect(result.message).toBe("something went wrong");
-    expect(typeof result.timestamp).toBe("string");
-  });
-
-  it("includes network when provided", () => {
-    const result = makeErrorEnvelope("operations", "not found", "bitcoin:main");
-    expect(result.network).toBe("bitcoin:main");
-  });
-
-  it("omits network when not provided", () => {
-    const result = makeErrorEnvelope("operations", "not found");
-    expect("network" in result).toBe(false);
-  });
-
-  it("timestamp is a valid ISO date string", () => {
-    const result = makeErrorEnvelope("send", "failed");
-    expect(() => new Date(result.timestamp as string).toISOString()).not.toThrow();
   });
 });

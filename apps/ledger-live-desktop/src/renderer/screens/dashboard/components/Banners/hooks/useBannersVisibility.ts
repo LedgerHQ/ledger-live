@@ -1,8 +1,9 @@
 import { useSelector } from "LLD/hooks/redux";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/index";
+import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { usePostOnboardingEntryPointVisibleOnWallet, usePostOnboardingPortfolioWidgetVisibility } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { showClearCacheBannerSelector } from "~/renderer/reducers/settings";
 import { portfolioContentCardSelector } from "~/renderer/reducers/dynamicContent";
+import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import { useLNSUpsellBannerState } from "LLD/features/LNSUpsell";
 import useActionCards from "~/renderer/hooks/useActionCards";
 
@@ -11,6 +12,8 @@ interface BannerVisibilityState {
   isClearCacheBannerVisible: boolean;
   /** True if the post-onboarding banner is visible */
   isPostOnboardingBannerVisible: boolean;
+  /** True if the Finish Onboarding widget (post-onboarding entry) should show on Portfolio */
+  isFinishOnboardingWidgetVisible: boolean;
   /** True if the action cards carousel is visible */
   isActionCardsVisible: boolean;
   /** True if the LNS upsell banner is visible */
@@ -28,12 +31,20 @@ interface BannerVisibilityState {
  */
 export function useBannersVisibility(): BannerVisibilityState {
   const lldActionCarousel = useFeature("lldActionCarousel");
+  const { shouldDisplayFinishOnboardingWidget = false } = useWalletFeaturesConfig("desktop");
 
   // Clear cache banner
   const isClearCacheBannerVisible: boolean = useSelector(showClearCacheBannerSelector);
 
   // Post-onboarding banner
   const isPostOnboardingBannerVisible = usePostOnboardingEntryPointVisibleOnWallet();
+
+  // Finish onboarding widget
+  const { isPortfolioWidgetBaseVisible } = usePostOnboardingPortfolioWidgetVisibility(
+    flattenAccountsSelector,
+  );
+  const isFinishOnboardingWidgetVisible =
+    isPortfolioWidgetBaseVisible && shouldDisplayFinishOnboardingWidget;
 
   // Action cards carousel
   const { actionCards } = useActionCards();
@@ -51,6 +62,7 @@ export function useBannersVisibility(): BannerVisibilityState {
 
   const hasAnyContentBannerVisible =
     isPostOnboardingBannerVisible ||
+    isFinishOnboardingWidgetVisible ||
     isActionCardsVisible ||
     isLNSUpsellBannerVisible ||
     isPortfolioContentCardsVisible;
@@ -58,6 +70,7 @@ export function useBannersVisibility(): BannerVisibilityState {
   return {
     isClearCacheBannerVisible,
     isPostOnboardingBannerVisible,
+    isFinishOnboardingWidgetVisible,
     isActionCardsVisible,
     isLNSUpsellBannerVisible,
     isPortfolioContentCardsVisible,

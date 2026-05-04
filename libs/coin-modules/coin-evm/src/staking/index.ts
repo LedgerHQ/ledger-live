@@ -4,3 +4,22 @@ export { buildTransactionParams, buildStakingTransactionParams } from "./transac
 export { isStakingOperation, detectEvmStakingOperationType } from "./detectOperationType";
 export type { StakingFetcher, StakingStrategy } from "../types/staking";
 export { encodeStakingData } from "./encoder";
+export {
+  getValidators,
+  getValidatorExplorerUrl,
+  getUnbondingPeriodDays,
+  hasUnbondingPeriod,
+} from "./validators";
+export {
+  mapDelegations,
+  mapUnbondings,
+  mapRedelegations,
+  getMaxDelegationAvailable,
+  getMaxEstimatedBalance,
+  canUndelegate,
+  canDelegate,
+  canRedelegate,
+  getRedelegation,
+  getRedelegationCompletionDate,
+  parseAmountStringToNumber,
+} from "./logic";

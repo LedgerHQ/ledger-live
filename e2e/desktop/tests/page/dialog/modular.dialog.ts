@@ -57,7 +57,7 @@ export class ModularDialog extends Dialog {
 
   async selectNetwork(currency: Currency, networkIndex: number = 0) {
     if (await this.isNetworkDialogVisible()) {
-      return await this.networkDialog.selectNetwork(currency, networkIndex);
+      await this.networkDialog.selectNetwork(currency, networkIndex);
     }
   }
 

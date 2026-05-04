@@ -44,8 +44,9 @@ const ethEarn = [
   },
 ];
 
+// Skipping this suite as legacy is not visible on prod anymore
 for (const { account, provider, xrayTicket } of ethEarn) {
-  test.describe("Start ETH staking flow from Earn Dashboard", () => {
+  test.describe.skip("Start ETH staking flow from Earn Dashboard", () => {
     setupEnv(true);
     test.use({
       teamOwner: Team.EARN,
@@ -114,7 +115,8 @@ for (const { account, provider, xrayTicket } of ethEarn) {
   });
 }
 
-test.describe("Inline Add Account", () => {
+// Skipping this suite as legacy is not visible on prod anymore
+test.describe.skip("Inline Add Account", () => {
   const account = Account.ETH_1;
   setupEnv(true);
   test.use({
@@ -199,8 +201,9 @@ const earnDashboardCurrencies = [
   },
 ];
 
+// Skipping this suite as legacy is not visible on prod anymore
 for (const { account, xrayTicket, staking } of earnDashboardCurrencies) {
-  test.describe("Correct Earn page is loaded depending on user's staking situation", () => {
+  test.describe.skip("Correct Earn page is loaded depending on user's staking situation", () => {
     setupEnv(true);
     test.use({
       teamOwner: Team.EARN,

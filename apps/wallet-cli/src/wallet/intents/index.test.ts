@@ -77,6 +77,53 @@ describe("EvmTransactionIntentSchema", () => {
   it("rejects missing recipient", () => {
     expect(EvmTransactionIntentSchema.safeParse({ family: "evm", amount: "0.5 ETH" }).success).toBe(false);
   });
+
+  it("parses valid calldata", () => {
+    const result = EvmTransactionIntentSchema.safeParse({
+      family: "evm",
+      recipient: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F",
+      amount: "0.5 ETH",
+      data: "0xd0e30db0",
+    });
+    expect(result.success).toBe(true);
+    if (result.success) expect(result.data.data).toBe("0xd0e30db0");
+  });
+
+  it("accepts empty calldata (0x)", () => {
+    expect(EvmTransactionIntentSchema.safeParse({
+      family: "evm",
+      recipient: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F",
+      amount: "0.5 ETH",
+      data: "0x",
+    }).success).toBe(true);
+  });
+
+  it("rejects odd-length hex (0x0)", () => {
+    expect(EvmTransactionIntentSchema.safeParse({
+      family: "evm",
+      recipient: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F",
+      amount: "0.5 ETH",
+      data: "0x0",
+    }).success).toBe(false);
+  });
+
+  it("rejects non-hex characters in data", () => {
+    expect(EvmTransactionIntentSchema.safeParse({
+      family: "evm",
+      recipient: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F",
+      amount: "0.5 ETH",
+      data: "0xzzzz",
+    }).success).toBe(false);
+  });
+
+  it("rejects data without 0x prefix", () => {
+    expect(EvmTransactionIntentSchema.safeParse({
+      family: "evm",
+      recipient: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F",
+      amount: "0.5 ETH",
+      data: "d0e30db0",
+    }).success).toBe(false);
+  });
 });
 
 describe("SolanaTransactionIntentSchema", () => {

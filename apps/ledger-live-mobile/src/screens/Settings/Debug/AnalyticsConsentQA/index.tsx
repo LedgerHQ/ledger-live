@@ -1,12 +1,12 @@
 import React, { useMemo } from "react";
 import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
 import {
   needsConsentRenewal,
   needsPrivacyPolicyAck,
   resolveAnalyticsConsentPhase,
-} from "@ledgerhq/live-common/analyticsConsentUtils";
+  resolveAnalyticsOptInParams,
+} from "@ledgerhq/live-common/analyticsConsent/index";
 import { useDispatch, useSelector } from "~/context/hooks";
 import {
   analyticsConsentInfoSelector,
@@ -31,13 +31,14 @@ export default function DebugAnalyticsConsentQA() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const feature = useFeature("analyticsOptIn");
+  const { policyVersion, consentValidityDays } = resolveAnalyticsOptInParams(feature);
   const consentInfo = useSelector(analyticsConsentInfoSelector);
   const analyticsEnabled = useSelector(analyticsEnabledSelector);
   const personalizedEnabled = useSelector(personalizedRecommendationsEnabledSelector);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
 
-  const storedVersionOk = !needsPrivacyPolicyAck(consentInfo.privacyPolicyVersion);
-  const consentDateOk = !needsConsentRenewal(consentInfo.consentDate);
+  const storedVersionOk = !needsPrivacyPolicyAck(consentInfo.privacyPolicyVersion, policyVersion);
+  const consentDateOk = !needsConsentRenewal(consentInfo.consentDate, consentValidityDays);
 
   const expectation = useMemo(() => {
     const analyticsOptInFeatureEnabled = Boolean(feature?.enabled);
@@ -47,8 +48,11 @@ export default function DebugAnalyticsConsentQA() {
     if (!hasCompletedOnboarding) {
       return { shouldOffer: false as const, phase: null, reason: "onboardingIncomplete" as const };
     }
-    const needsUpdatePrivacy = needsPrivacyPolicyAck(consentInfo.privacyPolicyVersion);
-    const needsRenewal = needsConsentRenewal(consentInfo.consentDate);
+    const needsUpdatePrivacy = needsPrivacyPolicyAck(
+      consentInfo.privacyPolicyVersion,
+      policyVersion,
+    );
+    const needsRenewal = needsConsentRenewal(consentInfo.consentDate, consentValidityDays);
     if (!needsUpdatePrivacy && !needsRenewal) {
       return { shouldOffer: false as const, phase: null, reason: "nothingToRenew" as const };
     }
@@ -68,6 +72,8 @@ export default function DebugAnalyticsConsentQA() {
     hasCompletedOnboarding,
     consentInfo.consentDate,
     consentInfo.privacyPolicyVersion,
+    policyVersion,
+    consentValidityDays,
   ]);
 
   const expectedModalLines = useMemo(() => {
@@ -91,7 +97,7 @@ export default function DebugAnalyticsConsentQA() {
   }, [expectation]);
 
   const onOutdateVersion = () => {
-    const outdated = Math.max(0, CURRENT_PRIVACY_POLICY_VERSION - 1);
+    const outdated = Math.max(0, policyVersion - 1);
     dispatch(
       setAnalyticsConsentInfo({
         consentDate: consentInfo.consentDate,
@@ -164,7 +170,7 @@ export default function DebugAnalyticsConsentQA() {
           App privacy policy version (config)
         </Text>
         <Text typography="body2SemiBold" lx={{ color: "base", marginBottom: "s16" }}>
-          {String(CURRENT_PRIVACY_POLICY_VERSION)}
+          {String(policyVersion)}
         </Text>
 
         <Box

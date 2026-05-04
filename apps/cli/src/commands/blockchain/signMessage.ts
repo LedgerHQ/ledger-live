@@ -50,11 +50,13 @@ export default {
             break;
         }
 
-        const preparedMessage = prepareMessageToSign(
-          account,
-          Buffer.from(opts.message).toString("hex"),
+        return from(
+          prepareMessageToSign(account, Buffer.from(opts.message).toString("hex")),
+        ).pipe(
+          switchMap(preparedMessage =>
+            withDevice(opts.device || "")(t => from(signMessage(t, account, preparedMessage))),
+          ),
         );
-        return withDevice(opts.device || "")(t => from(signMessage(t, account, preparedMessage)));
       }),
     );
   },

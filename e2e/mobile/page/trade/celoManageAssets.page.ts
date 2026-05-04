@@ -2,13 +2,13 @@ import { Step } from "jest-allure2-reporter/api";
 
 export default class CeloManageAssetsPage {
   titleId = "live-app-title";
-  celoLockButton = "celo-lock-button";
-  celoUnlockButton = "celo-unlock-button";
-  celoWithdrawButton = "celo-withdraw-button";
-  celoVoteButton = "celo-vote-button";
-  celoActivateVoteButton = "celo-activate-vote-button";
-  celoRevokeButton = "celo-revoke-button";
-  celoVoteStartButton = "celo-vote-start-button";
+  celoLockButton = "enabled-celo-lock-button";
+  celoUnlockButton = "enabled-celo-unlock-button";
+  celoWithdrawButton = "disabled-celo-withdraw-button";
+  celoVoteButton = "enabled-celo-vote-button";
+  celoActivateVoteButton = /^(enabled|disabled)-celo-activate-vote-button$/;
+  celoRevokeButton = /^(enabled|disabled)-celo-revoke-button$/;
+  celoVoteStartButton = "enabled-celo-vote-start-button";
 
   title = () => getElementById(this.titleId);
 

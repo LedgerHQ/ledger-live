@@ -1,12 +1,12 @@
 import React from "react";
 import type { LumenStyleSheetTheme } from "@ledgerhq/lumen-ui-rnative/styles";
-import type { NavBarAppearance } from "@ledgerhq/lumen-ui-rnative";
 import HeaderTitle from "./HeaderTitle";
 import NavBarHeader from "./NavBarHeader";
 import NavigationHeaderCloseButton from "./HeaderCloseButton";
 import type {
   LumenNativeStackNavigationOptions,
   LumenStackNavBarDefaults,
+  NavBarDensity,
 } from "./lumenNativeStack";
 
 export type {
@@ -28,7 +28,7 @@ export const defaultNavigationOptions: Partial<LumenNativeStackNavigationOptions
 
 export type GetLumenStackScreenOptionsParams = {
   theme: Pick<LumenStyleSheetTheme, "colors">;
-  appearance?: NavBarAppearance;
+  density?: NavBarDensity;
   closable?: boolean;
   onClose?: () => void;
   isOnboarding?: boolean;
@@ -37,7 +37,7 @@ export type GetLumenStackScreenOptionsParams = {
 
 export function getLumenStackScreenOptions({
   theme,
-  appearance = "compact",
+  density = "compact",
   closable = false,
   onClose,
   isOnboarding,
@@ -55,9 +55,7 @@ export function getLumenStackScreenOptions({
     headerTitleStyle: {
       color: theme.colors.text.base,
     },
-    header: props => (
-      <NavBarHeader {...props} appearance={appearance} navBarDefaults={navBarDefaults} />
-    ),
+    header: props => <NavBarHeader {...props} density={density} navBarDefaults={navBarDefaults} />,
     ...(closable
       ? {
           lumenNavBar: isOnboarding
@@ -70,7 +68,7 @@ export function getLumenStackScreenOptions({
 
 export const getStackNavigationConfigV4 = (
   theme: Pick<LumenStyleSheetTheme, "colors">,
-  appearance: NavBarAppearance = "compact",
+  density: NavBarDensity = "compact",
   closable = false,
   onClose?: () => void,
   isOnboarding?: boolean,
@@ -78,7 +76,7 @@ export const getStackNavigationConfigV4 = (
 ): Partial<LumenNativeStackNavigationOptions> =>
   getLumenStackScreenOptions({
     theme,
-    appearance,
+    density,
     closable,
     onClose,
     isOnboarding,

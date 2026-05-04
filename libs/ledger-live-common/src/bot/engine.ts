@@ -275,7 +275,7 @@ export async function runWithAppSpec<T extends TransactionCommon>(
           }
         }
         // eslint-disable-next-line no-console
-        console.log(formatReportForConsole(report as any));
+        console.log(await formatReportForConsole(report as any));
         mutationReports.push(report);
         appReport.mutations = mutationReports;
 

@@ -1059,6 +1059,51 @@ describe("listOperations", () => {
     expect(items[0].recipients[0]).toBe(stakingContract);
   });
 
+  it("copies smart contract fields from explorer extra into operation details", async () => {
+    setCoinConfig(() => ({ info: { explorer: { type: "ledger" } } }) as unknown as EvmCoinConfig);
+    const contractAddr = "0x1111111111111111111111111111111111111111";
+    const payload = "0xabcd";
+    jest.spyOn(ledgerExplorer, "getOperations").mockResolvedValue({
+      lastCoinOperations: [
+        {
+          id: "sci-op",
+          accountId: "",
+          type: "OUT",
+          senders: ["address"],
+          recipients: [contractAddr],
+          value: new BigNumber(0),
+          hash: "0xsci-hash",
+          blockHeight: 10,
+          blockHash: "0xblock",
+          fee: new BigNumber(1),
+          date: new Date("2025-02-20"),
+          transactionSequenceNumber: new BigNumber(1),
+          extra: {
+            contractInteraction: "SmartContractInteraction",
+            contractAddress: contractAddr,
+            contractPayload: payload,
+          },
+        },
+      ],
+      lastTokenOperations: [],
+      lastNftOperations: [],
+      lastInternalOperations: [],
+      nextPagingToken: "",
+    });
+
+    const { items } = await listOperations({} as CryptoCurrency, "address", {
+      minHeight: 1,
+      order: "asc",
+    });
+
+    expect(items[0].details).toEqual({
+      sequence: BigNumber(1),
+      contractInteraction: "SmartContractInteraction",
+      contractAddress: contractAddr,
+      contractPayload: payload,
+    });
+  });
+
   describe("Transaction to operation mapping should match the specification", () => {
     const blockHeight = 100;
     const blockHash = "0xblock";

@@ -182,6 +182,7 @@ jobs:
           invert_filter: false
           shard_index: 1
           shard_total: 1
+          enable_wallet40: true
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           XRAY: false

@@ -1,38 +1,19 @@
 import type { Config } from "jest";
 
-const transformIncludePatterns = ["ky"];
+const esmDeps = ["ky"];
 
 const config: Config = {
   testEnvironment: "node",
   transform: {
-    "^.+\\.tsx?$": [
+    "^.+\\.(t|j)sx?$": [
       "@swc/jest",
       {
         jsc: {
-          target: "es2022",
-          parser: {
-            syntax: "typescript",
-            tsx: false,
-            decorators: false,
-            dynamicImport: true,
-          },
+          target: "esnext",
         },
       },
     ],
-    "^.+\\.(js|jsx|mjs|cjs)$": [
-      "@swc/jest",
-      {
-        jsc: {
-          target: "es2022",
-          parser: {
-            syntax: "ecmascript",
-            jsx: true,
-            dynamicImport: true,
-          },
-        },
-      },
-    ],
-    [`node_modules/.pnpm/(${transformIncludePatterns.join("|")}).+\\.(js|jsx)?$`]: [
+    [`node_modules[\\\\|/].pnpm[\\\\|/](${esmDeps.join("|")}).+\\.(js|jsx|mjs)$`]: [
       "@swc/jest",
       {
         jsc: {
@@ -41,10 +22,9 @@ const config: Config = {
       },
     ],
   },
-  transformIgnorePatterns: [`node_modules/.pnpm/(?!(${transformIncludePatterns.join("|")}))`],
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
-  testMatch: ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
-  setupFilesAfterEnv: ["dotenv/config"],
+  transformIgnorePatterns: [`node_modules/.pnpm/(?!(${esmDeps.join("|")}))`],
+  testMatch: ["**/?(*.)+(spec|test).[jt]s?(x)"],
 };
 
 export default config;

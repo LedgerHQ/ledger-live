@@ -134,9 +134,9 @@ jobs:
           password: ${{ steps.jfrog-login.outputs.oidc-token }}
 
       - name: Setup environment
-        uses: ./tools/actions/composites/setup-coin-tester-env
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-coin-tester-env@develop
 
       - name: Run Coin Tester
-        uses: ./tools/actions/composites/run-coin-tester
+        uses: LedgerHQ/ledger-live/tools/actions/composites/run-coin-tester@develop
         with:
           chain: ${{ matrix.chain }}

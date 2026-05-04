@@ -12,7 +12,7 @@ services:
     ports:
       - "8000:8000"
     healthcheck:
-        test: ["CMD", "curl", "-f", "http://127.0.0.1:8000", "-H", "Accept: application/json", "-d", '{"jsonrpc":"2.0","id":1, "method":"system_health"}']
+        test: ["CMD", "curl", "-f", "http://127.0.0.1:8000", "-H", "Accept: application/json", "-d", '{ "jsonrpc": "2.0", "id": "healthcheck", "method": "system_health" }']
         interval: 5s
         timeout: 10s
         retries: 12
@@ -25,8 +25,13 @@ services:
         condition: service_healthy
     environment:
       - SAS_EXPRESS_BIND_HOST=0.0.0.0
-      - SAS_SUBSTRATE_URL=ws://chopsticks:${CHOPSTICKS_NODE_PORT-8000}
-      - SAS_EXPRESS_KEEP_ALIVE_TIMEOUT=${SIDECAR_KEEP_ALIVE_TIMEOUT-60000}
-      - SAS_EXPRESS_PORT=${SIDECAR_PORT-8080}
+      - SAS_SUBSTRATE_URL=ws://chopsticks:8000
+      - SAS_EXPRESS_KEEP_ALIVE_TIMEOUT=60000
+      - SAS_EXPRESS_PORT=8080
     ports:
       - "8080:8080"
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://127.0.0.1:8080/node/version", "-H", "Accept: application/json"]
+        interval: 5s
+        timeout: 10s
+        retries: 12

@@ -60,7 +60,7 @@ export const WalletV4TourDialog = ({
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="flex h-screen min-h-0 flex-col">
-        <DialogHeader appearance="compact" onClose={onClose} />
+        <DialogHeader density="compact" onClose={onClose} />
         <Slides initialSlideIndex={0} onSlideChange={onSlideChange}>
           <Slides.Content>
             {slides.map((slide, index) => (

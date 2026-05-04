@@ -2,7 +2,6 @@ import type { ReactNode } from "react";
 import type { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 
 import type {
-  NavBarAppearance,
   NavBarCoinCapsuleProps,
   NavBarContentProps,
   NavBarDescriptionProps,
@@ -11,9 +10,11 @@ import type {
   NavBarTrailingProps,
 } from "@ledgerhq/lumen-ui-rnative";
 
+export type NavBarDensity = NavBarProps["density"];
+
 export type LumenNavBarScreenOptions = {
-  appearance?: NavBarAppearance;
-  navBarProps?: Omit<NavBarProps, "appearance" | "children">;
+  density?: NavBarDensity;
+  navBarProps?: Omit<NavBarProps, "density" | "children">;
   navBarContentProps?: Omit<NavBarContentProps, "children">;
   navBarTitleProps?: Omit<NavBarTitleProps, "children">;
   navBarDescriptionProps?: Omit<NavBarDescriptionProps, "children">;
@@ -26,7 +27,7 @@ export type LumenNavBarScreenOptions = {
 };
 
 export type LumenStackNavBarDefaults = {
-  navBarProps?: Omit<NavBarProps, "appearance" | "children">;
+  navBarProps?: Omit<NavBarProps, "density" | "children">;
 };
 
 export type LumenNativeStackNavigationOptions = NativeStackNavigationOptions & {

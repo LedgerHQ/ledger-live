@@ -20,13 +20,20 @@ import { GRADIENT_HEIGHT } from "LLM/features/OperationsHistory/const";
 type Props = StackNavigatorProps<OperationsHistoryNavigatorParamsList, ScreenName.OperationsList>;
 
 function keyExtractor(item: Operation) {
-  return `${item.accountId}_${item.id}`;
+  return `${item.accountId}_${item.id}_${item.type}`;
 }
 
 export default function OperationsList(_: Props) {
   const { bottom } = useSafeAreaInsets();
-  const { accounts, flattenedAccounts, sections, completed, isEmpty, onEndReached } =
-    useOperationsListViewModel();
+  const {
+    accounts,
+    flattenedAccounts,
+    accountByAddress,
+    sections,
+    completed,
+    isEmpty,
+    onEndReached,
+  } = useOperationsListViewModel();
 
   const listContentStyle = useMemo(
     () => ({
@@ -47,10 +54,15 @@ export default function OperationsList(_: Props) {
       if (!account) return null;
 
       return (
-        <OperationsListItem operation={item} account={account} parentAccount={parentAccount} />
+        <OperationsListItem
+          operation={item}
+          account={account}
+          parentAccount={parentAccount}
+          accountByAddress={accountByAddress}
+        />
       );
     },
-    [flattenedAccounts, accounts],
+    [flattenedAccounts, accounts, accountByAddress],
   );
 
   const renderSectionHeader = useCallback(

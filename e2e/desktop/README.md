@@ -90,16 +90,16 @@ For detailed setup, debugging, and contribution guidelines, see:
 
 ### 6. Wallet 4.0
 
-To reduce noise in test reports the Wallet 4.0 feature is OFF by default (regardless of Firebase).
-You can force Wallet 4.0 ON by setting the E2E environment variable:
+The Wallet 4.0 feature is ON by default (regardless of Firebase).
+You can force Wallet 4.0 OFF (legacy) by setting the E2E environment variable:
 
 ```bash
-export E2E_ENABLE_WALLET40=1
+export E2E_ENABLE_WALLET40=0
 ```
 
-Individual tests can still switch the feature ON explicitly passing the flag and parameters.
+Individual tests can still switch Wallet 4.0 OFF by explicitly passing the `LWD_WALLET_40_FF_DISABLED` FF.
 
-To switch Wallet 4.0 on for all tests please use the checkbox on the Workflow.
+To switch Wallet 4.0 OFF on CI please untick the checkbox on the Github Workflow.
 
 ### 7. Custom feature flags with E2E_FEATURE_FLAGS_JSON
 

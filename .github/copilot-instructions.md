@@ -102,6 +102,10 @@ Methods that are not applicable may raise a "not supported"/"not applicable" err
 - `lastBlock` integ test needs to check that block height is higher than 0, time is a valid date and hash has the expected length.
 - `getNextSequence` needs to check that it is higher than the current nonce for a specific account.
 
+### live-common coin-* import rule
+
+In `libs/ledger-live-common/src`, runtime imports of coin-specific code — whether from `@ledgerhq/coin-*` packages or from `../families/*` paths — are only allowed inside `src/coin-modules/` and `src/families/`; all other shared code must access coin-specific behaviour through `coinModuleLoaders` from `src/coin-modules/loaders.ts`.
+
 
 ## Cross-team files (team-split convention)
 

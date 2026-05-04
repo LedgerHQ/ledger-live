@@ -49,6 +49,15 @@ const handlers = [
   http.get(`${SIDECAR_BASE_URL_TEST}/pallets/staking/progress`, () =>
     HttpResponse.json(fixtureStakingProgress),
   ),
+  http.get(`${SIDECAR_BASE_URL_TEST}/pallets/staking/consts`, () =>
+    HttpResponse.json({
+      items: [
+        { name: "SessionsPerEra", value: "0x06000000" },
+        { name: "BondingDuration", value: "0x1c000000" },
+        { name: "MaxExposurePageSize", value: "0x00020000" },
+      ],
+    }),
+  ),
 ];
 
 const mockServer = setupServer(...handlers);

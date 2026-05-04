@@ -10,6 +10,40 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation as LiveOperation, OperationType } from "@ledgerhq/types-live";
 import { getExplorerApi } from "../network/explorer";
 
+const CONTRACT_INTERACTION_KINDS = new Set<string>([
+  "SmartContractInteraction",
+  "SmartContractDeployment",
+]);
+
+/** Smart-contract fields copied from explorer `extra` into framework `details`. */
+function contractDetailsFromLiveExtra(
+  extra: LiveOperation["extra"],
+): Record<string, unknown> | undefined {
+  if (!extra || typeof extra !== "object") return undefined;
+  const src = extra as Record<string, unknown>;
+  const out: Record<string, unknown> = {};
+
+  const contractInteraction = src.contractInteraction;
+  if (
+    typeof contractInteraction === "string" &&
+    CONTRACT_INTERACTION_KINDS.has(contractInteraction)
+  ) {
+    out.contractInteraction = contractInteraction;
+  }
+
+  const contractAddress = src.contractAddress;
+  if (typeof contractAddress === "string") {
+    out.contractAddress = contractAddress;
+  }
+
+  const contractPayload = src.contractPayload;
+  if (typeof contractPayload === "string") {
+    out.contractPayload = contractPayload;
+  }
+
+  return Object.keys(out).length > 0 ? out : undefined;
+}
+
 type AssetConfig =
   | { type: "native"; internal?: boolean; parent?: LiveOperation }
   | { type: "token"; owner: string; parent?: LiveOperation };
@@ -129,6 +163,12 @@ function toOperation(
 
   const txFee = computeTxFee(asset, op);
 
+  const contractDetail =
+    contractDetailsFromLiveExtra(op.extra) ??
+    (asset.type === "token" && asset.parent
+      ? contractDetailsFromLiveExtra(asset.parent.extra)
+      : undefined);
+
   return {
     id: op.id,
     type,
@@ -152,6 +192,7 @@ function toOperation(
       sequence: op.transactionSequenceNumber,
       ...internalOpDetail,
       ...tokenOpDetail,
+      ...contractDetail,
     },
   };
 }

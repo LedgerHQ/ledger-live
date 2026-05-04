@@ -31,7 +31,7 @@ export function formatAppCandidate(appCandidate: AppCandidate): string {
   return `${appCandidate.appName} ${appCandidate.appVersion} on ${appCandidate.model} ${appCandidate.firmware}`;
 }
 
-export function formatReportForConsole<T extends Transaction>({
+export async function formatReportForConsole<T extends Transaction>({
   resyncAccountsDuration,
   appCandidate,
   account,
@@ -57,7 +57,7 @@ export function formatReportForConsole<T extends Transaction>({
   testDuration,
   error,
   errorTime,
-}: MutationReport<T>): string {
+}: MutationReport<T>): Promise<string> {
   let str = "";
   str += `necessary accounts resynced in ${formatTime(resyncAccountsDuration)}\n`;
   str += `▬ ${formatAppCandidate(appCandidate)}\n`;
@@ -100,11 +100,11 @@ export function formatReportForConsole<T extends Transaction>({
   }
 
   if (transaction && account) {
-    str += `✔️ transaction ${formatTransaction(transaction, account)}\n`;
+    str += `✔️ transaction ${await formatTransaction(transaction, account)}\n`;
   }
 
   if (status && transaction && account) {
-    str += `STATUS (${formatDt(mutationTime, statusTime)})${formatTransactionStatus(
+    str += `STATUS (${formatDt(mutationTime, statusTime)})${await formatTransactionStatus(
       transaction,
       status,
       account,
@@ -112,14 +112,19 @@ export function formatReportForConsole<T extends Transaction>({
   }
 
   if (recoveredFromTransactionStatus && account) {
-    str += `\n⚠️ recovered from transaction ${formatTransaction(
+    const recoveredTxStr = await formatTransaction(
       recoveredFromTransactionStatus.transaction,
       account,
-    )}\nof status ${formatTransactionStatus(
+    );
+    const recoveredStatusStr = await formatTransactionStatus(
       recoveredFromTransactionStatus.transaction,
       recoveredFromTransactionStatus.status,
       account,
-    )}\n\n`.replace(/\n/g, "\n  ");
+    );
+    str += `\n⚠️ recovered from transaction ${recoveredTxStr}\nof status ${recoveredStatusStr}\n\n`.replace(
+      /\n/g,
+      "\n  ",
+    );
   }
 
   if (signedOperation) {

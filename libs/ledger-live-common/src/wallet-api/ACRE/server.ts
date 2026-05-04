@@ -240,7 +240,7 @@ export const handlers = ({
       ? await getCryptoAssetsStore().findTokenById(tokenCurrency)
       : null;
     const signerAccount = currency ? makeEmptyTokenAccount(mainAccount, currency) : account;
-    const { canEditFees, liveTx, hasFeesProvided } = getWalletAPITransactionSignFlowInfos({
+    const { canEditFees, liveTx, hasFeesProvided } = await getWalletAPITransactionSignFlowInfos({
       walletApiTransaction: transaction,
       account,
     });

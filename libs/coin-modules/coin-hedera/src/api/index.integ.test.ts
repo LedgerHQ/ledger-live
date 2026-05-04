@@ -833,6 +833,20 @@ describe("createApi", () => {
         }),
       ]);
     });
+
+    it("filters out ERC20 operations with null sender or recipient address", async () => {
+      const blockHeight = 177564534;
+      const txHashWithNullAddress =
+        "tSFV6McHlh0v6tZEZVGlwavk/QRoMabPIOtVbyJ1/j3gvTHMZP97URu4Vw6JbMmC";
+
+      const block = await api.getBlock(blockHeight);
+      const transaction = block.transactions.find(tx => tx.hash === txHashWithNullAddress);
+      const operationAddresses = transaction?.operations.map(op => op.address);
+
+      expect(transaction).not.toBeUndefined();
+      expect(transaction?.operations.length).toBeGreaterThan(0);
+      expect(operationAddresses).not.toContain(null);
+    });
   });
 
   describe("lastBlock", () => {

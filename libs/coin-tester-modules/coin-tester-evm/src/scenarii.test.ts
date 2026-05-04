@@ -12,10 +12,7 @@ import { scenarioBnb } from "./scenarii/bnb";
 import "./tokenFixtures";
 
 global.console = require("console");
-jest.setTimeout(100_000);
-
-// Note this config runs with NanoX
-// https://github.com/LedgerHQ/ledger-live/blob/develop/libs/coin-tester/docker-compose.yml
+jest.setTimeout(300_000);
 
 describe("EVM Deterministic Tester", () => {
   it("scenario Ethereum", async () => {

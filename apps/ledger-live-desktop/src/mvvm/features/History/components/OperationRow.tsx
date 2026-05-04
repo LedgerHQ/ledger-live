@@ -1,12 +1,16 @@
 import React, { useCallback, memo } from "react";
 import { TableRow, TableCell, TableCellContent } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/index";
+import { CryptoIcon } from "@ledgerhq/crypto-icons";
+import { getValidCryptoIconSize } from "~/renderer/utils/cryptoIconSize";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { SquaredCryptoIcon } from "LLD/components/SquaredCryptoIcon";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import CounterValue from "~/renderer/components/CounterValue";
 import { getAddressDirection } from "../utils/getOperationCounterpartyAddress";
 import { OperationCounterpartyLabel } from "./OperationCounterpartyLabel";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { OperationRow as OperationRowType } from "../types";
 
 type OperationRowProps = {
@@ -16,6 +20,7 @@ type OperationRowProps = {
 
 function OperationRow({ row, onRowClick }: OperationRowProps) {
   const { t } = useTranslation();
+  const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
   const handleClick = useCallback(() => onRowClick(row), [onRowClick, row]);
   const item = row.original;
   const { operation, currency, amount, address, type } = item;
@@ -29,11 +34,29 @@ function OperationRow({ row, onRowClick }: OperationRowProps) {
 
   const unit = currency.units[0];
 
+  const cryptoCurrency: CryptoCurrency | TokenCurrency | undefined =
+    currency.type === "FiatCurrency" ? undefined : currency;
+  const isToken = cryptoCurrency?.type === "TokenCurrency";
+  const iconCurrency =
+    isToken && shouldDisplayAggregatedAssets ? cryptoCurrency.parentCurrency : cryptoCurrency;
+  const iconNetwork =
+    isToken && !shouldDisplayAggregatedAssets ? cryptoCurrency.parentCurrency.id : undefined;
+
   return (
     <TableRow clickable onClick={handleClick}>
       <TableCell>
         <TableCellContent
-          leadingContent={<CryptoCurrencyIcon currency={currency} size={32} />}
+          leadingContent={
+            shouldDisplayAggregatedAssets && cryptoCurrency ? (
+              <CryptoIcon
+                ledgerId={cryptoCurrency.id}
+                ticker={cryptoCurrency.ticker}
+                size={getValidCryptoIconSize(32)}
+              />
+            ) : (
+              <CryptoCurrencyIcon currency={currency} size={32} />
+            )
+          }
           title={typeLabel}
         />
       </TableCell>
@@ -43,14 +66,12 @@ function OperationRow({ row, onRowClick }: OperationRowProps) {
           title={
             <div className="inline-flex items-center gap-4">
               <OperationCounterpartyLabel item={item} prefix={addressPrefix} />
-              {currency.type !== "FiatCurrency" && (
+              {iconCurrency && (
                 <SquaredCryptoIcon
-                  ledgerId={currency.id}
-                  ticker={currency.ticker}
+                  ledgerId={iconCurrency.id}
+                  ticker={iconCurrency.ticker}
                   size="20px"
-                  {...(currency.type === "TokenCurrency"
-                    ? { network: currency.parentCurrency.id }
-                    : {})}
+                  network={iconNetwork}
                 />
               )}
             </div>

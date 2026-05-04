@@ -97,7 +97,18 @@ describe("EVM Staking - getStakes", () => {
   it("should handle multiple validators and filter zero amounts", async () => {
     const currency = getCryptoCurrencyById("sei_evm");
 
-    mockGetValidators.mockResolvedValue(["seivaloper1abc", "seivaloper1def"]);
+    const makeValidator = (validatorAddress: string) => ({
+      validatorAddress,
+      name: "",
+      commission: 0,
+      tokens: 0,
+      votingPower: 0,
+      estimatedYearlyRewardsRate: 0,
+    });
+    mockGetValidators.mockResolvedValue([
+      makeValidator("seivaloper1abc"),
+      makeValidator("seivaloper1def"),
+    ]);
 
     mockWithApi.mockImplementation(async (_cur, fn) => {
       const api = { call: jest.fn().mockResolvedValue("0x") } as unknown as JsonRpcProvider;
@@ -131,7 +142,7 @@ describe("EVM Staking - getStakes", () => {
           asset: expect.objectContaining({
             type: "native",
           }),
-          amount: 42n, // Exact value from the mock
+          amount: 42n * 10n ** 12n,
         }),
       ],
     });

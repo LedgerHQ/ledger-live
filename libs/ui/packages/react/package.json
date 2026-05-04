@@ -72,7 +72,7 @@
   "scripts": {
     "storybook": "storybook dev -p 6006",
     "build": "tsc -p tsconfig.prod.json && node scripts/transpile && node scripts/postBuild",
-    "prebuild:storybook": "pnpm -F ui-shared -F icons-ui build",
+    "prebuild:storybook": "nx run-many -t build -p @ledgerhq/ui-shared,@ledgerhq/icons-ui,@ledgerhq/crypto-icons",
     "build:storybook": "storybook build",
     "watch": "tsc -p tsconfig.prod.json --watch",
     "clean": "rimraf lib",

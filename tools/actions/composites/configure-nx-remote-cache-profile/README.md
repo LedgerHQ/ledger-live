@@ -16,6 +16,8 @@ After clone or when `nx.workspace.json` / `nx.s3.defaults.json` change, regenera
 pnpm run nx:write-cache-config
 ```
 
+If `nx.cache-config.json` already exists, the script skips overwriting it; run `pnpm run nx:write-cache-config -- --force` to regenerate after changing the tracked inputs.
+
 `nx.cache-config.json` is gitignored; do not commit it.
 
 ## Nx activation key

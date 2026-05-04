@@ -609,4 +609,21 @@ describe("buildTransaction", () => {
     // Verify feeCurrency is included
     expect(transaction.feeCurrency).toEqual(transactionWithUsdcFeeFixture.feeCurrency);
   });
+
+  it("uses adapter feeCurrency (not unwrapped token address) in built tx", async () => {
+    const transactionWithAdapterFee = {
+      ...transactionWithUsdcFeeFixture,
+      recipient: "0x79D5A290D7ba4b99322d91b577589e8d0BF87072",
+      feeCurrency: "0x2F25deB3848C207fc8E0c34035B3Ba7fC157602B" as `0x${string}`,
+      feeCurrencyUnwrapped: "0xcebA9300f2b948710d2653dD7B07f33A8B32118C" as `0x${string}`,
+    };
+
+    const transaction = await buildTransaction(
+      { ...accountFixture, spendableBalance: BigNumber(123) },
+      transactionWithAdapterFee,
+    );
+
+    expect(transaction.feeCurrency).toEqual(transactionWithAdapterFee.feeCurrency);
+    expect(transaction.feeCurrency).not.toEqual(transactionWithAdapterFee.feeCurrencyUnwrapped);
+  });
 });

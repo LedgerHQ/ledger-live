@@ -45,13 +45,20 @@ export function useOnboarding(
     }
   }, []);
 
-  const startOnboarding = useCallback(() => {
+  const startOnboarding = useCallback(async () => {
     unsubscribe();
     completedRef.current = false;
     setCompletedAccount(null);
     setCreateStatus(CreateStatus.PREPARING);
 
-    const bridge = getConcordiumBridge(currency);
+    let bridge;
+    try {
+      bridge = await getConcordiumBridge(currency);
+    } catch {
+      unsubscribe();
+      setCreateStatus(CreateStatus.ERROR);
+      return;
+    }
     subscriptionRef.current = bridge
       .onboardAccount(currency.id, deviceId, creatableAccount)
       .subscribe({

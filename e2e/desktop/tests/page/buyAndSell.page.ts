@@ -244,15 +244,26 @@ export class BuyAndSellPage extends WebViewAppPage {
   }
 
   private async waitForGoToUrl(): Promise<string> {
+    let stableUrl: string | undefined;
+
     await waitFor(
-      async () => this.webviewUrlHistory.some(url => url.toLowerCase().includes("gotourl")),
+      async () => {
+        const goToUrls = this.webviewUrlHistory.filter(url =>
+          url.toLowerCase().includes("gotourl"),
+        );
+        const latest = goToUrls.at(-1);
+        if (latest !== undefined && latest === stableUrl) {
+          return true; // last gotourl unchanged since previous check → settled
+        }
+        stableUrl = latest;
+        return false;
+      },
       200,
       10_000,
     );
 
-    const url = this.webviewUrlHistory.find(url => url.toLowerCase().includes("gotourl"));
-    if (!url) throw new Error("No GoTo URL found in webviewUrlHistory after waiting.");
-    return url;
+    if (!stableUrl) throw new Error("No GoTo URL found in webviewUrlHistory after waiting.");
+    return stableUrl;
   }
 
   private verifyBaseUrl(url: URL, providerName: string, operation: OperationType) {

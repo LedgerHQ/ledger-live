@@ -14,6 +14,8 @@ import {
 } from "../../../analytics/addAccount.types";
 import useAddAccountAnalytics from "../../../analytics/useAddAccountAnalytics";
 import { IconContainer } from "./IconContainer";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { getAccountsSidebarPath } from "LLD/components/SideBar/utils";
 
 const ActionItem = styled(Flex)`
   cursor: pointer;
@@ -48,6 +50,8 @@ const ActionsContainer = ({ account, currencyId }: Props) => {
   const dispatch = useDispatch();
   const { isCurrencyAvailable } = useRampCatalog();
   const { trackAddAccountEvent } = useAddAccountAnalytics();
+  const { shouldDisplayAssetSection } = useWalletFeaturesConfig("desktop");
+  const accountsPath = getAccountsSidebarPath(shouldDisplayAssetSection);
 
   const handleReceive = useCallback(() => {
     trackAddAccountEvent(ADD_ACCOUNT_EVENTS_NAME.ADD_ACCOUNT_BUTTON_CLICKED, {
@@ -55,9 +59,9 @@ const ActionsContainer = ({ account, currencyId }: Props) => {
       page: ADD_ACCOUNT_PAGE_NAME.FUNDING_ACTIONS,
     });
     setDrawer();
-    if (location.pathname === "/manager") navigate("/accounts");
+    if (location.pathname === "/manager") navigate(accountsPath);
     dispatch(openModal("MODAL_RECEIVE", { account }));
-  }, [account, dispatch, location.pathname, navigate, trackAddAccountEvent]);
+  }, [account, accountsPath, dispatch, location.pathname, navigate, trackAddAccountEvent]);
 
   const handleBuy = useCallback(() => {
     trackAddAccountEvent(ADD_ACCOUNT_EVENTS_NAME.ADD_ACCOUNT_BUTTON_CLICKED, {

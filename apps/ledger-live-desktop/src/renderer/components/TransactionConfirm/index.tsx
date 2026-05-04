@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { Account, AccountLike, TransactionCommon } from "@ledgerhq/types-live";
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getMainAccount, findSubAccountById } from "@ledgerhq/live-common/account/index";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useDeviceTransactionConfig } from "@ledgerhq/live-common/hooks/useDeviceTransactionConfig";
@@ -56,7 +56,15 @@ const AmountField = ({ account, status: { amount }, field }: FieldComponentProps
 const FeesField = ({ account, parentAccount, status, field }: FieldComponentProps) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const { estimatedFees } = status;
-  const feesUnit = useAccountUnit(mainAccount);
+
+  // Use feeCurrencyAccount if specified (e.g., for Celo non-native fee currencies)
+  const feeCurrencyAccountId =
+    "feeCurrencyAccountId" in status ? status.feeCurrencyAccountId : undefined;
+  const feeCurrencyAccount = feeCurrencyAccountId
+    ? findSubAccountById(mainAccount, feeCurrencyAccountId)
+    : undefined;
+
+  const feesUnit = useAccountUnit(feeCurrencyAccount ?? mainAccount);
   return (
     <TransactionConfirmField label={field.label}>
       <FormattedVal

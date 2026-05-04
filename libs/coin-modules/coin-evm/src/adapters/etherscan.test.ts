@@ -76,7 +76,12 @@ describe("EVM Family", () => {
             subOperations: [],
             internalOperations: [],
             type: "FEES",
-            extra: {},
+            extra: {
+              contractInteraction: "SmartContractDeployment",
+              contractAddress: "0x4969D9fD2542e71e6b3EA87bE54EA9a736bcC4E9",
+              contractPayload:
+                "0xa9059cbb000000000000000000000000313143c4088a47c469d06fe3fa5fd4196be6a4d600000000000000000000000000000000000000000003b8e97d229a2d54800000",
+            },
           };
 
           expect(etherscanOperationToOperations(accountId, etherscanOp)).toEqual([
@@ -134,7 +139,12 @@ describe("EVM Family", () => {
             subOperations: [],
             internalOperations: [],
             type: "FEES",
-            extra: {},
+            extra: {
+              contractInteraction: "SmartContractInteraction",
+              contractAddress: "0xc5102fE9359FD9a28f877a67E36B0F050d81a3CC",
+              contractPayload:
+                "0xa9059cbb000000000000000000000000313143c4088a47c469d06fe3fa5fd4196be6a4d600000000000000000000000000000000000000000003b8e97d229a2d54800000",
+            },
           };
 
           expect(etherscanOperationToOperations(accountId, etherscanOp)).toEqual([
@@ -1743,7 +1753,12 @@ describe("EVM Family", () => {
             subOperations: [],
             internalOperations: [],
             type: "DELEGATE",
-            extra: {},
+            extra: {
+              contractInteraction: "SmartContractInteraction",
+              contractAddress: "0x0000000000000000000000000000000000001005",
+              contractPayload:
+                "0x9ddb511a0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000001a73656976616c6f7065723178797a616263313233343536373839300000000000",
+            },
           };
 
           expect(etherscanOperationToOperations(accountId, etherscanOp)).toEqual([
@@ -1801,7 +1816,12 @@ describe("EVM Family", () => {
             subOperations: [],
             internalOperations: [],
             type: "REDELEGATE",
-            extra: {},
+            extra: {
+              contractInteraction: "SmartContractInteraction",
+              contractAddress: "0x0000000000000000000000000000000000001005",
+              contractPayload:
+                "0x7dd0209d00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000a76616c696461746f723100000000000000000000000000000000000000000000000000000000000000000a76616c696461746f72320000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000003e8",
+            },
           };
 
           expect(etherscanOperationToOperations(accountId, etherscanOp)).toEqual([
@@ -1857,7 +1877,11 @@ describe("EVM Family", () => {
             subOperations: [],
             internalOperations: [],
             type: "UNDELEGATE",
-            extra: {},
+            extra: {
+              contractInteraction: "SmartContractInteraction",
+              contractAddress: "0x0000000000000000000000000000000000001005",
+              contractPayload: "0x8dfc88970000000000000000000000",
+            },
           };
 
           expect(etherscanOperationToOperations(accountId, etherscanOp)).toEqual([

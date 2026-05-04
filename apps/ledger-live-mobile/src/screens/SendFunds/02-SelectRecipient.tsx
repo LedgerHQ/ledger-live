@@ -242,6 +242,8 @@ export default function SendSelectRecipient({ route }: Props) {
     specific && "StepRecipientCustomAlert" in specific ? specific.StepRecipientCustomAlert : null;
   const customSendRecipientCanNext =
     specific && "sendRecipientCanNext" in specific ? specific.sendRecipientCanNext : null;
+  const SendRecipientFields =
+    specific && "SendRecipientFields" in specific ? specific.SendRecipientFields : null;
 
   const customValidationSuccess = customSendRecipientCanNext?.(status) ?? true;
   const isContinueDisabled =
@@ -362,6 +364,15 @@ export default function SendSelectRecipient({ route }: Props) {
                 transaction={transaction}
                 warning={warning}
                 error={error}
+              />
+            )}
+
+            {SendRecipientFields && (
+              <SendRecipientFields
+                transaction={transaction}
+                account={mainAccount}
+                parentAccount={parentAccount}
+                setTransaction={setTransaction}
               />
             )}
 

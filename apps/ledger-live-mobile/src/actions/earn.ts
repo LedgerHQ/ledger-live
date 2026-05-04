@@ -6,6 +6,7 @@ import type {
   EarnSetMenuModalPayload,
   EarnSetMenuBottomSheetPayload,
   EarnSetProtocolInfoModalPayload,
+  EarnSetActionDialogPayload,
 } from "./types";
 
 export const makeSetEarnInfoModalAction = createAction<EarnSetInfoModalPayload>(
@@ -26,4 +27,8 @@ export const makeSetEarnMenuBottomSheetAction = createAction<EarnSetMenuBottomSh
 
 export const makeSetEarnProtocolInfoModalAction = createAction<EarnSetProtocolInfoModalPayload>(
   EarnActionTypes.EARN_PROTOCOL_INFO_MODAL,
+);
+
+export const makeSetEarnActionDialogAction = createAction<EarnSetActionDialogPayload>(
+  EarnActionTypes.EARN_ACTION_DIALOG,
 );

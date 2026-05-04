@@ -14,12 +14,12 @@ export async function fromScanAccountEventRaw(raw: ScanAccountEventRaw): Promise
       throw new Error("unsupported ScanAccountEvent " + raw.type);
   }
 }
-export function toScanAccountEventRaw(e: ScanAccountEvent): ScanAccountEventRaw {
+export async function toScanAccountEventRaw(e: ScanAccountEvent): Promise<ScanAccountEventRaw> {
   switch (e.type) {
     case "discovered":
       return {
         type: e.type,
-        account: toAccountRaw(e.account),
+        account: await toAccountRaw(e.account),
       };
 
     default:

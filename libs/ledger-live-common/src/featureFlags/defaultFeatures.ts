@@ -544,6 +544,10 @@ export const DEFAULT_FEATURES: Features = {
 
   analyticsOptIn: {
     enabled: false,
+    params: {
+      policyVersion: 1,
+      consentValidityDays: 365,
+    },
   },
 
   lldAnalyticsOptInPrompt: {
@@ -844,6 +848,7 @@ export const DEFAULT_FEATURES: Features = {
       brazePlacement: true,
       aggregatedAssets: true,
       myWallet: true,
+      finishOnboardingWidget: false,
     },
   },
   addressPoisoningOperationsFilter: {

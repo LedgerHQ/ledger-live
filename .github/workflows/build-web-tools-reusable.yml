@@ -21,6 +21,12 @@ on:
         default: true
         type: string
 
+      vercel-production:
+        description: When true, deploy web tools and Storybooks to Vercel production
+        required: false
+        default: "false"
+        type: string
+
   workflow_dispatch:
     inputs:
       ref:
@@ -41,6 +47,11 @@ on:
         description: Whether to react storybook
         required: false
         default: true
+      vercel-production:
+        description: Deploy Vercel targets to production
+        required: false
+        default: "false"
+        type: string
 
 permissions:
   id-token: write
@@ -81,6 +92,7 @@ jobs:
           vercel-org-id: ${{ secrets.VERCEL_LEDGER_WALLET_TEAM_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_WEBTOOLS }}
           working-directory: apps/web-tools
+          production: ${{ inputs.vercel-production }}
 
       - name: Typecheck web-tools
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
@@ -121,6 +133,7 @@ jobs:
           vercel-org-id: ${{ secrets.VERCEL_LEDGER_WALLET_TEAM_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_NATIVE_STORYBOOK }}
           working-directory: libs/ui/packages/native
+          production: ${{ inputs.vercel-production }}
 
   build-react-storybook:
     name: "React Storybook Build"
@@ -153,6 +166,7 @@ jobs:
           vercel-org-id: ${{ secrets.VERCEL_LEDGER_WALLET_TEAM_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_REACT_STORYBOOK }}
           working-directory: libs/ui/packages/react
+          production: ${{ inputs.vercel-production }}
 
   post-build-summary:
     name: "Post build status to PR"

@@ -1,0 +1,19 @@
+{
+  "name": "@ledgerhq/wallet-cli",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "targets": {
+    "coverage": {
+      "outputs": ["{projectRoot}/coverage/**"]
+    },
+    "generate": {
+      "outputs": ["{projectRoot}/.bunli/commands.gen.ts"]
+    },
+    "generate:check": {
+      "cache": false
+    },
+    "build": {
+      "cache": false
+    }
+  }
+}

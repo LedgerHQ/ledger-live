@@ -1,10 +1,14 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Account, AccountLike, TransactionStatusCommon } from "@ledgerhq/types-live";
 import { Trans } from "~/context/Locale";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import {
+  getAccountCurrency,
+  findSubAccountById,
+  getMainAccount,
+} from "@ledgerhq/live-common/account/index";
 import type { Transaction as CeloTransaction } from "@ledgerhq/live-common/families/celo/types";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import SummaryRow from "~/screens/SendFunds/SummaryRow";
 import LText from "~/components/LText";
@@ -29,6 +33,7 @@ type Props = {
   account: AccountLike;
   parentAccount?: Account | null;
   transaction: Transaction;
+  status?: TransactionStatusCommon;
 } & CompositeScreenProps<
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
   | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.SignTransactionSummary>
@@ -41,16 +46,21 @@ type Props = {
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
 
-export default function CeloFeeRow({ account, parentAccount, transaction }: Props) {
+export default function CeloFeeRow({ account, parentAccount, transaction, status }: Props) {
   const { colors } = useTheme();
   const extraInfoFees = useCallback(() => {
     Linking.openURL(urls.feesMoreInfo);
   }, []);
 
-  const mainAccount = parentAccount ?? account;
-  const fees = (transaction as CeloTransaction).fees;
-  const unit = useAccountUnit(mainAccount);
-  const currency = getAccountCurrency(mainAccount);
+  transaction = transaction as CeloTransaction;
+  const mainAccount = getMainAccount(account, parentAccount);
+  const feeCurrencyAccountId = transaction.feeCurrencyAccountId;
+  const feeCurrencyAccount = feeCurrencyAccountId
+    ? findSubAccountById(mainAccount, feeCurrencyAccountId)
+    : null;
+  const unit = useAccountUnit(feeCurrencyAccount ?? mainAccount);
+  const currency = getAccountCurrency(feeCurrencyAccount ?? mainAccount);
+  const fees = status?.estimatedFees ?? transaction.fees;
 
   return (
     <SummaryRow

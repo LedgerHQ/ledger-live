@@ -125,11 +125,13 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
 
     if (shouldDisplayMarketBanner) {
       sections.push(
-        <Box key="marketBanner" px={6} pt={6}>
+        <Box key="marketBanner" px={6}>
           <MarketBanner />
         </Box>,
       );
     }
+
+    sections.push(<PortfolioPerpsEntryPoint key="perpsEntryPoint" />);
 
     if (shouldDisplayAssetSection) {
       sections.push(<WalletAssetsView key="categorizedAssets" />);
@@ -145,8 +147,6 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
         />,
       );
     }
-
-    sections.push(<PortfolioPerpsEntryPoint key="perpsEntryPoint" />);
 
     if (isAWalletCardDisplayed) {
       sections.push(<PortfolioCarouselSection key="carousel" backgroundColor={backgroundColor} />);

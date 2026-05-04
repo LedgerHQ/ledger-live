@@ -1,6 +1,8 @@
-import * as bip32 from "bip32";
+import ecc from "@bitcoinerlab/secp256k1";
+import BIP32Factory from "bip32";
 import * as bip39 from "bip39";
 import * as bitcoin from "bitcoinjs-lib";
+import { ECPairFactory } from "ecpair";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import coininfo from "coininfo";
@@ -11,6 +13,9 @@ import Crypto from "../crypto/bitcoin";
 import Explorer from "../explorer";
 import BitcoinLikeStorage from "../storage";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+
+const bip32 = BIP32Factory(ecc);
+const ECPair = ECPairFactory(ecc);
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -31,7 +36,7 @@ describe.skip("testing xpub reorg management", () => {
     const seed = bip39.mnemonicToSeedSync(`test${i} test${i} test${i}`);
     const node = bip32.fromSeed(seed, network);
     const signer = (account: number, index: number) =>
-      bitcoin.ECPair.fromWIF(node.derive(account).derive(index).toWIF(), network);
+      ECPair.fromWIF(node.derive(account).derive(index).toWIF(), network);
     const xpub = new Xpub({
       storage,
       explorer,

@@ -2741,7 +2741,7 @@
     },
     "perpsEntry" : {
       "title" : "Perpetuals",
-      "description" : "Kaldıraçlı alım satım yapın"
+      "description" : "Kaldıraçlı işlem yapın"
     },
     "recommended" : {
       "title" : "Önerilen"
@@ -5813,6 +5813,9 @@
     "alerts" : {
       "withdrawableAssets" : "Çekebileceğiniz bir miktar bakiyeniz var.",
       "activatableVotes" : "Etkinleştirebileceğiniz oylar bulunuyor."
+    },
+    "send" : {
+      "feeCurrency" : "Ücret para birimi"
     }
   },
   "cosmos" : {
@@ -6734,7 +6737,7 @@
           "title" : "Transfer Kancası (Transfer Hook)",
           "transferHookAddress" : "Mevcut Transfer Kancası programı: {{address}}",
           "transferHookNotSetup" : "Mevcut Transfer Kancası programı belirlenmemiş.",
-          "description" : "Transfer Kancası (Transfer Hook), token çıkartanlara kullanıcılarla token'ların nasıl etkileşim kuracağını belirleme olanağını sunar. Token çıkartanlar normal bir transfer yerine, Transfer Kancası uzantısıyla kullanılacak özel bir mantığı bir programa ekleyebilir."
+          "description" : "Transfer Kancası (Transfer Hook), token ihraççılara kullanıcılarla token'ların nasıl etkileşim kuracağını belirleme olanağını sunar. Token çıkartanlar normal bir transfer yerine, Transfer Kancası uzantısıyla kullanılacak özel bir mantığı bir programa ekleyebilir."
         },
         "transferFee" : {
           "title" : "Transfer Ücreti",
@@ -7841,6 +7844,12 @@
         "description" : "En sevdiğiniz dijital sanat eserini veya fotoğrafı cihazınızın kilitli ekranında görüntüleyin.",
         "popupLabel" : "Kilitli ekran başarıyla özelleştirildi"
       },
+      "recover" : {
+        "title" : "Yedeklemenizi güvenceye alın",
+        "titleCompleted" : "Yedekleme güvenceye alındı",
+        "description" : "Ledger Recover’ı etkinleştirme işlemini tamamlayın",
+        "popupLabel" : "Ledger Recover'a başarıyla abone oldunuz"
+      },
       "syncAccounts" : {
         "title" : "Kripto hesaplarınızı senkronize edin",
         "titleCompleted" : "Hesaplarınız senkronize edildi",
@@ -8124,6 +8133,18 @@
       "lead" : "Onayınızı, dilediğiniz zaman ayarlardan iptal edebilirsiniz.",
       "privacyLink" : "Gizlilik Politikası"
     }
+  },
+  "analyticsPreferencesSettings" : {
+    "screenTitle" : "Tercihlerinizi belirleyin",
+    "appPerformance" : {
+      "title" : "Uygulama performansı",
+      "description" : "Deneyimi iyileştirmek için Ledger'ın uygulama kullanım verilerini toplamasına izin verin."
+    },
+    "personalizedExperience" : {
+      "title" : "Kişiselleştirilmiş deneyim",
+      "description" : "Kişiselleştirilmiş içerikler sunmamız için Ledger'ın uygulama kullanım verilerini toplamasına izin verin."
+    },
+    "confirmCta" : "Onayla"
   },
   "walletSync" : {
     "title" : "Ledger Sync",
@@ -8840,8 +8861,46 @@
   "myWallet" : {
     "quickActions" : {
       "recover" : "[L] Recover",
+      "backup" : "Yedekle",
       "help" : "Yardım",
       "referral" : "Referans"
+    },
+    "help" : {
+      "title" : "Yardım",
+      "sections" : {
+        "supportAndLearning" : "Destek ve öğrenme",
+        "more" : "Daha fazlası"
+      },
+      "rows" : {
+        "ledgerSupport" : {
+          "title" : "Ledger Destek",
+          "description" : "SSS bölümümüzden veya sohbet ile yardım alın"
+        },
+        "ledgerAcademy" : {
+          "title" : "Ledger Academy",
+          "description" : "Kriptoyu öğrenin"
+        },
+        "saveLogs" : {
+          "title" : "Log'ları kaydedin",
+          "description" : "Sorun giderme amacıyla Ledger Wallet günlüklerini kaydedin"
+        },
+        "ledgerStatus" : {
+          "title" : "Ledger Durumu",
+          "description" : "Sistem durumumuzu kontrol edin"
+        },
+        "clearCache" : {
+          "title" : "Önbelleği temizleyin",
+          "description" : "İşlemleri tarayın ve bakiyeleri yeniden hesaplayın"
+        }
+      }
+    },
+    "deviceSection" : {
+      "title" : "Cihazlarım",
+      "add" : "Ekle",
+      "addDevice" : "Bir Ledger cihazı ekleyin",
+      "exploreAllDevices" : "Tüm Ledger cihazlarını keşfedin",
+      "available" : "Mevcut",
+      "unavailable" : "Bağlı değil"
     }
   }
 }

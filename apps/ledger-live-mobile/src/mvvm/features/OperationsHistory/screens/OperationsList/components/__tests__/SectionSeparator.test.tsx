@@ -31,7 +31,7 @@ describe("SectionSeparator", () => {
     );
     expect(screen.getByTestId("operations-list-section-separator")).toBeVisible();
     expect(screen.getByTestId("operations-list-section-separator")).toHaveStyle({
-      height: 12,
+      height: 4,
     });
   });
 
@@ -41,7 +41,7 @@ describe("SectionSeparator", () => {
     );
     expect(screen.getByTestId("operations-list-section-separator")).toBeVisible();
     expect(screen.getByTestId("operations-list-section-separator")).toHaveStyle({
-      height: 24,
+      height: 16,
     });
   });
 

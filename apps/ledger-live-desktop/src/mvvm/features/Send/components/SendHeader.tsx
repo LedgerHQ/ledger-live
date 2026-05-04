@@ -187,7 +187,7 @@ export function SendHeader() {
     <div className="flex flex-col">
       <div data-testid="send-dialog-header">
         <DialogHeader
-          appearance="compact"
+          density="compact"
           title={title}
           description={descriptionText || undefined}
           onBack={showBackButton ? handleBack : undefined}

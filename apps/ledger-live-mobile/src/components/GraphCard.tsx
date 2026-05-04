@@ -21,6 +21,8 @@ import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { Item } from "./Graph/types";
 import { GestureResponderEvent } from "react-native";
 import GraphSection from "./GraphSection";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { AnalyticsBalanceDisplay } from "LLM/features/Analytics/components/AnalyticsBalanceDisplay";
 
 type Props = {
   areAccountsEmpty: boolean;
@@ -58,6 +60,7 @@ function GraphCard({
   hideGraph,
 }: Props) {
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
+  const { shouldDisplayBalanceRefreshRework } = useWalletFeaturesConfig("mobile");
 
   const { countervalueChange, balanceHistory } = portfolio;
   const item = balanceHistory[balanceHistory.length - 1];
@@ -129,7 +132,9 @@ function GraphCard({
             ) : (
               <>
                 <Flex px={6}>
-                  {!balanceHistory ? (
+                  {shouldDisplayBalanceRefreshRework ? (
+                    <AnalyticsBalanceDisplay hoveredValue={hoveredItem?.value ?? null} />
+                  ) : !balanceHistory ? (
                     <BigPlaceholder mt="8px" />
                   ) : (
                     <Text

@@ -3,7 +3,6 @@ import fsPromises from "fs/promises";
 import merge from "lodash/merge";
 import * as path from "path";
 import { OptionalFeatureMap } from "@ledgerhq/types-live";
-import { CURRENT_PRIVACY_POLICY_VERSION } from "@ledgerhq/live-common/privacyConsent";
 
 import { Application } from "tests/page";
 import { safeAppendFile } from "tests/utils/fileUtils";
@@ -79,7 +78,8 @@ export const test = base.extend<TestFixtures>({
       shareAnalytics: true,
       hasSeenAnalyticsOptInPrompt: true,
       lastAnalyticsConsentDate: new Date().toISOString(),
-      privacyPolicyVersion: CURRENT_PRIVACY_POLICY_VERSION,
+      // YYYYMMDD format. Let's use a very large number to ensure policy version is always up to date.
+      privacyPolicyVersion: 99999999,
       ...settings,
     };
 

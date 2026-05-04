@@ -53,6 +53,7 @@ export function CryptoAddressesView({
               icon={Plus}
               onClick={onAddAddressClick}
               data-testid="crypto-add-address-button"
+              className="shrink-0 whitespace-nowrap"
             >
               {t("cryptoAddresses.tableActions.addAddress")}
             </Button>

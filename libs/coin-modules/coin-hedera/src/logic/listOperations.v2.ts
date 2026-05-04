@@ -163,6 +163,9 @@ async function processERC20TokenTransfer({
       ? toEntityId({ num: transfer.receiver_account_id })
       : transfer.receiver_evm_address;
 
+    // meaningful operation cannot be created without correct addresses, so we skip it
+    if (!senderEvmAddress || !senderAddress || !recipientAddress) continue;
+
     const commonFields = {
       ...commonData,
       type: getOperationTypeFromERC20Details({

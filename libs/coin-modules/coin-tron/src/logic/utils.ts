@@ -254,15 +254,7 @@ export type AccountInfo = {
 };
 export function getTronResources(
   acc: AccountInfo,
-): Omit<
-  TronResources,
-  | "energy"
-  | "bandwidth"
-  | "unwithdrawnReward"
-  | "lastVotedDate"
-  | "cacheTransactionInfoById"
-  | "votes"
-> {
+): Omit<TronResources, "energy" | "bandwidth" | "unwithdrawnReward" | "lastVotedDate" | "votes"> {
   const delegatedFrozenBandwidth = get(acc, "delegated_frozenV2_balance_for_bandwidth", undefined);
   const delegatedFrozenEnergy = get(
     acc,

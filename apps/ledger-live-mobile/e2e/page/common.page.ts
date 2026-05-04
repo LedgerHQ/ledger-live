@@ -8,7 +8,7 @@ import { delay } from "../helpers/commonHelpers";
 export default class CommonPage {
   searchBarId = "common-search-field";
   searchBar = () => getElementById(this.searchBarId);
-  successCloseButtonId = "success-close-button";
+  successCloseButtonId = "enabled-success-close-button";
   closeButton = () => getElementById("NavigationHeaderCloseButton");
 
   accountCardPrefix = "account-card-";

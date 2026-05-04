@@ -186,7 +186,7 @@ const operationBalanceHistory = account => {
 export const accountFormatters: { [_: string]: (Account) => any } = {
   operationBalanceHistoryBackwards,
   operationBalanceHistory,
-  json: account => JSON.stringify(toAccountRaw(account)),
+  json: async account => JSON.stringify(await toAccountRaw(account)),
   head: account => cliFormat(account, "head"),
   default: account => cliFormat(account),
   basic: account => cliFormat(account, "basic"),

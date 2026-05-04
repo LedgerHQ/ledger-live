@@ -33,7 +33,6 @@ describe("PsbtV2", () => {
       // Create a PSBTv0 using bitcoinjs-lib
       const psbtv0 = new Psbt({ network: networks.testnet });
       psbtv0.addInput({
-        //@ts-expect-error TransactionInput interface is not declared correctly in bip174 lib
         hash: Buffer.alloc(32, 0),
         index: 0,
         witnessUtxo: {
@@ -56,7 +55,6 @@ describe("PsbtV2", () => {
       // Minimal PSBTv0: magic bytes + empty global map (0x00) + empty input/output
       const psbtv0 = new Psbt({ network: networks.testnet });
       psbtv0.addInput({
-        //@ts-expect-error TransactionInput interface is not declared correctly in bip174 lib
         hash: Buffer.alloc(32, 1),
         index: 0,
         witnessUtxo: {
@@ -79,7 +77,6 @@ describe("PsbtV2", () => {
       // Create a PSBTv0 and convert it to PSBTv2
       const psbtv0 = new Psbt({ network: networks.testnet });
       psbtv0.addInput({
-        //@ts-expect-error TransactionInput interface is not declared correctly in bip174 lib
         hash: Buffer.alloc(32, 0),
         index: 0,
         witnessUtxo: {

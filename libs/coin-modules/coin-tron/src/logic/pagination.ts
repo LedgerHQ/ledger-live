@@ -12,7 +12,7 @@ export function getOperationsPageSize(
     numbers.push(operationsPerAccountId[accountId]);
   }
 
-  if (typeof operations === "number") {
+  if (operations) {
     numbers.push(operations);
   }
 

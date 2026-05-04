@@ -6,7 +6,8 @@ import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { CLI } from "tests/utils/cliUtils";
 import { LWD_WALLET_40_FF_DISABLED, LWD_WALLET_40_FF_ENABLED } from "tests/utils/featureFlagUtils";
 
-test.describe("Portfolio - legacy", () => {
+// Skipping this suite as legacy is not visible on prod anymore
+test.describe.skip("Portfolio - legacy", () => {
   test.use({
     teamOwner: Team.WALLET_XP,
     userdata: "speculos-subAccount",

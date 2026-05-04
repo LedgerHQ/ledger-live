@@ -13,17 +13,3 @@ export function makeEnvelope(
     timestamp: new Date().toISOString(),
   };
 }
-
-export function makeErrorEnvelope(
-  command: string,
-  message: string,
-  network?: string,
-): Record<string, unknown> {
-  return {
-    status: "error",
-    command,
-    ...(network == null ? {} : { network }),
-    message,
-    timestamp: new Date().toISOString(),
-  };
-}

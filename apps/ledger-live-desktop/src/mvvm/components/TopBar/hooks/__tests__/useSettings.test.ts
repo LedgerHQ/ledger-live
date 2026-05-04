@@ -57,6 +57,19 @@ describe("useSettings", () => {
     expect(mockNavigate).toHaveBeenCalledWith("/settings");
   });
 
+  it("uses the provided tracking source when navigating", () => {
+    mockUseLocation.mockReturnValue(createLocation("/accounts"));
+
+    const { result } = renderHook(() => useSettings("mywallet"));
+
+    act(() => {
+      result.current.handleSettings();
+    });
+
+    expect(mockSetTrackingSource).toHaveBeenCalledWith("mywallet");
+    expect(mockNavigate).toHaveBeenCalledWith("/settings");
+  });
+
   it("does not navigate when already on settings page", () => {
     mockUseLocation.mockReturnValue(createLocation("/settings"));
 

@@ -317,9 +317,27 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       derivationMode,
     });
 
-    const blockInfo = await alpacaApi.lastBlock();
+    const validatorsPromise = alpacaApi.stakingSupported
+      ? alpacaApi
+          .getValidators()
+          .then(page =>
+            page.items.map(validator => ({
+              validatorAddress: validator.address,
+              name: validator.name ?? validator.address,
+              commission: Number(validator.commissionRate ?? 0),
+              tokens: Number(validator.balance ?? 0n),
+              votingPower: 0,
+              estimatedYearlyRewardsRate: Number(validator.apy ?? 0),
+            })),
+          )
+          .catch(() => [])
+      : Promise.resolve([]);
 
-    const balanceRes = await alpacaApi.getBalance(address, bridgeApi.balanceOptions);
+    const [blockInfo, balanceRes, validators] = await Promise.all([
+      alpacaApi.lastBlock(),
+      alpacaApi.getBalance(address, bridgeApi.balanceOptions),
+      validatorsPromise,
+    ]);
 
     const nativeAsset = extractBalance(balanceRes, "native");
     const allTokenAssetsBalances = balanceRes.filter(b => b.asset.type !== "native");
@@ -334,14 +352,12 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       0n,
     );
 
-    const nativeAvailable = nativeAsset?.value ?? 0n;
+    const nativeBalance = nativeAsset?.value ?? 0n;
     const nativeLocked = nativeAsset?.locked ?? 0n;
-    const noStaking = !hasActiveStake(nativeAsset) && !hasDeactivatingStake(nativeAsset);
 
-    // Some account-level staking models attach stake metadata to the native balance itself.
-    // Avoid adding that same native balance twice while preserving staking resources metadata.
-    const nativeBalance = delegatedBalance + unbondingBalance + (noStaking ? nativeAvailable : 0n);
-    const spendableBalance = nativeAvailable - nativeLocked;
+    // balance reflects only the native available balance.
+    // Staked/unbonding amounts are tracked separately in stakingResources.
+    const spendableBalance = nativeBalance - nativeLocked;
 
     const delegations: StakingDelegation[] = activeStakes
       .filter(hasStakeDelegate)
@@ -365,6 +381,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       delegatedBalance: new BigNumber(delegatedBalance.toString()),
       pendingRewardsBalance: new BigNumber(pendingRewardsBalance.toString()),
       unbondingBalance: new BigNumber(unbondingBalance.toString()),
+      ...(validators.length > 0 ? { validators } : {}),
     };
 
     // Normalize pre-alpaca operations to the new accountId to keep UI rendering consistent

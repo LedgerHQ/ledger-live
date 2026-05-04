@@ -8,9 +8,12 @@ import { useFeatureFlags } from "./useFeatureFlags";
 import { useMyLedger } from "./useMyLedger";
 import { useSettings } from "./useSettings";
 import { useHistory } from "./useHistory";
+import { useInformationCenter } from "./useInformationCenter";
 
 const useTopBarViewModel = () => {
-  const { shouldDisplayOperationsList } = useWalletFeaturesConfig("desktop");
+  const { shouldDisplayOperationsList, shouldDisplayMyWallet } = useWalletFeaturesConfig("desktop");
+  const { isOpen: isInformationCenterOpen, onRequestClose: onInformationCenterClose } =
+    useInformationCenter();
   const { handleDiscreet, discreetIcon, tooltip: discreetTooltip } = useDiscreetMode();
   const {
     hasAccounts,
@@ -86,7 +89,7 @@ const useTopBarViewModel = () => {
           },
         ]
       : []),
-    { type: "notification" },
+    ...(shouldDisplayMyWallet ? [] : [{ type: "notification" as const }]),
     {
       type: "action",
       action: {
@@ -112,31 +115,37 @@ const useTopBarViewModel = () => {
           },
         ]
       : []),
-    {
-      type: "action",
-      action: {
-        label: "settings",
-        tooltip: settingsTooltip,
-        icon: settingsIcon,
-        isInteractive: true,
-        onClick: handleSettings,
-      },
-    },
-    {
-      type: "action",
-      action: {
-        label: "my ledger",
-        tooltip: myLedgerTooltip,
-        icon: myLedgerIcon,
-        isInteractive: true,
-        onClick: handleMyLedger,
-      },
-    },
+    ...(shouldDisplayMyWallet
+      ? []
+      : [
+          {
+            type: "action" as const,
+            action: {
+              label: "settings",
+              tooltip: settingsTooltip,
+              icon: settingsIcon,
+              isInteractive: true,
+              onClick: handleSettings,
+            },
+          },
+          {
+            type: "action" as const,
+            action: {
+              label: "my ledger",
+              tooltip: myLedgerTooltip,
+              icon: myLedgerIcon,
+              isInteractive: true,
+              onClick: handleMyLedger,
+            },
+          },
+        ]),
   ];
 
   return {
     topBarSlots,
     inManager,
+    isInformationCenterOpen,
+    onInformationCenterClose,
   };
 };
 

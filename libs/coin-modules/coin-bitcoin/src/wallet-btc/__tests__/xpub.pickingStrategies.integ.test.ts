@@ -1,6 +1,7 @@
-import * as bip32 from "bip32";
+import ecc from "@bitcoinerlab/secp256k1";
+import BIP32Factory from "bip32";
 import * as bip39 from "bip39";
-import * as bitcoin from "bitcoinjs-lib";
+import { ECPairFactory } from "ecpair";
 import coininfo from "coininfo";
 import BigNumber from "bignumber.js";
 import { DerivationModes, OutputInfo } from "../types";
@@ -14,6 +15,9 @@ import { CoinSelect } from "../pickingstrategies/CoinSelect";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import * as utils from "../utils";
 
+const bip32 = BIP32Factory(ecc);
+const ECPair = ECPairFactory(ecc);
+
 describe("testing xpub legacy transactions", () => {
   const network = coininfo.bitcoin.test.toBitcoinJS();
 
@@ -25,7 +29,7 @@ describe("testing xpub legacy transactions", () => {
   const seed = bip39.mnemonicToSeedSync("test1 test1 test1");
   const node = bip32.fromSeed(seed, network);
   const signer = (account: number, index: number) =>
-    bitcoin.ECPair.fromWIF(node.derive(account).derive(index).toWIF(), network);
+    ECPair.fromWIF(node.derive(account).derive(index).toWIF(), network);
   const xpub = new Xpub({
     storage,
     explorer: new BitcoinLikeExplorer({

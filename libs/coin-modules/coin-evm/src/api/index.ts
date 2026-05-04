@@ -40,6 +40,7 @@ import {
 } from "../logic/index";
 import { validateAddress } from "../logic/validateAddress";
 import { STAKING_CONTRACTS } from "../staking";
+import { getValidatorsPage } from "../staking/validators";
 
 // NOTE Celo still relies on the EVM coin config and injects its own
 // while creating an unused instance of API
@@ -94,9 +95,7 @@ export function createApi(
     getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
       throw new Error("getRewards is not supported");
     },
-    getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
-      throw new Error("getValidators is not supported");
-    },
+    getValidators: (): Promise<Page<Validator>> => getValidatorsPage(currency.id),
     getNextSequence: (address: string): Promise<bigint> => getNextSequence(currency, address),
     validateAddress,
     validateIntent: (

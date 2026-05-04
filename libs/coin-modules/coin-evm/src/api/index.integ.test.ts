@@ -787,6 +787,97 @@ describe.each([
   });
 });
 
+describe("EVM Api: external node and explorer ONLY", () => {
+  let module: AlpacaApi<MemoNotSupported, BufferTxData> & BridgeApi;
+
+  beforeAll(() => {
+    setupCalClientStore();
+    module = createApi(
+      {
+        node: { type: "external", uri: "https://ethereum-rpc.publicnode.com" },
+        explorer: {
+          type: "etherscan",
+          uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1",
+        },
+        showNfts: true,
+      } as EvmConfig,
+      "ethereum",
+    );
+  });
+
+  describe("getBlock", () => {
+    it("returns details for a smart contract creation tx in block 24883766", async () => {
+      const txHash = "0xd66967e32c71db2f1ecaed67d710efc3fa97f498d25499cc5817563e4c2ae863";
+      const result = await module.getBlock(24883766);
+      const tx = result.transactions.find(t => t.hash.toLowerCase() === txHash);
+
+      expect(tx!.details).toMatchObject({
+        contractInteraction: "SmartContractDeployment",
+        contractAddress: expect.stringMatching(/^0x2d9fc5315307e7bab64bc175dffdb54ffecbe25f$/i),
+        contractPayload: expect.stringMatching(/0x60a080604052346100c2/i),
+      });
+    });
+
+    it("returns details for a smart contract interaction tx in block 24883766", async () => {
+      const txHash = "0xa669162b91ea2ebc5133148fb946360e51226b0252bec88768761eb065afea93";
+      const result = await module.getBlock(24883766);
+      const tx = result.transactions.find(t => t.hash.toLowerCase() === txHash);
+
+      expect(tx!.details).toMatchObject({
+        contractInteraction: "SmartContractInteraction",
+        contractAddress: expect.stringMatching(/^0x0de8bf93da2f7eecb3d9169422413a9bef4ef628$/i),
+        contractPayload: expect.stringMatching(/59635f6f/i),
+      });
+    });
+  });
+
+  describe("listOperations", () => {
+    describe("transactions non-regression", () => {
+      const opsForTx = (items: Operation[], txHash: string) =>
+        items.filter(op => op.tx.hash.toLowerCase() === txHash.toLowerCase());
+
+      it("smart contract creation tx", async () => {
+        const txHash = "0xd66967e32c71db2f1ecaed67d710efc3fa97f498d25499cc5817563e4c2ae863";
+        const blockHeight = 24883766;
+        const deployer = "0x2463BF4cf17c040ea7beB1F46847c91D45e34608";
+
+        const { items } = await module.listOperations(deployer, {
+          minHeight: blockHeight,
+          order: "asc",
+          limit: 50,
+        });
+        const txOps = opsForTx(items, txHash);
+
+        expect(txOps.length).toBeGreaterThan(0);
+        expect(txOps[0].details).toMatchObject({
+          contractInteraction: "SmartContractDeployment",
+          contractAddress: expect.stringMatching(/^0x2d9fc5315307e7bab64bc175dffdb54ffecbe25f$/i),
+          contractPayload: expect.stringMatching(/0x60a080604052346100c2/i),
+        });
+      });
+
+      it("smart contract interaction tx", async () => {
+        const txHash = "0xa669162b91ea2ebc5133148fb946360e51226b0252bec88768761eb065afea93";
+        const blockHeight = 24883766;
+        const caller = "0x11f84552D846325385eCB2242e2887e3f5B535Ea";
+        const { items } = await module.listOperations(caller, {
+          minHeight: blockHeight,
+          order: "asc",
+          limit: 50,
+        });
+        const txOps = opsForTx(items, txHash);
+
+        expect(txOps.length).toBeGreaterThan(0);
+        expect(txOps[0].details).toMatchObject({
+          contractInteraction: "SmartContractInteraction",
+          contractAddress: expect.stringMatching(/^0x0de8bf93da2f7eecb3d9169422413a9bef4ef628$/i),
+          contractPayload: expect.stringMatching(/59635f6f/i),
+        });
+      });
+    });
+  });
+});
+
 describe("EVM Api (Moonbeam Network)", () => {
   let module: AlpacaApi<MemoNotSupported, BufferTxData> & BridgeApi;
 

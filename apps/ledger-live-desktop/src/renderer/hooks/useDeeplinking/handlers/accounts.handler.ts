@@ -3,7 +3,10 @@ import { Currency } from "@ledgerhq/types-cryptoassets";
 import { DeeplinkHandler } from "../types";
 import { getAccountsOrSubAccountsByCurrency } from "../utils";
 
-export const accountsHandler: DeeplinkHandler<"accounts"> = (route, { accounts, navigate }) => {
+export const accountsHandler: DeeplinkHandler<"accounts"> = (
+  route,
+  { accounts, navigate, accountsPath },
+) => {
   const { address } = route;
 
   if (address && typeof address === "string") {
@@ -14,7 +17,7 @@ export const accountsHandler: DeeplinkHandler<"accounts"> = (route, { accounts, 
     }
   }
 
-  navigate("/accounts");
+  navigate(accountsPath);
 };
 
 export const accountHandler: DeeplinkHandler<"account"> = (route, { accounts, navigate }) => {

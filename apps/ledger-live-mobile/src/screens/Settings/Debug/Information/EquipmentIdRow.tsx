@@ -1,17 +1,13 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import Clipboard from "@react-native-clipboard/clipboard";
 import SettingsRow from "~/components/SettingsRow";
-import getOrCreateUser from "../../../../user";
+import { useSelector } from "~/context/hooks";
+import { userIdSelector } from "@ledgerhq/client-ids/store";
 
 const EquipmentIdRow = () => {
-  const [segmentId, setSegmentID] = useState("loading...");
+  const userId = useSelector(userIdSelector);
+  const segmentId = userId.exportUserIdForUserLogs();
   const [copied, setCopied] = useState(false);
-
-  useEffect(() => {
-    getOrCreateUser().then(({ user }) => {
-      setSegmentID(user.id);
-    });
-  });
 
   const copyEquipmentIdToClipboard = useCallback(() => {
     Clipboard.setString(segmentId);

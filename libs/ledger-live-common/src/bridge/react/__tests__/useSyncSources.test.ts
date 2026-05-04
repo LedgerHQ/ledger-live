@@ -135,6 +135,16 @@ describe("useSyncSources", () => {
     expect(result.current.hasWalletSyncError).toBe(true);
   });
 
+  it("should expose cvPending from countervalues polling", () => {
+    mockUseCountervaluesPolling.mockReturnValue({ ...defaultPollingReturn, pending: true });
+    const { result } = renderSyncSources();
+    expect(result.current.cvPending).toBe(true);
+
+    mockUseCountervaluesPolling.mockReturnValue({ ...defaultPollingReturn, pending: false });
+    const { result: result2 } = renderSyncSources();
+    expect(result2.current.cvPending).toBe(false);
+  });
+
   it("should call all three sync sources on triggerRefresh", () => {
     const { result } = renderSyncSources();
 

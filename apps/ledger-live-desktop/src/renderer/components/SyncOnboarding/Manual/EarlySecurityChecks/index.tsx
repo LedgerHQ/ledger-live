@@ -26,6 +26,7 @@ import { useNavigate } from "react-router";
 import { NetworkDown } from "@ledgerhq/errors";
 import { NetworkStatus, useNetworkStatus } from "~/renderer/hooks/useNetworkStatus";
 import { urls } from "~/config/urls";
+import { normalizeGenuineCheckError } from "./normalizeGenuineCheckError";
 
 export type Props = {
   onComplete: () => void;
@@ -271,7 +272,7 @@ const EarlySecurityChecks = ({
             resetGenuineCheckState();
             setGenuineCheckStatus(SoftwareCheckStatus.active);
           },
-          error: genuineCheckError,
+          error: normalizeGenuineCheckError(genuineCheckError),
         },
         commonDrawerProps,
       );
@@ -303,7 +304,7 @@ const EarlySecurityChecks = ({
             resetGenuineCheckState();
             setGenuineCheckStatus(SoftwareCheckStatus.active);
           },
-          error: new NetworkDown(),
+          error: normalizeGenuineCheckError(new NetworkDown()),
         },
         commonDrawerProps,
       );

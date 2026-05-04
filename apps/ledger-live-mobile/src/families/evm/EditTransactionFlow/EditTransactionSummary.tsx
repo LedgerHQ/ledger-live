@@ -10,10 +10,10 @@ import { isCurrencySupported } from "@ledgerhq/ledger-wallet-framework/currencie
 import { NotEnoughGas } from "@ledgerhq/errors";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import invariant from "invariant";
 import React, { useCallback } from "react";
+import { useFromTransactionRaw } from "~/hooks/useFromTransactionRaw";
 import { Trans } from "~/context/Locale";
 import EditTransactionSummaryView from "~/components/EditTransaction/EditTransactionSummaryView";
 import useEditTransactionSummaryActions from "~/components/EditTransaction/hooks/useEditTransactionSummaryActions";
@@ -32,7 +32,9 @@ type Navigation = BaseComposite<
 
 type Props = Navigation;
 
-function EditTransactionSummary({ navigation, route }: Props) {
+type ContentProps = Props & { transactionToUpdate: EvmTransaction };
+
+function EditTransactionSummaryContent({ navigation, route, transactionToUpdate }: ContentProps) {
   const { nextNavigation, overrideAmountLabel, transactionRaw, editType } = route.params;
 
   const { account, parentAccount } = useAccountScreen(route);
@@ -51,8 +53,6 @@ function EditTransactionSummary({ navigation, route }: Props) {
     parentAccount,
   }));
 
-  const transactionToUpdate = fromTransactionRaw(transactionRaw) as EvmTransaction;
-
   const status = getEditTransactionStatus({
     transaction: transaction as EvmTransaction,
     transactionToUpdate,
@@ -60,24 +60,19 @@ function EditTransactionSummary({ navigation, route }: Props) {
     editType,
   });
 
-  invariant(transaction, "transaction is missing");
-
   // handle any edit screen changes like fees changes
   useTransactionChangeFromNavigation(setTransaction);
 
-  const { amount, totalSpent, errors, warnings } = status;
   const { highFeesOpen, onAcceptFees, onRejectFees, onContinue } = useEditTransactionSummaryActions(
     {
       navigation,
       nextNavigation,
       routeParams: route.params,
-      transaction,
+      transaction: transaction ?? route.params.transaction,
       status,
-      feeTooHigh: warnings.feeTooHigh,
+      feeTooHigh: status.warnings.feeTooHigh,
     },
   );
-
-  const firstError = errors[Object.keys(errors)[0]];
 
   const mainAccount = getMainAccount(account, parentAccount);
   const currencyOrToken = getAccountCurrency(account);
@@ -96,10 +91,16 @@ function EditTransactionSummary({ navigation, route }: Props) {
     });
   }, [navigation, account?.id, currencyOrToken?.id]);
 
+  if (!transaction) return null;
+
   // FIXME: why is recipient sometimes empty?
   if (!transaction.recipient) {
     return null;
   }
+
+  const { amount, totalSpent, errors, warnings } = status;
+
+  const firstError = errors[Object.keys(errors)[0]];
 
   let footerAction;
   if (firstError && firstError instanceof NotEnoughGas) {
@@ -151,6 +152,24 @@ function EditTransactionSummary({ navigation, route }: Props) {
       highFeesOpen={highFeesOpen}
       onRejectFees={onRejectFees}
       onAcceptFees={onAcceptFees}
+    />
+  );
+}
+
+function EditTransactionSummary({ navigation, route }: Props) {
+  const { transactionRaw } = route.params;
+
+  invariant(transactionRaw, "transactionRaw is missing");
+
+  const transactionToUpdate = useFromTransactionRaw<EvmTransaction>(transactionRaw);
+
+  if (!transactionToUpdate) return null;
+
+  return (
+    <EditTransactionSummaryContent
+      navigation={navigation}
+      route={route}
+      transactionToUpdate={transactionToUpdate}
     />
   );
 }

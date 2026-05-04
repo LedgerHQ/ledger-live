@@ -33,6 +33,7 @@ describe("usePairing", () => {
     const onPaired = jest.fn();
     const { result } = renderHook(() => usePairing(currency, onPaired));
 
+    await waitFor(() => expect(pairingSubject.observed).toBe(true));
     act(() => {
       pairingSubject.next({
         status: ConcordiumPairingStatus.PREPARE,
@@ -50,6 +51,7 @@ describe("usePairing", () => {
     const onPaired = jest.fn();
     const { result } = renderHook(() => usePairing(currency, onPaired));
 
+    await waitFor(() => expect(pairingSubject.observed).toBe(true));
     act(() => {
       pairingSubject.next({
         status: ConcordiumPairingStatus.SUCCESS,
@@ -67,8 +69,7 @@ describe("usePairing", () => {
     const onPaired = jest.fn();
     const { result } = renderHook(() => usePairing(currency, onPaired));
 
-    expect(pairingSubject.observed).toBe(true);
-
+    await waitFor(() => expect(pairingSubject.observed).toBe(true));
     act(() => {
       pairingSubject.next({
         status: ConcordiumPairingStatus.ERROR,
@@ -85,6 +86,7 @@ describe("usePairing", () => {
     const onPaired = jest.fn();
     const { result } = renderHook(() => usePairing(currency, onPaired));
 
+    await waitFor(() => expect(pairingSubject.observed).toBe(true));
     act(() => {
       pairingSubject.error(new Error("connection failed"));
     });
@@ -94,11 +96,11 @@ describe("usePairing", () => {
     });
   });
 
-  it("should unsubscribe on unmount", () => {
+  it("should unsubscribe on unmount", async () => {
     const onPaired = jest.fn();
     const { unmount } = renderHook(() => usePairing(currency, onPaired));
 
-    expect(pairingSubject.observed).toBe(true);
+    await waitFor(() => expect(pairingSubject.observed).toBe(true));
 
     act(() => {
       unmount();

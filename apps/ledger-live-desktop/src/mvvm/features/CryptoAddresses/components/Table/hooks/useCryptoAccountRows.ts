@@ -1,16 +1,19 @@
 import { useCallback, useMemo } from "react";
 import type { Account } from "@ledgerhq/types-live";
 import { useSelector } from "LLD/hooks/redux";
-import { useFlattenSortAccounts } from "~/renderer/actions/general";
+import { useFlattenSortAccounts, useSortAccountsComparator } from "~/renderer/actions/general";
 import { useHideEmptyTokenAccounts } from "~/renderer/actions/settings";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/index";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { accountMatchesSearch } from "LLD/utils/accountMatchesSearch";
 
 export function useCryptoAccountRows(searchValue: string) {
+  const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
   const [hideEmptyTokenAccounts] = useHideEmptyTokenAccounts();
   const walletState = useSelector(walletSelector);
   const nestedAccounts = useSelector(accountsSelector);
+  const comparator = useSortAccountsComparator();
 
   const flattenOptions = useMemo(
     () => ({
@@ -30,7 +33,17 @@ export function useCryptoAccountRows(searchValue: string) {
     return map;
   }, [nestedAccounts]);
 
+  const sortedMainAccounts = useMemo(() => {
+    const mainAccounts = nestedAccounts.filter((a): a is Account => a.type === "Account");
+    return mainAccounts.sort(comparator);
+  }, [nestedAccounts, comparator]);
+
   const rows = useMemo(() => {
+    if (shouldDisplayAggregatedAssets) {
+      return sortedMainAccounts.filter(account =>
+        accountMatchesSearch(walletState, searchValue, account, true),
+      );
+    }
     return flattenedAccounts.filter(account => {
       const parentAddress =
         account.type === "TokenAccount"
@@ -38,7 +51,14 @@ export function useCryptoAccountRows(searchValue: string) {
           : undefined;
       return accountMatchesSearch(walletState, searchValue, account, false, parentAddress);
     });
-  }, [flattenedAccounts, searchValue, walletState, accountById]);
+  }, [
+    shouldDisplayAggregatedAssets,
+    sortedMainAccounts,
+    flattenedAccounts,
+    searchValue,
+    walletState,
+    accountById,
+  ]);
 
   const lookupParentAccount = useCallback(
     (id: string): Account | undefined | null => {

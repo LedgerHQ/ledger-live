@@ -58,7 +58,7 @@ jobs:
         run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --unsafe-perm
 
       - name: Build dependencies
-        run: pnpm exec nx run ledger-live-desktop:build --with-deps
+        run: pnpm exec nx run ledger-live-desktop:build
 
       - name: Build desktop JS
         run: |

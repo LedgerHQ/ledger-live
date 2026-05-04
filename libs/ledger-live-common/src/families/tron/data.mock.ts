@@ -716,7 +716,6 @@ const mockAccountV2Raw = {
     unwithdrawnReward: "319085",
     lastWithdrawnRewardDate: "2023-11-24T16:58:09.000Z",
     lastVotedDate: "2023-12-06T17:24:48.000Z",
-    cacheTransactionInfoById: {},
   },
   currencyId: "tron",
   lastSyncDate: "2023-12-21T09:22:46.747Z",

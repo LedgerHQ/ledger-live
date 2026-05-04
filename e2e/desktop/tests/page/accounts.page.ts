@@ -86,12 +86,12 @@ export class AccountsPage extends AppPage {
 
   @step("Expect number of accounts to be $0")
   async expectAccountsCount(count: number) {
-    await expect(this.visibleAccountsList).toHaveCount(count, { timeout: 30000 });
+    await expect(this.visibleAccountsList).toHaveCount(count);
   }
 
   @step("Expect at least one visible account in the list")
   async expectAtLeastOneAccountVisible() {
-    expect(await this.countAccounts()).toBeGreaterThan(0);
+    await expect(this.visibleAccountsList).not.toHaveCount(0);
   }
 
   async getAccountsName() {

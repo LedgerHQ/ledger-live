@@ -2,7 +2,9 @@
   "ignoreUnresolved": [
     "@jest/expect-utils",
     "@jest/get-type",
-    "jest-util","ansi-styles", "supports-color"],
-  "ignoreUnused": ["dotenv"],
+    "jest-util",
+    "ansi-styles",
+    "supports-color"
+  ],
   "ignoreUnimported": []
 }

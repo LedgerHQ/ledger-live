@@ -303,4 +303,21 @@ describe("getFeesForTransaction", () => {
     // Verify gasPrice was called with feeCurrency parameter
     expect(gasPriceMock).toHaveBeenCalledWith(transactionWithUsdcFeeFixture.feeCurrency);
   });
+
+  it("should call gasPrice with adapter feeCurrency when adapter/unwrapped differ", async () => {
+    gasPriceMock.mockClear();
+
+    const transaction = {
+      ...transactionWithUsdcFeeFixture,
+      feeCurrency: "0x2F25deB3848C207fc8E0c34035B3Ba7fC157602B" as `0x${string}`,
+      feeCurrencyUnwrapped: "0xcebA9300f2b948710d2653dD7B07f33A8B32118C" as `0x${string}`,
+    };
+
+    await getFeesForTransaction({
+      account: { ...accountFixture, balance: BigNumber(123), spendableBalance: BigNumber(123) },
+      transaction,
+    });
+
+    expect(gasPriceMock).toHaveBeenCalledWith(transaction.feeCurrency);
+  });
 });

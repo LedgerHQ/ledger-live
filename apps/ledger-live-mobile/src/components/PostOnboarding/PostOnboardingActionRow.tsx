@@ -10,7 +10,6 @@ import { PostOnboardingNavigatorParamList } from "../RootNavigator/types/PostOnb
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { isPostOnboardingHubActionFulfilled } from "~/logic/postOnboarding/postOnboardingHubCompletion";
 import { useCompleteActionCallback } from "~/logic/postOnboarding/useCompleteAction";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { usePostOnboardingActionHandlers } from "~/logic/postOnboarding/usePostOnboardingActionHandlers";
 
@@ -21,6 +20,7 @@ export type Props = PostOnboardingAction &
     isLedgerSyncActive?: boolean;
     openActivationDrawer?: () => void;
     accounts?: Account[];
+    protectId: string;
   };
 
 const PostOnboardingActionRow: React.FC<Props> = props => {
@@ -32,6 +32,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
     description,
     tagLabel,
     completed,
+    getIsAlreadyCompleted,
     getIsAlreadyCompletedByState,
     disabled,
     buttonLabelForAnalyticsEvent,
@@ -41,10 +42,9 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
     openActivationDrawer,
     isLedgerSyncActive,
     accounts,
+    protectId,
   } = props;
   const { t } = useTranslation();
-  const recoverServices = useFeature("protectServicesMobile");
-  const protectId = recoverServices?.params?.protectId ?? "protect-prod";
 
   const navigation =
     useNavigation<
@@ -53,14 +53,20 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
   const completeAction = useCompleteActionCallback();
   const [isActionCompleted, setIsActionCompleted] = useState(false);
 
-  const initIsActionCompleted = useCallback(() => {
-    setIsActionCompleted(
-      isPostOnboardingHubActionFulfilled(
-        { completed, getIsAlreadyCompletedByState },
-        { isLedgerSyncActive: !!isLedgerSyncActive, accounts },
-      ),
+  const initIsActionCompleted = useCallback(async () => {
+    const isComplete = await isPostOnboardingHubActionFulfilled(
+      { completed, getIsAlreadyCompletedByState, getIsAlreadyCompleted },
+      { isLedgerSyncActive: !!isLedgerSyncActive, accounts, protectId },
     );
-  }, [completed, getIsAlreadyCompletedByState, isLedgerSyncActive, accounts]);
+    setIsActionCompleted(isComplete);
+  }, [
+    completed,
+    getIsAlreadyCompletedByState,
+    isLedgerSyncActive,
+    accounts,
+    getIsAlreadyCompleted,
+    protectId,
+  ]);
 
   useEffect(() => {
     initIsActionCompleted();

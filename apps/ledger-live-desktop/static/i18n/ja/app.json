@@ -1331,6 +1331,10 @@
     }
   },
   "postOnboarding" : {
+    "widget" : {
+      "title" : "次は、ウォレット設定を完了します。",
+      "subtitle" : "まずはウォレットへの入金から始めましょう。"
+    },
     "postOnboardingScreen" : {
       "title" : "次のステップとは？",
       "titleCompleted" : "これで準備完了です！\nポートフォリオの構築をお楽しみください。",
@@ -2313,7 +2317,8 @@
         "banner" : "最大利用可能額は",
         "fees" : "手数料の詳細はこちら",
         "standard" : "標準",
-        "advanced" : "アドバンス"
+        "advanced" : "アドバンス",
+        "feeCurrency" : "手数料の通貨"
       },
       "summary" : {
         "title" : "概要"
@@ -4187,6 +4192,64 @@
         "eigenlayer_points" : "Eigenlayerポイント",
         "validator" : "バリデーター報酬"
       }
+    },
+    "evmStaking" : {
+      "delegation" : {
+        "emptyState" : {
+          "description" : "資産をデリゲートすることで、{{currencyTicker}}で報酬を獲得できます。",
+          "delegation" : "報酬を獲得する"
+        },
+        "claimRewards" : "報酬獲得を申請",
+        "header" : "デリゲート",
+        "noRewards" : "受け取り可能な報酬はありません。",
+        "delegate" : "追加",
+        "undelegate" : "デリゲート解除",
+        "redelegate" : "再デリゲート",
+        "redelegateDisabledTooltip" : "再デリゲートは、<0>{{days}}</0>後に可能です",
+        "redelegateMaxDisabledTooltip" : "一度に<0>7</0>件以上のバリデーターを再デリゲートすることはできません。",
+        "undelegateDisabledTooltip" : "一度に<0>7</0>件以上のバリデーターのデリゲートを解除することはできません。",
+        "reward" : "報酬獲得を申請",
+        "activeTooltip" : "デリゲートして報酬を得る",
+        "inactiveTooltip" : "デリゲートしていない金額は報酬を生成しません",
+        "minSafeWarning" : "資金不足",
+        "flow" : {
+          "title" : "デリゲート",
+          "steps" : {
+            "starter" : {
+              "description" : "{{currencyTicker}}資産をバリデーターにデリゲートすることで報酬を得ることができます。",
+              "bullet" : ["デリゲートされた資産の所有権を保持する", "Ledgerデバイスを使ってデリゲートしましょう", "資産はデリゲート解除後に使用可能"],
+              "warning" : {
+                "description" : "バリデーターは慎重に選択してください。不適切なバリデーターに資産を預けると、資産の一部がペナルティによって失われてしまう危険があります。"
+              }
+            },
+            "amount" : {
+              "title" : "数量"
+            },
+            "validator" : {
+              "title" : "バリデーター"
+            },
+            "connectDevice" : {
+              "title" : "デバイス"
+            },
+            "confirmation" : {
+              "title" : "確認",
+              "success" : {
+                "title" : "資産が正常にデリゲートされました。",
+                "text" : "ブロックチェーンがトランザクションを承認後、アカウントの残高が更新されます。",
+                "cta" : "詳細を表示"
+              },
+              "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+            }
+          }
+        }
+      },
+      "redelegation" : {
+        "header" : "再デリゲート"
+      },
+      "undelegation" : {
+        "header" : "デリゲート解除",
+        "inactiveTooltip" : "デリゲートされていない金額は報酬を生成しません。"
+      }
     }
   },
   "graph" : {
@@ -4441,6 +4504,8 @@
     "delegated" : "デリゲート",
     "completionDate" : "完了日",
     "rewards" : "報酬",
+    "sourceValidator" : "送付元バリデータ",
+    "destinationValidator" : "送付先バリデータ",
     "duration" : "期間",
     "durationJustStarted" : "たった今",
     "durationDays" : "{{count}}日",
@@ -4608,24 +4673,7 @@
       },
       "analyticsConsentOptInQa" : {
         "rowTitle" : "アナリティクスオプトイン同意（QA）",
-        "rowDesc" : "保存されているプライバシー同意バージョンと同意日を確認します。ポートフォリオ分析同意モーダルの古い状態をシミュレートします。",
-        "title" : "アナリティクスのオプトインに関する同意 — QA",
-        "readSection" : "現在の設定（読み取り専用）",
-        "storedPrivacyVersion" : "保存されているプライバシーポリシーのバージョン： {{version}}",
-        "currentPrivacyVersion" : "アプリの現在のプライバシーポリシーバージョン： {{version}}",
-        "consentDate" : "同意日：{{value}}",
-        "inlineOutdatePrivacyVersion" : "古いバージョン。",
-        "inlineRemoveConsentDate" : "日付を削除",
-        "actionResetForConsentFresh" : "同意を新たにリセット（同意データを削除し、分析とパーソナライゼーションをオフにする）",
-        "modalPreviewSection" : "ポートフォリオ（ホーム）に期待されるモーダル",
-        "modalPreviewNoModalUserOk" : "モーダルなし。プライバシーポリシーのバージョンと同意日は問題ありません。更新や再承認の必要はありません。",
-        "modalPreviewNoModalFeatureOff" : "モーダルなし。アナリティクスのオプトイン機能フラグがオフです。",
-        "modalPreviewNoModalOnboarding" : "モーダルなし。オンボーディングはまだ完了していません。",
-        "modalPreviewFresh" : "初回同意モーダル（新たな同意）。同意の更新が必要（欠落または無効な同意日）かつ共有分析がオフ（例：保存されたプライバシー確認なし／アナリティクス無効で同意日なし。",
-        "modalPreviewReconfirm" : "同意モーダルを再確認する。同意の更新が必要で、分析の共有がオンになっています。ユーザーは、初回コピーの代わりに、再確認／続行または停止のフローを選択します。",
-        "modalPreviewPrivacy" : "プライバシー更新モーダル。保存されているプライバシーポリシーのバージョンは最新ではありません（アプリよりもバージョンが低い）が、同意の更新はブロックされていません。ユーザーは最初にプライバシーポリシー更新のステップを確認します。",
-        "modalPreviewGoToHome" : "ポートフォリオのホームページを開き、モーダルが表示されるべき時に表示されます。",
-        "note" : "日付を削除すると、同意がnullに設定されます。古いバージョンは、保存されているプライバシーポリシーのバージョンを、アプリの現在のバージョンよりも低くします。リセットは、同意のメタデータを消去し、分析とパーソナライゼーションをオフにして、同意の新しいモーダルを再生成します。CONSENT_RENEWAL_INTERVAL_MSがlive-commonでnullである間、時間ベースの更新はオフのままです。"
+        "rowDesc" : "保存されているプライバシー同意バージョンと同意日を確認します。ポートフォリオ分析同意モーダルの古い状態をシミュレートします。"
       },
       "brazeTools" : {
         "title" : "Brazeツール",
@@ -8275,7 +8323,10 @@
       },
       "editName" : "名前を編集",
       "emptyState" : "暗号資産アドレスがありません",
-      "emptySearchState" : "検索条件に一致するアカウントがありません。"
+      "emptySearchState" : "検索条件に一致するアカウントがありません。",
+      "assetCount_zero" : "{{count}}資産",
+      "assetCount_one" : "{{count}}資産",
+      "assetCount_other" : "{{count}}資産"
     },
     "editName" : {
       "title" : "アドレス名を編集",
@@ -8552,5 +8603,17 @@
       "errorDescription" : "トランザクション履歴のエクスポート中にエラーが発生しました。もう一度お試しください。",
       "tryAgain" : "再試行"
     }
+  },
+  "myWallet" : {
+    "actionsList" : {
+      "help" : "ヘルプ",
+      "recover" : "[L] Recover",
+      "refer" : "紹介"
+    },
+    "myLedger" : {
+      "title" : "My Ledger",
+      "description" : "Ledgerデバイスを管理する"
+    },
+    "explore" : "すべてのLedgerデバイスを探索する"
   }
 }

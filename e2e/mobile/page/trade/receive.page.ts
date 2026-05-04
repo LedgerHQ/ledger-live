@@ -7,7 +7,7 @@ export default class ReceivePage {
   accountAddress = "receive-fresh-address";
   accountFreshAddress = "receive-verifyAddress-freshAdress";
   baseLink = "receive";
-  buttonContinueId = "add-accounts-continue-button";
+  buttonContinueId = "enabled-add-accounts-continue-button";
   buttonVerifyAddressId = "button-verify-my-address";
   networkBasedStep2HeaderTitleId = "addAccounts-header-step2-title";
   noVerifyAddressButton = "button-DontVerify-my-address";

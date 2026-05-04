@@ -6,6 +6,9 @@ on:
       ref:
         type: string
         required: false
+    outputs:
+      coverage_generated:
+        value: ${{ jobs.build-wallet-cli.outputs.coverage_generated }}
   workflow_dispatch:
     inputs:
       ref:
@@ -27,6 +30,8 @@ jobs:
     runs-on: ubuntu-22.04
     timeout-minutes: 30
     continue-on-error: true
+    outputs:
+      coverage_generated: ${{ contains(steps.generate_coverage.outcome, 'success') }}
 
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
@@ -39,11 +44,13 @@ jobs:
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
-          skip-turbo-cache: "false"
+          skip-turbo-cache: "true"
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # v2.0.2
@@ -53,12 +60,24 @@ jobs:
       - name: Install dependencies
         run: pnpm i --filter "@ledgerhq/wallet-cli..." --filter "ledger-live"
 
+      - name: Check wallet-cli generated commands
+        run: pnpm exec nx run "@ledgerhq/wallet-cli:generate:check"
+
       - name: Build wallet-cli
-        env:
-          TURBO_API: "http://127.0.0.1:${{ steps.setup-caches.outputs.port }}"
-          TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          TURBO_TEAM: "foo"
-        run: pnpm turbo build --filter "@ledgerhq/wallet-cli"
+        run: pnpm exec nx run @ledgerhq/wallet-cli:build
+
+      - name: Generate unit test coverage for wallet-cli
+        run: |
+          mkdir -p apps/wallet-cli/coverage
+          pnpm exec nx run @ledgerhq/wallet-cli:coverage
+
+      - name: Upload wallet-cli unit test coverage
+        id: generate_coverage
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: coverage-wallet-cli
+          path: ${{ github.workspace }}/apps/wallet-cli/coverage
 
       - name: Upload darwin-arm64 binary
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0

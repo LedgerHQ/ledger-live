@@ -46,6 +46,7 @@ import AccountsSettings from "~/screens/Settings/Accounts";
 import AboutSettings from "~/screens/Settings/About";
 import Resources from "~/screens/Settings/Resources";
 import GeneralSettings from "~/screens/Settings/General";
+import AnalyticsPreferencesSettings from "~/screens/Settings/AnalyticsPreferencesSettings";
 import CountervalueSettings from "~/screens/Settings/General/CountervalueSettings";
 import NotificationsSettings from "~/screens/Settings/Notifications";
 import HelpSettings from "~/screens/Settings/Help";
@@ -125,6 +126,16 @@ export default function SettingsNavigator() {
         layout={unmountOnBlur}
         options={{
           title: t("settings.display.title"),
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.AnalyticsPreferencesSettings}
+        component={AnalyticsPreferencesSettings}
+        options={{
+          title: "",
+          headerStyle: {
+            backgroundColor: colors.neutral.c00,
+          }
         }}
       />
       <Stack.Screen

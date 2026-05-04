@@ -131,6 +131,7 @@ export function useSideBarViewModel(): SideBarViewModel {
     shouldDisplayQuickActionCtas: isQuickActionCtasEnabled,
     shouldDisplayWallet40MainNav: isWallet40MainNavEnabled,
     shouldDisplayAssetSection,
+    shouldDisplayMyWallet: isMyWalletEnabled,
     isEnabled: isWallet40Enabled,
   } = useWalletFeaturesConfig("desktop");
 
@@ -325,6 +326,7 @@ export function useSideBarViewModel(): SideBarViewModel {
     isMarketBannerEnabled,
     isQuickActionCtasEnabled,
     isWallet40MainNavEnabled,
+    isMyWalletEnabled,
     referralProgramConfig,
     recoverFeature,
     recoverHomePath,

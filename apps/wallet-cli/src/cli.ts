@@ -1,5 +1,4 @@
 #!/usr/bin/env bun
-import "./polyfill";
 import "./init-cwd";
 import "./embed-usb-native";
 import { createCLI } from "@bunli/core";

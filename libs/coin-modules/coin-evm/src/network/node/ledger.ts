@@ -60,6 +60,7 @@ async function getTransaction(
     method: "GET",
     url: `${getEnv("EXPLORER")}/blockchain/v4/${config.explorerId}/tx/${hash}`,
   });
+
   return {
     hash: ledgerTransaction.hash,
     blockHeight: ledgerTransaction.block?.height,

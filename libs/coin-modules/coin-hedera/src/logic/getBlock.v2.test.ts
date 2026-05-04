@@ -441,6 +441,55 @@ describe("getBlockV2", () => {
     ]);
   });
 
+  it.each([
+    {
+      label: "sender evm address is null",
+      transferOverrides: { sender_account_id: null, sender_evm_address: null },
+    },
+    {
+      label: "recipient evm address is null",
+      transferOverrides: { receiver_account_id: null, receiver_evm_address: null },
+    },
+  ])("should skip ERC20 operations when $label", async ({ transferOverrides }) => {
+    const mockMirrorAccount = getMockedMirrorAccount({ account: "0.0.12345" });
+    const mockTokenERC20 = getMockedERC20TokenCurrency();
+    const mockMirrorTransaction = getMockedMirrorTransaction({
+      consensus_timestamp: "1625097600.000000000",
+      transaction_hash: "erc20-transfer-hash",
+      result: "SUCCESS",
+      name: "CONTRACTCALL",
+      transfers: [{ account: mockMirrorAccount.account, amount: -300000 }],
+    });
+    const mockERC20Transfer = getMockedERC20TokenTransfer({
+      token_evm_address: mockTokenERC20.contractAddress,
+      transaction_hash: mockMirrorTransaction.transaction_hash,
+      ...transferOverrides,
+    });
+
+    const mockContractCallResult = getMockedMirrorContractCallResult();
+    const mockEnrichedERC20Transfer = getMockedEnrichedERC20Transfer({
+      mirrorTransaction: mockMirrorTransaction,
+      contractCallResult: mockContractCallResult,
+      transfers: [mockERC20Transfer],
+    });
+
+    (apiClient.getTransactionsByTimestampRange as jest.Mock).mockResolvedValue([
+      mockMirrorTransaction,
+    ]);
+    (hgraphClient.getERC20TransfersByTimestampRange as jest.Mock).mockResolvedValue([
+      mockERC20Transfer,
+    ]);
+    (enrichERC20Transfers as jest.Mock).mockReturnValue([mockEnrichedERC20Transfer]);
+
+    const result = await getBlockV2(100);
+    const operations = result.transactions[0]?.operations;
+    const erc20Operations = operations?.filter(
+      op => op.type === "transfer" && op.asset.type === "erc20",
+    );
+
+    expect(erc20Operations).toEqual([]);
+  });
+
   it("should mark failed transactions", async () => {
     const mockTx = getMockedMirrorTransaction({
       transaction_id: "0.0.999-1234567890-000000000",

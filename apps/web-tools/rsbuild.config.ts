@@ -46,6 +46,7 @@ export default defineConfig({
       config.resolve.fallback = {
         ...config.resolve.fallback,
         fs: false,
+        module: false,
         net: false,
         vm: false,
         tls: false,

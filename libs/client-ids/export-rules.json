@@ -12,26 +12,44 @@
     "exportUserIdForAnalytics": [
       "apps/ledger-live-desktop/src/renderer/live-common-setup.ts",
       "apps/ledger-live-desktop/src/renderer/analytics/segment.ts",
-      "apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/index.tsx"
+      "apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/index.tsx",
+      "apps/ledger-live-mobile/src/analytics/segment.ts",
+      "apps/ledger-live-mobile/src/analytics/UserIdPlugin.tsx"
     ],
-    "exportUserIdForBraze": ["apps/ledger-live-desktop/src/renderer/hooks/useBraze.ts"],
+    "exportUserIdForBraze": [
+      "apps/ledger-live-desktop/src/renderer/hooks/useBraze.ts",
+      "apps/ledger-live-mobile/src/notifications/braze.ts"
+    ],
     "exportUserIdForRecover": ["apps/ledger-live-desktop/src/renderer/hooks/useRecoverRestoreOnboarding.ts"],
-    "exportUserIdForWalletAPI": ["apps/ledger-live-desktop/src/renderer/components/Web3AppWebview/WalletAPIWebview.tsx"],
+    "exportUserIdForWalletAPI": [
+      "apps/ledger-live-desktop/src/renderer/components/Web3AppWebview/WalletAPIWebview.tsx",
+      "apps/ledger-live-mobile/src/components/Web3AppWebview/helpers.ts"
+    ],
     "exportUserIdForUserLogs": [
       "apps/ledger-live-desktop/src/renderer/components/ExportLogsButton.tsx",
-      "apps/ledger-live-desktop/src/mvvm/hooks/useExportLogs.ts"
+      "apps/ledger-live-desktop/src/mvvm/hooks/useExportLogs.ts",
+      "apps/ledger-live-mobile/src/screens/Settings/Debug/Information/EquipmentIdRow.tsx",
+      "apps/ledger-live-mobile/src/screens/RatingsModal/index.tsx",
+      "apps/ledger-live-mobile/src/screens/NpsRatingsModal/index.tsx"
+    ],
+    "exportUserIdForChainwatch": [
+      "apps/ledger-live-mobile/src/components/TransactionsAlerts.tsx",
+      "apps/ledger-live-mobile/src/screens/Settings/Debug/Features/TransactionsAlerts.tsx"
     ]
   },
   "libs/client-ids/src/ids/DatadogId.ts": {
     "exportDatadogIdForPersistence": ["libs/client-ids/src/store/persistence.ts"],
     "exportDatadogIdForSentry": ["apps/ledger-live-desktop/src/sentry/renderer.ts"],
-    "exportDatadogIdForRumUser": ["apps/ledger-live-desktop/src/datadog/renderer.ts"]
+    "exportDatadogIdForRumUser": [
+      "apps/ledger-live-desktop/src/datadog/renderer.ts",
+      "apps/ledger-live-mobile/src/index.tsx"
+    ]
   },
   "libs/client-ids/src/store/persistence.ts": {
     "exportIdentitiesForPersistence": [
       "apps/ledger-live-desktop/src/renderer/middlewares/db.ts",
       "apps/ledger-live-mobile/src/components/DBSave.ts",
-      "apps/ledger-live-mobile/src/context/store.ts"
+      "apps/ledger-live-mobile/src/helpers/identities.ts"
     ]
   }
 }

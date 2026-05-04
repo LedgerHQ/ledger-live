@@ -1331,6 +1331,10 @@
     }
   },
   "postOnboarding": {
+    "widget": {
+      "title": "Next, finish wallet setup",
+      "subtitle": "Start with funding your wallet."
+    },
     "postOnboardingScreen": {
       "title": "What’s next?",
       "titleCompleted": "You're all set !\nKeep going and explore your portfolio.",
@@ -2313,7 +2317,8 @@
         "banner": "Maximum spendable amount is",
         "fees": "Learn more about fees",
         "standard": "Standard",
-        "advanced": "Advanced"
+        "advanced": "Advanced",
+        "feeCurrency": "Fee currency"
       },
       "summary": {
         "title": "Summary"
@@ -4207,6 +4212,68 @@
         "eigenlayer_points": "Eigenlayer points",
         "validator": "Validator rewards"
       }
+    },
+    "evmStaking": {
+      "delegation": {
+        "emptyState": {
+          "description": "You can earn {{currencyTicker}} rewards by delegating your assets.",
+          "delegation": "Earn rewards"
+        },
+        "claimRewards": "Claim rewards",
+        "header": "Delegation(s)",
+        "noRewards": "No rewards available",
+        "delegate": "Add",
+        "undelegate": "Undelegate",
+        "redelegate": "Redelegate",
+        "redelegateDisabledTooltip": "You can redelegate again <0>{{days}}</0>",
+        "redelegateMaxDisabledTooltip": "You cannot redelegate more than <0>7</0> validators at a time",
+        "undelegateDisabledTooltip": "You cannot undelegate more than <0>7</0> validators at a time",
+        "reward": "Claim rewards",
+        "activeTooltip": "Delegated amounts generate rewards",
+        "inactiveTooltip": "Undelegated amounts do not generate rewards",
+        "minSafeWarning": "Not enough funds",
+        "flow": {
+          "title": "Delegate",
+          "steps": {
+            "starter": {
+              "description": "You may earn rewards by delegating your {{currencyTicker}} assets to a validator.",
+              "bullet": [
+                "You keep ownership of delegated assets",
+                "Delegate using your Ledger device",
+                "Assets will be available after undelegation"
+              ],
+              "warning": {
+                "description": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately."
+              }
+            },
+            "amount": {
+              "title": "Amount"
+            },
+            "validator": {
+              "title": "Validators"
+            },
+            "connectDevice": {
+              "title": "Device"
+            },
+            "confirmation": {
+              "title": "Confirmation",
+              "success": {
+                "title": "You have successfully delegated your assets",
+                "text": "Your account balance will be updated when the blockchain confirms the transaction.",
+                "cta": "View details"
+              },
+              "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+            }
+          }
+        }
+      },
+      "redelegation": {
+        "header": "Redelegation(s)"
+      },
+      "undelegation": {
+        "header": "Undelegation(s)",
+        "inactiveTooltip": "Undelegated amounts do not generate rewards."
+      }
     }
   },
   "graph": {
@@ -4465,6 +4532,8 @@
     "delegated": "Delegated",
     "completionDate": "Completion date",
     "rewards": "Rewards",
+    "sourceValidator": "Source Validator",
+    "destinationValidator": "Destination Validator",
     "duration": "Duration",
     "durationJustStarted": "Just started",
     "durationDays": "{{count}} day",
@@ -4632,24 +4701,7 @@
       },
       "analyticsConsentOptInQa": {
         "rowTitle": "Analytics opt-in consent (QA)",
-        "rowDesc": "Inspect stored privacy consent version and consent date; simulate outdated states for the portfolio analytics consent modal.",
-        "title": "Analytics opt-in consent — QA",
-        "readSection": "Current settings (read-only)",
-        "storedPrivacyVersion": "Stored privacy policy version: {{version}}",
-        "currentPrivacyVersion": "App current privacy policy version: {{version}}",
-        "consentDate": "Consent date (raw): {{value}}",
-        "inlineOutdatePrivacyVersion": "Outdate version",
-        "inlineRemoveConsentDate": "Remove date",
-        "actionResetForConsentFresh": "Reset for consent fresh (clear consent data, turn off analytics & personalization)",
-        "modalPreviewSection": "Expected modal on portfolio (home)",
-        "modalPreviewNoModalUserOk": "No modal. Privacy policy version and consent date are fine: nothing to renew or re-acknowledge.",
-        "modalPreviewNoModalFeatureOff": "No modal. The analytics opt-in feature flag is off.",
-        "modalPreviewNoModalOnboarding": "No modal. Onboarding is not complete yet.",
-        "modalPreviewFresh": "First-time consent modal (consent fresh). Consent renewal is required (missing or invalid consent date) and Share analytics is off — e.g. no stored privacy ack / no consent date with analytics disabled.",
-        "modalPreviewReconfirm": "Reconfirm consent modal. Consent renewal is required and Share analytics is on — user gets the reconfirm / continue-or-stop flow instead of first-time copy.",
-        "modalPreviewPrivacy": "Privacy update modal. Stored privacy policy version is outdated (lower than the app), and consent renewal is not blocking — user sees the privacy-policy update step first.",
-        "modalPreviewGoToHome": "Open the portfolio home page to see the modal when it should appear.",
-        "note": "Remove date sets consent to null. Outdate version lowers the stored privacy policy version below the app's current version. Reset clears consent metadata and turns off analytics and personalization to reproduce the consent fresh modal. Time-based renewal stays off while CONSENT_RENEWAL_INTERVAL_MS is null in live-common."
+        "rowDesc": "Inspect stored privacy consent version and consent date; simulate outdated states for the portfolio analytics consent modal."
       },
       "brazeTools": {
         "title": "Braze Tools",
@@ -7850,7 +7902,7 @@
       },
       "personalizedExperience": {
         "title": "Personalized experience",
-        "description": "Enable Ledger to collect app usage to provide personalized contents"
+        "description": "Enable Ledger to collect app usage to provide personalized content"
       },
       "ctaConfirm": "Confirm"
     },
@@ -8302,7 +8354,10 @@
       },
       "editName": "Edit name",
       "emptyState": "No crypto address yet",
-      "emptySearchState": "No accounts match your search"
+      "emptySearchState": "No accounts match your search",
+      "assetCount_zero": "{{count}} asset",
+      "assetCount_one": "{{count}} asset",
+      "assetCount_other": "{{count}} assets"
     },
     "editName": {
       "title": "Edit address name",
@@ -8585,5 +8640,17 @@
       "errorDescription": "An error occurred while exporting your transaction history. Please try again.",
       "tryAgain": "Try again"
     }
+  },
+  "myWallet": {
+    "actionsList": {
+      "help": "Help",
+      "recover": "[L] Recover",
+      "refer": "Referral"
+    },
+    "myLedger": {
+      "title": "My Ledger",
+      "description": "Manage your Ledger device"
+    },
+    "explore": "Explore all Ledger devices"
   }
 }

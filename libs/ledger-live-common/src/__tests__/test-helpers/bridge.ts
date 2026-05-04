@@ -1,7 +1,6 @@
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import { reduce, filter, map } from "rxjs/operators";
-import flatMap from "lodash/flatMap";
 import omit from "lodash/omit";
 import { InvalidAddress, RecipientRequired, AmountRequired } from "@ledgerhq/errors";
 import {
@@ -208,11 +207,18 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
               });
 
               if (!sa.unstableAccounts) {
-                const raws: AccountRawLike[] = flatMap(accounts, a => {
-                  const main = toAccountRaw(a);
-                  if (!main.subAccounts) return [main];
-                  return [{ ...main, subAccounts: [] }, ...main.subAccounts] as AccountRawLike[];
-                });
+                const raws: AccountRawLike[] = (
+                  await Promise.all(
+                    accounts.map(async a => {
+                      const main = await toAccountRaw(a);
+                      if (!main.subAccounts) return [main];
+                      return [
+                        { ...main, subAccounts: [] },
+                        ...main.subAccounts,
+                      ] as AccountRawLike[];
+                    }),
+                  )
+                ).flat();
                 const heads = raws.map(a => {
                   const copy = omit(
                     a,
@@ -413,7 +419,7 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
           describe("sync", () => {
             makeTest("succeed", async () => {
               const account = await getSynced();
-              expect(fromAccountRaw(toAccountRaw(account))).toBeDefined();
+              expect(await fromAccountRaw(await toAccountRaw(account))).toBeDefined();
             });
 
             if (impl !== "mock") {
@@ -529,7 +535,7 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
               const account = await getAccount();
               const bridge = await getBridge();
               const t = bridge.createTransaction(account);
-              expect(fromTransactionRaw(toTransactionRaw(t))).toEqual(t);
+              expect(await fromTransactionRaw(await toTransactionRaw(t))).toEqual(t);
             });
             makeTest("transaction with amount and recipient correctly serialize", async () => {
               const account = await getSynced();
@@ -539,7 +545,7 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
                 amount: new BigNumber(1000),
                 recipient: account.freshAddress,
               };
-              expect(fromTransactionRaw(toTransactionRaw(t))).toEqual(t);
+              expect(await fromTransactionRaw(await toTransactionRaw(t))).toEqual(t);
             });
           });
 
@@ -718,7 +724,7 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
                     errors && expect(s.errors).toMatchObject(errors);
                     warnings && expect(s.warnings).toMatchObject(warnings);
                     // now we match rest of fields but using the raw version for better readability
-                    const restRaw: Record<string, any> = toTransactionStatusRaw(
+                    const restRaw: Record<string, any> = await toTransactionStatusRaw(
                       {
                         ...s,
                         ...es,
@@ -735,7 +741,7 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
                     }
 
                     expect(
-                      toTransactionStatusRaw(s as TransactionStatusCommon, account.currency.family),
+                      await toTransactionStatusRaw(s as TransactionStatusCommon, account.currency.family),
                     ).toMatchObject(restRaw);
                   }
 

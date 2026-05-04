@@ -1,8 +1,6 @@
 import { Account, AccountRaw, OperationExtra, OperationExtraRaw } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import {
-  TronTransactionInfo,
-  TronTransactionInfoRaw,
   isTrongridExtraTxInfo,
   isTrongridExtraTxInfoRaw,
   type TronAccount,
@@ -25,22 +23,15 @@ export const toTronResourcesRaw = ({
   unwithdrawnReward,
   lastWithdrawnRewardDate,
   lastVotedDate,
-  cacheTransactionInfoById: cacheTx,
 }: TronResources): TronResourcesRaw => {
   const frozenBandwidth = frozen.bandwidth;
   const frozenEnergy = frozen.energy;
   const delegatedFrozenBandwidth = delegatedFrozen.bandwidth;
   const delegatedFrozenEnergy = delegatedFrozen.energy;
-  const cacheTransactionInfoById: Record<string, TronTransactionInfoRaw> = {};
   const unFrozenBandwidth = unFrozen?.bandwidth;
   const unFrozenEnergy = unFrozen?.energy;
   const legacyFrozenBandwidth = legacyFrozen?.bandwidth;
   const legacyFrozenEnergy = legacyFrozen?.energy;
-
-  for (const k in cacheTx) {
-    const { fee, blockNumber, withdraw_amount, unfreeze_amount } = cacheTx[k];
-    cacheTransactionInfoById[k] = [fee, blockNumber, withdraw_amount, unfreeze_amount];
-  }
 
   return {
     frozen: {
@@ -107,7 +98,6 @@ export const toTronResourcesRaw = ({
       ? lastWithdrawnRewardDate.toISOString()
       : undefined,
     lastVotedDate: lastVotedDate ? lastVotedDate.toISOString() : undefined,
-    cacheTransactionInfoById,
   };
 };
 export const fromTronResourcesRaw = ({
@@ -122,7 +112,6 @@ export const fromTronResourcesRaw = ({
   unwithdrawnReward,
   lastWithdrawnRewardDate,
   lastVotedDate,
-  cacheTransactionInfoById: cacheTransactionInfoByIdRaw,
 }: TronResourcesRaw): TronResources => {
   const frozenBandwidth = frozen.bandwidth;
   const frozenEnergy = frozen.energy;
@@ -132,20 +121,6 @@ export const fromTronResourcesRaw = ({
   const unFrozenEnergy = unFrozen?.energy;
   const legacyFrozenBandwidth = legacyFrozen?.bandwidth;
   const legacyFrozenEnergy = legacyFrozen?.energy;
-
-  const cacheTransactionInfoById: Record<string, TronTransactionInfo> = {};
-
-  if (cacheTransactionInfoByIdRaw) {
-    for (const k in cacheTransactionInfoByIdRaw) {
-      const [fee, blockNumber, withdraw_amount, unfreeze_amount] = cacheTransactionInfoByIdRaw[k];
-      cacheTransactionInfoById[k] = {
-        fee,
-        blockNumber,
-        withdraw_amount,
-        unfreeze_amount,
-      };
-    }
-  }
 
   return {
     frozen: {
@@ -212,7 +187,6 @@ export const fromTronResourcesRaw = ({
       ? new Date(lastWithdrawnRewardDate)
       : undefined,
     lastVotedDate: lastVotedDate ? new Date(lastVotedDate) : undefined,
-    cacheTransactionInfoById,
   };
 };
 

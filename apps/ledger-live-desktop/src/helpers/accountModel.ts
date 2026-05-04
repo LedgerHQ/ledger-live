@@ -80,7 +80,7 @@ const accountModel: DataModel<AccountRaw, [Account, AccountUserData]> = createDa
   ],
 
   decode: async (raw: AccountRaw) => [await fromAccountRaw(raw), accountRawToAccountUserData(raw)],
-  encode: ([account, userData]: [Account, AccountUserData]): AccountRaw =>
+  encode: async ([account, userData]: [Account, AccountUserData]): Promise<AccountRaw> =>
     toAccountRaw(
       {
         ...account,

@@ -18,6 +18,13 @@ const INSUFFICIENT_FUNDS_AMOUNT_ERROR_NAMES = [
 /**
  * Maximum amount the user can send (spendable/balance minus estimated fees).
  * Returns zero if account is missing or balance would be negative.
+ *
+ * For sub-accounts (e.g. EVM ERC-20 tokens, TRC-20, SPL tokens), fees are paid
+ * in the parent account's native currency. Subtracting them from a token
+ * balance expressed in a different unit would be incorrect (and typically
+ * collapses the result to 0, since a few gwei of fees outweigh a token balance
+ * denominated in its smallest unit). In that case, the full token balance is
+ * returned and fee sufficiency is validated by the bridge status instead.
  */
 export function getMaxAvailable(
   account: AccountLike | null | undefined,
@@ -27,6 +34,9 @@ export function getMaxAvailable(
   const spendable = "spendableBalance" in account ? account.spendableBalance : undefined;
   const balance =
     spendable ?? ("balance" in account ? account.balance : undefined) ?? new BigNumber(0);
+  if (account.type === "TokenAccount") {
+    return BigNumber.max(0, balance);
+  }
   const safeMax = balance.minus(estimatedFees);
   return BigNumber.max(0, safeMax);
 }
