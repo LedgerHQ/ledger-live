@@ -140,10 +140,10 @@ describe("createSendSteps", () => {
     const privateTransaction = {
       family: "aleo",
       mode: "transfer_private",
-      properties: { amountRecordCommitment: "some-commitment", feeRecordCommitment: "some-fee" },
+      properties: { amountRecordCommitments: ["some-commitment"], feeRecordCommitment: "some-fee" },
     };
     const result = updater(privateTransaction);
-    expect(result.properties).toEqual({ amountRecordCommitment: null, feeRecordCommitment: null });
+    expect(result.properties).toEqual({ amountRecordCommitments: [], feeRecordCommitment: null });
   });
 
   it("should not clear record when going back from record-picker on non-private tx", () => {

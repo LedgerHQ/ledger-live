@@ -252,10 +252,10 @@ function getAmountToSpend({
   }
 
   if (isPrivateTransaction(transaction)) {
-    const commitment = transaction.properties.amountRecordCommitment;
-    const amountRecord = commitment ? getRecordByCommitment({ account, commitment }) : null;
-
-    return new BigNumber(amountRecord?.microcredits ?? "0");
+    return transaction.properties.amountRecordCommitments.reduce((sum, commitment) => {
+      const record = getRecordByCommitment({ account, commitment });
+      return record ? sum.plus(record.microcredits) : sum;
+    }, new BigNumber(0));
   }
 
   const transparentBalance = account.aleoResources?.transparentBalance ?? new BigNumber(0);
@@ -328,15 +328,15 @@ export function isPrivateTransaction(transaction: Transaction): transaction is T
 export function findBestRecordForFee({
   unspentRecords,
   targetFee,
-  selectedAmountRecordCommitment,
+  selectedAmountRecordCommitments,
 }: {
   unspentRecords: AleoUnspentRecord[];
   targetFee: BigNumber;
-  selectedAmountRecordCommitment: string | null;
+  selectedAmountRecordCommitments: string[];
 }): AleoUnspentRecord | null {
   const recordsSufficientForFee = unspentRecords.filter(
     r =>
-      r.commitment !== selectedAmountRecordCommitment &&
+      !selectedAmountRecordCommitments.includes(r.commitment) &&
       new BigNumber(r.microcredits).gte(targetFee),
   );
 
@@ -510,7 +510,7 @@ export function createTransactionIntent({
   } as const;
 
   if (isPrivateTx) {
-    const commitment = transaction.properties.amountRecordCommitment;
+    const commitment = transaction.properties.amountRecordCommitments[0];
     invariant(commitment, "aleo: missing amount record commitment");
     const amountRecord = getRecordByCommitment({ account, commitment });
     invariant(amountRecord, `aleo: no amount record found for commitment ${commitment}`);
