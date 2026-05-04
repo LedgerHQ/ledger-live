@@ -20,8 +20,8 @@ import {
   AccountValueCell,
   AggregatedAccountNameCell,
   AggregatedAccountValueCell,
-  getCryptoTableRowFreshAddress,
 } from "../Cell";
+import { getCryptoTableRowFreshAddress } from "LLD/features/CryptoAddresses/utils/getCryptoTableRowFreshAddress";
 import { useSyncPhase } from "LLD/hooks/useSyncPhase";
 
 type UseCryptoDataTableParams = {

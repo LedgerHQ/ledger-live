@@ -42,6 +42,10 @@ describe("AssetDetail integration", () => {
     expect(screen.getByText("Price performance")).toBeVisible();
     expect(screen.getByText("Placeholder market stats content")).toBeVisible();
     expect(screen.getByText("Placeholder performance metrics content")).toBeVisible();
+    expect(screen.getByText("Addresses")).toBeVisible();
+    expect(screen.getByTestId("asset-detail-address-list")).toBeVisible();
+    expect(screen.getByTestId("asset-detail-add-address")).toBeVisible();
+    expect(screen.getByText("Add")).toBeVisible();
     expect(screen.queryByText("Asset distribution item not found.")).not.toBeInTheDocument();
   });
 
@@ -69,6 +73,7 @@ describe("AssetDetail integration", () => {
     expect(screen.getByText("Total balance")).toBeVisible();
     expect(screen.getByText("Market stats")).toBeVisible();
     expect(screen.getByText("Price performance")).toBeVisible();
+    expect(screen.getByText("Addresses")).toBeVisible();
     expect(screen.queryByText("Asset distribution item not found.")).not.toBeInTheDocument();
   });
 
