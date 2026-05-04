@@ -258,7 +258,12 @@ export default class SwapPage extends CommonPage {
 
   @Step("Ensure token approval has been revoked")
   async ensureRevokeTokenApproval(fromAccount: Account | TokenAccount, provider: Provider) {
-    const remaining = await getTokenAllowanceCommand(fromAccount, provider.contractAddress!);
+    if (!provider.contractAddress) {
+      throw new Error(
+        `Provider "${provider.name}" has no contractAddress — revoke requires an EVM token provider`,
+      );
+    }
+    const remaining = await getTokenAllowanceCommand(fromAccount, provider.contractAddress);
     jestExpect(remaining).toBe("0");
   }
 }
