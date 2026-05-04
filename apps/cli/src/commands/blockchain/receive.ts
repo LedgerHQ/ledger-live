@@ -1,4 +1,4 @@
-import { of, concat, EMPTY, from, defer } from "rxjs";
+import { of, concat, EMPTY, defer } from "rxjs";
 import { ignoreElements, concatMap, mergeMap } from "rxjs/operators";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { scan, scanCommonOpts } from "../../scan";
