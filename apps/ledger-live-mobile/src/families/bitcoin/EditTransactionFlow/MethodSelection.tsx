@@ -66,7 +66,7 @@ function MethodSelectionComponent({ navigation, route }: Props) {
     };
   }, [operation.hash, mainAccount.freshAddress]);
 
-  const { transaction, setTransaction } = useBridgeTransaction<BtcTransaction>(() => ({
+  const { transaction, setTransaction } = useBridgeTransaction<BtcTransaction>(bridge, () => ({
     account,
     parentAccount,
     transaction: transactionToEdit,

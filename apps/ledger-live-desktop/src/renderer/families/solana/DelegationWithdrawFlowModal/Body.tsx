@@ -1,14 +1,14 @@
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import {
   Transaction,
   SolanaStakeWithMeta,
   SolanaAccount,
 } from "@ledgerhq/live-common/families/solana/types";
-import { AccountBridge, Operation, Account } from "@ledgerhq/types-live";
+import { Operation, Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { useCallback, useState } from "react";
@@ -79,6 +79,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
+  const bridge = useAccountBridge<Transaction>(params.account, undefined);
   const {
     transaction,
     setTransaction,
@@ -88,7 +89,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     status,
     bridgeError,
     bridgePending,
-  } = useBridgeTransaction(() => {
+  } = useBridgeTransaction(bridge, () => {
     const { account, stakeWithMeta } = params;
     const { stake } = stakeWithMeta;
     invariant(account && account.solanaResources, "solana: account and solana resources required");
@@ -96,7 +97,6 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
       stake.withdrawable > 0,
       "solana: can withdraw only if there is something to withdraw",
     );
-    const bridge: AccountBridge<Transaction> = getAccountBridge(account, undefined);
     const transaction = bridge.updateTransaction(bridge.createTransaction(account), {
       amount: new BigNumber(stake.withdrawable),
       model: {

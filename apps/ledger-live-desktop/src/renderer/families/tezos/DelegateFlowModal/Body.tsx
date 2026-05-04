@@ -113,7 +113,7 @@ const Body = ({ stepId, params, onChangeStepId, onClose }: Props) => {
     status,
     bridgeError,
     bridgePending,
-  } = useBridgeTransaction<Transaction>(() => {
+  } = useBridgeTransaction<Transaction>(bridge, () => {
     const account = params.account;
     const parentAccount = params.parentAccount;
 

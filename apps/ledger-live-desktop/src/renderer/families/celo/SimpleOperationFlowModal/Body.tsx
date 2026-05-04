@@ -9,8 +9,8 @@ import { createStructuredSelector } from "reselect";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import Track from "~/renderer/analytics/Track";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
@@ -24,7 +24,7 @@ import logger from "~/renderer/logger";
 import { StepId, StepProps, St, Mode } from "./types";
 import { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { CeloAccount, TransactionStatus } from "@ledgerhq/live-common/families/celo/types";
+import { CeloAccount, Transaction as CeloTransaction, TransactionStatus } from "@ledgerhq/live-common/families/celo/types";
 
 export type Data = {
   account: CeloAccount | TokenAccount;
@@ -84,6 +84,7 @@ const Body = ({ t, stepId, device, openModal, onClose, onChangeStepId, params, m
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
+  const bridge = useAccountBridge<CeloTransaction>(params.account, undefined);
   const {
     transaction,
     setTransaction,
@@ -93,10 +94,9 @@ const Body = ({ t, stepId, device, openModal, onClose, onChangeStepId, params, m
     status,
     bridgeError,
     bridgePending,
-  } = useBridgeTransaction(() => {
+  } = useBridgeTransaction(bridge, () => {
     const { account } = params;
     invariant(account, "celo: account required");
-    const bridge = getAccountBridge(account, undefined);
     const t = bridge.createTransaction(account);
     const transaction = bridge.updateTransaction(t, {
       mode,

@@ -2,12 +2,17 @@ import { renderHook, act } from "@tests/test-renderer";
 import { useSendFlowTransaction } from "../useSendFlowTransaction";
 import * as bridgeModule from "@ledgerhq/live-common/bridge/index";
 import * as useBridgeTransactionModule from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import * as useAccountBridgeModule from "@ledgerhq/live-common/bridge/useAccountBridge";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import BigNumber from "bignumber.js";
 
 jest.mock("@ledgerhq/live-common/bridge/useBridgeTransaction");
 jest.mock("@ledgerhq/live-common/bridge/index");
+jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
+  useAccountBridge: jest.fn(),
+  useAccountBridgeOrNull: jest.fn(),
+}));
 
 describe("useSendFlowTransaction", () => {
   const mockAccount = {
@@ -26,8 +31,14 @@ describe("useSendFlowTransaction", () => {
   const mockSetAccount = jest.fn();
   const mockUpdateTransaction = jest.fn((tx, updates) => ({ ...tx, ...updates }));
 
+  const mockBridge = { updateTransaction: jest.fn() };
+
   beforeEach(() => {
     jest.clearAllMocks();
+
+    mockBridge.updateTransaction = mockUpdateTransaction;
+
+    (useAccountBridgeModule.useAccountBridgeOrNull as jest.Mock).mockReturnValue(mockBridge);
 
     (useBridgeTransactionModule.default as jest.Mock).mockReturnValue({
       transaction: mockTransaction,

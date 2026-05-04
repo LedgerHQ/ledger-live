@@ -55,6 +55,7 @@ export default function SelectAmount({ navigation, route }: Props) {
   const bridge = useAccountBridge<GenericTransaction>(account);
   const unit = useAccountUnit(account);
   const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
+    bridge,
     () => ({
       account,
       parentAccount: undefined,

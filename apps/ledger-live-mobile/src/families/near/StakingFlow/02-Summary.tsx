@@ -57,6 +57,7 @@ export default function StakingSummary({ navigation, route }: Props) {
   }, [validators, validator]);
 
   const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
+    bridge,
     () => {
       const tx = route.params.transaction;
 

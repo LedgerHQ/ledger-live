@@ -8,8 +8,8 @@ import { createStructuredSelector } from "reselect";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { OpenModal, openModal } from "~/renderer/actions/modals";
@@ -20,7 +20,7 @@ import StepClaimRewards, { StepClaimRewardsFooter } from "./steps/StepClaimRewar
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/renderer/logger";
-import { AccountBridge, Operation, Account } from "@ledgerhq/types-live";
+import { Operation, Account } from "@ledgerhq/types-live";
 import { DelegationType } from "~/renderer/families/multiversx/types";
 import { StepProps, St, StepId } from "./types";
 import {
@@ -82,6 +82,7 @@ const Body = (props: Props) => {
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
+  const bridge = useAccountBridge<Transaction>(params.account, undefined);
   const {
     account,
     transaction,
@@ -91,8 +92,7 @@ const Body = (props: Props) => {
     bridgePending,
     status,
     parentAccount,
-  } = useBridgeTransaction(() => {
-    const bridge: AccountBridge<Transaction> = getAccountBridge(params.account, undefined);
+  } = useBridgeTransaction(bridge, () => {
     const transaction: Transaction = bridge.createTransaction(params.account);
     return {
       account: params.account,

@@ -157,6 +157,7 @@ const Body = ({
     setMaybeRecipient(null);
   }, [setMaybeRecipient]);
 
+  const initBridge = useAccountBridge(params?.account || accounts[0], params?.parentAccount);
   const {
     transaction,
     setTransaction,
@@ -168,7 +169,7 @@ const Body = ({
     status,
     bridgeError,
     bridgePending,
-  } = useBridgeTransaction(() => {
+  } = useBridgeTransaction(initBridge, () => {
     const parentAccount = params?.parentAccount;
     const account = params?.account || accounts[0];
     return {

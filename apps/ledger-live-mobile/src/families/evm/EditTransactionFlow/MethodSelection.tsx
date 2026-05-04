@@ -47,7 +47,7 @@ function MethodSelectionComponent({ navigation, route }: Props) {
     operation.transactionRaw as TransactionRaw,
   );
 
-  const { transaction, setTransaction } = useBridgeTransaction<EvmTransaction>(() => ({
+  const { transaction, setTransaction } = useBridgeTransaction<EvmTransaction>(bridge, () => ({
     account,
     parentAccount,
     transaction: transactionToEdit,

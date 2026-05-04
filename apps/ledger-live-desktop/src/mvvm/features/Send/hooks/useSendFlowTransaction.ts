@@ -33,7 +33,7 @@ export function useSendFlowTransaction({
     bridgeError,
     bridgePending,
     setAccount,
-  } = useBridgeTransaction(() => {
+  } = useBridgeTransaction(bridge, () => {
     if (!account) return {};
     return { account, parentAccount: parentAccount ?? undefined };
   });

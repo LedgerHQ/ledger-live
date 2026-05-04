@@ -160,6 +160,7 @@ export default function SelectValidator({ navigation, route }: Props) {
   invariant(account, "account is undefined");
   const bridge = useAccountBridge<TezosTransaction>(account, parentAccount);
   const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
+    bridge,
     () => ({
       account,
       parentAccount,

@@ -1,4 +1,5 @@
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useValidators } from "@ledgerhq/live-common/families/solana/react";
@@ -52,6 +53,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
   invariant(account, "account must be defined");
   invariant(account.type === "Account", "account type must be Account");
 
+  const bridge = useAccountBridge(account, parentAccount);
   const validators = useValidators(account.currency);
 
   const chosenValidator = useMemo(() => {
@@ -73,6 +75,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
   }, [validators, validator, delegationAction]);
 
   const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
+    bridge,
     () => ({
       account,
       parentAccount,

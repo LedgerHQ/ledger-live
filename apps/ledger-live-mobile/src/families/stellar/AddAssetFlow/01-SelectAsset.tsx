@@ -95,7 +95,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
   const mainAccount = getMainAccount(account);
   const bridge = useAccountBridge<StellarTransaction>(mainAccount);
   invariant(mainAccount, "stellar Account required");
-  const { transaction, status } = useBridgeTransaction(() => {
+  const { transaction, status } = useBridgeTransaction(bridge, () => {
     const t = bridge.createTransaction(mainAccount);
     return {
       account,

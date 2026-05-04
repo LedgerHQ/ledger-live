@@ -13,6 +13,7 @@ import type {
 } from "@ledgerhq/coin-bitcoin/types";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import React, { useEffect, useState } from "react";
@@ -46,13 +47,14 @@ function BitcoinEditTransactionSummaryContent({
   invariant(transactionRaw, "transactionRaw is missing");
 
   const mainAccount = getMainAccount(account, parentAccount);
+  const bridge = useAccountBridge(account, parentAccount);
 
   const {
     transaction,
     setTransaction,
     status: txStatus,
     bridgePending,
-  } = useBridgeTransaction(() => ({
+  } = useBridgeTransaction(bridge, () => ({
     transaction: route.params.transaction,
     account,
     parentAccount,

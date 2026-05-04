@@ -9,8 +9,8 @@ import { createStructuredSelector } from "reselect";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import Track from "~/renderer/analytics/Track";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { StepId, StepProps, St } from "./types";
 import { Account, Operation } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -27,7 +27,7 @@ import StepDelegation, { StepDelegationFooter } from "./steps/StepDelegation";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/renderer/logger";
-import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
+import { CosmosAccount, Transaction as CosmosTransaction } from "@ledgerhq/live-common/families/cosmos/types";
 
 export type Data = {
   account: CosmosAccount;
@@ -88,6 +88,7 @@ const Body = ({ onClose, t, stepId, device, openModal, onChangeStepId, params }:
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
   const { account, source = "Account Page" } = params;
+  const bridge = useAccountBridge<CosmosTransaction>(account, undefined);
   const {
     transaction,
     setTransaction,
@@ -96,15 +97,14 @@ const Body = ({ onClose, t, stepId, device, openModal, onChangeStepId, params }:
     status,
     bridgeError,
     bridgePending,
-  } = useBridgeTransaction(() => {
+  } = useBridgeTransaction(bridge, () => {
     invariant(account && account.cosmosResources, "cosmos: account and cosmos resources required");
-    const bridge = getAccountBridge(account, undefined);
     const t = bridge.createTransaction(account);
     const transaction = bridge.updateTransaction(t, {
       mode: "delegate",
       validators: [
         {
-          address: cryptoFactory(account.currency.id).ledgerValidator,
+          address: cryptoFactory(account.currency.id).ledgerValidator ?? "",
           amount: BigNumber(0),
         },
       ],

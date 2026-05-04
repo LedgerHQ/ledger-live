@@ -7,8 +7,8 @@ import { Trans, withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
@@ -22,7 +22,7 @@ import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmati
 import Track from "~/renderer/analytics/Track";
 import logger from "~/renderer/logger";
 import { MULTIVERSX_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/multiversx/constants";
-import { Account, AccountBridge, Operation } from "@ledgerhq/types-live";
+import { Account, Operation } from "@ledgerhq/types-live";
 import { DelegationType } from "~/renderer/families/multiversx/types";
 import { StepProps, St, StepId } from "./types";
 import {
@@ -97,6 +97,7 @@ const Body = (props: Props) => {
     validator => validator.contract === MULTIVERSX_LEDGER_VALIDATOR_ADDRESS,
   );
   const { account, source = "Account Page" } = params;
+  const bridge = useAccountBridge<Transaction>(account, undefined);
   const {
     transaction,
     setTransaction,
@@ -105,8 +106,7 @@ const Body = (props: Props) => {
     status,
     bridgeError,
     bridgePending,
-  } = useBridgeTransaction(() => {
-    const bridge: AccountBridge<Transaction> = getAccountBridge(account, undefined);
+  } = useBridgeTransaction(bridge, () => {
     const transaction: Transaction = bridge.createTransaction(account);
     return {
       account,

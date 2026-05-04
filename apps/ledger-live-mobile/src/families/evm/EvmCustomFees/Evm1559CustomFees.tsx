@@ -1,5 +1,5 @@
-import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getGasLimit } from "@ledgerhq/coin-evm/utils";
 import type { EvmTransactionEIP1559 } from "@ledgerhq/coin-evm/types/index";
@@ -54,6 +54,7 @@ const Evm1559CustomFees = ({
   const bridge = useAccountBridge<EvmTransactionEIP1559>(account);
 
   const { transaction, setTransaction, status } = useBridgeTransaction<EvmTransactionEIP1559>(
+    bridge,
     () => ({
       account,
       transaction: { ...originalTransaction, maxFeePerGas, maxPriorityFeePerGas },
