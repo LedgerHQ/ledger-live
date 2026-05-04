@@ -1,8 +1,7 @@
 import type { DeviceId } from "@ledgerhq/client-ids/ids";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
-import type { Account } from "@ledgerhq/types-live";
-import type { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
+import type { Account, DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import type { FlowName } from "../../../device-action/utils";
 import type { RequiresDerivation } from "../../../hw/connectApp";
 import type { ExpectedAccountIdentity } from "../../../hw/deviceInitialization/helpers/wrongDeviceValidation";
