@@ -96,7 +96,7 @@ export default function DebugDeviceIntentExecutorInitialization() {
       cancelIntentRequestId: undefined,
       onUserCancel: handleUserCancel,
     }),
-    [handleUserCancel, intent, selectedScenario],
+    [handleUserCancel, selectedScenario],
   );
 
   console.log("[DIE] executor props", { executorProps });
