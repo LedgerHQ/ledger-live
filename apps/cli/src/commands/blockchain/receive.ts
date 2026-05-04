@@ -1,5 +1,5 @@
-import { of, concat, EMPTY } from "rxjs";
-import { ignoreElements, concatMap } from "rxjs/operators";
+import { of, concat, EMPTY, defer } from "rxjs";
+import { ignoreElements, concatMap, mergeMap } from "rxjs/operators";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { scan, scanCommonOpts } from "../../scan";
 import type { ScanCommonOpts } from "../../scan";
@@ -24,12 +24,16 @@ export default {
         concat(
           of(account.freshAddress),
           opts.qr ? asQR(account.freshAddress) : EMPTY,
-          getAccountBridge(account)
-            .receive(account, {
-              deviceId: opts.device || "",
-              verify: true,
-            })
-            .pipe(ignoreElements()),
+          defer(() => Promise.resolve(getAccountBridge(account))).pipe(
+            mergeMap(bridge =>
+              bridge
+                .receive(account, {
+                  deviceId: opts.device || "",
+                  verify: true,
+                })
+                .pipe(ignoreElements()),
+            ),
+          ),
         ),
       ),
     ),
