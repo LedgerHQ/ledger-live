@@ -174,6 +174,11 @@ describe("useConfirmationViewModel", () => {
       root.render(<HookProbe onResult={vm => (latestVM = vm)} />);
     });
 
+    expect(trackPage).toHaveBeenCalledWith("Modal send - action rejected", null, {
+      flow: "send",
+      blockchain: "",
+    });
+
     expect(latestVM?.status).toBe("IDLE");
   });
 
@@ -317,7 +322,7 @@ describe("useConfirmationViewModel", () => {
     });
     latestVM?.onClose();
 
-    expect(trackPage).toHaveBeenCalledWith("Modal send - step confirmation", null, {
+    expect(trackPage).toHaveBeenCalledWith("Modal send - transaction sent", null, {
       flow: "send",
       blockchain: "",
     });
