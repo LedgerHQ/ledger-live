@@ -2,11 +2,8 @@ import test from "tests/fixtures/common";
 import { TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { setupEnv } from "tests/utils/swapUtils";
-import {
-  getTokenAllowanceCommand,
-  liveDataWithAddressCommand,
-} from "@ledgerhq/live-common/e2e/cliCommandsUtils";
-import { expect } from "@playwright/test";
+import { liveDataWithAddressCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
+import { ensureTokenApproval, revokeTokenApproval } from "tests/utils/swapUtils";
 
 // NOTE: QAA-615 spike: validate the CLI revoke hook resets allowance to zero in this
 // desktop flow.
@@ -38,11 +35,9 @@ test.describe("Swap - Revoke token approval", () => {
       tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
     },
     async ({ app }) => {
-      await app.swap.ensureTokenApproval(fromAccount, provider, minAmount);
-      await app.swap.revokeTokenApproval(fromAccount, provider);
-
-      const remaining = await getTokenAllowanceCommand(fromAccount, provider.contractAddress!);
-      expect(remaining).toBe("0");
+      await ensureTokenApproval(fromAccount, provider, minAmount);
+      await revokeTokenApproval(fromAccount, provider);
+      await app.swap.ensureRevokeTokenApproval(fromAccount, provider);
     },
   );
 });
