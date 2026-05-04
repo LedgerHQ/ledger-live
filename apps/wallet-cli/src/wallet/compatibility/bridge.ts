@@ -41,10 +41,9 @@ export class BridgeAdapter {
       let sub: Subscription | null = null;
       let torn = false;
       BridgeAdapter.cache.prepareCurrency(currency).then(
-        async () => {
+        () => {
           if (torn) return;
-          const currencyBridge = await getCurrencyBridge(currency);
-          sub = currencyBridge
+          sub = getCurrencyBridge(currency)
             .scanAccounts({ currency, deviceId, syncConfig: BridgeAdapter.SYNC_CONFIG })
             .pipe(
               filter((e): e is { type: "discovered"; account: Account } => e.type === "discovered"),
