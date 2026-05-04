@@ -1331,6 +1331,10 @@
     }
   },
   "postOnboarding" : {
+    "widget" : {
+      "title" : "Em seguida, termine de configurar a carteira",
+      "subtitle" : "Comece depositando fundos na sua carteira."
+    },
     "postOnboardingScreen" : {
       "title" : "O que vem a seguir?",
       "titleCompleted" : "Tudo pronto!\nContinue a explorar seu portfólio.",
@@ -2313,7 +2317,8 @@
         "banner" : "Quantia máxima a ser gasta é",
         "fees" : "Saiba mais sobre as taxas",
         "standard" : "Padrão",
-        "advanced" : "Avançado"
+        "advanced" : "Avançado",
+        "feeCurrency" : "Moeda da taxa"
       },
       "summary" : {
         "title" : "Resumo"
@@ -4187,6 +4192,64 @@
         "eigenlayer_points" : "Pontos Eigenlayer",
         "validator" : "Recompensas de validador"
       }
+    },
+    "evmStaking" : {
+      "delegation" : {
+        "emptyState" : {
+          "description" : "Você pode ganhar recompensas em {{currencyTicker}} delegando seus ativos.",
+          "delegation" : "Ganhe Recompensas"
+        },
+        "claimRewards" : "Resgatar Recompensas",
+        "header" : "Delegações",
+        "noRewards" : "Nenhuma recompensa disponível",
+        "delegate" : "Adicionar",
+        "undelegate" : "Desdelegar",
+        "redelegate" : "Redelegar",
+        "redelegateDisabledTooltip" : "Você pode delegar novamente em <0>{{days}}</0>",
+        "redelegateMaxDisabledTooltip" : "Você não pode redelegar a mais de <0>7</0> validadores por vez",
+        "undelegateDisabledTooltip" : "Você não pode desdelegar mais de <0>7</0> validadores por vez",
+        "reward" : "Resgatar Recompensas",
+        "activeTooltip" : "Quantias delegadas geram recompensas",
+        "inactiveTooltip" : "Quantias removidas de delegação não geram recompensas",
+        "minSafeWarning" : "Fundos Insuficientes",
+        "flow" : {
+          "title" : "Delegar",
+          "steps" : {
+            "starter" : {
+              "description" : "Você pode receber recompensas delegando seus ativos {{currencyTicker}} a um validador.",
+              "bullet" : ["Você continua tendo posse dos ativos delegados", "Delegar usando seu dispositivo Ledger", "Os ativos estarão disponíveis após parar delegação"],
+              "warning" : {
+                "description" : "Escolha seu validador com sabedoria: parte de seus ativos delegados pode ser irrevogavelmente perdida se o validador não se comportar adequadamente."
+              }
+            },
+            "amount" : {
+              "title" : "Quantia"
+            },
+            "validator" : {
+              "title" : "Validadores"
+            },
+            "connectDevice" : {
+              "title" : "Dispositivo"
+            },
+            "confirmation" : {
+              "title" : "Confirmação",
+              "success" : {
+                "title" : "Você delegou seus ativos com sucesso",
+                "text" : "O saldo da sua conta será atualizado quando a blockchain confirmar a transação.",
+                "cta" : "Ver detalhes"
+              },
+              "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
+            }
+          }
+        }
+      },
+      "redelegation" : {
+        "header" : "Redelegações"
+      },
+      "undelegation" : {
+        "header" : "Remoções de delegação",
+        "inactiveTooltip" : "Quantias removidas de delegação não geram recompensas"
+      }
     }
   },
   "graph" : {
@@ -4441,6 +4504,8 @@
     "delegated" : "Delegado",
     "completionDate" : "Data de conclusão",
     "rewards" : "Recompensas",
+    "sourceValidator" : "Validador de Fonte",
+    "destinationValidator" : "Validador de Destino",
     "duration" : "Duração",
     "durationJustStarted" : "Acabou de começar",
     "durationDays" : "{{count}} dia",
@@ -4608,24 +4673,7 @@
       },
       "analyticsConsentOptInQa" : {
         "rowTitle" : "Consentimento de Adesão às Métricas (QA)",
-        "rowDesc" : "Inspecionar a versão de consentimento de privacidade armazenada; simular estados desatualizados para o modal de consentimento da análise do portfolio.",
-        "title" : "Consentimento de Adesão às Métricas — QA",
-        "readSection" : "Configurações Atuais (somente leitura)",
-        "storedPrivacyVersion" : "Versão armazenada da política de privacidade: {{version}}",
-        "currentPrivacyVersion" : "Versão atual da política de privacidade do aplicativo: {{version}}",
-        "consentDate" : "Data de consentimento (raw): {{value}}",
-        "inlineOutdatePrivacyVersion" : "Versão desatualizada",
-        "inlineRemoveConsentDate" : "Remover data",
-        "actionResetForConsentFresh" : "Redefinir para consentimento renovado (limpar dados de consentimento, desativar análise e personalização)",
-        "modalPreviewSection" : "Modal esperado no portfólio (página inicial)",
-        "modalPreviewNoModalUserOk" : "Sem modal. A versão da política de privacidade e a data de consentimento estão corretas: nada a renovar ou reconhecer novamente.",
-        "modalPreviewNoModalFeatureOff" : "Sem modal. O marcador do recurso de adesão às métricas está desativado.",
-        "modalPreviewNoModalOnboarding" : "Sem modal. O onboarding ainda não foi concluído.",
-        "modalPreviewFresh" : "Modal de consentimento pela primeira vez (consentimento inicial). A renovação do consentimento é necessária (data de consentimento ausente ou inválida) e o Compartilhar métricas está desligado — por exemplo sem confirmação de privacidade armazenada / sem data de consentimento às métricas desativado.",
-        "modalPreviewReconfirm" : "Reconfirme o modal de consentimento. A renovação do consentimento é necessária e a análise de compartilhamento está ativada — o usuário recebe o fluxo de reconfirmação / “continuar ou parar” ao invés da cópia inicial.",
-        "modalPreviewPrivacy" : "Modal de atualização de privacidade. A versão armazenada da política de privacidade está desatualizada (inferior à do aplicativo), e a renovação do consentimento não está bloqueada — o usuário vê primeiro a etapa de atualização da política de privacidade.",
-        "modalPreviewGoToHome" : "Abra a página inicial do portfólio para ver o modal quando ele aparecer.",
-        "note" : "A data de remoção define o consentimento como nulo. A versão desatualizada reduz a versão da política de privacidade armazenada para abaixo da versão atual do aplicativo. A redefinição limpa os metadados de consentimento e desativa a análise e a personalização para reproduzir o modal de consentimento atual. A renovação baseada em tempo fica desativada enquanto CONSENT_RENEWAL_INTERVAL_MS é nulo no live-common."
+        "rowDesc" : "Inspecionar a versão de consentimento de privacidade armazenada; simular estados desatualizados para o modal de consentimento da análise do portfolio."
       },
       "brazeTools" : {
         "title" : "Ferramentas Braze",
@@ -7823,7 +7871,7 @@
       },
       "personalizedExperience" : {
         "title" : "Experiência personalizada",
-        "description" : "Permitir que a Ledger colete dados de uso do aplicativo para fornecer conteúdo personalizado"
+        "description" : "Permitir que a Ledger colete dados de uso do aplicativo para fornecer conteúdos personalizados"
       },
       "ctaConfirm" : "Confirmar"
     },
@@ -8275,7 +8323,10 @@
       },
       "editName" : "Editar Nome",
       "emptyState" : "Ainda não há endereço cripto",
-      "emptySearchState" : "Nenhuma conta corresponde à sua pesquisa."
+      "emptySearchState" : "Nenhuma conta corresponde à sua pesquisa.",
+      "assetCount_zero" : "{{count}} ativo",
+      "assetCount_one" : "{{count}} ativo",
+      "assetCount_other" : "{{count}} ativos"
     },
     "editName" : {
       "title" : "Editar nome do endereço",
@@ -8552,5 +8603,17 @@
       "errorDescription" : "Ocorreu um erro ao exportar o histórico de suas transações. Tente novamente.",
       "tryAgain" : "Tentar novamente"
     }
+  },
+  "myWallet" : {
+    "actionsList" : {
+      "help" : "Ajuda",
+      "recover" : "[L] Recover",
+      "refer" : "Indicação"
+    },
+    "myLedger" : {
+      "title" : "Minha Ledger",
+      "description" : "Gerenciar seu dispositivo Ledger"
+    },
+    "explore" : "Explore todos os dispositivos Ledger"
   }
 }

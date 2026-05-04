@@ -1331,6 +1331,10 @@
     }
   },
   "postOnboarding" : {
+    "widget" : {
+      "title" : "Finalisez la configuration de votre wallet",
+      "subtitle" : "Commencez par y déposer des actifs."
+    },
     "postOnboardingScreen" : {
       "title" : "Et maintenant ?",
       "titleCompleted" : "Parfait !\nVous pouvez maintenant explorer votre portefeuille.",
@@ -2313,7 +2317,8 @@
         "banner" : "Montant maximal pour envoi :",
         "fees" : "En savoir plus sur les frais",
         "standard" : "Standard",
-        "advanced" : "Avancé"
+        "advanced" : "Avancé",
+        "feeCurrency" : "Monnaie pour les frais"
       },
       "summary" : {
         "title" : "Récapitulatif"
@@ -4187,6 +4192,64 @@
         "eigenlayer_points" : "Points EigenLayer",
         "validator" : "Récompenses validateur"
       }
+    },
+    "evmStaking" : {
+      "delegation" : {
+        "emptyState" : {
+          "description" : "Vous pouvez gagner des récompenses en {{currencyTicker}} en déléguant vos actifs.",
+          "delegation" : "Gagner des récompenses"
+        },
+        "claimRewards" : "Demander les récompenses",
+        "header" : "Délégation(s)",
+        "noRewards" : "Aucune récompense disponible",
+        "delegate" : "Ajouter",
+        "undelegate" : "Déstaker",
+        "redelegate" : "Modifier",
+        "redelegateDisabledTooltip" : "Vous pouvez redéléguer dans <0>{{days}}</0>.",
+        "redelegateMaxDisabledTooltip" : "Vous ne pouvez pas redéléguer à plus de <0>7</0> validateurs à la fois.",
+        "undelegateDisabledTooltip" : "Vous ne pouvez pas arrêter la délégation de plus de <0>7</0> validateurs à la fois.",
+        "reward" : "Demander les récompenses",
+        "activeTooltip" : "Les montants délégués génèrent des récompenses.",
+        "inactiveTooltip" : "Les montants retirés de la délégation ne génèrent pas de récompenses.",
+        "minSafeWarning" : "Solde insuffisant",
+        "flow" : {
+          "title" : "Staker",
+          "steps" : {
+            "starter" : {
+              "description" : "Vous pouvez gagner des récompenses en déléguant vos {{currencyTicker}} à un validateur.",
+              "bullet" : ["Vous gardez la propriété de vos actifs délégués.", "Déléguez avec votre appareil Ledger.", "Les actifs seront disponibles une fois la délégation arrêtée."],
+              "warning" : {
+                "description" : "Choisissez votre validateur judicieusement : vous pouvez perdre une partie de vos actifs délégués si le validateur ne respecte pas les règles."
+              }
+            },
+            "amount" : {
+              "title" : "Montant"
+            },
+            "validator" : {
+              "title" : "Validateurs"
+            },
+            "connectDevice" : {
+              "title" : "Appareil"
+            },
+            "confirmation" : {
+              "title" : "Confirmation",
+              "success" : {
+                "title" : "Vous avez mis vos actifs en staking",
+                "text" : "Le solde de votre compte sera mis à jour une fois votre transaction confirmée sur le réseau.",
+                "cta" : "Voir les détails"
+              },
+              "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
+            }
+          }
+        }
+      },
+      "redelegation" : {
+        "header" : "Redélégation(s)"
+      },
+      "undelegation" : {
+        "header" : "Délégations arrêtées",
+        "inactiveTooltip" : "Les montants retirés de la délégation ne génèrent pas de récompenses."
+      }
     }
   },
   "graph" : {
@@ -4441,6 +4504,8 @@
     "delegated" : "Délégué",
     "completionDate" : "Date de réalisation",
     "rewards" : "Récompenses",
+    "sourceValidator" : "Validateur source",
+    "destinationValidator" : "Validateur de destination",
     "duration" : "Durée",
     "durationJustStarted" : "À l’instant",
     "durationDays" : "{{count}} jour",
@@ -4608,24 +4673,7 @@
       },
       "analyticsConsentOptInQa" : {
         "rowTitle" : "Opt-in Consentement Analytics (QA)",
-        "rowDesc" : "Explore la version de la Politique et la date de consentement stockées. Simule des états obsolètes pour la fenêtre de consentement Portfolio Analytics.",
-        "title" : "Opt-in Consentement Analytics — QA",
-        "readSection" : "Paramètres actuels (lecture seule)",
-        "storedPrivacyVersion" : "Version de la Politique de confidentialité enregistrée : {{version}}",
-        "currentPrivacyVersion" : "Version actuelle de la Politique de confidentialité de l’app : {{version}}",
-        "consentDate" : "Date du consentement (brut) : {{value}}",
-        "inlineOutdatePrivacyVersion" : "Version obsolète",
-        "inlineRemoveConsentDate" : "Supprimer la date",
-        "actionResetForConsentFresh" : "Réinitialiser le consentement (données, désactivation Analytics et Personalization)",
-        "modalPreviewSection" : "Fenêtre attendue sur le Portefeuille (Accueil)",
-        "modalPreviewNoModalUserOk" : "Pas de fenêtre. La version de la Politique de confidentialité et la date de consentement sont correctes : rien à renouveler ni revalider.",
-        "modalPreviewNoModalFeatureOff" : "Pas de fenêtre. Le Feature Flag Opt-in pour Analytics est désactivé.",
-        "modalPreviewNoModalOnboarding" : "Pas de fenêtre. La prise en main n’est pas encore terminée.",
-        "modalPreviewFresh" : "Fenêtre de consentement initiale (nouveau consentement). Le renouvellement du consentement est nécessaire (date de consentement manquante ou non valide) et le partage Analytics est désactivé. Par exemple : pas de validation de la Politique stockée ou date de consentement avec Analytics désactivé.",
-        "modalPreviewReconfirm" : "Reconfirme la fenêtre de consentement. Le renouvellement du consentement est requis et le partage Analytics est activé. L’utilisateur peut alors confirmer ou arrêter, au lieu de suivre le processus initial.",
-        "modalPreviewPrivacy" : "Fenêtre de mise à jour de la Politique. La version de la Politique de confidentialité stockée n’est pas la dernière (inférieure à celle de l’app), et le renouvellement du consentement n’est pas bloquant. L’utilisateur voit d’abord la mise à jour de la Politique.",
-        "modalPreviewGoToHome" : "Ouvrez la page d’accueil pour voir la fenêtre lorsqu’elle devrait apparaître.",
-        "note" : "Supprime la date de consentement. La version de la Politique de confidentialité stockée devient inférieure à la version actuelle de l’app. Réinitialise les métadonnées du consentement et désactive Analytics et Personalization pour reproduire la nouvelle fenêtre de consentement. Le renouvellement basé sur le temps reste désactivé, tandis que CONSENT_RENEWAL_INTERVAL_MS est sur null dans live-common."
+        "rowDesc" : "Explore la version de la Politique et la date de consentement stockées. Simule des états obsolètes pour la fenêtre de consentement Portfolio Analytics."
       },
       "brazeTools" : {
         "title" : "Outils pour Braze",
@@ -8275,7 +8323,10 @@
       },
       "editName" : "Modifier le nom",
       "emptyState" : "Pas encore d’adresse crypto",
-      "emptySearchState" : "Aucun compte ne correspond à votre recherche."
+      "emptySearchState" : "Aucun compte ne correspond à votre recherche.",
+      "assetCount_zero" : "{{count}} actif",
+      "assetCount_one" : "{{count}} actif",
+      "assetCount_other" : "{{count}} actifs"
     },
     "editName" : {
       "title" : "Modifier le nom de l’adresse",
@@ -8552,5 +8603,17 @@
       "errorDescription" : "Une erreur est survenue lors de l’exportation de votre historique des opérations. Veuillez réessayer.",
       "tryAgain" : "Réessayer"
     }
+  },
+  "myWallet" : {
+    "actionsList" : {
+      "help" : "Aide",
+      "recover" : "[L] Recover",
+      "refer" : "Parrainage"
+    },
+    "myLedger" : {
+      "title" : "My Ledger",
+      "description" : "Gérez votre appareil Ledger"
+    },
+    "explore" : "Découvrir tous les appareils Ledger"
   }
 }

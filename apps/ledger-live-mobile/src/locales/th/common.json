@@ -5813,6 +5813,9 @@
     "alerts" : {
       "withdrawableAssets" : "คุณมียอดคงเหลือที่สามารถถอนได้",
       "activatableVotes" : "คุณมีคะแนนโหวตที่สามารถเปิดใช้งานได้แล้ว"
+    },
+    "send" : {
+      "feeCurrency" : "สกุลเงินสำหรับค่าธรรมเนียม"
     }
   },
   "cosmos" : {
@@ -7841,6 +7844,12 @@
         "description" : "แสดงศิลปะดิจิทัลหรือรูปภาพโปรดของคุณเป็นล็อกสกรีนของอุปกรณ์",
         "popupLabel" : "ปรับแต่งหน้าจอล็อคเรียบร้อยแล้ว"
       },
+      "recover" : {
+        "title" : "สำรองข้อมูลเสร็จแล้ว",
+        "titleCompleted" : "ข้อมูลสำรองได้ถูกจัดเก็บอย่างปลอดภัยแล้ว",
+        "description" : "เปิดใช้งานบริการ Ledger Recover เรียบร้อยแล้ว",
+        "popupLabel" : "สมัครใช้งาน Ledger Recover สำเร็จแล้ว"
+      },
       "syncAccounts" : {
         "title" : "ซิงค์บัญชีคริปโตของคุณ",
         "titleCompleted" : "ซิงค์บัญชีของคุณแล้ว",
@@ -8124,6 +8133,18 @@
       "lead" : "คุณสามารถเพิกถอนการยินยอมของคุณได้ทุกเมื่อในการตั้งค่า",
       "privacyLink" : "นโยบายความเป็นส่วนตัว"
     }
+  },
+  "analyticsPreferencesSettings" : {
+    "screenTitle" : "ตั้งค่าความชอบส่วนตัว",
+    "appPerformance" : {
+      "title" : "ประสิทธิภาพของแอป",
+      "description" : "อนุญาตให้ Ledger เก็บรวบรวมข้อมูลการใช้งานแอปเพื่อพัฒนาและปรับปรุงประสบการณ์การใช้งาน"
+    },
+    "personalizedExperience" : {
+      "title" : "ประสบการณ์ที่เป็นส่วนตัว",
+      "description" : "อนุญาตให้ Ledger เก็บข้อมูลการใช้งานแอปเพื่อนำเสนอเนื้อหาที่ตรงกับความต้องการของคุณ"
+    },
+    "confirmCta" : "ยืนยัน"
   },
   "walletSync" : {
     "title" : "Ledger Sync",
@@ -8840,8 +8861,46 @@
   "myWallet" : {
     "quickActions" : {
       "recover" : "[L] Recover",
+      "backup" : "สำรองข้อมูล",
       "help" : "ช่วยเหลือ",
       "referral" : "แนะนำเพื่อน"
+    },
+    "help" : {
+      "title" : "ช่วยเหลือ",
+      "sections" : {
+        "supportAndLearning" : "บริการสนับสนุนและการเรียนรู้",
+        "more" : "เพิ่มเติม"
+      },
+      "rows" : {
+        "ledgerSupport" : {
+          "title" : "ฝ่ายสนับสนุน Ledger",
+          "description" : "รับความช่วยเหลือจากคำถามที่พบบ่อยของเรา หรือพูดคุยผ่านแชท"
+        },
+        "ledgerAcademy" : {
+          "title" : "Ledger Academy",
+          "description" : "เรียนรู้เกี่ยวกับคริปโต"
+        },
+        "saveLogs" : {
+          "title" : "บันทึก Log",
+          "description" : "จัดเก็บ Log ของแอป Ledger Wallet เพื่อใช้ประกอบการแก้ไขปัญหา"
+        },
+        "ledgerStatus" : {
+          "title" : "สถานะ Ledger",
+          "description" : "ตรวจสอบสถานะระบบของเรา"
+        },
+        "clearCache" : {
+          "title" : "ล้างแคช",
+          "description" : "สแกนธุรกรรมและคำนวณยอดคงเหลือในบัญชี"
+        }
+      }
+    },
+    "deviceSection" : {
+      "title" : "อุปกรณ์ของฉัน",
+      "add" : "เพิ่ม",
+      "addDevice" : "เพิ่มอุปกรณ์ Ledger",
+      "exploreAllDevices" : "ดูอุปกรณ์ Ledger ทั้งหมด",
+      "available" : "ใช้ได้",
+      "unavailable" : "ไม่ได้เชื่อมต่อ"
     }
   }
 }

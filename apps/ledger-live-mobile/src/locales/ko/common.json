@@ -1,6 +1,6 @@
 {
   "buyCurrency" : {
-    "buyCTA" : "{{ currencyNameOrTicker }} 구매"
+    "buyCTA" : "{{ currencyNameOrTicker }} 매수"
   },
   "common" : {
     "cancel" : "취소",
@@ -675,7 +675,7 @@
       "twoCtas" : "{{assetName}}(을)를 <cta1>{{cta1Label}}</cta1>하거나 <cta2>{{cta2Label}}</cta2>, 또는",
       "threeCtas" : "{{assetName}}(을)를 <cta1>{{cta1Label}}</cta1>, <cta2>{{cta2Label}}</cta2>, <cta3>{{cta3Label}}</cta3>하세요.",
       "ctas" : {
-        "buy" : "구매",
+        "buy" : "매수",
         "swap" : "스왑",
         "deposit" : "입금"
       }
@@ -2719,7 +2719,7 @@
       "noAccountsDesc" : "포트폴리오에 계정을 추가하세요.",
       "buttons" : {
         "import" : "자산 추가",
-        "buy" : "구매",
+        "buy" : "매수",
         "manager" : "앱 설치하기",
         "managerSecondary" : "내 장치에 앱을 설치합니다"
       },
@@ -2779,8 +2779,8 @@
       }
     },
     "quickActions" : {
-      "buy" : "구매",
-      "sell" : "판매",
+      "buy" : "매수",
+      "sell" : "매도",
       "swap" : "스왑",
       "send" : "전송",
       "deposit" : "수령",
@@ -3075,11 +3075,11 @@
     },
     "send" : "전송",
     "receive" : "수령",
-    "buy" : "구매",
+    "buy" : "매수",
     "walletconnect" : "WalletConnect",
     "stake" : "스테이킹",
     "yield" : "이자",
-    "sell" : "판매",
+    "sell" : "매도",
     "swap" : "스왑",
     "manage" : "관리",
     "lastTransactions" : "마지막 트랜잭션",
@@ -3090,7 +3090,7 @@
       "descToken" : "<1><0>{{managerAppName}}</0></1> 앱이 설치되어 있는지 확인하고 <3><0>{{currencyTicker}}</0></3> 및 <5><0>{{tokenType}}</0> 토큰</5> 수령을 시작합니다",
       "buttons" : {
         "receiveFunds" : "수령",
-        "buyCrypto" : "구매"
+        "buyCrypto" : "매수"
       },
       "addAccountCta" : "계정 추가",
       "addCryptoAccount" : "암호화폐 계정 추가"
@@ -3350,7 +3350,7 @@
       "mevProtection" : "MEV 보호",
       "mevProtectionDesc" : "MEV 보호 기능을 활성화하여 이더리움을 보다 안정적으로 거래하세요",
       "mevProtectionLearnMore" : "개인정보 관련 고지",
-      "personalizedRecommendations" : "맞춤화된 경험",
+      "personalizedRecommendations" : "사용자 맞춤 설정",
       "personalizedRecommendationsDesc" : "맞춤형 콘텐츠 제공을 위해 Ledger의 앱 사용 데이터 수집을 허용합니다.",
       "analyticsModal" : {
         "title" : "애널리틱스 공유",
@@ -3791,11 +3791,11 @@
       }
     },
     "buy" : {
-      "title" : "구매",
+      "title" : "매수",
       "description" : "현금으로 암호화폐를 안전하게 구매하세요."
     },
     "sell" : {
-      "title" : "판매",
+      "title" : "매도",
       "description" : "암호화폐를 안전하게 현금으로 매도하세요."
     },
     "exchange" : {
@@ -4152,7 +4152,7 @@
         },
         "buttons" : {
           "receive" : "{{ name }} 수령",
-          "buy" : "{{ name }} 구매"
+          "buy" : "{{ name }} 매수"
         }
       },
       "enable" : {
@@ -5813,6 +5813,9 @@
     "alerts" : {
       "withdrawableAssets" : "출금 가능한 잔액이 있습니다.",
       "activatableVotes" : "현재 활성화할 수 있는 투표가 있습니다."
+    },
+    "send" : {
+      "feeCurrency" : "수수료 지불 자산"
     }
   },
   "cosmos" : {
@@ -7245,7 +7248,7 @@
     "count" : "+ {{count}} 이상",
     "buy" : {
       "screenTitle" : "암호화폐 구매",
-      "tabTitle" : "구매",
+      "tabTitle" : "매수",
       "selectCurrency" : "통화를 선택하세요",
       "selectAccount" : "계정 선택",
       "wantToBuy" : "구매하고 싶습니다",
@@ -7273,7 +7276,7 @@
     },
     "sell" : {
       "screenTitle" : "암호화폐를 판매",
-      "tabTitle" : "판매",
+      "tabTitle" : "매도",
       "selectCurrency" : "통화를 선택하세요",
       "selectAccount" : "계정 선택",
       "wantToSell" : "판매하고 싶습니다",
@@ -7841,6 +7844,12 @@
         "description" : "좋아하는 디지털 아트나 사진을 장치 잠금 화면으로 설정할 수 있어요.",
         "popupLabel" : "잠금 화면 맞춤설정이 완료되었습니다"
       },
+      "recover" : {
+        "title" : "백업 보안 설정 마무리",
+        "titleCompleted" : "백업 보안 설정 완료",
+        "description" : "Ledger Recover 활성화 완료",
+        "popupLabel" : "Ledger Recover를 성공적으로 구독했습니다"
+      },
       "syncAccounts" : {
         "title" : "암호화폐 계정 동기화",
         "titleCompleted" : "사용자 계정이 동기화되었습니다",
@@ -7995,7 +8004,7 @@
       "description" : "자금이 부족하신가요? 걱정하지 마세요. Ledger Wallet에서 바로 암호화폐 구매, 스왑, 또는 수령이 가능합니다.",
       "options" : {
         "buy" : {
-          "title" : "구매",
+          "title" : "매수",
           "body" : "신뢰할 수 있는 공급자를 통한 구매"
         },
         "swap" : {
@@ -8124,6 +8133,18 @@
       "lead" : "설정에서 언제든지 동의를 철회하실 수 있습니다.",
       "privacyLink" : "개인 정보 보호 정책"
     }
+  },
+  "analyticsPreferencesSettings" : {
+    "screenTitle" : "설정 관리",
+    "appPerformance" : {
+      "title" : "앱 성능",
+      "description" : "사용자 경험 개선을 위해 Ledger의 앱 사용 데이터 수집을 허용합니다."
+    },
+    "personalizedExperience" : {
+      "title" : "사용자 맞춤 설정",
+      "description" : "맞춤형 콘텐츠 제공을 위해 Ledger의 앱 사용 데이터 수집을 허용합니다."
+    },
+    "confirmCta" : "확인"
   },
   "walletSync" : {
     "title" : "Ledger 동기화",
@@ -8840,8 +8861,46 @@
   "myWallet" : {
     "quickActions" : {
       "recover" : "[L] Recover",
+      "backup" : "백업",
       "help" : "도움말",
       "referral" : "친구 추천"
+    },
+    "help" : {
+      "title" : "도움말",
+      "sections" : {
+        "supportAndLearning" : "지원 및 학습",
+        "more" : "더 보기"
+      },
+      "rows" : {
+        "ledgerSupport" : {
+          "title" : "Ledger 지원",
+          "description" : "FAQ 또는 채팅을 통해 도움을 받아보세요"
+        },
+        "ledgerAcademy" : {
+          "title" : "Ledger 아카데미",
+          "description" : "암호화폐 알아보기"
+        },
+        "saveLogs" : {
+          "title" : "로그 저장하기",
+          "description" : "문제 해결을 위해 Ledger Wallet 로그를 저장합니다"
+        },
+        "ledgerStatus" : {
+          "title" : "Ledger 상태",
+          "description" : "시스템 상태를 확인합니다"
+        },
+        "clearCache" : {
+          "title" : "캐시 삭제",
+          "description" : "트랜잭션을 스캔하고 잔액을 다시 계산합니다"
+        }
+      }
+    },
+    "deviceSection" : {
+      "title" : "내 장치",
+      "add" : "추가",
+      "addDevice" : "Ledger 장치 추가",
+      "exploreAllDevices" : "모든 Ledger 장치 살펴보기",
+      "available" : "이용 가능",
+      "unavailable" : "연결되지 않음"
     }
   }
 }

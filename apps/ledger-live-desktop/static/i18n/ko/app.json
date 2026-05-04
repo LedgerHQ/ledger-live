@@ -619,7 +619,7 @@
       "description" : "자금이 부족하신가요? 걱정하지 마세요. Ledger Wallet에서 바로 암호화폐 구매, 스왑, 또는 수령이 가능합니다.",
       "options" : {
         "buy" : {
-          "title" : "구매",
+          "title" : "매수",
           "body" : "신뢰할 수 있는 공급자를 통한 구매"
         },
         "swap" : {
@@ -710,7 +710,7 @@
       "descToken" : "<1><0>{{managerAppName}}</0></1> 앱이 설치되어 있는지 확인하고 <3><0>{{ticker}}</0></3> 및 <5><0>{{tokenList}}</0> 토큰</5> 수령을 시작합니다",
       "buttons" : {
         "receiveFunds" : "수령",
-        "buy" : "구매"
+        "buy" : "매수"
       }
     },
     "settings" : {
@@ -800,7 +800,7 @@
       "buyFrom" : "어디서나 구매 가능",
       "cryptoSupported" : "지원되는 암호화폐",
       "payWith" : "카드 또는 SEPA로 지불",
-      "tab" : "구매",
+      "tab" : "매수",
       "coinify" : {
         "header" : "{{provider}}로 암호화폐 구매",
         "title" : "<0>{{provider}}</0>로 암호화폐 구매",
@@ -813,7 +813,7 @@
     "sell" : {
       "header" : "당사 파트너와 함께 암호화폐 판매",
       "title" : "<0>{{provider}}</0>로 암호화폐 판매",
-      "tab" : "판매",
+      "tab" : "매도",
       "selectCrypto" : "암호화폐 선택",
       "selectAccount" : "계정 선택",
       "continue" : "계속"
@@ -1062,7 +1062,7 @@
     "emptyAccountDeposit" : {
       "title" : "{{ asset }} 계정이 없습니다.",
       "description" : "자금을 예치하고 암호화폐를 대출하려면 {{ asset }} 계정이 필요합니다. 이더리움 주소로 자금을 수령하세요. 이더리움 주소로 자금을 수령하세요.",
-      "ctaBuy" : "{{ asset }} 구매",
+      "ctaBuy" : "{{ asset }} 매수",
       "ctaReceive" : "{{ asset }} 수령"
     }
   },
@@ -1096,8 +1096,8 @@
       "stake" : "스테이킹",
       "earn" : "수익 창출",
       "yield" : "이자",
-      "buy" : "구매",
-      "sell" : "판매",
+      "buy" : "매수",
+      "sell" : "매도",
       "edit" : "계정 편집",
       "hideToken" : "토큰 숨기기"
     }
@@ -1331,6 +1331,10 @@
     }
   },
   "postOnboarding" : {
+    "widget" : {
+      "title" : "다음 단계: 지갑 설정 마무리",
+      "subtitle" : "먼저, 자산 충전부터 시작해 보세요."
+    },
     "postOnboardingScreen" : {
       "title" : "이제 다음 단계는?",
       "titleCompleted" : "이제 모두 준비 끝!\n계속해서 내 포트폴리오를 살펴보세요.",
@@ -1408,7 +1412,7 @@
       "description" : "이제 Ledger Wallet에서 DOT을 곧바로 스테이킹, 보관, 관리할 수 있습니다"
     },
     "sell" : {
-      "title" : "암호화폐 판매",
+      "title" : "암호화폐 매도",
       "description" : "Ledger Wallet을 지원하는 서비스 제공업체를 통해 비트코인을 편리하게 매도하세요."
     },
     "stakeAlgorand" : {
@@ -2157,15 +2161,15 @@
     }
   },
   "buy" : {
-    "title" : "구매",
-    "titleCrypto" : "{{currency}} 구매",
-    "buyCTA" : "{{currencyTicker}} 구매",
+    "title" : "매수",
+    "titleCrypto" : "{{currency}} 매수",
+    "buyCTA" : "{{currencyTicker}} 매수",
     "withoutDevice" : "내 장치 없이 계속합니다",
     "connectWithoutDevice" : "사용자의 장치를 사용하는 것이 보안 최적화에 좋습니다",
     "skipConnect" : "내 장치 없이 계속합니다"
   },
   "sell" : {
-    "title" : "판매",
+    "title" : "매도",
     "titleCrypto" : "{{currency}} 매도",
     "exchangeDrawer" : {
       "completed" : {
@@ -2313,7 +2317,8 @@
         "banner" : "최대 사용 가능 금액은",
         "fees" : "수수료 자세히 알아보기",
         "standard" : "스탠다드",
-        "advanced" : "고급"
+        "advanced" : "고급",
+        "feeCurrency" : "수수료 지불 자산"
       },
       "summary" : {
         "title" : "요약"
@@ -4187,6 +4192,64 @@
         "eigenlayer_points" : "Eigenlayer 포인트",
         "validator" : "검증인 보상"
       }
+    },
+    "evmStaking" : {
+      "delegation" : {
+        "emptyState" : {
+          "description" : "자산을 위임하여 {{currencyTicker}} 보상을 받을 수 있습니다.",
+          "delegation" : "보상 받기"
+        },
+        "claimRewards" : "보상 수령",
+        "header" : "위임",
+        "noRewards" : "이용 가능한 보상이 없습니다",
+        "delegate" : "추가",
+        "undelegate" : "위임 해제",
+        "redelegate" : "재위임",
+        "redelegateDisabledTooltip" : "<0>{{days}}</0>에 재위임할 수 있습니다",
+        "redelegateMaxDisabledTooltip" : "한 번에 <0>7</0>명 이상의 검증인을 재위임할 수 없습니다",
+        "undelegateDisabledTooltip" : "한 번에 <0>7</0>명 이상의 검증인을 위임 해제할 수 없습니다",
+        "reward" : "보상 수령",
+        "activeTooltip" : "위임된 수량에서 보상이 생성됩니다",
+        "inactiveTooltip" : "위임되지 않은 금액은 보상을 생성하지 않습니다",
+        "minSafeWarning" : "자금이 부족합니다",
+        "flow" : {
+          "title" : "위임하기",
+          "steps" : {
+            "starter" : {
+              "description" : "{{currencyTicker}} 암호화폐를 검증인에게 위임하여 보상을 받을 수 있습니다.",
+              "bullet" : ["위임된 자산의 소유권은 귀하가 갖습니다", "Ledger 장치를 이용하여 위임하세요", "자산은 위임 취소 후 사용 가능합니다"],
+              "warning" : {
+                "description" : "검증인을 현명하게 선택하세요. 검증인이 부적절한 행동을 하는 경우 위임된 자산의 일부가 영구 손실될 수 있습니다."
+              }
+            },
+            "amount" : {
+              "title" : "수량"
+            },
+            "validator" : {
+              "title" : "검증인"
+            },
+            "connectDevice" : {
+              "title" : "장치"
+            },
+            "confirmation" : {
+              "title" : "확인",
+              "success" : {
+                "title" : "자산을 성공적으로 위임했습니다",
+                "text" : "블록체인이 트랜잭션 검증을 완료하면 계정 잔액이 업데이트됩니다.",
+                "cta" : "세부사항 보기"
+              },
+              "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+            }
+          }
+        }
+      },
+      "redelegation" : {
+        "header" : "재위임"
+      },
+      "undelegation" : {
+        "header" : "위임 해제",
+        "inactiveTooltip" : "위임되지 않은 금액은 보상을 생성하지 않습니다"
+      }
     }
   },
   "graph" : {
@@ -4441,6 +4504,8 @@
     "delegated" : "위임됨",
     "completionDate" : "완료 날짜",
     "rewards" : "보상",
+    "sourceValidator" : "Source Validator",
+    "destinationValidator" : "Destination Validator",
     "duration" : "기간",
     "durationJustStarted" : "시작됨",
     "durationDays" : "({{count}})일",
@@ -4608,24 +4673,7 @@
       },
       "analyticsConsentOptInQa" : {
         "rowTitle" : "애널리틱스 옵트인 동의(QA)",
-        "rowDesc" : "저장된 개인정보 보호정책 동의 버전 및 동의 날짜를 확인합니다. 포트폴리오 애널리틱스 동의 모달의 구버전 상태를 시뮬레이션해 볼 수 있습니다.",
-        "title" : "애널리틱스 옵트인 동의 — QA",
-        "readSection" : "현재 설정(읽기 전용)",
-        "storedPrivacyVersion" : "저장된 개인 정보 보호 정책 버전: {{version}}",
-        "currentPrivacyVersion" : "앱의 현재 개인 정보 보호 정책 버전: {{version}}",
-        "consentDate" : "동의 날짜(원본): {{value}}",
-        "inlineOutdatePrivacyVersion" : "구버전",
-        "inlineRemoveConsentDate" : "날짜 제거",
-        "actionResetForConsentFresh" : "동의 데이터를 초기화(동의 데이터 삭제, 애널리틱스 및 개인화 기능 끄기)",
-        "modalPreviewSection" : "포트폴리오(홈) 진입 시 예상되는 모달",
-        "modalPreviewNoModalUserOk" : "모달 없음 개인정보 보호 정책 버전과 동의 날짜가 정상입니다: 갱신 또는 재확인할 항목이 없습니다.",
-        "modalPreviewNoModalFeatureOff" : "모달 없음 애널리틱스 옵트인 기능 플래그가 꺼져 있습니다.",
-        "modalPreviewNoModalOnboarding" : "모달 없음 온보딩이 아직 완료되지 않았습니다.",
-        "modalPreviewFresh" : "최초 동의 모달(신규 동의). 동의 갱신이 필요하며(동의 날짜가 누락되었거나 유효하지 않음) 애널리틱스 공유가 꺼져 있음 — 예: 저장된 개인정보 확인 내역 없음/애널리틱스 비활성화 및 동의 날짜 없음",
-        "modalPreviewReconfirm" : "동의 모달을 재확인합니다. 동의 갱신이 필요하며 애널리틱스 공유가 활성화되어 있습니다. 사용자에게 최초 동의 문구 대신 재확인 또는 계속/중지 플로우가 표시됩니다.",
-        "modalPreviewPrivacy" : "개인정보 보호 업데이트 모달. 저장된 개인정보 보호정책이 구버전이고(앱 버전보다 낮음), 동의 갱신이 블로킹(차단) 상태가 아닌 경우 — 사용자에게 개인정보 보호정책 업데이트 단계가 먼저 표시됩니다.",
-        "modalPreviewGoToHome" : "모달 노출 조건이 충족되었을 때 포트폴리오 홈 페이지를 열면 해당 모달을 확인할 수 있습니다.",
-        "note" : "날짜를 제거하면 동의 값이 null로 설정됩니다. 구버전을 실행하면 저장된 개인정보 보호 정책 버전이 앱의 현재 버전보다 낮아집니다. 초기화를 실행하면 동의 메타데이터가 삭제되고 애널리틱스 및 개인화 기능이 꺼지며, 이를 통해 신규 동의 모달이 노출되는 상황을 재현할 수 있습니다. live-common에서 CONSENT_RENEWAL_INTERVAL_MS가 null인 동안에는 시간 기반 갱신 기능이 비활성화 상태로 유지됩니다."
+        "rowDesc" : "저장된 개인정보 보호정책 동의 버전 및 동의 날짜를 확인합니다. 포트폴리오 애널리틱스 동의 모달의 구버전 상태를 시뮬레이션해 볼 수 있습니다."
       },
       "brazeTools" : {
         "title" : "브레이즈 도구",
@@ -7330,7 +7378,7 @@
       "twoCtas" : "{{assetName}}(을)를 <cta1>{{cta1Label}}</cta1>하거나 <cta2>{{cta2Label}}</cta2>, 또는",
       "threeCtas" : "{{assetName}}(을)를 <cta1>{{cta1Label}}</cta1>, <cta2>{{cta2Label}}</cta2>, <cta3>{{cta3Label}}</cta3>하세요.",
       "ctas" : {
-        "buy" : "구매",
+        "buy" : "매수",
         "swap" : "스왑",
         "deposit" : "입금"
       }
@@ -7822,7 +7870,7 @@
         "description" : "사용자 환경 개선을 위해 Ledger의 앱 사용 데이터 수집을 허용합니다."
       },
       "personalizedExperience" : {
-        "title" : "맞춤화된 경험",
+        "title" : "사용자 맞춤 설정",
         "description" : "맞춤형 콘텐츠 제공을 위해 Ledger의 앱 사용 데이터 수집을 허용합니다."
       },
       "ctaConfirm" : "확인"
@@ -7885,7 +7933,7 @@
       "learnMore" : "Ledger의 고객 데이터 처리 방법에 대해 자세히 알아보세요"
     },
     "profileSettings" : {
-      "personalizedExp" : "맞춤화된 경험",
+      "personalizedExp" : "사용자 맞춤 설정",
       "analytics" : "앱 성능",
       "personalizedExpDesc" : "맞춤형 콘텐츠 제공을 위해 Ledger의 앱 사용 데이터 수집을 허용합니다.",
       "analyticsDesc" : "사용자 환경 개선을 위해 Ledger의 앱 사용 데이터 수집을 허용합니다."
@@ -8130,7 +8178,7 @@
     "fundAccount" : {
       "receive" : "수령",
       "receiveDescription" : "다른 지갑에서 암호화폐를 받아보세요",
-      "buy" : "구매",
+      "buy" : "매수",
       "buyDescription" : "현금으로 암호화폐를 안전하게 구매해보세요"
     },
     "scanAccounts" : {
@@ -8275,7 +8323,10 @@
       },
       "editName" : "이름 편집",
       "emptyState" : "아직 암호화폐 주소가 없습니다",
-      "emptySearchState" : "검색하신 조건에 맞는 계정을 찾을 수 없습니다"
+      "emptySearchState" : "검색하신 조건에 맞는 계정을 찾을 수 없습니다",
+      "assetCount_zero" : "{{count}}개 자산",
+      "assetCount_one" : "{{count}}개 자산",
+      "assetCount_other" : "{{count}}개 자산"
     },
     "editName" : {
       "title" : "주소 별칭 편집",
@@ -8552,5 +8603,17 @@
       "errorDescription" : "트랜잭션 내역 내보내기 중 오류가 발생했습니다. 다시 시도해 주세요.",
       "tryAgain" : "다시 시도하세요"
     }
+  },
+  "myWallet" : {
+    "actionsList" : {
+      "help" : "도움말",
+      "recover" : "[L] Recover",
+      "refer" : "친구 추천"
+    },
+    "myLedger" : {
+      "title" : "내 Ledger",
+      "description" : "Ledger 장치를 관리하세요"
+    },
+    "explore" : "모든 Ledger 장치 살펴보기"
   }
 }
