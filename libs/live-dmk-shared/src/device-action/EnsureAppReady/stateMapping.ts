@@ -9,6 +9,7 @@ import {
   DeviceExchangeError,
   DeviceLockedError,
   DeviceModelId,
+  AlreadySendingApduError,
   OutOfMemoryDAError,
   RefusedByUserDAError,
   UnsupportedFirmwareDAError,
@@ -199,6 +200,13 @@ export function mapConnectAppDAErrorStatus(params: {
         deviceModelId: dmkToLedgerDeviceIdMap[deviceModelId],
       };
     }
+  }
+
+  if (error instanceof AlreadySendingApduError || hasTag(error, "AlreadySendingApduError")) {
+    return {
+      type: RetryableStateType.DeviceBusy,
+      retry,
+    };
   }
 
   if (error instanceof DeviceDeprecationError) {
