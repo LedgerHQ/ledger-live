@@ -2,7 +2,8 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "paths": {
-      "jest/*": ["./jest/*"]
+      "jest/*": ["./jest/*"],
+      "jest/render.native": ["./jest/render/index.native.tsx"]
     },
     "lib": ["ES2024", "DOM"],
     "target": "ESNext",
@@ -13,6 +14,6 @@
     "noEmit": true,
     "types": ["jest"]
   },
-  "include": ["src/**/*", "jest.setup.ts", "jest/**/*"],
+  "include": ["src/**/*", "jest.setup.ts", "jest/render/**/*", "**/*.d.ts"],
   "exclude": ["node_modules"]
 }
