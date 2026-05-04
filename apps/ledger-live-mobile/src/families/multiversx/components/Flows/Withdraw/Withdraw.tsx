@@ -8,7 +8,7 @@ import StepHeader from "~/components/StepHeader";
 import WithdrawSelectDevice from "~/screens/SelectDevice";
 import WithdrawConnectDevice from "~/screens/ConnectDevice";
 
-import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import { getStackNavigatorConfig, bridgeSuspenseScreenLayout } from "~/navigation/navigatorConfig";
 import { ScreenName } from "~/const";
 
 import WithdrawFunds from "./components/WithdrawFunds";
@@ -45,6 +45,7 @@ const Withdraw = () => {
         ...stackNavigationConfig,
         gestureEnabled: Platform.OS === "ios",
       }}
+      screenLayout={bridgeSuspenseScreenLayout}
     >
       <Stack.Screen
         name={ScreenName.MultiversXWithdrawFunds}

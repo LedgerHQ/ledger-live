@@ -6,6 +6,7 @@ import { useTheme } from "@react-navigation/native";
 import {
   getStackNavigatorConfig,
   defaultNavigationOptions,
+  bridgeSuspenseScreenLayout,
 } from "../../../../navigation/navigatorConfig";
 import StepHeader from "~/components/StepHeader";
 import { ScreenName } from "~/const";
@@ -30,6 +31,7 @@ function ClaimRewardsFlow() {
         ...stackNavigationConfig,
         gestureEnabled: Platform.OS === "ios",
       }}
+      screenLayout={bridgeSuspenseScreenLayout}
     >
       <Stack.Screen
         name={ScreenName.AlgorandClaimRewardsStarted}

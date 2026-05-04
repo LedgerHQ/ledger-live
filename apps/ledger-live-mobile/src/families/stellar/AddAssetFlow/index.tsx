@@ -3,7 +3,7 @@ import { Platform } from "react-native";
 import { useTranslation } from "~/context/Locale";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "@react-navigation/native";
-import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import { getStackNavigatorConfig, bridgeSuspenseScreenLayout } from "~/navigation/navigatorConfig";
 import styles from "~/navigation/styles";
 import StepHeader from "~/components/StepHeader";
 import { ScreenName } from "~/const";
@@ -25,6 +25,7 @@ function AddAssetFlow() {
         ...stackNavigationConfig,
         gestureEnabled: Platform.OS === "ios",
       }}
+      screenLayout={bridgeSuspenseScreenLayout}
     >
       <Stack.Screen
         name={ScreenName.StellarAddAssetSelectAsset}
