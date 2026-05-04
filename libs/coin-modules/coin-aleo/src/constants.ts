@@ -41,3 +41,6 @@ export const PROGRESS_THROTTLE_MIN_STEP = 5;
 
 // The maximum number of private records that can be included in a single transaction.
 export const MAX_PRIVATE_RECORDS_PER_TRANSACTION = 14;
+
+// The estimated time in milliseconds it takes to sign a single record during transaction signing.
+export const SINGLE_CALL_SIGNING_TIME = 12500;
