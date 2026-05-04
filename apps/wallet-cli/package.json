@@ -38,6 +38,7 @@
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-dmk-shared": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
+    "@ledgerhq/live-network": "workspace:*",
     "@ledgerhq/live-wallet": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
