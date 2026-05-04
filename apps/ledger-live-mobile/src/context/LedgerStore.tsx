@@ -22,6 +22,7 @@ import {
   saveFeatureFlagsState,
   getSettings,
   getBle,
+  getHistory,
   getPostOnboardingState,
   getProtect,
   getMarketState,
@@ -41,6 +42,7 @@ import { importMarket } from "~/actions/market";
 import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { importWalletState } from "@ledgerhq/live-wallet/store";
 import { importLargeMoverState } from "~/actions/largeMoverLandingPage";
+import { initHistory } from "~/reducers/history";
 import type { SettingsState } from "~/reducers/types";
 import {
   restoreTokensToCache,
@@ -105,6 +107,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         persistedIdentities,
         persistedFeatureFlags,
         legacyUser,
+        historyState,
       ] = await Promise.all([
         retry(getBle, MAX_RETRIES, RETRY_DELAY),
         retry(getSettings, MAX_RETRIES, RETRY_DELAY),
@@ -120,6 +123,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         retry(getIdentities, MAX_RETRIES, RETRY_DELAY),
         retry(getFeatureFlagsState, MAX_RETRIES, RETRY_DELAY),
         retry(getUser, MAX_RETRIES, RETRY_DELAY),
+        retry(getHistory, MAX_RETRIES, RETRY_DELAY),
       ]).finally(() => {
         logStartupEvent<StoreStorageData>(STARTUP_EVENTS.STORE_STORAGE_READ, {
           readTime: Date.now() - readStorageStart,
@@ -156,6 +160,10 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
 
       if (largeMoverState) {
         store.dispatch(importLargeMoverState(largeMoverState));
+      }
+
+      if (historyState) {
+        store.dispatch(initHistory(historyState));
       }
 
       // Initialize identities (single source of truth): migrate from legacy "user" if present, then persist under "identities" only

@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import React, { useCallback } from "react";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
 import { useSelector } from "~/context/hooks";
 import { getDeviceIcon, type IconComponent } from "LLM/utils/getDeviceIcon";
@@ -10,6 +10,7 @@ export type TopBarActionIcon = {
   testID: string;
   accessibilityLabel: string;
   loading?: boolean;
+  wrapper?: (children: React.ReactElement) => React.ReactElement;
 };
 
 export function useMyLedgerTopBarAction(onPress: () => void): TopBarActionIcon {
