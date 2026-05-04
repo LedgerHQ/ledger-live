@@ -3,8 +3,7 @@ import React from "react";
 import { Trans } from "react-i18next";
 import { useHederaEnrichedDelegation } from "@ledgerhq/live-common/families/hedera/react";
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
-import type { AccountBridge } from "@ledgerhq/types-live";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { HederaValidator, Transaction } from "@ledgerhq/live-common/families/hedera/types";
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
 import { isStakingTransaction } from "@ledgerhq/live-common/families/hedera/utils";
@@ -42,9 +41,9 @@ function StepValidators({
   const isValidatorRemoved =
     !enrichedDelegation.validator.address && typeof delegation.nodeId === "number";
 
+  const bridge = useAccountBridge<Transaction>(account, parentAccount);
   const updateValidator = (validator: HederaValidator | null) => {
     if (!validator) return;
-    const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
     onUpdateTransaction(() => {
       return bridge.updateTransaction(transaction, {
         mode: HEDERA_TRANSACTION_MODES.Redelegate,

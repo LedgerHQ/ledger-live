@@ -4,9 +4,13 @@ import { createFixtureAccount } from "@ledgerhq/coin-bitcoin/fixtures/common.fix
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { of } from "rxjs";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import ExportKeyModal from "../index";
 import { StepId } from "../types";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
+
+jest.mock("@ledgerhq/live-common/bridge/useAccountBridge");
+const mockedUseAccountBridge = jest.mocked(useAccountBridge);
 
 const mockDispatch = jest.fn();
 const mockSyncStateUpdater = jest.fn();
@@ -139,9 +143,9 @@ describe("ZCash Export UFVK Flow - Integration test", () => {
         publicKey: "mock-public-key",
       }),
     );
-    jest.spyOn(require("@ledgerhq/live-common/bridge/index"), "getAccountBridge").mockReturnValue({
+    mockedUseAccountBridge.mockReturnValue({
       receive: mockReceive,
-    });
+    } as unknown as ReturnType<typeof useAccountBridge>);
 
     let stepId: StepId = "birthday";
     let currentBirthday = birthday;

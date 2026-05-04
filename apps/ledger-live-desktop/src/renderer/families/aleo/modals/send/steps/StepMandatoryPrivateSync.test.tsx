@@ -104,6 +104,7 @@ describe("StepMandatoryPrivateSync", () => {
     it("should call transitionTo('record-picker') after progress reaches 100 with manual strategy", async () => {
       const props = makeStepProps();
       render(<StepMandatoryPrivateSync {...props} />);
+      await Promise.resolve(); // flush from(Promise.resolve(bridge)) so syncSubject has a subscriber
 
       await act(async () => {
         syncSubject.next(() => makeAleoAccountAt100());
@@ -120,6 +121,7 @@ describe("StepMandatoryPrivateSync", () => {
 
       const props = makeStepProps();
       render(<StepMandatoryPrivateSync {...props} />);
+      await Promise.resolve(); // flush from(Promise.resolve(bridge)) so syncSubject has a subscriber
 
       await act(async () => {
         syncSubject.next(() => makeAleoAccountAt100());
@@ -133,6 +135,7 @@ describe("StepMandatoryPrivateSync", () => {
     it("should not call transitionTo if the component unmounts before the timer fires", async () => {
       const props = makeStepProps();
       const { unmount } = render(<StepMandatoryPrivateSync {...props} />);
+      await Promise.resolve(); // flush from(Promise.resolve(bridge)) so syncSubject has a subscriber
 
       await act(async () => {
         syncSubject.next(() => makeAleoAccountAt100());
@@ -149,6 +152,7 @@ describe("StepMandatoryPrivateSync", () => {
     it("should call updateAccount with the updated account on each sync emission", async () => {
       const props = makeStepProps();
       render(<StepMandatoryPrivateSync {...props} />);
+      await Promise.resolve(); // flush from(Promise.resolve(bridge)) so syncSubject has a subscriber
 
       await act(async () => {
         syncSubject.next(() => ({
@@ -171,6 +175,7 @@ describe("StepMandatoryPrivateSync", () => {
     it("should not throw when updateAccount is not provided", async () => {
       const props = makeStepProps({ updateAccount: undefined });
       render(<StepMandatoryPrivateSync {...props} />);
+      await Promise.resolve(); // flush from(Promise.resolve(bridge)) so syncSubject has a subscriber
 
       await act(async () => {
         syncSubject.next(() => ({
