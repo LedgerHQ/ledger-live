@@ -8773,6 +8773,8 @@
     "explore": "Explore all Ledger devices"
   },
   "assetDetails": {
-    "totalBalance": "Total balance"
+    "totalBalance": "Total balance",
+    "addresses": "Addresses",
+    "add": "Add"
   }
 }

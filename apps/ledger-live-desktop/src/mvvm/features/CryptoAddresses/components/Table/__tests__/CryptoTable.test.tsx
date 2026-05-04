@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js";
 import { within } from "@testing-library/react";
 import { render, screen } from "tests/testSetup";
 import { CryptoTable } from "../CryptoTable";
-import { getCryptoTableRowFreshAddress } from "../Cell";
+import { getCryptoTableRowFreshAddress } from "LLD/features/CryptoAddresses/utils/getCryptoTableRowFreshAddress";
 import {
   ETH_ACCOUNT,
   ETH_ACCOUNT_2,
