@@ -245,7 +245,9 @@ const Body = ({
   const handleChangeAccount = useCallback(
     (nextAccount: AccountLike, nextParentAccount?: Account | null) => {
       if (account !== nextAccount) {
-        setAccount(nextAccount, nextParentAccount, getAccountBridge(nextAccount, nextParentAccount));
+        void getAccountBridge(nextAccount, nextParentAccount).then(bridge => {
+          setAccount(nextAccount, nextParentAccount, bridge);
+        });
       }
     },
     [account, setAccount],

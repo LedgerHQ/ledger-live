@@ -94,7 +94,9 @@ export function useSendFlowTransaction({
 
   const setAccountForTransaction = useCallback(
     (newAccount: AccountLike, newParentAccount?: Account | null) => {
-      setAccount(newAccount, newParentAccount ?? undefined, getAccountBridge(newAccount, newParentAccount ?? undefined));
+      void getAccountBridge(newAccount, newParentAccount ?? undefined).then(bridge => {
+        setAccount(newAccount, newParentAccount ?? undefined, bridge);
+      });
     },
     [setAccount],
   );

@@ -7,6 +7,7 @@ import {
   SyncSkipUnderPriority,
 } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";

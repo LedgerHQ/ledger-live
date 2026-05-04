@@ -1,5 +1,5 @@
 import Config from "react-native-config";
-import { configureStore, StoreEnhancer } from "@reduxjs/toolkit";
+import { configureStore, StoreEnhancer, ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import NetInfo from "@react-native-community/netinfo";
 import reducers from "~/reducers";
@@ -36,7 +36,7 @@ export const store = configureStore({
 });
 
 export type StoreType = typeof store;
-export type AppDispatch = typeof store.dispatch;
+export type AppDispatch = ThunkDispatch<State, unknown, UnknownAction> & typeof store.dispatch;
 
 setupListeners(store.dispatch, (dispatch, { onOnline, onOffline }) => {
   const unsubscribe = NetInfo.addEventListener(state => {

@@ -6,8 +6,8 @@ import {
 } from "react-redux";
 import type { State } from "~/reducers/types";
 import { store } from "~/state-manager/configureStore";
+import type { AppDispatch } from "~/state-manager/configureStore";
 
-type AppDispatch = typeof store.dispatch;
 type StoreType = typeof store;
 
 export const useDispatch = useDispatchBase.withTypes<AppDispatch>();

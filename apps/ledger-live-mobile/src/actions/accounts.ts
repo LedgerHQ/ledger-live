@@ -13,7 +13,7 @@ import { initAccounts } from "@ledgerhq/live-wallet/store";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { clearAccount } from "@ledgerhq/live-common/account/index";
 import { accountsSelector } from "../reducers/accounts";
-import type { AppDispatch } from "../state-manager/configureStore";
+import type { ThunkAction, UnknownAction } from "@reduxjs/toolkit";
 import type { State } from "../reducers/types";
 
 const version = 0; // FIXME this needs to come from user data
@@ -69,7 +69,8 @@ export const replaceAccounts = createAction<AccountsReplacePayload>(
 );
 
 export const cleanCache =
-  () => async (dispatch: AppDispatch, getState: () => State) => {
+  (): ThunkAction<Promise<void>, State, unknown, UnknownAction> =>
+  async (dispatch, getState) => {
     const accounts = accountsSelector(getState());
     const cleared = await Promise.all(accounts.map(clearAccount));
     dispatch(replaceAccounts(cleared));
