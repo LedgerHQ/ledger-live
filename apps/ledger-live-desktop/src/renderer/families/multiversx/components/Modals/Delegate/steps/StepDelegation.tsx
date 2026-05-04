@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 import { Trans } from "react-i18next";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import invariant from "invariant";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -16,7 +16,7 @@ const StepDelegation = (props: StepProps) => {
   invariant(account && transaction, "account and transaction required");
   const { multiversxResources } = account;
   invariant(multiversxResources, "multiversxResources required");
-  const bridge = getAccountBridge(account);
+  const bridge = useAccountBridge<Transaction>(account);
   const onSelectValidator = (recipient: string) =>
     onUpdateTransaction(
       (transaction: Transaction): Transaction =>

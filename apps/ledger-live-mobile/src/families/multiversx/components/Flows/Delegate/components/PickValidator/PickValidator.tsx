@@ -3,7 +3,8 @@ import { useTranslation, Trans } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
 import { Box, SearchInput, Text } from "@ledgerhq/native-ui";
 import { FlatList, View } from "react-native";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import type { Transaction as MultiversXTransaction } from "@ledgerhq/live-common/families/multiversx/types";
 
 import { useSearchValidators } from "@ledgerhq/live-common/families/multiversx/react";
 
@@ -27,7 +28,7 @@ const PickValidator = (props: PickValidatorPropsType) => {
   const { account, validators, transaction } = route.params;
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const bridge = getAccountBridge(account);
+  const bridge = useAccountBridge<MultiversXTransaction>(account);
 
   /*
    * Filter out the providers, by the search query, and disabled them if not enough delegation cap available.
@@ -40,11 +41,11 @@ const PickValidator = (props: PickValidatorPropsType) => {
 
   const onSelect = useCallback(
     (validator: onSelectType["validator"]) => {
-      if (validator) {
+      if (validator && transaction) {
         navigation.navigate(ScreenName.MultiversXDelegationValidator, {
           account,
           validators,
-          transaction: bridge.updateTransaction(transaction, {
+          transaction: bridge.updateTransaction(transaction as MultiversXTransaction, {
             recipient: validator.contract,
           }),
         });

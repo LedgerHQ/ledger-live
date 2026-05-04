@@ -15,7 +15,7 @@ import { useTheme } from "@react-navigation/native";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { Transaction as CeloTransaction } from "@ledgerhq/live-common/families/celo/types";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { ScreenName } from "~/const";
 import { TrackScreen } from "~/analytics";
 import LText from "~/components/LText";
@@ -41,7 +41,7 @@ export default function UnlockAmount({ navigation, route }: Props) {
   const { account, parentAccount } = useAccountScreen(route);
   invariant(account, "account is required");
 
-  const bridge = getAccountBridge(account, parentAccount);
+  const bridge = useAccountBridge<CeloTransaction>(account, parentAccount);
   const mainAccount = getMainAccount(account, parentAccount);
 
   const [maxSpendable, setMaxSpendable] = useState<BigNumber | null>(null);
@@ -82,7 +82,7 @@ export default function UnlockAmount({ navigation, route }: Props) {
 
   const onChange = useCallback(
     (amount: BigNumber) => {
-      if (!amount.isNaN()) {
+      if (!amount.isNaN() && transaction) {
         setTransaction(bridge.updateTransaction(transaction, { amount }));
       }
     },

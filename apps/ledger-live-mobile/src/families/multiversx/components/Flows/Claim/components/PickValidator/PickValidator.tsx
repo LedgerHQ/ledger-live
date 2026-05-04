@@ -1,11 +1,12 @@
 import React, { useMemo, useCallback } from "react";
 import { View, FlatList } from "react-native";
 import { useTheme } from "@react-navigation/native";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account";
 
 import BigNumber from "bignumber.js";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import type { Transaction as MultiversXTransaction } from "@ledgerhq/live-common/families/multiversx/types";
 
 import { ScreenName } from "~/const";
 import Item from "./components/Item";
@@ -25,7 +26,7 @@ const PickValidator = (props: PickValidatorPropsType) => {
   const { colors } = useTheme();
 
   const mainAccount = getMainAccount(account, undefined);
-  const bridge = getAccountBridge(account, undefined);
+  const bridge = useAccountBridge<MultiversXTransaction>(account, undefined);
   const unit = useAccountUnit(account);
 
   /*
@@ -55,7 +56,7 @@ const PickValidator = (props: PickValidatorPropsType) => {
 
   const onSelect = useCallback(
     (validator: onSelectType["validator"], value: onSelectType["value"]) => {
-      if (validator) {
+      if (validator && transaction) {
         navigation.navigate(ScreenName.MultiversXClaimRewardsMethod, {
           value,
           account,

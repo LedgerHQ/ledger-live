@@ -1,7 +1,8 @@
 import invariant from "invariant";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import { Transaction } from "@ledgerhq/live-common/families/celo/types";
 import { TransactionRefusedOnDevice } from "@ledgerhq/live-common/errors";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -68,7 +69,7 @@ const StepAmount = ({
   );
 
   const unit = useAccountUnit(account);
-  const bridge = getAccountBridge(account, parentAccount);
+  const bridge = useAccountBridge<Transaction>(account, parentAccount);
   const onChange = useCallback(
     (index: number) => {
       onChangeTransaction(

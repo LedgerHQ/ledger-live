@@ -11,8 +11,8 @@ import {
 } from "react-native";
 import { Trans } from "~/context/Locale";
 import { BigNumber } from "bignumber.js";
-import type { NearAccount } from "@ledgerhq/live-common/families/near/types";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import type { NearAccount, Transaction as NearTransaction } from "@ledgerhq/live-common/families/near/types";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
 import Button from "~/components/Button";
@@ -47,7 +47,7 @@ function StakingAmount({ navigation, route }: Props) {
     account && account.nearResources && route.params.transaction,
     "account and near transaction required",
   );
-  const bridge = getAccountBridge(account, undefined);
+  const bridge = useAccountBridge<NearTransaction>(account, undefined);
   const unit = useAccountUnit(account);
   const initialValue = useMemo(() => route?.params?.value ?? new BigNumber(0), [route]);
   const [value, setValue] = useState(() => initialValue);

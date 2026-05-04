@@ -3,7 +3,7 @@ import { Trans } from "react-i18next";
 import { TFunction } from "i18next";
 import styled from "styled-components";
 import { BigNumber } from "bignumber.js";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import {
   PolkadotAccount,
   Transaction,
@@ -39,7 +39,7 @@ type Props = {
   bridgePending: boolean;
 };
 const AmountField = ({ account, onChangeTransaction, transaction, status }: Props) => {
-  const bridge = getAccountBridge(account);
+  const bridge = useAccountBridge<Transaction>(account);
   const defaultUnit = useAccountUnit(account);
   const onChange = useCallback(
     (value: BigNumber) => {
