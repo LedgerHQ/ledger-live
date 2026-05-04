@@ -7,7 +7,7 @@ import {
 import type { AppRequestInput, EnsureAppReadyInput } from "./types";
 import { buildExpectedAccountIdentity } from "../../../hw/deviceInitialization/helpers/wrongDeviceValidation";
 
-export type BuildEnsureAppReadyInputUseCaseParams = {
+export type BuildEnsureAppReadyInputParams = {
   appRequest: AppRequestInput;
   flow?: FlowName;
   currencyName?: string;
@@ -21,15 +21,15 @@ export type BuildEnsureAppReadyInputUseCaseParams = {
  * Use this when migrating a flow from `hw/actions/app` / `connectApp` to
  * `DeviceIntentExecutor`:
  * - keep building the same `AppRequestInput`
- * - pass it to `buildEnsureAppReadyInputUseCase(...)`
+ * - pass it to `buildEnsureAppReadyInput(...)`
  * - pass the returned object unchanged as `input`
  *
  * Callers should not manually derive `appName`, `dependencies`,
  * `requiresDerivation`, `expectedAccount`, or `deprecation`. This builder is
  * the canonical translation boundary from rich domain input to DIE init input.
  */
-export async function buildEnsureAppReadyInputUseCase(
-  params: BuildEnsureAppReadyInputUseCaseParams,
+export async function buildEnsureAppReadyInput(
+  params: BuildEnsureAppReadyInputParams,
 ): Promise<EnsureAppReadyInput> {
   const resolved = await resolveAppRequestRequirements(params.appRequest);
   const baseInput = toEnsureAppReadyInput(resolved);

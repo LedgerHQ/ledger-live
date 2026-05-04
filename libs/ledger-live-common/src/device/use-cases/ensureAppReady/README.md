@@ -7,7 +7,7 @@ The shared `EnsureAppReadyDeviceAction` orchestration lives in `@ledgerhq/live-d
 ## Top-level files
 
 - `ensureAppReadyUseCase.ts`: public use-case entry point. It starts `EnsureAppReadyDeviceAction` through DMK and forwards unexpected device-action errors as use-case states.
-- `buildEnsureAppReadyInputUseCase.ts`: builds the `EnsureAppReadyInput` expected by the Device Intent Executor from the legacy `AppRequestInput` shape.
+- `buildEnsureAppReadyInput.ts`: builds the `EnsureAppReadyInput` expected by the Device Intent Executor from the legacy `AppRequestInput` shape.
 - `types.ts`: public request/input and side-effect contracts used by the use cases.
 
 Shared app-request resolution and wrong-device validation still live in `hw/deviceInitialization/helpers` because they are also consumed by legacy connect-app flows.
