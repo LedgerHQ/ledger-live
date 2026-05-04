@@ -67,7 +67,7 @@ export function useWebviewState(
 ): UseWebviewStateReturn {
   const webviewRef = useRef<WebviewTag>(null);
   const { manifest, inputs, manifestDomainCheckEnabled } = params;
-  const [initialURL] = useState(() => getInitialURL(inputs, manifest));
+  const initialURL = useMemo(() => getInitialURL(inputs, manifest), [manifest, inputs]);
 
   // Mirror mobile's originWhitelist: if the feature flag is on, only load URLs that pass
   // the manifest.domains whitelist. Fall back to manifest.url if initialURL is rejected,
@@ -363,7 +363,7 @@ export function useSelectAccount({
     const source =
       currentRouteNameRef.current === "Platform Catalog"
         ? "Discover"
-        : (currentRouteNameRef.current ?? "Unknown");
+        : currentRouteNameRef.current ?? "Unknown";
 
     if (modularDrawerVisible) {
       dispatch(setFlowValue(flow));

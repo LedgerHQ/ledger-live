@@ -5813,6 +5813,9 @@
     "alerts" : {
       "withdrawableAssets" : "您有可提取余额。",
       "activatableVotes" : "您有现在可激活的投票。"
+    },
+    "send" : {
+      "feeCurrency" : "费用币种"
     }
   },
   "cosmos" : {
@@ -7841,6 +7844,12 @@
         "description" : "将您最喜欢的数字艺术或照片设置为设备锁屏界面。",
         "popupLabel" : "已成功自定义锁屏界面"
       },
+      "recover" : {
+        "title" : "完成保护您的备份",
+        "titleCompleted" : "备份已受保护",
+        "description" : "完成激活 Ledger Recover",
+        "popupLabel" : "已成功订阅 Ledger Recover"
+      },
       "syncAccounts" : {
         "title" : "同步您的加密货币账户",
         "titleCompleted" : "您的账户已同步",
@@ -8124,6 +8133,18 @@
       "lead" : "您可以随时在设置中撤回您的同意。",
       "privacyLink" : "隐私政策"
     }
+  },
+  "analyticsPreferencesSettings" : {
+    "screenTitle" : "设置偏好",
+    "appPerformance" : {
+      "title" : "应用性能",
+      "description" : "允许 Ledger 收集应用程序使用数据以优化用户体验。"
+    },
+    "personalizedExperience" : {
+      "title" : "个性化体验",
+      "description" : "允许 Ledger 收集应用程序使用数据，以提供个性化内容。"
+    },
+    "confirmCta" : "确认"
   },
   "walletSync" : {
     "title" : "Ledger Sync",
@@ -8840,8 +8861,46 @@
   "myWallet" : {
     "quickActions" : {
       "recover" : "[L] Recover",
+      "backup" : "备份",
       "help" : "帮助",
       "referral" : "推荐"
+    },
+    "help" : {
+      "title" : "帮助",
+      "sections" : {
+        "supportAndLearning" : "支持与学习",
+        "more" : "更多"
+      },
+      "rows" : {
+        "ledgerSupport" : {
+          "title" : "Ledger 客服",
+          "description" : "通过常见问题解答或聊天获取帮助"
+        },
+        "ledgerAcademy" : {
+          "title" : "Ledger 学院",
+          "description" : "学习加密货币"
+        },
+        "saveLogs" : {
+          "title" : "保存日志",
+          "description" : "保存 Ledger Wallet 日志以便排除故障"
+        },
+        "ledgerStatus" : {
+          "title" : "Ledger 状态",
+          "description" : "检查我们的系统状态"
+        },
+        "clearCache" : {
+          "title" : "清除缓存",
+          "description" : "扫描交易并重新计算余额"
+        }
+      }
+    },
+    "deviceSection" : {
+      "title" : "我的设备",
+      "add" : "添加",
+      "addDevice" : "添加 Ledger 设备",
+      "exploreAllDevices" : "探索所有 Ledger 设备",
+      "available" : "可用",
+      "unavailable" : "未连接"
     }
   }
 }
