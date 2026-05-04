@@ -17,6 +17,7 @@ import { urls } from "~/utils/urls";
 import { lastConnectedDeviceSelector, hasClickedRecoverSelector } from "~/reducers/settings";
 import { setHasClickedRecover } from "~/actions/settings";
 import { track } from "~/analytics";
+import { MY_WALLET_TRACKING_PAGE_NAME } from "../../constants";
 
 export interface QuickActionRowItem {
   readonly id: string;
@@ -51,7 +52,7 @@ export const useQuickActionsRowViewModel = (): QuickActionsRowViewModel => {
     if (!hasClickedRecover) {
       dispatch(setHasClickedRecover(true));
     }
-    track("button_clicked", { button: "Recover", page: ScreenName.MyWallet });
+    track("button_clicked", { button: "Recover", page: MY_WALLET_TRACKING_PAGE_NAME });
     navigation.navigate(ScreenName.Recover, {
       platform: protectId,
       device: lastConnectedDevice ?? undefined,
@@ -59,12 +60,12 @@ export const useQuickActionsRowViewModel = (): QuickActionsRowViewModel => {
   }, [navigation, protectId, lastConnectedDevice, hasClickedRecover, dispatch]);
 
   const handleHelpPress = useCallback(() => {
-    track("button_clicked", { button: "Help", page: ScreenName.MyWallet });
+    track("button_clicked", { button: "Help", page: MY_WALLET_TRACKING_PAGE_NAME });
     navigation.navigate(NavigatorName.MyWallet, { screen: ScreenName.MyWalletHelp });
   }, [navigation]);
 
   const handleReferralPress = useCallback(() => {
-    track("button_clicked", { button: "Referral", page: ScreenName.MyWallet });
+    track("button_clicked", { button: "Referral", page: MY_WALLET_TRACKING_PAGE_NAME });
     Linking.openURL(urls.referralProgram);
   }, []);
 

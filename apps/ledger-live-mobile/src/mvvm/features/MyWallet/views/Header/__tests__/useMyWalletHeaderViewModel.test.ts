@@ -2,6 +2,7 @@ import { act } from "@testing-library/react-native";
 import { renderHook } from "@tests/test-renderer";
 import { NavigatorName, ScreenName } from "~/const";
 import { track } from "~/analytics";
+import { MY_WALLET_TRACKING_PAGE_NAME } from "../../../constants";
 import { useMyWalletHeaderViewModel } from "../useMyWalletHeaderViewModel";
 
 const mockNavigate = jest.fn();
@@ -39,7 +40,7 @@ describe("useMyWalletHeaderViewModel", () => {
     });
     expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "Notifications",
-      page: ScreenName.MyWallet,
+      page: MY_WALLET_TRACKING_PAGE_NAME,
     });
   });
 
@@ -49,7 +50,7 @@ describe("useMyWalletHeaderViewModel", () => {
     expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Settings);
     expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "Settings",
-      page: ScreenName.MyWallet,
+      page: MY_WALLET_TRACKING_PAGE_NAME,
     });
   });
 

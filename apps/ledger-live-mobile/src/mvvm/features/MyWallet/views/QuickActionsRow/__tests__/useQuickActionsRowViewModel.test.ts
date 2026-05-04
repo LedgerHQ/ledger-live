@@ -7,6 +7,7 @@ import type { State } from "~/reducers/types";
 import { NavigatorName, ScreenName } from "~/const";
 import { track } from "~/analytics";
 import { urls } from "~/utils/urls";
+import { MY_WALLET_TRACKING_PAGE_NAME } from "../../../constants";
 import { useQuickActionsRowViewModel } from "../useQuickActionsRowViewModel";
 
 const mockNavigate = jest.fn();
@@ -56,7 +57,7 @@ describe("useQuickActionsRowViewModel", () => {
       });
       expect(track).toHaveBeenCalledWith("button_clicked", {
         button: "Help",
-        page: ScreenName.MyWallet,
+        page: MY_WALLET_TRACKING_PAGE_NAME,
       });
     });
   });
@@ -71,7 +72,7 @@ describe("useQuickActionsRowViewModel", () => {
       expect(Linking.openURL).toHaveBeenCalledWith(urls.referralProgram);
       expect(track).toHaveBeenCalledWith("button_clicked", {
         button: "Referral",
-        page: ScreenName.MyWallet,
+        page: MY_WALLET_TRACKING_PAGE_NAME,
       });
     });
   });
@@ -89,7 +90,7 @@ describe("useQuickActionsRowViewModel", () => {
       });
       expect(track).toHaveBeenCalledWith("button_clicked", {
         button: "Recover",
-        page: ScreenName.MyWallet,
+        page: MY_WALLET_TRACKING_PAGE_NAME,
       });
     });
 
