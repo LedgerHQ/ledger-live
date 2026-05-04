@@ -63,6 +63,7 @@ import {
   extractViewKey,
   findBestRecordForFee,
   selectPrivateRecordsForAmount,
+  getEstimatedSigningTime,
 } from "./utils";
 
 jest.mock("../config");
@@ -1704,5 +1705,43 @@ describe("selectPrivateRecordsForAmount", () => {
     });
 
     expect(result).toEqual([]);
+  });
+});
+
+describe("getEstimatedSigningTime", () => {
+  // SIGNING_RECORDS_TIME = 12500 ms per record
+
+  it("should return seconds for totals below 1 minute", () => {
+    // 4 records × 12500 ms = 50 000 ms = 50 s
+    expect(getEstimatedSigningTime(4, "sec", "min")).toBe("~50 sec");
+  });
+
+  it("should round seconds correctly for non-integer results", () => {
+    // 1 record × 12500 ms = 12.5 s → rounds to 13
+    expect(getEstimatedSigningTime(1, "sec", "min")).toBe("~13 sec");
+  });
+
+  it("should return minutes floored to 0.5 min for totals >= 1 minute", () => {
+    // 5 records × 12500 ms = 62.5 s → floor to 60 s = 1 min
+    expect(getEstimatedSigningTime(5, "sec", "min")).toBe("~1 min");
+  });
+
+  it("should floor to nearest 30 s above 1 minute", () => {
+    // 8 records × 12500 ms = 100 s → floor to 90 s = 1.5 min
+    expect(getEstimatedSigningTime(8, "sec", "min")).toBe("~1.5 min");
+  });
+
+  it("should floor to 2 min when total is just above 2 minutes", () => {
+    // 10 records × 12500 ms = 125 s → floor to 120 s = 2 min
+    expect(getEstimatedSigningTime(10, "sec", "min")).toBe("~2 min");
+  });
+
+  it("should show 2.5 min when total lands exactly on 150 s", () => {
+    // 12 records × 12500 ms = 150 s → floor to 150 s = 2.5 min
+    expect(getEstimatedSigningTime(12, "sec", "min")).toBe("~2.5 min");
+  });
+
+  it("should return 0 sec for 0 records", () => {
+    expect(getEstimatedSigningTime(0, "sec", "min")).toBe("~0 sec");
   });
 });
