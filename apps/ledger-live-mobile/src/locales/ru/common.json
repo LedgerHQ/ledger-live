@@ -2601,7 +2601,7 @@
       "recoverSeed" : "Заглушка: Ledger Recover",
       "selection" : "Выберите подходящий вариант настройки:",
       "selectionNewLedger" : {
-        "title" : "Настроить как новый Ledger",
+        "title" : "Настроить новое устройство Ledger",
         "desc" : "Будет создана новая секретная фраза восстановления."
       },
       "selectionRestore" : {
@@ -4976,9 +4976,9 @@
       "showAllCTA" : "Все устройства Ledger ({{count}})",
       "showLessCTA" : "Показать меньше",
       "otgBanner" : "Для подключения Ledger Nano S или Ledger Nano S Plus используйте USB-кабель.",
-      "connectExistingLedger" : "Подключить уже настроенный Ledger",
+      "connectExistingLedger" : "Подключить настроенное устройство",
       "connectExistingLedgerDescription" : "Если Ledger уже настроен",
-      "setUpNewLedger" : "Настроить новый Ledger",
+      "setUpNewLedger" : "Настроить новое устройство",
       "setUpNewLedgerDescription" : "Если Ledger ещё не настроено",
       "buyDeviceCTA" : "<0>Хотите новое устройство Ledger? </0><1>Купите его</1>",
       "item" : {
@@ -5226,12 +5226,12 @@
           "description" : "Переносим обновления на {{deviceName}}."
         },
         "titleBackingUp" : "Подготовка обновления к установке",
-        "titleTransferring" : "Перенос обновления",
+        "titleTransferring" : "Переносим обновление...",
         "description" : "Сохраняем настройки и приложения... Переносим обновление на {{deviceName}}..."
       },
       "installUpdate" : {
         "titleInactive" : "Установка",
-        "titleActive" : "Установка обновления",
+        "titleActive" : "Устанавливаем обновление...",
         "description" : "{{deviceName}} перезагрузится несколько раз.\n\nДля завершения процесса разблокируйте {{deviceName}} с помощью ПИН-кода после установки.",
         "descriptionNanoXBle" : "{{deviceName}} перезагрузится несколько раз.\n\nЕсли устройство выключится и не перезапустится автоматически, включите его самостоятельно.\n\nДля завершения процесса разблокируйте {{deviceName}} с помощью ПИН-кода после установки."
       },
@@ -5813,6 +5813,9 @@
     "alerts" : {
       "withdrawableAssets" : "У вас есть баланс для вывода.",
       "activatableVotes" : "У вас есть голоса, которые можно использовать"
+    },
+    "send" : {
+      "feeCurrency" : "Валюта комиссии"
     }
   },
   "cosmos" : {
@@ -7821,7 +7824,7 @@
     },
     "actions" : {
       "deviceOnboarded" : {
-        "titleCompleted" : "Настройки устройства Ledger"
+        "titleCompleted" : "Настройте устройство Ledger"
       },
       "assetsTransfer" : {
         "title" : "Переведите ваши активы",
@@ -7830,21 +7833,27 @@
         "popupLabel" : "Криптоактивы переведены"
       },
       "buyCrypto" : {
-        "title" : "Купите криптовалюты через Ledger Wallet",
+        "title" : "Купите криптовалюты в Ledger Wallet",
         "titleCompleted" : "Криптовалюта куплена",
         "description" : "Выбирайте из 500+ монет и токенов.",
         "popupLabel" : "Куплено криптовалюты"
       },
       "customImage" : {
-        "title" : "Настройки экрана блокировки",
+        "title" : "Украсьте экран блокировки",
         "titleCompleted" : "Экран блокировки настроен",
-        "description" : "Поместите любимый цифровой арт или фотографию в качестве заставки экрана блокировки вашего устройства.",
+        "description" : "Используйте любимый цифровой арт или фото в качестве экрана блокировки вашего устройства.",
         "popupLabel" : "Экран блокировки настроен"
       },
+      "recover" : {
+        "title" : "Завершите создание резервной копии",
+        "titleCompleted" : "Резервная копия создана",
+        "description" : "Активируйте Ledger Recover",
+        "popupLabel" : "Подписка на Ledger Recover оформлена"
+      },
       "syncAccounts" : {
-        "title" : "Синхронизация ваших счетов",
+        "title" : "Синхронизируйте счета",
         "titleCompleted" : "Ваши счета синхронизированы",
-        "description" : "Активируйте Ledger Sync, чтобы синхронизировать счета",
+        "description" : "Активируйте Ledger Sync для синхронизации счетов.",
         "popupLabel" : "Счета синхронизированы"
       }
     }
@@ -8125,6 +8134,18 @@
       "privacyLink" : "Политика конфиденциальности"
     }
   },
+  "analyticsPreferencesSettings" : {
+    "screenTitle" : "Настроить предпочтения",
+    "appPerformance" : {
+      "title" : "Производительность приложения",
+      "description" : "Позволяет Ledger собирать данные об использовании приложения для улучшения взаимодействия с приложением."
+    },
+    "personalizedExperience" : {
+      "title" : "Персонализация",
+      "description" : "Позвольте Ledger собирать данные об использовании приложения для предоставления персонализированного контента."
+    },
+    "confirmCta" : "Подтвердить"
+  },
   "walletSync" : {
     "title" : "Ledger Sync",
     "banner" : {
@@ -8244,10 +8265,10 @@
         "connectDevice" : {
           "title" : "Использовать устройство Ledger"
         },
-        "description" : "Укажите, синхронизировано ли приложение Ledger Wallet на другом смартфоне или ПК"
+        "description" : "Этот вариант подойдёт, если вы уже синхронизировали Ledger Wallet на другом ПК или смартфоне."
       },
       "qrCode" : {
-        "title" : "Синхронизация приложений Ledger Wallet",
+        "title" : "Синхронизация приложений Ledger Wallet",
         "show" : {
           "title" : "Показать QR",
           "explanation" : {
@@ -8479,7 +8500,7 @@
     "emptyAssetList" : "Ничего не нашли :(",
     "accountCount_one" : "1 счёт",
     "accountCount_other" : "Счета: {{count}}",
-    "perpetualsBanner" : "Пока что поддерживается только USDC в цепочке Arbitrum.",
+    "perpetualsBanner" : "Пока что поддерживается только USDC в блокчейне Arbitrum.",
     "errors" : {
       "title" : "Сбой подключения",
       "backend" : "Что-то пошло не так на нашей стороне. Повторите попытку позже",
@@ -8840,8 +8861,46 @@
   "myWallet" : {
     "quickActions" : {
       "recover" : "[L] Recover",
+      "backup" : "Резервная копия",
       "help" : "Помощь",
       "referral" : "Рефералы"
+    },
+    "help" : {
+      "title" : "Помощь",
+      "sections" : {
+        "supportAndLearning" : "Поддержка и обучение",
+        "more" : "Другие материалы"
+      },
+      "rows" : {
+        "ledgerSupport" : {
+          "title" : "Поддержка Ledger",
+          "description" : "Помощь можно получить в разделе частых вопросов или в чате"
+        },
+        "ledgerAcademy" : {
+          "title" : "Ledger Academy",
+          "description" : "Изучите нюансы криптовалютной отрасли"
+        },
+        "saveLogs" : {
+          "title" : "Сохранить логи",
+          "description" : "Сохранить логи Ledger Wallet для устранения неполадок"
+        },
+        "ledgerStatus" : {
+          "title" : "Состояние Ledger",
+          "description" : "Проверьте состояние наших систем"
+        },
+        "clearCache" : {
+          "title" : "Очистить кэш",
+          "description" : "Просканировать транзакции и пересчитать балансы"
+        }
+      }
+    },
+    "deviceSection" : {
+      "title" : "Мои устройства",
+      "add" : "Дополнить",
+      "addDevice" : "Добавить устройство Ledger",
+      "exploreAllDevices" : "Посмотреть все устройства Ledger",
+      "available" : "Доступно",
+      "unavailable" : "Не подключено"
     }
   }
 }
