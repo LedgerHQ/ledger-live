@@ -62,6 +62,7 @@ import { handleErrors } from "./handleSwapErrors";
 import get from "lodash/get";
 import { SwapError } from "./SwapError";
 import { getQuotes } from "./quotes";
+import { fetchSpotPrices } from "./quotes/service/fetchSpotPrices";
 
 export { ExchangeType };
 
@@ -732,7 +733,15 @@ export const handlers = ({
         if (!params) {
           throw new ServerError(createUnknownError({ message: "params is undefined" }));
         }
-        return getQuotes(params, { accounts, spotPrices: {} });
+        const spotPrices = await fetchSpotPrices({
+          currencyIds: [
+            params.data.sendCurrencyId,
+            params.data.receiveCurrencyId,
+            params.data.networkFeesCurrencyId,
+          ],
+          counterValue: params.data.counterValueCurrency || "usd",
+        });
+        return getQuotes(params, { accounts, spotPrices });
       },
     ),
   }) as const satisfies Handlers;

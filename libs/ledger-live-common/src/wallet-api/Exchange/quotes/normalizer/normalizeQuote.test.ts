@@ -471,4 +471,68 @@ describe("normalizeQuote", () => {
       expect(quote.warning).toEqual({ code: "unrealisticQuote", gainPercent: 1.5 });
     });
   });
+
+  describe("quoteDetails.estimatedNetworkFee / approvalNetworkFee — fee estimate plumbing", () => {
+    const emptyUnrealisticInput = {
+      sendCurrencyId: "",
+      receiveCurrencyId: "",
+      spotPrices: {},
+    };
+
+    it("populates both fields and leaves error = null when approval is needed and balance is sufficient", () => {
+      const quote = normalizeQuote(
+        makeRawQuote({ tokenAllowanceData: { isApproved: false } }),
+        emptyProviderData,
+        emptyUnrealisticInput,
+        {
+          estimatedNetworkFee: { amount: "6250000000000000", currencyId: "ethereum" },
+          approvalNetworkFee: { amount: "1500000000000000", currencyId: "ethereum" },
+          notEnoughBalance: false,
+        },
+      );
+      expect(quote.quoteDetails.estimatedNetworkFee).toEqual({
+        amount: "6250000000000000",
+        currencyId: "ethereum",
+      });
+      expect(quote.quoteDetails.approvalNetworkFee).toEqual({
+        amount: "1500000000000000",
+        currencyId: "ethereum",
+      });
+      expect(quote.error).toBeNull();
+    });
+
+    it("emits `notEnoughBalanceForFees` when the fee estimate reports insufficient balance", () => {
+      const quote = normalizeQuote(makeRawQuote(), emptyProviderData, emptyUnrealisticInput, {
+        estimatedNetworkFee: { amount: "6250000000000000", currencyId: "ethereum" },
+        approvalNetworkFee: undefined,
+        notEnoughBalance: true,
+      });
+      expect(quote.error).toBe("notEnoughBalanceForFees");
+    });
+
+    it("omits both fields and leaves error = null when the fee estimate is undefined", () => {
+      const quote = normalizeQuote(makeRawQuote(), emptyProviderData, emptyUnrealisticInput);
+      expect(quote.quoteDetails.estimatedNetworkFee).toBeUndefined();
+      expect(quote.quoteDetails.approvalNetworkFee).toBeUndefined();
+      expect(quote.error).toBeNull();
+    });
+
+    it("omits fields individually when the fee estimate marks them undefined", () => {
+      const quote = normalizeQuote(
+        makeRawQuote({ liquiditySource: "RFQ", tokenAllowanceData: { isApproved: false } }),
+        emptyProviderData,
+        emptyUnrealisticInput,
+        {
+          estimatedNetworkFee: undefined,
+          approvalNetworkFee: { amount: "1500000000000000", currencyId: "ethereum" },
+          notEnoughBalance: false,
+        },
+      );
+      expect(quote.quoteDetails.estimatedNetworkFee).toBeUndefined();
+      expect(quote.quoteDetails.approvalNetworkFee).toEqual({
+        amount: "1500000000000000",
+        currencyId: "ethereum",
+      });
+    });
+  });
 });

@@ -1,5 +1,6 @@
 import type { RawQuote } from "../service/types";
 import type { QuoteError, QuoteWarning } from "../types";
+import type { FeeEstimate } from "./networkFeeEstimate";
 import { computeUnrealisticQuote } from "./unrealisticQuote";
 
 export type NormalizationContext = {
@@ -15,6 +16,10 @@ export function computeWarning(
   return computeUnrealisticQuote(quote, context);
 }
 
-export function computeError(_quote: RawQuote, _context: NormalizationContext): QuoteError | null {
+/** Emits `notEnoughBalanceForFees` when {@link FeeEstimate} flags it; `null` otherwise. */
+export function computeError(_quote: RawQuote, feeEstimate?: FeeEstimate): QuoteError | null {
+  if (feeEstimate?.notEnoughBalance) {
+    return "notEnoughBalanceForFees";
+  }
   return null;
 }

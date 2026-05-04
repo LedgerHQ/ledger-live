@@ -1,6 +1,10 @@
+import BigNumber from "bignumber.js";
+
 import { getQuotes, type GetQuotesContext } from "./getQuotes";
 import { fetchQuotes } from "./service/fetchQuotes";
 import { fetchAndMergeProviderData } from "../../../exchange/providers/swap";
+import { fetchNetworkFeeContext } from "./fetchNetworkFeeContext";
+import { computeFeeEstimate } from "./normalizer/networkFeeEstimate";
 import type { RawQuote, RawQuoteError } from "./service/types";
 import type { GetQuotesArgs } from "./types";
 
@@ -12,12 +16,26 @@ jest.mock("../../../exchange/providers/swap", () => ({
   fetchAndMergeProviderData: jest.fn(),
 }));
 
+// Mocked to keep the bridge / live-network import chain out of this test
+// suite — the wallet-side fee context is exercised end-to-end in
+// fetchNetworkFeeContext.test.ts.
+jest.mock("./fetchNetworkFeeContext", () => ({
+  fetchNetworkFeeContext: jest.fn(),
+}));
+
+jest.mock("./normalizer/networkFeeEstimate", () => ({
+  ...jest.requireActual("./normalizer/networkFeeEstimate"),
+  computeFeeEstimate: jest.fn(),
+}));
+
 jest.mock("@ledgerhq/live-env", () => ({
   getEnv: jest.fn().mockReturnValue(false),
 }));
 
 const fetchQuotesMock = jest.mocked(fetchQuotes);
 const fetchAndMergeProviderDataMock = jest.mocked(fetchAndMergeProviderData);
+const fetchNetworkFeeContextMock = jest.mocked(fetchNetworkFeeContext);
+const computeFeeEstimateMock = jest.mocked(computeFeeEstimate);
 
 function makeRawQuote(overrides: Partial<RawQuote> = {}): RawQuote {
   return {
@@ -71,6 +89,7 @@ describe("getQuotes", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     fetchAndMergeProviderDataMock.mockResolvedValue({});
+    fetchNetworkFeeContextMock.mockResolvedValue(null);
   });
 
   it("drops every successful quote for an unsupported pair while forwarding aggregator errors", async () => {
@@ -108,6 +127,22 @@ describe("getQuotes", () => {
     expect(fetchAndMergeProviderDataMock).not.toHaveBeenCalled();
   });
 
+  it("forwards aggregator errors and skips the provider-data + fee-context fetches when no rawQuotes are returned", async () => {
+    // Common error-only response: every provider rejected the request
+    // (amount-too-small, KYC required, slippage too high, etc.). Both
+    // fetchAndMergeProviderData (CAL + CDN) and fetchNetworkFeeContext
+    // (bridge.sync + prepareTransaction + getTransactionStatus) are
+    // pure waste in this case — their results would never be consumed
+    // by normalizeQuote/computeFeeEstimate.
+    fetchQuotesMock.mockResolvedValue({ rawQuotes: [], errors: [aggregatorError] });
+
+    const response = await getQuotes(makeArgs("ethereum", "bitcoin"), emptyContext);
+
+    expect(response).toEqual({ quotes: [], errors: [aggregatorError] });
+    expect(fetchAndMergeProviderDataMock).not.toHaveBeenCalled();
+    expect(fetchNetworkFeeContextMock).not.toHaveBeenCalled();
+  });
+
   it("normalizes quotes for a supported pair and preserves aggregator errors", async () => {
     fetchQuotesMock.mockResolvedValue({
       rawQuotes: [makeRawQuote({ provider: "lifi" })],
@@ -120,5 +155,103 @@ describe("getQuotes", () => {
     expect(response.quotes[0].quoteDetails.exchangeRate).toBe(0.999);
     expect(response.errors).toEqual([aggregatorError]);
     expect(fetchAndMergeProviderDataMock).toHaveBeenCalledTimes(1);
+  });
+
+  describe("fee context plumbing", () => {
+    const feeContext = {
+      maxFeePerGas: new BigNumber("20000000000"),
+      gasPrice: undefined,
+      defaultGasLimit: "21000",
+      estimatedFeesAtomic: new BigNumber("420000000000000"),
+      balanceAtomic: new BigNumber("5000000000000000000"),
+      feeCurrencyId: "ethereum",
+      feeCurrencyMagnitude: 18,
+      mainAccountCurrencyId: "ethereum",
+    };
+
+    it("forwards fromAccountId and amountFrom to fetchNetworkFeeContext", async () => {
+      fetchQuotesMock.mockResolvedValue({ rawQuotes: [makeRawQuote()], errors: [] });
+
+      await getQuotes(makeArgs("ethereum", "bitcoin", { amount: "1.5" }), {
+        accounts: [],
+        spotPrices: {},
+      });
+
+      expect(fetchNetworkFeeContextMock).toHaveBeenCalledTimes(1);
+      expect(fetchNetworkFeeContextMock).toHaveBeenCalledWith({
+        accounts: [],
+        fromAccountId: "send-account",
+        amountFrom: "1.5",
+      });
+    });
+
+    it("threads the fee estimate through normalizeQuote when context resolves", async () => {
+      fetchNetworkFeeContextMock.mockResolvedValue(feeContext);
+      computeFeeEstimateMock.mockReturnValue({
+        estimatedNetworkFee: { amount: "420000000000000", currencyId: "ethereum" },
+        approvalNetworkFee: undefined,
+        notEnoughBalance: false,
+      });
+      fetchQuotesMock.mockResolvedValue({
+        rawQuotes: [makeRawQuote({ provider: "lifi" })],
+        errors: [],
+      });
+
+      const response = await getQuotes(makeArgs("ethereum", "bitcoin"), emptyContext);
+
+      expect(computeFeeEstimateMock).toHaveBeenCalledTimes(1);
+      expect(computeFeeEstimateMock).toHaveBeenCalledWith(expect.any(Object), feeContext);
+      expect(response.quotes[0].quoteDetails.estimatedNetworkFee).toEqual({
+        amount: "420000000000000",
+        currencyId: "ethereum",
+      });
+    });
+
+    it("emits notEnoughBalanceForFees when the fee estimate flags it", async () => {
+      fetchNetworkFeeContextMock.mockResolvedValue(feeContext);
+      computeFeeEstimateMock.mockReturnValue({
+        estimatedNetworkFee: { amount: "1", currencyId: "ethereum" },
+        approvalNetworkFee: undefined,
+        notEnoughBalance: true,
+      });
+      fetchQuotesMock.mockResolvedValue({ rawQuotes: [makeRawQuote()], errors: [] });
+
+      const response = await getQuotes(makeArgs("ethereum", "bitcoin"), emptyContext);
+
+      expect(response.quotes[0].error).toBe("notEnoughBalanceForFees");
+    });
+
+    it("skips computeFeeEstimate and emits no fee fields when context is null", async () => {
+      fetchNetworkFeeContextMock.mockResolvedValue(null);
+      fetchQuotesMock.mockResolvedValue({ rawQuotes: [makeRawQuote()], errors: [] });
+
+      const response = await getQuotes(makeArgs("ethereum", "bitcoin"), emptyContext);
+
+      expect(computeFeeEstimateMock).not.toHaveBeenCalled();
+      expect(response.quotes[0].quoteDetails.estimatedNetworkFee).toBeUndefined();
+      expect(response.quotes[0].quoteDetails.approvalNetworkFee).toBeUndefined();
+      expect(response.quotes[0].error).toBeNull();
+    });
+
+    it("computes a fee estimate per quote (one call per row)", async () => {
+      fetchNetworkFeeContextMock.mockResolvedValue(feeContext);
+      computeFeeEstimateMock.mockReturnValue({
+        estimatedNetworkFee: undefined,
+        approvalNetworkFee: undefined,
+        notEnoughBalance: false,
+      });
+      fetchQuotesMock.mockResolvedValue({
+        rawQuotes: [
+          makeRawQuote({ provider: "lifi", key: "lifi-key" }),
+          makeRawQuote({ provider: "oneinch", key: "oneinch-key" }),
+          makeRawQuote({ provider: "thorswap", key: "thorswap-key" }),
+        ],
+        errors: [],
+      });
+
+      await getQuotes(makeArgs("ethereum", "bitcoin"), emptyContext);
+
+      expect(computeFeeEstimateMock).toHaveBeenCalledTimes(3);
+    });
   });
 });

@@ -1,12 +1,17 @@
 import type { RawQuote } from "../service/types";
 import type { Quote } from "../types";
+import type { FeeEstimate } from "./networkFeeEstimate";
 import { buildNetworkFees, buildPayoutNetworkFees } from "./networkFees";
 import { buildPermitData } from "./permitData";
 import { computeLiquiditySource, normalizeSlippage } from "./quoteHelpers";
 import { buildTags } from "./tags";
 import { buildTokenAllowance } from "./tokenAllowance";
 
-export function buildQuoteDetails(quote: RawQuote, gasLess: boolean): Quote["quoteDetails"] {
+export function buildQuoteDetails(
+  quote: RawQuote,
+  gasLess: boolean,
+  feeEstimate?: FeeEstimate,
+): Quote["quoteDetails"] {
   const details: Quote["quoteDetails"] = {
     type: quote.type,
     sendAmount: quote.amountFrom ?? 0,
@@ -33,6 +38,13 @@ export function buildQuoteDetails(quote: RawQuote, gasLess: boolean): Quote["quo
   const permitData = buildPermitData(quote);
   if (permitData !== undefined) {
     details.permitData = permitData;
+  }
+
+  if (feeEstimate?.estimatedNetworkFee) {
+    details.estimatedNetworkFee = feeEstimate.estimatedNetworkFee;
+  }
+  if (feeEstimate?.approvalNetworkFee) {
+    details.approvalNetworkFee = feeEstimate.approvalNetworkFee;
   }
 
   return details;
