@@ -19,10 +19,11 @@ const DEFAULT_CONNECTION_PARAMS: DeviceConnectionParams = {
   acceptedDeviceModelIds: [],
 };
 
+const intent = createIntent(initializationEchoIntentLWMDefinition);
+
 export default function DebugDeviceIntentExecutorInitialization() {
   const [selectedScenarioId, setSelectedScenarioId] = useState(INITIALIZATION_SCENARIOS[0].id);
   const [enabled, setEnabled] = useState(false);
-  const [runId, setRunId] = useState(0);
   const [executorState, setExecutorState] = useState<ExecutorState | null>(null);
   const [latestJobState, setLatestJobState] = useState<InitializationEchoIntentJobState | null>(
     null,
@@ -34,8 +35,6 @@ export default function DebugDeviceIntentExecutorInitialization() {
   const selectedScenario =
     INITIALIZATION_SCENARIOS.find(scenario => scenario.id === selectedScenarioId) ??
     INITIALIZATION_SCENARIOS[0];
-
-  const intent = useMemo(() => createIntent(initializationEchoIntentLWMDefinition), [runId]);
 
   const openPicker = useCallback(() => {
     if (enabled) return;
@@ -60,7 +59,6 @@ export default function DebugDeviceIntentExecutorInitialization() {
   );
 
   const start = useCallback(() => {
-    setRunId(prev => prev + 1);
     setExecutorState(null);
     setLatestJobState(null);
     setJobCompleted(false);
