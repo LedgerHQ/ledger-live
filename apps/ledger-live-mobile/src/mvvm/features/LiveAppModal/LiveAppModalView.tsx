@@ -1,6 +1,7 @@
 import React from "react";
-import { Pressable, StyleSheet, View } from "react-native";
-import { Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
+import { Box, IconButton, Text } from "@ledgerhq/lumen-ui-rnative";
+import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
+import { ArrowLeft } from "@ledgerhq/lumen-ui-rnative/symbols";
 import SafeAreaView from "~/components/SafeAreaView";
 import GenericErrorView from "~/components/GenericErrorView";
 import InfiniteLoader from "~/components/InfiniteLoader";
@@ -15,7 +16,7 @@ import type { LiveAppModalViewProps } from "./useLiveAppModalViewModel";
 
 const appManifestNotFoundError = new Error("App not found");
 
-const EmptyLoader = () => <View />;
+const EmptyLoader = () => <Box />;
 
 const LiveAppModalContent = ({
   params,
@@ -37,44 +38,71 @@ const LiveAppModalContent = ({
     onWebviewStateChange,
   } = useLiveAppModalContentViewModel(params, onClose, extraInputs);
 
+  const styles = useStyleSheet(
+    theme => ({
+      root: {
+        flex: 1,
+      },
+      header: {
+        paddingHorizontal: theme.spacings.s16,
+        paddingTop: theme.spacings.s12,
+        paddingBottom: theme.spacings.s16,
+      },
+      placeholder: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        padding: theme.spacings.s48,
+      },
+      title: {
+        marginTop: theme.spacings.s12,
+      },
+      description: {
+        marginTop: theme.spacings.s4,
+      },
+      webviewContainer: {
+        flex: 1,
+      },
+    }),
+    [],
+  );
+
   if (!manifest) {
     return (
       <SafeAreaView style={styles.root} edges={["top", "bottom"]} isFlex>
-        <Flex flex={1} justifyContent="center" alignItems="center" p={10}>
+        <Box style={styles.placeholder}>
           {isManifestLoading ? (
             <InfiniteLoader />
           ) : (
             <GenericErrorView error={appManifestNotFoundError} />
           )}
-        </Flex>
+        </Box>
       </SafeAreaView>
     );
   }
 
   return (
     <SafeAreaView style={styles.root} edges={["top", "bottom"]} isFlex>
-      <Flex px={6} pt={4} pb={6}>
-        <Pressable
-          onPress={onClose}
-          hitSlop={8}
-          accessibilityRole="button"
+      <Box style={styles.header}>
+        <IconButton
+          appearance="no-background"
+          size="sm"
+          icon={ArrowLeft}
           accessibilityLabel={t("common.close")}
-          style={styles.backButton}
-        >
-          <IconsLegacy.ArrowLeftMedium size={24} />
-        </Pressable>
+          onPress={onClose}
+        />
         {title ? (
-          <Text variant="h3" fontWeight="semiBold" mt={4}>
+          <Text typography="heading3SemiBold" style={styles.title}>
             {title}
           </Text>
         ) : null}
         {description ? (
-          <Text variant="body" color="neutral.c70" mt={2}>
+          <Text typography="body1" lx={{ color: "muted" }} style={styles.description}>
             {description}
           </Text>
         ) : null}
-      </Flex>
-      <View style={styles.webviewContainer}>
+      </Box>
+      <Box style={styles.webviewContainer}>
         <Web3AppWebview
           ref={webviewAPIRef}
           manifest={manifest}
@@ -83,7 +111,7 @@ const LiveAppModalContent = ({
           customHandlers={customHandlers}
           Loader={EmptyLoader}
         />
-      </View>
+      </Box>
     </SafeAreaView>
   );
 };
@@ -108,18 +136,5 @@ const LiveAppModalView = ({ params, onClose }: LiveAppModalViewProps) => {
 
   return <LiveAppModalContent params={params} onClose={onClose} extraInputs={null} />;
 };
-
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
-  webviewContainer: {
-    flex: 1,
-  },
-  backButton: {
-    width: 24,
-    height: 24,
-  },
-});
 
 export default LiveAppModalView;
