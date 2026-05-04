@@ -11,6 +11,7 @@ import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/inde
 import { NavigatorName, ScreenName } from "~/const";
 import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import { track } from "~/analytics";
+import { MY_WALLET_TRACKING_PAGE_NAME } from "../constants";
 import DeviceActionModal from "~/components/DeviceActionModal";
 import { useManagerDeviceAction } from "~/hooks/deviceActions";
 import { useAutoRedirectToPostOnboarding } from "~/hooks/useAutoRedirectToPostOnboarding";
@@ -43,7 +44,7 @@ function MyLedgerSectionContent() {
   const exploreDevicesUrl = useLocalizedUrl(urls.exploreLedgerDevices);
 
   const onExploreDevices = useCallback(() => {
-    track("button_clicked", { button: "ExploreDevices", page: ScreenName.MyWallet });
+    track("button_clicked", { button: "ExploreDevices", page: MY_WALLET_TRACKING_PAGE_NAME });
     Linking.openURL(exploreDevicesUrl);
   }, [exploreDevicesUrl]);
 
