@@ -238,6 +238,66 @@ const shadownetConfig = (): TezosCoinConfig =>
     },
   }) as TezosCoinConfig;
 
+/**
+ * Pinned Operation fixtures for the historical staking ops on the funded test address.
+ * Values come from TzKT (`/v1/operations/staking?sender=…`) plus the matching block
+ * hashes (`/v1/blocks/{level}`); shadownet history for this account is immutable so
+ * these constants will not drift unless the chain is reset.
+ */
+const EXPECTED_STAKE = {
+  id: "ooyKCZtF84XchfEr5fjiQV5BEEBjKSCjhKW7xyY4o763yj27mLs-96147000524800",
+  asset: { type: "native" },
+  tx: {
+    hash: "ooyKCZtF84XchfEr5fjiQV5BEEBjKSCjhKW7xyY4o763yj27mLs",
+    fees: 797n,
+    feesPayer: SHADOWNET_STAKER,
+    block: {
+      hash: "BLa8cr5yFHqozjAzEnkvKQmaDmAxeurBBGvZqdibmzCiYmR6r6L",
+      height: 3106279,
+      time: new Date("2026-04-28T20:51:21Z"),
+    },
+    date: new Date("2026-04-28T20:51:21Z"),
+    failed: false,
+  },
+  type: "STAKE",
+  value: 500_000_000n,
+  senders: [SHADOWNET_STAKER],
+  recipients: [SHADOWNET_BAKER],
+  details: {
+    counter: 14416505,
+    gasLimit: 3630,
+    storageLimit: 0,
+    ledgerOpType: "STAKE",
+  },
+};
+
+const EXPECTED_UNSTAKE = {
+  id: "ooXrdBW4aY3613YkmsX4uzdidqUTM2Gw7cFZ7aU6irwQ6TmLeFS-96148169687040",
+  asset: { type: "native" },
+  tx: {
+    hash: "ooXrdBW4aY3613YkmsX4uzdidqUTM2Gw7cFZ7aU6irwQ6TmLeFS",
+    fees: 858n,
+    feesPayer: SHADOWNET_STAKER,
+    block: {
+      hash: "BLMaHTGtBfh7ZM2wk5rpFHQhNtx5LC7YMdYrnokzBcosrpgqNAe",
+      height: 3106307,
+      time: new Date("2026-04-28T20:54:09Z"),
+    },
+    date: new Date("2026-04-28T20:54:09Z"),
+    failed: false,
+  },
+  type: "UNSTAKE",
+  value: 250_000_000n,
+  senders: [SHADOWNET_STAKER],
+  recipients: [SHADOWNET_BAKER],
+  details: {
+    counter: 14416506,
+    gasLimit: 4250,
+    storageLimit: 0,
+    ledgerOpType: "UNSTAKE",
+  },
+};
+
 describe("listOperations — Shadownet Paris staking ops", () => {
   let originalGetCoinConfig: () => TezosCoinConfig;
 
@@ -253,17 +313,14 @@ describe("listOperations — Shadownet Paris staking ops", () => {
   });
 
   it.each([
-    ["STAKE", 500_000_000n],
-    ["UNSTAKE", 250_000_000n],
-  ])("contains a %s op with the expected amount and baker as recipient", async (type, amount) => {
+    ["STAKE", EXPECTED_STAKE],
+    ["UNSTAKE", EXPECTED_UNSTAKE],
+  ])("contains a %s op matching every field of the pinned fixture", async (type, expected) => {
     const [operations] = await listOperations(SHADOWNET_STAKER, { ...baseOpts, limit: 100 });
     const match = operations.find(op => op.type === type);
     if (!match) throw new Error(`No ${type} op found at ${SHADOWNET_STAKER}`);
 
-    expect(match.value).toBe(amount);
-    expect(match.senders).toContain(SHADOWNET_STAKER);
-    expect(match.recipients).toContain(SHADOWNET_BAKER);
-    expect(match.details?.ledgerOpType).toBe(type);
+    expect(match).toEqual(expected);
   });
 
   it.todo("contains a FINALIZE_UNSTAKE op (enable once finalize_unstake lands on chain)");
