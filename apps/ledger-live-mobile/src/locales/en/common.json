@@ -6279,6 +6279,7 @@
       "info": "How Delegation works",
       "claimRewards": "Claim rewards",
       "claimAvailableRewards": "Claim {{amount}}",
+      "commission": "Commission",
       "header": "Delegation(s)",
       "Amount": "Amount",
       "noRewards": "No rewards available",

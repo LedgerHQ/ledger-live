@@ -3,6 +3,7 @@ import { View, StyleSheet } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { Alert, Button, Flex, Text } from "@ledgerhq/native-ui";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { getUnbondingPeriodDays } from "@ledgerhq/live-common/families/evm/staking/logic";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { ScreenName } from "~/const";
 import NavigationScrollView from "~/components/NavigationScrollView";
@@ -31,6 +32,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
   const { account, parentAccount } = useAccountScreen(route);
   const mainAccount = getMainAccount(account!, parentAccount);
   const { ticker, name } = getAccountCurrency(mainAccount);
+  const unbondingDays = getUnbondingPeriodDays(mainAccount.currency.id);
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
@@ -60,7 +62,10 @@ export default function DelegationStarted({ navigation, route }: Props) {
               />
             </Text>,
             <Text fontWeight="semiBold" variant="body" key="b">
-              <Trans i18nKey="evm.delegation.flow.steps.starter.steps.1" />
+              <Trans
+                i18nKey="evm.delegation.flow.steps.starter.steps.1"
+                values={{ numberOfDays: unbondingDays ?? 0 }}
+              />
             </Text>,
             <Text fontWeight="semiBold" variant="body" key="c">
               <Trans i18nKey="evm.delegation.flow.steps.starter.steps.2" />
