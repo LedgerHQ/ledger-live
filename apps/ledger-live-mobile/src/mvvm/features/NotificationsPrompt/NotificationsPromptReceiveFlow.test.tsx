@@ -26,6 +26,13 @@ const mockHasPermission = jest.fn<Promise<AuthorizationStatusType>, []>(() =>
   Promise.resolve(AuthorizationStatus.NOT_DETERMINED),
 );
 
+// ReceiveFundsOptionsDrawer calls useRoute() which requires a navigation context.
+// It is rendered by GlobalDrawers but is not relevant to these notification tests.
+jest.mock("LLM/features/Receive/drawers/ReceiveFundsOptionsDrawer", () => ({
+  __esModule: true,
+  default: () => null,
+}));
+
 jest.mock("@react-native-firebase/messaging", () => {
   const AuthorizationStatus = {
     NOT_DETERMINED: -1,
