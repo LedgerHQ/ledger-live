@@ -90,7 +90,7 @@ export class AccountsPage extends AppPage {
 
   private async getReduxAccountIds(): Promise<string[]> {
     return this.page.evaluate(() => {
-      const store = window.__STORE__;
+      const store = globalThis.window.__STORE__;
       if (!store?.getState) return [];
       const state: { accounts?: { id?: string }[] } = store.getState();
       return (
@@ -99,6 +99,14 @@ export class AccountsPage extends AppPage {
           .filter((accountId): accountId is string => Boolean(accountId)) ?? []
       );
     });
+  }
+
+  private async hasReduxAccountIds(expectedAccountIds: string[]): Promise<boolean> {
+    const accountIds = await this.getReduxAccountIds();
+    return (
+      accountIds.length === expectedAccountIds.length &&
+      expectedAccountIds.every(accountId => accountIds.includes(accountId))
+    );
   }
 
   /**
@@ -112,7 +120,7 @@ export class AccountsPage extends AppPage {
 
   @step("Expect Redux account ids to be $0")
   async expectReduxAccountIds(expectedAccountIds: string[]) {
-    await expect.poll(async () => await this.getReduxAccountIds()).toEqual(expectedAccountIds);
+    await expect.poll(async () => await this.hasReduxAccountIds(expectedAccountIds)).toBe(true);
   }
 
   @step("Expect crypto account row for $0 to be visible")

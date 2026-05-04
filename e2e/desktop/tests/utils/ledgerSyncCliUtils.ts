@@ -150,16 +150,11 @@ export class LedgerSyncCliHelper {
   }
 
   static getCloudSyncResponse(page: Page): Promise<Response> {
-    return new Promise(resolve => {
-      page.on("response", response => {
-        if (
-          response.url().startsWith(LedgerSyncCliHelper.cloudSyncApiBaseUrl + "/atomic/v1/live") &&
-          response.status() === 200
-        ) {
-          resolve(response);
-        }
-      });
-    });
+    return page.waitForResponse(
+      response =>
+        response.url().startsWith(LedgerSyncCliHelper.cloudSyncApiBaseUrl + "/atomic/v1/live") &&
+        response.status() === 200,
+    );
   }
 
   static async initializeLedgerKeyRingProtocol() {

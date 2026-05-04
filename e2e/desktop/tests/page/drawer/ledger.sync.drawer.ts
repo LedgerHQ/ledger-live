@@ -20,9 +20,9 @@ export class LedgerSyncDrawer extends Drawer {
     "Your Ledger Wallet app on CLI is no longer connected to Ledger Sync",
   );
   private displayInstances = this.page.getByTestId("walletSync-manage-instances-label");
-  private cliMember = this.page.getByTestId("walletSync-manage-instance-CLI");
-  private removeCLI = this.cliMember.getByText("Remove");
-  private synchronizationSuccessText = this.page.getByText(
+  private readonly cliMember = this.page.getByTestId("walletSync-manage-instance-CLI");
+  private readonly removeCLI = this.cliMember.getByText("Remove");
+  private readonly synchronizationSuccessText = this.page.getByText(
     /From now on, your portfolio|Sync successful!/,
   );
 
