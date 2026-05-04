@@ -9,7 +9,6 @@ const SEI_EVM_RPC_ORIGIN = "https://sei-evm.coin.ledger.com";
 const SEI_VALIDATORS_ORIGIN = "https://rest.sei-apis.com";
 const SEI_VALIDATORS_PATHNAME = "/cosmos/staking/v1beta1/validators";
 const SEI_OPERATIONS_ORIGIN = "https://proxyetherscan.api.live.ledger.com";
-const SEI_OPERATIONS_PATHNAME = "/v2/api/1329";
 const SEI_OPERATIONS_ACTIONS = new Set([
   "txlist",
   "txlistinternal",
@@ -76,7 +75,11 @@ function getMockedSeiDelegationResult(params?: unknown[]): string {
 
 function handleSeiEvmRpcCall(request: JsonRpcRequest): JsonRpcResponse {
   const { id, method, params } = request;
-  const respond = (result: unknown): JsonRpcResponse => ({ id: id ?? null, jsonrpc: "2.0", result });
+  const respond = (result: unknown): JsonRpcResponse => ({
+    id: id ?? null,
+    jsonrpc: "2.0",
+    result,
+  });
 
   switch (method) {
     case "eth_chainId":
@@ -167,7 +170,11 @@ async function mockSeiEvmRpc(page: Page) {
 
       window.fetch = async (input, init) => {
         const url =
-          typeof input === "string" ? input : input instanceof Request ? input.url : input.toString();
+          typeof input === "string"
+            ? input
+            : input instanceof Request
+              ? input.url
+              : input.toString();
 
         if (url === rpcOrigin || url.startsWith(`${rpcOrigin}/`)) {
           let body = init?.body;
@@ -197,6 +204,7 @@ async function mockSeiEvmRpc(page: Page) {
   );
 }
 
+const MOCKED_SEI_EMPTY_REDELEGATIONS = { redelegation_responses: [] };
 const MOCKED_SEI_VALIDATORS = {
   validators: [
     {
@@ -224,21 +232,38 @@ async function mockSeiValidatorsApi(page: Page) {
   await page.route(`${SEI_VALIDATORS_ORIGIN}/**`, async route => {
     const request = route.request();
     const url = new URL(request.url());
-    const isExpectedRequest =
+    const pathname = normalizePathname(url.pathname);
+
+    const isValidatorsListRequest =
       request.method() === "GET" &&
-      normalizePathname(url.pathname) === SEI_VALIDATORS_PATHNAME &&
+      pathname === normalizePathname(SEI_VALIDATORS_PATHNAME) &&
       url.searchParams.get("status") === "BOND_STATUS_BONDED" &&
       url.searchParams.get("pagination.limit") === "200";
 
-    if (!isExpectedRequest) {
-      throw new Error(`Unexpected SEI validators request: ${request.method()} ${url.toString()}`);
+    if (isValidatorsListRequest) {
+      await route.fulfill({
+        headers: { ...CORS_HEADERS, teststatus: "mocked" },
+        contentType: "application/json",
+        body: JSON.stringify(MOCKED_SEI_VALIDATORS),
+      });
+      return;
     }
 
-    await route.fulfill({
-      headers: { ...CORS_HEADERS, teststatus: "mocked" },
-      contentType: "application/json",
-      body: JSON.stringify(MOCKED_SEI_VALIDATORS),
-    });
+    const isRedelegationsRequest =
+      request.method() === "GET" &&
+      pathname.includes("/cosmos/staking/v1beta1/delegators/") &&
+      pathname.endsWith("/redelegations");
+
+    if (isRedelegationsRequest) {
+      await route.fulfill({
+        headers: { ...CORS_HEADERS, teststatus: "mocked" },
+        contentType: "application/json",
+        body: JSON.stringify(MOCKED_SEI_EMPTY_REDELEGATIONS),
+      });
+      return;
+    }
+
+    throw new Error(`Unexpected SEI REST staking request: ${request.method()} ${url.toString()}`);
   });
 }
 
@@ -248,7 +273,6 @@ async function mockSeiOperationsApi(page: Page) {
     const url = new URL(request.url());
     const isExpectedRequest =
       request.method() === "GET" &&
-      normalizePathname(url.pathname) === SEI_OPERATIONS_PATHNAME &&
       url.searchParams.get("module") === "account" &&
       SEI_OPERATIONS_ACTIONS.has(url.searchParams.get("action") ?? "");
 
