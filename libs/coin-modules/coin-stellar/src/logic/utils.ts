@@ -25,3 +25,8 @@ export function isAddressValid(address: string): boolean {
     return false;
   }
 }
+
+/** Compile-time exhaustiveness helper: call when a value should be `never`. */
+export function assertUnreachable(_: never): never {
+  throw new Error("unreachable assertion failed");
+}
