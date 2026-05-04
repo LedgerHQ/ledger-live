@@ -610,4 +610,66 @@ test.describe("Send flows", () => {
       }
     });
   });
+
+  test.describe("Send Concordium (Testnet)", () => {
+    const ccdTx = new Transaction(Account.CCD_TESTNET_1, Account.CCD_TESTNET_2, "50", undefined);
+
+    test.use({
+      teamOwner: Team.COIN_INTEGRATION,
+      userdata: "skip-onboarding-with-last-seen-device",
+      speculosApp: ccdTx.accountToDebit.currency.speculosApp,
+      cliCommands: [
+        async (userdataPath?: string) => {
+          // CCD-specific: liveData needs --currency concordium_testnet (not the
+          // speculos app name "Concordium"); recipient resolves via wallet-proxy.
+          await liveDataCommand(ccdTx.accountToDebit, {
+            currency: ccdTx.accountToDebit.currency.id,
+          })(userdataPath);
+          const recipientAddress = await getAccountAddress(ccdTx.accountToCredit);
+          ccdTx.accountToCredit.address = recipientAddress;
+          ccdTx.recipientAddress = recipientAddress;
+          return recipientAddress;
+        },
+      ],
+      featureFlags: {
+        currencyConcordiumTestnet: { enabled: true },
+        analyticsOptIn: { enabled: true, params: { policyVersion: 1, consentValidityDays: 365 } },
+      },
+    });
+
+    const family = getFamilyByCurrencyId(ccdTx.accountToDebit.currency.id);
+
+    test(
+      `Send from ${ccdTx.accountToDebit.accountName} to ${ccdTx.accountToCredit.accountName}`,
+      {
+        tag: [
+          "@NanoSP",
+          "@NanoX",
+          "@Stax",
+          "@Flex",
+          "@NanoGen5",
+          `@${ccdTx.accountToDebit.currency.id}`,
+          ...(family ? [`@family-${family}`] : []),
+        ],
+        annotation: { type: "TMS", description: "B2CQA-2949" },
+      },
+      async ({ app }) => {
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+        await app.mainNavigation.openTargetFromMainNavigation("accounts");
+        await app.accounts.navigateToAccountByName(ccdTx.accountToDebit.accountName);
+
+        await app.account.clickSend();
+        await app.send.craftTx(ccdTx);
+        await app.send.continueAmountModal();
+        await app.send.expectTxInfoValidity(ccdTx);
+        await app.send.clickContinueToDevice();
+
+        await app.speculos.signSendTransaction(ccdTx);
+        await app.send.expectTxSent();
+        await app.account.navigateToViewDetails();
+        await app.sendDrawer.addressValueIsVisible(ccdTx.accountToCredit.address);
+      },
+    );
+  });
 });
