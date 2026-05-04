@@ -102,7 +102,8 @@
     "NO_DEBUG_WS",
     "NO_DEBUG_NETWORK",
     "NO_DEBUG_ANALYTICS",
-    "NO_DEBUG_COUNTERVALUES"
+    "NO_DEBUG_COUNTERVALUES",
+    "UPDATE_CHECK_PUBKEY"
   ],
   "ui": "tui",
   "tasks": {

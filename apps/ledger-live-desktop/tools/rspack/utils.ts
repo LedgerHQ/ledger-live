@@ -86,6 +86,7 @@ export function buildMainEnv(
     "global.GENTLY": JSON.stringify(false),
     __PRERELEASE__: JSON.stringify(PRERELEASE),
     __CHANNEL__: JSON.stringify(CHANNEL),
+    __UPDATE_CHECK_PUBKEY__: JSON.stringify(process.env.UPDATE_CHECK_PUBKEY || null),
   };
 
   if (mode === "development" && argv?.port) {
