@@ -7,13 +7,16 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/index";
 import {
   fetchBlockDelegations,
+  fetchBlockStaking,
   fetchBlockTokenTransfers,
   fetchBlockTransactions,
   tzkt,
 } from "../network";
+import { STAKING_ACTION_TO_OP_TYPE } from "../constants";
 import type {
   APIBlock,
   APIDelegationType,
+  APIStakingType,
   APITokenTransfer,
   APITransactionType,
 } from "../network/types";
@@ -163,6 +166,54 @@ function buildBlockTransactionFromDelegation(op: APIDelegationType): BlockTransa
 }
 
 // ---------------------------------------------------------------------------
+// Staking helpers (Paris adaptive issuance)
+// ---------------------------------------------------------------------------
+
+function computeStakingFees(op: APIStakingType): bigint {
+  return BigInt(op.bakerFee ?? 0) + BigInt(op.storageFee ?? 0) + BigInt(op.allocationFee ?? 0);
+}
+
+function buildStakingOperations(op: APIStakingType): BlockOperation[] {
+  const senderAddr = op.sender?.address;
+  if (!senderAddr) return [];
+
+  const operationType = STAKING_ACTION_TO_OP_TYPE[op.action];
+  const bakerAddr = op.baker?.address;
+
+  return [
+    {
+      type: "other",
+      address: senderAddr,
+      asset: NATIVE_ASSET,
+      amount: 0n,
+      details: {
+        operationType,
+        stakedAmount: BigInt(op.amount),
+        ...(bakerAddr && { delegate: bakerAddr }),
+        counter: op.counter,
+        gasLimit: op.gasLimit,
+        storageLimit: op.storageLimit,
+        ledgerOpType: operationType,
+      },
+    },
+  ];
+}
+
+function buildBlockTransactionFromStaking(op: APIStakingType): BlockTransaction | null {
+  if (!op.hash) return null;
+
+  const feesPayer = op.sender?.address;
+  const succeeded = !op.status || op.status === "applied";
+  return {
+    hash: op.hash,
+    failed: !succeeded,
+    fees: computeStakingFees(op),
+    ...(feesPayer && { feesPayer }),
+    operations: succeeded ? buildStakingOperations(op) : [],
+  };
+}
+
+// ---------------------------------------------------------------------------
 // FA token helpers
 // ---------------------------------------------------------------------------
 
@@ -295,10 +346,30 @@ function attachTokenTransfer(
 // Transaction grouping — public orchestrator
 // ---------------------------------------------------------------------------
 
+function mergeAuxiliaryTx(
+  blockTxByHash: Map<string, BlockTransaction>,
+  auxTx: BlockTransaction,
+): void {
+  const existing = blockTxByHash.get(auxTx.hash);
+  if (!existing) {
+    blockTxByHash.set(auxTx.hash, auxTx);
+    return;
+  }
+
+  if (auxTx.failed) {
+    existing.failed = true;
+    existing.operations = [];
+  } else if (!existing.failed && auxTx.operations.length > 0) {
+    existing.operations.push(...auxTx.operations);
+  }
+  existing.fees += auxTx.fees;
+}
+
 function groupAndMapTransactions(
   transactions: APITransactionType[],
   tokenTransfers: APITokenTransfer[],
   delegations: APIDelegationType[],
+  stakings: APIStakingType[],
 ): BlockTransaction[] {
   const groups = groupTransactionsByHash(transactions);
 
@@ -314,21 +385,12 @@ function groupAndMapTransactions(
 
   for (const delegation of delegations) {
     const delegationTx = buildBlockTransactionFromDelegation(delegation);
-    if (!delegationTx) continue;
+    if (delegationTx) mergeAuxiliaryTx(blockTxByHash, delegationTx);
+  }
 
-    const existing = blockTxByHash.get(delegationTx.hash);
-    if (!existing) {
-      blockTxByHash.set(delegationTx.hash, delegationTx);
-      continue;
-    }
-
-    if (delegationTx.failed) {
-      existing.failed = true;
-      existing.operations = [];
-    } else if (!existing.failed && delegationTx.operations.length > 0) {
-      existing.operations.push(...delegationTx.operations);
-    }
-    existing.fees += delegationTx.fees;
+  for (const staking of stakings) {
+    const stakingTx = buildBlockTransactionFromStaking(staking);
+    if (stakingTx) mergeAuxiliaryTx(blockTxByHash, stakingTx);
   }
 
   const standaloneByKey = new Map<string, BlockTransaction>();
@@ -347,7 +409,7 @@ function groupAndMapTransactions(
  * Returns the full block at the given Tezos level: metadata + all transactions
  * with their XTZ and FA token balance changes.
  *
- * - Fetches block metadata, native transactions, delegations, and FA token transfers in parallel.
+ * - Fetches block metadata, native transactions, delegations, FA token transfers, and staking operations in parallel.
  * - Also fetches the predecessor block in parallel to populate `BlockInfo.parent`.
  * - Groups operations by hash, aggregates fees, and determines the fee payer.
  * - Appends FA token transfer operations to the owning BlockTransaction when a
@@ -358,16 +420,18 @@ export async function getBlock(height: number): Promise<Block> {
     throw new Error(`getBlock: height must be a positive integer, got ${height}`);
   }
 
-  const [block, parentBlock, transactions, tokenTransfers, delegations] = await Promise.all([
-    tzkt.getBlockByLevel(height),
-    tzkt.getBlockByLevel(height - 1),
-    fetchBlockTransactions(height),
-    fetchBlockTokenTransfers(height),
-    fetchBlockDelegations(height),
-  ]);
+  const [block, parentBlock, transactions, tokenTransfers, delegations, stakings] =
+    await Promise.all([
+      tzkt.getBlockByLevel(height),
+      tzkt.getBlockByLevel(height - 1),
+      fetchBlockTransactions(height),
+      fetchBlockTokenTransfers(height),
+      fetchBlockDelegations(height),
+      fetchBlockStaking(height),
+    ]);
 
   return {
     info: mapBlockInfo(block, parentBlock),
-    transactions: groupAndMapTransactions(transactions, tokenTransfers, delegations),
+    transactions: groupAndMapTransactions(transactions, tokenTransfers, delegations, stakings),
   };
 }
