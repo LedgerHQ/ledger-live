@@ -109,10 +109,12 @@ const completeExchange = (
         if (unsubscribed) return;
 
         currentStep = "PROCESS_TRANSACTION";
-        const { payload, format }: { payload: Buffer; format: PayloadSignatureComputedFormat } =
-          isExchangeTypeNg(exchange.transactionType)
-            ? { payload: Buffer.from("." + binaryPayload), format: "jws" }
-            : { payload: Buffer.from(binaryPayload, "hex"), format: "raw" };
+
+        const { payload, format } = buildProcessTransactionPayload(
+          exchange.transactionType,
+          binaryPayload,
+        );
+
         await exchange.processTransaction(payload, estimatedFees, format);
         if (unsubscribed) return;
 
@@ -220,9 +222,50 @@ function convertSignature(signature: string, exchangeType: ExchangeTypes): Buffe
     const base64Signature = signature.replace(/-/g, "+").replace(/_/g, "/");
     return Buffer.from(base64Signature, "base64");
   }
-  if (exchangeType === ExchangeTypes.Sell) return Buffer.from(signature, "hex");
-  const sig = secp256k1.Signature.fromCompact(Buffer.from(signature, "hex"));
+
+  const sigHex = Buffer.from(signature, "hex");
+
+  if (exchangeType === ExchangeTypes.Sell) return sigHex;
+
+  // Signature may arrive as hex (128 chars = 64 bytes) or as base64url from providers
+  const sigBytes =
+    sigHex.length === 64
+      ? sigHex
+      : Buffer.from(signature.replace(/-/g, "+").replace(/_/g, "/"), "base64");
+
+  const sig = secp256k1.Signature.fromCompact(sigBytes);
   return Buffer.from(sig.toDERRawBytes());
+}
+
+/**
+ * FUND: firmware expects the raw base64url string bytes and will
+ * base64-decode them internally before running pb_decode (see process_transaction.c).
+ * @param transactionType
+ * @param binaryPayload
+ * @returns
+ */
+function buildProcessTransactionPayload(
+  transactionType: ExchangeTypes,
+  binaryPayload: string,
+): { payload: Buffer; format: PayloadSignatureComputedFormat } {
+  if (isExchangeTypeNg(transactionType)) {
+    return {
+      payload: Buffer.from("." + binaryPayload),
+      format: "jws",
+    };
+  }
+
+  if (transactionType === ExchangeTypes.Fund) {
+    return {
+      payload: Buffer.from(binaryPayload),
+      format: "raw",
+    };
+  }
+
+  return {
+    payload: Buffer.from(binaryPayload, "hex"),
+    format: "raw",
+  };
 }
 
 export default completeExchange;
