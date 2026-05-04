@@ -1,5 +1,7 @@
 import BigNumber from "bignumber.js";
+import { MAX_FEES_THRESHOLD_MULTIPLIER, MIN_GAS_FOR_NATIVE_TRANSFER } from "../../constants";
 import {
+  accountWithTokenAccountFixture,
   accountFixture,
   transactionFixture,
   transactionWithUsdcFeeFixture,
@@ -11,6 +13,8 @@ const VALID_RECIPIENT = "0x79D5A290D7ba4b99322d91b577589e8d0BF87072";
 
 const celoGasPriceMock = jest.fn(async () => BigInt(2));
 const estimateGasMock = jest.fn(async () => BigInt(3));
+const estimateMaxPriorityFeePerGasMock = jest.fn(async () => BigInt(1));
+const getBlockMock = jest.fn(async () => ({ baseFeePerGas: BigInt(10) }));
 const readContractMock = jest.fn(async ({ functionName }: { functionName: string }) => {
   if (functionName === "getAccountNonvotingLockedGold") return BigInt(0);
   if (functionName === "getTotalVotesForEligibleValidatorGroups") return [[], []];
@@ -21,8 +25,8 @@ jest.mock("../../network/client", () => ({
   celoGasPrice: (...args: unknown[]) => celoGasPriceMock(...args),
   getCeloClient: jest.fn(() => ({
     estimateGas: (...args: unknown[]) => estimateGasMock(...args),
-    estimateMaxPriorityFeePerGas: jest.fn(async () => BigInt(1)),
-    getBlock: jest.fn(async () => ({ baseFeePerGas: BigInt(10) })),
+    estimateMaxPriorityFeePerGas: (...args: unknown[]) => estimateMaxPriorityFeePerGasMock(...args),
+    getBlock: (...args: unknown[]) => getBlockMock(...args),
     getChainId: jest.fn(async () => 42220),
     getTransactionCount: jest.fn(async () => 1),
     readContract: readContractMock,
@@ -45,8 +49,13 @@ jest.mock("../../network/sdk", () => ({
 describe("getFeesForTransaction", () => {
   beforeEach(() => {
     celoGasPriceMock.mockClear();
+    celoGasPriceMock.mockImplementation(async () => BigInt(2));
     estimateGasMock.mockReset();
     estimateGasMock.mockImplementation(async () => BigInt(3));
+    estimateMaxPriorityFeePerGasMock.mockReset();
+    estimateMaxPriorityFeePerGasMock.mockImplementation(async () => BigInt(1));
+    getBlockMock.mockReset();
+    getBlockMock.mockImplementation(async () => ({ baseFeePerGas: BigInt(10) }));
   });
 
   it("should return the correct fees for a send transaction", async () => {
@@ -140,6 +149,21 @@ describe("getFeesForTransaction", () => {
     expect(fees).toEqual(BigNumber(2));
   });
 
+  it("should fallback to min native transfer gas when vote estimateGas fails", async () => {
+    estimateGasMock.mockImplementation(async () => {
+      throw new Error("execution reverted");
+    });
+
+    const fees = await getFeesForTransaction({
+      account: { ...accountFixture, balance: BigNumber(123), spendableBalance: BigNumber(123) },
+      transaction: { ...transactionFixture, mode: "vote", recipient: VALID_RECIPIENT },
+    });
+
+    const expectedGas = MIN_GAS_FOR_NATIVE_TRANSFER * MAX_FEES_THRESHOLD_MULTIPLIER;
+    const expectedFee = new BigNumber(2).times(expectedGas);
+    expect(fees).toEqual(expectedFee);
+  });
+
   it("should return the correct fees for a lock transaction", async () => {
     // estimateGas = 2, fees = 2*2 = 4
     estimateGasMock.mockImplementation(async () => BigInt(2));
@@ -222,6 +246,43 @@ describe("getFeesForTransaction", () => {
 
     expect(fees).toBeInstanceOf(BigNumber);
     expect(fees.gt(0)).toBe(true);
+  });
+
+  it("should fallback to maxPriorityFeePerGas when latest block baseFeePerGas is undefined", async () => {
+    getBlockMock.mockImplementation(async () => ({ baseFeePerGas: undefined }));
+
+    await getFeesForTransaction({
+      account: {
+        ...accountWithTokenAccountFixture,
+        balance: BigNumber(123),
+        spendableBalance: BigNumber(123),
+      },
+      transaction: {
+        ...tokenTransactionWithUsdcFeeFixture,
+        recipient: VALID_RECIPIENT,
+      },
+    });
+
+    expect(estimateGasMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        maxPriorityFeePerGas: BigInt(1),
+        maxFeePerGas: BigInt(2),
+      }),
+    );
+  });
+
+  it("should apply the fee market gas formula when computing final fees", async () => {
+    celoGasPriceMock.mockImplementation(async () => BigInt(11));
+    estimateMaxPriorityFeePerGasMock.mockImplementation(async () => BigInt(1));
+    estimateGasMock.mockImplementation(async () => BigInt(2));
+
+    const fees = await getFeesForTransaction({
+      account: { ...accountFixture, balance: BigNumber(123), spendableBalance: BigNumber(123) },
+      transaction: { ...transactionFixture, mode: "lock", recipient: VALID_RECIPIENT },
+    });
+
+    // maxFeePerGas = ((11 - 1) * 120 / 100) + 1 = 13
+    expect(fees).toEqual(BigNumber(26));
   });
 
   it("should pass feeCurrency parameter to gasPrice when provided", async () => {

@@ -1,4 +1,6 @@
 import BigNumber from "bignumber.js";
+import { electionABI } from "@celo/abis";
+import { encodeFunctionData } from "viem";
 import buildTransaction from "../../bridge/buildTransaction";
 import {
   accountFixture,
@@ -18,6 +20,7 @@ const estimateGasMock = jest.fn(async () => BigInt(3));
 const getChainIdMock = jest.fn(async () => 42220);
 const getTransactionCountMock = jest.fn(async () => 1);
 const readContractMock = jest.fn(async ({ functionName }: { functionName: string }) => {
+  if (functionName === "canReceiveVotes") return true;
   if (functionName === "getTotalVotesForEligibleValidatorGroups") return [[], []];
   return "0x0000000000000000000000000000000000000000";
 });
@@ -51,7 +54,12 @@ describe("buildTransaction", () => {
     estimateGasMock.mockClear();
     getChainIdMock.mockClear();
     getTransactionCountMock.mockClear();
-    readContractMock.mockClear();
+    readContractMock.mockReset();
+    readContractMock.mockImplementation(async ({ functionName }: { functionName: string }) => {
+      if (functionName === "canReceiveVotes") return true;
+      if (functionName === "getTotalVotesForEligibleValidatorGroups") return [[], []];
+      return "0x0000000000000000000000000000000000000000";
+    });
   });
 
   it("should build a lock transaction", async () => {
@@ -184,6 +192,120 @@ describe("buildTransaction", () => {
     });
   });
 
+  it("should use lesser and greater neighbors when building a vote transaction", async () => {
+    const groupA = "0x00000000000000000000000000000000000000a1" as `0x${string}`;
+    const groupB = "0x00000000000000000000000000000000000000b2" as `0x${string}`;
+    readContractMock.mockImplementation(async ({ functionName }: { functionName: string }) => {
+      if (functionName === "canReceiveVotes") return true;
+      if (functionName === "getTotalVotesForEligibleValidatorGroups") {
+        return [[groupA, groupB], [BigInt(10), BigInt(30)]];
+      }
+      return "0x0000000000000000000000000000000000000000";
+    });
+
+    const transaction = await buildTransaction(
+      {
+        ...accountFixture,
+        spendableBalance: BigNumber(123),
+        celoResources: {
+          registrationStatus: false,
+          lockedBalance: BigNumber(0),
+          nonvotingLockedBalance: BigNumber(40),
+          pendingWithdrawals: null,
+          votes: null,
+          electionAddress: null,
+          lockedGoldAddress: null,
+          maxNumGroupsVotedFor: BigNumber(0),
+        },
+      },
+      { ...transactionFixture, mode: "vote", recipient: VALID_RECIPIENT },
+    );
+
+    const expectedData = encodeFunctionData({
+      abi: electionABI,
+      functionName: "vote",
+      args: [VALID_RECIPIENT as `0x${string}`, BigInt(10), groupA, groupB],
+    });
+
+    expect(transaction).toMatchObject({
+      from: accountFixture.freshAddress,
+      to: ELECTION_ADDRESS,
+      data: expectedData,
+    });
+  });
+
+  it("should throw when validator group cannot receive more votes", async () => {
+    readContractMock.mockImplementationOnce(async ({ functionName }: { functionName: string }) => {
+      if (functionName === "canReceiveVotes") return false;
+      return [[], []];
+    });
+
+    await expect(
+      buildTransaction(
+        {
+          ...accountFixture,
+          spendableBalance: BigNumber(123),
+          celoResources: {
+            registrationStatus: false,
+            lockedBalance: BigNumber(0),
+            nonvotingLockedBalance: BigNumber(40),
+            pendingWithdrawals: null,
+            votes: null,
+            electionAddress: null,
+            lockedGoldAddress: null,
+            maxNumGroupsVotedFor: BigNumber(0),
+          },
+        },
+        { ...transactionFixture, mode: "vote", recipient: VALID_RECIPIENT },
+      ),
+    ).rejects.toThrow("vote cap exceeded");
+  });
+
+  it("should build vote transaction when eligible groups call fails", async () => {
+    readContractMock.mockImplementation(async ({ functionName }: { functionName: string }) => {
+      if (functionName === "canReceiveVotes") return true;
+      if (functionName === "getTotalVotesForEligibleValidatorGroups") {
+        throw new Error("revert");
+      }
+      return "0x0000000000000000000000000000000000000000";
+    });
+
+    const transaction = await buildTransaction(
+      {
+        ...accountFixture,
+        spendableBalance: BigNumber(123),
+        celoResources: {
+          registrationStatus: false,
+          lockedBalance: BigNumber(0),
+          nonvotingLockedBalance: BigNumber(40),
+          pendingWithdrawals: null,
+          votes: null,
+          electionAddress: null,
+          lockedGoldAddress: null,
+          maxNumGroupsVotedFor: BigNumber(0),
+        },
+      },
+      { ...transactionFixture, mode: "vote", recipient: VALID_RECIPIENT },
+    );
+
+    const expectedData = encodeFunctionData({
+      abi: electionABI,
+      functionName: "vote",
+      args: [
+        VALID_RECIPIENT as `0x${string}`,
+        BigInt(transactionFixture.amount.toFixed()),
+        "0x0000000000000000000000000000000000000000",
+        "0x0000000000000000000000000000000000000000",
+      ],
+    });
+
+    expect(transaction).toMatchObject({
+      from: accountFixture.freshAddress,
+      to: ELECTION_ADDRESS,
+      data: expectedData,
+    });
+  });
+
   it("should build a revoke transaction", async () => {
     const transaction = await buildTransaction(
       {
@@ -231,6 +353,44 @@ describe("buildTransaction", () => {
     expect(transaction).toMatchObject({
       from: accountFixture.freshAddress,
       to: ELECTION_ADDRESS,
+    });
+  });
+
+  it("should build revoke active transaction when index is not zero", async () => {
+    const transaction = await buildTransaction(
+      {
+        ...accountFixture,
+        spendableBalance: BigNumber(123),
+        celoResources: {
+          registrationStatus: false,
+          lockedBalance: BigNumber(0),
+          nonvotingLockedBalance: BigNumber(40),
+          pendingWithdrawals: null,
+          votes: null,
+          electionAddress: null,
+          lockedGoldAddress: null,
+          maxNumGroupsVotedFor: BigNumber(0),
+        },
+      },
+      { ...transactionFixture, mode: "revoke", index: 1, recipient: VALID_RECIPIENT },
+    );
+
+    const expectedData = encodeFunctionData({
+      abi: electionABI,
+      functionName: "revokeActive",
+      args: [
+        VALID_RECIPIENT as `0x${string}`,
+        BigInt(transactionFixture.amount.toFixed()),
+        "0x0000000000000000000000000000000000000000",
+        "0x0000000000000000000000000000000000000000",
+        BigInt(0),
+      ],
+    });
+
+    expect(transaction).toMatchObject({
+      from: accountFixture.freshAddress,
+      to: ELECTION_ADDRESS,
+      data: expectedData,
     });
   });
 

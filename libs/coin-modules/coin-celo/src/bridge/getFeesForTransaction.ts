@@ -11,7 +11,6 @@ import {
 import { getPendingStakingOperationAmounts, getVote } from "../logic";
 import { celoGasPrice, getCeloClient } from "../network/client";
 import { getRegistryAddressFor } from "../network/registry";
-import { voteSignerAccount } from "../network/sdk";
 import type { CeloAccount, Transaction } from "../types";
 import buildTransaction from "./buildTransaction";
 import { valueToHex } from "./utils";
@@ -138,11 +137,6 @@ const getFeesForTransaction = async ({
     }
   } else if (transaction.mode === "revoke") {
     const electionAddress = await getRegistryAddressFor("Election");
-    const accountsAddress = await getRegistryAddressFor("Accounts");
-    const signerAddress = await voteSignerAccount(account.freshAddress);
-    void accountsAddress;
-    void signerAddress;
-
     const isPending = transaction.index === 0;
     const ZERO_ADDR = "0x0000000000000000000000000000000000000000" as const;
     const revokeArgs = [

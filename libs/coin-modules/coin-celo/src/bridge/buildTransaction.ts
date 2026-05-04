@@ -10,7 +10,6 @@ import {
 import { getPendingStakingOperationAmounts, getVote } from "../logic";
 import { getCeloClient } from "../network/client";
 import { getRegistryAddressFor } from "../network/registry";
-import { voteSignerAccount } from "../network/sdk";
 import type { CeloAccount, CeloTransactionRequest, Transaction } from "../types";
 import { valueToHex, isSameTokenAsFee, normalizeAndSubtract, convertNumberDecimals } from "./utils";
 
@@ -42,11 +41,7 @@ const getVoteNeighbors = async (
 
   const groupIdx = groups.findIndex(g => g.toLowerCase() === group.toLowerCase());
   const currentVotes = groupIdx >= 0 ? votes[groupIdx] : BigInt(0);
-  const newVotes = add
-    ? currentVotes + delta
-    : currentVotes > delta
-      ? currentVotes - delta
-      : BigInt(0);
+  const newVotes = computeUpdatedVotes(currentVotes, delta, add);
 
   // Always include the target group in the sorted list. When groupIdx === -1 the
   // group is not yet in the eligible set (first-time voter), so we insert it
@@ -62,7 +57,7 @@ const getVoteNeighbors = async (
   const sorted: { address: `0x${string}`; votes: bigint }[] = [
     ...otherGroups,
     { address: group, votes: newVotes },
-  ].sort((a, b) => (a.votes < b.votes ? -1 : a.votes > b.votes ? 1 : 0));
+  ].sort(compareVotesAscending);
 
   const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000" as `0x${string}`;
   const idx = sorted.findIndex(g => g.address.toLowerCase() === group.toLowerCase());
@@ -71,6 +66,18 @@ const getVoteNeighbors = async (
   const greater = idx < sorted.length - 1 ? sorted[idx + 1].address : ZERO_ADDRESS;
 
   return { lesser, greater };
+};
+
+const computeUpdatedVotes = (currentVotes: bigint, delta: bigint, add: boolean): bigint => {
+  if (add) return currentVotes + delta;
+  if (currentVotes > delta) return currentVotes - delta;
+  return BigInt(0);
+};
+
+const compareVotesAscending = (a: { votes: bigint }, b: { votes: bigint }): number => {
+  if (a.votes < b.votes) return -1;
+  if (a.votes > b.votes) return 1;
+  return 0;
 };
 
 const calcTokenTransferValue = (
@@ -100,6 +107,166 @@ const calcTokenTransferValue = (
   return tokenAccount.spendableBalance;
 };
 
+type CeloTokenAccount = NonNullable<ReturnType<typeof findSubAccountById>> & { type: "TokenAccount" };
+
+const buildLockTx = async (
+  account: CeloAccount,
+  value: BigNumber,
+): Promise<CeloTransactionRequest> => {
+  const lockedGoldAddress = await getRegistryAddressFor("LockedGold");
+  return {
+    from: account.freshAddress as `0x${string}`,
+    value: valueToHex(value),
+    to: lockedGoldAddress,
+    data: encodeFunctionData({ abi: lockedGoldABI, functionName: "lock" }),
+  };
+};
+
+const buildUnlockTx = async (
+  account: CeloAccount,
+  value: BigNumber,
+): Promise<CeloTransactionRequest> => {
+  const lockedGoldAddress = await getRegistryAddressFor("LockedGold");
+  return {
+    from: account.freshAddress as `0x${string}`,
+    to: lockedGoldAddress,
+    data: encodeFunctionData({
+      abi: lockedGoldABI,
+      functionName: "unlock",
+      args: [BigInt(value.toFixed())],
+    }),
+  };
+};
+
+const buildWithdrawTx = async (
+  account: CeloAccount,
+  transaction: Transaction,
+): Promise<CeloTransactionRequest> => {
+  const lockedGoldAddress = await getRegistryAddressFor("LockedGold");
+  const withdrawIndex = transaction.index || 0;
+  return {
+    from: account.freshAddress as `0x${string}`,
+    to: lockedGoldAddress,
+    data: encodeFunctionData({
+      abi: lockedGoldABI,
+      functionName: "withdraw",
+      args: [BigInt(withdrawIndex)],
+    }),
+  };
+};
+
+const buildVoteTx = async (
+  client: ReturnType<typeof getCeloClient>,
+  account: CeloAccount,
+  transaction: Transaction,
+  value: BigNumber,
+): Promise<CeloTransactionRequest> => {
+  const electionAddress = await getRegistryAddressFor("Election");
+  const voteValue = BigInt(value.toFixed());
+  const recipient = transaction.recipient as `0x${string}`;
+
+  const canVote = await client.readContract({
+    address: electionAddress,
+    abi: electionABI,
+    functionName: "canReceiveVotes",
+    args: [recipient, voteValue],
+  });
+
+  if (!canVote) {
+    throw new Error(`Validator group ${transaction.recipient} cannot receive more votes: vote cap exceeded`);
+  }
+
+  const { lesser, greater } = await getVoteNeighbors(electionAddress, recipient, voteValue, true);
+  return {
+    from: account.freshAddress as `0x${string}`,
+    to: electionAddress,
+    data: encodeFunctionData({
+      abi: electionABI,
+      functionName: "vote",
+      args: [recipient, voteValue, lesser, greater],
+    }),
+  };
+};
+
+const buildRevokeTx = async (
+  account: CeloAccount,
+  transaction: Transaction,
+  value: BigNumber,
+): Promise<CeloTransactionRequest> => {
+  const electionAddress = await getRegistryAddressFor("Election");
+  const recipient = transaction.recipient as `0x${string}`;
+  const revokeValue = BigInt(value.toFixed());
+
+  const { lesser, greater } = await getVoteNeighbors(electionAddress, recipient, revokeValue, false);
+  const revokeArgs = [recipient, revokeValue, lesser, greater, BigInt(0)] as const;
+  const functionName = transaction.index === 0 ? "revokePending" : "revokeActive";
+
+  return {
+    from: account.freshAddress as `0x${string}`,
+    to: electionAddress,
+    data: encodeFunctionData({ abi: electionABI, functionName, args: revokeArgs }),
+  };
+};
+
+const buildActivateTx = async (
+  account: CeloAccount,
+  transaction: Transaction,
+): Promise<CeloTransactionRequest> => {
+  const electionAddress = await getRegistryAddressFor("Election");
+  return {
+    from: account.freshAddress as `0x${string}`,
+    to: electionAddress,
+    data: encodeFunctionData({
+      abi: electionABI,
+      functionName: "activate",
+      args: [transaction.recipient as `0x${string}`],
+    }),
+  };
+};
+
+const buildRegisterTx = async (account: CeloAccount): Promise<CeloTransactionRequest> => {
+  const accountsAddress = await getRegistryAddressFor("Accounts");
+  return {
+    from: account.freshAddress as `0x${string}`,
+    to: accountsAddress,
+    data: encodeFunctionData({ abi: accountsABI, functionName: "createAccount" }),
+  };
+};
+
+const buildTokenTransferTx = async (
+  account: CeloAccount,
+  transaction: Transaction,
+  tokenAccount: CeloTokenAccount,
+  value: BigNumber,
+): Promise<CeloTransactionRequest> => {
+  const tokenAddress: `0x${string}` = CELO_STABLE_TOKENS.includes(tokenAccount.token.id)
+    ? await getRegistryAddressFor(getStableTokenRegistryName(tokenAccount.token.id))
+    : (tokenAccount.token.contractAddress as `0x${string}`);
+
+  return {
+    from: account.freshAddress as `0x${string}`,
+    to: tokenAddress,
+    data: encodeFunctionData({
+      abi: ierc20ABI,
+      functionName: "transfer",
+      args: [transaction.recipient as `0x${string}`, BigInt(value.toFixed())],
+    }),
+    value: "0x0",
+    ...(transaction.feeCurrency ? { feeCurrency: transaction.feeCurrency } : {}),
+  };
+};
+
+const buildNativeSendTx = (
+  account: CeloAccount,
+  transaction: Transaction,
+  value: BigNumber,
+): CeloTransactionRequest => ({
+  from: account.freshAddress as `0x${string}`,
+  to: transaction.recipient as `0x${string}`,
+  value: valueToHex(value),
+  ...(transaction.feeCurrency ? { feeCurrency: transaction.feeCurrency } : {}),
+});
+
 const buildTransaction = async (
   account: CeloAccount,
   transaction: Transaction,
@@ -111,170 +278,46 @@ const buildTransaction = async (
   let value = transactionValue(account, transaction);
   let celoTransaction: CeloTransactionRequest;
 
-  if (transaction.mode === "lock") {
-    const lockedGoldAddress = await getRegistryAddressFor("LockedGold");
-    const valueHex = valueToHex(value);
-    const data = encodeFunctionData({ abi: lockedGoldABI, functionName: "lock" });
-    celoTransaction = {
-      from: account.freshAddress as `0x${string}`,
-      value: valueHex,
-      to: lockedGoldAddress,
-      data,
-    };
-  } else if (transaction.mode === "unlock") {
-    const lockedGoldAddress = await getRegistryAddressFor("LockedGold");
-    const data = encodeFunctionData({
-      abi: lockedGoldABI,
-      functionName: "unlock",
-      args: [BigInt(value.toFixed())],
-    });
-    celoTransaction = {
-      from: account.freshAddress as `0x${string}`,
-      to: lockedGoldAddress,
-      data,
-    };
-  } else if (transaction.mode === "withdraw") {
-    const lockedGoldAddress = await getRegistryAddressFor("LockedGold");
-    const withdrawIndex = transaction.index || 0;
-    const data = encodeFunctionData({
-      abi: lockedGoldABI,
-      functionName: "withdraw",
-      args: [BigInt(withdrawIndex)],
-    });
-    celoTransaction = {
-      from: account.freshAddress as `0x${string}`,
-      to: lockedGoldAddress,
-      data,
-    };
-  } else if (transaction.mode === "vote") {
-    const electionAddress = await getRegistryAddressFor("Election");
-
-    const canVote = await client.readContract({
-      address: electionAddress,
-      abi: electionABI,
-      functionName: "canReceiveVotes",
-      args: [transaction.recipient as `0x${string}`, BigInt(value.toFixed())],
-    });
-    if (!canVote) {
-      throw new Error(
-        `Validator group ${transaction.recipient} cannot receive more votes: vote cap exceeded`,
-      );
-    }
-
-    const { lesser, greater } = await getVoteNeighbors(
-      electionAddress,
-      transaction.recipient as `0x${string}`,
-      BigInt(value.toFixed()),
-      true,
-    );
-    const data = encodeFunctionData({
-      abi: electionABI,
-      functionName: "vote",
-      args: [transaction.recipient as `0x${string}`, BigInt(value.toFixed()), lesser, greater],
-    });
-    celoTransaction = {
-      from: account.freshAddress as `0x${string}`,
-      to: electionAddress,
-      data,
-    };
-  } else if (transaction.mode === "revoke") {
-    const electionAddress = await getRegistryAddressFor("Election");
-    const accountsAddress = await getRegistryAddressFor("Accounts");
-    const signerAddress = await voteSignerAccount(account.freshAddress);
-
-    const { lesser, greater } = await getVoteNeighbors(
-      electionAddress,
-      transaction.recipient as `0x${string}`,
-      BigInt(value.toFixed()),
-      false,
-    );
-
-    const isPending = transaction.index === 0;
-    const groupIndex = 0; // First matching group index
-
-    void accountsAddress;
-    void signerAddress;
-
-    const revokeArgs = [
-      transaction.recipient as `0x${string}`,
-      BigInt(value.toFixed()),
-      lesser,
-      greater,
-      BigInt(groupIndex),
-    ] as const;
-
-    const data: `0x${string}` = isPending
-      ? encodeFunctionData({ abi: electionABI, functionName: "revokePending", args: revokeArgs })
-      : encodeFunctionData({ abi: electionABI, functionName: "revokeActive", args: revokeArgs });
-
-    celoTransaction = {
-      from: account.freshAddress as `0x${string}`,
-      to: electionAddress,
-      data,
-    };
-  } else if (transaction.mode === "activate") {
-    const electionAddress = await getRegistryAddressFor("Election");
-    const data = encodeFunctionData({
-      abi: electionABI,
-      functionName: "activate",
-      args: [transaction.recipient as `0x${string}`],
-    });
-    celoTransaction = {
-      from: account.freshAddress as `0x${string}`,
-      to: electionAddress,
-      data,
-    };
-  } else if (transaction.mode === "register") {
-    const accountsAddress = await getRegistryAddressFor("Accounts");
-    const data = encodeFunctionData({ abi: accountsABI, functionName: "createAccount" });
-    celoTransaction = {
-      from: account.freshAddress as `0x${string}`,
-      to: accountsAddress,
-      data,
-    };
-  } else if (isTokenTransaction) {
-    value = calcTokenTransferValue(tokenAccount, transaction);
-
-    const tokenAddress: `0x${string}` = CELO_STABLE_TOKENS.includes(tokenAccount.token.id)
-      ? await getRegistryAddressFor(getStableTokenRegistryName(tokenAccount.token.id))
-      : (tokenAccount.token.contractAddress as `0x${string}`);
-
-    const data = encodeFunctionData({
-      abi: ierc20ABI,
-      functionName: "transfer",
-      args: [transaction.recipient as `0x${string}`, BigInt(value.toFixed())],
-    });
-
-    celoTransaction = {
-      from: account.freshAddress as `0x${string}`,
-      to: tokenAddress,
-      data,
-      value: "0x0",
-      ...(transaction.feeCurrency
-        ? {
-            feeCurrency: transaction.feeCurrency,
-          }
-        : {}),
-    };
-  } else {
-    // Send native CELO
-    celoTransaction = {
-      from: account.freshAddress as `0x${string}`,
-      to: transaction.recipient as `0x${string}`,
-      value: valueToHex(value),
-      ...(transaction.feeCurrency
-        ? {
-            feeCurrency: transaction.feeCurrency,
-          }
-        : {}),
-    };
+  switch (transaction.mode) {
+    case "lock":
+      celoTransaction = await buildLockTx(account, value);
+      break;
+    case "unlock":
+      celoTransaction = await buildUnlockTx(account, value);
+      break;
+    case "withdraw":
+      celoTransaction = await buildWithdrawTx(account, transaction);
+      break;
+    case "vote":
+      celoTransaction = await buildVoteTx(client, account, transaction, value);
+      break;
+    case "revoke":
+      celoTransaction = await buildRevokeTx(account, transaction, value);
+      break;
+    case "activate":
+      celoTransaction = await buildActivateTx(account, transaction);
+      break;
+    case "register":
+      celoTransaction = await buildRegisterTx(account);
+      break;
+    case "send":
+    default:
+      if (isTokenTransaction) {
+        value = calcTokenTransferValue(tokenAccount, transaction);
+        celoTransaction = await buildTokenTransferTx(account, transaction, tokenAccount, value);
+      } else {
+        celoTransaction = buildNativeSendTx(account, transaction, value);
+      }
+      break;
   }
 
+  const valueAsBigInt =
+    celoTransaction.value === undefined ? undefined : BigInt(celoTransaction.value);
   const estimatedGas = await client.estimateGas({
     account: celoTransaction.from,
     to: celoTransaction.to,
     data: celoTransaction.data,
-    value: celoTransaction.value !== undefined ? BigInt(celoTransaction.value) : undefined,
+    value: valueAsBigInt,
   });
 
   const gas = Math.ceil(Number(estimatedGas) * MAX_FEES_THRESHOLD_MULTIPLIER).toString();

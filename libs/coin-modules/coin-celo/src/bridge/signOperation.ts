@@ -19,6 +19,106 @@ import type { Transaction, CeloAccount } from "../types/types";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import buildTransaction from "./buildTransaction";
 
+type RunSignOperationInput = {
+  signerContext: SignerContext<CeloSigner>;
+  account: Account;
+  transaction: Transaction;
+  deviceId: DeviceId;
+  observer: { next: (event: SignOperationEvent) => void };
+  isCancelled: () => boolean;
+};
+
+const runSignOperation = async ({
+  signerContext,
+  account,
+  transaction,
+  deviceId,
+  observer,
+  isCancelled,
+}: RunSignOperationInput): Promise<void> => {
+  const { fees } = transaction;
+  if (!fees) throw new FeeNotLoaded();
+
+  const unsignedTransaction = await buildTransaction(account as CeloAccount, transaction);
+  const { chainId, nonce, feeCurrency } = unsignedTransaction;
+
+  const subAccount = findSubAccountById(account, transaction.subAccountId ?? "");
+  const isTokenTransaction = subAccount?.type === "TokenAccount";
+
+  const to = isTokenTransaction ? subAccount.token.contractAddress : unsignedTransaction.to;
+  const value = isTokenTransaction ? "0x0" : (unsignedTransaction.value ?? "0x0");
+
+  const { maxFeePerGas, maxPriorityFeePerGas } = await getFeeMarketGasParams(
+    feeCurrency ?? undefined,
+  );
+
+  const baseFields = {
+    chainId: chainId!,
+    nonce: nonce!,
+    to: to as `0x${string}`,
+    value: BigInt(value),
+    gas: BigInt(unsignedTransaction.gas ?? 0),
+    maxFeePerGas,
+    maxPriorityFeePerGas,
+    data: unsignedTransaction.data,
+  };
+
+  const txToSerialize: TransactionSerializableCIP64 | TransactionSerializableEIP1559 = feeCurrency
+    ? { ...baseFields, type: "cip64", feeCurrency }
+    : { ...baseFields, type: "eip1559" };
+
+  const { address } = await signerContext(deviceId, signer =>
+    signer.getAddress(account.freshAddressPath),
+  );
+
+  const serializedUnsigned = serializeTransaction(txToSerialize);
+  const rawTxHex = serializedUnsigned.startsWith("0x")
+    ? serializedUnsigned.slice(2)
+    : serializedUnsigned;
+
+  observer.next({ type: "device-signature-requested" });
+
+  const response = (await signerContext(deviceId, signer =>
+    signer.signTransaction(account.freshAddressPath, rawTxHex),
+  )) as EvmSignature;
+
+  if (isCancelled()) return;
+
+  observer.next({ type: "device-signature-granted" });
+
+  const v = BigInt("0x" + response.v);
+  const signature: Signature = {
+    r: ("0x" + response.r) as `0x${string}`,
+    s: ("0x" + response.s) as `0x${string}`,
+    v,
+    yParity: v % BigInt(2) === BigInt(0) ? 0 : 1,
+  };
+
+  const signedRaw = serializeTransaction(txToSerialize, signature);
+  const txHash = keccak256(serializedUnsigned);
+  const recoveredAddress = await recoverAddress({ hash: txHash, signature });
+
+  if (recoveredAddress.toLowerCase() !== address.toLowerCase()) {
+    throw new Error(
+      "celo: there was a signing error, the recovered address doesn't match your ledger address, the operation was cancelled",
+    );
+  }
+
+  const operation = buildOptimisticOperation(
+    account as CeloAccount,
+    transaction,
+    transaction.fees ?? new BigNumber(0),
+  );
+
+  observer.next({
+    type: "signed",
+    signedOperation: {
+      operation,
+      signature: signedRaw,
+    },
+  });
+};
+
 /**
  * Sign Transaction with Ledger hardware
  */
@@ -34,98 +134,16 @@ export const buildSignOperation =
     deviceId: DeviceId;
   }): Observable<SignOperationEvent> =>
     new Observable(o => {
-      let cancelled: boolean;
+      let cancelled = false;
 
-      async function main() {
-        const { fees } = transaction;
-        if (!fees) throw new FeeNotLoaded();
-
-        const unsignedTransaction = await buildTransaction(account as CeloAccount, transaction);
-        const { chainId, nonce, feeCurrency } = unsignedTransaction;
-
-        const subAccount = findSubAccountById(account, transaction.subAccountId ?? "");
-        const isTokenTransaction = subAccount?.type === "TokenAccount";
-
-        const to = isTokenTransaction ? subAccount.token.contractAddress : unsignedTransaction.to;
-        const value = isTokenTransaction ? "0x0" : (unsignedTransaction.value ?? "0x0");
-
-        const { maxFeePerGas, maxPriorityFeePerGas } = await getFeeMarketGasParams(
-          feeCurrency ?? undefined,
-        );
-
-        const baseFields = {
-          chainId: chainId!,
-          nonce: nonce!,
-          to: to as `0x${string}`,
-          value: BigInt(value),
-          gas: BigInt(unsignedTransaction.gas ?? 0),
-          maxFeePerGas,
-          maxPriorityFeePerGas,
-          data: unsignedTransaction.data,
-        };
-
-        const txToSerialize: TransactionSerializableCIP64 | TransactionSerializableEIP1559 =
-          feeCurrency
-            ? { ...baseFields, type: "cip64", feeCurrency }
-            : { ...baseFields, type: "eip1559" };
-
-        const { address } = await signerContext(deviceId, signer =>
-          signer.getAddress(account.freshAddressPath),
-        );
-
-        // Serialize unsigned tx — this is the raw hex sent to the Ledger
-        const serializedUnsigned = serializeTransaction(txToSerialize);
-        const rawTxHex = serializedUnsigned.startsWith("0x")
-          ? serializedUnsigned.slice(2)
-          : serializedUnsigned;
-
-        o.next({ type: "device-signature-requested" });
-
-        const response = (await signerContext(deviceId, signer =>
-          signer.signTransaction(account.freshAddressPath, rawTxHex),
-        )) as EvmSignature;
-
-        if (cancelled) return;
-
-        o.next({ type: "device-signature-granted" });
-
-        const v = BigInt("0x" + response.v);
-        const signature: Signature = {
-          r: ("0x" + response.r) as `0x${string}`,
-          s: ("0x" + response.s) as `0x${string}`,
-          v,
-          yParity: v % BigInt(2) === BigInt(0) ? 0 : 1,
-        };
-
-        // Serialize the signed transaction
-        const signedRaw = serializeTransaction(txToSerialize, signature);
-
-        // Verify the recovered address matches
-        const txHash = keccak256(serializedUnsigned);
-        const recoveredAddress = await recoverAddress({ hash: txHash, signature });
-
-        if (recoveredAddress.toLowerCase() !== address.toLowerCase()) {
-          throw new Error(
-            "celo: there was a signing error, the recovered address doesn't match your ledger address, the operation was cancelled",
-          );
-        }
-
-        const operation = buildOptimisticOperation(
-          account as CeloAccount,
-          transaction,
-          transaction.fees ?? new BigNumber(0),
-        );
-
-        o.next({
-          type: "signed",
-          signedOperation: {
-            operation,
-            signature: signedRaw,
-          },
-        });
-      }
-
-      main().then(
+      runSignOperation({
+        signerContext,
+        account,
+        transaction,
+        deviceId,
+        observer: o,
+        isCancelled: () => cancelled,
+      }).then(
         () => o.complete(),
         e => o.error(e),
       );
