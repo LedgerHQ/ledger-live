@@ -33,8 +33,8 @@ catalog:
   "@ledgerhq/signer-utils": 1.2.0
   "@ledgerhq/device-transport-kit-web-hid": 1.2.3
   "@ledgerhq/speculos-device-controller": 0.2.3
-  "@ledgerhq/lumen-design-core": 0.1.11
-  "@ledgerhq/lumen-ui-react": 0.1.25
+  "@ledgerhq/lumen-design-core": 0.1.12
+  "@ledgerhq/lumen-ui-react": 0.1.27
   "@ledgerhq/lumen-ui-rnative": 0.1.26
   "@ledgerhq/zcash-utils": 0.2.0
   # React Native
