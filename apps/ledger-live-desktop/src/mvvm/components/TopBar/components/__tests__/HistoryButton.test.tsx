@@ -13,7 +13,6 @@ const setupMock = (hasUnread: boolean) => {
     handleHistory: mockHandleHistory,
     historyIcon: Clock,
     hasUnread,
-    tooltip: "History",
     cta: "History",
   });
 };

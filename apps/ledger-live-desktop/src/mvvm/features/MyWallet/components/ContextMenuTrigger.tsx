@@ -1,13 +1,9 @@
 import React from "react";
-import { PopoverTrigger, Tooltip, TooltipTrigger, TooltipContent } from "@ledgerhq/lumen-ui-react";
+import { PopoverTrigger } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
 import { UserAvatar } from "./UserAvatar";
 
-type ContextMenuTriggerProps = Readonly<{
-  popoverOpen: boolean;
-}>;
-
-export function ContextMenuTrigger({ popoverOpen }: ContextMenuTriggerProps) {
+export function ContextMenuTrigger() {
   const { t } = useTranslation();
   const label = t("myWallet.title");
 
@@ -15,14 +11,9 @@ export function ContextMenuTrigger({ popoverOpen }: ContextMenuTriggerProps) {
     <PopoverTrigger
       render={
         <button aria-label={label} className="cursor-pointer items-center justify-center">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <span className="inline-flex">
-                <UserAvatar showNotification size="sm" />
-              </span>
-            </TooltipTrigger>
-            {!popoverOpen && <TooltipContent side="bottom">{label}</TooltipContent>}
-          </Tooltip>
+          <span className="inline-flex">
+            <UserAvatar showNotification size="sm" />
+          </span>
         </button>
       }
     />

@@ -16,7 +16,7 @@ const align = "end";
 export function ContextMenuView({ open, onOpenChange, contextValue }: ContextMenuViewProps) {
   return (
     <Popover overlay open={open} onOpenChange={onOpenChange}>
-      <ContextMenuTrigger popoverOpen={open} />
+      <ContextMenuTrigger />
 
       <PopoverContent width="fixed" side={side} align={align} className="flex flex-col gap-24">
         <ContextMenuContext.Provider value={contextValue}>
