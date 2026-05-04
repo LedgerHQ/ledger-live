@@ -26,6 +26,7 @@ import {
   useDeeplinkCustomHandlers,
   useLiveAppModalCustomHandlers,
 } from "./CustomHandlers";
+import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
 
 type Props = {
   manifest: LiveAppManifest;
@@ -36,6 +37,8 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
   const [isInfoPanelOpened, setIsInfoPanelOpened] = useState(false);
+  const hasBroadcastedWalletApiTransactionRef = useRef(false);
+  const { notifyFlowCompleted } = useNotificationsContext();
 
   const navigation =
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
@@ -54,6 +57,23 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
 
     return false;
   }, [webviewState.canGoBack, webviewAPIRef]);
+
+  const onWalletApiTransactionBroadcast = useCallback(() => {
+    hasBroadcastedWalletApiTransactionRef.current = true;
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("beforeRemove", () => {
+      if (!hasBroadcastedWalletApiTransactionRef.current) return;
+
+      hasBroadcastedWalletApiTransactionRef.current = false;
+      notifyFlowCompleted("dapp_complete");
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [navigation, notifyFlowCompleted]);
 
   useEffect(() => {
     if (Platform.OS === "android") {
@@ -115,6 +135,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
         inputs={inputs}
         onStateChange={setWebviewState}
         customHandlers={customHandlers}
+        onWalletApiTransactionBroadcast={onWalletApiTransactionBroadcast}
       />
       <BottomBar
         manifest={manifest}

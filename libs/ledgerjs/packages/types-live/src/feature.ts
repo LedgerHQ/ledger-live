@@ -458,6 +458,10 @@ export type Feature_BrazePushNotifications = Feature<{
       enabled: boolean;
       timer: number;
     };
+    dapp_complete: {
+      enabled: boolean;
+      timer: number;
+    };
   };
   inactivity_enabled: boolean;
   inactivity_reprompt: {

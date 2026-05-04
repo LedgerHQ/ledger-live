@@ -16,6 +16,7 @@ import { BTC_ACCOUNT } from "@ledgerhq/live-common/modularDrawer/__mocks__/accou
 import GlobalDrawers from "~/GlobalDrawers";
 import { track } from "~/analytics";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
+import { createNotificationsPromptFeatureFlags } from "./testUtils";
 
 type AuthorizationStatusType = (typeof AuthorizationStatus)[keyof typeof AuthorizationStatus];
 
@@ -44,52 +45,7 @@ jest.mock("@react-native-firebase/messaging", () => {
   };
 });
 
-const featureFlagsForReceivePrompt = {
-  brazePushNotifications: {
-    enabled: true,
-    params: {
-      action_events: {
-        complete_onboarding: {
-          enabled: true,
-          timer: 0,
-        },
-        add_favorite_coin: {
-          enabled: true,
-          timer: 0,
-        },
-        send: {
-          enabled: true,
-          timer: 0,
-        },
-        receive: {
-          enabled: true,
-          timer: 0,
-        },
-        buy: {
-          enabled: true,
-          timer: 0,
-        },
-        swap: {
-          enabled: true,
-          timer: 0,
-        },
-        stake: {
-          enabled: true,
-          timer: 0,
-        },
-      },
-      reprompt_schedule: [{ months: 0, days: 7, hours: 0, minutes: 0, seconds: 0 }],
-      inactivity_enabled: false,
-      inactivity_reprompt: { months: 6, days: 0, hours: 0, minutes: 0, seconds: 0 },
-    },
-  },
-  lwmNewWordingOptInNotificationsDrawer: {
-    enabled: true,
-    params: {
-      variant: ABTestingVariants.variantB,
-    },
-  },
-};
+const featureFlagsForReceivePrompt = createNotificationsPromptFeatureFlags();
 
 describe("NotificationsPrompt receive flow", () => {
   beforeAll(() => {

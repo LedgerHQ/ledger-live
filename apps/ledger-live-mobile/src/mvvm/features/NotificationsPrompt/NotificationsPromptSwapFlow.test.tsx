@@ -20,6 +20,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import GlobalDrawers from "~/GlobalDrawers";
 import { track } from "~/analytics";
 import { MockedAccounts } from "LLM/features/Accounts/__integrations__/mockedAccounts";
+import { createNotificationsPromptFeatureFlags } from "./testUtils";
 
 jest.mock("~/analytics", () => {
   const track = jest.fn();
@@ -42,52 +43,7 @@ jest.mock("~/screens/Swap/LiveApp/SwapLiveAppWallet40", () => ({
   SwapLiveAppWallet40: () => null,
 }));
 
-const featureFlagsForSwapPrompt = {
-  brazePushNotifications: {
-    enabled: true,
-    params: {
-      action_events: {
-        complete_onboarding: {
-          enabled: true,
-          timer: 0,
-        },
-        add_favorite_coin: {
-          enabled: true,
-          timer: 0,
-        },
-        send: {
-          enabled: true,
-          timer: 0,
-        },
-        receive: {
-          enabled: true,
-          timer: 0,
-        },
-        buy: {
-          enabled: true,
-          timer: 0,
-        },
-        swap: {
-          enabled: true,
-          timer: 0,
-        },
-        stake: {
-          enabled: true,
-          timer: 0,
-        },
-      },
-      reprompt_schedule: [{ months: 0, days: 7, hours: 0, minutes: 0, seconds: 0 }],
-      inactivity_enabled: false,
-      inactivity_reprompt: { months: 6, days: 0, hours: 0, minutes: 0, seconds: 0 },
-    },
-  },
-  lwmNewWordingOptInNotificationsDrawer: {
-    enabled: true,
-    params: {
-      variant: ABTestingVariants.variantB,
-    },
-  },
-};
+const featureFlagsForSwapPrompt = createNotificationsPromptFeatureFlags();
 
 describe("NotificationsPrompt swap flow", () => {
   beforeAll(() => {
