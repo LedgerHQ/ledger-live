@@ -46,7 +46,7 @@ const createSendSteps: NonNullable<AleoFamily["createSendSteps"]> = () => {
           return {
             ...t,
             properties: {
-              amountRecordCommitment: null,
+              amountRecordCommitments: [],
               feeRecordCommitment: null,
             },
           };

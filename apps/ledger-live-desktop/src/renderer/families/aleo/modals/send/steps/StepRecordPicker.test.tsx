@@ -101,8 +101,8 @@ describe("StepRecordPicker", () => {
     fees: new BigNumber(0),
     useAllAmount: false,
     properties: {
+      amountRecordCommitments: [],
       feeRecordCommitment: null,
-      amountRecordCommitment: null,
     },
   };
 
@@ -296,7 +296,7 @@ describe("StepRecordPicker", () => {
     expect(updateTransaction).toHaveBeenCalledTimes(1);
     const updaterFn = updateTransaction.mock.calls[0][0];
     const result = updaterFn(privateTransaction);
-    expect(result.properties?.amountRecordCommitment).toBe(record2.commitment);
+    expect(result.properties?.amountRecordCommitments).toEqual([record2.commitment]);
     expect(result.properties?.feeRecordCommitment).toBeNull();
   });
 
@@ -318,7 +318,7 @@ describe("StepRecordPicker", () => {
     expect(updateTransaction).toHaveBeenCalledTimes(1);
     const updaterFn = updateTransaction.mock.calls[0][0];
     const result = updaterFn(privateTransaction);
-    expect(result.properties?.amountRecordCommitment).toBe(record1.commitment);
+    expect(result.properties?.amountRecordCommitments).toEqual([record1.commitment]);
     expect(result.properties?.feeRecordCommitment).toBeNull();
   });
 

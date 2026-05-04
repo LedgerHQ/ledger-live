@@ -22,11 +22,11 @@ export const prepareTransaction: AccountBridge<
   if (
     isPrivateTransaction(transaction) &&
     !config.isFeeSponsored &&
-    transaction.properties.amountRecordCommitment
+    transaction.properties.amountRecordCommitments.length > 0
   ) {
     const feeRecord = findBestRecordForFee({
       unspentRecords: account.aleoResources?.unspentPrivateRecords ?? [],
-      selectedAmountRecordCommitment: transaction.properties.amountRecordCommitment,
+      selectedAmountRecordCommitments: transaction.properties.amountRecordCommitments,
       targetFee: estimatedFees,
     });
     const nextFeeRecordCommitment =
@@ -37,7 +37,6 @@ export const prepareTransaction: AccountBridge<
       fees: estimatedFees,
       properties: {
         ...transaction.properties,
-        amountRecordCommitment: transaction.properties.amountRecordCommitment,
         ...(nextFeeRecordCommitment && { feeRecordCommitment: nextFeeRecordCommitment }),
       },
     });

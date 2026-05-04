@@ -133,8 +133,8 @@ const AleoStepRecordPicker = ({ account, transaction, status, updateTransaction 
       return {
         ...transactionToUpdate,
         properties: {
+          amountRecordCommitments: [record.commitment],
           feeRecordCommitment: transactionToUpdate.properties?.feeRecordCommitment,
-          amountRecordCommitment: record.commitment,
         },
       };
     });
@@ -173,7 +173,9 @@ const AleoStepRecordPicker = ({ account, transaction, status, updateTransaction 
       >
         {unspentRecords.map(record => {
           const date = new Date(record.block_timestamp * 1000);
-          const isSelected = record.commitment === transaction.properties?.amountRecordCommitment;
+          const isSelected = (transaction.properties?.amountRecordCommitments ?? []).includes(
+            record.commitment,
+          );
 
           return (
             <StyledButton
