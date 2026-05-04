@@ -54,7 +54,7 @@ export default class SwapLiveAppPage {
     await tapWebElementByTestId(this.fromSelector);
   }
 
-  @Step("Verify currency is selected $0")
+  @Step("Verify currency is selected")
   async verifyCurrencyIsSelected(ticker: string, isFromCurrency: boolean) {
     const selector = isFromCurrency ? this.fromSelector : this.toSelector;
     const actualText = await getWebElementText(selector);
