@@ -382,6 +382,14 @@ export type LLDCoinFamily<
   StepReceiveFunds?: React.ComponentType<ReceiveStepProps>;
 
   /**
+   * When true, the family override owns the on-device address confirmation
+   * lifecycle and the shared StepReceiveFunds will not auto-trigger
+   * `confirmAddress`. The override is then responsible for invoking
+   * `bridge.receive(verify: true)` itself when needed.
+   */
+  useCustomConfirmAddress?: boolean;
+
+  /**
    * Allow to add component below the confirmation address box on receive step
    */
   StepReceiveFundsPostAlert?: React.ComponentType<ReceiveStepProps>;

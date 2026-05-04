@@ -873,6 +873,7 @@ export const DEFAULT_FEATURES: Features = {
       ],
     },
   },
+  concordiumVerifyAddress: DEFAULT_FEATURE,
   lldHideSmallValueTokenOperations: {
     ...DEFAULT_FEATURE,
     enabled: true,
