@@ -127,6 +127,43 @@ describe("buildLiveAppModalURL", () => {
     expect(result).toBeUndefined();
   });
 
+  it("returns undefined when path is a fully-qualified URL on a different origin", () => {
+    const result = buildLiveAppModalURL({
+      manifestURL: "https://example.com/app",
+      path: "https://evil.com/phish",
+      requestId: "req-1",
+      inputs: {},
+    });
+
+    expect(result).toBeUndefined();
+  });
+
+  it("returns undefined when path uses a non-http scheme", () => {
+    for (const path of ["javascript:alert(1)", "file:///etc/passwd", "data:text/html,foo"]) {
+      const result = buildLiveAppModalURL({
+        manifestURL: "https://example.com/app",
+        path,
+        requestId: "req-1",
+        inputs: {},
+      });
+
+      expect(result).toBeUndefined();
+    }
+  });
+
+  it("accepts a fully-qualified URL on the same origin as the manifest", () => {
+    const result = buildLiveAppModalURL({
+      manifestURL: "https://example.com/app",
+      path: "https://example.com/page",
+      requestId: "req-1",
+      inputs: {},
+    });
+
+    const url = new URL(result!);
+    expect(url.origin).toBe("https://example.com");
+    expect(url.pathname).toBe("/page");
+  });
+
   it("does not inline a payload when none is registered", () => {
     const result = buildLiveAppModalURL({
       manifestURL: "https://example.com/app",

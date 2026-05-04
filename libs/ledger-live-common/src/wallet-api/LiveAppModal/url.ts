@@ -20,7 +20,14 @@ export function buildLiveAppModalURL(options: {
   inputs: Record<string, string | undefined>;
 }): string | undefined {
   try {
-    const url = new URL(options.path, options.manifestURL);
+    const base = new URL(options.manifestURL);
+    const url = new URL(options.path, base);
+    // Reject absolute URLs or non-http(s) schemes passed as `path`. Without this,
+    // `new URL` ignores the base when `path` is fully qualified, the resolved URL
+    // fails downstream whitelist validation in getInitialURL, and the modal
+    // silently falls back to manifest.url — making the misroute invisible to the
+    // caller. Failing here lets the caller's RPC promise reject instead.
+    if (url.origin !== base.origin) return undefined;
     for (const [key, value] of Object.entries(options.inputs)) {
       if (value !== undefined) {
         url.searchParams.set(key, value);
