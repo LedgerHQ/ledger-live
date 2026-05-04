@@ -15,6 +15,8 @@ import coinConfig, { type SolanaConfig } from "./config";
 const SIGNATURE_SIZE = 64;
 const DUMMY_SIGNATURE_FILL = 1;
 export const DUMMY_SIGNATURE = Buffer.alloc(SIGNATURE_SIZE, DUMMY_SIGNATURE_FILL);
+// signatures provided by Solana are filled with 0
+export const ZERO_FILLED_DUMMY_SIGNATURE = Buffer.alloc(DUMMY_SIGNATURE.length, 0);
 
 // Hardcoding the Ledger validators info as backup,
 // because backend is flaky and sometimes doesn't return it anymore

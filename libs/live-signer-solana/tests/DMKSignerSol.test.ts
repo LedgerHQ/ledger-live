@@ -282,6 +282,39 @@ describe("DmkSignerSol", () => {
       );
       expect(result).toEqual({ signature: Buffer.from(outputArray) });
     });
+
+    it("forwards delayed signing options to DMK signer when resolution includes them", async () => {
+      const outputArray = Uint8Array.from([10, 20, 30]);
+      const observable = of({ status: DeviceActionStatus.Completed, output: outputArray });
+      (signer as any).dmkSigner = {
+        signTransaction: jest.fn().mockReturnValue({ observable }),
+      };
+
+      const fetchBlockhash = async () => Uint8Array.from([1, 2, 3]);
+      const resolution: Resolution = {
+        delayed: true,
+        solanaRPCURL: "https://solana.example.rpc",
+        fetchBlockhash,
+      };
+
+      const tx = Uint8Array.from([0x11, 0x22]);
+      const result = await signer.signTransaction("path", tx, resolution);
+
+      expect((signer as any).dmkSigner.signTransaction).toHaveBeenCalledWith(
+        "path",
+        tx,
+        expect.objectContaining({
+          transactionResolutionContext: expect.objectContaining({
+            userInputType: undefined,
+          }),
+          delayed: true,
+          solanaRPCURL: "https://solana.example.rpc",
+          fetchBlockhash,
+          skipOpenApp: true,
+        }),
+      );
+      expect(result).toEqual({ signature: Buffer.from(outputArray) });
+    });
   });
 
   describe("signMessage", () => {
