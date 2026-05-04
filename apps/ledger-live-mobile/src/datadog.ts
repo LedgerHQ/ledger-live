@@ -1,11 +1,5 @@
 import Config from "react-native-config";
-import {
-  TrackingConsent,
-  DatadogProvider,
-  DdLogs,
-  DdRum,
-  ErrorSource,
-} from "@datadog/mobile-react-native";
+import { TrackingConsent, DatadogProvider, DdLogs } from "@datadog/mobile-react-native";
 import { PartialInitializationConfiguration } from "@datadog/mobile-react-native/lib/typescript/DdSdkReactNativeConfiguration";
 import type { LogEvent } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { ScreenName } from "./const";
@@ -147,10 +141,9 @@ export function broadcastLogger(event: LogEvent): void {
     DdLogs.info("broadcast_success", { event });
   } else {
     const { error, ...rest } = event;
-    DdRum.addError("broadcast_failure", ErrorSource.SOURCE, error.stack ?? "", {
+    DdLogs.error("broadcast_failure", error.name, error.message, error.stack ?? "", {
       event: {
         ...rest,
-        error: { name: error.name, message: error.message },
       },
     });
   }

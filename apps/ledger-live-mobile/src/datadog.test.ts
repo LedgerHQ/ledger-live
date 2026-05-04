@@ -1,10 +1,8 @@
-import { DdLogs, DdRum } from "@datadog/mobile-react-native";
+import { DdLogs } from "@datadog/mobile-react-native";
 import { broadcastLogger } from "./datadog";
 
 jest.mock("@datadog/mobile-react-native", () => ({
-  DdLogs: { info: jest.fn() },
-  DdRum: { addError: jest.fn() },
-  ErrorSource: { SOURCE: "SOURCE" },
+  DdLogs: { info: jest.fn(), error: jest.fn() },
   TrackingConsent: {},
   DatadogProvider: { initialize: jest.fn() },
 }));
@@ -24,8 +22,8 @@ describe("broadcastLogger", () => {
     });
   });
 
-  it("calls DdRum.addError with correct parameters on failure event", () => {
-    const addErrorSpy = jest.spyOn(DdRum, "addError");
+  it("calls DdLogs.error with correct parameters on failure event", () => {
+    const errorSpy = jest.spyOn(DdLogs, "error");
     const error = new Error("tx broadcast failed");
     error.stack = "Error: tx broadcast failed\n  at test:1:1";
 
@@ -37,9 +35,10 @@ describe("broadcastLogger", () => {
       currencyId: "ethereum",
     });
 
-    expect(addErrorSpy).toHaveBeenCalledWith(
+    expect(errorSpy).toHaveBeenCalledWith(
       "broadcast_failure",
-      "SOURCE",
+      "Error",
+      "tx broadcast failed",
       "Error: tx broadcast failed\n  at test:1:1",
       {
         event: {
@@ -47,7 +46,6 @@ describe("broadcastLogger", () => {
           txPayload: "payload",
           appVersion: "1.0.0",
           currencyId: "ethereum",
-          error: { name: "Error", message: "tx broadcast failed" },
         },
       },
     );
