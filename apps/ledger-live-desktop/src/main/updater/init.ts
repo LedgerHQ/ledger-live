@@ -15,9 +15,10 @@ export type UpdateStatus =
   | "downloading-update"
   | "error";
 const UPDATE_CHECK_IGNORE = Boolean(__PRERELEASE__ && process.env.UPDATE_CHECK_IGNORE);
-const UPDATE_CHECK_FEED =
-  (__PRERELEASE__ && process.env.UPDATE_CHECK_FEED) ||
-  "https://resources.live.ledger.app/public_resources/signatures";
+const UPDATE_CHECK_FEED = __PRERELEASE__
+  ? process.env.UPDATE_CHECK_FEED || "https://lw-prerelease-sigs.s3.eu-west-1.amazonaws.com"
+  : "https://resources.live.ledger.app/public_resources/signatures";
+
 const sendStatus = (status: UpdateStatus, payload?: unknown) => {
   const win = getMainWindow();
   if (win) {
