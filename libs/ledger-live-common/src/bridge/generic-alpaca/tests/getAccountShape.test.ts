@@ -1244,22 +1244,26 @@ describe("genericGetAccountShape", () => {
       });
 
       const result2 = await runGetShape("address2");
-      expect(result2.operations).toHaveLength(2);
-      const noneOp = result2.operations?.find(o => o.type === "NONE");
-      const inOp = result2.operations?.find(o => o.type === "IN");
-      expect(noneOp).toMatchObject({
-        type: "NONE",
-        senders: ["address1"],
-        recipients: ["contract1"],
-        value: new BigNumber(0),
-        fee: new BigNumber(1),
-      });
-      expect(inOp).toMatchObject({
-        type: "IN",
-        senders: ["contract1"],
-        recipients: ["address2"],
-        value: new BigNumber(2),
-        fee: new BigNumber(1),
+      expect(result2.operations).toHaveLength(1);
+      expect(result2).toMatchObject({
+        operations: [
+          expect.objectContaining({
+            type: "NONE",
+            senders: ["address1"],
+            recipients: ["contract1"],
+            value: new BigNumber(0),
+            fee: new BigNumber(1),
+            internalOperations: [
+              expect.objectContaining({
+                type: "IN",
+                senders: ["contract1"],
+                recipients: ["address2"],
+                value: new BigNumber(2),
+                fee: new BigNumber(1),
+              }),
+            ],
+          }),
+        ],
       });
     });
 
