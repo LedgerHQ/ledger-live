@@ -54,6 +54,7 @@ export function runSwapDexNativeFlow(
       await app.swapLiveApp.tapExecuteSwap();
       await app.swapLiveApp.tapExecuteSwapOnStepApproval();
       await app.send.summaryContinue();
+      await app.send.dismissHighFeeModal();
 
       await app.swap.verifyAmountsAndAcceptSwap(swap, Number(amountToSwap).toFixed(8));
       await app.swap.waitForSwapHeaderCompleted();
