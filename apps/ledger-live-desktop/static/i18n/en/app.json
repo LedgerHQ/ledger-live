@@ -8745,5 +8745,8 @@
       "description": "Manage your Ledger device"
     },
     "explore": "Explore all Ledger devices"
+  },
+  "assetDetails": {
+    "totalBalance": "Total balance"
   }
 }
