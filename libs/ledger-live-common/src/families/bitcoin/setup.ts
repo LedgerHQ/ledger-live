@@ -10,6 +10,11 @@ import type { SignerContext } from "@ledgerhq/coin-bitcoin/signer";
 import makeCliTools from "@ledgerhq/coin-bitcoin/cli-transaction";
 import bitcoinResolver from "@ledgerhq/coin-bitcoin/hw-getAddress";
 import { signMessage } from "@ledgerhq/coin-bitcoin/hw-signMessage";
+import {
+  isEditableOperation,
+  isStuckOperation,
+  getStuckAccountAndOperation,
+} from "@ledgerhq/coin-bitcoin/operation";
 import { BitcoinAccount, Transaction, TransactionStatus } from "@ledgerhq/coin-bitcoin/types";
 import { GetAddressOptions, Resolver } from "../../hw/getAddress/types";
 import { withDevice } from "../../hw/deviceAccess";
@@ -17,6 +22,8 @@ import { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddres
 import { getCurrencyConfiguration } from "../../config";
 import { BitcoinConfigInfo } from "@ledgerhq/coin-bitcoin/config";
 import { SignMessage } from "../../hw/signMessage/types";
+import { clearAccount as bitcoinClearAccount } from "./clearAccount";
+import { makeClearAccount } from "../../bridge/makeClearAccount";
 
 const createSigner = (transport: Transport, currency: CryptoCurrency) => {
   return new Btc({ transport, currency: currency.id });
@@ -35,10 +42,21 @@ const getCurrencyConfig = (currencyId: string) => {
   return { info: getCurrencyConfiguration<BitcoinConfigInfo>(currencyId) };
 };
 
-const bridge: Bridge<Transaction, BitcoinAccount, TransactionStatus> = createBridges(
+const rawBridge: Bridge<Transaction, BitcoinAccount, TransactionStatus> = createBridges(
   signerContext,
   getCurrencyConfig,
 );
+
+const bridge: Bridge<Transaction, BitcoinAccount, TransactionStatus> = {
+  ...rawBridge,
+  accountBridge: {
+    ...rawBridge.accountBridge,
+    clearAccount: makeClearAccount(bitcoinClearAccount),
+    isEditableOperation,
+    isStuckOperation,
+    getStuckAccountAndOperation,
+  },
+};
 
 export function createMessageSigner(): SignMessage {
   return (transport, account, messageData) => {

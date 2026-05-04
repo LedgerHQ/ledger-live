@@ -2,8 +2,9 @@ import {
   canSend,
   getAccountCurrency,
   getMainAccount,
-  isAccountEmpty,
 } from "@ledgerhq/live-common/account/index";
+import { isAccountEmpty as commonIsAccountEmpty } from "@ledgerhq/ledger-wallet-framework/account";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 
 import { Account, AccountLike } from "@ledgerhq/types-live";
@@ -191,6 +192,7 @@ const pageName = "Page Account";
 const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   const { data: currenciesAll } = useFetchCurrencyAll();
   const mainAccount = getMainAccount(account, parentAccount);
+  const bridge = useAccountBridge(account, parentAccount);
   const contrastText = useTheme().colors.neutral.c70;
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const navigate = useNavigate();
@@ -401,7 +403,9 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
 
   return (
     <Box horizontal alignItems="center" justifyContent="flex-end" flow={2} mt={15}>
-      {!isAccountEmpty(account) ? NonEmptyAccountHeader : null}
+      {!(account.type === "Account"
+        ? (bridge.isAccountEmpty?.(account) ?? commonIsAccountEmpty(account))
+        : commonIsAccountEmpty(account)) ? NonEmptyAccountHeader : null}
     </Box>
   );
 };

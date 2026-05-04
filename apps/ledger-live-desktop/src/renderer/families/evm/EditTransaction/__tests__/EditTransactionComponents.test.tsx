@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getFormattedFeeFields } from "@ledgerhq/coin-evm/editTransaction/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { getStuckAccountAndOperation } from "@ledgerhq/live-common/operation";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import React from "react";
 import { render, screen, withFlagOverrides } from "tests/testSetup";
 import EditStuckTransactionPanelBodyHeader from "../EditStuckTransactionPanelBodyHeader";
@@ -20,9 +20,8 @@ jest.mock("@ledgerhq/live-common/account/index", () => ({
   getMainAccount: jest.fn(),
 }));
 
-jest.mock("@ledgerhq/live-common/operation", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/operation"),
-  getStuckAccountAndOperation: jest.fn(),
+jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
+  useAccountBridge: jest.fn(),
 }));
 
 jest.mock("~/renderer/components/SpeedUpCancel/SharedStepFees", () => ({
@@ -188,10 +187,12 @@ describe("EVM EditTransaction components", () => {
   });
 
   it("EditStuckTransactionPanelBodyHeader forwards feature/status to shared header", () => {
-    (getStuckAccountAndOperation as jest.Mock).mockReturnValue({
-      operation: {},
-      account,
-      parentAccount: undefined,
+    (useAccountBridge as jest.Mock).mockReturnValue({
+      getStuckAccountAndOperation: jest.fn().mockReturnValue({
+        operation: {},
+        account,
+        parentAccount: undefined,
+      }),
     });
 
     render(<EditStuckTransactionPanelBodyHeader account={account} parentAccount={undefined} />, {

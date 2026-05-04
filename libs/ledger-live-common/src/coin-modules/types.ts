@@ -5,11 +5,9 @@ import type {
   AnyMessage,
   AddressValidationCurrencyParameters,
   CurrencyBridge,
-  Operation,
   TransactionCommon,
   TransactionStatusCommon,
 } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { CommonDeviceTransactionField } from "@ledgerhq/ledger-wallet-framework/transaction/common";
 import type { Transaction as WalletAPITransaction } from "@ledgerhq/wallet-api-core";
 import type { Resolver } from "../hw/getAddress/types";
@@ -86,22 +84,6 @@ export type ValidateAddressFn = (
   parameters: Partial<AddressValidationCurrencyParameters>,
 ) => Promise<boolean>;
 
-export type HasGasTrackerFn = (currency: CryptoCurrency) => boolean;
-
-export type IsEditableOperationFn = (
-  account: Account,
-  operation: Operation,
-  hasGasTracker: HasGasTrackerFn,
-) => boolean;
-
-export type IsStuckOperationFn = (operation: Operation) => boolean;
-
-export type GetStuckAccountAndOperationFn = (
-  account: AccountLike,
-  parentAccount: Account | null | undefined,
-  hasGasTracker: HasGasTrackerFn,
-) => { account: AccountLike; parentAccount: Account | undefined; operation: Operation } | undefined;
-
 export type CoinModuleLoader = {
   family: string;
   loadSetup: () => FamilySetup;
@@ -112,12 +94,18 @@ export type CoinModuleLoader = {
   loadAccount?: () => AccountModule;
   loadMockBridge?: () => MockBridgeModule;
   loadMockAccount?: () => MockAccountModule;
-  loadIsEditableOperation?: () => IsEditableOperationFn;
-  loadIsStuckOperation?: () => IsStuckOperationFn;
-  loadGetStuckAccountAndOperation?: () => GetStuckAccountAndOperationFn;
-  loadIsAccountEmpty?: () => (account: Account) => boolean;
-  loadGetVotesCount?: () => (account: Account) => number;
-  loadClearAccount?: () => (account: Account) => void;
   loadValidateAddress?: () => ValidateAddressFn;
   loadSigner?: () => AlpacaSigner;
+  /**
+   * Optional per-family AccountBridge method overrides for alpacaized families.
+   *
+   * The generic-alpaca bridge covers the core sync/send/sign pipeline; coin-specific
+   * helpers (e.g. isEditableOperation, getStakesCount) that don't fit the generic
+   * pipeline are registered here and merged at bridge-construction time in impl.ts.
+   *
+   * Part of the generic-alpaca architecture where each family self-registers its
+   * extensions via a lazy require() rather than being imported statically by the
+   * bridge layer.
+   */
+  loadBridgeExtensions?: () => Partial<AccountBridge<any>>;
 };

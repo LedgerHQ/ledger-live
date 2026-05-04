@@ -1,6 +1,6 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
 
-import { createBridges } from "@ledgerhq/coin-vechain/index";
+import { createBridges, isAccountEmpty } from "@ledgerhq/coin-vechain/index";
 import makeCliTools from "@ledgerhq/coin-vechain/test/cli";
 import vechainResolver, { signMessage } from "@ledgerhq/coin-vechain/signer/index";
 import { Transaction, VechainSigner } from "./types";
@@ -12,7 +12,12 @@ import type { Resolver } from "../../hw/getAddress/types";
 
 const createSigner: CreateSigner<VechainSigner> = (transport: Transport) => new Vet(transport);
 
-const bridge: Bridge<Transaction> = createBridges(executeWithSigner(createSigner));
+const rawBridge: Bridge<Transaction> = createBridges(executeWithSigner(createSigner));
+
+const bridge: Bridge<Transaction> = {
+  ...rawBridge,
+  accountBridge: { ...rawBridge.accountBridge, isAccountEmpty },
+};
 
 const messageSigner = {
   signMessage,

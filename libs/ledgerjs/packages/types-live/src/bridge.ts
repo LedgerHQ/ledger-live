@@ -282,6 +282,18 @@ type AccountBridgeWithExchange<A extends Account = Account> = {
   getSerializedAddressParameters: (account: A, addressFormat?: string) => Buffer;
 };
 
+interface AccountBridgeExtensions {
+  isAccountEmpty?: (account: Account) => boolean;
+  clearAccount?: <A extends AccountLike>(account: A) => A;
+  getStakesCount?: (account: Account) => number;
+  isEditableOperation?: (account: Account, operation: Operation) => boolean;
+  isStuckOperation?: (operation: Operation) => boolean;
+  getStuckAccountAndOperation?: (
+    account: AccountLike,
+    parentAccount: Account | null | undefined,
+  ) => { account: AccountLike; parentAccount: Account | undefined; operation: Operation } | undefined;
+}
+
 export type AccountBridge<
   T extends TransactionCommon,
   A extends Account = Account,
@@ -290,7 +302,8 @@ export type AccountBridge<
   R extends AccountRaw = AccountRaw,
 > = SendReceiveAccountBridge<T, A, U> &
   AccountBridgeWithExchange<A> &
-  Partial<SerializationAccountBridge<A, O, R>>;
+  Partial<SerializationAccountBridge<A, O, R>> &
+  AccountBridgeExtensions;
 
 type ExpectFn = (...args: Array<any>) => any;
 

@@ -11,7 +11,6 @@ import {
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
-import { getStuckAccountAndOperation } from "@ledgerhq/live-common/operation";
 import { Operation } from "@ledgerhq/types-live";
 import QrCode from "@ledgerhq/icons-ui/native/QrCode";
 import { useNavigation, useTheme } from "@react-navigation/native";
@@ -225,7 +224,7 @@ export default function SendSelectRecipient({ route }: Props) {
 
   if (!account || !transaction) return null;
 
-  const stuckAccountAndOperation = getStuckAccountAndOperation(account, mainAccount);
+  const stuckAccountAndOperation = bridge.getStuckAccountAndOperation?.(account, mainAccount);
 
   const error = withoutHiddenError(status.errors.recipient);
   const warning = status.warnings.recipient;

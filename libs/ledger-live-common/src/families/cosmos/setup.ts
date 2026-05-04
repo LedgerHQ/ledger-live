@@ -1,6 +1,8 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
 
 import { createBridges } from "@ledgerhq/coin-cosmos/bridge/index";
+import { isAccountEmpty } from "@ledgerhq/coin-cosmos/helpers";
+import { getVotesCount } from "./getVotesCount";
 import makeCliTools from "@ledgerhq/coin-cosmos/cli";
 import { CosmosCoinConfig } from "@ledgerhq/coin-cosmos/config";
 import cosmosResolver from "@ledgerhq/coin-cosmos/hw-getAddress";
@@ -13,7 +15,7 @@ import {
 import { CosmosSigner } from "@ledgerhq/coin-cosmos/types/signer";
 import Transport from "@ledgerhq/hw-transport";
 import { DmkSignerCosmos, LegacySignerCosmos } from "@ledgerhq/live-signer-cosmos";
-import { Bridge } from "@ledgerhq/types-live";
+import type { Account, Bridge } from "@ledgerhq/types-live";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import { getCurrencyConfiguration } from "../../config";
 import { Resolver } from "../../hw/getAddress/types";
@@ -39,8 +41,17 @@ const getCurrencyConfig = (currencyId?: string) => {
   return getCurrencyConfiguration<CosmosCoinConfig>(currencyId);
 };
 
-const bridge: Bridge<Transaction, CosmosAccount, TransactionStatus, CosmosOperation> =
+const rawBridge: Bridge<Transaction, CosmosAccount, TransactionStatus, CosmosOperation> =
   createBridges(executeWithSigner(createSigner), getCurrencyConfig);
+
+const bridge: Bridge<Transaction, CosmosAccount, TransactionStatus, CosmosOperation> = {
+  ...rawBridge,
+  accountBridge: {
+    ...rawBridge.accountBridge,
+    isAccountEmpty: isAccountEmpty as unknown as (account: Account) => boolean,
+    getStakesCount: getVotesCount as (account: Account) => number,
+  },
+};
 
 const resolver: Resolver = createResolver(createSigner, cosmosResolver);
 

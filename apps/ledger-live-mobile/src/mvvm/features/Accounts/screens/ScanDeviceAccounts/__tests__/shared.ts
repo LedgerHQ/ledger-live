@@ -57,6 +57,7 @@ jest.mock("@ledgerhq/live-common/bridge/index", () => ({
     preload: jest.fn(() => Promise.resolve(undefined)),
     hydrate: jest.fn(),
   })),
+  getAccountBridge: jest.fn(() => ({})),
 }));
 
 jest.mock("~/bridge/cache", () => ({

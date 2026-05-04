@@ -18,6 +18,7 @@ import { genericSignRawOperation } from "./signRawOperation";
 import { postSync } from "./postSync";
 import { getValidateAddress } from "./validateAddress";
 import { getAccountRawAssignHooks } from "./accountRawAssign";
+import { getBridgeExtensions } from "./bridgeExtensions";
 import type { GenericTransaction, AlpacaSigner } from "./types";
 
 export function getAlpacaAccountBridge(
@@ -42,5 +43,6 @@ export function getAlpacaAccountBridge(
     assignToAccountRaw,
     getSerializedAddressParameters, // NOTE: check whether it should be exposed by coin-module's api instead?
     validateAddress: getValidateAddress(network),
+    ...getBridgeExtensions(network),
   } satisfies Partial<AccountBridge<GenericTransaction>>;
 }

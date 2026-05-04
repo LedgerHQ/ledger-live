@@ -1,62 +1,87 @@
-jest.mock("../coin-modules/registry", () => ({
-  loadIsAccountEmptyForFamily: jest.fn(),
-  loadClearAccountForFamily: jest.fn(),
-  loadGetVotesCountForFamily: jest.fn(),
+jest.mock("../bridge", () => ({
+  getAccountBridge: jest.fn(),
 }));
 jest.mock("@ledgerhq/ledger-wallet-framework/account", () => ({
-  clearAccount: (account: any, cb: any) => { cb(account); return account; },
+  clearAccount: jest.fn(account => account),
   isAccountEmpty: jest.fn(() => false),
   getMainAccount: (a: any) => a,
 }));
 jest.mock("@ledgerhq/cryptoassets/state", () => ({}));
 
-import {
-  loadIsAccountEmptyForFamily,
-  loadClearAccountForFamily,
-  loadGetVotesCountForFamily,
-} from "../coin-modules/registry";
+import { getAccountBridge } from "../bridge";
 import { isAccountEmpty, clearAccount, getVotesCount } from "./helpers";
+
+const makeMockBridge = (overrides = {}) => ({
+  isAccountEmpty: undefined,
+  clearAccount: undefined,
+  getStakesCount: undefined,
+  ...overrides,
+});
 
 const mockAccount = { type: "Account", currency: { family: "evm" } } as any;
 
 beforeEach(() => jest.clearAllMocks());
 
 describe("isAccountEmpty", () => {
-  it("delegates to loader for Account type", () => {
+  it("delegates to bridge method for Account type", () => {
     const fn = jest.fn(() => true);
-    (loadIsAccountEmptyForFamily as jest.Mock).mockReturnValue(fn);
+    (getAccountBridge as jest.Mock).mockReturnValue(makeMockBridge({ isAccountEmpty: fn }));
     expect(isAccountEmpty(mockAccount)).toBe(true);
-    expect(loadIsAccountEmptyForFamily).toHaveBeenCalledWith("evm");
+    expect(getAccountBridge).toHaveBeenCalledWith(mockAccount);
     expect(fn).toHaveBeenCalledWith(mockAccount);
   });
 
-  it("falls back to common when no loader", () => {
-    (loadIsAccountEmptyForFamily as jest.Mock).mockReturnValue(undefined);
+  it("falls back to common when bridge has no method", () => {
+    (getAccountBridge as jest.Mock).mockReturnValue(makeMockBridge());
     isAccountEmpty(mockAccount);
-    expect(loadIsAccountEmptyForFamily).toHaveBeenCalledWith("evm");
+    expect(getAccountBridge).toHaveBeenCalledWith(mockAccount);
+  });
+
+  it("falls back to common when getAccountBridge throws", () => {
+    (getAccountBridge as jest.Mock).mockImplementation(() => { throw new Error("not supported"); });
+    expect(isAccountEmpty(mockAccount)).toBe(false);
   });
 });
 
 describe("clearAccount", () => {
-  it("calls loader clearAccount fn", () => {
-    const fn = jest.fn();
-    (loadClearAccountForFamily as jest.Mock).mockReturnValue(fn);
+  it("delegates to bridge clearAccount when present", () => {
+    const fn = jest.fn(account => account);
+    (getAccountBridge as jest.Mock).mockReturnValue(makeMockBridge({ clearAccount: fn }));
     clearAccount(mockAccount);
-    expect(loadClearAccountForFamily).toHaveBeenCalledWith("evm");
+    expect(getAccountBridge).toHaveBeenCalledWith(mockAccount);
     expect(fn).toHaveBeenCalledWith(mockAccount);
+  });
+
+  it("falls back to common when bridge has no method", () => {
+    const { clearAccount: commonClearAccount } = require("@ledgerhq/ledger-wallet-framework/account");
+    (getAccountBridge as jest.Mock).mockReturnValue(makeMockBridge());
+    clearAccount(mockAccount);
+    expect(commonClearAccount).toHaveBeenCalledWith(mockAccount);
+  });
+
+  it("falls back to common when getAccountBridge throws", () => {
+    const { clearAccount: commonClearAccount } = require("@ledgerhq/ledger-wallet-framework/account");
+    (getAccountBridge as jest.Mock).mockImplementation(() => { throw new Error("not supported"); });
+    clearAccount(mockAccount);
+    expect(commonClearAccount).toHaveBeenCalledWith(mockAccount);
   });
 });
 
 describe("getVotesCount", () => {
-  it("delegates to loader", () => {
+  it("delegates to bridge getStakesCount", () => {
     const fn = jest.fn(() => 3);
-    (loadGetVotesCountForFamily as jest.Mock).mockReturnValue(fn);
+    (getAccountBridge as jest.Mock).mockReturnValue(makeMockBridge({ getStakesCount: fn }));
     expect(getVotesCount(mockAccount)).toBe(3);
-    expect(loadGetVotesCountForFamily).toHaveBeenCalledWith("evm");
+    expect(getAccountBridge).toHaveBeenCalledWith(mockAccount);
   });
 
-  it("returns 0 when no loader", () => {
-    (loadGetVotesCountForFamily as jest.Mock).mockReturnValue(undefined);
+  it("returns 0 when bridge has no method", () => {
+    (getAccountBridge as jest.Mock).mockReturnValue(makeMockBridge());
+    expect(getVotesCount(mockAccount)).toBe(0);
+  });
+
+  it("returns 0 when getAccountBridge throws", () => {
+    (getAccountBridge as jest.Mock).mockImplementation(() => { throw new Error("not supported"); });
     expect(getVotesCount(mockAccount)).toBe(0);
   });
 });

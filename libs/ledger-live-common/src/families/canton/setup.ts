@@ -1,10 +1,10 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
 
 import { createBridges } from "@ledgerhq/coin-canton/bridge/index";
+import { isAccountEmpty, CantonSigner } from "@ledgerhq/coin-canton";
+import cantonResolver from "@ledgerhq/coin-canton/signer";
 import { getEnv } from "@ledgerhq/live-env";
 import Transport from "@ledgerhq/hw-transport";
-import { CantonSigner } from "@ledgerhq/coin-canton";
-import cantonResolver from "@ledgerhq/coin-canton/signer";
 import type { Bridge } from "@ledgerhq/types-live";
 import makeCliTools from "@ledgerhq/coin-canton/test/cli";
 import { CantonCoinConfig } from "@ledgerhq/coin-canton/config";
@@ -26,9 +26,14 @@ const getCurrencyConfig = (currencyId?: string) => {
   return getCurrencyConfiguration<CantonCoinConfig>(currencyId);
 };
 
-const bridge: Bridge<Transaction, CantonAccount, TransactionStatus> = getEnv("MOCK")
+const rawBridge: Bridge<Transaction, CantonAccount, TransactionStatus> = getEnv("MOCK")
   ? cantonBridgeMock
   : createBridges(executeWithSigner(createSigner), getCurrencyConfig);
+
+const bridge: Bridge<Transaction, CantonAccount, TransactionStatus> = {
+  ...rawBridge,
+  accountBridge: { ...rawBridge.accountBridge, isAccountEmpty },
+};
 
 const resolver: Resolver = createResolver(createSigner, cantonResolver);
 
