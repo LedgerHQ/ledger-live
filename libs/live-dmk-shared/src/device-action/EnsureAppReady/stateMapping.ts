@@ -15,6 +15,7 @@ import {
   UnsupportedFirmwareDAError,
   UserInteractionRequired,
 } from "@ledgerhq/device-management-kit";
+import { StatusCodes } from "@ledgerhq/hw-transport";
 import { DeviceDeprecationError, UserInteractionRequiredLL } from "../ConnectApp/types";
 import { dmkToLedgerDeviceIdMap } from "../../config/dmkToLedgerDeviceIdMap";
 import { decideDeprecationPresentation } from "./deprecationPresentation";
@@ -41,6 +42,10 @@ function isObjectLike(value: unknown): value is Record<string, unknown> {
 
 function hasTag<Tag extends string>(value: unknown, tag: Tag): value is { _tag: Tag } {
   return isObjectLike(value) && "_tag" in value && value._tag === tag;
+}
+
+function hasStatusCode(value: unknown, statusCode: number): value is { statusCode: number } {
+  return isObjectLike(value) && value.statusCode === statusCode;
 }
 
 export function mapConnectAppDAPendingStatus(params: {
@@ -214,7 +219,13 @@ export function mapConnectAppDAErrorStatus(params: {
     return null;
   }
 
-  if (error instanceof DeviceLockedError) {
+  if (
+    error instanceof DeviceLockedError ||
+    // Legacy getAddress calls run through DmkCompatTransport during requiredDerivation.
+    // LedgerJS maps APDU status 0x5515 to LockedDeviceError, which reaches this mapper
+    // as a transport status shape rather than DMK's DeviceLockedError.
+    hasStatusCode(error, StatusCodes.LOCKED_DEVICE)
+  ) {
     return {
       type: RetryableStateType.DeviceLocked,
       retry,

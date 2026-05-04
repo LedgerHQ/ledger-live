@@ -15,13 +15,14 @@ import {
   UnsupportedFirmwareDAError,
   UserInteractionRequired,
 } from "@ledgerhq/device-management-kit";
+import { StatusCodes } from "@ledgerhq/hw-transport";
+import { DeviceModelId as LedgerDeviceModelId } from "@ledgerhq/types-devices";
 import type {
   ConnectAppDAError,
   ConnectAppDARequiredInteraction,
   ConnectAppDAState,
 } from "../ConnectApp/types";
 import { DeviceDeprecationError, UserInteractionRequiredLL } from "../ConnectApp/types";
-import { DeviceModelId as LedgerDeviceModelId } from "@ledgerhq/types-devices";
 import {
   AppInteractionRequiredStateType,
   BlockingStateType,
@@ -30,7 +31,6 @@ import {
   LoadingStateType,
   RetryableStateType,
 } from "./state";
-import type { DeprecationPresentationInput } from "./types";
 import {
   buildExtractedContext,
   mapConnectAppDAErrorStatus,
@@ -585,6 +585,29 @@ describe("mapConnectAppDAErrorStatus", () => {
     });
   });
 
+  it("GIVEN a legacy LedgerJS locked device error shape WHEN it is mapped THEN it returns a retryable locked state", () => {
+    const legacyLockedDeviceError = Object.assign(new Error("Ledger device: Locked device (0x5515)"), {
+      name: "LockedDeviceError",
+      statusCode: StatusCodes.LOCKED_DEVICE,
+      statusText: "LOCKED_DEVICE",
+    }) as unknown as ConnectAppDAError;
+
+    // WHEN
+    const result = mapConnectAppDAErrorStatus({
+      state: makeErrored(legacyLockedDeviceError),
+      appName,
+      getCurrentDeviceState: jest.fn(() => makeSessionState()),
+      latestInstallPlan: null,
+      retry,
+    });
+
+    // THEN
+    expect(result).toEqual({
+      type: RetryableStateType.DeviceLocked,
+      retry,
+    });
+  });
+
   it("GIVEN an already-sending-apdu error WHEN it is mapped THEN it returns a retryable busy state", () => {
     // WHEN
     const result = mapConnectAppDAErrorStatus({
@@ -622,9 +645,7 @@ describe("mapConnectAppDAErrorStatus", () => {
   it("GIVEN a 5501 device exchange error WHEN it is mapped THEN it returns a retryable refused state", () => {
     // WHEN
     const result = mapConnectAppDAErrorStatus({
-      state: makeErrored(
-        makeDeviceExchangeError("5501", "refused"),
-      ),
+      state: makeErrored(makeDeviceExchangeError("5501", "refused")),
       appName,
       getCurrentDeviceState: jest.fn(() => makeSessionState()),
       latestInstallPlan: null,
@@ -696,4 +717,3 @@ describe("buildExtractedContext", () => {
     });
   });
 });
-
