@@ -868,12 +868,12 @@ describe("listOperations", () => {
     }
 
     it.each([
-      ["stake", "STAKE", 500_000_000n],
-      ["unstake", "UNSTAKE", 250_000_000n],
-      ["finalize", "FINALIZE_UNSTAKE", 0n],
+      ["stake", "STAKE", 500_000_000n, [stakerAddress], [bakerAddress]],
+      ["unstake", "UNSTAKE", 250_000_000n, [stakerAddress], [bakerAddress]],
+      ["finalize", "FINALIZE_UNSTAKE", 0n, [bakerAddress], [stakerAddress]],
     ] as const)(
       "maps action %s to operation type %s with amount as value",
-      async (action, expectedType, expectedAmount) => {
+      async (action, expectedType, expectedAmount, expectedSenders, expectedRecipients) => {
         const op = makeStaking(action, Number(expectedAmount));
         mockGetAccountOperations.mockResolvedValue([op]);
 
@@ -883,12 +883,31 @@ describe("listOperations", () => {
         expect(results[0]).toMatchObject({
           type: expectedType,
           value: expectedAmount,
-          senders: [stakerAddress],
-          recipients: [bakerAddress],
+          senders: expectedSenders,
+          recipients: expectedRecipients,
           details: expect.objectContaining({ ledgerOpType: expectedType }),
         });
       },
     );
+
+    it("surfaces finalize_unstake to the staker even when a third party pays the gas", async () => {
+      const helperAddress = "tz1i92Eptw7UZ8JSb8j8jBFJ9Poa4TTnSQwZ";
+      const op: APIStakingType = {
+        ...makeStaking("finalize", 250_000_000),
+        sender: { address: helperAddress },
+      };
+      mockGetAccountOperations.mockResolvedValue([op]);
+
+      const [results] = await listOperations(stakerAddress, options);
+
+      expect(results).toHaveLength(1);
+      expect(results[0]).toMatchObject({
+        type: "FINALIZE_UNSTAKE",
+        senders: [bakerAddress],
+        recipients: [stakerAddress],
+        tx: expect.objectContaining({ feesPayer: helperAddress }),
+      });
+    });
 
     it("uses sender as feesPayer for staking operations", async () => {
       mockGetAccountOperations.mockResolvedValue([makeStaking("stake", 100)]);
