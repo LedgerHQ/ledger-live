@@ -2,8 +2,12 @@ import type { AccountLike } from "@ledgerhq/types-live";
 
 type SendFlowTrackingAccount = Readonly<{
   type?: AccountLike["type"];
-  currency?: Readonly<{ id?: string }>;
-  token?: Readonly<{ parentCurrency: Readonly<{ id: string }> }>;
+  currency?: Readonly<{ id?: string; ticker?: string }>;
+  token?: Readonly<{
+    id?: string;
+    ticker?: string;
+    parentCurrency: Readonly<{ id: string }>;
+  }>;
 }>;
 
 type SendFlowTrackingParentAccount = Readonly<{
@@ -23,6 +27,26 @@ export function getSendFlowBlockchain(
   return account.currency?.id ?? "";
 }
 
+export function getSendFlowCurrencyId(account: SendFlowTrackingAccount | null): string {
+  if (!account) return "";
+
+  if (account.type === "TokenAccount") {
+    return account.token?.id ?? "";
+  }
+
+  return account.currency?.id ?? "";
+}
+
+export function getSendFlowCurrencyTicker(account: SendFlowTrackingAccount | null): string {
+  if (!account) return "";
+
+  if (account.type === "TokenAccount") {
+    return account.token?.ticker ?? "";
+  }
+
+  return account.currency?.ticker ?? "";
+}
+
 export function getSendFlowTrackingProperties(
   account: SendFlowTrackingAccount | null,
   parentAccount?: SendFlowTrackingParentAccount | null,
@@ -30,5 +54,7 @@ export function getSendFlowTrackingProperties(
   return {
     flow: "send",
     blockchain: getSendFlowBlockchain(account, parentAccount),
+    currency: getSendFlowCurrencyTicker(account),
+    currency_id: getSendFlowCurrencyId(account),
   };
 }
