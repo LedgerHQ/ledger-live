@@ -209,17 +209,9 @@ describe("listOperations — mainnet FA2 / convertTokenOperation", () => {
   });
 });
 
-/**
- * Shadownet integration tests for Paris-style staking operations.
- *
- * Test address (`tz1dKrT1...`) was funded via the Shadownet faucet and put through:
- *   1. delegate to TF Test Baker (`tz3Q67aMz7gSMiQRcW729sXSfuMtkyAHYfqc`)
- *   2. stake 500 XTZ
- *   3. unstake 250 XTZ
- *   4. finalize_unstake (after `consensus_rights_delay` ≈ 2 cycles ≈ 48h)
- *
- * Step 4 lands later than the others; the corresponding test stays `.todo` until then.
- */
+// Shadownet test address `tz1dKrT1…` was funded via faucet and put through:
+// delegate to TF Test Baker, stake 500 XTZ, unstake 250 XTZ, then
+// finalize_unstake (paid by a helper account, after ~2 cycles ≈ 48h).
 const SHADOWNET_STAKER = "tz1dKrT1h6d7wP8fEzMPptG6er7mLLeQjBBY";
 const SHADOWNET_BAKER = "tz3Q67aMz7gSMiQRcW729sXSfuMtkyAHYfqc";
 
@@ -238,12 +230,7 @@ const shadownetConfig = (): TezosCoinConfig =>
     },
   }) as TezosCoinConfig;
 
-/**
- * Pinned Operation fixtures for the historical staking ops on the funded test address.
- * Values come from TzKT (`/v1/operations/staking?sender=…`) plus the matching block
- * hashes (`/v1/blocks/{level}`); shadownet history for this account is immutable so
- * these constants will not drift unless the chain is reset.
- */
+// To refresh: TzKT `/v1/operations/staking?sender=…` + `/v1/blocks/{level}`.
 const EXPECTED_STAKE = {
   id: "ooyKCZtF84XchfEr5fjiQV5BEEBjKSCjhKW7xyY4o763yj27mLs-96147000524800",
   asset: { type: "native" },
@@ -298,6 +285,34 @@ const EXPECTED_UNSTAKE = {
   },
 };
 
+const FINALIZE_FEES_PAYER = "tz1i92Eptw7UZ8JSb8j8jBFJ9Poa4TTnSQwZ";
+const EXPECTED_FINALIZE_UNSTAKE = {
+  id: "oodrjyZyoyccgoE24BbMsxfSY4JnP6nrZpmw2xqzurQb7QW3HBD-98214102433792",
+  asset: { type: "native" },
+  tx: {
+    hash: "oodrjyZyoyccgoE24BbMsxfSY4JnP6nrZpmw2xqzurQb7QW3HBD",
+    fees: 492n,
+    feesPayer: FINALIZE_FEES_PAYER,
+    block: {
+      hash: "BLvjbzKJ5cQfmncDt3CiKcuKpk87pP34t6rmm6FWE9iCFbJb1Xp",
+      height: 3153614,
+      time: new Date("2026-05-02T03:50:54Z"),
+    },
+    date: new Date("2026-05-02T03:50:54Z"),
+    failed: false,
+  },
+  type: "FINALIZE_UNSTAKE",
+  value: 250_000_000n,
+  senders: [SHADOWNET_BAKER],
+  recipients: [SHADOWNET_STAKER],
+  details: {
+    counter: 801846,
+    gasLimit: 2169,
+    storageLimit: 0,
+    ledgerOpType: "FINALIZE_UNSTAKE",
+  },
+};
+
 describe("listOperations — Shadownet Paris staking ops", () => {
   let originalGetCoinConfig: () => TezosCoinConfig;
 
@@ -315,6 +330,7 @@ describe("listOperations — Shadownet Paris staking ops", () => {
   it.each([
     ["STAKE", EXPECTED_STAKE],
     ["UNSTAKE", EXPECTED_UNSTAKE],
+    ["FINALIZE_UNSTAKE", EXPECTED_FINALIZE_UNSTAKE],
   ])("contains a %s op matching every field of the pinned fixture", async (type, expected) => {
     const [operations] = await listOperations(SHADOWNET_STAKER, { ...baseOpts, limit: 100 });
     const match = operations.find(op => op.type === type);
@@ -322,6 +338,4 @@ describe("listOperations — Shadownet Paris staking ops", () => {
 
     expect(match).toEqual(expected);
   });
-
-  it.todo("contains a FINALIZE_UNSTAKE op (enable once finalize_unstake lands on chain)");
 });
