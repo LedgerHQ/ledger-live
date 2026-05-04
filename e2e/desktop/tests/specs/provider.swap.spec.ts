@@ -7,7 +7,11 @@ import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
-import { setupEnv, performSwapUntilQuoteSelectionStep } from "tests/utils/swapUtils";
+import {
+  setupEnv,
+  performSwapUntilQuoteSelectionStep,
+  ensureTokenApproval,
+} from "tests/utils/swapUtils";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 
 const app: AppInfos = AppInfos.ETHEREUM;
@@ -78,7 +82,7 @@ for (const { fromAccount, toAccount, provider, xrayTicket, bugTickets } of provi
         await addBugLink(bugTickets);
 
         const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
-        await app.swap.ensureTokenApproval(fromAccount, provider, minAmount);
+        await ensureTokenApproval(fromAccount, provider, minAmount);
         const swap = new Swap(fromAccount, toAccount, minAmount, provider);
 
         await performSwapUntilQuoteSelectionStep(app, swap, minAmount);

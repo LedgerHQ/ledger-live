@@ -2,4 +2,4 @@
 "@ledgerhq/live-common": patch
 ---
 
-Add revokeTokenCommand E2E CLI wrapper for QAA-615.
+Add revokeTokenCommand and getTokenAllowanceCommand E2E CLI wrappers for QAA-615.
