@@ -3,11 +3,10 @@ import { isConfirmedOperation } from "@ledgerhq/live-common/operation";
 import type { Account, AccountLike, Operation, OperationType } from "@ledgerhq/types-live";
 import React from "react";
 import { connect } from "react-redux";
-import perFamilyOperationDetails from "../generated/operationDetails";
+import { useOperationDetails } from "~/families/hooks";
 import OperationStatusIcon from "~/icons/OperationStatusIcon";
 import { currencySettingsForAccountSelector } from "~/reducers/settings";
 import { State } from "~/reducers/types";
-import { UnionToIntersection } from "~/types/helpers";
 
 type OwnProps = {
   size: number;
@@ -21,9 +20,9 @@ type Props = OwnProps & {
   confirmed: boolean;
 };
 
-type FamilyOperationDetailsIntersection = UnionToIntersection<
-  (typeof perFamilyOperationDetails)[keyof typeof perFamilyOperationDetails]
->;
+type OperationDetailsSlot = {
+  operationStatusIcon?: Record<string, React.ComponentType<any>>; // eslint-disable-line @typescript-eslint/no-explicit-any
+};
 
 const OperationIcon = ({
   type,
@@ -35,12 +34,7 @@ const OperationIcon = ({
   parentAccount,
 }: Props) => {
   const mainAccount = getMainAccount(account, parentAccount);
-
-  const specific = mainAccount.currency.family
-    ? (perFamilyOperationDetails[
-        mainAccount.currency.family as keyof typeof perFamilyOperationDetails
-      ] as FamilyOperationDetailsIntersection)
-    : null;
+  const specific = useOperationDetails(mainAccount.currency.family) as OperationDetailsSlot | undefined;
 
   const SpecificOperationStatusIcon =
     specific && specific.operationStatusIcon

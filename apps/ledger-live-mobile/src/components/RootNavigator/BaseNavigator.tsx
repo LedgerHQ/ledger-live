@@ -8,7 +8,11 @@ import { RouteProp, useRoute } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 import { useSelector } from "~/context/hooks";
 import { ScreenName, NavigatorName } from "~/const";
-import * as families from "~/families";
+import {
+  familyNavigatorScreens,
+  EvmEditTransactionNavigator,
+  BitcoinEditTransactionNavigator,
+} from "~/families/nav-loaders";
 import OperationDetails from "~/screens/OperationDetails";
 import EditDeviceName from "~/screens/EditDeviceName";
 import ScanRecipient from "~/screens/SendFunds/ScanRecipient";
@@ -76,8 +80,6 @@ import {
   NavigationHeaderCloseButtonAdvanced,
 } from "../NavigationHeaderCloseButton";
 import { RootDrawer } from "../RootDrawer/RootDrawer";
-import EditTransactionNavigator from "~/families/evm/EditTransactionFlow/EditTransactionNavigator";
-import BitcoinEditTransactionNavigator from "~/families/bitcoin/EditTransactionFlow/EditTransactionNavigator";
 import { DrawerProps } from "../RootDrawer/types";
 import AnalyticsOptInPromptNavigator from "./AnalyticsOptInPromptNavigator";
 import LandingPagesNavigator from "./LandingPagesNavigator";
@@ -522,24 +524,13 @@ export default function BaseNavigator() {
           component={CustomImageNavigator}
           options={{ headerShown: false }}
         />
-        {/* This is a freaking hack… */}
-        {Object.keys(families).map(name => {
-          /* eslint-disable @typescript-eslint/consistent-type-assertions */
-          const { component, options } = families[name as keyof typeof families];
-          const screenName = name as keyof BaseNavigatorStackParamList;
-          const screenComponent = component as React.ComponentType;
-          const screenOptions = options as NativeStackNavigationOptions;
-          /* eslint-enable @typescript-eslint/consistent-type-assertions */
-
-          return (
-            <Stack.Screen
-              key={name}
-              name={screenName}
-              component={screenComponent}
-              options={screenOptions}
-            />
-          );
-        })}
+        {Object.keys(familyNavigatorScreens).map(name => (
+          <Stack.Screen
+            key={name}
+            name={name as keyof BaseNavigatorStackParamList}
+            component={familyNavigatorScreens[name as keyof typeof familyNavigatorScreens]}
+          />
+        ))}
         <Stack.Screen
           name={ScreenName.BleDevicePairingFlow}
           component={BleDevicePairingFlow}
@@ -633,7 +624,7 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={NavigatorName.EvmEditTransaction}
           options={{ headerShown: false }}
-          component={EditTransactionNavigator}
+          component={EvmEditTransactionNavigator}
         />
         <Stack.Screen
           name={NavigatorName.BitcoinEditTransaction}

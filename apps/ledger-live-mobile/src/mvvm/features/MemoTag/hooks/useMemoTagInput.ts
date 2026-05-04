@@ -4,7 +4,7 @@ import { FC, useMemo, useState } from "react";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import perFamily from "~/generated/MemoTagInput";
+import { useMemoTagInput as useMemoTagInputFamily } from "~/families/hooks";
 import { MemoTagInputProps, TxPatch } from "../types";
 
 export const useMemoTagInput = (
@@ -12,10 +12,8 @@ export const useMemoTagInput = (
   updateTransaction: (patch: TxPatch<Transaction>) => void,
 ) => {
   const featureMemoTag = useFeature("llmMemoTag");
-  const Input =
-    (featureMemoTag?.enabled &&
-      (perFamily[family as keyof typeof perFamily] as FC<MemoTagInputProps>)) ||
-    null;
+  const familyMemoTagInput = useMemoTagInputFamily(featureMemoTag?.enabled ? family : undefined);
+  const Input = (familyMemoTagInput as FC<MemoTagInputProps> | undefined) ?? null;
 
   const [isDebouncePending, setIsDebouncePending] = useState(false);
   const [isEmpty, setIsEmpty] = useState(true);

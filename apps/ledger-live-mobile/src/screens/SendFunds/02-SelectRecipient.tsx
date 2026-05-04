@@ -40,7 +40,7 @@ import { hasMemoDisclaimer } from "LLM/features/MemoTag/utils/hasMemoTag";
 import { useExpiryDurationInput } from "LLM/features/ExpiryDuration/hooks/useExpiryDurationInput";
 import DomainServiceRecipientRow from "./DomainServiceRecipientRow";
 import RecipientRow from "./RecipientRow";
-import perFamilySendSelectRecipient from "../../generated/SendSelectRecipient";
+import { useSendSelectRecipient as useSendSelectRecipientSlot } from "~/families/hooks";
 import {
   getTokenExtensions,
   hasProblematicExtension,
@@ -67,6 +67,7 @@ export default function SendSelectRecipient({ route }: Props) {
   invariant(account, "account is missing");
 
   const mainAccount = getMainAccount(account, parentAccount);
+  const specific = useSendSelectRecipientSlot(mainAccount.currency.family);
   const currencySettings = useCurrencySettingsForAccount(mainAccount);
   const { enabled: isDomainResolutionEnabled, params } = useFeature("domainInputResolution") ?? {};
   const isCurrencySupported =
@@ -234,16 +235,12 @@ export default function SendSelectRecipient({ route }: Props) {
       op.type === "IN" && !isConfirmedOperation(op, mainAccount, currencySettings.confirmationsNb),
   );
 
-  const specific =
-    perFamilySendSelectRecipient[
-      mainAccount.currency.family as keyof typeof perFamilySendSelectRecipient
-    ];
   const CustomRecipientAlert =
-    specific && "StepRecipientCustomAlert" in specific ? specific.StepRecipientCustomAlert : null;
+    specific && "StepRecipientCustomAlert" in (specific as object) ? (specific as { StepRecipientCustomAlert?: React.ComponentType<any> }).StepRecipientCustomAlert : null; // eslint-disable-line @typescript-eslint/no-explicit-any
   const customSendRecipientCanNext =
-    specific && "sendRecipientCanNext" in specific ? specific.sendRecipientCanNext : null;
+    specific && "sendRecipientCanNext" in (specific as object) ? (specific as { sendRecipientCanNext?: (...args: unknown[]) => boolean }).sendRecipientCanNext : null;
   const SendRecipientFields =
-    specific && "SendRecipientFields" in specific ? specific.SendRecipientFields : null;
+    specific && "SendRecipientFields" in (specific as object) ? (specific as { SendRecipientFields?: React.ComponentType<any> }).SendRecipientFields : null; // eslint-disable-line @typescript-eslint/no-explicit-any
 
   const customValidationSuccess = customSendRecipientCanNext?.(status) ?? true;
   const isContinueDisabled =

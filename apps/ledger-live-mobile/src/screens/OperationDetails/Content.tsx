@@ -27,8 +27,7 @@ import { useCurrencySettingsForAccount } from "LLM/hooks/useCurrencySettingsForA
 import DataList from "./DataList";
 import Modal from "./Modal";
 import Section, { styles as sectionStyles } from "./Section";
-import byFamiliesOperationDetails from "../../generated/operationDetails";
-import byFamiliesEditOperationPanel from "../../generated/EditOperationPanel";
+import { useOperationDetails as useOperationDetailsSlot, useEditOperationPanel as useEditOperationPanelSlot } from "~/families/hooks";
 import DefaultOperationDetailsExtra from "./Extra";
 import Title from "./Title";
 import FormatDate from "~/components/DateFormat/FormatDate";
@@ -125,15 +124,11 @@ export default function Content({
   const isEditable = isEditableOperation({ account: mainAccount, operation });
   const isOperationStuck = isStuckOperation({ family: mainAccount.currency.family, operation });
 
-  const specificOperationDetails =
-    byFamiliesOperationDetails[
-      mainAccount.currency.family as keyof typeof byFamiliesOperationDetails
-    ];
+  const specificOperationDetails = useOperationDetailsSlot(mainAccount.currency.family);
 
-  const { EditOperationPanel: SpecificEditOperationPanel = undefined } =
-    byFamiliesEditOperationPanel[
-      mainAccount.currency.family as keyof typeof byFamiliesEditOperationPanel
-    ] || {};
+  const editOperationPanelSlot = useEditOperationPanelSlot(mainAccount.currency.family);
+  const SpecificEditOperationPanel =
+    editOperationPanelSlot && (editOperationPanelSlot as { EditOperationPanel?: React.ComponentType<any> }).EditOperationPanel; // eslint-disable-line @typescript-eslint/no-explicit-any
 
   const urlFeesInfo =
     specificOperationDetails &&

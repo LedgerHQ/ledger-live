@@ -18,7 +18,7 @@ import ReadOnlyWarning from "./ReadOnlyWarning";
 import NotSyncedWarning from "./NotSyncedWarning";
 import GenericErrorView from "~/components/GenericErrorView";
 import DeviceActionModal from "~/components/DeviceActionModal";
-import byFamily from "../../generated/ConnectDevice";
+import { useConnectDevice as useConnectDeviceSlot } from "~/families/hooks";
 import { ReceiveFundsStackParamList } from "~/components/RootNavigator/types/ReceiveFundsNavigator";
 import {
   ReactNavigationHeaderOptions,
@@ -45,6 +45,12 @@ export default function ConnectDevice({
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const [device, setDevice] = useState<Device | undefined>();
   const action = useAppDeviceAction();
+  const mainAccountForSlot = account ? getMainAccount(account, parentAccount) : undefined;
+  const mainAccountCurrency = mainAccountForSlot ? getAccountCurrency(mainAccountForSlot) : undefined;
+  const mainCurrencyFamily =
+    mainAccountCurrency?.type === "CryptoCurrency" ? mainAccountCurrency.family : undefined;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const CustomConnectDevice = useConnectDeviceSlot(mainCurrencyFamily) as React.ComponentType<any> | undefined;
 
   // Animated height to prevent layout shift during device discovery
   const animatedHeight = useSharedValue(0);
@@ -150,7 +156,6 @@ export default function ConnectDevice({
   const tokenCurrency = account && account.type === "TokenAccount" ? account.token : undefined;
 
   // check for coin specific UI
-  const CustomConnectDevice = byFamily[currency.family as keyof typeof byFamily];
   if (CustomConnectDevice) return <CustomConnectDevice {...{ navigation, route }} />;
 
   if (readOnlyModeEnabled) {

@@ -21,10 +21,13 @@ import { HederaAccount } from "@ledgerhq/live-common/families/hedera/types";
 import { isEditableOperation, isStuckOperation } from "@ledgerhq/live-common/operation";
 import AccountGraphCard from "~/components/AccountGraphCard";
 import SubAccountsList from "./SubAccountsList";
-import perFamilyAccountHeader from "../../generated/AccountHeader";
-import perFamilyAccountSubHeader from "../../generated/AccountSubHeader";
-import perFamilyAccountBodyHeader from "../../generated/AccountBodyHeader";
-import perFamilyAccountBalanceSummaryFooter from "../../generated/AccountBalanceSummaryFooter";
+import {
+  useAccountHeader,
+  useAccountSubHeader,
+  useAccountBodyHeader,
+  useAccountBalanceSummaryFooter,
+  usePendingTransferProposals,
+} from "~/families/hooks";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import SectionContainer from "../WalletCentricSections/SectionContainer";
 import {
@@ -38,7 +41,6 @@ import WarningBannerStatus from "~/components/WarningBannerStatus";
 import WarningCustomBanner from "~/components/WarningCustomBanner";
 import ErrorWarning from "./ErrorWarning";
 import NftEntryPoint from "LLM/features/NftEntryPoint";
-import perFamilyPendingTransferProposals from "../../generated/PendingTransferProposals";
 
 type Props = {
   account?: AccountLike;
@@ -98,6 +100,13 @@ export function useListHeaderComponents({
     () => (account ? getMainAccount(account, parentAccount) : undefined),
     [account, parentAccount],
   );
+  const mainAccountFamily = mainAccount?.currency.family;
+  const perFamilyAccountHeader = useAccountHeader(mainAccountFamily) as MaybeComponent | undefined;
+  const perFamilyAccountBodyHeader = useAccountBodyHeader(mainAccountFamily) as MaybeComponent | undefined;
+  const perFamilyAccountSubHeader = useAccountSubHeader(mainAccountFamily) as MaybeComponent | undefined;
+  const perFamilyPendingTransferProposals = usePendingTransferProposals(mainAccountFamily) as MaybeComponent | undefined;
+  const perFamilyAccountBalanceSummaryFooter = useAccountBalanceSummaryFooter(mainAccountFamily) as MaybeComponent | undefined;
+
   const oldestEditableOperation = useMemo(() => {
     if (!account || !mainAccount) return undefined;
 
@@ -125,28 +134,21 @@ export function useListHeaderComponents({
 
   if (!account || !mainAccount) return { listHeaderComponents: [], stickyHeaderIndices: undefined };
 
-  const family: string = mainAccount.currency.family;
-
   const empty = isAccountEmpty(account);
   const shouldUseCounterValue = countervalueAvailable && useCounterValue;
 
-  const AccountHeader = (perFamilyAccountHeader as Record<string, MaybeComponent>)[family];
+  const AccountHeader = perFamilyAccountHeader;
   const AccountHeaderRendered = AccountHeader && AccountHeader({ account, parentAccount });
 
-  const AccountBodyHeader = (perFamilyAccountBodyHeader as Record<string, MaybeComponent>)[family];
+  const AccountBodyHeader = perFamilyAccountBodyHeader;
   // Pre-render component, cause we need to know if it return null so we don't render an empty border container (Tezos was doing it)
   const AccountBodyHeaderRendered =
     AccountBodyHeader && AccountBodyHeader({ account, parentAccount });
 
-  const AccountSubHeader = (perFamilyAccountSubHeader as Record<string, MaybeComponent>)[family];
-  const PendingTransferProposals = (
-    perFamilyPendingTransferProposals as Record<string, MaybeComponent>
-  )[family];
+  const AccountSubHeader = perFamilyAccountSubHeader;
+  const PendingTransferProposals = perFamilyPendingTransferProposals;
 
-  const AccountBalanceSummaryFooter =
-    perFamilyAccountBalanceSummaryFooter[
-      family as keyof typeof perFamilyAccountBalanceSummaryFooter
-    ];
+  const AccountBalanceSummaryFooter = perFamilyAccountBalanceSummaryFooter;
   const AccountBalanceSummaryFooterRendered =
     AccountBalanceSummaryFooter &&
     AccountBalanceSummaryFooter({

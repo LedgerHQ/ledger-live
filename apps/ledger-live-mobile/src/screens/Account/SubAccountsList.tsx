@@ -13,7 +13,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import SubAccountRow from "~/components/SubAccountRow";
 import Touchable from "~/components/Touchable";
 import TokenContextualModal from "../Settings/Accounts/TokenContextualModal";
-import perFamilySubAccountList from "../../generated/SubAccountList";
+import { useSubAccountList } from "~/families/hooks";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import Button from "~/components/Button";
 import { blacklistedTokenIdsSelector } from "~/reducers/settings";
@@ -65,11 +65,12 @@ export default function SubAccountsList({
   });
 
   const family = parentAccount.currency.family;
-  const specific = perFamilySubAccountList[family as keyof typeof perFamilySubAccountList];
+  const specific = useSubAccountList(family);
 
-  const hasSpecificTokenWording = specific && specific.hasSpecificTokenWording;
+  const hasSpecificTokenWording = specific && (specific as { hasSpecificTokenWording?: boolean }).hasSpecificTokenWording;
 
-  const Placeholder = specific && specific.Placeholder;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const Placeholder = specific && (specific as { Placeholder?: React.ComponentType<any> }).Placeholder;
 
   const isToken = useMemo(
     () => (parentAccount.currency.tokenTypes || []).length > 0,
