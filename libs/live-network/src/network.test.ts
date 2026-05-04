@@ -10,6 +10,7 @@ const mockedAxios = jest.mocked(axios);
 describe("network", () => {
   const DEFAULT_ENABLE_NETWORK_LOGS = getEnv("ENABLE_NETWORK_LOGS");
   const DEFAULT_GET_CALLS_RETRY = getEnv("GET_CALLS_RETRY");
+  const DEFAULT_LEDGER_CLIENT_VERSION = getEnv("LEDGER_CLIENT_VERSION");
 
   afterEach(() => {
     // restore the spy created with spyOn
@@ -18,6 +19,7 @@ describe("network", () => {
 
     // Restore DEFAULT_ENABLE_NETWORK_LOGS
     setEnv("ENABLE_NETWORK_LOGS", DEFAULT_ENABLE_NETWORK_LOGS);
+    setEnv("LEDGER_CLIENT_VERSION", DEFAULT_LEDGER_CLIENT_VERSION);
   });
 
   describe("requestInterceptor", () => {
@@ -171,6 +173,23 @@ describe("network", () => {
         // eslint-disable-next-line no-empty
       } catch {}
       expect(mockedAxios).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe("ledger client version headers", () => {
+    test("should set ledger client version as axios client headers", () => {
+      setEnv("LEDGER_CLIENT_VERSION", "wallet-cli/0.1.1");
+
+      expect(axios.defaults.headers.common["X-Ledger-Client-Version"]).toBe("wallet-cli/0.1.1");
+      expect(axios.defaults.headers.common["User-Agent"]).toBe("wallet-cli/0.1.1");
+    });
+
+    test("should clear ledger client version headers when env is empty", () => {
+      setEnv("LEDGER_CLIENT_VERSION", "wallet-cli/0.1.1");
+      setEnv("LEDGER_CLIENT_VERSION", "");
+
+      expect(axios.defaults.headers.common["X-Ledger-Client-Version"]).toBeUndefined();
+      expect(axios.defaults.headers.common["User-Agent"]).toBeUndefined();
     });
   });
 });

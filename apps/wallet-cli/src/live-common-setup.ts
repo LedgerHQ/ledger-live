@@ -8,6 +8,7 @@ import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { setEnv } from "@ledgerhq/live-env";
 import { registerWalletCliDmkTransport } from "./device/register-dmk-transport";
+import pkg from "../package.json" with { type: "json" };
 
 /**
  * Ensure USER_ID is set so DMK firmware distribution salt is stable for this CLI.
@@ -15,6 +16,13 @@ import { registerWalletCliDmkTransport } from "./device/register-dmk-transport";
 if (!process.env.USER_ID) {
   process.env.USER_ID = "wallet-cli";
 }
+
+const ledgerClientVersion = `wallet-cli/${pkg.version}`;
+setEnv("LEDGER_CLIENT_VERSION", ledgerClientVersion);
+process.env.LEDGER_CLIENT_VERSION = ledgerClientVersion;
+// Bun can resolve ESM imports to lib-es/ and require() calls to lib/, creating
+// separate live-env singletons. Keep both aligned for lazy CJS coin modules.
+require("@ledgerhq/live-env").setEnv("LEDGER_CLIENT_VERSION", ledgerClientVersion);
 
 /**
  * Wallet-cli-specific coin-module loaders (bitcoin, evm, solana only).
@@ -86,5 +94,3 @@ require("@ledgerhq/live-config/LiveConfig").LiveConfig.setConfig(walletCliConfig
 // instead of relying on setupCalClientStore from @ledgerhq/cryptoassets/cal-client (test-helpers).
 setupCalClientStore();
 registerWalletCliDmkTransport();
-
-setEnv("LEDGER_CLIENT_VERSION", "wallet-cli/0.1.0");

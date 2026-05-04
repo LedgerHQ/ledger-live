@@ -251,12 +251,23 @@ const implementation = <T = any>(arg: AxiosRequestConfig): AxiosPromise<T> => {
   return promise;
 };
 
+const canSetUserAgentHeader = (): boolean =>
+  typeof globalThis?.window === "undefined" &&
+  typeof process !== "undefined" &&
+  process.release?.name === "node";
+
 // attach the env "LEDGER_CLIENT_VERSION" to set the header globally for axios
 function setAxiosLedgerClientVersionHeader(value: string) {
   if (value) {
     axios.defaults.headers.common["X-Ledger-Client-Version"] = value;
+    if (canSetUserAgentHeader()) {
+      axios.defaults.headers.common["User-Agent"] = value;
+    }
   } else {
     delete axios.defaults.headers.common["X-Ledger-Client-Version"];
+    if (canSetUserAgentHeader()) {
+      delete axios.defaults.headers.common["User-Agent"];
+    }
   }
 }
 setAxiosLedgerClientVersionHeader(getEnv("LEDGER_CLIENT_VERSION"));
