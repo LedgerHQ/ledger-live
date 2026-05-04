@@ -2,7 +2,6 @@ export type LiveAppModalUseCase = "earn";
 
 export type LiveAppModalOpenParams = {
   path: string;
-  manifestId?: string;
   payload?: unknown;
   title?: string;
   description?: string;
@@ -42,12 +41,12 @@ export type LiveAppModalState = LiveAppModalParams | null;
 
 export function resolveLiveAppModalParams(
   input: LiveAppModalOpenParams & { requestId: string },
-  fallbackManifestId: string,
+  manifestId: string,
 ): LiveAppModalParams {
-  const { requestId, manifestId, path, title, description, useCase } = input;
+  const { requestId, path, title, description, useCase } = input;
   return {
     requestId,
-    manifestId: manifestId || fallbackManifestId,
+    manifestId,
     path,
     title,
     description,
