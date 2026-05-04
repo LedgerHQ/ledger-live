@@ -23,11 +23,11 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { loadAccountModuleForFamily } from "../../../coin-modules/registry";
 import {
-  buildEnsureAppReadyInputUseCase,
+  buildEnsureAppReadyInput,
   resolveAppRequestRequirements,
   toEnsureAppReadyInput,
   toConnectAppRequest,
-} from "./buildEnsureAppReadyInputUseCase";
+} from "./buildEnsureAppReadyInput";
 
 const mockGetDerivationModesForCurrency = jest.mocked(getDerivationModesForCurrency);
 const mockGetDerivationScheme = jest.mocked(getDerivationScheme);
@@ -36,7 +36,7 @@ const mockLoadAccountModuleForFamily = jest.mocked(loadAccountModuleForFamily);
 
 const ethereumCurrency = getCryptoCurrencyById("ethereum");
 
-describe("ensureAppReady buildEnsureAppReadyInputUseCase", () => {
+describe("ensureAppReady buildEnsureAppReadyInput", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockGetDerivationModesForCurrency.mockReturnValue(["ethM", ""]);
@@ -53,7 +53,7 @@ describe("ensureAppReady buildEnsureAppReadyInputUseCase", () => {
     account.freshAddressPath = "44'/60'/1'/0/0";
 
     expect(
-      await buildEnsureAppReadyInputUseCase({
+      await buildEnsureAppReadyInput({
         appRequest: { account },
         flow: FlowName.send,
       }),
@@ -84,7 +84,7 @@ describe("ensureAppReady buildEnsureAppReadyInputUseCase", () => {
     account.freshAddressPath = "44'/60'/2'/0/0";
 
     expect(
-      await buildEnsureAppReadyInputUseCase({
+      await buildEnsureAppReadyInput({
         appRequest: { account },
         skipWrongDeviceCheck: true,
       }),
@@ -107,7 +107,7 @@ describe("ensureAppReady buildEnsureAppReadyInputUseCase", () => {
     const tokenCurrency = createFixtureTokenAccount("11").token;
 
     expect(
-      await buildEnsureAppReadyInputUseCase({
+      await buildEnsureAppReadyInput({
         appRequest: {
           appName: "Exchange",
           tokenCurrency,
@@ -127,18 +127,18 @@ describe("ensureAppReady buildEnsureAppReadyInputUseCase", () => {
   it("falls back from token currency to account currency to currency for deprecation naming", async () => {
     const account = createFixtureAccount("03", ethereumCurrency);
     const tokenCurrency = createFixtureTokenAccount("12").token;
-    const tokenInput = await buildEnsureAppReadyInputUseCase({
+    const tokenInput = await buildEnsureAppReadyInput({
       appRequest: {
         appName: "Exchange",
         tokenCurrency,
       },
       flow: FlowName.swap,
     });
-    const accountInput = await buildEnsureAppReadyInputUseCase({
+    const accountInput = await buildEnsureAppReadyInput({
       appRequest: { account },
       flow: FlowName.receive,
     });
-    const currencyInput = await buildEnsureAppReadyInputUseCase({
+    const currencyInput = await buildEnsureAppReadyInput({
       appRequest: { currency: ethereumCurrency },
       flow: FlowName.addAccount,
     });
