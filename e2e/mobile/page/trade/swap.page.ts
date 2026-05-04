@@ -1,5 +1,5 @@
 import CommonPage from "../common.page";
-import { allure, Step } from "jest-allure2-reporter/api";
+import { Step } from "jest-allure2-reporter/api";
 import { openDeeplink, normalizeText, isIos } from "../../helpers/commonHelpers";
 import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
@@ -11,10 +11,6 @@ import {
   getParentAccountName,
   TokenAccount,
 } from "@ledgerhq/live-common/e2e/enum/Account";
-import { getEnv } from "@ledgerhq/live-env";
-import BigNumber from "bignumber.js";
-import { deleteSpeculos, launchSpeculos, registerSpeculos } from "../../utils/speculosUtils";
-import { log } from "detox";
 
 export default class SwapPage extends CommonPage {
   baseLink = "swap";
@@ -211,55 +207,9 @@ export default class SwapPage extends CommonPage {
     await waitForElementById(this.swapCloseButtonCompletedTestId);
   }
 
-  @Step("Ensure token approval")
-  async ensureTokenApproval(
-    fromAccount: Account | TokenAccount,
-    provider: Provider,
-    minAmount: string,
-  ) {
-    if (!provider.contractAddress || !fromAccount.parentAccount) return;
-
-    const currentAllowance = await isTokenAllowanceSufficientCommand(
-      fromAccount,
-      provider.contractAddress,
-      minAmount,
-    );
-    log.warn("CLI result: Current Allowance: ", currentAllowance);
-    if (currentAllowance) return;
-
-    const previousSpeculosPort = getEnv("SPECULOS_API_PORT");
-    const speculos = await launchSpeculos(fromAccount.currency.speculosApp.name);
-    await registerSpeculos(speculos.port);
-    try {
-      const result = await approveTokenCommand(
-        fromAccount,
-        provider.contractAddress,
-        new BigNumber(minAmount).times(12).div(10).toFixed(),
-      );
-      await allure.description(`Token approval result for ${provider.uiName}:\n\n ${result}`);
-    } finally {
-      await deleteSpeculos(speculos.id);
-      if (previousSpeculosPort > 0) {
-        await registerSpeculos(previousSpeculosPort);
-      }
-    }
-  }
-
-  @Step("Revoke token approval")
-  async revokeTokenApproval(fromAccount: Account | TokenAccount, provider: Provider) {
-    if (!provider.contractAddress || !fromAccount.parentAccount) return;
-
-    const previousSpeculosPort = getEnv("SPECULOS_API_PORT");
-    const speculos = await launchSpeculos(fromAccount.currency.speculosApp.name);
-    await registerSpeculos(speculos.port);
-    try {
-      const result = await revokeTokenCommand(fromAccount, provider.contractAddress);
-      await allure.description(`Token revoke result for ${provider.uiName}:\n\n ${result}`);
-    } finally {
-      await deleteSpeculos(speculos.id);
-      if (previousSpeculosPort > 0) {
-        await registerSpeculos(previousSpeculosPort);
-      }
-    }
+  @Step("Ensure token approval has been revoked")
+  async ensureRevokeTokenApproval(fromAccount: Account | TokenAccount, provider: Provider) {
+    const remaining = await getTokenAllowanceCommand(fromAccount, provider.contractAddress!);
+    jestExpect(remaining).toBe("0");
   }
 }
