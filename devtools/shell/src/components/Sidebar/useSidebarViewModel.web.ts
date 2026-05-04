@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import type { ChangeEventHandler } from "react";
 import type { Category, Tool } from "../../types";
 import { useAccordion } from "../../hooks";
@@ -32,7 +32,6 @@ export function useSidebarViewModel({
   onSelectTool,
   onHome,
 }: SidebarInput): SidebarViewProps {
-  const { isExpanded, toggle, expand } = useAccordion<Category>({ mode: "single" });
   const [query, setQuery] = useState("");
 
   const activeCategory = useMemo(
@@ -40,10 +39,10 @@ export function useSidebarViewModel({
     [activeToolId, categories],
   );
 
-  // Tools can be activated from the Overview without going through the accordion, keep it in sync.
-  useEffect(() => {
-    if (activeCategory) expand(activeCategory);
-  }, [activeCategory, expand]);
+  const { isExpanded, toggle } = useAccordion<Category>({
+    mode: "single",
+    openKey: activeCategory,
+  });
 
   const isSearchActive = query.trim().length > 0;
   const filteredCategories = useMemo(
