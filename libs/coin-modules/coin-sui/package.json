@@ -148,9 +148,13 @@
     "typecheck": "tsc --noEmit --customConditions node",
     "unimported": "unimported",
     "format": "oxfmt src",
-    "format:check": "oxfmt src --check"
+    "format:check": "oxfmt src --check",
+    "graphql:codegen": "node scripts/generate-graphql-types.mjs && oxfmt src/network/graphql/graphql-env.d.ts",
+    "graphql:codegen:fetch": "node scripts/generate-graphql-types.mjs --fetch && oxfmt src/network/graphql/graphql-env.d.ts src/network/graphql/introspection.json",
+    "graphql:codegen:check": "node scripts/generate-graphql-types.mjs --check"
   },
   "dependencies": {
+    "@0no-co/graphql.web": "^1.0.11",
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
@@ -165,10 +169,13 @@
     "@mysten/signers": "1.0.1",
     "@mysten/sui": "2.9.0",
     "bignumber.js": "^9.1.2",
+    "gql.tada": "^1.9.2",
     "lodash": "4.17.21",
     "rxjs": "catalog:"
   },
   "devDependencies": {
+    "@faker-js/faker": "^8.4.1",
+    "@gql.tada/internal": "1.0.9",
     "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@swc/core": "catalog:",
@@ -177,6 +184,7 @@
     "@types/jest": "catalog:",
     "@types/lodash": "^4.14.191",
     "@types/node": "catalog:",
+    "graphql": "^16.10.0",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:"

@@ -5870,6 +5870,9 @@ importers:
 
   libs/coin-modules/coin-sui:
     dependencies:
+      '@0no-co/graphql.web':
+        specifier: ^1.0.11
+        version: 1.0.11(graphql@16.13.2)
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 2.2.0(@ledgerhq/errors@libs+ledgerjs+packages+errors)
@@ -5912,6 +5915,9 @@ importers:
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
+      gql.tada:
+        specifier: ^1.9.2
+        version: 1.9.2(graphql@16.13.2)(typescript@6.0.2)
       lodash:
         specifier: 4.17.21
         version: 4.17.21
@@ -5919,6 +5925,12 @@ importers:
         specifier: 'catalog:'
         version: 7.8.2
     devDependencies:
+      '@faker-js/faker':
+        specifier: ^8.4.1
+        version: 8.4.1
+      '@gql.tada/internal':
+        specifier: 1.0.9
+        version: 1.0.9(graphql@16.13.2)(typescript@6.0.2)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../ledgerjs/packages/devices
@@ -5943,6 +5955,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      graphql:
+        specifier: ^16.10.0
+        version: 16.13.2
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)
@@ -15850,6 +15865,10 @@ packages:
     resolution: {integrity: sha512-sqXgo1SCv+j4VtYEwl/bukuOIBrVgx6euIoCat3Iyx5oeoXwEA2USCoeL0IPubflMxncA2INkqJ/Wr3NGrSgzw==}
     hasBin: true
 
+  '@faker-js/faker@8.4.1':
+    resolution: {integrity: sha512-XQ3cU+Q8Uqmrbf2e0cIC/QN43sTBSC8KF12u29Mb47tWrt2hAgBXSgpZMj4Ao8Uk0iJcU99QsOCaIL8934obCg==}
+    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0, npm: '>=6.14.13'}
+
   '@faker-js/faker@9.9.0':
     resolution: {integrity: sha512-OEl393iCOoo/z8bMezRlJu+GlRGlsKbUAN7jKB6LhnKoqKve5DXRpalbItIIcwnCjs1k/FOPjFzcA6Qn+H+YbA==}
     engines: {node: '>=18.0.0', npm: '>=9.0.0'}
@@ -16368,12 +16387,6 @@ packages:
         optional: true
       '@gql.tada/vue-support':
         optional: true
-
-  '@gql.tada/internal@1.0.8':
-    resolution: {integrity: sha512-XYdxJhtHC5WtZfdDqtKjcQ4d7R1s0d1rnlSs3OcBEUbYiPoJJfZU7tWsVXuv047Z6msvmr4ompJ7eLSK5Km57g==}
-    peerDependencies:
-      graphql: ^15.5.0 || ^16.0.0 || ^17.0.0
-      typescript: ^5.0.0
 
   '@gql.tada/internal@1.0.9':
     resolution: {integrity: sha512-Bp8yi+kLrzIJ3l5Dfxhz48H4OCH2LCX+pShaPcJgh+oiBt6clrjUKDYNDD3Z78aDQ3+Tyrxe4dd0MfLgpSLPPg==}
@@ -36920,7 +36933,7 @@ snapshots:
 
   '@0no-co/graphqlsp@1.12.16(graphql@16.13.2)(typescript@6.0.2)':
     dependencies:
-      '@gql.tada/internal': 1.0.8(graphql@16.13.2)(typescript@6.0.2)
+      '@gql.tada/internal': 1.0.9(graphql@16.13.2)(typescript@6.0.2)
       graphql: 16.13.2
       typescript: 6.0.2
 
@@ -43307,6 +43320,8 @@ snapshots:
       find-up: 5.0.0
       js-yaml: 4.1.0
 
+  '@faker-js/faker@8.4.1': {}
+
   '@faker-js/faker@9.9.0': {}
 
   '@fastify/ajv-compiler@3.6.0':
@@ -44146,12 +44161,6 @@ snapshots:
     dependencies:
       '@0no-co/graphqlsp': 1.12.16(graphql@16.13.2)(typescript@6.0.2)
       '@gql.tada/internal': 1.0.9(graphql@16.13.2)(typescript@6.0.2)
-      graphql: 16.13.2
-      typescript: 6.0.2
-
-  '@gql.tada/internal@1.0.8(graphql@16.13.2)(typescript@6.0.2)':
-    dependencies:
-      '@0no-co/graphql.web': 1.0.11(graphql@16.13.2)
       graphql: 16.13.2
       typescript: 6.0.2
 
