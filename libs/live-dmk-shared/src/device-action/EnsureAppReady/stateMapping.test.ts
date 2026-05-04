@@ -586,18 +586,9 @@ describe("mapConnectAppDAErrorStatus", () => {
   });
 
   it("GIVEN an already-sending-apdu error WHEN it is mapped THEN it returns a retryable busy state", () => {
-    // GIVEN
-    const err = new AlreadySendingApduError();
-    // eslint-disable-next-line no-console
-    console.log(
-      "AlreadySendingApduError debug",
-      err instanceof AlreadySendingApduError,
-      AlreadySendingApduError.toString(),
-    );
-
     // WHEN
     const result = mapConnectAppDAErrorStatus({
-      state: makeErrored(err as unknown as ConnectAppDAError),
+      state: makeErrored(new AlreadySendingApduError() as unknown as ConnectAppDAError),
       appName,
       getCurrentDeviceState: jest.fn(() => makeSessionState()),
       latestInstallPlan: null,
