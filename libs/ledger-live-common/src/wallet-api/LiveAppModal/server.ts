@@ -9,7 +9,6 @@ import {
   LiveAppModalGetInitialPayloadResult,
   LiveAppModalOpenParams,
   LiveAppModalOpenResult,
-  LiveAppModalSize,
   LiveAppModalUseCase,
 } from "./types";
 
@@ -18,7 +17,6 @@ export type LiveAppModalUiHookOpenParams = {
   path: string;
   title?: string;
   description?: string;
-  size?: LiveAppModalSize;
   useCase?: LiveAppModalUseCase;
 };
 
@@ -58,7 +56,6 @@ export const handlers = ({ uiHooks }: { uiHooks: LiveAppModalUiHooks }) =>
             path: params.path,
             title: params.title,
             description: params.description,
-            size: params.size,
             useCase: params.useCase,
           });
         } catch (err) {

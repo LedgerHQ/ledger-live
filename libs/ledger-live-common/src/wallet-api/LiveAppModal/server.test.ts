@@ -31,7 +31,6 @@ describe("LiveAppModal server handlers", () => {
       payload: { assets: ["BTC"] },
       title: "Crowd favourites",
       manifestId: "another-app",
-      size: "medium",
       useCase: "earn",
     });
 
@@ -40,7 +39,6 @@ describe("LiveAppModal server handlers", () => {
     expect(callArg).toMatchObject({
       path: "/modal/popular",
       title: "Crowd favourites",
-      size: "medium",
       useCase: "earn",
     });
     // A live-app must not be able to open a modal for a different manifest:

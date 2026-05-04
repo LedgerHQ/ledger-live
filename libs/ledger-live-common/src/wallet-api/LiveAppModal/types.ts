@@ -1,5 +1,3 @@
-export type LiveAppModalSize = "full" | "medium";
-
 export type LiveAppModalUseCase = "earn";
 
 export type LiveAppModalOpenParams = {
@@ -8,7 +6,6 @@ export type LiveAppModalOpenParams = {
   payload?: unknown;
   title?: string;
   description?: string;
-  size?: LiveAppModalSize;
   useCase?: LiveAppModalUseCase;
 };
 
@@ -38,7 +35,6 @@ export type LiveAppModalParams = {
   path: string;
   title?: string;
   description?: string;
-  size?: LiveAppModalSize;
   useCase?: LiveAppModalUseCase;
 };
 
@@ -48,14 +44,13 @@ export function resolveLiveAppModalParams(
   input: LiveAppModalOpenParams & { requestId: string },
   fallbackManifestId: string,
 ): LiveAppModalParams {
-  const { requestId, manifestId, path, title, description, size, useCase } = input;
+  const { requestId, manifestId, path, title, description, useCase } = input;
   return {
     requestId,
     manifestId: manifestId || fallbackManifestId,
     path,
     title,
     description,
-    size,
     useCase,
   };
 }
