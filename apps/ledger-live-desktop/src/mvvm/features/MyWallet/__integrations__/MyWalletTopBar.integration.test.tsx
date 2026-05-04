@@ -57,7 +57,7 @@ describe("MyWallet ContextMenu", () => {
 
     expect(mockTrack).toHaveBeenCalledWith("button_clicked", {
       button: MY_WALLET_TRACKING_BUTTON.menu,
-      page: MY_WALLET_TRACKING_PAGE_NAME,
+      page: "/",
     });
   });
 
