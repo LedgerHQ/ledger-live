@@ -11,6 +11,7 @@ import {
   prepareOnboarding,
   preparePreApprovalTransaction,
   prepareTapRequest,
+  submit,
   submitOnboarding,
   submitPreApprovalTransaction,
   submitTapRequest,
@@ -377,5 +378,13 @@ describe("gateway (devnet)", () => {
       expect(typeof response.submissionId).toBe("string");
       expect(typeof response.updateId).toBe("string");
     }, 30000);
+  });
+
+  describe("submit", () => {
+    it("throws when submitting with a non-existent party", async () => {
+      await expect(
+        submit(mockCurrency, "fake-party-id", "garbage-serialized", "garbage-signature"),
+      ).rejects.toThrow(/Invalid value for: path parameter party_id/);
+    });
   });
 });
