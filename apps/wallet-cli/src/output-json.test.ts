@@ -154,6 +154,110 @@ describe("JsonCommandOutput", () => {
     expect(lines[0].quotes[0]).toMatchObject({ quoteId: "quote-1", provider: "paraswap" });
   });
 
+  it("secretsInit emits member and rootId in envelope", () => {
+    try {
+      const out = createCommandOutput("json", { command: "secrets init", network: "all" });
+      out.secretsInit({ memberName: "my-machine (darwin)", rootId: "root-abc" });
+    } finally {
+      restore();
+    }
+    const [line] = writes.join("").trim().split("\n").map(l => JSON.parse(l));
+    expect(line).toMatchObject({
+      status: "success",
+      command: "secrets init",
+      network: "all",
+      member: "my-machine (darwin)",
+      rootId: "root-abc",
+    });
+  });
+
+  it("secretsKeys emits keys array in envelope", () => {
+    try {
+      const out = createCommandOutput("json", { command: "secrets keys", network: "all" });
+      out.secretsKeys([
+        { domain: "prod", firstUsed: "2026-04-27T00:00:00.000Z" },
+        { domain: "staging", firstUsed: "2026-04-28T00:00:00.000Z" },
+      ]);
+    } finally {
+      restore();
+    }
+    const [line] = writes.join("").trim().split("\n").map(l => JSON.parse(l));
+    expect(line).toMatchObject({
+      status: "success",
+      command: "secrets keys",
+      keys: [
+        { domain: "prod", firstUsed: "2026-04-27T00:00:00.000Z" },
+        { domain: "staging", firstUsed: "2026-04-28T00:00:00.000Z" },
+      ],
+    });
+  });
+
+  it("secretsKeys emits empty keys array when no domains tracked", () => {
+    try {
+      const out = createCommandOutput("json", { command: "secrets keys", network: "all" });
+      out.secretsKeys([]);
+    } finally {
+      restore();
+    }
+    const [line] = writes.join("").trim().split("\n").map(l => JSON.parse(l));
+    expect(line).toMatchObject({ status: "success", keys: [] });
+  });
+
+  it("secretsDestroy emits destroyed=true when remote succeeded", () => {
+    try {
+      const out = createCommandOutput("json", { command: "secrets destroy", network: "all" });
+      out.secretsDestroy(true);
+    } finally {
+      restore();
+    }
+    const [line] = writes.join("").trim().split("\n").map(l => JSON.parse(l));
+    expect(line).toMatchObject({ status: "success", destroyed: true, local_wiped: true });
+  });
+
+  it("secretsDestroy emits destroyed=false when only local wipe", () => {
+    try {
+      const out = createCommandOutput("json", { command: "secrets destroy", network: "all" });
+      out.secretsDestroy(false);
+    } finally {
+      restore();
+    }
+    const [line] = writes.join("").trim().split("\n").map(l => JSON.parse(l));
+    expect(line).toMatchObject({ status: "success", destroyed: false, local_wiped: true });
+  });
+
+  it("secretsDestroyCancelled emits cancelled:true envelope", () => {
+    try {
+      const out = createCommandOutput("json", { command: "secrets destroy", network: "all" });
+      out.secretsDestroyCancelled();
+    } finally {
+      restore();
+    }
+    const [line] = writes.join("").trim().split("\n").map(l => JSON.parse(l));
+    expect(line).toMatchObject({ status: "success", cancelled: true });
+  });
+
+  it("secretsEncrypt emits output path and byte count", () => {
+    try {
+      const out = createCommandOutput("json", { command: "secrets encrypt", network: "all" });
+      out.secretsEncrypt({ dest: "/tmp/out.enc", bytes: 64 });
+    } finally {
+      restore();
+    }
+    const [line] = writes.join("").trim().split("\n").map(l => JSON.parse(l));
+    expect(line).toMatchObject({ status: "success", output: "/tmp/out.enc", bytes: 64 });
+  });
+
+  it("secretsDecrypt emits output path", () => {
+    try {
+      const out = createCommandOutput("json", { command: "secrets decrypt", network: "all" });
+      out.secretsDecrypt({ dest: "/tmp/out.txt" });
+    } finally {
+      restore();
+    }
+    const [line] = writes.join("").trim().split("\n").map(l => JSON.parse(l));
+    expect(line).toMatchObject({ status: "success", output: "/tmp/out.txt" });
+  });
+
   it("emits swap quote unavailability as an NDJSON error envelope", () => {
     try {
       const out = createCommandOutput("json", {

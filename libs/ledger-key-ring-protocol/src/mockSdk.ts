@@ -101,7 +101,7 @@ export class MockSDK implements TrustchainSDK {
 
     const trustchain: Trustchain = trustchains.get("mock-root-id") || {
       rootId: "mock-root-id",
-      walletSyncEncryptionKey: "mock-wallet-sync-encryption-key",
+      walletSyncEncryptionKey: "cafe".repeat(16),
       applicationPath: "m/0'/16'/0'",
     };
     trustchains.set(trustchain.rootId, trustchain);
@@ -200,7 +200,7 @@ export class MockSDK implements TrustchainSDK {
     const index = 1 + parseInt(trustchain.applicationPath.split("/")[3].split("'")[0]);
     const newTrustchain = {
       rootId: trustchain.rootId,
-      walletSyncEncryptionKey: "mock-wallet-sync-encryption-key-" + index,
+      walletSyncEncryptionKey: index.toString(16).padStart(64, "0"),
       applicationPath: "m/0'/16'/" + index + "'",
     };
     trustchains.set(newTrustchain.rootId, newTrustchain);

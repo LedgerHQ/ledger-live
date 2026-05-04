@@ -18,6 +18,7 @@ import OperationsCommand from "./commands/operations";
 import ReceiveCommand from "./commands/receive";
 import SendCommand from "./commands/send";
 import SwapGroup from "./commands/swap/index";
+import SecretsGroup from "./commands/secrets/index";
 
 emitTestingBuildBannerIfNeeded();
 
@@ -37,6 +38,7 @@ export async function runMain(argv: string[] = process.argv.slice(2)): Promise<n
   cli.command(ReceiveCommand);
   cli.command(SendCommand);
   cli.command(SwapGroup);
+  cli.command(SecretsGroup);
   const code = await cli.run(argv, { noExit: true });
   return code ?? 0;
 }

@@ -109,6 +109,7 @@ export interface CommandOutput {
    * WalletCliDeviceError handling in run()/fail().
    */
   deviceState(state: DeviceState): void;
+
   /** Print one progress line for swap execute long-running steps. */
   swapExecuteProgress(line: string): void;
   /** Print payload-only swap execute result. */
@@ -130,6 +131,19 @@ export interface CommandOutput {
     magnitudeAwareRate?: string;
     dryRun?: boolean;
   }): void;
+
+  /** Output secrets init result (human: member + rootId lines; json: envelope). */
+  secretsInit(result: { memberName: string; rootId: string }): void;
+  /** Output domain keys table (human: table or empty message; json: envelope with keys array). */
+  secretsKeys(domains: ReadonlyArray<{ domain: string; firstUsed: string }>): void;
+  /** Output secrets destroy result (human: colored message; json: envelope). */
+  secretsDestroy(remoteSucceeded: boolean): void;
+  /** User cancelled destroy confirmation (human: stderr line; json: envelope with cancelled:true). */
+  secretsDestroyCancelled(): void;
+  /** Output encrypt-to-file result (human: ✔ line; json: envelope with output path + bytes). */
+  secretsEncrypt(result: { dest: string; bytes: number }): void;
+  /** Output decrypt-to-file result (human: ✔ line; json: envelope with output path). */
+  secretsDecrypt(result: { dest: string }): void;
 }
 
 // ---------------------------------------------------------------------------
@@ -351,7 +365,6 @@ class HumanCommandOutput implements CommandOutput {
 
   deviceState(state: DeviceState): void {
     if (isTerminalDeviceState(state)) {
-      // Terminal states are surfaced via thrown WalletCliDeviceError; avoid double-render.
       return;
     }
     const { glyph, message } = renderDeviceState(state);
@@ -413,6 +426,46 @@ class HumanCommandOutput implements CommandOutput {
     if (args.dryRun) {
       writeStdout(`${colors.bold("Dry run:")} yes (not signed or broadcasted)\n`);
     }
+  }
+
+  secretsInit({ memberName, rootId }: { memberName: string; rootId: string }): void {
+    writeStdout("");
+    writeStdout(`${colors.bold("Member:")}  ${memberName}`);
+    writeStdout(`${colors.bold("Root ID:")} ${rootId}`);
+    writeStdout(colors.dim("Encrypt/decrypt with: wallet-cli secrets encrypt --key <domain>"));
+  }
+
+  secretsKeys(domains: ReadonlyArray<{ domain: string; firstUsed: string }>): void {
+    if (domains.length === 0) {
+      writeStdout(colors.dim("No domain keys tracked yet. Use `secrets encrypt --key <domain>` to create one."));
+      return;
+    }
+    const w = Math.max(6, ...domains.map(d => d.domain.length));
+    writeStdout(`${colors.bold("Domain".padEnd(w))}  ${colors.bold("First Used")}`);
+    writeStdout("─".repeat(w + 2 + 10));
+    for (const { domain, firstUsed } of domains) {
+      writeStdout(`${domain.padEnd(w)}  ${firstUsed.slice(0, 10)}`);
+    }
+  }
+
+  secretsDestroy(remoteSucceeded: boolean): void {
+    writeStdout(
+      remoteSucceeded
+        ? `${colors.green("✔")} Encryption CLI trustchain destroyed.`
+        : `${colors.green("✔")} Encryption CLI local credentials wiped.`,
+    );
+  }
+
+  secretsDestroyCancelled(): void {
+    writeStderr("Cancelled.\n");
+  }
+
+  secretsEncrypt({ dest, bytes }: { dest: string; bytes: number }): void {
+    writeStdout(`${colors.green("✔")} Written to ${dest} (${bytes} bytes, AES-256-GCM)`);
+  }
+
+  secretsDecrypt({ dest }: { dest: string }): void {
+    writeStdout(`${colors.green("✔")} Written to ${dest}`);
   }
 }
 
@@ -637,6 +690,30 @@ class JsonCommandOutput implements CommandOutput {
         ...(args.dryRun ? { dry_run: true } : {}),
       }),
     );
+  }
+
+  secretsInit({ memberName, rootId }: { memberName: string; rootId: string }): void {
+    this._writeNdjson(this._envelope({ member: memberName, rootId }));
+  }
+
+  secretsKeys(domains: ReadonlyArray<{ domain: string; firstUsed: string }>): void {
+    this._writeNdjson(this._envelope({ keys: domains.map(d => ({ domain: d.domain, firstUsed: d.firstUsed })) }));
+  }
+
+  secretsDestroy(remoteSucceeded: boolean): void {
+    this._writeNdjson(this._envelope({ destroyed: remoteSucceeded, local_wiped: true }));
+  }
+
+  secretsDestroyCancelled(): void {
+    this._writeNdjson(this._envelope({ cancelled: true }));
+  }
+
+  secretsEncrypt({ dest, bytes }: { dest: string; bytes: number }): void {
+    this._writeNdjson(this._envelope({ output: dest, bytes }));
+  }
+
+  secretsDecrypt({ dest }: { dest: string }): void {
+    this._writeNdjson(this._envelope({ output: dest }));
   }
 }
 

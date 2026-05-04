@@ -1,5 +1,6 @@
 import "./live-common-setup";
 import { afterEach, beforeEach, describe, expect, it, mock } from "bun:test";
+import { installOutputCapture } from "./shared/ui";
 
 type MockSpinner = {
   text: string;
@@ -97,5 +98,68 @@ describe("HumanCommandOutput", () => {
 
     expect(spin.text).toBe("[⧖] Review on device. Approve or reject.");
     expect(createdSpinners).toHaveLength(1);
+  });
+
+  describe("secrets human output", () => {
+    let writes: string[] = [];
+    let stderrWrites: string[] = [];
+    let restore: () => void;
+
+    beforeEach(() => {
+      writes = [];
+      stderrWrites = [];
+      restore = installOutputCapture({
+        stdout: chunk => writes.push(chunk),
+        stderr: chunk => stderrWrites.push(chunk),
+      });
+    });
+
+    afterEach(() => restore());
+
+    const ctx = { command: "secrets", network: "all" };
+
+    it("secretsKeys renders a table with domain and date columns", () => {
+      createCommandOutput("human", ctx).secretsKeys([
+        { domain: "prod", firstUsed: "2026-04-27T12:00:00.000Z" },
+        { domain: "staging", firstUsed: "2026-04-28T12:00:00.000Z" },
+      ]);
+      const out = writes.join("");
+      expect(out).toContain("prod");
+      expect(out).toContain("staging");
+      expect(out).toContain("2026-04-27");
+      expect(out).toContain("2026-04-28");
+    });
+
+    it("secretsKeys renders dim message when empty", () => {
+      createCommandOutput("human", ctx).secretsKeys([]);
+      expect(writes.join("")).toContain("No domain keys");
+    });
+
+    it("secretsDestroy shows destroyed message when remote succeeded", () => {
+      createCommandOutput("human", ctx).secretsDestroy(true);
+      expect(writes.join("")).toContain("trustchain destroyed");
+    });
+
+    it("secretsDestroy shows local-wipe message when remote failed", () => {
+      createCommandOutput("human", ctx).secretsDestroy(false);
+      expect(writes.join("")).toContain("local credentials wiped");
+    });
+
+    it("secretsDestroyCancelled writes Cancelled to stderr", () => {
+      createCommandOutput("human", ctx).secretsDestroyCancelled();
+      expect(stderrWrites.join("")).toContain("Cancelled");
+    });
+
+    it("secretsEncrypt shows written path and byte count", () => {
+      createCommandOutput("human", ctx).secretsEncrypt({ dest: "/tmp/out.enc", bytes: 128 });
+      const out = writes.join("");
+      expect(out).toContain("/tmp/out.enc");
+      expect(out).toContain("128");
+    });
+
+    it("secretsDecrypt shows written path", () => {
+      createCommandOutput("human", ctx).secretsDecrypt({ dest: "/tmp/out.txt" });
+      expect(writes.join("")).toContain("/tmp/out.txt");
+    });
   });
 });

@@ -1,4 +1,5 @@
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { TRUSTCHAIN_APP_NAME } from "@ledgerhq/hw-ledger-key-ring-protocol/ApduDevice";
 import { connectLedgerApp } from "../device/connect-ledger-app";
 import type { DeviceState } from "../device/device-state";
 import { WalletCliDeviceError } from "../device/wallet-cli-device-error";
@@ -37,6 +38,25 @@ export async function withCurrencyDeviceSession<T>(
     throw WalletCliDeviceError.fromUnknown(e, { expectedApp: managerAppName });
   }
   walletCliDebug("Device session ready.");
+  try {
+    return await fn();
+  } finally {
+    walletCliDebug("Resetting device session…");
+    await resetWalletCliDmkSession();
+  }
+}
+
+/** Open the Ledger Sync app and run a function that sends LKRP APDUs. No currency required. */
+export async function withLkrpDeviceSession<T>(fn: () => Promise<T>): Promise<T> {
+  walletCliDebug("Ensuring DMK transport for LKRP…");
+  try {
+    const transport = await ensureWalletCliDmkTransport();
+    walletCliDebug("Connecting Ledger Sync app…");
+    await connectLedgerApp(transport.dmk, transport.sessionId, TRUSTCHAIN_APP_NAME);
+  } catch (e) {
+    throw WalletCliDeviceError.fromUnknown(e, { expectedApp: TRUSTCHAIN_APP_NAME });
+  }
+  walletCliDebug("Ledger Sync app open.");
   try {
     return await fn();
   } finally {

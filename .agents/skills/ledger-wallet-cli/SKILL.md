@@ -1,11 +1,13 @@
 ---
 name: ledger-wallet-cli
-description: Official Ledger wallet-cli — USB-based CLI for Ledger hardware wallet flows (account discover, receive, balances, operations, send) built on the Device Management Kit (DMK)
+description: Official Ledger wallet-cli — USB-based CLI for Ledger hardware wallet flows (account discover, receive, balances, operations, send, secrets encryption) built on the Device Management Kit (DMK)
 ---
 
 # wallet-cli
 
 USB-based CLI for Ledger wallet flows. Networks: **bitcoin**, **ethereum**, **base**, **solana** (mainnet + testnets). Base uses the Ethereum app.
+
+Also supports hardware-backed **file encryption** via `secrets` commands.
 
 Run from repo root: `pnpm --silent wallet-cli start <command> [flags]`
 
@@ -19,17 +21,23 @@ Run from repo root: `pnpm --silent wallet-cli start <command> [flags]`
 
 ## Commands
 
-| Command            | Device | Sandbox      |
-| ------------------ | ------ | ------------ |
-| `session view`     | No     | No           |
-| `session reset`    | No     | No           |
-| `account discover` | Yes    | **Required** |
-| `receive`          | Yes    | **Required** |
-| `send`             | Yes*   | **Required** |
-| `balances`         | No     | No           |
-| `operations`       | No     | No           |
+| Command              | Device | Sandbox      |
+| -------------------- | ------ | ------------ |
+| `session view`       | No     | No           |
+| `session reset`      | No     | No           |
+| `account discover`   | Yes    | **Required** |
+| `receive`            | Yes    | **Required** |
+| `send`               | Yes*   | **Required** |
+| `balances`           | No     | No           |
+| `operations`         | No     | No           |
+| `secrets init`       | Yes†   | **Required** |
+| `secrets encrypt`    | No     | No           |
+| `secrets decrypt`    | No     | No           |
+| `secrets keys`       | No     | No           |
+| `secrets destroy`    | No     | No           |
 
 *`send --dry-run` needs no device and no sandbox bypass.
+†`secrets init` needs the device (Ledger Sync app) only on first run to register this machine as a trustchain member.
 
 ---
 
@@ -89,6 +97,32 @@ Ticker is **mandatory** in `--amount`. No `--token` flag — ticker drives asset
 **Bitcoin flags:** `--fee-per-byte <sats>`, `--rbf`
 
 **Solana flags:** `--mode send|stake.createAccount|stake.delegate|stake.undelegate|stake.withdraw`, `--validator <addr>`, `--stake-account <addr>`, `--memo <text>`
+
+### secrets
+
+Powered by LKRP (Ledger Key Ring Protocol): register this machine once with your Ledger device (`init`), then encrypt and decrypt files without the device. Only a machine credential is stored locally (in the OS keychain); the shared root key is end-to-end encrypted — Ledger's servers relay it between members but only registered members can read it.
+
+The `--key <domain>` argument is a namespace (e.g. `prod`, `staging`): each domain produces an independent AES-256-GCM key derived from that shared root, so secrets across domains cannot cross-decrypt. Multiple machines can be registered as members, meaning any of them can decrypt what another encrypted. `destroy` removes this machine's access.
+
+**Flag conventions:** `--out` = output file path; `--output` = format (`human`|`json`).
+
+```bash
+# one-time setup (device + Ledger Sync app required) — needs dangerouslyDisableSandbox
+pnpm --silent wallet-cli start secrets init [--name "my-machine"]
+
+# encrypt/decrypt (no device needed after init)
+pnpm --silent wallet-cli start secrets encrypt --key prod -i secret.txt --out secret.enc
+pnpm --silent wallet-cli start secrets decrypt --key prod -i secret.enc --out secret.txt
+
+# pipe
+echo "hello" | pnpm --silent wallet-cli start secrets encrypt --key foo | pnpm --silent wallet-cli start secrets decrypt --key foo
+
+# list tracked domain keys with first-used date
+pnpm --silent wallet-cli start secrets keys
+
+# revoke this machine's credentials (interactive confirmation)
+pnpm --silent wallet-cli start secrets destroy
+```
 
 ---
 
