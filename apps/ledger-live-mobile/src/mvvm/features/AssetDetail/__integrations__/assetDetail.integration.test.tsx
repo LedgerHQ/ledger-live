@@ -43,4 +43,13 @@ describe("AssetDetail screen layout", () => {
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.chartPlaceholder)).toBeVisible();
     expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.receiveButton)).toBeNull();
   });
+
+  it("renders the addresses section with title and add button", () => {
+    render(<AssetDetailTestNavigator />);
+
+    expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.addresses)).toBeVisible();
+    expect(screen.getByText("Addresses")).toBeVisible();
+    expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.addAccount)).toBeVisible();
+    expect(screen.getByText("Add")).toBeVisible();
+  });
 });
