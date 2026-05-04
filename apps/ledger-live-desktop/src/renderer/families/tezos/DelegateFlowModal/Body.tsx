@@ -145,10 +145,19 @@ const Body = ({ stepId, params, onChangeStepId, onClose }: Props) => {
 
     // when changes, we set again
     if (patch.mode !== transaction.mode || patch.recipient) {
-      (async () => {
-        const bridge = await getAccountBridge(account, parentAccount);
-        setTransaction(bridge.updateTransaction(transaction, patch));
+      let cancelled = false;
+      void (async () => {
+        try {
+          const bridge = await getAccountBridge(account, parentAccount);
+          if (cancelled) return;
+          setTransaction(bridge.updateTransaction(transaction, patch));
+        } catch (err) {
+          if (!cancelled) console.error(err);
+        }
       })();
+      return () => {
+        cancelled = true;
+      };
     }
   }, [account, defaultBaker, stepId, params, parentAccount, setTransaction, transaction]);
 
