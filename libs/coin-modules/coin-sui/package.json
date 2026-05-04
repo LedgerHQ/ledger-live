@@ -165,6 +165,7 @@
     "@mysten/signers": "1.0.1",
     "@mysten/sui": "2.9.0",
     "bignumber.js": "^9.1.2",
+    "gql.tada": "^1.9.2",
     "lodash": "4.17.21",
     "rxjs": "catalog:"
   },
