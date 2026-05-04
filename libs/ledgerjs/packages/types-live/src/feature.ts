@@ -327,6 +327,8 @@ export type Features = CurrencyFeatures & {
   concordiumVerifyAddress: DefaultFeature;
   lldHideSmallValueTokenOperations: Feature_LldHideSmallValueTokenOperations;
   llmTransferButtonCopyVariant: Feature_LlmTransferButtonCopyVariant;
+  lldTezosStaking: DefaultFeature;
+  llmTezosStaking: DefaultFeature;
 };
 
 /**
