@@ -501,15 +501,15 @@ describe("calculateAmount", () => {
     });
   });
 
-  it("should use the full amount record for private transactions with useAllAmount", () => {
+  it("should sum multiple amount records for private transactions with useAllAmount", () => {
     const estimatedFees = new BigNumber(5000);
     const mockTransaction = getMockedTransaction({
       amount: new BigNumber(0),
       useAllAmount: true,
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
       properties: {
-        amountRecordCommitment: mockUnspentRecord1.commitment,
-        feeRecordCommitment: mockUnspentRecord2.commitment,
+        amountRecordCommitments: [mockUnspentRecord1.commitment, mockUnspentRecord2.commitment],
+        feeRecordCommitment: null,
       },
     });
     const mockAccount = getMockedAccount({
@@ -526,9 +526,13 @@ describe("calculateAmount", () => {
       estimatedFees,
     });
 
+    const expectedAmount = new BigNumber(mockUnspentRecord1.microcredits).plus(
+      mockUnspentRecord2.microcredits,
+    );
+
     expect(result).toMatchObject({
-      amount: new BigNumber(mockUnspentRecord1.microcredits),
-      totalSpent: new BigNumber(mockUnspentRecord1.microcredits).plus(estimatedFees),
+      amount: expectedAmount,
+      totalSpent: expectedAmount.plus(estimatedFees),
     });
   });
 
@@ -539,7 +543,7 @@ describe("calculateAmount", () => {
       useAllAmount: true,
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
       properties: {
-        amountRecordCommitment: null,
+        amountRecordCommitments: [],
         feeRecordCommitment: mockUnspentRecord2.commitment,
       },
     });
@@ -1153,7 +1157,7 @@ describe("createTransactionIntent", () => {
     const transaction = getMockedTransaction({
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
       properties: {
-        amountRecordCommitment: mockUnspentRecord1.commitment,
+        amountRecordCommitments: [mockUnspentRecord1.commitment],
         feeRecordCommitment: null,
       },
     });
@@ -1169,11 +1173,11 @@ describe("createTransactionIntent", () => {
     });
   });
 
-  it("should throw when amountRecordCommitment is null for a private transaction", () => {
+  it("should throw when amountRecordCommitments is empty for a private transaction", () => {
     const transaction = getMockedTransaction({
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
       properties: {
-        amountRecordCommitment: null,
+        amountRecordCommitments: [],
         feeRecordCommitment: null,
       },
     });
@@ -1183,11 +1187,11 @@ describe("createTransactionIntent", () => {
     );
   });
 
-  it("should throw when amountRecordCommitment does not match any unspent record", () => {
+  it("should throw when amountRecordCommitments entry does not match any unspent record", () => {
     const transaction = getMockedTransaction({
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
       properties: {
-        amountRecordCommitment: "non-existent-commitment",
+        amountRecordCommitments: ["non-existent-commitment"],
         feeRecordCommitment: null,
       },
     });
@@ -1243,7 +1247,7 @@ describe("createFeeTransactionIntent", () => {
     const transaction = getMockedTransaction({
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
       properties: {
-        amountRecordCommitment: null,
+        amountRecordCommitments: [],
         feeRecordCommitment: mockUnspentRecord2.commitment,
       },
     });
@@ -1279,7 +1283,7 @@ describe("createFeeTransactionIntent", () => {
     const transaction = getMockedTransaction({
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
       properties: {
-        amountRecordCommitment: null,
+        amountRecordCommitments: [],
         feeRecordCommitment: null,
       },
     });
@@ -1300,7 +1304,7 @@ describe("createFeeTransactionIntent", () => {
     const transaction = getMockedTransaction({
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
       properties: {
-        amountRecordCommitment: null,
+        amountRecordCommitments: [],
         feeRecordCommitment: null,
       },
     });
@@ -1450,7 +1454,7 @@ describe("findBestRecordForFee", () => {
     const result = findBestRecordForFee({
       unspentRecords: [mockUnspentRecord1, mockUnspentRecord2],
       targetFee,
-      selectedAmountRecordCommitment: null,
+      selectedAmountRecordCommitments: [],
     });
     // mockUnspentRecord2 (600000) is smaller than mockUnspentRecord1 (800000), both cover 500000
     expect(result).toBe(mockUnspentRecord2);
@@ -1461,7 +1465,7 @@ describe("findBestRecordForFee", () => {
     const result = findBestRecordForFee({
       unspentRecords: [mockUnspentRecord1, mockUnspentRecord2],
       targetFee,
-      selectedAmountRecordCommitment: mockUnspentRecord2.commitment,
+      selectedAmountRecordCommitments: [mockUnspentRecord2.commitment],
     });
     // mockUnspentRecord2 is excluded; only mockUnspentRecord1 (800000) remains
     expect(result).toBe(mockUnspentRecord1);
@@ -1472,7 +1476,7 @@ describe("findBestRecordForFee", () => {
     const result = findBestRecordForFee({
       unspentRecords: [mockUnspentRecord1, mockUnspentRecord2],
       targetFee,
-      selectedAmountRecordCommitment: null,
+      selectedAmountRecordCommitments: [],
     });
     expect(result).toBeNull();
   });
@@ -1481,7 +1485,7 @@ describe("findBestRecordForFee", () => {
     const result = findBestRecordForFee({
       unspentRecords: [],
       targetFee: new BigNumber(1000),
-      selectedAmountRecordCommitment: null,
+      selectedAmountRecordCommitments: [],
     });
     expect(result).toBeNull();
   });
@@ -1491,7 +1495,7 @@ describe("findBestRecordForFee", () => {
     const result = findBestRecordForFee({
       unspentRecords: [mockUnspentRecord1],
       targetFee,
-      selectedAmountRecordCommitment: null,
+      selectedAmountRecordCommitments: [],
     });
     expect(result).toBe(mockUnspentRecord1);
   });

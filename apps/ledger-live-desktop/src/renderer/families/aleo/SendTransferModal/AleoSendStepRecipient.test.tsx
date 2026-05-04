@@ -173,7 +173,7 @@ describe("AleoSendStepRecipient", () => {
     const updaterFn = updateTransaction.mock.calls[0][0];
     const result = updaterFn(aleoTransaction);
     expect(result.mode).toBe(TRANSACTION_TYPE.TRANSFER_PRIVATE);
-    expect(result.properties).toEqual({ amountRecordCommitment: null, feeRecordCommitment: null });
+    expect(result.properties).toEqual({ amountRecordCommitments: [], feeRecordCommitment: null });
   });
 
   it("should call updateTransaction with TRANSFER_PUBLIC when switching to public balance", async () => {
