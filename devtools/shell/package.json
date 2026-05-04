@@ -107,6 +107,13 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-native": "catalog:",
+    "@gorhom/bottom-sheet": "catalog:",
+    "expo-haptics": "catalog:",
+    "i18next": "catalog:",
+    "react-native-reanimated": "catalog:",
+    "react-native-safe-area-context": "catalog:",
+    "react-native-svg": "catalog:",
+    "react-native-worklets": "catalog:",
     "react-test-renderer": "catalog:",
     "tailwind-merge": "catalog:",
     "typescript": "catalog:"
