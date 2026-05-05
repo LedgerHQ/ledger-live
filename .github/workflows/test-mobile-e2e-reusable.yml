@@ -125,6 +125,10 @@ on:
         required: false
         type: boolean
         default: false
+    secrets:
+      SPECULINHO_URL:
+        description: Base URL for the Speculinho operator (remote Speculos on iOS E2E). Repository secret; pass via secrets inherit when reusing this workflow.
+        required: false
 
 permissions:
   id-token: write
@@ -137,7 +141,8 @@ env:
   ANDROID_TESTBINARY_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/androidTest/detox${{ inputs.production_firebase == true && 'PreRelease' || '' }}/app-detox${{ inputs.production_firebase == true && 'PreRelease' || '' }}-androidTest.apk
   IOS_JSBUNDLE_PATH: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app/main.jsbundle
   IOS_NATIVE_PATH: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
-  SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'latest' }}
+  SPECULOS_IMAGE_TAG_ANDROID: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'latest' }}
+  SPECULOS_IMAGE_TAG_IOS: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && 'speculos-38ccc68068db-coinapps-83978f0' || 'latest' }}
   COINAPPS: ${{ github.workspace }}/coin-apps
   SPECULOS_DEVICE: ${{ inputs.speculos_device || 'nanoX' }}
   E2E_ENABLE_WALLET40: ${{ inputs.enable_wallet40 == 'false' && '0' || '1' }}
@@ -593,7 +598,7 @@ jobs:
         timeout-minutes: ${{ fromJSON(needs.determine-builds.outputs.ios_timeout) }}
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
-          GITHUB_TOKEN: ${{ secrets.LL_SPECULOS_CI }}
+          SPECULINHO_URL: ${{ secrets.SPECULINHO_URL }}
           INPUT_E2E: "true"
           REMOTE_SPECULOS: "true"
           PRODUCTION: ${{ inputs.production_firebase }}
@@ -602,6 +607,7 @@ jobs:
           SHARD_INDEX: ${{ matrix.shard }}
           DEVICE_INFO: ${{ env.DEVICE_INFO }}
           NX_SKIP_NX_CACHE: true
+          SPECULOS_IMAGE_TAG: ${{ env.SPECULOS_IMAGE_TAG_IOS }}
         run: pnpm run mobile e2e:ci -p ios -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}.json
 
       - name: Upload iOS artifacts
@@ -815,6 +821,7 @@ jobs:
           SHARD_INDEX: ${{ matrix.shard }}
           ADB: /usr/local/lib/android/sdk/platform-tools/adb # Needed for scrcpy
           DEVICE_INFO: ${{ env.DEVICE_INFO }}
+          SPECULOS_IMAGE_TAG: ${{ env.SPECULOS_IMAGE_TAG_ANDROID }}
         run: pnpm run mobile e2e:ci -p android -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}.json
 
       - name: Upload Android artifacts

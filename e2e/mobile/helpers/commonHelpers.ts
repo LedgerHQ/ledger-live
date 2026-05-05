@@ -67,6 +67,7 @@ function createDetoxURLBlacklistRegex(): string {
     ".*127.0.0.1.*",
     ".*speculos.*ldg-tech.com.*",
     ".*optimism.*",
+    ".*speculos.ledgerlabs.net.*",
   ];
 
   return `\\("${patterns.join('","')}"\\)`;
