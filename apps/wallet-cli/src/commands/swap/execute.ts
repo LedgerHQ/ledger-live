@@ -14,6 +14,7 @@ import {
   outputOption,
   resolveAccountArg,
   resolveAccountDescriptor,
+  resolveOutputFormat,
 } from "../inputs";
 import { networkStringFromCurrencyId } from "../../shared/accountDescriptor";
 import { runFullSwapPipeline } from "./cli-swap-pipeline";
