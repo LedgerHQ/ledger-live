@@ -224,7 +224,7 @@ export function useSideBarViewModel(): SideBarViewModel {
   const handleOpenReceiveModal = useCallback(() => {
     maybeRedirectToAccounts();
     trackEntry("receive");
-    dispatch(openModal("MODAL_RECEIVE", undefined));
+    dispatch(openModal("MODAL_RECEIVE", { sourcePage: "sidebar" }));
   }, [dispatch, maybeRedirectToAccounts, trackEntry]);
 
   const handleClickRecover = useCallback(() => {

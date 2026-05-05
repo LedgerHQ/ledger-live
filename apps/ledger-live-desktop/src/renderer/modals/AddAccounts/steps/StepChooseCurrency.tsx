@@ -91,9 +91,11 @@ export const StepChooseCurrencyFooter = ({
             ? {
                 account: tokenAccount,
                 parentAccount: parentTokenAccount,
+                sourcePage: "add account",
               }
             : {
                 account: parentTokenAccount, // else receive to parent account
+                sourcePage: "add account",
               },
         ),
       );

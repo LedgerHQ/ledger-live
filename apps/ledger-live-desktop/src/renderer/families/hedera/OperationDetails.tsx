@@ -105,7 +105,9 @@ const OperationDetailsPostAlert = ({
     dispatch(
       openModal(
         "MODAL_RECEIVE",
-        tokenAccount ? { account: tokenAccount, parentAccount: account } : { account },
+        tokenAccount
+          ? { account: tokenAccount, parentAccount: account, sourcePage: "hedera" }
+          : { account, sourcePage: "hedera" },
       ),
     );
   };

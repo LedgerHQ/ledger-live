@@ -1,11 +1,11 @@
 import { useCallback } from "react";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { track } from "~/renderer/analytics/segment";
 
 export type UseReceiveOptionsViewModelArgs = Readonly<{
   onClose: () => void;
   onGoToAccount: () => void;
-  sourcePage: string;
+  sourcePage?: string;
 }>;
 
 export function useReceiveOptionsViewModel({
@@ -14,23 +14,26 @@ export function useReceiveOptionsViewModel({
   sourcePage,
 }: UseReceiveOptionsViewModelArgs) {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const page = sourcePage || location.pathname;
 
   const handleGoToBank = useCallback(() => {
     track("button_clicked", {
       button: "fiat",
-      page: sourcePage,
+      page,
     });
     onClose();
     navigate("/bank");
-  }, [onClose, navigate, sourcePage]);
+  }, [onClose, navigate, page]);
 
   const handleGoToCrypto = useCallback(() => {
     track("button_clicked", {
       button: "crypto",
-      page: sourcePage,
+      page,
     });
     onGoToAccount();
-  }, [onGoToAccount, sourcePage]);
+  }, [onGoToAccount, page]);
 
   return { handleGoToBank, handleGoToCrypto };
 }

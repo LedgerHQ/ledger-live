@@ -76,6 +76,7 @@ export default function AccountContextMenu({
             openModal("MODAL_RECEIVE", {
               account,
               parentAccount,
+              sourcePage: "account context menu",
             }),
           ),
       },

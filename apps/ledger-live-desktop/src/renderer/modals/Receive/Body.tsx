@@ -45,6 +45,7 @@ export type Data = {
   eventType?: string;
   isFromPostOnboardingEntryPoint?: boolean;
   shouldUseReceiveOptions?: boolean;
+  sourcePage?: string;
 };
 
 export type OwnProps = {
