@@ -4,9 +4,13 @@ import { filter, first, map } from "rxjs/operators";
 import { TouchableOpacity, Linking, LayoutChangeEvent } from "react-native";
 import { useSelector } from "~/context/hooks";
 import { useTranslation, Trans } from "~/context/Locale";
-import type { Account, TokenAccount } from "@ledgerhq/types-live";
+import {
+  ConcordiumAddressVerificationFailedError,
+  ConcordiumTrustedMetadataServiceError,
+} from "@ledgerhq/errors";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import styled, { useTheme } from "styled-components/native";
 import { Flex } from "@ledgerhq/native-ui";
@@ -33,18 +37,13 @@ import { lastConnectedDeviceSelector } from "~/reducers/settings";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import SafeAreaViewFixed from "~/components/SafeAreaView";
 import { getFreshAccountAddress } from "~/utils/address";
-import byFamily from "../../generated/VerifyAddress";
 
 const illustrations = {
   dark: require("~/images/illustration/Dark/_080.webp"),
   light: require("~/images/illustration/Light/_080.webp"),
 };
 
-type Props = {
-  account?: TokenAccount | Account;
-  parentAccount?: Account;
-  readOnlyModeEnabled?: boolean;
-} & StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveVerifyAddress>;
+type Props = StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveVerifyAddress>;
 
 const AnimationContainer = styled(Flex).attrs({
   alignSelf: "stretch",
@@ -54,13 +53,13 @@ const AnimationContainer = styled(Flex).attrs({
   mt: 8,
 })``;
 
-export default function ReceiveVerifyAddress({ navigation, route }: Props) {
+export default function ConcordiumReceiveVerifyAddress({ navigation, route }: Props) {
+  const verifyAddressFeature = useFeature("concordiumVerifyAddress");
   const { theme: themeKind } = useTheme();
   const { account, parentAccount } = useAccountScreen(route);
   const { t } = useTranslation();
   const [error, setError] = useState<Error | null>(null);
 
-  // Animated height to prevent layout shift when error state changes
   const animatedHeight = useSharedValue(0);
   const onLayout = useCallback(
     ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
@@ -97,6 +96,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
       if (!account) return;
       const mainAccount = getMainAccount(account, parentAccount);
 
+      sub.current?.unsubscribe();
       sub.current = (
         mainAccount.id.startsWith("mock")
           ? e2eBridgeClient.pipe(
@@ -120,6 +120,17 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
             });
         },
         error: (error: Error) => {
+          // Trusted metadata service couldn't answer (network failure, 5xx,
+          // malformed response). Route to Confirmation with verified: false —
+          // the native "skipped verification" path that shows the cached
+          // address with the security modal prompt.
+          if (error instanceof ConcordiumTrustedMetadataServiceError) {
+            navigation.navigate(ScreenName.ReceiveConfirmation, {
+              ...route.params,
+              verified: false,
+            });
+            return;
+          }
           if (error && error.name !== "UserRefusedAddress") {
             logger.critical(error);
           }
@@ -133,14 +144,9 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
 
   const mainAccount = account && getMainAccount(account, parentAccount);
   const currency = route.params?.currency || (account && getAccountCurrency(account));
-  const CustomVerifyAddress = mainAccount
-    ? byFamily[mainAccount.currency.family as keyof typeof byFamily]
-    : undefined;
 
   const onRetry = useCallback(() => {
-    track("button_clicked", {
-      button: "Retry",
-    });
+    track("button_clicked", { button: "Retry" });
     onModalClose();
     if (device) {
       verifyOnDevice(device);
@@ -148,9 +154,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
   }, [device, onModalClose, verifyOnDevice]);
 
   const goBack = useCallback(() => {
-    track("button_clicked", {
-      button: "Cancel",
-    });
+    track("button_clicked", { button: "Cancel" });
     navigation.navigate(ScreenName.ReceiveConfirmation, {
       ...route.params,
       verified: false,
@@ -166,15 +170,28 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
   }, []);
 
   useEffect(() => {
-    if (CustomVerifyAddress) return;
+    // When the on-device verify flag is off, skip the device prompt and route
+    // straight to Confirmation — the family-specific PostAlert renders the
+    // "it is not possible to verify…" notice there.
+    if (verifyAddressFeature?.enabled !== true) {
+      navigation.navigate(ScreenName.ReceiveConfirmation, {
+        ...route.params,
+        verified: false,
+      });
+      return;
+    }
     if (device) {
       verifyOnDevice(device);
     }
-  }, [CustomVerifyAddress, device, verifyOnDevice]);
+    return () => sub.current?.unsubscribe();
+  }, [verifyAddressFeature?.enabled, device, verifyOnDevice, navigation, route.params]);
 
   if (!account || !currency || !mainAccount || !device) return null;
+  if (verifyAddressFeature?.enabled !== true) return null;
 
-  if (CustomVerifyAddress) return <CustomVerifyAddress {...{ navigation, route }} />;
+  // Retrying a terminal address-verification refusal would just hit the same
+  // 4xx again — hide the button for that class of error.
+  const canRetry = !(error instanceof ConcordiumAddressVerificationFailedError);
 
   return (
     <SafeAreaViewFixed isFlex edges={["left", "right", "bottom"]}>
@@ -211,9 +228,11 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
                 <Button flex={1} type="secondary" outline onPress={goBack}>
                   {t("common.cancel")}
                 </Button>
-                <Button flex={1} type="main" ml={6} outline={false} onPress={onRetry}>
-                  {t("common.retry")}
-                </Button>
+                {canRetry && (
+                  <Button flex={1} type="main" ml={6} outline={false} onPress={onRetry}>
+                    {t("common.retry")}
+                  </Button>
+                )}
               </Flex>
             </>
           ) : (
