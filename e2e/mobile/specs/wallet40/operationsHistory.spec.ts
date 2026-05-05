@@ -26,8 +26,11 @@ describe("Wallet 4.0 - Operations History", () => {
   });
 
   it("should navigate to operation details from a transaction row", async () => {
+    await app.mainNavigation.openPortfolioViaDeeplink();
+    await app.mainNavigation.tapTopBarTransactionHistory();
+    await app.operation.expectOperationsListVisible();
     await app.operation.tapFirstOperationItem();
-    await app.operationDetails.waitForOperationDetails();
+    await app.operationDetails.checkTransactionDetailsVisibility();
   });
 
   // This test will evolve later once the asset/address page is implemented in W40
