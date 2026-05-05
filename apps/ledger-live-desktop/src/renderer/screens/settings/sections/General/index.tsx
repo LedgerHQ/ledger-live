@@ -21,9 +21,6 @@ import MevProtectionRow from "./MevProtection";
 import { useEntryPoint } from "LLD/features/LedgerSyncEntryPoints/hooks/useEntryPoint";
 import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
 import LedgerSyncEntryPoint from "LLD/features/LedgerSyncEntryPoints";
-import WalletSyncDrawer from "LLD/features/WalletSync/components/Drawer";
-import { AnalyticsPage } from "LLD/features/WalletSync/hooks/useLedgerSyncAnalytics";
-import { useActivationDrawer } from "LLD/features/LedgerSyncEntryPoints/hooks/useActivationDrawer";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
 
@@ -33,7 +30,6 @@ const SectionGeneral = () => {
   useInitSupportedCounterValues();
   const lldAnalyticsOptInPromptFlag = useFeature("lldAnalyticsOptInPrompt");
   const { shouldDisplayEntryPoint } = useEntryPoint(EntryPoint.settings);
-  const { closeDrawer } = useActivationDrawer();
   const ledgerSyncOptimisationFlag = useFeature("lwdLedgerSyncOptimisation");
   const mevProtectionUrl = useLocalizedUrl(urls.mevProtection);
 
@@ -146,7 +142,6 @@ const SectionGeneral = () => {
           </Row>
         )}
       </Body>
-      <WalletSyncDrawer currentPage={AnalyticsPage.SettingsGeneral} onClose={closeDrawer} />
     </>
   );
 };
