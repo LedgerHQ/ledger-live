@@ -210,6 +210,8 @@ describe("useConfirmationViewModel", () => {
       page: "step confirmation",
       flow: "send",
       blockchain: "",
+      currency: "",
+      currency_id: "",
     });
     expect(setDrawer).toHaveBeenCalledWith(OperationDetails, {
       operationId: "child1",
@@ -325,6 +327,8 @@ describe("useConfirmationViewModel", () => {
     expect(trackPage).toHaveBeenCalledWith("Modal send - transaction sent", null, {
       flow: "send",
       blockchain: "",
+      currency: "",
+      currency_id: "",
     });
     expect(close).toHaveBeenCalled();
   });

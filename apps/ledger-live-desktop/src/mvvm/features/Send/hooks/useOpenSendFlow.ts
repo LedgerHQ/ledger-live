@@ -7,9 +7,16 @@ import BigNumber from "bignumber.js";
 import { openSendFlowDialog, type SendFlowParams } from "~/renderer/reducers/sendFlow";
 import { useNewSendFlowFeature } from "./useNewSendFlowFeature";
 import type { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
-import { closeDialog, openDialog } from "~/renderer/reducers/modularDialog";
+import {
+  closeDialog,
+  openDialog,
+  setFlowValue,
+  setSourceValue,
+} from "~/renderer/reducers/modularDialog";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import { setOriginFlow } from "~/renderer/analytics/originFlow";
+import { track } from "~/renderer/analytics/segment";
+import { getSendFlowTrackingProperties } from "../utils/tracking";
 
 const SEND_ACCOUNT_SELECTION_DRAWER_CONFIGURATION: EnhancedModularDrawerConfiguration = {
   assets: { rightElement: "balance" },
@@ -24,6 +31,7 @@ type WorkflowParams = {
   memo?: string;
   fromMAD?: boolean;
   startWithWarning?: boolean;
+  source?: string;
 };
 
 export function useOpenSendFlow() {
@@ -43,12 +51,20 @@ export function useOpenSendFlow() {
           const shouldUseNewFlowForNoAccount = hasNoAccounts || isEnabledForFamily();
           if (shouldUseNewFlowForNoAccount) {
             // Feature flag enabled: use new drawer for account selection
+            dispatch(setFlowValue("send"));
+            dispatch(setSourceValue(nextParams?.source ?? ""));
             dispatch(
               openDialog({
                 currencies: [],
                 dialogConfiguration: SEND_ACCOUNT_SELECTION_DRAWER_CONFIGURATION,
                 onAccountSelected: (account: AccountLike, parentAccount?: Account) => {
                   dispatch(closeDialog());
+                  track("button_clicked", {
+                    button: "send",
+                    buttonLocation: "quick_action",
+                    page: "MAD",
+                    ...getSendFlowTrackingProperties(account, parentAccount),
+                  });
                   openSendFlowImpl({
                     ...nextParams,
                     account,
