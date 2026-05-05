@@ -1,5 +1,4 @@
 import { ThemeProvider, Divider } from "@ledgerhq/lumen-ui-react";
-import { ledgerLiveThemes } from "@ledgerhq/lumen-design-core";
 import { Sidebar, ToolShell, Overview } from "../components";
 import { useDevToolsViewModel, type DevToolsViewProps } from "./useDevToolsViewModel.web";
 
@@ -14,7 +13,7 @@ function DevToolsView({
   onClearTool,
 }: DevToolsViewProps) {
   return (
-    <ThemeProvider themes={ledgerLiveThemes} colorScheme={colorScheme}>
+    <ThemeProvider colorScheme={colorScheme}>
       <div data-testid="devtools" className="flex flex-col h-full bg-canvas text-base">
         <div className="flex items-center gap-8 px-16 py-6 bg-warning text-warning body-3 font-semibold border-b border-muted shrink-0">
           <span className="w-6 h-6 rounded-full bg-warning-strong shrink-0" />
