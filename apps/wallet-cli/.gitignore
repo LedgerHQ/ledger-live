@@ -1,2 +1,3 @@
 dist/
+npm-dist/
 *.bun-build

@@ -4,7 +4,7 @@
   "private": true,
   "description": "Ledger Wallet CLI using Device Management Kit (USB)",
   "bin": {
-    "wallet-cli": "./src/cli.ts"
+    "wallet-cli": "./bin/wallet-cli.cjs"
   },
   "type": "module",
   "scripts": {
@@ -13,6 +13,8 @@
     "generate": "bunli generate",
     "generate:check": "bunli generate && git diff --exit-code -- .bunli/commands.gen.ts",
     "build": "bunli build",
+    "prepublishOnly": "node ./scripts/prepare-npm-publish.mjs",
+    "pack:npm": "pnpm run build && node ./scripts/prepare-npm-publish.mjs && pnpm pack",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "bun test src/",
     "coverage": "bun test src/ --coverage",
@@ -69,5 +71,8 @@
   },
   "engines": {
     "bun": ">=1.1.0"
+  },
+  "publishConfig": {
+    "directory": "npm-dist"
   }
 }

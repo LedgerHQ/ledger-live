@@ -68,10 +68,18 @@ pnpm start -- <command> [args]
 - In `apps/wallet-cli`: `pnpm build` (Bunli native bundle → `dist/`)
 - From repo root: `pnpm build:wallet-cli`
 
+## Publish to npm (maintainers)
+
+The installable package is assembled under `npm-dist/`: a small **Node** launcher (`bin/wallet-cli.cjs`) plus the **Bunli-built** standalone binaries copied from `dist/`. End users need **Node.js** (see `engines` in the generated `npm-dist/package.json`) and do **not** need Bun or bunli.
+
+1. Run a full native build so every target exists (same artifacts as CI: `dist/darwin-arm64/cli`, `dist/linux-arm64/cli`, `dist/linux-x64/cli`, `dist/windows-x64/cli.exe`).
+2. Smoke-test a tarball: from `apps/wallet-cli`, run `pnpm pack:npm` (runs `build`, then `prepare-npm-publish`, then `pnpm pack`).
+3. To publish: set `"private": false` in this directory’s `package.json` when your registry policy allows it, then `pnpm publish` from `apps/wallet-cli`. `prepublishOnly` refreshes `npm-dist/`; `publishConfig.directory` points npm at that folder so the published manifest has no `workspace:` or `catalog:` entries.
+
 ## Environment
 
 If `USER_ID` is unset, it defaults to `wallet-cli` so DMK firmware distribution salt stays stable for this CLI (`env-setup.ts`).
 
 ## Relation to `ledger-live` CLI
 
-This package is **private** to the monorepo and DMK-focused. It is **not** the published npm package `@ledgerhq/live-cli` ([`apps/cli`](../cli)); that tool has a different scope and distribution model.
+This package is DMK-focused and is **not** `@ledgerhq/live-cli` ([`apps/cli`](../cli)), which has a different scope and distribution model. It can be published to npm as `@ledgerhq/wallet-cli` using the flow in [Publish to npm (maintainers)](#publish-to-npm-maintainers) while remaining `"private": true` in the repo until you intentionally release.
