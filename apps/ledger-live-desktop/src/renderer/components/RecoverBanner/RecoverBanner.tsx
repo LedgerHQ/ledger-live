@@ -1,8 +1,7 @@
 import { Flex, ProgressLoader, Text, Icons } from "@ledgerhq/react-ui";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { useNavigate } from "react-router";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { getStoreValue, setStoreValue } from "~/renderer/store";
 import { useCustomPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { useTranslation } from "react-i18next";
 import { RecoverBannerType } from "./types";
@@ -11,6 +10,7 @@ import { Card } from "../Box";
 import styled from "styled-components";
 import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
 import useTheme from "~/renderer/hooks/useTheme";
+import { useRecoverBannerState } from "~/renderer/hooks/useRecoverBannerState";
 
 const maxStepNumber = Object.keys(LedgerRecoverSubscriptionStateEnum).length;
 
@@ -24,26 +24,11 @@ const Wrapper = styled(Card)`
  */
 export default function RecoverBanner({ children }: { children?: React.ReactNode }) {
   const { colors } = useTheme();
-  const [storageData, setStorageData] = useState<LedgerRecoverSubscriptionStateEnum>(
-    LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION,
-  );
-  const [displayBannerData, setDisplayBannerData] = useState<boolean>();
-  const [stepNumber, setStepNumber] = useState<number>(0);
 
   const recoverServices = useFeature("protectServicesDesktop");
   const recoverBannerIsEnabled = recoverServices?.params?.bannerSubscriptionNotification;
   const protectID = recoverServices?.params?.protectId ?? "protect-prod";
-
-  const getStorageSubscriptionState = useCallback(async () => {
-    const storage = await getStoreValue("SUBSCRIPTION_STATE", protectID);
-    const displayBanner = await getStoreValue("DISPLAY_BANNER", protectID);
-    setStorageData(storage as LedgerRecoverSubscriptionStateEnum);
-    setDisplayBannerData(displayBanner === "true");
-  }, [protectID]);
-
-  useEffect(() => {
-    getStorageSubscriptionState();
-  }, [getStorageSubscriptionState]);
+  const { data, dismissBanner } = useRecoverBannerState(protectID);
 
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -55,44 +40,39 @@ export default function RecoverBanner({ children }: { children?: React.ReactNode
     "recover-launch",
   );
 
-  const recoverBannerSelected: RecoverBannerType | undefined = useMemo(() => {
+  const { recoverBannerSelected, stepNumber } = useMemo<{
+    recoverBannerSelected?: RecoverBannerType;
+    stepNumber: number;
+  }>(() => {
     let recoverBannerWording: RecoverBannerType;
 
-    switch (storageData) {
+    switch (data.subscriptionState) {
       case LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION:
-        setStepNumber(1);
-        return undefined;
+        return { stepNumber: 1 };
       case LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE:
-        setStepNumber(2);
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         recoverBannerWording = t("dashboard.recoverBanner.subscribeDone", {
           returnObjects: true,
         }) as RecoverBannerType;
-        break;
+        return { recoverBannerSelected: recoverBannerWording, stepNumber: 2 };
       case LedgerRecoverSubscriptionStateEnum.BACKUP_VERIFY_IDENTITY:
-        setStepNumber(3);
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         recoverBannerWording = t("dashboard.recoverBanner.verifyIdentity", {
           returnObjects: true,
         }) as RecoverBannerType;
-        break;
+        return { recoverBannerSelected: recoverBannerWording, stepNumber: 3 };
       case LedgerRecoverSubscriptionStateEnum.BACKUP_DEVICE_CONNECTION:
-        setStepNumber(4);
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         recoverBannerWording = t("dashboard.recoverBanner.connectDevice", {
           returnObjects: true,
         }) as RecoverBannerType;
-        break;
+        return { recoverBannerSelected: recoverBannerWording, stepNumber: 4 };
       case LedgerRecoverSubscriptionStateEnum.BACKUP_DONE:
-        setStepNumber(5);
-        return undefined;
+        return { stepNumber: 5 };
       default:
-        setStepNumber(0);
-        return undefined;
+        return { stepNumber: 0 };
     }
-
-    return recoverBannerWording;
-  }, [storageData, t]);
+  }, [data.subscriptionState, t]);
 
   const onRedirectRecover = () => {
     if (recoverResumeActivatePath) {
@@ -101,12 +81,11 @@ export default function RecoverBanner({ children }: { children?: React.ReactNode
   };
 
   const onCloseBanner = () => {
-    setStoreValue("DISPLAY_BANNER", "false", protectID);
-    setDisplayBannerData(false);
+    dismissBanner();
   };
 
   const passthroughs = children || null;
-  if (!recoverBannerIsEnabled || !recoverBannerSelected || !displayBannerData) return passthroughs;
+  if (!recoverBannerIsEnabled || !recoverBannerSelected || !data.displayBanner) return passthroughs;
 
   const isWarning = stepNumber > 2;
 
