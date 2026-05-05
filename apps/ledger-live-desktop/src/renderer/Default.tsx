@@ -67,6 +67,7 @@ import { setCosmosLdmkEnabled } from "@ledgerhq/live-common/families/cosmos/setu
 import { themeSelector } from "./actions/general";
 import useCheckAccountWithFunds from "./components/PostOnboardingHub/logic/useCheckAccountWithFunds";
 import GlobalDialogs from "LLD/features/GlobalDialogs";
+import GlobalDrawers from "LLD/features/GlobalDrawers";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/useWalletFeaturesConfig";
 import { useShouldShowDeferredModals } from "~/renderer/hooks/useShouldShowDeferredModals";
 import {
@@ -495,6 +496,7 @@ export default function Default() {
                   ) : null}
 
                   <GlobalDialogs />
+                  <GlobalDrawers />
 
                   <Routes>
                     <Route
