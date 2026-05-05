@@ -8453,7 +8453,7 @@
     "title": "Accounts",
     "tableActions": {
       "searchAddress": "Search by name, address",
-      "addAddress": "Add address"
+      "addAccount": "Add account"
     },
     "table": {
       "columns": {
