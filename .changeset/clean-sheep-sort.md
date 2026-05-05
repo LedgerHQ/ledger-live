@@ -1,7 +1,7 @@
 ---
-"@ledgerhq/coin-celo": patch
-"ledger-live-desktop": patch
-"live-mobile": patch
+"@ledgerhq/coin-celo": minor
+"ledger-live-desktop": minor
+"live-mobile": minor
 ---
 
 Enhance voting flow on Celo with validator group eligibility checks

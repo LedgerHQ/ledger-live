@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/live-common": patch
+"@ledgerhq/live-common": minor
 ---
 
 Added support for fund providers in test mode.

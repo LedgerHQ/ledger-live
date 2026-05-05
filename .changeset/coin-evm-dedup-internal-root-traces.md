@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-evm": patch
+"@ledgerhq/coin-evm": minor
 ---
 
 Fix `getBlock` and `listOperations` double-counting native transfers from explorer internal
