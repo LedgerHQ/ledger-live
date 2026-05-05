@@ -55,7 +55,7 @@ describe("Page utils", () => {
     it("returns true only for routes that show the swap sidebar", () => {
       expect(shouldDisplayRightPanel("/")).toBe(true);
       expect(shouldDisplayRightPanel("/analytics")).toBe(true);
-      expect(shouldDisplayRightPanel("/cryptos")).toBe(true);
+      expect(shouldDisplayRightPanel("/cryptos")).toBe(false);
     });
 
     it("returns false for other wallet 4.0 pages", () => {

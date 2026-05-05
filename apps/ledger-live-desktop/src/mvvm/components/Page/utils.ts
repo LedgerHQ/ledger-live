@@ -67,7 +67,7 @@ export const isWallet40Page = (pathname: string, options: IsWallet40PageOptions 
 /**
  * Pages that display the right panel (swap sidebar).
  */
-const RIGHT_PANEL_PAGES = new Set<string>(["/", "/analytics", "/cryptos"]);
+const RIGHT_PANEL_PAGES = new Set<string>(["/", "/analytics"]);
 
 /**
  * Check if a pathname should display the right panel (swap sidebar).
