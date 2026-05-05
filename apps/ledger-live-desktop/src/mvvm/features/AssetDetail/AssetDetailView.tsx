@@ -6,6 +6,7 @@ import { AssetDetailSection } from "./components/AssetDetailSection";
 import { AssetHeader } from "./components/AssetHeader/AssetHeader";
 import { AddressListSection } from "./components/AddressList";
 import { TotalBalance } from "./components/PortfolioSection/TotalBalance";
+import { TransactionsSection } from "./components/TransactionsSection";
 import { useAssetDetailSections } from "./hooks/useAssetDetailSections";
 import type { AssetDetailReady } from "./types";
 
@@ -43,6 +44,7 @@ export function AssetDetailView({ viewModel }: AssetDetailViewProps) {
         <>
           <TotalBalance distributionItem={distributionItem} />
           <AddressListSection distributionItem={distributionItem} />
+          <TransactionsSection distributionItem={distributionItem} />
         </>
       )}
 

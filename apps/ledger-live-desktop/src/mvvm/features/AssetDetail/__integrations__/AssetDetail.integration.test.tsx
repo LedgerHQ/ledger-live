@@ -311,6 +311,35 @@ describe("AssetDetail integration", () => {
 
       await waitFor(() => expectNotFound());
     });
+
+    it("does not render not-found while distribution is still loading", () => {
+      setupDistributionRouteMocks(useParams, useDistribution, "unknown-asset", {
+        list: [],
+        isLoading: true,
+      });
+
+      render(<AssetDetail />);
+
+      expect(screen.queryByText(LABEL.NOT_FOUND)).not.toBeInTheDocument();
+    });
+  });
+
+  describe("route params", () => {
+    it("resolves a token when route id is URL-encoded", async () => {
+      mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+      const item = buildDistributionItem({
+        currency: makeIntegrationTokenCurrency("bitcoin/test", "TBTC", "Bitcoin Test"),
+      });
+      setupRoute("bitcoin%2Ftest", { bySlug: {}, list: [item] });
+
+      renderWithMockedCounterValuesProvider(<AssetDetail />);
+
+      await waitFor(() => {
+        expectHeader();
+        expectAssetName("Bitcoin Test");
+        expect(screen.getByText(LABEL.TOTAL_BALANCE)).toBeVisible();
+      });
+    });
   });
 
   describe("token route with slashes", () => {

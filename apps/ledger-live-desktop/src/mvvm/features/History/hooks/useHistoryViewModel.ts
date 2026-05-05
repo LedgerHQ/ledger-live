@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { useCallback, useEffect, useMemo } from "react";
 import { useDispatch } from "LLD/hooks/redux";
 import { markOperationsAsSeen } from "~/renderer/reducers/history";
@@ -10,9 +10,10 @@ import { useHistoryTable } from "./useHistoryTable";
 import { useHistoryVirtualization } from "./useHistoryVirtualization";
 import type { HistoryTable, OperationRow, VirtualItem } from "../types";
 import { track } from "~/renderer/analytics/segment";
+import { parseHistoryBackPath } from "../utils/historyLocationState";
 
 export type HistoryViewModel = {
-  navigateToDashboard: () => void;
+  navigateBack: () => void;
   table: HistoryTable;
   parentRef: React.RefObject<HTMLDivElement | null>;
   rowVirtualizer: Virtualizer<HTMLDivElement, Element>;
@@ -26,6 +27,7 @@ export type HistoryViewModel = {
 export function useHistoryViewModel(): HistoryViewModel {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     return () => {
@@ -33,9 +35,13 @@ export function useHistoryViewModel(): HistoryViewModel {
     };
   }, [dispatch]);
 
-  const navigateToDashboard = useCallback(() => {
+  const navigateBack = useCallback(() => {
+    if (parseHistoryBackPath(location.state) !== undefined) {
+      navigate(-1);
+      return;
+    }
     navigate("/");
-  }, [navigate]);
+  }, [navigate, location.state]);
 
   const operations = useHistoryOperations();
   const table = useHistoryTable(operations);
@@ -58,7 +64,7 @@ export function useHistoryViewModel(): HistoryViewModel {
   const hasPendingOperations = useMemo(() => operations.some(op => op.isPending), [operations]);
 
   return {
-    navigateToDashboard,
+    navigateBack,
     table,
     parentRef,
     rowVirtualizer,
