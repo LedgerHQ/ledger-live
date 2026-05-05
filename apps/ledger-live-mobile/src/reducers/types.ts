@@ -37,6 +37,7 @@ import { RebornBuyDeviceDrawerState } from "./rebornBuyDeviceDrawer";
 import type { PortfolioRefreshState } from "./portfolioRefresh";
 import type { PortfolioBalanceDisplayState } from "./portfolioBalanceDisplay";
 import type { HistoryState } from "./history";
+import type { RecoverStateSliceState } from "./recoverState";
 
 // === ACCOUNT STATE ===
 
@@ -430,4 +431,5 @@ export type State = LLMRTKApiState & {
   walletSync: WalletSyncState;
   portfolioRefresh: PortfolioRefreshState;
   portfolioBalanceDisplay: PortfolioBalanceDisplayState;
+  recoverState: RecoverStateSliceState;
 };

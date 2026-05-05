@@ -11,6 +11,8 @@ import {
   overrideInitialStateWithPerpsAndAssetSection,
   overrideInitialStateWithAssetSection,
   overrideInitialStateWithNoAccountsAndAssetSection,
+  overrideInitialStateWithOnboardingWidgetVisible,
+  overrideInitialStateWithOnboardingWidgetVisibleAndReadOnly,
 } from "./shared";
 
 const DADA_API_URLS = [
@@ -224,26 +226,28 @@ describe("Portfolio Screen", () => {
   });
 
   describe("Portfolio Banners Section", () => {
-    it("should display banners section in noFund state", async () => {
+    it("should display banners section without a page indicator when only one banner is active", async () => {
       renderWithReactQuery(<PortfolioTest />, {
-        overrideInitialState: overrideInitialStateWithGraphReworkEnabled,
+        overrideInitialState: overrideInitialStateWithOnboardingWidgetVisible,
       });
 
       await screen.findByTestId("PortfolioEmptyList");
 
       const bannersSections = await screen.findAllByTestId("portfolio-banners-section");
       expect(bannersSections[0]).toBeVisible();
+      expect(screen.queryByTestId("banners-page-indicator")).toBeNull();
     });
 
-    it("should display banners section in noSigner state (readOnly mode)", async () => {
+    it("should display banners section without a page indicator in noSigner state (readOnly mode)", async () => {
       renderWithReactQuery(<ReadOnlyPortfolioTest />, {
-        overrideInitialState: overrideInitialStateWithGraphReworkAndReadOnly,
+        overrideInitialState: overrideInitialStateWithOnboardingWidgetVisibleAndReadOnly,
       });
 
       await screen.findByTestId("PortfolioReadOnlyItems");
 
       const bannersSections = await screen.findAllByTestId("portfolio-banners-section");
       expect(bannersSections[0]).toBeVisible();
+      expect(screen.queryByTestId("banners-page-indicator")).toBeNull();
     });
   });
 });
