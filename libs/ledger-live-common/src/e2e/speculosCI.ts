@@ -59,9 +59,7 @@ function buildAcquirePayload(deviceParams: DeviceParams, runId: string, seed: st
 
   const rawTag = process.env.SPECULOS_IMAGE_TAG?.trim();
   const tag =
-    rawTag && rawTag.includes(":")
-      ? rawTag.slice(rawTag.lastIndexOf(":") + 1)
-      : rawTag || "latest";
+    rawTag && rawTag.includes(":") ? rawTag.slice(rawTag.lastIndexOf(":") + 1) : rawTag || "latest";
 
   const libraries =
     dependencies?.map(dep => ({
@@ -75,7 +73,7 @@ function buildAcquirePayload(deviceParams: DeviceParams, runId: string, seed: st
     })) ?? undefined;
 
   return {
-    coin_app: appName.replace(/ /g, ""),
+    coin_app: appName,
     coin_app_version: appVersion,
     device,
     device_os_version: firmware,
@@ -164,14 +162,10 @@ export async function createSpeculosDeviceCI(
     const payload = buildAcquirePayload(deviceParams, runId, seed);
     let res;
     try {
-      res = await axios.post<SpeculinhoAcquireResponse>(
-        `${speculinhoUrl}/acquire`,
-        payload,
-        {
-          headers: { "Content-Type": "application/json" },
-          validateStatus: () => true,
-        },
-      );
+      res = await axios.post<SpeculinhoAcquireResponse>(`${speculinhoUrl}/acquire`, payload, {
+        headers: { "Content-Type": "application/json" },
+        validateStatus: () => true,
+      });
     } catch (error: unknown) {
       throw new Error(
         `[speculosCI] Speculinho /acquire transport error (${speculinhoUrl}): ${sanitizeError(error)}`,
