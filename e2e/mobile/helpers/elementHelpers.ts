@@ -478,7 +478,11 @@ export const WebElementHelpers = {
 
   async scrollToWebElement(element: WebElement) {
     try {
-      await element.runScript((el: HTMLElement) => el.scrollIntoView({ behavior: "smooth" }));
+      await retryUntilTimeout(
+        async () => element.runScript((el: HTMLElement) => el.scrollIntoView({ behavior: "smooth" })),
+        DEFAULT_TIMEOUT,
+        DEFAULT_WEB_ELEMENT_INTERVAL,
+      );
     } catch (error) {
       throw new Error(
         `Failed to scroll to web element using matcher: ${WebElementHelpers.getWebElementMatcher(element)}\nError: ${sanitizeError(error)}`,
