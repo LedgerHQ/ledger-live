@@ -358,10 +358,10 @@ test.describe("Send flows", () => {
           await app.account.clickSend();
 
           await app.send.craftTx(transaction.transaction);
-          await app.send.checkContinueButtonDisabled();
           if (transaction.expectedErrorMessage === null) {
-            await app.send.checkInputErrorVisibility("hidden");
+            await app.send.checkContinueButtonDisabled();
           } else {
+            await app.send.checkContinueButtonDisabled();
             await app.send.checkErrorMessage(transaction.expectedErrorMessage);
           }
         },
@@ -470,12 +470,12 @@ test.describe("Send flows", () => {
               : transaction.transaction.accountToCredit.address ?? "";
 
           await app.send.fillRecipientInfo(transaction.transaction);
+          await app.send.checkContinueButtonEnable();
           if (transaction.expectedWarningMessage === null) {
             await app.send.checkInputWarningVisibility("hidden");
           } else {
             await app.send.checkInputWarningMessage(transaction.expectedWarningMessage);
           }
-          await app.send.checkContinueButtonEnable();
         },
       );
     });
@@ -542,11 +542,11 @@ test.describe("Send flows", () => {
           await app.account.clickSend();
           await app.send.fillRecipient(transaction.address);
           if (transaction.expectedErrorMessage === null) {
-            await app.send.checkInputErrorVisibility("hidden");
+            await app.send.checkContinueButtonDisabled();
           } else {
             await app.send.checkErrorMessage(transaction.expectedErrorMessage);
+            await app.send.checkContinueButtonDisabled();
           }
-          await app.send.checkContinueButtonDisabled();
         },
       );
     });
