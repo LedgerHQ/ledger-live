@@ -157,7 +157,7 @@ function syntheticParentForTokenOnlyTx(
   // In the case of smart contract interaction, the contract must be the recipient of the parent operation => this
   // is why we need to extract this information from the operation details.
   const contract = getTokenContract(referenceOp);
-  const parentRecipients = contract !== undefined ? [contract] : referenceOp.recipients ?? [];
+  const parentRecipients = contract !== undefined ? [contract] : (referenceOp.recipients ?? []);
   const parentSenders = referenceOp.senders ?? [];
   return cleanedOperation({
     id: encodeOperationId(accountId, referenceOp.hash, parentType),
@@ -205,10 +205,11 @@ function parentOpsForTxWithNonInternalOperations(
 }
 
 /**
- * Parent + internal ops for a tx that has only internal ops (e.g. contract transfer from B to C).
- * This case happens when an address A calls a smart contract, that performs a transfer from B to C, seen from B or
- * C's perspective. In this case, the parent operation must be of type NONE, with A as the sender and the contract
- * as the recipient => the sender of the internal operation is used as the recipient of the synthetic parent operation.
+ * Synthetic NONE parent for a tx that has only internal ops (e.g. contract transfer from B to C).
+ * This case happens when an address A calls a smart contract, that performs a transfer from B to C,
+ * seen from B or C's perspective. The parent operation is of type NONE, with A as the sender
+ * (empty if unknown) and the contract as the recipient. Internal ops are attached to the NONE parent,
+ * not emitted as additional top-level operations.
  */
 function parentOpsForTxWithOnlyInternalOperations(
   hash: string,
@@ -221,45 +222,33 @@ function parentOpsForTxWithOnlyInternalOperations(
   const firstInternal = internalOperations[0];
   if (!firstInternal) return [];
 
-  const out: OperationCommon[] = [];
   const feePayer = getFeePayer(firstInternal);
-  if (feePayer != null) {
-    out.push(
-      cleanedOperation({
-        id: encodeOperationId(accountId, hash, "NONE"),
-        hash,
-        accountId,
-        type: "NONE",
-        value: new BigNumber(0),
-        fee: firstInternal.fee,
-        blockHash: firstInternal.blockHash,
-        blockHeight: firstInternal.blockHeight,
-        senders: [feePayer],
-        recipients: firstInternal.senders,
-        date: firstInternal.date,
-        transactionSequenceNumber: firstInternal.transactionSequenceNumber,
-        hasFailed: firstInternal.hasFailed,
-        extra: firstInternal.extra,
-        subOperations,
-        internalOperations,
-      }),
-    );
-  }
-  for (const internalOp of internalOperations) {
-    out.push(
-      cleanedOperation({
-        ...internalOp,
-        subOperations,
-        internalOperations,
-      }),
-    );
-  }
-  return out;
+  return [
+    cleanedOperation({
+      id: encodeOperationId(accountId, hash, "NONE"),
+      hash,
+      accountId,
+      type: "NONE",
+      value: new BigNumber(0),
+      fee: firstInternal.fee,
+      blockHash: firstInternal.blockHash,
+      blockHeight: firstInternal.blockHeight,
+      senders: feePayer ? [feePayer] : [],
+      recipients: firstInternal.senders,
+      date: firstInternal.date,
+      transactionSequenceNumber: firstInternal.transactionSequenceNumber,
+      hasFailed: firstInternal.hasFailed,
+      extra: firstInternal.extra,
+      subOperations,
+      internalOperations,
+    }),
+  ];
 }
 
 /**
- * Emit parent operations per tx hash so the account has one top-level operation per transaction for normal transactions,
- * and two for self-sends (IN + OUT) or internal-only (NONE + IN).
+ * Emit parent operations per tx hash: one top-level operation per transaction for normal transactions,
+ * two for self-sends (IN + OUT). Internal-only transactions produce a single NONE parent with internal
+ * ops attached, not emitted as additional top-level operations.
  */
 function buildParentOperations(
   newSubAccounts: TokenAccount[],
