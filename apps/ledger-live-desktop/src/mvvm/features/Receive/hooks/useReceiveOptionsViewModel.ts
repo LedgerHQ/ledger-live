@@ -5,30 +5,32 @@ import { track } from "~/renderer/analytics/segment";
 export type UseReceiveOptionsViewModelArgs = Readonly<{
   onClose: () => void;
   onGoToAccount: () => void;
+  sourcePage: string;
 }>;
 
 export function useReceiveOptionsViewModel({
   onClose,
   onGoToAccount,
+  sourcePage,
 }: UseReceiveOptionsViewModelArgs) {
   const navigate = useNavigate();
 
   const handleGoToBank = useCallback(() => {
     track("button_clicked", {
       button: "fiat",
-      page: "receive_drawer",
+      page: sourcePage,
     });
     onClose();
     navigate("/bank");
-  }, [onClose, navigate]);
+  }, [onClose, navigate, sourcePage]);
 
   const handleGoToCrypto = useCallback(() => {
     track("button_clicked", {
       button: "crypto",
-      page: "receive_drawer",
+      page: sourcePage,
     });
     onGoToAccount();
-  }, [onGoToAccount]);
+  }, [onGoToAccount, sourcePage]);
 
   return { handleGoToBank, handleGoToCrypto };
 }

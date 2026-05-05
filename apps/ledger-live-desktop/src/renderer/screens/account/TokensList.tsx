@@ -49,6 +49,7 @@ function TokensList({ account }: Props) {
       openModal("MODAL_RECEIVE", {
         account,
         receiveTokenMode: true,
+        sourcePage: "account",
       }),
     );
   }, [dispatch, account]);
