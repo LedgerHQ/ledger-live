@@ -37,6 +37,10 @@ function isInternalLiveOp(operation: OperationCommon): boolean {
   return !!operation.extra?.internal;
 }
 
+function hasStake(balance: Balance): balance is Balance & { stake: Stake } {
+  return balance.stake !== undefined;
+}
+
 function hasActiveStake(balance: Balance): balance is Balance & {
   stake: Stake & { state: "active" | "activating" };
 } {
@@ -56,8 +60,7 @@ function hasStakeDelegate<T extends Balance & { stake: Stake }>(
 }
 
 function delegatedAmountForStakingResources(b: Balance): bigint {
-  if (!b.stake) return 0n;
-  return typeof b.stake.amount === "bigint" ? b.stake.amount : 0n;
+  return b.stake?.amount ?? 0n;
 }
 
 /** True when the op is a main-account (native) op, not a token/sub-account op */
@@ -336,49 +339,63 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     const nativeAsset = extractBalance(balanceRes, "native");
     const allTokenAssetsBalances = balanceRes.filter(b => b.asset.type !== "native");
 
-    const activeStakes = balanceRes.filter(hasActiveStake);
-    const deactivatingStakes = balanceRes.filter(hasDeactivatingStake);
-
-    const delegatedBalance = activeStakes.reduce(
-      (acc, b) => acc + delegatedAmountForStakingResources(b),
-      0n,
-    );
-    const unbondingBalance = deactivatingStakes.reduce(
-      (acc, b) => acc + delegatedAmountForStakingResources(b),
-      0n,
-    );
-    const pendingRewardsBalance = activeStakes.reduce(
-      (acc, b) => acc + (b.stake.amountRewarded ?? 0n),
-      0n,
-    );
+    const usesStakingPositions = bridgeApi.usesStakingPositions === true;
 
     const nativeBalance = nativeAsset?.value ?? 0n;
     const nativeLocked = nativeAsset?.locked ?? 0n;
 
     // balance reflects only the native available balance.
-    // Staked/unbonding amounts are tracked separately in stakingResources.
+    // Staked/unbonding amounts are tracked separately (stakingResources or stakingPositions).
     const spendableBalance = nativeBalance - nativeLocked;
 
-    const delegations: StakingDelegation[] = activeStakes.filter(hasStakeDelegate).map(b => ({
-      validatorAddress: b.stake.delegate,
-      amount: new BigNumber(delegatedAmountForStakingResources(b).toString()),
-      pendingRewards: new BigNumber((b.stake.amountRewarded ?? 0n).toString()),
-      status: "bonded" as const,
-    }));
-    const unbondings: StakingUnbonding[] = deactivatingStakes.filter(hasStakeDelegate).map(b => ({
-      validatorAddress: b.stake.delegate,
-      amount: new BigNumber(delegatedAmountForStakingResources(b).toString()),
-      completionDate: b.stake.stateUpdatedAt ?? new Date(),
-    }));
-    const stakingResources: StakingResources = {
-      delegations,
-      redelegations: [],
-      unbondings,
-      delegatedBalance: new BigNumber(delegatedBalance.toString()),
-      pendingRewardsBalance: new BigNumber(pendingRewardsBalance.toString()),
-      unbondingBalance: new BigNumber(unbondingBalance.toString()),
-      ...(validators.length > 0 ? { validators } : {}),
-    };
+    let stakingResources: StakingResources | undefined;
+    let stakingPositions: Stake[] = [];
+    let delegationsCount = 0;
+    let unbondingsCount = 0;
+    if (usesStakingPositions) {
+      // Per-stake positions preserved as-is so the UI can group by uid prefix
+      // (delegation-* / stake-* / unstaking-*).
+      stakingPositions = balanceRes.filter(hasStake).map(b => b.stake);
+    } else {
+      const activeStakes = balanceRes.filter(hasActiveStake);
+      const deactivatingStakes = balanceRes.filter(hasDeactivatingStake);
+
+      const delegatedBalance = activeStakes.reduce(
+        (acc, b) => acc + delegatedAmountForStakingResources(b),
+        0n,
+      );
+      const unbondingBalance = deactivatingStakes.reduce(
+        (acc, b) => acc + delegatedAmountForStakingResources(b),
+        0n,
+      );
+      const pendingRewardsBalance = activeStakes.reduce(
+        (acc, b) => acc + (b.stake.amountRewarded ?? 0n),
+        0n,
+      );
+
+      const delegations: StakingDelegation[] = activeStakes.filter(hasStakeDelegate).map(b => ({
+        validatorAddress: b.stake.delegate,
+        amount: new BigNumber(delegatedAmountForStakingResources(b).toString()),
+        pendingRewards: new BigNumber((b.stake.amountRewarded ?? 0n).toString()),
+        status: "bonded" as const,
+      }));
+      const unbondings: StakingUnbonding[] = deactivatingStakes.filter(hasStakeDelegate).map(b => ({
+        validatorAddress: b.stake.delegate,
+        amount: new BigNumber(delegatedAmountForStakingResources(b).toString()),
+        completionDate: b.stake.stateUpdatedAt ?? new Date(),
+      }));
+      stakingResources = {
+        delegations,
+        redelegations: [],
+        unbondings,
+        delegatedBalance: new BigNumber(delegatedBalance.toString()),
+        pendingRewardsBalance: new BigNumber(pendingRewardsBalance.toString()),
+        unbondingBalance: new BigNumber(unbondingBalance.toString()),
+        ...(validators.length > 0 ? { validators } : {}),
+      };
+      delegationsCount = delegations.length;
+      unbondingsCount = unbondings.length;
+    }
 
     // Normalize pre-alpaca operations to the new accountId to keep UI rendering consistent
     const oldOps = ((initialAccount?.operations || []) as OperationCommon[]).map(op =>
@@ -448,8 +465,17 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     const newOperations = [...confirmedOperations, ...newOpsWithSubs];
     const operations = mergeOps(syncFromScratch ? [] : oldOps, newOperations) as OperationCommon[];
     const stakingEnabled =
-      alpacaApi.stakingSupported ?? (delegations.length > 0 || unbondings.length > 0);
-    const res: Partial<Account> & { stakingResources?: StakingResources } = {
+      alpacaApi.stakingSupported ?? (delegationsCount > 0 || unbondingsCount > 0);
+    let stakingShape: { stakingResources?: StakingResources; stakingPositions?: Stake[] } = {};
+    if (usesStakingPositions) {
+      stakingShape = { stakingPositions };
+    } else if (stakingEnabled) {
+      stakingShape = { stakingResources };
+    }
+    const res: Partial<Account> & {
+      stakingResources?: StakingResources;
+      stakingPositions?: Stake[];
+    } = {
       id: accountId,
       xpub: address,
       blockHeight: operations.length === 0 ? 0 : blockInfo.height || initialAccount?.blockHeight,
@@ -459,7 +485,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       subAccounts,
       operationsCount: operations.length,
       syncHash,
-      ...(stakingEnabled ? { stakingResources } : {}),
+      ...stakingShape,
     };
     return res;
   };

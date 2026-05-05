@@ -25,4 +25,5 @@ export function getAssetFromToken(token: TokenCurrency, owner: string): AssetInf
 export default {
   getTokenFromAsset,
   getAssetFromToken,
+  usesStakingPositions: true,
 } satisfies BridgeApi;

@@ -95,8 +95,24 @@ export function isTezosAccount(account: Account): account is TezosAccount {
   return "tezosResources" in account;
 }
 
+/**
+ * Persistable shape of a Tezos {@link StakingPosition}. Mirrors the framework
+ * `Stake` fields populated by `buildStakesForAccount` (uid prefix encodes the
+ * staking kind: delegation-* / stake-* / unstaking-*); `bigint` amounts are
+ * serialized as decimal strings, and `asset` is omitted because Tezos stakes
+ * are always native and the field is reconstructed on read.
+ */
+export type StakingPositionRaw = {
+  uid: string;
+  address: string;
+  delegate?: string;
+  state: "inactive" | "activating" | "active" | "deactivating";
+  amount: string;
+};
+
 export type TezosAccountRaw = AccountRaw & {
   tezosResources: TezosResourcesRaw;
+  stakingPositions?: StakingPositionRaw[];
 };
 
 export type TransactionStatus = TransactionStatusCommon;
