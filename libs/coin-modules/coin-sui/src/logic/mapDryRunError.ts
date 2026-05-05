@@ -1,4 +1,4 @@
-import { NotEnoughBalanceFees } from "@ledgerhq/errors";
+import { NotEnoughBalance, NotEnoughBalanceFees } from "@ledgerhq/errors";
 
 type ErrorMatcher = {
   pattern: RegExp;
@@ -16,6 +16,13 @@ const balanceErrorMatchers: ErrorMatcher[] = [
     //  Required: 1000, Available: 500"
     pattern: /Insufficient balance of .+ for owner/i,
     createError: (_match, cause) => new NotEnoughBalanceFees(undefined, undefined, { cause }),
+  },
+  {
+    // "Transaction resolution failed: InsufficientCoinBalance in command 0"
+    // Thrown by tx.build() when the sender has insufficient coins for the transfer amount.
+    // This is a user-amount error (not a gas error); getTransactionStatus handles the display.
+    pattern: /InsufficientCoinBalance/i,
+    createError: (_match, cause) => new NotEnoughBalance(undefined, undefined, { cause }),
   },
   // Add more patterns here as you discover them
 ];

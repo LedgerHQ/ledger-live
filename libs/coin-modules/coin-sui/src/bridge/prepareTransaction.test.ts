@@ -1,4 +1,5 @@
 import { faker } from "@faker-js/faker";
+import { NotEnoughBalance, NotEnoughBalanceFees } from "@ledgerhq/errors";
 import BigNumber from "bignumber.js";
 import { DEFAULT_COIN_TYPE } from "../network/sdk";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
@@ -96,12 +97,35 @@ describe("prepareTransaction", () => {
     expect(newTx.tokenId).toEqual("tokenSubAccountId");
   });
 
-  it("rejects when fee estimation fails", async () => {
+  it("rejects when fee estimation fails with an unrecognised error", async () => {
     // GIVEN
     mockGetFeesForTransaction.mockRejectedValue(new Error("fee estimation failed"));
     const tx = createFixtureTransaction();
 
     // WHEN / THEN
     await expect(prepareTransaction(createFixtureAccount(), tx)).rejects.toThrow();
+  });
+
+  it("rejects when fee estimation fails with NotEnoughBalanceFees", async () => {
+    // GIVEN — gas-shortage errors must propagate so the UI can act on them
+    mockGetFeesForTransaction.mockRejectedValue(new NotEnoughBalanceFees());
+    const tx = createFixtureTransaction();
+
+    // WHEN / THEN
+    await expect(prepareTransaction(createFixtureAccount(), tx)).rejects.toThrow(
+      NotEnoughBalanceFees,
+    );
+  });
+
+  it("returns fees=0 when fee estimation fails with NotEnoughBalance", async () => {
+    // GIVEN — amount > balance: getTransactionStatus will surface the error to the user
+    mockGetFeesForTransaction.mockRejectedValue(new NotEnoughBalance());
+    const tx = createFixtureTransaction();
+
+    // WHEN
+    const newTx = await prepareTransaction(createFixtureAccount(), tx);
+
+    // THEN
+    expect(newTx.fees).toEqual(new BigNumber(0));
   });
 });

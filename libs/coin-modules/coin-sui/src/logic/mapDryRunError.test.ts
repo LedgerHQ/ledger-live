@@ -1,4 +1,4 @@
-import { NotEnoughBalanceFees } from "@ledgerhq/errors";
+import { NotEnoughBalance, NotEnoughBalanceFees } from "@ledgerhq/errors";
 import { mapDryRunError } from "./mapDryRunError";
 
 describe("mapDryRunError", () => {
@@ -29,6 +29,20 @@ describe("mapDryRunError", () => {
     it("does not match a generic 'insufficient balance' string without the owner clause", () => {
       const error = new Error("Insufficient balance in your wallet");
       expect(mapDryRunError(error)).not.toBeInstanceOf(NotEnoughBalanceFees);
+    });
+  });
+
+  describe("InsufficientCoinBalance pattern", () => {
+    it("maps the tx.build() InsufficientCoinBalance message to NotEnoughBalance", () => {
+      const error = new Error("Transaction resolution failed: InsufficientCoinBalance in command 0");
+      const result = mapDryRunError(error);
+      expect(result).toBeInstanceOf(NotEnoughBalance);
+      expect(result.cause).toBe(error);
+    });
+
+    it("matches case-insensitively", () => {
+      const error = new Error("insufficientcoinbalance in command 1");
+      expect(mapDryRunError(error)).toBeInstanceOf(NotEnoughBalance);
     });
   });
 
