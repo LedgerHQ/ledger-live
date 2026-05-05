@@ -1,5 +1,5 @@
 /* eslint-disable no-bitwise */
-import { DeviceOnDashboardExpected, TransportStatusError } from "@ledgerhq/errors";
+import { DeviceOnDashboardExpected, StatusCodes, TransportStatusError } from "@ledgerhq/errors";
 import { LocalTracer, log } from "@ledgerhq/logs";
 import Transport from "@ledgerhq/hw-transport";
 import { getVersion } from "../device/use-cases/getVersionUseCase";
@@ -25,11 +25,14 @@ export default async function (transport: Transport): Promise<DeviceInfo> {
     .catch(e => {
       tracer.trace(`Error from getAppAndVersion: ${e}`, { error: e });
       if (e instanceof TransportStatusError) {
-        if (e.statusCode === 0x6e00 || e.statusCode === 0x6e01) {
+        if (
+          e.statusCode === StatusCodes.CLA_NOT_SUPPORTED ||
+          e.statusCode === StatusCodes.CLA_NOT_SUPPORTED_BOOTLOADER
+        ) {
           return true;
         }
 
-        if (e.statusCode === 0x6d00) {
+        if (e.statusCode === StatusCodes.INS_NOT_SUPPORTED) {
           return false;
         }
       }
