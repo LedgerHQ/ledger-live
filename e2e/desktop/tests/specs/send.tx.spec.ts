@@ -611,7 +611,9 @@ test.describe("Send flows", () => {
     });
   });
 
-  test.describe("Send Concordium (Testnet)", () => {
+  // TODO: LIVE-30321 - Until app-concordium 5.6.0 is released, the test is skipped as it requires a specific app version
+  // with the Concordium testnet support.
+  test.describe.skip("Send Concordium (Testnet)", () => {
     const ccdTx = new Transaction(Account.CCD_TESTNET_1, Account.CCD_TESTNET_2, "50", undefined);
 
     test.use({
