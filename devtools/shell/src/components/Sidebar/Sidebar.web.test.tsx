@@ -1,17 +1,24 @@
 import userEvent from "@testing-library/user-event";
 import { render, screen } from "jest/render";
+import { makeTool } from "jest/fixtures";
 import { Sidebar } from "./Sidebar.web";
 import { Category } from "../../types";
 
 const categories = [
   {
     category: Category.CONFIGURATION,
-    tools: [{ id: "feature-flags", label: "Feature Flags", category: Category.CONFIGURATION }],
+    tools: [
+      makeTool({ id: "feature-flags", label: "Feature Flags", category: Category.CONFIGURATION }),
+    ],
   },
   {
     category: Category.CONNECTIVITY,
     tools: [
-      { id: "network-inspector", label: "Network Inspector", category: Category.CONNECTIVITY },
+      makeTool({
+        id: "network-inspector",
+        label: "Network Inspector",
+        category: Category.CONNECTIVITY,
+      }),
     ],
   },
 ];
