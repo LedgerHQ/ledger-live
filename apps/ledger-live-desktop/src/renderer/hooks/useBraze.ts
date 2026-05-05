@@ -1,6 +1,7 @@
 import * as braze from "@braze/web-sdk";
 import { ClassicCard } from "@braze/web-sdk";
 import { generateAnonymousId } from "@ledgerhq/live-common/braze/anonymousUsers";
+import { parseOrder, sanitizeExtras } from "@ledgerhq/live-common/braze/contentCardExtras";
 import { appendDeeplinkLocationIfDefined } from "@ledgerhq/live-common/deeplinks/index";
 import { getEnv } from "@ledgerhq/live-env";
 import { useCallback, useEffect, useRef } from "react";
@@ -54,10 +55,7 @@ export const compareCards = (a: LedgerContentCard, b: LedgerContentCard) => {
   return (a.order || 0) - (b.order || 0);
 };
 
-const parseOrder = (value: string | undefined): number | undefined => {
-  const parsed = Number.parseInt(value ?? "", 10);
-  return Number.isNaN(parsed) ? undefined : parsed;
-};
+export { parseOrder, sanitizeExtras };
 
 export const mapAsActionContentCard = (card: ClassicCard): ActionContentCard => ({
   created: card.updated ?? null,

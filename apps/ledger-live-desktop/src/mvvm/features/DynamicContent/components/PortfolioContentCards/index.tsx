@@ -75,7 +75,7 @@ const PortfolioBrazePlacementSlide = memo(function PortfolioBrazePlacementSlide(
   const imageBackground = lumenImageBackgroundForPortfolio(card);
 
   return (
-    <LogContentCardWrapper id={card.id} location={card.location}>
+    <LogContentCardWrapper id={card.id} displayedPosition={index} location={card.location}>
       <ContentBannerActionCard
         title={card.title}
         description={card.description}

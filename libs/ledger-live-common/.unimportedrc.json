@@ -358,6 +358,7 @@
     "src/api/ofacGeoBlockApi.ts",
     "src/bot/specs.ts",
     "src/braze/anonymousUsers.ts",
+    "src/braze/contentCardExtras.ts",
     "src/bridge/descriptor/registry.ts",
     "src/bridge/descriptor/send/features.ts",
     "src/bridge/descriptor/send/memo.ts",
