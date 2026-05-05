@@ -316,7 +316,8 @@ export const MainAppLayout = () => {
     ? getPageBackground(pathname, theme)
     : undefined;
 
-  const useWallet40Layout = isWallet40Enabled && isWallet40Page(pathname);
+  const useWallet40Layout =
+    isWallet40Enabled && isWallet40Page(pathname, { shouldDisplayAggregatedAssets });
 
   useEffect(() => {
     if (shouldDisplayWallet40MainNav) preloadBackgrounds();
