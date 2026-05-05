@@ -13,6 +13,7 @@ declare const __PRERELEASE__: string;
 declare const __CHANNEL__: string;
 declare const __static: string;
 declare const __DEV__: boolean;
+declare const __UPDATE_CHECK_PUBKEY__: string | null;
 
 declare module "*.css";
 
