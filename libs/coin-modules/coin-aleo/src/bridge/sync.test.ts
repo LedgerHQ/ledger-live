@@ -1353,5 +1353,43 @@ describe("sync.ts", () => {
 
       expect(result.pendingOperations).toEqual([]);
     });
+
+    it("should remove a pending op matched by firstTransitionId even when transaction.id differs", () => {
+      // Aleo's prover re-generates ZK proofs non-deterministically: the transaction.id returned
+      // at broadcast time can differ from the one that lands on-chain, while the transition ID
+      // is stable (derived from circuit inputs only).
+      const sharedTransitionId = "au1tdzegucvzg23nptey5wpdwht90ktlj685pvxf7xndd66razeqgyqrqdgaj";
+
+      const confirmedOp = getMockedOperation({
+        id: "account-at1onchain-OUT",
+        hash: "at1onchain",
+        type: "OUT",
+        extra: {
+          functionId: "transfer_public",
+          transactionType: "public",
+          firstTransitionId: sharedTransitionId,
+        },
+      });
+      const pendingOp = getMockedOperation({
+        id: "account-at1broadcast-OUT",
+        hash: "at1broadcast",
+        type: "OUT",
+        extra: {
+          functionId: "transfer_public",
+          transactionType: "public",
+          firstTransitionId: sharedTransitionId,
+        },
+      });
+
+      const synced: AleoAccount = {
+        ...mockInitialAccount,
+        operations: [confirmedOp],
+        pendingOperations: [pendingOp],
+      };
+
+      const result = postSync(synced, synced);
+
+      expect(result.pendingOperations).toEqual([]);
+    });
   });
 });

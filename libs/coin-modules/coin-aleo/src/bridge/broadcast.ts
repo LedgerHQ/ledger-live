@@ -1,7 +1,7 @@
 import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { AccountBridge } from "@ledgerhq/types-live";
 import aleoCoinConfig from "../config";
-import type { AleoAccount, Transaction as AleoTransaction } from "../types";
+import type { AleoAccount, AleoOperation, Transaction as AleoTransaction } from "../types";
 import { broadcast as logicBroadcast } from "../logic/broadcast";
 
 export const broadcast: AccountBridge<AleoTransaction, AleoAccount>["broadcast"] = async ({
@@ -10,11 +10,19 @@ export const broadcast: AccountBridge<AleoTransaction, AleoAccount>["broadcast"]
 }) => {
   const config = aleoCoinConfig.getCoinConfig(account.currency.id);
 
-  const hash = await logicBroadcast({
+  const transaction = await logicBroadcast({
     configOrCurrencyId: config,
     account,
     signedTx: signedOperation.signature,
   });
 
-  return patchOperationWithHash(signedOperation.operation, hash);
+  const op = patchOperationWithHash(signedOperation.operation, transaction.id) as AleoOperation;
+
+  return {
+    ...op,
+    extra: {
+      ...op.extra,
+      firstTransitionId: transaction.execution.transitions[0].id,
+    },
+  };
 };

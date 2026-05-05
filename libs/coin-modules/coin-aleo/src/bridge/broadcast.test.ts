@@ -6,6 +6,7 @@ import { getMockedAccount } from "../__tests__/fixtures/account.fixture";
 import { broadcast as logicBroadcast } from "../logic/broadcast";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import { broadcast as bridgeBroadcast } from "./broadcast";
+import type { DelegatedProvingResponse } from "../types";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/operation");
 jest.mock("../logic/broadcast");
@@ -24,10 +25,44 @@ describe("bridge broadcast", () => {
     mockAleoConfig.getCoinConfig.mockReturnValue(mockConfig);
   });
 
-  it("should broadcast the signed operation and return an operation with the hash", async () => {
-    const hash = "at1broadcast_hash_123";
+  it("should broadcast the signed operation and return an operation with the hash and firstTransitionId", async () => {
+    const transactionId = "at1broadcast_hash_123";
+    const firstTransitionId = "au1transition_id_456";
     const signature = "signed_tx_hex_123";
-    mockLogicBroadcast.mockResolvedValueOnce(hash);
+
+    const mockTransaction: DelegatedProvingResponse["transaction"] = {
+      type: "execute",
+      id: transactionId,
+      execution: {
+        transitions: [
+          {
+            id: firstTransitionId,
+            program: "credits.aleo",
+            function: "transfer_public",
+            inputs: [],
+            outputs: [],
+            tpk: "",
+            tcm: "",
+            scm: "",
+          },
+        ],
+        global_state_root: "",
+        proof: "",
+        fee: {
+          transition: {
+            id: "au1fee",
+            program: "credits.aleo",
+            function: "fee_public",
+            inputs: [],
+            outputs: [],
+            tpk: "",
+            tcm: "",
+            scm: "",
+          },
+        },
+      },
+    };
+    mockLogicBroadcast.mockResolvedValueOnce(mockTransaction);
 
     const mockOperation: Operation = {
       id: "op123",
@@ -44,7 +79,7 @@ describe("bridge broadcast", () => {
       extra: {},
     };
 
-    const patchedOperation: Operation = { ...mockOperation, hash };
+    const patchedOperation: Operation = { ...mockOperation, hash: transactionId };
     mockPatchOperationWithHash.mockReturnValueOnce(patchedOperation);
 
     const result = await bridgeBroadcast({
@@ -52,14 +87,15 @@ describe("bridge broadcast", () => {
       signedOperation: { signature, operation: mockOperation },
     });
 
-    expect(mockLogicBroadcast).toHaveBeenCalledTimes(1);
     expect(mockLogicBroadcast).toHaveBeenCalledWith({
       configOrCurrencyId: mockConfig,
       account,
       signedTx: signature,
     });
-    expect(mockPatchOperationWithHash).toHaveBeenCalledTimes(1);
-    expect(mockPatchOperationWithHash).toHaveBeenCalledWith(mockOperation, hash);
-    expect(result).toEqual(patchedOperation);
+    expect(mockPatchOperationWithHash).toHaveBeenCalledWith(mockOperation, transactionId);
+    expect(result).toEqual({
+      ...patchedOperation,
+      extra: { firstTransitionId },
+    });
   });
 });

@@ -1,6 +1,6 @@
 import { apiClient } from "../network/api";
 import { sdkClient } from "../network/sdk";
-import type { AleoAccount, AleoCoinConfig } from "../types";
+import type { AleoAccount, AleoCoinConfig, DelegatedProvingResponse } from "../types";
 import { fromHex, resolveConfig } from "./utils";
 
 export async function broadcast({
@@ -11,7 +11,7 @@ export async function broadcast({
   configOrCurrencyId: AleoCoinConfig | string;
   account: AleoAccount;
   signedTx: string;
-}): Promise<string> {
+}): Promise<DelegatedProvingResponse["transaction"]> {
   const config = resolveConfig(configOrCurrencyId);
 
   // get authorization and feeAuthorization from signed transaction
@@ -29,7 +29,7 @@ export async function broadcast({
       broadcast: true,
     });
 
-    return res.transaction.id;
+    return res.transaction;
   }
 
   const publicKeyResponse = await apiClient.getProvePublicKey({
@@ -58,5 +58,5 @@ export async function broadcast({
     throw new Error(`aleo: broadcast failed with status: ${status} (${error ?? "Unknown error"})`);
   }
 
-  return res.transaction.id;
+  return res.transaction;
 }

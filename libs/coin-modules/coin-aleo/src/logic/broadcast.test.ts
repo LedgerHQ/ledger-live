@@ -52,7 +52,7 @@ describe("broadcast", () => {
       feeAuthorization: mockFeeAuthorization,
       broadcast: true,
     });
-    expect(result).toBe(mockResponse.transaction.id);
+    expect(result).toBe(mockResponse.transaction);
   });
 
   it("should call API without feeAuthorization when absent in signed transaction payload", async () => {
@@ -127,7 +127,7 @@ describe("broadcast", () => {
         encryptedData: mockEncryptedData,
         stickySessionCookie: mockPublicKeyResponse.stickySessionCookie,
       });
-      expect(result).toBe(mockResponse.transaction.id);
+      expect(result).toBe(mockResponse.transaction);
     });
 
     it("should call encryptProvingRequest without feeAuthorization when absent in signed transaction payload", async () => {

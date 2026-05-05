@@ -188,6 +188,7 @@ export const toBridgeOperation = (
     extra: {
       functionId: rawTx.function_id,
       transactionType,
+      firstTransitionId: rawTx.transition_id,
     },
   };
 };

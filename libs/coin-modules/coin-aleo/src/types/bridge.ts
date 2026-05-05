@@ -102,6 +102,19 @@ export type AleoOperationExtra = {
   transactionType: AleoTransactionType;
   // this field is used to indicate that semi-public operation has been patched with private data after private sync
   patched?: boolean;
+  /**
+   * The ID of the first execution transition (`execution.transitions[0].id`).
+   *
+   * Aleo's delegated prover generates ZK proofs with randomness, so the top-level
+   * `transaction.id` (which commits over the proof) can differ between the transaction
+   * returned at broadcast time and the one that actually lands on-chain. The transition ID,
+   * by contrast, is derived solely from the circuit inputs (the authorization) and is
+   * therefore stable across re-provings of the same user intent.
+   *
+   * Storing this on both pending and confirmed operations allows `postSync` to match them
+   * even when the transaction IDs diverge.
+   */
+  firstTransitionId?: string;
 };
 
 export type OperationDetailsExtraField = {

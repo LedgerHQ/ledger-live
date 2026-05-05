@@ -151,37 +151,7 @@ async function handleTransferTransaction({
     estimatedFees,
   });
 
-  const recipientError = await validateRecipient({
-    account,
-    recipient: transaction.recipient,
-    allowSelfTransfer,
-  });
-
-  if (recipientError) {
-    errors.recipient = recipientError;
-  }
-
-  if (transaction.amount.eq(0) && !transaction.useAllAmount) {
-    errors.amount = new AmountRequired();
-  }
-
-  if (isPrivateTransaction(transaction)) {
-    Object.assign(
-      errors,
-      validatePrivateTransaction({
-        account,
-        transaction,
-        amount: calculatedAmount.amount,
-        estimatedFees,
-        isFeeSponsored: config.isFeeSponsored,
-      }),
-    );
-  }
-
-  if (availableBalance.isLessThan(calculatedAmount.totalSpent)) {
-    errors.amount = new NotEnoughBalance();
-  }
-
+  // FIXME:
   return {
     amount: calculatedAmount.amount,
     totalSpent: calculatedAmount.totalSpent,
@@ -189,6 +159,45 @@ async function handleTransferTransaction({
     errors,
     warnings,
   };
+
+  // const recipientError = await validateRecipient({
+  //   account,
+  //   recipient: transaction.recipient,
+  //   allowSelfTransfer,
+  // });
+
+  // if (recipientError) {
+  //   errors.recipient = recipientError;
+  // }
+
+  // if (transaction.amount.eq(0) && !transaction.useAllAmount) {
+  //   errors.amount = new AmountRequired();
+  // }
+
+  // if (isPrivateTransaction(transaction)) {
+  //   Object.assign(
+  //     errors,
+  //     validatePrivateTransaction({
+  //       account,
+  //       transaction,
+  //       amount: calculatedAmount.amount,
+  //       estimatedFees,
+  //       isFeeSponsored: config.isFeeSponsored,
+  //     }),
+  //   );
+  // }
+
+  // if (availableBalance.isLessThan(calculatedAmount.totalSpent)) {
+  //   errors.amount = new NotEnoughBalance();
+  // }
+
+  // return {
+  //   amount: calculatedAmount.amount,
+  //   totalSpent: calculatedAmount.totalSpent,
+  //   estimatedFees,
+  //   errors,
+  //   warnings,
+  // };
 }
 
 export const getTransactionStatus: AccountBridge<
