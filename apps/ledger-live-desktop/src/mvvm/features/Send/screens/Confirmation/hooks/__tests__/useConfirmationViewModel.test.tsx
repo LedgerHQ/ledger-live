@@ -177,6 +177,8 @@ describe("useConfirmationViewModel", () => {
     expect(trackPage).toHaveBeenCalledWith("Modal send - action rejected", null, {
       flow: "send",
       blockchain: "",
+      currency: "",
+      currency_id: "",
     });
 
     expect(latestVM?.status).toBe("IDLE");
