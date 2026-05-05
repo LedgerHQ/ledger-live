@@ -24,6 +24,8 @@ import { SwapNavigatorParamList } from "./types/SwapNavigator";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import SwapCustomError from "~/screens/Swap/SubScreens/SwapCustomError";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
+import { isGoingToSwapHistory } from "~/screens/Swap/navigation/navigateBackToSwapTab";
 
 // Constants for tracking sources
 const TRACKING_SOURCES = {
@@ -85,6 +87,7 @@ export default function SwapNavigator(
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
   const track = useTrack();
   const navigation = useNavigation<StackNavigatorNavigation<SwapNavigatorParamList>>();
+  const { notifyFlowCompleted } = useNotificationsContext();
   const { isEnabled: isLwm40Enabled, shouldDisplayWallet40MainNav } =
     useWalletFeaturesConfig("mobile");
 
@@ -181,6 +184,14 @@ export default function SwapNavigator(
           headerTitle: t("transfer.swap.title"),
           headerLeft: NullHeader,
         }}
+        listeners={{
+          beforeRemove: ({ data }) => {
+            if (isGoingToSwapHistory(data.action.payload)) {
+              return;
+            }
+            notifyFlowCompleted("swap");
+          },
+        }}
       />
 
       <Stack.Screen
@@ -216,6 +227,11 @@ export default function SwapNavigator(
         options={{
           headerTitle: t("transfer.swap2.history.title"),
           headerRight: NullHeader,
+        }}
+        listeners={{
+          beforeRemove: () => {
+            notifyFlowCompleted("swap");
+          },
         }}
       />
     </Stack.Navigator>
