@@ -4,15 +4,15 @@ import { render, screen } from "@tests/test-renderer";
 import { ProductTourControlsProvider, useProductTourControls } from "./ProductTourControlsContext";
 
 function ContextProbe() {
-  const controls = useProductTourControls();
-  return <Text>{controls ? "inside" : "outside"}</Text>;
+  useProductTourControls();
+  return <Text>inside</Text>;
 }
 
 describe("ProductTourControlsContext", () => {
-  it("should return null from useProductTourControls when rendered outside the provider", () => {
-    render(<ContextProbe />);
-
-    expect(screen.getByText("outside")).toBeVisible();
+  it("should throw from useProductTourControls when rendered outside the provider", () => {
+    expect(() => render(<ContextProbe />)).toThrow(
+      "useProductTourControls must be used within ProductTourControlsProvider",
+    );
   });
 
   it("should expose openProductTour and closeProductTour inside the provider", () => {

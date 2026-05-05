@@ -1,11 +1,7 @@
 import React, { createContext, useContext, useMemo } from "react";
+import type { ProductTourControls } from "../Drawer/types";
 
-export type ProductTourControls = {
-  readonly openProductTour: () => void;
-  readonly closeProductTour: () => void;
-  readonly onSlideChange: (index: number) => void;
-  readonly isDrawerOpen: boolean;
-};
+export type { ProductTourControls };
 
 const ProductTourControlsContext = createContext<ProductTourControls | null>(null);
 
@@ -30,5 +26,10 @@ export const ProductTourControlsProvider = ({ value, children }: ProductTourCont
   );
 };
 
-export const useProductTourControls = (): ProductTourControls | null =>
-  useContext(ProductTourControlsContext);
+export const useProductTourControls = (): ProductTourControls => {
+  const ctx = useContext(ProductTourControlsContext);
+  if (ctx == null) {
+    throw new Error("useProductTourControls must be used within ProductTourControlsProvider");
+  }
+  return ctx;
+};

@@ -18,15 +18,12 @@ export const useProductTourDrawer = () => useProductTourDrawerViewModel();
 const AnimatedGestureHandlerFlatList = Animated.createAnimatedComponent(FlatList);
 
 export const ProductTourDrawer = () => {
-  const controls = useProductTourControls();
+  const { isDrawerOpen: resolvedIsDrawerOpen, closeProductTour, onSlideChange } =
+    useProductTourControls();
 
-  const resolvedIsDrawerOpen = controls?.isDrawerOpen ?? false;
-  const closeProductTour = controls?.closeProductTour;
-  const onSlideChange = controls?.onSlideChange;
+  const resolvedOnSlideChange = useCallback((index: number) => onSlideChange(index), [onSlideChange]);
 
-  const resolvedOnSlideChange = useCallback((index: number) => onSlideChange?.(index), [onSlideChange]);
-
-  const resolvedCloseDrawer = useCallback(() => closeProductTour?.(), [closeProductTour]);
+  const resolvedCloseDrawer = useCallback(() => closeProductTour(), [closeProductTour]);
 
   if (!resolvedIsDrawerOpen) {
     return null;

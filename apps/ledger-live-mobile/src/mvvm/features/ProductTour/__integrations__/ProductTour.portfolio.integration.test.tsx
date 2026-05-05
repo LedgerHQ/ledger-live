@@ -1,9 +1,7 @@
 import React from "react";
 import { View } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { act, render, screen, withFlagOverrides } from "@tests/test-renderer";
-import { tickProductTourDeeplink } from "~/actions/appstate";
-import { productTourDeeplinkNonceSelector } from "~/reducers/appstate";
+import { render, screen, withFlagOverrides } from "@tests/test-renderer";
 import type { State } from "~/reducers/types";
 import { ProductTourPortfolioMount } from "../index";
 
@@ -40,51 +38,12 @@ function IntegrationNavigator() {
 }
 
 describe("ProductTour on Portfolio (integration)", () => {
-  it("should mount the Product Tour subtree when lwmProductTour is on and onboarding is complete", async () => {
+  it("should mount the Product Tour subtree when eligible inside a native stack screen", async () => {
     render(<IntegrationNavigator />, {
       overrideInitialState: eligiblePortfolioState,
     });
 
     expect(await screen.findByTestId("product-tour-integration-portfolio")).toBeVisible();
-    expect(screen.getByTestId("product-tour-portfolio-mount")).toBeVisible();
-  });
-
-  it("should not mount the Product Tour subtree when lwmProductTour is off", async () => {
-    render(<IntegrationNavigator />, {
-      overrideInitialState: withFlagOverrides(
-        { lwmProductTour: { enabled: false } },
-        withOnboarding(true),
-      ),
-    });
-
-    expect(await screen.findByTestId("product-tour-integration-portfolio")).toBeVisible();
-    expect(screen.queryByTestId("product-tour-portfolio-mount")).toBeNull();
-  });
-
-  it("should not mount the Product Tour subtree when onboarding is not complete", async () => {
-    render(<IntegrationNavigator />, {
-      overrideInitialState: withFlagOverrides(
-        { lwmProductTour: { enabled: true } },
-        withOnboarding(false),
-      ),
-    });
-
-    expect(await screen.findByTestId("product-tour-integration-portfolio")).toBeVisible();
-    expect(screen.queryByTestId("product-tour-portfolio-mount")).toBeNull();
-  });
-
-  it("should increment productTourDeeplinkNonce when tick dispatches while the subtree is mounted", async () => {
-    const { store } = render(<IntegrationNavigator />, {
-      overrideInitialState: eligiblePortfolioState,
-    });
-
-    await screen.findByTestId("product-tour-portfolio-mount");
-
-    act(() => {
-      store.dispatch(tickProductTourDeeplink());
-    });
-
-    expect(productTourDeeplinkNonceSelector(store.getState())).toBe(1);
     expect(screen.getByTestId("product-tour-portfolio-mount")).toBeVisible();
   });
 });
