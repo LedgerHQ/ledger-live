@@ -24,6 +24,41 @@ describe("listOperations", () => {
     jest.clearAllMocks();
   });
 
+  it("should skip transitions with empty sender and recipient", async () => {
+    const batcherTx = getMockedTransaction({
+      transaction_id: "tx1",
+      sender_address: "",
+      recipient_address: "",
+      program_id: "ldgbatcher_ppub_28.aleo",
+      amount: 0,
+    });
+    const innerTx = getMockedTransaction({
+      transaction_id: "tx1",
+      sender_address: "",
+      recipient_address: mockAddress,
+      amount: 5,
+    });
+    const mockOp = getMockedOperation({ id: "op1" });
+
+    mockFetchAccountTransactionsFromHeight.mockResolvedValue({
+      transactions: [batcherTx, innerTx],
+      nextCursor: null,
+    });
+    mockToBridgeOperation.mockReturnValue(mockOp);
+
+    const result = await listOperations({
+      currency: mockCurrency,
+      address: mockAddress,
+      ledgerAccountId: mockLedgerAccountId,
+      mode: "bridge",
+      options: { minHeight: 0 },
+    });
+
+    expect(mockToBridgeOperation).toHaveBeenCalledTimes(1);
+    expect(mockToBridgeOperation).toHaveBeenCalledWith(mockLedgerAccountId, innerTx, mockAddress);
+    expect(result.operations).toEqual([mockOp]);
+  });
+
   describe("bridge mode", () => {
     it("should fetch and parse transactions in bridge mode", async () => {
       const mockTx1 = getMockedTransaction({ transaction_id: "tx1", block_number: 100 });

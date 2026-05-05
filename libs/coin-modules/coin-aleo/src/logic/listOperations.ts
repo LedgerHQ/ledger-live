@@ -44,6 +44,11 @@ export async function listOperations(
   });
 
   for (const rawTx of result.transactions) {
+    // Skip transitions that have no direct account involvement (e.g. outer call in a batching contract).
+    // Other transition, sharing the same transaction_id, will carry the real amount and addresses.
+    // Testnet transaction showing this issue: at1lqugdt847uwnfem2xhzwq6ewrnd6ysjv2gumvglytskutxj3kcpsmc3rrf
+    if (rawTx.sender_address === "" && rawTx.recipient_address === "") continue;
+
     if (mode === "alpaca") {
       operations.push(toAlpacaOperation(rawTx, address));
     } else {
