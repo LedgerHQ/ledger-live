@@ -7,23 +7,14 @@ import {
   ListItemTitle,
   ListItemTrailing,
 } from "@ledgerhq/lumen-ui-react";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { SquaredCryptoIcon } from "LLD/components/SquaredCryptoIcon";
-import { useAddressListItemViewModel } from "../hooks/useAddressListItemViewModel";
+import type { AddressListItemViewModel } from "../hooks/useAddressListItemViewModel";
 
-type AddressListItemProps = Readonly<{
-  account: AccountLike;
-  lookupParentAccount: (id: string) => Account | undefined | null;
-  onNavigate: (account: AccountLike, parentAccount?: Account | null) => void;
+export type AddressListItemViewProps = Readonly<{
+  vm: AddressListItemViewModel;
 }>;
 
-export function AddressListItem({
-  account,
-  lookupParentAccount,
-  onNavigate,
-}: AddressListItemProps) {
-  const vm = useAddressListItemViewModel(account, lookupParentAccount, onNavigate);
-
+export function AddressListItemView({ vm }: AddressListItemViewProps) {
   return (
     <ListItem onClick={vm.onClick} className="bg-surface" data-testid={vm.rowTestId}>
       <ListItemLeading>

@@ -1,6 +1,6 @@
 import React from "react";
 import type { DistributionItem } from "@ledgerhq/types-live";
-import { AssetDetailSection } from "../../AssetDetailSection";
+import { AssetDetailSection } from "../AssetDetailSection";
 import { AddressList } from "./components/AddressList";
 import { useAddressListViewModel } from "./hooks/useAddressListViewModel";
 

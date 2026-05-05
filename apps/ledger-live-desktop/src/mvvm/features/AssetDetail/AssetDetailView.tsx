@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { AssetDetailSection } from "./components/AssetDetailSection";
 import { AssetHeader } from "./components/AssetHeader/AssetHeader";
-import { AddressListSection } from "./components/PortfolioSection/AddressList";
+import { AddressListSection } from "./components/AddressList";
 import { TotalBalance } from "./components/PortfolioSection/TotalBalance";
 import { useAssetDetailSections } from "./hooks/useAssetDetailSections";
 import type { AssetDetailViewModel } from "./hooks/useAssetDetailViewModel";

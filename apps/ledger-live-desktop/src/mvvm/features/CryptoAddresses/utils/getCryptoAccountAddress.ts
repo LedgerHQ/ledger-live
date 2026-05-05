@@ -1,7 +1,7 @@
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 
-/** Fresh address used for display and table sorting (token rows use the parent account). */
-export function getCryptoTableRowFreshAddress(
+/** Address used for display and table sorting (token rows use the parent account). */
+export function getCryptoAccountAddress(
   account: AccountLike,
   lookupParentAccount: (id: string) => Account | undefined | null,
 ): string {

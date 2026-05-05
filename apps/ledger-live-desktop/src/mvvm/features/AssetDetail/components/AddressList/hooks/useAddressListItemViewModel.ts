@@ -6,14 +6,25 @@ import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import { useSelector } from "LLD/hooks/redux";
 import { discreetModeSelector, localeSelector } from "~/renderer/reducers/settings";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
-import { getCryptoTableRowFreshAddress } from "LLD/features/CryptoAddresses/utils/getCryptoTableRowFreshAddress";
+import { getCryptoAccountAddress } from "LLD/features/CryptoAddresses/utils/getCryptoAccountAddress";
 import { useCounterValueCellViewModel } from "LLD/components/Cells/CounterValueCell/useCounterValueCellViewModel";
+
+export type AddressListItemViewModel = Readonly<{
+  displayName: string;
+  formattedAddress: string;
+  formattedCounterValue: string;
+  cryptoFormatted: string;
+  networkLedgerId: string;
+  networkTicker: string;
+  onClick: () => void;
+  rowTestId: string;
+}>;
 
 export function useAddressListItemViewModel(
   account: AccountLike,
   lookupParentAccount: (id: string) => Account | undefined | null,
   onNavigate: (acc: AccountLike, parentAccount?: Account | null) => void,
-) {
+): AddressListItemViewModel {
   const locale = useSelector(localeSelector);
   const discreet = useSelector(discreetModeSelector);
   const currency = getAccountCurrency(account);
@@ -25,7 +36,7 @@ export function useAddressListItemViewModel(
       : currency;
 
   const displayName = getDefaultAccountName(account);
-  const rawAddress = getCryptoTableRowFreshAddress(account, lookupParentAccount);
+  const rawAddress = getCryptoAccountAddress(account, lookupParentAccount);
   const formattedAddress = formatAddress(rawAddress, { prefixLength: 5, suffixLength: 5 });
   const { formattedCounterValue } = useCounterValueCellViewModel(currency, account.balance);
   const cryptoFormatted = formatCurrencyUnit(currency.units[0], account.balance, {
