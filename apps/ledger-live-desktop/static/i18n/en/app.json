@@ -8491,8 +8491,7 @@
   },
   "topBar": {
     "history": {
-      "cta": "History",
-      "tooltip": "History"
+      "cta": "Transactions"
     },
     "activityIndicator": {
       "errorToolTip": "Your assets are safe. This is a temporary sync issue.\n Affected accounts: {{accounts}}. Tap to retry",
@@ -8726,7 +8725,7 @@
     }
   },
   "history": {
-    "title": "Transactions",
+    "title": "Transaction History",
     "pending": "Pending transaction",
     "pending_other": "Pending transactions",
     "columns": {
@@ -8744,7 +8743,7 @@
       "description": "Come back later to see your transactions."
     },
     "actionsBar": {
-      "csv": "CSV"
+      "csv": "Export"
     },
     "exportDialog": {
       "title": "Transaction History",

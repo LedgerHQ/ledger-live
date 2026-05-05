@@ -196,7 +196,7 @@ describe("History export dialog integration", () => {
   }
 
   async function openExportDialog(user: ReturnType<typeof renderHistoryWithAccounts>["user"]) {
-    await user.click(screen.getByRole("button", { name: /csv/i }));
+    await user.click(screen.getByRole("button", { name: /export/i }));
     await waitFor(() =>
       expect(screen.getByRole("heading", { name: "Transaction History" })).toBeVisible(),
     );
