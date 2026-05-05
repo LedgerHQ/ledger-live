@@ -35,6 +35,7 @@ export default function DelegationRow({
 
   return (
     <TouchableOpacity
+      testID="cardano-delegation-row"
       style={[
         styles.row,
         styles.wrapper,
