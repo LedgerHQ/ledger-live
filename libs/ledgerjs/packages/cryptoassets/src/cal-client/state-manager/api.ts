@@ -25,6 +25,7 @@ export interface TokenByIdParams {
 export interface TokenByAddressInCurrencyParams {
   contract_address: string;
   network: string;
+  token_identifier?: string;
 }
 
 function transformTokensResponse(
@@ -132,6 +133,9 @@ export const cryptoAssetsApi = createApi({
             network: params.network,
             limit: "1",
             output: TOKEN_OUTPUT_FIELDS.join(","),
+            ...(params.token_identifier === undefined
+              ? {}
+              : { token_identifier: params.token_identifier }),
           },
         };
       },

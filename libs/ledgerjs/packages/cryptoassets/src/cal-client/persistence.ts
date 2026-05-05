@@ -7,7 +7,7 @@ import isEqual from "lodash/isEqual";
 import { log } from "@ledgerhq/logs";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { findCryptoCurrencyById } from "../currencies";
-import { cryptoAssetsApi } from "./state-manager/api";
+import { cryptoAssetsApi, type TokenByAddressInCurrencyParams } from "./state-manager/api";
 import type { ThunkDispatch } from "@reduxjs/toolkit";
 
 /**
@@ -41,6 +41,12 @@ export interface PersistedTokenEntry {
   data: TokenCurrencyRaw;
   /** When this token was fetched (Unix timestamp in ms) */
   timestamp: number;
+  /**
+   * The token_identifier used in the findTokenByAddressInCurrency query, if any.
+   * Required to reconstruct the correct RTK Query cache key on hydration for chains
+   * where contract_address alone is not unique (e.g. MultiversX, Algorand, Cardano).
+   */
+  token_identifier?: string;
 }
 
 /**
@@ -131,17 +137,22 @@ export function extractTokensFromState(state: StateWithCryptoAssets): PersistedT
       (query.endpointName === "findTokenById" ||
         query.endpointName === "findTokenByAddressInCurrency")
     ) {
-      const token = query.data as TokenCurrency | undefined;
+      const token = query.data as TokenCurrency;
+      if (!token?.id) continue;
 
-      // Deduplicate by token ID
-      if (token && token.id && !seenIds.has(token.id)) {
-        seenIds.add(token.id);
+      const tokenIdentifier =
+        query.endpointName === "findTokenByAddressInCurrency"
+          ? (query.originalArgs as TokenByAddressInCurrencyParams | undefined)?.token_identifier
+          : undefined;
 
-        tokens.push({
-          data: toTokenCurrencyRaw(token),
-          timestamp: query.fulfilledTimeStamp || Date.now(),
-        });
-      }
+      if (seenIds.has(token.id)) continue;
+      seenIds.add(token.id);
+
+      tokens.push({
+        data: toTokenCurrencyRaw(token),
+        timestamp: query.fulfilledTimeStamp || Date.now(),
+        token_identifier: tokenIdentifier,
+      });
     }
   }
 
@@ -214,9 +225,7 @@ export function persistedCALContentEqual(a: PersistedCAL | null, b: PersistedCAL
   if (a.tokens.length !== b.tokens.length) return false;
   const tokensByIdA = new Map(a.tokens.map(t => [t.data.id, t.data]));
   const tokensByIdB = new Map(b.tokens.map(t => [t.data.id, t.data]));
-  const entriesA = Array.from(tokensByIdA.entries());
-  for (let i = 0; i < entriesA.length; i++) {
-    const [id, dataA] = entriesA[i];
+  for (const [id, dataA] of tokensByIdA) {
     const dataB = tokensByIdB.get(id);
     if (!dataB || !tokenCurrencyRawEqual(dataA, dataB)) return false;
   }
@@ -312,7 +321,7 @@ export async function restoreTokensToCache(
     | { endpointName: "findTokenById"; arg: { id: string }; value: TokenCurrency | undefined }
     | {
         endpointName: "findTokenByAddressInCurrency";
-        arg: { contract_address: string; network: string };
+        arg: { contract_address: string; network: string; token_identifier?: string };
         value: TokenCurrency | undefined;
       }
   > = [];
@@ -336,9 +345,25 @@ export async function restoreTokensToCache(
       arg: {
         contract_address: token.contractAddress,
         network: token.parentCurrency.id,
+        ...(entry.token_identifier === undefined
+          ? {}
+          : { token_identifier: entry.token_identifier }),
       },
       value: token,
     });
+
+    // Also restore the address-only key so lookups without token_identifier hit the cache.
+    // Collision on chains where address is not unique is a coin-level concern.
+    if (entry.token_identifier !== undefined) {
+      entries.push({
+        endpointName: "findTokenByAddressInCurrency",
+        arg: {
+          contract_address: token.contractAddress,
+          network: token.parentCurrency.id,
+        },
+        value: token,
+      });
+    }
   }
 
   if (entries.length > 0) {

@@ -10,6 +10,7 @@ import {
   transformApiTokenToTokenCurrency,
   validateAndTransformSingleTokenResponse,
 } from "./api";
+import type { TokenByIdParams, TokenByAddressInCurrencyParams } from "./api";
 import type { ApiTokenResponse } from "../entities";
 import { getEnv } from "@ledgerhq/live-env";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -145,19 +146,36 @@ describe("api.ts", () => {
 
   describe("API integration tests", () => {
     it("should have correct interface types for TokenByIdParams", () => {
-      const params: import("./api").TokenByIdParams = {
+      const params: TokenByIdParams = {
         id: "ethereum/erc20/usdc",
       };
       expect(params.id).toBe("ethereum/erc20/usdc");
     });
 
     it("should have correct interface types for TokenByAddressInCurrencyParams", () => {
-      const params: import("./api").TokenByAddressInCurrencyParams = {
+      const params: TokenByAddressInCurrencyParams = {
         contract_address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
         network: "ethereum",
       };
       expect(params.contract_address).toBe("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48");
       expect(params.network).toBe("ethereum");
+    });
+
+    it("should accept optional token_identifier in TokenByAddressInCurrencyParams", () => {
+      const params: TokenByAddressInCurrencyParams = {
+        contract_address: "EGLD-123",
+        network: "elrond",
+        token_identifier: "MYTOKEN-abc123",
+      };
+      expect(params.token_identifier).toBe("MYTOKEN-abc123");
+    });
+
+    it("should allow TokenByAddressInCurrencyParams without token_identifier", () => {
+      const params: TokenByAddressInCurrencyParams = {
+        contract_address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+        network: "ethereum",
+      };
+      expect(params.token_identifier).toBeUndefined();
     });
   });
 

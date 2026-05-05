@@ -70,6 +70,7 @@ export function createMockCryptoAssetsStore(
     findTokenByAddressInCurrency: async (
       _address: string,
       _currencyId: string,
+      _tokenIdentifier?: string,
     ): Promise<TokenCurrency | undefined> => {
       return undefined;
     },
