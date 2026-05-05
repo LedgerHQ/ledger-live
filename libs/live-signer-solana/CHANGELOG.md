@@ -1,5 +1,25 @@
 # @ledgerhq/live-signer-solana
 
+## 0.15.0-next.0
+
+### Minor Changes
+
+- [#17111](https://github.com/LedgerHQ/ledger-live/pull/17111) [`0e477ba`](https://github.com/LedgerHQ/ledger-live/commit/0e477bac9a3a16bd9088c2ad5906104b62c13731) Thanks [@henri-ly](https://github.com/henri-ly)! - add resolution delay test and support
+
+- [#16666](https://github.com/LedgerHQ/ledger-live/pull/16666) [`e4f79db`](https://github.com/LedgerHQ/ledger-live/commit/e4f79dbd58b47a02f2cc8229f9fe2866f3c8dbec) Thanks [@henri-ly](https://github.com/henri-ly)! - add 2 step signature for solana
+
+### Patch Changes
+
+- Updated dependencies [[`5457ea4`](https://github.com/LedgerHQ/ledger-live/commit/5457ea4d13f10341403fdfec2d1fbef64cc14682), [`d308b1a`](https://github.com/LedgerHQ/ledger-live/commit/d308b1a6b9c629839f051cf367a527f4232120c7), [`e4f79db`](https://github.com/LedgerHQ/ledger-live/commit/e4f79dbd58b47a02f2cc8229f9fe2866f3c8dbec), [`4daea73`](https://github.com/LedgerHQ/ledger-live/commit/4daea739d928bbd0c3c3c575ad97e30907acaeb5)]:
+  - @ledgerhq/coin-solana@0.52.0-next.0
+  - @ledgerhq/errors@6.35.0-next.0
+  - @ledgerhq/ledger-cal-service@1.16.1-next.0
+  - @ledgerhq/ledger-trust-service@0.8.1-next.0
+  - @ledgerhq/devices@8.14.2-next.0
+  - @ledgerhq/hw-app-solana@7.10.2-next.0
+  - @ledgerhq/hw-transport@6.35.2-next.0
+  - @ledgerhq/hw-bolos@6.36.2-next.0
+
 ## 0.14.2
 
 ### Patch Changes

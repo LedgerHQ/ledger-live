@@ -1,5 +1,43 @@
 # @ledgerhq/coin-aleo
 
+## 1.11.0-next.0
+
+### Minor Changes
+
+- [#16680](https://github.com/LedgerHQ/ledger-live/pull/16680) [`2a9b637`](https://github.com/LedgerHQ/ledger-live/commit/2a9b637916076295e048a43e9e4613693e0fc674) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - fix: auto-recover aleo account from 422 error from record scanner
+  fix: add missing retry button to private sync step in aleo send flows
+
+- [#16712](https://github.com/LedgerHQ/ledger-live/pull/16712) [`c48ebba`](https://github.com/LedgerHQ/ledger-live/commit/c48ebba05aa578c7c25e6bf30c469b6ffba6ac01) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - added filters to owned records api calls for Aleo
+
+- [#16675](https://github.com/LedgerHQ/ledger-live/pull/16675) [`054a8e8`](https://github.com/LedgerHQ/ledger-live/commit/054a8e8c7d4e1be511232a53a015d0bcc111e62e) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - extended private sync progress tracking for Aleo
+
+- [#16877](https://github.com/LedgerHQ/ledger-live/pull/16877) [`cb0987a`](https://github.com/LedgerHQ/ledger-live/commit/cb0987a8dcad760c194838a61a6675535cee67c9) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: algorithm for aleo auto record picking
+
+- [#16905](https://github.com/LedgerHQ/ledger-live/pull/16905) [`add6026`](https://github.com/LedgerHQ/ledger-live/commit/add60262f879ec9288802a687f31fcc476b81ff9) Thanks [@vtaranushenko-ext-ledger](https://github.com/vtaranushenko-ext-ledger)! - Add Aleo record-picking strategy config and update send back-navigation behavior
+
+- [#16236](https://github.com/LedgerHQ/ledger-live/pull/16236) [`802a58c`](https://github.com/LedgerHQ/ledger-live/commit/802a58c742513f73322deb5777b804674c33e529) Thanks [@vtaranushenko-ext-ledger](https://github.com/vtaranushenko-ext-ledger)! - Refactor Aleo private record enrichment to reuse existing transition types, simplify outgoing transfer handling, and keep semi-private history sync behavior clearer and safer.
+
+- [#17028](https://github.com/LedgerHQ/ledger-live/pull/17028) [`465447d`](https://github.com/LedgerHQ/ledger-live/commit/465447d5227e2ee395f9507d846b3b2aa54899cf) Thanks [@vtaranushenko-ext-ledger](https://github.com/vtaranushenko-ext-ledger)! - feat: migrate aleo private transaction field to amountRecordCommitments
+
+- [#17063](https://github.com/LedgerHQ/ledger-live/pull/17063) [`f65aae9`](https://github.com/LedgerHQ/ledger-live/commit/f65aae969b9cfde47c7cd52a8af6789fbab032e2) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - getEstimatedSigningTime util function for Aleo
+
+- [#16900](https://github.com/LedgerHQ/ledger-live/pull/16900) [`ca0b7ff`](https://github.com/LedgerHQ/ledger-live/commit/ca0b7ff2fe93d465e05282356ffabd3b1b544b3d) Thanks [@henri-ly](https://github.com/henri-ly)! - add error on broadcast
+
+- [#17068](https://github.com/LedgerHQ/ledger-live/pull/17068) [`bc980b8`](https://github.com/LedgerHQ/ledger-live/commit/bc980b842addd8b1d2a76d19383ab6ae06ae9aab) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: support auto record picking strategy in aleo prepareTransaction
+
+- [#17083](https://github.com/LedgerHQ/ledger-live/pull/17083) [`ce84add`](https://github.com/LedgerHQ/ledger-live/commit/ce84addfa3a9c955ea20f1f5ac4d7b959893c580) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - fix: aleo typecheck
+
+### Patch Changes
+
+- Updated dependencies [[`ed0dc8a`](https://github.com/LedgerHQ/ledger-live/commit/ed0dc8abc2c8f5054e655c4e12efe6fb433fbaca), [`4ddd97a`](https://github.com/LedgerHQ/ledger-live/commit/4ddd97a99bab5b581ad5ccfd36eb420ec4ee6352), [`7fafa10`](https://github.com/LedgerHQ/ledger-live/commit/7fafa10d8af581f4433a60ea908980a726d3a777), [`ac26c8b`](https://github.com/LedgerHQ/ledger-live/commit/ac26c8bffa9b5cc9f28bed5ce3d44e32982d655c), [`fb79639`](https://github.com/LedgerHQ/ledger-live/commit/fb79639eb81258bae4830ed6ffe375ae625054ad), [`0d11df6`](https://github.com/LedgerHQ/ledger-live/commit/0d11df6ef8dc781171071824ad1c39e3beed7730), [`b866ea6`](https://github.com/LedgerHQ/ledger-live/commit/b866ea67bcbd408a33dbc9233ef55298e2a8ef25), [`321a0e2`](https://github.com/LedgerHQ/ledger-live/commit/321a0e2ce948fac11f7bdf0e106eb0af57168caa), [`d308b1a`](https://github.com/LedgerHQ/ledger-live/commit/d308b1a6b9c629839f051cf367a527f4232120c7), [`21e69fe`](https://github.com/LedgerHQ/ledger-live/commit/21e69fea49cffc0b1204903e539a64b83e4b28f0), [`fb4d165`](https://github.com/LedgerHQ/ledger-live/commit/fb4d1656be8dc8e933e55600970a2e991fbaeebb), [`5bd95a9`](https://github.com/LedgerHQ/ledger-live/commit/5bd95a9ceaac4d08c87d635f721265357368f8ee), [`73bfe05`](https://github.com/LedgerHQ/ledger-live/commit/73bfe055ec23e0d630f2da9f4dbc9731b6fe5190)]:
+  - @ledgerhq/types-live@6.107.0-next.0
+  - @ledgerhq/ledger-wallet-framework@1.4.0-next.0
+  - @ledgerhq/live-env@2.34.0-next.0
+  - @ledgerhq/errors@6.35.0-next.0
+  - @ledgerhq/cryptoassets@13.47.0-next.0
+  - @ledgerhq/live-network@2.6.0-next.0
+  - @ledgerhq/devices@8.14.2-next.0
+
 ## 1.10.1
 
 ### Patch Changes
