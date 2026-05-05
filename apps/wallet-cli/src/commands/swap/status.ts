@@ -4,7 +4,7 @@ import { getSwapAPIBaseURL, getSwapUserIP } from "@ledgerhq/live-common/exchange
 import network from "@ledgerhq/live-network";
 import { walletCliDebug } from "../../shared/log";
 import { mapSwapStatusLine } from "./status-shared";
-import { SwapStatus } from "@ledgerhq/live-common/lib-es/exchange/swap/types";
+import { SwapStatus } from "@ledgerhq/live-common/exchange/swap/types";
 import { outputOption, resolveOutputFormat } from "../inputs";
 import { createCommandOutput } from "../../output";
 
