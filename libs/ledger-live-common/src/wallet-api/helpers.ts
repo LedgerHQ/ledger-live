@@ -1,3 +1,4 @@
+import { log } from "@ledgerhq/logs";
 import { isCryptoCurrency, isTokenCurrency } from "../currencies";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import type {
@@ -86,22 +87,22 @@ const isWhitelistedDomain = (url: string, manifestUrl: string): boolean => {
 
     // Only allow HTTPS scheme
     if (parsedUrl.protocol !== "https:") {
-      console.error(
-        `#isWhitelistedDomain:: invalid URL: non-HTTPS scheme '${parsedUrl.protocol}' is not allowed`,
-      );
+      log("wallet-api/helpers", "isWhitelistedDomain: non-HTTPS scheme blocked", {
+        protocol: parsedUrl.protocol,
+      });
       return false;
     }
 
     // Check if URL is on the same domain as manifest URL
     if (!isSameDomain(url, manifestUrl)) {
-      console.error(`#isWhitelistedDomain:: invalid URL: not on the same domain as manifest URL`);
+      log("wallet-api/helpers", "isWhitelistedDomain: URL not on same domain as manifest");
       return false;
     }
 
     return true;
   } catch (error) {
     // Invalid URL format
-    console.error(`#isWhitelistedDomain:: invalid URL format: ${error}`);
+    log("wallet-api/helpers", "isWhitelistedDomain: invalid URL format", { error: String(error) });
     return false;
   }
 };
@@ -132,7 +133,7 @@ export const getInitialURL = (
 
     return url.toString();
   } catch (e) {
-    if (e instanceof Error) console.error(e.message);
+    if (e instanceof Error) log("wallet-api/helpers", "getInitialURL error", { message: e.message });
 
     return manifest.url.toString();
   }
