@@ -477,11 +477,20 @@ export const WebElementHelpers = {
   },
 
   async scrollToWebElement(element: WebElement) {
+    const matcher = WebElementHelpers.getWebElementMatcher(element);
     try {
-      await element.runScript((el: HTMLElement) => el.scrollIntoView({ behavior: "smooth" }));
+      await retryUntilTimeout(
+        async () =>
+          element.runScript((el: HTMLElement | null) => {
+            if (!el?.isConnected) throw new Error("element not ready");
+            el.scrollIntoView({ behavior: "smooth" });
+          }),
+        DEFAULT_TIMEOUT,
+        DEFAULT_WEB_ELEMENT_INTERVAL,
+      );
     } catch (error) {
       throw new Error(
-        `Failed to scroll to web element using matcher: ${WebElementHelpers.getWebElementMatcher(element)}\nError: ${sanitizeError(error)}`,
+        `Failed to scroll to web element using matcher: ${matcher}\nError: ${sanitizeError(error)}`,
       );
     }
   },
