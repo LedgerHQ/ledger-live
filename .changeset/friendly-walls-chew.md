@@ -1,6 +1,6 @@
 ---
 "@ledgerhq/react-ui": minor
-"ledger-live-desktop": patch
+"ledger-live-desktop": minor
 "live-mobile": minor
 "@ledgerhq/web-tools": minor
 ---

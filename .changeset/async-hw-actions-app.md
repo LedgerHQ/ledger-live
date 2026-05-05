@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/live-common": patch
+"@ledgerhq/live-common": minor
 ---
 
 Make `inferCommandParams` async in `hw/actions/app.ts` to support lazy coin-module loading.
