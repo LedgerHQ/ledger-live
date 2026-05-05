@@ -11380,6 +11380,55 @@ importers:
         specifier: ^10.4.0
         version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(typescript@6.0.2)
 
+  libs/live-signer-zcash:
+    dependencies:
+      '@ledgerhq/context-module':
+        specifier: 1.17.1
+        version: 1.17.1(@ledgerhq/device-management-kit@1.4.0(rxjs@7.8.2))
+      '@ledgerhq/device-management-kit':
+        specifier: 'catalog:'
+        version: 1.4.0(rxjs@7.8.2)
+      '@ledgerhq/device-signer-kit-zcash':
+        specifier: 0.2.0
+        version: 0.2.0(@ledgerhq/device-management-kit@1.4.0(rxjs@7.8.2))
+      '@ledgerhq/errors':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/errors
+      '@ledgerhq/zcash-shielded':
+        specifier: workspace:^
+        version: link:../coin-modules/zcash-shielded
+      rxjs:
+        specifier: 'catalog:'
+        version: 7.8.2
+    devDependencies:
+      '@ledgerhq/types-live':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/types-live
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(typescript@6.0.2))
+      rimraf:
+        specifier: ^4.4.1
+        version: 4.4.1
+      ts-node:
+        specifier: ^10.4.0
+        version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(typescript@6.0.2)
+      ws:
+        specifier: 'catalog:'
+        version: 8.18.3
+
   libs/live-wallet:
     dependencies:
       '@ledgerhq/cryptoassets':
@@ -17074,6 +17123,11 @@ packages:
     resolution: {integrity: sha512-oe0GfnHMBQHcP8FrkCEWI0lA2skuVQCl2sMIrtwsHSRxocmLftgbyzUZlcyDZ5+7GOJAHJmi347Xt4p7oQWftw==}
     peerDependencies:
       '@ledgerhq/device-management-kit': ^1.2.0
+
+  '@ledgerhq/device-signer-kit-zcash@0.2.0':
+    resolution: {integrity: sha512-VE+wb64WXBkvVwMF7SwzAU1UQwlJ1Hb/dNJeuLSlpTWmsY9x0WZnQKTH5U/CLvnfoLXadl21tdthSQb0XlCDPA==}
+    peerDependencies:
+      '@ledgerhq/device-management-kit': ^1.4.1
 
   '@ledgerhq/device-transport-kit-react-native-ble@1.3.2':
     resolution: {integrity: sha512-NX/Ml23AR/8iQ5pUPQqum3qjQpValxNhZSbp+Zm/lSl8W0HETLMFK03w/4lj2nfPjiwBy3U+uPhzYNDzdROYQg==}
