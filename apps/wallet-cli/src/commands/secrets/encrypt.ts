@@ -1,6 +1,6 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
-import { loadDomainKey } from "../../secrets/load-secrets";
+import { loadDomainKeyInteractive } from "../../secrets/load-secrets";
 import { encryptData } from "../../secrets/crypto";
 import { outputOption, resolveOutputFormat, resolveUserPath } from "../inputs";
 import { createCommandOutput } from "../../output";
@@ -35,7 +35,7 @@ export default defineCommand({
       }
 
       const fetchSpin = out.spin("Fetching encryption key from trustchain…");
-      const { session, domainKey } = await loadDomainKey(flags.key);
+      const { session, domainKey } = await loadDomainKeyInteractive(flags.key);
       fetchSpin?.success("Encryption key retrieved");
 
       const plaintext = new Uint8Array(

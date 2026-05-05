@@ -4,6 +4,8 @@ import os from "node:os";
 import { Session } from "../../session/session-store";
 import { createLkrpSdk } from "../../secrets/lkrp-sdk";
 import { savePrivateKey } from "../../secrets/keychain";
+import { generatePasswordSalt, deriveWrappingKey } from "../../secrets/crypto";
+import { promptHidden } from "../../secrets/prompt";
 import { WALLET_CLI_DMK_DEVICE_ID } from "../../device/register-dmk-transport";
 import { withLkrpDeviceSession } from "../../session/bridge-device-session";
 import { MEMBER_NAME_MAX_LENGTH } from "../../secrets/constants";
@@ -23,6 +25,10 @@ export default defineCommand({
       description: `Member name (default: hostname + platform, max ${MEMBER_NAME_MAX_LENGTH} chars)`,
       short: "n",
     }),
+    "unsecure-no-password": option(z.boolean().default(false), {
+      description: "Skip password protection (stores private key unencrypted in the OS keychain)",
+      argumentKind: "flag",
+    }),
     output: outputOption,
   },
   handler: async ({ flags }) => {
@@ -33,6 +39,18 @@ export default defineCommand({
         throw new Error(
           "Encryption CLI already initialized. Run `wallet-cli secrets destroy` to reset.",
         );
+      }
+
+      let wrappingKey: CryptoKey | undefined;
+      let passwordSalt: string | undefined;
+
+      if (!flags["unsecure-no-password"]) {
+        const password = await promptHidden("Password: ");
+        if (!password) throw new Error("Password must not be empty.");
+        const confirm = await promptHidden("Confirm password: ");
+        if (password !== confirm) throw new Error("Passwords do not match.");
+        passwordSalt = generatePasswordSalt();
+        wrappingKey = await deriveWrappingKey(password, passwordSalt);
       }
 
       const memberName = flags.name ?? defaultMemberName();
@@ -50,11 +68,12 @@ export default defineCommand({
       );
       deviceSpin?.success("Trustchain created");
 
-      await savePrivateKey(memberCredentials.privatekey, memberCredentials.pubkey);
+      await savePrivateKey(memberCredentials.privatekey, memberCredentials.pubkey, wrappingKey);
       session.setTrustchain({
         rootId: trustchain.rootId,
         applicationPath: trustchain.applicationPath,
       });
+      if (passwordSalt) session.setPasswordSalt(passwordSalt);
       await session.write();
 
       out.secretsInit({ memberName, rootId: trustchain.rootId });

@@ -29,6 +29,7 @@ const SessionDataSchema = z.object({
   accounts: z.array(SessionEntrySchema).default([]),
   trustchain: TrustchainMetaSchema.optional(),
   domains: z.array(DomainEntrySchema).default([]),
+  passwordSalt: z.string().optional(),
 });
 
 export type SessionEntry = z.infer<typeof SessionEntrySchema>;
@@ -105,15 +106,16 @@ export class Session {
     private entries: SessionEntry[],
     private _trustchain: TrustchainMeta | undefined,
     private _domains: DomainEntry[],
+    private _passwordSalt: string | undefined,
   ) {}
 
   static async read(): Promise<Session> {
     const data = await readData();
-    return new Session(data.accounts, data.trustchain, data.domains);
+    return new Session(data.accounts, data.trustchain, data.domains, data.passwordSalt);
   }
 
   static from(entries: SessionEntry[]): Session {
-    return new Session([...entries], undefined, []);
+    return new Session([...entries], undefined, [], undefined);
   }
 
   get accounts(): ReadonlyArray<SessionEntry> {
@@ -122,6 +124,15 @@ export class Session {
 
   get trustchain(): TrustchainMeta | undefined {
     return this._trustchain;
+  }
+
+  get passwordSalt(): string | undefined {
+    return this._passwordSalt;
+  }
+
+  setPasswordSalt(salt: string): void {
+    this._passwordSalt = salt;
+    this._dirty = true;
   }
 
   setTrustchain(t: TrustchainMeta): void {
@@ -140,10 +151,11 @@ export class Session {
     }
   }
 
-  /** Clears trustchain and domain tracking, but keeps discovered accounts. */
+  /** Clears trustchain, domain tracking, and password salt, but keeps discovered accounts. */
   wipeSecrets(): void {
     this._trustchain = undefined;
     this._domains = [];
+    this._passwordSalt = undefined;
     this._dirty = true;
   }
 
@@ -178,6 +190,7 @@ export class Session {
     const data: Record<string, unknown> = { accounts: this.entries };
     if (this._trustchain) data.trustchain = this._trustchain;
     if (this._domains.length > 0) data.domains = this._domains;
+    if (this._passwordSalt) data.passwordSalt = this._passwordSalt;
     await Bun.write(getSessionPath(), YAML.stringify(data));
     this._dirty = false;
   }

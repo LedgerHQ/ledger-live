@@ -3,6 +3,8 @@ import { createInterface } from "node:readline";
 import { Session, trustchainFromMeta } from "../../session/session-store";
 import { loadMemberCredentials, deletePrivateKey } from "../../secrets/keychain";
 import { createLkrpSdk } from "../../secrets/lkrp-sdk";
+import { deriveWrappingKey } from "../../secrets/crypto";
+import { promptHidden } from "../../secrets/prompt";
 import { outputOption, resolveOutputFormat } from "../inputs";
 import { createCommandOutput } from "../../output";
 
@@ -37,7 +39,17 @@ export default defineCommand({
         return;
       }
 
-      const memberCredentials = await loadMemberCredentials();
+      let wrappingKey: CryptoKey | undefined;
+      if (session.passwordSalt) {
+        try {
+          const password = await promptHidden("Password (Enter to skip remote destroy): ");
+          if (password) wrappingKey = await deriveWrappingKey(password, session.passwordSalt);
+        } catch {
+          // Ctrl-C or no-TTY/no-WALLET_PASS — proceed with local wipe only
+        }
+      }
+
+      const memberCredentials = await loadMemberCredentials(wrappingKey).catch(() => null);
       const sdk = createLkrpSdk();
       const destroySpin = out.spin("Destroying trustchain…");
       let remoteDestroySucceeded = false;

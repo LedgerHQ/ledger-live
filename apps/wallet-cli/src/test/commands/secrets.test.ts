@@ -5,6 +5,21 @@ import { tmpdir } from "node:os";
 import { Readable } from "node:stream";
 import { runCli, type RunResult } from "../helpers/cli-runner";
 
+function runCliWithStdin(
+  args: string[],
+  env: Record<string, string>,
+  stdinLines: string[],
+): Promise<RunResult> {
+  const origDesc = Object.getOwnPropertyDescriptor(process, "stdin");
+  const fakeStdin = new Readable({ read() {} });
+  for (const line of stdinLines) fakeStdin.push(`${line}\n`);
+  fakeStdin.push(null);
+  Object.defineProperty(process, "stdin", { get: () => fakeStdin, configurable: true });
+  return runCli(args, env).finally(() => {
+    if (origDesc) Object.defineProperty(process, "stdin", origDesc);
+  });
+}
+
 // Mock OS keychain so tests never touch macOS Keychain / libsecret.
 // Must be declared before any runCli() call that triggers a keychain import.
 const _store = new Map<string, string>();
@@ -74,10 +89,10 @@ describe("secrets — happy path", () => {
     decFile = join(dir, "test.dec");
     await Bun.write(plainFile, "hello secrets");
 
-    initResult = await runCli(["secrets", "init", "--name", "test-member"], {
-      ...env,
-      ...MOCK_ENV_DMK,
-    });
+    initResult = await runCli(
+      ["secrets", "init", "--name", "test-member", "--unsecure-no-password"],
+      { ...env, ...MOCK_ENV_DMK },
+    );
     expect(initResult.exitCode, `init failed: ${initResult.stderr}`).toBe(0);
   });
 
@@ -162,18 +177,78 @@ describe("secrets — happy path", () => {
   });
 
   it("destroy wipes credentials after confirmation", async () => {
-    const origDesc = Object.getOwnPropertyDescriptor(process, "stdin");
-    const fakeStdin = new Readable({ read() {} });
-    fakeStdin.push("destroy\n");
-    fakeStdin.push(null);
-    Object.defineProperty(process, "stdin", { get: () => fakeStdin, configurable: true });
-    let r: RunResult;
-    try {
-      r = await runCli(["secrets", "destroy"], env);
-    } finally {
-      if (origDesc) Object.defineProperty(process, "stdin", origDesc);
-    }
-    expect(r!.exitCode, r!.stderr).toBe(0);
+    const r = await runCliWithStdin(["secrets", "destroy"], env, ["destroy"]);
+    expect(r.exitCode, r.stderr).toBe(0);
+  });
+
+  it("keys exits 1 after destroy", async () => {
+    const r = await runCli(["secrets", "keys"], env);
+    expect(r.exitCode).toBe(1);
+  });
+});
+
+describe("secrets — with password", () => {
+  let dir: string;
+  let env: Record<string, string>;
+  let plainFile: string;
+  let encFile: string;
+
+  beforeAll(async () => {
+    ({ dir, env } = makeTmpDir());
+    plainFile = join(dir, "plain.txt");
+    encFile = join(dir, "test.enc");
+    await Bun.write(plainFile, "hello password");
+  });
+
+  afterAll(() => rmSync(dir, { recursive: true, force: true }));
+
+  it("init stores password-wrapped key", async () => {
+    const r = await runCli(
+      ["secrets", "init", "--name", "pw-member"],
+      { ...env, ...MOCK_ENV_DMK, WALLET_PASS: "testpw" },
+    );
+    expect(r.exitCode, r.stderr).toBe(0);
+    expect(r.stdout).toContain("pw-member");
+  });
+
+  it("init rejects empty password", async () => {
+    const { dir: d2, env: e2 } = makeTmpDir();
+    const r = await runCli(
+      ["secrets", "init", "--name", "pw-member", "--output", "json"],
+      { ...e2, ...MOCK_ENV_DMK, WALLET_PASS: "" },
+    );
+    rmSync(d2, { recursive: true, force: true });
+    expect(r.exitCode).toBe(1);
+    expect(r.stdout).toMatch(/must not be empty/i);
+  });
+
+  it("keychain stores encrypted private key", () => {
+    const allValues = [..._store.values()];
+    expect(allValues.some(v => v.startsWith("ENC:"))).toBe(true);
+  });
+
+  it("encrypt with correct password reaches trustchain (credentials decrypted)", async () => {
+    const r = await runCli(
+      ["secrets", "encrypt", "--key", "prod", "--input", plainFile, "--out", encFile, "--output", "json"],
+      { ...env, WALLET_PASS: "testpw" },
+    );
+    expect(r.exitCode, r.stderr).toBe(0);
+    expect(r.stdout).not.toMatch(/[Ww]rong password/);
+    expect(r.stdout).not.toMatch(/[Pp]rivate key not found/);
+  });
+
+  it("encrypt with wrong password fails at decryption", async () => {
+    const r = await runCli(
+      ["secrets", "encrypt", "--key", "prod", "--input", plainFile, "--out", encFile, "--output", "json"],
+      { ...env, WALLET_PASS: "wrongpw" },
+    );
+    expect(r.exitCode).toBe(1);
+    expect(r.stdout).toMatch(/[Ww]rong password/);
+  });
+
+  it("destroy with correct password fully destroys trustchain", async () => {
+    const r = await runCliWithStdin(["secrets", "destroy"], { ...env, WALLET_PASS: "testpw" }, ["destroy"]);
+    expect(r.exitCode, r.stderr).toBe(0);
   });
 
   it("keys exits 1 after destroy", async () => {

@@ -1,5 +1,36 @@
 import { crypto as lkrpCrypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
 
+const PBKDF2_ITERATIONS = 100_000;
+const PBKDF2_SALT_BYTES = 16;
+
+export function generatePasswordSalt(): string {
+  return Buffer.from(globalThis.crypto.getRandomValues(new Uint8Array(PBKDF2_SALT_BYTES))).toString(
+    "hex",
+  );
+}
+
+export async function deriveWrappingKey(password: string, saltHex: string): Promise<CryptoKey> {
+  const keyMaterial = await globalThis.crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(password),
+    "PBKDF2",
+    false,
+    ["deriveKey"],
+  );
+  return globalThis.crypto.subtle.deriveKey(
+    {
+      name: "PBKDF2",
+      salt: hexToBytes(saltHex),
+      iterations: PBKDF2_ITERATIONS,
+      hash: "SHA-256",
+    },
+    keyMaterial,
+    { name: "AES-GCM", length: 256 },
+    false,
+    ["encrypt", "decrypt"],
+  );
+}
+
 export function pubkeyFromPrivatekey(privateHex: string): string {
   return lkrpCrypto.to_hex(lkrpCrypto.keypairFromSecretKey(hexToBytes(privateHex)).publicKey);
 }

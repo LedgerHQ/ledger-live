@@ -106,6 +106,25 @@ The `--key <domain>` argument is a namespace (e.g. `prod`, `staging`): each doma
 
 **Flag conventions:** `--out` = output file path; `--output` = format (`human`|`json`).
 
+#### Password — agentic injection
+
+`secrets init` (default) wraps the private key with a password. All subsequent secrets commands need it. Without a TTY, set `WALLET_PASS` — pull it from the OS keychain at invocation time:
+
+```bash
+# macOS
+WALLET_PASS=$(security find-generic-password -a default -s ledger-cli -w) pnpm --silent wallet-cli start secrets encrypt ...
+
+# Linux
+WALLET_PASS=$(secret-tool lookup service ledger-cli account default) pnpm --silent wallet-cli start secrets encrypt ...
+
+# Windows (PowerShell)
+$env:WALLET_PASS=(Get-StoredCredential -Target ledger-cli).GetNetworkCredential().Password
+pnpm --silent wallet-cli start secrets encrypt ...
+```
+
+No TTY + no `WALLET_PASS` → CLI exits with an error showing the exact commands above.
+No password at all → use `secrets init --unsecure-no-password`.
+
 ```bash
 # one-time setup (device + Ledger Sync app required) — needs dangerouslyDisableSandbox
 pnpm --silent wallet-cli start secrets init [--name "my-machine"]
@@ -114,13 +133,11 @@ pnpm --silent wallet-cli start secrets init [--name "my-machine"]
 pnpm --silent wallet-cli start secrets encrypt --key prod -i secret.txt --out secret.enc
 pnpm --silent wallet-cli start secrets decrypt --key prod -i secret.enc --out secret.txt
 
-# pipe
-echo "hello" | pnpm --silent wallet-cli start secrets encrypt --key foo | pnpm --silent wallet-cli start secrets decrypt --key foo
+# pipe: password from WALLET_PASS, stdin free for data
+echo "hello" | pnpm --silent wallet-cli start secrets encrypt --key foo --out foo.enc
 
-# list tracked domain keys with first-used date
+# list domain keys / destroy credentials
 pnpm --silent wallet-cli start secrets keys
-
-# revoke this machine's credentials (interactive confirmation)
 pnpm --silent wallet-cli start secrets destroy
 ```
 
