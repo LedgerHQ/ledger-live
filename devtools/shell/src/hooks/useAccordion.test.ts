@@ -1,5 +1,5 @@
 import { act, renderHook } from "@testing-library/react";
-import { useAccordion } from "../../hooks/useAccordion";
+import { useAccordion } from "./useAccordion";
 
 describe("useAccordion", () => {
   it("starts with all keys collapsed", () => {

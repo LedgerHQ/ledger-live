@@ -1,4 +1,4 @@
-import { deserialize } from "../../utils/devToolsStorageUtils";
+import { deserialize } from "../utils/devToolsStorageUtils";
 
 describe("deserialize", () => {
   it("returns empty object for an empty JSON object", () => {

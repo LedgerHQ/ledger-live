@@ -1,6 +1,6 @@
 import { act, renderHook } from "@testing-library/react";
-import { useDevToolsNavigation } from "../../hooks/useDevToolsNavigation";
-import { Category, type Tool } from "../../types";
+import { useDevToolsNavigation } from "./useDevToolsNavigation";
+import { Category, type Tool } from "../types";
 
 const tools: Tool[] = [
   { id: "feature-flags", label: "Feature Flags", category: Category.CONFIGURATION },
