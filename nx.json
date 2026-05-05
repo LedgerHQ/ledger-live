@@ -1,4 +1,5 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
-  "extends": "./nx.cache-config.json"
+  "extends": "./nx.cache-config.json",
+  "parallel": 8
 }
