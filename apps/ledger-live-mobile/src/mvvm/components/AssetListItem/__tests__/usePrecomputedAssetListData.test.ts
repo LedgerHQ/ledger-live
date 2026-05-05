@@ -79,6 +79,21 @@ describe("usePrecomputedAssetListData", () => {
     expect(ethData).toBeDefined();
   });
 
+  it("should always pass 'day' as the range to getCurrencyPortfolio regardless of global time range", () => {
+    const btcAccount = genAccount("btc-range", { currency: getCryptoCurrencyById("bitcoin") });
+
+    const assets: Asset[] = [{ ...createCryptoAsset(bitcoin, 100_000), accounts: [btcAccount] }];
+
+    renderHook(() => usePrecomputedAssetListData(assets));
+
+    expect(mockedGetCurrencyPortfolio).toHaveBeenCalledWith(
+      [btcAccount],
+      "day",
+      mockState,
+      expect.objectContaining({ ticker: "USD" }),
+    );
+  });
+
   it("should preserve stable references when computed data has not changed", () => {
     const assets: Asset[] = [createCryptoAsset(bitcoin, 100_000)];
 

@@ -1,11 +1,8 @@
 import { useCallback, useMemo, useState } from "react";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { FormattedValue } from "@ledgerhq/lumen-ui-rnative";
-import { useGetCurrencyDataQuery } from "@ledgerhq/live-common/market/state-manager/marketApi";
-import { REFETCH_TIME_ONE_MINUTE, BASIC_REFETCH } from "@ledgerhq/live-common/market/utils/timers";
 import { useSelector } from "~/context/hooks";
 import { shallowAccountsSelector } from "~/reducers/accounts";
-import { marketParamsSelector } from "~/reducers/market";
 import { track } from "~/analytics";
 import { RANGES } from "LLM/features/Market/utils";
 import { rangeDataTable } from "@ledgerhq/live-common/cg-client/utils/rangeDataTable";
@@ -13,23 +10,14 @@ import { useTranslation, useLocale } from "~/context/Locale";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
 import { parseCurrencyString } from "../../utils/currencyFormatter";
 import { RANGE_TO_PRICE_CHANGE_KEY, type RangeKey } from "../../utils/rangeMapping";
+import { useAssetMarketData } from "../../hooks/useAssetMarketData";
 
 export function useBalanceGraphViewModel(currency: CryptoCurrency | undefined) {
   const { t } = useTranslation();
   const { locale } = useLocale();
-
-  const marketParams = useSelector(marketParamsSelector);
-  const { counterCurrency = "usd" } = marketParams;
+  const { marketCurrency, counterCurrency, isLoading } = useAssetMarketData(currency);
 
   const [range, setRange] = useState<RangeKey>("24h");
-
-  const { data: marketCurrency, isFetching: isLoading } = useGetCurrencyDataQuery(
-    { id: currency?.id ?? "", counterCurrency },
-    {
-      pollingInterval: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
-      skip: !currency?.id,
-    },
-  );
 
   const ranges = useMemo(
     () =>
