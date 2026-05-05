@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 4.2.2-hotfix.0
+
+### Patch Changes
+
+- [#17139](https://github.com/LedgerHQ/ledger-live/pull/17139) [`642a071`](https://github.com/LedgerHQ/ledger-live/commit/642a07182f6fdb0a26e5ef02fd15a30bd0145222) Thanks [@thesan](https://github.com/thesan)! - Check signatures on pre-release builds
+
 ## 4.2.1
 
 ### Patch Changes
