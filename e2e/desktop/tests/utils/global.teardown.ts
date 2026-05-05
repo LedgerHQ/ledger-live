@@ -1,7 +1,6 @@
 import { formatFlagsData, formatEnvData } from "@ledgerhq/live-common/e2e/index";
 import { writeFileSync } from "fs";
-import { ElectronApplication } from "@playwright/test";
-import { OnboardingPage } from "tests/page/onboarding.page";
+import { ElectronApplication, expect } from "@playwright/test";
 import { launchApp } from "./electronUtils";
 import { getFeatureFlags } from "./featureFlagUtils";
 
@@ -24,15 +23,47 @@ export default async function globalTeardown() {
     await page.waitForLoadState("domcontentloaded");
     await page.waitForSelector("#loader-container", { state: "hidden" });
 
-    await new OnboardingPage(page).waitForLaunch();
+    // wait for app envs to be available
+    let appEnvsString = "";
+    try {
+      await expect
+        .poll(
+          async () => {
+            const appEnvs = await page.evaluate(() => {
+              return window.getAllEnvs();
+            });
+            if (Object.keys(appEnvs).length > 0) {
+              appEnvsString = formatEnvData(appEnvs);
+            }
+            return appEnvsString.length;
+          },
+          { timeout: 30_000, intervals: [1_000] },
+        )
+        .toBeGreaterThan(0);
+    } catch (error) {
+      console.log("Failed to retrieve app envs,", error);
+    }
 
-    const featureFlags = await getFeatureFlags(page);
+    // wait for feature flags to be available
+    let featureFlagsString = "";
+    try {
+      await expect
+        .poll(
+          async () => {
+            const featureFlags = await getFeatureFlags(page);
+            if (Object.keys(featureFlags).length > 0) {
+              featureFlagsString = formatFlagsData(featureFlags);
+            }
+            return featureFlagsString.length;
+          },
+          { timeout: 30_000, intervals: [1_000] },
+        )
+        .toBeGreaterThan(0);
+    } catch (error) {
+      console.log("Failed to retrieve feature flags,", error);
+    }
 
-    const appEnvs = await page.evaluate(() => {
-      return window.getAllEnvs();
-    });
-
-    writeFileSync(environmentFilePath, formatFlagsData(featureFlags) + formatEnvData(appEnvs), {
+    writeFileSync(environmentFilePath, featureFlagsString + appEnvsString, {
       encoding: "utf8",
       flag: "a",
     });
