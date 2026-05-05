@@ -260,7 +260,7 @@ export function diffWalletSyncState(
  */
 export async function integrateNewAccountDescriptor<T extends TransactionCommon>(
   accountDescriptor: AccountDescriptor,
-  getAccountBridge: (account: Account) => AccountBridge<T>,
+  getAccountBridge: (account: Account) => AccountBridge<T> | Promise<AccountBridge<T>>,
   bridgeCache: BridgeCacheSystem,
   blacklistedTokenIds?: string[],
 ): Promise<Account> {
