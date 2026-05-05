@@ -30,6 +30,7 @@ export default function OperationsList(_: Props) {
     accounts,
     flattenedAccounts,
     accountByAddress,
+    lastSeenTs,
     sections,
     completed,
     isEmpty,
@@ -61,10 +62,11 @@ export default function OperationsList(_: Props) {
           parentAccount={parentAccount}
           accountByAddress={accountByAddress}
           isPending={section.isPending ?? false}
+          lastSeenTs={lastSeenTs}
         />
       );
     },
-    [flattenedAccounts, accounts, accountByAddress],
+    [flattenedAccounts, accounts, accountByAddress, lastSeenTs],
   );
 
   const renderSectionHeader = useCallback(

@@ -21,6 +21,7 @@ export function TopBar({ screenName }: Readonly<TopBarProps>) {
     onSettingsPress,
     onTransactionHistoryPress,
     hasUnreadNotifications,
+    hasUnreadOperations,
     hasAccounts,
     isSyncError,
     isSyncPending,
@@ -43,6 +44,7 @@ export function TopBar({ screenName }: Readonly<TopBarProps>) {
       onSettingsPress={onSettingsPress}
       onTransactionHistoryPress={onTransactionHistoryPress}
       hasUnreadNotifications={hasUnreadNotifications}
+      hasUnreadOperations={hasUnreadOperations}
       hasAccounts={hasAccounts}
       isSyncError={isSyncError}
       isSyncPending={isSyncPending}

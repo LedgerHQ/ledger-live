@@ -1,6 +1,7 @@
 import React from "react";
 import {
   Box,
+  DotIndicator,
   ListItem as LumenListItem,
   ListItemContent,
   ListItemDescription,
@@ -23,6 +24,7 @@ type Props = {
   parentAccount: Account | undefined;
   accountByAddress: Map<string, AccountLike>;
   isPending: boolean;
+  lastSeenTs: number | null;
 };
 
 function OperationsListItem({
@@ -31,6 +33,7 @@ function OperationsListItem({
   parentAccount,
   accountByAddress,
   isPending,
+  lastSeenTs,
 }: Readonly<Props>) {
   const { t } = useTranslation();
   const {
@@ -39,6 +42,7 @@ function OperationsListItem({
     operationType,
     isOutgoing,
     isASendOrReceive,
+    isUnread,
     currency,
     unit,
     amount,
@@ -50,6 +54,7 @@ function OperationsListItem({
     account,
     parentAccount,
     accountByAddress,
+    lastSeenTs,
   });
 
   const title = t(`operations.types.${operationType}`);
@@ -78,7 +83,10 @@ function OperationsListItem({
           mediaSize={48}
         />
         <ListItemContent>
-          <ListItemTitle>{title}</ListItemTitle>
+          <Box lx={titleRowStyle}>
+            <ListItemTitle>{title}</ListItemTitle>
+            {isUnread && <DotIndicator appearance="red" testID="unread-indicator" />}
+          </Box>
           <ListItemDescription>{subtitle}</ListItemDescription>
         </ListItemContent>
       </ListItemLeading>
@@ -107,6 +115,12 @@ function OperationsListItem({
 
 const listItemStyle: LumenViewStyle = {
   marginHorizontal: "-s8",
+};
+
+const titleRowStyle: LumenViewStyle = {
+  flexDirection: "row",
+  alignItems: "center",
+  gap: "s8",
 };
 
 const trailingContainerStyle: LumenViewStyle = {

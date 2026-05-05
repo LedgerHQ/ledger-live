@@ -1,5 +1,6 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import type { IconButtonProps } from "@ledgerhq/lumen-ui-rnative";
+import { DotIndicator } from "@ledgerhq/lumen-ui-rnative";
 import {
   Compass,
   Bell,
@@ -37,6 +38,7 @@ export function TopBarView({
   onSettingsPress,
   onTransactionHistoryPress,
   hasUnreadNotifications,
+  hasUnreadOperations,
   hasAccounts,
   isSyncError,
   isSyncPending,
@@ -77,12 +79,25 @@ export function TopBarView({
     accessibilityLabel: "Notifications",
   };
 
+  const unreadWrapper = useMemo(
+    () =>
+      hasUnreadOperations
+        ? (children: React.ReactElement) => (
+            <DotIndicator appearance="red" testID="unread-indicator">
+              {children}
+            </DotIndicator>
+          )
+        : undefined,
+    [hasUnreadOperations],
+  );
+
   const transactionHistoryIcon: TopBarActionIcon = {
     id: "transaction-history",
     icon: Clock,
     callback: onTransactionHistoryPress,
     testID: "topbar-transaction-history",
     accessibilityLabel: "Transaction History",
+    wrapper: unreadWrapper,
   };
 
   const settingsIcon: TopBarActionIcon = {

@@ -11,6 +11,7 @@ import countervalues from "./countervalues";
 import deeplinkInstallApp from "./deeplinkInstallApp";
 import dynamicContent from "./dynamicContent";
 import earn from "./earn";
+import history from "./history";
 import inView from "./inView";
 import largeMover from "./largeMover";
 import market from "./market";
@@ -46,6 +47,7 @@ const appReducer = combineReducers({
   dynamicContent,
   earn,
   featureFlags,
+  history,
   identities: identitiesSlice.reducer,
   inView,
   largeMover,
