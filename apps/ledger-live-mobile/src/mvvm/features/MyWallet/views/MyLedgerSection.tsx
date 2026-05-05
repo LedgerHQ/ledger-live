@@ -112,7 +112,6 @@ function MyLedgerSectionContent() {
           stopBleScanning={!!device}
           requestToSetHeaderOptions={requestToSetHeaderOptions}
           withMyLedgerTracking
-          hasPostOnboardingEntryPointCard
         >
           {/* TODO(wallet40-myWallet): enable ExploreDevicesItem when ready */}
           {!shouldDisplayMyWallet && <ExploreDevicesItem onPress={onExploreDevices} />}

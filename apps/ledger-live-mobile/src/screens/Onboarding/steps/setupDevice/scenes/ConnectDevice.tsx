@@ -66,7 +66,6 @@ const ConnectDevice = ({ onSuccess }: { onSuccess: () => void }) => {
           stopBleScanning={!!device}
           requestToSetHeaderOptions={requestToSetHeaderOptions}
           isChoiceDrawerDisplayedOnAddDevice={false}
-          hasPostOnboardingEntryPointCard
         />
       </Flex>
       <DeviceActionModal
