@@ -8,11 +8,13 @@ import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import ConnectDevice from "~/screens/ConnectDevice";
 import SelectDevice from "~/screens/SelectDevice";
 import { useTranslation } from "~/context/Locale";
+import SelectValidator from "./01-SelectValidator";
+import SelectAmount from "./02-SelectAmount";
+import ValidationError from "./03-ValidationError";
+import ValidationSuccess from "./03-ValidationSuccess";
 import type { EvmDelegationFlowParamList } from "./types";
 
-const Stack = createNativeStackNavigator<EvmDelegationFlowParamList>();
-
-const totalSteps = "2";
+const totalSteps = "3";
 
 function DelegationFlow() {
   const { t } = useTranslation();
@@ -27,14 +29,50 @@ function DelegationFlow() {
       }}
     >
       <Stack.Screen
+        name={ScreenName.EvmDelegationValidator}
+        component={SelectValidator}
+        options={{
+          gestureEnabled: false,
+          headerTitle: () => (
+            <StepHeader
+              title={t("delegation.selectValidatorTitle")}
+              subtitle={t("send.stepperHeader.stepRange", {
+                currentStep: "1",
+                totalSteps,
+              })}
+            />
+          ),
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.EvmDelegationAmount}
+        component={SelectAmount}
+        options={({ route }) => ({
+          headerRight: undefined,
+          headerTitle: () => (
+            <StepHeader
+              title={
+                route.params?.validator?.name ??
+                route.params?.validator?.validatorAddress ??
+                t("send.summary.amount")
+              }
+              subtitle={t("send.stepperHeader.stepRange", {
+                currentStep: "2",
+                totalSteps,
+              })}
+            />
+          ),
+        })}
+      />
+      <Stack.Screen
         name={ScreenName.EvmDelegationSelectDevice}
         component={SelectDevice}
         options={{
           headerTitle: () => (
             <StepHeader
-              title={t("evm.delegation.stepperHeader.selectDevice")}
-              subtitle={t("evm.delegation.stepperHeader.stepRange", {
-                currentStep: "1",
+              title={t("send.stepperHeader.selectDevice")}
+              subtitle={t("send.stepperHeader.stepRange", {
+                currentStep: "3",
                 totalSteps,
               })}
             />
@@ -49,13 +87,31 @@ function DelegationFlow() {
           gestureEnabled: false,
           headerTitle: () => (
             <StepHeader
-              title={t("evm.delegation.stepperHeader.connectDevice")}
-              subtitle={t("evm.delegation.stepperHeader.stepRange", {
-                currentStep: "2",
+              title={t("send.stepperHeader.connectDevice")}
+              subtitle={t("send.stepperHeader.stepRange", {
+                currentStep: "3",
                 totalSteps,
               })}
             />
           ),
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.EvmDelegationValidationError}
+        component={ValidationError}
+        options={{
+          headerShown: false,
+          gestureEnabled: false,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.EvmDelegationValidationSuccess}
+        component={ValidationSuccess}
+        options={{
+          headerLeft: undefined,
+          headerRight: undefined,
+          headerTitle: "",
+          gestureEnabled: false,
         }}
       />
     </Stack.Navigator>
@@ -67,3 +123,5 @@ const options = {
 };
 
 export { DelegationFlow as component, options };
+
+const Stack = createNativeStackNavigator<EvmDelegationFlowParamList>();
