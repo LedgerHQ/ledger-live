@@ -27,7 +27,7 @@ describe("swap status", () => {
 
   it("json: success and core fields", async () => {
     const { stdout, stderr, exitCode } = await runCli(
-      ["swap", "status", "--swap-id", SWAP_ID, "--format", "json"],
+      ["swap", "status", "--swap-id", SWAP_ID, "--output", "json"],
       { WALLET_CLI_MOCK_PORT: String(server.port) },
     );
     expect(exitCode, stderr).toBe(0);

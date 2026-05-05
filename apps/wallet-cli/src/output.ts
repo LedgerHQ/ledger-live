@@ -22,6 +22,7 @@ import {
   type SwapQuoteLine,
   type SwapQuoteProviderError,
 } from "./commands/swap/quote-shared";
+import { formatSwapStatusHuman, type SwapStatusLine } from "./commands/swap/status-shared";
 import type { Balance, Operation, DiscoveredAccount, SendEvent } from "./wallet/models";
 import type { SessionEntry } from "./session/session-store";
 import type { SwapPayloadResponse } from "@ledgerhq/live-common/exchange/swap/types";
@@ -91,6 +92,8 @@ export interface CommandOutput {
 
   /** Print swap quotes (human: formatted blocks; json: success envelope with `quotes`). */
   swapQuotes(args: { quotes: SwapQuoteLine[]; partialErrors: SwapQuoteProviderError[] }): void;
+  /** Print swap status result. */
+  swapStatus(status: SwapStatusLine): void;
 
   /**
    * No quotes returned while providers reported errors. Json: error envelope + exit 1.
@@ -337,6 +340,10 @@ class HumanCommandOutput implements CommandOutput {
     }
   }
 
+  swapStatus(status: SwapStatusLine): void {
+    writeStdout(formatSwapStatusHuman(status));
+  }
+
   swapQuotesUnavailable(message: string, errors: SwapQuoteProviderError[]): never {
     this._printSwapProviderErrors(message, errors, true);
     throw new CliProcessExitError(1);
@@ -575,6 +582,10 @@ class JsonCommandOutput implements CommandOutput {
         ...(args.partialErrors.length === 0 ? {} : { provider_errors: args.partialErrors }),
       }),
     );
+  }
+
+  swapStatus(status: SwapStatusLine): void {
+    this._writeNdjson(this._envelope(status));
   }
 
   swapQuotesUnavailable(message: string, errors: SwapQuoteProviderError[]): never {

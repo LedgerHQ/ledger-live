@@ -18,6 +18,7 @@ function normalizeStatus(rawStatus?: string): SwapStatusValue {
     case "EXPIRED":
       return "REFUNDED";
     case "PENDING":
+    case "ONHOLD":
       return "PENDING";
     default:
       return "UNKNOWN";
