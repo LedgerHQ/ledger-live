@@ -9297,6 +9297,110 @@
       "description": "Something went wrong during installation. Please try again."
     }
   },
+  "deviceIntentExecutor": {
+    "connectDevice": {
+      "common": {
+        "available": "Available",
+        "close": "Close",
+        "ledgerDevice": "Ledger device",
+        "notConnected": "Not connected",
+        "tryAgain": "Try again"
+      },
+      "states": {
+        "connecting": {
+          "title": "Loading"
+        },
+        "connectionError": {
+          "errors": {
+            "blePairingRefused": {
+              "title": "Pairing was refused",
+              "description": "Pairing was refused"
+            },
+            "blePairingPeerRemovedPairing": {
+              "title": "Pairing was removed",
+              "description": "Pairing was removed"
+            },
+            "unknown": {
+              "title": "Unable to connect",
+              "description": "Unknown error"
+            }
+          }
+        },
+        "discovering": {
+          "title": "Select a device"
+        },
+        "discoveryError": {
+          "continueWithUsb": "I want to continue with USB",
+          "errors": {
+            "bluetoothPermissionDeniedPromptable": {
+              "title": "Bluetooth permission needed",
+              "description": "Please enable Bluetooth permission to use Bluetooth"
+            },
+            "bluetoothPermissionDeniedManualSettings": {
+              "title": "Bluetooth permission needed",
+              "description": "Please enable Bluetooth permission in your phone settings to use Bluetooth"
+            },
+            "bluetoothPermissionUnauthorizedManualSettings": {
+              "title": "Bluetooth permission needed",
+              "description": "Please enable Bluetooth permission in your phone settings to use Bluetooth"
+            },
+            "bluetoothDisabledPromptable": {
+              "title": "Bluetooth settings disabled",
+              "description": "Please enable Bluetooth settings to use Bluetooth"
+            },
+            "bluetoothDisabledManualAction": {
+              "title": "Bluetooth settings disabled",
+              "description": "Please enable Bluetooth settings in your phone settings to use Bluetooth"
+            },
+            "bluetoothStateUnknownCheckOnly": {
+              "title": "Bluetooth is not ready",
+              "description": "Please check your Bluetooth settings to use Bluetooth"
+            },
+            "bluetoothUnsupported": {
+              "title": "Bluetooth is not supported",
+              "description": "Bluetooth is not supported. Please check your Bluetooth settings."
+            },
+            "locationPermissionDeniedPromptable": {
+              "title": "Location permission needed",
+              "description": "Please enable Location permission to use Bluetooth"
+            },
+            "locationPermissionDeniedManualSettings": {
+              "title": "Location permission needed",
+              "description": "Please enable Location permission in your phone settings to use Bluetooth"
+            },
+            "locationDisabledPromptable": {
+              "title": "Location settings disabled",
+              "description": "Please enable Location settings to use Bluetooth"
+            },
+            "locationDisabledManualAction": {
+              "title": "Location settings disabled",
+              "description": "Please enable Location settings in your phone settings to use Bluetooth"
+            },
+            "locationServicePermissionMissing": {
+              "title": "Location permission needed",
+              "description": "Please enable Location permission to use Bluetooth"
+            },
+            "unknown": {
+              "title": "Unable to discover devices",
+              "description": "Unable to discover devices."
+            }
+          }
+        },
+        "loading": {
+          "title": "Loading"
+        },
+        "noKnownDevice": {
+          "title": "Ledger device required",
+          "description": "To continue, set up or connect your signer.",
+          "connectLedgerDevice": "Connect Ledger device",
+          "noLedgerDevice": "I don't have a Ledger device"
+        },
+        "waitingForSelectedDevice": {
+          "title": "Power on and unlock your {{productName}}"
+        }
+      }
+    }
+  },
   "myWallet": {
     "quickActions": {
       "recover": "[L] Recover",

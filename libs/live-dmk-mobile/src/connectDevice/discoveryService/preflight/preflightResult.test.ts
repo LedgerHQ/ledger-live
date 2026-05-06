@@ -1,4 +1,4 @@
-import { DiscoveryErrors, type DiscoveryError } from "../../types";
+import { DiscoveryErrorTypes, type DiscoveryError } from "../../types";
 import {
   mapDiscoveryErrorToPreflightResult,
   retryPreflightCheck,
@@ -6,7 +6,7 @@ import {
 } from "./preflightResult";
 
 const discoveryError: DiscoveryError = {
-  type: DiscoveryErrors.Unknown,
+  type: DiscoveryErrorTypes.Unknown,
   error: new Error("failure"),
 };
 

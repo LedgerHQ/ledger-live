@@ -1,5 +1,5 @@
 import type { DiscoveryError } from "../../../types";
-import { DiscoveryErrors } from "../../../types";
+import { DiscoveryErrorTypes } from "../../../types";
 import { AndroidLocationServicePreflightCheck } from "./AndroidLocationServicePreflightCheck";
 import type { AndroidPreflightRequirements } from "./androidPreflightRequirements";
 import type { LocationHelperModule, LocationServiceResponse } from "../nativeModules";
@@ -21,7 +21,7 @@ describe("AndroidLocationServicePreflightCheck", () => {
 
     // THEN
     expect(getError(result)).toMatchObject({
-      type: DiscoveryErrors.LocationDisabledManualAction,
+      type: DiscoveryErrorTypes.LocationDisabledManualAction,
       resolution: { type: "manual-action", retry },
     });
   });
@@ -52,7 +52,7 @@ describe("AndroidLocationServicePreflightCheck", () => {
 
     // THEN
     expect(getError(result)).toMatchObject({
-      type: DiscoveryErrors.LocationDisabledPromptable,
+      type: DiscoveryErrorTypes.LocationDisabledPromptable,
       resolution: { type: "prompt", retry },
     });
   });
@@ -66,7 +66,7 @@ describe("AndroidLocationServicePreflightCheck", () => {
 
     // THEN
     expect(getError(result)).toMatchObject({
-      type: DiscoveryErrors.LocationServicePermissionMissing,
+      type: DiscoveryErrorTypes.LocationServicePermissionMissing,
       resolution: { type: "check-only", retry },
     });
   });
@@ -82,7 +82,7 @@ describe("AndroidLocationServicePreflightCheck", () => {
 
       // THEN
       expect(getError(result)).toMatchObject({
-        type: DiscoveryErrors.LocationDisabledManualAction,
+        type: DiscoveryErrorTypes.LocationDisabledManualAction,
         error: response,
         resolution: { type: "manual-action", retry },
       });
@@ -102,7 +102,7 @@ describe("AndroidLocationServicePreflightCheck", () => {
 
     // THEN
     expect(getError(result)).toMatchObject({
-      type: DiscoveryErrors.Unknown,
+      type: DiscoveryErrorTypes.Unknown,
       error: nativeError,
       resolution: { type: "check-only", retry },
     });

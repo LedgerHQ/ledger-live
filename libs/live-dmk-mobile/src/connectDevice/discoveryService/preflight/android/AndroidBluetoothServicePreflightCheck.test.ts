@@ -1,6 +1,6 @@
 import { State as BlePlxState } from "react-native-ble-plx";
 import type { DiscoveryError } from "../../../types";
-import { DiscoveryErrors } from "../../../types";
+import { DiscoveryErrorTypes } from "../../../types";
 import {
   AndroidBluetoothServicePreflightCheck,
   type BleStateProvider,
@@ -52,7 +52,7 @@ describe("AndroidBluetoothServicePreflightCheck", () => {
 
     // THEN
     expect(getError(result)).toMatchObject({
-      type: DiscoveryErrors.BluetoothStateUnknownCheckOnly,
+      type: DiscoveryErrorTypes.BluetoothStateUnknownCheckOnly,
       state: BlePlxState.Unknown,
       resolution: { type: "check-only", retry },
     });
@@ -67,7 +67,7 @@ describe("AndroidBluetoothServicePreflightCheck", () => {
 
     // THEN
     expect(getError(result)).toMatchObject({
-      type: DiscoveryErrors.BluetoothDisabledManualAction,
+      type: DiscoveryErrorTypes.BluetoothDisabledManualAction,
       resolution: { type: "manual-action", retry },
     });
   });
@@ -102,7 +102,7 @@ describe("AndroidBluetoothServicePreflightCheck", () => {
 
     // THEN
     expect(getError(result)).toMatchObject({
-      type: DiscoveryErrors.BluetoothDisabledManualAction,
+      type: DiscoveryErrorTypes.BluetoothDisabledManualAction,
       resolution: { type: "manual-action", retry },
     });
   });
@@ -120,7 +120,7 @@ describe("AndroidBluetoothServicePreflightCheck", () => {
 
     // THEN
     expect(getError(result)).toMatchObject({
-      type: DiscoveryErrors.BluetoothStateUnknownCheckOnly,
+      type: DiscoveryErrorTypes.BluetoothStateUnknownCheckOnly,
       state: BlePlxState.Resetting,
       resolution: { type: "check-only", retry },
     });
@@ -139,7 +139,7 @@ describe("AndroidBluetoothServicePreflightCheck", () => {
 
     // THEN
     expect(getError(result)).toMatchObject({
-      type: DiscoveryErrors.BluetoothDisabledPromptable,
+      type: DiscoveryErrorTypes.BluetoothDisabledPromptable,
       resolution: { type: "prompt", retry },
     });
   });
@@ -158,7 +158,7 @@ describe("AndroidBluetoothServicePreflightCheck", () => {
 
     // THEN
     expect(getError(result)).toMatchObject({
-      type: DiscoveryErrors.BluetoothDisabledManualAction,
+      type: DiscoveryErrorTypes.BluetoothDisabledManualAction,
       error: nativeError,
       resolution: { type: "manual-action", retry },
     });
