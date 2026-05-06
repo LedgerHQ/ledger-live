@@ -1,11 +1,6 @@
 import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { BigNumber } from "bignumber.js";
-import {
-  CELO_STABLE_TOKENS,
-  getStableTokenEnum,
-  MAX_FEES_THRESHOLD_MULTIPLIER,
-  MIN_GAS_FOR_NATIVE_TRANSFER,
-} from "../constants";
+import { MAX_FEES_THRESHOLD_MULTIPLIER, MIN_GAS_FOR_NATIVE_TRANSFER } from "../constants";
 import { getPendingStakingOperationAmounts, getVote } from "../logic";
 import { celoKit } from "../network/sdk";
 import type { CeloAccount, RevokeTxo, Transaction } from "../types";
@@ -123,20 +118,11 @@ const getFeesForTransaction = async ({
     const baseFee = BigInt(block.baseFeePerGas || maxPriorityFeePerGas);
     const maxFeePerGas = baseFee + BigInt(maxPriorityFeePerGas);
 
-    let token;
-    if (CELO_STABLE_TOKENS.includes(tokenAccount.token.id)) {
-      token = await kit.contracts.getStableToken(getStableTokenEnum(tokenAccount.token.id));
-    } else {
-      token = await kit.contracts.getErc20(tokenAccount.token.contractAddress);
-    }
-
     const celoTransaction = {
       from: account.freshAddress,
       to: transaction.recipient,
-      data: token.transfer(transaction.recipient, value.toFixed()).txo.encodeABI(),
       maxFeePerGas: maxFeePerGas.toString(),
       maxPriorityFeePerGas,
-      value: valueToHex(value),
       ...(transaction.feeCurrency
         ? {
             feeCurrency: transaction.feeCurrency,
