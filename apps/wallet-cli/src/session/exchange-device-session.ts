@@ -1,5 +1,5 @@
 import { connectLedgerApp } from "../device/connect-ledger-app";
-import { toWalletCliDeviceError } from "../device/wallet-cli-device-error";
+import { toWalletCliDeviceError, WalletCliDeviceError } from "../device/wallet-cli-device-error";
 import {
   ensureWalletCliDmkTransport,
   resetWalletCliDmkSession,
@@ -15,14 +15,21 @@ export async function withLedgerManagerAppSession<T>(
     const transport = await ensureWalletCliDmkTransport();
     walletCliDebug(`Connecting Ledger app (${managerAppName})…`);
     await connectLedgerApp(transport.dmk, transport.sessionId, managerAppName);
-    walletCliDebug("Device session ready.");
-    try {
-      return await fn();
-    } finally {
-      walletCliDebug("Resetting device session…");
-      await resetWalletCliDmkSession();
-    }
   } catch (e) {
-    throw toWalletCliDeviceError(e);
+    throw toWalletCliDeviceError(e, { expectedApp: managerAppName, rejectedContext: "open_app" });
+  }
+  walletCliDebug("Device session ready.");
+  try {
+    return await fn();
+  } catch (e) {
+    throw (
+      WalletCliDeviceError.fromKnownDeviceError(e, {
+        expectedApp: managerAppName,
+        rejectedContext: "sign",
+      }) ?? e
+    );
+  } finally {
+    walletCliDebug("Resetting device session…");
+    await resetWalletCliDmkSession();
   }
 }

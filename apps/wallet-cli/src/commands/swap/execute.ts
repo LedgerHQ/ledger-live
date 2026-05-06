@@ -27,7 +27,7 @@ export default defineCommand({
     amount: option(z.string().min(1, "Amount is required (--amount <value>)"), {
       description: "Swap source amount in human units",
     }),
-    "to-account": option(z.string().min(1), {
+    "to-account": option(z.string().optional(), {
       description: "Destination account descriptor or session label (required for full pipeline)",
     }),
     account: accountOption,
@@ -65,7 +65,7 @@ export default defineCommand({
       });
 
       const toAccountArg = flags["to-account"];
-      if (!toAccountArg) {
+      if (typeof toAccountArg !== "string" || toAccountArg.trim().length === 0) {
         throw new Error("Swap execute requires --to-account <descriptor-or-label>.");
       }
       const toDescriptor = await resolveAccountDescriptor(toAccountArg);

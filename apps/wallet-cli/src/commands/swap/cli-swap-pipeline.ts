@@ -100,13 +100,13 @@ export type FullSwapPipelineResult = {
   dryRun?: boolean;
 };
 
-async function buildStrategyTransaction(args: {
+function buildStrategyTransaction(args: {
   payinAddress: string;
   fromAmountAtomic: BigNumber;
   fromCurrency: CryptoOrTokenCurrency;
   payinExtraId?: string;
   extraTransactionParameters?: SwapPayloadResponse["extraTransactionParameters"];
-}): Promise<Transaction> {
+}): Transaction {
   const { payinAddress, fromAmountAtomic, fromCurrency, payinExtraId, extraTransactionParameters } =
     args;
   const family =
@@ -308,7 +308,7 @@ export async function runFullSwapPipeline(
     `[2/5] Swap API returned swapId=${payload.swapId ?? "(none)"}, payin address received.`,
   );
 
-  const strategyTx = await buildStrategyTransaction({
+  const strategyTx = buildStrategyTransaction({
     payinAddress: payload.payinAddress,
     fromAmountAtomic: amountInAtomicUnit,
     fromCurrency,
