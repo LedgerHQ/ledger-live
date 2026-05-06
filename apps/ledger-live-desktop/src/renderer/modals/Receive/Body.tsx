@@ -87,6 +87,7 @@ export type StepProps = {
   currencyName: string | undefined | null;
   isFromPostOnboardingEntryPoint?: boolean;
   accountError?: Error;
+  sourcePage?: string;
 };
 export type St = Step<StepId, StepProps>;
 function createSteps(useLegacyReceiveOptions: boolean): Array<St> {
@@ -288,6 +289,7 @@ const Body = ({
     currencyName,
     isFromPostOnboardingEntryPoint: !!params.isFromPostOnboardingEntryPoint,
     accountError: accountError,
+    sourcePage: params.sourcePage,
   };
   return (
     <Stepper {...stepperProps}>

@@ -12,6 +12,7 @@ import Box from "~/renderer/components/Box";
 import EntryButton from "~/renderer/components/EntryButton/EntryButton";
 import CoinsIcon from "./assets/CoinsIcon";
 import { trackPage, track } from "~/renderer/analytics/segment";
+import { RECEIVE_SOURCE_PAGE } from "LLD/features/Receive/types";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
@@ -112,7 +113,11 @@ const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeM
     dispatch(closeModal(modalName));
 
     dispatch(
-      openModal("MODAL_RECEIVE", { parentAccount, account, sourcePage: "no funds stake modal" }),
+      openModal("MODAL_RECEIVE", {
+        parentAccount,
+        account,
+        sourcePage: RECEIVE_SOURCE_PAGE.NO_FUNDS_STAKE,
+      }),
     );
   }, [parentAccount, account, dispatch, location]);
 

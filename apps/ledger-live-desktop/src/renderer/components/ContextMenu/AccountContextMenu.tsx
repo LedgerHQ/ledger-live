@@ -16,6 +16,7 @@ import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
 import { swapSelectableCurrenciesSelector } from "~/renderer/reducers/settings";
 import { isCurrencySupported } from "~/renderer/screens/exchange/config";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { RECEIVE_SOURCE_PAGE } from "LLD/features/Receive/types";
 import { ContextMenuItemType } from "./ContextMenuWrapper";
 import { IconsLegacy } from "@ledgerhq/react-ui";
 import { accountStarredSelector, walletSelector } from "~/renderer/reducers/wallet";
@@ -76,7 +77,7 @@ export default function AccountContextMenu({
             openModal("MODAL_RECEIVE", {
               account,
               parentAccount,
-              sourcePage: "account context menu",
+              sourcePage: RECEIVE_SOURCE_PAGE.ACCOUNT_CONTEXT_MENU,
             }),
           ),
       },
