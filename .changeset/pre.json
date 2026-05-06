@@ -172,6 +172,7 @@
     "@ledgerhq/pnpm-utils": "1.0.1"
   },
   "changesets": [
+    "orange-wolves-dance",
     "purple-lions-rest",
     "sweet-countries-grow"
   ]
