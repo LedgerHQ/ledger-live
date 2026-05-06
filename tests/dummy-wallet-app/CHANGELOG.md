@@ -1,5 +1,14 @@
 # dummy-wallet-app
 
+## 0.17.2
+
+### Patch Changes
+
+- Updated dependencies [[`202cc42`](https://github.com/LedgerHQ/ledger-live/commit/202cc423b09662b5b25012b84124aecd4dc7245d)]:
+  - @ledgerhq/live-common@34.70.1
+  - @ledgerhq/hw-app-eth@7.8.2
+  - @ledgerhq/hw-transport@6.35.2
+
 ## 0.17.2-hotfix.0
 
 ### Patch Changes

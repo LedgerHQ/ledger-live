@@ -1,5 +1,14 @@
 # @ledgerhq/live-countervalues-react
 
+## 0.14.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/ledger-wallet-framework@1.3.2
+  - @ledgerhq/cryptoassets@13.46.2
+  - @ledgerhq/live-countervalues@0.18.3
+
 ## 0.14.2-hotfix.0
 
 ### Patch Changes

@@ -1,5 +1,14 @@
 # @ledgerhq/coin-tester-polkadot
 
+## 1.15.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-polkadot@6.24.1
+  - @ledgerhq/ledger-wallet-framework@1.3.2
+  - @ledgerhq/cryptoassets@13.46.2
+
 ## 1.15.1-hotfix.0
 
 ### Patch Changes
