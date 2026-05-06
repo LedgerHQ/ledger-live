@@ -28,8 +28,12 @@ const randomizedSeed = Math.abs(Math.sin(seed + 1));
 const { provider } = eligibleProviders[Math.floor(randomizedSeed * eligibleProviders.length)];
 
 test.describe(`Token approval - ${provider.uiName} flow`, () => {
+  test.skip(
+    process.env.DISABLE_TRANSACTION_BROADCAST !== "0",
+    "Token approval flow requires broadcast to be enabled — runs on Monday nightly only",
+  );
+
   setupEnv(false);
-  process.env.DISABLE_TRANSACTION_BROADCAST = "0";
 
   test.use({
     teamOwner: Team.SWAP,
