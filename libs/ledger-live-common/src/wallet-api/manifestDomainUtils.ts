@@ -2,12 +2,12 @@ import { getDomain } from "tldts";
 import type { LiveAppManifest } from "../platform/types";
 
 /**
- * Parses a URL string and returns both hostname and protocol
+ * Parses a URL string and returns hostname, host (incl. port), and protocol.
  */
-function parseUrl(url: string): { hostname: string; protocol: string } | null {
+function parseUrl(url: string): { hostname: string; host: string; protocol: string } | null {
   try {
     const urlObj = new URL(url);
-    return { hostname: urlObj.hostname, protocol: urlObj.protocol };
+    return { hostname: urlObj.hostname, host: urlObj.host, protocol: urlObj.protocol };
   } catch {
     return null;
   }
@@ -31,8 +31,15 @@ export function isSameDomain(url1: string | undefined, url2: string | undefined)
   const domain1 = getDomain(parsed1.hostname, { allowPrivateDomains: true });
   const domain2 = getDomain(parsed2.hostname, { allowPrivateDomains: true });
 
+  // tldts returns null for hostnames that don't map to a public suffix — localhost,
+  // bare IPs, `.local` mDNS, internal dev hostnames. Fall back to strict same-origin
+  // equality (host = hostname + port + protocol) so dev setups still match while
+  // preventing cross-port pivots like localhost:3000 → localhost:8080.
   if (!domain1 || !domain2) {
-    return false;
+    return (
+      parsed1.host.toLowerCase() === parsed2.host.toLowerCase() &&
+      parsed1.protocol === parsed2.protocol
+    );
   }
 
   return domain1 === domain2 && parsed1.protocol === parsed2.protocol;

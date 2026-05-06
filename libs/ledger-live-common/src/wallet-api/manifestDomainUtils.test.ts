@@ -111,12 +111,24 @@ describe("manifestDomainUtils", () => {
       expect(isSameDomain("not-a-url", "not-a-url")).toBe(false);
     });
 
-    it("should return false for localhost URLs", () => {
+    it("should return false for localhost URLs on different ports", () => {
       expect(isSameDomain("http://localhost:3000", "http://localhost:8080")).toBe(false);
+    });
+
+    it("should return true for localhost URLs on the same port and protocol", () => {
+      expect(isSameDomain("http://localhost:3000/foo", "http://localhost:3000/bar")).toBe(true);
+    });
+
+    it("should return false for localhost URLs with mismatched protocols", () => {
+      expect(isSameDomain("http://localhost:3000", "https://localhost:3000")).toBe(false);
     });
 
     it("should return false for IP address URLs", () => {
       expect(isSameDomain("http://192.168.1.1", "http://192.168.1.2")).toBe(false);
+    });
+
+    it("should return true for the same IP on the same port and protocol", () => {
+      expect(isSameDomain("http://192.168.1.1:8080/x", "http://192.168.1.1:8080/y")).toBe(true);
     });
   });
 

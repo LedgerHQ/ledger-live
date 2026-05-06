@@ -376,6 +376,7 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.SwapSubScreens]?: NavigatorScreenParams<SwapSubScreensNavigatorParamList>;
   [NavigatorName.MyWallet]?: NavigatorScreenParams<MyWalletNavigatorStackParamList>;
   [ScreenName.LedgerSyncDeepLinkHandler]: undefined;
+  [ScreenName.LiveAppModal]: undefined;
 };
 
 declare global {
