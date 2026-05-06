@@ -173,6 +173,20 @@ New reusable mocks go in `tests/mocks/`, new handlers in `tests/handlers/`, new 
 
 ---
 
+## Mock Anti-Patterns
+
+These cause flaky tests and mock cannibalization when running with parallel workers (`--maxWorkers=50%`).
+
+**Duplicate mocks** — Don't `jest.mock("module")` in a test file when it's already mocked in jest-setup (`apps/ledger-live-mobile/__tests__/jest-setup.js` or `apps/ledger-live-desktop/tests/jestSetup.js`). Use `jest.mocked(module.export).mockReturnValue(...)` in `beforeEach` instead.
+
+**Hooks at describe load time** — Never call `renderHook(...)` or access `.result.current` at the top level of a `describe` block. Move into `beforeEach` or inside each test — calling hooks outside of test callbacks crashes Jest parallel workers.
+
+**`jest.restoreAllMocks()`** — Never use this; it restores global mocks from jest-setup and breaks other tests. Use `jest.clearAllMocks()` or `mock.mockRestore()` for specific spies only.
+
+**Wrong `beforeEach` order** — Call `jest.clearAllMocks()` *before* `mockReturnValue()` or other mock configuration — not after (calling clear after wipes the setup).
+
+---
+
 ## Workflow
 
 ```

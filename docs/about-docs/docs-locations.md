@@ -28,5 +28,5 @@ Know where to put everything.
 - e.g. `.claude/skills -> .agents/skills`
 
 **The current documentation state is not the target**
-- Context is spread across GitHub Instructions, Cursor rules and other markdown
+- Some valuable context is spread across Cursor rules and other markdown
 - The `**/README.md` and `**/docs/**/*.md` convention is not applied everywhere
