@@ -84,6 +84,13 @@ const Delegation = ({ account }: { account: StakingAccount }) => {
     },
     [account, dispatch],
   );
+  const onClaimRewards = useCallback(() => {
+    dispatch(
+      openModal("MODAL_EVM_CLAIM_REWARDS", {
+        account,
+      }),
+    );
+  }, [account, dispatch]);
 
   if (!isCurrencySupported || !isEvmNativeStakingEnabled) return null;
 
@@ -96,7 +103,6 @@ const Delegation = ({ account }: { account: StakingAccount }) => {
   const mappedDelegations = mapDelegations(delegations, validators, unit);
   const mappedUnbondings = mapUnbondings(unbondings, validators, unit);
   const mappedRedelegations = mapRedelegations(redelegations, validators, unit);
-  const onClaimRewards = () => {};
 
   const hasDelegations = delegations.length > 0;
   // Only surface the "Pending undelegation" section when the chain enforces an unbonding
@@ -104,7 +110,7 @@ const Delegation = ({ account }: { account: StakingAccount }) => {
   // unbondings so showing the header would be misleading.
   const hasUnbondings = unbondings.length > 0 && hasUnbondingPeriod(account.currency.id);
   const hasRedelegations = redelegations.length > 0;
-  const hasRewards = pendingRewardsBalance.gt(0);
+  const hasRewards = true; //pendingRewardsBalance.gt(0);
 
   return (
     <>
