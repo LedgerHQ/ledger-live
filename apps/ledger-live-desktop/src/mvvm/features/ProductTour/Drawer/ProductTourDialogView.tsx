@@ -7,7 +7,7 @@ import { ProductTourSlideItem } from "./components/ProductTourSlideItem";
 import { PRODUCT_TOUR_SLIDE_COUNT } from "./const";
 import type { ProductTourPrimaryAction } from "./const";
 
-interface ProductTourDialogProps {
+export interface ProductTourDialogProps {
   readonly isOpen: boolean;
   readonly onClose: () => void;
   readonly onComplete: () => void;

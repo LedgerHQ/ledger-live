@@ -8,15 +8,9 @@ import Portfolio from "../index";
 
 jest.mock("@braze/web-sdk", () => mockGetBrazeWebSdkJestMock());
 
-jest.mock("~/renderer/screens/dashboard/components/Banners/BannerSection", () => ({
-  __esModule: true,
-  default: () => <div data-testid="banner-section">BannerSection</div>,
-}));
-
-jest.mock("~/renderer/screens/dashboard/components/Banners/PortfolioBannerContent", () => ({
-  PortfolioBannerContent: () => (
-    <div data-testid="portfolio-banner-content">PortfolioBannerContent</div>
-  ),
+jest.mock("~/renderer/store", () => ({
+  getStoreValue: jest.fn(),
+  setStoreValue: jest.fn(),
 }));
 
 function PortfolioProductTourHarness() {
@@ -56,10 +50,6 @@ function renderPortfolioProductTour({ isProductTourEnabled }: { isProductTourEna
 }
 
 describe("Portfolio Product Tour", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
   it("shows Product Tour dialog when lwdProductTour is enabled and opened", async () => {
     const { user } = renderPortfolioProductTour({ isProductTourEnabled: true });
 

@@ -26,27 +26,13 @@ jest.mock("LLD/features/ModularDialog/hooks/useOpenAssetFlow", () => ({
 }));
 
 function TestHarness() {
-  const {
-    isDialogOpen,
-    openDialog,
-    closeDialog,
-    completeProductTour,
-    onPrimaryAction,
-    onSlideChange,
-  } = useProductTourDialogViewModel();
-
+  const { openDialog, ...productTourDialogViewModel } = useProductTourDialogViewModel();
   return (
     <div>
       <button type="button" onClick={openDialog}>
         Open
       </button>
-      <ProductTourDialog
-        isOpen={isDialogOpen}
-        onClose={closeDialog}
-        onComplete={completeProductTour}
-        onPrimaryAction={onPrimaryAction}
-        onSlideChange={onSlideChange}
-      />
+      <ProductTourDialog {...productTourDialogViewModel} />
     </div>
   );
 }
