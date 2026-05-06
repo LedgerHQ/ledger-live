@@ -16,8 +16,6 @@ export default class SwapLiveAppPage {
   numberOfQuotes = "number-of-quotes";
   quotesCountDown = "quotes-countdown";
   quoteCardProviderNameSelector = "[data-testid^='compact-quote-card-provider-']";
-  quoteAmountLabelSelector = '[data-testid^="quote-container-"][data-testid$="-amount-label"]';
-  bestQuoteHeadingXpath = "//*[contains(normalize-space(.), 'Best quote')]";
   executeSwapButton = "execute-button";
   executeSwapButtonStepApproval = "execute-swap-button-step-approval";
   deviceActionErrorDescriptionId = "error-description-deviceAction";
@@ -25,6 +23,7 @@ export default class SwapLiveAppPage {
   showDetailslink = "show-details-link";
   quotesContainerErrorIcon = "quotes-container-error-icon";
   insufficientFundsBuyButton = "insufficient-funds-buy-button";
+  incompatibilityBannerPartnerId = "incompatibility-banner-partner";
   swapMainContainerCssSelector = "main";
   swapMainContainerWebElement = getWebElementByCssSelector(this.swapMainContainerCssSelector);
   swapMaxToggle = "from-account-max-toggle";
@@ -37,6 +36,10 @@ export default class SwapLiveAppPage {
     `[data-testid^="quote-container-${Provider.getNameByUiName(provider)}"]`;
   providerExecuteButtonCss = (provider: string) =>
     `${this.baseProviderCssSelector(provider)} [data-testid="${this.executeSwapButton}"]`;
+  providerQuoteContainerSelector = (provider: string) =>
+    `${this.baseProviderCssSelector(provider)}[data-testid$="-fixed"], ${this.baseProviderCssSelector(provider)}[data-testid$="-float"]`;
+  incompatibilityBannerPartnerSelector = (provider: string) =>
+    `${this.baseProviderCssSelector(provider)} [data-testid="${this.incompatibilityBannerPartnerId}"]`;
 
   @Step("Expect swap live app page")
   async expectSwapLiveApp() {
@@ -249,49 +252,53 @@ export default class SwapLiveAppPage {
     return actualButtonText;
   }
 
-  @Step("Check best-value quote corresponds to the best quote")
-  async checkBestOffer() {
+  @Step('Check "Best Offer" corresponds to the best quote')
+  async checkBestOffer(providerList: string[]) {
     await retryUntilTimeout(async () => {
-      const amountLabels = await this.getQuoteAmountLabels();
-      const quoteAmounts = this.extractQuoteAmounts(amountLabels);
+      const quotes = [];
+      for (const provider of providerList) {
+        quotes.push(await this.getProviderQuote(provider));
+      }
+      const bestOffer = quotes.reduce<{ provider: string; rate: number; fees: number } | null>(
+        (max, current) =>
+          current && (!max || current.rate - current.fees > max.rate - max.fees) ? current : max,
+        null,
+      );
 
-      await detoxExpect(getWebElementByXpath(this.bestQuoteHeadingXpath)).toExist();
-      jestExpect(quoteAmounts[0]).toBe(Math.max(...quoteAmounts));
+      jestExpect(bestOffer?.provider).toBe(providerList[0]);
     });
   }
 
-  @Step("Get quote receive amount labels")
-  async getQuoteAmountLabels() {
-    return await getWebElementsText(
-      this.swapMainContainerWebElement,
-      this.quoteAmountLabelSelector,
-    );
-  }
+  async getProviderQuote(provider: string) {
+    const quoteText =
+      (
+        await getWebElementsText(
+          this.swapMainContainerWebElement,
+          this.providerQuoteContainerSelector(provider),
+        )
+      )[0] ?? "";
+    const networkFeesIndex = quoteText.search(/Network Fees/i);
+    const feesMatch =
+      networkFeesIndex >= 0 ? /\$\s*(\d[\d,.]*)/.exec(quoteText.slice(networkFeesIndex)) : null;
+    const usdAmountRegex = /\$\s*(\d[\d,.]*)/g;
+    const usdAmounts = [];
+    let usdAmountMatch: RegExpExecArray | null;
 
-  @Step("Extract quote receive amounts")
-  extractQuoteAmounts(amountLabels: string[]) {
-    const amounts = amountLabels.map(amountLabel => this.parseQuoteAmountLabel(amountLabel));
-
-    if (amounts.length === 0) {
-      throw new Error("No quotes found");
-    }
-    return amounts;
-  }
-
-  private parseQuoteAmountLabel(amountLabel: string): number {
-    const amountMatch = /~?\s*([\d,]+(?:\.\d+)?)/.exec(amountLabel);
-
-    if (!amountMatch) {
-      throw new Error(`Could not parse quote amount label: ${amountLabel}`);
+    while ((usdAmountMatch = usdAmountRegex.exec(quoteText)) !== null) {
+      usdAmounts.push(usdAmountMatch[1]);
     }
 
-    const amount = Number(amountMatch[1].split(",").join(""));
-
-    if (!Number.isFinite(amount)) {
-      throw new TypeError(`Parsed quote amount is not finite: ${amountLabel}`);
+    if (!feesMatch || usdAmounts.length === 0) {
+      throw new Error(`No parsable quote found for provider ${provider}`);
     }
 
-    return amount;
+    const parseAmount = (amount: string) => Number.parseFloat(amount.replace(/,/g, ""));
+
+    return {
+      provider,
+      fees: parseAmount(feesMatch[1]),
+      rate: parseAmount(usdAmounts[usdAmounts.length - 1]),
+    };
   }
 
   @Step("Verify swap amount error message match: $0")
@@ -351,6 +358,13 @@ export default class SwapLiveAppPage {
     jestExpect(fromAccount).toContain(expectedAssetText);
   }
 
+  @Step("Check currency to swap from matches account $0")
+  async checkAssetFromMatchesAccount(account: Account) {
+    const selectedAccountText: string = await getWebElementText(this.fromSelector);
+    jestExpect(selectedAccountText).toContain(account.currency.ticker);
+    jestExpect(selectedAccountText).toContain(account.accountName);
+  }
+
   @Step("Check currency to swap to is $0 with amount $1")
   async checkAssetTo(currency: string, amount: string) {
     const assetTo: string = await getWebElementText(this.toSelector);
@@ -373,13 +387,23 @@ export default class SwapLiveAppPage {
     }
   }
 
-  @Step("Check Ledger Nano S not supported banner")
-  async checkLnsNotSupportedBanner() {
+  @Step("Check currency to swap to matches account $0")
+  async checkAssetToMatchesAccount(account: Account) {
+    const selectedAccountText: string = await getWebElementText(this.toSelector);
+    const expectedAccountName = account.parentAccount?.accountName ?? account.accountName;
+
+    jestExpect(selectedAccountText).toContain(account.currency.ticker);
+    jestExpect(selectedAccountText).toContain(expectedAccountName);
+  }
+
+  @Step("Check Ledger Nano S not supported banner for $0")
+  async checkLnsNotSupportedBanner(provider: string) {
     await retryUntilTimeout(async () => {
-      const bodyText = await getWebElementByCssSelector("body").runScript((body: HTMLElement) =>
-        (body.innerText || body.textContent || "").trim(),
+      const bannerText = await getWebElementsText(
+        this.swapMainContainerWebElement,
+        this.incompatibilityBannerPartnerSelector(provider),
       );
-      jestExpect(bodyText).toMatch(this.lnsUnsupportedBannerPattern);
+      jestExpect(bannerText.join(" ")).toMatch(this.lnsUnsupportedBannerPattern);
     }, 20000);
   }
 

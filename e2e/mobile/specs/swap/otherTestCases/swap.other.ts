@@ -163,13 +163,13 @@ export function runSwapLandingPageTest(
       );
       const providerList = await app.swapLiveApp.getProviderList();
       await app.swapLiveApp.checkFirstQuoteContainerInfos(providerList);
-      await app.swapLiveApp.checkBestOffer();
+      await app.swapLiveApp.checkBestOffer(providerList);
 
       await app.portfolio.openViaDeeplink();
       await app.swap.openViaDeeplink();
       await app.swapLiveApp.expectSwapLiveAppForm();
-      await app.swapLiveApp.checkAssetFromContains(fromAccount.currency.ticker);
-      await app.swapLiveApp.checkAssetToContains(toAccount.currency.ticker);
+      await app.swapLiveApp.checkAssetFromMatchesAccount(fromAccount);
+      await app.swapLiveApp.checkAssetToMatchesAccount(toAccount);
     });
   });
 }
@@ -219,7 +219,7 @@ export function runSwapLnsNotSupportedBannerTest(
 
         await performSwapUntilQuoteSelectionStep(fromAccount, toAccount, minAmount);
         await app.swapLiveApp.selectSpecificProvider(unsupportedProvider.uiName);
-        await app.swapLiveApp.checkLnsNotSupportedBanner();
+        await app.swapLiveApp.checkLnsNotSupportedBanner(unsupportedProvider.uiName);
       });
     },
   );
@@ -521,28 +521,6 @@ async function openSwapFromPortfolioEntryPoint() {
     await app.transferMenuDrawer.open();
     await app.transferMenuDrawer.navigateToSwap();
   }
-}
-
-export function runSwapDefaultCurrencyNoSetupTest(
-  defaultSendAccount: Account,
-  tmsLinks: string[],
-  tags: string[],
-) {
-  describe("Swap - Default currency without previous setup", () => {
-    beforeAll(async () => {
-      await beforeAllFunctionSwap({
-        userdata: "speculos-tests-app",
-        speculosApp: AppInfos.EXCHANGE,
-      });
-    });
-
-    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
-    tags.forEach(tag => $Tag(tag));
-    it("Defaults You send to the account with most funds and leaves You receive empty", async () => {
-      await openSwapFromPortfolioEntryPoint();
-      await validateSwapAssetsPage(defaultSendAccount.currency.ticker, "");
-    });
-  });
 }
 
 export function runSwapEntryPoints(account: Account, tmsLinks: string[], tags: string[]) {
