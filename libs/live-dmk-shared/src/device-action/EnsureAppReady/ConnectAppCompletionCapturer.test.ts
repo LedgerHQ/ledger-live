@@ -1,4 +1,7 @@
-import type { GetDeviceMetadataDAOutput } from "@ledgerhq/device-management-kit";
+import type {
+  GetAppAndVersionResponse,
+  GetDeviceMetadataDAOutput,
+} from "@ledgerhq/device-management-kit";
 import { DeviceActionStatus, UserInteractionRequired } from "@ledgerhq/device-management-kit";
 import type { ConnectAppDAState } from "../ConnectApp/types";
 import { ConnectAppCompletionCapturer } from "./ConnectAppCompletionCapturer";
@@ -22,6 +25,11 @@ const deviceMetadata = {
   firmwareUpdateContext: undefined,
 } as unknown as GetDeviceMetadataDAOutput;
 
+const currentApp: GetAppAndVersionResponse = {
+  name: "Ethereum",
+  version: "2.0.0",
+};
+
 function makePending(): ConnectAppDAState {
   return {
     status: DeviceActionStatus.Pending,
@@ -37,6 +45,7 @@ function makePending(): ConnectAppDAState {
 function makeCompleted(params: {
   deviceMetadata?: GetDeviceMetadataDAOutput;
   derivation?: string;
+  currentApp?: GetAppAndVersionResponse;
 }): ConnectAppDAState {
   return {
     status: DeviceActionStatus.Completed,
@@ -88,6 +97,28 @@ describe("ConnectAppCompletionCapturer", () => {
       expect(capturer.getCompletionCapture()).toEqual({
         deviceMetadata,
         derivation: "0xderived",
+        currentApp: undefined,
+      });
+    });
+
+    it("WHEN a completed snapshot includes the current app THEN it captures it", () => {
+      // GIVEN
+      const capturer = new ConnectAppCompletionCapturer();
+
+      // WHEN
+      capturer.handleSnapshot(
+        makeCompleted({
+          deviceMetadata,
+          derivation: "0xderived",
+          currentApp,
+        }),
+      );
+
+      // THEN
+      expect(capturer.getCompletionCapture()).toEqual({
+        deviceMetadata,
+        derivation: "0xderived",
+        currentApp,
       });
     });
 
@@ -113,6 +144,7 @@ describe("ConnectAppCompletionCapturer", () => {
       expect(capturer.getCompletionCapture()).toEqual({
         deviceMetadata: undefined,
         derivation: "0xsecond",
+        currentApp: undefined,
       });
     });
   });
