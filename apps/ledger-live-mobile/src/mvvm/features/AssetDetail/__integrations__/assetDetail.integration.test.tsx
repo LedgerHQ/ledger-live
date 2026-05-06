@@ -41,15 +41,28 @@ function withBtcAccounts(count: number) {
 }
 
 describe("AssetDetail screen layout", () => {
-  it("renders all section placeholders and BalanceGraph", () => {
+  it("renders all sections and BalanceGraph", () => {
     render(<AssetDetailTestNavigator />);
 
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.screen)).toBeVisible();
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.balanceGraph)).toBeVisible();
-    expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.balanceDetails)).toBeVisible();
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.marketStats)).toBeVisible();
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.transactions)).toBeVisible();
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.ctas)).toBeVisible();
+  });
+
+  it("hides balance details when there are no accounts", () => {
+    render(<AssetDetailTestNavigator />);
+    expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.balanceDetails)).toBeNull();
+  });
+
+  it("renders balance details with transfer button when accounts exist", () => {
+    render(<AssetDetailTestNavigator />, withBtcAccounts(2));
+    expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.balanceDetails)).toBeVisible();
+    expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.totalBalance)).toBeVisible();
+    expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.transferButton)).toBeVisible();
+    expect(screen.getByText("Total balance")).toBeVisible();
+    expect(screen.getByText("Transfer")).toBeVisible();
   });
 
   it("renders the market price section with title and chart placeholder", () => {

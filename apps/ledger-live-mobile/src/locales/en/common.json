@@ -8684,6 +8684,17 @@
       "minutesAgo": "{{count}}min ago",
       "justNow": "just now",
       "error": "Unable to load price performance"
+    },
+    "balanceDetails": {
+      "totalBalance": "Total balance",
+      "transfer": "Transfer",
+      "availableBalance": "Available balance",
+      "earnDeposit": "Earn deposit",
+      "earnBanner": "Earn up to {{apy}}% {{type}}",
+      "earnBannerGeneric": "Earn with this asset",
+      "earnBannerSubtitle": "Hold and earn with this asset",
+      "earnBannerAction": "Go to Earn",
+      "availableBalanceTooltip": "Funds available for immediate use, excluding staked or delegated amounts."
     }
   },
   "assetSelection": {
