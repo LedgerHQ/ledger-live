@@ -1,48 +1,45 @@
-import React, { memo, useCallback } from "react";
+import React, { memo } from "react";
 import {
   Box,
-  ListItem,
-  ListItemContent,
-  ListItemDescription,
-  ListItemLeading,
-  ListItemTitle,
-  ListItemTrailing,
+  Card,
+  CardContent,
+  CardContentDescription,
+  CardContentTitle,
+  CardHeader,
+  CardLeading,
+  CardTrailing,
 } from "@ledgerhq/lumen-ui-rnative";
-import type { Account } from "@ledgerhq/types-live";
 import CurrencyIcon from "~/components/CurrencyIcon";
 import { useFormattedAccountBalance } from "LLM/features/Send/screens/Recipient/hooks/useFormattedAccountBalance";
 import type { AddressAccountData } from "../useAddressesViewModel";
 
 type Props = Readonly<{
   data: AddressAccountData;
-  onPress: (account: Account) => void;
 }>;
 
-export const AddressAccountItem = memo(function AddressAccountItem({ data, onPress }: Props) {
+export const AddressAccountItem = memo(function AddressAccountItem({ data }: Props) {
   const { account, name, truncatedAddress } = data;
   const { formattedBalance, formattedCounterValue } = useFormattedAccountBalance(account);
 
-  const handlePress = useCallback(() => onPress(account), [account, onPress]);
-
   return (
-    <ListItem onPress={handlePress} testID={`asset-detail-address-item-${account.id}`}>
-      <ListItemLeading>
-        <ListItemContent>
-          <ListItemTitle numberOfLines={1}>{name}</ListItemTitle>
-          <Box lx={{ flexDirection: "row", alignItems: "center", gap: "s4" }}>
-            <ListItemDescription numberOfLines={1} ellipsizeMode="middle">
-              {truncatedAddress}
-            </ListItemDescription>
-            <CurrencyIcon currency={account.currency} size={16} squared />
-          </Box>
-        </ListItemContent>
-      </ListItemLeading>
-      <ListItemTrailing>
-        <ListItemContent>
-          <ListItemTitle>{formattedCounterValue}</ListItemTitle>
-          <ListItemDescription>{formattedBalance}</ListItemDescription>
-        </ListItemContent>
-      </ListItemTrailing>
-    </ListItem>
+    <Card type="info" testID={`asset-detail-address-item-${account.id}`}>
+      <CardHeader>
+        <CardLeading>
+          <CardContent>
+            <CardContentTitle>{name}</CardContentTitle>
+            <Box lx={{ flexDirection: "row", alignItems: "center", gap: "s4" }}>
+              <CardContentDescription>{truncatedAddress}</CardContentDescription>
+              <CurrencyIcon currency={account.currency} size={16} squared />
+            </Box>
+          </CardContent>
+        </CardLeading>
+        <CardTrailing>
+          <CardContent>
+            <CardContentTitle>{formattedCounterValue}</CardContentTitle>
+            <CardContentDescription>{formattedBalance}</CardContentDescription>
+          </CardContent>
+        </CardTrailing>
+      </CardHeader>
+    </Card>
   );
 });
