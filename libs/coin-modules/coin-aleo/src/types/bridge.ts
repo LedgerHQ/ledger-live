@@ -76,6 +76,9 @@ export interface AleoResources {
   transparentBalance: BigNumber;
   provableApi: ProvableApi | null;
   privateBalance: BigNumber | null;
+  /**
+   * List of unspent private records, sorted by microcredits in descending order.
+   */
   unspentPrivateRecords: AleoUnspentRecord[] | null;
   lastPrivateSyncDate: Date | null;
 }

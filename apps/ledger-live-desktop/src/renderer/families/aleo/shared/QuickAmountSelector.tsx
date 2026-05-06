@@ -112,9 +112,9 @@ const QuickAmountSelector = ({ account, transaction, updateTransaction, onSelect
 
   const sortedRecords: AleoUnspentRecord[] = useMemo(
     () =>
-      [...(account.aleoResources?.unspentPrivateRecords ?? [])]
-        .filter(r => new BigNumber(r.microcredits).isGreaterThan(0))
-        .sort((a, b) => new BigNumber(b.microcredits).comparedTo(a.microcredits)),
+      [...(account.aleoResources?.unspentPrivateRecords ?? [])].filter(r =>
+        new BigNumber(r.microcredits).isGreaterThan(0),
+      ),
     [account.aleoResources?.unspentPrivateRecords],
   );
 

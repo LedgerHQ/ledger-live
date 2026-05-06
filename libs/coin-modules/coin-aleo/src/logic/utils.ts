@@ -625,6 +625,9 @@ export function extractViewKey(account: AleoAccount): string {
 /**
  * Selects the minimum set of private records needed to cover `targetAmount` using a greedy largest-first strategy.
  *
+ * **Precondition**: `unspentRecords` must be sorted by value descending.
+ * This function runs very often during transaction construction, so we avoid the overhead of sorting by requiring the caller to pass in sorted records.
+ *
  * - If `targetAmount` is `null`, returns the top `MAX_PRIVATE_RECORDS_PER_TRANSACTION` records by value (useAllAmount mode).
  * - If `targetAmount` is provided and positive:
  *   1. Prefer the **smallest single record** that alone covers the target (fewest records, least overshoot).
@@ -643,8 +646,7 @@ export function selectPrivateRecordsForAmount({
 }): AleoUnspentRecord[] {
   const rankedRecords = unspentRecords
     .map(record => ({ record, value: new BigNumber(record.microcredits) }))
-    .filter(({ value }) => value.isGreaterThan(0))
-    .sort((a, b) => b.value.comparedTo(a.value));
+    .filter(({ value }) => value.isGreaterThan(0));
 
   if (rankedRecords.length === 0) {
     return [];

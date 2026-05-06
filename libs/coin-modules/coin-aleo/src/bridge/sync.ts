@@ -309,7 +309,12 @@ export async function performPrivateSync(
     ...(signal && { signal }),
   });
   const privateBalance = privateBalanceResult.balance;
-  const unspentPrivateRecords: AleoUnspentRecord[] = privateBalanceResult.unspentRecords;
+  const unspentPrivateRecords: AleoUnspentRecord[] = privateBalanceResult.unspentRecords
+    .slice()
+    .sort((a, b) => {
+      const diff = BigInt(b.microcredits) - BigInt(a.microcredits);
+      return diff > 0n ? 1 : diff < 0n ? -1 : 0;
+    });
 
   // merge old and new private operations — same incremental pattern as public ops;
   // deduplication is by operation id (encodeOperationId(accountId, txHash, type))

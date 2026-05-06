@@ -939,6 +939,44 @@ describe("sync.ts", () => {
       );
     });
 
+    it("should store unspentPrivateRecords sorted DESC by microcredits", async () => {
+      mockAccessProvableApi.mockResolvedValueOnce(configuredProvableApi);
+
+      const makeUnspentRecord = (microcredits: string, tag: string) => ({
+        ...getMockedRecord({ tag }),
+        microcredits,
+        decryptedData: { owner: "", data: {}, nonce: "", version: 0 as const },
+      });
+
+      const lowRecord = makeUnspentRecord("100000", "tag-low");
+      const midRecord = makeUnspentRecord("500000", "tag-mid");
+      const highRecord = makeUnspentRecord("900000", "tag-high");
+
+      mockGetPrivateBalance.mockResolvedValueOnce({
+        balance: new BigNumber(1500000),
+        unspentRecords: [lowRecord, highRecord, midRecord],
+      });
+
+      const result = await performPrivateSync(
+        {
+          index: mockAccount.index,
+          derivationPath: mockAccount.freshAddressPath,
+          address: mockAccount.freshAddress,
+          currency: mockCurrency,
+          derivationMode: mockDerivationMode,
+          initialAccount: mockInitialAccount,
+        },
+        mockSyncConfig,
+        [],
+      );
+
+      expect(result?.aleoResources?.unspentPrivateRecords).toEqual([
+        expect.objectContaining({ microcredits: highRecord.microcredits }),
+        expect.objectContaining({ microcredits: midRecord.microcredits }),
+        expect.objectContaining({ microcredits: lowRecord.microcredits }),
+      ]);
+    });
+
     it("should filter unspent records whose tags appear in consumedRecordTags before passing to getPrivateBalance", async () => {
       mockAccessProvableApi.mockResolvedValueOnce(configuredProvableApi);
       const consumedTag = "consumed-record-tag";
