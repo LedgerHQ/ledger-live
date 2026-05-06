@@ -1,3 +1,5 @@
+// TODO: LIVE-30321 - Until app-concordium 5.6.0 is released, the test is skipped as it requires a specific app version
+// with the Concordium testnet support.
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { runSendTest } from "./send";
 
