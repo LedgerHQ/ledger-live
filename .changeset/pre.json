@@ -172,6 +172,7 @@
     "@ledgerhq/pnpm-utils": "1.0.1"
   },
   "changesets": [
+    "purple-lions-rest",
     "sweet-countries-grow"
   ]
 }

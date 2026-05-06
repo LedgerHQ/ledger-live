@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 4.2.2-hotfix.1
+
+### Patch Changes
+
+- [#17102](https://github.com/LedgerHQ/ledger-live/pull/17102) [`7228d3a`](https://github.com/LedgerHQ/ledger-live/commit/7228d3a83254c4cde08d046557d6c2adf1ea53cd) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - LWD 4.2.2 release notes
+
 ## 4.2.2-hotfix.0
 
 ### Patch Changes
