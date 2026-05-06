@@ -19,7 +19,7 @@ import { Account } from "./enum/Account";
 import { Currency } from "./enum/Currency";
 import expect from "expect";
 import { sendBTC, sendBTCBasedCoin } from "./families/bitcoin";
-import { sendEVM } from "./families/evm";
+import { sendEVM, approveToken, signTypedMessage } from "./families/evm";
 import { sendPolkadot } from "./families/polkadot";
 import { sendAlgorand } from "./families/algorand";
 import { sendTron } from "./families/tron";
@@ -1144,3 +1144,5 @@ export const shareViewKey = withDeviceController(({ getButtonsController }) => a
     await buttons.both();
   }
 });
+
+export { approveToken, signTypedMessage };
