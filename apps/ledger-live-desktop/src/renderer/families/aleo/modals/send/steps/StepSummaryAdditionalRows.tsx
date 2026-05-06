@@ -36,10 +36,9 @@ const StepSummaryAdditionalRows: NonNullable<AleoFamily["StepSummaryAdditionalRo
 
   const mainAccount = getMainAccount(account, parentAccount);
   const currencyConfig = getAleoCurrencyConfig(mainAccount.currency);
-  const isManualPickingStrategy = currencyConfig?.recordPickingStrategy === "manual";
-
+  const isAutoPickingStrategy = currencyConfig?.recordPickingStrategy === "auto";
   if (
-    isManualPickingStrategy ||
+    !isAutoPickingStrategy ||
     !isAleoTransaction(transaction) ||
     isPublicTransaction(transaction) ||
     !transaction.properties
