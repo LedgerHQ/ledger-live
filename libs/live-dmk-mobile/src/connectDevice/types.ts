@@ -158,9 +158,47 @@ export type DiscoveryError =
       error?: unknown;
     };
 
-export type DeviceDiscoveryStartArgs = {
-  ignoreTransportIdentifiers?: TransportIdentifier[];
-};
+export enum UIStateType {
+  NoKnownDevice = "no-known-device",
+  Discovering = "discovering",
+  DiscoveryError = "discovery-error",
+  ManyDevicesAvailable = "many-devices-available",
+  WaitingForSelectedDevice = "waiting-for-selected-device",
+  Connecting = "connecting",
+  ConnectionError = "connection-error",
+  Connected = "connected",
+}
+
+export type ConnectDeviceUIState =
+  | {
+      type: UIStateType.NoKnownDevice;
+    }
+  | {
+      type: UIStateType.Discovering;
+      devices: Array<DisplayedDevice>;
+    }
+  | {
+      type: UIStateType.ManyDevicesAvailable;
+      devices: Array<DisplayedDevice>;
+    }
+  | {
+      type: UIStateType.WaitingForSelectedDevice;
+      device: DisplayedDevice;
+    }
+  | {
+      type: UIStateType.DiscoveryError;
+      error: DiscoveryError;
+    }
+  | {
+      type: UIStateType.Connecting;
+    }
+  | {
+      type: UIStateType.ConnectionError;
+      error: ConnectionError;
+    }
+  | {
+      type: UIStateType.Connected;
+    };
 
 export interface DeviceDiscoveryService {
   start(args?: DeviceDiscoveryStartArgs): void;
