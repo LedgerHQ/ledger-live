@@ -1,7 +1,6 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import { getSwapAPIBaseURL, getSwapUserIP } from "@ledgerhq/live-common/exchange/swap/index";
-import network from "@ledgerhq/live-network";
 import { walletCliDebug } from "../../shared/log";
 import { mapSwapStatusLine } from "./status-shared";
 import type { SwapStatus } from "@ledgerhq/live-common/exchange/swap/types";
@@ -10,27 +9,30 @@ import { createCommandOutput } from "../../output";
 
 type StatusFlags = {
   "swap-id": string;
-  provider?: string;
+  provider: string;
 };
 
 async function fetchSwapStatus(flags: StatusFlags): Promise<SwapStatus[]> {
   const baseURL = getSwapAPIBaseURL();
-  const response = await network({
+  const response = await fetch(`${baseURL}/swap/status`, {
     method: "POST",
-    url: `${baseURL}/swap/status`,
     headers: {
       "content-type": "application/json",
       Accept: "application/json",
       ...(getSwapUserIP() ?? {}),
     },
-    data: [
+    body: JSON.stringify([
       {
         provider: flags.provider,
         swapId: flags["swap-id"],
       },
-    ],
+    ]),
   });
-  return response.data as unknown as SwapStatus[];
+  if (!response.ok) {
+    throw new Error(`Failed to fetch swap status (HTTP ${response.status})`);
+  }
+
+  return await response.json();
 }
 
 export default defineCommand({
@@ -40,7 +42,7 @@ export default defineCommand({
     "swap-id": option(z.string().min(1, "Swap ID is required"), {
       description: "Swap identifier returned by the swap flow",
     }),
-    provider: option(z.string().min(1), {
+    provider: option(z.string().min(1, "Provider is required"), {
       description: "Partner identifier",
     }),
     output: outputOption,
@@ -48,7 +50,7 @@ export default defineCommand({
   handler: async ({ flags }) => {
     const output = resolveOutputFormat(flags.output);
     walletCliDebug(
-      `swap status: swapId=${flags["swap-id"]} provider=${flags.provider ?? "auto"} output=${output}`,
+      `swap status: swapId=${flags["swap-id"]} provider=${flags.provider} output=${output}`,
     );
     const out = createCommandOutput(output, { command: "swap status", network: "swap" });
 

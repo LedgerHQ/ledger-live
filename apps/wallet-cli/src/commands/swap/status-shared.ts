@@ -6,7 +6,6 @@ export type SwapStatusValue = "PENDING" | "FINISHED" | "REFUNDED" | "UNKNOWN";
 export type SwapStatusLine = {
   swapId: string;
   status: SwapStatusValue;
-  updatedAt: string;
 };
 
 function normalizeStatus(rawStatus?: string): SwapStatusValue {
@@ -30,9 +29,8 @@ export function mapSwapStatusLine(raw: SwapStatus, fallbackSwapId: string): Swap
     (typeof raw.swapId === "string" && raw.swapId.trim() !== "" ? raw.swapId : fallbackSwapId) ??
     fallbackSwapId;
   const status = normalizeStatus(raw.status);
-  const updatedAt = new Date().toISOString();
 
-  return { swapId, status, updatedAt };
+  return { swapId, status };
 }
 
 export function statusIndicator(status: SwapStatusValue): string {
@@ -49,8 +47,5 @@ export function statusIndicator(status: SwapStatusValue): string {
 }
 
 export function formatSwapStatusHuman(status: SwapStatusLine): string {
-  return [
-    `${statusIndicator(status.status)} ${colors.bold(status.status)} ${colors.dim(status.swapId)}`,
-    colors.dim(`  updatedAt:  ${status.updatedAt}`),
-  ].join("\n");
+  return `${statusIndicator(status.status)} ${colors.bold(status.status)} ${colors.dim(status.swapId)}`;
 }

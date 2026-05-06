@@ -3,6 +3,7 @@ import { MockServer } from "../helpers/mock-server";
 import { runCli } from "../helpers/cli-runner";
 
 const SWAP_ID = "swap-123";
+const PROVIDER = "test";
 
 describe("swap status", () => {
   const server = new MockServer([
@@ -17,9 +18,12 @@ describe("swap status", () => {
   afterAll(() => server.stop());
 
   it("human: success and shows normalized status", async () => {
-    const { stdout, stderr, exitCode } = await runCli(["swap", "status", "--swap-id", SWAP_ID], {
-      WALLET_CLI_MOCK_PORT: String(server.port),
-    });
+    const { stdout, stderr, exitCode } = await runCli(
+      ["swap", "status", "--swap-id", SWAP_ID, "--provider", PROVIDER],
+      {
+        WALLET_CLI_MOCK_PORT: String(server.port),
+      },
+    );
     expect(exitCode, stderr).toBe(0);
     expect(stdout).toContain("PENDING");
     expect(stdout).toContain(SWAP_ID);
@@ -27,15 +31,16 @@ describe("swap status", () => {
 
   it("json: success and core fields", async () => {
     const { stdout, stderr, exitCode } = await runCli(
-      ["swap", "status", "--swap-id", SWAP_ID, "--output", "json"],
-      { WALLET_CLI_MOCK_PORT: String(server.port) },
+      ["swap", "status", "--swap-id", SWAP_ID, "--provider", PROVIDER, "--output", "json"],
+      {
+        WALLET_CLI_MOCK_PORT: String(server.port),
+      },
     );
     expect(exitCode, stderr).toBe(0);
     expect(JSON.parse(stdout)).toEqual(
       expect.objectContaining({
         swapId: SWAP_ID,
         status: "PENDING",
-        updatedAt: expect.stringMatching(/^\d{4}-\d{2}-\d{2}T/),
       }),
     );
   });
