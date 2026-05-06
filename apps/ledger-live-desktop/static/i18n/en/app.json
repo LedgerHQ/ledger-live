@@ -8755,7 +8755,7 @@
     }
   },
   "history": {
-    "title": "Transaction History",
+    "title": "Transaction history",
     "pending": "Pending transaction",
     "pending_other": "Pending transactions",
     "columns": {
@@ -8776,7 +8776,7 @@
       "csv": "Export"
     },
     "exportDialog": {
-      "title": "Transaction History",
+      "title": "Transaction history",
       "description": "Choose the accounts to include in the export",
       "disclaimer": "Estimated values only. Countervalues are provided by Kaiko for information purposes. Do not use this data for tax, legal, or accounting purposes.",
       "accountsToInclude": "Accounts to include",
