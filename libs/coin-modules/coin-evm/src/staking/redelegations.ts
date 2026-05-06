@@ -105,6 +105,7 @@ async function fetchCosmosRestRedelegations(
   baseUrl: string,
   strategy: Extract<RedelegationStrategy, { type: "cosmos-rest" }>,
   evmAddress: string,
+  calldataAmountScale: bigint,
 ): Promise<StakingRedelegation[]> {
   const cosmosAddress = evmAddressToCosmos(evmAddress, strategy.hrp);
   const url = `${baseUrl.replace(/\/$/, "")}${strategy.endpoint.replace("{address}", cosmosAddress)}`;
@@ -127,10 +128,11 @@ async function fetchCosmosRestRedelegations(
       const completionDate = new Date(entry.redelegation_entry.completion_time);
       if (completionDate <= now) continue; // skip already-completed entries
 
-      // Amount is in usei (6 decimals). Convert to EVM units (18 decimals) to
-      // stay consistent with how delegation amounts are stored in stakingResources.
+      // Amount is returned in the chain's Cosmos REST base unit. Convert it using
+      // the per-currency staking config so redelegation amounts stay consistent
+      // with how delegation amounts are stored in stakingResources.
       const amountUsei = BigInt(entry.balance);
-      const amountWei = amountUsei * 1_000_000_000_000n;
+      const amountWei = amountUsei * calldataAmountScale;
 
       redelegations.push({
         validatorSrcAddress: validator_src_address,
@@ -164,7 +166,12 @@ export async function fetchRedelegations(
   switch (strategy.type) {
     case "cosmos-rest":
       if (!config.apiConfig?.baseUrl) return [];
-      return fetchCosmosRestRedelegations(config.apiConfig.baseUrl, strategy, evmAddress);
+      return fetchCosmosRestRedelegations(
+        config.apiConfig.baseUrl,
+        strategy,
+        evmAddress,
+        config.calldataAmountScale ?? 1n,
+      );
     // Future strategies (e.g. "native-rpc", "graphql", …) go here.
   }
 }
@@ -305,41 +312,76 @@ export async function buildRedelegationsFromOps(
   const unbondingMs = (config.unbondingPeriodDays ?? 21) * 24 * 60 * 60 * 1000;
   const iface = new ethers.Interface(abi);
   const now = new Date();
-  const redelegations: StakingRedelegation[] = [];
-
-  for (const op of operations) {
-    if (op.type !== "REDELEGATE") continue;
-    // Operation.date is always a Date object (not a raw string).
+  // const redelegations: StakingRedelegation[] = [];
+  const eligibleOperations = operations.filter(op => {
+    if (op.type !== "REDELEGATE") return false;
+    if (op.hasFailed) return false;
     const completionDate = new Date(op.date.getTime() + unbondingMs);
+    if (completionDate <= now) return false;
+    return true;
+  });
+  // for (const op of operations) {
+  //   if (op.type !== "REDELEGATE") continue;
+  //   // Operation.date is always a Date object (not a raw string).
+  //   const completionDate = new Date(op.date.getTime() + unbondingMs);
 
-    if (op.hasFailed) continue;
-    if (completionDate <= now) continue;
+  //   if (op.hasFailed) continue;
+  //   if (completionDate <= now) continue;
 
-    // Use cached calldata when available; otherwise fetch from the RPC node.
-    const extra = isRecord(op.extra) ? op.extra : undefined;
-    const cached = extra?.contractPayload;
-    let payload = typeof cached === "string" ? cached : undefined;
-    if (!payload) {
-      payload = await fetchTxDataFromRpc(currency, op.hash);
-    }
+  //   // Use cached calldata when available; otherwise fetch from the RPC node.
+  //   const extra = isRecord(op.extra) ? op.extra : undefined;
+  //   const cached = extra?.contractPayload;
+  //   let payload = typeof cached === "string" ? cached : undefined;
+  //   if (!payload) {
+  //     payload = await fetchTxDataFromRpc(currency, op.hash);
+  //   }
 
-    if (!payload) continue;
+  //   if (!payload) continue;
 
-    try {
-      const d = iface.decodeFunctionData(functionName, payload);
-      const [srcAddress, dstAddress, rawAmount] = d;
-      const amountBigInt = typeof rawAmount === "bigint" ? rawAmount : BigInt(String(rawAmount));
-      const scale = config.calldataAmountScale ?? 1n;
-      redelegations.push({
-        validatorSrcAddress: String(srcAddress),
-        validatorDstAddress: String(dstAddress),
-        amount: new BigNumber((amountBigInt * scale).toString()),
-        completionDate,
-      });
-    } catch {
-      // skip ops with malformed payload
-    }
-  }
+  //   try {
+  //     const d = iface.decodeFunctionData(functionName, payload);
+  //     const [srcAddress, dstAddress, rawAmount] = d;
+  //     const amountBigInt = typeof rawAmount === "bigint" ? rawAmount : BigInt(String(rawAmount));
+  //     const scale = config.calldataAmountScale ?? 1n;
+  //     redelegations.push({
+  //       validatorSrcAddress: String(srcAddress),
+  //       validatorDstAddress: String(dstAddress),
+  //       amount: new BigNumber((amountBigInt * scale).toString()),
+  //       completionDate,
+  //     });
+  //   } catch {
+  //     // skip ops with malformed payload
+  //   }
+  // }
 
-  return redelegations;
+  // return redelegations;
+  const redelegations = await Promise.all(
+    eligibleOperations.map(async op => {
+      const completionDate = new Date(op.date.getTime() + unbondingMs);
+      // Use cached calldata when available; otherwise fetch from the RPC node.
+      const extra = isRecord(op.extra) ? op.extra : undefined;
+      const cached = extra?.contractPayload;
+      const payload =
+        typeof cached === "string" ? cached : await fetchTxDataFromRpc(currency, op.hash);
+      if (!payload) return null;
+      try {
+        const d = iface.decodeFunctionData(functionName, payload);
+        const [srcAddress, dstAddress, rawAmount] = d;
+        const amountBigInt = typeof rawAmount === "bigint" ? rawAmount : BigInt(String(rawAmount));
+        const scale = config.calldataAmountScale ?? 1n;
+        return {
+          validatorSrcAddress: String(srcAddress),
+          validatorDstAddress: String(dstAddress),
+          amount: new BigNumber((amountBigInt * scale).toString()),
+          completionDate,
+        } satisfies StakingRedelegation;
+      } catch {
+        // skip ops with malformed payload
+        return null;
+      }
+    }),
+  );
+  return redelegations.filter(
+    (redelegation): redelegation is StakingRedelegation => redelegation !== null,
+  );
 }

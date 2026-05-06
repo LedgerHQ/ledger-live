@@ -4275,7 +4275,7 @@
               "bullet": [
                 "You keep ownership of delegated assets",
                 "Delegate using your Ledger device",
-                "Assets will be available after undelegation"
+                "Assets will be available {{numberOfDays}} days after undelegation"
               ],
               "warning": {
                 "description": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately."
