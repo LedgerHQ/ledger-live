@@ -1,7 +1,7 @@
 import { type Permission } from "react-native";
 import { State as BlePlxState } from "react-native-ble-plx";
 import { rnBleTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-ble";
-import { DiscoveryErrors, type DiscoveryError } from "../../types";
+import { DiscoveryErrorTypes, type DiscoveryError } from "../../types";
 
 type DiscoveryRetry = () => Promise<true | DiscoveryError>;
 
@@ -9,8 +9,8 @@ export const buildBluetoothPermissionPromptableError = (
   permissions: Permission[],
   retry: DiscoveryRetry,
 ): DiscoveryError => ({
-  type: DiscoveryErrors.BluetoothPermissionDeniedPromptable,
-  transportID: rnBleTransportIdentifier,
+  type: DiscoveryErrorTypes.BluetoothPermissionDeniedPromptable,
+  transportId: rnBleTransportIdentifier,
   permissions,
   resolution: {
     type: "prompt",
@@ -22,8 +22,8 @@ export const buildBluetoothPermissionManualSettingsError = (
   permissions: Permission[],
   retry: DiscoveryRetry,
 ): DiscoveryError => ({
-  type: DiscoveryErrors.BluetoothPermissionDeniedManualSettings,
-  transportID: rnBleTransportIdentifier,
+  type: DiscoveryErrorTypes.BluetoothPermissionDeniedManualSettings,
+  transportId: rnBleTransportIdentifier,
   permissions,
   resolution: {
     type: "manual-action",
@@ -32,8 +32,8 @@ export const buildBluetoothPermissionManualSettingsError = (
 });
 
 export const buildBluetoothDisabledPromptableError = (retry: DiscoveryRetry): DiscoveryError => ({
-  type: DiscoveryErrors.BluetoothDisabledPromptable,
-  transportID: rnBleTransportIdentifier,
+  type: DiscoveryErrorTypes.BluetoothDisabledPromptable,
+  transportId: rnBleTransportIdentifier,
   resolution: {
     type: "prompt",
     retry,
@@ -44,8 +44,8 @@ export const buildBluetoothDisabledManualActionError = (
   retry: DiscoveryRetry,
   error?: unknown,
 ): DiscoveryError => ({
-  type: DiscoveryErrors.BluetoothDisabledManualAction,
-  transportID: rnBleTransportIdentifier,
+  type: DiscoveryErrorTypes.BluetoothDisabledManualAction,
+  transportId: rnBleTransportIdentifier,
   error,
   resolution: {
     type: "manual-action",
@@ -59,8 +59,8 @@ export const buildBluetoothStateError = (
 ): DiscoveryError => {
   if (state === BlePlxState.Unauthorized) {
     return {
-      type: DiscoveryErrors.BluetoothPermissionUnauthorizedManualSettings,
-      transportID: rnBleTransportIdentifier,
+      type: DiscoveryErrorTypes.BluetoothPermissionUnauthorizedManualSettings,
+      transportId: rnBleTransportIdentifier,
       resolution: {
         type: "manual-action",
         retry,
@@ -70,15 +70,15 @@ export const buildBluetoothStateError = (
 
   if (state === BlePlxState.Unsupported) {
     return {
-      type: DiscoveryErrors.BluetoothUnsupported,
-      transportID: rnBleTransportIdentifier,
+      type: DiscoveryErrorTypes.BluetoothUnsupported,
+      transportId: rnBleTransportIdentifier,
       resolution: { type: "none" },
     };
   }
 
   return {
-    type: DiscoveryErrors.BluetoothStateUnknownCheckOnly,
-    transportID: rnBleTransportIdentifier,
+    type: DiscoveryErrorTypes.BluetoothStateUnknownCheckOnly,
+    transportId: rnBleTransportIdentifier,
     state,
     resolution: {
       type: "check-only",
@@ -91,8 +91,8 @@ export const buildLocationPermissionPromptableError = (
   permissions: Permission[],
   retry: DiscoveryRetry,
 ): DiscoveryError => ({
-  type: DiscoveryErrors.LocationPermissionDeniedPromptable,
-  transportID: rnBleTransportIdentifier,
+  type: DiscoveryErrorTypes.LocationPermissionDeniedPromptable,
+  transportId: rnBleTransportIdentifier,
   permission: permissions[0],
   resolution: {
     type: "prompt",
@@ -104,8 +104,8 @@ export const buildLocationPermissionManualSettingsError = (
   permissions: Permission[],
   retry: DiscoveryRetry,
 ): DiscoveryError => ({
-  type: DiscoveryErrors.LocationPermissionDeniedManualSettings,
-  transportID: rnBleTransportIdentifier,
+  type: DiscoveryErrorTypes.LocationPermissionDeniedManualSettings,
+  transportId: rnBleTransportIdentifier,
   permission: permissions[0],
   resolution: {
     type: "manual-action",
@@ -114,8 +114,8 @@ export const buildLocationPermissionManualSettingsError = (
 });
 
 export const buildLocationDisabledPromptableError = (retry: DiscoveryRetry): DiscoveryError => ({
-  type: DiscoveryErrors.LocationDisabledPromptable,
-  transportID: rnBleTransportIdentifier,
+  type: DiscoveryErrorTypes.LocationDisabledPromptable,
+  transportId: rnBleTransportIdentifier,
   resolution: {
     type: "prompt",
     retry,
@@ -126,8 +126,8 @@ export const buildLocationDisabledManualActionError = (
   retry: DiscoveryRetry,
   error?: unknown,
 ): DiscoveryError => ({
-  type: DiscoveryErrors.LocationDisabledManualAction,
-  transportID: rnBleTransportIdentifier,
+  type: DiscoveryErrorTypes.LocationDisabledManualAction,
+  transportId: rnBleTransportIdentifier,
   error,
   resolution: {
     type: "manual-action",
@@ -138,8 +138,8 @@ export const buildLocationDisabledManualActionError = (
 export const buildLocationServicePermissionMissingError = (
   retry: DiscoveryRetry,
 ): DiscoveryError => ({
-  type: DiscoveryErrors.LocationServicePermissionMissing,
-  transportID: rnBleTransportIdentifier,
+  type: DiscoveryErrorTypes.LocationServicePermissionMissing,
+  transportId: rnBleTransportIdentifier,
   resolution: {
     type: "check-only",
     retry,
@@ -150,8 +150,8 @@ export const buildUnknownDiscoveryError = (
   error: unknown,
   retry: DiscoveryRetry,
 ): DiscoveryError => ({
-  type: DiscoveryErrors.Unknown,
-  transportID: rnBleTransportIdentifier,
+  type: DiscoveryErrorTypes.Unknown,
+  transportId: rnBleTransportIdentifier,
   error,
   resolution: {
     type: "check-only",

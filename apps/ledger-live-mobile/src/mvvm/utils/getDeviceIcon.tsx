@@ -7,10 +7,10 @@ import { StyleProp, ViewStyle } from "react-native";
 
 type SymbolProps = { size?: IconSize; style?: StyleProp<ViewStyle> };
 
-export function getDeviceSymbol(
-  lastConnectedDevice: Device | undefined,
+export function getDeviceSymbolByModelId(
+  deviceModelId: DeviceModelId | undefined,
 ): ComponentType<SymbolProps> {
-  switch (lastConnectedDevice?.modelId) {
+  switch (deviceModelId) {
     case DeviceModelId.europa:
       return Flex;
     case DeviceModelId.apex:
@@ -20,6 +20,12 @@ export function getDeviceSymbol(
     default:
       return Nano;
   }
+}
+
+export function getDeviceSymbol(
+  lastConnectedDevice: Device | undefined,
+): ComponentType<SymbolProps> {
+  return getDeviceSymbolByModelId(lastConnectedDevice?.modelId);
 }
 
 export type IconComponent = NonNullable<React.ComponentProps<typeof IconButton>["icon"]>;
