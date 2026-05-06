@@ -12,18 +12,20 @@ import completeExchange from "@ledgerhq/live-common/exchange/platform/completeEx
 import type { CompleteExchangeRequestEvent } from "@ledgerhq/live-common/exchange/platform/types";
 import startExchange from "@ledgerhq/live-common/exchange/platform/startExchange";
 import { retrieveSwapPayload } from "@ledgerhq/live-common/exchange/swap/api/v5/actions";
-import { transactionStrategy } from "@ledgerhq/live-common/lib-es/exchange/swap/transactionStrategies";
-import type { Transaction } from "@ledgerhq/live-common/lib-es/coin-modules/transaction-types";
-import type { ExchangeRequestEvent } from "@ledgerhq/live-common/lib-es/hw/actions/startExchange";
-import type { Device } from "@ledgerhq/live-common/lib-es/hw/actions/types";
-import { getWalletCliDeviceModelId, WALLET_CLI_DMK_DEVICE_ID } from "../../device/register-dmk-transport";
+import { transactionStrategy } from "@ledgerhq/live-common/exchange/swap/transactionStrategies";
+import type { Transaction } from "@ledgerhq/live-common/coin-modules/transaction-types";
+import type { ExchangeRequestEvent } from "@ledgerhq/live-common/hw/actions/startExchange";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import {
+  getWalletCliDeviceModelId,
+  WALLET_CLI_DMK_DEVICE_ID,
+} from "../../device/register-dmk-transport";
 import { withLedgerManagerAppSession } from "../../session/exchange-device-session";
 import type {
   SwapPayloadRequestData,
   SwapPayloadResponse,
-} from "@ledgerhq/live-common/lib-es/exchange/swap/types";
+} from "@ledgerhq/live-common/exchange/swap/types";
 import { CommandOutput } from "../../output";
-import { DeviceModelId } from "@ledgerhq/types-devices";
 
 const EXCHANGE_SWAP: ExchangeTypes.Swap = 0x00;
 const RATE_FIXED: RateTypes = 0x00;

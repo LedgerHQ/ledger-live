@@ -24,7 +24,7 @@ import {
 } from "./commands/swap/quote-shared";
 import type { Balance, Operation, DiscoveredAccount, SendEvent } from "./wallet/models";
 import type { SessionEntry } from "./session/session-store";
-import type { SwapPayloadResponse } from "@ledgerhq/live-common/lib-es/exchange/swap/types";
+import type { SwapPayloadResponse } from "@ledgerhq/live-common/exchange/swap/types";
 
 // ---------------------------------------------------------------------------
 // Context & interface

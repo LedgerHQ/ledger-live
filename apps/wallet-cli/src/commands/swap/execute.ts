@@ -3,10 +3,7 @@ import { BigNumber } from "bignumber.js";
 import { z } from "zod";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
-import {
-  findCryptoCurrencyById,
-  parseCurrencyUnit,
-} from "@ledgerhq/live-common/lib-es/currencies/index";
+import { findCryptoCurrencyById, parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { integrateNewAccountDescriptor } from "@ledgerhq/live-wallet/walletsync/modules/accounts";
 import { createCommandOutput } from "../../output";
 import {
