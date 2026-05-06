@@ -47,6 +47,7 @@ const Grid = ContentLayoutBuilder<Props>(({ items, styles: _styles = defaultStyl
           <LogContentCardWrapper
             key={item.props.metadata.id}
             id={item.props.metadata.id}
+            displayedPosition={item.props.metadata.displayedPosition}
             location={item.props.location}
           >
             <Flex style={{ width: cardWidth }}>

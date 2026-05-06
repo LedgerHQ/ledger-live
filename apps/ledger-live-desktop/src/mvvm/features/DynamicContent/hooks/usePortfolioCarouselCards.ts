@@ -14,6 +14,7 @@ import {
 import { trackingEnabledSelector } from "~/renderer/reducers/settings";
 import type { PortfolioContentCard } from "~/types/dynamicContent";
 import type { CarouselActions } from "../types";
+import { sanitizeExtras } from "~/renderer/hooks/useBraze";
 
 export type PortfolioCarouselVariant = "top" | "bottom";
 
@@ -55,11 +56,12 @@ export function usePortfolioCarouselCards(
         if (isTrackedUser) {
           braze.logCardDismissal(currentCard);
           track("contentcard_dismissed", {
-            ...currentCard.extras,
+            ...sanitizeExtras(currentCard.extras),
             card: slide.id,
             page: "Portfolio",
             type: "portfolio_carousel",
             location: slide.location,
+            displayedPosition: index,
           });
         } else if (currentCard.id) {
           dispatch(setDismissedContentCards({ id: currentCard.id, timestamp: Date.now() }));
@@ -74,7 +76,8 @@ export function usePortfolioCarouselCards(
     cardId => {
       if (!isTrackedUser) return;
 
-      const slide = portfolioCards.find(card => card.id === cardId);
+      const slideIndex = portfolioCards.findIndex(card => card.id === cardId);
+      const slide = slideIndex >= 0 ? portfolioCards[slideIndex] : undefined;
       if (!slide) return;
       const currentCard = getBrazeCard(cardId);
 
@@ -84,13 +87,14 @@ export function usePortfolioCarouselCards(
       currentCard.url = currentCard.id;
       braze.logContentCardClick(currentCard);
       track("contentcard_clicked", {
-        ...currentCard.extras,
+        ...sanitizeExtras(currentCard.extras),
         contentcard: slide.title,
         link: slide.path || slide.url,
         campaign: cardId,
         page: "Portfolio",
         type: "portfolio_carousel",
         location: slide.location,
+        displayedPosition: slideIndex,
       });
     },
     [portfolioCards, getBrazeCard, isTrackedUser],
