@@ -1,5 +1,12 @@
 # @ledgerhq/ledger-cal-service
 
+## 1.16.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-network@2.5.2-hotfix.0
+
 ## 1.16.0
 
 ### Minor Changes

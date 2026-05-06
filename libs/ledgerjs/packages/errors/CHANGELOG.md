@@ -1,5 +1,11 @@
 # @ledgerhq/errors
 
+## 6.34.1-hotfix.0
+
+### Patch Changes
+
+- [#17154](https://github.com/LedgerHQ/ledger-live/pull/17154) [`202cc42`](https://github.com/LedgerHQ/ledger-live/commit/202cc423b09662b5b25012b84124aecd4dc7245d) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - handle new bootloader CLA_NOT_SUPPORTED error code
+
 ## 6.34.0
 
 ### Minor Changes

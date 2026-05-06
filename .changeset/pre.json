@@ -172,5 +172,7 @@
     "@ledgerhq/create-release-hash": "1.0.0",
     "@ledgerhq/pnpm-utils": "1.0.1"
   },
-  "changesets": []
+  "changesets": [
+    "hot-scissors-dream"
+  ]
 }

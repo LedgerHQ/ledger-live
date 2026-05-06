@@ -1,5 +1,84 @@
 # @ledgerhq/live-common
 
+## 34.70.1-hotfix.0
+
+### Patch Changes
+
+- [#17154](https://github.com/LedgerHQ/ledger-live/pull/17154) [`202cc42`](https://github.com/LedgerHQ/ledger-live/commit/202cc423b09662b5b25012b84124aecd4dc7245d) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - handle new bootloader CLA_NOT_SUPPORTED error code
+
+- Updated dependencies [[`202cc42`](https://github.com/LedgerHQ/ledger-live/commit/202cc423b09662b5b25012b84124aecd4dc7245d)]:
+  - @ledgerhq/errors@6.34.1-hotfix.0
+  - @ledgerhq/coin-aleo@1.10.2-hotfix.0
+  - @ledgerhq/coin-algorand@1.5.2-hotfix.0
+  - @ledgerhq/coin-aptos@3.18.2-hotfix.0
+  - @ledgerhq/coin-bitcoin@0.39.1-hotfix.0
+  - @ledgerhq/coin-canton@0.23.2-hotfix.0
+  - @ledgerhq/coin-cardano@0.25.2-hotfix.0
+  - @ledgerhq/coin-casper@2.13.2-hotfix.0
+  - @ledgerhq/coin-celo@2.1.1-hotfix.0
+  - @ledgerhq/coin-concordium@0.9.2-hotfix.0
+  - @ledgerhq/coin-cosmos@0.32.1-hotfix.0
+  - @ledgerhq/coin-evm@3.5.1-hotfix.0
+  - @ledgerhq/coin-filecoin@1.24.2-hotfix.0
+  - @ledgerhq/coin-hedera@1.30.1-hotfix.0
+  - @ledgerhq/coin-icon@0.22.2-hotfix.0
+  - @ledgerhq/coin-internet_computer@1.21.2-hotfix.0
+  - @ledgerhq/coin-kaspa@1.13.2-hotfix.0
+  - @ledgerhq/coin-mina@1.14.2-hotfix.0
+  - @ledgerhq/coin-multiversx@0.16.2-hotfix.0
+  - @ledgerhq/coin-near@0.25.2-hotfix.0
+  - @ledgerhq/coin-polkadot@6.24.1-hotfix.0
+  - @ledgerhq/coin-solana@0.51.2-hotfix.0
+  - @ledgerhq/coin-stacks@0.21.2-hotfix.0
+  - @ledgerhq/coin-stellar@6.21.1-hotfix.0
+  - @ledgerhq/coin-sui@0.32.1-hotfix.0
+  - @ledgerhq/coin-tezos@7.0.1-hotfix.0
+  - @ledgerhq/coin-ton@0.28.2-hotfix.0
+  - @ledgerhq/coin-tron@6.0.1-hotfix.0
+  - @ledgerhq/coin-vechain@2.21.2-hotfix.0
+  - @ledgerhq/device-core@0.10.2-hotfix.0
+  - @ledgerhq/ledger-wallet-framework@1.3.2-hotfix.0
+  - @ledgerhq/cryptoassets@13.46.2-hotfix.0
+  - @ledgerhq/devices@8.14.2-hotfix.0
+  - @ledgerhq/hw-app-algorand@6.35.2-hotfix.0
+  - @ledgerhq/hw-app-aptos@6.38.2-hotfix.0
+  - @ledgerhq/hw-app-eth@7.8.2-hotfix.0
+  - @ledgerhq/hw-app-exchange@0.22.2-hotfix.0
+  - @ledgerhq/hw-app-hedera@1.6.2-hotfix.0
+  - @ledgerhq/hw-app-icon@1.7.2-hotfix.0
+  - @ledgerhq/hw-app-kaspa@1.7.2-hotfix.0
+  - @ledgerhq/hw-app-polkadot@6.38.2-hotfix.0
+  - @ledgerhq/hw-app-str@7.7.2-hotfix.0
+  - @ledgerhq/hw-app-sui@1.10.1-hotfix.0
+  - @ledgerhq/hw-app-vet@0.12.3-hotfix.0
+  - @ledgerhq/hw-transport@6.35.2-hotfix.0
+  - @ledgerhq/live-network@2.5.2-hotfix.0
+  - @ledgerhq/live-signer-aleo@0.16.2-hotfix.0
+  - @ledgerhq/live-signer-canton@0.9.3-hotfix.0
+  - @ledgerhq/live-signer-concordium@0.2.2-hotfix.0
+  - @ledgerhq/live-signer-cosmos@0.2.2-hotfix.0
+  - @ledgerhq/live-signer-evm@0.17.1-hotfix.0
+  - @ledgerhq/live-signer-hyperliquid@1.2.2-hotfix.0
+  - @ledgerhq/live-signer-solana@0.14.3-hotfix.0
+  - @ledgerhq/live-signer-celo@1.0.2-hotfix.0
+  - @ledgerhq/live-wallet@0.25.3-hotfix.0
+  - @ledgerhq/live-countervalues@0.18.3-hotfix.0
+  - @ledgerhq/live-countervalues-react@0.14.2-hotfix.0
+  - @ledgerhq/asset-aggregation@0.4.2-hotfix.0
+  - @ledgerhq/live-currency-format@0.8.1
+  - @ledgerhq/speculos-transport@0.9.1-hotfix.0
+  - @ledgerhq/hw-app-btc@10.22.1-hotfix.0
+  - @ledgerhq/hw-app-multiversx@6.30.2-hotfix.0
+  - @ledgerhq/hw-app-near@6.35.2-hotfix.0
+  - @ledgerhq/hw-app-tezos@6.36.2-hotfix.0
+  - @ledgerhq/hw-app-trx@6.36.1-hotfix.0
+  - @ledgerhq/hw-app-xrp@6.37.2-hotfix.0
+  - @ledgerhq/hw-bolos@6.36.2-hotfix.0
+  - @ledgerhq/hw-transport-mocker@6.34.2-hotfix.0
+  - @ledgerhq/live-dmk-shared@0.22.3-hotfix.0
+  - @ledgerhq/ledger-cal-service@1.16.1-hotfix.0
+  - @ledgerhq/ledger-trust-service@0.8.1-hotfix.0
+
 ## 34.70.0
 
 ### Minor Changes

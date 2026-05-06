@@ -1,5 +1,30 @@
 # @ledgerhq/live-cli
 
+## 24.40.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`202cc42`](https://github.com/LedgerHQ/ledger-live/commit/202cc423b09662b5b25012b84124aecd4dc7245d)]:
+  - @ledgerhq/errors@6.34.1-hotfix.0
+  - @ledgerhq/live-common@34.70.1-hotfix.0
+  - @ledgerhq/coin-bitcoin@0.39.1-hotfix.0
+  - @ledgerhq/device-core@0.10.2-hotfix.0
+  - @ledgerhq/ledger-key-ring-protocol@0.13.1-hotfix.0
+  - @ledgerhq/ledger-wallet-framework@1.3.2-hotfix.0
+  - @ledgerhq/cryptoassets@13.46.2-hotfix.0
+  - @ledgerhq/devices@8.14.2-hotfix.0
+  - @ledgerhq/hw-transport@6.35.2-hotfix.0
+  - @ledgerhq/hw-transport-http@6.36.2-hotfix.0
+  - @ledgerhq/hw-transport-node-hid@6.33.2-hotfix.0
+  - @ledgerhq/hw-transport-node-speculos@6.34.2-hotfix.0
+  - @ledgerhq/live-network@2.5.2-hotfix.0
+  - @ledgerhq/live-wallet@0.25.3-hotfix.0
+  - @ledgerhq/live-countervalues@0.18.3-hotfix.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.10.1-hotfix.0
+  - @ledgerhq/hw-app-btc@10.22.1-hotfix.0
+  - @ledgerhq/hw-transport-mocker@6.34.2-hotfix.0
+  - @ledgerhq/live-dmk-speculos@0.8.6-hotfix.0
+
 ## 24.40.0
 
 ### Minor Changes

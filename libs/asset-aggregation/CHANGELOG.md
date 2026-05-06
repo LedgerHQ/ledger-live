@@ -1,5 +1,12 @@
 # @ledgerhq/asset-aggregation
 
+## 0.4.2-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-countervalues@0.18.3-hotfix.0
+
 ## 0.4.1
 
 ### Patch Changes

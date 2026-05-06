@@ -1,5 +1,25 @@
 # web-tools
 
+## 0.39.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`202cc42`](https://github.com/LedgerHQ/ledger-live/commit/202cc423b09662b5b25012b84124aecd4dc7245d)]:
+  - @ledgerhq/errors@6.34.1-hotfix.0
+  - @ledgerhq/live-common@34.70.1-hotfix.0
+  - @ledgerhq/domain-service@1.8.2-hotfix.0
+  - @ledgerhq/ledger-key-ring-protocol@0.13.1-hotfix.0
+  - @ledgerhq/ledger-wallet-framework@1.3.2-hotfix.0
+  - @ledgerhq/cryptoassets@13.46.2-hotfix.0
+  - @ledgerhq/hw-app-eth@7.8.2-hotfix.0
+  - @ledgerhq/hw-transport@6.35.2-hotfix.0
+  - @ledgerhq/hw-transport-http@6.36.2-hotfix.0
+  - @ledgerhq/hw-transport-web-ble@6.34.2-hotfix.0
+  - @ledgerhq/hw-transport-webhid@6.35.2-hotfix.0
+  - @ledgerhq/hw-transport-webusb@6.34.2-hotfix.0
+  - @ledgerhq/live-wallet@0.25.3-hotfix.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.10.1-hotfix.0
+
 ## 0.39.0
 
 ### Minor Changes

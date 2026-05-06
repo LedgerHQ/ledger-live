@@ -1,5 +1,12 @@
 # @ledgerhq/live-dmk-speculos
 
+## 0.8.6-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.35.2-hotfix.0
+
 ## 0.8.5
 
 ### Patch Changes

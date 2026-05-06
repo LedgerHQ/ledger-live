@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-btc
 
+## 10.22.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.35.2-hotfix.0
+
 ## 10.22.0
 
 ### Minor Changes

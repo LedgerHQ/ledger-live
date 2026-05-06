@@ -1,5 +1,15 @@
 # @ledgerhq/hw-app-eth
 
+## 7.8.2-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`202cc42`](https://github.com/LedgerHQ/ledger-live/commit/202cc423b09662b5b25012b84124aecd4dc7245d)]:
+  - @ledgerhq/errors@6.34.1-hotfix.0
+  - @ledgerhq/domain-service@1.8.2-hotfix.0
+  - @ledgerhq/hw-transport@6.35.2-hotfix.0
+  - @ledgerhq/hw-transport-mocker@6.34.2-hotfix.0
+
 ## 7.8.1
 
 ### Patch Changes
