@@ -34,7 +34,9 @@ export default class AssetAccountsPage {
 
   @Step("Tap on asset quick action button ")
   async tapOnAssetQuickActionButton(action: "send" | "receive" | "buy" | "sell" | "swap") {
-    await tapByElement(this.assetQuickActionButton(action));
+    const quickActionButton = this.assetQuickActionButton(action);
+    await waitForElement(quickActionButton);
+    await tapByElement(quickActionButton);
   }
 
   @Step("Open asset page via deeplink")

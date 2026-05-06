@@ -313,10 +313,10 @@ for (const { fromAccount, toAccount, xrayTicket } of swapMax) {
         await app.swap.clickSwapMax();
 
         const amountToSend = await app.swap.getAmountToSend();
-        await app.swap.selectExchangeWithoutKyc();
+        const provider = await app.swap.selectExchangeWithoutKyc();
         const swap = new Swap(fromAccount, toAccount, amountToSend);
 
-        await app.swap.clickExchangeButton();
+        await app.swap.clickExchangeButton(provider.name);
         await app.speculos.verifyAmountsAndAcceptSwap(swap, amountToSend);
         await app.swapDrawer.verifyExchangeCompletedTextContent(swap.accountToCredit.currency.name);
       },
@@ -485,8 +485,8 @@ test.describe("Swap - Block blacklisted addresses", () => {
       const swap = new Swap(fromAccount, toAccount, minAmount);
 
       await performSwapUntilQuoteSelectionStep(app, swap, minAmount);
-      await app.swap.selectExchangeWithoutKyc();
-      await app.swap.clickExchangeButton();
+      const provider = await app.swap.selectExchangeWithoutKyc();
+      await app.swap.clickExchangeButton(provider.name);
 
       await app.swapDrawer.checkErrorMessage(
         `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${fromAccount.address}`,
