@@ -70,7 +70,7 @@ export const EarnV2Webview = ({
     safeAreaRight: insets.right.toString(),
     topNavigationHeightOffset: topBarHeight.toString(),
     bottomNavigationHeightOffset: bottomBarHeight.toString(),
-    uiVersion: earnUiVersion,
+    uiVersion: computedUiVersion,
     lw40enabled: isLwm40Enabled ? "true" : "false",
   };
 
