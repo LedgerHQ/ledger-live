@@ -8666,6 +8666,21 @@
       }
     },
     "shared": {
+      "quickAmountSelector": {
+        "strategies": {
+          "fast": "Fast",
+          "balanced": "Balanced",
+          "full": "Full"
+        },
+        "recordCount_one": "{{count}} record",
+        "recordCount_other": "{{count}} records",
+        "unavailable": "Unavailable",
+        "spendableBalance": "Max Spendable Balance:"
+      },
+      "infoBanner": {
+        "descPartOne": "Sender, amount and recipient hidden on-chain.",
+        "descPartTwo": "Up to {{max}} records per send."
+      },
       "sponsoredByProvable": "Sponsored by Provable",
       "balanceSelector": {
         "private": "Private balance",
