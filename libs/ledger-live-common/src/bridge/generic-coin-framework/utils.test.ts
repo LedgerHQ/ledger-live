@@ -180,6 +180,17 @@ describe("Alpaca utils", () => {
       ],
       [
         "coin",
+        "finalize_unstake",
+        {},
+        {
+          parentType: "FINALIZE_UNSTAKE",
+          subType: undefined,
+          parentValue: new BigNumber(50),
+          parentRecipient: "recipient-address",
+        },
+      ],
+      [
+        "coin",
         "send",
         {},
         {
@@ -240,6 +251,17 @@ describe("Alpaca utils", () => {
         {
           parentType: "FEES",
           subType: "UNDELEGATE",
+          parentValue: new BigNumber(12),
+          parentRecipient: "contract-address",
+        },
+      ],
+      [
+        "token",
+        "finalize_unstake",
+        { subAccountId: "sub-account-id" },
+        {
+          parentType: "FEES",
+          subType: "FINALIZE_UNSTAKE",
           parentValue: new BigNumber(12),
           parentRecipient: "contract-address",
         },
@@ -376,6 +398,7 @@ describe("Alpaca utils", () => {
         ["send-eip1559", "send-eip1559"],
         ["stake", "stake"],
         ["unstake", "unstake"],
+        ["finalize_unstake", "finalize_unstake"],
         ["delegate", "stake"],
         ["undelegate", "unstake"],
       ])(
@@ -399,6 +422,19 @@ describe("Alpaca utils", () => {
             { mode: "any" as unknown } as GenericTransaction,
           ),
         ).toThrow("Unsupported transaction mode: any");
+      });
+
+      it("treats finalize_unstake as a staking intent with forced amount=0 and useAllAmount=true", () => {
+        const intent = transactionToIntent(
+          { currency: { name: "tezos", units: [{}] } } as Account,
+          { mode: "finalize_unstake", amount: new BigNumber(100) } as GenericTransaction,
+        );
+        expect(intent).toMatchObject({
+          intentType: "staking",
+          type: "finalize_unstake",
+          amount: 0n,
+          useAllAmount: true,
+        });
       });
 
       it("supersedes the logic with a custom function", () => {

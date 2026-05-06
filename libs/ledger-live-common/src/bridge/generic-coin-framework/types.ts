@@ -50,6 +50,7 @@ export const GENERIC_TRANSACTION_MODE = [
   "stake",
   "undelegate",
   "unstake",
+  "finalize_unstake",
   "claimReward",
 ] as const;
 
