@@ -36,12 +36,12 @@ describe("swap status", () => {
         WALLET_CLI_MOCK_PORT: String(server.port),
       },
     );
-    expect(exitCode, stderr).toBe(0);
-    expect(JSON.parse(stdout)).toEqual(
-      expect.objectContaining({
-        swapId: SWAP_ID,
-        status: "PENDING",
-      }),
-    );
+    expect(exitCode, `stderr: ${stderr}`).toBe(0);
+
+    const data = JSON.parse(stdout);
+    expect(data.command).toBe("swap status");
+    expect(data.network).toBe("swap");
+    expect(data.swapId).toBe(SWAP_ID);
+    expect(data.status).toBe("PENDING");
   });
 });

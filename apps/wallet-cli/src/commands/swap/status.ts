@@ -1,10 +1,10 @@
 import { defineCommand, option } from "@bunli/core";
+import { getMultipleStatus } from "@ledgerhq/live-common/exchange/swap/getStatus";
 import { z } from "zod";
 import { walletCliDebug } from "../../shared/log";
-import { mapSwapStatusLine } from "./status-shared";
-import { outputOption, resolveOutputFormat } from "../inputs";
 import { createCommandOutput } from "../../output";
-import { getMultipleStatus } from "@ledgerhq/live-common/exchange/swap/getStatus";
+import { outputOption, resolveOutputFormat } from "../inputs";
+import { mapSwapStatusLine } from "./status-shared";
 
 export default defineCommand({
   name: "status",
