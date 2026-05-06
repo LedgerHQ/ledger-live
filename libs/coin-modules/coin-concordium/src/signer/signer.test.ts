@@ -8,7 +8,7 @@ import ConcordiumSigner from "./index";
 describe("signer", () => {
   describe("getAddress", () => {
     const deviceId = "test-device-id";
-    const path = "44'/919'/404'/404'/0'";
+    const path = "44'/1'/0'/0'/0'/0'";
 
     it("should return address and publicKey from signer", async () => {
       // GIVEN
@@ -83,7 +83,7 @@ describe("signer", () => {
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
       const getAddressFn = getAddress(signerContext);
-      const customPath = "44'/919'/404'/404'/5'";
+      const customPath = "44'/1'/0'/0'/0'/5'";
 
       // WHEN
       const result = await getAddressFn(deviceId, { path: customPath } as any);
@@ -96,7 +96,7 @@ describe("signer", () => {
 
   describe("getPublicKey", () => {
     const deviceId = "test-device-id";
-    const path = "44'/919'/404'/404'/0'";
+    const path = "44'/1'/0'/0'/0'/0'";
 
     it("should return public key from signer", async () => {
       // GIVEN
@@ -166,7 +166,7 @@ describe("signer", () => {
 
   describe("signCredentialDeployment", () => {
     const deviceId = "test-device-id";
-    const path = "44'/919'/404'/404'/0'";
+    const path = "44'/1'/0'/0'/0'/0'";
     // 128 hex chars = 64 bytes, Ed25519 signature
     const mockSignature = "bb".repeat(64);
 
@@ -267,7 +267,7 @@ describe("signer", () => {
       const mockSigner = createFixtureSigner();
       const signerContext = createFixtureSignerContext(mockSigner);
       const transaction = createMockTransaction();
-      const customPath = "44'/919'/404'/404'/5'";
+      const customPath = "44'/1'/0'/0'/0'/5'";
 
       // WHEN
       await signCredentialDeployment(signerContext, deviceId, transaction, customPath);

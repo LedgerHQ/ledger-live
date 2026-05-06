@@ -32,14 +32,14 @@ export function createFixtureConcordiumAccount(
 ): ConcordiumAccount {
   return {
     type: "Account",
-    id: "js:2:concordium:3a9gh23nNY3kH4k3ajaCqAbM8rcbWMor2VhEzQ6qkn2r17UU7w:",
+    id: "js:2:concordium_testnet:3a9gh23nNY3kH4k3ajaCqAbM8rcbWMor2VhEzQ6qkn2r17UU7w:",
     seedIdentifier: PUBLIC_KEY,
     xpub: PUBLIC_KEY,
     derivationMode: "",
     index: 0,
     currency: createFixtureCurrency(),
     freshAddress: VALID_ADDRESS,
-    freshAddressPath: "44'/919'/404'/404'/0'",
+    freshAddressPath: "44'/1'/0'/0'/0'/0'",
     balance: new BigNumber(10000000),
     spendableBalance: new BigNumber(9900000),
     blockHeight: 1000,

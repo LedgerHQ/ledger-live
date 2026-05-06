@@ -128,13 +128,13 @@ export class Account {
     Currency.CCD_TESTNET,
     "Concordium (Testnet) 1",
     0,
-    "44'/919'/404'/404'/0'",
+    "44'/1'/0'/0'/0'/0'",
   );
   static readonly CCD_TESTNET_2 = new Account(
     Currency.CCD_TESTNET,
     "Concordium (Testnet) 2",
     1,
-    "44'/919'/404'/404'/1'",
+    "44'/1'/0'/0'/0'/1'",
   );
 
   static readonly CELO_1 = new Account(Currency.CELO, "Celo 1", 0, "44'/52752'/0'/0/0");
