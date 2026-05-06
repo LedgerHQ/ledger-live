@@ -45,7 +45,7 @@ jobs:
         env:
           LANG: en_US.UTF-8
         run: |
-          pnpm i --filter="./libs/**" --filter="./features/**" --filter="./shared/**" --filter="./domain/**" --filter="live-mobile..." --filter="ledger-live-desktop..." --no-frozen-lockfile --unsafe-perm
+          pnpm i --filter="./libs/**" --filter="./features/**" --filter="./shared/**" --filter="./domain/**" --filter="./devtools/**" --filter="live-mobile..." --filter="ledger-live-desktop..." --no-frozen-lockfile --unsafe-perm
 
       - name: Build dependencies
         run: |
@@ -152,6 +152,29 @@ jobs:
             fi
           done
 
+      - name: Generate Unit test coverage for devtools
+        run: |
+          mkdir -p devtools/coverage
+          touch devtools/coverage/lcov.info
+          touch devtools/coverage/sonar-executionTests-report.xml
+
+          pnpm exec nx run-many -t coverage --projects=tag:scope:devtools --parallel=4 -- --runInBand=1
+
+          for package_json in $(find ./devtools -name "package.json" -not -path "*/node_modules/*" -not -path "*/coverage/*"); do
+            pkg=$(dirname "$package_json")
+            echo "Processing package at path: $pkg"
+
+            if [ -f "$package_json" ] && jq -e '.scripts.coverage' "$package_json" > /dev/null 2>&1; then
+              if [ -f "$pkg/coverage/lcov.info" ] && [ -f "$pkg/coverage/sonar-executionTests-report.xml" ]; then
+                echo "Appending coverage files for $pkg"
+                cat "$pkg/coverage/lcov.info" >> devtools/coverage/lcov.info
+                cat "$pkg/coverage/sonar-executionTests-report.xml" >> devtools/coverage/sonar-executionTests-report.xml
+              fi
+            else
+              echo "No coverage script found for $pkg, skipping."
+            fi
+          done
+
       - name: Setup Bun
         uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # v2.0.2
         with:
@@ -171,8 +194,8 @@ jobs:
 
       - name: Merge coverage files
         run: |
-          cat libs/coverage/lcov.info features/coverage/lcov.info shared/coverage/lcov.info domain/coverage/lcov.info apps/ledger-live-desktop/coverage/lcov.info apps/ledger-live-mobile/coverage/lcov.info apps/wallet-cli/coverage/lcov.info > ./lcov.info
-          cat libs/coverage/sonar-executionTests-report.xml features/coverage/sonar-executionTests-report.xml shared/coverage/sonar-executionTests-report.xml domain/coverage/sonar-executionTests-report.xml apps/ledger-live-desktop/coverage/sonar-executionTests-report.xml apps/ledger-live-mobile/coverage/sonar-executionTests-report.xml > ./sonar-executionTests-report.xml
+          cat libs/coverage/lcov.info features/coverage/lcov.info shared/coverage/lcov.info domain/coverage/lcov.info devtools/coverage/lcov.info apps/ledger-live-desktop/coverage/lcov.info apps/ledger-live-mobile/coverage/lcov.info apps/wallet-cli/coverage/lcov.info > ./lcov.info
+          cat libs/coverage/sonar-executionTests-report.xml features/coverage/sonar-executionTests-report.xml shared/coverage/sonar-executionTests-report.xml domain/coverage/sonar-executionTests-report.xml devtools/coverage/sonar-executionTests-report.xml apps/ledger-live-desktop/coverage/sonar-executionTests-report.xml apps/ledger-live-mobile/coverage/sonar-executionTests-report.xml > ./sonar-executionTests-report.xml
 
       - name: Sonarqube Scan
         uses: SonarSource/sonarqube-scan-action@fd88b7d7ccbaefd23d8f36f73b59db7a3d246602 # v6
