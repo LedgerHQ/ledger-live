@@ -886,27 +886,14 @@ jobs:
           status_10: ${{ needs.detox-tests-ios.outputs.status_10 }}
           status_11: ${{ needs.detox-tests-ios.outputs.status_11 }}
           status_12: ${{ needs.detox-tests-ios.outputs.status_12 }}
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - name: Build and upload iOS AI artifact
         if: ${{ !cancelled() && (github.event_name == 'schedule' || inputs.generate_ai_artifacts == true) }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/build-ai-artifact@support/e2e-mobile-ai-artifact-composite-action
         with:
+          platform: ios
+          artifacts: ios-test-artifacts
+          out: ios-ai
           ref: ${{ inputs.ref || github.sha }}
-          repository: LedgerHQ/ledger-live
-          persist-credentials: false
-          sparse-checkout: e2e/mobile/scripts
-          path: repo
-      - name: Build iOS AI artifact
-        if: ${{ !cancelled() && (github.event_name == 'schedule' || inputs.generate_ai_artifacts == true) }}
-        env:
-          ARTIFACTS: ios-test-artifacts
-          OUT: ios-ai
-        run: bash repo/e2e/mobile/scripts/build-ai-artifact.sh
-      - name: Upload iOS AI artifact
-        if: ${{ !cancelled() && (github.event_name == 'schedule' || inputs.generate_ai_artifacts == true) }}
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
-        with:
-          name: ios-ai-analysis
-          path: ios-ai
-          retention-days: 7
 
   allure-report-android:
     name: Allure Report Android
@@ -959,27 +946,14 @@ jobs:
           status_10: ${{ needs.detox-tests-android.outputs.status_10 }}
           status_11: ${{ needs.detox-tests-android.outputs.status_11 }}
           status_12: ${{ needs.detox-tests-android.outputs.status_12 }}
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - name: Build and upload Android AI artifact
         if: ${{ !cancelled() && (github.event_name == 'schedule' || inputs.generate_ai_artifacts == true) }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/build-ai-artifact@support/e2e-mobile-ai-artifact-composite-action
         with:
+          platform: android
+          artifacts: android-test-artifacts
+          out: android-ai
           ref: ${{ inputs.ref || github.sha }}
-          repository: LedgerHQ/ledger-live
-          persist-credentials: false
-          sparse-checkout: e2e/mobile/scripts
-          path: repo
-      - name: Build Android AI artifact
-        if: ${{ !cancelled() && (github.event_name == 'schedule' || inputs.generate_ai_artifacts == true) }}
-        env:
-          ARTIFACTS: android-test-artifacts
-          OUT: android-ai
-        run: bash repo/e2e/mobile/scripts/build-ai-artifact.sh
-      - name: Upload Android AI artifact
-        if: ${{ !cancelled() && (github.event_name == 'schedule' || inputs.generate_ai_artifacts == true) }}
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
-        with:
-          name: android-ai-analysis
-          path: android-ai
-          retention-days: 7
 
   upload-to-xray:
     name: "Test Mobile E2E > XRAY Report"

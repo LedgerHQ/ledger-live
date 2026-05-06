@@ -1,0 +1,40 @@
+name: "Build and Upload AI Artifact"
+description: "Builds a filtered AI analysis artifact from Allure results and uploads it with a date-stamped name"
+inputs:
+  platform:
+    description: "Platform name (ios or android)"
+    required: true
+  artifacts:
+    description: "Path to the test artifacts directory"
+    required: true
+  out:
+    description: "Output directory for the AI artifact"
+    required: true
+  ref:
+    description: "Git ref to checkout for the build script"
+    required: true
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      with:
+        ref: ${{ inputs.ref }}
+        repository: LedgerHQ/ledger-live
+        persist-credentials: false
+        sparse-checkout: e2e/mobile/scripts
+        path: repo
+    - name: Build AI artifact
+      id: build
+      env:
+        ARTIFACTS: ${{ inputs.artifacts }}
+        OUT: ${{ inputs.out }}
+      run: |
+        echo "date=$(date +%Y-%m-%d)" >> $GITHUB_OUTPUT
+        bash repo/e2e/mobile/scripts/build-ai-artifact.sh
+      shell: bash
+    - name: Upload AI artifact
+      uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+      with:
+        name: ${{ inputs.platform }}-ai-analysis-${{ steps.build.outputs.date }}
+        path: ${{ inputs.out }}
+        retention-days: 7
