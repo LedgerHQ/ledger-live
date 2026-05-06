@@ -111,7 +111,9 @@ const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeM
 
     dispatch(closeModal(modalName));
 
-    dispatch(openModal("MODAL_RECEIVE", { parentAccount, account, sourcePage: location.pathname }));
+    dispatch(
+      openModal("MODAL_RECEIVE", { parentAccount, account, sourcePage: "no funds stake modal" }),
+    );
   }, [parentAccount, account, dispatch, location]);
 
   const onClose = useCallback(() => {
