@@ -3,6 +3,10 @@ import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionS
 import useShouldDisplayRecoverBanner from "../useShouldDisplayRecoverBanner";
 import { withBannerEnabled, withRecoverState } from "../../../utils/recoverTestHelpers";
 
+jest.mock("../useAddRecoverPostOnboardingAction", () => ({
+  useAddRecoverPostOnboardingAction: jest.fn(),
+}));
+
 describe("useShouldDisplayRecoverBanner", () => {
   it("returns true when all conditions are met", async () => {
     const { result } = renderHook(() => useShouldDisplayRecoverBanner(), {

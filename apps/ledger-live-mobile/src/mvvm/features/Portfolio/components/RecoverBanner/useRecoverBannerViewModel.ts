@@ -1,11 +1,6 @@
-import { useEffect } from "react";
 import { GestureResponderEvent, Linking } from "react-native";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useCustomURI } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
-import { addPostOnboardingAction } from "@ledgerhq/live-common/postOnboarding/actions";
-import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-import { PostOnboardingActionId } from "@ledgerhq/types-live";
-import { useDispatch } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
 import {
   LedgerRecoverSubscriptionStateEnum,
@@ -13,18 +8,13 @@ import {
 } from "~/types/recoverSubscriptionState";
 import { track } from "~/analytics";
 import useRecoverBannerState from "../../hooks/useRecoverBannerState";
+import { useAddRecoverPostOnboardingAction } from "./useAddRecoverPostOnboardingAction";
 
 function useRecoverBannerViewModel() {
   const { t } = useTranslation();
   const recoverServices = useFeature("protectServicesMobile");
-  const dispatch = useDispatch();
   const bannerIsEnabled = recoverServices?.params?.bannerSubscriptionNotification;
   const protectID = recoverServices?.params?.protectId ?? "protect-prod";
-
-  const { actionsState } = usePostOnboardingHubState();
-  const actionStateRecover = actionsState.find(
-    action => action.id === PostOnboardingActionId.recover,
-  );
 
   const recoverResumeActivatePath = useCustomURI(
     recoverServices,
@@ -38,17 +28,7 @@ function useRecoverBannerViewModel() {
   const subscriptionState =
     data?.subscriptionState ?? LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION;
   const isInProgress = subscriptionState in LedgerRecoverSubscriptionStateInProgressEnum;
-
-  useEffect(() => {
-    if (
-      data?.subscriptionState !== undefined &&
-      (data.subscriptionState in LedgerRecoverSubscriptionStateInProgressEnum ||
-        data.subscriptionState === LedgerRecoverSubscriptionStateEnum.BACKUP_DONE) &&
-      actionStateRecover === undefined
-    ) {
-      dispatch(addPostOnboardingAction({ actionId: PostOnboardingActionId.recover }));
-    }
-  }, [data?.subscriptionState, actionStateRecover, dispatch]);
+  useAddRecoverPostOnboardingAction(data?.subscriptionState);
 
   const onRedirectRecover = async () => {
     track("banner_clicked", {
