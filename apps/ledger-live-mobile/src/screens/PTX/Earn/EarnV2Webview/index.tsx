@@ -3,7 +3,7 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { Flex } from "@ledgerhq/native-ui";
-import React, { ComponentProps, Fragment, useRef, useCallback } from "react";
+import React, { ComponentProps, Fragment, useRef, useCallback, useMemo } from "react";
 import { Animated, StyleSheet, View } from "react-native";
 import type WebView from "react-native-webview";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -12,6 +12,7 @@ import GenericErrorView from "~/components/GenericErrorView";
 import { useNavigationBarHeights } from "LLM/hooks/useNavigationBarHeights";
 import { EarnWebview } from "../EarnWebview";
 import { LiveAppBackground } from "LLM/components/LiveAppBackground";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/useWalletFeaturesConfig";
 
 type Props = {
   manifest?: LiveAppManifest;
@@ -36,8 +37,22 @@ export const EarnV2Webview = ({
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
   const insets = useSafeAreaInsets();
   const { topBarHeight, bottomBarHeight } = useNavigationBarHeights();
+  const { shouldDisplayEarnUpselling, shouldDisplayEarnSimulator } =
+    useWalletFeaturesConfig("mobile");
+
   const earnUiVersion = useFeature("ptxEarnUi")?.params?.value ?? "v1";
-  const isPtxUiMinV2 = isMinEarnUiVersion(earnUiVersion, "v2");
+
+  const computedUiVersion = useMemo(() => {
+    if (shouldDisplayEarnUpselling) {
+      return "v3";
+    }
+    if (shouldDisplayEarnSimulator) {
+      return "v4";
+    }
+    return earnUiVersion;
+  }, [shouldDisplayEarnUpselling, shouldDisplayEarnSimulator, earnUiVersion]);
+
+  const isPtxUiMinV2 = isMinEarnUiVersion(computedUiVersion, "v2");
 
   const scrollY = useRef(new Animated.Value(0)).current;
   const handleScroll = useCallback<NonNullable<ComponentProps<typeof WebView>["onScroll"]>>(
