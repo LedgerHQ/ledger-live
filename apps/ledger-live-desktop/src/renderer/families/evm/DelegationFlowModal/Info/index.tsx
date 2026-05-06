@@ -42,9 +42,7 @@ export default function EvmEarnRewardsInfoModal({ account }: Props) {
       bullets={[
         t("ethereum.evmStaking.delegation.flow.steps.starter.bullet.0"),
         t("ethereum.evmStaking.delegation.flow.steps.starter.bullet.1"),
-        t("ethereum.evmStaking.delegation.flow.steps.starter.bullet.2", {
-          numberOfDays: getUnbondingPeriodDays(currencyId),
-        }),
+        t("ethereum.evmStaking.delegation.flow.steps.starter.bullet.2"),
       ]}
       additional={
         showLockupWarning && (

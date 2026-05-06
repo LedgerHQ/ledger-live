@@ -173,9 +173,9 @@ describe("redelegations", () => {
       expect(result[0].validatorSrcAddress).toBe("seivaloper1src");
       expect(result[0].validatorDstAddress).toBe("seivaloper1dst");
       // 5_000_000 usei × 10^12 = 5 × 10^18 wei
-      expect(
-        result[0].amount.isEqualTo((BigInt(balanceUsei) * 1_000_000_000_000n).toString()),
-      ).toBe(true);
+      expect(result[0].amount.isEqualTo((BigInt(balanceUsei) * USEI_TO_EVM_SCALE).toString())).toBe(
+        true,
+      );
       expect(result[0].completionDate > new Date()).toBe(true);
     });
   });

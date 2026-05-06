@@ -172,7 +172,8 @@ export async function fetchRedelegations(
         evmAddress,
         config.calldataAmountScale ?? 1n,
       );
-    // Future strategies (e.g. "native-rpc", "graphql", …) go here.
+    default:
+      return [];
   }
 }
 
@@ -312,7 +313,6 @@ export async function buildRedelegationsFromOps(
   const unbondingMs = (config.unbondingPeriodDays ?? 21) * 24 * 60 * 60 * 1000;
   const iface = new ethers.Interface(abi);
   const now = new Date();
-  // const redelegations: StakingRedelegation[] = [];
   const eligibleOperations = operations.filter(op => {
     if (op.type !== "REDELEGATE") return false;
     if (op.hasFailed) return false;
@@ -320,41 +320,6 @@ export async function buildRedelegationsFromOps(
     if (completionDate <= now) return false;
     return true;
   });
-  // for (const op of operations) {
-  //   if (op.type !== "REDELEGATE") continue;
-  //   // Operation.date is always a Date object (not a raw string).
-  //   const completionDate = new Date(op.date.getTime() + unbondingMs);
-
-  //   if (op.hasFailed) continue;
-  //   if (completionDate <= now) continue;
-
-  //   // Use cached calldata when available; otherwise fetch from the RPC node.
-  //   const extra = isRecord(op.extra) ? op.extra : undefined;
-  //   const cached = extra?.contractPayload;
-  //   let payload = typeof cached === "string" ? cached : undefined;
-  //   if (!payload) {
-  //     payload = await fetchTxDataFromRpc(currency, op.hash);
-  //   }
-
-  //   if (!payload) continue;
-
-  //   try {
-  //     const d = iface.decodeFunctionData(functionName, payload);
-  //     const [srcAddress, dstAddress, rawAmount] = d;
-  //     const amountBigInt = typeof rawAmount === "bigint" ? rawAmount : BigInt(String(rawAmount));
-  //     const scale = config.calldataAmountScale ?? 1n;
-  //     redelegations.push({
-  //       validatorSrcAddress: String(srcAddress),
-  //       validatorDstAddress: String(dstAddress),
-  //       amount: new BigNumber((amountBigInt * scale).toString()),
-  //       completionDate,
-  //     });
-  //   } catch {
-  //     // skip ops with malformed payload
-  //   }
-  // }
-
-  // return redelegations;
   const redelegations = await Promise.all(
     eligibleOperations.map(async op => {
       const completionDate = new Date(op.date.getTime() + unbondingMs);
