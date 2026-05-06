@@ -42,14 +42,14 @@ describe("useBroadcast", () => {
   describe.each([
     [
       "when sending native asset",
-      { id: "main-account-id", type: "Account", currency: { id: "currency-id" } },
-      { id: "main-account-id", type: "Account", currency: { id: "currency-id" } },
+      { id: "main-account-id", type: "Account", currency: { id: "currency-id", family: "family" } },
+      { id: "main-account-id", type: "Account", currency: { id: "currency-id", family: "family" } },
       undefined,
     ],
     [
       "when sending token asset",
       { id: "sub-account-id", type: "TokenAccount", token: { id: "token-id" } },
-      { id: "main-account-id", type: "Account", currency: { id: "currency-id" } },
+      { id: "main-account-id", type: "Account", currency: { id: "currency-id", family: "family" } },
       "token-id",
     ],
   ])("%s", (_s, account, parentAccount, expectedTokenId) => {
@@ -78,6 +78,7 @@ describe("useBroadcast", () => {
         status: "success",
         currencyId: "currency-id",
         tokenId: expectedTokenId,
+        family: "family",
         appVersion: "llc/test",
         source: { type: "coin-module", name: "ledger-live-desktop" },
       });
@@ -113,6 +114,7 @@ describe("useBroadcast", () => {
         error: new Error("Broadcast failed"),
         currencyId: "currency-id",
         tokenId: expectedTokenId,
+        family: "family",
         appVersion: "llc/test",
         source: { type: "coin-module", name: "ledger-live-desktop" },
         txPayload: "signed-transaction",

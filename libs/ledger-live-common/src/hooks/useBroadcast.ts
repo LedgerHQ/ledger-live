@@ -17,6 +17,7 @@ type CommonLogEvent = {
   appVersion: string;
   source?: TransactionSource;
   currencyId: string;
+  family: string;
   tokenId?: string;
 };
 
@@ -63,6 +64,7 @@ export const useBroadcast = ({
         appVersion: getEnv("LEDGER_CLIENT_VERSION"),
         source: broadcastConfig?.source,
         currencyId: mainAccount.currency.id,
+        family: mainAccount.currency.family,
         ...(account.type === "TokenAccount" ? { tokenId: account.token.id } : {}),
       };
 

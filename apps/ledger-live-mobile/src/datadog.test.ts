@@ -15,10 +15,15 @@ describe("broadcastLogger", () => {
   it("calls DdLogs.info with correct parameters on success event", () => {
     const infoSpy = jest.spyOn(DdLogs, "info");
 
-    broadcastLogger({ status: "success", appVersion: "1.0.0", currencyId: "bitcoin" });
+    broadcastLogger({
+      status: "success",
+      appVersion: "1.0.0",
+      currencyId: "bitcoin",
+      family: "family",
+    });
 
     expect(infoSpy).toHaveBeenCalledWith("broadcast_success", {
-      event: { status: "success", appVersion: "1.0.0", currencyId: "bitcoin" },
+      event: { status: "success", appVersion: "1.0.0", currencyId: "bitcoin", family: "family" },
     });
   });
 
@@ -33,6 +38,7 @@ describe("broadcastLogger", () => {
       txPayload: "payload",
       appVersion: "1.0.0",
       currencyId: "ethereum",
+      family: "family",
     });
 
     expect(errorSpy).toHaveBeenCalledWith(
@@ -46,6 +52,7 @@ describe("broadcastLogger", () => {
           txPayload: "payload",
           appVersion: "1.0.0",
           currencyId: "ethereum",
+          family: "family",
         },
       },
     );
