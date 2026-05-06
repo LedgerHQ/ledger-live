@@ -118,7 +118,13 @@ export const PortfolioBannersSection = ({
       key="BannersSection"
       testID="portfolio-banners-section"
     >
-      <Box style={{ width: WIDTH }} lx={{ paddingTop: "s12" }}>
+      <Box
+        style={{ width: WIDTH }}
+        lx={{
+          paddingTop: "s12",
+          marginLeft: shouldShowOnboardingWidget ? "s12" : "s0",
+        }}
+      >
         {shouldShowOnboardingWidget && <OnboardingWidget />}
         {shouldDisplayRecover && <RecoverBanner paddingHorizontal="s0" />}
       </Box>

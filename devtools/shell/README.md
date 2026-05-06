@@ -1,42 +1,48 @@
 # @devtools/shell
 
-The shell package of the `devtools/` namespace. It exposes the root `<DevTools />` component that host applications embed to surface developer tooling.
+The shell is the navigation and layout layer of the `devtools/` namespace. It owns the `<DevTools />` entry point that host apps embed, the sidebar, the tool routing, and the tool registry. It has no tool logic of its own.
 
-## Goal
+## Responsibility
 
-Provide a single, composable entry point for Ledger Live developer tools that can be dropped into any platform-specific app (web, desktop, mobile) without the host needing to know what tools are inside.
+- Render the navigation shell (sidebar, overview, category grouping)
+- Route to the active tool
+- Expose `<DevTools />` as the single entry point for host apps
+- Maintain `tools.config.ts` — the registry that maps tool descriptors to their component entry points
+
+The shell is the only package in `devtools/` that imports from tool packages. It does so exclusively through `tools.config.ts`.
 
 ## What is implemented
 
-- **`<DevTools />`** — a React component exported from `src/index.ts`. Currently renders a placeholder `<div>` that acts as the mount point for the tools panel.
-- **Package wiring** — the package is registered in the pnpm workspace under `devtools/*` and consumed by `@ledgerhq/web-tools` as a workspace dependency.
-
-## Usage
-
-```tsx
-import { DevTools } from "@devtools/shell";
-
-export default function MyPage() {
-  return (
-    <main>
-      <DevTools />
-    </main>
-  );
-}
-```
+- **`<DevTools />`** — root component, web and native variants
+- **Sidebar** — category and tool navigation
+- **Overview** — landing screen listing all tools by category
+- **ToolShell** — wrapper rendered around the active tool
+- **CategoryCard / CategoryRow / ToolCard / ToolRow** — navigation primitives
+- **`useDevToolsNavigation`** — navigation state hook
+- **`useDevToolsStorage`** — persistence hook (web only)
+- **`useAccordion`** — accordion state for category groups
 
 ## Package structure
 
 ```
-devtools/shell/
+shell/
 ├── src/
-│   ├── index.ts        # public exports
-│   └── DevTools.tsx    # root component
+│   ├── DevTools/            # <DevTools /> entry point (web + native)
+│   ├── components/          # Shell UI components
+│   ├── hooks/               # Shell hooks
+│   ├── tools.config.ts      # Tool registry
+│   ├── categoryConfig.ts    # Category metadata
+│   ├── types.ts             # Tool & Category types
+│   ├── index.ts             # Web exports
+│   └── index.native.ts      # Native exports
+├── jest/                    # Test helpers and mocks
 ├── package.json
 └── tsconfig.json
 ```
 
 ## Notes
 
+- `"private": true` — not published to npm.
 - React `>=19` is a peer dependency — the host app provides it.
-- No build step: the package is source-first. `main` and `types` in `package.json` point directly at `src/index.ts`, so the consuming bundler picks up the TypeScript source without a compilation step.
+- No build step: `main` and `types` in `package.json` point directly at `src/index.ts`. The consuming bundler compiles the TypeScript source.
+
