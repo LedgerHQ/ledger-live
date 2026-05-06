@@ -5,6 +5,7 @@ import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { CLI } from "tests/utils/cliUtils";
 import { LedgerSyncCliHelper } from "tests/utils/ledgerSyncCliUtils";
+import { expectPulledDataToMatchAccountChanges } from "tests/utils/ledgerSyncPulledDataUtils";
 import { accountNames, accounts } from "tests/testdata/ledgerSyncTestData";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 
@@ -125,7 +126,7 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
         ...LedgerSyncCliHelper.ledgerSyncPullDataArgs,
       });
 
-      LedgerSyncCliHelper.expectPulledDataToMatchAccountChanges(pulledData, {
+      expectPulledDataToMatchAccountChanges(pulledData, {
         deletedAccountId: firstAccountId,
         remainingAccountId: secondAccountId,
         expectedRemainingAccountName: renamedSecondAccountName,

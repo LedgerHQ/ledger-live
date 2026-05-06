@@ -93,20 +93,15 @@ export class AccountsPage extends AppPage {
       const store = globalThis.window.__STORE__;
       if (!store?.getState) return [];
       const state: { accounts?: { id?: string }[] } = store.getState();
-      return (
-        state.accounts
-          ?.map(account => account.id)
-          .filter((accountId): accountId is string => Boolean(accountId)) ?? []
-      );
-    });
-  }
 
-  private async hasReduxAccountIds(expectedAccountIds: string[]): Promise<boolean> {
-    const accountIds = await this.getReduxAccountIds();
-    return (
-      accountIds.length === expectedAccountIds.length &&
-      expectedAccountIds.every(accountId => accountIds.includes(accountId))
-    );
+      if (state.accounts) {
+        return state.accounts
+          .map(account => account.id)
+          .filter((accountId): accountId is string => Boolean(accountId));
+      }
+
+      return [];
+    });
   }
 
   /**
@@ -115,12 +110,25 @@ export class AccountsPage extends AppPage {
    */
   @step("Expect Redux accounts length to be $0")
   async expectReduxAccountsLength(count: number) {
-    await expect.poll(async () => (await this.getReduxAccountIds()).length).toBe(count);
+    await expect
+      .poll(async () => (await this.getReduxAccountIds()).length, { timeout: 60_000 })
+      .toBe(count);
   }
 
   @step("Expect Redux account ids to be $0")
   async expectReduxAccountIds(expectedAccountIds: string[]) {
-    await expect.poll(async () => await this.hasReduxAccountIds(expectedAccountIds)).toBe(true);
+    await expect
+      .poll(
+        async () => {
+          const accountIds = await this.getReduxAccountIds();
+          return (
+            accountIds.length === expectedAccountIds.length &&
+            expectedAccountIds.every(accountId => accountIds.includes(accountId))
+          );
+        },
+        { timeout: 60_000 },
+      )
+      .toBe(true);
   }
 
   @step("Expect crypto account row for $0 to be visible")

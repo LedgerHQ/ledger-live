@@ -4,7 +4,7 @@ import { accountNames, accounts } from "tests/testdata/ledgerSyncTestData";
 import { expect, Page, Response } from "@playwright/test";
 import { Application } from "tests/page";
 import { getEnv } from "@ledgerhq/live-env";
-import invariant from "invariant";
+
 interface LedgerKeyRingProtocolArgs {
   pubKey: string;
   privateKey: string;
@@ -38,27 +38,6 @@ interface LedgerOutput {
   rootId?: string;
   walletSyncEncryptionKey?: string;
   applicationPath?: string;
-}
-
-interface LedgerSyncAccountData {
-  id?: string;
-  currencyId?: string;
-  index?: number;
-}
-
-interface LedgerSyncPulledData {
-  updateEvent?: {
-    data?: {
-      accounts?: LedgerSyncAccountData[];
-      accountNames?: Record<string, string>;
-    };
-  };
-}
-
-interface ExpectedSyncedAccountData {
-  deletedAccountId: string;
-  remainingAccountId: string;
-  expectedRemainingAccountName: string;
 }
 
 function isLedgerOutput(output: unknown): output is LedgerOutput {
@@ -139,16 +118,6 @@ export class LedgerSyncCliHelper {
     }
   }
 
-  static parseData(pulledData: string | void): LedgerSyncPulledData {
-    invariant(pulledData, "Ledger Sync: pulledData is undefined");
-    try {
-      const parsedData: LedgerSyncPulledData = JSON.parse(pulledData);
-      return parsedData;
-    } catch (error) {
-      throw new Error(`Failed to parse pulledData: ${error}`);
-    }
-  }
-
   static getCloudSyncResponse(page: Page): Promise<Response> {
     return page.waitForResponse(
       response =>
@@ -190,75 +159,10 @@ export class LedgerSyncCliHelper {
     });
   }
 
-  static async checkSynchronizationSuccess(page: Page, app: Application): Promise<Response> {
+  static async checkSynchronizationSuccess(page: Page, app: Application): Promise<void> {
     const cloudSyncResponse = LedgerSyncCliHelper.getCloudSyncResponse(page);
     await app.layout.waitForAccountsSyncToBeDone();
-    return cloudSyncResponse;
-  }
-
-  private static findSyncedAccount(
-    parsedData: LedgerSyncPulledData,
-    accountId: string,
-  ): LedgerSyncAccountData | undefined {
-    return parsedData.updateEvent?.data?.accounts?.find(account => account.id === accountId);
-  }
-
-  private static getSyncedAccountIds(parsedData: LedgerSyncPulledData): string[] {
-    return (
-      parsedData.updateEvent?.data?.accounts
-        ?.map(account => account.id)
-        .filter((accountId): accountId is string => Boolean(accountId)) ?? []
-    );
-  }
-
-  private static getSyncedAccountName(
-    parsedData: LedgerSyncPulledData,
-    accountId: string,
-  ): string | undefined {
-    return parsedData.updateEvent?.data?.accountNames?.[accountId];
-  }
-
-  private static isAccountDeleted(parsedData: LedgerSyncPulledData, accountId: string): boolean {
-    return !LedgerSyncCliHelper.findSyncedAccount(parsedData, accountId);
-  }
-
-  private static isAccountRenamedCorrectly(
-    parsedData: LedgerSyncPulledData,
-    accountId: string,
-    expectedName: string,
-  ): boolean {
-    return LedgerSyncCliHelper.getSyncedAccountName(parsedData, accountId) === expectedName;
-  }
-
-  static expectPulledDataToMatchAccountChanges(
-    pulledData: string | void,
-    {
-      deletedAccountId,
-      remainingAccountId,
-      expectedRemainingAccountName,
-    }: ExpectedSyncedAccountData,
-  ) {
-    const parsedData = LedgerSyncCliHelper.parseData(pulledData);
-
-    expect(
-      LedgerSyncCliHelper.getSyncedAccountIds(parsedData),
-      "Backend data should only contain the remaining account",
-    ).toEqual([remainingAccountId]);
-    expect(
-      LedgerSyncCliHelper.isAccountDeleted(parsedData, deletedAccountId),
-      "Deleted account should not be present in backend accounts",
-    ).toBe(true);
-    expect(
-      LedgerSyncCliHelper.getSyncedAccountName(parsedData, remainingAccountId),
-      "Backend account name should match the renamed account",
-    ).toBe(expectedRemainingAccountName);
-    expect(
-      LedgerSyncCliHelper.isAccountRenamedCorrectly(
-        parsedData,
-        remainingAccountId,
-        expectedRemainingAccountName,
-      ),
-      "Account should be renamed correctly",
-    ).toBe(true);
+    const response = await cloudSyncResponse;
+    await expect(response, "Cloud Sync response should complete").toBeDefined();
   }
 }

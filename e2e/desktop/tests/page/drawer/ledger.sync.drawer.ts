@@ -125,7 +125,7 @@ export class LedgerSyncDrawer extends Drawer {
     await expect(this.cliMember).toBeVisible();
   }
 
-  @step("Check if the CLI member was removed")
+  @step("Check if the CLI member is not visible")
   async expectCLIMemberRemoved() {
     await expect(this.cliMember).not.toBeVisible();
   }
