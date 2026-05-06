@@ -67,6 +67,11 @@ export class Layout extends Component {
     await expect(this.topbarSynchronizeButton).not.toHaveText("Synchronizing");
   }
 
+  @step("Wait for accounts sync to be finished")
+  async waitForSyncButtonToBeEnabled() {
+    await expect(this.topbarSynchronizeButton).not.toHaveAttribute("disabled");
+  }
+
   @step("Expect buy/sell sidebar to be selected")
   async verifyBuySellSideBarIsSelected() {
     await expect(this.drawerBuycryptoButton).toHaveAttribute("data-active", "true");

@@ -65,7 +65,7 @@ function EmptyStateAccount({ t, account, parentAccount, openModal }: Props) {
         width="400"
       />
       <Box mt={5} alignItems="center">
-        <Title>{t("account.emptyState.title")}</Title>
+        <Title data-testid={"no-assets-title"}>{t("account.emptyState.title")}</Title>
         <Description
           mt={3}
           style={{
