@@ -391,7 +391,6 @@ class HumanCommandOutput implements CommandOutput {
     swapId?: string;
     amountExpectedTo?: string;
     magnitudeAwareRate?: string;
-    dryRun: boolean;
   }): void {
     this.swapExecutePayloadResult(args);
     if (args.amountExpectedTo) {
@@ -401,9 +400,6 @@ class HumanCommandOutput implements CommandOutput {
     }
     if (args.operationHash) {
       writeStdout(`${colors.bold("Operation hash:")} ${args.operationHash}\n`);
-    }
-    if (args.dryRun) {
-      writeStdout(colors.dim("Dry run: transaction was not broadcast.\n"));
     }
   }
 }
@@ -610,7 +606,6 @@ class JsonCommandOutput implements CommandOutput {
     swapId?: string;
     amountExpectedTo?: string;
     magnitudeAwareRate?: string;
-    dryRun: boolean;
   }): void {
     this._writeNdjson(
       this._envelope({
@@ -622,7 +617,6 @@ class JsonCommandOutput implements CommandOutput {
         swapId: args.swapId,
         amountExpectedTo: args.amountExpectedTo,
         magnitudeAwareRate: args.magnitudeAwareRate,
-        dry_run: args.dryRun,
       }),
     );
   }

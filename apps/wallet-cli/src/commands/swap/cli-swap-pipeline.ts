@@ -194,7 +194,7 @@ async function awaitCompleteExchangeTransaction(
   );
   const obs = completeExchange({
     deviceId: WALLET_CLI_DMK_DEVICE_ID,
-    deviceModelId: undefined,
+    deviceModelId: await getWalletCliDeviceModelId(),
     provider: input.provider,
     binaryPayload: input.binaryPayload,
     signature: input.signature,
