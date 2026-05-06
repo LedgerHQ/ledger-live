@@ -37,7 +37,7 @@ export function MyWalletHelpScreen() {
   return (
     <>
       <ScrollView testID="my-wallet-help-screen">
-        <TrackScreen category="MyWallet" name="Help" />
+        <TrackScreen category="My Wallet" name="Help" />
         <Box lx={{ paddingHorizontal: "s16", paddingTop: "s8", gap: "s24" }}>
           <Box lx={{ gap: "s8" }}>
             <Subheader>
