@@ -1,5 +1,4 @@
 import { useMemo, type ReactNode } from "react";
-import type { DistributionItem } from "@ledgerhq/types-live";
 
 export type AssetDetailSectionItem = {
   id: string;
@@ -15,7 +14,7 @@ type AssetDetailSections = {
   sections: AssetDetailSectionItem[];
 };
 
-export function useAssetDetailSections(_distributionItem: DistributionItem): AssetDetailSections {
+export function useAssetDetailSections(): AssetDetailSections {
   return useMemo(
     () => ({
       topSections: [

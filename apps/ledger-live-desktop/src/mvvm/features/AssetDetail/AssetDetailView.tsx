@@ -15,7 +15,7 @@ export function AssetDetailView({ distributionItem }: Readonly<AssetDetailViewMo
     navigate(-1);
   }, [navigate]);
 
-  const { topSections, sections } = useAssetDetailSections(distributionItem);
+  const { topSections, sections } = useAssetDetailSections();
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-32">

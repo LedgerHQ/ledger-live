@@ -1,7 +1,7 @@
 import React, { useEffect, lazy, Suspense } from "react";
 import styled, { useTheme } from "styled-components";
 import { ipcRenderer } from "electron";
-import { Navigate, Route, Routes, useNavigate, useLocation } from "react-router";
+import { Navigate, Route, Routes, useNavigate, useLocation, useParams } from "react-router";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import TrackAppStart from "~/renderer/components/TrackAppStart";
 import { LiveApp } from "~/renderer/screens/platform";
@@ -156,6 +156,11 @@ const LetInternalSendCrashTest = () => {
   return null;
 };
 
+const RedirectMarketToAsset = () => {
+  const { currencyId } = useParams<{ currencyId: string }>();
+  return <Navigate to={`/asset/${currencyId ?? ""}`} replace />;
+};
+
 export const TopBannerContainer = styled.div`
   position: sticky;
   top: 0;
@@ -284,7 +289,12 @@ const MainAppContent = ({
           element={withSuspense(shouldDisplayAggregatedAssets ? AssetDetails : Asset)({})}
         />
         <Route path="/swap/*" element={withSuspense(Swap2)({})} />
-        <Route path="/market/:currencyId" element={withSuspense(MarketCoin)({})} />
+        <Route
+          path="/market/:currencyId"
+          element={
+            shouldDisplayAggregatedAssets ? <RedirectMarketToAsset /> : withSuspense(MarketCoin)({})
+          }
+        />
         <Route
           path="/market"
           element={withSuspense(shouldDisplayMarketBanner ? Market40 : Market)({})}
