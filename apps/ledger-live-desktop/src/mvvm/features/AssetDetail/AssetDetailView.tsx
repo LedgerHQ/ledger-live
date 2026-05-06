@@ -1,6 +1,7 @@
 import React, { useCallback } from "react";
 import { useNavigate } from "react-router";
-import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
+import { CryptoIcon } from "@ledgerhq/crypto-icons";
+import { getValidCryptoIconSize } from "~/renderer/utils/cryptoIconSize";
 import { AssetDetailSection } from "./components/AssetDetailSection";
 import { AssetHeader } from "./components/AssetHeader/AssetHeader";
 import { AddressListSection } from "./components/AddressList";
@@ -20,7 +21,13 @@ export function AssetDetailView({ distributionItem }: Readonly<AssetDetailViewMo
     <div className="flex min-h-0 flex-1 flex-col gap-32">
       <AssetHeader
         assetLabel={distributionItem.currency.name}
-        icon={<CryptoCurrencyIcon currency={distributionItem.currency} size={24} />}
+        icon={
+          <CryptoIcon
+            ledgerId={distributionItem.currency.id}
+            ticker={distributionItem.currency.ticker}
+            size={getValidCryptoIconSize(24)}
+          />
+        }
         onBack={onBack}
       />
 
