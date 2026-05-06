@@ -1,6 +1,5 @@
 import React from "react";
 import { Linking } from "react-native";
-import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import HorizontalCard from "../../contentCards/cards/horizontal";
 import { ContentBannerActionCard } from "../../contentCards/cards/contentBannerAction";
@@ -163,9 +162,6 @@ const Layout = ({ category, cards }: LayoutProps) => {
           }}
         />
       );
-      if (isTopWallet) {
-        return <Box lx={{ marginBottom: showLumenDots ? "s24" : "s32" }}>{carouselEl}</Box>;
-      }
       return carouselEl;
     }
 

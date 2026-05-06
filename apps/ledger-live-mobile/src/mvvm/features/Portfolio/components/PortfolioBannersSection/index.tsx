@@ -43,7 +43,7 @@ export const PortfolioBannersSection = ({
         key="BannersSection"
         testID="portfolio-banners-section"
       >
-        <LNSUpsellBanner location="wallet" mx={6} mb={6} mt={4} />
+        <LNSUpsellBanner location="wallet" mx={6} pt={4} />
       </SectionContainer>
     );
   }
@@ -58,7 +58,7 @@ export const PortfolioBannersSection = ({
         key="BannersSection"
         testID="portfolio-banners-section"
       >
-        <Box lx={{ marginTop: sectionMarginTop }}>
+        <Box lx={{ paddingTop: "s12" }}>
           <RecoverBanner />
 
           <ContentCardsLocation
@@ -84,7 +84,7 @@ export const PortfolioBannersSection = ({
         key="BannersSection"
         testID="portfolio-banners-section"
       >
-        <Box lx={{ marginTop: sectionMarginTop, gap: "s8", marginBottom: "s24" }}>
+        <Box lx={{ paddingTop: "s12", gap: "s8" }}>
           <FlatList
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -119,7 +119,7 @@ export const PortfolioBannersSection = ({
       key="BannersSection"
       testID="portfolio-banners-section"
     >
-      <Box style={{ width: WIDTH }} lx={{ marginTop: sectionMarginTop, marginBottom: "s24" }}>
+      <Box style={{ width: WIDTH }} lx={{ paddingTop: "s12" }}>
         {shouldShowOnboardingWidget && <OnboardingWidget />}
         {shouldDisplayRecover && <RecoverBanner paddingHorizontal="s0" />}
       </Box>

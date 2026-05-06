@@ -143,7 +143,7 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
     <>
 
       {!shouldDisplayQuickActionCtas && (
-        <Box my={24}>
+        <Box pt={24}>
           <PortfolioQuickActionsBar />
         </Box>
       )}
@@ -151,7 +151,7 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
       {!isWallet40Enabled && <PortfolioPerpsEntryPoint />}
 
       {shouldDisplayMarketBanner && __DEV__ && (
-        <Box my={24}>
+        <Box pb={24}>
           <MarketBannerFeature />
         </Box>
       )}
