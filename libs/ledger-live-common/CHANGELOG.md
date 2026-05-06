@@ -1,5 +1,57 @@
 # @ledgerhq/live-common
 
+## 34.71.0-next.1
+
+### Minor Changes
+
+- [#17188](https://github.com/LedgerHQ/ledger-live/pull/17188) [`e6dc658`](https://github.com/LedgerHQ/ledger-live/commit/e6dc658b83ebd2102e19a1fead021443457c05d9) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Switch Concordium derivation to canonical 6-segment path `m/44'/<coin>'/0'/0'/0'/<account>'` and split mainnet/testnet coin types (`919`/`1`, the BIP-44 generic testnet). Replaces the previous non-canonical `44'/919'/404'/404'/<account>'` override and aligns with the upstream SDK and device firmware.
+
+### Patch Changes
+
+- Updated dependencies [[`e6dc658`](https://github.com/LedgerHQ/ledger-live/commit/e6dc658b83ebd2102e19a1fead021443457c05d9)]:
+  - @ledgerhq/cryptoassets@13.47.0-next.1
+  - @ledgerhq/coin-concordium@0.10.0-next.1
+  - @ledgerhq/ledger-wallet-framework@1.4.0-next.1
+  - @ledgerhq/asset-aggregation@0.5.0-next.1
+  - @ledgerhq/coin-aleo@1.11.0-next.1
+  - @ledgerhq/coin-algorand@1.5.2-next.1
+  - @ledgerhq/coin-aptos@3.18.2-next.1
+  - @ledgerhq/coin-bitcoin@0.40.0-next.1
+  - @ledgerhq/coin-canton@0.24.0-next.1
+  - @ledgerhq/coin-cardano@0.25.2-next.1
+  - @ledgerhq/coin-casper@2.13.2-next.1
+  - @ledgerhq/coin-celo@2.2.0-next.1
+  - @ledgerhq/coin-cosmos@0.33.0-next.1
+  - @ledgerhq/coin-evm@3.6.0-next.1
+  - @ledgerhq/coin-filecoin@1.24.2-next.1
+  - @ledgerhq/coin-hedera@1.31.0-next.1
+  - @ledgerhq/coin-icon@0.23.0-next.1
+  - @ledgerhq/coin-internet_computer@1.22.0-next.1
+  - @ledgerhq/coin-kaspa@1.14.0-next.1
+  - @ledgerhq/coin-mina@1.15.0-next.1
+  - @ledgerhq/coin-multiversx@0.16.2-next.1
+  - @ledgerhq/coin-near@0.25.2-next.1
+  - @ledgerhq/coin-polkadot@6.25.0-next.1
+  - @ledgerhq/coin-solana@0.52.0-next.1
+  - @ledgerhq/coin-stacks@0.21.2-next.1
+  - @ledgerhq/coin-sui@0.33.0-next.1
+  - @ledgerhq/coin-tezos@7.1.0-next.1
+  - @ledgerhq/coin-ton@0.28.2-next.1
+  - @ledgerhq/coin-tron@6.0.1-next.1
+  - @ledgerhq/coin-vechain@2.22.0-next.1
+  - @ledgerhq/hw-app-vet@0.12.3-next.1
+  - @ledgerhq/live-countervalues@0.18.3-next.1
+  - @ledgerhq/live-countervalues-react@0.14.2-next.1
+  - @ledgerhq/live-currency-format@0.8.2-next.0
+  - @ledgerhq/live-wallet@0.25.3-next.1
+  - @ledgerhq/live-signer-concordium@0.3.0-next.1
+  - @ledgerhq/live-signer-aleo@0.16.2-next.1
+  - @ledgerhq/live-signer-canton@0.9.3-next.1
+  - @ledgerhq/live-signer-celo@1.0.2-next.1
+  - @ledgerhq/live-signer-cosmos@0.2.2-next.1
+  - @ledgerhq/live-signer-evm@0.18.0-next.1
+  - @ledgerhq/live-signer-solana@0.15.0-next.1
+
 ## 34.71.0-next.0
 
 ### Minor Changes

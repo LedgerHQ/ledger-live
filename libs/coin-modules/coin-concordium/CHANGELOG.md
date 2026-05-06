@@ -1,5 +1,17 @@
 # @ledgerhq/coin-concordium
 
+## 0.10.0-next.1
+
+### Minor Changes
+
+- [#17188](https://github.com/LedgerHQ/ledger-live/pull/17188) [`e6dc658`](https://github.com/LedgerHQ/ledger-live/commit/e6dc658b83ebd2102e19a1fead021443457c05d9) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Switch Concordium derivation to canonical 6-segment path `m/44'/<coin>'/0'/0'/0'/<account>'` and split mainnet/testnet coin types (`919`/`1`, the BIP-44 generic testnet). Replaces the previous non-canonical `44'/919'/404'/404'/<account>'` override and aligns with the upstream SDK and device firmware.
+
+### Patch Changes
+
+- Updated dependencies [[`e6dc658`](https://github.com/LedgerHQ/ledger-live/commit/e6dc658b83ebd2102e19a1fead021443457c05d9)]:
+  - @ledgerhq/cryptoassets@13.47.0-next.1
+  - @ledgerhq/ledger-wallet-framework@1.4.0-next.1
+
 ## 0.10.0-next.0
 
 ### Minor Changes

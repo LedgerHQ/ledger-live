@@ -1,5 +1,12 @@
 # @ledgerhq/live-signer-celo
 
+## 1.0.2-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-celo@2.2.0-next.1
+
 ## 1.0.2-next.0
 
 ### Patch Changes

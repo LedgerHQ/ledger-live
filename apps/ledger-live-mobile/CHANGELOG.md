@@ -1,5 +1,25 @@
 # live-mobile
 
+## 4.4.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`e6dc658`](https://github.com/LedgerHQ/ledger-live/commit/e6dc658b83ebd2102e19a1fead021443457c05d9)]:
+  - @ledgerhq/cryptoassets@13.47.0-next.1
+  - @ledgerhq/coin-concordium@0.10.0-next.1
+  - @ledgerhq/ledger-wallet-framework@1.4.0-next.1
+  - @ledgerhq/coin-bitcoin@0.40.0-next.1
+  - @ledgerhq/coin-canton@0.24.0-next.1
+  - @ledgerhq/coin-casper@2.13.2-next.1
+  - @ledgerhq/coin-cosmos@0.33.0-next.1
+  - @ledgerhq/coin-evm@3.6.0-next.1
+  - @ledgerhq/coin-filecoin@1.24.2-next.1
+  - @ledgerhq/coin-multiversx@0.16.2-next.1
+  - @ledgerhq/coin-stacks@0.21.2-next.1
+  - @ledgerhq/live-countervalues@0.18.3-next.1
+  - @ledgerhq/live-countervalues-react@0.14.2-next.1
+  - @ledgerhq/live-wallet@0.25.3-next.1
+
 ## 4.4.0-next.0
 
 ### Minor Changes
