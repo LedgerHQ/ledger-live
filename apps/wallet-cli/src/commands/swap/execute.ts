@@ -34,6 +34,10 @@ export default defineCommand({
     "fee-strategy": option(z.enum(["slow", "medium", "fast"]).default("medium"), {
       description: "Fee strategy for the refund-chain transaction (full pipeline)",
     }),
+    "dry-run": option(z.boolean().default(false), {
+      description: "Run through exchange preparation but do not sign or broadcast",
+      argumentKind: "flag",
+    }),
     output: outputOption,
   },
   handler: async ({ flags, positional }) => {
@@ -80,6 +84,7 @@ export default defineCommand({
         amount: flags.amount,
         amountInAtomicUnit,
         feeStrategy: flags["fee-strategy"],
+        dryRun: flags["dry-run"],
         fromAccount,
         toAccount,
       });
@@ -89,10 +94,11 @@ export default defineCommand({
         amount: flags.amount,
         transactionId: result.transactionId,
         payload: result.payload,
-        operationHash: result.operationHash,
+        operationHash: flags["dry-run"] ? undefined : result.operationHash,
         swapId: result.swapId,
         amountExpectedTo: result.amountExpectedTo,
         magnitudeAwareRate: result.magnitudeAwareRate,
+        dryRun: result.dryRun,
       });
     });
   },

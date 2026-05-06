@@ -85,6 +85,7 @@ export type FullSwapPipelineInput = {
   amountInAtomicUnit: BigNumber;
   quoteId?: string;
   feeStrategy: string;
+  dryRun: boolean;
   fromAccount: AccountLike;
   toAccount: AccountLike;
 };
@@ -96,6 +97,7 @@ export type FullSwapPipelineResult = {
   swapId?: string;
   amountExpectedTo?: string;
   magnitudeAwareRate?: string;
+  dryRun?: boolean;
 };
 
 async function buildStrategyTransaction(args: {
@@ -270,6 +272,7 @@ export async function runFullSwapPipeline(
     amountInAtomicUnit,
     quoteId,
     feeStrategy,
+    dryRun,
     fromAccount,
     toAccount,
   } = input;
@@ -349,24 +352,35 @@ export async function runFullSwapPipeline(
     toCurrency,
   };
 
-  const signOutcome = await withLedgerManagerAppSession(EXCHANGE_APP_NAME, async () => {
-    const finalTx = await awaitCompleteExchangeTransaction(out, {
+  const finalTx = await withLedgerManagerAppSession(EXCHANGE_APP_NAME, async () =>
+    awaitCompleteExchangeTransaction(out, {
       provider,
       binaryPayload: payload.binaryPayload,
       signature: payload.signature,
       rateType,
       transaction: tx,
       exchange,
-    });
-    return signAndBroadcast(out, fromAccount, fromParentAccount, finalTx);
-  });
+    }),
+  );
+
+  let operationHash: string | undefined;
+
+  if (dryRun) {
+    out.swapExecuteProgress(
+      "[5/5] Dry run complete. Transaction prepared but not signed or broadcasted.",
+    );
+  } else {
+    const signOutcome = await signAndBroadcast(out, fromAccount, fromParentAccount, finalTx);
+    operationHash = signOutcome.operationHash;
+  }
 
   return {
     transactionId,
     payload,
-    operationHash: signOutcome.operationHash,
+    operationHash,
     swapId: payload.swapId,
     amountExpectedTo: amountExpectedTo.toFixed(),
     ...(magnitudeAwareRate != null ? { magnitudeAwareRate: magnitudeAwareRate.toFixed() } : {}),
+    ...(dryRun ? { dryRun: true } : {}),
   };
 }

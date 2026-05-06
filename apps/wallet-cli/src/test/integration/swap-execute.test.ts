@@ -25,8 +25,15 @@ const mockPipelineResult = {
   magnitudeAwareRate: "2500.5",
 } as const;
 
+const runFullSwapPipelineMock = mock((input: { dryRun?: boolean }) =>
+  Promise.resolve({
+    ...mockPipelineResult,
+    ...(input.dryRun ? { dryRun: true } : {}),
+  }),
+);
+
 mock.module(pipelineUrl, () => ({
-  runFullSwapPipeline: mock(() => Promise.resolve({ ...mockPipelineResult })),
+  runFullSwapPipeline: runFullSwapPipelineMock,
 }));
 
 const baseExecuteArgs = [
@@ -83,5 +90,19 @@ describe("swap execute command", () => {
     expect(data.swapId).toBe("mock-swap-id");
     expect(data.amountExpectedTo).toBe(mockPipelineResult.amountExpectedTo);
     expect(data.magnitudeAwareRate).toBe(mockPipelineResult.magnitudeAwareRate);
+  });
+
+  it("json: --dry-run returns dry_run=true and omits operationHash", async () => {
+    const { stdout, exitCode, stderr } = await runCli([...baseExecuteArgs, "--dry-run"], {
+      WALLET_CLI_MOCK_PORT: String(server.port),
+    });
+    expect(exitCode, `stderr: ${stderr}`).toBe(0);
+
+    const data = JSON.parse(stdout);
+    expect(data.command).toBe("swap execute");
+    expect(data.dry_run).toBe(true);
+    expect(data.operationHash).toBeUndefined();
+    expect(runFullSwapPipelineMock).toHaveBeenCalled();
+    expect(runFullSwapPipelineMock.mock.calls.at(-1)?.[0]?.dryRun).toBe(true);
   });
 });
