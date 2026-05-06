@@ -8,6 +8,7 @@ export const ASSET_DETAIL_TEST_IDS = {
   addresses: "asset-detail-addresses",
   addAccount: "asset-detail-add-account",
   marketStats: "asset-detail-market-stats",
+  pricePerformance: "asset-detail-price-performance",
   transactions: "asset-detail-transactions",
   ctas: "asset-detail-ctas",
 } as const;

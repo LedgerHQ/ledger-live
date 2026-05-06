@@ -8661,6 +8661,29 @@
       "title": "Addresses",
       "addAccount": "Add",
       "empty": "No addresses yet. Tap Add to get started."
+    },
+    "marketStats": {
+      "title": "Market stats",
+      "marketCap": "Market cap",
+      "marketRank": "Market rank",
+      "circulatingSupply": "Circulating supply",
+      "circulatingSupplyTooltip": "The number of coins currently available for trading and circulating in the market.",
+      "maxSupply": "Max supply",
+      "maxSupplyTooltip": "The maximum number of coins that will ever exist for this cryptocurrency.",
+      "tradingVolume": "24h trading volume",
+      "error": "Unable to load market stats"
+    },
+    "pricePerformance": {
+      "title": "Price performance",
+      "allTimeHigh": "All-time high",
+      "allTimeLow": "All-time low",
+      "yearsAgo": "{{count}}y ago",
+      "monthsAgo": "{{count}}m ago",
+      "daysAgo": "{{count}}d ago",
+      "hoursAgo": "{{count}}h ago",
+      "minutesAgo": "{{count}}min ago",
+      "justNow": "just now",
+      "error": "Unable to load price performance"
     }
   },
   "assetSelection": {

@@ -10,6 +10,7 @@ import { SectionPlaceholder } from "./components/SectionPlaceholder";
 import { BalanceGraph } from "./components/BalanceGraph";
 import { Addresses } from "./components/Addresses";
 import { Footer } from "./components/Footer";
+import { MarketData } from "./components/MarketData";
 import { CTAS_HEIGHT, SECTION_HEIGHT, PLACEHOLDER_COLORS } from "./utils/constants";
 
 type Props = Readonly<{
@@ -38,11 +39,7 @@ export function AssetDetailView({ currency, source, isRefreshing, onRefresh }: P
             height={SECTION_HEIGHT}
           />
           <Addresses currency={currency} />
-          <SectionPlaceholder
-            testID={ASSET_DETAIL_TEST_IDS.marketStats}
-            backgroundColor={PLACEHOLDER_COLORS.marketStats}
-            height={SECTION_HEIGHT}
-          />
+          <MarketData currency={currency} />
           <SectionPlaceholder
             testID={ASSET_DETAIL_TEST_IDS.transactions}
             backgroundColor={PLACEHOLDER_COLORS.transactions}
