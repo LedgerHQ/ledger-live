@@ -160,7 +160,7 @@ function syntheticParentForTokenOnlyTx(
   // In the case of smart contract interaction, the contract must be the recipient of the parent operation => this
   // is why we need to extract this information from the operation details.
   const contract = getTokenContract(referenceOp);
-  const parentRecipients = contract !== undefined ? [contract] : (referenceOp.recipients ?? []);
+  const parentRecipients = contract === undefined ? (referenceOp.recipients ?? []) : [contract];
   const parentSenders = referenceOp.senders ?? [];
   return cleanedOperation({
     id: encodeOperationId(accountId, referenceOp.hash, parentType),
@@ -373,17 +373,24 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         0n,
       );
 
-      const delegations: StakingDelegation[] = activeStakes.filter(hasStakeDelegate).map(b => ({
-        validatorAddress: b.stake.delegate,
-        amount: new BigNumber(delegatedAmountForStakingResources(b).toString()),
-        pendingRewards: new BigNumber((b.stake.amountRewarded ?? 0n).toString()),
-        status: "bonded" as const,
-      }));
-      const unbondings: StakingUnbonding[] = deactivatingStakes.filter(hasStakeDelegate).map(b => ({
-        validatorAddress: b.stake.delegate,
-        amount: new BigNumber(delegatedAmountForStakingResources(b).toString()),
-        completionDate: b.stake.stateUpdatedAt ?? new Date(),
-      }));
+      const delegations: StakingDelegation[] = activeStakes.filter(hasStakeDelegate).map(b => {
+        const delegated: bigint = delegatedAmountForStakingResources(b);
+        const rewarded: bigint = b.stake.amountRewarded ?? 0n;
+        return {
+          validatorAddress: b.stake.delegate,
+          amount: new BigNumber(delegated.toString()),
+          pendingRewards: new BigNumber(rewarded.toString()),
+          status: "bonded" as const,
+        };
+      });
+      const unbondings: StakingUnbonding[] = deactivatingStakes.filter(hasStakeDelegate).map(b => {
+        const delegated: bigint = delegatedAmountForStakingResources(b);
+        return {
+          validatorAddress: b.stake.delegate,
+          amount: new BigNumber(delegated.toString()),
+          completionDate: b.stake.stateUpdatedAt ?? new Date(),
+        };
+      });
       stakingResources = {
         delegations,
         redelegations: [],

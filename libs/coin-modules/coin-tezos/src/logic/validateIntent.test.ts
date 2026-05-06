@@ -19,11 +19,14 @@ jest.mock("./estimateFees", () => ({
 
 const mockGetAccountByAddress = jest.fn();
 const mockGetTokensBalances = jest.fn();
+const mockGetUnstakeRequestsFinalizable = jest.fn();
 jest.mock("../network/tzkt", () => ({
   __esModule: true,
   default: {
     getAccountByAddress: (...args: unknown[]) => mockGetAccountByAddress(...args),
     getTokensBalances: (...args: unknown[]) => mockGetTokensBalances(...args),
+    getUnstakeRequestsFinalizable: (...args: unknown[]) =>
+      mockGetUnstakeRequestsFinalizable(...args),
   },
 }));
 
@@ -71,6 +74,7 @@ describe("validateIntent", () => {
 
     mockGetAccountByAddress.mockResolvedValue(makeUserAccount());
     mockGetTokensBalances.mockResolvedValue([]);
+    mockGetUnstakeRequestsFinalizable.mockResolvedValue(0n);
   });
 
   describe("recipient validation", () => {
@@ -204,7 +208,7 @@ describe("validateIntent", () => {
     });
 
     it("uses amount 0 and only fees as totalSpent for finalize_unstake", async () => {
-      mockGetAccountByAddress.mockResolvedValue(makeUserAccount({ unstakedFinalizable: 1234 }));
+      mockGetUnstakeRequestsFinalizable.mockResolvedValue(1234n);
 
       const result = await validateIntent({
         intentType: "staking",
@@ -332,7 +336,7 @@ describe("validateIntent", () => {
     });
 
     it("should return NotEnoughBalance when finalize_unstake has nothing finalizable", async () => {
-      mockGetAccountByAddress.mockResolvedValue(makeUserAccount({ unstakedFinalizable: 0 }));
+      mockGetUnstakeRequestsFinalizable.mockResolvedValue(0n);
 
       const result = await validateIntent({
         intentType: "staking",
@@ -446,7 +450,7 @@ describe("validateIntent", () => {
     });
 
     it("should pass validation for finalize_unstake transaction", async () => {
-      mockGetAccountByAddress.mockResolvedValue(makeUserAccount({ unstakedFinalizable: 4000 }));
+      mockGetUnstakeRequestsFinalizable.mockResolvedValue(4000n);
 
       const result = await validateIntent({
         intentType: "staking",

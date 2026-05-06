@@ -30,6 +30,14 @@ const positions: StakingPosition[] = [
     asset: { type: "native" },
     amount: 42n,
   },
+  {
+    uid: `finalizable-${ADDRESS}`,
+    address: ADDRESS,
+    delegate: DELEGATE,
+    state: "inactive",
+    asset: { type: "native" },
+    amount: 7n,
+  },
 ];
 
 function makeAccount(positions: StakingPosition[]): TezosAccount {
@@ -42,11 +50,12 @@ describe("coin-tezos serialization", () => {
     const raw = {} as AccountRaw;
     assignToAccountRaw(account as unknown as Account, raw);
     const persisted = (raw as TezosAccountRaw).stakingPositions;
-    expect(persisted).toHaveLength(3);
+    expect(persisted).toHaveLength(4);
     expect(persisted?.map(p => p.uid)).toEqual([
       `delegation-${ADDRESS}`,
       `stake-${ADDRESS}`,
       `unstaking-${ADDRESS}`,
+      `finalizable-${ADDRESS}`,
     ]);
     expect(persisted?.[1].amount).toEqual("9999999999999999999");
   });
