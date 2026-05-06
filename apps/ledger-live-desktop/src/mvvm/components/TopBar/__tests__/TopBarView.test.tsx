@@ -21,6 +21,7 @@ describe("TopBarView", () => {
     slots: defaultSlots,
     isInformationCenterOpen: false,
     onInformationCenterClose: jest.fn(),
+    shouldDisplayAggregatedAssets: false,
   };
 
   it("should render updater when not in manager", () => {
