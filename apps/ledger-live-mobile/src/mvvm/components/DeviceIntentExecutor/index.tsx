@@ -5,7 +5,7 @@ import {
 } from "@ledgerhq/device-intent";
 import {
   BottomSheetHeader,
-  BottomSheetScrollView,
+  BottomSheetView,
 } from "@ledgerhq/lumen-ui-rnative";
 import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 import React from "react";
@@ -55,17 +55,16 @@ export function DeviceIntentExecutorLWM<JobState, Input, ExtraProps>(
       isRequestingToBeOpened={props.enabled}
       onClose={props.onUserCancel}
       preventBackdropClick={!props.cancellableUI}
-      enableDynamicSizing={false}
-      snapPoints="medium"
+      enableDynamicSizing
     >
-      <BottomSheetScrollView style={{ paddingBottom: bottomInset + 16 }}>
+      <BottomSheetView style={{ paddingBottom: bottomInset + 16 }}>
         {props.cancellableUI && <BottomSheetHeader density="expanded" />}
         <DeviceIntentExecutor
           {...props}
           platformConfig={platformConfig}
           initializerConfig={props.initializerConfig}
         />
-      </BottomSheetScrollView>
+      </BottomSheetView>
     </QueuedDrawerBottomSheet>
   );
 }

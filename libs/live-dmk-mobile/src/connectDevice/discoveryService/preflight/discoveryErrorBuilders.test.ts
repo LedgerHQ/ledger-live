@@ -1,7 +1,7 @@
 import { PermissionsAndroid } from "react-native";
 import { State as BlePlxState } from "react-native-ble-plx";
 import { rnBleTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-ble";
-import { DiscoveryErrors, type DiscoveryError } from "../../types";
+import { DiscoveryErrorTypes, type DiscoveryError } from "../../types";
 import {
   buildBluetoothDisabledManualActionError,
   buildBluetoothDisabledPromptableError,
@@ -54,8 +54,8 @@ describe("discoveryErrorBuilders", () => {
 
     // THEN
     expect(error).toEqual({
-      type: DiscoveryErrors.BluetoothPermissionDeniedPromptable,
-      transportID: rnBleTransportIdentifier,
+      type: DiscoveryErrorTypes.BluetoothPermissionDeniedPromptable,
+      transportId: rnBleTransportIdentifier,
       permissions,
       resolution: { type: "prompt", retry },
     });
@@ -70,8 +70,8 @@ describe("discoveryErrorBuilders", () => {
 
     // THEN
     expect(error).toEqual({
-      type: DiscoveryErrors.BluetoothPermissionDeniedManualSettings,
-      transportID: rnBleTransportIdentifier,
+      type: DiscoveryErrorTypes.BluetoothPermissionDeniedManualSettings,
+      transportId: rnBleTransportIdentifier,
       permissions,
       resolution: { type: "manual-action", retry },
     });
@@ -83,8 +83,8 @@ describe("discoveryErrorBuilders", () => {
 
     // THEN
     expect(error).toEqual({
-      type: DiscoveryErrors.BluetoothDisabledPromptable,
-      transportID: rnBleTransportIdentifier,
+      type: DiscoveryErrorTypes.BluetoothDisabledPromptable,
+      transportId: rnBleTransportIdentifier,
       resolution: { type: "prompt", retry },
     });
   });
@@ -98,8 +98,8 @@ describe("discoveryErrorBuilders", () => {
 
     // THEN
     expect(error).toEqual({
-      type: DiscoveryErrors.BluetoothDisabledManualAction,
-      transportID: rnBleTransportIdentifier,
+      type: DiscoveryErrorTypes.BluetoothDisabledManualAction,
+      transportId: rnBleTransportIdentifier,
       error: nativeError,
       resolution: { type: "manual-action", retry },
     });
@@ -111,8 +111,8 @@ describe("discoveryErrorBuilders", () => {
 
     // THEN
     expect(error).toEqual({
-      type: DiscoveryErrors.BluetoothPermissionUnauthorizedManualSettings,
-      transportID: rnBleTransportIdentifier,
+      type: DiscoveryErrorTypes.BluetoothPermissionUnauthorizedManualSettings,
+      transportId: rnBleTransportIdentifier,
       resolution: { type: "manual-action", retry },
     });
   });
@@ -123,8 +123,8 @@ describe("discoveryErrorBuilders", () => {
 
     // THEN
     expect(error).toEqual({
-      type: DiscoveryErrors.BluetoothUnsupported,
-      transportID: rnBleTransportIdentifier,
+      type: DiscoveryErrorTypes.BluetoothUnsupported,
+      transportId: rnBleTransportIdentifier,
       resolution: { type: "none" },
     });
   });
@@ -135,8 +135,8 @@ describe("discoveryErrorBuilders", () => {
 
     // THEN
     expect(error).toEqual({
-      type: DiscoveryErrors.BluetoothStateUnknownCheckOnly,
-      transportID: rnBleTransportIdentifier,
+      type: DiscoveryErrorTypes.BluetoothStateUnknownCheckOnly,
+      transportId: rnBleTransportIdentifier,
       state: BlePlxState.Unknown,
       resolution: { type: "check-only", retry },
     });
@@ -151,8 +151,8 @@ describe("discoveryErrorBuilders", () => {
 
     // THEN
     expect(error).toEqual({
-      type: DiscoveryErrors.LocationPermissionDeniedPromptable,
-      transportID: rnBleTransportIdentifier,
+      type: DiscoveryErrorTypes.LocationPermissionDeniedPromptable,
+      transportId: rnBleTransportIdentifier,
       permission,
       resolution: { type: "prompt", retry },
     });
@@ -167,8 +167,8 @@ describe("discoveryErrorBuilders", () => {
 
     // THEN
     expect(error).toEqual({
-      type: DiscoveryErrors.LocationPermissionDeniedManualSettings,
-      transportID: rnBleTransportIdentifier,
+      type: DiscoveryErrorTypes.LocationPermissionDeniedManualSettings,
+      transportId: rnBleTransportIdentifier,
       permission,
       resolution: { type: "manual-action", retry },
     });
@@ -180,8 +180,8 @@ describe("discoveryErrorBuilders", () => {
 
     // THEN
     expect(error).toEqual({
-      type: DiscoveryErrors.LocationDisabledPromptable,
-      transportID: rnBleTransportIdentifier,
+      type: DiscoveryErrorTypes.LocationDisabledPromptable,
+      transportId: rnBleTransportIdentifier,
       resolution: { type: "prompt", retry },
     });
   });
@@ -195,8 +195,8 @@ describe("discoveryErrorBuilders", () => {
 
     // THEN
     expect(error).toEqual({
-      type: DiscoveryErrors.LocationDisabledManualAction,
-      transportID: rnBleTransportIdentifier,
+      type: DiscoveryErrorTypes.LocationDisabledManualAction,
+      transportId: rnBleTransportIdentifier,
       error: nativeError,
       resolution: { type: "manual-action", retry },
     });
@@ -208,8 +208,8 @@ describe("discoveryErrorBuilders", () => {
 
     // THEN
     expect(error).toEqual({
-      type: DiscoveryErrors.LocationServicePermissionMissing,
-      transportID: rnBleTransportIdentifier,
+      type: DiscoveryErrorTypes.LocationServicePermissionMissing,
+      transportId: rnBleTransportIdentifier,
       resolution: { type: "check-only", retry },
     });
   });
@@ -223,8 +223,8 @@ describe("discoveryErrorBuilders", () => {
 
     // THEN
     expect(error).toEqual({
-      type: DiscoveryErrors.Unknown,
-      transportID: rnBleTransportIdentifier,
+      type: DiscoveryErrorTypes.Unknown,
+      transportId: rnBleTransportIdentifier,
       error: unknownError,
       resolution: { type: "check-only", retry },
     });

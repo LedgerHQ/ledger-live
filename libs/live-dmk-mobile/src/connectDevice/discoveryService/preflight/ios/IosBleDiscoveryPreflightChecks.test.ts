@@ -1,6 +1,6 @@
 import { State as BlePlxState } from "react-native-ble-plx";
 import { rnBleTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-ble";
-import { DiscoveryErrors } from "../../../types";
+import { DiscoveryErrorTypes } from "../../../types";
 import { BlePlxManager } from "../../../../transport/BlePlxManager";
 import { getBluetoothHelperModule } from "../nativeModules";
 import { IosBleDiscoveryPreflightChecks } from "./IosBleDiscoveryPreflightChecks";
@@ -82,13 +82,13 @@ describe("IosBleDiscoveryPreflightChecks", () => {
     expect(result).toMatchObject({
       success: false,
       discoveryError: {
-        type: DiscoveryErrors.BluetoothDisabledManualAction,
-        transportID: rnBleTransportIdentifier,
+        type: DiscoveryErrorTypes.BluetoothDisabledManualAction,
+        transportId: rnBleTransportIdentifier,
         resolution: { type: "manual-action" },
       },
     });
     await expect(callRetry(result)).resolves.toMatchObject({
-      type: DiscoveryErrors.BluetoothDisabledManualAction,
+      type: DiscoveryErrorTypes.BluetoothDisabledManualAction,
     });
   });
 
@@ -104,13 +104,13 @@ describe("IosBleDiscoveryPreflightChecks", () => {
     expect(result).toMatchObject({
       success: false,
       discoveryError: {
-        type: DiscoveryErrors.BluetoothPermissionUnauthorizedManualSettings,
-        transportID: rnBleTransportIdentifier,
+        type: DiscoveryErrorTypes.BluetoothPermissionUnauthorizedManualSettings,
+        transportId: rnBleTransportIdentifier,
         resolution: { type: "manual-action" },
       },
     });
     await expect(callRetry(result)).resolves.toMatchObject({
-      type: DiscoveryErrors.BluetoothPermissionUnauthorizedManualSettings,
+      type: DiscoveryErrorTypes.BluetoothPermissionUnauthorizedManualSettings,
     });
   });
 
@@ -126,14 +126,14 @@ describe("IosBleDiscoveryPreflightChecks", () => {
     expect(result).toMatchObject({
       success: false,
       discoveryError: {
-        type: DiscoveryErrors.BluetoothStateUnknownCheckOnly,
-        transportID: rnBleTransportIdentifier,
+        type: DiscoveryErrorTypes.BluetoothStateUnknownCheckOnly,
+        transportId: rnBleTransportIdentifier,
         state: BlePlxState.Unknown,
         resolution: { type: "check-only" },
       },
     });
     await expect(callRetry(result)).resolves.toMatchObject({
-      type: DiscoveryErrors.BluetoothStateUnknownCheckOnly,
+      type: DiscoveryErrorTypes.BluetoothStateUnknownCheckOnly,
     });
   });
 
@@ -150,14 +150,14 @@ describe("IosBleDiscoveryPreflightChecks", () => {
     expect(result).toMatchObject({
       success: false,
       discoveryError: {
-        type: DiscoveryErrors.Unknown,
-        transportID: rnBleTransportIdentifier,
+        type: DiscoveryErrorTypes.Unknown,
+        transportId: rnBleTransportIdentifier,
         error,
         resolution: { type: "check-only" },
       },
     });
     await expect(callRetry(result)).resolves.toMatchObject({
-      type: DiscoveryErrors.Unknown,
+      type: DiscoveryErrorTypes.Unknown,
     });
   });
 });

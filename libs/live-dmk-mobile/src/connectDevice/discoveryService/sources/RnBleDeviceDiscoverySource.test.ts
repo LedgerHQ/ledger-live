@@ -5,7 +5,7 @@ import {
 } from "@ledgerhq/device-transport-kit-react-native-ble";
 import { BleError, BleErrorCode } from "react-native-ble-plx";
 import { firstValueFrom, of, throwError } from "rxjs";
-import { DiscoveryErrors, type DiscoveryError } from "../../types";
+import { DiscoveryErrorTypes, type DiscoveryError } from "../../types";
 import type { DiscoveryPreflightChecks } from "../preflight/preflightResult";
 import { RnBleDeviceDiscoverySource } from "./RnBleDeviceDiscoverySource";
 
@@ -33,8 +33,8 @@ const createDiscoveredDevice = (id: string): DiscoveredDevice =>
   }) as unknown as DiscoveredDevice;
 
 const discoveryError: DiscoveryError = {
-  type: DiscoveryErrors.BluetoothUnsupported,
-  transportID: rnBleTransportIdentifier,
+  type: DiscoveryErrorTypes.BluetoothUnsupported,
+  transportId: rnBleTransportIdentifier,
   resolution: { type: "none" },
 };
 
@@ -106,8 +106,8 @@ describe("RnBleDeviceDiscoverySource", () => {
     await expect(event).resolves.toEqual({
       type: "error",
       error: {
-        type: DiscoveryErrors.Unknown,
-        transportID: rnBleTransportIdentifier,
+        type: DiscoveryErrorTypes.Unknown,
+        transportId: rnBleTransportIdentifier,
         error,
       },
     });
@@ -129,8 +129,8 @@ describe("RnBleDeviceDiscoverySource", () => {
     await expect(event).resolves.toEqual({
       type: "error",
       error: {
-        type: DiscoveryErrors.Unknown,
-        transportID: rnBleTransportIdentifier,
+        type: DiscoveryErrorTypes.Unknown,
+        transportId: rnBleTransportIdentifier,
         error,
       },
     });
@@ -142,8 +142,8 @@ describe("RnBleDeviceDiscoverySource", () => {
       errorCode: BleErrorCode.BluetoothPoweredOff,
     });
     const bluetoothDisabledError: DiscoveryError = {
-      type: DiscoveryErrors.BluetoothDisabledManualAction,
-      transportID: rnBleTransportIdentifier,
+      type: DiscoveryErrorTypes.BluetoothDisabledManualAction,
+      transportId: rnBleTransportIdentifier,
       resolution: { type: "manual-action", retry: jest.fn() },
     };
     const getPreflight = jest
@@ -170,8 +170,8 @@ describe("RnBleDeviceDiscoverySource", () => {
   it("GIVEN a typed BlePoweredOff is thrown mid-scan, WHEN listening, THEN it should re-run preflight and emit the typed BluetoothDisabled error", async () => {
     // GIVEN
     const bluetoothDisabledError: DiscoveryError = {
-      type: DiscoveryErrors.BluetoothDisabledPromptable,
-      transportID: rnBleTransportIdentifier,
+      type: DiscoveryErrorTypes.BluetoothDisabledPromptable,
+      transportId: rnBleTransportIdentifier,
       resolution: { type: "prompt", retry: jest.fn() },
     };
     const getPreflight = jest
