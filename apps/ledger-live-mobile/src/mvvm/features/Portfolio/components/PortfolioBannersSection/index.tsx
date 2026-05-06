@@ -25,7 +25,6 @@ export const PortfolioBannersSection = ({
 }: PortfolioBannersSectionProps) => {
   const {
     shouldShowOnboardingWidget,
-    sectionMarginTop,
     hasAssets,
     shouldDisplayRecover,
     onScroll,
