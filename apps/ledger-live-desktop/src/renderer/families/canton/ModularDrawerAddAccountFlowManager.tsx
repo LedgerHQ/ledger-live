@@ -32,6 +32,7 @@ import { CANTON_MODULAR_DRAWER_ADD_ACCOUNT_STEP } from "./AddAccountDrawer/domai
 import type { CantonModularDrawerAddAccountStep } from "./AddAccountDrawer/domain";
 import { useAddAccountFlowNavigation } from "./AddAccountDrawer/hooks/useAddAccountFlowNavigation";
 import CantonOnboard from "./AddAccountDrawer/CantonOnboard";
+import CantonDisclaimer from "./AddAccountDrawer/CantonDisclaimer";
 
 const StepContainer = styled(Flex)`
   flex: 1;
@@ -58,6 +59,7 @@ const ModularDrawerAddAccountFlowManager = ({
     emptyAccount,
     accountToEdit,
     accountToFund,
+    closeDrawer,
     navigateBack,
     navigateToCantonOnboard,
     navigateToWarningScreen,
@@ -112,6 +114,12 @@ const ModularDrawerAddAccountFlowManager = ({
 
   const renderStepContent = (step: CantonModularDrawerAddAccountStep) => {
     switch (step) {
+      case CANTON_MODULAR_DRAWER_ADD_ACCOUNT_STEP.DISCLAIMER:
+        return (
+          <StepContainer paddingX="8px" data-test-id="content">
+            <CantonDisclaimer onAgree={navigateToConnectDevice} onCancel={closeDrawer} />
+          </StepContainer>
+        );
       case CANTON_MODULAR_DRAWER_ADD_ACCOUNT_STEP.CONNECT_YOUR_DEVICE:
         return (
           <StepContainer paddingX="8px" data-test-id="content">
