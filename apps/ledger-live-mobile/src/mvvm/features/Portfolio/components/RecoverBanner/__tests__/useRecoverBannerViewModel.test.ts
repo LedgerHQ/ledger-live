@@ -1,7 +1,5 @@
 import { act, renderHook, waitFor, withFlagOverrides } from "@tests/test-renderer";
 import { Linking } from "react-native";
-import { addPostOnboardingAction } from "@ledgerhq/live-common/postOnboarding/actions";
-import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
 import useRecoverBannerViewModel from "../useRecoverBannerViewModel";
 import { withBannerEnabled, withRecoverState } from "../../../utils/recoverTestHelpers";
@@ -11,16 +9,9 @@ jest.mock("@ledgerhq/live-common/hooks/recoverFeatureFlag", () => ({
   useCustomURI: () => mockUseCustomURI(),
 }));
 
-const mockActionsState = jest.fn();
-jest.mock("@ledgerhq/live-common/postOnboarding/hooks/index", () => ({
-  usePostOnboardingHubState: () => mockActionsState(),
+jest.mock("../useAddRecoverPostOnboardingAction", () => ({
+  useAddRecoverPostOnboardingAction: jest.fn(),
 }));
-
-jest.mock("@ledgerhq/live-common/postOnboarding/actions", () => ({
-  addPostOnboardingAction: jest.fn(args => ({ type: "ADD_POST_ONBOARDING_ACTION", ...args })),
-}));
-
-const mockAddPostOnboardingAction = jest.mocked(addPostOnboardingAction);
 
 const mockRecoverUri = "ledgerlive://recover/test";
 
@@ -28,7 +19,6 @@ describe("useRecoverBannerViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockUseCustomURI.mockReturnValue(mockRecoverUri);
-    mockActionsState.mockReturnValue({ actionsState: [] });
     jest.spyOn(Linking, "canOpenURL").mockResolvedValue(true);
     jest.spyOn(Linking, "openURL").mockResolvedValue(undefined);
   });
@@ -142,45 +132,6 @@ describe("useRecoverBannerViewModel", () => {
 
       expect(Linking.canOpenURL).not.toHaveBeenCalled();
       expect(Linking.openURL).not.toHaveBeenCalled();
-    });
-  });
-
-  describe("addPostOnboardingAction dispatch", () => {
-    it.each([
-      LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE,
-      LedgerRecoverSubscriptionStateEnum.BACKUP_DONE,
-    ])("dispatches for valid state %s", async subscriptionState => {
-      renderHook(() => useRecoverBannerViewModel(), {
-        overrideInitialState: state => withRecoverState(subscriptionState, true)(state),
-      });
-
-      await waitFor(() =>
-        expect(mockAddPostOnboardingAction).toHaveBeenCalledWith({
-          actionId: PostOnboardingActionId.recover,
-        }),
-      );
-    });
-
-    it("does not dispatch when actionStateRecover already exists", () => {
-      mockActionsState.mockReturnValue({
-        actionsState: [{ id: PostOnboardingActionId.recover }],
-      });
-
-      renderHook(() => useRecoverBannerViewModel(), {
-        overrideInitialState: state =>
-          withRecoverState(LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE, true)(state),
-      });
-
-      expect(mockAddPostOnboardingAction).not.toHaveBeenCalled();
-    });
-
-    it("does not dispatch when subscriptionState is NO_SUBSCRIPTION", () => {
-      renderHook(() => useRecoverBannerViewModel(), {
-        overrideInitialState: state =>
-          withRecoverState(LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION, true)(state),
-      });
-
-      expect(mockAddPostOnboardingAction).not.toHaveBeenCalled();
     });
   });
 });
