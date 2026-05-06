@@ -27,11 +27,12 @@ const sendStatus = (status: UpdateStatus, payload?: unknown) => {
   }
 };
 const handleDownload = async (info: UpdateDownloadedEvent) => {
-  function onSuccess() {
+  async function onSuccess() {
+    await new Promise(resolve => setTimeout(resolve, 500));
     sendStatus("check-success");
     autoUpdater.autoInstallOnAppQuit = true;
   }
-  if (__PRERELEASE__) return onSuccess();
+  if (true) return onSuccess();
   try {
     sendStatus("checking");
     const appUpdater = await createElectronAppUpdater({

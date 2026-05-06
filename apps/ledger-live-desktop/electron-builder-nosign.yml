@@ -83,3 +83,7 @@ files:
 # Disable native module rebuilding since we removed all native dependencies (node-hid, usb)
 buildDependenciesFromSource: false
 npmRebuild: false
+
+publish:
+  - provider: generic
+    url: https://download.live.ledger.com
