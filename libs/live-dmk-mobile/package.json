@@ -26,6 +26,7 @@
     "lint:fix": "pnpm lint --fix",
     "typecheck": "tsc --noEmit --customConditions node",
     "unimported": "pnpm knip --directory ../.. -W libs/live-dmk-mobile",
+    "coverage": "jest --coverage",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage"
