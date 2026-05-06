@@ -22,12 +22,7 @@ import {
   runDerivationScheme,
 } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { loadAccountModuleForFamily } from "../../../coin-modules/registry";
-import {
-  buildEnsureAppReadyInput,
-  resolveAppRequestRequirements,
-  toEnsureAppReadyInput,
-  toConnectAppRequest,
-} from "./buildEnsureAppReadyInput";
+import { buildEnsureAppReadyInput } from "./buildEnsureAppReadyInput";
 
 const mockGetDerivationModesForCurrency = jest.mocked(getDerivationModesForCurrency);
 const mockGetDerivationScheme = jest.mocked(getDerivationScheme);
@@ -157,11 +152,5 @@ describe("ensureAppReady buildEnsureAppReadyInput", () => {
       flow: FlowName.addAccount,
       currencyName: "Ethereum",
     });
-  });
-
-  it("re-exports requirement resolver helpers", () => {
-    expect(resolveAppRequestRequirements).toBeDefined();
-    expect(toEnsureAppReadyInput).toBeDefined();
-    expect(toConnectAppRequest).toBeDefined();
   });
 });

@@ -2,7 +2,6 @@ import type { FlowName } from "../../../device-action/utils";
 import {
   resolveAppRequestRequirements,
   toEnsureAppReadyInput,
-  toConnectAppRequest,
 } from "../../../hw/deviceInitialization/helpers/resolveAppRequestRequirements";
 import type { AppRequestInput, EnsureAppReadyInput } from "./types";
 import { buildExpectedAccountIdentity } from "../../../hw/deviceInitialization/helpers/wrongDeviceValidation";
@@ -59,5 +58,3 @@ export async function buildEnsureAppReadyInput(
     deprecation,
   };
 }
-
-export { resolveAppRequestRequirements, toEnsureAppReadyInput, toConnectAppRequest };
