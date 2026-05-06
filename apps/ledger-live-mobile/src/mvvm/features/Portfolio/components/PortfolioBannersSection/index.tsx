@@ -42,7 +42,7 @@ export const PortfolioBannersSection = ({
         key="BannersSection"
         testID="portfolio-banners-section"
       >
-        <LNSUpsellBanner location="wallet" mx={6} pt={4} />
+        <LNSUpsellBanner location="wallet" pt={4} />
       </SectionContainer>
     );
   }
@@ -58,11 +58,11 @@ export const PortfolioBannersSection = ({
         testID="portfolio-banners-section"
       >
         <Box lx={{ paddingTop: "s12" }}>
-          <RecoverBanner />
-
+          <RecoverBanner paddingHorizontal="s0" />
           <ContentCardsLocation
             key="contentCardsLocationPortfolio"
             locationId={ContentCardLocation.TopWallet}
+            mx={-6}
           />
         </Box>
       </SectionContainer>
@@ -96,7 +96,8 @@ export const PortfolioBannersSection = ({
             bounces={false}
             data={carouselItems}
             keyExtractor={item => item.key}
-            renderItem={({ item }) => <Box style={{ width: WIDTH }}>{item.component}</Box>}
+            ItemSeparatorComponent={() => <Box style={{ width: 12 }} />}
+            renderItem={({ item }) => <Box  style={{ width: WIDTH }}>{item.component}</Box>}
           />
 
           <Box lx={{ alignItems: "center" }} testID="banners-page-indicator">
@@ -118,13 +119,7 @@ export const PortfolioBannersSection = ({
       key="BannersSection"
       testID="portfolio-banners-section"
     >
-      <Box
-        style={{ width: WIDTH }}
-        lx={{
-          paddingTop: "s12" ,
-          marginLeft: shouldShowOnboardingWidget ? "s12" : "s0",
-        }}
-      >
+      <Box lx={{ paddingTop: "s12" }}>
         {shouldShowOnboardingWidget && <OnboardingWidget />}
         {shouldDisplayRecover && <RecoverBanner paddingHorizontal="s0" />}
       </Box>
