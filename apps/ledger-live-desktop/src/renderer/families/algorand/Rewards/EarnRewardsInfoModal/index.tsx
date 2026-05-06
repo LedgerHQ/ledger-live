@@ -18,7 +18,7 @@ export default function AlgorandEarnRewardsInfoModal({ account }: Props) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const onNext = useCallback(() => {
-    dispatch(openModal("MODAL_RECEIVE", { account, sourcePage: RECEIVE_SOURCE_PAGE.ALGORAND }));
+    dispatch(openModal("MODAL_RECEIVE", { account, sourcePage: RECEIVE_SOURCE_PAGE.ACCOUNT_PAGE }));
   }, [account, dispatch]);
 
   const algorandStakingRewards = useLocalizedUrl(urls.algorandStakingRewards);

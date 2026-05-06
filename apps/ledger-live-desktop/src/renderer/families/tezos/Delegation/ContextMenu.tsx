@@ -49,7 +49,7 @@ const ContextMenu = ({ account }: Props) => {
             account,
             eventType: "tezos",
             startWithWarning: receiveShouldWarnDelegation,
-            sourcePage: RECEIVE_SOURCE_PAGE.TEZOS,
+            sourcePage: RECEIVE_SOURCE_PAGE.ACCOUNT_PAGE,
           }),
         ),
     },

@@ -117,7 +117,7 @@ function EmptyStateAccount({ t, account, parentAccount, openModal }: Props) {
               openModal("MODAL_RECEIVE", {
                 account,
                 parentAccount,
-                sourcePage: RECEIVE_SOURCE_PAGE.ACCOUNT,
+                sourcePage: RECEIVE_SOURCE_PAGE.ACCOUNT_PAGE,
               })
             }
           >

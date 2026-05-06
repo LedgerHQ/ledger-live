@@ -5,12 +5,7 @@ export type ReceiveOptionsDialogProps = Readonly<{
 }>;
 
 export const RECEIVE_SOURCE_PAGE = {
-  ACCOUNT: "account",
-  ACCOUNT_CONTEXT_MENU: "account context menu",
-  ALGORAND: "algorand",
-  BANK: "bank",
-  HEDERA: "hedera",
-  NO_FUNDS_STAKE: "no funds stake modal",
-  SIDEBAR: "sidebar",
-  TEZOS: "tezos",
+  ACCOUNT_PAGE: "Account Page",
+  BANK: "Bank Page",
+  SIDEBAR: "Sidebar",
 } as const;

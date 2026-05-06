@@ -357,7 +357,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
     openModal("MODAL_RECEIVE", {
       parentAccount,
       account,
-      sourcePage: RECEIVE_SOURCE_PAGE.ACCOUNT,
+      sourcePage: RECEIVE_SOURCE_PAGE.ACCOUNT_PAGE,
     });
   }, [openModal, parentAccount, account, buttonSharedTrackingFields]);
 

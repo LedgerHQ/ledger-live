@@ -116,7 +116,7 @@ const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeM
       openModal("MODAL_RECEIVE", {
         parentAccount,
         account,
-        sourcePage: RECEIVE_SOURCE_PAGE.NO_FUNDS_STAKE,
+        sourcePage: RECEIVE_SOURCE_PAGE.ACCOUNT_PAGE,
       }),
     );
   }, [parentAccount, account, dispatch, location]);
