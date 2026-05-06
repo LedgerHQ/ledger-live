@@ -1,39 +1,10 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
-import { getSwapAPIBaseURL, getSwapUserIP } from "@ledgerhq/live-common/exchange/swap/index";
 import { walletCliDebug } from "../../shared/log";
 import { mapSwapStatusLine } from "./status-shared";
-import type { SwapStatus } from "@ledgerhq/live-common/exchange/swap/types";
 import { outputOption, resolveOutputFormat } from "../inputs";
 import { createCommandOutput } from "../../output";
-
-type StatusFlags = {
-  "swap-id": string;
-  provider: string;
-};
-
-async function fetchSwapStatus(flags: StatusFlags): Promise<SwapStatus[]> {
-  const baseURL = getSwapAPIBaseURL();
-  const response = await fetch(`${baseURL}/swap/status`, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      Accept: "application/json",
-      ...(getSwapUserIP() ?? {}),
-    },
-    body: JSON.stringify([
-      {
-        provider: flags.provider,
-        swapId: flags["swap-id"],
-      },
-    ]),
-  });
-  if (!response.ok) {
-    throw new Error(`Failed to fetch swap status (HTTP ${response.status})`);
-  }
-
-  return await response.json();
-}
+import { getMultipleStatus } from "@ledgerhq/live-common/exchange/swap/getStatus";
 
 export default defineCommand({
   name: "status",
@@ -55,10 +26,12 @@ export default defineCommand({
     const out = createCommandOutput(output, { command: "swap status", network: "swap" });
 
     await out.run(async () => {
-      const raw = await fetchSwapStatus({
-        "swap-id": flags["swap-id"],
-        provider: flags.provider,
-      });
+      const raw = await getMultipleStatus([
+        {
+          provider: flags.provider,
+          swapId: flags["swap-id"],
+        },
+      ]);
       if (!Array.isArray(raw) || raw.length === 0) {
         throw new Error(
           `No swap status found for swap id "${flags["swap-id"]}"${flags.provider ? ` and provider "${flags.provider}"` : ""}.`,
