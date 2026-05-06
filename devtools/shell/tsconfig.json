@@ -15,5 +15,5 @@
     "types": ["jest"]
   },
   "include": ["src/**/*", "jest.setup.ts", "jest/**/*", "**/*.d.ts"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "jest/setup.native.ts"]
 }

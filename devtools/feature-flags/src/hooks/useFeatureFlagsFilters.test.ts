@@ -1,9 +1,9 @@
 import { act, renderHook } from "@testing-library/react";
 import { FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
-import { ALL_FLAG_IDS } from "../../../tools/feature-flags/constants";
+import { ALL_FLAG_IDS } from "../constants";
 import type { FeatureId, PartialFeatures } from "@shared/feature-flags";
-import { useFeatureFlagsFilters } from "../../../tools/feature-flags/hooks/useFeatureFlagsFilters";
-import type { FeatureFlagsFiltersInput } from "../../../tools/feature-flags/hooks/useFeatureFlagsFilters";
+import { useFeatureFlagsFilters } from "./useFeatureFlagsFilters";
+import type { FeatureFlagsFiltersInput } from "./useFeatureFlagsFilters";
 
 const { resolved } = FEATURE_FLAGS_INITIAL_STATE;
 

@@ -1,8 +1,8 @@
 import { renderHook } from "@testing-library/react";
 import { FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
 import type { FeatureId, PartialFeatures } from "@shared/feature-flags";
-import { useFeatureFlagsState } from "../../../tools/feature-flags/hooks/useFeatureFlagsState";
-import type { FeatureFlagsToolProps } from "../../../tools/feature-flags/types";
+import { useFeatureFlagsState } from "./useFeatureFlagsState";
+import type { FeatureFlagsToolProps } from "../types";
 
 const { resolved } = FEATURE_FLAGS_INITIAL_STATE;
 
