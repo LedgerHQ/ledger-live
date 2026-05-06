@@ -5,10 +5,12 @@ import { useDistribution } from "~/renderer/actions/general";
 import { decodeRouteParam } from "../utils/decodeRouteParam";
 
 export type AssetDetailViewModel = {
-  distributionItem: DistributionItem | undefined;
+  distributionItem: DistributionItem;
 };
 
-export function useAssetDetailViewModel(): AssetDetailViewModel {
+export function useAssetDetailViewModel(): {
+  distributionItem: DistributionItem | undefined;
+} {
   const { "*": routeAssetId } = useParams<{ "*": string }>();
   const distribution = useDistribution({ groupBy: "asset" });
 
