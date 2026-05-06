@@ -1,5 +1,27 @@
 # ledger-live-desktop-e2e-tests
 
+## 0.26.1
+
+### Patch Changes
+
+- Updated dependencies [[`202cc42`](https://github.com/LedgerHQ/ledger-live/commit/202cc423b09662b5b25012b84124aecd4dc7245d)]:
+  - @ledgerhq/live-common@34.70.1
+  - @ledgerhq/live-cli@24.40.1
+  - @ledgerhq/ledger-key-ring-protocol@0.13.1
+  - @ledgerhq/live-wallet@0.25.3
+  - @ledgerhq/live-dmk-speculos@0.8.6
+
+## 0.26.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`202cc42`](https://github.com/LedgerHQ/ledger-live/commit/202cc423b09662b5b25012b84124aecd4dc7245d)]:
+  - @ledgerhq/live-common@34.70.1-hotfix.0
+  - @ledgerhq/live-cli@24.40.1-hotfix.0
+  - @ledgerhq/ledger-key-ring-protocol@0.13.1-hotfix.0
+  - @ledgerhq/live-wallet@0.25.3-hotfix.0
+  - @ledgerhq/live-dmk-speculos@0.8.6-hotfix.0
+
 ## 0.26.0
 
 ### Minor Changes

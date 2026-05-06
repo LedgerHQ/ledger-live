@@ -114,6 +114,23 @@ describe("isLockedDevicePolling", () => {
       });
     });
 
+    it("should return lockedStateCannotBeDetermined when error is CLA_NOT_SUPPORTED_BOOTLOADER", async () => {
+      const error = new TransportStatusError(StatusCodes.CLA_NOT_SUPPORTED_BOOTLOADER);
+      mockGetAppAndVersion.mockRejectedValue(error);
+
+      const observable = isLockedDevicePolling(
+        mockDevice,
+        mockTransport,
+        mockGetAppAndVersion,
+        1000,
+      );
+      const result = await firstValueFrom(observable.pipe(take(1)));
+
+      expect(result).toEqual({
+        type: IsDeviceLockedResultType.lockedStateCannotBeDetermined,
+      });
+    });
+
     it("should return locked when error is SendApduTimeoutError", async () => {
       const error = new SendApduTimeoutError("Timeout");
       mockGetAppAndVersion.mockRejectedValue(error);

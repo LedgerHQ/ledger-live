@@ -1,5 +1,19 @@
 # @ledgerhq/zcash-shielded
 
+## 0.9.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-network@2.5.2
+
+## 0.9.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-network@2.5.2-hotfix.0
+
 ## 0.9.0
 
 ### Minor Changes

@@ -33,7 +33,11 @@ export function isLockedDevicePolling(
       catchError((error: Error) => {
         if (
           error instanceof TransportStatusError &&
-          [StatusCodes.CLA_NOT_SUPPORTED, StatusCodes.INS_NOT_SUPPORTED].includes(error.statusCode)
+          [
+            StatusCodes.CLA_NOT_SUPPORTED,
+            StatusCodes.CLA_NOT_SUPPORTED_BOOTLOADER,
+            StatusCodes.INS_NOT_SUPPORTED,
+          ].includes(error.statusCode)
         ) {
           return of<IsDeviceLockedResult>({
             type: IsDeviceLockedResultType.lockedStateCannotBeDetermined,

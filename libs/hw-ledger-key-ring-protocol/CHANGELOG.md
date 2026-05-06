@@ -1,5 +1,19 @@
 # @ledgerhq/live-wallet
 
+## 0.10.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.35.2
+
+## 0.10.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.35.2-hotfix.0
+
 ## 0.10.0
 
 ### Minor Changes

@@ -1,5 +1,69 @@
 # ledger-live-desktop
 
+## 4.3.1
+
+### Patch Changes
+
+- Updated dependencies [[`202cc42`](https://github.com/LedgerHQ/ledger-live/commit/202cc423b09662b5b25012b84124aecd4dc7245d)]:
+  - @ledgerhq/errors@6.34.1
+  - @ledgerhq/live-common@34.70.1
+  - @ledgerhq/coin-bitcoin@0.39.1
+  - @ledgerhq/coin-canton@0.23.2
+  - @ledgerhq/coin-casper@2.13.2
+  - @ledgerhq/coin-concordium@0.9.2
+  - @ledgerhq/coin-cosmos@0.32.1
+  - @ledgerhq/coin-evm@3.5.1
+  - @ledgerhq/coin-filecoin@1.24.2
+  - @ledgerhq/domain-service@1.8.2
+  - @ledgerhq/ledger-key-ring-protocol@0.13.1
+  - @ledgerhq/ledger-wallet-framework@1.3.2
+  - @ledgerhq/cryptoassets@13.46.2
+  - @ledgerhq/devices@8.14.2
+  - @ledgerhq/hw-transport@6.35.2
+  - @ledgerhq/hw-transport-http@6.36.2
+  - @ledgerhq/hw-transport-vault@1.7.2
+  - @ledgerhq/live-network@2.5.2
+  - @ledgerhq/live-dmk-desktop@0.16.7
+  - @ledgerhq/live-wallet@0.25.3
+  - @ledgerhq/live-countervalues@0.18.3
+  - @ledgerhq/live-countervalues-react@0.14.2
+  - @ledgerhq/asset-aggregation@0.4.2
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.10.1
+  - @ledgerhq/live-dmk-speculos@0.8.6
+  - @ledgerhq/zcash-shielded@0.9.1
+
+## 4.3.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`202cc42`](https://github.com/LedgerHQ/ledger-live/commit/202cc423b09662b5b25012b84124aecd4dc7245d)]:
+  - @ledgerhq/errors@6.34.1-hotfix.0
+  - @ledgerhq/live-common@34.70.1-hotfix.0
+  - @ledgerhq/coin-bitcoin@0.39.1-hotfix.0
+  - @ledgerhq/coin-canton@0.23.2-hotfix.0
+  - @ledgerhq/coin-casper@2.13.2-hotfix.0
+  - @ledgerhq/coin-concordium@0.9.2-hotfix.0
+  - @ledgerhq/coin-cosmos@0.32.1-hotfix.0
+  - @ledgerhq/coin-evm@3.5.1-hotfix.0
+  - @ledgerhq/coin-filecoin@1.24.2-hotfix.0
+  - @ledgerhq/domain-service@1.8.2-hotfix.0
+  - @ledgerhq/ledger-key-ring-protocol@0.13.1-hotfix.0
+  - @ledgerhq/ledger-wallet-framework@1.3.2-hotfix.0
+  - @ledgerhq/cryptoassets@13.46.2-hotfix.0
+  - @ledgerhq/devices@8.14.2-hotfix.0
+  - @ledgerhq/hw-transport@6.35.2-hotfix.0
+  - @ledgerhq/hw-transport-http@6.36.2-hotfix.0
+  - @ledgerhq/hw-transport-vault@1.7.2-hotfix.0
+  - @ledgerhq/live-network@2.5.2-hotfix.0
+  - @ledgerhq/live-dmk-desktop@0.16.7-hotfix.0
+  - @ledgerhq/live-wallet@0.25.3-hotfix.0
+  - @ledgerhq/live-countervalues@0.18.3-hotfix.0
+  - @ledgerhq/live-countervalues-react@0.14.2-hotfix.0
+  - @ledgerhq/asset-aggregation@0.4.2-hotfix.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.10.1-hotfix.0
+  - @ledgerhq/live-dmk-speculos@0.8.6-hotfix.0
+  - @ledgerhq/zcash-shielded@0.9.1-hotfix.0
+
 ## 4.3.0
 
 ### Minor Changes
