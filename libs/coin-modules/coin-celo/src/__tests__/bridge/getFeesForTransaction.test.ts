@@ -4,6 +4,8 @@ import {
   transactionFixture,
   transactionWithUsdcFeeFixture,
   tokenTransactionWithUsdcFeeFixture,
+  accountWithTokenAccountFixture,
+  tokenTransactionWithUsdtFeeFixture,
 } from "../../bridge/fixtures";
 import getFeesForTransaction from "../../bridge/getFeesForTransaction";
 
@@ -97,6 +99,13 @@ jest.mock("../../network/sdk", () => {
         estimateGasWithInflationFactor: jest.fn().mockReturnValue(3),
         gasPrice: gasPriceMock,
         getMaxPriorityFeePerGas: jest.fn().mockResolvedValue(1),
+        web3: {
+          eth: {
+            getBlock: jest.fn().mockResolvedValue({
+              baseFeePerGas: undefined,
+            }),
+          },
+        },
       },
     })),
   };
@@ -282,8 +291,27 @@ describe("getFeesForTransaction", () => {
 
   it("should return the correct fees for a token transaction with USDC fee currency", async () => {
     const fees = await getFeesForTransaction({
-      account: { ...accountFixture, balance: BigNumber(123), spendableBalance: BigNumber(123) },
+      account: {
+        ...accountWithTokenAccountFixture,
+        balance: BigNumber(123),
+        spendableBalance: BigNumber(123),
+      },
       transaction: tokenTransactionWithUsdcFeeFixture,
+    });
+
+    // Fees should still be calculated correctly when feeCurrency is provided
+    expect(fees).toBeInstanceOf(BigNumber);
+    expect(fees.gt(0)).toBe(true);
+  });
+
+  it("should return the correct fees for a token transaction with USDT fee currency", async () => {
+    const fees = await getFeesForTransaction({
+      account: {
+        ...accountWithTokenAccountFixture,
+        balance: BigNumber(123),
+        spendableBalance: BigNumber(123),
+      },
+      transaction: tokenTransactionWithUsdtFeeFixture,
     });
 
     // Fees should still be calculated correctly when feeCurrency is provided
