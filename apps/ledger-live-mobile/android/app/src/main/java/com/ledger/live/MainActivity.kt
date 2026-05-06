@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
+import androidx.activity.OnBackPressedCallback
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
@@ -31,6 +32,18 @@ class MainActivity : ReactActivity() {
             )
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Registered BEFORE super.onCreate() so this callback has the lowest LIFO priority.
+        // react-native-screens registers its own OnBackPressedCallbacks after super.onCreate()
+        // (during RN init / screen rendering), giving them higher priority. They handle back
+        // natively for mid-flow screens. Our callback only fires when react-native-screens has
+        // already given up (root screen with nothing to pop), bridging the RN 0.81 + targetSdk
+        // 36 gap where Android 16 no longer calls Activity.onBackPressed() directly.
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                this@MainActivity.onBackPressed()
+            }
+        })
+
         if (android.os.Build.VERSION.SDK_INT >= 31) {
             installSplashScreen()
         }
@@ -41,6 +54,12 @@ class MainActivity : ReactActivity() {
 
         val sharedI18nUtilInstance = I18nUtil.getInstance()
         sharedI18nUtilInstance.allowRTL(applicationContext, true)
+    }
+
+    // When JS doesn't consume the back press, ReactActivity calls this. Without the
+    // override it re-enters onBackPressedDispatcher and loops. Move to background instead.
+    override fun invokeDefaultOnBackPressed() {
+        moveTaskToBack(false)
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
