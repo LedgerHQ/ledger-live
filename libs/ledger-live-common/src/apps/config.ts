@@ -89,6 +89,12 @@ const appConfig: Record<string, ConfigInfo> = {
       nanosMinVersion: "0.7.0",
     },
   },
+  config_nanoapp_concordium: {
+    type: "object",
+    default: {
+      minVersion: "5.6.0",
+    },
+  },
 };
 
 export { appConfig };

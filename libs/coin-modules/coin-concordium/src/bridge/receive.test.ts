@@ -12,7 +12,7 @@ import {
 jest.mock("../config", () => ({
   __esModule: true,
   default: {
-    getCoinConfig: jest.fn().mockReturnValue({ networkType: "mainnet" }),
+    getCoinConfig: jest.fn().mockReturnValue({ networkType: "testnet" }),
   },
 }));
 
@@ -40,7 +40,7 @@ describe("receive", () => {
       expect(events).toHaveLength(1);
       expect(events[0]).toEqual({
         address: VALID_ADDRESS,
-        path: "44'/919'/404'/404'/0'",
+        path: "44'/1'/0'/0'/0'/0'",
         publicKey: PUBLIC_KEY,
       });
     });
@@ -64,7 +64,7 @@ describe("receive", () => {
       // GIVEN
       const signerContext = createMockSignerContext();
       const receive = buildReceive(signerContext);
-      const customPath = "44'/919'/404'/404'/5'";
+      const customPath = "44'/1'/0'/0'/0'/5'";
       const account = createFixtureConcordiumAccount({ freshAddressPath: customPath });
 
       // WHEN
@@ -155,7 +155,7 @@ describe("receive", () => {
         get freshAddress(): string {
           throw new Error(errorMessage);
         },
-        freshAddressPath: "44'/919'/404'/404'/0'",
+        freshAddressPath: "44'/1'/0'/0'/0'/0'",
         concordiumResources: { publicKey: "abc" },
       } as any;
 
@@ -182,7 +182,7 @@ describe("receive", () => {
         expect(signer.verifyAddress).toHaveBeenCalledWith(
           account.freshAddressPath,
           account.freshAddress,
-          "mainnet",
+          "testnet",
         );
       });
 
@@ -201,7 +201,7 @@ describe("receive", () => {
         expect(events).toHaveLength(1);
         expect(events[0]).toEqual({
           address: VALID_ADDRESS,
-          path: "44'/919'/404'/404'/0'",
+          path: "44'/1'/0'/0'/0'/0'",
           publicKey: PUBLIC_KEY,
         });
       });
