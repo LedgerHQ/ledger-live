@@ -1,5 +1,4 @@
 ---
-"@ledgerhq/coin-evm": minor
 "live-mobile": minor
 "@ledgerhq/live-common": minor
 ---
