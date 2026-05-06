@@ -522,6 +522,53 @@ export const getTransactionParams = async (currency?: CryptoCurrency) => {
   };
 };
 
+type PostInfo = {
+  actualWeight: { refTime: string; proofSize: string } | null;
+  paysFee: "Yes" | "No";
+};
+
+type SubmitExtrinsicDryRunResponse = {
+  at: { hash: string; height: string };
+  result:
+    | {
+        resultType: "DispatchOutcome";
+        result: { postInfo: PostInfo; ok?: null };
+      }
+    | {
+        resultType: "DispatchError";
+        result: { postInfo: PostInfo; error: Record<string, unknown> };
+      };
+};
+
+/**
+ * We run a dry run of the extrinsic to check if the transaction is valid and eventually get a precise error or what is wrong with transaction
+ */
+export const submitExtrinsicDryRun = async (
+  extrinsic: string,
+  currency?: CryptoCurrency,
+): Promise<SubmitExtrinsicDryRunResponse> => {
+  const { registry } = await getRegistry(currency);
+  const decoded = registry.createType("Extrinsic", extrinsic);
+  const callHex = decoded.method.toHex();
+  const senderAddress = decoded.signer.toString();
+
+  const { data } = await callSidecar<SubmitExtrinsicDryRunResponse>(
+    "/transaction/dry-run",
+    currency,
+    "POST",
+    {
+      tx: callHex,
+      senderAddress,
+    },
+  );
+
+  if (data.result.resultType === "DispatchError") {
+    throw new Error(`polkadot: ${JSON.stringify(data.result.result.error)}`);
+  }
+
+  return data;
+};
+
 /**
  * Broadcast the transaction to the substrate node
  *

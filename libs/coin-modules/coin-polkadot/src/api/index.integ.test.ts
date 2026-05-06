@@ -1,5 +1,8 @@
 import type { AlpacaApi } from "@ledgerhq/coin-module-framework/api/index";
 import { createApi } from ".";
+import { ApiPromise, HttpProvider, Keyring } from "@polkadot/api";
+import { type ProviderInterface } from "@polkadot/rpc-provider/types";
+import { cryptoWaitReady, encodeAddress, hdLedger, mnemonicGenerate } from "@polkadot/util-crypto";
 
 describe("Polkadot Api", () => {
   let module: AlpacaApi;
@@ -84,6 +87,37 @@ describe("Polkadot Api", () => {
       expect(result[0].asset).toEqual({ type: "native" });
       expect(result[0].value).toBeGreaterThan(0);
     }, 10000);
+  });
+
+  describe("broadcast", () => {
+    it("should throw an error if the transaction is not valid", async () => {
+      const senderSeed = mnemonicGenerate(24);
+      const receiverSeed = mnemonicGenerate(24);
+
+      const senderKeyPair = hdLedger(senderSeed, "m/44'/354'/0'/0'/0'");
+      const receiverKeyPair = hdLedger(receiverSeed, "m/44'/354'/0'/0'/0'");
+
+      const receiverAddress = encodeAddress(receiverKeyPair.publicKey, 0);
+
+      await cryptoWaitReady();
+
+      const provider = new HttpProvider("https://polkadot-asset-hub-fullnodes.api.live.ledger.com");
+      const api = await ApiPromise.create({
+        provider: provider as ProviderInterface,
+        noInitWarn: true,
+      });
+
+      try {
+        const signerPair = new Keyring().addFromPair(senderKeyPair);
+        const signedTx = await api.tx.balances
+          .transferKeepAlive(receiverAddress, 15_000_000_000n)
+          .signAsync(signerPair, { nonce: 0 });
+
+        await expect(module.broadcast(signedTx.toHex())).rejects.toThrow(/FundsUnavailable/);
+      } finally {
+        await api.disconnect();
+      }
+    });
   });
 
   describe("craftTransaction", () => {
