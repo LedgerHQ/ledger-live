@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { Page, useMarketActions } from "LLD/features/Market/hooks/useMarketActions";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/index";
 import { MarketCurrencyData, KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import { MarketAction } from "./types";
 
@@ -16,6 +17,7 @@ type UseRowItemViewModelProps = {
 export function useRowItemViewModel({ currency, toggleStar, range }: UseRowItemViewModelProps) {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
 
   const {
     onBuy,
@@ -33,11 +35,13 @@ export function useRowItemViewModel({ currency, toggleStar, range }: UseRowItemV
   const onCurrencyClick = useCallback(() => {
     if (currency) {
       setTrackingSource("Page Market");
-      navigate(`/market/${currency.id}`, {
-        state: currency,
-      });
+      if (shouldDisplayAggregatedAssets) {
+        navigate(`/asset/${currency.id}`, { state: currency });
+      } else {
+        navigate(`/market/${currency.id}`, { state: currency });
+      }
     }
-  }, [currency, navigate]);
+  }, [currency, navigate, shouldDisplayAggregatedAssets]);
 
   const onStarClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
