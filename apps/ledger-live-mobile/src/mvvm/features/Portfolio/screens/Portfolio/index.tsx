@@ -12,6 +12,7 @@ import { ScreenName } from "~/const";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
 import { AnalyticsConsentDrawer } from "LLM/features/AnalyticsConsentDrawer";
+import TrackScreen from "~/analytics/TrackScreen";
 import { usePortfolioBorrowSectionViewModel } from "../../components/PortfolioBorrowSection/usePortfolioBorrowSectionViewModel";
 import {
   PROGRESS_VIEW_OFFSET_LEGACY_ANDROID,
@@ -108,6 +109,8 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
       );
       return sections;
     }
+
+    sections.push(<TrackScreen key="trackWallet" category="Wallet" />);
 
     if (shouldDisplayQuickActionCtas && !shouldDisplayGraphRework) {
       sections.push(
