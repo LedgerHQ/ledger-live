@@ -10,6 +10,7 @@ import {
 import { speculosTransportFactory } from "@ledgerhq/device-transport-kit-speculos";
 import { getEnv } from "@ledgerhq/live-env";
 import { ButtonKey, deviceControllerClientFactory } from "@ledgerhq/speculos-device-controller";
+import { withTransientHttpRetries } from "./speculosTransientHttpRetry";
 
 export type SpeculosHttpTransportOpts = {
   apiPort?: string;
@@ -131,10 +132,12 @@ export default class SpeculosHttpTransport extends Transport {
         ),
       );
 
-      deviceManagementEntry.sessionId = await deviceManagementEntry.dmk.connect({
-        device: discoveredDevices[0],
-        sessionRefresherOptions: { isRefresherDisabled: true },
-      });
+      deviceManagementEntry.sessionId = await withTransientHttpRetries("speculos-dmk-connect", () =>
+        deviceManagementEntry.dmk.connect({
+          device: discoveredDevices[0],
+          sessionRefresherOptions: { isRefresherDisabled: true },
+        }),
+      );
     })();
 
     try {
@@ -187,17 +190,23 @@ export default class SpeculosHttpTransport extends Transport {
         : buttonInput;
 
     log("speculos-button", "press-and-release", resolved);
-    return await this.getButtonClient().press(resolved);
+    return await withTransientHttpRetries("speculos-button-press", () =>
+      this.getButtonClient().press(resolved),
+    );
   }
 
   async exchange(apduCommand: Buffer): Promise<Buffer> {
-    try {
-      const { data, statusCode } = await this.dmk.sendApdu({
+    const apdu = new Uint8Array(apduCommand.buffer, apduCommand.byteOffset, apduCommand.byteLength);
+
+    const sendOnce = () =>
+      this.dmk.sendApdu({
         sessionId: this.sessionId,
-        apdu: new Uint8Array(apduCommand.buffer, apduCommand.byteOffset, apduCommand.byteLength),
+        apdu,
       });
-      const responseBuffer = Buffer.from([...data, ...statusCode]);
-      return responseBuffer;
+
+    try {
+      const { data, statusCode } = await withTransientHttpRetries("speculos-send-apdu", sendOnce);
+      return Buffer.from([...data, ...statusCode]);
     } catch {
       const deviceManagementEntry = SpeculosHttpTransport.ensureEntry(
         this.baseUrl,
@@ -210,12 +219,11 @@ export default class SpeculosHttpTransport extends Transport {
       }
       this.sessionId = deviceManagementEntry.sessionId;
 
-      const { data, statusCode } = await this.dmk.sendApdu({
-        sessionId: this.sessionId,
-        apdu: new Uint8Array(apduCommand.buffer, apduCommand.byteOffset, apduCommand.byteLength),
-      });
-      const responseBuffer = Buffer.from([...data, ...statusCode]);
-      return responseBuffer;
+      const { data, statusCode } = await withTransientHttpRetries(
+        "speculos-send-apdu-after-reconnect",
+        sendOnce,
+      );
+      return Buffer.from([...data, ...statusCode]);
     }
   }
 
