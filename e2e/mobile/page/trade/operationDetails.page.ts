@@ -110,10 +110,12 @@ export default class OperationDetailsPage {
   }
 
   @Step("Check that transaction details are displayed")
-  async checkTransactionDetailsVisibility(accountName: string) {
+  async checkTransactionDetailsVisibility(accountName?: string) {
     await this.waitForOperationDetails();
     await detoxExpect(this.account()).toBeVisible();
-    await detoxExpect(this.account()).toHaveText(accountName);
+    if (accountName) {
+      await detoxExpect(this.account()).toHaveText(accountName);
+    }
     await detoxExpect(this.amount()).toBeVisible();
     await scrollToId(this.operationDetailsIdentifier, this.operationDetailsScrollViewId);
     await detoxExpect(this.operation()).toBeVisible();

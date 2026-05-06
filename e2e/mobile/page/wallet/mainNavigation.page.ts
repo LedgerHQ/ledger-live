@@ -13,6 +13,7 @@ export default class MainNavigationPage {
   topBarDiscoverId = "topbar-discover";
   topBarNotificationsId = "topbar-notifications";
   topBarSettingsId = "topbar-settings";
+  topBarTransactionHistoryId = "topbar-transaction-history";
 
   // --- Legacy bottom tabs ---
   legacyPortfolioTabId = "tab-bar-portfolio";
@@ -76,6 +77,11 @@ export default class MainNavigationPage {
   @Step("Tap Settings in top bar")
   async tapTopBarSettings() {
     await tapById(this.topBarSettingsId);
+  }
+
+  @Step("Tap Transaction History in top bar")
+  async tapTopBarTransactionHistory() {
+    await tapById(this.topBarTransactionHistoryId);
   }
 
   // =====================
