@@ -68,27 +68,6 @@ describe("useAddressesViewModel", () => {
     });
   });
 
-  describe("onAccountPress", () => {
-    it("navigates to account screen and fires analytics", () => {
-      const { result } = renderHook(
-        () => useAddressesViewModel(mockBtcCryptoCurrency),
-        withAccounts("bitcoin", 1),
-      );
-
-      const account = result.current.accounts[0].account;
-      act(() => result.current.onAccountPress(account));
-
-      expect(mockNavigate).toHaveBeenCalledWith(ScreenName.Account, {
-        accountId: account.id,
-      });
-      expect(track).toHaveBeenCalledWith("account_clicked", {
-        currency: "bitcoin",
-        accountId: account.id,
-        page: "Asset Detail",
-      });
-    });
-  });
-
   describe("onAddAccount", () => {
     it("navigates to device selection and fires analytics", () => {
       const { result } = renderHook(

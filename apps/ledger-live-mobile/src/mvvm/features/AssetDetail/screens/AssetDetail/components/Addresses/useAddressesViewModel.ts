@@ -46,20 +46,6 @@ export function useAddressesViewModel(currency: CryptoCurrency | undefined) {
     });
   }, [currency, accountTuples, walletState]);
 
-  const onAccountPress = useCallback(
-    (account: Account) => {
-      track("account_clicked", {
-        currency: currency?.id,
-        accountId: account.id,
-        page: "Asset Detail",
-      });
-      navigation.navigate(ScreenName.Account, {
-        accountId: account.id,
-      });
-    },
-    [navigation, currency?.id],
-  );
-
   const onAddAccount = useCallback(() => {
     if (!currency) return;
     track("button_clicked", {
@@ -78,7 +64,6 @@ export function useAddressesViewModel(currency: CryptoCurrency | undefined) {
 
   return {
     accounts,
-    onAccountPress,
     onAddAccount,
   };
 }
