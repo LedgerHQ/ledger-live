@@ -4,7 +4,7 @@ import { getSwapAPIBaseURL, getSwapUserIP } from "@ledgerhq/live-common/exchange
 import network from "@ledgerhq/live-network";
 import { walletCliDebug } from "../../shared/log";
 import { mapSwapStatusLine } from "./status-shared";
-import { SwapStatus } from "@ledgerhq/live-common/exchange/swap/types";
+import type { SwapStatus } from "@ledgerhq/live-common/exchange/swap/types";
 import { outputOption, resolveOutputFormat } from "../inputs";
 import { createCommandOutput } from "../../output";
 
@@ -40,8 +40,8 @@ export default defineCommand({
     "swap-id": option(z.string().min(1, "Swap ID is required"), {
       description: "Swap identifier returned by the swap flow",
     }),
-    provider: option(z.string().min(1).optional(), {
-      description: "Optional partner identifier when the API requires it",
+    provider: option(z.string().min(1), {
+      description: "Partner identifier",
     }),
     output: outputOption,
   },
