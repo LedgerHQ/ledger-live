@@ -242,6 +242,7 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
                   ..._.context.intermediateValue,
                   requiredUserInteraction:
                     _.event.snapshot.context.intermediateValue.requiredUserInteraction,
+                  installPlan: null,
                 }),
               }),
             },
@@ -574,6 +575,12 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
           },
         },
         RefreshDeviceStatus: {
+          entry: assign({
+            intermediateValue: _ => ({
+              ..._.context.intermediateValue,
+              installPlan: null,
+            }),
+          }),
           invoke: {
             src: "getStatus",
             input: _ => ({
@@ -585,6 +592,7 @@ export class ConnectAppDeviceAction extends XStateDeviceAction<
                   ..._.context.intermediateValue,
                   requiredUserInteraction:
                     _.event.snapshot.context.intermediateValue.requiredUserInteraction,
+                  installPlan: null,
                 }),
               }),
             },

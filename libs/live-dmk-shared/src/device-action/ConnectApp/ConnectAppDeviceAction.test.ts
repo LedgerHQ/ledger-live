@@ -121,7 +121,9 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
     deviceMetadata: DEVICE_METADATA,
   };
   const REFRESH_DEVICE_STATUS_PENDING = {
-    intermediateValue: expect.any(Object),
+    intermediateValue: expect.objectContaining({
+      installPlan: null,
+    }),
     status: DeviceActionStatus.Pending,
   } as unknown as ConnectAppDAState;
 
