@@ -10,6 +10,8 @@ import { OnboardingWidget } from "../OnboardingWidget";
 import { usePortfolioBannersSectionViewModel } from "./usePortfolioBannersSectionViewModel";
 import { width } from "~/helpers/normalizeSize";
 
+const WIDTH = width - 32;
+
 interface PortfolioBannersSectionProps {
   readonly isFirst: boolean;
   readonly isLNSUpsellBannerShown: boolean;
@@ -28,7 +30,6 @@ export const PortfolioBannersSection = ({
     shouldDisplayRecover,
     onScroll,
     carouselIndex,
-    hasMultipleCards,
   } = usePortfolioBannersSectionViewModel({
     showAssets,
   });
@@ -69,14 +70,46 @@ export const PortfolioBannersSection = ({
     );
   }
 
-  const carouselItems = [
-    ...(shouldShowOnboardingWidget
-      ? [{ key: "onboarding", component: <OnboardingWidget />, padded: true }]
-      : []),
-    ...(shouldDisplayRecover
-      ? [{ key: "recover", component: <RecoverBanner />, padded: false }]
-      : []),
-  ];
+  if (shouldShowOnboardingWidget && shouldDisplayRecover) {
+    const carouselItems = [
+      { key: "onboarding", component: <OnboardingWidget /> },
+      { key: "recover", component: <RecoverBanner paddingHorizontal="s0" /> },
+    ];
+
+    return (
+      <SectionContainer
+        py="0"
+        mt={0}
+        isFirst={isFirst}
+        key="BannersSection"
+        testID="portfolio-banners-section"
+      >
+        <Box lx={{ marginTop: sectionMarginTop, gap: "s8", marginBottom: "s24" }}>
+          <FlatList
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            onScroll={onScroll}
+            onMomentumScrollEnd={onScroll}
+            disableIntervalMomentum
+            snapToInterval={width}
+            decelerationRate={0}
+            scrollEventThrottle={16}
+            bounces={false}
+            data={carouselItems}
+            keyExtractor={item => item.key}
+            renderItem={({ item }) => <Box style={{ width: WIDTH }}>{item.component}</Box>}
+          />
+
+          <Box lx={{ alignItems: "center" }} testID="banners-page-indicator">
+            <PageIndicator
+              currentPage={Math.min(carouselIndex + 1, carouselItems.length)}
+              totalPages={carouselItems.length}
+            />
+          </Box>
+        </Box>
+      </SectionContainer>
+    );
+  }
 
   return (
     <SectionContainer
@@ -86,33 +119,9 @@ export const PortfolioBannersSection = ({
       key="BannersSection"
       testID="portfolio-banners-section"
     >
-      <Box lx={{ marginTop: sectionMarginTop, gap: "s8", marginBottom: "s24" }}>
-        <FlatList
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          onScroll={onScroll}
-          onMomentumScrollEnd={onScroll}
-          disableIntervalMomentum
-          snapToInterval={width}
-          decelerationRate={0}
-          scrollEventThrottle={16}
-          bounces={false}
-          data={carouselItems}
-          keyExtractor={item => item.key}
-          renderItem={({ item }) => (
-            <Box style={{ width }} lx={item.padded ? { paddingHorizontal: "s16" } : undefined}>
-              {item.component}
-            </Box>
-          )}
-        />
-        {hasMultipleCards && (
-          <Box lx={{ alignItems: "center" }} testID="banners-page-indicator">
-            <PageIndicator
-              currentPage={Math.min(carouselIndex + 1, carouselItems.length)}
-              totalPages={carouselItems.length}
-            />
-          </Box>
-        )}
+      <Box style={{ width: WIDTH }} lx={{ marginTop: sectionMarginTop, marginBottom: "s24" }}>
+        {shouldShowOnboardingWidget && <OnboardingWidget />}
+        {shouldDisplayRecover && <RecoverBanner paddingHorizontal="s0" />}
       </Box>
     </SectionContainer>
   );
