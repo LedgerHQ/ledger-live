@@ -23,7 +23,7 @@ export class DmkCompatTransport extends Transport {
   ): Promise<Buffer> {
     const { data, statusCode } = await this.dmk.sendApdu({
       sessionId: this.sessionId,
-      apdu: new Uint8Array(apdu),
+      apdu: new Uint8Array(apdu.buffer, apdu.byteOffset, apdu.byteLength),
       abortTimeout: abortTimeoutMs,
     });
 

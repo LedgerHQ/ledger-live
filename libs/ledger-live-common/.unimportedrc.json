@@ -602,7 +602,6 @@
   ],
   "ignoreUnused": [
     "@ledgerhq/asset-aggregation",
-    "@ledgerhq/device-intent",
     "@ledgerhq/hw-app-eth",
     "@ledgerhq/hw-transport-mocker",
     "@ledgerhq/live-countervalues-react",

@@ -1,6 +1,5 @@
 import type {
   DeviceExtractedContext,
-  Intent,
   IntentDefinition,
   IntentPlatformDefinition,
 } from "@ledgerhq/device-intent";
@@ -12,7 +11,7 @@ export type InitializationEchoIntentJobState = {
 
 export type InitializationEchoIntentInput = undefined;
 
-export type InitializationEchoIntentExtraProps = Record<string, never>;
+type InitializationEchoIntentExtraProps = Record<string, never>;
 
 export type InitializationEchoIntentDefinition = IntentDefinition<
   InitializationEchoIntentJobState,
@@ -20,12 +19,6 @@ export type InitializationEchoIntentDefinition = IntentDefinition<
 >;
 
 export type InitializationEchoIntentPlatformDefinition = IntentPlatformDefinition<
-  InitializationEchoIntentJobState,
-  InitializationEchoIntentInput,
-  InitializationEchoIntentExtraProps
->;
-
-export type InitializationEchoIntent = Intent<
   InitializationEchoIntentJobState,
   InitializationEchoIntentInput,
   InitializationEchoIntentExtraProps

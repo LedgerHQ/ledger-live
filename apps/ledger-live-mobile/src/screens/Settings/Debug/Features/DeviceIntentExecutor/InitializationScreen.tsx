@@ -99,8 +99,6 @@ export default function DebugDeviceIntentExecutorInitialization() {
     [handleUserCancel, selectedScenario],
   );
 
-  console.log("[DIE] executor props", { executorProps });
-
   return (
     <>
       <ScrollView style={styles.container} contentContainerStyle={styles.content}>

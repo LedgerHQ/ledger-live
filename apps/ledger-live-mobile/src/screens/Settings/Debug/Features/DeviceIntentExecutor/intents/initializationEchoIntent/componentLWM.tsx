@@ -1,16 +1,12 @@
 import React from "react";
 import { Text, Flex } from "@ledgerhq/native-ui";
-import type { InitializationEchoIntentExtraProps, InitializationEchoIntentJobState } from "./types";
+import type { InitializationEchoIntentJobState } from "./types";
 
 export function InitializationEchoIntentComponentLWM({
   jobState,
-  extraProps: _extraProps,
 }: Readonly<{
   jobState: InitializationEchoIntentJobState | undefined;
-  extraProps: InitializationEchoIntentExtraProps;
 }>) {
-  void _extraProps;
-
   return (
     <Flex p={4}>
       <Text variant="subtitle" mb={2}>
