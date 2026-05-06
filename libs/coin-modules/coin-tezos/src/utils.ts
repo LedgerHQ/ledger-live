@@ -26,22 +26,6 @@ export const MIN_SUGGESTED_FEE_SMALL_TRANSFER = 489;
  */
 export const OP_SIZE_XTZ_TRANSFER = 154;
 
-/**
- * Helper function to map generic staking intents to Tezos operation modes
- */
-export function mapIntentTypeToTezosMode(intentType: string): "send" | "delegate" | "undelegate" {
-  switch (intentType) {
-    case "stake":
-    case "delegate":
-      return "delegate";
-    case "unstake":
-    case "undelegate":
-      return "undelegate";
-    default:
-      return "send";
-  }
-}
-
 /** Minimal asset shape from `TransactionIntent` for FA2 detection */
 export type TezosAssetLike = {
   type: string;
@@ -77,7 +61,7 @@ export function resolveTezosOperationMode(
   intentType: string,
   asset: TezosAssetLike | undefined,
 ): TezosOperationMode {
-  const base = mapIntentTypeToTezosMode(intentType);
+  const base = intentType as TezosOperationMode;
   if (base === "send" && parseTezosTokenAsset(asset) !== null) {
     return "send_token";
   }
