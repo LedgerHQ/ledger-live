@@ -24,7 +24,7 @@ type ErrorLogEvent = { status: "failure"; error: Error; txPayload: string } & Co
 
 type SuccessLogEvent = { status: "success" } & CommonLogEvent;
 
-type LogEvent = SuccessLogEvent | ErrorLogEvent;
+export type LogEvent = SuccessLogEvent | ErrorLogEvent;
 
 export type SignTransactionArgs = {
   account?: AccountLike | null;
