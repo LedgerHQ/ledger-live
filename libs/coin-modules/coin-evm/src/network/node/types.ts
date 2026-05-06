@@ -5,6 +5,11 @@ import { EvmConfigInfo } from "../../config";
 import { Transaction as EvmTransaction, FeeData } from "../../types";
 
 /**
+ * Block finalization levels supported by EVM JSON-RPC API, used to fetch the latest block.
+ */
+export type BlockFinalizationTag = "latest" | "safe" | "finalized";
+
+/**
  * Asset information for token transfers
  */
 export type ERC20Asset = {
@@ -191,7 +196,7 @@ export type NodeApi = {
   ) => Promise<string>;
   getBlockByHeight: (
     currency: CryptoCurrency,
-    blockHeight: number | "latest",
+    blockHeight: number | BlockFinalizationTag,
     prefetchTxs?: boolean,
     // timestamp is in milliseconds
   ) => Promise<BlockByHeightResult>;

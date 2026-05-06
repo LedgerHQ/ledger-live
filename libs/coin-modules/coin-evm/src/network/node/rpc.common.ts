@@ -31,6 +31,7 @@ import {
   TransactionInfo,
   BlockByHeightResult,
   BlockReceiptInfo,
+  BlockFinalizationTag,
 } from "./types";
 
 /**
@@ -398,7 +399,7 @@ async function broadcastTransaction(
 async function getBlockByHeight(
   api: JsonRpcProvider,
   _currency: CryptoCurrency,
-  blockHeight: number | "latest",
+  blockHeight: number | BlockFinalizationTag,
   prefetchTxs?: boolean,
 ): Promise<BlockByHeightResult> {
   let block: ethers.Block | null;
@@ -496,10 +497,10 @@ function parseRpcHexQuantity(value: unknown, fieldName: string): number {
  */
 async function getBlockByHeightFromRawRpc(
   api: JsonRpcProvider,
-  blockHeight: number | "latest",
+  blockHeight: number | BlockFinalizationTag,
   prefetchTxs: boolean,
 ): Promise<BlockByHeightResult> {
-  const blockTag = blockHeight === "latest" ? "latest" : ethers.toQuantity(blockHeight);
+  const blockTag = typeof blockHeight === "number" ? ethers.toQuantity(blockHeight) : blockHeight;
   const rawBlock = await api.send("eth_getBlockByNumber", [blockTag, prefetchTxs]);
   if (typeof rawBlock !== "object" || rawBlock === null)
     throw new Error("Invalid eth_getBlockByNumber response");

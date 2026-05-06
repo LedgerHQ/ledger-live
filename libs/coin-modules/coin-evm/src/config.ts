@@ -44,6 +44,11 @@ export type EvmConfig = {
     explorerId: LedgerExplorerId;
   };
   showNfts: boolean;
+  /**
+   * The block tag used to fetch the latest block. Defaults to "latest" if not set.
+   * Use "safe" or "finalized" on chains where reorg protection is needed.
+   */
+  finalizationLevel?: "latest" | "safe" | "finalized";
 };
 
 export type ExternalNodeConfig = Extract<EvmConfig["node"], { type: "external" }>;
