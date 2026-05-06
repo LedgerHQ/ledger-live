@@ -58,6 +58,7 @@ import {
   useRedirectToSwapHistory,
 } from "../utils/index";
 import FeesDrawerLiveApp from "./FeesDrawerLiveApp";
+import { useSwapDefaultAccounts } from "./useSwapDefaultAccounts";
 import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
@@ -165,52 +166,14 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
   const location = useLocation();
   const state = isSwapLocationState(location.state) ? location.state : null;
 
-  const rawFromAccountId =
-    typeof state?.defaultAccountId === "object"
-      ? state?.defaultAccountId?.fromAccountId
-      : undefined;
-
-  const rawToAccountId =
-    typeof state?.defaultAccountId === "string"
-      ? state.defaultAccountId
-      : state?.defaultAccountId?.toAccountId;
-
-  const resolvedDefaultToAccount = useMemo(() => {
-    if (state?.defaultAccount) return state.defaultAccount;
-    return rawToAccountId ? accounts.find(acc => acc.id === rawToAccountId) : undefined;
-  }, [accounts, state?.defaultAccount, rawToAccountId]);
-
-  const resolvedDefaultFromAccount = useMemo(
-    () => (rawFromAccountId ? accounts.find(acc => acc.id === rawFromAccountId) : undefined),
-    [accounts, rawFromAccountId],
-  );
-
-  const resolvedDefaultToParentAccount = useMemo(() => {
-    if (state?.defaultParentAccount) {
-      return state.defaultParentAccount;
-    }
-    if (state?.defaultParentAccountId) {
-      const candidate = accounts.find(acc => acc.id === state.defaultParentAccountId);
-      return candidate?.type === "Account" ? candidate : undefined;
-    }
-    if (resolvedDefaultToAccount?.type === "TokenAccount") {
-      const candidate = accounts.find(acc => acc.id === resolvedDefaultToAccount.parentId);
-      return candidate?.type === "Account" ? candidate : undefined;
-    }
-    return undefined;
-  }, [
-    accounts,
-    state?.defaultParentAccount,
-    state?.defaultParentAccountId,
+  const {
+    rawFromAccountId,
+    rawToAccountId,
+    resolvedDefaultFromAccount,
+    resolvedDefaultFromParentAccount,
     resolvedDefaultToAccount,
-  ]);
-  const resolvedDefaultFromParentAccount = useMemo(() => {
-    if (resolvedDefaultFromAccount?.type === "TokenAccount") {
-      const candidate = accounts.find(acc => acc.id === resolvedDefaultFromAccount.parentId);
-      return candidate?.type === "Account" ? candidate : undefined;
-    }
-    return undefined;
-  }, [accounts, resolvedDefaultFromAccount]);
+    resolvedDefaultToParentAccount,
+  } = useSwapDefaultAccounts(state);
   const { networkStatus } = useNetworkStatus();
   const isOffline = networkStatus === NetworkStatus.OFFLINE;
   // Remove after KYC AB Testing
@@ -508,10 +471,7 @@ const SwapWebView = ({ manifest, isEmbedded = false, Loader = SwapLoader }: Swap
   );
 
   const hashString = useMemo(() => {
-    // Prefer recomputing the wallet-API id from the resolved account (this also
-    // warms the uuidToAccountId map used by later custom.* handlers). If the
-    // local account isn't available (e.g. cold-start deeplink), fall back to
-    // whatever raw id came in — typically already a wallet-API id.
+    // Recompute wallet-API ids when possible; otherwise keep raw deeplink ids.
     const fromAccountIdForUrl = resolvedDefaultFromAccount
       ? accountToWalletAPIAccount(
           walletState,
