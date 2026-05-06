@@ -117,15 +117,12 @@ describe("prepareTransaction", () => {
     );
   });
 
-  it("returns fees=0 when fee estimation fails with NotEnoughBalance", async () => {
-    // GIVEN — amount > balance: getTransactionStatus will surface the error to the user
+  it("rejects when fee estimation fails with NotEnoughBalance", async () => {
+    // GIVEN — amount > balance: error propagates so the caller can act on it
     mockGetFeesForTransaction.mockRejectedValue(new NotEnoughBalance());
     const tx = createFixtureTransaction();
 
-    // WHEN
-    const newTx = await prepareTransaction(createFixtureAccount(), tx);
-
-    // THEN
-    expect(newTx.fees).toEqual(new BigNumber(0));
+    // WHEN / THEN
+    await expect(prepareTransaction(createFixtureAccount(), tx)).rejects.toThrow(NotEnoughBalance);
   });
 });
