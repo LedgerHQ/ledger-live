@@ -32,7 +32,6 @@ const baseViewModel = {
   shouldDisplayRecover: false,
   onScroll: jest.fn(),
   carouselIndex: 0,
-  hasMultipleCards: false,
 };
 
 const renderSection = (props: Partial<React.ComponentProps<typeof PortfolioBannersSection>> = {}) =>
@@ -66,7 +65,6 @@ describe("PortfolioBannersSection", () => {
         ...baseViewModel,
         hasAssets: true,
         shouldDisplayRecover: true,
-        hasMultipleCards: true,
       });
     });
 
@@ -103,7 +101,6 @@ describe("PortfolioBannersSection", () => {
         ...baseViewModel,
         shouldShowOnboardingWidget: true,
         shouldDisplayRecover: true,
-        hasMultipleCards: true,
       });
       renderSection();
       expect(screen.getByTestId("mock-onboarding-widget")).toBeVisible();
@@ -121,7 +118,6 @@ describe("PortfolioBannersSection", () => {
         ...baseViewModel,
         shouldShowOnboardingWidget: true,
         shouldDisplayRecover: true,
-        hasMultipleCards: true,
       });
       renderSection();
       expect(screen.getByTestId("banners-page-indicator")).toBeVisible();

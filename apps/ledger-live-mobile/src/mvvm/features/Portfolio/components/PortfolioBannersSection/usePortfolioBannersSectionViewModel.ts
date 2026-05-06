@@ -10,13 +10,12 @@ interface PortfolioBannersSectionViewModelParams {
 }
 
 interface PortfolioBannersSectionViewModelResult {
-  readonly sectionMarginTop: "s12" | "s16" | "s32";
+  readonly sectionMarginTop: "s8" | "s12" | "s16" | "s32";
   readonly hasAssets: boolean;
   readonly shouldShowOnboardingWidget: boolean;
   readonly shouldDisplayRecover: boolean;
   readonly onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
   readonly carouselIndex: number;
-  readonly hasMultipleCards: boolean;
 }
 
 export const usePortfolioBannersSectionViewModel = ({
@@ -29,15 +28,16 @@ export const usePortfolioBannersSectionViewModel = ({
   const [carouselIndex, setCarouselIndex] = useState(0);
 
   const hasAssets = showAssets === true;
-
+  const hasMultipleCards = shouldDisplayRecover && shouldShowOnboardingWidget;
   let sectionMarginTop: PortfolioBannersSectionViewModelResult["sectionMarginTop"] = "s32";
-  if (!shouldDisplayQuickActionCtas || !hasAssets) {
+
+  if (!hasMultipleCards && (!shouldDisplayQuickActionCtas || !hasAssets)) {
     sectionMarginTop = "s16";
   } else if (hasTopWalletDisplayableCards || shouldDisplayRecover) {
     sectionMarginTop = "s12";
+  } else if (!hasMultipleCards) {
+    sectionMarginTop = "s8";
   }
-
-  const hasMultipleCards = shouldDisplayRecover && shouldShowOnboardingWidget;
 
   const onScroll = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -55,6 +55,5 @@ export const usePortfolioBannersSectionViewModel = ({
     shouldDisplayRecover,
     onScroll,
     carouselIndex,
-    hasMultipleCards,
   };
 };
