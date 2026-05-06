@@ -5,6 +5,8 @@ import { TrackScreen } from "~/analytics";
 import { useTrackDmkErrorsEvents } from "~/analytics/hooks/useTrackDmkErrorsEvents";
 import GenericErrorView from "~/components/GenericErrorView";
 import { ConnectYourDevice } from "../DeviceAction/rendering";
+import { StuckDeviceActionHint } from "../StuckDeviceActionHint";
+import { useStuckDeviceActionHint } from "../StuckDeviceActionHint/useStuckDeviceActionHint";
 import QueuedDrawer from "../QueuedDrawer";
 import { useIsDeviceLockedPolling } from "~/hooks/useIsDeviceLockedPolling/useIsDeviceLockedPolling";
 import { IsDeviceLockedResultType } from "~/hooks/useIsDeviceLockedPolling/types";
@@ -34,6 +36,10 @@ export const DeviceLockedCheckDrawer = ({ isOpen, device, onDeviceUnlocked, onCl
   const isLockedStateCannotBeDetermined =
     isLockedResult.type === IsDeviceLockedResultType.lockedStateCannotBeDetermined;
 
+  // Stuck-loader hint: show after 10s of undetermined polling so the user
+  // gets feedback when the device is silently busy (no AlreadySendingApduError).
+  const showStuckHint = useStuckDeviceActionHint(isOpen && isUndetermined);
+
   useEffect(() => {
     if (isUnlocked || isLockedStateCannotBeDetermined) {
       onDeviceUnlocked();
@@ -56,7 +62,12 @@ export const DeviceLockedCheckDrawer = ({ isOpen, device, onDeviceUnlocked, onCl
 
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose}>
-      {isUndetermined && <InfiniteLoader />}
+      {isUndetermined && (
+        <>
+          <InfiniteLoader />
+          {showStuckHint ? <StuckDeviceActionHint /> : null}
+        </>
+      )}
       {isPeerRemovedPairingError && (
         <BleForgetDeviceIllustration
           productName={getDeviceModel(device.modelId).productName}
