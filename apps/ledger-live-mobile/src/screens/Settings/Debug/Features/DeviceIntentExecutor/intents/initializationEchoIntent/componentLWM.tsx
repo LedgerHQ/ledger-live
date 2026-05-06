@@ -4,10 +4,13 @@ import type { InitializationEchoIntentExtraProps, InitializationEchoIntentJobSta
 
 export function InitializationEchoIntentComponentLWM({
   jobState,
-}: {
+  extraProps: _extraProps,
+}: Readonly<{
   jobState: InitializationEchoIntentJobState | undefined;
   extraProps: InitializationEchoIntentExtraProps;
-}) {
+}>) {
+  void _extraProps;
+
   return (
     <Flex p={4}>
       <Text variant="subtitle" mb={2}>

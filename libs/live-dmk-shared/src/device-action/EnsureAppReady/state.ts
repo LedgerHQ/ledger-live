@@ -31,7 +31,7 @@ export enum BlockingStateType {
   /**
    * To use in case the min app version is not in the catalog apps for
    * the current OS and apps catalog provider, and *THERE IS an OS* update available.
-   * TODO: we should refine this on DMK side to determine between 2 cases:
+   * DMK should eventually refine this to determine between 2 cases:
    *  - app available on an up-to-date OS -> "must update OS".
    *  - app not available on an up-to-date OS -> "app satisfying min app version not available".
    *

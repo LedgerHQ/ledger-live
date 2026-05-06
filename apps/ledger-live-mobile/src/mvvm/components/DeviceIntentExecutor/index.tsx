@@ -6,7 +6,6 @@ import {
 import {
   BottomSheetHeader,
   BottomSheetScrollView,
-  BottomSheetView,
 } from "@ledgerhq/lumen-ui-rnative";
 import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 import React from "react";

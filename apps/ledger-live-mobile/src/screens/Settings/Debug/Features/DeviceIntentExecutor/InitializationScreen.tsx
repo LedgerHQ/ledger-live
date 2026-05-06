@@ -215,7 +215,7 @@ export default function DebugDeviceIntentExecutorInitialization() {
   );
 }
 
-function StateRow({ label, value }: { label: string; value: string }) {
+function StateRow({ label, value }: Readonly<{ label: string; value: string }>) {
   return (
     <Flex flexDirection="row" justifyContent="space-between" mb={1}>
       <Text variant="small" color="neutral.c70">
@@ -228,7 +228,7 @@ function StateRow({ label, value }: { label: string; value: string }) {
   );
 }
 
-function SummaryBox({ label, value, mt }: { label: string; value: string; mt?: number }) {
+function SummaryBox({ label, value, mt }: Readonly<{ label: string; value: string; mt?: number }>) {
   return (
     <Flex p={2} backgroundColor="neutral.c30" borderRadius={4} mt={mt}>
       <Text variant="tiny" color="neutral.c80" mb={1} fontWeight="semiBold">
@@ -243,7 +243,13 @@ function SummaryBox({ label, value, mt }: { label: string; value: string; mt?: n
 
 function formatError(error: unknown): string {
   if (!error) return "-";
-  return error instanceof Error ? error.message : String(error);
+  if (error instanceof Error) return error.message;
+  if (typeof error === "string") return error;
+  try {
+    return JSON.stringify(error) ?? "Unknown error";
+  } catch {
+    return "Unknown error";
+  }
 }
 
 const styles = StyleSheet.create({

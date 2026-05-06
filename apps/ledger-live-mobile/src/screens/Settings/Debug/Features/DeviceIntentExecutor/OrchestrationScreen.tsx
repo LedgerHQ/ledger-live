@@ -17,6 +17,7 @@ export default function DebugDeviceIntentExecutorOrchestration() {
   });
 
   const { enabled, toggleEnabled } = orchestration;
+  const jobErrorMessage = formatError(orchestration.jobError);
 
   const decrementTicks = useCallback(() => {
     if (!enabled) setTickCount(prev => Math.max(1, prev - 1));
@@ -55,16 +56,7 @@ export default function DebugDeviceIntentExecutorOrchestration() {
           value={orchestration.latestJobState ? JSON.stringify(orchestration.latestJobState) : "—"}
         />
         <StateRow label="Job completed" value={orchestration.jobCompleted ? "YES" : "no"} />
-        <StateRow
-          label="Job error"
-          value={
-            orchestration.jobError
-              ? orchestration.jobError instanceof Error
-                ? orchestration.jobError.message
-                : String(orchestration.jobError)
-              : "—"
-          }
-        />
+        <StateRow label="Job error" value={jobErrorMessage} />
       </Flex>
 
       {/* --- Configuration --- */}
@@ -99,7 +91,7 @@ export default function DebugDeviceIntentExecutorOrchestration() {
   );
 }
 
-function StateRow({ label, value }: { label: string; value: string }) {
+function StateRow({ label, value }: Readonly<{ label: string; value: string }>) {
   return (
     <Flex flexDirection="row" justifyContent="space-between" mb={1}>
       <Text variant="small" color="neutral.c70">
@@ -110,6 +102,17 @@ function StateRow({ label, value }: { label: string; value: string }) {
       </Text>
     </Flex>
   );
+}
+
+function formatError(error: unknown): string {
+  if (!error) return "—";
+  if (error instanceof Error) return error.message;
+  if (typeof error === "string") return error;
+  try {
+    return JSON.stringify(error) ?? "Unknown error";
+  } catch {
+    return "Unknown error";
+  }
 }
 
 const styles = StyleSheet.create({

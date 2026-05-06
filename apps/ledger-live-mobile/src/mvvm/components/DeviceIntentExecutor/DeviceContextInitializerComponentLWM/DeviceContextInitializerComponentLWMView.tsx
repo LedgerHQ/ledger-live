@@ -262,6 +262,6 @@ function renderEnsureAppReadyState(state: EnsureAppReadyState): React.ReactNode 
 
 export function DeviceContextInitializerComponentLWMView({
   state,
-}: DeviceContextInitializerComponentLWMViewProps) {
+}: Readonly<DeviceContextInitializerComponentLWMViewProps>) {
   return <Box lx={{ padding: "s16", gap: "s8" }}>{renderEnsureAppReadyState(state)}</Box>;
 }

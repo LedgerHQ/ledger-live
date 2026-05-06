@@ -91,7 +91,7 @@ export function mapDeviceInfo(osVersion: GetOsVersionResponse): DeviceInfo | nul
     mcuTargetId: osVersion.mcuTargetId,
     flags: Buffer.from(osVersion.seFlags),
     bootloaderVersion: osVersion.mcuBootloaderVersion,
-    hardwareVersion: parseInt(osVersion.hwVersion, 16),
+    hardwareVersion: Number.parseInt(osVersion.hwVersion, 16),
     languageId: osVersion.langId,
   });
 }

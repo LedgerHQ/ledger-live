@@ -38,11 +38,11 @@ function DebugEntry({
   title,
   description,
   onPress,
-}: {
+}: Readonly<{
   title: string;
   description: string;
   onPress: () => void;
-}) {
+}>) {
   return (
     <Flex p={3} backgroundColor="neutral.c20" borderRadius={8} mb={3}>
       <Text variant="subtitle" mb={1}>

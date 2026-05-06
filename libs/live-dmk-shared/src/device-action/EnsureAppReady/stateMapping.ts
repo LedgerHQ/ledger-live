@@ -143,6 +143,46 @@ function mapDeprecationState(params: {
   };
 }
 
+function mapUnsupportedFirmwareState(deviceState: DeviceSessionState): EnsureAppReadyState {
+  const firmwareUpdateContext =
+    "firmwareUpdateContext" in deviceState ? deviceState.firmwareUpdateContext : undefined;
+  const currentVersion = firmwareUpdateContext?.currentFirmware?.version;
+  const latestVersion = firmwareUpdateContext?.availableUpdate?.finalFirmware.version;
+  const updateInfo =
+    currentVersion && latestVersion
+      ? {
+          currentVersion,
+          latestVersion,
+        }
+      : undefined;
+
+  return {
+    type: BlockingStateType.UnsupportedFirmwareVersion,
+    updateInfo,
+  };
+}
+
+function mapUnsupportedApplicationState(params: {
+  deviceState: DeviceSessionState;
+  appName: string;
+}): EnsureAppReadyState {
+  const { deviceState, appName } = params;
+  const deviceModelId = deviceState.deviceModelId;
+
+  if (deviceModelId === DeviceModelId.NANO_S) {
+    return {
+      type: BlockingStateType.UnsupportedApplication,
+      appName,
+      deviceModelId: dmkToLedgerDeviceIdMap[deviceModelId],
+    };
+  }
+
+  return {
+    type: BlockingStateType.UnsupportedFeature,
+    deviceModelId: dmkToLedgerDeviceIdMap[deviceModelId],
+  };
+}
+
 export function mapConnectAppDAErrorStatus(params: {
   state: Extract<ConnectAppDAState, { status: DeviceActionStatus.Error }>;
   appName: string;
@@ -176,35 +216,11 @@ export function mapConnectAppDAErrorStatus(params: {
   const deviceState = getCurrentDeviceState();
 
   if (error instanceof UnsupportedFirmwareDAError) {
-    const updateInfo =
-      "firmwareUpdateContext" in deviceState &&
-      deviceState.firmwareUpdateContext &&
-      deviceState.firmwareUpdateContext.availableUpdate?.finalFirmware.version
-        ? {
-            currentVersion: deviceState.firmwareUpdateContext.currentFirmware.version,
-            latestVersion: deviceState.firmwareUpdateContext.availableUpdate.finalFirmware.version,
-          }
-        : undefined;
-    return {
-      type: BlockingStateType.UnsupportedFirmwareVersion,
-      updateInfo,
-    };
+    return mapUnsupportedFirmwareState(deviceState);
   }
 
   if (hasTag(error, "UnsupportedApplicationDAError")) {
-    const deviceModelId = deviceState.deviceModelId;
-    if (deviceModelId === DeviceModelId.NANO_S) {
-      return {
-        type: BlockingStateType.UnsupportedApplication,
-        appName,
-        deviceModelId: dmkToLedgerDeviceIdMap[deviceModelId],
-      };
-    } else {
-      return {
-        type: BlockingStateType.UnsupportedFeature,
-        deviceModelId: dmkToLedgerDeviceIdMap[deviceModelId],
-      };
-    }
+    return mapUnsupportedApplicationState({ deviceState, appName });
   }
 
   if (error instanceof AlreadySendingApduError || hasTag(error, "AlreadySendingApduError")) {
