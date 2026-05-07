@@ -55,6 +55,7 @@ describe("quote command", () => {
   it("human output: prints quote summary", async () => {
     const { stdout, exitCode, stderr } = await runCli(
       [
+        "swap",
         "quote",
         "--from",
         "ethereum",
@@ -79,6 +80,7 @@ describe("quote command", () => {
   it("json output: returns a valid swap quote envelope", async () => {
     const { stdout, exitCode, stderr } = await runCli(
       [
+        "swap",
         "quote",
         "--from",
         "ethereum",
