@@ -1,5 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import { resolveAccountArg, resolveOutputFormat } from "./inputs";
+import { resolveAccountArg, resolveAccountInput, resolveOutputFormat } from "./inputs";
+import { makeSessionDir } from "../test/helpers/session-fixture";
+import { ETH_DESCRIPTOR } from "../test/helpers/constants";
 import { XPUB } from "../shared/accountDescriptor/test-fixtures";
 
 const SHORT = `js:2:bitcoin:${XPUB}:native_segwit:0`;
@@ -15,6 +17,54 @@ describe("resolveAccountArg", () => {
 
   it("throws when both are missing", () => {
     expect(() => resolveAccountArg(undefined, [])).toThrow(/Missing account/);
+  });
+});
+
+describe("resolveAccountInput", () => {
+  let sessionCleanup: (() => void) | undefined;
+  let savedXdgStateHome: string | undefined;
+
+  beforeEach(() => {
+    savedXdgStateHome = process.env.XDG_STATE_HOME;
+  });
+
+  afterEach(() => {
+    sessionCleanup?.();
+    sessionCleanup = undefined;
+    if (savedXdgStateHome === undefined) delete process.env.XDG_STATE_HOME;
+    else process.env.XDG_STATE_HOME = savedXdgStateHome;
+  });
+
+  it("resolves a known session label to its descriptor", async () => {
+    const fixture = makeSessionDir([{ label: "my-eth", descriptor: ETH_DESCRIPTOR }]);
+    sessionCleanup = fixture.cleanup;
+    process.env.XDG_STATE_HOME = fixture.env.XDG_STATE_HOME;
+    const result = await resolveAccountInput("my-eth");
+    expect(result).toBe(ETH_DESCRIPTOR);
+  });
+
+  it("throws when the label is not found in session", async () => {
+    const fixture = makeSessionDir([]);
+    sessionCleanup = fixture.cleanup;
+    process.env.XDG_STATE_HOME = fixture.env.XDG_STATE_HOME;
+    await expect(resolveAccountInput("unknown-label")).rejects.toThrow(
+      /No account labeled "unknown-label"/,
+    );
+  });
+
+  it("rejects a raw descriptor passed directly (contains ':')", async () => {
+    const fixture = makeSessionDir([]);
+    sessionCleanup = fixture.cleanup;
+    process.env.XDG_STATE_HOME = fixture.env.XDG_STATE_HOME;
+    let caught: Error | undefined;
+    try {
+      await resolveAccountInput(ETH_DESCRIPTOR);
+    } catch (e) {
+      caught = e as Error;
+    }
+    expect(caught?.message).toMatch(/Raw descriptors are not accepted/);
+    // Must not echo the descriptor back (would leak xpub/path into logs).
+    expect(caught?.message).not.toContain(ETH_DESCRIPTOR);
   });
 });
 

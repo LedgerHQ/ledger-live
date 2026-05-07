@@ -35,18 +35,23 @@ describe("balances command", () => {
   });
 
   it("human output: prints ETH balance line", async () => {
-    const { stdout, exitCode, stderr } = await runCli(["balances", "--account", ETH_DESCRIPTOR], {
-      WALLET_CLI_MOCK_PORT: String(server.port),
-    });
+    const fixture = makeSessionDir([{ label: "ethereum-1", descriptor: ETH_DESCRIPTOR }]);
+    sessionCleanup = fixture.cleanup;
+    const { stdout, exitCode, stderr } = await runCli(
+      ["balances", "--account", "ethereum-1"],
+      { WALLET_CLI_MOCK_PORT: String(server.port), ...fixture.env },
+    );
     expect(exitCode, `stderr: ${stderr}`).toBe(0);
     expect(stdout).toMatch(/ETH/i);
     expect(stdout).toMatch(/1\.5/);
   });
 
   it("json output: returns a valid balances envelope", async () => {
+    const fixture = makeSessionDir([{ label: "ethereum-1", descriptor: ETH_DESCRIPTOR }]);
+    sessionCleanup = fixture.cleanup;
     const { stdout, exitCode, stderr } = await runCli(
-      ["balances", "--account", ETH_DESCRIPTOR, "--output", "json"],
-      { WALLET_CLI_MOCK_PORT: String(server.port) },
+      ["balances", "--account", "ethereum-1", "--output", "json"],
+      { WALLET_CLI_MOCK_PORT: String(server.port), ...fixture.env },
     );
     expect(exitCode, `stderr: ${stderr}`).toBe(0);
 
@@ -61,28 +66,28 @@ describe("balances command", () => {
     expect(native.amount).toMatch(/1\.5/);
   });
 
-  it("can resolve a session label to the matching account", async () => {
-    const fixture = makeSessionDir([{ label: "ethereum-1", descriptor: ETH_DESCRIPTOR }]);
+  it("json output: raw descriptor passed as --account is rejected with code 1", async () => {
+    const fixture = makeSessionDir([]);
     sessionCleanup = fixture.cleanup;
-    const { stdout, exitCode, stderr } = await runCli(
-      ["balances", "--account", "ethereum-1", "--output", "json"],
+    const { stdout, exitCode } = await runCli(
+      ["balances", "--account", ETH_DESCRIPTOR, "--output", "json"],
       { WALLET_CLI_MOCK_PORT: String(server.port), ...fixture.env },
     );
-    expect(exitCode, `stderr: ${stderr}`).toBe(0);
-    const data = JSON.parse(stdout);
-    expect(data.command).toBe("balances");
-    expect(data.network).toBe("ethereum:main");
-    const native = data.balances.find((b: { asset: string }) => b.asset === "ethereum");
-    expect(native?.amount).toMatch(/1\.5/);
+    expect(exitCode).toBe(1);
+    const err = JSON.parse(stdout);
+    expect(err.ok).toBe(false);
+    expect(err.error.command).toBe("balances");
+    expect(err.error.message).toStartWith("Raw descriptors are not accepted");
   });
 
-  it("json output: invalid descriptor exits with code 1", async () => {
+  it("json output: unknown session label exits with code 1", async () => {
+    const fixture = makeSessionDir([]);
+    sessionCleanup = fixture.cleanup;
     const { stdout, exitCode } = await runCli(
-      ["balances", "--account", "not-a-valid-descriptor", "--output", "json"],
-      { WALLET_CLI_MOCK_PORT: String(server.port) },
+      ["balances", "--account", "not-a-valid-label", "--output", "json"],
+      { WALLET_CLI_MOCK_PORT: String(server.port), ...fixture.env },
     );
     expect(exitCode).toBe(1);
-    // JSON mode routes all output to stdout; errors have { ok: false, ... }.
     const err = JSON.parse(stdout);
     expect(err.ok).toBe(false);
     expect(err.error.command).toBe("balances");
