@@ -216,7 +216,7 @@ describe("HttpManagerApiRepository", () => {
         targetId: "",
         providerId: 12,
       }),
-    ).rejects.toThrow("targetId is required");
+    ).rejects.toThrow(TypeError);
 
     expect(mockedNetwork).not.toHaveBeenCalled();
   });
@@ -262,7 +262,7 @@ describe("HttpManagerApiRepository", () => {
         providerId: 12,
         version: "",
       }),
-    ).rejects.toThrow("version is required");
+    ).rejects.toThrow(TypeError);
 
     expect(mockedNetwork).not.toHaveBeenCalled();
   });
@@ -338,7 +338,7 @@ describe("HttpManagerApiRepository", () => {
         providerId: 12,
         version: "",
       }),
-    ).rejects.toThrow("version is required");
+    ).rejects.toThrow(TypeError);
 
     expect(mockedNetwork).not.toHaveBeenCalled();
   });
@@ -459,7 +459,19 @@ describe("HttpManagerApiRepository", () => {
         provider: 12,
         firmwareVersion: "mockedFirmwareVersion",
       }),
-    ).rejects.toThrow("targetId is required");
+    ).rejects.toThrow(TypeError);
+
+    expect(mockedNetwork).not.toHaveBeenCalled();
+  });
+
+  test("catalogForDevice should reject before calling network if firmwareVersion is missing", async () => {
+    await expect(
+      httpManagerApiRepository.catalogForDevice({
+        targetId: 123,
+        provider: 12,
+        firmwareVersion: "",
+      }),
+    ).rejects.toThrow(TypeError);
 
     expect(mockedNetwork).not.toHaveBeenCalled();
   });
@@ -500,7 +512,7 @@ describe("HttpManagerApiRepository", () => {
   test("getLanguagePackagesForDevice should reject before calling network if device targetId is missing", async () => {
     await expect(
       httpManagerApiRepository.getLanguagePackagesForDevice(createDeviceInfo({ targetId: "" })),
-    ).rejects.toThrow("targetId is required");
+    ).rejects.toThrow(TypeError);
 
     expect(mockedNetwork).not.toHaveBeenCalled();
   });
@@ -508,7 +520,7 @@ describe("HttpManagerApiRepository", () => {
   test("getLanguagePackagesForDevice should reject before calling network if device version is missing", async () => {
     await expect(
       httpManagerApiRepository.getLanguagePackagesForDevice(createDeviceInfo({ version: "" })),
-    ).rejects.toThrow("version is required");
+    ).rejects.toThrow(TypeError);
 
     expect(mockedNetwork).not.toHaveBeenCalled();
   });

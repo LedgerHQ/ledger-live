@@ -83,7 +83,7 @@ export class HttpManagerApiRepository implements ManagerApiRepository {
 
   readonly getDeviceVersion: ManagerApiRepository["getDeviceVersion"] = makeLRUCache(
     async ({ targetId, providerId }) => {
-      if (!targetId) throw new Error("targetId is required");
+      if (!targetId) throw new TypeError("targetId is required");
 
       const {
         data,
@@ -116,7 +116,7 @@ export class HttpManagerApiRepository implements ManagerApiRepository {
 
   readonly getCurrentOSU: ManagerApiRepository["getCurrentOSU"] = makeLRUCache(
     async input => {
-      if (!input.version) throw new Error("version is required");
+      if (!input.version) throw new TypeError("version is required");
 
       const { data } = await network({
         method: "GET",
@@ -137,7 +137,7 @@ export class HttpManagerApiRepository implements ManagerApiRepository {
 
   readonly getCurrentFirmware: ManagerApiRepository["getCurrentFirmware"] = makeLRUCache(
     async input => {
-      if (!input.version) throw new Error("version is required");
+      if (!input.version) throw new TypeError("version is required");
 
       const {
         data,
@@ -215,8 +215,8 @@ export class HttpManagerApiRepository implements ManagerApiRepository {
   readonly catalogForDevice: ManagerApiRepository["catalogForDevice"] = makeLRUCache(
     async params => {
       const { provider, targetId, firmwareVersion } = params;
-      if (!targetId) throw new Error("targetId is required");
-      if (!firmwareVersion) throw new Error("firmwareVersion is required");
+      if (!targetId) throw new TypeError("targetId is required");
+      if (!firmwareVersion) throw new TypeError("firmwareVersion is required");
 
       const {
         data,
@@ -248,8 +248,8 @@ export class HttpManagerApiRepository implements ManagerApiRepository {
     deviceInfo: DeviceInfoEntity,
     forceProvider?: number,
   ) => {
-    if (!deviceInfo.targetId) throw new Error("targetId is required");
-    if (!deviceInfo.version) throw new Error("version is required");
+    if (!deviceInfo.targetId) throw new TypeError("targetId is required");
+    if (!deviceInfo.version) throw new TypeError("version is required");
 
     const providerId = getProviderIdUseCase({ deviceInfo, forceProvider });
 
