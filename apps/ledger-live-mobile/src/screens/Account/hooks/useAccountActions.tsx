@@ -45,6 +45,7 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
   const walletState = useSelector(walletSelector);
 
   const ptxServiceCtaScreens = useFeature("ptxServiceCtaScreens");
+  const evmNativeStakingFeature = useFeature("evmNativeStaking");
 
   const isPtxServiceCtaScreensDisabled = useMemo(
     () => !(ptxServiceCtaScreens?.enabled ?? true),
@@ -64,10 +65,13 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
     () => getCanStakeUsingPlatformApp(currency.id),
     [getCanStakeUsingPlatformApp, currency.id],
   );
-  const canOnlyStakeUsingLedgerLive = useMemo(
-    () => canStakeUsingLedgerLive && !canStakeUsingPlatformApp,
-    [canStakeUsingLedgerLive, canStakeUsingPlatformApp],
+  const evmNativeStakingSupportedCurrencyIds =
+    evmNativeStakingFeature?.params?.supportedCurrencyIds ?? [];
+  const canStakeUsingEvmNativeStaking = Boolean(
+    evmNativeStakingFeature?.enabled && evmNativeStakingSupportedCurrencyIds.includes(currency.id),
   );
+  const canStakeThroughLedgerLive = canStakeUsingLedgerLive || canStakeUsingEvmNativeStaking;
+  const shouldShowLedgerLiveStakeAction = canStakeThroughLedgerLive && !canStakeUsingPlatformApp;
 
   const balance = getAccountSpendableBalance(account);
   const isZeroBalance = !balance.gt(0);
@@ -264,8 +268,9 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
         parentAccount,
         colors,
         parentRoute: route,
+        evmNativeStakingFeature,
       }) ?? [],
-    [walletState, account, parentAccount, colors, route, decorators],
+    [walletState, account, parentAccount, colors, route, decorators, evmNativeStakingFeature],
   );
 
   const mainActions = useMemo(
@@ -276,8 +281,8 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
       ...(!readOnlyModeEnabled && canStakeUsingPlatformApp && !!StakeAction ? [StakeAction] : []),
       ...(!readOnlyModeEnabled
         ? familySpecificMainActions.filter(
-            action => action.id !== "stake" || canOnlyStakeUsingLedgerLive,
-          ) // filter out family stake action if we cannot stake using ledger Wallet or if account can be staked with a third-party platform app
+            action => action.id !== "stake" || shouldShowLedgerLiveStakeAction,
+          ) // keep the Ledger Live stake action only when no platform app stake action is available
         : []),
       ...(!readOnlyModeEnabled ? [SendAction] : []),
       ReceiveAction,
@@ -290,7 +295,7 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
       canStakeUsingPlatformApp,
       StakeAction,
       familySpecificMainActions,
-      canOnlyStakeUsingLedgerLive,
+      shouldShowLedgerLiveStakeAction,
       actionButtonSwap,
       actionButtonBuy,
       actionButtonSell,

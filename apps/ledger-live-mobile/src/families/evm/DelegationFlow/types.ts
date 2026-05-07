@@ -1,59 +1,46 @@
-import type {
-  Transaction,
-  TransactionStatus,
-  StakingValidatorItem,
-} from "@ledgerhq/coin-evm/types/index";
-import type { Operation } from "@ledgerhq/types-live";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import type { TransactionStatus } from "@ledgerhq/coin-evm/types/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import type { StakingValidatorItem } from "@ledgerhq/live-common/families/evm/staking/types";
+import type { Operation } from "@ledgerhq/types-live";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
 import { ScreenName } from "~/const";
 
+type AccountRouteParams = {
+  accountId: string;
+  parentId?: string | null;
+  source?: RouteProp<ParamListBase, ScreenName>;
+};
+
 export type EvmDelegationFlowParamList = {
-  [ScreenName.EvmDelegationStarted]: {
-    accountId: string;
-    source?: RouteProp<ParamListBase, ScreenName>;
+  [ScreenName.EvmDelegationValidator]: AccountRouteParams;
+  [ScreenName.EvmDelegationAmount]: AccountRouteParams & {
+    transaction: Transaction;
+    validator: StakingValidatorItem;
   };
-  [ScreenName.EvmDelegationValidatorSelect]: {
-    accountId: string;
-    validator?: StakingValidatorItem;
-    transaction?: Transaction;
-    source?: RouteProp<ParamListBase, ScreenName>;
+  [ScreenName.EvmDelegationSelectDevice]: AccountRouteParams & {
+    transaction: Transaction;
+    status: TransactionStatus;
+    validatorName?: StakingValidatorItem["name"];
   };
-  [ScreenName.EvmDelegationSelectDevice]: {
-    accountId: string;
-    parentId?: string;
-    transaction?: Transaction;
-    status?: TransactionStatus;
-    validatorName?: string;
-    source?: RouteProp<ParamListBase, ScreenName>;
-  };
-  [ScreenName.EvmDelegationConnectDevice]: {
+  [ScreenName.EvmDelegationConnectDevice]: AccountRouteParams & {
     device: Device;
-    accountId: string;
-    parentId?: string;
     transaction: Transaction;
     status: TransactionStatus;
     appName?: string;
-    selectDeviceLink?: boolean;
     onSuccess?: (payload: unknown) => void;
     onError?: (error: Error) => void;
     analyticsPropertyFlow?: string;
     forceSelectDevice?: boolean;
-    source?: RouteProp<ParamListBase, ScreenName>;
+    validatorName?: StakingValidatorItem["name"];
   };
-  [ScreenName.EvmDelegationValidationError]: {
-    accountId: string;
-    deviceId: string;
+  [ScreenName.EvmDelegationValidationError]: AccountRouteParams & {
     transaction: Transaction;
     error: Error;
-    source?: RouteProp<ParamListBase, ScreenName>;
   };
-  [ScreenName.EvmDelegationValidationSuccess]: {
-    accountId: string;
-    deviceId: string;
+  [ScreenName.EvmDelegationValidationSuccess]: AccountRouteParams & {
     transaction: Transaction;
     result: Operation;
-    validatorName?: string;
-    source?: RouteProp<ParamListBase, ScreenName>;
+    validatorName?: StakingValidatorItem["name"];
   };
 };
