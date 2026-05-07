@@ -101,7 +101,9 @@ function isStringArray(value: unknown): value is string[] {
 }
 
 function isDelegationMode(mode: GenericTransaction["mode"]): mode is StakingOperation {
-  return mode === "delegate" || mode === "undelegate" || mode === "redelegate";
+  return (
+    mode === "delegate" || mode === "undelegate" || mode === "redelegate" || mode === "claimReward"
+  );
 }
 
 type GenericAlpacaMemo = { type: string; value?: string };
