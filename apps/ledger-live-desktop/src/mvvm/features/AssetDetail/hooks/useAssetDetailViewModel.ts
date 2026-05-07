@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 import { useLocation, useParams } from "react-router";
 import { useSelector } from "LLD/hooks/redux";
-import { useCurrencyData } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
+import { useGetCurrencyDataQuery } from "@ledgerhq/live-common/market/state-manager/api";
+import { REFETCH_TIME_ONE_MINUTE, BASIC_REFETCH } from "@ledgerhq/live-common/market/utils/timers";
 import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
 import { selectCurrency } from "@ledgerhq/live-common/dada-client/utils/currencySelection";
 import { useDistribution } from "~/renderer/actions/general";
@@ -26,10 +27,15 @@ export function useAssetDetailViewModel(): AssetDetailViewModel {
     [routeAssetId, decodedAssetId, marketState, distribution],
   );
 
-  const { data: marketFromHook, isLoading: isLoadingMarket } = useCurrencyData({
-    id: decodedAssetId,
-    counterCurrency,
-  });
+  const currencyDataQueryId = distributionItem?.currency.id ?? decodedAssetId;
+
+  const { data: marketFromHook, isLoading: isLoadingMarket } = useGetCurrencyDataQuery(
+    { id: currencyDataQueryId ?? "", counterCurrency },
+    {
+      skip: !currencyDataQueryId,
+      pollingInterval: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
+    },
+  );
 
   const ledgerIds = useMemo(() => {
     if (distributionItem) return [distributionItem.currency.id];
@@ -60,6 +66,12 @@ export function useAssetDetailViewModel(): AssetDetailViewModel {
   const ledgerCurrency = distributionItem ? distributionItem.currency : ledgerCurrencyFromDada;
 
   if (distributionItem || marketInfo) {
+    const marketCurrencyQueryId =
+      distributionItem?.currency.id ??
+      marketInfo?.id ??
+      marketInfo?.ledgerIds?.[0] ??
+      decodedAssetId;
+
     return {
       mode: "ready",
       distributionItem,
@@ -68,6 +80,7 @@ export function useAssetDetailViewModel(): AssetDetailViewModel {
       assetName: distributionItem?.currency.name ?? marketInfo?.name ?? "",
       assetTicker: distributionItem?.currency.ticker ?? marketInfo?.ticker ?? "",
       ledgerId: ledgerCurrency?.id ?? marketInfo?.ledgerIds?.[0],
+      marketCurrencyQueryId,
       isLoading: isLoadingDada,
     };
   }

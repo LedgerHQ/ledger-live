@@ -23,6 +23,8 @@ export type AssetDetailReady = {
   assetName: string;
   assetTicker: string;
   ledgerId: string | undefined;
+  /** Resolved id for Market API `getCurrencyData` (ledger id for held tokens, else market/route ids). */
+  marketCurrencyQueryId: string | undefined;
   isLoading: boolean;
 };
 
