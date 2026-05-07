@@ -32,6 +32,20 @@ const createAxiosResponse = <T>(data: T): Awaited<ReturnType<typeof network>> =>
     config: {},
   }) as Awaited<ReturnType<typeof network>>;
 
+const createDeviceInfo = (overrides: Partial<DeviceInfoEntity> = {}): DeviceInfoEntity => ({
+  mcuVersion: "mockedMcuVersion",
+  version: "mockedVersion",
+  majMin: "1.2",
+  targetId: 123,
+  isBootloader: false,
+  isOSU: false,
+  providerName: null,
+  managerAllowed: true,
+  pinValidated: true,
+  seFlags: Buffer.alloc(0),
+  ...overrides,
+});
+
 describe("HttpManagerApiRepository", () => {
   let httpManagerApiRepository: HttpManagerApiRepository;
 
@@ -196,6 +210,17 @@ describe("HttpManagerApiRepository", () => {
     expect(result).toBe("mockedData");
   });
 
+  test("getDeviceVersion should reject before calling network if targetId is missing", async () => {
+    await expect(
+      httpManagerApiRepository.getDeviceVersion({
+        targetId: "",
+        providerId: 12,
+      }),
+    ).rejects.toThrow(TypeError);
+
+    expect(mockedNetwork).not.toHaveBeenCalled();
+  });
+
   test("getCurrentOSU should call network() with the correct parameters", async () => {
     const params: Parameters<typeof httpManagerApiRepository.getCurrentOSU>[0] = {
       deviceId: 123,
@@ -228,6 +253,18 @@ describe("HttpManagerApiRepository", () => {
     });
 
     expect(result).toBe("mockedData");
+  });
+
+  test("getCurrentOSU should reject before calling network if version is missing", async () => {
+    await expect(
+      httpManagerApiRepository.getCurrentOSU({
+        deviceId: 123,
+        providerId: 12,
+        version: "",
+      }),
+    ).rejects.toThrow(TypeError);
+
+    expect(mockedNetwork).not.toHaveBeenCalled();
   });
 
   test("getCurrentFirmware should call network() with the correct parameters", async () => {
@@ -292,6 +329,18 @@ describe("HttpManagerApiRepository", () => {
     });
 
     expect(result).toBe("mockedData");
+  });
+
+  test("getCurrentFirmware should reject before calling network if version is missing", async () => {
+    await expect(
+      httpManagerApiRepository.getCurrentFirmware({
+        deviceId: 123,
+        providerId: 12,
+        version: "",
+      }),
+    ).rejects.toThrow(TypeError);
+
+    expect(mockedNetwork).not.toHaveBeenCalled();
   });
 
   test("getFinalFirmwareById should call network() with the correct parameters", async () => {
@@ -403,6 +452,30 @@ describe("HttpManagerApiRepository", () => {
     expect(result).toEqual(["mockedData"]);
   });
 
+  test("catalogForDevice should reject before calling network if targetId is missing", async () => {
+    await expect(
+      httpManagerApiRepository.catalogForDevice({
+        targetId: "",
+        provider: 12,
+        firmwareVersion: "mockedFirmwareVersion",
+      }),
+    ).rejects.toThrow(TypeError);
+
+    expect(mockedNetwork).not.toHaveBeenCalled();
+  });
+
+  test("catalogForDevice should reject before calling network if firmwareVersion is missing", async () => {
+    await expect(
+      httpManagerApiRepository.catalogForDevice({
+        targetId: 123,
+        provider: 12,
+        firmwareVersion: "",
+      }),
+    ).rejects.toThrow(TypeError);
+
+    expect(mockedNetwork).not.toHaveBeenCalled();
+  });
+
   test("getLanguagePackagesForDevice should call network() and other methods with the correct parameters", async () => {
     const getDeviceVersionSpy = jest
       .spyOn(httpManagerApiRepository, "getDeviceVersion")
@@ -413,11 +486,10 @@ describe("HttpManagerApiRepository", () => {
 
     await httpManagerApiRepository
       .getLanguagePackagesForDevice(
-        {
-          version: 1,
+        createDeviceInfo({
+          version: "1",
           targetId: 2,
-          id: 3,
-        } as unknown as DeviceInfoEntity,
+        }),
         12,
       )
       .catch(() => {
@@ -425,12 +497,32 @@ describe("HttpManagerApiRepository", () => {
       });
 
     expect(getDeviceVersionSpy).toHaveBeenCalledWith({ targetId: 2, providerId: 12 });
-    expect(getCurrentFirmwareSpy).toHaveBeenCalledWith({ deviceId: 4, providerId: 12, version: 1 });
+    expect(getCurrentFirmwareSpy).toHaveBeenCalledWith({
+      deviceId: 4,
+      providerId: 12,
+      version: "1",
+    });
 
     expect(mockedNetwork).toHaveBeenCalledWith({
       method: "GET",
       url: "http://managerApiBase.com/language-package?livecommonversion=1.2.3",
     });
+  });
+
+  test("getLanguagePackagesForDevice should reject before calling network if device targetId is missing", async () => {
+    await expect(
+      httpManagerApiRepository.getLanguagePackagesForDevice(createDeviceInfo({ targetId: "" })),
+    ).rejects.toThrow(TypeError);
+
+    expect(mockedNetwork).not.toHaveBeenCalled();
+  });
+
+  test("getLanguagePackagesForDevice should reject before calling network if device version is missing", async () => {
+    await expect(
+      httpManagerApiRepository.getLanguagePackagesForDevice(createDeviceInfo({ version: "" })),
+    ).rejects.toThrow(TypeError);
+
+    expect(mockedNetwork).not.toHaveBeenCalled();
   });
 
   test("getLanguagePackagesForDevice should return language packages", async () => {
@@ -480,7 +572,10 @@ describe("HttpManagerApiRepository", () => {
     );
 
     const result = await httpManagerApiRepository.getLanguagePackagesForDevice(
-      {} as unknown as DeviceInfoEntity,
+      createDeviceInfo({
+        targetId: 123,
+        version: "mockedVersion",
+      }),
     );
 
     expect(result).toEqual([
