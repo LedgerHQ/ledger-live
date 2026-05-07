@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { getValidCryptoIconSize } from "~/renderer/utils/cryptoIconSize";
 import { AssetHeader } from "./components/AssetHeader/AssetHeader";
+import { MarketPriceSection } from "./components/MarketPriceSection";
 import { MarketDataSection } from "./components/MarketDataSection";
 import { PortfolioSection } from "./components/PortfolioSection/PortfolioSection";
 import { TransactionsSection } from "./components/TransactionsSection";
@@ -15,6 +16,7 @@ type AssetDetailViewProps = Readonly<{
 export function AssetDetailView({ viewModel }: AssetDetailViewProps) {
   const navigate = useNavigate();
   const { distributionItem, marketInfo, assetName, assetTicker, ledgerId } = viewModel;
+  const resolvedMarketAssetId = marketInfo?.id ?? distributionItem?.currency.id ?? ledgerId;
 
   const onBack = useCallback(() => {
     navigate(-1);
@@ -35,6 +37,13 @@ export function AssetDetailView({ viewModel }: AssetDetailViewProps) {
         }
         onBack={onBack}
       />
+
+      {marketInfo && resolvedMarketAssetId && (
+        <MarketPriceSection
+          distributionItem={distributionItem}
+          marketAssetId={resolvedMarketAssetId}
+        />
+      )}
 
       {distributionItem && <PortfolioSection distributionItem={distributionItem} />}
 

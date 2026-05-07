@@ -123,8 +123,6 @@ describe("usePricePerformanceViewModel", () => {
               athDate: new Date("2021-11-10T00:00:00.000Z"),
               atl: 67.81,
               atlDate: new Date("2013-07-06T00:00:00.000Z"),
-              low24h: 49_000,
-              high24h: 51_000,
             }),
           }),
         ),
