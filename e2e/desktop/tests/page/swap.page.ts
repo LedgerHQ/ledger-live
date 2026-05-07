@@ -480,12 +480,17 @@ export class SwapPage extends WebViewAppPage {
     await expect
       .poll(
         async () => {
-          this._webviewPage = undefined;
-          const webview = await this.getWebView(5_000);
-          const isFromSelectorEnabled = await webview
-            .getByTestId(this.fromAccountCoinSelector)
-            .isEnabled();
-          return isFromSelectorEnabled;
+          try {
+            this._webviewPage = undefined;
+            const webview = await this.getWebView(5_000);
+            const isFromSelectorEnabled = await webview
+              .getByTestId(this.fromAccountCoinSelector)
+              .isEnabled();
+            return isFromSelectorEnabled;
+          } catch {
+            // If the webview is not found or any error occurs, return false to keep polling
+            return false;
+          }
         },
         {
           intervals: [500],
