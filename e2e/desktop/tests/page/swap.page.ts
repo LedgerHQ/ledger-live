@@ -475,35 +475,13 @@ export class SwapPage extends WebViewAppPage {
 
   @step("Go and wait for Swap app to be ready")
   async goAndWaitForSwapToBeReady(swapFunction: () => Promise<void>) {
-    // reset webview page to ensure we wait for the new one to be ready after swapFunction
+    // reset cached webview page to ensure we fetch the correct one after navigation
     this._webviewPage = undefined;
 
-    // execute funtion and wait for swap page
+    // Perform the action that leads to the swap page and wait for the webview to be ready
     await swapFunction();
-    await this.page.waitForURL(/\/swap(?:\/|$|\?)/);
     await this.swapPageHeading.waitFor({ state: "visible" });
     await this.getWebView();
-
-    // const swapTimeout = 90_000;
-    // await expect
-    //   .poll(
-    //     async () => {
-    //       try {
-    //         this._webviewPage = undefined;
-    //         await this.getWebView(5_000);
-    //         return true;
-    //       } catch {
-    //         // If the webview is not found or any error occurs, return false to keep polling
-    //         return false;
-    //       }
-    //     },
-    //     {
-    //       intervals: [500],
-    //       timeout: swapTimeout,
-    //       message: `Swap app should be ready within ${swapTimeout}ms`,
-    //     },
-    //   )
-    //   .toBe(true);
   }
 
   @step("Go to swap history")
