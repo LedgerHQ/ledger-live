@@ -14,3 +14,10 @@
 
 - Before finishing any agentic code change, run static checks for the affected scope
 - See [/docs/dev/validate-before-finishing.md](/docs/dev/validate-before-finishing.md)
+
+## Ongoing Rework
+
+- `getAccountBridge` and `getCurrencyBridge` must not be called synchronously (becoming async, PR #17155).
+  - React: use `useAccountBridge` / `useCurrencyBridge` hooks
+  - RxJS: `from(Promise.resolve(getAccountBridge(...))).pipe(mergeMap(bridge => ...))`
+  - async: `const bridge = await getAccountBridge(...)`
