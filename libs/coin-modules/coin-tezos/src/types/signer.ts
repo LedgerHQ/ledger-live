@@ -13,20 +13,6 @@ type TezosCurves = {
 };
 export type Curve = TezosCurves[keyof TezosCurves];
 
-export type LedgerSigner = {
-  publicKey(): Promise<string>;
-  publicKeyHash(): Promise<string>;
-  sign(
-    bytes: string,
-    watermark?: Uint8Array,
-  ): Promise<{
-    bytes: string;
-    sig: string;
-    prefixSig: string;
-    sbytes: string;
-  }>;
-  secretKey(): Promise<string | undefined>;
-};
 export interface TezosSigner {
   getAddress(
     path: string,
@@ -43,6 +29,4 @@ export interface TezosSigner {
       curve?: Curve;
     },
   ): Promise<TezosSignature>;
-  // Tezos [LedgerSigner](https://www.npmjs.com/package/@taquito/ledger-signer)
-  createLedgerSigner(path: string, prompt: boolean, derivationType: number): LedgerSigner;
 }

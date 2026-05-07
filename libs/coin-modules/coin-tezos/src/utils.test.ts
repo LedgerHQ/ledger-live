@@ -97,4 +97,25 @@ describe("normalizePublicKeyForAddress", () => {
     // Then: should return the correct base58 encoded public key
     expect(result).toBe(expectedPublicKey);
   });
+
+  it("should compress an uncompressed secp256k1 public key before normalizing it", () => {
+    const tz2Address = "tz2F4XnSd1wjwWsthemvZQjoPER7NVSt35k3";
+    const compressedPublicKey =
+      "03576c19462a7d0cc3d121b1b00e92258b5f71d643c99a599fc1683f03abb7a1c2";
+    const uncompressedPublicKey = `04${compressedPublicKey.slice(2)}${"01".repeat(32)}`;
+    const expectedPublicKey = "sppk7but7h93Ws1XhAPvdBcttVmoBDGHxdpaU8dPy5549f3eLJFAjag";
+
+    const result = normalizePublicKeyForAddress(uncompressedPublicKey, tz2Address);
+
+    expect(result).toBe(expectedPublicKey);
+  });
+
+  it("should return undefined for invalid uncompressed secp256k1 public keys", () => {
+    const tz2Address = "tz2F4XnSd1wjwWsthemvZQjoPER7NVSt35k3";
+    const invalidPublicKey = `03${"01".repeat(64)}`;
+
+    const result = normalizePublicKeyForAddress(invalidPublicKey, tz2Address);
+
+    expect(result).toBeUndefined();
+  });
 });

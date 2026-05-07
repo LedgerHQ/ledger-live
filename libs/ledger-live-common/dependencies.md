@@ -48,7 +48,6 @@ yarn upgrade-interactive -i --latest
 | @solana/web3.js                             | Solana coin integration                                           | **BLOCKED BY LLM because of BigInt in RN (ticket missing)**          |
 | @stacks/network                             | Stacks coin integration                                           | monthly                                                              |
 | @stacks/transactions                        | Stacks coin integration                                           | monthly                                                              |
-| @taquito/ledger-signer                      | Tezos coin integration                                            | monthly                                                              |
 | @taquito/taquito                            | Tezos coin integration                                            | monthly                                                              |
 | @taquito/utils                              | Tezos coin integration                                            | monthly                                                              |
 | @types/bchaddrjs                            | Bitcoin coin integration                                          | monthly                                                              |
