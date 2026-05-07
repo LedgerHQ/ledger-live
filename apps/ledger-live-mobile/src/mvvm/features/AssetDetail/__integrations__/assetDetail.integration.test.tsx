@@ -8,6 +8,12 @@ import type { State } from "~/reducers/types";
 import AssetDetailNavigator from "../Navigator";
 import { ASSET_DETAIL_TEST_IDS } from "../testIds";
 
+const mockIsCurrencyAvailable = jest.fn().mockReturnValue(false);
+
+jest.mock("@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog", () => ({
+  useRampCatalog: () => ({ isCurrencyAvailable: mockIsCurrencyAvailable }),
+}));
+
 const Stack = createNativeStackNavigator();
 
 function AssetDetailTestNavigator() {
@@ -41,14 +47,17 @@ function withBtcAccounts(count: number) {
 }
 
 describe("AssetDetail screen layout", () => {
-  it("renders all sections and BalanceGraph", () => {
+  beforeEach(() => {
+    mockIsCurrencyAvailable.mockReturnValue(false);
+  });
+
+  it("renders all section placeholders and BalanceGraph", () => {
     render(<AssetDetailTestNavigator />);
 
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.screen)).toBeVisible();
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.balanceGraph)).toBeVisible();
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.marketStats)).toBeVisible();
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.transactions)).toBeVisible();
-    expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.ctas)).toBeVisible();
   });
 
   it("hides balance details when there are no accounts", () => {
@@ -86,5 +95,24 @@ describe("AssetDetail screen layout", () => {
     expect(screen.getByText("Addresses")).toBeVisible();
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.addAccount)).toBeVisible();
     expect(screen.getByText("Add")).toBeVisible();
+  });
+
+  describe("floating bar CTAs", () => {
+    it("hides the floating bar when Buy is unavailable", () => {
+      render(<AssetDetailTestNavigator />);
+
+      expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.ctas)).toBeNull();
+      expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.buyButton)).toBeNull();
+    });
+
+    it("renders the Buy button when Buy is available", () => {
+      mockIsCurrencyAvailable.mockReturnValue(true);
+
+      render(<AssetDetailTestNavigator />);
+
+      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.ctas)).toBeVisible();
+      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.buyButton)).toBeVisible();
+      expect(screen.getByText("Buy")).toBeVisible();
+    });
   });
 });
