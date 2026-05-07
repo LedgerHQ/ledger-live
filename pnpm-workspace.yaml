@@ -194,9 +194,9 @@ catalog:
   allure-js-commons: 3.2.1
   oxlint: 1.51.0
   oxfmt: 0.36.0
-  # Modules published by Alpaca
-  "@ledgerhq/coin-module-framework": 2.2.0
-  "@ledgerhq/coin-xrp": 7.21.4
+  # Modules published by coin-modules
+  "@ledgerhq/coin-module-framework": 3.0.0
+  "@ledgerhq/coin-xrp": 7.21.5
   detox: 20.51.1
 
 overrides:
