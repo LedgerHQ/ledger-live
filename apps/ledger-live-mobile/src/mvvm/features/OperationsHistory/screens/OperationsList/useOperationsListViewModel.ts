@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useMemo } from "react";
+import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { flattenAccountsSelector, shallowAccountsSelector } from "~/reducers/accounts";
 import { lastSeenOperationDateSelector, markOperationsAsSeen } from "~/reducers/history";
@@ -13,11 +14,29 @@ export type { OperationsListSection } from "./hooks/useOperationsSections";
 const INITIAL_OP_COUNT = 50;
 const OP_COUNT_INCREMENT = 50;
 
-export function useOperationsListViewModel() {
+export function useOperationsListViewModel(currencyId?: string) {
   const dispatch = useDispatch();
-  const accounts = useSelector(shallowAccountsSelector);
-  const flattenedAccounts = useSelector(flattenAccountsSelector);
+  const allAccounts = useSelector(shallowAccountsSelector);
+  const allFlattenedAccounts = useSelector(flattenAccountsSelector);
   const [opCount, setOpCount] = useState(INITIAL_OP_COUNT);
+
+  const currency = useMemo(
+    () => (currencyId ? findCryptoCurrencyById(currencyId) : undefined),
+    [currencyId],
+  );
+
+  const accounts = useMemo(
+    () => (currency ? allAccounts.filter(a => a.currency.id === currency.id) : allAccounts),
+    [allAccounts, currency],
+  );
+
+  const flattenedAccounts = useMemo(
+    () =>
+      currency
+        ? allFlattenedAccounts.filter(a => getAccountCurrency(a).id === currency.id)
+        : allFlattenedAccounts,
+    [allFlattenedAccounts, currency],
+  );
 
   const lastSeenDate = useSelector(lastSeenOperationDateSelector);
   const lastSeenTs = useMemo(() => parseLastSeenMs(lastSeenDate), [lastSeenDate]);
