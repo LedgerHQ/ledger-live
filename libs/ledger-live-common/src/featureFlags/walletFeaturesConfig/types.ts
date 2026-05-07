@@ -17,6 +17,8 @@ export type Wallet40Params = {
   readonly aggregatedAssets?: boolean;
   readonly myWallet?: boolean;
   readonly finishOnboardingWidget?: boolean;
+  readonly earnUpselling?: boolean;
+  readonly earnSimulator?: boolean;
 };
 
 export const FEATURE_FLAG_KEYS = {
@@ -60,4 +62,8 @@ export interface WalletFeaturesConfig {
   readonly shouldDisplayMyWallet: boolean;
   /** Whether to show the Finish Onboarding widget on Portfolio (desktop / lwdWallet40) */
   readonly shouldDisplayFinishOnboardingWidget: boolean;
+  /** Whether to show the Earn Upselling component */
+  readonly shouldDisplayEarnUpselling: boolean;
+  /** Whether to show the Earn Simulator component */
+  readonly shouldDisplayEarnSimulator: boolean;
 }
