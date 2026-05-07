@@ -7,6 +7,7 @@ import {
   walletPostOnboardingEntryPointDismissedSelector,
 } from "../reducer";
 import { useAllPostOnboardingActionsCompleted } from "./useAllPostOnboardingActionsCompleted";
+import { usePostOnboardingHubState } from "./usePostOnboardingHubState";
 import { usePostOnboardingEntryPointVisibleOnWallet } from "./usePostOnboardingEntryPointVisibleOnWallet";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 
@@ -15,16 +16,27 @@ jest.mock("react-redux", () => ({
 }));
 jest.mock("../reducer");
 jest.mock("./useAllPostOnboardingActionsCompleted");
+jest.mock("./usePostOnboardingHubState");
 
 const mockedUseAllCompleted = jest.mocked(useAllPostOnboardingActionsCompleted);
+const mockedUsePostOnboardingHubState = jest.mocked(usePostOnboardingHubState);
 const mockedDismissedSelector = jest.mocked(walletPostOnboardingEntryPointDismissedSelector);
 const mockedDeviceModelIdSelector = jest.mocked(postOnboardingDeviceModelIdSelector);
+
+const hubStateWithActions = {
+  deviceModelId: null,
+  lastActionCompleted: null,
+  actionsState: [{ completed: false, disabled: false } as never],
+  postOnboardingInProgress: false,
+};
 
 describe("usePostOnboardingEntryPointVisibleOnWallet", () => {
   beforeEach(() => {
     mockedUseAllCompleted.mockClear();
+    mockedUsePostOnboardingHubState.mockClear();
     mockedDismissedSelector.mockClear();
     mockedDeviceModelIdSelector.mockClear();
+    mockedUsePostOnboardingHubState.mockReturnValue(hubStateWithActions);
   });
 
   it("should be false if deviceModelId is null", () => {
@@ -64,6 +76,22 @@ describe("usePostOnboardingEntryPointVisibleOnWallet", () => {
     mockedDismissedSelector.mockReturnValue(false);
     mockedUseAllCompleted.mockReturnValue(false);
     mockedDeviceModelIdSelector.mockReturnValue(DeviceModelId.nanoX);
+
+    const { result } = renderHook(() => usePostOnboardingEntryPointVisibleOnWallet());
+
+    expect(result.current).toBe(true);
+  });
+
+  it("should be true when hub actions are not initialized yet", () => {
+    mockedDismissedSelector.mockReturnValue(false);
+    mockedDeviceModelIdSelector.mockReturnValue(DeviceModelId.nanoX);
+    mockedUseAllCompleted.mockReturnValue(true);
+    mockedUsePostOnboardingHubState.mockReturnValue({
+      deviceModelId: null,
+      lastActionCompleted: null,
+      actionsState: [],
+      postOnboardingInProgress: false,
+    });
 
     const { result } = renderHook(() => usePostOnboardingEntryPointVisibleOnWallet());
 
