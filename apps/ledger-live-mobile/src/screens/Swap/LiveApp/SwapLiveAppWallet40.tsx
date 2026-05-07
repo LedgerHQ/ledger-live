@@ -1,6 +1,5 @@
-import React, { RefObject, useCallback, useMemo, useRef, useState } from "react";
+import React, { RefObject, useCallback, useMemo } from "react";
 import { StyleSheet, View } from "react-native";
-import { useFocusEffect } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
 import InfiniteLoader from "~/components/InfiniteLoader";
 import { useTheme as useLumenTheme } from "@ledgerhq/lumen-ui-rnative/styles";
@@ -68,27 +67,6 @@ export function SwapLiveAppWallet40({
     canGoBack: webviewState.canGoBack,
   });
 
-  // Force a full remount of the swap webview when the screen regains focus,
-  // unless it's already on home ("/").
-  const webviewUrlRef = useRef(webviewState.url);
-  webviewUrlRef.current = webviewState.url;
-  const [webviewMountKey, setWebviewMountKey] = useState(0);
-
-  useFocusEffect(
-    useCallback(() => {
-      const url = webviewUrlRef.current;
-      if (!url) return;
-
-      try {
-        if (new URL(url).pathname !== "/") {
-          setWebviewMountKey(key => key + 1);
-        }
-      } catch {
-        // Ignore transient/unparseable webview URLs.
-      }
-    }, []),
-  );
-
   const handleWebviewStateChange = useCallback(
     (nextState: WebviewState) => {
       setWebviewState(nextState);
@@ -116,7 +94,6 @@ export function SwapLiveAppWallet40({
       <View style={styles.contentContainer} pointerEvents="box-none">
         {manifest && (
           <SwapWebviewContent
-            key={webviewMountKey}
             manifest={manifest}
             params={defaultParams}
             webviewRef={webviewRef}
