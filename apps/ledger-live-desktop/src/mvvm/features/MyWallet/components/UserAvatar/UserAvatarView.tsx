@@ -7,7 +7,7 @@ import { UserAvatarViewProps } from "./types";
 export function UserAvatarView({
   showNotification,
   unseenCount,
-  size = "sm",
+  size = "md",
 }: UserAvatarViewProps) {
   const { t } = useTranslation();
 

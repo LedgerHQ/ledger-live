@@ -125,6 +125,7 @@ export type NotificationsState = {
   drawerSource?:
     | "onboarding"
     | "send"
+    | "dapp_complete"
     | "receive"
     | "swap"
     | "stake"

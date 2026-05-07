@@ -5,7 +5,7 @@ import { UserAvatar } from "../../components/UserAvatar";
 export function ProfileSection() {
   return (
     <Box lx={{ alignItems: "center" }}>
-      <UserAvatar size="lg" />
+      <UserAvatar size="xl" />
     </Box>
   );
 }

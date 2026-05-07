@@ -4,8 +4,7 @@ import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { getValidCryptoIconSize } from "~/renderer/utils/cryptoIconSize";
 import { AssetDetailSection } from "./components/AssetDetailSection";
 import { AssetHeader } from "./components/AssetHeader/AssetHeader";
-import { AddressListSection } from "./components/AddressList";
-import { TotalBalance } from "./components/PortfolioSection/TotalBalance";
+import { PortfolioSection } from "./components/PortfolioSection/PortfolioSection";
 import { useAssetDetailSections } from "./hooks/useAssetDetailSections";
 import type { AssetDetailReady } from "./types";
 
@@ -39,12 +38,7 @@ export function AssetDetailView({ viewModel }: AssetDetailViewProps) {
         onBack={onBack}
       />
 
-      {distributionItem && (
-        <>
-          <TotalBalance distributionItem={distributionItem} />
-          <AddressListSection distributionItem={distributionItem} />
-        </>
-      )}
+      {distributionItem && <PortfolioSection distributionItem={distributionItem} />}
 
       {marketInfo && (
         <>

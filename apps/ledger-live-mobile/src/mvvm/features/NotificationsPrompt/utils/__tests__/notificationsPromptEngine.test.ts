@@ -24,6 +24,7 @@ const createBrazePushNotificationsFeature = (
       action_events: {
         complete_onboarding: { enabled: true, timer: 100 },
         send: { enabled: true, timer: 200 },
+        dapp_complete: { enabled: true, timer: 200 },
         receive: { enabled: true, timer: 300 },
         buy: { enabled: true, timer: 400 },
         swap: { enabled: true, timer: 500 },

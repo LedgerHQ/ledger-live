@@ -11,7 +11,7 @@ export type TransactionalDotSymbol =
   | "Mailbox"
   | "PenEdit"
   | "Snow"
-  | "Star"
+  | "StarFill"
   | "Unlink"
   | "Spinner";
 
@@ -47,7 +47,7 @@ export function getTransactionalDotConfig(
     case "REWARD_PAYOUT":
     case "WITHDRAW_UNBONDED":
     case "WITHDRAW_UNSTAKED":
-      return { symbol: "Star", appearance: "success" };
+      return { symbol: "StarFill", appearance: "success" };
     case "DELEGATE":
     case "REDELEGATE":
     case "BOND":
