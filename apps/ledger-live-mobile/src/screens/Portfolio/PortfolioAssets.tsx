@@ -10,7 +10,6 @@ import { track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import {
   blacklistedTokenIdsSelector,
-  discreetModeSelector,
   selectedTabPortfolioAssetsSelector,
 } from "~/reducers/settings";
 import { setSelectedTabPortfolioAssets } from "~/actions/settings";
@@ -66,7 +65,6 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
     showEmptyAccounts: true,
     hideEmptyTokenAccount,
   });
-  const discreetMode = useSelector(discreetModeSelector);
 
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const blacklistedTokenIdsSet = useMemo(() => new Set(blacklistedTokenIds), [blacklistedTokenIds]);

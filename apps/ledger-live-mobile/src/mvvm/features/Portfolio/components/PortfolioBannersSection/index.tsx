@@ -1,5 +1,5 @@
 import React from "react";
-import { FlatList } from "react-native";
+import { FlatList, ListRenderItemInfo } from "react-native";
 import { Box, PageIndicator } from "@ledgerhq/lumen-ui-rnative";
 import SectionContainer from "~/screens/WalletCentricSections/SectionContainer";
 import { LNSUpsellBanner } from "LLM/features/LNSUpsell/components/LNSUpsellBanner";
@@ -11,6 +11,29 @@ import { usePortfolioBannersSectionViewModel } from "./usePortfolioBannersSectio
 import { width } from "~/helpers/normalizeSize";
 
 const WIDTH = width - 32;
+
+const CAROUSEL_ITEMS = [
+  { key: "onboarding", slide: "onboarding" as const },
+  { key: "recover", slide: "recover" as const },
+];
+
+function OnboardingRecoverBannerSeparator() {
+  return <Box style={{ width: 12 }} />;
+}
+
+function OnboardingRecoverBannerRow({
+  item,
+}: ListRenderItemInfo<(typeof CAROUSEL_ITEMS)[number]>) {
+  return (
+    <Box style={{ width: WIDTH }}>
+      {item.slide === "onboarding" ? (
+        <OnboardingWidget />
+      ) : (
+        <RecoverBanner paddingHorizontal="s0" />
+      )}
+    </Box>
+  );
+}
 
 interface PortfolioBannersSectionProps {
   readonly isFirst: boolean;
@@ -70,11 +93,6 @@ export const PortfolioBannersSection = ({
   }
 
   if (shouldShowOnboardingWidget && shouldDisplayRecover) {
-    const carouselItems = [
-      { key: "onboarding", component: <OnboardingWidget /> },
-      { key: "recover", component: <RecoverBanner paddingHorizontal="s0" /> },
-    ];
-
     return (
       <SectionContainer
         py="0"
@@ -94,16 +112,16 @@ export const PortfolioBannersSection = ({
             decelerationRate={0}
             scrollEventThrottle={16}
             bounces={false}
-            data={carouselItems}
+            data={CAROUSEL_ITEMS}
             keyExtractor={item => item.key}
-            ItemSeparatorComponent={() => <Box style={{ width: 12 }} />}
-            renderItem={({ item }) => <Box  style={{ width: WIDTH }}>{item.component}</Box>}
+            ItemSeparatorComponent={OnboardingRecoverBannerSeparator}
+            renderItem={OnboardingRecoverBannerRow}
           />
 
           <Box lx={{ alignItems: "center" }} testID="banners-page-indicator">
             <PageIndicator
-              currentPage={Math.min(carouselIndex + 1, carouselItems.length)}
-              totalPages={carouselItems.length}
+              currentPage={Math.min(carouselIndex + 1, CAROUSEL_ITEMS.length)}
+              totalPages={CAROUSEL_ITEMS.length}
             />
           </Box>
         </Box>
