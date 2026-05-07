@@ -28,6 +28,10 @@ export class SwapPage extends WebViewAppPage {
     "../artifacts/ledgerwallet-swap-history.csv",
   );
 
+  private readonly swapPageHeading = this.page
+    .getByTestId("page-header")
+    .getByRole("heading", { name: "Swap" });
+
   // Swap Amount and Currency components
   private maxSpendableToggle = this.page.getByTestId("swap-max-spendable-toggle");
   private fromAccountCoinSelector = "from-account-coin-selector";
@@ -471,34 +475,35 @@ export class SwapPage extends WebViewAppPage {
 
   @step("Go and wait for Swap app to be ready")
   async goAndWaitForSwapToBeReady(swapFunction: () => Promise<void>) {
+    // reset webview page to ensure we wait for the new one to be ready after swapFunction
     this._webviewPage = undefined;
 
+    // execute funtion and wait for swap page
     await swapFunction();
     await this.page.waitForURL(/\/swap(?:\/|$|\?)/);
+    await this.swapPageHeading.waitFor({ state: "visible" });
+    await this.getWebView();
 
-    const swapTimeout = 90_000;
-    await expect
-      .poll(
-        async () => {
-          try {
-            this._webviewPage = undefined;
-            const webview = await this.getWebView(5_000);
-            const isFromSelectorEnabled = await webview
-              .getByTestId(this.fromAccountCoinSelector)
-              .isEnabled();
-            return isFromSelectorEnabled;
-          } catch {
-            // If the webview is not found or any error occurs, return false to keep polling
-            return false;
-          }
-        },
-        {
-          intervals: [500],
-          timeout: swapTimeout,
-          message: `Swap app should be ready within ${swapTimeout}ms`,
-        },
-      )
-      .toBe(true);
+    // const swapTimeout = 90_000;
+    // await expect
+    //   .poll(
+    //     async () => {
+    //       try {
+    //         this._webviewPage = undefined;
+    //         await this.getWebView(5_000);
+    //         return true;
+    //       } catch {
+    //         // If the webview is not found or any error occurs, return false to keep polling
+    //         return false;
+    //       }
+    //     },
+    //     {
+    //       intervals: [500],
+    //       timeout: swapTimeout,
+    //       message: `Swap app should be ready within ${swapTimeout}ms`,
+    //     },
+    //   )
+    //   .toBe(true);
   }
 
   @step("Go to swap history")
