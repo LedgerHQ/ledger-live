@@ -2,26 +2,25 @@ import { z } from "zod";
 import { FeatureSchema } from "./schema.base";
 import * as flags from "../flags";
 
+// Re-export internal base schema to allow consumers to use the schema directly
 export { FeatureSchema } from "./schema.base";
 
-export type Feature<T = unknown> = z.infer<typeof FeatureSchema> & { params?: T };
-
+/** Registry of all available feature flags. */
 export const flagRegistry = flags;
 
+/** Represents a feature flag with optional parameters. */
+export type Feature<T = unknown> = z.infer<typeof FeatureSchema> & { params?: T };
+
+/** Represents the unique identifier of a feature flag. */
 export type FeatureId = keyof typeof flagRegistry;
 
-export type Features = {
-  [K in FeatureId]: z.infer<(typeof flagRegistry)[K]>;
-};
-
-// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-export const FeatureIdSchema = z.enum(Object.keys(flagRegistry) as [FeatureId, ...FeatureId[]]);
-
+/** Represents a full set of feature flags. */
 export type FeatureMap<T = Features[FeatureId]> = { [key in FeatureId]: T };
+
+/** Represents a partial set of feature flags, used for overrides and partial resolution. */
 export type OptionalFeatureMap<T = Features[FeatureId]> = { [key in FeatureId]?: T };
 
-export type PartialFeatures = { [K in FeatureId]?: Features[K] };
-
+/** Represents the state of feature flags in the store. */
 export interface FeatureFlagsState {
   /** User-set local overrides that take priority over remote and env values during resolution. */
   overrides: PartialFeatures;
@@ -31,21 +30,37 @@ export interface FeatureFlagsState {
   bannerVisible: boolean;
 }
 
-const FlagRegistrySchema = z.object(flagRegistry);
+/** Represents the resolved values of all feature flags. */
+export type Features = { [K in FeatureId]: z.infer<(typeof flagRegistry)[K]> };
+
+/** Represents a partial set of feature flags, used for overrides and partial resolution. */
+export type PartialFeatures = { [K in FeatureId]?: Features[K] };
+
+/** Represents the shape of the feature flags state in the store. */
+export type WithFeatureFlags = { featureFlags: FeatureFlagsState };
+
+/** Represents the feature flags resolution configuration. */
+export type ResolutionConfig = z.infer<typeof ResolutionConfigSchema>;
+
+/** Schema that validates allowed feature flag IDs. */
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+export const FeatureIdSchema = z.enum(Object.keys(flagRegistry) as [FeatureId, ...FeatureId[]]);
+
+/** Schema that validates a single feature flag override value. */
 export const OverrideValueSchema = FeatureSchema.extend({ params: z.unknown().optional() });
 
+/** Schema that validates the entire feature flags state. */
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 export const FeatureFlagsStateSchema = z.object({
   overrides: z.record(z.string(), OverrideValueSchema.optional()).default({}),
-  resolved: FlagRegistrySchema,
+  resolved: z.object(flagRegistry),
   bannerVisible: z.boolean(),
 }) as z.ZodType<FeatureFlagsState>;
 
+/** Schema that validates the resolution configuration. */
 export const ResolutionConfigSchema = z.object({
   platform: z.enum(["desktop", "ios", "android"]).optional(),
   appVersion: z.string().optional(),
   appLanguage: z.string().optional(),
   envFlags: z.record(z.string(), OverrideValueSchema.optional()).optional(),
 });
-
-export type ResolutionConfig = z.infer<typeof ResolutionConfigSchema>;
