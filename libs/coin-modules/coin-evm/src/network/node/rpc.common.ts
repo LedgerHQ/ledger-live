@@ -9,7 +9,7 @@ import { ethers, FetchRequest, JsonRpcProvider } from "ethers";
 import ERC20Abi from "../../abis/erc20.abi.json";
 import OptimismGasPriceOracleAbi from "../../abis/optimismGasPriceOracle.abi.json";
 import ScrollGasPriceOracleAbi from "../../abis/scrollGasPriceOracle.abi.json";
-import { ExternalNodeConfig } from "../../config";
+import { BlockFinalizationTag, ExternalNodeConfig } from "../../config";
 import { GasEstimationError, InsufficientFunds, UnsupportedRpcMethodError } from "../../errors";
 import { FeeHistory, FeeData, Transaction as EvmTransaction } from "../../types";
 import { isSmartContractInput, safeEncodeEIP55, normalizeAddress } from "../../utils";
@@ -398,7 +398,7 @@ async function broadcastTransaction(
 async function getBlockByHeight(
   api: JsonRpcProvider,
   _currency: CryptoCurrency,
-  blockHeight: number | "latest",
+  blockHeight: number | BlockFinalizationTag,
   prefetchTxs?: boolean,
 ): Promise<BlockByHeightResult> {
   let block: ethers.Block | null;
@@ -496,10 +496,10 @@ function parseRpcHexQuantity(value: unknown, fieldName: string): number {
  */
 async function getBlockByHeightFromRawRpc(
   api: JsonRpcProvider,
-  blockHeight: number | "latest",
+  blockHeight: number | BlockFinalizationTag,
   prefetchTxs: boolean,
 ): Promise<BlockByHeightResult> {
-  const blockTag = blockHeight === "latest" ? "latest" : ethers.toQuantity(blockHeight);
+  const blockTag = typeof blockHeight === "number" ? ethers.toQuantity(blockHeight) : blockHeight;
   const rawBlock = await api.send("eth_getBlockByNumber", [blockTag, prefetchTxs]);
   if (typeof rawBlock !== "object" || rawBlock === null)
     throw new Error("Invalid eth_getBlockByNumber response");

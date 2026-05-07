@@ -1,7 +1,7 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, BroadcastConfig } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { EvmConfigInfo } from "../../config";
+import { BlockFinalizationTag, EvmConfigInfo } from "../../config";
 import { Transaction as EvmTransaction, FeeData } from "../../types";
 
 /**
@@ -191,7 +191,7 @@ export type NodeApi = {
   ) => Promise<string>;
   getBlockByHeight: (
     currency: CryptoCurrency,
-    blockHeight: number | "latest",
+    blockHeight: number | BlockFinalizationTag,
     prefetchTxs?: boolean,
     // timestamp is in milliseconds
   ) => Promise<BlockByHeightResult>;

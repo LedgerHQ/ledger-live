@@ -1,6 +1,11 @@
 import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import { LedgerExplorerId } from "@ledgerhq/types-cryptoassets";
 
+/**
+ * Block finalization levels supported by EVM JSON-RPC API, used to fetch the latest block.
+ */
+export type BlockFinalizationTag = "latest" | "safe" | "finalized";
+
 export type EvmConfig = {
   node:
     | {
@@ -44,6 +49,11 @@ export type EvmConfig = {
     explorerId: LedgerExplorerId;
   };
   showNfts: boolean;
+  /**
+   * The block tag used to fetch the latest block. Defaults to "latest" if not set.
+   * Use "safe" or "finalized" on chains where reorg protection is needed.
+   */
+  finalizationLevel?: BlockFinalizationTag;
 };
 
 export type ExternalNodeConfig = Extract<EvmConfig["node"], { type: "external" }>;
