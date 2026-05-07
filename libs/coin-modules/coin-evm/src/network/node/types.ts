@@ -1,13 +1,8 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, BroadcastConfig } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { EvmConfigInfo } from "../../config";
+import { BlockFinalizationTag, EvmConfigInfo } from "../../config";
 import { Transaction as EvmTransaction, FeeData } from "../../types";
-
-/**
- * Block finalization levels supported by EVM JSON-RPC API, used to fetch the latest block.
- */
-export type BlockFinalizationTag = "latest" | "safe" | "finalized";
 
 /**
  * Asset information for token transfers

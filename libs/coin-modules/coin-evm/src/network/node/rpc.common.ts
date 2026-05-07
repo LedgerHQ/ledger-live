@@ -9,7 +9,7 @@ import { ethers, FetchRequest, JsonRpcProvider } from "ethers";
 import ERC20Abi from "../../abis/erc20.abi.json";
 import OptimismGasPriceOracleAbi from "../../abis/optimismGasPriceOracle.abi.json";
 import ScrollGasPriceOracleAbi from "../../abis/scrollGasPriceOracle.abi.json";
-import { ExternalNodeConfig } from "../../config";
+import { BlockFinalizationTag, ExternalNodeConfig } from "../../config";
 import { GasEstimationError, InsufficientFunds, UnsupportedRpcMethodError } from "../../errors";
 import { FeeHistory, FeeData, Transaction as EvmTransaction } from "../../types";
 import { isSmartContractInput, safeEncodeEIP55, normalizeAddress } from "../../utils";
@@ -31,7 +31,6 @@ import {
   TransactionInfo,
   BlockByHeightResult,
   BlockReceiptInfo,
-  BlockFinalizationTag,
 } from "./types";
 
 /**

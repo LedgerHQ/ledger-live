@@ -8,13 +8,13 @@ import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import ERC20Abi from "../../abis/erc20.abi.json";
 import OptimismGasPriceOracleAbi from "../../abis/optimismGasPriceOracle.abi.json";
-import { LedgerNodeConfig } from "../../config";
+import { BlockFinalizationTag, LedgerNodeConfig } from "../../config";
 import { GasEstimationError } from "../../errors";
 import { LedgerExplorerOperation } from "../../types";
 import { padHexString, safeEncodeEIP55 } from "../../utils";
 import { getGasOptions } from "../gasTracker/ledger";
 import { withRetries } from "../withRetries";
-import { BlockByHeightResult, BlockFinalizationTag, NodeApi, TransactionInfo } from "./types";
+import { BlockByHeightResult, NodeApi, TransactionInfo } from "./types";
 
 const LEDGER_TIMEOUT = 10_000; // 10s for network call timeout
 const LEDGER_TIME_BETWEEN_TRIES = 200; // 200ms between 2 calls
