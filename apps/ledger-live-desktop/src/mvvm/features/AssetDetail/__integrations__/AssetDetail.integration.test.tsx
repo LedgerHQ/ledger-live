@@ -23,7 +23,8 @@ const LABEL = {
 const TEST_ID = {
   HEADER: "asset-detail-header",
   ADDRESS_LIST: "asset-detail-address-list",
-  MARKET_SECTION: "asset-detail-market-data-section",
+  MARKET_PRICE_SECTION: "asset-detail-market-price-section",
+  MARKET_DATA_SECTION: "asset-detail-market-data-section",
   TRANSACTIONS_SECTION: "asset-detail-transactions-section",
 } as const;
 
@@ -53,6 +54,8 @@ const setLocation = (state: unknown = null, pathname = "/asset/bitcoin") =>
 const expectHeader = () => expect(screen.getByTestId(TEST_ID.HEADER)).toBeVisible();
 const expectAssetName = (name: string) => expect(screen.getByText(name)).toBeVisible();
 const expectMarketView = () => {
+  expect(screen.getByTestId(TEST_ID.MARKET_PRICE_SECTION)).toBeVisible();
+  expect(screen.getByTestId(TEST_ID.MARKET_DATA_SECTION)).toBeVisible();
   expect(screen.getByRole("heading", { name: LABEL.MARKET_STATS })).toBeVisible();
   expect(screen.getByRole("heading", { name: LABEL.PRICE_PERFORMANCE })).toBeVisible();
 };
@@ -258,6 +261,13 @@ describe("AssetDetail integration", () => {
           expectAssetName(displayName);
           expectMarketView();
         });
+        expect(screen.getByTestId("asset-detail-market-price")).toHaveTextContent(/\S/);
+        expect(screen.getByTestId("asset-detail-market-price-percent")).not.toHaveTextContent(
+          /^-0(?:[.,]0+)?%$/,
+        );
+        expect(
+          screen.getByTestId("asset-detail-market-price-fiat-variation"),
+        ).not.toHaveTextContent(/^—$/);
         expectNoOwnedView();
       },
     );
@@ -276,6 +286,13 @@ describe("AssetDetail integration", () => {
           expectAssetName(displayName);
           expectMarketView();
         });
+        expect(screen.getByTestId("asset-detail-market-price")).toHaveTextContent(/\S/);
+        expect(screen.getByTestId("asset-detail-market-price-percent")).not.toHaveTextContent(
+          /^-0(?:[.,]0+)?%$/,
+        );
+        expect(
+          screen.getByTestId("asset-detail-market-price-fiat-variation"),
+        ).not.toHaveTextContent(/^—$/);
       },
     );
 
@@ -354,7 +371,7 @@ describe("AssetDetail integration", () => {
         expect(screen.getByRole("heading", { name: "Transaction history" })).toBeVisible();
       });
 
-      const marketSection = screen.getByTestId(TEST_ID.MARKET_SECTION);
+      const marketSection = screen.getByTestId(TEST_ID.MARKET_DATA_SECTION);
       const transactionsSection = screen.getByTestId(TEST_ID.TRANSACTIONS_SECTION);
       expect(marketSection.compareDocumentPosition(transactionsSection)).toBe(
         Node.DOCUMENT_POSITION_FOLLOWING,

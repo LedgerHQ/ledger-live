@@ -6,7 +6,13 @@ import type { PricePerformanceViewModelResult } from "./hooks/usePricePerformanc
 
 type Props = Readonly<PricePerformanceViewModelResult>;
 
-export function PricePerformanceView({ sectionTitle, athBlock, atlBlock, showSkeleton }: Props) {
+export function PricePerformanceView({
+  sectionTitle,
+  athBlock,
+  atlBlock,
+  range24hRow,
+  showSkeleton,
+}: Props) {
   return (
     <div className="flex min-w-0 flex-col gap-16">
       <SectionHeader title={sectionTitle} />
@@ -26,6 +32,10 @@ export function PricePerformanceView({ sectionTitle, athBlock, atlBlock, showSke
               leadingDescription={atlBlock.dateLine}
               trailingTitle={atlBlock.priceText}
               trailingDescription={atlBlock.changeText}
+            />
+            <PricePerformanceListRow
+              leadingTitle={range24hRow.label}
+              trailingTitle={range24hRow.value}
             />
           </div>
         )}
