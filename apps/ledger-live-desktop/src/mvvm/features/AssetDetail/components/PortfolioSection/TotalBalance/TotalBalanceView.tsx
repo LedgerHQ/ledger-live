@@ -18,10 +18,10 @@ export function TotalBalanceView({
   cryptoBalance,
 }: TotalBalanceViewProps) {
   return (
-    <div className="flex flex-col gap-4 py-8" data-testid="asset-detail-total-balance">
+    <div className="flex flex-col gap-8" data-testid="asset-detail-total-balance">
       <p className="body-2-semi-bold text-muted">{totalBalanceLabel}</p>
 
-      <div className="flex min-w-0 flex-wrap items-baseline gap-8">
+      <div className="flex min-w-0 flex-wrap items-baseline gap-4">
         <AmountDisplay
           value={fiatDisplayValue}
           formatter={fiatFormatter}
