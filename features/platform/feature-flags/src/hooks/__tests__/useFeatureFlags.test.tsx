@@ -1,7 +1,7 @@
 import { renderHook, act } from "@testing-library/react";
 import { syncRemoteConfig } from "@shared/feature-flags";
-import { useFeatureFlags } from "./useFeatureFlags";
-import { makeStoreWrapper } from "./testUtils/renderWithStore";
+import { useFeatureFlags } from "../useFeatureFlags";
+import { makeStoreWrapper } from "../../__tests__/renderWithStore";
 
 describe("useFeatureFlags", () => {
   it("returns the entire resolved feature-flag map", () => {

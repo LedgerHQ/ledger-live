@@ -1,13 +1,13 @@
 import { renderHook } from "@testing-library/react";
 import type { Features } from "@shared/feature-flags";
-import { useWalletFeaturesConfig } from "./useWalletFeaturesConfig";
 import {
+  useWalletFeaturesConfig,
   FEATURE_FLAG_KEYS,
   type Wallet40Params,
   type WalletFeaturesConfig,
   type WalletPlatform,
-} from "./types";
-import { FEATURE_FLAGS_DEFAULTS, makeStoreWrapper } from "../testUtils/renderWithStore";
+} from "../useWalletFeaturesConfig";
+import { FEATURE_FLAGS_DEFAULTS, makeStoreWrapper } from "../../__tests__/renderWithStore";
 
 const PLATFORMS: [WalletPlatform, "lwdWallet40" | "lwmWallet40"][] = [
   ["desktop", "lwdWallet40"],
@@ -16,22 +16,19 @@ const PLATFORMS: [WalletPlatform, "lwdWallet40" | "lwmWallet40"][] = [
 
 type FlagValue = { enabled: boolean; params?: Wallet40Params };
 
-const renderWalletFeaturesConfig = (platform: WalletPlatform, flagValue?: FlagValue) => {
+function renderWalletFeaturesConfig(platform: WalletPlatform, flagValue?: FlagValue) {
   const flagKey = FEATURE_FLAG_KEYS[platform];
-  const resolved = {
+  const resolved: Features = {
     ...FEATURE_FLAGS_DEFAULTS,
     [flagKey]: flagValue ?? { enabled: false },
-  } as Features;
+  };
   const { Wrapper } = makeStoreWrapper({ resolved });
   return renderHook(() => useWalletFeaturesConfig(platform), { wrapper: Wrapper });
-};
+}
 
-const expectConfig = (
-  result: { current: WalletFeaturesConfig },
-  expected: WalletFeaturesConfig,
-) => {
+function expectConfig(result: { current: WalletFeaturesConfig }, expected: WalletFeaturesConfig) {
   expect(result.current).toEqual(expected);
-};
+}
 
 const makeConfig = (
   value: boolean,
@@ -104,16 +101,13 @@ describe("useWalletFeaturesConfig hook", () => {
   });
 
   describe("when feature flag is enabled", () => {
-    it.each(PLATFORMS)(
-      "returns ALL_ENABLED_CONFIG for %s with all params enabled",
-      platform => {
-        const { result } = renderWalletFeaturesConfig(platform, {
-          enabled: true,
-          params: ALL_PARAMS_ENABLED,
-        });
-        expectConfig(result, ALL_ENABLED_CONFIG);
-      },
-    );
+    it.each(PLATFORMS)("returns ALL_ENABLED_CONFIG for %s with all params enabled", platform => {
+      const { result } = renderWalletFeaturesConfig(platform, {
+        enabled: true,
+        params: ALL_PARAMS_ENABLED,
+      });
+      expectConfig(result, ALL_ENABLED_CONFIG);
+    });
 
     describe.each(PLATFORMS)("on %s platform", platform => {
       it.each<[string, Wallet40Params, Partial<WalletFeaturesConfig>]>([
@@ -138,11 +132,7 @@ describe("useWalletFeaturesConfig hook", () => {
         ["onboardingWidget", { onboardingWidget: true }, { shouldDisplayOnboardingWidget: true }],
         ["brazePlacement", { brazePlacement: true }, { shouldDisplayBrazePlacement: true }],
         ["operationsList", { operationsList: true }, { shouldDisplayOperationsList: true }],
-        [
-          "aggregatedAssets",
-          { aggregatedAssets: true },
-          { shouldDisplayAggregatedAssets: true },
-        ],
+        ["aggregatedAssets", { aggregatedAssets: true }, { shouldDisplayAggregatedAssets: true }],
         ["myWallet", { myWallet: true }, { shouldDisplayMyWallet: true }],
         [
           "finishOnboardingWidget",

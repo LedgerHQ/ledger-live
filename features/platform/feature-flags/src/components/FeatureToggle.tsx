@@ -1,6 +1,6 @@
 import { type ReactNode } from "react";
 import type { FeatureId } from "@shared/feature-flags";
-import { useFeature } from "./useFeature";
+import { useFeature } from "../hooks/useFeature";
 
 type Props = {
   featureId: FeatureId;
@@ -8,7 +8,7 @@ type Props = {
   children?: ReactNode;
 };
 
-export const FeatureToggle = ({ featureId, fallback, children }: Props): React.JSX.Element => {
+export function FeatureToggle({ featureId, fallback, children }: Props): React.JSX.Element {
   const feature = useFeature(featureId);
 
   if (!feature || !feature.enabled) {
@@ -16,4 +16,4 @@ export const FeatureToggle = ({ featureId, fallback, children }: Props): React.J
   }
 
   return <>{children || null}</>;
-};
+}

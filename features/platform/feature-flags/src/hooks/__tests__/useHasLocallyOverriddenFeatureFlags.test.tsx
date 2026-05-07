@@ -1,6 +1,6 @@
 import { renderHook } from "@testing-library/react";
-import { useHasLocallyOverriddenFeatureFlags } from "./useHasLocallyOverriddenFeatureFlags";
-import { makeStoreWrapper, FEATURE_FLAGS_DEFAULTS } from "./testUtils/renderWithStore";
+import { useHasLocallyOverriddenFeatureFlags } from "../useHasLocallyOverriddenFeatureFlags";
+import { makeStoreWrapper, FEATURE_FLAGS_DEFAULTS } from "../../__tests__/renderWithStore";
 
 describe("useHasLocallyOverriddenFeatureFlags", () => {
   it("is false when no resolved flag carries override metadata", () => {

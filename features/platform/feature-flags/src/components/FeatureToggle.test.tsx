@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { FeatureToggle } from "./FeatureToggle";
-import { makeStoreWrapper, FEATURE_FLAGS_DEFAULTS } from "./testUtils/renderWithStore";
+import { makeStoreWrapper, FEATURE_FLAGS_DEFAULTS } from "../__tests__/renderWithStore";
 
 describe("FeatureToggle", () => {
   it("renders children when the flag is enabled", () => {

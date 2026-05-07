@@ -16,9 +16,3 @@ their root reducer.
 | `useHasLocallyOverriddenFeatureFlags()`   | `true` if any resolved flag has `overridesRemote` or `overriddenByEnv`. |
 | `<FeatureToggle featureId fallback>`      | Renders `children` when the flag is enabled, otherwise `fallback`.      |
 | `useWalletFeaturesConfig(platform)`       | Boolean config object derived from `lwdWallet40` / `lwmWallet40`.       |
-
-## Migration
-
-Once all in-app call sites import from this package, the
-`FirebaseFeatureFlagsProvider` and `FirebaseRemoteConfigProvider` can be removed
-from both apps (DA-105a / DA-105b).

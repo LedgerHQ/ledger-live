@@ -1,7 +1,7 @@
 import { renderHook, act } from "@testing-library/react";
 import { setOverride } from "@shared/feature-flags";
-import { useFeature } from "./useFeature";
-import { makeStoreWrapper, FEATURE_FLAGS_DEFAULTS } from "./testUtils/renderWithStore";
+import { useFeature } from "../useFeature";
+import { makeStoreWrapper, FEATURE_FLAGS_DEFAULTS } from "../../__tests__/renderWithStore";
 
 describe("useFeature", () => {
   it("returns the resolved value seeded in the store", () => {
