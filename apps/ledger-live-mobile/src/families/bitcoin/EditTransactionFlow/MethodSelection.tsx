@@ -18,7 +18,6 @@ import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge"
 import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 import { getEnv } from "@ledgerhq/live-env";
 import { Flex } from "@ledgerhq/native-ui";
-import type { Account } from "@ledgerhq/types-live";
 import { urls } from "~/utils/urls";
 import invariant from "invariant";
 import React, { memo, useCallback, useEffect, useState } from "react";
