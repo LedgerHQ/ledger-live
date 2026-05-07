@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 4.2.2-hotfix.1
+
+### Patch Changes
+
+- [#17226](https://github.com/LedgerHQ/ledger-live/pull/17226) [`577e74e`](https://github.com/LedgerHQ/ledger-live/commit/577e74ed22905759349c923c9175947a4bdbd17b) Thanks [@thesan](https://github.com/thesan)! - Whitelist the `UPDATE_CHECK_PUBKEY` for turbo and nx
+
 ## 4.2.2-hotfix.0
 
 ### Patch Changes
