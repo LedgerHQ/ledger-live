@@ -28,10 +28,6 @@ export class SwapPage extends WebViewAppPage {
     "../artifacts/ledgerwallet-swap-history.csv",
   );
 
-  private readonly swapPageHeading = this.page
-    .getByTestId("page-header")
-    .getByRole("heading", { name: "Swap" });
-
   // Swap Amount and Currency components
   private maxSpendableToggle = this.page.getByTestId("swap-max-spendable-toggle");
   private fromAccountCoinSelector = "from-account-coin-selector";
@@ -478,9 +474,12 @@ export class SwapPage extends WebViewAppPage {
     // reset cached webview page to ensure we fetch the correct one after navigation
     this._webviewPage = undefined;
 
-    // Perform the action that leads to the swap page and wait for the webview to be ready
+    // perform passed in action and wait for the webview to be ready
     await swapFunction();
-    await this.swapPageHeading.waitFor({ state: "visible" });
+    await this.page
+      .locator('webview[src*="swap"][src*="isEmbedded=false"]')
+      .waitFor({ timeout: 60_000, state: "visible" });
+
     await this.getWebView();
   }
 
