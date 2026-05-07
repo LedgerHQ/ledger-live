@@ -8,6 +8,7 @@ import { TrackScreen } from "~/analytics";
 import { ASSET_DETAIL_TEST_IDS } from "../../testIds";
 import { SectionPlaceholder } from "./components/SectionPlaceholder";
 import { BalanceGraph } from "./components/BalanceGraph";
+import { BalanceDetails } from "./components/BalanceDetails";
 import { Addresses } from "./components/Addresses";
 import { Footer } from "./components/Footer";
 import { MarketData } from "./components/MarketData";
@@ -33,11 +34,7 @@ export function AssetDetailView({ currency, source, isRefreshing, onRefresh }: P
       >
         <Box lx={contentStyle}>
           <BalanceGraph currency={currency} />
-          <SectionPlaceholder
-            testID={ASSET_DETAIL_TEST_IDS.balanceDetails}
-            backgroundColor={PLACEHOLDER_COLORS.balanceDetails}
-            height={SECTION_HEIGHT}
-          />
+          <BalanceDetails currency={currency} />
           <Addresses currency={currency} />
           <MarketData currency={currency} />
           <SectionPlaceholder
