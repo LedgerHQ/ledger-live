@@ -11,19 +11,6 @@ jest.mock("../network/node", () => ({
 
 const mockGetNodeApi = jest.mocked(getNodeApi);
 
-const BLOCK_RESULT = {
-  hash: "hash",
-  parentHash: "parentHash",
-  height: 33,
-  timestamp: new Date("2025-12-31").getTime(),
-};
-
-const BLOCK_INFO = {
-  hash: "hash",
-  height: 33,
-  time: new Date("2025-12-31"),
-};
-
 describe("lastBlock", () => {
   const externalMocks = mockNodeApi();
   const ledgerMocks = mockNodeApi();
@@ -40,18 +27,33 @@ describe("lastBlock", () => {
     ["an external node", "external", externalMocks],
     ["a ledger node", "ledger", ledgerMocks],
   ])("returns last block info using %s", async (_, type, nodeApiMock) => {
-    setCoinConfig(() => ({ info: { node: { type } } }) as unknown as EvmCoinConfig);
-    nodeApiMock.getBlockByHeight.mockResolvedValue(BLOCK_RESULT);
+    const blockResult = {
+      hash: "hash",
+      parentHash: "parentHash",
+      height: 33,
+      timestamp: new Date("2025-12-31").getTime(),
+    };
+    const expectedInfo = { hash: "hash", height: 33, time: new Date("2025-12-31") };
 
-    expect(await lastBlock({} as CryptoCurrency)).toEqual(BLOCK_INFO);
+    setCoinConfig(() => ({ info: { node: { type } } }) as unknown as EvmCoinConfig);
+    nodeApiMock.getBlockByHeight.mockResolvedValue(blockResult);
+
+    expect(await lastBlock({} as CryptoCurrency)).toEqual(expectedInfo);
   });
 
   it.each([
     ["an external node", "external", externalMocks],
     ["a ledger node", "ledger", ledgerMocks],
   ])("passes 'latest' by default to getBlockByHeight using %s", async (_, type, nodeApiMock) => {
+    const blockResult = {
+      hash: "hash",
+      parentHash: "parentHash",
+      height: 33,
+      timestamp: new Date("2025-12-31").getTime(),
+    };
+
     setCoinConfig(() => ({ info: { node: { type } } }) as unknown as EvmCoinConfig);
-    nodeApiMock.getBlockByHeight.mockResolvedValue(BLOCK_RESULT);
+    nodeApiMock.getBlockByHeight.mockResolvedValue(blockResult);
 
     await lastBlock({} as CryptoCurrency);
 
@@ -66,12 +68,20 @@ describe("lastBlock", () => {
   ])(
     "forwards finalizationLevel '%s' to getBlockByHeight using %s",
     async (finalizationLevel, _, type, nodeApiMock) => {
+      const blockResult = {
+        hash: "hash",
+        parentHash: "parentHash",
+        height: 33,
+        timestamp: new Date("2025-12-31").getTime(),
+      };
+      const expectedInfo = { hash: "hash", height: 33, time: new Date("2025-12-31") };
+
       setCoinConfig(
         () => ({ info: { node: { type }, finalizationLevel } }) as unknown as EvmCoinConfig,
       );
-      nodeApiMock.getBlockByHeight.mockResolvedValue(BLOCK_RESULT);
+      nodeApiMock.getBlockByHeight.mockResolvedValue(blockResult);
 
-      expect(await lastBlock({} as CryptoCurrency)).toEqual(BLOCK_INFO);
+      expect(await lastBlock({} as CryptoCurrency)).toEqual(expectedInfo);
       expect(nodeApiMock.getBlockByHeight).toHaveBeenCalledWith(
         expect.anything(),
         finalizationLevel,
