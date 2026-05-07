@@ -480,14 +480,13 @@ export class SwapPage extends WebViewAppPage {
     await expect
       .poll(
         async () => {
-          try {
-            this._webviewPage = undefined;
-            await this.getWebView(5_000);
-            return true;
-          } catch {
-            // Webview not ready yet
-            return false;
-          }
+          this._webviewPage = undefined;
+          await this.getWebView(5_000);
+          const webview = await this.getWebView();
+          const isFromSelectorEnabled = await webview
+            .getByTestId(this.fromAccountCoinSelector)
+            .isEnabled();
+          return isFromSelectorEnabled;
         },
         {
           intervals: [500],
