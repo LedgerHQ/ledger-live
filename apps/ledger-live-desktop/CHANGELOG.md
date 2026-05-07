@@ -1,5 +1,17 @@
 # ledger-live-desktop
 
+## 4.2.2
+
+### Patch Changes
+
+- [#17234](https://github.com/LedgerHQ/ledger-live/pull/17234) [`b8e1193`](https://github.com/LedgerHQ/ledger-live/commit/b8e1193c4c7d6cb2c789bb5a0068047ad2f79a85) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Minor housekeeping
+
+- [#17234](https://github.com/LedgerHQ/ledger-live/pull/17234) [`0d057d7`](https://github.com/LedgerHQ/ledger-live/commit/0d057d7dc6d253182cc813956e52342038237ccb) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Minor housekeeping
+
+- [#17226](https://github.com/LedgerHQ/ledger-live/pull/17226) [`577e74e`](https://github.com/LedgerHQ/ledger-live/commit/577e74ed22905759349c923c9175947a4bdbd17b) Thanks [@thesan](https://github.com/thesan)! - Whitelist the `UPDATE_CHECK_PUBKEY` for turbo and nx
+
+- [#17234](https://github.com/LedgerHQ/ledger-live/pull/17234) [`e305145`](https://github.com/LedgerHQ/ledger-live/commit/e305145aa6b1c66f1c5019c74926acc2ef0918af) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Check signatures on pre-release builds
+
 ## 4.2.2-hotfix.3
 
 ### Patch Changes
