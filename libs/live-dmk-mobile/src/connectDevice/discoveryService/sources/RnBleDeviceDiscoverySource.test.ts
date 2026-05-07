@@ -1,5 +1,9 @@
 import type { DeviceManagementKit, DiscoveredDevice } from "@ledgerhq/device-management-kit";
-import { rnBleTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-ble";
+import {
+  BlePoweredOff,
+  rnBleTransportIdentifier,
+} from "@ledgerhq/device-transport-kit-react-native-ble";
+import { BleError, BleErrorCode } from "react-native-ble-plx";
 import { firstValueFrom, of, throwError } from "rxjs";
 import { DiscoveryErrors, type DiscoveryError } from "../../types";
 import type { DiscoveryPreflightChecks } from "../preflight/preflightResult";
@@ -130,5 +134,66 @@ describe("RnBleDeviceDiscoverySource", () => {
         error,
       },
     });
+  });
+
+  it("GIVEN a BleError with BluetoothPoweredOff is thrown mid-scan, WHEN listening, THEN it should re-run preflight and emit the typed BluetoothDisabled error", async () => {
+    // GIVEN
+    const bleError = Object.assign(new BleError("Bluetooth powered off", {} as never), {
+      errorCode: BleErrorCode.BluetoothPoweredOff,
+    });
+    const bluetoothDisabledError: DiscoveryError = {
+      type: DiscoveryErrors.BluetoothDisabledManualAction,
+      transportID: rnBleTransportIdentifier,
+      resolution: { type: "manual-action", retry: jest.fn() },
+    };
+    const getPreflight = jest
+      .fn()
+      .mockResolvedValueOnce({ success: true })
+      .mockResolvedValueOnce({ success: false, discoveryError: bluetoothDisabledError });
+    const listenToAvailableDevices = jest.fn().mockReturnValue(throwError(() => bleError));
+    const source = new RnBleDeviceDiscoverySource(
+      createMockDMK(listenToAvailableDevices),
+      createPreflightChecks(getPreflight),
+    );
+
+    // WHEN
+    const event = firstValueFrom(source.listen());
+
+    // THEN
+    await expect(event).resolves.toEqual({
+      type: "error",
+      error: bluetoothDisabledError,
+    });
+    expect(getPreflight).toHaveBeenCalledTimes(2);
+  });
+
+  it("GIVEN a typed BlePoweredOff is thrown mid-scan, WHEN listening, THEN it should re-run preflight and emit the typed BluetoothDisabled error", async () => {
+    // GIVEN
+    const bluetoothDisabledError: DiscoveryError = {
+      type: DiscoveryErrors.BluetoothDisabledPromptable,
+      transportID: rnBleTransportIdentifier,
+      resolution: { type: "prompt", retry: jest.fn() },
+    };
+    const getPreflight = jest
+      .fn()
+      .mockResolvedValueOnce({ success: true })
+      .mockResolvedValueOnce({ success: false, discoveryError: bluetoothDisabledError });
+    const listenToAvailableDevices = jest
+      .fn()
+      .mockReturnValue(throwError(() => new BlePoweredOff("powered off")));
+    const source = new RnBleDeviceDiscoverySource(
+      createMockDMK(listenToAvailableDevices),
+      createPreflightChecks(getPreflight),
+    );
+
+    // WHEN
+    const event = firstValueFrom(source.listen());
+
+    // THEN
+    await expect(event).resolves.toEqual({
+      type: "error",
+      error: bluetoothDisabledError,
+    });
+    expect(getPreflight).toHaveBeenCalledTimes(2);
   });
 });

@@ -1,5 +1,9 @@
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
-import { rnBleTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-ble";
+import {
+  BlePoweredOff,
+  rnBleTransportIdentifier,
+} from "@ledgerhq/device-transport-kit-react-native-ble";
+import { BleError, BleErrorCode } from "react-native-ble-plx";
 import { catchError, from, map, mergeMap, of, type Observable } from "rxjs";
 import { DiscoveryErrors } from "../../types";
 import { DefaultBleDiscoveryPreflightChecks } from "../preflight/DefaultBleDiscoveryPreflightChecks";
@@ -37,13 +41,24 @@ export class RnBleDeviceDiscoverySource implements DeviceDiscoverySource {
                 devices,
               }) as const,
           ),
+          catchError((error: unknown) => {
+            // BLE was turned off mid-scan: re-run the preflight pipeline so the
+            // consumer receives the proper platform-specific BluetoothDisabled*
+            // error (with the right resolution + retry) instead of a generic
+            // Unknown error. Works for both Android and iOS.
+            if (isBluetoothPoweredOffError(error)) {
+              return this.listen();
+            }
+
+            return of(this.mapUnknownErrorToDiscoveryEvent(error));
+          }),
         );
       }),
-      catchError(error => of(this.getUnknownDiscoveryErrorEvent(error))),
+      catchError(error => of(this.mapUnknownErrorToDiscoveryEvent(error))),
     );
   }
 
-  private getUnknownDiscoveryErrorEvent(error: unknown): DeviceDiscoverySourceEvent {
+  private mapUnknownErrorToDiscoveryEvent(error: unknown): DeviceDiscoverySourceEvent {
     return {
       type: "error",
       error: {
@@ -54,3 +69,15 @@ export class RnBleDeviceDiscoverySource implements DeviceDiscoverySource {
     };
   }
 }
+
+const isBluetoothPoweredOffError = (error: unknown): boolean => {
+  if (error instanceof BlePoweredOff) {
+    return true;
+  }
+
+  if (error instanceof BleError && error.errorCode === BleErrorCode.BluetoothPoweredOff) {
+    return true;
+  }
+
+  return false;
+};
