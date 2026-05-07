@@ -31,6 +31,8 @@ interface SigningParams {
   baseFee: BigNumber;
   priorityFee: BigNumber;
   viewKey: string;
+  // FIXME: remove once integrated
+  _mockSignature: boolean;
 }
 
 async function buildRootAuthorization(
@@ -89,9 +91,16 @@ async function buildFeeAuthorization(
 }
 
 async function executeSigningFlow(signer: AleoSigner, params: SigningParams): Promise<string> {
-  const { account, request, config, viewKey } = params;
+  const { account, request, config, viewKey, _mockSignature } = params;
 
-  const authorization = await buildRootAuthorization(signer, account, request, viewKey);
+  const authorization = _mockSignature
+    ? await sdkClient.createAuthorization({
+        currency: account.currency,
+        request,
+        signatures: "",
+        viewKey,
+      })
+    : await buildRootAuthorization(signer, account, request, viewKey);
 
   const feeAuthorization = config.isFeeSponsored
     ? null
@@ -146,6 +155,7 @@ export const buildSignOperation =
               baseFee,
               priorityFee,
               viewKey,
+              _mockSignature: (transaction.properties?.amountRecordCommitments ?? []).length > 1,
             }),
           );
 

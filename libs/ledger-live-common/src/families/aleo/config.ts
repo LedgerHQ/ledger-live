@@ -34,7 +34,7 @@ const USE_ENCRYPTED_PROVE = true;
  * - "auto": records are selected automatically (manual picker step is skipped).
  * Default is "manual" to preserve existing behaviour.
  */
-const RECORD_PICKING_STRATEGY: RecordPickingStrategy = "manual";
+const RECORD_PICKING_STRATEGY: RecordPickingStrategy = "auto";
 
 /**
  * Controls whether Aleo token-related features are enabled.
