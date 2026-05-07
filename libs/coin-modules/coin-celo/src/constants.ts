@@ -70,3 +70,5 @@ export const FEE_CURRENCY_BY_CONTRACT: Map<string, (typeof FEE_CURRENCY_OPTIONS)
     option,
   ]),
 );
+
+export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";

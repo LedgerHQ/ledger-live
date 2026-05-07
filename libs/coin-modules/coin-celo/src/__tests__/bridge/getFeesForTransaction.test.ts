@@ -1,5 +1,9 @@
 import BigNumber from "bignumber.js";
-import { MAX_FEES_THRESHOLD_MULTIPLIER, MIN_GAS_FOR_NATIVE_TRANSFER } from "../../constants";
+import {
+  MAX_FEES_THRESHOLD_MULTIPLIER,
+  MIN_GAS_FOR_NATIVE_TRANSFER,
+  ZERO_ADDRESS,
+} from "../../constants";
 import {
   accountWithTokenAccountFixture,
   accountFixture,
@@ -40,7 +44,7 @@ jest.mock("../../network/registry", () => ({
     if (name === "LockedGold") return "0x0000000000000000000000000000000000001d00";
     if (name === "Election") return "0x000000000000000000000000000000000000ce10";
     if (name === "Accounts") return "0x000000000000000000000000000000000000aa10";
-    return "0x0000000000000000000000000000000000000000";
+    return ZERO_ADDRESS;
   }),
 }));
 

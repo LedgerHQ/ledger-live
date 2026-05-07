@@ -6,6 +6,7 @@ import {
   CELO_STABLE_TOKENS,
   getStableTokenRegistryName,
   MAX_FEES_THRESHOLD_MULTIPLIER,
+  ZERO_ADDRESS,
 } from "../constants";
 import { getPendingStakingOperationAmounts, getVote } from "../logic";
 import { getCeloClient } from "../network/client";
@@ -59,7 +60,6 @@ const getVoteNeighbors = async (
     { address: group, votes: newVotes },
   ].sort(compareVotesAscending);
 
-  const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000" as `0x${string}`;
   const idx = sorted.findIndex(g => g.address.toLowerCase() === group.toLowerCase());
 
   const lesser = idx > 0 ? sorted[idx - 1].address : ZERO_ADDRESS;
@@ -107,7 +107,9 @@ const calcTokenTransferValue = (
   return tokenAccount.spendableBalance;
 };
 
-type CeloTokenAccount = NonNullable<ReturnType<typeof findSubAccountById>> & { type: "TokenAccount" };
+type CeloTokenAccount = NonNullable<ReturnType<typeof findSubAccountById>> & {
+  type: "TokenAccount";
+};
 
 const buildLockTx = async (
   account: CeloAccount,
@@ -173,7 +175,9 @@ const buildVoteTx = async (
   });
 
   if (!canVote) {
-    throw new Error(`Validator group ${transaction.recipient} cannot receive more votes: vote cap exceeded`);
+    throw new Error(
+      `Validator group ${transaction.recipient} cannot receive more votes: vote cap exceeded`,
+    );
   }
 
   const { lesser, greater } = await getVoteNeighbors(electionAddress, recipient, voteValue, true);
@@ -197,7 +201,12 @@ const buildRevokeTx = async (
   const recipient = transaction.recipient as `0x${string}`;
   const revokeValue = BigInt(value.toFixed());
 
-  const { lesser, greater } = await getVoteNeighbors(electionAddress, recipient, revokeValue, false);
+  const { lesser, greater } = await getVoteNeighbors(
+    electionAddress,
+    recipient,
+    revokeValue,
+    false,
+  );
   const revokeArgs = [recipient, revokeValue, lesser, greater, BigInt(0)] as const;
   const functionName = transaction.index === 0 ? "revokePending" : "revokeActive";
 

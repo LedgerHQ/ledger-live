@@ -7,6 +7,7 @@ import {
   getStableTokenRegistryName,
   MAX_FEES_THRESHOLD_MULTIPLIER,
   MIN_GAS_FOR_NATIVE_TRANSFER,
+  ZERO_ADDRESS,
 } from "../constants";
 import { getPendingStakingOperationAmounts, getVote } from "../logic";
 import { celoGasPrice, getCeloClient } from "../network/client";
@@ -120,8 +121,8 @@ const getFeesForTransaction = async ({
       args: [
         transaction.recipient as `0x${string}`,
         BigInt(value.toFixed()),
-        "0x0000000000000000000000000000000000000000",
-        "0x0000000000000000000000000000000000000000",
+        ZERO_ADDRESS,
+        ZERO_ADDRESS,
       ],
     });
     try {
@@ -138,12 +139,11 @@ const getFeesForTransaction = async ({
   } else if (transaction.mode === "revoke") {
     const electionAddress = await getRegistryAddressFor("Election");
     const isPending = transaction.index === 0;
-    const ZERO_ADDR = "0x0000000000000000000000000000000000000000" as const;
     const revokeArgs = [
       transaction.recipient as `0x${string}`,
       BigInt(value.toFixed()),
-      ZERO_ADDR,
-      ZERO_ADDR,
+      ZERO_ADDRESS,
+      ZERO_ADDRESS,
       BigInt(0),
     ] as const;
     const data = isPending

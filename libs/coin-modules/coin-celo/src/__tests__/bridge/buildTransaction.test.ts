@@ -9,6 +9,7 @@ import {
   transactionWithUsdcFeeFixture,
   tokenTransactionWithUsdcFeeFixture,
 } from "../../bridge/fixtures";
+import { ZERO_ADDRESS } from "../../constants";
 
 const LOCKED_GOLD_ADDRESS = "0x0000000000000000000000000000000000001d00";
 const ELECTION_ADDRESS = "0x000000000000000000000000000000000000ce10";
@@ -23,7 +24,7 @@ const readContractMock = jest.fn<Promise<unknown>, [{ functionName: string }]>(
   async ({ functionName }) => {
     if (functionName === "canReceiveVotes") return true;
     if (functionName === "getTotalVotesForEligibleValidatorGroups") return [[], []];
-    return "0x0000000000000000000000000000000000000000";
+    return ZERO_ADDRESS;
   },
 );
 
@@ -43,7 +44,7 @@ jest.mock("../../network/registry", () => ({
     if (name === "Accounts") return ACCOUNTS_ADDRESS;
     if (name === "StableTokenEUR") return STABLE_TOKEN_ADDRESS;
     if (name === "StableToken") return STABLE_TOKEN_ADDRESS;
-    return "0x0000000000000000000000000000000000000000";
+    return ZERO_ADDRESS;
   }),
 }));
 
@@ -60,7 +61,7 @@ describe("buildTransaction", () => {
     readContractMock.mockImplementation(async ({ functionName }) => {
       if (functionName === "canReceiveVotes") return true;
       if (functionName === "getTotalVotesForEligibleValidatorGroups") return [[], []];
-      return "0x0000000000000000000000000000000000000000";
+      return ZERO_ADDRESS;
     });
   });
 
@@ -200,9 +201,12 @@ describe("buildTransaction", () => {
     readContractMock.mockImplementation(async ({ functionName }: { functionName: string }) => {
       if (functionName === "canReceiveVotes") return true;
       if (functionName === "getTotalVotesForEligibleValidatorGroups") {
-        return [[groupA, groupB], [BigInt(10), BigInt(30)]];
+        return [
+          [groupA, groupB],
+          [BigInt(10), BigInt(30)],
+        ];
       }
-      return "0x0000000000000000000000000000000000000000";
+      return ZERO_ADDRESS;
     });
 
     const transaction = await buildTransaction(
@@ -269,7 +273,7 @@ describe("buildTransaction", () => {
       if (functionName === "getTotalVotesForEligibleValidatorGroups") {
         throw new Error("revert");
       }
-      return "0x0000000000000000000000000000000000000000";
+      return ZERO_ADDRESS;
     });
 
     const transaction = await buildTransaction(
@@ -296,8 +300,8 @@ describe("buildTransaction", () => {
       args: [
         VALID_RECIPIENT as `0x${string}`,
         BigInt(transactionFixture.amount.toFixed()),
-        "0x0000000000000000000000000000000000000000",
-        "0x0000000000000000000000000000000000000000",
+        ZERO_ADDRESS,
+        ZERO_ADDRESS,
       ],
     });
 
@@ -383,8 +387,8 @@ describe("buildTransaction", () => {
       args: [
         VALID_RECIPIENT as `0x${string}`,
         BigInt(transactionFixture.amount.toFixed()),
-        "0x0000000000000000000000000000000000000000",
-        "0x0000000000000000000000000000000000000000",
+        ZERO_ADDRESS,
+        ZERO_ADDRESS,
         BigInt(0),
       ],
     });
