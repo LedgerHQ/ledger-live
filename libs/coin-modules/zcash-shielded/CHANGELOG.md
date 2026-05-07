@@ -15,6 +15,20 @@
 - Updated dependencies [[`5bd95a9`](https://github.com/LedgerHQ/ledger-live/commit/5bd95a9ceaac4d08c87d635f721265357368f8ee)]:
   - @ledgerhq/live-network@2.6.0-next.0
 
+## 0.9.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-network@2.5.2
+
+## 0.9.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-network@2.5.2-hotfix.0
+
 ## 0.9.0
 
 ### Minor Changes

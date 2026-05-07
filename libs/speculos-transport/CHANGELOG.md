@@ -14,6 +14,24 @@
   - @ledgerhq/devices@8.14.2-next.0
   - @ledgerhq/hw-transport-node-speculos@6.34.2-next.0
 
+## 0.9.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/devices@8.14.2
+  - @ledgerhq/hw-transport-node-speculos@6.34.2
+  - @ledgerhq/live-dmk-speculos@0.8.6
+
+## 0.9.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/devices@8.14.2-hotfix.0
+  - @ledgerhq/hw-transport-node-speculos@6.34.2-hotfix.0
+  - @ledgerhq/live-dmk-speculos@0.8.6-hotfix.0
+
 ## 0.9.0
 
 ### Minor Changes

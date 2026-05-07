@@ -20,6 +20,26 @@
   - @ledgerhq/live-network@2.6.0-next.0
   - @ledgerhq/ledger-key-ring-protocol@0.13.1-next.0
 
+## 0.25.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/ledger-key-ring-protocol@0.13.1
+  - @ledgerhq/ledger-wallet-framework@1.3.2
+  - @ledgerhq/cryptoassets@13.46.2
+  - @ledgerhq/live-network@2.5.2
+
+## 0.25.3-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/ledger-key-ring-protocol@0.13.1-hotfix.0
+  - @ledgerhq/ledger-wallet-framework@1.3.2-hotfix.0
+  - @ledgerhq/cryptoassets@13.46.2-hotfix.0
+  - @ledgerhq/live-network@2.5.2-hotfix.0
+
 ## 0.25.2
 
 ### Patch Changes

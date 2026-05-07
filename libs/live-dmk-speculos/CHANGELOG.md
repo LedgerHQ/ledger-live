@@ -8,6 +8,20 @@
   - @ledgerhq/live-env@2.34.0-next.0
   - @ledgerhq/hw-transport@6.35.2-next.0
 
+## 0.8.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.35.2
+
+## 0.8.6-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.35.2-hotfix.0
+
 ## 0.8.5
 
 ### Patch Changes

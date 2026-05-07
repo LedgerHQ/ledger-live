@@ -29,6 +29,30 @@
   - @ledgerhq/live-countervalues@0.18.3-next.0
   - @ledgerhq/devices@8.14.2-next.0
 
+## 1.30.1
+
+### Patch Changes
+
+- Updated dependencies [[`202cc42`](https://github.com/LedgerHQ/ledger-live/commit/202cc423b09662b5b25012b84124aecd4dc7245d)]:
+  - @ledgerhq/errors@6.34.1
+  - @ledgerhq/ledger-wallet-framework@1.3.2
+  - @ledgerhq/cryptoassets@13.46.2
+  - @ledgerhq/devices@8.14.2
+  - @ledgerhq/live-network@2.5.2
+  - @ledgerhq/live-countervalues@0.18.3
+
+## 1.30.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`202cc42`](https://github.com/LedgerHQ/ledger-live/commit/202cc423b09662b5b25012b84124aecd4dc7245d)]:
+  - @ledgerhq/errors@6.34.1-hotfix.0
+  - @ledgerhq/ledger-wallet-framework@1.3.2-hotfix.0
+  - @ledgerhq/cryptoassets@13.46.2-hotfix.0
+  - @ledgerhq/devices@8.14.2-hotfix.0
+  - @ledgerhq/live-network@2.5.2-hotfix.0
+  - @ledgerhq/live-countervalues@0.18.3-hotfix.0
+
 ## 1.30.0
 
 ### Minor Changes

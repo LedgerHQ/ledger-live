@@ -27,6 +27,28 @@
   - @ledgerhq/cryptoassets@13.47.0-next.0
   - @ledgerhq/live-network@2.6.0-next.0
 
+## 0.32.1
+
+### Patch Changes
+
+- Updated dependencies [[`202cc42`](https://github.com/LedgerHQ/ledger-live/commit/202cc423b09662b5b25012b84124aecd4dc7245d)]:
+  - @ledgerhq/errors@6.34.1
+  - @ledgerhq/ledger-wallet-framework@1.3.2
+  - @ledgerhq/cryptoassets@13.46.2
+  - @ledgerhq/hw-app-sui@1.10.1
+  - @ledgerhq/live-network@2.5.2
+
+## 0.32.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`202cc42`](https://github.com/LedgerHQ/ledger-live/commit/202cc423b09662b5b25012b84124aecd4dc7245d)]:
+  - @ledgerhq/errors@6.34.1-hotfix.0
+  - @ledgerhq/ledger-wallet-framework@1.3.2-hotfix.0
+  - @ledgerhq/cryptoassets@13.46.2-hotfix.0
+  - @ledgerhq/hw-app-sui@1.10.1-hotfix.0
+  - @ledgerhq/live-network@2.5.2-hotfix.0
+
 ## 0.32.0
 
 ### Minor Changes

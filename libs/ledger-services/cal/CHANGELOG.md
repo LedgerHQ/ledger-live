@@ -8,6 +8,20 @@
   - @ledgerhq/live-env@2.34.0-next.0
   - @ledgerhq/live-network@2.6.0-next.0
 
+## 1.16.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-network@2.5.2
+
+## 1.16.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-network@2.5.2-hotfix.0
+
 ## 1.16.0
 
 ### Minor Changes

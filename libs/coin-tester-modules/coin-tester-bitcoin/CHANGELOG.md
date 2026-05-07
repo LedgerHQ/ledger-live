@@ -22,6 +22,28 @@
   - @ledgerhq/coin-tester@0.20.0
   - @ledgerhq/hw-app-btc@10.22.1-next.0
 
+## 1.10.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-bitcoin@0.39.1
+  - @ledgerhq/ledger-wallet-framework@1.3.2
+  - @ledgerhq/cryptoassets@13.46.2
+  - @ledgerhq/live-network@2.5.2
+  - @ledgerhq/hw-app-btc@10.22.1
+
+## 1.10.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-bitcoin@0.39.1-hotfix.0
+  - @ledgerhq/ledger-wallet-framework@1.3.2-hotfix.0
+  - @ledgerhq/cryptoassets@13.46.2-hotfix.0
+  - @ledgerhq/live-network@2.5.2-hotfix.0
+  - @ledgerhq/hw-app-btc@10.22.1-hotfix.0
+
 ## 1.10.0
 
 ### Minor Changes
