@@ -201,8 +201,10 @@ apps/ledger-live-mobile/src/mvvm/features/Card/                                 
 apps/ledger-live-desktop/src/mvvm/features/Card/                                        @ledgerhq/ptx
 apps/ledger-live-mobile/src/mvvm/features/Swap/                                         @ledgerhq/ptx
 apps/ledger-live-mobile/src/mvvm/features/Stake/                                        @ledgerhq/ptx
-apps/ledger-live-desktop/src/mvvm/features/PtxInfoDialog/                               @ledgerhq/ptx
-apps/ledger-live-desktop/src/mvvm/features/ActionConfirmationDialog/                    @ledgerhq/ptx
+apps/ledger-live-desktop/src/mvvm/features/PtxInfoDialog/                                @ledgerhq/ptx
+apps/ledger-live-desktop/src/mvvm/features/ActionConfirmationDialog/                     @ledgerhq/ptx
+apps/ledger-live-desktop/src/mvvm/features/LiveAppModal/                                 @ledgerhq/ptx
+apps/ledger-live-mobile/src/mvvm/features/LiveAppModal/                                  @ledgerhq/ptx
 apps/ledger-live-mobile/src/mvvm/features/Borrow/                                       @ledgerhq/ptx
 apps/ledger-live-mobile/src/mvvm/features/Portfolio/components/PortfolioBorrowSection   @ledgerhq/ptx
 apps/ledger-live-desktop/src/mvvm/features/Borrow							            @ledgerhq/ptx
@@ -306,11 +308,17 @@ apps/ledger-live-desktop/src/renderer/hooks/useBuyDeviceIntercept.ts            
 apps/ledger-live-desktop/src/renderer/hooks/useBuyDeviceIntercept.test.ts                      @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/hooks/useNavigateToMyLedger.ts                           @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/hooks/useActionCards.tsx                                 @ledgerhq/engagement
+apps/ledger-live-desktop/src/renderer/hooks/useNotifications.ts                                @ledgerhq/engagement
+apps/ledger-live-desktop/src/renderer/hooks/useBraze.ts                                        @ledgerhq/engagement
+apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/BrazeTools/          @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/screens/dashboard/ActionContentCards.tsx                 @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/screens/dashboard/components/Banners/hooks/**/useBannersVisibility*.ts @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/screens/dashboard/components/Banners/PortfolioBannerContent/ @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/components/ContentCards/                                 @ledgerhq/engagement
-apps/ledger-live-desktop/src/reducers/dynamicContent.ts                                        @ledgerhq/engagement
+apps/ledger-live-desktop/src/renderer/reducers/dynamicContent.ts                               @ledgerhq/engagement
+apps/ledger-live-desktop/src/renderer/actions/dynamicContent.ts                                @ledgerhq/engagement
+apps/ledger-live-desktop/src/types/dynamicContent.ts                                           @ledgerhq/engagement
+apps/ledger-live-desktop/src/braze-setup.ts                                                    @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/DynamicContent/                                     @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/LNSUpsell/                                          @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/AnalyticsOptInPrompt/                               @ledgerhq/engagement
@@ -345,7 +353,7 @@ apps/ledger-live-mobile/src/mvvm/features/PostOnboardingHubDrawer/              
 apps/ledger-live-mobile/src/mvvm/features/DynamicContent/                                      @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/LandingPages/                                        @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/NotificationsPrompt/                                 @ledgerhq/engagement
-apps/ledger-live-mobile/src/mvvm/features/AnalyticsConsentDrawer/                               @ledgerhq/engagement
+apps/ledger-live-mobile/src/mvvm/features/AnalyticsConsentDrawer/                              @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/WalletV4Tour/                                        @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/Reborn/                                              @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/Portfolio/components/OnboardingWidget/               @ledgerhq/engagement
@@ -354,9 +362,10 @@ apps/ledger-live-mobile/src/mvvm/features/Portfolio/components/PortfolioCarousel
 apps/ledger-live-mobile/src/mvvm/features/Portfolio/hooks/**/useOnboardingWidgetVisibility*.ts @ledgerhq/engagement
 apps/ledger-live-mobile/src/reducers/dynamicContent.ts                                         @ledgerhq/engagement
 apps/ledger-live-mobile/src/reducers/largeMover.ts                                             @ledgerhq/engagement
-apps/ledger-live-mobile/src/screens/Settings/AnalyticsPreferencesSettings/                                     @ledgerhq/engagement
+apps/ledger-live-mobile/src/screens/Settings/AnalyticsPreferencesSettings/                     @ledgerhq/engagement
 
 # Common
+libs/ledger-live-common/src/braze/                                                             @ledgerhq/engagement
 libs/ledger-live-common/src/analyticsConsent/                                                  @ledgerhq/engagement
 libs/ledger-live-common/src/analytics/                                                         @ledgerhq/engagement
 libs/ledger-live-common/src/onboarding/                                                        @ledgerhq/engagement

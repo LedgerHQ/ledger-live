@@ -1,39 +1,21 @@
 import { useTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React, { useMemo } from "react";
-import { Platform, Pressable, View } from "react-native";
+import { Platform } from "react-native";
 import StepHeader from "~/components/StepHeader";
 import { ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import ConnectDevice from "~/screens/ConnectDevice";
 import SelectDevice from "~/screens/SelectDevice";
 import { useTranslation } from "~/context/Locale";
+import SelectValidator from "./01-SelectValidator";
+import SelectAmount from "./02-SelectAmount";
+import ValidationError from "./03-ValidationError";
+import ValidationSuccess from "./03-ValidationSuccess";
 import type { EvmDelegationFlowParamList } from "./types";
 import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
-import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 
-const Stack = createNativeStackNavigator<EvmDelegationFlowParamList>();
-
-const totalSteps = "2";
-
-function ValidationError({
-  navigation,
-}: StackNavigatorProps<EvmDelegationFlowParamList, ScreenName.EvmDelegationValidationError>) {
-  return <Pressable testID="SendErrorClose" onPress={() => navigation.getParent()?.goBack()} />;
-}
-
-function ValidationSuccess({
-  navigation,
-}: StackNavigatorProps<EvmDelegationFlowParamList, ScreenName.EvmDelegationValidationSuccess>) {
-  return (
-    <View testID="validate-success-screen">
-      <Pressable
-        testID="enabled-success-close-button"
-        onPress={() => navigation.getParent()?.goBack()}
-      />
-    </View>
-  );
-}
+const totalSteps = "3";
 
 function DelegationFlow() {
   const { t } = useTranslation();
@@ -49,14 +31,50 @@ function DelegationFlow() {
       }}
     >
       <Stack.Screen
+        name={ScreenName.EvmDelegationValidator}
+        component={SelectValidator}
+        options={{
+          gestureEnabled: false,
+          headerTitle: () => (
+            <StepHeader
+              title={t("delegation.selectValidatorTitle")}
+              subtitle={t("send.stepperHeader.stepRange", {
+                currentStep: "1",
+                totalSteps,
+              })}
+            />
+          ),
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.EvmDelegationAmount}
+        component={SelectAmount}
+        options={({ route }) => ({
+          headerRight: undefined,
+          headerTitle: () => (
+            <StepHeader
+              title={
+                route.params?.validator?.name ??
+                route.params?.validator?.validatorAddress ??
+                t("send.summary.amount")
+              }
+              subtitle={t("send.stepperHeader.stepRange", {
+                currentStep: "2",
+                totalSteps,
+              })}
+            />
+          ),
+        })}
+      />
+      <Stack.Screen
         name={ScreenName.EvmDelegationSelectDevice}
         component={SelectDevice}
         options={{
           headerTitle: () => (
             <StepHeader
-              title={t("evm.delegation.stepperHeader.selectDevice")}
-              subtitle={t("evm.delegation.stepperHeader.stepRange", {
-                currentStep: "1",
+              title={t("send.stepperHeader.selectDevice")}
+              subtitle={t("send.stepperHeader.stepRange", {
+                currentStep: "3",
                 totalSteps,
               })}
             />
@@ -71,9 +89,9 @@ function DelegationFlow() {
           gestureEnabled: false,
           headerTitle: () => (
             <StepHeader
-              title={t("evm.delegation.stepperHeader.connectDevice")}
-              subtitle={t("evm.delegation.stepperHeader.stepRange", {
-                currentStep: "2",
+              title={t("send.stepperHeader.connectDevice")}
+              subtitle={t("send.stepperHeader.stepRange", {
+                currentStep: "3",
                 totalSteps,
               })}
             />
@@ -112,3 +130,5 @@ const options = {
 };
 
 export { DelegationFlow as component, options };
+
+const Stack = createNativeStackNavigator<EvmDelegationFlowParamList>();

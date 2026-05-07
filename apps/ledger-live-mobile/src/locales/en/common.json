@@ -892,6 +892,9 @@
     "RecommendUndelegation": {
       "title": "Please undelegate the account before emptying it"
     },
+    "MustDelegateBeforeStaking": {
+      "title": "Please delegate your account before staking"
+    },
     "RecommendSubAccountsToEmpty": {
       "title": "Please empty all subaccounts first"
     },
@@ -2819,15 +2822,8 @@
       }
     },
     "recoverBanner": {
-      "subscribeDone": {
-        "title": "Reminder: Finish subscribing to Ledger Recover"
-      },
-      "verifyIdentity": {
-        "title": "Access to your wallet is not backed up yet"
-      },
-      "connectDevice": {
-        "title": "Access to your wallet is not backed up yet"
-      }
+      "title": "Finish securing your backup",
+      "description": "Complete activating Ledger Recover"
     },
     "refreshStatus": {
       "refreshing": "Refreshing...",
@@ -8051,11 +8047,6 @@
       "viewWallet": "Explore my portfolio",
       "deviceStepComplete": "Complete"
     },
-    "entryPointCard": {
-      "title": "What's next for your {{productName}}?",
-      "description": "Secure your assets and go further.",
-      "buttonLabel": "See what's next"
-    },
     "drawer": {
       "title": "Next, finish wallet setup",
       "titleCompleted": "You’re all set!",
@@ -8673,6 +8664,29 @@
       "title": "Addresses",
       "addAccount": "Add",
       "empty": "No addresses yet. Tap Add to get started."
+    },
+    "marketStats": {
+      "title": "Market stats",
+      "marketCap": "Market cap",
+      "marketRank": "Market rank",
+      "circulatingSupply": "Circulating supply",
+      "circulatingSupplyTooltip": "The number of coins currently available for trading and circulating in the market.",
+      "maxSupply": "Max supply",
+      "maxSupplyTooltip": "The maximum number of coins that will ever exist for this cryptocurrency.",
+      "tradingVolume": "24h trading volume",
+      "error": "Unable to load market stats"
+    },
+    "pricePerformance": {
+      "title": "Price performance",
+      "allTimeHigh": "All-time high",
+      "allTimeLow": "All-time low",
+      "yearsAgo": "{{count}}y ago",
+      "monthsAgo": "{{count}}m ago",
+      "daysAgo": "{{count}}d ago",
+      "hoursAgo": "{{count}}h ago",
+      "minutesAgo": "{{count}}min ago",
+      "justNow": "just now",
+      "error": "Unable to load price performance"
     }
   },
   "assetSelection": {

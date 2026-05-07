@@ -7,12 +7,6 @@ import { parseV1 } from "../shared/accountDescriptor";
 import type { AccountDescriptorV1 } from "../shared/accountDescriptor";
 import { Session } from "../session/session-store";
 
-export const accountOption = option(z.string().min(1).optional(), {
-  description:
-    "Account descriptor or session label (e.g. ethereum-1). Can also be the first positional arg.",
-  short: "a",
-});
-
 /**
  * Shared --output option used by all commands. If omitted, the CLI keeps
  * human-readable output.
@@ -35,6 +29,12 @@ export function resolveOutputFormat(
  */
 export const deviceTimeoutOption = option(z.coerce.number().int().positive().default(60_000), {
   description: `Max time (ms) to wait for the device to unlock / confirm. Default: ${DEFAULT_DEVICE_TIMEOUT_MS}.`,
+});
+
+export const accountOption = option(z.string().min(1).optional(), {
+  description:
+    "Account descriptor or session label (e.g. ethereum-1). Can also be the first positional arg.",
+  short: "a",
 });
 
 export function resolveAccountArg(

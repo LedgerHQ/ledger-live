@@ -36,6 +36,9 @@ import type { FirebaseMessagingTypes } from "@react-native-firebase/messaging";
 import { RebornBuyDeviceDrawerState } from "./rebornBuyDeviceDrawer";
 import type { PortfolioRefreshState } from "./portfolioRefresh";
 import type { PortfolioBalanceDisplayState } from "./portfolioBalanceDisplay";
+import type { HistoryState } from "./history";
+import type { RecoverStateSliceState } from "./recoverState";
+import type { LiveAppModalState } from "./liveAppModal";
 
 // === ACCOUNT STATE ===
 
@@ -406,6 +409,7 @@ export type State = LLMRTKApiState & {
   dynamicContent: DynamicContentState;
   earn: EarnState;
   featureFlags: FeatureFlagsState;
+  history: HistoryState;
   identities: IdentitiesState;
   inView: InViewState;
   largeMover: LargeMoverState;
@@ -428,4 +432,6 @@ export type State = LLMRTKApiState & {
   walletSync: WalletSyncState;
   portfolioRefresh: PortfolioRefreshState;
   portfolioBalanceDisplay: PortfolioBalanceDisplayState;
+  recoverState: RecoverStateSliceState;
+  liveAppModal: LiveAppModalState;
 };

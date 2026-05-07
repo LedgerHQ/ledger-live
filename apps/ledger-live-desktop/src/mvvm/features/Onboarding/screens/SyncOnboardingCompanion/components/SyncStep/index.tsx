@@ -6,8 +6,6 @@ import { SeedOriginType } from "@ledgerhq/types-live";
 import useLedgerSyncEntryPointViewModel from "LLD/features/LedgerSyncEntryPoints/useLedgerSyncEntryPointViewModel";
 import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
 import { LogoWrapper } from "LLD/features/WalletSync/components/LogoWrapper";
-import WalletSyncDrawer from "LLD/features/WalletSync/components/Drawer";
-import { AnalyticsPage } from "LLD/features/WalletSync/hooks/useLedgerSyncAnalytics";
 import SkipSyncDrawer from "../SkipSyncDrawer";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setSkipDrawerVisibility } from "~/renderer/reducers/onboarding";
@@ -32,7 +30,7 @@ const SyncStep = ({
   const dispatch = useDispatch();
   const isSyncDrawerOpen = useSelector(walletSyncDrawerVisibilitySelector);
 
-  const { openDrawer: openSyncDrawer, closeDrawer } = useLedgerSyncEntryPointViewModel({
+  const { openDrawer: openSyncDrawer } = useLedgerSyncEntryPointViewModel({
     entryPoint: EntryPoint.onboarding,
     needEligibleDevice: true,
     onboardingNewDevice: true,
@@ -124,12 +122,6 @@ const SyncStep = ({
         </>
       )}
 
-      <WalletSyncDrawer
-        currentPage={AnalyticsPage.OnboardingSync}
-        onClose={() => {
-          closeDrawer();
-        }}
-      />
       <SkipSyncDrawer
         onSkip={handleContinue}
         handleSync={openDrawer}

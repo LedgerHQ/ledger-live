@@ -12,16 +12,27 @@ import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import { StakingDrawerNavigationProps } from "~/components/Stake/types";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
+import { canDelegate } from "@ledgerhq/live-common/families/evm/staking/logic";
+import { isStakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
 
 const ethMagnitude = getCryptoCurrencyById("ethereum").units[0].magnitude ?? 18;
 
 const ETH_LIMIT = BigNumber(32).times(BigNumber(10).pow(ethMagnitude));
+const SEI_EVM_CURRENCY_ID = "sei_evm";
+
+type EvmNativeStakingFeature = {
+  enabled?: boolean;
+  params?: {
+    supportedCurrencyIds?: string[];
+  };
+};
 
 type Props = {
   account: AccountLike;
   parentAccount: Account;
   parentRoute: RouteProp<ParamListBase, ScreenName>;
   walletState: WalletState;
+  evmNativeStakingFeature?: EvmNativeStakingFeature | null;
 };
 
 type AccountTypeGetterProps = {
@@ -50,8 +61,10 @@ function getNavigatorParams({
   account,
   parentAccount,
   walletState,
+  evmNativeStakingFeature,
 }: Props): NavigationParamsType {
   const { isPOLAccount, isBscAccount, isAvaxAccount, isStakekit } = getAccountType(account);
+  const isSeiEvmNativeStaking = getIsSeiEvmNativeStakingEnabled(account, evmNativeStakingFeature);
 
   if (isAccountEmpty(account)) {
     return [
@@ -61,6 +74,18 @@ function getNavigatorParams({
         params: {
           account,
           parentAccount,
+        },
+      },
+    ];
+  }
+
+  if (isSeiEvmNativeStaking) {
+    return [
+      NavigatorName.EvmDelegationFlow,
+      {
+        screen: ScreenName.EvmDelegationValidator,
+        params: {
+          source: parentRoute,
         },
       },
     ];
@@ -133,18 +158,29 @@ const getMainActions = ({
   parentAccount,
   parentRoute,
   walletState,
+  evmNativeStakingFeature,
 }: Props): ActionButtonEvent[] => {
   const { isPOLAccount, isBscAccount, isAvaxAccount, isStakekit, isEthAccount } =
     getAccountType(account);
+  const isSeiEvmNativeStaking = getIsSeiEvmNativeStakingEnabled(account, evmNativeStakingFeature);
 
-  if (isEthAccount || isStakekit) {
-    const label = getStakeLabelLocaleBased();
+  if (isEthAccount || isStakekit || isSeiEvmNativeStaking) {
+    const hasDelegations =
+      account.type === "Account" &&
+      isStakingAccount(account) &&
+      account.stakingResources.delegations.length > 0;
+    const label = isSeiEvmNativeStaking
+      ? hasDelegations
+        ? "account.delegation.addDelegation"
+        : "account.delegation.info.cta"
+      : getStakeLabelLocaleBased();
 
     const navigationParams = getNavigatorParams({
       account,
       parentAccount,
       parentRoute,
       walletState,
+      evmNativeStakingFeature,
     });
 
     const getCurrentCurrency = () => {
@@ -183,3 +219,17 @@ const getMainActions = ({
 export default {
   getMainActions,
 };
+
+function getIsSeiEvmNativeStakingEnabled(
+  account: AccountLike,
+  feature?: EvmNativeStakingFeature | null,
+): boolean {
+  return (
+    account.type === "Account" &&
+    account.currency.id === SEI_EVM_CURRENCY_ID &&
+    feature?.enabled === true &&
+    feature.params?.supportedCurrencyIds?.includes(SEI_EVM_CURRENCY_ID) === true &&
+    isStakingAccount(account) &&
+    canDelegate(account)
+  );
+}

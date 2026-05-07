@@ -69,6 +69,28 @@ const getAmountFromDecoded = (currencyId: string, decoded: unknown): bigint => {
   return extractor ? extractor(decoded) : 0n;
 };
 
+const isMissingRevertDataCallException = (error: unknown): boolean => {
+  if (!(error instanceof Error) || !("code" in error)) {
+    return false;
+  }
+
+  const message =
+    "shortMessage" in error && typeof error.shortMessage === "string"
+      ? error.shortMessage
+      : error.message;
+
+  return (
+    error.code === "CALL_EXCEPTION" &&
+    (!("data" in error) || error.data === null) &&
+    (!("reason" in error) || error.reason === null) &&
+    (!("revert" in error) || error.revert === null) &&
+    message.includes("missing revert data")
+  );
+};
+
+const isSeiMissingDelegationError = (currencyId: string, error: unknown): boolean =>
+  currencyId === "sei_evm" && isMissingRevertDataCallException(error);
+
 // TODO: tech debt: the call should be implemented in the node API as an optional function (like traceBlock)
 const createStakeFromContract = async (stakingContract: StakeCreate): Promise<Stake | null> => {
   const { currency, config, address, currencyId, validatorAddress } = stakingContract;
@@ -123,6 +145,10 @@ const createStakeFromContract = async (stakingContract: StakeCreate): Promise<St
           },
         };
       } catch (error) {
+        if (isSeiMissingDelegationError(currencyId, error)) {
+          return null;
+        }
+
         console.error("Staking fetch failed", error);
         return null;
       }

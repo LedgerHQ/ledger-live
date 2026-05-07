@@ -11,6 +11,7 @@ import { Box } from "@ledgerhq/react-ui";
 import { updateAnonymousUserNotifications } from "~/renderer/actions/settings";
 import { OFFLINE_SEEN_DELAY } from "../utils/constants";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
+import { sanitizeExtras } from "~/renderer/hooks/useBraze";
 
 interface LogContentCardWrapperProps {
   id: string;
@@ -56,7 +57,7 @@ const LogContentCardWrapper: React.FC<LogContentCardWrapperProps> = ({
             braze.logContentCardImpressions([currentCard]);
             track("contentcard_impression", {
               id: currentCard.id,
-              ...currentCard.extras,
+              ...sanitizeExtras(currentCard.extras),
               ...additionalProps,
               displayedPosition,
             });

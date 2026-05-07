@@ -7,6 +7,15 @@ jest.mock("../../../../../release-notes.json", () => [
   { tag_name: "2.80.0", body: "## What's new\n\n- Feature A" },
 ]);
 
+/** Real `electron-store` is not usable in Jest; keep persistence at the boundary.
+ *  Same pattern as `RecoverBanner.test.tsx`. LiveAppModal transitively imports
+ *  `~/renderer/store`, so mocking it here unblocks the dialog mount tree. */
+jest.mock("~/renderer/store", () => ({
+  getStoreValue: jest.fn(),
+  setStoreValue: jest.fn(),
+  resetStore: jest.fn(),
+}));
+
 describe("GlobalDialogs Integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();

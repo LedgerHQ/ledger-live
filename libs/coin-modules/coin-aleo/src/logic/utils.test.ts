@@ -64,6 +64,7 @@ import {
   findBestRecordForFee,
   selectPrivateRecordsForAmount,
   getEstimatedSigningTime,
+  sumPrivateRecords,
 } from "./utils";
 
 jest.mock("../config");
@@ -1743,5 +1744,44 @@ describe("getEstimatedSigningTime", () => {
 
   it("should return 0 sec for 0 records", () => {
     expect(getEstimatedSigningTime(0, "sec", "min")).toBe("~0 sec");
+  });
+});
+
+describe("sumPrivateRecords", () => {
+  it("returns BigNumber(0) for an empty array", () => {
+    expect(sumPrivateRecords([]).isEqualTo(new BigNumber(0))).toBe(true);
+  });
+
+  it("sums a single record", () => {
+    expect(
+      sumPrivateRecords([{ ...mockUnspentRecord1, microcredits: "500" }]).isEqualTo(
+        new BigNumber(500),
+      ),
+    ).toBe(true);
+  });
+
+  it("sums multiple records", () => {
+    const records = [
+      { ...mockUnspentRecord1, microcredits: "100" },
+      { ...mockUnspentRecord1, microcredits: "200" },
+      { ...mockUnspentRecord1, microcredits: "300" },
+    ];
+    expect(sumPrivateRecords(records).isEqualTo(new BigNumber(600))).toBe(true);
+  });
+
+  it("handles large microcredit values without precision loss", () => {
+    const records = [
+      { ...mockUnspentRecord1, microcredits: "999999999999999999" },
+      { ...mockUnspentRecord1, microcredits: "1" },
+    ];
+    expect(sumPrivateRecords(records).isEqualTo(new BigNumber("1000000000000000000"))).toBe(true);
+  });
+
+  it("handles string-typed microcredits", () => {
+    const records = [
+      { ...mockUnspentRecord1, microcredits: "42" },
+      { ...mockUnspentRecord1, microcredits: "58" },
+    ];
+    expect(sumPrivateRecords(records).isEqualTo(new BigNumber(100))).toBe(true);
   });
 });

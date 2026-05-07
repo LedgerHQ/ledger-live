@@ -10,7 +10,7 @@ import {
   LandingPageUseCase,
 } from "~/dynamicContent/types";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
-import { filterCategoriesByLocation } from "~/dynamicContent/utils";
+import { filterCategoriesByLocation, sanitizeExtras } from "~/dynamicContent/utils";
 import { isDynamicContentLoadingSelector } from "~/reducers/dynamicContent";
 
 export type NavigationProps = BaseComposite<
@@ -35,7 +35,7 @@ export const useGeneralLandingPage = (props: NavigationProps) => {
 
   const openLink = async (card: LandingPageStickyCtaContentCard) => {
     await trackContentCardEvent("contentcard_clicked", {
-      ...card.extras,
+      ...sanitizeExtras(card.extras),
       campaign: card.id,
       contentcard: card.cta,
       landingPage: useCase,

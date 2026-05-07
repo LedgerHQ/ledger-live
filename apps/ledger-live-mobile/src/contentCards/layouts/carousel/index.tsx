@@ -75,10 +75,16 @@ const Carousel = ContentLayoutBuilder<Props>(
     const isContainerVisibleRef = useRef(false);
     const visibleCardsRef = useRef<string[]>([]);
     const { logImpressionCard } = useDynamicContent();
+    const findDisplayedPosition = useCallback(
+      (id: string) => items.find(i => i.props.metadata.id === id)?.props.metadata.displayedPosition,
+      [items],
+    );
+
     useInViewContext(
       ({ isInView, progressRatio }) => {
         isInViewRef.current = isInView;
-        if (isInView) visibleCardsRef.current.forEach(id => logImpressionCard(id));
+        if (isInView)
+          visibleCardsRef.current.forEach(id => logImpressionCard(id, findDisplayedPosition(id)));
 
         const isNowVisible = progressRatio >= CONTAINER_IMPRESSION_THRESHOLD;
         if (isNowVisible && !isContainerVisibleRef.current) {
@@ -92,7 +98,7 @@ const Carousel = ContentLayoutBuilder<Props>(
         }
         isContainerVisibleRef.current = isNowVisible;
       },
-      [logImpressionCard, items],
+      [logImpressionCard, findDisplayedPosition, items],
       viewRef,
     );
     const handleViewableItemsChanged = useCallback(
@@ -100,9 +106,10 @@ const Carousel = ContentLayoutBuilder<Props>(
         const visibleCards = viewableItems.map(({ item }) => item.props.metadata.id);
         const newlyVisibleCards = visibleCards.filter(id => !visibleCardsRef.current.includes(id));
         visibleCardsRef.current = visibleCards;
-        if (isInViewRef.current) newlyVisibleCards.forEach(id => logImpressionCard(id));
+        if (isInViewRef.current)
+          newlyVisibleCards.forEach(id => logImpressionCard(id, findDisplayedPosition(id)));
       },
-      [logImpressionCard],
+      [logImpressionCard, findDisplayedPosition],
     );
 
     return (

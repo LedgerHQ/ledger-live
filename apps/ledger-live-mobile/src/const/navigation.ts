@@ -234,6 +234,8 @@ export enum ScreenName {
   EvmDelegationConnectDevice = "EvmDelegationConnectDevice",
   EvmDelegationValidationError = "EvmDelegationValidationError",
   EvmDelegationValidationSuccess = "EvmDelegationValidationSuccess",
+  EvmDelegationValidator = "EvmDelegationValidator",
+  EvmDelegationAmount = "EvmDelegationAmount",
 
   // cosmos
   CosmosFamilyEditMemo = "CosmosFamilyEditMemo",
@@ -588,6 +590,9 @@ export enum ScreenName {
   NoAssociatedAccounts = "NoAssociatedAccounts",
   LargeMoverLandingPage = "LargeMoverLandingPage",
   OperationsList = "OperationsList",
+
+  // Live App generic modal screen (renders an earn/live-app webview as a modal presentation)
+  LiveAppModal = "LiveAppModal",
 }
 
 export enum NavigatorName {

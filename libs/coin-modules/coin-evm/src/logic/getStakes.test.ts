@@ -33,6 +33,14 @@ const mockDecodeStakingResult = decodeStakingResult as jest.Mock;
 const mockGetValidators = getValidators as jest.Mock;
 
 const externalNodeConfig = { type: "external" as const, uri: "https://test" };
+const makeValidator = (validatorAddress: string) => ({
+  validatorAddress,
+  name: "",
+  commission: 0,
+  tokens: 0,
+  votingPower: 0,
+  estimatedYearlyRewardsRate: 0,
+});
 
 describe("EVM Staking - getStakes", () => {
   const address = "0x1234567890abcdef1234567890abcdef12345678";
@@ -97,14 +105,6 @@ describe("EVM Staking - getStakes", () => {
   it("should handle multiple validators and filter zero amounts", async () => {
     const currency = getCryptoCurrencyById("sei_evm");
 
-    const makeValidator = (validatorAddress: string) => ({
-      validatorAddress,
-      name: "",
-      commission: 0,
-      tokens: 0,
-      votingPower: 0,
-      estimatedYearlyRewardsRate: 0,
-    });
     mockGetValidators.mockResolvedValue([
       makeValidator("seivaloper1abc"),
       makeValidator("seivaloper1def"),
@@ -174,6 +174,34 @@ describe("EVM Staking - getStakes", () => {
     expect(result).toEqual({
       items: [],
     });
+  });
+
+  it("should treat SEI missing delegation reverts as an empty stake without logging", async () => {
+    const currency = getCryptoCurrencyById("sei_evm");
+
+    mockGetValidators.mockResolvedValue([makeValidator("seivaloper1abc")]);
+    mockWithApi.mockImplementation(async (_cur, fn) => {
+      const api = {
+        call: jest.fn().mockRejectedValue(
+          Object.assign(new Error("missing revert data"), {
+            code: "CALL_EXCEPTION",
+            data: null,
+            reason: null,
+            revert: null,
+            shortMessage: "missing revert data",
+          }),
+        ),
+      };
+      return fn(api);
+    });
+    mockEncodeStakingData.mockReturnValue("0xdeadbeef");
+
+    const result = await getStakes(currency, address);
+
+    expect(result).toEqual({
+      items: [],
+    });
+    expect(console.error).not.toHaveBeenCalled();
   });
 
   it("should handle SEI when no validators are available", async () => {

@@ -704,3 +704,10 @@ export const getEstimatedSigningTime = (
   const minutes = flooredSeconds / 60;
   return `~${minutes} ${minuteShort}`;
 };
+
+export function sumPrivateRecords(records: AleoUnspentRecord[]): BigNumber {
+  return records.reduce(
+    (sum, record) => sum.plus(new BigNumber(record.microcredits)),
+    new BigNumber(0),
+  );
+}

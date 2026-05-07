@@ -15,6 +15,7 @@ import type {
   FeeEstimation,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
+import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import { RecommendUndelegation } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
@@ -42,7 +43,6 @@ import api from "../network/tzkt";
 import {
   DUST_MARGIN_MUTEZ,
   hasEmptyBalance,
-  mapIntentTypeToTezosMode,
   normalizePublicKeyForAddress,
   parseTezosTokenAsset,
   resolveTezosOperationMode,
@@ -50,10 +50,22 @@ import {
 import type { TezosFeeEstimation } from "./types";
 import type { TezosOperationMode } from "../types/model";
 
-export function createApi(config: TezosConfig): AlpacaApi {
+export function createApi(config: TezosConfig): AlpacaApi & BridgeApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
+    computeIntentType: (transaction: Record<string, unknown>): string => {
+      switch (transaction.mode) {
+        case "delegate":
+        case "undelegate":
+        case "stake":
+        case "unstake":
+        case "finalize_unstake":
+          return transaction.mode;
+        default:
+          return "send";
+      }
+    },
     broadcast,
     combine,
     craftTransaction: craft,
@@ -91,10 +103,9 @@ export function createApi(config: TezosConfig): AlpacaApi {
 
 function isTezosTransactionType(
   type: string,
-): type is "send" | "delegate" | "undelegate" | "stake" | "unstake" {
-  return ["send", "delegate", "undelegate", "stake", "unstake"].includes(type);
+): type is "send" | "delegate" | "undelegate" | "stake" | "unstake" | "finalize_unstake" {
+  return ["send", "delegate", "undelegate", "stake", "unstake", "finalize_unstake"].includes(type);
 }
-
 async function craft(
   transactionIntent: TransactionIntent,
   customFees?: FeeEstimation,
@@ -113,12 +124,12 @@ async function craft(
 
   const tezosMode = resolveTezosOperationMode(transactionIntent.type, transactionIntent.asset);
   const mappedType: TezosOperationMode =
-    tezosMode === "send_token" ? "send_token" : mapIntentTypeToTezosMode(transactionIntent.type);
+    tezosMode === "send_token" ? "send_token" : (transactionIntent.type as TezosOperationMode);
   const tokenCraftInfo =
     tezosMode === "send_token" ? parseTezosTokenAsset(transactionIntent.asset)! : undefined;
 
   // Guard: send max is incompatible with delegated accounts (native XTZ only)
-  let amountToUse = transactionIntent.amount;
+  let amountToUse = tezosMode === "finalize_unstake" ? 0n : transactionIntent.amount;
   if (tezosMode === "send" && transactionIntent.useAllAmount) {
     const senderInfo = await api.getAccountByAddress(transactionIntent.sender);
     if (senderInfo.type === "user" && senderInfo.delegate?.address) {
@@ -254,7 +265,7 @@ async function estimate(transactionIntent: TransactionIntent): Promise<TezosFeeE
   const transaction: CoreTransactionInfo = {
     mode: tezosModeForEstimate,
     recipient: transactionIntent.recipient,
-    amount: transactionIntent.amount,
+    amount: tezosModeForEstimate === "finalize_unstake" ? 0n : transactionIntent.amount,
     useAllAmount: !!transactionIntent.useAllAmount,
     ...(tokenEstimationInfo && {
       contractAddress: tokenEstimationInfo.contractAddress,

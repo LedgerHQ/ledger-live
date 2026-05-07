@@ -12,7 +12,8 @@
     "test": "pnpm run test:web && pnpm run test:native",
     "test:native": "jest --config jest.native.config.js",
     "test:web": "jest --config jest.config.js",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@shared/feature-flags": "workspace:^"
@@ -116,6 +117,7 @@
     "react-native-worklets": "catalog:",
     "react-test-renderer": "catalog:",
     "tailwind-merge": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "jest-sonar": "0.2.16"
   }
 }

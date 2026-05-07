@@ -13,6 +13,7 @@ import { track } from "../analytics/segment";
 import { trackingEnabledSelector } from "../reducers/settings";
 import { setDismissedContentCards } from "../actions/settings";
 import { ActionContentCard } from "~/types/dynamicContent";
+import { sanitizeExtras } from "./useBraze";
 
 const useActionCards = () => {
   const dispatch = useDispatch();
@@ -44,7 +45,7 @@ const useActionCards = () => {
 
     if (actionCard && !actionCard.isMock) {
       track("contentcard_dismissed", {
-        ...currentCard?.extras,
+        ...sanitizeExtras(currentCard?.extras),
         contentcard: actionCard.title,
         campaign: actionCard.id,
         page: "Portfolio",
@@ -70,7 +71,7 @@ const useActionCards = () => {
     }
     if (actionCard) {
       track("contentcard_clicked", {
-        ...currentCard?.extras,
+        ...sanitizeExtras(currentCard?.extras),
         contentcard: actionCard.title,
         link: actionCard.link,
         campaign: actionCard.id,

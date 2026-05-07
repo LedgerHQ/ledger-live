@@ -51,6 +51,10 @@ export const useWalletFeaturesConfig = (platform: WalletPlatform): WalletFeature
       shouldDisplayFinishOnboardingWidget:
         isEnabled &&
         Boolean(params && "finishOnboardingWidget" in params && params.finishOnboardingWidget),
+      shouldDisplayEarnUpselling:
+        isEnabled && Boolean(params && "earnUpselling" in params && params.earnUpselling),
+      shouldDisplayEarnSimulator:
+        isEnabled && Boolean(params && "earnSimulator" in params && params.earnSimulator),
     };
   }, [walletFeatureFlag]);
 };

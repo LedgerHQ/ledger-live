@@ -1,6 +1,7 @@
 import Config from "react-native-config";
-import { TrackingConsent, DatadogProvider } from "@datadog/mobile-react-native";
+import { TrackingConsent, DatadogProvider, DdLogs } from "@datadog/mobile-react-native";
 import { PartialInitializationConfiguration } from "@datadog/mobile-react-native/lib/typescript/DdSdkReactNativeConfiguration";
+import type { LogEvent } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { ScreenName } from "./const";
 import { ViewNamePredicate } from "@datadog/mobile-react-navigation";
 import { ErrorEventMapper } from "@datadog/mobile-react-native/lib/typescript/rum/eventMappers/errorEventMapper";
@@ -132,6 +133,21 @@ export const customLogEventMapper: LogEventMapper = event => {
     },
   };
 };
+
+export function broadcastLogger(event: LogEvent): void {
+  if (!isDatadogEnabled) return;
+
+  if (event.status === "success") {
+    DdLogs.info("broadcast_success", { event });
+  } else {
+    const { error, ...rest } = event;
+    DdLogs.error("broadcast_failure", error.name, error.message, error.stack ?? "", {
+      event: {
+        ...rest,
+      },
+    });
+  }
+}
 
 /**
  * A predicate function to determine the view name for tracking purposes.

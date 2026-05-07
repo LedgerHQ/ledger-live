@@ -4,6 +4,7 @@ import { useSelector } from "~/context/hooks";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
+import { broadcastLogger } from "~/datadog";
 import DeviceActionModal from "~/components/DeviceActionModal";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { PlatformExchangeNavigatorParamList } from "~/components/RootNavigator/types/PlatformExchangeNavigator";
@@ -42,6 +43,7 @@ const PlatformCompleteExchange: React.FC<Props> = ({
       sponsored: request.sponsored,
       source: { type: "swap", name: request.provider },
     },
+    logger: broadcastLogger,
   });
   const [transaction, setTransaction] = useState<Transaction>();
   const [signedOperation, setSignedOperation] = useState<SignedOperation>();

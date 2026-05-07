@@ -128,7 +128,7 @@ export function useWelcomeViewModel() {
   );
 
   // Ledger Sync activation
-  const { openDrawer, closeDrawer } = useActivationDrawer();
+  const { openDrawer } = useActivationDrawer();
 
   const setupLedgerSync = useCallback(() => {
     acceptTerms();
@@ -197,8 +197,5 @@ export function useWelcomeViewModel() {
     // Analytics opt-in
     isFeatureFlagsAnalyticsPrefDisplayed,
     extendedAnalyticsOptInPromptProps,
-
-    // Ledger Sync
-    closeDrawer,
   };
 }

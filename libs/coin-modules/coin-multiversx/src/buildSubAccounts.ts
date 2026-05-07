@@ -6,10 +6,12 @@ import {
 import { mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
+import { ESDT_CONTRACT_ADDRESS_HEX } from "@multiversx/sdk-core/out/constants";
 import BigNumber from "bignumber.js";
 import { getESDTOperations, getAccountESDTTokens } from "./api";
-import { addPrefixToken, extractTokenId } from "./logic";
+import { extractTokenId } from "./logic";
 import { ESDTToken } from "./types";
+import { Address } from "@multiversx/sdk-core/out";
 
 async function buildMultiversXESDTTokenAccount({
   parentAccountId,
@@ -108,6 +110,7 @@ async function updateTokenAccountBalance(
 }
 
 async function processESDT({
+  currencyId,
   esdt,
   accountId,
   accountAddress,
@@ -115,6 +118,7 @@ async function processESDT({
   existingAccountTickers,
   blacklistedTokenIds,
 }: {
+  currencyId: string;
   esdt: ESDTToken;
   accountId: string;
   accountAddress: string;
@@ -122,8 +126,11 @@ async function processESDT({
   existingAccountTickers: string[];
   blacklistedTokenIds: string[];
 }): Promise<TokenAccount | null> {
-  const esdtIdentifierHex = Buffer.from(esdt.identifier).toString("hex");
-  const token = await getCryptoAssetsStore().findTokenById(addPrefixToken(esdtIdentifierHex));
+  const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(
+    Address.fromHex(ESDT_CONTRACT_ADDRESS_HEX).toBech32(),
+    currencyId,
+    esdt.identifier,
+  );
 
   if (!token || blacklistedTokenIds.includes(token.id)) {
     return null;
@@ -156,6 +163,7 @@ async function processESDT({
 }
 
 async function MultiversXBuildESDTTokenAccounts({
+  currency,
   accountId,
   accountAddress,
   existingAccount,
@@ -178,6 +186,7 @@ async function MultiversXBuildESDTTokenAccounts({
   const accountESDTs = await getAccountESDTTokens(accountAddress);
   for (const esdt of accountESDTs) {
     const tokenAccount = await processESDT({
+      currencyId: currency.id,
       esdt,
       accountId,
       accountAddress,

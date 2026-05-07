@@ -10,6 +10,7 @@ import {
 } from "~/renderer/reducers/dynamicContent";
 import { track } from "../analytics/segment";
 import { trackingEnabledSelector } from "../reducers/settings";
+import { sanitizeExtras } from "./useBraze";
 
 export function useNotifications() {
   const desktopCards = useSelector(desktopContentCardSelector);
@@ -70,7 +71,7 @@ export function useNotifications() {
         if (isTrackedUser) {
           braze.logContentCardClick(currentCard);
           track("contentcard_clicked", {
-            ...currentCard.extras,
+            ...sanitizeExtras(currentCard.extras),
             contentcard: card.title,
             link: card.path || card.url,
             campaign: card.id,

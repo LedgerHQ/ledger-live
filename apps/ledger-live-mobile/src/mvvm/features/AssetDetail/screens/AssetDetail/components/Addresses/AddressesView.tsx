@@ -8,7 +8,6 @@ import {
   Text,
 } from "@ledgerhq/lumen-ui-rnative";
 import { PlusCircleFill } from "@ledgerhq/lumen-ui-rnative/symbols";
-import type { Account } from "@ledgerhq/types-live";
 import { useTranslation } from "~/context/Locale";
 import { ASSET_DETAIL_TEST_IDS } from "LLM/features/AssetDetail/testIds";
 import { AddressAccountItem } from "./components/AddressAccountItem";
@@ -16,12 +15,13 @@ import type { AddressAccountData } from "./useAddressesViewModel";
 
 type Props = Readonly<{
   accounts: readonly AddressAccountData[];
-  onAccountPress: (account: Account) => void;
   onAddAccount: () => void;
 }>;
 
-export function AddressesView({ accounts, onAccountPress, onAddAccount }: Props) {
+export function AddressesView({ accounts, onAddAccount }: Props) {
   const { t } = useTranslation();
+
+  if (accounts.length === 0) return null;
 
   return (
     <Box testID={ASSET_DETAIL_TEST_IDS.addresses}>
@@ -41,18 +41,10 @@ export function AddressesView({ accounts, onAccountPress, onAddAccount }: Props)
           </Pressable>
         </SubheaderRow>
       </Subheader>
-      <Box lx={{ backgroundColor: "surface", borderRadius: "md", paddingVertical: "s4" }}>
-        {accounts.length > 0 ? (
-          accounts.map(data => (
-            <AddressAccountItem key={data.id} data={data} onPress={onAccountPress} />
-          ))
-        ) : (
-          <Box lx={{ padding: "s16", alignItems: "center" }}>
-            <Text typography="body3" lx={{ color: "muted" }}>
-              {t("assetDetail.addresses.empty")}
-            </Text>
-          </Box>
-        )}
+      <Box lx={{ gap: "s8" }}>
+        {accounts.map(data => (
+          <AddressAccountItem key={data.id} data={data} />
+        ))}
       </Box>
     </Box>
   );

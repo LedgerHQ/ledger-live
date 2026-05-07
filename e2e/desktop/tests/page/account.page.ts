@@ -1,9 +1,11 @@
 import { expect } from "@playwright/test";
+import { Layout } from "tests/component/layout.component";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "./abstractClasses";
 import { AccountType } from "@ledgerhq/live-common/e2e/enum/Account";
 
 export class AccountPage extends AppPage {
+  private readonly layout = new Layout(this.page);
   readonly settingsButton = this.page.getByTestId("account-settings-button");
   private settingsDeleteButton = this.page.getByTestId("account-settings-delete-button");
   private settingsConfirmButton = this.page.getByTestId("modal-confirm-button");
@@ -38,6 +40,7 @@ export class AccountPage extends AppPage {
   private accountChart = this.page.getByTestId("chart-container");
   private selectSpecificOperation = (operationType: string) =>
     this.page.locator("[data-testid^='operation-row-']").filter({ hasText: operationType });
+  private readonly noAssetsTitle = this.page.getByTestId("no-assets-title");
 
   private accountHeaderNamePattern(...names: string[]) {
     const escaped = names.map(n => n.trim().replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`));
@@ -72,6 +75,10 @@ export class AccountPage extends AppPage {
 
   @step("Click `Send` button")
   async clickSend() {
+    if (await this.noAssetsTitle.isVisible()) {
+      await this.layout.syncAccounts();
+      await this.layout.waitForSyncButtonToBeEnabled();
+    }
     await this.sendButton.click();
   }
 

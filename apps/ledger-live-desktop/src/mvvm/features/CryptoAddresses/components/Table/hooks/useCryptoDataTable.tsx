@@ -20,8 +20,8 @@ import {
   AccountValueCell,
   AggregatedAccountNameCell,
   AggregatedAccountValueCell,
-  getCryptoTableRowFreshAddress,
 } from "../Cell";
+import { getCryptoAccountAddress } from "LLD/features/CryptoAddresses/utils/getCryptoAccountAddress";
 import { useSyncPhase } from "LLD/hooks/useSyncPhase";
 
 type UseCryptoDataTableParams = {
@@ -88,10 +88,10 @@ export function useCryptoDataTable({
       },
       {
         id: "address",
-        accessorFn: row => getCryptoTableRowFreshAddress(row, lookupParentAccount),
+        accessorFn: row => getCryptoAccountAddress(row, lookupParentAccount),
         sortingFn: (rowA, rowB) =>
-          getCryptoTableRowFreshAddress(rowA.original, lookupParentAccount).localeCompare(
-            getCryptoTableRowFreshAddress(rowB.original, lookupParentAccount),
+          getCryptoAccountAddress(rowA.original, lookupParentAccount).localeCompare(
+            getCryptoAccountAddress(rowB.original, lookupParentAccount),
             undefined,
             { sensitivity: "base" },
           ),

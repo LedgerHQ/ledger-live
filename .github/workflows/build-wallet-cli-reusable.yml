@@ -58,7 +58,7 @@ jobs:
       - name: Build, lint, typecheck and test wallet-cli
         run: |
           mkdir -p apps/wallet-cli/coverage
-          pnpm exec nx run-many --projects=@ledgerhq/wallet-cli --targets=generate:check,lint:ci,typecheck,build,coverage
+          pnpm exec nx run-many --projects=@ledgerhq/wallet-cli --targets=generate,lint:ci,typecheck,build,coverage
 
       - name: Upload wallet-cli unit test coverage
         id: generate_coverage
