@@ -1,7 +1,6 @@
 import React from "react";
 import type { DistributionItem } from "@ledgerhq/types-live";
 import { AddressListSection } from "../AddressList";
-import { TransactionsSection } from "../TransactionsSection";
 import { TotalBalance } from "./TotalBalance";
 import { usePortfolioSectionViewModel } from "./usePortfolioSectionViewModel";
 
@@ -20,7 +19,6 @@ export function PortfolioSection({ distributionItem }: PortfolioSectionProps) {
     <>
       <TotalBalance distributionItem={distributionItem} />
       <AddressListSection distributionItem={distributionItem} />
-      <TransactionsSection distributionItem={distributionItem} />
     </>
   );
 }
