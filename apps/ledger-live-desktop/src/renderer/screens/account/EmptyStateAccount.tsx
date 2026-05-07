@@ -18,6 +18,7 @@ import styled from "styled-components";
 import { useNavigate, useLocation } from "react-router";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { RECEIVE_SOURCE_PAGE } from "LLD/features/Receive/types";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 const mapDispatchToProps = {
   openModal,
@@ -116,6 +117,7 @@ function EmptyStateAccount({ t, account, parentAccount, openModal }: Props) {
               openModal("MODAL_RECEIVE", {
                 account,
                 parentAccount,
+                sourcePage: RECEIVE_SOURCE_PAGE.ACCOUNT_PAGE,
               })
             }
           >

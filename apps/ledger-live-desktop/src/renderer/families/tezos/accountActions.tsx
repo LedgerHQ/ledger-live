@@ -3,6 +3,7 @@ import { useDispatch } from "LLD/hooks/redux";
 import { useDelegation } from "@ledgerhq/live-common/families/tezos/react";
 import { TokenAccount } from "@ledgerhq/types-live";
 import { openModal } from "~/renderer/actions/modals";
+import { RECEIVE_SOURCE_PAGE } from "LLD/features/Receive/types";
 import {
   SendActionDefault,
   ReceiveActionDefault,
@@ -42,6 +43,7 @@ const ReceiveAction = ({ account, parentAccount, onClick }: Props) => {
           parentAccount,
           account,
           startWithWarning: receiveShouldWarnDelegation,
+          sourcePage: RECEIVE_SOURCE_PAGE.ACCOUNT_PAGE,
         }),
       );
     } else {

@@ -60,7 +60,9 @@ const ActionsContainer = ({ account, currencyId }: Props) => {
     });
     setDrawer();
     if (location.pathname === "/manager") navigate(accountsPath);
-    dispatch(openModal("MODAL_RECEIVE", { account }));
+    dispatch(
+      openModal("MODAL_RECEIVE", { account, sourcePage: ADD_ACCOUNT_PAGE_NAME.FUNDING_ACTIONS }),
+    );
   }, [account, accountsPath, dispatch, location.pathname, navigate, trackAddAccountEvent]);
 
   const handleBuy = useCallback(() => {
