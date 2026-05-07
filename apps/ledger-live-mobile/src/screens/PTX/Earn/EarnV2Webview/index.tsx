@@ -13,6 +13,7 @@ import { useNavigationBarHeights } from "LLM/hooks/useNavigationBarHeights";
 import { EarnWebview } from "../EarnWebview";
 import { LiveAppBackground } from "LLM/components/LiveAppBackground";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/useWalletFeaturesConfig";
+import { computeEarnUiVersion } from "@ledgerhq/live-common/domain/computeEarnUiVersion";
 
 type Props = {
   manifest?: LiveAppManifest;
@@ -42,15 +43,11 @@ export const EarnV2Webview = ({
 
   const earnUiVersion = useFeature("ptxEarnUi")?.params?.value ?? "v1";
 
-  const computedUiVersion = useMemo(() => {
-    if (shouldDisplayEarnUpselling) {
-      return "v3";
-    }
-    if (shouldDisplayEarnSimulator) {
-      return "v4";
-    }
-    return earnUiVersion;
-  }, [shouldDisplayEarnUpselling, shouldDisplayEarnSimulator, earnUiVersion]);
+  const computedUiVersion = computeEarnUiVersion({
+    baseUiVersion: earnUiVersion,
+    shouldDisplayEarnUpselling,
+    shouldDisplayEarnSimulator,
+  });
 
   const isPtxUiMinV2 = isMinEarnUiVersion(computedUiVersion, "v2");
 
