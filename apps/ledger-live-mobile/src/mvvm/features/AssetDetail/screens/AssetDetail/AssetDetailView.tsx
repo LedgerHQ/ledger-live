@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { RefreshControl, ScrollView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
@@ -12,6 +12,7 @@ import { BalanceDetails } from "./components/BalanceDetails";
 import { Addresses } from "./components/Addresses";
 import { Footer } from "./components/Footer";
 import { MarketData } from "./components/MarketData";
+import { useIsBuyAvailable } from "./components/Footer/useFooterViewModel";
 import { CTAS_HEIGHT, SECTION_HEIGHT, PLACEHOLDER_COLORS } from "./utils/constants";
 
 type Props = Readonly<{
@@ -23,13 +24,18 @@ type Props = Readonly<{
 
 export function AssetDetailView({ currency, source, isRefreshing, onRefresh }: Props) {
   const { bottom } = useSafeAreaInsets();
+  const hasFooter = useIsBuyAvailable(currency);
+  const scrollPaddingBottom = useMemo(
+    () => (hasFooter ? CTAS_HEIGHT + bottom : bottom),
+    [hasFooter, bottom],
+  );
 
   return (
     <Box testID={ASSET_DETAIL_TEST_IDS.screen} lx={screenStyle}>
       <TrackScreen category="Asset" currency={currency?.name} source={source} />
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: CTAS_HEIGHT + bottom }}
+        contentContainerStyle={{ paddingBottom: scrollPaddingBottom }}
         refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
       >
         <Box lx={contentStyle}>
@@ -44,7 +50,7 @@ export function AssetDetailView({ currency, source, isRefreshing, onRefresh }: P
           />
         </Box>
       </ScrollView>
-      <Footer />
+      <Footer currency={currency} />
     </Box>
   );
 }
