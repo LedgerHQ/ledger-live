@@ -2,8 +2,6 @@ import { test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
-import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
-import { CLI } from "tests/utils/cliUtils";
 import { LWD_WALLET_40_FF_DISABLED, LWD_WALLET_40_FF_ENABLED } from "tests/utils/featureFlagUtils";
 
 // Skipping this suite as legacy is not visible on prod anymore
@@ -40,7 +38,6 @@ test.describe("Portfolio Wallet 4.0 - Zero balance state", () => {
   test.use({
     teamOwner: Team.WALLET_XP,
     userdata: "skip-onboarding-with-last-seen-device",
-    // to-do remove when wallet 4.0 is default
     featureFlags: LWD_WALLET_40_FF_ENABLED,
   });
 
@@ -73,27 +70,14 @@ test.describe("Portfolio Wallet 4.0 - Zero balance state", () => {
 });
 
 test.describe("Portfolio Wallet 4.0 - With Account", () => {
-  const currency = Currency.BTC;
   test.use({
     teamOwner: Team.WALLET_XP,
-    userdata: "skip-onboarding-with-last-seen-device",
-    speculosApp: currency.speculosApp,
-    cliCommands: [
-      (userdataPath?: string) => {
-        return CLI.liveData({
-          currency: currency.id,
-          index: 0,
-          add: true,
-          appjson: userdataPath,
-        });
-      },
-    ],
-    // to-do remove when wallet 4.0 is default
+    userdata: "1AccountBTC1AccountETH",
     featureFlags: LWD_WALLET_40_FF_ENABLED,
   });
 
   test(
-    "Portfolio happy path: zero balance state, add account, then verify balance and analytics",
+    "Portfolio happy path: with account, then verify balance and analytics",
     {
       tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
       annotation: {
@@ -108,7 +92,7 @@ test.describe("Portfolio Wallet 4.0 - With Account", () => {
       await app.portfolio.checkSellButtonEnabled();
       await app.portfolio.checkSendButtonEnabled();
 
-      await app.portfolio.expectTotalBalanceCounterValue("0");
+      await app.portfolio.expectBalanceVisibility();
       await app.portfolio.checkOneDayPerformanceIndicatorVisibility();
       await app.portfolio.clickOnPerformancePill();
       await app.analytics.expectAnalyticsScreenToBeVisible();
@@ -122,7 +106,6 @@ test.describe("Portfolio Wallet 4.0 - No seen device (Reborn mode)", () => {
   test.use({
     teamOwner: Team.WALLET_XP,
     userdata: "skip-onboarding",
-    // to-do remove when wallet 4.0 is default
     featureFlags: LWD_WALLET_40_FF_ENABLED,
   });
 
