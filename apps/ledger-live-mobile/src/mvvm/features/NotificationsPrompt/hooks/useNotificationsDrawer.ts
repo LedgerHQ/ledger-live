@@ -182,6 +182,14 @@ export const useNotificationsDrawer = ({
           openDrawerCallback("send", sendParams?.timer);
           break;
         }
+        case "dapp_complete": {
+          const dAppCompleteParams = actionEvents?.dapp_complete;
+          if (!dAppCompleteParams?.enabled) {
+            return;
+          }
+          openDrawerCallback("dapp_complete", dAppCompleteParams?.timer);
+          break;
+        }
         case "receive": {
           const receiveParams = actionEvents?.receive;
           if (!receiveParams?.enabled) {
