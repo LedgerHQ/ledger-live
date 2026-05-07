@@ -8831,6 +8831,7 @@
   },
   "assetDetails": {
     "totalBalance": "Total balance",
+    "marketPrice": "Market price",
     "addresses": "Addresses",
     "add": "Add",
     "notFound": "Asset distribution item not found.",
@@ -8838,6 +8839,7 @@
     "marketStatsTooltip": "Market metrics for this asset.",
     "pricePerformance": "Price performance",
     "marketRank": "Market rank",
-    "tradingVolume24h": "24h trading volume"
+    "tradingVolume24h": "24h trading volume",
+    "day": "1 day"
   }
 }

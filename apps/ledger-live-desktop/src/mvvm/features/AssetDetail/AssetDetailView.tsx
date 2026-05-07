@@ -4,6 +4,7 @@ import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { getValidCryptoIconSize } from "~/renderer/utils/cryptoIconSize";
 import { AssetHeader } from "./components/AssetHeader/AssetHeader";
 import { ActionBar } from "./components/ActionBar";
+import { MarketPriceSection } from "./components/MarketPriceSection";
 import { MarketDataSection } from "./components/MarketDataSection";
 import { PortfolioSection } from "./components/PortfolioSection/PortfolioSection";
 import { TransactionsSection } from "./components/TransactionsSection";
@@ -17,6 +18,7 @@ export function AssetDetailView({ viewModel }: AssetDetailViewProps) {
   const navigate = useNavigate();
   const { distributionItem, marketInfo, market, assetName, assetTicker, ledgerId, ledgerCurrency } =
     viewModel;
+  const marketPriceAssetId = marketInfo?.id ?? distributionItem?.currency.id ?? ledgerId;
 
   const onBack = useCallback(() => {
     navigate(-1);
@@ -38,6 +40,13 @@ export function AssetDetailView({ viewModel }: AssetDetailViewProps) {
           }
           onBack={onBack}
         />
+
+        {marketPriceAssetId && (
+          <MarketPriceSection
+            distributionItem={distributionItem}
+            marketAssetId={marketPriceAssetId}
+          />
+        )}
 
         <ActionBar
           distributionItem={distributionItem}
