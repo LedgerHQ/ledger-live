@@ -12,7 +12,10 @@ import { parseCurrencyString } from "../../utils/currencyFormatter";
 import { RANGE_TO_PRICE_CHANGE_KEY, type RangeKey } from "../../utils/rangeMapping";
 import { useAssetMarketData } from "../../hooks/useAssetMarketData";
 
-export function useBalanceGraphViewModel(currency: AssetDetailCurrencyProps) {
+export function useBalanceGraphViewModel(
+  currency?: AssetDetailCurrencyProps,
+  hideReceive?: boolean,
+) {
   const { t } = useTranslation();
   const { locale } = useLocale();
   const { marketCurrency, counterCurrency, isLoading } = useAssetMarketData(currency);
@@ -83,11 +86,11 @@ export function useBalanceGraphViewModel(currency: AssetDetailCurrencyProps) {
   const accounts = useSelector(shallowAccountsSelector);
 
   const showReceive = useMemo(() => {
-    if (!currency) return false;
+    if (hideReceive || !currency) return false;
     const hasAssetFunds = accounts.some(a => a.currency.id === currency.id && a.balance.gt(0));
     const hasFundsElsewhere = accounts.some(a => a.currency.id !== currency.id && a.balance.gt(0));
     return !hasAssetFunds && hasFundsElsewhere;
-  }, [accounts, currency]);
+  }, [hideReceive, accounts, currency]);
 
   const { handleOpenReceiveDrawer } = useOpenReceiveDrawer({
     currency,

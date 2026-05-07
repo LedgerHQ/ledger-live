@@ -17,4 +17,6 @@ export const ASSET_DETAIL_TEST_IDS = {
   transactions: "asset-detail-transactions",
   ctas: "asset-detail-ctas",
   buyButton: "asset-detail-buy-button",
+  swapButton: "asset-detail-swap-button",
+  footerReceiveButton: "asset-detail-footer-receive-button",
 } as const;
