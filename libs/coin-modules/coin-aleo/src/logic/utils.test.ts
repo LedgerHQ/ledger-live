@@ -27,7 +27,9 @@ import {
   mockTxIntentFeePublic,
   mockTxIntentSelfTransferToPrivate,
   mockTxIntentSelfTransferToPublic,
+  mockTxIntentSelfTransferToPublic2,
   mockTxIntentTransferPrivate,
+  mockTxIntentTransferPrivate2,
   mockTxIntentTransferPublic,
 } from "../__tests__/fixtures/transaction.fixture";
 import type { AleoOperationExtra, ProvableApi } from "../types";
@@ -63,6 +65,8 @@ import {
   extractViewKey,
   findBestRecordForFee,
   selectPrivateRecordsForAmount,
+  getEstimatedSigningTime,
+  sumPrivateRecords,
 } from "./utils";
 
 jest.mock("../config");
@@ -501,15 +505,15 @@ describe("calculateAmount", () => {
     });
   });
 
-  it("should use the full amount record for private transactions with useAllAmount", () => {
+  it("should sum multiple amount records for private transactions with useAllAmount", () => {
     const estimatedFees = new BigNumber(5000);
     const mockTransaction = getMockedTransaction({
       amount: new BigNumber(0),
       useAllAmount: true,
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
       properties: {
-        amountRecordCommitment: mockUnspentRecord1.commitment,
-        feeRecordCommitment: mockUnspentRecord2.commitment,
+        amountRecordCommitments: [mockUnspentRecord1.commitment, mockUnspentRecord2.commitment],
+        feeRecordCommitment: null,
       },
     });
     const mockAccount = getMockedAccount({
@@ -526,9 +530,13 @@ describe("calculateAmount", () => {
       estimatedFees,
     });
 
+    const expectedAmount = new BigNumber(mockUnspentRecord1.microcredits).plus(
+      mockUnspentRecord2.microcredits,
+    );
+
     expect(result).toMatchObject({
-      amount: new BigNumber(mockUnspentRecord1.microcredits),
-      totalSpent: new BigNumber(mockUnspentRecord1.microcredits).plus(estimatedFees),
+      amount: expectedAmount,
+      totalSpent: expectedAmount.plus(estimatedFees),
     });
   });
 
@@ -539,7 +547,7 @@ describe("calculateAmount", () => {
       useAllAmount: true,
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
       properties: {
-        amountRecordCommitment: null,
+        amountRecordCommitments: [],
         feeRecordCommitment: mockUnspentRecord2.commitment,
       },
     });
@@ -916,6 +924,78 @@ describe("mapTransactionIntentToSdkIntent", () => {
     });
   });
 
+  it("should map transfer_private intent to transfer_private_2 SDK intent for two records", () => {
+    const intent = mockTxIntentTransferPrivate2;
+
+    const result = mapTransactionIntentToSdkIntent(intent);
+
+    expect(result).toEqual({
+      type: "transfer_private_2",
+      amount: intent.amount.toString(),
+      to: intent.recipient,
+      records: [mockUnspentRecord1.decryptedData, mockUnspentRecord2.decryptedData],
+    });
+  });
+
+  it("should map convert_private_to_public intent to transfer_private_to_public_2 SDK intent for two records", () => {
+    const intent = mockTxIntentSelfTransferToPublic2;
+
+    const result = mapTransactionIntentToSdkIntent(intent);
+
+    expect(result).toEqual({
+      type: "transfer_private_to_public_2",
+      amount: intent.amount.toString(),
+      to: intent.recipient,
+      records: [mockUnspentRecord1.decryptedData, mockUnspentRecord2.decryptedData],
+    });
+  });
+
+  it("should throw when private transfer intent contains an empty records array", () => {
+    const intent = {
+      ...mockTxIntentTransferPrivate,
+      data: {
+        type: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+        records: [],
+      },
+    };
+
+    expect(() => mapTransactionIntentToSdkIntent(intent)).toThrow(
+      `aleo: at least one record is required for ${TRANSACTION_TYPE.TRANSFER_PRIVATE}`,
+    );
+  });
+
+  it("should throw when private_to_public intent contains an empty records array", () => {
+    const intent = {
+      ...mockTxIntentSelfTransferToPublic,
+      data: {
+        type: TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC,
+        records: [],
+      },
+    };
+
+    expect(() => mapTransactionIntentToSdkIntent(intent)).toThrow(
+      `aleo: at least one record is required for ${TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC}`,
+    );
+  });
+
+  it("should throw when private transfer intent contains too many records", () => {
+    const records = Array.from(
+      { length: MAX_PRIVATE_RECORDS_PER_TRANSACTION + 1 },
+      () => mockUnspentRecord1.decryptedData,
+    );
+    const intent = {
+      ...mockTxIntentTransferPrivate,
+      data: {
+        type: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+        records,
+      },
+    };
+
+    expect(() => mapTransactionIntentToSdkIntent(intent)).toThrow(
+      `aleo: too many records for ${TRANSACTION_TYPE.TRANSFER_PRIVATE} (max: ${MAX_PRIVATE_RECORDS_PER_TRANSACTION})`,
+    );
+  });
+
   it("should map fee_private intent to SDK intent with correct fields", () => {
     const intent = mockTxIntentFeePrivate;
     if (!hasSpecificIntentData(intent, "fee_private")) {
@@ -1031,20 +1111,23 @@ describe("getOperationDetailsExtraFields", () => {
 
 describe("getAvailableBalance", () => {
   const mockTransparentBalance = new BigNumber(100);
-  const mockPrivateBalance = new BigNumber(200);
+  const expectedPrivateSpendableBalance = new BigNumber(mockUnspentRecord1.microcredits).plus(
+    new BigNumber(mockUnspentRecord2.microcredits),
+  );
   const mockAccount = getMockedAccount({
     aleoResources: {
       ...mockAleoResources,
       transparentBalance: mockTransparentBalance,
-      privateBalance: mockPrivateBalance,
+      privateBalance: new BigNumber(200),
+      unspentPrivateRecords: [mockUnspentRecord1, mockUnspentRecord2],
     },
   });
 
   it.each([
     [TRANSACTION_TYPE.TRANSFER_PUBLIC, mockTransparentBalance],
     [TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE, mockTransparentBalance],
-    [TRANSACTION_TYPE.TRANSFER_PRIVATE, mockPrivateBalance],
-    [TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC, mockPrivateBalance],
+    [TRANSACTION_TYPE.TRANSFER_PRIVATE, expectedPrivateSpendableBalance],
+    [TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC, expectedPrivateSpendableBalance],
   ])("should return correct balance for %s", (mode, expected) => {
     const transaction = getMockedTransaction({ mode });
 
@@ -1153,7 +1236,7 @@ describe("createTransactionIntent", () => {
     const transaction = getMockedTransaction({
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
       properties: {
-        amountRecordCommitment: mockUnspentRecord1.commitment,
+        amountRecordCommitments: [mockUnspentRecord1.commitment],
         feeRecordCommitment: null,
       },
     });
@@ -1164,36 +1247,69 @@ describe("createTransactionIntent", () => {
       type: transaction.mode,
       data: {
         type: transaction.mode,
-        record: mockUnspentRecord1.decryptedData,
+        records: [mockUnspentRecord1.decryptedData],
       },
     });
   });
 
-  it("should throw when amountRecordCommitment is null for a private transaction", () => {
+  it("should throw when amountRecordCommitments is empty for a private transaction", () => {
     const transaction = getMockedTransaction({
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
       properties: {
-        amountRecordCommitment: null,
+        amountRecordCommitments: [],
         feeRecordCommitment: null,
       },
     });
 
     expect(() => createTransactionIntent({ account: mockAccount, transaction })).toThrow(
-      "aleo: missing amount record commitment",
+      "aleo: missing amount record commitments",
     );
   });
 
-  it("should throw when amountRecordCommitment does not match any unspent record", () => {
+  it("should throw when amountRecordCommitments entry does not match any unspent record", () => {
     const transaction = getMockedTransaction({
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
       properties: {
-        amountRecordCommitment: "non-existent-commitment",
+        amountRecordCommitments: ["non-existent-commitment"],
         feeRecordCommitment: null,
       },
     });
 
     expect(() => createTransactionIntent({ account: mockAccount, transaction })).toThrow(
-      "aleo: no amount record found for commitment non-existent-commitment",
+      "aleo: no amount records found for given commitments: non-existent-commitment",
+    );
+  });
+
+  it("should throw when at least one commitment is missing even if others resolve", () => {
+    const missingCommitment = "non-existent-commitment";
+    const transaction = getMockedTransaction({
+      mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+      properties: {
+        amountRecordCommitments: [mockUnspentRecord1.commitment, missingCommitment],
+        feeRecordCommitment: null,
+      },
+    });
+
+    expect(() => createTransactionIntent({ account: mockAccount, transaction })).toThrow(
+      `aleo: no amount records found for given commitments: ${missingCommitment}`,
+    );
+  });
+
+  it("should throw when selected amount record commitments exceed supported max", () => {
+    const amountRecordCommitments = Array.from(
+      { length: MAX_PRIVATE_RECORDS_PER_TRANSACTION + 1 },
+      (_, index) => `commitment-${index}`,
+    );
+    const transaction = getMockedTransaction({
+      mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+      properties: {
+        amountRecordCommitments,
+        feeRecordCommitment: null,
+      },
+    });
+
+    expect(() => createTransactionIntent({ account: mockAccount, transaction })).toThrow(
+      `aleo: too many amount record commitments selected (max: ${MAX_PRIVATE_RECORDS_PER_TRANSACTION})`,
     );
   });
 });
@@ -1243,7 +1359,7 @@ describe("createFeeTransactionIntent", () => {
     const transaction = getMockedTransaction({
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
       properties: {
-        amountRecordCommitment: null,
+        amountRecordCommitments: [],
         feeRecordCommitment: mockUnspentRecord2.commitment,
       },
     });
@@ -1279,7 +1395,7 @@ describe("createFeeTransactionIntent", () => {
     const transaction = getMockedTransaction({
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
       properties: {
-        amountRecordCommitment: null,
+        amountRecordCommitments: [],
         feeRecordCommitment: null,
       },
     });
@@ -1300,7 +1416,7 @@ describe("createFeeTransactionIntent", () => {
     const transaction = getMockedTransaction({
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
       properties: {
-        amountRecordCommitment: null,
+        amountRecordCommitments: [],
         feeRecordCommitment: null,
       },
     });
@@ -1450,7 +1566,7 @@ describe("findBestRecordForFee", () => {
     const result = findBestRecordForFee({
       unspentRecords: [mockUnspentRecord1, mockUnspentRecord2],
       targetFee,
-      selectedAmountRecordCommitment: null,
+      selectedAmountRecordCommitments: [],
     });
     // mockUnspentRecord2 (600000) is smaller than mockUnspentRecord1 (800000), both cover 500000
     expect(result).toBe(mockUnspentRecord2);
@@ -1461,7 +1577,7 @@ describe("findBestRecordForFee", () => {
     const result = findBestRecordForFee({
       unspentRecords: [mockUnspentRecord1, mockUnspentRecord2],
       targetFee,
-      selectedAmountRecordCommitment: mockUnspentRecord2.commitment,
+      selectedAmountRecordCommitments: [mockUnspentRecord2.commitment],
     });
     // mockUnspentRecord2 is excluded; only mockUnspentRecord1 (800000) remains
     expect(result).toBe(mockUnspentRecord1);
@@ -1472,7 +1588,7 @@ describe("findBestRecordForFee", () => {
     const result = findBestRecordForFee({
       unspentRecords: [mockUnspentRecord1, mockUnspentRecord2],
       targetFee,
-      selectedAmountRecordCommitment: null,
+      selectedAmountRecordCommitments: [],
     });
     expect(result).toBeNull();
   });
@@ -1481,7 +1597,7 @@ describe("findBestRecordForFee", () => {
     const result = findBestRecordForFee({
       unspentRecords: [],
       targetFee: new BigNumber(1000),
-      selectedAmountRecordCommitment: null,
+      selectedAmountRecordCommitments: [],
     });
     expect(result).toBeNull();
   });
@@ -1491,7 +1607,7 @@ describe("findBestRecordForFee", () => {
     const result = findBestRecordForFee({
       unspentRecords: [mockUnspentRecord1],
       targetFee,
-      selectedAmountRecordCommitment: null,
+      selectedAmountRecordCommitments: [],
     });
     expect(result).toBe(mockUnspentRecord1);
   });
@@ -1700,5 +1816,82 @@ describe("selectPrivateRecordsForAmount", () => {
     });
 
     expect(result).toEqual([]);
+  });
+});
+
+describe("getEstimatedSigningTime", () => {
+  // SIGNING_RECORDS_TIME = 12500 ms per record
+
+  it("should return seconds for totals below 1 minute", () => {
+    // 4 records × 12500 ms = 50 000 ms = 50 s
+    expect(getEstimatedSigningTime(4, "sec", "min")).toBe("~50 sec");
+  });
+
+  it("should round seconds correctly for non-integer results", () => {
+    // 1 record × 12500 ms = 12.5 s → rounds to 13
+    expect(getEstimatedSigningTime(1, "sec", "min")).toBe("~13 sec");
+  });
+
+  it("should return minutes floored to 0.5 min for totals >= 1 minute", () => {
+    // 5 records × 12500 ms = 62.5 s → floor to 60 s = 1 min
+    expect(getEstimatedSigningTime(5, "sec", "min")).toBe("~1 min");
+  });
+
+  it("should floor to nearest 30 s above 1 minute", () => {
+    // 8 records × 12500 ms = 100 s → floor to 90 s = 1.5 min
+    expect(getEstimatedSigningTime(8, "sec", "min")).toBe("~1.5 min");
+  });
+
+  it("should floor to 2 min when total is just above 2 minutes", () => {
+    // 10 records × 12500 ms = 125 s → floor to 120 s = 2 min
+    expect(getEstimatedSigningTime(10, "sec", "min")).toBe("~2 min");
+  });
+
+  it("should show 2.5 min when total lands exactly on 150 s", () => {
+    // 12 records × 12500 ms = 150 s → floor to 150 s = 2.5 min
+    expect(getEstimatedSigningTime(12, "sec", "min")).toBe("~2.5 min");
+  });
+
+  it("should return 0 sec for 0 records", () => {
+    expect(getEstimatedSigningTime(0, "sec", "min")).toBe("~0 sec");
+  });
+});
+
+describe("sumPrivateRecords", () => {
+  it("returns BigNumber(0) for an empty array", () => {
+    expect(sumPrivateRecords([]).isEqualTo(new BigNumber(0))).toBe(true);
+  });
+
+  it("sums a single record", () => {
+    expect(
+      sumPrivateRecords([{ ...mockUnspentRecord1, microcredits: "500" }]).isEqualTo(
+        new BigNumber(500),
+      ),
+    ).toBe(true);
+  });
+
+  it("sums multiple records", () => {
+    const records = [
+      { ...mockUnspentRecord1, microcredits: "100" },
+      { ...mockUnspentRecord1, microcredits: "200" },
+      { ...mockUnspentRecord1, microcredits: "300" },
+    ];
+    expect(sumPrivateRecords(records).isEqualTo(new BigNumber(600))).toBe(true);
+  });
+
+  it("handles large microcredit values without precision loss", () => {
+    const records = [
+      { ...mockUnspentRecord1, microcredits: "999999999999999999" },
+      { ...mockUnspentRecord1, microcredits: "1" },
+    ];
+    expect(sumPrivateRecords(records).isEqualTo(new BigNumber("1000000000000000000"))).toBe(true);
+  });
+
+  it("handles string-typed microcredits", () => {
+    const records = [
+      { ...mockUnspentRecord1, microcredits: "42" },
+      { ...mockUnspentRecord1, microcredits: "58" },
+    ];
+    expect(sumPrivateRecords(records).isEqualTo(new BigNumber(100))).toBe(true);
   });
 });

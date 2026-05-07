@@ -14,8 +14,6 @@ import {
 import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 
-//Warning 🚨: XRP Tests may fail due to API HTTP 429 issue - Jira: LIVE-14237
-
 const transactionsAmountInvalid = [
   {
     transaction: new Transaction(Account.ETH_1, Account.ETH_2, "", Fee.MEDIUM),
@@ -41,6 +39,11 @@ const transactionsAmountInvalid = [
     transaction: new Transaction(Account.ETH_1, Account.ETH_2, "100", Fee.MEDIUM),
     expectedErrorMessage: "Sorry, insufficient funds",
     xrayTicket: "B2CQA-2572",
+  },
+  {
+    transaction: new Transaction(Account.HEDERA_1, Account.HEDERA_2, "100000", undefined, "noTag"),
+    expectedErrorMessage: "Sorry, insufficient funds",
+    xrayTicket: "B2CQA-4287",
   },
 ];
 
@@ -156,10 +159,6 @@ const transactionAddressValid = [
 ];
 
 const transactionE2E = [
-  {
-    transaction: new Transaction(Account.sep_ETH_1, Account.sep_ETH_2, "0.00001", Fee.SLOW),
-    xrayTicket: "B2CQA-2574",
-  },
   {
     transaction: new Transaction(Account.POL_1, Account.POL_2, "0.001", Fee.SLOW),
     xrayTicket: "B2CQA-2807",
@@ -330,9 +329,10 @@ test.describe("Send flows", () => {
       });
 
       const family = getFamilyByCurrencyId(transaction.transaction.accountToDebit.currency.id);
+      const expectedErrorLabel = transaction.expectedErrorMessage ?? "no error message";
 
       test(
-        `Check "${transaction.expectedErrorMessage}" for ${transaction.transaction.accountToDebit.currency.name} - invalid amount ${transaction.transaction.amount} input error`,
+        `Check "${expectedErrorLabel}" for ${transaction.transaction.accountToDebit.currency.name} - invalid amount ${transaction.transaction.amount} input error`,
         {
           tag: [
             "@NanoSP",
@@ -358,8 +358,12 @@ test.describe("Send flows", () => {
           await app.account.clickSend();
 
           await app.send.craftTx(transaction.transaction);
-          await app.send.checkContinueButtonDisabled();
-          await app.send.checkErrorMessage(transaction.expectedErrorMessage);
+          if (transaction.expectedErrorMessage === null) {
+            await app.send.checkContinueButtonDisabled();
+          } else {
+            await app.send.checkContinueButtonDisabled();
+            await app.send.checkErrorMessage(transaction.expectedErrorMessage);
+          }
         },
       );
     });
@@ -466,8 +470,12 @@ test.describe("Send flows", () => {
               : transaction.transaction.accountToCredit.address ?? "";
 
           await app.send.fillRecipientInfo(transaction.transaction);
-          await app.send.checkInputWarningMessage(transaction.expectedWarningMessage);
           await app.send.checkContinueButtonEnable();
+          if (transaction.expectedWarningMessage === null) {
+            await app.send.checkInputWarningVisibility("hidden");
+          } else {
+            await app.send.checkInputWarningMessage(transaction.expectedWarningMessage);
+          }
         },
       );
     });
@@ -501,9 +509,10 @@ test.describe("Send flows", () => {
       });
 
       const family = getFamilyByCurrencyId(transaction.transaction.accountToDebit.currency.id);
+      const expectedErrorLabel = transaction.expectedErrorMessage ?? "no error message";
 
       test(
-        `Check "${transaction.expectedErrorMessage}" (from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName}) - invalid address input error`,
+        `Check "${expectedErrorLabel}" (from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName}) - invalid address input error`,
         {
           tag: [
             "@NanoSP",
@@ -532,8 +541,12 @@ test.describe("Send flows", () => {
 
           await app.account.clickSend();
           await app.send.fillRecipient(transaction.address);
-          await app.send.checkErrorMessage(transaction.expectedErrorMessage);
-          await app.send.checkContinueButtonDisabled();
+          if (transaction.expectedErrorMessage === null) {
+            await app.send.checkContinueButtonDisabled();
+          } else {
+            await app.send.checkErrorMessage(transaction.expectedErrorMessage);
+            await app.send.checkContinueButtonDisabled();
+          }
         },
       );
     });
@@ -609,5 +622,69 @@ test.describe("Send flows", () => {
         delete process.env.DISABLE_TRANSACTION_BROADCAST;
       }
     });
+  });
+
+  // TODO: LIVE-30321 - Until app-concordium 5.6.0 is released, the test is skipped as it requires a specific app version
+  // with the Concordium testnet support.
+  test.describe.skip("Send Concordium (Testnet)", () => {
+    const ccdTx = new Transaction(Account.CCD_TESTNET_1, Account.CCD_TESTNET_2, "50", undefined);
+
+    test.use({
+      teamOwner: Team.COIN_INTEGRATION,
+      userdata: "skip-onboarding-with-last-seen-device",
+      speculosApp: ccdTx.accountToDebit.currency.speculosApp,
+      cliCommands: [
+        async (userdataPath?: string) => {
+          // CCD-specific: liveData needs --currency concordium_testnet (not the
+          // speculos app name "Concordium"); recipient resolves via wallet-proxy.
+          await liveDataCommand(ccdTx.accountToDebit, {
+            currency: ccdTx.accountToDebit.currency.id,
+          })(userdataPath);
+          const recipientAddress = await getAccountAddress(ccdTx.accountToCredit);
+          ccdTx.accountToCredit.address = recipientAddress;
+          ccdTx.recipientAddress = recipientAddress;
+          return recipientAddress;
+        },
+      ],
+      featureFlags: {
+        currencyConcordiumTestnet: { enabled: true },
+        analyticsOptIn: { enabled: true, params: { policyVersion: 1, consentValidityDays: 365 } },
+      },
+    });
+
+    const family = getFamilyByCurrencyId(ccdTx.accountToDebit.currency.id);
+
+    test(
+      `Send from ${ccdTx.accountToDebit.accountName} to ${ccdTx.accountToCredit.accountName}`,
+      {
+        tag: [
+          "@NanoSP",
+          "@NanoX",
+          "@Stax",
+          "@Flex",
+          "@NanoGen5",
+          `@${ccdTx.accountToDebit.currency.id}`,
+          ...(family ? [`@family-${family}`] : []),
+        ],
+        annotation: { type: "TMS", description: "B2CQA-2949" },
+      },
+      async ({ app }) => {
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+        await app.mainNavigation.openTargetFromMainNavigation("accounts");
+        await app.accounts.navigateToAccountByName(ccdTx.accountToDebit.accountName);
+
+        await app.account.clickSend();
+        await app.send.craftTx(ccdTx);
+        await app.send.continueAmountModal();
+        await app.send.expectTxInfoValidity(ccdTx);
+        await app.send.clickContinueToDevice();
+
+        await app.speculos.signSendTransaction(ccdTx);
+        await app.send.expectTxSent();
+        await app.account.navigateToViewDetails();
+        await app.sendDrawer.addressValueIsVisible(ccdTx.accountToCredit.address);
+      },
+    );
   });
 });

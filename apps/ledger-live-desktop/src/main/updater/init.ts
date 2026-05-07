@@ -14,9 +14,11 @@ export type UpdateStatus =
   | "check-success"
   | "downloading-update"
   | "error";
-const UPDATE_CHECK_IGNORE = Boolean(process.env.UPDATE_CHECK_IGNORE);
-const UPDATE_CHECK_FEED =
-  process.env.UPDATE_CHECK_FEED || "https://resources.live.ledger.app/public_resources/signatures";
+const UPDATE_CHECK_IGNORE = Boolean(__PRERELEASE__ && process.env.UPDATE_CHECK_IGNORE);
+const UPDATE_CHECK_FEED = __PRERELEASE__
+  ? process.env.UPDATE_CHECK_FEED || "https://lw-prerelease-sigs.s3.eu-west-1.amazonaws.com"
+  : "https://resources.live.ledger.app/public_resources/signatures";
+
 const sendStatus = (status: UpdateStatus, payload?: unknown) => {
   const win = getMainWindow();
   if (win) {
@@ -27,11 +29,6 @@ const sendStatus = (status: UpdateStatus, payload?: unknown) => {
   }
 };
 const handleDownload = async (info: UpdateDownloadedEvent) => {
-  function onSuccess() {
-    sendStatus("check-success");
-    autoUpdater.autoInstallOnAppQuit = true;
-  }
-  if (__PRERELEASE__) return onSuccess();
   try {
     sendStatus("checking");
     const appUpdater = await createElectronAppUpdater({
@@ -39,11 +36,14 @@ const handleDownload = async (info: UpdateDownloadedEvent) => {
       info,
     });
     await appUpdater.verify();
-    onSuccess();
+    sendStatus("check-success");
   } catch (err) {
     console.error(err);
-    if (UPDATE_CHECK_IGNORE) return onSuccess();
-    sendStatus("error", err);
+    if (UPDATE_CHECK_IGNORE) {
+      sendStatus("check-success");
+    } else {
+      sendStatus("error", err);
+    }
   }
 };
 const init = () => {
@@ -55,8 +55,14 @@ const init = () => {
   autoUpdater.on("error", err => {
     console.error(err);
   });
-  autoUpdater.autoInstallOnAppQuit = false;
+  autoUpdater.autoInstallOnAppQuit = true;
   autoUpdater.autoDownload = true;
+  if (__PRERELEASE__ && process.env.UPDATE_FEED_URL) {
+    autoUpdater.setFeedURL({
+      provider: "generic",
+      url: process.env.UPDATE_FEED_URL,
+    });
+  }
   autoUpdater.checkForUpdates();
   if (__PRERELEASE__ && __CHANNEL__ && !__CHANNEL__.includes("sha")) {
     autoUpdater.channel = __CHANNEL__;

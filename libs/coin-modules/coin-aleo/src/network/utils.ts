@@ -77,7 +77,19 @@ export async function fetchAccountTransactionsFromHeight({
     const nextCursorBlockNumber = page.next_cursor?.block_number.toString() ?? null;
     hasMorePages = nextCursorBlockNumber !== null;
 
-    const recentTxs = page.transactions.filter(tx => tx.block_number >= minBlockHeight);
+    const recentTxs = page.transactions.filter(tx => {
+      const hasValidBlockNumber = tx.block_number >= minBlockHeight;
+
+      // Skip transitions that have no direct account involvement (e.g. outer call in a batching contract).
+      // Other transition, sharing the same transaction_id, will carry the real amount and addresses.
+      // Testnet transaction showing this issue: at1lqugdt847uwnfem2xhzwq6ewrnd6ysjv2gumvglytskutxj3kcpsmc3rrf
+      const isInvalidTransition =
+        tx.function_id.includes("transfer") &&
+        tx.sender_address === "" &&
+        tx.recipient_address === "";
+
+      return hasValidBlockNumber && !isInvalidTransition;
+    });
     transactions.push(...recentTxs);
 
     // stop if DESC order hit the min height boundary

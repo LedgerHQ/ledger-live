@@ -27,6 +27,7 @@ import type { PayloadAction, UnknownAction } from "@reduxjs/toolkit";
 import dialogs, { DialogsState } from "./dialogs";
 import ptxInfoDialog, { PtxInfoDialogState } from "./ptxInfoDialog";
 import actionDialog, { ActionDialogState } from "./actionDialog";
+import liveAppModal, { LiveAppModalState } from "./liveAppModal";
 import syncRefresh, { SyncRefreshState } from "./syncRefresh";
 import shieldedSyncSubscriptions, {
   ShieldedSyncSubscriptionsState,
@@ -58,6 +59,7 @@ export type State = LLDRTKApiState & {
   dialogs: DialogsState;
   ptxInfoDialog: PtxInfoDialogState;
   actionDialog: ActionDialogState;
+  liveAppModal: LiveAppModalState;
   syncRefresh: SyncRefreshState;
   shieldedSyncSubscriptions: ShieldedSyncSubscriptionsState;
   countervaluesExtraTracking: CountervaluesExtraTrackingState;
@@ -86,6 +88,7 @@ const appReducer = combineReducers({
   dialogs,
   ptxInfoDialog,
   actionDialog,
+  liveAppModal,
   syncRefresh,
   shieldedSyncSubscriptions,
   countervaluesExtraTracking,

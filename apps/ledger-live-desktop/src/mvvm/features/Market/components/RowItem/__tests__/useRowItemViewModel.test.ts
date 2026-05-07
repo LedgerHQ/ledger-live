@@ -31,6 +31,15 @@ jest.mock("~/renderer/hooks/useGetStakeLabelLocaleBased", () => ({
   useGetStakeLabelLocaleBased: () => "Earn",
 }));
 
+const mockShouldDisplayAggregatedAssets = jest.fn(() => true);
+jest.mock("@ledgerhq/live-common/featureFlags/walletFeaturesConfig/index", () => ({
+  useWalletFeaturesConfig: () => ({
+    shouldDisplayAggregatedAssets: mockShouldDisplayAggregatedAssets(),
+    shouldDisplayAssetSection: true,
+    shouldDisplayWallet40MainNav: true,
+  }),
+}));
+
 const mockedUseMarketActions = jest.mocked(useMarketActions);
 
 const bitcoinCurrency = MOCK_MARKET_CURRENCY_DATA[0];
@@ -156,7 +165,27 @@ describe("useRowItemViewModel", () => {
     );
   });
 
-  it("onCurrencyClick navigates to the correct route", () => {
+  it("onCurrencyClick navigates to /asset/ when shouldDisplayAggregatedAssets is true", () => {
+    mockShouldDisplayAggregatedAssets.mockReturnValue(true);
+    const { result } = renderHook(() =>
+      useRowItemViewModel({
+        currency: bitcoinCurrency,
+        toggleStar: jest.fn(),
+        range: "24h",
+      }),
+    );
+
+    act(() => {
+      result.current.onCurrencyClick();
+    });
+
+    expect(mockNavigate).toHaveBeenCalledWith(`/asset/${bitcoinCurrency.id}`, {
+      state: bitcoinCurrency,
+    });
+  });
+
+  it("onCurrencyClick navigates to /market/ when shouldDisplayAggregatedAssets is false", () => {
+    mockShouldDisplayAggregatedAssets.mockReturnValue(false);
     const { result } = renderHook(() =>
       useRowItemViewModel({
         currency: bitcoinCurrency,

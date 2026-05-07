@@ -2,8 +2,8 @@ import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import { Trans } from "~/context/Locale";
 import { useTheme, useNavigation } from "@react-navigation/native";
-import { CantonAccount } from "@ledgerhq/live-common/families/canton/types";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import type { CantonAccount, Transaction as CantonTransaction } from "@ledgerhq/live-common/families/canton/types";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import LText from "~/components/LText";
 import Button from "~/components/Button";
@@ -25,11 +25,10 @@ function TooManyUtxosModal({ isOpened, onClose, account }: Props) {
   const { colors } = useTheme();
   const navigation = useNavigation();
   const learnMoreUrl = useLocalizedUrl(urls.canton.learnMore);
+  const bridge = useAccountBridge<CantonTransaction>(account);
 
   const handleConsolidate = useCallback(() => {
     onClose();
-
-    const bridge = getAccountBridge(account);
     const transaction = bridge.createTransaction(account);
     const updatedTransaction = bridge.updateTransaction(transaction, {
       recipient: account.xpub || "",
@@ -43,7 +42,7 @@ function TooManyUtxosModal({ isOpened, onClose, account }: Props) {
         transaction: updatedTransaction,
       },
     });
-  }, [navigation, account, onClose]);
+  }, [navigation, account, bridge, onClose]);
 
   const handleLearnMore = useCallback(() => {
     Linking.openURL(learnMoreUrl);

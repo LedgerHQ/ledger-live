@@ -45,8 +45,10 @@ import { INITIAL_STATE as WALLET_CONNECT_INITIAL_STATE } from "~/reducers/wallet
 import { INITIAL_STATE as WALLETSYNC_INITIAL_STATE } from "~/reducers/walletSync";
 import { INITIAL_STATE as AUTH_INITIAL_STATE } from "~/reducers/auth";
 import { INITIAL_STATE as SEND_FLOW_INITIAL_STATE } from "~/reducers/sendFlow";
+import { INITIAL_STATE as HISTORY_INITIAL_STATE } from "~/reducers/history";
 import { INITIAL_STATE as PORTFOLIO_REFRESH_INITIAL_STATE } from "~/reducers/portfolioRefresh";
 import { INITIAL_STATE as DEEPLINK_INSTALL_APP_INITIAL_STATE } from "~/reducers/deeplinkInstallApp";
+import { INITIAL_STATE as RECOVER_STATE_INITIAL_STATE } from "~/reducers/recoverState";
 import { FEATURE_FLAGS_INITIAL_STATE, FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import type { FeatureId, Features, PartialFeatures, Feature } from "@shared/feature-flags";
 import StyleProvider from "~/StyleProvider";
@@ -62,6 +64,7 @@ const INITIAL_STATE: State = {
   dynamicContent: DYNAMIC_CONTENT_INITIAL_STATE,
   earn: EARN_INITIAL_STATE,
   featureFlags: FEATURE_FLAGS_INITIAL_STATE,
+  history: HISTORY_INITIAL_STATE,
   identities: initialIdentitiesState,
   inView: IN_VIEW_INITIAL_STATE,
   largeMover: LARGE_MOVER_INITIAL_STATE,
@@ -85,6 +88,7 @@ const INITIAL_STATE: State = {
   sendFlow: SEND_FLOW_INITIAL_STATE,
   portfolioRefresh: PORTFOLIO_REFRESH_INITIAL_STATE,
   deeplinkInstallApp: DEEPLINK_INSTALL_APP_INITIAL_STATE,
+  recoverState: RECOVER_STATE_INITIAL_STATE,
   ...llmRtkApiInitialStates,
 };
 

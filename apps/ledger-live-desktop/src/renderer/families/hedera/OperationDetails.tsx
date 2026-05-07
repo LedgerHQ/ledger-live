@@ -10,6 +10,7 @@ import { Link } from "@ledgerhq/react-ui";
 import { urls } from "~/config/urls";
 import { useDispatch } from "LLD/hooks/redux";
 import { openModal } from "~/renderer/actions/modals";
+import { RECEIVE_SOURCE_PAGE } from "LLD/features/Receive/types";
 import type {
   AddressCellProps,
   OperationDetailsExtraProps,
@@ -105,7 +106,9 @@ const OperationDetailsPostAlert = ({
     dispatch(
       openModal(
         "MODAL_RECEIVE",
-        tokenAccount ? { account: tokenAccount, parentAccount: account } : { account },
+        tokenAccount
+          ? { account: tokenAccount, parentAccount: account, sourcePage: RECEIVE_SOURCE_PAGE.ACCOUNT_PAGE }
+          : { account, sourcePage: RECEIVE_SOURCE_PAGE.ACCOUNT_PAGE },
       ),
     );
   };

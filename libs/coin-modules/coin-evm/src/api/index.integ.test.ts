@@ -901,7 +901,7 @@ describe("EVM Api (Moonbeam Network)", () => {
      * Non-regression: some Moonbeam transactions (e.g. contract creations) have
      * an empty `to` field in the Etherscan API response. The adapter used to emit
      * `recipients: [""]` (array with one empty string) instead of `recipients: []`.
-     * @see https://alpaca.api.ledger.com/v1/moonbeam/account/0x2a9c55b6dc56da178f9f9a566f1161237b73ba66/operations?limit=100
+     * @see https://coin-service.api.ledger.com/v1/moonbeam/account/0x2a9c55b6dc56da178f9f9a566f1161237b73ba66/operations?limit=100
      */
     it("returns no operations with empty string recipients or senders", async () => {
       const { items } = await module.listOperations("0x2a9c55b6dc56da178f9f9a566f1161237b73ba66", {

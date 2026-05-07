@@ -50,7 +50,7 @@ export const ledgerOperationToOperations = (
     types.push("NONE");
   }
 
-  // Value = transferred amount only (same whether tx failed or not); fee is separate. Ledger Wallet contract is applied by generic-alpaca bridge.
+  // Value = transferred amount only (same whether tx failed or not); fee is separate. Ledger Wallet contract is applied by generic-coin-framework bridge.
   return types.map(
     type =>
       ({

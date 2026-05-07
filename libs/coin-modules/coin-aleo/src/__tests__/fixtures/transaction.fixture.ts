@@ -46,7 +46,17 @@ export const mockTxIntentTransferPrivate: AleoTransactionIntent = {
   type: TRANSACTION_TYPE.TRANSFER_PRIVATE,
   data: {
     type: TRANSACTION_TYPE.TRANSFER_PRIVATE,
-    record: mockUnspentRecord1.decryptedData,
+    records: [mockUnspentRecord1.decryptedData],
+  },
+};
+
+export const mockTxIntentTransferPrivate2: AleoTransactionIntent = {
+  ...baseTxIntentFields,
+  amount: 200n,
+  type: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+  data: {
+    type: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+    records: [mockUnspentRecord1.decryptedData, mockUnspentRecord2.decryptedData],
   },
 };
 
@@ -62,7 +72,17 @@ export const mockTxIntentSelfTransferToPublic: AleoTransactionIntent = {
   type: TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC,
   data: {
     type: TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC,
-    record: mockUnspentRecord1.decryptedData,
+    records: [mockUnspentRecord1.decryptedData],
+  },
+};
+
+export const mockTxIntentSelfTransferToPublic2: AleoTransactionIntent = {
+  ...baseTxIntentFields,
+  amount: 400n,
+  type: TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC,
+  data: {
+    type: TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC,
+    records: [mockUnspentRecord1.decryptedData, mockUnspentRecord2.decryptedData],
   },
 };
 

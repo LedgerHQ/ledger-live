@@ -14,15 +14,15 @@ pnpm test:family <family>
 
 Runs the complete test suite for a given coin/bridge family in one shot. For a family like `evm` this covers:
 
-| Layer | What runs |
-|---|---|
-| Coin module | `@ledgerhq/coin-evm` (jest) |
-| Signer | `@ledgerhq/live-signer-evm` (jest) |
-| Tools | `@ledgerhq/evm-tools` (jest) |
-| Integration tester | `@ledgerhq/coin-tester-evm` (jest via `start`, needs Docker/Anvil) |
-| Bridge logic in live-common | `src/bridge/generic-alpaca/families/evm/` |
-| Family logic in live-common | `src/families/evm/bridge.integration.test.ts`, `signer.test.ts`, … |
-| Family UI in live-common | `src/families/evm/react.test.ts`, `platformAdapter.test.ts`, `walletApiAdapter.test.ts`, … |
+| Layer                       | What runs                                                                                  |
+|-----------------------------|--------------------------------------------------------------------------------------------|
+| Coin module                 | `@ledgerhq/coin-evm` (jest)                                                                |
+| Signer                      | `@ledgerhq/live-signer-evm` (jest)                                                         |
+| Tools                       | `@ledgerhq/evm-tools` (jest)                                                               |
+| Integration tester          | `@ledgerhq/coin-tester-evm` (jest via `start`, needs Docker/Anvil)                         |
+| Bridge logic in live-common | `src/bridge/generic-coin-framework/families/evm/`                                            |
+| Family logic in live-common | `src/families/evm/bridge.integration.test.ts`, `signer.test.ts`, …                         |
+| Family UI in live-common    | `src/families/evm/react.test.ts`, `platformAdapter.test.ts`, `walletApiAdapter.test.ts`, … |
 
 Everything is **auto-discovered** at runtime — no static config to maintain.
 
@@ -30,7 +30,7 @@ Everything is **auto-discovered** at runtime — no static config to maintain.
 
 1. **Workspace packages** — scans all monorepo workspace roots and keeps every package whose `name` field contains the family name at a word boundary (so `ton` finds `@ledgerhq/coin-ton` but not `@ledgerhq/coin-canton`).
 
-2. **live-common family tests** — checks for `src/families/<family>/` and `src/bridge/generic-alpaca/families/<family>/` inside `@ledgerhq/live-common` and runs jest scoped to those paths only.
+2. **live-common family tests** — checks for `src/families/<family>/` and `src/bridge/generic-coin-framework/families/<family>/` inside `@ledgerhq/live-common` and runs jest scoped to those paths only.
 
 3. **Logic vs UI split** — tests inside `src/families/<family>/` are classified automatically:
    - **UI**: files matching `react`, `platformAdapter`, `walletApiAdapter`, `banner`
@@ -50,7 +50,7 @@ All test output is streamed live to the terminal. At the end a summary is printe
     ✓ PASS  @ledgerhq/live-signer-evm
     ✗ FAIL  @ledgerhq/coin-evm
     ✓ PASS  @ledgerhq/coin-tester-evm
-    ✓ PASS  live-common: bridge/generic-alpaca/families/evm
+    ✓ PASS  live-common: bridge/generic-coin-framework/families/evm
     ✓ PASS  live-common: families/evm (logic)
     ─────────────────────────────────────────────
     5 passed, 1 failed

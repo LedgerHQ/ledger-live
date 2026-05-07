@@ -1,7 +1,7 @@
 import React, { useEffect, lazy, Suspense } from "react";
 import styled, { useTheme } from "styled-components";
 import { ipcRenderer } from "electron";
-import { Navigate, Route, Routes, useNavigate, useLocation } from "react-router";
+import { Navigate, Route, Routes, useNavigate, useLocation, useParams } from "react-router";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import TrackAppStart from "~/renderer/components/TrackAppStart";
 import { LiveApp } from "~/renderer/screens/platform";
@@ -67,6 +67,7 @@ import { setCosmosLdmkEnabled } from "@ledgerhq/live-common/families/cosmos/setu
 import { themeSelector } from "./actions/general";
 import useCheckAccountWithFunds from "./components/PostOnboardingHub/logic/useCheckAccountWithFunds";
 import GlobalDialogs from "LLD/features/GlobalDialogs";
+import GlobalDrawers from "LLD/features/GlobalDrawers";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/useWalletFeaturesConfig";
 import { useShouldShowDeferredModals } from "~/renderer/hooks/useShouldShowDeferredModals";
 import {
@@ -87,6 +88,7 @@ const Bank = lazy(() => import("~/renderer/screens/bank"));
 const SwapWeb = lazy(() => import("~/renderer/screens/swapWeb"));
 const Swap2 = lazy(() => import("~/renderer/screens/exchange/Swap2"));
 const Perps = lazy(() => import("LLD/features/Perps"));
+const Borrow = lazy(() => import("LLD/features/Borrow"));
 const Market40 = lazy(() => import("LLD/features/Market"));
 const Market = lazy(() => import("~/renderer/screens/market"));
 
@@ -152,6 +154,11 @@ const LetInternalSendCrashTest = () => {
     ipcRenderer.send("internalCrashTest");
   }, []);
   return null;
+};
+
+const RedirectMarketToAsset = () => {
+  const { currencyId } = useParams<{ currencyId: string }>();
+  return <Navigate to={`/asset/${currencyId ?? ""}`} replace />;
 };
 
 export const TopBannerContainer = styled.div`
@@ -272,6 +279,7 @@ const MainAppContent = ({
         <Route path="/platform" element={withSuspense(PlatformCatalog)({})} />
         <Route path="/platform/:appId" element={<LiveApp />} />
         <Route path="/earn/*" element={withSuspense(Earn)({})} />
+        <Route path="/borrow/*" element={withSuspense(Borrow)({})} />
         <Route path="/exchange/:appId?" element={withSuspense(Exchange)({})} />
         <Route path="/swap-web" element={withSuspense(SwapWeb)({})} />
         <Route path="/account/:parentId/:id/*" element={withSuspense(Account)({})} />
@@ -281,7 +289,12 @@ const MainAppContent = ({
           element={withSuspense(shouldDisplayAggregatedAssets ? AssetDetails : Asset)({})}
         />
         <Route path="/swap/*" element={withSuspense(Swap2)({})} />
-        <Route path="/market/:currencyId" element={withSuspense(MarketCoin)({})} />
+        <Route
+          path="/market/:currencyId"
+          element={
+            shouldDisplayAggregatedAssets ? <RedirectMarketToAsset /> : withSuspense(MarketCoin)({})
+          }
+        />
         <Route
           path="/market"
           element={withSuspense(shouldDisplayMarketBanner ? Market40 : Market)({})}
@@ -314,7 +327,8 @@ export const MainAppLayout = () => {
     ? getPageBackground(pathname, theme)
     : undefined;
 
-  const useWallet40Layout = isWallet40Enabled && isWallet40Page(pathname);
+  const useWallet40Layout =
+    isWallet40Enabled && isWallet40Page(pathname, { shouldDisplayAggregatedAssets });
 
   useEffect(() => {
     if (shouldDisplayWallet40MainNav) preloadBackgrounds();
@@ -493,6 +507,7 @@ export default function Default() {
                   ) : null}
 
                   <GlobalDialogs />
+                  <GlobalDrawers />
 
                   <Routes>
                     <Route

@@ -14,8 +14,8 @@ import {
   TransactionCommon,
   TransactionStatusCommon,
 } from "@ledgerhq/types-live";
-import { getAlpacaAccountBridge } from "./generic-alpaca/accountBridge";
-import { getAlpacaCurrencyBridge } from "./generic-alpaca/currencyBridge";
+import { getAlpacaAccountBridge } from "./generic-coin-framework/accountBridge";
+import { getAlpacaCurrencyBridge } from "./generic-coin-framework/currencyBridge";
 import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
 import { loadSetupForFamily, loadMockBridgeForFamily } from "../coin-modules/registry";
 

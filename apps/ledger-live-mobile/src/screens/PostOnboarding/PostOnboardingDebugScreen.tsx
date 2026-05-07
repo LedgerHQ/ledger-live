@@ -1,10 +1,8 @@
 import { DeviceModelId } from "@ledgerhq/devices/index";
-import { Flex } from "@ledgerhq/native-ui";
 import React, { useCallback } from "react";
 import { ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-import PostOnboardingEntryPointCard from "~/components/PostOnboarding/PostOnboardingEntryPointCard";
 import SettingsRow from "~/components/SettingsRow";
 import { useNavigateToPostOnboardingHubCallback } from "~/logic/postOnboarding/useNavigateToPostOnboardingHubCallback";
 import { NavigatorName } from "~/const";
@@ -15,6 +13,10 @@ import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionS
 import { removePostOnboardingActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import { useDispatch } from "~/context/hooks";
+import {
+  setDisplayBanner,
+  setRecoverState as setRecoverStateAction,
+} from "~/reducers/recoverState";
 
 export default () => {
   const navigation = useNavigation();
@@ -24,7 +26,9 @@ export default () => {
   const { protectId } = usePostOnboardingHubCompletionContext();
   const setRecoverState = async (input: LedgerRecoverSubscriptionStateEnum) => {
     await setStoreValue("SUBSCRIPTION_STATE", String(input), protectId);
-
+    await setStoreValue("DISPLAY_BANNER", "true", protectId);
+    dispatch(setDisplayBanner({ protectId, displayBanner: true }));
+    dispatch(setRecoverStateAction({ protectId, subscriptionState: input }));
     dispatch(removePostOnboardingActionCompleted({ actionId: PostOnboardingActionId.recover }));
   };
 
@@ -88,9 +92,6 @@ export default () => {
           desc="Set recover local state to being complete"
           onPress={() => setRecoverState(LedgerRecoverSubscriptionStateEnum.BACKUP_DONE)}
         />
-        <Flex m={6}>
-          <PostOnboardingEntryPointCard />
-        </Flex>
       </ScrollView>
     </SafeAreaViewFixed>
   );

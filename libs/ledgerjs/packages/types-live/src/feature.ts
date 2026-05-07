@@ -324,8 +324,11 @@ export type Features = CurrencyFeatures & {
   lwmWallet40: Feature_LwmWallet40;
   lwdWallet40: Feature_LwdWallet40;
   addressPoisoningOperationsFilter: Feature_AddressPoisoningOperationsFilter;
+  concordiumVerifyAddress: DefaultFeature;
   lldHideSmallValueTokenOperations: Feature_LldHideSmallValueTokenOperations;
   llmTransferButtonCopyVariant: Feature_LlmTransferButtonCopyVariant;
+  lldTezosStaking: DefaultFeature;
+  llmTezosStaking: DefaultFeature;
 };
 
 /**

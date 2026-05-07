@@ -4,7 +4,7 @@ import React, { useCallback, useMemo } from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import type { AccountBridge } from "@ledgerhq/types-live";
-import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-alpaca/types";
+import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 import {
   mapDelegations,
   getUnbondingPeriodDays,

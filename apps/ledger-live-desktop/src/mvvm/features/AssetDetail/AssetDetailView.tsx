@@ -1,8 +1,11 @@
 import React, { useCallback } from "react";
 import { useNavigate } from "react-router";
-import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
+import { CryptoIcon } from "@ledgerhq/crypto-icons";
+import { getValidCryptoIconSize } from "~/renderer/utils/cryptoIconSize";
 import { AssetDetailSection } from "./components/AssetDetailSection";
 import { AssetHeader } from "./components/AssetHeader/AssetHeader";
+import { AddressListSection } from "./components/AddressList";
+import { TotalBalance } from "./components/PortfolioSection/TotalBalance";
 import { useAssetDetailSections } from "./hooks/useAssetDetailSections";
 import type { AssetDetailViewModel } from "./hooks/useAssetDetailViewModel";
 
@@ -12,17 +15,25 @@ export function AssetDetailView({ distributionItem }: Readonly<AssetDetailViewMo
     navigate(-1);
   }, [navigate]);
 
-  const { topSections, sections, notFoundContent } = useAssetDetailSections(distributionItem);
+  const { topSections, sections } = useAssetDetailSections();
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-32">
-      {distributionItem ? (
-        <AssetHeader
-          assetLabel={distributionItem.currency.name}
-          icon={<CryptoCurrencyIcon currency={distributionItem.currency} size={24} />}
-          onBack={onBack}
-        />
-      ) : null}
+      <AssetHeader
+        assetLabel={distributionItem.currency.name}
+        icon={
+          <CryptoIcon
+            ledgerId={distributionItem.currency.id}
+            ticker={distributionItem.currency.ticker}
+            size={getValidCryptoIconSize(24)}
+          />
+        }
+        onBack={onBack}
+      />
+
+      <TotalBalance distributionItem={distributionItem} />
+
+      <AddressListSection distributionItem={distributionItem} />
 
       <section className="grid grid-cols-2 gap-24">
         {topSections.map(section => (
@@ -30,7 +41,7 @@ export function AssetDetailView({ distributionItem }: Readonly<AssetDetailViewMo
             key={section.id}
             title={section.title}
             actionLabel={section.actionLabel}
-            actionHref={section.actionHref}
+            onActionClick={section.onActionClick}
             tooltipContent={section.tooltipContent}
           >
             {section.content}
@@ -43,18 +54,12 @@ export function AssetDetailView({ distributionItem }: Readonly<AssetDetailViewMo
           key={section.id}
           title={section.title}
           actionLabel={section.actionLabel}
-          actionHref={section.actionHref}
+          onActionClick={section.onActionClick}
           tooltipContent={section.tooltipContent}
         >
           {section.content}
         </AssetDetailSection>
       ))}
-
-      {distributionItem ? null : (
-        <section className="rounded-16 border border-dashed border-neutral-c70/30 p-16 text-body text-neutral-c70">
-          {notFoundContent}
-        </section>
-      )}
     </div>
   );
 }

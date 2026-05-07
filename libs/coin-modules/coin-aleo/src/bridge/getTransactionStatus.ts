@@ -14,6 +14,7 @@ import type {
   TransactionStatus as AleoTransactionStatus,
   TransactionSelfTransfer,
   TransactionTransfer,
+  AleoCoinConfig,
 } from "../types";
 import { estimateFees, validateAddress } from "../logic";
 import {
@@ -24,10 +25,13 @@ import {
   isSelfTransferTransaction,
 } from "../logic/utils";
 import aleoCoinConfig from "../config";
+import { MAX_PRIVATE_RECORDS_PER_TRANSACTION } from "../constants";
 import {
   AleoAmountRecordRequired,
+  AleoAmountTooLargeForTransaction,
   AleoFeeRecordInsufficientBalance,
   AleoFeeRecordRequired,
+  AleoTooManyRecordsSelected,
   AleoTwoRecordsRequired,
 } from "../errors";
 
@@ -39,13 +43,27 @@ function getValidRecord({
   commitment,
 }: {
   account: AleoAccount;
-  commitment: TransactionPrivate["properties"]["amountRecordCommitment"];
+  commitment: string | null;
 }) {
   if (!commitment) {
     return null;
   }
 
   return getRecordByCommitment({ account, commitment });
+}
+
+/**
+ * Returns the appropriate error when auto-picking selected no records, possible reasons are:
+ * - no private balance (no records)
+ * - insufficient balance to cover given amount
+ * - more than MAX_PRIVATE_RECORDS_PER_TRANSACTION records would be needed to cover the amount
+ */
+function resolveAutoPickingAmountError(amount: BigNumber, privateBalance: BigNumber): Error {
+  if (privateBalance.isZero() || amount.gt(privateBalance)) {
+    return new NotEnoughBalance();
+  }
+
+  return new AleoAmountTooLargeForTransaction();
 }
 
 /**
@@ -61,25 +79,41 @@ function validatePrivateTransaction({
   transaction,
   amount,
   estimatedFees,
-  isFeeSponsored,
+  config,
 }: {
   account: AleoAccount;
   transaction: TransactionPrivate;
   amount: BigNumber;
   estimatedFees: BigNumber;
-  isFeeSponsored: boolean;
+  config: AleoCoinConfig;
 }): Errors {
   const errors: Errors = {};
-  const { amountRecordCommitment, feeRecordCommitment } = transaction.properties;
-  const amountRecord = getValidRecord({ account, commitment: amountRecordCommitment });
+  const { feeRecordCommitment, amountRecordCommitments } = transaction.properties;
+  const amountRecords = amountRecordCommitments
+    .map(commitment => getValidRecord({ account, commitment }))
+    .filter((record): record is NonNullable<typeof record> => !!record);
 
-  if (!amountRecord) {
+  const totalAmountRecordsValue = amountRecords.reduce(
+    (sum, record) => sum.plus(new BigNumber(record.microcredits)),
+    new BigNumber(0),
+  );
+
+  const privateBalance = account.aleoResources?.privateBalance ?? new BigNumber(0);
+  const hasSelectedRecord = amountRecords.length > 0;
+
+  if (config.recordPickingStrategy === "manual" && !hasSelectedRecord) {
     errors.amountRecord = new AleoAmountRecordRequired();
-  } else if (amount.gt(new BigNumber(amountRecord.microcredits))) {
+  } else if (config.recordPickingStrategy === "auto" && !hasSelectedRecord) {
+    errors.amount = resolveAutoPickingAmountError(amount, privateBalance);
+  } else if (amountRecords.length > MAX_PRIVATE_RECORDS_PER_TRANSACTION) {
+    errors.amount = new AleoTooManyRecordsSelected(undefined, {
+      count: MAX_PRIVATE_RECORDS_PER_TRANSACTION,
+    });
+  } else if (amount.gt(totalAmountRecordsValue)) {
     errors.amount = new NotEnoughBalance();
   }
 
-  if (isFeeSponsored) {
+  if (config.isFeeSponsored) {
     return errors;
   }
 
@@ -90,7 +124,7 @@ function validatePrivateTransaction({
 
   if (availableRecords.length <= 1) {
     errors.feeRecord = new AleoTwoRecordsRequired();
-  } else if (!feeRecord || feeRecord.commitment === amountRecordCommitment) {
+  } else if (!feeRecord || amountRecordCommitments.includes(feeRecord.commitment)) {
     errors.feeRecord = new AleoFeeRecordRequired();
   } else if (estimatedFees.gt(new BigNumber(feeRecord.microcredits))) {
     errors.feeRecord = new AleoFeeRecordInsufficientBalance();
@@ -173,7 +207,7 @@ async function handleTransferTransaction({
         transaction,
         amount: calculatedAmount.amount,
         estimatedFees,
-        isFeeSponsored: config.isFeeSponsored,
+        config,
       }),
     );
   }

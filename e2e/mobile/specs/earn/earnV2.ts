@@ -1,17 +1,19 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { setEnv } from "@ledgerhq/live-env";
 import { waitEarnReady } from "../../bridge/server";
-import { ApplicationOptions } from "page";
 import { WALLET_40_FEATURE_FLAGS } from "../../utils/constants";
+
+import type { ApplicationOptions } from "page";
+import type { PartialFeatures } from "@shared/feature-flags";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
-let earnReady: Promise<string>;
-
-const EARN_V2_FLAGS = {
+const EARN_V2_FLAGS: PartialFeatures = {
   ...WALLET_40_FEATURE_FLAGS,
-  ptxEarnUi: { enabled: true, params: { value: "v2" as const } },
+  ptxEarnUi: { enabled: true, params: { value: "v2" } },
 };
+
+let earnReady: Promise<string>;
 
 async function navigateToEarn() {
   // EARN_V2_FLAGS always enables lwmWallet40 with mainNavigation: true,

@@ -7,6 +7,7 @@ import { act, renderHook } from "@tests/test-renderer";
 import { ScreenName } from "~/const";
 import { track } from "~/analytics";
 import { urls } from "~/utils/urls";
+import { MY_WALLET_TRACKING_PAGE_NAME } from "../../../constants";
 import { useDeviceSectionViewModel, type DeviceSectionDevice } from "../useDeviceSectionViewModel";
 import type { State } from "~/reducers/types";
 
@@ -97,7 +98,7 @@ describe("useDeviceSectionViewModel", () => {
       expect(mockNavigate).toHaveBeenCalledWith(ScreenName.BleDevicePairingFlow);
       expect(track).toHaveBeenCalledWith("button_clicked", {
         button: "Add",
-        page: ScreenName.MyWallet,
+        page: MY_WALLET_TRACKING_PAGE_NAME,
       });
     });
   });
@@ -111,7 +112,7 @@ describe("useDeviceSectionViewModel", () => {
       expect(Linking.openURL).toHaveBeenCalledWith(urls.exploreLedgerDevices);
       expect(track).toHaveBeenCalledWith("button_clicked", {
         button: "ExploreDevices",
-        page: ScreenName.MyWallet,
+        page: MY_WALLET_TRACKING_PAGE_NAME,
       });
     });
   });
@@ -132,7 +133,7 @@ describe("useDeviceSectionViewModel", () => {
       });
       expect(track).toHaveBeenCalledWith("button_clicked", {
         button: "Device",
-        page: ScreenName.MyWallet,
+        page: MY_WALLET_TRACKING_PAGE_NAME,
         deviceModelId: DeviceModelId.europa,
       });
     });

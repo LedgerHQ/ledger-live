@@ -11,9 +11,9 @@ import {
 } from "react-native";
 import { Trans } from "~/context/Locale";
 import { BigNumber } from "bignumber.js";
-import type { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
+import type { CosmosAccount, Transaction as CosmosTransaction } from "@ledgerhq/live-common/families/cosmos/types";
 import { getMaxEstimatedBalance } from "@ledgerhq/live-common/families/cosmos/logic";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
 import Button from "~/components/Button";
@@ -54,7 +54,7 @@ function DelegationAmount({ navigation, route }: Props) {
     "unsupported cosmos transaction mode",
   );
 
-  const bridge = getAccountBridge(account, undefined);
+  const bridge = useAccountBridge<CosmosTransaction>(account, undefined);
   const unit = useAccountUnit(account);
   const initialValue = useMemo(() => route?.params?.value ?? BigNumber(0), [route]);
   const redelegatedBalance = route?.params?.redelegatedBalance ?? BigNumber(0);

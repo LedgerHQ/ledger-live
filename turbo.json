@@ -102,7 +102,8 @@
     "NO_DEBUG_WS",
     "NO_DEBUG_NETWORK",
     "NO_DEBUG_ANALYTICS",
-    "NO_DEBUG_COUNTERVALUES"
+    "NO_DEBUG_COUNTERVALUES",
+    "UPDATE_CHECK_PUBKEY"
   ],
   "ui": "tui",
   "tasks": {
@@ -330,6 +331,10 @@
     "@ledgerhq/wallet-cli#test": {
       "dependsOn": ["^build"],
       "outputs": []
+    },
+    "@ledgerhq/wallet-cli#coverage": {
+      "dependsOn": ["^build", "build"],
+      "outputs": ["coverage/lcov.info", "coverage/sonar-executionTests-report.xml"]
     },
     "@ledgerhq/wallet-cli#lint": {
       "env": ["CI_OS"],

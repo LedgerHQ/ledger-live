@@ -10,7 +10,11 @@ import { OperationDetails, PendingOperation, SwapLoading } from "~/screens/Swap/
 import SwapCustomError from "~/screens/Swap/SubScreens/SwapCustomError";
 import { SwapSubScreensNavigatorParamList } from "./types/SwapSubScreensNavigator";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
-import { navigateBackToSwapTab } from "~/screens/Swap/navigation/navigateBackToSwapTab";
+import {
+  isGoingToSwapHistory,
+  navigateBackToSwapTab,
+} from "~/screens/Swap/navigation/navigateBackToSwapTab";
+import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
 
 const Stack = createNativeStackNavigator<SwapSubScreensNavigatorParamList>();
 
@@ -65,6 +69,7 @@ export default function SwapSubScreensNavigator() {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
+  const { notifyFlowCompleted } = useNotificationsContext();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
   return (
@@ -76,6 +81,14 @@ export default function SwapSubScreensNavigator() {
           headerTitle: t("transfer.swap.title"),
           headerLeft: NullHeader,
         }}
+        listeners={{
+          beforeRemove: ({ data }) => {
+            if (isGoingToSwapHistory(data.action.payload)) {
+              return;
+            }
+            notifyFlowCompleted("swap");
+          },
+        }}
       />
       <Stack.Screen
         name={ScreenName.SwapHistory}
@@ -84,6 +97,11 @@ export default function SwapSubScreensNavigator() {
           headerTitle: t("transfer.swap2.history.title"),
           shouldDisplayWallet40MainNav,
         })}
+        listeners={{
+          beforeRemove: () => {
+            notifyFlowCompleted("swap");
+          },
+        }}
       />
       <Stack.Screen
         name={ScreenName.SwapLoading}

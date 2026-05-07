@@ -19,7 +19,7 @@ module.exports = {
       },
     ],
   },
-  testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts"],
+  testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.(integ|integration)\\.test\\.ts"],
   reporters: [
     "default",
     ...(process.env.CI ? ["github-actions"] : []),

@@ -13,6 +13,7 @@ import type {
   CosmosAccount,
   CosmosMappedDelegation,
   CosmosMappedUnbonding,
+  Transaction as CosmosTransaction,
 } from "@ledgerhq/live-common/families/cosmos/types";
 import {
   mapUnbondings,
@@ -28,7 +29,7 @@ import {
 } from "@ledgerhq/live-common/families/cosmos/banner";
 import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { AccountLike } from "@ledgerhq/types-live";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import AccountDelegationInfo from "~/components/AccountDelegationInfo";
@@ -85,7 +86,7 @@ function Delegations({ account }: Props) {
     cosmosResources &&
     cosmosResources.unbondings &&
     mapUnbondings(cosmosResources.unbondings, validators, unit);
-  const bridge = getAccountBridge(account, undefined);
+  const bridge = useAccountBridge<CosmosTransaction>(account, undefined);
   const { transaction } = useBridgeTransaction(() => {
     const t = bridge.createTransaction(mainAccount);
     const { validatorSrcAddress } = { ...banner };

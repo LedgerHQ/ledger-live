@@ -8,11 +8,7 @@ import { ValueChange } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { useLocale } from "~/context/Locale";
 import { useSelector } from "~/context/hooks";
-import {
-  counterValueCurrencySelector,
-  discreetModeSelector,
-  selectedTimeRangeSelector,
-} from "~/reducers/settings";
+import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
 import { Asset } from "~/types/asset";
 
 export interface AssetListItemViewModelResult {
@@ -30,7 +26,7 @@ const CV_THROTTLE_MS = 5_000;
 interface SharedState {
   cvState: ReturnType<typeof useCountervaluesState>;
   counterValueCurrency: ReturnType<typeof counterValueCurrencySelector>;
-  range: ReturnType<typeof selectedTimeRangeSelector>;
+  range: "day";
   locale: string;
   discreet: boolean;
 }
@@ -120,7 +116,7 @@ export function usePrecomputedAssetListData(
   const { locale } = useLocale();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const discreet = useSelector(discreetModeSelector);
-  const range = useSelector(selectedTimeRangeSelector);
+  const range = "day" as const;
 
   const rawCvState = useCountervaluesState();
   const cvState = useThrottledValue(rawCvState, CV_THROTTLE_MS);

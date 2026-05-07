@@ -98,6 +98,7 @@ const NotEnoughFundsToUnstake = ({
     dispatch(
       openModal("MODAL_RECEIVE", {
         account: account,
+        sourcePage: buttonSharedTrackingFields.page,
       }),
     );
   }, [account, buttonSharedTrackingFields, dispatch, onClose]);

@@ -8,16 +8,12 @@ import {
 import PostOnboardingHubContent from "~/renderer/components/PostOnboardingHub/PostOnboardingHubContent";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import WalletSyncDrawer from "LLD/features/WalletSync/components/Drawer";
-import { AnalyticsPage } from "LLD/features/WalletSync/hooks/useLedgerSyncAnalytics";
-import { useActivationDrawer } from "LLD/features/LedgerSyncEntryPoints/hooks/useActivationDrawer";
 
 const PostOnboardingScreen = () => {
   const { t } = useTranslation();
   const areAllPostOnboardingActionsCompleted = useAllPostOnboardingActionsCompleted();
 
   const { deviceModelId } = usePostOnboardingHubState();
-  const { closeDrawer } = useActivationDrawer();
 
   return (
     <Flex
@@ -59,7 +55,6 @@ const PostOnboardingScreen = () => {
       <Flex flex={1} paddingRight={100} paddingLeft={50} paddingTop={50} overflow="auto">
         <PostOnboardingHubContent />
       </Flex>
-      <WalletSyncDrawer currentPage={AnalyticsPage.PostOnboarding} onClose={closeDrawer} />
     </Flex>
   );
 };

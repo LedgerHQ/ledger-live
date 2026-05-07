@@ -1,0 +1,32 @@
+import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
+
+export const marketCurrencyData = {
+  id: "bitcoin",
+  name: "Bitcoin",
+  ticker: "BTC",
+  price: 50000,
+  marketcap: 1000000000000,
+  marketcapRank: 1,
+  circulatingSupply: 19500000,
+  maxSupply: 21000000,
+  totalVolume: 25000000000,
+  totalSupply: 19500000,
+  high24h: 51000,
+  low24h: 49000,
+  ath: 69000,
+  athDate: new Date("2021-11-10"),
+  atl: 67.81,
+  atlDate: new Date("2013-07-06"),
+  priceChangePercentage: {
+    [KeysPriceChange.hour]: 0.5,
+    [KeysPriceChange.day]: 2.35,
+    [KeysPriceChange.week]: -5.12,
+    [KeysPriceChange.month]: 10,
+    [KeysPriceChange.year]: 150,
+  },
+  marketCapChangePercentage24h: 1.5,
+  sparklineIn7d: undefined,
+  chartData: {},
+  image: "",
+  ledgerIds: [],
+};

@@ -208,3 +208,134 @@ describe("listOperations — mainnet FA2 / convertTokenOperation", () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 });
+
+// Shadownet test address `tz1dKrT1…` was funded via faucet and put through:
+// delegate to TF Test Baker, stake 500 XTZ, unstake 250 XTZ, then
+// finalize_unstake (paid by a helper account, after ~2 cycles ≈ 48h).
+const SHADOWNET_STAKER = "tz1dKrT1h6d7wP8fEzMPptG6er7mLLeQjBBY";
+const SHADOWNET_BAKER = "tz3Q67aMz7gSMiQRcW729sXSfuMtkyAHYfqc";
+
+const shadownetConfig = (): TezosCoinConfig =>
+  ({
+    status: { type: "active" },
+    baker: { url: "https://tezos-bakers.api.live.ledger.com" },
+    explorer: { url: "https://api.shadownet.tzkt.io", maxTxQuery: 100 },
+    node: { url: "https://rpc.shadownet.teztnets.com" },
+    fees: {
+      minGasLimit: 0,
+      minRevealGasLimit: 0,
+      minStorageLimit: 0,
+      minFees: 0,
+      minEstimatedFees: 0,
+    },
+  }) as TezosCoinConfig;
+
+// To refresh: TzKT `/v1/operations/staking?sender=…` + `/v1/blocks/{level}`.
+const EXPECTED_STAKE = {
+  id: "ooyKCZtF84XchfEr5fjiQV5BEEBjKSCjhKW7xyY4o763yj27mLs-96147000524800",
+  asset: { type: "native" },
+  tx: {
+    hash: "ooyKCZtF84XchfEr5fjiQV5BEEBjKSCjhKW7xyY4o763yj27mLs",
+    fees: 797n,
+    feesPayer: SHADOWNET_STAKER,
+    block: {
+      hash: "BLa8cr5yFHqozjAzEnkvKQmaDmAxeurBBGvZqdibmzCiYmR6r6L",
+      height: 3106279,
+      time: new Date("2026-04-28T20:51:21Z"),
+    },
+    date: new Date("2026-04-28T20:51:21Z"),
+    failed: false,
+  },
+  type: "STAKE",
+  value: 500_000_000n,
+  senders: [SHADOWNET_STAKER],
+  recipients: [SHADOWNET_BAKER],
+  details: {
+    counter: 14416505,
+    gasLimit: 3630,
+    storageLimit: 0,
+    ledgerOpType: "STAKE",
+  },
+};
+
+const EXPECTED_UNSTAKE = {
+  id: "ooXrdBW4aY3613YkmsX4uzdidqUTM2Gw7cFZ7aU6irwQ6TmLeFS-96148169687040",
+  asset: { type: "native" },
+  tx: {
+    hash: "ooXrdBW4aY3613YkmsX4uzdidqUTM2Gw7cFZ7aU6irwQ6TmLeFS",
+    fees: 858n,
+    feesPayer: SHADOWNET_STAKER,
+    block: {
+      hash: "BLMaHTGtBfh7ZM2wk5rpFHQhNtx5LC7YMdYrnokzBcosrpgqNAe",
+      height: 3106307,
+      time: new Date("2026-04-28T20:54:09Z"),
+    },
+    date: new Date("2026-04-28T20:54:09Z"),
+    failed: false,
+  },
+  type: "UNSTAKE",
+  value: 250_000_000n,
+  senders: [SHADOWNET_STAKER],
+  recipients: [SHADOWNET_BAKER],
+  details: {
+    counter: 14416506,
+    gasLimit: 4250,
+    storageLimit: 0,
+    ledgerOpType: "UNSTAKE",
+  },
+};
+
+const FINALIZE_FEES_PAYER = "tz1i92Eptw7UZ8JSb8j8jBFJ9Poa4TTnSQwZ";
+const EXPECTED_FINALIZE_UNSTAKE = {
+  id: "oodrjyZyoyccgoE24BbMsxfSY4JnP6nrZpmw2xqzurQb7QW3HBD-98214102433792",
+  asset: { type: "native" },
+  tx: {
+    hash: "oodrjyZyoyccgoE24BbMsxfSY4JnP6nrZpmw2xqzurQb7QW3HBD",
+    fees: 492n,
+    feesPayer: FINALIZE_FEES_PAYER,
+    block: {
+      hash: "BLvjbzKJ5cQfmncDt3CiKcuKpk87pP34t6rmm6FWE9iCFbJb1Xp",
+      height: 3153614,
+      time: new Date("2026-05-02T03:50:54Z"),
+    },
+    date: new Date("2026-05-02T03:50:54Z"),
+    failed: false,
+  },
+  type: "FINALIZE_UNSTAKE",
+  value: 250_000_000n,
+  senders: [SHADOWNET_BAKER],
+  recipients: [SHADOWNET_STAKER],
+  details: {
+    counter: 801846,
+    gasLimit: 2169,
+    storageLimit: 0,
+    ledgerOpType: "FINALIZE_UNSTAKE",
+  },
+};
+
+describe("listOperations — Shadownet Paris staking ops", () => {
+  let originalGetCoinConfig: () => TezosCoinConfig;
+
+  beforeAll(() => {
+    originalGetCoinConfig = coinConfig.getCoinConfig;
+    coinConfig.setCoinConfig(shadownetConfig);
+  });
+
+  afterAll(() => {
+    if (originalGetCoinConfig) {
+      coinConfig.setCoinConfig(originalGetCoinConfig);
+    }
+  });
+
+  it.each([
+    ["STAKE", EXPECTED_STAKE],
+    ["UNSTAKE", EXPECTED_UNSTAKE],
+    ["FINALIZE_UNSTAKE", EXPECTED_FINALIZE_UNSTAKE],
+  ])("contains a %s op matching every field of the pinned fixture", async (type, expected) => {
+    const [operations] = await listOperations(SHADOWNET_STAKER, { ...baseOpts, limit: 100 });
+    const match = operations.find(op => op.type === type);
+    if (!match) throw new Error(`No ${type} op found at ${SHADOWNET_STAKER}`);
+
+    expect(match).toEqual(expected);
+  });
+});

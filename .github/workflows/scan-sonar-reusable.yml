@@ -27,6 +27,10 @@ on:
         required: false
         default: "false"
         type: string
+      should_download_devtools_coverage:
+        required: false
+        default: "false"
+        type: string
       should_download_wallet_cli_coverage:
         required: false
         default: "false"
@@ -108,6 +112,13 @@ jobs:
           name: coverage-domain
           path: coverage-domain
 
+      - name: Download devtools unit test coverage
+        if: ${{ inputs.should_download_devtools_coverage == 'true' }}
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          name: coverage-devtools
+          path: coverage-devtools
+
       - name: Download wallet-cli unit test coverage
         if: ${{ inputs.should_download_wallet_cli_coverage == 'true' }}
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
@@ -146,6 +157,11 @@ jobs:
             echo "Merging domain coverage files"
             cat ./coverage-domain/lcov.info >> ./lcov.info
             cat ./coverage-domain/sonar-executionTests-report.xml >> ./sonar-executionTests-report.xml
+          fi
+          if [ -d ./coverage-devtools ]; then
+            echo "Merging devtools coverage files"
+            cat ./coverage-devtools/lcov.info >> ./lcov.info
+            cat ./coverage-devtools/sonar-executionTests-report.xml >> ./sonar-executionTests-report.xml
           fi
           if [ -d ./coverage-wallet-cli ]; then
             echo "Merging wallet-cli coverage files"

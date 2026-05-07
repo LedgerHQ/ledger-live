@@ -1,6 +1,8 @@
-import { useState, useCallback, useMemo } from "react";
-import { useSelector } from "~/context/hooks";
+import { useState, useCallback, useEffect, useMemo } from "react";
+import { useSelector, useDispatch } from "~/context/hooks";
 import { flattenAccountsSelector, shallowAccountsSelector } from "~/reducers/accounts";
+import { lastSeenOperationDateSelector, markOperationsAsSeen } from "~/reducers/history";
+import { parseLastSeenMs } from "LLM/features/OperationsHistory/utils/unreadOperations";
 import { useOperationsV1 } from "~/screens/Analytics/Operations/useOperationsV1";
 import { AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
@@ -12,9 +14,19 @@ const INITIAL_OP_COUNT = 50;
 const OP_COUNT_INCREMENT = 50;
 
 export function useOperationsListViewModel() {
+  const dispatch = useDispatch();
   const accounts = useSelector(shallowAccountsSelector);
   const flattenedAccounts = useSelector(flattenAccountsSelector);
   const [opCount, setOpCount] = useState(INITIAL_OP_COUNT);
+
+  const lastSeenDate = useSelector(lastSeenOperationDateSelector);
+  const lastSeenTs = useMemo(() => parseLastSeenMs(lastSeenDate), [lastSeenDate]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(markOperationsAsSeen());
+    };
+  }, [dispatch]);
 
   const { sections: rawSections, completed } = useOperationsV1(accounts, opCount);
 
@@ -44,6 +56,7 @@ export function useOperationsListViewModel() {
     accounts,
     flattenedAccounts,
     accountByAddress,
+    lastSeenTs,
     sections,
     completed,
     isEmpty,

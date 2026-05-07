@@ -152,7 +152,11 @@ export interface DelegatedProvingResponse {
       fee: {
         transition: DelegatedProvingTransitionResponse;
       };
-      broadcast_result: string;
     };
+  };
+  broadcast_result?: {
+    status: string;
+    status_code?: number;
+    message?: string;
   };
 }

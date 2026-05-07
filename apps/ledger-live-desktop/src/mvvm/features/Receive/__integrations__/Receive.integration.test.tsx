@@ -33,7 +33,11 @@ describe("Receive feature integration", () => {
 
     it("calls onGoToAccount when user clicks crypto option", async () => {
       const { user } = render(
-        <ReceiveOptionsDialog onClose={onClose} onGoToAccount={onGoToAccount} />,
+        <ReceiveOptionsDialog
+          onClose={onClose}
+          onGoToAccount={onGoToAccount}
+          sourcePage="receive_drawer"
+        />,
       );
 
       await user.click(screen.getByTestId("receive-step-options-crypto"));
@@ -48,7 +52,11 @@ describe("Receive feature integration", () => {
 
     it("calls onClose and navigates to /bank when user clicks bank option", async () => {
       const { user } = render(
-        <ReceiveOptionsDialog onClose={onClose} onGoToAccount={onGoToAccount} />,
+        <ReceiveOptionsDialog
+          onClose={onClose}
+          onGoToAccount={onGoToAccount}
+          sourcePage="receive_drawer"
+        />,
       );
 
       await user.click(screen.getByTestId("receive-step-options-bank"));

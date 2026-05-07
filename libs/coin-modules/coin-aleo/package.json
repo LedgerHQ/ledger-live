@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-aleo",
-  "version": "1.10.0",
+  "version": "1.10.1",
   "description": "Ledger Aleo Coin integration",
   "license": "Apache-2.0",
   "keywords": [
@@ -96,8 +96,8 @@
     "lint:fix": "oxfmt src && oxlint src --fix --quiet",
     "test": "jest",
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
-    "test-integ": "jest --config=jest.integ.config.js",
-    "test-integ:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --config=jest.integ.config.js",
+    "test-integ": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --config=jest.integ.config.js",
+    "test-integ:debug": "node --experimental-vm-modules --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --config=jest.integ.config.js",
     "typecheck": "tsc --noEmit --customConditions node",
     "unimported": "unimported",
     "format": "oxfmt src",
@@ -122,6 +122,7 @@
   },
   "devDependencies": {
     "@ledgerhq/disable-network-setup": "workspace:^",
+    "@provablehq/sdk": "0.10.2",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/invariant": "^2.2.2",

@@ -22,6 +22,7 @@ import {
   mapAsMediumSquareContentCard,
   mapAsBigSquareContentCard,
   mapAsHeroContentCard,
+  sanitizeExtras,
 } from "~/dynamicContent/utils";
 import Carousel from "../../contentCards/layouts/carousel";
 import { WidthFactor } from "~/contentCards/layouts/types";
@@ -89,7 +90,7 @@ const Layout = ({ category, cards }: LayoutProps) => {
 
   const onCardClick = async (card: AnyContentCard, displayedPosition?: number) => {
     await trackContentCardEvent("contentcard_clicked", {
-      ...card.extras,
+      ...sanitizeExtras(card.extras),
       page: card.location,
       campaign: card.id,
       contentcard: card.title,
@@ -109,7 +110,7 @@ const Layout = ({ category, cards }: LayoutProps) => {
 
   const onCardDismiss = (card: AnyContentCard, displayedPosition?: number) => {
     trackContentCardEvent("contentcard_dismissed", {
-      ...card.extras,
+      ...sanitizeExtras(card.extras),
       page: card.location,
       campaign: card.id,
       contentcard: card.title,

@@ -18,6 +18,7 @@ import {
   type PersistedCAL,
   type StateWithCryptoAssets,
 } from "./persistence";
+import { configureStore } from "@reduxjs/toolkit";
 import { cryptoAssetsApi } from "./state-manager/api";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
@@ -238,6 +239,87 @@ describe("Token Persistence", () => {
 
       expect(tokens).toEqual([]);
     });
+
+    it("should extract token_identifier from findTokenByAddressInCurrency originalArgs", () => {
+      const mockState = {
+        [cryptoAssetsApi.reducerPath]: {
+          queries: {
+            'findTokenByAddressInCurrency({"contract_address":"0xdac17f958d2ee523a2206206994597c13d831ec7","network":"ethereum","token_identifier":"MYTOKEN-abc123"})':
+              {
+                status: "fulfilled",
+                data: mockToken,
+                endpointName: "findTokenByAddressInCurrency",
+                originalArgs: {
+                  contract_address: mockToken.contractAddress,
+                  network: mockToken.parentCurrency.id,
+                  token_identifier: "MYTOKEN-abc123",
+                },
+                fulfilledTimeStamp: Date.now(),
+              },
+          },
+        },
+      } as unknown as StateWithCryptoAssets;
+
+      const tokens = extractTokensFromState(mockState);
+
+      expect(tokens).toHaveLength(1);
+      expect(tokens[0].token_identifier).toBe("MYTOKEN-abc123");
+    });
+
+    it("should not set token_identifier for findTokenById queries", () => {
+      const mockState = {
+        [cryptoAssetsApi.reducerPath]: {
+          queries: {
+            'findTokenById({"id":"ethereum/erc20/usdt"})': {
+              status: "fulfilled",
+              data: mockToken,
+              endpointName: "findTokenById",
+              originalArgs: { id: mockToken.id },
+              fulfilledTimeStamp: Date.now(),
+            },
+          },
+        },
+      } as unknown as StateWithCryptoAssets;
+
+      const tokens = extractTokensFromState(mockState);
+
+      expect(tokens).toHaveLength(1);
+      expect(tokens[0].token_identifier).toBeUndefined();
+    });
+
+    it("should deduplicate when same token appears in both findTokenById and findTokenByAddressInCurrency caches", () => {
+      const mockState = {
+        [cryptoAssetsApi.reducerPath]: {
+          queries: {
+            'findTokenById({"id":"ethereum/erc20/usdt"})': {
+              status: "fulfilled",
+              data: mockToken,
+              endpointName: "findTokenById",
+              originalArgs: { id: mockToken.id },
+              fulfilledTimeStamp: Date.now(),
+            },
+            'findTokenByAddressInCurrency({"contract_address":"0xdac17f958d2ee523a2206206994597c13d831ec7","network":"ethereum","token_identifier":"MYTOKEN-abc123"})':
+              {
+                status: "fulfilled",
+                data: mockToken,
+                endpointName: "findTokenByAddressInCurrency",
+                originalArgs: {
+                  contract_address: mockToken.contractAddress,
+                  network: mockToken.parentCurrency.id,
+                  token_identifier: "MYTOKEN-abc123",
+                },
+                fulfilledTimeStamp: Date.now(),
+              },
+          },
+        },
+      } as unknown as StateWithCryptoAssets;
+
+      const tokens = extractTokensFromState(mockState);
+
+      // token.id is unique — same token in multiple cache entries collapses to one
+      expect(tokens).toHaveLength(1);
+      expect(tokens[0].data.id).toBe(mockToken.id);
+    });
   });
 
   describe("filterExpiredTokens", () => {
@@ -443,12 +525,7 @@ describe("Token Persistence", () => {
 
       mockDispatch.mockImplementation(async action => {
         if (typeof action === "function") {
-          const actionStr = String(action);
-          if (actionStr.includes("getTokensSyncHash")) {
-            return { data: currentHash, error: undefined };
-          }
-          const result = await action(mockDispatch, () => ({}), undefined);
-          return result;
+          return { data: currentHash, error: undefined };
         }
         const actionType = (action as any)?.type || "";
         if (actionType.includes("upsertQueryEntries") || actionType.includes("upsert")) {
@@ -483,12 +560,7 @@ describe("Token Persistence", () => {
 
       mockDispatch.mockImplementation(async action => {
         if (typeof action === "function") {
-          const actionStr = String(action);
-          if (actionStr.includes("getTokensSyncHash")) {
-            return { data: currentHash, error: undefined };
-          }
-          const result = await action(mockDispatch, () => ({}), undefined);
-          return result;
+          return { data: currentHash, error: undefined };
         }
         const actionType = (action as any)?.type || "";
         if (actionType.includes("upsertQueryEntries") || actionType.includes("upsert")) {
@@ -522,12 +594,7 @@ describe("Token Persistence", () => {
 
       mockDispatch.mockImplementation(async action => {
         if (typeof action === "function") {
-          const actionStr = String(action);
-          if (actionStr.includes("getTokensSyncHash")) {
-            throw new Error("Network error");
-          }
-          const result = await action(mockDispatch, () => ({}), undefined);
-          return result;
+          throw new Error("Network error");
         }
         const actionType = (action as any)?.type || "";
         if (actionType.includes("upsertQueryEntries") || actionType.includes("upsert")) {
@@ -818,6 +885,91 @@ describe("Token Persistence", () => {
     });
   });
 
+  describe("integration: token_identifier round-trip", () => {
+    const ttl = 24 * 60 * 60 * 1000;
+
+    function makeStore() {
+      return configureStore({
+        reducer: { [cryptoAssetsApi.reducerPath]: cryptoAssetsApi.reducer },
+        middleware: getDefaultMiddleware =>
+          getDefaultMiddleware({ serializableCheck: false }).concat(cryptoAssetsApi.middleware),
+      });
+    }
+
+    it("should restore cache entry with token_identifier after extract → restore cycle", async () => {
+      // Simulate RTK Query state after a real findTokenByAddressInCurrency fetch with token_identifier
+      const sourceState = {
+        [cryptoAssetsApi.reducerPath]: {
+          queries: {
+            'findTokenByAddressInCurrency({"contract_address":"0xdac17f958d2ee523a2206206994597c13d831ec7","network":"ethereum","token_identifier":"MYTOKEN-abc123"})':
+              {
+                status: "fulfilled",
+                data: mockToken,
+                endpointName: "findTokenByAddressInCurrency",
+                originalArgs: {
+                  contract_address: mockToken.contractAddress,
+                  network: mockToken.parentCurrency.id,
+                  token_identifier: "MYTOKEN-abc123",
+                },
+                fulfilledTimeStamp: Date.now(),
+              },
+          },
+        },
+      } as unknown as StateWithCryptoAssets;
+
+      const persisted = extractPersistedCALFromState(sourceState);
+      expect(persisted.tokens[0].token_identifier).toBe("MYTOKEN-abc123");
+
+      // Restore into a real Redux store
+      const newStore = makeStore();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await restoreTokensToCache(newStore.dispatch as any, persisted, ttl);
+
+      // Verify the store has the cache entry with token_identifier in originalArgs
+      const newQueries = newStore.getState()[cryptoAssetsApi.reducerPath].queries;
+      const restoredEntry = Object.values(newQueries).find(
+        entry =>
+          entry?.endpointName === "findTokenByAddressInCurrency" &&
+          (entry.originalArgs as { token_identifier?: string } | undefined)?.token_identifier ===
+            "MYTOKEN-abc123",
+      );
+      expect(restoredEntry).toBeDefined();
+      expect(restoredEntry?.data).toMatchObject({ id: mockToken.id });
+    });
+
+    it("should restore cache entry without token_identifier unchanged after round-trip", async () => {
+      const sourceState = {
+        [cryptoAssetsApi.reducerPath]: {
+          queries: {
+            'findTokenById({"id":"ethereum/erc20/usdt"})': {
+              status: "fulfilled",
+              data: mockToken,
+              endpointName: "findTokenById",
+              originalArgs: { id: mockToken.id },
+              fulfilledTimeStamp: Date.now(),
+            },
+          },
+        },
+      } as unknown as StateWithCryptoAssets;
+
+      const persisted = extractPersistedCALFromState(sourceState);
+      expect(persisted.tokens[0].token_identifier).toBeUndefined();
+
+      const newStore = makeStore();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await restoreTokensToCache(newStore.dispatch as any, persisted, ttl);
+
+      const newQueries = newStore.getState()[cryptoAssetsApi.reducerPath].queries;
+      const addressEntry = Object.values(newQueries).find(
+        entry => entry?.endpointName === "findTokenByAddressInCurrency",
+      );
+      expect(addressEntry).toBeDefined();
+      expect(
+        (addressEntry?.originalArgs as { token_identifier?: string } | undefined)?.token_identifier,
+      ).toBeUndefined();
+    });
+  });
+
   describe("persistedCALContentEqual", () => {
     const baseTokenData: TokenCurrencyRaw = {
       id: "ethereum/erc20/usdt",
@@ -919,5 +1071,6 @@ describe("Token Persistence", () => {
       };
       expect(persistedCALContentEqual(a, b)).toBe(false);
     });
+
   });
 });

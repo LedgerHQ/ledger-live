@@ -11,6 +11,10 @@ const broadcast = async ({
   const signedPayload = JSON.parse(signature) as MinaSignedTransaction;
   const hash = await broadcastTransaction(signedPayload);
 
+  if (!hash) {
+    throw new Error("mina: broadcast returned no transaction id");
+  }
+
   return patchOperationWithHash(operation, hash);
 };
 

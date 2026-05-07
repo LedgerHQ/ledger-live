@@ -54,6 +54,17 @@ export function useConfirmationViewModel() {
 
   const transactionError = state.operation.transactionError;
 
+  useMemo(() => {
+    switch (status) {
+      case FLOW_STATUS.SUCCESS:
+        trackPage("Modal send - transaction sent", null, sendFlowTrackingProperties);
+        break;
+      case FLOW_STATUS.IDLE:
+        trackPage("Modal send - action rejected", null, sendFlowTrackingProperties);
+        break;
+    }
+  }, [status, sendFlowTrackingProperties]);
+
   const onViewDetails = useCallback(() => {
     close();
     if (account && concernedOperation) {
@@ -77,9 +88,8 @@ export function useConfirmationViewModel() {
   }, [navigation, operation, statusActions]);
 
   const onClose = useCallback(() => {
-    trackPage("Modal send - step confirmation", null, sendFlowTrackingProperties);
     close();
-  }, [close, sendFlowTrackingProperties]);
+  }, [close]);
 
   return {
     status,

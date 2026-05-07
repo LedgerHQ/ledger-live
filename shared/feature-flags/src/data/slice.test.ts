@@ -8,22 +8,20 @@ import {
   setBannerVisible,
   importState,
 } from "./slice";
-import { setResolutionConfig } from "../config";
-import type { FeatureFlagsState } from "./schema";
+import { createFeatureFlagsMiddleware } from "./middleware";
+import type { ResolutionConfig, FeatureFlagsState } from "./schema";
 import { FEATURE_FLAGS_DEFAULTS } from "../constants";
 
-const defaults = FEATURE_FLAGS_DEFAULTS as FeatureFlagsState["resolved"];
+const defaults = FEATURE_FLAGS_DEFAULTS;
 
-function createStore(preloadedState?: FeatureFlagsState) {
+function createStore(preloadedState?: FeatureFlagsState, resolutionConfig?: ResolutionConfig) {
   return configureStore({
     reducer: { featureFlags: featureFlagsReducer },
     preloadedState: preloadedState ? { featureFlags: preloadedState } : undefined,
+    middleware: getDefaultMiddleware =>
+      getDefaultMiddleware().concat(createFeatureFlagsMiddleware(resolutionConfig ?? {})),
   });
 }
-
-beforeEach(() => {
-  setResolutionConfig({});
-});
 
 describe("featureFlagsSlice reducers", () => {
   it("has correct initial state", () => {
@@ -140,8 +138,7 @@ describe("featureFlagsSlice reducers", () => {
 
 describe("resolution logic", () => {
   it("version filtering disables flag when version does not match", () => {
-    setResolutionConfig({ platform: "desktop", appVersion: "1.0.0" });
-    const store = createStore();
+    const store = createStore(undefined, { platform: "desktop", appVersion: "1.0.0" });
     store.dispatch(
       syncRemoteConfig({
         mockFeature: { enabled: true, desktop_version: ">=2.0.0" },
@@ -153,8 +150,7 @@ describe("resolution logic", () => {
   });
 
   it("version filtering keeps flag when version matches", () => {
-    setResolutionConfig({ platform: "desktop", appVersion: "3.0.0" });
-    const store = createStore();
+    const store = createStore(undefined, { platform: "desktop", appVersion: "3.0.0" });
     store.dispatch(
       syncRemoteConfig({
         mockFeature: { enabled: true, desktop_version: ">=2.0.0" },
@@ -164,8 +160,7 @@ describe("resolution logic", () => {
   });
 
   it("mobile_version is used for ios/android platforms", () => {
-    setResolutionConfig({ platform: "ios", appVersion: "1.0.0" });
-    const store = createStore();
+    const store = createStore(undefined, { platform: "ios", appVersion: "1.0.0" });
     store.dispatch(
       syncRemoteConfig({
         mockFeature: { enabled: true, mobile_version: ">=2.0.0" },
@@ -175,8 +170,7 @@ describe("resolution logic", () => {
   });
 
   it("language whitelist disables flag when language is not whitelisted", () => {
-    setResolutionConfig({ appLanguage: "de" });
-    const store = createStore();
+    const store = createStore(undefined, { appLanguage: "de" });
     store.dispatch(
       syncRemoteConfig({
         mockFeature: { enabled: true, languages_whitelisted: ["en", "fr"] },
@@ -188,8 +182,7 @@ describe("resolution logic", () => {
   });
 
   it("language blacklist disables flag when language is blacklisted", () => {
-    setResolutionConfig({ appLanguage: "de" });
-    const store = createStore();
+    const store = createStore(undefined, { appLanguage: "de" });
     store.dispatch(
       syncRemoteConfig({
         mockFeature: { enabled: true, languages_blacklisted: ["de"] },
@@ -199,22 +192,23 @@ describe("resolution logic", () => {
   });
 
   it("language filtering does not apply to local overrides", () => {
-    setResolutionConfig({ appLanguage: "de" });
-    const store = createStore({
-      overrides: { mockFeature: { enabled: true, languages_whitelisted: ["en"] } },
-      remote: {},
-      resolved: defaults,
-      bannerVisible: false,
-    });
+    const store = createStore(
+      {
+        overrides: { mockFeature: { enabled: true, languages_whitelisted: ["en"] } },
+        remote: {},
+        resolved: defaults,
+        bannerVisible: false,
+      },
+      { appLanguage: "de" },
+    );
     store.dispatch(syncRemoteConfig({}));
     expect(store.getState().featureFlags.resolved.mockFeature.enabled).toBe(true);
   });
 
   it("env flags override remote config", () => {
-    setResolutionConfig({
+    const store = createStore(undefined, {
       envFlags: { mockFeature: { enabled: true, params: { envOverride: true } } },
     });
-    const store = createStore();
     store.dispatch(syncRemoteConfig({ mockFeature: { enabled: false } }));
     const resolved = store.getState().featureFlags.resolved.mockFeature;
     expect(resolved.enabled).toBe(true);
@@ -223,15 +217,15 @@ describe("resolution logic", () => {
   });
 
   it("resolution priority: local override > env > remote", () => {
-    setResolutionConfig({
-      envFlags: { mockFeature: { enabled: false } },
-    });
-    const store = createStore({
-      overrides: { mockFeature: { enabled: true, overridesRemote: true } },
-      remote: {},
-      resolved: defaults,
-      bannerVisible: false,
-    });
+    const store = createStore(
+      {
+        overrides: { mockFeature: { enabled: true, overridesRemote: true } },
+        remote: {},
+        resolved: defaults,
+        bannerVisible: false,
+      },
+      { envFlags: { mockFeature: { enabled: false } } },
+    );
     store.dispatch(syncRemoteConfig({ mockFeature: { enabled: false } }));
     expect(store.getState().featureFlags.resolved.mockFeature.enabled).toBe(true);
   });

@@ -1,6 +1,6 @@
 import type { CantonCurrencyBridge } from "@ledgerhq/coin-canton/types";
 import { OnboardStatus } from "@ledgerhq/coin-canton/types";
-import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
+import { useCurrencyBridge } from "@ledgerhq/live-common/bridge/useCurrencyBridge";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
 import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import { useCallback, useEffect, useLayoutEffect, useMemo } from "react";
@@ -31,14 +31,7 @@ export function useOnboardScreenViewModel({ navigation, route }: OnboardScreenVi
   const dispatch = useDispatch();
 
   const cryptoCurrency = isTokenCurrency(currency) ? currency.parentCurrency : currency;
-  const bridge = useMemo(() => {
-    const currencyBridge = getCurrencyBridge(cryptoCurrency);
-    if (!currencyBridge) {
-      throw new Error(`Currency bridge not found for ${cryptoCurrency.id}`);
-    }
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    return currencyBridge as CantonCurrencyBridge;
-  }, [cryptoCurrency]);
+  const bridge = useCurrencyBridge<CantonCurrencyBridge>(cryptoCurrency);
 
   const {
     onboardingStatus,

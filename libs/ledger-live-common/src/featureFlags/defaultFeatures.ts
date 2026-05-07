@@ -873,6 +873,7 @@ export const DEFAULT_FEATURES: Features = {
       ],
     },
   },
+  concordiumVerifyAddress: DEFAULT_FEATURE,
   lldHideSmallValueTokenOperations: {
     ...DEFAULT_FEATURE,
     enabled: true,
@@ -884,6 +885,8 @@ export const DEFAULT_FEATURES: Features = {
     enabled: false,
     params: { variantId: "control" },
   },
+  lldTezosStaking: DEFAULT_FEATURE,
+  llmTezosStaking: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings

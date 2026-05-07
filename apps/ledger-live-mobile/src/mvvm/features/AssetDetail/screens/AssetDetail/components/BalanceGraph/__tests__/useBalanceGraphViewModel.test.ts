@@ -3,7 +3,6 @@ import { useBalanceGraphViewModel } from "../useBalanceGraphViewModel";
 import { track } from "~/analytics";
 import { useGetCurrencyDataQuery } from "@ledgerhq/live-common/market/state-manager/marketApi";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
-import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import {
   mockBtcCryptoCurrency,
   mockEthCryptoCurrency,
@@ -11,6 +10,7 @@ import {
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import BigNumber from "bignumber.js";
 import type { State } from "~/reducers/types";
+import { marketCurrencyData } from "../../../__fixtures__/marketCurrencyData";
 
 jest.mock("@ledgerhq/live-common/market/state-manager/marketApi", () => ({
   ...jest.requireActual("@ledgerhq/live-common/market/state-manager/marketApi"),
@@ -21,18 +21,6 @@ jest.mock("LLM/features/Receive");
 const mockUseGetCurrencyDataQuery = jest.mocked(useGetCurrencyDataQuery);
 const mockUseOpenReceiveDrawer = jest.mocked(useOpenReceiveDrawer);
 const mockHandleOpenReceiveDrawer = jest.fn();
-
-const marketCurrencyData = {
-  id: "bitcoin",
-  price: 50000,
-  priceChangePercentage: {
-    [KeysPriceChange.hour]: 0.5,
-    [KeysPriceChange.day]: 2.35,
-    [KeysPriceChange.week]: -5.12,
-    [KeysPriceChange.month]: 10.0,
-    [KeysPriceChange.year]: 150.0,
-  },
-};
 
 function withAccounts(accounts: Array<{ currencyId: string; balance: number }>) {
   return {

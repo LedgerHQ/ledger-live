@@ -6,7 +6,7 @@ export function useNavigation() {
   return useGenericNavigation({
     backwardDirection: NAVIGATION_DIRECTION.BACKWARD,
     forwardDirection: NAVIGATION_DIRECTION.FORWARD,
-    initialStep: CANTON_MODULAR_DRAWER_ADD_ACCOUNT_STEP.CONNECT_YOUR_DEVICE,
+    initialStep: CANTON_MODULAR_DRAWER_ADD_ACCOUNT_STEP.DISCLAIMER,
     stepOrder: CANTON_ADD_ACCOUNT_STEP_ORDER,
   });
 }

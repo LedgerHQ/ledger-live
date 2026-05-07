@@ -1,14 +1,14 @@
 import { renderHook, waitFor } from "@testing-library/react-native";
 import BigNumber from "bignumber.js";
 import { useFeePresetFiatValues } from "../useFeePresetFiatValues";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useCalculateCountervalueCallback } from "@ledgerhq/live-countervalues-react";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 
-jest.mock("@ledgerhq/live-common/bridge/index");
+jest.mock("@ledgerhq/live-common/bridge/useAccountBridge");
 jest.mock("@ledgerhq/live-countervalues-react");
 jest.mock("@ledgerhq/live-common/currencies/index");
 
@@ -77,8 +77,8 @@ describe("useFeePresetFiatValues", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest
-      .mocked(getAccountBridge)
-      .mockReturnValue(mockBridge as unknown as ReturnType<typeof getAccountBridge>);
+      .mocked(useAccountBridge)
+      .mockReturnValue(mockBridge as unknown as ReturnType<typeof useAccountBridge>);
     jest
       .mocked(useCalculateCountervalueCallback)
       .mockReturnValue(

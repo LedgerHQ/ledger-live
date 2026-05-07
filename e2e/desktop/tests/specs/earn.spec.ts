@@ -34,11 +34,6 @@ const ethEarn = [
   },
   {
     account: Account.ETH_1,
-    provider: Provider.STADER_LABS,
-    xrayTicket: "B2CQA-3677",
-  },
-  {
-    account: Account.ETH_1,
     provider: Provider.KILN,
     xrayTicket: "B2CQA-3678",
   },
@@ -116,7 +111,7 @@ for (const { account, provider, xrayTicket } of ethEarn) {
 }
 
 // Skipping this suite as legacy is not visible on prod anymore
-test.describe.skip("Inline Add Account", () => {
+test.describe.skip("Earn live app Add Account", () => {
   const account = Account.ETH_1;
   setupEnv(true);
   test.use({
@@ -127,7 +122,7 @@ test.describe.skip("Inline Add Account", () => {
   });
 
   test(
-    "Inline Add Account",
+    "Earn live app Add Account",
     {
       tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
       annotation: [
@@ -188,12 +183,11 @@ const earnDashboardCurrencies = [
     xrayTicket: "B2CQA-3683",
     staking: true,
   },
-  // FIXME: Solana is delegated but we need to wait for BE to be updated
-  // {
-  //   account: Account.SOL_2,
-  //   xrayTicket: "B2CQA-3684",
-  //   staking: true,
-  // },
+  {
+    account: Account.SOL_2,
+    xrayTicket: "B2CQA-3684",
+    staking: true,
+  },
   {
     account: Account.ATOM_1,
     xrayTicket: "B2CQA-3685",

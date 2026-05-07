@@ -292,7 +292,7 @@ describe("onboard", () => {
       const onboardAccount = buildOnboardAccount(signerContext);
       const currency = createFixtureCurrency();
       const account = createFixtureAccount({ freshAddress: "", xpub: "" });
-      account.freshAddressPath = "44'/919'/404'/404'/5'";
+      account.freshAddressPath = "44'/1'/0'/0'/0'/5'";
 
       // WHEN
       const observable = onboardAccount(currency.id, "test-device", account);
@@ -302,7 +302,7 @@ describe("onboard", () => {
       expect(getPublicKey).toHaveBeenCalledWith(
         signerContext,
         "test-device",
-        "44'/919'/404'/404'/5'",
+        "44'/1'/0'/0'/0'/5'",
       );
     });
 

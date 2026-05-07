@@ -1,14 +1,15 @@
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StepProps } from "../types";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import { Transaction } from "@ledgerhq/live-common/families/polkadot/types";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import ValidatorsField from "../fields/ValidatorsField";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
-export default function StepNomination({
+function StepNominationContent({
   account,
   onUpdateTransaction,
   transaction,
@@ -18,8 +19,8 @@ export default function StepNomination({
   openModal,
   onClose,
   t,
-}: StepProps) {
-  const bridge = account && getAccountBridge(account);
+}: StepProps & { transaction: Transaction }) {
+  const bridge = useAccountBridge<Transaction>(account);
   const onGoToChill = useCallback(() => {
     onClose();
     openModal("MODAL_POLKADOT_SIMPLE_OPERATION", {
@@ -30,14 +31,13 @@ export default function StepNomination({
   const updateNomination = useCallback(
     (updater: (a: string[]) => string[]) => {
       onUpdateTransaction(transaction =>
-        bridge?.updateTransaction(transaction, {
+        bridge.updateTransaction(transaction, {
           validators: updater(transaction.validators || []),
         }),
       );
     },
     [bridge, onUpdateTransaction],
   );
-  if (!account || !transaction) return null;
   const { polkadotResources } = account;
   const nominations = polkadotResources.nominations || [];
   return (
@@ -62,6 +62,11 @@ export default function StepNomination({
       />
     </Box>
   );
+}
+
+export default function StepNomination(props: StepProps) {
+  if (!props.account || !props.transaction) return null;
+  return <StepNominationContent {...props} transaction={props.transaction} />;
 }
 export function StepNominationFooter({
   transitionTo,

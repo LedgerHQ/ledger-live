@@ -12,7 +12,7 @@ import {
 import { Trans } from "~/context/Locale";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Transaction as CeloTransaction } from "@ledgerhq/live-common/families/celo/types";
 import { ScreenName } from "~/const";
 import { TrackScreen } from "~/analytics";
@@ -43,7 +43,7 @@ export default function VoteAmount({ navigation, route }: Props) {
 
   const [maxSpendable, setMaxSpendable] = useState(0);
 
-  const bridge = getAccountBridge(account);
+  const bridge = useAccountBridge<CeloTransaction>(account);
 
   const { transaction, setTransaction, status, bridgePending } = useBridgeTransaction(() => {
     return {

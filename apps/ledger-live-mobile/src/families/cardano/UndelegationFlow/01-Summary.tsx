@@ -5,13 +5,14 @@ import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "rea
 import { Trans, useTranslation } from "~/context/Locale";
 import { SafeAreaView, StyleSheet, View } from "react-native";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import type {
   CardanoAccount,
   CardanoDelegation,
   TransactionStatus,
+  Transaction as CardanoTransaction,
 } from "@ledgerhq/live-common/families/cardano/types";
 import { Text, Box } from "@ledgerhq/native-ui";
 import { AccountLike } from "@ledgerhq/types-live";
@@ -47,7 +48,7 @@ export default function UndelegationSummary({ navigation, route }: Props) {
   const { cardanoResources } = account as CardanoAccount;
   const currentDelegation = cardanoResources.delegation as CardanoDelegation;
   const mainAccount = getMainAccount(account, parentAccount);
-  const bridge = getAccountBridge(account, undefined);
+  const bridge = useAccountBridge<CardanoTransaction>(account, undefined);
 
   const { transaction, status, bridgePending, bridgeError, setTransaction } = useBridgeTransaction(
     () => {
@@ -82,7 +83,7 @@ export default function UndelegationSummary({ navigation, route }: Props) {
     navigation.navigate(ScreenName.CardanoUndelegationSelectDevice, {
       accountId: account.id,
       parentId: parentAccount?.id || undefined,
-      transaction,
+      transaction: transaction ?? undefined,
       status,
     });
   }, [status, account, parentAccount, navigation, transaction]);
@@ -98,14 +99,16 @@ export default function UndelegationSummary({ navigation, route }: Props) {
   const onBridgeErrorRetry = useCallback(() => {
     setBridgeErr(null);
     if (!transaction) return;
-    const bridge = getAccountBridge(account, parentAccount);
     setTransaction(bridge.updateTransaction(transaction, {}));
-  }, [setTransaction, account, parentAccount, transaction]);
+  }, [setTransaction, bridge, transaction]);
 
   const hasNotEnoughtBalanceError = bridgeError instanceof CardanoNotEnoughFunds;
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.root, { backgroundColor: colors.background }]}
+      testID="Cardano-Undelegation-Summary"
+    >
       <TrackScreen category="DelegationFlow" name="Summary" />
 
       <View style={styles.body}>
@@ -148,6 +151,7 @@ export default function UndelegationSummary({ navigation, route }: Props) {
           onPress={onContinue}
           disabled={bridgePending || !!bridgeError || Object.keys(status.errors).length > 0}
           pending={bridgePending}
+          testID="delegation-undelegate-continue"
         />
       </View>
       {!hasNotEnoughtBalanceError && bridgeErr && (
@@ -273,7 +277,7 @@ function SummaryWords({
   return (
     <>
       <View style={styles.summarySection}>
-        <LText style={styles.labelText} color="smoke">
+        <LText style={styles.labelText} color="smoke" testID="undelegation-message">
           {t("cardano.undelegation.undelegationMessage")}
         </LText>
         <View

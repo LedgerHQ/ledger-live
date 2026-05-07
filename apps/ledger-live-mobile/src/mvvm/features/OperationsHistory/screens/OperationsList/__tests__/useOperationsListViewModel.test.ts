@@ -51,6 +51,20 @@ describe("useOperationsListViewModel", () => {
     expect(mockUseOperationsV1.mock.calls.length).toBe(callsBefore);
   });
 
+  describe("markOperationsAsSeen on unmount", () => {
+    it("sets lastSeenOperationDate in store when the hook unmounts", () => {
+      const { unmount, store } = renderHook(() => useOperationsListViewModel());
+
+      expect(store.getState().history.lastSeenOperationDate).toBeNull();
+
+      act(() => {
+        unmount();
+      });
+
+      expect(store.getState().history.lastSeenOperationDate).not.toBeNull();
+    });
+  });
+
   describe("accountByAddress", () => {
     // EVM chains share the same address format — Base, OP Mainnet, and Ethereum accounts
     // all have identical 0x addresses. The map must key by currencyId:address so that

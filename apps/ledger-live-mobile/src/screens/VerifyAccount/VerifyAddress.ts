@@ -3,7 +3,7 @@ import { useTranslation } from "~/context/Locale";
 import { useTheme } from "styled-components/native";
 import type { Account } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { renderVerifyAddress } from "~/components/DeviceAction/rendering";
 
@@ -18,10 +18,11 @@ function VerifyAddress({
 }) {
   const { theme } = useTheme();
   const { t } = useTranslation();
+  const bridge = useAccountBridge(account);
   useEffect(() => {
     if (!device) return;
 
-    const sub = getAccountBridge(account)
+    const sub = bridge
       .receive(account, {
         deviceId: device.deviceId,
         verify: true,
@@ -30,15 +31,15 @@ function VerifyAddress({
         complete() {
           onResult(true);
         },
-        error(err) {
-          onResult(false, err as Error);
+        error(err: Error) {
+          onResult(false, err);
         },
       });
 
     return () => {
       sub.unsubscribe();
     };
-  }, [account, device, onResult]);
+  }, [account, bridge, device, onResult]);
 
   if (!device) return null;
 

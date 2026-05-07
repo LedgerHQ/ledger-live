@@ -43,6 +43,13 @@ export default defineConfig({
   tools: {
     rspack: (config, { appendPlugins }) => {
       config.resolve ??= {};
+      config.resolve.extensions = [
+        ".web.tsx",
+        ".web.ts",
+        ".web.jsx",
+        ".web.js",
+        ...(config.resolve.extensions ?? []),
+      ];
       config.resolve.fallback = {
         ...config.resolve.fallback,
         fs: false,

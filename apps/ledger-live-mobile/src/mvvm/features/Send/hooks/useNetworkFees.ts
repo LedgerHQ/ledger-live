@@ -11,7 +11,7 @@ import {
   getAccountCurrency,
   getMainAccount,
 } from "@ledgerhq/ledger-wallet-framework/account/helpers";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useSelector } from "~/context/hooks";
 import { counterValueCurrencySelector } from "~/reducers/settings";
@@ -55,6 +55,7 @@ export function useNetworkFees({
     () => getMainAccount(account, parentAccount ?? undefined),
     [account, parentAccount],
   );
+  const bridge = useAccountBridge<Transaction>(account, parentAccount);
   const accountCurrency = useMemo(() => getAccountCurrency(mainAccount), [mainAccount]);
   const accountUnit = useMaybeAccountUnit(mainAccount) ?? accountCurrency.units[0];
   const fiatUnit = counterValueCurrency.units[0];
@@ -87,11 +88,10 @@ export function useNetworkFees({
   const updateTransactionWithPatch = useCallback(
     (patch: Partial<Transaction>) => {
       transactionActions.updateTransaction(currentTx => {
-        const bridge = getAccountBridge(account, parentAccount ?? undefined);
         return bridge.updateTransaction(currentTx, patch);
       });
     },
-    [account, parentAccount, transactionActions],
+    [bridge, transactionActions],
   );
 
   const selectedFeeStrategy = transaction.feesStrategy ?? null;

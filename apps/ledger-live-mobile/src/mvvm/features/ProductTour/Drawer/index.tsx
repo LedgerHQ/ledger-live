@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Slides } from "@ledgerhq/native-ui";
 import Animated from "react-native-reanimated";
 import { FlatList } from "react-native-gesture-handler";
@@ -6,6 +6,7 @@ import { Platform, StyleSheet } from "react-native";
 import { BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
 import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 import { TrackScreen } from "~/analytics";
+import { useProductTourControls } from "../context/ProductTourControlsContext";
 import { useProductTourDrawerViewModel } from "./hooks/useProductTourDrawerViewModel";
 import { SlideItem } from "./components/SlideItem";
 import { SlideFooterButton } from "./components/SlideFooterButton";
@@ -16,22 +17,20 @@ export const useProductTourDrawer = () => useProductTourDrawerViewModel();
 
 const AnimatedGestureHandlerFlatList = Animated.createAnimatedComponent(FlatList);
 
-type ProductTourDrawerProps = Omit<
-  ReturnType<typeof useProductTourDrawerViewModel>,
-  "openDrawer" | "productTourCompleted" | "handleCloseDrawer"
->;
+export const ProductTourDrawer = () => {
+  const { isDrawerOpen: resolvedIsDrawerOpen, closeProductTour, onSlideChange } =
+    useProductTourControls();
 
-export const ProductTourDrawer = ({
-  isDrawerOpen,
-  closeDrawer,
-  onSlideChange,
-}: ProductTourDrawerProps) => {
-  if (!isDrawerOpen) {
+  const resolvedOnSlideChange = useCallback((index: number) => onSlideChange(index), [onSlideChange]);
+
+  const resolvedCloseDrawer = useCallback(() => closeProductTour(), [closeProductTour]);
+
+  if (!resolvedIsDrawerOpen) {
     return null;
   }
 
   return (
-    <QueuedDrawerBottomSheet isRequestingToBeOpened={isDrawerOpen} onClose={closeDrawer}>
+    <QueuedDrawerBottomSheet isRequestingToBeOpened={resolvedIsDrawerOpen} onClose={resolvedCloseDrawer}>
       <BottomSheetView>
         <BottomSheetHeader />
         <TrackScreen page={PAGE_TRACKING_PRODUCT_TOUR} />
@@ -41,7 +40,7 @@ export const ProductTourDrawer = ({
           testID="product-tour-slides-container"
           initialNumToRender={1}
           maxToRenderPerBatch={Platform.OS === "ios" ? 1 : undefined}
-          onSlideChange={onSlideChange}
+          onSlideChange={resolvedOnSlideChange}
         >
           <Slides.Content>
             {Array.from({ length: PRODUCT_TOUR_TOTAL_SLIDES }, (_, index) => (
@@ -56,7 +55,7 @@ export const ProductTourDrawer = ({
           </Slides.ProgressIndicator>
 
           <Slides.Footer>
-            <SlideFooterButton closeDrawer={closeDrawer} />
+            <SlideFooterButton closeDrawer={resolvedCloseDrawer} />
           </Slides.Footer>
         </Slides>
       </BottomSheetView>

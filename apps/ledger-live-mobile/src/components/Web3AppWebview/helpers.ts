@@ -284,7 +284,7 @@ export function useWebviewState(
 ) {
   const webviewRef = useRef<WebView>(null);
   const { manifest, inputs, manifestDomainCheckEnabled } = params;
-  const [initialURL] = useState(() => getInitialURL(inputs, manifest));
+  const initialURL = useMemo(() => getInitialURL(inputs, manifest), [manifest, inputs]);
   const [state, setState] = useState<WebviewState>(initialWebviewState);
 
   // Mirror desktop's originWhitelist logic: when the flag is on, validate the initial URL

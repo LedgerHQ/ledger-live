@@ -8,7 +8,7 @@
  */
 export { isAccountEmpty, clearAccount, getVotesCount } from "../account/helpers";
 export { isEditableOperation, isStuckOperation, getStuckAccountAndOperation } from "../operation";
-export { getValidateAddress } from "../bridge/generic-alpaca/validateAddress";
+export { getValidateAddress } from "../bridge/generic-coin-framework/validateAddress";
 export { getCurrencyBridge, getAccountBridge } from "../bridge/impl";
 export { sync as mockSync } from "../bridge/mockHelpers";
 export { genAccount } from "../mock/account";

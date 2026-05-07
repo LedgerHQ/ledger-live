@@ -1331,6 +1331,10 @@
     }
   },
   "postOnboarding" : {
+    "widget" : {
+      "title" : "接着，完成钱包设置",
+      "subtitle" : "首先为您的钱包充值。"
+    },
     "postOnboardingScreen" : {
       "title" : "接下来呢？",
       "titleCompleted" : "一切准备就绪！\n继续探索您的资产组合。",
@@ -2313,7 +2317,8 @@
         "banner" : "最大可支出数额为",
         "fees" : "详细了解费用",
         "standard" : "标准",
-        "advanced" : "高级"
+        "advanced" : "高级",
+        "feeCurrency" : "费用币种"
       },
       "summary" : {
         "title" : "概要"
@@ -4187,6 +4192,64 @@
         "eigenlayer_points" : "Eigenlayer 积分",
         "validator" : "验证者奖励"
       }
+    },
+    "evmStaking" : {
+      "delegation" : {
+        "emptyState" : {
+          "description" : "您可以通过委托资产赚取 {{currencyTicker}} 奖励。",
+          "delegation" : "赚取奖励"
+        },
+        "claimRewards" : "申领奖励",
+        "header" : "委托",
+        "noRewards" : "没有奖励可用",
+        "delegate" : "添加",
+        "undelegate" : "解除委托",
+        "redelegate" : "重新委托",
+        "redelegateDisabledTooltip" : "您可以再次重新委托 <0>{{days}}</0>",
+        "redelegateMaxDisabledTooltip" : "每次重新委托的验证者不能多于 <0>7</0> 个",
+        "undelegateDisabledTooltip" : "每次取消委托的验证者不能多于 <0>7</0> 个",
+        "reward" : "申领奖励",
+        "activeTooltip" : "已委托的数额会生成奖励",
+        "inactiveTooltip" : "已解除委托的数额不会生成奖励。",
+        "minSafeWarning" : "资金不足",
+        "flow" : {
+          "title" : "委托",
+          "steps" : {
+            "starter" : {
+              "description" : "您可以通过将 {{currencyTicker}} 资产委托给验证者来赚取奖励。",
+              "bullet" : ["您保有对已委托资产的所有权", "使用您的 Ledger 设备进行委托", "资产将在解除委托后可用"],
+              "warning" : {
+                "description" : "请明智地选择验证者：如果验证者表现不当，您可能会不可挽回地损失部分已委托资产。"
+              }
+            },
+            "amount" : {
+              "title" : "数额"
+            },
+            "validator" : {
+              "title" : "验证者"
+            },
+            "connectDevice" : {
+              "title" : "设备"
+            },
+            "confirmation" : {
+              "title" : "确认",
+              "success" : {
+                "title" : "您的资产已经成功委托。",
+                "text" : "该交易一经区块链确认，就会更新您的账户余额。",
+                "cta" : "查看详情"
+              },
+              "broadcastError" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。"
+            }
+          }
+        }
+      },
+      "redelegation" : {
+        "header" : "重新委托"
+      },
+      "undelegation" : {
+        "header" : "解除委托",
+        "inactiveTooltip" : "已解除委托的数额不会生成奖励。"
+      }
     }
   },
   "graph" : {
@@ -4441,6 +4504,8 @@
     "delegated" : "已委托",
     "completionDate" : "完成日期",
     "rewards" : "奖励",
+    "sourceValidator" : "来源验证者",
+    "destinationValidator" : "目标验证者",
     "duration" : "持续时间",
     "durationJustStarted" : "刚刚开始",
     "durationDays" : "{{count}} 天",
@@ -4608,24 +4673,7 @@
       },
       "analyticsConsentOptInQa" : {
         "rowTitle" : "分析数据使用同意 (QA)",
-        "rowDesc" : "检查已存储的隐私同意版本和同意日期；模拟资产组合分析同意弹窗的过期状态。",
-        "title" : "分析数据使用同意 —— QA",
-        "readSection" : "当前设置（只读）",
-        "storedPrivacyVersion" : "存储的隐私政策版本： {{version}}",
-        "currentPrivacyVersion" : "应用程序的当前隐私政策版本： {{version}}",
-        "consentDate" : "同意日期（原始）： {{value}}",
-        "inlineOutdatePrivacyVersion" : "过期版本",
-        "inlineRemoveConsentDate" : "删除日期",
-        "actionResetForConsentFresh" : "重置同意为初始状态（清除同意数据，关闭分析与个性化）",
-        "modalPreviewSection" : "资产组合（首页）预期弹窗",
-        "modalPreviewNoModalUserOk" : "无弹窗。隐私政策版本和同意日期均正常：无需更新或重新确认。",
-        "modalPreviewNoModalFeatureOff" : "无弹窗。分析数据使用同意功能标帜已关闭。",
-        "modalPreviewNoModalOnboarding" : "无弹窗。引导流程尚未完成。",
-        "modalPreviewFresh" : "首次同意弹窗（初始状态）。需要重新获取同意（同意日期缺失或无效），且“共享分析”已关闭——例如：未存储隐私确认 / 无同意日期且分析已禁用。",
-        "modalPreviewReconfirm" : "重新确认同意弹窗。需要重新获取同意且“共享分析”为开启状态——用户将看到重新确认（继续 / 停止）流程，而非首次同意文案。",
-        "modalPreviewPrivacy" : "隐私政策更新弹窗。已存储的隐私政策版本过期（低于当前应用版本），且同意续期不阻塞——用户将优先看到隐私政策更新步骤。",
-        "modalPreviewGoToHome" : "打开资产组合首页，在应出现时查看弹窗。",
-        "note" : "移除日期会将同意清空。过时的版本会将存储的隐私政策版本降低到低于应用程序的当前版本。重置将清除同意相关的元数据，并关闭分析和个性化功能，以重新触发初始的同意弹窗。当 live-common 中的 CONSENT_RENEWAL_INTERVAL_MS 为空时，基于时间的续期功能将保持关闭状态。"
+        "rowDesc" : "检查已存储的隐私同意版本和同意日期；模拟资产组合分析同意弹窗的过期状态。"
       },
       "brazeTools" : {
         "title" : "Braze 工具",
@@ -7823,7 +7871,7 @@
       },
       "personalizedExperience" : {
         "title" : "个性化体验",
-        "description" : "允许 Ledger 收集应用程序使用情况，以便提供个性化内容"
+        "description" : "允许 Ledger 收集应用程序使用数据，以提供个性化内容"
       },
       "ctaConfirm" : "确认"
     },
@@ -8275,7 +8323,10 @@
       },
       "editName" : "编辑名称",
       "emptyState" : "暂无加密地址",
-      "emptySearchState" : "没有与您的搜索相符的账户。"
+      "emptySearchState" : "没有与您的搜索相符的账户。",
+      "assetCount_zero" : "{{count}} 个资产",
+      "assetCount_one" : "{{count}} 个资产",
+      "assetCount_other" : "{{count}} 个资产"
     },
     "editName" : {
       "title" : "编辑地址名称",
@@ -8552,5 +8603,17 @@
       "errorDescription" : "导出您的交易历史记录时出错。请重试。",
       "tryAgain" : "请重试"
     }
+  },
+  "myWallet" : {
+    "actionsList" : {
+      "help" : "帮助",
+      "recover" : "[L] Recover",
+      "refer" : "推荐"
+    },
+    "myLedger" : {
+      "title" : "我的 Ledger",
+      "description" : "管理您的 Ledger 设备"
+    },
+    "explore" : "探索所有 Ledger 设备"
   }
 }

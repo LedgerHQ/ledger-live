@@ -10,5 +10,8 @@ import { Transaction } from "../types";
 export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({ signedOperation }) => {
   const { signature, operation } = signedOperation;
   const hash = (await submitTransaction(signature)).txId;
+  if (!hash) {
+    throw new Error("kaspa: broadcast returned no transaction id");
+  }
   return patchOperationWithHash(operation, hash);
 };

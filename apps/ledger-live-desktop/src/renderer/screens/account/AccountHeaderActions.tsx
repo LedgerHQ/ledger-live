@@ -17,6 +17,7 @@ import { compose } from "redux";
 import styled from "styled-components";
 import { openModal } from "~/renderer/actions/modals";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { RECEIVE_SOURCE_PAGE } from "LLD/features/Receive/types";
 import Box, { Tabbable } from "~/renderer/components/Box";
 import Star from "~/renderer/components/Stars/Star";
 import Tooltip from "~/renderer/components/Tooltip";
@@ -45,6 +46,8 @@ import { WC_ID } from "@ledgerhq/live-common/wallet-api/constants";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { useStake } from "LLD/hooks/useStake";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
+import { useNewSendFlowFeature } from "LLD/features/Send/hooks/useNewSendFlowFeature";
+import { getSendFlowTrackingProperties } from "LLD/features/Send/utils/tracking";
 
 type RenderActionParams = {
   label: React.ReactNode;
@@ -195,6 +198,8 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   const location = useLocation();
   const specific = getLLDCoinFamily(mainAccount.currency.family);
   const openSendFlow = useOpenSendFlow();
+  const { isEnabledForFamily, getFamilyFromAccount, getCurrencyIdFromAccount } =
+    useNewSendFlowFeature();
 
   const manage = specific?.accountHeaderManageActions;
   let manageList: ManageAction[] = [];
@@ -313,20 +318,36 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   ]);
 
   const onSend = useCallback(() => {
+    const family = getFamilyFromAccount(account, parentAccount);
+    const currencyId = getCurrencyIdFromAccount(account, parentAccount);
+    const isNewSendFlow = isEnabledForFamily(family, currencyId);
+    const sendFlowTrackingProperties = isNewSendFlow
+      ? getSendFlowTrackingProperties(account, parentAccount)
+      : { flow: "send" };
     track("button_clicked2", {
       button: "send",
       ...buttonSharedTrackingFields,
     });
     track("button_clicked", {
       button: "send",
-      page: "account",
-      flow: "send",
+      page: "Account",
+      currency: currency.ticker,
+      ...sendFlowTrackingProperties,
     });
     openSendFlow({
       parentAccount,
       account,
     });
-  }, [openSendFlow, parentAccount, account, buttonSharedTrackingFields]);
+  }, [
+    openSendFlow,
+    parentAccount,
+    account,
+    buttonSharedTrackingFields,
+    isEnabledForFamily,
+    getFamilyFromAccount,
+    getCurrencyIdFromAccount,
+    currency.ticker,
+  ]);
 
   const onReceive = useCallback(() => {
     track("button_clicked2", {
@@ -336,6 +357,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
     openModal("MODAL_RECEIVE", {
       parentAccount,
       account,
+      sourcePage: RECEIVE_SOURCE_PAGE.ACCOUNT_PAGE,
     });
   }, [openModal, parentAccount, account, buttonSharedTrackingFields]);
 

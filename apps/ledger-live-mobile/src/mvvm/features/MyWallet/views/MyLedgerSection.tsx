@@ -11,6 +11,7 @@ import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/inde
 import { NavigatorName, ScreenName } from "~/const";
 import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import { track } from "~/analytics";
+import { MY_WALLET_TRACKING_PAGE_NAME } from "../constants";
 import DeviceActionModal from "~/components/DeviceActionModal";
 import { useManagerDeviceAction } from "~/hooks/deviceActions";
 import { useAutoRedirectToPostOnboarding } from "~/hooks/useAutoRedirectToPostOnboarding";
@@ -22,9 +23,19 @@ import type { MyWalletNavigatorStackParamList } from "../types";
 import { ExploreDevicesItem } from "./DeviceSection/components/ExploreDevicesItem";
 import { MyWalletHeaderTrailing } from "./Header";
 
-function MyLedgerSectionContent() {
+type MyLedgerSectionProps = {
+  onPairingStateChanged?: (isPairing: boolean) => void;
+};
+
+function MyLedgerSectionContent({ onPairingStateChanged }: MyLedgerSectionProps) {
   const action = useManagerDeviceAction();
   const [device, setDevice] = useState<Device>();
+  const [isHeaderOverridden, setIsHeaderOverridden] = useState<boolean>(false);
+
+  useEffect(() => {
+    onPairingStateChanged?.(isHeaderOverridden);
+  }, [isHeaderOverridden, onPairingStateChanged]);
+
   const { params } =
     useRoute<RouteProp<MyWalletNavigatorStackParamList, typeof ScreenName.MyWallet>>();
 
@@ -43,7 +54,7 @@ function MyLedgerSectionContent() {
   const exploreDevicesUrl = useLocalizedUrl(urls.exploreLedgerDevices);
 
   const onExploreDevices = useCallback(() => {
-    track("button_clicked", { button: "ExploreDevices", page: ScreenName.MyWallet });
+    track("button_clicked", { button: "ExploreDevices", page: MY_WALLET_TRACKING_PAGE_NAME });
     Linking.openURL(exploreDevicesUrl);
   }, [exploreDevicesUrl]);
 
@@ -82,23 +93,34 @@ function MyLedgerSectionContent() {
 
   const requestToSetHeaderOptions = useCallback(
     (request: SetHeaderOptionsRequest) => {
-      const opts: Partial<LumenNativeStackNavigationOptions> =
-        request.type === "set"
-          ? {
-              lumenNavBar: {
-                renderLeading: request.options.headerLeft,
-                renderTrailing: request.options.headerRight,
-                renderCenter: () => null,
-              },
-            }
-          : {
-              lumenNavBar: {
-                renderLeading: undefined,
-                renderCenter: () => null,
-                renderTrailing: () => <MyWalletHeaderTrailing />,
-              },
-            };
-      navigation.setOptions(opts);
+      if (request.type === "set") {
+        const HeaderLeft = request.options.headerLeft;
+        const opts: Partial<LumenNativeStackNavigationOptions> = {
+          lumenNavBar: {
+            renderLeading: HeaderLeft
+              ? () => (
+                  <Box style={{ paddingLeft: 12 }}>
+                    <HeaderLeft />
+                  </Box>
+                )
+              : undefined,
+            renderTrailing: request.options.headerRight,
+            renderCenter: () => null,
+          },
+        };
+        navigation.setOptions(opts);
+        setIsHeaderOverridden(true);
+      } else {
+        const opts: Partial<LumenNativeStackNavigationOptions> = {
+          lumenNavBar: {
+            renderLeading: undefined,
+            renderCenter: () => null,
+            renderTrailing: () => <MyWalletHeaderTrailing />,
+          },
+        };
+        navigation.setOptions(opts);
+        setIsHeaderOverridden(false);
+      }
     },
     [navigation],
   );
@@ -111,7 +133,6 @@ function MyLedgerSectionContent() {
           stopBleScanning={!!device}
           requestToSetHeaderOptions={requestToSetHeaderOptions}
           withMyLedgerTracking
-          hasPostOnboardingEntryPointCard
         >
           {/* TODO(wallet40-myWallet): enable ExploreDevicesItem when ready */}
           {!shouldDisplayMyWallet && <ExploreDevicesItem onPress={onExploreDevices} />}
@@ -131,8 +152,8 @@ function MyLedgerSectionContent() {
   );
 }
 
-export function MyLedgerSection() {
+export function MyLedgerSection({ onPairingStateChanged }: MyLedgerSectionProps) {
   const isFocused = useIsFocused();
   if (!isFocused) return null;
-  return <MyLedgerSectionContent />;
+  return <MyLedgerSectionContent onPairingStateChanged={onPairingStateChanged} />;
 }

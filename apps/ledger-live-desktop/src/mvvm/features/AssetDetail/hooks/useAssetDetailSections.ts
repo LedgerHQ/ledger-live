@@ -1,26 +1,22 @@
-import { useMemo } from "react";
-import type { DistributionItem } from "@ledgerhq/types-live";
+import { useMemo, type ReactNode } from "react";
 
 export type AssetDetailSectionItem = {
   id: string;
   title: string;
-  content: string;
+  content: ReactNode;
   actionLabel?: string;
-  actionHref?: string;
+  onActionClick?: () => void;
   tooltipContent?: string;
 };
 
 type AssetDetailSections = {
   topSections: [AssetDetailSectionItem, AssetDetailSectionItem];
   sections: AssetDetailSectionItem[];
-  notFoundContent: string;
 };
 
-export function useAssetDetailSections(
-  distributionItem: DistributionItem | undefined,
-): AssetDetailSections {
-  return useMemo(() => {
-    return {
+export function useAssetDetailSections(): AssetDetailSections {
+  return useMemo(
+    () => ({
       topSections: [
         {
           id: "market-stats",
@@ -33,11 +29,10 @@ export function useAssetDetailSections(
           title: "Price performance",
           content: "Placeholder performance metrics content",
           actionLabel: "Action",
-          actionHref: "#",
         },
       ],
       sections: [],
-      notFoundContent: distributionItem ? "" : "Asset distribution item not found.",
-    };
-  }, [distributionItem]);
+    }),
+    [],
+  );
 }

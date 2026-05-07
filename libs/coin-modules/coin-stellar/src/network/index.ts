@@ -1,7 +1,9 @@
 export {
   broadcastTransaction,
   fetchAccount,
+  fetchAllLedgerOperations,
   fetchAllOperations,
+  fetchLedgerRecord,
   fetchOperations,
   fetchBaseFee,
   fetchSequence,

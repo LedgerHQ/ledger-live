@@ -8,7 +8,7 @@ import type { AccountBridge } from "@ledgerhq/types-live";
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
 import type { Transaction } from "@ledgerhq/live-common/families/hedera/types";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
@@ -34,7 +34,7 @@ function ClaimRewardsClaim({ navigation, route }: Props) {
 
   const { selectedDelegation } = route.params;
   const unit = useAccountUnit(account);
-  const bridge: AccountBridge<Transaction> = getAccountBridge(account);
+  const bridge = useAccountBridge<Transaction>(account);
   const { transaction, status, bridgePending, bridgeError } = useBridgeTransaction(() => {
     const t = bridge.createTransaction(account);
 

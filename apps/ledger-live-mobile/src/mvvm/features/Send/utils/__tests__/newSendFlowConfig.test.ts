@@ -1,5 +1,6 @@
 import {
   getNewSendFlowAllowedFamilies,
+  getNewSendFlowExcludedCurrencyIds,
   isFamilyAllowedForNewSendFlow,
   isValidNewSendFlowConfig,
 } from "../newSendFlowConfig";
@@ -60,27 +61,54 @@ describe("newSendFlowConfig", () => {
     });
   });
 
+  describe("getNewSendFlowExcludedCurrencyIds", () => {
+    it("should return empty array when feature is null or undefined", () => {
+      expect(getNewSendFlowExcludedCurrencyIds(null)).toEqual([]);
+      expect(getNewSendFlowExcludedCurrencyIds(undefined)).toEqual([]);
+    });
+
+    it("should return empty array when excludedCurrencyIds is not an array", () => {
+      expect(
+        getNewSendFlowExcludedCurrencyIds({ params: { excludedCurrencyIds: "zcash" } }),
+      ).toEqual([]);
+      expect(getNewSendFlowExcludedCurrencyIds({ params: {} })).toEqual([]);
+    });
+
+    it("should return excluded currency ids array when valid", () => {
+      expect(
+        getNewSendFlowExcludedCurrencyIds({ params: { excludedCurrencyIds: ["zcash"] } }),
+      ).toEqual(["zcash"]);
+    });
+  });
+
   describe("isFamilyAllowedForNewSendFlow", () => {
     const allowedFamilies = ["ethereum", "bitcoin"];
 
-    it("should return false when config is invalid", () => {
-      expect(isFamilyAllowedForNewSendFlow("ethereum", allowedFamilies, false)).toBe(false);
-      expect(isFamilyAllowedForNewSendFlow(undefined, allowedFamilies, false)).toBe(false);
-    });
-
     it("should return true when family is undefined or empty (no filter)", () => {
-      expect(isFamilyAllowedForNewSendFlow(undefined, allowedFamilies, true)).toBe(true);
-      expect(isFamilyAllowedForNewSendFlow("", allowedFamilies, true)).toBe(true);
+      expect(isFamilyAllowedForNewSendFlow(undefined, allowedFamilies)).toBe(true);
+      expect(isFamilyAllowedForNewSendFlow("", allowedFamilies)).toBe(true);
     });
 
     it("should return true when family is in allowedFamilies", () => {
-      expect(isFamilyAllowedForNewSendFlow("ethereum", allowedFamilies, true)).toBe(true);
-      expect(isFamilyAllowedForNewSendFlow("bitcoin", allowedFamilies, true)).toBe(true);
+      expect(isFamilyAllowedForNewSendFlow("ethereum", allowedFamilies)).toBe(true);
+      expect(isFamilyAllowedForNewSendFlow("bitcoin", allowedFamilies)).toBe(true);
     });
 
     it("should return false when family is not in allowedFamilies", () => {
-      expect(isFamilyAllowedForNewSendFlow("solana", allowedFamilies, true)).toBe(false);
-      expect(isFamilyAllowedForNewSendFlow("cosmos", allowedFamilies, true)).toBe(false);
+      expect(isFamilyAllowedForNewSendFlow("solana", allowedFamilies)).toBe(false);
+      expect(isFamilyAllowedForNewSendFlow("cosmos", allowedFamilies)).toBe(false);
+    });
+
+    it("should return false when currency is excluded even if family is allowed", () => {
+      expect(isFamilyAllowedForNewSendFlow("bitcoin", allowedFamilies, "zcash", ["zcash"])).toBe(
+        false,
+      );
+    });
+
+    it("should return true when family is allowed and currency is not excluded", () => {
+      expect(isFamilyAllowedForNewSendFlow("bitcoin", allowedFamilies, "bitcoin", ["zcash"])).toBe(
+        true,
+      );
     });
   });
 });

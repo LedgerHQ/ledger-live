@@ -1,4 +1,4 @@
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/canton/types";
 import { DurationEnum } from "@ledgerhq/coin-canton/types";
 import { Account } from "@ledgerhq/types-live";
@@ -33,7 +33,7 @@ const ExpiryDurationField = ({
   status: TransactionStatus;
 }) => {
   const { t } = useTranslation();
-  const bridge = getAccountBridge(account);
+  const bridge = useAccountBridge<Transaction>(account);
 
   const options: DurationOption[] = useMemo(
     () => [

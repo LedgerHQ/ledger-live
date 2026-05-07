@@ -6,10 +6,11 @@ import { Trans } from "~/context/Locale";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import type { Account } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import type {
   TronAccount,
+  TronResource,
   Transaction as TronTransaction,
 } from "@ledgerhq/live-common/families/tron/types";
 import { ScreenName } from "~/const";
@@ -54,7 +55,7 @@ type InnerProps = {
 function UnfreezeAmountInner({ account }: InnerProps) {
   const { colors } = useTheme();
   const navigation = useNavigation<StackNavigatorNavigation<UnfreezeNavigatorParamList>>();
-  const bridge = getAccountBridge(account, undefined);
+  const bridge = useAccountBridge<TronTransaction>(account, undefined);
   const unit = useAccountUnit(account);
   const { tronResources } = account as TronAccount;
   invariant(tronResources, "tron resources expected");
@@ -100,9 +101,10 @@ function UnfreezeAmountInner({ account }: InnerProps) {
   }, [bridge, setTransaction, transaction]);
   const onChangeResource = useCallback(
     (resource: string) => {
+      if (!transaction) return;
       setTransaction(
         bridge.updateTransaction(transaction, {
-          resource,
+          resource: resource as TronResource,
         }),
       );
     },

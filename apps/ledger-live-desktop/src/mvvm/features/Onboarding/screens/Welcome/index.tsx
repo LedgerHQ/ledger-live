@@ -5,8 +5,6 @@ import { useTheme } from "styled-components";
 import AnalyticsOptInPrompt from "LLD/features/AnalyticsOptInPrompt/screens";
 import LedgerSyncEntryPoint from "LLD/features/LedgerSyncEntryPoints";
 import { EntryPoint as LSEntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
-import WalletSyncDrawer from "LLD/features/WalletSync/components/Drawer";
-import { AnalyticsPage } from "LLD/features/WalletSync/hooks/useLedgerSyncAnalytics";
 
 import { useWelcomeViewModel } from "./hooks/useWelcomeViewModel";
 import { useVideoCarousel } from "./hooks/useVideoCarousel";
@@ -38,7 +36,6 @@ export function Welcome() {
     handleSetupLedgerSync,
     isFeatureFlagsAnalyticsPrefDisplayed,
     extendedAnalyticsOptInPromptProps,
-    closeDrawer,
   } = useWelcomeViewModel();
 
   const {
@@ -165,7 +162,6 @@ export function Welcome() {
       {isFeatureFlagsAnalyticsPrefDisplayed && (
         <AnalyticsOptInPrompt {...extendedAnalyticsOptInPromptProps} />
       )}
-      <WalletSyncDrawer currentPage={AnalyticsPage.Onboarding} onClose={closeDrawer} />
     </WelcomeContainer>
   );
 }

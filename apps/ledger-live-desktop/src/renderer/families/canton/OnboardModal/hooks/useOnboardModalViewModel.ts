@@ -1,6 +1,6 @@
 import type { CantonCurrencyBridge } from "@ledgerhq/coin-canton/types";
 import { OnboardStatus } from "@ledgerhq/coin-canton/types";
-import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
+import { useCurrencyBridge } from "@ledgerhq/live-common/bridge/useCurrencyBridge";
 import { useSelector } from "LLD/hooks/redux";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { accountsSelector } from "~/renderer/reducers/accounts";
@@ -29,11 +29,7 @@ export function useOnboardModalViewModel({
 
   const [stepId, setStepId] = useState<StepId>(StepId.ONBOARD);
 
-  const bridge = useMemo(() => {
-    if (!currency) return null;
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    return getCurrencyBridge(currency) as CantonCurrencyBridge;
-  }, [currency]);
+  const bridge = useCurrencyBridge<CantonCurrencyBridge>(currency);
 
   const {
     onboardingStatus,
@@ -56,15 +52,10 @@ export function useOnboardModalViewModel({
     [selectedAccounts],
   );
 
-  const accountName = useMemo(() => {
-    if (!currency) return "";
-    return resolveCreatableAccountName(
-      creatableAccount,
-      currency,
-      editedNames,
-      importableAccounts.length,
-    );
-  }, [creatableAccount, currency, editedNames, importableAccounts.length]);
+  const accountName = useMemo(
+    () => resolveCreatableAccountName(creatableAccount, currency, editedNames, importableAccounts.length),
+    [creatableAccount, currency, editedNames, importableAccounts.length],
+  );
 
   const transitionTo = useCallback((id: StepId) => {
     setStepId(id);

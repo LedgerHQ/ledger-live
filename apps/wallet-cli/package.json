@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/wallet-cli",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "private": true,
   "description": "Ledger Wallet CLI using Device Management Kit (USB)",
   "bin": {
@@ -11,7 +11,6 @@
     "start": "bun run ./src/cli.ts",
     "dev": "bunli dev",
     "generate": "bunli generate",
-    "generate:check": "bunli generate && git diff --exit-code -- .bunli/commands.gen.ts",
     "build": "bunli build",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "bun test src/",
@@ -32,6 +31,7 @@
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/hw-app-exchange": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",

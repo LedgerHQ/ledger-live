@@ -5,7 +5,7 @@
 
 export type NewSendFlowFeatureParams = {
   enabled?: boolean;
-  params?: { families?: unknown };
+  params?: { families?: unknown; excludedCurrencyIds?: unknown };
 };
 
 /**
@@ -30,17 +30,28 @@ export function getNewSendFlowAllowedFamilies(
 }
 
 /**
- * Returns true if the new send flow is enabled for the given family.
- * When config is invalid: false.
+ * Returns the list of excluded currency ids (empty array if not an array).
+ */
+export function getNewSendFlowExcludedCurrencyIds(
+  feature: NewSendFlowFeatureParams | null | undefined,
+): readonly string[] {
+  const excludedCurrencyIds = feature?.params?.excludedCurrencyIds;
+  return Array.isArray(excludedCurrencyIds) ? excludedCurrencyIds : [];
+}
+
+/**
+ * Returns true if the given family and currency match the new send flow filters.
+ * When currency is excluded: false.
  * When family is undefined: true (no filter).
  * Otherwise: true iff family is in allowedFamilies.
  */
 export function isFamilyAllowedForNewSendFlow(
   family: string | undefined,
   allowedFamilies: readonly string[],
-  isConfigValid: boolean,
+  currencyId?: string,
+  excludedCurrencyIds: readonly string[] = [],
 ): boolean {
-  if (!isConfigValid) return false;
+  if (currencyId && excludedCurrencyIds.includes(currencyId)) return false;
   if (family === undefined || family === "") return true;
   return allowedFamilies.includes(family);
 }

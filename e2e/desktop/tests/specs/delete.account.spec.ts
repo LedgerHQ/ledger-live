@@ -19,6 +19,9 @@ const accounts = [
   { account: Account.ALGO_1, xrayTicket: "B2CQA-2546" },
   { account: Account.ATOM_1, xrayTicket: "B2CQA-2550" },
   { account: Account.XTZ_1, xrayTicket: "B2CQA-2555" },
+  { account: Account.APTOS_1, xrayTicket: "B2CQA-5666" },
+  { account: Account.BASE_1, xrayTicket: "B2CQA-5667" },
+  { account: Account.ZEC_1, xrayTicket: "B2CQA-5668" },
 ];
 
 for (const account of accounts) {

@@ -3,7 +3,7 @@ import React from "react";
 import { BigNumber } from "bignumber.js";
 import type { Transaction, NearAccount } from "@ledgerhq/live-common/families/near/types";
 import { getMaxAmount } from "@ledgerhq/live-common/families/near/logic";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import SelectAmount from "../shared/02-SelectAmount";
@@ -19,7 +19,7 @@ type Props = BaseComposite<
 function UnstakingAmount({ navigation, route }: Props) {
   const { account } = useAccountScreen(route);
   invariant(account, "account required");
-  const bridge = getAccountBridge(account, undefined);
+  const bridge = useAccountBridge<Transaction>(account, undefined);
   const mainAccount = getMainAccount(account, undefined);
   const { validatorId } = route.params.stakingPosition;
   const {

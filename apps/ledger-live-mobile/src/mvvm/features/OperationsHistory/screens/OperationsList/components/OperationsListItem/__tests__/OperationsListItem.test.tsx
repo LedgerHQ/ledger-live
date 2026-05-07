@@ -42,7 +42,12 @@ function buildOperation(overrides: Partial<Operation>): Operation {
   };
 }
 
-function renderItem(operation: Operation, accountByAddress = emptyMap, isPending = false) {
+function renderItem(
+  operation: Operation,
+  accountByAddress = emptyMap,
+  isPending = false,
+  lastSeenTs: number | null = null,
+) {
   return render(
     <OperationsListItem
       operation={operation}
@@ -50,6 +55,7 @@ function renderItem(operation: Operation, accountByAddress = emptyMap, isPending
       parentAccount={undefined}
       accountByAddress={accountByAddress}
       isPending={isPending}
+      lastSeenTs={lastSeenTs}
     />,
   );
 }
@@ -174,6 +180,7 @@ describe("OperationsListItem", () => {
           parentAccount={ownerEthAccount}
           accountByAddress={accountByAddress}
           isPending={false}
+          lastSeenTs={null}
         />,
       );
 
@@ -257,6 +264,23 @@ describe("OperationsListItem", () => {
     });
   });
 
+  it("should render unread dot only when operation date is after lastSeenTs", () => {
+    const LAST_SEEN_TS = new Date("2024-06-01T00:00:00.000Z").getTime();
+    const op = (date?: Date) => buildOperation({ type: "IN", value: new BigNumber(1), date });
+
+    expect(renderItem(op()).queryByTestId("unread-indicator")).toBeNull();
+    expect(
+      renderItem(op(new Date("2024-01-01")), emptyMap, false, LAST_SEEN_TS).queryByTestId(
+        "unread-indicator",
+      ),
+    ).toBeNull();
+    expect(
+      renderItem(op(new Date("2024-12-01")), emptyMap, false, LAST_SEEN_TS).getByTestId(
+        "unread-indicator",
+      ),
+    ).toBeTruthy();
+  });
+
   it("should pass parentId when parentAccount is provided", async () => {
     const parentAccount = { ...account, id: "parent-account-id" };
     const operation = buildOperation({ type: "IN", value: new BigNumber(1), senders: ["s"] });
@@ -267,6 +291,7 @@ describe("OperationsListItem", () => {
         parentAccount={parentAccount}
         accountByAddress={emptyMap}
         isPending={false}
+        lastSeenTs={null}
       />,
     );
     await user.press(getByText("Received"));

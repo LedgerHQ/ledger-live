@@ -21,7 +21,7 @@ module.exports = {
       },
     ],
   },
-  testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts"],
+  testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.(integ|integration)\\.test\\.ts"],
   modulePathIgnorePatterns: ["__tests__/fixtures"],
   reporters: [
     "default",

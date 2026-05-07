@@ -5813,6 +5813,9 @@
     "alerts" : {
       "withdrawableAssets" : "Du hast ein abhebbares Guthaben.",
       "activatableVotes" : "Du hast Votes, die jetzt aktiviert werden können."
+    },
+    "send" : {
+      "feeCurrency" : "Gebührenwährung"
     }
   },
   "cosmos" : {
@@ -7841,6 +7844,12 @@
         "description" : "Zeige dein digitales Lieblingskunstwerk oder -foto als Sperrbildschirm deines Geräts an.",
         "popupLabel" : "Sperrbildschirm erfolgreich angepasst"
       },
+      "recover" : {
+        "title" : "Schutz deines Backups vervollständigen",
+        "titleCompleted" : "Backup abgesichert",
+        "description" : "Aktivierung von Ledger Recover vornehmen",
+        "popupLabel" : "Du hast erfolgreich Ledger Recover abonniert"
+      },
       "syncAccounts" : {
         "title" : "Deine Kryptokonten synchronisieren",
         "titleCompleted" : "Deine Konten sind synchronisiert",
@@ -8124,6 +8133,18 @@
       "lead" : "Du kannst deine Einwilligung jederzeit in den Einstellungen widerrufen.",
       "privacyLink" : "Datenschutzrichtlinie"
     }
+  },
+  "analyticsPreferencesSettings" : {
+    "screenTitle" : "Einstellungen festlegen",
+    "appPerformance" : {
+      "title" : "App-Leistung",
+      "description" : "Ermöglicht Ledger, die App-Nutzung zu erfassen, um das Nutzungserlebnis zu optimieren."
+    },
+    "personalizedExperience" : {
+      "title" : "Personalisierte Nutzung",
+      "description" : "Ermöglicht Ledger, die App-Nutzung zu erfassen, um personalisierte Inhalte bereitzustellen"
+    },
+    "confirmCta" : "Bestätigen"
   },
   "walletSync" : {
     "title" : "Ledger Sync",
@@ -8840,8 +8861,46 @@
   "myWallet" : {
     "quickActions" : {
       "recover" : "[L] Recover",
+      "backup" : "Backup",
       "help" : "Hilfe",
       "referral" : "Empfehlung"
+    },
+    "help" : {
+      "title" : "Hilfe",
+      "sections" : {
+        "supportAndLearning" : "Support und Lernen",
+        "more" : "Mehr"
+      },
+      "rows" : {
+        "ledgerSupport" : {
+          "title" : "Ledger Support",
+          "description" : "Erhalte Unterstützung über unsere FAQs oder den Chat"
+        },
+        "ledgerAcademy" : {
+          "title" : "Ledger Academy",
+          "description" : "Krypto kennenlernen"
+        },
+        "saveLogs" : {
+          "title" : "Protokolle speichern",
+          "description" : "Speichere Ledger Wallet-Logs für die Fehlerbehebung"
+        },
+        "ledgerStatus" : {
+          "title" : "Ledger-Status",
+          "description" : "Prüfe unseren Systemstatus"
+        },
+        "clearCache" : {
+          "title" : "Cache löschen",
+          "description" : "Scanne Transaktionen und berechne Salden neu"
+        }
+      }
+    },
+    "deviceSection" : {
+      "title" : "Meine Geräte",
+      "add" : "Hinzufügen",
+      "addDevice" : "Füge ein Ledger-Gerät hinzu",
+      "exploreAllDevices" : "Alle Ledger-Geräte entdecken",
+      "available" : "Verfügbar",
+      "unavailable" : "Nicht verbunden"
     }
   }
 }

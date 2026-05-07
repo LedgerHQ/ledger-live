@@ -5,6 +5,7 @@ import { ConcordiumFamily } from "./types";
 const family: ConcordiumFamily = {
   StepReceiveFunds,
   sendRecipientFields: SendRecipientFields,
+  useCustomConfirmAddress: true,
 };
 
 export default family;

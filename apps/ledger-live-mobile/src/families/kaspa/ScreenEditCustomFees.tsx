@@ -5,7 +5,8 @@ import { useTranslation } from "~/context/Locale";
 import i18next from "i18next";
 import { Keyboard, SafeAreaView, StyleSheet, View } from "react-native";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import type { Transaction as KaspaTransaction } from "@ledgerhq/live-common/families/kaspa/types";
 import Button from "~/components/Button";
 import KeyboardView from "~/components/KeyboardView";
 import NavigationScrollView from "~/components/NavigationScrollView";
@@ -41,6 +42,7 @@ function KaspaEditCustomFees({ navigation, route }: Props) {
   const { transaction } = route.params;
   const { account, parentAccount } = useAccountScreen(route);
   invariant(account, "no account found");
+  const bridge = useAccountBridge<KaspaTransaction>(account, parentAccount);
   const [ownSompiPerByte, setOwnSompiPerByte] = useState(
     sompiPerByte ? sompiPerByte.toString() : "",
   );
@@ -53,7 +55,6 @@ function KaspaEditCustomFees({ navigation, route }: Props) {
     if (BigNumber(ownSompiPerByte || 0).isZero()) return;
     Keyboard.dismiss();
     setSompiPerByte && setSompiPerByte(BigNumber(ownSompiPerByte || 0));
-    const bridge = getAccountBridge(account, parentAccount);
     navigation.navigate(NavigatorName.SendFunds, {
       screen: ScreenName.SendSummary,
       params: {
@@ -69,7 +70,7 @@ function KaspaEditCustomFees({ navigation, route }: Props) {
     setSompiPerByte,
     ownSompiPerByte,
     account,
-    parentAccount,
+    bridge,
     route.params,
     navigation,
     transaction,

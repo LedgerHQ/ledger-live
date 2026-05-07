@@ -5,6 +5,7 @@ import { setDefaultEnv, updateEnv, getEnv } from "../helpers/env";
 import { Resizable } from "re-resizable";
 import map from "lodash/map";
 import get from "lodash/get";
+// @ts-expect-error react-table v6 types don't export a module
 import ReactTable from "react-table";
 import { SmallButton } from "./Smallbutton";
 
@@ -129,7 +130,6 @@ function LiveEnvEditor() {
         maxHeight={150}
         minHeight={100}
       >
-        {/* @ts-expect-error */}
         <ReactTable
           style={{ width: "100%", height: "100%" }}
           data={state}

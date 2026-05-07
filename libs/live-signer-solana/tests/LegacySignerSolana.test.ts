@@ -67,6 +67,19 @@ describe("LegacySignerSolana", () => {
       expect(signTransaction).toHaveBeenCalledWith("path", Buffer.from("transaction"), undefined);
     });
 
+    it("expected resolution to be undefined when resolution.delayed is true", async () => {
+      const signTransaction = jest.spyOn(Solana.prototype, "signTransaction").mockResolvedValue({
+        signature: Buffer.from("0102", "hex"),
+      });
+
+      expect(
+        await signer.signTransaction("path", Buffer.from("transaction"), { delayed: true }),
+      ).toEqual({
+        signature: Buffer.from("0102", "hex"),
+      });
+      expect(signTransaction).toHaveBeenCalledWith("path", Buffer.from("transaction"), undefined);
+    });
+
     it("fails to sign a transaction with a resolution and missing device model id", async () => {
       await expect(signer.signTransaction("path", Buffer.from("transaction"), {})).rejects.toThrow(
         "Resolution provided without a deviceModelId",
@@ -260,6 +273,7 @@ describe("LegacySignerSolana", () => {
             deviceModelId: DeviceModelId.europa,
             tokenInternalId: "tokenInternalId",
             certificateSignatureKind: expectedSignatureKind,
+            delayed: true,
           }),
         ).toEqual({
           signature: Buffer.from("0102", "hex"),
