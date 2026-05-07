@@ -2,11 +2,10 @@ import invariant from "invariant";
 import React from "react";
 import { Trans } from "react-i18next";
 import { StepProps } from "../types";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
-import { AccountBridge } from "@ledgerhq/types-live";
 import ValidatorField from "../fields/ValidatorField";
 import LedgerByFigmentTCLink from "../components/LedgerByFigmentTCLink";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
@@ -21,8 +20,8 @@ export default function StepStake({
   status,
 }: StepProps) {
   invariant(account && transaction, "account and transaction required");
+  const bridge = useAccountBridge<Transaction>(account, parentAccount);
   const updateValidator = ({ address }: { address: string }) => {
-    const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
     onUpdateTransaction(() => {
       return bridge.updateTransaction(transaction, {
         recipient: address,

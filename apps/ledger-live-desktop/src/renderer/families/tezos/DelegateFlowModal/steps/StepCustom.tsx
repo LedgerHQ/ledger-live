@@ -3,7 +3,8 @@ import React, { useCallback, useEffect, useRef } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import { Transaction } from "@ledgerhq/live-common/families/tezos/types";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import RecipientField from "~/renderer/modals/Send/fields/RecipientField";
 import Button from "~/renderer/components/Button";
@@ -79,23 +80,22 @@ export const StepCustomFooter = ({
   const { errors } = status;
   const canNext = !bridgePending && !Object.keys(errors).length;
   const initialTransaction = useRef(transaction);
+  const bridge = useAccountBridge<Transaction>(account, parentAccount);
   useEffect(() => {
-    // empty the field
     onChangeTransaction(
-      getAccountBridge(account, parentAccount).updateTransaction(initialTransaction.current, {
+      bridge.updateTransaction(initialTransaction.current, {
         recipient: "",
       }),
     );
-  }, [onChangeTransaction, account, parentAccount]);
+  }, [bridge, onChangeTransaction]);
   const onBack = useCallback(() => {
-    // we need to revert
     onChangeTransaction(
-      getAccountBridge(account, parentAccount).updateTransaction(transaction, {
+      bridge.updateTransaction(transaction, {
         recipient: initialTransaction.current.recipient,
       }),
     );
     transitionTo("summary");
-  }, [account, parentAccount, onChangeTransaction, transaction, transitionTo]);
+  }, [bridge, onChangeTransaction, transaction, transitionTo]);
   const onNext = useCallback(() => {
     transitionTo("summary");
   }, [transitionTo]);

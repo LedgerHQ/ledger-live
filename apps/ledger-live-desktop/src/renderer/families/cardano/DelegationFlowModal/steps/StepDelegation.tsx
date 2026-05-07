@@ -2,11 +2,10 @@ import invariant from "invariant";
 import React from "react";
 import { Trans } from "react-i18next";
 import { StepProps } from "../types";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
-import { AccountBridge } from "@ledgerhq/types-live";
 import { Transaction as CardanoTransaction } from "@ledgerhq/live-common/families/cardano/types";
 import { StakePool } from "@ledgerhq/live-common/families/cardano/staking";
 import ValidatorField from "../fields/ValidatorField";
@@ -31,10 +30,10 @@ export default function StepDelegation({
 
   const { errors } = status;
   const displayError = errors.amount?.message ? errors.amount : "";
+  const bridge = useAccountBridge<CardanoTransaction>(account);
 
   const selectPool = (stakePool: StakePool) => {
     setSelectedPool(stakePool);
-    const bridge: AccountBridge<CardanoTransaction> = getAccountBridge(account);
     onUpdateTransaction(() => {
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       const updatedTransaction = bridge.updateTransaction(transaction as CardanoTransaction, {
