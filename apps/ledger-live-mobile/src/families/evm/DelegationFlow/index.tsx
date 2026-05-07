@@ -13,12 +13,14 @@ import SelectAmount from "./02-SelectAmount";
 import ValidationError from "./03-ValidationError";
 import ValidationSuccess from "./03-ValidationSuccess";
 import type { EvmDelegationFlowParamList } from "./types";
+import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
 
 const totalSteps = "3";
 
 function DelegationFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
+  const { notifyFlowCompleted } = useNotificationsContext();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
   return (
@@ -112,6 +114,11 @@ function DelegationFlow() {
           headerRight: undefined,
           headerTitle: "",
           gestureEnabled: false,
+        }}
+        listeners={{
+          beforeRemove: () => {
+            notifyFlowCompleted("stake");
+          },
         }}
       />
     </Stack.Navigator>

@@ -16,7 +16,6 @@ import type {
 } from "~/components/RootNavigator/types/helpers";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
-import { useNotifications } from "LLM/features/NotificationsPrompt";
 import type { EvmDelegationFlowParamList } from "./types";
 
 type Props = BaseComposite<
@@ -26,7 +25,6 @@ type Props = BaseComposite<
 export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useAccountScreen(route);
-  const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
   const { ticker } = getAccountCurrency(account);
   const transaction = route.params.transaction as unknown as GenericTransaction;
   const validator = route.params.validatorName ?? transaction.valAddress ?? "unknown";
@@ -52,8 +50,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
       delegation: "delegation",
       flow: "stake",
     });
-    tryTriggerPushNotificationDrawerAfterAction("stake");
-  }, [source, ticker, tryTriggerPushNotificationDrawerAfterAction, validator]);
+  }, [source, ticker, validator]);
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
