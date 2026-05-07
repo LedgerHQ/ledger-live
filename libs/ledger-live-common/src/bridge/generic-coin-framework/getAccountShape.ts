@@ -63,6 +63,31 @@ function delegatedAmountForStakingResources(b: Balance): bigint {
   return b.stake?.amount ?? 0n;
 }
 
+/**
+ * On-Account shape for `stakingPositions`: framework `Stake` with `bigint`
+ * amounts converted to `BigNumber`, matching the convention used elsewhere on
+ * the Account (`balance`, `spendableBalance`, `stakingResources.*`).
+ */
+type StakingPositionOnAccount = Omit<Stake, "amount" | "amountDeposited" | "amountRewarded"> & {
+  amount: BigNumber;
+  amountDeposited?: BigNumber;
+  amountRewarded?: BigNumber;
+};
+
+function toStakingPositionOnAccount(stake: Stake): StakingPositionOnAccount {
+  const { amount, amountDeposited, amountRewarded, ...rest } = stake;
+  return {
+    ...rest,
+    amount: new BigNumber(amount.toString()),
+    ...(amountDeposited !== undefined && {
+      amountDeposited: new BigNumber(amountDeposited.toString()),
+    }),
+    ...(amountRewarded !== undefined && {
+      amountRewarded: new BigNumber(amountRewarded.toString()),
+    }),
+  };
+}
+
 /** True when the op is a main-account (native) op, not a token/sub-account op */
 function isNativeLiveOp(operation: OperationCommon): boolean {
   const assetReference = operation.extra?.assetReference;
@@ -160,7 +185,7 @@ function syntheticParentForTokenOnlyTx(
   // In the case of smart contract interaction, the contract must be the recipient of the parent operation => this
   // is why we need to extract this information from the operation details.
   const contract = getTokenContract(referenceOp);
-  const parentRecipients = contract === undefined ? (referenceOp.recipients ?? []) : [contract];
+  const parentRecipients = contract === undefined ? referenceOp.recipients ?? [] : [contract];
   const parentSenders = referenceOp.senders ?? [];
   return cleanedOperation({
     id: encodeOperationId(accountId, referenceOp.hash, parentType),
@@ -349,13 +374,15 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     const spendableBalance = nativeBalance - nativeLocked;
 
     let stakingResources: StakingResources | undefined;
-    let stakingPositions: Stake[] = [];
+    let stakingPositions: StakingPositionOnAccount[] = [];
     let delegationsCount = 0;
     let unbondingsCount = 0;
     if (usesStakingPositions) {
-      // Per-stake positions preserved as-is so the UI can group by uid prefix
-      // (delegation-* / stake-* / unstaking-*).
-      stakingPositions = balanceRes.filter(hasStake).map(b => b.stake);
+      // Per-stake positions preserved so the UI can group by uid prefix
+      // (delegation-* / stake-* / unstaking-* / finalizable-*). `bigint` framework
+      // amounts are converted to `BigNumber` to match the Account-side convention
+      // (balance, spendableBalance, stakingResources also use BigNumber).
+      stakingPositions = balanceRes.filter(hasStake).map(b => toStakingPositionOnAccount(b.stake));
     } else {
       const activeStakes = balanceRes.filter(hasActiveStake);
       const deactivatingStakes = balanceRes.filter(hasDeactivatingStake);
@@ -473,7 +500,10 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     const operations = mergeOps(syncFromScratch ? [] : oldOps, newOperations) as OperationCommon[];
     const stakingEnabled =
       alpacaApi.stakingSupported ?? (delegationsCount > 0 || unbondingsCount > 0);
-    let stakingShape: { stakingResources?: StakingResources; stakingPositions?: Stake[] } = {};
+    let stakingShape: {
+      stakingResources?: StakingResources;
+      stakingPositions?: StakingPositionOnAccount[];
+    } = {};
     if (usesStakingPositions) {
       stakingShape = { stakingPositions };
     } else if (stakingEnabled) {
@@ -481,7 +511,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     }
     const res: Partial<Account> & {
       stakingResources?: StakingResources;
-      stakingPositions?: Stake[];
+      stakingPositions?: StakingPositionOnAccount[];
     } = {
       id: accountId,
       xpub: address,

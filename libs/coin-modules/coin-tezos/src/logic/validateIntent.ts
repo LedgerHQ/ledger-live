@@ -115,6 +115,10 @@ function validateUnstakeConstraints(
   return {};
 }
 
+function validateFinalizeUnstakeConstraints(finalizable: bigint): Record<string, Error> {
+  return finalizable <= 0n ? { amount: new NotEnoughBalance() } : {};
+}
+
 function validateTransactionConstraints(
   intent: TransactionIntent,
   senderInfo: APIUserAccount,
@@ -128,7 +132,7 @@ function validateTransactionConstraints(
     case "unstake":
       return validateUnstakeConstraints(intent, senderInfo);
     case "finalize_unstake":
-      return finalizable <= 0n ? { amount: new NotEnoughBalance() } : {};
+      return validateFinalizeUnstakeConstraints(finalizable);
     default:
       return {};
   }

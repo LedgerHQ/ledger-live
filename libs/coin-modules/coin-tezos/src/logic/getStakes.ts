@@ -23,7 +23,7 @@ type APIUserAccount = Extract<APIAccount, { type: "user" }>;
 export function buildStakesForAccount(
   address: string,
   account: APIUserAccount,
-  finalizable: bigint = 0n,
+  finalizable: bigint,
 ): Stake[] {
   const balance = BigInt(account.balance ?? 0);
   const stakedBalance = BigInt(account.stakedBalance ?? 0);
@@ -85,8 +85,6 @@ export async function getStakes(address: string, _cursor?: Cursor): Promise<Page
   const accountInfo = await api.getAccountByAddress(address);
   if (accountInfo.type !== "user") return { items: [] };
   const finalizable =
-    (accountInfo.unstakedBalance ?? 0) > 0
-      ? await api.getUnstakeRequestsFinalizable(address)
-      : 0n;
+    (accountInfo.unstakedBalance ?? 0) > 0 ? await api.getUnstakeRequestsFinalizable(address) : 0n;
   return { items: buildStakesForAccount(address, accountInfo, finalizable) };
 }

@@ -1,4 +1,5 @@
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
 import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
 import type { StakingPosition, TezosAccount, TezosAccountRaw } from "./types/bridge";
 
@@ -12,7 +13,7 @@ const positions: StakingPosition[] = [
     delegate: DELEGATE,
     state: "active",
     asset: { type: "native" },
-    amount: 1234567890n,
+    amount: new BigNumber("1234567890"),
   },
   {
     uid: `stake-${ADDRESS}`,
@@ -20,7 +21,7 @@ const positions: StakingPosition[] = [
     delegate: DELEGATE,
     state: "active",
     asset: { type: "native" },
-    amount: 9_999_999_999_999_999_999n,
+    amount: new BigNumber("9999999999999999999"),
   },
   {
     uid: `unstaking-${ADDRESS}`,
@@ -28,7 +29,7 @@ const positions: StakingPosition[] = [
     delegate: DELEGATE,
     state: "deactivating",
     asset: { type: "native" },
-    amount: 42n,
+    amount: new BigNumber("42"),
   },
   {
     uid: `finalizable-${ADDRESS}`,
@@ -36,7 +37,7 @@ const positions: StakingPosition[] = [
     delegate: DELEGATE,
     state: "inactive",
     asset: { type: "native" },
-    amount: 7n,
+    amount: new BigNumber("7"),
   },
 ];
 
@@ -95,11 +96,11 @@ describe("coin-tezos serialization", () => {
       delegate: DELEGATE,
       state: "active",
       asset: { type: "native" },
-      amount: 1234567890n,
+      amount: new BigNumber("1234567890"),
     });
     // Stake without delegate: delegate field is omitted, not set to undefined
     expect(got[1]).not.toHaveProperty("delegate");
-    expect(got[1].amount).toEqual(42n);
+    expect(got[1].amount).toEqual(new BigNumber("42"));
   });
 
   test("assignFromAccountRaw defaults to empty array when raw lacks the field", () => {

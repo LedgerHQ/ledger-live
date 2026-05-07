@@ -86,7 +86,18 @@ export type Delegation = {
   sendShouldWarnDelegation: boolean;
 };
 
-export type StakingPosition = Stake;
+/**
+ * Tezos staking position as exposed on the synced account (front-side shape).
+ * Mirrors the framework `Stake` populated by `buildStakesForAccount` but uses
+ * `BigNumber` to match the Account-side convention shared with `balance`,
+ * `spendableBalance`, and the `stakingResources` aggregate used by other coins.
+ */
+export type StakingPosition = Omit<Stake, "amount" | "amountDeposited" | "amountRewarded"> & {
+  amount: BigNumber;
+  amountDeposited?: BigNumber;
+  amountRewarded?: BigNumber;
+};
+
 export type TezosAccount = Account & {
   tezosResources: TezosResources;
   stakingPositions: StakingPosition[];
@@ -96,9 +107,8 @@ export function isTezosAccount(account: Account): account is TezosAccount {
 }
 
 /**
- * Persistable shape of a Tezos {@link StakingPosition}. Mirrors the framework
- * `Stake` fields populated by `buildStakesForAccount` (uid prefix encodes the
- * staking kind: delegation-* / stake-* / unstaking-* / finalizable-*); `bigint`
+ * Persistable shape of a Tezos {@link StakingPosition}. uid prefix encodes the
+ * staking kind: delegation-* / stake-* / unstaking-* / finalizable-*; `BigNumber`
  * amounts are serialized as decimal strings, and `asset` is omitted because Tezos
  * stakes are always native and the field is reconstructed on read.
  */

@@ -372,7 +372,7 @@ describe("getStakes", () => {
     });
 
     it("skips the finalizable endpoint entirely when unstakedBalance is 0", async () => {
-      mockGetAccountByAddress.mockResolvedValue(makeAccount({ balance: 1000 }));
+      mockGetAccountByAddress.mockResolvedValue(makeAccount({ balance: 1000, unstakedBalance: 0 }));
 
       const result = await api.getStakes(address);
 

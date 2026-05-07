@@ -1059,10 +1059,10 @@ describe("genericGetAccountShape", () => {
         "stake-tz1abc",
         "unstaking-tz1abc",
       ]);
-      // bigint amounts preserved exactly, not coerced
-      expect(positions[0].amount).toBe(700n);
-      expect(positions[1].amount).toBe(300n);
-      expect(positions[2].amount).toBe(50n);
+      // bigint framework amounts converted to BigNumber to match Account-side convention
+      expect(positions[0].amount).toEqual(new BigNumber(700));
+      expect(positions[1].amount).toEqual(new BigNumber(300));
+      expect(positions[2].amount).toEqual(new BigNumber(50));
       // Tezos opts out of the EVM-shaped aggregate
       expect((result as any).stakingResources).toBeUndefined();
     });
@@ -1145,7 +1145,7 @@ describe("genericGetAccountShape", () => {
       const positions = (result as any).stakingPositions;
       expect(positions).toHaveLength(1);
       expect(positions[0].uid).toBe("delegation-tz1abc");
-      expect(positions[0].amount).toBe(1000n);
+      expect(positions[0].amount).toEqual(new BigNumber(1000));
       expect((result as any).stakingResources).toBeUndefined();
     });
 

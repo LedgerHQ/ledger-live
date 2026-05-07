@@ -1,4 +1,5 @@
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
 import type {
   StakingPosition,
   StakingPositionRaw,
@@ -23,7 +24,7 @@ function fromStakingPositionRaw(r: StakingPositionRaw): StakingPosition {
     ...(r.delegate && { delegate: r.delegate }),
     state: r.state,
     asset: { type: "native" },
-    amount: BigInt(r.amount),
+    amount: new BigNumber(r.amount),
   };
 }
 

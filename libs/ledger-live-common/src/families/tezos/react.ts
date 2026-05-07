@@ -69,7 +69,7 @@ export function useStakingPositions(account: AccountLike): StakingPosition[] {
         delegate: delegation.address,
         state: "active" as const,
         asset: { type: "native" as const },
-        amount: BigInt(account.balance.toString()),
+        amount: account.balance,
       },
     ];
   }, [account, delegation]);
