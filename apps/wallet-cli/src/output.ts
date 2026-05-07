@@ -143,7 +143,7 @@ class HumanCommandOutput implements CommandOutput {
 
   spin(text: string): Spinner | null {
     if (!isInteractive()) {
-      process.stderr.write(text + "\n");
+      writeStderr(text + "\n");
       return null;
     }
     const s = spinner(text);
@@ -197,7 +197,7 @@ class HumanCommandOutput implements CommandOutput {
     if (isInteractive() && this._activeSpin) {
       this._activeSpin.error(displayText);
     } else {
-      process.stderr.write(displayText + "\n");
+      writeStderr(displayText + "\n");
     }
     this._activeSpin = null;
     process.exit(err.exitCode);
@@ -321,9 +321,9 @@ class HumanCommandOutput implements CommandOutput {
       return;
     }
 
-    process.stderr.write(message + "\n");
+    writeStderr(message + "\n");
     for (const e of errors) {
-      process.stderr.write(this._renderSwapProviderError(e) + "\n");
+      writeStderr(this._renderSwapProviderError(e) + "\n");
     }
   }
 
@@ -363,7 +363,7 @@ class HumanCommandOutput implements CommandOutput {
         this.spin(text);
       }
     } else {
-      process.stderr.write(text + "\n");
+      writeStderr(text + "\n");
     }
   }
   swapExecuteProgress(line: string): void {
@@ -372,7 +372,7 @@ class HumanCommandOutput implements CommandOutput {
       this._activeSpin = null;
       return;
     }
-    process.stderr.write(`${line}\n`);
+    writeStderr(`${line}\n`);
   }
 
   swapExecutePayloadResult(args: {
