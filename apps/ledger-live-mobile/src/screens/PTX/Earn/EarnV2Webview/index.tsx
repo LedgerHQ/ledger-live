@@ -3,7 +3,7 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { Flex } from "@ledgerhq/native-ui";
-import React, { ComponentProps, Fragment, useRef, useCallback, useMemo } from "react";
+import React, { ComponentProps, Fragment, useRef, useCallback } from "react";
 import { Animated, StyleSheet, View } from "react-native";
 import type WebView from "react-native-webview";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
