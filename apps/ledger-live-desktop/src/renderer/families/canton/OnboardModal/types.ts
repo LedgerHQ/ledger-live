@@ -31,7 +31,6 @@ export type StepProps = {
   error: Error | null;
   isReonboarding?: boolean;
   onAddAccounts: () => void;
-  onAddMore: () => void;
   onOnboardAccount: () => void;
   onRetryOnboardAccount: () => void;
   transitionTo: (stepId: StepId) => void;
@@ -39,7 +38,7 @@ export type StepProps = {
 
 // Props passed to OnboardModal from parent (e.g., modal data).
 export type UserProps = {
-  currency: CryptoCurrency | null;
+  currency: CryptoCurrency;
   editedNames: { [accountId: string]: string };
   selectedAccounts: Account[];
   isReonboarding?: boolean;

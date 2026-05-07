@@ -256,6 +256,25 @@ describe("RtkCryptoAssetsStore", () => {
       expect(result).toEqual(mockToken);
     });
 
+    it("should call initiate with token_identifier when provided", async () => {
+      mockDispatch.mockResolvedValue({ data: undefined });
+      await store.findTokenByAddressInCurrency("EGLD-123", "elrond", "MYTOKEN-abc123");
+      expect(mockApi.endpoints.findTokenByAddressInCurrency.initiate).toHaveBeenCalledWith({
+        contract_address: "EGLD-123",
+        network: "elrond",
+        token_identifier: "MYTOKEN-abc123",
+      });
+    });
+
+    it("should call initiate without token_identifier when not provided", async () => {
+      mockDispatch.mockResolvedValue({ data: undefined });
+      await store.findTokenByAddressInCurrency("0xABC", "ethereum");
+      expect(mockApi.endpoints.findTokenByAddressInCurrency.initiate).toHaveBeenCalledWith({
+        contract_address: "0xABC",
+        network: "ethereum",
+      });
+    });
+
     it("should return data when getTokensSyncHash succeeds", async () => {
       const mockHash = "abc123def456";
       mockDispatch.mockResolvedValue({ data: mockHash });

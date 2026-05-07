@@ -1,5 +1,5 @@
 import { MAX_MEMO_LENGTH } from "@ledgerhq/coin-concordium/constants";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/concordium/types";
 import { Account } from "@ledgerhq/types-live";
 import MemoTagField from "LLD/features/MemoTag/components/MemoTagField";
@@ -23,7 +23,7 @@ const MemoField = ({
   trackProperties = {},
   autoFocus,
 }: Props) => {
-  const bridge = getAccountBridge(account);
+  const bridge = useAccountBridge<Transaction>(account);
 
   const onMemoChange = useCallback(
     (memo: string) => {

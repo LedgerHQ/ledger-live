@@ -34,4 +34,11 @@ describe("broadcast", () => {
     } as { signedOperation: SignedOperation });
     expect(patchOperationSpy).toHaveBeenCalledWith({}, "hash");
   });
+
+  it("throws when broadcastTransaction returns no hash", async () => {
+    (broadcastLogic as jest.Mock).mockResolvedValueOnce("");
+    await expect(
+      broadcast({ signedOperation } as { signedOperation: SignedOperation }),
+    ).rejects.toThrow("mina: broadcast returned no transaction id");
+  });
 });

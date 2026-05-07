@@ -532,7 +532,7 @@ export function useDappLogic({
                 }),
               );
 
-              const bridge = getAccountBridge(currentAccount, undefined);
+              const bridge = await getAccountBridge(currentAccount, undefined);
               const mainAccount = getMainAccount(currentAccount, undefined);
 
               let optimisticOperation: Operation = signedTransaction.operation;

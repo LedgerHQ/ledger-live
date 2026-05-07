@@ -1,6 +1,7 @@
 import { CurrencyNotSupported } from "@ledgerhq/errors";
 import type {
   AccountModule,
+  AlpacaSigner,
   CoinModuleLoader,
   DeviceTransactionConfigFn,
   FamilySetup,
@@ -100,6 +101,9 @@ export const loadClearAccountForFamily = (
 
 export const loadValidateAddressForFamily = (family: string): ValidateAddressFn | undefined =>
   loaders.get(family)?.loadValidateAddress?.();
+
+export const loadSignerForFamily = (family: string): AlpacaSigner | undefined =>
+  loaders.get(family)?.loadSigner?.();
 
 export const loadIsEditableOperationForFamily = (
   family: string,

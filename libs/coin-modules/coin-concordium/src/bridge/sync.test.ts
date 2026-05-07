@@ -190,7 +190,7 @@ describe("getAccountShape", () => {
     const result = await getAccountShape({
       currency,
       derivationMode: "",
-      derivationPath: "44'/919'/404'/404'/0'",
+      derivationPath: "44'/1'/0'/0'/0'/0'",
       index: 0,
       rest: { publicKey: PUBLIC_KEY },
     });
@@ -212,7 +212,7 @@ describe("getAccountShape", () => {
     const result = await getAccountShape({
       currency,
       derivationMode: "",
-      derivationPath: "44'/919'/404'/404'/0'",
+      derivationPath: "44'/1'/0'/0'/0'/0'",
       index: 0,
       rest: { publicKey: PUBLIC_KEY },
     });
@@ -227,7 +227,7 @@ describe("getAccountShape", () => {
     const result = await getAccountShape({
       currency,
       derivationMode: "",
-      derivationPath: "44'/919'/404'/404'/0'",
+      derivationPath: "44'/1'/0'/0'/0'/0'",
       index: 0,
       rest: { publicKey: PUBLIC_KEY },
     });
@@ -242,7 +242,7 @@ describe("getAccountShape", () => {
     const result = await getAccountShape({
       currency,
       derivationMode: "",
-      derivationPath: "44'/919'/404'/404'/0'",
+      derivationPath: "44'/1'/0'/0'/0'/0'",
       index: 0,
       rest: { publicKey: PUBLIC_KEY },
     });
@@ -262,7 +262,7 @@ describe("getAccountShape", () => {
       getAccountShape({
         currency,
         derivationMode: "",
-        derivationPath: "44'/919'/404'/404'/0'",
+        derivationPath: "44'/1'/0'/0'/0'/0'",
         index: 0,
         rest: { publicKey: PUBLIC_KEY },
       }),
@@ -285,7 +285,7 @@ describe("getAccountShape", () => {
     await getAccountShape({
       currency,
       derivationMode: "",
-      derivationPath: "44'/919'/404'/404'/0'",
+      derivationPath: "44'/1'/0'/0'/0'/0'",
       index: 0,
       initialAccount,
     });
@@ -299,13 +299,13 @@ describe("getAccountShape", () => {
     const result = await getAccountShape({
       currency,
       derivationMode: "concordium",
-      derivationPath: "44'/919'/404'/404'/5'",
+      derivationPath: "44'/1'/0'/0'/0'/5'",
       index: 5,
       rest: { publicKey: PUBLIC_KEY },
     });
 
     expect(result.derivationMode).toBe("concordium");
-    expect(result.derivationPath).toBe("44'/919'/404'/404'/5'");
+    expect(result.derivationPath).toBe("44'/1'/0'/0'/0'/5'");
     expect(result.index).toBe(5);
   });
 
@@ -325,7 +325,7 @@ describe("getAccountShape", () => {
     const result = await getAccountShape({
       currency,
       derivationMode: "",
-      derivationPath: "44'/919'/404'/404'/0'",
+      derivationPath: "44'/1'/0'/0'/0'/0'",
       index: 0,
       initialAccount,
       rest: { publicKey: PUBLIC_KEY },
@@ -353,7 +353,7 @@ describe("getAccountShape", () => {
     await getAccountShape({
       currency,
       derivationMode: "",
-      derivationPath: "44'/919'/404'/404'/0'",
+      derivationPath: "44'/1'/0'/0'/0'/0'",
       index: 0,
       initialAccount,
     });

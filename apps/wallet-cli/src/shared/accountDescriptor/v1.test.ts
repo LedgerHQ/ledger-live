@@ -23,9 +23,7 @@ const ETH_V1: AccountDescriptorV1 = {
 
 describe("serializeV1", () => {
   it("serializes a utxo descriptor", () => {
-    expect(serializeV1(UTXO_V1)).toBe(
-      `account:1:utxo:bitcoin:main:${XPUB}:m/84h/0h/0h`,
-    );
+    expect(serializeV1(UTXO_V1)).toBe(`account:1:utxo:bitcoin:main:${XPUB}:m/84h/0h/0h`);
   });
 
   it("serializes an address descriptor", () => {
@@ -87,32 +85,22 @@ describe("parseV1", () => {
   });
 
   it("throws on too few segments", () => {
-    expect(() => parseV1("account:1:utxo:bitcoin:main")).toThrow(
-      /expected at least 7/,
-    );
+    expect(() => parseV1("account:1:utxo:bitcoin:main")).toThrow(/expected at least 7/);
   });
 
   it("throws on wrong purpose", () => {
-    expect(() =>
-      parseV1(`wallet:1:utxo:bitcoin:main:${XPUB}:m/84h/0h/0h`),
-    ).toThrow(/purpose/);
+    expect(() => parseV1(`wallet:1:utxo:bitcoin:main:${XPUB}:m/84h/0h/0h`)).toThrow(/purpose/);
   });
 
   it("throws on wrong version", () => {
-    expect(() =>
-      parseV1(`account:2:utxo:bitcoin:main:${XPUB}:m/84h/0h/0h`),
-    ).toThrow(/version/);
+    expect(() => parseV1(`account:2:utxo:bitcoin:main:${XPUB}:m/84h/0h/0h`)).toThrow(/version/);
   });
 
   it("throws on unknown type", () => {
-    expect(() =>
-      parseV1(`account:1:xpub:bitcoin:main:${XPUB}:m/84h/0h/0h`),
-    ).toThrow(/type/i);
+    expect(() => parseV1(`account:1:xpub:bitcoin:main:${XPUB}:m/84h/0h/0h`)).toThrow(/type/i);
   });
 
   it("throws when utxo path has non-hardened segments", () => {
-    expect(() =>
-      parseV1(`account:1:utxo:bitcoin:main:${XPUB}:m/84h/0h/0`),
-    ).toThrow();
+    expect(() => parseV1(`account:1:utxo:bitcoin:main:${XPUB}:m/84h/0h/0`)).toThrow();
   });
 });

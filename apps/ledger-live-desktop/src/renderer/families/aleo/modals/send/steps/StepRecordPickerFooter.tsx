@@ -22,7 +22,7 @@ const StepRecordPickerFooter = ({
   const isPrivateWithoutRecord =
     transaction?.family === "aleo" &&
     isPrivateTransaction(transaction) &&
-    !transaction.properties?.amountRecordCommitment;
+    (transaction.properties?.amountRecordCommitments ?? []).length === 0;
   const hasRecordError = !!status.errors.amountRecord || !!status.errors.feeRecord;
 
   return (

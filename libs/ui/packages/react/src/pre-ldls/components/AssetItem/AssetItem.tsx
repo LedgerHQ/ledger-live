@@ -99,7 +99,7 @@ export const AssetItem = ({
 }: AssetItemProps) => {
   return (
     <Wrapper onClick={() => onClick({ name, ticker, id })}>
-      <CryptoIcon size="48px" ledgerId={id} ticker={ticker} />
+      <CryptoIcon size={48} ledgerId={id} ticker={ticker} />
       <InfoWrapper>
         <Text
           data-testid={`asset-item-name-${name}`}

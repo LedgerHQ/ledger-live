@@ -6,6 +6,7 @@ import { createMainConfig } from "./rspack.main";
 import { createPreloaderConfig } from "./rspack.preloader";
 import { createWebviewPreloaderConfig } from "./rspack.webviewPreloader";
 import { createWebviewDappPreloaderConfig } from "./rspack.webviewDappPreloader";
+import { createZcashUtilityConfig } from "./rspack.zcashUtility";
 import { lldRoot } from "./utils";
 import path from "path";
 
@@ -69,6 +70,7 @@ export function createMainWatchers(options: DevServerOptions): Promise<Watching[
     createPreloaderConfig("development", argv),
     createWebviewPreloaderConfig("development", argv),
     createWebviewDappPreloaderConfig("development", argv),
+    createZcashUtilityConfig("development", argv),
   ];
 
   const watchers = configs.map(config => {

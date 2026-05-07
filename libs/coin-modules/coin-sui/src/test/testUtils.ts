@@ -39,3 +39,28 @@ export async function extractCoinTypeFromUnsignedTx(
 
   return coinTypes;
 }
+
+/**
+ * Fetches a live SUI coin owned by dead address to use as gas payment in
+ * integration tests that assert "sender does not own gas" failures.
+ */
+export async function fetchForeignOwnedSuiGasPayment(client: SuiJsonRpcClient) {
+  const { data } = await client.getCoins({
+    owner: "0x000000000000000000000000000000000000000000000000000000000000dead",
+    coinType: "0x2::sui::SUI",
+    limit: 1,
+  });
+  const coin = data[0];
+  if (!coin) {
+    throw new Error(
+      "sui integ: no SUI coin returned for burn address; cannot build foreign-owned gas fixture",
+    );
+  }
+  return [
+    {
+      objectId: coin.coinObjectId,
+      version: coin.version,
+      digest: coin.digest,
+    },
+  ];
+}

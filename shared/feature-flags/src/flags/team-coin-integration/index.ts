@@ -1,4 +1,5 @@
 export * from "./addressPoisoningOperationsFilter";
+export * from "./concordiumVerifyAddress";
 export * from "./currencyAdi";
 export * from "./currencyAleo";
 export * from "./currencyAleoTestnet";
@@ -97,8 +98,10 @@ export * from "./evmNativeStaking";
 export * from "./fetchAdditionalCoins";
 export * from "./lldHideSmallValueTokenOperations";
 export * from "./lldMemoTag";
+export * from "./lldTezosStaking";
 export * from "./lldWebviewManifestDomainCheck";
 export * from "./llmMemoTag";
+export * from "./llmTezosStaking";
 export * from "./llmWebviewManifestDomainCheck";
 export * from "./newSendFlow";
 export * from "./web3hub";

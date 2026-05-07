@@ -5,6 +5,7 @@ import reducer, {
   analyticsConsentInfoSelector,
   lastConnectedDeviceSelector,
   lastSeenDeviceSelector,
+  productTourCompletedSelector,
   resolvedThemeSelector,
   themeSelector,
   trackingEnabledSelector,
@@ -13,7 +14,12 @@ import reducer, {
 } from "./settings";
 import { State, Theme, SettingsState } from "./types";
 import { aDeviceInfoBuilder } from "@ledgerhq/live-common/mock/fixtures/aDeviceInfo";
-import { importSettings, setAnalyticsConsentInfo, setTheme } from "../actions/settings";
+import {
+  importSettings,
+  setAnalyticsConsentInfo,
+  setProductTourCompleted,
+  setTheme,
+} from "../actions/settings";
 import { SettingsActionTypes } from "../actions/types";
 const invalidDeviceModelIds = ["nanoFTS", undefined, "whatever"];
 const validDeviceModelIds: DeviceModelId[] = Object.values(DeviceModelId);
@@ -408,6 +414,7 @@ describe("filterValidSettings", () => {
       language: "fr",
       locale: "fr-FR",
       hideEmptyTokenAccounts: true,
+      productTourCompleted: true,
     };
 
     const filtered = filterValidSettings(importedSettings);
@@ -561,5 +568,30 @@ describe("SETTINGS_IMPORT action", () => {
     expect(newState.locale).toBe("de-DE");
     expect(newState.hideEmptyTokenAccounts).toBe(false);
     expect("oldField" in newState).toBe(false);
+  });
+
+  it("should import productTourCompleted when present in payload", () => {
+    const action = importSettings({ productTourCompleted: true });
+    const newState = reducer(SETTINGS_INITIAL_STATE, action);
+    expect(newState.productTourCompleted).toBe(true);
+  });
+});
+
+describe("productTourCompleted setting", () => {
+  it("defaults to false in initial state", () => {
+    expect(SETTINGS_INITIAL_STATE.productTourCompleted).toBe(false);
+  });
+
+  it("updates via setProductTourCompleted and exposes via selector", () => {
+    const after = reducer(SETTINGS_INITIAL_STATE, setProductTourCompleted(true));
+    expect(after.productTourCompleted).toBe(true);
+    const state = stateWithSettings({ productTourCompleted: true });
+    expect(productTourCompletedSelector(state)).toBe(true);
+  });
+
+  it("can be cleared after being set", () => {
+    const afterTrue = reducer(SETTINGS_INITIAL_STATE, setProductTourCompleted(true));
+    const afterFalse = reducer(afterTrue, setProductTourCompleted(false));
+    expect(afterFalse.productTourCompleted).toBe(false);
   });
 });

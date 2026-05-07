@@ -56,6 +56,7 @@ export async function runInlineAddAccountTest(
     it(`Inline Add Account [${account.currency.speculosApp.name}]`, async () => {
       if (isWallet40) {
         await app.mainNavigation.tapWallet40Tab("earn");
+        await earnReady;
         await app.earnDashboard.verifyEarnByStackingButton();
       } else {
         await app.transferMenuDrawer.open();

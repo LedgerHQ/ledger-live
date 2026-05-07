@@ -42,11 +42,6 @@ const transactionsAmountInvalid = [
     expectedErrorMessage: "Sorry, insufficient funds",
     xrayTicket: "B2CQA-2572",
   },
-  {
-    transaction: new Transaction(Account.HEDERA_1, Account.HEDERA_2, "100000", undefined, "noTag"),
-    expectedErrorMessage: "Sorry, insufficient funds",
-    xrayTicket: "B2CQA-4281",
-  },
 ];
 
 const transactionsAddressInvalid = [
@@ -168,7 +163,7 @@ const transactionE2E = [
   {
     transaction: new Transaction(Account.POL_1, Account.POL_2, "0.001", Fee.SLOW),
     xrayTicket: "B2CQA-2807",
-    bugTicket: "LIVE-28070",
+    bugTickets: ["LIVE-28070"],
   },
   {
     transaction: new Transaction(Account.DOGE_1, Account.DOGE_2, "0.01", Fee.SLOW),
@@ -197,7 +192,7 @@ const transactionE2E = [
   {
     transaction: new Transaction(Account.XLM_1, Account.XLM_2, "0.0001", undefined, "noTag"),
     xrayTicket: "B2CQA-2813",
-    bugTicket: "LIVE-24214",
+    bugTickets: ["LIVE-24214", "LIVE-29554"],
   },
   {
     transaction: new Transaction(Account.ATOM_1, Account.ATOM_2, "0.00001", undefined, "noTag"),
@@ -239,7 +234,7 @@ const transactionE2E = [
   {
     transaction: new Transaction(Account.BASE_1, Account.BASE_2, "0.000001"),
     xrayTicket: "B2CQA-4225",
-    bugTicket: "LIVE-28070",
+    bugTickets: ["LIVE-28070"],
   },
   {
     transaction: new Transaction(Account.VET_1, Account.VET_2, "0.1"),
@@ -299,8 +294,8 @@ test.describe("Send flows", () => {
         },
         async ({ app }) => {
           await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-          if (transaction.bugTicket) {
-            await addBugLink([transaction.bugTicket]);
+          if (transaction.bugTickets) {
+            await addBugLink(transaction.bugTickets);
           }
 
           await app.mainNavigation.openTargetFromMainNavigation("accounts");
@@ -468,7 +463,7 @@ test.describe("Send flows", () => {
           transaction.transaction.accountToCredit.address =
             transaction.transaction.accountToCredit === Account.ETH_2_LOWER_CASE
               ? (transaction.transaction.accountToCredit.address ?? "").toLowerCase()
-              : (transaction.transaction.accountToCredit.address ?? "");
+              : transaction.transaction.accountToCredit.address ?? "";
 
           await app.send.fillRecipientInfo(transaction.transaction);
           await app.send.checkInputWarningMessage(transaction.expectedWarningMessage);
@@ -614,5 +609,69 @@ test.describe("Send flows", () => {
         delete process.env.DISABLE_TRANSACTION_BROADCAST;
       }
     });
+  });
+
+  // TODO: LIVE-30321 - Until app-concordium 5.6.0 is released, the test is skipped as it requires a specific app version
+  // with the Concordium testnet support.
+  test.describe.skip("Send Concordium (Testnet)", () => {
+    const ccdTx = new Transaction(Account.CCD_TESTNET_1, Account.CCD_TESTNET_2, "50", undefined);
+
+    test.use({
+      teamOwner: Team.COIN_INTEGRATION,
+      userdata: "skip-onboarding-with-last-seen-device",
+      speculosApp: ccdTx.accountToDebit.currency.speculosApp,
+      cliCommands: [
+        async (userdataPath?: string) => {
+          // CCD-specific: liveData needs --currency concordium_testnet (not the
+          // speculos app name "Concordium"); recipient resolves via wallet-proxy.
+          await liveDataCommand(ccdTx.accountToDebit, {
+            currency: ccdTx.accountToDebit.currency.id,
+          })(userdataPath);
+          const recipientAddress = await getAccountAddress(ccdTx.accountToCredit);
+          ccdTx.accountToCredit.address = recipientAddress;
+          ccdTx.recipientAddress = recipientAddress;
+          return recipientAddress;
+        },
+      ],
+      featureFlags: {
+        currencyConcordiumTestnet: { enabled: true },
+        analyticsOptIn: { enabled: true, params: { policyVersion: 1, consentValidityDays: 365 } },
+      },
+    });
+
+    const family = getFamilyByCurrencyId(ccdTx.accountToDebit.currency.id);
+
+    test(
+      `Send from ${ccdTx.accountToDebit.accountName} to ${ccdTx.accountToCredit.accountName}`,
+      {
+        tag: [
+          "@NanoSP",
+          "@NanoX",
+          "@Stax",
+          "@Flex",
+          "@NanoGen5",
+          `@${ccdTx.accountToDebit.currency.id}`,
+          ...(family ? [`@family-${family}`] : []),
+        ],
+        annotation: { type: "TMS", description: "B2CQA-2949" },
+      },
+      async ({ app }) => {
+        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+        await app.mainNavigation.openTargetFromMainNavigation("accounts");
+        await app.accounts.navigateToAccountByName(ccdTx.accountToDebit.accountName);
+
+        await app.account.clickSend();
+        await app.send.craftTx(ccdTx);
+        await app.send.continueAmountModal();
+        await app.send.expectTxInfoValidity(ccdTx);
+        await app.send.clickContinueToDevice();
+
+        await app.speculos.signSendTransaction(ccdTx);
+        await app.send.expectTxSent();
+        await app.account.navigateToViewDetails();
+        await app.sendDrawer.addressValueIsVisible(ccdTx.accountToCredit.address);
+      },
+    );
   });
 });

@@ -2,14 +2,29 @@ import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { WalletAdapter } from "../wallet";
-import { parseAccountDescriptor, resolveAccountArg } from "../wallet/models";
 import { TransactionIntentSchema } from "../wallet/intents";
-import { WALLET_CLI_DMK_DEVICE_ID } from "../device/register-dmk-transport";
-import { withCurrencyDeviceSession } from "../session/bridge-device-session";
+import type { AccountDescriptor } from "../wallet/models";
+import {
+  WALLET_CLI_DMK_DEVICE_ID,
+  getWalletCliDeviceModelId,
+} from "../device/register-dmk-transport";
+import { WalletCliDeviceError } from "../device/wallet-cli-device-error";
+import {
+  getManagerAppNameForCurrencyId,
+  withCurrencyDeviceSession,
+} from "../session/bridge-device-session";
 import { networkStringFromCurrencyId } from "../shared/accountDescriptor";
 import { colors } from "../shared/ui";
 import { createCommandOutput } from "../output";
-import { accountOption, outputOption } from "./shared-options";
+import { runObservable } from "./run-observable";
+import {
+  accountOption,
+  deviceTimeoutOption,
+  outputOption,
+  resolveAccountArg,
+  resolveAccountDescriptor,
+  resolveOutputFormat,
+} from "./inputs";
 
 type SendFlags = {
   account?: string;
@@ -23,7 +38,7 @@ type SendFlags = {
   memo?: string;
   data?: string;
   "dry-run": boolean;
-  output: "human" | "json";
+  output?: "human" | "json";
 };
 
 type IntentBuilder = (flags: SendFlags) => unknown;
@@ -52,6 +67,81 @@ const INTENT_BUILDERS: Record<string, IntentBuilder> = {
     memo: flags.memo,
   }),
 };
+
+function buildIntentData(currencyId: string, flags: SendFlags) {
+  const { family } = getCryptoCurrencyById(currencyId);
+  const builder = INTENT_BUILDERS[family];
+  if (!builder) {
+    throw new Error(
+      `Unsupported family: ${family}. Supported: ${Object.keys(INTENT_BUILDERS).join(", ")}`,
+    );
+  }
+  return builder(flags);
+}
+
+async function runDryRunSend(
+  wallet: WalletAdapter,
+  descriptor: AccountDescriptor,
+  intent: ReturnType<typeof TransactionIntentSchema.parse>,
+  out: ReturnType<typeof createCommandOutput>,
+): Promise<void> {
+  const spin = out.spin("Preparing transaction (dry run)…");
+  const prepared = await wallet.prepareSend(descriptor, intent);
+  spin?.success("Dry run complete (transaction not broadcasted)");
+  out.sendDryRun(prepared);
+}
+
+type RunLiveSendParams = {
+  wallet: WalletAdapter;
+  descriptor: AccountDescriptor;
+  intent: ReturnType<typeof TransactionIntentSchema.parse>;
+  managerAppName: string;
+  deviceTimeoutMs: number | undefined;
+  out: ReturnType<typeof createCommandOutput>;
+};
+
+async function runLiveSend({
+  wallet,
+  descriptor,
+  intent,
+  managerAppName,
+  deviceTimeoutMs,
+  out,
+}: RunLiveSendParams): Promise<void> {
+  out.spin(`Connect device and open ${colors.bold(managerAppName)} app…`);
+  await withCurrencyDeviceSession(
+    descriptor.currencyId,
+    async () => {
+      out.spin(`Preparing ${colors.bold(managerAppName)} transaction…`);
+
+      const deviceModelId = await getWalletCliDeviceModelId();
+      if (deviceModelId === undefined) {
+        throw new Error(
+          "Could not determine device model from the active session. Disconnect and reconnect the device.",
+        );
+      }
+
+      await runObservable({
+        source$: wallet.send(descriptor, intent, {
+          deviceId: WALLET_CLI_DMK_DEVICE_ID,
+          deviceModelId,
+        }),
+        onNext: event => out.sendEvent(event),
+        mapError: error =>
+          WalletCliDeviceError.fromKnownDeviceError(error, {
+            expectedApp: managerAppName,
+            rejectedContext: "sign",
+          }) ?? error,
+      });
+
+      out.sendComplete();
+    },
+    {
+      deviceTimeoutMs,
+      onStateChange: state => out.deviceState(state),
+    },
+  );
+}
 
 export default defineCommand({
   name: "send",
@@ -91,7 +181,10 @@ export default defineCommand({
     data: option(
       z
         .string()
-        .regex(/^0x([0-9a-fA-F]{2})*$/, "data must be 0x-prefixed hex with an even number of digits")
+        .regex(
+          /^0x([0-9a-fA-F]{2})*$/,
+          "data must be 0x-prefixed hex with an even number of digits",
+        )
         .optional(),
       {
         description: "EVM calldata as 0x-prefixed hex (e.g. 0xd0e30db0)",
@@ -102,51 +195,40 @@ export default defineCommand({
       argumentKind: "flag",
     }),
     output: outputOption,
+    "device-timeout": deviceTimeoutOption,
   },
   handler: async ({ flags, positional }) => {
-    const descriptor = parseAccountDescriptor(resolveAccountArg(flags.account, positional));
-    const network = networkStringFromCurrencyId(descriptor.currencyId);
+    const ctx = { command: "send", network: "", account: "" };
+    const output = resolveOutputFormat(flags.output);
     const wallet = new WalletAdapter();
     const dryRun = flags["dry-run"];
-    const out = createCommandOutput(flags.output, { command: "send", network, account: descriptor.id });
-
-    // Build the TransactionIntent based on the currency family
-    const { family } = getCryptoCurrencyById(descriptor.currencyId);
-    const builder = INTENT_BUILDERS[family];
-    if (!builder) {
-      throw new Error(
-        `Unsupported family: ${family}. Supported: ${Object.keys(INTENT_BUILDERS).join(", ")}`,
-      );
-    }
-    const intentData = builder(flags as SendFlags);
+    const out = createCommandOutput(output, ctx);
 
     await out.run(async () => {
+      const descriptor = await resolveAccountDescriptor(
+        resolveAccountArg(flags.account, positional),
+      );
+      ctx.network = networkStringFromCurrencyId(descriptor.currencyId);
+      ctx.account = descriptor.id;
+      const managerAppName = getManagerAppNameForCurrencyId(descriptor.currencyId);
+
+      // Build the TransactionIntent based on the currency family
+      const intentData = buildIntentData(descriptor.currencyId, flags as SendFlags);
+
       // Intent schema parse may throw (ZodError) — out.run catches it in json mode
       const intent = TransactionIntentSchema.parse(intentData);
 
       if (dryRun) {
-        const spin = out.spin("Preparing transaction (dry run)…");
-        const prepared = await wallet.prepareSend(descriptor, intent);
-        spin?.clear();
-        out.sendDryRun(prepared);
-        spin?.success("Dry run complete (transaction not broadcasted)");
+        await runDryRunSend(wallet, descriptor, intent, out);
         return;
       }
-
-      const spin = out.spin(`Connect device and open ${colors.bold(descriptor.currencyId)} app…`);
-      await withCurrencyDeviceSession(descriptor.currencyId, async () => {
-        spin?.success("Device session established");
-        out.spin(`Preparing ${colors.bold(descriptor.currencyId)} transaction…`);
-
-        await new Promise<void>((resolve, reject) => {
-          wallet.send(descriptor, intent, WALLET_CLI_DMK_DEVICE_ID, dryRun).subscribe({
-            next: event => out.sendEvent(event),
-            error: (e: unknown) => reject(e),
-            complete: resolve,
-          });
-        });
-
-        out.sendComplete();
+      await runLiveSend({
+        wallet,
+        descriptor,
+        intent,
+        managerAppName,
+        deviceTimeoutMs: flags["device-timeout"],
+        out,
       });
     });
   },

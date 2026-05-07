@@ -1,4 +1,4 @@
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getGasLimit } from "@ledgerhq/coin-evm/utils";
@@ -51,7 +51,7 @@ const Evm1559CustomFees = ({
 
   // Creating a new transaction to simulate the bridge status response before updating
   // the original transaction
-  const bridge = getAccountBridge(account);
+  const bridge = useAccountBridge<EvmTransactionEIP1559>(account);
 
   const { transaction, setTransaction, status } = useBridgeTransaction<EvmTransactionEIP1559>(
     () => ({

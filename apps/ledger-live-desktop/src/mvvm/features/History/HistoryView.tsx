@@ -2,7 +2,7 @@ import React from "react";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import HistoryPageHeader from "./components/HistoryPageHeader";
 import { HistoryList } from "./screens/HistoryList";
-import type { HistoryViewModel } from "./useHistoryViewModel";
+import type { HistoryViewModel } from "./hooks/useHistoryViewModel";
 
 export function HistoryView({
   navigateToDashboard,
@@ -16,7 +16,7 @@ export function HistoryView({
   hasPendingOperations,
 }: Readonly<HistoryViewModel>) {
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-24">
+    <div className="flex min-h-0 flex-1 flex-col gap-24" data-testid="history-page">
       <TrackPage
         category="OperationList"
         operationsCount={operationsCount}

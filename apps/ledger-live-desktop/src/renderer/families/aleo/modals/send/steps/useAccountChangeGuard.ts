@@ -13,7 +13,7 @@ import type { StepProps } from "~/renderer/modals/Send/types";
  * Background: `useBridgeTransaction.setAccount` calls `bridge.createTransaction()` (which returns
  * a default public tx with no `properties`), then shallow-patches the `mode` from the previous
  * transaction. This leaves TRANSFER_PRIVATE / CONVERT_PRIVATE_TO_PUBLIC without `properties`,
- * causing crashes on anything that reads `transaction.properties.amountRecordCommitment`.
+ * causing crashes on anything that reads `transaction.properties.amountRecordCommitments`.
  */
 export const useAccountChangeGuard = (
   onChangeAccount: StepProps["onChangeAccount"],

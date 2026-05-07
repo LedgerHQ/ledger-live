@@ -91,7 +91,7 @@ export function useBridgeRecipientValidation({
 
     try {
       const mainAccount = getMainAccount(account, parentAccount);
-      const bridge = getAccountBridge(account, parentAccount);
+      const bridge = await getAccountBridge(account, parentAccount);
 
       let transaction = bridge.createTransaction(mainAccount);
       transaction = bridge.updateTransaction(transaction, { recipient });

@@ -39,7 +39,11 @@ export const getProviderConfig = async (
   switch (exchangeType) {
     case ExchangeTypes.Fund:
     case ExchangeTypes.FundNg:
-      return getFundProvider(provider.toLowerCase());
+      return getFundProvider({
+        providerId: provider.toLowerCase(),
+        ledgerSignatureEnv,
+        partnerSignatureEnv,
+      });
 
     case ExchangeTypes.Sell:
     case ExchangeTypes.SellNg:

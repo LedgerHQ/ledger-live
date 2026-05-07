@@ -218,7 +218,7 @@ export function useSideBarViewModel(): SideBarViewModel {
   const handleOpenSendModal = useCallback(() => {
     maybeRedirectToAccounts();
     trackEntry("send");
-    openSendFlow();
+    openSendFlow({ source: "sidebar" });
   }, [maybeRedirectToAccounts, openSendFlow, trackEntry]);
 
   const handleOpenReceiveModal = useCallback(() => {

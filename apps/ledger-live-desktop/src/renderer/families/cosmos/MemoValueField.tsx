@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import invariant from "invariant";
 import {
   CosmosAccount,
@@ -21,7 +21,7 @@ const MemoValueField = ({
   autoFocus?: boolean;
 }) => {
   invariant(transaction.family === "cosmos", "MemoTypeField: cosmos family expected");
-  const bridge = getAccountBridge(account);
+  const bridge = useAccountBridge<Transaction>(account);
   const onMemoValueChange = useCallback(
     (memo: string) => {
       onChange(

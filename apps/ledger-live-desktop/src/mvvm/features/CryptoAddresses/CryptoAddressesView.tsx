@@ -37,8 +37,8 @@ export function CryptoAddressesView({
       <PageHeader title={t("cryptoAddresses.title")} />
       <div data-testid="crypto-page-content" className="flex min-h-0 flex-1 flex-col gap-16">
         <TableActionBar>
-          <TableActionBarLeading>
-            <div className="w-[400px] flex-auto pt-4">
+          <TableActionBarLeading className="flex-1 min-w-0">
+            <div className="w-full max-w-[400px] min-w-0 pt-4">
               <SearchInput
                 value={searchValue}
                 placeholder={t("cryptoAddresses.tableActions.searchAddress")}
@@ -46,7 +46,7 @@ export function CryptoAddressesView({
               />
             </div>
           </TableActionBarLeading>
-          <TableActionBarTrailing>
+          <TableActionBarTrailing className="shrink-0">
             <Button
               appearance="base"
               size="md"

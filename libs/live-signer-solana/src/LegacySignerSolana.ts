@@ -76,7 +76,7 @@ export class LegacySignerSolana implements SolanaSigner {
     tx: Buffer,
     resolution?: Resolution | undefined,
   ): Promise<SolanaSignature> {
-    if (resolution) {
+    if (resolution && !(resolution.delayed && !resolution.deviceModelId)) {
       if (!resolution.deviceModelId) {
         throw new Error("Resolution provided without a deviceModelId");
       }

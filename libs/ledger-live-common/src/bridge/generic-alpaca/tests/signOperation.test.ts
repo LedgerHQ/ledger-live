@@ -80,7 +80,7 @@ describe("genericSignOperation", () => {
       },
     });
 
-    expect(transactionToIntent).toHaveBeenCalledWith(account, transaction, undefined);
+    expect(transactionToIntent).toHaveBeenCalledWith(account, transaction, undefined, undefined);
     expect(mockSigner.signTransaction).toHaveBeenCalledWith("44'/144'/0'/0/0", "unsignedTx", {
       domain: "recipient.gen",
       address: "recipient-address",

@@ -1,16 +1,16 @@
 {
   "name": "@domain/entity-currency-unit",
-  "version": "0.1.0",
+  "version": "0.2.0-next.0",
   "private": true,
   "description": "Zod-first schema for the Unit value object",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "sideEffects": false,
   "scripts": {
-    "build": "tsc",
     "typecheck": "tsc --noEmit",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "zod": "catalog:"

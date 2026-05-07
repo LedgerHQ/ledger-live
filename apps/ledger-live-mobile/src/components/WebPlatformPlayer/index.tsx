@@ -5,7 +5,7 @@ import { useSelector } from "~/context/hooks";
 
 import { useNavigation } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
-import { CurrentAccountHistDB, safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
+import { CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
 import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
 
@@ -43,10 +43,8 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
   ]: CurrentAccountHistDB = useCurrentAccountHistDB();
 
   const handleHardwareBackPress = useCallback(() => {
-    const webview = safeGetRefValue(webviewAPIRef);
-
-    if (webviewState.canGoBack) {
-      webview.goBack();
+    if (webviewState.canGoBack && webviewAPIRef?.current) {
+      webviewAPIRef.current.goBack();
       return true; // prevent default behavior (native navigation)
     }
 

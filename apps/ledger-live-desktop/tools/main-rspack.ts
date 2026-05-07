@@ -13,6 +13,7 @@ import {
   createWebviewPreloaderConfig,
   createWebviewDappPreloaderConfig,
   createWorkerConfig,
+  createZcashUtilityConfig,
   startDev,
   lldRoot,
 } from "./rspack";
@@ -127,6 +128,7 @@ const build = async (argv: { port?: number }) => {
     { name: "webviewPreloader", config: createWebviewPreloaderConfig("production", argv) },
     { name: "webviewDappPreloader", config: createWebviewDappPreloaderConfig("production", argv) },
     { name: "workers", config: createWorkerConfig("production") },
+    { name: "zcashUtility", config: createZcashUtilityConfig("production", argv) },
   ];
 
   const results = await Promise.all(

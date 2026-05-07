@@ -1,7 +1,7 @@
 import { createFixtureOperation } from "../types/bridge.fixture";
 import { broadcast } from "./broadcast";
 
-const executeTransactionBlock = jest.fn();
+const executeTransactionBlock = jest.fn().mockResolvedValue({ digest: "test-digest-hash" });
 
 jest.mock("../network", () => {
   return {
@@ -11,6 +11,11 @@ jest.mock("../network", () => {
 });
 
 describe("broadcast", () => {
+  beforeEach(() => {
+    executeTransactionBlock.mockClear();
+    executeTransactionBlock.mockResolvedValue({ digest: "test-digest-hash" });
+  });
+
   it("calls explorer for broadcast operation", async () => {
     // WHEN
     await broadcast({

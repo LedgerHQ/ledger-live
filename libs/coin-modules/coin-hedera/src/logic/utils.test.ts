@@ -87,6 +87,7 @@ import {
   millisToSeconds,
   nanosToSeconds,
   secondsToNanos,
+  toTimestamp,
   createStakingRewardOperationHash,
 } from "./utils";
 
@@ -812,6 +813,22 @@ describe("logic utils", () => {
 
       expect(result.start.getMilliseconds()).toEqual(0);
       expect(result.end.getMilliseconds()).toEqual(0);
+    });
+  });
+
+  describe("toTimestamp", () => {
+    it("should parse seconds and nanos from consensus timestamp", () => {
+      const result = toTimestamp("1758733200.632122898");
+
+      expect(result.seconds.toString()).toBe("1758733200");
+      expect(result.nanos.toString()).toBe("632122898");
+    });
+
+    it("should support nanos shorter than 9 digits", () => {
+      const result = toTimestamp("1758733200.6");
+
+      expect(result.seconds.toString()).toBe("1758733200");
+      expect(result.nanos.toString()).toBe("600000000");
     });
   });
 

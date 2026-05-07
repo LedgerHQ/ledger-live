@@ -3,7 +3,7 @@ import { test } from "tests/fixtures/common";
 import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { EARN_V2_DESKTOP_FLAGS, useLocalEarnManifest } from "tests/utils/featureFlagUtils";
-import { addTmsLink } from "tests/utils/allureUtils";
+import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import earnLocalManifestJson from "tests/utils/earnLocalManifest.json";
@@ -13,10 +13,32 @@ import {
 } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import type { Application } from "tests/page";
+import type { OptionalFeatureMap } from "@ledgerhq/types-live";
 
 const EARN_LOCAL_MANIFEST: LiveAppManifest = earnLocalManifestJson as LiveAppManifest;
 
 const DEVICE_TAGS = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
+
+// TODO: sync Firebase environments and remove this override when final variant is chosen
+const FF_STAKE_PROGRAMS_MODAL: OptionalFeatureMap = {
+  stakePrograms: {
+    enabled: true,
+    params: {
+      list: ["ethereum", "cosmos"],
+      redirects: {
+        "ethereum/erc20/usd__coin": {
+          platform: "earn",
+          name: "Earn - Deposit",
+          queryParams: {
+            cryptoAssetId: "ethereum/erc20/usd__coin",
+            intent: "deposit",
+            deposit: "stablecoin",
+          },
+        },
+      },
+    },
+  },
+};
 
 function getTags(account: Account) {
   const family = getFamilyByCurrencyId(account.currency.id);
@@ -82,7 +104,10 @@ test.describe("Earn [v2]", () => {
       test.use({
         userdata: "skip-onboarding",
         speculosApp: account.currency.speculosApp,
-        featureFlags: EARN_V2_DESKTOP_FLAGS,
+        featureFlags: {
+          ...EARN_V2_DESKTOP_FLAGS,
+          ...FF_STAKE_PROGRAMS_MODAL,
+        },
         cliCommands: [liveDataCommand(account)],
       });
 
@@ -159,7 +184,10 @@ test.describe("Earn [v2]", () => {
     test.use({
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: account.currency.speculosApp,
-      featureFlags: EARN_V2_DESKTOP_FLAGS,
+      featureFlags: {
+        ...EARN_V2_DESKTOP_FLAGS,
+        ...FF_STAKE_PROGRAMS_MODAL,
+      },
     });
 
     test(
@@ -250,7 +278,10 @@ test.describe("Earn [v2]", () => {
       test.use({
         userdata: "skip-onboarding",
         speculosApp: account.currency.speculosApp,
-        featureFlags: EARN_V2_DESKTOP_FLAGS,
+        featureFlags: {
+          ...EARN_V2_DESKTOP_FLAGS,
+          ...FF_STAKE_PROGRAMS_MODAL,
+        },
         cliCommands: [liveDataWithAddressCommand(account)],
       });
 
@@ -285,6 +316,7 @@ test.describe("Earn [v2]", () => {
       speculosApp: account.currency.speculosApp,
       featureFlags: {
         ...EARN_V2_DESKTOP_FLAGS,
+        // TODO: sync Firebase environments and remove this override when final variant is chosen
         stakePrograms: {
           enabled: true,
           params: {
@@ -307,6 +339,7 @@ test.describe("Earn [v2]", () => {
       },
       async ({ app, page }) => {
         await navigateToEarn(app);
+        await addBugLink(["LIVE-29872"]);
         await app.earnV2Dashboard.verifyHotStartPage();
         await app.earnV2Dashboard.verifyPositionRowPresent(account.currency.ticker);
         await app.earnV2Dashboard.clickPositionRow(account.currency.ticker);

@@ -288,7 +288,7 @@ const envDefinitions = {
     desc: "Thorest API for VeChain",
   },
   ALEO_MAINNET_NODE_ENDPOINT: {
-    def: "https://aleo.coin.ledger-test.com",
+    def: "https://aleo.coin.ledger.com",
     parser: stringParser,
     desc: "Aleo mainnet node URL",
   },
@@ -298,7 +298,7 @@ const envDefinitions = {
     desc: "Aleo mainnet SDK URL",
   },
   ALEO_TESTNET_NODE_ENDPOINT: {
-    def: "https://aleo.coin.ledger-test.com",
+    def: "https://aleo.coin.ledger.com",
     parser: stringParser,
     desc: "Aleo testnet node URL",
   },
@@ -1027,6 +1027,11 @@ const envDefinitions = {
     def: false,
     parser: boolParser,
     desc: "Enable logs for drawers",
+  },
+  LW_ICONS_AVATARS_CDN_BASE_URL: {
+    def: "https://lw-icons.ledger.com/cdn/Avatars/v1/192x192",
+    parser: stringParser,
+    desc: "Base URL for Ledger Wallet icons CDN",
   },
   SANCTIONED_ADDRESSES_URL: {
     def: "https://compliance.ledger.com/all_sanctioned_addresses_without_ticker.json",

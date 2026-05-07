@@ -36,13 +36,19 @@ export const getAccountShape: GetAccountShape<Account> = async info => {
   const blockHeight = await getLastBlockHeight();
 
   // Merge new operations with the previously synced ones
-  const newOperations = await getOperations(accountId, address, startAt);
+  const newOperations = await getOperations(accountId, address, startAt, blockHeight);
 
   //Get last token operations
   const vthoToken = await getCryptoAssetsStore().findTokenById("vechain/vip180/vtho");
   if (!vthoToken) throw new Error("VTHO token not found");
   const vthoAccountId = encodeTokenAccountId(accountId, vthoToken);
-  const vthoOperations = await getTokenOperations(vthoAccountId, address, VTHO_ADDRESS, 1); // from parameter must be 1 otherwise the response is empty
+  const vthoOperations = await getTokenOperations(
+    vthoAccountId,
+    address,
+    VTHO_ADDRESS,
+    1, // from parameter must be 1 otherwise the response is empty
+    blockHeight,
+  );
 
   const operations = mergeOps(oldOperations, newOperations);
 

@@ -151,7 +151,7 @@ export const cosmosConfig: CosmosConfig = {
     type: "object",
     default: {
       lcd: "https://api.mantrachain.io",
-      minGasPrice: 0.01,
+      minGasPrice: 40000000000,
       ledgerValidator: "mantravaloper13cyn4zgugjz7pta8s7wkrxqp4cdrp7ygeem3fq",
       status: {
         type: "active",
@@ -182,7 +182,7 @@ export const cosmosConfig: CosmosConfig = {
   config_currency_zenrock: {
     type: "object",
     default: {
-      lcd: "https://api.diamond.zenrocklabs.io",
+      lcd: "https://zenrock.api.m.stavr.tech",
       minGasPrice: 2.5,
       status: {
         type: "active",

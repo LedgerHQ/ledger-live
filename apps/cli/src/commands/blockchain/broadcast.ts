@@ -16,10 +16,14 @@ export default {
         inferSignedOperations(account, opts).pipe(
           concatMap(signedOperation =>
             from(
-              getAccountBridge(account).broadcast({
-                account,
-                signedOperation,
-              }),
+              Promise.resolve()
+                .then(() => getAccountBridge(account))
+                .then(bridge =>
+                  bridge.broadcast({
+                    account,
+                    signedOperation,
+                  }),
+                ),
             ),
           ),
         ),

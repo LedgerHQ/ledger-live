@@ -329,6 +329,7 @@ describe("ModularDialogFlowManager - Select Account Flow", () => {
       },
       true,
       true,
+      false,
     );
   });
 

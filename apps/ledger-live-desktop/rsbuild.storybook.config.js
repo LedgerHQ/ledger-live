@@ -79,6 +79,13 @@ module.exports = defineConfig({
         test: /\.mjs$/,
         type: "javascript/auto",
       });
+      config.module.rules.push({
+        test: /\.lottie$/,
+        type: "asset/resource",
+        generator: {
+          filename: "assets/[name]-[hash][ext]",
+        },
+      });
       if (config.entry && typeof config.entry === "object" && "main" in config.entry) {
         const mainEntry = config.entry.main;
         if (Array.isArray(mainEntry)) {

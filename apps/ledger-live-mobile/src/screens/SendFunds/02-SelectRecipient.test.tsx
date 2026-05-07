@@ -16,6 +16,9 @@ jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
   useScrollToTop: jest.fn(),
 }));
+jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
+  useAccountBridge: jest.fn().mockReturnValue({ updateTransaction: jest.fn() }),
+}));
 
 describe("SendSelectRecipient", () => {
   it.each([

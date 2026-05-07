@@ -23,7 +23,7 @@ describe("Verify Address warnings", () => {
     "@family-tron",
   ];
   tags.forEach(tag => $Tag(tag));
-  it(`Verify address warning for ${account.currency.name}`, async () => {
+  it(`Verify empty address warning for ${account.currency.name}`, async () => {
     await app.account.openViaDeeplink();
     await app.account.goToAccountByName(account.accountName);
     await app.account.tapReceive();

@@ -12,15 +12,24 @@ import { getERC20BalancesForAccountV2 } from "../network/utils";
 export async function getBalance(currency: CryptoCurrency, address: string): Promise<Balance[]> {
   try {
     const coinConfig = hederaCoinConfig.getCoinConfig(currency.id);
-    const [mirrorAccount, mirrorTokens, mirrorNodes, erc20TokenBalances] = await Promise.all([
-      apiClient.getAccount(address),
+    // Fetch only the specific staked node (or nothing at all for non-staking
+    // accounts) instead of paginating the full /network/nodes list. The
+    // validator lookup is chained on the account promise so it still runs
+    // concurrently with the token fetches.
+    const mirrorAccountPromise = apiClient.getAccount(address);
+    const validatorPromise = mirrorAccountPromise.then(account =>
+      typeof account.staked_node_id === "number" && account.staked_node_id >= 0
+        ? apiClient.getNode(account.staked_node_id)
+        : null,
+    );
+    const [mirrorAccount, mirrorTokens, erc20TokenBalances, validator] = await Promise.all([
+      mirrorAccountPromise,
       apiClient.getAccountTokens(address),
-      apiClient.getNodes({ fetchAllPages: true }),
       coinConfig.useHgraphForErc20 ? getERC20BalancesForAccountV2(address) : Promise.resolve([]),
+      validatorPromise,
     ]);
 
     const mixedTokens = [...mirrorTokens, ...erc20TokenBalances];
-    const validator = mirrorNodes.nodes.find(v => v.node_id === mirrorAccount.staked_node_id);
 
     const nativeBalance: Balance = {
       asset: { type: "native" },

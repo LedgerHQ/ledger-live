@@ -36,6 +36,7 @@ const targets = [
   "ReceiveConfirmationPostAlert",
   "ReceiveConfirmationTokenAlert",
   "ConnectDevice",
+  "VerifyAddress",
   "NoAssociatedAccounts",
   "EditOperationPanel",
   "MemoTagInput",

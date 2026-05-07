@@ -1,7 +1,9 @@
 export {
   broadcastTransaction,
   fetchAccount,
+  fetchAllLedgerOperations,
   fetchAllOperations,
+  fetchLedgerRecord,
   fetchOperations,
   fetchBaseFee,
   fetchSequence,
@@ -10,4 +12,5 @@ export {
   getLastBlock,
   getRecipientAccount,
   loadAccount,
+  registerHorizonInterceptors,
 } from "./horizon";

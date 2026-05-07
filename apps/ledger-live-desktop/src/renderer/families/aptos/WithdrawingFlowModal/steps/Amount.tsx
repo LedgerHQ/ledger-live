@@ -2,9 +2,9 @@ import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation, Trans } from "react-i18next";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { StepProps } from "../types";
-import { AptosMappedStakingPosition } from "@ledgerhq/live-common/families/aptos/types";
+import { AptosMappedStakingPosition, Transaction } from "@ledgerhq/live-common/families/aptos/types";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -20,7 +20,7 @@ export default function StepAmount({
   error,
 }: Readonly<StepProps>) {
   const [available, setAvailable] = useState(transaction.amount);
-  const bridge = getAccountBridge(account);
+  const bridge = useAccountBridge<Transaction>(account);
 
   const updateValidator = useCallback(
     ({ address, amount }: { address: string; amount: BigNumber }) => {

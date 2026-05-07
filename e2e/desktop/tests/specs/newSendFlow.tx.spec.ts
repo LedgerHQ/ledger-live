@@ -3,7 +3,7 @@ import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
 import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
-import { addTmsLink } from "tests/utils/allureUtils";
+import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { liveDataWithRecipientAddressCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
@@ -72,6 +72,7 @@ const transactionsNewSendFlow = [
   {
     transaction: new Transaction(Account.XLM_1, Account.XLM_2, "0.0001", undefined, "noTag"),
     xrayTicket: "B2CQA-2813",
+    bugTicket: "LIVE-29554",
   },
   {
     transaction: new Transaction(Account.XRP_1, Account.XRP_2, "0.0001", undefined, "noTag"),
@@ -138,6 +139,9 @@ test.describe("New Send Flow", () => {
           const requiresMemoStep = family ? MEMO_STEP_FAMILIES.has(family) : false;
 
           await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+          if (entry.bugTicket) {
+            await addBugLink([entry.bugTicket]);
+          }
 
           await app.mainNavigation.openTargetFromMainNavigation("accounts");
           await app.accounts.navigateToAccountByName(tx.accountToDebit.accountName);

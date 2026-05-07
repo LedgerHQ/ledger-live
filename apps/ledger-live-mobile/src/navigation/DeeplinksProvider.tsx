@@ -1,6 +1,6 @@
 import React, { useMemo, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "~/context/hooks";
-import { Platform, Linking, View, StyleSheet } from "react-native";
+import { Linking, View, StyleSheet } from "react-native";
 import {
   getStateFromPath,
   LinkingOptions,
@@ -48,7 +48,6 @@ import {
 } from "./deeplinks/validation";
 import { handleWallet40Deeplink } from "./deeplinks/handleWallet40Deeplink";
 import { handleMarketBannerDeeplink } from "./deeplinks/handleMarketBannerDeeplink";
-import { AppLoadingManager } from "LLM/features/LaunchScreen";
 import { SplashScreenHandle } from "LLM/features/LaunchScreen/SplashScreenHandle";
 import { useDeeplinkDrawerCleanup } from "./deeplinks/useDeeplinkDrawerCleanup";
 
@@ -421,6 +420,14 @@ export const DeeplinksProvider = ({
                           },
                         },
                       }),
+                      /**
+                       * ie: "ledgerlive://perps" -> will redirect to the perps page
+                       */
+                      [NavigatorName.Perps]: {
+                        screens: {
+                          [ScreenName.PerpsTab]: "perps",
+                        },
+                      },
                       [NavigatorName.Main]: {
                         initialRouteName: ScreenName.Portfolio,
                         screens: {
@@ -506,6 +513,14 @@ export const DeeplinksProvider = ({
                                   },
                                 },
                               }),
+                          [NavigatorName.Borrow]: {
+                            screens: {
+                              /**
+                               * ie: "ledgerlive://borrow" will open the borrow screen
+                               */
+                              [ScreenName.Borrow]: "borrow",
+                            },
+                          },
                           [NavigatorName.MyLedger]: {
                             screens: {
                               /**
@@ -556,9 +571,10 @@ export const DeeplinksProvider = ({
                            * @params ?sourceScreenName: string
                            * ie: "ledgerlive://crypto-addresses" will open the crypto addresses screen.
                            */
-                          ...(shouldDisplayWallet40MainNav && shouldDisplayAssetSection && {
-                            [ScreenName.CryptoAddresses]: "crypto-addresses",
-                          }),
+                          ...(shouldDisplayWallet40MainNav &&
+                            shouldDisplayAssetSection && {
+                              [ScreenName.CryptoAddresses]: "crypto-addresses",
+                            }),
                         },
                       },
                     },
@@ -888,17 +904,9 @@ export const DeeplinksProvider = ({
     [],
   );
 
-  const animSplash = useFeature("llmAnimatedSplashScreen");
-  const showAnimatedSplashScreen = useRef(
-    (animSplash?.enabled && animSplash.params?.[Platform.OS]) ?? true,
-  );
-  const SplashScreenComponent = useRef(
-    showAnimatedSplashScreen.current ? AppLoadingManager : SplashScreenHandle,
-  );
-
   return (
     <View style={styles.appBackground}>
-      <SplashScreenComponent.current
+      <SplashScreenHandle
         isNavigationReady={isReady && isNavigationContainerReady}
         onAppReady={handleStartComplete}
       >
@@ -915,7 +923,7 @@ export const DeeplinksProvider = ({
             {children}
           </NavigationContainer>
         ) : null}
-      </SplashScreenComponent.current>
+      </SplashScreenHandle>
     </View>
   );
 };

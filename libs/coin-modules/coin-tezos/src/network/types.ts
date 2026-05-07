@@ -77,11 +77,22 @@ export function isAPIRevealType(op: APIOperation): op is APIRevealType {
   return op.type === "reveal";
 }
 
-export type APIStakingType = CommonOperationType & {
+export type APIStakingType = Omit<CommonOperationType, "block"> & {
   type: "staking";
-  kind: "stake" | "unstake" | "finalize";
+  action: "stake" | "unstake" | "finalize";
   amount: number;
+  requestedAmount?: number;
+  counter: number;
   sender: { address: string } | undefined | null;
+  staker?: { address: string } | undefined | null;
+  baker?: { address: string; alias?: string } | undefined | null;
+  stakingUpdatesCount?: number;
+  /**
+   * `/accounts/{addr}/operations` returns the full block object inline
+   * (with `.hash` and other fields); `/operations/staking` returns the
+   * hash as a plain string. Consumers must narrow before reading `.hash`.
+   */
+  block?: string | APIBlock;
 };
 export function isAPIStakingType(op: APIOperation): op is APIStakingType {
   return op.type === "staking";
@@ -94,6 +105,10 @@ export type AccountsGetOperationsOptions = {
   sort?: "Descending" | "Ascending";
   // the minimum height of the block the operation is in
   "level.ge": number;
+  /** Exclusive upper bound on block level (pagination window). */
+  "level.lt"?: number;
+  /** Exclusive lower bound on block level (pagination window). */
+  "level.gt"?: number;
 };
 
 export type APIOperation =
@@ -167,10 +182,15 @@ export type APIBlock = {
 };
 
 export type TokenTransfersGetOptions = {
-  lastId?: number;
   limit?: number;
   sort?: "Descending" | "Ascending";
   "level.ge"?: number;
+  "level.lt"?: number;
+  "level.gt"?: number;
+  /** Exclusive upper bound on transfer id (TzKT `id.lt`). Used for intra-level pagination when sort is Descending. */
+  "id.lt"?: number;
+  /** Exclusive lower bound on transfer id (TzKT `id.gt`). Used for intra-level pagination when sort is Ascending. */
+  "id.gt"?: number;
 };
 
 /**
@@ -206,6 +226,7 @@ export type APITokenTransfer = {
    * Undefined for implicit/protocol-level transfers.
    */
   transactionId?: number;
+  originationId?: number;
 };
 
 /**

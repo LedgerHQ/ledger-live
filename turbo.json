@@ -124,6 +124,9 @@
       "dependsOn": ["^build"],
       "outputs": ["dist/**", "lib/**", "lib-es/**", "build/**"]
     },
+    "check-export-rules": {
+      "cache": false
+    },
     "lint": {
       "env": ["CI_OS"]
     },

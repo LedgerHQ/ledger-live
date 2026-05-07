@@ -3,6 +3,7 @@ import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { Account, AccountBridge, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import bs58 from "bs58";
 import { Observable } from "rxjs";
 import { buildVersionedTransaction } from "./logic/craftTransaction";
 import { ChainAPI } from "./network";
@@ -24,7 +25,28 @@ import type {
   Transaction,
   TransferCommand,
 } from "./types";
-import { assertUnreachable } from "./utils";
+import {
+  assertUnreachable,
+  DUMMY_SIGNATURE,
+  ZERO_FILLED_DUMMY_SIGNATURE,
+  endpointByCurrencyId,
+} from "./utils";
+import { BlockhashWithExpiryBlockHeight } from "@solana/web3.js";
+
+function transactionHasNonPlaceholderSignatures(
+  signatures: ReadonlyArray<Uint8Array | Buffer>,
+): boolean {
+  if (signatures.length === 0) {
+    return false;
+  }
+  for (const sig of signatures) {
+    const sigBuf = Buffer.from(sig);
+    if (!sigBuf.equals(ZERO_FILLED_DUMMY_SIGNATURE) && !sigBuf.equals(DUMMY_SIGNATURE)) {
+      return true;
+    }
+  }
+  return false;
+}
 
 const buildOptimisticOperation = (account: Account, transaction: Transaction): SolanaOperation => {
   if (transaction.model.commandDescriptor === undefined) {
@@ -115,26 +137,39 @@ export const buildSignOperation =
           type: "device-signature-requested",
         });
 
+        const hasRealSignatures = transactionHasNonPlaceholderSignatures(tx.signatures);
+
+        let overrideRecentBlockhash: BlockhashWithExpiryBlockHeight | undefined;
+
         const { signature } = await signerContext(deviceId, signer =>
-          signer.signTransaction(
-            account.freshAddressPath,
-            Buffer.from(tx.message.serialize()),
-            getResolution(transaction, deviceModelId, certificateSignatureKind),
-          ),
+          signer.signTransaction(account.freshAddressPath, Buffer.from(tx.message.serialize()), {
+            ...getResolution(transaction, deviceModelId, certificateSignatureKind),
+            solanaRPCURL: endpointByCurrencyId(account.currency.id),
+            ...(!hasRealSignatures
+              ? {
+                  delayed: true,
+                  fetchBlockhash: async () => {
+                    const getLatestBlockhash = await api.getLatestBlockhash("confirmed");
+                    overrideRecentBlockhash = getLatestBlockhash;
+                    return bs58.decode(getLatestBlockhash.blockhash);
+                  },
+                }
+              : {}),
+          }),
         );
 
         subscriber.next({
           type: "device-signature-granted",
         });
 
-        const signedTx = signOnChainTransaction(signature);
+        const signedTx = signOnChainTransaction(signature, overrideRecentBlockhash ?? undefined);
         subscriber.next({
           type: "signed",
           signedOperation: {
             operation: buildOptimisticOperation(account, transaction),
             signature: Buffer.from(signedTx.serialize()).toString("hex"),
             rawData: {
-              recentBlockhash,
+              recentBlockhash: overrideRecentBlockhash ?? recentBlockhash,
             },
           },
         });

@@ -81,6 +81,20 @@ export interface HederaMirrorTransactionsResponse {
   };
 }
 
+export interface HederaMirrorBlock {
+  timestamp: {
+    from: string;
+    to: string | null;
+  };
+}
+
+export interface HederaMirrorBlocksResponse {
+  blocks: HederaMirrorBlock[];
+  links: {
+    next: string | null;
+  };
+}
+
 export interface HederaMirrorNetworkFees {
   fees: {
     gas: number;

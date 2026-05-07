@@ -5,6 +5,12 @@ import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 
+const mockFindCryptoCurrencyById = jest.fn();
+
+jest.mock("@ledgerhq/cryptoassets", () => ({
+  findCryptoCurrencyById: (...args: unknown[]) => mockFindCryptoCurrencyById(...args),
+}));
+
 jest.mock("@ledgerhq/live-countervalues/logic", () => ({
   calculate: jest.fn((_state, { value }: { value: number }) => value * 2),
 }));
@@ -36,13 +42,27 @@ describe("buildAssetDistribution", () => {
   const ethMainnet = makeCurrency("ethereum", "Ethereum");
   const ethArbitrum = makeCurrency("arbitrum", "Arbitrum");
   const ethBase = makeCurrency("base", "Base");
+  const ethOptimism = makeCurrency("optimism", "Optimism");
   const btcCurrency = makeCurrency("bitcoin", "Bitcoin");
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockFindCryptoCurrencyById.mockImplementation((id: string) => {
+      if (id === "ethereum") return ethMainnet;
+      return undefined;
+    });
+  });
 
   const assetsData: AssetsDataLike = {
     cryptoAssets: {
       "urn:crypto:meta-currency:ethereum": {
         id: "urn:crypto:meta-currency:ethereum",
-        assetsIds: { ethereum: "ethereum", arbitrum: "arbitrum", base: "base" },
+        assetsIds: {
+          ethereum: "ethereum",
+          arbitrum: "arbitrum",
+          base: "base",
+          optimism: "optimism",
+        },
       },
       "urn:crypto:meta-currency:bitcoin": {
         id: "urn:crypto:meta-currency:bitcoin",
@@ -52,11 +72,15 @@ describe("buildAssetDistribution", () => {
     markets: {
       ethereum: { id: "ethereum" },
       bitcoin: { id: "bitcoin" },
+      optimism: { id: "optimism" },
     },
   };
 
-  const distribute = (accounts: Account[], opts?: BuildAssetDistributionOpts) =>
-    buildAssetDistribution(accounts, cvState, usd, assetsData, opts);
+  const distribute = (
+    accounts: Account[],
+    opts?: BuildAssetDistributionOpts,
+    data: AssetsDataLike = assetsData,
+  ) => buildAssetDistribution(accounts, cvState, usd, data, opts);
 
   it("should group ETH across multiple networks into a single item", () => {
     const result = distribute([
@@ -68,6 +92,7 @@ describe("buildAssetDistribution", () => {
     expect(result.isAvailable).toBe(true);
     expect(result.list).toHaveLength(1);
     expect(result.list[0].metaCurrencyId).toBe("urn:crypto:meta-currency:ethereum");
+    expect(result.list[0].currency.id).toBe("ethereum");
     expect(result.list[0].amount).toBe(1800);
     expect(result.list[0].accounts).toHaveLength(3);
   });
@@ -96,7 +121,39 @@ describe("buildAssetDistribution", () => {
     const result = distribute([makeAccount("arb-1", ethArbitrum, 500)]);
 
     expect(result.list[0].metaCurrencyId).toBe("urn:crypto:meta-currency:ethereum");
+    expect(result.list[0].currency.id).toBe("ethereum");
     expect(result.list[0].marketId).toBe("ethereum");
+  });
+
+  it("should canonicalize Base and Optimism-only ETH groups to Ethereum", () => {
+    const partialEthereumAssetsData: AssetsDataLike = {
+      cryptoAssets: {
+        ...assetsData.cryptoAssets,
+        "urn:crypto:meta-currency:ethereum": {
+          id: "urn:crypto:meta-currency:ethereum",
+          assetsIds: { base: "base", optimism: "optimism" },
+        },
+      },
+      markets: {
+        base: { id: "base" },
+        optimism: { id: "optimism" },
+      },
+    };
+
+    const result = distribute(
+      [makeAccount("base-1", ethBase, 300), makeAccount("op-1", ethOptimism, 200)],
+      undefined,
+      partialEthereumAssetsData,
+    );
+
+    expect(result.list).toHaveLength(1);
+    expect(result.list[0].metaCurrencyId).toBe("urn:crypto:meta-currency:ethereum");
+    expect(result.list[0].currency.id).toBe("ethereum");
+    expect(result.list[0].marketId).toBe("ethereum");
+    expect(result.list[0].networks?.map(network => network.currency.id)).toEqual([
+      "base",
+      "optimism",
+    ]);
   });
 
   it("should build bySlug lookup", () => {

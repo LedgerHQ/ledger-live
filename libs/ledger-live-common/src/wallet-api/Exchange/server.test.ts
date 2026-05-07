@@ -91,7 +91,7 @@ jest.mock("@ledgerhq/wallet-api-core", () => ({
 }));
 
 jest.mock("../../bridge", () => ({
-  getAccountBridge: jest.fn(),
+  getAccountBridge: jest.fn().mockResolvedValue({}),
 }));
 
 describe("handlers", () => {
@@ -251,7 +251,7 @@ describe("handlers", () => {
       });
 
       const { getAccountBridge } = jest.requireMock("../../bridge");
-      getAccountBridge.mockReturnValue({
+      getAccountBridge.mockResolvedValue({
         createTransaction: jest.fn().mockReturnValue({ family: "bitcoin", recipient: "" }),
         updateTransaction: jest.fn().mockImplementation((tx: object, upd: object) => ({ ...tx, ...upd })),
       });

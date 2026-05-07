@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/bitcoin/types";
 import { Account } from "@ledgerhq/types-live";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
@@ -24,7 +24,7 @@ const InputRight = styled(Box).attrs(() => ({
 }))``;
 export const FeesField = ({ transaction, account, onChange, status }: Props) => {
   invariant(transaction.family === "bitcoin", "FeeField: bitcoin family expected");
-  const bridge = getAccountBridge(account);
+  const bridge = useAccountBridge<Transaction>(account);
   const { feePerByte, networkInfo } = transaction;
   const inputRef = useRef<HTMLInputElement | null>(null);
   const { units } = account.currency;

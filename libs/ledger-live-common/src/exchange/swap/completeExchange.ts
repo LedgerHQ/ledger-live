@@ -73,8 +73,8 @@ const completeExchange = (
 
         const refundAccount = getMainAccount(fromAccount, fromParentAccount);
         const payoutAccount = getMainAccount(toAccount, toParentAccount);
-        const accountBridge = getAccountBridge(refundAccount);
-        const payoutAccountBridge = getAccountBridge(payoutAccount);
+        const accountBridge = await getAccountBridge(refundAccount);
+        const payoutAccountBridge = await getAccountBridge(payoutAccount);
         const mainPayoutCurrency = getAccountCurrency(payoutAccount);
         const payoutCurrency = getAccountCurrency(toAccount);
         const refundCurrency = getAccountCurrency(fromAccount);

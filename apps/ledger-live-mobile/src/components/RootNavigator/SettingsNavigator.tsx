@@ -82,6 +82,7 @@ import { DebugStorageMigration } from "~/screens/Settings/Debug/Debugging/Storag
 import CustomCALRefInput from "~/screens/Settings/Developer/CustomCALRefInput";
 import ModularDrawerScreenDebug from "LLM/features/ModularDrawer/Debug";
 import WalletV4TourScreenDebug from "LLM/features/WalletV4Tour/Debug";
+import ProductTourScreenDebug from "LLM/features/ProductTour/Debug";
 import { UnmountOnBlur } from "./utils/UnmountOnBlur";
 
 const Stack = createNativeStackNavigator<SettingsNavigatorStackParamList>();
@@ -570,6 +571,13 @@ export default function SettingsNavigator() {
         component={WalletV4TourScreenDebug}
         options={{
           title: "Wallet V4 Tour",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugProductTour}
+        component={ProductTourScreenDebug}
+        options={{
+          title: "Product Tour",
         }}
       />
     </Stack.Navigator>

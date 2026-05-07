@@ -7,6 +7,7 @@ import {
   AddAccountRoute,
   BuyRoute,
   EarnRoute,
+  BorrowRoute,
   ManagerRoute,
   SwapRoute,
   BridgeRoute,
@@ -19,6 +20,7 @@ import {
   WalletConnectRoute,
   MarketRoute,
   AssetRoute,
+  PerpsRoute,
   RecoverRoute,
   RecoverRestoreFlowRoute,
   PostOnboardingRoute,
@@ -138,6 +140,15 @@ export function createRoute(parsed: ParsedDeeplink): DeeplinkRoute {
       return route;
     }
 
+    case "borrow": {
+      const route: BorrowRoute = {
+        type: "borrow",
+        path,
+        search,
+      };
+      return route;
+    }
+
     case "myledger": {
       const route: ManagerRoute = {
         type: "myledger",
@@ -247,6 +258,13 @@ export function createRoute(parsed: ParsedDeeplink): DeeplinkRoute {
       const route: AssetRoute = {
         type: "asset",
         path,
+      };
+      return route;
+    }
+
+    case "perps": {
+      const route: PerpsRoute = {
+        type: "perps",
       };
       return route;
     }

@@ -28,6 +28,10 @@ type Props = {
    * name should not override the "source".
    */
   refreshSource?: boolean;
+  /**
+   * When true, send the page event even if standard analytics tracking is disabled.
+   */
+  mandatory?: boolean;
   [key: string]: unknown;
 };
 
@@ -35,10 +39,16 @@ type Props = {
  * On mount, this component will track an event which will have the name
  * `Page ${category}${name ? " " + name : ""}`.
  */
-const TrackPage: React.FC<Props> = ({ category, name, refreshSource = true, ...properties }) => {
+const TrackPage: React.FC<Props> = ({
+  category,
+  name,
+  refreshSource = true,
+  mandatory = false,
+  ...properties
+}) => {
   useEffect(() => {
-    trackPage(category, name, properties, true, refreshSource);
-  }, [category, name, properties, refreshSource]);
+    trackPage(category, name, properties, true, refreshSource, mandatory);
+  }, [category, name, properties, refreshSource, mandatory]);
   return null;
 };
 

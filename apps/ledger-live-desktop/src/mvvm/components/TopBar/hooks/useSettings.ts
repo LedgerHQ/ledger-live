@@ -3,8 +3,9 @@ import { useNavigate, useLocation } from "react-router";
 import { useTranslation } from "react-i18next";
 import { Settings } from "@ledgerhq/lumen-ui-react/symbols";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { MY_WALLET_TRACKING_PAGE_NAME } from "LLD/features/MyWallet/constants";
 
-export type SettingsTrackingSource = "topbar" | "mywallet";
+export type SettingsTrackingSource = "topbar" | typeof MY_WALLET_TRACKING_PAGE_NAME;
 
 export const useSettings = (
   source: SettingsTrackingSource = "topbar",

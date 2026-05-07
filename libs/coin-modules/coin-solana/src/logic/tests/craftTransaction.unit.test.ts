@@ -708,6 +708,34 @@ describe("buildVersionedTransaction", () => {
     expect(spiedDeserialize).toHaveBeenCalledTimes(1);
     expect(spiedDeserialize).toHaveBeenCalledWith(Buffer.from(rawTransaction.raw!, "base64"));
   });
+
+  it("should set message recentBlockhash from the signing callback when a fresher blockhash is passed", async () => {
+    const expectedSolanaTransaction = createMockVersionedTransaction();
+    expectedSolanaTransaction.message.recentBlockhash = OLD_BLOCKHASH;
+    expectedSolanaTransaction.signatures = [VALID_SIGNATURE];
+
+    spiedDeserialize = setDeserialize(expectedSolanaTransaction);
+
+    const rawTransaction = transaction({ raw: "test" });
+    const [solanaTransaction, , addSignatureCallback] = await buildVersionedTransaction(
+      ADDRESS,
+      rawTransaction,
+      createMockChainApi(BLOCKHASH, LAST_VALID_BLOCK_HEIGHT),
+    );
+
+    expect(solanaTransaction.message.recentBlockhash).toBe(OLD_BLOCKHASH);
+
+    const fresher: BlockhashWithExpiryBlockHeight = {
+      blockhash: "9nQbnEqWiU9q9vcYf81hS7zDkk1klF6jS1MJr5LSrRRST",
+      lastValidBlockHeight: 9_999_999,
+    };
+
+    addSignatureCallback(SIGNATURE, fresher);
+
+    expect(solanaTransaction.message.recentBlockhash).toBe(fresher.blockhash);
+    expect(mockAddSignature).toHaveBeenCalledTimes(1);
+    expect(mockAddSignature).toHaveBeenCalledWith(new PublicKey(ADDRESS), SIGNATURE);
+  });
 });
 
 describe("buildInstructions edge cases", () => {

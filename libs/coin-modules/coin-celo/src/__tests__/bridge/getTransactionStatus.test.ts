@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import type { CeloValidatorGroup } from "../../types/types";
 import {
   accountFixture,
   accountWithTokenAccountFixture,
@@ -9,6 +10,14 @@ import {
   usdcTokenAccount,
 } from "../../bridge/fixtures";
 import getTransactionStatus from "../../bridge/getTransactionStatus";
+
+const mockGetCurrentCeloPreloadData = jest.fn(() => ({
+  validatorGroups: [] as CeloValidatorGroup[],
+}));
+
+jest.mock("../../bridge/preload", () => ({
+  getCurrentCeloPreloadData: () => mockGetCurrentCeloPreloadData(),
+}));
 
 jest.mock("../../network/sdk", () => {
   return {
@@ -494,5 +503,58 @@ describe("getTransactionStatus", () => {
     });
 
     expect(transactionStatus.errors["amount"]?.name).toEqual("NotEnoughBalance");
+  });
+
+  describe("vote mode - CeloGroupNotVotable", () => {
+    const voteAccount = {
+      ...accountFixture,
+      balance: BigNumber(10000000000000000),
+      spendableBalance: BigNumber(10000000000000000),
+      celoResources: {
+        ...accountFixture.celoResources,
+        nonvotingLockedBalance: BigNumber(100),
+      },
+    };
+    const voteTransaction = {
+      ...transactionFixture,
+      mode: "vote" as const,
+      recipient: "0x79D5A290D7ba4b99322d91b577589e8d0BF87072",
+      fees: BigNumber(2),
+      amount: BigNumber(50),
+    };
+
+    beforeEach(() => {
+      mockGetCurrentCeloPreloadData.mockReset();
+    });
+
+    it("should return CeloGroupNotVotable when recipient is not in the preload validator groups list", async () => {
+      mockGetCurrentCeloPreloadData.mockReturnValue({
+        validatorGroups: [{ address: "0xOtherGroup", name: "Other", votes: BigNumber(0) }],
+      });
+
+      const status = await getTransactionStatus(voteAccount, voteTransaction);
+
+      expect(status.errors["recipient"].name).toEqual("CeloGroupNotVotable");
+    });
+
+    it("should not return CeloGroupNotVotable when recipient is in the preload validator groups list", async () => {
+      mockGetCurrentCeloPreloadData.mockReturnValue({
+        validatorGroups: [
+          { address: voteTransaction.recipient, name: "Eligible Group", votes: BigNumber(0) },
+        ],
+      });
+
+      const status = await getTransactionStatus(voteAccount, voteTransaction);
+
+      expect(status.errors).not.toHaveProperty("recipient");
+    });
+
+    it("should not return CeloGroupNotVotable when preload list is empty (preload not yet run)", async () => {
+      mockGetCurrentCeloPreloadData.mockReturnValue({ validatorGroups: [] });
+
+      const status = await getTransactionStatus(voteAccount, voteTransaction);
+
+      expect(status.errors).not.toHaveProperty("recipient");
+    });
   });
 });

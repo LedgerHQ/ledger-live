@@ -3,7 +3,6 @@ import { activateLedgerSync } from "@ledgerhq/live-common/e2e/speculos";
 import { accountNames, accounts } from "tests/testdata/ledgerSyncTestData";
 import { Page } from "@playwright/test";
 import { Application } from "tests/page";
-import { DistantState as LiveData } from "@ledgerhq/live-wallet/walletsync/index";
 import { getEnv } from "@ledgerhq/live-env";
 import invariant from "invariant";
 interface LedgerKeyRingProtocolArgs {
@@ -176,8 +175,8 @@ export class LedgerSyncCliHelper {
   }
 
   static checkAccountDeletion(parsedData: any, accountId: string): any {
-    return (parsedData.updateEvent.data as LiveData).accounts?.find(
-      account => account.id === accountId,
+    return parsedData.updateEvent.data.accounts?.find(
+      (account: { id: string }) => account.id === accountId,
     );
   }
 
@@ -186,8 +185,7 @@ export class LedgerSyncCliHelper {
     accountId: string,
     expectedName: string,
   ): boolean {
-    return !!(parsedData.updateEvent.data as LiveData).accounts?.find(
-      account => account.id === accountId && accountNames[accountId] === expectedName,
-    );
+    const data = parsedData.updateEvent.data;
+    return data.accountNames?.[accountId] === expectedName;
   }
 }

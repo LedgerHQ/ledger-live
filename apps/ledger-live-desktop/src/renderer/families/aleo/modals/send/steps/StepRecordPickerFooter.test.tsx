@@ -25,12 +25,12 @@ const mockStatus: TransactionStatus = {
 
 const privateTransaction = makeAleoTransaction({
   mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
-  properties: { amountRecordCommitment: null, feeRecordCommitment: null },
+  properties: { amountRecordCommitments: [], feeRecordCommitment: null },
 });
 
 const privateTransactionWithRecord = makeAleoTransaction({
   mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
-  properties: { amountRecordCommitment: "some-commitment", feeRecordCommitment: null },
+  properties: { amountRecordCommitments: ["some-commitment"], feeRecordCommitment: null },
 });
 
 const defaultProps: StepProps = {

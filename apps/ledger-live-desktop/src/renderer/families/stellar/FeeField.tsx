@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import Box from "~/renderer/components/Box";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import Text from "~/renderer/components/Text";
@@ -27,12 +27,12 @@ const FeeField = ({
   invariant(transaction.family === "stellar", "FeeField: stellar family expected");
 
   const unit = useAccountUnit(account);
-  const bridge = getAccountBridge(account);
+  const bridge = useAccountBridge<Transaction>(account);
   const onFeeValueChange = useCallback(
     (fees: BigNumber) => {
       onChange(
         bridge.updateTransaction(transaction, {
-          customFees: { parameters: { fees: fees } },
+          customFees: { value: 0n, parameters: { fees } },
         }),
       );
     },

@@ -1,5 +1,13 @@
 # @ledgerhq/hw-transport-node-speculos-http
 
+## 6.36.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`d308b1a`](https://github.com/LedgerHQ/ledger-live/commit/d308b1a6b9c629839f051cf367a527f4232120c7)]:
+  - @ledgerhq/errors@6.35.0-next.0
+  - @ledgerhq/hw-transport@6.35.2-next.0
+
 ## 6.36.2
 
 ### Patch Changes

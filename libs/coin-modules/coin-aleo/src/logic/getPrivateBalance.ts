@@ -11,11 +11,15 @@ export async function getPrivateBalance({
   viewKey,
   privateRecords,
   oldUnspentRecords,
+  onProgress,
+  signal,
 }: {
   currency: CryptoCurrency;
   viewKey: string;
   privateRecords: AleoPrivateRecord[];
   oldUnspentRecords: AleoUnspentRecord[];
+  onProgress?: (completed: number, total: number) => void;
+  signal?: AbortSignal;
 }): Promise<{
   balance: BigNumber;
   unspentRecords: AleoUnspentRecord[];
@@ -25,31 +29,37 @@ export async function getPrivateBalance({
     record => record.program_name === PROGRAM_ID.CREDITS && !record.spent,
   );
 
+  let completed = 0;
   const decryptedResults = await promiseAllBatched(2, unspentCreditsRecords, async record => {
+    signal?.throwIfAborted();
     const cachedRecord = recordByCiphertext.get(record.record_ciphertext);
 
+    let result: { microcredits: string; unspentRecord: AleoUnspentRecord };
     if (cachedRecord) {
-      return {
+      result = {
         microcredits: cachedRecord.microcredits,
         unspentRecord: cachedRecord,
       };
+    } else {
+      const decryptedRecord = await sdkClient.decryptRecord({
+        currency,
+        viewKey,
+        ciphertext: record.record_ciphertext,
+      });
+      const microcredits = parseMicrocredits(decryptedRecord.data.microcredits);
+
+      result = {
+        microcredits,
+        unspentRecord: {
+          ...record,
+          microcredits,
+          decryptedData: decryptedRecord,
+        },
+      };
     }
 
-    const decryptedRecord = await sdkClient.decryptRecord({
-      currency,
-      viewKey,
-      ciphertext: record.record_ciphertext,
-    });
-    const microcredits = parseMicrocredits(decryptedRecord.data.microcredits);
-
-    return {
-      microcredits,
-      unspentRecord: {
-        ...record,
-        microcredits,
-        decryptedData: decryptedRecord,
-      },
-    };
+    onProgress?.(++completed, unspentCreditsRecords.length);
+    return result;
   });
 
   const balance = decryptedResults.reduce((acc, { microcredits }) => {

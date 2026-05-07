@@ -21,5 +21,26 @@ export const TRANSACTION_TYPE = {
 export const RECIPIENT_ARG_INDEX = 1;
 export const AMOUNT_ARG_INDEX = 2;
 
-// The maximum amount of records to fetch in a single API call when fetching owned records. This is not a limit on the total number of records that can be fetched, but rather a pagination parameter for the API calls.
+// The maximum amount of records to fetch in a single API call when fetching owned records.
+// This is not a limit on the total number of records that can be fetched, but rather a pagination parameter for the API calls.
 export const DEFAULT_RECORDS_PAGE_SIZE = 1000;
+
+/**
+ * Progress phase boundaries for private sync.
+ *
+ * Phase 1 (PROGRESS_AFTER_SCANNER):          0 → 30   — record scanner / fetch stage
+ * Phase 2 (PROGRESS_AFTER_LIST_OPS):        30 → 65   — listing / decoding private operations (35 pts)
+ * Phase 3 (PROGRESS_AFTER_PARSING_RECORDS): 65 → 95   — parsing records / computing private balance (30 pts)
+ * Done:                                        100
+ */
+export const PROGRESS_AFTER_SCANNER = 30;
+export const PROGRESS_AFTER_LIST_OPS = PROGRESS_AFTER_SCANNER + 35; // 65
+export const PROGRESS_AFTER_PARSING_RECORDS = 30; // 65 → 95
+export const PROGRESS_DONE = 100;
+export const PROGRESS_THROTTLE_MIN_STEP = 5;
+
+// The maximum number of private records that can be included in a single transaction.
+export const MAX_PRIVATE_RECORDS_PER_TRANSACTION = 14;
+
+// The estimated time in milliseconds it takes to sign a single record during transaction signing.
+export const SINGLE_CALL_SIGNING_TIME = 12500;
