@@ -150,6 +150,49 @@ describe("usePricePerformanceViewModel", () => {
     expect(result.current.athBlock.changeText).toBe("-");
   });
 
+  it("pairs 24h low and high fiat amounts when both are present", () => {
+    const { result } = renderHook(
+      () =>
+        usePricePerformanceViewModel(
+          buildCurrencyData({
+            data: createMockMarketCurrencyData({
+              price: 50_000,
+              ath: 69_000,
+              athDate: new Date("2021-11-10T00:00:00.000Z"),
+              atl: 67.81,
+              atlDate: new Date("2013-07-06T00:00:00.000Z"),
+              low24h: 49_000,
+              high24h: 51_000,
+            }),
+          }),
+        ),
+      hookOptions(),
+    );
+
+    expect(result.current.range24hRow.value).toMatch(/49/);
+    expect(result.current.range24hRow.value).toMatch(/51/);
+    expect(result.current.range24hRow.value).toContain(" / ");
+    expect(result.current.range24hRow.key).toBe("range_24h");
+  });
+
+  it("uses hyphen for 24h range when either bound is nullish", () => {
+    const { result } = renderHook(
+      () =>
+        usePricePerformanceViewModel(
+          buildCurrencyData({
+            data: createMockMarketCurrencyData({
+              // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- exercising nullish bounds in VM
+              low24h: null as unknown as number,
+              high24h: 51_000,
+            }),
+          }),
+        ),
+      hookOptions(),
+    );
+
+    expect(result.current.range24hRow.value).toBe("-");
+  });
+
   it("shows a skeleton while fetching without cached data", () => {
     const { result } = renderHook(
       () =>

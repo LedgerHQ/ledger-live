@@ -8831,6 +8831,7 @@
   },
   "assetDetails": {
     "totalBalance": "Total balance",
+    "marketPrice": "Market price",
     "addresses": "Addresses",
     "add": "Add",
     "notFound": "Asset distribution item not found.",
