@@ -110,7 +110,7 @@ const Earn = () => {
             ? JSON.stringify(stakeCurrenciesParam)
             : undefined,
           ethDepositCohort,
-          uiVersion: isLwd40Enabled ? computedUiVersion: "v1",
+          uiVersion: isLwd40Enabled ? computedUiVersion : "v1",
           lw40enabled: isLwd40Enabled ? "true" : "false",
         }}
       />
