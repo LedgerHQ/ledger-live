@@ -31,8 +31,10 @@ export const store = configureStore({
       )
       .concat(
         createFeatureFlagsMiddleware({
-          platform: Platform.OS === "ios" ? "ios" : "android",
-          appVersion: VersionNumber.appVersion ?? undefined,
+          resolutionConfig: {
+            platform: Platform.OS === "ios" ? "ios" : "android",
+            appVersion: VersionNumber.appVersion ?? undefined,
+          },
         }),
       ),
 

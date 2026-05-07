@@ -36,7 +36,6 @@ describe("FeatureFlagsStateSchema", () => {
   it("parses a valid state with overrides and resolved", () => {
     const input = {
       overrides: { mockFeature: { enabled: true } },
-      remote: {},
       resolved: { ...FEATURE_FLAGS_DEFAULTS, mockFeature: { enabled: true } },
       bannerVisible: false,
     };
@@ -46,7 +45,6 @@ describe("FeatureFlagsStateSchema", () => {
   it("parses state with empty overrides and default resolved", () => {
     const input = {
       overrides: {},
-      remote: {},
       resolved: FEATURE_FLAGS_DEFAULTS,
       bannerVisible: false,
     };
