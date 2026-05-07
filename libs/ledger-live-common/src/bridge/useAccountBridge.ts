@@ -26,3 +26,12 @@ export function useAccountBridge<T extends TransactionCommon>(
   );
   return use(promise);
 }
+
+// Null-safe variant: returns null when account is null.
+export function useAccountBridgeOrNull<T extends TransactionCommon>(
+  account: AccountLike | null,
+  parentAccount?: Account | null,
+): AccountBridge<T> | null {
+  if (!account) return null;
+  return getAccountBridge(account, parentAccount) as AccountBridge<T>;
+}
