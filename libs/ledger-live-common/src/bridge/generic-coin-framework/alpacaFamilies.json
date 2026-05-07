@@ -1,0 +1,7 @@
+{
+  "evm": true,
+  "xrp": true,
+  "stellar": true,
+  "tezos": true,
+  "solana": false
+}

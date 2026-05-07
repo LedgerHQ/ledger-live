@@ -16,16 +16,9 @@ import {
 } from "@ledgerhq/types-live";
 import { getAlpacaAccountBridge } from "./generic-coin-framework/accountBridge";
 import { getAlpacaCurrencyBridge } from "./generic-coin-framework/currencyBridge";
+import { isAlpacaizedFamily } from "./generic-coin-framework/alpacaFamilies";
 import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
 import { loadSetupForFamily, loadMockBridgeForFamily } from "../coin-modules/registry";
-
-const alpacaized = {
-  evm: true,
-  xrp: true,
-  stellar: true,
-  tezos: true,
-  solana: false, // TODO: Enable once solana is ready to be used in production
-};
 
 // Alpacaized currency bridges are created on demand; cache ensures referential stability.
 const currencyBridgeCache: Record<string, CurrencyBridge> = {};
@@ -57,7 +50,7 @@ export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
     });
   }
 
-  if (alpacaized[currency.family]) {
+  if (isAlpacaizedFamily(currency.family)) {
     if (!currencyBridgeCache[currency.family]) {
       currencyBridgeCache[currency.family] = getAlpacaCurrencyBridge(currency.family, "local");
     }
@@ -122,7 +115,7 @@ export function getAccountBridgeByFamily(family: string, accountId?: string): Ac
 
   if (!accountBridgeCache[family]) {
     let rawBridge: AccountBridge<any>;
-    if (alpacaized[family]) {
+    if (isAlpacaizedFamily(family)) {
       rawBridge = getAlpacaAccountBridge(family, "local");
     } else {
       const setup = loadSetupForFamily(family);

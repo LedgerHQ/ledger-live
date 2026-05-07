@@ -18,7 +18,7 @@ on:
         description: "Specify branch to checkout and test or leave blank to use the workflow branch"
         required: false
       test_filter:
-        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@bitcoin,@family-evm" or "addAccount deeplinks")
+        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@generic-alpaca,@solana", "@bitcoin,@family-evm" or "addAccount deeplinks")
         required: false
         type: string
       tests_type:
@@ -88,7 +88,7 @@ on:
         required: false
         type: string
       test_filter:
-        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@bitcoin,@family-evm" or "addAccount deeplinks")
+        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@generic-alpaca,@solana", "@bitcoin,@family-evm" or "addAccount deeplinks")
         required: false
         type: string
       tests_type:
@@ -200,6 +200,8 @@ jobs:
           sparse-checkout: |
             apps/ledger-live-mobile
             e2e/mobile
+            libs/ledger-live-common/src/bridge/generic-coin-framework/alpacaFamilies.json
+            scripts/resolve-e2e-test-filter.mjs
             .pnpmfile.cjs
             tools
             .mise/tasks
@@ -291,21 +293,20 @@ jobs:
       - name: Prepare test filter
         id: test-filter
         run: |
-          BASE_FILTER="${{ inputs.test_filter }}"
+          RESOLVED_FILTER="$(node scripts/resolve-e2e-test-filter.mjs \
+            --input "${{ inputs.test_filter }}" \
+            --smoke-tests "${{ inputs.smoke_tests }}" \
+            --check-dir "e2e/mobile/specs")"
+          echo "filter=$RESOLVED_FILTER" >> $GITHUB_OUTPUT
+        shell: bash
 
-          if [ -n "$BASE_FILTER" ]; then
-            BASE_FILTER="${BASE_FILTER//,/|}"
+      - name: Write resolved filter to GitHub Summary
+        run: |
+          FILTER_PATTERN="${{ steps.test-filter.outputs.filter }}"
+          if [ -z "$FILTER_PATTERN" ]; then
+            FILTER_PATTERN="(none)"
           fi
-
-          if [ "${{ inputs.smoke_tests }}" = "true" ]; then
-            if [ -n "$BASE_FILTER" ]; then
-              echo "filter=@smoke $BASE_FILTER" >> $GITHUB_OUTPUT
-            else
-              echo "filter=@smoke" >> $GITHUB_OUTPUT
-            fi
-          else
-            echo "filter=$BASE_FILTER" >> $GITHUB_OUTPUT
-          fi
+          echo "- **Resolved filtered pattern:** $FILTER_PATTERN" >> $GITHUB_STEP_SUMMARY
         shell: bash
 
       - name: Generate shards matrix and test files
