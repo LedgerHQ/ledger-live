@@ -13,4 +13,4 @@
 ## Validate Before Finishing
 
 - Before finishing any agentic code change, run static checks for the affected scope
-- See [/docs/dev/validate-before-finishing.md](/docs/dev/validate-before-finishing.md)
+- See [/docs/validate-before-finishing.md](/docs/validate-before-finishing.md)
