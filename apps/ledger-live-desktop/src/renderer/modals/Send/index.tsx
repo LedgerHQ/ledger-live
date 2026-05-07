@@ -32,7 +32,8 @@ const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
   const isModalLocked = MODAL_LOCKED[stepId];
   const dispatch = useDispatch();
 
-  const { isEnabledForFamily, getFamilyFromAccount } = useNewSendFlowFeature();
+  const { isEnabledForFamily, getFamilyFromAccount, getCurrencyIdFromAccount } =
+    useNewSendFlowFeature();
   const isOpened = useSelector((state: State) => isModalOpened(state, "MODAL_SEND"));
   const modalData = useSelector((state: State) => getModalData(state, "MODAL_SEND"));
 
@@ -40,7 +41,11 @@ const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
     modalData?.account ?? undefined,
     modalData?.parentAccount ?? null,
   );
-  const shouldRedirectToNewFlow = isEnabledForFamily(family);
+  const currencyId = getCurrencyIdFromAccount(
+    modalData?.account ?? undefined,
+    modalData?.parentAccount ?? null,
+  );
+  const shouldRedirectToNewFlow = isEnabledForFamily(family, currencyId);
 
   const handleModalClose = useCallback(() => {
     dispatch(

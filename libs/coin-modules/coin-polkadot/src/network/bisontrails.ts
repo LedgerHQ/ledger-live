@@ -74,6 +74,7 @@ const getOperationType = (
     case "transfer":
     case "transferAllowDeath":
     case "transferKeepAlive":
+    case "transferAll":
       return "OUT";
 
     case "bond":
@@ -203,7 +204,10 @@ const extrinsicToOperation = (
 ): PolkadotOperation | null => {
   let type = getOperationType(extrinsic.section, extrinsic.method);
 
-  if (type === "OUT" && extrinsic.affectedAddress1 === addr && extrinsic.signer !== addr) {
+  if (
+    (type === "OUT" && extrinsic.affectedAddress1 === addr && extrinsic.signer !== addr) ||
+    (extrinsic.method === "transferAll" && extrinsic.signer !== addr)
+  ) {
     type = "IN";
   }
 

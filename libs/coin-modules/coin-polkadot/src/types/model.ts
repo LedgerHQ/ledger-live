@@ -14,6 +14,7 @@ export type PolkadotOperationMode =
 export type PalletMethodName =
   | "transfer"
   | "transferAllowDeath"
+  | "transferAll"
   | "transferKeepAlive"
   | "bond"
   | "bondExtra"

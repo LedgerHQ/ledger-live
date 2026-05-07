@@ -1,20 +1,123 @@
 {
   "name": "@devtools/shell",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Ledger Live DevTools — cross-platform debug component",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "sideEffects": false,
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "format": "prettier --write 'src/**/*.{ts,tsx}' 'jest/**/*.{ts,tsx}'",
+    "typecheck": "tsc --noEmit",
+    "test": "pnpm run test:web && pnpm run test:native",
+    "test:native": "jest --config jest.native.config.js",
+    "test:web": "jest --config jest.config.js",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage"
+  },
+  "dependencies": {
+    "@shared/feature-flags": "workspace:^"
   },
   "peerDependencies": {
-    "react": ">=19"
+    "@ledgerhq/lumen-design-core": "catalog:",
+    "@ledgerhq/lumen-ui-react": "catalog:",
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "@radix-ui/react-checkbox": "catalog:",
+    "@radix-ui/react-dialog": "catalog:",
+    "@radix-ui/react-dropdown-menu": "catalog:",
+    "@radix-ui/react-slot": "catalog:",
+    "@radix-ui/react-switch": "catalog:",
+    "@radix-ui/react-tooltip": "catalog:",
+    "@tanstack/react-table": "catalog:",
+    "class-variance-authority": "catalog:",
+    "clsx": "catalog:",
+    "react": ">=19",
+    "react-native": "*",
+    "tailwind-merge": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "@ledgerhq/lumen-ui-rnative": {
+      "optional": true
+    },
+    "@ledgerhq/lumen-ui-react": {
+      "optional": true
+    },
+    "@radix-ui/react-checkbox": {
+      "optional": true
+    },
+    "@radix-ui/react-dialog": {
+      "optional": true
+    },
+    "@radix-ui/react-dropdown-menu": {
+      "optional": true
+    },
+    "@radix-ui/react-slot": {
+      "optional": true
+    },
+    "@radix-ui/react-switch": {
+      "optional": true
+    },
+    "@radix-ui/react-tooltip": {
+      "optional": true
+    },
+    "@tanstack/react-table": {
+      "optional": true
+    },
+    "class-variance-authority": {
+      "optional": true
+    },
+    "clsx": {
+      "optional": true
+    },
+    "react-native": {
+      "optional": true
+    },
+    "tailwind-merge": {
+      "optional": true
+    }
   },
   "devDependencies": {
+    "@babel/plugin-transform-export-namespace-from": "7.27.1",
+    "@jest/globals": "catalog:",
+    "@ledgerhq/lumen-design-core": "catalog:",
+    "@ledgerhq/lumen-ui-react": "catalog:",
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "@radix-ui/react-checkbox": "catalog:",
+    "@radix-ui/react-dialog": "catalog:",
+    "@radix-ui/react-dropdown-menu": "catalog:",
+    "@radix-ui/react-slot": "catalog:",
+    "@radix-ui/react-switch": "catalog:",
+    "@radix-ui/react-tooltip": "catalog:",
+    "@react-native/babel-preset": "catalog:",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@tanstack/react-table": "catalog:",
+    "@testing-library/dom": "catalog:",
+    "@testing-library/jest-dom": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@testing-library/react-native": "catalog:",
+    "@testing-library/user-event": "catalog:",
+    "@types/jest": "catalog:",
     "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "babel-jest": "catalog:",
+    "class-variance-authority": "catalog:",
+    "clsx": "catalog:",
+    "jest": "catalog:",
+    "jest-environment-jsdom": "catalog:",
     "react": "catalog:",
-    "typescript": "catalog:"
+    "react-dom": "catalog:",
+    "react-native": "catalog:",
+    "@gorhom/bottom-sheet": "catalog:",
+    "expo-haptics": "catalog:",
+    "i18next": "catalog:",
+    "react-native-reanimated": "catalog:",
+    "react-native-safe-area-context": "catalog:",
+    "react-native-svg": "catalog:",
+    "react-native-worklets": "catalog:",
+    "react-test-renderer": "catalog:",
+    "tailwind-merge": "catalog:",
+    "typescript": "catalog:",
+    "jest-sonar": "0.2.16"
   }
 }

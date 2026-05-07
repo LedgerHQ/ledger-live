@@ -79,6 +79,19 @@ env:
   ANDROID_TESTBINARY_PATH: apps/ledger-live-mobile/android/app/build/outputs/apk/androidTest/detox/app-detox-androidTest.apk
   IOS_JSBUNDLE_PATH: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app/main.jsbundle
   IOS_NATIVE_PATH: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
+  # Android AVD configuration (shared by determine-builds cache key + Detox Android job)
+  AVD_API: 36
+  AVD_ARCH: x86_64
+  AVD_PROFILE: pixel_9_pro
+  AVD_TARGET: google_apis
+  AVD_NAME: "Android_Emulator"
+  AVD_CORES: 4
+  AVD_RAM_SIZE: 5120
+  AVD_HEAP_SIZE: 1024
+  AVD_OPTIONS: -no-window -gpu swiftshader_indirect -accel on -no-audio -no-boot-anim -camera-back none -camera-front none -no-metrics
+  MOBILE_ARTIFACTS_ROOT: apps/ledger-live-mobile/artifacts
+  E2E_TEST_RESULTS_PREFIX_IOS: e2e-test-results-ios
+  E2E_TEST_RESULTS_PREFIX_ANDROID: e2e-test-results-android
 
 jobs:
   determine-builds:
@@ -98,6 +111,8 @@ jobs:
       pod_check_key: ${{ steps.cache-keys.outputs.pod_check_key }}
       matrix_ios: ${{ steps.generate-shards.outputs.matrix_ios }}
       matrix_android: ${{ steps.generate-shards.outputs.matrix_android }}
+      avd_cache_key: ${{ steps.cache-keys.outputs.avd_cache_key }}
+      avd_exists: ${{ steps.check-avd.outputs.cache-hit }}
       pod_lockfile_validated: ${{ steps.check-lockfile-status.outputs.cache-hit }}
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
@@ -110,6 +125,7 @@ jobs:
             pnpm-lock.yaml
             .pnpmfile.cjs
             tools
+            .mise/tasks
 
       - name: Determine cache keys
         id: cache-keys
@@ -122,9 +138,10 @@ jobs:
           echo "android_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/android') }}-detox-native-android-3" >> $GITHUB_OUTPUT
           echo "ios_js_key=${PREFIX}${{ inputs.ref || github.sha }}-detox-js-ios" >> $GITHUB_OUTPUT
           echo "android_js_key=${PREFIX}${{ inputs.ref || github.sha }}-detox-js-android" >> $GITHUB_OUTPUT
-          echo "android_timing_cache_key=android-mock-timing-${{ hashFiles('apps/ledger-live-mobile/e2e') }}-${{ inputs.max-shards }}shards" >> $GITHUB_OUTPUT
-          echo "ios_timing_cache_key=ios-mock-timing-${{ hashFiles('apps/ledger-live-mobile/e2e') }}-${{ inputs.max-shards }}shards-${{ inputs.macos-specificity-runner-label }}" >> $GITHUB_OUTPUT
+          echo "android_timing_cache_key=${PREFIX}android-mock-timing-${{ hashFiles('apps/ledger-live-mobile/e2e') }}-${{ inputs.max-shards }}shards" >> $GITHUB_OUTPUT
+          echo "ios_timing_cache_key=${PREFIX}ios-mock-timing-${{ hashFiles('apps/ledger-live-mobile/e2e') }}-${{ inputs.max-shards }}shards-${{ inputs.macos-specificity-runner-label }}" >> $GITHUB_OUTPUT
           echo "pod_check_key=${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/Podfile', 'pnpm-lock.yaml') }}-pod-lockfile-validated" >> $GITHUB_OUTPUT
+          echo "avd_cache_key=${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-${{ env.AVD_CORES }}-${{ env.AVD_RAM_SIZE }}-${{ env.AVD_HEAP_SIZE }}-r2-v8" >> $GITHUB_OUTPUT
 
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
@@ -160,6 +177,18 @@ jobs:
           cache_bucket: ${{ env.cache-bucket }}
           aws_region: ${{ secrets.AWS_CACHE_REGION }}
           max_shards: ${{ inputs.max-shards }}
+
+      - name: Check if Android AVD cache exists
+        id: check-avd
+        if: ${{ steps.generate-shards.outputs.matrix_android != '[]' }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/exists@develop
+        with:
+          key: ${{ steps.cache-keys.outputs.avd_cache_key }}
+          accessKey: ${{ secrets.R2_ACCESS_KEY_ID }}
+          secretKey: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          bucket: ledger-live-cache
+          endpoint: ${{ secrets.R2_ENDPOINT }}
+          region: auto
 
       - name: Check if iOS Native Build exists already
         id: check-ios-native
@@ -252,6 +281,30 @@ jobs:
       android-native-cache-key: ${{ needs.determine-builds.outputs.android_native_key }}
       android-js-cache-key: ${{ needs.determine-builds.outputs.android_js_key }}
     secrets: inherit
+
+  setup-android-avd:
+    name: "Setup Android AVD"
+    needs: [determine-builds]
+    if: ${{ always() && !cancelled() && needs.determine-builds.outputs.avd_exists != 'true' }}
+    runs-on: [ledger-live-linux-8CPU-32RAM]
+    steps:
+      - name: Setup Android AVDs
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@develop
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          avd_api: ${{ env.AVD_API }}
+          avd_arch: ${{ env.AVD_ARCH }}
+          avd_profile: ${{ env.AVD_PROFILE }}
+          avd_target: ${{ env.AVD_TARGET }}
+          avd_name: ${{ env.AVD_NAME }}
+          avd_cores: ${{ env.AVD_CORES }}
+          avd_ram_size: ${{ env.AVD_RAM_SIZE }}
+          avd_heap_size: ${{ env.AVD_HEAP_SIZE }}
+          avd_options: ${{ env.AVD_OPTIONS }}
+          cache_key: ${{ needs.determine-builds.outputs.avd_cache_key }}
+          r2_access_key: ${{ secrets.R2_ACCESS_KEY_ID }}
+          r2_secret_key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          r2_endpoint: ${{ secrets.R2_ENDPOINT }}
 
   detox-tests-ios:
     name: "iOS Build / iOS Detox (${{ matrix.shard }}, ${{ matrix.total }})"
@@ -346,7 +399,7 @@ jobs:
         timeout-minutes: 75
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
         with:
-          command: pnpm exec nx run live-mobile:e2e:ci -- $SHARD_TEST_FILES --platform=ios --test --outputFile=artifacts/e2e-test-results-ios-shard-${{ matrix.shard }}.json
+          command: pnpm exec nx run live-mobile:e2e:ci -- $SHARD_TEST_FILES --platform=ios --test --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}.json
           disable_cache: ${{ inputs.disable-turbo-cache || false }}
 
       - name: Upload test artifacts
@@ -354,15 +407,15 @@ jobs:
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         id: "test-artifacts"
         with:
-          name: "ios-test-artifacts-${{ matrix.shard }}"
-          path: apps/ledger-live-mobile/artifacts
+          name: ios-test-artifacts-${{ matrix.shard }}
+          path: ${{ env.MOBILE_ARTIFACTS_ROOT }}
 
       - name: Setup iOS Shard timing artifacts
         if: (!cancelled() || steps.detox.outcome == 'cancelled')
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
-          path: apps/ledger-live-mobile/artifacts/e2e-test-results-ios-shard-${{ matrix.shard }}.json
-          name: "${{ needs.determine-builds.outputs.ios_timing_cache_key }}-${{ matrix.shard }}"
+          path: ${{ env.MOBILE_ARTIFACTS_ROOT }}/${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}.json
+          name: ${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}
 
       - name: Record Flake
         if: ${{ steps.detox.outcome == 'success' && hashFiles('apps/ledger-live-mobile/artifacts/ios.**') != '' }}
@@ -371,7 +424,8 @@ jobs:
 
   detox-tests-android:
     name: "Android Build / Android Detox (${{ matrix.shard }}, ${{ matrix.total }})"
-    needs: [build-android, determine-builds]
+    needs: [build-android, determine-builds, setup-android-avd]
+    if: ${{ always() && !cancelled() && needs.build-android.result == 'success' && (needs.setup-android-avd.result == 'success' || needs.setup-android-avd.result == 'skipped') }}
     runs-on: [ledger-live-linux-8CPU-32RAM]
     timeout-minutes: 80
     env:
@@ -379,14 +433,6 @@ jobs:
       LANG: en_US.UTF-8
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
-      AVD_API: 35
-      AVD_ARCH: x86_64
-      AVD_PROFILE: pixel_7_pro
-      AVD_TARGET: google_apis
-      AVD_NAME: "Android_Emulator"
-      AVD_CORES: 4
-      AVD_RAM_SIZE: 4096M
-      AVD_OPTIONS: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
       JEST_MAX_WORKERS: "2"
     outputs:
       status_1: ${{ steps.set-output.outputs.status_1 }}
@@ -411,8 +457,17 @@ jobs:
           distribution: "zulu"
           java-version: "17"
 
+      - name: Remove preinstalled cmdline-tools (force pinned install)
+        shell: bash
+        run: |
+          SDK="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-$HOME/.android/sdk}}"
+          if [ -d "$SDK/cmdline-tools" ]; then
+            echo "Removing $SDK/cmdline-tools so pinned cmdline-tools are not skipped."
+            rm -rf "$SDK/cmdline-tools" 2>/dev/null || sudo rm -rf "$SDK/cmdline-tools"
+          fi
+
       - name: setup Android SDK
-        uses: android-actions/setup-android@v3.2.2
+        uses: android-actions/setup-android@v4.0.1
         with:
           packages: "tools platform-tools"
 
@@ -486,49 +541,17 @@ jobs:
         run: node apps/ledger-live-mobile/node_modules/detox/scripts/postinstall.js
 
       - name: Download android emulator
-        timeout-minutes: 5
+        timeout-minutes: 10
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
         id: detox-avd
         with:
-          key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-r2-v8
+          key: ${{ needs.determine-builds.outputs.avd_cache_key }}
           accessKey: "${{ secrets.R2_ACCESS_KEY_ID }}"
           secretKey: "${{ secrets.R2_SECRET_ACCESS_KEY }}"
           bucket: ledger-live-cache
           endpoint: ${{ secrets.R2_ENDPOINT }}
           region: auto
           destination: /
-
-      - name: create AVD and generate snapshot for caching
-        if: steps.detox-avd.outputs.cache-hit != 'true'
-        uses: reactivecircus/android-emulator-runner@v2
-        id: create-avd
-        with:
-          api-level: ${{ env.AVD_API }}
-          arch: ${{ env.AVD_ARCH }}
-          profile: ${{ env.AVD_PROFILE }}
-          target: ${{ env.AVD_TARGET }}
-          avd-name: ${{ env.AVD_NAME }}
-          force-avd-creation: true
-          cores: ${{ env.AVD_CORES }}
-          ram-size: ${{ env.AVD_RAM_SIZE }}
-          disable-linux-hw-accel: false
-          emulator-options: ${{ env.AVD_OPTIONS }}
-          script: ./tools/scripts/wait_emulator_idle.sh
-
-      - name: Cache android emulator
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
-        if: steps.detox-avd.outputs.cache-hit != 'true'
-        with:
-          path: |
-            /home/runner/.android/
-            /usr/local/lib/android/sdk/emulator/
-            /usr/local/lib/android/sdk/system-images/android-${{ env.AVD_API }}/${{ env.AVD_TARGET }}/${{ env.AVD_ARCH }}/
-          key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-r2-v8
-          accessKey: "${{ secrets.R2_ACCESS_KEY_ID }}"
-          secretKey: "${{ secrets.R2_SECRET_ACCESS_KEY }}"
-          bucket: ledger-live-cache
-          endpoint: ${{ secrets.R2_ENDPOINT }}
-          region: auto
 
       - name: Duplicate AVDs for parallel testing
         uses: LedgerHQ/ledger-live/tools/actions/composites/duplicate-avd@develop
@@ -546,7 +569,7 @@ jobs:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           PRODUCTION: ${{ inputs.production_firebase }}
         with:
-          command: pnpm exec nx run live-mobile:e2e:ci -- $SHARD_TEST_FILES --platform=android --test $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') --outputFile=artifacts/e2e-test-results-android-shard-${{ matrix.shard }}.json
+          command: pnpm exec nx run live-mobile:e2e:ci -- $SHARD_TEST_FILES --platform=android --test $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}.json
           disable_cache: ${{ inputs.disable-turbo-cache || false }}
 
       - name: Upload test artifacts
@@ -554,15 +577,15 @@ jobs:
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         id: "test-artifacts"
         with:
-          name: "android-test-artifacts-${{ matrix.shard }}"
-          path: apps/ledger-live-mobile/artifacts/
+          name: android-test-artifacts-${{ matrix.shard }}
+          path: ${{ env.MOBILE_ARTIFACTS_ROOT }}
 
       - name: Setup Android Shard timing artifacts
         if: (!cancelled() || steps.detox.outcome == 'cancelled')
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
-          path: apps/ledger-live-mobile/artifacts/e2e-test-results-android-shard-${{ matrix.shard }}.json
-          name: "${{ needs.determine-builds.outputs.android_timing_cache_key }}-${{ matrix.shard }}"
+          path: ${{ env.MOBILE_ARTIFACTS_ROOT }}/${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}.json
+          name: ${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}
 
       - name: Record Flake
         if: ${{ steps.detox.outcome == 'success' && hashFiles('apps/ledger-live-mobile/artifacts/android.**') != '' }}
@@ -612,17 +635,9 @@ jobs:
     runs-on: ubuntu-24.04
     if: ${{ !cancelled() && (needs.detox-tests-ios.result == 'success' || needs.detox-tests-ios.result == 'failure')  && inputs.max-shards > 1 }}
     steps:
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        id: aws
-        with:
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
-          aws-region: ${{ secrets.AWS_CACHE_REGION }}
-
       - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@develop
         with:
-          platform: ios
-          artifacts_dir: apps/ledger-live-mobile/e2e/artifacts
+          artifacts_dir: ${{ env.MOBILE_ARTIFACTS_ROOT }}
           key: ${{ needs.determine-builds.outputs.ios_timing_cache_key }}
           aws_access_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ env.AWS_SECRET_ACCESS_KEY }}
@@ -633,6 +648,9 @@ jobs:
           github_run_id: ${{ github.run_id }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          test_results_prefix: ${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}
 
   merge-android-timings:
     name: Merge Android Timing Files
@@ -640,17 +658,9 @@ jobs:
     runs-on: ubuntu-24.04
     if: ${{ !cancelled() && (needs.detox-tests-android.result == 'success' || needs.detox-tests-android.result == 'failure') && inputs.max-shards > 1 }}
     steps:
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        id: aws
-        with:
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
-          aws-region: ${{ secrets.AWS_CACHE_REGION }}
-
       - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@develop
         with:
-          platform: android
-          artifacts_dir: apps/ledger-live-mobile/e2e/artifacts
+          artifacts_dir: ${{ env.MOBILE_ARTIFACTS_ROOT }}
           key: ${{ needs.determine-builds.outputs.android_timing_cache_key }}
           aws_access_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ env.AWS_SECRET_ACCESS_KEY }}
@@ -661,6 +671,9 @@ jobs:
           github_run_id: ${{ github.run_id }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          test_results_prefix: ${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}
 
   test-pod-lockfile:
     name: "Test Pod Lockfile"
@@ -668,7 +681,6 @@ jobs:
     needs: [determine-builds]
     if: needs.determine-builds.outputs.ios_native_exists == 'true' && inputs.skip-pod-checks != 'true' && needs.determine-builds.outputs.pod_lockfile_validated != 'true'
     steps:
-
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           ref: ${{ inputs.ref || github.sha }}

@@ -20,6 +20,7 @@ import { Flex } from "@ledgerhq/react-ui/index";
 import { dayFormat, hourFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 import Alert from "~/renderer/components/Alert";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
+import { getAleoCurrencyConfig } from "../../../shared/utils";
 import { isAleoAccount } from "./utils";
 
 interface Props extends Pick<StepProps, "status" | "updateTransaction"> {
@@ -132,8 +133,8 @@ const AleoStepRecordPicker = ({ account, transaction, status, updateTransaction 
       return {
         ...transactionToUpdate,
         properties: {
+          amountRecordCommitments: [record.commitment],
           feeRecordCommitment: transactionToUpdate.properties?.feeRecordCommitment,
-          amountRecordCommitment: record.commitment,
         },
       };
     });
@@ -172,7 +173,9 @@ const AleoStepRecordPicker = ({ account, transaction, status, updateTransaction 
       >
         {unspentRecords.map(record => {
           const date = new Date(record.block_timestamp * 1000);
-          const isSelected = record.commitment === transaction.properties?.amountRecordCommitment;
+          const isSelected = (transaction.properties?.amountRecordCommitments ?? []).includes(
+            record.commitment,
+          );
 
           return (
             <StyledButton
@@ -200,6 +203,9 @@ const AleoStepRecordPicker = ({ account, transaction, status, updateTransaction 
 
 const StepRecordPicker = ({ account, transaction, status, updateTransaction }: StepProps) => {
   if (transaction?.family !== "aleo" || !account || !isAleoAccount(account)) return null;
+
+  const config = getAleoCurrencyConfig(account.currency);
+  if (config?.recordPickingStrategy === "auto") return null;
 
   return (
     <AleoStepRecordPicker

@@ -24,7 +24,7 @@ jest.mock("../account", () => ({
 }));
 
 jest.mock("../bridge", () => ({
-  getAccountBridge: jest.fn().mockReturnValue({
+  getAccountBridge: jest.fn().mockResolvedValue({
     broadcast: jest.fn(),
   }),
 }));

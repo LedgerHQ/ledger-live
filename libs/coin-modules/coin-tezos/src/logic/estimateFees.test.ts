@@ -42,8 +42,11 @@ function setupFa2ContractMock() {
 describe("estimateFees", () => {
   const mockTezosToolkit = {
     estimate: {
+      finalizeUnstake: jest.fn(),
       setDelegate: jest.fn(),
+      stake: jest.fn(),
       transfer: jest.fn(),
+      unstake: jest.fn(),
     },
     contract: {
       at: jest.fn(),
@@ -190,6 +193,90 @@ describe("estimateFees", () => {
     expect(mockTezosToolkit.estimate.setDelegate).toHaveBeenCalledWith({
       source: revealedAccount.address,
     });
+  });
+
+  it("stake uses Taquito stake estimation and maps fee fields", async () => {
+    mockTezosToolkit.estimate.stake.mockResolvedValue({
+      suggestedFeeMutez: 700,
+      gasLimit: 1100,
+      storageLimit: 5,
+      burnFeeMutez: 0,
+      opSize: 100,
+    });
+
+    const result = await estimateFees({
+      account: revealedAccount,
+      transaction: {
+        mode: "stake",
+        recipient: "",
+        amount: 1234n,
+      },
+    });
+
+    expect(mockTezosToolkit.estimate.stake).toHaveBeenCalledWith({
+      amount: 1234,
+      mutez: true,
+    });
+    expect(result.fees).toBe(700n);
+    expect(result.gasLimit).toBe(1100n);
+    expect(result.storageLimit).toBe(5n);
+    expect(result.estimatedFees).toBe(700n);
+    expect(result.amount).toBe(1234n);
+  });
+
+  it("unstake uses Taquito unstake estimation and maps fee fields", async () => {
+    mockTezosToolkit.estimate.unstake.mockResolvedValue({
+      suggestedFeeMutez: 710,
+      gasLimit: 1200,
+      storageLimit: 6,
+      burnFeeMutez: 0,
+      opSize: 100,
+    });
+
+    const result = await estimateFees({
+      account: revealedAccount,
+      transaction: {
+        mode: "unstake",
+        recipient: "",
+        amount: 4321n,
+      },
+    });
+
+    expect(mockTezosToolkit.estimate.unstake).toHaveBeenCalledWith({
+      amount: 4321,
+      mutez: true,
+    });
+    expect(result.fees).toBe(710n);
+    expect(result.gasLimit).toBe(1200n);
+    expect(result.storageLimit).toBe(6n);
+    expect(result.estimatedFees).toBe(710n);
+    expect(result.amount).toBe(4321n);
+  });
+
+  it("finalize_unstake uses Taquito finalizeUnstake estimation and maps fee fields", async () => {
+    mockTezosToolkit.estimate.finalizeUnstake.mockResolvedValue({
+      suggestedFeeMutez: 720,
+      gasLimit: 1300,
+      storageLimit: 7,
+      burnFeeMutez: 0,
+      opSize: 100,
+    });
+
+    const result = await estimateFees({
+      account: revealedAccount,
+      transaction: {
+        mode: "finalize_unstake",
+        recipient: "",
+        amount: 0n,
+      },
+    });
+
+    expect(mockTezosToolkit.estimate.finalizeUnstake).toHaveBeenCalledWith({});
+    expect(result.fees).toBe(720n);
+    expect(result.gasLimit).toBe(1300n);
+    expect(result.storageLimit).toBe(7n);
+    expect(result.estimatedFees).toBe(720n);
+    expect(result.amount).toBe(0n);
   });
 
   it("transfer (send) applies minFees and returns gas/storage from estimate", async () => {

@@ -397,7 +397,10 @@ export const getMockedDelegatedProvingResponse = (): DelegatedProvingResponse =>
           scm: "scm1fee123",
         },
       },
-      broadcast_result: "Accepted",
     },
+  },
+  broadcast_result: {
+    status: "Accepted",
+    status_code: 200,
   },
 });

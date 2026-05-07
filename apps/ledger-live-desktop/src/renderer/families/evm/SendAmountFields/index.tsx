@@ -1,8 +1,7 @@
 import { Transaction as EvmTransaction, Strategy } from "@ledgerhq/coin-evm/types/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useGasOptions } from "@ledgerhq/live-common/families/evm/react";
 import { log } from "@ledgerhq/logs";
-import { AccountBridge } from "@ledgerhq/types-live";
 import React, { useCallback, useEffect, useState } from "react";
 import SendFeeMode from "~/renderer/components/SendFeeMode";
 import Spinner from "~/renderer/components/Spinner";
@@ -15,7 +14,7 @@ import SelectFeeStrategy from "./SelectFeeStrategy";
 
 const Root: NonNullable<EvmFamily["sendAmountFields"]>["component"] = props => {
   const { account, updateTransaction, transaction } = props;
-  const bridge: AccountBridge<EvmTransaction> = getAccountBridge(account);
+  const bridge = useAccountBridge<EvmTransaction>(account);
 
   const [gasOptions, error, loading] = useGasOptions({
     currency: account.currency,

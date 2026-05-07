@@ -125,14 +125,7 @@ export function getMaxDelegationAvailable(
 }
 
 export const getMaxEstimatedBalance = (a: StakingAccount, estimatedFees: BigNumber): BigNumber => {
-  const { stakingResources } = a;
-  let blockBalance = new BigNumber(0);
-
-  if (stakingResources) {
-    blockBalance = stakingResources.unbondingBalance.plus(stakingResources.delegatedBalance);
-  }
-
-  const amount = a.balance.minus(estimatedFees).minus(blockBalance);
+  const amount = a.spendableBalance.minus(estimatedFees);
 
   // If the fees are greater than the balance we will have a negative amount
   // so we round it to 0

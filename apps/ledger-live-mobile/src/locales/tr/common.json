@@ -294,6 +294,11 @@
       "title" : "Üzgünüz, bağlantı başarısız",
       "description" : "Lütfen tekrar deneyin."
     },
+    "CounterfeitDevice" : {
+      "title" : "Bu {{productName}} cihazının Orijinallik Denetimi başarısız oldu",
+      "description" : "Bu Ledger cihazını kullanmak güvenli değildir. Lütfen Ledger Destek ile iletişime geçin.",
+      "contactSupportCTA" : "Ledger Destek"
+    },
     "DeviceSocketNoBulkStatus" : {
       "title" : "Bağlantı başarısız oldu",
       "description" : "Lütfen tekrar deneyin."
@@ -415,8 +420,8 @@
       "description" : "Cihazınızla bilgi alışverişi yapılırken bir sorun oluştu. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
     },
     "AlreadySendingApduError" : {
-      "title" : "İletişim hatası",
-      "description" : "Cihazınızla bilgi alışverişi yapılırken bir sorun oluştu. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+      "title" : "Ledger cihazınızda eylem gerekiyor",
+      "description" : "Cihazınızda eylemi tamamlayın."
     },
     "UnknownDeviceExchangeError" : {
       "title" : "İletişim hatası",
@@ -1305,7 +1310,7 @@
     },
     "noAccounts" : {
       "title" : "Bu uygulamaya erişmek için bir hesabınızın olması gerekiyor.",
-      "add" : "Hesap ekle"
+      "select" : "Hesap seç"
     }
   },
   "location" : {
@@ -1601,7 +1606,7 @@
       "desc" : "Özel anahtarlarınızın kontrolü sizdedir."
     },
     "1" : {
-      "title" : "Güvenle alıp satın",
+      "title" : "Güvenle işlem yapın",
       "desc" : "İşlemleri güvenli bir ekranda doğrulayın."
     },
     "2" : {
@@ -2688,6 +2693,7 @@
     "accounts" : "Hesaplar",
     "transfer" : "Transfer",
     "manager" : "My Ledger",
+    "myWallet" : "Cüzdanım",
     "settings" : "Ayarlar",
     "platform" : "Live Apps",
     "discover" : "Keşfet",
@@ -2734,8 +2740,8 @@
       "title" : "Sizin için"
     },
     "perpsEntry" : {
-      "title" : "Süresiz vadeli sözleşmeler",
-      "description" : "Kaldıraçlı alım satım yapın"
+      "title" : "Perpetuals",
+      "description" : "Kaldıraçlı işlem yapın"
     },
     "recommended" : {
       "title" : "Önerilen"
@@ -2925,6 +2931,10 @@
       "UPDATE_ACCOUNT" : "Güncellenmiş hesap"
     }
   },
+  "operationsList" : {
+    "to" : "Alıcı",
+    "from" : "Gönderici"
+  },
   "operationDetails" : {
     "title" : "İşlem bilgileri",
     "account" : "Hesap",
@@ -3001,6 +3011,8 @@
   },
   "operationList" : {
     "noOperations" : "İşlem Yok",
+    "emptyTitle" : "Henüz işlem yok",
+    "emptySubtitle" : "İşlemlerinizi görmek için daha sonra geri dönün.",
     "noMoreTransactions" : "Başka işlem yok"
   },
   "selectableAccountsList" : {
@@ -5801,6 +5813,9 @@
     "alerts" : {
       "withdrawableAssets" : "Çekebileceğiniz bir miktar bakiyeniz var.",
       "activatableVotes" : "Etkinleştirebileceğiniz oylar bulunuyor."
+    },
+    "send" : {
+      "feeCurrency" : "Ücret para birimi"
     }
   },
   "cosmos" : {
@@ -6722,7 +6737,7 @@
           "title" : "Transfer Kancası (Transfer Hook)",
           "transferHookAddress" : "Mevcut Transfer Kancası programı: {{address}}",
           "transferHookNotSetup" : "Mevcut Transfer Kancası programı belirlenmemiş.",
-          "description" : "Transfer Kancası (Transfer Hook), token çıkartanlara kullanıcılarla token'ların nasıl etkileşim kuracağını belirleme olanağını sunar. Token çıkartanlar normal bir transfer yerine, Transfer Kancası uzantısıyla kullanılacak özel bir mantığı bir programa ekleyebilir."
+          "description" : "Transfer Kancası (Transfer Hook), token ihraççılara kullanıcılarla token'ların nasıl etkileşim kuracağını belirleme olanağını sunar. Token çıkartanlar normal bir transfer yerine, Transfer Kancası uzantısıyla kullanılacak özel bir mantığı bir programa ekleyebilir."
         },
         "transferFee" : {
           "title" : "Transfer Ücreti",
@@ -7829,6 +7844,12 @@
         "description" : "En sevdiğiniz dijital sanat eserini veya fotoğrafı cihazınızın kilitli ekranında görüntüleyin.",
         "popupLabel" : "Kilitli ekran başarıyla özelleştirildi"
       },
+      "recover" : {
+        "title" : "Yedeklemenizi güvenceye alın",
+        "titleCompleted" : "Yedekleme güvenceye alındı",
+        "description" : "Ledger Recover’ı etkinleştirme işlemini tamamlayın",
+        "popupLabel" : "Ledger Recover'a başarıyla abone oldunuz"
+      },
       "syncAccounts" : {
         "title" : "Kripto hesaplarınızı senkronize edin",
         "titleCompleted" : "Hesaplarınız senkronize edildi",
@@ -8112,6 +8133,18 @@
       "lead" : "Onayınızı, dilediğiniz zaman ayarlardan iptal edebilirsiniz.",
       "privacyLink" : "Gizlilik Politikası"
     }
+  },
+  "analyticsPreferencesSettings" : {
+    "screenTitle" : "Tercihlerinizi belirleyin",
+    "appPerformance" : {
+      "title" : "Uygulama performansı",
+      "description" : "Deneyimi iyileştirmek için Ledger'ın uygulama kullanım verilerini toplamasına izin verin."
+    },
+    "personalizedExperience" : {
+      "title" : "Kişiselleştirilmiş deneyim",
+      "description" : "Kişiselleştirilmiş içerikler sunmamız için Ledger'ın uygulama kullanım verilerini toplamasına izin verin."
+    },
+    "confirmCta" : "Onayla"
   },
   "walletSync" : {
     "title" : "Ledger Sync",
@@ -8467,7 +8500,7 @@
     "emptyAssetList" : "Hiçbir varlık bulunamadı",
     "accountCount_one" : "{{count}} hesap",
     "accountCount_other" : "{{count}} hesap",
-    "perpetualsBanner" : "Şu anda Arbitrum zincirinde yalnızca USDC ile desteklenmektedir.",
+    "perpetualsBanner" : "Şu anda yalnızca Arbitrum zincirindeki USDC ile desteklenmektedir.",
     "errors" : {
       "title" : "Bağlantı başarısız oldu",
       "backend" : "Bizim tarafımızda bir sorun oluştu. Lütfen daha sonra tekrar deneyin.",
@@ -8823,6 +8856,51 @@
     "error" : {
       "title" : "{{appName}} yüklenemedi",
       "description" : "Kurulum sırasında bir hata oluştu. Lütfen tekrar deneyin."
+    }
+  },
+  "myWallet" : {
+    "quickActions" : {
+      "recover" : "[L] Recover",
+      "backup" : "Yedekle",
+      "help" : "Yardım",
+      "referral" : "Referans"
+    },
+    "help" : {
+      "title" : "Yardım",
+      "sections" : {
+        "supportAndLearning" : "Destek ve öğrenme",
+        "more" : "Daha fazlası"
+      },
+      "rows" : {
+        "ledgerSupport" : {
+          "title" : "Ledger Destek",
+          "description" : "SSS bölümümüzden veya sohbet ile yardım alın"
+        },
+        "ledgerAcademy" : {
+          "title" : "Ledger Academy",
+          "description" : "Kriptoyu öğrenin"
+        },
+        "saveLogs" : {
+          "title" : "Log'ları kaydedin",
+          "description" : "Sorun giderme amacıyla Ledger Wallet günlüklerini kaydedin"
+        },
+        "ledgerStatus" : {
+          "title" : "Ledger Durumu",
+          "description" : "Sistem durumumuzu kontrol edin"
+        },
+        "clearCache" : {
+          "title" : "Önbelleği temizleyin",
+          "description" : "İşlemleri tarayın ve bakiyeleri yeniden hesaplayın"
+        }
+      }
+    },
+    "deviceSection" : {
+      "title" : "Cihazlarım",
+      "add" : "Ekle",
+      "addDevice" : "Bir Ledger cihazı ekleyin",
+      "exploreAllDevices" : "Tüm Ledger cihazlarını keşfedin",
+      "available" : "Mevcut",
+      "unavailable" : "Bağlı değil"
     }
   }
 }

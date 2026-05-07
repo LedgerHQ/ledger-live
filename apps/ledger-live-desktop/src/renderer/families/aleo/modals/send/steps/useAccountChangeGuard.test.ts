@@ -76,7 +76,7 @@ describe("useAccountChangeGuard", () => {
     const updater = updateTransaction.mock.calls[0][0];
     const tx = makeAleoTransaction({
       mode: TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC,
-      properties: { amountRecordCommitment: "abc", feeRecordCommitment: null },
+      properties: { amountRecordCommitments: ["abc"], feeRecordCommitment: null },
     });
     const nextTx = updater(tx);
 
@@ -94,7 +94,7 @@ describe("useAccountChangeGuard", () => {
     const updater = updateTransaction.mock.calls[0][0];
     const tx = makeAleoTransaction({
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
-      properties: { amountRecordCommitment: "xyz", feeRecordCommitment: null },
+      properties: { amountRecordCommitments: ["xyz"], feeRecordCommitment: null },
     });
     const nextTx = updater(tx);
 
@@ -113,7 +113,7 @@ describe("useAccountChangeGuard", () => {
     const tx = makeAleoTransaction({
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
       recipient: "aleo1recipient",
-      properties: { amountRecordCommitment: "xyz", feeRecordCommitment: null },
+      properties: { amountRecordCommitments: ["xyz"], feeRecordCommitment: null },
     });
     const nextTx = updater(tx);
 

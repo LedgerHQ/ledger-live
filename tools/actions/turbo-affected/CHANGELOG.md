@@ -1,5 +1,17 @@
 # @actions/turbo-affected
 
+## 1.5.0
+
+### Minor Changes
+
+- [#16244](https://github.com/LedgerHQ/ledger-live/pull/16244) [`5687218`](https://github.com/LedgerHQ/ledger-live/commit/5687218f339deee72691b0e99438988ce22c55a4) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - chore: removed eslint, added oxlint/oxfmt, updated scripts
+
+## 1.5.0-next.0
+
+### Minor Changes
+
+- [#16244](https://github.com/LedgerHQ/ledger-live/pull/16244) [`5687218`](https://github.com/LedgerHQ/ledger-live/commit/5687218f339deee72691b0e99438988ce22c55a4) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - chore: removed eslint, added oxlint/oxfmt, updated scripts
+
 ## 1.4.0
 
 ### Minor Changes

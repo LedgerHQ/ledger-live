@@ -33,7 +33,15 @@ export function RecentlyUsed({
   );
 }
 
-const Scroll = styled(Flex).attrs({ overflowX: "scroll" })`
+const Scroll = styled(Flex).attrs({
+  flexDirection: "row",
+  overflowX: "scroll",
+  overflowY: "hidden",
+})`
+  > * {
+    flex-shrink: 0;
+  }
+
   &::-webkit-scrollbar {
     display: none;
   }

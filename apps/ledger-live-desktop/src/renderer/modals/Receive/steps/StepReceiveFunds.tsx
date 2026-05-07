@@ -298,16 +298,18 @@ const StepReceiveFunds = (props: StepProps) => {
     hasStakeProgramsRedirect,
   ]);
 
-  // when address need verification we trigger it on device
-  useEffect(() => {
-    if (isAddressVerified === null) {
-      confirmAddress();
-    }
-  }, [isAddressVerified, confirmAddress]);
-
   // custom family UI for StepReceiveFunds
   const specific = getLLDCoinFamily(mainAccount.currency.family);
   const CustomStepReceiveFunds = specific?.StepReceiveFunds;
+
+  // Families that own their confirm-address lifecycle opt out of the shared auto-trigger.
+  useEffect(() => {
+    if (specific?.useCustomConfirmAddress) return;
+    if (isAddressVerified === null) {
+      confirmAddress();
+    }
+  }, [specific?.useCustomConfirmAddress, isAddressVerified, confirmAddress]);
+
   if (CustomStepReceiveFunds) {
     return <CustomStepReceiveFunds {...props} />;
   }

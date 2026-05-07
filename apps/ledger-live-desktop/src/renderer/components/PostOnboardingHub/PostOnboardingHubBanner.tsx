@@ -1,8 +1,6 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "LLD/hooks/redux";
 import styled from "styled-components";
-import { hidePostOnboardingWalletEntryPoint } from "@ledgerhq/live-common/postOnboarding/actions";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
@@ -30,7 +28,6 @@ const illustrations = {
 
 const PostOnboardingHubBanner = () => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
   const navigateToPostOnboardingHub = useNavigateToPostOnboardingHubCallback();
   const { deviceModelId } = usePostOnboardingHubState();
 
@@ -38,11 +35,6 @@ const PostOnboardingHubBanner = () => {
     track("button_clicked2", { button: "What’s next for your device", deviceModelId });
     navigateToPostOnboardingHub();
   }, [navigateToPostOnboardingHub, deviceModelId]);
-
-  const handleHidePostOnboardingHubBanner = useCallback(() => {
-    track("button_clicked2", { button: "Dismiss post onboarding banner", deviceModelId });
-    dispatch(hidePostOnboardingWalletEntryPoint());
-  }, [dispatch, deviceModelId]);
 
   return (
     <Wrapper>
@@ -57,11 +49,6 @@ const PostOnboardingHubBanner = () => {
             label: t("postOnboarding.postOnboardingBanner.link"),
             action: handleNavigateToPostOnboardingHub,
             dataTestId: "postonboarding-banner-entry-point",
-          },
-          dismiss: {
-            label: t("postOnboarding.postOnboardingBanner.dismiss"),
-            action: handleHidePostOnboardingHubBanner,
-            dataTestId: "postonboarding-banner-entry-point-close-button",
           },
         }}
       />

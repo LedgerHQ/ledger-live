@@ -1,53 +1,60 @@
-import { access, readFile } from "fs/promises";
+import { readFile } from "fs/promises";
 import { join } from "path";
+
+interface Operation {
+  type?: string;
+  recipients?: string[];
+}
+
+interface AccountData {
+  freshAddress?: string;
+  operations?: Operation[];
+}
 
 interface AppJson {
   data?: {
-    accounts?: Array<{ data?: { freshAddress?: string } }>;
+    accounts?: Array<{ data?: AccountData }>;
   };
 }
 
-export async function getAccountAddressesFromAppJson(userDataDir: string): Promise<string[]> {
-  if (userDataDir.trim() === "") {
-    throw new Error("userDataDir must be a non-empty string");
-  }
-
-  const userdataPath = join(userDataDir, "app.json");
-
+async function parseAppJson(filePath: string): Promise<AppJson> {
+  const raw = await readFile(filePath, "utf-8").catch(() => {
+    throw new Error(`File not found: "${filePath}"`);
+  });
   try {
-    await access(userdataPath);
-  } catch {
-    throw new Error(`File not found: "${userdataPath}"`);
-  }
-
-  const raw = await readFile(userdataPath, "utf-8");
-  let parsed: AppJson;
-  try {
-    parsed = JSON.parse(raw);
+    return JSON.parse(raw) as AppJson;
   } catch (e) {
-    throw new Error(`Failed to JSON.parse("${userdataPath}"):\n${(e as Error).message}`);
+    throw new Error(`Failed to parse "${filePath}": ${(e as Error).message}`);
+  }
+}
+
+// Returns all addresses owned by an account: current receive address plus
+// recipients of past IN operations (UTXO HD wallet — all used addresses remain valid).
+function extractAddresses(account: AccountData): string[] {
+  const inOpRecipients = (account.operations ?? [])
+    .filter(op => op.type === "IN")
+    .flatMap(op => op.recipients ?? []);
+
+  return [account.freshAddress, ...inOpRecipients].filter(
+    (addr): addr is string => typeof addr === "string",
+  );
+}
+
+export async function getAccountAddressesFromAppJson(userDataDir: string): Promise<string[]> {
+  if (!userDataDir.trim()) throw new Error("userDataDir must be a non-empty string");
+
+  const filePath = join(userDataDir, "app.json");
+  const { data } = await parseAppJson(filePath);
+  const accounts = data?.accounts;
+
+  if (!Array.isArray(accounts)) {
+    throw new Error(`Invalid app.json at "${filePath}": "data.accounts" must be an array`);
   }
 
-  if (!parsed.data) {
-    throw new Error(`Invalid shape in "${userdataPath}": missing "data" property`);
-  }
-  if (!Array.isArray(parsed.data.accounts)) {
-    throw new Error(
-      `Invalid shape in "${userdataPath}": expected “data.accounts” to be an array, got:\n${JSON.stringify(
-        parsed.data.accounts,
-        null,
-        2,
-      )}`,
-    );
-  }
-
-  const accounts = parsed.data.accounts as Array<{ data?: { freshAddress?: string } }>;
-  const addresses = accounts
-    .map(a => a.data?.freshAddress)
-    .filter((a): a is string => typeof a === "string");
+  const addresses = [...new Set(accounts.flatMap(a => (a.data ? extractAddresses(a.data) : [])))];
 
   if (addresses.length === 0) {
-    throw new Error(`No valid account addresses found in "${userdataPath}"`);
+    throw new Error(`No valid account addresses found in "${filePath}"`);
   }
 
   return addresses;

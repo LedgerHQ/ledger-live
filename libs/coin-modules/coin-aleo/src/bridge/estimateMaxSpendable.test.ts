@@ -92,13 +92,13 @@ describe("estimateMaxSpendable", () => {
     expect(mockCreateTransaction).toHaveBeenCalledWith(mockAccount);
   });
 
-  it("should return zero for private tx when amountRecordCommitment is missing", async () => {
+  it("should return zero for private tx when amountRecordCommitments is empty", async () => {
     mockPrepareTransaction.mockResolvedValue({
       ...mockPreparedTransaction,
       amount: new BigNumber(0),
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
       properties: {
-        amountRecordCommitment: null,
+        amountRecordCommitments: [],
         feeRecordCommitment: null,
       },
     });
@@ -110,7 +110,7 @@ describe("estimateMaxSpendable", () => {
         ...mockPreparedTransaction,
         mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
         properties: {
-          amountRecordCommitment: null,
+          amountRecordCommitments: [],
           feeRecordCommitment: null,
         },
       },
@@ -119,7 +119,7 @@ describe("estimateMaxSpendable", () => {
     expect(result).toEqual(new BigNumber(0));
   });
 
-  it("should return microcredits value for private tx when amountRecordCommitment exists", async () => {
+  it("should return microcredits value for private tx when amountRecordCommitments has an entry", async () => {
     const commitment = "record-1-commitment";
     const privateRecordAmount = "12345";
     const aleoResources = mockAccount.aleoResources!;
@@ -141,7 +141,7 @@ describe("estimateMaxSpendable", () => {
       amount: new BigNumber(privateRecordAmount),
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
       properties: {
-        amountRecordCommitment: commitment,
+        amountRecordCommitments: [commitment],
         feeRecordCommitment: null,
       },
     });
@@ -153,7 +153,7 @@ describe("estimateMaxSpendable", () => {
         ...mockPreparedTransaction,
         mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
         properties: {
-          amountRecordCommitment: commitment,
+          amountRecordCommitments: [commitment],
           feeRecordCommitment: null,
         },
       },
@@ -162,7 +162,7 @@ describe("estimateMaxSpendable", () => {
     expect(result).toEqual(new BigNumber(privateRecordAmount));
   });
 
-  it("should return zero for private tx when amountRecordCommitment exists but no record matches", async () => {
+  it("should return zero for private tx when amountRecordCommitments has an entry but no record matches", async () => {
     const commitment = "record-1-commitment";
     const aleoResources = mockAccount.aleoResources!;
     const accountWithoutMatchingRecord = getMockedAccount({
@@ -182,7 +182,7 @@ describe("estimateMaxSpendable", () => {
       amount: new BigNumber(0),
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
       properties: {
-        amountRecordCommitment: commitment,
+        amountRecordCommitments: [commitment],
         feeRecordCommitment: null,
       },
     });
@@ -195,7 +195,7 @@ describe("estimateMaxSpendable", () => {
           ...mockPreparedTransaction,
           mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
           properties: {
-            amountRecordCommitment: commitment,
+            amountRecordCommitments: [commitment],
             feeRecordCommitment: null,
           },
         },

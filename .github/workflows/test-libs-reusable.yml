@@ -168,6 +168,9 @@ jobs:
       - name: Lint affected libraries
         id: lint-libs
         run: pnpm exec nx run-many -t lint --exclude=ledger-live-desktop,live-mobile,@ledgerhq/live-cli,@ledgerhq/web-tools,ledger-live-desktop-e2e-tests,ledger-live-mobile-e2e-tests --parallel=3 --nxBail=false -- --quiet
+      - name: Check export rules
+        run: pnpm exec nx run @ledgerhq/client-ids:check-export-rules
+        continue-on-error: true
       - name: Typecheck affected libraries
         id: typecheck-libs
         run: pnpm exec nx run-many -t typecheck --exclude=ledger-live-desktop,live-mobile,@ledgerhq/live-cli,@ledgerhq/web-tools,ledger-live-desktop-e2e-tests,ledger-live-mobile-e2e-tests --parallel=3 --nxBail=false

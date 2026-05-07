@@ -1,6 +1,6 @@
 {
   "name": "live-mobile",
-  "version": "4.1.0",
+  "version": "4.3.0",
   "private": true,
   "scripts": {
     "postinstall": "zx ./scripts/post.mjs",
@@ -11,6 +11,8 @@
     "start:msw": "MSW_ENABLED=true react-native start",
     "conf": "react-native config",
     "doc": "react-native doctor",
+    "doctor": "NODE_OPTIONS=--max-old-space-size=8192 RSDOCTOR=1 react-native bundle --platform ios --entry-file index.js --dev false --bundle-output main.jsbundle",
+    "doctor:open": "open ../../rsdoctor/mobile/report.html",
     "bundle:ios": "NODE_OPTIONS=--max-old-space-size=8192 react-native bundle --platform ios --entry-file index.js --bundle-output main.jsbundle",
     "bundle:ios:prod": "NODE_OPTIONS=--max-old-space-size=8192 react-native bundle --platform ios --entry-file index.js --dev false --bundle-output main.ios.jsbundle",
     "bundle:android": "NODE_OPTIONS=--max-old-space-size=8192 react-native bundle --platform android --entry-file index.js --bundle-output main.jsbundle",
@@ -262,6 +264,7 @@
     "@ledgerhq/asset-aggregation": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/speculos-transport": "workspace:^",
+    "@ledgerhq/coin-cardano": "workspace:^",
     "@ledgerhq/test-utils": "workspace:^",
     "@react-native-community/cli": "catalog:",
     "@react-native-community/cli-platform-android": "catalog:",
@@ -278,6 +281,7 @@
     "@swc/helpers": "catalog:",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",
+    "@rsdoctor/rspack-plugin": "catalog:",
     "hermes-parser": "0.32.1",
     "@testing-library/react-native": "13.3.3",
     "@types/color": "3.0.6",

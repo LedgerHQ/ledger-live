@@ -1,6 +1,7 @@
 import React from "react";
 import {
   Box,
+  DotIndicator,
   ListItem as LumenListItem,
   ListItemContent,
   ListItemDescription,
@@ -12,49 +13,80 @@ import {
 import type { LumenViewStyle, LumenTextStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { useTranslation } from "~/context/Locale";
-import CurrencyIcon from "~/components/CurrencyIcon";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import CounterValue from "~/components/CounterValue";
+import TransactionalIcon from "LLM/components/TransactionalIcon";
 import { useOperationsListItemViewModel } from "./useOperationsListItemViewModel";
 
 type Props = {
   operation: Operation;
   account: AccountLike;
   parentAccount: Account | undefined;
+  accountByAddress: Map<string, AccountLike>;
+  isPending: boolean;
+  lastSeenTs: number | null;
 };
 
-function OperationsListItem({ operation, account, parentAccount }: Readonly<Props>) {
+function OperationsListItem({
+  operation,
+  account,
+  parentAccount,
+  accountByAddress,
+  isPending,
+  lastSeenTs,
+}: Readonly<Props>) {
   const { t } = useTranslation();
   const {
+    accountName,
+    counterpartyLabel,
     operationType,
     isOutgoing,
     isASendOrReceive,
-    formattedAddress,
+    isUnread,
     currency,
     unit,
     amount,
     amountColor,
-    isOptimistic,
+    hasFailed,
     onPress,
-  } = useOperationsListItemViewModel({ operation, account, parentAccount });
+  } = useOperationsListItemViewModel({
+    operation,
+    account,
+    parentAccount,
+    accountByAddress,
+    lastSeenTs,
+  });
 
   const title = t(`operations.types.${operationType}`);
   const directionLabel = isOutgoing ? t("operationsList.to") : t("operationsList.from");
-  let subtitle = "";
-  if (!isASendOrReceive) subtitle = formattedAddress;
-  else if (formattedAddress) subtitle = `${directionLabel} ${formattedAddress}`;
+
+  // For send/receive: show counterpartyLabel (internal account name or address) with direction.
+  // For other types: show own account name without direction, or raw counterpartyLabel as fallback.
+  const getSubtitle = () => {
+    if (isASendOrReceive && counterpartyLabel) {
+      return `${directionLabel} ${counterpartyLabel}`;
+    }
+
+    return accountName || counterpartyLabel;
+  };
+
+  const subtitle = getSubtitle();
 
   return (
-    <LumenListItem
-      onPress={onPress}
-      disabled={isOptimistic}
-      lx={listItemStyle}
-      testID="operations-list-item"
-    >
+    <LumenListItem onPress={onPress} lx={listItemStyle} testID="operations-list-item">
       <ListItemLeading>
-        <CurrencyIcon currency={currency} size={48} hideNetwork />
+        <TransactionalIcon
+          operationType={operationType}
+          isPending={isPending}
+          hasFailed={hasFailed}
+          currency={currency}
+          mediaSize={48}
+        />
         <ListItemContent>
-          <ListItemTitle>{title}</ListItemTitle>
+          <Box lx={titleRowStyle}>
+            <ListItemTitle>{title}</ListItemTitle>
+            {isUnread && <DotIndicator appearance="red" testID="unread-indicator" />}
+          </Box>
           <ListItemDescription>{subtitle}</ListItemDescription>
         </ListItemContent>
       </ListItemLeading>
@@ -83,6 +115,12 @@ function OperationsListItem({ operation, account, parentAccount }: Readonly<Prop
 
 const listItemStyle: LumenViewStyle = {
   marginHorizontal: "-s8",
+};
+
+const titleRowStyle: LumenViewStyle = {
+  flexDirection: "row",
+  alignItems: "center",
+  gap: "s8",
 };
 
 const trailingContainerStyle: LumenViewStyle = {

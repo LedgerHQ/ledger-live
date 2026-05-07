@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
 import { LedgerAPI4xx, LedgerAPI5xx } from "@ledgerhq/errors";
-import { EXPLORER_TRANSFER_TYPES, DEFAULT_RECORDS_PAGE_SIZE } from "../constants";
+import { AleoApiConfigurationResetError } from "../errors";
+import { EXPLORER_TRANSFER_TYPES, DEFAULT_RECORDS_PAGE_SIZE, PROGRAM_ID } from "../constants";
 import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import { sdkClient } from "../network/sdk";
 import type { ProvableApi } from "../types";
@@ -330,6 +331,59 @@ describe("network/utils", () => {
           order: "desc",
         });
       });
+
+      it("should skip batcher outer call transitions that have transfer in function_id but empty addresses", async () => {
+        const minBlockHeight = 100;
+        const commonTxId = "at1batcher";
+
+        // batcher outer call: function_id contains "transfer" but no account involvement
+        // testnet example: at1lqugdt847uwnfem2xhzwq6ewrnd6ysjv2gumvglytskutxj3kcpsmc3rrf
+        const batcherOuterCall = getMockedPublicTransaction({
+          block_number: 150,
+          transaction_id: commonTxId,
+          function_id: "transfer_private_to_public_8",
+          sender_address: "",
+          recipient_address: "",
+          amount: 0,
+        });
+
+        // inner transition for the same tx — carries the real amount and addresses
+        const realTransfer = getMockedPublicTransaction({
+          block_number: 150,
+          transaction_id: commonTxId,
+          function_id: "transfer_private_to_public",
+          sender_address: "",
+          recipient_address: "aleo1recipient",
+          amount: 1000000,
+        });
+
+        // standalone NONE operation with empty addresses — must NOT be filtered
+        const initializeTx = getMockedPublicTransaction({
+          block_number: 150,
+          transaction_id: "at1initialize",
+          function_id: "initialize",
+          sender_address: "",
+          recipient_address: "",
+          amount: 0,
+        });
+
+        jest.mocked(apiClient.getAccountPublicTransactions).mockResolvedValueOnce({
+          address: mockAddress,
+          transactions: [batcherOuterCall, realTransfer, initializeTx],
+        });
+
+        const result = await fetchAccountTransactionsFromHeight({
+          currency: mockCurrency,
+          address: mockAddress,
+          fetchAllPages: true,
+          minBlockHeight,
+        });
+
+        expect(result.transactions).toHaveLength(2);
+        expect(result.transactions).toContainEqual(realTransfer);
+        expect(result.transactions).toContainEqual(initializeTx);
+        expect(result.transactions).not.toContainEqual(batcherOuterCall);
+      });
     });
   });
 
@@ -416,7 +470,7 @@ describe("network/utils", () => {
         expect(result?.scannerStatus).toEqual({ synced: true, percentage: 100 });
       });
 
-      it("should return null when getRecordScannerStatus fails with a 422 error", async () => {
+      it("should throw AleoApiConfigurationResetError when getRecordScannerStatus fails with a 422 error", async () => {
         const existingProvableApi: ProvableApi = {
           uuid: mockUUID,
           scannerStatus: { synced: false, percentage: 50 },
@@ -429,13 +483,14 @@ describe("network/utils", () => {
         });
         mockGetRecordScannerStatus.mockRejectedValue(error422);
 
-        const result = await accessProvableApi({
-          currency: mockCurrency,
-          viewKey: mockViewKey,
-          provableApi: existingProvableApi,
-        });
+        await expect(
+          accessProvableApi({
+            currency: mockCurrency,
+            viewKey: mockViewKey,
+            provableApi: existingProvableApi,
+          }),
+        ).rejects.toThrow(AleoApiConfigurationResetError);
 
-        expect(result).toBeNull();
         expect(mockGetRecordScannerStatus).toHaveBeenCalledTimes(1);
       });
 
@@ -1473,6 +1528,12 @@ describe("network/utils", () => {
         uuid: mockUUID,
         resultsPerPage: DEFAULT_RECORDS_PAGE_SIZE,
         page: 0,
+        programs: [PROGRAM_ID.CREDITS],
+        functions: [
+          EXPLORER_TRANSFER_TYPES.PRIVATE,
+          EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE,
+          EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC,
+        ],
       });
       expect(result).toEqual(records);
     });
@@ -1495,12 +1556,24 @@ describe("network/utils", () => {
         uuid: mockUUID,
         resultsPerPage: pageSize,
         page: 0,
+        programs: [PROGRAM_ID.CREDITS],
+        functions: [
+          EXPLORER_TRANSFER_TYPES.PRIVATE,
+          EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE,
+          EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC,
+        ],
       });
       expect(mockGetAccountOwnedRecords).toHaveBeenNthCalledWith(2, {
         currency: mockCurrency,
         uuid: mockUUID,
         resultsPerPage: pageSize,
         page: 1,
+        programs: [PROGRAM_ID.CREDITS],
+        functions: [
+          EXPLORER_TRANSFER_TYPES.PRIVATE,
+          EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE,
+          EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC,
+        ],
       });
       expect(result).toEqual([...page0, ...page1]);
     });
@@ -1598,6 +1671,57 @@ describe("network/utils", () => {
       expect(result).toEqual([...page0, ...page1, ...page2]);
     });
 
+    it("should always pass programs: [PROGRAM_ID.CREDITS] to every page request", async () => {
+      const pageSize = 2;
+      const page0 = [getMockedRecord({ tag: "a" }), getMockedRecord({ tag: "b" })];
+      const page1 = [getMockedRecord({ tag: "c" })];
+      mockGetAccountOwnedRecords.mockResolvedValueOnce(page0).mockResolvedValueOnce(page1);
+
+      await fetchAllOwnedRecords({
+        currency: mockCurrency,
+        uuid: mockUUID,
+        resultsPerPage: pageSize,
+      });
+
+      expect(mockGetAccountOwnedRecords).toHaveBeenCalledTimes(2);
+      expect(mockGetAccountOwnedRecords).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining({ programs: [PROGRAM_ID.CREDITS] }),
+      );
+      expect(mockGetAccountOwnedRecords).toHaveBeenNthCalledWith(
+        2,
+        expect.objectContaining({ programs: [PROGRAM_ID.CREDITS] }),
+      );
+    });
+
+    it("should always pass the correct functions filter to every page request", async () => {
+      const pageSize = 2;
+      const page0 = [getMockedRecord({ tag: "a" }), getMockedRecord({ tag: "b" })];
+      const page1 = [getMockedRecord({ tag: "c" })];
+      mockGetAccountOwnedRecords.mockResolvedValueOnce(page0).mockResolvedValueOnce(page1);
+
+      await fetchAllOwnedRecords({
+        currency: mockCurrency,
+        uuid: mockUUID,
+        resultsPerPage: pageSize,
+      });
+
+      const expectedFunctions = [
+        EXPLORER_TRANSFER_TYPES.PRIVATE,
+        EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE,
+        EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC,
+      ];
+      expect(mockGetAccountOwnedRecords).toHaveBeenCalledTimes(2);
+      expect(mockGetAccountOwnedRecords).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining({ functions: expectedFunctions }),
+      );
+      expect(mockGetAccountOwnedRecords).toHaveBeenNthCalledWith(
+        2,
+        expect.objectContaining({ functions: expectedFunctions }),
+      );
+    });
+
     it("should propagate errors thrown by the underlying API call", async () => {
       mockGetAccountOwnedRecords.mockRejectedValueOnce(new Error("Scanner unavailable"));
 
@@ -1607,6 +1731,21 @@ describe("network/utils", () => {
           uuid: mockUUID,
         }),
       ).rejects.toThrow("Scanner unavailable");
+    });
+
+    it("should throw AbortError when signal is aborted before the first page request", async () => {
+      const controller = new AbortController();
+      controller.abort();
+
+      await expect(
+        fetchAllOwnedRecords({
+          currency: mockCurrency,
+          uuid: mockUUID,
+          signal: controller.signal,
+        }),
+      ).rejects.toMatchObject({ name: "AbortError" });
+
+      expect(mockGetAccountOwnedRecords).not.toHaveBeenCalled();
     });
   });
 });

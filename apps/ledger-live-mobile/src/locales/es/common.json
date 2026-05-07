@@ -294,6 +294,11 @@
       "title" : "La conexión ha fallado",
       "description" : "Inténtalo de nuevo."
     },
+    "CounterfeitDevice" : {
+      "title" : "Este {{productName}} no ha superado la Verificación de Autenticidad",
+      "description" : "No es seguro utilizar este dispositivo Ledger. Ponte en contacto con el Soporte de Ledger.",
+      "contactSupportCTA" : "Ponte en contacto con el Soporte de Ledger"
+    },
     "DeviceSocketNoBulkStatus" : {
       "title" : "La conexión falló",
       "description" : "Inténtalo de nuevo."
@@ -415,8 +420,8 @@
       "description" : "Se produjo un problema al intercambiar información con tu dispositivo. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
     },
     "AlreadySendingApduError" : {
-      "title" : "Error de comunicación",
-      "description" : "Se produjo un problema al intercambiar información con tu dispositivo. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
+      "title" : "Se requiere acción en tu dispositivo Ledger",
+      "description" : "Finaliza la acción en tu dispositivo."
     },
     "UnknownDeviceExchangeError" : {
       "title" : "Error de comunicación",
@@ -1305,7 +1310,7 @@
     },
     "noAccounts" : {
       "title" : "Necesitas una cuenta para poder acceder a esta aplicación.",
-      "add" : "Agregar cuenta"
+      "select" : "Seleccionar cuenta"
     }
   },
   "location" : {
@@ -2688,6 +2693,7 @@
     "accounts" : "Cuentas",
     "transfer" : "Transferir",
     "manager" : "Mi Ledger",
+    "myWallet" : "Mi wallet",
     "settings" : "Ajustes",
     "platform" : "Aplicaciones de Live",
     "discover" : "Discover",
@@ -2925,6 +2931,10 @@
       "UPDATE_ACCOUNT" : "Cuenta actualizada"
     }
   },
+  "operationsList" : {
+    "to" : "A",
+    "from" : "De"
+  },
   "operationDetails" : {
     "title" : "Detalles de las transacciones",
     "account" : "Cuenta",
@@ -3001,6 +3011,8 @@
   },
   "operationList" : {
     "noOperations" : "Sin operaciones",
+    "emptyTitle" : "Aún no hay transacciones",
+    "emptySubtitle" : "Intenta más tarde para ver tus transacciones.",
     "noMoreTransactions" : "No hay otras transacciones"
   },
   "selectableAccountsList" : {
@@ -5801,6 +5813,9 @@
     "alerts" : {
       "withdrawableAssets" : "Tienes saldo retirable.",
       "activatableVotes" : "Tienes votos que puedes activar."
+    },
+    "send" : {
+      "feeCurrency" : "Divisa de la tarifa"
     }
   },
   "cosmos" : {
@@ -7829,6 +7844,12 @@
         "description" : "Exhibe tu ilustración digital o foto favoritos como pantalla de bloqueo de tu dispositivo.",
         "popupLabel" : "Pantalla de bloqueo personalizada correctamente"
       },
+      "recover" : {
+        "title" : "Termina de proteger tu copia de respaldo",
+        "titleCompleted" : "Copia de respaldo protegida",
+        "description" : "Completa la activación de Ledger Recover",
+        "popupLabel" : "Te has suscrito correctamente a Ledger Recover"
+      },
       "syncAccounts" : {
         "title" : "Sincroniza tus cuentas cripto",
         "titleCompleted" : "Tus cuentas están sincronizadas.",
@@ -8112,6 +8133,18 @@
       "lead" : "Puedes retirar tu consentimiento en cualquier momento desde los Ajustes.",
       "privacyLink" : "Política de privacidad"
     }
+  },
+  "analyticsPreferencesSettings" : {
+    "screenTitle" : "Definir preferencias",
+    "appPerformance" : {
+      "title" : "Rendimiento de la app",
+      "description" : "Permite que Ledger recopile datos de uso de la aplicación para mejorar la experiencia"
+    },
+    "personalizedExperience" : {
+      "title" : "Experiencia personalizada",
+      "description" : "Permite que Ledger recopile datos de uso de la aplicación para ofrecer contenidos personalizados"
+    },
+    "confirmCta" : "Confirmar"
   },
   "walletSync" : {
     "title" : "Ledger Sync",
@@ -8823,6 +8856,51 @@
     "error" : {
       "title" : "No se ha podido instalar {{appName}}",
       "description" : "Algo salió mal durante la instalación. Inténtalo de nuevo."
+    }
+  },
+  "myWallet" : {
+    "quickActions" : {
+      "recover" : "[L] Recover",
+      "backup" : "Respalda.",
+      "help" : "Ayuda",
+      "referral" : "Recomendación"
+    },
+    "help" : {
+      "title" : "Ayuda",
+      "sections" : {
+        "supportAndLearning" : "Soporte y aprendizaje",
+        "more" : "Más"
+      },
+      "rows" : {
+        "ledgerSupport" : {
+          "title" : "Soporte de Ledger",
+          "description" : "Obtén ayuda a través de nuestras preguntas frecuentes o por chat"
+        },
+        "ledgerAcademy" : {
+          "title" : "Ledger Academy",
+          "description" : "Aprender sobre las cripto"
+        },
+        "saveLogs" : {
+          "title" : "Guardar registros",
+          "description" : "Guarda los registros de Ledger Wallet para solucionar problemas"
+        },
+        "ledgerStatus" : {
+          "title" : "Estado de Ledger",
+          "description" : "Comprueba el estado de nuestro sistema"
+        },
+        "clearCache" : {
+          "title" : "Borrar caché",
+          "description" : "Escanear transacciones y recalcular saldos"
+        }
+      }
+    },
+    "deviceSection" : {
+      "title" : "Mis dispositivos",
+      "add" : "Agregar",
+      "addDevice" : "Agregar un dispositivo Ledger",
+      "exploreAllDevices" : "Explora todos los dispositivos Ledger",
+      "available" : "Disponible",
+      "unavailable" : "No conectado"
     }
   }
 }

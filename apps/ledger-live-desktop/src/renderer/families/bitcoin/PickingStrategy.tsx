@@ -2,7 +2,7 @@ import React from "react";
 import { Trans } from "react-i18next";
 import { bitcoinPickingStrategy, Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
 import { Account } from "@ledgerhq/types-live";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import Select from "~/renderer/components/Select";
@@ -10,10 +10,10 @@ import useBitcoinPickingStrategy from "./useBitcoinPickingStrategy";
 type Props = {
   account: Account;
   transaction: Transaction;
-  onChange: (a: (t: Transaction, p: Partial<Transaction>) => void) => void;
+  onChange: (a: Transaction) => void;
 };
 export const PickingStrategy = ({ transaction, account, onChange }: Props) => {
-  const bridge = getAccountBridge(account);
+  const bridge = useAccountBridge<Transaction>(account);
   const { item, options } = useBitcoinPickingStrategy(transaction.utxoStrategy.strategy);
   return (
     <Box flow={2} horizontal alignItems="center" justifyContent="space-between">

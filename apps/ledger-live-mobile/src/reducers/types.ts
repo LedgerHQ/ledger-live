@@ -29,12 +29,16 @@ import type { ModularDrawerState } from "./modularDrawer";
 import type { LLMRTKApiState } from "~/context/rtkQueryApi";
 import type { ReceiveOptionsDrawerState } from "./receiveOptionsDrawer";
 import type { TransferDrawerState } from "./transferDrawer";
+import type { PostOnboardingHubDrawerState } from "./postOnboardingHubDrawer";
 import type { SendFlowState } from "./sendFlow";
 import { IdentitiesState } from "@ledgerhq/client-ids/store";
 import type { FirebaseMessagingTypes } from "@react-native-firebase/messaging";
 import { RebornBuyDeviceDrawerState } from "./rebornBuyDeviceDrawer";
 import type { PortfolioRefreshState } from "./portfolioRefresh";
 import type { PortfolioBalanceDisplayState } from "./portfolioBalanceDisplay";
+import type { HistoryState } from "./history";
+import type { RecoverStateSliceState } from "./recoverState";
+import type { LiveAppModalState } from "./liveAppModal";
 
 // === ACCOUNT STATE ===
 
@@ -84,6 +88,8 @@ export type AppState = {
   isPasswordLockBlocked: boolean;
   /** Reboot ID for triggering app remount */
   rebootId: number;
+  /** Incremented when `ledgerlive://product-tour` is handled so the Product Tour subtree can open after navigation to Portfolio. */
+  productTourDeeplinkNonce: number;
 };
 
 // === AUTH STATE ===
@@ -288,8 +294,10 @@ export type SettingsState = {
   mevProtection: boolean;
   selectedTabPortfolioAssets: TabPortfolioAssetsType;
   hasSeenWalletV4Tour: boolean;
+  productTourCompleted: boolean;
   deprecationDoNotRemind: string[];
   analyticsConsentInfo: AnalyticsConsentInfo;
+  hasClickedRecover: boolean;
 };
 
 export type AnalyticsConsentInfo = {
@@ -403,6 +411,7 @@ export type State = LLMRTKApiState & {
   dynamicContent: DynamicContentState;
   earn: EarnState;
   featureFlags: FeatureFlagsState;
+  history: HistoryState;
   identities: IdentitiesState;
   inView: InViewState;
   largeMover: LargeMoverState;
@@ -413,6 +422,7 @@ export type State = LLMRTKApiState & {
   transferDrawer: TransferDrawerState;
   notifications: NotificationsState;
   postOnboarding: PostOnboardingState;
+  postOnboardingHubDrawer: PostOnboardingHubDrawerState;
   protect: ProtectState;
   ratings: RatingsState;
   sendFlow: SendFlowState;
@@ -424,4 +434,6 @@ export type State = LLMRTKApiState & {
   walletSync: WalletSyncState;
   portfolioRefresh: PortfolioRefreshState;
   portfolioBalanceDisplay: PortfolioBalanceDisplayState;
+  recoverState: RecoverStateSliceState;
+  liveAppModal: LiveAppModalState;
 };

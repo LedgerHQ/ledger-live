@@ -25,6 +25,7 @@ module.exports = {
   setupFilesAfterEnv: ["jest-expect-message", "dotenv/config", "@ledgerhq/disable-network-setup"],
   reporters: [
     "default",
+    ...(process.env.CI ? ["github-actions"] : []),
     ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
   ],
 };

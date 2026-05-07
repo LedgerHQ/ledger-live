@@ -4,7 +4,18 @@
   "projectType": "application",
   "targets": {
     "coverage": {
+      "dependsOn": ["generate"],
       "outputs": ["{projectRoot}/coverage/**"]
+    },
+    "generate": {
+      "dependsOn": ["^build"],
+      "outputs": ["{projectRoot}/.bunli/commands.gen.ts"]
+    },
+    "typecheck": {
+      "dependsOn": ["generate"]
+    },
+    "test": {
+      "dependsOn": ["generate"]
     },
     "build": {
       "cache": false

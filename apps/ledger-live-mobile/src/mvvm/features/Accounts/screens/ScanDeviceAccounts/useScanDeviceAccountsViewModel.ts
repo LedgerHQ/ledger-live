@@ -7,7 +7,7 @@ import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import uniq from "lodash/uniq";
 import type { Account } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
+import { useCurrencyBridge } from "@ledgerhq/live-common/bridge/useCurrencyBridge";
 import { isCryptoCurrency, isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
 import logger from "~/logger";
 import { NavigatorName, ScreenName } from "~/const";
@@ -77,9 +77,9 @@ export default function useScanDeviceAccountsViewModel({
     () => (newAccountSchemes && newAccountSchemes.length > 0 ? newAccountSchemes[0] : undefined),
     [newAccountSchemes],
   );
+  const cryptoCurrency = isTokenCurrency(currency) ? currency.parentCurrency : currency;
+  const currencyBridge = useCurrencyBridge(cryptoCurrency);
   const startSubscription = useCallback(() => {
-    const cryptoCurrency = isTokenCurrency(currency) ? currency.parentCurrency : currency;
-    const bridge = getCurrencyBridge(cryptoCurrency);
     const syncConfig = {
       paginationConfig: {
         operations: 0,
@@ -89,7 +89,7 @@ export default function useScanDeviceAccountsViewModel({
     // will be set to false if an existing account is found
     scanSubscription.current = concat(
       from(prepareCurrency(cryptoCurrency)).pipe(ignoreElements()),
-      bridge.scanAccounts({
+      currencyBridge.scanAccounts({
         currency: cryptoCurrency,
         deviceId,
         syncConfig,
@@ -104,7 +104,7 @@ export default function useScanDeviceAccountsViewModel({
         setError(error);
       },
     });
-  }, [blacklistedTokenIds, currency, deviceId]);
+  }, [blacklistedTokenIds, cryptoCurrency, currencyBridge, deviceId]);
 
   const restartSubscription = useCallback(() => {
     setScanning(true);

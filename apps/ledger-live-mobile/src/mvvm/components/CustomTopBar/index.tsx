@@ -7,44 +7,48 @@ import type { TopBarActionIcon } from "./useMyLedgerTopBarAction";
 export type { TopBarActionIcon } from "./useMyLedgerTopBarAction";
 export { useMyLedgerTopBarAction } from "./useMyLedgerTopBarAction";
 
+function renderIconButton(item: TopBarActionIcon, appearance: IconButtonProps["appearance"]) {
+  const button = (
+    <IconButton
+      key={item.id}
+      onPress={item.callback}
+      testID={item.testID}
+      accessibilityLabel={item.accessibilityLabel}
+      appearance={appearance}
+      icon={item.icon}
+      size="md"
+      loading={item.loading}
+    />
+  );
+  return item.wrapper ? (
+    <React.Fragment key={item.id}>{item.wrapper(button)}</React.Fragment>
+  ) : (
+    button
+  );
+}
+
 type CustomTopBarProps = {
+  leadingElement?: React.ReactNode;
   leadingIcons: readonly TopBarActionIcon[];
   trailingIcons: readonly TopBarActionIcon[];
 };
 
-export function CustomTopBar({ leadingIcons, trailingIcons }: Readonly<CustomTopBarProps>) {
+export function CustomTopBar({
+  leadingElement,
+  leadingIcons,
+  trailingIcons,
+}: Readonly<CustomTopBarProps>) {
   const isAndroid = Platform.OS === "android";
   const appearance: IconButtonProps["appearance"] = isAndroid ? "gray" : "transparent";
   return (
     <Box lx={rowLx}>
       <Box lx={iconsGroupLayout}>
-        {leadingIcons.map(item => (
-          <IconButton
-            key={item.id}
-            onPress={item.callback}
-            testID={item.testID}
-            accessibilityLabel={item.accessibilityLabel}
-            appearance={appearance}
-            icon={item.icon}
-            size="md"
-            loading={item.loading}
-          />
-        ))}
+        {leadingElement}
+        {leadingIcons.map(item => renderIconButton(item, appearance))}
       </Box>
 
       <Box lx={iconsGroupLayout}>
-        {trailingIcons.map(item => (
-          <IconButton
-            key={item.id}
-            onPress={item.callback}
-            testID={item.testID}
-            accessibilityLabel={item.accessibilityLabel}
-            appearance={appearance}
-            icon={item.icon}
-            size="md"
-            loading={item.loading}
-          />
-        ))}
+        {trailingIcons.map(item => renderIconButton(item, appearance))}
       </Box>
     </Box>
   );

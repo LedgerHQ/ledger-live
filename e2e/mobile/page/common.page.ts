@@ -19,10 +19,13 @@ export default class CommonPage {
   walletApiWebview = "wallet-api-webview";
   closeWithConfirmationButtonId = "button-close-add-account";
   errorPage = new ErrorPage();
+  seeAllTransactionButton = "portfolio-seeAll-transaction";
 
   searchBar = () => getElementById(this.searchBarId);
   closeButton = () => getElementById("NavigationHeaderCloseButton");
   backButton = () => getElementById("navigation-header-back-button");
+  seeAllOperationsButtonElement = () => getElementById(this.seeAllTransactionButton);
+  assetScreenFlatlistElement = () => getElementById(this.assetScreenFlatlistId);
   accountCardRegExp = (id = ".*") => new RegExp(this.accountCardPrefix + id);
   accountItemRegExp = (id = ".*(?<!-name)$") => new RegExp(`${this.accountItemId}${id}`);
   accountItem = (id: string) => getElementById(this.accountItemRegExp(id));
@@ -137,5 +140,12 @@ export default class CommonPage {
 
   async enableSynchronization() {
     await device.enableSynchronization();
+  }
+
+  @Step("Press on see all operations button")
+  async pressOnSeeAllOperationsButton() {
+    await detoxExpect(this.assetScreenFlatlistElement()).toBeVisible();
+    await scrollToId(this.seeAllTransactionButton, this.assetScreenFlatlistId);
+    await tapByElement(this.seeAllOperationsButtonElement());
   }
 }

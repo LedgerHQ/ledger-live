@@ -42,10 +42,7 @@ import { usesEncodedAccountIdFormat } from "@ledgerhq/live-common/wallet-api/uti
 import { updateAccountWithUpdater } from "~/actions/accounts";
 import { validateInfoDialogParams } from "@ledgerhq/live-common/wallet-api/validation/validateInfoDialogParams";
 import type { InfoDialogParams } from "@ledgerhq/live-common/wallet-api/validation/validateInfoDialogParams";
-import {
-  makeSetEarnInfoBottomSheetAction,
-  makeSetEarnMenuBottomSheetAction,
-} from "~/actions/earn";
+import { makeSetEarnInfoBottomSheetAction, makeSetEarnMenuBottomSheetAction } from "~/actions/earn";
 import { createOpenActionDialogHandler } from "./actionDialogStore";
 import type { Dispatch } from "redux";
 import { useDispatch } from "~/context/hooks";
@@ -518,7 +515,6 @@ export function createOpenInfoBottomSheetHandler(dispatch: Dispatch) {
     dispatch(makeSetEarnInfoBottomSheetAction(validated));
   };
 }
-
 
 export function createOpenMenuBottomSheetHandler(dispatch: Dispatch) {
   return async (request: {

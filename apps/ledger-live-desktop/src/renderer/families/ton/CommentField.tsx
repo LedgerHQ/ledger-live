@@ -1,4 +1,4 @@
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/ton/types";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Account } from "@ledgerhq/types-live";
@@ -25,7 +25,7 @@ const CommentField = ({
 
   const { t } = useTranslation();
 
-  const bridge = getAccountBridge(account);
+  const bridge = useAccountBridge<Transaction>(account);
   const lldMemoTag = useFeature("lldMemoTag");
 
   const onCommentFieldChange = useCallback(

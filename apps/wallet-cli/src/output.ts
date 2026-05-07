@@ -9,13 +9,23 @@
  */
 
 import type { Spinner } from "yocto-spinner";
-import { writeSync } from "node:fs";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets";
+import { CliProcessExitError } from "./cli-process-exit-error";
+import { type DeviceState, isTerminalDeviceState, renderDeviceState } from "./device/device-state";
+import { WalletCliDeviceError } from "./device/wallet-cli-device-error";
 import { HumanFormatter } from "./wallet/formatter/human";
 import { JsonFormatter } from "./wallet/formatter/json";
 import { makeEnvelope } from "./shared/response";
-import { spinner, colors, writeStdout } from "./shared/ui";
+import { spinner, colors, writeStdout, writeStderr, isInteractive } from "./shared/ui";
+import {
+  formatSwapQuoteHuman,
+  type SwapQuoteLine,
+  type SwapQuoteProviderError,
+} from "./commands/swap/quote-shared";
+import { formatSwapStatusHuman, type SwapStatusLine } from "./commands/swap/status-shared";
 import type { Balance, Operation, DiscoveredAccount, SendEvent } from "./wallet/models";
+import type { SessionEntry } from "./session/session-store";
+import type { SwapPayloadResponse } from "@ledgerhq/live-common/exchange/swap/types";
 
 // ---------------------------------------------------------------------------
 // Context & interface
@@ -42,14 +52,15 @@ export interface CommandOutput {
 
   /**
    * Error-handling boundary for the command handler body.
-   * Human: re-throws errors (Bunli handles display).
-   * Json: catches errors, writes a JSON error envelope, and exits with code 1.
+   * Human: exits immediately for WalletCliDeviceError, otherwise re-throws for Bunli.
+   * Json: catches errors, writes a JSON error envelope, and exits with the mapped code.
    */
   run(fn: () => Promise<void>): Promise<void>;
 
   /**
    * Immediately handle an error.
-   * Human: throws it. Json: writes error envelope + exits.
+   * Human: exits immediately for WalletCliDeviceError, otherwise throws it.
+   * Json: writes error envelope + exits.
    */
   fail(e: unknown): never;
 
@@ -64,6 +75,13 @@ export interface CommandOutput {
   discoveredAccount(d: DiscoveredAccount): void;
   /** Signal end of discovery stream. Json: flush buffered accounts as envelope. Human: noop. */
   flushDiscovery(): void;
+  /** Note that N new accounts were persisted to session (human: dim footer; json: noop). */
+  sessionSaved(added: number): void;
+
+  /** Output the result of a session reset (human: colored message; json: envelope with removed count). */
+  sessionReset(count: number): void;
+  /** Output session accounts (human: table or empty message; json: envelope with accounts array). */
+  sessionView(accounts: readonly SessionEntry[]): void;
 
   /** Output a dry-run prepared transaction (human: formatted lines; json: envelope). */
   sendDryRun(p: { recipient: string; amount: string; fees: string }): void;
@@ -71,6 +89,47 @@ export interface CommandOutput {
   sendEvent(event: SendEvent): void;
   /** Signal send stream complete. Json: write result envelope (account from ctx). Human: noop. */
   sendComplete(): void;
+
+  /** Print swap quotes (human: formatted blocks; json: success envelope with `quotes`). */
+  swapQuotes(args: { quotes: SwapQuoteLine[]; partialErrors: SwapQuoteProviderError[] }): void;
+  /** Print swap status result. */
+  swapStatus(status: SwapStatusLine): void;
+
+  /**
+   * No quotes returned while providers reported errors. Json: error envelope + exit 1.
+   * Human: error lines + exit 1.
+   */
+  swapQuotesUnavailable(message: string, errors: SwapQuoteProviderError[]): never;
+
+  /**
+   * Emit an intermediate device-state transition (awaiting_approval, exchange_app_needed).
+   * Human: update the active spinner with the canonical glyph + message.
+   * Json: emit an NDJSON device-state event so non-interactive clients can react before the
+   * final success/error envelope. Terminal failures are still surfaced through
+   * WalletCliDeviceError handling in run()/fail().
+   */
+  deviceState(state: DeviceState): void;
+  /** Print one progress line for swap execute long-running steps. */
+  swapExecuteProgress(line: string): void;
+  /** Print payload-only swap execute result. */
+  swapExecutePayloadResult(args: {
+    provider: string;
+    amount: string;
+    transactionId?: string;
+    payload: SwapPayloadResponse;
+  }): void;
+  /** Print full-pipeline swap execute result. */
+  swapExecuteFullResult(args: {
+    provider: string;
+    amount: string;
+    transactionId: string;
+    payload: SwapPayloadResponse;
+    operationHash?: string;
+    swapId?: string;
+    amountExpectedTo?: string;
+    magnitudeAwareRate?: string;
+    dryRun?: boolean;
+  }): void;
 }
 
 // ---------------------------------------------------------------------------
@@ -83,6 +142,10 @@ class HumanCommandOutput implements CommandOutput {
   constructor(private readonly _fmt: HumanFormatter) {}
 
   spin(text: string): Spinner | null {
+    if (!isInteractive()) {
+      process.stderr.write(text + "\n");
+      return null;
+    }
     const s = spinner(text);
     this._activeSpin = s;
     return s;
@@ -104,14 +167,40 @@ class HumanCommandOutput implements CommandOutput {
     try {
       await fn();
     } catch (err) {
-      this._activeSpin?.error(HumanFormatter.formatError(err));
+      if (err instanceof WalletCliDeviceError) {
+        this._exitWithDeviceError(err);
+      }
+      const displayText = HumanCommandOutput._formatErrorForSpinner(err);
+      this._activeSpin?.error(displayText);
       this._activeSpin = null;
       throw err;
     }
   }
 
   fail(e: unknown): never {
+    if (e instanceof WalletCliDeviceError) {
+      this._exitWithDeviceError(e);
+    }
     throw e;
+  }
+
+  private static _formatErrorForSpinner(err: unknown): string {
+    if (err instanceof WalletCliDeviceError) {
+      const { glyph, message } = renderDeviceState(err.state);
+      return `${glyph} ${message}`;
+    }
+    return HumanFormatter.formatError(err);
+  }
+
+  private _exitWithDeviceError(err: WalletCliDeviceError): never {
+    const displayText = HumanCommandOutput._formatErrorForSpinner(err);
+    if (isInteractive() && this._activeSpin) {
+      this._activeSpin.error(displayText);
+    } else {
+      process.stderr.write(displayText + "\n");
+    }
+    this._activeSpin = null;
+    process.exit(err.exitCode);
   }
 
   async balances(items: Balance[]): Promise<void> {
@@ -126,7 +215,7 @@ class HumanCommandOutput implements CommandOutput {
       writeStdout(op.parentId ? `  ${line}` : line);
     }
     if (nextCursor) {
-      process.stderr.write("\n" + colors.dim(`nextCursor: ${nextCursor}`) + "\n");
+      writeStderr("\n" + colors.dim(`nextCursor: ${nextCursor}`) + "\n");
     }
   }
 
@@ -139,7 +228,32 @@ class HumanCommandOutput implements CommandOutput {
     writeStdout(this._fmt.formatDiscoveredAccount(d));
   }
 
-  flushDiscovery(): void { /* noop */ }
+  flushDiscovery(): void {
+    /* noop */
+  }
+
+  sessionSaved(added: number): void {
+    writeStdout(colors.dim(`  session: ${added} new account${added === 1 ? "" : "s"} saved`));
+  }
+
+  sessionReset(count: number): void {
+    writeStdout(
+      count === 0
+        ? colors.dim("Session was already empty.")
+        : `Removed ${colors.bold(String(count))} account${count === 1 ? "" : "s"} from session.`,
+    );
+  }
+
+  sessionView(accounts: readonly SessionEntry[]): void {
+    if (accounts.length === 0) {
+      writeStdout(colors.dim("No accounts in session. Run `account discover` first."));
+      return;
+    }
+    const maxLabel = Math.max(...accounts.map(e => e.label.length));
+    for (const entry of accounts) {
+      writeStdout(`${colors.bold(entry.label.padEnd(maxLabel))}  ${colors.dim(entry.descriptor)}`);
+    }
+  }
 
   private _printTransactionLines(p: { recipient: string; amount: string; fees: string }): void {
     writeStdout(`  To:     ${p.recipient}`);
@@ -162,9 +276,16 @@ class HumanCommandOutput implements CommandOutput {
       case "device-streaming":
         if (s) s.text = `Streaming to device… ${Math.round(event.progress * 100)}%`;
         break;
-      case "device-signature-requested":
-        if (s) s.text = "Please confirm on device…";
+      case "device-signature-requested": {
+        if (s) {
+          const { glyph, message } = renderDeviceState({
+            code: "awaiting_approval",
+            reason: "sign",
+          });
+          s.text = `${glyph} ${message}`;
+        }
         break;
+      }
       case "device-signature-granted":
         if (s) s.text = "Signed, broadcasting…";
         break;
@@ -177,7 +298,122 @@ class HumanCommandOutput implements CommandOutput {
     }
   }
 
-  sendComplete(): void { /* noop */ }
+  sendComplete(): void {
+    /* noop */
+  }
+
+  private _renderSwapProviderError(e: SwapQuoteProviderError): string {
+    return colors.dim(`  ${e.provider} (${e.type}): ${e.code} - ${e.message}`);
+  }
+
+  private _printSwapProviderErrors(
+    message: string,
+    errors: SwapQuoteProviderError[],
+    asFailure: boolean,
+  ): void {
+    if (isInteractive()) {
+      const s = spinner("");
+      if (asFailure) s.error(message);
+      else s.error(colors.dim(message));
+      for (const e of errors) {
+        s.error(this._renderSwapProviderError(e));
+      }
+      return;
+    }
+
+    process.stderr.write(message + "\n");
+    for (const e of errors) {
+      process.stderr.write(this._renderSwapProviderError(e) + "\n");
+    }
+  }
+
+  swapQuotes(args: { quotes: SwapQuoteLine[]; partialErrors: SwapQuoteProviderError[] }): void {
+    for (const q of args.quotes) {
+      writeStdout(`${formatSwapQuoteHuman(q)}\n`);
+    }
+    if (args.partialErrors.length > 0) {
+      this._printSwapProviderErrors(
+        `${args.partialErrors.length} provider(s) returned errors:`,
+        args.partialErrors,
+        false,
+      );
+    }
+  }
+
+  swapStatus(status: SwapStatusLine): void {
+    writeStdout(formatSwapStatusHuman(status));
+  }
+
+  swapQuotesUnavailable(message: string, errors: SwapQuoteProviderError[]): never {
+    this._printSwapProviderErrors(message, errors, true);
+    throw new CliProcessExitError(1);
+  }
+
+  deviceState(state: DeviceState): void {
+    if (isTerminalDeviceState(state)) {
+      // Terminal states are surfaced via thrown WalletCliDeviceError; avoid double-render.
+      return;
+    }
+    const { glyph, message } = renderDeviceState(state);
+    const text = `${glyph} ${message}`;
+    if (isInteractive()) {
+      if (this._activeSpin) {
+        this._activeSpin.text = text;
+      } else {
+        this.spin(text);
+      }
+    } else {
+      process.stderr.write(text + "\n");
+    }
+  }
+  swapExecuteProgress(line: string): void {
+    if (this._activeSpin?.isSpinning) {
+      this._activeSpin.success(line);
+      this._activeSpin = null;
+      return;
+    }
+    process.stderr.write(`${line}\n`);
+  }
+
+  swapExecutePayloadResult(args: {
+    provider: string;
+    amount: string;
+    transactionId?: string;
+    payload: SwapPayloadResponse;
+  }): void {
+    writeStdout(`${colors.bold("Provider:")} ${args.provider}\n`);
+    writeStdout(`${colors.bold("Amount:")} ${args.amount}\n`);
+    if (args.transactionId) {
+      writeStdout(`${colors.bold("Device transaction id:")} ${args.transactionId}\n`);
+    }
+    writeStdout(`${colors.bold("Swap ID:")} ${args.payload.swapId ?? "(none)"}\n`);
+    writeStdout(`${colors.bold("Payin address:")} ${args.payload.payinAddress}\n`);
+  }
+
+  swapExecuteFullResult(args: {
+    provider: string;
+    amount: string;
+    transactionId: string;
+    payload: SwapPayloadResponse;
+    operationHash?: string;
+    swapId?: string;
+    amountExpectedTo?: string;
+    magnitudeAwareRate?: string;
+    dryRun?: boolean;
+  }): void {
+    this.swapExecutePayloadResult(args);
+    if (args.amountExpectedTo) {
+      writeStdout(
+        `${colors.bold("Amount expected to (decoded payload):")} ${args.amountExpectedTo}\n`,
+      );
+    }
+    if (args.operationHash) {
+      writeStdout(`${colors.bold("Operation hash:")} ${args.operationHash}\n`);
+    }
+    if (args.dryRun) {
+      writeStdout(`${colors.bold("Dry run:")} yes (not signed or broadcasted)\n`);
+    }
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -196,16 +432,61 @@ class JsonCommandOutput implements CommandOutput {
     this._jsonFmt = new JsonFormatter(fmt);
   }
 
-  private _envelope(data: Record<string, unknown>): string {
-    return JSON.stringify(makeEnvelope(this._ctx.command, this._ctx.network, data, this._ctx.account), null, 2);
+  private _envelope(data: Record<string, unknown>): Record<string, unknown> {
+    return makeEnvelope(this._ctx.command, this._ctx.network, data, this._ctx.account);
   }
 
-  private _errorEnvelope(e: unknown): string {
-    return JSON.stringify(
-      { ok: false, error: { command: this._ctx.command, message: HumanFormatter.formatError(e) } },
-      null,
-      2,
-    );
+  private _errorEnvelope(e: unknown): Record<string, unknown> {
+    if (e instanceof WalletCliDeviceError) {
+      const { message } = renderDeviceState(e.state);
+      return {
+        ok: false,
+        error: {
+          command: this._ctx.command,
+          code: e.state.code,
+          message,
+        },
+      };
+    }
+    return {
+      ok: false,
+      error: { command: this._ctx.command, message: HumanFormatter.formatError(e) },
+    };
+  }
+
+  private _swapQuoteErrorEnvelope(
+    message: string,
+    errors: SwapQuoteProviderError[],
+  ): Record<string, unknown> {
+    return {
+      ok: false,
+      error: {
+        command: this._ctx.command,
+        code: "swap_quotes_unavailable",
+        message,
+        provider_errors: errors,
+      },
+    };
+  }
+
+  private _exitCode(e: unknown): number {
+    return e instanceof WalletCliDeviceError ? e.exitCode : 1;
+  }
+
+  private _writeNdjson(value: unknown): void {
+    writeStdout(JSON.stringify(value));
+  }
+
+  private _emitDeviceStateEvent(state: DeviceState): void {
+    const { message } = renderDeviceState(state);
+    this._writeNdjson({
+      type: "device-state",
+      command: this._ctx.command,
+      network: this._ctx.network,
+      ...(this._ctx.account == null ? {} : { account: this._ctx.account }),
+      state,
+      message,
+    });
   }
 
   spin(_text: string): null {
@@ -220,30 +501,29 @@ class JsonCommandOutput implements CommandOutput {
     try {
       await fn();
     } catch (e) {
-      // Bun.spawn on Linux does not reliably capture fd 2 (stderr) from subprocesses.
-      // writeSync(1, ...) is a synchronous POSIX syscall — immune to process.exit() buffer drain.
-      writeSync(1, this._errorEnvelope(e) + "\n");
-      process.exit(1);
+      if (e instanceof CliProcessExitError) throw e;
+      this._writeNdjson(this._errorEnvelope(e));
+      throw new CliProcessExitError(this._exitCode(e));
     }
   }
 
   fail(e: unknown): never {
-    writeSync(1, this._errorEnvelope(e) + "\n");
-    process.exit(1);
+    this._writeNdjson(this._errorEnvelope(e));
+    throw new CliProcessExitError(this._exitCode(e));
   }
 
   async balances(items: Balance[]): Promise<void> {
     const balances = await this._jsonFmt.balances(items);
-    writeStdout(this._envelope({ balances }));
+    this._writeNdjson(this._envelope({ balances }));
   }
 
   async operations(items: Operation[], currencyId: string, nextCursor?: string): Promise<void> {
     const operations = await this._jsonFmt.operations(items, currencyId, this._ctx.account ?? "");
-    writeStdout(this._envelope({ operations, nextCursor }));
+    this._writeNdjson(this._envelope({ operations, nextCursor }));
   }
 
   address(addr: string): void {
-    writeStdout(this._envelope({ address: addr }));
+    this._writeNdjson(this._envelope({ address: addr }));
   }
 
   discoveredAccount(d: DiscoveredAccount): void {
@@ -252,11 +532,25 @@ class JsonCommandOutput implements CommandOutput {
 
   flushDiscovery(): void {
     const accounts = JsonFormatter.discoveredAccounts(this._discoveredAccounts);
-    writeStdout(this._envelope({ accounts }));
+    this._writeNdjson(this._envelope({ accounts }));
+  }
+
+  sessionSaved(_added: number): void {
+    /* noop */
+  }
+
+  sessionReset(count: number): void {
+    this._writeNdjson(this._envelope({ removed: count }));
+  }
+
+  sessionView(accounts: readonly SessionEntry[]): void {
+    this._writeNdjson(this._envelope({ accounts }));
   }
 
   sendDryRun(p: { recipient: string; amount: string; fees: string }): void {
-    writeStdout(this._envelope({ dry_run: true, recipient: p.recipient, amount: p.amount, fee: p.fees }));
+    this._writeNdjson(
+      this._envelope({ dry_run: true, recipient: p.recipient, amount: p.amount, fee: p.fees }),
+    );
   }
 
   sendEvent(event: SendEvent): void {
@@ -264,6 +558,8 @@ class JsonCommandOutput implements CommandOutput {
       this._sendResult.recipient = event.recipient;
       this._sendResult.amount = event.amount;
       this._sendResult.fee = event.fees;
+    } else if (event.type === "device-signature-requested") {
+      this._emitDeviceStateEvent({ code: "awaiting_approval", reason: "sign" });
     } else if (event.type === "broadcasted") {
       this._sendResult.tx_hash = event.txHash;
     } else if (event.type === "dry-run") {
@@ -272,7 +568,75 @@ class JsonCommandOutput implements CommandOutput {
   }
 
   sendComplete(): void {
-    writeStdout(this._envelope(this._sendResult));
+    this._writeNdjson(this._envelope(this._sendResult));
+  }
+
+  deviceState(state: DeviceState): void {
+    this._emitDeviceStateEvent(state);
+  }
+
+  swapQuotes(args: { quotes: SwapQuoteLine[]; partialErrors: SwapQuoteProviderError[] }): void {
+    this._writeNdjson(
+      this._envelope({
+        quotes: args.quotes,
+        ...(args.partialErrors.length === 0 ? {} : { provider_errors: args.partialErrors }),
+      }),
+    );
+  }
+
+  swapStatus(status: SwapStatusLine): void {
+    this._writeNdjson(this._envelope(status));
+  }
+
+  swapQuotesUnavailable(message: string, errors: SwapQuoteProviderError[]): never {
+    this._writeNdjson(this._swapQuoteErrorEnvelope(message, errors));
+    throw new CliProcessExitError(1);
+  }
+
+  swapExecuteProgress(_line: string): void {
+    // Keep JSON mode stdout clean and machine-readable.
+  }
+
+  swapExecutePayloadResult(args: {
+    provider: string;
+    amount: string;
+    transactionId?: string;
+    payload: SwapPayloadResponse;
+  }): void {
+    this._writeNdjson(
+      this._envelope({
+        provider: args.provider,
+        amount: args.amount,
+        transactionId: args.transactionId,
+        payload: args.payload,
+      }),
+    );
+  }
+
+  swapExecuteFullResult(args: {
+    provider: string;
+    amount: string;
+    transactionId: string;
+    payload: SwapPayloadResponse;
+    operationHash?: string;
+    swapId?: string;
+    amountExpectedTo?: string;
+    magnitudeAwareRate?: string;
+    dryRun?: boolean;
+  }): void {
+    this._writeNdjson(
+      this._envelope({
+        provider: args.provider,
+        amount: args.amount,
+        transactionId: args.transactionId,
+        payload: args.payload,
+        operationHash: args.operationHash,
+        swapId: args.swapId,
+        amountExpectedTo: args.amountExpectedTo,
+        magnitudeAwareRate: args.magnitudeAwareRate,
+        ...(args.dryRun ? { dry_run: true } : {}),
+      }),
+    );
   }
 }
 
@@ -280,12 +644,8 @@ class JsonCommandOutput implements CommandOutput {
 // Factory
 // ---------------------------------------------------------------------------
 
-export function createCommandOutput(
-  format: "human" | "json",
-  ctx: OutputContext,
-): CommandOutput {
+export function createCommandOutput(format: "human" | "json", ctx: OutputContext): CommandOutput {
   const humanFmt = new HumanFormatter(getCryptoAssetsStore());
   if (format === "json") return new JsonCommandOutput(ctx, humanFmt);
   return new HumanCommandOutput(humanFmt);
 }
-

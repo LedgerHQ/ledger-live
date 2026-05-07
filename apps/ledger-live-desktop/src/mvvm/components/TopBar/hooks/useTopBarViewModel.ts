@@ -7,11 +7,11 @@ import { useExperimentalFeatures } from "./useExperimentalFeatures";
 import { useFeatureFlags } from "./useFeatureFlags";
 import { useMyLedger } from "./useMyLedger";
 import { useSettings } from "./useSettings";
-import { useHistory } from "./useHistory";
 import { useInformationCenter } from "./useInformationCenter";
 
 const useTopBarViewModel = () => {
-  const { shouldDisplayOperationsList, shouldDisplayMyWallet } = useWalletFeaturesConfig("desktop");
+  const { shouldDisplayOperationsList, shouldDisplayMyWallet, shouldDisplayAggregatedAssets } =
+    useWalletFeaturesConfig("desktop");
   const { isOpen: isInformationCenterOpen, onRequestClose: onInformationCenterClose } =
     useInformationCenter();
   const { handleDiscreet, discreetIcon, tooltip: discreetTooltip } = useDiscreetMode();
@@ -25,7 +25,6 @@ const useTopBarViewModel = () => {
   } = useActivityIndicator();
   const { handleSettings, settingsIcon, tooltip: settingsTooltip } = useSettings();
   const { handleMyLedger, tooltip: myLedgerTooltip, icon: myLedgerIcon } = useMyLedger();
-  const { handleHistory, historyIcon, tooltip: historyTooltip, cta: historyCta } = useHistory();
   const {
     isVisible: isExperimentalVisible,
     handleExperimental,
@@ -100,21 +99,7 @@ const useTopBarViewModel = () => {
         onClick: handleDiscreet,
       },
     },
-    ...(shouldDisplayOperationsList
-      ? [
-          {
-            type: "action" as const,
-            action: {
-              label: "history",
-              tooltip: historyTooltip,
-              icon: historyIcon,
-              isInteractive: true,
-              onClick: handleHistory,
-              cta: historyCta,
-            },
-          },
-        ]
-      : []),
+    ...(shouldDisplayOperationsList ? [{ type: "history" as const }] : []),
     ...(shouldDisplayMyWallet
       ? []
       : [
@@ -146,6 +131,7 @@ const useTopBarViewModel = () => {
     inManager,
     isInformationCenterOpen,
     onInformationCenterClose,
+    shouldDisplayAggregatedAssets,
   };
 };
 

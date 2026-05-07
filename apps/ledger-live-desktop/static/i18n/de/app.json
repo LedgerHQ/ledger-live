@@ -1256,8 +1256,8 @@
             "description" : "Du musst zuerst die Einstellung „My Ledger-Anbieter ({{providerNumber}})“ deaktivieren. Hierzu öffne in Ledger Wallet die Einstellungen, wähle „Experimentelle Features“ aus und deaktiviere dann die Option „Anbieter in My Ledger“."
           },
           "deviceNotGenuineError" : {
-            "title" : "Dieses {{productName}}-Gerät ist nicht echt",
-            "description" : "Die Nutzung dieses {{productName}}-Geräts ist nicht sicher.\nBitte kontaktiere den Ledger-Kundenservice."
+            "title" : "Die Echtheitsprüfung für dieses {{productName}}-Gerät ist fehlgeschlagen",
+            "description" : "Die Verwendung dieses Ledger-Geräts ist nicht sicher.\nBitte kontaktiere den Ledger-Kundenservice."
           }
         },
         "whyPerformChecksLink" : "Weitere Informationen zur Ledger-Echtheitsprüfung",
@@ -1331,6 +1331,10 @@
     }
   },
   "postOnboarding" : {
+    "widget" : {
+      "title" : "Schließe nun die Wallet-Einrichtung ab",
+      "subtitle" : "Beginne mit Einzahlungen in deine Wallet."
+    },
     "postOnboardingScreen" : {
       "title" : "Wie geht es weiter?",
       "titleCompleted" : "Alles eingerichtet! \nLerne jetzt dein Portfolio kennen.",
@@ -2313,7 +2317,8 @@
         "banner" : "Maximaler Auszahlungsbetrag ist",
         "fees" : "Weitere Informationen zu Gebühren",
         "standard" : "Standart",
-        "advanced" : "Advanced"
+        "advanced" : "Advanced",
+        "feeCurrency" : "Gebührenwährung"
       },
       "summary" : {
         "title" : "Zusammenfassung"
@@ -4187,6 +4192,64 @@
         "eigenlayer_points" : "Eigenlayer-Punkte",
         "validator" : "Validatorbelohnungen"
       }
+    },
+    "evmStaking" : {
+      "delegation" : {
+        "emptyState" : {
+          "description" : "Du kannst {{currencyTicker}}-Prämien erhalten, indem du deine Assets delegierst.",
+          "delegation" : "Prämien verdienen"
+        },
+        "claimRewards" : "Prämien beanspruchen",
+        "header" : "Delegierung(en)",
+        "noRewards" : "Keine Prämien verfügbar",
+        "delegate" : "Hinzufügen",
+        "undelegate" : "Delegierung aufheben",
+        "redelegate" : "Erneut delegieren",
+        "redelegateDisabledTooltip" : "Du kannst für <0>{{days}}</0> wieder redelegieren.",
+        "redelegateMaxDisabledTooltip" : "Du kannst nicht mehr als <0>7</0> Validatoren auf einmal redelegieren",
+        "undelegateDisabledTooltip" : "Du kannst die Delegierung nicht für mehr als <0>7</0> Validatoren gleichzeitig aufheben",
+        "reward" : "Prämien beanspruchen",
+        "activeTooltip" : "Delegierte Beträge generieren Prämien",
+        "inactiveTooltip" : "Nicht-delegierte Beträge generieren keine Prämien",
+        "minSafeWarning" : "Zu niedriges Guthaben",
+        "flow" : {
+          "title" : "Delegieren",
+          "steps" : {
+            "starter" : {
+              "description" : "Du kannst Prämien verdienen, indem du deine {{currencyTicker}}-Assets an einen Validator delegierst.",
+              "bullet" : ["Du behältst das Eigentum an delegierten Assets", "Delegiere mit deinem Ledger-Gerät", "Vermögenswerte sind nach nach Aufhebung der Delegierung verfügbar"],
+              "warning" : {
+                "description" : "Wähle deinen Validator mit Bedacht: Ein Teil deiner delegierten Assets kann unwiderruflich verloren gehen, wenn sich der Validator nicht angemessen verhält."
+              }
+            },
+            "amount" : {
+              "title" : "Betrag"
+            },
+            "validator" : {
+              "title" : "Validatoren"
+            },
+            "connectDevice" : {
+              "title" : "Gerät"
+            },
+            "confirmation" : {
+              "title" : "Bestätigung",
+              "success" : {
+                "title" : "Du hast deine Assets erfolgreich delegiert",
+                "text" : "Dein Guthaben wird aktualisiert, sobald die Transaktion durch das Blockchain-Netzwerk bestätigt wurde.",
+                "cta" : "Details anzeigen"
+              },
+              "broadcastError" : "Deine Transaktion ist möglicherweise fehlgeschlagen. Bitte warte einen Moment und prüfe vor einem erneuten Versuch zunächst den Transaktionsverlauf."
+            }
+          }
+        }
+      },
+      "redelegation" : {
+        "header" : "Redelegierung(en)"
+      },
+      "undelegation" : {
+        "header" : "Aufgehobene Delegierung(en)",
+        "inactiveTooltip" : "Beträge mit aufgehobener Delegierung generieren keine Prämien."
+      }
     }
   },
   "graph" : {
@@ -4441,6 +4504,8 @@
     "delegated" : "Delegiert",
     "completionDate" : "Datum der Fertigstellung",
     "rewards" : "Prämien",
+    "sourceValidator" : "Quell-Validator",
+    "destinationValidator" : "Ziel-Validator",
     "duration" : "Dauer",
     "durationJustStarted" : "Gerade begonnen",
     "durationDays" : "{{count}} Tag",
@@ -4606,6 +4671,10 @@
         "title" : "Designumschalter",
         "desc" : "Zeigt ein schwebendes Overlay an, mit dem du schnell zwischen Designs umschalten kannst."
       },
+      "analyticsConsentOptInQa" : {
+        "rowTitle" : "Opt-in-Zustimmung für Analysen (QA)",
+        "rowDesc" : "Überprüfe die gespeicherte Version der Datenschutzeinwilligung und das Zustimmungsdatum; simuliere veraltete Zustände für das Zustimmungsfenster der Portfolioanalyse."
+      },
       "brazeTools" : {
         "title" : "Braze-Tools",
         "description" : "Lokale Braze-Karten erstellen",
@@ -4633,6 +4702,26 @@
             "path" : "Pfad"
           }
         }
+      },
+      "appJsonImporter" : {
+        "title" : "App.json laden",
+        "desc" : "Ziehe eine app.json-Datei zum Importieren von Konten und Einstellungen",
+        "dropOrBrowse" : "Lege die app.json hier ab oder klicke zum Durchsuchen",
+        "importing" : "Importieren...",
+        "success" : "{{count}} Konto erfolgreich importiert.",
+        "success_other" : "{{count}} Konten erfolgreich importiert.",
+        "lastDeviceSeen" : "Letztes Gerät gesehen: {{device}}",
+        "invalidFileType" : "Ungültiger Dateityp. Erwartet eine .json Datei.",
+        "missingDataField" : "Ungültige app.json: Fehlendes Datenfeld auf der obersten Ebene.",
+        "encryptedAccounts" : "Verschlüsselte Konten erkannt. Entschlüssele zuerst die Datei.",
+        "successLabel" : "Erfolgreich",
+        "appJsonFile" : "App.json-Datei",
+        "accountsImported" : "Konten importiert",
+        "accountsFailed" : "Konten konnten nicht verarbeitet werden",
+        "importFailed" : "Import fehlgeschlagen: {{message}}",
+        "unknownError" : "Unbekannter Fehler beim Import.",
+        "failedCount" : "{{count}} Konto konnte nicht geladen werden.",
+        "failedCount_other" : "{{count}} Konten konnten nicht geladen werden."
       },
       "mockAccounts" : {
         "title" : "Pseudokonten generieren",
@@ -5872,6 +5961,10 @@
     },
     "recipientWording" : {
       "send" : "Empfänger",
+      "transfer_public" : "öffentlicher Empfänger",
+      "transfer_private" : "privater Empfänger",
+      "convert_public_to_private" : "privater Empfänger",
+      "convert_private_to_public" : "öffentlicher Empfänger",
       "delegate" : "Validator",
       "redelegate" : "Validator",
       "undelegate" : "Validator",
@@ -6313,6 +6406,11 @@
     "DeviceSocketFail" : {
       "title" : "Bitte starte dein Ledger-Gerät neu und versuche es noch einmal",
       "description" : "Ein unerwarteter Fehler ist aufgetreten. Bitte versuche es noch einmal. ({{message}})"
+    },
+    "CounterfeitDevice" : {
+      "title" : "Die Echtheitsprüfung für dieses {{productName}}-Gerät ist fehlgeschlagen",
+      "description" : "Es ist nicht sicher, dieses Ledger-Gerät zu verwenden. Bitte kontaktiere den Ledger-Kundenservice.",
+      "contactSupportCTA" : "Ledger-Kundenservice kontaktieren"
     },
     "DeviceSocketNoBulkStatus" : {
       "title" : "Die Verbindung ist fehlgeschlagen",
@@ -7225,10 +7323,20 @@
       "title" : "Unzureichendes Guthaben. Das erforderliche Mindestguthaben beträgt 0,02 TON."
     },
     "AleoAmountRecordRequired" : {
-      "title" : "Wähle einen gültigen privaten Eintrag für den Betrag aus."
+      "title" : "Wähle einen gültigen privaten Eintrag für den Betrag aus.",
+      "description" : "Wähle eine deiner verfügbaren privaten Aufzeichnungen aus, um den Überweisungsbetrag bereitzustellen."
     },
     "AleoFeeRecordRequired" : {
-      "title" : "Wähle einen gültigen privaten Eintrag für die Gebühr."
+      "title" : "Eine weitere private Aufzeichnung ist erforderlich, um die Netzwerkgebühr zu decken.",
+      "description" : "Lade dein Guthaben auf, falls nötig. Eine private Aufzeichnung wird für den Überweisungsbetrag verwendet, und du musst eine weitere Aufzeichnung haben, die die Netzwerkgebühr abdecken kann."
+    },
+    "AleoTwoRecordsRequired" : {
+      "title" : "Für das private Senden sind mindestens zwei Einträge erforderlich",
+      "description" : "Du benötigst eine Aufzeichnung für den Überweisungsbetrag und eine weitere, um die Netzwerkgebühr abzudecken."
+    },
+    "AleoFeeRecordInsufficientBalance" : {
+      "title" : "Keine private Aufzeichnung kann die Netzwerkgebühr decken.",
+      "description" : "Wähle einen anderen Eintrag für den Überweisungsbetrag oder lade deinen Kontostand mit zusätzlichen Assets auf."
     },
     "BackupAppDataError" : {
       "title" : "Fehler beim Erstellen der Sicherheitskopie der App-Daten"
@@ -7393,8 +7501,8 @@
       "description" : "Beim Datenaustausch mit deinem Gerät ist ein Problem aufgetreten. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
     },
     "AlreadySendingApduError" : {
-      "title" : "Kommunikationsfehler",
-      "description" : "Beim Datenaustausch mit deinem Gerät ist ein Problem aufgetreten. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+      "title" : "Aktion erforderlich auf deinem Ledger-Gerät",
+      "description" : "Beende die Aktion auf deinem Gerät und wähle dann „Wiederholen“ unten aus."
     },
     "UnknownDeviceExchangeError" : {
       "title" : "Kommunikationsfehler",
@@ -7729,11 +7837,48 @@
     },
     "noAccounts" : {
       "title" : "Für den Zugriff auf diese App brauchst du ein Konto.",
-      "add" : "Konto hinzufügen"
+      "select" : "Konto auswählen"
     }
   },
   "recoverRestore" : {
     "title" : "Verbinde und entsperre dein Ledger-Gerät"
+  },
+  "analyticsConsentModal" : {
+    "fresh" : {
+      "title" : "Hilf uns, Ledger zu verbessern",
+      "description" : "Mit deiner Zustimmung erheben wir Nutzungsdaten, um Funktionen zu verbessern und dein Nutzungserlebnis zu personalisieren.",
+      "ctaAcceptAll" : "Alle annehmen",
+      "ctaRefuseAll" : "Alle ablehnen"
+    },
+    "reconfirm" : {
+      "title" : "Möchtest du Ledger weiter verbessern?",
+      "description" : "Möchtest du weiterhin Nutzungsdaten weitergeben, um uns bei der Verbesserung von Ledger zu unterstützen? Diese Daten werden verwendet, um Funktionen zu verbessern und dein Nutzungserlebnis zu personalisieren.",
+      "ctaContinue" : "Ja, fortfahren",
+      "ctaStop" : "Nein, aufhören"
+    },
+    "privacy" : {
+      "title" : "Wir aktualisieren unsere Datenschutzrichtlinie",
+      "descriptionLead" : "Bitte überprüfe unser Angebot ",
+      "descriptionLinkLabel" : "Datenschutzrichtlinie",
+      "descriptionTrail" : " um zu erfahren, was sich geändert hat. Du kannst deine Einstellungen jederzeit in den Einstellungen anpassen.",
+      "ctaGotIt" : "Verstanden"
+    },
+    "setPreferences" : "Einstellungen festlegen",
+    "preferences" : {
+      "appPerformance" : {
+        "title" : "App-Leistung",
+        "description" : "Ermöglicht Ledger, die App-Nutzung zu erfassen, um das Nutzungserlebnis zu optimieren."
+      },
+      "personalizedExperience" : {
+        "title" : "Personalisierte Nutzung",
+        "description" : "Ermöglicht Ledger, die App-Nutzung zu erfassen, um personalisierte Inhalte bereitzustellen"
+      },
+      "ctaConfirm" : "Bestätigen"
+    },
+    "footer" : {
+      "lead" : "Du kannst deine Einwilligung jederzeit in den Einstellungen widerrufen.",
+      "privacyLink" : "Datenschutzrichtlinie"
+    }
   },
   "analyticsOptInPrompt" : {
     "variantA" : {
@@ -8178,7 +8323,10 @@
       },
       "editName" : "Name bearbeiten",
       "emptyState" : "Noch keine Krypto-Adresse",
-      "emptySearchState" : "Es wurden keine Konten gefunden, die deiner Suche entsprechen"
+      "emptySearchState" : "Es wurden keine Konten gefunden, die deiner Suche entsprechen",
+      "assetCount_zero" : "{{count}} Assets",
+      "assetCount_one" : "{{count}} Assets",
+      "assetCount_other" : "{{count}} Assets"
     },
     "editName" : {
       "title" : "Adressnamen bearbeiten",
@@ -8248,7 +8396,7 @@
         "showBalance" : "Saldo zeigen",
         "startSync" : "Synchronisierung starten",
         "stopSync" : "Synchronisierung anhalten",
-        "lastProcessedBlock" : "Zuletzt verarbeiteter Block: {{block}}. {{missing}} Blöcke fehlen.",
+        "upToDate" : "Aktuell",
         "lastSync" : "Letzte Synchronisierung: {{date}}",
         "estimatedTimeRemaining" : "Geschätzte verbleibende Zeit: {{hours}}:{{minutes}}"
       },
@@ -8455,5 +8603,17 @@
       "errorDescription" : "Beim Exportieren deines Transaktionsverlaufs ist ein Fehler aufgetreten. Bitte versuche es noch einmal.",
       "tryAgain" : "Wiederholen"
     }
+  },
+  "myWallet" : {
+    "actionsList" : {
+      "help" : "Hilfe",
+      "recover" : "[L] Recover",
+      "refer" : "Empfehlung"
+    },
+    "myLedger" : {
+      "title" : "My Ledger",
+      "description" : "Verwalte dein Ledger-Gerät"
+    },
+    "explore" : "Alle Ledger-Geräte entdecken"
   }
 }

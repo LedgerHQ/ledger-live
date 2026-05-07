@@ -224,7 +224,7 @@ const App = () => {
     [mode, id, contractAddress, network, findCurrencyById, findTokenByAddress],
   );
 
-  const iconSize = "56px";
+  const iconSize = 56;
 
   return (
     <Container>
@@ -327,14 +327,14 @@ const App = () => {
                   ticker={currency.ticker}
                   size={iconSize}
                   network={currency.parentCurrency.id}
-                  overridesRadius="16px"
+                  shape="square"
                 />
               ) : (
                 <CryptoIcon
                   ledgerId={currency.id}
                   ticker={currency.ticker}
                   size={iconSize}
-                  overridesRadius="16px"
+                  shape="square"
                 />
               )}
             </IconContainer>

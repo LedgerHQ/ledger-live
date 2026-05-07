@@ -2,7 +2,14 @@ import path from "path";
 import { rspack, type RspackOptions } from "@rspack/core";
 import ReactRefreshPlugin from "@rspack/plugin-react-refresh";
 import { commonConfig, rootFolder } from "./rspack.common";
-import { buildRendererEnv, buildDotEnvDefine, DOTENV_FILE, lldRoot } from "./utils";
+import {
+  buildRendererEnv,
+  buildDotEnvDefine,
+  DOTENV_FILE,
+  lldRoot,
+  getRsdoctorPlugin,
+  isRsdoctorEnabled,
+} from "./utils";
 
 /**
  * Creates the rspack configuration for the Electron renderer process
@@ -32,7 +39,7 @@ export function createRendererConfig(
       publicPath: isDev ? "/" : "./",
       assetModuleFilename: "assets/[name]-[hash][ext]",
     },
-    devtool: isDev ? "eval-source-map" : "source-map",
+    devtool: isRsdoctorEnabled() ? false : isDev ? "eval-source-map" : "source-map",
     resolve: {
       ...commonConfig.resolve,
       // Platform-specific file resolution:
@@ -76,6 +83,10 @@ export function createRendererConfig(
         ...commonConfig.resolve?.alias,
         LLD: path.resolve(lldRoot, "src", "mvvm"),
         "styled-components": styledComponentsPath,
+        // Route `ZCashNative` to the IPC client in the renderer so the
+        // `zcash-utils` .node addon stays out of the bundle (see
+        // `@ledgerhq/zcash-shielded/ipc/main-host`).
+        "@ledgerhq/zcash-shielded/ZCashNative$": "@ledgerhq/zcash-shielded/ZCashNativeIPC",
         // Fix tests/time.js import for TIMEMACHINE feature
         "../../tests/time.js": path.resolve(rootFolder, "tests", "time.ts"),
         "../tests/time": path.resolve(rootFolder, "tests", "time.ts"),
@@ -269,6 +280,7 @@ export function createRendererConfig(
       ],
     },
     plugins: [
+      ...getRsdoctorPlugin("renderer"),
       // ElectronTargetPlugin for proper node/electron module handling
       new rspack.electron.ElectronTargetPlugin("renderer"),
       new rspack.DefinePlugin({

@@ -1,12 +1,16 @@
 import React from "react";
-import { Box } from "@ledgerhq/lumen-ui-rnative";
+import { FlatList } from "react-native";
+import { Box, PageIndicator } from "@ledgerhq/lumen-ui-rnative";
 import SectionContainer from "~/screens/WalletCentricSections/SectionContainer";
 import { LNSUpsellBanner } from "LLM/features/LNSUpsell/components/LNSUpsellBanner";
 import ContentCardsLocation from "~/dynamicContent/ContentCardsLocation";
 import { ContentCardLocation } from "~/dynamicContent/types";
-import RecoverBanner from "~/components/RecoverBanner";
+import RecoverBanner from "../RecoverBanner";
 import { OnboardingWidget } from "../OnboardingWidget";
 import { usePortfolioBannersSectionViewModel } from "./usePortfolioBannersSectionViewModel";
+import { width } from "~/helpers/normalizeSize";
+
+const WIDTH = width - 32;
 
 interface PortfolioBannersSectionProps {
   readonly isFirst: boolean;
@@ -19,32 +23,113 @@ export const PortfolioBannersSection = ({
   isLNSUpsellBannerShown,
   showAssets,
 }: PortfolioBannersSectionProps) => {
-  const { shouldShowOnboardingWidget } = usePortfolioBannersSectionViewModel({
-    isLNSUpsellBannerShown,
+  const {
+    shouldShowOnboardingWidget,
+    sectionMarginTop,
+    hasAssets,
+    shouldDisplayRecover,
+    onScroll,
+    carouselIndex,
+  } = usePortfolioBannersSectionViewModel({
+    showAssets,
   });
+
+  if (isLNSUpsellBannerShown) {
+    return (
+      <SectionContainer
+        py="0"
+        mt={0}
+        isFirst={isFirst}
+        key="BannersSection"
+        testID="portfolio-banners-section"
+      >
+        <LNSUpsellBanner location="wallet" mx={6} mb={6} mt={4} />
+      </SectionContainer>
+    );
+  }
+  if (!shouldShowOnboardingWidget && !shouldDisplayRecover && !hasAssets) return null;
+
+  if (hasAssets && !shouldShowOnboardingWidget) {
+    return (
+      <SectionContainer
+        py="0"
+        mt={0}
+        isFirst={isFirst}
+        key="BannersSection"
+        testID="portfolio-banners-section"
+      >
+        <Box lx={{ marginTop: sectionMarginTop }}>
+          <RecoverBanner />
+
+          <ContentCardsLocation
+            key="contentCardsLocationPortfolio"
+            locationId={ContentCardLocation.TopWallet}
+          />
+        </Box>
+      </SectionContainer>
+    );
+  }
+
+  if (shouldShowOnboardingWidget && shouldDisplayRecover) {
+    const carouselItems = [
+      { key: "onboarding", component: <OnboardingWidget /> },
+      { key: "recover", component: <RecoverBanner paddingHorizontal="s0" /> },
+    ];
+
+    return (
+      <SectionContainer
+        py="0"
+        mt={0}
+        isFirst={isFirst}
+        key="BannersSection"
+        testID="portfolio-banners-section"
+      >
+        <Box lx={{ marginTop: sectionMarginTop, gap: "s8", marginBottom: "s24" }}>
+          <FlatList
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            onScroll={onScroll}
+            onMomentumScrollEnd={onScroll}
+            disableIntervalMomentum
+            snapToInterval={width}
+            decelerationRate={0}
+            scrollEventThrottle={16}
+            bounces={false}
+            data={carouselItems}
+            keyExtractor={item => item.key}
+            renderItem={({ item }) => <Box style={{ width: WIDTH }}>{item.component}</Box>}
+          />
+
+          <Box lx={{ alignItems: "center" }} testID="banners-page-indicator">
+            <PageIndicator
+              currentPage={Math.min(carouselIndex + 1, carouselItems.length)}
+              totalPages={carouselItems.length}
+            />
+          </Box>
+        </Box>
+      </SectionContainer>
+    );
+  }
 
   return (
     <SectionContainer
       py="0"
-      mt={6}
+      mt={0}
       isFirst={isFirst}
       key="BannersSection"
       testID="portfolio-banners-section"
     >
-      {shouldShowOnboardingWidget ? (
-        <Box style={{ marginBottom: 6 }}>
-          <OnboardingWidget />
-        </Box>
-      ) : null}
-      {isLNSUpsellBannerShown && <LNSUpsellBanner location="wallet" mx={6} mb={6} />}
-      {!isLNSUpsellBannerShown && !shouldShowOnboardingWidget && showAssets ? (
-        <ContentCardsLocation
-          key="contentCardsLocationPortfolio"
-          locationId={ContentCardLocation.TopWallet}
-          mb={6}
-        />
-      ) : null}
-      <RecoverBanner mb={6} />
+      <Box
+        style={{ width: WIDTH }}
+        lx={{
+          marginTop: sectionMarginTop,
+          marginBottom: "s24",
+          marginLeft: shouldShowOnboardingWidget ? "s12" : "s0",
+        }}
+      >
+        {shouldShowOnboardingWidget && <OnboardingWidget />}
+        {shouldDisplayRecover && <RecoverBanner paddingHorizontal="s0" />}
+      </Box>
     </SectionContainer>
   );
 };

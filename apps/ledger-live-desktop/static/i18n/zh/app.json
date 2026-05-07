@@ -1256,8 +1256,8 @@
             "description" : "您必须先禁用“我的 Ledger 提供商 ({{providerNumber}})”设置。要禁用该设置，请打开 Ledger Wallet “设置”，选择“实验性功能”，然后关闭“我的 Ledger 提供商”。"
           },
           "deviceNotGenuineError" : {
-            "title" : "此 {{productName}} 不是正品",
-            "description" : "此 {{productName}} 不能安全使用。\n请联系 Ledger 客服。"
+            "title" : "{{productName}} 未通过正品检查",
+            "description" : "使用这个 Ledger 设备并不安全。\n请联系 Ledger 客服。"
           }
         },
         "whyPerformChecksLink" : "详细了解 Ledger 正品检查",
@@ -1331,6 +1331,10 @@
     }
   },
   "postOnboarding" : {
+    "widget" : {
+      "title" : "接着，完成钱包设置",
+      "subtitle" : "首先为您的钱包充值。"
+    },
     "postOnboardingScreen" : {
       "title" : "接下来呢？",
       "titleCompleted" : "一切准备就绪！\n继续探索您的资产组合。",
@@ -2313,7 +2317,8 @@
         "banner" : "最大可支出数额为",
         "fees" : "详细了解费用",
         "standard" : "标准",
-        "advanced" : "高级"
+        "advanced" : "高级",
+        "feeCurrency" : "费用币种"
       },
       "summary" : {
         "title" : "概要"
@@ -4187,6 +4192,64 @@
         "eigenlayer_points" : "Eigenlayer 积分",
         "validator" : "验证者奖励"
       }
+    },
+    "evmStaking" : {
+      "delegation" : {
+        "emptyState" : {
+          "description" : "您可以通过委托资产赚取 {{currencyTicker}} 奖励。",
+          "delegation" : "赚取奖励"
+        },
+        "claimRewards" : "申领奖励",
+        "header" : "委托",
+        "noRewards" : "没有奖励可用",
+        "delegate" : "添加",
+        "undelegate" : "解除委托",
+        "redelegate" : "重新委托",
+        "redelegateDisabledTooltip" : "您可以再次重新委托 <0>{{days}}</0>",
+        "redelegateMaxDisabledTooltip" : "每次重新委托的验证者不能多于 <0>7</0> 个",
+        "undelegateDisabledTooltip" : "每次取消委托的验证者不能多于 <0>7</0> 个",
+        "reward" : "申领奖励",
+        "activeTooltip" : "已委托的数额会生成奖励",
+        "inactiveTooltip" : "已解除委托的数额不会生成奖励。",
+        "minSafeWarning" : "资金不足",
+        "flow" : {
+          "title" : "委托",
+          "steps" : {
+            "starter" : {
+              "description" : "您可以通过将 {{currencyTicker}} 资产委托给验证者来赚取奖励。",
+              "bullet" : ["您保有对已委托资产的所有权", "使用您的 Ledger 设备进行委托", "资产将在解除委托后可用"],
+              "warning" : {
+                "description" : "请明智地选择验证者：如果验证者表现不当，您可能会不可挽回地损失部分已委托资产。"
+              }
+            },
+            "amount" : {
+              "title" : "数额"
+            },
+            "validator" : {
+              "title" : "验证者"
+            },
+            "connectDevice" : {
+              "title" : "设备"
+            },
+            "confirmation" : {
+              "title" : "确认",
+              "success" : {
+                "title" : "您的资产已经成功委托。",
+                "text" : "该交易一经区块链确认，就会更新您的账户余额。",
+                "cta" : "查看详情"
+              },
+              "broadcastError" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。"
+            }
+          }
+        }
+      },
+      "redelegation" : {
+        "header" : "重新委托"
+      },
+      "undelegation" : {
+        "header" : "解除委托",
+        "inactiveTooltip" : "已解除委托的数额不会生成奖励。"
+      }
     }
   },
   "graph" : {
@@ -4441,6 +4504,8 @@
     "delegated" : "已委托",
     "completionDate" : "完成日期",
     "rewards" : "奖励",
+    "sourceValidator" : "来源验证者",
+    "destinationValidator" : "目标验证者",
     "duration" : "持续时间",
     "durationJustStarted" : "刚刚开始",
     "durationDays" : "{{count}} 天",
@@ -4606,6 +4671,10 @@
         "title" : "主题切换",
         "desc" : "显示可快速切换主题的浮动覆盖。"
       },
+      "analyticsConsentOptInQa" : {
+        "rowTitle" : "分析数据使用同意 (QA)",
+        "rowDesc" : "检查已存储的隐私同意版本和同意日期；模拟资产组合分析同意弹窗的过期状态。"
+      },
       "brazeTools" : {
         "title" : "Braze 工具",
         "description" : "生成本地 Braze 卡",
@@ -4633,6 +4702,26 @@
             "path" : "路径"
           }
         }
+      },
+      "appJsonImporter" : {
+        "title" : "加载 app.json",
+        "desc" : "拖放 app.json 文件以导入账户和设置。",
+        "dropOrBrowse" : "将 app.json 文件拖放到此处，或点击浏览。",
+        "importing" : "正在导入...",
+        "success" : "已成功导入 {{count}} 个账户。",
+        "success_other" : "已成功导入 {{count}} 个账户。",
+        "lastDeviceSeen" : "最近使用的设备：{{device}}",
+        "invalidFileType" : "无效的文件类型需要 .json 文件。",
+        "missingDataField" : "app.json 无效：缺少顶层数据字段。",
+        "encryptedAccounts" : "检测到已加密的账户。请先解密文件。",
+        "successLabel" : "成功",
+        "appJsonFile" : "App.json 文件",
+        "accountsImported" : "已导入账户",
+        "accountsFailed" : "失败的账户",
+        "importFailed" : "导入失败：{{message}}",
+        "unknownError" : "导入时发生未知错误。",
+        "failedCount" : "{{count}} 个账户无法加载。",
+        "failedCount_other" : "{{count}} 个账户无法加载。"
       },
       "mockAccounts" : {
         "title" : "生成 Mock（模拟）账户",
@@ -5872,6 +5961,10 @@
     },
     "recipientWording" : {
       "send" : "接收方",
+      "transfer_public" : "公开接收方",
+      "transfer_private" : "私密接收者",
+      "convert_public_to_private" : "私密接收者",
+      "convert_private_to_public" : "公开接收方",
       "delegate" : "验证者",
       "redelegate" : "验证者",
       "undelegate" : "验证者",
@@ -6313,6 +6406,11 @@
     "DeviceSocketFail" : {
       "title" : "请重启您的 Ledger 设备并重试",
       "description" : "发生意外错误。请再次尝试。({{message}})"
+    },
+    "CounterfeitDevice" : {
+      "title" : "{{productName}} 未通过正品检查",
+      "description" : "使用这个 Ledger 设备并不安全。请联系 Ledger 客服。",
+      "contactSupportCTA" : "联系 Ledger 客服"
     },
     "DeviceSocketNoBulkStatus" : {
       "title" : "连接失败",
@@ -7225,10 +7323,20 @@
       "title" : "资金不足。所需最低余额为 0.02 TON。"
     },
     "AleoAmountRecordRequired" : {
-      "title" : "请为数额选择有效的私密记录。"
+      "title" : "请为数额选择有效的私密记录。",
+      "description" : "选择一条可用私密记录，用于支付转账数额。"
     },
     "AleoFeeRecordRequired" : {
-      "title" : "请为费用选择有效的私密记录。"
+      "title" : "需要另一条私密记录来支付网络费用。",
+      "description" : "如有需要，请充值您的余额。一条私密记录用于转账数额，您必须有另一条记录能够支付网络费用。"
+    },
+    "AleoTwoRecordsRequired" : {
+      "title" : "私密发送需要至少两条记录。",
+      "description" : "您需要一条记录用于转账数额，另一条记录用于支付网络费用。"
+    },
+    "AleoFeeRecordInsufficientBalance" : {
+      "title" : "没有私密记录可用于支付网络费用。",
+      "description" : "为转账数额选择其他记录，或者使用其他资金充值您的余额。"
     },
     "BackupAppDataError" : {
       "title" : "应用程序数据备份过程中出错"
@@ -7393,8 +7501,8 @@
       "description" : "与您的设备交换信息时出现问题。请重试，如果问题仍然存在，请联系 Ledger 客服。"
     },
     "AlreadySendingApduError" : {
-      "title" : "通信错误",
-      "description" : "与您的设备交换信息时出现问题。请重试，如果问题仍然存在，请联系 Ledger 客服。"
+      "title" : "请在您的 Ledger 设备上完成操作",
+      "description" : "在您的设备上完成该操作，然后选择下面的“重试”。"
     },
     "UnknownDeviceExchangeError" : {
       "title" : "通信错误",
@@ -7729,11 +7837,48 @@
     },
     "noAccounts" : {
       "title" : "您需要使用账户才能访问此应用程序。",
-      "add" : "添加账户"
+      "select" : "选择账户"
     }
   },
   "recoverRestore" : {
     "title" : "连接并解锁您的 Ledger 设备"
+  },
+  "analyticsConsentModal" : {
+    "fresh" : {
+      "title" : "帮助我们改进 Ledger",
+      "description" : "征得您的同意后，我们将收集使用数据，以改进功能并提供个性化体验。",
+      "ctaAcceptAll" : "全部接受",
+      "ctaRefuseAll" : "全部拒绝"
+    },
+    "reconfirm" : {
+      "title" : "继续改进 Ledger？",
+      "description" : "您想继续分享使用数据以帮助我们改进 Ledger 吗？这些数据用于改进功能并个性化您的体验。",
+      "ctaContinue" : "可以，继续",
+      "ctaStop" : "不想，停止"
+    },
+    "privacy" : {
+      "title" : "我们正在更新我们的隐私政策",
+      "descriptionLead" : "请查看我们的 ",
+      "descriptionLinkLabel" : "隐私政策",
+      "descriptionTrail" : " 了解发生了什么变化。您可以随时在设置中更新您的偏好。",
+      "ctaGotIt" : "知道了"
+    },
+    "setPreferences" : "设置偏好",
+    "preferences" : {
+      "appPerformance" : {
+        "title" : "应用性能",
+        "description" : "允许 Ledger 收集应用程序使用数据以优化用户体验"
+      },
+      "personalizedExperience" : {
+        "title" : "个性化体验",
+        "description" : "允许 Ledger 收集应用程序使用数据，以提供个性化内容"
+      },
+      "ctaConfirm" : "确认"
+    },
+    "footer" : {
+      "lead" : "您可以随时在设置中撤回您的同意。",
+      "privacyLink" : "隐私政策"
+    }
   },
   "analyticsOptInPrompt" : {
     "variantA" : {
@@ -8178,7 +8323,10 @@
       },
       "editName" : "编辑名称",
       "emptyState" : "暂无加密地址",
-      "emptySearchState" : "没有与您的搜索相符的账户。"
+      "emptySearchState" : "没有与您的搜索相符的账户。",
+      "assetCount_zero" : "{{count}} 个资产",
+      "assetCount_one" : "{{count}} 个资产",
+      "assetCount_other" : "{{count}} 个资产"
     },
     "editName" : {
       "title" : "编辑地址名称",
@@ -8248,7 +8396,7 @@
         "showBalance" : "显示余额",
         "startSync" : "开始同步",
         "stopSync" : "停止同步",
-        "lastProcessedBlock" : "最后处理的区块：{{block}}。缺少 {{missing}} 个区块。",
+        "upToDate" : "最新",
         "lastSync" : "上次同步：{{date}}",
         "estimatedTimeRemaining" : "预计剩余时间：{{hours}}:{{minutes}}"
       },
@@ -8455,5 +8603,17 @@
       "errorDescription" : "导出您的交易历史记录时出错。请重试。",
       "tryAgain" : "请重试"
     }
+  },
+  "myWallet" : {
+    "actionsList" : {
+      "help" : "帮助",
+      "recover" : "[L] Recover",
+      "refer" : "推荐"
+    },
+    "myLedger" : {
+      "title" : "我的 Ledger",
+      "description" : "管理您的 Ledger 设备"
+    },
+    "explore" : "探索所有 Ledger 设备"
   }
 }

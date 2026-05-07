@@ -127,6 +127,23 @@ describe("useTopBarViewModel", () => {
     expect(mockNavigate).toHaveBeenCalledTimes(1);
   });
 
+  describe("hasUnreadOperations", () => {
+    it("should be false by default (null lastSeenOperationDate)", () => {
+      const { result } = renderHook(() => useTopBarViewModel(mockNavigation as never));
+      expect(result.current.hasUnreadOperations).toBe(false);
+    });
+
+    it("should be false when lastSeenOperationDate is set but no operations are newer", () => {
+      const { result } = renderHook(() => useTopBarViewModel(mockNavigation as never), {
+        overrideInitialState: (state: State) => ({
+          ...state,
+          history: { lastSeenOperationDate: "2099-01-01T00:00:00.000Z" },
+        }),
+      });
+      expect(result.current.hasUnreadOperations).toBe(false);
+    });
+  });
+
   describe("sync drawer", () => {
     it("should open the drawer and track SyncErrorList with error currency ids on openSyncDrawer", () => {
       mockedUseSyncIndicator.mockReturnValue({

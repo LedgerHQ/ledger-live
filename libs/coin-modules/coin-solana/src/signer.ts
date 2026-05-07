@@ -27,6 +27,9 @@ export type Resolution = {
   };
   userInputType?: UserInputType;
   templateId?: string;
+  delayed?: boolean;
+  solanaRPCURL?: string;
+  fetchBlockhash?: () => Promise<Uint8Array>;
 };
 
 export enum PubKeyDisplayMode {

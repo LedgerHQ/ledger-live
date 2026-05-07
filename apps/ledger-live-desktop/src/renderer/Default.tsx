@@ -1,14 +1,14 @@
 import React, { useEffect, lazy, Suspense } from "react";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { ipcRenderer } from "electron";
-import { Navigate, Route, Routes, useNavigate, useLocation } from "react-router";
+import { Navigate, Route, Routes, useNavigate, useLocation, useParams } from "react-router";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import TrackAppStart from "~/renderer/components/TrackAppStart";
 import { LiveApp } from "~/renderer/screens/platform";
 import { BridgeSyncProvider } from "~/renderer/bridge/BridgeSyncContext";
 import { WalletSyncProvider } from "LLD/features/WalletSync/components/WalletSyncContext";
 import { SyncNewAccounts } from "~/renderer/bridge/SyncNewAccounts";
-import Box from "~/renderer/components/Box/Box";
+import { cn } from "LLD/utils/cn";
 import { useListenToHidDevices } from "./hooks/useListenToHidDevices";
 import ExportLogsButton from "~/renderer/components/ExportLogsButton";
 import Idler from "~/renderer/components/Idler";
@@ -67,6 +67,7 @@ import { setCosmosLdmkEnabled } from "@ledgerhq/live-common/families/cosmos/setu
 import { themeSelector } from "./actions/general";
 import useCheckAccountWithFunds from "./components/PostOnboardingHub/logic/useCheckAccountWithFunds";
 import GlobalDialogs from "LLD/features/GlobalDialogs";
+import GlobalDrawers from "LLD/features/GlobalDrawers";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/useWalletFeaturesConfig";
 import { useShouldShowDeferredModals } from "~/renderer/hooks/useShouldShowDeferredModals";
 import {
@@ -87,6 +88,7 @@ const Bank = lazy(() => import("~/renderer/screens/bank"));
 const SwapWeb = lazy(() => import("~/renderer/screens/swapWeb"));
 const Swap2 = lazy(() => import("~/renderer/screens/exchange/Swap2"));
 const Perps = lazy(() => import("LLD/features/Perps"));
+const Borrow = lazy(() => import("LLD/features/Borrow"));
 const Market40 = lazy(() => import("LLD/features/Market"));
 const Market = lazy(() => import("~/renderer/screens/market"));
 
@@ -102,6 +104,7 @@ const Onboarding = lazy(() => import("~/renderer/components/Onboarding"));
 const PostOnboardingScreen = lazy(() => import("~/renderer/components/PostOnboardingScreen"));
 const USBTroubleshooting = lazy(() => import("~/renderer/screens/USBTroubleshooting"));
 const Asset = lazy(() => import("~/renderer/screens/asset"));
+const AssetDetails = lazy(() => import("LLD/features/AssetDetail"));
 const Account = lazy(() => import("~/renderer/screens/account"));
 const Analytics = lazy(() => import("LLD/features/Analytics"));
 const CryptoAddresses = lazy(() => import("LLD/features/CryptoAddresses"));
@@ -128,7 +131,6 @@ const Fallback = () => (
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-// eslint-disable-next-line react/display-name
 const withSuspense = Component => props => (
   <Suspense fallback={<Fallback />}>
     <Component {...props} />
@@ -152,6 +154,11 @@ const LetInternalSendCrashTest = () => {
     ipcRenderer.send("internalCrashTest");
   }, []);
   return null;
+};
+
+const RedirectMarketToAsset = () => {
+  const { currencyId } = useParams<{ currencyId: string }>();
+  return <Navigate to={`/asset/${currencyId ?? ""}`} replace />;
 };
 
 export const TopBannerContainer = styled.div`
@@ -221,10 +228,12 @@ const MainAppContent = ({
   shouldDisplayMarketBanner,
   shouldDisplayWallet40MainNav,
   shouldDisplayAssetSection,
+  shouldDisplayAggregatedAssets,
 }: {
   shouldDisplayMarketBanner: boolean;
   shouldDisplayWallet40MainNav: boolean;
   shouldDisplayAssetSection: boolean;
+  shouldDisplayAggregatedAssets: boolean;
 }) => (
   <>
     <Routes>
@@ -270,13 +279,22 @@ const MainAppContent = ({
         <Route path="/platform" element={withSuspense(PlatformCatalog)({})} />
         <Route path="/platform/:appId" element={<LiveApp />} />
         <Route path="/earn/*" element={withSuspense(Earn)({})} />
+        <Route path="/borrow/*" element={withSuspense(Borrow)({})} />
         <Route path="/exchange/:appId?" element={withSuspense(Exchange)({})} />
         <Route path="/swap-web" element={withSuspense(SwapWeb)({})} />
         <Route path="/account/:parentId/:id/*" element={withSuspense(Account)({})} />
         <Route path="/account/:id/*" element={withSuspense(Account)({})} />
-        <Route path="/asset/*" element={withSuspense(Asset)({})} />
+        <Route
+          path="/asset/*"
+          element={withSuspense(shouldDisplayAggregatedAssets ? AssetDetails : Asset)({})}
+        />
         <Route path="/swap/*" element={withSuspense(Swap2)({})} />
-        <Route path="/market/:currencyId" element={withSuspense(MarketCoin)({})} />
+        <Route
+          path="/market/:currencyId"
+          element={
+            shouldDisplayAggregatedAssets ? <RedirectMarketToAsset /> : withSuspense(MarketCoin)({})
+          }
+        />
         <Route
           path="/market"
           element={withSuspense(shouldDisplayMarketBanner ? Market40 : Market)({})}
@@ -295,11 +313,13 @@ const MainAppContent = ({
 export const MainAppLayout = () => {
   const { pathname } = useLocation();
   const theme = useSelector(themeSelector);
+  const styledComponentsTheme = useTheme();
   const {
     shouldDisplayMarketBanner,
     isEnabled: isWallet40Enabled,
     shouldDisplayWallet40MainNav,
     shouldDisplayAssetSection,
+    shouldDisplayAggregatedAssets,
   } = useWalletFeaturesConfig("desktop");
   const shouldShowDeferredModals = useShouldShowDeferredModals();
 
@@ -307,7 +327,8 @@ export const MainAppLayout = () => {
     ? getPageBackground(pathname, theme)
     : undefined;
 
-  const useWallet40Layout = isWallet40Enabled && isWallet40Page(pathname);
+  const useWallet40Layout =
+    isWallet40Enabled && isWallet40Page(pathname, { shouldDisplayAggregatedAssets });
 
   useEffect(() => {
     if (shouldDisplayWallet40MainNav) preloadBackgrounds();
@@ -324,39 +345,30 @@ export const MainAppLayout = () => {
       )}
       <SyncNewAccounts priority={2} />
 
-      {useWallet40Layout ? (
-        <div
-          className="flex size-full grow flex-row bg-canvas bg-top-left bg-no-repeat transition-[background-image] duration-200"
-          style={
-            backgroundImage
+      <div
+        className={cn(
+          "flex size-full min-w-0 grow flex-row",
+          useWallet40Layout &&
+            "bg-canvas bg-top-left bg-no-repeat transition-[background-image] duration-200",
+        )}
+        style={
+          useWallet40Layout
+            ? backgroundImage
               ? { backgroundImage: `url(${backgroundImage})`, backgroundSize: BACKGROUND_SIZE }
               : undefined
-          }
-        >
-          <MainAppContent
-            shouldDisplayMarketBanner={shouldDisplayMarketBanner}
-            shouldDisplayWallet40MainNav={shouldDisplayWallet40MainNav}
-            shouldDisplayAssetSection={shouldDisplayAssetSection}
-          />
-        </div>
-      ) : (
-        <Box
-          grow
-          horizontal
-          bg="background.default"
-          color="neutral.c70"
-          style={{
-            width: "100%",
-            height: "100%",
-          }}
-        >
-          <MainAppContent
-            shouldDisplayMarketBanner={shouldDisplayMarketBanner}
-            shouldDisplayWallet40MainNav={shouldDisplayWallet40MainNav}
-            shouldDisplayAssetSection={shouldDisplayAssetSection}
-          />
-        </Box>
-      )}
+            : {
+                backgroundColor: styledComponentsTheme.colors.background.default,
+                color: styledComponentsTheme.colors.neutral.c70,
+              }
+        }
+      >
+        <MainAppContent
+          shouldDisplayMarketBanner={shouldDisplayMarketBanner}
+          shouldDisplayWallet40MainNav={shouldDisplayWallet40MainNav}
+          shouldDisplayAssetSection={shouldDisplayAssetSection}
+          shouldDisplayAggregatedAssets={shouldDisplayAggregatedAssets}
+        />
+      </div>
 
       {__PRERELEASE__ && __CHANNEL__ !== "next" && !__CHANNEL__.includes("sha") ? (
         <NightlyLayer />
@@ -495,6 +507,7 @@ export default function Default() {
                   ) : null}
 
                   <GlobalDialogs />
+                  <GlobalDrawers />
 
                   <Routes>
                     <Route

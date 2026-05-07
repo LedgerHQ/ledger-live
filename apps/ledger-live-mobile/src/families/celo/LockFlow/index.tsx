@@ -12,12 +12,14 @@ import ConnectDevice from "~/screens/ConnectDevice";
 import ValidationSuccess from "./ValidationSuccess";
 import ValidationError from "./ValidationError";
 import type { CeloLockFlowParamList } from "./types";
+import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
 
 const totalSteps = "3";
 
 function LockFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
+  const { notifyFlowCompleted } = useNotificationsContext();
 
   const stackNavigatorConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
@@ -77,6 +79,11 @@ function LockFlow() {
           gestureEnabled: false,
           headerLeft: undefined,
           headerRight: undefined,
+        }}
+        listeners={{
+          beforeRemove: () => {
+            notifyFlowCompleted("stake");
+          },
         }}
       />
       <Stack.Screen

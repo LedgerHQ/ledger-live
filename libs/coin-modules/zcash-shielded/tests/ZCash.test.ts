@@ -1,5 +1,5 @@
 import { ZCash } from "../src/ZCash";
-import type { ZcashPrivateInfo } from "../src/types";
+import type { ShieldedSyncResult } from "../src/types";
 import {
   testAccount1,
   blockWithMyTx,
@@ -531,7 +531,7 @@ describe("syncShielded", () => {
         ...args,
       });
 
-      const steps: Partial<ZcashPrivateInfo>[] = [];
+      const steps: ShieldedSyncResult[] = [];
 
       try {
         await syncedShieldedObs.forEach(step => steps.push(step));
@@ -553,7 +553,7 @@ describe("syncShielded", () => {
       viewingKey: testAccount1.viewingKey,
       maxBatchSize: 1,
     });
-    const steps: Partial<ZcashPrivateInfo>[] = [];
+    const steps: ShieldedSyncResult[] = [];
 
     try {
       await syncedShieldedObs.forEach(step => steps.push(step));
@@ -572,7 +572,7 @@ describe("syncShielded", () => {
       viewingKey: "abc456",
       maxBatchSize: 1,
     });
-    const steps: Partial<ZcashPrivateInfo>[] = [];
+    const steps: ShieldedSyncResult[] = [];
 
     await syncedShieldedObs.forEach(value => {
       steps.push(value);
@@ -583,7 +583,8 @@ describe("syncShielded", () => {
     expect(steps).toEqual(
       expect.arrayOf(
         expect.objectContaining({
-          syncState: expect.any(String),
+          processedBlocks: expect.any(Number),
+          remainingBlocks: expect.any(Number),
           lastProcessedBlock: expect.any(Number),
           transactions: [],
         }),
@@ -598,13 +599,12 @@ describe("syncShielded", () => {
       viewingKey: testAccount1.viewingKey,
       maxBatchSize: 1,
     });
-    const steps: Partial<ZcashPrivateInfo>[] = [];
+    const steps: ShieldedSyncResult[] = [];
 
     await syncShieldedObs.forEach(step => steps.push(step));
 
-    expect(steps[steps.length - 1]).toEqual({
+    expect(steps[steps.length - 1]).toMatchObject({
       lastProcessedBlock: LAST_BLOCK_COUNT,
-      syncState: "running",
       transactions: [
         {
           id: txShieldedOrchard.txid,
@@ -627,7 +627,7 @@ describe("syncShielded", () => {
       viewingKey: testAccount1.viewingKey,
       maxBatchSize,
     });
-    const steps: Partial<ZcashPrivateInfo>[] = [];
+    const steps: ShieldedSyncResult[] = [];
 
     await syncedShieldedObs.forEach(syncedShielded => {
       steps.push(syncedShielded);
@@ -636,16 +636,16 @@ describe("syncShielded", () => {
     expect(steps).toEqual(
       expect.arrayOf(
         expect.objectContaining({
-          syncState: expect.any(String),
+          processedBlocks: expect.any(Number),
+          remainingBlocks: expect.any(Number),
           lastProcessedBlock: expect.any(Number),
           transactions: expect.any(Array),
         }),
       ),
     );
 
-    expect(steps[steps.length - 1]).toEqual({
+    expect(steps[steps.length - 1]).toMatchObject({
       lastProcessedBlock: LAST_BLOCK_COUNT,
-      syncState: "running",
       transactions: [
         {
           id: txShieldedOrchard.txid,
@@ -668,7 +668,7 @@ describe("syncShielded", () => {
       maxBatchSize: 3,
     });
 
-    const steps: Partial<ZcashPrivateInfo>[] = [];
+    const steps: ShieldedSyncResult[] = [];
 
     await syncShieldedObs.forEach(value => {
       steps.push(value);
@@ -680,16 +680,16 @@ describe("syncShielded", () => {
     expect(steps).toEqual(
       expect.arrayOf(
         expect.objectContaining({
-          syncState: expect.any(String),
+          processedBlocks: expect.any(Number),
+          remainingBlocks: expect.any(Number),
           lastProcessedBlock: expect.any(Number),
           transactions: expect.any(Array),
         }),
       ),
     );
 
-    expect(steps[steps.length - 1]).toEqual({
+    expect(steps[steps.length - 1]).toMatchObject({
       lastProcessedBlock: LAST_BLOCK_COUNT + 1,
-      syncState: "running",
       transactions: [
         {
           id: txShieldedOrchard.txid,

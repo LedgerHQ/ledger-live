@@ -144,20 +144,23 @@ env:
   # iOS Simulator configuration
   IOS_SIMULATOR_DEVICE: iPhone 15
   # Android AVD configuration
-  AVD_API: 35
+  AVD_API: 36
   AVD_ARCH: x86_64
-  AVD_PROFILE: pixel_7_pro
+  AVD_PROFILE: pixel_9_pro
   AVD_TARGET: google_apis
   AVD_NAME: "Android_Emulator"
-  AVD_CORES: 4
-  AVD_RAM_SIZE: 5120M
-  AVD_HEAP_SIZE: 1023M
-  AVD_OPTIONS: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+  AVD_CORES: 2
+  AVD_RAM_SIZE: 3072
+  AVD_HEAP_SIZE: 1024
+  AVD_OPTIONS: -no-window -gpu swiftshader_indirect -accel on -no-audio -no-boot-anim -camera-back none -camera-front none -no-metrics
+  MOBILE_ARTIFACTS_ROOT: e2e/mobile/artifacts
+  E2E_TEST_RESULTS_PREFIX_IOS: e2e-test-results-ios
+  E2E_TEST_RESULTS_PREFIX_ANDROID: e2e-test-results-android
 
 jobs:
   determine-builds:
     name: "Determine Builds & Generate Shards"
-    runs-on: ledger-live-medium
+    runs-on: ubuntu-24.04
     outputs:
       matrix_ios: ${{ steps.generate-shards.outputs.matrix_ios }}
       matrix_android: ${{ steps.generate-shards.outputs.matrix_android }}
@@ -197,6 +200,7 @@ jobs:
             e2e/mobile
             .pnpmfile.cjs
             tools
+            .mise/tasks
           token: ${{ steps.generate-token.outputs.token }}
 
       - name: Setup the caches
@@ -257,9 +261,9 @@ jobs:
           echo "android_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/android') }}-detox-native-android-${{ inputs.production_firebase == true && 'prod-2' || '3' }}" >> $GITHUB_OUTPUT
           echo "ios_js_key=${PREFIX}${{ inputs.ref || github.sha }}-detox-js-ios" >> $GITHUB_OUTPUT
           echo "android_js_key=${PREFIX}${{ inputs.ref || github.sha }}-detox-js-android" >> $GITHUB_OUTPUT
-          echo "android_timing_cache_key=android-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2" >> $GITHUB_OUTPUT
-          echo "ios_timing_cache_key=ios-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2" >> $GITHUB_OUTPUT
-          echo "avd_cache_key=${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}_4-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-${{ env.AVD_CORES }}-${{ env.AVD_RAM_SIZE }}-${{ env.AVD_HEAP_SIZE }}-r2-v8" >> $GITHUB_OUTPUT
+          echo "android_timing_cache_key=${PREFIX}android-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2" >> $GITHUB_OUTPUT
+          echo "ios_timing_cache_key=${PREFIX}ios-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2" >> $GITHUB_OUTPUT
+          echo "avd_cache_key=${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}_5-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-${{ env.AVD_CORES }}-${{ env.AVD_RAM_SIZE }}-${{ env.AVD_HEAP_SIZE }}-r2-v8" >> $GITHUB_OUTPUT
 
       - name: Prepare test filter
         id: test-filter
@@ -424,12 +428,7 @@ jobs:
     name: iOS E2E Tests (${{ matrix.shard }}, ${{ matrix.total }})
     needs: [build-ios, determine-builds]
     if: ${{ inputs.tests_type != 'Android Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
-    runs-on:
-      [
-        "qaa",
-        macOS,
-        ARM64,
-      ]
+    runs-on: ["qaa", macOS, ARM64]
     env:
       NODE_OPTIONS: "--max-old-space-size=8192"
       LANG: en_US.UTF-8
@@ -477,7 +476,6 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
 
-
       - name: Set shard test files from pre-computed matrix
         run: |
           echo "SHARD_TEST_FILES<<EOF" >> $GITHUB_ENV
@@ -492,8 +490,8 @@ jobs:
 
       - name: Boot iOS Simulator in Background
         run: |
-          LOG_FILE="e2e/mobile/artifacts/simulator-boot.log"
-          mkdir -p e2e/mobile/artifacts
+          LOG_FILE="${{ env.MOBILE_ARTIFACTS_ROOT }}/simulator-boot.log"
+          mkdir -p ${{ env.MOBILE_ARTIFACTS_ROOT }}
           nohup bash -c '
             echo "🔧 Creating iOS Simulator 2 (if not exists)"
             xcrun simctl list devices | grep -q "iOS Simulator 2" || xcrun simctl create "iOS Simulator 2" "${{ env.IOS_SIMULATOR_DEVICE }}"
@@ -593,7 +591,7 @@ jobs:
           SHARD_INDEX: ${{ matrix.shard }}
           DEVICE_INFO: ${{ env.DEVICE_INFO }}
           NX_SKIP_NX_CACHE: true
-        run: pnpm run mobile e2e:ci -p ios -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/e2e-test-results-ios-shard-${{ matrix.shard }}.json
+        run: pnpm run mobile e2e:ci -p ios -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}.json
 
       - name: Upload iOS artifacts
         if: (!cancelled() || steps.run-ios.outcome == 'cancelled')
@@ -601,15 +599,15 @@ jobs:
         id: "test-artifacts"
         with:
           name: ios-test-artifacts-${{ matrix.shard }}
-          path: e2e/mobile/artifacts
+          path: ${{ env.MOBILE_ARTIFACTS_ROOT }}
           retention-days: 7
 
       - name: Setup iOS Shard timing artifacts
         if: (!cancelled() || steps.run-ios.outcome == 'cancelled')
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
-          path: e2e/mobile/artifacts/e2e-test-results-ios-shard-${{ matrix.shard }}.json
-          name: "${{ needs.determine-builds.outputs.ios_timing_cache_key }}-${{ matrix.shard }}"
+          path: ${{ env.MOBILE_ARTIFACTS_ROOT }}/${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}.json
+          name: ${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}
           retention-days: 7
 
       - name: Set job output based on detox result
@@ -627,8 +625,8 @@ jobs:
 
   detox-tests-android:
     name: Android E2E Tests (${{ matrix.shard }}, ${{ matrix.total }})
-    needs: [build-android, determine-builds]
-    if: ${{ inputs.tests_type != 'iOS Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
+    needs: [build-android, determine-builds, setup-android-avd]
+    if: ${{ always() && !cancelled() && inputs.tests_type != 'iOS Only' && needs.determine-builds.outputs.test_files_for_sharding != '' && needs.determine-builds.result == 'success' && needs.build-android.result == 'success' && (needs.setup-android-avd.result == 'success' || needs.setup-android-avd.result == 'skipped') }}
     runs-on: [ledger-live-linux-e2e-8CPU-32RAM]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -766,30 +764,11 @@ jobs:
 
       - name: Boot Android Emulators in Background
         run: |
-          LOG_FILE="e2e/mobile/artifacts/emulator-boot.log"
-          mkdir -p e2e/mobile/artifacts
-          nohup bash -c '
-            log() { echo "[$(date +%H:%M:%S)] $1"; }
-            ts() { while IFS= read -r line; do echo "[$(date +%H:%M:%S)] [$1] $line"; done; }
-
-            log "🛫 Starting emulators..."
-            $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME }} ${{ env.AVD_OPTIONS }} -read-only 2>&1 | ts "EMU1" &
-            $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME }}_2 ${{ env.AVD_OPTIONS }} -read-only 2>&1 | ts "EMU2" &
-            $ANDROID_HOME/emulator/emulator -avd ${{ env.AVD_NAME }}_3 ${{ env.AVD_OPTIONS }} -read-only 2>&1 | ts "EMU3" &
-
-            log "⏳ Waiting for 3 emulators to connect..."
-            while [ "$(adb devices | grep -c emulator)" -lt 3 ]; do sleep 2; done
-            log "✅ 3 emulators connected"
-            log "⏳ Waiting for all emulators to finish booting..."
-            adb -s emulator-5554 wait-for-device shell "while [ \"\$(getprop sys.boot_completed)\" != 1 ]; do sleep 1; done"
-            log "✅ emulator-5554 booted"
-            adb -s emulator-5556 wait-for-device shell "while [ \"\$(getprop sys.boot_completed)\" != 1 ]; do sleep 1; done"
-            log "✅ emulator-5556 booted"
-            adb -s emulator-5558 wait-for-device shell "while [ \"\$(getprop sys.boot_completed)\" != 1 ]; do sleep 1; done"
-            log "✅ emulator-5558 booted"
-
-            log "✅ All 3 emulators are fully booted"
-          ' > "$LOG_FILE" 2>&1 &
+          LOG_FILE="${{ env.MOBILE_ARTIFACTS_ROOT }}/emulator-boot.log"
+          mkdir -p ${{ env.MOBILE_ARTIFACTS_ROOT }}
+          export AVD_NAME="${{ env.AVD_NAME }}"
+          export AVD_OPTIONS="${{ env.AVD_OPTIONS }}"
+          nohup bash tools/scripts/boot-android-emulators-ci.sh > "$LOG_FILE" 2>&1 &
           echo "ℹ️ Android emulators boot started in background."
         shell: bash
 
@@ -831,7 +810,7 @@ jobs:
           SHARD_INDEX: ${{ matrix.shard }}
           ADB: /usr/local/lib/android/sdk/platform-tools/adb # Needed for scrcpy
           DEVICE_INFO: ${{ env.DEVICE_INFO }}
-        run: pnpm run mobile e2e:ci -p android -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/e2e-test-results-android-shard-${{ matrix.shard }}.json
+        run: pnpm run mobile e2e:ci -p android -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}.json
 
       - name: Upload Android artifacts
         if: (!cancelled() || steps.run-android.outcome == 'cancelled')
@@ -839,15 +818,15 @@ jobs:
         id: "test-artifacts"
         with:
           name: android-test-artifacts-${{ matrix.shard }}
-          path: e2e/mobile/artifacts
+          path: ${{ env.MOBILE_ARTIFACTS_ROOT }}
           retention-days: 7
 
       - name: Setup Android Shard timing artifacts
         if: (!cancelled() || steps.run-android.outcome == 'cancelled')
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
-          path: e2e/mobile/artifacts/e2e-test-results-android-shard-${{ matrix.shard }}.json
-          name: "${{ needs.determine-builds.outputs.android_timing_cache_key }}-${{ matrix.shard }}"
+          path: ${{ env.MOBILE_ARTIFACTS_ROOT }}/${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}.json
+          name: ${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}
           retention-days: 7
 
       - name: Set job output based on detox result
@@ -890,6 +869,7 @@ jobs:
           allure-results-path: ios-test-artifacts
           platform: iOS
       - name: Aggregate test results
+        if: ${{ !cancelled() }}
         id: aggregate
         uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@develop
         with:
@@ -907,7 +887,7 @@ jobs:
           status_11: ${{ needs.detox-tests-ios.outputs.status_11 }}
           status_12: ${{ needs.detox-tests-ios.outputs.status_12 }}
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-        if: ${{ github.event_name == 'schedule' || inputs.generate_ai_artifacts == true }}
+        if: ${{ !cancelled() && (github.event_name == 'schedule' || inputs.generate_ai_artifacts == true) }}
         with:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
@@ -915,13 +895,13 @@ jobs:
           sparse-checkout: e2e/mobile/scripts
           path: repo
       - name: Build iOS AI artifact
-        if: ${{ github.event_name == 'schedule' || inputs.generate_ai_artifacts == true }}
+        if: ${{ !cancelled() && (github.event_name == 'schedule' || inputs.generate_ai_artifacts == true) }}
         env:
           ARTIFACTS: ios-test-artifacts
           OUT: ios-ai
         run: bash repo/e2e/mobile/scripts/build-ai-artifact.sh
       - name: Upload iOS AI artifact
-        if: ${{ github.event_name == 'schedule' || inputs.generate_ai_artifacts == true }}
+        if: ${{ !cancelled() && (github.event_name == 'schedule' || inputs.generate_ai_artifacts == true) }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: ios-ai-analysis
@@ -962,6 +942,7 @@ jobs:
           allure-results-path: android-test-artifacts
           platform: android
       - name: Aggregate test results
+        if: ${{ !cancelled() }}
         id: aggregate
         uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@develop
         with:
@@ -979,7 +960,7 @@ jobs:
           status_11: ${{ needs.detox-tests-android.outputs.status_11 }}
           status_12: ${{ needs.detox-tests-android.outputs.status_12 }}
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-        if: ${{ github.event_name == 'schedule' || inputs.generate_ai_artifacts == true }}
+        if: ${{ !cancelled() && (github.event_name == 'schedule' || inputs.generate_ai_artifacts == true) }}
         with:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
@@ -987,13 +968,13 @@ jobs:
           sparse-checkout: e2e/mobile/scripts
           path: repo
       - name: Build Android AI artifact
-        if: ${{ github.event_name == 'schedule' || inputs.generate_ai_artifacts == true }}
+        if: ${{ !cancelled() && (github.event_name == 'schedule' || inputs.generate_ai_artifacts == true) }}
         env:
           ARTIFACTS: android-test-artifacts
           OUT: android-ai
         run: bash repo/e2e/mobile/scripts/build-ai-artifact.sh
       - name: Upload Android AI artifact
-        if: ${{ github.event_name == 'schedule' || inputs.generate_ai_artifacts == true }}
+        if: ${{ !cancelled() && (github.event_name == 'schedule' || inputs.generate_ai_artifacts == true) }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: android-ai-analysis
@@ -1070,7 +1051,7 @@ jobs:
     name: "Test Mobile E2E > Slack Report"
     runs-on: ubuntu-22.04
     needs: [allure-report-android, allure-report-ios]
-    if: ${{ !cancelled() && (needs.allure-report-ios.outputs.report-url || needs.allure-report-android.outputs.report-url) }}
+    if: ${{ !cancelled() && (needs.allure-report-ios.outputs.finalStatus || needs.allure-report-android.outputs.finalStatus) }}
     env:
       IOS_STATUS: ${{ needs.allure-report-ios.outputs.finalStatus }}
       IOS_REPORT_URL: ${{ needs.allure-report-ios.outputs.report-url }}
@@ -1226,8 +1207,7 @@ jobs:
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
       - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@develop
         with:
-          platform: ios
-          artifacts_dir: e2e/mobile/artifacts
+          artifacts_dir: ${{ env.MOBILE_ARTIFACTS_ROOT }}
           key: ${{ needs.determine-builds.outputs.ios_timing_cache_key }}
           aws_access_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ env.AWS_SECRET_ACCESS_KEY }}
@@ -1238,6 +1218,9 @@ jobs:
           github_run_id: ${{ github.run_id }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          test_results_prefix: ${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}
 
   merge-android-timings:
     name: Merge Android Timing Files
@@ -1253,8 +1236,7 @@ jobs:
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
       - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@develop
         with:
-          platform: android
-          artifacts_dir: e2e/mobile/artifacts
+          artifacts_dir: ${{ env.MOBILE_ARTIFACTS_ROOT }}
           key: ${{ needs.determine-builds.outputs.android_timing_cache_key }}
           aws_access_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ env.AWS_SECRET_ACCESS_KEY }}
@@ -1265,4 +1247,6 @@ jobs:
           github_run_id: ${{ github.run_id }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          test_results_prefix: ${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}

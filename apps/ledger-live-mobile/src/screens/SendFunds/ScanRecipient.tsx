@@ -1,7 +1,8 @@
 import React, { memo, useCallback, useEffect } from "react";
 import Config from "react-native-config";
 import { decodeURIScheme } from "@ledgerhq/live-common/currencies/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridgeOrNull } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { ScreenName, NavigatorName } from "~/const";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import Scanner from "~/components/Scanner";
@@ -12,13 +13,14 @@ type NavigationProps = StackNavigatorProps<BaseNavigatorStackParamList, ScreenNa
 
 const ScanRecipient = ({ route, navigation }: NavigationProps) => {
   const { account, parentAccount } = useAccountScreen(route);
+  const bridge = useAccountBridgeOrNull<Transaction>(account ?? null, parentAccount);
 
   const onResult = useCallback(
     (result: string) => {
-      if (!account) return;
-      const bridge = getAccountBridge(account, parentAccount);
+      if (!account || !bridge) return;
       const { amount, address, currency, ...rest } = decodeURIScheme(result);
       const transaction = route.params?.transaction;
+      if (!transaction) return;
       const patch: Record<string, unknown> = {};
       patch.recipient = address;
 
@@ -45,7 +47,7 @@ const ScanRecipient = ({ route, navigation }: NavigationProps) => {
         },
       });
     },
-    [account, navigation, parentAccount, route.params],
+    [account, bridge, navigation, parentAccount, route.params],
   );
 
   useEffect(() => {

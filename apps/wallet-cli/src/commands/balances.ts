@@ -1,10 +1,15 @@
 import { defineCommand } from "@bunli/core";
 import { WalletAdapter } from "../wallet";
-import { parseAccountDescriptor, resolveAccountArg } from "../wallet/models";
 import { networkStringFromCurrencyId } from "../shared/accountDescriptor";
 import { walletCliDebug } from "../shared/log";
 import { createCommandOutput } from "../output";
-import { accountOption, outputOption } from "./shared-options";
+import {
+  accountOption,
+  outputOption,
+  resolveAccountArg,
+  resolveAccountDescriptor,
+  resolveOutputFormat,
+} from "./inputs";
 
 export default defineCommand({
   name: "balances",
@@ -14,14 +19,17 @@ export default defineCommand({
     output: outputOption,
   },
   handler: async ({ flags, positional }) => {
+    const output = resolveOutputFormat(flags.output);
     const ctx = { command: "balances", network: "", account: "" };
-    const out = createCommandOutput(flags.output, ctx);
+    const out = createCommandOutput(output, ctx);
 
     await out.run(async () => {
-      const descriptor = parseAccountDescriptor(resolveAccountArg(flags.account, positional));
+      const descriptor = await resolveAccountDescriptor(
+        resolveAccountArg(flags.account, positional),
+      );
       ctx.network = networkStringFromCurrencyId(descriptor.currencyId);
       ctx.account = descriptor.id;
-      walletCliDebug(`balances: account=${descriptor.id}, output=${flags.output}`);
+      walletCliDebug(`balances: account=${descriptor.id}, output=${output}`);
       const wallet = new WalletAdapter();
 
       const balances = await out.withActivity(

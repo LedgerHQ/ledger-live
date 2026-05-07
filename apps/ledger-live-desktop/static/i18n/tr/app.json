@@ -307,7 +307,7 @@
     "earn" : "Kazan",
     "exchange" : "Satın Al / Sat",
     "swap" : "Takas et",
-    "perps" : "Süresiz vadeli sözleşmeler",
+    "perps" : "Perpetuals",
     "home" : "Ana Sayfa",
     "refer" : "Arkadaşına Öner",
     "lend" : "Borç ver",
@@ -1256,8 +1256,8 @@
             "description" : "İlk önce “My Ledger Sağlayıcım ({{providerNumber}})” ayarını devre dışı bırakmanız gerekmektedir. Bunu devre dışı bırakmak için Ledger Wallet'ta “Ayarlar”ı açın, “Deneysel özellikler”i seçin ve “My Ledger sağlayıcım” ayarını kapalı hâle getirin."
           },
           "deviceNotGenuineError" : {
-            "title" : "Bu {{productName}} orijinal değil",
-            "description" : "Bu {{productName}} cihazını kullanmak güvenli değil.\nLütfen Ledger Destek ile iletişime geçin."
+            "title" : "Bu {{productName}} cihazının Orijinallik Denetimi başarısız oldu",
+            "description" : "Bu Ledger cihazını kullanmak güvenli değildir.\nLütfen Ledger Destek ile iletişime geçin."
           }
         },
         "whyPerformChecksLink" : "Ledger Orijinallik Denetimi hakkında daha fazla bilgi edinin",
@@ -1331,6 +1331,10 @@
     }
   },
   "postOnboarding" : {
+    "widget" : {
+      "title" : "Şimdi, cüzdan kurulumunu tamamlayın",
+      "subtitle" : "Cüzdanınıza fon aktararak başlayın."
+    },
     "postOnboardingScreen" : {
       "title" : "Sırada ne mi var?",
       "titleCompleted" : "Her şey hazır!\nŞimdi portföyünüzü keşfetmeye başlayabilirsiniz.",
@@ -2182,7 +2186,7 @@
       "desc" : "Özel anahtarlarınızın kontrolü sizdedir."
     },
     "1" : {
-      "title" : "Güvenle alıp satın",
+      "title" : "Güvenle işlem yapın",
       "desc" : "İşlemleri güvenli bir ekranda doğrulayın."
     },
     "2" : {
@@ -2313,7 +2317,8 @@
         "banner" : "Maksimum harcanabilir tutar",
         "fees" : "Ücretler hakkında daha fazla bilgi edinin",
         "standard" : "Standart",
-        "advanced" : "Gelişmiş"
+        "advanced" : "Gelişmiş",
+        "feeCurrency" : "Ücret para birimi"
       },
       "summary" : {
         "title" : "Özet"
@@ -3903,7 +3908,7 @@
           "title" : "Transfer Kancası (Transfer Hook)",
           "transferHookAddress" : "Mevcut Transfer Kancası programı: {{address}}",
           "transferHookNotSetup" : "Mevcut Transfer Kancası programı belirlenmemiş.",
-          "description" : "Transfer Kancası (Transfer Hook), token çıkartanlara kullanıcılarla token'ların nasıl etkileşim kuracağını belirleme olanağını sunar. Token çıkartanlar normal bir transfer yerine, Transfer Kancası uzantısıyla kullanılacak özel bir mantığı bir programa ekleyebilir."
+          "description" : "Transfer Kancası (Transfer Hook), token ihraççılara kullanıcılarla token'ların nasıl etkileşim kuracağını belirleme olanağını sunar. Token çıkartanlar normal bir transfer yerine, Transfer Kancası uzantısıyla kullanılacak özel bir mantığı bir programa ekleyebilir."
         },
         "transferFee" : {
           "title" : "Transfer Ücreti",
@@ -4187,6 +4192,64 @@
         "eigenlayer_points" : "Eigenlayer puanları",
         "validator" : "Doğrulayıcı ödülleri"
       }
+    },
+    "evmStaking" : {
+      "delegation" : {
+        "emptyState" : {
+          "description" : "Varlıklarınızla yetki devrederek {{currencyTicker}} ödülleri kazanabilirsiniz.",
+          "delegation" : "Ödüller kazanın"
+        },
+        "claimRewards" : "Ödüllerinizi alın",
+        "header" : "Yetki Devirleri",
+        "noRewards" : "Ödül yok",
+        "delegate" : "Ekle",
+        "undelegate" : "Yetki devrini iptal et",
+        "redelegate" : "Yetki devret",
+        "redelegateDisabledTooltip" : "Yetkiyi yeniden devretmek için <0>{{days}}</0> gün beklemelisiniz",
+        "redelegateMaxDisabledTooltip" : "Bir seferde en fazla <0>7</0> doğrulayıcıya yeniden yetki devredebilirsiniz.",
+        "undelegateDisabledTooltip" : "Bir seferde en fazla <0>7</0> doğrulayıcının yetkisini iptal edebilirsiniz.",
+        "reward" : "Ödüllerinizi alın",
+        "activeTooltip" : "Yetkisi devredilen tutar ödül üretiyor",
+        "inactiveTooltip" : "Yetki devri iptal edilen tutarlar üzerinden ödül kazanamazsınız",
+        "minSafeWarning" : "Yetersiz fon miktarı",
+        "flow" : {
+          "title" : "Yetki Devret",
+          "steps" : {
+            "starter" : {
+              "description" : "{{currencyTicker}} varlıklarınızla bir doğrulayıcıya yetki devrederek ödüller kazanabilirsiniz.",
+              "bullet" : ["Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.", "Ledger cihazınızı kullanarak yetki devredin.", "Varlıklar, yetki devri iptal edildikten sonra mevcut olacak"],
+              "warning" : {
+                "description" : "Doğrulayıcınızı dikkatle seçin: Doğrulayıcının yanlış kararlar vermesi halinde yetki devrinde kullandığınız varlıkların bir kısmını geri dönülemez bir şekilde kaybedebilirsiniz."
+              }
+            },
+            "amount" : {
+              "title" : "Miktar"
+            },
+            "validator" : {
+              "title" : "Doğrulayıcılar"
+            },
+            "connectDevice" : {
+              "title" : "Cihaz"
+            },
+            "confirmation" : {
+              "title" : "Onaylayın",
+              "success" : {
+                "title" : "Varlıklarınızla yetki devretmeyi tamamladınız",
+                "text" : "İşlem blok zinciri tarafından onaylandığında hesap bakiyeniz güncellenecek",
+                "cta" : "Ayrıntıları gör"
+              },
+              "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+            }
+          }
+        }
+      },
+      "redelegation" : {
+        "header" : "Yetki yeniden devri"
+      },
+      "undelegation" : {
+        "header" : "Yetki Devri İptalleri",
+        "inactiveTooltip" : "Yetki devri iptal edilen tutarlar üzerinden ödül kazanamazsınız."
+      }
     }
   },
   "graph" : {
@@ -4441,6 +4504,8 @@
     "delegated" : "Yetki devredildi",
     "completionDate" : "Tamamlanma tarihi",
     "rewards" : "Ödüller",
+    "sourceValidator" : "Kaynak Doğrulayıcı",
+    "destinationValidator" : "Hedef Doğrulayıcı",
     "duration" : "Süre",
     "durationJustStarted" : "Yeni başladı",
     "durationDays" : "{{count}} gün",
@@ -4606,6 +4671,10 @@
         "title" : "Tema Butonu",
         "desc" : "Temalar arasında hızlıca geçiş yapmak için bir küçük pencere gösterin."
       },
+      "analyticsConsentOptInQa" : {
+        "rowTitle" : "Analitik katılım onayı (QA)",
+        "rowDesc" : "Kaydedilen gizlilik onayı sürümünü ve onay tarihini inceleyin; portföy analitiği onay modal'ı için güncel olmayan durumları simüle edin."
+      },
       "brazeTools" : {
         "title" : "Braze Araçları",
         "description" : "Yerel braze kartları oluşturun",
@@ -4633,6 +4702,26 @@
             "path" : "Yol"
           }
         }
+      },
+      "appJsonImporter" : {
+        "title" : "app.json dosyası yükleyin",
+        "desc" : "Hesapları ve ayarları içe aktarmak için app.json dosyasını sürükleyip bırakın",
+        "dropOrBrowse" : "app.json dosyasını buraya bırakın veya göz atmak için tıklayın",
+        "importing" : "İçe aktarılıyor...",
+        "success" : "{{count}} hesap başarıyla içe aktarıldı.",
+        "success_other" : "{{count}} hesap başarıyla içe aktarıldı.",
+        "lastDeviceSeen" : "Son görülen cihaz: {{device}}",
+        "invalidFileType" : "Geçersiz dosya türü. Bir .json dosyası bekleniyor.",
+        "missingDataField" : "Geçersiz app.json: Üst düzey veri alanı eksik.",
+        "encryptedAccounts" : "Şifrelenmiş hesaplar tespit edildi. Önce dosyanın şifresini çözün.",
+        "successLabel" : "Başarılı",
+        "appJsonFile" : "App.json dosyası",
+        "accountsImported" : "Hesaplar içe aktarıldı",
+        "accountsFailed" : "Hesaplar başarısız oldu",
+        "importFailed" : "İçe aktarılamadı: {{message}}",
+        "unknownError" : "İçe aktarma sırasında bilinmeyen bir hata oluştu.",
+        "failedCount" : "{{count}} hesap yüklenemedi.",
+        "failedCount_other" : "{{count}} hesap yüklenemedi."
       },
       "mockAccounts" : {
         "title" : "Test Hesapları Oluşturun",
@@ -5872,6 +5961,10 @@
     },
     "recipientWording" : {
       "send" : "alıcı",
+      "transfer_public" : "açık alıcı",
+      "transfer_private" : "özel alıcı",
+      "convert_public_to_private" : "özel alıcı",
+      "convert_private_to_public" : "açık alıcı",
       "delegate" : "doğrulayıcı",
       "redelegate" : "doğrulayıcı",
       "undelegate" : "doğrulayıcı",
@@ -6313,6 +6406,11 @@
     "DeviceSocketFail" : {
       "title" : "Lütfen Ledger cihazınızı yeniden başlatın ve tekrar deneyin",
       "description" : "Beklenmedik bir hata oluştu. Lütfen tekrar deneyin. ({{message}})"
+    },
+    "CounterfeitDevice" : {
+      "title" : "Bu {{productName}} cihazının Orijinallik Denetimi başarısız oldu",
+      "description" : "Bu Ledger cihazını kullanmak güvenli değildir. Lütfen Ledger Destek ile iletişime geçin.",
+      "contactSupportCTA" : "Ledger Destek ile iletişime geçin"
     },
     "DeviceSocketNoBulkStatus" : {
       "title" : "Bağlantı başarısız oldu",
@@ -7225,10 +7323,20 @@
       "title" : "Yetersiz fon miktarı. Gerekli minimum bakiye 0,02 TON'dur."
     },
     "AleoAmountRecordRequired" : {
-      "title" : "Tutar için geçerli bir özel kayıt seçin."
+      "title" : "Tutar için geçerli bir özel kayıt seçin.",
+      "description" : "Transfer tutarını karşılamak için kullanılabilir gizli kayıtlarınızdan birini seçin."
     },
     "AleoFeeRecordRequired" : {
-      "title" : "Ücret için geçerli bir özel kayıt seçin."
+      "title" : "Ağ ücretini karşılamak için başka bir gizli kayıt gereklidir.",
+      "description" : "Gerekirse yeni bakiye yükleyin. Transfer tutarı için bir gizli kayıt kullanılır ve ağ ücretini karşılayabilecek başka bir kaydınızın olması gerekir."
+    },
+    "AleoTwoRecordsRequired" : {
+      "title" : "Gizli gönderim işlemi en az iki kayıt gerektirir.",
+      "description" : "Transfer tutarı için bir kayıt, ağ ücretini karşılamak içinse başka bir kayıt gerekir."
+    },
+    "AleoFeeRecordInsufficientBalance" : {
+      "title" : "Ağ ücretini karşılayabilecek gizli kayıt bulunmuyor.",
+      "description" : "Transfer tutarı için farklı bir kayıt seçin veya bakiyenize ekleme yapın."
     },
     "BackupAppDataError" : {
       "title" : "Uygulama verileri yedeklenirken hata oluştu"
@@ -7393,8 +7501,8 @@
       "description" : "Cihazınızla bilgi alışverişi yapılırken bir sorun oluştu. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
     },
     "AlreadySendingApduError" : {
-      "title" : "İletişim hatası",
-      "description" : "Cihazınızla bilgi alışverişi yapılırken bir sorun oluştu. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+      "title" : "Ledger cihazınızda eylem gerekiyor",
+      "description" : "Cihazınızda işlemi tamamlayın ve aşağıdaki \"Tekrar Dene\" seçeneğini belirleyin."
     },
     "UnknownDeviceExchangeError" : {
       "title" : "İletişim hatası",
@@ -7623,7 +7731,7 @@
   },
   "dialogs" : {
     "selectAccount" : {
-      "description" : "Henüz hiçbir {{network}} hesabınız yok. Devam etmek için lütfen bir tane ekleyin.",
+      "description" : "Henüz bir {{network}} hesabınız yok. Devam etmek için lütfen bir tane ekleyin.",
       "addAccount" : "Hesap ekle"
     }
   },
@@ -7634,7 +7742,7 @@
     "selectAccount" : {
       "title" : "hesap seçin",
       "addAccount" : "Yeni veya mevcut bir hesabı ekle",
-      "perpetualsBanner" : "Şu anda Arbitrum zincirinde yalnızca USDC ile desteklenmektedir."
+      "perpetualsBanner" : "Şu anda yalnızca Arbitrum zincirindeki USDC ile desteklenmektedir."
     }
   },
   "customImage" : {
@@ -7729,11 +7837,48 @@
     },
     "noAccounts" : {
       "title" : "Bu uygulamaya erişmek için bir hesabınızın olması gerekiyor.",
-      "add" : "Hesap ekle"
+      "select" : "Hesap seç"
     }
   },
   "recoverRestore" : {
     "title" : "Ledger'ınızı bağlayın ve kilidini açın"
+  },
+  "analyticsConsentModal" : {
+    "fresh" : {
+      "title" : "Ledger'ın geliştirilmesine yardımcı olun",
+      "description" : "Onayınızla, özellikleri geliştirmek ve deneyiminizi kişiselleştirmek için kullanım verilerinizi toplayacağız.",
+      "ctaAcceptAll" : "Tümünü kabul et",
+      "ctaRefuseAll" : "Tümünü reddet"
+    },
+    "reconfirm" : {
+      "title" : "Hâlâ izniniz var mı?",
+      "description" : "Ledger'ı geliştirmemize yardımcı olmak için kullanım verilerinizi paylaşmaya devam etmek ister misiniz? Bu veriler, özellikleri geliştirmek ve deneyiminizi kişiselleştirmek için kullanılır.",
+      "ctaContinue" : "Evet, devam et",
+      "ctaStop" : "Hayır, dur"
+    },
+    "privacy" : {
+      "title" : "Gizlilik politikamızı güncelliyoruz",
+      "descriptionLead" : "Nelerin değiştiğini öğrenmek için lütfen ",
+      "descriptionLinkLabel" : "Gizlilik Politikası",
+      "descriptionTrail" : " göz atın. Tercihlerinizi dilediğiniz zaman Ayarlar bölümünden güncelleyebilirsiniz.",
+      "ctaGotIt" : "Anladım"
+    },
+    "setPreferences" : "Tercihlerinizi belirleyin",
+    "preferences" : {
+      "appPerformance" : {
+        "title" : "Uygulama performansı",
+        "description" : "Deneyimi iyileştirmek için Ledger'ın uygulama kullanım verilerini toplamasına izin verin"
+      },
+      "personalizedExperience" : {
+        "title" : "Kişiselleştirilmiş deneyim",
+        "description" : "Kişiselleştirilmiş içerik sunmamız için Ledger'ın uygulama kullanım verilerini toplamasına izin verin"
+      },
+      "ctaConfirm" : "Onayla"
+    },
+    "footer" : {
+      "lead" : "Onayınızı, dilediğiniz zaman ayarlardan iptal edebilirsiniz.",
+      "privacyLink" : "Gizlilik Politikası"
+    }
   },
   "analyticsOptInPrompt" : {
     "variantA" : {
@@ -8109,8 +8254,8 @@
     "addAccountCta" : "Kripto hesabı ekle",
     "noBalanceTitle" : "Cüzdanınıza fon aktararak başlayın.",
     "perpsEntry" : {
-      "title" : "Süresiz vadeli sözleşmeler",
-      "description" : "Kaldıraçlı alım satım yapın",
+      "title" : "Perpetuals",
+      "description" : "Kaldıraçlı işlem yapın",
       "cta" : "Keşfet"
     },
     "noDeviceTitle" : "Güvenli kripto cüzdanınız"
@@ -8178,7 +8323,10 @@
       },
       "editName" : "Adını düzenle",
       "emptyState" : "Henüz kripto adresi yok",
-      "emptySearchState" : "Aramanızla eşleşen hesap yok"
+      "emptySearchState" : "Aramanızla eşleşen hesap yok",
+      "assetCount_zero" : "{{count}} varlık",
+      "assetCount_one" : "{{count}} varlık",
+      "assetCount_other" : "{{count}} varlık"
     },
     "editName" : {
       "title" : "Adres adını düzenleyin",
@@ -8248,7 +8396,7 @@
         "showBalance" : "Bakiyeyi göster",
         "startSync" : "Senkronizasyonu başlat",
         "stopSync" : "Senkronizasyonu durdur",
-        "lastProcessedBlock" : "Son işlenen blok: {{block}}. {{missing}} blok eksik.",
+        "upToDate" : "Güncel",
         "lastSync" : "Son senkronizasyon: {{date}}",
         "estimatedTimeRemaining" : "Tahmini kalan süre: {{hours}}:{{minutes}}"
       },
@@ -8387,7 +8535,7 @@
         "proofGenerationWarning" : "Aleo işlemi kanıt oluşturulmasını gerektirir. Bu biraz zaman alabilir."
       },
       "mandatoryPrivateSync" : {
-        "title" : "Özel bakiyeniz senkronize ediliyor (%{{percentage}}).",
+        "title" : "Gizli bakiyeniz senkronize ediliyor (%{{percentage}}).",
         "desc" : "Lütfen bekleyin",
         "error" : "Özel bakiye senkronizasyonu başarısız oldu. Lütfen daha sonra tekrar deneyin."
       }
@@ -8455,5 +8603,17 @@
       "errorDescription" : "İşlem geçmişinizi dışa aktarırken bir hata oluştu. Lütfen tekrar deneyin.",
       "tryAgain" : "Tekrar deneyin"
     }
+  },
+  "myWallet" : {
+    "actionsList" : {
+      "help" : "Yardım",
+      "recover" : "[L] Recover",
+      "refer" : "Referans"
+    },
+    "myLedger" : {
+      "title" : "My Ledger",
+      "description" : "Ledger cihazınızı yönetin"
+    },
+    "explore" : "Tüm Ledger cihazlarını keşfedin"
   }
 }

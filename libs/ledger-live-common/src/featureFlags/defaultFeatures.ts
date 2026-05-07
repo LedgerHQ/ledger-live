@@ -500,6 +500,13 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
 
+  ptxBorrowLiveApp: {
+    enabled: false,
+    params: {
+      manifest_id: "borrow",
+    },
+  },
+
   ptxEarnLiveApp: {
     enabled: true,
     params: {
@@ -641,6 +648,7 @@ export const DEFAULT_FEATURES: Features = {
   },
   lwmLedgerSyncOptimisation: DEFAULT_FEATURE,
   lwdLedgerSyncOptimisation: DEFAULT_FEATURE,
+  lwdProductTour: DEFAULT_FEATURE,
   lwmNewWordingOptInNotificationsDrawer: {
     ...DEFAULT_FEATURE,
     params: { variant: ABTestingVariants.variantA },
@@ -791,6 +799,7 @@ export const DEFAULT_FEATURES: Features = {
     ...DEFAULT_FEATURE,
     params: {
       families: [],
+      excludedCurrencyIds: [],
     },
   },
   zcashShielded: DEFAULT_FEATURE,
@@ -798,13 +807,6 @@ export const DEFAULT_FEATURES: Features = {
   lldRebornABtest: DEFAULT_FEATURE,
   llmRebornABtest: DEFAULT_FEATURE,
   lifiSolana: DEFAULT_FEATURE,
-  llmAnimatedSplashScreen: {
-    enabled: true,
-    params: {
-      ios: true,
-      android: true,
-    },
-  },
   llmOnboardingEnableSync: initFeature({
     enabled: false,
     params: {
@@ -812,6 +814,9 @@ export const DEFAULT_FEATURES: Features = {
       touchscreens: false,
     },
   }),
+  lwdGenericAwarenessModal: DEFAULT_FEATURE,
+  lwmGenericAwarenessModal: DEFAULT_FEATURE,
+  lwmProductTour: DEFAULT_FEATURE,
   lwmWallet40: {
     ...DEFAULT_FEATURE,
     params: {
@@ -868,6 +873,7 @@ export const DEFAULT_FEATURES: Features = {
       ],
     },
   },
+  concordiumVerifyAddress: DEFAULT_FEATURE,
   lldHideSmallValueTokenOperations: {
     ...DEFAULT_FEATURE,
     enabled: true,
@@ -875,6 +881,12 @@ export const DEFAULT_FEATURES: Features = {
       thresholdUsd: 0.5,
     },
   },
+  llmTransferButtonCopyVariant: {
+    enabled: false,
+    params: { variantId: "control" },
+  },
+  lldTezosStaking: DEFAULT_FEATURE,
+  llmTezosStaking: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings

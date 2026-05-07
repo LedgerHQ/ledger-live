@@ -21,6 +21,7 @@ jest.mock("../../../../context/SendFlowContext", () => ({
 
 import { useFlowWizard } from "../../../../../FlowWizard/FlowWizardContext";
 import { useSendFlowActions, useSendFlowData } from "../../../../context/SendFlowContext";
+import { track, trackPage } from "~/renderer/analytics/segment";
 
 type VM = ReturnType<typeof useConfirmationViewModel>;
 let container: HTMLElement;
@@ -173,6 +174,13 @@ describe("useConfirmationViewModel", () => {
       root.render(<HookProbe onResult={vm => (latestVM = vm)} />);
     });
 
+    expect(trackPage).toHaveBeenCalledWith("Modal send - action rejected", null, {
+      flow: "send",
+      blockchain: "",
+      currency: "",
+      currency_id: "",
+    });
+
     expect(latestVM?.status).toBe("IDLE");
   });
 
@@ -199,6 +207,14 @@ describe("useConfirmationViewModel", () => {
     latestVM?.onViewDetails();
 
     expect(close).toHaveBeenCalled();
+    expect(track).toHaveBeenCalledWith("send_modal", {
+      button: "view details",
+      page: "step confirmation",
+      flow: "send",
+      blockchain: "",
+      currency: "",
+      currency_id: "",
+    });
     expect(setDrawer).toHaveBeenCalledWith(OperationDetails, {
       operationId: "child1",
       accountId: "acc1",
@@ -310,6 +326,12 @@ describe("useConfirmationViewModel", () => {
     });
     latestVM?.onClose();
 
+    expect(trackPage).toHaveBeenCalledWith("Modal send - transaction sent", null, {
+      flow: "send",
+      blockchain: "",
+      currency: "",
+      currency_id: "",
+    });
     expect(close).toHaveBeenCalled();
   });
 });

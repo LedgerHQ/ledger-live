@@ -96,9 +96,9 @@ jest.mock("react-native-haptic-feedback", () => ({
 }));
 
 jest.mock("expo-haptics", () => ({
-  impactAsync: jest.fn(),
-  notificationAsync: jest.fn(),
-  selectionAsync: jest.fn(),
+  impactAsync: jest.fn().mockResolvedValue(undefined),
+  notificationAsync: jest.fn().mockResolvedValue(undefined),
+  selectionAsync: jest.fn().mockResolvedValue(undefined),
   ImpactFeedbackStyle: {
     Light: "light",
     Medium: "medium",
@@ -140,21 +140,7 @@ jest.mock("lottie-react-native", () => {
   return MockLottie;
 });
 
-// Mirror runtime: react-native-config exposes env as strings (e.g. "1"/"true" for DETOX).
-// Use undefined so (1) DETOX_ENABLED stays false and (2) truthiness checks (Config.DETOX) are falsy in unit tests.
-jest.mock("react-native-config", () => {
-  const config = {
-    DETOX: undefined,
-    ANALYTICS_TOKEN: "test-token",
-    ANALYTICS_LOGS: "false",
-  };
-  return {
-    __esModule: true,
-    get default() {
-      return config;
-    },
-  };
-});
+jest.mock("react-native-config");
 
 export const mockSimulateBarcodeScanned = jest.fn();
 export const mockGetCameraPermissionStatus = jest.fn(() => "granted");

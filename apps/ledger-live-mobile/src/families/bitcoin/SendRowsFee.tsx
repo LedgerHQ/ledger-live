@@ -9,7 +9,7 @@ import type {
 import { Trans } from "~/context/Locale";
 import type { Transaction as BitcoinTransaction } from "@ledgerhq/live-common/families/bitcoin/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useFeesStrategy } from "@ledgerhq/live-common/families/bitcoin/react";
 import { CompositeScreenProps } from "@react-navigation/native";
 import BigNumber from "bignumber.js";
@@ -45,6 +45,7 @@ export default function BitcoinSendRowsFee({
   ...props
 }: Props) {
   invariant(account.type === "Account", "account not found");
+  const bridge = useAccountBridge<BitcoinTransaction>(account, parentAccount);
   const defaultStrategies = useFeesStrategy(account, transaction as BitcoinTransaction);
   const [satPerByte, setSatPerByte] = useState<BigNumber | null>(null);
   const strategies = useMemo(
@@ -64,15 +65,14 @@ export default function BitcoinSendRowsFee({
   );
   const onFeesSelected = useCallback(
     ({ amount, label }: SelectFeeStrategy) => {
-      const bridge = getAccountBridge(account, parentAccount);
       setTransaction(
-        bridge.updateTransaction(transaction, {
-          feesStrategy: label,
+        bridge.updateTransaction(transaction as BitcoinTransaction, {
+          feesStrategy: label as BitcoinTransaction["feesStrategy"],
           feePerByte: amount,
         }),
       );
     },
-    [setTransaction, account, parentAccount, transaction],
+    [setTransaction, bridge, transaction],
   );
   const openCustomFees = useCallback(() => {
     navigation.navigate(ScreenName.BitcoinEditCustomFees, {

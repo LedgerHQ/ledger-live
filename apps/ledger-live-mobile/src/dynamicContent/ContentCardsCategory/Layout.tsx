@@ -1,5 +1,6 @@
 import React from "react";
 import { Linking } from "react-native";
+import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import HorizontalCard from "../../contentCards/cards/horizontal";
 import { ContentBannerActionCard } from "../../contentCards/cards/contentBannerAction";
@@ -21,6 +22,7 @@ import {
   mapAsMediumSquareContentCard,
   mapAsBigSquareContentCard,
   mapAsHeroContentCard,
+  sanitizeExtras,
 } from "~/dynamicContent/utils";
 import Carousel from "../../contentCards/layouts/carousel";
 import { WidthFactor } from "~/contentCards/layouts/types";
@@ -74,6 +76,7 @@ type LayoutCardItemProps = ContentCardProps & { widthFactor?: number };
 
 const Layout = ({ category, cards }: LayoutProps) => {
   const { logClickCard, dismissCard, trackContentCardEvent } = useDynamicContent();
+  const isTopWallet = category.location === ContentCardLocation.TopWallet;
   const { shouldDisplayBrazePlacement } = useWalletFeaturesConfig("mobile");
   const isContentBannerVariant =
     shouldDisplayBrazePlacement &&
@@ -87,7 +90,7 @@ const Layout = ({ category, cards }: LayoutProps) => {
 
   const onCardClick = async (card: AnyContentCard, displayedPosition?: number) => {
     await trackContentCardEvent("contentcard_clicked", {
-      ...card.extras,
+      ...sanitizeExtras(card.extras),
       page: card.location,
       campaign: card.id,
       contentcard: card.title,
@@ -107,7 +110,7 @@ const Layout = ({ category, cards }: LayoutProps) => {
 
   const onCardDismiss = (card: AnyContentCard, displayedPosition?: number) => {
     trackContentCardEvent("contentcard_dismissed", {
-      ...card.extras,
+      ...sanitizeExtras(card.extras),
       page: card.location,
       campaign: card.id,
       contentcard: card.title,
@@ -146,18 +149,25 @@ const Layout = ({ category, cards }: LayoutProps) => {
   );
 
   switch (category.cardsLayout) {
-    case ContentCardsLayout.carousel:
-      return (
+    case ContentCardsLayout.carousel: {
+      const showLumenDots = isContentBannerVariant && cardsSorted.length > 1;
+      const carouselEl = (
         <Carousel
           items={items}
-          showLumenPageIndicator={isContentBannerVariant && cardsSorted.length > 1}
+          showLumenPageIndicator={showLumenDots}
+          disableVerticalStretch={isTopWallet}
           styles={{
             widthFactor: cardsSorted[0].carouselWidthFactor || WidthFactor.Full,
-            pagination: category.hasPagination,
+            pagination: isTopWallet ? false : category.hasPagination,
             gap: cardsSorted[0].gridWidthFactor === WidthFactor.Full ? 6 : 8,
           }}
         />
       );
+      if (isTopWallet) {
+        return <Box lx={{ marginBottom: showLumenDots ? "s24" : "s32" }}>{carouselEl}</Box>;
+      }
+      return carouselEl;
+    }
 
     case ContentCardsLayout.grid:
       return <Grid items={items} styles={{ widthFactor: cardsSorted[0].gridWidthFactor }} />;

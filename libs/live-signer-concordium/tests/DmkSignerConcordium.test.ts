@@ -1,5 +1,10 @@
 import { DeviceActionStatus, DeviceManagementKit } from "@ledgerhq/device-management-kit";
-import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/errors";
+import {
+  ConcordiumAddressVerificationFailedError,
+  ConcordiumTrustedMetadataServiceError,
+  LockedDeviceError,
+  UserRefusedOnDevice,
+} from "@ledgerhq/errors";
 import { SignerConcordiumBuilder } from "@ledgerhq/device-signer-kit-concordium";
 import { TransactionType, AccountAddress } from "@ledgerhq/concordium-core";
 import type { Transaction, CredentialDeploymentTransaction } from "@ledgerhq/concordium-core";
@@ -20,6 +25,7 @@ describe("DmkSignerConcordium", () => {
     getPublicKey: jest.fn(),
     signTransaction: jest.fn(),
     signCredentialDeploymentTransaction: jest.fn(),
+    verifyAddress: jest.fn(),
   };
 
   const dmkMock = {
@@ -116,18 +122,35 @@ describe("DmkSignerConcordium", () => {
       await expect(signer.getPublicKey(mockPath)).rejects.toThrow("SomeDAError");
     });
 
-    it.each([DeviceActionStatus.NotStarted, DeviceActionStatus.Pending, DeviceActionStatus.Stopped])(
-      "should throw for unexpected status %s",
-      async (status) => {
-        mockSignerConcordium.getPublicKey.mockReturnValue({
-          observable: of({ status }),
-        });
+    it("should include originalError.message in generic error when present", async () => {
+      mockSignerConcordium.getPublicKey.mockReturnValue({
+        observable: of({
+          status: DeviceActionStatus.Error,
+          error: {
+            _tag: "InvalidStatusWordError",
+            originalError: new Error("Failed to fetch account ownership context: Network Error"),
+          },
+        }),
+      });
 
-        await expect(signer.getPublicKey(mockPath)).rejects.toThrow(
-          "Unexpected device action status",
-        );
-      },
-    );
+      await expect(signer.getPublicKey(mockPath)).rejects.toThrow(
+        "InvalidStatusWordError: Failed to fetch account ownership context: Network Error",
+      );
+    });
+
+    it.each([
+      DeviceActionStatus.NotStarted,
+      DeviceActionStatus.Pending,
+      DeviceActionStatus.Stopped,
+    ])("should throw for unexpected status %s", async status => {
+      mockSignerConcordium.getPublicKey.mockReturnValue({
+        observable: of({ status }),
+      });
+
+      await expect(signer.getPublicKey(mockPath)).rejects.toThrow(
+        "Unexpected device action status",
+      );
+    });
   });
 
   describe("getAddress", () => {
@@ -263,9 +286,111 @@ describe("DmkSignerConcordium", () => {
   });
 
   describe("verifyAddress", () => {
-    it("should throw not supported error", async () => {
-      await expect(signer.verifyAddress(0, 0, 0)).rejects.toThrow(
-        "verifyAddress is not yet supported via DMK signer",
+    const ADDRESS = "3kBx2h5Y2veb4hZgAJWPrr8RyQESKm5TjzF3ti1QQ4VSYLwK1G";
+    const NETWORK = "mainnet" as const;
+
+    it("should resolve when device completes verification", async () => {
+      mockSignerConcordium.verifyAddress.mockReturnValue({
+        observable: of({
+          status: DeviceActionStatus.Completed,
+          output: true,
+        }),
+      });
+
+      await expect(signer.verifyAddress(mockPath, ADDRESS, NETWORK)).resolves.toBeUndefined();
+      expect(mockSignerConcordium.verifyAddress).toHaveBeenCalledWith(mockPath, ADDRESS, NETWORK, {
+        skipOpenApp: true,
+      });
+    });
+
+    it("should throw when device completes with a non-true output", async () => {
+      mockSignerConcordium.verifyAddress.mockReturnValue({
+        observable: of({
+          status: DeviceActionStatus.Completed,
+          output: false,
+        }),
+      });
+
+      await expect(signer.verifyAddress(mockPath, ADDRESS, NETWORK)).rejects.toThrow(
+        "Address verification did not complete on the device",
+      );
+    });
+
+    it("should throw UserRefusedOnDevice when user refuses", async () => {
+      mockSignerConcordium.verifyAddress.mockReturnValue({
+        observable: of({
+          status: DeviceActionStatus.Error,
+          error: { _tag: "UserRejected", errorCode: "6985" },
+        }),
+      });
+
+      await expect(signer.verifyAddress(mockPath, ADDRESS, NETWORK)).rejects.toThrow(
+        UserRefusedOnDevice,
+      );
+    });
+
+    it("should throw LockedDeviceError when device is locked", async () => {
+      mockSignerConcordium.verifyAddress.mockReturnValue({
+        observable: of({
+          status: DeviceActionStatus.Error,
+          error: { _tag: "LockedDevice", errorCode: "5515" },
+        }),
+      });
+
+      await expect(signer.verifyAddress(mockPath, ADDRESS, NETWORK)).rejects.toThrow(
+        LockedDeviceError,
+      );
+    });
+
+    it("should throw generic error for unknown error code", async () => {
+      mockSignerConcordium.verifyAddress.mockReturnValue({
+        observable: of({
+          status: DeviceActionStatus.Error,
+          error: { _tag: "TrustedNameMismatch", errorCode: "6b0c" },
+        }),
+      });
+
+      await expect(signer.verifyAddress(mockPath, ADDRESS, NETWORK)).rejects.toThrow(
+        "TrustedNameMismatch",
+      );
+    });
+
+    it("should throw ConcordiumTrustedMetadataServiceError on trusted_metadata_service_error", async () => {
+      mockSignerConcordium.verifyAddress.mockReturnValue({
+        observable: of({
+          status: DeviceActionStatus.Error,
+          error: {
+            _tag: "ConcordiumTrustedMetadataServiceError",
+            errorCode: "trusted_metadata_service_error",
+            originalError: new Error("Backend unavailable"),
+          },
+        }),
+      });
+
+      await expect(signer.verifyAddress(mockPath, ADDRESS, NETWORK)).rejects.toThrow(
+        ConcordiumTrustedMetadataServiceError,
+      );
+    });
+
+    it("should throw ConcordiumAddressVerificationFailedError on address_verification_failed", async () => {
+      const backendMessage =
+        "Address ByteVector(32 bytes, 0xa63c) is not associated with the given public key ByteVector(32 bytes, 0x9dc1) on the network Testnet";
+      mockSignerConcordium.verifyAddress.mockReturnValue({
+        observable: of({
+          status: DeviceActionStatus.Error,
+          error: {
+            _tag: "AddressVerificationFailedError",
+            errorCode: "address_verification_failed",
+            originalError: new Error(backendMessage),
+          },
+        }),
+      });
+
+      await expect(signer.verifyAddress(mockPath, ADDRESS, NETWORK)).rejects.toThrow(
+        ConcordiumAddressVerificationFailedError,
+      );
+      await expect(signer.verifyAddress(mockPath, ADDRESS, NETWORK)).rejects.toThrow(
+        backendMessage,
       );
     });
   });

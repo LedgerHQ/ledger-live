@@ -23,6 +23,7 @@ export const getCardanoAccountFixture = (params: {
   currency: {
     id: "cardano_testnet",
     units: [{ name: "Cardano", code: "ADA", magnitude: 6 }],
+    ticker: "ADA",
   } as CryptoCurrency,
   operationsCount: 0,
   operations: [],

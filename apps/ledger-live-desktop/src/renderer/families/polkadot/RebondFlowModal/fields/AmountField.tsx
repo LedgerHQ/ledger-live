@@ -4,7 +4,7 @@ import { Trans } from "react-i18next";
 import { TFunction } from "i18next";
 import styled from "styled-components";
 import { BigNumber } from "bignumber.js";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import {
   PolkadotAccount,
   Transaction,
@@ -42,7 +42,7 @@ type Props = {
 };
 const AmountField = ({ account, onChangeTransaction, transaction, status }: Props) => {
   invariant(account && transaction && account.spendableBalance, "account and transaction required");
-  const bridge = getAccountBridge(account);
+  const bridge = useAccountBridge<Transaction>(account);
   const defaultUnit = useAccountUnit(account);
   const onChange = useCallback(
     (value: BigNumber) => {

@@ -6,11 +6,16 @@ import { useReceiveOptionsViewModel } from "../../hooks/useReceiveOptionsViewMod
 import { ReceiveOptionsView } from "./ReceiveOptionsView";
 import type { ReceiveOptionsDialogProps } from "../../types";
 
-export function ReceiveOptionsDialog({ onClose, onGoToAccount }: ReceiveOptionsDialogProps) {
+export function ReceiveOptionsDialog({
+  onClose,
+  onGoToAccount,
+  sourcePage,
+}: ReceiveOptionsDialogProps) {
   const { t } = useTranslation();
   const { handleGoToBank, handleGoToCrypto } = useReceiveOptionsViewModel({
     onClose,
     onGoToAccount,
+    sourcePage,
   });
 
   return (

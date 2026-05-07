@@ -1,5 +1,5 @@
 import { TRANSACTION_TYPE } from "@ledgerhq/coin-aleo/constants";
-import type { TransactionType } from "@ledgerhq/coin-aleo/types";
+import type { RecordPickingStrategy, TransactionType } from "@ledgerhq/coin-aleo/types";
 import type { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
 import { getEnv } from "@ledgerhq/live-env";
 
@@ -28,6 +28,14 @@ const IS_FEE_SPONSORED = true;
  */
 const USE_ENCRYPTED_PROVE = true;
 
+/**
+ * Controls how private transaction records are selected.
+ * - "manual": user picks records explicitly via the record picker UI step.
+ * - "auto": records are selected automatically (manual picker step is skipped).
+ * Default is "manual" to preserve existing behaviour.
+ */
+const RECORD_PICKING_STRATEGY: RecordPickingStrategy = "manual";
+
 export const aleoConfig: Record<string, ConfigInfo> = {
   config_currency_aleo: {
     type: "object",
@@ -44,6 +52,7 @@ export const aleoConfig: Record<string, ConfigInfo> = {
       feeSafetyMultiplier: DEFAULT_FEE_SAFETY_MULTIPLIER,
       isFeeSponsored: IS_FEE_SPONSORED,
       useEncryptedProve: USE_ENCRYPTED_PROVE,
+      recordPickingStrategy: RECORD_PICKING_STRATEGY,
     },
   },
   config_currency_aleo_testnet: {
@@ -61,6 +70,7 @@ export const aleoConfig: Record<string, ConfigInfo> = {
       feeSafetyMultiplier: DEFAULT_FEE_SAFETY_MULTIPLIER,
       isFeeSponsored: IS_FEE_SPONSORED,
       useEncryptedProve: USE_ENCRYPTED_PROVE,
+      recordPickingStrategy: RECORD_PICKING_STRATEGY,
     },
   },
 };

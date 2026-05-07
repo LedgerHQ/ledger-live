@@ -19,6 +19,7 @@ import SelectDevice from "~/screens/SelectDevice";
 import ConnectDevice from "~/screens/ConnectDevice";
 
 import type { MultiversXDelegationFlowParamList } from "./types";
+import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
 
 const totalSteps = "3";
 const options = {
@@ -34,6 +35,7 @@ const Stack = createNativeStackNavigator<MultiversXDelegationFlowParamList>();
 const Delegate = () => {
   const { t } = useTranslation();
   const { colors } = useTheme();
+  const { notifyFlowCompleted } = useNotificationsContext();
 
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
@@ -146,6 +148,11 @@ const Delegate = () => {
           headerRight: undefined,
           headerTitle: "",
           gestureEnabled: false,
+        }}
+        listeners={{
+          beforeRemove: () => {
+            notifyFlowCompleted("stake");
+          },
         }}
       />
     </Stack.Navigator>

@@ -3,7 +3,7 @@ import Config from "react-native-config";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import {
   getDefaultValidator,
   isStakingTransaction,
@@ -45,7 +45,7 @@ export default function DelegationSummary({ navigation, route }: Readonly<Props>
   invariant(account, "account must be defined");
   invariant(account.type === "Account", "account type must be Account");
 
-  const bridge: AccountBridge<Transaction> = getAccountBridge(account);
+  const bridge = useAccountBridge<Transaction>(account);
   const validators = useHederaValidators(account.currency);
   const defaultValidator = getDefaultValidator(validators);
 

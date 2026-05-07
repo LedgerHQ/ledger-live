@@ -101,6 +101,12 @@ export interface EarnRoute {
   search: string;
 }
 
+export interface BorrowRoute {
+  type: "borrow";
+  path: string;
+  search: string;
+}
+
 export interface ManagerRoute {
   type: "myledger";
   installApp?: string;
@@ -193,6 +199,10 @@ export interface PostOnboardingRoute {
   device?: string;
 }
 
+export interface PerpsRoute {
+  type: "perps";
+}
+
 export interface LedgerSyncRoute {
   type: "ledgersync";
 }
@@ -207,6 +217,7 @@ export type DeeplinkRoute =
   | AddAccountRoute
   | BuyRoute
   | EarnRoute
+  | BorrowRoute
   | ManagerRoute
   | SwapRoute
   | BridgeRoute
@@ -221,6 +232,7 @@ export type DeeplinkRoute =
   | AssetRoute
   | RecoverRoute
   | RecoverRestoreFlowRoute
+  | PerpsRoute
   | PostOnboardingRoute
   | LedgerSyncRoute
   | DefaultRoute;

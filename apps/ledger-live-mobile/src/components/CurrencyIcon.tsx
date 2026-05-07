@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { Flex } from "@ledgerhq/native-ui";
-import styled, { useTheme } from "styled-components/native";
+import styled from "styled-components/native";
 import { CryptoIcon } from "@ledgerhq/native-ui/pre-ldls";
 import { getValidCryptoIconSizeNative } from "@ledgerhq/live-common/helpers/cryptoIconSize";
 
@@ -20,7 +20,6 @@ type Props = {
 };
 
 const CurrencyIcon = ({ size, currency, disabled, hideNetwork, squared }: Props) => {
-  const { colors } = useTheme();
   const validIconSize = getValidCryptoIconSizeNative(size);
 
   if (currency.type === "FiatCurrency") {
@@ -29,7 +28,6 @@ const CurrencyIcon = ({ size, currency, disabled, hideNetwork, squared }: Props)
 
   const ledgerId = currency.id;
   const ticker = currency.ticker;
-  const overridesRadius = squared ? Math.round(validIconSize * 0.25) : undefined;
 
   const cryptoIconElement =
     !hideNetwork && currency.type === "TokenCurrency" ? (
@@ -37,17 +35,15 @@ const CurrencyIcon = ({ size, currency, disabled, hideNetwork, squared }: Props)
         ledgerId={ledgerId}
         ticker={ticker}
         size={validIconSize}
-        backgroundColor={colors.background.main}
         network={currency.parentCurrency.id}
-        overridesRadius={overridesRadius}
+        shape={squared ? "square" : undefined}
       />
     ) : (
       <CryptoIcon
         ledgerId={ledgerId}
         ticker={ticker}
         size={validIconSize}
-        backgroundColor={colors.background.main}
-        overridesRadius={overridesRadius}
+        shape={squared ? "square" : undefined}
       />
     );
 

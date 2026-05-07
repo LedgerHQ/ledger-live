@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/client-ids",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "description": "Ledger Live client IDs management library",
   "keywords": [
     "Ledger"
@@ -26,8 +26,11 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch --project tsconfig.build.json",
     "watch:es": "tsc --watch --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
-    "lint": "node scripts/check-export-rules.mjs && eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
-    "lint:fix": "pnpm lint --fix",
+    "check-export-rules": "node scripts/check-export-rules.mjs",
+    "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
+    "lint:fix": "pnpm exec oxfmt -c ../oxc-live-libs/.oxfmtrc.json ./src && oxlint -c ../oxc-live-libs/.oxlintrc.json ./src --fix --quiet",
+    "format": "pnpm exec oxfmt -c ../oxc-live-libs/.oxfmtrc.json ./src",
+    "format:check": "pnpm exec oxfmt -c ../oxc-live-libs/.oxfmtrc.json ./src --check",
     "typecheck": "tsc --noEmit --customConditions node",
     "test": "jest",
     "coverage": "jest --coverage"
@@ -39,6 +42,8 @@
   },
   "devDependencies": {
     "@types/jest": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/uuid": "^9.0.0",

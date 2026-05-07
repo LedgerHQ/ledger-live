@@ -39,6 +39,7 @@ export const SectionListContent = ({
       onPress={onItemPress}
       precomputed={precomputedData.get(item.currency.id)!}
       lx={NEGATIVE_MARGIN_OFFSET}
+      hideNetwork
     />
   ));
 };

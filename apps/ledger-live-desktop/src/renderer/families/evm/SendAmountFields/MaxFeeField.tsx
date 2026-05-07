@@ -1,7 +1,6 @@
 import { Transaction } from "@ledgerhq/coin-evm/types/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import React, { memo, useCallback, useMemo } from "react";
@@ -53,7 +52,7 @@ const FeesField: NonNullable<EvmFamily["sendAmountFields"]>["component"] = ({
   invariant(transaction.family === "evm", "MaxFeeField: evm family expected");
   invariant(transaction.type === 2, "MaxFeeField: transaction should be of type 2 (EIP1559)");
 
-  const bridge: AccountBridge<Transaction> = getAccountBridge(account);
+  const bridge = useAccountBridge<Transaction>(account);
   const { t } = useTranslation();
 
   const onMaxFeeChange = useCallback(

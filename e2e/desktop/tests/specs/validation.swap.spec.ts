@@ -110,22 +110,17 @@ for (const swap of tooLowAmountForQuoteSwaps) {
           description: swap.xrayTicket,
         },
       },
-      async ({ app, electronApp }) => {
+      async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-        await performSwapUntilQuoteSelectionStep(
-          app,
-          electronApp,
-          swap.swap,
-          swap.swap.amount ?? "0",
-        );
+        await performSwapUntilQuoteSelectionStep(app, swap.swap, swap.swap.amount ?? "0");
         if (swap.quotesVisible) {
-          await app.swap.checkQuotes(electronApp);
-          await app.swap.selectExchange(electronApp);
+          await app.swap.checkQuotes();
+          await app.swap.selectExchange();
         }
-        await app.swap.verifySwapAmountErrorMessageIsCorrect(electronApp, swap.errorMessage);
+        await app.swap.verifySwapAmountErrorMessageIsCorrect(swap.errorMessage);
         if (swap.ctaBanner) {
-          await app.swap.checkInsufficientFundsBannerVisible(electronApp);
+          await app.swap.checkInsufficientFundsBannerVisible();
         }
       },
     );
@@ -211,20 +206,18 @@ test.describe(`Swap - Error message when network fees are above account balance 
         description: swapNetworkFeesAboveAccountBalanceTestConfig.xrayTicket,
       },
     },
-    async ({ app, electronApp }) => {
+    async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       const minAmount = await app.swap.getMinimumAmount(accountToDebit, accountToCredit);
 
       await performSwapUntilQuoteSelectionStep(
         app,
-        electronApp,
         swapNetworkFeesAboveAccountBalanceTestConfig.swap,
         minAmount,
       );
-      await app.swap.checkQuotes(electronApp);
-      await app.swap.selectExchange(electronApp);
+      await app.swap.checkQuotes();
+      await app.swap.selectExchange();
       await app.swap.checkFeeErrorMessage(
-        electronApp,
         swapNetworkFeesAboveAccountBalanceTestConfig.errorMessage,
       );
     },

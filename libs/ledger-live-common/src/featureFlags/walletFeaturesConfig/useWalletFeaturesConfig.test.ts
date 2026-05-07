@@ -52,6 +52,8 @@ const makeConfig = (
   shouldDisplayMyWallet: value,
   shouldDisplayAggregatedAssets: value,
   shouldDisplayFinishOnboardingWidget: value,
+  shouldDisplayEarnUpselling: value,
+  shouldDisplayEarnSimulator: value,
   ...overrides,
 });
 
@@ -72,6 +74,8 @@ const makeParams = (value: boolean): Wallet40Params => ({
   aggregatedAssets: value,
   myWallet: value,
   finishOnboardingWidget: value,
+  earnUpselling: value,
+  earnSimulator: value,
 });
 
 const DISABLED_CONFIG = makeConfig(false);
@@ -140,6 +144,8 @@ describe("useWalletFeaturesConfig hook", () => {
         ["aggregatedAssets", { aggregatedAssets: true }, { shouldDisplayAggregatedAssets: true }],
         ["myWallet", { myWallet: true }, { shouldDisplayMyWallet: true }],
         ["finishOnboardingWidget", { finishOnboardingWidget: true }, { shouldDisplayFinishOnboardingWidget: true }],
+        ["earnUpselling", { earnUpselling: true }, { shouldDisplayEarnUpselling: true }],
+        ["earnSimulator", { earnSimulator: true }, { shouldDisplayEarnSimulator: true }],
       ])("should return correct config when only %s is enabled", (_, params, expectedOverrides) => {
         const { result } = renderWalletFeaturesConfig(platform, {
           [flagKey]: createFeatureFlag(true, params),

@@ -118,6 +118,21 @@ export async function estimateFees({
           source: account.address,
         });
         break;
+      case "stake":
+        estimate = await tezosToolkit.estimate.stake({
+          amount: Number(amount),
+          mutez: true,
+        });
+        break;
+      case "unstake":
+        estimate = await tezosToolkit.estimate.unstake({
+          amount: Number(amount),
+          mutez: true,
+        });
+        break;
+      case "finalize_unstake":
+        estimate = await tezosToolkit.estimate.finalizeUnstake({});
+        break;
       case "send_token": {
         if (!transaction.contractAddress || transaction.tokenId === undefined) {
           throw new Error("FA2 transfer requires contractAddress and tokenId");

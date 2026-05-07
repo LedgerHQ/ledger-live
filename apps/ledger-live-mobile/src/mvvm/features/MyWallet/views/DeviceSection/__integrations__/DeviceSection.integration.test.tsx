@@ -1,8 +1,20 @@
 import React from "react";
-import { render, screen } from "@tests/test-renderer";
+import { render, screen, fireEvent, waitFor } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { DeviceSectionView } from "../DeviceSectionView";
 import { type DeviceSectionDevice } from "../useDeviceSectionViewModel";
+
+jest.mock("~/components/DeviceActionModal", () => ({
+  __esModule: true,
+  default: () => null,
+}));
+
+jest.mock("~/hooks/deviceActions", () => ({
+  useManagerDeviceAction: () => ({
+    useHook: jest.fn(),
+    mapResult: jest.fn(),
+  }),
+}));
 
 const mockDevices: DeviceSectionDevice[] = [
   { id: "device-1", name: "Flex Pro", modelId: DeviceModelId.europa, available: false },
@@ -10,10 +22,64 @@ const mockDevices: DeviceSectionDevice[] = [
   { id: "device-3", name: "Flex 3294", modelId: DeviceModelId.europa, available: false },
 ];
 
+const mockOnAddDevice = jest.fn();
+const mockOnExploreDevices = jest.fn();
+const mockOnDevicePress = jest.fn();
+const mockOnOpenMenu = jest.fn();
+const mockOnCloseRemoveMenu = jest.fn();
+const mockOnRemoveDevice = jest.fn();
+const mockOnDeviceActionResult = jest.fn();
+const mockOnDeviceActionClose = jest.fn();
+const mockOnDeviceActionError = jest.fn();
+
+const mockManagerAction = { useHook: jest.fn(), mapResult: jest.fn() } as const;
+
+const renderView = (
+  devices: readonly DeviceSectionDevice[],
+  overrides: Partial<{
+    deviceToRemove: DeviceSectionDevice | null;
+    isRemoveDrawerOpen: boolean;
+  }> = {},
+) =>
+  render(
+    <DeviceSectionView
+      devices={devices}
+      hasDevices={devices.length > 0}
+      onAddDevice={mockOnAddDevice}
+      onExploreDevices={mockOnExploreDevices}
+      onDevicePress={mockOnDevicePress}
+      onOpenMenu={mockOnOpenMenu}
+      deviceToRemove={overrides.deviceToRemove ?? null}
+      isRemoveDrawerOpen={overrides.isRemoveDrawerOpen ?? false}
+      onCloseRemoveMenu={mockOnCloseRemoveMenu}
+      onRemoveDevice={mockOnRemoveDevice}
+      selectedDevice={null}
+      managerAction={mockManagerAction}
+      onDeviceActionResult={mockOnDeviceActionResult}
+      onDeviceActionClose={mockOnDeviceActionClose}
+      onDeviceActionError={mockOnDeviceActionError}
+    />,
+  );
+
 describe("DeviceSection", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  describe("device card press", () => {
+    beforeEach(() => {
+      renderView([mockDevices[0]]);
+    });
+
+    it("calls onDevicePress with the device when tapped", async () => {
+      fireEvent.press(screen.getByTestId("my-wallet-device-item-device-1"));
+      await waitFor(() => expect(mockOnDevicePress).toHaveBeenCalledWith(mockDevices[0]));
+    });
+  });
+
   describe("with no devices", () => {
     beforeEach(() => {
-      render(<DeviceSectionView devices={[]} />);
+      renderView([]);
     });
 
     it("renders the section container", () => {
@@ -25,12 +91,14 @@ describe("DeviceSection", () => {
       expect(screen.getByTestId("my-wallet-device-section-title")).toHaveTextContent("My devices");
     });
 
-    it("renders the Add button", () => {
-      expect(screen.getByTestId("my-wallet-device-section-add")).toBeVisible();
+    it("renders the Add button and calls onAddDevice when pressed", async () => {
+      expect(screen.getByTestId("my-wallet-device-section-add-device")).toBeVisible();
+      fireEvent.press(screen.getByTestId("my-wallet-device-section-add-device"));
+      await waitFor(() => expect(mockOnAddDevice).toHaveBeenCalledTimes(1));
     });
 
-    it('renders the "Explore all Ledger devices" item', () => {
-      expect(screen.getByTestId("my-wallet-device-section-explore")).toBeVisible();
+    it('does not render the "Explore all Ledger devices" item', () => {
+      expect(screen.queryByTestId("my-wallet-device-section-explore")).toBeNull();
     });
 
     it("does not render any device item", () => {
@@ -42,7 +110,7 @@ describe("DeviceSection", () => {
     const singleDevice: DeviceSectionDevice[] = [mockDevices[0]];
 
     beforeEach(() => {
-      render(<DeviceSectionView devices={singleDevice} />);
+      renderView(singleDevice);
     });
 
     it("renders the device item", () => {
@@ -57,8 +125,21 @@ describe("DeviceSection", () => {
       expect(screen.getByText("Not connected")).toBeVisible();
     });
 
+    it("renders the Add header link", () => {
+      expect(screen.getByTestId("my-wallet-device-section-add")).toBeVisible();
+    });
+
+    it('does not render the "Add a Ledger device" CTA', () => {
+      expect(screen.queryByTestId("my-wallet-device-section-add-device")).toBeNull();
+    });
+
     it('renders the "Explore all Ledger devices" item', () => {
       expect(screen.getByTestId("my-wallet-device-section-explore")).toBeVisible();
+    });
+
+    it("calls onOpenMenu with the device when the 3-dot menu icon is pressed", async () => {
+      fireEvent.press(screen.getByTestId("my-wallet-device-item-device-1-menu"));
+      await waitFor(() => expect(mockOnOpenMenu).toHaveBeenCalledWith(mockDevices[0]));
     });
   });
 
@@ -68,7 +149,7 @@ describe("DeviceSection", () => {
     ];
 
     beforeEach(() => {
-      render(<DeviceSectionView devices={availableDevice} />);
+      renderView(availableDevice);
     });
 
     it('renders "Available" status', () => {
@@ -78,7 +159,7 @@ describe("DeviceSection", () => {
 
   describe("with multiple devices", () => {
     beforeEach(() => {
-      render(<DeviceSectionView devices={mockDevices} />);
+      renderView(mockDevices);
     });
 
     it("renders all device items", () => {
@@ -95,6 +176,12 @@ describe("DeviceSection", () => {
 
     it('renders the "Explore all Ledger devices" item', () => {
       expect(screen.getByTestId("my-wallet-device-section-explore")).toBeVisible();
+    });
+
+    it("renders a menu icon for each device", () => {
+      expect(screen.getByTestId("my-wallet-device-item-device-1-menu")).toBeVisible();
+      expect(screen.getByTestId("my-wallet-device-item-device-2-menu")).toBeVisible();
+      expect(screen.getByTestId("my-wallet-device-item-device-3-menu")).toBeVisible();
     });
   });
 });

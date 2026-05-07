@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import CryptoIcons from "./pages/crypto-icons";
 import Derivations from "./pages/derivations";
+import DevToolsPage from "./pages/dev-tools";
 import DomainTlvParser from "./pages/domain-tlv-parser";
 import EthTxTools from "./pages/eth-tx-tools";
 import Home from "./pages/index";
@@ -26,6 +27,7 @@ export const AppRoutes = () => (
     <Route path="/repl" element={<Repl />} />
     <Route path="/trustchain" element={<Trustchain />} />
     <Route path="/crypto-icons" element={<CryptoIcons />} />
+    <Route path="/dev-tools" element={<DevToolsPage />} />
     <Route path="*" element={<NotFound />} />
   </Routes>
 );

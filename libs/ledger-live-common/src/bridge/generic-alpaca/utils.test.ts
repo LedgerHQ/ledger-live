@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import {
   adaptCoreOperationToLiveOperation,
   applyMemoToIntent,
@@ -10,11 +11,29 @@ import {
   transactionToIntent,
 } from "./utils";
 import BigNumber from "bignumber.js";
-import { Operation as CoreOperation, TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
+import {
+  Operation as CoreOperation,
+  TransactionIntent,
+} from "@ledgerhq/coin-module-framework/api/types";
 import { Account } from "@ledgerhq/types-live";
 import { GenericTransaction, OperationCommon } from "./types";
+import * as craftTransactionDataModule from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
+
+jest.mock("@ledgerhq/coin-module-framework/logic/craftTransactionData", () => {
+  const originalModule = jest.requireActual(
+    "@ledgerhq/coin-module-framework/logic/craftTransactionData",
+  );
+  return {
+    ...originalModule,
+    craftTransactionData: jest.fn().mockReturnValue({ type: "none" }),
+  };
+});
 
 describe("Alpaca utils", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   describe("applyMemoToIntent", () => {
     it("does not apply any memo", () => {
       const intent = applyMemoToIntent(
@@ -395,6 +414,89 @@ describe("Alpaca utils", () => {
         ).toMatchObject({
           type: "send-eip1559",
         });
+      });
+    });
+
+    describe("craftTransactionData", () => {
+      it.each([
+        { title: "undefined", data: undefined },
+        { title: "empty", data: Buffer.from("") },
+      ])("should use provided craftTransactionData when data is $title", ({ data }) => {
+        const defaultCraftTransactionDataSpy = jest.spyOn(
+          craftTransactionDataModule,
+          "craftTransactionData",
+        );
+        const expectedData = {
+          type: "buffer",
+          value: Buffer.from(
+            "1794958f000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000002200000000000000000000000000000000000000000000000000000000000000440e0cd9cdb4af547ee08c2e9c3091a9e342799d013aded94214fff87bea5c7069a000000000000000000000000000000000000000000000000000000000000014000000000000000000000000000000000000000000000000000000000000001800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000066c4371ae8ffed2ec1c2ebbbccfb7e494181e1e300000000000000000000000000000000000000000000000000018c5e679f058000000000000000000000000000000000000000000000000000000000000021050000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000066163726f7373000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000075f6c65646765720000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000020000000000000000000000000685527c551cc40ce1f1c9818cd8683307076e4ed000000000000000000000000685527c551cc40ce1f1c9818cd8683307076e4ed0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000018ff7eea2040000000000000000000000000000000000000000000000000000000000000000e0000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000c40e8ae67f00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000002000000000000000000000000c06ebbefd94032b85424d51906e2a335efae264b000000000000000000000000000000000000000000000000000000ccc8ab55000000000000000000000000002d1c5382748559ba877246db753cacbc54d5b9b4000000000000000000000000000000000000000000000000000002ccbe57a9800000000000000000000000000000000000000000000000000000000000000000000000000000000066c4371ae8ffed2ec1c2ebbbccfb7e494181e1e30000000000000000000000004d4717adf15c04e0c8f84d448b7c76f60864bf38000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2000000000000000000000000420000000000000000000000000000000000000600000000000000000000000000000000000000000000000000018a997696af320000000000000000000000000000000000000000000000000dd0daeaf3b8fcff00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000069f0d05b0000000000000000000000000000000000000000000000000000000069f0f4ce000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001600000000000000000000000000000000000000000000000000000000000000000",
+          ),
+        };
+        const craftTransactionDataMock = jest.fn().mockReturnValueOnce(expectedData);
+
+        const intent = transactionToIntent(
+          {
+            currency: {
+              name: "ethereum",
+              units: ["wei"],
+            },
+          } as unknown as Account,
+          { data } as unknown as GenericTransaction,
+          undefined,
+          craftTransactionDataMock,
+        );
+
+        expect(intent).toMatchObject({ data: expectedData });
+
+        expect(craftTransactionDataMock).toHaveBeenCalledTimes(1);
+        expect(defaultCraftTransactionDataSpy).not.toHaveBeenCalled();
+      });
+
+      it("should use default craftTransactionData when not provided", () => {
+        const defaultCraftTransactionDataSpy = jest.spyOn(
+          craftTransactionDataModule,
+          "craftTransactionData",
+        );
+
+        transactionToIntent(
+          {
+            currency: {
+              name: "ethereum",
+              units: ["wei"],
+            },
+          } as unknown as Account,
+          {} as unknown as GenericTransaction,
+          undefined,
+          undefined,
+        );
+
+        expect(defaultCraftTransactionDataSpy).toHaveBeenCalledTimes(1);
+      });
+
+      it("should set data from transaction when non empty and does not call craftTransactionData", () => {
+        const defaultCraftTransactionDataSpy = jest.spyOn(
+          craftTransactionDataModule,
+          "craftTransactionData",
+        );
+        const craftTransactionDataMock = jest.fn();
+        const expectedData = Buffer.from("some random data");
+
+        const intent = transactionToIntent(
+          {
+            currency: {
+              name: "ethereum",
+              units: ["wei"],
+            },
+          } as unknown as Account,
+          { data: expectedData } as unknown as GenericTransaction,
+          undefined,
+          craftTransactionDataMock,
+        );
+
+        expect(intent).toMatchObject({ data: { type: "buffer", value: expectedData } });
+
+        expect(craftTransactionDataMock).not.toHaveBeenCalled();
+        expect(defaultCraftTransactionDataSpy).not.toHaveBeenCalled();
       });
     });
   });

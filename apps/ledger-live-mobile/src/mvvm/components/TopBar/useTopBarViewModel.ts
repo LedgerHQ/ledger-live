@@ -6,6 +6,7 @@ import { track } from "~/analytics";
 import { setOriginFlow } from "~/analytics/originFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { useSelector } from "~/context/hooks";
+import { hasUnreadOperationsSelector } from "~/reducers/history";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
@@ -57,6 +58,8 @@ export function useTopBarViewModel(
     [notificationCards],
   );
 
+  const hasUnreadOperations = useSelector(hasUnreadOperationsSelector);
+
   const onMyLedgerPress = useCallback(() => {
     track("menuentry_clicked", { button: "MyLedger", page });
     if (readOnlyModeEnabled) {
@@ -75,7 +78,7 @@ export function useTopBarViewModel(
   }, [navigation, page, readOnlyModeEnabled, navigateToRebornFlow]);
 
   const onMyWalletPress = useCallback(() => {
-    track("menuentry_clicked", { button: "MyWallet", page });
+    track("button_clicked", { button: "My Wallet", page });
     navigation.navigate(NavigatorName.MyWallet, {
       screen: ScreenName.MyWallet,
     });
@@ -123,6 +126,7 @@ export function useTopBarViewModel(
     onSettingsPress,
     onTransactionHistoryPress,
     hasUnreadNotifications,
+    hasUnreadOperations,
     hasAccounts,
     isSyncError: isError,
     isSyncPending: isPending || isTryRefreshPending,

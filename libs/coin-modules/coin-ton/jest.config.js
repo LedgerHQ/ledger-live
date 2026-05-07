@@ -19,13 +19,14 @@ module.exports = {
       },
     ],
   },
-  testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts"],
+  testPathIgnorePatterns: ["lib/", "lib-es/", ".(integ|integration).test.ts"],
   modulePathIgnorePatterns: [
     "__tests__/fixtures",
     "__tests__/integration/bridge.integration.test.ts", // this file is tested at the live-common level
   ],
   reporters: [
     "default",
+    ...(process.env.CI ? ["github-actions"] : []),
     ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
   ],
   // setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],

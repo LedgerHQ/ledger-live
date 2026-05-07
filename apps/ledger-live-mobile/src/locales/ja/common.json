@@ -294,6 +294,11 @@
       "title" : "接続に失敗しました。",
       "description" : "もう一度お試しください。"
     },
+    "CounterfeitDevice" : {
+      "title" : "この{{productName}}は、正規品チェックに失敗しました",
+      "description" : "このLedgerデバイスは安全に使用できません。Ledgerサポートにご連絡ください。",
+      "contactSupportCTA" : "Ledgerサポートへお問い合わせ"
+    },
     "DeviceSocketNoBulkStatus" : {
       "title" : "接続に失敗しました。",
       "description" : "もう一度お試しください。"
@@ -415,8 +420,8 @@
       "description" : "デバイスとの情報交換中に問題が発生しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
     },
     "AlreadySendingApduError" : {
-      "title" : "通信エラー",
-      "description" : "デバイスとの情報交換中に問題が発生しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+      "title" : "Ledgerデバイスで操作が必要です",
+      "description" : "デバイスで操作を完了する。"
     },
     "UnknownDeviceExchangeError" : {
       "title" : "通信エラー",
@@ -1305,7 +1310,7 @@
     },
     "noAccounts" : {
       "title" : "このアプリにアクセスするにはアカウントが必要です。",
-      "add" : "アカウントを追加"
+      "select" : "アカウントを選択"
     }
   },
   "location" : {
@@ -2688,6 +2693,7 @@
     "accounts" : "アカウント",
     "transfer" : "送金",
     "manager" : "My Ledger",
+    "myWallet" : "ウォレット",
     "settings" : "設定",
     "platform" : "Live Apps",
     "discover" : "アプリ一覧",
@@ -2925,6 +2931,10 @@
       "UPDATE_ACCOUNT" : "アカウント更新"
     }
   },
+  "operationsList" : {
+    "to" : "送付先",
+    "from" : "送付元"
+  },
   "operationDetails" : {
     "title" : "トランザクションの詳細",
     "account" : "アカウント",
@@ -3001,6 +3011,8 @@
   },
   "operationList" : {
     "noOperations" : "オペレーションはありません。",
+    "emptyTitle" : "まだトランザクションがありません",
+    "emptySubtitle" : "後ほど、トランザクションをご確認ください。",
     "noMoreTransactions" : "他のトランザクションはありません"
   },
   "selectableAccountsList" : {
@@ -5801,6 +5813,9 @@
     "alerts" : {
       "withdrawableAssets" : "引き出し可能な残高があります。",
       "activatableVotes" : "有効化可能な投票があります。"
+    },
+    "send" : {
+      "feeCurrency" : "手数料の通貨"
     }
   },
   "cosmos" : {
@@ -7829,6 +7844,12 @@
         "description" : "お気に入りのデジタルアートや写真を、デバイスのロック画面に表示しましょう。",
         "popupLabel" : "ロック画面のカスタマイズに成功しました"
       },
+      "recover" : {
+        "title" : "バックアップの保護を完了",
+        "titleCompleted" : "バックアップ保護完了",
+        "description" : "Ledger Recoverの有効化を完了してください",
+        "popupLabel" : "Ledger Recoverのサブスクリプション契約を正常に完了しました"
+      },
       "syncAccounts" : {
         "title" : "暗号資産アカウントを同期する",
         "titleCompleted" : "アカウントの同期が完了しました",
@@ -8112,6 +8133,18 @@
       "lead" : "同意は設定からいつでも取り消すことができます。",
       "privacyLink" : "プライバシーポリシー"
     }
+  },
+  "analyticsPreferencesSettings" : {
+    "screenTitle" : "設定を選択してください",
+    "appPerformance" : {
+      "title" : "アプリのパフォーマンス",
+      "description" : "Ledgerがアプリの使用状況を収集できるようにし、ユーザー体験を向上させます。"
+    },
+    "personalizedExperience" : {
+      "title" : "好みに合わせてコンテンツをカスタマイズ",
+      "description" : "Ledgerがアプリの使用状況を収集して、パーソナライズされたコンテンツを提供できるようにします。"
+    },
+    "confirmCta" : "確認"
   },
   "walletSync" : {
     "title" : "Ledger Sync",
@@ -8823,6 +8856,51 @@
     "error" : {
       "title" : "{{appName}}のインストールに失敗しました。",
       "description" : "インストール中に問題が発生しました。もう一度お試しください。"
+    }
+  },
+  "myWallet" : {
+    "quickActions" : {
+      "recover" : "[L] Recover",
+      "backup" : "バックアップ",
+      "help" : "ヘルプ",
+      "referral" : "紹介"
+    },
+    "help" : {
+      "title" : "ヘルプ",
+      "sections" : {
+        "supportAndLearning" : "サポートと学習",
+        "more" : "詳細"
+      },
+      "rows" : {
+        "ledgerSupport" : {
+          "title" : "Ledgerサポート",
+          "description" : "FAQやチャットでサポートを利用する"
+        },
+        "ledgerAcademy" : {
+          "title" : "Ledger Academy",
+          "description" : "暗号資産について学ぶ"
+        },
+        "saveLogs" : {
+          "title" : "ログを保存",
+          "description" : "問題解決のためにLedger Walletのログを保存"
+        },
+        "ledgerStatus" : {
+          "title" : "Ledgerステータス",
+          "description" : "システムの状態を確認"
+        },
+        "clearCache" : {
+          "title" : "キャッシュを削除する",
+          "description" : "トランザクションをスキャンして残高を再計算"
+        }
+      }
+    },
+    "deviceSection" : {
+      "title" : "デバイス",
+      "add" : "追加",
+      "addDevice" : "Ledgerデバイスを追加する",
+      "exploreAllDevices" : "すべてのLedgerデバイスを探索する",
+      "available" : "利用可能",
+      "unavailable" : "接続されていません"
     }
   }
 }

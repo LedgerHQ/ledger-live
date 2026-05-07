@@ -17,6 +17,7 @@ jest.mock("@ledgerhq/lumen-ui-rnative/symbols", () => {
     Flex: makeIcon("device-icon-flex"),
     Apex: makeIcon("device-icon-apex"),
     Stax: makeIcon("device-icon-stax"),
+    User: makeIcon("my-wallet-avatar"),
   };
 });
 
@@ -46,6 +47,7 @@ describe("TopBarView", () => {
     onSettingsPress,
     onTransactionHistoryPress,
     hasUnreadNotifications: false,
+    hasUnreadOperations: false,
     hasAccounts: false,
     isSyncError: false,
     isSyncPending: false,
@@ -88,6 +90,28 @@ describe("TopBarView", () => {
     expect(getByTestId("topbar-discover")).toBeVisible();
     expect(getByTestId("topbar-notifications")).toBeVisible();
     expect(getByTestId("topbar-settings")).toBeVisible();
+  });
+
+  it("when My Wallet is enabled with operations list, trailing shows only transaction history", () => {
+    const { queryByTestId, getByTestId } = renderWithReactQuery(
+      <TopBarView {...defaultProps} shouldDisplayMyWallet shouldDisplayOperationsList />,
+    );
+    expect(getByTestId("topbar-mywallet")).toBeVisible();
+    expect(getByTestId("topbar-discover")).toBeVisible();
+    expect(getByTestId("topbar-transaction-history")).toBeVisible();
+    expect(queryByTestId("topbar-notifications")).toBeNull();
+    expect(queryByTestId("topbar-settings")).toBeNull();
+  });
+
+  it("when My Wallet is enabled without operations list, trailing shows only discover", () => {
+    const { queryByTestId, getByTestId } = renderWithReactQuery(
+      <TopBarView {...defaultProps} shouldDisplayMyWallet shouldDisplayOperationsList={false} />,
+    );
+    expect(getByTestId("topbar-mywallet")).toBeVisible();
+    expect(getByTestId("topbar-discover")).toBeVisible();
+    expect(queryByTestId("topbar-transaction-history")).toBeNull();
+    expect(queryByTestId("topbar-notifications")).toBeNull();
+    expect(queryByTestId("topbar-settings")).toBeNull();
   });
 
   it("should render bell icon when there are no unread notifications", () => {

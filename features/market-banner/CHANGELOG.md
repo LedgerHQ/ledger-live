@@ -1,5 +1,17 @@
 # @features/market-banner
 
+## 0.7.0
+
+### Minor Changes
+
+- [#16238](https://github.com/LedgerHQ/ledger-live/pull/16238) [`db81e79`](https://github.com/LedgerHQ/ledger-live/commit/db81e79fd3d19471cb0118b89fe37b03337474b7) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Bump Lumen catalog deps (@ledgerhq/lumen-design-core 0.1.9, @ledgerhq/lumen-ui-react 0.1.19, @ledgerhq/lumen-ui-rnative 0.1.19) and adapt desktop to Select and InteractiveIcon API changes
+
+## 0.7.0-next.0
+
+### Minor Changes
+
+- [#16238](https://github.com/LedgerHQ/ledger-live/pull/16238) [`db81e79`](https://github.com/LedgerHQ/ledger-live/commit/db81e79fd3d19471cb0118b89fe37b03337474b7) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Bump Lumen catalog deps (@ledgerhq/lumen-design-core 0.1.9, @ledgerhq/lumen-ui-react 0.1.19, @ledgerhq/lumen-ui-rnative 0.1.19) and adapt desktop to Select and InteractiveIcon API changes
+
 ## 0.6.0
 
 ### Minor Changes

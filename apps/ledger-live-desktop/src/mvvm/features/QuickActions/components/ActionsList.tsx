@@ -8,7 +8,10 @@ interface ActionsListProps {
 
 export const ActionsList = ({ actionsList }: ActionsListProps) => {
   return (
-    <div className="flex items-center gap-12" data-testid="quick-actions-actions-list">
+    <div
+      className="flex w-full min-w-0 flex-wrap items-center gap-12"
+      data-testid="quick-actions-actions-list"
+    >
       {actionsList.map(({ title, onAction, icon, disabled, buttonAppearance }, index) => (
         <Button
           key={index}

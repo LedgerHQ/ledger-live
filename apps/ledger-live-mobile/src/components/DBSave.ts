@@ -13,6 +13,7 @@ import {
   saveCountervalues,
   saveCryptoAssetsCacheState,
   saveFeatureFlagsState,
+  saveHistory,
   saveIdentities,
   saveLargeMoverState,
   saveMarketState,
@@ -184,6 +185,7 @@ const featureFlagsLense = (state: State) => ({
   overrides: state.featureFlags.overrides,
   bannerVisible: state.featureFlags.bannerVisible,
 });
+const historyNotEquals = (a: State, b: State) => a.history !== b.history;
 const identitiesNotEquals = (a: State, b: State) => a.identities !== b.identities;
 
 const extractIdentitiesForPersistence = (state: State) =>
@@ -276,6 +278,14 @@ export const ConfigureDBSaveEffects = () => {
     throttle: 1000,
     getChangesStats: cryptoAssetsNotEquals,
     lense: extractPersistedCALFromState,
+  });
+
+  useDBSaveEffect({
+    stateSelector: (state: State) => state.history,
+    save: saveHistory,
+    throttle: 500,
+    getChangesStats: historyNotEquals,
+    lense: (state: State) => state.history,
   });
 
   useDBSaveEffect({

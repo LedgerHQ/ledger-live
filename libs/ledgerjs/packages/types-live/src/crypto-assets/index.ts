@@ -30,6 +30,11 @@ export type CryptoAssetsStore = {
    *
    * @param address - The contract address of the token
    * @param currencyId - The ID of the parent currency/blockchain (e.g., "ethereum", "polygon")
+   * @param tokenIdentifier - Optional discriminator for chains where contract_address alone is not
+   *   unique (e.g. MultiversX ESDT identifier, Cardano asset policy+name, Algorand asset ID,
+   *   Stellar classic asset code+issuer). When provided, it is forwarded as `token_identifier`
+   *   in the CAL query so the correct token is returned. Omit only for chains where address
+   *   uniquely identifies a token (e.g. EVM).
    * @returns Promise resolving to the TokenCurrency if found, undefined otherwise
    * @example
    * ```typescript
@@ -37,11 +42,18 @@ export type CryptoAssetsStore = {
    *   "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
    *   "polygon"
    * );
+   * // MultiversX — token_identifier needed to disambiguate
+   * const mxToken = await store.findTokenByAddressInCurrency(
+   *   "EGLD-abc123",
+   *   "elrond",
+   *   "MYTOKEN-def456"
+   * );
    * ```
    */
   findTokenByAddressInCurrency(
     address: string,
     currencyId: string,
+    tokenIdentifier?: string,
   ): Promise<TokenCurrency | undefined>;
 
   /**

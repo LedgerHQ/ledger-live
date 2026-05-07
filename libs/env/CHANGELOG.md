@@ -1,5 +1,29 @@
 # @ledgerhq/live-env
 
+## 2.33.0
+
+### Minor Changes
+
+- [#16146](https://github.com/LedgerHQ/ledger-live/pull/16146) [`78acbfa`](https://github.com/LedgerHQ/ledger-live/commit/78acbfae7319c5b3fb1453f8727e2210e895669c) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: switch aleo backend back to prod
+
+- [#16070](https://github.com/LedgerHQ/ledger-live/pull/16070) [`1bd0cac`](https://github.com/LedgerHQ/ledger-live/commit/1bd0cac7957422fa06e18424e9e2706c39072078) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-stellar): remove some `@ledgerhq/` dependencies
+
+- [#16023](https://github.com/LedgerHQ/ledger-live/pull/16023) [`c910c1b`](https://github.com/LedgerHQ/ledger-live/commit/c910c1bd9b4f7fbcc0e33fe19b33da44085ab7f9) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - chore: remove eslint and prettier, replace with with oxlint and oxfmt
+
+- [#16233](https://github.com/LedgerHQ/ledger-live/pull/16233) [`f36e748`](https://github.com/LedgerHQ/ledger-live/commit/f36e74881c03a25164c0eac24b13765bbbbbb440) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: enable aleo encrypted prove + remove jwt management
+
+## 2.33.0-next.0
+
+### Minor Changes
+
+- [#16146](https://github.com/LedgerHQ/ledger-live/pull/16146) [`78acbfa`](https://github.com/LedgerHQ/ledger-live/commit/78acbfae7319c5b3fb1453f8727e2210e895669c) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: switch aleo backend back to prod
+
+- [#16070](https://github.com/LedgerHQ/ledger-live/pull/16070) [`1bd0cac`](https://github.com/LedgerHQ/ledger-live/commit/1bd0cac7957422fa06e18424e9e2706c39072078) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-stellar): remove some `@ledgerhq/` dependencies
+
+- [#16023](https://github.com/LedgerHQ/ledger-live/pull/16023) [`c910c1b`](https://github.com/LedgerHQ/ledger-live/commit/c910c1bd9b4f7fbcc0e33fe19b33da44085ab7f9) Thanks [@iqbalibrahim-ledger](https://github.com/iqbalibrahim-ledger)! - chore: remove eslint and prettier, replace with with oxlint and oxfmt
+
+- [#16233](https://github.com/LedgerHQ/ledger-live/pull/16233) [`f36e748`](https://github.com/LedgerHQ/ledger-live/commit/f36e74881c03a25164c0eac24b13765bbbbbb440) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: enable aleo encrypted prove + remove jwt management
+
 ## 2.32.0
 
 ### Minor Changes

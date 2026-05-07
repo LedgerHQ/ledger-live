@@ -33,6 +33,7 @@ import { lastConnectedDeviceSelector } from "~/reducers/settings";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import SafeAreaViewFixed from "~/components/SafeAreaView";
 import { getFreshAccountAddress } from "~/utils/address";
+import byFamily from "../../generated/VerifyAddress";
 
 const illustrations = {
   dark: require("~/images/illustration/Dark/_080.webp"),
@@ -104,7 +105,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
               map(() => ({})),
               rejectionOp(),
             )
-          : getAccountBridge(mainAccount).receive(mainAccount, {
+          : (await getAccountBridge(mainAccount)).receive(mainAccount, {
               deviceId: device.deviceId,
               verify: true,
             })
@@ -132,6 +133,9 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
 
   const mainAccount = account && getMainAccount(account, parentAccount);
   const currency = route.params?.currency || (account && getAccountCurrency(account));
+  const CustomVerifyAddress = mainAccount
+    ? byFamily[mainAccount.currency.family as keyof typeof byFamily]
+    : undefined;
 
   const onRetry = useCallback(() => {
     track("button_clicked", {
@@ -162,12 +166,15 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
   }, []);
 
   useEffect(() => {
+    if (CustomVerifyAddress) return;
     if (device) {
       verifyOnDevice(device);
     }
-  }, [device, verifyOnDevice]);
+  }, [CustomVerifyAddress, device, verifyOnDevice]);
 
   if (!account || !currency || !mainAccount || !device) return null;
+
+  if (CustomVerifyAddress) return <CustomVerifyAddress {...{ navigation, route }} />;
 
   return (
     <SafeAreaViewFixed isFlex edges={["left", "right", "bottom"]}>

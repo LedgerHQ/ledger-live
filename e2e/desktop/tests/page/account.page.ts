@@ -1,9 +1,11 @@
 import { expect } from "@playwright/test";
+import { Layout } from "tests/component/layout.component";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "./abstractClasses";
 import { AccountType } from "@ledgerhq/live-common/e2e/enum/Account";
 
 export class AccountPage extends AppPage {
+  private readonly layout = new Layout(this.page);
   readonly settingsButton = this.page.getByTestId("account-settings-button");
   private settingsDeleteButton = this.page.getByTestId("account-settings-delete-button");
   private settingsConfirmButton = this.page.getByTestId("modal-confirm-button");
@@ -38,6 +40,7 @@ export class AccountPage extends AppPage {
   private accountChart = this.page.getByTestId("chart-container");
   private selectSpecificOperation = (operationType: string) =>
     this.page.locator("[data-testid^='operation-row-']").filter({ hasText: operationType });
+  private readonly noAssetsTitle = this.page.getByTestId("no-assets-title");
 
   private accountHeaderNamePattern(...names: string[]) {
     const escaped = names.map(n => n.trim().replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`));
@@ -72,6 +75,10 @@ export class AccountPage extends AppPage {
 
   @step("Click `Send` button")
   async clickSend() {
+    if (await this.noAssetsTitle.isVisible()) {
+      await this.layout.syncAccounts();
+      await this.layout.waitForSyncButtonToBeEnabled();
+    }
     await this.sendButton.click();
   }
 
@@ -101,8 +108,12 @@ export class AccountPage extends AppPage {
   }
 
   @step("Click on last operation and return status")
-  async clickOnLastOperationAndReturnStatus() {
+  async clickOnLastOperationAndReturnStatus(): Promise<string> {
     const status = await this.operationStatus.first().textContent();
+    if (!status) {
+      throw new Error("Expected operation status to be defined");
+    }
+
     await this.operationRows.first().click();
     return status;
   }
@@ -131,9 +142,7 @@ export class AccountPage extends AppPage {
 
   @step("Wait for account $0 to be visible")
   async expectAccountVisibility(firstAccountName: string) {
-    await expect(this.accountName).toHaveValue(this.accountHeaderNamePattern(firstAccountName), {
-      timeout: 30000,
-    });
+    await expect(this.accountName).toHaveValue(this.accountHeaderNamePattern(firstAccountName));
     await expect(this.settingsButton).toBeVisible();
   }
 
@@ -147,6 +156,14 @@ export class AccountPage extends AppPage {
     await this.scrollToOperations();
     await expect(this.lastOperation).toBeVisible();
     await expect(this.operationList).not.toBeEmpty();
+  }
+
+  @step("Expect funded account details for $0")
+  async expectFundedAccountDetails(accountName: string): Promise<string> {
+    await this.expectAccountVisibility(accountName);
+    await this.expectAccountBalance();
+    await this.expectLastOperationsVisibility();
+    return this.clickOnLastOperationAndReturnStatus();
   }
 
   @step("Expect token Account to be visible")
@@ -203,14 +220,12 @@ export class AccountPage extends AppPage {
     const pattern = fallbackName
       ? this.accountHeaderNamePattern(headerName, fallbackName)
       : this.accountHeaderNamePattern(headerName);
-    await expect(this.accountName).toHaveValue(pattern, { timeout: 30000 });
+    await expect(this.accountName).toHaveValue(pattern);
   }
 
   @step("Verify account with header name $0 is visible")
   async verifyAccountHeaderNameIsVisible(headerName: string) {
-    await expect(this.accountName).toHaveValue(this.accountHeaderNamePattern(headerName), {
-      timeout: 30000,
-    });
+    await expect(this.accountName).toHaveValue(this.accountHeaderNamePattern(headerName));
   }
 
   @step("Check account chart is visible")

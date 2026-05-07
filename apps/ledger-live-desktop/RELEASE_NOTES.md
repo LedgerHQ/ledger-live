@@ -1,3 +1,11 @@
+# 4.2.1
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
+# 4.2.0
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
 # 4.0.0
 
 This release includes small security improvements, UI tweaks, and minor bug fixes.

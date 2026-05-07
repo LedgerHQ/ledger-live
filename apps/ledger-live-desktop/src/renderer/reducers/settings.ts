@@ -33,6 +33,7 @@ import regionsByKey from "~/renderer/screens/settings/sections/General/regions.j
 import { State } from ".";
 import {
   PURGE_EXPIRED_ANONYMOUS_USER_NOTIFICATIONS,
+  SET_PRODUCT_TOUR_COMPLETED,
   TOGGLE_MEMOTAG_INFO,
   TOGGLE_MEV,
   UPDATE_ANONYMOUS_USER_NOTIFICATIONS,
@@ -132,6 +133,7 @@ export type SettingsState = {
   alwaysShowMemoTagInfo: boolean;
   anonymousUserNotifications: { LNSUpsell?: number } & Record<string, number>;
   hasSeenWalletV4Tour: boolean;
+  productTourCompleted: boolean;
   hasClickedRecover: boolean;
   doNotAskAgainSkipMemo: boolean;
   deprecationDoNotRemind: string[];
@@ -236,6 +238,7 @@ export const INITIAL_STATE: SettingsState = {
   alwaysShowMemoTagInfo: true,
   anonymousUserNotifications: {},
   hasSeenWalletV4Tour: false,
+  productTourCompleted: false,
   hasClickedRecover: false,
   doNotAskAgainSkipMemo: false,
   deprecationDoNotRemind: [],
@@ -301,6 +304,7 @@ type HandlersPayloads = {
     notifications: Record<string, number>;
   };
   SET_HAS_SEEN_WALLET_V4_TOUR: boolean;
+  [SET_PRODUCT_TOUR_COMPLETED]: boolean;
   SET_HAS_CLICKED_RECOVER: boolean;
 };
 type SettingsHandlers<PreciseKey = true> = Handlers<SettingsState, HandlersPayloads, PreciseKey>;
@@ -530,6 +534,10 @@ const handlers: SettingsHandlers = {
   SET_HAS_SEEN_WALLET_V4_TOUR: (state: SettingsState, { payload }) => ({
     ...state,
     hasSeenWalletV4Tour: payload,
+  }),
+  [SET_PRODUCT_TOUR_COMPLETED]: (state: SettingsState, { payload }) => ({
+    ...state,
+    productTourCompleted: payload,
   }),
   SET_HAS_CLICKED_RECOVER: (state: SettingsState, { payload }) => ({
     ...state,
@@ -848,6 +856,7 @@ export const alwaysShowMemoTagInfoSelector = (state: State) => state.settings.al
 export const anonymousUserNotificationsSelector = (state: State) =>
   state.settings.anonymousUserNotifications;
 export const hasSeenWalletV4TourSelector = (state: State) => state.settings.hasSeenWalletV4Tour;
+export const productTourCompletedSelector = (state: State) => state.settings.productTourCompleted;
 export const hasClickedRecoverSelector = (state: State) => state.settings.hasClickedRecover;
 
 // Last onboarded device is the device set when a user goes through the onboarding flow.

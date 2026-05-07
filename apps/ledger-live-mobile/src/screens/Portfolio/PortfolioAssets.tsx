@@ -6,7 +6,7 @@ import { GestureResponderEvent } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Button, IconsLegacy, Box } from "@ledgerhq/native-ui";
 import { useDistribution } from "~/actions/general";
-import { track, TrackScreen } from "~/analytics";
+import { track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import {
   blacklistedTokenIdsSelector,
@@ -141,11 +141,6 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
 
   return (
     <>
-      <TrackScreen
-        category="Wallet"
-        accountsLength={distribution.list && distribution.list.length}
-        discreet={discreetMode}
-      />
 
       {!shouldDisplayQuickActionCtas && (
         <Box my={24}>

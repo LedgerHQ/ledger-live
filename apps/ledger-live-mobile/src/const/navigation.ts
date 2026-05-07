@@ -1,5 +1,6 @@
 export enum ScreenName {
   Analytics = "Analytics",
+  AnalyticsPreferencesSettings = "AnalyticsPreferencesSettings",
   AboutSettings = "AboutSettings",
   Account = "Account",
   Accounts = "Accounts",
@@ -11,6 +12,7 @@ export enum ScreenName {
   AddAccountsTokenCurrencyDisclaimer = "AddAccountsTokenCurrencyDisclaimer",
   AdvancedLogs = "AdvancedLogs",
   Asset = "Asset",
+  AssetDetail = "AssetDetail",
   Assets = "Assets",
   AccountsList = "AccountsList",
   AssetsList = "AssetsList",
@@ -58,6 +60,7 @@ export enum ScreenName {
   DebugLumen = "DebugLumen",
   DebugWallet40 = "DebugWallet40",
   DebugWalletV4Tour = "DebugWalletV4Tour",
+  DebugProductTour = "DebugProductTour",
   DebugTermsOfUse = "DebugTermsOfUse",
   DebugVideos = "DebugVideos",
   DebugMockGenerateAccounts = "DebugMockGenerateAccounts",
@@ -164,6 +167,7 @@ export enum ScreenName {
   SwapTab = "SwapTab",
   PerpsTab = "PerpsTab",
   Earn = "Earn",
+  Borrow = "Borrow",
   Transfer = "Transfer",
   UnfreezeAmount = "UnfreezeAmount",
   UnfreezeConnectDevice = "UnfreezeConnectDevice",
@@ -222,6 +226,16 @@ export enum ScreenName {
   CeloWithdrawSelectDevice = "CeloWithdrawSelectDevice",
   CeloWithdrawConnectDevice = "CeloWithdrawConnectDevice",
   CeloWithdrawAmount = "CeloWithdrawAmount",
+
+  // evm staking
+  EvmDelegationStarted = "EvmDelegationStarted",
+  EvmDelegationValidatorSelect = "EvmDelegationValidatorSelect",
+  EvmDelegationSelectDevice = "EvmDelegationSelectDevice",
+  EvmDelegationConnectDevice = "EvmDelegationConnectDevice",
+  EvmDelegationValidationError = "EvmDelegationValidationError",
+  EvmDelegationValidationSuccess = "EvmDelegationValidationSuccess",
+  EvmDelegationValidator = "EvmDelegationValidator",
+  EvmDelegationAmount = "EvmDelegationAmount",
 
   // cosmos
   CosmosFamilyEditMemo = "CosmosFamilyEditMemo",
@@ -576,6 +590,9 @@ export enum ScreenName {
   NoAssociatedAccounts = "NoAssociatedAccounts",
   LargeMoverLandingPage = "LargeMoverLandingPage",
   OperationsList = "OperationsList",
+
+  // Live App generic modal screen (renders an earn/live-app webview as a modal presentation)
+  LiveAppModal = "LiveAppModal",
 }
 
 export enum NavigatorName {
@@ -592,6 +609,7 @@ export enum NavigatorName {
   Base = "Base",
   BaseOnboarding = "BaseOnboarding",
   BuyDevice = "BuyDevice",
+  EvmDelegationFlow = "EvmDelegationFlow",
   CosmosClaimRewardsFlow = "CosmosClaimRewardsFlow",
   CosmosDelegationFlow = "CosmosDelegationFlow",
   CosmosRedelegationFlow = "CosmosRedelegationFlow",
@@ -622,6 +640,7 @@ export enum NavigatorName {
   SwapSubScreens = "SwapSubScreensNavigator",
   Perps = "PerpsNavigator",
   Earn = "EarnNavigator",
+  Borrow = "BorrowNavigator",
   Fees = "FeesNavigator",
   TezosDelegationFlow = "TezosDelegationFlow",
   TronVoteFlow = "TronVoteFlow",
@@ -709,6 +728,7 @@ export enum NavigatorName {
   WalletSync = "WalletSync",
   ModularDrawer = "ModularDrawer",
   DeviceSelection = "DeviceSelection",
+  AssetDetail = "AssetDetail",
   Assets = "Assets",
   Analytics = "Analytics",
   OperationsHistory = "OperationsHistory",

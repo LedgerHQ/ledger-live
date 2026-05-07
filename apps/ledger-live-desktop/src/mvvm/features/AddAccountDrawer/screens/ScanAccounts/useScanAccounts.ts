@@ -5,7 +5,8 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { Subscription } from "rxjs";
+import { concat, from, Subscription } from "rxjs";
+import { prepareCurrency } from "~/renderer/bridge/cache";
 import { openModal } from "~/renderer/actions/modals";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import * as RX from "rxjs/operators";
@@ -86,28 +87,38 @@ export function useScanAccounts({
   }, []);
 
   useEffect(() => {
-    scanSubscriptionRef.current = getCurrencyBridge(currency)
-      .scanAccounts({
-        currency,
-        deviceId,
-        syncConfig: {
-          paginationConfig: {
-            operations: 0,
+    let cancelled = false;
+    (async () => {
+      const bridge = await getCurrencyBridge(currency);
+      if (cancelled) return;
+      scanSubscriptionRef.current = concat(
+        from(prepareCurrency(currency)).pipe(RX.ignoreElements()),
+        bridge.scanAccounts({
+          currency,
+          deviceId,
+          syncConfig: {
+            paginationConfig: {
+              operations: 0,
+            },
+            blacklistedTokenIds: blacklistedTokenIds || [],
           },
-          blacklistedTokenIds: blacklistedTokenIds || [],
-        },
-      })
-      .pipe(RX.scan((acc: Account[], { account }) => [...acc, account], []))
-      .subscribe({
-        next: accounts => {
-          setScannedAccounts(accounts);
-          setScanning(true);
-        },
-        error: setError,
-        complete: () => setScanning(false),
-      });
+        }),
+      )
+        .pipe(RX.scan((acc: Account[], { account }) => [...acc, account], []))
+        .subscribe({
+          next: (accounts: Account[]) => {
+            setScannedAccounts(accounts);
+            setScanning(true);
+          },
+          error: setError,
+          complete: () => setScanning(false),
+        });
+    })();
 
-    return () => stopSubscription(false);
+    return () => {
+      cancelled = true;
+      stopSubscription(false);
+    };
   }, [blacklistedTokenIds, currency, deviceId, stopSubscription]);
 
   useEffect(() => {

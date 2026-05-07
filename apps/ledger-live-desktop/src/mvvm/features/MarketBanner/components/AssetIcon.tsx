@@ -10,7 +10,7 @@ type AssetIconProps = {
 
 export const AssetIcon = ({ ledgerId, ticker, image, capitalizedTicker }: AssetIconProps) => {
   if (ledgerId && ticker) {
-    return <CryptoIcon ledgerId={ledgerId} ticker={ticker} size="40px" />;
+    return <CryptoIcon ledgerId={ledgerId} ticker={ticker} size={40} />;
   }
 
   return (

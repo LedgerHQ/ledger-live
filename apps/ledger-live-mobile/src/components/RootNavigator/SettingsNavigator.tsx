@@ -46,6 +46,7 @@ import AccountsSettings from "~/screens/Settings/Accounts";
 import AboutSettings from "~/screens/Settings/About";
 import Resources from "~/screens/Settings/Resources";
 import GeneralSettings from "~/screens/Settings/General";
+import AnalyticsPreferencesSettings from "~/screens/Settings/AnalyticsPreferencesSettings";
 import CountervalueSettings from "~/screens/Settings/General/CountervalueSettings";
 import NotificationsSettings from "~/screens/Settings/Notifications";
 import HelpSettings from "~/screens/Settings/Help";
@@ -81,6 +82,7 @@ import { DebugStorageMigration } from "~/screens/Settings/Debug/Debugging/Storag
 import CustomCALRefInput from "~/screens/Settings/Developer/CustomCALRefInput";
 import ModularDrawerScreenDebug from "LLM/features/ModularDrawer/Debug";
 import WalletV4TourScreenDebug from "LLM/features/WalletV4Tour/Debug";
+import ProductTourScreenDebug from "LLM/features/ProductTour/Debug";
 import { UnmountOnBlur } from "./utils/UnmountOnBlur";
 
 const Stack = createNativeStackNavigator<SettingsNavigatorStackParamList>();
@@ -125,6 +127,16 @@ export default function SettingsNavigator() {
         layout={unmountOnBlur}
         options={{
           title: t("settings.display.title"),
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.AnalyticsPreferencesSettings}
+        component={AnalyticsPreferencesSettings}
+        options={{
+          title: "",
+          headerStyle: {
+            backgroundColor: colors.neutral.c00,
+          }
         }}
       />
       <Stack.Screen
@@ -559,6 +571,13 @@ export default function SettingsNavigator() {
         component={WalletV4TourScreenDebug}
         options={{
           title: "Wallet V4 Tour",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugProductTour}
+        component={ProductTourScreenDebug}
+        options={{
+          title: "Product Tour",
         }}
       />
     </Stack.Navigator>

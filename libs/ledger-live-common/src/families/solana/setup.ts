@@ -17,8 +17,6 @@ import { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 
 let _solanaLdmkFFEnabled: boolean = false;
 
-let _dmkSignerInstance: DmkSignerSol | null = null;
-
 // temporary solution to dynamically enable/disable the Solana DMK signer,
 // waiting for LIVE-20250 to be implemented
 // to be removed together with useFeature("ldmkSolanaSigner")
@@ -33,18 +31,13 @@ const canDMKSignerBeUsed = (
   transport.dmk instanceof DeviceManagementKit &&
   typeof transport.sessionId === "string";
 
-// get the same instance if FF gets flipped
 export function getSolanaSignerInstance(
   transport: Transport & Partial<{ dmk: DeviceManagementKit; sessionId: string }>,
 ): SolanaSigner {
   if (canDMKSignerBeUsed(transport)) {
-    if (!_dmkSignerInstance) {
-      _dmkSignerInstance = new DmkSignerSol(transport.dmk, transport.sessionId);
-    }
-    return _dmkSignerInstance;
-  } else {
-    return new LegacySignerSolana(transport);
+    return new DmkSignerSol(transport.dmk, transport.sessionId);
   }
+  return new LegacySignerSolana(transport);
 }
 
 const getCurrencyConfig = () => getCurrencyConfiguration<SolanaCoinConfig>("solana");

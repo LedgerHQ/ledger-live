@@ -30,17 +30,19 @@ export interface ProvableApi {
   scannerStatus?: AleoRecordScannerStatusResponse;
 }
 
+export type RecordPickingStrategy = "manual" | "auto";
+
 export type TransactionType = (typeof TRANSACTION_TYPE)[keyof typeof TRANSACTION_TYPE];
 
 export type AleoTransactionIntentData =
   | TxDataNotSupported
   | {
       type: typeof TRANSACTION_TYPE.TRANSFER_PRIVATE;
-      record: AleoDecryptedRecordResponse;
+      records: AleoDecryptedRecordResponse[];
     }
   | {
       type: typeof TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC;
-      record: AleoDecryptedRecordResponse;
+      records: AleoDecryptedRecordResponse[];
     }
   | {
       type: "fee_public";

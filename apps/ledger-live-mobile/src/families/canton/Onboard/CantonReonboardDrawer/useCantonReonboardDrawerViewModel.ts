@@ -1,6 +1,6 @@
 import type { CantonCurrencyBridge, CantonOnboardResult } from "@ledgerhq/coin-canton/types";
 import { OnboardStatus } from "@ledgerhq/coin-canton/types";
-import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
+import { useCurrencyBridge } from "@ledgerhq/live-common/bridge/useCurrencyBridge";
 import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
@@ -39,10 +39,7 @@ export function useCantonReonboardDrawerViewModel({
   const existingAccounts = useSelector(accountsSelector);
   const dispatch = useDispatch();
 
-  const bridge = useMemo(() => {
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    return getCurrencyBridge(currency) as CantonCurrencyBridge;
-  }, [currency]);
+  const bridge = useCurrencyBridge<CantonCurrencyBridge>(currency);
 
   const {
     onboardingStatus,

@@ -1,9 +1,10 @@
-import crypto from "crypto";
 import network from "@ledgerhq/live-network";
+import { log } from "@ledgerhq/logs";
 import { mockPostSwapAccepted, mockPostSwapCancelled } from "./mock";
 import type { PostSwapAccepted, PostSwapCancelled, FeatureFlags } from "./types";
 import { isIntegrationTestEnv } from "./utils/isIntegrationTestEnv";
 import { getSwapAPIBaseURL, getSwapUserIP } from ".";
+import { sha256 } from "../../crypto";
 
 function createSwapIntentHashes({
   provider,
@@ -15,13 +16,11 @@ function createSwapIntentHashes({
   fromAccountAddress?: string;
   toAccountAddress?: string;
   fromAmount?: string;
-}) {
-  // for example '2025-08-01' used to add a one day unique nonce to the swap intent hash
-  const currentday = new Date().toISOString().split("T")[0];
+}): { swapIntentWithProvider?: string; swapIntentWithoutProvider?: string } {
+  try {
+    const currentday = new Date().toISOString().split("T")[0];
 
-  const swapIntentWithProvider = crypto
-    .createHash("sha256")
-    .update(
+    const swapIntentWithProvider = sha256(
       JSON.stringify({
         provider,
         fromAccountAddress,
@@ -29,22 +28,22 @@ function createSwapIntentHashes({
         fromAmount,
         currentday,
       }),
-    )
-    .digest("hex");
+    ).toString("hex");
 
-  const swapIntentWithoutProvider = crypto
-    .createHash("sha256")
-    .update(
+    const swapIntentWithoutProvider = sha256(
       JSON.stringify({
         fromAccountAddress,
         toAccountAddress,
         fromAmount,
         currentday,
       }),
-    )
-    .digest("hex");
+    ).toString("hex");
 
-  return { swapIntentWithProvider, swapIntentWithoutProvider };
+    return { swapIntentWithProvider, swapIntentWithoutProvider };
+  } catch (error) {
+    log("error", "[createSwapIntentHashes] sha256 hashing failed", { error });
+    return {};
+  }
 }
 
 const getWallet40Header = (flags?: FeatureFlags): Record<string, string> =>
@@ -72,14 +71,14 @@ export const postSwapAccepted: PostSwapAccepted = async ({
     return null;
   }
 
-  const { swapIntentWithProvider, swapIntentWithoutProvider } = createSwapIntentHashes({
-    provider,
-    fromAccountAddress,
-    toAccountAddress,
-    fromAmount,
-  });
-
   try {
+    const { swapIntentWithProvider, swapIntentWithoutProvider } = createSwapIntentHashes({
+      provider,
+      fromAccountAddress,
+      toAccountAddress,
+      fromAmount,
+    });
+
     const ipHeader = getSwapUserIP();
     const headers = {
       ...(ipHeader || {}),
@@ -125,18 +124,18 @@ export const postSwapCancelled: PostSwapCancelled = async ({
     return null;
   }
 
-  const { swapIntentWithProvider, swapIntentWithoutProvider } = createSwapIntentHashes({
-    provider,
-    fromAccountAddress,
-    toAccountAddress,
-    fromAmount,
-  });
-
-  // Check if the refundAddress and payoutAddress match the account addresses, just to eliminate this supposition
-  const payloadAddressMatchAccountAddress =
-    fromAccountAddress === refundAddress && toAccountAddress === payoutAddress;
-
   try {
+    const { swapIntentWithProvider, swapIntentWithoutProvider } = createSwapIntentHashes({
+      provider,
+      fromAccountAddress,
+      toAccountAddress,
+      fromAmount,
+    });
+
+    // Check if the refundAddress and payoutAddress match the account addresses, just to eliminate this supposition
+    const payloadAddressMatchAccountAddress =
+      fromAccountAddress === refundAddress && toAccountAddress === payoutAddress;
+
     const ipHeader = getSwapUserIP();
     const headers = {
       ...(ipHeader || {}),

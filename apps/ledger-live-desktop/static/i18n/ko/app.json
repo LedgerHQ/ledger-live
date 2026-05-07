@@ -307,7 +307,7 @@
     "earn" : "수익",
     "exchange" : "매수 / 매도",
     "swap" : "스왑",
-    "perps" : "무기한 계약",
+    "perps" : "무기한 선물",
     "home" : "홈",
     "refer" : "친구 추천",
     "lend" : "대출",
@@ -619,7 +619,7 @@
       "description" : "자금이 부족하신가요? 걱정하지 마세요. Ledger Wallet에서 바로 암호화폐 구매, 스왑, 또는 수령이 가능합니다.",
       "options" : {
         "buy" : {
-          "title" : "구매",
+          "title" : "매수",
           "body" : "신뢰할 수 있는 공급자를 통한 구매"
         },
         "swap" : {
@@ -710,7 +710,7 @@
       "descToken" : "<1><0>{{managerAppName}}</0></1> 앱이 설치되어 있는지 확인하고 <3><0>{{ticker}}</0></3> 및 <5><0>{{tokenList}}</0> 토큰</5> 수령을 시작합니다",
       "buttons" : {
         "receiveFunds" : "수령",
-        "buy" : "구매"
+        "buy" : "매수"
       }
     },
     "settings" : {
@@ -800,7 +800,7 @@
       "buyFrom" : "어디서나 구매 가능",
       "cryptoSupported" : "지원되는 암호화폐",
       "payWith" : "카드 또는 SEPA로 지불",
-      "tab" : "구매",
+      "tab" : "매수",
       "coinify" : {
         "header" : "{{provider}}로 암호화폐 구매",
         "title" : "<0>{{provider}}</0>로 암호화폐 구매",
@@ -813,7 +813,7 @@
     "sell" : {
       "header" : "당사 파트너와 함께 암호화폐 판매",
       "title" : "<0>{{provider}}</0>로 암호화폐 판매",
-      "tab" : "판매",
+      "tab" : "매도",
       "selectCrypto" : "암호화폐 선택",
       "selectAccount" : "계정 선택",
       "continue" : "계속"
@@ -1062,7 +1062,7 @@
     "emptyAccountDeposit" : {
       "title" : "{{ asset }} 계정이 없습니다.",
       "description" : "자금을 예치하고 암호화폐를 대출하려면 {{ asset }} 계정이 필요합니다. 이더리움 주소로 자금을 수령하세요. 이더리움 주소로 자금을 수령하세요.",
-      "ctaBuy" : "{{ asset }} 구매",
+      "ctaBuy" : "{{ asset }} 매수",
       "ctaReceive" : "{{ asset }} 수령"
     }
   },
@@ -1096,8 +1096,8 @@
       "stake" : "스테이킹",
       "earn" : "수익 창출",
       "yield" : "이자",
-      "buy" : "구매",
-      "sell" : "판매",
+      "buy" : "매수",
+      "sell" : "매도",
       "edit" : "계정 편집",
       "hideToken" : "토큰 숨기기"
     }
@@ -1256,8 +1256,8 @@
             "description" : "먼저 “My Ledger 서비스 제공업체({{providerNumber}})” 설정을 비활성화해야 합니다. 이를 비활성화하려면 Ledger Live의 \"설정\"을 열고 \"실험 기능\"을 선택한 다음 \"My Ledger 서비스 제공업체\"를 끕니다."
           },
           "deviceNotGenuineError" : {
-            "title" : "이 {{productName}} 장치는 정품입니다",
-            "description" : "이 {{productName}} 장치는 사용하기에 안전합니다.\nLedger 지원 부서로 문의하세요"
+            "title" : " {{productName}}의 정품 확인에 실패했습니다.",
+            "description" : "이 Ledger 장치 사용은 위험할 수 있습니다.\nLedger 지원팀으로 문의해 주세요"
           }
         },
         "whyPerformChecksLink" : "Ledger 정품 확인에 대해 자세히 알아보기",
@@ -1331,6 +1331,10 @@
     }
   },
   "postOnboarding" : {
+    "widget" : {
+      "title" : "다음 단계: 지갑 설정 마무리",
+      "subtitle" : "먼저, 자산 충전부터 시작해 보세요."
+    },
     "postOnboardingScreen" : {
       "title" : "이제 다음 단계는?",
       "titleCompleted" : "이제 모두 준비 끝!\n계속해서 내 포트폴리오를 살펴보세요.",
@@ -1408,7 +1412,7 @@
       "description" : "이제 Ledger Wallet에서 DOT을 곧바로 스테이킹, 보관, 관리할 수 있습니다"
     },
     "sell" : {
-      "title" : "암호화폐 판매",
+      "title" : "암호화폐 매도",
       "description" : "Ledger Wallet을 지원하는 서비스 제공업체를 통해 비트코인을 편리하게 매도하세요."
     },
     "stakeAlgorand" : {
@@ -2157,15 +2161,15 @@
     }
   },
   "buy" : {
-    "title" : "구매",
-    "titleCrypto" : "{{currency}} 구매",
-    "buyCTA" : "{{currencyTicker}} 구매",
+    "title" : "매수",
+    "titleCrypto" : "{{currency}} 매수",
+    "buyCTA" : "{{currencyTicker}} 매수",
     "withoutDevice" : "내 장치 없이 계속합니다",
     "connectWithoutDevice" : "사용자의 장치를 사용하는 것이 보안 최적화에 좋습니다",
     "skipConnect" : "내 장치 없이 계속합니다"
   },
   "sell" : {
-    "title" : "판매",
+    "title" : "매도",
     "titleCrypto" : "{{currency}} 매도",
     "exchangeDrawer" : {
       "completed" : {
@@ -2313,7 +2317,8 @@
         "banner" : "최대 사용 가능 금액은",
         "fees" : "수수료 자세히 알아보기",
         "standard" : "스탠다드",
-        "advanced" : "고급"
+        "advanced" : "고급",
+        "feeCurrency" : "수수료 지불 자산"
       },
       "summary" : {
         "title" : "요약"
@@ -4187,6 +4192,64 @@
         "eigenlayer_points" : "Eigenlayer 포인트",
         "validator" : "검증인 보상"
       }
+    },
+    "evmStaking" : {
+      "delegation" : {
+        "emptyState" : {
+          "description" : "자산을 위임하여 {{currencyTicker}} 보상을 받을 수 있습니다.",
+          "delegation" : "보상 받기"
+        },
+        "claimRewards" : "보상 수령",
+        "header" : "위임",
+        "noRewards" : "이용 가능한 보상이 없습니다",
+        "delegate" : "추가",
+        "undelegate" : "위임 해제",
+        "redelegate" : "재위임",
+        "redelegateDisabledTooltip" : "<0>{{days}}</0>에 재위임할 수 있습니다",
+        "redelegateMaxDisabledTooltip" : "한 번에 <0>7</0>명 이상의 검증인을 재위임할 수 없습니다",
+        "undelegateDisabledTooltip" : "한 번에 <0>7</0>명 이상의 검증인을 위임 해제할 수 없습니다",
+        "reward" : "보상 수령",
+        "activeTooltip" : "위임된 수량에서 보상이 생성됩니다",
+        "inactiveTooltip" : "위임되지 않은 금액은 보상을 생성하지 않습니다",
+        "minSafeWarning" : "자금이 부족합니다",
+        "flow" : {
+          "title" : "위임하기",
+          "steps" : {
+            "starter" : {
+              "description" : "{{currencyTicker}} 암호화폐를 검증인에게 위임하여 보상을 받을 수 있습니다.",
+              "bullet" : ["위임된 자산의 소유권은 귀하가 갖습니다", "Ledger 장치를 이용하여 위임하세요", "자산은 위임 취소 후 사용 가능합니다"],
+              "warning" : {
+                "description" : "검증인을 현명하게 선택하세요. 검증인이 부적절한 행동을 하는 경우 위임된 자산의 일부가 영구 손실될 수 있습니다."
+              }
+            },
+            "amount" : {
+              "title" : "수량"
+            },
+            "validator" : {
+              "title" : "검증인"
+            },
+            "connectDevice" : {
+              "title" : "장치"
+            },
+            "confirmation" : {
+              "title" : "확인",
+              "success" : {
+                "title" : "자산을 성공적으로 위임했습니다",
+                "text" : "블록체인이 트랜잭션 검증을 완료하면 계정 잔액이 업데이트됩니다.",
+                "cta" : "세부사항 보기"
+              },
+              "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+            }
+          }
+        }
+      },
+      "redelegation" : {
+        "header" : "재위임"
+      },
+      "undelegation" : {
+        "header" : "위임 해제",
+        "inactiveTooltip" : "위임되지 않은 금액은 보상을 생성하지 않습니다"
+      }
     }
   },
   "graph" : {
@@ -4441,6 +4504,8 @@
     "delegated" : "위임됨",
     "completionDate" : "완료 날짜",
     "rewards" : "보상",
+    "sourceValidator" : "Source Validator",
+    "destinationValidator" : "Destination Validator",
     "duration" : "기간",
     "durationJustStarted" : "시작됨",
     "durationDays" : "({{count}})일",
@@ -4606,6 +4671,10 @@
         "title" : "테마 토글",
         "desc" : "테마를 빠르게 전환할 수 있도록 플로팅 오버레이를 표시합니다."
       },
+      "analyticsConsentOptInQa" : {
+        "rowTitle" : "애널리틱스 옵트인 동의(QA)",
+        "rowDesc" : "저장된 개인정보 보호정책 동의 버전 및 동의 날짜를 확인합니다. 포트폴리오 애널리틱스 동의 모달의 구버전 상태를 시뮬레이션해 볼 수 있습니다."
+      },
       "brazeTools" : {
         "title" : "브레이즈 도구",
         "description" : "로컬 브레이즈 카드 생성",
@@ -4633,6 +4702,26 @@
             "path" : "경로"
           }
         }
+      },
+      "appJsonImporter" : {
+        "title" : "앱.json 파일 불러오기",
+        "desc" : "앱.json 파일을 드래그 및 드롭하여 계정 및 설정 불러오기",
+        "dropOrBrowse" : "app.json 파일을 여기로 끌어오거나 클릭하여 선택하기",
+        "importing" : "가져오기 중...",
+        "success" : "{{count}}개 계정을 성공적으로 가져왔습니다.",
+        "success_other" : "{{count}}개 계정을 성공적으로 가져왔습니다.",
+        "lastDeviceSeen" : "마지막으로 확인된 장치: {{device}}",
+        "invalidFileType" : "잘못된 파일 형식 .json 파일이 필요합니다.",
+        "missingDataField" : "유효하지 않은 app.json: 최상위 데이터 필드가 누락되었습니다.",
+        "encryptedAccounts" : "암호화된 계정이 감지되었습니다. 먼저 파일 암호를 해제하세요.",
+        "successLabel" : "완료",
+        "appJsonFile" : "앱.json 파일",
+        "accountsImported" : "가져온 계정",
+        "accountsFailed" : "실패한 계정",
+        "importFailed" : "가져오기 실패: {{message}}",
+        "unknownError" : "가져오기 중 알 수 없는 오류가 발생했습니다.",
+        "failedCount" : "{{count}}개의 계정을 불러올 수 없습니다.",
+        "failedCount_other" : "{{count}}개의 계정을 불러올 수 없습니다."
       },
       "mockAccounts" : {
         "title" : "모의 계좌 생성",
@@ -5872,6 +5961,10 @@
     },
     "recipientWording" : {
       "send" : "수령인",
+      "transfer_public" : "공개 수령인",
+      "transfer_private" : "비공개 수령인",
+      "convert_public_to_private" : "비공개 수령인",
+      "convert_private_to_public" : "공개 수령인",
       "delegate" : "검증인",
       "redelegate" : "검증인",
       "undelegate" : "검증인",
@@ -6313,6 +6406,11 @@
     "DeviceSocketFail" : {
       "title" : "Ledger 장치를 재시작하고 다시 시도해 주세요",
       "description" : "예상하지 못한 오류가 발생했습니다. 다시 시도해주세요. ({{message}})"
+    },
+    "CounterfeitDevice" : {
+      "title" : " {{productName}}의 정품 확인에 실패했습니다.",
+      "description" : "이 Ledger 장치 사용은 위험할 수 있습니다.\n Ledger 지원팀으로 문의해 주세요",
+      "contactSupportCTA" : "Ledger 지원 부서에 문의해주세요"
     },
     "DeviceSocketNoBulkStatus" : {
       "title" : "연결이 실패했습니다",
@@ -7225,10 +7323,20 @@
       "title" : "자금이 부족합니다 필요한 최소 잔액은 0.02 TON입니다."
     },
     "AleoAmountRecordRequired" : {
-      "title" : "전송에 사용할 유효한 프라이빗 레코드를 선택하세요."
+      "title" : "전송에 사용할 유효한 프라이빗 레코드를 선택하세요.",
+      "description" : "보낼 수량에 맞춰 프라이빗 레코드를 하나 선택하세요."
     },
     "AleoFeeRecordRequired" : {
-      "title" : "수수료에 사용할 유효한 프라이빗 레코드를 선택하세요."
+      "title" : "네트워크 수수료에 사용할 또 다른 프라이빗 레코드가 필요합니다.",
+      "description" : "필요한 경우 잔액을 충전하세요. 프라이빗 레코드 1개는 보낼 수량으로 사용되며, 네트워크 수수료로 사용할 또 다른 레코드가 필요합니다."
+    },
+    "AleoTwoRecordsRequired" : {
+      "title" : "프라이빗 전송에는 최소 2개의 레코드가 필요합니다.",
+      "description" : "보낼 수량에 사용할 레코드 1개와 네트워크 수수료에 사용할 레코드 1개가 필요합니다."
+    },
+    "AleoFeeRecordInsufficientBalance" : {
+      "title" : "네트워크 수수료로 사용할 프라이빗 레코드가 없습니다.",
+      "description" : "보낼 수량에 맞게 다른 레코드를 선택하거나 잔액을 추가로 충전하세요."
     },
     "BackupAppDataError" : {
       "title" : "앱 데이터 백업 중 오류가 발생했습니다"
@@ -7270,7 +7378,7 @@
       "twoCtas" : "{{assetName}}(을)를 <cta1>{{cta1Label}}</cta1>하거나 <cta2>{{cta2Label}}</cta2>, 또는",
       "threeCtas" : "{{assetName}}(을)를 <cta1>{{cta1Label}}</cta1>, <cta2>{{cta2Label}}</cta2>, <cta3>{{cta3Label}}</cta3>하세요.",
       "ctas" : {
-        "buy" : "구매",
+        "buy" : "매수",
         "swap" : "스왑",
         "deposit" : "입금"
       }
@@ -7393,8 +7501,8 @@
       "description" : "장치와 데이터 통신 중 문제가 발생했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
     },
     "AlreadySendingApduError" : {
-      "title" : "통신 오류",
-      "description" : "장치와 데이터 통신 중 문제가 발생했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+      "title" : "Ledger 장치에서 확인이 필요합니다.",
+      "description" : "장치 화면에 표시된 작업을 완료한 후, 아래 '다시 시도'를 선택하세요."
     },
     "UnknownDeviceExchangeError" : {
       "title" : "통신 오류",
@@ -7729,11 +7837,48 @@
     },
     "noAccounts" : {
       "title" : "이 앱에 액세스하려면 계정이 필요합니다.",
-      "add" : "계정 추가"
+      "select" : "계정 선택"
     }
   },
   "recoverRestore" : {
     "title" : "Ledger를 연결하고 잠금을 해제하세요"
+  },
+  "analyticsConsentModal" : {
+    "fresh" : {
+      "title" : "Ledger 개선에 참여해 주세요",
+      "description" : "동의해 주시면 사용 데이터를 수집하여 기능을 개선하고 맞춤형 환경을 제공합니다.",
+      "ctaAcceptAll" : "모두 수락",
+      "ctaRefuseAll" : "모두 거부"
+    },
+    "reconfirm" : {
+      "title" : "Ledger 개선에 계속 참여하시겠습니까?",
+      "description" : "Ledger 기능 향상을 위해 사용 데이터를 계속 공유하시겠습니까? 이 데이터는 기능을 개선하고 맞춤형 환경을 제공하는 데 사용됩니다.",
+      "ctaContinue" : "예, 계속합니다",
+      "ctaStop" : "아니요, 중단합니다"
+    },
+    "privacy" : {
+      "title" : "개인정보 처리방침이 업데이트됩니다",
+      "descriptionLead" : "변경 안내: ",
+      "descriptionLinkLabel" : "개인 정보 보호 정책",
+      "descriptionTrail" : " 변경 내역 확인하기. 설정에서 언제든지 기본 설정을 변경할 수 있습니다.",
+      "ctaGotIt" : "확인"
+    },
+    "setPreferences" : "설정 관리",
+    "preferences" : {
+      "appPerformance" : {
+        "title" : "앱 성능",
+        "description" : "사용자 환경 개선을 위해 Ledger의 앱 사용 데이터 수집을 허용합니다."
+      },
+      "personalizedExperience" : {
+        "title" : "사용자 맞춤 설정",
+        "description" : "맞춤형 콘텐츠 제공을 위해 Ledger의 앱 사용 데이터 수집을 허용합니다."
+      },
+      "ctaConfirm" : "확인"
+    },
+    "footer" : {
+      "lead" : "설정에서 언제든지 동의를 철회하실 수 있습니다.",
+      "privacyLink" : "개인 정보 보호 정책"
+    }
   },
   "analyticsOptInPrompt" : {
     "variantA" : {
@@ -7788,7 +7933,7 @@
       "learnMore" : "Ledger의 고객 데이터 처리 방법에 대해 자세히 알아보세요"
     },
     "profileSettings" : {
-      "personalizedExp" : "맞춤화된 경험",
+      "personalizedExp" : "사용자 맞춤 설정",
       "analytics" : "앱 성능",
       "personalizedExpDesc" : "맞춤형 콘텐츠 제공을 위해 Ledger의 앱 사용 데이터 수집을 허용합니다.",
       "analyticsDesc" : "사용자 환경 개선을 위해 Ledger의 앱 사용 데이터 수집을 허용합니다."
@@ -8033,7 +8178,7 @@
     "fundAccount" : {
       "receive" : "수령",
       "receiveDescription" : "다른 지갑에서 암호화폐를 받아보세요",
-      "buy" : "구매",
+      "buy" : "매수",
       "buyDescription" : "현금으로 암호화폐를 안전하게 구매해보세요"
     },
     "scanAccounts" : {
@@ -8109,7 +8254,7 @@
     "addAccountCta" : "암호화폐 계정 추가",
     "noBalanceTitle" : "자산을 입금하고 시작하세요",
     "perpsEntry" : {
-      "title" : "무기한 계약",
+      "title" : "무기한 선물",
       "description" : "레버리지로 거래하기",
       "cta" : "탐색"
     },
@@ -8178,7 +8323,10 @@
       },
       "editName" : "이름 편집",
       "emptyState" : "아직 암호화폐 주소가 없습니다",
-      "emptySearchState" : "검색하신 조건에 맞는 계정을 찾을 수 없습니다"
+      "emptySearchState" : "검색하신 조건에 맞는 계정을 찾을 수 없습니다",
+      "assetCount_zero" : "{{count}}개 자산",
+      "assetCount_one" : "{{count}}개 자산",
+      "assetCount_other" : "{{count}}개 자산"
     },
     "editName" : {
       "title" : "주소 별칭 편집",
@@ -8248,7 +8396,7 @@
         "showBalance" : "잔액 보기",
         "startSync" : "동기화 시작",
         "stopSync" : "동기화 중지",
-        "lastProcessedBlock" : "최근 처리된 블록: {{block}}, 누락된 블록: {{missing}}",
+        "upToDate" : "최신",
         "lastSync" : "마지막 동기화: {{date}}",
         "estimatedTimeRemaining" : "남은 예상 시간: {{hours}}:{{minutes}}"
       },
@@ -8455,5 +8603,17 @@
       "errorDescription" : "트랜잭션 내역 내보내기 중 오류가 발생했습니다. 다시 시도해 주세요.",
       "tryAgain" : "다시 시도하세요"
     }
+  },
+  "myWallet" : {
+    "actionsList" : {
+      "help" : "도움말",
+      "recover" : "[L] Recover",
+      "refer" : "친구 추천"
+    },
+    "myLedger" : {
+      "title" : "내 Ledger",
+      "description" : "Ledger 장치를 관리하세요"
+    },
+    "explore" : "모든 Ledger 장치 살펴보기"
   }
 }

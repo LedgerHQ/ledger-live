@@ -1,15 +1,34 @@
-// Re-export the upstream @mysten/ledgerjs-hw-app-sui Sui class from inlined source.
-// The upstream package (0.7.1) ships a mega-bundle that inlines all dependencies
-// (RxJS, @ledgerhq/*, etc.), causing ~900KB of duplication in the final bundle.
-// By importing from source and resolving dependencies from the monorepo, we avoid
-// bundling duplicate copies.
-// Can be reverted to normal import once the upstream package is fixed.
-// See: https://github.com/MystenLabs/ts-sdks/issues/967
-export { default } from "./upstream/Sui";
+import SuiUpstream from "@mysten/ledgerjs-hw-app-sui";
+import { DeviceModelId } from "@ledgerhq/devices";
+import { UpdateYourApp } from "@ledgerhq/errors";
+import semver from "semver";
+
+import type { Resolution, SignTransactionResult } from "@mysten/ledgerjs-hw-app-sui";
+
+const MIN_VERSION = "1.5.4";
+const MANAGER_APP_NAME = "Sui";
+
+export default class Sui extends SuiUpstream {
+  async signTransaction(
+    path: string,
+    txn: Uint8Array,
+    options?: { bcsObjects: Uint8Array[] },
+    resolution?: Resolution,
+  ): Promise<SignTransactionResult> {
+    if (resolution?.deviceModelId && resolution.deviceModelId !== DeviceModelId.nanoS) {
+      const { major, minor, patch } = await super.getVersion();
+      if (semver.lt(`${major}.${minor}.${patch}`, MIN_VERSION)) {
+        throw new UpdateYourApp(undefined, { managerAppName: MANAGER_APP_NAME });
+      }
+    }
+    return super.signTransaction(path, txn, options, resolution);
+  }
+}
+
 export type {
+  AppConfig,
   GetPublicKeyResult,
-  SignTransactionResult,
   GetVersionResult,
   Resolution,
-  AppConfig,
-} from "./upstream/Sui";
+  SignTransactionResult,
+} from "@mysten/ledgerjs-hw-app-sui";

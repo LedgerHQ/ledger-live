@@ -327,6 +327,20 @@ describe("EVM Family", () => {
           const byHash = traceBlockItemsToOperationsByHash([]);
           expect(byHash.size).toBe(0);
         });
+
+        it.each(["delegatecall", "staticcall", "callcode"])(
+          "should skip %s frames since they cannot move native value",
+          callType => {
+            const items: TraceBlockItem[] = [
+              makeTraceItem({
+                transactionHash: "0xhash1",
+                action: makeAction({ callType }),
+              }),
+            ];
+            const byHash = traceBlockItemsToOperationsByHash(items);
+            expect(byHash.size).toBe(0);
+          },
+        );
       });
 
       describe("ledgerTransactionToBlockOperations", () => {

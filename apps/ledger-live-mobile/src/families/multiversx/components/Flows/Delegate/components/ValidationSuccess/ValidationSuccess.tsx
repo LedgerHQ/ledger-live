@@ -12,7 +12,6 @@ import type { StackNavigatorNavigation } from "~/components/RootNavigator/types/
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import styles from "./styles";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
-import { useNotifications } from "LLM/features/NotificationsPrompt";
 
 /*
  * Handle the component declaration.
@@ -25,7 +24,6 @@ const ValidationSuccess = ({ navigation, route }: ValidationSuccessPropsType) =>
   const { colors } = useTheme();
   const { account } = useAccountScreen(route);
   const { ticker } = getAccountCurrency(account);
-  const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
 
   const parent = useMemo<StackNavigatorNavigation<BaseNavigatorStackParamList>>(
     () => navigation.getParent(),
@@ -47,8 +45,7 @@ const ValidationSuccess = ({ navigation, route }: ValidationSuccessPropsType) =>
       delegation: "delegation",
       flow: "stake",
     });
-    tryTriggerPushNotificationDrawerAfterAction("stake");
-  }, [source, validator, ticker, tryTriggerPushNotificationDrawerAfterAction]);
+  }, [source, validator, ticker]);
 
   /*
    * Should the validation fail, close all stacks, on callback click.

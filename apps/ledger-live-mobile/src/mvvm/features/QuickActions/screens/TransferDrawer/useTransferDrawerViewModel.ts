@@ -6,8 +6,10 @@ import { useSelector } from "~/context/hooks";
 import { QrCode, ArrowUp, Bank } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { NavigatorName, ScreenName } from "~/const";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
-import { readOnlyModeEnabledSelector } from "~/reducers/settings";
+import { languageSelector, readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { accountsCountSelector, areAccountsEmptySelector } from "~/reducers/accounts";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { resolveRemoteCopy } from "@ledgerhq/live-common/featureFlags/remoteABTesting/resolveRemoteCopy";
 import { track } from "~/analytics";
 import { useTransferDrawerController } from "../../hooks/useTransferDrawerController";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
@@ -15,7 +17,6 @@ import { TransferAction } from "../../types";
 import { QUICK_ACTIONS_TEST_IDS } from "../../testIds";
 import { useTranslation } from "~/context/Locale";
 import { useReceiveNoahEntry } from "LLM/features/Noah/useNoahEntryPoint";
-
 // Fiat provider manifest ID for Noah integration
 const FIAT_PROVIDER_MANIFEST_ID = "noah";
 
@@ -23,9 +24,9 @@ const BUTTON_LOCATION = "quick_action_transfer";
 
 interface TransferDrawerViewModel {
   isOpen: boolean;
+  title: string;
   actions: readonly TransferAction[];
   handleClose: () => void;
-  t: (key: string) => string;
   bottomInset: number;
 }
 
@@ -46,6 +47,21 @@ export const useTransferDrawerViewModel = (): TransferDrawerViewModel => {
   });
 
   const { showNoahMenu: showNoahOption } = useReceiveNoahEntry();
+
+  const transferCopyFlag = useFeature("llmTransferButtonCopyVariant");
+  const language = useSelector(languageSelector);
+  const isEN = language === "en";
+  const flagParams = transferCopyFlag?.params;
+  const resolveCopy = useCallback(
+    (param: string | undefined, fallback: string) =>
+      resolveRemoteCopy(transferCopyFlag?.enabled, isEN, param, fallback),
+    [transferCopyFlag?.enabled, isEN],
+  );
+
+  const title = resolveCopy(
+    flagParams?.modalTitle,
+    t("portfolio.quickActionsCtas.transferDrawer.title"),
+  );
 
   const handleReceivePress = useCallback(() => {
     track("button_clicked", {
@@ -88,7 +104,10 @@ export const useTransferDrawerViewModel = (): TransferDrawerViewModel => {
     () => [
       {
         id: "receive",
-        title: t("portfolio.quickActionsCtas.transferDrawer.receiveCrypto"),
+        title: resolveCopy(
+          flagParams?.rowReceiveTitle,
+          t("portfolio.quickActionsCtas.transferDrawer.receiveCrypto"),
+        ),
         icon: QrCode,
         disabled: readOnlyModeEnabled,
         onPress: handleReceivePress,
@@ -96,7 +115,10 @@ export const useTransferDrawerViewModel = (): TransferDrawerViewModel => {
       },
       {
         id: "send",
-        title: t("portfolio.quickActionsCtas.transferDrawer.sendCrypto"),
+        title: resolveCopy(
+          flagParams?.rowSendTitle,
+          t("portfolio.quickActionsCtas.transferDrawer.sendCrypto"),
+        ),
         icon: ArrowUp,
         disabled: readOnlyModeEnabled || !hasFunds,
         onPress: handleSendPress,
@@ -106,8 +128,14 @@ export const useTransferDrawerViewModel = (): TransferDrawerViewModel => {
         ? [
             {
               id: "bank_transfer" as const,
-              title: t("portfolio.quickActionsCtas.transferDrawer.bankTransfer"),
-              description: t("portfolio.quickActionsCtas.transferDrawer.bankTransferDescription"),
+              title: resolveCopy(
+                flagParams?.rowCashToStableTitle,
+                t("portfolio.quickActionsCtas.transferDrawer.bankTransfer"),
+              ),
+              description: resolveCopy(
+                flagParams?.rowCashToStableDescription,
+                t("portfolio.quickActionsCtas.transferDrawer.bankTransferDescription"),
+              ),
               icon: Bank,
               disabled: readOnlyModeEnabled,
               onPress: handleBankTransferPress,
@@ -124,14 +152,16 @@ export const useTransferDrawerViewModel = (): TransferDrawerViewModel => {
       handleSendPress,
       showNoahOption,
       handleBankTransferPress,
+      flagParams,
+      resolveCopy,
     ],
   );
 
   return {
     isOpen,
+    title,
     actions,
     handleClose: closeDrawer,
-    t,
     bottomInset,
   };
 };

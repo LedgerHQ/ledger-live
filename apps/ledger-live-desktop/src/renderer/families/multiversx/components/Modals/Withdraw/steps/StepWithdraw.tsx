@@ -1,6 +1,6 @@
 import React, { Fragment, useCallback } from "react";
 import { denominate } from "@ledgerhq/live-common/families/multiversx/helpers";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Trans } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -29,7 +29,7 @@ const StepWithdraw = (props: StepProps) => {
     name,
   } = props;
   const unit = useAccountUnit(account);
-  const bridge: AccountBridge<Transaction> = getAccountBridge(account);
+  const bridge = useAccountBridge<Transaction>(account);
   const onDelegationChange = useCallback(
     // @ts-expect-error another TS puzzle for another day
     validator => {

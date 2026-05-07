@@ -3,8 +3,39 @@ import type { AccountBridge } from "@ledgerhq/types-live";
 import { updateTransaction } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import aleoCoinConfig from "../config";
 import { estimateFees } from "../logic";
-import { calculateAmount, findBestRecordForFee, isPrivateTransaction } from "../logic/utils";
-import type { AleoAccount, Transaction as AleoTransaction } from "../types";
+import {
+  calculateAmount,
+  findBestRecordForFee,
+  isPrivateTransaction,
+  selectPrivateRecordsForAmount,
+} from "../logic/utils";
+import type {
+  AleoAccount,
+  AleoCoinConfig,
+  Transaction as AleoTransaction,
+  TransactionPrivate as AleoTransactionPrivate,
+  AleoUnspentRecord,
+} from "../types";
+
+function getAmountRecordCommitments({
+  transaction,
+  config,
+  unspentRecords,
+}: {
+  transaction: AleoTransactionPrivate;
+  config: AleoCoinConfig;
+  unspentRecords: AleoUnspentRecord[];
+}): string[] {
+  if (config.recordPickingStrategy === "manual") {
+    return transaction.properties.amountRecordCommitments;
+  }
+
+  const targetAmount = transaction.useAllAmount ? null : transaction.amount;
+  const selectedAmountRecords = selectPrivateRecordsForAmount({ unspentRecords, targetAmount });
+  const selectedAmountRecordCommitments = selectedAmountRecords.map(record => record.commitment);
+
+  return selectedAmountRecordCommitments;
+}
 
 export const prepareTransaction: AccountBridge<
   AleoTransaction,
@@ -17,34 +48,55 @@ export const prepareTransaction: AccountBridge<
   });
 
   const estimatedFees = new BigNumber(feeEstimation.value.toString());
-  const calculatedAmount = calculateAmount({ transaction, account, estimatedFees });
 
-  if (
-    isPrivateTransaction(transaction) &&
-    !config.isFeeSponsored &&
-    transaction.properties.amountRecordCommitment
-  ) {
-    const feeRecord = findBestRecordForFee({
-      unspentRecords: account.aleoResources?.unspentPrivateRecords ?? [],
-      selectedAmountRecordCommitment: transaction.properties.amountRecordCommitment,
-      targetFee: estimatedFees,
-    });
-    const nextFeeRecordCommitment =
-      feeRecord?.commitment ?? transaction.properties.feeRecordCommitment;
+  // public transactions don't use records - amount and fees are resolved directly.
+  if (!isPrivateTransaction(transaction)) {
+    const calculatedAmount = calculateAmount({ transaction, account, estimatedFees });
 
     return updateTransaction(transaction, {
       amount: calculatedAmount.amount,
       fees: estimatedFees,
-      properties: {
-        ...transaction.properties,
-        amountRecordCommitment: transaction.properties.amountRecordCommitment,
-        ...(nextFeeRecordCommitment && { feeRecordCommitment: nextFeeRecordCommitment }),
-      },
     });
   }
 
-  return updateTransaction(transaction, {
+  const unspentRecords = account.aleoResources?.unspentPrivateRecords ?? [];
+  const newAmountRecordCommitments = getAmountRecordCommitments({
+    transaction,
+    config,
+    unspentRecords,
+  });
+  const privateTransactionWithRecords = updateTransaction(transaction, {
+    properties: {
+      ...transaction.properties,
+      amountRecordCommitments: newAmountRecordCommitments,
+    },
+  });
+  const calculatedAmount = calculateAmount({
+    transaction: privateTransactionWithRecords,
+    account,
+    estimatedFees,
+  });
+
+  // when fee sponsorship is off, pick the smallest record that covers the fee
+  let selectedFeeRecordCommitment: string | null = null;
+
+  if (!config.isFeeSponsored && newAmountRecordCommitments.length > 0) {
+    const feeRecord = findBestRecordForFee({
+      unspentRecords,
+      selectedAmountRecordCommitments: newAmountRecordCommitments,
+      targetFee: estimatedFees,
+    });
+
+    selectedFeeRecordCommitment =
+      feeRecord?.commitment ?? privateTransactionWithRecords.properties.feeRecordCommitment;
+  }
+
+  return updateTransaction(privateTransactionWithRecords, {
     amount: calculatedAmount.amount,
     fees: estimatedFees,
+    properties: {
+      ...privateTransactionWithRecords.properties,
+      feeRecordCommitment: config.isFeeSponsored ? null : selectedFeeRecordCommitment,
+    },
   });
 };

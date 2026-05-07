@@ -11,6 +11,7 @@ import type { Feature_LlmMmkvMigration } from "@ledgerhq/types-live";
 import { useRefreshAccountsOrdering } from "~/actions/general";
 import { track } from "~/analytics";
 import { usePortfolioBalance } from "LLM/hooks/usePortfolioBalance";
+import { useBorrowLiveConfig } from "LLM/features/Borrow/hooks/useBorrowLiveConfig";
 import {
   flattenAccountsSelector,
   hasNonTokenAccountsSelector,
@@ -25,6 +26,7 @@ import { useWallet40Theme } from "LLM/hooks/useWallet40Theme";
 import storage from "LLM/storage";
 import { DdRum } from "@datadog/mobile-react-native";
 import { PORTFOLIO_VIEW_ID, TOP_CHAINS } from "~/utils/constants";
+import { ddAddViewLoadingTime } from "LLM/utils/ddAddViewLoadingTime";
 import { buildFeatureFlagTags } from "~/utils/datadogUtils";
 import { ScreenName } from "~/const";
 
@@ -36,6 +38,7 @@ interface UsePortfolioViewModelResult {
   shouldDisplayWallet40MainNav: boolean;
   shouldDisplayAssetSection: boolean;
   shouldDisplayMarketBanner: boolean;
+  shouldDisplayBorrowSection: boolean;
   shouldDisplayOperationsList: boolean;
   showAssets: boolean;
   isLNSUpsellBannerShown: boolean;
@@ -68,6 +71,8 @@ const usePortfolioViewModel = (navigation: {
     shouldDisplayOperationsList,
   } = useWalletFeaturesConfig("mobile");
   const isAccountListUIEnabled = accountListFF?.enabled ?? false;
+  const borrowConfig = useBorrowLiveConfig();
+  const shouldDisplayBorrowSection = borrowConfig?.enabled ?? false;
   const llmDatadog = useFeature("llmDatadog");
   const allAccounts = useSelector(flattenAccountsSelector, shallowEqual);
   const isFocused = useIsFocused();
@@ -114,7 +119,7 @@ const usePortfolioViewModel = (navigation: {
       { topChains, featureFlags: buildFeatureFlagTags() },
       Date.now(),
     );
-    DdRum.addViewLoadingTime(true);
+    ddAddViewLoadingTime();
   }, [allAccounts, llmDatadog?.enabled]);
 
   const hasTokenAccounts = useSelector(hasTokenAccountsNotBlacklistedSelector);
@@ -157,6 +162,7 @@ const usePortfolioViewModel = (navigation: {
     shouldDisplayQuickActionCtas,
     shouldDisplayWallet40MainNav,
     shouldDisplayAssetSection,
+    shouldDisplayBorrowSection,
     shouldDisplayMarketBanner,
     shouldDisplayOperationsList,
     showAssets,

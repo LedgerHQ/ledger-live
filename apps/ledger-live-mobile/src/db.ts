@@ -17,6 +17,7 @@ import type {
   ProtectState,
   SettingsState,
 } from "./reducers/types";
+import type { HistoryState } from "./reducers/history";
 import type { FeatureFlagsState } from "@shared/feature-flags";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { ExportedWalletState } from "@ledgerhq/live-wallet/store";
@@ -92,6 +93,13 @@ export async function getBle(): Promise<BleState> {
 }
 export async function saveBle(obj: BleState): Promise<void> {
   await storage.save("ble", obj);
+}
+
+export function getHistory(): Promise<HistoryState | null> {
+  return storage.get("history") as Promise<HistoryState | null>;
+}
+export async function saveHistory(obj: HistoryState): Promise<void> {
+  await storage.save("history", obj);
 }
 
 const formatAccountDBKey = (id: string): string => `${ACCOUNTS_DB_PREFIX}${id}`;

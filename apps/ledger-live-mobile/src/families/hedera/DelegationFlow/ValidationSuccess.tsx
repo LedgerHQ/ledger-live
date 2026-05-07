@@ -19,7 +19,6 @@ import type {
 import type { HederaDelegationFlowParamList } from "./types";
 import { getTrackingDelegationType } from "../../helpers";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
-import { useNotifications } from "LLM/features/NotificationsPrompt";
 
 type Props = BaseComposite<
   StackNavigatorProps<HederaDelegationFlowParamList, ScreenName.HederaDelegationValidationSuccess>
@@ -28,7 +27,6 @@ type Props = BaseComposite<
 export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useAccountScreen(route);
-  const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
 
   const transaction = route.params.transaction;
   invariant(isStakingTransaction(transaction), "hedera: staking tx expected");
@@ -51,15 +49,8 @@ export default function ValidationSuccess({ navigation, route }: Props) {
         delegation,
         flow: "stake",
       });
-      tryTriggerPushNotificationDrawerAfterAction("stake");
     }
-  }, [
-    source,
-    selectedValidatorNodeId,
-    delegation,
-    ticker,
-    tryTriggerPushNotificationDrawerAfterAction,
-  ]);
+  }, [source, selectedValidatorNodeId, delegation, ticker]);
 
   const goToOperationDetails = useCallback(() => {
     if (!account) return;

@@ -1,3 +1,4 @@
+import { log } from "@ledgerhq/logs";
 import { isCryptoCurrency, isTokenCurrency } from "../currencies";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import type {
@@ -73,35 +74,61 @@ export function getClientHeaders(params: getHostHeadersParams): Record<string, s
 }
 
 /**
- * Validates a URL by checking if it's on the same domain as the manifest URL.
- * Only HTTPS URLs are allowed.
+ * Validates a URL by checking it shares the manifest's registrable domain (eTLD+1)
+ * and protocol. Subdomains of the manifest's domain are allowed
+ * (e.g. https://cdn.example.com is accepted when the manifest is at
+ * https://app.example.com), which is intentional so live apps can navigate
+ * across their own subdomains. For hosts without a public suffix (localhost,
+ * raw IPs, .local) the check tightens to strict same-origin (host:port + protocol),
+ * preventing cross-port pivots like localhost:3000 → localhost:8080.
+ *
+ * Scheme must match the manifest's scheme and must be http: or https: (never
+ * javascript:, data:, file:, ftp:, etc.). In production builds, only https: is
+ * accepted; http: is permitted in development so http://localhost manifests
+ * can be loaded.
+ *
  * @param url - The URL to validate
- * @param manifestUrl - The manifest URL to check same domain against
- * @returns true if the URL is valid and is on the same domain as manifestUrl
+ * @param manifestUrl - The manifest URL to compare against
+ * @returns true if the URL passes the registrable-domain + protocol check
  */
 const isWhitelistedDomain = (url: string, manifestUrl: string): boolean => {
   try {
-    // Parse the URL
     const parsedUrl = new URL(url);
+    const parsedManifestUrl = new URL(manifestUrl);
 
-    // Only allow HTTPS scheme
-    if (parsedUrl.protocol !== "https:") {
-      console.error(
-        `#isWhitelistedDomain:: invalid URL: non-HTTPS scheme '${parsedUrl.protocol}' is not allowed`,
+    if (parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:") {
+      log(
+        "wallet-api/helpers",
+        `isWhitelistedDomain: invalid URL: scheme '${parsedUrl.protocol}' is not allowed`,
       );
       return false;
     }
 
-    // Check if URL is on the same domain as manifest URL
+    // Production builds only accept https. http is permitted in dev so local
+    // manifests (http://localhost) can be loaded; the dead branch is stripped
+    // at build time by the bundler's NODE_ENV inlining.
+    if (process.env.NODE_ENV === "production" && parsedUrl.protocol !== "https:") {
+      log("wallet-api/helpers", "isWhitelistedDomain: invalid URL: only https is allowed in production");
+      return false;
+    }
+
+    if (parsedUrl.protocol !== parsedManifestUrl.protocol) {
+      log(
+        "wallet-api/helpers",
+        `isWhitelistedDomain: invalid URL: scheme '${parsedUrl.protocol}' does not match manifest scheme '${parsedManifestUrl.protocol}'`,
+      );
+      return false;
+    }
+
     if (!isSameDomain(url, manifestUrl)) {
-      console.error(`#isWhitelistedDomain:: invalid URL: not on the same domain as manifest URL`);
+      log("wallet-api/helpers", "isWhitelistedDomain: URL not on same domain as manifest");
       return false;
     }
 
     return true;
   } catch (error) {
     // Invalid URL format
-    console.error(`#isWhitelistedDomain:: invalid URL format: ${error}`);
+    log("wallet-api/helpers", "isWhitelistedDomain: invalid URL format", { error: String(error) });
     return false;
   }
 };
@@ -132,7 +159,8 @@ export const getInitialURL = (
 
     return url.toString();
   } catch (e) {
-    if (e instanceof Error) console.error(e.message);
+    if (e instanceof Error)
+      log("wallet-api/helpers", "getInitialURL error", { message: e.message });
 
     return manifest.url.toString();
   }

@@ -1,6 +1,8 @@
 import * as braze from "@braze/web-sdk";
 import { ClassicCard } from "@braze/web-sdk";
 import { generateAnonymousId } from "@ledgerhq/live-common/braze/anonymousUsers";
+import { parseOrder, sanitizeExtras } from "@ledgerhq/live-common/braze/contentCardExtras";
+import { appendDeeplinkLocationIfDefined } from "@ledgerhq/live-common/deeplinks/index";
 import { getEnv } from "@ledgerhq/live-env";
 import { useCallback, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
@@ -53,10 +55,7 @@ export const compareCards = (a: LedgerContentCard, b: LedgerContentCard) => {
   return (a.order || 0) - (b.order || 0);
 };
 
-const parseOrder = (value: string | undefined): number | undefined => {
-  const parsed = Number.parseInt(value ?? "", 10);
-  return Number.isNaN(parsed) ? undefined : parsed;
-};
+export { parseOrder, sanitizeExtras };
 
 export const mapAsActionContentCard = (card: ClassicCard): ActionContentCard => ({
   created: card.updated ?? null,
@@ -65,7 +64,7 @@ export const mapAsActionContentCard = (card: ClassicCard): ActionContentCard => 
   image: card.extras?.image,
   image_background: card.extras?.image_background,
   icon: card.extras?.icon,
-  link: card.extras?.link,
+  link: appendDeeplinkLocationIfDefined(card.extras?.link, LocationContentCard.Action),
   location: LocationContentCard.Action,
   mainCta: card.extras?.mainCta,
   order: parseOrder(card.extras?.order),
@@ -90,7 +89,7 @@ const mapBrazeCardToPortfolioContentCard = (
   tag: card.extras?.tag,
   picto: card.extras?.picto,
   title: card.extras?.title,
-  url: card.extras?.url || card.extras?.link,
+  url: appendDeeplinkLocationIfDefined(card.extras?.url || card.extras?.link, location),
 });
 
 export const mapAsPortfolioContentCard = (card: ClassicCard): PortfolioContentCard =>
@@ -108,7 +107,7 @@ export const mapAsNotificationContentCard = (card: ClassicCard): NotificationCon
   order: parseOrder(card.extras?.order),
   path: card.extras?.path,
   title: card.extras?.title,
-  url: card.extras?.url,
+  url: appendDeeplinkLocationIfDefined(card.extras?.url, LocationContentCard.NotificationCenter),
   viewed: card.viewed,
 });
 

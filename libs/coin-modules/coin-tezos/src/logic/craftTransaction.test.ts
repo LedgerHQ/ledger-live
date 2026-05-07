@@ -4,7 +4,14 @@ import coinConfig from "../config";
 import { craftTransaction, rawEncode } from "./craftTransaction";
 import { getTezosToolkit } from "./tezosToolkit";
 
-type TransactionType = "send" | "delegate" | "undelegate" | "send_token";
+type TransactionType =
+  | "send"
+  | "delegate"
+  | "undelegate"
+  | "send_token"
+  | "stake"
+  | "unstake"
+  | "finalize_unstake";
 
 jest.mock("./tezosToolkit");
 jest.mock("../config", () => ({
@@ -393,6 +400,145 @@ describe("craftTransaction", () => {
         },
       ),
     ).rejects.toThrow("FA2 transfer requires contractAddress and tokenId");
+  });
+
+  it("should craft a stake transaction", async () => {
+    mockTezosToolkit.rpc.getContract.mockResolvedValue({ counter: "1" });
+
+    const account = { address: "tz1..." };
+    const transaction = {
+      type: "stake" as TransactionType,
+      recipient: "",
+      amount: BigInt(1234),
+      fee: { fees: "100", gasLimit: "200", storageLimit: "300" },
+    };
+
+    const result = await craftTransaction(account, transaction);
+
+    expect(result.type).toBe("STAKE");
+    expect(result.contents).toEqual([
+      {
+        kind: OpKind.TRANSACTION,
+        amount: "1234",
+        destination: account.address,
+        source: account.address,
+        counter: "2",
+        fee: "100",
+        gas_limit: "200",
+        storage_limit: "300",
+        parameters: { entrypoint: "stake", value: { prim: "Unit" } },
+      },
+    ]);
+  });
+
+  it("should craft an unstake transaction", async () => {
+    mockTezosToolkit.rpc.getContract.mockResolvedValue({ counter: "1" });
+
+    const account = { address: "tz1..." };
+    const transaction = {
+      type: "unstake" as TransactionType,
+      recipient: "",
+      amount: BigInt(4321),
+      fee: { fees: "100", gasLimit: "200", storageLimit: "300" },
+    };
+
+    const result = await craftTransaction(account, transaction);
+
+    expect(result.type).toBe("UNSTAKE");
+    expect(result.contents).toEqual([
+      {
+        kind: OpKind.TRANSACTION,
+        amount: "4321",
+        destination: account.address,
+        source: account.address,
+        counter: "2",
+        fee: "100",
+        gas_limit: "200",
+        storage_limit: "300",
+        parameters: { entrypoint: "unstake", value: { prim: "Unit" } },
+      },
+    ]);
+  });
+
+  it("should craft a finalize_unstake transaction with amount forced to 0", async () => {
+    mockTezosToolkit.rpc.getContract.mockResolvedValue({ counter: "1" });
+
+    const account = { address: "tz1..." };
+    const transaction = {
+      type: "finalize_unstake" as TransactionType,
+      recipient: "",
+      // even with a non-zero amount the operation must serialize amount: "0"
+      amount: BigInt(999),
+      fee: { fees: "100", gasLimit: "200", storageLimit: "300" },
+    };
+
+    const result = await craftTransaction(account, transaction);
+
+    expect(result.type).toBe("FINALIZE_UNSTAKE");
+    expect(result.contents).toEqual([
+      {
+        kind: OpKind.TRANSACTION,
+        amount: "0",
+        destination: account.address,
+        source: account.address,
+        counter: "2",
+        fee: "100",
+        gas_limit: "200",
+        storage_limit: "300",
+        parameters: { entrypoint: "finalize_unstake", value: { prim: "Unit" } },
+      },
+    ]);
+  });
+
+  it("should prepend a reveal operation when crafting a stake transaction with publicKey", async () => {
+    mockTezosToolkit.rpc.getContract.mockResolvedValue({ counter: "1" });
+    mockTezosToolkit.estimate.reveal.mockResolvedValue({
+      gasLimit: 100,
+      storageLimit: 0,
+      suggestedFeeMutez: getRevealFee("tz1..."),
+    });
+    (coinConfig.getCoinConfig as jest.Mock).mockReturnValue({
+      fees: {
+        minRevealGasLimit: 100,
+        minFees: 0,
+        minStorageLimit: 0,
+      },
+    });
+
+    const account = { address: "tz1..." };
+    const transaction = {
+      type: "stake" as TransactionType,
+      recipient: "",
+      amount: BigInt(500),
+      fee: { fees: "100", gasLimit: "200", storageLimit: "300" },
+    };
+    const publicKey = { publicKey: "publicKey", publicKeyHash: "publicKeyHash" };
+
+    const result = await craftTransaction(account, transaction, publicKey);
+
+    expect(result.type).toBe("STAKE");
+    expect(result.contents).toEqual([
+      {
+        kind: OpKind.REVEAL,
+        fee: getRevealFee(account.address).toString(),
+        gas_limit: "100",
+        storage_limit: "0",
+        source: publicKey.publicKeyHash,
+        counter: "2",
+        public_key: publicKey.publicKey,
+      },
+      {
+        kind: OpKind.TRANSACTION,
+        amount: "500",
+        destination: account.address,
+        source: account.address,
+        counter: "3",
+        fee: "100",
+        gas_limit: "200",
+        storage_limit: "300",
+        parameters: { entrypoint: "stake", value: { prim: "Unit" } },
+      },
+    ]);
   });
 
   it("should throw an error for unsupported transaction type", async () => {

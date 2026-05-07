@@ -939,7 +939,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     type: "CryptoCurrency",
     id: "concordium_testnet",
     managerAppName: "Concordium",
-    coinType: CoinType.CONCORDIUM,
+    coinType: 1, // SLIP-44 generic testnet (BIP-44)
     name: "Concordium (Testnet)",
     ticker: "CCD",
     scheme: "concordium_testnet",

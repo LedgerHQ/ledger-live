@@ -1,6 +1,6 @@
 import React, { useMemo, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "~/context/hooks";
-import { Platform, Linking, View, StyleSheet } from "react-native";
+import { Linking, View, StyleSheet } from "react-native";
 import {
   getStateFromPath,
   LinkingOptions,
@@ -26,7 +26,7 @@ import {
   makeSetEarnMenuModalAction,
   makeSetEarnProtocolInfoModalAction,
 } from "~/actions/earn";
-import { blockPasswordLock } from "../actions/appstate";
+import { blockPasswordLock, tickProductTourDeeplink } from "../actions/appstate";
 import { handleModularDrawerDeeplink } from "LLM/features/ModularDrawer";
 import { isValidInstallApp } from "LLM/features/DeeplinkInstallApp";
 import { openDeeplinkInstallAppDrawer } from "~/actions/deeplinkInstallApp";
@@ -48,7 +48,7 @@ import {
 } from "./deeplinks/validation";
 import { handleWallet40Deeplink } from "./deeplinks/handleWallet40Deeplink";
 import { handleMarketBannerDeeplink } from "./deeplinks/handleMarketBannerDeeplink";
-import { AppLoadingManager } from "LLM/features/LaunchScreen";
+import { useProductTourEligibility } from "LLM/features/ProductTour";
 import { SplashScreenHandle } from "LLM/features/LaunchScreen/SplashScreenHandle";
 import { useDeeplinkDrawerCleanup } from "./deeplinks/useDeeplinkDrawerCleanup";
 
@@ -351,6 +351,7 @@ export const DeeplinksProvider = ({
   const { shouldDisplayMarketBanner, shouldDisplayWallet40MainNav, shouldDisplayAssetSection } =
     useWalletFeaturesConfig("mobile");
   const web3hubFlag = useFeature("web3hub");
+  const { isProductTourEligible } = useProductTourEligibility();
 
   const buySellUiManifestId = buySellUiFlag?.params?.manifestId;
 
@@ -421,6 +422,14 @@ export const DeeplinksProvider = ({
                           },
                         },
                       }),
+                      /**
+                       * ie: "ledgerlive://perps" -> will redirect to the perps page
+                       */
+                      [NavigatorName.Perps]: {
+                        screens: {
+                          [ScreenName.PerpsTab]: "perps",
+                        },
+                      },
                       [NavigatorName.Main]: {
                         initialRouteName: ScreenName.Portfolio,
                         screens: {
@@ -506,6 +515,14 @@ export const DeeplinksProvider = ({
                                   },
                                 },
                               }),
+                          [NavigatorName.Borrow]: {
+                            screens: {
+                              /**
+                               * ie: "ledgerlive://borrow" will open the borrow screen
+                               */
+                              [ScreenName.Borrow]: "borrow",
+                            },
+                          },
                           [NavigatorName.MyLedger]: {
                             screens: {
                               /**
@@ -556,9 +573,10 @@ export const DeeplinksProvider = ({
                            * @params ?sourceScreenName: string
                            * ie: "ledgerlive://crypto-addresses" will open the crypto addresses screen.
                            */
-                          ...(shouldDisplayWallet40MainNav && shouldDisplayAssetSection && {
-                            [ScreenName.CryptoAddresses]: "crypto-addresses",
-                          }),
+                          ...(shouldDisplayWallet40MainNav &&
+                            shouldDisplayAssetSection && {
+                              [ScreenName.CryptoAddresses]: "crypto-addresses",
+                            }),
                         },
                       },
                     },
@@ -811,6 +829,12 @@ export const DeeplinksProvider = ({
             const pathWithParams = swapSearch ? `swap?${swapSearch}` : "swap";
             return getStateFromPath(pathWithParams, config);
           }
+
+          if (hostname === "product-tour" && isProductTourEligible) {
+            dispatch(tickProductTourDeeplink());
+            return getStateFromPath("portfolio", config);
+          }
+
           // Handle wallet deeplink with installApp param
           // ledgerlive://wallet?installApp=RecoveryKeyUpdater
           if (
@@ -870,6 +894,7 @@ export const DeeplinksProvider = ({
     liveAppProviderInitialized,
     manifests,
     web3hubFlag?.enabled,
+    isProductTourEligible,
   ]);
   const [isReady, setIsReady] = React.useState(false);
   const [isNavigationContainerReady, setIsNavigationContainerReady] = React.useState(false);
@@ -888,17 +913,9 @@ export const DeeplinksProvider = ({
     [],
   );
 
-  const animSplash = useFeature("llmAnimatedSplashScreen");
-  const showAnimatedSplashScreen = useRef(
-    (animSplash?.enabled && animSplash.params?.[Platform.OS]) ?? true,
-  );
-  const SplashScreenComponent = useRef(
-    showAnimatedSplashScreen.current ? AppLoadingManager : SplashScreenHandle,
-  );
-
   return (
     <View style={styles.appBackground}>
-      <SplashScreenComponent.current
+      <SplashScreenHandle
         isNavigationReady={isReady && isNavigationContainerReady}
         onAppReady={handleStartComplete}
       >
@@ -915,7 +932,7 @@ export const DeeplinksProvider = ({
             {children}
           </NavigationContainer>
         ) : null}
-      </SplashScreenComponent.current>
+      </SplashScreenHandle>
     </View>
   );
 };

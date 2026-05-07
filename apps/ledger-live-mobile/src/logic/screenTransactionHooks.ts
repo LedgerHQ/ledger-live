@@ -26,7 +26,10 @@ import {
 } from "@ledgerhq/live-common/errors/transactionBroadcastErrors";
 import { formatTransaction } from "@ledgerhq/live-common/transaction/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { execAndWaitAtLeast } from "@ledgerhq/live-common/promise";
+import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
+import { broadcastLogger } from "~/datadog";
 import { getEnv } from "@ledgerhq/live-env";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { TransactionRefusedOnDevice } from "@ledgerhq/live-common/errors";
@@ -44,6 +47,7 @@ import type { SignTransactionNavigatorParamList } from "../components/RootNaviga
 import type { AlgorandClaimRewardsFlowParamList } from "~/families/algorand/Rewards/ClaimRewardsFlow/type";
 import type { StellarAddAssetFlowParamList } from "~/families/stellar/AddAssetFlow/types";
 import { mevProtectionSelector } from "~/reducers/settings";
+import { useNewSendFlowFeature } from "LLM/features/Send/hooks/useNewSendFlowFeature";
 
 type Navigation =
   | StackNavigatorNavigation<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
@@ -91,9 +95,10 @@ export const useSignWithDevice = ({
   const [signed, setSigned] = useState(false);
   const subscription = useRef<null | Subscription>(null);
   const mevProtected = useSelector(mevProtectionSelector);
+  const bridge = useAccountBridge(account, parentAccount);
   const signWithDevice = useCallback(() => {
     const { deviceId, transaction } = route.params || {};
-    const bridge = getAccountBridge(account, parentAccount);
+    if (!transaction || !deviceId) return;
     const mainAccount = getMainAccount(account, parentAccount);
 
     navigation.setOptions({
@@ -103,14 +108,13 @@ export const useSignWithDevice = ({
     log("transaction-summary", `→ FROM ${formatAccount(mainAccount, "basic")}`);
     log(
       "transaction-summary",
-      `✔️ transaction ${transaction && formatTransaction(transaction, mainAccount)}`,
+      `✔️ transaction ${formatTransaction(transaction, mainAccount)}`,
     );
     subscription.current = bridge
       .signOperation({
         account: mainAccount,
         transaction,
-        // FIXME: deviceId could be undefined apparently
-        deviceId: deviceId!,
+        deviceId,
       })
       .pipe(
         // FIXME later we will need to treat more events
@@ -195,6 +199,7 @@ export const useSignWithDevice = ({
   }, [
     context,
     account,
+    bridge,
     navigation,
     parentAccount,
     updateAccountWithUpdater,
@@ -229,7 +234,7 @@ export const broadcastSignedTx = async (
 ): Promise<Operation> => {
   invariant(account, "account not present");
   const mainAccount = getMainAccount(account, parentAccount);
-  const bridge = getAccountBridge(account, parentAccount);
+  const bridge = await getAccountBridge(account, parentAccount);
 
   if (getEnv("DISABLE_TRANSACTION_BROADCAST")) {
     return Promise.resolve(signedOperation.operation);
@@ -252,15 +257,6 @@ export const broadcastSignedTx = async (
   );
 };
 
-// TODO move to live-common
-function useBroadcast({ account, parentAccount, broadcastConfig }: SignTransactionArgs) {
-  return useCallback(
-    async (signedOperation: SignedOperation): Promise<Operation> =>
-      broadcastSignedTx(account, parentAccount, signedOperation, broadcastConfig),
-    [account, parentAccount, broadcastConfig],
-  );
-}
-
 export function useSignedTxHandler({
   account,
   parentAccount,
@@ -271,16 +267,19 @@ export function useSignedTxHandler({
   const mevProtected = useSelector(mevProtectionSelector);
   const navigation = useNavigation();
   const route = useRoute();
+  const mainAccount = getMainAccount(account, parentAccount);
+  const { isEnabledForFamily } = useNewSendFlowFeature();
+  const newSendFlow = isEnabledForFamily(mainAccount.currency.family, mainAccount.currency.id);
   const broadcast = useBroadcast({
     account,
     parentAccount,
     broadcastConfig: {
       mevProtected,
-      source: { type: "coin-module", name: "ledger-live-mobile" },
+      source: { type: "coin-module", name: "ledger-live-mobile", flags: { newSendFlow } },
     },
+    logger: broadcastLogger,
   });
   const dispatch = useDispatch();
-  const mainAccount = getMainAccount(account, parentAccount);
   return useCallback(
     // TODO: fix type error
 

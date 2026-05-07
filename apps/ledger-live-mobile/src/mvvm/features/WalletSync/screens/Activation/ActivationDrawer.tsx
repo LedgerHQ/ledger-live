@@ -21,6 +21,7 @@ function View({
   canGoBack,
   navigateToChooseSyncMethod,
   navigateToQrCodeMethod,
+  navigateToWalletSyncActivationProcess,
   onCreateKey,
   onQrCodeScanned,
   goBackToPreviousStep,
@@ -46,6 +47,7 @@ function View({
           <ActivationFlow
             navigateToChooseSyncMethod={navigateToChooseSyncMethod}
             navigateToQrCodeMethod={navigateToQrCodeMethod}
+            navigateToWalletSyncActivationProcess={navigateToWalletSyncActivationProcess}
             qrProcess={qrProcess}
             currentOption={currentOption}
             setOption={setCurrentOption}

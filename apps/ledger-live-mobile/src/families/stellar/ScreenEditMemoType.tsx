@@ -31,12 +31,12 @@ const mapStateToProps = (_state: State, props: NavigationProps) => ({
     : "NO_MEMO",
   items,
   cancelNavigateBack: true,
-  onValueChange: ({ value }: { value: string; label: string }) => {
+  onValueChange: async ({ value }: { value: string; label: string }) => {
     const { navigation, route } = props;
     const { transaction, account } = route.params;
 
     if (value === "NO_MEMO") {
-      const bridge = getAccountBridge(account);
+      const bridge = await getAccountBridge(account);
       popToScreen(navigation, ScreenName.SendSummary, {
         accountId: account.id,
         transaction: bridge.updateTransaction(transaction, {

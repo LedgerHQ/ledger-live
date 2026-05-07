@@ -14,8 +14,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation, Trans } from "~/context/Locale";
 import { Icons } from "@ledgerhq/native-ui";
 import { RecipientRequired } from "@ledgerhq/errors";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import type {
   Transaction as TezosTransaction,
   Baker,
@@ -158,17 +158,15 @@ export default function SelectValidator({ navigation, route }: Props) {
   }
 
   invariant(account, "account is undefined");
+  const bridge = useAccountBridge<TezosTransaction>(account, parentAccount);
   const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
-    () => {
-      const bridge = getAccountBridge(account, parentAccount);
-      return {
-        account,
-        parentAccount,
-        transaction: bridge.updateTransaction(route.params?.transaction, {
-          recipient: "",
-        }),
-      };
-    },
+    () => ({
+      account,
+      parentAccount,
+      transaction: bridge.updateTransaction(route.params?.transaction, {
+        recipient: "",
+      }),
+    }),
   );
   invariant(transaction, "transaction is undefined");
   let error: Error | null = bridgeError || status.errors.recipient;
@@ -179,14 +177,13 @@ export default function SelectValidator({ navigation, route }: Props) {
 
   const onChangeText = useCallback(
     (recipient: string) => {
-      const bridge = getAccountBridge(account, parentAccount);
       setTransaction(
         bridge.updateTransaction(transaction, {
           recipient,
         }),
       );
     },
-    [account, parentAccount, setTransaction, transaction],
+    [bridge, setTransaction, transaction],
   );
   const continueCustom = useCallback(() => {
     setEditingCustom(false);
@@ -210,7 +207,6 @@ export default function SelectValidator({ navigation, route }: Props) {
   }, []);
   const onItemPress = useCallback(
     (baker: Baker) => {
-      const bridge = getAccountBridge(account, parentAccount);
       const transaction = bridge.updateTransaction(route.params?.transaction, {
         recipient: baker.address,
       });
@@ -220,7 +216,7 @@ export default function SelectValidator({ navigation, route }: Props) {
         status,
       });
     },
-    [account, parentAccount, route.params, navigation, status],
+    [bridge, route.params, navigation, status],
   );
   const renderItem: ListRenderItem<Baker> = useCallback(
     ({ item }) => <BakerRow baker={item} onPress={onItemPress} />,
