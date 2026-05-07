@@ -30,6 +30,11 @@ export default function DebugDeviceIntentExecutor() {
         description="Run one echo intent after initialization to inspect the extracted device context."
         onPress={() => navigation.navigate(ScreenName.DebugDeviceIntentExecutorInitialization)}
       />
+      <DebugEntry
+        title="Discovery"
+        description="Run DefaultDeviceDiscoveryService directly to inspect devices and retryable discovery errors."
+        onPress={() => navigation.navigate(ScreenName.DebugDeviceIntentExecutorDiscovery)}
+      />
     </ScrollView>
   );
 }

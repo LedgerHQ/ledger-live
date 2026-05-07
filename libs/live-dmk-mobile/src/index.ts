@@ -2,9 +2,12 @@ import { useDeviceSessionState } from "@ledgerhq/live-dmk-shared";
 
 export { DeviceManagementKitBLETransport } from "./transport/DeviceManagementKitBLETransport";
 export { DeviceManagementKitHIDTransport } from "./transport/DeviceManagementKitHIDTransport";
+<<<<<<< HEAD
 export { DeviceManagementKitHTTPProxyTransport } from "./transport/DeviceManagementKitHTTPProxyTransport";
 export { rnBleTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-ble";
 export { rnHidTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-hid";
+=======
+>>>>>>> e7f8cdb953 (feat(lwm): debug screen for new discovery service)
 export { DefaultDeviceDiscoveryService } from "./connectDevice/discoveryService/DefaultDeviceDiscoveryService";
 export {
   DiscoveryErrors,

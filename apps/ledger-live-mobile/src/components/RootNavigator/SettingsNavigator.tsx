@@ -41,6 +41,7 @@ import DebugStore from "~/screens/Settings/Debug/Debugging/Store";
 import DebugSwap from "~/screens/Settings/Debug/Features/Swap";
 import DebugVideos from "~/screens/Settings/Debug/Features/Videos";
 import TooltipDemo from "~/screens/Settings/Debug/Features/TooltipDemo";
+import DebugDeviceIntentExecutorDiscovery from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/DiscoveryScreen";
 import DebugDeviceIntentExecutorInitialization from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/InitializationScreen";
 import DebugDeviceIntentExecutorOrchestration from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/OrchestrationScreen";
 import Settings from "~/screens/Settings";
@@ -138,7 +139,7 @@ export default function SettingsNavigator() {
           title: "",
           headerStyle: {
             backgroundColor: colors.neutral.c00,
-          }
+          },
         }}
       />
       <Stack.Screen
@@ -314,6 +315,13 @@ export default function SettingsNavigator() {
         component={DebugDeviceIntentExecutorInitialization}
         options={{
           title: "DIE Initialization",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugDeviceIntentExecutorDiscovery}
+        component={DebugDeviceIntentExecutorDiscovery}
+        options={{
+          title: "DIE Discovery",
         }}
       />
       <Stack.Screen
