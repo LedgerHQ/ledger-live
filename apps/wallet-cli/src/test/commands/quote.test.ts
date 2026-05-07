@@ -1,7 +1,8 @@
-import { describe, it, expect, beforeAll, afterAll } from "bun:test";
+import { describe, it, expect, beforeAll, afterAll, afterEach } from "bun:test";
 import { MockServer } from "../helpers/mock-server";
 import { runCli } from "../helpers/cli-runner";
-import { ETH_ADDRESS } from "../helpers/constants";
+import { makeSessionDir } from "../helpers/session-fixture";
+import { ETH_ADDRESS, ETH_DESCRIPTOR } from "../helpers/constants";
 
 /** Minimal `RawQuote` row for `/quote` — enough for `normalizeQuote` + `buildQuoteDetails`. */
 const MOCK_QUOTE_ROW = {
@@ -51,6 +52,11 @@ describe("quote command", () => {
 
   beforeAll(() => server.start());
   afterAll(() => server.stop());
+  let sessionCleanup: (() => void) | undefined;
+  afterEach(() => {
+    sessionCleanup?.();
+    sessionCleanup = undefined;
+  });
 
   it("human output: prints quote summary", async () => {
     const { stdout, exitCode, stderr } = await runCli(
@@ -104,6 +110,33 @@ describe("quote command", () => {
     expect(data.network).toBe("ethereum");
     expect(Array.isArray(data.quotes)).toBe(true);
     expect(data.quotes.length).toBeGreaterThanOrEqual(1);
+    expect(data.quotes[0].provider).toBe("paraswap");
+  });
+
+  it("can resolve source and destination addresses from session labels", async () => {
+    const fixture = makeSessionDir([{ label: "ethereum-1", descriptor: ETH_DESCRIPTOR }]);
+    sessionCleanup = fixture.cleanup;
+    const { stdout, exitCode, stderr } = await runCli(
+      [
+        "quote",
+        "--from",
+        "ethereum",
+        "--to",
+        "bitcoin",
+        "--from-account",
+        "ethereum-1",
+        "--to-account",
+        "ethereum-1",
+        "--amount",
+        "0.1",
+        "--output",
+        "json",
+      ],
+      { WALLET_CLI_MOCK_PORT: String(server.port), ...fixture.env },
+    );
+    expect(exitCode, `stderr: ${stderr}`).toBe(0);
+    const data = JSON.parse(stdout);
+    expect(data.command).toBe("swap quote");
     expect(data.quotes[0].provider).toBe("paraswap");
   });
 });
