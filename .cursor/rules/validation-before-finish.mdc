@@ -3,4 +3,4 @@ description: Before finishing any agentic code changes, run static checks for th
 alwaysApply: true
 ---
 
-See [/docs/dev/validate-before-finishing.md](/docs/dev/validate-before-finishing.md)
+See [/docs/validate-before-finishing.md](/docs/validate-before-finishing.md)
