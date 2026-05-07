@@ -5,7 +5,7 @@ import * as cantonModule from "@ledgerhq/coin-canton/api/index";
 import * as tronModule from "@ledgerhq/coin-tron/api/index";
 import * as evmModule from "@ledgerhq/coin-evm/api/index";
 import * as config from "../../../config";
-import * as networkApi from "./network/network-alpaca";
+import * as networkApi from "./network/network-coin-service";
 import * as cryptoAssets from "@ledgerhq/cryptoassets/currencies";
 
 const mockApiInstance = { mock: "api" };
@@ -38,7 +38,7 @@ jest.mock("@ledgerhq/coin-evm/api/index", () => ({
   createApi: jest.fn(),
 }));
 
-jest.mock("./network/network-alpaca", () => ({
+jest.mock("./network/network-coin-service", () => ({
   getNetworkAlpacaApi: jest.fn(),
 }));
 

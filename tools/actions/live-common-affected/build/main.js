@@ -15580,7 +15580,7 @@ var __webpack_exports__ = {};
                         if (first.startsWith("coin-modules/")) coins.add(first.replace(/^.*coin-/, ""));
                         else if (first.startsWith("live-common/src/families/")) coins.add(first.replace(/^live-common\/src\/families\//, ""));
                         if ("families" === second) return `${second}/${third}`;
-                        if ("live-common/src/bridge/generic-alpaca" === second) return GENERIC_ALPACA_CHAINS;
+                        if ("live-common/src/bridge/generic-coin-framework" === second) return GENERIC_ALPACA_CHAINS;
                         return second || first;
                     }
                 }).flat().filter(Boolean))

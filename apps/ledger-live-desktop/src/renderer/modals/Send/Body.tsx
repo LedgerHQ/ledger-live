@@ -14,8 +14,8 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { isCryptoCurrency } from "@ledgerhq/live-common/currencies/helpers";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import logger from "~/renderer/logger";
@@ -180,6 +180,8 @@ const Body = ({
 
   invariant(account, "account required");
 
+  const bridge = useAccountBridge<Transaction>(account, parentAccount);
+
   // make sure step id is in sync
   useEffect(() => {
     const stepId = params?.startWithWarning ? "warning" : null;
@@ -190,7 +192,6 @@ const Body = ({
   useEffect(() => {
     if (!transaction) return;
 
-    const bridge = getAccountBridge(account, parentAccount);
     let updatedTransaction = transaction;
     let hasChanges = false;
 
@@ -212,11 +213,10 @@ const Body = ({
       setTransaction(updatedTransaction);
     }
   }, [
+    bridge,
     maybeRecipient,
     maybeAmount,
     transaction,
-    account,
-    parentAccount,
     setTransaction,
     onResetMaybeRecipient,
     onResetMaybeAmount,

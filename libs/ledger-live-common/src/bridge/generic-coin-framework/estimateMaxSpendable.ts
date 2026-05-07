@@ -1,6 +1,6 @@
 import { AccountBridge } from "@ledgerhq/types-live";
 import { getMainAccount } from "../../account";
-import { getAlpacaApi } from "./alpaca";
+import { getAlpacaApi } from "./api";
 import { createTransaction } from "./createTransaction";
 import { bigNumberToBigIntDeep, extractBalances, transactionToIntent } from "./utils";
 import BigNumber from "bignumber.js";

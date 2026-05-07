@@ -92,7 +92,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadPlatformAdapter: () => require("../families/evm/platformAdapter").default,
     loadMockBridge: () => require("../families/evm/bridge/mock").default,
     loadValidateAddress: () => require("@ledgerhq/coin-evm/logic/validateAddress").validateAddress,
-    loadSigner: () => require("../bridge/generic-alpaca/families/evm/signer").default,
+    loadSigner: () => require("../bridge/generic-coin-framework/families/evm/signer").default,
     loadIsEditableOperation: () => require("../families/evm/operations").isEditableOperation,
     loadIsStuckOperation: () => require("../families/evm/operations").isStuckOperation,
     loadGetStuckAccountAndOperation: () => require("../families/evm/operations").getStuckAccountAndOperation,
@@ -168,7 +168,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadMockBridge: () => require("../families/solana/bridge/mock").default,
     loadValidateAddress: () =>
       require("@ledgerhq/coin-solana/logic/validateAddress").validateAddress,
-    loadSigner: () => require("../bridge/generic-alpaca/families/solana/signer").default,
+    loadSigner: () => require("../bridge/generic-coin-framework/families/solana/signer").default,
   },
   {
     family: "stacks",
@@ -184,7 +184,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadMockBridge: () => require("../families/stellar/bridge/mock").default,
     loadValidateAddress: () =>
       require("@ledgerhq/coin-stellar/logic/validateAddress").validateAddress,
-    loadSigner: () => require("../bridge/generic-alpaca/families/stellar/signer").default,
+    loadSigner: () => require("../bridge/generic-coin-framework/families/stellar/signer").default,
   },
   {
     family: "sui",
@@ -201,7 +201,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadGetVotesCount: () => require("../families/tezos/getVotesCount").getVotesCount,
     loadValidateAddress: () =>
       require("@ledgerhq/coin-tezos/logic/validateAddress").validateAddress,
-    loadSigner: () => require("../bridge/generic-alpaca/families/tezos/signer").default,
+    loadSigner: () => require("../bridge/generic-coin-framework/families/tezos/signer").default,
   },
   {
     family: "ton",
@@ -237,6 +237,6 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadMockBridge: () => require("../families/xrp/bridge/mock").default,
     loadValidateAddress: () =>
       require("@ledgerhq/coin-xrp/logic/validateAddress").validateAddress,
-    loadSigner: () => require("../bridge/generic-alpaca/families/xrp/signer").default,
+    loadSigner: () => require("../bridge/generic-coin-framework/families/xrp/signer").default,
   },
 ];

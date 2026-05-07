@@ -2,9 +2,8 @@ import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { useCallback, useMemo } from "react";
 import { useTranslation, Trans } from "react-i18next";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import type { AccountBridge } from "@ledgerhq/types-live";
-import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-alpaca/types";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 import {
   mapDelegations,
   getUnbondingPeriodDays,
@@ -33,7 +32,7 @@ export default function StepAmount({
   invariant(account && transaction, "account and transaction required");
   const unit = useAccountUnit(account);
 
-  const bridge = getAccountBridge(account, parentAccount) as AccountBridge<GenericTransaction>;
+  const bridge = useAccountBridge<GenericTransaction>(account, parentAccount);
 
   // Rely on the authoritative mapping (same as the delegation table) to keep the validator
   // metadata (name, icon) consistent across the whole flow.

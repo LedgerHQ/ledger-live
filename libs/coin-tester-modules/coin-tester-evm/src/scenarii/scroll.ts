@@ -11,7 +11,7 @@ import { killAnvil, spawnAnvil } from "../anvil";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { USDC_ON_SCROLL } from "../tokenFixtures";
 import { buildSigner } from "../signer";
-import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-alpaca/types";
+import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 
 type ScrollScenarioTransaction = ScenarioTransaction<GenericTransaction, Account>;
 

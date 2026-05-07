@@ -1,6 +1,6 @@
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { Account } from "@ledgerhq/types-live";
-import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-alpaca/types";
+import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 import type { BridgeStrategy } from "@ledgerhq/coin-tester/types";
 import {
   RECIPIENT,
@@ -73,7 +73,7 @@ interface StakingResourcesShape {
   pendingRewardsBalance: BigNumber;
 }
 
-/** Extract stakingResources set by the generic-alpaca bridge (not typed on Account). */
+/** Extract stakingResources set by the generic-coin-framework bridge (not typed on Account). */
 function getStakingResources(account: Account): StakingResourcesShape | undefined {
   const raw = (account as Account & { stakingResources?: StakingResourcesShape }).stakingResources;
   return raw;

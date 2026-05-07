@@ -140,7 +140,7 @@ const StepReceiveFunds = ({
     try {
       if (!device) throw new DisconnectedDevice();
       await firstValueFrom(
-        getAccountBridge(mainAccount).receive(mainAccount, {
+        (await getAccountBridge(mainAccount)).receive(mainAccount, {
           deviceId: device.deviceId,
           verify: true,
         }),

@@ -119,14 +119,14 @@ class StepImport extends PureComponent<
     }
   };
 
-  startScanAccountsDevice() {
+  async startScanAccountsDevice() {
     this.unsub();
     try {
       const { currency, device, setScanStatus, setScannedAccounts, blacklistedTokenIds } =
         this.props;
       if (!currency || !device) throw new UnresponsiveDeviceError();
       const mainCurrency = currency.type === "TokenCurrency" ? currency.parentCurrency : currency;
-      const bridge = getCurrencyBridge(mainCurrency);
+      const bridge = await getCurrencyBridge(mainCurrency);
 
       // will be set to false if an existing account is found
       let onlyNewAccounts = true;

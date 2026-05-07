@@ -1,6 +1,6 @@
 import { AccountBridge } from "@ledgerhq/types-live";
 import { patchOperationWithHash } from "@ledgerhq/ledger-wallet-framework/operation";
-import { getAlpacaApi } from "./alpaca";
+import { getAlpacaApi } from "./api";
 import { GenericTransaction } from "./types";
 
 export const genericBroadcast: (

@@ -1,9 +1,9 @@
 import BigNumber from "bignumber.js";
 import { genericGetTransactionStatus } from "../getTransactionStatus";
-import { getAlpacaApi } from "../alpaca";
+import { getAlpacaApi } from "../api";
 import * as utils from "../utils";
 
-jest.mock("../alpaca", () => ({
+jest.mock("../api", () => ({
   getAlpacaApi: jest.fn(),
 }));
 

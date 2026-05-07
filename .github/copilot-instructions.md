@@ -68,14 +68,14 @@ Package name: `@ledgerhq/coin-<family>`
 
 Every coin module must follow this layout:
 
-| Directory / file | Purpose |
-|---|---|
-| `api/` | Alpaca API surface — implements `AlpacaApi` from `@ledgerhq/coin-framework/api/types`, types from `@ledgerhq/types-live` are not allowed |
-| `logic/` | Core blockchain logic, agnostic of Bridge or API interfaces; only depends on `network/` and external libs, not required if only implementing Alpaca API |
-| `network/` | Communication with explorer / indexer / node |
-| `types/` | Model definitions for the coin-module, not related to network |
-| `bridge/` (legacy) | Bridge implementation (`CurrencyBridge` + `AccountBridge`), relates to types in  `@ledgerhq/types-live` package |
-| `signer/` (legacy) | Hardware wallet signer interface and device address resolver |
+| Directory / file   | Purpose                                                                                                                                                 |
+|--------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `api/`             | Coin framework API surface — implements `AlpacaApi` from `@ledgerhq/coin-framework/api/types`, types from `@ledgerhq/types-live` are not allowed        |
+| `logic/`           | Core blockchain logic, agnostic of Bridge or API interfaces; only depends on `network/` and external libs, not required if only implementing Alpaca API |
+| `network/`         | Communication with explorer / indexer / node                                                                                                            |
+| `types/`           | Model definitions for the coin-module, not related to network                                                                                           |
+| `bridge/` (legacy) | Bridge implementation (`CurrencyBridge` + `AccountBridge`), relates to types in  `@ledgerhq/types-live` package                                         |
+| `signer/` (legacy) | Hardware wallet signer interface and device address resolver                                                                                            |
 
 - Unit tests: `*.unit.test.ts`, co-located with source.
 - Integration tests without network calls: `*.test.ts`.
@@ -87,7 +87,7 @@ Prefer native dependencies from the blockchain foundation/ecosystem and well-est
 
 ### Two integration paths
 
-1. **Alpaca path** (preferred)— The coin module exports `createApi(config, currencyId)` implementing `AlpacaApi`. Families listed in the `alpacaized` map in `libs/ledger-live-common/src/bridge/impl.ts`, use `generic-alpaca` to build bridges from the API. Interface defined in `@ledgerhq/coin-framework/api/types.ts`.
+1. **Alpaca path** (preferred)— The coin module exports `createApi(config, currencyId)` implementing `AlpacaApi`. Families listed in the `alpacaized` map in `libs/ledger-live-common/src/bridge/impl.ts`, use `generic-coin-framework` to build bridges from the API. Interface defined in `@ledgerhq/coin-framework/api/types.ts`.
 
 Methods that are not applicable may raise a "not supported"/"not applicable" error.
 

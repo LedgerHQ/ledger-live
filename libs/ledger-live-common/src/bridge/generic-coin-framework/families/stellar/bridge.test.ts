@@ -34,7 +34,7 @@ beforeAll(() => {
   setCryptoAssetsStore(mockStore);
 });
 
-describe("generic-alpaca stellar token", () => {
+describe("generic-coin-framework stellar token", () => {
   describe("stellar token helpers", () => {
     it("computes the token of a known asset", async () => {
       await expect(
