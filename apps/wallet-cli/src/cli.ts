@@ -11,6 +11,13 @@ import "../.bunli/commands.gen";
 import bunliConfig from "../bunli.config";
 import { CliProcessExitError } from "./cli-process-exit-error";
 import { disposeWalletCliDmkTransportFully } from "./device/register-dmk-transport";
+import AccountGroup from "./commands/account/index";
+import SessionGroup from "./commands/session/index";
+import BalancesCommand from "./commands/balances";
+import OperationsCommand from "./commands/operations";
+import ReceiveCommand from "./commands/receive";
+import SendCommand from "./commands/send";
+import SwapGroup from "./commands/swap/index";
 
 emitTestingBuildBannerIfNeeded();
 
@@ -23,6 +30,13 @@ emitTestingBuildBannerIfNeeded();
  */
 export async function runMain(argv: string[] = process.argv.slice(2)): Promise<number> {
   const cli = await createCLI(bunliConfig as unknown as Parameters<typeof createCLI>[0]);
+  cli.command(AccountGroup);
+  cli.command(SessionGroup);
+  cli.command(BalancesCommand);
+  cli.command(OperationsCommand);
+  cli.command(ReceiveCommand);
+  cli.command(SendCommand);
+  cli.command(SwapGroup);
   const code = await cli.run(argv, { noExit: true });
   return code ?? 0;
 }

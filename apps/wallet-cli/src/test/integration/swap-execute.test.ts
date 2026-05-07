@@ -37,6 +37,7 @@ mock.module(pipelineUrl, () => ({
 }));
 
 const baseExecuteArgs = [
+  "swap",
   "execute",
   "--provider",
   "changelly",
@@ -58,6 +59,7 @@ describe("swap execute command", () => {
   it("json: exits 1 when --to-account is missing", async () => {
     const { exitCode, stderr } = await runCli(
       [
+        "swap",
         "execute",
         "--provider",
         "changelly",
