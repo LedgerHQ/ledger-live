@@ -8725,7 +8725,9 @@
         "selectLabel": "Send from"
       },
       "summary": {
-        "proofGenerationWarning": "Aleo transaction requires proof generation. This may take some time."
+        "proofGenerationWarning": "Aleo transaction requires proof generation. This may take some time.",
+        "recordsUsed": "Records used",
+        "signingTime": "Signing time"
       },
       "mandatoryPrivateSync": {
         "title": "Syncing your private balance ({{percentage}}%)",
