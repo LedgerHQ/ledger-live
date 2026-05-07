@@ -25,6 +25,7 @@ import {
   RecoverRestoreFlowRoute,
   PostOnboardingRoute,
   LedgerSyncRoute,
+  ProductTourRoute,
   DefaultRoute,
 } from "./types";
 
@@ -296,6 +297,13 @@ export function createRoute(parsed: ParsedDeeplink): DeeplinkRoute {
     case "ledgersync": {
       const route: LedgerSyncRoute = {
         type: "ledgersync",
+      };
+      return route;
+    }
+
+    case "product-tour": {
+      const route: ProductTourRoute = {
+        type: "product-tour",
       };
       return route;
     }

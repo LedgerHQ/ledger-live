@@ -330,6 +330,15 @@ describe("parseDeepLink", () => {
       });
     });
 
+    it("creates product tour route", () => {
+      const parsed = parseDeepLink("ledgerlive://product-tour");
+      const route = createRoute(parsed);
+
+      expect(route).toEqual({
+        type: "product-tour",
+      });
+    });
+
     it("creates default route for unknown URLs", () => {
       const parsed = parseDeepLink("ledgerwallet://unknown-route");
       const route = createRoute(parsed);

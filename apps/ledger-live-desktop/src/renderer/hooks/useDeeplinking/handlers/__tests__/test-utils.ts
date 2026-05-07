@@ -5,6 +5,7 @@ export const createMockContext = (
 ): DeeplinkHandlerContext => ({
   dispatch: jest.fn(),
   accounts: [],
+  hasCompletedOnboarding: true,
   navigate: jest.fn(),
   openAddAccountFlow: jest.fn(),
   openAssetFlow: jest.fn(),
@@ -15,5 +16,6 @@ export const createMockContext = (
   currentSearch: "",
   currentLocationState: undefined,
   accountsPath: "/accounts",
+  isProductTourEnabled: true,
   ...overrides,
 });
