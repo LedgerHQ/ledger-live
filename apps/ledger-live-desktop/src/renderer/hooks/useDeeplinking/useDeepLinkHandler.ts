@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router";
 import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 
 import { accountsSelector } from "~/renderer/reducers/accounts";
+import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useNavigateToPostOnboardingHubCallback } from "~/renderer/components/PostOnboardingHub/logic/useNavigateToPostOnboardingHubCallback";
 import { usePostOnboardingDeeplinkHandler } from "@ledgerhq/live-common/postOnboarding/hooks/index";
@@ -21,6 +22,7 @@ import { getAccountsSidebarPath } from "LLD/components/SideBar/utils";
 export function useDeepLinkHandler() {
   const dispatch = useDispatch();
   const accounts = useSelector(accountsSelector);
+  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const location = useLocation();
   const routerNavigate = useNavigate();
 
@@ -39,6 +41,8 @@ export function useDeepLinkHandler() {
   const openSendFlow = useOpenSendFlow();
   const recoverFF = useFeature("protectServicesDesktop");
   const recoverAppId = recoverFF?.params?.protectId;
+  const lwdProductTour = useFeature("lwdProductTour");
+  const isProductTourEnabled = lwdProductTour?.enabled === true;
   const { shouldDisplayAssetSection } = useWalletFeaturesConfig("desktop");
   const accountsPath = getAccountsSidebarPath(shouldDisplayAssetSection);
 
@@ -64,6 +68,7 @@ export function useDeepLinkHandler() {
     () => ({
       dispatch,
       accounts,
+      hasCompletedOnboarding,
       navigate,
       openAddAccountFlow,
       openAssetFlow,
@@ -75,10 +80,12 @@ export function useDeepLinkHandler() {
       currentLocationState: location.state,
       accountsPath,
       recoverAppId,
+      isProductTourEnabled,
     }),
     [
       dispatch,
       accounts,
+      hasCompletedOnboarding,
       navigate,
       openAddAccountFlow,
       openAssetFlow,
@@ -90,6 +97,7 @@ export function useDeepLinkHandler() {
       location.state,
       accountsPath,
       recoverAppId,
+      isProductTourEnabled,
     ],
   );
 
