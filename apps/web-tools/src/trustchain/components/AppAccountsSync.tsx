@@ -24,7 +24,7 @@ import walletsync, {
 } from "@ledgerhq/live-wallet/walletsync/index";
 import { getAccountBridge, getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
-import { Account, BridgeCacheSystem } from "@ledgerhq/types-live";
+import { Account, BridgeCacheSystem, ScanAccountEvent } from "@ledgerhq/types-live";
 import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -302,7 +302,7 @@ function HeadlessAddAccounts({
   const [disabled, setDisabled] = useState(false);
 
   const onSubmit = useCallback(
-    (e: any) => {
+    async (e: any) => {
       e.preventDefault();
       if (!e.target) return;
       const data = new FormData(e.target);
@@ -310,7 +310,7 @@ function HeadlessAddAccounts({
       if (!currencyId) return;
       setDisabled(true);
       const currency = getCryptoCurrencyById(String(currencyId));
-      const currencyBridge = getCurrencyBridge(currency);
+      const currencyBridge = await getCurrencyBridge(currency);
       const sub = appForCurrency(deviceId, currency, () =>
         concat(
           from(bridgeCache.prepareCurrency(currency)).pipe(ignoreElements()),
@@ -324,7 +324,7 @@ function HeadlessAddAccounts({
           }),
         ),
       ).subscribe({
-        next: event => {
+        next: (event: ScanAccountEvent) => {
           if (event.type === "discovered") {
             addAccounts([event.account]);
           }
