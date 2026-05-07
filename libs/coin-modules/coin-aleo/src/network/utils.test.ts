@@ -331,6 +331,59 @@ describe("network/utils", () => {
           order: "desc",
         });
       });
+
+      it("should skip batcher outer call transitions that have transfer in function_id but empty addresses", async () => {
+        const minBlockHeight = 100;
+        const commonTxId = "at1batcher";
+
+        // batcher outer call: function_id contains "transfer" but no account involvement
+        // testnet example: at1lqugdt847uwnfem2xhzwq6ewrnd6ysjv2gumvglytskutxj3kcpsmc3rrf
+        const batcherOuterCall = getMockedPublicTransaction({
+          block_number: 150,
+          transaction_id: commonTxId,
+          function_id: "transfer_private_to_public_8",
+          sender_address: "",
+          recipient_address: "",
+          amount: 0,
+        });
+
+        // inner transition for the same tx — carries the real amount and addresses
+        const realTransfer = getMockedPublicTransaction({
+          block_number: 150,
+          transaction_id: commonTxId,
+          function_id: "transfer_private_to_public",
+          sender_address: "",
+          recipient_address: "aleo1recipient",
+          amount: 1000000,
+        });
+
+        // standalone NONE operation with empty addresses — must NOT be filtered
+        const initializeTx = getMockedPublicTransaction({
+          block_number: 150,
+          transaction_id: "at1initialize",
+          function_id: "initialize",
+          sender_address: "",
+          recipient_address: "",
+          amount: 0,
+        });
+
+        jest.mocked(apiClient.getAccountPublicTransactions).mockResolvedValueOnce({
+          address: mockAddress,
+          transactions: [batcherOuterCall, realTransfer, initializeTx],
+        });
+
+        const result = await fetchAccountTransactionsFromHeight({
+          currency: mockCurrency,
+          address: mockAddress,
+          fetchAllPages: true,
+          minBlockHeight,
+        });
+
+        expect(result.transactions).toHaveLength(2);
+        expect(result.transactions).toContainEqual(realTransfer);
+        expect(result.transactions).toContainEqual(initializeTx);
+        expect(result.transactions).not.toContainEqual(batcherOuterCall);
+      });
     });
   });
 
