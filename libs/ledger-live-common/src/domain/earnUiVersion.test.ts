@@ -15,15 +15,15 @@ describe("normalizeEarnUiVersionOrNull", () => {
   });
 
   it.each([
-    [null, null],
-    [undefined, null],
-    ["v0", null],
-    ["0", null],
-    [0, null],
-    [-1, null],
-    [1.5, null],
-    ["v1.5", null],
-    ["garbage", null],
+    [null],
+    [undefined],
+    ["v0"],
+    ["0"],
+    [0],
+    [-1],
+    [1.5],
+    ["v1.5"],
+    ["garbage"],
   ])("returns null for invalid value %p", raw => {
     expect(normalizeEarnUiVersionOrNull(raw)).toBeNull();
   });
