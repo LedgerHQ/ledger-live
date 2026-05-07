@@ -37,4 +37,15 @@ export default defineConfig({
       },
     },
   ],
+  tools: {
+    rspack: {
+      module: {
+        parser: {
+          javascript: {
+            dynamicImportMode: "eager",
+          },
+        },
+      },
+    },
+  },
 });
