@@ -1,0 +1,40 @@
+name: "Publish wallet-cli to JFrog"
+description: "Build, package and publish wallet-cli npm packages to JFrog"
+
+inputs:
+  registry:
+    description: "JFrog npm registry path without protocol"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Build wallet-cli
+      shell: bash
+      run: pnpm exec nx run-many --projects=@ledgerhq/wallet-cli --targets=generate,build
+
+    - name: Prepare and validate wallet-cli npm packages
+      shell: bash
+      run: |
+        pnpm --filter "@ledgerhq/wallet-cli" prepare:npm
+        pnpm --filter "@ledgerhq/wallet-cli" pack:check
+
+    - name: Login to internal JFrog registry
+      id: jfrog-login
+      uses: LedgerHQ/actions-security/actions/jfrog-login@actions/jfrog-login-1
+
+    - name: Setup npm config for JFrog
+      id: jfrog-npm
+      uses: LedgerHQ/actions-security/actions/jfrog-npm@actions/jfrog-npm-0.3
+      with:
+        token: ${{ steps.jfrog-login.outputs.oidc-token }}
+        registry: ${{ inputs.registry }}
+
+    - name: Publish wallet-cli packages to JFrog
+      shell: bash
+      run: |
+        npm publish apps/wallet-cli/npm/darwin-arm64/.npm-package --access public
+        npm publish apps/wallet-cli/npm/linux-arm64/.npm-package --access public
+        npm publish apps/wallet-cli/npm/linux-x64/.npm-package --access public
+        npm publish apps/wallet-cli/npm/windows-x64/.npm-package --access public
+        npm publish apps/wallet-cli/.npm-package --access public

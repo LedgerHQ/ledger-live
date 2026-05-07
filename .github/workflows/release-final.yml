@@ -35,10 +35,12 @@ jobs:
     runs-on: ubuntu-24.04
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
+      NPM_REGISTRY: jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-prod-public
     permissions:
       contents: write
       pull-requests: write
       packages: write
+      id-token: write
     steps:
       - name: generate token
         id: generate-token
@@ -72,10 +74,18 @@ jobs:
           ruby-version: 3.3.0
 
       - name: install dependencies
-        run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli"
+        run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli" -F "@ledgerhq/wallet-cli..." -F "@ledgerhq/wallet-cli-*"
 
       - name: build libs
         run: pnpm exec nx run-many -t build --projects=tag:scope:libs
+
+      - name: build wallet-cli
+        run: pnpm exec nx run-many --projects=@ledgerhq/wallet-cli --targets=generate,build
+
+      - name: prepare wallet-cli npm packages
+        run: |
+          pnpm --filter "@ledgerhq/wallet-cli" prepare:npm
+          pnpm --filter "@ledgerhq/wallet-cli" pack:check
 
       - name: authenticate with npm
         uses: actions/setup-node@v4
@@ -86,6 +96,28 @@ jobs:
         run: pnpm changeset publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
+
+      - name: Login to internal JFrog registry
+        id: jfrog-login
+        uses: LedgerHQ/actions-security/actions/jfrog-login@actions/jfrog-login-1
+
+      - name: Setup npm config for JFrog
+        env:
+          NPM_REGISTRY_TOKEN: ${{ steps.jfrog-login.outputs.oidc-token }}
+        run: |
+          cat << EOF | tee .npmrc
+          enable-pre-post-scripts=true
+          registry=https://${NPM_REGISTRY}/
+          //${NPM_REGISTRY}/:_authToken=${NPM_REGISTRY_TOKEN}
+          EOF
+
+      - name: publish wallet-cli with JFrog
+        run: |
+          npm publish apps/wallet-cli/npm/darwin-arm64/.npm-package --access public
+          npm publish apps/wallet-cli/npm/linux-arm64/.npm-package --access public
+          npm publish apps/wallet-cli/npm/linux-x64/.npm-package --access public
+          npm publish apps/wallet-cli/npm/windows-x64/.npm-package --access public
+          npm publish apps/wallet-cli/.npm-package --access public
 
       - name: check if desktop versions are different
         if: ${{ inputs.caller == 'release-prepare' || inputs.caller == 'release-prepare-hotfix' }}

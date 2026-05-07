@@ -5,10 +5,14 @@ on:
     - cron: "0 2 * * TUE-SAT" # At 02:00 on Tuesday, Wednesday, Thursday, Friday and Saturday (UTC)
   workflow_dispatch:
 
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   nightly-release:
     name: Nightly Release
-    runs-on: ubuntu-24.04
+    runs-on: ledger-live-linux-8CPU-32RAM
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
@@ -25,7 +29,7 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
-          ref: develop
+          ref: support/wallet-cli-npm
           fetch-depth: 1
           token: ${{ steps.generate-token.outputs.token }}
 
@@ -51,7 +55,7 @@ jobs:
           ruby-version: 3.3.0
 
       - name: install dependencies
-        run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli"
+        run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli" -F "@ledgerhq/wallet-cli..." -F "@ledgerhq/wallet-cli-*"
 
       - name: build libs
         run: pnpm exec nx run-many -t build --projects=tag:scope:libs
@@ -70,6 +74,11 @@ jobs:
         run: pnpm changeset publish --tag nightly --no-git-tag
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
+
+      - name: publish wallet-cli with JFrog
+        uses: LedgerHQ/ledger-live/tools/actions/composites/publish-wallet-cli-jfrog@support/wallet-cli-npm
+        with:
+          registry: jfrog.ledgerlabs.net/artifactory/api/npm/ledgerlive-npm-sandbox-green
 
       - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
         id: post-desktop-version

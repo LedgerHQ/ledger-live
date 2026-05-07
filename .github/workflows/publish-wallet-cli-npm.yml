@@ -1,0 +1,45 @@
+name: "[Wallet CLI] - Publish npm - Manual"
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "the ref (branch or sha) to publish from"
+        required: false
+        default: main
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish-wallet-cli-npm:
+    name: Publish wallet-cli npm packages
+    runs-on: ledger-live-4xlarge
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: setup-caches
+        with:
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          skip-turbo-cache: "true"
+          cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+          cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+          nx-key: ${{ secrets.NX_KEY }}
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: Install dependencies
+        run: pnpm i --filter "@ledgerhq/wallet-cli..." --filter "ledger-live"
+
+      - name: Publish wallet-cli packages to JFrog
+        uses: LedgerHQ/ledger-live/tools/actions/composites/publish-wallet-cli-jfrog@develop
+        with:
+          registry: jfrog.ledgerlabs.net/artifactory/api/npm/ledgerlive-npm-sandbox-green
