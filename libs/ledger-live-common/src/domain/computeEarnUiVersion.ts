@@ -20,7 +20,7 @@ export type ComputeEarnUiVersionInput = {
 
 /**
  * Computes the final Earn UI version from Wallet40 toggles and ptxEarnUi value.
- * Precedence: simulator (v4) > upselling (v3) > baseUiVersion (normalized, fallback to v1).
+ * Precedence: simulator (v4) > upselling (v3) > baseUiVersion (normalized, fallback to v2).
  */
 export function computeEarnUiVersion({
   baseUiVersion,

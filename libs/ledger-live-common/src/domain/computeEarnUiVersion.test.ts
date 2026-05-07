@@ -16,9 +16,9 @@ describe("computeEarnUiVersion", () => {
     [{ baseUiVersion: "v2" }, "v2"],
     [{ baseUiVersion: "2" }, "v2"],
     [{ baseUiVersion: 3 }, "v3"],
-    [{ baseUiVersion: null }, "v1"],
-    [{ baseUiVersion: undefined }, "v1"],
-    [{ baseUiVersion: "garbage" }, "v1"],
+    [{ baseUiVersion: null }, "v2"],
+    [{ baseUiVersion: undefined }, "v2"],
+    [{ baseUiVersion: "garbage" }, "v2"],
   ])("normalizes baseUiVersion for %p => %s", (input, expected) => {
     expect(computeEarnUiVersion(input)).toBe(expected);
   });
