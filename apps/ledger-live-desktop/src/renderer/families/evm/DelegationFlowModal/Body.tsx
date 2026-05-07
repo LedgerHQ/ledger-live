@@ -104,7 +104,7 @@ const Body = ({ onClose, t, stepId, device, openModal, onChangeStepId, params }:
     const baseTransaction = bridge.createTransaction(account);
     // NB: `mode` is intentionally not set here. It is set later together with `valAddress`
     // (see StepDelegation → updateValidator) once the user has picked a validator.
-    // Setting `mode: "delegate"` while `valAddress` is still empty makes the generic-alpaca
+    // Setting `mode: "delegate"` while `valAddress` is still empty makes the generic-coin-framework
     // bridge build a staking intent without a `mode`, which throws
     // "Invalid staking operation: undefined" during the first status computation.
     const transaction = bridge.updateTransaction(baseTransaction, {

@@ -1,7 +1,7 @@
-import { getAlpacaApi } from "./alpaca";
+import { getAlpacaApi } from "./api";
 import { genericBroadcast } from "./broadcast";
 
-jest.mock("./alpaca", () => ({
+jest.mock("./api", () => ({
   getAlpacaApi: jest.fn(),
 }));
 

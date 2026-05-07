@@ -269,7 +269,7 @@ function getParsedInstructions(tx: ParsedTransactionWithMeta): ParsedIx[] {
 /**
  * Detects staking program instructions and returns a typed operation.
  *
- * Value semantics (accounting for the generic-alpaca adapter which adds fee
+ * Value semantics (accounting for the generic-coin-framework adapter which adds fee
  * for DELEGATE and UNDELEGATE but not WITHDRAW_UNBONDED):
  * - DELEGATE / UNDELEGATE: value = 0  (adapter adds fee → final = fee)
  * - WITHDRAW_UNBONDED:    value = fee (adapter keeps as-is → final = fee)
@@ -353,7 +353,7 @@ function makeDelegateResult(
  * operationIndex starts at 1 (0 is reserved for the native operation).
  *
  * Token operations are marked `internal: true` in their details so that the
- * generic-alpaca bridge (`getAccountShape`) excludes them from the parent
+ * generic-coin-framework bridge (`getAccountShape`) excludes them from the parent
  * account's operations list — they only surface as sub-account operations.
  */
 function parseTokenOperations(

@@ -1,7 +1,7 @@
 import { Observable } from "rxjs";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { Account, DeviceId, SignOperationEvent, AccountBridge } from "@ledgerhq/types-live";
-import { getAlpacaApi } from "./alpaca";
+import { getAlpacaApi } from "./api";
 import { buildOptimisticOperation } from "./utils";
 import { Result } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { log } from "@ledgerhq/logs";

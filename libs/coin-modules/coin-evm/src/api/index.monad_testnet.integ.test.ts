@@ -32,7 +32,7 @@ describe("EVM Api (Monad Testnet)", () => {
      * `txlistinternal` endpoint when an address has no internal transactions, instead
      * of the standard `{"result": []}`. This used to crash with
      * "Cannot read properties of null (reading 'map')".
-     * @see https://alpaca.api.ledger.com/v1/monad_testnet/account/0x152b9c98dfdfb79c3708f0179bc63fdcef455465/operations?minHeight=0&order=asc&limit=50
+     * @see https://coin-service.api.ledger.com/v1/monad_testnet/account/0x152b9c98dfdfb79c3708f0179bc63fdcef455465/operations?minHeight=0&order=asc&limit=50
      */
     it("returns operations without crashing when explorer returns null for internal transactions", async () => {
       const { items } = await module.listOperations("0x152b9c98dfdfb79c3708f0179bc63fdcef455465", {

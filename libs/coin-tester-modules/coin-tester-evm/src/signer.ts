@@ -1,5 +1,5 @@
 import { EvmAddress } from "@ledgerhq/coin-evm/types/signer";
-import { Signer } from "@ledgerhq/live-common/bridge/generic-alpaca/families/evm/signer";
+import { Signer } from "@ledgerhq/live-common/bridge/generic-coin-framework/families/evm/signer";
 import { HDNodeWallet, Transaction } from "ethers";
 import { generateMnemonic, mnemonicToSeed } from "bip39";
 

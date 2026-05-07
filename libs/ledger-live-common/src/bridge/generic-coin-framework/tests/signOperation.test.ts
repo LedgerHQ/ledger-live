@@ -2,10 +2,10 @@ import { lastValueFrom } from "rxjs";
 import { toArray } from "rxjs/operators";
 import { genericSignOperation } from "../signOperation";
 import { FeeNotLoaded } from "@ledgerhq/errors";
-import { getAlpacaApi } from "../alpaca";
+import { getAlpacaApi } from "../api";
 import { buildOptimisticOperation, transactionToIntent } from "../utils";
 
-jest.mock("../alpaca", () => ({
+jest.mock("../api", () => ({
   getAlpacaApi: jest.fn(),
 }));
 
