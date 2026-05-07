@@ -481,8 +481,7 @@ export class SwapPage extends WebViewAppPage {
       .poll(
         async () => {
           this._webviewPage = undefined;
-          await this.getWebView(5_000);
-          const webview = await this.getWebView();
+          const webview = await this.getWebView(5_000);
           const isFromSelectorEnabled = await webview
             .getByTestId(this.fromAccountCoinSelector)
             .isEnabled();
