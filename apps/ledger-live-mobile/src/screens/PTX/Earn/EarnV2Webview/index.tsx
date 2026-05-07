@@ -41,7 +41,7 @@ export const EarnV2Webview = ({
   const { shouldDisplayEarnUpselling, shouldDisplayEarnSimulator } =
     useWalletFeaturesConfig("mobile");
 
-  const earnUiVersion = useFeature("ptxEarnUi")?.params?.value ?? "v1";
+  const earnUiVersion = useFeature("ptxEarnUi")?.params?.value ?? "v2";
 
   const computedUiVersion = computeEarnUiVersion({
     baseUiVersion: earnUiVersion,
