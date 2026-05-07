@@ -9,7 +9,7 @@ import type {
 import { Trans } from "~/context/Locale";
 import type { Transaction as KaspaTransaction } from "@ledgerhq/live-common/families/kaspa/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useFeesStrategy } from "@ledgerhq/live-common/families/kaspa/react";
 import { CompositeScreenProps } from "@react-navigation/native";
 import BigNumber from "bignumber.js";
@@ -45,6 +45,7 @@ export default function KaspaSendRowsFee({
   ...props
 }: Props) {
   invariant(account.type === "Account", "account not found");
+  const bridge = useAccountBridge<KaspaTransaction>(account, parentAccount);
   const defaultStrategies = useFeesStrategy(account, transaction as KaspaTransaction);
   const [sompiPerByte, setSompiPerByte] = useState<BigNumber | null>(null);
   const strategies = useMemo(
@@ -64,14 +65,13 @@ export default function KaspaSendRowsFee({
   );
   const onFeesSelected = useCallback(
     ({ label }: SelectFeeStrategy) => {
-      const bridge = getAccountBridge(account, parentAccount);
       setTransaction(
-        bridge.updateTransaction(transaction, {
-          feesStrategy: label,
+        bridge.updateTransaction(transaction as KaspaTransaction, {
+          feesStrategy: label as KaspaTransaction["feesStrategy"],
         }),
       );
     },
-    [setTransaction, account, parentAccount, transaction],
+    [setTransaction, bridge, transaction],
   );
   const openCustomFees = useCallback(() => {
     navigation.navigate(ScreenName.KaspaEditCustomFees, {

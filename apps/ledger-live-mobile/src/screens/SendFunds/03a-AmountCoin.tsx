@@ -79,7 +79,7 @@ function SendAmountCoinContent({ navigation, route, account, parentAccount }: Co
         parentAccount,
         transaction: debouncedTransaction,
       })
-      .then(estimate => {
+      .then((estimate: BigNumber) => {
         if (cancelled) return;
         setMaxSpendable(estimate);
       });
@@ -90,7 +90,8 @@ function SendAmountCoinContent({ navigation, route, account, parentAccount }: Co
   }, [account, parentAccount, debouncedTransaction, bridge]);
   const onChange = useCallback(
     (amount: BigNumber) => {
-      if (!amount.isNaN() && transaction) {
+      if (!amount.isNaN()) {
+        if (!account || !transaction) return;
         setTransaction(
           bridge.updateTransaction(transaction, {
             amount,
@@ -98,7 +99,7 @@ function SendAmountCoinContent({ navigation, route, account, parentAccount }: Co
         );
       }
     },
-    [setTransaction, bridge, transaction],
+    [setTransaction, bridge, account, transaction],
   );
   const toggleUseAllAmount = useCallback(() => {
     if (!transaction) return;

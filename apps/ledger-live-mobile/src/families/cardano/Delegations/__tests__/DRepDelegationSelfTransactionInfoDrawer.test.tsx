@@ -89,7 +89,7 @@ describe("DRepDelegationSelfTransactionInfoDrawer", () => {
     const continueButton = screen.getByTestId("continue-button");
     fireEvent.press(continueButton);
 
-    expect(getAccountBridge).toHaveBeenCalledWith(mockAccount);
+    expect(getAccountBridge).toHaveBeenCalledWith(mockAccount, undefined);
     expect(mockBridge.createTransaction).toHaveBeenCalledWith(mockAccount);
     expect(mockBridge.updateTransaction).toHaveBeenCalledWith(expect.anything(), {
       recipient: mockAccount.freshAddress,

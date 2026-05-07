@@ -1,4 +1,5 @@
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import type { Transaction as SolanaTransaction } from "@ledgerhq/live-common/families/solana/types";
 import { useTheme } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import i18next from "i18next";
@@ -28,9 +29,9 @@ function SolanaEditMemo({ navigation, route }: NavigationProps) {
 
   const [memo, setMemo] = useState(modelSupported ? modelSupported.uiState.memo : undefined);
   const account = route.params.account;
+  const bridge = useAccountBridge<SolanaTransaction>(account);
 
   const onValidateText = useCallback(() => {
-    const bridge = getAccountBridge(account);
     const { transaction } = route.params;
     const nextTx = bridge.updateTransaction(transaction, {
       model: {
@@ -39,14 +40,14 @@ function SolanaEditMemo({ navigation, route }: NavigationProps) {
           ...transaction.model.uiState,
           memo,
         },
-      },
+      } as SolanaTransaction["model"],
     });
 
     popToScreen(navigation, ScreenName.SendSummary, {
       accountId: account.id,
       transaction: nextTx,
     });
-  }, [navigation, route.params, account, memo]);
+  }, [navigation, route.params, account, bridge, memo]);
 
   if (!modelSupported) {
     return null;

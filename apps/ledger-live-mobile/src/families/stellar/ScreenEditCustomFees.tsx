@@ -5,7 +5,8 @@ import { useTranslation } from "~/context/Locale";
 import i18next from "i18next";
 import { Keyboard, StyleSheet, View, SafeAreaView, ScrollView } from "react-native";
 import { useTheme } from "@react-navigation/native";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import Button from "~/components/Button";
 import KeyboardView from "~/components/KeyboardView";
@@ -38,6 +39,7 @@ function StellarEditCustomFees({ navigation, route }: NavigationProps) {
   const { account, parentAccount } = useAccountScreen(route);
   invariant(transaction.family === "stellar", "not stellar family");
   invariant(account, "no account found");
+  const bridge = useAccountBridge<StellarTransaction>(account, parentAccount);
   const mainAccount = getMainAccount(account, parentAccount);
   const { networkCongestionLevel } = transaction?.networkInfo || {};
   const [customFee, setCustomFee] = useState(transaction.fees);
@@ -51,17 +53,19 @@ function StellarEditCustomFees({ navigation, route }: NavigationProps) {
   const onSubmit = useCallback(() => {
     Keyboard.dismiss();
     setCustomFee(BigNumber(customFee || 0));
-    const bridge = getAccountBridge(account, parentAccount);
     const { currentNavigation } = route.params;
     popToScreen(navigation, currentNavigation, {
       ...route.params,
       accountId: account.id,
       transaction: bridge.updateTransaction(transaction, {
         fees: BigNumber(customFee || 0),
-        customFees: { parameters: { fees: BigNumber(customFee || 0) } },
+        customFees: {
+          value: BigInt(BigNumber(customFee || 0).toString()),
+          parameters: { fees: BigNumber(customFee || 0) },
+        },
       }),
     });
-  }, [customFee, account, parentAccount, route.params, navigation, transaction]);
+  }, [customFee, account, bridge, route.params, navigation, transaction]);
   return (
     <SafeAreaView style={styles.root}>
       <KeyboardView

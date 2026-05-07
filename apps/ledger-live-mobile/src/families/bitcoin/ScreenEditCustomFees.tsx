@@ -5,7 +5,8 @@ import { useTranslation } from "~/context/Locale";
 import i18next from "i18next";
 import { Keyboard, StyleSheet, View, SafeAreaView } from "react-native";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import type { Transaction as BitcoinTransaction } from "@ledgerhq/live-common/families/bitcoin/types";
 import Button from "~/components/Button";
 import KeyboardView from "~/components/KeyboardView";
 import NavigationScrollView from "~/components/NavigationScrollView";
@@ -55,6 +56,7 @@ function BitcoinEditCustomFees({ navigation, route }: Props) {
   const { account, parentAccount } = useAccountScreen(route);
   invariant(transaction.family === "bitcoin", "not bitcoin family");
   invariant(account, "no account found");
+  const bridge = useAccountBridge<BitcoinTransaction>(account, parentAccount);
   const [ownSatPerByte, setOwnSatPerByte] = useState(satPerByte ? satPerByte.toString() : "");
 
   const onChange = useCallback((text: string) => {
@@ -67,7 +69,6 @@ function BitcoinEditCustomFees({ navigation, route }: Props) {
     if (setSatPerByte) {
       setSatPerByte(BigNumber(ownSatPerByte || 0));
     }
-    const bridge = getAccountBridge(account, parentAccount);
     const { currentNavigation } = route.params;
     const updatedTransaction = bridge.updateTransaction(transaction, {
       feePerByte: BigNumber(ownSatPerByte || 0),
@@ -88,7 +89,7 @@ function BitcoinEditCustomFees({ navigation, route }: Props) {
     }
 
     popToScreen(navigation, currentNavigation, nextParams);
-  }, [setSatPerByte, ownSatPerByte, account, parentAccount, route.params, navigation, transaction]);
+  }, [setSatPerByte, ownSatPerByte, account, bridge, route.params, navigation, transaction]);
   return (
     <SafeAreaView
       style={{
