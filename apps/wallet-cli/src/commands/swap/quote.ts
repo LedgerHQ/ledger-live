@@ -6,7 +6,7 @@ import { walletCliDebug } from "../../shared/log";
 import { outputOption, resolveOutputFormat } from "../inputs";
 import { mapSwapQuoteLine } from "./quote-shared";
 
-const DEFAULT_PROVIDERS = ["changelly_v2", "oneinch", "paraswap", "exodus", "swapsxyz"];
+const DEFAULT_PROVIDERS = ["changelly_v2", "exodus", "swapsxyz", "cic_v2", "nearintents"];
 
 export default defineCommand({
   name: "quote",
