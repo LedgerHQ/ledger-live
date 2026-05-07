@@ -37,31 +37,21 @@ export function expandRequestedAccountIdsForHistoryScope(
   topLevelAccounts: Account[],
   requestedIds: ReadonlySet<string>,
 ): Set<string> {
-  const accountIdToScope = new Map<
-    string,
-    { topId: string; isRoot: boolean; subtreeIds?: string[] }
-  >();
+  if (requestedIds.size === 0) return new Set<string>();
+  const expanded = new Set<string>();
+
   for (const top of topLevelAccounts) {
     const flat = flattenAccounts([top]);
-    const subtreeIds = flat.map(a => a.id);
-    accountIdToScope.set(top.id, { topId: top.id, isRoot: true, subtreeIds });
+    if (requestedIds.has(top.id)) {
+      flat.forEach(account => expanded.add(account.id));
+      continue;
+    }
+
     for (const account of flat) {
-      if (account.id === top.id) continue;
-      accountIdToScope.set(account.id, { topId: top.id, isRoot: false });
+      if (requestedIds.has(account.id)) expanded.add(account.id);
     }
   }
 
-  const expanded = new Set<string>();
-  for (const rid of requestedIds) {
-    const scope = accountIdToScope.get(rid);
-    if (!scope) continue;
-
-    if (scope.isRoot) {
-      scope.subtreeIds?.forEach(id => expanded.add(id));
-    } else {
-      expanded.add(rid);
-    }
-  }
   return expanded;
 }
 
