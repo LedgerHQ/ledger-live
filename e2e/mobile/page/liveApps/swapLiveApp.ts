@@ -31,6 +31,7 @@ export default class SwapLiveAppPage {
   lnsUnsupportedBannerPattern =
     /Ledger Nano S[\s\S]*(not supported|unsupported|does not support|not compatible)/i;
   giveApprovalButton = "give-approval-button";
+  signPermitButton = "sign-permit-button";
   specificQuoteCardProviderName = (provider: string) =>
     `compact-quote-card-provider-name-${provider}`;
   baseProviderCssSelector = (provider: string) =>
@@ -457,5 +458,18 @@ export default class SwapLiveAppPage {
     await waitWebElementByTestId(this.giveApprovalButton);
     await waitForWebElementToBeEnabled(this.giveApprovalButton);
     await tapWebElementByTestId(this.giveApprovalButton);
+  }
+
+  @Step("Tap Give Authorization button")
+  async tapGiveAuthorizationButton() {
+    await waitWebElementByTestId(this.signPermitButton);
+    await waitForWebElementToBeEnabled(this.signPermitButton);
+    await tapWebElementByTestId(this.signPermitButton);
+  }
+
+  @Step("Expect TwoStepSign screen to be displayed")
+  async expectTwoStepSignScreen() {
+    await waitWebElementByTestId(this.executeSwapButtonStepApproval);
+    await detoxExpect(getWebElementByTestId(this.executeSwapButtonStepApproval)).toExist();
   }
 }
