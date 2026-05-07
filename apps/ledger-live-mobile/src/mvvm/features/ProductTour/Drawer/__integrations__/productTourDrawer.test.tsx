@@ -1,19 +1,25 @@
 import React from "react";
 import { Button } from "react-native";
 import { fireEvent, render, screen, waitFor } from "@tests/test-renderer";
+import { ProductTourControlsProvider } from "../../context/ProductTourControlsContext";
 import { useProductTourDrawer, ProductTourDrawer } from "../index";
 
 const TestComponent = () => {
-  const { isDrawerOpen, openDrawer, closeDrawer, onSlideChange } = useProductTourDrawer();
+  const { isDrawerOpen, openProductTour, closeProductTour, onSlideChange } = useProductTourDrawer();
 
   return (
     <>
-      <Button onPress={openDrawer} title="Open Drawer" />
-      <ProductTourDrawer
-        isDrawerOpen={isDrawerOpen}
-        closeDrawer={closeDrawer}
-        onSlideChange={onSlideChange}
-      />
+      <Button onPress={openProductTour} title="Open Drawer" />
+      <ProductTourControlsProvider
+        value={{
+          openProductTour,
+          closeProductTour,
+          onSlideChange,
+          isDrawerOpen,
+        }}
+      >
+        <ProductTourDrawer />
+      </ProductTourControlsProvider>
     </>
   );
 };

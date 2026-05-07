@@ -5,9 +5,8 @@ import ProductTourScreenDebug from "../index";
 jest.mock("../../Drawer", () => ({
   useProductTourDrawer: () => ({
     isDrawerOpen: false,
-    openDrawer: jest.fn(),
-    handleCloseDrawer: jest.fn(),
-    closeDrawer: jest.fn(),
+    openProductTour: jest.fn(),
+    closeProductTour: jest.fn(),
     onSlideChange: jest.fn(),
   }),
   ProductTourDrawer: () => null,
