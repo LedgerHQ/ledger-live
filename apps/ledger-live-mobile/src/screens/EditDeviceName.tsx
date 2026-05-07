@@ -13,6 +13,7 @@ import TranslatedError from "~/components/TranslatedError";
 import DeviceActionModal from "~/components/DeviceActionModal";
 import KeyboardView from "~/components/KeyboardView";
 import { saveBleDeviceName } from "~/actions/ble";
+import { saveKnownDeviceName } from "~/reducers/knownDevices";
 import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { ScreenName } from "~/const";
@@ -24,6 +25,7 @@ import { useToastsActions } from "~/actions/toast";
 
 const mapDispatchToProps = {
   saveBleDeviceName,
+  saveKnownDeviceName,
 };
 
 type NavigationProps = RootComposite<
@@ -32,9 +34,10 @@ type NavigationProps = RootComposite<
 >;
 type Props = {
   saveBleDeviceName: ({ deviceId, name }: BleSaveDeviceNamePayload) => void;
+  saveKnownDeviceName: ({ deviceId, name }: BleSaveDeviceNamePayload) => void;
 } & NavigationProps;
 
-function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
+function EditDeviceName({ navigation, route, saveBleDeviceName, saveKnownDeviceName }: Props) {
   const action = useRenameDeviceAction();
   const originalName = route.params?.deviceName;
   const device = route.params?.device;
@@ -89,6 +92,7 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
     setCompleted(true);
     setRunning(false);
     saveBleDeviceName({ deviceId: device.deviceId, name });
+    saveKnownDeviceName({ deviceId: device.deviceId, name });
     onNameChange(name);
 
     pushToast({
@@ -99,7 +103,16 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
     });
 
     navigation.goBack();
-  }, [device.deviceId, name, navigation, onNameChange, pushToast, saveBleDeviceName, t]);
+  }, [
+    device.deviceId,
+    name,
+    navigation,
+    onNameChange,
+    pushToast,
+    saveBleDeviceName,
+    saveKnownDeviceName,
+    t,
+  ]);
 
   const onClose = useCallback(() => {
     if (completed) {

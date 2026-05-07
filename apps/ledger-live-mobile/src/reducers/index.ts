@@ -13,6 +13,7 @@ import dynamicContent from "./dynamicContent";
 import earn from "./earn";
 import history from "./history";
 import inView from "./inView";
+import knownDevices from "./knownDevices";
 import largeMover from "./largeMover";
 import market from "./market";
 import modularDrawer from "./modularDrawer";
@@ -52,6 +53,7 @@ const appReducer = combineReducers({
   history,
   identities: identitiesSlice.reducer,
   inView,
+  knownDevices,
   largeMover,
   market,
   modularDrawer,

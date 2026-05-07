@@ -22,6 +22,7 @@ import {
   getSettings,
   getBle,
   getHistory,
+  getKnownDevices,
   getPostOnboardingState,
   getProtect,
   getMarketState,
@@ -34,6 +35,7 @@ import {
 import { importSettings, setSupportedCounterValues } from "~/actions/settings";
 import { importStore as importAccountsRaw } from "~/actions/accounts";
 import { importBle } from "~/actions/ble";
+import { importKnownDevices } from "~/reducers/knownDevices";
 import { updateProtectData, updateProtectStatus } from "~/actions/protect";
 import { INITIAL_STATE as settingsState } from "~/reducers/settings";
 import { listCachedCurrencyIds, hydrateCurrency } from "~/bridge/cache";
@@ -89,6 +91,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       mmkvStorageWrapper.monitor(true);
       const [
         bleData,
+        persistedKnownDevices,
         settingsData,
         accountsData,
         postOnboardingState,
@@ -105,6 +108,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         historyState,
       ] = await Promise.all([
         retry(getBle, MAX_RETRIES, RETRY_DELAY),
+        retry(getKnownDevices, MAX_RETRIES, RETRY_DELAY),
         retry(getSettings, MAX_RETRIES, RETRY_DELAY),
         retry(getAccounts, MAX_RETRIES, RETRY_DELAY),
         retry(getPostOnboardingState, MAX_RETRIES, RETRY_DELAY),
@@ -127,6 +131,9 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       });
 
       store.dispatch(importBle(bleData));
+      if (persistedKnownDevices) {
+        store.dispatch(importKnownDevices(persistedKnownDevices));
+      }
 
       store.dispatch(importSettings(settingsData));
 

@@ -1,5 +1,6 @@
 import { act, renderHook } from "@testing-library/react-native";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
+import { rnBleTransportIdentifier } from "@ledgerhq/live-dmk-mobile";
 import { __testUtils, useMockBleDevicesScanning } from "./useMockBle";
 import { DeviceLike } from "~/reducers/types";
 
@@ -95,7 +96,7 @@ describe("useMockBleDevicesScanning", () => {
         discoveredDevice: {
           id: knownDevice.id,
           name: knownDevice.name,
-          transport: "BLE",
+          transport: rnBleTransportIdentifier,
         },
       },
     ]);

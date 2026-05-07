@@ -12,12 +12,14 @@ import {
 } from "~/actions/settings";
 import { reboot } from "~/actions/appstate";
 import { bleDevicesSelector } from "~/reducers/ble";
-import { removeKnownDevices } from "~/actions/ble";
+import { removeKnownBleDevices } from "~/actions/ble";
+import { knownDevicesSelector, removeKnownDevices } from "~/reducers/knownDevices";
 import { useUnacceptGeneralTerms } from "~/logic/terms";
 
 export default function ResetOnboardingStateRow() {
   const dispatch = useDispatch();
-  const knownDevices = useSelector(bleDevicesSelector);
+  const knownBleDevices = useSelector(bleDevicesSelector);
+  const knownDevices = useSelector(knownDevicesSelector);
   const unacceptGeneralTerms = useUnacceptGeneralTerms();
   return (
     <SettingsRow
@@ -28,6 +30,7 @@ export default function ResetOnboardingStateRow() {
         dispatch(setReadOnlyMode(true));
         dispatch(setHasOrderedNano(false));
         dispatch(completeOnboarding(false));
+        dispatch(removeKnownBleDevices(knownBleDevices.map(d => d.id)));
         dispatch(removeKnownDevices(knownDevices.map(d => d.id)));
         dispatch(setHasBeenUpsoldProtect(false));
         dispatch(setHasBeenRedirectedToPostOnboarding(false));
