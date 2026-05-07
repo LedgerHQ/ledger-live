@@ -9,7 +9,7 @@ const AssetDetail = () => {
 
   if (viewModel.mode === "loading") {
     return (
-      <div className="flex min-h-0 flex-1 flex-col gap-32">
+      <div className="flex w-full shrink-0 flex-col gap-32 pb-32">
         <div className="h-40 w-1/3 animate-pulse rounded-8 bg-neutral-c20" />
         <div className="grid grid-cols-2 gap-24">
           <div className="h-[200px] animate-pulse rounded-16 bg-neutral-c20" />
