@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-alpaca/types";
+import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";

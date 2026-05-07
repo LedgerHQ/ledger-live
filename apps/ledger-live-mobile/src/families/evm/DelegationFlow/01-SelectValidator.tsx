@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-alpaca/types";
+import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useEvmStakingValidators } from "@ledgerhq/live-common/families/evm/staking/react";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
