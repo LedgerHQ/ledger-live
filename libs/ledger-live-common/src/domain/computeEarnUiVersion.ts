@@ -1,16 +1,6 @@
-import { z } from "zod";
-
-type EarnUiVersion = `v${number}`;
+import { EarnUiVersion, normalizeEarnUiVersionOrNull } from "./earnUiVersion";
 
 const DEFAULT: EarnUiVersion = "v2";
-
-const coercedString = z.coerce.string();
-
-function parseEarnUiVersionOrNull(raw: string): EarnUiVersion | null {
-  const bare = raw.startsWith("v") ? raw.slice(1) : raw;
-  const n = z.coerce.number().int().positive().safeParse(bare);
-  return n.success ? `v${n.data}` : null;
-}
 
 export type ComputeEarnUiVersionInput = {
   baseUiVersion: string | number | null | undefined;
@@ -30,6 +20,5 @@ export function computeEarnUiVersion({
   if (shouldDisplayEarnSimulator) return "v4";
   if (shouldDisplayEarnUpselling) return "v3";
 
-  const baseRaw = baseUiVersion == null ? DEFAULT : coercedString.parse(baseUiVersion);
-  return parseEarnUiVersionOrNull(baseRaw) ?? DEFAULT;
+  return normalizeEarnUiVersionOrNull(baseUiVersion) ?? DEFAULT;
 }

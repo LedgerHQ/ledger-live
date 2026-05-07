@@ -522,7 +522,7 @@ export const DEFAULT_FEATURES: Features = {
   ptxEarnUi: {
     enabled: false,
     params: {
-      value: "v1",
+      value: "v2",
     },
   },
 
