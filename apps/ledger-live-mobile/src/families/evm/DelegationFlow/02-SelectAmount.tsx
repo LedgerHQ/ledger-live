@@ -27,6 +27,7 @@ import {
 } from "react-native";
 import { Trans, useTranslation } from "~/context/Locale";
 import Button from "~/components/Button";
+import TranslatedError from "~/components/TranslatedError";
 import CurrencyInput from "~/components/CurrencyInput";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import KeyboardView from "~/components/KeyboardView";
@@ -75,9 +76,12 @@ export default function SelectAmount({ navigation, route }: Props) {
   );
   const amount = evmTransaction.amount ?? new BigNumber(0);
   const remaining = maxSpendable.minus(amount);
-  const hasErrors = Object.keys(status.errors).length > 0;
-  const firstError = Object.values(status.errors)[0];
-  const firstErrorMessage = firstError instanceof Error ? firstError.message : undefined;
+  const statusErrors = Object.values(status.errors).filter(
+    (error): error is Error => error instanceof Error,
+  );
+  const hasErrors = statusErrors.length > 0;
+  const firstError = statusErrors[0];
+  const displayError = firstError?.name === "AmountRequired" ? undefined : firstError;
   const canContinue =
     !bridgePending && !bridgeError && !hasErrors && amount.gt(0) && maxSpendable.gte(amount);
   const showLockUpWarning = hasUnbondingPeriod(account.currency.id);
@@ -176,11 +180,11 @@ export default function SelectAmount({ navigation, route }: Props) {
                   </Text>
                 </Flex>
               ) : null}
-              {firstErrorMessage ? (
+              {displayError ? (
                 <View style={styles.errorContainer}>
                   <Warning size={16} color={colors.error.c50} />
                   <LText style={styles.errorText} color="red">
-                    {firstErrorMessage}
+                    <TranslatedError error={displayError} />
                   </LText>
                 </View>
               ) : null}
