@@ -2,7 +2,7 @@ import { z } from "zod";
 
 type EarnUiVersion = `v${number}`;
 
-const DEFAULT: EarnUiVersion = "v1";
+const DEFAULT: EarnUiVersion = "v2";
 
 const coercedString = z.coerce.string();
 
