@@ -38,11 +38,11 @@ export type AleoTransactionIntentData =
   | TxDataNotSupported
   | {
       type: typeof TRANSACTION_TYPE.TRANSFER_PRIVATE;
-      record: AleoDecryptedRecordResponse;
+      records: AleoDecryptedRecordResponse[];
     }
   | {
       type: typeof TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC;
-      record: AleoDecryptedRecordResponse;
+      records: AleoDecryptedRecordResponse[];
     }
   | {
       type: "fee_public";
