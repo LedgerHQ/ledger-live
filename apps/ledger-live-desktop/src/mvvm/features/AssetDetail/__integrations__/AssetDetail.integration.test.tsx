@@ -1,4 +1,5 @@
 import React from "react";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { render, renderWithMockedCounterValuesProvider, screen, waitFor } from "tests/testSetup";
 import { MarketMockedResponse } from "tests/handlers/fixtures/market";
 import {
@@ -7,6 +8,7 @@ import {
   setupDistributionRouteMocks,
 } from "tests/utils/distributionTestUtils";
 import { mockMarket, mockDada } from "tests/utils/assetDetailMocks";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import type { DistributionItem } from "@ledgerhq/types-live";
 import AssetDetail from "../index";
 
@@ -35,6 +37,7 @@ jest.mock("~/renderer/actions/general", () => ({
 
 const { useParams, useLocation } = jest.requireMock("react-router");
 const { useDistribution } = jest.requireMock("~/renderer/actions/general");
+const btc = getCryptoCurrencyById("bitcoin");
 
 const setupRoute = (
   routeId: string,
@@ -77,7 +80,8 @@ const OWNED_ASSETS: OwnedAsset[] = [
     displayName: "Bitcoin",
     marketResponse: MarketMockedResponse.bitcoinDetail,
     buildDistribution: () => {
-      const item = buildDistributionItem();
+      const account = genAccount("asset-detail-btc-account", { currency: btc });
+      const item = buildDistributionItem({ accounts: [account] });
       return { bySlug: { bitcoin: item }, list: [item] };
     },
   },
@@ -87,8 +91,10 @@ const OWNED_ASSETS: OwnedAsset[] = [
     displayName: "USD Coin",
     marketResponse: MarketMockedResponse.usdcDetail,
     buildDistribution: () => {
+      const account = genAccount("asset-detail-usdc-account", { currency: btc });
       const item = buildDistributionItem({
         currency: makeIntegrationTokenCurrency("ethereum/erc20/usd__coin", "USDC", "USD Coin"),
+        accounts: [account],
       });
       return { bySlug: {}, list: [item] };
     },
@@ -327,8 +333,10 @@ describe("AssetDetail integration", () => {
   describe("route params", () => {
     it("resolves a token when route id is URL-encoded", async () => {
       mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+      const account = genAccount("asset-detail-token-encoded-account", { currency: btc });
       const item = buildDistributionItem({
         currency: makeIntegrationTokenCurrency("bitcoin/test", "TBTC", "Bitcoin Test"),
+        accounts: [account],
       });
       setupRoute("bitcoin%2Ftest", { bySlug: {}, list: [item] });
 
@@ -345,8 +353,10 @@ describe("AssetDetail integration", () => {
   describe("token route with slashes", () => {
     it("resolves a token with slashes in its route id", async () => {
       mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+      const account = genAccount("asset-detail-token-slashed-account", { currency: btc });
       const item = buildDistributionItem({
         currency: makeIntegrationTokenCurrency("bitcoin/test", "TBTC", "Bitcoin Test"),
+        accounts: [account],
       });
       setupRoute("bitcoin/test", { bySlug: {}, list: [item] });
 
