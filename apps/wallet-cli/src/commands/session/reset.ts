@@ -24,7 +24,7 @@ export default defineCommand({
         session = Session.from([]);
       }
       const count = session.clear();
-      await session.write(); // always write: fixes corrupt files too
+      session.write(); // always write: fixes corrupt files too
       out.sessionReset(count);
     });
   },

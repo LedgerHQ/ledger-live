@@ -101,7 +101,7 @@ export default defineCommand({
           try {
             const session = await Session.read();
             added = session.addDescriptors(discoveredDescriptors);
-            if (added > 0) await session.write();
+            if (added > 0) session.write();
           } catch {
             // Session persistence failure is non-fatal; discovery output is already flushed.
           }
