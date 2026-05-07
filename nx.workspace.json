@@ -310,6 +310,9 @@
       },
       {
         "env": "NO_DEBUG_COUNTERVALUES"
+      },
+      {
+        "env": "UPDATE_CHECK_PUBKEY"
       }
     ]
   },
