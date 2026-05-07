@@ -45,7 +45,6 @@ jobs:
       - name: create hotfix branch
         run: |
           git checkout -b hotfix
-          git checkout origin/main -- .github/workflows
           git push -u origin hotfix
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
