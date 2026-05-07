@@ -129,7 +129,7 @@ export async function formatReportForConsole<T extends Transaction>({
 
   if (signedOperation) {
     str += `✔️ has been signed! (${formatDt(statusTime, signedTime)}) ${
-      !optimisticOperation ? JSON.stringify(toSignedOperationRaw(signedOperation)) : ""
+      !optimisticOperation ? JSON.stringify(await toSignedOperationRaw(signedOperation)) : ""
     }\n`;
   }
 

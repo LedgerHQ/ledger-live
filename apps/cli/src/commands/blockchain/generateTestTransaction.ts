@@ -93,6 +93,9 @@ export default {
                             ),
                             mergeMap(async ([signedOperation, status]) => {
                               unsubscribe();
+                              const signedOpRaw = await toSignedOperationRaw(
+                                signedOperation as SignedOperation,
+                              );
                               return `
 {
   name: "NO_NAME",
@@ -103,9 +106,7 @@ export default {
   ),
   // WARNING: DO NOT commit this test publicly unless you're ok with possibility tx could leak out. (do self txs)
   testSignedOperation: (expect, signedOperation) => {
-    expect(toSignedOperationRaw(signedOperation)).toMatchObject(${JSON.stringify(
-      toSignedOperationRaw(signedOperation as SignedOperation),
-    )})
+    expect(toSignedOperationRaw(signedOperation)).toMatchObject(${JSON.stringify(signedOpRaw)})
   },
   apdus: \`
 ${apdus.map(a => "  " + a).join("\n")}
