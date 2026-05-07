@@ -3,6 +3,7 @@ import {
   postOnboardingDeviceModelIdSelector,
   walletPostOnboardingEntryPointDismissedSelector,
 } from "../reducer";
+import { useAllPostOnboardingActionsCompleted } from "./useAllPostOnboardingActionsCompleted";
 
 /**
  *
@@ -12,6 +13,7 @@ import {
 export function usePostOnboardingEntryPointVisibleOnWallet(): boolean {
   const deviceModelId = useSelector(postOnboardingDeviceModelIdSelector);
   const dismissed = useSelector(walletPostOnboardingEntryPointDismissedSelector);
+  const allCompleted = useAllPostOnboardingActionsCompleted();
 
-  return !!deviceModelId && !dismissed;
+  return !!deviceModelId && !(dismissed || allCompleted);
 }
