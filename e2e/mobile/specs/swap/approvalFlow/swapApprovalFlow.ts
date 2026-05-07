@@ -1,11 +1,8 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { performSwapUntilQuoteSelectionStep, revokeTokenApproval } from "../../../utils/swapUtils";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
-// import { setEnv } from "@ledgerhq/live-env";
 import { beforeAllFunctionSwap } from "../swap.setup";
 import { getAmountFromUSD } from "@ledgerhq/live-common/e2e/swap";
-
-// setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
 export function runSwapApprovalFlow(
   fromAccount: Account,
@@ -63,10 +60,10 @@ export function runSwapApprovalFlow(
       await app.send.summaryContinue();
       await app.speculos.signTokenApproval();
       if (provider === Provider.UNISWAP) {
-        //tapGiveAutorizationButton
+        await app.swapLiveApp.tapGiveAuthorizationButton();
         await app.speculos.signTypedMessage();
       }
-      //expectTwoStepSignScreen
+      await app.swapLiveApp.expectTwoStepSignScreen();
     });
   });
 }
