@@ -10,6 +10,7 @@ export type AleoConfig = {
   feeByTransactionType: Record<TransactionType, number>;
   feeSafetyMultiplier: number;
   isFeeSponsored: boolean;
+  enableTokens: boolean;
   useEncryptedProve: boolean;
   recordPickingStrategy: RecordPickingStrategy;
 };

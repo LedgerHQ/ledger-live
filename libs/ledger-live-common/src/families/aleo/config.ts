@@ -36,6 +36,11 @@ const USE_ENCRYPTED_PROVE = true;
  */
 const RECORD_PICKING_STRATEGY: RecordPickingStrategy = "manual";
 
+/**
+ * Controls whether Aleo token-related features are enabled.
+ */
+const ENABLE_TOKENS = false;
+
 export const aleoConfig: Record<string, ConfigInfo> = {
   config_currency_aleo: {
     type: "object",
@@ -51,6 +56,7 @@ export const aleoConfig: Record<string, ConfigInfo> = {
       feeByTransactionType: DEFAULT_FEE_BY_TRANSACTION_TYPE,
       feeSafetyMultiplier: DEFAULT_FEE_SAFETY_MULTIPLIER,
       isFeeSponsored: IS_FEE_SPONSORED,
+      enableTokens: ENABLE_TOKENS,
       useEncryptedProve: USE_ENCRYPTED_PROVE,
       recordPickingStrategy: RECORD_PICKING_STRATEGY,
     },
@@ -69,6 +75,7 @@ export const aleoConfig: Record<string, ConfigInfo> = {
       feeByTransactionType: DEFAULT_FEE_BY_TRANSACTION_TYPE,
       feeSafetyMultiplier: DEFAULT_FEE_SAFETY_MULTIPLIER,
       isFeeSponsored: IS_FEE_SPONSORED,
+      enableTokens: ENABLE_TOKENS,
       useEncryptedProve: USE_ENCRYPTED_PROVE,
       recordPickingStrategy: RECORD_PICKING_STRATEGY,
     },
