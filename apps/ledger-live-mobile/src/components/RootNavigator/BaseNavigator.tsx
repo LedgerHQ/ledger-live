@@ -89,7 +89,7 @@ import { LedgerSyncDeepLinkHandler } from "LLM/features/WalletSync/LedgerSyncDee
 import { DeviceSelectionScreen as DeeplinkInstallAppDeviceSelection } from "LLM/features/DeeplinkInstallApp";
 import Web3HubNavigator from "LLM/features/Web3Hub/Navigator";
 import Web3HubTabNavigator from "LLM/features/Web3Hub/TabNavigator";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import MyLedgerNavigator from "./MyLedgerNavigator";
 import MyWalletNavigator from "LLM/features/MyWallet/Navigator";
 import DiscoverNavigator from "./DiscoverNavigator";

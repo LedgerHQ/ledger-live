@@ -50,7 +50,7 @@ import { createOpenActionDialogHandler } from "./actionDialogStore";
 import type { Dispatch } from "redux";
 import { useDispatch } from "~/context/hooks";
 import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 const DrawerClosedError = createCustomErrorClass("DrawerClosedError");
 const drawerClosedError = new DrawerClosedError("User closed the drawer");

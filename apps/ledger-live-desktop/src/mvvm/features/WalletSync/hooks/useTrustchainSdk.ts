@@ -7,7 +7,7 @@ import { useStore } from "LLD/hooks/redux";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { walletSyncStateSelector } from "@ledgerhq/live-wallet/store";
 import { TrustchainSDK } from "@ledgerhq/ledger-key-ring-protocol/types";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
 import { useInstanceName } from "./useInstanceName";
 

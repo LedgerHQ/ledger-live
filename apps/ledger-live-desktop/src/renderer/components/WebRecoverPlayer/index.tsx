@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import styled from "styled-components";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 
 import { Web3AppWebview } from "../Web3AppWebview";

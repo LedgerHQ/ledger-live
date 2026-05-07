@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import type { Account } from "@ledgerhq/types-live";
 import { Flex } from "@ledgerhq/native-ui";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import { Trans, useTranslation } from "~/context/Locale";
 import Alert from "~/components/Alert";

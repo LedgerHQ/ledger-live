@@ -109,6 +109,7 @@ module.exports = {
   resolver: "<rootDir>/scripts/resolver.js",
   moduleNameMapper: {
     ...pathsToModuleNameMapper(compilerOptions.paths),
+    "^@features/platform-feature-flags$": "<rootDir>/../../features/platform/feature-flags/src",
     "^@features/(.*)$": "<rootDir>/../../features/$1/src",
     "^@ledgerhq/lumen-ui-rnative$":
       "<rootDir>/node_modules/@ledgerhq/lumen-ui-rnative/src/index.ts",

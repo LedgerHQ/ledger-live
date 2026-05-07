@@ -18,7 +18,7 @@ import { VISIBLE_STATUS } from "./Updater/Banner";
 import StyleProvider from "~/renderer/styles/StyleProvider";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { track } from "~/renderer/analytics/segment";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import TopBanner from "./TopBanner";
 import Box from "./Box";
 import getCleanVersion from "../screens/manager/FirmwareUpdate/getCleanVersion";

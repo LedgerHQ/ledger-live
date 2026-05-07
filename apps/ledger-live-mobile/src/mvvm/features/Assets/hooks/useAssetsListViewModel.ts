@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { GestureResponderEvent } from "react-native";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useNonBlacklistedDistribution } from "~/hooks/useNonBlacklistedDistribution";
 import { useRefreshAccountsOrdering } from "~/actions/general";
 import { NavigatorName, ScreenName } from "~/const";

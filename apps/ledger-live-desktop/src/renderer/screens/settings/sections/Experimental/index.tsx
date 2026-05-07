@@ -18,7 +18,7 @@ import LottieTester from "../Developer/LottieTester";
 import PostOnboardingHubTester from "../Developer/PostOnboardingHubTester";
 import VaultSigner from "./VaultSigner";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-desktop";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 
 const experimentalTypesMap = {
   toggle: ExperimentalSwitch,

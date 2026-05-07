@@ -8,7 +8,7 @@ import { useWebView } from "./helpers";
 import { NetworkError } from "./NetworkError";
 import { INTERNAL_APP_IDS, WC_ID } from "@ledgerhq/live-common/wallet-api/constants";
 import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { INJECTED_JAVASCRIPT } from "./dappInject";
 import { DappAccountGate } from "./DappAccountGate";
 import { E2E_WEBVIEW_NETWORK_CAPTURE_SCRIPT } from "~/e2e/webviewNetworkLogCapture";

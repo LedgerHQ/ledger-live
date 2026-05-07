@@ -12,7 +12,7 @@ import { setNotifications } from "~/actions/settings";
 import type { State } from "~/reducers/types";
 import { useNotifications } from "LLM/features/NotificationsPrompt";
 import { updateUserPreferences } from "~/notifications/braze";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
 import { useRoute } from "@react-navigation/core";
 

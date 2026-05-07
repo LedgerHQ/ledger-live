@@ -15,7 +15,7 @@ import { DistributionItem } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { hideEmptyTokenAccountsSelector } from "~/renderer/reducers/settings";
 import { useSelector } from "LLD/hooks/redux";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 type ItemShape = {
   key: string;

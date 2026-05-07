@@ -15,7 +15,7 @@ import { useSyncAllAccounts } from "../LiveApp/hooks/useSyncAllAccounts";
 import { PendingOperationParamList } from "../types";
 import { SWAP_VERSION } from "../utils";
 import { NavigationHeaderCloseButton } from "~/components/NavigationHeaderCloseButton";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { hasSwapTabRoute, navigateBackToSwapTab } from "../navigation/navigateBackToSwapTab";
 
 export function PendingOperation({ route, navigation }: PendingOperationParamList) {

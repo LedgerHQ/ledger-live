@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "~/context/hooks";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { setHasSeenWalletV4Tour } from "~/actions/settings";
 import { hasSeenWalletV4TourSelector } from "~/reducers/settings";
 import type { WalletV4TourDrawerViewModel } from "../types";

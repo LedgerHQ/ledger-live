@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, NewBannerCard } from "@ledgerhq/native-ui";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useTranslation } from "~/context/Locale";
 import { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
 import { LNSUpsellMediaBanner } from "./LNSUpsellMediaBanner";

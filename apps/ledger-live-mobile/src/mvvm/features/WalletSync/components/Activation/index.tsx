@@ -5,7 +5,7 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
 import { useTheme } from "styled-components/native";
 import { useInitMemberCredentials } from "../../hooks/useInitMemberCredentials";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { Linking } from "react-native";
 
 type Props = { onSyncMethodPress: () => void; navigateToChooseSyncMethod: () => void };

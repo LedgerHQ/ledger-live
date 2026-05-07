@@ -14,7 +14,7 @@ import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { track } from "~/analytics";
 import { DETAILED_ALLOCATION_PAGE } from "../../../const";
 import type { DistributionItem } from "../../../types/distribution";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 type Props = Readonly<{
   item: DistributionItem;

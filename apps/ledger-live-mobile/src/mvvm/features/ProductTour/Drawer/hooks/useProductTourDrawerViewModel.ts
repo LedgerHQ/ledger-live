@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from "react";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { useSelector } from "~/context/hooks";
 import { productTourCompletedSelector } from "~/reducers/settings";
 import type { ProductTourDrawerViewModel } from "../types";

@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@features/platform-feature-flags";
 import {
   getAccountBannerState as getMultiversXBannerState,
   AccountBannerState,

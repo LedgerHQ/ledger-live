@@ -1,4 +1,4 @@
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import type { Feature_StakePrograms } from "@ledgerhq/types-live";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { useMemo } from "react";

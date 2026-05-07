@@ -6,7 +6,7 @@ import QueuedDrawer from "LLM/components/QueuedDrawer";
 import { NotificationsDrawerIllustration } from "LLM/features/NotificationsPrompt/components/NotificationsDrawerIllustration";
 import { NotificationsPromptContent } from "LLM/features/NotificationsPrompt/components/NotificationsPromptContent";
 import { TrackScreen } from "~/analytics";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@features/platform-feature-flags";
 
 export const NotificationsPromptDrawer = () => {
   const { t } = useTranslation();

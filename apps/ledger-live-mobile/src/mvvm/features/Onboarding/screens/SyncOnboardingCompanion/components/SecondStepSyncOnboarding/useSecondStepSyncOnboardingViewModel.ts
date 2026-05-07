@@ -6,7 +6,7 @@ import {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { COMPANION_STATE } from "~/screens/SyncOnboarding/TwoStepStepper/types";
 import { UseSecondStepSyncOnboardingViewModelProps } from "./types";
 

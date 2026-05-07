@@ -39,6 +39,7 @@ const moduleNameMapper = {
   ".*\\.lottie$": "<rootDir>/fileMock.js",
   ...pathsToModuleNameMapper(compilerOptions.paths),
   "~/(.*)": "<rootDir>/src/$1",
+  "^@features/platform-feature-flags$": "<rootDir>/../../features/platform/feature-flags/src",
   "^@features/(.*)$": "<rootDir>/../../features/$1/src",
   "^@ledgerhq/(lumen-ui-react|lumen-design-core)$": "<rootDir>/node_modules/@ledgerhq/$1",
   "\\.(jpg|ico|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga|lottie)$":

@@ -23,7 +23,7 @@ import { StackNavigatorNavigation, StackNavigatorProps } from "./types/helpers";
 import { SwapNavigatorParamList } from "./types/SwapNavigator";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import SwapCustomError from "~/screens/Swap/SubScreens/SwapCustomError";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
 import { isGoingToSwapHistory } from "~/screens/Swap/navigation/navigateBackToSwapTab";
 

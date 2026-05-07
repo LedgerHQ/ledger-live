@@ -6,7 +6,7 @@ import { useTranslation } from "~/context/Locale";
 import { PtxScreen } from "~/screens/PTX";
 import { CARD_APP_ID } from "../../constants";
 import { BackConfig } from "~/components/WebPTXPlayer";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@features/platform-feature-flags";
 
 type CardLiveAppScreenProps = StackNavigatorProps<PtxNavigatorParamList, ScreenName.Card>;
 

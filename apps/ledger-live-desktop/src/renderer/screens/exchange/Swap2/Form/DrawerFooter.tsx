@@ -10,7 +10,7 @@ import {
   getSwapProvider,
   AdditionalProviderConfig,
 } from "@ledgerhq/live-common/exchange/providers/swap";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@features/platform-feature-flags";
 
 const Terms = styled(Text).attrs({
   ff: "Inter|SemiBold",

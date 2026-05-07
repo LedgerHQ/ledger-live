@@ -5,6 +5,7 @@ import {
   FeatureId,
   Features,
   PartialFeatures,
+  setAllOverrides,
 } from "@shared/feature-flags";
 import { CountervaluesProvider } from "@ledgerhq/live-countervalues-react";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
@@ -91,12 +92,26 @@ export function withFlagOverrides(flags: LooseFlagOverrides): DeepPartial<State>
       }),
     };
   }
+  const overrides = merged as unknown as PartialFeatures;
   return {
     featureFlags: {
       ...FEATURE_FLAGS_INITIAL_STATE,
-      overrides: merged as unknown as PartialFeatures,
+      overrides,
+      resolved: { ...FEATURE_FLAGS_INITIAL_STATE.resolved, ...overrides },
     },
   };
+}
+
+/**
+ * Re-dispatches preloaded overrides through the slice so `resolved` is recomputed.
+ * Tests that only set `featureFlags.overrides` in initialState would otherwise leave
+ * `resolved` at defaults — which the new Redux-backed `useFeature` reads.
+ */
+function syncResolvedFromOverrides(store: ReduxStore) {
+  const overrides = store.getState().featureFlags?.overrides;
+  if (overrides && Object.keys(overrides).length > 0) {
+    store.dispatch(setAllOverrides(overrides));
+  }
 }
 
 function CountervaluesProviders({
@@ -223,6 +238,8 @@ function renderWithMockedCounterValuesProvider(
     ...renderOptions
   } = options;
 
+  syncResolvedFromOverrides(store);
+
   return {
     store,
     i18n,
@@ -261,6 +278,8 @@ function render(ui: React.JSX.Element, options: ExtraOptions = {}): RenderReturn
     withRampCatalog = false,
     ...renderOptions
   } = options;
+
+  syncResolvedFromOverrides(store);
 
   return {
     store,
@@ -319,6 +338,8 @@ function renderHook<Result, Props>(
     wrapper: Wrapper,
   } = options;
 
+  syncResolvedFromOverrides(store);
+
   return {
     store,
     ...rtlRenderHook(hook, {
@@ -346,6 +367,8 @@ function renderHookWithLiveAppProvider<Result, Props>(
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     store = createStore({ state: initialState as State, dbMiddleware }),
   } = options;
+
+  syncResolvedFromOverrides(store);
 
   return {
     store,

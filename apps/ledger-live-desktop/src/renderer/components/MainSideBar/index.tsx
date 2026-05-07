@@ -4,7 +4,7 @@ import { useSelector } from "LLD/hooks/redux";
 import { Link } from "react-router";
 import { Transition, type TransitionStatus } from "react-transition-group";
 import styled from "styled-components";
-import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
+import { FeatureToggle } from "@features/platform-feature-flags";
 import { Icons, Tag as TagComponent } from "@ledgerhq/react-ui";
 import { Infinite } from "@ledgerhq/lumen-ui-react/symbols";
 import {

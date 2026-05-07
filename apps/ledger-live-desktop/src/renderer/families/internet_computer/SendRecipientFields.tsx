@@ -1,7 +1,7 @@
 import React from "react";
 import Box from "~/renderer/components/Box";
 import MemoField from "./MemoField";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { InternetComputerMemoFieldProps } from "./types";
 
 const Root = (props: InternetComputerMemoFieldProps) => {

@@ -1,4 +1,4 @@
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { Carousel } from "@ledgerhq/react-ui";
 import { ABTestingVariants } from "@ledgerhq/types-live";
 import React, { PropsWithChildren, useMemo } from "react";

@@ -4,7 +4,7 @@ import styled, { useTheme } from "styled-components/native";
 import { TrackScreen } from "~/analytics";
 import PreventNativeBack from "~/components/PreventNativeBack";
 import SafeAreaView from "~/components/SafeAreaView";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@features/platform-feature-flags";
 type Props = {
   title: string;
   desc?: string;

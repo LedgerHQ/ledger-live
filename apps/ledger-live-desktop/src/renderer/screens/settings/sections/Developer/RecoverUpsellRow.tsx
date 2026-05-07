@@ -1,5 +1,6 @@
 import React from "react";
-import { useFeature, useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
+import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
 import { SettingsSectionRow as Row } from "../../SettingsSection";
 import { Switch } from "@ledgerhq/lumen-ui-react";
 

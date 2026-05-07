@@ -1,7 +1,7 @@
 import { Flex, ProgressLoader, Text, Icons } from "@ledgerhq/react-ui";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { getStoreValue, setStoreValue } from "~/renderer/store";
 import { useCustomPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { useTranslation } from "react-i18next";

@@ -7,7 +7,7 @@ import { setPersonalizedRecommendations } from "~/actions/settings";
 import { personalizedRecommendationsEnabledSelector } from "~/reducers/settings";
 import Track from "~/analytics/Track";
 import { track, updateIdentify } from "~/analytics";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 
 const PersonalizedRecommendationsRow = () => {
   const { t } = useTranslation();

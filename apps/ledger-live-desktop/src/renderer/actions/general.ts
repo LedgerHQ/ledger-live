@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { createSelector } from "reselect";
 import type { FlattenAccountsOptions } from "@ledgerhq/live-common/account/index";
 import { isAccountDelegating } from "@ledgerhq/live-common/families/tezos/staking";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import {
   useCalculateCountervalueCallback as useCalculateCountervalueCallbackCommon,

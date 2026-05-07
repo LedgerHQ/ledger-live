@@ -12,7 +12,7 @@ import RepairDeviceButton from "./RepairDeviceButton";
 import LaunchOnboardingBtn from "./LaunchOnboardingBtn";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
-import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 const SectionHelp = () => {
   const { t } = useTranslation();

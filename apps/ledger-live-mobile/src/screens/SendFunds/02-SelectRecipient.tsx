@@ -9,7 +9,7 @@ import {
   SyncSkipUnderPriority,
 } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { getStuckAccountAndOperation } from "@ledgerhq/live-common/operation";
 import { Operation } from "@ledgerhq/types-live";

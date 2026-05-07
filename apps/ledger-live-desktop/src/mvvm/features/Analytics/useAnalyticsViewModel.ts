@@ -5,7 +5,7 @@ import {
   counterValueCurrencySelector,
   selectedTimeRangeSelector,
 } from "~/renderer/reducers/settings";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import type { AnalyticsViewModel } from "./types";
 
 export default function useAnalyticsViewModel(): AnalyticsViewModel {

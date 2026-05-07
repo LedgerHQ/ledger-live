@@ -1,5 +1,5 @@
 import { useSelector } from "~/context/hooks";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@features/platform-feature-flags";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { lastSeenDeviceSelector } from "~/reducers/settings";
 import { DeviceModelId } from "@ledgerhq/types-devices";

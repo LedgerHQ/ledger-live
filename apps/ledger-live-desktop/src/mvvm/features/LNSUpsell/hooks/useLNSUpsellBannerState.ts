@@ -1,5 +1,5 @@
 import { useSelector } from "LLD/hooks/redux";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { desktopContentCardSelector } from "~/renderer/reducers/dynamicContent";
 import {

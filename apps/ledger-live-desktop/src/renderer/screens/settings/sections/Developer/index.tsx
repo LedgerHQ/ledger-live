@@ -21,7 +21,7 @@ import ExchangeTestPartnerMode from "./ExchangeTestPartnerMode";
 import LottieTester from "./LottieTester";
 import PostOnboardingHubTester from "./PostOnboardingHubTester";
 import AllowDebugReactQueryToggle from "./AllowDebugReactQueryToggle";
-import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
+import { FeatureToggle } from "@features/platform-feature-flags";
 import WalletSyncTester from "./WalletSync/WalletSyncTester";
 import MockAppUpdate from "./MockAppUpdate";
 import EnableAnalyticsConsole from "./EnableAnalyticsConsole";

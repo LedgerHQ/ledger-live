@@ -3,7 +3,7 @@ import { useRoute } from "@react-navigation/native";
 import { useSelector } from "~/context/hooks";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AccountLike } from "@ledgerhq/types-live";
@@ -16,7 +16,6 @@ import { useStake } from "LLM/hooks/useStake/useStake";
 import { useOpenStakeDrawer } from "LLM/features/Stake";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
 import { useOpenSwap } from "LLM/features/Swap";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { useOpenBuySell } from "LLM/features/Buy";
 
 export type QuickAction = {

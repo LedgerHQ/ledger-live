@@ -3,7 +3,7 @@ import { Linking } from "react-native";
 import { useTranslation } from "~/context/Locale";
 import { useDispatch } from "~/context/hooks";
 import { useNavigation } from "@react-navigation/native";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { useAcceptGeneralTerms } from "~/logic/terms";
 import { urls } from "~/utils/urls";
 import { NavigatorName, ScreenName } from "~/const/navigation";

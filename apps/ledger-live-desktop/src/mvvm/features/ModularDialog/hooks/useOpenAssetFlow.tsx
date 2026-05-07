@@ -21,7 +21,7 @@ import {
   openDialog,
   closeDialog,
 } from "~/renderer/reducers/modularDialog";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@features/platform-feature-flags";
 
 function selectCurrencyDialog(
   dispatch: ReturnType<typeof useDispatch>,

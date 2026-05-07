@@ -3,7 +3,8 @@ import { useNavigate } from "react-router";
 import { track } from "~/renderer/analytics/segment";
 import { getStoreValue } from "~/renderer/store";
 import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-import { isRecoverDisplayed, useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { isRecoverDisplayed } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { useUpsellPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { useRecoverWidgetViewModel } from "LLD/features/FinishOnboarding/RecoverWidget/useRecoverWidgetViewModel";
@@ -18,6 +19,7 @@ jest.mock("~/renderer/store", () => ({
 
 jest.mock("@ledgerhq/live-common/postOnboarding/hooks/index");
 jest.mock("@ledgerhq/live-common/featureFlags/index");
+jest.mock("@features/platform-feature-flags");
 jest.mock("@ledgerhq/live-common/hooks/recoverFeatureFlag", () => ({
   useUpsellPath: jest.fn(),
 }));

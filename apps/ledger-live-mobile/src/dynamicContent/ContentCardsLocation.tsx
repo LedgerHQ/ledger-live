@@ -5,7 +5,7 @@ import type { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex/in
 import useDynamicContent from "./useDynamicContent";
 import { AllLocations, BrazeContentCard, CategoryContentCard } from "./types";
 import ContentCardsCategory from "./ContentCardsCategory";
-import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
+import { FeatureToggle } from "@features/platform-feature-flags";
 import { filterCategoriesByLocation, formatCategories } from "./utils";
 
 const Category: ListRenderItem<CategoriesWithCards> = ({ item }) => (

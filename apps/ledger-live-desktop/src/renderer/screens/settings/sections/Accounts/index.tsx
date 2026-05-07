@@ -8,7 +8,7 @@ import SectionExport from "./Export";
 import Currencies from "./Currencies";
 import BlacklistedTokens from "./BlacklistedTokens";
 import DoNotAskAgainSkipMemo from "./DoNotAskAgainSkipMemo";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 export default function SectionAccounts() {
   const { t } = useTranslation();

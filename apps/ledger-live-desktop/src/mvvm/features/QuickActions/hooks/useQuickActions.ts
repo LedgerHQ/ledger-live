@@ -19,7 +19,7 @@ import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums
 import { track } from "~/renderer/analytics/segment";
 import { hasOnboardedDeviceSelector } from "~/renderer/reducers/settings";
 import { useLazyOnboardingActions } from "LLD/hooks/useLazyOnboardingActions";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { getAccountsSidebarPath } from "LLD/components/SideBar/utils";
 
 export const useQuickActions = (trackingPageName: string): { actionsList: QuickAction[] } => {

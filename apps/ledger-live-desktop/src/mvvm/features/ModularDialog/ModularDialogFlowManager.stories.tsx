@@ -20,21 +20,29 @@ import { useDispatch } from "LLD/hooks/redux";
 import { setEnv } from "@ledgerhq/live-env";
 import { setSupportedCurrencies } from "@ledgerhq/ledger-wallet-framework/currencies/support";
 import {
-  makeMockedFeatureFlagsProviderWrapper,
-  makeMockedContextValue,
-} from "@ledgerhq/live-common/featureFlags/mock";
+  FEATURE_FLAGS_INITIAL_STATE,
+  featureFlagsReducer,
+  type FeatureFlagsState,
+} from "@shared/feature-flags";
 
 setEnv("MOCK", "true");
 
 setSupportedCurrencies(["ethereum", "arbitrum", "bitcoin"]);
 
-const mockedFeatureFlags = {
-  lldModularDrawer: { enabled: true, params: { enableModularization: true } },
-};
-
-const FeatureFlagsProvider = makeMockedFeatureFlagsProviderWrapper(
-  makeMockedContextValue(mockedFeatureFlags),
-);
+const mockedFeatureFlagsState = {
+  ...FEATURE_FLAGS_INITIAL_STATE,
+  resolved: {
+    ...FEATURE_FLAGS_INITIAL_STATE.resolved,
+    lldModularDrawer: {
+      ...FEATURE_FLAGS_INITIAL_STATE.resolved.lldModularDrawer,
+      enabled: true,
+      params: {
+        ...FEATURE_FLAGS_INITIAL_STATE.resolved.lldModularDrawer.params,
+        enableModularization: true,
+      },
+    },
+  },
+} as FeatureFlagsState;
 
 const onAccountSelected = fn();
 
@@ -85,9 +93,11 @@ const store = configureStore({
     modularDialog: modularDialogReducer,
     countervalues: (state = initialMockState.countervalues) => state,
     assetsDataApi: assetsDataApi.reducer,
+    featureFlags: featureFlagsReducer,
   },
   preloadedState: {
     modularDialog: initialMockState.modularDialog,
+    featureFlags: mockedFeatureFlagsState,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
@@ -145,12 +155,10 @@ const meta: Meta<StoryArgs> = {
   decorators: [
     Story => (
       <div style={{ minHeight: "400px", position: "relative", margin: "50px" }}>
-        <FeatureFlagsProvider>
-          <Provider store={store}>
-            <OpenDialogButton />
-            <Story />
-          </Provider>
-        </FeatureFlagsProvider>
+        <Provider store={store}>
+          <OpenDialogButton />
+          <Story />
+        </Provider>
       </div>
     ),
   ],

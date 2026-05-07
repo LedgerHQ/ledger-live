@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { firstValueFrom } from "rxjs";
 import { Account } from "@ledgerhq/types-live";
 import { ConcordiumTrustedMetadataServiceError, DisconnectedDevice } from "@ledgerhq/errors";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { getEnv } from "@ledgerhq/live-env";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";

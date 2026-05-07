@@ -10,8 +10,8 @@ import { CONTENT_BANNER_ACTION_CARD_CLOSE_LABEL } from "../components/ContentBan
 
 let mockShouldDisplayBrazePlacement = false;
 
-jest.mock("@ledgerhq/live-common/featureFlags/index", () => {
-  const actual = jest.requireActual("@ledgerhq/live-common/featureFlags/index");
+jest.mock("@features/platform-feature-flags", () => {
+  const actual = jest.requireActual("@features/platform-feature-flags");
   return {
     ...actual,
     useWalletFeaturesConfig: (platform: "desktop" | "mobile") => {

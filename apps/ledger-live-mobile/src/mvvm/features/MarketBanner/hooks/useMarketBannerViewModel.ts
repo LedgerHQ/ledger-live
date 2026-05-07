@@ -15,7 +15,7 @@ import { counterValueCurrencySelector } from "~/reducers/settings";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { MARKET_BANNER_TILE_COUNT, PAGE_NAME, BANNER_NAME } from "../constants";
 import { UseMarketBannerViewModelResult } from "../types";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import {
   TIME_RANGE,
   MARKET_BANNER_DATA_SORT_ORDER,

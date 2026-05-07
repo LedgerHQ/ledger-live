@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import EntryButton from "~/renderer/components/EntryButton/EntryButton";
 import { useNavigate } from "react-router";
 import useStakeFlow from "~/renderer/screens/stake";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { track } from "~/renderer/analytics/segment";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 

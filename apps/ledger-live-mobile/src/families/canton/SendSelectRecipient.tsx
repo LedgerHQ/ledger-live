@@ -5,7 +5,7 @@ import {
 } from "@ledgerhq/coin-canton";
 import { CantonAccount, TransactionStatus } from "@ledgerhq/live-common/families/canton/types";
 import { isCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { sendRecipientCanNext } from "@ledgerhq/live-common/families/hedera/utils";
 import { urls } from "~/utils/urls";
 import Alert from "~/components/Alert";

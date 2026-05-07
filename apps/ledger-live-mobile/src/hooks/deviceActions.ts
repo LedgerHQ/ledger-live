@@ -33,7 +33,7 @@ import {
   removeImageExecMock,
   renameDeviceExecMock,
 } from "../../e2e/bridge/types";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 
 export function useAppDeviceAction() {
   const envMock = useEnv("MOCK");

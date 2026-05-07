@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions, @typescript-eslint/no-explicit-any */
 import { TopologyChangeError } from "@ledgerhq/coin-canton/types/errors";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { act, renderHook, waitFor } from "@tests/test-renderer";
 import { NavigatorName, ScreenName } from "~/const";
 import { usePendingTransferProposalsViewModel } from "../usePendingTransferProposalsViewModel";
@@ -12,8 +12,8 @@ import {
   createRawProposal,
 } from "./test-utils";
 
-jest.mock("@ledgerhq/live-common/featureFlags/index", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/featureFlags/index"),
+jest.mock("@features/platform-feature-flags", () => ({
+  ...jest.requireActual("@features/platform-feature-flags"),
   useFeature: jest.fn(),
 }));
 

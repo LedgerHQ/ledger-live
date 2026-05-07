@@ -6,7 +6,7 @@ import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
 import LabelInfoTooltip from "~/renderer/components/LabelInfoTooltip";
 import CommentField from "./CommentField";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 
 const Root = (props: {
   account: Account;

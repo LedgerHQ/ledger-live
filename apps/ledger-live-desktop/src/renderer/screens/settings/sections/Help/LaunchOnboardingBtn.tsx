@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import Track from "~/renderer/analytics/Track";
 import Button from "~/renderer/components/Button";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 const LaunchOnboardingBtn = () => {
   const { t } = useTranslation();

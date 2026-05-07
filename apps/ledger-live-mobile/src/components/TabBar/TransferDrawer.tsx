@@ -8,7 +8,7 @@ import { Linking, StyleProp, ViewStyle } from "react-native";
 import snakeCase from "lodash/snakeCase";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@features/platform-feature-flags";
 import { NavigatorName } from "~/const";
 import { hasOrderedNanoSelector, readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { openRebornBuyDeviceDrawer } from "~/reducers/rebornBuyDeviceDrawer";

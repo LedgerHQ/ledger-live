@@ -1,6 +1,6 @@
 import { useCallback, useLayoutEffect, useState } from "react";
 import { useLocation } from "react-router";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { SCROLL_UP_BUTTON_THRESHOLD, SCROLL_TO_TOP_EVENT } from "./constants";
 import { shouldDisplayRightPanel as isRightPanelPage } from "./utils";
 import { useRightPanelViewModel } from "LLD/components/RightPanel/useRightPanelViewModel";

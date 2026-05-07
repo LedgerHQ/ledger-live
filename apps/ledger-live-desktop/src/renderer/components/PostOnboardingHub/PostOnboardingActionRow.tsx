@@ -11,7 +11,7 @@ import { openModal } from "~/renderer/actions/modals";
 import { AllModalNames } from "~/renderer/modals/types";
 import { useNavigate } from "react-router";
 import { useCompleteActionCallback } from "./logic/useCompleteAction";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@features/platform-feature-flags";
 import { Dispatch } from "redux";
 import useLedgerSyncEntryPointViewModel from "LLD/features/LedgerSyncEntryPoints/useLedgerSyncEntryPointViewModel";
 import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";

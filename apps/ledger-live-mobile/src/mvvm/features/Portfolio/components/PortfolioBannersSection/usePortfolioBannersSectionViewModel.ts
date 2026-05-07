@@ -1,4 +1,4 @@
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useTopWalletHasDisplayableContentCards } from "~/dynamicContent/useTopWalletHasDisplayableContentCards";
 import { useOnboardingWidgetVisibility } from "../../hooks/useOnboardingWidgetVisibility";
 

@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { isAddressPoisoningOperation } from "@ledgerhq/live-common/operation";
 import Box from "~/renderer/components/Box";
 import { accountsSelector } from "~/renderer/reducers/accounts";

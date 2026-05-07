@@ -2,11 +2,8 @@ import {
   stakeProgramsToEarnParam,
   getEthDepositScreenSetting,
 } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import {
-  DEFAULT_FEATURES,
-  useWalletFeaturesConfig,
-} from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/index";
 import {
   useRemoteLiveAppContext,
   useRemoteLiveAppManifest,

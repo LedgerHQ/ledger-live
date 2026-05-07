@@ -13,7 +13,7 @@ import {
 import SettingsNavigationScrollView from "./SettingsNavigationScrollView";
 import SettingsCard from "~/components/SettingsCard";
 import { urls } from "~/utils/urls";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 
 const Resources = () => {

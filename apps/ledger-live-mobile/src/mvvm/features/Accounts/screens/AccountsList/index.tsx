@@ -22,7 +22,7 @@ import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { AccountsListNavigator } from "./types";
 import LedgerSyncEntryPoint from "LLM/features/LedgerSyncEntryPoint";
 import { EntryPoint } from "LLM/features/LedgerSyncEntryPoint/types";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@features/platform-feature-flags";
 
 type ViewProps = GenericAccountsType & Partial<SpecificAccountsType>;
 

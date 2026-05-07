@@ -6,7 +6,7 @@ import { track } from "~/renderer/analytics/segment";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import styled, { useTheme } from "styled-components";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 
 export type Props = {
   onClose: () => void;

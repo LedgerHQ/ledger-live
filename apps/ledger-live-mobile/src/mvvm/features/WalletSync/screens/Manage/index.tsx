@@ -24,7 +24,7 @@ import { useCustomTimeOut } from "../../hooks/useCustomTimeOut";
 import { useDispatch } from "~/context/hooks";
 import { blockPasswordLock } from "~/actions/appstate";
 import { isNoTrustchainError } from "../../utils/errors";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@features/platform-feature-flags";
 
 const WalletSyncManage = () => {
   const { t } = useTranslation();
