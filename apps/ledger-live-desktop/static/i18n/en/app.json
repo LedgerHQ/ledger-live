@@ -8799,6 +8799,28 @@
       "growYourRewards": "Grow your rewards",
       "spendYourCrypto": "Spend your crypto",
       "everythingAtAGlance": "Everything at a glance"
+    },
+    "slides": {
+      "fund": {
+        "title": "Start by funding your wallet",
+        "subTitle": "Fund your Ledger Wallet your way — transfer, buy, or convert cash to stablecoins."
+      },
+      "portfolio": {
+        "title": "Stay ahead of the market",
+        "subTitle": "Keep track of your assets, rewards, and market trends easily."
+      },
+      "earn": {
+        "title": "Enjoy rewards on your crypto",
+        "subTitle": "Put your crypto to work via Earn."
+      },
+      "card": {
+        "title": "Spend crypto in real life",
+        "subTitle": "Pay with your crypto card and earn cashback, online or in-store"
+      },
+      "swap": {
+        "title": "Swap without switching apps",
+        "subTitle": "Enjoy limitless trading on thousands of assets via our trusted swap partners."
+      }
     }
   },
   "history": {
