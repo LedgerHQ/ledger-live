@@ -5,11 +5,12 @@ import { setDefaultEnv, updateEnv, getEnv } from "../helpers/env";
 import { Resizable } from "re-resizable";
 import map from "lodash/map";
 import get from "lodash/get";
-// @ts-expect-error react-table v6 types don't export a module
-import ReactTable from "react-table";
+import ReactTableLib from "react-table";
 import { SmallButton } from "./Smallbutton";
-
 import "react-table/react-table.css";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const ReactTable = ReactTableLib as unknown as React.ComponentType<any>;
 
 const convertEnvData = (envData: any) =>
   map(envData, (value: unknown, key: string) => {

@@ -65,7 +65,7 @@ class LocationHelperModule(
      */
     private val activityEventListener = object : BaseActivityEventListener() {
         override fun onActivityResult(
-            activity: Activity?, requestCode: Int, resultCode: Int, data: Intent?
+            activity: Activity, requestCode: Int, resultCode: Int, data: Intent?
         ) {
             if (requestCode == REQUEST_ENABLE_LOCATION) {
                 when (resultCode) {
