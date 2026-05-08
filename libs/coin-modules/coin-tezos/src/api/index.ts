@@ -15,7 +15,6 @@ import type {
   FeeEstimation,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
-import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 import { RecommendUndelegation } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
@@ -50,22 +49,10 @@ import {
 import type { TezosFeeEstimation } from "./types";
 import type { TezosOperationMode } from "../types/model";
 
-export function createApi(config: TezosConfig): AlpacaApi & BridgeApi {
+export function createApi(config: TezosConfig): AlpacaApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
-    computeIntentType: (transaction: Record<string, unknown>): string => {
-      switch (transaction.mode) {
-        case "delegate":
-        case "undelegate":
-        case "stake":
-        case "unstake":
-        case "finalize_unstake":
-          return transaction.mode;
-        default:
-          return "send";
-      }
-    },
     broadcast,
     combine,
     craftTransaction: craft,

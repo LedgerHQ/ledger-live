@@ -1,7 +1,7 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getAssetFromToken, getTokenFromAsset } from "./bridge";
+import { computeIntentType, getAssetFromToken, getTokenFromAsset } from "./bridge";
 
 beforeAll(() => {
   const tezos = getCryptoCurrencyById("tezos");
@@ -95,6 +95,20 @@ describe("generic-coin-framework Tezos token", () => {
         name: "Tether USD",
         unit: { name: "Tether USD", code: "USDt", magnitude: 6 },
       });
+    });
+  });
+
+  describe("computeIntentType", () => {
+    it.each([
+      ["delegate", "delegate"],
+      ["undelegate", "undelegate"],
+      ["stake", "stake"],
+      ["unstake", "unstake"],
+      ["finalize_unstake", "finalize_unstake"],
+      ["send", "send"],
+      ["unknown", "send"],
+    ])("computes the intent type related to the '%s' mode", (mode, expectedIntentType) => {
+      expect(computeIntentType({ mode } as any)).toEqual(expectedIntentType);
     });
   });
 });
