@@ -16,7 +16,7 @@ export default class SwapLiveAppPage {
   quotesButtonDisabled = "mobile-get-quotes-button-disabled";
   numberOfQuotes = "number-of-quotes";
   quotesCountDown = "quotes-countdown";
-  quoteCardProviderName = "compact-quote-card-provider-";
+  quoteCardProviderNameSelector = "[data-testid^='compact-quote-card-provider-']";
   executeSwapButton = "execute-button";
   executeSwapButtonStepApproval = "execute-swap-button-step-approval";
   deviceActionErrorDescriptionId = "error-description-deviceAction";
@@ -24,6 +24,8 @@ export default class SwapLiveAppPage {
   showDetailslink = "show-details-link";
   quotesContainerErrorIcon = "quotes-container-error-icon";
   insufficientFundsBuyButton = "insufficient-funds-buy-button";
+  swapMainContainerCssSelector = "main";
+  swapMainContainerWebElement = getWebElementByCssSelector(this.swapMainContainerCssSelector);
   swapMaxToggle = "from-account-max-toggle";
   switchButton = "to-account-switch-accounts";
   specificQuoteCardProviderName = (provider: string) =>
@@ -158,10 +160,22 @@ export default class SwapLiveAppPage {
   async getProviderList() {
     await detoxExpect(getWebElementByTestId(this.numberOfQuotes)).toExist();
     await detoxExpect(getWebElementByTestId(this.quotesCountDown)).toExist();
-    const numberOfQuotesText: string = await getWebElementText(this.numberOfQuotes);
-    const providerList = await getWebElementsText(`[data-testid^='${this.quoteCardProviderName}']`);
-    jestExpect(numberOfQuotesText).toMatch(new RegExp(`${providerList.length} quotes? found`));
-    return providerList;
+
+    return await retryUntilTimeout(async () => {
+      const numberOfQuotesText = await getWebElementText(this.numberOfQuotes);
+      const providerList = await getWebElementsText(
+        this.swapMainContainerWebElement,
+        this.quoteCardProviderNameSelector,
+      );
+
+      if (!numberOfQuotesText.match(new RegExp(`^${providerList.length} quotes? found$`))) {
+        throw new Error(
+          `Quote count mismatch: UI shows "${numberOfQuotesText}" but found ${providerList.length} cards`,
+        );
+      }
+
+      return providerList;
+    }, 30000);
   }
 
   @Step("Check error message: $0")
@@ -235,6 +249,7 @@ export default class SwapLiveAppPage {
   @Step("Get all swap providers available")
   async getAllSwapProviders() {
     return await getWebElementsText(
+      this.swapMainContainerWebElement,
       '[data-testid^="quote-container-"][data-testid$="-fixed"], [data-testid^="quote-container-"][data-testid$="-float"]',
     );
   }

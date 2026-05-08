@@ -352,23 +352,20 @@ export const WebElementHelpers = {
     return index > 0 ? base.atIndex(index) : base;
   },
 
-  async getWebElementsText(selector: string): Promise<string[]> {
-    const texts: string[] = [];
-    let i = 0;
-
-    while (true) {
-      try {
-        const el = WebElementHelpers.getWebElementByCssSelector(selector, i);
-        const text: string = await el.runScript((node: HTMLElement) =>
-          (node.innerText || node.textContent || "").trim(),
-        );
-        texts.push(text);
-        i++;
-      } catch {
-        break;
-      }
-    }
-
+  async getWebElementsText(
+    containerWebElement: WebElement,
+    childrenCssSelector: string,
+  ): Promise<string[]> {
+    const raw = await containerWebElement.runScript(
+      (el: HTMLElement, sel: string) =>
+        JSON.stringify(
+          Array.from(el.querySelectorAll<HTMLElement>(sel)).map(node =>
+            (node.innerText || node.textContent || "").trim(),
+          ),
+        ),
+      [childrenCssSelector],
+    );
+    const texts: string[] = JSON.parse(raw);
     return texts.filter(Boolean);
   },
 
