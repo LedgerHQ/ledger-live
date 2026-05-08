@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import "./chain-adapters/zcash"; // register zcash adapter for serialization tests
 import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
 import {
   BitcoinAccount,
@@ -97,8 +98,8 @@ describe("assignToAccountRaw", () => {
   });
 
   beforeEach(() => {
-    accountZcashMock = {} as ZcashAccount;
-    accountZcashRawMock = {} as ZcashAccountRaw;
+    accountZcashMock = { currency: { id: "zcash" } } as unknown as ZcashAccount;
+    accountZcashRawMock = { currency: { id: "zcash" } } as unknown as ZcashAccountRaw;
   });
 
   describe("when bitcoinResources is defined", () => {
@@ -241,8 +242,8 @@ describe("assignFromAccountRaw", () => {
   });
 
   beforeEach(() => {
-    accountZcashMock = {} as ZcashAccount;
-    accountZcashRawMock = {} as ZcashAccountRaw;
+    accountZcashMock = { currency: { id: "zcash" } } as unknown as ZcashAccount;
+    accountZcashRawMock = { currency: { id: "zcash" } } as unknown as ZcashAccountRaw;
   });
 
   describe("when bitcoinResources is defined", () => {
