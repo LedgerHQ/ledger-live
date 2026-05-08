@@ -1,6 +1,6 @@
 import { useTheme } from "styled-components/native";
-import React, { useState } from "react";
-import { Linking } from "react-native";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { AppState, Linking } from "react-native";
 import { Button, Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
 import Circle from "~/components/Circle";
@@ -11,8 +11,29 @@ export function NeedMemoTagModal() {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
+  const shouldReopenRef = useRef(false);
+
   const openModal = () => setIsOpen(true);
   const closeModal = () => setIsOpen(false);
+
+  // When the user opens an external URL from inside the modal the screen may
+  // briefly lose navigation focus, causing QueuedDrawer to call onClose and
+  // set isOpen=false. Track the "Learn more" tap so we can restore the modal
+  // when the app returns to the foreground.
+  const handleLearnMore = useCallback(() => {
+    shouldReopenRef.current = true;
+    Linking.openURL(urls.memoTag);
+  }, []);
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", nextState => {
+      if (nextState === "active" && shouldReopenRef.current) {
+        shouldReopenRef.current = false;
+        setIsOpen(true);
+      }
+    });
+    return () => subscription.remove();
+  }, []);
 
   return (
     <>
@@ -43,7 +64,7 @@ export function NeedMemoTagModal() {
           type="accent"
           size="large"
           Icon={() => <Icons.ExternalLink size="S" color="primary.c80" />}
-          onPress={() => Linking.openURL(urls.memoTag)}
+          onPress={handleLearnMore}
         >
           {t("transfer.receive.memoTag.learnMore")}
         </Button>
