@@ -2,6 +2,7 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useModularDrawerController } from "LLM/features/ModularDrawer";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { setProductTourCompleted } from "~/actions/settings";
 import { productTourCompletedSelector } from "~/reducers/settings";
@@ -13,8 +14,11 @@ import { NavigatorName } from "~/const/navigation";
 import { PAGE_TRACKING_PRODUCT_TOUR } from "../const";
 import type { ProductTourPrimaryAction } from "../const";
 
+type CloseSource = "cross" | "external" | "internal";
+
 export const useProductTourDrawerViewModel = (): ProductTourDrawerViewModel => {
   const currentIndexRef = useRef(0);
+  const closeSourceRef = useRef<CloseSource>("external");
   const productTourCompleted = useSelector(productTourCompletedSelector);
   const deeplinkNonce = useSelector(productTourDeeplinkNonceSelector);
   const lastHandledDeeplinkNonceRef = useRef(0);
@@ -26,6 +30,7 @@ export const useProductTourDrawerViewModel = (): ProductTourDrawerViewModel => {
   );
   const dispatch = useDispatch();
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
+  const { openDrawer: openModularDrawer } = useModularDrawerController();
 
   const openProductTour = useCallback(() => {
     if (!productTourCompleted && isLWMProductTourEnabled) {
@@ -41,7 +46,8 @@ export const useProductTourDrawerViewModel = (): ProductTourDrawerViewModel => {
     setIsDrawerOpen(false);
   }, []);
 
-  const closeProductTour = useCallback(() => {
+  const onCloseButtonPress = useCallback(() => {
+    closeSourceRef.current = "cross";
     track("button_clicked", {
       button: "Close",
       page: PAGE_TRACKING_PRODUCT_TOUR,
@@ -50,13 +56,28 @@ export const useProductTourDrawerViewModel = (): ProductTourDrawerViewModel => {
     handleCloseDrawer();
   }, [handleCloseDrawer]);
 
+  const closeProductTour = useCallback(() => {
+    if (closeSourceRef.current === "external") {
+      track("modal_dismissed", {
+        page: PAGE_TRACKING_PRODUCT_TOUR,
+        card: currentIndexRef.current + 1,
+      });
+    }
+    closeSourceRef.current = "external";
+    handleCloseDrawer();
+  }, [handleCloseDrawer]);
+
   const onPrimaryAction = useCallback(
     (action: ProductTourPrimaryAction) => {
+      closeSourceRef.current = "internal";
       handleCloseDrawer();
 
       switch (action) {
-        case "done":
-          dispatch(setProductTourCompleted(true));
+        case "fund":
+          openModularDrawer({
+            flow: "add_account",
+            source: "product_tour",
+          });
           break;
         case "swap":
           if (shouldDisplayWallet40MainNav) {
@@ -79,7 +100,7 @@ export const useProductTourDrawerViewModel = (): ProductTourDrawerViewModel => {
           break;
       }
     },
-    [dispatch, handleCloseDrawer, navigation, shouldDisplayWallet40MainNav],
+    [handleCloseDrawer, navigation, openModularDrawer, shouldDisplayWallet40MainNav],
   );
 
   const onSlideChange = useCallback((index: number) => {
@@ -90,8 +111,15 @@ export const useProductTourDrawerViewModel = (): ProductTourDrawerViewModel => {
     });
   }, []);
 
+  const completeProductTour = useCallback(() => {
+    closeSourceRef.current = "internal";
+    dispatch(setProductTourCompleted(true));
+    handleCloseDrawer();
+  }, [dispatch, handleCloseDrawer]);
+
   useEffect(() => {
     if (isDrawerOpen && (productTourCompleted || !isLWMProductTourEnabled)) {
+      closeSourceRef.current = "internal";
       setIsDrawerOpen(false);
     }
   }, [isDrawerOpen, productTourCompleted, isLWMProductTourEnabled]);
@@ -111,7 +139,9 @@ export const useProductTourDrawerViewModel = (): ProductTourDrawerViewModel => {
     isDrawerOpen,
     openProductTour,
     closeProductTour,
+    onCloseButtonPress,
     onPrimaryAction,
     onSlideChange,
+    completeProductTour,
   };
 };
