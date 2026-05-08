@@ -8,6 +8,7 @@ import MarketList from "./MarketList";
 import { useMarket } from "LLD/features/Market/hooks/useMarket";
 import SearchInputComponent from "./components/SearchInputComponent";
 import { useMarketListVirtualization } from "LLD/features/Market/hooks/useMarketListVirtualization";
+import { TopCoinBanner } from "./TopCoinBanner";
 
 const Container = styled(Flex).attrs({
   flex: "1",
@@ -109,6 +110,7 @@ export default function Market() {
       <Title>{t("market.title")}</Title>
       <Flex flexDirection="row" pr="6px" my={2} alignItems="center" justifyContent="space-between">
         <SearchInputComponent search={search} updateSearch={updateSearch} />
+        <TopCoinBanner />
         <SelectBarContainer flexDirection="row" alignItems="center" justifyContent="flex-end">
           <Flex data-testid="market-countervalue-select" justifyContent="flex-end" mx={4}>
             <CounterValueSelect
