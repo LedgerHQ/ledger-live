@@ -66,9 +66,7 @@ export const getVotes = async (address: string): Promise<CeloVote[]> => {
     return [];
   }
 
-  const votes: CeloVote[] = [];
-
-  await Promise.all(
+  const groupedVotes = await Promise.all(
     groups.map(async group => {
       const [pendingRaw, activeRaw] = await Promise.all([
         client.readContract({
@@ -87,6 +85,7 @@ export const getVotes = async (address: string): Promise<CeloVote[]> => {
 
       const pending = new BigNumber(pendingRaw.toString());
       const active = new BigNumber(activeRaw.toString());
+      const groupVotes: CeloVote[] = [];
 
       const activatable = pending.gt(0)
         ? await client.readContract({
@@ -101,7 +100,7 @@ export const getVotes = async (address: string): Promise<CeloVote[]> => {
 
       if (pending.gt(0)) {
         activeVoteRevokable = false;
-        votes.push({
+        groupVotes.push({
           validatorGroup: group,
           amount: pending,
           activatable,
@@ -112,7 +111,7 @@ export const getVotes = async (address: string): Promise<CeloVote[]> => {
       }
 
       if (active.gt(0)) {
-        votes.push({
+        groupVotes.push({
           validatorGroup: group,
           amount: active,
           activatable: false,
@@ -121,10 +120,12 @@ export const getVotes = async (address: string): Promise<CeloVote[]> => {
           type: "active",
         });
       }
+
+      return groupVotes;
     }),
   );
 
-  return votes;
+  return groupedVotes.flat();
 };
 
 /**
