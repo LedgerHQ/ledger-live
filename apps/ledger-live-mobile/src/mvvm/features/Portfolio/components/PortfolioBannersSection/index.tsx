@@ -1,5 +1,5 @@
 import React from "react";
-import { FlatList } from "react-native";
+import { FlatList, ListRenderItemInfo } from "react-native";
 import { Box, PageIndicator } from "@ledgerhq/lumen-ui-rnative";
 import SectionContainer from "~/screens/WalletCentricSections/SectionContainer";
 import { LNSUpsellBanner } from "LLM/features/LNSUpsell/components/LNSUpsellBanner";
@@ -11,6 +11,29 @@ import { usePortfolioBannersSectionViewModel } from "./usePortfolioBannersSectio
 import { width } from "~/helpers/normalizeSize";
 
 const WIDTH = width - 32;
+
+const CAROUSEL_ITEMS = [
+  { key: "onboarding", slide: "onboarding" as const },
+  { key: "recover", slide: "recover" as const },
+];
+
+function OnboardingRecoverBannerSeparator() {
+  return <Box style={{ width: 12 }} />;
+}
+
+function OnboardingRecoverBannerRow({
+  item,
+}: ListRenderItemInfo<(typeof CAROUSEL_ITEMS)[number]>) {
+  return (
+    <Box style={{ width: WIDTH }}>
+      {item.slide === "onboarding" ? (
+        <OnboardingWidget />
+      ) : (
+        <RecoverBanner paddingHorizontal="s0" />
+      )}
+    </Box>
+  );
+}
 
 interface PortfolioBannersSectionProps {
   readonly isFirst: boolean;
@@ -25,7 +48,6 @@ export const PortfolioBannersSection = ({
 }: PortfolioBannersSectionProps) => {
   const {
     shouldShowOnboardingWidget,
-    sectionMarginTop,
     hasAssets,
     shouldDisplayRecover,
     onScroll,
@@ -43,7 +65,7 @@ export const PortfolioBannersSection = ({
         key="BannersSection"
         testID="portfolio-banners-section"
       >
-        <LNSUpsellBanner location="wallet" mx={6} mb={6} mt={4} />
+        <LNSUpsellBanner location="wallet" pt={4} />
       </SectionContainer>
     );
   }
@@ -58,12 +80,12 @@ export const PortfolioBannersSection = ({
         key="BannersSection"
         testID="portfolio-banners-section"
       >
-        <Box lx={{ marginTop: sectionMarginTop }}>
-          <RecoverBanner />
-
+        <Box lx={{ paddingTop: "s12" }}>
+          <RecoverBanner paddingHorizontal="s0" />
           <ContentCardsLocation
             key="contentCardsLocationPortfolio"
             locationId={ContentCardLocation.TopWallet}
+            mx={-6}
           />
         </Box>
       </SectionContainer>
@@ -71,11 +93,6 @@ export const PortfolioBannersSection = ({
   }
 
   if (shouldShowOnboardingWidget && shouldDisplayRecover) {
-    const carouselItems = [
-      { key: "onboarding", component: <OnboardingWidget /> },
-      { key: "recover", component: <RecoverBanner paddingHorizontal="s0" /> },
-    ];
-
     return (
       <SectionContainer
         py="0"
@@ -84,7 +101,7 @@ export const PortfolioBannersSection = ({
         key="BannersSection"
         testID="portfolio-banners-section"
       >
-        <Box lx={{ marginTop: sectionMarginTop, gap: "s8", marginBottom: "s24" }}>
+        <Box lx={{ paddingTop: "s12", gap: "s8" }}>
           <FlatList
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -95,15 +112,16 @@ export const PortfolioBannersSection = ({
             decelerationRate={0}
             scrollEventThrottle={16}
             bounces={false}
-            data={carouselItems}
+            data={CAROUSEL_ITEMS}
             keyExtractor={item => item.key}
-            renderItem={({ item }) => <Box style={{ width: WIDTH }}>{item.component}</Box>}
+            ItemSeparatorComponent={OnboardingRecoverBannerSeparator}
+            renderItem={OnboardingRecoverBannerRow}
           />
 
           <Box lx={{ alignItems: "center" }} testID="banners-page-indicator">
             <PageIndicator
-              currentPage={Math.min(carouselIndex + 1, carouselItems.length)}
-              totalPages={carouselItems.length}
+              currentPage={Math.min(carouselIndex + 1, CAROUSEL_ITEMS.length)}
+              totalPages={CAROUSEL_ITEMS.length}
             />
           </Box>
         </Box>
@@ -119,14 +137,7 @@ export const PortfolioBannersSection = ({
       key="BannersSection"
       testID="portfolio-banners-section"
     >
-      <Box
-        style={{ width: WIDTH }}
-        lx={{
-          marginTop: sectionMarginTop,
-          marginBottom: "s24",
-          marginLeft: shouldShowOnboardingWidget ? "s12" : "s0",
-        }}
-      >
+      <Box lx={{ paddingTop: "s12" }}>
         {shouldShowOnboardingWidget && <OnboardingWidget />}
         {shouldDisplayRecover && <RecoverBanner paddingHorizontal="s0" />}
       </Box>

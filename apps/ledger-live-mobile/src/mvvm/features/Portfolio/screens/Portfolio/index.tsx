@@ -123,12 +123,14 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     }
 
     sections.push(
-      <PortfolioBannersSection
-        key="banners"
-        isFirst={true}
-        isLNSUpsellBannerShown={isLNSUpsellBannerShown}
-        showAssets={showAssets}
-      />,
+      <Box key="portfolioBannersSection" px={6} backgroundColor="background.contrast">
+        <PortfolioBannersSection
+          key="banners"
+          isFirst={true}
+          isLNSUpsellBannerShown={isLNSUpsellBannerShown}
+          showAssets={showAssets}
+        />
+      </Box>,
     );
 
     if (shouldDisplayMarketBanner) {
