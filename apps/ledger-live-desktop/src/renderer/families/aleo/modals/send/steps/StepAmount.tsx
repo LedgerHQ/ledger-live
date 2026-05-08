@@ -1,4 +1,4 @@
-import BigNumber from "bignumber.js";
+// import BigNumber from "bignumber.js";
 import React, { Fragment, useCallback, useState } from "react";
 import invariant from "invariant";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
@@ -11,8 +11,8 @@ import SendAmountFields from "~/renderer/modals/Send/SendAmountFields";
 import AmountField from "~/renderer/modals/Send/fields/AmountField";
 import type { StepProps } from "~/renderer/modals/Send/types";
 import { isPrivateTransaction } from "@ledgerhq/live-common/families/aleo/utils";
-import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
-import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
+// import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
+// import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import { getAleoCurrencyConfig } from "../../../shared/utils";
 import QuickAmountSelector from "../../../shared/QuickAmountSelector";
 import InfoBanner from "../../../shared/InfoBanner";
@@ -41,7 +41,7 @@ const StepAmount = (props: StepProps) => {
 
   const mainAccount = getMainAccount(account, parentAccount);
   invariant(mainAccount, "main account required");
-  const config = getAleoCurrencyConfig(mainAccount.currency);
+  // const config = getAleoCurrencyConfig(mainAccount.currency);
 
   const currencyConfig = getAleoCurrencyConfig(mainAccount.currency);
   const isAutoPickingStrategy =
@@ -56,16 +56,16 @@ const StepAmount = (props: StepProps) => {
 
   if (!status) return null;
 
-  const unit = mainAccount.currency.units[0];
-  const unspentRecords = [
-    ...((mainAccount as AleoAccount).aleoResources?.unspentPrivateRecords ?? [])
-      .filter(r => new BigNumber(r.microcredits).isGreaterThan(0))
-      .sort((a, b) => new BigNumber(b.microcredits).comparedTo(new BigNumber(a.microcredits))),
-  ];
+  // const unit = mainAccount.currency.units[0];
+  // const unspentRecords = [
+  //   ...((mainAccount as AleoAccount).aleoResources?.unspentPrivateRecords ?? [])
+  //     .filter(r => new BigNumber(r.microcredits).isGreaterThan(0))
+  //     .sort((a, b) => new BigNumber(b.microcredits).comparedTo(new BigNumber(a.microcredits))),
+  // ];
 
-  const topRecordsSum = unspentRecords.slice(0, 14).reduce((acc, curr) => {
-    return acc.plus(Number(curr.microcredits));
-  }, new BigNumber(0));
+  // const topRecordsSum = unspentRecords.slice(0, 14).reduce((acc, curr) => {
+  //   return acc.plus(Number(curr.microcredits));
+  // }, new BigNumber(0));
 
   return (
     <Box flow={4} data-testid="aleo-step-amount">
@@ -120,7 +120,7 @@ const StepAmount = (props: StepProps) => {
           bridgePending={bridgePending}
           updateTransaction={updateTransaction}
         />
-        {config?.recordPickingStrategy === "auto" &&
+        {/* {config?.recordPickingStrategy === "auto" &&
           transaction.family === "aleo" &&
           isPrivateTransaction(transaction) && (
             <div
@@ -169,7 +169,7 @@ const StepAmount = (props: StepProps) => {
                 </span>
               </div>
             </div>
-          )}
+          )} */}
       </Fragment>
     </Box>
   );
