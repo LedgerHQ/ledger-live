@@ -1,4 +1,5 @@
-import { test as base, Page, ElectronApplication } from "@playwright/test";
+import { test as playwrightBase, Page, ElectronApplication } from "@playwright/test";
+import { withQuarantine } from "@ledgerhq/test-quarantine/playwright/fixture";
 import fsPromises from "fs/promises";
 import merge from "lodash/merge";
 import * as path from "path";
@@ -28,6 +29,8 @@ type TestFixtures = {
 
 const IS_DEBUG_MODE = !!process.env.PWDEBUG;
 
+const base = withQuarantine(playwrightBase);
+
 export const test = base.extend<TestFixtures>({
   env: undefined,
   lang: "en-US",
@@ -56,6 +59,7 @@ export const test = base.extend<TestFixtures>({
 
   electronApp: async (
     {
+      __quarantine: _q,
       lang,
       theme,
       userdataDestinationPath,

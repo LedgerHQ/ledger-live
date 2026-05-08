@@ -47,8 +47,9 @@ const config: PlaywrightTestConfig = {
         ["line"],
         ["allure-playwright"],
         ["./utils/customJsonReporter.ts"],
+        ["@ledgerhq/test-quarantine/playwright/reporter"],
       ]
-    : [["allure-playwright"]],
+    : [["allure-playwright"], ["@ledgerhq/test-quarantine/playwright/reporter"]],
 };
 
 export default config;

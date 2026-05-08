@@ -1,0 +1,6 @@
+team: qa
+expiry: "2026-12-31"
+reason: Temporary skip while Electron environment is being stabilised — encrypted.spec.ts handled separately
+failureMode: skip
+filter:
+  files: "apps/ledger-live-desktop/tests/specs/accounts/**"

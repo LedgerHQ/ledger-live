@@ -189,6 +189,7 @@
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/live-cli": "workspace:^",
     "@ledgerhq/speculos-transport": "workspace:^",
+    "@ledgerhq/test-quarantine": "workspace:^",
     "@ledgerhq/test-utils": "workspace:^",
     "@playwright/test": "catalog:",
     "@rsbuild/core": "catalog:",

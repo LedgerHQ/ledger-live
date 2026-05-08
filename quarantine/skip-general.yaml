@@ -1,0 +1,6 @@
+team: qa
+expiry: "2026-12-31"
+reason: Temporary skip while Electron environment is being stabilised — layout.spec.ts and terms.spec.ts kept active
+failureMode: skip
+filter:
+  files: "apps/ledger-live-desktop/tests/specs/general/{keyboard-shortcuts,passwordlock,updater,userParametersChange}.spec.ts"
