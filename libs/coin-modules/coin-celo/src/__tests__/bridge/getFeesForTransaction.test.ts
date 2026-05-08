@@ -291,6 +291,20 @@ describe("getFeesForTransaction", () => {
     expect(fees).toEqual(BigNumber(26));
   });
 
+  it("should floor fee market baseFeePerGas at 0 when gasPrice is lower than priority fee", async () => {
+    celoGasPriceMock.mockImplementation(async () => BigInt(1));
+    estimateMaxPriorityFeePerGasMock.mockImplementation(async () => BigInt(100));
+    estimateGasMock.mockImplementation(async () => BigInt(2));
+
+    const fees = await getFeesForTransaction({
+      account: { ...accountFixture, balance: BigNumber(123), spendableBalance: BigNumber(123) },
+      transaction: { ...transactionFixture, mode: "lock", recipient: VALID_RECIPIENT },
+    });
+
+    // baseFeePerGas is floored to 0, so maxFeePerGas = 100.
+    expect(fees).toEqual(BigNumber(200));
+  });
+
   it("should pass feeCurrency parameter to gasPrice when provided", async () => {
     celoGasPriceMock.mockClear();
 

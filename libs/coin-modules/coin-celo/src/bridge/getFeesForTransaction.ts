@@ -53,11 +53,12 @@ const getFeesForTransaction = async ({
   const tokenAccount = findSubAccountById(account, transaction.subAccountId || "");
   const isTokenTransaction = tokenAccount?.type === "TokenAccount";
 
-  const maxPriorityFeePerGas = await client.estimateMaxPriorityFeePerGas();
+  const maxPriorityFeePerGas = BigInt(await client.estimateMaxPriorityFeePerGas());
   // Align with @celo/connect setFeeMarketGas: used for final fee for all modes.
   const gasPrice = await celoGasPrice(transaction.feeCurrency ?? undefined);
-  const maxFeePerGas =
-    ((gasPrice - maxPriorityFeePerGas) * BigInt(120)) / BigInt(100) + maxPriorityFeePerGas;
+  const baseFeePerGas =
+    gasPrice > maxPriorityFeePerGas ? gasPrice - maxPriorityFeePerGas : BigInt(0);
+  const maxFeePerGas = (baseFeePerGas * BigInt(120)) / BigInt(100) + maxPriorityFeePerGas;
   const maxFeePerGasNumber = new BigNumber(maxFeePerGas.toString());
 
   if ((transaction.mode === "unlock" || transaction.mode === "vote") && account.celoResources) {
