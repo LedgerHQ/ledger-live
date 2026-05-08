@@ -19,7 +19,9 @@ type Props = {
   pt?: number;
 };
 
-const AnimatedFlashList = Animated.createAnimatedComponent<FlashListProps<AppManifest>>(FlashList);
+const AnimatedFlashList = Animated.createAnimatedComponent(
+  FlashList as React.ComponentType<FlashListProps<AppManifest>>,
+);
 
 const keyExtractor = (item: AppManifest) => item.id;
 
