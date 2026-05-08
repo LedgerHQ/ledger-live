@@ -84,6 +84,7 @@ describe("useBannersVisibility", () => {
     expect(result.current.isClearCacheBannerVisible).toBe(false);
     expect(result.current.isPostOnboardingBannerVisible).toBe(false);
     expect(result.current.isFinishOnboardingWidgetVisible).toBe(false);
+    expect(result.current.shouldDisplayFinishOnboardingWidget).toBe(true);
     expect(result.current.isActionCardsVisible).toBe(false);
     expect(result.current.isLNSUpsellBannerVisible).toBe(false);
     expect(result.current.isPortfolioContentCardsVisible).toBe(false);
@@ -115,6 +116,7 @@ describe("useBannersVisibility", () => {
 
     expect(result.current.isPostOnboardingBannerVisible).toBe(true);
     expect(result.current.isFinishOnboardingWidgetVisible).toBe(true);
+    expect(result.current.shouldDisplayFinishOnboardingWidget).toBe(true);
     expect(result.current.hasAnyContentBannerVisible).toBe(true);
   });
 
@@ -133,6 +135,7 @@ describe("useBannersVisibility", () => {
 
     expect(result.current.isPostOnboardingBannerVisible).toBe(true);
     expect(result.current.isFinishOnboardingWidgetVisible).toBe(false);
+    expect(result.current.shouldDisplayFinishOnboardingWidget).toBe(false);
     expect(result.current.hasAnyContentBannerVisible).toBe(true);
   });
 
