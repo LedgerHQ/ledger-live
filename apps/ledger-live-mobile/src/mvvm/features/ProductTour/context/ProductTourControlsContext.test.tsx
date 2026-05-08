@@ -19,6 +19,7 @@ describe("ProductTourControlsContext", () => {
     const openProductTour = jest.fn();
     const closeProductTour = jest.fn();
     const onSlideChange = jest.fn();
+    const onPrimaryAction = jest.fn();
 
     render(
       <ProductTourControlsProvider
@@ -26,6 +27,7 @@ describe("ProductTourControlsContext", () => {
           openProductTour,
           closeProductTour,
           onSlideChange,
+          onPrimaryAction,
           isDrawerOpen: false,
         }}
       >

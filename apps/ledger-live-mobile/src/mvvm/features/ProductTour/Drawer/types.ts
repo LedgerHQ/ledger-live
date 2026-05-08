@@ -1,7 +1,10 @@
+import type { ProductTourPrimaryAction } from "./const";
+
 export interface ProductTourDrawerViewModel {
   readonly isDrawerOpen: boolean;
   readonly openProductTour: () => void;
   readonly closeProductTour: () => void;
+  readonly onPrimaryAction: (action: ProductTourPrimaryAction) => void;
   readonly onSlideChange: (index: number) => void;
 }
 

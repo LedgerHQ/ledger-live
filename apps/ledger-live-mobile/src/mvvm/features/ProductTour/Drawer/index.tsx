@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { Slides } from "@ledgerhq/native-ui";
 import Animated from "react-native-reanimated";
 import { FlatList } from "react-native-gesture-handler";
@@ -18,19 +18,15 @@ export const useProductTourDrawer = () => useProductTourDrawerViewModel();
 const AnimatedGestureHandlerFlatList = Animated.createAnimatedComponent(FlatList);
 
 export const ProductTourDrawer = () => {
-  const { isDrawerOpen: resolvedIsDrawerOpen, closeProductTour, onSlideChange } =
+  const { isDrawerOpen, closeProductTour, onSlideChange, onPrimaryAction } =
     useProductTourControls();
 
-  const resolvedOnSlideChange = useCallback((index: number) => onSlideChange(index), [onSlideChange]);
-
-  const resolvedCloseDrawer = useCallback(() => closeProductTour(), [closeProductTour]);
-
-  if (!resolvedIsDrawerOpen) {
+  if (!isDrawerOpen) {
     return null;
   }
 
   return (
-    <QueuedDrawerBottomSheet isRequestingToBeOpened={resolvedIsDrawerOpen} onClose={resolvedCloseDrawer}>
+    <QueuedDrawerBottomSheet isRequestingToBeOpened={isDrawerOpen} onClose={closeProductTour}>
       <BottomSheetView>
         <BottomSheetHeader />
         <TrackScreen page={PAGE_TRACKING_PRODUCT_TOUR} />
@@ -40,7 +36,7 @@ export const ProductTourDrawer = () => {
           testID="product-tour-slides-container"
           initialNumToRender={1}
           maxToRenderPerBatch={Platform.OS === "ios" ? 1 : undefined}
-          onSlideChange={resolvedOnSlideChange}
+          onSlideChange={onSlideChange}
         >
           <Slides.Content>
             {Array.from({ length: PRODUCT_TOUR_TOTAL_SLIDES }, (_, index) => (
@@ -55,7 +51,7 @@ export const ProductTourDrawer = () => {
           </Slides.ProgressIndicator>
 
           <Slides.Footer>
-            <SlideFooterButton closeDrawer={resolvedCloseDrawer} />
+            <SlideFooterButton onPrimaryAction={onPrimaryAction} />
           </Slides.Footer>
         </Slides>
       </BottomSheetView>

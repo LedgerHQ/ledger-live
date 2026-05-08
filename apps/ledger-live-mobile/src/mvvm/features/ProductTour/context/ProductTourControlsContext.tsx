@@ -10,19 +10,31 @@ type ProductTourControlsProviderProps = {
   readonly children: React.ReactNode;
 };
 
-export const ProductTourControlsProvider = ({ value, children }: ProductTourControlsProviderProps) => {
+export const ProductTourControlsProvider = ({
+  value,
+  children,
+}: ProductTourControlsProviderProps) => {
   const stable = useMemo(
     () => ({
       openProductTour: value.openProductTour,
       closeProductTour: value.closeProductTour,
       onSlideChange: value.onSlideChange,
       isDrawerOpen: value.isDrawerOpen,
+      onPrimaryAction: value.onPrimaryAction,
     }),
-    [value.openProductTour, value.closeProductTour, value.onSlideChange, value.isDrawerOpen],
+    [
+      value.openProductTour,
+      value.closeProductTour,
+      value.onSlideChange,
+      value.isDrawerOpen,
+      value.onPrimaryAction,
+    ],
   );
 
   return (
-    <ProductTourControlsContext.Provider value={stable}>{children}</ProductTourControlsContext.Provider>
+    <ProductTourControlsContext.Provider value={stable}>
+      {children}
+    </ProductTourControlsContext.Provider>
   );
 };
 
