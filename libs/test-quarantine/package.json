@@ -1,0 +1,50 @@
+{
+  "name": "@ledgerhq/test-quarantine",
+  "version": "0.1.0",
+  "private": true,
+  "description": "YAML-driven test quarantine (Playwright, future Jest)",
+  "keywords": ["Ledger", "playwright", "testing"],
+  "main": "lib/index.js",
+  "module": "lib-es/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "unimported": "unimported"
+  },
+  "dependencies": {
+    "picomatch": "catalog:",
+    "yaml": "catalog:",
+    "zod": "catalog:"
+  },
+  "peerDependencies": {
+    "@playwright/test": "catalog:"
+  },
+  "devDependencies": {
+    "@playwright/test": "catalog:",
+    "@types/node": "catalog:",
+    "@types/picomatch": "4.0.0",
+    "rimraf": "catalog:"
+  },
+  "exports": {
+    ".": {
+      "@ledgerhq/source": "./src/index.ts",
+      "import": "./lib-es/index.js",
+      "require": "./lib/index.js",
+      "default": "./lib/index.js"
+    },
+    "./playwright/fixture": {
+      "@ledgerhq/source": "./src/playwright/fixture.ts",
+      "import": "./lib-es/playwright/fixture.js",
+      "require": "./lib/playwright/fixture.js",
+      "default": "./lib/playwright/fixture.js"
+    },
+    "./playwright/reporter": {
+      "@ledgerhq/source": "./src/playwright/reporter.ts",
+      "import": "./lib-es/playwright/reporter.js",
+      "require": "./lib/playwright/reporter.js",
+      "default": "./lib/playwright/reporter.js"
+    },
+    "./package.json": "./package.json"
+  }
+}
