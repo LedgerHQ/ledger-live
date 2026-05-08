@@ -161,8 +161,9 @@ export const getFeeMarketGasParams = async (
     client.estimateMaxPriorityFeePerGas(),
   ]);
 
-  const maxFeePerGas =
-    ((gasPrice - maxPriorityFeePerGas) * BigInt(120)) / BigInt(100) + maxPriorityFeePerGas;
+  const baseFeePerGas =
+    gasPrice > maxPriorityFeePerGas ? gasPrice - maxPriorityFeePerGas : BigInt(0);
+  const maxFeePerGas = (baseFeePerGas * BigInt(120)) / BigInt(100) + maxPriorityFeePerGas;
 
   return { maxFeePerGas, maxPriorityFeePerGas };
 };

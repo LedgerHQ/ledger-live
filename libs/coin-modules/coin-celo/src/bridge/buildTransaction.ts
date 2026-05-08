@@ -48,12 +48,16 @@ const getVoteNeighbors = async (
   // group is not yet in the eligible set (first-time voter), so we insert it
   // explicitly. Without this the group is missing from `sorted`, idx stays -1,
   // and lesser/greater are always wrong — causing the Election contract to revert.
-  const otherGroups: { address: `0x${string}`; votes: bigint }[] = [...groups]
-    .filter(addr => addr.toLowerCase() !== group.toLowerCase())
-    .map(addr => {
-      const i = groups.findIndex(g => g.toLowerCase() === addr.toLowerCase());
-      return { address: addr, votes: votes[i] };
-    });
+  const normalizedGroup = group.toLowerCase();
+  const otherGroups: { address: `0x${string}`; votes: bigint }[] = groups.reduce(
+    (acc, addr, index) => {
+      if (addr.toLowerCase() !== normalizedGroup) {
+        acc.push({ address: addr, votes: votes[index] });
+      }
+      return acc;
+    },
+    [] as { address: `0x${string}`; votes: bigint }[],
+  );
 
   const sorted: { address: `0x${string}`; votes: bigint }[] = [
     ...otherGroups,

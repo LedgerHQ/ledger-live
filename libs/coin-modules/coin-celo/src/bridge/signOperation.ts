@@ -46,7 +46,7 @@ const runSignOperation = async ({
   const isTokenTransaction = subAccount?.type === "TokenAccount";
 
   const to = isTokenTransaction ? subAccount.token.contractAddress : unsignedTransaction.to;
-  const value = isTokenTransaction ? "0x0" : (unsignedTransaction.value ?? "0x0");
+  const value = isTokenTransaction ? "0x0" : unsignedTransaction.value ?? "0x0";
 
   const { maxFeePerGas, maxPriorityFeePerGas } = await getFeeMarketGasParams(
     feeCurrency ?? undefined,
@@ -87,11 +87,21 @@ const runSignOperation = async ({
   observer.next({ type: "device-signature-granted" });
 
   const v = BigInt("0x" + response.v);
+  const yParity =
+    v === BigInt(0) || v === BigInt(1)
+      ? Number(v)
+      : v === BigInt(27) || v === BigInt(28)
+        ? Number(v - BigInt(27))
+        : null;
+  if (yParity === null) {
+    throw new Error(`celo: unsupported signature v value returned by device: ${response.v}`);
+  }
+
   const signature: Signature = {
     r: ("0x" + response.r) as `0x${string}`,
     s: ("0x" + response.s) as `0x${string}`,
     v,
-    yParity: v % BigInt(2) === BigInt(0) ? 0 : 1,
+    yParity,
   };
 
   const signedRaw = serializeTransaction(txToSerialize, signature);
