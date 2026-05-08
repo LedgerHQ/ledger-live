@@ -1,9 +1,6 @@
 import type { BigNumber } from "bignumber.js";
 import type { Observable } from "rxjs";
 
-export type * from "./jsonRpcClient";
-export type * from "./shieldedTransaction";
-
 export type SyncShieldedArgs = {
   startBlockHeight: number;
   viewingKey: string;
