@@ -4,17 +4,28 @@
  */
 import { ONE_SUI } from "../../constants";
 import { RATE_BATCH_CHUNK_SIZE } from "./constants";
-import { BATCH_RATES_15 } from "./queries";
+import {
+  BATCH_RATES_15,
+  CHECKPOINT_BY_SEQUENCE,
+  EXCHANGE_RATE_AT_EPOCH,
+  LATEST_CHECKPOINT_SEQUENCE,
+  STAKED_SUI_OBJECTS_BY_OWNER,
+  SUI_SYSTEM_STATE,
+} from "./queries";
 import {
   assertSystemStateJson,
+  computeApy,
   computeEstimatedReward,
   computeStakeRewards,
+  extractFailureError,
   fromSystemStateJson,
   groupStakedSuiByPool,
   isStakedSuiJson,
   parseExchangeRateNode,
   planActivationRateLookups,
   poolRefsFromSystemState,
+  projectOpenMoveBody,
+  projectOpenMoveSignature,
   shortenCoinType,
   UNKNOWN_VALIDATOR,
   validateStakedSuiNodes,
@@ -507,6 +518,78 @@ describe("computeEstimatedReward", () => {
   });
 });
 
+// ----- computeApy ---------------------------------------------------------
+
+describe("computeApy", () => {
+  const flat = { sui_amount: 1000, pool_token_amount: 1000 };
+  const up1Pct = { sui_amount: 1010, pool_token_amount: 1000 };
+
+  it("should compute annualised growth from a 30-epoch window", () => {
+    // GIVEN
+    // Past ratio = 1.0; current ratio = 1.01 → 1% growth over 30 epochs.
+    // APY = (1.01)^(365/30) − 1 ≈ 0.1295.
+
+    // WHEN
+    const apy = computeApy(up1Pct, flat, 30);
+
+    // THEN
+    expect(apy).toBeGreaterThan(0.12);
+    expect(apy).toBeLessThan(0.14);
+  });
+
+  it("should return 0 when current_ratio == past_ratio (no growth)", () => {
+    // WHEN
+    const apy = computeApy(flat, flat, 30);
+
+    // THEN
+    expect(apy).toBe(0);
+  });
+
+  it("should clamp negative growth to 0", () => {
+    // GIVEN
+    // Past rate higher than current — pool effectively bled value.
+    // Real wallets shouldn't show a negative APY; clamp to 0.
+    const down = { sui_amount: 990, pool_token_amount: 1000 };
+
+    // WHEN
+    const apy = computeApy(down, flat, 30);
+
+    // THEN
+    expect(apy).toBe(0);
+  });
+
+  it("should return 0 for non-positive epochsBetween", () => {
+    // WHEN / THEN
+    expect(computeApy(up1Pct, flat, 0)).toBe(0);
+    expect(computeApy(up1Pct, flat, -5)).toBe(0);
+  });
+
+  it("should return 0 when past rate has zero pool_token_amount (degenerate)", () => {
+    // GIVEN
+    const pastRate = { sui_amount: 1000, pool_token_amount: 0 };
+
+    // WHEN
+    const apy = computeApy(up1Pct, pastRate, 30);
+
+    // THEN
+    expect(apy).toBe(0);
+  });
+
+  it("should match known JSON-RPC values within tolerance for a realistic pool", () => {
+    // GIVEN
+    // 0.3% growth over 30 epochs annualises to ~3.7%, in the 2-4% real-world band.
+    const currentRate = { sui_amount: "10030000000000000", pool_token_amount: "10000000000000000" };
+    const pastRate = { sui_amount: "10000000000000000", pool_token_amount: "10000000000000000" };
+
+    // WHEN
+    const apy = computeApy(currentRate, pastRate, 30);
+
+    // THEN
+    expect(apy).toBeGreaterThan(0.03);
+    expect(apy).toBeLessThan(0.04);
+  });
+});
+
 // ----- validateStakedSuiNodes ---------------------------------------------
 
 describe("validateStakedSuiNodes", () => {
@@ -826,5 +909,163 @@ describe("BATCH_RATES_15 structural invariant", () => {
     // THEN
     expect(op.kind).toBe("OperationDefinition");
     expect(aliases).toBe(RATE_BATCH_CHUNK_SIZE);
+  });
+});
+
+// ----- extractFailureError ------------------------------------------------
+
+describe("extractFailureError", () => {
+  test.each<[Record<string, unknown>, string]>([
+    [{ status: { error: { description: "out of gas" } } }, "out of gas"],
+    [{ status: { error: { kind: "INSUFFICIENT_GAS" } } }, "insufficient gas"],
+    [{ status: { error: {} } }, "transaction execution failed"],
+    [{}, "transaction execution failed"],
+    [{ status: "FAILURE" }, "transaction execution failed"],
+    [
+      { status: { error: { description: "", kind: "INVARIANT_VIOLATION" } } },
+      "invariant violation",
+    ],
+    [{ status: { error: { description: "", kind: "" } } }, "transaction execution failed"],
+  ])("extractFailureError(%j) → %s", (input, expected) => {
+    expect(extractFailureError(input)).toBe(expected);
+  });
+});
+
+// ----- Schema-availability invariant --------------------------------------
+
+describe("graphql query availability", () => {
+  // Guards against Mysten removing or renaming a query we depend on.
+  // Re-running `pnpm graphql:codegen:fetch` regenerates `introspection.json` —
+  // a structural drift will trip the parser before this test even runs.
+  const op = (doc: unknown): { kind?: string; name?: { value: string } } =>
+    (doc as { definitions: ReadonlyArray<unknown> }).definitions[0] as {
+      kind?: string;
+      name?: { value: string };
+    };
+
+  it.each([
+    ["CHECKPOINT_BY_SEQUENCE", CHECKPOINT_BY_SEQUENCE, "CheckpointBySequence"],
+    ["LATEST_CHECKPOINT_SEQUENCE", LATEST_CHECKPOINT_SEQUENCE, "LatestCheckpointSequence"],
+    ["STAKED_SUI_OBJECTS_BY_OWNER", STAKED_SUI_OBJECTS_BY_OWNER, "StakedSuiObjects"],
+    ["SUI_SYSTEM_STATE", SUI_SYSTEM_STATE, "SuiSystemState"],
+    ["EXCHANGE_RATE_AT_EPOCH", EXCHANGE_RATE_AT_EPOCH, "ExchangeRateAtEpoch"],
+    ["BATCH_RATES_15", BATCH_RATES_15, "BatchExchangeRates"],
+  ])("%s parses as a typed OperationDefinition", (_label, doc, expectedName) => {
+    const def = op(doc);
+    expect(def.kind).toBe("OperationDefinition");
+    expect(def.name?.value).toBe(expectedName);
+  });
+});
+
+// ----- projectOpenMoveBody / projectOpenMoveSignature ---------------------
+
+describe("projectOpenMoveBody", () => {
+  it.each([
+    ["address"],
+    ["bool"],
+    ["u8"],
+    ["u16"],
+    ["u32"],
+    ["u64"],
+    ["u128"],
+    ["u256"],
+  ])("maps primitive kind %s to { $kind: %s }", kind => {
+    expect(projectOpenMoveBody(kind)).toEqual({ $kind: kind });
+  });
+
+  it("maps an unrecognised string to unknown", () => {
+    expect(projectOpenMoveBody("string")).toEqual({ $kind: "unknown" });
+  });
+
+  it("recursively projects a vector wrapper", () => {
+    expect(projectOpenMoveBody({ vector: "u8" })).toEqual({
+      $kind: "vector",
+      vector: { $kind: "u8" },
+    });
+  });
+
+  it("recursively projects nested vectors", () => {
+    expect(projectOpenMoveBody({ vector: { vector: "u8" } })).toEqual({
+      $kind: "vector",
+      vector: { $kind: "vector", vector: { $kind: "u8" } },
+    });
+  });
+
+  it("projects a typeParameter index", () => {
+    expect(projectOpenMoveBody({ typeParameter: 2 })).toEqual({ $kind: "typeParameter", index: 2 });
+  });
+
+  it("coerces typeParameter from a string", () => {
+    expect(projectOpenMoveBody({ typeParameter: "3" })).toEqual({
+      $kind: "typeParameter",
+      index: 3,
+    });
+  });
+
+  it("projects a datatype with no type parameters", () => {
+    expect(
+      projectOpenMoveBody({
+        datatype: { package: "0x2", module: "coin", type: "Coin" },
+      }),
+    ).toEqual({
+      $kind: "datatype",
+      datatype: { typeName: "0x2::coin::Coin", typeParameters: [] },
+    });
+  });
+
+  it("recursively projects datatype type parameters", () => {
+    expect(
+      projectOpenMoveBody({
+        datatype: {
+          package: "0x2",
+          module: "coin",
+          type: "Coin",
+          typeParameters: ["u64"],
+        },
+      }),
+    ).toEqual({
+      $kind: "datatype",
+      datatype: {
+        typeName: "0x2::coin::Coin",
+        typeParameters: [{ $kind: "u64" }],
+      },
+    });
+  });
+
+  it("falls through to unknown for nulls and unrecognised shapes", () => {
+    expect(projectOpenMoveBody(null)).toEqual({ $kind: "unknown" });
+    expect(projectOpenMoveBody(undefined)).toEqual({ $kind: "unknown" });
+    expect(projectOpenMoveBody({ noKnownKey: 1 })).toEqual({ $kind: "unknown" });
+    expect(projectOpenMoveBody(42)).toEqual({ $kind: "unknown" });
+  });
+});
+
+describe("projectOpenMoveSignature", () => {
+  it("returns null reference + projected body when no ref", () => {
+    expect(projectOpenMoveSignature({ body: "u64" })).toEqual({
+      reference: null,
+      body: { $kind: "u64" },
+    });
+  });
+
+  it("maps &mut to mutable", () => {
+    expect(projectOpenMoveSignature({ ref: "&mut", body: "address" })).toEqual({
+      reference: "mutable",
+      body: { $kind: "address" },
+    });
+  });
+
+  it("maps & to immutable", () => {
+    expect(projectOpenMoveSignature({ ref: "&", body: "u8" })).toEqual({
+      reference: "immutable",
+      body: { $kind: "u8" },
+    });
+  });
+
+  it("tolerates a missing/undefined sigJson", () => {
+    expect(projectOpenMoveSignature(undefined)).toEqual({
+      reference: null,
+      body: { $kind: "unknown" },
+    });
   });
 });

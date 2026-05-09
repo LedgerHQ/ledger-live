@@ -11,11 +11,67 @@ export const CHECKPOINT_BY_SEQUENCE = graphql(`
       digest
       sequenceNumber
       timestamp
+      previousCheckpointDigest
     }
   }
 `);
 
 export type CheckpointBySequenceResult = ResultOf<typeof CHECKPOINT_BY_SEQUENCE>;
+
+/**
+ * Block-explorer view: checkpoint metadata + all transactions in the block.
+ * Reuses the same per-transaction field set as
+ * {@link TRANSACTIONS_BY_AFFECTED_ADDRESS} so the adapter is shared.
+ */
+export const BLOCK_BY_SEQUENCE = graphql(`
+  query BlockBySequence($sequenceNumber: UInt53, $txFirst: Int!, $txAfter: String, $eventsFirst: Int!) {
+    checkpoint(sequenceNumber: $sequenceNumber) {
+      digest
+      sequenceNumber
+      timestamp
+      previousCheckpointDigest
+      transactions(first: $txFirst, after: $txAfter) {
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+        nodes {
+          digest
+          transactionJson
+          effects {
+            status
+            timestamp
+            balanceChangesJson
+            effectsJson
+            gasEffects {
+              gasSummary {
+                computationCost
+                storageCost
+                storageRebate
+                nonRefundableStorageFee
+              }
+            }
+            events(first: $eventsFirst) {
+              nodes {
+                contents {
+                  type {
+                    repr
+                  }
+                  json
+                }
+              }
+            }
+            checkpoint {
+              sequenceNumber
+            }
+          }
+        }
+      }
+    }
+  }
+`);
+
+export type BlockBySequenceResult = ResultOf<typeof BLOCK_BY_SEQUENCE>;
 
 /** Latest checkpoint's sequence number (`sui_getLatestCheckpointSequenceNumber` equivalent). */
 export const LATEST_CHECKPOINT_SEQUENCE = graphql(`
@@ -144,3 +200,305 @@ export const ALL_BALANCES_BY_OWNER = graphql(`
     }
   }
 `);
+
+/**
+ * Single transaction by digest. JSON blobs (`transactionJson`, `effectsJson`,
+ * `balanceChangesJson`) carry the gRPC-proto shapes the existing JSON-RPC
+ * mappers consume; typed `gasEffects` and `events` are read directly.
+ */
+export const TRANSACTION_BY_DIGEST = graphql(`
+  query TransactionByDigest($digest: String!, $eventsFirst: Int!) {
+    transaction(digest: $digest) {
+      digest
+      transactionJson
+      effects {
+        status
+        timestamp
+        balanceChangesJson
+        effectsJson
+        gasEffects {
+          gasSummary {
+            computationCost
+            storageCost
+            storageRebate
+            nonRefundableStorageFee
+          }
+        }
+        events(first: $eventsFirst) {
+          nodes {
+            contents {
+              type {
+                repr
+              }
+              json
+            }
+          }
+        }
+        checkpoint {
+          sequenceNumber
+        }
+      }
+    }
+  }
+`);
+
+export type TransactionByDigestResult = ResultOf<typeof TRANSACTION_BY_DIGEST>;
+
+/**
+ * Paginated transaction history for an address. `affectedAddress` matches sender, sponsor, OR
+ * recipient — collapsing the JSON-RPC IN+OUT merge into a single query. Backward pagination
+ * (`last`/`before`) yields newest-first order; `beforeCheckpoint`/`afterCheckpoint` pin the
+ * page boundary for `getListOperations`'s cursor translation.
+ */
+export const TRANSACTIONS_BY_AFFECTED_ADDRESS = graphql(`
+  query TransactionsByAffectedAddress(
+    $address: SuiAddress!
+    $last: Int
+    $before: String
+    $beforeCheckpoint: UInt53
+    $afterCheckpoint: UInt53
+    $eventsFirst: Int!
+  ) {
+    transactions(
+      filter: {
+        affectedAddress: $address
+        beforeCheckpoint: $beforeCheckpoint
+        afterCheckpoint: $afterCheckpoint
+      }
+      last: $last
+      before: $before
+    ) {
+      pageInfo {
+        hasPreviousPage
+        startCursor
+      }
+      nodes {
+        digest
+        transactionJson
+        effects {
+          status
+          timestamp
+          balanceChangesJson
+          effectsJson
+          gasEffects {
+            gasSummary {
+              computationCost
+              storageCost
+              storageRebate
+              nonRefundableStorageFee
+            }
+          }
+          events(first: $eventsFirst) {
+            nodes {
+              contents {
+                type {
+                  repr
+                }
+                json
+              }
+            }
+          }
+          checkpoint {
+            sequenceNumber
+            digest
+          }
+        }
+      }
+    }
+  }
+`);
+
+export type TransactionsByAffectedAddressResult = ResultOf<typeof TRANSACTIONS_BY_AFFECTED_ADDRESS>;
+
+/**
+ * Dry-run a transaction (replaces JSON-RPC `dryRunTransactionBlock`); accepts already-built BCS.
+ * `status` + `effectsJson` let the adapter distinguish a successful dry-run from a failed one
+ * whose effects payload is still populated. Without these the adapter would report `$0` gas
+ * on a failed simulation.
+ */
+export const SIMULATE_TRANSACTION = graphql(`
+  query SimulateTransaction($transaction: JSON!) {
+    simulateTransaction(transaction: $transaction, doGasSelection: false) {
+      effects {
+        status
+        effectsJson
+        gasEffects {
+          gasSummary {
+            computationCost
+            storageCost
+            storageRebate
+          }
+        }
+        transaction {
+          gasInput {
+            gasBudget
+          }
+        }
+      }
+    }
+  }
+`);
+
+export type SimulateTransactionResult = ResultOf<typeof SIMULATE_TRANSACTION>;
+
+/** Broadcast a signed transaction (replaces JSON-RPC `executeTransactionBlock`); returns after finality on chain. */
+export const EXECUTE_TRANSACTION = graphql(`
+  mutation ExecuteTransaction($transactionDataBcs: Base64!, $signatures: [Base64!]!) {
+    executeTransaction(transactionDataBcs: $transactionDataBcs, signatures: $signatures) {
+      effects {
+        digest
+        status
+        effectsJson
+      }
+    }
+  }
+`);
+
+export type ExecuteTransactionResult = ResultOf<typeof EXECUTE_TRANSACTION>;
+
+// ----- Build-side queries (write-flow GraphQL adapter) ---------------------
+
+/**
+ * Address-owned objects filtered by Move type — replaces JSON-RPC
+ * `getCoins(owner, coinType, cursor)`. Supplies the gas-coin selection list
+ * to `Transaction.build`. Use the fully-qualified `Coin<T>` type literal in
+ * `$type` (e.g. `0x2::coin::Coin<0x2::sui::SUI>`).
+ */
+export const LIST_COINS_BY_OWNER_AND_TYPE = graphql(`
+  query ListCoinsByOwnerAndType(
+    $owner: SuiAddress!
+    $type: String!
+    $first: Int
+    $after: String
+  ) {
+    address(address: $owner) {
+      objects(filter: { type: $type }, first: $first, after: $after) {
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+        nodes {
+          address
+          version
+          digest
+          contents {
+            json
+          }
+        }
+      }
+    }
+  }
+`);
+
+export type ListCoinsByOwnerAndTypeResult = ResultOf<typeof LIST_COINS_BY_OWNER_AND_TYPE>;
+
+/**
+ * Single object fetch by address — replaces JSON-RPC `getObject(id)` and
+ * batch-driven `multiGetObjects([ids])` (issue N parallel queries). The
+ * adapter projects `address`/`version`/`digest`/owner into the JSON-RPC
+ * `SuiObjectResponse` shape `Transaction.build` consumes.
+ */
+export const OBJECT_BY_ADDRESS = graphql(`
+  query ObjectByAddress($address: SuiAddress!, $version: UInt53) {
+    object(address: $address, version: $version) {
+      address
+      version
+      digest
+      objectBcs
+      owner {
+        __typename
+        ... on AddressOwner {
+          address {
+            address
+          }
+        }
+        ... on ConsensusAddressOwner {
+          address {
+            address
+          }
+          startVersion
+        }
+        ... on Shared {
+          initialSharedVersion
+        }
+      }
+      asMoveObject {
+        contents {
+          type {
+            repr
+          }
+          json
+        }
+      }
+    }
+  }
+`);
+
+export type ObjectByAddressResult = ResultOf<typeof OBJECT_BY_ADDRESS>;
+
+/**
+ * Chain identifier — replaces JSON-RPC `getChainIdentifier()`. Used by
+ * `Transaction.build` as the BCS-prefix discriminator. Stable across
+ * checkpoints; cache aggressively.
+ */
+export const CHAIN_IDENTIFIER = graphql(`
+  query ChainIdentifier {
+    chainIdentifier
+  }
+`);
+
+export type ChainIdentifierResult = ResultOf<typeof CHAIN_IDENTIFIER>;
+
+/**
+ * Minimal system-state query for the build-side adapter — only the fields
+ * `coreClientResolveTransactionPlugin` reads (`epochId`, `referenceGasPrice`,
+ * `startTimestamp`). Separate from `SUI_SYSTEM_STATE` to avoid pulling the
+ * heavy `systemState.json` blob on every transaction build.
+ */
+export const SYSTEM_STATE_FOR_BUILD = graphql(`
+  query SystemStateForBuild {
+    epoch {
+      epochId
+      referenceGasPrice
+      startTimestamp
+    }
+  }
+`);
+
+export type SystemStateForBuildResult = ResultOf<typeof SYSTEM_STATE_FOR_BUILD>;
+
+/**
+ * Move function signature — replaces JSON-RPC `getNormalizedMoveFunction(...)`.
+ * Fetches the structured `signature` JSON scalar (recursive `{ ref, body }`)
+ * which the adapter projects into the SDK's `OpenSignature[]` shape.
+ */
+export const MOVE_FUNCTION_BY_NAME = graphql(`
+  query MoveFunctionByName(
+    $package: SuiAddress!
+    $module: String!
+    $function: String!
+  ) {
+    package(address: $package) {
+      module(name: $module) {
+        function(name: $function) {
+          name
+          typeParameters {
+            constraints
+          }
+          parameters {
+            signature
+            repr
+          }
+          return {
+            signature
+            repr
+          }
+          isEntry
+          visibility
+        }
+      }
+    }
+  }
+`);
+
+export type MoveFunctionByNameResult = ResultOf<typeof MOVE_FUNCTION_BY_NAME>;

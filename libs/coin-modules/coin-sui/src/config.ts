@@ -4,9 +4,11 @@ import buildCoinConfig from "@ledgerhq/coin-module-framework/config";
 /**
  * Per-currency feature flags scoped to coin-sui. Populated at app startup by
  * the LLC `setup.ts` closure from the central `suiGraphqlTransport` feature
- * flag — not from LiveConfig. `graphql=true` routes read-side dispatch
- * (`network/sdk.ts`) through GraphQL; write-side and SDK-internal callers
- * always use `node.url` (JSON-RPC).
+ * flag — not from LiveConfig. `graphql=true` routes every `withTransport`
+ * dispatcher in `network/sdk.ts` (reads + writes — balances, stakes, last
+ * block, checkpoint, operations, validators, transaction construction, fee
+ * dry-run, broadcast) through GraphQL via `node.graphqlUrl`. Callers bound
+ * directly to `withApi` (none in the current hot path) always use `node.url`.
  */
 export type SuiFeatureFlags = {
   graphql: boolean;
