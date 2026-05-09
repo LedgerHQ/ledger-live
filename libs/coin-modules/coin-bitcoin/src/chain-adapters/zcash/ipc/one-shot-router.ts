@@ -4,9 +4,9 @@
  * Factors out the `Map<RequestId, { resolve, reject }>` plumbing that the
  * Electron main-process bridge needs for every one-shot utility call
  * (`getChainTip`, and any future one-shot methods such as `getBalance`,
- * `getTransaction`, …).
+ * `getTransaction`, ...).
  *
- * Streaming methods (like `syncShielded`) don't use this — they have their
+ * Streaming methods (like `syncShielded`) don't use this -- they have their
  * own state per subscription and funnel errors through `StreamEvent.kind =
  * "error"` instead. See the error-reporting conventions in `contract.ts`.
  *
@@ -51,7 +51,7 @@ export class OneShotResolver<T> {
    * failure).
    *
    * If `dispatch` itself throws or rejects, the pending entry is cleaned up
-   * immediately — the caller sees the original error and doesn't leak an
+   * immediately -- the caller sees the original error and doesn't leak an
    * entry that no reply will ever match.
    */
   async register(requestId: RequestId, dispatch: () => Promise<void>): Promise<T> {
@@ -69,7 +69,7 @@ export class OneShotResolver<T> {
 
   /**
    * Resolves the pending request with `value`. No-op (with a silent drop) if
-   * the id is unknown — happens legitimately after `failAll()` or when the
+   * the id is unknown -- happens legitimately after `failAll()` or when the
    * utility sends a late reply for a cancelled request.
    */
   resolve(requestId: RequestId, value: T): boolean {

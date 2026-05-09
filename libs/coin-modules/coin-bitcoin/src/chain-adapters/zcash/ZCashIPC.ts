@@ -1,12 +1,12 @@
 /**
  * Renderer-side Electron IPC client for the ZCash native engine.
  *
- * Exposes the same public surface as {@link ./ZCashNative.ZCashNative} so
+ * Exposes the same public surface as {@link ./ZCash.ZCash} so
  * callers (e.g. `familyConfig`) are completely agnostic about whether the
  * engine runs in-process (Node) or in a UtilityProcess bridged via IPC
  * (Electron renderer):
  *
- *   new ZCashNativeIPC({ grpcUrl, network })
+ *   new ZCashIPC({ grpcUrl, network })
  *     .getChainTip(): Promise<number>
  *     .estimatedSyncTime(totalBlocks): (processedBlocks) => SyncEstimatedTime
  *     .syncShielded(args): Observable<ShieldedSyncResult>
@@ -34,7 +34,7 @@
 import { Observable } from "rxjs";
 import { log } from "@ledgerhq/logs";
 import { ZCASH_LOG_TYPE } from "./constants";
-import type { ShieldedSyncResult, SyncEstimatedTime, ZCashNativeClient } from "./types";
+import type { ShieldedSyncResult, SyncEstimatedTime, ZCashClient } from "./types";
 import type { SyncShieldedArgs } from "./types";
 import {
   ZCASH_IPC,
@@ -68,14 +68,14 @@ let cachedIpcRenderer: IpcRendererLike | null = null;
 /**
  * Resolves `electron.ipcRenderer` lazily, so importing this file in a
  * non-Electron test context doesn't crash at module load. Throws only when
- * actually used — not at import time.
+ * actually used -- not at import time.
  */
 function getIpcRenderer(): IpcRendererLike {
   if (cachedIpcRenderer) return cachedIpcRenderer;
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const electron = require("electron") as { ipcRenderer?: IpcRendererLike };
   if (!electron?.ipcRenderer) {
-    throw new Error("ZCashNativeIPC: electron.ipcRenderer not available in this context");
+    throw new Error("ZCashIPC: electron.ipcRenderer not available in this context");
   }
   cachedIpcRenderer = electron.ipcRenderer;
   return cachedIpcRenderer;
@@ -83,7 +83,7 @@ function getIpcRenderer(): IpcRendererLike {
 
 let requestIdCounter = 0;
 /**
- * Unique-per-process request id. Kept short & predictable on purpose —
+ * Unique-per-process request id. Kept short & predictable on purpose --
  * `crypto.randomUUID` would force a conditional import for non-browser tests.
  */
 function nextRequestId(): RequestId {
@@ -91,7 +91,7 @@ function nextRequestId(): RequestId {
   return `zcash-${Date.now().toString(36)}-${requestIdCounter}`;
 }
 
-export class ZCashNativeIPC implements ZCashNativeClient {
+export class ZCashIPC implements ZCashClient {
   readonly grpcUrl: string;
   readonly network: string;
 
@@ -126,7 +126,7 @@ export class ZCashNativeIPC implements ZCashNativeClient {
   /**
    * Wall-clock-based estimator. Kept `async` to preserve the original public
    * contract used by callers; the underlying logic is sync and shared with
-   * `ZCashNative` via `createSyncTimeEstimator`.
+   * `ZCash` via `createSyncTimeEstimator`.
    */
   async estimatedSyncTime(
     totalBlocks: number,
@@ -139,7 +139,7 @@ export class ZCashNativeIPC implements ZCashNativeClient {
    * delegating to the UtilityProcess over IPC.
    *
    * The Observable's teardown posts a `cancelSync` so in-flight gRPC streams
-   * inside the utility are torn down promptly — no need to wait for the
+   * inside the utility are torn down promptly -- no need to wait for the
    * current batch to finish.
    */
   syncShielded(args: SyncShieldedArgs): Observable<ShieldedSyncResult> {
@@ -190,7 +190,7 @@ export class ZCashNativeIPC implements ZCashNativeClient {
       return () => {
         ipc.removeListener(ZCASH_IPC.stream, listener);
         const cancelPayload: CancelSyncArgs = { requestId };
-        // Fire-and-forget — a failed cancel only leaks a bit of utility CPU
+        // Fire-and-forget -- a failed cancel only leaks a bit of utility CPU
         // until the current batch ends; don't let it reach the subscriber.
         ipc.invoke(ZCASH_IPC.cancelSync, cancelPayload).catch(err => {
           log(ZCASH_LOG_TYPE, "cancelSync invoke failed", { err: String(err) });
@@ -210,7 +210,7 @@ export class ZCashNativeIPC implements ZCashNativeClient {
   }
 }
 
-// Drop-in alias: the renderer bundle aliases `@ledgerhq/zcash-shielded/ZCashNative`
-// to this module (see `rspack.renderer.ts`). Callers destructure `{ ZCashNative }`,
+// Drop-in alias: the renderer bundle aliases `@ledgerhq/coin-bitcoin/chain-adapters/zcash/ZCash`
+// to this module (see `rspack.renderer.ts`). Callers destructure `{ ZCash }`,
 // so we re-export the IPC client under that name to keep the public API stable.
-export { ZCashNativeIPC as ZCashNative };
+export { ZCashIPC as ZCash };

@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import type { OperationType } from "@ledgerhq/types-live";
-import type { ShieldedTransaction } from "@ledgerhq/zcash-shielded/types";
+import type { ShieldedTransaction } from "./types";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { BtcOperation } from "../../types";
 

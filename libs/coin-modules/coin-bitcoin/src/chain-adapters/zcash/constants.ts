@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import type { ZcashPrivateInfo } from "./types";
 
-export const ZCASH_LOG_TYPE = "zcash-shielded";
+export const ZCASH_LOG_TYPE = "zcash";
 export const ZCASH_GRPC_URL_TESTNET = "https://zaino-zec-testnet.nodes.stg.ledger-test.com";
 export const ZCASH_GRPC_URL_MAINNET = "https://zaino-zec-mainnet-zebra.nodes.stg.ledger-test.com";
 export const ZCASH_ACTIVATION_DATE = new Date("2016-10-28");

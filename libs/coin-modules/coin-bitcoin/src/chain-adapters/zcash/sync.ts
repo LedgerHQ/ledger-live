@@ -6,16 +6,9 @@ import { mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import type { SyncConfig } from "@ledgerhq/types-live";
 import { SYNC_TYPE_SHIELDED } from "@ledgerhq/types-live";
-import type {
-  ShieldedTransaction,
-  ShieldedSyncResult,
-  ZcashPrivateInfo,
-} from "@ledgerhq/zcash-shielded/types";
-import {
-  DEFAULT_ZCASH_PRIVATE_INFO,
-  ZCASH_GRPC_URL_MAINNET,
-} from "@ledgerhq/zcash-shielded/constants";
-import type { ZCashNative } from "@ledgerhq/zcash-shielded/ZCashNative";
+import type { ShieldedTransaction, ShieldedSyncResult, ZcashPrivateInfo } from "./types";
+import { DEFAULT_ZCASH_PRIVATE_INFO, ZCASH_GRPC_URL_MAINNET } from "./constants";
+import type { ZCash } from "./ZCash";
 import type { BtcOperation } from "../../types";
 import { removeReplaced } from "../../synchronisation";
 import type { ZcashAccount } from "./types";
@@ -37,13 +30,13 @@ export const setZainoGrpcUrl = (url: string | null): void => {
 };
 
 // Lazy import to avoid loading @ledgerhq/zcash-utils at module initialization.
-// The import path MUST be exactly `@ledgerhq/zcash-shielded/ZCashNative` because
-// the desktop renderer's rspack config aliases it to ZCashNativeIPC for Electron IPC.
-let nativeModuleCache: Promise<{ ZCashNative: typeof ZCashNative }> | null = null;
+// The import path is resolved at build time; the desktop renderer's rspack config
+// aliases it to ZCashIPC for Electron IPC.
+let nativeModuleCache: Promise<{ ZCash: typeof ZCash }> | null = null;
 
 const getNativeModule = () => {
   nativeModuleCache ??= import(
-    /* webpackChunkName: "zcash-native" */ "@ledgerhq/zcash-shielded/ZCashNative"
+    /* webpackChunkName: "zcash-native" */ "@ledgerhq/coin-bitcoin/chain-adapters/zcash/ZCash"
   );
   return nativeModuleCache;
 };
@@ -75,8 +68,8 @@ export const zcashSyncShielded = (
     const { lastProcessedBlock, birthday } = acc.initialAccount?.privateInfo ?? {};
 
     return from(getNativeModule()).pipe(
-      mergeMap(({ ZCashNative }) => {
-        const client = new ZCashNative({
+      mergeMap(({ ZCash }) => {
+        const client = new ZCash({
           grpcUrl: ZCASH_GRPC_URL_CUSTOM ?? ZCASH_GRPC_URL_MAINNET,
         });
         return from(

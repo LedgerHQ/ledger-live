@@ -29,7 +29,7 @@ export function createZcashUtilityConfig(
     entry: {
       zcashUtility: path.resolve(
         rootFolder,
-        "../../libs/coin-modules/zcash-shielded/src/ipc/utility-entry.ts",
+        "../../libs/coin-modules/coin-bitcoin/src/chain-adapters/zcash/ipc/utility-entry.ts",
       ),
     },
     output: {

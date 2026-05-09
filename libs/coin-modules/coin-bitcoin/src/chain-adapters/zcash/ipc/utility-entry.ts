@@ -6,7 +6,7 @@
  * drives it via `parentPort.postMessage` using the {@link UtilityInboundMessage}
  * shapes; results flow back the same way as {@link UtilityOutboundMessage}.
  *
- * This file stays tiny on purpose — the real logic lives in `engine.ts` so the
+ * This file stays tiny on purpose -- the real logic lives in `engine.ts` so the
  * same code can be unit-tested without Electron, and later moved to any other
  * host (another UtilityProcess, a worker_thread, etc.) without touching the
  * wire format.
@@ -25,7 +25,7 @@ import type {
 } from "./contract";
 
 /**
- * Minimal parentPort surface — we don't depend on Electron types here so this
+ * Minimal parentPort surface -- we don't depend on Electron types here so this
  * file can be compiled by any Node-targeting TypeScript config.
  */
 type ParentPort = {
@@ -131,7 +131,7 @@ function handleCancelSync(args: CancelSyncArgs): void {
 }
 
 /**
- * Wires up a {@link ParentPort} to the ZCash engine. Exported for testing —
+ * Wires up a {@link ParentPort} to the ZCash engine. Exported for testing --
  * production code calls this once below with Electron's `process.parentPort`.
  */
 export function bootstrapUtility(port: ParentPort): void {

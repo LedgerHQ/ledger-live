@@ -21,6 +21,9 @@ module.exports = {
       },
     ],
   },
+  moduleNameMapper: {
+    "^@ledgerhq/coin-bitcoin/(.*)$": "<rootDir>/src/$1",
+  },
   testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.(integ|integration)\\.test\\.ts"],
   modulePathIgnorePatterns: ["__tests__/fixtures"],
   reporters: [

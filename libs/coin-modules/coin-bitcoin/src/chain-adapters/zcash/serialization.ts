@@ -1,9 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import type {
-  ZcashPrivateInfo,
-  ZcashPrivateInfoRaw,
-  ZcashSyncState,
-} from "@ledgerhq/zcash-shielded/types";
+import type { ZcashPrivateInfo, ZcashPrivateInfoRaw, ZcashSyncState } from "./types";
 
 export function toZcashPrivateInfoRaw(info: ZcashPrivateInfo): ZcashPrivateInfoRaw {
   return {

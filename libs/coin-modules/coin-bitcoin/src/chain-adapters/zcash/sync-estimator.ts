@@ -1,7 +1,7 @@
 /**
  * Shared sync-time estimator for the ZCash engines.
  *
- * Shared by both the in-process `ZCashNative` and the IPC `ZCashNativeIPC`
+ * Shared by both the in-process `ZCash` and the IPC `ZCashIPC`
  * wrappers: the logic is a pure wall-clock extrapolation with no native
  * dependency, so duplicating it in each class was pointless.
  */

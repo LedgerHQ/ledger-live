@@ -1,5 +1,5 @@
 /**
- * Main-process bridge between the renderer's ZCashNative client and the
+ * Main-process bridge between the renderer's ZCash client and the
  * UtilityProcess that hosts the napi-rs Rust engine.
  *
  * Role:
@@ -13,14 +13,14 @@
  * Why a dedicated UtilityProcess:
  * - Isolates the `.node` addon from renderer and main, so a Rust panic can't
  *   take either down.
- * - Unblocks turning `nodeIntegration` off in the renderer — the renderer no
+ * - Unblocks turning `nodeIntegration` off in the renderer -- the renderer no
  *   longer `require()`s the native module directly.
  *
  * Host-only: this module MUST only be imported from the Electron main
  * process. It calls `require("electron")` lazily (inside `getElectron()`)
  * rather than at import time so the file stays importable from non-Electron
  * contexts (Jest, typecheck in the lib itself). Electron is not a dependency
- * of this package on purpose — the consuming app (e.g. ledger-live-desktop)
+ * of this package on purpose -- the consuming app (e.g. ledger-live-desktop)
  * provides it at runtime.
  */
 
@@ -41,7 +41,7 @@ import { OneShotResolver } from "./one-shot-router";
 
 const LOG_TYPE = "zcash-native-host";
 
-// ─── Minimal structural types for Electron ──────────────────────────────────
+// --- Minimal structural types for Electron ---
 //
 // We avoid `import type { ... } from "electron"` so the lib itself doesn't
 // need Electron in its dependency tree (tests, mobile, non-Electron Node
@@ -114,12 +114,12 @@ function getElectron(): ElectronApi {
   return cachedElectron;
 }
 
-// ─── Host state ─────────────────────────────────────────────────────────────
+// --- Host state ---
 
 /**
  * Tracks which `webContents` id initiated each in-flight sync request, so
  * `zcash:stream` events are routed back to the originating window only.
- * `getChainTip` and other one-shot calls don't need this — their reply flows
+ * `getChainTip` and other one-shot calls don't need this -- their reply flows
  * back through the `ipcMain.handle` promise, not `zcash:stream`.
  */
 type PendingSync = {
@@ -158,7 +158,7 @@ const state: HostState = {
  *
  * Both dev and prod builds emit it alongside `main.bundle.js` in `.webpack/`
  * (see `rspack.zcashUtility.ts`), and `__dirname` at runtime points to that
- * directory — so a single resolution works for both.
+ * directory -- so a single resolution works for both.
  */
 function resolveUtilityBundlePath(): string {
   return path.join(__dirname, "zcash-utility.bundle.js");
@@ -268,12 +268,12 @@ function handleUtilityMessage(msg: UtilityOutboundMessage): void {
 }
 
 function sendStreamEvent(webContentsId: number, event: StreamEvent): void {
-  // Resolve webContents lazily — it might have been destroyed (window closed)
+  // Resolve webContents lazily -- it might have been destroyed (window closed)
   // between the request and the reply. `fromId` returns undefined in that case.
   const { webContents } = getElectron();
   const wc = webContents.fromId(webContentsId);
   if (!wc || wc.isDestroyed()) {
-    log(LOG_TYPE, "dropping stream event — webContents destroyed", {
+    log(LOG_TYPE, "dropping stream event -- webContents destroyed", {
       webContentsId,
       requestId: event.requestId,
       kind: event.kind,
@@ -322,7 +322,7 @@ function registerHandlers(): void {
     ZCASH_IPC.cancelSync,
     async (_event, args): Promise<void> => {
       // Whether or not the utility already finished, posting a cancel is cheap
-      // and the utility handles unknown ids gracefully. Don't `await` — cancel
+      // and the utility handles unknown ids gracefully. Don't `await` -- cancel
       // must not block the renderer for longer than a single IPC round-trip.
       if (!state.utility) return;
       try {
@@ -355,12 +355,12 @@ export function setupZcashNativeHost(): void {
 export function cleanupZcashNativeHost(): void {
   const utility = state.utility;
   if (!utility) return;
-  log(LOG_TYPE, "cleanup — killing zcash utility");
+  log(LOG_TYPE, "cleanup -- killing zcash utility");
   failAllPending(new Error("zcash utility shutting down"));
   try {
     utility.kill();
   } catch (err) {
-    log(LOG_TYPE, "cleanup — utility.kill() threw", { err: String(err) });
+    log(LOG_TYPE, "cleanup -- utility.kill() threw", { err: String(err) });
   }
   state.utility = null;
   state.spawnReady = null;

@@ -2,18 +2,18 @@
  * In-process ZCash native engine wrapper.
  *
  * Drives the napi-rs Rust engine (`@ledgerhq/zcash-utils`) **directly** from
- * the current Node-compatible process — no IPC, no UtilityProcess. Intended
+ * the current Node-compatible process -- no IPC, no UtilityProcess. Intended
  * for plain Node runtimes: coin-tester, integration tests, Ledger Live Mobile
  * (when we later wire it up), or any context where `require()` of a native
  * `.node` addon is allowed.
  *
- * For the Electron renderer, use {@link ./ZCashNativeIPC.ZCashNativeIPC} instead. It
+ * For the Electron renderer, use {@link ./ZCashIPC.ZCashIPC} instead. It
  * exposes the exact same public API but delegates to a UtilityProcess over
  * IPC. Both classes share `engine.ts`, so business logic lives in one place.
  *
- * Public API (kept identical to ZCashNativeIPC on purpose):
+ * Public API (kept identical to ZCashIPC on purpose):
  *
- *   new ZCashNative({ grpcUrl, network })
+ *   new ZCash({ grpcUrl, network })
  *     .getChainTip(): Promise<number>
  *     .estimatedSyncTime(totalBlocks): (processedBlocks) => SyncEstimatedTime
  *     .syncShielded(args): Observable<ShieldedSyncResult>
@@ -25,7 +25,7 @@
 import { Observable } from "rxjs";
 import { log } from "@ledgerhq/logs";
 import { ZCASH_LOG_TYPE } from "./constants";
-import type { ShieldedSyncResult, SyncEstimatedTime, ZCashNativeClient } from "./types";
+import type { ShieldedSyncResult, SyncEstimatedTime, ZCashClient } from "./types";
 import type { SyncShieldedArgs } from "./types";
 import {
   findBlockHeightJob,
@@ -39,7 +39,7 @@ import { createSyncTimeEstimator } from "./sync-estimator";
 
 type NativeStreamHandle = { cancel: () => void };
 
-export class ZCashNative implements ZCashNativeClient {
+export class ZCash implements ZCashClient {
   readonly grpcUrl: string;
   readonly network: string;
 
@@ -66,7 +66,7 @@ export class ZCashNative implements ZCashNativeClient {
   /**
    * Wall-clock-based estimator. Kept `async` to preserve the original public
    * contract used by callers; the underlying logic is sync and shared with
-   * `ZCashNativeIPC` via `createSyncTimeEstimator`.
+   * `ZCashIPC` via `createSyncTimeEstimator`.
    */
   async estimatedSyncTime(
     totalBlocks: number,
@@ -78,8 +78,8 @@ export class ZCashNative implements ZCashNativeClient {
    * Scans blocks for shielded transactions matching the viewing key, driving
    * the native Rust engine in-process.
    *
-   * The Observable's teardown flips a `cancelled` flag and — if a native
-   * stream is in flight — calls `stream.cancel()` so tonic/gRPC tears down
+   * The Observable's teardown flips a `cancelled` flag and -- if a native
+   * stream is in flight -- calls `stream.cancel()` so tonic/gRPC tears down
    * immediately rather than waiting for the current batch to finish.
    */
   syncShielded(args: SyncShieldedArgs): Observable<ShieldedSyncResult> {
@@ -123,11 +123,11 @@ export class ZCashNative implements ZCashNativeClient {
       return () => {
         cancelled = true;
         if (activeStream) {
-          log(ZCASH_LOG_TYPE, "teardown — cancelling active native stream");
+          log(ZCASH_LOG_TYPE, "teardown -- cancelling active native stream");
           try {
             activeStream.cancel();
           } catch (err) {
-            log(ZCASH_LOG_TYPE, "teardown — stream.cancel() threw", { err: String(err) });
+            log(ZCASH_LOG_TYPE, "teardown -- stream.cancel() threw", { err: String(err) });
           }
           activeStream = null;
         }

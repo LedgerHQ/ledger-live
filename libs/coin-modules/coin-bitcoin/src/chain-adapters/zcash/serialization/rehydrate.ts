@@ -4,9 +4,9 @@
  * `BigNumber`.
  *
  * Used by both:
- *   - `ZCashNativeIPC` (Electron renderer), after receiving a chunk from the
+ *   - `ZCashIPC` (Electron renderer), after receiving a chunk from the
  *     UtilityProcess via `structuredClone`.
- *   - `ZCashNative` (in-process), for symmetry with the IPC client — the
+ *   - `ZCash` (in-process), for symmetry with the IPC client -- the
  *     engine always emits `Raw` shapes and this keeps the two code paths
  *     interchangeable.
  *

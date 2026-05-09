@@ -1,6 +1,6 @@
 import { getTxType, convertShieldedTransactionsToOperations } from "../operations";
 import BigNumber from "bignumber.js";
-import type { ShieldedTransaction, DecryptedTransaction } from "@ledgerhq/zcash-shielded/types";
+import type { ShieldedTransaction, DecryptedTransaction } from "../types";
 
 describe("getTxType", () => {
   it("should return SHIELDED_TX_ORCHARD_IN when transfer_type is incoming", () => {

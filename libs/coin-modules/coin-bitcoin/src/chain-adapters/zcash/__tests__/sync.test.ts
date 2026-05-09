@@ -7,27 +7,27 @@ import {
 import { BtcOperation, BitcoinAccount } from "../../../types";
 import type { ZcashAccount } from "../types";
 import BigNumber from "bignumber.js";
-import type { ShieldedTransaction, ShieldedSyncResult } from "@ledgerhq/zcash-shielded/types";
+import type { ShieldedTransaction, ShieldedSyncResult } from "../types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import type { DerivationMode } from "@ledgerhq/types-live";
 import { firstValueFrom, from, Observable, of } from "rxjs";
 import { AccountShapeInfo } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { createFixtureAccount } from "../../../fixtures/common.fixtures";
+import { ZCash } from "../ZCash";
 
-// ─── Mock ZCashNative ────────────────────────────────────────────────────────
+// ─── Mock ZCash ────────────────────────────────────────────────────────
 
 const mockSyncShielded = jest.fn<Observable<ShieldedSyncResult>, [unknown]>();
 const mockFindBlockHeight = jest.fn<Promise<number>, [number]>();
 
-jest.mock("@ledgerhq/zcash-shielded/ZCashNative", () => ({
-  ZCashNative: jest.fn().mockImplementation(() => ({
+jest.mock("../ZCash", () => ({
+  ZCash: jest.fn().mockImplementation(() => ({
     syncShielded: mockSyncShielded,
     findBlockHeight: mockFindBlockHeight,
   })),
 }));
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const { ZCashNative: MockZCashNative } = require("@ledgerhq/zcash-shielded/ZCashNative");
+const MockZCash = ZCash as jest.MockedClass<typeof ZCash>;
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -796,10 +796,10 @@ describe("zcashSyncShielded", () => {
     await expect(firstValueFrom(obs)).rejects.toThrow(
       "Missing unified full viewing key (ufvk) for ZCash shielded sync",
     );
-    expect(MockZCashNative).not.toHaveBeenCalled();
+    expect(MockZCash).not.toHaveBeenCalled();
   });
 
-  test("instantiates ZCashNative with the default gRPC URL", async () => {
+  test("instantiates ZCash with the default gRPC URL", async () => {
     mockSyncShielded.mockReturnValue(of(makeSyncResult()));
 
     const obs = zcashSyncShielded(
@@ -816,7 +816,7 @@ describe("zcashSyncShielded", () => {
 
     await firstValueFrom(obs);
 
-    expect(MockZCashNative).toHaveBeenCalledWith(
+    expect(MockZCash).toHaveBeenCalledWith(
       expect.objectContaining({ grpcUrl: expect.any(String) }),
     );
   });
@@ -954,7 +954,7 @@ describe("zcashSyncShielded", () => {
     expect(result.lastProcessedBlock).toBe(142);
   });
 
-  test("forwards the ShieldedSyncResult from ZCashNative", async () => {
+  test("forwards the ShieldedSyncResult from ZCash", async () => {
     const expected = makeSyncResult({
       processedBlocks: 500,
       remainingBlocks: 100,
@@ -995,7 +995,7 @@ describe("zcashSyncShielded", () => {
     expect(result).toEqual(expected);
   });
 
-  test("propagates errors from ZCashNative.syncShielded", async () => {
+  test("propagates errors from ZCash.syncShielded", async () => {
     mockSyncShielded.mockReturnValue(
       new Observable(subscriber => subscriber.error(new Error("gRPC stream broken"))),
     );
@@ -1033,7 +1033,7 @@ describe("zcashSyncShielded", () => {
 
     await firstValueFrom(obs);
 
-    expect(MockZCashNative).toHaveBeenCalledWith(
+    expect(MockZCash).toHaveBeenCalledWith(
       expect.objectContaining({ grpcUrl: "https://custom-grpc.example.com" }),
     );
   });

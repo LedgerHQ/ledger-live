@@ -16,7 +16,7 @@ import {
   ShieldedTransactionRaw,
   ZcashPrivateInfo,
   ZcashPrivateInfoRaw,
-} from "@ledgerhq/zcash-shielded/types";
+} from "./chain-adapters/zcash/types";
 
 const privateInfoMock: ZcashPrivateInfo = {
   saplingBalance: new BigNumber("2"),

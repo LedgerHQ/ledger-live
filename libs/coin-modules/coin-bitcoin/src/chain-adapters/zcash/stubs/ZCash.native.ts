@@ -1,9 +1,9 @@
-// React Native stub — the `react-native` export condition in this package's
-// package.json resolves `@ledgerhq/zcash-shielded/ZCashNative` to this file
-// instead of `../ZCashNative.ts`.
+// React Native stub -- the `react-native` export condition in this package's
+// package.json resolves `@ledgerhq/coin-bitcoin/chain-adapters/zcash/ZCash` to this file
+// instead of `../ZCash.ts`.
 //
-// The real `ZCashNative.ts` pulls in `../native-engine/engine.ts`, which imports
-// `@ledgerhq/zcash-utils` — a Node.js `.node` addon that cannot run inside a
+// The real `ZCash.ts` pulls in `../native-engine/engine.ts`, which imports
+// `@ledgerhq/zcash-utils` -- a Node.js `.node` addon that cannot run inside a
 // React Native bundle. Exporting a no-op class here keeps both the native
 // binary and `zcash-utils`'s transitive dependencies out of the mobile graph.
 //
@@ -16,12 +16,12 @@ import type {
   ShieldedSyncResult,
   SyncEstimatedTime,
   SyncShieldedArgs,
-  ZCashNativeClient,
+  ZCashClient,
 } from "../types";
 
-const UNSUPPORTED_ERROR_MESSAGE = "ZCashNative is not supported on React Native";
+const UNSUPPORTED_ERROR_MESSAGE = "ZCash is not supported on React Native";
 
-export class ZCashNative implements ZCashNativeClient {
+export class ZCash implements ZCashClient {
   readonly grpcUrl: string;
   readonly network: string;
 

@@ -1,7 +1,7 @@
 /**
  * ZCash native Rust engine (host-side).
  *
- * Pure functions that wrap `@ledgerhq/zcash-utils` — the napi-rs `.node` addon.
+ * Pure functions that wrap `@ledgerhq/zcash-utils` -- the napi-rs `.node` addon.
  * No RxJS, no Electron, no BigNumber: everything emitted here is IPC-safe
  * (serializable via `structuredClone`). The renderer client rehydrates the
  * `ShieldedTransactionRaw` into `ShieldedTransaction` with real `BigNumber`.
@@ -40,7 +40,7 @@ export type StartSyncJobArgs = {
  * Validation for {@link startSyncJob} arguments.
  *
  * Returns an error message string on failure, or `null` when the args are
- * valid. Extracted from the old `ZCashNative.validateSyncArgs` so callers can
+ * valid. Extracted from the old `ZCash.validateSyncArgs` so callers can
  * fail fast before any native module load.
  */
 export function validateStartSyncArgs(args: {
@@ -81,8 +81,8 @@ export async function findBlockHeightJob(grpcUrl: string, timestamp: number): Pr
  * expected to also call the returned abort hook to cancel an in-flight stream
  * without waiting for `stream.next()` to resolve).
  *
- * Mirrors the semantics of the old `ZCashNative.syncShielded` Observable
- * contract — the only difference is that transactions are emitted as
+ * Mirrors the semantics of the old `ZCash.syncShielded` Observable
+ * contract -- the only difference is that transactions are emitted as
  * `ShieldedTransactionRaw` (fee/amount as string) instead of `BigNumber`.
  */
 export async function startSyncJob(
@@ -126,7 +126,7 @@ export async function startSyncJob(
 
   while (chunkStart <= endHeight) {
     if (isCancelled()) {
-      log(ZCASH_LOG_TYPE, "cancelled — stopping before chunk", { chunkStart });
+      log(ZCASH_LOG_TYPE, "cancelled -- stopping before chunk", { chunkStart });
       break;
     }
 
@@ -145,7 +145,7 @@ export async function startSyncJob(
     );
 
     if (isCancelled()) {
-      log(ZCASH_LOG_TYPE, "cancelled — stopping after chunk", { chunkStart });
+      log(ZCASH_LOG_TYPE, "cancelled -- stopping after chunk", { chunkStart });
       break;
     }
 
@@ -222,7 +222,7 @@ async function syncChunk(
 
   try {
     if (isCancelled()) {
-      log(ZCASH_LOG_TYPE, "cancelled before first read — calling stream.cancel()");
+      log(ZCASH_LOG_TYPE, "cancelled before first read -- calling stream.cancel()");
       stream.cancel();
       return { blocksScanned: 0, transactions: [] };
     }
@@ -231,7 +231,7 @@ async function syncChunk(
     let tx: NativeTx | null;
     while ((tx = await stream.next()) !== null) {
       if (isCancelled()) {
-        log(ZCASH_LOG_TYPE, "cancelled mid-stream — calling stream.cancel()");
+        log(ZCASH_LOG_TYPE, "cancelled mid-stream -- calling stream.cancel()");
         stream.cancel();
         return { blocksScanned: 0, transactions: [] };
       }
@@ -239,7 +239,7 @@ async function syncChunk(
     }
 
     if (isCancelled()) {
-      log(ZCASH_LOG_TYPE, "cancelled after stream exhausted — calling stream.cancel()");
+      log(ZCASH_LOG_TYPE, "cancelled after stream exhausted -- calling stream.cancel()");
       stream.cancel();
       return { blocksScanned: 0, transactions: [] };
     }
@@ -261,7 +261,7 @@ async function syncChunk(
 /**
  * Converts a native (Rust-side) transaction to the IPC-safe `ShieldedTransactionRaw`.
  *
- * `BigNumber` reconstruction happens client-side, after the value has crossed IPC —
+ * `BigNumber` reconstruction happens client-side, after the value has crossed IPC --
  * `structuredClone` would strip the prototype otherwise.
  */
 function mapNativeTx(tx: NativeTx): ShieldedTransactionRaw {
