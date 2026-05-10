@@ -140,7 +140,6 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   sui_testnet: "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164",
   zenrock: "zen1704dk997ccmk5x8smn8secphckfvbgxxfd99xxr",
   sonic: EVM_DEAD_ADDRESS,
-  sonic_blaze: EVM_DEAD_ADDRESS,
   mina: "B62qpJZZ8KcQTkPaoonqJ6GMyph2TW3LrgEQBYoMsYL23hiGvRXWRy6",
   babylon: "bbn1vh34djka7ug2gww9njrsmmr7emj3dx3paz5sj4",
   hyperevm: EVM_DEAD_ADDRESS,

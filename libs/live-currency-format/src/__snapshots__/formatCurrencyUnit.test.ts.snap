@@ -330,8 +330,6 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Songbird unit (SGB) 1`] = `"0,012345678900000000- -SGB"`;
 
-exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Sonic Blaze unit (S) 1`] = `"0,012345678900000000- -S"`;
-
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Sonic unit (S) 1`] = `"0,012345678900000000- -S"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Stacks unit (STX) 1`] = `"12.345.678.900,000000- -STX"`;
@@ -739,8 +737,6 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Somnia unit (SOMI) 1`] = `"0.012345678900000000- -SOMI"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Songbird unit (SGB) 1`] = `"0.012345678900000000- -SGB"`;
-
-exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Sonic Blaze unit (S) 1`] = `"0.012345678900000000- -S"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Sonic unit (S) 1`] = `"0.012345678900000000- -S"`;
 
@@ -1150,8 +1146,6 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Songbird unit (SGB) 1`] = `"0,012345678900000000- -SGB"`;
 
-exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Sonic Blaze unit (S) 1`] = `"0,012345678900000000- -S"`;
-
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Sonic unit (S) 1`] = `"0,012345678900000000- -S"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Stacks unit (STX) 1`] = `"12.345.678.900,000000- -STX"`;
@@ -1559,8 +1553,6 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Somnia unit (SOMI) 1`] = `"0,012345678900000000- -SOMI"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Songbird unit (SGB) 1`] = `"0,012345678900000000- -SGB"`;
-
-exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Sonic Blaze unit (S) 1`] = `"0,012345678900000000- -S"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Sonic unit (S) 1`] = `"0,012345678900000000- -S"`;
 
@@ -1970,8 +1962,6 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Songbird unit (SGB) 1`] = `"0.012345678900000000- -SGB"`;
 
-exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Sonic Blaze unit (S) 1`] = `"0.012345678900000000- -S"`;
-
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Sonic unit (S) 1`] = `"0.012345678900000000- -S"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Stacks unit (STX) 1`] = `"12,345,678,900.000000- -STX"`;
@@ -2379,8 +2369,6 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Somnia unit (SOMI) 1`] = `"0.012345678900000000- -SOMI"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Songbird unit (SGB) 1`] = `"0.012345678900000000- -SGB"`;
-
-exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Sonic Blaze unit (S) 1`] = `"0.012345678900000000- -S"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Sonic unit (S) 1`] = `"0.012345678900000000- -S"`;
 
@@ -2790,8 +2778,6 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Songbird unit (SGB) 1`] = `"0,012345678900000000- -SGB"`;
 
-exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Sonic Blaze unit (S) 1`] = `"0,012345678900000000- -S"`;
-
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Sonic unit (S) 1`] = `"0,012345678900000000- -S"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Stacks unit (STX) 1`] = `"12.345.678.900,000000- -STX"`;
@@ -3199,8 +3185,6 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Somnia unit (SOMI) 1`] = `"0,012345678900000000- -SOMI"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Songbird unit (SGB) 1`] = `"0,012345678900000000- -SGB"`;
-
-exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Sonic Blaze unit (S) 1`] = `"0,012345678900000000- -S"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Sonic unit (S) 1`] = `"0,012345678900000000- -S"`;
 
@@ -3610,8 +3594,6 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Songbird unit (SGB) 1`] = `"0,012345678900000000- -SGB"`;
 
-exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Sonic Blaze unit (S) 1`] = `"0,012345678900000000- -S"`;
-
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Sonic unit (S) 1`] = `"0,012345678900000000- -S"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Stacks unit (STX) 1`] = `"12.345.678.900,000000- -STX"`;
@@ -4020,8 +4002,6 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Songbird unit (SGB) 1`] = `"0.012345678900000000- -SGB"`;
 
-exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Sonic Blaze unit (S) 1`] = `"0.012345678900000000- -S"`;
-
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Sonic unit (S) 1`] = `"0.012345678900000000- -S"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Stacks unit (STX) 1`] = `"12,345,678,900.000000- -STX"`;
@@ -4429,8 +4409,6 @@ exports[`formatCurrencyUnit with default options should correctly format Solana 
 exports[`formatCurrencyUnit with default options should correctly format Somnia unit (SOMI) 1`] = `"0.0123456"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Songbird unit (SGB) 1`] = `"0.0123456"`;
-
-exports[`formatCurrencyUnit with default options should correctly format Sonic Blaze unit (S) 1`] = `"0.0123456"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Sonic unit (S) 1`] = `"0.0123456"`;
 

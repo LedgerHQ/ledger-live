@@ -167,21 +167,6 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       showNfts: false,
     },
   },
-  config_currency_sonic_blaze: {
-    type: "object",
-    default: {
-      status: "active",
-      node: {
-        type: "external",
-        uri: "https://sonic-blaze.coin.ledger.com",
-      },
-      explorer: {
-        type: "etherscan",
-        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/57054",
-      },
-      showNfts: false,
-    },
-  },
   config_currency_ethereum_classic: {
     type: "object",
     default: {
