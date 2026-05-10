@@ -8,6 +8,8 @@ module.exports = {
     "!src/__tests__/**/*.ts",
     "!src/datasets/**/*.ts",
     "!src/wallet-btc/__tests__/**/*.ts",
+    "!src/chain-adapters/zcash/ipc/**/*.ts",
+    "!src/chain-adapters/zcash/stubs/**/*.ts",
   ],
   coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
   testEnvironment: "node",

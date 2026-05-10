@@ -19,5 +19,9 @@ describe("chain-adapters/registry", () => {
     expect(defaultAdapter.buildExtraSyncObservable).toBeUndefined();
     expect(defaultAdapter.assignToAccountRaw).toBeUndefined();
     expect(defaultAdapter.assignFromAccountRaw).toBeUndefined();
+    expect(defaultAdapter.signOperation).toBeUndefined();
+    expect(defaultAdapter.getTransactionStatus).toBeUndefined();
+    expect(defaultAdapter.estimateMaxSpendable).toBeUndefined();
+    expect(defaultAdapter.prepareTransaction).toBeUndefined();
   });
 });

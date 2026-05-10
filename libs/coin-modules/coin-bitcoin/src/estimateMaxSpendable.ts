@@ -4,6 +4,7 @@ import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index"
 import { getAccountNetworkInfo } from "./getAccountNetworkInfo";
 import wallet, { getWalletAccount } from "./wallet-btc";
 import type { Transaction } from "./types";
+import { getChainAdapter } from "./chain-adapters/registry";
 
 /**
  * Returns the maximum possible amount for transaction
@@ -16,6 +17,10 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
   transaction,
 }) => {
   const mainAccount = getMainAccount(account, parentAccount);
+  const adapter = getChainAdapter(mainAccount.currency.id);
+  const custom = adapter.estimateMaxSpendable?.(mainAccount, parentAccount, transaction);
+  if (custom) return custom;
+
   const walletAccount = getWalletAccount(mainAccount);
   let feePerByte = transaction?.feePerByte;
   if (!feePerByte) {

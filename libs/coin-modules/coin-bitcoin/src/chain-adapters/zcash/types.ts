@@ -145,3 +145,21 @@ export type ZcashAccountRaw = BitcoinAccountRaw & {
 export function isZcashAccount(a: BitcoinAccount): a is ZcashAccount {
   return "privateInfo" in a && a.currency.id === "zcash";
 }
+
+// ── Transaction types ───────────────────────────────────────────────────
+
+export type ZcashTransferType =
+  | "transparent"
+  | "transparent-to-shielded"
+  | "shielded-to-transparent"
+  | "shielded";
+
+export type ZcashTransaction = import("../../types").Transaction & {
+  transferType: ZcashTransferType;
+  /** Optional 512-byte memo field for shielded outputs. */
+  memo?: string;
+};
+
+export function isShieldedTransfer(tx: ZcashTransaction): boolean {
+  return tx.transferType !== "transparent";
+}
