@@ -3,6 +3,7 @@ import BigNumber from "bignumber.js";
 
 import { getDelegationOpMaxAmount, getStakingPosition } from "../logic/staking";
 import { AptosAPI } from "../network";
+import type { TokenAccount } from "@ledgerhq/types-live";
 import type { AptosAccount, Transaction } from "../types";
 import {
   APTOS_DELEGATION_RESERVE_IN_OCTAS,
@@ -11,7 +12,6 @@ import {
 } from "./../constants";
 import { getEstimatedGas } from "./getFeesForTransaction";
 import { getMaxSendBalance } from "./logic";
-import { TokenAccount } from "@ledgerhq/types-live";
 
 const checkSendConditions = (
   transaction: Transaction,
