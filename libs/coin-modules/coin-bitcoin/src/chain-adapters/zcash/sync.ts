@@ -8,7 +8,7 @@ import type { SyncConfig } from "@ledgerhq/types-live";
 import { SYNC_TYPE_SHIELDED } from "@ledgerhq/types-live";
 import type { ShieldedTransaction, ShieldedSyncResult, ZcashPrivateInfo } from "./types";
 import { DEFAULT_ZCASH_PRIVATE_INFO, ZCASH_GRPC_URL_MAINNET } from "./constants";
-import type { ZCash } from "./ZCash";
+import type { ZCashClient } from "./types";
 import type { BtcOperation } from "../../types";
 import { removeReplaced } from "../../synchronisation";
 import type { ZcashAccount } from "./types";
@@ -32,9 +32,11 @@ export const setZainoGrpcUrl = (url: string | null): void => {
 // Lazy import to avoid loading @ledgerhq/zcash-utils at module initialization.
 // The import path is resolved at build time; the desktop renderer's rspack config
 // aliases it to ZCashIPC for Electron IPC.
-let nativeModuleCache: Promise<{ ZCash: typeof ZCash }> | null = null;
+type ZCashModule = { createZCashClient: (args: { grpcUrl: string }) => ZCashClient };
 
-const getNativeModule = () => {
+let nativeModuleCache: Promise<ZCashModule> | null = null;
+
+const getNativeModule = (): Promise<ZCashModule> => {
   nativeModuleCache ??= import(
     /* webpackChunkName: "zcash-native" */ "@ledgerhq/coin-bitcoin/chain-adapters/zcash/ZCash"
   );
@@ -68,8 +70,8 @@ export const zcashSyncShielded = (
     const { lastProcessedBlock, birthday } = acc.initialAccount?.privateInfo ?? {};
 
     return from(getNativeModule()).pipe(
-      mergeMap(({ ZCash }) => {
-        const client = new ZCash({
+      mergeMap(({ createZCashClient }) => {
+        const client = createZCashClient({
           grpcUrl: ZCASH_GRPC_URL_CUSTOM ?? ZCASH_GRPC_URL_MAINNET,
         });
         return from(

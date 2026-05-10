@@ -29,6 +29,12 @@ export interface ZCashClient {
   syncShielded(args: SyncShieldedArgs): Observable<ShieldedSyncResult>;
 }
 
+/** Common constructor args shared by both ZCash client factories. */
+export type ZCashClientArgs = {
+  grpcUrl: string;
+  network?: string;
+};
+
 export type ZcashSyncState = "disabled" | "ready" | "running" | "stopped" | "complete" | "outdated";
 
 export type DecryptedOutputRaw = {

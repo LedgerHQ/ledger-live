@@ -1,5 +1,5 @@
 /**
- * In-process ZCash native engine wrapper.
+ * In-process ZCash native engine client.
  *
  * Drives the napi-rs Rust engine (`@ledgerhq/zcash-utils`) **directly** from
  * the current Node-compatible process -- no IPC, no UtilityProcess. Intended
@@ -7,131 +7,153 @@
  * (when we later wire it up), or any context where `require()` of a native
  * `.node` addon is allowed.
  *
- * For the Electron renderer, use {@link ./ZCashIPC.ZCashIPC} instead. It
- * exposes the exact same public API but delegates to a UtilityProcess over
- * IPC. Both classes share `engine.ts`, so business logic lives in one place.
+ * For the Electron renderer, use {@link ./ZCashIPC.createZCashIPCClient}
+ * instead. It exposes the exact same {@link ZCashClient} surface but delegates
+ * to a UtilityProcess over IPC.
  *
- * Public API (kept identical to ZCashIPC on purpose):
+ * Usage (production — deps wired automatically):
  *
- *   new ZCash({ grpcUrl, network })
- *     .getChainTip(): Promise<number>
- *     .estimatedSyncTime(totalBlocks): (processedBlocks) => SyncEstimatedTime
- *     .syncShielded(args): Observable<ShieldedSyncResult>
+ *   const client = createZCashClient({ grpcUrl, network });
  *
- * The engine emits IPC-safe `Raw` shapes; we rehydrate to BigNumber here so
- * callers always receive the full-fat `ShieldedSyncResult`.
+ * Usage (tests — inject fake deps):
+ *
+ *   const client = createZCashClientWith(fakeDeps, { grpcUrl });
  */
 
 import { Observable } from "rxjs";
 import { log } from "@ledgerhq/logs";
 import { ZCASH_LOG_TYPE } from "./constants";
-import type { ShieldedSyncResult, SyncEstimatedTime, ZCashClient } from "./types";
-import type { SyncShieldedArgs } from "./types";
+import type {
+  ShieldedSyncResult,
+  ShieldedSyncResultRaw,
+  SyncEstimatedTime,
+  SyncShieldedArgs,
+  ZCashClient,
+  ZCashClientArgs,
+} from "./types";
+import type { StartSyncJobArgs } from "./native-engine/engine";
 import {
-  findBlockHeightJob,
   getChainTipJob,
+  findBlockHeightJob,
   startSyncJob,
   validateStartSyncArgs,
-  type StartSyncJobArgs,
 } from "./native-engine/engine";
 import { rehydrateSyncResult } from "./serialization/rehydrate";
 import { createSyncTimeEstimator } from "./sync-estimator";
 
+// ── Dependency & argument types ─────────────────────────────────────────
+
 type NativeStreamHandle = { cancel: () => void };
 
-export class ZCash implements ZCashClient {
-  readonly grpcUrl: string;
-  readonly network: string;
+export type ZCashClientDeps = {
+  getChainTipJob: (grpcUrl: string) => Promise<number>;
+  findBlockHeightJob: (grpcUrl: string, timestamp: number) => Promise<number>;
+  validateStartSyncArgs: (args: SyncShieldedArgs) => string | null;
+  startSyncJob: (
+    args: StartSyncJobArgs,
+    onChunk: (chunk: ShieldedSyncResultRaw) => void,
+    hooks: {
+      isCancelled: () => boolean;
+      onActiveStream?: (stream: NativeStreamHandle | null) => void;
+    },
+  ) => Promise<void>;
+  rehydrateSyncResult: (raw: ShieldedSyncResultRaw) => ShieldedSyncResult;
+  createSyncTimeEstimator: (totalBlocks: number) => (processedBlocks: number) => SyncEstimatedTime;
+};
 
-  constructor(args: { grpcUrl: string; network?: string }) {
-    this.grpcUrl = args.grpcUrl;
-    this.network = args.network ?? "mainnet";
-  }
+// ── DI factory (for tests) ──────────────────────────────────────────────
 
-  /**
-   * Returns the current chain tip height, via the native gRPC client.
-   */
-  async getChainTip(): Promise<number> {
-    return getChainTipJob(this.grpcUrl);
-  }
+export function createZCashClientWith(deps: ZCashClientDeps, args: ZCashClientArgs): ZCashClient {
+  const grpcUrl = args.grpcUrl;
+  const network = args.network ?? "mainnet";
 
-  /**
-   * Returns the block height corresponding to the given Unix timestamp,
-   * via the native gRPC client (interpolation search + streaming range).
-   */
-  async findBlockHeight(timestamp: number): Promise<number> {
-    return findBlockHeightJob(this.grpcUrl, timestamp);
-  }
+  return {
+    grpcUrl,
+    network,
 
-  /**
-   * Wall-clock-based estimator. Kept `async` to preserve the original public
-   * contract used by callers; the underlying logic is sync and shared with
-   * `ZCashIPC` via `createSyncTimeEstimator`.
-   */
-  async estimatedSyncTime(
-    totalBlocks: number,
-  ): Promise<(processedBlocks: number) => SyncEstimatedTime> {
-    return createSyncTimeEstimator(totalBlocks);
-  }
+    getChainTip(): Promise<number> {
+      return deps.getChainTipJob(grpcUrl);
+    },
 
-  /**
-   * Scans blocks for shielded transactions matching the viewing key, driving
-   * the native Rust engine in-process.
-   *
-   * The Observable's teardown flips a `cancelled` flag and -- if a native
-   * stream is in flight -- calls `stream.cancel()` so tonic/gRPC tears down
-   * immediately rather than waiting for the current batch to finish.
-   */
-  syncShielded(args: SyncShieldedArgs): Observable<ShieldedSyncResult> {
-    return new Observable<ShieldedSyncResult>(subscriber => {
-      const validationError = validateStartSyncArgs(args);
-      if (validationError) {
-        subscriber.error(validationError);
-        return;
-      }
+    findBlockHeight(timestamp: number): Promise<number> {
+      return deps.findBlockHeightJob(grpcUrl, timestamp);
+    },
 
-      let cancelled = false;
-      let activeStream: NativeStreamHandle | null = null;
-      const isCancelled = () => cancelled || subscriber.closed;
+    async estimatedSyncTime(
+      totalBlocks: number,
+    ): Promise<(processedBlocks: number) => SyncEstimatedTime> {
+      return deps.createSyncTimeEstimator(totalBlocks);
+    },
 
-      const jobArgs: StartSyncJobArgs = {
-        grpcUrl: this.grpcUrl,
-        network: this.network,
-        viewingKey: args.viewingKey,
-        startBlockHeight: args.startBlockHeight,
-        maxBatchSize: args.maxBatchSize,
-      };
-
-      startSyncJob(
-        jobArgs,
-        chunk => {
-          if (isCancelled()) return;
-          subscriber.next(rehydrateSyncResult(chunk));
-        },
-        {
-          isCancelled,
-          onActiveStream: stream => {
-            activeStream = stream;
-          },
-        },
-      )
-        .then(() => {
-          if (!isCancelled()) subscriber.complete();
-        })
-        .catch(err => subscriber.error(err));
-
-      return () => {
-        cancelled = true;
-        if (activeStream) {
-          log(ZCASH_LOG_TYPE, "teardown -- cancelling active native stream");
-          try {
-            activeStream.cancel();
-          } catch (err) {
-            log(ZCASH_LOG_TYPE, "teardown -- stream.cancel() threw", { err: String(err) });
-          }
-          activeStream = null;
+    syncShielded(syncArgs: SyncShieldedArgs): Observable<ShieldedSyncResult> {
+      return new Observable<ShieldedSyncResult>(subscriber => {
+        const validationError = deps.validateStartSyncArgs(syncArgs);
+        if (validationError) {
+          subscriber.error(validationError);
+          return;
         }
-      };
-    });
-  }
+
+        let cancelled = false;
+        let activeStream: NativeStreamHandle | null = null;
+        const isCancelled = () => cancelled || subscriber.closed;
+
+        const jobArgs: StartSyncJobArgs = {
+          grpcUrl,
+          network,
+          viewingKey: syncArgs.viewingKey,
+          startBlockHeight: syncArgs.startBlockHeight,
+          maxBatchSize: syncArgs.maxBatchSize,
+        };
+
+        deps
+          .startSyncJob(
+            jobArgs,
+            chunk => {
+              if (isCancelled()) return;
+              subscriber.next(deps.rehydrateSyncResult(chunk));
+            },
+            {
+              isCancelled,
+              onActiveStream: stream => {
+                activeStream = stream;
+              },
+            },
+          )
+          .then(() => {
+            if (!isCancelled()) subscriber.complete();
+          })
+          .catch(err => subscriber.error(err));
+
+        return () => {
+          cancelled = true;
+          if (activeStream) {
+            log(ZCASH_LOG_TYPE, "teardown -- cancelling active native stream");
+            try {
+              activeStream.cancel();
+            } catch (err) {
+              log(ZCASH_LOG_TYPE, "teardown -- stream.cancel() threw", { err: String(err) });
+            }
+            activeStream = null;
+          }
+        };
+      });
+    },
+  };
+}
+
+// ── Default deps ────────────────────────────────────────────────────────
+
+const defaultDeps: ZCashClientDeps = {
+  getChainTipJob,
+  findBlockHeightJob,
+  startSyncJob,
+  validateStartSyncArgs,
+  rehydrateSyncResult,
+  createSyncTimeEstimator,
+};
+
+// ── Convenience factory (production — deps pre-wired) ───────────────────
+
+export function createZCashClient(args: ZCashClientArgs): ZCashClient {
+  return createZCashClientWith(defaultDeps, args);
 }

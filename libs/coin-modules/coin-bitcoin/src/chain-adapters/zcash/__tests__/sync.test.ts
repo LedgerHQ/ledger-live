@@ -13,21 +13,22 @@ import type { DerivationMode } from "@ledgerhq/types-live";
 import { firstValueFrom, from, Observable, of } from "rxjs";
 import { AccountShapeInfo } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { createFixtureAccount } from "../../../fixtures/common.fixtures";
-import { ZCash } from "../ZCash";
-
 // ─── Mock ZCash ────────────────────────────────────────────────────────
 
 const mockSyncShielded = jest.fn<Observable<ShieldedSyncResult>, [unknown]>();
 const mockFindBlockHeight = jest.fn<Promise<number>, [number]>();
 
-jest.mock("../ZCash", () => ({
-  ZCash: jest.fn().mockImplementation(() => ({
-    syncShielded: mockSyncShielded,
-    findBlockHeight: mockFindBlockHeight,
-  })),
+const mockCreateZCashClient = jest.fn<
+  { syncShielded: typeof mockSyncShielded; findBlockHeight: typeof mockFindBlockHeight },
+  [unknown]
+>(() => ({
+  syncShielded: mockSyncShielded,
+  findBlockHeight: mockFindBlockHeight,
 }));
 
-const MockZCash = ZCash as jest.MockedClass<typeof ZCash>;
+jest.mock("../ZCash", () => ({
+  createZCashClient: (args: unknown) => mockCreateZCashClient(args),
+}));
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -796,10 +797,10 @@ describe("zcashSyncShielded", () => {
     await expect(firstValueFrom(obs)).rejects.toThrow(
       "Missing unified full viewing key (ufvk) for ZCash shielded sync",
     );
-    expect(MockZCash).not.toHaveBeenCalled();
+    expect(mockCreateZCashClient).not.toHaveBeenCalled();
   });
 
-  test("instantiates ZCash with the default gRPC URL", async () => {
+  test("creates client with the default gRPC URL", async () => {
     mockSyncShielded.mockReturnValue(of(makeSyncResult()));
 
     const obs = zcashSyncShielded(
@@ -816,7 +817,7 @@ describe("zcashSyncShielded", () => {
 
     await firstValueFrom(obs);
 
-    expect(MockZCash).toHaveBeenCalledWith(
+    expect(mockCreateZCashClient).toHaveBeenCalledWith(
       expect.objectContaining({ grpcUrl: expect.any(String) }),
     );
   });
@@ -1033,7 +1034,7 @@ describe("zcashSyncShielded", () => {
 
     await firstValueFrom(obs);
 
-    expect(MockZCash).toHaveBeenCalledWith(
+    expect(mockCreateZCashClient).toHaveBeenCalledWith(
       expect.objectContaining({ grpcUrl: "https://custom-grpc.example.com" }),
     );
   });
