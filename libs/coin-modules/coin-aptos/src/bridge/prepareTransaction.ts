@@ -11,9 +11,18 @@ import {
 } from "./../constants";
 import { getEstimatedGas } from "./getFeesForTransaction";
 import { getMaxSendBalance } from "./logic";
+import { TokenAccount } from "@ledgerhq/types-live";
 
-const checkSendConditions = (transaction: Transaction, account: AptosAccount) =>
-  transaction.mode === "send" && transaction.amount.gt(account.spendableBalance);
+const checkSendConditions = (
+  transaction: Transaction,
+  account: AptosAccount,
+  tokenAccount: TokenAccount | undefined,
+) => {
+  if (transaction.mode !== "send") return false;
+  const spendableBalance = tokenAccount ? tokenAccount.spendableBalance : account.spendableBalance;
+
+  return transaction.amount.gt(spendableBalance);
+};
 
 const checkStakeConditions = (transaction: Transaction, account: AptosAccount) => {
   const txAmount = transaction.useAllAmount ? account.spendableBalance : transaction.amount;
@@ -52,9 +61,11 @@ const prepareTransaction = async (
   account: AptosAccount,
   transaction: Transaction,
 ): Promise<Transaction> => {
+  const tokenAccount = findSubAccountById(account, transaction?.subAccountId ?? "");
+
   if (
     !transaction.recipient ||
-    checkSendConditions(transaction, account) ||
+    checkSendConditions(transaction, account, tokenAccount) ||
     checkStakeConditions(transaction, account) ||
     checkRestakeConditions(transaction, account) ||
     checkUnstakeConditions(transaction, account) ||
@@ -72,7 +83,6 @@ const prepareTransaction = async (
   }
 
   const aptosClient = new AptosAPI(account.currency.id);
-  const tokenAccount = findSubAccountById(account, transaction?.subAccountId ?? "");
 
   try {
     const { fees, estimate, errors } = await getEstimatedGas(account, transaction, aptosClient);

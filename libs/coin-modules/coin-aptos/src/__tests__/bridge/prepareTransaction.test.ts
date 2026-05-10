@@ -3,7 +3,12 @@ import { getEstimatedGas } from "../../bridge/getFeesForTransaction";
 import { getMaxSendBalance } from "../../bridge/logic";
 import prepareTransaction from "../../bridge/prepareTransaction";
 import { AptosAPI } from "../../network";
+
 import type { AptosAccount, Transaction } from "../../types";
+import {
+  createFixtureAccountWithSubAccount,
+  createFixtureTransactionWithSubAccount,
+} from "../../bridge/bridge.fixture";
 
 jest.mock("../../network");
 jest.mock("../../bridge/getFeesForTransaction");
@@ -15,6 +20,7 @@ describe("Aptos prepareTransaction", () => {
     let transaction: Transaction;
 
     beforeEach(() => {
+      jest.clearAllMocks();
       account = {
         id: "test-account-id",
         name: "Test Account",
@@ -126,6 +132,66 @@ describe("Aptos prepareTransaction", () => {
         ...transaction,
         fees: null,
       });
+    });
+
+    it("should estimate fees for native APT send when amount is within native APT balance", async () => {
+      transaction.recipient = "test-recipient";
+      transaction.amount = new BigNumber(500); // send amount (500) < native balance (1000)
+
+      (getEstimatedGas as jest.Mock).mockResolvedValue({
+        fees: new BigNumber(20_000),
+        estimate: { maxGasAmount: new BigNumber(200), gasUnitPrice: new BigNumber(100) },
+        errors: {},
+      });
+
+      const result = await prepareTransaction(account, transaction);
+
+      expect(result.fees?.isEqualTo(new BigNumber(20_000))).toBe(true);
+    });
+
+    it("should skip fee estimation for native APT send when amount exceeds native APT balance", async () => {
+      transaction.recipient = "test-recipient";
+      transaction.amount = new BigNumber(2000); // send amount (2000) > native balance (1000)
+
+      await prepareTransaction(account, transaction);
+
+      expect(getEstimatedGas).not.toHaveBeenCalled();
+    });
+
+    it("should estimate fees for token send when amount (in raw units) is within token balance — even if it exceeds native APT balance", async () => {
+      const account = createFixtureAccountWithSubAccount("coin");
+      account.spendableBalance = new BigNumber(100_000);
+      account.subAccounts![0].spendableBalance = new BigNumber(300_000);
+
+      const transaction = createFixtureTransactionWithSubAccount();
+      transaction.recipient = "test-recipient";
+      // native balance (100_000) < send amount (200_000) < token balance (300_000)
+      transaction.amount = new BigNumber(200_000);
+
+      (getEstimatedGas as jest.Mock).mockResolvedValue({
+        fees: new BigNumber(20_000),
+        estimate: { maxGasAmount: new BigNumber(200), gasUnitPrice: new BigNumber(100) },
+        errors: {},
+      });
+
+      const result = await prepareTransaction(account, transaction);
+
+      expect(result.fees?.isEqualTo(new BigNumber(20_000))).toBe(true);
+    });
+
+    it("should skip fee estimation for token send when amount (in raw units) exceeds token balance — even if it is within native APT balance", async () => {
+      const account = createFixtureAccountWithSubAccount("coin");
+      account.spendableBalance = new BigNumber(300_000);
+      account.subAccounts![0].spendableBalance = new BigNumber(100_000);
+
+      const transaction = createFixtureTransactionWithSubAccount();
+      transaction.recipient = "test-recipient";
+      // token balance (100_000) < send amount (200_000) < native balance (300_000)
+      transaction.amount = new BigNumber(200_000);
+
+      await prepareTransaction(account, transaction);
+
+      expect(getEstimatedGas).not.toHaveBeenCalled();
     });
   });
 });
