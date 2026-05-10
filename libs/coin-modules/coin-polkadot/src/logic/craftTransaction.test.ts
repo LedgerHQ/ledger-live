@@ -1,4 +1,3 @@
-import { faker } from "@faker-js/faker";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { TypeRegistry } from "@polkadot/types";
 import { createFixtureAccount } from "../types/bridge.fixture";
@@ -49,7 +48,7 @@ describe("craftTransaction", () => {
       });
       return new mockCodec();
     });
-    const expectExtrinsicMethodHex = faker.string.hexadecimal({ length: 16 });
+    const expectExtrinsicMethodHex = "0x1111111111111111";
     const mockTransferKeepAlive = jest.fn().mockReturnValue({
       toHex: () => expectExtrinsicMethodHex,
     });
@@ -105,7 +104,7 @@ describe("craftTransaction", () => {
     const { freshAddress: address } = createFixtureAccount();
     const recipient = "WHATEVER";
     const amount = BigInt(0);
-    const expectExtrinsicMethodHex = faker.string.hexadecimal({ length: 16 });
+    const expectExtrinsicMethodHex = "0x2222222222222222";
     const mockTransferAll = jest.fn().mockReturnValue({
       toHex: () => expectExtrinsicMethodHex,
     });
@@ -144,7 +143,7 @@ describe("craftTransaction", () => {
       const { freshAddress: address } = createFixtureAccount();
       const recipient = "WHATEVER";
       const amount = BigInt(0);
-      const expectExtrinsicMethodHex = faker.string.hexadecimal({ length: 16 });
+      const expectExtrinsicMethodHex = "0x3333333333333333";
       const mockWithdrawUnbonded = jest.fn().mockReturnValue({
         toHex: () => expectExtrinsicMethodHex,
       });
@@ -179,7 +178,7 @@ describe("craftTransaction", () => {
     const { freshAddress: address } = createFixtureAccount();
     const recipient = "WHATEVER";
     const amount = BigInt(0);
-    const expectExtrinsicMethodHex = faker.string.hexadecimal({ length: 16 });
+    const expectExtrinsicMethodHex = "0x4444444444444444";
     const mockSetController = jest.fn().mockReturnValue({
       toHex: () => expectExtrinsicMethodHex,
     });
@@ -212,7 +211,7 @@ describe("craftTransaction", () => {
     const { freshAddress: address } = createFixtureAccount();
     const recipient = "WHATEVER";
     const amount = BigInt(0);
-    const expectExtrinsicMethodHex = faker.string.hexadecimal({ length: 16 });
+    const expectExtrinsicMethodHex = "0x5555555555555555";
     const mockChill = jest.fn().mockReturnValue({
       toHex: () => expectExtrinsicMethodHex,
     });

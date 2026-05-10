@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 
-import { faker } from "@faker-js/faker";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -172,7 +171,7 @@ describe("getAccountShape", () => {
   it("returns an AccountShapeInfo with operations from initialAccount", async () => {
     // GIVEN
     const extra = { coinType: DEFAULT_COIN_TYPE };
-    const initialOperations = [createFixtureOperation({ id: faker.string.uuid(), extra })];
+    const initialOperations = [createFixtureOperation({ id: "sui:initial-op-1", extra })];
     const initialAccount = createFixtureAccount({ operations: initialOperations });
     const accountBalance = createAccountBalance();
     mockGetAccountBalances.mockResolvedValue([accountBalance]);
@@ -204,8 +203,8 @@ describe("getAccountShape", () => {
     mockGetAccountBalances.mockResolvedValue([accountBalance]);
     const extra = { coinType: DEFAULT_COIN_TYPE };
     const apiOperations = [
-      createFixtureOperation({ id: faker.string.uuid(), extra }),
-      createFixtureOperation({ id: faker.string.uuid(), extra }),
+      createFixtureOperation({ id: "sui:api-op-1", extra }),
+      createFixtureOperation({ id: "sui:api-op-2", extra }),
     ];
     mockGetOperations.mockResolvedValue(apiOperations);
     mockGetStakesRaw.mockResolvedValue([]);
@@ -719,7 +718,7 @@ function createAccountBalance(overrides = {}) {
   return {
     coinType: DEFAULT_COIN_TYPE,
     blockHeight: 10,
-    balance: new BigNumber(faker.string.numeric()),
+    balance: new BigNumber(1000),
     fundsInAddressBalance: new BigNumber(0),
     ...overrides,
   };

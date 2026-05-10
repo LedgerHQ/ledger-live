@@ -1,4 +1,3 @@
-import { faker } from "@faker-js/faker";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
 import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
 import { emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account/index";
@@ -19,9 +18,9 @@ export function createFixtureAccount(account?: Partial<IconAccount>): IconAccoun
     derivationPath: "derivation_path",
   };
 
-  const id = faker.string.uuid();
-  const seedIdentifier = faker.string.uuid();
-  const index = faker.number.int();
+  const id = "icon:fixture-account";
+  const seedIdentifier = "fixture-seed";
+  const index = 0;
 
   return {
     type: "Account",
@@ -34,8 +33,8 @@ export function createFixtureAccount(account?: Partial<IconAccount>): IconAccoun
     used: true,
     balance: account?.balance || new BigNumber(0),
     spendableBalance: account?.spendableBalance || new BigNumber(0),
-    creationDate: faker.date.past(),
-    blockHeight: faker.number.int({ min: 100_000, max: 200_000 }),
+    creationDate: new Date("2024-01-01"),
+    blockHeight: 100_000,
     currency,
     operationsCount: account?.operationsCount || 0,
     operations: account?.operations || [],
@@ -59,17 +58,17 @@ export function createFixtureTransaction(tx?: Partial<Transaction>): Transaction
 
 export function createFixtureOperation(operation?: Partial<IconOperation>): IconOperation {
   return {
-    id: operation?.id || faker.string.uuid(),
-    hash: operation?.hash || faker.string.uuid(),
+    id: operation?.id || "icon:fixture-op",
+    hash: operation?.hash || "0x" + "0".repeat(64),
     type: operation?.type || "OUT",
-    value: operation?.value || new BigNumber(faker.string.numeric()),
+    value: operation?.value || new BigNumber(0),
     fee: operation?.fee || new BigNumber(0),
     senders: operation?.senders || [],
     recipients: operation?.recipients || [],
     blockHeight: operation?.blockHeight || undefined,
     blockHash: operation?.blockHash || undefined,
-    accountId: operation?.accountId || faker.string.uuid(),
-    date: operation?.date || faker.date.past(),
+    accountId: operation?.accountId || "icon:fixture-account",
+    date: operation?.date || new Date("2024-01-01"),
     extra: {},
   };
 }

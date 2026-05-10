@@ -1,4 +1,3 @@
-import { faker } from "@faker-js/faker";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
 import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
 import { emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account/index";
@@ -18,13 +17,13 @@ export function createFixtureAccount(account?: Partial<PolkadotAccount>): Polkad
   const polkadotResources: PolkadotResources = account?.polkadotResources || {
     controller: account?.polkadotResources?.controller || undefined,
     stash: account?.polkadotResources?.stash || undefined,
-    nonce: faker.number.int(100_000),
-    lockedBalance: new BigNumber(faker.string.numeric()),
-    unlockedBalance: new BigNumber(faker.string.numeric()),
-    unlockingBalance: new BigNumber(faker.string.numeric()),
+    nonce: 0,
+    lockedBalance: new BigNumber(0),
+    unlockedBalance: new BigNumber(0),
+    unlockingBalance: new BigNumber(0),
     unlockings: undefined,
     nominations: undefined,
-    numSlashingSpans: faker.number.int(10),
+    numSlashingSpans: 0,
   };
 
   const freshAddress = {
@@ -33,10 +32,9 @@ export function createFixtureAccount(account?: Partial<PolkadotAccount>): Polkad
     derivationPath: "derivation_path",
   };
 
-  const id = faker.string.uuid();
-  const seedIdentifier = faker.string.uuid();
-  const index = faker.number.int();
-  faker.string.alpha(); // there used to be a name and to not break the test, we need to consume it
+  const id = "polkadot:fixture-account";
+  const seedIdentifier = "fixture-seed";
+  const index = 0;
 
   return {
     type: "Account",
@@ -49,8 +47,8 @@ export function createFixtureAccount(account?: Partial<PolkadotAccount>): Polkad
     used: true,
     balance: account?.balance || new BigNumber(0),
     spendableBalance: account?.spendableBalance || new BigNumber(0),
-    creationDate: faker.date.past(),
-    blockHeight: faker.number.int({ min: 100_000, max: 200_000 }),
+    creationDate: new Date("2024-01-01"),
+    blockHeight: 100_000,
     currency,
     operationsCount: account?.operationsCount || 0,
     operations: account?.operations || [],
@@ -84,18 +82,18 @@ export function createFixtureOperation(operation?: Partial<PolkadotOperation>): 
   };
 
   return {
-    id: operation?.id || faker.string.uuid(),
-    hash: operation?.hash || faker.string.uuid(),
+    id: operation?.id || "polkadot:fixture-op",
+    hash: operation?.hash || "0x" + "0".repeat(64),
     type: operation?.type || "ACTIVATE",
-    value: operation?.value || new BigNumber(faker.string.numeric()),
+    value: operation?.value || new BigNumber(0),
     fee: operation?.fee || new BigNumber(0),
     // senders & recipients addresses
     senders: operation?.senders || [],
     recipients: operation?.recipients || [],
     blockHeight: operation?.blockHeight || undefined,
     blockHash: operation?.blockHash || undefined,
-    accountId: operation?.accountId || faker.string.uuid(),
-    date: operation?.date || faker.date.past(),
+    accountId: operation?.accountId || "polkadot:fixture-account",
+    date: operation?.date || new Date("2024-01-01"),
     extra,
   };
 }
