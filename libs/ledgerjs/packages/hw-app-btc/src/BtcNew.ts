@@ -538,10 +538,10 @@ export default class BtcNew {
  * the bitcoin descriptor template.
  */
 function descrTemplFrom(addressFormat: AddressFormat): DefaultDescriptorTemplate {
-  if (addressFormat == "legacy") return "pkh(@0)";
-  if (addressFormat == "p2sh") return "sh(wpkh(@0))";
-  if (addressFormat == "bech32") return "wpkh(@0)";
-  if (addressFormat == "bech32m") return "tr(@0)";
+  if (addressFormat == "legacy") return "pkh(@0/**)";
+  if (addressFormat == "p2sh") return "sh(wpkh(@0/**))";
+  if (addressFormat == "bech32") return "wpkh(@0/**)";
+  if (addressFormat == "bech32m") return "tr(@0/**)";
   throw new Error("Unsupported address format " + addressFormat);
 }
 
