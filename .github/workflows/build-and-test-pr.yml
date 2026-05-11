@@ -112,7 +112,7 @@ jobs:
     name: "Test DevTools"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'devtools') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-devtools-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-devtools-reusable.yml@ci/devtools/fix-pnpm-workspace-filter
     secrets: inherit
 
   enforce-boundaries:
