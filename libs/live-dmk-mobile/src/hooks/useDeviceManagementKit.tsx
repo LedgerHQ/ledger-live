@@ -9,6 +9,7 @@ import { LedgerLiveLogger, UserHashService } from "@ledgerhq/live-dmk-shared";
 import { RNHidTransportFactory } from "@ledgerhq/device-transport-kit-react-native-hid";
 import { getEnv } from "@ledgerhq/live-env";
 import { LocalTracer } from "@ledgerhq/logs";
+import { httpProxyTransportFactory, httpProxyUrlSubject } from "../transport/HttpProxyDmkTransport";
 
 const tracer = new LocalTracer("live-dmk-tracer", { function: "useDeviceManagementKit" });
 
@@ -24,6 +25,7 @@ export const getDeviceManagementKit = (): DeviceManagementKit => {
     instance = new DeviceManagementKitBuilder()
       .addTransport(RNBleTransportFactory)
       .addTransport(RNHidTransportFactory)
+      .addTransport(httpProxyTransportFactory(httpProxyUrlSubject))
       .addLogger(new LedgerLiveLogger(LogLevel.Debug))
       .addConfig({ firmwareDistributionSalt })
       .build();
