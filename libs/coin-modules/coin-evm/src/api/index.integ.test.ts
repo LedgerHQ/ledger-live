@@ -1,5 +1,5 @@
 import {
-  AlpacaApi,
+  CoinModuleApi,
   BufferTxData,
   FeeEstimation,
   MemoNotSupported,
@@ -37,7 +37,7 @@ describe.each([
     },
   ],
 ])("EVM Api (%s)", (_, config) => {
-  let module: AlpacaApi<MemoNotSupported, BufferTxData> & BridgeApi;
+  let module: CoinModuleApi<MemoNotSupported, BufferTxData> & BridgeApi;
 
   beforeAll(() => {
     // Setup CAL client store (automatically set as global store)
@@ -788,7 +788,7 @@ describe.each([
 });
 
 describe("EVM Api: external node and explorer ONLY", () => {
-  let module: AlpacaApi<MemoNotSupported, BufferTxData> & BridgeApi;
+  let module: CoinModuleApi<MemoNotSupported, BufferTxData> & BridgeApi;
 
   beforeAll(() => {
     setupCalClientStore();
@@ -879,7 +879,7 @@ describe("EVM Api: external node and explorer ONLY", () => {
 });
 
 describe("EVM Api (Moonbeam Network)", () => {
-  let module: AlpacaApi<MemoNotSupported, BufferTxData> & BridgeApi;
+  let module: CoinModuleApi<MemoNotSupported, BufferTxData> & BridgeApi;
 
   beforeAll(() => {
     setupCalClientStore();
@@ -924,7 +924,7 @@ describe("EVM Api (Moonbeam Network)", () => {
 });
 
 describe("EVM Api (SEI Network)", () => {
-  let module: AlpacaApi<MemoNotSupported, BufferTxData> & BridgeApi;
+  let module: CoinModuleApi<MemoNotSupported, BufferTxData> & BridgeApi;
 
   beforeAll(() => {
     // Setup CAL client store (automatically set as global store)
@@ -1048,7 +1048,7 @@ describe("EVM Api (SEI Network)", () => {
 });
 
 describe("EVM Api (Zero Gravity)", () => {
-  let module: AlpacaApi<MemoNotSupported, BufferTxData> & BridgeApi;
+  let module: CoinModuleApi<MemoNotSupported, BufferTxData> & BridgeApi;
 
   beforeAll(() => {
     setupCalClientStore();

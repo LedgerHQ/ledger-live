@@ -4,7 +4,7 @@ import { log } from "@ledgerhq/logs";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import type {
-  Operation as AlpacaOperation,
+  Operation as CoinFrameworkOperation,
   MemoNotSupported,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
@@ -123,10 +123,10 @@ function parseTransactionFields(rawTx: AleoPublicTransaction, address: string) {
   return { type, fee, blockHash, transactionType, date, hasFailed };
 }
 
-export const toAlpacaOperation = (
+export const toCoinFrameworkOperation = (
   rawTx: AleoPublicTransaction,
   address: string,
-): AlpacaOperation => {
+): CoinFrameworkOperation => {
   const { type, fee, blockHash, transactionType, date, hasFailed } = parseTransactionFields(
     rawTx,
     address,

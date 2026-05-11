@@ -425,7 +425,7 @@ describe("SUI SDK Integration tests", () => {
     });
   });
 
-  describe("getListOperations (SIP-58 / alpaca path)", () => {
+  describe("getListOperations (SIP-58 / coin-framework path)", () => {
     const account = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
 
     let descPage: Awaited<ReturnType<typeof getListOperations>>;

@@ -1,6 +1,6 @@
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import {
-  AlpacaApi,
+  CoinModuleApi,
   BalanceOptions,
   CraftedTransaction,
   Cursor,
@@ -32,7 +32,7 @@ import { validateAddress } from "../logic/validateAddress";
 import { fetchSequence, registerHorizonInterceptors } from "../network";
 import { StellarMemo } from "../types";
 
-export function createApi(config: StellarConfig): AlpacaApi<StellarMemo> {
+export function createApi(config: StellarConfig): CoinModuleApi<StellarMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
   registerHorizonInterceptors();
 

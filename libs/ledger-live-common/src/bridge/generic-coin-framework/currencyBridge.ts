@@ -2,13 +2,13 @@ import { makeScanAccounts } from "@ledgerhq/ledger-wallet-framework/bridge/jsHel
 import type { CurrencyBridge } from "@ledgerhq/types-live";
 import { genericGetAccountShape } from "./getAccountShape";
 import { getSigner } from "./signer";
-import type { AlpacaSigner } from "./types";
+import type { CoinFrameworkSigner } from "./types";
 import { postSync } from "./postSync";
 
-export function getAlpacaCurrencyBridge(
+export function getCoinFrameworkCurrencyBridge(
   network: string,
   kind: string,
-  customSigner?: AlpacaSigner,
+  customSigner?: CoinFrameworkSigner,
 ): CurrencyBridge {
   const signer = customSigner ?? getSigner(network);
   return {

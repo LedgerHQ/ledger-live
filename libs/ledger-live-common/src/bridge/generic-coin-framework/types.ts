@@ -128,7 +128,7 @@ export type LegacySigner = {
   signTransaction: (path: string, rawTxHex: string) => Promise<string>;
 };
 
-export type AlpacaSigner<S = unknown> = {
+export type CoinFrameworkSigner<S = unknown> = {
   getAddress: GetAddressFn;
   signMessage?: (message: string) => Promise<string>;
   context: SignerContext<S>;

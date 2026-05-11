@@ -1,18 +1,18 @@
-import type { AlpacaApi } from "@ledgerhq/coin-module-framework/api/types";
+import type { CoinModuleApi } from "@ledgerhq/coin-module-framework/api/types";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
 import { findCryptoCurrencyByNetwork } from "../utils";
-import { getNetworkAlpacaApi } from "./network/network-coin-service";
+import { getNetworkCoinModuleApi } from "./network/network-coin-service";
 
 /**
- * Lazy-load coin Alpaca API modules so consumers (e.g. wallet-cli EVM-only) do not evaluate
+ * Lazy-load Coin Module API modules so consumers (e.g. wallet-cli EVM-only) do not evaluate
  * unrelated coin stacks (Tron pulls tronweb/protobuf, which breaks under some Bun runtimes).
  *
  * Uses dynamic `import()` so each build only loads the module for the matched family on demand.
  */
-export async function getAlpacaApi(
+export async function getCoinModuleApi(
   network: string,
   kind: string,
-): Promise<AlpacaApi<any> & BridgeApi> {
+): Promise<CoinModuleApi<any> & BridgeApi> {
   if (kind === "local") {
     const currency = findCryptoCurrencyByNetwork(network);
     switch (currency?.family) {
@@ -32,5 +32,5 @@ export async function getAlpacaApi(
         return (await import("./local/solana.js")).createLocalSolanaApi(currency.id);
     }
   }
-  return getNetworkAlpacaApi(network) satisfies Partial<AlpacaApi<any> & BridgeApi>;
+  return getNetworkCoinModuleApi(network) satisfies Partial<CoinModuleApi<any> & BridgeApi>;
 }

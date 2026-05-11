@@ -1,6 +1,6 @@
 import { AccountBridge } from "@ledgerhq/types-live";
 import { getMainAccount } from "../../account";
-import { getAlpacaApi } from "./api";
+import { getCoinModuleApi } from "./api";
 import { createTransaction } from "./createTransaction";
 import { bigNumberToBigIntDeep, extractBalances, transactionToIntent } from "./utils";
 import BigNumber from "bignumber.js";
@@ -16,7 +16,7 @@ export function genericEstimateMaxSpendable(
       return account.spendableBalance;
     }
     const mainAccount = getMainAccount(account, parentAccount);
-    const alpacaApi = await getAlpacaApi(mainAccount.currency.id, kind);
+    const coinModuleApi = await getCoinModuleApi(mainAccount.currency.id, kind);
     const bridgeApi = getBridgeApi(mainAccount.currency, network);
     const draftTransaction = {
       ...createTransaction(account),
@@ -27,12 +27,12 @@ export function genericEstimateMaxSpendable(
 
     let fees = transaction?.fees;
     if (!BigNumber.isBigNumber(fees)) {
-      const { value } = await alpacaApi.estimateFees(
+      const { value } = await coinModuleApi.estimateFees(
         transactionToIntent(
           mainAccount,
           draftTransaction,
           bridgeApi.computeIntentType,
-          alpacaApi.craftTransactionData,
+          coinModuleApi.craftTransactionData,
         ),
       );
 
@@ -40,12 +40,12 @@ export function genericEstimateMaxSpendable(
     }
 
     // TODO Remove the call to `validateIntent` https://ledgerhq.atlassian.net/browse/LIVE-22229
-    const { amount } = await alpacaApi.validateIntent(
+    const { amount } = await coinModuleApi.validateIntent(
       transactionToIntent(
         account,
         { ...draftTransaction },
         bridgeApi.computeIntentType,
-        alpacaApi.craftTransactionData,
+        coinModuleApi.craftTransactionData,
       ),
       extractBalances(account, bridgeApi.getAssetFromToken),
       bigNumberToBigIntDeep({ value: transaction?.fees ?? new BigNumber(0) }),

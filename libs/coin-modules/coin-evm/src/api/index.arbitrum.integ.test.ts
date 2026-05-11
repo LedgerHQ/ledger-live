@@ -1,5 +1,5 @@
 import {
-  AlpacaApi,
+  CoinModuleApi,
   BufferTxData,
   MemoNotSupported,
 } from "@ledgerhq/coin-module-framework/api/types";
@@ -9,7 +9,7 @@ import { EvmConfig } from "../config";
 import { createApi } from "./index";
 
 describe("EVM Arbitrum Network", () => {
-  let module: AlpacaApi<MemoNotSupported, BufferTxData> & BridgeApi;
+  let module: CoinModuleApi<MemoNotSupported, BufferTxData> & BridgeApi;
 
   beforeAll(() => {
     setupCalClientStore();

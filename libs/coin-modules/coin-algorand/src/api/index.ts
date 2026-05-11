@@ -1,6 +1,6 @@
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import {
-  AlpacaApi,
+  CoinModuleApi,
   Block,
   CraftedTransaction,
   Cursor,
@@ -27,7 +27,7 @@ import {
 import type { AlgorandMemo } from "../types";
 import { validateAddress } from "../validateAddress";
 
-export function createApi(config: AlgorandCoinConfig): AlpacaApi<AlgorandMemo> {
+export function createApi(config: AlgorandCoinConfig): CoinModuleApi<AlgorandMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {

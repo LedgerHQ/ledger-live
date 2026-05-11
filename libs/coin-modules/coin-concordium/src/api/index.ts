@@ -1,5 +1,5 @@
 import type {
-  AlpacaApi,
+  CoinModuleApi,
   Balance,
   BalanceOptions,
   CraftedTransaction,
@@ -39,7 +39,7 @@ import {
 import type { ConcordiumConfig, ConcordiumMemo } from "../types";
 import { mapRawOperationToApiOperation } from "./utils";
 
-export function createApi(config: ConcordiumConfig, currencyId: string): AlpacaApi<ConcordiumMemo> {
+export function createApi(config: ConcordiumConfig, currencyId: string): CoinModuleApi<ConcordiumMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {

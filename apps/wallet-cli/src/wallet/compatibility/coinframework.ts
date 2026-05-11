@@ -1,4 +1,4 @@
-// Alpaca adapter: high-performance balance and operation fetching.
+// Coin framework adapter: high-performance balance and operation fetching.
 // Skips full bridge sync — uses direct API calls instead.
 
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
@@ -18,9 +18,9 @@ export type OperationsPage = {
   nextCursor: string | undefined;
 };
 
-type AlpacaAssetEntry = { asset: { type: string }; value: bigint };
+type CoinFrameworkAssetEntry = { asset: { type: string }; value: bigint };
 
-export class AlpacaAdapter {
+export class CoinFrameworkAdapter {
   async getBalances(descriptor: AccountDescriptor): Promise<Balance[]> {
     const { xpubOrAddress: address } = decodeAccountId(descriptor.id);
     const currency = getCryptoCurrencyById(descriptor.currencyId);
@@ -28,7 +28,7 @@ export class AlpacaAdapter {
     // Pending better bridge API — evmBridge used as interim token resolver
     const bridgeApi = evmBridge(currency);
 
-    const balanceRes: AlpacaAssetEntry[] = await api.getBalance(address);
+    const balanceRes: CoinFrameworkAssetEntry[] = await api.getBalance(address);
     const native = extractBalance(balanceRes, "native");
     const tokenAssets = balanceRes.filter(b => b.asset.type !== "native");
 
@@ -61,7 +61,7 @@ export class AlpacaAdapter {
       limit: options?.limit ?? 50,
     });
 
-    const coreOps: CoreOperation[] = Array.isArray(page) ? page : (page.items ?? []);
+    const coreOps: CoreOperation[] = Array.isArray(page) ? page : page.items ?? [];
     const nextCursor: string | undefined =
       !Array.isArray(page) && page.next != null ? String(page.next) : undefined;
 

@@ -1,5 +1,5 @@
 import { genericPrepareTransaction } from "../prepareTransaction";
-import { getAlpacaApi } from "../api";
+import { getCoinModuleApi } from "../api";
 import { getBridgeApi } from "../bridge";
 import { transactionToIntent } from "../utils";
 import BigNumber from "bignumber.js";
@@ -9,7 +9,7 @@ import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { decodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 
 jest.mock("../api", () => ({
-  getAlpacaApi: jest.fn(),
+  getCoinModuleApi: jest.fn(),
 }));
 jest.mock("../bridge", () => ({
   getBridgeApi: jest.fn(),
@@ -56,7 +56,7 @@ describe("genericPrepareTransaction", () => {
   it("updates fees if they differ", async () => {
     const newFee = new BigNumber(700);
 
-    (getAlpacaApi as jest.Mock).mockReturnValue({
+    (getCoinModuleApi as jest.Mock).mockReturnValue({
       estimateFees: jest.fn().mockResolvedValue({ value: newFee }),
     });
 
@@ -75,7 +75,7 @@ describe("genericPrepareTransaction", () => {
   it("returns original transaction if fees are the same", async () => {
     const sameFee = baseTransaction.fees;
 
-    (getAlpacaApi as jest.Mock).mockReturnValue({
+    (getCoinModuleApi as jest.Mock).mockReturnValue({
       estimateFees: jest.fn().mockResolvedValue({ value: sameFee }),
     });
 
@@ -87,7 +87,7 @@ describe("genericPrepareTransaction", () => {
 
   it("sets fee if original fees are undefined", async () => {
     const newFee = new BigNumber(1234);
-    (getAlpacaApi as jest.Mock).mockReturnValue({
+    (getCoinModuleApi as jest.Mock).mockReturnValue({
       estimateFees: jest.fn().mockResolvedValue({ value: newFee }),
     });
 
@@ -101,7 +101,7 @@ describe("genericPrepareTransaction", () => {
 
   it("returns original if fees are BigNumber-equal but different instance", async () => {
     const sameValue = new BigNumber(baseTransaction.fees.toString()); // different instance
-    (getAlpacaApi as jest.Mock).mockReturnValue({
+    (getCoinModuleApi as jest.Mock).mockReturnValue({
       estimateFees: jest.fn().mockResolvedValue({ value: sameValue }),
     });
 
@@ -122,7 +122,7 @@ describe("genericPrepareTransaction", () => {
   ])(
     "propagates %s from estimation parameters",
     async (parameterName, parameterValue, expectedValue) => {
-      (getAlpacaApi as jest.Mock).mockReturnValue({
+      (getCoinModuleApi as jest.Mock).mockReturnValue({
         estimateFees: jest.fn().mockResolvedValue({
           value: new BigNumber(491),
           parameters: { [parameterName]: parameterValue },
@@ -148,7 +148,7 @@ describe("genericPrepareTransaction", () => {
   );
 
   it("does not propagate the custom gas limit", async () => {
-    (getAlpacaApi as jest.Mock).mockReturnValue({
+    (getCoinModuleApi as jest.Mock).mockReturnValue({
       estimateFees: jest.fn().mockResolvedValue({
         value: 100000n,
         parameters: { gasLimit: 22000n }, // custom gasLimit in parameter
@@ -181,7 +181,7 @@ describe("genericPrepareTransaction", () => {
     (transactionToIntent as jest.Mock).mockImplementation((_, transaction) => ({
       amount: BigInt(transaction.amount.toFixed()),
     }));
-    (getAlpacaApi as jest.Mock).mockReturnValue({
+    (getCoinModuleApi as jest.Mock).mockReturnValue({
       estimateFees,
       validateIntent: intent => Promise.resolve({ amount: intent.amount }),
     });
@@ -207,7 +207,7 @@ describe("genericPrepareTransaction", () => {
       findTokenById: tokenId =>
         Promise.resolve(tokenId === "usdc" ? ({ id: tokenId } as TokenCurrency) : undefined),
     });
-    (getAlpacaApi as jest.Mock).mockReturnValue({
+    (getCoinModuleApi as jest.Mock).mockReturnValue({
       estimateFees: () => Promise.resolve({ value: 0n }),
     });
     (getBridgeApi as jest.Mock).mockReturnValue({

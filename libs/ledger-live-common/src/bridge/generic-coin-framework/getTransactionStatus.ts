@@ -1,7 +1,7 @@
 import { AccountBridge } from "@ledgerhq/types-live";
 import { AccountAwaitingSendPendingOperations } from "@ledgerhq/errors";
 import BigNumber from "bignumber.js";
-import { getAlpacaApi } from "./api";
+import { getCoinModuleApi } from "./api";
 import { getBridgeApi } from "./bridge";
 import {
   bigNumberToBigIntDeep,
@@ -11,13 +11,13 @@ import {
 } from "./utils";
 import type { GenericTransaction } from "./types";
 
-// => alpaca validateIntent
+// => coin-framework validateIntent
 export function genericGetTransactionStatus(
   network: string,
   kind: string,
 ): AccountBridge<GenericTransaction>["getTransactionStatus"] {
   return async (account, transaction) => {
-    const alpacaApi = await getAlpacaApi(account.currency.id, kind);
+    const coinModuleApi = await getCoinModuleApi(account.currency.id, kind);
     const bridgeApi = getBridgeApi(account.currency, network);
 
     const draftTransaction = {
@@ -52,7 +52,7 @@ export function genericGetTransactionStatus(
       account,
       draftTransaction,
       bridgeApi.computeIntentType,
-      alpacaApi.craftTransactionData,
+      coinModuleApi.craftTransactionData,
     );
     intent = applyMemoToIntent(intent, transaction);
 
@@ -69,7 +69,7 @@ export function genericGetTransactionStatus(
     });
 
     const { errors, warnings, estimatedFees, amount, totalSpent, totalFees } =
-      await alpacaApi.validateIntent(
+      await coinModuleApi.validateIntent(
         intent,
         extractBalances(account, bridgeApi.getAssetFromToken),
         customFees,

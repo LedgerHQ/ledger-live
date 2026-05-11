@@ -2,7 +2,7 @@ import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Operation, ListOperationsOptions } from "@ledgerhq/coin-module-framework/api/types";
 import type { AleoOperation } from "../types/bridge";
 import { fetchAccountTransactionsFromHeight } from "../network/utils";
-import { toAlpacaOperation, toBridgeOperation } from "./utils";
+import { toCoinFrameworkOperation, toBridgeOperation } from "./utils";
 
 interface Params {
   currency: CryptoCurrency;
@@ -15,8 +15,8 @@ interface BridgeParams extends Params {
   ledgerAccountId: string;
 }
 
-interface AlpacaParams extends Params {
-  mode: "alpaca";
+interface CoinFrameworkParams extends Params {
+  mode: "coin-framework";
 }
 
 type Result<T> = {
@@ -25,9 +25,9 @@ type Result<T> = {
 };
 
 export async function listOperations(params: BridgeParams): Promise<Result<AleoOperation>>;
-export async function listOperations(params: AlpacaParams): Promise<Result<Operation>>;
+export async function listOperations(params: CoinFrameworkParams): Promise<Result<Operation>>;
 export async function listOperations(
-  params: BridgeParams | AlpacaParams,
+  params: BridgeParams | CoinFrameworkParams,
 ): Promise<Result<AleoOperation | Operation>> {
   const { mode, currency, address, options } = params;
   const operations: Array<AleoOperation | Operation> = [];
@@ -44,8 +44,8 @@ export async function listOperations(
   });
 
   for (const rawTx of result.transactions) {
-    if (mode === "alpaca") {
-      operations.push(toAlpacaOperation(rawTx, address));
+    if (mode === "coin-framework") {
+      operations.push(toCoinFrameworkOperation(rawTx, address));
     } else {
       operations.push(toBridgeOperation(params.ledgerAccountId, rawTx, address));
     }

@@ -1,5 +1,5 @@
 import { AccountBridge } from "@ledgerhq/types-live";
-import { getAlpacaApi } from "./api";
+import { getCoinModuleApi } from "./api";
 import { getBridgeApi } from "./bridge";
 import { bigNumberToBigIntDeep, extractBalances, transactionToIntent } from "./utils";
 import BigNumber from "bignumber.js";
@@ -48,7 +48,7 @@ export function genericPrepareTransaction(
   kind: string,
 ): AccountBridge<GenericTransaction>["prepareTransaction"] {
   return async (account, transaction) => {
-    const alpacaApi = await getAlpacaApi(account.currency.id, kind);
+    const coinModuleApi = await getCoinModuleApi(account.currency.id, kind);
     const bridgeApi = getBridgeApi(account.currency, network);
 
     const getAssetFromTokenForCurrency = bridgeApi.getAssetFromToken;
@@ -83,7 +83,7 @@ export function genericPrepareTransaction(
         amount,
       },
       bridgeApi.computeIntentType,
-      alpacaApi.craftTransactionData,
+      coinModuleApi.craftTransactionData,
     );
     const customFeesParameters = bigNumberToBigIntDeep({
       gasPrice: transaction.gasPrice,
@@ -94,7 +94,7 @@ export function genericPrepareTransaction(
     });
     const estimation: FeeEstimation = customParametersFees
       ? { value: BigInt(customParametersFees.toFixed()) }
-      : await alpacaApi.estimateFees(intent, customFeesParameters);
+      : await coinModuleApi.estimateFees(intent, customFeesParameters);
     const fees = new BigNumber(estimation.value.toString());
 
     if (!bnEq(transaction.fees, fees)) {
@@ -133,7 +133,7 @@ export function genericPrepareTransaction(
         )
       ) {
         // TODO Remove the call to `validateIntent` https://ledgerhq.atlassian.net/browse/LIVE-22228
-        const { amount } = await alpacaApi.validateIntent(
+        const { amount } = await coinModuleApi.validateIntent(
           transactionToIntent(
             account,
             {
@@ -142,7 +142,7 @@ export function genericPrepareTransaction(
               assetReference,
             },
             bridgeApi.computeIntentType,
-            alpacaApi.craftTransactionData,
+            coinModuleApi.craftTransactionData,
           ),
           extractBalances(account, getAssetFromTokenForCurrency),
         );

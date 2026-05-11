@@ -1,4 +1,4 @@
-import type { AlpacaApi } from "@ledgerhq/coin-module-framework/api/index";
+import type { CoinModuleApi } from "@ledgerhq/coin-module-framework/api/index";
 import type { ConcordiumMemo } from "../types";
 import { TESTNET_COIN_CONFIG } from "../test/fixtures";
 import { createApi } from ".";
@@ -7,10 +7,10 @@ import { createApi } from ".";
  * Integration tests for Concordium API
  *
  * These tests verify the API implementation against real Concordium testnet.
- * Tests cover all required AlpacaApi methods as per API docs requirements.
+ * Tests cover all required CoinModuleApi methods as per API docs requirements.
  */
 describe("Concordium Api (testnet)", () => {
-  let api: AlpacaApi<ConcordiumMemo>;
+  let api: CoinModuleApi<ConcordiumMemo>;
 
   // Test account with some balance and transactions
   // https://testnet.ccdscan.io/

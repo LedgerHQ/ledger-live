@@ -18,11 +18,12 @@ export default defineCommand({
   options: {
     account: accountOption,
     limit: option(z.coerce.number().int().min(1).optional(), {
-      description: "Max number of operations to return (Alpaca families only)",
+      description: "Max number of operations to return (coin-framework families only)",
       short: "l",
     }),
     cursor: option(z.string().min(1).optional(), {
-      description: "Pagination cursor from a previous call's nextCursor (Alpaca families only)",
+      description:
+        "Pagination cursor from a previous call's nextCursor (coin-framework families only)",
     }),
     output: outputOption,
   },

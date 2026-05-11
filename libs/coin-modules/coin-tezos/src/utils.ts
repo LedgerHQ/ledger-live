@@ -33,7 +33,7 @@ export type TezosAssetLike = {
 };
 
 /**
- * Parse FA1.2 / FA2 token contract + token id from Alpaca `assetReference`
+ * Parse FA1.2 / FA2 token contract + token id from coin-framework `assetReference`
  * (`KT1…` or `KT1…:tokenId` as produced by getBlock / listOperations).
  */
 export function parseTezosTokenAsset(

@@ -1,19 +1,20 @@
 Coin Modules
 ============
 
-Alpaca compatibility
---------------------
+Coin framework compatibility
+----------------------------
 
 ### Architectural Decision
-The following concepts are mandatory for a CoinModule to be *Alpaca compliant*.
+The following concepts are mandatory for a CoinModule to be *Coin framework compliant*.
+
 #### A CoinModule has the following directories/modules
-* `api`: interface for exposing the CoinModule to a backend service (a.k.a. Alpaca)
+* `api`: interface for exposing the CoinModule to a backend service (a.k.a. coin-service)
 * `logic`: contains all core logic of the blockchain. The code here is agnostic of all external interface (i.e. Bridge or Api) and relies only on external libs and `network` directory
 * `network`: communication logic with explorer/index/node
 * `types`: all different model definitions, except for `network`
 * `config.ts`: exposes methods to update and fetch the coin config
 * `transaction.ts`: exposes serialization utils
-* `supportedFeatures.ts` (to be refined): exposes the set of features available within the Alpaca API
+* `supportedFeatures.ts` (to be refined): exposes the set of features available within the Coin Module API
 * `bridge` (legacy): implementation of Bridges interface (cf. [Bridge](https://github.com/LedgerHQ/ledger-live/blob/25c9bc5fc4276e8a2268c81a334776ec927e495e/libs/ledgerjs/packages/types-live/src/bridge.ts#L96-L105))
 * `signer` (legacy): defines the interface definition to the Embedded App and the logic to retrieve
 
@@ -29,7 +30,7 @@ The following concepts are mandatory for a CoinModule to be *Alpaca compliant*.
 * `api` types are defined in `types` module
 * `api` types can only be used within its module
 
-**==> By creating this separation, we avoid any colision between Bridge types (a.k.a. Live types) in Alpaca interface and vice versa.**
+**==> By creating this separation, we avoid any collision between Bridge types (a.k.a. Live types) in `CoinModuleApi` interface and vice versa.**
 
 #### Network calls
 `network` functions should only be accessed through the `logic` module. *This is an on-going effort*.
@@ -37,4 +38,4 @@ The following concepts are mandatory for a CoinModule to be *Alpaca compliant*.
 **==> By creating this layer, we enforce the consistency between `bridge` behaviour and `api` behaviour.**
 
 ### Status
-List of CoinModule compatible with Alpaca on [Confluence](https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/6129025043/Coin+Modules+Developments+Mapping)
+List of coin modules compatible with Coin framework on [Confluence](https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/6129025043/Coin+Modules+Developments+Mapping)

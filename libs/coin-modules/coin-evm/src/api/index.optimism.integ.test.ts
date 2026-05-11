@@ -1,5 +1,5 @@
 import {
-  AlpacaApi,
+  CoinModuleApi,
   BufferTxData,
   MemoNotSupported,
   Operation,
@@ -10,7 +10,7 @@ import { EvmConfig } from "../config";
 import { createApi } from "./index";
 
 describe("EVM Optimism Network", () => {
-  let module: AlpacaApi<MemoNotSupported, BufferTxData> & BridgeApi;
+  let module: CoinModuleApi<MemoNotSupported, BufferTxData> & BridgeApi;
 
   beforeAll(() => {
     setupCalClientStore();

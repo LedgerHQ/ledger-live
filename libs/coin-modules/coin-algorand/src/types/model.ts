@@ -1,6 +1,6 @@
 import { StringMemo } from "@ledgerhq/coin-module-framework/api/types";
 
-// Algorand memo type for AlpacaApi
+// Algorand memo type for CoinModuleApi
 export type AlgorandMemo = StringMemo<"note">;
 
 // Operation mode for Algorand transactions
