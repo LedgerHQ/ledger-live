@@ -16,10 +16,6 @@ export function NeedMemoTagModal() {
   const openModal = () => setIsOpen(true);
   const closeModal = () => setIsOpen(false);
 
-  // When the user opens an external URL from inside the modal the screen may
-  // briefly lose navigation focus, causing QueuedDrawer to call onClose and
-  // set isOpen=false. Track the "Learn more" tap so we can restore the modal
-  // when the app returns to the foreground.
   const handleLearnMore = useCallback(() => {
     shouldReopenRef.current = true;
     Linking.openURL(urls.memoTag);
