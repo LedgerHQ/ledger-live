@@ -118,6 +118,7 @@ describe("quote command", () => {
     sessionCleanup = fixture.cleanup;
     const { stdout, exitCode, stderr } = await runCli(
       [
+        "swap",
         "quote",
         "--from",
         "ethereum",
