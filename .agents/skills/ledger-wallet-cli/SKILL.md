@@ -103,11 +103,17 @@ Ticker is **mandatory** in `--amount`. No `--token` flag — ticker drives asset
 **Solana flags:** `--mode send|stake.createAccount|stake.delegate|stake.undelegate|stake.withdraw`, `--validator <addr>`, `--stake-account <addr>`, `--memo <text>`
 
 ### swap quote
+Fetches quotes from the default swap provider set (no device when you pass explicit addresses).
+
+**Addresses (pick one per side):** `--from-fresh-address` or `--from-account`; `--to-fresh-address` or `--to-account`. Account flags accept a session label or descriptor; the CLI resolves a fresh receive address like `receive`.
+
 ```bash
 pnpm --silent wallet-cli start swap quote --from ethereum --to bitcoin --amount 0.1 --from-fresh-address 0xABC... --to-fresh-address bc1q...
 pnpm --silent wallet-cli start swap quote --from ethereum --to bitcoin --amount 0.1 --from-fresh-address 0xABC... --to-fresh-address bc1q... --output json
+pnpm --silent wallet-cli start swap quote --from ethereum --to bitcoin --amount 0.1 --from-account ethereum-1 --to-account bitcoin-native-1
+pnpm --silent wallet-cli start swap quote --from ethereum --to bitcoin --amount 0.1 --from-account ethereum-1 --to-account bitcoin-native-1 --output json
 ```
-Required flags: `--from`, `--to`, `--amount`, `--from-fresh-address`, `--to-fresh-address`
+Required: `--from`, `--to`, `--amount`, and both send/receive covered by the address flags above (`--from` / `--to` are currency IDs, not account labels).
 
 ### swap execute
 ```bash
