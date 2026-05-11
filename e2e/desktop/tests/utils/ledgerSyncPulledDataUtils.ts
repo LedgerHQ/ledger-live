@@ -54,16 +54,6 @@ function getSyncedAccountIds(parsedData: LedgerSyncPulledData): string[] {
   return [];
 }
 
-function expectSyncedAccountName(
-  parsedData: LedgerSyncPulledData,
-  accountId: string,
-  expectedName: string,
-) {
-  const accountName = parsedData.updateEvent?.data?.accountNames?.[accountId];
-
-  expect(accountName, "Backend account name should match the renamed account").toBe(expectedName);
-}
-
 function isAccountDeleted(parsedData: LedgerSyncPulledData, accountId: string): boolean {
   return !hasSyncedAccount(parsedData, accountId);
 }
@@ -82,5 +72,8 @@ export function expectPulledDataToMatchAccountChanges(
     isAccountDeleted(parsedData, deletedAccountId),
     "Deleted account should not be present in backend accounts",
   ).toBe(true);
-  expectSyncedAccountName(parsedData, remainingAccountId, expectedRemainingAccountName);
+  const remainingAccountName = parsedData.updateEvent?.data?.accountNames?.[remainingAccountId];
+  expect(remainingAccountName, "Backend account name should match the renamed account").toBe(
+    expectedRemainingAccountName,
+  );
 }

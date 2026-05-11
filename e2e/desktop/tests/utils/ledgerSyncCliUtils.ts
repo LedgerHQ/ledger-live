@@ -123,6 +123,7 @@ export class LedgerSyncCliHelper {
       response =>
         response.url().startsWith(LedgerSyncCliHelper.cloudSyncApiBaseUrl + "/atomic/v1/live") &&
         response.status() === 200,
+      { timeout: 60_000 },
     );
   }
 
@@ -159,10 +160,12 @@ export class LedgerSyncCliHelper {
     });
   }
 
-  static async checkSynchronizationSuccess(page: Page, app: Application): Promise<void> {
-    const cloudSyncResponse = LedgerSyncCliHelper.getCloudSyncResponse(page);
+  static async checkSynchronizationSuccess(
+    cloudSyncResponse: Promise<Response>,
+    app: Application,
+  ): Promise<void> {
     await app.layout.waitForAccountsSyncToBeDone();
     const response = await cloudSyncResponse;
-    await expect(response, "Cloud Sync response should complete").toBeDefined();
+    expect(response.ok(), "Cloud Sync response should complete").toBe(true);
   }
 }

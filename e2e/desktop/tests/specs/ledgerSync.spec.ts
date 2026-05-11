@@ -111,8 +111,9 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
       await app.account.renameAccount(renamedSecondAccountName);
       await app.account.expectAccountVisibility(renamedSecondAccountName);
 
+      const cloudSyncResponse = LedgerSyncCliHelper.getCloudSyncResponse(page);
       await app.layout.syncAccountsIfAvailable();
-      await LedgerSyncCliHelper.checkSynchronizationSuccess(page, app);
+      await LedgerSyncCliHelper.checkSynchronizationSuccess(cloudSyncResponse, app);
 
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.expectReduxAccountsLength(1);
