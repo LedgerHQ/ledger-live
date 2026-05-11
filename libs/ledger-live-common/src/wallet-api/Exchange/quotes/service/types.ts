@@ -1,3 +1,5 @@
+import type { ProviderErrorCodes } from "../types";
+
 export type TradeMethod = "fixed" | "float";
 
 export type ProviderTypes = "DEX" | "CEX";
@@ -114,7 +116,7 @@ export type RawQuoteErrorParameter = {
 };
 
 export type RawQuoteError = {
-  code: string;
+  code: ProviderErrorCodes | (string & {});
   type: "float" | "fixed";
   provider: string;
   message: string;

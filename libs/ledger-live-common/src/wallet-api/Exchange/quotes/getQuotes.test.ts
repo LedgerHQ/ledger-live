@@ -6,7 +6,7 @@ import { fetchAndMergeProviderData } from "../../../exchange/providers/swap";
 import { fetchNetworkFeeContext } from "./fetchNetworkFeeContext";
 import { computeFeeEstimate } from "./normalizer/networkFeeEstimate";
 import type { RawQuote, RawQuoteError } from "./service/types";
-import { QuoteErrorCodes, type GetQuotesArgs } from "./types";
+import { ProviderErrorCodes, QuoteErrorCodes, QuotesErrorCodes, type GetQuotesArgs } from "./types";
 
 jest.mock("./service/fetchQuotes", () => ({
   fetchQuotes: jest.fn(),
@@ -115,7 +115,7 @@ describe("getQuotes", () => {
     expect(response.providerErrors).toEqual([aggregatorError]);
     // Unsupported pair drops every successful quote -> the digested
     // error list is non-empty (`noQuotes` from the producer).
-    expect(response.errors).toEqual([{ code: "noQuotes" }]);
+    expect(response.errors).toEqual([{ code: QuotesErrorCodes.NO_QUOTES }]);
   });
 
   it("blocks the unsupported pair in the reverse direction as well", async () => {
@@ -128,7 +128,7 @@ describe("getQuotes", () => {
 
     expect(response.quotes).toEqual([]);
     expect(response.providerErrors).toEqual([]);
-    expect(response.errors).toEqual([{ code: "noQuotes" }]);
+    expect(response.errors).toEqual([{ code: QuotesErrorCodes.NO_QUOTES }]);
   });
 
   it("skips the provider-data fetch when the pair is unsupported", async () => {
@@ -155,7 +155,7 @@ describe("getQuotes", () => {
 
     expect(response.quotes).toEqual([]);
     expect(response.providerErrors).toEqual([aggregatorError]);
-    expect(response.errors).toEqual([{ code: "noQuotes" }]);
+    expect(response.errors).toEqual([{ code: QuotesErrorCodes.NO_QUOTES }]);
     expect(fetchAndMergeProviderDataMock).not.toHaveBeenCalled();
     expect(fetchNetworkFeeContextMock).not.toHaveBeenCalled();
   });
@@ -184,14 +184,14 @@ describe("getQuotes", () => {
         rawQuotes: [],
         providerErrors: [
           {
-            code: "amount_off_limits",
+            code: ProviderErrorCodes.AMOUNT_OFF_LIMITS,
             type: "float",
             provider: "lifi",
             message: "min",
             parameter: { minAmount: "10" },
           },
           {
-            code: "amount_off_limits",
+            code: ProviderErrorCodes.AMOUNT_OFF_LIMITS,
             type: "float",
             provider: "okx",
             message: "min",
@@ -200,11 +200,14 @@ describe("getQuotes", () => {
         ],
       });
 
-      const response = await getQuotes(makeArgs("ethereum", "bitcoin", { amount: "1" }), emptyContext);
+      const response = await getQuotes(
+        makeArgs("ethereum", "bitcoin", { amount: "1" }),
+        emptyContext,
+      );
 
       expect(response.errors).toEqual([
-        { code: "noQuotes" },
-        { code: "amountTooLow", minAmount: "10" },
+        { code: QuotesErrorCodes.NO_QUOTES },
+        { code: QuotesErrorCodes.AMOUNT_TOO_LOW, minAmount: "10" },
       ]);
     });
 
@@ -213,14 +216,14 @@ describe("getQuotes", () => {
         rawQuotes: [],
         providerErrors: [
           {
-            code: "amount_off_limits",
+            code: ProviderErrorCodes.AMOUNT_OFF_LIMITS,
             type: "float",
             provider: "lifi",
             message: "max",
             parameter: { maxAmount: "100" },
           },
           {
-            code: "amount_off_limits",
+            code: ProviderErrorCodes.AMOUNT_OFF_LIMITS,
             type: "float",
             provider: "okx",
             message: "max",
@@ -235,8 +238,8 @@ describe("getQuotes", () => {
       );
 
       expect(response.errors).toEqual([
-        { code: "noQuotes" },
-        { code: "amountTooHigh", maxAmount: "150" },
+        { code: QuotesErrorCodes.NO_QUOTES },
+        { code: QuotesErrorCodes.AMOUNT_TOO_HIGH, maxAmount: "150" },
       ]);
     });
 
@@ -245,7 +248,7 @@ describe("getQuotes", () => {
         rawQuotes: [makeRawQuote()],
         providerErrors: [
           {
-            code: "amount_off_limits",
+            code: ProviderErrorCodes.AMOUNT_OFF_LIMITS,
             type: "float",
             provider: "okx",
             message: "min",
@@ -254,7 +257,10 @@ describe("getQuotes", () => {
         ],
       });
 
-      const response = await getQuotes(makeArgs("ethereum", "bitcoin", { amount: "1" }), emptyContext);
+      const response = await getQuotes(
+        makeArgs("ethereum", "bitcoin", { amount: "1" }),
+        emptyContext,
+      );
 
       expect(response.errors).toEqual([]);
     });
@@ -264,7 +270,7 @@ describe("getQuotes", () => {
         rawQuotes: [makeRawQuote()],
         providerErrors: [
           {
-            code: "amount_off_limits",
+            code: ProviderErrorCodes.AMOUNT_OFF_LIMITS,
             type: "float",
             provider: "lifi",
             message: "min",
@@ -273,16 +279,13 @@ describe("getQuotes", () => {
         ],
       });
 
-      const response = await getQuotes(
-        makeArgs("near", "stellar", { amount: "1" }),
-        emptyContext,
-      );
+      const response = await getQuotes(makeArgs("near", "stellar", { amount: "1" }), emptyContext);
 
       // Unsupported-pair short-circuit forces successful quotes to 0. The
       // providerErrors still flow through, so amount_off_limits can stack too.
       expect(response.errors).toEqual([
-        { code: "noQuotes" },
-        { code: "amountTooLow", minAmount: "10" },
+        { code: QuotesErrorCodes.NO_QUOTES },
+        { code: QuotesErrorCodes.AMOUNT_TOO_LOW, minAmount: "10" },
       ]);
     });
   });
@@ -350,9 +353,6 @@ describe("getQuotes", () => {
 
       const response = await getQuotes(makeArgs("ethereum", "bitcoin"), emptyContext);
 
-      expect(response.quotes[0].error).toEqual({
-        code: QuoteErrorCodes.NOT_ENOUGH_BALANCE_FOR_FEES,
-      });
       expect(response.quotes[0].errors).toEqual([
         { code: QuoteErrorCodes.NOT_ENOUGH_BALANCE_FOR_FEES },
       ]);
@@ -367,7 +367,7 @@ describe("getQuotes", () => {
       expect(computeFeeEstimateMock).not.toHaveBeenCalled();
       expect(response.quotes[0].quoteDetails.estimatedNetworkFee).toBeUndefined();
       expect(response.quotes[0].quoteDetails.approvalNetworkFee).toBeUndefined();
-      expect(response.quotes[0].error).toBeNull();
+      expect(response.quotes[0].errors).toEqual([]);
     });
 
     it("does not drop `oneinchfusion` rows on Ethereum source (filter is hook-permanent)", async () => {

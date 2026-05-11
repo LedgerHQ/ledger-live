@@ -18,7 +18,8 @@ import type { FetchQuotesResult, RawQuote, RawQuoteError } from "./types";
  *   (`rawQuotes`) and per-provider rejection rows (`providerErrors`).
  *   Rejection rows carry an aggregator `code` (e.g. `amount_off_limits`)
  *   plus the provider's reason; consumers digest them into globals via
- *   `computeQuotesErrors`.
+ *   `computeQuotesErrors`. Non-OK HTTP responses become an empty result
+ *   so the caller can return the same `noQuotes` global as the legacy UI.
  */
 export async function fetchQuotes(
   args: GetQuotesArgs,
@@ -63,11 +64,23 @@ export async function fetchQuotes(
     ...(customHeaders ? Object.fromEntries(customHeaders) : {}),
   };
 
-  const response = await axios.get(url, { headers: requestHeaders, signal });
-  const data: Array<RawQuote | RawQuoteError> = response.data ?? [];
+  try {
+    const response = await axios.get(url, { headers: requestHeaders, signal });
+    const data: Array<RawQuote | RawQuoteError> = response.data ?? [];
 
-  const rawQuotes = data.filter((q): q is RawQuote => !("code" in q));
-  const providerErrors = data.filter((q): q is RawQuoteError => "code" in q);
+    const rawQuotes = data.filter((q): q is RawQuote => !("code" in q));
+    const providerErrors = data.filter((q): q is RawQuoteError => "code" in q);
 
-  return { rawQuotes, providerErrors };
+    return { rawQuotes, providerErrors };
+  } catch (error) {
+    if (axios.isCancel(error)) {
+      throw error;
+    }
+
+    if (axios.isAxiosError(error) && error.response) {
+      return { rawQuotes: [], providerErrors: [] };
+    }
+
+    throw error;
+  }
 }
