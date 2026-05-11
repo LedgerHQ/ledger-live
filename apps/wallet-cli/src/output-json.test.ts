@@ -112,6 +112,33 @@ describe("JsonCommandOutput", () => {
     });
   });
 
+  it("emits genuine check output as a success envelope", () => {
+    try {
+      const out = createCommandOutput("json", {
+        command: "genuine-check",
+        network: "device",
+      });
+
+      out.genuineCheck();
+    } finally {
+      restore();
+    }
+
+    const lines = writes
+      .join("")
+      .trim()
+      .split("\n")
+      .map(line => JSON.parse(line));
+    expect(lines).toHaveLength(1);
+    expect(lines[0]).toMatchObject({
+      status: "success",
+      command: "genuine-check",
+      network: "device",
+      genuine: true,
+    });
+    expect(lines[0].timestamp).toEqual(expect.any(String));
+  });
+
   it("emits swap quote output as NDJSON with provider errors", () => {
     try {
       const out = createCommandOutput("json", {

@@ -70,6 +70,8 @@ export interface CommandOutput {
   operations(items: Operation[], currencyId: string, nextCursor?: string): Promise<void>;
   /** Output a receive / fresh address. */
   address(addr: string): void;
+  /** Output the result of a successful device genuine check. */
+  genuineCheck(): void;
 
   /** Stream one discovered account (human: print immediately; json: buffer). */
   discoveredAccount(d: DiscoveredAccount): void;
@@ -221,6 +223,15 @@ class HumanCommandOutput implements CommandOutput {
 
   address(addr: string): void {
     writeStdout(addr);
+  }
+
+  genuineCheck(): void {
+    if (this._activeSpin?.isSpinning) {
+      this._activeSpin.success("Device is genuine");
+      this._activeSpin = null;
+      return;
+    }
+    writeStdout("Device is genuine");
   }
 
   discoveredAccount(d: DiscoveredAccount): void {
@@ -524,6 +535,10 @@ class JsonCommandOutput implements CommandOutput {
 
   address(addr: string): void {
     this._writeNdjson(this._envelope({ address: addr }));
+  }
+
+  genuineCheck(): void {
+    this._writeNdjson(this._envelope({ genuine: true }));
   }
 
   discoveredAccount(d: DiscoveredAccount): void {
