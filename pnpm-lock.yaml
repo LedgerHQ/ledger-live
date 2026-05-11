@@ -7342,9 +7342,6 @@ importers:
       '@ledgerhq/device-core':
         specifier: workspace:^
         version: link:../device-core
-      '@ledgerhq/device-intent':
-        specifier: workspace:^
-        version: link:../device-intent
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
         version: 1.3.0(rxjs@7.8.2)
