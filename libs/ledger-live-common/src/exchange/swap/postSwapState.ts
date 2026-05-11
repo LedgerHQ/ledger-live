@@ -93,7 +93,7 @@ export const postSwapAccepted: PostSwapAccepted = async ({
       ...(Object.keys(headers).length > 0 ? { headers } : {}),
     });
   } catch (error) {
-    console.error(error);
+    log("error", "[postSwapAccepted] failed to post swap accepted", { error });
   }
 
   return null;
