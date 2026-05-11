@@ -39,6 +39,7 @@ import type { PortfolioBalanceDisplayState } from "./portfolioBalanceDisplay";
 import type { HistoryState } from "./history";
 import type { RecoverStateSliceState } from "./recoverState";
 import type { LiveAppModalState } from "./liveAppModal";
+import type { KnownDevicesState } from "./knownDevices";
 
 // === ACCOUNT STATE ===
 
@@ -415,6 +416,7 @@ export type State = LLMRTKApiState & {
   history: HistoryState;
   identities: IdentitiesState;
   inView: InViewState;
+  knownDevices: KnownDevicesState;
   largeMover: LargeMoverState;
   market: MarketState;
   modularDrawer: ModularDrawerState;

@@ -25,7 +25,8 @@ import { isAllowedOnboardingStatePollingErrorDmk } from "@ledgerhq/live-dmk-mobi
 
 import { SeedOriginType, SeedPhraseType } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { addKnownDevice } from "~/actions/ble";
+import { addKnownBleDevice } from "~/actions/ble";
+import { addKnownDevice, mapDeviceToKnownDevice } from "~/reducers/knownDevices";
 import { NavigatorName, ScreenName } from "~/const";
 import HelpDrawer from "./HelpDrawer";
 import DesyncOverlay from "./DesyncOverlay";
@@ -262,9 +263,10 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
    */
   const addToKnownDevices = useCallback(() => {
     dispatchRedux(setLastConnectedDevice(device));
+    dispatchRedux(addKnownDevice(mapDeviceToKnownDevice(device)));
     if (!device.wired) {
       dispatchRedux(
-        addKnownDevice({
+        addKnownBleDevice({
           id: device.deviceId,
           name: device.deviceName ?? device.modelId,
           modelId: device.modelId,

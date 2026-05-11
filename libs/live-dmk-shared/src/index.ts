@@ -1,4 +1,5 @@
 export * from "./hooks";
+export type { KnownDevice } from "./connectDevice/types";
 export { activeDeviceSessionSubject } from "./config/activeDeviceSession";
 export { dmkToLedgerDeviceIdMap, ledgerToDmkDeviceIdMap } from "./config/dmkToLedgerDeviceIdMap";
 export { LedgerLiveLogger } from "./services/LedgerLiveLogger";

@@ -13,7 +13,12 @@ import { TrackScreen, track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { bleDevicesSelector } from "~/reducers/ble";
 import Touchable from "../Touchable";
-import { saveBleDeviceName, updateKnownDevice } from "~/actions/ble";
+import { saveBleDeviceName, updateKnownBleDevice } from "~/actions/ble";
+import {
+  mapDiscoveredDeviceToKnownDevice,
+  saveKnownDeviceName,
+  updateKnownDevice,
+} from "~/reducers/knownDevices";
 import { setHasConnectedDevice, updateMainNavigatorVisibility } from "~/actions/appstate";
 import { setLastConnectedDevice, setReadOnlyMode } from "~/actions/settings";
 import { BaseComposite, StackNavigatorProps } from "../RootNavigator/types/helpers";
@@ -206,9 +211,10 @@ export default function SelectDevice({
       dispatch(setHasConnectedDevice(true));
       onSelect(device, discoveredDevice);
       dispatch(setReadOnlyMode(false));
+      dispatch(updateKnownDevice(mapDiscoveredDeviceToKnownDevice(discoveredDevice)));
       if (!device.wired) {
         dispatch(
-          updateKnownDevice({
+          updateKnownBleDevice({
             id: device.deviceId,
             name: device.deviceName ?? "",
             modelId: device.modelId,
@@ -421,6 +427,12 @@ export default function SelectDevice({
       ) {
         dispatch(
           saveBleDeviceName({
+            deviceId: knownDevice.id,
+            name: equivalentScannedDevice?.deviceName,
+          }),
+        );
+        dispatch(
+          saveKnownDeviceName({
             deviceId: knownDevice.id,
             name: equivalentScannedDevice?.deviceName,
           }),

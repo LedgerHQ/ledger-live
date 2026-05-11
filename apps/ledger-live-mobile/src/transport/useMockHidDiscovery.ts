@@ -4,6 +4,7 @@ import { HIDDiscoveryState } from "@ledgerhq/live-dmk-mobile";
 import { DiscoveredDevice } from "@ledgerhq/device-management-kit";
 import { e2eBridgeClient } from "../../e2e/bridge/client";
 import { filter } from "rxjs/operators";
+import { makeMockDiscoveredDevice } from "./mockDiscoveredDevice";
 
 type MockHIDDiscoveredDevice = {
   deviceId: string;
@@ -50,14 +51,19 @@ export const useMockHidDevicesDiscovery = (enabled: boolean): HIDDiscoveryState 
         if (msg.type === "addUSB") {
           const descriptor = msg.payload;
           const deviceId = `usb|${JSON.stringify(descriptor)}`;
+          const device = {
+            deviceId,
+            deviceName: descriptor.deviceName,
+            wired: true,
+            modelId: descriptor.modelId as DeviceModelId,
+          };
 
           const newDevice: MockHIDDiscoveredDevice = {
             deviceId,
             deviceName: descriptor.deviceName,
             wired: true,
             modelId: descriptor.modelId as DeviceModelId,
-            // Not used in mock mode -- communication is mocked via mockDeviceEventSubject
-            discoveredDevice: undefined as unknown as DiscoveredDevice,
+            discoveredDevice: makeMockDiscoveredDevice(device),
           };
 
           setHidDevices(prev => {

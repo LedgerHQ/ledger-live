@@ -38,6 +38,8 @@ jest.mock("@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling", ()
 }));
 
 jest.mock("@ledgerhq/live-dmk-mobile", () => ({
+  rnBleTransportIdentifier: "react-native-ble",
+  rnHidTransportIdentifier: "react-native-hid",
   isAllowedOnboardingStatePollingErrorDmk: () => true,
 }));
 
@@ -61,7 +63,7 @@ jest.mock("~/actions/settings", () => ({
 }));
 
 jest.mock("~/actions/ble", () => ({
-  addKnownDevice: jest.fn((payload: unknown) => ({ type: "addKnownDevice", payload })),
+  addKnownBleDevice: jest.fn((payload: unknown) => ({ type: "addKnownBleDevice", payload })),
 }));
 
 const mockT = jest.fn(
@@ -232,17 +234,28 @@ describe("useFirstStepSyncOnboardingViewModel", () => {
 
     const { setIsReborn, setLastConnectedDevice, setOnboardingHasDevice } =
       jest.requireMock("~/actions/settings");
-    const { addKnownDevice } = jest.requireMock("~/actions/ble");
+    const { addKnownBleDevice } = jest.requireMock("~/actions/ble");
 
     expect(props.setIsPollingOn).toHaveBeenCalledWith(false);
     expect(setIsReborn).toHaveBeenCalledWith(false);
     expect(setOnboardingHasDevice).toHaveBeenCalledWith(true);
     expect(setLastConnectedDevice).toHaveBeenCalledWith(device);
-    expect(addKnownDevice).toHaveBeenCalledWith(
+    expect(addKnownBleDevice).toHaveBeenCalledWith(
       expect.objectContaining({
         id: "device-1",
         name: "My Ledger",
         modelId: "Europa",
+      }),
+    );
+    expect(dispatchRedux).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "knownDevices/addKnownDevice",
+        payload: expect.objectContaining({
+          id: "device-1",
+          name: "My Ledger",
+          deviceModelId: "Europa",
+          transport: "react-native-ble",
+        }),
       }),
     );
   });
