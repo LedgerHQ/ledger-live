@@ -1,0 +1,9 @@
+[
+  {
+    "inputs": [{ "internalType": "string", "name": "validator", "type": "string" }],
+    "name": "withdrawDelegationRewards",
+    "outputs": [{ "internalType": "bool", "name": "success", "type": "bool" }],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]
