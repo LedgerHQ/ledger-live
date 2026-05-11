@@ -22,8 +22,22 @@ export function getAssetFromToken(token: TokenCurrency, owner: string): AssetInf
   };
 }
 
+export function computeIntentType(transaction: Record<string, unknown>): string {
+  switch (transaction.mode) {
+    case "delegate":
+    case "undelegate":
+    case "stake":
+    case "unstake":
+    case "finalize_unstake":
+      return transaction.mode;
+    default:
+      return "send";
+  }
+}
+
 export default {
   getTokenFromAsset,
   getAssetFromToken,
   usesStakingPositions: true,
+  computeIntentType,
 } satisfies BridgeApi;
