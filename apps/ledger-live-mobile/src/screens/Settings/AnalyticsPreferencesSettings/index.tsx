@@ -50,12 +50,6 @@ export default function AnalyticsPreferencesSettings({ navigation, route }: Prop
   );
 
   const onConfirm = useCallback(async () => {
-    const wasFullyOptedOut = !analyticsFromStore && !personalizedFromStore;
-    const willBeFullyOptedOut = !appPerformanceEnabled && !personalizedEnabled;
-    // Same idea as analytics consent `applyOptOut`: do not force tracking when the user was already
-    // fully opted out in the store and confirms without enabling either toggle.
-    const mandatory = !(wasFullyOptedOut && willBeFullyOptedOut);
-
     await track(
       "button_clicked",
       {
@@ -64,7 +58,7 @@ export default function AnalyticsPreferencesSettings({ navigation, route }: Prop
         appPerformance: appPerformanceEnabled,
         personalizedExperience: personalizedEnabled,
       },
-      mandatory,
+      true,
     );
     dispatch(setAnalytics(appPerformanceEnabled));
     dispatch(setPersonalizedRecommendations(personalizedEnabled));
@@ -75,17 +69,9 @@ export default function AnalyticsPreferencesSettings({ navigation, route }: Prop
       }),
     );
     dispatch(setHasSeenAnalyticsOptInPrompt(true));
-    await updateIdentify(undefined, mandatory);
+    await updateIdentify(undefined, true);
     navigation.goBack();
-  }, [
-    analyticsFromStore,
-    appPerformanceEnabled,
-    dispatch,
-    navigation,
-    personalizedEnabled,
-    personalizedFromStore,
-    policyVersion,
-  ]);
+  }, [appPerformanceEnabled, dispatch, navigation, personalizedEnabled, policyVersion]);
 
   return (
     <Box lx={{ flex: 1, backgroundColor: "canvas" }}>
