@@ -7658,9 +7658,6 @@ importers:
       '@stricahq/typhonjs':
         specifier: ^3.0.0
         version: 3.0.0
-      '@taquito/ledger-signer':
-        specifier: ^23.0.0-RC.0
-        version: 23.0.0-beta.1
       '@ton-community/ton-ledger':
         specifier: ^7.3.0
         version: 7.3.0(@ton/core@0.62.0(patch_hash=9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324)(@ton/crypto@3.3.0))
