@@ -98,7 +98,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
   tx = bridge.updateTransaction(tx, { mode: "delegate" });
 
   const { transaction, updateTransaction, setTransaction, status, bridgePending, bridgeError } =
-    useBridgeTransaction(() => {
+    useBridgeTransaction(bridge, () => {
       if (chosenPool) {
         tx = bridge.updateTransaction(tx, { poolId: chosenPool.poolId });
       }

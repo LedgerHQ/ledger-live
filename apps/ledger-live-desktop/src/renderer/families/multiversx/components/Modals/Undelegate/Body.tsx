@@ -7,9 +7,9 @@ import { useDispatch } from "LLD/hooks/redux";
 import { createStructuredSelector } from "reselect";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import logger from "~/renderer/logger";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { OpenModal, openModal } from "~/renderer/actions/modals";
@@ -17,7 +17,7 @@ import Track from "~/renderer/analytics/Track";
 import Stepper from "~/renderer/components/Stepper";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { useSteps } from "./steps";
-import { Account, AccountBridge, Operation } from "@ledgerhq/types-live";
+import { Account, Operation } from "@ledgerhq/types-live";
 import {
   Transaction,
   MultiversXAccount,
@@ -75,6 +75,7 @@ const Body = (props: Props) => {
   const [optimisticOperation, setOptimisticOperation] = useState<Operation | null>(null);
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
+  const bridge = useAccountBridge<Transaction>(accountProp, undefined);
   const {
     account,
     transaction,
@@ -83,8 +84,7 @@ const Body = (props: Props) => {
     updateTransaction,
     bridgePending,
     status,
-  } = useBridgeTransaction(() => {
-    const bridge: AccountBridge<Transaction> = getAccountBridge(accountProp, undefined);
+  } = useBridgeTransaction(bridge, () => {
     const transaction: Transaction = bridge.createTransaction(accountProp);
     return {
       account: accountProp,

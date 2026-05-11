@@ -45,12 +45,12 @@ export default function DelegationSummary({ navigation, route }: Readonly<Props>
   invariant(account, "account must be defined");
   invariant(account.type === "Account", "account type must be Account");
 
-  const bridge = useAccountBridge<Transaction>(account);
+  const bridge: AccountBridge<Transaction> = useAccountBridge(account);
   const validators = useHederaValidators(account.currency);
   const defaultValidator = getDefaultValidator(validators);
 
   const { transaction, updateTransaction, status, bridgePending, bridgeError } =
-    useBridgeTransaction(() => {
+    useBridgeTransaction(bridge, () => {
       const t = bridge.createTransaction(account);
 
       const transaction = bridge.updateTransaction(t, {

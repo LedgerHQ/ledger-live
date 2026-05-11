@@ -46,7 +46,7 @@ export default function UnlockAmount({ navigation, route }: Props) {
 
   const [maxSpendable, setMaxSpendable] = useState<BigNumber | null>(null);
 
-  const { transaction, setTransaction, status, bridgePending } = useBridgeTransaction(() => {
+  const { transaction, setTransaction, status, bridgePending } = useBridgeTransaction(bridge, () => {
     const t = bridge.createTransaction(mainAccount);
 
     const transaction = bridge.updateTransaction(t, {

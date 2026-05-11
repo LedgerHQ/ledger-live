@@ -9,8 +9,8 @@ import { createStructuredSelector } from "reselect";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import Track from "~/renderer/analytics/Track";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { StepId, StepProps, St } from "./types";
 import { Account, Operation } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -25,6 +25,7 @@ import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmati
 import logger from "~/renderer/logger";
 import type { StakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
 import { isStakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
+import type { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
 
 export type Data = {
   account: StakingAccount;
@@ -81,6 +82,7 @@ const Body = ({ onClose, t, stepId, device, openModal, onChangeStepId, params }:
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
   const { account, validatorAddress, source = "Account Page" } = params;
+  const bridge = useAccountBridge<EvmTransaction>(account, undefined);
 
   const {
     transaction,
@@ -90,14 +92,13 @@ const Body = ({ onClose, t, stepId, device, openModal, onChangeStepId, params }:
     status,
     bridgeError,
     bridgePending,
-  } = useBridgeTransaction(() => {
+  } = useBridgeTransaction(bridge, () => {
     invariant(isStakingAccount(account), "evm: account with staking resources required");
     // Pre-populate the transaction with the existing delegation amount so the user starts
     // on a valid "undelegate all" intent. The amount field lets them reduce it afterwards.
     const delegation = account.stakingResources.delegations.find(
       d => d.validatorAddress === validatorAddress,
     );
-    const bridge = getAccountBridge(account, undefined);
     const baseTransaction = bridge.createTransaction(account);
     const transaction = bridge.updateTransaction(baseTransaction, {
       mode: "undelegate",
@@ -105,7 +106,7 @@ const Body = ({ onClose, t, stepId, device, openModal, onChangeStepId, params }:
       recipient: account.freshAddress,
       amount: delegation?.amount,
       useAllAmount: false,
-    });
+    } as unknown as Partial<EvmTransaction>);
     return {
       account,
       parentAccount: undefined,

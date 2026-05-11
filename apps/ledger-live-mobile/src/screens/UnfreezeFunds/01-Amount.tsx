@@ -64,6 +64,7 @@ function UnfreezeAmountInner({ account }: InnerProps) {
     [account],
   );
   const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
+    bridge,
     () => {
       const t = bridge.createTransaction(account);
       const transaction = bridge.updateTransaction(t, {
@@ -100,11 +101,11 @@ function UnfreezeAmountInner({ account }: InnerProps) {
     setTransaction(bridge.updateTransaction(transaction, {}));
   }, [bridge, setTransaction, transaction]);
   const onChangeResource = useCallback(
-    (resource: string) => {
+    (resource: TronResource) => {
       if (!transaction) return;
       setTransaction(
         bridge.updateTransaction(transaction, {
-          resource: resource as TronResource,
+          resource,
         }),
       );
     },

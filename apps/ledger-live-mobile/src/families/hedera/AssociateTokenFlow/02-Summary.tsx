@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { Trans } from "~/context/Locale";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
 import { Transaction } from "@ledgerhq/live-common/families/hedera/types";
 import { View, SafeAreaView, StyleSheet } from "react-native";
@@ -34,9 +34,9 @@ export default function Summary({ navigation, route }: Props) {
 
   invariant(account, "hedera: account is required");
   const mainAccount = getMainAccount(account, parentAccount);
+  const bridge = useAccountBridge<Transaction>(account, parentAccount);
 
-  const { transaction, status, bridgeError, bridgePending } = useBridgeTransaction(() => {
-    const bridge = getAccountBridge(account, parentAccount);
+  const { transaction, status, bridgeError, bridgePending } = useBridgeTransaction(bridge, () => {
     const transaction = bridge.createTransaction(account);
     const updatedTransaction = bridge.updateTransaction(transaction, {
       mode: HEDERA_TRANSACTION_MODES.TokenAssociate,
@@ -57,7 +57,7 @@ export default function Summary({ navigation, route }: Props) {
   const navigateToNext = useCallback(() => {
     navigation.navigate(ScreenName.HederaAssociateTokenSelectDevice, {
       ...route.params,
-      transaction,
+      transaction: transaction ?? undefined,
       status,
     });
   }, [navigation, transaction, status, route]);

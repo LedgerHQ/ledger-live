@@ -11,6 +11,7 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { isOldestPendingOperation } from "@ledgerhq/live-common/operation";
 import { getEnv } from "@ledgerhq/live-env";
@@ -130,6 +131,7 @@ const Body = ({
 
   const transactionToUpdate = fromTransactionRaw(params.transactionRaw);
 
+  const bridge = useAccountBridge(params?.account || accounts[0], params?.parentAccount);
   const {
     transaction,
     setTransaction,
@@ -139,7 +141,7 @@ const Body = ({
     status,
     bridgeError,
     bridgePending,
-  } = useBridgeTransaction<Transaction>(() => {
+  } = useBridgeTransaction<Transaction>(bridge, () => {
     const parentAccount = params?.parentAccount;
     const account = params?.account || accounts[0];
     return {

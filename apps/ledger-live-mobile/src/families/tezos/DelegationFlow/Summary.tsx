@@ -115,6 +115,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
   const bridge = useAccountBridge<TezosTransaction>(account, parentAccount);
 
   const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
+    bridge,
     () => ({
       account,
       parentAccount,
@@ -148,7 +149,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
         bridge.updateTransaction(transaction, patch),
       );
     }
-  }, [account, bridge, defaultBaker, navigation, parentAccount, setTransaction, transaction, route.params]);
+  }, [account, bridge, defaultBaker, navigation, setTransaction, transaction, route.params]);
 
   const [rotateAnim] = useState(() => new Animated.Value(0));
   useEffect(() => {

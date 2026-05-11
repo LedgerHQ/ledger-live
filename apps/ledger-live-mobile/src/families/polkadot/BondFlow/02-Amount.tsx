@@ -84,7 +84,7 @@ export default function PolkadotBondAmount({ navigation, route }: Props) {
   const mainAccount = getMainAccount(account, parentAccount) as PolkadotAccount;
   const [maxSpendable, setMaxSpendable] = useState<BigNumber | null>(null);
   const [infoModalOpen, setInfoModalOpen] = useState<boolean>();
-  const bridgeTransaction = useBridgeTransaction(() => {
+  const bridgeTransaction = useBridgeTransaction(bridge, () => {
     const t = bridge.createTransaction(mainAccount);
     const transaction = bridge.updateTransaction(t, {
       mode: "bond",
@@ -116,7 +116,7 @@ export default function PolkadotBondAmount({ navigation, route }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [account, parentAccount, debouncedTransaction, bridge]);
+  }, [bridge, account, parentAccount, debouncedTransaction]);
   const onChange = useCallback(
     (amount: BigNumber) => {
       if (!amount.isNaN()) {

@@ -72,7 +72,7 @@ function NominateSelectValidator({ navigation, route }: Props) {
   const [drawerValidator, setDrawerValidator] = useState<PolkadotValidator | null | undefined>();
   const { polkadotResources } = mainAccount;
   invariant(polkadotResources, "polkadotResources required");
-  const bridgeTransaction = useBridgeTransaction(() => {
+  const bridgeTransaction = useBridgeTransaction(bridge, () => {
     const tx = route.params.transaction;
 
     if (!tx) {

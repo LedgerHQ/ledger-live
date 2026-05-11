@@ -10,6 +10,7 @@ import {
 import { Account } from "@ledgerhq/types-live";
 import { useEffect, useMemo, useState } from "react";
 import useBridgeTransaction, { Result } from "../../../bridge/useBridgeTransaction";
+import { useAccountBridgeOrNull } from "../../../bridge/useAccountBridge";
 import { Transaction } from "../../../coin-modules/transaction-types";
 import {
   ExchangeRate,
@@ -127,7 +128,8 @@ export const useSwapTransaction = ({
   isEnabled,
   sponsored,
 }: UseSwapTransactionProps): SwapTransactionType => {
-  const bridgeTransaction = useBridgeTransaction(() => ({
+  const bridge = useAccountBridgeOrNull(defaultAccount ?? null, defaultParentAccount);
+  const bridgeTransaction = useBridgeTransaction(bridge, () => ({
     account: defaultAccount,
     parentAccount: defaultParentAccount,
   }));

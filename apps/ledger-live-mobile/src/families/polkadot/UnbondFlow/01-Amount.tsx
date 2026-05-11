@@ -44,6 +44,7 @@ export default function PolkadotUnbondAmount({ navigation, route }: Props) {
   const mainAccount = getMainAccount(account, parentAccount);
   const [maxSpendable, setMaxSpendable] = useState<BigNumber | null>(null);
   const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
+    bridge,
     () => {
       const t = bridge.createTransaction(mainAccount);
       const transaction = bridge.updateTransaction(t, {
@@ -73,7 +74,7 @@ export default function PolkadotUnbondAmount({ navigation, route }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [account, parentAccount, debouncedTransaction, bridge]);
+  }, [bridge, account, parentAccount, debouncedTransaction]);
   const onChange = useCallback(
     (amount: BigNumber) => {
       if (!amount.isNaN() && transaction) {

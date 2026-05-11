@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 
 import { useTranslation } from "react-i18next";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Account, AccountLike, SignedOperation } from "@ledgerhq/types-live";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import Stepper from "~/renderer/components/Stepper";
@@ -17,10 +18,9 @@ import StepConnectDevice from "./steps/StepConnectDevice";
 import StepSummary, { StepSummaryFooter } from "./steps/StepSummary";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import { St, StepId } from "./types";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import logger from "~/renderer/logger";
 import Text from "~/renderer/components/Text";
-import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { ModalData } from "../types";
 import { DeviceTransactionField } from "@ledgerhq/live-common/transaction/index";
 import { useDeviceTransactionConfig } from "@ledgerhq/live-common/hooks/useDeviceTransactionConfig";
@@ -121,6 +121,7 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { canEditFees, transactionData } = params;
+  const bridge = useAccountBridge<Transaction>(params?.account, params?.parentAccount);
   const {
     transaction,
     setTransaction,
@@ -131,10 +132,9 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
     status,
     bridgeError,
     bridgePending,
-  } = useBridgeTransaction(() => {
+  } = useBridgeTransaction(bridge, () => {
     const parentAccount = params && params.parentAccount;
     const account = params && params.account;
-    const bridge = getAccountBridge(account, parentAccount);
     const tx = bridge.createTransaction(account);
     const { recipient, ...txData } = transactionData;
     const tx2 = bridge.updateTransaction(tx, {
@@ -192,7 +192,8 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
   const { fields } = useDeviceTransactionConfig({
     account: params.account,
     parentAccount,
-    transaction,
+    // transaction is null until the bridge initializes; the hook guards on null internally
+    transaction: transaction as Transaction,
     status,
   });
 

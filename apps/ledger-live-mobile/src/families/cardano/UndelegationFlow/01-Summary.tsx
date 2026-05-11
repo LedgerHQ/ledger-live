@@ -51,6 +51,7 @@ export default function UndelegationSummary({ navigation, route }: Props) {
   const bridge = useAccountBridge<CardanoTransaction>(account, undefined);
 
   const { transaction, status, bridgePending, bridgeError, setTransaction } = useBridgeTransaction(
+    bridge,
     () => {
       const tx = route.params.transaction;
 
