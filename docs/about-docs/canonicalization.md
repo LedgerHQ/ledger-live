@@ -47,7 +47,7 @@ See [docs-locations](./docs-locations.md) for where to put each type of doc.
 
 #### Bad
 
-Valuable context in silos (e.g. Cursor rules) duplicates work and becomes hard to share. It should be migrated to the canonical structure using the `/docs-migrate` skill.
+Valuable context in silos (GitHub instructions, Cursor rules) duplicates work and becomes hard to share. Migrate to the canonical structure. See `/docs-migrate` skill.
 
 ## Consequences
 
