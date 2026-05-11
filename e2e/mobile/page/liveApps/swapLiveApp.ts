@@ -221,8 +221,7 @@ export default class SwapLiveAppPage {
     const selector = this.providerExecuteButtonCss(provider);
     const button = getWebElementByCssSelector(selector);
     await waitWebElement(button);
-    const actualButtonText =
-      (await getWebElementsText(this.swapMainContainerWebElement, selector))[0] ?? "";
+    const actualButtonText = (await getWebElementsText(selector))[0] ?? "";
     jestExpect(actualButtonText).toMatch(new RegExp(`^(Swap|Continue) with ${provider}$`, "i"));
     return actualButtonText;
   }
