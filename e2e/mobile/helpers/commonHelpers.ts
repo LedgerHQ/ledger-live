@@ -7,6 +7,7 @@ import { Device } from "@ledgerhq/live-common/e2e/enum/Device";
 import { readFile } from "fs/promises";
 import { NANO_APP_CATALOG_PATH } from "../utils/constants";
 import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
+import { workerLogVerbose } from "../utils/workerDebugLog";
 
 const BASE_DEEPLINK = "ledgerlive://";
 
@@ -73,9 +74,17 @@ function createDetoxURLBlacklistRegex(): string {
 }
 
 export async function launchApp() {
+  const t0 = Date.now();
+  workerLogVerbose("launchApp: findFreePort …");
   const port = await findFreePort();
+  workerLogVerbose("launchApp: findFreePort ok", `port=${port} +${Date.now() - t0}ms`);
+
+  workerLogVerbose("launchApp: closeBridge + initBridge …");
   closeBridge();
   initBridge(port);
+
+  const launchT0 = Date.now();
+  workerLogVerbose("launchApp: device.launchApp …");
   await device.launchApp({
     launchArgs: {
       wsPort: port,
@@ -92,6 +101,7 @@ export async function launchApp() {
       camera: "YES",
     },
   });
+  workerLogVerbose("launchApp: device.launchApp done", `+${Date.now() - launchT0}ms total +${Date.now() - t0}ms`);
   return port;
 }
 

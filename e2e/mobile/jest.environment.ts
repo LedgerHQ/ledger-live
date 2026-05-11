@@ -31,6 +31,7 @@ import { NativeElementHelpers, WebElementHelpers } from "./helpers/elementHelper
 import expect from "expect";
 import { Application } from "./page/index";
 import { ServerData } from "../../apps/ledger-live-mobile/e2e/bridge/types";
+import { workerLog } from "./utils/workerDebugLog";
 
 // @ts-expect-error detox doesn't provide type declarations for this module
 import DetoxEnvironment from "detox/runners/jest/testEnvironment";
@@ -198,17 +199,51 @@ export default class TestEnvironment extends DetoxEnvironment {
     await super.handleTestEvent(event, state);
 
     if (["hook_failure", "test_fn_failure"].includes(event.name)) {
+      const failureT0 = Date.now();
+      workerLog("failure-handling begin", event.name);
       this.global.IS_FAILED = true;
+
+      workerLog("failure-handling takeSpeculosScreenshot …");
       await takeSpeculosScreenshot();
+      workerLog("failure-handling takeSpeculosScreenshot done", `+${Date.now() - failureT0}ms`);
+
+      workerLog("failure-handling takeAppScreenshot …");
+      const shotT0 = Date.now();
       await takeAppScreenshot("Test Failure");
+      workerLog("failure-handling takeAppScreenshot done", `+${Date.now() - shotT0}ms`);
+
       try {
+        workerLog("failure-handling attachTestExecutionConsoleToAllure …");
+        const a0 = Date.now();
         await attachTestExecutionConsoleToAllure();
+        workerLog("failure-handling attachTestExecutionConsoleToAllure done", `+${Date.now() - a0}ms`);
+
+        workerLog("failure-handling attachSpeculosStartupErrorToAllure …");
         await attachSpeculosStartupErrorToAllure();
+
+        workerLog("failure-handling getLogs …");
+        const logsT0 = Date.now();
         const logsPayload = await getLogs();
+        workerLog(
+          "failure-handling getLogs done",
+          `+${Date.now() - logsT0}ms bytes=${logsPayload?.length ?? 0}`,
+        );
+
+        workerLog("failure-handling attachFailureLogsToAllure …");
         await attachFailureLogsToAllure(logsPayload);
+
+        workerLog("failure-handling captureNativeViewHierarchy …");
+        const vhT0 = Date.now();
         await captureNativeViewHierarchy();
+        workerLog("failure-handling captureNativeViewHierarchy done", `+${Date.now() - vhT0}ms`);
+
         console.info("Failure logs attached to Allure report");
+        workerLog("failure-handling complete", `total +${Date.now() - failureT0}ms`);
       } catch (err) {
+        workerLog(
+          "failure-handling ABORTED",
+          `${sanitizeError(err)} (+${Date.now() - failureT0}ms since begin)`,
+        );
         console.warn("Failed to attach failure logs to Allure:", err);
       }
     }
