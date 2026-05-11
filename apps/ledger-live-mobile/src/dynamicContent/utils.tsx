@@ -89,25 +89,32 @@ export const formatCategories = (
   return categoriesWithAtLeastOneCard;
 };
 
-export const mapAsCategoryContentCard = (card: BrazeContentCard): CategoryContentCard => ({
-  id: card.id,
-  categoryId: card.extras.id,
-  location: card.extras.location as ContentCardLocation,
-  createdAt: card.created,
-  viewed: card.viewed,
-  order: parseOrder(card.extras.order),
-  cardsLayout: card.extras.cardsLayout as ContentCardsLayout,
-  cardsType: card.extras.cardsType as ContentCardsType,
-  type: card.extras.type as ContentCardsType.category,
-  title: card.extras.title,
-  description: card.extras.description,
-  link: appendDeeplinkLocationIfDefined(card.extras.link, card.extras.location),
-  cta: card.extras.cta,
-  isDismissable: Boolean(card.extras?.isDismissable === "true"),
-  hasPagination: Boolean(card.extras?.hasPagination === "true"),
-  centeredText: Boolean(card.extras?.centeredText === "true"),
-  extras: card.extras,
-});
+export const mapAsCategoryContentCard = (card: BrazeContentCard): CategoryContentCard => {
+  const location =
+    card.extras.id === "alwayson"
+      ? ContentCardLocation.TopWallet
+      : (card.extras.location as ContentCardLocation);
+
+  return {
+    id: card.id,
+    categoryId: card.extras.id,
+    location: location,
+    createdAt: card.created,
+    viewed: card.viewed,
+    order: parseOrder(card.extras.order),
+    cardsLayout: card.extras.cardsLayout as ContentCardsLayout,
+    cardsType: card.extras.cardsType as ContentCardsType,
+    type: card.extras.type as ContentCardsType.category,
+    title: card.extras.title,
+    description: card.extras.description,
+    link: appendDeeplinkLocationIfDefined(card.extras.link, location),
+    cta: card.extras.cta,
+    isDismissable: Boolean(card.extras?.isDismissable === "true"),
+    hasPagination: Boolean(card.extras?.hasPagination === "true"),
+    centeredText: Boolean(card.extras?.centeredText === "true"),
+    extras: card.extras,
+  };
+};
 
 export const mapAsWalletContentCard = (card: BrazeContentCard): WalletContentCard => ({
   id: card.id,
