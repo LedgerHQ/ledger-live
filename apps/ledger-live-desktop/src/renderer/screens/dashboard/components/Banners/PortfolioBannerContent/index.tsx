@@ -49,9 +49,9 @@ const PortfolioBannerWallet40 = memo(function PortfolioBannerWallet40({
  * - Otherwise `PortfolioContentCards` directly (via `PortfolioBannerWallet40`).
  *
  * **Legacy** (Wallet40 off):
- * - Post-onboarding hub: `RecoverBanner` wrapping `PostOnboardingHubBanner` when the wallet entry
- *   point is visible.
- * - Otherwise `RecoverBanner` with action cards, LNS upsell, or `PortfolioContentCards`.
+ * - Post-onboarding hub: `PostOnboardingHubBanner` is rendered directly when the wallet entry point
+ *   is visible.
+ * - Otherwise `RecoverBanner` wraps action cards, LNS upsell, or `PortfolioContentCards`.
  *
  * When Wallet40 applies and LNS upsell is visible, LNS is rendered here without mounting the Recover
  * subtree. Otherwise the finish/recover row uses one `useRecoverWidgetViewModel` (→ `useRecoverBannerState`,
