@@ -68,7 +68,6 @@ const config = {
   modulePaths: [compilerOptions.baseUrl ?? "."],
   maxWorkers: process.env.CI ? 3 : 1,
   transform: {
-    "^.+\\.(js|jsx)?$": "babel-jest",
     "^.+\\.(ts|tsx)?$": [
       "@swc/jest",
       {
