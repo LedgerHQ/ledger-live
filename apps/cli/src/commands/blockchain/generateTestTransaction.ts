@@ -105,8 +105,8 @@ export default {
     ${toTransactionStatusJS(status)}
   ),
   // WARNING: DO NOT commit this test publicly unless you're ok with possibility tx could leak out. (do self txs)
-  testSignedOperation: (expect, signedOperation) => {
-    expect(toSignedOperationRaw(signedOperation)).toMatchObject(${JSON.stringify(signedOpRaw)})
+  testSignedOperation: async (expect, signedOperation) => {
+    expect(await toSignedOperationRaw(signedOperation)).toMatchObject(${JSON.stringify(signedOpRaw)})
   },
   apdus: \`
 ${apdus.map(a => "  " + a).join("\n")}
