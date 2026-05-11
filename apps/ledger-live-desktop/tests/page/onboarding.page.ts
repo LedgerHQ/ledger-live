@@ -49,8 +49,24 @@ export class OnboardingPage extends AppPage {
 
   async hoverDevice(device: "nanoS" | "nanoX" | "nanoSP" | "stax") {
     const locator = this.page.getByTestId(`v3-container-device-${device}`);
-    await locator.waitFor({ state: "attached" });
+    await locator.waitFor({ state: "visible" });
+    await locator.scrollIntoViewIfNeeded();
     await locator.hover();
+  }
+
+  async waitForDeviceToBeHovered(device: "nanoS" | "nanoX" | "nanoSP" | "stax") {
+    await this.page.waitForFunction((deviceId: string) => {
+      const container = document.querySelector(`[data-testid="v3-container-device-${deviceId}"]`);
+      const button = document.querySelector(`[data-testid="v3-device-${deviceId}"]`);
+
+      if (!container || !button) {
+        return false;
+      }
+
+      const isHovered = (container as HTMLElement).matches(":hover");
+      const buttonOpacity = window.getComputedStyle(button).opacity;
+      return isHovered && buttonOpacity === "1";
+    }, device);
   }
 
   async waitForDeviceToBeVisible(device: "nanoS" | "nanoX" | "nanoSP" | "stax") {
