@@ -36,7 +36,6 @@ export default class SwapPage extends CommonPage {
   exportOperationsButton = "enabled-export-swap-operations-link";
   swapHistoryFeedbackLink = "swap-history-feedback-link";
   swapFormTabId = "swap-form-tab";
-  swapCloseButtonCompletedTestId = "NavigationHeaderCloseButtonCompleted";
 
   operationDetails = {
     fromAccount: "swap-operation-details-fromAccount",
@@ -204,11 +203,6 @@ export default class SwapPage extends CommonPage {
       errorElementId: app.swapLiveApp.deviceActionErrorDescriptionId,
     });
     await tapById(app.common.proceedButtonId);
-  }
-
-  @Step("Wait for swap navigation header title completed")
-  async waitForSwapHeaderCompleted() {
-    await waitForElementById(this.swapCloseButtonCompletedTestId);
   }
 
   @Step("Ensure token approval")
