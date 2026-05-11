@@ -1,12 +1,14 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
-import { useMarketDataSectionCurrencyData } from "../../hooks/useMarketDataSectionCurrencyData";
+import { useMarketDataSectionCurrencyContext } from "../../MarketDataSectionCurrencyContext";
 import type { MarketStatRow } from "../../types";
+
+const MISSING = "-";
 
 export function useMarketStatsViewModel() {
   const { t } = useTranslation();
-  const { data, showSkeleton, counterCurrency, locale } = useMarketDataSectionCurrencyData();
+  const { data, showSkeleton, counterCurrency, locale } = useMarketDataSectionCurrencyContext();
 
   const sectionTitle = t("assetDetails.marketStats");
   const sectionTooltip = t("assetDetails.marketStatsTooltip");
@@ -39,7 +41,7 @@ export function useMarketStatsViewModel() {
     });
 
     const marketRank =
-      data?.marketcapRank != null && data.marketcapRank > 0 ? `#${data.marketcapRank}` : "—";
+      data?.marketcapRank != null && data.marketcapRank > 0 ? `#${data.marketcapRank}` : MISSING;
 
     return [
       {

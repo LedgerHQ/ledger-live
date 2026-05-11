@@ -2,8 +2,9 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import { longDayFormat, useDateFormatter, fromNow } from "~/renderer/hooks/useDateFormatter";
-import { useMarketDataSectionCurrencyData } from "../../hooks/useMarketDataSectionCurrencyData";
-import type { MarketStatRow } from "../../types";
+import { useMarketDataSectionCurrencyContext } from "../../MarketDataSectionCurrencyContext";
+
+const MISSING = "-";
 
 export type PricePerformanceBlock = Readonly<{
   title: string;
@@ -30,7 +31,7 @@ function formatPctVsReference(
 
 export function usePricePerformanceViewModel() {
   const { t } = useTranslation();
-  const { data, showSkeleton, counterCurrency, locale } = useMarketDataSectionCurrencyData();
+  const { data, showSkeleton, counterCurrency, locale } = useMarketDataSectionCurrencyContext();
   const formatLongDate = useDateFormatter(longDayFormat);
 
   const sectionTitle = t("assetDetails.pricePerformance");
@@ -43,42 +44,31 @@ export function usePricePerformanceViewModel() {
 
   const athBlock: PricePerformanceBlock = useMemo(() => {
     const d = data?.athDate;
-    const dateLine = d && !Number.isNaN(d.getTime()) ? `${formatLongDate(d)} (${fromNow(d)})` : "—";
+    const dateLine =
+      d && !Number.isNaN(d.getTime()) ? `${formatLongDate(d)} (${fromNow(d)})` : MISSING;
     return {
       title: t("market.detailsPage.allTimeHigh"),
       priceText: fiat(data?.ath),
       dateLine,
-      changeText: formatPctVsReference(locale, data?.price, data?.ath) ?? "—",
+      changeText: formatPctVsReference(locale, data?.price, data?.ath) ?? MISSING,
     };
   }, [data?.ath, data?.athDate, data?.price, fiat, formatLongDate, locale, t]);
 
   const atlBlock: PricePerformanceBlock = useMemo(() => {
     const d = data?.atlDate;
-    const dateLine = d && !Number.isNaN(d.getTime()) ? `${formatLongDate(d)} (${fromNow(d)})` : "—";
+    const dateLine =
+      d && !Number.isNaN(d.getTime()) ? `${formatLongDate(d)} (${fromNow(d)})` : MISSING;
     return {
       title: t("market.detailsPage.allTimeLow"),
       priceText: fiat(data?.atl),
       dateLine,
-      changeText: formatPctVsReference(locale, data?.price, data?.atl) ?? "—",
+      changeText: formatPctVsReference(locale, data?.price, data?.atl) ?? MISSING,
     };
   }, [data?.atl, data?.atlDate, data?.price, fiat, formatLongDate, locale, t]);
-
-  const range24hRow: MarketStatRow = useMemo(
-    () => ({
-      key: "range_24h",
-      label: t("market.detailsPage.24hLowHight"),
-      value:
-        data?.low24h != null && data?.high24h != null
-          ? `${fiat(data.low24h)} / ${fiat(data.high24h)}`
-          : "—",
-    }),
-    [data?.high24h, data?.low24h, fiat, t],
-  );
 
   return {
     athBlock,
     atlBlock,
-    range24hRow,
     showSkeleton,
     sectionTitle,
   };

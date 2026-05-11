@@ -38,7 +38,7 @@ export function AssetDetailView({ viewModel }: AssetDetailViewProps) {
 
       {distributionItem && <PortfolioSection distributionItem={distributionItem} />}
 
-      {marketInfo && <MarketDataSection />}
+      {marketInfo && <MarketDataSection currencyQueryId={viewModel.marketCurrencyQueryId} />}
 
       {distributionItem && <TransactionsSection distributionItem={distributionItem} />}
     </div>

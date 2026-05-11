@@ -1,6 +1,7 @@
 import React from "react";
 import { SectionHeader } from "../../SectionHeader";
 import { StatRow } from "../components/StatRow";
+import { MarketDataStatRowSkeletons } from "../components/MarketDataStatRowSkeletons";
 import type { MarketStatsViewModelResult } from "./hooks/useMarketStatsViewModel";
 
 type Props = Readonly<MarketStatsViewModelResult>;
@@ -11,15 +12,7 @@ export function MarketStatsView({ rows, showSkeleton, sectionTitle, sectionToolt
       <SectionHeader title={sectionTitle} tooltipContent={sectionTooltip} />
       <div className="text-body">
         {showSkeleton ? (
-          <div className="flex flex-col gap-8 pt-8">
-            {rows.map(row => (
-              <div
-                key={row.key}
-                className="h-36 animate-pulse rounded-8 bg-neutral-c20"
-                aria-hidden
-              />
-            ))}
-          </div>
+          <MarketDataStatRowSkeletons count={rows.length} />
         ) : (
           <div className="flex flex-col gap-8">
             {rows.map(row => (
