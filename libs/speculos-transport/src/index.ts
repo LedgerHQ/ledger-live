@@ -94,6 +94,33 @@ export async function releaseSpeculosDevice(id: string) {
   }
 }
 
+const DOCKER_LOGS_CONTAINER_ID = /^[a-zA-Z0-9_.-]+$/;
+
+/**
+ * Recent stdout+stderr from the Speculos Docker container.
+ * Only use with ids produced by this module (e.g. speculosID-…). Call before {@link releaseSpeculosDevice}.
+ */
+export function getSpeculosDockerLogs(containerId: string, tailLines = 10_000): Promise<string> {
+  if (!DOCKER_LOGS_CONTAINER_ID.test(containerId)) {
+    return Promise.resolve("(getSpeculosDockerLogs: invalid container id)");
+  }
+
+  return new Promise(resolve => {
+    exec(
+      `docker logs --tail ${tailLines} ${containerId} 2>&1`,
+      { maxBuffer: 20 * 1024 * 1024 },
+      (error, stdout, stderr) => {
+        const combined = [stdout, stderr].filter(Boolean).join("\n").trim();
+        if (error) {
+          resolve(combined || `docker logs failed for ${containerId}: ${error.message}`);
+          return;
+        }
+        resolve(combined || "(empty docker logs)");
+      },
+    );
+  });
+}
+
 /**
  * Close all speculos devices
  */

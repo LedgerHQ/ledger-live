@@ -1104,3 +1104,5 @@ export const shareViewKey = withDeviceController(({ getButtonsController }) => a
     await buttons.both();
   }
 });
+
+export { getSpeculosDockerLogs } from "@ledgerhq/speculos-transport";

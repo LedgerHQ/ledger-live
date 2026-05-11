@@ -15,6 +15,7 @@ import { FeatureIdSchema } from "@shared/feature-flags";
 import { log as detoxLog } from "detox";
 import { getSpeculosModel } from "@ledgerhq/live-common/e2e/speculosAppVersion";
 import { v4 as uuid } from "uuid";
+import { workerLog, workerLogVerbose } from "../utils/workerDebugLog";
 
 const RESPONSE_TIMEOUT = 10000;
 
@@ -172,10 +173,17 @@ export async function getEnvs() {
 }
 
 async function fetchData(message: MessageData, timeout = RESPONSE_TIMEOUT): Promise<string> {
+  const started = Date.now();
+  workerLogVerbose("fetchData dispatch", `${message.type} id=${message.id} timeout=${timeout}ms`);
   return new Promise<string>(resolve => {
     postMessage(message);
     const timeoutId = setTimeout(() => {
       global.pendingCallbacks?.delete(message.type);
+      const elapsed = Date.now() - started;
+      workerLog(
+        "fetchData TIMEOUT",
+        `${message.type} after ${elapsed}ms (limit ${timeout}ms) — app likely not responding`,
+      );
       console.warn(`Timeout while waiting for ${message.type}`);
       resolve("");
     }, timeout);
@@ -184,6 +192,11 @@ async function fetchData(message: MessageData, timeout = RESPONSE_TIMEOUT): Prom
       callback: (data: string) => {
         clearTimeout(timeoutId);
         global.pendingCallbacks?.delete(message.type);
+        const elapsed = Date.now() - started;
+        workerLogVerbose(
+          "fetchData OK",
+          `${message.type} ${elapsed}ms payloadBytes=${data?.length ?? 0}`,
+        );
         resolve(data);
       },
     });

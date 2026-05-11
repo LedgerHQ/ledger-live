@@ -5,10 +5,11 @@ import {
   stopSpeculos,
   takeScreenshot,
   setExchangeDependencies,
+  getSpeculosDockerLogs,
 } from "@ledgerhq/live-common/e2e/speculos";
 import { setEnv } from "@ledgerhq/live-env";
 import { device, log } from "detox";
-import { waitForSpeculosReady } from "@ledgerhq/live-common/e2e/speculosCI";
+import { waitForSpeculosReady, fetchSpeculinhoLogs } from "@ledgerhq/live-common/e2e/speculosCI";
 import { isSpeculosRemote } from "../helpers/commonHelpers";
 import { addKnownSpeculos, getEnvs, removeKnownSpeculos } from "../bridge/server";
 import { CLI } from "./cliUtils";
@@ -210,6 +211,31 @@ export async function deleteSpeculos(deviceId?: string): Promise<number | undefi
   delete process.env.SPECULOS_API_PORT;
 
   return port;
+}
+
+/**
+ * Attaches Speculos stderr / container logs to the Allure report for each active instance.
+ * Speculinho (iOS remote): GET /logs/{run_id}. Local Docker (e.g. Android): docker logs.
+ * Intended for test failure handlers while the instance is still running.
+ */
+export async function attachSpeculosLogsToAllure() {
+  if (!speculosDevices.size) {
+    return;
+  }
+
+  for (const [deviceId, apiPort] of speculosDevices.entries()) {
+    try {
+      const logs = isSpeculosRemote()
+        ? await fetchSpeculinhoLogs(deviceId)
+        : await getSpeculosDockerLogs(deviceId);
+      const title = isSpeculosRemote()
+        ? `Speculos logs (Speculinho run_id=${deviceId})`
+        : `Speculos logs (Docker ${deviceId}, apiPort=${apiPort})`;
+      await allure.attachment(title, logs, "text/plain");
+    } catch (error) {
+      log.warn("E2E", `attachSpeculosLogsToAllure: ${sanitizeError(error)}`);
+    }
+  }
 }
 
 export async function takeSpeculosScreenshot() {

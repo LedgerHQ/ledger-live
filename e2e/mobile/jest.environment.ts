@@ -1,4 +1,4 @@
-import { takeSpeculosScreenshot } from "./utils/speculosUtils";
+import { attachSpeculosLogsToAllure, takeSpeculosScreenshot } from "./utils/speculosUtils";
 import {
   attachTestExecutionConsoleToAllure,
   attachFailureLogsToAllure,
@@ -31,6 +31,7 @@ import { NativeElementHelpers, WebElementHelpers } from "./helpers/elementHelper
 import expect from "expect";
 import { Application } from "./page/index";
 import { ServerData } from "../../apps/ledger-live-mobile/e2e/bridge/types";
+import { workerLog } from "./utils/workerDebugLog";
 
 // @ts-expect-error detox doesn't provide type declarations for this module
 import DetoxEnvironment from "detox/runners/jest/testEnvironment";
@@ -40,37 +41,68 @@ const FAST_DIAGNOSTIC_TIMEOUT_MS = 5_000;
 const SLOW_DIAGNOSTIC_TIMEOUT_MS = 15_000;
 
 async function captureFailureDiagnostics(): Promise<void> {
+  workerLog("failure-handling takeSpeculosScreenshot …");
   await withTimeout(takeSpeculosScreenshot(), FAST_DIAGNOSTIC_TIMEOUT_MS, "takeSpeculosScreenshot");
+
+  workerLog("failure-handling attachSpeculosLogsToAllure …");
+  const speculosLogT0 = Date.now();
+  await withTimeout(
+    attachSpeculosLogsToAllure(),
+    FAST_DIAGNOSTIC_TIMEOUT_MS,
+    "attachSpeculosLogsToAllure",
+  );
+  workerLog("failure-handling attachSpeculosLogsToAllure done", `+${Date.now() - speculosLogT0}ms`);
+
+  workerLog("failure-handling takeAppScreenshot …");
+  const shotT0 = Date.now();
   await withTimeout(
     takeAppScreenshot("Test Failure"),
     FAST_DIAGNOSTIC_TIMEOUT_MS,
     "takeAppScreenshot",
   );
+  workerLog("failure-handling takeAppScreenshot done", `+${Date.now() - shotT0}ms`);
+
+  workerLog("failure-handling attachTestExecutionConsoleToAllure …");
+  const a0 = Date.now();
   await withTimeout(
     attachTestExecutionConsoleToAllure(),
     FAST_DIAGNOSTIC_TIMEOUT_MS,
     "attachTestExecutionConsoleToAllure",
   );
+  workerLog("failure-handling attachTestExecutionConsoleToAllure done", `+${Date.now() - a0}ms`);
+
+  workerLog("failure-handling attachSpeculosStartupErrorToAllure …");
   await withTimeout(
     attachSpeculosStartupErrorToAllure(),
     FAST_DIAGNOSTIC_TIMEOUT_MS,
     "attachSpeculosStartupErrorToAllure",
   );
+
   // getLogs has its own 10s RESPONSE_TIMEOUT inside the bridge; this outer bound
   // is just defense-in-depth in case the inner timer is starved on a wedged worker.
+  workerLog("failure-handling getLogs …");
+  const logsT0 = Date.now();
   const logs = await withTimeout(getLogs(), 12_000, "getLogs");
+  workerLog(
+    "failure-handling getLogs done",
+    `+${Date.now() - logsT0}ms bytes=${logs?.length ?? 0}`,
+  );
+
   if (logs)
     await withTimeout(
       attachFailureLogsToAllure(logs),
       SLOW_DIAGNOSTIC_TIMEOUT_MS,
       "attachFailureLogsToAllure",
     );
+
+  workerLog("failure-handling captureNativeViewHierarchy …");
+  const vhT0 = Date.now();
   await withTimeout(
     captureNativeViewHierarchy(),
     SLOW_DIAGNOSTIC_TIMEOUT_MS,
     "captureNativeViewHierarchy",
   );
-  console.info("Failure diagnostics capture completed");
+  workerLog("failure-handling captureNativeViewHierarchy done", `+${Date.now() - vhT0}ms`);
 }
 
 export default class TestEnvironment extends DetoxEnvironment {
@@ -239,8 +271,11 @@ export default class TestEnvironment extends DetoxEnvironment {
     await super.handleTestEvent(event, state);
 
     if (["hook_failure", "test_fn_failure"].includes(event.name)) {
+      const failureT0 = Date.now();
+      workerLog("failure-handling begin", event.name);
       this.global.IS_FAILED = true;
       await captureFailureDiagnostics();
+      workerLog("failure-handling complete", `total +${Date.now() - failureT0}ms`);
     }
 
     if (event.name === "run_start") {
