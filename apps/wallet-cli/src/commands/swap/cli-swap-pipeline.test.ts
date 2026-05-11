@@ -18,6 +18,7 @@ import type { CommandOutput } from "../../output";
  */
 
 const events: string[] = [];
+let updatedTransactionAmount = new BigNumber("1000000000000000000");
 
 mock.module("../../session/exchange-device-session", () => ({
   withLedgerManagerAppSession: async <T>(_app: string, fn: () => Promise<T>): Promise<T> => {
@@ -121,7 +122,7 @@ function getAccountBridge(): ReturnType<typeof getLiveAccountBridge> {
     updateTransaction: (
       tx: Record<string, unknown>,
       patch: Record<string, unknown>,
-    ): Record<string, unknown> => ({ ...tx, ...patch }),
+    ): Record<string, unknown> => ({ ...tx, ...patch, amount: updatedTransactionAmount }),
   } as unknown as ReturnType<typeof getLiveAccountBridge>;
 }
 
@@ -132,6 +133,7 @@ async function getDeviceModelId() {
 describe("runFullSwapPipeline session lifecycle", () => {
   afterEach(() => {
     events.length = 0;
+    updatedTransactionAmount = new BigNumber("1000000000000000000");
     retrieveSwapPayloadMock.mockClear();
   });
 
@@ -154,6 +156,25 @@ describe("runFullSwapPipeline session lifecycle", () => {
     expect(result.dryRun).toBe(true);
     expect(result.operationHash).toBeUndefined();
     expect(retrieveSwapPayloadMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("omits magnitudeAwareRate when the prepared transaction amount is zero", async () => {
+    updatedTransactionAmount = new BigNumber(0);
+
+    const result = await runFullSwapPipeline({
+      out: makeOutput(),
+      provider: "changelly",
+      amount: "1",
+      amountInAtomicUnit: new BigNumber("1000000000000000000"),
+      feeStrategy: "medium",
+      dryRun: true,
+      fromAccount: makeAccount("from"),
+      toAccount: makeAccount("to"),
+      getAccountBridge,
+    });
+
+    expect(result.magnitudeAwareRate).toBeUndefined();
+    expect(result).not.toHaveProperty("magnitudeAwareRate");
   });
 
   it("closes the session even when the swap API call throws", async () => {

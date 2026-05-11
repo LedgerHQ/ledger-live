@@ -334,7 +334,10 @@ export async function runFullSwapPipeline(
 
     const decodePayload = await decodeSwapPayload(payload.binaryPayload);
     const amountExpectedTo = new BigNumber(decodePayload.amountToWallet.toString());
-    const magnitudeAwareRate = tx.amount && amountExpectedTo.dividedBy(tx.amount);
+    const magnitudeAwareRate =
+      tx.amount && new BigNumber(tx.amount).gt(0)
+        ? amountExpectedTo.dividedBy(tx.amount)
+        : undefined;
     tx.amount = new BigNumber(tx.amount);
 
     const rateType = quoteId != null && quoteId !== "" ? RATE_FIXED : RATE_FLOATING;
