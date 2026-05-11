@@ -98,13 +98,13 @@ export async function getDeviceFirmwareVersion(device: DeviceModelId): Promise<s
     );
   }
 
-  // Nano S, Nano SP, Nano X use latest firmware; other devices use n-1.
+  // Nano S, Nano SP, Nano X use latest firmware; other devices use n-2.
   const sortedByIdDesc = [...providerFirmwares].sort((a, b) => b.id - a.id);
   const firmwareIndex = [DeviceModelId.nanoS, DeviceModelId.nanoSP, DeviceModelId.nanoX].includes(
     device,
   )
     ? 0
-    : 1;
+    : 2;
   const firmware = sortedByIdDesc[firmwareIndex] ?? sortedByIdDesc[0]!;
 
   firmwareVersionCache.set(device, firmware.version);
