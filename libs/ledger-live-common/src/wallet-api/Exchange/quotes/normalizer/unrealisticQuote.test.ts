@@ -1,4 +1,5 @@
 import type { RawQuote } from "../service/types";
+import { QuoteWarningCodes } from "../types";
 import { computeUnrealisticQuote } from "./unrealisticQuote";
 
 function makeRawQuote(overrides: Partial<RawQuote> = {}): RawQuote {
@@ -71,7 +72,7 @@ describe("computeUnrealisticQuote", () => {
     // 1 * 1 = 1 input fiat, 1 * 2 = 2 output fiat → gain = 100%
     expect(
       computeUnrealisticQuote(makeRawQuote({ amountFrom: 1, amountTo: 1 }), ethToBtcDoubledFiat),
-    ).toEqual({ code: "unrealisticQuote", gainPercent: 100 });
+    ).toEqual({ code: QuoteWarningCodes.UNREALISTIC_QUOTE, gainPercent: 100 });
   });
 
   it("returns null when the gain percentage overflows to a non-finite number", () => {

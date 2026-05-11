@@ -5,9 +5,22 @@ import type { ProviderData } from "../lookupProviderConfig";
 import { buildFormattedQuoteValues } from "./buildFormattedQuoteValues";
 import { buildProviderDetails } from "./buildProviderDetails";
 import { buildQuoteDetails } from "./buildQuoteDetails";
-import { computeError, computeWarning, type NormalizationContext } from "./computeQuoteStatus";
+
 import type { FeeEstimate } from "./networkFeeEstimate";
 import { isGasLess, normalizedProviderId, resolveQuoteId } from "./quoteHelpers";
+import { buildQuoteWarnings, NormalizationContext } from "./buildQuoteWarnings";
+import { buildQuoteErrors } from "./buildQuoteErrors";
+
+enum ProviderErrorCodes {
+  FAILED_TO_GET_QUOTE_ERROR = "failed_to_get_quote_error",
+  AMOUNT_OFF_LIMITS = "amount_off_limits",
+}
+
+interface ProviderError {
+  code: string;
+  originalCode: string;
+  message: string;
+}
 
 const EMPTY_CONTEXT: NormalizationContext = {
   sendCurrencyId: "",
@@ -48,14 +61,19 @@ export function normalizeQuote(
   const gasLess = isGasLess(rawQuote);
   const quoteDetails = buildQuoteDetails(rawQuote, gasLess, feeEstimate);
 
+  const warnings = buildQuoteWarnings(rawQuote, context);
+  const errors = buildQuoteErrors(feeEstimate);
+
   const quote: Quote = {
     id: resolveQuoteId(rawQuote),
     key: rawQuote.key ?? `${provider}-${rawQuote.type}`,
     provider,
     providerDetails: buildProviderDetails(rawQuote, providerData),
     quoteDetails,
-    warning: computeWarning(rawQuote, context),
-    error: computeError(rawQuote, feeEstimate),
+    warning: warnings[0] ?? null,
+    error: errors[0] ?? null,
+    warnings,
+    errors,
   };
 
   if (formatContext) {

@@ -6,7 +6,7 @@ import { fetchAndMergeProviderData } from "../../../exchange/providers/swap";
 import { fetchNetworkFeeContext } from "./fetchNetworkFeeContext";
 import { computeFeeEstimate } from "./normalizer/networkFeeEstimate";
 import type { RawQuote, RawQuoteError } from "./service/types";
-import type { GetQuotesArgs } from "./types";
+import { QuoteErrorCodes, type GetQuotesArgs } from "./types";
 
 jest.mock("./service/fetchQuotes", () => ({
   fetchQuotes: jest.fn(),
@@ -28,6 +28,12 @@ jest.mock("./normalizer/networkFeeEstimate", () => ({
   computeFeeEstimate: jest.fn(),
 }));
 
+// `live-network` reads `getEnv("LEDGER_CLIENT_VERSION")?.startsWith(...)` and
+// `changes.subscribe(...)` at module load (transitive import via
+// buildFormatContext -> currencies -> live-countervalues -> live-network). We
+// need to satisfy both at module-eval time, so the mock surfaces a no-op
+// `changes` subject alongside `getEnv`. Per-test `getEnv` overrides happen via
+// the `jest.mocked` hook in the suite body.
 jest.mock("@ledgerhq/live-env", () => ({
   getEnv: jest.fn().mockReturnValue(""),
   changes: { subscribe: jest.fn() },
@@ -97,69 +103,188 @@ describe("getQuotes", () => {
     fetchNetworkFeeContextMock.mockResolvedValue(null);
   });
 
-  it("drops every successful quote for an unsupported pair while forwarding aggregator errors", async () => {
+  it("drops every successful quote for an unsupported pair while forwarding providerErrors", async () => {
     fetchQuotesMock.mockResolvedValue({
       rawQuotes: [makeRawQuote()],
-      errors: [aggregatorError],
+      providerErrors: [aggregatorError],
     });
 
     const response = await getQuotes(makeArgs("near", "stellar"), emptyContext);
 
     expect(response.quotes).toEqual([]);
-    expect(response.errors).toEqual([aggregatorError]);
+    expect(response.providerErrors).toEqual([aggregatorError]);
+    // Unsupported pair drops every successful quote -> the digested
+    // error list is non-empty (`noQuotes` from the producer).
+    expect(response.errors).toEqual([{ code: "noQuotes" }]);
   });
 
   it("blocks the unsupported pair in the reverse direction as well", async () => {
     fetchQuotesMock.mockResolvedValue({
       rawQuotes: [makeRawQuote({ provider: "thorswap" })],
-      errors: [],
+      providerErrors: [],
     });
 
     const response = await getQuotes(makeArgs("stellar", "near"), emptyContext);
 
     expect(response.quotes).toEqual([]);
-    expect(response.errors).toEqual([]);
+    expect(response.providerErrors).toEqual([]);
+    expect(response.errors).toEqual([{ code: "noQuotes" }]);
   });
 
   it("skips the provider-data fetch when the pair is unsupported", async () => {
     // The CAL + CDN round-trip inside `fetchAndMergeProviderData` is a cold
     // cache miss on first call; asserting the mock was not touched protects
     // the short-circuit path from regressions.
-    fetchQuotesMock.mockResolvedValue({ rawQuotes: [makeRawQuote()], errors: [] });
+    fetchQuotesMock.mockResolvedValue({ rawQuotes: [makeRawQuote()], providerErrors: [] });
 
     await getQuotes(makeArgs("near", "stellar"), emptyContext);
 
     expect(fetchAndMergeProviderDataMock).not.toHaveBeenCalled();
   });
 
-  it("forwards aggregator errors and skips the provider-data + fee-context fetches when no rawQuotes are returned", async () => {
+  it("forwards providerErrors and skips the provider-data + fee-context fetches when no rawQuotes are returned", async () => {
     // Common error-only response: every provider rejected the request
     // (amount-too-small, KYC required, slippage too high, etc.). Both
     // fetchAndMergeProviderData (CAL + CDN) and fetchNetworkFeeContext
     // (bridge.sync + prepareTransaction + getTransactionStatus) are
     // pure waste in this case — their results would never be consumed
     // by normalizeQuote/computeFeeEstimate.
-    fetchQuotesMock.mockResolvedValue({ rawQuotes: [], errors: [aggregatorError] });
+    fetchQuotesMock.mockResolvedValue({ rawQuotes: [], providerErrors: [aggregatorError] });
 
     const response = await getQuotes(makeArgs("ethereum", "bitcoin"), emptyContext);
 
-    expect(response).toEqual({ quotes: [], errors: [aggregatorError] });
+    expect(response.quotes).toEqual([]);
+    expect(response.providerErrors).toEqual([aggregatorError]);
+    expect(response.errors).toEqual([{ code: "noQuotes" }]);
     expect(fetchAndMergeProviderDataMock).not.toHaveBeenCalled();
     expect(fetchNetworkFeeContextMock).not.toHaveBeenCalled();
   });
 
-  it("normalizes quotes for a supported pair and preserves aggregator errors", async () => {
+  it("normalizes quotes for a supported pair and preserves providerErrors with an empty digested errors list", async () => {
     fetchQuotesMock.mockResolvedValue({
       rawQuotes: [makeRawQuote({ provider: "lifi" })],
-      errors: [aggregatorError],
+      providerErrors: [aggregatorError],
     });
 
     const response = await getQuotes(makeArgs("ethereum", "bitcoin"), emptyContext);
 
     expect(response.quotes).toHaveLength(1);
     expect(response.quotes[0].quoteDetails.exchangeRate).toBe(0.999);
-    expect(response.errors).toEqual([aggregatorError]);
+    expect(response.providerErrors).toEqual([aggregatorError]);
+    // Successful quotes were returned -> the producer emits no globals,
+    // even when the response carries provider-level rejection rows.
+    expect(response.errors).toEqual([]);
     expect(fetchAndMergeProviderDataMock).toHaveBeenCalledTimes(1);
+  });
+
+  describe("digested global errors (computeQuotesErrors integration)", () => {
+    it("emits `amountTooLow` alongside `noQuotes` when every provider rejected on a min bound that brackets the input", async () => {
+      // amount = "1", min bounds reported = "10" and "12" -> lowest is "10".
+      fetchQuotesMock.mockResolvedValue({
+        rawQuotes: [],
+        providerErrors: [
+          {
+            code: "amount_off_limits",
+            type: "float",
+            provider: "lifi",
+            message: "min",
+            parameter: { minAmount: "10" },
+          },
+          {
+            code: "amount_off_limits",
+            type: "float",
+            provider: "okx",
+            message: "min",
+            parameter: { minAmount: "12" },
+          },
+        ],
+      });
+
+      const response = await getQuotes(makeArgs("ethereum", "bitcoin", { amount: "1" }), emptyContext);
+
+      expect(response.errors).toEqual([
+        { code: "noQuotes" },
+        { code: "amountTooLow", minAmount: "10" },
+      ]);
+    });
+
+    it("emits `amountTooHigh` alongside `noQuotes` when every provider rejected on a max bound that brackets the input", async () => {
+      fetchQuotesMock.mockResolvedValue({
+        rawQuotes: [],
+        providerErrors: [
+          {
+            code: "amount_off_limits",
+            type: "float",
+            provider: "lifi",
+            message: "max",
+            parameter: { maxAmount: "100" },
+          },
+          {
+            code: "amount_off_limits",
+            type: "float",
+            provider: "okx",
+            message: "max",
+            parameter: { maxAmount: "150" },
+          },
+        ],
+      });
+
+      const response = await getQuotes(
+        makeArgs("ethereum", "bitcoin", { amount: "200" }),
+        emptyContext,
+      );
+
+      expect(response.errors).toEqual([
+        { code: "noQuotes" },
+        { code: "amountTooHigh", maxAmount: "150" },
+      ]);
+    });
+
+    it("does not emit any digested errors when at least one quote was successful, even when providerErrors contains amount_off_limits rows", async () => {
+      fetchQuotesMock.mockResolvedValue({
+        rawQuotes: [makeRawQuote()],
+        providerErrors: [
+          {
+            code: "amount_off_limits",
+            type: "float",
+            provider: "okx",
+            message: "min",
+            parameter: { minAmount: "10" },
+          },
+        ],
+      });
+
+      const response = await getQuotes(makeArgs("ethereum", "bitcoin", { amount: "1" }), emptyContext);
+
+      expect(response.errors).toEqual([]);
+    });
+
+    it("derives global errors for an unsupported pair from the forwarded providerErrors", async () => {
+      fetchQuotesMock.mockResolvedValue({
+        rawQuotes: [makeRawQuote()],
+        providerErrors: [
+          {
+            code: "amount_off_limits",
+            type: "float",
+            provider: "lifi",
+            message: "min",
+            parameter: { minAmount: "10" },
+          },
+        ],
+      });
+
+      const response = await getQuotes(
+        makeArgs("near", "stellar", { amount: "1" }),
+        emptyContext,
+      );
+
+      // Unsupported-pair short-circuit forces successful quotes to 0. The
+      // providerErrors still flow through, so amount_off_limits can stack too.
+      expect(response.errors).toEqual([
+        { code: "noQuotes" },
+        { code: "amountTooLow", minAmount: "10" },
+      ]);
+    });
   });
 
   describe("fee context plumbing", () => {
@@ -175,7 +300,7 @@ describe("getQuotes", () => {
     };
 
     it("forwards fromAccountId and amountFrom to fetchNetworkFeeContext", async () => {
-      fetchQuotesMock.mockResolvedValue({ rawQuotes: [makeRawQuote()], errors: [] });
+      fetchQuotesMock.mockResolvedValue({ rawQuotes: [makeRawQuote()], providerErrors: [] });
 
       await getQuotes(makeArgs("ethereum", "bitcoin", { amount: "1.5" }), {
         accounts: [],
@@ -201,7 +326,7 @@ describe("getQuotes", () => {
       });
       fetchQuotesMock.mockResolvedValue({
         rawQuotes: [makeRawQuote({ provider: "lifi" })],
-        errors: [],
+        providerErrors: [],
       });
 
       const response = await getQuotes(makeArgs("ethereum", "bitcoin"), emptyContext);
@@ -221,16 +346,21 @@ describe("getQuotes", () => {
         approvalNetworkFee: undefined,
         notEnoughBalance: true,
       });
-      fetchQuotesMock.mockResolvedValue({ rawQuotes: [makeRawQuote()], errors: [] });
+      fetchQuotesMock.mockResolvedValue({ rawQuotes: [makeRawQuote()], providerErrors: [] });
 
       const response = await getQuotes(makeArgs("ethereum", "bitcoin"), emptyContext);
 
-      expect(response.quotes[0].error).toBe("notEnoughBalanceForFees");
+      expect(response.quotes[0].error).toEqual({
+        code: QuoteErrorCodes.NOT_ENOUGH_BALANCE_FOR_FEES,
+      });
+      expect(response.quotes[0].errors).toEqual([
+        { code: QuoteErrorCodes.NOT_ENOUGH_BALANCE_FOR_FEES },
+      ]);
     });
 
     it("skips computeFeeEstimate and emits no fee fields when context is null", async () => {
       fetchNetworkFeeContextMock.mockResolvedValue(null);
-      fetchQuotesMock.mockResolvedValue({ rawQuotes: [makeRawQuote()], errors: [] });
+      fetchQuotesMock.mockResolvedValue({ rawQuotes: [makeRawQuote()], providerErrors: [] });
 
       const response = await getQuotes(makeArgs("ethereum", "bitcoin"), emptyContext);
 
@@ -254,7 +384,7 @@ describe("getQuotes", () => {
           makeRawQuote({ provider: "oneinch", key: "oneinch-key" }),
           makeRawQuote({ provider: "oneinchfusion", key: "oneinchfusion-key" }),
         ],
-        errors: [],
+        providerErrors: [],
       });
 
       const response = await getQuotes(makeArgs("ethereum", "bitcoin"), emptyContext);
@@ -275,7 +405,7 @@ describe("getQuotes", () => {
           makeRawQuote({ provider: "oneinch", key: "oneinch-key" }),
           makeRawQuote({ provider: "thorswap", key: "thorswap-key" }),
         ],
-        errors: [],
+        providerErrors: [],
       });
 
       await getQuotes(makeArgs("ethereum", "bitcoin"), emptyContext);
