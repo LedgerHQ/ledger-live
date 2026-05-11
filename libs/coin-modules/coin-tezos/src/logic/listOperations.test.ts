@@ -33,9 +33,9 @@ const options: {
 
 describe("listOperations", () => {
   afterEach(() => {
-    mockGetAccountOperations.mockClear();
-    mockGetAccountTokenTransfers.mockClear();
-    mockGetBlockHashesByLevels.mockClear();
+    mockGetAccountOperations.mockReset();
+    mockGetAccountTokenTransfers.mockReset();
+    mockGetBlockHashesByLevels.mockReset();
   });
 
   beforeEach(() => {
@@ -847,6 +847,143 @@ describe("listOperations", () => {
     expect(results.find(o => o.asset.type === "fa2")?.tx.hash).toBe(someHash);
   });
 
+  describe("both streams exhausted: skip alignment, return all ops", () => {
+    const nativeOp1: APITransactionType = {
+      ...transfer,
+      id: 70_001,
+      level: 500,
+      status: "applied" as const,
+    };
+    const nativeOp2: APITransactionType = {
+      ...transfer,
+      id: 70_002,
+      level: 600,
+      status: "applied" as const,
+    };
+    const tokenAtLowLevel: APITokenTransfer & { hash: string } = {
+      id: 71_001,
+      level: 100,
+      timestamp: "2024-06-01T00:00:00Z",
+      token: {
+        id: 1,
+        contract: { address: "KT1Low" },
+        tokenId: "0",
+        standard: "fa2",
+      },
+      from: { address: someSenderAddress },
+      to: { address: someDestinationAddress },
+      amount: "1",
+      hash: "ooLowLevelToken",
+    };
+
+    it("ascending: all ops returned in one page when both streams are exhausted", async () => {
+      // 2 native ops (500, 600) + 1 token (100), limit=10 → neither full.
+      // Without fix: boundary=100, native ops aligned away and lost.
+      // With fix: bothExhausted=true, boundary skipped, all 3 ops returned.
+      mockGetAccountOperations.mockResolvedValueOnce([nativeOp1, nativeOp2]);
+      mockGetAccountTokenTransfers.mockResolvedValueOnce([tokenAtLowLevel]);
+
+      const [page, cursor] = await listOperations(someDestinationAddress, {
+        sort: "Ascending",
+        minHeight: 0,
+        limit: 10,
+      });
+
+      expect(page.filter(o => o.asset.type === "native")).toHaveLength(2);
+      expect(page.filter(o => o.asset.type === "fa2")).toHaveLength(1);
+      expect(cursor).toBe("");
+    });
+
+    it("descending: all ops returned in one page when both streams are exhausted", async () => {
+      // Same data, descending. Without fix: boundary=500, token op lost.
+      mockGetAccountOperations.mockResolvedValueOnce([nativeOp2, nativeOp1]);
+      mockGetAccountTokenTransfers.mockResolvedValueOnce([tokenAtLowLevel]);
+
+      const [page, cursor] = await listOperations(someDestinationAddress, {
+        sort: "Descending",
+        minHeight: 0,
+        limit: 10,
+      });
+
+      expect(page.filter(o => o.asset.type === "native")).toHaveLength(2);
+      expect(page.filter(o => o.asset.type === "fa2")).toHaveLength(1);
+      expect(cursor).toBe("");
+    });
+  });
+
+  it("native empty, token has ops: returns token ops without cursor", async () => {
+    const fa2: APITokenTransfer & { hash: string } = {
+      id: 72_001,
+      level: 300,
+      timestamp: "2024-06-01T00:00:00Z",
+      token: {
+        id: 1,
+        contract: { address: "KT1Tok" },
+        tokenId: "0",
+        standard: "fa2",
+      },
+      from: { address: someSenderAddress },
+      to: { address: someDestinationAddress },
+      amount: "5",
+      hash: "ooOnlyToken",
+    };
+    mockGetAccountOperations.mockResolvedValueOnce([]);
+    mockGetAccountTokenTransfers.mockResolvedValueOnce([fa2]);
+
+    const [results, cursor] = await listOperations(someDestinationAddress, {
+      sort: "Descending",
+      minHeight: 0,
+      limit: 10,
+    });
+
+    expect(results).toHaveLength(1);
+    expect(results[0]?.asset.type).toBe("fa2");
+    expect(cursor).toBe("");
+  });
+
+  it("token full, native not full: cursor emitted via tokenFull", async () => {
+    // token returns exactly limit ops → full, native returns fewer → not full.
+    // Alignment runs normally, cursor emitted because tokenFull=true.
+    const nativeHigh: APITransactionType = {
+      ...transfer,
+      id: 73_001,
+      level: 2000,
+      status: "applied" as const,
+    };
+    const fa2Low: APITokenTransfer & { hash: string } = {
+      id: 73_002,
+      level: 800,
+      timestamp: "2024-06-01T00:00:00Z",
+      token: {
+        id: 1,
+        contract: { address: "KT1TokFull" },
+        tokenId: "0",
+        standard: "fa2",
+      },
+      from: { address: someSenderAddress },
+      to: { address: someDestinationAddress },
+      amount: "1",
+      hash: "ooTokFull1",
+    };
+    const fa2High: APITokenTransfer & { hash: string } = {
+      ...fa2Low,
+      id: 73_003,
+      level: 2000,
+      hash: "ooTokFull2",
+    };
+    // limit=2: token returns 2 (full), native returns 1 (not full)
+    mockGetAccountOperations.mockResolvedValueOnce([nativeHigh]);
+    mockGetAccountTokenTransfers.mockResolvedValueOnce([fa2High, fa2Low]);
+
+    const [, cursor] = await listOperations(someDestinationAddress, {
+      sort: "Descending",
+      minHeight: 0,
+      limit: 2,
+    });
+
+    expect(cursor).not.toBe("");
+  });
+
   describe("staking operations (Paris adaptive issuance)", () => {
     const stakerAddress = "tz1dKrT1h6d7wP8fEzMPptG6er7mLLeQjBBY";
     const bakerAddress = "tz3Q67aMz7gSMiQRcW729sXSfuMtkyAHYfqc";
@@ -931,8 +1068,7 @@ describe("listOperations", () => {
 
       mockGetAccountOperations.mockResolvedValue([stakeNoBlock, unstakeNoBlock, finalizeNoBlock]);
       mockGetBlockHashesByLevels.mockImplementation(
-        async (levels: number[]) =>
-          new Map(levels.map(level => [level, `BL-fetched-${level}`])),
+        async (levels: number[]) => new Map(levels.map(level => [level, `BL-fetched-${level}`])),
       );
 
       const [results] = await listOperations(stakerAddress, options);
