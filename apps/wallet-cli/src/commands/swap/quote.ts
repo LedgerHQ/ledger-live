@@ -1,17 +1,13 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
-import { getParentAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
-import { integrateNewAccountDescriptor } from "@ledgerhq/live-wallet/walletsync/modules/accounts";
 import { getQuotes } from "@ledgerhq/live-common/wallet-api/Exchange/index";
-import { parseV1 } from "../../shared/accountDescriptor";
 import { createCommandOutput } from "../../output";
 import { walletCliDebug } from "../../shared/log";
+import { WalletAdapter } from "../../wallet";
 import {
   outputOption,
   resolveAccountDescriptor,
-  resolveAccountInput,
+  resolveAccountDescriptorV1,
   resolveOutputFormat,
 } from "../inputs";
 import { mapSwapQuoteLine } from "./quote-shared";
@@ -31,30 +27,7 @@ type SwapAddressFlags = {
   addressFlag: "--from-fresh-address" | "--to-fresh-address";
 };
 
-const createSwapAddressResolver = () => {
-  let syncCache: ReturnType<typeof makeBridgeCacheSystem> | undefined;
-
-  const getSyncCache = () =>
-    (syncCache ??= makeBridgeCacheSystem({
-      saveData: async () => {},
-      getData: async () => undefined,
-    }));
-
-  const getFreshAddress = (
-    account: Awaited<ReturnType<typeof integrateNewAccountDescriptor>>,
-  ): string | undefined => {
-    const parent = getParentAccount(account, [account]);
-    if (parent?.freshAddress) return parent.freshAddress;
-    if (
-      "freshAddress" in account &&
-      typeof account.freshAddress === "string" &&
-      account.freshAddress.length > 0
-    ) {
-      return account.freshAddress;
-    }
-    return undefined;
-  };
-
+const createSwapAddressResolver = (wallet: WalletAdapter) => {
   return async (
     directAddress: string | undefined,
     accountInput: string | undefined,
@@ -68,22 +41,13 @@ const createSwapAddressResolver = () => {
       throw new Error(`Missing ${addressFlag}. Use ${addressFlag} or ${accountFlag}.`);
     }
 
-    const descriptorInput = await resolveAccountInput(accountInput);
-    const descriptorV1 = parseV1(descriptorInput);
-    if (descriptorV1.type === "address") return descriptorV1.address;
-
-    const account = await integrateNewAccountDescriptor(
-      await resolveAccountDescriptor(accountInput),
-      getAccountBridge,
-      getSyncCache(),
-    );
-    const freshAddress = getFreshAddress(account);
-
-    if (freshAddress) {
-      return freshAddress;
+    const v1 = await resolveAccountDescriptorV1(accountInput);
+    if (v1.type === "address") {
+      return v1.address;
     }
 
-    throw new Error(`Could not resolve a fresh address from ${accountFlag}.`);
+    const descriptor = await resolveAccountDescriptor(accountInput);
+    return wallet.getFreshAddress(descriptor);
   };
 };
 
@@ -123,7 +87,8 @@ export default defineCommand({
     const out = createCommandOutput(output, { command: "swap quote", network: flags.from });
 
     await out.run(async () => {
-      const resolveSwapAddress = createSwapAddressResolver();
+      const wallet = new WalletAdapter();
+      const resolveSwapAddress = createSwapAddressResolver(wallet);
 
       const sendAddress = await resolveSwapAddress(
         flags["from-fresh-address"],
