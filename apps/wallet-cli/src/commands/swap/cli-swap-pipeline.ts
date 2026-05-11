@@ -33,13 +33,6 @@ const RATE_FLOATING: RateTypes = 0x01;
 
 const EXCHANGE_APP_NAME = "Exchange";
 
-/** Minimal device context for live-common exchange APDUs over wallet-cli DMK transport. */
-const walletCliExchangeDevice = async (): Promise<Device> => ({
-  deviceId: WALLET_CLI_DMK_DEVICE_ID,
-  modelId: (await getWalletCliDeviceModelId())!,
-  wired: true,
-});
-
 export type CliSwapLog = (message: string) => void;
 
 export type StartExchangeContext = {
@@ -88,6 +81,8 @@ export type FullSwapPipelineInput = {
   dryRun: boolean;
   fromAccount: AccountLike;
   toAccount: AccountLike;
+  getAccountBridge?: typeof getAccountBridge;
+  getDeviceModelId?: typeof getWalletCliDeviceModelId;
 };
 
 export type FullSwapPipelineResult = {
@@ -132,14 +127,19 @@ function buildStrategyTransaction(args: {
   return built as Transaction;
 }
 
-async function awaitStartExchangeContext(
+async function startExchangeContext(
   out: CommandOutput,
   provider: string,
+  getDeviceModelId: typeof getWalletCliDeviceModelId,
 ): Promise<StartExchangeContext> {
   out.swapExecuteProgress(
     `[1/5] Starting new exchange transaction on the device (open the ${EXCHANGE_APP_NAME} app when prompted)…`,
   );
-  const device = await walletCliExchangeDevice();
+  const device: Device = {
+    deviceId: WALLET_CLI_DMK_DEVICE_ID,
+    modelId: (await getDeviceModelId())!,
+    wired: true,
+  };
   const events = startExchange({
     device,
     exchangeType: EXCHANGE_SWAP,
@@ -164,16 +164,7 @@ async function awaitStartExchangeContext(
   return { transactionId, deviceInfo };
 }
 
-export async function startExchangeContext(
-  out: CommandOutput,
-  provider: string,
-): Promise<StartExchangeContext> {
-  return withLedgerManagerAppSession(EXCHANGE_APP_NAME, () =>
-    awaitStartExchangeContext(out, provider),
-  );
-}
-
-async function awaitCompleteExchangeTransaction(
+async function completeExchangeTransaction(
   out: CommandOutput,
   input: {
     provider: string;
@@ -189,6 +180,7 @@ async function awaitCompleteExchangeTransaction(
       fromCurrency: CryptoOrTokenCurrency;
       toCurrency: CryptoOrTokenCurrency;
     };
+    getDeviceModelId: typeof getWalletCliDeviceModelId;
   },
 ): Promise<Transaction> {
   out.swapExecuteProgress(
@@ -196,7 +188,7 @@ async function awaitCompleteExchangeTransaction(
   );
   const obs = completeExchange({
     deviceId: WALLET_CLI_DMK_DEVICE_ID,
-    deviceModelId: await getWalletCliDeviceModelId(),
+    deviceModelId: await input.getDeviceModelId(),
     provider: input.provider,
     binaryPayload: input.binaryPayload,
     signature: input.signature,
@@ -233,9 +225,10 @@ async function signAndBroadcast(
   fromAccount: AccountLike,
   fromParentAccount: Account | null | undefined,
   transaction: Transaction,
+  getBridge: typeof getAccountBridge,
 ): Promise<{ operationHash?: string }> {
   const mainAccount = getMainAccount(fromAccount, fromParentAccount);
-  const bridge = getAccountBridge(fromAccount, fromParentAccount);
+  const bridge = await getBridge(fromAccount, fromParentAccount);
   out.swapExecuteProgress("[5/5] Signing and broadcasting — follow prompts on the device…");
 
   const sign$ = bridge.signOperation({
@@ -275,6 +268,8 @@ export async function runFullSwapPipeline(
     dryRun,
     fromAccount,
     toAccount,
+    getAccountBridge: getBridge = getAccountBridge,
+    getDeviceModelId = getWalletCliDeviceModelId,
   } = input;
 
   const accounts: AccountLike[] = [fromAccount, toAccount];
@@ -290,97 +285,104 @@ export async function runFullSwapPipeline(
     ? toParentAccount.freshAddress
     : (toAccount as Account).freshAddress;
 
-  const { transactionId } = await startExchangeContext(out, provider);
+  return withLedgerManagerAppSession(EXCHANGE_APP_NAME, async () => {
+    const { transactionId } = await startExchangeContext(out, provider, getDeviceModelId);
 
-  out.swapExecuteProgress("[2/5] Requesting swap payload from Ledger swap API…");
-  const payload = await retrieveSwapPayload({
-    provider,
-    deviceTransactionId: transactionId,
-    fromAccountAddress,
-    toAccountAddress,
-    fromAccountCurrency: fromCurrency.id,
-    toAccountCurrency: toCurrency.id,
-    amount,
-    amountInAtomicUnit,
-    ...(quoteId != null && quoteId !== "" ? { quoteId } : {}),
-  });
-  out.swapExecuteProgress(
-    `[2/5] Swap API returned swapId=${payload.swapId ?? "(none)"}, payin address received.`,
-  );
-
-  const strategyTx = buildStrategyTransaction({
-    payinAddress: payload.payinAddress,
-    fromAmountAtomic: amountInAtomicUnit,
-    fromCurrency,
-    payinExtraId: payload.payinExtraId,
-    extraTransactionParameters: payload.extraTransactionParameters,
-  });
-
-  const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
-  if (strategyTx.family !== mainFromAccount.currency.family) {
-    throw new Error(
-      `Account and transaction must be from the same family. Account family: ${mainFromAccount.currency.family}, Transaction family: ${strategyTx.family}`,
+    out.swapExecuteProgress("[2/5] Requesting swap payload from Ledger swap API…");
+    const payload = await retrieveSwapPayload({
+      provider,
+      deviceTransactionId: transactionId,
+      fromAccountAddress,
+      toAccountAddress,
+      fromAccountCurrency: fromCurrency.id,
+      toAccountCurrency: toCurrency.id,
+      amount,
+      amountInAtomicUnit,
+      ...(quoteId != null && quoteId !== "" ? { quoteId } : {}),
+    });
+    out.swapExecuteProgress(
+      `[2/5] Swap API returned swapId=${payload.swapId ?? "(none)"}, payin address received.`,
     );
-  }
 
-  const accountBridge = getAccountBridge(fromAccount, fromParentAccount);
-  const subAccountId =
-    fromParentAccount && fromParentAccount.id !== fromAccount.id ? fromAccount.id : undefined;
-  const bridgeTx = accountBridge.createTransaction(fromAccount);
-  const tx = accountBridge.updateTransaction(
-    { ...bridgeTx, recipient: strategyTx.recipient },
-    {
-      ...strategyTx,
-      feesStrategy: feeStrategy.toLowerCase(),
-      subAccountId,
-    },
-  );
+    const strategyTx = buildStrategyTransaction({
+      payinAddress: payload.payinAddress,
+      fromAmountAtomic: amountInAtomicUnit,
+      fromCurrency,
+      payinExtraId: payload.payinExtraId,
+      extraTransactionParameters: payload.extraTransactionParameters,
+    });
 
-  const decodePayload = await decodeSwapPayload(payload.binaryPayload);
-  const amountExpectedTo = new BigNumber(decodePayload.amountToWallet.toString());
-  const magnitudeAwareRate = tx.amount && amountExpectedTo.dividedBy(tx.amount);
-  tx.amount = new BigNumber(tx.amount);
+    const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
+    if (strategyTx.family !== mainFromAccount.currency.family) {
+      throw new Error(
+        `Account and transaction must be from the same family. Account family: ${mainFromAccount.currency.family}, Transaction family: ${strategyTx.family}`,
+      );
+    }
 
-  const rateType = quoteId != null && quoteId !== "" ? RATE_FIXED : RATE_FLOATING;
+    const accountBridge = await getBridge(fromAccount, fromParentAccount);
+    const subAccountId =
+      fromParentAccount && fromParentAccount.id !== fromAccount.id ? fromAccount.id : undefined;
+    const bridgeTx = accountBridge.createTransaction(fromAccount);
+    const tx = accountBridge.updateTransaction(
+      { ...bridgeTx, recipient: strategyTx.recipient },
+      {
+        ...strategyTx,
+        feesStrategy: feeStrategy.toLowerCase(),
+        subAccountId,
+      },
+    );
 
-  const exchange = {
-    fromAccount,
-    fromParentAccount,
-    toAccount,
-    toParentAccount,
-    fromCurrency,
-    toCurrency,
-  };
+    const decodePayload = await decodeSwapPayload(payload.binaryPayload);
+    const amountExpectedTo = new BigNumber(decodePayload.amountToWallet.toString());
+    const magnitudeAwareRate = tx.amount && amountExpectedTo.dividedBy(tx.amount);
+    tx.amount = new BigNumber(tx.amount);
 
-  const finalTx = await withLedgerManagerAppSession(EXCHANGE_APP_NAME, async () =>
-    awaitCompleteExchangeTransaction(out, {
+    const rateType = quoteId != null && quoteId !== "" ? RATE_FIXED : RATE_FLOATING;
+
+    const exchange = {
+      fromAccount,
+      fromParentAccount,
+      toAccount,
+      toParentAccount,
+      fromCurrency,
+      toCurrency,
+    };
+
+    const finalTx = await completeExchangeTransaction(out, {
       provider,
       binaryPayload: payload.binaryPayload,
       signature: payload.signature,
       rateType,
       transaction: tx,
       exchange,
-    }),
-  );
+      getDeviceModelId,
+    });
 
-  let operationHash: string | undefined;
+    let operationHash: string | undefined;
 
-  if (dryRun) {
-    out.swapExecuteProgress(
-      "[5/5] Dry run complete. Transaction prepared but not signed or broadcasted.",
-    );
-  } else {
-    const signOutcome = await signAndBroadcast(out, fromAccount, fromParentAccount, finalTx);
-    operationHash = signOutcome.operationHash;
-  }
+    if (dryRun) {
+      out.swapExecuteProgress(
+        "[5/5] Dry run complete. Transaction prepared but not signed or broadcasted.",
+      );
+    } else {
+      const signOutcome = await signAndBroadcast(
+        out,
+        fromAccount,
+        fromParentAccount,
+        finalTx,
+        getBridge,
+      );
+      operationHash = signOutcome.operationHash;
+    }
 
-  return {
-    transactionId,
-    payload,
-    operationHash,
-    swapId: payload.swapId,
-    amountExpectedTo: amountExpectedTo.toFixed(),
-    ...(magnitudeAwareRate != null ? { magnitudeAwareRate: magnitudeAwareRate.toFixed() } : {}),
-    ...(dryRun ? { dryRun: true } : {}),
-  };
+    return {
+      transactionId,
+      payload,
+      operationHash,
+      swapId: payload.swapId,
+      amountExpectedTo: amountExpectedTo.toFixed(),
+      ...(magnitudeAwareRate != null ? { magnitudeAwareRate: magnitudeAwareRate.toFixed() } : {}),
+      ...(dryRun ? { dryRun: true } : {}),
+    };
+  });
 }
