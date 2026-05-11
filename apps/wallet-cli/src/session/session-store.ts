@@ -10,7 +10,10 @@ export const APP_NAME = "ledger-wallet-cli";
 const SESSION_FILE = "session.yaml";
 
 const SessionEntrySchema = z.object({
-  label: z.string(),
+  label: z
+    .string()
+    .min(1)
+    .regex(/^[A-Za-z0-9_-]+$/, "Session label must not contain ':' or other special characters"),
   descriptor: z.string(),
 });
 

@@ -32,8 +32,7 @@ export const deviceTimeoutOption = option(z.coerce.number().int().positive().def
 });
 
 export const accountOption = option(z.string().min(1).optional(), {
-  description:
-    "Account descriptor or session label (e.g. ethereum-1). Can also be the first positional arg.",
+  description: "Session label (e.g. ethereum-1). Can also be the first positional arg.",
   short: "a",
 });
 
@@ -44,20 +43,24 @@ export function resolveAccountArg(
   const arg = account ?? positional[0];
   if (!arg) {
     throw new Error(
-      "Missing account: use --account <descriptor-or-label> or pass it as the first positional argument.",
+      "Missing account: use --account <session-label> or pass the label as the first positional argument. Run `account discover` first to populate the session.",
     );
   }
   return arg;
 }
 
-// Contains ":" → descriptor passthrough; no ":" → session label lookup.
+// Session label lookup only — raw descriptors are not accepted as CLI arguments.
 export async function resolveAccountInput(input: string): Promise<string> {
-  if (input.includes(":")) return input;
+  if (input.includes(":")) {
+    throw new Error(
+      "Raw descriptors are not accepted as CLI arguments. Run `account discover` first, then reference the account by its session label (e.g. `--account ethereum-1`).",
+    );
+  }
   const session = await Session.read();
   const entry = session.accounts.find(e => e.label === input);
   if (!entry) {
     throw new Error(
-      `No account labeled "${input}" in session. Run \`account discover\` first or pass a full descriptor.`,
+      `No account labeled "${input}" in session. Run \`account discover\` first to populate the session.`,
     );
   }
   return entry.descriptor;

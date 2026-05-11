@@ -1,24 +1,33 @@
-import { describe, it, expect, beforeAll, afterAll } from "bun:test";
+import { describe, it, expect, beforeAll, afterAll, afterEach } from "bun:test";
 import { MockServer } from "../helpers/mock-server";
 import { runCli } from "../helpers/cli-runner";
+import { makeSessionDir } from "../helpers/session-fixture";
 import { ETH_SYNC_ROUTES } from "../helpers/eth-sync-routes";
 import { MOCK_ETH_DESCRIPTOR, MOCK_ETH_ADDRESS, MOCK_ETH_PUBKEY } from "../helpers/constants";
 
 describe("receive --verify command (mock DMK)", () => {
   const server = new MockServer(ETH_SYNC_ROUTES);
 
+  let sessionCleanup: (() => void) | undefined;
   beforeAll(() => server.start());
   afterAll(() => server.stop());
+  afterEach(() => {
+    sessionCleanup?.();
+    sessionCleanup = undefined;
+  });
 
   it("json output: returns the verified address from mock device", async () => {
+    const fixture = makeSessionDir([{ label: "ethereum-1", descriptor: MOCK_ETH_DESCRIPTOR }]);
+    sessionCleanup = fixture.cleanup;
     const { stdout, exitCode, stderr } = await runCli(
-      ["receive", "--account", MOCK_ETH_DESCRIPTOR, "--verify", "--output", "json"],
+      ["receive", "--account", "ethereum-1", "--verify", "--output", "json"],
       {
         WALLET_CLI_MOCK_PORT: String(server.port),
         WALLET_CLI_MOCK_DMK: "1",
         WALLET_CLI_MOCK_APP_RESULTS: JSON.stringify({
           Ethereum: { publicKey: MOCK_ETH_PUBKEY, address: MOCK_ETH_ADDRESS },
         }),
+        ...fixture.env,
       },
     );
     expect(exitCode, `stderr: ${stderr}`).toBe(0);

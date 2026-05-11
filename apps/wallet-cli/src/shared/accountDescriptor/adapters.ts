@@ -39,7 +39,7 @@ export class UnsupportedFamilyError extends Error {
 // ---------------------------------------------------------------------------
 
 function isXpub(seedIdentifier: string): boolean {
-  return /^[xyz]pub/.test(seedIdentifier) || /^[xyz]prv/.test(seedIdentifier);
+  return /^[xyztuv]pub/.test(seedIdentifier) || /^[xyztuv]prv/.test(seedIdentifier);
 }
 
 /**
