@@ -16,86 +16,29 @@ jest.mock("../../bridge/getFeesForTransaction", () => ({
   default: jest.fn().mockResolvedValue(new BigNumber(12)),
 }));
 
-const voteMock = jest.fn(() => ({
-  txo: {
-    encodeABI: jest.fn(() => ({ data: "vote_data" })),
-    estimateGas: jest.fn(async () => 1),
-  },
+jest.mock("../../network/client", () => ({
+  celoGasPrice: jest.fn(async () => BigInt(2)),
+  getCeloClient: jest.fn(() => ({
+    estimateGas: jest.fn(async () => BigInt(3)),
+    estimateMaxPriorityFeePerGas: jest.fn(async () => BigInt(1)),
+    getBlock: jest.fn(async () => ({ baseFeePerGas: BigInt(10) })),
+    getChainId: jest.fn(async () => 42220),
+    getTransactionCount: jest.fn(async () => 1),
+    readContract: jest.fn(async ({ functionName }: { functionName: string }) => {
+      if (functionName === "getAccountNonvotingLockedGold") return BigInt(22);
+      if (functionName === "getTotalVotesForEligibleValidatorGroups") return [[], []];
+      return BigInt(0);
+    }),
+  })),
 }));
 
-jest.mock("../../network/sdk", () => {
-  return {
-    celoKit: jest.fn(() => ({
-      contracts: {
-        getLockedGold: jest.fn(async () => ({
-          address: "address",
-          getAccountNonvotingLockedGold: jest.fn(async () => BigNumber(22)),
-          lock: jest.fn(() => ({
-            txo: {
-              encodeABI: jest.fn(() => ({ data: "lock_data" })),
-              estimateGas: jest.fn(async () => 2),
-            },
-          })),
-          unlock: jest.fn(() => ({
-            txo: {
-              encodeABI: jest.fn(() => ({ data: "unlock_data" })),
-              estimateGas: jest.fn(async () => 3),
-            },
-          })),
-          withdraw: jest.fn(() => ({
-            txo: {
-              encodeABI: jest.fn(() => ({ data: "withdraw_data" })),
-              estimateGas: jest.fn(async () => 3),
-            },
-          })),
-          vote: jest.fn(() => ({
-            txo: {
-              encodeABI: jest.fn(() => ({ data: "vote_data" })),
-              estimateGas: jest.fn(async () => 3),
-            },
-          })),
-        })),
-        getElection: jest.fn(async () => ({
-          vote: voteMock,
-          revoke: jest.fn(),
-          address: "vote_address",
-        })),
-        getAccounts: jest.fn(async () => ({
-          voteSignerToAccount: jest.fn(),
-          createAccount: jest.fn(() => ({
-            txo: {
-              encodeABI: jest.fn(() => ({ data: "register_data" })),
-              estimateGas: jest.fn(async () => 3),
-            },
-          })),
-          address: "register_address",
-        })),
-        getStableToken: jest.fn(async () => ({
-          address: "stable_token_address",
-          transfer: jest.fn(() => ({
-            txo: {
-              encodeABI: jest.fn(() => ({ data: "send_token_data" })),
-            },
-          })),
-        })),
-        getErc20: jest.fn(async () => ({
-          address: "erc20_token_address",
-          transfer: jest.fn(() => ({
-            txo: {
-              encodeABI: jest.fn(() => ({ data: "send_token_data" })),
-            },
-          })),
-        })),
-        getGoldToken: jest.fn(async () => ({ address: "gold_token_address" })),
-      },
-      connection: {
-        chainId: jest.fn(),
-        nonce: jest.fn(),
-        estimateGasWithInflationFactor: jest.fn().mockReturnValue(3),
-      },
-    })),
-  };
-});
+jest.mock("../../network/registry", () => ({
+  getRegistryAddressFor: jest.fn(async () => "0x0000000000000000000000000000000000001d00"),
+}));
+
+jest.mock("../../network/sdk", () => ({
+  voteSignerAccount: jest.fn(async () => "signer_account"),
+}));
 
 describe("estimateMaxSpendable", () => {
   it("returns the maximum spendable for a celo account", async () => {

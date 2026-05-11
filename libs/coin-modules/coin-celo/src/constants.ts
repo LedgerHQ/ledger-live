@@ -1,14 +1,18 @@
-import { StableToken } from "@celo/contractkit";
+import type { RegistryContractName } from "./network/registry";
 
-const CELO_STAKE_TOKENS_PAIR: Record<string, StableToken> = {
-  cEUR: StableToken.cEUR,
-  cREAL: StableToken.cREAL,
-  cUSD: StableToken.cUSD,
+/**
+ * Maps token tickers to their Celo Registry contract names.
+ * These are the identifiers passed to `getRegistryAddressFor`.
+ */
+const CELO_STAKE_TOKENS_PAIR: Record<string, RegistryContractName> = {
+  cEUR: "StableTokenEUR",
+  cREAL: "StableTokenBRL",
+  cUSD: "StableToken",
 };
 
 export const CELO_STABLE_TOKENS = Object.keys(CELO_STAKE_TOKENS_PAIR);
 
-export const getStableTokenEnum = (tokenTicker: string): StableToken =>
+export const getStableTokenRegistryName = (tokenTicker: string): RegistryContractName =>
   CELO_STAKE_TOKENS_PAIR[tokenTicker];
 
 /** Minimum gas for a simple native transfer (EVM standard). */
@@ -66,3 +70,5 @@ export const FEE_CURRENCY_BY_CONTRACT: Map<string, (typeof FEE_CURRENCY_OPTIONS)
     option,
   ]),
 );
+
+export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";

@@ -114,11 +114,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@celo/connect": "^7.0.0",
-    "@celo/contractkit": "^10.0.0",
-    "@celo/utils": "^8.0.3",
-    "@celo/wallet-base": "^8.0.0",
-    "@celo/wallet-ledger": "^8.0.0",
+    "@celo/abis": "^14.0.1",
     "@ledgerhq/coin-evm": "workspace:^",
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/cryptoassets": "workspace:^",
@@ -135,10 +131,10 @@
     "eip55": "^2.1.1",
     "invariant": "^2.2.4",
     "lodash": "^4.17.21",
-    "rxjs": "catalog:"
+    "rxjs": "catalog:",
+    "viem": "^2.27.0"
   },
   "devDependencies": {
-    "@celo/wallet-local": "^8.0.0",
     "@faker-js/faker": "^9.9.0",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
