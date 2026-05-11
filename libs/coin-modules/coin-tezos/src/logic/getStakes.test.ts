@@ -17,9 +17,11 @@ describe("getStakes", () => {
   });
 
   const mockGetAccountByAddress = jest.spyOn(tzktApi, "getAccountByAddress");
+  const mockGetUnstakeRequestsFinalizable = jest.spyOn(tzktApi, "getUnstakeRequestsFinalizable");
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockGetUnstakeRequestsFinalizable.mockResolvedValue(0n);
 
     coinConfig.setCoinConfig(() => ({
       status: { type: "active" },
@@ -265,6 +267,117 @@ describe("getStakes", () => {
           amount: 10n,
         },
       ]);
+    });
+  });
+
+  describe("finalizable unstakes", () => {
+    const address = "tz1FinalizableStaker";
+    const delegateAddress = "tz1KqTpEZ7Yob7QbPE4Hy4Wo8fHG8LhKxZSx";
+
+    function makeAccount(overrides: Record<string, unknown> = {}) {
+      return {
+        type: "user" as const,
+        address,
+        publicKey: "edpk...",
+        balance: 1000,
+        revealed: true,
+        counter: 0,
+        delegationLevel: 0,
+        delegationTime: "2026-01-01T00:00:00Z",
+        numTransactions: 0,
+        firstActivityTime: "2026-01-01T00:00:00Z",
+        ...overrides,
+      };
+    }
+
+    it("splits unstakedBalance into deactivating and finalizable when finalizable > 0", async () => {
+      mockGetAccountByAddress.mockResolvedValue(
+        makeAccount({
+          balance: 1000,
+          unstakedBalance: 100,
+          delegate: { alias: "B", address: delegateAddress, active: true },
+        }),
+      );
+      mockGetUnstakeRequestsFinalizable.mockResolvedValue(40n);
+
+      const result = await api.getStakes(address);
+
+      expect(result.items).toEqual([
+        {
+          uid: `delegation-${address}`,
+          address,
+          delegate: delegateAddress,
+          state: "active",
+          asset: { type: "native" },
+          amount: 1000n,
+        },
+        {
+          uid: `unstaking-${address}`,
+          address,
+          delegate: delegateAddress,
+          state: "deactivating",
+          asset: { type: "native" },
+          amount: 60n,
+        },
+        {
+          uid: `finalizable-${address}`,
+          address,
+          delegate: delegateAddress,
+          state: "inactive",
+          asset: { type: "native" },
+          amount: 40n,
+        },
+      ]);
+    });
+
+    it("emits only finalizable when the entire unstakedBalance is finalizable", async () => {
+      mockGetAccountByAddress.mockResolvedValue(
+        makeAccount({ balance: 1000, unstakedBalance: 100 }),
+      );
+      mockGetUnstakeRequestsFinalizable.mockResolvedValue(100n);
+
+      const result = await api.getStakes(address);
+
+      expect(result.items).toEqual([
+        {
+          uid: `finalizable-${address}`,
+          address,
+          state: "inactive",
+          asset: { type: "native" },
+          amount: 100n,
+        },
+      ]);
+    });
+
+    it("clamps finalizable to unstakedBalance when the two endpoints momentarily disagree", async () => {
+      // A `finalize_unstake` landing between the two TzKT calls could make
+      // `finalizable` exceed the still-cached `unstakedBalance`. Prevent a negative
+      // `unstaking-*` amount.
+      mockGetAccountByAddress.mockResolvedValue(
+        makeAccount({ balance: 1000, unstakedBalance: 30 }),
+      );
+      mockGetUnstakeRequestsFinalizable.mockResolvedValue(50n);
+
+      const result = await api.getStakes(address);
+
+      expect(result.items).toEqual([
+        {
+          uid: `finalizable-${address}`,
+          address,
+          state: "inactive",
+          asset: { type: "native" },
+          amount: 30n,
+        },
+      ]);
+    });
+
+    it("skips the finalizable endpoint entirely when unstakedBalance is 0", async () => {
+      mockGetAccountByAddress.mockResolvedValue(makeAccount({ balance: 1000, unstakedBalance: 0 }));
+
+      const result = await api.getStakes(address);
+
+      expect(result.items).toEqual([]);
+      expect(mockGetUnstakeRequestsFinalizable).not.toHaveBeenCalled();
     });
   });
 });

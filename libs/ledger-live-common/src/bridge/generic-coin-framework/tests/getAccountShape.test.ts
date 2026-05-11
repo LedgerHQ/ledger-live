@@ -27,14 +27,17 @@ jest.mock("../api", () => ({
     refreshOperations: (...a: any[]) => refreshOperationsMock(...a),
   }),
 }));
+const getBridgeApiMock = jest.fn();
 jest.mock("../bridge", () => ({
-  getBridgeApi: () => ({
-    getTokenFromAsset: getTokenFromAssetMock,
-    getChainSpecificRules: () => ({
-      getAccountShape: (...a: any[]) => chainSpecificGetAccountShapeMock(...a),
-    }),
-  }),
+  getBridgeApi: (...a: any[]) => getBridgeApiMock(...a),
 }));
+const defaultBridgeApi = () => ({
+  getTokenFromAsset: getTokenFromAssetMock,
+  getChainSpecificRules: () => ({
+    getAccountShape: (...a: any[]) => chainSpecificGetAccountShapeMock(...a),
+  }),
+});
+getBridgeApiMock.mockImplementation(defaultBridgeApi);
 
 const adaptCoreOperationToLiveOperationMock = jest.fn();
 const extractBalanceMock = jest.fn();
@@ -988,6 +991,210 @@ describe("genericGetAccountShape", () => {
       // delegatedBalance and delegation.amount use stake.amount (80), not b.value (100)
       expect((result as any).stakingResources?.delegatedBalance).toEqual(new BigNumber(80));
       expect((result as any).stakingResources?.delegations[0]?.amount).toEqual(new BigNumber(80));
+    });
+
+    test("usesStakingPositions: surfaces raw Stake[] preserving uid prefixes; no stakingResources", async () => {
+      getSyncHashMock.mockReturnValue("sync-hash");
+      extractBalanceMock.mockReturnValue({ value: 1000n, locked: 0n });
+      // Three balance rows mirroring buildStakesForAccount output: delegation-* / stake-* / unstaking-*
+      const stakes = [
+        {
+          uid: "delegation-tz1abc",
+          address: "tz1abc",
+          delegate: "tz1baker",
+          state: "active" as const,
+          asset: { type: "native" as const },
+          amount: 700n,
+        },
+        {
+          uid: "stake-tz1abc",
+          address: "tz1abc",
+          delegate: "tz1baker",
+          state: "active" as const,
+          asset: { type: "native" as const },
+          amount: 300n,
+        },
+        {
+          uid: "unstaking-tz1abc",
+          address: "tz1abc",
+          delegate: "tz1baker",
+          state: "deactivating" as const,
+          asset: { type: "native" as const },
+          amount: 50n,
+        },
+      ];
+      getBalanceMock.mockResolvedValue([
+        { asset: { type: "native" }, value: 1000n },
+        ...stakes.map(stake => ({ asset: { type: "native" }, value: stake.amount, stake })),
+      ]);
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+      buildSubAccountsMock.mockReturnValue([]);
+      inferSubOperationsMock.mockReturnValue([]);
+      lastBlockMock.mockResolvedValue({ height: 1 });
+      mergeOpsMock.mockImplementation((_old: unknown[], newOps: unknown[]) => newOps);
+      cleanedOperationMock.mockImplementation((op: unknown) => op);
+      chainSpecificGetAccountShapeMock.mockImplementation(() => {});
+
+      // Override the bridge mock to opt into the stakingPositions shape (Tezos config)
+      getBridgeApiMock.mockImplementationOnce(() => ({
+        ...defaultBridgeApi(),
+        usesStakingPositions: true,
+      }));
+
+      const getShape = genericGetAccountShape("mainnet", "tezos");
+      const result = await getShape(
+        {
+          address: "tz1abc",
+          initialAccount: undefined,
+          currency: { id: "tezos", name: "Tezos", family: "tezos" },
+          derivationMode: "",
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      const positions = (result as any).stakingPositions;
+      expect(positions).toHaveLength(3);
+      expect(positions.map((p: any) => p.uid)).toEqual([
+        "delegation-tz1abc",
+        "stake-tz1abc",
+        "unstaking-tz1abc",
+      ]);
+      // bigint framework amounts converted to BigNumber to match Account-side convention
+      expect(positions[0].amount).toEqual(new BigNumber(700));
+      expect(positions[1].amount).toEqual(new BigNumber(300));
+      expect(positions[2].amount).toEqual(new BigNumber(50));
+      // Tezos opts out of the EVM-shaped aggregate
+      expect((result as any).stakingResources).toBeUndefined();
+    });
+
+    test("usesStakingPositions: empty stakes => empty stakingPositions, no stakingResources", async () => {
+      // Account has never delegated/staked: balanceRes carries only the primary native row.
+      getSyncHashMock.mockReturnValue("sync-hash");
+      extractBalanceMock.mockReturnValue({ value: 1000n, locked: 0n });
+      getBalanceMock.mockResolvedValue([{ asset: { type: "native" }, value: 1000n }]);
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+      buildSubAccountsMock.mockReturnValue([]);
+      inferSubOperationsMock.mockReturnValue([]);
+      lastBlockMock.mockResolvedValue({ height: 1 });
+      mergeOpsMock.mockImplementation((_old: unknown[], newOps: unknown[]) => newOps);
+      cleanedOperationMock.mockImplementation((op: unknown) => op);
+      chainSpecificGetAccountShapeMock.mockImplementation(() => {});
+
+      getBridgeApiMock.mockImplementationOnce(() => ({
+        ...defaultBridgeApi(),
+        usesStakingPositions: true,
+      }));
+
+      const getShape = genericGetAccountShape("mainnet", "tezos");
+      const result = await getShape(
+        {
+          address: "tz1empty",
+          initialAccount: undefined,
+          currency: { id: "tezos", name: "Tezos", family: "tezos" },
+          derivationMode: "",
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      // Field is always emitted (the synced TezosAccount type requires it), even when empty
+      expect((result as any).stakingPositions).toEqual([]);
+      expect((result as any).stakingResources).toBeUndefined();
+    });
+
+    test("usesStakingPositions: preserves the available subset when only some kinds are present", async () => {
+      // Account has delegated but never opted into staking: only `delegation-*` is present.
+      // The `stake-*` and `unstaking-*` prefixes are absent and must NOT be synthesized.
+      getSyncHashMock.mockReturnValue("sync-hash");
+      extractBalanceMock.mockReturnValue({ value: 1000n, locked: 0n });
+      const delegation = {
+        uid: "delegation-tz1abc",
+        address: "tz1abc",
+        delegate: "tz1baker",
+        state: "active" as const,
+        asset: { type: "native" as const },
+        amount: 1000n,
+      };
+      getBalanceMock.mockResolvedValue([
+        { asset: { type: "native" }, value: 1000n },
+        { asset: { type: "native" }, value: delegation.amount, stake: delegation },
+      ]);
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+      buildSubAccountsMock.mockReturnValue([]);
+      inferSubOperationsMock.mockReturnValue([]);
+      lastBlockMock.mockResolvedValue({ height: 1 });
+      mergeOpsMock.mockImplementation((_old: unknown[], newOps: unknown[]) => newOps);
+      cleanedOperationMock.mockImplementation((op: unknown) => op);
+      chainSpecificGetAccountShapeMock.mockImplementation(() => {});
+
+      getBridgeApiMock.mockImplementationOnce(() => ({
+        ...defaultBridgeApi(),
+        usesStakingPositions: true,
+      }));
+
+      const getShape = genericGetAccountShape("mainnet", "tezos");
+      const result = await getShape(
+        {
+          address: "tz1abc",
+          initialAccount: undefined,
+          currency: { id: "tezos", name: "Tezos", family: "tezos" },
+          derivationMode: "",
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      const positions = (result as any).stakingPositions;
+      expect(positions).toHaveLength(1);
+      expect(positions[0].uid).toBe("delegation-tz1abc");
+      expect(positions[0].amount).toEqual(new BigNumber(1000));
+      expect((result as any).stakingResources).toBeUndefined();
+    });
+
+    test("usesStakingPositions: passes through stakes without `delegate` (e.g. unstake after redelegate)", async () => {
+      // Per buildStakesForAccount: `stake-*` and `unstaking-*` only carry `delegate` when
+      // `delegateAddress` is currently set; the field is omitted otherwise. Verify the
+      // pass-through preserves that omission rather than synthesizing it.
+      getSyncHashMock.mockReturnValue("sync-hash");
+      extractBalanceMock.mockReturnValue({ value: 1000n, locked: 0n });
+      const unstaking = {
+        uid: "unstaking-tz1abc",
+        address: "tz1abc",
+        // no delegate
+        state: "deactivating" as const,
+        asset: { type: "native" as const },
+        amount: 50n,
+      };
+      getBalanceMock.mockResolvedValue([
+        { asset: { type: "native" }, value: 1000n },
+        { asset: { type: "native" }, value: unstaking.amount, stake: unstaking },
+      ]);
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+      buildSubAccountsMock.mockReturnValue([]);
+      inferSubOperationsMock.mockReturnValue([]);
+      lastBlockMock.mockResolvedValue({ height: 1 });
+      mergeOpsMock.mockImplementation((_old: unknown[], newOps: unknown[]) => newOps);
+      cleanedOperationMock.mockImplementation((op: unknown) => op);
+      chainSpecificGetAccountShapeMock.mockImplementation(() => {});
+
+      getBridgeApiMock.mockImplementationOnce(() => ({
+        ...defaultBridgeApi(),
+        usesStakingPositions: true,
+      }));
+
+      const getShape = genericGetAccountShape("mainnet", "tezos");
+      const result = await getShape(
+        {
+          address: "tz1abc",
+          initialAccount: undefined,
+          currency: { id: "tezos", name: "Tezos", family: "tezos" },
+          derivationMode: "",
+        } as any,
+        { paginationConfig: {} as any },
+      );
+
+      const positions = (result as any).stakingPositions;
+      expect(positions).toHaveLength(1);
+      expect(positions[0]).not.toHaveProperty("delegate");
+      expect(positions[0].uid).toBe("unstaking-tz1abc");
     });
 
     test("Case 1: simple native transfer between EOAs", async () => {

@@ -1,5 +1,6 @@
 import type { AccountBridge } from "@ledgerhq/types-live";
 import evmAccountRawAssign from "./families/evm/accountRawAssign";
+import tezosAccountRawAssign from "./families/tezos/accountRawAssign";
 import type { GenericTransaction } from "./types";
 
 type AccountRawAssignHooks = {
@@ -18,6 +19,8 @@ export function getAccountRawAssignHooks(network: string): AccountRawAssignHooks
   switch (network) {
     case "evm":
       return evmAccountRawAssign;
+    case "tezos":
+      return tezosAccountRawAssign;
     default:
       return {};
   }

@@ -71,63 +71,71 @@ function validateBasicSendParams(intent: TransactionIntent): Record<string, Erro
   return errors;
 }
 
-/**
- * Validates specific transaction constraints based on account state
- */
-function validateTransactionConstraints(
+// send max not allowed on delegated accounts (must undelegate acc first); native XTZ only
+function validateSendConstraints(
   intent: TransactionIntent,
   senderInfo: APIUserAccount,
 ): Record<string, Error> {
-  const errors: Record<string, Error> = {};
-
-  // send max not allowed on delegated accounts (must undelegate acc first); native XTZ only
   if (
-    intent.type === "send" &&
     intent.useAllAmount &&
     resolveValidationOperationMode(intent) === "send" &&
     senderInfo.delegate?.address
   ) {
-    errors.amount = new RecommendUndelegation();
+    return { amount: new RecommendUndelegation() };
   }
+  return {};
+}
 
-  if (intent.type === "stake") {
-    if (!senderInfo.delegate?.address) {
-      errors.amount = new MustDelegateBeforeStaking();
-      return errors;
-    }
-
-    const amountError = validateStrictlyPositiveAmount(intent.amount);
-    if (amountError) {
-      errors.amount = amountError;
-    }
+function validateStakeConstraints(
+  intent: TransactionIntent,
+  senderInfo: APIUserAccount,
+): Record<string, Error> {
+  if (!senderInfo.delegate?.address) {
+    return { amount: new MustDelegateBeforeStaking() };
   }
+  const amountError = validateStrictlyPositiveAmount(intent.amount);
+  return amountError ? { amount: amountError } : {};
+}
 
-  if (intent.type === "unstake") {
-    const stakedBalance = BigInt(senderInfo.stakedBalance ?? 0);
-    if (stakedBalance <= 0n) {
-      errors.amount = new NotEnoughBalance();
-      return errors;
-    }
-
-    const amountError = validateStrictlyPositiveAmount(intent.amount);
-    if (amountError) {
-      errors.amount = amountError;
-      return errors;
-    }
-
-    if (intent.amount > stakedBalance) {
-      errors.amount = new NotEnoughBalance();
-    }
+function validateUnstakeConstraints(
+  intent: TransactionIntent,
+  senderInfo: APIUserAccount,
+): Record<string, Error> {
+  const stakedBalance = BigInt(senderInfo.stakedBalance ?? 0);
+  if (stakedBalance <= 0n) {
+    return { amount: new NotEnoughBalance() };
   }
-
-  if (intent.type === "finalize_unstake") {
-    const unstakedFinalizable = BigInt(senderInfo.unstakedFinalizable ?? 0);
-    if (unstakedFinalizable <= 0n) {
-      errors.amount = new NotEnoughBalance();
-    }
+  const amountError = validateStrictlyPositiveAmount(intent.amount);
+  if (amountError) {
+    return { amount: amountError };
   }
+  if (intent.amount > stakedBalance) {
+    return { amount: new NotEnoughBalance() };
+  }
+  return {};
+}
 
-  return errors;
+function validateFinalizeUnstakeConstraints(finalizable: bigint): Record<string, Error> {
+  return finalizable <= 0n ? { amount: new NotEnoughBalance() } : {};
+}
+
+function validateTransactionConstraints(
+  intent: TransactionIntent,
+  senderInfo: APIUserAccount,
+  finalizable: bigint,
+): Record<string, Error> {
+  switch (intent.type) {
+    case "send":
+      return validateSendConstraints(intent, senderInfo);
+    case "stake":
+      return validateStakeConstraints(intent, senderInfo);
+    case "unstake":
+      return validateUnstakeConstraints(intent, senderInfo);
+    case "finalize_unstake":
+      return validateFinalizeUnstakeConstraints(finalizable);
+    default:
+      return {};
+  }
 }
 
 /**
@@ -316,7 +324,14 @@ export async function validateIntent(intent: TransactionIntent): Promise<Transac
     const senderInfo = await api.getAccountByAddress(intent.sender);
     if (senderInfo.type !== "user") throw new Error("unexpected account type");
 
-    const constraintErrors = validateTransactionConstraints(intent, senderInfo);
+    // Finalizable amount lives on /v1/staking/unstake_requests, not the account
+    // endpoint; only `finalize_unstake` validation needs it.
+    const finalizable =
+      intent.type === "finalize_unstake"
+        ? await api.getUnstakeRequestsFinalizable(intent.sender)
+        : 0n;
+
+    const constraintErrors = validateTransactionConstraints(intent, senderInfo, finalizable);
     Object.assign(errors, constraintErrors);
 
     if (Object.keys(errors).length > 0) {
