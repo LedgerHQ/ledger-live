@@ -47,8 +47,7 @@ test.describe("Portfolio Wallet 4.0 - Zero balance state", () => {
       tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
       annotation: {
         type: "TMS",
-        description:
-          "B2CQA-4343, B2CQA-4350, B2CQA-4351, B2CQA-4347, B2CQA-4339, B2CQA-4340, B2CQA-4342",
+        description: "B2CQA-4343",
       },
     },
     async ({ app }) => {
@@ -82,8 +81,7 @@ test.describe("Portfolio Wallet 4.0 - With Account", () => {
       tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
       annotation: {
         type: "TMS",
-        description:
-          "B2CQA-4343, B2CQA-4350, B2CQA-4351, B2CQA-4347, B2CQA-4339, B2CQA-4340, B2CQA-4345",
+        description: "B2CQA-4350, B2CQA-4340, B2CQA-4342, B2CQA-4345",
       },
     },
     async ({ app }) => {
@@ -100,6 +98,33 @@ test.describe("Portfolio Wallet 4.0 - With Account", () => {
       await app.analytics.expectAnalyticsScreenToBeVisible();
       await app.analytics.clickBackButton();
       await app.portfolio.expectPortfolioScreenToBeVisible();
+    },
+  );
+});
+
+test.describe("Portfolio Wallet 4.0 - With Funds", () => {
+  test.use({
+    teamOwner: Team.WALLET_XP,
+    userdata: "1AccountBTC1AccountETH",
+    featureFlags: LWD_WALLET_40_FF_ENABLED,
+  });
+
+  test(
+    "Portfolio happy path: with funds, then verify balance and quick actions",
+    {
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-4347, B2CQA-4339",
+      },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      await app.portfolio.checkSellButtonEnabled();
+      await app.portfolio.checkSendButtonEnabled();
+      await app.portfolio.expectBalanceVisibility();
+      await app.portfolio.checkOneDayPerformanceIndicatorVisibility();
     },
   );
 });
