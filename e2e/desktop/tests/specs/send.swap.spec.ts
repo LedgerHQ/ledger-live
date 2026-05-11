@@ -423,13 +423,13 @@ for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
           if (provider.app !== exchangeApp) {
             await speculos.relaunch(provider.app.name);
           }
-          await app.swap.clickExchangeButton();
+          await app.swap.clickExchangeButton(provider.name);
           await app.swap.clickExecuteSwapButton();
           await app.swap.clickContinueButton();
           await app.speculos.verifyAmountsAndAcceptSwap(swap, minAmount);
           await app.swap.expectTransactionSentToasterToBeVisible();
         } else {
-          await app.swap.clickExchangeButton();
+          await app.swap.clickExchangeButton(provider.name);
           await app.speculos.verifyAmountsAndAcceptSwap(swap, minAmount);
           await app.swapDrawer.verifyExchangeCompletedTextContent(
             swap.accountToCredit.currency.name,

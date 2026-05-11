@@ -36,9 +36,11 @@ export class SwapPage extends WebViewAppPage {
   private quoteCardProviderName = "compact-quote-card-provider-";
   private specificQuoteCardProviderName = (provider: string) =>
     `[data-testid^='compact-quote-card-provider-name-${provider.toLowerCase()}']`;
-  private baseProviderSelector = (provider: string, suffix: string) =>
-    `[data-testid^="quote-container-${provider}"][data-testid$="${suffix}"]`;
-  private numberOfQuotes = "number-of-quotes";
+  private providerContainerSelector = (provider: string) =>
+    `[data-testid^="quote-container-${provider}"]`;
+  private providerContainerInfoSelector = (provider: string, suffix: string) =>
+    `${this.providerContainerSelector(provider)}[data-testid$="${suffix}"]`;
+  private bestValueInfoIcon = "best-value-info-icon";
   private switchButton = "to-account-switch-accounts";
   private swapMaxToggle = "from-account-max-toggle";
   private quotesCountdown = "quotes-countdown";
@@ -78,7 +80,9 @@ export class SwapPage extends WebViewAppPage {
   @step("Get provider list")
   async getProviderList() {
     const webview = await this.getWebView();
-    await expect(webview.getByTestId(this.numberOfQuotes)).toBeVisible();
+    // Quotes are confirmed loaded once the best-offer info icon (rendered next
+    // to the "Best Offer" title in the quotes list) is visible.
+    await expect(webview.getByTestId(this.bestValueInfoIcon)).toBeVisible();
     await expect(webview.getByTestId(this.quotesCountdown)).toBeVisible();
 
     return await webview
@@ -104,26 +108,31 @@ export class SwapPage extends WebViewAppPage {
     const webview = await this.getWebView();
     const provider = Provider.getNameByUiName(providerList[0]);
 
-    await webview.locator(this.baseProviderSelector(provider, "amount-label")).first().click();
+    await webview
+      .locator(this.providerContainerInfoSelector(provider, "amount-label"))
+      .first()
+      .click();
     await expect(
-      webview.locator(this.baseProviderSelector(provider, "amount-label")),
+      webview.locator(this.providerContainerInfoSelector(provider, "amount-label")),
     ).toBeVisible();
     await expect(
-      webview.locator(this.baseProviderSelector(provider, "fiatAmount-label")),
+      webview.locator(this.providerContainerInfoSelector(provider, "fiatAmount-label")),
     ).toBeVisible();
     await expect(
-      webview.locator(this.baseProviderSelector(provider, "networkFees-heading")),
+      webview.locator(this.providerContainerInfoSelector(provider, "networkFees-heading")),
     ).toBeVisible();
     await expect(
       webview
-        .locator(this.baseProviderSelector(provider, "extraFeesContainer"))
+        .locator(this.providerContainerInfoSelector(provider, "extraFeesContainer"))
         .getByText(/Floating rate|Fixed rate/),
     ).toBeVisible();
     await expect(
-      webview.locator(this.baseProviderSelector(provider, "rate-infoIcon")),
+      webview.locator(this.providerContainerInfoSelector(provider, "rate-infoIcon")),
     ).toBeVisible();
     await expect(
-      webview.locator(this.baseProviderSelector(provider, "extraFeesContainer")).getByText(ticker),
+      webview
+        .locator(this.providerContainerInfoSelector(provider, "extraFeesContainer"))
+        .getByText(ticker),
     ).toBeVisible();
     if (
       provider === Provider.ONE_INCH.name ||
@@ -133,11 +142,13 @@ export class SwapPage extends WebViewAppPage {
     ) {
       await expect(
         webview
-          .locator(this.baseProviderSelector(provider, "extraFeesContainer"))
+          .locator(this.providerContainerInfoSelector(provider, "extraFeesContainer"))
           .getByText("Max Slippage"),
       ).toBeVisible();
       await expect(
-        webview.locator(this.baseProviderSelector(provider, "extraFeesContainer")).getByText("%"),
+        webview
+          .locator(this.providerContainerInfoSelector(provider, "extraFeesContainer"))
+          .getByText("%"),
       ).toBeVisible();
     }
     await this.checkExchangeButton(providerList[0]);
@@ -215,13 +226,19 @@ export class SwapPage extends WebViewAppPage {
 
     const providersList = await this.getProviderList();
 
-    const providers = providersList.filter(providerName => {
-      return Object.values(Provider).find(p => p.uiName === providerName);
-    });
+    const providers = providersList
+      .map(providerName => ({
+        providerName,
+        provider: Object.values(Provider).find(p => p.uiName === providerName),
+      }))
+      .filter(
+        (entry): entry is { providerName: string; provider: Provider } =>
+          entry.provider !== undefined,
+      );
 
-    for (const providerName of providers) {
+    for (const { providerName, provider } of providers) {
       const providerLocator = webview
-        .locator(this.specificQuoteCardProviderName(providerName))
+        .locator(this.specificQuoteCardProviderName(provider.name))
         .first();
 
       if (await providerLocator.isVisible()) {
@@ -251,7 +268,9 @@ export class SwapPage extends WebViewAppPage {
     await expect(errorMessageSpan).toBeVisible();
     const insufficientFundsBuyButton = webview.getByTestId(this.insufficientFundsBuyButton);
     await expect(insufficientFundsBuyButton).toBeEnabled();
-    await expect(webview.getByTestId(this.executeButtonDisabled)).toBeDisabled();
+    // Each quote card renders its own disabled CTA when the swap is
+    // blocked; assert on the first match instead of a unique element.
+    await expect(webview.getByTestId(this.executeButtonDisabled).first()).toBeDisabled();
   }
 
   @step("Extract quotes and fees")
@@ -296,12 +315,14 @@ export class SwapPage extends WebViewAppPage {
   }
 
   @step("Click Exchange button")
-  async clickExchangeButton() {
+  async clickExchangeButton(provider: string) {
     const webview = await this.getWebView();
-    const swapButton = webview.getByTestId(this.swapBtn);
-    await expect(swapButton).toBeVisible();
-    await expect(swapButton).toBeEnabled();
-    await swapButton.click();
+    await webview
+      .locator(this.providerContainerSelector(provider))
+      .getByTestId(this.swapBtn)
+      // 'first' as workaround for changely showing float AND fixed in the list
+      .first()
+      .click();
   }
 
   @step("Click Execute Swap button")
@@ -466,7 +487,9 @@ export class SwapPage extends WebViewAppPage {
   @step("verify quotes are displayed")
   async checkQuotes() {
     const webview = await this.getWebView();
-    await expect(webview.getByTestId(this.numberOfQuotes)).toBeVisible();
+    // Quotes are confirmed loaded once the best-offer info icon (rendered next
+    // to the "Best Offer" title in the quotes list) is visible.
+    await expect(webview.getByTestId(this.bestValueInfoIcon)).toBeVisible();
   }
 
   @step("Go and wait for Swap app to be ready")

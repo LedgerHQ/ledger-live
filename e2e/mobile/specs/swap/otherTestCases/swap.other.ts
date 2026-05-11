@@ -113,7 +113,7 @@ export function runSwapWithDifferentSeedTest(
       const provider = await app.swapLiveApp.selectExchange();
       await app.swapLiveApp.checkExchangeButtonHasProviderName(provider.uiName);
       await app.common.disableSynchronizationForiOS();
-      await app.swapLiveApp.tapExecuteSwap();
+      await app.swapLiveApp.tapExecuteSwap(provider.uiName);
       if (errorMessage) {
         await app.swapLiveApp.checkErrorMessage(errorMessage);
       } else {
@@ -258,9 +258,9 @@ export function runUserRefusesTransactionTest(
         rejectedSwap.accountToCredit,
         minAmount,
       );
-      await app.swapLiveApp.selectExchange();
+      const provider = await app.swapLiveApp.selectExchange();
       await app.common.disableSynchronizationForiOS();
-      await app.swapLiveApp.tapExecuteSwap();
+      await app.swapLiveApp.tapExecuteSwap(provider.uiName);
       await app.swap.verifyAmountsAndRejectSwap(rejectedSwap, minAmount);
       await app.swapLiveApp.checkErrorMessage("Please retry or contact Ledger Support if in doubt");
     });
@@ -407,10 +407,10 @@ export function runSwapWithSendMaxTest(
       await app.swapLiveApp.tapGetQuotesButton();
       await app.swapLiveApp.waitForQuotes();
 
-      await app.swapLiveApp.selectExchange();
+      const provider = await app.swapLiveApp.selectExchange();
       await app.common.disableSynchronizationForiOS();
 
-      await app.swapLiveApp.tapExecuteSwap();
+      await app.swapLiveApp.tapExecuteSwap(provider.uiName);
 
       const swap = new Swap(fromAccount, toAccount, amountToSend);
       await app.swap.verifyAmountsAndAcceptSwap(swap, amountToSend);
