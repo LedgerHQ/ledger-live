@@ -1,7 +1,7 @@
-import assert from "assert/strict";
-import fs from "fs";
-import os from "os";
-import path from "path";
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import { test } from "node:test";
 
 import {
@@ -67,6 +67,7 @@ test("emits warnings but preserves resolved filter when a tag has no matches", (
     );
   } finally {
     console.warn = originalWarn;
+    fs.rmSync(tempDir, { recursive: true, force: true });
   }
 
   assert.equal(warnings.length, 3);

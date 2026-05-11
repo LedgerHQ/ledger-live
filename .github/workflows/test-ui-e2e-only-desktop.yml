@@ -265,11 +265,14 @@ jobs:
         id: test-filter
         run: |
           RESOLVED_FILTER="$(node scripts/resolve-e2e-test-filter.mjs \
-            --input "${{ inputs.test_filter }}" \
-            --smoke-tests "${{ inputs.smoke_tests }}" \
+            --input "$TEST_FILTER_INPUT" \
+            --smoke-tests "$SMOKE_TESTS_INPUT" \
             --check-dir "e2e/desktop/tests")"
           echo "filter=$RESOLVED_FILTER" >> $GITHUB_OUTPUT
         shell: bash
+        env:
+          TEST_FILTER_INPUT: ${{ inputs.test_filter }}
+          SMOKE_TESTS_INPUT: ${{ inputs.smoke_tests }}
 
       - name: Write workflow context to GitHub Summary
         run: |
