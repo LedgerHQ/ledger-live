@@ -1,6 +1,15 @@
 export const PROGRAM_ID = {
   CREDITS: "credits.aleo",
+  TOKEN_REGISTRY: "token_registry.aleo",
+  USAD: "usad_stablecoin.aleo",
+  USDCX: "usdcx_stablecoin.aleo",
 };
+
+export const TOKENS_PROGRAMS = [
+  PROGRAM_ID.TOKEN_REGISTRY,
+  PROGRAM_ID.USAD,
+  PROGRAM_ID.USDCX,
+] as const;
 
 export const EXPLORER_TRANSFER_TYPES = {
   PRIVATE: "transfer_private",
