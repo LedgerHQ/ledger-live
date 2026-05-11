@@ -60,6 +60,9 @@ catalogs:
     '@ledgerhq/lumen-ui-react':
       specifier: 0.1.30
       version: 0.1.30
+    '@ledgerhq/lumen-ui-react-visualization':
+      specifier: 0.1.8
+      version: 0.1.8
     '@ledgerhq/lumen-ui-rnative':
       specifier: 0.1.29
       version: 0.1.29
@@ -1029,6 +1032,9 @@ importers:
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
         version: 0.1.30(dcbfab10dcd5417d898239a9a392543b)
+      '@ledgerhq/lumen-ui-react-visualization':
+        specifier: 'catalog:'
+        version: 0.1.8(@ledgerhq/lumen-design-core@0.1.12)(@ledgerhq/lumen-ui-react@0.1.30(dcbfab10dcd5417d898239a9a392543b))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(tailwind-merge@3.4.0)
       '@ledgerhq/react-ui':
         specifier: workspace:^
         version: link:../../libs/ui/packages/react
@@ -17192,6 +17198,17 @@ packages:
 
   '@ledgerhq/lumen-design-core@0.1.12':
     resolution: {integrity: sha512-McBfYo5jZwhkBirtSQwmVAdc/YJuO/w7pw4h2zyxU5KHQiQfEUmJdg2/0h3oTSpKdtuHCl59+QHWLHQZf3SlcA==}
+
+  '@ledgerhq/lumen-ui-react-visualization@0.1.8':
+    resolution: {integrity: sha512-q+Y7jcJGFHxcRsmxc4QMqdpVYtqGPRw5d8/7+c/llZ+XAUlTxjCwY4ms8VC9oM+iy8sGck/syevahX6/Ax6dnQ==}
+    peerDependencies:
+      '@ledgerhq/lumen-design-core': 0.1.12
+      '@ledgerhq/lumen-ui-react': 0.1.29
+      class-variance-authority: ^0.7.1
+      clsx: ^2.1.1
+      react: 19.0.0
+      react-dom: 19.0.0
+      tailwind-merge: ^2.6.0
 
   '@ledgerhq/lumen-ui-react@0.1.30':
     resolution: {integrity: sha512-QHkU+4u5eR6yMTBMYc4dRRyVkr6Xp2gombDtOu1KlgnhvCTdmkhr8QdVLhjhpj7rVsndYIqCmS8YNCyc9u34Rg==}
@@ -46146,6 +46163,20 @@ snapshots:
     dependencies:
       tailwindcss: 4.1.18
       tslib: 2.6.2
+
+  '@ledgerhq/lumen-ui-react-visualization@0.1.8(@ledgerhq/lumen-design-core@0.1.12)(@ledgerhq/lumen-ui-react@0.1.30(dcbfab10dcd5417d898239a9a392543b))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(tailwind-merge@3.4.0)':
+    dependencies:
+      '@ledgerhq/lumen-design-core': 0.1.12
+      '@ledgerhq/lumen-ui-react': 0.1.30(dcbfab10dcd5417d898239a9a392543b)
+      '@ledgerhq/lumen-utils-shared': 0.1.3(react@19.0.0)
+      class-variance-authority: 0.7.1
+      clsx: 2.1.1
+      d3-array: 3.2.4
+      d3-scale: 4.0.2
+      d3-shape: 3.2.0
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
+      tailwind-merge: 3.4.0
 
   '@ledgerhq/lumen-ui-react@0.1.30(6d5eafba7705ee38ebc0331edc563a6c)':
     dependencies:
