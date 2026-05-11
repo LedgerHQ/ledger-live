@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 4.4.0-next.2
+
+### Minor Changes
+
+- [#17333](https://github.com/LedgerHQ/ledger-live/pull/17333) [`e09a2a8`](https://github.com/LedgerHQ/ledger-live/commit/e09a2a88edf67eeef5e0131cef63fbbee48db4e2) Thanks [@thesan](https://github.com/thesan)! - Check signatures on pre-release builds
+
 ## 4.4.0-next.1
 
 ### Patch Changes
