@@ -8935,6 +8935,36 @@
       "withdrawableBalance": "Withdrawable",
       "withdrawableBalanceTooltip": "Funds you can reclaim from offers you sent that have expired. Withdraw to move these back to your available balance."
     },
+    "disclaimer": {
+      "title": "Setup Canton Network",
+      "intro": "Canton has unique properties that require your awareness before continuing:",
+      "bullets": {
+        "utxo": {
+          "title": "UTXO-based balance",
+          "body": "Balance exists as individual coin contracts, capped at 100 per transfer. Idle contracts lose value over time and expire if fees exceed their balance."
+        },
+        "offers": {
+          "title": "Offer-based transfers",
+          "body": "Nothing settles automatically. Sent transfers can be withdrawn; received transfers need manual accept or reject. Manage offers from your Canton dashboard."
+        },
+        "dualValidator": {
+          "title": "Dual-validator security",
+          "body": "Transactions require co-signing from both Ledger and Klin. Neither can act on your behalf alone."
+        },
+        "tokenLiability": {
+          "title": "Standard token liability ⚠️",
+          "body": "Token recovery in a failure scenario is the token issuer's responsibility, not Ledger's."
+        }
+      },
+      "agreeLabel": "I agree to <1>Canton Network Terms and Ledger’s liability exclusion</1>",
+      "cancel": "Cancel",
+      "agree": "Agree",
+      "terms": {
+        "title": "Canton Network Terms",
+        "sectionTitle": "Standard Token Liability & Recovery",
+        "body": "Ledger only supports standard tokens issued through the Digital Asset (DA) Registry. Ledger is not the issuer of these tokens and holds no liability for their value, management, or underlying smart contracts.\n\nIn the event of a Ledger service disruption or \"disaster recovery\" failure, Ledger cannot recover your assets. You must contact the specific Token Issuer (Asset Admin) directly to initiate recovery via their \"Asset Freeze\" or \"Registry Recovery\" protocols. Your recourse lies solely with the Token Issuer under their existing Service Level Agreements (SLAs). By proceeding, you acknowledge that Ledger and its affiliates are excluded from all liability arising from the loss, recovery, or inability to recover these tokens."
+      }
+    },
     "onboard": {
       "account": "Account",
       "authorize": "Authorize",
