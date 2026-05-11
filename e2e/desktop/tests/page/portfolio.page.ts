@@ -155,6 +155,13 @@ export class PortfolioPage extends AppPage {
     await expect(this.portfolioTotalBalance).toContainText(counterValue);
   }
 
+  @step("Expect total balance to be zero")
+  async expectTotalBalanceToBeZero() {
+    await expect(this.portfolioTotalBalance).toBeVisible();
+    // DisplayAmount animation pollutes textContent with hidden digits; aria-label keeps the clean amount.
+    await expect(this.portfolioTotalBalance).toHaveAttribute("aria-label", "$ 0.00");
+  }
+
   @step("Expect balance diff to display the correct counter value $0")
   async expectBalanceDiffCounterValue(counterValue: string) {
     await expect(this.portfolioTrendPercentage).toBeVisible();

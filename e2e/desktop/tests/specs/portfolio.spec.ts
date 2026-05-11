@@ -72,12 +72,12 @@ test.describe("Portfolio Wallet 4.0 - Zero balance state", () => {
 test.describe("Portfolio Wallet 4.0 - With Account", () => {
   test.use({
     teamOwner: Team.WALLET_XP,
-    userdata: "1AccountBTC1AccountETH",
+    userdata: "1AccountSOL0Balance",
     featureFlags: LWD_WALLET_40_FF_ENABLED,
   });
 
   test(
-    "Portfolio happy path: with account, then verify balance and analytics",
+    "Portfolio happy path: with zero-balance account, then verify balance and analytics",
     {
       tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
       annotation: {
@@ -89,10 +89,12 @@ test.describe("Portfolio Wallet 4.0 - With Account", () => {
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-      await app.portfolio.checkSellButtonEnabled();
-      await app.portfolio.checkSendButtonEnabled();
+      await app.portfolio.checkReceiveButtonVisibility();
+      await app.portfolio.checkBuyButtonVisibility();
+      await app.portfolio.checkSellButtonDisabled();
+      await app.portfolio.checkSendButtonDisabled();
 
-      await app.portfolio.expectBalanceVisibility();
+      await app.portfolio.expectTotalBalanceToBeZero();
       await app.portfolio.checkOneDayPerformanceIndicatorVisibility();
       await app.portfolio.clickOnPerformancePill();
       await app.analytics.expectAnalyticsScreenToBeVisible();
