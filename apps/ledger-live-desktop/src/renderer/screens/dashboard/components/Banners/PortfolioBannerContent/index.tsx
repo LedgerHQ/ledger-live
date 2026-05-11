@@ -46,7 +46,7 @@ const PortfolioBannerWallet40 = memo(function PortfolioBannerWallet40({
  * **Wallet40** (`shouldDisplayFinishOnboardingWidget`):
  * - LNS upsell when `isLNSUpsellBannerVisible`.
  * - Finish onboarding and/or Recover widgets in a row when either applies.
- * - Otherwise `RecoverBanner` (passthrough / Recover UX) wrapping `PortfolioContentCards`.
+ * - Otherwise `PortfolioContentCards` directly (via `PortfolioBannerWallet40`).
  *
  * **Legacy** (Wallet40 off):
  * - Post-onboarding hub: `RecoverBanner` wrapping `PostOnboardingHubBanner` when the wallet entry
