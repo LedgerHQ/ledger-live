@@ -34,10 +34,8 @@ react {
     //   The list of variants to that are debuggable. For those we're going to
     //   skip the bundling of the JS bundle and the assets. By default is just 'debug'.
     //   If you add flavors like lite, prod, etc. you'll have to list your debuggableVariants.
-    // RN 0.81: debuggableVariants replaces project.ext.react.bundleInDebug.
-    // Variants listed here use the dev server (no JS bundling). Default is ["debug"].
-    // ANDROID_BUNDLE_IN_DEBUG forces bundling even in debug (mirrors the old bundleInDebug=true).
-    // SKIP_JS_BUNDLING=true marks the detox flavor as debuggable (handled externally).
+    // RN 0.81+: debuggableVariants controls JS bundling (replaces project.ext.react.bundleInDebug).
+    // Ref: https://github.com/facebook/react-native/releases/tag/v0.81.0
     def bundleInDebug = System.getenv("ANDROID_BUNDLE_IN_DEBUG") != null
     def skipJsBundling = System.getenv("SKIP_JS_BUNDLING") == "true"
     debuggableVariants = bundleInDebug
