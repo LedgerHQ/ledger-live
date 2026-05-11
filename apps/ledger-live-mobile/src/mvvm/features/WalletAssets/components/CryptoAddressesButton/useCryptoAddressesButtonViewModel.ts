@@ -1,5 +1,6 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
@@ -7,7 +8,6 @@ import { NavigatorName, ScreenName } from "~/const";
 import { useSelector } from "~/context/hooks";
 import { shallowAccountsSelector } from "~/reducers/accounts";
 import { track } from "~/analytics";
-import { useCategorizedAssetsFromPortfolio } from "LLM/hooks/useCategorizedAssetsFromPortfolio";
 
 interface CryptoAddressesButtonViewModelResult {
   accountsCount: number;
@@ -26,20 +26,15 @@ export function useCryptoAddressesButtonViewModel(): CryptoAddressesButtonViewMo
   const accounts = useSelector(shallowAccountsSelector);
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
   const route = useRoute();
-  const { categorizedAssets } = useCategorizedAssetsFromPortfolio();
   const [isAddAccountOpen, setIsAddAccountOpen] = useState(false);
 
   const accountsCount = accounts.length;
   const hasAccounts = accountsCount > 0;
   const shouldShowAddAccount = isAddAccountOpen && !hasAccounts;
 
-  const firstThreeCurrencies = useMemo(
-    () =>
-      [...categorizedAssets.cryptos, ...categorizedAssets.stablecoins]
-        .sort((a, b) => b.value - a.value)
-        .slice(0, MAX_ACCOUNTS_TO_DISPLAY)
-        .map(asset => asset.currency),
-    [categorizedAssets],
+  const firstThreeCurrencies = [...new Set(accounts.map(a => getAccountCurrency(a)))].slice(
+    0,
+    MAX_ACCOUNTS_TO_DISPLAY,
   );
 
   const onPress = useCallback(() => {
