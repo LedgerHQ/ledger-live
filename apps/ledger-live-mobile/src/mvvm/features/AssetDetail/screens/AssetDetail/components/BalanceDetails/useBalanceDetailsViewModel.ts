@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { shallowEqual } from "react-redux";
 import BigNumber from "bignumber.js";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { AssetDetailCurrencyProps } from "LLM/features/AssetDetail/types";
 import type { FormattedValue } from "@ledgerhq/lumen-ui-rnative";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useCalculate } from "@ledgerhq/live-countervalues-react";
@@ -23,7 +23,7 @@ type EarnState =
   | { type: "banner"; label: string }
   | { type: "staked"; formattedAvailable: string; formattedDeposit: string };
 
-export function useBalanceDetailsViewModel(currency: CryptoCurrency | undefined) {
+export function useBalanceDetailsViewModel(currency: AssetDetailCurrencyProps) {
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const { locale } = useLocale();
   const { t } = useTranslation();

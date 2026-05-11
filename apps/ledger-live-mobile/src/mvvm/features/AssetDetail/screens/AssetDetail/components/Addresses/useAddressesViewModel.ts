@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { shallowEqual } from "react-redux";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { AssetDetailCurrencyProps } from "LLM/features/AssetDetail/types";
 import type { Account } from "@ledgerhq/types-live";
 import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
@@ -19,7 +19,7 @@ export type AddressAccountData = Readonly<{
   truncatedAddress: string;
 }>;
 
-export function useAddressesViewModel(currency: CryptoCurrency | undefined) {
+export function useAddressesViewModel(currency: AssetDetailCurrencyProps) {
   const navigation = useNavigation();
   const walletState = useSelector(walletSelector);
 
@@ -53,10 +53,11 @@ export function useAddressesViewModel(currency: CryptoCurrency | undefined) {
       currency: currency.id,
       page: "Asset Detail",
     });
+    const cryptoCurrency = currency.type === "TokenCurrency" ? currency.parentCurrency : currency;
     navigation.navigate(NavigatorName.DeviceSelection, {
       screen: ScreenName.SelectDevice,
       params: {
-        currency,
+        currency: cryptoCurrency,
         context: AddAccountContexts.AddAccounts,
       },
     });
