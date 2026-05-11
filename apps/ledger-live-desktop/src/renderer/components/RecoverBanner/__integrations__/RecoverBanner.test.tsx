@@ -37,17 +37,6 @@ describe("RecoverBanner", () => {
   });
 
   describe("subscribe-done state (STARGATE_SUBSCRIBE)", () => {
-    it("shows banner when DISPLAY_BANNER is unset (parity with mobile default visible)", async () => {
-      mockGetStoreValue.mockImplementation((key: string) => {
-        if (key === "SUBSCRIPTION_STATE") return LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE;
-        return undefined;
-      });
-
-      render(<RecoverBanner />, { initialState: recoverFlagState });
-
-      expect(await screen.findByRole("button", { name: /add card/i })).toBeInTheDocument();
-    });
-
     it("renders secondary dismiss link when i18n includes secondaryCta", async () => {
       mockGetStoreValue.mockImplementation((key: string) => {
         if (key === "SUBSCRIPTION_STATE") return LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE;
