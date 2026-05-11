@@ -145,12 +145,15 @@ export async function attachFailureLogsToAllure(logsPayload: string): Promise<vo
     JSON.stringify(parsed.appLogs ?? logsPayload),
     "application/json",
   );
+  parsed.appLogs = undefined;
+
   if (parsed.webviewNetworkLogs?.length) {
     await allure.attachment(
       "Webview Network Logs",
       JSON.stringify(parsed.webviewNetworkLogs, null, 2),
       "application/json",
     );
+    parsed.webviewNetworkLogs = undefined;
   }
   if (parsed.webviewConsoleLogs?.length) {
     await allure.attachment(
@@ -158,6 +161,7 @@ export async function attachFailureLogsToAllure(logsPayload: string): Promise<vo
       formatWebviewConsoleLogs(parsed.webviewConsoleLogs),
       "text/plain",
     );
+    parsed.webviewConsoleLogs = undefined;
   }
 
   if (parsed.webviewLoadErrors?.length) {
@@ -166,5 +170,6 @@ export async function attachFailureLogsToAllure(logsPayload: string): Promise<vo
       JSON.stringify(parsed.webviewLoadErrors, null, 2),
       "application/json",
     );
+    parsed.webviewLoadErrors = undefined;
   }
 }

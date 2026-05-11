@@ -82,7 +82,7 @@ async function captureFailureDiagnostics(): Promise<void> {
   // is just defense-in-depth in case the inner timer is starved on a wedged worker.
   workerLog("failure-handling getLogs …");
   const logsT0 = Date.now();
-  const logs = await withTimeout(getLogs(), 12_000, "getLogs");
+  let logs = await withTimeout(getLogs(), 12_000, "getLogs");
   workerLog(
     "failure-handling getLogs done",
     `+${Date.now() - logsT0}ms bytes=${logs?.length ?? 0}`,
@@ -94,6 +94,7 @@ async function captureFailureDiagnostics(): Promise<void> {
       SLOW_DIAGNOSTIC_TIMEOUT_MS,
       "attachFailureLogsToAllure",
     );
+  logs = "";
 
   workerLog("failure-handling captureNativeViewHierarchy …");
   const vhT0 = Date.now();

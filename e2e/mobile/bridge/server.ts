@@ -179,6 +179,7 @@ async function fetchData(message: MessageData, timeout = RESPONSE_TIMEOUT): Prom
     postMessage(message);
     const timeoutId = setTimeout(() => {
       global.pendingCallbacks?.delete(message.type);
+      delete webSocket.messages[message.id];
       const elapsed = Date.now() - started;
       workerLog(
         "fetchData TIMEOUT",
