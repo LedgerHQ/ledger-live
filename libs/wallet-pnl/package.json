@@ -82,6 +82,12 @@
     }
   },
   "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "@ledgerhq/source": "./src/index.ts",
+      "require": "./lib/index.js",
+      "default": "./lib-es/index.js"
+    },
     "./lib/*": "./lib/*.js",
     "./lib/*.js": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
@@ -90,6 +96,11 @@
       "@ledgerhq/source": "./src/hooks/index.ts",
       "require": "./lib/hooks/index.js",
       "default": "./lib-es/hooks/index.js"
+    },
+    "./scenarios": {
+      "@ledgerhq/source": "./src/scenarios/index.ts",
+      "require": "./lib/scenarios/index.js",
+      "default": "./lib-es/scenarios/index.js"
     },
     "./*": {
       "@ledgerhq/source": "./src/*.ts",

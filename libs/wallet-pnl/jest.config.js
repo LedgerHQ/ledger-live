@@ -15,7 +15,7 @@ module.exports = {
     ],
   },
   testEnvironment: "jsdom",
-  testPathIgnorePatterns: ["lib/", "lib-es/", "fixtures/", "helpers/"],
+  testPathIgnorePatterns: ["lib/", "lib-es/", "helpers/"],
   coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../" }], "text"],
   reporters: [
     "default",
