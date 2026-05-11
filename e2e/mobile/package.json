@@ -55,7 +55,7 @@
     "bignumber.js": "9.1.2",
     "body-parser": "2.2.2",
     "cors": "2.8.5",
-    "detox": "20.48.0",
+    "detox": "catalog:",
     "detox-allure2-adapter": "1.0.0-alpha.42",
     "expect": "catalog:",
     "express": "5.2.1",
