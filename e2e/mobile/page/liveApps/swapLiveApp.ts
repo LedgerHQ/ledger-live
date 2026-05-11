@@ -5,7 +5,6 @@ import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { retryUntilTimeout } from "../../utils/retry";
 import { floatNumberRegex } from "@ledgerhq/live-common/e2e/data/regexes";
 import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
-import type { IndexedWebElement } from "../../helpers/elementHelpers";
 
 type QuoteWithFees = { rate: number; fees: number; quote: string };
 
@@ -142,11 +141,10 @@ export default class SwapLiveAppPage {
 
   @Step("Tap execute swap button")
   async tapExecuteSwap(provider: string) {
-    const button = (
-      getWebElementByCssSelector(
-        `${this.providerContainerSelector(provider)} [data-testid="${this.executeSwapButton}"]`,
-      ) as IndexedWebElement
-    ).atIndex(0);
+    const button = getWebElementByCssSelector(
+      `${this.providerContainerSelector(provider)} [data-testid="${this.executeSwapButton}"]`,
+      0,
+    );
     await waitWebElement(button);
     await tapWebElementByElement(button);
   }

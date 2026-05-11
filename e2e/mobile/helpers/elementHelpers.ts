@@ -7,7 +7,7 @@ import { PageScroller } from "./pageScroller";
 import { checkForErrorElement } from "./errorHelpers";
 import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
 
-export interface IndexedWebElement extends WebElement {
+interface IndexedWebElement extends WebElement {
   atIndex(index: number): WebElement;
 }
 interface WebElementWithMatcher extends WebElement {
