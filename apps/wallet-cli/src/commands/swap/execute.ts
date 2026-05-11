@@ -14,19 +14,22 @@ import {
   resolveOutputFormat,
 } from "../inputs";
 import { networkStringFromCurrencyId } from "../../shared/accountDescriptor";
+import { OutputFormatSchema } from "../../wallet/models";
 import { runFullSwapPipeline as runFullSwapPipelineDefault } from "./cli-swap-pipeline";
 
 type RunFullSwapPipeline = typeof runFullSwapPipelineDefault;
 
-export type SwapExecuteFlags = {
-  provider: string;
-  amount: string;
-  "to-account"?: string;
-  account?: string;
-  "fee-strategy": "slow" | "medium" | "fast";
-  "dry-run": boolean;
-  output?: "human" | "json";
-};
+const swapExecuteFlagsSchema = z.object({
+  provider: z.string().min(1, "Provider is required (--provider <name>)"),
+  amount: z.string().min(1, "Amount is required (--amount <value>)"),
+  "to-account": z.string().optional(),
+  account: z.string().min(1).optional(),
+  "fee-strategy": z.enum(["slow", "medium", "fast"]).default("medium"),
+  "dry-run": z.boolean().default(false),
+  output: OutputFormatSchema.optional(),
+});
+
+export type SwapExecuteFlags = z.infer<typeof swapExecuteFlagsSchema>;
 
 export type SwapExecuteDependencies = {
   runFullSwapPipeline: RunFullSwapPipeline;
@@ -114,20 +117,20 @@ export default defineCommand({
   description:
     "Swap flow with Ledger device + API pipeline (nonce → payload → complete exchange → sign/broadcast).",
   options: {
-    provider: option(z.string().min(1, "Provider is required (--provider <name>)"), {
+    provider: option(swapExecuteFlagsSchema.shape.provider, {
       description: "Swap provider name, e.g. changelly",
     }),
-    amount: option(z.string().min(1, "Amount is required (--amount <value>)"), {
+    amount: option(swapExecuteFlagsSchema.shape.amount, {
       description: "Swap source amount in human units",
     }),
-    "to-account": option(z.string().optional(), {
+    "to-account": option(swapExecuteFlagsSchema.shape["to-account"], {
       description: "Destination account descriptor or session label (required for full pipeline)",
     }),
     account: accountOption,
-    "fee-strategy": option(z.enum(["slow", "medium", "fast"]).default("medium"), {
+    "fee-strategy": option(swapExecuteFlagsSchema.shape["fee-strategy"], {
       description: "Fee strategy for the refund-chain transaction (full pipeline)",
     }),
-    "dry-run": option(z.boolean().default(false), {
+    "dry-run": option(swapExecuteFlagsSchema.shape["dry-run"], {
       description: "Run through exchange preparation but do not sign or broadcast",
       argumentKind: "flag",
     }),
