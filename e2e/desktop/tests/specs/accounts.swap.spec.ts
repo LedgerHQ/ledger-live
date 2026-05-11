@@ -172,9 +172,9 @@ test.describe("Swap - Rejected on device", () => {
       const rejectedSwap = new Swap(fromAccount, toAccount, minAmount);
 
       await performSwapUntilQuoteSelectionStep(app, rejectedSwap, minAmount);
-      await app.swap.selectExchangeWithoutKyc();
+      const provider = await app.swap.selectExchangeWithoutKyc();
 
-      await app.swap.clickExchangeButton();
+      await app.swap.clickExchangeButton(provider.name);
       await app.speculos.verifyAmountsAndRejectSwap(rejectedSwap, minAmount);
       await app.swapDrawer.verifyExchangeErrorTextContent("Operation denied on device");
     },

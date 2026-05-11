@@ -84,7 +84,7 @@ for (const { fromAccount, toAccount, provider, xrayTicket, bugTickets } of provi
         await performSwapUntilQuoteSelectionStep(app, swap, minAmount);
         await app.swap.selectSpecificProvider(provider);
 
-        await app.swap.clickExchangeButton();
+        await app.swap.clickExchangeButton(provider.name);
         await app.swap.checkElementsPresenceOnSwapApprovalStep();
         await app.swap.clickExecuteSwapButton();
         await app.swap.clickContinueButton();
