@@ -3,6 +3,7 @@ import type { Operation, ListOperationsOptions } from "@ledgerhq/coin-module-fra
 import type { AleoOperation } from "../types/bridge";
 import { fetchAccountTransactionsFromHeight } from "../network/utils";
 import { toAlpacaOperation, toBridgeOperation } from "./utils";
+import { TOKENS_PROGRAMS } from "../constants";
 
 interface Params {
   currency: CryptoCurrency;
@@ -21,6 +22,7 @@ interface AlpacaParams extends Params {
 
 type Result<T> = {
   readonly operations: T[];
+  readonly tokenOperations: T[];
   readonly nextCursor: string | null;
 };
 
@@ -31,6 +33,7 @@ export async function listOperations(
 ): Promise<Result<AleoOperation | Operation>> {
   const { mode, currency, address, options } = params;
   const operations: Array<AleoOperation | Operation> = [];
+  const tokenOperations: Array<AleoOperation | Operation> = [];
   const fetchAllPages = mode === "bridge";
 
   const result = await fetchAccountTransactionsFromHeight({
@@ -48,11 +51,17 @@ export async function listOperations(
       operations.push(toAlpacaOperation(rawTx, address));
     } else {
       operations.push(toBridgeOperation(params.ledgerAccountId, rawTx, address));
+
+      // FIXME: refactor + only supported in bridge
+      if (TOKENS_PROGRAMS.includes(rawTx.program_id)) {
+        tokenOperations.push(toBridgeOperation(params.ledgerAccountId, rawTx, address));
+      }
     }
   }
 
   return {
     operations,
+    tokenOperations,
     nextCursor: result.nextCursor,
   };
 }

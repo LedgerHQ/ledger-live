@@ -19,6 +19,7 @@ import {
   MAX_PRIVATE_RECORDS_PER_TRANSACTION,
   PROGRAM_ID,
   SINGLE_CALL_SIGNING_TIME,
+  TOKENS_PROGRAMS,
   TRANSACTION_TYPE,
 } from "../constants";
 import type {
@@ -188,6 +189,12 @@ export const toBridgeOperation = (
     extra: {
       functionId: rawTx.function_id,
       transactionType,
+      ...(TOKENS_PROGRAMS.includes(rawTx.program_id) && {
+        tokenInfo: {
+          programId: rawTx.program_id,
+          tokenId: rawTx.token_id && rawTx.token_id !== "0" ? rawTx.token_id : null,
+        },
+      }),
     },
   };
 };

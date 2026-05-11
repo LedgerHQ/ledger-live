@@ -39,7 +39,7 @@ const RECORD_PICKING_STRATEGY: RecordPickingStrategy = "manual";
 /**
  * Controls whether Aleo token-related features are enabled.
  */
-const ENABLE_TOKENS = false;
+const ENABLE_TOKENS = true;
 
 export const aleoConfig: Record<string, ConfigInfo> = {
   config_currency_aleo: {

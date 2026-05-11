@@ -47,6 +47,35 @@ export interface AleoPublicTransaction {
   recipient_address: string;
   program_id: string;
   fee: number;
+  token_id?: string;
+}
+
+export interface AleoVerifiedToken {
+  token_id: string;
+  token_id_datatype: string | null;
+  symbol: string;
+  display: string;
+  program_name: string;
+  decimals: number;
+  total_supply: string;
+  verified: boolean;
+  token_icon_url: string | null;
+  price: string | null;
+  price_change_percentage_24h: string | null;
+  fully_diluted_value: string | null;
+  total_market_cap: string | null;
+  volume_24h: string | null;
+}
+
+export interface AleoVerifiedTokensResponse {
+  pagination: {
+    limit: number;
+    offset: number;
+    total_count: number;
+    has_next: boolean;
+    has_previous: boolean;
+  };
+  data: AleoVerifiedToken[];
 }
 
 export interface AleoPublicTransactionDetailsResponse {
