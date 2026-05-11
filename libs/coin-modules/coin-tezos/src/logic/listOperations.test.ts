@@ -387,7 +387,7 @@ describe("listOperations", () => {
     });
   });
 
-  it("FA2 token transfers (tokenId 0), attributes fees from parent tx", async () => {
+  it("FA2 IN token transfer: fees are 0n (recipient does not pay), feesPayer comes from parent tx", async () => {
     const fa2: APITokenTransfer & { hash: string } = {
       id: 9001,
       level: 100,
@@ -428,13 +428,13 @@ describe("listOperations", () => {
       value: 1_000_000n,
       asset: {
         type: "fa2",
-        assetReference: "KT1TokenContract",
+        assetReference: "KT1TokenContract:0",
         assetOwner: someDestinationAddress,
         unit: { magnitude: 6, name: "Tok", code: "TOK" },
       },
       tx: {
         hash: someHash,
-        fees: 6n,
+        fees: 0n,
         feesPayer: someSenderAddress,
         failed: false,
         block: { hash: "BMJ1ZQ6", height: 100, time: new Date(fa2.timestamp) },
@@ -847,6 +847,238 @@ describe("listOperations", () => {
     expect(results.find(o => o.asset.type === "fa2")?.tx.hash).toBe(someHash);
   });
 
+  describe("FA2 assetReference must include tokenId", () => {
+    const makeFA2Transfer = (
+      tokenId: string,
+      contractAddress: string,
+      id: number,
+    ): APITokenTransfer & { hash: string } => ({
+      id,
+      level: 200,
+      timestamp: "2024-01-01T00:00:00Z",
+      token: {
+        id: 1,
+        contract: { address: contractAddress },
+        tokenId,
+        standard: "fa2",
+      },
+      from: { address: someSenderAddress },
+      to: { address: someDestinationAddress },
+      amount: "100",
+      hash: "ooLive30344Hash",
+    });
+
+    it("includes tokenId in assetReference for a non-zero tokenId", async () => {
+      mockGetAccountOperations.mockResolvedValue([]);
+      mockGetAccountTokenTransfers.mockResolvedValue([
+        makeFA2Transfer("42", "KT1MultiToken", 10_001),
+      ]);
+      const [results] = await listOperations(someDestinationAddress, options);
+      const op = results.find(o => o.asset.type === "fa2");
+      expect(op).toBeDefined();
+      expect(op!.asset).toMatchObject({ assetReference: "KT1MultiToken:42" });
+    });
+
+    it("includes :0 suffix in assetReference when tokenId is 0", async () => {
+      mockGetAccountOperations.mockResolvedValue([]);
+      mockGetAccountTokenTransfers.mockResolvedValue([makeFA2Transfer("0", "KT1Standard", 10_002)]);
+      const [results] = await listOperations(someDestinationAddress, options);
+      const op = results.find(o => o.asset.type === "fa2");
+      expect(op).toBeDefined();
+      expect(op!.asset).toMatchObject({ assetReference: "KT1Standard:0" });
+    });
+
+    it("defaults to :0 suffix when tokenId is undefined", async () => {
+      const fa2NoTokenId: APITokenTransfer & { hash: string } = {
+        ...makeFA2Transfer("0", "KT1NoId", 10_003),
+        // @ts-expect-error testing missing tokenId
+        token: { id: 1, contract: { address: "KT1NoId" }, standard: "fa2" },
+      };
+      mockGetAccountOperations.mockResolvedValue([]);
+      mockGetAccountTokenTransfers.mockResolvedValue([fa2NoTokenId]);
+      const [results] = await listOperations(someDestinationAddress, options);
+      const op = results.find(o => o.asset.type === "fa2");
+      expect(op).toBeDefined();
+      expect(op!.asset).toMatchObject({ assetReference: "KT1NoId:0" });
+    });
+  });
+
+  // LIVE-30365: fees on a token operation must only be charged to the fees payer
+  describe("LIVE-30365 — FA2 fees must only be attributed to the fees payer", () => {
+    const parentWithFees: APITransactionType = {
+      ...transfer,
+      status: "applied" as const,
+      storageFee: 1,
+      bakerFee: 2,
+      allocationFee: 3, // total = 6
+    };
+
+    const fa2Base: APITokenTransfer & { hash: string } = {
+      id: 20_001,
+      level: parentWithFees.level,
+      timestamp: parentWithFees.timestamp,
+      token: {
+        id: 1,
+        contract: { address: "KT1FeeToken" },
+        tokenId: "0",
+        standard: "fa2",
+      },
+      from: { address: someSenderAddress },
+      to: { address: someDestinationAddress },
+      amount: "500",
+      transactionId: parentWithFees.id,
+      hash: someHash,
+    };
+
+    it("FA2 IN transfer has fees 0n — recipient did not pay fees", async () => {
+      mockGetAccountOperations.mockResolvedValue([parentWithFees]);
+      mockGetAccountTokenTransfers.mockResolvedValue([fa2Base]);
+      const [results] = await listOperations(someDestinationAddress, options);
+      const op = results.find(o => o.asset.type === "fa2");
+      expect(op).toBeDefined();
+      expect(op!.type).toBe("IN");
+      expect(op!.tx.fees).toBe(0n);
+      // feesPayer must still be populated so the UI can display who paid
+      expect(op!.tx.feesPayer).toBe(someSenderAddress);
+    });
+
+    it("FA2 OUT transfer has fees 0n — fees live on the native op with the same hash", async () => {
+      mockGetAccountOperations.mockResolvedValue([parentWithFees]);
+      mockGetAccountTokenTransfers.mockResolvedValue([fa2Base]);
+      const [results] = await listOperations(someSenderAddress, options);
+      const op = results.find(o => o.asset.type === "fa2");
+      expect(op).toBeDefined();
+      expect(op!.type).toBe("OUT");
+      // Fees are 0n: the native op (FEES type, same hash) already carries them.
+      // Copying fees here would double-count for any consumer summing fees by hash.
+      expect(op!.tx.fees).toBe(0n);
+      // feesPayer is still set so the UI can display who paid at the transaction level
+      expect(op!.tx.feesPayer).toBe(someSenderAddress);
+    });
+
+    it("FA2 OUT via initiator: fees are 0n on the token op (native op carries them)", async () => {
+      const initiatorAddress = "tz1NKVAxzJusWgKewn4LEViPSQVRE5Kg6XFV";
+      const parentViaInitiator: APITransactionType = {
+        ...parentWithFees,
+        initiator: { address: initiatorAddress },
+        sender: { address: "KT1ContractSender" },
+      };
+      const fa2ViaInitiator: APITokenTransfer & { hash: string } = {
+        ...fa2Base,
+        id: 20_002,
+        from: { address: initiatorAddress },
+        transactionId: parentViaInitiator.id,
+      };
+      mockGetAccountOperations.mockResolvedValue([parentViaInitiator]);
+      mockGetAccountTokenTransfers.mockResolvedValue([fa2ViaInitiator]);
+      const [results] = await listOperations(initiatorAddress, options);
+      const op = results.find(o => o.asset.type === "fa2");
+      expect(op!.type).toBe("OUT");
+      expect(op!.tx.fees).toBe(0n);
+      expect(op!.tx.feesPayer).toBe(initiatorAddress);
+    });
+
+    it("FA2 IN via initiator: recipient does not see fees even though parent has an initiator", async () => {
+      const initiatorAddress = "tz1NKVAxzJusWgKewn4LEViPSQVRE5Kg6XFV";
+      const parentViaInitiator: APITransactionType = {
+        ...parentWithFees,
+        initiator: { address: initiatorAddress },
+        sender: { address: "KT1ContractSender" },
+      };
+      const fa2ViaInitiator: APITokenTransfer & { hash: string } = {
+        ...fa2Base,
+        id: 20_002,
+        from: { address: initiatorAddress },
+        transactionId: parentViaInitiator.id,
+      };
+      mockGetAccountOperations.mockResolvedValue([parentViaInitiator]);
+      mockGetAccountTokenTransfers.mockResolvedValue([fa2ViaInitiator]);
+      const [results] = await listOperations(someDestinationAddress, options);
+      const op = results.find(o => o.asset.type === "fa2");
+      expect(op!.type).toBe("IN");
+      expect(op!.tx.fees).toBe(0n);
+      expect(op!.tx.feesPayer).toBe(initiatorAddress);
+    });
+
+    it("FA2 self-transfer triggered by an external initiator: fees are 0n (address did not pay)", async () => {
+      // Edge case: type = "FEES" (self-transfer) but the initiator is a different contract.
+      // The address did not pay the fees, so fees must be 0n.
+      const externalInitiator = "tz1NKVAxzJusWgKewn4LEViPSQVRE5Kg6XFV";
+      const parentExternal: APITransactionType = {
+        ...parentWithFees,
+        initiator: { address: externalInitiator },
+        sender: { address: "KT1ContractSender" },
+      };
+      const fa2Self: APITokenTransfer & { hash: string } = {
+        ...fa2Base,
+        id: 20_003,
+        // self-transfer: from and to are both the listed address
+        from: { address: someSenderAddress },
+        to: { address: someSenderAddress },
+        transactionId: parentExternal.id,
+      };
+      mockGetAccountOperations.mockResolvedValue([parentExternal]);
+      mockGetAccountTokenTransfers.mockResolvedValue([fa2Self]);
+      const [results] = await listOperations(someSenderAddress, options);
+      const op = results.find(o => o.asset.type === "fa2");
+      expect(op!.type).toBe("FEES");
+      expect(op!.tx.fees).toBe(0n);
+      expect(op!.tx.feesPayer).toBe(externalInitiator);
+    });
+
+    it("sending FA2 tokens: native op carries fees, token op has 0n — no double-count", async () => {
+      // This is the exact scenario from the bug report:
+      //   Actual:   native FEES op (fees=733) + token OUT op (fees=733) → sum = 1466
+      //   Expected: native FEES op (fees=733) + token OUT op (fees=0)   → sum = 733
+      const parentTx: APITransactionType = {
+        ...parentWithFees, // storageFee=1, bakerFee=2, allocationFee=3 → total 6
+        sender: { address: someSenderAddress },
+        target: { address: "KT1TokenContractAddress" },
+        // amount=0: calling a contract, which is typed as FEES from the sender's view
+        amount: 0,
+      };
+      const fa2Out: APITokenTransfer & { hash: string } = {
+        ...fa2Base,
+        id: 20_005,
+        from: { address: someSenderAddress },
+        to: { address: someDestinationAddress },
+        transactionId: parentTx.id,
+      };
+      mockGetAccountOperations.mockResolvedValue([parentTx]);
+      mockGetAccountTokenTransfers.mockResolvedValue([fa2Out]);
+      const [results] = await listOperations(someSenderAddress, options);
+
+      const nativeOp = results.find(o => o.asset.type === "native");
+      const tokenOp = results.find(o => o.asset.type === "fa2");
+      expect(nativeOp).toBeDefined();
+      expect(tokenOp).toBeDefined();
+      expect(nativeOp!.tx.hash).toBe(tokenOp!.tx.hash);
+
+      // Native op carries the actual fees
+      expect(nativeOp!.tx.fees).toBe(6n);
+      // Token op is 0n — fees already counted on the native op
+      expect(tokenOp!.tx.fees).toBe(0n);
+      // Sum equals the real fees paid, not 2×
+      expect(nativeOp!.tx.fees + tokenOp!.tx.fees).toBe(6n);
+    });
+
+    it("FA2 orphan OUT transfer (no parent): fees are 0n", async () => {
+      const fa2OrphanOut: APITokenTransfer & { hash: string } = {
+        ...fa2Base,
+        id: 20_004,
+        // no transactionId — orphan transfer
+      };
+      delete (fa2OrphanOut as { transactionId?: number }).transactionId;
+      mockGetAccountOperations.mockResolvedValue([]);
+      mockGetAccountTokenTransfers.mockResolvedValue([fa2OrphanOut]);
+      const [results] = await listOperations(someSenderAddress, options);
+      const op = results.find(o => o.asset.type === "fa2");
+      expect(op!.type).toBe("OUT");
+      expect(op!.tx.fees).toBe(0n);
+      expect(op!.tx.feesPayer).toBeUndefined();
+    });
+  });
+
   describe("staking operations (Paris adaptive issuance)", () => {
     const stakerAddress = "tz1dKrT1h6d7wP8fEzMPptG6er7mLLeQjBBY";
     const bakerAddress = "tz3Q67aMz7gSMiQRcW729sXSfuMtkyAHYfqc";
@@ -931,8 +1163,7 @@ describe("listOperations", () => {
 
       mockGetAccountOperations.mockResolvedValue([stakeNoBlock, unstakeNoBlock, finalizeNoBlock]);
       mockGetBlockHashesByLevels.mockImplementation(
-        async (levels: number[]) =>
-          new Map(levels.map(level => [level, `BL-fetched-${level}`])),
+        async (levels: number[]) => new Map(levels.map(level => [level, `BL-fetched-${level}`])),
       );
 
       const [results] = await listOperations(stakerAddress, options);

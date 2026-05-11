@@ -385,8 +385,7 @@ function resolveBlockHash(
   operation: ConvertibleOperation,
   stakingBlockHashes: Map<number, string>,
 ): string {
-  const fromOp =
-    typeof operation.block === "string" ? operation.block : operation.block?.hash;
+  const fromOp = typeof operation.block === "string" ? operation.block : operation.block?.hash;
   return fromOp ?? stakingBlockHashes.get(operation.level) ?? "";
 }
 
@@ -536,14 +535,13 @@ function convertTokenOperation(
     type = "IN";
   }
 
-  const fee = parent
-    ? BigInt(parent.storageFee ?? 0) +
-      BigInt(parent.bakerFee ?? 0) +
-      BigInt(parent.allocationFee ?? 0)
-    : 0n;
   const feesPayer = parent?.initiator?.address ?? parent?.sender?.address;
+  // Token ops never carry fees: the parent native op (same hash) already holds them.
+  // Copying fees here would cause double-counting for any consumer that sums fees by hash.
+  const fee = 0n;
 
-  const assetReference = transfer.token.contract.address;
+  const tokenId = transfer.token.tokenId ?? "0";
+  const assetReference = `${transfer.token.contract.address}:${tokenId}`;
 
   return {
     id: `${transfer.hash}-token-${transfer.id}`,
