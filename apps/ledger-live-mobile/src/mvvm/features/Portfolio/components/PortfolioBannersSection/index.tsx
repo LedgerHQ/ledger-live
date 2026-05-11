@@ -143,10 +143,16 @@ export const PortfolioBannersSection = ({
         testID="portfolio-banners-section"
       >
         <Box>
-          {shouldShowOnboardingWidget && 
-            <Box lx={{ paddingTop: "s12" }}><OnboardingWidget /></Box>}
-          {shouldDisplayRecover && 
-            <Box lx={{ paddingTop: "s12" }}><RecoverBanner paddingHorizontal="s0" /></Box>}
+          {shouldShowOnboardingWidget && (
+            <Box lx={{ paddingTop: "s12" }}>
+              <OnboardingWidget />
+            </Box>
+          )}
+          {shouldDisplayRecover && (
+            <Box lx={{ paddingTop: "s12" }}>
+              <RecoverBanner paddingHorizontal="s0" />
+            </Box>
+          )}
         </Box>
       </SectionContainer>
     );
