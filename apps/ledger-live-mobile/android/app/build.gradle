@@ -41,8 +41,8 @@ react {
     def bundleInDebug = System.getenv("ANDROID_BUNDLE_IN_DEBUG") != null
     def skipJsBundling = System.getenv("SKIP_JS_BUNDLING") == "true"
     debuggableVariants = bundleInDebug
-        ? (skipJsBundling ? ["detox"] : [])
-        : (skipJsBundling ? ["detox", "debug"] : ["debug"])
+        ? (skipJsBundling ? ["detox", "detoxPreRelease"] : [])
+        : (skipJsBundling ? ["detox", "detoxPreRelease", "debug"] : ["debug"])
 
     /* Bundling */
     //   A list containing the node command and its flags. Default is just 'node'.
