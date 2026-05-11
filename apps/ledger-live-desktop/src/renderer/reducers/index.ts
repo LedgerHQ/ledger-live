@@ -35,6 +35,7 @@ import shieldedSyncSubscriptions, {
 import countervaluesExtraTracking, {
   CountervaluesExtraTrackingState,
 } from "./countervaluesExtraTracking";
+import { recoverStateReducer, RecoverStateSliceState } from "./recoverState";
 
 export type State = LLDRTKApiState & {
   accounts: AccountsState;
@@ -63,6 +64,7 @@ export type State = LLDRTKApiState & {
   syncRefresh: SyncRefreshState;
   shieldedSyncSubscriptions: ShieldedSyncSubscriptionsState;
   countervaluesExtraTracking: CountervaluesExtraTrackingState;
+  recoverState: RecoverStateSliceState;
 };
 
 const appReducer = combineReducers({
@@ -92,6 +94,7 @@ const appReducer = combineReducers({
   syncRefresh,
   shieldedSyncSubscriptions,
   countervaluesExtraTracking,
+  recoverState: recoverStateReducer,
   ...lldRTKApiReducers,
   ...(getEnv("PLAYWRIGHT_RUN") && { lastAction: (_: unknown, action: PayloadAction) => action }),
 });

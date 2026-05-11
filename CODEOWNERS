@@ -314,6 +314,9 @@ apps/ledger-live-desktop/src/renderer/hooks/useActionCards.tsx                  
 apps/ledger-live-desktop/src/renderer/hooks/useNotifications.ts                                @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/hooks/useBraze.ts                                        @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/BrazeTools/          @ledgerhq/engagement
+apps/ledger-live-desktop/src/renderer/hooks/useRecoverBannerState.ts                           @ledgerhq/engagement
+apps/ledger-live-desktop/src/renderer/components/Web3AppWebview/syncRecoverStateFromStorageSet.ts @ledgerhq/engagement
+apps/ledger-live-desktop/src/renderer/components/Web3AppWebview/__tests__/syncRecoverStateFromStorageSet.test.ts @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/screens/dashboard/ActionContentCards.tsx                 @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/screens/dashboard/components/Banners/hooks/**/useBannersVisibility*.ts @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/screens/dashboard/components/Banners/PortfolioBannerContent/ @ledgerhq/engagement
@@ -325,6 +328,8 @@ apps/ledger-live-desktop/src/renderer/reducers/dynamicContent.ts                
 apps/ledger-live-desktop/src/renderer/actions/dynamicContent.ts                                @ledgerhq/engagement
 apps/ledger-live-desktop/src/types/dynamicContent.ts                                           @ledgerhq/engagement
 apps/ledger-live-desktop/src/braze-setup.ts                                                    @ledgerhq/engagement
+apps/ledger-live-desktop/src/renderer/reducers/recoverState.ts                                 @ledgerhq/engagement
+apps/ledger-live-desktop/src/renderer/reducers/dynamicContent.ts                               @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/DynamicContent/                                     @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/LNSUpsell/                                          @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/AnalyticsOptInPrompt/                               @ledgerhq/engagement

@@ -1,10 +1,10 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { getStoreValue } from "~/renderer/store";
+import React from "react";
 import { LedgerRecoverSubscriptionStateInProgressEnum } from "~/types/recoverSubscriptionState";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Box, Icons } from "@ledgerhq/react-ui";
 import useTheme from "~/renderer/hooks/useTheme";
 import styled, { keyframes, css } from "styled-components";
+import { useRecoverBannerState } from "~/renderer/hooks/useRecoverBannerState";
 
 interface RecoverStatusNotificationProps {
   collapsed: boolean;
@@ -48,11 +48,11 @@ const StyledBox = styled(Box)<{
   transform: translateY(0);
   opacity: 0;
   animation: ${p =>
-    p.collapsed
-      ? css`
+      p.collapsed
+        ? css`
             ${collapseAnim}
           `
-      : css`
+        : css`
             ${openAnim}
           `}
     200ms 500ms ease forwards;
@@ -62,20 +62,10 @@ const RecoverStatusDot = ({ collapsed }: RecoverStatusNotificationProps) => {
   const { colors } = useTheme();
   const recoverServices = useFeature("protectServicesDesktop");
   const protectID = recoverServices?.params?.protectId ?? "protect-prod";
-  const [displayRecoverDot, setDisplayRecoverDot] = useState<boolean>();
-
-  const getRecoverSubscriptionState = useCallback(async () => {
-    const storage = await getStoreValue("SUBSCRIPTION_STATE", protectID);
-    setDisplayRecoverDot(
-      Object.values(LedgerRecoverSubscriptionStateInProgressEnum).includes(
-        storage as LedgerRecoverSubscriptionStateInProgressEnum,
-      ),
-    );
-  }, [protectID]);
-
-  useEffect(() => {
-    getRecoverSubscriptionState();
-  }, [getRecoverSubscriptionState]);
+  const {
+    data: { subscriptionState },
+  } = useRecoverBannerState(protectID);
+  const displayRecoverDot = subscriptionState in LedgerRecoverSubscriptionStateInProgressEnum;
 
   return displayRecoverDot ? (
     <StyledBox collapsed={collapsed}>

@@ -43,6 +43,7 @@ import { useDrawerConfiguration } from "@ledgerhq/live-common/dada-client/hooks/
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { setOriginFlow } from "~/renderer/analytics/originFlow";
+import { syncRecoverStateFromStorageSet } from "./syncRecoverStateFromStorageSet";
 
 const wallet = { name: "ledger-live-desktop", version: __APP_VERSION__ };
 
@@ -165,6 +166,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
       },
       "storage.set": ({ key, value, storeId }) => {
         setStoreValue(key, value, storeId);
+        syncRecoverStateFromStorageSet({ key, value, storeId, dispatch });
       },
       "transaction.sign": ({
         account,

@@ -1,11 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router";
 import { isRecoverDisplayed, useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useUpsellPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-import { getStoreValue } from "~/renderer/store";
+import { useRecoverBannerState } from "~/renderer/hooks/useRecoverBannerState";
 import { track } from "~/renderer/analytics/segment";
-import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
 import { shouldShowRecoverPortfolioWidget } from "./recoverPortfolioWidgetVisibility";
 
 const TRACK = {
@@ -31,25 +30,9 @@ export function useRecoverWidgetViewModel(): RecoverWidgetViewProps {
   const { deviceModelId } = usePostOnboardingHubState();
 
   const protectId = recoverServices?.params?.protectId ?? "protect-prod";
-  const [subscriptionState, setSubscriptionState] = useState<LedgerRecoverSubscriptionStateEnum | undefined>(
-    () => {
-      try {
-        return getStoreValue<LedgerRecoverSubscriptionStateEnum>("SUBSCRIPTION_STATE", protectId);
-      } catch {
-        return undefined;
-      }
-    },
-  );
-
-  useEffect(() => {
-    try {
-      setSubscriptionState(
-        getStoreValue<LedgerRecoverSubscriptionStateEnum>("SUBSCRIPTION_STATE", protectId),
-      );
-    } catch {
-      setSubscriptionState(undefined);
-    }
-  }, [protectId]);
+  const {
+    data: { subscriptionState },
+  } = useRecoverBannerState(protectId);
 
   const isRecoverOfferAvailable = isRecoverDisplayed(recoverServices, deviceModelId ?? undefined);
 
