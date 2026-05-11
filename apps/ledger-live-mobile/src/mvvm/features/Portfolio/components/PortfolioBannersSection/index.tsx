@@ -135,7 +135,7 @@ export const PortfolioBannersSection = ({
 
   if (shouldShowOnboardingWidget || shouldDisplayRecover) {
     return (
-      <SectionContainer 
+      <SectionContainer
         py="0"
         mt={0}
         isFirst={isFirst}

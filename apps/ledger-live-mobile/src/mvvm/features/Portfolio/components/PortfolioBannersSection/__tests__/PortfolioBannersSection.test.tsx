@@ -79,6 +79,17 @@ describe("PortfolioBannersSection", () => {
       expect(screen.queryByTestId("mock-onboarding-widget")).toBeNull();
       expect(screen.queryByTestId("banners-page-indicator")).toBeNull();
     });
+
+    it("renders content cards without recover when recover banner is off", () => {
+      mockUseViewModel.mockReturnValue({
+        ...baseViewModel,
+        hasAssets: true,
+        shouldDisplayRecover: false,
+      });
+      renderSection({ showAssets: true });
+      expect(screen.getByTestId("mock-content-cards")).toBeVisible();
+      expect(screen.queryByTestId("mock-recover-banner")).toBeNull();
+    });
   });
 
   describe("carousel layout", () => {
