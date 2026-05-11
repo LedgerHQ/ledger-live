@@ -32,7 +32,10 @@ export default class SwapLiveAppPage {
   switchButton = "to-account-switch-accounts";
   specificQuoteCardProviderName = (provider: string) =>
     `compact-quote-card-provider-name-${provider}`;
-  providerContainerSelector = (provider: string) => `[data-testid^="quote-container-${provider}"]`;
+  baseProviderCssSelector = (provider: string) =>
+    `[data-testid^="quote-container-${Provider.getNameByUiName(provider)}"]`;
+  providerExecuteButtonCss = (provider: string) =>
+    `${this.baseProviderCssSelector(provider)} [data-testid="${this.executeSwapButton}"]`;
 
   @Step("Expect swap live app page")
   async expectSwapLiveApp() {
@@ -141,10 +144,7 @@ export default class SwapLiveAppPage {
 
   @Step("Tap execute swap button")
   async tapExecuteSwap(provider: string) {
-    const button = getWebElementByCssSelector(
-      `${this.providerContainerSelector(provider)} [data-testid="${this.executeSwapButton}"]`,
-      0,
-    );
+    const button = getWebElementByCssSelector(this.providerExecuteButtonCss(provider), 0);
     await waitWebElement(button);
     await tapWebElementByElement(button);
   }
@@ -232,8 +232,7 @@ export default class SwapLiveAppPage {
 
   @Step("Check exchange button has provider name: $0")
   async checkExchangeButtonHasProviderName(provider: string): Promise<string> {
-    const internalName = Provider.getNameByUiName(provider);
-    const selector = `${this.providerContainerSelector(internalName)} [data-testid="${this.executeSwapButton}"]`;
+    const selector = this.providerExecuteButtonCss(provider);
     const button = getWebElementByCssSelector(selector);
     await waitWebElement(button);
     const actualButtonText =
@@ -363,13 +362,10 @@ export default class SwapLiveAppPage {
 
   @Step("Go to $0 live app")
   async goToProviderLiveApp(provider: string) {
-    const internalName = Provider.getNameByUiName(provider);
-    const button = getWebElementByCssSelector(
-      `${this.providerContainerSelector(internalName)} [data-testid="${this.executeSwapButton}"]`,
-    );
+    const button = getWebElementByCssSelector(this.providerExecuteButtonCss(provider));
     await detoxExpect(button).toExist();
     const actualButtonText = await app.swapLiveApp.checkExchangeButtonHasProviderName(provider);
-    await app.swapLiveApp.tapExecuteSwap(internalName);
+    await app.swapLiveApp.tapExecuteSwap(provider);
     if (provider === "1inch" && actualButtonText.includes("Swap with")) {
       await app.swapLiveApp.tapExecuteSwapOnStepApproval();
       const summaryContinueButton = app.send.summaryContinueButton();
