@@ -13,7 +13,7 @@ function getEventMessage(ev: Record<string, unknown>): string {
 }
 
 /**
- * Builds the beforeSend callback for Datadog RUM.
+ * Builds the beforeSend callback for Datadog RUM / Log.
  * Drops events when opt-in is off or error message matches ignore list;
  * applies anonymization to the payload (parity with Sentry).
  */
