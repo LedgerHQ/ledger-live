@@ -1,8 +1,7 @@
 import { Observable, Subject } from "rxjs";
-import { act, renderHook } from "@testing-library/react-native";
+import { act, renderHook } from "@tests/test-renderer";
 import type { DeviceConnectionResult } from "@ledgerhq/device-intent";
 import { DeviceId } from "@ledgerhq/client-ids/ids";
-import { identitiesSlice } from "@ledgerhq/client-ids/store";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { DeviceInfo } from "@ledgerhq/types-live";
 import {
@@ -12,18 +11,9 @@ import {
   type EnsureAppReadyState,
 } from "@ledgerhq/live-dmk-shared";
 import { ensureAppReadyUseCase } from "@ledgerhq/live-common/device/use-cases/ensureAppReady/ensureAppReadyUseCase";
-import { setLastSeenDeviceInfo } from "~/actions/settings";
+import type { State } from "~/reducers/types";
 import { useDeviceContextInitializerComponentLWMViewModel } from "../useDeviceContextInitializerComponentLWMViewModel";
 import type { InitializationInput } from "../../types";
-
-const mockDispatch = jest.fn();
-const mockUseSelector = jest.fn();
-
-jest.mock("~/context/hooks", () => ({
-  ...jest.requireActual("~/context/hooks"),
-  useDispatch: () => mockDispatch,
-  useSelector: (selector: unknown) => mockUseSelector(selector),
-}));
 
 jest.mock("@ledgerhq/live-common/device/use-cases/ensureAppReady/ensureAppReadyUseCase", () => ({
   ensureAppReadyUseCase: jest.fn(),
@@ -51,28 +41,40 @@ const extractedContext = {
   derivedAddress: "0x123",
 };
 
-function setupUseSelector(deprecationDoNotRemind = ["Ethereum"]) {
-  mockUseSelector.mockImplementation(selector =>
-    (selector as (state: unknown) => { deprecationDoNotRemind: string[] })({
-      settings: { deprecationDoNotRemind },
-    }),
-  );
-}
-
 function setupObservable() {
   const subject = new Subject<EnsureAppReadyState>();
   mockedEnsureAppReadyUseCase.mockReturnValue(subject.asObservable());
   return subject;
 }
 
-function renderViewModel(onContextInitialized = jest.fn()) {
+function withDeprecationDoNotRemind(deprecationDoNotRemind = ["Ethereum"]) {
   return {
-    ...renderHook(() =>
-      useDeviceContextInitializerComponentLWMViewModel({
-        connectionResult,
-        deviceInitializationInput,
-        onContextInitialized,
-      }),
+    overrideInitialState: (state: State): State => ({
+      ...state,
+      settings: {
+        ...state.settings,
+        deprecationDoNotRemind,
+      },
+    }),
+  };
+}
+
+function renderViewModel({
+  onContextInitialized = jest.fn(),
+  deprecationDoNotRemind,
+}: {
+  onContextInitialized?: jest.Mock;
+  deprecationDoNotRemind?: string[];
+} = {}) {
+  return {
+    ...renderHook(
+      () =>
+        useDeviceContextInitializerComponentLWMViewModel({
+          connectionResult,
+          deviceInitializationInput,
+          onContextInitialized,
+        }),
+      withDeprecationDoNotRemind(deprecationDoNotRemind),
     ),
     onContextInitialized,
   };
@@ -81,7 +83,6 @@ function renderViewModel(onContextInitialized = jest.fn()) {
 describe("useDeviceContextInitializerComponentLWMViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    setupUseSelector();
     setupObservable();
   });
 
@@ -93,9 +94,8 @@ describe("useDeviceContextInitializerComponentLWMViewModel", () => {
 
   it("should start ensureAppReadyUseCase with connection, input and dismissed deprecations", () => {
     const deprecationDoNotRemind = ["Ethereum", "Bitcoin"];
-    setupUseSelector(deprecationDoNotRemind);
 
-    renderViewModel();
+    renderViewModel({ deprecationDoNotRemind });
 
     expect(mockedEnsureAppReadyUseCase).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -122,7 +122,7 @@ describe("useDeviceContextInitializerComponentLWMViewModel", () => {
   it("should notify context initialization once when the use case succeeds", () => {
     const subject = setupObservable();
     const onContextInitialized = jest.fn();
-    const { result } = renderViewModel(onContextInitialized);
+    const { result } = renderViewModel({ onContextInitialized });
     const successState: EnsureAppReadyState = {
       type: FinalStateType.Success,
       extractedContext,
@@ -166,7 +166,7 @@ describe("useDeviceContextInitializerComponentLWMViewModel", () => {
   });
 
   it("should dispatch store updates from use case side effects", () => {
-    renderViewModel();
+    const { store } = renderViewModel();
     const { sideEffects } = mockedEnsureAppReadyUseCase.mock.calls[0][0];
     const deviceId = DeviceId.fromString("010203");
     const deviceInfo = { version: "2.0.0" } as DeviceInfo;
@@ -178,13 +178,15 @@ describe("useDeviceContextInitializerComponentLWMViewModel", () => {
       latestFirmware: null,
     });
 
-    expect(mockDispatch).toHaveBeenCalledWith(identitiesSlice.actions.addDeviceId(deviceId));
-    expect(mockDispatch).toHaveBeenCalledWith(
-      setLastSeenDeviceInfo({
+    const state = store.getState();
+    expect(state.identities.deviceIds).toHaveLength(1);
+    expect(state.identities.deviceIds[0].equals(deviceId)).toBe(true);
+    expect(state.settings.seenDevices).toEqual([
+      {
         modelId: DeviceModelId.nanoX,
         deviceInfo,
         apps: [],
-      }),
-    );
+      },
+    ]);
   });
 });
