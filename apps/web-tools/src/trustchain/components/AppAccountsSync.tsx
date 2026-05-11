@@ -1,5 +1,5 @@
 import React, { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Observable, concat, find, from, ignoreElements, mergeMap, tap } from "rxjs";
+import { Observable, concat, defer, find, from, ignoreElements, mergeMap, tap } from "rxjs";
 import { Button } from "@ledgerhq/lumen-ui-react";
 import { MemberCredentials, Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { useTrustchainSDK } from "../context";
@@ -302,7 +302,7 @@ function HeadlessAddAccounts({
   const [disabled, setDisabled] = useState(false);
 
   const onSubmit = useCallback(
-    async (e: any) => {
+    (e: any) => {
       e.preventDefault();
       if (!e.target) return;
       const data = new FormData(e.target);
@@ -310,18 +310,21 @@ function HeadlessAddAccounts({
       if (!currencyId) return;
       setDisabled(true);
       const currency = getCryptoCurrencyById(String(currencyId));
-      const currencyBridge = await getCurrencyBridge(currency);
       const sub = appForCurrency(deviceId, currency, () =>
-        concat(
-          from(bridgeCache.prepareCurrency(currency)).pipe(ignoreElements()),
-          currencyBridge.scanAccounts({
-            currency,
-            deviceId,
-            syncConfig: {
-              paginationConfig: {},
-              blacklistedTokenIds: [],
-            },
-          }),
+        defer(() => Promise.resolve(getCurrencyBridge(currency))).pipe(
+          mergeMap(currencyBridge =>
+            concat(
+              from(bridgeCache.prepareCurrency(currency)).pipe(ignoreElements()),
+              currencyBridge.scanAccounts({
+                currency,
+                deviceId,
+                syncConfig: {
+                  paginationConfig: {},
+                  blacklistedTokenIds: [],
+                },
+              }),
+            ),
+          ),
         ),
       ).subscribe({
         next: (event: ScanAccountEvent) => {
