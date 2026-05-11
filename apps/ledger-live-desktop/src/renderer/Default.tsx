@@ -2,7 +2,7 @@ import React, { useEffect, lazy, Suspense } from "react";
 import styled, { useTheme } from "styled-components";
 import { ipcRenderer } from "electron";
 import { Navigate, Route, Routes, useNavigate, useLocation, useParams } from "react-router";
-import { useDispatch, useSelector } from "LLD/hooks/redux";
+import { useSelector } from "LLD/hooks/redux";
 import TrackAppStart from "~/renderer/components/TrackAppStart";
 import { LiveApp } from "~/renderer/screens/platform";
 import { BridgeSyncProvider } from "~/renderer/bridge/BridgeSyncContext";
@@ -51,12 +51,9 @@ import { accountsSelector } from "./reducers/accounts";
 import { useRecoverRestoreOnboarding } from "~/renderer/hooks/useRecoverRestoreOnboarding";
 import {
   hasCompletedOnboardingSelector,
-  hasSeenAnalyticsOptInPromptSelector,
   areSettingsLoaded,
 } from "~/renderer/reducers/settings";
-import { isLocked as isLockedSelector } from "~/renderer/reducers/application";
 import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-import { setShareAnalytics, setSharePersonalizedRecommendations } from "./actions/settings";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { useEnforceSupportedLanguage } from "./hooks/useEnforceSupportedLanguage";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-desktop";
@@ -413,11 +410,6 @@ export default function Default() {
   useAutoDismissPostOnboardingEntryPoint();
   useEnforceSupportedLanguage();
 
-  const analyticsFF = useFeature("lldAnalyticsOptInPrompt");
-  const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
-  const isLocked = useSelector(isLockedSelector);
-  const dispatch = useDispatch();
-
   useEffect(() => {
     if (typeof ldmkSolanaSignerFeatureFlag?.enabled === "boolean") {
       setSolanaLdmkEnabled(ldmkSolanaSignerFeatureFlag?.enabled);
@@ -438,19 +430,6 @@ export default function Default() {
     // setting provider only at initialisation
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [dmk]);
-
-  useEffect(() => {
-    if (
-      !isLocked &&
-      analyticsFF?.enabled &&
-      (!hasCompletedOnboarding || analyticsFF?.params?.entryPoints.includes("Portfolio")) &&
-      !hasSeenAnalyticsOptInPrompt
-    ) {
-      dispatch(setShareAnalytics(false));
-      dispatch(setSharePersonalizedRecommendations(false));
-    }
-    // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLocked]);
 
   useEffect(() => {
     if (!areSettingsLoadedSelector) {
