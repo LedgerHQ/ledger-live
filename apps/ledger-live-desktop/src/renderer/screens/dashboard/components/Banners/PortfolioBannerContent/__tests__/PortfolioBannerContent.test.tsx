@@ -6,7 +6,6 @@ import { render, screen } from "tests/testSetup";
 import dbMiddleware from "~/renderer/middlewares/db";
 import type { State } from "~/renderer/reducers";
 import createStore from "~/state-manager/configureStore";
-import shouldDisplayRecoverBannerFromStore from "LLD/features/Portfolio/utils/shouldDisplayRecoverBannerFromStore";
 import { useRecoverWidgetViewModel } from "LLD/features/FinishOnboarding/RecoverWidget/useRecoverWidgetViewModel";
 import { useBannersVisibility } from "../../hooks/useBannersVisibility";
 import { PortfolioBannerContent } from "..";
@@ -24,7 +23,7 @@ jest.mock("LLD/features/FinishOnboarding/FinishOnboardingWidget", () => ({
   default: () => <div data-testid="finish-onboarding-widget" />,
 }));
 
-jest.mock("LLD/features/FinishOnboarding/RecoverWidget", () => ({
+jest.mock("LLD/features/FinishOnboarding/RecoverWidget/RecoverWidgetView", () => ({
   __esModule: true,
   default: () => <div data-testid="recover-widget" />,
 }));
@@ -47,26 +46,28 @@ jest.mock("~/renderer/screens/dashboard/ActionContentCards", () => ({
   default: () => <div data-testid="action-content-cards" />,
 }));
 
-jest.mock("LLD/features/Portfolio/utils/shouldDisplayRecoverBannerFromStore", () => ({
-  __esModule: true,
-  default: jest.fn(() => false),
-}));
-
 jest.mock("../../hooks/useBannersVisibility", () => ({
   useBannersVisibility: jest.fn(),
 }));
 
 const mockUseBannersVisibility = jest.mocked(useBannersVisibility);
-const mockShouldDisplayRecoverBannerFromStore = jest.mocked(shouldDisplayRecoverBannerFromStore);
 const mockUseRecoverWidgetViewModel = jest.mocked(useRecoverWidgetViewModel);
 
 function defaultRecoverWidgetViewModelReturn() {
   return {
     isVisible: true,
+    shouldDisplayRecoverInPortfolioBannerRow: true,
     titleKey: "postOnboarding.dialog.actions.recover.title",
     descriptionKey: "postOnboarding.dialog.actions.recover.description",
     onOpenRecover: jest.fn(),
   };
+}
+
+function setWallet40RecoverInRow(show: boolean) {
+  mockUseRecoverWidgetViewModel.mockReturnValue({
+    ...defaultRecoverWidgetViewModelReturn(),
+    shouldDisplayRecoverInPortfolioBannerRow: show,
+  });
 }
 
 type BannersVisibility = ReturnType<typeof useBannersVisibility>;
@@ -106,7 +107,6 @@ function postOnboardingInProgressState(): PostOnboardingState {
 describe("PortfolioBannerContent", () => {
   beforeEach(() => {
     mockUseBannersVisibility.mockClear();
-    mockShouldDisplayRecoverBannerFromStore.mockReturnValue(false);
     mockUseRecoverWidgetViewModel.mockReturnValue(defaultRecoverWidgetViewModelReturn());
     setVisibility({});
   });
@@ -139,7 +139,7 @@ describe("PortfolioBannerContent", () => {
 
   describe("Wallet40 finish-onboarding gating (shouldDisplayFinishOnboardingWidget)", () => {
     it("prefers LNS upsell over the finish/recover row when LNS is visible", () => {
-      mockShouldDisplayRecoverBannerFromStore.mockReturnValue(true);
+      setWallet40RecoverInRow(true);
       setVisibility({
         shouldDisplayFinishOnboardingWidget: true,
         isLNSUpsellBannerVisible: true,
@@ -154,7 +154,7 @@ describe("PortfolioBannerContent", () => {
     });
 
     it("renders finish onboarding and recover widgets when both should show and LNS is off", () => {
-      mockShouldDisplayRecoverBannerFromStore.mockReturnValue(true);
+      setWallet40RecoverInRow(true);
       setVisibility({
         shouldDisplayFinishOnboardingWidget: true,
         isLNSUpsellBannerVisible: false,
@@ -168,7 +168,7 @@ describe("PortfolioBannerContent", () => {
     });
 
     it("renders only recover widget when finish widget is off but recover banner should show", () => {
-      mockShouldDisplayRecoverBannerFromStore.mockReturnValue(true);
+      setWallet40RecoverInRow(true);
       setVisibility({
         shouldDisplayFinishOnboardingWidget: true,
         isLNSUpsellBannerVisible: false,
@@ -182,7 +182,7 @@ describe("PortfolioBannerContent", () => {
     });
 
     it("falls back to portfolio content cards when finish and recover are both off", () => {
-      mockShouldDisplayRecoverBannerFromStore.mockReturnValue(false);
+      setWallet40RecoverInRow(false);
       setVisibility({
         shouldDisplayFinishOnboardingWidget: true,
         isLNSUpsellBannerVisible: false,
@@ -194,11 +194,25 @@ describe("PortfolioBannerContent", () => {
       expect(screen.getByTestId("portfolio-content-cards")).toBeInTheDocument();
     });
 
-    it("falls back to portfolio content cards when store wants recover but RecoverWidget visibility gates are off", () => {
-      mockShouldDisplayRecoverBannerFromStore.mockReturnValue(true);
+    it("shows finish onboarding without recover when displayBanner is false", () => {
+      setWallet40RecoverInRow(false);
+      setVisibility({
+        shouldDisplayFinishOnboardingWidget: true,
+        isLNSUpsellBannerVisible: false,
+        isFinishOnboardingWidgetVisible: true,
+      });
+
+      render(<PortfolioBannerContent />);
+
+      expect(screen.getByTestId("finish-onboarding-widget")).toBeInTheDocument();
+      expect(screen.queryByTestId("recover-widget")).not.toBeInTheDocument();
+    });
+
+    it("falls back to portfolio content cards when banner allows recover but RecoverWidget visibility gates are off", () => {
       mockUseRecoverWidgetViewModel.mockReturnValue({
         ...defaultRecoverWidgetViewModelReturn(),
         isVisible: false,
+        shouldDisplayRecoverInPortfolioBannerRow: false,
       });
       setVisibility({
         shouldDisplayFinishOnboardingWidget: true,
