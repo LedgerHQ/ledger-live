@@ -2,7 +2,6 @@ import { act } from "@testing-library/react-native";
 import { renderHook } from "@tests/test-renderer";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
-import { CategorizedAssets } from "@ledgerhq/asset-aggregation/assetCategorization/types";
 import { NavigatorName, ScreenName } from "~/const";
 import { State } from "~/reducers/types";
 import { track } from "~/analytics";
@@ -15,12 +14,6 @@ jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
   useNavigation: () => ({ navigate: mockNavigate }),
   useRoute: () => ({ name: "Portfolio" }),
-}));
-
-const mockCategorizedAssets = jest.fn();
-
-jest.mock("LLM/hooks/useCategorizedAssetsFromPortfolio", () => ({
-  useCategorizedAssetsFromPortfolio: () => mockCategorizedAssets(),
 }));
 
 const bitcoin = getCryptoCurrencyById("bitcoin");
@@ -38,32 +31,9 @@ const withAccounts =
     accounts: { active: accounts as State["accounts"]["active"] },
   });
 
-const mockPortfolio = (
-  cryptos: CategorizedAssets["cryptos"] = [],
-  stablecoins: CategorizedAssets["stablecoins"] = [],
-): void => {
-  mockCategorizedAssets.mockReturnValue({
-    categorizedAssets: { cryptos, stablecoins },
-    stablecoinTickers: new Set<string>(),
-    isLoadingStablecoinTickers: false,
-  });
-};
-
-const makeCategorizedItem = (
-  currency: ReturnType<typeof getCryptoCurrencyById>,
-  value: number,
-) => ({
-  currency,
-  balance: value,
-  value,
-  distribution: 0,
-  accounts: [],
-});
-
 describe("useCryptoAddressesButtonViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockPortfolio();
   });
 
   describe("accountsCount", () => {
@@ -85,52 +55,45 @@ describe("useCryptoAddressesButtonViewModel", () => {
   });
 
   describe("firstThreeCurrencies", () => {
-    it("should return currencies sorted by countervalue descending", () => {
-      mockPortfolio([
-        makeCategorizedItem(bitcoin, 500),
-        makeCategorizedItem(ethereum, 1000),
-        makeCategorizedItem(solana, 200),
-      ]);
+    it("should return unique currencies from accounts", () => {
+      const solAccount = genAccount("sol1", { currency: solana });
 
       const { result } = renderHook(() => useCryptoAddressesButtonViewModel(), {
-        overrideInitialState: withAccounts([btcAccount, ethAccount]),
+        overrideInitialState: withAccounts([btcAccount, ethAccount, solAccount]),
       });
 
       expect(result.current.firstThreeCurrencies).toHaveLength(3);
-      expect(result.current.firstThreeCurrencies[0]).toBe(ethereum);
-      expect(result.current.firstThreeCurrencies[1]).toBe(bitcoin);
-      expect(result.current.firstThreeCurrencies[2]).toBe(solana);
+      expect(result.current.firstThreeCurrencies).toEqual(
+        expect.arrayContaining([bitcoin, ethereum, solana]),
+      );
     });
 
     it("should cap at 3 currencies", () => {
-      mockPortfolio([
-        makeCategorizedItem(bitcoin, 1000),
-        makeCategorizedItem(ethereum, 800),
-        makeCategorizedItem(solana, 600),
-        makeCategorizedItem(ripple, 400),
-      ]);
+      const accounts = [bitcoin, ethereum, solana, ripple].map((c, i) =>
+        genAccount(`acc${i}`, { currency: c }),
+      );
 
       const { result } = renderHook(() => useCryptoAddressesButtonViewModel(), {
-        overrideInitialState: withAccounts([btcAccount]),
+        overrideInitialState: withAccounts(accounts),
       });
 
       expect(result.current.firstThreeCurrencies).toHaveLength(3);
     });
 
-    it("should include stablecoins sorted by countervalue alongside cryptos", () => {
-      mockPortfolio([makeCategorizedItem(bitcoin, 300)], [makeCategorizedItem(ethereum, 900)]);
+    it("should deduplicate accounts with the same currency", () => {
+      const btcAccount2 = genAccount("btc2", { currency: bitcoin });
 
       const { result } = renderHook(() => useCryptoAddressesButtonViewModel(), {
-        overrideInitialState: withAccounts([btcAccount, ethAccount]),
+        overrideInitialState: withAccounts([btcAccount, btcAccount2, ethAccount]),
       });
 
-      expect(result.current.firstThreeCurrencies[0]).toBe(ethereum);
-      expect(result.current.firstThreeCurrencies[1]).toBe(bitcoin);
+      expect(result.current.firstThreeCurrencies).toHaveLength(2);
+      expect(result.current.firstThreeCurrencies).toEqual(
+        expect.arrayContaining([bitcoin, ethereum]),
+      );
     });
 
-    it("should return empty array when portfolio has no assets", () => {
-      mockPortfolio([], []);
-
+    it("should return empty array when there are no accounts", () => {
       const { result } = renderHook(() => useCryptoAddressesButtonViewModel(), {
         overrideInitialState: withAccounts([]),
       });
@@ -225,7 +188,6 @@ describe("useCryptoAddressesButtonViewModel", () => {
 
   describe("moreAccountsCount", () => {
     it("should be total accounts minus displayed icon slots when above three accounts", () => {
-      mockPortfolio([makeCategorizedItem(bitcoin, 100)]);
       const fiveAccounts = [
         genAccount("a1", { currency: bitcoin }),
         genAccount("a2", { currency: bitcoin }),
@@ -241,7 +203,6 @@ describe("useCryptoAddressesButtonViewModel", () => {
     });
 
     it("should be non-positive when at most three accounts", () => {
-      mockPortfolio([makeCategorizedItem(bitcoin, 100)]);
       const { result } = renderHook(() => useCryptoAddressesButtonViewModel(), {
         overrideInitialState: withAccounts([btcAccount, ethAccount]),
       });
@@ -250,7 +211,6 @@ describe("useCryptoAddressesButtonViewModel", () => {
     });
 
     it("should not exceed 99", () => {
-      mockPortfolio([makeCategorizedItem(bitcoin, 100)]);
       const manyAccounts = Array.from({ length: 105 }, (_, i) =>
         genAccount(`many${i}`, { currency: bitcoin }),
       );
