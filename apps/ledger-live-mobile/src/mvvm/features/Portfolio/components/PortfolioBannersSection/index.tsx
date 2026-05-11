@@ -80,8 +80,12 @@ export const PortfolioBannersSection = ({
         key="BannersSection"
         testID="portfolio-banners-section"
       >
-        <Box lx={{ paddingTop: "s12" }}>
-          <RecoverBanner paddingHorizontal="s0" />
+        <Box>
+          {shouldDisplayRecover && (
+            <Box lx={{ paddingTop: "s12" }}>
+              <RecoverBanner paddingHorizontal="s0" />
+            </Box>
+          )}
           <ContentCardsLocation
             key="contentCardsLocationPortfolio"
             locationId={ContentCardLocation.TopWallet}
@@ -129,18 +133,23 @@ export const PortfolioBannersSection = ({
     );
   }
 
-  return (
-    <SectionContainer
-      py="0"
-      mt={0}
-      isFirst={isFirst}
-      key="BannersSection"
-      testID="portfolio-banners-section"
-    >
-      <Box lx={{ paddingTop: "s12" }}>
-        {shouldShowOnboardingWidget && <OnboardingWidget />}
-        {shouldDisplayRecover && <RecoverBanner paddingHorizontal="s0" />}
-      </Box>
-    </SectionContainer>
-  );
+  if (shouldShowOnboardingWidget || shouldDisplayRecover) {
+    return (
+      <SectionContainer 
+        py="0"
+        mt={0}
+        isFirst={isFirst}
+        key="BannersSection"
+        testID="portfolio-banners-section"
+      >
+        <Box>
+          {shouldShowOnboardingWidget && 
+            <Box lx={{ paddingTop: "s12" }}><OnboardingWidget /></Box>}
+          {shouldDisplayRecover && 
+            <Box lx={{ paddingTop: "s12" }}><RecoverBanner paddingHorizontal="s0" /></Box>}
+        </Box>
+      </SectionContainer>
+    );
+  }
+  return null;
 };
