@@ -3,7 +3,7 @@ import { useSelector } from "LLD/hooks/redux";
 import { BigNumber } from "bignumber.js";
 import { formatShort } from "@ledgerhq/live-common/currencies/index";
 import { Currency } from "@ledgerhq/types-cryptoassets";
-import { BalanceHistoryData, PortfolioRange } from "@ledgerhq/types-live";
+import { BalanceHistoryData, Portfolio, PortfolioRange } from "@ledgerhq/types-live";
 import Chart, { GraphTrackingScreenName } from "~/renderer/components/Chart";
 import Box, { Card } from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
@@ -12,21 +12,45 @@ import { discreetModeSelector } from "~/renderer/reducers/settings";
 import BalanceInfos from "~/renderer/components/BalanceInfos";
 import { usePortfolio } from "~/renderer/actions/portfolio";
 import { hourFormat, dayFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
+
 type Props = {
   counterValue: Currency;
   chartColor: string;
   range: PortfolioRange;
   isWallet40?: boolean;
   shouldDisplayGraphRework?: boolean;
+  /**
+   * Optional pre-computed portfolio. When provided, the component skips its
+   * own `usePortfolio()` call and uses this portfolio instead. This lets
+   * callers (e.g. the Analytics page) share a single throttled portfolio
+   * source with other consumers (`usePortfolioBalance`) so the displayed
+   * balance and % stay consistent across pages during a sync.
+   */
+  portfolio?: Portfolio;
 };
-export default function PortfolioBalanceSummary({
+
+export default function PortfolioBalanceSummary({ portfolio, ...rest }: Props) {
+  if (portfolio) {
+    return <PortfolioBalanceSummaryView {...rest} portfolio={portfolio} />;
+  }
+  return <PortfolioBalanceSummaryContainer {...rest} />;
+}
+
+function PortfolioBalanceSummaryContainer(props: Omit<Props, "portfolio">) {
+  const portfolio = usePortfolio();
+  return <PortfolioBalanceSummaryView {...props} portfolio={portfolio} />;
+}
+
+type ViewProps = Omit<Props, "portfolio"> & { portfolio: Portfolio };
+
+function PortfolioBalanceSummaryView({
   range,
   chartColor,
   counterValue,
   isWallet40,
   shouldDisplayGraphRework,
-}: Props) {
-  const portfolio = usePortfolio();
+  portfolio,
+}: ViewProps) {
   const discreetMode = useSelector(discreetModeSelector);
   const renderTickY = useCallback(
     (val: number | string) => formatShort(counterValue.units[0], BigNumber(val)),
@@ -111,6 +135,7 @@ export default function PortfolioBalanceSummary({
     </Card>
   );
 }
+
 function Tooltip({
   data,
   counterValue,

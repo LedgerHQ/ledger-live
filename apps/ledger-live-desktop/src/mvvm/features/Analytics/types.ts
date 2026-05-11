@@ -1,5 +1,5 @@
 import { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
-import { PortfolioRange } from "@ledgerhq/types-live";
+import { Portfolio, PortfolioRange } from "@ledgerhq/types-live";
 
 export type AllocationTableItem = {
   currency: CryptoOrTokenCurrency;
@@ -18,6 +18,7 @@ export type AnalyticsViewModel = {
   navigateToDashboard: () => void;
   counterValue: Currency;
   selectedTimeRange: PortfolioRange;
+  portfolio: Portfolio;
   shouldDisplayGraphRework?: boolean;
   shouldDisplayAssetSection?: boolean;
 };

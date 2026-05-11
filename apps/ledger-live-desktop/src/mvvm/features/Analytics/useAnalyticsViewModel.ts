@@ -6,6 +6,7 @@ import {
   selectedTimeRangeSelector,
 } from "~/renderer/reducers/settings";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { usePortfolioBalance } from "LLD/hooks/usePortfolioBalance";
 import type { AnalyticsViewModel } from "./types";
 
 export default function useAnalyticsViewModel(): AnalyticsViewModel {
@@ -15,6 +16,8 @@ export default function useAnalyticsViewModel(): AnalyticsViewModel {
   const { shouldDisplayGraphRework, shouldDisplayAssetSection } =
     useWalletFeaturesConfig("desktop");
 
+  const { portfolio } = usePortfolioBalance();
+
   const navigateToDashboard = useCallback(() => {
     navigate("/");
   }, [navigate]);
@@ -23,6 +26,7 @@ export default function useAnalyticsViewModel(): AnalyticsViewModel {
     navigateToDashboard,
     counterValue,
     selectedTimeRange,
+    portfolio,
 
     shouldDisplayGraphRework,
     shouldDisplayAssetSection,
