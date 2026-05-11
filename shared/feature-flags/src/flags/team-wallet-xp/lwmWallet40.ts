@@ -18,6 +18,7 @@ export const lwmWallet40 = flagWith(
     myWallet: z.boolean(),
     quickActionsCtasVariant: z.boolean().optional(),
     brazePlacement: z.boolean().optional(),
+    pnl: z.boolean(),
   },
   {
     enabled: false,
@@ -34,6 +35,7 @@ export const lwmWallet40 = flagWith(
       operationsList: true,
       aggregatedAssets: true,
       myWallet: true,
+      pnl: true,
     },
   },
 );
