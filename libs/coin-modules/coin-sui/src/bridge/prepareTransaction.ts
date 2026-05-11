@@ -1,7 +1,6 @@
 import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { updateTransaction } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { AccountBridge } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
 import { DEFAULT_COIN_TYPE } from "../network/sdk";
 import type { SuiTransactionMode, SuiAccount, Transaction } from "../types";
 import getFeesForTransaction from "./getFeesForTransaction";
@@ -25,15 +24,10 @@ export const prepareTransaction: AccountBridge<
     amount = calculateAmount({ account, transaction });
   }
 
-  let fees: BigNumber;
-  try {
-    fees = await getFeesForTransaction({
-      account,
-      transaction,
-    });
-  } catch {
-    fees = BigNumber(0);
-  }
+  const fees = await getFeesForTransaction({
+    account,
+    transaction,
+  });
 
   let mode: SuiTransactionMode = transaction.mode ?? "send";
   let coinType = DEFAULT_COIN_TYPE;
