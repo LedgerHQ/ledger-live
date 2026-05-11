@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Dialog, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { Slides } from "LLD/components/Slides";
@@ -20,15 +20,6 @@ export const WalletV4TourDialog = ({
   onSlideChange,
 }: WalletV4TourDialogProps) => {
   const { t } = useTranslation();
-  const prevOpenRef = useRef(false);
-
-  useEffect(() => {
-    const justOpened = isOpen && !prevOpenRef.current;
-    prevOpenRef.current = isOpen;
-    if (justOpened) {
-      onSlideChange?.(0);
-    }
-  }, [isOpen, onSlideChange]);
 
   const slides = useMemo(
     () => [
@@ -57,11 +48,19 @@ export const WalletV4TourDialog = ({
     }
   };
 
+  if (!isOpen) {
+    return null;
+  }
+
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="flex h-screen min-h-0 flex-col">
         <DialogHeader density="compact" onClose={onClose} />
-        <Slides initialSlideIndex={0} onSlideChange={onSlideChange}>
+        <Slides
+          key={isOpen ? "open" : "closed"}
+          initialSlideIndex={0}
+          onSlideChange={onSlideChange}
+        >
           <Slides.Content>
             {slides.map((slide, index) => (
               <Slides.Content.Item key={slide.id}>

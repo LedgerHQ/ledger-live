@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, waitFor } from "tests/testSetup";
+import { fireEvent, render, screen, waitFor } from "tests/testSetup";
 import { ProductTourDialog } from "../ProductTourDialogView";
 import { useProductTourDialogViewModel } from "../hooks/useProductTourDialogViewModel";
 
@@ -45,6 +45,22 @@ function getProductTourTestInitialState(overrides?: { productTourCompleted?: boo
   };
 }
 
+function completeSlideOutAnimation(fromIndex: number) {
+  const slideOutAnimationStart = new Event("animationstart", {
+    bubbles: true,
+  });
+  Object.defineProperty(slideOutAnimationStart, "animationName", {
+    value: "slide-out-to-left",
+  });
+
+  fireEvent(screen.getByTestId(`product-tour-slide-${fromIndex}`), slideOutAnimationStart);
+}
+
+async function goToNextSlide(user: ReturnType<typeof render>["user"], fromIndex: number) {
+  await user.click(screen.getByRole("button", { name: CONTINUE_LABEL }));
+  completeSlideOutAnimation(fromIndex);
+}
+
 describe("ProductTourDialog", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -81,10 +97,10 @@ describe("ProductTourDialog", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: CONTINUE_LABEL }));
-    await user.click(screen.getByRole("button", { name: CONTINUE_LABEL }));
-    await user.click(screen.getByRole("button", { name: CONTINUE_LABEL }));
-    await user.click(screen.getByRole("button", { name: CONTINUE_LABEL }));
+    await goToNextSlide(user, 0);
+    await goToNextSlide(user, 1);
+    await goToNextSlide(user, 2);
+    await goToNextSlide(user, 3);
 
     expect(await screen.findByTestId("product-tour-slide-4")).toBeVisible();
     expect(screen.getByRole("button", { name: PORTFOLIO_LABEL })).toBeVisible();
@@ -161,10 +177,10 @@ describe("ProductTour dialog from debug (view model)", () => {
 
     expect(screen.getByTestId("product-tour-slide-0")).toBeVisible();
 
-    await user.click(screen.getByRole("button", { name: CONTINUE_LABEL }));
-    await user.click(screen.getByRole("button", { name: CONTINUE_LABEL }));
-    await user.click(screen.getByRole("button", { name: CONTINUE_LABEL }));
-    await user.click(screen.getByRole("button", { name: CONTINUE_LABEL }));
+    await goToNextSlide(user, 0);
+    await goToNextSlide(user, 1);
+    await goToNextSlide(user, 2);
+    await goToNextSlide(user, 3);
 
     expect(await screen.findByTestId("product-tour-slide-4")).toBeVisible();
     expect(store.getState().settings.productTourCompleted).toBe(true);
