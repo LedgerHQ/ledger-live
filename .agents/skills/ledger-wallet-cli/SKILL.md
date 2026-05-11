@@ -11,7 +11,7 @@ Run from repo root: `pnpm --silent wallet-cli start <command> [flags]`
 
 > **Session first:** When invoked without a specific task, **immediately run `session view`** — do not ask the user what to do first. Show the result, then ask what to do next. If labels exist, skip `account discover`.
 
-> **Sandbox:** `account discover`, `receive`, `send` **must** use `dangerouslyDisableSandbox: true` — sandbox blocks USB (causes `Timeout has occurred`). Other commands are fine in sandbox.
+> **Sandbox:** `account discover`, `receive`, `send`, `genuine-check` **must** use `dangerouslyDisableSandbox: true` — sandbox blocks USB (causes `Timeout has occurred`). Other commands are fine in sandbox.
 
 > **Device contention:** Never run two device commands in parallel — they fail with `[object Object]` or garbled APDU. Run sequentially.
 
@@ -26,6 +26,7 @@ Run from repo root: `pnpm --silent wallet-cli start <command> [flags]`
 | `account discover` | Yes    | **Required** |
 | `receive`          | Yes    | **Required** |
 | `send`             | Yes*   | **Required** |
+| `genuine-check`    | Yes    | **Required** |
 | `balances`         | No     | No           |
 | `operations`       | No     | No           |
 
@@ -62,6 +63,13 @@ Networks: `bitcoin` (mainnet), `base`, `ethereum:sepolia`, `bitcoin:testnet`, `s
 pnpm --silent wallet-cli start receive ethereum-1
 pnpm --silent wallet-cli start receive ethereum-1 --no-verify  # skip device confirmation
 ```
+
+### genuine-check
+```bash
+pnpm --silent wallet-cli start genuine-check
+pnpm --silent wallet-cli start genuine-check --output json
+```
+Device must be unlocked and on the dashboard.
 
 ### balances
 ```bash
