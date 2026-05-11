@@ -388,11 +388,10 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
       node: {
         type: "external",
-        uri: "https://evm.cronos.org",
+        uri: "https://cronos.coin.ledger.com",
       },
       explorer: {
-        type: "blockscout",
-        uri: "https://cronos.org/explorer/api",
+        type: "none",
       },
       showNfts: false,
     },

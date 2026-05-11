@@ -22,10 +22,10 @@ export const cronos = currency({
   ],
   explorerViews: [
     {
-      tx: "https://cronos.org/explorer/tx/$hash",
-      address: "https://cronos.org/explorer/address/$address",
+      tx: "https://explorer.cronos.org/tx/$hash",
+      address: "https://explorer.cronos.org/address/$address",
       token:
-        "https://cronos.org/explorer/address/$address?tab=token_transfer&token=$contractAddress",
+        "https://explorer.cronos.org/address/$address?tab=token_transfer&token=$contractAddress",
     },
   ],
 });
