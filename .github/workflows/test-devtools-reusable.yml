@@ -52,7 +52,7 @@ jobs:
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
 
       - name: Install dependencies
-        run: pnpm i --filter="./devtools/**"
+        run: pnpm i --filter="@devtools/*..."
 
       - name: Run coverage on devtools packages
         env:
