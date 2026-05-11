@@ -6,6 +6,8 @@ import { retryUntilTimeout } from "../../utils/retry";
 import { floatNumberRegex } from "@ledgerhq/live-common/e2e/data/regexes";
 import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
 
+type QuoteWithFees = { rate: number; fees: number; quote: string };
+
 export default class SwapLiveAppPage {
   fromSelector = "from-account-coin-selector";
   fromAmount = "from-account";
@@ -30,6 +32,10 @@ export default class SwapLiveAppPage {
   switchButton = "to-account-switch-accounts";
   specificQuoteCardProviderName = (provider: string) =>
     `compact-quote-card-provider-name-${provider}`;
+  baseProviderCssSelector = (provider: string) =>
+    `[data-testid^="quote-container-${Provider.getNameByUiName(provider)}"]`;
+  providerExecuteButtonCss = (provider: string) =>
+    `${this.baseProviderCssSelector(provider)} [data-testid="${this.executeSwapButton}"]`;
 
   @Step("Expect swap live app page")
   async expectSwapLiveApp() {
@@ -137,8 +143,10 @@ export default class SwapLiveAppPage {
   }
 
   @Step("Tap execute swap button")
-  async tapExecuteSwap() {
-    await tapWebElementByTestId(this.executeSwapButton);
+  async tapExecuteSwap(provider: string) {
+    const button = getWebElementByCssSelector(this.providerExecuteButtonCss(provider), 0);
+    await waitWebElement(button);
+    await tapWebElementByElement(button);
   }
 
   @Step("Tap execute swap button on step approval")
@@ -224,8 +232,11 @@ export default class SwapLiveAppPage {
 
   @Step("Check exchange button has provider name: $0")
   async checkExchangeButtonHasProviderName(provider: string): Promise<string> {
-    await waitWebElementByTestId(this.executeSwapButton);
-    const actualButtonText = await getWebElementText(this.executeSwapButton);
+    const selector = this.providerExecuteButtonCss(provider);
+    const button = getWebElementByCssSelector(selector);
+    await waitWebElement(button);
+    const actualButtonText =
+      (await getWebElementsText(this.swapMainContainerWebElement, selector))[0] ?? "";
     jestExpect(actualButtonText).toMatch(new RegExp(`^(Swap|Continue) with ${provider}$`, "i"));
     return actualButtonText;
   }
@@ -266,7 +277,7 @@ export default class SwapLiveAppPage {
         }
         return undefined;
       })
-      .filter(Boolean) as Array<{ rate: number; fees: number; quote: string }>;
+      .filter((quote): quote is QuoteWithFees => quote !== undefined);
 
     if (quotes.length === 0) {
       throw new Error("No quotes found");
@@ -351,10 +362,10 @@ export default class SwapLiveAppPage {
 
   @Step("Go to $0 live app")
   async goToProviderLiveApp(provider: string) {
-    const continueButton = getWebElementByTestId(this.executeSwapButton);
-    await detoxExpect(continueButton).toExist();
+    const button = getWebElementByCssSelector(this.providerExecuteButtonCss(provider));
+    await detoxExpect(button).toExist();
     const actualButtonText = await app.swapLiveApp.checkExchangeButtonHasProviderName(provider);
-    await app.swapLiveApp.tapExecuteSwap();
+    await app.swapLiveApp.tapExecuteSwap(provider);
     if (provider === "1inch" && actualButtonText.includes("Swap with")) {
       await app.swapLiveApp.tapExecuteSwapOnStepApproval();
       const summaryContinueButton = app.send.summaryContinueButton();

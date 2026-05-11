@@ -84,7 +84,7 @@ test.describe("Swap - Changelly KYC warning and feedback link", () => {
       const amountToSend = await app.swap.getAmountToSend();
       const swap = new Swap(kycFromAccount, kycToAccount, amountToSend);
 
-      await app.swap.clickExchangeButton();
+      await app.swap.clickExchangeButton(kycProvider.name);
       await app.swapDrawer.checkKycWarningBannerVisible();
       await app.speculos.verifyAmountsAndAcceptSwap(swap, amountToSend);
       await app.swapDrawer.verifyExchangeCompletedTextContent(swap.accountToCredit.currency.name);

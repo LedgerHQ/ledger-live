@@ -89,8 +89,8 @@ export async function handleSwapErrorOrSuccess(
   errorMessage: string | null,
   expectedErrorPerDevice?: { [deviceId: string]: string },
 ) {
-  await app.swap.selectExchangeWithoutKyc(swap);
-  await app.swap.clickExchangeButton();
+  const provider = await app.swap.selectExchangeWithoutKyc(swap);
+  await app.swap.clickExchangeButton(provider.name);
 
   const deviceId = getSpeculosModel();
 
