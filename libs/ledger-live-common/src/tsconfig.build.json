@@ -2,6 +2,7 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "customConditions": [],
+    "module": "CommonJS",
     "types": [
       "node",
       "jest"

@@ -22,12 +22,17 @@ import { SolanaAccount } from "@ledgerhq/coin-solana/types";
 /**
  * @memberof mock/account
  */
-export function genAddingOperationsInAccount(
+export async function genAddingOperationsInAccount(
   account: Account,
   count: number,
   seed: number | string,
-): Account {
+): Promise<Account> {
   const rng = new Prando(seed);
+  // Load module first so genAccountEnhanceOperations runs before the shallow copy
+  const perFamilyOperation = await loadMockAccountForFamily(account.currency.family);
+  if (perFamilyOperation && typeof (perFamilyOperation as any).genAccountEnhanceOperations === "function") {
+    (perFamilyOperation as any).genAccountEnhanceOperations(account, rng);
+  }
   const copy: Account = { ...account };
   copy.operations = Array(count)
     .fill(null)
@@ -36,7 +41,7 @@ export function genAddingOperationsInAccount(
       return ops.concat(op);
     }, copy.operations);
   copy.spendableBalance = copy.balance = ensureNoNegative(copy.operations);
-  loadMockAccountForFamily(account.currency.family)?.postSyncAccount?.(copy);
+  perFamilyOperation?.postSyncAccount?.(copy);
   return copy;
 }
 
@@ -190,25 +195,18 @@ export function genAccount(id: number | string, opts: GenAccountOptions = {}): A
           };
           break;
         default: {
-          try {
-            const bridge = getAccountBridge(account);
-            const initAccount = bridge.initAccount;
-            if (initAccount) {
-              initAccount(account);
-            }
-          } catch {
-            // to fix /src/__tests__/cross.ts, skip bridge error if there is no bridge in such currency
-          }
+          getAccountBridge(account)
+            .then(bridge => {
+              bridge.initAccount?.(account);
+            })
+            .catch(() => {
+              // to fix /src/__tests__/cross.ts, skip bridge error if there is no bridge in such currency
+            });
         }
       }
     },
-    (account: Account, currency: CryptoCurrency, rng: Prando) => {
-      const perFamilyOperation = loadMockAccountForFamily(currency.family);
-      const genAccountEnhanceOperations =
-        perFamilyOperation && (perFamilyOperation as any).genAccountEnhanceOperations;
-      if (genAccountEnhanceOperations) {
-        genAccountEnhanceOperations(account, rng);
-      }
+    (_account: Account, _currency: CryptoCurrency, _rng: Prando) => {
+      // genAccountEnhanceOperations is applied in genAddingOperationsInAccount (async)
     },
   );
 }

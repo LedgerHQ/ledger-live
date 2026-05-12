@@ -50,7 +50,7 @@ export const syncNewAccountsToImport = async (
   const failed: Record<string, Error> = {};
   await promiseAllBatched(getEnv("SYNC_MAX_CONCURRENT"), selectedItems, async ({ account }) => {
     try {
-      const bridge = getAccountBridge(account);
+      const bridge = await getAccountBridge(account);
       await bridgeCache.prepareCurrency(account.currency);
       const syncConfig = {
         paginationConfig: {},
