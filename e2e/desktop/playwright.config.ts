@@ -2,7 +2,7 @@ import { PlaywrightTestConfig } from "@playwright/test";
 
 const config: PlaywrightTestConfig = {
   testDir: "./tests/specs",
-  retries: process.env.CI ? 2 : 0,
+  retries: 0,
   timeout: process.env.CI ? 400000 : 1200000,
   outputDir: "./tests/artifacts/test-results",
   expect: {
@@ -16,6 +16,7 @@ const config: PlaywrightTestConfig = {
     // Playwright will capture screenshots for the main view and any open webviews
     // Handle screenshots ourselves to avoid multiple results
     screenshot: "off",
+    trace: "retain-on-failure",
   },
   forbidOnly: !!process.env.CI,
   preserveOutput: process.env.CI ? "failures-only" : "always",
