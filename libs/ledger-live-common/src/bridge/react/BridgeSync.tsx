@@ -4,7 +4,7 @@ import priorityQueue from "async/priorityQueue";
 import { concat, from } from "rxjs";
 import { ignoreElements } from "rxjs/operators";
 import React, { useEffect, useCallback, useState, useRef, useMemo } from "react";
-import { getVotesCount, isUpToDateAccount, getAccountCurrency } from "../../account";
+import { isUpToDateAccount, getAccountCurrency } from "../../account";
 import { getAccountBridge } from "..";
 import { getEnv } from "@ledgerhq/live-env";
 import type { SyncAction, SyncState, BridgeSyncState } from "./types";
@@ -171,6 +171,7 @@ function useSyncQueue({
             return;
           }
 
+          const votesCount = bridge.getStakesCount(account);
           trackAnalytics("SyncSuccess", {
             duration: (Date.now() - startSyncTime) / 1000,
             currencyName: account.currency.name,
@@ -185,9 +186,9 @@ function useSyncQueue({
               operationsLength: a.operationsCount,
               parentCurrencyName: account.currency.name,
               parentDerivationMode: account.derivationMode,
-              votesCount: getVotesCount(a, account),
+              votesCount,
             })),
-            votesCount: getVotesCount(account),
+            votesCount,
             reason,
           });
         };

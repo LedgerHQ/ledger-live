@@ -32,10 +32,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadPlatformAdapter: () => require("../families/bitcoin/platformAdapter").default,
     loadAccount: () => require("@ledgerhq/coin-bitcoin/account").default,
     loadMockBridge: () => require("../families/bitcoin/bridge/mock").default,
-    loadClearAccount: () => require("../families/bitcoin/clearAccount").clearAccount,
-    loadIsEditableOperation: () => require("../families/bitcoin/operations").isEditableOperation,
-    loadIsStuckOperation: () => require("../families/bitcoin/operations").isStuckOperation,
-    loadGetStuckAccountAndOperation: () => require("../families/bitcoin/operations").getStuckAccountAndOperation,
+    loadBridgeExtensions: () => require("../families/bitcoin/bridgeExtensions").default,
   },
   {
     family: "canton",
@@ -43,7 +40,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadTransaction: () => require("@ledgerhq/coin-canton/transaction").default,
     loadDeviceTxConfig: () => require("@ledgerhq/coin-canton/deviceTransactionConfig").default,
     loadMockBridge: () => require("../families/canton/bridge/mock").default,
-    loadIsAccountEmpty: () => require("@ledgerhq/coin-canton").isAccountEmpty,
+    loadBridgeExtensions: () => require("../families/canton/bridgeExtensions").default,
   },
   {
     family: "cardano",
@@ -80,8 +77,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadWalletApiAdapter: () => require("../families/cosmos/walletApiAdapter").default,
     loadMockBridge: () => require("../families/cosmos/bridge/mock").default,
     loadMockAccount: () => require("@ledgerhq/coin-cosmos/mock").default,
-    loadIsAccountEmpty: () => require("@ledgerhq/coin-cosmos/helpers").isAccountEmpty,
-    loadGetVotesCount: () => require("../families/cosmos/getVotesCount").getVotesCount,
+    loadBridgeExtensions: () => require("../families/cosmos/bridgeExtensions").default,
   },
   {
     family: "evm",
@@ -93,9 +89,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadMockBridge: () => require("../families/evm/bridge/mock").default,
     loadValidateAddress: () => require("@ledgerhq/coin-evm/logic/validateAddress").validateAddress,
     loadSigner: () => require("../bridge/generic-coin-framework/families/evm/signer").default,
-    loadIsEditableOperation: () => require("../families/evm/operations").isEditableOperation,
-    loadIsStuckOperation: () => require("../families/evm/operations").isStuckOperation,
-    loadGetStuckAccountAndOperation: () => require("../families/evm/operations").getStuckAccountAndOperation,
+    loadBridgeExtensions: () => require("../families/evm/bridgeExtensions").default,
   },
   {
     family: "filecoin",
@@ -198,10 +192,10 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadTransaction: () => require("@ledgerhq/coin-tezos/transaction").default,
     loadDeviceTxConfig: () => require("@ledgerhq/coin-tezos/deviceTransactionConfig").default,
     loadMockBridge: () => require("../families/tezos/bridge/mock").default,
-    loadGetVotesCount: () => require("../families/tezos/getVotesCount").getVotesCount,
     loadValidateAddress: () =>
       require("@ledgerhq/coin-tezos/logic/validateAddress").validateAddress,
     loadSigner: () => require("../bridge/generic-coin-framework/families/tezos/signer").default,
+    loadBridgeExtensions: () => require("../families/tezos/bridgeExtensions").default,
   },
   {
     family: "ton",
@@ -215,8 +209,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadTransaction: () => require("@ledgerhq/coin-tron/transaction").default,
     loadDeviceTxConfig: () => require("@ledgerhq/coin-tron/deviceTransactionConfig").default,
     loadMockBridge: () => require("../families/tron/bridge/mock").default,
-    loadIsAccountEmpty: () => require("@ledgerhq/coin-tron/index").isAccountEmpty,
-    loadGetVotesCount: () => require("../families/tron/getVotesCount").getVotesCount,
+    loadBridgeExtensions: () => require("../families/tron/bridgeExtensions").default,
   },
   {
     family: "vechain",
@@ -225,7 +218,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     // No loadDeviceTxConfig: vechain has no deviceTransactionConfig
     loadAccount: () => require("@ledgerhq/coin-vechain/account").default,
     loadMockAccount: () => require("@ledgerhq/coin-vechain/mock").default,
-    loadIsAccountEmpty: () => require("@ledgerhq/coin-vechain").isAccountEmpty,
+    loadBridgeExtensions: () => require("../families/vechain/bridgeExtensions").default,
   },
   {
     family: "xrp",

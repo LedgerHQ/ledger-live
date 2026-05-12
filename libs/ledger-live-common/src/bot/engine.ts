@@ -17,7 +17,7 @@ import {
 import { log } from "@ledgerhq/logs";
 import { getCurrencyBridge, getAccountBridge } from "../bridge";
 import { promiseAllBatched, delay } from "../promise";
-import { isAccountEmpty, formatAccount } from "../account";
+import { formatAccount } from "../account";
 import { getOperationConfirmationNumber } from "../operation";
 import { getEnv } from "@ledgerhq/live-env";
 import {
@@ -187,7 +187,10 @@ export async function runWithAppSpec<T extends TransactionCommon>(
       )}\n${accounts.map(a => formatAccount(a, "head")).join("\n")}\n`,
     );
 
-    if (accounts.every(isAccountEmpty)) {
+    const emptyChecks = await Promise.all(
+      accounts.map(async a => (await getAccountBridge(a)).isAccountEmpty(a)),
+    );
+    if (emptyChecks.every(Boolean)) {
       reportLog(
         `This SEED does not have ${currency.name}. Please send funds to ${accounts
           .map(a => a.freshAddress)

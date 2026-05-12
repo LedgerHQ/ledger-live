@@ -1,16 +1,9 @@
-import {
-  clearAccount as commonClearAccount,
-  isAccountEmpty as commonIsAccountEmpty,
-  getMainAccount,
-} from "@ledgerhq/ledger-wallet-framework/account";
+import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
-import {
-  loadClearAccountForFamily,
-  loadGetVotesCountForFamily,
-  loadIsAccountEmptyForFamily,
-} from "../coin-modules/registry";
+import { loadBridgeExtensionsForFamily } from "../coin-modules/registry";
+import { defaultBridgeExtensions } from "../bridge/defaultBridgeExtensions";
 
 // TODO: remove this export and prefer import from root file.
 export {
@@ -30,28 +23,40 @@ export {
   shortAddressPreview,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
 
+/**
+ * @deprecated Acquire the bridge first via `useAccountBridge(account)` (React)
+ * or `getAccountBridge(account)` (non-React), then call `bridge.isAccountEmpty(account)`.
+ */
 export const isAccountEmpty = (a: AccountLike): boolean => {
   if (a.type === "Account") {
-    const fn = loadIsAccountEmptyForFamily(a.currency.family);
+    const fn = loadBridgeExtensionsForFamily(a.currency.family).isAccountEmpty;
     if (fn) return fn(a);
   }
-  return commonIsAccountEmpty(a);
+  return defaultBridgeExtensions.isAccountEmpty(a);
 };
 
-// clear account to a bare minimal version that can be restored via sync
-// will preserve the balance to avoid user panic
+/**
+ * @deprecated Acquire the bridge first via `useAccountBridge(account)` (React)
+ * or `getAccountBridge(account)` (non-React), then call `bridge.clearAccount(account)`.
+ */
 export function clearAccount<T extends AccountLike>(account: T): T {
-  return commonClearAccount(account, (account: Account) => {
-    loadClearAccountForFamily(account.currency.family)?.(account);
-  });
+  if (account.type !== "Account") return defaultBridgeExtensions.clearAccount(account) as T;
+  const fn = loadBridgeExtensionsForFamily(account.currency.family).clearAccount;
+  return (fn ?? defaultBridgeExtensions.clearAccount)(account) as T;
 }
 
+/**
+ * @deprecated Acquire the bridge first via `useAccountBridge(account, parentAccount)` (React)
+ * or `getAccountBridge(account, parentAccount)` (non-React), then call
+ * `bridge.getStakesCount(getMainAccount(account, parentAccount))`.
+ */
 export const getVotesCount = (
   account: AccountLike,
   parentAccount?: Account | null | undefined,
 ): number => {
   const mainAccount = getMainAccount(account, parentAccount);
-  return loadGetVotesCountForFamily(mainAccount.currency.family)?.(mainAccount) ?? 0;
+  return (loadBridgeExtensionsForFamily(mainAccount.currency.family).getStakesCount ??
+    defaultBridgeExtensions.getStakesCount)(mainAccount);
 };
 
 /**
