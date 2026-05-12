@@ -76,7 +76,6 @@
     "uuid": "11.1.0"
   },
   "devDependencies": {
-    "@faker-js/faker": "^8.4.1",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

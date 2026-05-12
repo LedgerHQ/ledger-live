@@ -1,4 +1,3 @@
-import { faker } from "@faker-js/faker";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
@@ -121,7 +120,7 @@ describe("getAccountShape", () => {
 
   it("returns an AccountShapeInfo with operations from initialAccount", async () => {
     // GIVEN
-    const initialOperations = [createFixtureOperation({ id: faker.string.uuid() })];
+    const initialOperations = [createFixtureOperation({ id: "polkadot:initial-op-1" })];
     const initialAccount = createFixtureAccount({ operations: initialOperations });
     const accountInfo = createAccountInfo();
     mockGetAccount.mockResolvedValue(accountInfo);
@@ -156,8 +155,8 @@ describe("getAccountShape", () => {
     const accountInfo = createAccountInfo();
     mockGetAccount.mockResolvedValue(accountInfo);
     const apiOperations: PolkadotOperation[] = [
-      createFixtureOperation({ id: faker.string.uuid() }),
-      createFixtureOperation({ id: faker.string.uuid() }),
+      createFixtureOperation({ id: "polkadot:api-op-1" }),
+      createFixtureOperation({ id: "polkadot:api-op-2" }),
     ];
     mockGetOperations.mockResolvedValue(apiOperations);
 
@@ -355,14 +354,14 @@ describe("getAccountShape", () => {
 function createAccountInfo() {
   return {
     blockHeight: 54,
-    balance: new BigNumber(faker.string.numeric()),
-    spendableBalance: new BigNumber(faker.string.numeric()),
+    balance: new BigNumber(1000),
+    spendableBalance: new BigNumber(1000),
     nonce: 12,
-    lockedBalance: new BigNumber(faker.string.numeric()),
+    lockedBalance: new BigNumber(0),
     controller: null,
     stash: null,
-    unlockedBalance: new BigNumber(faker.string.numeric()),
-    unlockingBalance: new BigNumber(faker.string.numeric()),
+    unlockedBalance: new BigNumber(0),
+    unlockingBalance: new BigNumber(0),
     unlockings: [],
     nominations: [],
     numSlashingSpans: undefined,

@@ -1,4 +1,3 @@
-import { faker } from "@faker-js/faker";
 import { emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { TokenAccount } from "@ledgerhq/types-live";
@@ -186,7 +185,7 @@ describe("buildSignOperation", () => {
     const date = new Date("2020-01-01");
     jest.useFakeTimers().setSystemTime(date);
 
-    const id = faker.string.uuid();
+    const id = "aptos:signop-account";
     const account = createFixtureAccount({
       id,
       subAccounts: [
