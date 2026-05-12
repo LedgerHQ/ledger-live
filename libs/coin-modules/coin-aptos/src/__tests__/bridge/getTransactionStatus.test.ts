@@ -4,6 +4,7 @@ import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
+  NotEnoughBalanceFees,
   NotEnoughToRestake,
   NotEnoughToStake,
   NotEnoughToUnstake,
@@ -82,7 +83,6 @@ describe("getTransactionStatus Test", () => {
     const expected = {
       errors: {
         fees: new FeeNotLoaded(),
-        amount: new NotEnoughBalance(),
       },
       warnings: {},
       estimatedFees: BigNumber(0),
@@ -230,7 +230,7 @@ describe("getTransactionStatus Test", () => {
 
     const expected = {
       errors: {
-        amount: new NotEnoughBalance(),
+        amount: new NotEnoughBalanceFees(),
       },
       warnings: {},
       estimatedFees: BigNumber(0),
@@ -255,7 +255,6 @@ describe("getTransactionStatus Test", () => {
     const expected = {
       errors: {
         recipient: new RecipientRequired(),
-        amount: new NotEnoughBalance(),
       },
       warnings: {},
       estimatedFees: BigNumber(2),
