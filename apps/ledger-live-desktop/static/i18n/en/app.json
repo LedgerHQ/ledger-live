@@ -4620,6 +4620,32 @@
         },
         "cta": "Stake"
       }
+    },
+    "unstake": {
+      "flow": {
+        "title": "Unstake XTZ",
+        "steps": {
+          "amount": {
+            "title": "Amount",
+            "amountLabel": "Amount to unstake",
+            "availableLabel": "Staked",
+            "maxLabel": "Max",
+            "unbondingNotice": "Unstaking takes 4 days. During this period your XTZ remains delegated and stops earning staking rewards."
+          },
+          "device": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "broadcastError": "Your unstaking transaction couldn't be sent to the network. Please try again.",
+            "success": {
+              "title": "Unstake submitted",
+              "text": "Your XTZ are unstaking and will be available for withdrawal in ~4 days.",
+              "cta": "View details"
+            }
+          }
+        }
+      }
     }
   },
   "delegation": {
