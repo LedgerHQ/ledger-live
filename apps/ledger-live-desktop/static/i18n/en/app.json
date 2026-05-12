@@ -8833,6 +8833,11 @@
     "totalBalance": "Total balance",
     "addresses": "Addresses",
     "add": "Add",
-    "notFound": "Asset distribution item not found."
+    "notFound": "Asset distribution item not found.",
+    "marketStats": "Market stats",
+    "marketStatsTooltip": "Market metrics for this asset.",
+    "pricePerformance": "Price performance",
+    "marketRank": "Market rank",
+    "tradingVolume24h": "24h trading volume"
   }
 }

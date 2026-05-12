@@ -10,6 +10,7 @@ import {
 import { mockMarket, mockDada } from "tests/utils/assetDetailMocks";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import type { DistributionItem } from "@ledgerhq/types-live";
+import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import AssetDetail from "../index";
 
 const LABEL = {
@@ -22,6 +23,8 @@ const LABEL = {
 const TEST_ID = {
   HEADER: "asset-detail-header",
   ADDRESS_LIST: "asset-detail-address-list",
+  MARKET_SECTION: "asset-detail-market-data-section",
+  TRANSACTIONS_SECTION: "asset-detail-transactions-section",
 } as const;
 
 jest.mock("react-router", () => ({
@@ -327,6 +330,35 @@ describe("AssetDetail integration", () => {
       render(<AssetDetail />);
 
       expect(screen.queryByText(LABEL.NOT_FOUND)).not.toBeInTheDocument();
+    });
+  });
+
+  describe("market section and transaction layout", () => {
+    it("surfaces market detail fields from the API and lists transaction history after the market grid when the account is in the store", async () => {
+      mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+      const account = genAccount("asset-detail-market-tx-layout", { currency: btc });
+      const item = buildDistributionItem({ accounts: [account] });
+      setupRoute("bitcoin", { bySlug: { bitcoin: item }, list: [item] });
+
+      renderWithMockedCounterValuesProvider(<AssetDetail />, {
+        initialState: { accounts: [account], settings: AFTER_ONBOARDING_STATE },
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText("Market rank")).toBeVisible();
+        expect(screen.getByText("#1")).toBeVisible();
+        expect(screen.getByText("24h trading volume")).toBeVisible();
+      });
+
+      await waitFor(() => {
+        expect(screen.getByRole("heading", { name: "Transaction history" })).toBeVisible();
+      });
+
+      const marketSection = screen.getByTestId(TEST_ID.MARKET_SECTION);
+      const transactionsSection = screen.getByTestId(TEST_ID.TRANSACTIONS_SECTION);
+      expect(marketSection.compareDocumentPosition(transactionsSection)).toBe(
+        Node.DOCUMENT_POSITION_FOLLOWING,
+      );
     });
   });
 

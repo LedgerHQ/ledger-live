@@ -108,8 +108,13 @@ describe("useAssetDetailViewModel", () => {
         bitcoin: { id: "bitcoin", ledgerIds: ["bitcoin"], name: "Bitcoin DADA", price: 2 },
       });
 
-      const vm = await waitForReady();
-      await waitFor(() => expect(vm.marketInfo?.name).toBe("Bitcoin DADA"));
+      const { result } = renderVM();
+      await waitFor(() => expect(result.current.mode).toBe("ready"));
+      assertReady(result.current);
+      await waitFor(() => {
+        assertReady(result.current);
+        expect(result.current.marketInfo?.name).toBe("Bitcoin DADA");
+      });
     });
 
     it("falls back to marketFromHook when DADA has no market entry", async () => {
