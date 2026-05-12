@@ -12,9 +12,9 @@ import {
 
 const ENABLED_FAMILIES = ["evm", "xrp", "stellar", "tezos"];
 
-test("expands generic Alpaca aliases from enabled families", () => {
+test("expands generic coin framework aliases from enabled families", () => {
   assert.equal(
-    resolveBaseFilter("@generic-alpaca", ENABLED_FAMILIES).filter,
+    resolveBaseFilter("@generic-coin-framework", ENABLED_FAMILIES).filter,
     "@family-evm|@family-xrp|@family-stellar|@family-tezos",
   );
   assert.equal(
@@ -25,7 +25,7 @@ test("expands generic Alpaca aliases from enabled families", () => {
 
 test("preserves explicit extra filters", () => {
   assert.equal(
-    resolveBaseFilter("@generic-alpaca,@solana", ENABLED_FAMILIES).filter,
+    resolveBaseFilter("@generic-coin-framework,@solana", ENABLED_FAMILIES).filter,
     "@family-evm|@family-xrp|@family-stellar|@family-tezos|@solana",
   );
 });
@@ -39,7 +39,7 @@ test("normalizes comma and pipe separated filters", () => {
 
 test("deduplicates expanded and explicit filters", () => {
   assert.equal(
-    resolveBaseFilter("@generic-alpaca,@family-evm", ENABLED_FAMILIES).filter,
+    resolveBaseFilter("@generic-coin-framework,@family-evm", ENABLED_FAMILIES).filter,
     "@family-evm|@family-xrp|@family-stellar|@family-tezos",
   );
 });
@@ -60,7 +60,7 @@ test("emits warnings but preserves resolved filter when a tag has no matches", (
   try {
     assert.equal(
       resolveTestFilter({
-        input: "@generic-alpaca",
+        input: "@generic-coin-framework",
         checkDir: relativeTempDir,
       }),
       "@family-evm|@family-xrp|@family-stellar|@family-tezos",

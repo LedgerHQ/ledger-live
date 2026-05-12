@@ -11,7 +11,7 @@ on:
         description: "Specify branch to checkout and test or leave blank to use the workflow branch"
         required: false
       test_filter:
-        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@generic-alpaca,@solana", "@bitcoin,@family-evm" or "Accounts @smoke|Settings")
+        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@generic-coin-framework,@solana", "@bitcoin,@family-evm" or "Accounts @smoke|Settings")
         required: false
       invert_filter:
         description: Ignore test having name pattern (entered in the previous field)
@@ -80,7 +80,7 @@ on:
         required: false
         type: string
       test_filter:
-        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@generic-alpaca,@solana", "@bitcoin,@family-evm" or "Accounts @smoke|Settings")
+        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@generic-coin-framework,@solana", "@bitcoin,@family-evm" or "Accounts @smoke|Settings")
         required: false
         type: string
       invert_filter:

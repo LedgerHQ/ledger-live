@@ -18,7 +18,7 @@ on:
         description: "Specify branch to checkout and test or leave blank to use the workflow branch"
         required: false
       test_filter:
-        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@generic-alpaca,@solana", "@bitcoin,@family-evm" or "addAccount deeplinks")
+        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@generic-coin-framework,@solana", "@bitcoin,@family-evm" or "addAccount deeplinks")
         required: false
         type: string
       tests_type:
@@ -88,7 +88,7 @@ on:
         required: false
         type: string
       test_filter:
-        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@generic-alpaca,@solana", "@bitcoin,@family-evm" or "addAccount deeplinks")
+        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@generic-coin-framework,@solana", "@bitcoin,@family-evm" or "addAccount deeplinks")
         required: false
         type: string
       tests_type:
@@ -200,7 +200,7 @@ jobs:
           sparse-checkout: |
             apps/ledger-live-mobile
             e2e/mobile
-            libs/ledger-live-common/src/bridge/generic-coin-framework/alpacaFamilies.json
+            libs/ledger-live-common/src/bridge/generic-coin-framework/genericCoinFrameworkFamilies.json
             scripts/resolve-e2e-test-filter.mjs
             .pnpmfile.cjs
             tools

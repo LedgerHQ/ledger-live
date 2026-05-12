@@ -8,20 +8,20 @@ import { fileURLToPath } from "node:url";
 const currentFile = fileURLToPath(import.meta.url);
 const currentDir = path.dirname(currentFile);
 const repoRoot = path.resolve(currentDir, "..");
-const alpacaFamiliesPath = path.join(
+const genericCoinFrameworkFamiliesPath = path.join(
   repoRoot,
-  "libs/ledger-live-common/src/bridge/generic-coin-framework/alpacaFamilies.json",
+  "libs/ledger-live-common/src/bridge/generic-coin-framework/genericCoinFrameworkFamilies.json",
 );
 
-const GENERIC_ALPACA_ALIASES = new Set([
+const GENERIC_COIN_FRAMEWORK_ALIASES = new Set([
   "generic-family",
   "@generic-family",
-  "generic-alpaca",
-  "@generic-alpaca",
+  "generic-coin-framework",
+  "@generic-coin-framework",
 ]);
 
-function readEnabledAlpacaFamilies() {
-  const familyFlags = JSON.parse(fs.readFileSync(alpacaFamiliesPath, "utf8"));
+function readEnabledGenericCoinFrameworkFamilies() {
+  const familyFlags = JSON.parse(fs.readFileSync(genericCoinFrameworkFamiliesPath, "utf8"));
   return Object.entries(familyFlags)
     .filter(([, isEnabled]) => isEnabled)
     .map(([family]) => family);
@@ -38,16 +38,21 @@ function joinFilterParts(parts) {
   return [...new Set(parts)].join("|");
 }
 
-export function resolveBaseFilter(input, enabledAlpacaFamilies = readEnabledAlpacaFamilies()) {
+export function resolveBaseFilter(
+  input,
+  enabledGenericCoinFrameworkFamilies = readEnabledGenericCoinFrameworkFamilies(),
+) {
   const parts = splitFilter(input);
-  const genericAlpacaTags = enabledAlpacaFamilies.map(family => `@family-${family}`);
-  let expandedGenericAlpaca = false;
+  const genericCoinFrameworkTags = enabledGenericCoinFrameworkFamilies.map(
+    family => `@family-${family}`,
+  );
+  let expandedGenericCoinFramework = false;
   const resolvedParts = [];
 
   for (const part of parts) {
-    if (GENERIC_ALPACA_ALIASES.has(part)) {
-      expandedGenericAlpaca = true;
-      resolvedParts.push(...genericAlpacaTags);
+    if (GENERIC_COIN_FRAMEWORK_ALIASES.has(part)) {
+      expandedGenericCoinFramework = true;
+      resolvedParts.push(...genericCoinFrameworkTags);
     } else {
       resolvedParts.push(part);
     }
@@ -55,7 +60,7 @@ export function resolveBaseFilter(input, enabledAlpacaFamilies = readEnabledAlpa
 
   return {
     filter: joinFilterParts(resolvedParts),
-    expandedTags: expandedGenericAlpaca ? genericAlpacaTags : [],
+    expandedTags: expandedGenericCoinFramework ? genericCoinFrameworkTags : [],
   };
 }
 
