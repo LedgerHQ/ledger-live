@@ -407,6 +407,7 @@ export function buildSyncObservables(
     syncs.push(createTransparentSyncObservable(info, signerContext));
   }
 
+  // Chain adapter guards (syncType flags, ufvk, syncState) are checked internally
   const adapter = getChainAdapter(currency.id);
   const extraSync = adapter.buildExtraSyncObservable?.(info, syncConfig);
   if (extraSync) {

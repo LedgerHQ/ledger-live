@@ -3,8 +3,7 @@ import type { ChainAdapter } from "../types";
 import type { SignerContext } from "../../signer";
 import type { Transaction } from "../../types";
 import { registerChainAdapter } from "../registry";
-import type { ZcashAccount, ZcashAccountRaw, ZcashTransaction } from "./types";
-import { isShieldedTransfer } from "./types";
+import type { ZcashAccount, ZcashAccountRaw } from "./types";
 import { toZcashPrivateInfoRaw, fromZcashPrivateInfoRaw } from "./serialization";
 import { buildExtraSyncObservable } from "./sync";
 
@@ -30,46 +29,36 @@ const zcashChainAdapter: ChainAdapter = {
   },
 
   // ── Transaction ─────────────────────────────────────────────────────
+  // All Zcash transactions (transparent + shielded) will use PCZT.
+  // Until PCZT is implemented, returning undefined falls back to Bitcoin legacy path.
 
   signOperation(
     _account: Account,
     _deviceId: string,
-    transaction: Transaction,
+    _transaction: Transaction,
     _signerContext: SignerContext,
   ) {
-    const tx = transaction as ZcashTransaction;
-    if (!isShieldedTransfer(tx)) return undefined;
-
-    // TODO: implement PCZT signing for shielded transactions
-    throw new Error("Zcash shielded signOperation not yet implemented");
+    // TODO: implement PCZT signing for all Zcash transactions
+    return undefined;
   },
 
-  getTransactionStatus(_account: Account, transaction: Transaction) {
-    const tx = transaction as ZcashTransaction;
-    if (!isShieldedTransfer(tx)) return undefined;
-
-    // TODO: implement shielded transaction validation + ZIP-317 fee estimation
-    throw new Error("Zcash shielded getTransactionStatus not yet implemented");
+  getTransactionStatus(_account: Account, _transaction: Transaction) {
+    // TODO: implement PCZT transaction validation + ZIP-317 fee estimation
+    return undefined;
   },
 
   estimateMaxSpendable(
     _account: Account,
     _parentAccount: Account | null | undefined,
-    transaction: Transaction | null | undefined,
+    _transaction: Transaction | null | undefined,
   ) {
-    const tx = transaction as ZcashTransaction | null | undefined;
-    if (!tx || !isShieldedTransfer(tx)) return undefined;
-
-    // TODO: implement shielded balance estimation
-    throw new Error("Zcash shielded estimateMaxSpendable not yet implemented");
+    // TODO: implement PCZT balance estimation
+    return undefined;
   },
 
-  prepareTransaction(_account: Account, transaction: Transaction) {
-    const tx = transaction as ZcashTransaction;
-    if (!isShieldedTransfer(tx)) return undefined;
-
-    // TODO: implement shielded transaction preparation (ZIP-317 fee info)
-    throw new Error("Zcash shielded prepareTransaction not yet implemented");
+  prepareTransaction(_account: Account, _transaction: Transaction) {
+    // TODO: implement PCZT transaction preparation (ZIP-317 fee info)
+    return undefined;
   },
 };
 

@@ -15,7 +15,7 @@ const mockSignerContext = jest.fn() as unknown as SignerContext;
 function makeTx(transferType: ZcashTransferType): Transaction {
   return {
     family: "bitcoin",
-    amount: 0 as any,
+    amount: 0 as unknown as Transaction["amount"],
     recipient: "",
     useAllAmount: false,
     feePerByte: null,
@@ -27,80 +27,65 @@ function makeTx(transferType: ZcashTransferType): Transaction {
 }
 
 // ── Tests ──────────────────────────────────────────────────────────────
+// All Zcash transactions (transparent + shielded) will use PCZT.
+// Until PCZT is implemented, every method returns undefined (falls back to Bitcoin legacy path).
 
 describe("zcash chain adapter — transaction routing", () => {
   const adapter = getChainAdapter("zcash");
 
-  describe("signOperation", () => {
-    it("returns undefined for transparent transactions", () => {
-      const result = adapter.signOperation!(
-        mockAccount,
-        "device",
-        makeTx("transparent"),
-        mockSignerContext,
-      );
-      expect(result).toBeUndefined();
-    });
+  const allTransferTypes: ZcashTransferType[] = [
+    "transparent",
+    "transparent-to-shielded",
+    "shielded-to-transparent",
+    "shielded",
+  ];
 
-    it.each<ZcashTransferType>(["transparent-to-shielded", "shielded-to-transparent", "shielded"])(
-      "throws for %s transactions (not yet implemented)",
+  describe("signOperation", () => {
+    it.each<ZcashTransferType>(allTransferTypes)(
+      "returns undefined for %s transactions (PCZT not yet implemented)",
       transferType => {
-        expect(() =>
-          adapter.signOperation!(mockAccount, "device", makeTx(transferType), mockSignerContext),
-        ).toThrow("not yet implemented");
+        const result = adapter.signOperation!(
+          mockAccount,
+          "device",
+          makeTx(transferType),
+          mockSignerContext,
+        );
+        expect(result).toBeUndefined();
       },
     );
   });
 
   describe("getTransactionStatus", () => {
-    it("returns undefined for transparent transactions", () => {
-      const result = adapter.getTransactionStatus!(mockAccount, makeTx("transparent"));
-      expect(result).toBeUndefined();
-    });
-
-    it.each<ZcashTransferType>(["transparent-to-shielded", "shielded-to-transparent", "shielded"])(
-      "throws for %s transactions (not yet implemented)",
+    it.each<ZcashTransferType>(allTransferTypes)(
+      "returns undefined for %s transactions (PCZT not yet implemented)",
       transferType => {
-        expect(() => adapter.getTransactionStatus!(mockAccount, makeTx(transferType))).toThrow(
-          "not yet implemented",
-        );
+        const result = adapter.getTransactionStatus!(mockAccount, makeTx(transferType));
+        expect(result).toBeUndefined();
       },
     );
   });
 
   describe("estimateMaxSpendable", () => {
-    it("returns undefined for transparent transactions", () => {
-      const result = adapter.estimateMaxSpendable!(mockAccount, undefined, makeTx("transparent"));
-      expect(result).toBeUndefined();
-    });
-
-    it("returns undefined when transaction is null", () => {
-      const result = adapter.estimateMaxSpendable!(mockAccount, undefined, null as any);
-      expect(result).toBeUndefined();
-    });
-
-    it.each<ZcashTransferType>(["transparent-to-shielded", "shielded-to-transparent", "shielded"])(
-      "throws for %s transactions (not yet implemented)",
+    it.each<ZcashTransferType>(allTransferTypes)(
+      "returns undefined for %s transactions (PCZT not yet implemented)",
       transferType => {
-        expect(() =>
-          adapter.estimateMaxSpendable!(mockAccount, undefined, makeTx(transferType)),
-        ).toThrow("not yet implemented");
+        const result = adapter.estimateMaxSpendable!(mockAccount, undefined, makeTx(transferType));
+        expect(result).toBeUndefined();
       },
     );
+
+    it("returns undefined when transaction is null", () => {
+      const result = adapter.estimateMaxSpendable!(mockAccount, undefined, null as unknown as Transaction);
+      expect(result).toBeUndefined();
+    });
   });
 
   describe("prepareTransaction", () => {
-    it("returns undefined for transparent transactions", () => {
-      const result = adapter.prepareTransaction!(mockAccount, makeTx("transparent"));
-      expect(result).toBeUndefined();
-    });
-
-    it.each<ZcashTransferType>(["transparent-to-shielded", "shielded-to-transparent", "shielded"])(
-      "throws for %s transactions (not yet implemented)",
+    it.each<ZcashTransferType>(allTransferTypes)(
+      "returns undefined for %s transactions (PCZT not yet implemented)",
       transferType => {
-        expect(() => adapter.prepareTransaction!(mockAccount, makeTx(transferType))).toThrow(
-          "not yet implemented",
-        );
+        const result = adapter.prepareTransaction!(mockAccount, makeTx(transferType));
+        expect(result).toBeUndefined();
       },
     );
   });

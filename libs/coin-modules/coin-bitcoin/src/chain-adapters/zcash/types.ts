@@ -1,6 +1,6 @@
 import type { BigNumber } from "bignumber.js";
 import type { Observable } from "rxjs";
-import type { BitcoinAccount, BitcoinAccountRaw } from "../../types";
+import type { BitcoinAccount, BitcoinAccountRaw, Transaction } from "../../types";
 
 export type SyncShieldedArgs = {
   startBlockHeight: number;
@@ -160,12 +160,18 @@ export type ZcashTransferType =
   | "shielded-to-transparent"
   | "shielded";
 
-export type ZcashTransaction = import("../../types").Transaction & {
+export type ZcashTransaction = Transaction & {
   transferType: ZcashTransferType;
   /** Optional 512-byte memo field for shielded outputs. */
   memo?: string;
 };
 
+export function isZcashTransaction(tx: Transaction): tx is ZcashTransaction {
+  return "transferType" in tx && tx.transferType !== null && tx.transferType !== undefined;
+}
+
 export function isShieldedTransfer(tx: ZcashTransaction): boolean {
-  return tx.transferType !== "transparent";
+  return (
+    tx.transferType !== null && tx.transferType !== undefined && tx.transferType !== "transparent"
+  );
 }
