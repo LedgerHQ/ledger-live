@@ -128,6 +128,8 @@ export interface CommandOutput {
   }): void;
   /** Print full-pipeline swap execute result. */
   swapExecuteFullResult(args: {
+    from: string;
+    to: string;
     provider: string;
     amount: string;
     transactionId: string;
@@ -416,6 +418,8 @@ class HumanCommandOutput implements CommandOutput {
   }
 
   swapExecuteFullResult(args: {
+    from: string;
+    to: string;
     provider: string;
     amount: string;
     transactionId: string;
@@ -426,6 +430,8 @@ class HumanCommandOutput implements CommandOutput {
     magnitudeAwareRate?: string;
     dryRun?: boolean;
   }): void {
+    writeStdout(`${colors.bold("From:")} ${args.from}\n`);
+    writeStdout(`${colors.bold("To:")} ${args.to}\n`);
     this.swapExecutePayloadResult(args);
     if (args.amountExpectedTo) {
       writeStdout(
@@ -659,6 +665,8 @@ class JsonCommandOutput implements CommandOutput {
   }
 
   swapExecuteFullResult(args: {
+    from: string;
+    to: string;
     provider: string;
     amount: string;
     transactionId: string;
@@ -671,6 +679,8 @@ class JsonCommandOutput implements CommandOutput {
   }): void {
     this._writeNdjson(
       this._envelope({
+        from: args.from,
+        to: args.to,
         provider: args.provider,
         amount: args.amount,
         transactionId: args.transactionId,
