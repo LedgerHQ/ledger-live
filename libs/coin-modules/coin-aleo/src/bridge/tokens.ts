@@ -17,18 +17,13 @@ function normalizeTokenId(tokenId: string): string {
   return tokenId.endsWith("field") ? tokenId.slice(0, -"field".length).trimEnd() : tokenId;
 }
 
-function ensureTokenIdFieldSuffix(tokenId: string): string {
-  return tokenId.endsWith("field") ? tokenId : `${tokenId}field`;
-}
-
 async function computeTokenBalanceKey(tokenId: string, ownerAddress: string): Promise<string> {
   const { BHP256, Plaintext } = await import("@provablehq/sdk/mainnet.js");
 
   const hasher = new BHP256();
-  const normalizedTokenId = ensureTokenIdFieldSuffix(tokenId);
-  const structPlaintext = Plaintext.fromString(
-    `{ account: ${ownerAddress}, token_id: ${normalizedTokenId} }`,
-  );
+  const fieldTokenId = tokenId.endsWith("field") ? tokenId : `${tokenId}field`;
+  const hashPlaintext = `{ account: ${ownerAddress}, token_id: ${fieldTokenId} }`;
+  const structPlaintext = Plaintext.fromString(hashPlaintext);
   const bits = structPlaintext.toBitsLe();
 
   return hasher.hash(bits).toString();
@@ -84,10 +79,10 @@ function getBalanceStrategy(token: AleoVerifiedToken): BalanceStrategy {
   return { type: "program", programId: token.program_name };
 }
 
-type DiscoveredToken = {
+interface DiscoveredToken {
   tokenCurrency: TokenCurrency;
   verifiedToken: AleoVerifiedToken;
-};
+}
 
 function discoverTokensFromOperations(
   tokenOperations: AleoOperation[],
@@ -141,12 +136,12 @@ async function fetchTokenBalance(
   switch (strategy.type) {
     case "registry": {
       const mappingKey = await computeTokenBalanceKey(strategy.tokenId, address);
-      return parseTokenBalance(await apiClient.getRegistryTokenBalance(currency, mappingKey));
+      const balance = await apiClient.getRegistryTokenBalance(currency, mappingKey);
+      return parseTokenBalance(balance);
     }
     case "program": {
-      return parseTokenBalance(
-        await apiClient.getProgramTokenBalance(currency, strategy.programId, address),
-      );
+      const balance = await apiClient.getProgramTokenBalance(currency, strategy.programId, address);
+      return parseTokenBalance(balance);
     }
   }
 }

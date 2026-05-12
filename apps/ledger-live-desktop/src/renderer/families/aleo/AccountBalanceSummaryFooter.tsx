@@ -195,11 +195,7 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
     );
   }
 
-  if (account.type === "TokenAccount") {
-    return null;
-  }
-
-  if (!account.aleoResources) {
+  if (account.type !== "Account" || !account.aleoResources) {
     return null;
   }
 
