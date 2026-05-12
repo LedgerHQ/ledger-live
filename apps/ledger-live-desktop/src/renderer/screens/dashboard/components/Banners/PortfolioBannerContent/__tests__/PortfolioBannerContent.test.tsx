@@ -148,7 +148,7 @@ describe("PortfolioBannerContent", () => {
 
       render(<PortfolioBannerContent />);
 
-      expect(screen.getByTestId("lns-upsell-banner")).toBeInTheDocument();
+      expect(screen.getByTestId("lns-upsell-banner")).toBeVisible();
       expect(screen.queryByTestId("finish-onboarding-widget")).not.toBeInTheDocument();
       expect(screen.queryByTestId("recover-widget")).not.toBeInTheDocument();
     });
@@ -250,7 +250,7 @@ describe("PortfolioBannerContent", () => {
 
       render(<PortfolioBannerContent />);
 
-      expect(screen.getByTestId("lns-upsell-banner")).toBeInTheDocument();
+      expect(screen.getByTestId("lns-upsell-banner")).toBeVisible();
       expect(screen.queryByTestId("action-content-cards")).not.toBeInTheDocument();
     });
 

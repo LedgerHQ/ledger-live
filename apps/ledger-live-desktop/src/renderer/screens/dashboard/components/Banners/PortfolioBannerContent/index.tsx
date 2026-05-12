@@ -20,13 +20,13 @@ const PortfolioBannerWallet40 = memo(function PortfolioBannerWallet40({
   isFinishOnboardingWidgetVisible: boolean;
 }) {
   const recoverVm = useRecoverWidgetViewModel();
-  const { shouldDisplayRecoverInPortfolioBannerRow: shouldDisplayRecover } = recoverVm;
+  const { shouldDisplayRecoverInPortfolioBannerRow } = recoverVm;
 
-  if (isFinishOnboardingWidgetVisible || shouldDisplayRecover) {
+  if (isFinishOnboardingWidgetVisible || shouldDisplayRecoverInPortfolioBannerRow) {
     return (
       <div className="flex w-full gap-12">
         {isFinishOnboardingWidgetVisible && <FinishOnboardingWidget />}
-        {shouldDisplayRecover && (
+        {shouldDisplayRecoverInPortfolioBannerRow && (
           <RecoverWidgetView
             isVisible={recoverVm.isVisible}
             titleKey={recoverVm.titleKey}
@@ -82,13 +82,12 @@ export const PortfolioBannerContent = memo(function PortfolioBannerContent() {
     return <PostOnboardingHubBanner />;
   }
 
-  let recoverBannerChildren: React.ReactNode;
+  let recoverBannerChildren: React.ReactNode = <PortfolioContentCards />;
+
   if (isActionCardsVisible) {
     recoverBannerChildren = <ActionContentCards variant={ABTestingVariants.variantA} />;
   } else if (isLNSUpsellBannerVisible) {
     recoverBannerChildren = <LNSUpsellBanner location="portfolio" />;
-  } else {
-    recoverBannerChildren = <PortfolioContentCards />;
   }
 
   return <RecoverBanner>{recoverBannerChildren}</RecoverBanner>;
