@@ -757,7 +757,7 @@ describe.each([
         type: `send-${mode}`,
         intentType: "transaction",
         amount: 100000000000000n, // 0.0001 ETH (smaller amount)
-        sender: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+        sender: "0xDb3812cD8d20F27888677dDC97dF1241850f8c48",
         recipient: "0x7b2C7232f9E38F30E2868f0E5Bf311Cd83554b5A",
         data: { type: "buffer", value: Buffer.from([]) },
         asset: {
@@ -773,7 +773,7 @@ describe.each([
         type: `send-${mode}`,
         intentType: "transaction",
         amount: 1000000n, // 1 USDC (6 decimals)
-        sender: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+        sender: "0xDb3812cD8d20F27888677dDC97dF1241850f8c48",
         recipient: "0x7b2C7232f9E38F30E2868f0E5Bf311Cd83554b5A",
         data: { type: "buffer", value: Buffer.from([]) },
         asset: {
