@@ -15,8 +15,10 @@ import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { dayAndHourFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 import ButtonV3 from "~/renderer/components/ButtonV3";
 import Spinner from "~/renderer/components/Spinner";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { PRIVATE_BALANCE_PLACEHOLDER } from "./constants";
 import { useAleoPrivateSync } from "./hooks/useAleoPrivateSync";
+import { getAleoCurrencyConfig } from "./shared/utils";
 
 type AleoSyncState = "ready" | "running" | "complete";
 
@@ -117,6 +119,13 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   const unit = useAccountUnit(account);
+  const config = getAleoCurrencyConfig(getAccountCurrency(account));
+  const formatConfig = {
+    alwaysShowSign: false,
+    showCode: true,
+    discreet,
+    locale,
+  };
 
   const {
     isSyncing,
@@ -147,16 +156,52 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
     };
   }, [isSyncing]);
 
-  if (account.type !== "Account" || !account.aleoResources) {
+  if (account.type === "TokenAccount" && config?.enableTokens) {
+    const formattedTransparentBalance = formatCurrencyUnit(
+      unit,
+      account.spendableBalance,
+      formatConfig,
+    );
+
+    return (
+      <Wrapper>
+        <BalanceDetail>
+          <ToolTip content={<Trans i18nKey="aleo.account.transparentBalanceTooltip" />}>
+            <TitleWrapper>
+              <Title>
+                <Trans i18nKey="aleo.account.transparentBalance" />
+              </Title>
+              <InfoCircle size={13} />
+            </TitleWrapper>
+          </ToolTip>
+          <AmountValue>
+            <Discreet>{formattedTransparentBalance}</Discreet>
+          </AmountValue>
+        </BalanceDetail>
+        <BalanceDetail>
+          <ToolTip content={<Trans i18nKey="aleo.account.privateBalanceTooltip" />}>
+            <TitleWrapper>
+              <Title>
+                <Trans i18nKey="aleo.account.privateBalance" />
+              </Title>
+              <InfoCircle size={13} />
+            </TitleWrapper>
+          </ToolTip>
+          <AmountValue>
+            <Discreet>{PRIVATE_BALANCE_PLACEHOLDER}</Discreet>
+          </AmountValue>
+        </BalanceDetail>
+      </Wrapper>
+    );
+  }
+
+  if (account.type === "TokenAccount") {
     return null;
   }
 
-  const formatConfig = {
-    alwaysShowSign: false,
-    showCode: true,
-    discreet,
-    locale,
-  };
+  if (!account.aleoResources) {
+    return null;
+  }
 
   const spendableBalance = account.spendableBalance;
   const transparentBalance = account.aleoResources.transparentBalance;
