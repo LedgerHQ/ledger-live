@@ -52,6 +52,7 @@ describe("DeviceManagementKitTransport", () => {
       ]);
     });
     jest.spyOn(deviceManagementKit, "connect").mockResolvedValue(`session-123`);
+    jest.spyOn(deviceManagementKit, "listConnectedDevices").mockReturnValue([]);
     jest.spyOn(deviceManagementKit, "getDeviceSessionState").mockImplementation(() => {
       obs.next({
         deviceStatus: DeviceStatus.CONNECTED,
@@ -70,6 +71,35 @@ describe("DeviceManagementKitTransport", () => {
 
   it("should open a device", async () => {
     expect(transport).toBeInstanceOf(DeviceManagementKitTransport);
+  });
+
+  it("should reuse a connected device session", async () => {
+    jest.spyOn(deviceManagementKit, "listConnectedDevices").mockReturnValue([
+      {
+        id: "dev1",
+        sessionId: "existing-session",
+      } as ConnectedDevice,
+    ]);
+
+    const reusedTransport = await DeviceManagementKitTransport.open();
+
+    expect(reusedTransport).toBeInstanceOf(DeviceManagementKitTransport);
+    expect(reusedTransport.sessionId).toBe("existing-session");
+    expect(deviceManagementKit.connect).not.toHaveBeenCalled();
+  });
+
+  it("should emit disconnect when the session becomes disconnected", () => {
+    const sessionState = new Subject<DeviceSessionState>();
+    jest.spyOn(deviceManagementKit, "getDeviceSessionState").mockReturnValue(sessionState);
+    const disconnectedTransport = new DeviceManagementKitTransport(
+      deviceManagementKit,
+      "session-to-disconnect",
+    );
+    jest.spyOn(disconnectedTransport, "emit");
+
+    sessionState.next({ deviceStatus: DeviceStatus.NOT_CONNECTED } as DeviceSessionState);
+
+    expect(disconnectedTransport.emit).toHaveBeenCalledWith("disconnect");
   });
 
   it("should be able to exchange APDU", async () => {
