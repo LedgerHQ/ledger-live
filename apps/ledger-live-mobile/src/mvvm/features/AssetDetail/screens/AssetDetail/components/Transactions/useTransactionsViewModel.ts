@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { flattenAccounts } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
@@ -15,7 +15,7 @@ import type { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 
 export const MAX_PREVIEW_OPERATIONS = 3;
 
-export function useTransactionsViewModel(currency: CryptoCurrency | undefined) {
+export function useTransactionsViewModel(currency: CryptoOrTokenCurrency | undefined) {
   const navigation = useNavigation<BaseNavigation>();
 
   const accountTuples = useAccountsByCryptoCurrency(currency);
