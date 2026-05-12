@@ -8,7 +8,7 @@ import type { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import { useAppDeviceAction } from "~/hooks/deviceActions";
 import type { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
-import type { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 
 type NavigationProps = RootComposite<
   StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.PerpsSign>
@@ -34,6 +34,7 @@ export type PerpsSignViewModel = {
   handleAppResult: (result: AppResult) => void;
   handleDrawerClose: () => void;
   handleDrawerHidden: () => void;
+  handleOpenManager: () => void;
   requestToSetHeaderOptions: (req: SetHeaderOptionsRequest) => void;
 };
 
@@ -46,6 +47,7 @@ export function usePerpsSignViewModel({ navigation, route }: NavigationProps): P
   const [selectedDevice, setSelectedDevice] = useState<Device | null | undefined>();
   const [connectedDevice, setConnectedDevice] = useState<Device | null>(null);
   const completedRef = useRef(false);
+  const navigatingToManagerRef = useRef(false);
 
   const action = useAppDeviceAction();
   const request = useMemo(
@@ -74,7 +76,7 @@ export function usePerpsSignViewModel({ navigation, route }: NavigationProps): P
   }, [onCancel]);
 
   const handleDrawerHidden = useCallback(() => {
-    if (completedRef.current) {
+    if (completedRef.current && !navigatingToManagerRef.current) {
       navigation.goBack();
     }
   }, [navigation]);
@@ -123,6 +125,15 @@ export function usePerpsSignViewModel({ navigation, route }: NavigationProps): P
     };
   }, [connectedDevice, signFactory, onSuccess, onError]);
 
+  const handleOpenManager = useCallback(() => {
+    completedRef.current = true;
+    navigatingToManagerRef.current = true;
+    navigation.replace(NavigatorName.MyLedger, {
+      screen: ScreenName.MyLedgerChooseDevice,
+      params: { searchQuery: appName },
+    });
+  }, [navigation, appName]);
+
   useEffect(() => {
     return () => {
       if (!completedRef.current) {
@@ -144,6 +155,7 @@ export function usePerpsSignViewModel({ navigation, route }: NavigationProps): P
     handleAppResult,
     handleDrawerClose,
     handleDrawerHidden,
+    handleOpenManager,
     requestToSetHeaderOptions,
   };
 }
