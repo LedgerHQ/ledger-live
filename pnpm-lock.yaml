@@ -918,9 +918,12 @@ importers:
       '@braze/web-sdk':
         specifier: 6.4.0
         version: 6.4.0
+      '@datadog/browser-logs':
+        specifier: 6.30.1
+        version: 6.30.1(@datadog/browser-rum@6.30.1)
       '@datadog/browser-rum':
         specifier: 6.30.1
-        version: 6.30.1
+        version: 6.30.1(@datadog/browser-logs@6.30.1)
       '@electron/fuses':
         specifier: 2.0.0
         version: 2.0.0
@@ -15060,6 +15063,14 @@ packages:
 
   '@datadog/browser-core@6.30.1':
     resolution: {integrity: sha512-udXaUdjFld/UkdaH69oVWzDYILRqTdSXobVGnmcsqPvC5VBqdhunl0cR+t1k0oJgJndabqCFY/zluJ+joTOdaA==}
+
+  '@datadog/browser-logs@6.30.1':
+    resolution: {integrity: sha512-FhV1xY60U9wyaX+uQm8z7yN1Jn8XeI+1bF+LOL+tn1zuaJkOnLbSYz/tvDWsVk8LsJ1/gOHMht5D9JXHbDxexA==}
+    peerDependencies:
+      '@datadog/browser-rum': 6.30.1
+    peerDependenciesMeta:
+      '@datadog/browser-rum':
+        optional: true
 
   '@datadog/browser-rum-core@6.30.1':
     resolution: {integrity: sha512-U7TxRz5MuvLACfuskP4gGZk3ghSniEzkrhDNJeUXdA9+TZZLyrsZYBT9n6NuZTL1qTM5NNeK89e49kLUVI3Tiw==}
@@ -41949,14 +41960,22 @@ snapshots:
 
   '@datadog/browser-core@6.30.1': {}
 
+  '@datadog/browser-logs@6.30.1(@datadog/browser-rum@6.30.1)':
+    dependencies:
+      '@datadog/browser-core': 6.30.1
+    optionalDependencies:
+      '@datadog/browser-rum': 6.30.1(@datadog/browser-logs@6.30.1)
+
   '@datadog/browser-rum-core@6.30.1':
     dependencies:
       '@datadog/browser-core': 6.30.1
 
-  '@datadog/browser-rum@6.30.1':
+  '@datadog/browser-rum@6.30.1(@datadog/browser-logs@6.30.1)':
     dependencies:
       '@datadog/browser-core': 6.30.1
       '@datadog/browser-rum-core': 6.30.1
+    optionalDependencies:
+      '@datadog/browser-logs': 6.30.1(@datadog/browser-rum@6.30.1)
 
   '@datadog/datadog-api-client-synthetics@0.0.1-beta.1':
     dependencies:

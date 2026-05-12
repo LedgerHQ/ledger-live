@@ -79,7 +79,7 @@ export async function initDatadog(
   if (initialized) return true;
   if (!shouldSend()) return false;
 
-  const { applicationId, clientToken, site, env } = getDatadogBuildConfig();
+  const { applicationId, clientToken, site, service, env } = getDatadogBuildConfig();
   if (!applicationId || !clientToken) return false;
   if (!getOperatingSystemSupportStatus().supported) return false;
 
@@ -93,9 +93,9 @@ export async function initDatadog(
     datadogRum.init({
       applicationId,
       clientToken,
-      site: site ?? "datadoghq.eu",
-      service: "ledger-live-desktop",
-      env: env ?? (__DEV__ ? "development" : "production"),
+      site,
+      service,
+      env,
       version: __APP_VERSION__,
       sessionSampleRate: params?.sessionSampleRate ?? 100,
       sessionReplaySampleRate: params?.sessionReplaySampleRate ?? 0,
