@@ -14,7 +14,7 @@ export const FirebaseFeatureFlagsProvider = ({
   children,
   getFeature,
 }: Props): React.JSX.Element => {
-  const { config: remoteConfig } = useFirebaseRemoteConfig();
+  const { config: remoteConfig, lastFetchTime } = useFirebaseRemoteConfig();
 
   const dispatch = useDispatch();
   const localOverrides = useSelector(featureFlagsOverridesSelector);
@@ -48,7 +48,7 @@ export const FirebaseFeatureFlagsProvider = ({
 
   const wrappedGetFeature = useCallback(
     <T extends FeatureId>(key: T) => getFeature({ key, localOverrides }),
-    [getFeature, localOverrides],
+    [getFeature, localOverrides, lastFetchTime],
   );
 
   useEffect(() => {
