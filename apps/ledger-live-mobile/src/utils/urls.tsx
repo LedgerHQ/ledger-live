@@ -142,7 +142,6 @@ export const urls = {
       },
       lifi: {
         main: "https://lifi.io/",
-        support: "https://scan.li.fi/",
         tos: "https://li.fi/legal/terms-and-conditions/",
       },
       uniswap: {
