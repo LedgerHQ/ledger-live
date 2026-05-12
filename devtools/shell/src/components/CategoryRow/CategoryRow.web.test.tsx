@@ -1,12 +1,13 @@
 import userEvent from "@testing-library/user-event";
 import { render, screen } from "jest/render";
+import { makeTool } from "jest/fixtures";
 import { CategoryRow } from "./CategoryRow.web";
 import { Category } from "../../types";
 import { Settings } from "@ledgerhq/lumen-ui-react/symbols";
 
 const tools = [
-  { id: "feature-flags", label: "Feature Flags", category: Category.CONFIGURATION },
-  { id: "another-tool", label: "Another Tool", category: Category.CONFIGURATION },
+  makeTool({ id: "feature-flags", label: "Feature Flags", category: Category.CONFIGURATION }),
+  makeTool({ id: "another-tool", label: "Another Tool", category: Category.CONFIGURATION }),
 ];
 
 const defaultProps = {

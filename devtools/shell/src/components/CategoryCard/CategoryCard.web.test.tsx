@@ -1,9 +1,14 @@
 import userEvent from "@testing-library/user-event";
 import { render, screen } from "jest/render";
+import { makeTool } from "jest/fixtures";
 import { CategoryCard } from "./CategoryCard.web";
 import { Category } from "../../types";
 
-const tool = { id: "feature-flags", label: "Feature Flags", category: Category.CONFIGURATION };
+const tool = makeTool({
+  id: "feature-flags",
+  label: "Feature Flags",
+  category: Category.CONFIGURATION,
+});
 
 describe("CategoryCard", () => {
   it("renders the category name", () => {

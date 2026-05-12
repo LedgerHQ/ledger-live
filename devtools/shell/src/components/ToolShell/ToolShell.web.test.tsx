@@ -1,13 +1,14 @@
 import userEvent from "@testing-library/user-event";
 import { render, screen } from "jest/render";
+import { makeTool } from "jest/fixtures";
 import { ToolShell } from "./ToolShell.web";
 import { Category } from "../../types";
 
-const baseTool = {
+const baseTool = makeTool({
   id: "feature-flags",
   label: "Feature Flags",
   category: Category.CONFIGURATION,
-};
+});
 
 describe("ToolShell", () => {
   it("renders the tool label", () => {
