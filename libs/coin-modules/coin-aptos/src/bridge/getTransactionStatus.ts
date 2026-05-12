@@ -50,20 +50,16 @@ const checkSendTransaction = (
     newErrors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
   }
 
-  if (t.amount.gt(a.balance) && !newErrors.amount) {
-    newErrors.amount = new NotEnoughBalance();
-  }
-
-  if (tokenAccount && t.errors?.maxGasAmount === "GasInsufficientBalance" && !newErrors.amount) {
+  if (t.errors?.maxGasAmount === "GasInsufficientBalance" && !newErrors.amount) {
     newErrors.amount = new NotEnoughBalanceFees();
   }
 
   if (
-    (tokenAccount
-      ? tokenAccount.spendableBalance.isLessThan(t.amount) ||
-        a.spendableBalance.isLessThan(estimatedFees)
-      : a.spendableBalance.isLessThan(t.amount.plus(estimatedFees))) &&
-    !newErrors.amount
+    !newErrors.amount &&
+    ((!tokenAccount && a.spendableBalance.isLessThan(t.amount.plus(estimatedFees))) ||
+      (tokenAccount &&
+        (tokenAccount.spendableBalance.isLessThan(t.amount) ||
+          a.spendableBalance.isLessThan(estimatedFees))))
   ) {
     newErrors.amount = new NotEnoughBalance();
   }
