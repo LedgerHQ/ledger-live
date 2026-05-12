@@ -34,8 +34,9 @@ describe("datadog logs", () => {
       getDatadogBuildConfig.mockReturnValue({
         applicationId: null,
         clientToken: null,
-        site: null,
-        env: null,
+        site: "datadoghq.eu",
+        service: "ledger-live-desktop",
+        env: "production",
       });
       expect(isDatadogLogsAvailable()).toBe(false);
     });
@@ -44,8 +45,9 @@ describe("datadog logs", () => {
       getDatadogBuildConfig.mockReturnValue({
         applicationId: null,
         clientToken: "token",
-        site: null,
-        env: null,
+        site: "datadoghq.eu",
+        service: "ledger-live-desktop",
+        env: "production",
       });
       getOperatingSystemSupportStatus.mockReturnValue({ supported: false });
       expect(isDatadogLogsAvailable()).toBe(false);
@@ -55,8 +57,9 @@ describe("datadog logs", () => {
       getDatadogBuildConfig.mockReturnValue({
         applicationId: null,
         clientToken: "token",
-        site: null,
-        env: null,
+        site: "datadoghq.eu",
+        service: "ledger-live-desktop",
+        env: "production",
       });
       expect(isDatadogLogsAvailable()).toBe(true);
     });
@@ -68,6 +71,7 @@ describe("datadog logs", () => {
         applicationId: null,
         clientToken: "token",
         site: "datadoghq.eu",
+        service: "ledger-live-desktop",
         env: "production",
       });
       expect(initDatadogLogs(() => false)).toBe(false);
@@ -78,8 +82,9 @@ describe("datadog logs", () => {
       getDatadogBuildConfig.mockReturnValue({
         applicationId: null,
         clientToken: null,
-        site: null,
-        env: null,
+        site: "datadoghq.eu",
+        service: "ledger-live-desktop",
+        env: "production",
       });
       expect(initDatadogLogs(() => true)).toBe(false);
       expect(datadogLogs.init).not.toHaveBeenCalled();
@@ -89,8 +94,9 @@ describe("datadog logs", () => {
       getDatadogBuildConfig.mockReturnValue({
         applicationId: null,
         clientToken: "token",
-        site: null,
-        env: null,
+        site: "datadoghq.eu",
+        service: "ledger-live-desktop",
+        env: "production",
       });
       getOperatingSystemSupportStatus.mockReturnValue({ supported: false });
       expect(initDatadogLogs(() => true)).toBe(false);
@@ -102,6 +108,7 @@ describe("datadog logs", () => {
         applicationId: null,
         clientToken: "token",
         site: "datadoghq.eu",
+        service: "ledger-live-desktop",
         env: "production",
       });
       datadogLogs.init.mockImplementationOnce(() => {
@@ -119,6 +126,7 @@ describe("datadog logs", () => {
         applicationId: null,
         clientToken: "token",
         site: "datadoghq.eu",
+        service: "ledger-live-desktop",
         env: "production",
       });
     });
@@ -137,22 +145,6 @@ describe("datadog logs", () => {
       );
       expect(datadogLogs.setGlobalContext).toHaveBeenCalledWith(
         expect.objectContaining({ git_commit: expect.any(String) }),
-      );
-    });
-
-    it("should fall back to defaults for missing site/env", () => {
-      getDatadogBuildConfig.mockReturnValue({
-        applicationId: null,
-        clientToken: "token",
-        site: null,
-        env: null,
-      });
-      initDatadogLogs(() => true);
-      expect(datadogLogs.init).toHaveBeenCalledWith(
-        expect.objectContaining({
-          site: "datadoghq.eu",
-          env: expect.any(String),
-        }),
       );
     });
 

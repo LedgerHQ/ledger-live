@@ -21,16 +21,16 @@ export function initDatadogLogs(shouldSend: ShouldSendCallback): boolean {
   if (initialized) return true;
   if (!shouldSend()) return false;
 
-  const { clientToken, site, env } = getDatadogBuildConfig();
+  const { clientToken, site, service, env } = getDatadogBuildConfig();
   if (!clientToken) return false;
   if (!getOperatingSystemSupportStatus().supported) return false;
 
   try {
     datadogLogs.init({
       clientToken,
-      site: site ?? "datadoghq.eu",
-      service: "ledger-live-desktop",
-      env: env ?? (__DEV__ ? "development" : "production"),
+      site,
+      service,
+      env,
       version: __APP_VERSION__,
       sessionSampleRate: 100,
       forwardErrorsToLogs: false,

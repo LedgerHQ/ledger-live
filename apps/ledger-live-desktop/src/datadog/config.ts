@@ -41,13 +41,15 @@ export function buildBeforeSend(shouldSend: ShouldSendCallback) {
 export function getDatadogBuildConfig(): {
   applicationId: string | null | undefined;
   clientToken: string | null | undefined;
-  site: string | null | undefined;
-  env: string | null | undefined;
+  site: string;
+  service: string;
+  env: string;
 } {
   return {
     applicationId: __DATADOG_APPLICATION_ID__,
     clientToken: __DATADOG_CLIENT_TOKEN__,
-    site: __DATADOG_SITE__,
-    env: __DATADOG_ENV__,
+    site: __DATADOG_SITE__ ?? "datadoghq.eu",
+    service: "ledger-live-desktop",
+    env: __DATADOG_ENV__ ?? (__DEV__ ? "development" : "production"),
   };
 }
