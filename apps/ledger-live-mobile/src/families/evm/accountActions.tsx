@@ -1,8 +1,8 @@
 import React from "react";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Account, AccountLike, ResolvedAccountBridge } from "@ledgerhq/types-live";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { Trans } from "~/context/Locale";
-import { isAccountEmpty, isTokenAccount } from "@ledgerhq/live-common/account/index";
+import { isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
 import { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
 import { NavigatorName, ScreenName } from "~/const";
@@ -33,6 +33,8 @@ type Props = {
   parentRoute: RouteProp<ParamListBase, ScreenName>;
   walletState: WalletState;
   evmNativeStakingFeature?: EvmNativeStakingFeature | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  bridge: ResolvedAccountBridge<any>;
 };
 
 type AccountTypeGetterProps = {
@@ -62,11 +64,12 @@ function getNavigatorParams({
   parentAccount,
   walletState,
   evmNativeStakingFeature,
+  bridge,
 }: Props): NavigationParamsType {
   const { isPOLAccount, isBscAccount, isAvaxAccount, isStakekit } = getAccountType(account);
   const isSeiEvmNativeStaking = getIsSeiEvmNativeStakingEnabled(account, evmNativeStakingFeature);
 
-  if (isAccountEmpty(account)) {
+  if (bridge.isAccountEmpty(account)) {
     return [
       NavigatorName.NoFundsFlow,
       {
@@ -159,6 +162,7 @@ const getMainActions = ({
   parentRoute,
   walletState,
   evmNativeStakingFeature,
+  bridge,
 }: Props): ActionButtonEvent[] => {
   const { isPOLAccount, isBscAccount, isAvaxAccount, isStakekit, isEthAccount } =
     getAccountType(account);
@@ -181,6 +185,7 @@ const getMainActions = ({
       parentRoute,
       walletState,
       evmNativeStakingFeature,
+      bridge,
     });
 
     const getCurrentCurrency = () => {

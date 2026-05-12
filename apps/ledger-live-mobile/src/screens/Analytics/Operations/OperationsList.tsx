@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { SectionList, SectionListData, SectionListRenderItem } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
 import { Account, AccountLike, DailyOperationsSection, Operation } from "@ledgerhq/types-live";
-import { flattenAccounts, isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
+import { flattenAccounts } from "@ledgerhq/live-common/account/helpers";
+import { useAccountBridgeMany } from "@ledgerhq/live-common/bridge/useAccountBridge";
 
 import { Trans } from "~/context/Locale";
 
@@ -21,16 +22,47 @@ function keyExtractor(item: Operation) {
   return item.id;
 }
 
-function ListEmptyComponent({ accountsFiltered }: { accountsFiltered: AccountLike[] }) {
-  if (accountsFiltered.length === 0) {
-    return <EmptyStatePortfolio />;
-  }
-
-  if (accountsFiltered.every(isAccountEmpty)) {
-    return <NoOpStatePortfolio />;
-  }
-
+function ListEmptyBody({
+  accountsFiltered,
+  isAllEmpty,
+}: Readonly<{
+  accountsFiltered: AccountLike[];
+  isAllEmpty: boolean;
+}>) {
+  if (accountsFiltered.length === 0) return <EmptyStatePortfolio />;
+  if (isAllEmpty) return <NoOpStatePortfolio />;
   return null;
+}
+
+function renderFooter({
+  completed,
+  onEndReached,
+  isAllEmpty,
+  hasSections,
+  onTransactionButtonPress,
+}: {
+  completed: boolean;
+  onEndReached: boolean;
+  isAllEmpty: boolean;
+  hasSections: boolean;
+  onTransactionButtonPress?: () => void;
+}) {
+  if (!completed) {
+    return onEndReached ? (
+      <LoadingFooter />
+    ) : (
+      <Flex m={8}>
+        <Button
+          event="View Transactions"
+          type="lightPrimary"
+          title={<Trans i18nKey="common.seeAll" />}
+          onPress={onTransactionButtonPress}
+        />
+      </Flex>
+    );
+  }
+  if (isAllEmpty) return null;
+  return hasSections ? <NoMoreOperationFooter /> : <NoOperationFooter />;
 }
 
 export function OperationsList({
@@ -41,6 +73,16 @@ export function OperationsList({
   onEndReached,
   onTransactionButtonPress,
 }: ListProps) {
+  const mainAccounts = accountsFiltered.filter((a): a is Account => a.type === "Account");
+  const bridges = useAccountBridgeMany(mainAccounts);
+  const bridgeById = new Map(mainAccounts.map((a, i) => [a.id, bridges[i]]));
+  const isAllEmpty = accountsFiltered.every(a =>
+    bridgeById.get(a.type === "Account" ? a.id : a.parentId)?.isAccountEmpty(a),
+  );
+  const ListEmptyComponent = useCallback(
+    () => <ListEmptyBody accountsFiltered={accountsFiltered} isAllEmpty={isAllEmpty} />,
+    [accountsFiltered, isAllEmpty],
+  );
   const renderItem: SectionListRenderItem<Operation, DailyOperationsSection> = ({
     item,
     index,
@@ -88,26 +130,13 @@ export function OperationsList({
         onEndReached={onEndReached}
         onEndReachedThreshold={0.5}
         showsVerticalScrollIndicator={false}
-        ListFooterComponent={
-          !completed ? (
-            !onEndReached ? (
-              <Flex m={8}>
-                <Button
-                  event="View Transactions"
-                  type="lightPrimary"
-                  title={<Trans i18nKey="common.seeAll" />}
-                  onPress={onTransactionButtonPress}
-                />
-              </Flex>
-            ) : (
-              <LoadingFooter />
-            )
-          ) : accountsFiltered.every(isAccountEmpty) ? null : sections.length ? (
-            <NoMoreOperationFooter />
-          ) : (
-            <NoOperationFooter />
-          )
-        }
+        ListFooterComponent={renderFooter({
+          completed,
+          onEndReached: !!onEndReached,
+          isAllEmpty,
+          hasSections: sections.length > 0,
+          onTransactionButtonPress,
+        })}
         ListEmptyComponent={ListEmptyComponent}
       />
       <TrackScreen category="Analytics" name="Operations" />
