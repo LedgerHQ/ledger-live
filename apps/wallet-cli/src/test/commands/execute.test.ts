@@ -52,7 +52,6 @@ const baseFlags: SwapExecuteFlags = {
   account: MOCK_ETH_DESCRIPTOR,
   "to-account": "destination-account",
   "fee-strategy": "medium",
-  "dry-run": false,
   output: "json",
 };
 
@@ -92,11 +91,8 @@ const integrateNewAccountDescriptorMock = mock(async (descriptor: AccountDescrip
 const getAccountBridgeMockFn = mock(() => ({}));
 const getAccountBridgeMock = getAccountBridgeMockFn as unknown as typeof getLiveAccountBridge;
 
-const runFullSwapPipelineMock = mock((input: FullSwapPipelineInput) =>
-  Promise.resolve({
-    ...mockPipelineResult,
-    ...(input.dryRun ? { dryRun: true } : {}),
-  }),
+const runFullSwapPipelineMock = mock((_input: FullSwapPipelineInput) =>
+  Promise.resolve({ ...mockPipelineResult }),
 );
 
 async function runExecuteSwapCommand(flags: SwapExecuteFlags = baseFlags) {
@@ -158,20 +154,9 @@ describe("executeSwapCommand", () => {
     expect(pipelineInput.amount).toBe("0.001");
     expect(pipelineInput.amountInAtomicUnit.toFixed()).toBe("1000000000000000");
     expect(pipelineInput.feeStrategy).toBe("medium");
-    expect(pipelineInput.dryRun).toBe(false);
     expect(pipelineInput.fromAccount.id).toBe(fromDescriptor.id);
     expect(pipelineInput.toAccount.id).toBe(toDescriptor.id);
     expect(pipelineInput.getAccountBridge).toBe(getAccountBridgeMock);
-  });
-
-  it("should omit operationHash and forward dryRun when dry-run is enabled", async () => {
-    const data = await runExecuteSwapCommand({ ...baseFlags, "dry-run": true });
-
-    expect(data.command).toBe("swap execute");
-    expect(data.dry_run).toBe(true);
-    expect(data.operationHash).toBeUndefined();
-    expect(runFullSwapPipelineMock).toHaveBeenCalledTimes(1);
-    expect(runFullSwapPipelineMock.mock.calls[0][0].dryRun).toBe(true);
   });
 
   it("json: exits 1 when --to-account is missing", async () => {
