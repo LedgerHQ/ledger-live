@@ -1,5 +1,5 @@
 import { from } from "rxjs";
-import { map, concatMap } from "rxjs/operators";
+import { concatMap } from "rxjs/operators";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { toOperationRaw } from "@ledgerhq/live-common/account/index";
 import { scan, scanCommonOpts } from "../../scan";
@@ -28,6 +28,6 @@ export default {
           ),
         ),
       ),
-      map(obj => JSON.stringify(toOperationRaw(obj))),
+      concatMap(async obj => JSON.stringify(await toOperationRaw(obj))),
     ),
 };
