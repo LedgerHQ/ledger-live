@@ -27,7 +27,7 @@ jest.mock("~/context/Locale", () => ({
 }));
 jest.mock("../useFeePresetOptions");
 jest.mock("../useFeePresetFiatValues");
-jest.mock("@ledgerhq/live-common/bridge/impl");
+jest.mock("@ledgerhq/live-common/bridge/useAccountBridge");
 jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features");
 jest.mock("@ledgerhq/ledger-wallet-framework/account/helpers");
 jest.mock("@ledgerhq/live-countervalues-react");
@@ -48,7 +48,7 @@ const mockUseFeePresetFiatValues = jest.requireMock(
 const { getMainAccount, getAccountCurrency } = jest.requireMock(
   "@ledgerhq/ledger-wallet-framework/account/helpers",
 );
-const { getAccountBridge } = jest.requireMock("@ledgerhq/live-common/bridge/impl");
+const { useAccountBridge } = jest.requireMock("@ledgerhq/live-common/bridge/useAccountBridge");
 const sendFeatures = jest.requireMock(
   "@ledgerhq/live-common/bridge/descriptor/send/features",
 ).sendFeatures;
@@ -145,7 +145,7 @@ describe("useNetworkFees", () => {
     jest
       .mocked(useSelector)
       .mockReturnValue(mockCounterValueCurrency as ReturnType<typeof useSelector>);
-    getAccountBridge.mockReturnValue({
+    useAccountBridge.mockReturnValue({
       updateTransaction: jest.fn((tx: Transaction, patch: Partial<Transaction>) => ({
         ...tx,
         ...patch,
@@ -223,7 +223,7 @@ describe("useNetworkFees", () => {
         ...tx,
         ...patch,
       }));
-      getAccountBridge.mockReturnValue({ updateTransaction: bridgeUpdateTransaction });
+      useAccountBridge.mockReturnValue({ updateTransaction: bridgeUpdateTransaction });
       const params = buildParams();
 
       const { result } = renderHook(() => useNetworkFees(params));
@@ -245,7 +245,7 @@ describe("useNetworkFees", () => {
         ...tx,
         ...patch,
       }));
-      getAccountBridge.mockReturnValue({ updateTransaction: bridgeUpdateTransaction });
+      useAccountBridge.mockReturnValue({ updateTransaction: bridgeUpdateTransaction });
       const params = buildParams();
 
       const { result } = renderHook(() => useNetworkFees(params));
