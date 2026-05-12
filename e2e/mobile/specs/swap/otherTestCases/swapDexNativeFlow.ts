@@ -57,7 +57,7 @@ export function runSwapDexNativeFlow(
       await app.send.dismissHighFeeModal();
 
       await app.swap.verifyAmountsAndAcceptSwap(swap, Number(amountToSwap).toFixed(8));
-      await app.swap.waitForSwapHeaderCompleted();
+      await app.swapLiveApp.expectExecuteSwapOnStepApproval();
     });
   });
 }
