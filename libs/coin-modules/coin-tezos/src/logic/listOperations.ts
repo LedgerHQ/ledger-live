@@ -548,7 +548,8 @@ function convertTokenOperation(
     : 0n;
   const feesPayer = parent?.initiator?.address ?? parent?.sender?.address;
 
-  const assetReference = transfer.token.contract.address;
+  const tokenId = transfer.token.tokenId ?? "0";
+  const assetReference = `${transfer.token.contract.address}:${tokenId}`;
 
   return {
     id: `${transfer.hash}-token-${transfer.id}`,
