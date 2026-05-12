@@ -5,6 +5,7 @@ import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 
 export class AccountsPage extends AppPage {
   private accountsTitle = this.page.getByRole("heading", { name: "Accounts" });
+  private cryptoAddAddressButton = this.page.getByTestId("crypto-add-address-button");
   private readonly visibleAccountsList = this.page
     .locator(`[data-testid^="crypto-account-row-"]`)
     .filter({ visible: true });
@@ -21,6 +22,11 @@ export class AccountsPage extends AppPage {
 
   private syncAccountButton = (accountName: string) =>
     this.cryptoAccountRow(accountName).getByTestId("sync-button").locator("div").first();
+
+  @step("Click add account button from accounts page")
+  async clickAddAccountButtonFromAccountsPage() {
+    await this.cryptoAddAddressButton.click();
+  }
 
   @step("Wait for Accounts title to be visible")
   async expectAccountsTitleVisibility() {
