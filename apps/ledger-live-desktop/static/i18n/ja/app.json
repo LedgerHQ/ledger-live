@@ -308,6 +308,7 @@
     "exchange" : "購入/売却",
     "swap" : "スワップ",
     "perps" : "無期限先物",
+    "borrow" : "借入",
     "home" : "ホーム",
     "refer" : "ご友人紹介",
     "lend" : "レンディング",
@@ -785,6 +786,9 @@
         }
       }
     }
+  },
+  "borrow" : {
+    "pageHeader" : "借入"
   },
   "exchange" : {
     "pageHeader" : "購入または売却",
@@ -1334,6 +1338,33 @@
     "widget" : {
       "title" : "次は、ウォレット設定を完了します。",
       "subtitle" : "まずはウォレットへの入金から始めましょう。"
+    },
+    "dialog" : {
+      "title" : "次は、ウォレット設定を完了します。",
+      "titleCompleted" : "これで準備完了です。",
+      "primaryLabel" : "了解",
+      "actionCompletedLabel" : "完了",
+      "actions" : {
+        "deviceOnboarded" : {
+          "title" : "Ledgerを設定する"
+        },
+        "assetsTransfer" : {
+          "title" : "暗号資産を追加",
+          "description" : "暗号資産を受け取る/購入してウォレットに資金を追加する"
+        },
+        "syncAccounts" : {
+          "title" : "ウォレットを同期",
+          "description" : "暗号資産アカウントを同期したままにする"
+        },
+        "customImage" : {
+          "title" : "ロック画面をカスタマイズ",
+          "description" : "お気に入りのデジタルアートや写真を、デバイスのロック画面に表示しましょう。"
+        },
+        "recover" : {
+          "title" : "バックアップの保護を完了",
+          "description" : "Ledger Recoverの有効化を完了してください"
+        }
+      }
     },
     "postOnboardingScreen" : {
       "title" : "次のステップとは？",
@@ -4212,6 +4243,8 @@
         "activeTooltip" : "デリゲートして報酬を得る",
         "inactiveTooltip" : "デリゲートしていない金額は報酬を生成しません",
         "minSafeWarning" : "資金不足",
+        "commission" : "コミッション",
+        "totalStake" : "合計ステーキング量",
         "flow" : {
           "title" : "デリゲート",
           "steps" : {
@@ -4226,7 +4259,8 @@
               "title" : "数量"
             },
             "validator" : {
-              "title" : "バリデーター"
+              "title" : "バリデーター",
+              "noResults" : "検索条件に一致するバリデーターなし"
             },
             "connectDevice" : {
               "title" : "デバイス"
@@ -4248,7 +4282,35 @@
       },
       "undelegation" : {
         "header" : "デリゲート解除",
-        "inactiveTooltip" : "デリゲートされていない金額は報酬を生成しません。"
+        "headerTooltip" : "{{numberOfDays}}日間のロック後に利用可能",
+        "inactiveTooltip" : "デリゲートされていない金額は報酬を生成しません。",
+        "flow" : {
+          "title" : "ステーキングを停止する",
+          "steps" : {
+            "amount" : {
+              "title" : "数量",
+              "subtitle" : "デリゲートの解除完了には、<0>{{numberOfDays}}</0>かかります。",
+              "warningWithTimelock" : "報酬は自動的に受け取れます。デリゲート解除済み金額は、<0>{{numberOfDays}}日間のタイムロック</0>後に利用可能な残高に戻ります。",
+              "warningInstant" : "報酬は自動的に受け取れます。解除された金額は、残高にすぐに反映され利用可能です。",
+              "fields" : {
+                "validator" : "バリデータ",
+                "amount" : "デリゲート解除額"
+              }
+            },
+            "connectDevice" : {
+              "title" : "デバイス"
+            },
+            "confirmation" : {
+              "title" : "確認",
+              "success" : {
+                "title" : "資産のデリゲートを正常に解除しました。",
+                "description" : "<0>{{amount}}</0>は<0>{{validator}}</0>からデリゲート解除されました。",
+                "cta" : "詳細を表示"
+              },
+              "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+            }
+          }
+        }
       }
     }
   },
@@ -4635,7 +4697,7 @@
       "walletSyncDesc" : "さまざまなスマートフォンやコンピューター間でLedger Wallet暗号資産アカウントを同期します。",
       "walletSyncDescription" : "PCの切り替えやスマートフォンを使用する際も、ポートフォリオを最新の状態に維持",
       "mevProtection" : "MEV保護",
-      "mevProtectionDesc" : "MEV保護を有効にすると、イーサリアムでのトランザクションの信頼性が高まります。",
+      "mevProtectionDesc" : "より信頼性の高いトランザクションのためにMEV保護を有効にしてください。",
       "mevProtectionLearnMore" : "プライバシーに関する通知"
     },
     "developer" : {
@@ -4802,6 +4864,17 @@
         "openDrawer" : "ドロワーを開く",
         "debugDialog" : "ダイアログのデバッグ",
         "debugDuplicates" : "重複のデバッグ"
+      },
+      "featuresAndFlowsDevTool" : {
+        "title" : "機能 & フロー",
+        "description" : "機能関連のフロー用の開発者ツール。",
+        "productTour" : {
+          "title" : "製品ツアー",
+          "label" : "製品ツアー",
+          "completed" : "製品ツアーは完了済みです。",
+          "notCompleted" : "製品ツアーはまだ完了していません。",
+          "open" : "開く"
+        }
       },
       "walletFeaturesDevTool" : {
         "title" : "ウォレット機能開発ツール",
@@ -6300,6 +6373,9 @@
     "CeloAllFundsWarning" : {
       "title" : "今後のトランザクション手数料に十分な残高を、確保しておいてください。"
     },
+    "CeloGroupNotVotable" : {
+      "title" : "このバリデータグループは投票を受け取ることができません。満額であるか、または対象外となる場合があります。"
+    },
     "ClaimRewardsFeesWarning" : {
       "title" : "報酬額が、申請に必要な推定手数料を下回っています。",
       "description" : ""
@@ -7137,6 +7213,9 @@
       "title" : "セッションの有効期限が切れました",
       "description" : "Concordium ID アプリのセッションは終了しました。再度ペアリングしてください。"
     },
+    "ConcordiumAddressVerificationFailedError" : {
+      "title" : "アドレスの検証に失敗しました"
+    },
     "StacksMemoTooLong" : {
       "title" : "メモの長さが長すぎます"
     },
@@ -7337,6 +7416,9 @@
     "AleoFeeRecordInsufficientBalance" : {
       "title" : "ネットワーク手数料を補うことができる記録はありません",
       "description" : "送金金額の別のデータを選択するか、追加の資金で残高を補充してください。"
+    },
+    "AleoApiConfigurationResetError" : {
+      "title" : "レコードスキャナーの設定がリセットされましたので、アカウントを再度同期してください。"
     },
     "BackupAppDataError" : {
       "title" : "アプリデータのバックアップ中にエラーが発生しました"
@@ -8258,6 +8340,12 @@
       "description" : "レバレッジ取引",
       "cta" : "アプリ一覧"
     },
+    "borrowEntry" : {
+      "title" : "ローン",
+      "cardTitle" : "ステーブルコインを借りる",
+      "cardDescription" : "資産を自由に使う",
+      "cta" : "探索"
+    },
     "noDeviceTitle" : "安全な暗号資産ウォレット"
   },
   "marketBanner" : {
@@ -8537,7 +8625,8 @@
       "mandatoryPrivateSync" : {
         "title" : "プライベート残高を同期中（{{percentage}}％）",
         "desc" : "お待ちください",
-        "error" : "プライベート同期に失敗しました。しばらくしてから、もう一度お試しください。"
+        "errorTitle" : "プライベート同期に失敗しました。",
+        "errorDesc" : "問題が発生しました。もう一度お試しください。"
       }
     }
   },
@@ -8565,6 +8654,17 @@
     "cta" : {
       "continue" : "続行",
       "explore" : "新しいポートフォリオを見る"
+    }
+  },
+  "productTour" : {
+    "cta" : {
+      "continue" : "続行",
+      "done" : "完了",
+      "fundYourWallet" : "ウォレットに資金を追加する",
+      "discoverSwap" : "スワップを見る",
+      "growYourRewards" : "報酬を運用する",
+      "spendYourCrypto" : "暗号資産で決済",
+      "everythingAtAGlance" : "すべてを一目で把握"
     }
   },
   "history" : {
@@ -8605,6 +8705,12 @@
     }
   },
   "myWallet" : {
+    "title" : "ウォレット",
+    "avatar" : {
+      "label" : "Avatar",
+      "labelWithNotifications_one" : "Avatar、{{count}}件の未見通知",
+      "labelWithNotifications_other" : "Avatar、{{count}}件の未読通知"
+    },
     "actionsList" : {
       "help" : "ヘルプ",
       "recover" : "[L] Recover",
@@ -8615,5 +8721,8 @@
       "description" : "Ledgerデバイスを管理する"
     },
     "explore" : "すべてのLedgerデバイスを探索する"
+  },
+  "assetDetails" : {
+    "totalBalance" : "総資産"
   }
 }
