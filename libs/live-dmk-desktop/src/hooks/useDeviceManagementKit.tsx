@@ -1,11 +1,15 @@
-import React, { createContext, useContext, useMemo } from "react";
+import React, { createContext, useContext, useEffect, useMemo } from "react";
 import {
   DeviceManagementKitBuilder,
   DeviceManagementKit,
   LogLevel,
 } from "@ledgerhq/device-management-kit";
 import { webHidTransportFactory } from "@ledgerhq/device-transport-kit-web-hid";
-import { LedgerLiveLogger, UserHashService } from "@ledgerhq/live-dmk-shared";
+import {
+  activeDeviceSessionRegistry,
+  LedgerLiveLogger,
+  UserHashService,
+} from "@ledgerhq/live-dmk-shared";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { getEnv } from "@ledgerhq/live-env";
 import { LocalTracer } from "@ledgerhq/logs";
@@ -47,6 +51,10 @@ export const DeviceManagementKitProvider: React.FC<Props> = ({ children, disable
     if (!ldmkTransportFlag) return null;
     return getDeviceManagementKit();
   }, [ldmkTransportFlag]);
+
+  useEffect(() => {
+    return () => activeDeviceSessionRegistry.dispose();
+  }, []);
 
   if (!ldmkTransportFlag || deviceManagementKit === null) {
     return <>{children}</>;

@@ -1,11 +1,15 @@
-import React, { createContext, useContext, useMemo } from "react";
+import React, { createContext, useContext, useEffect, useMemo } from "react";
 import {
   DeviceManagementKitBuilder,
   DeviceManagementKit,
   LogLevel,
 } from "@ledgerhq/device-management-kit";
 import { RNBleTransportFactory } from "@ledgerhq/device-transport-kit-react-native-ble";
-import { LedgerLiveLogger, UserHashService } from "@ledgerhq/live-dmk-shared";
+import {
+  activeDeviceSessionRegistry,
+  LedgerLiveLogger,
+  UserHashService,
+} from "@ledgerhq/live-dmk-shared";
 import { RNHidTransportFactory } from "@ledgerhq/device-transport-kit-react-native-hid";
 import { getEnv } from "@ledgerhq/live-env";
 import { LocalTracer } from "@ledgerhq/logs";
@@ -44,6 +48,10 @@ export const DeviceManagementKitProvider: React.FC<Props> = ({ children }) => {
 
   const deviceManagementKit = useMemo(() => {
     return getDeviceManagementKit();
+  }, []);
+
+  useEffect(() => {
+    return () => activeDeviceSessionRegistry.dispose();
   }, []);
 
   if (deviceManagementKit === null) {

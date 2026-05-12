@@ -1,13 +1,13 @@
-import { act, render } from "@testing-library/react";
+import { act, cleanup, render } from "@testing-library/react";
 import React from "react";
-import { of } from "rxjs";
+import { Subject } from "rxjs";
 import {
   DeviceManagementKit,
   DeviceSessionState,
   DeviceStatus,
 } from "@ledgerhq/device-management-kit";
 import { useDeviceSessionState } from "./useDeviceSessionState";
-import { activeDeviceSessionSubject } from "../config/activeDeviceSession";
+import { activeDeviceSessionRegistry } from "../config/activeDeviceSession";
 
 const TestComponent: React.FC<{ dmk: DeviceManagementKit }> = ({ dmk }) => {
   const sessionState = useDeviceSessionState(dmk);
@@ -16,30 +16,26 @@ const TestComponent: React.FC<{ dmk: DeviceManagementKit }> = ({ dmk }) => {
 
 describe("useDeviceSessionState", () => {
   let deviceManagementKitMock: DeviceManagementKit;
+  let sessionStateSubject: Subject<DeviceSessionState>;
 
   beforeEach(() => {
+    sessionStateSubject = new Subject<DeviceSessionState>();
     deviceManagementKitMock = {
       getDeviceSessionState: jest.fn(),
     } as unknown as DeviceManagementKit;
 
     jest
       .spyOn(deviceManagementKitMock, "getDeviceSessionState")
-      .mockImplementation(({ sessionId }) =>
-        of({
-          deviceStatus:
-            sessionId === "valid-session" ? DeviceStatus.CONNECTED : DeviceStatus.NOT_CONNECTED,
-        } as DeviceSessionState),
-      );
+      .mockReturnValue(sessionStateSubject.asObservable());
   });
 
   afterEach(() => {
+    cleanup();
+    activeDeviceSessionRegistry.dispose();
     jest.clearAllMocks();
   });
 
   it("provides a default state when there is no active session", async () => {
-    // given
-    activeDeviceSessionSubject.next(null);
-
     // when
     const result = await act(async () =>
       render(<TestComponent dmk={deviceManagementKitMock as unknown as DeviceManagementKit} />),
@@ -53,31 +49,45 @@ describe("useDeviceSessionState", () => {
 
   it("should display the device status when an active session is found", async () => {
     // given
-    activeDeviceSessionSubject.next({ sessionId: "valid-session", transport: {} as any });
+    activeDeviceSessionRegistry.addSession({
+      sessionId: "valid-session",
+      dmk: deviceManagementKitMock,
+    });
     // when
     const result = await act(async () =>
       render(<TestComponent dmk={deviceManagementKitMock as unknown as DeviceManagementKit} />),
     );
     const { getByTestId } = result;
     const statusElement = getByTestId("device-status");
+    await act(async () => {
+      sessionStateSubject.next({ deviceStatus: DeviceStatus.CONNECTED } as DeviceSessionState);
+    });
     // then
     expect(statusElement).toHaveTextContent("CONNECTED");
   });
 
   it("should update the state when the device disconnects", async () => {
     // given
-    activeDeviceSessionSubject.next({ sessionId: "valid-session", transport: {} as any });
+    activeDeviceSessionRegistry.addSession({
+      sessionId: "valid-session",
+      dmk: deviceManagementKitMock,
+    });
     // when
     const result = await act(async () =>
       render(<TestComponent dmk={deviceManagementKitMock as unknown as DeviceManagementKit} />),
     );
     const { getByTestId } = result;
     const statusElement = getByTestId("device-status");
+    await act(async () => {
+      sessionStateSubject.next({ deviceStatus: DeviceStatus.CONNECTED } as DeviceSessionState);
+    });
     // then
     expect(statusElement).toHaveTextContent("CONNECTED");
     // and when
     await act(async () => {
-      activeDeviceSessionSubject.next(null);
+      sessionStateSubject.next({
+        deviceStatus: DeviceStatus.NOT_CONNECTED,
+      } as DeviceSessionState);
     });
     // then
     expect(statusElement).toHaveTextContent("null");

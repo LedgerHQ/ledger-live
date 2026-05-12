@@ -9,6 +9,7 @@ import {
 } from "@ledgerhq/device-management-kit";
 import { DeviceManagementKitTransport } from "./DeviceManagementKitTransport";
 import { getDeviceManagementKit } from "../hooks/useDeviceManagementKit";
+import { activeDeviceSessionRegistry } from "@ledgerhq/live-dmk-shared";
 
 let obs: Subject<DeviceSessionState> = new Subject<DeviceSessionState>();
 let transport: DeviceManagementKitTransport;
@@ -63,6 +64,7 @@ describe("DeviceManagementKitTransport", () => {
   });
 
   afterEach(() => {
+    activeDeviceSessionRegistry.dispose();
     obs.complete();
     obs = new Subject<DeviceSessionState>();
     jest.clearAllMocks();

@@ -5,6 +5,7 @@ import React from "react";
 import { Device } from "@ledgerhq/types-devices";
 import { act, render } from "@testing-library/react";
 import { Observable } from "rxjs";
+import { activeDeviceSessionRegistry } from "@ledgerhq/live-dmk-shared";
 
 const TestComponent: React.FC<{ device: Device }> = ({ device }) => {
   const { isPaired, pairingError } = useBleDevicePairing({ device });
@@ -35,10 +36,15 @@ describe("useBleDevicePairing", () => {
     dmk.close.mockResolvedValue(undefined);
     dmk.getDeviceSessionState.mockReturnValue(new Observable());
   });
+  afterEach(() => {
+    activeDeviceSessionRegistry.dispose();
+    jest.clearAllMocks();
+  });
   it("should pair a device", async () => {
     // given
     let result: ReturnType<typeof render> | undefined;
     dmk.connect.mockResolvedValue("session");
+    const addSessionSpy = jest.spyOn(activeDeviceSessionRegistry, "addSession");
     const device = { deviceId: "id", deviceName: "name", modelId: "model" };
 
     // when
@@ -55,6 +61,7 @@ describe("useBleDevicePairing", () => {
     // then
     expect(isPaired).toHaveTextContent("true");
     expect(pairingError).toHaveTextContent("null");
+    expect(addSessionSpy).toHaveBeenCalledWith({ sessionId: "session", dmk });
   });
   it("should set an error", async () => {
     // given

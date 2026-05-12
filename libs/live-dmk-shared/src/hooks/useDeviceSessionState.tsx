@@ -4,7 +4,7 @@ import {
   DeviceStatus,
 } from "@ledgerhq/device-management-kit";
 import { useState, useEffect } from "react";
-import { activeDeviceSessionSubject } from "../config/activeDeviceSession";
+import { activeDeviceSessionRegistry } from "../config/activeDeviceSession";
 
 export const useDeviceSessionState = (
   dmk: DeviceManagementKit | null,
@@ -13,27 +13,34 @@ export const useDeviceSessionState = (
 
   useEffect(() => {
     if (!dmk) return;
-    const subscription = activeDeviceSessionSubject.subscribe({
-      next: session => {
-        if (!session) {
+    let stateSubscription: { unsubscribe: () => void } | null = null;
+    const subscription = activeDeviceSessionRegistry.subscribe(sessions => {
+      stateSubscription?.unsubscribe();
+      stateSubscription = null;
+
+      const session = sessions.find(session => session.dmk === dmk) ?? sessions[0];
+
+      if (!session) {
+        setSessionState(undefined);
+        return;
+      }
+
+      stateSubscription = session.dmk.getDeviceSessionState({ sessionId: session.sessionId }).subscribe({
+        next: (state: DeviceSessionState) => {
+          if (state.deviceStatus !== DeviceStatus.NOT_CONNECTED) {
+            setSessionState(state);
+          } else {
           setSessionState(undefined);
-        } else {
-          const { sessionId } = session;
-          const stateSubscription = dmk.getDeviceSessionState({ sessionId }).subscribe({
-            next: (state: DeviceSessionState) => {
-              state.deviceStatus !== DeviceStatus.NOT_CONNECTED
-                ? setSessionState(state)
-                : setSessionState(undefined);
-            },
-            error: (error: Error) => console.error("[useDeviceSessionState] error", error),
-          });
-          return () => stateSubscription.unsubscribe();
-        }
-      },
-      error: error => console.error("[useDeviceSessionState] subscription error", error),
+          }
+        },
+        error: (error: Error) => console.error("[useDeviceSessionState] error", error),
+      });
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      stateSubscription?.unsubscribe();
+      subscription.unsubscribe();
+    };
   }, [dmk]);
 
   return sessionState;

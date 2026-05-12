@@ -2,11 +2,10 @@ import {
   type DeviceId,
   DeviceManagementKit,
   DeviceStatus,
-  type DeviceSessionState,
   DiscoveredDevice,
 } from "@ledgerhq/device-management-kit";
 import Transport from "@ledgerhq/hw-transport";
-import { dmkToLedgerDeviceIdMap, activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
+import { activeDeviceSessionRegistry, dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import { LocalTracer } from "@ledgerhq/logs";
 import { DescriptorEvent } from "@ledgerhq/types-devices";
 import { firstValueFrom, Observer, startWith, pairwise, map, Subscription } from "rxjs";
@@ -17,56 +16,22 @@ const tracer = new LocalTracer("live-dmk-tracer", { function: "DeviceManagementK
 export class DeviceManagementKitTransport extends Transport {
   sessionId: string;
   readonly dmk: DeviceManagementKit;
+  private registrySubscription: Subscription;
+  private wasRegistered = false;
 
   constructor(dmk: DeviceManagementKit, sessionId: string) {
     super();
     this.sessionId = sessionId;
     this.dmk = dmk;
-    this.listenToDisconnect();
+    this.registrySubscription = this.listenToRegistryRemoval();
   }
 
-  listenToDisconnect = () => {
-    const subscription = this.dmk.getDeviceSessionState({ sessionId: this.sessionId }).subscribe({
-      next: (state: { deviceStatus: DeviceStatus }) => {
-        if (state.deviceStatus === DeviceStatus.NOT_CONNECTED) {
-          tracer.trace("[listenToDisconnect] Device disconnected, closing transport");
-          activeDeviceSessionSubject.next(null);
-          this.emit("disconnect");
-        }
-      },
-      error: (error: unknown) => {
-        console.error("[listenToDisconnect] error", error);
-        this.emit("disconnect");
-        subscription.unsubscribe();
-      },
-      complete: () => {
-        tracer.trace("[listenToDisconnect] Complete");
-        this.emit("disconnect");
-        subscription.unsubscribe();
-      },
-    });
-    return subscription;
-  };
-
   static async open(): Promise<DeviceManagementKitTransport> {
-    const activeSessionId = activeDeviceSessionSubject.value?.sessionId;
+    const reusableSession = activeDeviceSessionRegistry.findSession(() => true);
 
-    if (activeSessionId) {
-      tracer.trace(`[open] checking existing session ${activeSessionId}`);
-      const deviceSessionState: DeviceSessionState | null = await firstValueFrom(
-        getDeviceManagementKit().getDeviceSessionState({ sessionId: activeSessionId }),
-      ).catch(e => {
-        tracer.trace("[SDKTransport][open] error getting device session state", e);
-        return null;
-      });
-
-      if (
-        deviceSessionState?.deviceStatus !== DeviceStatus.NOT_CONNECTED &&
-        activeDeviceSessionSubject.value?.transport
-      ) {
-        tracer.trace("[open] reusing existing session and instantiating a new SdkTransport");
-        return activeDeviceSessionSubject.value.transport;
-      }
+    if (reusableSession) {
+      tracer.trace("[open] reusing existing session and instantiating a new SdkTransport");
+      return new DeviceManagementKitTransport(reusableSession.dmk, reusableSession.sessionId);
     }
 
     tracer.trace("[open] No active session found, starting discovery");
@@ -79,11 +44,9 @@ export class DeviceManagementKitTransport extends Transport {
     });
 
     tracer.trace("[open] Connected");
-    const transport = new DeviceManagementKitTransport(
-      getDeviceManagementKit(),
-      connectedSessionId,
-    );
-    activeDeviceSessionSubject.next({ sessionId: connectedSessionId, transport });
+    const dmk = getDeviceManagementKit();
+    activeDeviceSessionRegistry.addSession({ sessionId: connectedSessionId, dmk });
+    const transport = new DeviceManagementKitTransport(dmk, connectedSessionId);
 
     return transport;
   }
@@ -252,7 +215,10 @@ export class DeviceManagementKitTransport extends Transport {
     };
   };
 
-  close: () => Promise<void> = () => Promise.resolve();
+  close: () => Promise<void> = () => {
+    this.registrySubscription.unsubscribe();
+    return Promise.resolve();
+  };
 
   disconnect = () => {
     this.dmk.disconnect({ sessionId: this.sessionId });
@@ -271,6 +237,10 @@ export class DeviceManagementKitTransport extends Transport {
         sessionRefresherOptions: { isRefresherDisabled: true },
       });
       this.sessionId = connectedSessionId;
+      activeDeviceSessionRegistry.addSession({
+        sessionId: connectedSessionId,
+        dmk: getDeviceManagementKit(),
+      });
     }
 
     return await this.dmk
@@ -285,5 +255,21 @@ export class DeviceManagementKitTransport extends Transport {
       .catch(e => {
         throw e;
       });
+  }
+
+  private listenToRegistryRemoval(): Subscription {
+    return activeDeviceSessionRegistry.subscribe(sessions => {
+      const isRegistered = sessions.some(session => session.sessionId === this.sessionId);
+
+      if (isRegistered) {
+        this.wasRegistered = true;
+        return;
+      }
+
+      if (this.wasRegistered) {
+        this.wasRegistered = false;
+        this.emit("disconnect");
+      }
+    });
   }
 }
