@@ -7,7 +7,7 @@ import {
   makeIntegrationTokenCurrency,
   setupDistributionRouteMocks,
 } from "tests/utils/distributionTestUtils";
-import { mockMarket, mockDada } from "tests/utils/assetDetailMocks";
+import { mockDada, mockMarket } from "tests/utils/assetDetailMocks";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import type { DistributionItem } from "@ledgerhq/types-live";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
@@ -335,6 +335,7 @@ describe("AssetDetail integration", () => {
 
   describe("market section and transaction layout", () => {
     it("surfaces market detail fields from the API and lists transaction history after the market grid when the account is in the store", async () => {
+      mockDada.empty();
       mockMarket.withData(MarketMockedResponse.bitcoinDetail);
       const account = genAccount("asset-detail-market-tx-layout", { currency: btc });
       const item = buildDistributionItem({ accounts: [account] });

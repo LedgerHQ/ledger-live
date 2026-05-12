@@ -14,7 +14,7 @@ type AssetDetailViewProps = Readonly<{
 
 export function AssetDetailView({ viewModel }: AssetDetailViewProps) {
   const navigate = useNavigate();
-  const { distributionItem, marketInfo, assetName, assetTicker, ledgerId } = viewModel;
+  const { distributionItem, marketInfo, market, assetName, assetTicker, ledgerId } = viewModel;
 
   const onBack = useCallback(() => {
     navigate(-1);
@@ -38,7 +38,7 @@ export function AssetDetailView({ viewModel }: AssetDetailViewProps) {
 
       {distributionItem && <PortfolioSection distributionItem={distributionItem} />}
 
-      {marketInfo && <MarketDataSection currencyQueryId={viewModel.marketCurrencyQueryId} />}
+      {marketInfo && <MarketDataSection market={market} />}
 
       {distributionItem && <TransactionsSection distributionItem={distributionItem} />}
     </div>

@@ -1,14 +1,15 @@
 import React from "react";
+import type { AssetMarketData } from "@ledgerhq/asset-detail";
 import { MarketStats } from "./MarketStats";
 import { PricePerformance } from "./PricePerformance";
 import { useMarketDataSectionCurrencyData } from "./hooks/useMarketDataSectionCurrencyData";
 
 type MarketDataSectionProps = Readonly<{
-  currencyQueryId: string | undefined;
+  market: AssetMarketData;
 }>;
 
-export function MarketDataSection({ currencyQueryId }: MarketDataSectionProps) {
-  const currencyData = useMarketDataSectionCurrencyData(currencyQueryId);
+export function MarketDataSection({ market }: MarketDataSectionProps) {
+  const currencyData = useMarketDataSectionCurrencyData(market);
 
   return (
     <div className="grid grid-cols-2 gap-24" data-testid="asset-detail-market-data-section">

@@ -126,7 +126,7 @@ export default function useCryptoAssetsViewModel(): CryptoAssetsViewModel {
       navigate(
         item.isPlaceholder
           ? shouldDisplayAggregatedAssets
-            ? `/asset/${encodeURIComponent(rawId)}`
+            ? `/asset/${encodeURIComponent(dadaIdToMarketId(rawId))}`
             : `/market/${encodeURIComponent(dadaIdToMarketId(rawId))}`
           : `/asset/${item.currency.id}`,
       );

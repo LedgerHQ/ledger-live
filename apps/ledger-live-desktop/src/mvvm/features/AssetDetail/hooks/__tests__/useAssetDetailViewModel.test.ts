@@ -185,5 +185,21 @@ describe("useAssetDetailViewModel", () => {
         expect(result.current.ledgerCurrency?.id).toBe(btc.id);
       });
     });
+
+    it("exposes the resolved market dataset under viewModel.market for MarketDataSection", async () => {
+      mockMarket.withData([
+        { id: "bitcoin", ledgerIds: ["bitcoin"], name: "Bitcoin Hook", ticker: "BTC", price: 1 },
+      ]);
+      mockDada.empty();
+      route("bitcoin", { bySlug: { bitcoin: buildDistributionItem({ currency: btc }) } });
+
+      const { result } = renderVM();
+      await waitFor(() => expect(result.current.mode).toBe("ready"));
+      await waitFor(() => {
+        assertReady(result.current);
+        expect(result.current.market.marketCurrencyData?.name).toBe("Bitcoin Hook");
+        expect(result.current.market.isLoading).toBe(false);
+      });
+    });
   });
 });

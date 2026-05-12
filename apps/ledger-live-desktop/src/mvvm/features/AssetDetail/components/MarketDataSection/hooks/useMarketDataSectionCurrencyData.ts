@@ -1,39 +1,24 @@
 import { useSelector } from "LLD/hooks/redux";
-import { useGetCurrencyDataQuery } from "@ledgerhq/live-common/market/state-manager/api";
-import { REFETCH_TIME_ONE_MINUTE, BASIC_REFETCH } from "@ledgerhq/live-common/market/utils/timers";
+import type { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
+import type { AssetMarketData } from "@ledgerhq/asset-detail";
 
 export type MarketDataSectionCurrencyData = Readonly<{
-  data: ReturnType<typeof useGetCurrencyDataQuery>["data"];
+  data: MarketCurrencyData | undefined;
   showSkeleton: boolean;
   counterCurrency: string;
   locale: string;
 }>;
 
-/**
- * RTK Query-backed currency data for Market Stats + Price Performance.
- * Call once from `MarketDataSection` and pass the result into child components as props.
- */
 export function useMarketDataSectionCurrencyData(
-  currencyQueryId: string | undefined,
+  market: AssetMarketData,
 ): MarketDataSectionCurrencyData {
-  const counterValueCurrency = useSelector(counterValueCurrencySelector);
-  const counterCurrency = counterValueCurrency.ticker.toLowerCase();
+  const counterCurrency = useSelector(counterValueCurrencySelector).ticker.toLowerCase();
   const locale = useSelector(localeSelector);
 
-  const { data, isLoading, isFetching } = useGetCurrencyDataQuery(
-    { id: currencyQueryId ?? "", counterCurrency },
-    {
-      skip: !currencyQueryId,
-      pollingInterval: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
-    },
-  );
-
-  const showSkeleton = Boolean(currencyQueryId && (isLoading || isFetching) && !data);
-
   return {
-    data,
-    showSkeleton,
+    data: market.marketCurrencyData,
+    showSkeleton: !market.marketCurrencyData && market.isLoading,
     counterCurrency,
     locale,
   };
