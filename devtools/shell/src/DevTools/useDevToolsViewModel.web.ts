@@ -1,4 +1,4 @@
-import { TOOLS } from "../tools.config";
+import { tools } from "../registry/tools";
 import { useDevToolsNavigation } from "../hooks";
 import { useDevToolsStorage } from "../hooks/useDevToolsStorage.web";
 import type { Category, Tool } from "../types";

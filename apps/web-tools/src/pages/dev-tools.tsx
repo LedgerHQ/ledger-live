@@ -7,7 +7,7 @@ export default function DevToolsPage() {
 
   return (
     <div style={{ height: "100vh" }}>
-      <DevTools {...{ [FEATURE_FLAGS_ID]: featureFlagsProps }} />
+      <DevTools toolProps={{ [FEATURE_FLAGS_ID]: featureFlagsProps }} />
     </div>
   );
 }

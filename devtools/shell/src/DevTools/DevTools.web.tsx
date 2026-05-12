@@ -6,7 +6,10 @@ import type { DevToolsPropsRegistry } from "../context";
 
 type ColorScheme = "light" | "dark" | "system";
 
-export type DevToolsProps = DevToolsPropsRegistry & { colorScheme?: ColorScheme };
+export interface DevToolsProps {
+  toolProps?: Partial<DevToolsPropsRegistry>;
+  colorScheme?: ColorScheme;
+}
 
 function DevToolsView({
   colorScheme,
@@ -55,8 +58,8 @@ function DevToolsView({
   );
 }
 
-export const DevTools = ({ colorScheme, ...toolProps }: DevToolsProps) => (
-  <DevToolsProvider {...toolProps}>
+export const DevTools = ({ colorScheme, toolProps }: DevToolsProps) => (
+  <DevToolsProvider value={toolProps}>
     <DevToolsView {...useDevToolsViewModel({ colorScheme })} />
   </DevToolsProvider>
 );

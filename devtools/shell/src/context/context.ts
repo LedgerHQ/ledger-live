@@ -1,23 +1,23 @@
 import { createContext, createElement, useContext } from "react";
 import type { ReactNode } from "react";
-import type { FeatureFlagsToolProps } from "../tools/feature-flags/types";
-import { FEATURE_FLAGS_ID } from "../toolIds";
+import type { DevToolsPropsRegistry } from "../index";
+import { registeredToolIds } from "../registry/tools";
 
-export type DevToolsPropsRegistry = {
-  [FEATURE_FLAGS_ID]?: FeatureFlagsToolProps;
-};
-
-const DevToolsContext = createContext<DevToolsPropsRegistry>({});
+const EMPTY_VALUE: Partial<DevToolsPropsRegistry> = {};
+const DevToolsContext = createContext<Partial<DevToolsPropsRegistry>>(EMPTY_VALUE);
 
 export function DevToolsProvider({
+  value,
   children,
-  ...props
-}: DevToolsPropsRegistry & { children: ReactNode }) {
-  return createElement(DevToolsContext.Provider, { value: props }, children);
+}: {
+  value?: Partial<DevToolsPropsRegistry>;
+  children: ReactNode;
+}) {
+  return createElement(DevToolsContext.Provider, { value: value ?? EMPTY_VALUE }, children);
 }
 
 export function useToolProps<K extends keyof DevToolsPropsRegistry>(
   id: K,
-): DevToolsPropsRegistry[K] {
+): DevToolsPropsRegistry[K] | undefined {
   return useContext(DevToolsContext)[id];
 }

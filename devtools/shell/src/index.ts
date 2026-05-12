@@ -1,6 +1,8 @@
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface DevToolsPropsRegistry {}
+
 export { DevTools } from "./DevTools/DevTools.web";
 export type { DevToolsProps } from "./DevTools/DevTools.web";
-export { DevToolsProvider, useToolProps } from "./context";
-export type { DevToolsPropsRegistry } from "./context";
-export type { FeatureFlagsToolProps } from "./tools/feature-flags/types";
-export { FEATURE_FLAGS_ID } from "./toolIds";
+export { DevToolsProvider, useToolProps, useIsToolConfigured } from "./context";
+export { registerTool, registerStandaloneTool } from "./registry/tools";
+export { Category } from "./types";

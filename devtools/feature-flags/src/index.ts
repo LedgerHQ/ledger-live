@@ -1,3 +1,5 @@
+import "./register";
+
 export type { FeatureFlagsToolProps, FlagDisplayState, FlagFilter } from "./types";
 export { ALL_FLAG_IDS } from "./constants";
 export { useFeatureFlagsState } from "./hooks";

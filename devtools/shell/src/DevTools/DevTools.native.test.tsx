@@ -1,16 +1,15 @@
-import { fireEvent, render, screen } from "jest/render.native";
-import { FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
-import type { PartialFeatures } from "@shared/feature-flags";
-import { FEATURE_FLAGS_ID } from "../toolIds";
+import { render, screen, userEvent } from "jest/render.native";
+import "../../jest/fixtures";
+import { registerTool } from "../registry/tools";
+import { Category } from "../types";
 import { DevTools } from "./DevTools.native";
 
-const featureFlagsProps = {
-  resolved: FEATURE_FLAGS_INITIAL_STATE.resolved,
-  overrides: {} as PartialFeatures,
-  setOverride: jest.fn(),
-  clearOverride: jest.fn(),
-  clearAllOverrides: jest.fn(),
-};
+registerTool({
+  id: "test-tool",
+  label: "Test Tool",
+  category: Category.CONFIGURATION,
+  component: () => null,
+});
 
 describe("DevTools (native)", () => {
   it("renders the shell", () => {
@@ -29,25 +28,27 @@ describe("DevTools (native)", () => {
     expect(screen.queryByTestId("devtools-content")).toBeNull();
   });
 
-  it("tapping a category shows its tools", () => {
+  it("tapping a category shows its tools", async () => {
+    const user = userEvent.setup();
     render(<DevTools />);
-    fireEvent.press(screen.getByRole("button", { name: "Configuration" }));
-    expect(screen.getByRole("button", { name: "Feature Flags" })).toBeOnTheScreen();
+    await user.press(screen.getByRole("button", { name: "Configuration" }));
+    expect(screen.getByRole("button", { name: "Test Tool" })).toBeOnTheScreen();
   });
 
-  it("tapping back from category returns to home", () => {
+  it("tapping back from category returns to home", async () => {
+    const user = userEvent.setup();
     render(<DevTools />);
-    fireEvent.press(screen.getByRole("button", { name: "Configuration" }));
-    fireEvent.press(screen.getByRole("button", { name: "Back" }));
+    await user.press(screen.getByRole("button", { name: "Configuration" }));
+    await user.press(screen.getByRole("button", { name: "Back" }));
     expect(screen.getByTestId("devtools-home")).toBeOnTheScreen();
   });
 
-  it("tapping a tool shows the tool screen", () => {
-    render(<DevTools {...{ [FEATURE_FLAGS_ID]: featureFlagsProps }} />);
-    fireEvent.press(screen.getByRole("button", { name: "Configuration" }));
-    fireEvent.press(screen.getByRole("button", { name: "Feature Flags" }));
+  it("tapping a tool shows the tool screen", async () => {
+    const user = userEvent.setup();
+    render(<DevTools toolProps={{ "test-tool": { value: "x" } }} />);
+    await user.press(screen.getByRole("button", { name: "Configuration" }));
+    await user.press(screen.getByRole("button", { name: "Test Tool" }));
     expect(screen.getByTestId("devtools-content")).toBeOnTheScreen();
-    expect(screen.getByTestId("devtools-content")).toHaveTextContent(/Feature Flags/);
+    expect(screen.getByTestId("devtools-content")).toHaveTextContent(/Test Tool/);
   });
-
 });

@@ -2755,6 +2755,9 @@ importers:
 
   devtools/feature-flags:
     dependencies:
+      '@devtools/shell':
+        specifier: workspace:*
+        version: link:../shell
       '@shared/feature-flags':
         specifier: workspace:^
         version: link:../../shared/feature-flags

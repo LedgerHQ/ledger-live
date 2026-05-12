@@ -2,14 +2,16 @@ import { ThemeProvider, Box, Text } from "@ledgerhq/lumen-ui-rnative";
 import { ledgerLiveThemes } from "@ledgerhq/lumen-design-core";
 import { ScrollView, TextInput, Pressable } from "react-native";
 import { useState } from "react";
-import { TOOLS } from "../tools.config";
+import { tools } from "../registry/tools";
 import { Category } from "../types";
 import type { Tool } from "../types";
 import { DevToolsProvider } from "../context";
 import type { DevToolsPropsRegistry } from "../context";
 import { filterToolsByPlatform } from "../utils/toolsUtils";
 
-export type DevToolsProps = DevToolsPropsRegistry;
+export interface DevToolsProps {
+  toolProps?: Partial<DevToolsPropsRegistry>;
+}
 
 type Screen = "home" | "category" | "tool";
 
@@ -206,9 +208,9 @@ const DevToolsShell = () => {
   );
 };
 
-export const DevTools = (props: DevToolsProps) => (
+export const DevTools = ({ toolProps }: DevToolsProps) => (
   <ThemeProvider themes={ledgerLiveThemes}>
-    <DevToolsProvider {...props}>
+    <DevToolsProvider value={toolProps}>
       <DevToolsShell />
     </DevToolsProvider>
   </ThemeProvider>
