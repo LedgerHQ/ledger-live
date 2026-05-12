@@ -247,7 +247,7 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & Partial<Additional
     needsBearerToken: false,
     termsOfUseUrl: "https://li.fi/legal/terms-and-conditions/",
     supportUrl: "https://discord.gg/jumperexchange",
-    mainUrl: "https://li.fi/",
+    mainUrl: "https://scan.li.fi/",
     needsKYC: false,
     version: 2,
     publicKey: {
