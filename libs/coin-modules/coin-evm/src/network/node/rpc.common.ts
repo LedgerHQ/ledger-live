@@ -50,6 +50,10 @@ export const WETH_DEPOSIT_TOPIC =
 export const WETH_WITHDRAWAL_TOPIC =
   "0x7fcf532c15f0a6db0bd6d0e038bea71d30d808c7d98cb3bf7268a95bf5081b65";
 
+/** keccak256("Mint(address,uint256)") — generic ERC20 mint event signature. */
+export const ERC20_MINT_TOPIC =
+  "0x0f6798a560793a54c3bcfe86a93cde1e73087d944c0ea20544137d4121396885";
+
 const ZERO_ADDRESS_HEX = safeEncodeEIP55("0x0000000000000000000000000000000000000000");
 
 function topicToAddress(topic: string | undefined): string {
@@ -67,6 +71,10 @@ function isWethDeposit(log: LogWithAddress): boolean {
 
 function isWethWithdrawal(log: LogWithAddress): boolean {
   return log.topics[0] === WETH_WITHDRAWAL_TOPIC && log.topics.length === 2 && log.data.length > 2;
+}
+
+function isMint(log: LogWithAddress): boolean {
+  return log.topics[0] === ERC20_MINT_TOPIC && log.topics.length === 2 && log.data.length > 2;
 }
 
 function makeErc20Transfer(log: LogWithAddress, from: string, to: string): ERC20Transfer {
@@ -102,6 +110,12 @@ function makeErc20Transfer(log: LogWithAddress, from: string, to: string): ERC20
  * - data: wad (uint256, 32 bytes)
  * - log.address: token contract address
  *
+ * ERC20 `Mint(address,uint256)` (supply increase, ≡ Transfer from 0x0):
+ * - topic[0]: event signature hash (0x0f6798a5…)
+ * - topic[1]: account address (indexed, padded to 32 bytes)
+ * - data: amount (uint256, 32 bytes)
+ * - log.address: token contract address
+ *
  *  Other standards (not supported yet):
  * - ERC721:  4 topics (sig, from, to, tokenId) - filtered out by topics.length === 3
  * - ERC1155: different event signature - filtered out by topic[0] check
@@ -119,6 +133,9 @@ export function parseERC20TransfersFromLogs(logs: ReadonlyArray<LogWithAddress>)
     }
     if (isWethWithdrawal(log)) {
       return [makeErc20Transfer(log, topicToAddress(log.topics[1]), ZERO_ADDRESS_HEX)];
+    }
+    if (isMint(log)) {
+      return [makeErc20Transfer(log, ZERO_ADDRESS_HEX, topicToAddress(log.topics[1]))];
     }
     return [];
   });
@@ -218,6 +235,7 @@ async function getTransaction(
     value: tx.value.toString(),
     from: tx.from,
     to: tx.to ?? undefined,
+    type: receipt.type ?? tx.type ?? undefined,
     ...(tx.data !== null && tx.data !== undefined && isSmartContractInput(tx.data)
       ? { input: tx.data }
       : {}),
@@ -633,6 +651,7 @@ async function getBlockReceipts(
       status: receipt.status === null ? null : Number(receipt.status),
       erc20Transfers: parseERC20TransfersFromLogs(receipt.logs),
       ...(contractAddress ? { contractAddress } : {}),
+      ...(receipt.type !== undefined ? { type: Number(receipt.type) } : {}),
     };
   });
 }

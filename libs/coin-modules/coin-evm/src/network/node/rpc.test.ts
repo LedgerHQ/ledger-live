@@ -290,6 +290,7 @@ describe("EVM Family", () => {
           from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
           to: "0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C",
           erc20Transfers: [],
+          type: 0,
         });
       });
     });
@@ -514,6 +515,29 @@ describe("EVM Family", () => {
             from: "0xbeBcf96eEEd98D495F45407CE7017179738E3552",
             to: "0x0000000000000000000000000000000000000000",
             value: "200000000000000",
+          },
+        ]);
+      });
+
+      it("parses Mint as Transfer from 0x0", () => {
+        const MINT_TOPIC = "0x0f6798a560793a54c3bcfe86a93cde1e73087d944c0ea20544137d4121396885";
+        const L2_BASE_TOKEN = "0x000000000000000000000000000000000000800A";
+        const result = parseERC20TransfersFromLogs([
+          {
+            address: L2_BASE_TOKEN,
+            topics: [
+              MINT_TOPIC,
+              "0x000000000000000000000000beb30f27e61efff46aa27dce18e23ee8d5a7c6a4",
+            ],
+            data: "0x0000000000000000000000000000000000000000000000000000000000000064",
+          },
+        ]);
+        expect(result).toEqual([
+          {
+            asset: { type: "erc20", assetReference: L2_BASE_TOKEN },
+            from: "0x0000000000000000000000000000000000000000",
+            to: "0xbEB30f27e61eFFF46Aa27dcE18E23ee8D5A7c6a4",
+            value: "100",
           },
         ]);
       });
