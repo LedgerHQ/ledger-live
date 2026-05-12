@@ -29,6 +29,48 @@ import { getStakingPosition } from "../logic/staking";
 import type { AptosAccount, AptosStakingPosition, Transaction, TransactionStatus } from "../types";
 import { getTokenAccount } from "./logic";
 
+const validateSendRecipient = (t: Transaction, a: AptosAccount): Error | null => {
+  if (!t.recipient) {
+    return new RecipientRequired();
+  }
+  if (t.recipient === a.freshAddress) {
+    return new InvalidAddressBecauseDestinationIsAlsoSource();
+  }
+  if (!AccountAddress.isValid({ input: t.recipient }).valid) {
+    return new InvalidAddress("", { currencyName: a.currency.name });
+  }
+  return null;
+};
+
+const validateSendTokenAmount = (
+  t: Transaction,
+  a: AptosAccount,
+  tokenAccount: TokenAccount,
+  estimatedFees: BigNumber,
+): Error | null => {
+  if (
+    t.errors?.maxGasAmount === "GasInsufficientBalance" ||
+    a.spendableBalance.isLessThan(estimatedFees)
+  ) {
+    return new NotEnoughBalanceFees();
+  }
+  if (tokenAccount.spendableBalance.isLessThan(t.amount)) {
+    return new NotEnoughBalance();
+  }
+  return null;
+};
+
+const validateSendNativeAmount = (
+  t: Transaction,
+  a: AptosAccount,
+  estimatedFees: BigNumber,
+): Error | null => {
+  if (a.spendableBalance.isLessThan(t.amount.plus(estimatedFees))) {
+    return new NotEnoughBalance();
+  }
+  return null;
+};
+
 const checkSendTransaction = (
   t: Transaction,
   a: AptosAccount,
@@ -38,34 +80,18 @@ const checkSendTransaction = (
 ): Record<string, Error> => {
   const newErrors = { ...errors };
 
-  if (!t.recipient) {
-    newErrors.recipient = new RecipientRequired();
+  const recipientError = validateSendRecipient(t, a);
+  if (recipientError) {
+    newErrors.recipient = recipientError;
   }
 
-  if (!AccountAddress.isValid({ input: t.recipient }).valid && !newErrors.recipient) {
-    newErrors.recipient = new InvalidAddress("", { currencyName: a.currency.name });
-  }
-
-  if (t.recipient === a.freshAddress && !newErrors.recipient) {
-    newErrors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
-  }
-
-  if (t.amount.gt(a.balance) && !newErrors.amount) {
-    newErrors.amount = new NotEnoughBalance();
-  }
-
-  if (tokenAccount && t.errors?.maxGasAmount === "GasInsufficientBalance" && !newErrors.amount) {
-    newErrors.amount = new NotEnoughBalanceFees();
-  }
-
-  if (
-    (tokenAccount
-      ? tokenAccount.spendableBalance.isLessThan(t.amount) ||
-        a.spendableBalance.isLessThan(estimatedFees)
-      : a.spendableBalance.isLessThan(t.amount.plus(estimatedFees))) &&
-    !newErrors.amount
-  ) {
-    newErrors.amount = new NotEnoughBalance();
+  if (!newErrors.amount) {
+    const amountError = tokenAccount
+      ? validateSendTokenAmount(t, a, tokenAccount, estimatedFees)
+      : validateSendNativeAmount(t, a, estimatedFees);
+    if (amountError) {
+      newErrors.amount = amountError;
+    }
   }
 
   return newErrors;

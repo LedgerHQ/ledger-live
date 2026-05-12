@@ -4,6 +4,7 @@ import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
+  NotEnoughBalanceFees,
   NotEnoughToRestake,
   NotEnoughToStake,
   NotEnoughToUnstake,
@@ -82,7 +83,6 @@ describe("getTransactionStatus Test", () => {
     const expected = {
       errors: {
         fees: new FeeNotLoaded(),
-        amount: new NotEnoughBalance(),
       },
       warnings: {},
       estimatedFees: BigNumber(0),
@@ -93,9 +93,9 @@ describe("getTransactionStatus Test", () => {
     expect(result).toEqual(expected);
   });
 
-  it("should return error for NotEnoughBalance", async () => {
+  it("should return error for NotEnoughBalance when native currency insufficient for amount and fees", async () => {
     const account = createFixtureAccount();
-    account.spendableBalance = BigNumber(1);
+    account.spendableBalance = BigNumber(3);
 
     const transaction = createFixtureTransaction();
     transaction.recipient = "0x" + "0".repeat(64);
@@ -191,7 +191,7 @@ describe("getTransactionStatus Test", () => {
     expect(result).toEqual(expected);
   });
 
-  it("should return error for NotEnoughBalance for token account with use all amount option when not enough fees", async () => {
+  it("should return error for NotEnoughBalanceFees for token account with use all amount option when not enough fees", async () => {
     const account = createFixtureAccountWithSubAccount("coin");
     account.spendableBalance = BigNumber(10);
 
@@ -205,7 +205,7 @@ describe("getTransactionStatus Test", () => {
 
     const expected = {
       errors: {
-        amount: new NotEnoughBalance(),
+        amount: new NotEnoughBalanceFees(),
       },
       warnings: {},
       estimatedFees: BigNumber(200),
@@ -216,7 +216,7 @@ describe("getTransactionStatus Test", () => {
     expect(result).toEqual(expected);
   });
 
-  it("should return error for NotEnoughBalanceFees", async () => {
+  it("should return error for NotEnoughBalanceFees when maxGasAmount has GasInsufficientBalance error", async () => {
     const account = createFixtureAccountWithSubAccount("coin");
     account.spendableBalance = BigNumber(1);
 
@@ -230,12 +230,36 @@ describe("getTransactionStatus Test", () => {
 
     const expected = {
       errors: {
-        amount: new NotEnoughBalance(),
+        amount: new NotEnoughBalanceFees(),
       },
       warnings: {},
       estimatedFees: BigNumber(0),
       amount: BigNumber(2),
       totalSpent: BigNumber(2),
+    };
+
+    expect(result).toEqual(expected);
+  });
+
+  it("should return error for NotEnoughBalanceFees for token account when insufficient fee balance", async () => {
+    const account = createFixtureAccountWithSubAccount("coin");
+    account.spendableBalance = BigNumber(1);
+
+    const transaction = createFixtureTransactionWithSubAccount();
+    transaction.recipient = "0x" + "0".repeat(64);
+    transaction.amount = BigNumber(500);
+    transaction.fees = BigNumber(2);
+
+    const result = await getTransactionStatus(account, transaction);
+
+    const expected = {
+      errors: {
+        amount: new NotEnoughBalanceFees(),
+      },
+      warnings: {},
+      estimatedFees: BigNumber(2),
+      amount: BigNumber(500),
+      totalSpent: BigNumber(500),
     };
 
     expect(result).toEqual(expected);
@@ -255,7 +279,6 @@ describe("getTransactionStatus Test", () => {
     const expected = {
       errors: {
         recipient: new RecipientRequired(),
-        amount: new NotEnoughBalance(),
       },
       warnings: {},
       estimatedFees: BigNumber(2),
@@ -317,6 +340,8 @@ describe("getTransactionStatus Test", () => {
 
   it("should return error for RecipientRequired", async () => {
     const account = createFixtureAccount();
+    account.spendableBalance = BigNumber(10);
+
     const transaction = createFixtureTransaction();
 
     transaction.amount = BigNumber(2);
@@ -329,7 +354,6 @@ describe("getTransactionStatus Test", () => {
     const expected = {
       errors: {
         recipient: new RecipientRequired(),
-        amount: new NotEnoughBalance(),
       },
       warnings: {},
       estimatedFees: BigNumber(2),
