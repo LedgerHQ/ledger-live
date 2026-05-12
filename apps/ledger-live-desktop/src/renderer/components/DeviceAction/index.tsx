@@ -173,6 +173,7 @@ type InnerProps<P> = {
   Result?: React.ComponentType<P>;
   onResult?: (_: NonNullable<P>) => void;
   onError?: (_: Error) => Promise<void> | void;
+  onOpenManager?: () => void;
   renderOnResult?: (_: P) => React.JSX.Element | null;
   renderDeviceSignatureRequested?: (args: { device: Device; request: unknown }) => React.ReactNode;
   renderLockedDevice?: (args: {
@@ -212,6 +213,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   Result,
   onResult,
   onError,
+  onOpenManager,
   renderDeviceSignatureRequested,
   renderLockedDevice,
   overridesPreferredDeviceModel,
@@ -493,7 +495,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     const { appName, appNames: maybeAppNames } = requiresAppInstallation;
     const appNames = maybeAppNames?.length ? maybeAppNames : [appName];
 
-    return renderRequiresAppInstallation({ appNames });
+    return renderRequiresAppInstallation({ appNames, onOpenManager });
   }
 
   if (allowRenamingRequested) {

@@ -142,6 +142,35 @@ describe("usePerpsSignViewModel", () => {
     expect(data.onCancel).not.toHaveBeenCalled();
   });
 
+  it("should call onClose without onError when handleOpenManager is invoked", () => {
+    const data = createMockData();
+    const onClose = jest.fn();
+    const { result } = renderHook(() => usePerpsSignViewModel(data, onClose));
+
+    act(() => {
+      result.current.handleOpenManager();
+    });
+
+    expect(onClose).toHaveBeenCalled();
+    expect(data.onError).not.toHaveBeenCalled();
+    expect(result.current.closing).toBe(true);
+  });
+
+  it("should call onCancel after handleOpenManager + unmount", () => {
+    const data = createMockData();
+    const onClose = jest.fn();
+    const { result, unmount } = renderHook(() => usePerpsSignViewModel(data, onClose));
+
+    act(() => {
+      result.current.handleOpenManager();
+    });
+
+    unmount();
+
+    expect(data.onCancel).toHaveBeenCalledTimes(1);
+    expect(data.onError).not.toHaveBeenCalled();
+  });
+
   it("should build request from data app options", () => {
     const data = createMockData({
       appName: "TestApp",
