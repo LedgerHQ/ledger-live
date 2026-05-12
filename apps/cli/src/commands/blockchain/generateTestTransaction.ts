@@ -50,7 +50,7 @@ export type GenerateTestTransactionJobOpts = InferTransactionsOpts & ScanCommonO
 
 export default {
   description: "Generate a test for transaction (live-common dataset)",
-  args: [...scanCommonOpts, ...inferTransactionsOpts],
+  args: inferTransactionsOpts.then(opts => [...scanCommonOpts, ...opts]),
   job: (opts: GenerateTestTransactionJobOpts) =>
     scan(opts).pipe(
       switchMap(account =>
