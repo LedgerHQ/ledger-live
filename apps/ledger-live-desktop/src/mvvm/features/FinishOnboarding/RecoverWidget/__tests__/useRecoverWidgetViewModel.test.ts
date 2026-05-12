@@ -91,6 +91,7 @@ describe("useRecoverWidgetViewModel", () => {
     await waitFor(() => {
       expect(result.current.isVisible).toBe(true);
     });
+    expect(result.current.shouldDisplayRecoverInPortfolioBannerRow).toBe(true);
   });
 
   it("returns isVisible false when subscription is NO_SUBSCRIPTION (never started recover)", async () => {
@@ -101,6 +102,7 @@ describe("useRecoverWidgetViewModel", () => {
     await waitFor(() => {
       expect(result.current.isVisible).toBe(false);
     });
+    expect(result.current.shouldDisplayRecoverInPortfolioBannerRow).toBe(false);
   });
 
   it("returns isVisible false when subscription state is not hydrated", async () => {
@@ -160,6 +162,21 @@ describe("useRecoverWidgetViewModel", () => {
     await waitFor(() => {
       expect(result.current.isVisible).toBe(false);
     });
+    expect(result.current.shouldDisplayRecoverInPortfolioBannerRow).toBe(false);
+  });
+
+  it("returns shouldDisplayRecoverInPortfolioBannerRow false when displayBanner is dismissed but subscription is in progress", async () => {
+    const { result } = renderHook(() => useRecoverWidgetViewModel(), {
+      initialState: withRecoverState(
+        LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE,
+        false,
+      ),
+    });
+
+    await waitFor(() => {
+      expect(result.current.isVisible).toBe(true);
+    });
+    expect(result.current.shouldDisplayRecoverInPortfolioBannerRow).toBe(false);
   });
 
   it("navigates to the upsell path and tracks when the CTA is used", async () => {

@@ -18,5 +18,5 @@ export function usePostOnboardingEntryPointVisibleOnWallet(): boolean {
   const allCompleted = useAllPostOnboardingActionsCompleted();
   const allCompletedAndInitialized = actionsState.length > 0 && allCompleted;
 
-  return !!deviceModelId && !(dismissed || allCompletedAndInitialized);
+  return Boolean(deviceModelId) && !dismissed && !allCompletedAndInitialized;
 }
