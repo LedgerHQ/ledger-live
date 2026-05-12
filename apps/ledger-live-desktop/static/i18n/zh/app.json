@@ -308,6 +308,7 @@
     "exchange" : "买入 / 卖出",
     "swap" : "互换",
     "perps" : "永续合约",
+    "borrow" : "借入",
     "home" : "首页",
     "refer" : "推荐好友",
     "lend" : "借出",
@@ -785,6 +786,9 @@
         }
       }
     }
+  },
+  "borrow" : {
+    "pageHeader" : "借入"
   },
   "exchange" : {
     "pageHeader" : "买入或卖出",
@@ -1334,6 +1338,33 @@
     "widget" : {
       "title" : "接着，完成钱包设置",
       "subtitle" : "首先为您的钱包充值。"
+    },
+    "dialog" : {
+      "title" : "接着，完成钱包设置",
+      "titleCompleted" : "一切准备就绪！",
+      "primaryLabel" : "知道了",
+      "actionCompletedLabel" : "完成",
+      "actions" : {
+        "deviceOnboarded" : {
+          "title" : "设置 Ledger 设备"
+        },
+        "assetsTransfer" : {
+          "title" : "添加加密",
+          "description" : "接收或买入加密货币，为您的钱包提供资金"
+        },
+        "syncAccounts" : {
+          "title" : "同步您的钱包",
+          "description" : "保持您的加密货币账户同步"
+        },
+        "customImage" : {
+          "title" : "自定义锁屏界面",
+          "description" : "将您最喜欢的数字艺术或照片设置为设备锁屏界面。"
+        },
+        "recover" : {
+          "title" : "完成保护您的备份",
+          "description" : "完成激活 Ledger Recover"
+        }
+      }
     },
     "postOnboardingScreen" : {
       "title" : "接下来呢？",
@@ -4212,6 +4243,8 @@
         "activeTooltip" : "已委托的数额会生成奖励",
         "inactiveTooltip" : "已解除委托的数额不会生成奖励。",
         "minSafeWarning" : "资金不足",
+        "commission" : "佣金",
+        "totalStake" : "质押总额",
         "flow" : {
           "title" : "委托",
           "steps" : {
@@ -4226,7 +4259,8 @@
               "title" : "数额"
             },
             "validator" : {
-              "title" : "验证者"
+              "title" : "验证者",
+              "noResults" : "未找到匹配的验证者"
             },
             "connectDevice" : {
               "title" : "设备"
@@ -4248,7 +4282,35 @@
       },
       "undelegation" : {
         "header" : "解除委托",
-        "inactiveTooltip" : "已解除委托的数额不会生成奖励。"
+        "headerTooltip" : "{{numberOfDays}} 天时间锁后可用",
+        "inactiveTooltip" : "已解除委托的数额不会生成奖励。",
+        "flow" : {
+          "title" : "停止质押",
+          "steps" : {
+            "amount" : {
+              "title" : "数额",
+              "subtitle" : "取消委托过程需要 <0>{{numberOfDays}} 天</0>才能完成。",
+              "warningWithTimelock" : "奖励将自动领取。解除委托的数额在 <0>{{numberOfDays}} 天锁定期</0>后才会返还至可用余额。",
+              "warningInstant" : "奖励将自动领取。解除委托的数额将立即可用，并显示在您的余额中。",
+              "fields" : {
+                "validator" : "验证者",
+                "amount" : "要解除委托的数额"
+              }
+            },
+            "connectDevice" : {
+              "title" : "设备"
+            },
+            "confirmation" : {
+              "title" : "确认",
+              "success" : {
+                "title" : "您的资产已成功解除委托",
+                "description" : "<0>{{amount}}</0>已从<0>{{validator}}</0>解除委托",
+                "cta" : "查看详情"
+              },
+              "broadcastError" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。"
+            }
+          }
+        }
       }
     }
   },
@@ -4635,7 +4697,7 @@
       "walletSyncDesc" : "在不同的手机和电脑上同步您的 Ledger Wallet 加密货币账户。",
       "walletSyncDescription" : "在您换用电脑或使用手机时，及时更新自己的资产组合",
       "mevProtection" : "MEV 保护",
-      "mevProtectionDesc" : "启用 MEV Protection，确保以太坊上的交易更加可靠。",
+      "mevProtectionDesc" : "启用 MEV 保护，确保交易更加可靠。",
       "mevProtectionLearnMore" : "隐私声明"
     },
     "developer" : {
@@ -4802,6 +4864,17 @@
         "openDrawer" : "打开抽屉",
         "debugDialog" : "调试对话",
         "debugDuplicates" : "调试副本"
+      },
+      "featuresAndFlowsDevTool" : {
+        "title" : "功能和流程",
+        "description" : "适用于功能相关流程的开发者工具。",
+        "productTour" : {
+          "title" : "产品导览",
+          "label" : "产品导览",
+          "completed" : "产品导览已标记为已完成。",
+          "notCompleted" : "产品导览尚未完成。",
+          "open" : "打开"
+        }
       },
       "walletFeaturesDevTool" : {
         "title" : "钱包功能开发工具",
@@ -6300,6 +6373,9 @@
     "CeloAllFundsWarning" : {
       "title" : "确保您留有足够的余额，以便缴纳未来的交易费"
     },
+    "CeloGroupNotVotable" : {
+      "title" : "该验证者组无法接收投票。可能已满或不再符合条件。"
+    },
     "ClaimRewardsFeesWarning" : {
       "title" : "奖励少于领取奖金的估算费用。",
       "description" : ""
@@ -7137,6 +7213,9 @@
       "title" : "会话已过期",
       "description" : "Concordium ID 应用程序的会话不再活跃。请重新配对。"
     },
+    "ConcordiumAddressVerificationFailedError" : {
+      "title" : "地址验证失败"
+    },
     "StacksMemoTooLong" : {
       "title" : "Memo 过长"
     },
@@ -7337,6 +7416,9 @@
     "AleoFeeRecordInsufficientBalance" : {
       "title" : "没有私密记录可用于支付网络费用。",
       "description" : "为转账数额选择其他记录，或者使用其他资金充值您的余额。"
+    },
+    "AleoApiConfigurationResetError" : {
+      "title" : "记录扫描仪配置已重置，请再次同步您的账户。"
     },
     "BackupAppDataError" : {
       "title" : "应用程序数据备份过程中出错"
@@ -8258,6 +8340,12 @@
       "description" : "杠杆交易",
       "cta" : "探索"
     },
+    "borrowEntry" : {
+      "title" : "贷款",
+      "cardTitle" : "借入稳定币",
+      "cardDescription" : "释放流动性",
+      "cta" : "探索"
+    },
     "noDeviceTitle" : "您的安全加密货币钱包"
   },
   "marketBanner" : {
@@ -8537,7 +8625,8 @@
       "mandatoryPrivateSync" : {
         "title" : "正在同步您的私密余额 ({{percentage}}%)",
         "desc" : "请稍候",
-        "error" : "私密数据同步失败请稍后重试。"
+        "errorTitle" : "私密同步失败",
+        "errorDesc" : "出了点问题，请重试"
       }
     }
   },
@@ -8565,6 +8654,17 @@
     "cta" : {
       "continue" : "继续",
       "explore" : "探索我的全新资产组合"
+    }
+  },
+  "productTour" : {
+    "cta" : {
+      "continue" : "继续",
+      "done" : "完成",
+      "fundYourWallet" : "为您的钱包注资",
+      "discoverSwap" : "探索互换",
+      "growYourRewards" : "提升收益",
+      "spendYourCrypto" : "使用加密货币消费",
+      "everythingAtAGlance" : "一目了然"
     }
   },
   "history" : {
@@ -8605,6 +8705,12 @@
     }
   },
   "myWallet" : {
+    "title" : "我的钱包",
+    "avatar" : {
+      "label" : "虚拟化身",
+      "labelWithNotifications_one" : "虚拟化身，{{count}} 个未读通知",
+      "labelWithNotifications_other" : "虚拟化身，{{count}} 个未读通知"
+    },
     "actionsList" : {
       "help" : "帮助",
       "recover" : "[L] Recover",
@@ -8615,5 +8721,8 @@
       "description" : "管理您的 Ledger 设备"
     },
     "explore" : "探索所有 Ledger 设备"
+  },
+  "assetDetails" : {
+    "totalBalance" : "总余额"
   }
 }
