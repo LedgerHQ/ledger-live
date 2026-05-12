@@ -668,7 +668,8 @@ export function convertShieldedTransactionsToOperations(
       type: txType,
       senders: [],
       recipients: [],
-      date: new Date(tx.timestamp),
+      // zcash shielded transaction timestamps are Unix seconds.
+      date: new Date(tx.timestamp * 1000),
       value,
       fee: new BigNumber(tx.fee),
       extra: {},
