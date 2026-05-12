@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setOverride, setAllOverrides } from "@shared/feature-flags";
 import type { Feature, FeatureId } from "@shared/feature-flags";
-import type { FeatureFlagsToolProps } from "@devtools/shell";
+import type { FeatureFlagsToolProps } from "@devtools/feature-flags";
 import type { RootState } from "../store";
 
 export function useFeatureFlagsToolProps(): FeatureFlagsToolProps {
@@ -21,10 +21,7 @@ export function useFeatureFlagsToolProps(): FeatureFlagsToolProps {
     [dispatch],
   );
 
-  const handleClearAllOverrides = useCallback(
-    () => dispatch(setAllOverrides({})),
-    [dispatch],
-  );
+  const handleClearAllOverrides = useCallback(() => dispatch(setAllOverrides({})), [dispatch]);
 
   return useMemo(
     () => ({

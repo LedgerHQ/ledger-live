@@ -1,5 +1,5 @@
 import { DevTools } from "@devtools/shell";
-import { FEATURE_FLAGS_ID } from "@devtools/shell/src/toolIds";
+import { registerFeatureFlagsTool, FEATURE_FLAGS_ID } from "@devtools/feature-flags";
 import { useFeatureFlagsToolProps } from "../hooks/useFeatureFlagsToolProps";
 
 export default function DevToolsPage() {

@@ -2475,6 +2475,9 @@ importers:
       '@codemirror/view':
         specifier: ^6.39.5
         version: 6.39.5
+      '@devtools/feature-flags':
+        specifier: workspace:*
+        version: link:../../devtools/feature-flags
       '@devtools/shell':
         specifier: workspace:*
         version: link:../../devtools/shell
