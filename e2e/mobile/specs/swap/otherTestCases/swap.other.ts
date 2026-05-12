@@ -1,4 +1,5 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Device } from "@ledgerhq/live-common/e2e/enum/Device";
 import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
 import { performSwapUntilQuoteSelectionStep } from "../../../utils/swapUtils";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
@@ -9,6 +10,35 @@ import { isWallet40 } from "../../../helpers/commonHelpers";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
+async function handleAssetSwap(asset: Account, hasAccount: boolean) {
+  const isModularDrawer = await app.modularDrawer.isFlowEnabled("live_app");
+  if (isModularDrawer) {
+    await app.modularDrawer.performSearchByTicker(asset.currency.ticker);
+    await app.modularDrawer.selectCurrencyByTicker(asset.currency.ticker);
+    const networkName = asset?.parentAccount
+      ? asset.parentAccount.currency.name
+      : asset.currency.speculosApp.name;
+    await app.modularDrawer.selectNetworkIfAsked(networkName);
+
+    if (hasAccount) {
+      await app.modularDrawer.selectFirstAccount();
+    } else {
+      await app.modularDrawer.tapAddNewOrExistingAccountButtonMAD();
+      await app.addAccount.addAccountAtIndex(`${asset.currency.name} 1`, asset.currency.id, 0);
+    }
+  } else {
+    await app.common.performSearch(asset.currency.name);
+    await app.stake.selectCurrency(asset.currency.id);
+    if (hasAccount) {
+      await app.common.selectFirstAccount();
+    } else {
+      await app.common.tapProceedButton();
+      await app.addAccount.addAccountAtIndex(`${asset.currency.name} 1`, asset.currency.id, 0);
+      await app.common.selectFirstAccount();
+    }
+  }
+}
+
 export function runSwapWithoutAccountTest(
   asset1: Account,
   asset2: Account,
@@ -17,35 +47,6 @@ export function runSwapWithoutAccountTest(
   event: "noAccountTo" | "noAccountFrom" | "noAccountFromAndTo",
   tags: string[],
 ) {
-  const handleAssetSwap = async (asset: Account, hasAccount: boolean) => {
-    const isModularDrawer = await app.modularDrawer.isFlowEnabled("live_app");
-    if (isModularDrawer) {
-      await app.modularDrawer.performSearchByTicker(asset.currency.ticker);
-      await app.modularDrawer.selectCurrencyByTicker(asset.currency.ticker);
-      const networkName = asset?.parentAccount
-        ? asset.parentAccount.currency.name
-        : asset.currency.speculosApp.name;
-      await app.modularDrawer.selectNetworkIfAsked(networkName);
-
-      if (hasAccount) {
-        await app.modularDrawer.selectFirstAccount();
-      } else {
-        await app.modularDrawer.tapAddNewOrExistingAccountButtonMAD();
-        await app.addAccount.addAccountAtIndex(`${asset.currency.name} 1`, asset.currency.id, 0);
-      }
-    } else {
-      await app.common.performSearch(asset.currency.name);
-      await app.stake.selectCurrency(asset.currency.id);
-      if (hasAccount) {
-        await app.common.selectFirstAccount();
-      } else {
-        await app.common.tapProceedButton();
-        await app.addAccount.addAccountAtIndex(`${asset.currency.name} 1`, asset.currency.id, 0);
-        await app.common.selectFirstAccount();
-      }
-    }
-  };
-
   describe("Swap a coin for which you have no account yet", () => {
     beforeAll(async () => {
       await beforeAllFunctionSwap({
@@ -151,7 +152,7 @@ export function runSwapLandingPageTest(
 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    test("Swap landing page", async () => {
+    it("Swap landing page", async () => {
       const minAmount = await app.swapLiveApp.getMinimumAmount(fromAccount, toAccount);
       const swap = new Swap(fromAccount, toAccount, minAmount);
 
@@ -162,9 +163,66 @@ export function runSwapLandingPageTest(
       );
       const providerList = await app.swapLiveApp.getProviderList();
       await app.swapLiveApp.checkFirstQuoteContainerInfos(providerList);
-      await app.swapLiveApp.checkBestOffer();
+      await app.swapLiveApp.checkBestOffer(providerList);
+
+      await app.portfolio.openViaDeeplink();
+      await app.swap.openViaDeeplink();
+      await app.swapLiveApp.expectSwapLiveAppForm();
+      await app.swapLiveApp.checkAssetFromMatchesAccount(fromAccount);
+      await app.swapLiveApp.checkAssetToMatchesAccount(toAccount);
     });
   });
+}
+
+async function setupSwapAccounts(
+  fromAccount: Account,
+  toAccount: Account,
+  userdata = "skip-onboarding",
+) {
+  await app.speculos.setExchangeDependencies(fromAccount, toAccount);
+  await beforeAllFunctionSwap({
+    userdata,
+    speculosApp: AppInfos.EXCHANGE,
+    cliCommandsOnApp: [
+      {
+        app: fromAccount.currency.speculosApp,
+        cmd: liveDataWithAddressCommand(fromAccount),
+      },
+      {
+        app: toAccount.currency.speculosApp,
+        cmd: liveDataWithAddressCommand(toAccount),
+      },
+    ],
+  });
+}
+
+export function runSwapLnsNotSupportedBannerTest(
+  fromAccount: Account,
+  toAccount: Account,
+  unsupportedProvider: Provider,
+  tmsLinks: string[],
+  tags: string[],
+) {
+  (process.env.SPECULOS_DEVICE === Device.LNS.name ? describe : describe.skip)(
+    "Swap - LNS not supported banner",
+    () => {
+      beforeAll(async () => {
+        await setupSwapAccounts(fromAccount, toAccount, "skip-onboarding-with-last-seen-device");
+      });
+
+      tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+      tags.forEach(tag => $Tag(tag));
+      it(`Shows LNS not supported banner for ${unsupportedProvider.uiName}`, async () => {
+        const minAmount = await app.swapLiveApp.getMinimumAmount(fromAccount, toAccount, [
+          unsupportedProvider.name,
+        ]);
+
+        await performSwapUntilQuoteSelectionStep(fromAccount, toAccount, minAmount);
+        await app.swapLiveApp.selectSpecificProvider(unsupportedProvider.uiName);
+        await app.swapLiveApp.checkLnsNotSupportedBanner(unsupportedProvider.uiName);
+      });
+    },
+  );
 }
 
 export function runTooLowAmountForQuoteSwapsTest(
@@ -449,13 +507,23 @@ export function runSwapSwitchSendAndReceiveCurrenciesTest(
   });
 }
 
-export function runSwapEntryPoints(account: Account, tmsLinks: string[], tags: string[]) {
-  const validateSwapAssetsPage = async (accountFrom: string, accountTo: string) => {
-    await app.swapLiveApp.expectSwapLiveApp();
-    await app.swapLiveApp.checkAssetFrom(accountFrom, "");
-    await app.swapLiveApp.checkAssetTo(accountTo, "-");
-  };
+async function validateSwapAssetsPage(accountFrom: string, accountTo: string) {
+  await app.swapLiveApp.expectSwapLiveApp();
+  await app.swapLiveApp.checkAssetFrom(accountFrom, "");
+  await app.swapLiveApp.checkAssetTo(accountTo, "-");
+}
 
+async function openSwapFromPortfolioEntryPoint() {
+  await app.portfolio.openViaDeeplink();
+  if (isWallet40) {
+    await app.mainNavigation.tapWallet40Tab("swap");
+  } else {
+    await app.transferMenuDrawer.open();
+    await app.transferMenuDrawer.navigateToSwap();
+  }
+}
+
+export function runSwapEntryPoints(account: Account, tmsLinks: string[], tags: string[]) {
   describe("Swap - Entry Points", () => {
     beforeAll(async () => {
       await beforeAllFunctionSwap({
@@ -467,13 +535,7 @@ export function runSwapEntryPoints(account: Account, tmsLinks: string[], tags: s
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it("Access Swap from different entry points", async () => {
-      await app.portfolio.openViaDeeplink();
-      if (isWallet40) {
-        await app.mainNavigation.tapWallet40Tab("swap");
-      } else {
-        await app.transferMenuDrawer.open();
-        await app.transferMenuDrawer.navigateToSwap();
-      }
+      await openSwapFromPortfolioEntryPoint();
       await validateSwapAssetsPage(account.currency.ticker, "");
 
       await app.account.openViaDeeplink();
