@@ -428,7 +428,7 @@ describe("listOperations", () => {
       value: 1_000_000n,
       asset: {
         type: "fa2",
-        assetReference: "KT1TokenContract:0",
+        assetReference: "KT1TokenContract",
         assetOwner: someDestinationAddress,
         unit: { magnitude: 6, name: "Tok", code: "TOK" },
       },
@@ -845,62 +845,6 @@ describe("listOperations", () => {
     expect(results.filter(o => o.asset.type === "native")).toHaveLength(1);
     expect(results.filter(o => o.asset.type === "fa2")).toHaveLength(1);
     expect(results.find(o => o.asset.type === "fa2")?.tx.hash).toBe(someHash);
-  });
-
-  describe("FA2 assetReference must include tokenId", () => {
-    const makeFA2Transfer = (
-      tokenId: string,
-      contractAddress: string,
-      id: number,
-    ): APITokenTransfer & { hash: string } => ({
-      id,
-      level: 200,
-      timestamp: "2024-01-01T00:00:00Z",
-      token: {
-        id: 1,
-        contract: { address: contractAddress },
-        tokenId,
-        standard: "fa2",
-      },
-      from: { address: someSenderAddress },
-      to: { address: someDestinationAddress },
-      amount: "100",
-      hash: "ooLive30344Hash",
-    });
-
-    it("includes tokenId in assetReference for a non-zero tokenId", async () => {
-      mockGetAccountOperations.mockResolvedValue([]);
-      mockGetAccountTokenTransfers.mockResolvedValue([
-        makeFA2Transfer("42", "KT1MultiToken", 10_001),
-      ]);
-      const [results] = await listOperations(someDestinationAddress, options);
-      const op = results.find(o => o.asset.type === "fa2");
-      expect(op).toBeDefined();
-      expect(op!.asset).toMatchObject({ assetReference: "KT1MultiToken:42" });
-    });
-
-    it("includes :0 suffix in assetReference when tokenId is 0", async () => {
-      mockGetAccountOperations.mockResolvedValue([]);
-      mockGetAccountTokenTransfers.mockResolvedValue([makeFA2Transfer("0", "KT1Standard", 10_002)]);
-      const [results] = await listOperations(someDestinationAddress, options);
-      const op = results.find(o => o.asset.type === "fa2");
-      expect(op).toBeDefined();
-      expect(op!.asset).toMatchObject({ assetReference: "KT1Standard:0" });
-    });
-
-    it("defaults to :0 suffix when tokenId is undefined", async () => {
-      const fa2NoTokenId: APITokenTransfer & { hash: string } = {
-        ...makeFA2Transfer("0", "KT1NoId", 10_003),
-        // @ts-expect-error testing missing tokenId
-        token: { id: 1, contract: { address: "KT1NoId" }, standard: "fa2" },
-      };
-      mockGetAccountOperations.mockResolvedValue([]);
-      mockGetAccountTokenTransfers.mockResolvedValue([fa2NoTokenId]);
-      const [results] = await listOperations(someDestinationAddress, options);
-      const op = results.find(o => o.asset.type === "fa2");
-      expect(op).toBeDefined();
-      expect(op!.asset).toMatchObject({ assetReference: "KT1NoId:0" });
-    });
   });
 
   // LIVE-30365: fees on a token operation must only be charged to the fees payer

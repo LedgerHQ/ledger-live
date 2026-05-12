@@ -49,7 +49,7 @@ export async function getBalance(address: string): Promise<Balance[]> {
       value: BigInt(balance),
       asset: {
         type: token.standard,
-        assetReference: `${token.contract.address}:${token.tokenId ?? "0"}`,
+        assetReference: token.contract.address,
         assetOwner: address,
         name: token.contract.alias,
         ...(unit && { unit }),

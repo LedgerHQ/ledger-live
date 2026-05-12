@@ -540,8 +540,7 @@ function convertTokenOperation(
   // Copying fees here would cause double-counting for any consumer that sums fees by hash.
   const fee = 0n;
 
-  const tokenId = transfer.token.tokenId ?? "0";
-  const assetReference = `${transfer.token.contract.address}:${tokenId}`;
+  const assetReference = transfer.token.contract.address;
 
   return {
     id: `${transfer.hash}-token-${transfer.id}`,

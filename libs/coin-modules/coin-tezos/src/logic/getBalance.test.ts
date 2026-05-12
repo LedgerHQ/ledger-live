@@ -111,7 +111,7 @@ describe("getBalance", () => {
         value: BigInt("2000"),
         asset: {
           type: "fa2",
-          assetReference: "KT1T87QbpXEVgkwsNPzz8iRoah3SS3D1MDmh:0",
+          assetReference: "KT1T87QbpXEVgkwsNPzz8iRoah3SS3D1MDmh",
           assetOwner: "tz1TzrmTBSuiVHV2VfMnGRMYvTEPCP42oSM8",
           name: "BTCtz",
           unit: { magnitude: 8, name: "BTCtez", code: "BTCtz" },
@@ -141,7 +141,7 @@ describe("getBalance", () => {
         value: 2000n,
         asset: {
           type: "fa2",
-          assetReference: "KT1T87QbpXEVgkwsNPzz8iRoah3SS3D1MDmh:0",
+          assetReference: "KT1T87QbpXEVgkwsNPzz8iRoah3SS3D1MDmh",
           assetOwner: "tz1TzrmTBSuiVHV2VfMnGRMYvTEPCP42oMMM",
           name: "BTCtz",
           unit: {

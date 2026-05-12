@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-tezos": minor
+"@ledgerhq/coin-tezos": patch
 ---
 
-Fix fee handling in listOperations
+fix(coin-tezos): FA2 token ops no longer duplicate fees from parent native op (LIVE-30365)

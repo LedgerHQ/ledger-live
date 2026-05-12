@@ -11,9 +11,7 @@ import { listOperations } from "./listOperations";
 const ADDRESS = "tz1UD2zz5eFTW2Jy26kBnC3ZkdeazUgeFWST";
 /** FA2 USDt contract for this account on mainnet (TzKT). */
 const USDT_FA2_CONTRACT = "KT1XnTn74bUtxHfDtBmm2bGZAQfhPbvKWR8o";
-/** Expected assetReference after the LIVE-30344 fix: contract:tokenId. USDt tokenId is 0. */
-const USDT_FA2_ASSET_REF = `${USDT_FA2_CONTRACT}:0`;
-const KT1_ASSET_REF_PATTERN = /^KT1[1-9A-HJ-NP-Za-km-z]+:\d+$/;
+const KT1_PATTERN = /^KT1[1-9A-HJ-NP-Za-km-z]+$/;
 
 const mainnetConfig = (): TezosCoinConfig =>
   ({
@@ -55,7 +53,7 @@ describe("listOperations — mainnet FA2 / convertTokenOperation", () => {
     const [operations] = await listOperations(ADDRESS, { ...baseOpts, limit: 200 });
     const fa2 = operations.find(op => {
       if (op.asset.type !== "fa2") return false;
-      return op.asset.assetReference === USDT_FA2_ASSET_REF;
+      return op.asset.assetReference === USDT_FA2_CONTRACT;
     });
 
     const tokenOp = fa2!;
@@ -69,8 +67,8 @@ describe("listOperations — mainnet FA2 / convertTokenOperation", () => {
       type: "fa2",
       assetOwner: ADDRESS,
     });
-    expect(asset.assetReference).toMatch(KT1_ASSET_REF_PATTERN);
-    expect(asset.assetReference).toBe(USDT_FA2_ASSET_REF);
+    expect(asset.assetReference).toMatch(KT1_PATTERN);
+    expect(asset.assetReference).toBe(USDT_FA2_CONTRACT);
     const unit = asset.unit!;
     expect(typeof unit.magnitude).toBe("number");
     expect(unit.magnitude).toBeGreaterThanOrEqual(0);
