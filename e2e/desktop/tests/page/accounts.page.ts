@@ -88,6 +88,22 @@ export class AccountsPage extends AppPage {
     await expect(this.visibleAccountsList).toHaveCount(count, { timeout });
   }
 
+  private async getReduxAccountIds(): Promise<string[]> {
+    return this.page.evaluate(() => {
+      const store = globalThis.window.__STORE__;
+      if (!store?.getState) return [];
+      const state: { accounts?: { id?: string }[] } = store.getState();
+
+      if (state.accounts) {
+        return state.accounts
+          .map(account => account.id)
+          .filter((accountId): accountId is string => Boolean(accountId));
+      }
+
+      return [];
+    });
+  }
+
   /**
    * Waits until the in-app Redux store has the expected number of accounts.
    * Use after Ledger Sync / bridge merges (CI can show the success screen before all rows exist).
@@ -95,18 +111,24 @@ export class AccountsPage extends AppPage {
   @step("Expect Redux accounts length to be $0")
   async expectReduxAccountsLength(count: number) {
     await expect
+      .poll(async () => (await this.getReduxAccountIds()).length, { timeout: 60_000 })
+      .toBe(count);
+  }
+
+  @step("Expect Redux account ids to be $0")
+  async expectReduxAccountIds(expectedAccountIds: string[]) {
+    await expect
       .poll(
-        async () =>
-          this.page.evaluate(() => {
-            const store = // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-              (globalThis as { __STORE__?: { getState?: () => { accounts?: unknown[] } } })
-                .__STORE__;
-            if (!store?.getState) return -1;
-            return store.getState().accounts?.length ?? 0;
-          }),
+        async () => {
+          const accountIds = await this.getReduxAccountIds();
+          return (
+            accountIds.length === expectedAccountIds.length &&
+            expectedAccountIds.every(accountId => accountIds.includes(accountId))
+          );
+        },
         { timeout: 60_000 },
       )
-      .toBe(count);
+      .toBe(true);
   }
 
   @step("Expect crypto account row for $0 to be visible")
