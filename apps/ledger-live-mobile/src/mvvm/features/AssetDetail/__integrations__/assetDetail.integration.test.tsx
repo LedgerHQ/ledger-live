@@ -32,14 +32,14 @@ function AssetDetailTestNavigator() {
   );
 }
 
-function withBtcAccounts(count: number) {
+function withBtcAccounts(count: number, operationsSize = 0) {
   return {
     overrideInitialState: (state: State): State => ({
       ...state,
       accounts: {
         ...state.accounts,
         active: Array.from({ length: count }, (_, i) =>
-          genAccount(`bitcoin-${i}`, { currency: mockBtcCryptoCurrency, operationsSize: 0 }),
+          genAccount(`bitcoin-${i}`, { currency: mockBtcCryptoCurrency, operationsSize }),
         ),
       },
     }),
@@ -57,7 +57,7 @@ describe("AssetDetail screen layout", () => {
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.screen)).toBeVisible();
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.balanceGraph)).toBeVisible();
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.marketStats)).toBeVisible();
-    expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.transactions)).toBeVisible();
+    expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.transactions)).toBeNull();
   });
 
   it("hides balance details when there are no accounts", () => {
@@ -95,6 +95,19 @@ describe("AssetDetail screen layout", () => {
     expect(screen.getByText("Addresses")).toBeVisible();
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.addAccount)).toBeVisible();
     expect(screen.getByText("Add")).toBeVisible();
+  });
+
+  it("hides the transactions section when there are no operations", () => {
+    render(<AssetDetailTestNavigator />, withBtcAccounts(2, 0));
+
+    expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.transactions)).toBeNull();
+  });
+
+  it("renders the transactions section when operations exist", () => {
+    render(<AssetDetailTestNavigator />, withBtcAccounts(1, 5));
+
+    expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.transactions)).toBeVisible();
+    expect(screen.getByText("Transactions")).toBeVisible();
   });
 
   describe("floating bar CTAs", () => {

@@ -8705,6 +8705,9 @@
       "justNow": "just now",
       "error": "Unable to load price performance"
     },
+    "transactions": {
+      "title": "Transactions"
+    },
     "balanceDetails": {
       "totalBalance": "Total balance",
       "transfer": "Transfer",
