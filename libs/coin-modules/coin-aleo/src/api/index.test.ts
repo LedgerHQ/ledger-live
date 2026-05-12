@@ -35,6 +35,7 @@ describe("createApi", () => {
     mockedLastBlock.mockResolvedValue({ hash: "blockHash", height: 42, time: new Date() });
     mockedListOperations.mockResolvedValue({
       operations: [mockOperation],
+      tokenOperations: [],
       nextCursor: "next-cursor",
     });
     mockedGetTransactionType.mockReturnValue("transfer_public");
@@ -230,6 +231,7 @@ describe("createApi", () => {
       const api = createApi(mockConfig, "aleo");
       mockedListOperations.mockResolvedValueOnce({
         operations: [mockOperation],
+        tokenOperations: [],
         nextCursor: null,
       });
       const result = await api.listOperations("aleo1test", { minHeight: 1 });

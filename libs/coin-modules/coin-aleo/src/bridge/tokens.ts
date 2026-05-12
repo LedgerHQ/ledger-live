@@ -17,6 +17,18 @@ function normalizeTokenId(tokenId: string): string {
   return tokenId.endsWith("field") ? tokenId.slice(0, -"field".length).trimEnd() : tokenId;
 }
 
+async function computeTokenBalanceKey(tokenId: string, ownerAddress: string): Promise<string> {
+  const { BHP256, Plaintext } = await import("@provablehq/sdk/mainnet.js");
+
+  const hasher = new BHP256();
+  const structPlaintext = Plaintext.fromString(
+    `{ account: ${ownerAddress}, token_id: ${tokenId} }`,
+  );
+  const bits = structPlaintext.toBitsLe();
+
+  return hasher.hash(bits).toString();
+}
+
 /** Registry tokens are those managed by the token_registry.aleo program. */
 function isRegistryToken(token: AleoVerifiedToken): boolean {
   return token.program_name === PROGRAM_ID.TOKEN_REGISTRY;
@@ -32,13 +44,8 @@ function buildTokenCurrencyFromVerifiedToken(
   token: AleoVerifiedToken,
 ): TokenCurrency {
   const contractAddress = isRegistryToken(token) ? token.token_id : token.program_name;
-
   // Stable id: strip trailing "field" suffix for registry token ids.
-  const idKey = isRegistryToken(token)
-    ? contractAddress.endsWith("field")
-      ? contractAddress.slice(0, -"field".length).trimEnd()
-      : contractAddress
-    : contractAddress;
+  const idKey = isRegistryToken(token) ? normalizeTokenId(contractAddress) : contractAddress;
 
   return {
     type: "TokenCurrency",
@@ -60,22 +67,28 @@ function buildTokenCurrencyFromVerifiedToken(
   };
 }
 
-/**
- * Builds token sub-accounts from `tokenOperations` (operations already known to be token
- * transfers), matching against `verifiedTokens`. Each sub-account appears at most once
- * (deduplication across existing and new).
- */
-function buildSubAccountsFromOperations({
-  tokenOperations,
-  verifiedTokens,
-  ledgerAccountId,
-  currency,
-}: {
-  tokenOperations: AleoOperation[];
-  verifiedTokens: AleoVerifiedToken[];
-  ledgerAccountId: string;
-  currency: CryptoCurrency;
-}): TokenAccount[] {
+type BalanceStrategy =
+  | { type: "registry"; tokenId: string }
+  | { type: "program"; programId: string };
+
+function getBalanceStrategy(token: AleoVerifiedToken): BalanceStrategy {
+  if (isRegistryToken(token)) {
+    return { type: "registry", tokenId: token.token_id };
+  }
+
+  return { type: "program", programId: token.program_name };
+}
+
+type DiscoveredToken = {
+  tokenCurrency: TokenCurrency;
+  verifiedToken: AleoVerifiedToken;
+};
+
+function discoverTokensFromOperations(
+  tokenOperations: AleoOperation[],
+  verifiedTokens: AleoVerifiedToken[],
+  currency: CryptoCurrency,
+): DiscoveredToken[] {
   // FIXME: MOCKED CAL LIST BASED ON VERIFIED TOKENS LIST
   const mockedCAL = verifiedTokens.filter(t => t.program_name !== PROGRAM_ID.CREDITS);
   const registryTokensMap = new Map<string, AleoVerifiedToken>(
@@ -84,8 +97,9 @@ function buildSubAccountsFromOperations({
   const customProgramTokensMap = new Map<string, AleoVerifiedToken>(
     mockedCAL.filter(isCustomProgramToken).map(t => [t.program_name, t]),
   );
-  const seenIds = new Set<string>();
-  const subAccounts: TokenAccount[] = [];
+
+  const seen = new Set<string>();
+  const discovered: DiscoveredToken[] = [];
 
   for (const op of tokenOperations) {
     const tokenInfo = op.extra?.tokenInfo;
@@ -103,23 +117,82 @@ function buildSubAccountsFromOperations({
     if (!verifiedToken) continue;
 
     const tokenCurrency = buildTokenCurrencyFromVerifiedToken(currency, verifiedToken);
-    const id = encodeTokenAccountId(ledgerAccountId, tokenCurrency);
+    if (seen.has(tokenCurrency.id)) continue;
 
-    if (seenIds.has(id)) continue;
-    seenIds.add(id);
-    subAccounts.push(buildZeroBalanceTokenAccount(id, ledgerAccountId, tokenCurrency));
+    seen.add(tokenCurrency.id);
+    discovered.push({ tokenCurrency, verifiedToken });
   }
 
-  return subAccounts;
+  return discovered;
+}
+
+async function fetchTokenBalance(
+  token: DiscoveredToken,
+  address: string,
+  currency: CryptoCurrency,
+): Promise<BigNumber> {
+  const strategy = getBalanceStrategy(token.verifiedToken);
+
+  switch (strategy.type) {
+    case "registry": {
+      const mappingKey = await computeTokenBalanceKey(strategy.tokenId, address);
+      return parseTokenBalance(await apiClient.getRegistryTokenBalance(currency, mappingKey));
+    }
+    case "program": {
+      return parseTokenBalance(
+        await apiClient.getProgramTokenBalance(currency, strategy.programId, address),
+      );
+    }
+  }
+}
+
+/**
+ * Builds token sub-accounts from `tokenOperations` (operations already known to be token
+ * transfers), matching against `verifiedTokens`. Each sub-account appears at most once
+ * (deduplication across existing and new).
+ */
+function buildSubAccountsFromOperations({
+  address,
+  tokenOperations,
+  verifiedTokens,
+  ledgerAccountId,
+  currency,
+}: {
+  address: string;
+  tokenOperations: AleoOperation[];
+  verifiedTokens: AleoVerifiedToken[];
+  ledgerAccountId: string;
+  currency: CryptoCurrency;
+}): Promise<TokenAccount[]> {
+  const discovered = discoverTokensFromOperations(tokenOperations, verifiedTokens, currency);
+
+  return Promise.allSettled(
+    discovered.map(async token => {
+      const balance = await fetchTokenBalance(token, address, currency);
+      const id = encodeTokenAccountId(ledgerAccountId, token.tokenCurrency);
+
+      return buildTokenAccount(id, ledgerAccountId, token.tokenCurrency, balance);
+    }),
+  ).then(results =>
+    results.flatMap(result => {
+      if (result.status === "fulfilled") {
+        return [result.value];
+      }
+
+      return [];
+    }),
+  );
 }
 
 export async function getAleoSubAccounts({
   currency,
   ledgerAccountId,
+  address,
   tokenOperations,
 }: {
   currency: CryptoCurrency;
   ledgerAccountId: string;
+  address: string;
   tokenOperations: AleoOperation[];
 }): Promise<TokenAccount[]> {
   if (tokenOperations.length === 0) return [];
@@ -127,6 +200,7 @@ export async function getAleoSubAccounts({
   const allVerified = await apiClient.getVerifiedTokens({ currency });
 
   return buildSubAccountsFromOperations({
+    address,
     tokenOperations,
     verifiedTokens: allVerified,
     ledgerAccountId,
@@ -134,18 +208,29 @@ export async function getAleoSubAccounts({
   });
 }
 
-function buildZeroBalanceTokenAccount(
+/**
+ * Parses a token balance string in Aleo format (e.g. "123u128") into a BigNumber.
+ * Returns zero if the input is null or parsing fails.
+ */
+function parseTokenBalance(balanceStr: string | null): BigNumber {
+  if (!balanceStr) return new BigNumber(0);
+  const numericStr = balanceStr.replace(/u\d+$/, "");
+  return new BigNumber(numericStr);
+}
+
+function buildTokenAccount(
   id: string,
   parentId: string,
   token: TokenCurrency,
+  balance: BigNumber = new BigNumber(0),
 ): TokenAccount {
   return {
     type: "TokenAccount",
     id,
     parentId,
     token,
-    balance: new BigNumber(0),
-    spendableBalance: new BigNumber(0),
+    balance,
+    spendableBalance: balance,
     creationDate: new Date(),
     operations: [],
     operationsCount: 0,
