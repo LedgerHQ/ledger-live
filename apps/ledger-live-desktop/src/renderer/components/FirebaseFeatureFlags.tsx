@@ -48,7 +48,7 @@ export const FirebaseFeatureFlagsProvider = ({
 
   const wrappedGetFeature = useCallback(
     <T extends FeatureId>(key: T) => getFeature({ key, localOverrides }),
-    [getFeature, localOverrides, lastFetchTime],
+    [getFeature, localOverrides],
   );
 
   useEffect(() => {
@@ -75,7 +75,8 @@ export const FirebaseFeatureFlagsProvider = ({
       resetFeature,
       resetFeatures,
     }),
-    [wrappedGetFeature, overrideFeature, resetFeature, resetFeatures],
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
+    [wrappedGetFeature, overrideFeature, resetFeature, resetFeatures, lastFetchTime],
   );
 
   return <FeatureFlagsProvider value={contextValue}>{children}</FeatureFlagsProvider>;
