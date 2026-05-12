@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { AssetDetailCurrencyProps } from "LLM/features/AssetDetail/types";
 import { useTranslation, useLocale } from "~/context/Locale";
 import { track } from "~/analytics";
 import { counterValueFormatter } from "LLM/features/Market/utils";
@@ -20,7 +20,7 @@ type StatRow = {
   tooltip?: { title: string; content: string };
 };
 
-export function useMarketStatsViewModel(currency: CryptoCurrency | undefined) {
+export function useMarketStatsViewModel(currency: AssetDetailCurrencyProps) {
   const { t } = useTranslation();
   const { locale } = useLocale();
   const { marketCurrency, counterCurrency, isLoading, isError } = useAssetMarketData(currency);

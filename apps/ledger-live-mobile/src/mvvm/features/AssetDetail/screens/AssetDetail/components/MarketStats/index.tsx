@@ -1,13 +1,9 @@
 import React from "react";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { AssetDetailCurrencyProps } from "LLM/features/AssetDetail/types";
 import { useMarketStatsViewModel } from "./useMarketStatsViewModel";
 import { MarketStatsView } from "./MarketStatsView";
 
-type Props = Readonly<{
-  currency: CryptoCurrency | undefined;
-}>;
-
-export function MarketStats({ currency }: Props) {
+export function MarketStats({ currency }: Readonly<{ currency: AssetDetailCurrencyProps }>) {
   const viewModel = useMarketStatsViewModel(currency);
   return <MarketStatsView {...viewModel} />;
 }

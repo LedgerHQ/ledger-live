@@ -1,15 +1,16 @@
 import { useCallback } from "react";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { track } from "~/analytics";
 import { useOpenBuySell } from "LLM/features/Buy";
+import type { AssetDetailCurrencyProps } from "LLM/features/AssetDetail/types";
 
-export function useIsBuyAvailable(currency: CryptoCurrency | undefined): boolean {
+export function useIsBuyAvailable(currency: AssetDetailCurrencyProps): boolean {
   const { isCurrencyAvailable } = useRampCatalog();
+
   return !!currency && isCurrencyAvailable(currency.id, "onRamp");
 }
 
-export function useFooterViewModel(currency: CryptoCurrency | undefined) {
+export function useFooterViewModel(currency: AssetDetailCurrencyProps) {
   const { handleOpenBuySell } = useOpenBuySell({
     currency,
     sourceScreenName: "Asset Detail",
