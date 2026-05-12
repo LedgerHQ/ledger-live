@@ -6,13 +6,21 @@ import { SYNC_TYPE_TRANSPARENT, SYNC_TYPE_SHIELDED } from "@ledgerhq/types-live"
 import { getBalance, lastBlock, listOperations } from "../logic";
 import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import { getMockedAccount, mockAleoResources } from "../__tests__/fixtures/account.fixture";
+import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import { AleoAccount } from "../types";
 import { AleoApiConfigurationResetError } from "../errors";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
 import { getMockedRecord } from "../__tests__/fixtures/api.fixture";
-import { accessProvableApi, fetchAllOwnedRecords, patchPublicOperations } from "../network/utils";
+import coinConfig from "../config";
+import {
+  accessProvableApi,
+  fetchAllOwnedRecords,
+  patchPublicOperations,
+  fetchAccountTransactionsFromHeight,
+} from "../network/utils";
 import { listPrivateOperations } from "../logic/listPrivateOperations";
 import { getPrivateBalance } from "../logic/getPrivateBalance";
+import { apiClient } from "../network/api";
 import {
   performPublicSync,
   performPrivateSync,
@@ -33,9 +41,11 @@ const mockLastBlock = jest.mocked(lastBlock);
 const mockListOperations = jest.mocked(listOperations);
 const mockAccessProvableApi = jest.mocked(accessProvableApi);
 const mockFetchAllOwnedRecords = jest.mocked(fetchAllOwnedRecords);
+const mockFetchAccountTransactionsFromHeight = jest.mocked(fetchAccountTransactionsFromHeight);
 const mockListPrivateOperations = jest.mocked(listPrivateOperations);
 const mockGetPrivateBalance = jest.mocked(getPrivateBalance);
 const mockPatchPublicOperations = jest.mocked(patchPublicOperations);
+const mockApiClient = jest.mocked(apiClient);
 
 describe("sync.ts", () => {
   const mockCurrency = getMockedCurrency();
@@ -57,6 +67,7 @@ describe("sync.ts", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    coinConfig.setCoinConfig(() => getMockedConfig("mainnet"));
 
     mockGetBalance.mockResolvedValue([
       {
@@ -73,10 +84,18 @@ describe("sync.ts", () => {
 
     mockListOperations.mockResolvedValue({
       operations: [],
+      tokenOperations: [],
       nextCursor: null,
     });
     mockAccessProvableApi.mockResolvedValue(mockAleoResources.provableApi);
     mockFetchAllOwnedRecords.mockResolvedValue([]);
+    mockFetchAccountTransactionsFromHeight.mockResolvedValue({
+      transactions: [],
+      nextCursor: null,
+    });
+    mockApiClient.getVerifiedTokens.mockResolvedValue([]);
+    mockApiClient.getRegistryTokenBalance.mockResolvedValue(null);
+    mockApiClient.getProgramTokenBalance.mockResolvedValue(null);
     mockListPrivateOperations.mockResolvedValue({ operations: [], consumedRecordTags: new Set() });
     mockGetPrivateBalance.mockResolvedValue({ balance: new BigNumber(0), unspentRecords: [] });
     mockPatchPublicOperations.mockResolvedValue([]);
@@ -214,6 +233,10 @@ describe("sync.ts", () => {
       const mockOperation = getMockedOperation({
         blockHeight: 12345,
         accountId: mockInitialAccount.id,
+        extra: {
+          transactionType: "public",
+          functionId: "transfer_public",
+        },
       });
 
       const accountWithOperations = {
@@ -284,6 +307,7 @@ describe("sync.ts", () => {
 
       mockListOperations.mockResolvedValue({
         operations: [newOperation as any],
+        tokenOperations: [],
         nextCursor: null,
       });
 
@@ -823,6 +847,7 @@ describe("sync.ts", () => {
       mockListOperations.mockResolvedValueOnce({
         // @ts-expect-error - bridge operation type is expected in this test
         operations: [newPublicOp],
+        tokenOperations: [],
         nextCursor: null,
       });
       mockListPrivateOperations.mockResolvedValueOnce({
@@ -888,6 +913,7 @@ describe("sync.ts", () => {
       const privateRecord = getMockedRecord();
       mockListOperations.mockResolvedValueOnce({
         operations: [newPublicOp as any],
+        tokenOperations: [],
         nextCursor: null,
       });
       mockFetchAllOwnedRecords.mockResolvedValueOnce([privateRecord]).mockResolvedValueOnce([]);
