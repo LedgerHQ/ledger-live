@@ -144,7 +144,6 @@ tools/actions/composites/monitor/                        @ledgerhq/coin-integrat
 libs/coin-modules/coin-aptos/                                            @ledgerhq/blockchain-support @ledgerhq/ledger-third-party-leads
 libs/coin-modules/coin-near/                                             @ledgerhq/blockchain-support @ledgerhq/ledger-third-party-leads
 libs/coin-modules/coin-cardano/                                          @ledgerhq/blockchain-support @ledgerhq/ledger-third-party-leads
-libs/coin-modules/coin-tezos/                                            @ledgerhq/blockchain-support @ledgerhq/ledger-third-party-leads
 libs/coin-modules/coin-vechain/                                          @ledgerhq/blockchain-support @ledgerhq/ledger-third-party-leads
 libs/coin-modules/coin-casper/                                           @ledgerhq/blockchain-support @ledgerhq/ledger-third-party-leads
 libs/coin-modules/coin-filecoin/                                         @ledgerhq/blockchain-support @ledgerhq/ledger-third-party-leads
@@ -157,6 +156,7 @@ libs/coin-modules/coin-ton/                                              @ledger
 libs/coin-modules/coin-sui/                                              @ledgerhq/ledger-partner-hoodies @ledgerhq/ledger-third-party-leads
 libs/coin-modules/coin-canton/                                           @ledgerhq/ledger-partner-hoodies @ledgerhq/ledger-third-party-leads
 libs/coin-modules/coin-concordium/                                       @ledgerhq/ledger-partner-hoodies @ledgerhq/ledger-third-party-leads
+libs/coin-modules/coin-tezos/                                            @ledgerhq/ledger-partner-hoodies @ledgerhq/ledger-third-party-leads
 
 ## Blockydevs
 libs/coin-modules/coin-hedera/                                           @ledgerhq/ledger-partner-blockydevs @ledgerhq/ledger-third-party-leads
@@ -343,6 +343,7 @@ apps/ledger-live-desktop/src/mvvm/features/ProductTour/                         
 apps/ledger-live-desktop/src/mvvm/features/BuyDevice/                                          @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/FinishOnboardingWidget/                             @ledgerhq/engagement
 apps/ledger-live-desktop/src/mvvm/features/Onboarding/                                         @ledgerhq/engagement
+apps/ledger-live-desktop/src/mvvm/features/GenericAwarenessModal/                              @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/hooks/useRecoverRestoreOnboarding.ts                     @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/images/lns-upsell-banner.webp                            @ledgerhq/engagement
 apps/ledger-live-desktop/tests/specs/onboarding/                                               @ledgerhq/engagement
@@ -375,6 +376,7 @@ apps/ledger-live-mobile/src/mvvm/features/WalletV4Tour/                         
 apps/ledger-live-mobile/src/mvvm/features/ProductTour/                                         @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/LNSUpsell/                                           @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/Reborn/                                              @ledgerhq/engagement
+apps/ledger-live-mobile/src/mvvm/features/GenericAwarenessModal/                               @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/Portfolio/components/OnboardingWidget/               @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/Portfolio/components/PortfolioBannersSection/        @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/Portfolio/components/PortfolioCarouselSection/       @ledgerhq/engagement
@@ -397,6 +399,7 @@ libs/ledger-live-common/src/analytics/                                          
 libs/ledger-live-common/src/onboarding/                                                        @ledgerhq/engagement
 libs/ledger-live-common/src/postOnboarding/                                                    @ledgerhq/engagement
 libs/ledger-live-common/src/transactionsAlerts/                                                @ledgerhq/engagement
+libs/ledger-live-common/src/genericAwarenessModal/                                             @ledgerhq/engagement
 libs/ui/packages/native/src/components/Layout/Slides/                                          @ledgerhq/engagement
 
 

@@ -1,13 +1,9 @@
 import React from "react";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { AssetDetailCurrencyProps } from "LLM/features/AssetDetail/types";
 import { useBalanceDetailsViewModel } from "./useBalanceDetailsViewModel";
 import { BalanceDetailsView } from "./BalanceDetailsView";
 
-type Props = Readonly<{
-  currency: CryptoCurrency | undefined;
-}>;
-
-export function BalanceDetails({ currency }: Props) {
+export function BalanceDetails({ currency }: Readonly<{ currency: AssetDetailCurrencyProps }>) {
   const viewModel = useBalanceDetailsViewModel(currency);
   return <BalanceDetailsView {...viewModel} />;
 }

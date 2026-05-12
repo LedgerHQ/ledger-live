@@ -1,4 +1,3 @@
-import { faker } from "@faker-js/faker";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
 import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
 import { emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account/index";
@@ -16,7 +15,7 @@ const currency = listCryptoCurrencies(true).find(c => c.id === "tezos")!;
 export function createFixtureAccount(account?: Partial<TezosAccount>): TezosAccount {
   const tezosResources: TezosResources = account?.tezosResources || {
     revealed: account?.tezosResources?.revealed || true,
-    counter: account?.tezosResources?.counter || faker.number.int(),
+    counter: account?.tezosResources?.counter || 0,
   };
 
   const freshAddress = {
@@ -27,17 +26,17 @@ export function createFixtureAccount(account?: Partial<TezosAccount>): TezosAcco
 
   return {
     type: "Account",
-    id: faker.string.uuid(),
-    seedIdentifier: faker.string.uuid(),
+    id: "tezos:fixture-account",
+    seedIdentifier: "fixture-seed",
     derivationMode: "",
-    index: faker.number.int(),
+    index: 0,
     freshAddress: account?.freshAddress || freshAddress.address,
     freshAddressPath: freshAddress.derivationPath,
     used: true,
     balance: account?.balance || new BigNumber(0),
     spendableBalance: account?.spendableBalance || new BigNumber(0),
-    creationDate: faker.date.past(),
-    blockHeight: faker.number.int({ min: 100_000, max: 200_000 }),
+    creationDate: new Date("2024-01-01"),
+    blockHeight: 100_000,
     currency,
     operationsCount: account?.operationsCount || 0,
     operations: account?.operations || [],
@@ -76,18 +75,18 @@ export function createFixtureOperation(operation?: Partial<TezosOperation>): Tez
   };
 
   return {
-    id: operation?.id || faker.string.uuid(),
-    hash: operation?.hash || faker.string.uuid(),
+    id: operation?.id || "tezos:fixture-op",
+    hash: operation?.hash || "0x" + "0".repeat(64),
     type: operation?.type || "ACTIVATE",
-    value: operation?.value || new BigNumber(faker.string.numeric()),
+    value: operation?.value || new BigNumber(0),
     fee: operation?.fee || new BigNumber(0),
     // senders & recipients addresses
     senders: operation?.senders || [],
     recipients: operation?.recipients || [],
     blockHeight: operation?.blockHeight || undefined,
     blockHash: operation?.blockHash || undefined,
-    accountId: operation?.accountId || faker.string.uuid(),
-    date: operation?.date || faker.date.past(),
+    accountId: operation?.accountId || "tezos:fixture-account",
+    date: operation?.date || new Date("2024-01-01"),
     extra,
   };
 }

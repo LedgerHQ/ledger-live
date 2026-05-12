@@ -1,5 +1,5 @@
 import { from, defer, of, concat, EMPTY, Observable } from "rxjs";
-import { map, switchMap, mergeMap, concatMap, catchError, tap } from "rxjs/operators";
+import { switchMap, mergeMap, concatMap, catchError, tap } from "rxjs/operators";
 import { getEnv } from "@ledgerhq/live-env";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
@@ -87,7 +87,7 @@ export default {
                             deviceId: opts.device || "",
                           })
                           .pipe(
-                            map(toSignOperationEventRaw),
+                            concatMap(toSignOperationEventRaw),
                             // @ts-expect-error more voodoo stuff
                             ...(opts["disable-broadcast"] ||
                             getEnv("DISABLE_TRANSACTION_BROADCAST")

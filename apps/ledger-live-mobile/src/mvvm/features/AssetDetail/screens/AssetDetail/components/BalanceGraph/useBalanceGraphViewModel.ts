@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { AssetDetailCurrencyProps } from "LLM/features/AssetDetail/types";
 import type { FormattedValue } from "@ledgerhq/lumen-ui-rnative";
 import { useSelector } from "~/context/hooks";
 import { shallowAccountsSelector } from "~/reducers/accounts";
@@ -12,7 +12,7 @@ import { parseCurrencyString } from "../../utils/currencyFormatter";
 import { RANGE_TO_PRICE_CHANGE_KEY, type RangeKey } from "../../utils/rangeMapping";
 import { useAssetMarketData } from "../../hooks/useAssetMarketData";
 
-export function useBalanceGraphViewModel(currency: CryptoCurrency | undefined) {
+export function useBalanceGraphViewModel(currency: AssetDetailCurrencyProps) {
   const { t } = useTranslation();
   const { locale } = useLocale();
   const { marketCurrency, counterCurrency, isLoading } = useAssetMarketData(currency);

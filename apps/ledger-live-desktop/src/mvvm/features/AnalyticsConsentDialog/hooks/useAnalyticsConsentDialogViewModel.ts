@@ -7,7 +7,6 @@ import {
   analyticsConsentInfoSelector,
   hasCompletedOnboardingSelector,
   shareAnalyticsSelector,
-  sharePersonalizedRecommendationsSelector,
 } from "~/renderer/reducers/settings";
 import {
   setAnalyticsConsentInfo,
@@ -49,7 +48,6 @@ export function useAnalyticsConsentDialogViewModel() {
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const consentInfo = useSelector(analyticsConsentInfoSelector);
   const shareAnalytics = useSelector(shareAnalyticsSelector);
-  const sharePersonalizedRecommendations = useSelector(sharePersonalizedRecommendationsSelector);
 
   const needsUpdatePrivacy = needsPrivacyPolicyAck(consentInfo.privacyPolicyVersion, policyVersion);
   const needsRenewal = needsConsentRenewal(consentInfo.consentDate, consentValidityDays);
@@ -137,8 +135,6 @@ export function useAnalyticsConsentDialogViewModel() {
   };
 
   const applyOptOut = async () => {
-    const isPreviouslyOptedOutCompletely = !shareAnalytics && !sharePersonalizedRecommendations;
-    const trackMandatory = !isPreviouslyOptedOutCompletely;
     track(
       "button_clicked",
       {
@@ -146,7 +142,7 @@ export function useAnalyticsConsentDialogViewModel() {
         page: ANALYTICS_CONSENT_DIALOG_PAGE,
         privacyPolicyVersion: policyVersion,
       },
-      trackMandatory,
+      true,
     );
     dispatch(setShareAnalytics(false));
     dispatch(setSharePersonalizedRecommendations(false));
@@ -155,11 +151,15 @@ export function useAnalyticsConsentDialogViewModel() {
   };
 
   const onPrivacyGotIt = async () => {
-    track("button_clicked", {
-      button: "analytics_consent_privacy_got_it",
-      page: ANALYTICS_CONSENT_DIALOG_PAGE,
-      privacyPolicyVersion: policyVersion,
-    });
+    track(
+      "button_clicked",
+      {
+        button: "analytics_consent_privacy_got_it",
+        page: ANALYTICS_CONSENT_DIALOG_PAGE,
+        privacyPolicyVersion: policyVersion,
+      },
+      true,
+    );
     await persistAnalyticsConsentAck();
     handleCloseDialog();
   };
@@ -183,7 +183,6 @@ export function useAnalyticsConsentDialogViewModel() {
   const onBackFromPreferences = () => setPhase(consentPhaseBeforePreferences);
 
   const applyPreferences = async () => {
-    const trackMandatory = draftShareAnalytics || draftSharePersonalized;
     track(
       "button_clicked",
       {
@@ -191,7 +190,7 @@ export function useAnalyticsConsentDialogViewModel() {
         page: ANALYTICS_CONSENT_DIALOG_PAGE,
         privacyPolicyVersion: policyVersion,
       },
-      trackMandatory,
+      true,
     );
     dispatch(setShareAnalytics(draftShareAnalytics));
     dispatch(setSharePersonalizedRecommendations(draftSharePersonalized));

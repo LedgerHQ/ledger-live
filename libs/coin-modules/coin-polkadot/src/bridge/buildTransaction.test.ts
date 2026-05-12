@@ -1,4 +1,3 @@
-import { faker } from "@faker-js/faker";
 import { TypeRegistry } from "@polkadot/types";
 import coinConfig from "../config";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
@@ -65,7 +64,7 @@ describe("buildTransaction", () => {
       });
       return new mockCodec();
     });
-    const expectExtrinsicMethodHex = faker.string.hexadecimal({ length: 16 });
+    const expectExtrinsicMethodHex = "0x1111111111111111";
     const mockTransferKeepAlive = jest.fn().mockReturnValue({
       toHex: () => expectExtrinsicMethodHex,
     });
@@ -121,7 +120,7 @@ describe("buildTransaction", () => {
       mode: "nominate",
       validators: ["validator name", "2nd validator name"],
     });
-    const expectExtrinsicMethodHex = faker.string.hexadecimal({ length: 16 });
+    const expectExtrinsicMethodHex = "0x2222222222222222";
     const mockNominate = jest.fn().mockReturnValue({
       toHex: () => expectExtrinsicMethodHex,
     });
@@ -149,7 +148,7 @@ describe("buildTransaction", () => {
     const transaction = createFixtureTransaction({
       mode: "chill",
     });
-    const expectExtrinsicMethodHex = faker.string.hexadecimal({ length: 16 });
+    const expectExtrinsicMethodHex = "0x3333333333333333";
     const mockChill = jest.fn().mockReturnValue({
       toHex: () => expectExtrinsicMethodHex,
     });
@@ -179,7 +178,7 @@ describe("buildTransaction", () => {
       validators: ["validator name", "2nd validator name"],
       era: "era value",
     });
-    const expectExtrinsicMethodHex = faker.string.hexadecimal({ length: 16 });
+    const expectExtrinsicMethodHex = "0x4444444444444444";
     const mockPayoutStakers = jest.fn().mockReturnValue({
       toHex: () => expectExtrinsicMethodHex,
     });

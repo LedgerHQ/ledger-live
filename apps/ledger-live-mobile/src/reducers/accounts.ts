@@ -245,8 +245,7 @@ export const flattenAccountsByCryptoCurrencySelector = createSelector(
 
 const emptyTuples: ReturnType<typeof accountsTuplesByCurrencySelector> = [];
 export const accountsByCryptoCurrencyScreenSelector =
-  (currency: CryptoOrTokenCurrency) => (state: State) => {
-    // TODO look if we can remove this check as the types should already protect here
+  (currency?: CryptoOrTokenCurrency) => (state: State) => {
     if (!currency) return emptyTuples;
     return accountsTuplesByCurrencySelector(state, currency);
   };

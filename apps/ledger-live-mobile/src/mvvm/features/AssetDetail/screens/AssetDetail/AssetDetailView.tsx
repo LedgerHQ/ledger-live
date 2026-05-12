@@ -3,20 +3,20 @@ import { RefreshControl, ScrollView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { TrackScreen } from "~/analytics";
+import type { AssetDetailCurrencyProps } from "LLM/features/AssetDetail/types";
 import { ASSET_DETAIL_TEST_IDS } from "../../testIds";
-import { SectionPlaceholder } from "./components/SectionPlaceholder";
 import { BalanceGraph } from "./components/BalanceGraph";
 import { BalanceDetails } from "./components/BalanceDetails";
 import { Addresses } from "./components/Addresses";
+import { Transactions } from "./components/Transactions";
 import { Footer } from "./components/Footer";
 import { MarketData } from "./components/MarketData";
 import { useIsBuyAvailable } from "./components/Footer/useFooterViewModel";
-import { CTAS_HEIGHT, SECTION_HEIGHT, PLACEHOLDER_COLORS } from "./utils/constants";
+import { CTAS_HEIGHT } from "./utils/constants";
 
 type Props = Readonly<{
-  currency: CryptoCurrency | undefined;
+  currency: AssetDetailCurrencyProps;
   source?: string;
   isRefreshing: boolean;
   onRefresh: () => void;
@@ -43,11 +43,7 @@ export function AssetDetailView({ currency, source, isRefreshing, onRefresh }: P
           <BalanceDetails currency={currency} />
           <Addresses currency={currency} />
           <MarketData currency={currency} />
-          <SectionPlaceholder
-            testID={ASSET_DETAIL_TEST_IDS.transactions}
-            backgroundColor={PLACEHOLDER_COLORS.transactions}
-            height={SECTION_HEIGHT}
-          />
+          <Transactions currency={currency} />
         </Box>
       </ScrollView>
       <Footer currency={currency} />

@@ -47,16 +47,34 @@ export default defineCommand({
       ctx.account = serializeV1(v1);
       const currencyId = currencyIdFromNetwork(v1.network);
       const managerAppName = getManagerAppNameForCurrencyId(currencyId);
+      const address =
+        v1.type === "address"
+          ? v1.address
+          : await out.withActivity(
+              `Scanning ${v1.network.name} blockchain for fresh address…`,
+              "Fresh address resolved",
+              () => wallet.getFreshAddress(toV0(v1)),
+            );
       if (flags.verify) {
+        out.preVerifyAddress(address);
         const spin = out.spin(`Connect device and open ${colors.bold(managerAppName)} app…`);
         await withCurrencyDeviceSession(
           currencyId,
           async () => {
             out.deviceState({ code: "awaiting_approval", reason: "verify_address" });
             try {
-              const address = await wallet.verifyAddress(toV0(v1), WALLET_CLI_DMK_DEVICE_ID);
+              const deviceAddress = await wallet.verifyAddress(toV0(v1), WALLET_CLI_DMK_DEVICE_ID);
+              const hexAddress = address.toLowerCase().startsWith("0x");
+              const match = hexAddress
+                ? deviceAddress.toLowerCase() === address.toLowerCase()
+                : deviceAddress === address;
+              if (!match) {
+                throw new Error(
+                  `Address mismatch: device returned ${deviceAddress}, expected ${address}`,
+                );
+              }
               spin?.success("Address verified");
-              out.address(address);
+              out.address(address, true);
             } catch (e) {
               throw WalletCliDeviceError.fromUnknown(e, {
                 expectedApp: managerAppName,
@@ -70,15 +88,7 @@ export default defineCommand({
           },
         );
       } else {
-        const address =
-          v1.type === "address"
-            ? v1.address
-            : await out.withActivity(
-                `Scanning ${v1.network.name} blockchain for fresh address…`,
-                "Fresh address resolved",
-                () => wallet.getFreshAddress(toV0(v1)),
-              );
-        out.address(address);
+        out.address(address, false);
       }
     });
   },
