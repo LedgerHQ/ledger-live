@@ -308,6 +308,7 @@
     "exchange" : "ซื้อ / ขาย",
     "swap" : "สวอป",
     "perps" : "Perpetuals",
+    "borrow" : "ยืม",
     "home" : "หน้าหลัก",
     "refer" : "แนะนำเพื่อน",
     "lend" : "ให้ยืม",
@@ -785,6 +786,9 @@
         }
       }
     }
+  },
+  "borrow" : {
+    "pageHeader" : "ยืม"
   },
   "exchange" : {
     "pageHeader" : "ซื้อหรือขาย",
@@ -1334,6 +1338,33 @@
     "widget" : {
       "title" : "ถัดไป! ทำการติดตั้งวอลเล็ตให้เรียบร้อย",
       "subtitle" : "เริ่มต้นด้วยการเติมเงินเข้าวอลเล็ตของคุณ"
+    },
+    "dialog" : {
+      "title" : "ถัดไป! ทำการติดตั้งวอลเล็ตให้เรียบร้อย",
+      "titleCompleted" : "เรียบร้อยแล้ว!",
+      "primaryLabel" : "เข้าใจแล้ว",
+      "actionCompletedLabel" : "เสร็จเรียบร้อย",
+      "actions" : {
+        "deviceOnboarded" : {
+          "title" : "ตั้งค่า Ledger ของคุณ"
+        },
+        "assetsTransfer" : {
+          "title" : "เพิ่มคริปโต",
+          "description" : "รับหรือซื้อคริปโตเพื่อเติมลงในวอลเล็ตของคุณ"
+        },
+        "syncAccounts" : {
+          "title" : "ซิงค์วอลเล็ตของคุณ",
+          "description" : "ดูแลบัญชีคริปโตของคุณให้มีการซิงค์อยู่เสมอ"
+        },
+        "customImage" : {
+          "title" : "ปรับแต่งหน้าจอล็อค",
+          "description" : "แสดงศิลปะดิจิทัลหรือรูปภาพโปรดของคุณเป็นล็อกสกรีนของอุปกรณ์"
+        },
+        "recover" : {
+          "title" : "สำรองข้อมูลเสร็จแล้ว",
+          "description" : "เปิดใช้งานบริการ Ledger Recover เรียบร้อยแล้ว"
+        }
+      }
     },
     "postOnboardingScreen" : {
       "title" : "ขั้นตอนถัดไปคืออะไร?",
@@ -4212,6 +4243,8 @@
         "activeTooltip" : "จำนวนที่ Delegate จะส่งผลต่อจำนวน Reward ที่ได้",
         "inactiveTooltip" : "จำนวนที่ Undelegate จะไม่สร้าง Reward",
         "minSafeWarning" : "เงินทุนไม่เพียงพอ",
+        "commission" : "คอมมิชชัน",
+        "totalStake" : "สเตคทั้งหมด",
         "flow" : {
           "title" : "Delegate",
           "steps" : {
@@ -4226,7 +4259,8 @@
               "title" : "จำนวน"
             },
             "validator" : {
-              "title" : "ผู้ตรวจสอบ"
+              "title" : "ผู้ตรวจสอบ",
+              "noResults" : "ไม่มีผู้ตรวจสอบที่ตรงกับการค้นหาของคุณ"
             },
             "connectDevice" : {
               "title" : "อุปกรณ์"
@@ -4248,7 +4282,35 @@
       },
       "undelegation" : {
         "header" : "การ Undelegate",
-        "inactiveTooltip" : "จำนวนที่ Undelegate ซึ่งไม่สร้าง Reward"
+        "headerTooltip" : "ใช้ได้หลังระยะเวลาล็อก {{numberOfDays}} วัน",
+        "inactiveTooltip" : "จำนวนที่ Undelegate ซึ่งไม่สร้าง Reward",
+        "flow" : {
+          "title" : "หยุดการสเตคกิ้ง",
+          "steps" : {
+            "amount" : {
+              "title" : "จำนวน",
+              "subtitle" : "กระบวนการ Undelegate ใช้เวลา <0>{{numberOfDays}} วัน</0> จึงจะแล้วเสร็จ",
+              "warningWithTimelock" : "จะมีการเคลม Reward โดยอัตโนมัติ จำนวนที่ Undelegate จะกลับมาอยู่ในยอดคงเหลือในบัญชีหลังจากระยะเวลาล็อค <0>{{numberOfDays}} วัน</0>",
+              "warningInstant" : "จะมีการเคลม Reward โดยอัตโนมัติ จำนวนที่ Undelegate จะปรากฏในยอดคงเหลือในบัญชีของคุณทันที",
+              "fields" : {
+                "validator" : "ผู้ตรวจสอบ",
+                "amount" : "จำนวนที่จะ Undelegate"
+              }
+            },
+            "connectDevice" : {
+              "title" : "อุปกรณ์"
+            },
+            "confirmation" : {
+              "title" : "การยืนยัน",
+              "success" : {
+                "title" : "คุณได้ Undelegate สินทรัพย์ของคุณสำเร็จแล้ว",
+                "description" : "<0>{{amount}}</0> ได้รับการ Undelegate จาก <0>{{validator}}</0> แล้ว",
+                "cta" : "ดูรายละเอียด"
+              },
+              "broadcastError" : "ธุรกรรมของคุณอาจล้มเหลว โปรดรอสักครู่ แล้วตรวจสอบประวัติธุรกรรมก่อนลองใหม่อีกครั้ง"
+            }
+          }
+        }
       }
     }
   },
@@ -4635,7 +4697,7 @@
       "walletSyncDesc" : "ซิงค์บัญชีคริปโตบนแอป Ledger Wallet ของคุณระหว่างโทรศัพท์และคอมพิวเตอร์เครื่องอื่น ๆ",
       "walletSyncDescription" : "พอร์ตการลงทุนของคุณจะอัปเดตเสมอ ไม่ว่าจะเปลี่ยนไปใช้คอมพิวเตอร์หรือใช้โทรศัพท์",
       "mevProtection" : "MEV Protection",
-      "mevProtectionDesc" : "เปิดใช้ Mev Protection เพื่อธุรกรรมที่เชื่อถือได้มากยิ่งขึ้นบน Ethereum",
+      "mevProtectionDesc" : "เปิดใช้ MEV Protection เพื่อเพิ่มความปลอดภัยให้ธุรกรรมของคุณ",
       "mevProtectionLearnMore" : "ประกาศความเป็นส่วนตัว"
     },
     "developer" : {
@@ -4802,6 +4864,17 @@
         "openDrawer" : "เปิดลิ้นชัก",
         "debugDialog" : "กล่องข้อความจากการ Debug",
         "debugDuplicates" : "สำเนาของการ Debug"
+      },
+      "featuresAndFlowsDevTool" : {
+        "title" : "ฟีเจอร์และโฟลว์",
+        "description" : "เครื่องมือสำหรับนักพัฒนาเพื่อจัดการฟีเจอร์ต่าง ๆ",
+        "productTour" : {
+          "title" : "แนะนำการใช้งานแอป",
+          "label" : "แนะนำการใช้งานแอป",
+          "completed" : "การแนะนำการใช้งานแอปเสร็จสิ้นแล้ว",
+          "notCompleted" : "การแนะนำการใช้งานแอปยังไม่เสร็จสิ้น",
+          "open" : "เปิด"
+        }
       },
       "walletFeaturesDevTool" : {
         "title" : "เครื่องมือพัฒนาฟีเจอร์วอลเล็ต",
@@ -6300,6 +6373,9 @@
     "CeloAllFundsWarning" : {
       "title" : "ตรวจสอบให้แน่ใจว่าคุณมียอดคงเหลือในบัญชีเพียงพอสำหรับค่าธรรมเนียมธุรกรรมในอนาคต"
     },
+    "CeloGroupNotVotable" : {
+      "title" : "กลุ่มผู้ตรวจสอบนี้ไม่สามารถรับโหวตได้ เนื่องจากอาจได้รับโหวตเต็มแล้ว หรือไม่ผ่านคุณสมบัติ"
+    },
     "ClaimRewardsFeesWarning" : {
       "title" : "Reward น้อยกว่าค่าธรรมเนียมโดยประมาณในการขอรับ",
       "description" : ""
@@ -7137,6 +7213,9 @@
       "title" : "เซสชันหมดอายุ",
       "description" : "เซสชันแอป Concordium ID หมดอายุการใช้งานแล้ว กรุณาจับคู่อีกครั้ง"
     },
+    "ConcordiumAddressVerificationFailedError" : {
+      "title" : "การตรวจสอบที่อยู่ล้มเหลว"
+    },
     "StacksMemoTooLong" : {
       "title" : "Memo ยาวมากเกินไป"
     },
@@ -7337,6 +7416,9 @@
     "AleoFeeRecordInsufficientBalance" : {
       "title" : "ไม่มีรายการส่วนตัวใดที่สามารถครอบคลุมค่าธรรมเนียมเครือข่ายได้",
       "description" : "เลือกรายการอื่นสำหรับจำนวนเงินที่ต้องการโอน หรือเติมยอดคงเหลือในบัญชีของคุณเพิ่มเติม"
+    },
+    "AleoApiConfigurationResetError" : {
+      "title" : "การตั้งค่าตัวสแกนบันทึกถูกรีเซ็ตแล้ว โปรดซิงค์บัญชีของคุณใหม่อีกครั้ง"
     },
     "BackupAppDataError" : {
       "title" : "เกิดข้อผิดพลาดระหว่างการสำรองข้อมูลแอป"
@@ -8258,6 +8340,12 @@
       "description" : "เทรดแบบมีเลเวอเรจ",
       "cta" : "ผู้ให้บริการ"
     },
+    "borrowEntry" : {
+      "title" : "การกู้ยืม",
+      "cardTitle" : "ยืมสเตเบิลคอยน์",
+      "cardDescription" : "ใช้จ่ายผ่านคริปโตได้ง่ายขึ้น",
+      "cta" : "สำรวจ"
+    },
     "noDeviceTitle" : "คริปโตวอลเล็ตที่ปลอดภัยของคุณ"
   },
   "marketBanner" : {
@@ -8537,7 +8625,8 @@
       "mandatoryPrivateSync" : {
         "title" : "กำลังซิงค์ยอดคงเหลือในบัญชีของคุณ ({{percentage}}%)",
         "desc" : "โปรดรอสักครู่",
-        "error" : "การซิงค์ข้อมูลแบบส่วนตัวล้มเหลว โปรดลองอีกครั้งในภายหลัง"
+        "errorTitle" : "การซิงค์ข้อมูลแบบส่วนตัวล้มเหลว",
+        "errorDesc" : "มีบางอย่างผิดพลาด โปรดลองอีกครั้ง"
       }
     }
   },
@@ -8565,6 +8654,17 @@
     "cta" : {
       "continue" : "ดำเนินการต่อ",
       "explore" : "สำรวจพอร์ตการลงทุนใหม่ของฉัน"
+    }
+  },
+  "productTour" : {
+    "cta" : {
+      "continue" : "ดำเนินการต่อ",
+      "done" : "เสร็จสิ้น",
+      "fundYourWallet" : "เติมเงินเข้าวอลเล็ตของคุณ",
+      "discoverSwap" : "สำรวจการสวอป",
+      "growYourRewards" : "เพิ่มพูนรางวัลของคุณ",
+      "spendYourCrypto" : "ใช้จ่ายคริปโตของคุณ",
+      "everythingAtAGlance" : "ดูทุกอย่างในหน้าเดียว"
     }
   },
   "history" : {
@@ -8605,6 +8705,12 @@
     }
   },
   "myWallet" : {
+    "title" : "วอลเล็ตของฉัน",
+    "avatar" : {
+      "label" : "อวตาร",
+      "labelWithNotifications_one" : "อวตาร / {{count}} การแจ้งเตือนที่ยังไม่ได้ดู",
+      "labelWithNotifications_other" : "อวตาร / {{count}} การแจ้งเตือนที่ยังไม่ได้ดู"
+    },
     "actionsList" : {
       "help" : "ช่วยเหลือ",
       "recover" : "[L] Recover",
@@ -8615,5 +8721,8 @@
       "description" : "จัดการอุปกรณ์ Ledger ของคุณ"
     },
     "explore" : "ดูอุปกรณ์ Ledger ทั้งหมด"
+  },
+  "assetDetails" : {
+    "totalBalance" : "ยอดคงเหลือทั้งหมด"
   }
 }
