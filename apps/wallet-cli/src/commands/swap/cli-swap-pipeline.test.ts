@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, mock } from "bun:test";
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { getAccountBridge as getLiveAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import type { CommandOutput } from "../../output";
@@ -112,6 +112,11 @@ function makeOutput(): CommandOutput {
   } as unknown as CommandOutput;
 }
 
+const mockSignedOperation = {
+  operation: {},
+  signature: "mock-signature",
+} as unknown as SignedOperation;
+
 function getAccountBridge(): ReturnType<typeof getLiveAccountBridge> {
   return {
     createTransaction: () => ({
@@ -123,6 +128,13 @@ function getAccountBridge(): ReturnType<typeof getLiveAccountBridge> {
       tx: Record<string, unknown>,
       patch: Record<string, unknown>,
     ): Record<string, unknown> => ({ ...tx, ...patch, amount: updatedTransactionAmount }),
+    signOperation: () =>
+      new Observable(observer => {
+        observer.next({ type: "signed", signedOperation: mockSignedOperation });
+        observer.complete();
+      }),
+    // Pipeline always calls broadcast; no on-chain hash in this unit test.
+    broadcast: async () => ({ hash: undefined }) as unknown as Operation,
   } as unknown as ReturnType<typeof getLiveAccountBridge>;
 }
 
