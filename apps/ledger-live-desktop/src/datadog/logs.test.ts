@@ -1,4 +1,9 @@
-import { __resetDatadogLogsForTesting, initDatadogLogs, isDatadogLogsAvailable } from "./logs";
+import {
+  __resetDatadogLogsForTesting,
+  broadcastLogger,
+  initDatadogLogs,
+  isDatadogLogsAvailable,
+} from "./logs";
 
 jest.mock("./config", () => ({
   getDatadogBuildConfig: jest.fn(),
@@ -13,6 +18,10 @@ jest.mock("@datadog/browser-logs", () => ({
   datadogLogs: {
     init: jest.fn(),
     setGlobalContext: jest.fn(),
+    logger: {
+      info: jest.fn(),
+      error: jest.fn(),
+    },
   },
 }));
 
@@ -153,6 +162,64 @@ describe("datadog logs", () => {
       datadogLogs.init.mockClear();
       expect(initDatadogLogs(() => true)).toBe(true);
       expect(datadogLogs.init).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("broadcastLogger", () => {
+    beforeEach(() => {
+      getDatadogBuildConfig.mockReturnValue({
+        applicationId: null,
+        clientToken: "token",
+        site: "datadoghq.eu",
+        env: "production",
+      });
+      initDatadogLogs(() => true);
+    });
+
+    it("calls datadogLogs.logger.info with correct parameters on success event", () => {
+      broadcastLogger({
+        status: "success",
+        appVersion: "1.0.0",
+        currencyId: "bitcoin",
+        family: "bitcoin",
+      });
+
+      expect(datadogLogs.logger.info).toHaveBeenCalledWith("broadcast_success", {
+        event: {
+          status: "success",
+          appVersion: "1.0.0",
+          currencyId: "bitcoin",
+          family: "bitcoin",
+        },
+      });
+    });
+
+    it("calls datadogLogs.logger.error with correct parameters on failure event", () => {
+      const error = new Error("tx broadcast failed");
+      error.stack = "Error: tx broadcast failed\n  at test:1:1";
+
+      broadcastLogger({
+        status: "failure",
+        error,
+        txPayload: "payload",
+        appVersion: "1.0.0",
+        currencyId: "ethereum",
+        family: "evm",
+      });
+
+      expect(datadogLogs.logger.error).toHaveBeenCalledWith(
+        "broadcast_failure",
+        {
+          event: {
+            status: "failure",
+            txPayload: "payload",
+            appVersion: "1.0.0",
+            currencyId: "ethereum",
+            family: "evm",
+          },
+        },
+        error,
+      );
     });
   });
 });

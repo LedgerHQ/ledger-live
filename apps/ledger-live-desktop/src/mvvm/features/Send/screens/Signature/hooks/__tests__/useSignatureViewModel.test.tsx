@@ -34,7 +34,7 @@ type AccountLike = { id: string; type: "Account" | "TokenAccount"; token?: Token
 type MockState = {
   account: {
     account: AccountLike;
-    parentAccount: { id: string } | null;
+    parentAccount: { id: string; currency: { family: string } } | null;
     currency: { id: string } | null;
   };
   transaction: {
@@ -127,7 +127,7 @@ describe("useSignatureViewModel", () => {
 
   test("exposes action and builds request with tokenCurrency for TokenAccount", () => {
     mockState.account.account = { id: "tokAcc", type: "TokenAccount", token: { id: "token-1" } };
-    mockState.account.parentAccount = { id: "parent-acc" };
+    mockState.account.parentAccount = { id: "parent-acc", currency: { family: "family" } };
 
     const ref = React.createRef<HookApi>();
     render(<Harness ref={ref} />);
@@ -135,7 +135,7 @@ describe("useSignatureViewModel", () => {
     expect(ref.current?.action).toBe(actionMock);
     expect(ref.current?.request).toEqual({
       tokenCurrency: { id: "token-1" },
-      parentAccount: { id: "parent-acc" },
+      parentAccount: { id: "parent-acc", currency: { family: "family" } },
       account: { id: "tokAcc", type: "TokenAccount", token: { id: "token-1" } },
       transaction: { id: "tx" },
       status: { ok: true },

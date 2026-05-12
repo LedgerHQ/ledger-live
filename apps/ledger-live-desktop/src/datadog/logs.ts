@@ -1,4 +1,5 @@
 import { datadogLogs } from "@datadog/browser-logs";
+import type { LogEvent } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { getOperatingSystemSupportStatus } from "~/support/os";
 import { buildBeforeSend, getDatadogBuildConfig, type ShouldSendCallback } from "./config";
 
@@ -50,5 +51,16 @@ export function initDatadogLogs(shouldSend: ShouldSendCallback): boolean {
   } catch (e) {
     console.error("Datadog Logs init failed", e);
     return false;
+  }
+}
+
+export function broadcastLogger(event: LogEvent): void {
+  if (!initialized) return;
+
+  if (event.status === "success") {
+    datadogLogs.logger.info("broadcast_success", { event });
+  } else {
+    const { error, ...rest } = event;
+    datadogLogs.logger.error("broadcast_failure", { event: rest }, error);
   }
 }

@@ -6,6 +6,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import StepProgress from "~/renderer/components/StepProgress";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
+import { broadcastLogger } from "~/datadog/logs";
 import { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
@@ -14,7 +15,6 @@ import { mevProtectionSelector } from "~/renderer/reducers/settings";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import { useTransactionAction } from "~/renderer/hooks/useConnectAppAction";
 import type { ModalData } from "~/renderer/modals/types";
-import { useNewSendFlowFeature } from "LLD/features/Send/hooks/useNewSendFlowFeature";
 
 const Result = (
   props:
@@ -61,30 +61,22 @@ export default function StepConnectDevice({
 }) {
   const mevProtected = useSelector(mevProtectionSelector);
   const dispatch = useDispatch();
-  const newSendFlowFeature = useNewSendFlowFeature();
-  const newSendFlowFamily = newSendFlowFeature.getFamilyFromAccount(
-    account ?? undefined,
-    parentAccount ?? null,
-  );
-  const newSendFlowCurrencyId = newSendFlowFeature.getCurrencyIdFromAccount(
-    account ?? undefined,
-    parentAccount ?? null,
-  );
-  const newSendFlow = newSendFlowFeature.isEnabledForFamily(
-    newSendFlowFamily,
-    newSendFlowCurrencyId,
-  );
   const broadcastConfig = useMemo(
     () => ({
       mevProtected,
-      source: { type: "coin-module" as const, name: "ledger-live-desktop", flags: { newSendFlow } },
+      source: {
+        type: "coin-module" as const,
+        name: "ledger-live-desktop",
+        flags: { newSendFlow: false },
+      },
     }),
-    [mevProtected, newSendFlow],
+    [mevProtected],
   );
   const broadcast = useBroadcast({
     account,
     parentAccount,
     broadcastConfig,
+    logger: broadcastLogger,
   });
   const tokenCurrency = (account && account.type === "TokenAccount" && account.token) || undefined;
   const request = useMemo(
