@@ -5,6 +5,7 @@ import {
   useRemoteLiveAppManifest,
 } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
+import { useDeepLinkListener } from "./useDeepLinkListener";
 import Earn from ".";
 
 const mockWebPlatformPlayer = jest.fn((_props: unknown) => (
@@ -18,6 +19,10 @@ jest.mock("@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index"
 jest.mock("@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index", () => ({
   useLocalLiveAppManifest: jest.fn(),
 }));
+
+jest.mock("./useDeepLinkListener", () => ({
+  useDeepLinkListener: jest.fn(),
+}));
 jest.mock("~/renderer/components/WebPlatformPlayer", () => ({
   __esModule: true,
   default: (props: unknown) => mockWebPlatformPlayer(props),
@@ -26,6 +31,7 @@ jest.mock("~/renderer/components/WebPlatformPlayer", () => ({
 const mockedUseRemoteLiveAppManifest = jest.mocked(useRemoteLiveAppManifest);
 const mockedUseRemoteLiveAppContext = jest.mocked(useRemoteLiveAppContext);
 const mockedUseLocalLiveAppManifest = jest.mocked(useLocalLiveAppManifest);
+const mockedUseDeepLinkListener = jest.mocked(useDeepLinkListener);
 
 const manifest = {
   id: "earn-manifest-id",
@@ -39,6 +45,7 @@ describe("Earn screen", () => {
     mockedUseRemoteLiveAppManifest.mockReturnValue(manifest);
     mockedUseLocalLiveAppManifest.mockReturnValue(undefined);
     mockedUseRemoteLiveAppContext.mockReturnValue({ updateManifests: jest.fn() } as never);
+    mockedUseDeepLinkListener.mockImplementation(jest.fn());
   });
 
   it("passes enabled uiVersion and lw40enabled=true when feature is enabled", () => {
