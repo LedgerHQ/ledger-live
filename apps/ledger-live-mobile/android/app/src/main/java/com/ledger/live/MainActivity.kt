@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
-import androidx.activity.OnBackPressedCallback
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
@@ -32,14 +31,6 @@ class MainActivity : ReactActivity() {
             )
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                isEnabled = false
-                this@MainActivity.onBackPressed()
-                isEnabled = true
-            }
-        })
-
         if (android.os.Build.VERSION.SDK_INT >= 31) {
             installSplashScreen()
         }
@@ -50,10 +41,6 @@ class MainActivity : ReactActivity() {
 
         val sharedI18nUtilInstance = I18nUtil.getInstance()
         sharedI18nUtilInstance.allowRTL(applicationContext, true)
-    }
-
-    override fun invokeDefaultOnBackPressed() {
-        moveTaskToBack(false)
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
