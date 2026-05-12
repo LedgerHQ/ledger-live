@@ -4,6 +4,7 @@ import { z } from "zod";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
 import { findCryptoCurrencyById, parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { getCurrencyForAccount } from "@ledgerhq/types-live";
 import { integrateNewAccountDescriptor } from "@ledgerhq/live-wallet/walletsync/modules/accounts";
 import { createCommandOutput } from "../../output";
 import {
@@ -20,6 +21,8 @@ import { runFullSwapPipeline as runFullSwapPipelineDefault } from "./cli-swap-pi
 type RunFullSwapPipeline = typeof runFullSwapPipelineDefault;
 
 const swapExecuteFlagsSchema = z.object({
+  from: z.string().min(1, "Source currency is required (--from <currencyId>)"),
+  to: z.string().min(1, "Destination currency is required (--to <currencyId>)"),
   provider: z.string().min(1, "Provider is required (--provider <name>)"),
   amount: z.string().min(1, "Amount is required (--amount <value>)"),
   "to-account": z.string().optional(),
@@ -52,14 +55,16 @@ export async function executeSwapCommand({
   positional: readonly string[];
 } & SwapExecuteDependencies): Promise<void> {
   const fromDescriptor = await resolveDescriptor(resolveAccountArg(flags.account, positional));
-  const fromCurrency = findCryptoCurrencyById(fromDescriptor.currencyId);
-  if (!fromCurrency) {
-    throw new Error(`Currency ${fromDescriptor.currencyId} not found`);
+
+  const fromCurrencyCatalog = findCryptoCurrencyById(flags.from);
+  if (!fromCurrencyCatalog) {
+    throw new Error(`Unknown source currency (--from): ${flags.from}`);
+  }
+  if (!findCryptoCurrencyById(flags.to)) {
+    throw new Error(`Unknown destination currency (--to): ${flags.to}`);
   }
 
-  const amountInAtomicUnit: BigNumber = parseCurrencyUnit(fromCurrency.units[0], flags.amount);
-
-  const network = networkStringFromCurrencyId(fromDescriptor.currencyId);
+  const network = networkStringFromCurrencyId(flags.from);
 
   const out = createCommandOutput(resolveOutputFormat(flags.output), {
     command: "swap execute",
@@ -86,6 +91,24 @@ export async function executeSwapCommand({
       integrateDescriptor(toDescriptor, getBridge, syncCache),
     ]);
 
+    const fromAccountCurrencyId = getCurrencyForAccount(fromAccount).id;
+    const toAccountCurrencyId = getCurrencyForAccount(toAccount).id;
+    if (fromAccountCurrencyId !== flags.from) {
+      throw new Error(
+        `Source account asset is ${fromAccountCurrencyId}, but --from was ${flags.from}. Use matching --from and source account, or pick another source account.`,
+      );
+    }
+    if (toAccountCurrencyId !== flags.to) {
+      throw new Error(
+        `Destination account asset is ${toAccountCurrencyId}, but --to was ${flags.to}. Use matching --to and destination account, or pick another destination account.`,
+      );
+    }
+
+    const amountInAtomicUnit: BigNumber = parseCurrencyUnit(
+      fromCurrencyCatalog.units[0],
+      flags.amount,
+    );
+
     const result = await runFullSwapPipeline({
       out,
       provider: flags.provider,
@@ -99,6 +122,8 @@ export async function executeSwapCommand({
     });
 
     out.swapExecuteFullResult({
+      from: flags.from,
+      to: flags.to,
       provider: flags.provider,
       amount: flags.amount,
       transactionId: result.transactionId,
@@ -117,6 +142,14 @@ export default defineCommand({
   description:
     "Swap flow with Ledger device + API pipeline (nonce → payload → complete exchange → sign/broadcast).",
   options: {
+    from: option(swapExecuteFlagsSchema.shape.from, {
+      description: "Source currency ID",
+      short: "f",
+    }),
+    to: option(swapExecuteFlagsSchema.shape.to, {
+      description: "Destination currency ID",
+      short: "t",
+    }),
     provider: option(swapExecuteFlagsSchema.shape.provider, {
       description: "Swap provider name, e.g. changelly",
     }),
