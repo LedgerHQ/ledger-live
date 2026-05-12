@@ -3570,9 +3570,6 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
-      '@provablehq/sdk':
-        specifier: 0.10.2
-        version: 0.10.2
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -3588,6 +3585,9 @@ importers:
       '@types/lodash':
         specifier: ^4.14.191
         version: 4.17.21
+      '@provablehq/sdk':
+        specifier: 0.10.2
+        version: 0.10.2
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0

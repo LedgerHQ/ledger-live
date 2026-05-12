@@ -140,6 +140,7 @@ export async function performPublicSync(
     const newSubAccounts = await getAleoSubAccounts({
       currency,
       ledgerAccountId,
+      address,
       tokenOperations: latestAccountPublicOperations.tokenOperations,
     });
 
