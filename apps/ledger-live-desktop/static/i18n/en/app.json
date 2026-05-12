@@ -4595,6 +4595,33 @@
       }
     }
   },
+  "tezos": {
+    "earnChoice": {
+      "title": "Earn Tezos Rewards: Delegate or Stake",
+      "description": "Earn rewards on your Tezos (XTZ) by delegating to a Baker, keeping full control. For higher returns, stake your XTZ, understanding the low associated risk. Choose the best way to grow your assets.",
+      "howItWorks": "How it works",
+      "delegate": {
+        "header": "Delegate",
+        "bullet": {
+          "0": "No lockup",
+          "1": "Your entire balance is delegated",
+          "2": "Send/swap your XTZ at any time",
+          "3": "Risk free"
+        },
+        "cta": "Delegate"
+      },
+      "stake": {
+        "header": "Stake",
+        "bullet": {
+          "0": "Boost earnings (2-3x)",
+          "1": "XTZ is locked for staking",
+          "2": "Unstake: 4 days",
+          "3": "Risk: Low (Slashing)"
+        },
+        "cta": "Stake"
+      }
+    }
+  },
   "delegation": {
     "title": "Earn rewards",
     "header": "Delegation",
