@@ -9,6 +9,7 @@ const BuyDevice = lazy(() => import("LLD/features/BuyDevice"));
 const FinishOnboardingDialog = lazy(() => import("LLD/features/FinishOnboarding/FinishOnboardingDialog"));
 const PtxInfoDialog = lazy(() => import("LLD/features/PtxInfoDialog"));
 const LiveAppModal = lazy(() => import("LLD/features/LiveAppModal"));
+const GenericAwarenessModal = lazy(() => import("LLD/features/GenericAwarenessModal"));
 
 /** Mounts all root-level dialogs and flows. Add new global dialogs here. */
 const GlobalDialogs = () => (
@@ -31,6 +32,9 @@ const GlobalDialogs = () => (
     </Suspense>
     <Suspense fallback={null}>
       <LiveAppModal />
+    </Suspense>
+    <Suspense fallback={null}>
+      <GenericAwarenessModal />
     </Suspense>
   </>
 );
