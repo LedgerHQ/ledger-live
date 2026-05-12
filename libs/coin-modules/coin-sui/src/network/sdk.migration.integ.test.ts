@@ -35,14 +35,14 @@ beforeAll(async () => {
   coinConfig.setCoinConfig(id => {
     if (id === JSON_RPC_ID) {
       return {
-        node: { url: JSON_RPC_URL },
+        node: { url: JSON_RPC_URL, graphqlUrl: GRAPHQL_MAINNET_URL },
         status: { type: "active" },
         features: { graphql: false },
       };
     }
     if (id === GRAPHQL_ID) {
       return {
-        node: { url: GRAPHQL_MAINNET_URL },
+        node: { url: JSON_RPC_URL, graphqlUrl: GRAPHQL_MAINNET_URL },
         status: { type: "active" },
         features: { graphql: true },
       };

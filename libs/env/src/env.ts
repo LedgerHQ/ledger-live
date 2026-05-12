@@ -227,6 +227,16 @@ const envDefinitions = {
     def: "https://sui.coin.ledger.com",
     desc: "reverse proxy url for sui node",
   },
+  API_SUI_GRAPHQL_PROXY: {
+    parser: stringParser,
+    def: "https://sui.coin.ledger.com/graphql",
+    desc: "reverse proxy url for sui graphql",
+  },
+  API_SUI_TESTNET_GRAPHQL_PROXY: {
+    parser: stringParser,
+    def: "https://graphql.testnet.sui.io/graphql",
+    desc: "GraphQL endpoint url for sui testnet",
+  },
   SUI_ENABLE_TOKENS: {
     parser: boolParser,
     def: true,

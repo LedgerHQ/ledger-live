@@ -54,7 +54,7 @@ beforeEach(() => {
   unexpectedJsonRpc.mockClear();
   // Default-on: every test in this suite needs the GraphQL branch.
   coinConfig.setCoinConfig(() => ({
-    node: { url: GRAPHQL_MAINNET_URL },
+    node: { url: GRAPHQL_MAINNET_URL, graphqlUrl: GRAPHQL_MAINNET_URL },
     status: { type: "active" },
     features: { graphql: true },
   }));

@@ -70,7 +70,11 @@ const mockLedgerSigner = {
 beforeAll(() => {
   coinConfig.setCoinConfig(() => ({
     status: { type: "active" },
-    node: { url: getJsonRpcFullnodeUrl("mainnet") },
+    node: {
+      url: getJsonRpcFullnodeUrl("mainnet"),
+      graphqlUrl: "https://graphql.mainnet.sui.io/graphql",
+    },
+    features: { graphql: false },
   }));
 });
 

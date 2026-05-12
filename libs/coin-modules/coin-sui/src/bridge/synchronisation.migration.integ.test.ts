@@ -13,7 +13,8 @@ const JSON_RPC_URL = getJsonRpcFullnodeUrl("mainnet");
 function configureTransport(useGraphQL: boolean) {
   coinConfig.setCoinConfig(() => ({
     status: { type: "active" },
-    node: { url: useGraphQL ? GRAPHQL_MAINNET_URL : JSON_RPC_URL },
+    // Both URLs always present; the feature flag selects which dispatcher branch runs.
+    node: { url: JSON_RPC_URL, graphqlUrl: GRAPHQL_MAINNET_URL },
     features: { graphql: useGraphQL },
   }));
 }
@@ -67,8 +68,8 @@ describe("getAccountShape: JSON-RPC vs GraphQL parity (live mainnet)", () => {
 
     expect(gql.subAccounts).toEqual(rpc.subAccounts);
 
-    // TODO: re-enable once `getOperations` is migrated to GraphQL — its JSON-RPC call currently lands
-    // on the GraphQL host on the `useGraphQL = true` run and returns 0 ops, so counts aren't comparable.
-    // expect(Math.abs((gql.operationsCount ?? 0) - (rpc.operationsCount ?? 0))).toBeLessThanOrEqual(2);
+    // `getOperations` is JSON-RPC only in Part 1; both runs hit the same host and should
+    // agree on count, modulo a small in-flight delta between the two live calls.
+    expect(Math.abs((gql.operationsCount ?? 0) - (rpc.operationsCount ?? 0))).toBeLessThanOrEqual(2);
   });
 });

@@ -38,7 +38,7 @@ beforeEach(() => {
   factoryMock.mockReset();
   unexpectedJsonRpc.mockClear();
   coinConfig.setCoinConfig(() => ({
-    node: { url: GRAPHQL_MAINNET_URL },
+    node: { url: GRAPHQL_MAINNET_URL, graphqlUrl: GRAPHQL_MAINNET_URL },
     status: { type: "active" },
     features: { graphql: true },
   }));
@@ -49,22 +49,16 @@ beforeEach(() => {
 describe("isGraphQLEnabled", () => {
   it("should return true when features.graphql === true", () => {
     coinConfig.setCoinConfig(() => ({
-      node: { url: GRAPHQL_MAINNET_URL },
+      node: { url: GRAPHQL_MAINNET_URL, graphqlUrl: GRAPHQL_MAINNET_URL },
       status: { type: "active" },
       features: { graphql: true },
     }));
     expect(isGraphQLEnabled()).toBe(true);
   });
 
-  it("should return false when features.graphql is missing or false", () => {
+  it("should return false when features.graphql is false", () => {
     coinConfig.setCoinConfig(() => ({
-      node: { url: GRAPHQL_MAINNET_URL },
-      status: { type: "active" },
-    }));
-    expect(isGraphQLEnabled()).toBe(false);
-
-    coinConfig.setCoinConfig(() => ({
-      node: { url: GRAPHQL_MAINNET_URL },
+      node: { url: GRAPHQL_MAINNET_URL, graphqlUrl: GRAPHQL_MAINNET_URL },
       status: { type: "active" },
       features: { graphql: false },
     }));
@@ -74,8 +68,9 @@ describe("isGraphQLEnabled", () => {
   it("should treat the feature flag as the single source of truth, not node.url", () => {
     // Even with a GraphQL-shaped URL, the flag-off path should report false.
     coinConfig.setCoinConfig(() => ({
-      node: { url: GRAPHQL_MAINNET_URL },
+      node: { url: GRAPHQL_MAINNET_URL, graphqlUrl: GRAPHQL_MAINNET_URL },
       status: { type: "active" },
+      features: { graphql: false },
     }));
     expect(isGraphQLEnabled()).toBe(false);
   });
@@ -181,8 +176,6 @@ describe("fetcher: retry behaviour", () => {
       await pending;
 
       // THEN — every attempt's per-fetch timeout must have been cleared.
-      // Pre-fix, each attempt's 30s abort timer would survive into the next
-      // attempts and keep the event loop awake.
       expect(jest.getTimerCount()).toBe(0);
     } finally {
       jest.useRealTimers();

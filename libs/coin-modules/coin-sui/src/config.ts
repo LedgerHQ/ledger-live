@@ -2,20 +2,24 @@ import { type CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import buildCoinConfig from "@ledgerhq/coin-module-framework/config";
 
 /**
- * Per-currency feature flags scoped to coin-sui. `graphql` routes the
- * dual-path reads in `network/sdk.ts` (balances, stakes, last block,
- * checkpoint) through GraphQL when `true`; default OFF — JSON-RPC is the
- * production path until the 2026-07-31 sunset.
+ * Per-currency feature flags scoped to coin-sui. Populated at app startup by
+ * the LLC `setup.ts` closure from the central `suiGraphqlTransport` feature
+ * flag — not from LiveConfig. `graphql=true` routes read-side dispatch
+ * (`network/sdk.ts`) through GraphQL; write-side and SDK-internal callers
+ * always use `node.url` (JSON-RPC).
  */
 export type SuiFeatureFlags = {
-  graphql?: boolean;
+  graphql: boolean;
 };
 
 export type SuiConfig = {
   node: {
+    /** JSON-RPC fullnode URL — used by `withApi` */
     url: string;
+    /** GraphQL endpoint URL — used by `withGraphQLApi` */
+    graphqlUrl: string;
   };
-  features?: SuiFeatureFlags;
+  features: SuiFeatureFlags;
 };
 
 export type SuiCoinConfig = CurrencyConfig & SuiConfig;

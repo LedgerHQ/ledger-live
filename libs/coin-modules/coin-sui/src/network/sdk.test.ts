@@ -416,7 +416,9 @@ beforeAll(() => {
     },
     node: {
       url: "https://mockapi.sui.io",
+      graphqlUrl: "https://mockapi.sui.io/graphql",
     },
+    features: { graphql: false },
   }));
 });
 

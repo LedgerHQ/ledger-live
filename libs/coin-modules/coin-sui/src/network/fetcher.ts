@@ -1,9 +1,10 @@
 import { getEnv } from "@ledgerhq/live-env";
 import type { SuiClientTypes } from "@mysten/sui/client";
-import { REQUEST_TIMEOUT_MS } from "./graphql/constants";
 
 const RETRY_BACKOFF_BASE_MS = 200;
 const RETRY_LIMIT = 3;
+/** Per-attempt deadline. 30 s × 3 retries ≈ 90 s worst case for the ~50 KB system-state payload. */
+const REQUEST_TIMEOUT_MS = 30_000;
 
 export function inferNetworkFromUrl(url: string): SuiClientTypes.Network {
   if (url.includes("testnet")) return "testnet";

@@ -12,7 +12,9 @@ describe("getBalance", () => {
       },
       node: {
         url: getJsonRpcFullnodeUrl("testnet"),
+        graphqlUrl: "https://graphql.testnet.sui.io/graphql",
       },
+      features: { graphql: false },
     }));
   });
 

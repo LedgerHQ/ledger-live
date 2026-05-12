@@ -39,7 +39,7 @@ export async function withGraphQLApi<T>(
   execute: AsyncGraphQLApiFunction<T>,
   currencyId?: string,
 ): Promise<T> {
-  const url = coinConfig.getCoinConfig(currencyId).node.url;
+  const url = coinConfig.getCoinConfig(currencyId).node.graphqlUrl;
   const api = createSuiGraphQLClient({ url, fetch: fetcher });
   return execute(api);
 }

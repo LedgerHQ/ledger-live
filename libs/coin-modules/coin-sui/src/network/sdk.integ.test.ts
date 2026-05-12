@@ -31,7 +31,9 @@ describe("SUI SDK Integration tests", () => {
       },
       node: {
         url: getEnv("API_SUI_NODE_PROXY"),
+        graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
       },
+      features: { graphql: false },
     }));
   });
 
@@ -511,7 +513,11 @@ describe("SUI SDK Integration tests", () => {
     afterAll(() => {
       coinConfig.setCoinConfig(() => ({
         status: { type: "active" },
-        node: { url: getEnv("API_SUI_NODE_PROXY") },
+        node: {
+          url: getEnv("API_SUI_NODE_PROXY"),
+          graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
+        },
+        features: { graphql: false },
       }));
     });
 
@@ -528,7 +534,11 @@ describe("SUI SDK Integration tests", () => {
       beforeAll(() => {
         coinConfig.setCoinConfig(() => ({
           status: { type: "active" },
-          node: { url: getJsonRpcFullnodeUrl("mainnet") },
+          node: {
+            url: getJsonRpcFullnodeUrl("mainnet"),
+            graphqlUrl: "https://graphql.mainnet.sui.io/graphql",
+          },
+          features: { graphql: false },
         }));
       });
 
@@ -617,7 +627,11 @@ describe("SUI SDK Integration tests", () => {
       beforeAll(() => {
         coinConfig.setCoinConfig(() => ({
           status: { type: "active" },
-          node: { url: getJsonRpcFullnodeUrl("testnet") },
+          node: {
+            url: getJsonRpcFullnodeUrl("testnet"),
+            graphqlUrl: "https://graphql.testnet.sui.io/graphql",
+          },
+          features: { graphql: false },
         }));
       });
 

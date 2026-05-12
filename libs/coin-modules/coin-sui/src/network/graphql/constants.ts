@@ -14,9 +14,6 @@ export const GRAPHQL_MAINNET_URL = "https://graphql.mainnet.sui.io/graphql";
  */
 export const ACCOUNT_EMPTY = "0xdead00000000000000000000000000000000000000000000000000000000beef";
 
-/** Per-attempt deadline. 30 s × 3 retries ≈ 90 s worst case for the ~50 KB system-state payload. */
-export const REQUEST_TIMEOUT_MS = 30_000;
-
 /**
  * One retry suffices: the only meaningful recovery is restart-from-
  * page-1, and a second expiry means the call can't make progress.
