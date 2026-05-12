@@ -1,6 +1,7 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import { getQuotes } from "@ledgerhq/live-common/wallet-api/Exchange/index";
+import { WALLET_CLI_SUPPORTED_CRYPTO_CURRENCY_IDS } from "../../live-common-setup";
 import { createCommandOutput } from "../../output";
 import { walletCliDebug } from "../../shared/log";
 import { WalletAdapter } from "../../wallet";
@@ -11,6 +12,16 @@ import {
   resolveOutputFormat,
 } from "../inputs";
 import { mapSwapQuoteLine } from "./quote-shared";
+
+const walletCliSupportedSwapCurrencyIds = new Set<string>(WALLET_CLI_SUPPORTED_CRYPTO_CURRENCY_IDS);
+
+function assertWalletCliSwapCurrencyId(id: string, role: "from" | "to"): void {
+  if (!walletCliSupportedSwapCurrencyIds.has(id)) {
+    throw new Error(
+      `Unsupported swap ${role} currency "${id}". Wallet CLI supports: ${WALLET_CLI_SUPPORTED_CRYPTO_CURRENCY_IDS.join(", ")}.`,
+    );
+  }
+}
 
 const DEFAULT_PROVIDERS = [
   "changelly_v2",
@@ -87,6 +98,9 @@ export default defineCommand({
     const out = createCommandOutput(output, { command: "swap quote", network: flags.from });
 
     await out.run(async () => {
+      assertWalletCliSwapCurrencyId(flags.from, "from");
+      assertWalletCliSwapCurrencyId(flags.to, "to");
+
       const wallet = new WalletAdapter();
       const resolveSwapAddress = createSwapAddressResolver(wallet);
 
