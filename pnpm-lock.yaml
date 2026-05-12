@@ -2497,6 +2497,9 @@ importers:
       '@ledgerhq/live-config':
         specifier: workspace:^
         version: link:../../libs/live-config
+      '@ledgerhq/live-countervalues':
+        specifier: workspace:^
+        version: link:../../libs/live-countervalues
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../libs/env
@@ -2521,6 +2524,9 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/types-live
+      '@ledgerhq/wallet-pnl':
+        specifier: workspace:^
+        version: link:../../libs/wallet-pnl
       '@radix-ui/react-checkbox':
         specifier: 'catalog:'
         version: 1.3.2(@types/react-dom@19.0.0(@types/react@19.0.14))(@types/react@19.0.14)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)

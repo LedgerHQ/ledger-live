@@ -11,6 +11,7 @@ import NetworkTroubleshoot from "./pages/networkTroubleshoot";
 import Repl from "./pages/repl";
 import Sync from "./pages/sync";
 import Trustchain from "./pages/trustchain";
+import PnlCalculator from "./pages/pnl-calculator";
 
 const NotFound = () => <main>Not found</main>;
 
@@ -23,6 +24,7 @@ export const AppRoutes = () => (
     <Route path="/lld-signatures" element={<LldSignatures />} />
     <Route path="/logsviewer" element={<LogsViewer />} />
     <Route path="/networkTroubleshoot" element={<NetworkTroubleshoot />} />
+    <Route path="/pnl-calculator" element={<PnlCalculator />} />
     <Route path="/sync" element={<Sync />} />
     <Route path="/repl" element={<Repl />} />
     <Route path="/trustchain" element={<Trustchain />} />
