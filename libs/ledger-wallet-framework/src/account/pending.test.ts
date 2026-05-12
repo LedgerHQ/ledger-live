@@ -107,6 +107,33 @@ describe("shouldRetainPendingOperation", () => {
     expect(shouldRetainPending).toBe(false);
   });
 
+  it.each([
+    [9, 10],
+    [99, 100],
+    [999, 1000],
+    [9999, 10000],
+  ])(
+    "should retain when op's transactionSequenceNumber numerically exceeds last's across digit boundary (last=%i, op=%i)",
+    (lastSeq, opSeq) => {
+      const account = createAccount("12");
+      const date = new Date();
+      account.operations = [createOperation("12", [account.freshAddress], BigInt(lastSeq), date)];
+      const op = createOperation("12", [account.freshAddress], BigInt(opSeq), date);
+
+      const result = addPendingOperation(account, op);
+      expect(shouldRetainPendingOperation(result, op)).toBe(true);
+    },
+  );
+
+  it("should not retain when op's transactionSequenceNumber equals last's", () => {
+    const account = createAccount("12");
+    const date = new Date();
+    account.operations = [createOperation("12", [account.freshAddress], BigInt(100), date)];
+    const op = createOperation("12", [account.freshAddress], BigInt(100), date);
+
+    expect(shouldRetainPendingOperation(account, op)).toBe(false);
+  });
+
   it("should not retain the operation if last operation has no matching sender", () => {
     // Given
     const account = createAccount("12");
