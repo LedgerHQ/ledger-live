@@ -1,4 +1,3 @@
-import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { groupAddAccounts } from "@ledgerhq/live-wallet/addAccounts";
 import { Account, DerivationMode } from "@ledgerhq/types-live";
 
@@ -13,21 +12,6 @@ export const getUnimportedAccounts = (scanned: Account[], existing: Account[]): 
     seen.add(acc.id);
     return true;
   });
-};
-
-export const determineSelectedIds = (
-  accounts: Account[],
-  onlyNewAccounts: boolean,
-  currentSelectedIds: string[],
-) => {
-  if (onlyNewAccounts) {
-    return accounts.map(x => x.id);
-  }
-
-  const latestAccount = accounts.at(-1);
-  return latestAccount && !isAccountEmpty(latestAccount)
-    ? [...currentSelectedIds, latestAccount.id]
-    : currentSelectedIds;
 };
 
 export const getGroupedAccounts = (

@@ -3,11 +3,11 @@ import { handleActions } from "redux-actions";
 import { Account, AccountUserData, AccountLike } from "@ledgerhq/types-live";
 import {
   flattenAccounts,
-  clearAccount,
   getAccountCurrency,
   isUpToDateAccount,
-  isAccountEmpty,
 } from "@ledgerhq/live-common/account/index";
+import { useAccountBridgeMany } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import { useSelector } from "LLD/hooks/redux";
 
 import isEqual from "lodash/isEqual";
 import { State } from ".";
@@ -33,7 +33,6 @@ type HandlersPayloads = {
   ADD_ACCOUNTS: AddAccountsAction["payload"];
   UPDATE_ACCOUNT: { accountId: string; updater: (a: Account) => Account };
   REMOVE_ACCOUNT: Account;
-  CLEAN_ACCOUNTS_CACHE: never;
   REPLACE_ACCOUNTS: Account[];
 };
 
@@ -51,7 +50,6 @@ const handlers: AccountsHandlers = {
       return updater(existingAccount);
     }),
   REMOVE_ACCOUNT: (state, { payload: account }) => state.filter(acc => acc.id !== account.id),
-  CLEAN_ACCOUNTS_CACHE: state => state.map(clearAccount),
   REPLACE_ACCOUNTS: (state, { payload }) => payload,
 };
 
@@ -128,7 +126,8 @@ export const isUpToDateAccountSelector = createSelector(accountSelector, isUpToD
 
 export const flattenAccountsSelector = createSelector(accountsSelector, flattenAccounts);
 
-export const areAccountsEmptySelector = createSelector(
-  accountsSelector,
-  accounts => accounts.length > 0 && accounts.every(isAccountEmpty),
-);
+export function useAreAccountsEmpty(): boolean {
+  const accounts = useSelector(accountsSelector);
+  const bridges = useAccountBridgeMany(accounts);
+  return accounts.length > 0 && accounts.every((a, i) => bridges[i].isAccountEmpty(a));
+}

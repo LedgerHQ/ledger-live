@@ -8,6 +8,9 @@ import { getLLDCoinFamily } from "~/renderer/families";
 import StepRecipient from "./StepRecipient";
 
 jest.mock("~/renderer/families");
+jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
+  useAccountBridgeOrNull: () => ({ getStuckAccountAndOperation: () => undefined }),
+}));
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const mockTFunction: jest.Mock<TFunction> = jest.fn(key => key) as unknown as jest.Mock<TFunction>;

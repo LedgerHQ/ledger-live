@@ -1,5 +1,5 @@
-import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridgeMany } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
@@ -21,7 +21,6 @@ import {
 import useAddAccountAnalytics from "../../analytics/useAddAccountAnalytics";
 import { WARNING_REASON, WarningReason } from "../../domain";
 import {
-  determineSelectedIds,
   getGroupedAccounts,
   getUnimportedAccounts,
 } from "./utils/processAccounts";
@@ -121,21 +120,33 @@ export function useScanAccounts({
     };
   }, [blacklistedTokenIds, currency, deviceId, stopSubscription]);
 
+  const unimportedAccounts = useMemo(
+    () => getUnimportedAccounts(scannedAccounts, existingAccounts),
+    [scannedAccounts, existingAccounts],
+  );
+  const unimportedBridges = useAccountBridgeMany(unimportedAccounts);
+
   useEffect(() => {
-    const unimportedAccounts = getUnimportedAccounts(scannedAccounts, existingAccounts);
-    const onlyNewAccounts = unimportedAccounts.every(isAccountEmpty);
+    const emptyChecks = unimportedAccounts.map((a, i) => unimportedBridges[i].isAccountEmpty(a));
+    const onlyNewAccounts = emptyChecks.every(Boolean);
 
     const processedAccountIds = new Set<string>();
     const freshAccounts = unimportedAccounts.filter(acc => {
-      if (processedAccountIds.has(acc.id)) {
-        return false;
-      }
+      if (processedAccountIds.has(acc.id)) return false;
       processedAccountIds.add(acc.id);
       return true;
     });
 
-    setSelectedIds(current => determineSelectedIds(freshAccounts, onlyNewAccounts, current));
-  }, [existingAccounts, scannedAccounts]);
+    setSelectedIds(current => {
+      if (onlyNewAccounts) return freshAccounts.map(x => x.id);
+      const latest = freshAccounts.at(-1);
+      if (!latest) return current;
+      const idx = unimportedAccounts.findIndex(a => a.id === latest.id);
+      const latestEmpty = idx >= 0 ? emptyChecks[idx] : true;
+      return latestEmpty ? current : [...current, latest.id];
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [unimportedAccounts]);
 
   const {
     importableAccounts,

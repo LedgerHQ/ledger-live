@@ -16,6 +16,7 @@ import {
   FeeStrategy,
   Operation,
   OperationType,
+  ResolvedAccountBridge,
   TokenAccount,
   TransactionCommon,
   TransactionCommonRaw,
@@ -478,6 +479,8 @@ export type LLDCoinFamily<
     parentAccount: A | undefined;
     mainAccount: A;
     operation: O;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    bridge: ResolvedAccountBridge<any>;
     featureFlags: EditTransactionFeatureFlags;
   }) => EditTransactionModalConfig | null;
 

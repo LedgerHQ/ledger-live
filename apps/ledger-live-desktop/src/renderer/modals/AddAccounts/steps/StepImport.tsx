@@ -3,14 +3,14 @@ import { useDispatch } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { concat, from, Subscription } from "rxjs";
-import { ignoreElements, filter, map, retry } from "rxjs/operators";
+import { ignoreElements, filter, map, retry, concatMap } from "rxjs/operators";
 import { Account } from "@ledgerhq/types-live";
-import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { isCantonAccount } from "@ledgerhq/coin-canton/bridge/serialization";
 import { isConcordiumAccount } from "@ledgerhq/coin-concordium/bridge/serialization";
 import { openModal } from "~/renderer/actions/modals";
 import { DeviceShouldStayInApp, UnresponsiveDeviceError } from "@ledgerhq/errors";
-import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
+import { getAccountBridge, getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridgeMany } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import uniq from "lodash/uniq";
 import { urls } from "~/config/urls";
 import logger from "~/renderer/logger";
@@ -148,13 +148,17 @@ class StepImport extends PureComponent<
           filter(e => e.type === "discovered"),
           map(e => e.account),
           retry(2), //needs to retry to output proper error message
+          concatMap(account =>
+            from(Promise.resolve(getAccountBridge(account))).pipe(
+              map(accountBridge => ({ account, isNewAccount: accountBridge.isAccountEmpty(account) })),
+            ),
+          ),
         )
         .subscribe({
-          next: account => {
+          next: ({ account, isNewAccount }) => {
             const { scannedAccounts, checkedAccountsIds, existingAccounts } = this.props;
             const hasAlreadyBeenScanned = !!scannedAccounts.find(a => account.id === a.id);
             const hasAlreadyBeenImported = !!existingAccounts.find(a => account.id === a.id);
-            const isNewAccount = isAccountEmpty(account);
             if (!isNewAccount && !hasAlreadyBeenImported) {
               onlyNewAccounts = false;
             }
@@ -387,14 +391,12 @@ export const StepImportFooter = ({
   editedNames,
 }: StepProps) => {
   const dispatch = useDispatch();
-  const willCreateAccount = checkedAccountsIds.some(id => {
-    const account = scannedAccounts.find(a => a.id === id);
-    return account && isAccountEmpty(account);
-  });
-  const willAddAccounts = checkedAccountsIds.some(id => {
-    const account = scannedAccounts.find(a => a.id === id);
-    return account && !isAccountEmpty(account);
-  });
+  const checkedAccounts = checkedAccountsIds
+    .map(id => scannedAccounts.find(a => a.id === id))
+    .filter((a): a is Account => !!a);
+  const checkedBridges = useAccountBridgeMany(checkedAccounts);
+  const willCreateAccount = checkedAccounts.some((a, i) => checkedBridges[i].isAccountEmpty(a));
+  const willAddAccounts = checkedAccounts.some((a, i) => !checkedBridges[i].isAccountEmpty(a));
   const count = checkedAccountsIds.length;
   const willClose = !willCreateAccount && !willAddAccounts;
 
