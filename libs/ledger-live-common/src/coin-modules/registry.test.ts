@@ -10,14 +10,9 @@ import {
   loadAccountModuleForFamily,
   loadMockBridgeForFamily,
   loadMockAccountForFamily,
-  loadIsAccountEmptyForFamily,
-  loadGetVotesCountForFamily,
-  loadClearAccountForFamily,
   loadValidateAddressForFamily,
-  loadIsEditableOperationForFamily,
-  loadIsStuckOperationForFamily,
-  loadGetStuckAccountAndOperationForFamily,
   loadSignerForFamily,
+  loadBridgeExtensionsForFamily,
 } from "./registry";
 import type { CoinModuleLoader, FamilySetup, TransactionModule } from "./types";
 
@@ -57,13 +52,7 @@ const allLoaders: LoaderEntry[] = [
   { loaderKey: "loadAccount", fn: loadAccountModuleForFamily },
   { loaderKey: "loadMockBridge", fn: loadMockBridgeForFamily },
   { loaderKey: "loadMockAccount", fn: loadMockAccountForFamily },
-  { loaderKey: "loadIsAccountEmpty", fn: loadIsAccountEmptyForFamily },
-  { loaderKey: "loadGetVotesCount", fn: loadGetVotesCountForFamily },
-  { loaderKey: "loadClearAccount", fn: loadClearAccountForFamily },
   { loaderKey: "loadValidateAddress", fn: loadValidateAddressForFamily },
-  { loaderKey: "loadIsEditableOperation", fn: loadIsEditableOperationForFamily },
-  { loaderKey: "loadIsStuckOperation", fn: loadIsStuckOperationForFamily },
-  { loaderKey: "loadGetStuckAccountAndOperation", fn: loadGetStuckAccountAndOperationForFamily },
   { loaderKey: "loadSigner", fn: loadSignerForFamily },
 ];
 
@@ -86,4 +75,19 @@ describe.each(allLoaders)("$fn.name", ({ loaderKey, fn, required }) => {
       expect(fn("__bare__")).toBeUndefined();
     });
   }
+});
+
+describe("loadBridgeExtensionsForFamily", () => {
+  it("returns extensions when loader has them", () => {
+    const ext = { isAccountEmpty: jest.fn(() => true) };
+    registerCoinModules([makeLoader("__ext__", { loadBridgeExtensions: () => ext })]);
+    expect(loadBridgeExtensionsForFamily("__ext__")).toBe(ext);
+  });
+  it("returns empty object for unknown family", () => {
+    expect(loadBridgeExtensionsForFamily("__none__")).toEqual({});
+  });
+  it("returns empty object when loader exists but loadBridgeExtensions is absent", () => {
+    registerCoinModules([makeLoader("__bare2__")]);
+    expect(loadBridgeExtensionsForFamily("__bare2__")).toEqual({});
+  });
 });
