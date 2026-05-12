@@ -3,6 +3,8 @@ import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { LWD_WALLET_40_FF_DISABLED, LWD_WALLET_40_FF_ENABLED } from "tests/utils/featureFlagUtils";
+import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { getModularSelector } from "tests/utils/modularSelectorUtils";
 
 // Skipping this suite as legacy is not visible on prod anymore
 test.describe.skip("Portfolio - legacy", () => {
@@ -149,6 +151,57 @@ test.describe("Portfolio Wallet 4.0 - No seen device (Reborn mode)", () => {
       await app.portfolio.checkNoDeviceTitleVisibility();
       await app.portfolio.checkConnectButtonVisibility();
       await app.portfolio.checkBuyALedgerButtonVisibility();
+    },
+  );
+});
+
+test.describe("Portfolio Wallet 4.0 - add funded account", () => {
+  const currency = Currency.BTC;
+  test.use({
+    teamOwner: Team.WALLET_XP,
+    userdata: "1AccountSOL0Balance",
+    featureFlags: LWD_WALLET_40_FF_ENABLED,
+    speculosApp: currency.speculosApp,
+  });
+
+  test(
+    "Portfolio: with zero-balance account, then add funded account and verify balance and quick actions",
+    {
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-4351",
+      },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      await app.portfolio.checkReceiveButtonVisibility();
+      await app.portfolio.checkBuyButtonVisibility();
+      await app.portfolio.checkSellButtonDisabled();
+      await app.portfolio.checkSendButtonDisabled();
+
+      await app.mainNavigation.openTargetFromMainNavigation("accounts");
+      await app.accounts.clickAddAccountButtonFromAccountsPage();
+      const selector = await getModularSelector(app, "ASSET");
+      if (selector) {
+        await selector.validateItems();
+        await selector.selectAssetByTicker(currency);
+        await selector.selectNetwork(currency);
+        await app.scanAccountsDrawer.selectFirstAccount();
+        await app.scanAccountsDrawer.clickCloseButton();
+      } else {
+        await app.addAccount.expectModalVisibility();
+        await app.addAccount.selectCurrency(currency);
+        await app.addAccount.addAccounts();
+        await app.addAccount.done();
+      }
+
+      await app.mainNavigation.openTargetFromMainNavigation("home");
+      await app.portfolio.checkSellButtonEnabled();
+      await app.portfolio.checkSendButtonEnabled();
+      await app.portfolio.expectBalanceVisibility();
+      await app.portfolio.checkOneDayPerformanceIndicatorVisibility();
     },
   );
 });
