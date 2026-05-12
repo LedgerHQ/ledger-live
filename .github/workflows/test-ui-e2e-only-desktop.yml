@@ -343,6 +343,14 @@ jobs:
           name: allure-results${{ matrix.artifact_suffix }}
           path: "e2e/desktop/allure-results"
 
+      - name: Upload Playwright traces artifact
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: playwright-traces${{ matrix.artifact_suffix }}
+          path: "e2e/desktop/tests/artifacts/test-results/**/trace.zip"
+          if-no-files-found: ignore
+
       - name: Upload Xray test results for Jira
         if: ${{ !cancelled() && inputs.export_to_xray && matrix.is_primary }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
