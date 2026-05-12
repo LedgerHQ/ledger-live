@@ -141,7 +141,8 @@ export const urls = {
         tos: "https://www.exodus.com/terms/",
       },
       lifi: {
-        main: "https://scan.li.fi/",
+        main: "https://lifi.io/",
+        support: "https://scan.li.fi/",
         tos: "https://li.fi/legal/terms-and-conditions/",
       },
       uniswap: {
