@@ -9,7 +9,10 @@ import {
   ensureNoNegative,
 } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getAccountBridge } from "../bridge";
-import { loadMockAccountForFamily } from "../coin-modules/registry";
+import {
+  getLoadedMockAccountForFamily,
+  loadMockAccountForFamily,
+} from "../coin-modules/registry";
 import { CosmosAccount } from "../families/cosmos/types";
 import { BitcoinAccount } from "@ledgerhq/coin-bitcoin/types";
 import { PolkadotAccount } from "@ledgerhq/coin-polkadot/types/index";
@@ -22,12 +25,13 @@ import { SolanaAccount } from "@ledgerhq/coin-solana/types";
 /**
  * @memberof mock/account
  */
-export function genAddingOperationsInAccount(
+export async function genAddingOperationsInAccount(
   account: Account,
   count: number,
   seed: number | string,
-): Account {
+): Promise<Account> {
   const rng = new Prando(seed);
+  const perFamilyOperation = await loadMockAccountForFamily(account.currency.family);
   const copy: Account = { ...account };
   copy.operations = Array(count)
     .fill(null)
@@ -36,11 +40,17 @@ export function genAddingOperationsInAccount(
       return ops.concat(op);
     }, copy.operations);
   copy.spendableBalance = copy.balance = ensureNoNegative(copy.operations);
-  loadMockAccountForFamily(account.currency.family)?.postSyncAccount?.(copy);
+  perFamilyOperation?.postSyncAccount?.(copy);
   return copy;
 }
 
-export function genAccount(id: number | string, opts: GenAccountOptions = {}): Account {
+/**
+ * Sync mock account generator. Silently skips `genAccountEnhanceOperations`
+ * (e.g. cosmos delegations, algorand opt-ins) unless the caller has already
+ * awaited `loadMockAccountForFamily` for the currency's family. Prefer
+ * `genMockAccount` (async), which guarantees the module is loaded.
+ */
+export function genAccountLegacy(id: number | string, opts: GenAccountOptions = {}): Account {
   return genAccountCommon(
     id,
     opts,
@@ -190,25 +200,45 @@ export function genAccount(id: number | string, opts: GenAccountOptions = {}): A
           };
           break;
         default: {
-          try {
-            const bridge = getAccountBridge(account);
-            const initAccount = bridge.initAccount;
-            if (initAccount) {
-              initAccount(account);
-            }
-          } catch {
-            // to fix /src/__tests__/cross.ts, skip bridge error if there is no bridge in such currency
-          }
+          getAccountBridge(account)
+            .then(bridge => {
+              bridge.initAccount?.(account);
+            })
+            .catch(() => {
+              // to fix /src/__tests__/cross.ts, skip bridge error if there is no bridge in such currency
+            });
         }
       }
     },
     (account: Account, currency: CryptoCurrency, rng: Prando) => {
-      const perFamilyOperation = loadMockAccountForFamily(currency.family);
-      const genAccountEnhanceOperations =
-        perFamilyOperation && (perFamilyOperation as any).genAccountEnhanceOperations;
-      if (genAccountEnhanceOperations) {
-        genAccountEnhanceOperations(account, rng);
-      }
+      // Sync path: only finds the module if a caller has already awaited
+      // loadMockAccountForFamily for this family. Prefer genMockAccount
+      // which guarantees the module is loaded.
+      getLoadedMockAccountForFamily(currency.family)?.genAccountEnhanceOperations?.(account, rng);
     },
   );
 }
+
+/**
+ * Async mock account generator. Pre-loads the family's mock account module
+ * so `genAccountEnhanceOperations` is applied at creation (e.g. cosmos
+ * delegations, algorand asset opt-ins). Prefer this over `genAccountLegacy`
+ * in any async-capable call site.
+ *
+ * `opts.currency` is required (unlike `genAccountLegacy`) to guarantee the
+ * preload targets the right family — letting the framework pick a random
+ * currency would re-introduce the silent-skip bug this function is meant
+ * to fix.
+ */
+export async function genMockAccount(
+  id: number | string,
+  opts: GenAccountOptions & { currency: CryptoCurrency },
+): Promise<Account> {
+  await loadMockAccountForFamily(opts.currency.family);
+  return genAccountLegacy(id, opts);
+}
+
+/**
+ * @deprecated Alias of `genAccountLegacy`. Prefer `genMockAccount` (async).
+ */
+export const genAccount = genAccountLegacy;

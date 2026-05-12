@@ -89,31 +89,50 @@ let triggerError: ((error: Error) => void) | null = null;
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
   __esModule: true,
-  getCurrencyBridge: () => ({
-    scanAccounts: () =>
-      new Observable<{ account: Account }>(subscriber => {
-        const originalNext = triggerNext;
-        const originalComplete = triggerComplete;
-        const originalError = triggerError;
-        triggerNext = (accounts: Account[]) => {
-          accounts.forEach(account => subscriber.next({ account }));
-        };
-        triggerComplete = () => {
-          subscriber.complete();
-        };
-        triggerError = (error: Error) => {
-          subscriber.error(error);
-        };
-        return () => {
-          triggerNext = originalNext;
-          triggerComplete = originalComplete;
-          triggerError = originalError;
-        };
-      }),
-    preload: () => Promise.resolve(true),
-    hydrate: () => true,
-  }),
-  getAccountBridge: () => ({ isAccountEmpty: () => false }),
+  getCurrencyBridge: () => {
+    const bridge = {
+      scanAccounts: () =>
+        new Observable<{ account: Account }>(subscriber => {
+          const originalNext = triggerNext;
+          const originalComplete = triggerComplete;
+          const originalError = triggerError;
+          triggerNext = (accounts: Account[]) => {
+            accounts.forEach(account => subscriber.next({ account }));
+          };
+          triggerComplete = () => {
+            subscriber.complete();
+          };
+          triggerError = (error: Error) => {
+            subscriber.error(error);
+          };
+          return () => {
+            triggerNext = originalNext;
+            triggerComplete = originalComplete;
+            triggerError = originalError;
+          };
+        }),
+      preload: () => Promise.resolve(true),
+      hydrate: () => true,
+    };
+    return Object.assign(Promise.resolve(bridge), { status: "fulfilled", value: bridge });
+  },
+  getAccountBridge: () => {
+    const accountBridge = {
+      isAccountEmpty: () => false,
+      createTransaction: jest.fn(() => ({})),
+      updateTransaction: jest.fn((tx: object, patch: object) => ({ ...tx, ...patch })),
+      prepareTransaction: jest.fn((_, tx: unknown) => Promise.resolve(tx)),
+      getTransactionStatus: jest.fn(() => Promise.resolve({ errors: {}, warnings: {} })),
+      estimateMaxSpendable: jest.fn(() => Promise.resolve(0)),
+      receive: jest.fn(() => new Observable()),
+      signOperation: jest.fn(() => new Observable()),
+      broadcast: jest.fn(),
+    };
+    return Object.assign(Promise.resolve(accountBridge), {
+      status: "fulfilled",
+      value: accountBridge,
+    });
+  },
 }));
 
 const mockScanAccountsSubscription = async (accounts: Account[]) => {

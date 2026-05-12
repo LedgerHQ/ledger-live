@@ -148,9 +148,10 @@ describe("ZCash Export UFVK Flow", () => {
       viewKey: "uview1mocked",
       path: account.freshAddressPath,
     }));
-    jest.spyOn(require("@ledgerhq/live-common/bridge/index"), "getAccountBridge").mockReturnValue({
-      getFullViewingKey: mockGetFullViewingKey,
-    });
+    const bridge = { getFullViewingKey: mockGetFullViewingKey };
+    jest
+      .spyOn(require("@ledgerhq/live-common/bridge/index"), "getAccountBridge")
+      .mockReturnValue(Object.assign(Promise.resolve(bridge), { status: "fulfilled", value: bridge }));
 
     render(
       <Body

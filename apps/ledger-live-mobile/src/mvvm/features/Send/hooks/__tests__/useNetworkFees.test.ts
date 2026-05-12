@@ -49,6 +49,13 @@ const { getMainAccount, getAccountCurrency } = jest.requireMock(
   "@ledgerhq/ledger-wallet-framework/account/helpers",
 );
 const { getAccountBridge } = jest.requireMock("@ledgerhq/live-common/bridge/impl");
+
+function makeSettledBridgePromise(bridge: object): ReturnType<typeof getAccountBridge> {
+  return Object.assign(Promise.resolve(bridge), {
+    status: "fulfilled" as const,
+    value: bridge,
+  }) as ReturnType<typeof getAccountBridge>;
+}
 const sendFeatures = jest.requireMock(
   "@ledgerhq/live-common/bridge/descriptor/send/features",
 ).sendFeatures;
@@ -145,12 +152,14 @@ describe("useNetworkFees", () => {
     jest
       .mocked(useSelector)
       .mockReturnValue(mockCounterValueCurrency as ReturnType<typeof useSelector>);
-    getAccountBridge.mockReturnValue({
-      updateTransaction: jest.fn((tx: Transaction, patch: Partial<Transaction>) => ({
-        ...tx,
-        ...patch,
-      })),
-    });
+    getAccountBridge.mockReturnValue(
+      makeSettledBridgePromise({
+        updateTransaction: jest.fn((tx: Transaction, patch: Partial<Transaction>) => ({
+          ...tx,
+          ...patch,
+        })),
+      }),
+    );
     sendFeatures.shouldEstimateFeePresetsWithBridge = jest.fn(() => false);
     mockUseFeePresetOptions.mockReturnValue(defaultPresetOptions);
     mockUseFeePresetFiatValues.mockReturnValue(defaultFiatValues);
@@ -223,7 +232,9 @@ describe("useNetworkFees", () => {
         ...tx,
         ...patch,
       }));
-      getAccountBridge.mockReturnValue({ updateTransaction: bridgeUpdateTransaction });
+      getAccountBridge.mockReturnValue(
+        makeSettledBridgePromise({ updateTransaction: bridgeUpdateTransaction }),
+      );
       const params = buildParams();
 
       const { result } = renderHook(() => useNetworkFees(params));
@@ -245,7 +256,9 @@ describe("useNetworkFees", () => {
         ...tx,
         ...patch,
       }));
-      getAccountBridge.mockReturnValue({ updateTransaction: bridgeUpdateTransaction });
+      getAccountBridge.mockReturnValue(
+        makeSettledBridgePromise({ updateTransaction: bridgeUpdateTransaction }),
+      );
       const params = buildParams();
 
       const { result } = renderHook(() => useNetworkFees(params));
