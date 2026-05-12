@@ -28,7 +28,6 @@ const swapExecuteFlagsSchema = z.object({
   "to-account": z.string().optional(),
   account: z.string().min(1).optional(),
   "fee-strategy": z.enum(["slow", "medium", "fast"]).default("medium"),
-  "dry-run": z.boolean().default(false),
   output: OutputFormatSchema.optional(),
 });
 
@@ -115,7 +114,6 @@ export async function executeSwapCommand({
       amount: flags.amount,
       amountInAtomicUnit,
       feeStrategy: flags["fee-strategy"],
-      dryRun: flags["dry-run"],
       fromAccount,
       toAccount,
       getAccountBridge: getBridge,
@@ -128,11 +126,10 @@ export async function executeSwapCommand({
       amount: flags.amount,
       transactionId: result.transactionId,
       payload: result.payload,
-      operationHash: flags["dry-run"] ? undefined : result.operationHash,
+      operationHash: result.operationHash,
       swapId: result.swapId,
       amountExpectedTo: result.amountExpectedTo,
       magnitudeAwareRate: result.magnitudeAwareRate,
-      dryRun: result.dryRun,
     });
   });
 }
@@ -162,10 +159,6 @@ export default defineCommand({
     account: accountOption,
     "fee-strategy": option(swapExecuteFlagsSchema.shape["fee-strategy"], {
       description: "Fee strategy for the refund-chain transaction (full pipeline)",
-    }),
-    "dry-run": option(swapExecuteFlagsSchema.shape["dry-run"], {
-      description: "Run through exchange preparation but do not sign or broadcast",
-      argumentKind: "flag",
     }),
     output: outputOption,
   },

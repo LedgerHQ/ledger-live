@@ -144,7 +144,6 @@ describe("runFullSwapPipeline session lifecycle", () => {
       amount: "1",
       amountInAtomicUnit: new BigNumber("1000000000000000000"),
       feeStrategy: "medium",
-      dryRun: true,
       fromAccount: makeAccount("from"),
       toAccount: makeAccount("to"),
       getAccountBridge,
@@ -153,7 +152,6 @@ describe("runFullSwapPipeline session lifecycle", () => {
 
     expect(events).toEqual(["session:open", "startExchange", "completeExchange", "session:close"]);
     expect(result.transactionId).toBe("tx-id-123");
-    expect(result.dryRun).toBe(true);
     expect(result.operationHash).toBeUndefined();
     expect(retrieveSwapPayloadMock).toHaveBeenCalledTimes(1);
   });
@@ -167,7 +165,6 @@ describe("runFullSwapPipeline session lifecycle", () => {
       amount: "1",
       amountInAtomicUnit: new BigNumber("1000000000000000000"),
       feeStrategy: "medium",
-      dryRun: true,
       fromAccount: makeAccount("from"),
       toAccount: makeAccount("to"),
       getAccountBridge,
@@ -190,7 +187,6 @@ describe("runFullSwapPipeline session lifecycle", () => {
         amount: "1",
         amountInAtomicUnit: new BigNumber("1000000000000000000"),
         feeStrategy: "medium",
-        dryRun: true,
         fromAccount: makeAccount("from"),
         toAccount: makeAccount("to"),
         getAccountBridge,
