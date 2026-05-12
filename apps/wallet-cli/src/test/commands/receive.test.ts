@@ -86,4 +86,17 @@ describe("receive --verify command (mock DMK)", () => {
     expect(stdout).toBe(MOCK_ETH_ADDRESS);
     expect(stderr).toContain("Warning: address was NOT verified on device");
   });
+
+  it("--no-verify is equivalent to --verify=false", async () => {
+    const fixture = makeSessionDir([{ label: "ethereum-1", descriptor: MOCK_ETH_DESCRIPTOR }]);
+    sessionCleanup = fixture.cleanup;
+    const { stdout, stderr, exitCode } = await runCli(
+      ["receive", "--account", "ethereum-1", "--no-verify", "--output", "json"],
+      { WALLET_CLI_MOCK_PORT: String(server.port), ...fixture.env },
+    );
+    expect(exitCode, `stderr: ${stderr}`).toBe(0);
+    const data = JSON.parse(stdout);
+    expect(data.verified).toBe(false);
+    expect(data.source).toBe("software-derivation");
+  });
 });

@@ -39,8 +39,13 @@ export async function runMain(argv: string[] = process.argv.slice(2)): Promise<n
   cli.command(SendCommand);
   cli.command(SwapGroup);
   cli.command(GenuineCheckCommand);
-  const code = await cli.run(argv, { noExit: true });
+  const code = await cli.run(normalizeNegatedFlags(argv), { noExit: true });
   return code ?? 0;
+}
+
+// bunli silently drops unknown --no-foo flags; rewrite to --foo=false for GNU-style negation.
+function normalizeNegatedFlags(argv: string[]): string[] {
+  return argv.map(arg => (arg.startsWith("--no-") ? `--${arg.slice(5)}=false` : arg));
 }
 
 if (import.meta.main) {
