@@ -1,10 +1,10 @@
 import React from "react";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useTransactionsViewModel } from "./useTransactionsViewModel";
 import { TransactionsView } from "./TransactionsView";
 
 type Props = Readonly<{
-  currency: CryptoCurrency | undefined;
+  currency: CryptoOrTokenCurrency | undefined;
 }>;
 
 export function Transactions({ currency }: Props) {
