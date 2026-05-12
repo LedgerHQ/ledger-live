@@ -78,7 +78,6 @@ export type FullSwapPipelineInput = {
   amountInAtomicUnit: BigNumber;
   quoteId?: string;
   feeStrategy: string;
-  dryRun: boolean;
   fromAccount: AccountLike;
   toAccount: AccountLike;
   getAccountBridge?: typeof getAccountBridge;
@@ -92,7 +91,6 @@ export type FullSwapPipelineResult = {
   swapId?: string;
   amountExpectedTo?: string;
   magnitudeAwareRate?: string;
-  dryRun?: boolean;
 };
 
 function buildStrategyTransaction(args: {
@@ -265,7 +263,6 @@ export async function runFullSwapPipeline(
     amountInAtomicUnit,
     quoteId,
     feeStrategy,
-    dryRun,
     fromAccount,
     toAccount,
     getAccountBridge: getBridge = getAccountBridge,
@@ -361,22 +358,13 @@ export async function runFullSwapPipeline(
       getDeviceModelId,
     });
 
-    let operationHash: string | undefined;
-
-    if (dryRun) {
-      out.swapExecuteProgress(
-        "[5/5] Dry run complete. Transaction prepared but not signed or broadcasted.",
-      );
-    } else {
-      const signOutcome = await signAndBroadcast(
-        out,
-        fromAccount,
-        fromParentAccount,
-        finalTx,
-        getBridge,
-      );
-      operationHash = signOutcome.operationHash;
-    }
+    const { operationHash } = await signAndBroadcast(
+      out,
+      fromAccount,
+      fromParentAccount,
+      finalTx,
+      getBridge,
+    );
 
     return {
       transactionId,
@@ -385,7 +373,6 @@ export async function runFullSwapPipeline(
       swapId: payload.swapId,
       amountExpectedTo: amountExpectedTo.toFixed(),
       ...(magnitudeAwareRate != null ? { magnitudeAwareRate: magnitudeAwareRate.toFixed() } : {}),
-      ...(dryRun ? { dryRun: true } : {}),
     };
   });
 }
