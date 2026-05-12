@@ -18,7 +18,7 @@ describe("useFeatureFlagsFilters", () => {
   describe("search", () => {
     it("returns all flags when search is empty", () => {
       const { result } = renderHook(() => useFeatureFlagsFilters(defaultInput));
-      expect(result.current.filteredFlagIds).toEqual(ALL_FLAG_IDS);
+      expect(result.current.filteredFlagIds).toEqual([...ALL_FLAG_IDS].sort());
     });
 
     it("filters flags by search query", () => {

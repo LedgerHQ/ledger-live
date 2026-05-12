@@ -23,6 +23,8 @@ export function useFeatureFlagsFilters({
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<FlagFilter>("all");
 
+  const sortedFlagIds = useMemo(() => [...ALL_FLAG_IDS].sort(), []);
+
   const filteredFlagIds = useMemo(() => {
     const q = search.trim().toLowerCase();
     const matchesFilter: Record<FlagFilter, (id: FeatureId) => boolean> = {
@@ -31,10 +33,10 @@ export function useFeatureFlagsFilters({
       disabled: id => !resolved[id].enabled,
       overridden: id => !!overrides[id],
     };
-    return ALL_FLAG_IDS.filter(
+    return sortedFlagIds.filter(
       id => (!q || id.toLowerCase().includes(q)) && matchesFilter[filter](id),
     );
-  }, [search, filter, resolved, overrides]);
+  }, [search, filter, resolved, overrides, sortedFlagIds]);
 
   return { search, setSearch, filter, setFilter, filteredFlagIds };
 }
