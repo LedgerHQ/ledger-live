@@ -113,6 +113,33 @@ describe("quote command", () => {
     expect(data.quotes[0].provider).toBe("paraswap");
   });
 
+  it("rejects swap currencies outside wallet-cli supported list", async () => {
+    const { stdout, exitCode, stderr } = await runCli(
+      [
+        "swap",
+        "quote",
+        "--from",
+        "dogecoin",
+        "--to",
+        "bitcoin",
+        "--from-fresh-address",
+        ETH_ADDRESS,
+        "--to-fresh-address",
+        ETH_ADDRESS,
+        "--amount",
+        "0.1",
+        "--output",
+        "json",
+      ],
+      { WALLET_CLI_MOCK_PORT: String(server.port) },
+    );
+    expect(exitCode, `stderr: ${stderr}`).toBe(1);
+    const data = JSON.parse(stdout);
+    expect(data.ok).toBe(false);
+    expect(data.error.message).toContain("Unsupported swap from currency");
+    expect(data.error.message).toContain("bitcoin, ethereum, solana");
+  });
+
   it("can resolve source and destination addresses from session labels", async () => {
     const fixture = makeSessionDir([{ label: "ethereum-1", descriptor: ETH_DESCRIPTOR }]);
     sessionCleanup = fixture.cleanup;
