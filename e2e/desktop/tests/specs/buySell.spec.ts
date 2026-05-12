@@ -64,7 +64,6 @@ for (const asset of assets) {
     });
 
     const family = getFamilyByCurrencyId(crypto.currency.id);
-
     test(
       `Entry Point - Asset Allocation page with [${crypto.currency.name}] asset`,
       {
@@ -86,7 +85,7 @@ for (const asset of assets) {
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         await app.mainNavigation.openTargetFromMainNavigation("home");
-        await app.portfolio.clickOnSelectedAssetRow(crypto.currency.name);
+        await app.portfolio.assetsView.clickAsset(crypto.currency);
         await app.assetPage.startBuyFlow();
 
         if ((await isWallet40Enabled(app.getPage())) === false) {

@@ -1,7 +1,6 @@
 import { AccountPage } from "./account.page";
 import { AccountsPage } from "./accounts.page";
 import { AnalyticsPage } from "./analytics.page";
-import { AssetsPage } from "./assets.page";
 import { AddAccountModal } from "./modal/add.account.modal";
 import { AssetDrawer } from "./drawer/asset.drawer";
 import { AssetPage } from "./asset.page";
@@ -39,6 +38,8 @@ import { NewSendModal } from "./modal/new.send.modal";
 import { PrivateBalanceModal } from "./modal/private.balance.modal";
 import { HistoryPage } from "./history.page";
 import { MainNavigationPage } from "./mainNavigation.page";
+import { MarketCoinPage } from "./marketCoin.page";
+import { CryptoAssetsPage } from "./cryptoAssets.page";
 
 export class Application extends PageHolder {
   public account = new AccountPage(this.page);
@@ -80,5 +81,7 @@ export class Application extends PageHolder {
   public fearAndGreedDialog = new FearAndGreedDialog(this.page);
   public history = new HistoryPage(this.page);
   public mainNavigation = new MainNavigationPage(this.page);
-  public assets = new AssetsPage(this.page);
+  public marketCoin = new MarketCoinPage(this.page);
+  public cryptoAssetsPage = new CryptoAssetsPage(this.page, "cryptos");
+  public stablecoinsAssetsPage = new CryptoAssetsPage(this.page, "stablecoins");
 }

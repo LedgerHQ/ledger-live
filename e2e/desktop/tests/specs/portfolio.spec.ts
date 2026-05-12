@@ -31,7 +31,6 @@ test.describe.skip("Portfolio - legacy", () => {
       await app.portfolio.checkEmbeddedSwapContainerVisibility();
       await app.swap.expectSelectedAssetDisplayed(/ETH|BTC/);
       await app.portfolio.checkChartVisibility();
-      await app.portfolio.checkAssetAllocationSection();
     },
   );
 });
@@ -98,7 +97,7 @@ test.describe("Portfolio Wallet 4.0 - With Account", () => {
       await app.portfolio.checkOneDayPerformanceIndicatorVisibility();
       await app.portfolio.clickOnPerformancePill();
       await app.analytics.expectAnalyticsScreenToBeVisible();
-      await app.analytics.clickBackButton();
+      await app.analytics.header.clickBack();
       await app.portfolio.expectPortfolioScreenToBeVisible();
     },
   );
