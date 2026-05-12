@@ -30,11 +30,10 @@ Run from repo root: `pnpm --silent wallet-cli start <command> [flags]`
 | `balances`         | No     | No           |
 | `operations`       | No     | No           |
 | `swap quote`       | No     | No           |
-| `swap execute`     | Yes**  | **Required** |
+| `swap execute`     | Yes    | **Required** |
 | `swap status`      | No     | No           |
 
 *`send --dry-run` needs no device and no sandbox bypass.
-**`swap execute --dry-run` needs no device and no sandbox bypass.
 
 ---
 
@@ -119,7 +118,7 @@ Required: `--from`, `--to`, `--amount`, and both send/receive covered by the add
 ```bash
 pnpm --silent wallet-cli start swap execute --account ethereum-1 --to-account bitcoin-native-1 --provider changelly --amount 0.1
 pnpm --silent wallet-cli start swap execute --account ethereum-1 --to-account bitcoin-native-1 --provider changelly --amount 0.1 --fee-strategy fast
-pnpm --silent wallet-cli start swap execute --account ethereum-1 --to-account bitcoin-native-1 --provider changelly --amount 0.1 --dry-run --output json
+pnpm --silent wallet-cli start swap execute --account ethereum-1 --to-account bitcoin-native-1 --provider changelly --amount 0.1 --output json
 ```
 Required flags: `--account`, `--to-account`, `--provider`, `--amount`
 
