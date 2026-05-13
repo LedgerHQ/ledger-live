@@ -4,7 +4,7 @@ import { expect } from "@playwright/test";
 import { isWallet40Enabled } from "tests/utils/featureFlagUtils";
 
 export class MarketPage extends AppPage {
-  private navbarTitle = this.page.getByTestId("page-header-title");
+  private readonly navbarTitle = this.page.getByTestId("page-header-title");
   private searchInput = this.page.getByTestId("market-search-input");
   private loadingPlaceholder = this.page.getByTestId("loading-placeholder");
   private coinRow = (ticker: string) => this.page.getByTestId(`market-${ticker}-row`).first();
