@@ -104,7 +104,7 @@ Ticker is **mandatory** in `--amount`. No `--token` flag — ticker drives asset
 ### swap quote
 Fetches quotes in parallel from the built-in provider list (no device when addresses are supplied via flags below).
 
-**Currencies:** `--from` / `-f` and `--to` / `-t` are Ledger **currency IDs** , e.g. `ethereum`, `bitcoin`. They are **not** session account labels — use `--from-account` / `--to-account` (or fresh addresses) for accounts.
+**Currencies:** `--from` / `-f` and `--to` / `-t` are Ledger **currency IDs** — native assets (e.g. `ethereum`, `bitcoin`, `solana`) **or token IDs** when the token’s parent chain is a supported native swap currency (same IDs the CLI allows for swap). They are **not** session account labels — use `--from-account` / `--to-account` (or fresh addresses) for accounts.
 
 **Default providers queried by `swap quote` and usable by `swap execute`:** `changelly`, `cic`, `exodus`, `nearintents`, `swapsxyz`.
 
@@ -119,7 +119,7 @@ pnpm --silent wallet-cli start swap quote --from ethereum --to bitcoin --amount 
 Required: `--from`, `--to`, `--amount`, and both sides covered by the address flags above.
 
 ### swap execute
-**Currencies:** `--from` / `-f` and `--to` / `-t` are Ledger **currency IDs** (same as `swap quote`). They must match the asset of the source `--account` and of `--to-account` respectively
+**Currencies:** `--from` / `-f` and `--to` / `-t` are Ledger **currency IDs** (same as `swap quote`): native assets or **tokens** on an allowed parent chain. They must match the asset of the source `--account` and of `--to-account` respectively.
 
 ```bash
 pnpm --silent wallet-cli start swap execute --from ethereum --to bitcoin --account ethereum-1 --to-account bitcoin-native-1 --provider changelly --amount 0.1
