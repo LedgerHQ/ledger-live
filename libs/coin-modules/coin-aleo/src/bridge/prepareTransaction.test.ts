@@ -2,11 +2,7 @@ import BigNumber from "bignumber.js";
 import aleoConfig from "../config";
 import { TRANSACTION_TYPE } from "../constants";
 import { estimateFees } from "../logic";
-import {
-  calculateAmount,
-  findBestRecordForFee,
-  selectPrivateRecordsForAmount,
-} from "../logic/utils";
+import { calculateAmount, findBestRecordForFee } from "../logic/utils";
 import {
   getMockedAccount,
   mockUnspentRecord1,
@@ -22,7 +18,6 @@ jest.mock("../logic/utils", () => ({
   ...jest.requireActual("../logic/utils"),
   calculateAmount: jest.fn(),
   findBestRecordForFee: jest.fn(),
-  selectPrivateRecordsForAmount: jest.fn(),
 }));
 
 const mockConfig = getMockedConfig("mainnet");
@@ -30,7 +25,6 @@ const mockAleoConfig = jest.mocked(aleoConfig);
 const mockEstimateFees = jest.mocked(estimateFees);
 const mockCalculateAmount = jest.mocked(calculateAmount);
 const mockFindBestRecordForFee = jest.mocked(findBestRecordForFee);
-const mockSelectPrivateRecordsForAmount = jest.mocked(selectPrivateRecordsForAmount);
 
 describe("prepareTransaction", () => {
   const mockAccount = getMockedAccount({ balance: new BigNumber(1000000) });
@@ -54,7 +48,6 @@ describe("prepareTransaction", () => {
       totalSpent: mockAmount.plus(mockFees),
     });
     mockFindBestRecordForFee.mockReturnValue(null);
-    mockSelectPrivateRecordsForAmount.mockReturnValue([mockUnspentRecord1]);
   });
 
   it("should return transaction with calculated amount and fees", async () => {
@@ -77,7 +70,7 @@ describe("prepareTransaction", () => {
     });
   });
 
-  it("should auto-select amount records and update feeRecordCommitment for private non-sponsored transactions", async () => {
+  it("should update feeRecordCommitment for private transactions with non-sponsored fees", async () => {
     const mockPrivateTransaction: Transaction = {
       ...mockTransaction,
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
@@ -110,7 +103,6 @@ describe("prepareTransaction", () => {
       selectedAmountRecordCommitments: mockPrivateTransaction.properties.amountRecordCommitments,
       targetFee: mockFees,
     });
-    expect(mockSelectPrivateRecordsForAmount).toHaveBeenCalledTimes(1);
     expect(result).toMatchObject({
       amount: mockAmount,
       fees: mockFees,

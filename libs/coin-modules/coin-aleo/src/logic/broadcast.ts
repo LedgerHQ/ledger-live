@@ -15,14 +15,10 @@ export async function broadcast({
   const config = resolveConfig(configOrCurrencyId);
 
   // get authorization and feeAuthorization from signed transaction
-  const { authorization: rawAuthorization, feeAuthorization } = fromHex<{
-    authorization: Record<string, unknown> | string;
+  const { authorization, feeAuthorization } = fromHex<{
+    authorization: Record<string, unknown>;
     feeAuthorization?: Record<string, unknown>;
   }>(signedTx);
-
-  // STRING CAUSED BY MOCKED SIGNATURE, REMOVE LATER
-  const authorization =
-    typeof rawAuthorization === "string" ? JSON.parse(rawAuthorization) : rawAuthorization;
 
   // TODO: not used anymore, remove with https://ledgerhq.atlassian.net/browse/LIVE-29982
   if (!config.useEncryptedProve) {
