@@ -1,3 +1,4 @@
+import type { ComponentType } from "react";
 import type { Tool } from "../types";
 import type { DevToolsPropsRegistry } from "../index";
 
@@ -17,13 +18,16 @@ function addTool(tool: Tool): boolean {
 }
 
 export function registerTool<K extends keyof DevToolsPropsRegistry>(
-  tool: Tool & { id: K },
-): Tool & { id: K } {
+  tool: Tool & {
+    id: K;
+    component: ComponentType<NonNullable<DevToolsPropsRegistry[K]>>;
+  },
+): Tool {
   if (addTool(tool)) registeredToolIds.add(tool.id);
   return tool;
 }
 
-export function registerStandaloneTool(tool: Tool): Tool {
+export function registerStandaloneTool(tool: Tool & { component: ComponentType }): Tool {
   addTool(tool);
   return tool;
 }
