@@ -14,9 +14,17 @@ import { useTranslation } from "react-i18next";
 import ContactsPanelView from "./ContactsPanelView";
 import type { ContactsViewProps } from "./types";
 
-const ContactsView = ({ isOpen, onOpenChange, sessionId, setSessionId }: ContactsViewProps) => {
+const ContactsView = ({
+  isOpen,
+  onOpenChange,
+  sessionId,
+  setSessionId,
+  subView,
+  setSubView,
+}: ContactsViewProps) => {
   const { t } = useTranslation();
   const label = t("topBar.contacts.tooltip");
+  const isStorage = subView === "storage";
 
   return (
     <>
@@ -34,11 +42,20 @@ const ContactsView = ({ isOpen, onOpenChange, sessionId, setSessionId }: Contact
         <TooltipContent side="bottom">{label}</TooltipContent>
       </Tooltip>
 
-      <Dialog open={isOpen} onOpenChange={onOpenChange} height="fit">
+      <Dialog open={isOpen} onOpenChange={onOpenChange} height="fixed">
         <DialogContent>
-          <DialogHeader title={t("contacts.title")} onClose={() => onOpenChange(false)} />
-          <DialogBody scrollbarWidth="auto">
-            <ContactsPanelView sessionId={sessionId} setSessionId={setSessionId} />
+          <DialogHeader
+            title={isStorage ? t("contacts.storageTitle") : t("contacts.title")}
+            onClose={() => onOpenChange(false)}
+            onBack={isStorage ? () => setSubView("actions") : undefined}
+          />
+          <DialogBody scrollbarWidth="auto" className="flex flex-col">
+            <ContactsPanelView
+              sessionId={sessionId}
+              setSessionId={setSessionId}
+              subView={subView}
+              setSubView={setSubView}
+            />
           </DialogBody>
         </DialogContent>
       </Dialog>
