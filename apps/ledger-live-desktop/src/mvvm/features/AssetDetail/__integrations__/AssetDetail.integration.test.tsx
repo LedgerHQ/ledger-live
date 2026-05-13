@@ -1,6 +1,13 @@
 import React from "react";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { render, renderWithMockedCounterValuesProvider, screen, waitFor } from "tests/testSetup";
+import {
+  render,
+  renderWithMockedCounterValuesProvider,
+  screen,
+  waitFor,
+  within,
+  withFlagOverrides,
+} from "tests/testSetup";
 import { MarketMockedResponse } from "tests/handlers/fixtures/market";
 import {
   buildDistributionItem,
@@ -577,6 +584,80 @@ describe("AssetDetail integration", () => {
         expectAssetName("Bitcoin Test");
         expect(screen.getByText(LABEL.TOTAL_BALANCE)).toBeVisible();
       });
+    });
+  });
+
+  describe("PnL section", () => {
+    const pnlEnabled = withFlagOverrides({
+      lwdWallet40: { enabled: true, params: { pnl: true } },
+    });
+
+    const setupBitcoinAsset = (accountId: string) => {
+      mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+      const account = genAccount(accountId, { currency: btc });
+      const item = buildDistributionItem({ accounts: [account] });
+      setupRoute("bitcoin", { bySlug: { bitcoin: item }, list: [item] });
+      return { account };
+    };
+
+    it("does not render the PnL cards when the feature flag is off", async () => {
+      const { account } = setupBitcoinAsset("asset-detail-pnl-flag-off");
+
+      renderWithMockedCounterValuesProvider(<AssetDetail />, {
+        initialState: { accounts: [account], settings: AFTER_ONBOARDING_STATE },
+      });
+
+      await waitFor(() => expectHeader());
+      expect(screen.queryByRole("button", { name: /unrealised return/i })).not.toBeInTheDocument();
+      expect(screen.queryByText("Average entry price")).not.toBeInTheDocument();
+    });
+
+    it("renders both the unrealised return and average entry price cards when the feature flag is on", async () => {
+      const { account } = setupBitcoinAsset("asset-detail-pnl-flag-on");
+
+      renderWithMockedCounterValuesProvider(<AssetDetail />, {
+        initialState: { ...pnlEnabled, accounts: [account], settings: AFTER_ONBOARDING_STATE },
+      });
+
+      await waitFor(() => {
+        expect(screen.getByRole("button", { name: /unrealised return/i })).toBeVisible();
+        expect(screen.getByText("Average entry price")).toBeVisible();
+      });
+    });
+
+    it("opens the detail dialog with the three return rows when the unrealised return card is clicked", async () => {
+      const { account } = setupBitcoinAsset("asset-detail-pnl-dialog-open");
+
+      const { user } = renderWithMockedCounterValuesProvider(<AssetDetail />, {
+        initialState: { ...pnlEnabled, accounts: [account], settings: AFTER_ONBOARDING_STATE },
+      });
+
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+
+      const card = await screen.findByRole("button", { name: /unrealised return/i });
+      await user.click(card);
+
+      const dialog = await screen.findByRole("dialog");
+      const dialogScope = within(dialog);
+      expect(dialogScope.getByText("Total return")).toBeVisible();
+      expect(dialogScope.getByText("Unrealised return")).toBeVisible();
+      expect(dialogScope.getByText("Realised return")).toBeVisible();
+    });
+
+    it("dismisses the detail dialog when the close button is clicked", async () => {
+      const { account } = setupBitcoinAsset("asset-detail-pnl-dialog-close");
+
+      const { user } = renderWithMockedCounterValuesProvider(<AssetDetail />, {
+        initialState: { ...pnlEnabled, accounts: [account], settings: AFTER_ONBOARDING_STATE },
+      });
+
+      const card = await screen.findByRole("button", { name: /unrealised return/i });
+      await user.click(card);
+
+      const dialog = await screen.findByRole("dialog");
+      await user.click(within(dialog).getByRole("button", { name: /close/i }));
+
+      await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
     });
   });
 

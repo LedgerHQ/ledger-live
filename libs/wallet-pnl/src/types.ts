@@ -36,6 +36,16 @@ export type AssetPnL = PortfolioPnL & {
 };
 
 /**
+ * Aggregated PnL for accounts that all hold the **same asset**.
+ * - `totalAmount`: cumulative on-chain balance, in the asset's smallest unit (sat, wei…).
+ * - `averageEntryPrice`: cost-weighted price in fiat per full asset unit (e.g. USD per BTC).
+ */
+export type AssetGroupPnL = PortfolioPnL & {
+  totalAmount: BigNumber;
+  averageEntryPrice: BigNumber;
+};
+
+/**
  * Diagnostic for the gap between what the operations stream cumulatively
  * implies (`recordedAmount`) and what the chain reports (`onChainBalance`).
  *

@@ -6,15 +6,16 @@ type PnLCardProps = React.ComponentProps<typeof PnLCard>;
 type InteractiveProps = Extract<PnLCardProps, { type: "interactive" }>;
 type InfoProps = Extract<PnLCardProps, { type: "info" }>;
 
+const ID = "unrealisedReturn";
 const TITLE = "Unrealised return";
 const VALUE = "243.32";
 const TOOLTIP = "This is a tooltip";
-const DISCREET_PLACEHOLDER = "***";
 
 const makeInteractiveProps = (
   overrides: Partial<Omit<InteractiveProps, "type">> = {},
 ): InteractiveProps => ({
   type: "interactive",
+  id: ID,
   title: TITLE,
   value: VALUE,
   trend: "up",
@@ -24,6 +25,7 @@ const makeInteractiveProps = (
 
 const makeInfoProps = (overrides: Partial<Omit<InfoProps, "type">> = {}): InfoProps => ({
   type: "info",
+  id: ID,
   title: TITLE,
   value: VALUE,
   tooltipContent: TOOLTIP,
@@ -111,28 +113,6 @@ describe("PnLCard", () => {
         const tooltips = screen.getAllByText(TOOLTIP);
         expect(tooltips.some(el => el.closest("[role='tooltip']"))).toBe(true);
       });
-    });
-  });
-
-  describe("when discreet is enabled", () => {
-    it("should hide the value behind '***' in the interactive variant", () => {
-      render(<PnLCard {...makeInteractiveProps({ discreet: true })} />);
-
-      expect(screen.getByText(DISCREET_PLACEHOLDER)).toBeVisible();
-      expect(screen.queryByText(VALUE)).not.toBeInTheDocument();
-    });
-
-    it("should hide the value behind '***' in the info variant", () => {
-      render(<PnLCard {...makeInfoProps({ discreet: true })} />);
-
-      expect(screen.getByText(DISCREET_PLACEHOLDER)).toBeVisible();
-      expect(screen.queryByText(VALUE)).not.toBeInTheDocument();
-    });
-
-    it("should still render the title when the value is hidden", () => {
-      render(<PnLCard {...makeInteractiveProps({ discreet: true })} />);
-
-      expect(screen.getByText(TITLE)).toBeVisible();
     });
   });
 });

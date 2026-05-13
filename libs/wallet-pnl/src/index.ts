@@ -1,5 +1,6 @@
 export type {
   AssetPnL,
+  AssetGroupPnL,
   PortfolioPnL,
   CostBasisState,
   OperationFlow,
@@ -15,5 +16,6 @@ export {
   reconcileCostBasisWithBalance,
 } from "./costBasisReconciliation";
 export { computeAssetPnL } from "./assetPnL";
+export { computeAssetGroupPnL } from "./assetGroupPnL";
 export { computePortfolioPnL } from "./portfolioPnL";
 export { pnlPercentage } from "./percentage";

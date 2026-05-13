@@ -8905,5 +8905,32 @@
     "marketRank": "Market rank",
     "tradingVolume24h": "24h trading volume",
     "day": "1 day"
+  },
+  "pnl": {
+    "asset": {
+      "entry": {
+        "title": "Average entry price",
+        "tooltip": "The average price you paid for this asset in this wallet, including everything you’ve bought or received from other wallets. This is used to to track your profit or loss."
+      },
+      "return": {
+        "title": "Unrealised return"
+      },
+      "dialog": {
+        "title": "Profit and loss",
+        "description": "A summary of how this asset has performed in your portfolio.",
+        "totalReturn": {
+          "title": "Total return",
+          "description": "The sum of unrealised and realised returns."
+        },
+        "unrealisedReturn": {
+          "title": "Unrealised return",
+          "description": "The estimated gain or loss if sold at today's price."
+        },
+        "realisedReturn": {
+          "title": "Realised return",
+          "description": "Profit or loss confirmed from previous sales or transfers."
+        }
+      }
+    }
   }
 }
