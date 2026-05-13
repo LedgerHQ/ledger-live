@@ -30,4 +30,5 @@ export type AssetMarketData = Readonly<{
 export type AssetMarketDataResult = AssetMarketData &
   Readonly<{
     ledgerCurrencyFromDada: CryptoOrTokenCurrency | undefined;
+    isError: boolean;
   }>;

@@ -18,7 +18,11 @@ export function useAssetMarketData({
   version,
   isStaging = false,
 }: AssetMarketDataInput): AssetMarketDataResult {
-  const { data: marketFromHook, isLoading: isLoadingMarket } = useGetCurrencyDataQuery(
+  const {
+    data: marketFromHook,
+    isLoading: isLoadingMarket,
+    isError: isErrorMarket,
+  } = useGetCurrencyDataQuery(
     { id: marketApiCurrencyId ?? "", counterCurrency },
     {
       skip: !marketApiCurrencyId,
@@ -31,7 +35,11 @@ export function useAssetMarketData({
     [knownLedgerIds, marketFromHook?.ledgerIds],
   );
 
-  const { data: assetData, isLoading: isLoadingDada } = assetsDataApi.useGetAssetDataQuery(
+  const {
+    data: assetData,
+    isLoading: isLoadingDada,
+    isError: isErrorDada,
+  } = assetsDataApi.useGetAssetDataQuery(
     {
       currencyIds: effectiveLedgerIds ? [...effectiveLedgerIds] : [],
       product,
@@ -59,5 +67,6 @@ export function useAssetMarketData({
     marketCurrencyData,
     ledgerCurrencyFromDada,
     isLoading: isLoadingMarket || isLoadingDada,
+    isError: isErrorMarket || isErrorDada,
   };
 }
