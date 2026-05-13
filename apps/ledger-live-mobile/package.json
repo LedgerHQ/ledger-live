@@ -262,6 +262,7 @@
     "@features/market-banner": "workspace:^",
     "@jest/reporters": "catalog:",
     "@ledgerhq/asset-aggregation": "workspace:^",
+    "@ledgerhq/asset-detail": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/speculos-transport": "workspace:^",
     "@ledgerhq/coin-cardano": "workspace:^",
