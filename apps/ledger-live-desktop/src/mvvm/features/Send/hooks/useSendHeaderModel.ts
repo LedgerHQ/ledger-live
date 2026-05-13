@@ -14,6 +14,7 @@ import {
 import { SendStepConfig } from "../types";
 import BigNumber from "bignumber.js";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
+import { useDisplayAddress } from "~/renderer/contacts/useDisplayAddress";
 
 type UseSendHeaderModelParams = Readonly<{
   availableText: string;
@@ -104,11 +105,24 @@ export function useSendHeaderModel({
     }
   }, [backTarget, close, currentStep, navigation, resetViewState, transaction]);
 
+  const recipientDisplayAddress = useMemo(
+    () => getRecipientDisplayValue(state.recipient),
+    [state.recipient],
+  );
+  const currency = state.account.currency;
+  const recipientChainId =
+    currency?.type === "CryptoCurrency"
+      ? currency.ethereumLikeInfo?.chainId
+      : currency?.type === "TokenCurrency"
+        ? currency.parentCurrency.ethereumLikeInfo?.chainId
+        : undefined;
+  const decoratedRecipient = useDisplayAddress(recipientDisplayAddress, recipientChainId);
+
   const addressInputValue = useMemo(() => {
     if (isRecipientStep) return recipientSearch.value;
-    if (isAmountStep) return getRecipientDisplayValue(state.recipient);
+    if (isAmountStep) return decoratedRecipient;
     return recipientSearch.value;
-  }, [isRecipientStep, isAmountStep, recipientSearch.value, state.recipient]);
+  }, [isRecipientStep, isAmountStep, recipientSearch.value, decoratedRecipient]);
 
   const handleRecipientInputClick = useCallback(() => {
     if (!isAmountStep) return;

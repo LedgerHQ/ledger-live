@@ -10,6 +10,10 @@ export {
 } from "./services/LiveBlindSigningReporter";
 export type { LiveBlindSigningContext } from "./services/LiveBlindSigningReporter";
 export { DmkCompatTransport } from "./transport/DmkCompatTransport";
+export {
+  LiveContactsDataSource,
+  liveContactsDataSource,
+} from "./services/LiveContactsDataSource";
 
 export { ConnectAppDeviceAction } from "./device-action/ConnectApp/ConnectAppDeviceAction";
 export {

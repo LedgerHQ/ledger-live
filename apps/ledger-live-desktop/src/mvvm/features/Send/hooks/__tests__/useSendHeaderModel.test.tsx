@@ -13,6 +13,9 @@ jest.mock("~/renderer/reducers/wallet", () => ({
   ...jest.requireActual("~/renderer/reducers/wallet"),
   useMaybeAccountName: jest.fn(),
 }));
+jest.mock("~/renderer/contacts/useDisplayAddress", () => ({
+  useDisplayAddress: jest.fn((address: string | undefined) => address),
+}));
 
 import { useFlowWizard } from "../../../FlowWizard/FlowWizardContext";
 import { useSendFlowData, useSendFlowActions } from "../../context/SendFlowContext";
