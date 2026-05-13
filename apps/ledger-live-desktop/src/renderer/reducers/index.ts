@@ -28,6 +28,9 @@ import dialogs, { DialogsState } from "./dialogs";
 import ptxInfoDialog, { PtxInfoDialogState } from "./ptxInfoDialog";
 import actionDialog, { ActionDialogState } from "./actionDialog";
 import liveAppModal, { LiveAppModalState } from "./liveAppModal";
+import swapTransactionStatusDialog, {
+  SwapTransactionStatusDialogState,
+} from "./swapTransactionStatusDialog";
 import syncRefresh, { SyncRefreshState } from "./syncRefresh";
 import shieldedSyncSubscriptions, {
   ShieldedSyncSubscriptionsState,
@@ -65,6 +68,7 @@ export type State = LLDRTKApiState & {
   ptxInfoDialog: PtxInfoDialogState;
   actionDialog: ActionDialogState;
   liveAppModal: LiveAppModalState;
+  swapTransactionStatusDialog: SwapTransactionStatusDialogState;
   syncRefresh: SyncRefreshState;
   shieldedSyncSubscriptions: ShieldedSyncSubscriptionsState;
   countervaluesExtraTracking: CountervaluesExtraTrackingState;
@@ -97,6 +101,7 @@ const appReducer = combineReducers({
   ptxInfoDialog,
   actionDialog,
   liveAppModal,
+  swapTransactionStatusDialog,
   syncRefresh,
   shieldedSyncSubscriptions,
   countervaluesExtraTracking,
