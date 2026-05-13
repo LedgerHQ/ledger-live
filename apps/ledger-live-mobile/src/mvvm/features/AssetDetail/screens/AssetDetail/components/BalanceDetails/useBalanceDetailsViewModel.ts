@@ -3,7 +3,10 @@ import { shallowEqual } from "react-redux";
 import BigNumber from "bignumber.js";
 import type { AssetDetailCurrencyProps } from "LLM/features/AssetDetail/types";
 import type { FormattedValue } from "@ledgerhq/lumen-ui-rnative";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import {
+  formatCurrencyUnit,
+  formatCurrencyUnitFragment,
+} from "@ledgerhq/live-common/currencies/index";
 import { useCalculate } from "@ledgerhq/live-countervalues-react";
 import { useInterestRatesByCurrencies } from "@ledgerhq/live-common/dada-client/hooks/useInterestRatesByCurrencies";
 import { useNavigation } from "@react-navigation/native";
@@ -16,7 +19,6 @@ import { useLocale, useTranslation } from "~/context/Locale";
 import type { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 import { useStake } from "LLM/hooks/useStake/useStake";
 import { useTransferDrawerController } from "LLM/features/QuickActions/hooks/useTransferDrawerController";
-import { parseCurrencyString } from "../../utils/currencyFormatter";
 
 type EarnState =
   | { type: "hidden" }
@@ -59,7 +61,7 @@ export function useBalanceDetailsViewModel(currency: AssetDetailCurrencyProps) {
     return formatCurrencyUnit(unit, totalBalance, { showCode: true });
   }, [unit, totalBalance]);
 
-  const counterCurrency = counterValueCurrency.ticker;
+  const counterValueUnit = counterValueCurrency.units[0];
 
   const totalCounterValue = useCalculate({
     from: currency ?? counterValueCurrency,
@@ -71,17 +73,12 @@ export function useBalanceDetailsViewModel(currency: AssetDetailCurrencyProps) {
   const counterValue = typeof totalCounterValue === "number" ? totalCounterValue : undefined;
 
   const counterValueFormatter = useCallback(
-    (value: number): FormattedValue => {
-      const formatted = new Intl.NumberFormat(locale, {
-        style: "currency",
-        currency: counterCurrency,
-        numberingSystem: "latn",
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      }).format(value);
-      return parseCurrencyString(formatted, locale);
-    },
-    [locale, counterCurrency],
+    (value: number): FormattedValue =>
+      formatCurrencyUnitFragment(counterValueUnit, new BigNumber(value), {
+        locale,
+        showCode: true,
+      }),
+    [counterValueUnit, locale],
   );
 
   const { getCanStakeCurrency } = useStake();
