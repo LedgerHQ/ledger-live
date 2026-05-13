@@ -12,7 +12,6 @@ import { Addresses } from "./components/Addresses";
 import { Transactions } from "./components/Transactions";
 import { Footer } from "./components/Footer";
 import { MarketData } from "./components/MarketData";
-import { useIsBuyAvailable } from "./components/Footer/useFooterViewModel";
 import { CTAS_HEIGHT } from "./utils/constants";
 
 type Props = Readonly<{
@@ -20,11 +19,19 @@ type Props = Readonly<{
   source?: string;
   isRefreshing: boolean;
   onRefresh: () => void;
+  hasFooter: boolean;
+  hideReceiveInBalanceGraph: boolean;
 }>;
 
-export function AssetDetailView({ currency, source, isRefreshing, onRefresh }: Props) {
+export function AssetDetailView({
+  currency,
+  source,
+  isRefreshing,
+  onRefresh,
+  hasFooter,
+  hideReceiveInBalanceGraph,
+}: Props) {
   const { bottom } = useSafeAreaInsets();
-  const hasFooter = useIsBuyAvailable(currency);
   const scrollPaddingBottom = useMemo(
     () => (hasFooter ? CTAS_HEIGHT + bottom : bottom),
     [hasFooter, bottom],
@@ -39,7 +46,7 @@ export function AssetDetailView({ currency, source, isRefreshing, onRefresh }: P
         refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
       >
         <Box lx={contentStyle}>
-          <BalanceGraph currency={currency} />
+          <BalanceGraph currency={currency} hideReceive={hideReceiveInBalanceGraph} />
           <BalanceDetails currency={currency} />
           <Addresses currency={currency} />
           <MarketData currency={currency} />

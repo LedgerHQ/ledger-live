@@ -196,6 +196,18 @@ describe("useBalanceGraphViewModel", () => {
 
       expect(result.current.showReceive).toBe(false);
     });
+
+    it("is false when hideReceive is true even if conditions are met", () => {
+      const { result } = renderHook(
+        () => useBalanceGraphViewModel(mockBtcCryptoCurrency, true),
+        withAccounts([
+          { currencyId: "bitcoin", balance: 0 },
+          { currencyId: "ethereum", balance: 1000 },
+        ]),
+      );
+
+      expect(result.current.showReceive).toBe(false);
+    });
   });
 
   describe("onReceivePress", () => {
