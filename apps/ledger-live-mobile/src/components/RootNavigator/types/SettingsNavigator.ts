@@ -38,6 +38,7 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.DebugDeviceIntentExecutorContent]: undefined;
   [ScreenName.DebugDeviceIntentExecutorInfoState]: undefined;
   [ScreenName.DebugDeviceIntentExecutorInitialization]: undefined;
+  [ScreenName.DebugDeviceIntentExecutorInitializerStates]: undefined;
   [ScreenName.DebugDeviceIntentExecutorOrchestration]: undefined;
   [ScreenName.DebugConfiguration]: undefined;
   [ScreenName.DebugFeatures]:

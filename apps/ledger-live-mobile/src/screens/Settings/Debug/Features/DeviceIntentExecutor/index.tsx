@@ -40,6 +40,11 @@ export default function DebugDeviceIntentExecutor() {
         description="Run one echo intent after initialization to inspect the extracted device context."
         onPress={() => navigation.navigate(ScreenName.DebugDeviceIntentExecutorInitialization)}
       />
+      <DebugEntry
+        title="Initializer States"
+        description="Preview every initializer UI state with mock data inside the bottom sheet."
+        onPress={() => navigation.navigate(ScreenName.DebugDeviceIntentExecutorInitializerStates)}
+      />
     </ScrollView>
   );
 }

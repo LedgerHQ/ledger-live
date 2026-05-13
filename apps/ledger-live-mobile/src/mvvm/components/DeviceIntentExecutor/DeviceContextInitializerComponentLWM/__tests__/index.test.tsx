@@ -34,7 +34,17 @@ const deviceInitializationInput: InitializationInput = {
 describe("DeviceContextInitializerComponentLWM", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockedUseViewModel.mockReturnValue({ type: LoadingStateType.Loading });
+    mockedUseViewModel.mockReturnValue({
+      state: { type: LoadingStateType.Loading },
+      device: {
+        id: "device-id",
+        modelId: DeviceModelId.nanoX,
+        supportedModelId: DeviceModelId.nanoX,
+        name: "Ledger Nano X",
+        productName: "Ledger Nano X",
+        wired: false,
+      },
+    });
   });
 
   it("should pass initialization params to the view model when config is omitted", () => {
