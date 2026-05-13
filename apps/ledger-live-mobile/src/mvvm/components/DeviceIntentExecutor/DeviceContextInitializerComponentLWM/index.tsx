@@ -8,6 +8,7 @@ import { useDeviceContextInitializerComponentLWMViewModel } from "./useDeviceCon
 export type InitializerConfig =
   | {
       dependencies?: Partial<EnsureAppReadyUseCaseDependencies>;
+      onCancel?: () => void;
     }
   | undefined;
 
@@ -15,14 +16,22 @@ const DeviceContextInitializerComponentLWM: DeviceContextInitializerComponent<
   InitializationInput,
   InitializerConfig
 > = ({ connectionResult, deviceInitializationInput, onContextInitialized, config }) => {
-  const state = useDeviceContextInitializerComponentLWMViewModel({
+  const { state, device } = useDeviceContextInitializerComponentLWMViewModel({
     connectionResult,
     deviceInitializationInput,
     onContextInitialized,
     dependencies: config?.dependencies,
   });
 
-  return <DeviceContextInitializerComponentLWMView state={state} />;
+  return (
+    <DeviceContextInitializerComponentLWMView
+      state={state}
+      device={device}
+      onCancel={config?.onCancel ?? noop}
+    />
+  );
 };
 
 export default DeviceContextInitializerComponentLWM;
+
+function noop() {}
