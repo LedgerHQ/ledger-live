@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import {
   adaptCoreOperationToLiveOperation,
-  applyMemoToIntent,
   bigNumberToBigIntDeep,
   buildOptimisticOperation,
   cleanedOperation,
@@ -11,10 +10,7 @@ import {
   transactionToIntent,
 } from "./utils";
 import BigNumber from "bignumber.js";
-import {
-  Operation as CoreOperation,
-  TransactionIntent,
-} from "@ledgerhq/coin-module-framework/api/types";
+import type { Operation as CoreOperation } from "@ledgerhq/coin-module-framework/api/types";
 import { Account } from "@ledgerhq/types-live";
 import { GenericTransaction, GenericTransactionMode, OperationCommon } from "./types";
 import * as craftTransactionDataModule from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
@@ -32,42 +28,6 @@ jest.mock("@ledgerhq/coin-module-framework/logic/craftTransactionData", () => {
 describe("coin-framework utils", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-  });
-
-  describe("applyMemoToIntent", () => {
-    it("does not apply any memo", () => {
-      const intent = applyMemoToIntent(
-        {} as unknown as TransactionIntent,
-        {} as GenericTransaction,
-      );
-
-      expect(intent).toEqual({});
-    });
-
-    it.each([
-      [0, "0"],
-      [1, "1"],
-    ])("applies '%s' as the destination tag", (tag, expectedTag) => {
-      const intent = applyMemoToIntent(
-        {} as unknown as TransactionIntent,
-        { tag } as GenericTransaction,
-      );
-
-      expect(intent).toEqual({
-        memo: { type: "map", memos: new Map([["destinationTag", expectedTag]]) },
-      });
-    });
-
-    it("applies a custom memo type", () => {
-      const intent = applyMemoToIntent(
-        {} as unknown as TransactionIntent,
-        { memoType: "memo-type", memoValue: "memo-value" } as GenericTransaction,
-      );
-
-      expect(intent).toEqual({
-        memo: { type: "memo-type", value: "memo-value" },
-      });
-    });
   });
 
   describe("bigNumberToBigIntDeep", () => {
@@ -543,6 +503,46 @@ describe("coin-framework utils", () => {
 
         expect(craftTransactionDataMock).not.toHaveBeenCalled();
         expect(defaultCraftTransactionDataSpy).not.toHaveBeenCalled();
+      });
+    });
+
+    describe("memo", () => {
+      const account = { currency: { name: "ethereum", units: [{}] } } as Account;
+
+      it("defaults to NO_MEMO when no memo or tag is provided", () => {
+        const intent = transactionToIntent(account, {} as GenericTransaction);
+        expect(intent.memo).toEqual({ type: "NO_MEMO" });
+      });
+
+      it.each([
+        [0, "0"],
+        [1, "1"],
+      ])("maps tag '%s' to a destination tag memo", (tag, expectedTag) => {
+        const intent = transactionToIntent(account, { tag } as GenericTransaction);
+        expect(intent.memo).toEqual({
+          type: "map",
+          memos: new Map([["destinationTag", expectedTag]]),
+        });
+      });
+
+      it("maps memoType/memoValue to a typed memo", () => {
+        const intent = transactionToIntent(account, {
+          memoType: "memo-type",
+          memoValue: "memo-value",
+        } as GenericTransaction);
+        expect(intent.memo).toEqual({ type: "memo-type", value: "memo-value" });
+      });
+
+      it("prefers tag over memoType/memoValue when both are set", () => {
+        const intent = transactionToIntent(account, {
+          tag: 42,
+          memoType: "memo-type",
+          memoValue: "memo-value",
+        } as GenericTransaction);
+        expect(intent.memo).toEqual({
+          type: "map",
+          memos: new Map([["destinationTag", "42"]]),
+        });
       });
     });
 

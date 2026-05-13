@@ -1,9 +1,10 @@
+import BigNumber from "bignumber.js";
 import { lastValueFrom } from "rxjs";
 import { toArray } from "rxjs/operators";
 import { genericSignOperation } from "../signOperation";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import { getCoinModuleApi } from "../api";
-import { buildOptimisticOperation, transactionToIntent } from "../utils";
+import { buildOptimisticOperation } from "../utils";
 
 jest.mock("../api", () => ({
   getCoinModuleApi: jest.fn(),
@@ -12,7 +13,6 @@ jest.mock("../api", () => ({
 jest.mock("../utils", () => ({
   ...jest.requireActual("../utils"),
   buildOptimisticOperation: jest.fn(),
-  transactionToIntent: jest.fn(),
 }));
 
 describe("genericSignOperation", () => {
@@ -23,33 +23,30 @@ describe("genericSignOperation", () => {
   };
 
   const transaction = {
-    amount: 100_000n,
-    fees: 500n,
+    amount: new BigNumber(100_000),
+    fees: new BigNumber(500),
     tag: 1234,
+    recipient: "rRecipient",
+    family: "xrp",
     recipientDomain: {
       domain: "recipient.gen",
       address: "recipient-address",
     },
   } as any;
 
-  const txIntent = {
-    memo: {
-      type: "map",
-      memos: new Map(),
-    },
-  };
+  const craftTransaction = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
 
+    craftTransaction.mockResolvedValue({ transaction: "unsignedTx" });
     (getCoinModuleApi as jest.Mock).mockReturnValue({
-      craftTransaction: jest.fn().mockResolvedValue({ transaction: "unsignedTx" }),
+      craftTransaction,
       getAccountInfo: jest.fn().mockResolvedValue("pubKey"),
       combine: jest.fn().mockResolvedValue("signedTx"),
       getNextSequence: jest.fn().mockResolvedValue(1n),
     });
 
-    (transactionToIntent as jest.Mock).mockReturnValue(txIntent);
     (buildOptimisticOperation as jest.Mock).mockReturnValue({ id: "mock-op" });
 
     mockSigner.getAddress.mockResolvedValue({ publicKey: "pubKey" });
@@ -61,11 +58,11 @@ describe("genericSignOperation", () => {
     freshAddressPath: "44'/144'/0'/0/0",
     freshAddress: "rTestAddress",
     address: "rTestAddress",
-    currency: { id: "testnet" },
+    currency: { id: "ripple", name: "ripple", units: [{ name: "ripple", code: "XRP" }] },
   } as any;
 
-  it("emits full sign operation flow", async () => {
-    const signOperation = genericSignOperation("testnet", "local")(mockSignerContext);
+  it("emits full sign operation flow and forwards destination tag to craftTransaction", async () => {
+    const signOperation = genericSignOperation("mainnet", "xrp")(mockSignerContext);
     const observable = signOperation({ account, transaction, deviceId: "" });
 
     const events = await lastValueFrom(observable.pipe(toArray()));
@@ -80,20 +77,24 @@ describe("genericSignOperation", () => {
       },
     });
 
-    expect(transactionToIntent).toHaveBeenCalledWith(account, transaction, undefined, undefined);
     expect(mockSigner.signTransaction).toHaveBeenCalledWith("44'/144'/0'/0/0", "unsignedTx", {
       domain: "recipient.gen",
       address: "recipient-address",
       derivationMode: undefined,
     });
-    expect(txIntent.memo.memos.get("destinationTag")).toBe("1234");
+    expect(craftTransaction).toHaveBeenCalledWith(
+      expect.objectContaining({
+        memo: { type: "map", memos: new Map([["destinationTag", "1234"]]) },
+      }),
+      expect.anything(),
+    );
   });
 
   it("throws FeeNotLoaded if fees are missing", async () => {
     const txWithoutFees = { ...transaction };
     delete txWithoutFees.fees;
 
-    const signOperation = genericSignOperation("testnet", "local")(mockSignerContext);
+    const signOperation = genericSignOperation("mainnet", "xrp")(mockSignerContext);
     const observable = signOperation({ account, transaction: txWithoutFees, deviceId: "" });
 
     await expect(lastValueFrom(observable)).rejects.toThrow(FeeNotLoaded);
