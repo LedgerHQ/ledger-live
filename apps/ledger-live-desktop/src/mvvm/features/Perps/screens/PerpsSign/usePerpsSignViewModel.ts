@@ -32,6 +32,7 @@ export type PerpsSignViewModel = {
   closing: boolean;
   handleDeviceResult: (result: AppResult) => void;
   handleDeviceError: (error: Error) => void;
+  handleOpenManager: () => void;
 };
 
 export function usePerpsSignViewModel(
@@ -101,6 +102,13 @@ export function usePerpsSignViewModel(
     [data, onClose],
   );
 
+  // User navigated to My Ledger to install/update the required app.
+  // Dismiss the dialog; the unmount cleanup will fire data.onCancel().
+  const handleOpenManager = useCallback(() => {
+    setClosing(true);
+    onClose();
+  }, [onClose]);
+
   return {
     phase: device ? "sign" : "connect",
     closing,
@@ -109,5 +117,6 @@ export function usePerpsSignViewModel(
     request,
     handleDeviceResult,
     handleDeviceError,
+    handleOpenManager,
   };
 }

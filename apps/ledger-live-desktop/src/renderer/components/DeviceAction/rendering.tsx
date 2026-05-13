@@ -347,6 +347,7 @@ const OpenManagerBtn = ({
   appName,
   updateApp,
   firmwareUpdate,
+  onOpenManager,
   mt = 2,
   ml = 0,
 }: {
@@ -355,6 +356,7 @@ const OpenManagerBtn = ({
   appName?: string;
   updateApp?: boolean;
   firmwareUpdate?: boolean;
+  onOpenManager?: () => void;
   mt?: number;
   ml?: number;
 }) => {
@@ -373,6 +375,7 @@ const OpenManagerBtn = ({
     closeAllModal();
     closePlatformAppDrawer();
     setDrawer(undefined);
+    onOpenManager?.();
   }, [
     updateApp,
     firmwareUpdate,
@@ -381,6 +384,7 @@ const OpenManagerBtn = ({
     closeAllModal,
     closePlatformAppDrawer,
     setDrawer,
+    onOpenManager,
   ]);
 
   return (
@@ -414,7 +418,13 @@ const OpenManagerButton = connect(null, {
   closePlatformAppDrawer,
 })(OpenManagerBtn);
 
-export const renderRequiresAppInstallation = ({ appNames }: { appNames: string[] }) => {
+export const renderRequiresAppInstallation = ({
+  appNames,
+  onOpenManager,
+}: {
+  appNames: string[];
+  onOpenManager?: () => void;
+}) => {
   const appNamesCSV = appNames.join(", ");
   return (
     <Wrapper>
@@ -432,7 +442,7 @@ export const renderRequiresAppInstallation = ({ appNames }: { appNames: string[]
         />
       </ErrorDescription>
       <Box mt={24}>
-        <OpenManagerButton appName={appNamesCSV} />
+        <OpenManagerButton appName={appNamesCSV} onOpenManager={onOpenManager} />
       </Box>
     </Wrapper>
   );
