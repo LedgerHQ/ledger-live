@@ -1,7 +1,7 @@
 import React from "react";
 import { Banner, Box, Tag, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useTheme as useStyledTheme } from "styled-components/native";
-import { DeviceActionAnimation } from "./DeviceActionAnimation";
+import Animation from "~/components/Animation";
 import {
   getDeviceActionAnimation,
   getDeviceActionAnimationStyle,
@@ -32,11 +32,13 @@ export function DeviceActionContent({
   return (
     <Box lx={rootStyle} testID={testID}>
       <Box lx={deviceSectionStyle}>
-        <DeviceActionAnimation
-          source={animationSource}
-          style={getDeviceActionAnimationStyle(deviceModelId)}
-          testID={testID ? `${testID}-animation` : undefined}
-        />
+        {animationSource ? (
+          <Animation
+            source={animationSource}
+            style={getDeviceActionAnimationStyle(deviceModelId)}
+            testID={testID ? `${testID}-animation` : undefined}
+          />
+        ) : null}
         {deviceName ? <Tag size="md" appearance="gray" label={deviceName} /> : null}
       </Box>
 
