@@ -12,7 +12,7 @@ permissions:
 jobs:
   nightly-release:
     name: Nightly Release
-    runs-on: ledger-live-linux-8CPU-32RAM
+    runs-on: ubuntu-24.04
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
@@ -29,7 +29,7 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
-          ref: support/wallet-cli-npm
+          ref: develop
           fetch-depth: 1
           token: ${{ steps.generate-token.outputs.token }}
 
@@ -55,7 +55,7 @@ jobs:
           ruby-version: 3.3.0
 
       - name: install dependencies
-        run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli" -F "@ledgerhq/wallet-cli..." -F "@ledgerhq/wallet-cli-*"
+        run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli"
 
       - name: build libs
         run: pnpm exec nx run-many -t build --projects=tag:scope:libs
@@ -79,24 +79,6 @@ jobs:
         run: pnpm changeset publish --tag nightly --no-git-tag
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
-
-      - uses: actions/github-script@v7
-        name: trigger nightly wallet-cli sign and JFrog publish
-        with:
-          github-token: ${{ steps.generate-token.outputs.token }}
-          script: |
-            github.rest.actions.createWorkflowDispatch({
-              owner: "ledgerhq",
-              repo: "ledger-live-build",
-              ref: "main",
-              workflow_id: "nightly-wallet-cli.yml",
-              inputs: {
-                ref: "${{ steps.get-sha.outputs.sha }}",
-                version_override: "${{ steps.post-wallet-cli-version.outputs.version }}",
-                publish_to_jfrog: "true",
-                jfrog_registry: "jfrog.ledgerlabs.net/artifactory/api/npm/ledgerlive-npm-sandbox-green"
-              }
-            });
 
       - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
         id: post-desktop-version
@@ -143,6 +125,24 @@ jobs:
               workflow_id: "nightly-mobile.yml",
               inputs: {
                   version_override: "${{ steps.post-mobile-version.outputs.version }}"
+              }
+            });
+
+      - uses: actions/github-script@v7
+        name: trigger nightly wallet-cli sign and JFrog publish
+        with:
+          github-token: ${{ steps.generate-token.outputs.token }}
+          script: |
+            github.rest.actions.createWorkflowDispatch({
+              owner: "ledgerhq",
+              repo: "ledger-live-build",
+              ref: "main",
+              workflow_id: "nightly-wallet-cli.yml",
+              inputs: {
+                ref: "${{ steps.get-sha.outputs.sha }}",
+                version_override: "${{ steps.post-wallet-cli-version.outputs.version }}",
+                publish_to_jfrog: "true",
+                jfrog_registry: "jfrog.ledgerlabs.net/artifactory/api/npm/ledgerlive-npm-prod-public"
               }
             });
 
