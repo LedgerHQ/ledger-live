@@ -1,5 +1,4 @@
 import { ETH_SYNC_ROUTES } from "../helpers/eth-sync-routes";
-import { runCli } from "../helpers/cli-runner";
 import { MockServer } from "../helpers/mock-server";
 import "../../live-common-setup";
 import { afterEach, beforeEach, describe, expect, it, mock } from "bun:test";
@@ -117,7 +116,12 @@ async function runExecuteSwapCommand(flags: SwapExecuteFlags = baseFlags) {
   return JSON.parse(writes.join("").trim());
 }
 
-describe("executeSwapCommand", () => {
+/**
+ * Keep this file focused on CLI-level registration/validation. Pipeline wiring is
+ * covered in apps/wallet-cli/src/commands/swap/execute.test.ts with explicit
+ * dependency injection, so this test does not need process-wide Bun module mocks.
+ */
+describe("swap execute command", () => {
   const server = new MockServer(ETH_SYNC_ROUTES);
 
   beforeEach(() => {
@@ -157,19 +161,6 @@ describe("executeSwapCommand", () => {
     expect(pipelineInput.fromAccount.id).toBe(fromDescriptor.id);
     expect(pipelineInput.toAccount.id).toBe(toDescriptor.id);
     expect(pipelineInput.getAccountBridge).toBe(getAccountBridgeMock);
-  });
-
-  it("rejects an unsupported --provider before running the pipeline", async () => {
-    await expect(
-      runExecuteSwapCommand({ ...baseFlags, provider: "unknown_provider" }),
-    ).rejects.toThrow(/Unsupported swap provider/);
-    expect(runFullSwapPipelineMock).not.toHaveBeenCalled();
-  });
-
-  it("passes changelly_v2 through to the pipeline when --provider is changelly_v2", async () => {
-    await runExecuteSwapCommand({ ...baseFlags, provider: "changelly_v2" });
-    const pipelineInput = runFullSwapPipelineMock.mock.calls[0][0];
-    expect(pipelineInput.provider).toBe("changelly_v2");
   });
 
   it("json: exits 1 when --to-account is missing", async () => {
