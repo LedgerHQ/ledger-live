@@ -1,17 +1,18 @@
 import React from "react";
-import { fireEvent, render, screen } from "@tests/test-renderer";
+import { render, screen } from "@tests/test-renderer";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { Search } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { InfoState, type InfoStatePreset } from ".";
+import { InfoState } from ".";
+import type { InfoStatePreset } from "./types";
 
 type VisualInfoStatePreset = Exclude<InfoStatePreset, "text">;
 
 describe("InfoState", () => {
-  it("renders title, description, banner, and actions", () => {
+  it("renders title, description, banner, and actions", async () => {
     const onPrimaryPress = jest.fn();
     const onSecondaryPress = jest.fn();
 
-    render(
+    const { user } = render(
       <InfoState
         preset="success"
         title="State title"
@@ -35,8 +36,8 @@ describe("InfoState", () => {
     expect(screen.getByText("Banner title")).toBeVisible();
     expect(screen.getByText("Banner description")).toBeVisible();
 
-    fireEvent.press(screen.getByTestId("info-state-primary"));
-    fireEvent.press(screen.getByTestId("info-state-secondary"));
+    await user.press(screen.getByTestId("info-state-primary"));
+    await user.press(screen.getByTestId("info-state-secondary"));
 
     expect(onPrimaryPress).toHaveBeenCalledTimes(1);
     expect(onSecondaryPress).toHaveBeenCalledTimes(1);
@@ -77,9 +78,7 @@ describe("InfoState", () => {
   });
 });
 
-function getPresetProps(
-  preset: VisualInfoStatePreset,
-): React.ComponentProps<typeof InfoState> {
+function getPresetProps(preset: VisualInfoStatePreset): React.ComponentProps<typeof InfoState> {
   switch (preset) {
     case "illustration":
       return {
@@ -101,5 +100,5 @@ function getPresetProps(
 }
 
 function assertNever(value: never): never {
-  throw new Error(`Unhandled info state preset: ${value}`);
+  throw new Error(`Unhandled info state preset: ${JSON.stringify(value)}`);
 }
