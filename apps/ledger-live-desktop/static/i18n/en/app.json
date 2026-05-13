@@ -408,6 +408,42 @@
         "refunded": "Refunded"
       }
     },
+    "modals": {
+      "transactionStatus": {
+        "title": "Swap {{sendTicker}} → {{receiveTicker}}",
+        "sections": {
+          "status": {
+            "heading": "Status",
+            "sendPending": "Sending {{ticker}}",
+            "sendCompleted": "Sent {{ticker}}",
+            "receivePending": "Receiving {{ticker}}",
+            "receiveCompleted": "Received {{ticker}}"
+          },
+          "details": {
+            "networkFees": "Network fees",
+            "receiveAccount": "Receive account",
+            "provider": "Provider",
+            "swapId": "Swap ID"
+          }
+        },
+        "statusLabels": {
+          "pending": "Ongoing",
+          "onhold": "On hold",
+          "expired": "Expired",
+          "finished": "Completed",
+          "refunded": "Refunded",
+          "cancelled": "Cancelled",
+          "unknown": "Unknown"
+        },
+        "actions": {
+          "viewInExplorer": "View in explorer",
+          "copied": "Copied"
+        },
+        "accessibility": {
+          "copySwapId": "Copy swap ID"
+        }
+      }
+    },
     "exchangeDrawer": {
       "title": "Confirm your Exchange",
       "completed": {

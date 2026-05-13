@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
@@ -23,7 +23,8 @@ import {
 import { Operation } from "@ledgerhq/types-live";
 
 import CompleteExchange, {
-  Data as CompleteExchangeData,
+  type CloseExchangeCompleteOptions,
+  type Data as CompleteExchangeData,
   isCompleteExchangeData,
 } from "~/renderer/modals/Platform/Exchange/CompleteExchange/Body";
 import { ExchangeType } from "@ledgerhq/live-common/wallet-api/Exchange/server";
@@ -102,10 +103,21 @@ export const LiveAppDrawer = () => {
   }, [dismissDisclaimerChecked, dispatch, payload]);
 
   const [exchangeCompleted, setExchangeCompleted] = React.useState(false);
+  const [shouldRestoreDrawerFocusOnClose, setShouldRestoreDrawerFocusOnClose] = useState(true);
 
-  const onCloseExchangeComplete = useCallback(() => {
-    dispatch(closePlatformAppDrawer());
-  }, [dispatch]);
+  useEffect(() => {
+    if (!isOpen && !shouldRestoreDrawerFocusOnClose) {
+      setShouldRestoreDrawerFocusOnClose(true);
+    }
+  }, [isOpen, shouldRestoreDrawerFocusOnClose]);
+
+  const onCloseExchangeComplete = useCallback(
+    ({ shouldRestoreFocusOnClose = true }: CloseExchangeCompleteOptions = {}) => {
+      setShouldRestoreDrawerFocusOnClose(shouldRestoreFocusOnClose);
+      dispatch(closePlatformAppDrawer());
+    },
+    [dispatch],
+  );
 
   const action = useStartExchangeAction();
 
@@ -267,10 +279,12 @@ export const LiveAppDrawer = () => {
           });
         }
         dispatch(closePlatformAppDrawer());
+        setShouldRestoreDrawerFocusOnClose(true);
         // Reset state for next time
         setExchangeCompleted(false);
       }}
       direction="left"
+      shouldRestoreFocusOnClose={shouldRestoreDrawerFocusOnClose}
     >
       <ContentWrapper>{drawerContent}</ContentWrapper>
     </SideDrawer>
