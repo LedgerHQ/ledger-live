@@ -48,7 +48,7 @@ const allowedSwapExecuteProviderInput = new Set<string>(WALLET_CLI_DEFAULT_SWAP_
  * Validates `swap execute --provider` against the wallet-cli quote provider set and maps legacy
  * `changelly` to `changelly_v2` for the exchange API.
  */
-function resolveSwapExecuteProvider(provider: string): string {
+export function resolveSwapProvider(provider: string): string {
   if (!allowedSwapExecuteProviderInput.has(provider)) {
     throw new Error(
       `Unsupported swap provider "${provider}". Allowed: ${WALLET_CLI_DEFAULT_SWAP_PROVIDERS.join(", ")}.`,
@@ -79,7 +79,7 @@ export async function executeSwapCommand({
     throw new Error(`Unknown destination currency (--to): ${flags.to}`);
   }
 
-  const provider = resolveSwapExecuteProvider(flags.provider);
+  const provider = resolveSwapProvider(flags.provider);
 
   const network = networkStringFromCurrencyId(flags.from);
 
