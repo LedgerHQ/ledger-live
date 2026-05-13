@@ -1401,8 +1401,9 @@
         "actionCompletedPopupLabel": "Accounts synced"
       },
       "recover": {
-        "title": "Subscribe to Ledger Recover",
-        "description": "Restore access to your wallet without needing your Secret Recovery Phrase.",
+        "title": "Finish securing your backup",
+        "titleCompleted": "Backup secured",
+        "description": "Complete activating Ledger Recover",
         "actionCompletedPopupLabel": "Successfully subscribed to Ledger Recover"
       }
     }
@@ -4942,6 +4943,13 @@
           "completed": "Product tour is marked as completed.",
           "notCompleted": "Product tour is not completed yet.",
           "open": "Open"
+        },
+        "recover": {
+          "title": "Recover",
+          "description": "Set the local Ledger Recover subscription state to test the post-onboarding hub and recover banner.",
+          "noSubscription": "No subscription",
+          "inProgress": "In progress",
+          "backupDone": "Backup done"
         }
       },
       "walletFeaturesDevTool": {
