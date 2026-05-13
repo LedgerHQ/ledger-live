@@ -6,6 +6,7 @@ import { render, screen } from "tests/testSetup";
 import dbMiddleware from "~/renderer/middlewares/db";
 import type { State } from "~/renderer/reducers";
 import createStore from "~/state-manager/configureStore";
+import { usePortfolioAddRecoverPostOnboardingAction } from "LLD/features/FinishOnboarding/RecoverWidget/usePortfolioAddRecoverPostOnboardingAction";
 import { useRecoverWidgetViewModel } from "LLD/features/FinishOnboarding/RecoverWidget/useRecoverWidgetViewModel";
 import { useBannersVisibility } from "../../hooks/useBannersVisibility";
 import { PortfolioBannerContent } from "..";
@@ -32,6 +33,13 @@ jest.mock("LLD/features/FinishOnboarding/RecoverWidget/useRecoverWidgetViewModel
   useRecoverWidgetViewModel: jest.fn(),
 }));
 
+jest.mock(
+  "LLD/features/FinishOnboarding/RecoverWidget/usePortfolioAddRecoverPostOnboardingAction",
+  () => ({
+    usePortfolioAddRecoverPostOnboardingAction: jest.fn(),
+  }),
+);
+
 jest.mock("LLD/features/LNSUpsell", () => ({
   LNSUpsellBanner: () => <div data-testid="lns-upsell-banner" />,
 }));
@@ -52,6 +60,7 @@ jest.mock("../../hooks/useBannersVisibility", () => ({
 
 const mockUseBannersVisibility = jest.mocked(useBannersVisibility);
 const mockUseRecoverWidgetViewModel = jest.mocked(useRecoverWidgetViewModel);
+const mockUseEnsureRecoverPostOnboardingAction = jest.mocked(usePortfolioAddRecoverPostOnboardingAction);
 
 function defaultRecoverWidgetViewModelReturn() {
   return {
@@ -107,8 +116,44 @@ function postOnboardingInProgressState(): PostOnboardingState {
 describe("PortfolioBannerContent", () => {
   beforeEach(() => {
     mockUseBannersVisibility.mockClear();
+    mockUseEnsureRecoverPostOnboardingAction.mockClear();
     mockUseRecoverWidgetViewModel.mockReturnValue(defaultRecoverWidgetViewModelReturn());
     setVisibility({});
+  });
+
+  describe("Recover post-onboarding action orchestration", () => {
+    it.each([
+      [
+        "Wallet40 LNS upsell branch (Recover widget subtree not mounted)",
+        {
+          shouldDisplayFinishOnboardingWidget: true,
+          isLNSUpsellBannerVisible: true,
+          isFinishOnboardingWidgetVisible: true,
+        },
+      ],
+      [
+        "legacy RecoverBanner branch",
+        {
+          shouldDisplayFinishOnboardingWidget: false,
+          isLNSUpsellBannerVisible: false,
+          isActionCardsVisible: false,
+        },
+      ],
+      [
+        "Wallet40 finish/recover row branch",
+        {
+          shouldDisplayFinishOnboardingWidget: true,
+          isLNSUpsellBannerVisible: false,
+          isFinishOnboardingWidgetVisible: true,
+        },
+      ],
+    ])("calls usePortfolioAddRecoverPostOnboardingAction in %s", (_, visibility) => {
+      setVisibility(visibility);
+
+      render(<PortfolioBannerContent />);
+
+      expect(mockUseEnsureRecoverPostOnboardingAction).toHaveBeenCalled();
+    });
   });
 
   it("renders PostOnboardingHubBanner branch when post-onboarding is visible and finish widget is hidden", () => {

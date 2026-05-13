@@ -8,21 +8,18 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import * as UseCompletionScreenViewModel from "../useCompletionScreenViewModel";
 
 jest.mock("../useCompletionScreenViewModel", () => ({
-  ...jest.requireActual("../useCompletionScreenViewModel"),
   useCompletionScreenViewModel: jest.fn(),
 }));
 
-const mockViewModel = jest.fn();
-
 describe("CompletionScreen", () => {
   beforeEach(() => {
-    mockViewModel.mockReset();
+    jest.mocked(UseCompletionScreenViewModel.useCompletionScreenViewModel).mockReset();
   });
 
   [DeviceModelId.stax, DeviceModelId.apex, DeviceModelId.europa].forEach(deviceModelId =>
     it(`should display ${deviceModelId} animation and redirect to post onboarding`, async () => {
       jest
-        .spyOn(UseCompletionScreenViewModel, "useCompletionScreenViewModel")
+        .mocked(UseCompletionScreenViewModel.useCompletionScreenViewModel)
         .mockImplementation(() => ({
           seedConfiguration: "new_seed",
           deviceModelId,
