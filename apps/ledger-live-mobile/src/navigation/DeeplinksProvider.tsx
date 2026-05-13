@@ -12,6 +12,7 @@ import Config from "react-native-config";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { BUY_SELL_UI_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
+import { parseSwapTransactionStatusParams } from "@ledgerhq/live-common/exchange/transactionStatus/index";
 import Braze from "@braze/react-native-sdk";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
@@ -30,6 +31,7 @@ import { blockPasswordLock, tickProductTourDeeplink } from "../actions/appstate"
 import { handleModularDrawerDeeplink } from "LLM/features/ModularDrawer";
 import { isValidInstallApp } from "LLM/features/DeeplinkInstallApp";
 import { openDeeplinkInstallAppDrawer } from "~/actions/deeplinkInstallApp";
+import { openSwapTransactionStatusDrawer } from "~/reducers/swapTransactionStatusDrawer";
 import { logLastStartupEvents } from "LLM/utils/logLastStartupEvents";
 import { logStartupEvent } from "LLM/utils/logStartupTime";
 import { STARTUP_EVENTS } from "LLM/utils/resolveStartupEvents";
@@ -830,6 +832,22 @@ export const DeeplinksProvider = ({
             const swapSearch = swapParams.toString();
             const pathWithParams = swapSearch ? `swap?${swapSearch}` : "swap";
             return getStateFromPath(pathWithParams, config);
+          }
+
+          if (
+            (hostname === "connect" && pathname === "/swap/transaction-status") ||
+            hostname === "transaction-status"
+          ) {
+            const result = parseSwapTransactionStatusParams({
+              ...query,
+              kind:
+                hostname === "connect" || platform === "swap" || !platform
+                  ? "swap"
+                  : (platform as never),
+            });
+            if (!result.ok) return;
+            dispatch(openSwapTransactionStatusDrawer(result.params));
+            return getStateFromPath("portfolio", config);
           }
 
           if (hostname === "product-tour" && isProductTourEligible) {

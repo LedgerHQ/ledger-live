@@ -4045,6 +4045,42 @@
       "history": {
         "title": "Swap history"
       },
+      "modals": {
+        "transactionStatus": {
+          "title": "Swap {{sendTicker}} → {{receiveTicker}}",
+          "sections": {
+            "status": {
+              "heading": "Status",
+              "sendPending": "Sending {{ticker}}",
+              "sendCompleted": "Sent {{ticker}}",
+              "receivePending": "Receiving {{ticker}}",
+              "receiveCompleted": "Received {{ticker}}"
+            },
+            "details": {
+              "networkFees": "Network fees",
+              "receiveAccount": "Receive account",
+              "provider": "Provider",
+              "swapId": "Swap ID"
+            }
+          },
+          "statusLabels": {
+            "pending": "Pending",
+            "onhold": "On hold",
+            "expired": "Expired",
+            "finished": "Completed",
+            "refunded": "Refunded",
+            "unknown": "Unknown"
+          },
+          "actions": {
+            "viewInExplorer": "View in explorer",
+            "copied": "Copied"
+          },
+          "accessibility": {
+            "close": "Close",
+            "copySwapId": "Copy swap ID"
+          }
+        }
+      },
       "wrongDevice": {
         "title": "Ledger Nano S™ is not compatible with {{provider}}",
         "description": "Ledger Nano S™ is not compatible with {{provider}}. You can use Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™, or Ledger Flex™ to experience cross-chain swaps on {{provider}} via Ledger Wallet",
