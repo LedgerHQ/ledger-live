@@ -8675,7 +8675,9 @@
   },
   "contacts": {
     "title": "Contacts (alpha)",
+    "storageTitle": "Local store",
     "connect": "Connect device",
+    "disconnect": "Disconnect",
     "connecting": "Connecting…",
     "connected": "Connected",
     "disconnected": "No device",
@@ -8691,7 +8693,9 @@
     "walletState": "Wallet state",
     "lastResult": "Last result",
     "lastError": "Last error",
-    "empty": "Local store is empty"
+    "empty": "Local store is empty",
+    "viewStorage": "View local store",
+    "errorHint": "Last action failed — see local store for details."
   },
   "geoBlocking": {
     "title": "Location unavailable",

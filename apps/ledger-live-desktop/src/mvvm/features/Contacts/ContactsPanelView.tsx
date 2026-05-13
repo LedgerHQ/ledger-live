@@ -1,12 +1,11 @@
 import React, { useCallback, useState } from "react";
 import { firstValueFrom } from "rxjs";
-import { Button } from "@ledgerhq/lumen-ui-react";
+import { Button, Link } from "@ledgerhq/lumen-ui-react";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-desktop";
 import { useTranslation } from "react-i18next";
 import { useContacts } from "~/renderer/contacts/useContacts";
 import type { ContactsPanelViewProps } from "./types";
 
-// Hard-coded smoke fixtures (L1 only). L3 replaces these with real form input.
 const FIXTURE = {
   contactName: "Alice",
   renamedTo: "Bob",
@@ -22,7 +21,14 @@ const FIXTURE = {
   accountPath: "44'/60'/0'/0/1",
 };
 
-const ContactsPanelView = ({ sessionId, setSessionId }: ContactsPanelViewProps) => {
+type VerbDef = { label: string; key: string; fn: () => Promise<unknown> };
+
+const ContactsPanelView = ({
+  sessionId,
+  setSessionId,
+  subView,
+  setSubView,
+}: ContactsPanelViewProps) => {
   const { t } = useTranslation();
   const dmk = useDeviceManagementKit();
   const contacts = useContacts(sessionId);
@@ -30,6 +36,7 @@ const ContactsPanelView = ({ sessionId, setSessionId }: ContactsPanelViewProps) 
   const [lastResult, setLastResult] = useState<unknown>(null);
   const [lastError, setLastError] = useState<string | null>(null);
   const [connecting, setConnecting] = useState(false);
+  const [pendingVerb, setPendingVerb] = useState<string | null>(null);
 
   const handleConnect = useCallback(async () => {
     if (!dmk) {
@@ -59,28 +66,133 @@ const ContactsPanelView = ({ sessionId, setSessionId }: ContactsPanelViewProps) 
   }, [dmk, sessionId, setSessionId]);
 
   const runVerb = useCallback(
-    (label: string, fn: () => Promise<unknown>) => async () => {
+    (key: string, fn: () => Promise<unknown>) => async () => {
       setLastError(null);
       setLastResult(null);
+      setPendingVerb(key);
       try {
         const result = await fn();
-        setLastResult({ verb: label, result });
+        setLastResult({ verb: key, result });
       } catch (e) {
         setLastError(e instanceof Error ? e.message : String(e));
+      } finally {
+        setPendingVerb(null);
       }
     },
     [],
   );
 
+  const verbs: VerbDef[] = [
+    {
+      key: "addContact",
+      label: t("contacts.actions.addContact"),
+      fn: () =>
+        contacts.addContact({
+          name: FIXTURE.contactName,
+          addressHex: FIXTURE.addressMainnet,
+          scope: FIXTURE.scopeMainnet,
+          derivationPath: FIXTURE.derivationPath,
+          chainId: FIXTURE.chainIdMainnet,
+        }),
+    },
+    {
+      key: "addAddressToContact",
+      label: t("contacts.actions.addAddressToContact"),
+      fn: () =>
+        contacts.addAddressToContact({
+          contactName: FIXTURE.contactName,
+          name: FIXTURE.contactName,
+          addressHex: FIXTURE.addressPolygon,
+          scope: "Polygon",
+          derivationPath: FIXTURE.derivationPath,
+          chainId: FIXTURE.chainIdPolygon,
+        }),
+    },
+    {
+      key: "editAddressLabel",
+      label: t("contacts.actions.editAddressLabel"),
+      fn: () =>
+        contacts.editAddressLabel({
+          contactName: FIXTURE.contactName,
+          oldLabel: FIXTURE.scopeMainnet,
+          newLabel: FIXTURE.scopeRenamedLabel,
+          addressHex: FIXTURE.addressMainnet,
+          chainId: FIXTURE.chainIdMainnet,
+        }),
+    },
+    {
+      key: "editAddress",
+      label: t("contacts.actions.editAddress"),
+      fn: () =>
+        contacts.editAddress({
+          contactName: FIXTURE.contactName,
+          oldAddressHex: FIXTURE.addressMainnet,
+          newAddressHex: FIXTURE.addressRotated,
+          chainId: FIXTURE.chainIdMainnet,
+        }),
+    },
+    {
+      key: "renameContact",
+      label: t("contacts.actions.renameContact"),
+      fn: () =>
+        contacts.renameContact({
+          oldName: FIXTURE.contactName,
+          newName: FIXTURE.renamedTo,
+        }),
+    },
+    {
+      key: "addLedgerAccount",
+      label: t("contacts.actions.addLedgerAccount"),
+      fn: () =>
+        contacts.addLedgerAccount({
+          name: FIXTURE.accountName,
+          derivationPath: FIXTURE.accountPath,
+          chainId: FIXTURE.chainIdMainnet,
+        }),
+    },
+  ];
+
   const isEmpty =
     Object.keys(contacts.wallet.contacts).length === 0 &&
     Object.keys(contacts.wallet.accounts).length === 0;
   const ready = contacts.isReady;
+  const isBusy = pendingVerb !== null || connecting;
+
+  if (subView === "storage") {
+    return (
+      <div className="flex flex-1 min-h-0 flex-col gap-12">
+        <section className="flex flex-col gap-4">
+          <p className="body-2-semi-bold text-base">{t("contacts.walletState")}</p>
+          <pre className="body-3 text-base bg-muted rounded-md p-12 overflow-auto whitespace-pre-wrap break-all select-text">
+            {isEmpty ? t("contacts.empty") : JSON.stringify(contacts.wallet, null, 2)}
+          </pre>
+        </section>
+
+        {lastResult !== null && (
+          <section className="flex flex-col gap-4">
+            <p className="body-2-semi-bold text-base">{t("contacts.lastResult")}</p>
+            <pre className="body-3 text-base bg-muted rounded-md p-12 overflow-auto whitespace-pre-wrap break-all select-text">
+              {JSON.stringify(lastResult, null, 2)}
+            </pre>
+          </section>
+        )}
+
+        {lastError !== null && (
+          <section className="flex flex-col gap-4">
+            <p className="body-2-semi-bold text-error">{t("contacts.lastError")}</p>
+            <pre className="body-3 text-error bg-error-transparent rounded-md p-12 overflow-auto whitespace-pre-wrap break-all select-text">
+              {lastError}
+            </pre>
+          </section>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-16">
       <section className="flex flex-col gap-8">
-        <p className="body-2-medium">
+        <p className="body-2-medium text-base">
           {connecting
             ? t("contacts.connecting")
             : sessionId
@@ -88,15 +200,20 @@ const ContactsPanelView = ({ sessionId, setSessionId }: ContactsPanelViewProps) 
               : t("contacts.disconnected")}
         </p>
         {sessionId ? (
-          <Button appearance="gray" size="sm" onClick={handleDisconnect}>
-            Disconnect
+          <Button
+            appearance="gray"
+            size="sm"
+            disabled={isBusy}
+            onClick={handleDisconnect}
+          >
+            {t("contacts.disconnect")}
           </Button>
         ) : (
           <Button
             appearance="accent"
             size="sm"
             loading={connecting}
-            disabled={connecting || !dmk}
+            disabled={isBusy || !dmk}
             onClick={handleConnect}
           >
             {t("contacts.connect")}
@@ -105,139 +222,38 @@ const ContactsPanelView = ({ sessionId, setSessionId }: ContactsPanelViewProps) 
       </section>
 
       <section className="flex flex-col gap-8">
-        <Button
-          appearance="gray"
-          size="sm"
-          disabled={!ready}
-          onClick={runVerb("addContact", () =>
-            contacts.addContact({
-              name: FIXTURE.contactName,
-              addressHex: FIXTURE.addressMainnet,
-              scope: FIXTURE.scopeMainnet,
-              derivationPath: FIXTURE.derivationPath,
-              chainId: FIXTURE.chainIdMainnet,
-            }),
-          )}
-        >
-          {t("contacts.actions.addContact")}
-        </Button>
-
-        <Button
-          appearance="gray"
-          size="sm"
-          disabled={!ready}
-          onClick={runVerb("addAddressToContact", () =>
-            contacts.addAddressToContact({
-              contactName: FIXTURE.contactName,
-              name: FIXTURE.contactName,
-              addressHex: FIXTURE.addressPolygon,
-              scope: "Polygon",
-              derivationPath: FIXTURE.derivationPath,
-              chainId: FIXTURE.chainIdPolygon,
-            }),
-          )}
-        >
-          {t("contacts.actions.addAddressToContact")}
-        </Button>
-
-        <Button
-          appearance="gray"
-          size="sm"
-          disabled={!ready}
-          onClick={runVerb("editAddressLabel", () =>
-            contacts.editAddressLabel({
-              contactName: FIXTURE.contactName,
-              oldLabel: FIXTURE.scopeMainnet,
-              newLabel: FIXTURE.scopeRenamedLabel,
-              addressHex: FIXTURE.addressMainnet,
-              chainId: FIXTURE.chainIdMainnet,
-            }),
-          )}
-        >
-          {t("contacts.actions.editAddressLabel")}
-        </Button>
-
-        <Button
-          appearance="gray"
-          size="sm"
-          disabled={!ready}
-          onClick={runVerb("editAddress", () =>
-            contacts.editAddress({
-              contactName: FIXTURE.contactName,
-              oldAddressHex: FIXTURE.addressMainnet,
-              newAddressHex: FIXTURE.addressRotated,
-              chainId: FIXTURE.chainIdMainnet,
-            }),
-          )}
-        >
-          {t("contacts.actions.editAddress")}
-        </Button>
-
-        <Button
-          appearance="gray"
-          size="sm"
-          disabled={!ready}
-          onClick={runVerb("renameContact", () =>
-            contacts.renameContact({
-              oldName: FIXTURE.contactName,
-              newName: FIXTURE.renamedTo,
-            }),
-          )}
-        >
-          {t("contacts.actions.renameContact")}
-        </Button>
-
-        <Button
-          appearance="gray"
-          size="sm"
-          disabled={!ready}
-          onClick={runVerb("addLedgerAccount", () =>
-            contacts.addLedgerAccount({
-              name: FIXTURE.accountName,
-              derivationPath: FIXTURE.accountPath,
-              chainId: FIXTURE.chainIdMainnet,
-            }),
-          )}
-        >
-          {t("contacts.actions.addLedgerAccount")}
-        </Button>
+        {verbs.map(v => (
+          <Button
+            key={v.key}
+            appearance="gray"
+            size="sm"
+            loading={pendingVerb === v.key}
+            disabled={!ready || (isBusy && pendingVerb !== v.key)}
+            onClick={runVerb(v.key, v.fn)}
+          >
+            {v.label}
+          </Button>
+        ))}
       </section>
 
       <section className="flex flex-col gap-8">
         <Button
           appearance="red"
           size="sm"
-          disabled={isEmpty}
+          loading={pendingVerb === "reset"}
+          disabled={isEmpty || (isBusy && pendingVerb !== "reset")}
           onClick={runVerb("reset", () => contacts.reset())}
         >
           {t("contacts.actions.reset")}
         </Button>
       </section>
 
-      <section className="flex flex-col gap-4">
-        <p className="body-2-semi-bold">{t("contacts.walletState")}</p>
-        <pre className="body-3-regular bg-base-c20 max-h-160 overflow-auto rounded p-8 text-xs">
-          {isEmpty ? t("contacts.empty") : JSON.stringify(contacts.wallet, null, 2)}
-        </pre>
+      <section className="flex flex-col items-start gap-4">
+        <Link onClick={() => setSubView("storage")}>{t("contacts.viewStorage")}</Link>
+        {lastError !== null && (
+          <p className="body-3 text-error">{t("contacts.errorHint")}</p>
+        )}
       </section>
-
-      {lastResult !== null && (
-        <section className="flex flex-col gap-4">
-          <p className="body-2-semi-bold">{t("contacts.lastResult")}</p>
-          <pre className="body-3-regular bg-base-c20 max-h-120 overflow-auto rounded p-8 text-xs">
-            {JSON.stringify(lastResult, null, 2)}
-          </pre>
-        </section>
-      )}
-
-      {lastError !== null && (
-        <section className="flex flex-col gap-4">
-          <p className="body-2-semi-bold text-error-c80">{t("contacts.lastError")}</p>
-          <pre className="body-3-regular bg-error-c20 max-h-120 overflow-auto rounded p-8 text-xs">
-            {lastError}
-          </pre>
-        </section>
-      )}
     </div>
   );
 };
