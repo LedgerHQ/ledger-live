@@ -76,11 +76,14 @@ const PlatformCompleteExchange: React.FC<Props> = ({
   }, [onResult, error]);
 
   const onCloseHandler = useCallback(() => {
-    // Prevent onClose being called twice
-    if (!hasPopped.current) {
+    // Only pop if the user actually dismissed the drawer on this screen.
+    // When the drawer closes due to a redirect (navigation away), isFocused is false
+    // and popping here would unwind the just-pushed destination — leave hasPopped
+    // unchanged so a later focused close can still pop.
+    if (!hasPopped.current && navigation.isFocused()) {
       navigation.pop();
+      hasPopped.current = true;
     }
-    hasPopped.current = true;
     onClose?.();
   }, [navigation, onClose]);
 

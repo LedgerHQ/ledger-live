@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import type { TFunction } from "i18next";
 import { Image, Linking, ScrollView } from "react-native";
-import { useSelector } from "~/context/hooks";
 import styled, { useTheme } from "styled-components/native";
 import { useTranslation } from "~/context/Locale";
 
@@ -30,17 +29,13 @@ import { WalletState } from "@ledgerhq/live-wallet/store";
 import { BoxedIcon, Flex, Icons, IconsLegacy, Link, Log, Tag, Text } from "@ledgerhq/native-ui";
 import { StuckDeviceActionHint } from "../StuckDeviceActionHint";
 import InfiniteLoader from "~/components/InfiniteLoader";
-import { DownloadMedium } from "@ledgerhq/native-ui/assets/icons";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import type { DeviceModelInfo } from "@ledgerhq/types-live";
 
-import { TrackScreen, track, useTrack } from "~/analytics";
+import { TrackScreen, track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { MANAGER_TABS } from "~/const/manager";
 import { getDeviceAnimation, getDeviceAnimationStyles } from "~/helpers/getDeviceAnimation";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
-import { lastSeenDeviceSelector } from "~/reducers/settings";
 import { SettingsState } from "~/reducers/types";
 import { urls } from "~/utils/urls";
 import { Theme, lighten } from "../../colors";
@@ -769,128 +764,6 @@ export function NanoSNotSupportedComponent() {
           </Link>
         </Flex>
       </GenericErrorView>
-    </Wrapper>
-  );
-}
-
-export function RequiredFirmwareUpdate({
-  device,
-  navigation,
-}: Omit<RawProps, "t"> & {
-  navigation: NativeStackNavigationProp<ParamListBase>;
-  device: Device;
-}) {
-  const { t } = useTranslation();
-  const track = useTrack();
-  const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(lastSeenDeviceSelector);
-  const { shouldDisplayWallet40MainNav, shouldDisplayMyWallet } = useWalletFeaturesConfig("mobile");
-
-  const usbFwUpdateActivated = !!lastSeenDevice;
-  const deviceName = getDeviceModel(device.modelId).productName;
-  const isDeviceConnectedViaUSB = device.wired;
-
-  // Goes to the manager if a firmware update is available, but only automatically
-  // displays the firmware update drawer if the device is already connected via USB
-  const onPress = () => {
-    track("button_clicked", {
-      button: "OpenMyLedger",
-      page: "Update_OS_To_Continue",
-    });
-
-    if (shouldDisplayMyWallet) {
-      const myWalletState = {
-        routes: [
-          {
-            name: ScreenName.MyWallet,
-            params: { device, firmwareUpdate: isDeviceConnectedViaUSB },
-          },
-        ],
-      };
-      navigation.reset({
-        index: 0,
-        routes: [
-          {
-            name: NavigatorName.Base,
-            state: {
-              index: 1,
-              routes: [
-                { name: NavigatorName.Main },
-                { name: NavigatorName.MyWallet, state: myWalletState },
-              ],
-            },
-          },
-        ],
-      });
-    } else {
-      const myLedgerState = {
-        routes: [
-          {
-            name: ScreenName.MyLedgerChooseDevice,
-            params: { device, firmwareUpdate: isDeviceConnectedViaUSB },
-          },
-        ],
-      };
-      if (shouldDisplayWallet40MainNav) {
-        navigation.reset({
-          index: 1,
-          routes: [
-            { name: NavigatorName.Main },
-            { name: NavigatorName.MyLedger, state: myLedgerState },
-          ],
-        });
-      } else {
-        navigation.reset({
-          index: 0,
-          routes: [
-            {
-              name: NavigatorName.Main,
-              state: {
-                routes: [{ name: NavigatorName.MyLedger, state: myLedgerState }],
-              },
-            },
-          ],
-        });
-      }
-    }
-  };
-
-  return (
-    <Wrapper>
-      <Flex flexDirection="column" alignItems="center" alignSelf="stretch">
-        <TrackScreen category="Firmware Update" name="Error: App Unavailable Update Firmware" />
-        <Flex mb={5}>
-          <BoxedIcon size={64} Icon={DownloadMedium} iconSize={24} iconColor="neutral.c100" />
-        </Flex>
-
-        <Text variant="h4" fontWeight="semiBold" textAlign="center" numberOfLines={3} mb={6}>
-          {usbFwUpdateActivated
-            ? t("firmwareUpdateRequired.updateAvailableFromLLM.title", {
-                deviceName,
-              })
-            : t("firmwareUpdateRequired.updateNotAvailableFromLLM.title", {
-                deviceName,
-              })}
-        </Text>
-        <Text variant="paragraph" textAlign="center" numberOfLines={3} mb={6}>
-          {usbFwUpdateActivated
-            ? t("firmwareUpdateRequired.updateAvailableFromLLM.description", {
-                deviceName,
-              })
-            : t("firmwareUpdateRequired.updateNotAvailableFromLLM.description", {
-                deviceName,
-              })}
-        </Text>
-        {usbFwUpdateActivated ? (
-          <ActionContainer marginBottom={0} marginTop={32}>
-            <StyledButton
-              type="main"
-              outline={false}
-              title={t("firmwareUpdateRequired.updateAvailableFromLLM.cta")}
-              onPress={onPress}
-            />
-          </ActionContainer>
-        ) : null}
-      </Flex>
     </Wrapper>
   );
 }
