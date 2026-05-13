@@ -66,6 +66,11 @@ on:
         required: false
         type: string
         default: "true"
+      disable-turbo-cache:
+        description: Disable turbo caching
+        required: false
+        type: boolean
+        default: true
 
 permissions:
   id-token: write
