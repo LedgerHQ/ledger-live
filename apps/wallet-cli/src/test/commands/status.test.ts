@@ -3,14 +3,14 @@ import { MockServer } from "../helpers/mock-server";
 import { runCli } from "../helpers/cli-runner";
 
 const SWAP_ID = "swap-123";
-const PROVIDER = "test";
+const PROVIDER = "exodus";
 
 describe("swap status", () => {
   const server = new MockServer([
     {
       method: "POST",
       match: /\/swap\/status/,
-      response: [{ provider: "test", swapId: SWAP_ID, status: "pending" }],
+      response: [{ provider: "exodus", swapId: SWAP_ID, status: "pending" }],
     },
   ]);
 
@@ -43,5 +43,17 @@ describe("swap status", () => {
     expect(data.network).toBe("swap");
     expect(data.swapId).toBe(SWAP_ID);
     expect(data.status).toBe("PENDING");
+  });
+
+  it("exits with code 1 when --provider is not on the allow-list", async () => {
+    const { exitCode } = await runCli([
+      "swap",
+      "status",
+      "--swap-id",
+      SWAP_ID,
+      "--provider",
+      "unknown_provider",
+    ]);
+    expect(exitCode).toBe(1);
   });
 });

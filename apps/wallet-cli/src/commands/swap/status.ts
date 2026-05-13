@@ -5,6 +5,7 @@ import { walletCliDebug } from "../../shared/log";
 import { createCommandOutput } from "../../output";
 import { outputOption, resolveOutputFormat } from "../inputs";
 import { mapSwapStatusLine } from "./status-shared";
+import { resolveSwapProvider } from "./providers";
 
 export default defineCommand({
   name: "status",
@@ -24,11 +25,11 @@ export default defineCommand({
       `swap status: swapId=${flags["swap-id"]} provider=${flags.provider} output=${output}`,
     );
     const out = createCommandOutput(output, { command: "swap status", network: "swap" });
-
+    const provider = resolveSwapProvider(flags.provider);
     await out.run(async () => {
       const raw = await getMultipleStatus([
         {
-          provider: flags.provider,
+          provider,
           swapId: flags["swap-id"],
         },
       ]);

@@ -11,7 +11,7 @@ import {
   resolveAccountDescriptorV1,
   resolveOutputFormat,
 } from "../inputs";
-import { mapSwapQuoteLine } from "./quote-shared";
+import { mapSwapQuoteLine, WALLET_CLI_DEFAULT_SWAP_PROVIDERS } from "./quote-shared";
 
 const walletCliSupportedSwapCurrencyIds = new Set<string>(WALLET_CLI_SUPPORTED_CRYPTO_CURRENCY_IDS);
 
@@ -22,16 +22,6 @@ function assertWalletCliSwapCurrencyId(id: string, role: "from" | "to"): void {
     );
   }
 }
-
-const DEFAULT_PROVIDERS = [
-  "changelly_v2",
-  "changelly",
-  "cic_v2",
-  "cic",
-  "exodus",
-  "nearintents",
-  "swapsxyz",
-];
 
 type SwapAddressFlags = {
   accountFlag: "--from-account" | "--to-account";
@@ -118,7 +108,7 @@ export default defineCommand({
       const s = out.spin("Fetching swap quotes…");
       const result = await getQuotes(
         {
-          providers: DEFAULT_PROVIDERS,
+          providers: [...WALLET_CLI_DEFAULT_SWAP_PROVIDERS],
           data: {
             amount: flags.amount,
             uniswapOrderType: "classic",

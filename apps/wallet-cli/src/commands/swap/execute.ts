@@ -17,6 +17,7 @@ import {
 import { networkStringFromCurrencyId } from "../../shared/accountDescriptor";
 import { OutputFormatSchema } from "../../wallet/models";
 import { runFullSwapPipeline as runFullSwapPipelineDefault } from "./cli-swap-pipeline";
+import { resolveSwapProvider, WALLET_CLI_DEFAULT_SWAP_PROVIDERS } from "./providers";
 
 type RunFullSwapPipeline = typeof runFullSwapPipelineDefault;
 
@@ -62,6 +63,8 @@ export async function executeSwapCommand({
   if (!findCryptoCurrencyById(flags.to)) {
     throw new Error(`Unknown destination currency (--to): ${flags.to}`);
   }
+
+  const provider = resolveSwapProvider(flags.provider);
 
   const network = networkStringFromCurrencyId(flags.from);
 
@@ -110,7 +113,7 @@ export async function executeSwapCommand({
 
     const result = await runFullSwapPipeline({
       out,
-      provider: flags.provider,
+      provider,
       amount: flags.amount,
       amountInAtomicUnit,
       feeStrategy: flags["fee-strategy"],
@@ -122,7 +125,7 @@ export async function executeSwapCommand({
     out.swapExecuteFullResult({
       from: flags.from,
       to: flags.to,
-      provider: flags.provider,
+      provider,
       amount: flags.amount,
       transactionId: result.transactionId,
       payload: result.payload,
@@ -148,7 +151,7 @@ export default defineCommand({
       short: "t",
     }),
     provider: option(swapExecuteFlagsSchema.shape.provider, {
-      description: "Swap provider name, e.g. changelly",
+      description: `Swap provider (${WALLET_CLI_DEFAULT_SWAP_PROVIDERS.join(", ")})`,
     }),
     amount: option(swapExecuteFlagsSchema.shape.amount, {
       description: "Swap source amount in human units",
