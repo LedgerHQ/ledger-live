@@ -8,8 +8,6 @@ import type {
   NetworkInfo,
   UtxoStrategy,
   BtcOperation,
-  BitcoinAccount,
-  ZcashAccount,
 } from "./types";
 import { $Shape } from "utility-types";
 import type { TX, Input as WalletInput, Output as WalletOutput } from "./wallet-btc";
@@ -344,7 +342,3 @@ export const mapTxToOperations = (
 
   return operations;
 };
-
-export function isZcashAccount(a: BitcoinAccount): a is ZcashAccount {
-  return "privateInfo" in a && a.currency.id === "zcash";
-}

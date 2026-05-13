@@ -41,6 +41,7 @@ import DebugStore from "~/screens/Settings/Debug/Debugging/Store";
 import DebugSwap from "~/screens/Settings/Debug/Features/Swap";
 import DebugVideos from "~/screens/Settings/Debug/Features/Videos";
 import TooltipDemo from "~/screens/Settings/Debug/Features/TooltipDemo";
+import DebugDeviceActionContentScreen from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/DeviceActionContentScreen";
 import DebugDeviceIntentExecutorInitialization from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/InitializationScreen";
 import DebugDeviceIntentExecutorOrchestration from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/OrchestrationScreen";
 import Settings from "~/screens/Settings";
@@ -307,6 +308,13 @@ export default function SettingsNavigator() {
         component={DebugDeviceIntentExecutor}
         options={{
           title: "Device Intent Executor",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugDeviceIntentExecutorContent}
+        component={DebugDeviceActionContentScreen}
+        options={{
+          title: "DIE Device Action Content",
         }}
       />
       <Stack.Screen

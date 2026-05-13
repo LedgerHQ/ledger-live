@@ -1,5 +1,7 @@
 import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
-import { FamilyConfig, findFamilyConfigById } from "./familyConfig";
+
+// Side-effect: register the zcash chain adapter
+import "./chain-adapters/zcash";
 
 export type BitcoinConfigInfo = CurrencyConfig;
 
@@ -15,18 +17,10 @@ export const setCoinConfig = (config: CoinConfig): void => {
   coinConfig = config;
 };
 
-export const getCoinConfig = (
-  currencyId: string,
-): BitcoinCoinConfig & { family: FamilyConfig | undefined } => {
+export const getCoinConfig = (currencyId: string): BitcoinCoinConfig => {
   if (!coinConfig) {
     throw new Error("Bitcoin module config not set");
   }
 
-  const coin = coinConfig(currencyId);
-  const family = findFamilyConfigById(currencyId);
-
-  return {
-    ...coin,
-    family,
-  };
+  return coinConfig(currencyId);
 };

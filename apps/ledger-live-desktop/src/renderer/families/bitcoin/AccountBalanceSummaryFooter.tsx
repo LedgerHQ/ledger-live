@@ -21,12 +21,15 @@ import type { Currency } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
 import type { ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import { SYNC_TYPE_SHIELDED } from "@ledgerhq/types-live";
-import { ZcashPrivateInfo, ZcashSyncState } from "@ledgerhq/zcash-shielded/types";
+import {
+  ZcashPrivateInfo,
+  ZcashSyncState,
+} from "@ledgerhq/coin-bitcoin/chain-adapters/zcash/types";
 import { syncStateUpdater } from "./ZCashExportKeyFlowModal/sync";
 import {
   ZCASH_CHECK_OUTDATED_SYNC_INTERVAL,
   ZCASH_OUTDATED_SYNC_INTERVAL_MINUTES,
-} from "@ledgerhq/zcash-shielded/constants";
+} from "@ledgerhq/coin-bitcoin/chain-adapters/zcash/constants";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { from, switchMap } from "rxjs";
 import {

@@ -9,7 +9,6 @@ import {
   TransactionStatusCommonRaw,
   Operation,
 } from "@ledgerhq/types-live";
-import { ZcashPrivateInfo, ZcashPrivateInfoRaw } from "@ledgerhq/zcash-shielded/types";
 
 export type BitcoinInput = {
   address: string | null | undefined;
@@ -189,9 +188,8 @@ export type BtcOperationExtra = {
 
 export type BtcOperation = Operation<BtcOperationExtra>;
 
-export type ZcashAccount = BitcoinAccount & { privateInfo?: ZcashPrivateInfo };
-
-export type ZcashAccountRaw = BitcoinAccountRaw & { privateInfo?: ZcashPrivateInfoRaw };
+/** @deprecated Import from "./chain-adapters/zcash/types" */
+export type { ZcashAccount, ZcashAccountRaw } from "./chain-adapters/zcash/types";
 
 // Possible types of "replace by fee" (aka "edit transaction") operations:
 export type EditType = "cancel" | "speedup";

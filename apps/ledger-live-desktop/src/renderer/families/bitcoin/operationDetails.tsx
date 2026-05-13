@@ -14,7 +14,7 @@ import {
   SplitAddress,
   SplitAddressProps,
 } from "~/renderer/components/OperationsList/AddressCellShared";
-import { ZCASH_SHIELDED_TX_TYPES } from "@ledgerhq/zcash-shielded/types";
+import { ZCASH_SHIELDED_TX_TYPES } from "@ledgerhq/coin-bitcoin/chain-adapters/zcash/types";
 import type { AddressCellProps } from "~/renderer/families/types";
 import { discreetModeSelector } from "~/renderer/reducers/settings";
 import { useSelector } from "LLD/hooks/redux";
