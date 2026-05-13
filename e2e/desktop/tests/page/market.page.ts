@@ -4,6 +4,7 @@ import { expect } from "@playwright/test";
 import { isWallet40Enabled } from "tests/utils/featureFlagUtils";
 
 export class MarketPage extends AppPage {
+  private navbarTitle = this.page.getByTestId("page-header-title");
   private searchInput = this.page.getByTestId("market-search-input");
   private loadingPlaceholder = this.page.getByTestId("loading-placeholder");
   private coinRow = (ticker: string) => this.page.getByTestId(`market-${ticker}-row`).first();
@@ -37,8 +38,9 @@ export class MarketPage extends AppPage {
 
   @step("Validate Market List")
   async validateMarketList() {
-    await this.coinRow("btc").waitFor({ state: "visible" });
-    await this.coinRow("eth").waitFor({ state: "visible" });
+    await expect(this.navbarTitle).toHaveText("Market");
+    await expect(this.coinRow("btc")).toBeVisible();
+    await expect(this.coinRow("eth")).toBeVisible();
   }
 
   @step("Open coin page for $0")

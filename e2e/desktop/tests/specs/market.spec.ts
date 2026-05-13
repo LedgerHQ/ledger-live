@@ -8,27 +8,9 @@ import { LWD_WALLET_40_FF_ENABLED } from "tests/utils/featureFlagUtils";
 test.describe("Market", () => {
   test.use({
     teamOwner: Team.WALLET_XP,
-    //TODO: remove feature flag when market banner is enabled for all users
     userdata: "speculos-tests-app",
     featureFlags: LWD_WALLET_40_FF_ENABLED,
   });
-
-  test(
-    "Market list content",
-    {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
-      annotation: {
-        type: "TMS",
-        description: "B2CQA-4316",
-      },
-    },
-    async ({ app }) => {
-      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
-      await app.marketBanner.clickExploreMarketHeader();
-      await app.market.validateMarketList();
-    },
-  );
 
   test(
     "Filters behavior",
@@ -36,14 +18,13 @@ test.describe("Market", () => {
       tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
       annotation: {
         type: "TMS",
-        description: "B2CQA-4315, B2CQA-1879",
+        description: "B2CQA-4315, B2CQA-4316, B2CQA-1879",
       },
     },
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       await app.marketBanner.clickExploreMarketHeader();
-
       await app.market.validateMarketList();
 
       await app.market.starCoin(Account.BTC_NATIVE_SEGWIT_1.currency.ticker);
