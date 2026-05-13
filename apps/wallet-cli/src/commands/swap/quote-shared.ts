@@ -2,6 +2,16 @@ import type { Quote } from "@ledgerhq/live-common/wallet-api/Exchange/index";
 import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { colors } from "../../shared/ui";
 
+/** Providers passed to the swap quote API from wallet-cli (swap quote + execute allow-list). */
+export const WALLET_CLI_DEFAULT_SWAP_PROVIDERS = [
+  "changelly_v2",
+  "changelly",
+  "cic_v2",
+  "cic",
+  "exodus",
+  "nearintents",
+  "swapsxyz",
+] as const;
 /** Serializable quote line for JSON envelopes and human formatting. */
 export type SwapQuoteLine = {
   quoteId: string | null;

@@ -17,6 +17,7 @@ import {
 import { networkStringFromCurrencyId } from "../../shared/accountDescriptor";
 import { OutputFormatSchema } from "../../wallet/models";
 import { runFullSwapPipeline as runFullSwapPipelineDefault } from "./cli-swap-pipeline";
+import { WALLET_CLI_DEFAULT_SWAP_PROVIDERS } from "./quote-shared";
 
 type RunFullSwapPipeline = typeof runFullSwapPipelineDefault;
 
@@ -41,6 +42,21 @@ export type SwapExecuteDependencies = {
   makeBridgeCacheSystem?: typeof makeBridgeCacheSystem;
 };
 
+const allowedSwapExecuteProviderInput = new Set<string>(WALLET_CLI_DEFAULT_SWAP_PROVIDERS);
+
+/**
+ * Validates `swap execute --provider` against the wallet-cli quote provider set and maps legacy
+ * `changelly` to `changelly_v2` for the exchange API.
+ */
+function resolveSwapExecuteProvider(provider: string): string {
+  if (!allowedSwapExecuteProviderInput.has(provider)) {
+    throw new Error(
+      `Unsupported swap provider "${provider}". Allowed: ${WALLET_CLI_DEFAULT_SWAP_PROVIDERS.join(", ")}.`,
+    );
+  }
+  return provider === "changelly" ? "changelly_v2" : provider;
+}
+
 export async function executeSwapCommand({
   flags,
   positional,
@@ -62,6 +78,8 @@ export async function executeSwapCommand({
   if (!findCryptoCurrencyById(flags.to)) {
     throw new Error(`Unknown destination currency (--to): ${flags.to}`);
   }
+
+  const provider = resolveSwapExecuteProvider(flags.provider);
 
   const network = networkStringFromCurrencyId(flags.from);
 
@@ -110,7 +128,7 @@ export async function executeSwapCommand({
 
     const result = await runFullSwapPipeline({
       out,
-      provider: flags.provider,
+      provider,
       amount: flags.amount,
       amountInAtomicUnit,
       feeStrategy: flags["fee-strategy"],
@@ -122,7 +140,7 @@ export async function executeSwapCommand({
     out.swapExecuteFullResult({
       from: flags.from,
       to: flags.to,
-      provider: flags.provider,
+      provider,
       amount: flags.amount,
       transactionId: result.transactionId,
       payload: result.payload,
@@ -148,7 +166,7 @@ export default defineCommand({
       short: "t",
     }),
     provider: option(swapExecuteFlagsSchema.shape.provider, {
-      description: "Swap provider name, e.g. changelly",
+      description: `Swap provider (${WALLET_CLI_DEFAULT_SWAP_PROVIDERS.join(", ")};)`,
     }),
     amount: option(swapExecuteFlagsSchema.shape.amount, {
       description: "Swap source amount in human units",

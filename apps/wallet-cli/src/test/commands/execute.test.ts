@@ -139,7 +139,7 @@ describe("executeSwapCommand", () => {
     expect(data.network).toBe("ethereum:main");
     expect(data.from).toBe("ethereum");
     expect(data.to).toBe("bitcoin");
-    expect(data.provider).toBe("changelly");
+    expect(data.provider).toBe("changelly_v2");
     expect(data.amount).toBe("0.001");
     expect(data.transactionId).toBe(mockPipelineResult.transactionId);
     expect(data.payload.swapId).toBe("mock-swap-id");
@@ -150,13 +150,26 @@ describe("executeSwapCommand", () => {
 
     expect(runFullSwapPipelineMock).toHaveBeenCalledTimes(1);
     const pipelineInput = runFullSwapPipelineMock.mock.calls[0][0];
-    expect(pipelineInput.provider).toBe("changelly");
+    expect(pipelineInput.provider).toBe("changelly_v2");
     expect(pipelineInput.amount).toBe("0.001");
     expect(pipelineInput.amountInAtomicUnit.toFixed()).toBe("1000000000000000");
     expect(pipelineInput.feeStrategy).toBe("medium");
     expect(pipelineInput.fromAccount.id).toBe(fromDescriptor.id);
     expect(pipelineInput.toAccount.id).toBe(toDescriptor.id);
     expect(pipelineInput.getAccountBridge).toBe(getAccountBridgeMock);
+  });
+
+  it("rejects an unsupported --provider before running the pipeline", async () => {
+    await expect(
+      runExecuteSwapCommand({ ...baseFlags, provider: "unknown_provider" }),
+    ).rejects.toThrow(/Unsupported swap provider/);
+    expect(runFullSwapPipelineMock).not.toHaveBeenCalled();
+  });
+
+  it("passes changelly_v2 through to the pipeline when --provider is changelly_v2", async () => {
+    await runExecuteSwapCommand({ ...baseFlags, provider: "changelly_v2" });
+    const pipelineInput = runFullSwapPipelineMock.mock.calls[0][0];
+    expect(pipelineInput.provider).toBe("changelly_v2");
   });
 
   it("json: exits 1 when --to-account is missing", async () => {
