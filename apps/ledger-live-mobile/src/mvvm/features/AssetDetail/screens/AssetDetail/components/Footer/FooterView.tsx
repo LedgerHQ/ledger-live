@@ -1,10 +1,10 @@
 import React from "react";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Box, Button } from "@ledgerhq/lumen-ui-rnative";
+import { Box, Button, LinearGradient } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useTranslation } from "~/context/Locale";
 import type { SecondaryButtonType } from "./useFooterViewModel";
 import { ASSET_DETAIL_TEST_IDS } from "../../../../testIds";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type Props = Readonly<{
   isBuyAvailable: boolean;
@@ -27,14 +27,19 @@ export function FooterView({
   if (!isBuyAvailable && !secondaryButton) return null;
 
   return (
-    <Box
+    <LinearGradient
+      stops={[
+        { color: "transparent", opacity: 0 },
+        { offset: 0.2, color: "base", opacity: 1 },
+        { offset: 1, color: "base", opacity: 1 },
+      ]}
+      direction="to-bottom"
       testID={ASSET_DETAIL_TEST_IDS.ctas}
       lx={containerStyle}
-      style={{ paddingBottom: bottom + 16 }}
     >
-      <Box lx={rowStyle}>
+      <Box lx={rowStyle} style={{ paddingBottom: bottom + 16 }}>
         {isBuyAvailable && (
-          <Box style={buttonSlotStyle}>
+          <Box lx={buttonSlotStyle}>
             <Button
               appearance="gray"
               size="lg"
@@ -48,7 +53,7 @@ export function FooterView({
         )}
 
         {secondaryButton === "swap" && (
-          <Box style={buttonSlotStyle}>
+          <Box lx={buttonSlotStyle}>
             <Button
               appearance="base"
               size="lg"
@@ -62,7 +67,7 @@ export function FooterView({
         )}
 
         {secondaryButton === "receive" && (
-          <Box style={buttonSlotStyle}>
+          <Box lx={buttonSlotStyle}>
             <Button
               appearance="base"
               size="lg"
@@ -75,22 +80,24 @@ export function FooterView({
           </Box>
         )}
       </Box>
-    </Box>
+    </LinearGradient>
   );
 }
+
+const rowStyle: LumenViewStyle = {
+  paddingHorizontal: "s16",
+  paddingTop: "s16",
+  flexDirection: "row",
+  gap: "s8",
+};
 
 const containerStyle: LumenViewStyle = {
   position: "absolute",
   bottom: "s0",
   left: "s0",
   right: "s0",
-  paddingHorizontal: "s16",
-  paddingTop: "s16",
 };
 
-const rowStyle: LumenViewStyle = {
-  flexDirection: "row",
-  gap: "s8",
+const buttonSlotStyle: LumenViewStyle = {
+  flex: 1,
 };
-
-const buttonSlotStyle = { flex: 1 } as const;
