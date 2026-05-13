@@ -54,11 +54,13 @@ declare global {
   var Swap: typeof SwapType;
 
   var clearTextByElement: typeof NativeElementHelpers.clearTextByElement;
+  var countElements: typeof NativeElementHelpers.countElements;
   var countElementsById: typeof NativeElementHelpers.countElementsById;
   var detoxExpect: typeof NativeElementHelpers.expect;
   var getAttributesOfElement: typeof NativeElementHelpers.getAttributesOfElement;
   var getElementById: typeof NativeElementHelpers.getElementById;
   var getElementByIdAndText: typeof NativeElementHelpers.getElementByIdAndText;
+  var getElementByIdWithAncestorIds: typeof NativeElementHelpers.getElementByIdWithAncestorIds;
   var getElementByIdWithDescendantTexts: typeof NativeElementHelpers.getElementByIdWithDescendantTexts;
   var getElementByText: typeof NativeElementHelpers.getElementByText;
   var getElementsById: typeof NativeElementHelpers.getElementsById;

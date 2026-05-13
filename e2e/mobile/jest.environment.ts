@@ -83,10 +83,12 @@ export default class TestEnvironment extends DetoxEnvironment {
 
     const nativeHelpers = {
       clearTextByElement: NativeElementHelpers.clearTextByElement,
+      countElements: NativeElementHelpers.countElements,
       countElementsById: NativeElementHelpers.countElementsById,
       getAttributesOfElement: NativeElementHelpers.getAttributesOfElement,
       getElementById: NativeElementHelpers.getElementById,
       getElementByIdAndText: NativeElementHelpers.getElementByIdAndText,
+      getElementByIdWithAncestorIds: NativeElementHelpers.getElementByIdWithAncestorIds,
       getElementByIdWithDescendantTexts: NativeElementHelpers.getElementByIdWithDescendantTexts,
       getElementByText: NativeElementHelpers.getElementByText,
       getElementsById: NativeElementHelpers.getElementsById,

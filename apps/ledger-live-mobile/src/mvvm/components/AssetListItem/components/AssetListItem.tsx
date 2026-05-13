@@ -40,7 +40,11 @@ const AssetListItem: React.FC<AssetListItemProps> = memo(
         <ListItemTrailing>
           <Box lx={{ flexDirection: "column", alignItems: "flex-end", gap: "s4" }}>
             {formattedCounterValue != null && (
-              <Text typography="body2SemiBold" lx={{ color: "base" }}>
+              <Text
+                typography="body2SemiBold"
+                lx={{ color: "base" }}
+                testID={`assetItem-${asset.currency.name}-countervalue`}
+              >
                 {formattedCounterValue}
               </Text>
             )}

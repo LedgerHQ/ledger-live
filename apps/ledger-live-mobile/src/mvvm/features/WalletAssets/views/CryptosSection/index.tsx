@@ -32,6 +32,7 @@ const PortfolioCryptosSectionComponent: React.FC<PortfolioCryptosSectionProps> =
           onPress={hasMore ? onPressShowAll : undefined}
           accessibilityRole={hasMore ? "button" : undefined}
           lx={{ marginBottom: "s4" }}
+          testID="portfolio-cryptos-section-header"
         >
           <SubheaderTitle>{t("wallet.tabs.crypto")}</SubheaderTitle>
           {hasMore && (
