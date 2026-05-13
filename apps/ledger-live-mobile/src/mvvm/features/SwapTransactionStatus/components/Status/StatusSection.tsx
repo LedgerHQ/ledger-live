@@ -1,16 +1,16 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
 import {
   getSwapTransactionStatusDisplayStatus,
   getSwapTransactionStatusLabelKey,
   getSwapTransactionStatusTitleKey,
 } from "@ledgerhq/live-common/exchange/swapTransactionStatus/index";
 import type { TransactionStatusValue } from "@ledgerhq/live-common/wallet-api/Exchange/transactionStatus/index";
-import { Skeleton } from "@ledgerhq/lumen-ui-react";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { Box, Skeleton, Text } from "@ledgerhq/lumen-ui-rnative";
+import { useTranslation } from "~/context/Locale";
 import { StatusRow } from "./StatusRow";
 
-const TRANSACTION_STATUS_TRANSLATION_PREFIX = "swap2.modals.transactionStatus";
+const TRANSACTION_STATUS_TRANSLATION_PREFIX = "transfer.swap2.modals.transactionStatus";
 
 type StatusSectionProps = Readonly<{
   sendCurrency?: CryptoOrTokenCurrency;
@@ -62,16 +62,16 @@ export function StatusSection({
   );
 
   return (
-    <section className="flex flex-col">
-      <h3 className="mb-12 heading-5-semi-bold text-base">
-        {t("swap2.modals.transactionStatus.sections.status.heading")}
-      </h3>
-      <div className="flex flex-col rounded-md bg-surface p-12 pb-8 gap-12">
+    <Box lx={{ gap: "s12" }}>
+      <Text typography="heading5SemiBold" lx={{ color: "base" }}>
+        {t("transfer.swap2.modals.transactionStatus.sections.status.heading")}
+      </Text>
+      <Box lx={{ gap: "s4", borderRadius: "md", backgroundColor: "surface", padding: "s12" }}>
         <StatusRow
           status={sendDisplayStatus}
           title={sendTitle}
           subtitle={sendStatusLabel}
-          value={sentAmount ?? <Skeleton className="h-16 w-96 rounded-sm" />}
+          value={sentAmount ?? <Skeleton lx={{ height: "s16", width: "s96" }} />}
           isLoading={isLoading}
           lineStatus={receiveDisplayStatus}
         />
@@ -79,10 +79,11 @@ export function StatusSection({
           status={receiveDisplayStatus}
           title={receiveTitle}
           subtitle={receiveStatusLabel}
-          value={receivedAmount ?? <Skeleton className="h-16 w-96 rounded-sm" />}
+          value={receivedAmount ?? <Skeleton lx={{ height: "s16", width: "s96" }} />}
           isLoading={isLoading}
+          isLast
         />
-      </div>
-    </section>
+      </Box>
+    </Box>
   );
 }

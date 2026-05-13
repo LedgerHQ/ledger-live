@@ -1,10 +1,6 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { useEffect, useMemo, useState } from "react";
-import {
-  flattenAccounts,
-  getAccountCurrency,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import {
   getSwapProvider,
   type AdditionalProviderConfig,
@@ -14,28 +10,39 @@ import {
   type SwapTransactionStatusParams,
 } from "@ledgerhq/live-common/exchange/swapTransactionStatus/index";
 import type { TransactionStatusValue } from "@ledgerhq/live-common/wallet-api/Exchange/transactionStatus/index";
-import { useSelector } from "LLD/hooks/redux";
-import { useLLDCoinFamily } from "~/renderer/families";
-import { accountsSelector } from "~/renderer/reducers/accounts";
-import { localeSelector } from "~/renderer/reducers/settings";
-import { useMaybeAccountName } from "~/renderer/reducers/wallet";
-import { formatAmount, formatFeesAmount, getExplorerUrl, resolveAccountLike } from "../utils";
+import { useSelector } from "~/context/hooks";
+import byFamiliesOperationDetails from "~/generated/operationDetails";
+import { flattenAccountsSelector } from "~/reducers/accounts";
+import { localeSelector } from "~/reducers/settings";
+import { useMaybeAccountName } from "~/reducers/wallet";
+import {
+  formatAmount,
+  formatFeesAmount,
+  getExplorerUrl,
+  resolveAccountLike,
+  type TransactionExplorerBuilder,
+} from "../utils";
 import { useSwapTransactionStatus } from "./useSwapTransactionStatus";
 
-export function useSwapTransactionStatusViewModel(params: SwapTransactionStatusParams) {
-  const transactionStatus = useSwapTransactionStatus(params);
-  const accounts = useSelector(accountsSelector);
+export function useSwapTransactionStatusViewModel({
+  params,
+  onClose,
+}: {
+  params: SwapTransactionStatusParams;
+  onClose: () => void;
+}) {
+  const transactionStatus = useSwapTransactionStatus({ params, onClose });
+  const accounts = useSelector(flattenAccountsSelector);
   const locale = useSelector(localeSelector);
   const details = transactionStatus.details;
   const provider = details?.provider ?? params.provider;
-  const flattenedAccounts = useMemo(() => flattenAccounts(accounts), [accounts]);
   const sendResolved = useMemo(
-    () => resolveAccountLike(flattenedAccounts, details?.fromAccountId),
-    [details?.fromAccountId, flattenedAccounts],
+    () => resolveAccountLike(accounts, details?.fromAccountId),
+    [accounts, details?.fromAccountId],
   );
   const receiveResolved = useMemo(
-    () => resolveAccountLike(flattenedAccounts, details?.toAccountId),
-    [details?.toAccountId, flattenedAccounts],
+    () => resolveAccountLike(accounts, details?.toAccountId),
+    [accounts, details?.toAccountId],
   );
 
   const receiveAccount = receiveResolved
@@ -69,7 +76,17 @@ export function useSwapTransactionStatusViewModel(params: SwapTransactionStatusP
     sendCurrency?.type === "TokenCurrency"
       ? getCryptoCurrencyById(sendCurrency.parentCurrencyId)
       : sendCurrency;
-  const { getTransactionExplorer } = useLLDCoinFamily(sendMainCurrency?.family);
+  const getTransactionExplorer = useMemo<TransactionExplorerBuilder | undefined>(() => {
+    if (!sendMainCurrency) return undefined;
+    const familyDetails =
+      byFamiliesOperationDetails[
+        sendMainCurrency.family as keyof typeof byFamiliesOperationDetails
+      ];
+
+    return familyDetails && "getTransactionExplorer" in familyDetails
+      ? (familyDetails.getTransactionExplorer as TransactionExplorerBuilder)
+      : undefined;
+  }, [sendMainCurrency]);
   const sentAmount = formatAmount(sendCurrency, details?.sentAmount, locale);
   const receivedAmount = formatAmount(
     receiveCurrency,

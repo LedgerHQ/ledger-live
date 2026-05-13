@@ -23,6 +23,7 @@ import modularDrawer from "./modularDrawer";
 import receiveOptionsDrawer from "./receiveOptionsDrawer";
 import rebornBuyDeviceDrawer from "./rebornBuyDeviceDrawer";
 import transferDrawer from "./transferDrawer";
+import swapTransactionStatusDrawer from "./swapTransactionStatusDrawer";
 import notifications from "./notifications";
 import protect from "./protect";
 import ratings from "./ratings";
@@ -67,6 +68,7 @@ const appReducer = combineReducers({
   receiveOptionsDrawer,
   rebornBuyDeviceDrawer,
   transferDrawer,
+  swapTransactionStatusDrawer,
   notifications,
   postOnboarding,
   postOnboardingHubDrawer,
