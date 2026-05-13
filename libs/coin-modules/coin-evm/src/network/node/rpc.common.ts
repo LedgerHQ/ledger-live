@@ -13,7 +13,7 @@ import { BlockFinalizationTag, ExternalNodeConfig } from "../../config";
 import { GasEstimationError, InsufficientFunds, UnsupportedRpcMethodError } from "../../errors";
 import { Transaction as EvmTransaction, FeeData, FeeHistory } from "../../types";
 import { isSmartContractInput, normalizeAddress, safeEncodeEIP55 } from "../../utils";
-import { RetryPolicy, withApi, PROVIDERS_BY_RPC } from "../withApi";
+import { RetryStrategy, withApi } from "../withApi";
 import { gethCallTracerToTraceBlockItems } from "./gethCallTracerToTraceBlockItems";
 import {
   hasErrorCode,
@@ -746,7 +746,7 @@ function make<F extends (currency: CryptoCurrency, ...args: any[]) => any>(
   f: (api: JsonRpcProvider, ...args: Parameters<F>) => ReturnType<F>,
   nodeConfig: ExternalNodeConfig,
   configOverride: Partial<ExternalNodeConfig> = {},
-  retryPolicy: RetryPolicy = "app-retries",
+  retryPolicy: RetryStrategy = "application",
 ): F {
   const mergedConfig = { ...nodeConfig, ...configOverride };
   return ((...args: Parameters<F>) => {
@@ -759,7 +759,7 @@ export function createNodeApi(config: ExternalNodeConfig): NodeApi {
   return {
     getBlockByHeight: make(getBlockByHeight, config),
     getCoinBalance: make(getCoinBalance, config),
-    getTokenBalance: make(getTokenBalance, config, {}, "ethers-http-only"),
+    getTokenBalance: make(getTokenBalance, config, {}, "library"),
     getTokenAllowance: make(getTokenAllowance, config),
     getTransactionCount: make(getTransactionCount, config),
     getTransaction: make(getTransaction, config),

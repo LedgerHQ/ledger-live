@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-/* instanbul ignore file: don't test fixtures */
+/* istanbul ignore file: don't test fixtures */
 
 import {
   decodeAccountId,
@@ -207,7 +207,11 @@ export function makeUniqueRandomCurrency(
 }
 
 export function makeUniqueRandomNodeConfig(
-  partialCurrency?: Partial<ExternalNodeConfig>,
+  partialConfig?: Partial<ExternalNodeConfig>,
 ): ExternalNodeConfig {
-  return { ...partialCurrency, uri: crypto.randomUUID() } as unknown as ExternalNodeConfig;
+  return {
+    type: "external",
+    ...partialConfig,
+    uri: crypto.randomUUID(),
+  };
 }

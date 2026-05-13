@@ -17,7 +17,7 @@ describe("rpc.common", () => {
     const nodeConfig = {} as unknown as ExternalNodeConfig;
     const nodeApi = createNodeApi(nodeConfig);
 
-    it("should use ethers-http-only as retry policy", async () => {
+    it("should use library as retry policy", async () => {
       await nodeApi.getTokenBalance(
         currency,
         "some random ethereum address",
@@ -27,7 +27,7 @@ describe("rpc.common", () => {
         currency,
         expect.any(Function),
         nodeConfig,
-        "ethers-http-only",
+        "library",
       );
     });
   });

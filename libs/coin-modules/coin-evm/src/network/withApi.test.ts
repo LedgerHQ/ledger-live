@@ -114,7 +114,7 @@ describe("withApi", () => {
       makeUniqueRandomCurrency(),
       (_api: JsonRpcProvider) => Promise.resolve(),
       makeUniqueRandomNodeConfig(),
-      "app-retries",
+      "application",
     );
 
     expect(withRetriesSpy).toHaveBeenCalled();
@@ -127,24 +127,24 @@ describe("withApi", () => {
       makeUniqueRandomCurrency(),
       (_api: JsonRpcProvider) => Promise.resolve(),
       makeUniqueRandomNodeConfig(),
-      "app-retries",
+      "application",
     );
 
     expect(setThrottleParamsSpy).toHaveBeenCalledWith({ maxAttempts: 1 });
   });
 
-  it("should not use withRetries when retry policy is ethers-http-only", async () => {
+  it("should not use withRetries when retry policy is library", async () => {
     await withApi(
       makeUniqueRandomCurrency(),
       (_api: JsonRpcProvider) => Promise.resolve(),
       makeUniqueRandomNodeConfig(),
-      "ethers-http-only",
+      "library",
     );
 
     expect(withRetriesSpy).not.toHaveBeenCalled();
   });
 
-  it("should set ethers retry limit from node configuration when policy is ethers-http-only", async () => {
+  it("should set ethers retry limit from node configuration when policy is library", async () => {
     const setThrottleParamsSpy = jest.spyOn(FetchRequest.prototype, "setThrottleParams");
     const expectedRetries = 5;
 
@@ -152,7 +152,7 @@ describe("withApi", () => {
       makeUniqueRandomCurrency(),
       (_api: JsonRpcProvider) => Promise.resolve(),
       makeUniqueRandomNodeConfig({ retries: expectedRetries }),
-      "ethers-http-only",
+      "library",
     );
 
     expect(setThrottleParamsSpy).toHaveBeenCalledWith({ maxAttempts: expectedRetries });
