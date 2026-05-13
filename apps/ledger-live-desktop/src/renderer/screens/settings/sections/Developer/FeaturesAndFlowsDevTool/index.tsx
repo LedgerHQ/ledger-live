@@ -6,6 +6,7 @@ import { productTourCompletedSelector } from "~/renderer/reducers/settings";
 import { setProductTourCompleted } from "~/renderer/actions/settings";
 import { SettingsSectionRow as Row } from "../../../SettingsSection";
 import { ProductTourSection } from "./ProductTourSection";
+import { RecoverSubscriptionStateSection } from "./RecoverSubscriptionStateSection";
 import { useProductTourDialogViewModel, ProductTourDialog } from "LLD/features/ProductTour/Drawer";
 
 const FeaturesAndFlowsDevTool = () => {
@@ -51,6 +52,7 @@ const FeaturesAndFlowsDevTool = () => {
                   onToggleProductTourCompleted={handleToggleProductTourCompleted}
                   onOpenProductTour={openProductTourDialog}
                 />
+                <RecoverSubscriptionStateSection />
               </div>
             ) : null}
           </div>
