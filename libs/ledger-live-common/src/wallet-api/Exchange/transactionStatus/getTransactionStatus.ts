@@ -3,11 +3,9 @@ import type { AccountLike } from "@ledgerhq/types-live";
 import { flattenAccounts, getAccountCurrency } from "../../../account";
 import getCompleteSwapHistory from "../../../exchange/swap/getCompleteSwapHistory";
 import { swapProviderRequiresOperationId } from "../../../exchange/swap/providersRequiringOperationId";
-import {
-  getSwapTransactionLegStatusesFromAccounts,
-  isTransactionStatusValue,
-} from "../../../exchange/transactionStatus";
-import { fetchTransactionSwapStatus } from "../../../exchange/transactionStatus/fetchSwapStatus";
+import { getSwapTransactionLegStatusesFromAccounts } from "../../../exchange/swapTransactionStatus/status/statusController";
+import { isTransactionStatusValue } from "../../../exchange/swapTransactionStatus/status/statusValues";
+import { fetchTransactionSwapStatus } from "../../../exchange/swapTransactionStatus/api/fetchSwapStatus";
 import type {
   MappedSwapOperation,
   SwapStatus,

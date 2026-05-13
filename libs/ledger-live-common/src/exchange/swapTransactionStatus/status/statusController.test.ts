@@ -1,5 +1,5 @@
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import type { SwapStatus } from "../swap/types";
+import type { SwapStatus } from "../../swap/types";
 import {
   createInitialSwapTransactionStatusState,
   getSendSwapStatus,
