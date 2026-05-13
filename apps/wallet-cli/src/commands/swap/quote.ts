@@ -121,7 +121,6 @@ export default defineCommand({
           providers: DEFAULT_PROVIDERS,
           data: {
             amount: flags.amount,
-            counterValueCurrency: "USD",
             uniswapOrderType: "classic",
             sendCurrencyId: flags.from,
             receiveCurrencyId: flags.to,
@@ -131,7 +130,7 @@ export default defineCommand({
             receiveAccountId: "",
           },
         },
-        { accounts: [], spotPrices: {} },
+        { accounts: [], spotPrices: {}, locale: "en", counterValueCurrency: "USD" },
       );
 
       if (result.quotes.length === 0 && result.errors.length > 0) {
