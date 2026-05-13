@@ -79,4 +79,52 @@ describe("NodeWebUsbApduSender", () => {
     const sendResult = await sendPromise;
     expect(sendResult.isLeft()).toBe(true);
   });
+
+  it("does not wait forever when the active read loop is stuck", async () => {
+    let transferInStarted: (() => void) | undefined;
+    const transferInStartedPromise = new Promise<void>(resolve => {
+      transferInStarted = resolve;
+    });
+
+    const device = {
+      opened: true,
+      transferOut: async () => ({ status: "ok" }),
+      transferIn: async () => {
+        transferInStarted?.();
+        return new Promise<{ status: "ok"; data: DataView }>(() => {});
+      },
+      releaseInterface: async () => {},
+      close: async () => {},
+    };
+
+    const apduSenderFactory = (() => ({
+      getFrames: () => [
+        {
+          getRawData: () => new Uint8Array([0xe0, 0x01, 0x00, 0x00]),
+        },
+      ],
+    })) as unknown as ApduSenderServiceFactory;
+
+    const apduReceiverFactory = (() => ({
+      handleFrame: () => {
+        throw new Error("read loop should not resolve in this test");
+      },
+    })) as unknown as ApduReceiverServiceFactory;
+
+    const sender = new NodeWebUsbApduSender({
+      dependencies: { device: device as never, interfaceNumber: 1 },
+      apduSenderFactory,
+      apduReceiverFactory,
+      loggerFactory: () => createLogger(),
+      closeReadLoopTimeoutMs: 5,
+    });
+
+    const sendPromise = sender.sendApdu(new Uint8Array([0xe0, 0x01, 0x00, 0x00]));
+    await transferInStartedPromise;
+
+    await sender.closeConnection();
+
+    const sendResult = await sendPromise;
+    expect(sendResult.isLeft()).toBe(true);
+  });
 });

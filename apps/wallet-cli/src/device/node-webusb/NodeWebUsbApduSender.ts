@@ -19,6 +19,8 @@ import {
   LEDGER_WEBUSB_ENDPOINT_NUMBER,
 } from "./node-webusb-constants";
 
+const CLOSE_READ_LOOP_TIMEOUT_MS = 1_000;
+
 export type NodeWebUsbApduSenderDependencies = {
   device: WebUSBDevice;
   interfaceNumber: number;
@@ -29,6 +31,7 @@ export type NodeWebUsbApduSenderConstructorArgs = {
   apduSenderFactory: ApduSenderServiceFactory;
   apduReceiverFactory: ApduReceiverServiceFactory;
   loggerFactory: (tag: string) => LoggerPublisherService;
+  closeReadLoopTimeoutMs?: number;
 };
 
 async function gracefullyResetDevice(device: WebUSBDevice): Promise<void> {
@@ -46,6 +49,27 @@ function bufferFromInTransfer(data: DataView): Uint8Array {
   return new Uint8Array(data.buffer, data.byteOffset, data.byteLength);
 }
 
+async function awaitReadLoopClose(
+  readLoopPromise: Promise<void> | null,
+  timeoutMs: number,
+): Promise<void> {
+  if (!readLoopPromise) {
+    return;
+  }
+
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeoutPromise = new Promise<void>(resolve => {
+    timer = setTimeout(resolve, timeoutMs);
+    timer.unref?.();
+  });
+
+  try {
+    await Promise.race([readLoopPromise.catch(() => undefined), timeoutPromise]);
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+}
+
 /** DMK device APDU sender over Ledger WebUSB bulk endpoints (node-usb WebUSB API, same framing as hw-transport-webusb). */
 export class NodeWebUsbApduSender implements DeviceApduSender<NodeWebUsbApduSenderDependencies> {
   private dependencies: NodeWebUsbApduSenderDependencies;
@@ -59,12 +83,14 @@ export class NodeWebUsbApduSender implements DeviceApduSender<NodeWebUsbApduSend
   private readLoopGeneration = 0;
   private readLoopPromise: Promise<void> | null = null;
   private closeConnectionPromise: Promise<void> | null = null;
+  private readonly closeReadLoopTimeoutMs: number;
 
   constructor({
     dependencies,
     apduSenderFactory,
     apduReceiverFactory,
     loggerFactory,
+    closeReadLoopTimeoutMs = CLOSE_READ_LOOP_TIMEOUT_MS,
   }: NodeWebUsbApduSenderConstructorArgs) {
     const channel = Maybe.of(crypto.getRandomValues(new Uint8Array(2)));
     this.dependencies = dependencies;
@@ -77,6 +103,7 @@ export class NodeWebUsbApduSender implements DeviceApduSender<NodeWebUsbApduSend
     this.apduReceiverFactory = apduReceiverFactory;
     this.apduReceiver = this.apduReceiverFactory({ channel });
     this.logger = loggerFactory("NodeWebUsbApduSender");
+    this.closeReadLoopTimeoutMs = closeReadLoopTimeoutMs;
   }
 
   getDependencies(): NodeWebUsbApduSenderDependencies {
@@ -158,7 +185,7 @@ export class NodeWebUsbApduSender implements DeviceApduSender<NodeWebUsbApduSend
     this.resolvePendingApdu(Left(new OpeningConnectionError("WebUSB connection closed")));
 
     if (!device.opened) {
-      await readLoopPromise;
+      await awaitReadLoopClose(readLoopPromise, this.closeReadLoopTimeoutMs);
       return;
     }
 
@@ -172,7 +199,7 @@ export class NodeWebUsbApduSender implements DeviceApduSender<NodeWebUsbApduSend
     } catch (e) {
       this.logger.error("Error while closing WebUSB device", { data: { error: e } });
     }
-    await readLoopPromise;
+    await awaitReadLoopClose(readLoopPromise, this.closeReadLoopTimeoutMs);
     this.logger.info("Disconnect (WebUSB)");
   }
 

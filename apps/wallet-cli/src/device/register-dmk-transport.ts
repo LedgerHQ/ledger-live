@@ -23,6 +23,7 @@ const CONNECT_TIMEOUT_MS = 60_000;
  * the wait rather than skipping the call entirely.
  */
 const DISPOSE_DISCONNECT_TIMEOUT_MS = 1_000;
+const DISPOSE_DESTROY_TIMEOUT_MS = 1_000;
 
 const MODULE_ID = "wallet-cli-dmk-webusb";
 
@@ -76,8 +77,8 @@ function getOrCreatePersistentDmk(): Promise<WalletCliDmk> {
 
 /**
  * Race the supplied promise against a timeout, swallowing both the resolution
- * and the error. Used to bound the dispose-time `dmk.disconnect`: at process
- * exit, a wedged USB transferIn must not be allowed to keep us alive.
+ * and the error. At process exit, a wedged USB transferIn must not be allowed
+ * to keep us alive.
  */
 async function awaitWithTimeout(work: Promise<unknown>, timeoutMs: number): Promise<void> {
   let timer: ReturnType<typeof setTimeout> | undefined;
@@ -91,10 +92,7 @@ async function awaitWithTimeout(work: Promise<unknown>, timeoutMs: number): Prom
   }
 }
 
-async function disconnectHeldDmk(
-  held: Singleton | null,
-  mode: "reset" | "dispose",
-): Promise<void> {
+async function disconnectHeldDmk(held: Singleton | null, mode: "reset" | "dispose"): Promise<void> {
   if (!held) return;
 
   const disconnect = held.dmk.disconnect({ sessionId: held.transport.sessionId });
@@ -109,17 +107,21 @@ async function disconnectHeldDmk(
 async function destroyHeldDmk(held: Singleton | null): Promise<void> {
   if (!held) return;
 
-  await held.destroyTransport();
+  await awaitWithTimeout(held.destroyTransport(), DISPOSE_DESTROY_TIMEOUT_MS);
   closeDmkQuietly(held.dmk);
 }
 
-async function destroyPersistentDmkOnReset(
+async function destroyPersistentDmk(
   kit: WalletCliDmk | null,
   mode: "reset" | "dispose",
 ): Promise<void> {
-  if (mode !== "reset" || !kit) return;
+  if (!kit) return;
 
-  await kit.destroyTransport();
+  if (mode === "reset") {
+    await kit.destroyTransport().catch(() => {});
+  } else {
+    await awaitWithTimeout(kit.destroyTransport(), DISPOSE_DESTROY_TIMEOUT_MS);
+  }
   closeDmkQuietly(kit.dmk);
 }
 
@@ -137,9 +139,9 @@ async function teardownPersistentDmk(
     return;
   }
 
-  // No singleton owned the persistent kit. Reset closes it now; dispose lets the
-  // OS reclaim it as the process is exiting.
-  await destroyPersistentDmkOnReset(kit, mode);
+  // No singleton owned the persistent kit. Close it in both reset and dispose
+  // so hotplug listeners cannot keep the process alive after a failed connect.
+  await destroyPersistentDmk(kit, mode);
   persistentDmk = null;
 }
 
