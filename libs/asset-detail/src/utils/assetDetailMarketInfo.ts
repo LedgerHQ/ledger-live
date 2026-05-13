@@ -1,15 +1,14 @@
 import type { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
-import type { AssetDetailMarketInfo, AssetDetailMarketSource } from "../types";
+import type { AssetDetailMarketInfo } from "../types";
 
-// TODO: Remove this function when doing Market info ticket
 function toAssetDetailMarketInfo(
-  source: AssetDetailMarketSource,
+  source: MarketCurrencyData | undefined,
 ): AssetDetailMarketInfo | undefined {
   if (!source) return undefined;
 
   const ledgerIds = source.ledgerIds ?? [];
   const marketInfo: AssetDetailMarketInfo = {
-    id: ("currencyId" in source ? source.currencyId : undefined) ?? source.id ?? ledgerIds[0],
+    id: source.id ?? ledgerIds[0],
     ledgerIds,
     name: source.name,
     ticker: source.ticker,
@@ -26,7 +25,7 @@ function toAssetDetailMarketInfo(
 }
 
 export function resolveAssetDetailMarketInfo(
-  ...sources: AssetDetailMarketSource[]
+  ...sources: Array<MarketCurrencyData | undefined>
 ): AssetDetailMarketInfo | undefined {
   return sources
     .map(toAssetDetailMarketInfo)

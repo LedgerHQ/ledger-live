@@ -1,20 +1,6 @@
 import { renderHook } from "tests/testSetup";
 import { createMockMarketCurrencyData } from "@ledgerhq/live-common/market/utils/fixtures";
-import { useGetCurrencyDataQuery } from "@ledgerhq/live-common/market/state-manager/api";
 import { useMarketDataSectionCurrencyData } from "../hooks/useMarketDataSectionCurrencyData";
-
-jest.mock("@ledgerhq/live-common/market/state-manager/api", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/market/state-manager/api"),
-  useGetCurrencyDataQuery: jest.fn(),
-}));
-
-const mockUseGetCurrencyDataQuery = jest.mocked(useGetCurrencyDataQuery);
-
-type QueryResult = ReturnType<typeof useGetCurrencyDataQuery>;
-
-function queryReturn(value: Partial<QueryResult>): QueryResult {
-  return value as QueryResult;
-}
 
 const hookOptions = () => ({
   minimal: false as const,
@@ -22,56 +8,49 @@ const hookOptions = () => ({
 });
 
 describe("useMarketDataSectionCurrencyData", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-    mockUseGetCurrencyDataQuery.mockReturnValue(
-      queryReturn({
-        data: createMockMarketCurrencyData(),
-        isLoading: false,
-        isFetching: false,
-      }),
+  it("forwards the resolved market data and adds counter value + locale", () => {
+    const marketCurrencyData = createMockMarketCurrencyData();
+    const { result } = renderHook(
+      () => useMarketDataSectionCurrencyData({ marketCurrencyData, isLoading: false }),
+      hookOptions(),
     );
+
+    expect(result.current.data).toBe(marketCurrencyData);
+    expect(result.current.counterCurrency).toBe("usd");
+    expect(result.current.locale).toBeTruthy();
+    expect(result.current.showSkeleton).toBe(false);
   });
 
-  it("requests currency data with the provided query id", () => {
-    renderHook(() => useMarketDataSectionCurrencyData("ethereum/erc20/usd__coin"), hookOptions());
-
-    expect(mockUseGetCurrencyDataQuery).toHaveBeenCalledWith(
-      expect.objectContaining({ id: "ethereum/erc20/usd__coin", counterCurrency: "usd" }),
-      expect.objectContaining({ skip: false }),
-    );
-  });
-
-  it("skips the query when no currency id is provided", () => {
-    renderHook(() => useMarketDataSectionCurrencyData(undefined), hookOptions());
-
-    expect(mockUseGetCurrencyDataQuery).toHaveBeenCalledWith(
-      expect.anything(),
-      expect.objectContaining({ skip: true }),
-    );
-  });
-
-  it("shows a skeleton while the query is pending and an id is set", () => {
-    mockUseGetCurrencyDataQuery.mockReturnValue(
-      queryReturn({ data: undefined, isLoading: true, isFetching: false }),
+  it("shows the skeleton while the upstream hook is still loading without data", () => {
+    const { result } = renderHook(
+      () => useMarketDataSectionCurrencyData({ marketCurrencyData: undefined, isLoading: true }),
+      hookOptions(),
     );
 
-    const { result } = renderHook(() => useMarketDataSectionCurrencyData("bitcoin"), hookOptions());
-
+    expect(result.current.data).toBeUndefined();
     expect(result.current.showSkeleton).toBe(true);
   });
 
-  it("hides the skeleton once data resolves", () => {
-    mockUseGetCurrencyDataQuery.mockReturnValue(
-      queryReturn({
-        data: createMockMarketCurrencyData(),
-        isLoading: false,
-        isFetching: false,
-      }),
+  it("hides the skeleton as soon as data is available even if the upstream is still refreshing", () => {
+    const { result } = renderHook(
+      () =>
+        useMarketDataSectionCurrencyData({
+          marketCurrencyData: createMockMarketCurrencyData(),
+          isLoading: true,
+        }),
+      hookOptions(),
     );
 
-    const { result } = renderHook(() => useMarketDataSectionCurrencyData("bitcoin"), hookOptions());
+    expect(result.current.showSkeleton).toBe(false);
+  });
 
+  it("does not show the skeleton when neither data nor loading is reported", () => {
+    const { result } = renderHook(
+      () => useMarketDataSectionCurrencyData({ marketCurrencyData: undefined, isLoading: false }),
+      hookOptions(),
+    );
+
+    expect(result.current.data).toBeUndefined();
     expect(result.current.showSkeleton).toBe(false);
   });
 });

@@ -10,17 +10,15 @@ jest.mock("~/renderer/hooks/useDateFormatter", () => ({
   fromNow: jest.fn(() => "2 years ago"),
 }));
 
-function buildCurrencyData(
+const buildCurrencyData = (
   overrides: Partial<MarketDataSectionCurrencyData> = {},
-): MarketDataSectionCurrencyData {
-  return {
-    data: createMockMarketCurrencyData({ marketcapRank: 1 }),
-    showSkeleton: false,
-    counterCurrency: "usd",
-    locale: "en-US",
-    ...overrides,
-  };
-}
+): MarketDataSectionCurrencyData => ({
+  data: createMockMarketCurrencyData({ marketcapRank: 1 }),
+  showSkeleton: false,
+  counterCurrency: "usd",
+  locale: "en-US",
+  ...overrides,
+});
 
 const hookOptions = () => ({
   minimal: false as const,
@@ -32,18 +30,16 @@ describe("useMarketStatsViewModel", () => {
     jest.clearAllMocks();
   });
 
-  it("shows a skeleton while currency data reports loading", () => {
+  it("shows a skeleton when currencyData reports loading", () => {
     const { result } = renderHook(
       () => useMarketStatsViewModel(buildCurrencyData({ showSkeleton: true, data: undefined })),
-      {
-        ...hookOptions(),
-      },
+      hookOptions(),
     );
 
     expect(result.current.showSkeleton).toBe(true);
   });
 
-  it("hides the skeleton once currency data is available", () => {
+  it("hides the skeleton once currencyData provides data", () => {
     const { result } = renderHook(
       () => useMarketStatsViewModel(buildCurrencyData()),
       hookOptions(),
@@ -56,9 +52,7 @@ describe("useMarketStatsViewModel", () => {
     const { result } = renderHook(
       () =>
         useMarketStatsViewModel(
-          buildCurrencyData({
-            data: createMockMarketCurrencyData({ marketcapRank: 3 }),
-          }),
+          buildCurrencyData({ data: createMockMarketCurrencyData({ marketcapRank: 3 }) }),
         ),
       hookOptions(),
     );
@@ -71,9 +65,7 @@ describe("useMarketStatsViewModel", () => {
     const { result } = renderHook(
       () =>
         useMarketStatsViewModel(
-          buildCurrencyData({
-            data: createMockMarketCurrencyData({ marketcapRank: 0 }),
-          }),
+          buildCurrencyData({ data: createMockMarketCurrencyData({ marketcapRank: 0 }) }),
         ),
       hookOptions(),
     );
@@ -140,9 +132,7 @@ describe("usePricePerformanceViewModel", () => {
     const { result } = renderHook(
       () =>
         usePricePerformanceViewModel(
-          buildCurrencyData({
-            data: createMockMarketCurrencyData({ price: 50_000, ath: 0 }),
-          }),
+          buildCurrencyData({ data: createMockMarketCurrencyData({ price: 50_000, ath: 0 }) }),
         ),
       hookOptions(),
     );
@@ -150,7 +140,7 @@ describe("usePricePerformanceViewModel", () => {
     expect(result.current.athBlock.changeText).toBe("-");
   });
 
-  it("shows a skeleton while fetching without cached data", () => {
+  it("shows a skeleton when currencyData reports loading without cached data", () => {
     const { result } = renderHook(
       () =>
         usePricePerformanceViewModel(buildCurrencyData({ showSkeleton: true, data: undefined })),

@@ -63,6 +63,7 @@
     "@electron/fuses": "2.0.0",
     "@features/market-banner": "workspace:^",
     "@ledgerhq/asset-aggregation": "workspace:^",
+    "@ledgerhq/asset-detail": "workspace:^",
     "@ledgerhq/client-ids": "workspace:*",
     "@ledgerhq/coin-bitcoin": "workspace:^",
     "@ledgerhq/coin-canton": "workspace:^",
