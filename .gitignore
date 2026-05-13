@@ -22,9 +22,12 @@ libs/ui/packages/react/rsbuild.config.js
 libs/ui/packages/react/rsbuild.config.js.map
 .zed
 
+.claude/settings.local.json
+.claude/worktrees/
 .cursor/rules/trial/*
 
 .nx/cache
 .nx/workspace-data
 .nx/key
 nx.cache-config.json
+rsdoctor/

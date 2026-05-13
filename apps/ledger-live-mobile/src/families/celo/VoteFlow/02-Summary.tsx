@@ -1,9 +1,9 @@
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useValidatorGroups } from "@ledgerhq/live-common/families/celo/react";
-import { CeloValidatorGroup } from "@ledgerhq/live-common/families/celo/types";
+import { CeloValidatorGroup, Transaction as CeloTransaction } from "@ledgerhq/live-common/families/celo/types";
 import { defaultValidatorGroupAddress } from "@ledgerhq/live-common/families/celo/logic";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Text, Icons } from "@ledgerhq/native-ui";
@@ -45,7 +45,7 @@ export default function VoteSummary({ navigation, route }: Props) {
 
   const validators = useValidatorGroups();
   const mainAccount = getMainAccount(account, parentAccount);
-  const bridge = getAccountBridge(account, undefined);
+  const bridge = useAccountBridge<CeloTransaction>(account, undefined);
 
   const chosenValidator = useMemo(() => {
     if (validator !== undefined) {
@@ -66,8 +66,8 @@ export default function VoteSummary({ navigation, route }: Props) {
           account,
           transaction: bridge.updateTransaction(t, {
             mode: "vote",
-            recipient: defaultValidatorGroupAddress(),
-            amount: route.params.amount ?? 0,
+            recipient: validators[0]?.address ?? defaultValidatorGroupAddress(),
+            amount: route.params.amount ?? new BigNumber(0),
           }),
         };
       }
@@ -198,15 +198,18 @@ export default function VoteSummary({ navigation, route }: Props) {
           />
         </View>
       </View>
-      {status.errors.sender && (
+      {(status.errors.sender || status.errors.recipient) && (
         <>
           <LText style={[styles.fieldStatus]} color="alert" numberOfLines={5}>
-            <TranslatedError error={status.errors.sender} />
+            <TranslatedError error={status.errors.sender || status.errors.recipient} />
           </LText>
           <LText style={[styles.fieldStatus]} color="alert" numberOfLines={5}>
-            <TranslatedError error={status.errors.sender} field="description" />
+            <TranslatedError
+              error={status.errors.sender || status.errors.recipient}
+              field="description"
+            />
           </LText>
-          <SupportLinkError error={status.errors.sender} type="alert" />
+          <SupportLinkError error={status.errors.sender || status.errors.recipient} type="alert" />
         </>
       )}
       <View style={styles.footer}>

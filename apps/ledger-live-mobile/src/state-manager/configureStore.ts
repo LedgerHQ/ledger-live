@@ -2,6 +2,8 @@ import Config from "react-native-config";
 import { configureStore, StoreEnhancer } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import NetInfo from "@react-native-community/netinfo";
+import { Platform } from "react-native";
+import VersionNumber from "react-native-version-number";
 import reducers from "~/reducers";
 import { rebootMiddleware } from "~/middleware/rebootMiddleware";
 import { rozeniteDevToolsEnhancer } from "@rozenite/redux-devtools-plugin";
@@ -11,6 +13,7 @@ import { setupRecentAddressesStore } from "LLM/storage/recentAddresses";
 import { createIdentitiesSyncMiddleware } from "@ledgerhq/client-ids/store";
 import { State } from "~/reducers/types";
 import { trackingEnabledSelector } from "~/reducers/settings";
+import { createFeatureFlagsMiddleware } from "@shared/feature-flags";
 
 export const store = configureStore({
   reducer: reducers,
@@ -24,6 +27,12 @@ export const store = configureStore({
         createIdentitiesSyncMiddleware({
           getIdentitiesState: (state: State) => state.identities,
           getAnalyticsConsent: (state: State) => trackingEnabledSelector(state),
+        }),
+      )
+      .concat(
+        createFeatureFlagsMiddleware({
+          platform: Platform.OS === "ios" ? "ios" : "android",
+          appVersion: VersionNumber.appVersion ?? undefined,
         }),
       ),
 

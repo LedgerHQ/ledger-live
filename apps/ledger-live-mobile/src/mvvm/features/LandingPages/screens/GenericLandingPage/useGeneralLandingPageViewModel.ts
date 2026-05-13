@@ -41,6 +41,7 @@ export const useGeneralLandingPage = (props: NavigationProps) => {
       landingPage: useCase,
     });
     logClickCard(card.id);
+    if (!card.link) return;
     await Linking.openURL(card.link);
   };
 

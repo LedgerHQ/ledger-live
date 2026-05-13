@@ -74,7 +74,9 @@ import type {
   SettingsIsOnboardingFlowReceiveSuccessPayload,
   SettingsIsPostOnboardingFlowPayload,
   SettingsSetHasSeenWalletV4TourPayload,
+  SettingsSetProductTourCompletedPayload,
   SettingsSetAnalyticsConsentInfoPayload,
+  SettingsSetHasClickedRecoverPayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -174,6 +176,8 @@ export const INITIAL_STATE: SettingsState = {
   isPostOnboardingFlow: false,
   generalTermsVersionAccepted: undefined,
   hasSeenWalletV4Tour: false,
+  productTourCompleted: false,
+  hasClickedRecover: false,
   deprecationDoNotRemind: [],
   analyticsConsentInfo: {
     consentDate: null,
@@ -670,6 +674,16 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     hasSeenWalletV4Tour: (action as Action<SettingsSetHasSeenWalletV4TourPayload>).payload,
   }),
+
+  [SettingsActionTypes.SET_PRODUCT_TOUR_COMPLETED]: (state, action) => ({
+    ...state,
+    productTourCompleted: (action as Action<SettingsSetProductTourCompletedPayload>).payload,
+  }),
+
+  [SettingsActionTypes.SET_HAS_CLICKED_RECOVER]: (state, action) => ({
+    ...state,
+    hasClickedRecover: (action as Action<SettingsSetHasClickedRecoverPayload>).payload,
+  }),
 };
 
 export default handleActions<SettingsState, SettingsPayload>(handlers, INITIAL_STATE);
@@ -909,4 +923,6 @@ export const mevProtectionSelector = (state: State) => state.settings.mevProtect
 export const selectedTabPortfolioAssetsSelector = (state: State) =>
   state.settings.selectedTabPortfolioAssets;
 export const hasSeenWalletV4TourSelector = (state: State) => state.settings.hasSeenWalletV4Tour;
+export const productTourCompletedSelector = (state: State) => state.settings.productTourCompleted;
 export const analyticsConsentInfoSelector = (state: State) => state.settings.analyticsConsentInfo;
+export const hasClickedRecoverSelector = (state: State) => state.settings.hasClickedRecover;

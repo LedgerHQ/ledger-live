@@ -9,6 +9,7 @@ export const hederaConfig: Record<string, ConfigInfo> = {
         features: [{ id: "blockchain_txs", status: "active" }],
       },
       useHgraphForErc20: true,
+      useNetworkTimestamp: true,
     },
   },
 };

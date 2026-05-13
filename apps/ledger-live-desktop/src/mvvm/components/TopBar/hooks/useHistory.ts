@@ -4,16 +4,19 @@ import { useTranslation } from "react-i18next";
 import { Clock } from "@ledgerhq/lumen-ui-react/symbols";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
+import { useSelector } from "LLD/hooks/redux";
+import { hasUnreadOperationsSelector } from "~/renderer/reducers/history";
 
 export const useHistory = (): {
   handleHistory: () => void;
   historyIcon: typeof Clock;
-  tooltip: string;
+  hasUnread: boolean;
   cta: string;
 } => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
+  const hasUnread = useSelector(hasUnreadOperationsSelector);
 
   const handleHistory = useCallback(() => {
     const url = "/history";
@@ -30,7 +33,7 @@ export const useHistory = (): {
   return {
     handleHistory,
     historyIcon: Clock,
-    tooltip: t("topBar.history.tooltip"),
+    hasUnread,
     cta: t("topBar.history.cta"),
   };
 };

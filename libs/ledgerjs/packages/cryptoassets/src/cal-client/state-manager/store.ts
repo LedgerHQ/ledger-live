@@ -25,11 +25,13 @@ export class RtkCryptoAssetsStore implements CryptoAssetsStore {
   async findTokenByAddressInCurrency(
     address: string,
     currencyId: string,
+    tokenIdentifier?: string,
   ): Promise<TokenCurrency | undefined> {
     const result = await this.dispatch(
       this.api.endpoints.findTokenByAddressInCurrency.initiate({
         contract_address: address,
         network: currencyId,
+        ...(tokenIdentifier === undefined ? {} : { token_identifier: tokenIdentifier }),
       }),
     );
     if (result.error) throw remapRtkQueryError(result.error);

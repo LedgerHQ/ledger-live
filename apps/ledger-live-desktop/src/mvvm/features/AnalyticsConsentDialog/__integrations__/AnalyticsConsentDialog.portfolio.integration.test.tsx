@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router";
 import { render, screen, waitFor, within } from "tests/testSetup";
 import { FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
+import { trackPage } from "~/renderer/analytics/segment";
 import { AnalyticsConsentDialog } from "../index";
 
 const featureFlagsWithAnalyticsOptIn = {
@@ -49,6 +50,10 @@ function TestRouter() {
 }
 
 describe("AnalyticsConsentDialog on portfolio route", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it("shows fresh consent when renewal is needed and share analytics is off", async () => {
     render(<TestRouter />, {
       initialRoute: "/",
@@ -65,7 +70,52 @@ describe("AnalyticsConsentDialog on portfolio route", () => {
       await screen.findByRole("heading", { name: "Help us improve Ledger" }),
     ).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /close/i })).not.toBeInTheDocument();
+    expect(trackPage).toHaveBeenCalledWith(
+      "AnalyticsConsentDialog",
+      "Analytics consent",
+      {
+        type: "modal",
+        phase: "consentFresh",
+      },
+      true,
+      false,
+      true,
+    );
   });
+
+  it.each([
+    { shareAnalytics: false, sharePersonalizedRecommandations: false },
+    { shareAnalytics: true, sharePersonalizedRecommandations: false },
+    { shareAnalytics: false, sharePersonalizedRecommandations: true },
+    { shareAnalytics: true, sharePersonalizedRecommandations: true },
+  ])(
+    "tracks the consent dialog page as mandatory telemetry when consent is $shareAnalytics/$sharePersonalizedRecommandations",
+    async ({ shareAnalytics, sharePersonalizedRecommandations }) => {
+      render(<TestRouter />, {
+        initialRoute: "/",
+        initialState: {
+          featureFlags: featureFlagsWithAnalyticsOptIn,
+          settings: baseSettings({
+            shareAnalytics,
+            sharePersonalizedRecommandations,
+          }),
+        },
+      });
+
+      await screen.findByTestId("analytics-consent-dialog");
+
+      expect(trackPage).toHaveBeenCalledWith(
+        "AnalyticsConsentDialog",
+        "Analytics consent",
+        expect.objectContaining({
+          type: "modal",
+        }),
+        true,
+        false,
+        true,
+      );
+    },
+  );
 
   it("shows reconfirm copy when renewal is needed and share analytics is on", async () => {
     render(<TestRouter />, {

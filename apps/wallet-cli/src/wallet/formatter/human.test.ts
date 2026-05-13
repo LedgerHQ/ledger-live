@@ -140,7 +140,9 @@ describe("HumanFormatter.formatAmount", () => {
   });
 
   it("throws for unknown assetId", async () => {
-    const storeWithNoToken = { findTokenById: async () => undefined } as unknown as CryptoAssetsStore;
+    const storeWithNoToken = {
+      findTokenById: async () => undefined,
+    } as unknown as CryptoAssetsStore;
     const f = new HumanFormatter(storeWithNoToken);
     await expect(f.formatAmount("100", "notacurrency")).rejects.toThrow(/Unknown/);
   });
@@ -148,7 +150,10 @@ describe("HumanFormatter.formatAmount", () => {
   it("does not query store for known built-in currencies (ethereum)", async () => {
     const calls: string[] = [];
     const countingStore = {
-      findTokenById: async (id: string) => { calls.push(id); return undefined; },
+      findTokenById: async (id: string) => {
+        calls.push(id);
+        return undefined;
+      },
     } as unknown as CryptoAssetsStore;
     const f = new HumanFormatter(countingStore);
     await f.formatAmount("1000000000000000000", "ethereum");
@@ -162,12 +167,16 @@ describe("HumanFormatter.formatBalance", () => {
   const formatter = new HumanFormatter(stubStore);
 
   it("formats a non-zero balance", async () => {
-    const result = await formatter.formatBalance(BalanceSchema.parse({ assetId: "ethereum", balance: "1000000000000000000" }));
+    const result = await formatter.formatBalance(
+      BalanceSchema.parse({ assetId: "ethereum", balance: "1000000000000000000" }),
+    );
     expect(result).toContain("ETH");
   });
 
   it("formats a zero balance", async () => {
-    const result = await formatter.formatBalance(BalanceSchema.parse({ assetId: "ethereum", balance: "0" }));
+    const result = await formatter.formatBalance(
+      BalanceSchema.parse({ assetId: "ethereum", balance: "0" }),
+    );
     expect(result).toContain("ETH");
   });
 });
@@ -240,9 +249,17 @@ describe("JsonFormatter.operations", () => {
 
   it("includes parentId when present", async () => {
     const op = OperationSchema.parse({
-      id: "op2", hash: "0xdef", type: "IN", value: "500", fee: "50",
-      senders: [], recipients: [], blockHeight: null,
-      accountId: "acc1", assetId: "ethereum", date: "2024-01-01T00:00:00.000Z",
+      id: "op2",
+      hash: "0xdef",
+      type: "IN",
+      value: "500",
+      fee: "50",
+      senders: [],
+      recipients: [],
+      blockHeight: null,
+      accountId: "acc1",
+      assetId: "ethereum",
+      date: "2024-01-01T00:00:00.000Z",
       parentId: "parent1",
     });
     const result = await json.operations([op], "ethereum", "acct");

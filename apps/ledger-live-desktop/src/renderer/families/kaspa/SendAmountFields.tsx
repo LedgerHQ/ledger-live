@@ -1,4 +1,4 @@
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useFeesStrategy } from "@ledgerhq/live-common/families/kaspa/react";
 import { Transaction } from "@ledgerhq/live-common/families/kaspa/types";
 import React, { useCallback, useEffect, useState } from "react";
@@ -38,32 +38,30 @@ const Fields: Props = ({
   trackProperties = {},
 }) => {
   const [isAdvanceMode, setAdvanceMode] = useState(!transaction.feesStrategy);
-  const bridge = getAccountBridge(account);
+  const bridge = useAccountBridge<Transaction>(account);
 
   const strategies = useFeesStrategy(account, transaction);
 
   useEffect(() => {
     updateTransaction((t: Transaction) =>
       bridge.updateTransaction(t, {
-        rbf: true,
         // initially "fast" is selected - set this feerate
-        feerate: strategies.filter(x => x.label === "fast")[0].amount,
+        customFeeRate: strategies.filter(x => x.label === "fast")[0].amount,
       }),
     );
   }, []); // oxlint-disable-line react-hooks/exhaustive-deps
 
   const onFeeStrategyClick = useCallback(
     ({ feesStrategy }: OnClickType) => {
-      updateTransaction(
-        (transaction: Transaction) =>
-          !isAdvanceMode &&
-          bridge.updateTransaction(transaction, {
-            feesStrategy,
-          }),
+      if (isAdvanceMode) return;
+      updateTransaction((transaction: Transaction) =>
+        bridge.updateTransaction(transaction, {
+          feesStrategy: feesStrategy as Transaction["feesStrategy"],
+        }),
       );
     },
     // oxlint-disable-next-line react-hooks/exhaustive-deps
-    [updateTransaction, bridge],
+    [updateTransaction, bridge, isAdvanceMode],
   );
 
   const setAdvanceModeAndTrack = useCallback(

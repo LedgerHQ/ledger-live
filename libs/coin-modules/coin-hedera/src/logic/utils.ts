@@ -2,6 +2,7 @@ import { createHash } from "crypto";
 import {
   AccountId,
   EntityIdHelper,
+  Timestamp,
   Transaction as HederaSDKTransaction,
   TransactionId,
 } from "@hashgraph/sdk";
@@ -820,6 +821,17 @@ export function secondsToNanos(seconds: number | BigNumber): BigNumber {
 
 export function nanosToSeconds(nanos: number | BigNumber): BigNumber {
   return new BigNumber(nanos).dividedBy(10 ** 9);
+}
+
+export function toTimestamp(consensusTimestamp: string): Timestamp {
+  const [secondsPart, nanosPart] = consensusTimestamp.split(".");
+
+  invariant(
+    typeof secondsPart === "string" && typeof nanosPart === "string",
+    `invalid consensus timestamp format: ${consensusTimestamp}`,
+  );
+
+  return new Timestamp(Number(secondsPart), Number(nanosPart.padEnd(9, "0")));
 }
 
 export function createStakingRewardOperationHash(hash: string): string {

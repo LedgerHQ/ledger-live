@@ -46,6 +46,7 @@ import {
   isRebornSelector,
   isOnboardingFlowSelector,
   isPostOnboardingFlowSelector,
+  analyticsConsentInfoSelector,
 } from "../reducers/settings";
 import { bleDevicesSelector } from "../reducers/ble";
 import { DeviceLike, State } from "../reducers/types";
@@ -65,6 +66,7 @@ import { getVersionedRedirects } from "LLM/hooks/useStake/useVersionedStakeProgr
 import { resolveStartupEvents, STARTUP_EVENTS } from "LLM/utils/resolveStartupEvents";
 import { getTotalStakeableAssets } from "@ledgerhq/live-common/domain/getTotalStakeableAssets";
 import { getWallet40Attributes } from "@ledgerhq/live-common/analytics/featureFlagHelpers/wallet40";
+import { getRemoteABTestingAttributes } from "@ledgerhq/live-common/featureFlags/remoteABTesting/remoteABTestingAnalytics";
 import { notificationsPermissionStatusSelector } from "~/reducers/notifications";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
 
@@ -188,6 +190,7 @@ const getMandatoryProperties = (store: AppStore) => {
   const hasSeenAnalyticsOptInPrompt = hasSeenAnalyticsOptInPromptSelector(state);
   const readOnlyMode = readOnlyModeEnabledSelector(state);
   const devModeEnabled = getEnv("MANAGER_DEV_MODE");
+  const analyticsInfo = analyticsConsentInfoSelector(state);
 
   return {
     userId: userIdStr,
@@ -197,6 +200,7 @@ const getMandatoryProperties = (store: AppStore) => {
     optInPersonalRecommendations: personalizedRecommendationsEnabled,
     hasSeenAnalyticsOptInPrompt,
     readOnlyMode,
+    analyticsInfo,
   };
 };
 
@@ -358,6 +362,7 @@ const extraProperties = async (store: AppStore) => {
   const tokenWithFunds = getTokensWithFunds(accounts);
   const migrationToMMKV = getMigrationUserProps();
   const wallet40Attributes = getWallet40Attributes(analyticsFeatureFlagMethod, "lwm");
+  const remoteABTestingAttributes = getRemoteABTestingAttributes(analyticsFeatureFlagMethod);
   // NOTE: Currently there no reliable way to uniquely identify devices from DeviceModelInfo.
   // So device counts is approximated as follows:
   // Each model of device seen which was not connected in Bluetooth is counted as a 1 device.
@@ -423,6 +428,7 @@ const extraProperties = async (store: AppStore) => {
     stakeableAssets: stakeableAssetsList,
     wallet40Attributes,
     ...optimiseOptInNotificationsNewWordingAttributes,
+    ...remoteABTestingAttributes,
   };
 };
 

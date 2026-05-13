@@ -1,5 +1,17 @@
 # @ledgerhq/live-env
 
+## 2.34.0
+
+### Minor Changes
+
+- [#17072](https://github.com/LedgerHQ/ledger-live/pull/17072) [`b866ea6`](https://github.com/LedgerHQ/ledger-live/commit/b866ea67bcbd408a33dbc9233ef55298e2a8ef25) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - fix avatar resolution
+
+## 2.34.0-next.0
+
+### Minor Changes
+
+- [#17072](https://github.com/LedgerHQ/ledger-live/pull/17072) [`b866ea6`](https://github.com/LedgerHQ/ledger-live/commit/b866ea67bcbd408a33dbc9233ef55298e2a8ef25) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - fix avatar resolution
+
 ## 2.33.0
 
 ### Minor Changes

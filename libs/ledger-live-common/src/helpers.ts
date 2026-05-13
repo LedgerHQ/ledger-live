@@ -17,3 +17,4 @@ export function reverseRecord<T extends PropertyKey, U extends PropertyKey>(
 }
 
 export * from "./helpers/cryptoIconSize";
+export * from "./helpers/transactionalDotConfig";

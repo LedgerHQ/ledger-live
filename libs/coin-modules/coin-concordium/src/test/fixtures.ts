@@ -60,7 +60,7 @@ export function createFixtureAccount(overrides?: Partial<Account>): Account {
     index: 0,
     currency: createFixtureCurrency(),
     freshAddress: VALID_ADDRESS,
-    freshAddressPath: "44'/919'/404'/404'/0'",
+    freshAddressPath: "44'/1'/0'/0'/0'/0'",
     balance: new BigNumber(10000000),
     spendableBalance: new BigNumber(9900000),
     blockHeight: 1000,

@@ -56,12 +56,19 @@ export const submit = async (signedOperation: SignedOperation, currency: CryptoC
     getSignature: () => signedOperation.signature,
   };
 
-  const response = await iconService
-    .sendTransaction(signedTransaction as SignedTransaction)
-    .execute();
-  return {
-    hash: response,
-  };
+  /**
+   * `icon-sdk-js` throw plain strings (cf https://github.com/icon-project/icon-sdk-js/blob/0415489dc0c295de4bed84b0187f7659e528823b/lib/transport/http/client/HttpCall.ts#L31-L48)
+   */
+  try {
+    const response = await iconService
+      .sendTransaction(signedTransaction as SignedTransaction)
+      .execute();
+    return {
+      hash: response,
+    };
+  } catch (err) {
+    throw typeof err === "string" ? new Error(err) : err;
+  }
 };
 
 /**

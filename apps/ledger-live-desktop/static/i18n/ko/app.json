@@ -308,6 +308,7 @@
     "exchange" : "매수 / 매도",
     "swap" : "스왑",
     "perps" : "무기한 선물",
+    "borrow" : "대출하기",
     "home" : "홈",
     "refer" : "친구 추천",
     "lend" : "대출",
@@ -785,6 +786,9 @@
         }
       }
     }
+  },
+  "borrow" : {
+    "pageHeader" : "대출하기"
   },
   "exchange" : {
     "pageHeader" : "매수 또는 매도",
@@ -1334,6 +1338,33 @@
     "widget" : {
       "title" : "다음 단계: 지갑 설정 마무리",
       "subtitle" : "먼저, 자산 충전부터 시작해 보세요."
+    },
+    "dialog" : {
+      "title" : "다음 단계: 지갑 설정 마무리",
+      "titleCompleted" : "모든 준비가 완료되었습니다!",
+      "primaryLabel" : "확인",
+      "actionCompletedLabel" : "완료",
+      "actions" : {
+        "deviceOnboarded" : {
+          "title" : "Ledger 설정"
+        },
+        "assetsTransfer" : {
+          "title" : "암호화폐 추가",
+          "description" : "암호화폐 전송이나 매수로 지갑에 자산을 충전하세요"
+        },
+        "syncAccounts" : {
+          "title" : "지갑 동기화",
+          "description" : "암호화폐 계정을 동기화 상태로 유지하세요"
+        },
+        "customImage" : {
+          "title" : "잠금화면을 취향대로 꾸며보세요",
+          "description" : "좋아하는 디지털 아트나 사진을 장치 잠금 화면으로 설정할 수 있어요."
+        },
+        "recover" : {
+          "title" : "백업 보안 설정 마무리",
+          "description" : "Ledger Recover 활성화 완료"
+        }
+      }
     },
     "postOnboardingScreen" : {
       "title" : "이제 다음 단계는?",
@@ -4212,6 +4243,8 @@
         "activeTooltip" : "위임된 수량에서 보상이 생성됩니다",
         "inactiveTooltip" : "위임되지 않은 금액은 보상을 생성하지 않습니다",
         "minSafeWarning" : "자금이 부족합니다",
+        "commission" : "수수료",
+        "totalStake" : "총 스테이킹",
         "flow" : {
           "title" : "위임하기",
           "steps" : {
@@ -4226,7 +4259,8 @@
               "title" : "수량"
             },
             "validator" : {
-              "title" : "검증인"
+              "title" : "검증인",
+              "noResults" : "검색하신 조건에 맞는 검증인을 찾을 수 없습니다"
             },
             "connectDevice" : {
               "title" : "장치"
@@ -4248,7 +4282,35 @@
       },
       "undelegation" : {
         "header" : "위임 해제",
-        "inactiveTooltip" : "위임되지 않은 금액은 보상을 생성하지 않습니다"
+        "headerTooltip" : "{{numberOfDays}}일 타임 락이 끝나면 이용할 수 있습니다",
+        "inactiveTooltip" : "위임되지 않은 금액은 보상을 생성하지 않습니다",
+        "flow" : {
+          "title" : "스테이킹 중지",
+          "steps" : {
+            "amount" : {
+              "title" : "수량",
+              "subtitle" : "위임 해제 절차 완료까지 <0>{{numberOfDays}}일</0>이 소요됩니다.",
+              "warningWithTimelock" : "보상은 자동으로 전송됩니다. 위임 해제된 수량은 <0>{{numberOfDays}}일의 타임 락(대기 기간)</0> 후 이용 가능한 잔액에 반영됩니다.",
+              "warningInstant" : "보상은 자동으로 전송됩니다. 위임 해제된 수량은 즉시 잔액에 반영되어 바로 이용 가능합니다.",
+              "fields" : {
+                "validator" : "검증인",
+                "amount" : "위임 해제 수량"
+              }
+            },
+            "connectDevice" : {
+              "title" : "장치"
+            },
+            "confirmation" : {
+              "title" : "확인",
+              "success" : {
+                "title" : "귀하의 자산을 성공적으로 위임 해제했습니다.",
+                "description" : "<0>{{amount}}</0>가 <0>{{validator}}</0>로부터 위임 해제되었습니다",
+                "cta" : "세부사항 보기"
+              },
+              "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+            }
+          }
+        }
       }
     }
   },
@@ -4635,7 +4697,7 @@
       "walletSyncDesc" : "여러 휴대전화와 컴퓨터에서 Ledger Wallet 암호화폐 계정 동기화",
       "walletSyncDescription" : "PC와 모바일 어디서든, 포트폴리오를 항상 최신 상태로 유지하세요",
       "mevProtection" : "MEV 보호",
-      "mevProtectionDesc" : "MEV 보호 기능을 활성화하여 이더리움을 보다 안정적으로 거래하세요",
+      "mevProtectionDesc" : "더 안정적인 거래를 위해 MEV 보호 기능을 활성화하세요.",
       "mevProtectionLearnMore" : "개인정보 관련 고지"
     },
     "developer" : {
@@ -4802,6 +4864,17 @@
         "openDrawer" : "Drawer 열기",
         "debugDialog" : "디버그 대화상자",
         "debugDuplicates" : "중복 항목 디버그"
+      },
+      "featuresAndFlowsDevTool" : {
+        "title" : "기능 및 플로우",
+        "description" : "기능 관련 플로우를 개발자 도구입니다.",
+        "productTour" : {
+          "title" : "제품 둘러보기",
+          "label" : "제품 둘러보기",
+          "completed" : "제품 둘러보기가 완료로 표시됩니다.",
+          "notCompleted" : "제품 둘러보기가 아직 완료되지 않았습니다.",
+          "open" : "열기"
+        }
       },
       "walletFeaturesDevTool" : {
         "title" : "지갑 기능 개발 툴",
@@ -6300,6 +6373,9 @@
     "CeloAllFundsWarning" : {
       "title" : "향후 트랜잭션 수수료 지불에 필요한 잔액을 충분히 남겨 두세요"
     },
+    "CeloGroupNotVotable" : {
+      "title" : "이 검증인 그룹에는 투표할 수 없습니다. 위임 한도가 초과되었거나 자격이 없는 상태일 수 있습니다."
+    },
     "ClaimRewardsFeesWarning" : {
       "title" : "추정된 수수료보다 수령하는 보상액이 적습니다",
       "description" : ""
@@ -7137,6 +7213,9 @@
       "title" : "세션 만료",
       "description" : "Concordium ID 앱 세션이 만료되었습니다. 다시 페어링해 주세요."
     },
+    "ConcordiumAddressVerificationFailedError" : {
+      "title" : "주소 인증 실패"
+    },
     "StacksMemoTooLong" : {
       "title" : "메모 길이가 너무 깁니다"
     },
@@ -7337,6 +7416,9 @@
     "AleoFeeRecordInsufficientBalance" : {
       "title" : "네트워크 수수료로 사용할 프라이빗 레코드가 없습니다.",
       "description" : "보낼 수량에 맞게 다른 레코드를 선택하거나 잔액을 추가로 충전하세요."
+    },
+    "AleoApiConfigurationResetError" : {
+      "title" : "레코드 스캐너 설정이 초기화되었습니다. 계정을 다시 동기화하세요."
     },
     "BackupAppDataError" : {
       "title" : "앱 데이터 백업 중 오류가 발생했습니다"
@@ -8258,6 +8340,12 @@
       "description" : "레버리지로 거래하기",
       "cta" : "탐색"
     },
+    "borrowEntry" : {
+      "title" : "대출",
+      "cardTitle" : "스테이블코인 대출하기",
+      "cardDescription" : "유동성 활용하기",
+      "cta" : "탐색"
+    },
     "noDeviceTitle" : "안전한 암호화폐 지갑"
   },
   "marketBanner" : {
@@ -8537,7 +8625,8 @@
       "mandatoryPrivateSync" : {
         "title" : "비공개 수량 동기화 중({{percentage}}%)",
         "desc" : "잠시만 기다려 주세요",
-        "error" : "비공개 수량 동기화에 실패했습니다. 나중에 다시 시도하세요."
+        "errorTitle" : "비공개 수량 동기화 실패",
+        "errorDesc" : "문제가 발생했습니다. 잠시 후 다시 시도하세요"
       }
     }
   },
@@ -8565,6 +8654,17 @@
     "cta" : {
       "continue" : "계속",
       "explore" : "새로워진 포트폴리오 살펴보기"
+    }
+  },
+  "productTour" : {
+    "cta" : {
+      "continue" : "계속",
+      "done" : "완료",
+      "fundYourWallet" : "자산 입금하기",
+      "discoverSwap" : "스왑 살펴보기",
+      "growYourRewards" : "보상 수익 늘리기",
+      "spendYourCrypto" : "암호화폐로 결제하세요",
+      "everythingAtAGlance" : "모든 정보를 한눈에"
     }
   },
   "history" : {
@@ -8605,6 +8705,12 @@
     }
   },
   "myWallet" : {
+    "title" : "내 지갑",
+    "avatar" : {
+      "label" : "Avatar",
+      "labelWithNotifications_one" : "Avatar, {{count}}개의 미확인 알림",
+      "labelWithNotifications_other" : "Avatar, {{count}}개의 미확인 알림"
+    },
     "actionsList" : {
       "help" : "도움말",
       "recover" : "[L] Recover",
@@ -8615,5 +8721,8 @@
       "description" : "Ledger 장치를 관리하세요"
     },
     "explore" : "모든 Ledger 장치 살펴보기"
+  },
+  "assetDetails" : {
+    "totalBalance" : "총 잔액"
   }
 }

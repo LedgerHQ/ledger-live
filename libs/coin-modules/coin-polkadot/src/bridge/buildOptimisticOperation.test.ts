@@ -79,7 +79,7 @@ describe("buildOptimisticOperation", () => {
     const operation = buildOptimisticOperation(account, transaction, fee);
     expect(operation.extra).toEqual({
       index: 0,
-      palletMethod: "balances.transferAllowDeath",
+      palletMethod: "balances.transferAll",
       transferAmount: transaction.amount,
     });
   });

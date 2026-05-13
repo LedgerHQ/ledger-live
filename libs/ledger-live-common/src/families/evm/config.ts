@@ -456,7 +456,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
       node: {
         type: "external",
-        uri: "https://flare-api.flare.network/ext/bc/C/rpc",
+        uri: "https://flare.coin.ledger.com/ext/bc/C/rpc",
       },
       explorer: {
         type: "blockscout",
@@ -846,7 +846,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
       node: {
         type: "external",
-        uri: "https://public-en-cypress.klaytn.net",
+        uri: "https://kaia.coin.ledger.com",
       },
       explorer: {
         type: "klaytnfinder",
@@ -986,7 +986,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         type: "active",
         features: [{ id: "blockchain_txs", status: "active" }],
       },
-      node: { type: "external", uri: "https://rpc.public.zkevm-test.net" },
+      node: { type: "external", uri: "https://polygon-zkevm-cardona.coin.ledger.com" },
       explorer: {
         type: "etherscan",
         uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1442",
@@ -1184,7 +1184,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
       explorer: {
         type: "blockscout",
-        uri: "https://explorer.somnia.network/api",
+        uri: "https://mainnet.somnia.w3us.site/api",
       },
       showNfts: false,
     },

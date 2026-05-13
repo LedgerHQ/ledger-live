@@ -30,7 +30,15 @@ export function LocalLiveAppSection({ localLiveApps }: { localLiveApps: LiveAppM
   );
 }
 
-const Scroll = styled(Flex).attrs({ overflowX: "scroll" })`
+const Scroll = styled(Flex).attrs({
+  flexDirection: "row",
+  overflowX: "scroll",
+  overflowY: "hidden",
+})`
+  > * {
+    flex-shrink: 0;
+  }
+
   &::-webkit-scrollbar {
     display: none;
   }

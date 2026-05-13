@@ -15,6 +15,11 @@ const { _trackMock: mockTrack } = require("@segment/analytics-react-native") as 
   _trackMock: jest.Mock;
 };
 
+const analyticsConsentInfo = {
+  consentDate: "2026-04-29T00:00:00.000Z",
+  privacyPolicyVersion: 1,
+};
+
 const makeStore = (): AppStore =>
   configureStore({
     reducer: reducers,
@@ -39,12 +44,7 @@ describe("segment readOnlyMode", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     store = makeStore();
-    store.dispatch(
-      setAnalyticsConsentInfo({
-        consentDate: new Date().toISOString(),
-        privacyPolicyVersion: 1,
-      }),
-    );
+    store.dispatch(setAnalyticsConsentInfo(analyticsConsentInfo));
     store.dispatch(setAnalytics(true));
   });
 
@@ -89,6 +89,20 @@ describe("segment readOnlyMode", () => {
       expect(mockTrack).toHaveBeenCalledWith(
         "TestEvent",
         expect.objectContaining({ readOnlyMode: true }),
+      ),
+    );
+  });
+
+  it("track() includes analyticsInfo from consent state", async () => {
+    await segment.start(store);
+    mockTrack.mockClear();
+
+    segment.track("TestEvent", {});
+
+    await waitFor(() =>
+      expect(mockTrack).toHaveBeenCalledWith(
+        "TestEvent",
+        expect.objectContaining({ analyticsInfo: analyticsConsentInfo }),
       ),
     );
   });

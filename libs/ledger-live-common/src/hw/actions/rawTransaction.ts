@@ -155,28 +155,34 @@ export const createAction = (
         return;
       }
 
-      const bridge = getAccountBridge(mainAccount);
-      const sub = bridge
-        .signRawOperation({
-          account: mainAccount,
-          transaction,
-          deviceId: device.deviceId,
-          deviceModelId: device.modelId,
-          broadcast,
-        })
-        .pipe(
-          catchError(error =>
-            of<{ type: "error"; error: Error }>({
-              type: "error",
-              error,
-            }),
-          ),
-          tap((e: Event) => log("actions-transaction-event", e.type, e)),
-          scan(reducer, initialState),
-        )
-        .subscribe((x: any) => setState(x));
+      let cancelled = false;
+      let sub: { unsubscribe: () => void } | undefined;
+      (async () => {
+        const bridge = await getAccountBridge(mainAccount);
+        if (cancelled) return;
+        sub = bridge
+          .signRawOperation({
+            account: mainAccount,
+            transaction,
+            deviceId: device.deviceId,
+            deviceModelId: device.modelId,
+            broadcast,
+          })
+          .pipe(
+            catchError(error =>
+              of<{ type: "error"; error: Error }>({
+                type: "error",
+                error,
+              }),
+            ),
+            tap((e: Event) => log("actions-transaction-event", e.type, e)),
+            scan(reducer, initialState),
+          )
+          .subscribe((x: any) => setState(x));
+      })();
       return () => {
-        sub.unsubscribe();
+        cancelled = true;
+        sub?.unsubscribe();
       };
     }, [device, mainAccount, transaction, broadcast, opened, inWrongDeviceForAccount, error]);
     return {

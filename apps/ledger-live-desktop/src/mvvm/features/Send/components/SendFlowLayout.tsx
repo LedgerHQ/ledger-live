@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { Dialog, DialogContent } from "@ledgerhq/lumen-ui-react";
 import { cn } from "LLD/utils/cn";
 import { useFlowWizard } from "../../FlowWizard/FlowWizardContext";
@@ -9,6 +9,7 @@ import type { SendStepConfig } from "../types";
 import { SendHeader } from "./SendHeader";
 import { AnimatedHeight } from "./AnimatedHeight";
 import { track } from "~/renderer/analytics/segment";
+import { getSendFlowTrackingProperties } from "../utils/tracking";
 
 type SendFlowLayoutProps = Readonly<{
   isOpen: boolean;
@@ -21,6 +22,10 @@ export function SendFlowLayout({ isOpen, onClose }: SendFlowLayoutProps) {
 
   const currentStepConfig = wizard.currentStepConfig;
   const StepComponent = wizard.currentStepRenderer;
+  const sendFlowTrackingProperties = useMemo(
+    () => getSendFlowTrackingProperties(state.account.account, state.account.parentAccount),
+    [state.account.account, state.account.parentAccount],
+  );
 
   const handleDialogOpenChange = useCallback(
     (open: boolean) => {
@@ -28,12 +33,12 @@ export function SendFlowLayout({ isOpen, onClose }: SendFlowLayoutProps) {
         track("button_clicked", {
           button: "close",
           page: `step ${wizard.currentStep}`,
-          flow: "send",
+          ...sendFlowTrackingProperties,
         });
         onClose();
       }
     },
-    [onClose, wizard.currentStep],
+    [onClose, wizard.currentStep, sendFlowTrackingProperties],
   );
 
   const dialogHeight = currentStepConfig?.height ?? "fixed";

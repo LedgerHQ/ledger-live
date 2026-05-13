@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { StepProps } from "../types";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -20,7 +20,7 @@ import CosmosFamilyLedgerValidatorIcon from "~/renderer/families/cosmos/shared/c
 import Text from "~/renderer/components/Text";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
-import { CosmosMappedDelegation } from "@ledgerhq/live-common/families/cosmos/types";
+import { CosmosMappedDelegation, Transaction } from "@ledgerhq/live-common/families/cosmos/types";
 
 const SelectButton = styled(Base)`
   border-radius: 4px;
@@ -61,7 +61,7 @@ export default function StepValidators({
   transitionTo,
 }: StepProps) {
   invariant(account && account.cosmosResources && transaction, "account and transaction required");
-  const bridge = getAccountBridge(account, parentAccount);
+  const bridge = useAccountBridge<Transaction>(account, parentAccount);
   const sourceValidator = useMemo(() => {
     const found = account.cosmosResources?.delegations.find(
       d => d.validatorAddress === transaction.sourceValidator,

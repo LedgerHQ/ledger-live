@@ -75,7 +75,7 @@ export function useTopBarViewModel(
   }, [navigation, page, readOnlyModeEnabled, navigateToRebornFlow]);
 
   const onMyWalletPress = useCallback(() => {
-    track("menuentry_clicked", { button: "MyWallet", page });
+    track("button_clicked", { button: "My Wallet", page });
     navigation.navigate(NavigatorName.MyWallet, {
       screen: ScreenName.MyWallet,
     });

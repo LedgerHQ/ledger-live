@@ -55,7 +55,7 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - name: Install dependencies
-        run: pnpm i --filter="live-common..." --filter="ledger-live"
+        run: pnpm i --filter="live-common..." --filter="ledger-live" --filter="@ledgerhq/ledger-wallet-framework"
       - name: Build
         env:
           TURBO_API: "http://127.0.0.1:${{ steps.setup-caches.outputs.port }}"
@@ -70,6 +70,9 @@ jobs:
         run: |
           pnpm common ci-test-integration $FILTER
           git diff --exit-code libs/ledger-live-common/src
+      - name: Test Ledger Wallet framework
+        shell: bash
+        run: pnpm --filter @ledgerhq/ledger-wallet-framework test-integ
       - name: (On Failure) Upload live-common snapshots and source
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: failure()

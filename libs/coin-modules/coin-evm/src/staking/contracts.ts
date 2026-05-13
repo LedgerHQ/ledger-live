@@ -16,6 +16,11 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
       validatorsEndpoint:
         "/cosmos/staking/v1beta1/validators?status=BOND_STATUS_BONDED&pagination.limit=200",
     },
+    redelegationStrategy: {
+      type: "cosmos-rest",
+      hrp: "sei",
+      endpoint: "/cosmos/staking/v1beta1/delegators/{address}/redelegations",
+    },
     explorerConfig: {
       validatorUrl: "https://seistream.app/validators/$address",
     },

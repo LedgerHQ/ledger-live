@@ -15,6 +15,8 @@ import type { Transaction as WalletAPITransaction } from "@ledgerhq/wallet-api-c
 import type { Resolver } from "../hw/getAddress/types";
 import type { SignMessage } from "../hw/signMessage/types";
 import type { GetWalletAPITransactionSignFlowInfos } from "../wallet-api/types";
+import type { AlpacaSigner } from "../bridge/generic-alpaca/types";
+export type { AlpacaSigner };
 
 export type MessageSignerModule = {
   signMessage: SignMessage;
@@ -117,4 +119,5 @@ export type CoinModuleLoader = {
   loadGetVotesCount?: () => (account: Account) => number;
   loadClearAccount?: () => (account: Account) => void;
   loadValidateAddress?: () => ValidateAddressFn;
+  loadSigner?: () => AlpacaSigner;
 };

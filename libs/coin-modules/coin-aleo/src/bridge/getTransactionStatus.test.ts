@@ -159,7 +159,7 @@ describe("getTransactionStatus", () => {
         recipient: account.freshAddress,
         mode: TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC,
         properties: {
-          amountRecordCommitment: null,
+          amountRecordCommitments: [],
           feeRecordCommitment: null,
         },
       };
@@ -282,7 +282,7 @@ describe("getTransactionStatus", () => {
       ...mockTransaction,
       mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
       properties: {
-        amountRecordCommitment: mockUnspentRecord1.commitment,
+        amountRecordCommitments: [mockUnspentRecord1.commitment],
         feeRecordCommitment: mockUnspentRecord2.commitment,
       },
     };
@@ -292,7 +292,7 @@ describe("getTransactionStatus", () => {
         ...privateTransaction,
         properties: {
           ...privateTransaction.properties,
-          amountRecordCommitment: null,
+          amountRecordCommitments: [],
         },
       };
 
@@ -306,7 +306,7 @@ describe("getTransactionStatus", () => {
         ...privateTransaction,
         properties: {
           ...privateTransaction.properties,
-          amountRecordCommitment: "missing-amount-record",
+          amountRecordCommitments: ["missing-amount-record"],
         },
       };
 
@@ -394,7 +394,7 @@ describe("getTransactionStatus", () => {
       const transaction: Transaction = {
         ...privateTransaction,
         properties: {
-          amountRecordCommitment: mockUnspentRecord1.commitment,
+          amountRecordCommitments: [mockUnspentRecord1.commitment],
           feeRecordCommitment: null,
         },
       };
@@ -428,7 +428,7 @@ describe("getTransactionStatus", () => {
       const transaction: Transaction = {
         ...privateTransaction,
         properties: {
-          amountRecordCommitment: mockUnspentRecord1.commitment,
+          amountRecordCommitments: [mockUnspentRecord1.commitment],
           feeRecordCommitment: smallFeeRecord.commitment,
         },
       };

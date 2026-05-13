@@ -1,5 +1,27 @@
 # @ledgerhq/live-dmk
 
+## 0.23.0
+
+### Minor Changes
+
+- [#16652](https://github.com/LedgerHQ/ledger-live/pull/16652) [`561b86b`](https://github.com/LedgerHQ/ledger-live/commit/561b86be1f972908ae950e362912519e3904917d) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Add blind-signing tracking context for dmk signer ethereum
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.35.2
+
+## 0.23.0-next.0
+
+### Minor Changes
+
+- [#16652](https://github.com/LedgerHQ/ledger-live/pull/16652) [`561b86b`](https://github.com/LedgerHQ/ledger-live/commit/561b86be1f972908ae950e362912519e3904917d) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Add blind-signing tracking context for dmk signer ethereum
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.35.2-next.0
+
 ## 0.22.3
 
 ### Patch Changes

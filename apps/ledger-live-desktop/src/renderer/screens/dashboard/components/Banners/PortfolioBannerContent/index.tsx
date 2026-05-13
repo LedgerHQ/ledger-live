@@ -1,12 +1,13 @@
 import React, { memo } from "react";
 import { ABTestingVariants } from "@ledgerhq/types-live";
 import PortfolioContentCards from "LLD/features/DynamicContent/components/PortfolioContentCards";
-import FinishOnboardingWidget from "LLD/features/FinishOnboardingWidget";
+import FinishOnboardingWidget from "LLD/features/FinishOnboarding/FinishOnboardingWidget";
 import { LNSUpsellBanner } from "LLD/features/LNSUpsell";
 import PostOnboardingHubBanner from "~/renderer/components/PostOnboardingHub/PostOnboardingHubBanner";
 import RecoverBanner from "~/renderer/components/RecoverBanner/RecoverBanner";
 import ActionContentCards from "~/renderer/screens/dashboard/ActionContentCards";
 import { useBannersVisibility } from "../hooks/useBannersVisibility";
+import RecoverWidget from "LLD/features/FinishOnboarding/RecoverWidget";
 
 /**
  * Renders the portfolio banner block. Order of evaluation (first match wins):
@@ -35,7 +36,12 @@ export const PortfolioBannerContent = memo(function PortfolioBannerContent() {
   }
 
   if (isFinishOnboardingWidgetVisible) {
-    return <FinishOnboardingWidget />;
+    return (
+      <div className="flex w-full gap-12">
+        <FinishOnboardingWidget />
+        <RecoverWidget />
+      </div>
+    );
   }
 
   return (

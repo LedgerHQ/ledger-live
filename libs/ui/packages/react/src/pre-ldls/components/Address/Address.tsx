@@ -38,8 +38,8 @@ export const Address = ({
       >
         {formattedAddress}
       </Text>
-      {showIcon && (
-        <CryptoIcon ledgerId={cryptoId} network={parentId} ticker={ticker} size="20px" />
+      {showIcon && cryptoId && ticker && (
+        <CryptoIcon ledgerId={cryptoId} network={parentId} ticker={ticker} size={20} />
       )}
     </Wrapper>
   );

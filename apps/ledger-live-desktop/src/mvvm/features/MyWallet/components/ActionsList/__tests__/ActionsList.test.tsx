@@ -4,6 +4,7 @@ import { render, screen, withFlagOverrides } from "tests/testSetup";
 import { track } from "~/renderer/analytics/segment";
 import { ActionsList } from "..";
 import ContextMenuContext from "../../ContextMenuContext";
+import { MY_WALLET_TRACKING_BUTTON, MY_WALLET_TRACKING_PAGE_NAME } from "../../../constants";
 
 const HELP_LABEL = "Help";
 const RECOVER_LABEL = "[L] Recover";
@@ -70,9 +71,8 @@ describe("ActionsList", () => {
 
     expect(mockNavigate).toHaveBeenCalledWith("/settings/help");
     expect(mockTrack).toHaveBeenCalledWith("button_clicked", {
-      button: "Help",
-      page: MY_WALLET_ROUTE,
-      entry: "my_wallet_actions_list",
+      button: MY_WALLET_TRACKING_BUTTON.help,
+      page: MY_WALLET_TRACKING_PAGE_NAME,
     });
   });
 
@@ -96,9 +96,8 @@ describe("ActionsList", () => {
 
     expect(mockNavigate).toHaveBeenCalledWith(RECOVER_HOME_PATH);
     expect(mockTrack).toHaveBeenCalledWith("button_clicked", {
-      button: "Recover",
-      page: MY_WALLET_ROUTE,
-      entry: "my_wallet_actions_list",
+      button: MY_WALLET_TRACKING_BUTTON.recover,
+      page: MY_WALLET_TRACKING_PAGE_NAME,
     });
   });
 
@@ -153,9 +152,8 @@ describe("ActionsList", () => {
 
     expect(mockNavigate).toHaveBeenCalledWith(REFER_PATH);
     expect(mockTrack).toHaveBeenCalledWith("button_clicked", {
-      button: "Refer",
-      page: MY_WALLET_ROUTE,
-      entry: "my_wallet_actions_list",
+      button: MY_WALLET_TRACKING_BUTTON.referral,
+      page: MY_WALLET_TRACKING_PAGE_NAME,
     });
   });
 });

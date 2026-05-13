@@ -1,8 +1,9 @@
 import { getEnv } from "@ledgerhq/live-env";
 import type { Operation } from "@ledgerhq/types-live";
-import type { SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
+import { getJsonRpcFullnodeUrl, type SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import BigNumber from "bignumber.js";
 import coinConfig from "../config";
+import { normalizeSuiAddressForComparison } from "../utils";
 import {
   createTransaction,
   DEFAULT_COIN_TYPE,
@@ -10,11 +11,15 @@ import {
   getListOperations,
   getOperations,
   getCheckpoint,
+  getOperationAmount,
+  getOperationFee,
+  getUnifiedBalanceChanges,
   isSettlementTransaction,
   paymentInfo,
   getBlock,
   getBlockInfo,
   getStakes,
+  transactionToOperation,
   withApi,
 } from "./sdk";
 
@@ -100,6 +105,50 @@ describe("SUI SDK Integration tests", () => {
               senders: [testingAccount],
               extra: { coinType: "0x2::sui::SUI" },
             });
+          });
+
+          it("live RPC: balance change amounts are strings; unprefixed address needs normalized match for getOperationAmount", async () => {
+            const txHash = "rkTA5Tn9dgrWPnHgj2WK7rVnk5t9jC3ViPcHU9dewDg";
+            const tx = await withApi(async api =>
+              api.getTransactionBlock({
+                digest: txHash,
+                options: {
+                  showBalanceChanges: true,
+                  showInput: true,
+                  showEffects: true,
+                },
+              }),
+            );
+
+            const changes = tx.balanceChanges ?? [];
+            expect(changes.length).toBeGreaterThan(0);
+
+            const unprefixed = testingAccount.replace(/^0x/i, "");
+            expect(
+              changes.some(
+                c =>
+                  typeof c.owner !== "string" &&
+                  "AddressOwner" in c.owner &&
+                  c.owner.AddressOwner === unprefixed,
+              ),
+            ).toBe(false);
+
+            const normalizedTarget = normalizeSuiAddressForComparison(unprefixed);
+            const accountRows = changes.filter(
+              c =>
+                typeof c.owner !== "string" &&
+                "AddressOwner" in c.owner &&
+                normalizeSuiAddressForComparison(c.owner.AddressOwner) === normalizedTarget &&
+                c.coinType === DEFAULT_COIN_TYPE,
+            );
+            expect(accountRows.length).toBeGreaterThanOrEqual(1);
+            for (const row of accountRows) {
+              expect(typeof row.amount).toBe("string");
+            }
+
+            expect(getOperationAmount(unprefixed, tx, DEFAULT_COIN_TYPE).toString()).toBe(
+              "150000000",
+            );
           });
         });
 
@@ -443,6 +492,208 @@ describe("SUI SDK Integration tests", () => {
           expect(op.senders).toContain(account);
         }
       }
+    });
+  });
+
+  // Pin both transfer flows to immutable on-chain testnet transactions and
+  // verify the SDK maps each correctly. Asserts flow-specific on-chain shape
+  // (gasData.payment, accumulatorEvents) AND the resulting Operation values,
+  // so both code paths in sdk.ts are exercised end-to-end against live RPC.
+  //
+  // The fixtures below live on testnet, so this block overrides the coin-sui
+  // network config to testnet for the duration of these tests, then restores
+  // the suite-level config in afterAll so other tests are unaffected.
+  describe("Transfer flow comparison: legacy coin vs SIP-58 address balance", () => {
+    beforeAll(() => {
+      coinConfig.setCoinConfig(() => ({
+        status: { type: "active" },
+        node: { url: getJsonRpcFullnodeUrl("testnet") },
+      }));
+    });
+
+    afterAll(() => {
+      coinConfig.setCoinConfig(() => ({
+        status: { type: "active" },
+        node: { url: getEnv("API_SUI_NODE_PROXY") },
+      }));
+    });
+
+    describe("legacy flow (coin-object-funded)", () => {
+      // https://suiscan.xyz/testnet/tx/93XR6Y2bfrTFKaRa4zQTA3tMeHGb6W3tKJy23a7TTREU
+      // Plain SUI transfer of 0.1 SUI; gas paid from a real coin object.
+      const SENDER = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
+      const RECIPIENT = "0x48e76327eeb7232abc5e9cb870334a2abe8a2e00140eba2b59b2b4af735ec732";
+      const TX_DIGEST = "93XR6Y2bfrTFKaRa4zQTA3tMeHGb6W3tKJy23a7TTREU";
+      const TRANSFER_AMOUNT = "100000000";
+      const FEE_AMOUNT = "1997880"; // 1_000_000 + 1_976_000 - 978_120
+      const SENDER_TOTAL_OUT = "101997880";
+
+      const fetchTx = () =>
+        withApi(api =>
+          api.getTransactionBlock({
+            digest: TX_DIGEST,
+            options: { showInput: true, showBalanceChanges: true, showEffects: true },
+          }),
+        );
+
+      test("on-chain shape: gasData.payment is a real coin object", async () => {
+        const raw = await fetchTx();
+        const payment = raw.transaction?.data?.gasData?.payment ?? [];
+        expect(payment.length).toBeGreaterThan(0);
+        expect(payment[0]).toMatchObject({
+          objectId: expect.stringMatching(/^0x[0-9a-f]+$/),
+        });
+      });
+
+      test("on-chain shape: no accumulator events", async () => {
+        const raw = await fetchTx();
+        expect(raw.effects?.accumulatorEvents ?? []).toEqual([]);
+      });
+
+      test("isSettlementTransaction returns false", async () => {
+        const raw = await fetchTx();
+        expect(isSettlementTransaction(raw)).toBe(false);
+      });
+
+      test("getUnifiedBalanceChanges yields 2 entries with bare 0x2::sui::SUI coinType", async () => {
+        const raw = await fetchTx();
+        const merged = getUnifiedBalanceChanges(raw);
+        expect(merged.length).toBe(2);
+        for (const c of merged) {
+          expect(c.coinType).toBe(DEFAULT_COIN_TYPE);
+        }
+      });
+
+      test("getOperationFee equals computationCost + storageCost - storageRebate", async () => {
+        const raw = await fetchTx();
+        expect(getOperationFee(raw).toString()).toBe(FEE_AMOUNT);
+      });
+
+      test("transactionToOperation maps OUT side for sender (transfer + fee)", async () => {
+        const raw = await fetchTx();
+        const op = transactionToOperation("acc-sender", SENDER, raw);
+        expect(op).toMatchObject({
+          type: "OUT",
+          hasFailed: false,
+          hash: TX_DIGEST,
+          senders: [SENDER],
+          recipients: [RECIPIENT],
+          extra: { coinType: DEFAULT_COIN_TYPE },
+        });
+        expect(op.value.toString()).toBe(SENDER_TOTAL_OUT);
+        expect(op.fee.toString()).toBe(FEE_AMOUNT);
+      });
+
+      test("transactionToOperation maps IN side for recipient (transfer only)", async () => {
+        const raw = await fetchTx();
+        const op = transactionToOperation("acc-recipient", RECIPIENT, raw);
+        expect(op).toMatchObject({
+          type: "IN",
+          hasFailed: false,
+          hash: TX_DIGEST,
+          senders: [SENDER],
+          recipients: [RECIPIENT],
+          extra: { coinType: DEFAULT_COIN_TYPE },
+        });
+        expect(op.value.toString()).toBe(TRANSFER_AMOUNT);
+      });
+    });
+
+    describe("SIP-58 flow (address-balance-funded)", () => {
+      // https://suiscan.xyz/testnet/tx/6DaVcYeArKBv6eez7SKwHT1gFG7wxvFE8oYw9ri6pCDX
+      // Transfer of 0.01 SUI broadcast via coin-sui's own pipeline. Both gas
+      // and transfer amount sourced from the SIP-58 address balance.
+      const SENDER = "0xb11999dc44f51bd380ac285a3e85196f7156900c469023235a84900544db1edb";
+      const RECIPIENT = "0x48e76327eeb7232abc5e9cb870334a2abe8a2e00140eba2b59b2b4af735ec732";
+      const TX_DIGEST = "6DaVcYeArKBv6eez7SKwHT1gFG7wxvFE8oYw9ri6pCDX";
+      const TRANSFER_AMOUNT = "10000000";
+      const FEE_AMOUNT = "1988000"; // 1_000_000 + 988_000 - 0
+      const SENDER_TOTAL_OUT = "11988000";
+
+      const fetchTx = () =>
+        withApi(api =>
+          api.getTransactionBlock({
+            digest: TX_DIGEST,
+            options: { showInput: true, showBalanceChanges: true, showEffects: true },
+          }),
+        );
+
+      test("on-chain shape: gasData.payment is empty (gas from address balance)", async () => {
+        const raw = await fetchTx();
+        expect(raw.transaction?.data?.gasData?.payment).toEqual([]);
+      });
+
+      test("on-chain shape: accumulator split event for sender of Balance<SUI>", async () => {
+        const raw = await fetchTx();
+        const events = raw.effects?.accumulatorEvents ?? [];
+        expect(events.length).toBeGreaterThan(0);
+        const split = events.find(e => e.address === SENDER && e.operation === "split");
+        expect(split).not.toBeUndefined();
+        expect(split!.ty).toBe("0x2::balance::Balance<0x2::sui::SUI>");
+        if ("integer" in split!.value) {
+          expect(String(split!.value.integer)).toBe(SENDER_TOTAL_OUT);
+        } else {
+          throw new Error("expected integer value on accumulator event");
+        }
+      });
+
+      test("isSettlementTransaction returns false (no 0xacc input)", async () => {
+        const raw = await fetchTx();
+        expect(isSettlementTransaction(raw)).toBe(false);
+      });
+
+      test("getUnifiedBalanceChanges yields 2 entries with bare 0x2::sui::SUI coinType (no Balance<> wrapper leak)", async () => {
+        const raw = await fetchTx();
+        const merged = getUnifiedBalanceChanges(raw);
+        expect(merged.length).toBe(2);
+        for (const c of merged) {
+          // The accumulator event uses `0x2::balance::Balance<0x2::sui::SUI>`,
+          // which sdk.ts must strip to `0x2::sui::SUI` before merging.
+          expect(c.coinType).toBe(DEFAULT_COIN_TYPE);
+        }
+      });
+
+      test("getOperationFee equals computationCost + storageCost - storageRebate", async () => {
+        const raw = await fetchTx();
+        expect(getOperationFee(raw).toString()).toBe(FEE_AMOUNT);
+      });
+
+      test("transactionToOperation maps OUT side for sender (transfer + fee)", async () => {
+        const raw = await fetchTx();
+        const op = transactionToOperation("acc-sender", SENDER, raw);
+        expect(op).toMatchObject({
+          type: "OUT",
+          hasFailed: false,
+          hash: TX_DIGEST,
+          senders: [SENDER],
+          recipients: [RECIPIENT],
+          extra: { coinType: DEFAULT_COIN_TYPE },
+        });
+        expect(op.value.toString()).toBe(SENDER_TOTAL_OUT);
+        expect(op.fee.toString()).toBe(FEE_AMOUNT);
+      });
+
+      test("transactionToOperation maps IN side for recipient (transfer only)", async () => {
+        const raw = await fetchTx();
+        const op = transactionToOperation("acc-recipient", RECIPIENT, raw);
+        expect(op).toMatchObject({
+          type: "IN",
+          hasFailed: false,
+          hash: TX_DIGEST,
+          senders: [SENDER],
+          recipients: [RECIPIENT],
+          extra: { coinType: DEFAULT_COIN_TYPE },
+        });
+        expect(op.value.toString()).toBe(TRANSFER_AMOUNT);
+      });
+
+      test("getAccountBalances reports a non-zero fundsInAddressBalance for the sender", async () => {
+        const balances = await getAccountBalances(SENDER);
+        const sui = balances.find(b => b.coinType === DEFAULT_COIN_TYPE);
+        expect(sui).not.toBeUndefined();
+        expect(sui!.fundsInAddressBalance.isGreaterThan(0)).toBe(true);
+        expect(sui!.fundsInAddressBalance.isLessThanOrEqualTo(sui!.balance)).toBe(true);
+      });
     });
   });
 });

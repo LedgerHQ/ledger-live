@@ -53,6 +53,7 @@ type DatabaseValues = {
   cryptoAssets: PersistedCAL;
   featureFlags: Pick<FeatureFlagsState, "overrides" | "bannerVisible">;
   identities: PersistedIdentities;
+  history: { lastSeenOperationDate: string | null };
   PLAYWRIGHT_RUN: {
     localStorage?: Record<string, string>;
   };

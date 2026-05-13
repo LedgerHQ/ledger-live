@@ -69,6 +69,7 @@ export function AnalyticsConsentDialogView({
             type="modal"
             phase={phase}
             refreshSource={false}
+            mandatory
           />
           {phase === "preferences" ? (
             <AnalyticsConsentPreferencesView

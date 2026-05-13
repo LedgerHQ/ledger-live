@@ -7,6 +7,7 @@ import {
   APIBlock,
   APIDelegationType,
   APIOperation,
+  APIStakingType,
   APITokenTransfer,
   APITransactionType,
   AccountsGetOperationsOptions,
@@ -25,6 +26,33 @@ const clearUndefined = (obj: Record<string, unknown>) => {
 
   return newObj;
 };
+
+/**
+ * Internal helper shared by `getOperationsTransactions` and `getOperationsOrigination`.
+ * Both endpoints accept the same query shape; only the URL path differs.
+ */
+async function getOperationsByType(
+  type: "transactions" | "originations",
+  level: number,
+  cursor?: number,
+  apiQueryParams: Record<string, unknown> = {},
+): Promise<(APITransactionType & { block: string; hash: string })[]> {
+  // "sort.asc": "id" guarantees forward progress for cursor-based paging (offset.cr).
+  // Without an explicit sort the API default may be descending, which would cause the
+  // cursor to go backwards and produce duplicates or an infinite loop.
+  const params: Record<string, unknown> = {
+    "level.gte": level,
+    limit: BLOCK_PAGE_SIZE,
+    "sort.asc": "id",
+    ...clearUndefined(apiQueryParams),
+  };
+  if (cursor !== undefined) params["offset.cr"] = cursor;
+  const { data } = await network<(APITransactionType & { block: string; hash: string })[]>({
+    url: `${getExplorerUrl()}/v1/operations/${type}`,
+    params,
+  });
+  return data;
+}
 
 const api = {
   async getBlockCount(): Promise<number> {
@@ -80,6 +108,27 @@ const api = {
   },
 
   /**
+   * Resolves block hashes for the given levels in a single request.
+   * Uses `/v1/blocks?level.in=...&select.values=level,hash`, which TzKT honours
+   * (unlike `/v1/blocks/{level}?select=...`, where `select` is ignored). Used
+   * for cheap backfill of `block.hash` on operations whose level is known but
+   * whose response omits the block field (e.g. `/accounts/{addr}/operations`
+   * for staking ops). Levels that don't resolve are absent from the result map.
+   */
+  async getBlockHashesByLevels(levels: readonly number[]): Promise<Map<number, string>> {
+    if (levels.length === 0) return new Map();
+    const { data } = await network<[number, string][]>({
+      url: `${getExplorerUrl()}/v1/blocks`,
+      params: {
+        "level.in": levels.join(","),
+        "select.values": "level,hash",
+        limit: levels.length,
+      },
+    });
+    return new Map(data);
+  },
+
+  /**
    * Fetches a single page of `transaction` operations at the given block level.
    * Internal — used by `fetchBlockTransactions` which handles pagination.
    * https://api.tzkt.io/#operation/Operations_GetTransactions
@@ -105,22 +154,20 @@ const api = {
     level: number,
     cursor?: number,
     apiQueryParams: Record<string, unknown> = {},
-  ): Promise<APITransactionType[]> {
-    // "sort.asc": "id" guarantees forward progress for cursor-based paging (offset.cr).
-    // Without an explicit sort the API default may be descending, which would cause the
-    // cursor to go backwards and produce duplicates or an infinite loop.
-    const params: Record<string, unknown> = {
-      "level.gte": level,
-      limit: BLOCK_PAGE_SIZE,
-      "sort.asc": "id",
-      ...clearUndefined(apiQueryParams),
-    };
-    if (cursor !== undefined) params["offset.cr"] = cursor;
-    const { data } = await network<APITransactionType[]>({
-      url: `${getExplorerUrl()}/v1/operations/transactions`,
-      params,
-    });
-    return data;
+  ): Promise<(APITransactionType & { block: string; hash: string })[]> {
+    return getOperationsByType("transactions", level, cursor, apiQueryParams);
+  },
+
+  /**
+   * Fetches a list of `originations` operations after the given level.
+   * https://api.tzkt.io/#operation/Operations_GetOriginations
+   */
+  async getOperationsOrigination(
+    level: number,
+    cursor?: number,
+    apiQueryParams: Record<string, unknown> = {},
+  ): Promise<(APITransactionType & { block: string; hash: string })[]> {
+    return getOperationsByType("originations", level, cursor, apiQueryParams);
   },
 
   /**
@@ -145,19 +192,11 @@ const api = {
    * https://api.tzkt.io/#operation/Tokens_GetTokenTransfers
    */
   async getTokenTransfers(
-    level: number,
-    cursor?: number,
     apiQueryParams: Record<string, unknown> = {},
   ): Promise<APITokenTransfer[]> {
-    // Same rationale as getBlockTransactionsPage: explicit ascending sort keeps the
-    // offset.cr cursor advancing forward regardless of the API's default ordering.;
-    const params: Record<string, unknown> = {
-      "level.gte": level,
-      limit: BLOCK_PAGE_SIZE,
-      "sort.asc": "id",
+    const params = {
       ...clearUndefined(apiQueryParams),
     };
-    if (cursor !== undefined) params["offset.cr"] = cursor;
     const { data } = await network<APITokenTransfer[]>({
       url: `${getExplorerUrl()}/v1/tokens/transfers`,
       params,
@@ -181,41 +220,91 @@ const api = {
   },
 
   /**
+   * Fetches a single page of `staking` operations at the given block level.
+   * Internal — used by `fetchBlockStaking` which handles pagination.
+   * https://api.tzkt.io/#operation/Operations_GetStaking
+   */
+  async getBlockStakingPage(level: number, cursor?: number): Promise<APIStakingType[]> {
+    const params: Record<string, unknown> = { level, limit: BLOCK_PAGE_SIZE, "sort.asc": "id" };
+    if (cursor !== undefined) params["offset.cr"] = cursor;
+    const { data } = await network<APIStakingType[]>({
+      url: `${getExplorerUrl()}/v1/operations/staking`,
+      params,
+    });
+    return data;
+  },
+
+  /**
    * Fetches FA2 token transfers (tokenId = 0 only) for a given account.
    * This is limited to `token.standard=fa2` and `token.tokenId=0` on the TzKT API.
+   * Translates `query.sort` to TzKT's `sort.asc=id` / `sort.desc=id`.
+   * The lower-level `getTokenTransfers` helper is a generic pass-through and does not pin the sort.
    * https://api.tzkt.io/#operation/Tokens_GetTokenTransfers
    */
   async getAccountTokenTransfers(
     address: string,
     query: TokenTransfersGetOptions,
-  ): Promise<(APITokenTransfer & { hash: string })[]> {
+  ): Promise<(APITokenTransfer & { hash: string; block: string })[]> {
+    const sortKey = query.sort === "Descending" ? "sort.desc" : "sort.asc";
     const params: Record<string, unknown> = {
       "anyof.from.to": address,
       "token.tokenId": "0",
       "token.standard": "fa2",
+      [sortKey]: "id",
+      limit: query.limit,
+      "level.ge": query["level.ge"],
+      "level.lt": query["level.lt"],
+      "level.gt": query["level.gt"],
+      "id.lt": query["id.lt"],
+      "id.gt": query["id.gt"],
     };
 
-    const data = await api.getTokenTransfers(query["level.ge"] as number, query["lastId"], params);
+    const data = await api.getTokenTransfers(clearUndefined(params));
 
     const transactionIds = data
       .map(t => t.transactionId)
       .filter((id): id is number => typeof id === "number");
 
-    if (transactionIds.length === 0) {
-      return data.map(token => ({
-        ...token,
-        hash: "",
-      }));
+    const originationIds = data
+      .map(t => t.originationId)
+      .filter((id): id is number => typeof id === "number");
+
+    if (transactionIds.length === 0 && originationIds.length === 0) {
+      return [];
     }
 
-    const transactions = await api.getOperationsTransactions(query["level.ge"] || 0, undefined, {
-      "id.in": transactionIds.join(","),
-    });
+    const transactions = transactionIds.length
+      ? await api.getOperationsTransactions(query["level.ge"] || 0, undefined, {
+          "id.in": transactionIds.join(","),
+        })
+      : [];
 
-    return data.map(token => ({
-      ...token,
-      hash: transactions.find(t => t.id === token.transactionId)?.hash ?? "",
-    }));
+    const originations = originationIds.length
+      ? await api.getOperationsOrigination(query["level.ge"] || 0, undefined, {
+          "id.in": originationIds.join(","),
+        })
+      : [];
+
+    // Build id -> operation maps once so per-transfer lookups are O(1) instead of O(n).
+    // Keys are widened to `number | undefined` so lookups with a missing id naturally
+    // return `undefined` (no entry is ever stored under the `undefined` key).
+    const transactionsById = new Map<number | undefined, (typeof transactions)[number]>(
+      transactions.map(t => [t.id, t]),
+    );
+    const originationsById = new Map<number | undefined, (typeof originations)[number]>(
+      originations.map(o => [o.id, o]),
+    );
+
+    return data.map(token => {
+      const transaction = transactionsById.get(token.transactionId);
+      const origination = originationsById.get(token.originationId);
+
+      return {
+        ...token,
+        hash: transaction?.hash ?? origination?.hash ?? "",
+        block: transaction?.block ?? origination?.block ?? "",
+      };
+    });
   },
 
   /**
@@ -350,6 +439,30 @@ export const fetchBlockDelegations = async (level: number): Promise<APIDelegatio
     );
   }
   return delegations;
+};
+
+/**
+ * Fetches ALL `staking` operations for a given block level, paginating through
+ * TzKT's cursor-based pages (`offset.cr`) until exhausted.
+ */
+export const fetchBlockStaking = async (level: number): Promise<APIStakingType[]> => {
+  const stakingOps: APIStakingType[] = [];
+  let cursor: number | undefined;
+  let maxIteration = coinConfig.getCoinConfig().explorer.maxTxQuery;
+  do {
+    const page = await api.getBlockStakingPage(level, cursor);
+    if (page.length === 0) break;
+    stakingOps.push(...page);
+    if (page.length < BLOCK_PAGE_SIZE) break;
+    cursor = page.at(-1)!.id;
+  } while (--maxIteration > 0);
+  if (maxIteration === 0) {
+    log(
+      "tezos",
+      `fetchBlockStaking: maxTxQuery limit reached at level ${level}, result may be incomplete`,
+    );
+  }
+  return stakingOps;
 };
 
 export default api;

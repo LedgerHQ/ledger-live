@@ -237,6 +237,47 @@ describe("getNetworkFees", () => {
   });
 });
 
+describe("getLatestBlock", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("should return latest block", async () => {
+    const latestBlock = {
+      timestamp: { from: "1758733199.000000000", to: "1758733200.632122898" },
+    };
+
+    mockedNetwork.mockResolvedValueOnce(
+      getMockResponse({
+        blocks: [latestBlock],
+        links: { next: null },
+      }),
+    );
+
+    const result = await apiClient.getLatestBlock();
+
+    expect(result).toEqual(latestBlock);
+    expect(mockedNetwork).toHaveBeenCalledTimes(1);
+    expect(mockedNetwork.mock.calls[0][0].url).toContain("/api/v1/blocks");
+    expect(mockedNetwork.mock.calls[0][0].url).toContain("limit=1");
+    expect(mockedNetwork.mock.calls[0][0].url).toContain("order=desc");
+  });
+
+  it("should throw when no blocks are returned", async () => {
+    mockedNetwork.mockResolvedValueOnce(
+      getMockResponse({
+        blocks: [],
+        links: { next: null },
+      }),
+    );
+
+    await expect(apiClient.getLatestBlock()).rejects.toThrow(
+      "No blocks found on the Hedera network",
+    );
+    expect(mockedNetwork).toHaveBeenCalledTimes(1);
+  });
+});
+
 describe("getContractCallResult", () => {
   beforeEach(() => {
     jest.clearAllMocks();

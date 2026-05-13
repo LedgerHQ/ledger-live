@@ -9,12 +9,11 @@
 import crypto from "node:crypto";
 import type {
   Address,
-  VerifyAddressResponse,
   Transaction,
   CredentialDeploymentTransaction,
   SigningResult,
 } from "@ledgerhq/concordium-core";
-import type { ConcordiumSigner } from "../types";
+import type { ConcordiumNetwork, ConcordiumSigner } from "../types";
 
 export interface ConcordiumTestKeyPair {
   publicKeyHex: string; // Ed25519 public key in hex format (64 chars)
@@ -118,22 +117,9 @@ export function createMockSigner(keyPair: ConcordiumTestKeyPair): ConcordiumSign
     },
 
     verifyAddress: async (
-      _identityIndex: number,
-      _credNumber: number,
-      _ipIdentity: number,
-      credId?: string,
-    ): Promise<VerifyAddressResponse> => {
-      // Mock implementation - always returns success
-      // If credId is provided, return it as deviceCredId
-      if (credId) {
-        return {
-          status: "success",
-          address: `mock-address-${credId.slice(0, 16)}`,
-          deviceCredId: credId,
-          devicePrfKey: `mock-prfKey-${credId.slice(0, 8)}`,
-        };
-      }
-      return { status: "success" };
-    },
+      _path: string,
+      _address: string,
+      _network: ConcordiumNetwork,
+    ): Promise<void> => {},
   };
 }

@@ -169,6 +169,9 @@
     "CeloAllFundsWarning": {
       "title": "Ensure you have enough balance left for future transaction fees"
     },
+    "CeloGroupNotVotable": {
+      "title": "This validator group cannot receive votes. It may be full or no longer eligible."
+    },
     "CeloMissingWithdrawalsError": {
       "title": "Something went wrong, cannot fetch any funds to withdraw"
     },
@@ -1320,6 +1323,13 @@
     "openSettings": "Open location settings",
     "tryEnablingAgain": "Try enabling location again",
     "noInfos": "Ledger does not access your location information."
+  },
+  "borrow": {
+    "title": "Borrow",
+    "appNotFound": "Borrow app not found",
+    "infoModal": {
+      "close": "Close"
+    }
   },
   "earn": {
     "deposit": {
@@ -2743,6 +2753,12 @@
       "title": "Perpetuals",
       "description": "Trade with leverage"
     },
+    "borrowEntry": {
+      "title": "Loans",
+      "cardTitle": "Borrow Stablecoin",
+      "cardDescription": "Unlock liquidity",
+      "cta": "Explore"
+    },
     "recommended": {
       "title": "Recommended"
     },
@@ -2933,7 +2949,8 @@
   },
   "operationsList": {
     "to": "To",
-    "from": "From"
+    "from": "From",
+    "pending": "Pending"
   },
   "operationDetails": {
     "title": "Transaction details",
@@ -3218,7 +3235,9 @@
     "title": "Accounts",
     "addAccount": "Add account",
     "emptyState": "No accounts yet",
-    "errorState": "An error occurred while loading your accounts"
+    "errorState": "An error occurred while loading your accounts",
+    "assetsCount": "{{count}} assets",
+    "assetsCount_one": "{{count}} asset"
   },
   "crypto": {
     "title": "Crypto",
@@ -3349,7 +3368,7 @@
       "analytics": "App performance",
       "analyticsDesc": "Enable Ledger to collect app usage to enhance the experience",
       "mevProtection": "MEV Protection",
-      "mevProtectionDesc": "Enable MEV Protection for more reliable transactions on Ethereum.",
+      "mevProtectionDesc": "Enable MEV Protection for more reliable transactions.",
       "mevProtectionLearnMore": "Privacy notice",
       "personalizedRecommendations": "Personalized experience",
       "personalizedRecommendationsDesc": "Enable Ledger to collect app usage to provide personalized contents",
@@ -7816,27 +7835,53 @@
   "postOnboarding": {
     "hub": {
       "title": "What’s next?",
-      "areAllPostOnboardingActionsCompletedTitle": "You're all set! Keep going and explore your portfolio",
+      "areAllPostOnboardingActionsCompletedTitle": "You’re all set!",
       "skip": "I’ll do this later",
-      "viewWallet": "Explore my portfolio"
+      "viewWallet": "Explore my portfolio",
+      "deviceStepComplete": "Complete"
     },
     "entryPointCard": {
       "title": "What's next for your {{productName}}?",
       "description": "Secure your assets and go further.",
       "buttonLabel": "See what's next"
     },
+    "drawer": {
+      "title": "Next, finish wallet setup",
+      "titleCompleted": "You’re all set!",
+      "primaryLabel": "Got it",
+      "actionCompletedLabel": "Complete",
+      "actions": {
+        "deviceOnboarded": {
+          "title": "Set up your Ledger"
+        },
+        "assetsTransfer": {
+          "title": "Add crypto",
+          "description": "Receive or buy crypto to fund your wallet"
+        },
+        "syncAccounts": {
+          "title": "Sync your wallet",
+          "description": "Keep your crypto accounts synced"
+        },
+        "customImage": {
+          "title": "Customize the lock screen",
+          "description": "Display your favorite digital art or photo as your device’s lock screen."
+        },
+        "recover": {
+          "title": "Finish securing your backup",
+          "description": "Complete activating Ledger Recover"
+        }
+      }
+    },
     "widget": {
       "title": "Next, finish wallet setup",
-      "subtitle": "Start with funding your wallet."
+      "subtitle": "Secure your assets and go further."
     },
     "actions": {
       "deviceOnboarded": {
-        "titleCompleted": "Setup your Ledger device"
+        "titleCompleted": "Set up your Ledger"
       },
       "assetsTransfer": {
-        "title": "Transfer your assets",
         "titleCompleted": "Assets transferred to Ledger",
-        "description": "Transfer from any exchange or wallet.",
         "popupLabel": "Assets transferred"
       },
       "buyCrypto": {
@@ -7846,21 +7891,15 @@
         "popupLabel": "Crypto bought"
       },
       "customImage": {
-        "title": "Customize the lock screen",
         "titleCompleted": "Lock screen customized",
-        "description": "Display your favorite digital art or photo as your device’s lock screen.",
         "popupLabel": "Lock screen customized successfully"
       },
       "recover": {
-        "title": "Finish securing your backup",
         "titleCompleted": "Backup secured",
-        "description": "Complete activating Ledger Recover",
         "popupLabel": "Successfully subscribed to Ledger Recover"
       },
       "syncAccounts": {
-        "title": "Sync your crypto accounts",
         "titleCompleted": "Your accounts are synchronized",
-        "description": "Activate Ledger Sync to sync your crypto accounts",
         "popupLabel": "Accounts synced"
       }
     }
@@ -8407,6 +8446,24 @@
       }
     }
   },
+  "assetDetail": {
+    "balanceGraph": {
+      "marketPrice": "Market price",
+      "timeframeSelector": "Timeframe",
+      "timeLabel": {
+        "24h": "1 day",
+        "7d": "1 week",
+        "30d": "1 month",
+        "1y": "1 year"
+      },
+      "chartPlaceholder": "Graphic"
+    },
+    "addresses": {
+      "title": "Addresses",
+      "addAccount": "Add",
+      "empty": "No addresses yet. Tap Add to get started."
+    }
+  },
   "assetSelection": {
     "selectCrypto": {
       "title": "Select Asset"
@@ -8907,7 +8964,8 @@
       "addDevice": "Add a Ledger device",
       "exploreAllDevices": "Explore all Ledger devices",
       "available": "Available",
-      "unavailable": "Not connected"
+      "unavailable": "Not connected",
+      "menuAccessibilityLabel": "Device options"
     }
   }
 }

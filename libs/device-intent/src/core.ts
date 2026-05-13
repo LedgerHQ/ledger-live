@@ -32,35 +32,9 @@ export type DeviceConnectionResult = {
 
 // ---- Device Context ----
 
-/** Parameters for address derivation during device context initialisation. */
-export type RequiresDerivation = {
-  currencyId: string;
-  path: string;
-  derivationMode: string;
-  forceFormat?: string;
-};
-
 /**
- * Declarative description of the device state that must be established before
- * an intent's job can run (e.g. which app must be open, which dependencies
- * must be installed).
- */
-export type RequiredDeviceContext = {
-  /** App to install and open on the device. */
-  appName: string;
-  /** Optional derivation to perform once the app is open. */
-  requiresDerivation?: RequiresDerivation;
-  /** Additional app names to install alongside the main app. */
-  dependencies: string[];
-  /** Fail initialisation if the device OS is not up to date. */
-  requireLatestFirmware: boolean;
-  /** When `true`, missing optional dependencies do not cause a failure. */
-  allowPartialDependencies: boolean;
-};
-
-/**
- * Normalised information produced once the {@link RequiredDeviceContext} has
- * been established. Passed to each intent's job alongside the connection result.
+ * Normalised information produced once the initializer has established the
+ * device context. Passed to each intent's job alongside the connection result.
  */
 export type DeviceExtractedContext = {
   currentOsVersion: string;

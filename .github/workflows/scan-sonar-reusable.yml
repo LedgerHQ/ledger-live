@@ -19,6 +19,14 @@ on:
         required: false
         default: "false"
         type: string
+      should_download_shared_coverage:
+        required: false
+        default: "false"
+        type: string
+      should_download_domain_coverage:
+        required: false
+        default: "false"
+        type: string
       should_download_wallet_cli_coverage:
         required: false
         default: "false"
@@ -86,6 +94,20 @@ jobs:
           name: coverage-features
           path: coverage-features
 
+      - name: Download shared unit test coverage
+        if: ${{ inputs.should_download_shared_coverage == 'true' }}
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          name: coverage-shared
+          path: coverage-shared
+
+      - name: Download domain unit test coverage
+        if: ${{ inputs.should_download_domain_coverage == 'true' }}
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          name: coverage-domain
+          path: coverage-domain
+
       - name: Download wallet-cli unit test coverage
         if: ${{ inputs.should_download_wallet_cli_coverage == 'true' }}
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
@@ -114,6 +136,16 @@ jobs:
             echo "Merging features coverage files"
             cat ./coverage-features/lcov.info >> ./lcov.info
             cat ./coverage-features/sonar-executionTests-report.xml >> ./sonar-executionTests-report.xml
+          fi
+          if [ -d ./coverage-shared ]; then
+            echo "Merging shared coverage files"
+            cat ./coverage-shared/lcov.info >> ./lcov.info
+            cat ./coverage-shared/sonar-executionTests-report.xml >> ./sonar-executionTests-report.xml
+          fi
+          if [ -d ./coverage-domain ]; then
+            echo "Merging domain coverage files"
+            cat ./coverage-domain/lcov.info >> ./lcov.info
+            cat ./coverage-domain/sonar-executionTests-report.xml >> ./sonar-executionTests-report.xml
           fi
           if [ -d ./coverage-wallet-cli ]; then
             echo "Merging wallet-cli coverage files"

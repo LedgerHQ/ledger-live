@@ -2,8 +2,10 @@ import React from "react";
 import BigNumber from "bignumber.js";
 import { Subject } from "rxjs";
 import { act, render, screen, waitFor } from "tests/testSetup";
-import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
+import type { AleoAccount, AleoCoinConfig } from "@ledgerhq/live-common/families/aleo/types";
 import { ALEO_ACCOUNT_1 } from "../../../__mocks__/account.mock";
+import { mockAleoCoinConfig } from "../../../__mocks__/config.mock";
+import { getAleoCurrencyConfig } from "../../../shared/utils";
 import StepMandatoryPrivateSync from "./StepMandatoryPrivateSync";
 import { makeStepProps } from "../../../__mocks__/stepProps.mock";
 
@@ -18,7 +20,12 @@ jest.mock("~/renderer/actions/accounts", () => ({
     })),
 }));
 
+jest.mock("../../../shared/utils", () => ({
+  getAleoCurrencyConfig: jest.fn(),
+}));
+
 const { getAccountBridge } = jest.requireMock("@ledgerhq/live-common/bridge/impl");
+const mockGetAleoCurrencyConfig = jest.mocked(getAleoCurrencyConfig);
 
 describe("StepMandatoryPrivateSync", () => {
   let syncSubject: Subject<(acc: AleoAccount) => AleoAccount>;
@@ -29,6 +36,7 @@ describe("StepMandatoryPrivateSync", () => {
     syncSubject = new Subject();
     mockSync = jest.fn().mockReturnValue(syncSubject.asObservable());
     getAccountBridge.mockReturnValue({ sync: mockSync });
+    mockGetAleoCurrencyConfig.mockReturnValue(mockAleoCoinConfig);
   });
 
   afterEach(() => {
@@ -51,6 +59,26 @@ describe("StepMandatoryPrivateSync", () => {
     });
 
     expect(screen.getByText(/Private sync failed/)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Retry/i })).toBeInTheDocument();
+  });
+
+  it("should restart sync when retry button is clicked after error", async () => {
+    const { user } = render(<StepMandatoryPrivateSync {...makeStepProps()} />);
+
+    await act(async () => {
+      syncSubject.error(new Error("Sync failed"));
+    });
+
+    expect(screen.getByText(/Private sync failed/)).toBeInTheDocument();
+
+    // Prepare a new subject for the retry attempt
+    syncSubject = new Subject();
+    mockSync.mockReturnValue(syncSubject.asObservable());
+
+    await user.click(screen.getByRole("button", { name: /retry/i }));
+
+    expect(mockSync).toHaveBeenCalledTimes(2);
+    expect(screen.getByText(/Syncing your private balance/)).toBeInTheDocument();
   });
 
   it("should not call sync when account is not an AleoAccount", () => {
@@ -61,7 +89,7 @@ describe("StepMandatoryPrivateSync", () => {
     expect(mockSync).not.toHaveBeenCalled();
   });
 
-  describe("transition to record-picker when progress reaches 100%", () => {
+  describe("transition when progress reaches 100%", () => {
     const makeAleoAccountAt100 = (): AleoAccount => ({
       ...ALEO_ACCOUNT_1,
       aleoResources: {
@@ -73,7 +101,7 @@ describe("StepMandatoryPrivateSync", () => {
       },
     });
 
-    it("should call transitionTo('record-picker') after progress reaches 100", async () => {
+    it("should call transitionTo('record-picker') after progress reaches 100 with manual strategy", async () => {
       const props = makeStepProps();
       render(<StepMandatoryPrivateSync {...props} />);
 
@@ -82,6 +110,22 @@ describe("StepMandatoryPrivateSync", () => {
       });
 
       await waitFor(() => expect(props.transitionTo).toHaveBeenCalledWith("record-picker"), {
+        timeout: 1000,
+      });
+    });
+
+    it("should call transitionTo('amount') after progress reaches 100 with auto strategy", async () => {
+      const autoConfig: AleoCoinConfig = { ...mockAleoCoinConfig, recordPickingStrategy: "auto" };
+      mockGetAleoCurrencyConfig.mockReturnValue(autoConfig);
+
+      const props = makeStepProps();
+      render(<StepMandatoryPrivateSync {...props} />);
+
+      await act(async () => {
+        syncSubject.next(() => makeAleoAccountAt100());
+      });
+
+      await waitFor(() => expect(props.transitionTo).toHaveBeenCalledWith("amount"), {
         timeout: 1000,
       });
     });
@@ -142,7 +186,7 @@ describe("StepMandatoryPrivateSync", () => {
       });
 
       // No crash — updateAccount being optional is handled gracefully
-      expect(screen.getByText(/30%/)).toBeInTheDocument();
+      expect(screen.getByText(/Syncing your private balance/)).toBeInTheDocument();
     });
   });
 });

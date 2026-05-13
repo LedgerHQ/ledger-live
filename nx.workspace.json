@@ -310,6 +310,9 @@
       },
       {
         "env": "NO_DEBUG_COUNTERVALUES"
+      },
+      {
+        "env": "UPDATE_CHECK_PUBKEY"
       }
     ]
   },
@@ -338,6 +341,9 @@
       ]
     },
     "lint:fix": {
+      "cache": false
+    },
+    "check-export-rules": {
       "cache": false
     },
     "typecheck": {

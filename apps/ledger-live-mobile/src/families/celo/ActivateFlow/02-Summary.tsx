@@ -1,8 +1,8 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useValidatorGroups } from "@ledgerhq/live-common/families/celo/react";
-import { CeloValidatorGroup, CeloAccount } from "@ledgerhq/live-common/families/celo/types";
+import { CeloValidatorGroup, CeloAccount, Transaction as CeloTransaction } from "@ledgerhq/live-common/families/celo/types";
 import { activatableVotes } from "@ledgerhq/live-common/families/celo/logic";
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
@@ -36,7 +36,7 @@ export default function ActivateSummary({ navigation, route }: Props) {
   const validators = useValidatorGroups();
   const votes = activatableVotes(account as CeloAccount);
   const mainAccount = getMainAccount(account, parentAccount);
-  const bridge = getAccountBridge(account, undefined);
+  const bridge = useAccountBridge<CeloTransaction>(account, undefined);
 
   const chosenValidator = useMemo(() => {
     if (validator !== undefined) {

@@ -6,6 +6,8 @@ import { retryUntilTimeout } from "../../utils/retry";
 import { floatNumberRegex } from "@ledgerhq/live-common/e2e/data/regexes";
 import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
 
+type QuoteWithFees = { rate: number; fees: number; quote: string };
+
 export default class SwapLiveAppPage {
   fromSelector = "from-account-coin-selector";
   fromAmount = "from-account";
@@ -28,6 +30,10 @@ export default class SwapLiveAppPage {
   switchButton = "to-account-switch-accounts";
   specificQuoteCardProviderName = (provider: string) =>
     `compact-quote-card-provider-name-${provider}`;
+  baseProviderCssSelector = (provider: string) =>
+    `[data-testid^="quote-container-${Provider.getNameByUiName(provider)}"]`;
+  providerExecuteButtonCss = (provider: string) =>
+    `${this.baseProviderCssSelector(provider)} [data-testid="${this.executeSwapButton}"]`;
 
   @Step("Expect swap live app page")
   async expectSwapLiveApp() {
@@ -54,7 +60,7 @@ export default class SwapLiveAppPage {
     await tapWebElementByTestId(this.fromSelector);
   }
 
-  @Step("Verify currency is selected $0")
+  @Step("Verify currency is selected")
   async verifyCurrencyIsSelected(ticker: string, isFromCurrency: boolean) {
     const selector = isFromCurrency ? this.fromSelector : this.toSelector;
     const actualText = await getWebElementText(selector);
@@ -135,8 +141,10 @@ export default class SwapLiveAppPage {
   }
 
   @Step("Tap execute swap button")
-  async tapExecuteSwap() {
-    await tapWebElementByTestId(this.executeSwapButton);
+  async tapExecuteSwap(provider: string) {
+    const button = getWebElementByCssSelector(this.providerExecuteButtonCss(provider), 0);
+    await waitWebElement(button);
+    await tapWebElementByElement(button);
   }
 
   @Step("Tap execute swap button on step approval")
@@ -158,10 +166,8 @@ export default class SwapLiveAppPage {
   async getProviderList() {
     await detoxExpect(getWebElementByTestId(this.numberOfQuotes)).toExist();
     await detoxExpect(getWebElementByTestId(this.quotesCountDown)).toExist();
-    const providerList = await getWebElementsByCssSelector(
-      `[data-testid^='${this.quoteCardProviderName}']`,
-    );
     const numberOfQuotesText: string = await getWebElementText(this.numberOfQuotes);
+    const providerList = await getWebElementsText(`[data-testid^='${this.quoteCardProviderName}']`);
     jestExpect(numberOfQuotesText).toMatch(new RegExp(`${providerList.length} quotes? found`));
     return providerList;
   }
@@ -175,17 +181,27 @@ export default class SwapLiveAppPage {
   @Step("Check first quote container infos")
   async checkFirstQuoteContainerInfos(providerList: string[]) {
     const provider: string = Provider.getNameByUiName(providerList[0]);
-    const baseProviderLocator = `quote-container-${provider}-`;
-    await waitWebElementByTestId(baseProviderLocator + "amount-label");
-    await tapWebElementByTestId(baseProviderLocator + "amount-label");
+    const baseProviderLocator = `quote-container-${provider}`;
+    await waitWebElementByTestId(baseProviderLocator, { testIdSuffix: "-amount-label" });
+    await tapWebElementByTestId(baseProviderLocator, { testIdSuffix: "-amount-label" });
 
-    await detoxExpect(getWebElementByTestId(baseProviderLocator + "amount-label")).toExist();
-    await detoxExpect(getWebElementByTestId(baseProviderLocator + "fiatAmount-label")).toExist();
-    await detoxExpect(getWebElementByTestId(baseProviderLocator + "networkFees-heading")).toExist();
+    await detoxExpect(
+      getWebElementByTestId(baseProviderLocator, { testIdSuffix: "-amount-label" }),
+    ).toExist();
+    await detoxExpect(
+      getWebElementByTestId(baseProviderLocator, { testIdSuffix: "-fiatAmount-label" }),
+    ).toExist();
+    await detoxExpect(
+      getWebElementByTestId(baseProviderLocator, { testIdSuffix: "-networkFees-heading" }),
+    ).toExist();
 
-    const extraFeesContainer = getWebElementByTestId(baseProviderLocator + "extraFeesContainer");
+    const extraFeesContainer = getWebElementByTestId(baseProviderLocator, {
+      testIdSuffix: "extraFeesContainer",
+    });
     await detoxExpect(extraFeesContainer).toExist();
-    await detoxExpect(getWebElementByTestId(baseProviderLocator + "rate-infoIcon")).toExist();
+    await detoxExpect(
+      getWebElementByTestId(baseProviderLocator, { testIdSuffix: "-rate-infoIcon" }),
+    ).toExist();
 
     if (
       provider === Provider.ONE_INCH.name ||
@@ -193,15 +209,19 @@ export default class SwapLiveAppPage {
       provider === Provider.UNISWAP.name ||
       provider === Provider.LIFI.name
     ) {
-      await detoxExpect(getWebElementByTestId(baseProviderLocator + "slippage-infoIcon")).toExist();
+      await detoxExpect(
+        getWebElementByTestId(baseProviderLocator, { testIdSuffix: "-slippage-infoIcon" }),
+      ).toExist();
     }
     await this.checkExchangeButtonHasProviderName(providerList[0]);
   }
 
   @Step("Check exchange button has provider name: $0")
   async checkExchangeButtonHasProviderName(provider: string): Promise<string> {
-    await waitWebElementByTestId(this.executeSwapButton);
-    const actualButtonText = await getWebElementText(this.executeSwapButton);
+    const selector = this.providerExecuteButtonCss(provider);
+    const button = getWebElementByCssSelector(selector);
+    await waitWebElement(button);
+    const actualButtonText = (await getWebElementsText(selector))[0] ?? "";
     jestExpect(actualButtonText).toMatch(new RegExp(`^(Swap|Continue) with ${provider}$`, "i"));
     return actualButtonText;
   }
@@ -224,7 +244,7 @@ export default class SwapLiveAppPage {
 
   @Step("Get all swap providers available")
   async getAllSwapProviders() {
-    return await getWebElementsByCssSelector(
+    return await getWebElementsText(
       '[data-testid^="quote-container-"][data-testid$="-fixed"], [data-testid^="quote-container-"][data-testid$="-float"]',
     );
   }
@@ -241,7 +261,7 @@ export default class SwapLiveAppPage {
         }
         return undefined;
       })
-      .filter(Boolean) as Array<{ rate: number; fees: number; quote: string }>;
+      .filter((quote): quote is QuoteWithFees => quote !== undefined);
 
     if (quotes.length === 0) {
       throw new Error("No quotes found");
@@ -326,10 +346,10 @@ export default class SwapLiveAppPage {
 
   @Step("Go to $0 live app")
   async goToProviderLiveApp(provider: string) {
-    const continueButton = getWebElementByTestId(this.executeSwapButton);
-    await detoxExpect(continueButton).toExist();
+    const button = getWebElementByCssSelector(this.providerExecuteButtonCss(provider));
+    await detoxExpect(button).toExist();
     const actualButtonText = await app.swapLiveApp.checkExchangeButtonHasProviderName(provider);
-    await app.swapLiveApp.tapExecuteSwap();
+    await app.swapLiveApp.tapExecuteSwap(provider);
     if (provider === "1inch" && actualButtonText.includes("Swap with")) {
       await app.swapLiveApp.tapExecuteSwapOnStepApproval();
       const summaryContinueButton = app.send.summaryContinueButton();

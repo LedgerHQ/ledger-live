@@ -1,4 +1,4 @@
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useFeesStrategy } from "@ledgerhq/live-common/families/bitcoin/react";
 import { Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
 import React, { useCallback, useState } from "react";
@@ -33,7 +33,7 @@ const Fields: Props = ({
   mapStrategies,
   trackProperties = {},
 }) => {
-  const bridge = getAccountBridge(account);
+  const bridge = useAccountBridge<Transaction>(account);
   const { t } = useTranslation();
   const [coinControlOpened, setCoinControlOpened] = useState(false);
   const [isAdvanceMode, setAdvanceMode] = useState(
@@ -55,7 +55,7 @@ const Fields: Props = ({
       updateTransaction((transaction: Transaction) =>
         bridge.updateTransaction(transaction, {
           feePerByte: amount,
-          feesStrategy,
+          feesStrategy: feesStrategy as Transaction["feesStrategy"],
         }),
       );
     },
@@ -124,7 +124,6 @@ const Fields: Props = ({
             <CoinControlModal
               transaction={transaction}
               account={account}
-              // @ts-expect-error We use the same onChangeTrack function on 2 components yet their onChange signature is different, please halp
               onChange={onChangeAndTrack}
               status={status}
               isOpened={coinControlOpened}

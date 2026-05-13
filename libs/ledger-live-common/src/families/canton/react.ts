@@ -29,13 +29,12 @@ export function useCantonAcceptOrRejectOffer({
   account,
   partyId,
 }: UseCantonAcceptOrRejectOfferOptions) {
-  const cantonBridge = getCurrencyBridge(currency) as CantonCurrencyBridge;
-
   const transferInstruction = useCallback(
-    (
+    async (
       { contractId, deviceId, reason }: TransferInstructionParams,
       type: TransferInstructionType,
     ) => {
+      const cantonBridge = (await getCurrencyBridge(currency)) as CantonCurrencyBridge;
       return cantonBridge.transferInstruction(
         currency,
         deviceId,
@@ -46,7 +45,7 @@ export function useCantonAcceptOrRejectOffer({
         reason,
       );
     },
-    [cantonBridge, currency, account, partyId],
+    [currency, account, partyId],
   );
 
   return transferInstruction;

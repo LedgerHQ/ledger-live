@@ -6,8 +6,8 @@ import { createApi } from ".";
 
 const defaultConfig: TezosConfig = {
   baker: { url: "https://baker.example.com" },
-  explorer: { url: "https://api.ghostnet.tzkt.io", maxTxQuery: 100 },
-  node: { url: "https://rpc.ghostnet.teztnets.com" },
+  explorer: { url: "https://api.shadownet.tzkt.io", maxTxQuery: 100 },
+  node: { url: "https://rpc.shadownet.teztnets.com" },
   fees: {
     minGasLimit: 600,
     minRevealGasLimit: 300,
@@ -18,13 +18,17 @@ const defaultConfig: TezosConfig = {
 };
 
 /**
- * Ghostnet-specific integration tests
- * https://teztnets.com/ghostnet-about
- * https://api.tzkt.io/#section/Get-Started/Free-TzKT-API
+ * Shadownet-specific integration tests (Ghostnet was deprecated in early 2026).
+ * https://teztnets.com/shadownet-about
+ * https://api.shadownet.tzkt.io
  */
 describe("Tezos Api", () => {
   let module: TezosApi;
-  const address = "tz1heMGVHQnx7ALDcDKqez8fan64Eyicw4DJ";
+  // Persistent Shadownet test account — see LIVE-28763 PR for chain-of-custody.
+  const address = "tz1dKrT1h6d7wP8fEzMPptG6er7mLLeQjBBY";
+  // Registered baker on Shadownet, distinct from `address`'s current delegate
+  // (TF Test Baker) — picked so `delegate` intents don't simulate as `delegate.unchanged`.
+  const baker = "tz1a28g3f7Eswy7XfX81sJSdhBHZqMjkfaf9";
 
   beforeAll(() => {
     module = createApi(defaultConfig);
@@ -41,7 +45,7 @@ describe("Tezos Api", () => {
         asset: { type: "native" },
         type: "send",
         sender: address,
-        recipient: "tz1heMGVHQnx7ALDcDKqez8fan64Eyicw4DJ",
+        recipient: address,
         amount,
       });
 
@@ -52,35 +56,36 @@ describe("Tezos Api", () => {
     });
   });
 
+  // Multi-curve sender handling — each row exercises estimateFees with a sender
+  // address + matching senderPublicKey for a different curve, covering the
+  // pubkey-normalization + sender-derivation path in api/index.ts.
   it.each([
     [
       "ed25519 / tz1",
-      "tz1heMGVHQnx7ALDcDKqez8fan64Eyicw4DJ",
-      "6D9733FB7E27C56F032FAD41E4C0C90D58D0D5F1A253B2430B702071B57E47C1",
+      "tz1dKrT1h6d7wP8fEzMPptG6er7mLLeQjBBY",
+      "edpkv2EJVgdvaK8TB5mMttfN93jRhHwoyKcy9sehANdeMDNY27zkjz",
     ],
     [
       "secp256k1 / tz2",
-      "tz2DvEBHrtFkq9pTXqt6yavnf4sPe2jut2XH",
-      "032fede4de54cf92381832a053f0787125fdc0d065d231585eb34d5eae327c0222",
+      "tz29GPjgeRQTRX6mcPQXkiuHnq7jbya1Abnq",
+      "sppk7cWw2W2H9Uf7zWAju13smtbETcPbLpDGFZtpB7TAoDsVFiAizhf",
     ],
     [
       "P256 / tz3",
-      "tz3DvEBHrtFkq9pTXqt6yavnf4sPe2jut2XH",
-      "0466839a78481025e3613f65fcd4b492a492bedd1a3cba77ae48eaa1803611d8e5f4e23c0d0f3586e2095f4f83d09c841e1c17586b2356d5d3a3ed3f45bb3a857e",
+      "tz3Q67aMz7gSMiQRcW729sXSfuMtkyAHYfqc",
+      "p2pk66gP3wq6k9QgNwAgaGLeXc3YFfrxgYdC7cdYuJWAHYBw4hExVHW",
     ],
-  ])("does not fail when providing a %s address with pub key", async (_, sender, pubKey) => {
-    // When
+  ])("does not fail when providing a %s sender with pub key", async (_, sender, pubKey) => {
     const result = await module.estimateFees({
       intentType: "transaction",
       asset: { type: "native" },
       type: "send",
-      sender: "tz3DvEBHrtFkq9pTXqt6yavnf4sPe2jut2XH",
+      sender,
       senderPublicKey: pubKey,
-      recipient: sender,
+      recipient: address,
       amount: BigInt(100),
     } as SendTransactionIntent);
 
-    // Then
     expect(result.value).toBeGreaterThanOrEqual(BigInt(0));
     expect(result.parameters?.gasLimit).toBeGreaterThanOrEqual(BigInt(0));
     expect(result.parameters?.storageLimit).toBeGreaterThanOrEqual(BigInt(0));
@@ -182,7 +187,8 @@ describe("Tezos Api", () => {
     }
 
     it.each(["send", "delegate", "undelegate"])("returns a raw transaction with %s", async type => {
-      const recipient = "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9";
+      // `delegate` requires a registered baker; the others accept any tz address.
+      const recipient = type === "delegate" ? baker : "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9";
       const amount = BigInt(10);
       // When
       const { transaction: encodedTransaction } = await module.craftTransaction({
@@ -284,7 +290,7 @@ describe("Tezos Api", () => {
           asset: { type: "native" },
           type: "delegate",
           sender: address,
-          recipient: "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9",
+          recipient: baker,
           amount: BigInt(0),
         });
         expect(result.value).toBeGreaterThanOrEqual(BigInt(minFees));
@@ -312,7 +318,7 @@ describe("Tezos Api", () => {
           asset: { type: "native" },
           type: "delegate",
           sender: address,
-          recipient: "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9",
+          recipient: baker,
           amount: BigInt(0),
         });
         const decoded = await localForger.parse(encodedTransaction.slice(2));

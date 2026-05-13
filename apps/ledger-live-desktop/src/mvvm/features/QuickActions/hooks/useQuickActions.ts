@@ -60,7 +60,7 @@ export const useQuickActions = (trackingPageName: string): { actionsList: QuickA
       flow: "send",
     });
     maybeRedirectToAccounts();
-    openSendFlow();
+    openSendFlow({ source: trackingPageName });
   }, [maybeRedirectToAccounts, openSendFlow, trackingPageName]);
 
   const onReceive = useCallback(() => {

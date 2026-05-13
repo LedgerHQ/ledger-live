@@ -4,7 +4,7 @@ import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { setExchangeDependencies } from "@ledgerhq/live-common/e2e/speculos";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
-import { addTmsLink } from "tests/utils/allureUtils";
+import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { setupEnv, performSwapUntilQuoteSelectionStep } from "tests/utils/swapUtils";
@@ -18,16 +18,18 @@ const providerFlowTests = [
     toAccount: TokenAccount.ETH_USDC_1,
     provider: Provider.ONE_INCH,
     xrayTicket: "B2CQA-3120",
+    bugTickets: ["LIVE-29454", "LIVE-29858"],
   },
   {
     fromAccount: TokenAccount.ETH_USDT_1,
     toAccount: Account.ETH_1,
     provider: Provider.OKX,
     xrayTicket: "B2CQA-4728",
+    bugTickets: ["LIVE-29858"],
   },
 ];
 
-for (const { fromAccount, toAccount, provider, xrayTicket } of providerFlowTests) {
+for (const { fromAccount, toAccount, provider, xrayTicket, bugTickets } of providerFlowTests) {
   test.describe(`Swap - ${provider.uiName} flow`, () => {
     setupEnv(true);
 
@@ -71,19 +73,20 @@ for (const { fromAccount, toAccount, provider, xrayTicket } of providerFlowTests
           },
         ],
       },
-      async ({ app, electronApp }) => {
+      async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+        await addBugLink(bugTickets);
 
         const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
         await app.swap.ensureTokenApproval(fromAccount, provider, minAmount);
         const swap = new Swap(fromAccount, toAccount, minAmount, provider);
 
-        await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
-        await app.swap.selectSpecificProvider(provider, electronApp);
+        await performSwapUntilQuoteSelectionStep(app, swap, minAmount);
+        await app.swap.selectSpecificProvider(provider);
 
-        await app.swap.clickExchangeButton(electronApp);
-        await app.swap.checkElementsPresenceOnSwapApprovalStep(electronApp);
-        await app.swap.clickExecuteSwapButton(electronApp);
+        await app.swap.clickExchangeButton(provider.name);
+        await app.swap.checkElementsPresenceOnSwapApprovalStep();
+        await app.swap.clickExecuteSwapButton();
         await app.swap.clickContinueButton();
         await app.speculos.verifyAmountsAndAcceptSwap(swap, minAmount);
         await app.swap.expectTransactionSentToasterToBeVisible();
@@ -141,15 +144,15 @@ test.describe("Swap - Check Best Offer", () => {
       ],
       annotation: { type: "TMS", description: "B2CQA-2327" },
     },
-    async ({ app, electronApp }) => {
+    async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
       const swap = new Swap(fromAccount, toAccount, minAmount);
 
-      await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
-      await app.swap.selectExchangeWithoutKyc(electronApp);
-      await app.swap.checkBestOffer(electronApp);
+      await performSwapUntilQuoteSelectionStep(app, swap, minAmount);
+      await app.swap.selectExchangeWithoutKyc();
+      await app.swap.checkBestOffer();
     },
   );
 });
@@ -193,7 +196,7 @@ test.describe("Swap - Landing page", () => {
       tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
       annotation: { type: "TMS", description: "B2CQA-2918" },
     },
-    async ({ app, electronApp }) => {
+    async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
@@ -204,14 +207,10 @@ test.describe("Swap - Landing page", () => {
 
       const swap = new Swap(fromAccount, toAccount, minAmount);
 
-      await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
-      const providerList = await app.swap.getProviderList(electronApp);
-      await app.swap.checkQuotesContainerInfos(
-        electronApp,
-        providerList,
-        toAccount.currency.ticker,
-      );
-      await app.swap.checkBestOffer(electronApp);
+      await performSwapUntilQuoteSelectionStep(app, swap, minAmount);
+      const providerList = await app.swap.getProviderList();
+      await app.swap.checkQuotesContainerInfos(providerList, toAccount.currency.ticker);
+      await app.swap.checkBestOffer();
     },
   );
 });

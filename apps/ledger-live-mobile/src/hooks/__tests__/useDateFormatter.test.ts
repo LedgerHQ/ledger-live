@@ -148,10 +148,21 @@ describe("useFormatDaySection", () => {
     expect(result.current(lateToday)).toBe("Today");
   });
 
-  it("returns 'Yesterday' for the previous calendar day", () => {
+  it("returns a formatted long date for the previous calendar day (no 'Yesterday' label)", () => {
     const yesterday = new Date(2024, 0, 14);
-    const { result } = renderHook(() => useFormatDaySection());
-    expect(result.current(yesterday)).toBe("Yesterday");
+    const { result } = renderHook(() => useFormatDaySection(), {
+      overrideInitialState: (state: State) => ({
+        ...state,
+        settings: { ...state.settings, language: "en" },
+      }),
+    });
+    const expected = new Intl.DateTimeFormat("en", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    }).format(yesterday);
+    expect(result.current(yesterday)).toBe(expected);
+    expect(result.current(yesterday)).not.toBe("Yesterday");
   });
 
   it("returns a formatted long date for 2 days ago", () => {

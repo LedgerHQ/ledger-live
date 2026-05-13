@@ -3,9 +3,6 @@ name: Merge Timing Files
 description: Merge and cache E2E timing files for a given platform
 
 inputs:
-  platform:
-    description: "Platform (ios or android)"
-    required: true
   artifacts_dir:
     description: "Directory containing timing artifacts"
     required: false
@@ -40,6 +37,17 @@ inputs:
   key:
     description: "Cache key prefix for timing files"
     required: true
+  test_results_prefix:
+    description: "Name of the E2E test results artifact"
+    required: true
+  cache-develop-role-arn:
+    description: "Full IAM OIDC role ARN for refs/heads/develop (optional; use with cache-branch-role-arn instead of accountId/roleName)"
+    required: false
+    default: ""
+  cache-branch-role-arn:
+    description: "Full IAM OIDC role ARN for non-develop refs (optional; use with cache-develop-role-arn)"
+    required: false
+    default: ""
 
 runs:
   using: "composite"
@@ -50,17 +58,32 @@ runs:
         repository: LedgerHQ/ledger-live
         sparse-checkout: |
           apps/ledger-live-mobile/scripts
+          tools/nx
+
+    - name: Setup the caches
+      uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+      id: setup-caches
+      with:
+        skip-pnpm-cache: "true"
+        skip-pod-cache: "true"
+        skip-turbo-cache: "true"
+        skip-nx-cache: "true"
+        cache-develop-role-arn: ${{ inputs.cache-develop-role-arn }}
+        cache-branch-role-arn: ${{ inputs.cache-branch-role-arn }}
+        accountId: ${{ inputs.accountId }}
+        roleName: ${{ inputs.roleName }}
+        region: ${{ inputs.aws_region }}
 
     - name: Download timing files
       uses: actions/download-artifact@v4
       with:
-        pattern: "${{ inputs.key }}-*"
+        pattern: "${{ inputs.test_results_prefix }}-*"
         merge-multiple: true
 
     - name: Restore cached timing file
       uses: tespkg/actions-cache/restore@v1
       with:
-        path: ${{ inputs.artifacts_dir }}/e2e-test-results-${{ inputs.platform }}.json
+        path: ${{ inputs.artifacts_dir }}/${{ inputs.test_results_prefix }}.json
         key: "${{ inputs.key }}"
         accessKey: ${{ inputs.aws_access_key_id }}
         secretKey: ${{ inputs.aws_secret_access_key }}
@@ -73,20 +96,26 @@ runs:
       shell: bash
       run: |
         apps/ledger-live-mobile/scripts/merge-timing-files.sh \
-          --platform "${{ inputs.platform }}" \
+          --file-prefix "${{ inputs.test_results_prefix }}" \
           --artifacts-dir "${{ inputs.artifacts_dir }}" \
           --verbose
+
+    - name: Upload merged timing file to artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: "${{ inputs.test_results_prefix }}"
+        path: ./${{ inputs.test_results_prefix }}.json
 
     - name: Copy merged timing file to artifacts dir
       shell: bash
       run: |
         mkdir -p ${{ inputs.artifacts_dir }}
-        cp ./e2e-test-results-${{ inputs.platform }}.json ${{ inputs.artifacts_dir }}/e2e-test-results-${{ inputs.platform }}.json
+        cp ./${{ inputs.test_results_prefix }}.json ${{ inputs.artifacts_dir }}/${{ inputs.test_results_prefix }}.json
 
     - name: Save merged timing file to cache
       uses: tespkg/actions-cache/save@v1
       with:
-        path: ${{ inputs.artifacts_dir }}/e2e-test-results-${{ inputs.platform }}.json
+        path: ${{ inputs.artifacts_dir }}/${{ inputs.test_results_prefix }}.json
         key: "${{ inputs.key }}"
         accessKey: ${{ inputs.aws_access_key_id }}
         secretKey: ${{ inputs.aws_secret_access_key }}

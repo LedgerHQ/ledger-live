@@ -221,6 +221,12 @@ export const ConcordiumPairingExpiredError = createCustomErrorClass(
 export const ConcordiumSessionExpiredError = createCustomErrorClass(
   "ConcordiumSessionExpiredError",
 );
+export const ConcordiumTrustedMetadataServiceError = createCustomErrorClass(
+  "ConcordiumTrustedMetadataServiceError",
+);
+export const ConcordiumAddressVerificationFailedError = createCustomErrorClass(
+  "ConcordiumAddressVerificationFailedError",
+);
 
 // Language
 export const LanguageNotFound = createCustomErrorClass("LanguageNotFound");

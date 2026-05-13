@@ -1,5 +1,17 @@
 # @ledgerhq/react-ui
 
+## 0.51.0
+
+### Minor Changes
+
+- [#16950](https://github.com/LedgerHQ/ledger-live/pull/16950) [`5f106de`](https://github.com/LedgerHQ/ledger-live/commit/5f106de78922082d3b6f05208f5493b47e74c32d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - fix crypto icons in react-ui lib
+
+## 0.51.0-next.0
+
+### Minor Changes
+
+- [#16950](https://github.com/LedgerHQ/ledger-live/pull/16950) [`5f106de`](https://github.com/LedgerHQ/ledger-live/commit/5f106de78922082d3b6f05208f5493b47e74c32d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - fix crypto icons in react-ui lib
+
 ## 0.50.0
 
 ### Minor Changes

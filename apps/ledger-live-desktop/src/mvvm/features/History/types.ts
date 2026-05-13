@@ -16,6 +16,7 @@ export type OperationTableItem = {
   amount: BigNumber;
   currency: Currency;
   isPending: boolean;
+  isUnread: boolean;
 };
 
 export type HistoryTable = Table<OperationTableItem>;

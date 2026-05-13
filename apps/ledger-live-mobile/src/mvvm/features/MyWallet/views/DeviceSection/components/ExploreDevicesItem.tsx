@@ -20,12 +20,12 @@ export function ExploreDevicesItem({ onPress }: ExploreDevicesItemProps) {
 
   return (
     <ListItem
-      lx={{ backgroundColor: "surface", borderRadius: "md" }}
+      lx={{ backgroundColor: "surface", borderRadius: "md", paddingVertical: "s4" }}
       testID="my-wallet-device-section-explore"
       onPress={onPress}
     >
       <ListItemLeading>
-        <Image source={allDevicesImage} style={{ width: 40, height: 40 }} resizeMode="contain" />
+        <Image source={allDevicesImage} style={{ width: 48, height: 48 }} resizeMode="contain" />
         <ListItemContent>
           <ListItemTitle>{t("myWallet.deviceSection.exploreAllDevices")}</ListItemTitle>
         </ListItemContent>

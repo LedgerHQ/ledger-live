@@ -1,3 +1,4 @@
+import { appendDeeplinkLocationIfDefined } from "@ledgerhq/live-common/deeplinks/index";
 import { Size } from "~/contentCards/cards/vertical/types";
 import { WidthFactor } from "~/contentCards/layouts/types";
 import {
@@ -53,12 +54,28 @@ export const filterCardsThatHaveBeenDismissed = (
   return filteredCards;
 };
 
+export const dedupeCategoriesByCategoryId = (categories: CategoryContentCard[]) => {
+  const seenCategoryIds = new Set<string>();
+  const uniqueCategories: CategoryContentCard[] = [];
+  for (const category of categories) {
+    if (!category.categoryId) {
+      uniqueCategories.push(category);
+      continue;
+    }
+    if (seenCategoryIds.has(category.categoryId)) continue;
+    seenCategoryIds.add(category.categoryId);
+    uniqueCategories.push(category);
+  }
+  return uniqueCategories;
+};
+
 export const formatCategories = (
   categories: CategoryContentCard[],
   mobileCards: BrazeContentCard[],
 ) => {
   const categoriesSorted = categories.sort(compareCards);
-  const categoriesWithCards = categoriesSorted.map(category => ({
+  const uniqueCategories = dedupeCategoriesByCategoryId(categoriesSorted);
+  const categoriesWithCards = uniqueCategories.map(category => ({
     category,
     cards: mobileCards.filter(mobileCard => mobileCard.extras.categoryId === category.categoryId),
   }));
@@ -81,7 +98,7 @@ export const mapAsCategoryContentCard = (card: BrazeContentCard): CategoryConten
   type: card.extras.type as ContentCardsType.category,
   title: card.extras.title,
   description: card.extras.description,
-  link: card.extras.link,
+  link: appendDeeplinkLocationIfDefined(card.extras.link, card.extras.location),
   cta: card.extras.cta,
   isDismissable: Boolean(card.extras?.isDismissable === "true"),
   hasPagination: Boolean(card.extras?.hasPagination === "true"),
@@ -97,7 +114,7 @@ export const mapAsWalletContentCard = (card: BrazeContentCard): WalletContentCar
   location: ContentCardLocation.Wallet,
   image: card.extras.image,
   image_background: card.extras.image_background,
-  link: card.extras.link,
+  link: appendDeeplinkLocationIfDefined(card.extras.link, ContentCardLocation.Wallet),
   background: Background[card.extras.background as Background] || Background.purple,
   viewed: card.viewed,
   createdAt: card.created,
@@ -111,7 +128,7 @@ export const mapAsAssetContentCard = (card: BrazeContentCard): AssetContentCard 
   title: card.extras.title,
   location: ContentCardLocation.Asset,
   image: card.extras.image,
-  link: card.extras.link,
+  link: appendDeeplinkLocationIfDefined(card.extras.link, ContentCardLocation.Asset),
   cta: card.extras.cta,
   assets: card.extras.assets ?? "",
   displayOnEveryAssets: Boolean(card.extras.displayOnEveryAssets),
@@ -127,7 +144,7 @@ export const mapAsNotificationContentCard = (card: BrazeContentCard): Notificati
   title: card.extras.title,
   description: card.extras.description,
   location: ContentCardLocation.NotificationCenter,
-  link: card.extras.link,
+  link: appendDeeplinkLocationIfDefined(card.extras.link, ContentCardLocation.NotificationCenter),
   cta: card.extras.cta,
   createdAt: card.created,
   viewed: card.viewed,
@@ -144,7 +161,7 @@ export const mapAsHorizontalContentCard = (card: BrazeContentCard): HorizontalCo
   image: card.extras.image,
   image_background: card.extras.image_background,
   icon: card.extras.icon,
-  link: card.extras.link,
+  link: appendDeeplinkLocationIfDefined(card.extras.link, card.extras.location),
   createdAt: card.created,
   viewed: card.viewed,
   order: parseInt(card.extras.order) ?? undefined,
@@ -169,7 +186,7 @@ const mapAsSquareContentCard = (
   titleTextAlign: card.extras.titleTextAlign as CanvasTextAlign,
   cta: card.extras.cta,
   size,
-  link: card.extras.link,
+  link: appendDeeplinkLocationIfDefined(card.extras.link, card.extras.location),
   createdAt: card.created,
   viewed: card.viewed,
   order: parseInt(card.extras.order) ?? undefined,
@@ -190,7 +207,7 @@ export const mapAsHeroContentCard = (card: BrazeContentCard): HeroContentCard =>
   image: card.extras.image,
   cta: card.extras.cta,
   centeredText: Boolean(card.extras?.centeredText === "true"),
-  link: card.extras.link,
+  link: appendDeeplinkLocationIfDefined(card.extras.link, card.extras.location),
   createdAt: card.created,
   viewed: card.viewed,
   order: parseInt(card.extras.order) ?? undefined,
@@ -223,7 +240,7 @@ export const mapAsLandingPageStickyCtaContentCard = (
 ): LandingPageStickyCtaContentCard => ({
   id: card.id,
   cta: card.extras.cta,
-  link: card.extras.link,
+  link: appendDeeplinkLocationIfDefined(card.extras.link, ContentCardLocation.LandingPageStickyCta),
   createdAt: card.created,
   viewed: card.viewed,
   landingPage: card.extras.landingPage as LandingPageUseCase,

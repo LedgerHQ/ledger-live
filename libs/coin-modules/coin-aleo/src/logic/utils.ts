@@ -14,7 +14,13 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { decodeOperationId, encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import aleoConfig from "../config";
-import { EXPLORER_TRANSFER_TYPES, PROGRAM_ID, TRANSACTION_TYPE } from "../constants";
+import {
+  EXPLORER_TRANSFER_TYPES,
+  MAX_PRIVATE_RECORDS_PER_TRANSACTION,
+  PROGRAM_ID,
+  SINGLE_CALL_SIGNING_TIME,
+  TRANSACTION_TYPE,
+} from "../constants";
 import type {
   AleoOperation,
   AleoTransactionType,
@@ -247,10 +253,10 @@ function getAmountToSpend({
   }
 
   if (isPrivateTransaction(transaction)) {
-    const commitment = transaction.properties.amountRecordCommitment;
-    const amountRecord = commitment ? getRecordByCommitment({ account, commitment }) : null;
-
-    return new BigNumber(amountRecord?.microcredits ?? "0");
+    return transaction.properties.amountRecordCommitments.reduce((sum, commitment) => {
+      const record = getRecordByCommitment({ account, commitment });
+      return record ? sum.plus(record.microcredits) : sum;
+    }, new BigNumber(0));
   }
 
   const transparentBalance = account.aleoResources?.transparentBalance ?? new BigNumber(0);
@@ -279,7 +285,7 @@ export function calculateAmount({
 
 export const isProvableApiConfigured = (
   provableApi: ProvableApi | null,
-): provableApi is Required<Pick<ProvableApi, "uuid">> => {
+): provableApi is ProvableApi & { uuid: string } => {
   return !!provableApi?.uuid;
 };
 
@@ -323,15 +329,15 @@ export function isPrivateTransaction(transaction: Transaction): transaction is T
 export function findBestRecordForFee({
   unspentRecords,
   targetFee,
-  selectedAmountRecordCommitment,
+  selectedAmountRecordCommitments,
 }: {
   unspentRecords: AleoUnspentRecord[];
   targetFee: BigNumber;
-  selectedAmountRecordCommitment: string | null;
+  selectedAmountRecordCommitments: string[];
 }): AleoUnspentRecord | null {
   const recordsSufficientForFee = unspentRecords.filter(
     r =>
-      r.commitment !== selectedAmountRecordCommitment &&
+      !selectedAmountRecordCommitments.includes(r.commitment) &&
       new BigNumber(r.microcredits).gte(targetFee),
   );
 
@@ -505,7 +511,7 @@ export function createTransactionIntent({
   } as const;
 
   if (isPrivateTx) {
-    const commitment = transaction.properties.amountRecordCommitment;
+    const commitment = transaction.properties.amountRecordCommitments[0];
     invariant(commitment, "aleo: missing amount record commitment");
     const amountRecord = getRecordByCommitment({ account, commitment });
     invariant(amountRecord, `aleo: no amount record found for commitment ${commitment}`);
@@ -615,3 +621,86 @@ export function extractViewKey(account: AleoAccount): string {
   invariant(viewKey, `aleo: view key is missing in ${account.freshAddress} account`);
   return viewKey;
 }
+
+/**
+ * Selects the minimum set of private records needed to cover `targetAmount` using a greedy largest-first strategy.
+ *
+ * - If `targetAmount` is `null`, returns the top `MAX_PRIVATE_RECORDS_PER_TRANSACTION` records by value (useAllAmount mode).
+ * - If `targetAmount` is provided and positive:
+ *   1. Prefer the **smallest single record** that alone covers the target (fewest records, least overshoot).
+ *   2. Otherwise accumulate the **largest records first** until the running total meets the target or
+ *      `MAX_PRIVATE_RECORDS_PER_TRANSACTION` is exhausted.
+ *
+ * Returns `[]` when the target cannot be covered — either because total funds are insufficient
+ * or the record cap is exhausted before the running total reaches the target.
+ */
+export function selectPrivateRecordsForAmount({
+  unspentRecords,
+  targetAmount,
+}: {
+  unspentRecords: AleoUnspentRecord[];
+  targetAmount: BigNumber | null;
+}): AleoUnspentRecord[] {
+  const rankedRecords = unspentRecords
+    .map(record => ({ record, value: new BigNumber(record.microcredits) }))
+    .filter(({ value }) => value.isGreaterThan(0))
+    .sort((a, b) => b.value.comparedTo(a.value));
+
+  if (rankedRecords.length === 0) {
+    return [];
+  }
+
+  // no target amount supplied -> useAllAmount mode, return top N records.
+  if (targetAmount === null) {
+    return rankedRecords.slice(0, MAX_PRIVATE_RECORDS_PER_TRANSACTION).map(({ record }) => record);
+  }
+
+  if (targetAmount.lte(0)) {
+    return [];
+  }
+
+  // Step 1: Find the smallest single record that covers the target (least overshoot).
+  // Scanning from the end of the descending array gives us the smallest candidate first.
+  for (let i = rankedRecords.length - 1; i >= 0; i--) {
+    if (rankedRecords[i].value.gte(targetAmount)) {
+      return [rankedRecords[i].record];
+    }
+  }
+
+  // Step 2: No single record is sufficient - accumulate largest-first.
+  const selected: AleoUnspentRecord[] = [];
+  let runningTotal = new BigNumber(0);
+
+  for (const { record, value } of rankedRecords) {
+    if (selected.length >= MAX_PRIVATE_RECORDS_PER_TRANSACTION) {
+      break;
+    }
+
+    selected.push(record);
+    runningTotal = runningTotal.plus(value);
+
+    if (runningTotal.gte(targetAmount)) {
+      return selected;
+    }
+  }
+
+  // Target could not be covered within the record cap or with the available funds.
+  return [];
+}
+
+// Helper function to get estimated signing time based on the number of records being signed.
+export const getEstimatedSigningTime = (
+  recordCount: number,
+  secondShort: string,
+  minuteShort: string,
+): string => {
+  const totalSeconds = (recordCount * SINGLE_CALL_SIGNING_TIME) / 1000;
+
+  if (totalSeconds < 60) {
+    return `~${Math.round(totalSeconds)} ${secondShort}`;
+  }
+
+  const flooredSeconds = Math.floor(totalSeconds / 30) * 30;
+  const minutes = flooredSeconds / 60;
+  return `~${minutes} ${minuteShort}`;
+};

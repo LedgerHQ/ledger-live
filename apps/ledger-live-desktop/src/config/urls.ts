@@ -45,8 +45,10 @@ export const urls = {
     "https://shop.ledger.com/pages/ledger-live-terms-of-use?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=terms",
   buyNew:
     "https://shop.ledger.com/pages/hardware-wallets-comparison?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=onboarding",
+  exploreLedgerDevices:
+    "https://shop.ledger.com/pages/hardware-wallets-comparison?utm_source=ledger_wallet_desktop&utm_medium=page_my_wallet&utm_content=explore_ledger_devices",
   reborn:
-    "https://shop.ledger.com/pages/unlock-ledger-wallet-desktop?utm_source=ledger_wallet_destkop&utm_medium=self_referral&utm_content=onboarding-2",
+    "https://shop.ledger.com/pages/unlock-ledger-wallet-desktop?utm_source=ledger_wallet_desktop&utm_medium=self_referral&utm_content=onboarding-2",
   noDevice: {
     learnMore:
       "https://www.ledger.com?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=onboarding",
@@ -63,7 +65,7 @@ export const urls = {
   recipientAddressInfo: "https://support.ledger.com/article/4404389453841-zd",
   managerAppLearnMore: "https://support.ledger.com/",
   privacyPolicy:
-    "https://www.ledger.com/privacy-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
+    "https://shop.ledger.com/pages/privacy-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
   trackingPolicy:
     "https://shop.ledger.com/pages/ledger-live-tracking-policy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=privacy",
   troubleshootingUSB: "https://support.ledger.com/article/115005165269-zd",

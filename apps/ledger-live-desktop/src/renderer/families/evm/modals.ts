@@ -5,6 +5,8 @@ import { AccountLike } from "@ledgerhq/types-live";
 import MODAL_EVM_DELEGATE from "./DelegationFlowModal";
 import { Data as DelegationProps } from "./DelegationFlowModal/Body";
 import MODAL_EVM_REWARDS_INFO, { Props as RewardsInfoProps } from "./DelegationFlowModal/Info";
+import MODAL_EVM_UNDELEGATE from "./UndelegationFlowModal";
+import { Data as UndelegationProps } from "./UndelegationFlowModal/Body";
 
 export type ModalsData = {
   MODAL_EVM_STAKE: {
@@ -16,6 +18,7 @@ export type ModalsData = {
   MODAL_EVM_EDIT_TRANSACTION: EditTransactionModalProps;
   MODAL_EVM_DELEGATE: DelegationProps;
   MODAL_EVM_REWARDS_INFO: RewardsInfoProps;
+  MODAL_EVM_UNDELEGATE: UndelegationProps;
 };
 
 const modals: MakeModalsType<ModalsData> = {
@@ -23,6 +26,7 @@ const modals: MakeModalsType<ModalsData> = {
   MODAL_EVM_EDIT_TRANSACTION: EditTransactionModal,
   MODAL_EVM_DELEGATE,
   MODAL_EVM_REWARDS_INFO,
+  MODAL_EVM_UNDELEGATE,
 };
 
 export default modals;

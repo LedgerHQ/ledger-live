@@ -18,11 +18,11 @@ describe("transaction", () => {
     fees: mockedTransaction.fees.toString(),
   });
   const fullPrivateProperties = {
-    amountRecordCommitment: "abc123",
+    amountRecordCommitments: ["abc123"],
     feeRecordCommitment: "def456",
   };
   const emptyPrivateProperties = {
-    amountRecordCommitment: null,
+    amountRecordCommitments: [],
     feeRecordCommitment: null,
   };
 

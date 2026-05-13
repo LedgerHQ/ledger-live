@@ -1,10 +1,13 @@
-import type { Balance, Stake } from "@ledgerhq/coin-module-framework/api/index";
+import type { Balance } from "@ledgerhq/coin-module-framework/api/index";
 import api from "../network/tzkt";
+import { buildStakesForAccount } from "./getStakes";
 
 /**
  * Returns the balances of the given address as an array of Balance objects.
- * The first entry represents the native balance (with value 0n for empty accounts),
- * followed by any token balances associated with the address.
+ * The first entry represents the native balance (with value 0n for empty accounts).
+ * For delegated/staked accounts, additional native entries are appended carrying each
+ * staking position (delegation, active staking, deactivating unstake) per the Paris upgrade.
+ * Token balances are appended after.
  */
 export async function getBalance(address: string): Promise<Balance[]> {
   const [apiAccountResult, tokensBalancesResult] = await Promise.allSettled([
@@ -21,17 +24,14 @@ export async function getBalance(address: string): Promise<Balance[]> {
     tokensBalancesResult.status === "fulfilled" ? tokensBalancesResult.value : [];
   const normalized = apiAccount.type === "user" ? BigInt(apiAccount.balance) : 0n;
 
-  const stake: Stake | undefined =
-    apiAccount.type === "user" && apiAccount.delegate?.address
-      ? {
-          uid: address,
-          address,
-          delegate: apiAccount.delegate.address,
-          state: "active",
+  const stakeBalances: Balance[] =
+    apiAccount.type === "user"
+      ? buildStakesForAccount(address, apiAccount).map(stake => ({
+          value: stake.amount,
           asset: { type: "native" },
-          amount: normalized,
-        }
-      : undefined;
+          stake,
+        }))
+      : [];
 
   const tokensBalance: Balance[] = tokensBalancesRaw.map(({ balance, token }) => {
     const magnitude = Number.parseInt(token.metadata?.decimals || "0", 10);
@@ -61,8 +61,8 @@ export async function getBalance(address: string): Promise<Balance[]> {
     {
       value: normalized,
       asset: { type: "native" },
-      ...(stake && { stake }),
     },
+    ...stakeBalances,
     ...tokensBalance,
   ];
 }

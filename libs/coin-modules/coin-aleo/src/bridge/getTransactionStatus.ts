@@ -39,7 +39,7 @@ function getValidRecord({
   commitment,
 }: {
   account: AleoAccount;
-  commitment: TransactionPrivate["properties"]["amountRecordCommitment"];
+  commitment: string | null;
 }) {
   if (!commitment) {
     return null;
@@ -70,8 +70,8 @@ function validatePrivateTransaction({
   isFeeSponsored: boolean;
 }): Errors {
   const errors: Errors = {};
-  const { amountRecordCommitment, feeRecordCommitment } = transaction.properties;
-  const amountRecord = getValidRecord({ account, commitment: amountRecordCommitment });
+  const { amountRecordCommitments, feeRecordCommitment } = transaction.properties;
+  const amountRecord = getValidRecord({ account, commitment: amountRecordCommitments[0] ?? null });
 
   if (!amountRecord) {
     errors.amountRecord = new AleoAmountRecordRequired();
@@ -90,7 +90,7 @@ function validatePrivateTransaction({
 
   if (availableRecords.length <= 1) {
     errors.feeRecord = new AleoTwoRecordsRequired();
-  } else if (!feeRecord || feeRecord.commitment === amountRecordCommitment) {
+  } else if (!feeRecord || amountRecordCommitments.includes(feeRecord.commitment)) {
     errors.feeRecord = new AleoFeeRecordRequired();
   } else if (estimatedFees.gt(new BigNumber(feeRecord.microcredits))) {
     errors.feeRecord = new AleoFeeRecordInsufficientBalance();

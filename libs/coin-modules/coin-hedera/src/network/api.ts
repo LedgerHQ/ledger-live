@@ -8,9 +8,11 @@ import { HEDERA_TRANSACTION_NAMES } from "../constants";
 import { HederaAddAccountError } from "../errors";
 import type {
   HederaMirrorAccountTokensResponse,
+  HederaMirrorBlocksResponse,
   HederaMirrorTransactionsResponse,
   HederaMirrorAccount,
   HederaMirrorAccountsResponse,
+  HederaMirrorBlock,
   HederaMirrorToken,
   HederaMirrorTransaction,
   HederaMirrorNetworkFees,
@@ -181,6 +183,25 @@ async function getLatestTransaction(before: Date): Promise<HederaMirrorTransacti
   return transaction;
 }
 
+async function getLatestBlock(): Promise<HederaMirrorBlock> {
+  const params = new URLSearchParams({
+    limit: "1",
+    order: "desc",
+  });
+
+  const res = await network<HederaMirrorBlocksResponse>({
+    method: "GET",
+    url: `${API_URL}/api/v1/blocks?${params.toString()}`,
+  });
+  const block = res.data.blocks[0];
+
+  if (!block) {
+    throw new Error("No blocks found on the Hedera network");
+  }
+
+  return block;
+}
+
 async function getNetworkFees(): Promise<HederaMirrorNetworkFees> {
   const res = await network<HederaMirrorNetworkFees>({
     method: "GET",
@@ -339,6 +360,19 @@ async function getTransactionsByTimestampRange({
   return transactions;
 }
 
+async function getNode(nodeId: number): Promise<HederaMirrorNode | null> {
+  const params = new URLSearchParams({
+    "node.id": `eq:${nodeId}`,
+    limit: "1",
+  });
+
+  const res = await network<HederaMirrorNodesResponse>({
+    method: "GET",
+    url: `${API_URL}/api/v1/network/nodes?${params.toString()}`,
+  });
+  return res.data.nodes[0] ?? null;
+}
+
 async function getNodes({
   cursor,
   limit = 100,
@@ -397,6 +431,7 @@ export const apiClient = {
   getAccount,
   getAccountTokens,
   getAccountTransactions,
+  getLatestBlock,
   getLatestTransaction,
   getNetworkFees,
   getContractCallResult,
@@ -405,5 +440,6 @@ export const apiClient = {
   getERC20Balance,
   estimateContractCallGas,
   getTransactionsByTimestampRange,
+  getNode,
   getNodes,
 };

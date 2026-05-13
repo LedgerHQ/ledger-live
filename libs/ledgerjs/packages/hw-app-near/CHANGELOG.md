@@ -7,6 +7,20 @@
 - Updated dependencies []:
   - @ledgerhq/hw-transport@6.35.2
 
+## 6.35.2-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.35.2-next.0
+
+## 6.35.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.35.2
+
 ## 6.35.2-hotfix.0
 
 ### Patch Changes

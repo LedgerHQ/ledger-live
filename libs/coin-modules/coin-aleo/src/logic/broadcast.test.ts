@@ -86,7 +86,13 @@ describe("broadcast", () => {
 
   describe("when useEncryptedProve is true", () => {
     const encryptedConfig = { ...getMockedConfig("testnet"), useEncryptedProve: true };
-    const mockPublicKeyResponse = { key_id: "mockKeyId", public_key: "mockPublicKey" };
+    const mockPublicKeyResponse = {
+      data: {
+        key_id: "mockKeyId",
+        public_key: "mockPublicKey",
+      },
+      stickySessionCookie: null,
+    };
     const mockEncryptedData = "mockEncryptedData";
 
     beforeEach(() => {
@@ -108,7 +114,7 @@ describe("broadcast", () => {
       });
       expect(sdkClient.encryptProvingRequest).toHaveBeenCalledTimes(1);
       expect(sdkClient.encryptProvingRequest).toHaveBeenCalledWith({
-        publicKey: mockPublicKeyResponse.public_key,
+        publicKey: mockPublicKeyResponse.data.public_key,
         currency: mockAccount.currency,
         authorization: mockAuthorization,
         feeAuthorization: mockFeeAuthorization,
@@ -117,8 +123,9 @@ describe("broadcast", () => {
       expect(apiClient.submitEncryptedDelegatedProvingRequest).toHaveBeenCalledTimes(1);
       expect(apiClient.submitEncryptedDelegatedProvingRequest).toHaveBeenCalledWith({
         currency: mockAccount.currency,
-        keyId: mockPublicKeyResponse.key_id,
+        keyId: mockPublicKeyResponse.data.key_id,
         encryptedData: mockEncryptedData,
+        stickySessionCookie: mockPublicKeyResponse.stickySessionCookie,
       });
       expect(result).toBe(mockResponse.transaction.id);
     });
@@ -135,7 +142,7 @@ describe("broadcast", () => {
       });
 
       expect(sdkClient.encryptProvingRequest).toHaveBeenCalledWith({
-        publicKey: mockPublicKeyResponse.public_key,
+        publicKey: mockPublicKeyResponse.data.public_key,
         currency: mockAccount.currency,
         authorization: mockAuthorization,
         broadcast: true,
@@ -150,6 +157,42 @@ describe("broadcast", () => {
       });
 
       expect(apiClient.submitDelegatedProvingRequest).not.toHaveBeenCalled();
+    });
+
+    it("should throw with status and message when broadcast_result is Rejected", async () => {
+      jest.mocked(apiClient.submitEncryptedDelegatedProvingRequest).mockResolvedValue({
+        ...mockResponse,
+        broadcast_result: {
+          status: "Rejected",
+          status_code: 400,
+          message: "Transaction rejected",
+        },
+      });
+
+      await expect(
+        broadcast({
+          configOrCurrencyId: encryptedConfig,
+          account: mockAccount,
+          signedTx: mockSignedTx,
+        }),
+      ).rejects.toThrow("aleo: broadcast failed with status: Rejected (Transaction rejected)");
+    });
+
+    it("should throw with Unknown error when broadcast_result has no message (Skipped)", async () => {
+      jest.mocked(apiClient.submitEncryptedDelegatedProvingRequest).mockResolvedValue({
+        ...mockResponse,
+        broadcast_result: {
+          status: "Skipped",
+        },
+      });
+
+      await expect(
+        broadcast({
+          configOrCurrencyId: encryptedConfig,
+          account: mockAccount,
+          signedTx: mockSignedTx,
+        }),
+      ).rejects.toThrow("aleo: broadcast failed with status: Skipped (Unknown error)");
     });
   });
 });

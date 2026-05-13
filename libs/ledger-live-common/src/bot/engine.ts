@@ -130,7 +130,7 @@ export async function runWithAppSpec<T extends TransactionCommon>(
   try {
     device = await createSpeculosDevice(deviceParams);
     appReport.appPath = device.appPath;
-    const bridge = getCurrencyBridge(currency);
+    const bridge = await getCurrencyBridge(currency);
     const syncConfig = {
       paginationConfig: {},
     };
@@ -374,7 +374,7 @@ export async function runOnAccount<T extends TransactionCommon>({
   };
 
   try {
-    const accountBridge = getAccountBridge(account);
+    const accountBridge = await getAccountBridge(account);
     const accountBeforeTransaction = account;
     report.account = account;
     log("engine", `spec ${spec.name}/${getDefaultAccountNameForCurrencyIndex(account)}`);
@@ -737,8 +737,9 @@ export async function runOnAccount<T extends TransactionCommon>({
 }
 
 async function syncAccount(initialAccount: Account): Promise<Account> {
+  const bridge = await getAccountBridge(initialAccount);
   const acc = await firstValueFrom(
-    getAccountBridge(initialAccount)
+    bridge
       .sync(initialAccount, {
         paginationConfig: {},
       })

@@ -53,7 +53,9 @@ export const AccountListItem = ({ onClick, account }: AccountListItemProps) => {
           <ListItemTitle>{name}</ListItemTitle>
           <ListItemDescription className="flex gap-6">
             {formattedAddress}
-            <SquaredCryptoIcon size="16px" ledgerId={networkId} ticker={ticker} />
+            {ticker && networkId && (
+              <SquaredCryptoIcon size={16} ledgerId={networkId} ticker={ticker} />
+            )}
           </ListItemDescription>
         </ListItemContent>
       </ListItemLeading>

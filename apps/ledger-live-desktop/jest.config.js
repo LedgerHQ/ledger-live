@@ -57,6 +57,8 @@ const moduleNameMapper = {
 const transformIncludePatterns = [
   "ky",
   "@ledgerhq\\+lumen-ui-react",
+  "@ledgerhq\\+lumen-design-core",
+  "@ledgerhq\\+crypto-icons",
   "@mysten\\+",
   "@scure\\+",
   "@noble\\+",
@@ -116,6 +118,7 @@ module.exports = {
   coverageReporters: ["json", ["lcov", { projectRoot: "../" }], "json-summary"],
   reporters: [
     "default",
+    ...(process.env.CI ? ["github-actions"] : []),
     ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
   ],
   silent: false,

@@ -543,8 +543,12 @@ export const trackPage = (
    * any effect.
    */
   refreshSource?: boolean,
+  /**
+   * When true, event will be sent even if standard analytics tracking is disabled.
+   */
+  mandatory?: boolean,
 ) => {
-  if (!storeInstance || !trackingEnabledSelector(storeInstance.getState())) {
+  if (!storeInstance || (!mandatory && !trackingEnabledSelector(storeInstance.getState()))) {
     return;
   }
 
@@ -563,7 +567,7 @@ export const trackPage = (
   };
   const allProperties = {
     ...eventPropertiesWithoutExtra,
-    ...extraProperties(storeInstance),
+    ...(mandatory ? getMandatoryProperties(storeInstance) : extraProperties(storeInstance)),
   };
   logger.analyticsPage(category, name, allProperties);
   sendTrack(eventName, allProperties);

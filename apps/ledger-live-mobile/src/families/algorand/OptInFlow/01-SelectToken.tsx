@@ -3,14 +3,14 @@ import React, { useCallback, useState } from "react";
 import { View, StyleSheet, SafeAreaView, FlatList, TouchableOpacity } from "react-native";
 import { Trans } from "~/context/Locale";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useTokensData } from "@ledgerhq/cryptoassets/cal-client/hooks/useTokensData";
 import { extractTokenId } from "@ledgerhq/live-common/families/algorand/tokens";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
-import { AlgorandAccount } from "@ledgerhq/live-common/families/algorand/types";
+import { AlgorandAccount, Transaction as AlgorandTransaction } from "@ledgerhq/live-common/families/algorand/types";
 import { ScreenName } from "~/const";
 import LText from "~/components/LText";
 import { TrackScreen } from "~/analytics";
@@ -87,7 +87,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
   const { account } = useAccountScreen(route);
   invariant(account, "Account required");
   const mainAccount = getMainAccount(account) as AlgorandAccount;
-  const bridge = getAccountBridge(mainAccount);
+  const bridge = useAccountBridge<AlgorandTransaction>(mainAccount);
   invariant(mainAccount && mainAccount.algorandResources, "algorand Account required");
   const { transaction } = useBridgeTransaction(() => {
     const t = bridge.createTransaction(mainAccount);
@@ -101,6 +101,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
   });
   const onNext = useCallback(
     (assetId: string) => {
+      if (!transaction) return;
       navigation.navigate(ScreenName.AlgorandOptInSelectDevice, {
         ...route.params,
         transaction: bridge.updateTransaction(transaction, {

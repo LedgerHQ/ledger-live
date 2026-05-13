@@ -2,7 +2,11 @@ import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
-import { usePostOnboardingPortfolioWidgetVisibility } from "@ledgerhq/live-common/postOnboarding/hooks/index";
+import {
+  usePostOnboardingHubState,
+  usePostOnboardingPortfolioWidgetVisibility,
+} from "@ledgerhq/live-common/postOnboarding/hooks/index";
+import { usePostOnboardingHubStepperDisplay } from "~/logic/postOnboarding/usePostOnboardingHubStepperDisplay";
 import differenceInCalendarDays from "date-fns/differenceInCalendarDays";
 import {
   hasCompletedOnboardingSelector,
@@ -20,6 +24,9 @@ export const useOnboardingWidgetVisibility = () => {
     flattenAccountsSelector,
   );
 
+  const { actionsState } = usePostOnboardingHubState();
+  const { areAllActionsCompleted } = usePostOnboardingHubStepperDisplay(actionsState);
+
   const isBeforeCutoffTime = useMemo(() => {
     return onboardingCompletionDate === null
       ? hasCompletedOnboarding
@@ -34,5 +41,13 @@ export const useOnboardingWidgetVisibility = () => {
     }
   }, [hasCompletedOnboarding, onboardingCompletionDate, dispatch]);
 
-  return isPortfolioWidgetBaseVisible && shouldDisplayOnboardingWidget && isBeforeCutoffTime;
+  const areHubStepsDone =
+    actionsState.length > 0 && areAllActionsCompleted;
+
+  return (
+    isPortfolioWidgetBaseVisible &&
+    shouldDisplayOnboardingWidget &&
+    isBeforeCutoffTime &&
+    !areHubStepsDone
+  );
 };
