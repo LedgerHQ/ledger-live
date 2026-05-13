@@ -1,13 +1,12 @@
-import type { FlowName } from "../../device-action/utils";
+import type { FlowName } from "../../../device-action/utils";
 import {
   resolveAppRequestRequirements,
-  toConnectAppInitializationInput,
-  toConnectAppRequest,
-} from "./resolveAppRequestRequirements";
-import type { AppRequestInput, ConnectAppInitializationInput } from "./types";
-import { buildExpectedAccountIdentity } from "./wrongDeviceValidation";
+  toEnsureAppReadyInput,
+} from "../../../hw/deviceInitialization/helpers/resolveAppRequestRequirements";
+import type { AppRequestInput, EnsureAppReadyInput } from "./types";
+import { buildExpectedAccountIdentity } from "../../../hw/deviceInitialization/helpers/wrongDeviceValidation";
 
-export type BuildConnectAppInitializationParams = {
+export type BuildEnsureAppReadyInputParams = {
   appRequest: AppRequestInput;
   flow?: FlowName;
   currencyName?: string;
@@ -15,24 +14,24 @@ export type BuildConnectAppInitializationParams = {
 };
 
 /**
- * Build the connect-app `deviceInitializationInput` consumed by DIE from the
+ * Build the `EnsureAppReadyInput` consumed by DIE from the
  * same `AppRequestInput` shape historically passed to legacy connect-app flows.
  *
  * Use this when migrating a flow from `hw/actions/app` / `connectApp` to
  * `DeviceIntentExecutor`:
  * - keep building the same `AppRequestInput`
- * - pass it to `buildConnectAppInitializationInput(...)`
- * - pass the returned object unchanged as `deviceInitializationInput`
+ * - pass it to `buildEnsureAppReadyInput(...)`
+ * - pass the returned object unchanged as `input`
  *
  * Callers should not manually derive `appName`, `dependencies`,
  * `requiresDerivation`, `expectedAccount`, or `deprecation`. This builder is
  * the canonical translation boundary from rich domain input to DIE init input.
  */
-export async function buildConnectAppInitializationInput(
-  params: BuildConnectAppInitializationParams,
-): Promise<ConnectAppInitializationInput> {
+export async function buildEnsureAppReadyInput(
+  params: BuildEnsureAppReadyInputParams,
+): Promise<EnsureAppReadyInput> {
   const resolved = await resolveAppRequestRequirements(params.appRequest);
-  const baseInput = toConnectAppInitializationInput(resolved);
+  const baseInput = toEnsureAppReadyInput(resolved);
 
   const expectedAccount =
     !params.skipWrongDeviceCheck && params.appRequest.account
@@ -59,5 +58,3 @@ export async function buildConnectAppInitializationInput(
     deprecation,
   };
 }
-
-export { resolveAppRequestRequirements, toConnectAppInitializationInput, toConnectAppRequest };

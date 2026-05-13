@@ -1,9 +1,13 @@
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import type { DeviceDeprecationRules } from "../connectApp";
-import { FlowName } from "../../device-action/utils";
+import type { DeviceDeprecationRules } from "../ConnectApp/types";
 import { decideDeprecationPresentation } from "./deprecationPresentation";
 
 const defaultDate = new Date("2023-12-31");
+const FlowName = {
+  send: "send",
+  receive: "receive",
+  unknown: "unknown",
+} as const;
 
 function createRules(overrides: Partial<DeviceDeprecationRules> = {}): DeviceDeprecationRules {
   return {

@@ -74,6 +74,39 @@ export const setupGetDeviceStatusMock = (deviceStatus: GetDeviceStatusDAOutput, 
   }));
 };
 
+export const setupGetDeviceStatusSequenceMock = (deviceStatuses: GetDeviceStatusDAOutput[]) => {
+  const statuses = [...deviceStatuses];
+
+  (GetDeviceStatusDeviceAction as jest.Mock).mockImplementation(() => ({
+    makeStateMachine: jest.fn().mockImplementation(() => {
+      return createMachine({
+        id: "MockGetDeviceStatusDeviceAction",
+        initial: "ready",
+        states: {
+          ready: {
+            after: {
+              0: "done",
+            },
+            entry: assign({
+              intermediateValue: () => ({
+                requiredUserInteraction: UserInteractionRequired.None,
+              }),
+            }),
+          },
+          done: {
+            type: "final",
+          },
+        },
+        output: () => {
+          const deviceStatus = statuses.shift() ?? deviceStatuses[deviceStatuses.length - 1];
+
+          return Right(deviceStatus);
+        },
+      });
+    }),
+  }));
+};
+
 export const setupGetDeviceMetadataMock = (metadata: GetDeviceMetadataDAOutput, error = false) => {
   (GetDeviceMetadataDeviceAction as jest.Mock).mockImplementation(() => ({
     makeStateMachine: jest.fn().mockImplementation(() =>
