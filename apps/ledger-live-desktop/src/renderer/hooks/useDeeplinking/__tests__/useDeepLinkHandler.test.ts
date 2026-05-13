@@ -6,6 +6,7 @@ import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
 import { openModal, closeAllModal } from "~/renderer/actions/modals";
+import { openSwapTransactionStatusDialog } from "~/renderer/reducers/swapTransactionStatusDialog";
 import {
   FEATURE_INTRO_CAMPAIGN_ID,
   genericAwarenessModalTestContentCards,
@@ -18,10 +19,38 @@ jest.mock("~/renderer/actions/modals", () => ({
   closeAllModal: jest.fn(() => ({ type: "CLOSE_ALL_MODAL" })),
 }));
 
+jest.mock("~/renderer/reducers/swapTransactionStatusDialog", () => ({
+  openSwapTransactionStatusDialog: jest.fn(payload => ({
+    type: "swapTransactionStatusDialog/openSwapTransactionStatusDialog",
+    payload,
+  })),
+}));
+
+jest.mock(
+  "@ledgerhq/live-common/exchange/transactionStatus/index",
+  () => ({
+    parseSwapTransactionStatusParams: jest.fn(params => {
+      if (!params.swapId) {
+        return { ok: false, error: { code: "missing_required_field" } };
+      }
+      return {
+        ok: true,
+        params: {
+          swapId: params.swapId,
+          provider: params.provider,
+          redirectUrl: params.redirectUrl,
+        },
+      };
+    }),
+  }),
+  { virtual: true },
+);
+
 jest.mock("~/renderer/actions/walletSync");
 
 const mockOpenModal = jest.mocked(openModal);
 const mockCloseAllModal = jest.mocked(closeAllModal);
+const mockOpenSwapTransactionStatusDialog = jest.mocked(openSwapTransactionStatusDialog);
 
 jest.mock("~/renderer/analytics/TrackPage", () => ({
   setTrackingSource: jest.fn(),
@@ -172,6 +201,30 @@ describe("useDeepLinkHandler", () => {
       await waitFor(() => {
         expect(mockFindCryptoCurrencyByKeyword).toHaveBeenCalledWith("ETHEREUM");
         expect(mockOpenAddAccountFlow).toHaveBeenCalledWith(mockCurrency, true);
+      });
+    });
+  });
+
+  describe("swap-transaction-status flow", () => {
+    it("opens the SwapTransactionStatus dialog with validated swap params", async () => {
+      await testDeeplink(
+        "ledgerwallet://connect/swap/transaction-status?swapId=swap-1&provider=lifi&redirectUrl=https%3A%2F%2Fexample.com",
+      );
+
+      await waitFor(() => {
+        expect(mockOpenSwapTransactionStatusDialog).toHaveBeenCalledWith({
+          swapId: "swap-1",
+          provider: "lifi",
+          redirectUrl: "https://example.com",
+        });
+      });
+    });
+
+    it("ignores invalid SwapTransactionStatus deeplinks", async () => {
+      await testDeeplink("ledgerwallet://connect/swap/transaction-status?provider=lifi");
+
+      await waitFor(() => {
+        expect(mockOpenSwapTransactionStatusDialog).not.toHaveBeenCalled();
       });
     });
   });
