@@ -89,6 +89,11 @@ test("PostOnboarding state logic", async ({ page }) => {
   await test.step("start and complete 'personalize' mocked action", async () => {
     await postOnboarding.startPersonalizeMock();
     await postOnboarding.completeActionAndGoToHub();
+  });
+
+  await test.step("start and complete 'recover' mocked action", async () => {
+    await postOnboarding.startRecoverMock();
+    await postOnboarding.completeActionAndGoToHub();
     await expect(page).toHaveScreenshot(
       `${generateScreenshotPrefix()}postonboarding-completed-all-actions.png`,
     );

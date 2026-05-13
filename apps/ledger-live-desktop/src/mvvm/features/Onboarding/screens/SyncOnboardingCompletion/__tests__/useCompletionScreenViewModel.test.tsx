@@ -13,7 +13,6 @@ const mockOpenFinishOnboardingDialog = jest.fn();
 const mockRedirectToPostOnboarding = jest.fn();
 
 jest.mock("~/renderer/hooks/useAutoRedirectToPostOnboarding", () => ({
-  ...jest.requireActual("~/renderer/hooks/useAutoRedirectToPostOnboarding"),
   useRedirectToPostOnboardingCallback: jest.fn(),
 }));
 
