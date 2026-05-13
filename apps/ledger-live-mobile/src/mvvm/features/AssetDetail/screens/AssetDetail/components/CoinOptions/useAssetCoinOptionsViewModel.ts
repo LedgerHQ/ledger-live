@@ -1,0 +1,104 @@
+import { useCallback, useMemo, useState } from "react";
+import { useDispatch, useSelector } from "~/context/hooks";
+import {
+  addStarredMarketCoins,
+  blacklistToken,
+  removeStarredMarketCoins,
+  showToken,
+} from "~/actions/settings";
+import { blacklistedTokenIdsSelector, starredMarketCoinsSelector } from "~/reducers/settings";
+import { track } from "~/analytics";
+import { useNotifications } from "LLM/features/NotificationsPrompt";
+import type { AssetDetailCurrencyProps } from "LLM/features/AssetDetail/types";
+import { useTranslation } from "~/context/Locale";
+
+type Params = Readonly<{
+  currency: AssetDetailCurrencyProps;
+  currencyId: string;
+}>;
+
+export function useAssetCoinOptionsViewModel({ currency, currencyId }: Params) {
+  const { t } = useTranslation();
+  const dispatch = useDispatch();
+  const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
+
+  const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
+  const starredMarketCoins = useSelector(starredMarketCoinsSelector);
+
+  const [isCoinOptionsSheetOpen, setCoinOptionsSheetOpen] = useState(false);
+
+  const isHidden = !!currency && blacklistedTokenIds.includes(currency.id);
+  const isStarred = starredMarketCoins.includes(currencyId);
+
+  const blacklistedTokenIdsSet = useMemo(() => new Set(blacklistedTokenIds), [blacklistedTokenIds]);
+
+  const openCoinOptions = useCallback(() => setCoinOptionsSheetOpen(true), []);
+  const closeCoinOptions = useCallback(() => setCoinOptionsSheetOpen(false), []);
+
+  const trailingAccessibilityLabel = t("assetDetail.coinOptions.openMenuA11yLabel");
+
+  const onToggleFavourite = useCallback(() => {
+    if (!currency) return;
+    const nextStarred = !isStarred;
+
+    track("button_clicked", {
+      button: "asset_coin_options_favourite",
+      currency: currency.id,
+      page: "Asset Detail",
+      is_favourite: nextStarred,
+    });
+
+    if (nextStarred) {
+      if (!starredMarketCoins.includes(currencyId)) {
+        dispatch(addStarredMarketCoins(currencyId));
+      }
+      tryTriggerPushNotificationDrawerAfterAction("add_favorite_coin");
+    } else if (starredMarketCoins.includes(currencyId)) {
+      dispatch(removeStarredMarketCoins(currencyId));
+    }
+    closeCoinOptions();
+  }, [
+    currency,
+    isStarred,
+    currencyId,
+    dispatch,
+    starredMarketCoins,
+    tryTriggerPushNotificationDrawerAfterAction,
+    closeCoinOptions,
+  ]);
+
+  const onToggleHideFromPortfolio = useCallback(() => {
+    if (!currency) return;
+
+    const nextHidden = !isHidden;
+
+    track("button_clicked", {
+      button: "asset_coin_options_hide_portfolio",
+      currency: currency.id,
+      page: "Asset Detail",
+      is_hidden: nextHidden,
+    });
+
+    if (nextHidden) {
+      if (!blacklistedTokenIdsSet.has(currency.id)) {
+        dispatch(blacklistToken(currency.id));
+      }
+    } else {
+      dispatch(showToken(currency.id));
+    }
+    closeCoinOptions();
+  }, [currency, isHidden, blacklistedTokenIdsSet, dispatch, closeCoinOptions]);
+
+  return {
+    isCoinOptionsSheetOpen,
+    openCoinOptions,
+    closeCoinOptions,
+    trailingAccessibilityLabel,
+    isHidden,
+    isStarred,
+    onToggleFavourite,
+    onToggleHideFromPortfolio,
+  };
+}
+
+export type AssetCoinOptionsViewModel = ReturnType<typeof useAssetCoinOptionsViewModel>;

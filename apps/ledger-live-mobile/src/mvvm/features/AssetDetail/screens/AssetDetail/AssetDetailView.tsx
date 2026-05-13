@@ -13,6 +13,8 @@ import { Transactions } from "./components/Transactions";
 import { Footer } from "./components/Footer";
 import { MarketData } from "./components/MarketData";
 import { CTAS_HEIGHT } from "./utils/constants";
+import { AssetCoinOptionsSheetView } from "./components/CoinOptions/AssetCoinOptionsSheetView";
+import type { AssetCoinOptionsViewModel } from "./components/CoinOptions/useAssetCoinOptionsViewModel";
 
 type Props = Readonly<{
   currency: AssetDetailCurrencyProps;
@@ -21,6 +23,7 @@ type Props = Readonly<{
   onRefresh: () => void;
   hasFooter: boolean;
   hideReceiveInBalanceGraph: boolean;
+  coinOptions: AssetCoinOptionsViewModel;
 }>;
 
 export function AssetDetailView({
@@ -30,6 +33,7 @@ export function AssetDetailView({
   onRefresh,
   hasFooter,
   hideReceiveInBalanceGraph,
+  coinOptions,
 }: Props) {
   const { bottom } = useSafeAreaInsets();
   const scrollPaddingBottom = useMemo(
@@ -54,6 +58,14 @@ export function AssetDetailView({
         </Box>
       </ScrollView>
       <Footer currency={currency} />
+      <AssetCoinOptionsSheetView
+        isOpen={coinOptions.isCoinOptionsSheetOpen}
+        onClose={coinOptions.closeCoinOptions}
+        isHidden={coinOptions.isHidden}
+        isStarred={coinOptions.isStarred}
+        onToggleFavourite={coinOptions.onToggleFavourite}
+        onToggleHideFromPortfolio={coinOptions.onToggleHideFromPortfolio}
+      />
     </Box>
   );
 }

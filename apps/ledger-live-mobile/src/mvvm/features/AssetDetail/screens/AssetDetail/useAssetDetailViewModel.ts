@@ -5,6 +5,7 @@ import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpe
 import { ScreenName } from "~/const";
 import type { AssetDetailNavigatorParamsList } from "../../types";
 import { useIsBuyAvailable, useSecondaryButtonType } from "./components/Footer/useFooterViewModel";
+import { useAssetCoinOptionsViewModel } from "./components/CoinOptions/useAssetCoinOptionsViewModel";
 
 type Route = StackNavigatorProps<AssetDetailNavigatorParamsList, ScreenName.AssetDetail>["route"];
 
@@ -24,6 +25,8 @@ export function useAssetDetailViewModel() {
   const hasFooter = isBuyAvailable || secondaryButton !== null;
   const hideReceiveInBalanceGraph = secondaryButton === "receive";
 
+  const coinOptions = useAssetCoinOptionsViewModel({ currency, currencyId });
+
   return {
     currency,
     source,
@@ -31,5 +34,6 @@ export function useAssetDetailViewModel() {
     onRefresh,
     hasFooter,
     hideReceiveInBalanceGraph,
+    coinOptions,
   };
 }

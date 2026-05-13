@@ -19,4 +19,8 @@ export const ASSET_DETAIL_TEST_IDS = {
   buyButton: "asset-detail-buy-button",
   swapButton: "asset-detail-swap-button",
   footerReceiveButton: "asset-detail-footer-receive-button",
+  coinOptionsTrailing: "asset-detail-coin-options-trailing",
+  coinOptionsSheet: "asset-detail-coin-options-sheet",
+  coinOptionsFavouriteRow: "asset-detail-coin-options-favourite-row",
+  coinOptionsHideRow: "asset-detail-coin-options-hide-row",
 } as const;
