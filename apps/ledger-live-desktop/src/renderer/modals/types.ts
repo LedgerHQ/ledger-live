@@ -18,6 +18,7 @@ import { ModalStartStakeProps } from "./StartStake";
 import { CoinModalsData } from "../families/generated";
 import { Language } from "~/config/languages";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import type { SwapTransactionStatusParams } from "@ledgerhq/live-common/exchange/transactionStatus/index";
 
 /**
  * the modals data type are all defined by a key value map,
@@ -76,6 +77,7 @@ export type GlobalModalData = {
   MODAL_PLATFORM_EXCHANGE_COMPLETE: PlatformExchangeCompleteData;
   MODAL_CONNECT_DEVICE: ConnectDeviceData;
   MODAL_EXCHANGE_CRYPTO_DEVICE: ExchangeCryptoDeviceDataProp;
+  MODAL_SWAP_TRANSACTION_STATUS: SwapTransactionStatusParams;
 
   MODAL_WEBSOCKET_BRIDGE: {
     origin?: string | undefined | null;

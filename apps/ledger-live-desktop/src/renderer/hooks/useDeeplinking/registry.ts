@@ -7,6 +7,7 @@ import { earnHandler } from "./handlers/earn.handler";
 import { borrowHandler } from "./handlers/borrow.handler";
 import { managerHandler } from "./handlers/manager.handler";
 import { swapHandler } from "./handlers/swap.handler";
+import { swapTransactionStatusHandler } from "./handlers/swapTransactionStatus.handler";
 import { bridgeHandler } from "./handlers/bridge.handler";
 import { sendHandler, receiveHandler, delegateHandler } from "./handlers/transactionFlow.handler";
 import { settingsHandler } from "./handlers/settings.handler";
@@ -28,6 +29,7 @@ export const deeplinkRegistry: DeeplinkHandlerRegistry = {
   borrow: borrowHandler,
   myledger: managerHandler,
   swap: swapHandler,
+  "transaction-status": swapTransactionStatusHandler,
   bridge: bridgeHandler,
   send: sendHandler,
   receive: receiveHandler,

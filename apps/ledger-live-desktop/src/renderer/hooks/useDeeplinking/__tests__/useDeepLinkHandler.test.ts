@@ -14,6 +14,27 @@ jest.mock("~/renderer/actions/modals", () => ({
   closeAllModal: jest.fn(() => ({ type: "CLOSE_ALL_MODAL" })),
 }));
 
+jest.mock(
+  "@ledgerhq/live-common/exchange/transactionStatus/index",
+  () => ({
+    parseSwapTransactionStatusParams: jest.fn(params => {
+      if (!params.swapId) {
+        return { ok: false, error: { code: "missing_required_field" } };
+      }
+      return {
+        ok: true,
+        params: {
+          kind: "swap",
+          swapId: params.swapId,
+          provider: params.provider,
+          redirectUrl: params.redirectUrl,
+        },
+      };
+    }),
+  }),
+  { virtual: true },
+);
+
 jest.mock("~/renderer/actions/walletSync");
 
 const mockOpenModal = jest.mocked(openModal);
@@ -168,6 +189,34 @@ describe("useDeepLinkHandler", () => {
       await waitFor(() => {
         expect(mockFindCryptoCurrencyByKeyword).toHaveBeenCalledWith("ETHEREUM");
         expect(mockOpenAddAccountFlow).toHaveBeenCalledWith(mockCurrency, true);
+      });
+    });
+  });
+
+  describe("transaction-status flow", () => {
+    it("opens the SwapTransactionStatus modal with validated swap params", async () => {
+      await testDeeplink(
+        "ledgerwallet://connect/swap/transaction-status?swapId=swap-1&provider=lifi&redirectUrl=https%3A%2F%2Fexample.com",
+      );
+
+      await waitFor(() => {
+        expect(mockOpenModal).toHaveBeenCalledWith("MODAL_SWAP_TRANSACTION_STATUS", {
+          kind: "swap",
+          swapId: "swap-1",
+          provider: "lifi",
+          redirectUrl: "https://example.com",
+        });
+      });
+    });
+
+    it("ignores invalid SwapTransactionStatus deeplinks", async () => {
+      await testDeeplink("ledgerwallet://connect/swap/transaction-status?provider=lifi");
+
+      await waitFor(() => {
+        expect(mockOpenModal).not.toHaveBeenCalledWith(
+          "MODAL_SWAP_TRANSACTION_STATUS",
+          expect.anything(),
+        );
       });
     });
   });
