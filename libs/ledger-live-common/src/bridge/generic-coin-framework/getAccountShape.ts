@@ -327,7 +327,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     const alpacaApi = await getAlpacaApi(currency.id, kind);
     const bridgeApi = getBridgeApi(currency, network);
 
-    const chainSpecificValidation = bridgeApi.getChainSpecificRules?.();
+    const chainSpecificValidation = bridgeApi.getChainSpecificRules;
     if (chainSpecificValidation) {
       chainSpecificValidation.getAccountShape(address);
     }

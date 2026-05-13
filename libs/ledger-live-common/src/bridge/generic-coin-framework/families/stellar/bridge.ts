@@ -5,19 +5,17 @@ import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { StellarBurnAddressError } from "@ledgerhq/coin-stellar/types";
 import { STELLAR_BURN_ADDRESS } from "@ledgerhq/coin-stellar/logic";
 
-export function getChainSpecificRules(): ChainSpecificRules {
-  return {
-    getAccountShape: (address: string) => {
-      // NOTE: https://github.com/LedgerHQ/ledger-live/pull/2058
-      if (address === STELLAR_BURN_ADDRESS) {
-        throw new StellarBurnAddressError();
-      }
-    },
-    getTransactionStatus: {
-      throwIfPendingOperation: true,
-    },
-  };
-}
+export const getChainSpecificRules: ChainSpecificRules = {
+  getAccountShape: (address: string) => {
+    // NOTE: https://github.com/LedgerHQ/ledger-live/pull/2058
+    if (address === STELLAR_BURN_ADDRESS) {
+      throw new StellarBurnAddressError();
+    }
+  },
+  getTransactionStatus: {
+    throwIfPendingOperation: true,
+  },
+};
 
 export async function getTokenFromAsset(asset: AssetInfo): Promise<TokenCurrency | undefined> {
   const assetId =

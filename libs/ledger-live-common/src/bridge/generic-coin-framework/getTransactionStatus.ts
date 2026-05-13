@@ -39,7 +39,7 @@ export function genericGetTransactionStatus(
       dstValAddress: transaction.dstValAddress,
     };
 
-    const chainSpecificValidation = bridgeApi.getChainSpecificRules?.();
+    const chainSpecificValidation = bridgeApi.getChainSpecificRules;
     if (chainSpecificValidation) {
       if (chainSpecificValidation.getTransactionStatus.throwIfPendingOperation) {
         if (account.pendingOperations.length > 0) {
