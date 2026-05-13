@@ -25,11 +25,12 @@ export default function PlatformStartExchange({ navigation, route }: Props) {
   const hasPopped = useRef(false);
 
   const onClose = useCallback(() => {
-    // Prevent onClose being called twice
-    if (!hasPopped.current) {
+    // Only pop on a genuine user dismissal: when the drawer closes from a redirect,
+    // isFocused() is false and popping would unwind the just-pushed destination.
+    if (!hasPopped.current && navigation.isFocused()) {
       navigation.pop();
+      hasPopped.current = true;
     }
-    hasPopped.current = true;
   }, [navigation]);
 
   const onResult = useCallback(
