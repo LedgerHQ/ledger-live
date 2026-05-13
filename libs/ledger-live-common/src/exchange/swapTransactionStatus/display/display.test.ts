@@ -1,16 +1,20 @@
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "../../../currencies/index";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
-  formatAmount,
-  formatCreatedAt,
-  formatFeesAmount,
-  getExplorerUrl,
-  resolveAccountLike,
-  truncateMiddle,
-} from "../utils";
+  formatSwapTransactionStatusAmount,
+  formatSwapTransactionStatusCreatedAt,
+  formatSwapTransactionStatusFeesAmount,
+  getSwapTransactionStatusDisplayStatus,
+  getSwapTransactionStatusExplorerUrl,
+  getSwapTransactionStatusLabelKey,
+  getSwapTransactionStatusReceiveDisplayStatus,
+  getSwapTransactionStatusTitleKey,
+  resolveSwapTransactionStatusAccountLike,
+  truncateSwapTransactionStatusIdentifier,
+} from "./index";
 
-jest.mock("@ledgerhq/live-common/explorers", () => ({
+jest.mock("../../../explorers", () => ({
   getDefaultExplorerView: jest.fn(currency => ({ currencyId: currency.id })),
   getTransactionExplorer: jest.fn((_explorerView, operationHash) => {
     return `https://explorer.test/tx/${operationHash}`;
@@ -42,48 +46,50 @@ function normalizeSpaces(value: string | undefined): string | undefined {
   return value?.replace(/\u00a0/g, " ");
 }
 
-describe("resolveAccountLike", () => {
+describe("resolveSwapTransactionStatusAccountLike", () => {
   it("should resolve a parent account directly", () => {
     const account = genAccount("bitcoin-account", { currency: bitcoin });
 
-    expect(resolveAccountLike([account], account.id)).toEqual({ account });
+    expect(resolveSwapTransactionStatusAccountLike([account], account.id)).toEqual({ account });
   });
 
   it("should resolve token accounts with their parent account", () => {
     const parentAccount = genAccount("polygon-account", { currency: polygon });
     const tokenAccount = genTokenAccount(0, parentAccount, usdcPolygon);
 
-    expect(resolveAccountLike([parentAccount, tokenAccount], tokenAccount.id)).toEqual({
+    expect(
+      resolveSwapTransactionStatusAccountLike([parentAccount, tokenAccount], tokenAccount.id),
+    ).toEqual({
       account: tokenAccount,
       parentAccount,
     });
   });
 
   it("should return undefined when the account cannot be resolved", () => {
-    expect(resolveAccountLike([], "missing-account")).toBeUndefined();
-    expect(resolveAccountLike([], undefined)).toBeUndefined();
+    expect(resolveSwapTransactionStatusAccountLike([], "missing-account")).toBeUndefined();
+    expect(resolveSwapTransactionStatusAccountLike([], undefined)).toBeUndefined();
   });
 });
 
 describe("amount formatting", () => {
   it("should format raw atomic amounts with at most eight displayed decimals", () => {
-    expect(normalizeSpaces(formatAmount(ethereum, "123456789123456789", "en-US"))).toBe(
-      "0.12345678 ETH",
-    );
+    expect(
+      normalizeSpaces(formatSwapTransactionStatusAmount(ethereum, "123456789123456789", "en-US")),
+    ).toBe("0.12345678 ETH");
   });
 
   it("should format fees from the resolved main account currency", () => {
     const account = genAccount("bitcoin-account", { currency: bitcoin });
 
-    expect(normalizeSpaces(formatFeesAmount({ account }, "123456789", "en-US"))).toBe(
-      "1.23456789 BTC",
-    );
+    expect(
+      normalizeSpaces(formatSwapTransactionStatusFeesAmount({ account }, "123456789", "en-US")),
+    ).toBe("1.23456789 BTC");
   });
 
   it("should return undefined when amount inputs are missing", () => {
-    expect(formatAmount(undefined, "123", "en-US")).toBeUndefined();
-    expect(formatAmount(bitcoin, undefined, "en-US")).toBeUndefined();
-    expect(formatFeesAmount(undefined, "123", "en-US")).toBeUndefined();
+    expect(formatSwapTransactionStatusAmount(undefined, "123", "en-US")).toBeUndefined();
+    expect(formatSwapTransactionStatusAmount(bitcoin, undefined, "en-US")).toBeUndefined();
+    expect(formatSwapTransactionStatusFeesAmount(undefined, "123", "en-US")).toBeUndefined();
   });
 });
 
@@ -91,7 +97,7 @@ describe("date and identifier formatting", () => {
   it("should format creation dates with the requested locale", () => {
     const createdAt = new Date(2024, 0, 2, 15, 4).getTime();
 
-    expect(formatCreatedAt(createdAt, "en-US")).toBe(
+    expect(formatSwapTransactionStatusCreatedAt(createdAt, "en-US")).toBe(
       new Intl.DateTimeFormat("en-US", {
         month: "long",
         day: "numeric",
@@ -103,19 +109,19 @@ describe("date and identifier formatting", () => {
   });
 
   it("should truncate long identifiers without changing short identifiers", () => {
-    expect(truncateMiddle("1234567890abcdef")).toBe("12345678…abcdef");
-    expect(truncateMiddle("swap-1")).toBe("swap-1");
+    expect(truncateSwapTransactionStatusIdentifier("1234567890abcdef")).toBe("12345678…abcdef");
+    expect(truncateSwapTransactionStatusIdentifier("swap-1")).toBe("swap-1");
   });
 });
 
-describe("getExplorerUrl", () => {
+describe("getSwapTransactionStatusExplorerUrl", () => {
   it.each([
     ["lifi", "https://scan.li.fi/tx/hash-1"],
     ["thorswap", "https://runescan.io/tx/hash-1"],
     ["nearintents", "https://track.swapkit.dev/tx/hash-1"],
   ])("should return the provider operation explorer URL for %s", (provider, expectedUrl) => {
     expect(
-      getExplorerUrl({
+      getSwapTransactionStatusExplorerUrl({
         provider,
         swapId: "swap-1",
         operationHash: "hash-1",
@@ -128,7 +134,7 @@ describe("getExplorerUrl", () => {
     "should return the Swaps.xyz scan URL for %s without requiring an operation hash",
     provider => {
       expect(
-        getExplorerUrl({
+        getSwapTransactionStatusExplorerUrl({
           provider,
           swapId: "swap-1",
           operationHash: undefined,
@@ -140,7 +146,7 @@ describe("getExplorerUrl", () => {
 
   it("should return the OKX explorer URL for the parent currency of a token swap", () => {
     expect(
-      getExplorerUrl({
+      getSwapTransactionStatusExplorerUrl({
         provider: "okx",
         swapId: "swap-1",
         operationHash: "hash-1",
@@ -151,7 +157,7 @@ describe("getExplorerUrl", () => {
 
   it("should return undefined for OKX when the currency is missing", () => {
     expect(
-      getExplorerUrl({
+      getSwapTransactionStatusExplorerUrl({
         provider: "okx",
         swapId: "swap-1",
         operationHash: "hash-1",
@@ -162,7 +168,7 @@ describe("getExplorerUrl", () => {
 
   it("should fall back to the currency transaction explorer for unknown providers", () => {
     expect(
-      getExplorerUrl({
+      getSwapTransactionStatusExplorerUrl({
         provider: "custom-provider",
         swapId: "swap-1",
         operationHash: "hash-1",
@@ -173,7 +179,7 @@ describe("getExplorerUrl", () => {
 
   it("should use the family transaction explorer override for unknown TON providers", () => {
     expect(
-      getExplorerUrl({
+      getSwapTransactionStatusExplorerUrl({
         provider: "changelly_v2",
         swapId: "swap-1",
         operationHash: "ton-hash-1",
@@ -186,7 +192,7 @@ describe("getExplorerUrl", () => {
 
   it("should not build provider hash URLs when the operation hash is missing", () => {
     expect(
-      getExplorerUrl({
+      getSwapTransactionStatusExplorerUrl({
         provider: "lifi",
         swapId: "swap-1",
         operationHash: undefined,
@@ -197,12 +203,65 @@ describe("getExplorerUrl", () => {
 
   it("should return undefined when provider data is missing", () => {
     expect(
-      getExplorerUrl({
+      getSwapTransactionStatusExplorerUrl({
         provider: undefined,
         swapId: "swap-1",
         operationHash: "hash-1",
         fromCurrency: bitcoin,
       }),
     ).toBeUndefined();
+  });
+});
+
+describe("status display helpers", () => {
+  it("should normalize receive unknown to finished when the swap or send leg is finished", () => {
+    expect(getSwapTransactionStatusReceiveDisplayStatus("unknown", "finished", "pending")).toBe(
+      "finished",
+    );
+    expect(getSwapTransactionStatusReceiveDisplayStatus("unknown", "pending", "finished")).toBe(
+      "finished",
+    );
+  });
+
+  it("should keep receive unknown when the swap and send leg are not finished", () => {
+    expect(getSwapTransactionStatusReceiveDisplayStatus("unknown", "pending", "pending")).toBe(
+      "unknown",
+    );
+  });
+
+  it.each([
+    ["finished", "success"],
+    ["expired", "error"],
+    ["refunded", "error"],
+    ["unknown", "unknown"],
+    ["pending", "pending"],
+  ] as const)("should map %s to %s display status", (status, displayStatus) => {
+    expect(getSwapTransactionStatusDisplayStatus(status)).toBe(displayStatus);
+  });
+
+  it("should build status title keys from the given translation prefix", () => {
+    expect(
+      getSwapTransactionStatusTitleKey("send", "finished", "swap2.modals.transactionStatus"),
+    ).toBe("swap2.modals.transactionStatus.sections.status.sendCompleted");
+    expect(
+      getSwapTransactionStatusTitleKey(
+        "receive",
+        "pending",
+        "transfer.swap2.modals.transactionStatus",
+      ),
+    ).toBe("transfer.swap2.modals.transactionStatus.sections.status.receivePending");
+  });
+
+  it("should build status label keys and use cancelled for refunded receive statuses", () => {
+    expect(
+      getSwapTransactionStatusLabelKey("send", "refunded", "swap2.modals.transactionStatus"),
+    ).toBe("swap2.modals.transactionStatus.statusLabels.refunded");
+    expect(
+      getSwapTransactionStatusLabelKey(
+        "receive",
+        "refunded",
+        "transfer.swap2.modals.transactionStatus",
+      ),
+    ).toBe("transfer.swap2.modals.transactionStatus.statusLabels.cancelled");
   });
 });
