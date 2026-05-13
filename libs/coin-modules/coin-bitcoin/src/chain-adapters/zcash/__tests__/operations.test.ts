@@ -244,7 +244,7 @@ describe("convertShieldedTransactionsToOperations", () => {
       blockHash: "blockhash1",
       blockHeight: 100,
       type: "SHIELDED_TX_ORCHARD_IN",
-      date: new Date(1700000000),
+      date: new Date(1700000000 * 1000), // timestamp is in Unix seconds
       fee: new BigNumber(500),
       value: new BigNumber(1000),
     });
