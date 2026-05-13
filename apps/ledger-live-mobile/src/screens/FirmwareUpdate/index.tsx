@@ -73,7 +73,12 @@ import { lastSeenDeviceSelector } from "~/reducers/settings";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
 import SafeAreaViewFixed from "~/components/SafeAreaView";
+import InfiniteLoader from "~/components/InfiniteLoader";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
+import {
+  getLatestFirmwareForDeviceUseCase,
+  type FirmwareUpdateContextEntity,
+} from "@ledgerhq/live-common/device/use-cases/getLatestFirmwareForDeviceUseCase";
 
 const requiredBatteryStatuses = [
   BatteryStatusTypes.BATTERY_PERCENTAGE,
@@ -913,15 +918,67 @@ export const FirmwareUpdate = ({
 };
 
 export default function FirmwareUpdateScreen({ route: { params } }: NavigationProps) {
-  if (!params.device || !params.firmwareUpdateContext || !params.deviceInfo) {
+  // Resolve the firmware-update context locally when callers don't pre-fetch
+  // it. Tracks loading/error explicitly so we can recover from a failed fetch
+  // (or a "no update available" response) instead of stranding the user on an
+  // infinite spinner.
+  const navigation = useNavigation();
+  const { firmwareUpdateContext: providedContext, deviceInfo, device } = params;
+  const shouldFetch = !providedContext && !!deviceInfo;
+
+  const [fetchedContext, setFetchedContext] = useState<FirmwareUpdateContextEntity | null>(null);
+  const [fetchStatus, setFetchStatus] = useState<"loading" | "done" | "error">(
+    shouldFetch ? "loading" : "done",
+  );
+
+  useEffect(() => {
+    if (!shouldFetch || !deviceInfo) return;
+    let cancelled = false;
+    setFetchStatus("loading");
+    getLatestFirmwareForDeviceUseCase(deviceInfo)
+      .then(ctx => {
+        if (cancelled) return;
+        setFetchedContext(ctx);
+        setFetchStatus("done");
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setFetchStatus("error");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [shouldFetch, deviceInfo]);
+
+  const firmwareUpdateContext = providedContext ?? fetchedContext;
+  const hasNoUpdate = fetchStatus === "done" && !firmwareUpdateContext;
+
+  useEffect(() => {
+    // Fetch failed or resolved with no available update — back out so the
+    // user lands on the previous screen and can retry from there.
+    if (fetchStatus === "error" || hasNoUpdate) {
+      navigation.goBack();
+    }
+  }, [fetchStatus, hasNoUpdate, navigation]);
+
+  if (!device || !deviceInfo) {
     return null;
+  }
+  if (!firmwareUpdateContext) {
+    return (
+      <SafeAreaViewFixed isFlex>
+        <Flex flex={1} justifyContent="center" alignItems="center">
+          <InfiniteLoader />
+        </Flex>
+      </SafeAreaViewFixed>
+    );
   }
   return (
     <SafeAreaViewFixed isFlex>
       <FirmwareUpdate
-        deviceInfo={params.deviceInfo}
-        device={params.device}
-        firmwareUpdateContext={params.firmwareUpdateContext}
+        deviceInfo={deviceInfo}
+        device={device}
+        firmwareUpdateContext={firmwareUpdateContext}
         onBackFromUpdate={params.onBackFromUpdate}
         isBeforeOnboarding={params.isBeforeOnboarding}
       />
