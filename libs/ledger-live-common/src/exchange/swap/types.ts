@@ -165,7 +165,7 @@ export type GetExchangeRates = (
   exchangeObject: ExchangeObject,
 ) => Promise<(ExchangeRate & { expirationDate?: Date })[]>;
 
-type ValidSwapStatus = "pending" | "onhold" | "expired" | "finished" | "refunded";
+type ValidSwapStatus = "pending" | "onhold" | "expired" | "finished" | "refunded" | "unknown";
 
 export type SwapStatusRequest = {
   provider: string;
