@@ -20,8 +20,7 @@ import {
 import type { PnLCardProps } from "./types";
 
 export const PnLCard = (props: PnLCardProps) => {
-  const { title, value, type, discreet } = props;
-  const displayedValue = discreet ? "***" : value;
+  const { title, value, type } = props;
 
   return (
     <Card type={type} onClick={type === "interactive" ? props.onClick : undefined}>
@@ -54,7 +53,7 @@ export const PnLCard = (props: PnLCardProps) => {
                     )}
                   </span>
                 )}
-                <span className="text-base body-2-semi-bold">{displayedValue}</span>
+                <span className="text-base body-2-semi-bold">{value}</span>
               </div>
             </CardContentDescription>
           </CardContent>

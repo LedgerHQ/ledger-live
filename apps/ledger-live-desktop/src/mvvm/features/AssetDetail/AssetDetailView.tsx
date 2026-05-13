@@ -8,6 +8,7 @@ import { MarketDataSection } from "./components/MarketDataSection";
 import { PortfolioSection } from "./components/PortfolioSection/PortfolioSection";
 import { TransactionsSection } from "./components/TransactionsSection";
 import type { AssetDetailReady } from "./types";
+import { PnLSection } from "./components/PnL";
 
 type AssetDetailViewProps = Readonly<{
   viewModel: AssetDetailReady;
@@ -52,6 +53,8 @@ export function AssetDetailView({ viewModel }: AssetDetailViewProps) {
 
       <div className="flex flex-col gap-32">
         {distributionItem && <PortfolioSection distributionItem={distributionItem} />}
+
+        {distributionItem && <PnLSection distributionItem={distributionItem} />}
 
         {marketInfo && <MarketDataSection market={market} />}
 
