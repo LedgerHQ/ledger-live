@@ -21,6 +21,11 @@ export default function DebugDeviceIntentExecutor() {
       </Flex>
 
       <DebugEntry
+        title="Device Action Content"
+        description="Preview the reusable mobile component for device action copy, banner, and lotties."
+        onPress={() => navigation.navigate(ScreenName.DebugDeviceIntentExecutorContent)}
+      />
+      <DebugEntry
         title="Orchestration"
         description="Run the existing chained intent playground to test DIE core orchestration."
         onPress={() => navigation.navigate(ScreenName.DebugDeviceIntentExecutorOrchestration)}
