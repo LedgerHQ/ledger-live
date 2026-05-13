@@ -31,37 +31,21 @@ interface SigningParams {
   baseFee: BigNumber;
   priorityFee: BigNumber;
   viewKey: string;
-  // FIXME: remove once integrated
-  _mockSignature: boolean;
 }
 
-async function buildRootAuthorization(
-  signer: AleoSigner,
-  account: AleoAccount,
-  request: PreparedRequestResponse,
-  viewKey: string,
-) {
-  const { signature } = await signer.signRootIntent(
-    account.freshAddressPath,
-    Buffer.from(request.tlv, "hex"),
-  );
-
-  return sdkClient.createAuthorization({
-    currency: account.currency,
-    request,
-    signatures: signature,
-    viewKey,
-  });
-}
-
-async function buildFeeAuthorization(
-  signer: AleoSigner,
-  params: SigningParams,
-  executionId: string,
-): Promise<string> {
+async function buildFeeAuthorization({
+  signer,
+  params,
+  executionId,
+  onDeviceSigned,
+}: {
+  signer: AleoSigner;
+  params: SigningParams;
+  executionId: string;
+  onDeviceSigned: () => void;
+}): Promise<string> {
   const { account, transaction, config, baseFee, priorityFee, viewKey } = params;
 
-  // craft fee request even if it's zero, because device needs the second APDU in signing flow to move forward
   const craftedFeeRequest = await craftTransaction({
     currency: account.currency,
     viewKey,
@@ -80,38 +64,70 @@ async function buildFeeAuthorization(
 
   const { signature } = await signer.signFeeIntent(Buffer.from(feeRequest.tlv, "hex"));
 
+  onDeviceSigned();
+
   const result = await sdkClient.createAuthorization({
     currency: account.currency,
     request: feeRequest,
-    signatures: signature,
+    signatures: [signature],
     viewKey,
   });
 
   return result.authorization;
 }
 
-async function executeSigningFlow(signer: AleoSigner, params: SigningParams): Promise<string> {
-  const { account, request, config, viewKey, _mockSignature } = params;
+async function executeSigningFlow({
+  signer,
+  params,
+  onDeviceSigned,
+}: {
+  signer: AleoSigner;
+  params: SigningParams;
+  onDeviceSigned: () => void;
+}): Promise<string> {
+  const { account, request, config, viewKey } = params;
+  const nestedCalls = request.nested_calls ?? [];
+  const nestedSignatures: string[] = [];
 
-  const authorization = _mockSignature
-    ? await sdkClient.createAuthorization({
-        currency: account.currency,
-        request,
-        signatures: "",
-        viewKey,
-      })
-    : await buildRootAuthorization(signer, account, request, viewKey);
+  // sign root intent
+  const { signature: rootSignature } = await signer.signRootIntent(
+    account.freshAddressPath,
+    Buffer.from(request.tlv, "hex"),
+  );
 
+  // sign nested calls if any
+  for (const nestedCall of nestedCalls) {
+    const { signature } = await signer.signNestedCall(Buffer.from(nestedCall.tlv, "hex"));
+    nestedSignatures.push(signature);
+  }
+
+  // for sponsored txs there is no fee signing, so device is done here
+  if (config.isFeeSponsored) {
+    onDeviceSigned();
+  }
+
+  // create authorization for main transaction
+  const authorization = await sdkClient.createAuthorization({
+    currency: account.currency,
+    request,
+    signatures: [rootSignature, ...nestedSignatures],
+    viewKey,
+  });
+
+  // if fee sponsorship is disabled, sign and create fee authorization
   const feeAuthorization = config.isFeeSponsored
     ? null
-    : await buildFeeAuthorization(signer, params, authorization.execution_id);
+    : await buildFeeAuthorization({
+        signer,
+        params,
+        executionId: authorization.execution_id,
+        onDeviceSigned,
+      });
 
-  const signedTransaction = {
+  return toHex({
     authorization: authorization.authorization,
     feeAuthorization,
-  } satisfies SignedAleoTransaction;
-
-  return toHex(signedTransaction);
+  } satisfies SignedAleoTransaction);
 }
 
 export const buildSignOperation =
@@ -122,10 +138,6 @@ export const buildSignOperation =
     new Observable(o => {
       void (async function () {
         try {
-          o.next({
-            type: "device-signature-requested",
-          });
-
           const viewKey = extractViewKey(account);
           const config = resolveConfig(account.currency.id);
           const baseFee = transaction.fees;
@@ -146,22 +158,25 @@ export const buildSignOperation =
 
           const request = fromHex<PreparedRequestResponse>(craftedRequest.transaction);
 
+          o.next({
+            type: "device-signature-requested",
+          });
+
           const signedTx = await signerContext(deviceId, signer =>
-            executeSigningFlow(signer, {
-              account,
-              transaction,
-              request,
-              config,
-              baseFee,
-              priorityFee,
-              viewKey,
-              _mockSignature: (transaction.properties?.amountRecordCommitments ?? []).length > 1,
+            executeSigningFlow({
+              signer,
+              params: {
+                account,
+                transaction,
+                request,
+                config,
+                baseFee,
+                priorityFee,
+                viewKey,
+              },
+              onDeviceSigned: () => o.next({ type: "device-signature-granted" }),
             }),
           );
-
-          o.next({
-            type: "device-signature-granted",
-          });
 
           const operation = buildOptimisticOperation({
             account,

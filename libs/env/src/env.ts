@@ -298,7 +298,7 @@ const envDefinitions = {
     desc: "Aleo mainnet node URL",
   },
   ALEO_MAINNET_SDK_ENDPOINT: {
-    def: "https://aleo-backend.api.live.ledger.com/network/mainnet",
+    def: "http://10.3.19.130/network/mainnet",
     parser: stringParser,
     desc: "Aleo mainnet SDK URL",
   },

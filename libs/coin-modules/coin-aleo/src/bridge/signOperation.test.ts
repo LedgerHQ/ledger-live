@@ -37,6 +37,7 @@ function createMockSigner(): jest.Mocked<AleoSigner> {
     getViewKey: jest.fn(),
     signRootIntent: jest.fn().mockResolvedValue({ signature: "root-signature" }),
     signFeeIntent: jest.fn().mockResolvedValue({ signature: "fee-signature" }),
+    signNestedCall: jest.fn().mockResolvedValue({ signature: "nested-signature" }),
   };
 }
 
@@ -271,6 +272,128 @@ describe("buildSignOperation", () => {
 
     expect(mockedCreateAuthorization).toHaveBeenCalledTimes(1);
     expect(parsedSignature.feeAuthorization).toBeNull();
+  });
+
+  it("should emit device-signature-granted after signFeeIntent when fee is not sponsored", async () => {
+    let eventEmitted = false;
+
+    mockSigner.signFeeIntent.mockImplementationOnce(async () => {
+      expect(eventEmitted).toBe(false);
+      return { signature: "fee-signature" };
+    });
+
+    await new Promise<void>((resolve, reject) => {
+      mockSignOperation({
+        account: mockAccount,
+        transaction: mockTransaction,
+        deviceId: "test-device",
+      }).subscribe({
+        next: event => {
+          if (event.type === "device-signature-granted") eventEmitted = true;
+        },
+        error: reject,
+        complete: resolve,
+      });
+    });
+
+    expect(eventEmitted).toBe(true);
+  });
+
+  it("should emit device-signature-granted before createAuthorization when fee is sponsored", async () => {
+    mockAleoConfig.getCoinConfig.mockReturnValue({ ...mockConfig, isFeeSponsored: true });
+
+    let eventEmitted = false;
+
+    mockedCreateAuthorization.mockImplementationOnce(async () => {
+      expect(eventEmitted).toBe(true);
+      return { authorization: "tx-auth", execution_id: "exec-id" };
+    });
+
+    await new Promise<void>((resolve, reject) => {
+      mockSignOperation({
+        account: mockAccount,
+        transaction: mockTransaction,
+        deviceId: "test-device",
+      }).subscribe({
+        next: event => {
+          if (event.type === "device-signature-granted") eventEmitted = true;
+        },
+        error: reject,
+        complete: resolve,
+      });
+    });
+
+    expect(eventEmitted).toBe(true);
+  });
+
+  it("should sign nested calls before emitting device-signature-granted", async () => {
+    const requestWithNested = getMockedPreparedRequestResponse({
+      nested_calls: [getMockedPreparedRequestResponse({ is_root: false, tlv: "deadbeef" })],
+    });
+    mockedCraftTransaction.mockResolvedValueOnce({ transaction: toHex(requestWithNested) });
+
+    let eventEmitted = false;
+
+    mockSigner.signNestedCall.mockImplementationOnce(async () => {
+      expect(eventEmitted).toBe(false);
+      return { signature: "nested-signature" };
+    });
+
+    await new Promise<void>((resolve, reject) => {
+      mockSignOperation({
+        account: mockAccount,
+        transaction: mockTransaction,
+        deviceId: "test-device",
+      }).subscribe({
+        next: event => {
+          if (event.type === "device-signature-granted") eventEmitted = true;
+        },
+        error: reject,
+        complete: resolve,
+      });
+    });
+
+    expect(eventEmitted).toBe(true);
+  });
+
+  it("should include nested call signatures in createAuthorization call", async () => {
+    const requestWithNested = getMockedPreparedRequestResponse({
+      nested_calls: [
+        getMockedPreparedRequestResponse({ is_root: false, tlv: "aabb" }),
+        getMockedPreparedRequestResponse({ is_root: false, tlv: "ccdd" }),
+      ],
+    });
+    mockedCraftTransaction.mockResolvedValueOnce({ transaction: toHex(requestWithNested) });
+
+    mockSigner.signNestedCall
+      .mockResolvedValueOnce({ signature: "nested-sig-1" })
+      .mockResolvedValueOnce({ signature: "nested-sig-2" });
+
+    await firstValueFrom(
+      mockSignOperation({
+        account: mockAccount,
+        transaction: mockTransaction,
+        deviceId: "test-device",
+      }).pipe(toArray()),
+    );
+
+    expect(mockedCreateAuthorization).toHaveBeenCalledWith(
+      expect.objectContaining({
+        signatures: ["root-signature", "nested-sig-1", "nested-sig-2"],
+      }),
+    );
+  });
+
+  it("should not call signNestedCall when there are no nested calls", async () => {
+    await firstValueFrom(
+      mockSignOperation({
+        account: mockAccount,
+        transaction: mockTransaction,
+        deviceId: "test-device",
+      }).pipe(toArray()),
+    );
+
+    expect(mockSigner.signNestedCall).not.toHaveBeenCalled();
   });
 
   it("should propagate signer errors to the observable", async () => {

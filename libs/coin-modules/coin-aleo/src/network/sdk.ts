@@ -133,7 +133,7 @@ async function createAuthorization({
 }: {
   currency: CryptoCurrency;
   request: PreparedRequestResponse;
-  signatures: string;
+  signatures: string[];
   viewKey: string;
 }) {
   const { sdkUrl } = getNetworkConfig(currency);
