@@ -209,7 +209,7 @@ class HumanCommandOutput implements CommandOutput {
       writeStderr(displayText + "\n");
     }
     this._activeSpin = null;
-    process.exit(err.exitCode);
+    throw new CliProcessExitError(err.exitCode);
   }
 
   async balances(items: Balance[]): Promise<void> {

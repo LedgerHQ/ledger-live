@@ -9,7 +9,7 @@ import { emitTestingBuildBannerIfNeeded } from "./shared/testing-build-banner";
 // This side-effect import registers commands in the standalone binary.
 import "../.bunli/commands.gen";
 import bunliConfig from "../bunli.config";
-import { CliProcessExitError } from "./cli-process-exit-error";
+import { getCliProcessExitCode } from "./cli-process-exit-error";
 import { disposeWalletCliDmkTransportFully } from "./device/register-dmk-transport";
 import AccountGroup from "./commands/account/index";
 import SessionGroup from "./commands/session/index";
@@ -53,13 +53,11 @@ if (import.meta.main) {
   try {
     exitCode = await runMain();
   } catch (e) {
-    if (e instanceof CliProcessExitError && e.isCliProcessExitError) {
-      exitCode = e.code;
-    } else {
-      throw e;
-    }
+    const code = getCliProcessExitCode(e);
+    if (code === null) throw e;
+    exitCode = code;
   } finally {
     await disposeWalletCliDmkTransportFully();
   }
-  process.exit(exitCode);
+  process.exitCode = exitCode;
 }

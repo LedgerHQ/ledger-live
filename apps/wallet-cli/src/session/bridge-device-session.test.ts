@@ -1,9 +1,8 @@
-import { beforeEach, describe, expect, it, mock } from "bun:test";
+import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { DeviceActionStatus } from "@ledgerhq/device-management-kit";
 import { Observable } from "rxjs";
 
 const calls = {
-  ensure: 0,
   execute: [] as Array<{
     sessionId: string;
     deviceAction: unknown;
@@ -44,61 +43,48 @@ const testTransport = {
       calls.execute.push({ sessionId, deviceAction });
       return executeImpl();
     },
+    disconnect: async () => {
+      calls.reset += 1;
+    },
   },
   sessionId: "test-session-id",
 };
 
-let ensureImpl: () => Promise<typeof testTransport>;
 let executeImpl: () => { observable: Observable<unknown>; cancel: () => void };
-let resetImpl: () => Promise<void>;
 
-mock.module("../device/register-dmk-transport", () => {
-  let _leakedTestTransport: unknown = null;
-  return {
-    WALLET_CLI_DMK_DEVICE_ID: "wallet-cli-dmk",
-    // Allow cli-runner (running in a worker that received the leaked mock) to
-    // install a test transport so DMK-dependent commands still work.
-    _setTestDmkTransport: (t: unknown) => {
-      _leakedTestTransport = t;
-    },
-    ensureWalletCliDmkTransport: async () => {
-      if (_leakedTestTransport) return _leakedTestTransport;
-      calls.ensure += 1;
-      return ensureImpl();
-    },
-    resetWalletCliDmkSession: async () => {
-      calls.reset += 1;
-      return resetImpl();
-    },
-    disposeWalletCliDmkTransportFully: async () => {},
-    registerWalletCliDmkTransport: () => {},
-  };
-});
-
+const { _setTestDmkTransport, disposeWalletCliDmkTransportFully } =
+  await import("../device/register-dmk-transport");
 const { WalletCliDeviceError } = await import("../device/wallet-cli-device-error");
 const { getManagerAppNameForCurrencyId, withCurrencyDeviceSession } =
   await import("./bridge-device-session");
 
 describe("withCurrencyDeviceSession", () => {
-  beforeEach(() => {
-    calls.ensure = 0;
+  beforeEach(async () => {
+    _setTestDmkTransport(null);
+    await disposeWalletCliDmkTransportFully();
     calls.execute = [];
     calls.reset = 0;
-    ensureImpl = async () => testTransport;
     executeImpl = () => completedAction();
-    resetImpl = async () => {};
+    _setTestDmkTransport(testTransport as never);
+  });
+
+  afterEach(async () => {
+    await disposeWalletCliDmkTransportFully();
+    _setTestDmkTransport(null);
   });
 
   it("wraps setup failures as WalletCliDeviceError", async () => {
     const usbError = new Error("USB down");
-    ensureImpl = async () => {
-      throw usbError;
-    };
+    _setTestDmkTransport({
+      get dmk() {
+        throw usbError;
+      },
+      sessionId: "broken-session-id",
+    } as never);
 
     await expect(withCurrencyDeviceSession("ethereum", async () => "ok")).rejects.toBeInstanceOf(
       WalletCliDeviceError,
     );
-    expect(calls.ensure).toBe(1);
     expect(calls.execute).toHaveLength(0);
     expect(calls.reset).toBe(0);
   });
@@ -109,7 +95,6 @@ describe("withCurrencyDeviceSession", () => {
     await expect(withCurrencyDeviceSession("ethereum", async () => "ok")).rejects.toBeInstanceOf(
       WalletCliDeviceError,
     );
-    expect(calls.ensure).toBe(1);
     expect(calls.execute).toHaveLength(1);
     expect(calls.reset).toBe(0);
   });

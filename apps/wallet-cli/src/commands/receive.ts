@@ -1,7 +1,12 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import { WalletAdapter } from "../wallet";
-import { serializeNetwork, serializeV1, toV0, currencyIdFromNetwork } from "../shared/accountDescriptor";
+import {
+  serializeNetwork,
+  serializeV1,
+  toV0,
+  currencyIdFromNetwork,
+} from "../shared/accountDescriptor";
 import { WALLET_CLI_DMK_DEVICE_ID } from "../device/register-dmk-transport";
 import { WalletCliDeviceError } from "../device/wallet-cli-device-error";
 import {
@@ -40,9 +45,7 @@ export default defineCommand({
     const out = createCommandOutput(output, ctx);
 
     await out.run(async () => {
-      const v1 = await resolveAccountDescriptorV1(
-        resolveAccountArg(flags.account, positional),
-      );
+      const v1 = await resolveAccountDescriptorV1(resolveAccountArg(flags.account, positional));
       ctx.network = serializeNetwork(v1.network);
       ctx.account = serializeV1(v1);
       const currencyId = currencyIdFromNetwork(v1.network);
