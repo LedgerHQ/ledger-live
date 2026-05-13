@@ -4,7 +4,7 @@ import { Transaction } from "../../coin-modules/transaction-types";
 import { TransactionCommon } from "@ledgerhq/types-live";
 import { createStepError, StepError, CustomErrorType } from "../../wallet-api/Exchange";
 import { getFeature } from "../../featureFlags";
-import { hasParametersForSolana } from "./utils";
+import { hasParametersForSolana } from "./hasParametersForSolana";
 
 export type { SwapLiveError } from "@ledgerhq/wallet-api-exchange-module";
 
