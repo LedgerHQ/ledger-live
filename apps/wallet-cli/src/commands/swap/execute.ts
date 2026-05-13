@@ -17,7 +17,7 @@ import {
 import { networkStringFromCurrencyId } from "../../shared/accountDescriptor";
 import { OutputFormatSchema } from "../../wallet/models";
 import { runFullSwapPipeline as runFullSwapPipelineDefault } from "./cli-swap-pipeline";
-import { WALLET_CLI_DEFAULT_SWAP_PROVIDERS } from "./quote-shared";
+import { resolveSwapProvider, WALLET_CLI_DEFAULT_SWAP_PROVIDERS } from "./providers";
 
 type RunFullSwapPipeline = typeof runFullSwapPipelineDefault;
 
@@ -41,21 +41,6 @@ export type SwapExecuteDependencies = {
   getAccountBridge?: typeof getAccountBridge;
   makeBridgeCacheSystem?: typeof makeBridgeCacheSystem;
 };
-
-const allowedSwapExecuteProviderInput = new Set<string>(WALLET_CLI_DEFAULT_SWAP_PROVIDERS);
-
-/**
- * Validates `swap execute --provider` against the wallet-cli quote provider set and maps legacy
- * `changelly` to `changelly_v2` for the exchange API.
- */
-export function resolveSwapProvider(provider: string): string {
-  if (!allowedSwapExecuteProviderInput.has(provider)) {
-    throw new Error(
-      `Unsupported swap provider "${provider}". Allowed: ${WALLET_CLI_DEFAULT_SWAP_PROVIDERS.join(", ")}.`,
-    );
-  }
-  return provider === "changelly" ? "changelly_v2" : provider;
-}
 
 export async function executeSwapCommand({
   flags,
@@ -166,7 +151,7 @@ export default defineCommand({
       short: "t",
     }),
     provider: option(swapExecuteFlagsSchema.shape.provider, {
-      description: `Swap provider (${WALLET_CLI_DEFAULT_SWAP_PROVIDERS.join(", ")};)`,
+      description: `Swap provider (${WALLET_CLI_DEFAULT_SWAP_PROVIDERS.join(", ")})`,
     }),
     amount: option(swapExecuteFlagsSchema.shape.amount, {
       description: "Swap source amount in human units",

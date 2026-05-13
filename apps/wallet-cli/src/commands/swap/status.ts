@@ -5,7 +5,7 @@ import { walletCliDebug } from "../../shared/log";
 import { createCommandOutput } from "../../output";
 import { outputOption, resolveOutputFormat } from "../inputs";
 import { mapSwapStatusLine } from "./status-shared";
-import { resolveSwapProvider } from "./execute";
+import { resolveSwapProvider } from "./providers";
 
 export default defineCommand({
   name: "status",
