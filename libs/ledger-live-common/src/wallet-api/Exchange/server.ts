@@ -63,6 +63,11 @@ import get from "lodash/get";
 import { SwapError } from "./SwapError";
 import { getQuotes } from "./quotes";
 import { fetchSpotPrices } from "./quotes/service/fetchSpotPrices";
+import {
+  getTransactionStatus,
+  type GetTransactionStatusResponse,
+  type GetTransactionStatusWireArgs,
+} from "./transactionStatus";
 
 export { ExchangeType };
 
@@ -76,6 +81,10 @@ type Handlers = {
   "custom.isReady": RPCHandler<void, void>;
   "custom.exchange.swap": RPCHandler<SwapResult, ExchangeSwapParams>;
   "custom.exchange.getQuotes": RPCHandler<GetQuotesResponse, GetQuotesWireArgs>;
+  "custom.exchange.getTransactionStatus": RPCHandler<
+    GetTransactionStatusResponse,
+    GetTransactionStatusWireArgs
+  >;
 };
 
 export type CompleteExchangeUiRequest = {
@@ -778,6 +787,16 @@ export const handlers = ({
         return getQuotes(params, { accounts, spotPrices, locale, counterValueCurrency });
       },
     ),
+
+    "custom.exchange.getTransactionStatus": customWrapper<
+      GetTransactionStatusWireArgs,
+      GetTransactionStatusResponse
+    >(async params => {
+      if (!params) {
+        throw new ServerError(createUnknownError({ message: "params is undefined" }));
+      }
+      return getTransactionStatus(params, { accounts });
+    }),
   }) as const satisfies Handlers;
 
 async function extractSwapStartParam(
