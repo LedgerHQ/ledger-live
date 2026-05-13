@@ -8731,6 +8731,13 @@
       "earnBannerSubtitle": "Hold and earn with this asset",
       "earnBannerAction": "Go to Earn",
       "availableBalanceTooltip": "Funds available for immediate use, excluding staked or delegated amounts."
+    },
+    "coinOptions": {
+      "openMenuA11yLabel": "Coin options",
+      "addFavourite": "Add to favourites",
+      "removeFavourite": "Remove from favourites",
+      "hideFromPortfolio": "Hide from portfolio",
+      "showInPortfolio": "Show in portfolio"
     }
   },
   "assetSelection": {
