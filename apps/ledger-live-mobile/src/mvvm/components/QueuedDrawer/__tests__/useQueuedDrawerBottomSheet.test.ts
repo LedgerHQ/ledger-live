@@ -404,6 +404,37 @@ describe("useQueuedDrawerBottomSheet", () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
+  it("calls header close callbacks once and ignores later close animation and dismiss callbacks", () => {
+    const onClose = jest.fn();
+    const onHeaderClosePressed = jest.fn();
+    const { signal } = setupDrawerStateCapture();
+
+    const { result } = renderHook(() =>
+      useQueuedDrawerBottomSheet({
+        isRequestingToBeOpened: true,
+        onClose,
+        onHeaderClosePressed,
+      }),
+    );
+
+    signal(true);
+
+    act(() => {
+      result.current.handleHeaderClosePressed();
+    });
+
+    expect(onHeaderClosePressed).toHaveBeenCalledTimes(1);
+    expect(onClose).toHaveBeenCalledTimes(1);
+
+    act(() => {
+      result.current.handleCloseAnimationStart(0, -1);
+      result.current.handleDismiss();
+    });
+
+    expect(onHeaderClosePressed).toHaveBeenCalledTimes(1);
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
   it("does not clear consumer state on open or snap-point animations", () => {
     const onClose = jest.fn();
     const { signal } = setupDrawerStateCapture();

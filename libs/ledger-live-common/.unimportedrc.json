@@ -93,6 +93,8 @@
     "src/exchange/swap/updateAccountSwapStatus.ts",
     "src/exchange/swap/utils/index.ts",
     "src/exchange/swap/webApp/index.ts",
+    "src/exchange/swapTransactionStatus/index.ts",
+    "src/exchange/swapTransactionStatus/transactionStatus.ts",
     "src/explorer.ts",
     "src/explorers.ts",
     "src/families/algorand/logic.ts",
@@ -364,12 +366,7 @@
     "src/domain/computeEarnUiVersion.ts",
     "src/domain/earnUiVersion.ts"
   ],
-  "extensions": [
-    ".ts",
-    ".js",
-    ".jsx",
-    ".tsx"
-  ],
+  "extensions": [".ts", ".js", ".jsx", ".tsx"],
   "ignorePatterns": [
     "**/node_modules/**",
     "**/__tests__/**",
@@ -916,12 +913,7 @@
     "@react-native/virtualized-lists",
     "@solana/buffer-layout",
     "@solana/codecs-numbers",
-    [
-      "@solana/codecs-numbers",
-      [
-        "node_modules/@solana/web3.js/lib/index.cjs.js"
-      ]
-    ],
+    ["@solana/codecs-numbers", ["node_modules/@solana/web3.js/lib/index.cjs.js"]],
     "abort-controller/dist/abort-controller",
     "anser",
     "base64-js",

@@ -1,5 +1,5 @@
-import { getMultipleStatus } from "../swap/getStatus";
-import type { SwapStatus, SwapStatusRequest } from "../swap/types";
+import { getMultipleStatus } from "../../swap/getStatus";
+import type { SwapStatus, SwapStatusRequest } from "../../swap/types";
 
 export async function fetchTransactionSwapStatus(
   request: SwapStatusRequest,
