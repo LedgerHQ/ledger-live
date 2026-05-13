@@ -5108,6 +5108,8 @@
       },
       "experimentalApps": "Allow experimental apps",
       "experimentalAppsDesc": "Display and allow opening experimental tagged platform apps.",
+      "contactsAlpha": "Contacts (alpha)",
+      "contactsAlphaDesc": "Internal beta — enables the local Contacts feature (B2). Local-only, no remote data, off by default.",
       "mockAppUpdate": "Mock app update",
       "mockAppUpdateDesc": "Display available app update in My Ledger, it will reinstall the same app version",
       "catalogUrl": "Set the catalog apps provider",

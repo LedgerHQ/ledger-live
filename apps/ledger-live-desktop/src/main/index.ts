@@ -13,6 +13,7 @@ import {
   loadWindow,
 } from "./window-lifecycle";
 import db from "./db";
+import { setupContactsIpc } from "./db/contacts/ipc";
 import { UserDataCleanup } from "./cleanupUserData";
 import debounce from "lodash/debounce";
 import sentry, { setTags } from "~/sentry/main";
@@ -142,6 +143,7 @@ app.on("ready", async () => {
   ipcMain.handle("setKey", (event, { ns, keyPath, value }) => {
     return db.setKey(ns, keyPath, value);
   });
+  setupContactsIpc();
   ipcMain.handle("hasEncryptionKey", () => {
     return db.hasEncryptionKey();
   });

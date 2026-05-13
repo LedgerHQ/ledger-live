@@ -25,6 +25,7 @@ libs/ui/packages/react/rsbuild.config.js.map
 .claude/settings.local.json
 .claude/worktrees/
 .cursor/rules/trial/*
+**/CLAUDE.local.md
 
 .nx/cache
 .nx/workspace-data

@@ -126,6 +126,10 @@ export const setAllowExperimentalApps = (allowExperimentalApps: boolean) =>
   saveSettings({
     allowExperimentalApps,
   });
+export const setContactsAlpha = (contactsAlpha: boolean) =>
+  saveSettings({
+    contactsAlpha,
+  });
 
 export const setEnablePlatformDevTools = (enablePlatformDevTools: boolean) =>
   saveSettings({

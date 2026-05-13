@@ -6,6 +6,7 @@ import { userIdSelector } from "@ledgerhq/client-ids/store";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { SettingsSectionBody as Body, SettingsSectionRow as Row } from "../../SettingsSection";
 import AllowExperimentalAppsToggle from "./AllowExperimentalAppsToggle";
+import ContactsAlphaToggle from "./ContactsAlphaToggle";
 import AllowDebugAppsToggle from "./AllowDebugAppsToggle";
 import EnablePlatformDevToolsToggle from "./EnablePlatformDevToolsToggle";
 import CatalogProviderInput from "./CatalogProviderInput";
@@ -58,6 +59,13 @@ const Default = () => {
         desc={t("settings.developer.experimentalAppsDesc")}
       >
         <AllowExperimentalAppsToggle />
+      </Row>
+
+      <Row
+        title={t("settings.developer.contactsAlpha")}
+        desc={t("settings.developer.contactsAlphaDesc")}
+      >
+        <ContactsAlphaToggle />
       </Row>
 
       <Row
