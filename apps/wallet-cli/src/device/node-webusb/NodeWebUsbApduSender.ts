@@ -57,6 +57,8 @@ export class NodeWebUsbApduSender implements DeviceApduSender<NodeWebUsbApduSend
   private sendApduPromiseResolver: Maybe<(result: SendApduResult) => void> = Nothing;
   private abortTimeout: Maybe<ReturnType<typeof setTimeout>> = Nothing;
   private readLoopGeneration = 0;
+  private readLoopPromise: Promise<void> | null = null;
+  private closeConnectionPromise: Promise<void> | null = null;
 
   constructor({
     dependencies,
@@ -97,6 +99,10 @@ export class NodeWebUsbApduSender implements DeviceApduSender<NodeWebUsbApduSend
   }
 
   async setupConnection(): Promise<void> {
+    if (this.closeConnectionPromise) {
+      await this.closeConnectionPromise;
+    }
+
     const { device, interfaceNumber } = this.dependencies;
 
     if (device.opened) {
@@ -131,16 +137,28 @@ export class NodeWebUsbApduSender implements DeviceApduSender<NodeWebUsbApduSend
     this.logger.info("Connected to device (WebUSB)");
   }
 
-  async closeConnection(): Promise<void> {
+  closeConnection(): Promise<void> {
+    if (this.closeConnectionPromise) {
+      return this.closeConnectionPromise;
+    }
+
+    const closePromise = this.closeConnectionInternal().finally(() => {
+      if (this.closeConnectionPromise === closePromise) {
+        this.closeConnectionPromise = null;
+      }
+    });
+    this.closeConnectionPromise = closePromise;
+    return closePromise;
+  }
+
+  private async closeConnectionInternal(): Promise<void> {
     const { device, interfaceNumber } = this.dependencies;
     this.readLoopGeneration++;
-    this.sendApduPromiseResolver = Nothing;
-    this.abortTimeout.map(t => {
-      this.abortTimeout = Nothing;
-      clearTimeout(t);
-    });
+    const readLoopPromise = this.readLoopPromise;
+    this.resolvePendingApdu(Left(new OpeningConnectionError("WebUSB connection closed")));
 
     if (!device.opened) {
+      await readLoopPromise;
       return;
     }
 
@@ -150,11 +168,11 @@ export class NodeWebUsbApduSender implements DeviceApduSender<NodeWebUsbApduSend
       // ignore
     }
     try {
-      await gracefullyResetDevice(device);
       await device.close();
     } catch (e) {
       this.logger.error("Error while closing WebUSB device", { data: { error: e } });
     }
+    await readLoopPromise;
     this.logger.info("Disconnect (WebUSB)");
   }
 
@@ -204,7 +222,12 @@ export class NodeWebUsbApduSender implements DeviceApduSender<NodeWebUsbApduSend
     }
 
     const generation = ++this.readLoopGeneration;
-    void this.receiveResponseFrames(device, generation);
+    const readLoopPromise = this.receiveResponseFrames(device, generation).finally(() => {
+      if (this.readLoopPromise === readLoopPromise) {
+        this.readLoopPromise = null;
+      }
+    });
+    this.readLoopPromise = readLoopPromise;
 
     return completion;
   }

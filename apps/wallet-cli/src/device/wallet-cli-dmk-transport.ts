@@ -1,5 +1,6 @@
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import HwTransport from "@ledgerhq/hw-transport";
+import { withWalletCliDeviceInterruptScope } from "./interrupt-scope";
 
 const TransportClass =
   HwTransport as unknown as abstract new () => import("@ledgerhq/hw-transport").default;
@@ -24,12 +25,14 @@ export class WalletCliDmkTransport extends TransportClass {
     apdu: Buffer,
     { abortTimeoutMs }: { abortTimeoutMs?: number } = {},
   ): Promise<Buffer> {
-    const { data, statusCode } = await this.dmk.sendApdu({
-      sessionId: this.sessionId,
-      apdu: new Uint8Array(apdu.buffer, apdu.byteOffset, apdu.byteLength),
-      abortTimeout: abortTimeoutMs ?? WALLET_CLI_DEFAULT_APDU_ABORT_MS,
+    return withWalletCliDeviceInterruptScope(async () => {
+      const { data, statusCode } = await this.dmk.sendApdu({
+        sessionId: this.sessionId,
+        apdu: new Uint8Array(apdu.buffer, apdu.byteOffset, apdu.byteLength),
+        abortTimeout: abortTimeoutMs ?? WALLET_CLI_DEFAULT_APDU_ABORT_MS,
+      });
+      return Buffer.from([...data, ...statusCode]);
     });
-    return Buffer.from([...data, ...statusCode]);
   }
 
   close(): Promise<void> {
