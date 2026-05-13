@@ -28,6 +28,7 @@ import type { LoadConfig, ResolutionConfig } from "@ledgerhq/hw-app-eth/services
 import {
   buildDefaultHttpBlindSigningReporter,
   liveBlindSigningReporter,
+  liveContactsDataSource,
 } from "@ledgerhq/live-dmk-shared";
 
 export type DAError =
@@ -47,11 +48,17 @@ export class DmkSignerEth implements EvmSigner {
       buildDefaultHttpBlindSigningReporter(originToken, ContextModuleChainID.Ethereum, "ledger-wallet"),
     );
     liveBlindSigningReporter.setContext({ sessionId });
-    const contextModule = new ContextModuleBuilder({ originToken })
+    const contextModuleBuilder = new ContextModuleBuilder({ originToken })
       .setAppSource("ledger-wallet")
       .setBlindSigningReporter(liveBlindSigningReporter)
-      .setChain(ContextModuleChainID.Ethereum)
-      .build();
+      .setChain(ContextModuleChainID.Ethereum);
+
+    const contactsDataSource = liveContactsDataSource.getInner();
+    if (contactsDataSource) {
+      contextModuleBuilder.setContactsDataSource(contactsDataSource);
+    }
+
+    const contextModule = contextModuleBuilder.build();
     this.signer = new SignerEthBuilder({
       dmk,
       sessionId,
