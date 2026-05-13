@@ -1,4 +1,4 @@
-export { ToolRow } from "./ToolRow/ToolRow.web";
+export { ToolRowItem } from "./ToolRowItem/ToolRowItem.web";
 export { CategoryRow } from "./CategoryRow/CategoryRow.web";
 export { CategoryCard } from "./CategoryCard/CategoryCard.web";
 export { ToolCard } from "./ToolCard/ToolCard.web";

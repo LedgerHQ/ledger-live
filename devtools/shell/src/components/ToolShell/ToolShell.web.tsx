@@ -1,5 +1,7 @@
 import { Tag } from "@ledgerhq/lumen-ui-react";
 import type { Tool } from "../../types";
+import { useIsToolConfigured } from "../../context";
+import ToolNotConfigured from "../ToolNotConfigured/ToolNotConfigured";
 
 interface ToolShellProps {
   tool: Tool;
@@ -7,6 +9,9 @@ interface ToolShellProps {
 }
 
 export function ToolShell({ tool, onBack }: ToolShellProps) {
+  const isConfigured = useIsToolConfigured(tool.id);
+  const Component = tool.component;
+
   return (
     <>
       <div className="px-32 pt-20 pb-16 border-b border-muted flex items-start gap-16 shrink-0">
@@ -22,7 +27,9 @@ export function ToolShell({ tool, onBack }: ToolShellProps) {
         </div>
         {tool.owner && <Tag label={tool.owner} appearance="gray" size="sm" className="shrink-0" />}
       </div>
-      <div className="flex-1 p-24 overflow-y-auto" />
+      <div className="flex-1 p-24 overflow-y-auto">
+        {isConfigured ? <Component /> : <ToolNotConfigured />}
+      </div>
     </>
   );
 }

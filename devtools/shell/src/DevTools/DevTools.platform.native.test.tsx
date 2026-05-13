@@ -1,14 +1,32 @@
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import { makeTool } from "../../jest/fixtures";
 import { DevTools } from "../DevTools/DevTools.native";
+import { registerStandaloneTool } from "../registry/tools";
+import { Category } from "../types";
 
-jest.mock("../tools.config", () => ({
-  TOOLS: [
-    makeTool({ id: "web-tool", label: "Web Tool", category: "Configuration", platform: "web" }),
-    makeTool({ id: "native-tool", label: "Native Tool", category: "Configuration", platform: "native" }),
-    makeTool({ id: "shared-tool", label: "Shared Tool", category: "Configuration" }),
-  ],
-}));
+registerStandaloneTool(
+  makeTool({
+    id: "native-tool",
+    label: "Native Tool",
+    category: Category.CONFIGURATION,
+    platform: "native",
+  }),
+);
+registerStandaloneTool(
+  makeTool({
+    id: "web-tool",
+    label: "Web Tool",
+    category: Category.CONFIGURATION,
+    platform: "web",
+  }),
+);
+registerStandaloneTool(
+  makeTool({
+    id: "shared-tool",
+    label: "Shared Tool",
+    category: Category.CONFIGURATION,
+  }),
+);
 
 describe("DevTools (native) — platform filtering", () => {
   it("shows native-only tools", () => {

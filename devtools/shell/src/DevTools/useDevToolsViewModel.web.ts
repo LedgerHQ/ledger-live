@@ -23,7 +23,7 @@ export function useDevToolsViewModel({
   colorScheme = "system",
 }: DevToolsInput = {}): DevToolsViewProps {
   const { activeTool, setActiveToolId, clearActiveTool, categories } = useDevToolsNavigation(
-    filterToolsByPlatform(TOOLS, "web"),
+    filterToolsByPlatform(tools, "web"),
   );
   const { recentToolIds } = useDevToolsStorage(activeTool?.id, setActiveToolId);
 

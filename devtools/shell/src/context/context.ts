@@ -21,3 +21,9 @@ export function useToolProps<K extends keyof DevToolsPropsRegistry>(
 ): DevToolsPropsRegistry[K] | undefined {
   return useContext(DevToolsContext)[id];
 }
+
+export function useIsToolConfigured(id: string): boolean {
+  const context = useContext(DevToolsContext);
+  if (!registeredToolIds.has(id)) return true;
+  return id in context;
+}

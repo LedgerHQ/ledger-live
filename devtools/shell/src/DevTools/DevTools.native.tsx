@@ -24,7 +24,7 @@ const DevToolsShell = () => {
   const [query, setQuery] = useState("");
 
   const q = query.trim().toLowerCase();
-  const nativeTools = filterToolsByPlatform(TOOLS, "native");
+  const nativeTools = filterToolsByPlatform(tools, "native");
 
   const toolsByCategory = CATEGORIES.map(cat => ({
     category: cat,
