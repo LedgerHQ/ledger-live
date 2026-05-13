@@ -1,5 +1,14 @@
 # @ledgerhq/hw-transport-web-ble
 
+## 6.34.2
+
+### Patch Changes
+
+- Updated dependencies [[`d308b1a`](https://github.com/LedgerHQ/ledger-live/commit/d308b1a6b9c629839f051cf367a527f4232120c7)]:
+  - @ledgerhq/errors@6.35.0
+  - @ledgerhq/devices@8.14.2
+  - @ledgerhq/hw-transport@6.35.2
+
 ## 6.34.2-next.0
 
 ### Patch Changes

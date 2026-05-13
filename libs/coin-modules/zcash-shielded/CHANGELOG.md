@@ -1,5 +1,20 @@
 # @ledgerhq/zcash-shielded
 
+## 0.10.0
+
+### Minor Changes
+
+- [#16736](https://github.com/LedgerHQ/ledger-live/pull/16736) [`05b5ea0`](https://github.com/LedgerHQ/ledger-live/commit/05b5ea0579f0325c669805711b298f2eb0bd6434) Thanks [@semeano](https://github.com/semeano)! - Connect the UI to work with the new native engine.
+
+- [#16972](https://github.com/LedgerHQ/ledger-live/pull/16972) [`46b7bc6`](https://github.com/LedgerHQ/ledger-live/commit/46b7bc6c78f316c75feabb7172665b1c1a6b87e7) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Use findBlockHeight method in zcash-shielded module to identify start block during synchronization
+
+- [#16226](https://github.com/LedgerHQ/ledger-live/pull/16226) [`a22ac3e`](https://github.com/LedgerHQ/ledger-live/commit/a22ac3e225f7de60a6bc1906922a60080d1a8dcb) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Implement native Rust engine for shielded synchronization. ZCash native (napi-rs) engine out of the Electron renderer and into a dedicated UtilityProcess bridged via IPC. Split `ZCashNative` into an in-process wrapper (for Node contexts: coin-tester, integration tests) and a `ZCashNativeIPC` client (for Electron renderer); both share the same public API via a single host-side `engine.ts` module.
+
+### Patch Changes
+
+- Updated dependencies [[`5bd95a9`](https://github.com/LedgerHQ/ledger-live/commit/5bd95a9ceaac4d08c87d635f721265357368f8ee)]:
+  - @ledgerhq/live-network@2.6.0
+
 ## 0.10.0-next.0
 
 ### Minor Changes

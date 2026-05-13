@@ -1,5 +1,23 @@
 # @ledgerhq/coin-evm
 
+## 2.22.0
+
+### Minor Changes
+
+- [#16929](https://github.com/LedgerHQ/ledger-live/pull/16929) [`2b71600`](https://github.com/LedgerHQ/ledger-live/commit/2b716004309ceb17fc694c967db7160c900358f9) Thanks [@alevito](https://github.com/alevito)! - Fix valid vechain addresses rejected due to letter casing.
+
+- [#16424](https://github.com/LedgerHQ/ledger-live/pull/16424) [`34d92d3`](https://github.com/LedgerHQ/ledger-live/commit/34d92d3b2090b3c8a136ff8be8e4f08dddedef68) Thanks [@alevito](https://github.com/alevito)! - Use pagination to `getOperations` when logged operations exceed limit 1000.
+
+### Patch Changes
+
+- Updated dependencies [[`0d11df6`](https://github.com/LedgerHQ/ledger-live/commit/0d11df6ef8dc781171071824ad1c39e3beed7730), [`b866ea6`](https://github.com/LedgerHQ/ledger-live/commit/b866ea67bcbd408a33dbc9233ef55298e2a8ef25), [`d308b1a`](https://github.com/LedgerHQ/ledger-live/commit/d308b1a6b9c629839f051cf367a527f4232120c7), [`e6dc658`](https://github.com/LedgerHQ/ledger-live/commit/e6dc658b83ebd2102e19a1fead021443457c05d9), [`fb4d165`](https://github.com/LedgerHQ/ledger-live/commit/fb4d1656be8dc8e933e55600970a2e991fbaeebb), [`5bd95a9`](https://github.com/LedgerHQ/ledger-live/commit/5bd95a9ceaac4d08c87d635f721265357368f8ee)]:
+  - @ledgerhq/ledger-wallet-framework@1.4.0
+  - @ledgerhq/live-env@2.34.0
+  - @ledgerhq/errors@6.35.0
+  - @ledgerhq/cryptoassets@13.47.0
+  - @ledgerhq/live-network@2.6.0
+  - @ledgerhq/devices@8.14.2
+
 ## 2.22.0-next.1
 
 ### Patch Changes

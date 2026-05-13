@@ -1,5 +1,39 @@
 # @ledgerhq/coin-evm
 
+## 3.6.0
+
+### Minor Changes
+
+- [#16465](https://github.com/LedgerHQ/ledger-live/pull/16465) [`2def56d`](https://github.com/LedgerHQ/ledger-live/commit/2def56d641c0d08f5b1c57d35b068c114faf7c24) Thanks [@adussarps](https://github.com/adussarps)! - Fix `getBlock` and `listOperations` double-counting native transfers from explorer internal
+  txs. Blockscout and Etherscan expose the root call of every tx as an internal transaction,
+  and report `delegatecall`/`staticcall`/`callcode` frames with an inherited `msg.value` that
+  cannot actually move native ETH — both were surfaced as independent native ops, driving
+  downstream indexer balances negative and producing phantom IN/OUT ops in account history.
+  The three internal-tx adapters now skip non-value-transferring call types, and
+  `mergeInternalTransactions` runs a provider-agnostic structural dedup as a safety net.
+
+- [#15389](https://github.com/LedgerHQ/ledger-live/pull/15389) [`e9886ec`](https://github.com/LedgerHQ/ledger-live/commit/e9886ec8f6a5835a745b4e3c25920cae4f1bb11f) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - Move calldata building into `craftTransactionData` so EIP-7623 gas limit can use intent-provided calldata
+
+- [#17024](https://github.com/LedgerHQ/ledger-live/pull/17024) [`78557fd`](https://github.com/LedgerHQ/ledger-live/commit/78557fdbee0b7c7702fc20d8a89ac62525c9aef7) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(lwd): add redelegation endpoint staking evm
+
+- [#16721](https://github.com/LedgerHQ/ledger-live/pull/16721) [`7f80800`](https://github.com/LedgerHQ/ledger-live/commit/7f80800b3949541e54a6000cfe9398844e23ccff) Thanks [@dilaouid](https://github.com/dilaouid)! - Persist EVM native staking resources through the `fromAccountRaw`/`toAccountRaw` cycle
+
+- [#16489](https://github.com/LedgerHQ/ledger-live/pull/16489) [`ef08282`](https://github.com/LedgerHQ/ledger-live/commit/ef08282513f27162b3ebc411315b29f6bd1a367d) Thanks [@dilaouid](https://github.com/dilaouid)! - Add EVM native staking start flow (validator list, amount, protocol-aware lock-up warning) gated by the `evmNativeStaking` feature flag.
+
+- [#16071](https://github.com/LedgerHQ/ledger-live/pull/16071) [`b8800ee`](https://github.com/LedgerHQ/ledger-live/commit/b8800ee391b24bd878a2a5e8b86008b9f3142786) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(lwd): add delegated balance evm
+
+### Patch Changes
+
+- Updated dependencies [[`0d11df6`](https://github.com/LedgerHQ/ledger-live/commit/0d11df6ef8dc781171071824ad1c39e3beed7730), [`b866ea6`](https://github.com/LedgerHQ/ledger-live/commit/b866ea67bcbd408a33dbc9233ef55298e2a8ef25), [`d308b1a`](https://github.com/LedgerHQ/ledger-live/commit/d308b1a6b9c629839f051cf367a527f4232120c7), [`e6dc658`](https://github.com/LedgerHQ/ledger-live/commit/e6dc658b83ebd2102e19a1fead021443457c05d9), [`fb4d165`](https://github.com/LedgerHQ/ledger-live/commit/fb4d1656be8dc8e933e55600970a2e991fbaeebb), [`5bd95a9`](https://github.com/LedgerHQ/ledger-live/commit/5bd95a9ceaac4d08c87d635f721265357368f8ee)]:
+  - @ledgerhq/ledger-wallet-framework@1.4.0
+  - @ledgerhq/live-env@2.34.0
+  - @ledgerhq/errors@6.35.0
+  - @ledgerhq/cryptoassets@13.47.0
+  - @ledgerhq/live-network@2.6.0
+  - @ledgerhq/domain-service@1.8.2
+  - @ledgerhq/evm-tools@1.12.5
+  - @ledgerhq/devices@8.14.2
+
 ## 3.6.0-next.1
 
 ### Patch Changes
