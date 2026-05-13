@@ -62,8 +62,6 @@ export function formatSwapQuoteHuman(m: SwapQuoteLine): string {
     colors.bold(`    from:         ${m.amountFrom} ${m.from}`),
     colors.bold(`    to:           ${m.receiveAmount} ${m.to}`),
     colors.bold(`    rate:         1 ${m.from} = ${m.rate} ${m.to}`),
-    colors.dim(`    Network fee:  ${m.networkFee ?? "n/a"}`),
-    colors.dim(`    Provider fee: ${m.providerFee ?? "n/a"}`),
     colors.dim(`    Provider:     ${m.provider}`),
     m.quoteId ? colors.dim(`    Quote ID:     ${m.quoteId}`) : null,
   ]
