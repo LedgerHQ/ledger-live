@@ -3,15 +3,25 @@
   "version": "0.3.0",
   "private": true,
   "description": "Ledger Wallet CLI using Device Management Kit (USB)",
+  "license": "Apache-2.0",
   "bin": {
-    "wallet-cli": "./src/cli.ts"
+    "wallet-cli": "./bin/wallet-cli"
   },
+  "files": [
+    "bin/",
+    "README.md",
+    "CHANGELOG.md",
+    "package.json"
+  ],
   "type": "module",
   "scripts": {
     "start": "bun run ./src/cli.ts",
     "dev": "bunli dev",
     "generate": "bunli generate",
     "build": "bunli build",
+    "prepare:npm": "node ./scripts/prepare-npm.mjs",
+    "pack:check": "node ./scripts/pack-check.mjs",
+    "smoke:npm": "node ./scripts/smoke-npm.mjs",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "bun test src/",
     "coverage": "bun test src/ --coverage",
@@ -21,7 +31,13 @@
     "format": "oxfmt -c ../../.oxfmtrc.json src bunli.config.ts",
     "format:check": "oxfmt -c ../../.oxfmtrc.json src bunli.config.ts --check"
   },
-  "dependencies": {
+  "optionalDependencies": {
+    "@ledgerhq/wallet-cli-darwin-arm64": "workspace:*",
+    "@ledgerhq/wallet-cli-linux-arm64": "workspace:*",
+    "@ledgerhq/wallet-cli-linux-x64": "workspace:*",
+    "@ledgerhq/wallet-cli-windows-x64": "workspace:*"
+  },
+  "devDependencies": {
     "@bunli/core": "0.9.1",
     "@bunli/utils": "0.6.0",
     "@ledgerhq/coin-bitcoin": "workspace:^",
@@ -51,9 +67,7 @@
     "rxjs": "catalog:",
     "usb": "2.17.0",
     "yocto-spinner": "0.2.0",
-    "zod": "catalog:"
-  },
-  "devDependencies": {
+    "zod": "catalog:",
     "@oxlint/binding-darwin-arm64": "1.51.0",
     "@oxlint/binding-darwin-x64": "1.51.0",
     "@oxlint/binding-linux-x64-gnu": "1.51.0",

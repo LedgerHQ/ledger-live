@@ -1,0 +1,10 @@
+{
+  "name": "@ledgerhq/wallet-cli-linux-arm64",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Linux arm64 native binary for @ledgerhq/wallet-cli",
+  "license": "Apache-2.0",
+  "bin": {
+    "wallet-cli": "./bin/wallet-cli"
+  }
+}
