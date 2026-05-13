@@ -3,7 +3,7 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { Flex } from "@ledgerhq/native-ui";
-import React, { ComponentProps, Fragment, useRef, useCallback, useMemo } from "react";
+import React, { ComponentProps, Fragment, useRef, useCallback } from "react";
 import { Animated, StyleSheet, View } from "react-native";
 import type WebView from "react-native-webview";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -13,6 +13,7 @@ import { useNavigationBarHeights } from "LLM/hooks/useNavigationBarHeights";
 import { EarnWebview } from "../EarnWebview";
 import { LiveAppBackground } from "LLM/components/LiveAppBackground";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/useWalletFeaturesConfig";
+import { computeEarnUiVersion } from "@ledgerhq/live-common/domain/computeEarnUiVersion";
 
 type Props = {
   manifest?: LiveAppManifest;
@@ -40,17 +41,13 @@ export const EarnV2Webview = ({
   const { shouldDisplayEarnUpselling, shouldDisplayEarnSimulator } =
     useWalletFeaturesConfig("mobile");
 
-  const earnUiVersion = useFeature("ptxEarnUi")?.params?.value ?? "v1";
+  const earnUiVersion = useFeature("ptxEarnUi")?.params?.value ?? "v2";
 
-  const computedUiVersion = useMemo(() => {
-    if (shouldDisplayEarnUpselling) {
-      return "v3";
-    }
-    if (shouldDisplayEarnSimulator) {
-      return "v4";
-    }
-    return earnUiVersion;
-  }, [shouldDisplayEarnUpselling, shouldDisplayEarnSimulator, earnUiVersion]);
+  const computedUiVersion = computeEarnUiVersion({
+    baseUiVersion: earnUiVersion,
+    shouldDisplayEarnUpselling,
+    shouldDisplayEarnSimulator,
+  });
 
   const isPtxUiMinV2 = isMinEarnUiVersion(computedUiVersion, "v2");
 
