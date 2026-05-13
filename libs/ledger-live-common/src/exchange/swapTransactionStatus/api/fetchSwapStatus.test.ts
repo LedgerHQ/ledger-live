@@ -1,7 +1,7 @@
-import { getMultipleStatus } from "../swap/getStatus";
+import { getMultipleStatus } from "../../swap/getStatus";
 import { fetchTransactionSwapStatus } from "./fetchSwapStatus";
 
-jest.mock("../swap/getStatus", () => ({
+jest.mock("../../swap/getStatus", () => ({
   getMultipleStatus: jest.fn(),
 }));
 

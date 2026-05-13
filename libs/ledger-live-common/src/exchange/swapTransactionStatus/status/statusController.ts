@@ -1,6 +1,6 @@
 import type { AccountLike } from "@ledgerhq/types-live";
 import { TransactionStatus } from "@ledgerhq/wallet-api-exchange-module";
-import type { SwapStatus } from "../swap/types";
+import type { SwapStatus } from "../../swap/types";
 
 export type SwapTransactionStatusPhase = "polling_hidden" | "polling_visible" | "settled_visible";
 

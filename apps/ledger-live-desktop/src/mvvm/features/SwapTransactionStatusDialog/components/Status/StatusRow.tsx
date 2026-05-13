@@ -1,33 +1,35 @@
 import React from "react";
+import {
+  getSwapTransactionStatusVisualTokens,
+  type SwapTransactionStatusDisplayStatus,
+  type SwapTransactionStatusVisualIcon,
+} from "@ledgerhq/live-common/exchange/swapTransactionStatus/index";
 import { Skeleton } from "@ledgerhq/lumen-ui-react";
 import { CheckmarkCircleFill, ClockFill, DeleteCircleFill } from "@ledgerhq/lumen-ui-react/symbols";
 import { cn } from "LLD/utils/cn";
 import { StatusLine } from "./StatusLine";
 
-type DisplayStatus = "success" | "pending" | "error" | "unknown";
-
 type StatusRowProps = Readonly<{
-  status: DisplayStatus;
+  status: SwapTransactionStatusDisplayStatus;
   title: string;
   subtitle: string;
   value: React.ReactNode;
   isLoading: boolean;
-  lineStatus?: DisplayStatus;
+  lineStatus?: SwapTransactionStatusDisplayStatus;
   testId?: string;
 }>;
 
 type StatusIconProps = Readonly<{
-  status: DisplayStatus;
+  icon: SwapTransactionStatusVisualIcon;
 }>;
 
-function StatusIcon({ status }: StatusIconProps) {
-  switch (status) {
+function StatusIcon({ icon }: StatusIconProps) {
+  switch (icon) {
     case "success":
       return <CheckmarkCircleFill size={20} className="text-success" />;
     case "error":
       return <DeleteCircleFill size={20} className="text-error" />;
     case "pending":
-    case "unknown":
       return <ClockFill size={20} />;
   }
 }
@@ -43,6 +45,7 @@ export function StatusRow({
 }: StatusRowProps) {
   const titleContent = isLoading ? <Skeleton className="h-16 w-112 rounded-sm" /> : title;
   const subtitleContent = isLoading ? <Skeleton className="h-14 w-72 rounded-sm" /> : subtitle;
+  const visualTokens = getSwapTransactionStatusVisualTokens(status);
 
   return (
     <div
@@ -51,11 +54,11 @@ export function StatusRow({
     >
       <div
         className={cn("col-start-1 row-start-1 flex text-muted", {
-          "text-success": status === "success",
-          "text-error": status === "error",
+          "text-success": visualTokens.tone === "success",
+          "text-error": visualTokens.tone === "error",
         })}
       >
-        <StatusIcon status={status} />
+        <StatusIcon icon={visualTokens.icon} />
       </div>
       <span className="col-start-2 row-start-1 body-2-semi-bold text-base">{titleContent}</span>
       <span
@@ -69,8 +72,8 @@ export function StatusRow({
       </div>
       <span
         className={cn("col-start-2 row-start-2 body-3 text-muted", {
-          "text-success": status === "success",
-          "text-error": status === "error",
+          "text-success": visualTokens.tone === "success",
+          "text-error": visualTokens.tone === "error",
         })}
       >
         {subtitleContent}

@@ -11,7 +11,6 @@ jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
 }));
 
 jest.mock("@ledgerhq/live-common/wallet-api/Exchange/transactionStatus/index", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/wallet-api/Exchange/transactionStatus/index"),
   getTransactionStatus: jest.fn(),
 }));
 
