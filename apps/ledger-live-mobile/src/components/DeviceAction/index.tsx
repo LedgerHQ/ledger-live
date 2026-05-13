@@ -62,10 +62,10 @@ import {
   renderRequestQuitApp,
   renderRequiresAppInstallation,
   renderWarningOutdated,
-  RequiredFirmwareUpdate,
   NanoSNotSupportedComponent,
   UnsupportedFeatureComponent,
 } from "./rendering";
+import { RequiredFirmwareUpdate } from "LLM/features/FirmwareUpdate/components/RequiredFirmwareUpdate";
 import { ThorSwapIncompatibility } from "./ThorSwapIncompatibility";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import { DeviceId } from "@ledgerhq/client-ids/ids";
@@ -648,7 +648,9 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     }
 
     if (error instanceof LatestFirmwareVersionRequired) {
-      return <RequiredFirmwareUpdate navigation={navigation} device={selectedDevice} />;
+      return (
+        <RequiredFirmwareUpdate navigation={navigation} device={selectedDevice} onClose={onClose} />
+      );
     }
 
     if (error instanceof UnsupportedFeatureError) {

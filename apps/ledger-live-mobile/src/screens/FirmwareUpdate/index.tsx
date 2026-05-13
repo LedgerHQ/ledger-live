@@ -73,7 +73,9 @@ import { lastSeenDeviceSelector } from "~/reducers/settings";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
 import SafeAreaViewFixed from "~/components/SafeAreaView";
+import InfiniteLoader from "~/components/InfiniteLoader";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
+import { useLatestFirmware } from "@ledgerhq/live-common/device/hooks/useLatestFirmware";
 
 const requiredBatteryStatuses = [
   BatteryStatusTypes.BATTERY_PERCENTAGE,
@@ -913,15 +915,31 @@ export const FirmwareUpdate = ({
 };
 
 export default function FirmwareUpdateScreen({ route: { params } }: NavigationProps) {
-  if (!params.device || !params.firmwareUpdateContext || !params.deviceInfo) {
+  // Resolve the firmware-update context locally. Callers may pass it via
+  // params (pre-fetched on a previous screen), but we no longer require them
+  // to: this screen will fetch the context itself via the React-Query-backed
+  // `useLatestFirmware` hook (cache hits return instantly).
+  const fetchedFirmware = useLatestFirmware(params.deviceInfo);
+  const firmwareUpdateContext = params.firmwareUpdateContext ?? fetchedFirmware;
+
+  if (!params.device || !params.deviceInfo) {
     return null;
+  }
+  if (!firmwareUpdateContext) {
+    return (
+      <SafeAreaViewFixed isFlex>
+        <Flex flex={1} justifyContent="center" alignItems="center">
+          <InfiniteLoader />
+        </Flex>
+      </SafeAreaViewFixed>
+    );
   }
   return (
     <SafeAreaViewFixed isFlex>
       <FirmwareUpdate
         deviceInfo={params.deviceInfo}
         device={params.device}
-        firmwareUpdateContext={params.firmwareUpdateContext}
+        firmwareUpdateContext={firmwareUpdateContext}
         onBackFromUpdate={params.onBackFromUpdate}
         isBeforeOnboarding={params.isBeforeOnboarding}
       />
