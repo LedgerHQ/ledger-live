@@ -1,7 +1,7 @@
 import { registerTool, Category } from "@devtools/shell";
 import type { FeatureFlagsToolProps } from "./types";
-
-export const FEATURE_FLAGS_ID = "feature-flags" as const;
+import { FEATURE_FLAGS_ID } from "./constants";
+import { FeatureFlags } from "./FeatureFlags";
 
 declare module "@devtools/shell" {
   interface DevToolsPropsRegistry {
@@ -9,13 +9,11 @@ declare module "@devtools/shell" {
   }
 }
 
-export function registerFeatureFlagsTool() {
-  registerTool({
-    id: FEATURE_FLAGS_ID,
-    label: "Feature Flags",
-    category: Category.CONFIGURATION,
-    component: () => null,
-    owner: "Platform",
-    desc: "Toggle feature flags at runtime.",
-  });
-}
+registerTool({
+  id: FEATURE_FLAGS_ID,
+  label: "Feature Flags",
+  category: Category.CONFIGURATION,
+  component: FeatureFlags,
+  owner: "Platform",
+  desc: "Toggle feature flags at runtime.",
+});
