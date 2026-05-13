@@ -54,7 +54,7 @@ export function runSwapApprovalFlow(
         true,
       );
       await app.swapLiveApp.selectSpecificProvider(provider.uiName);
-      await app.swapLiveApp.tapExecuteSwap();
+      await app.swapLiveApp.tapExecuteSwap(provider.uiName);
       await app.swapLiveApp.expectTwoStepApprovalScreen();
       await app.swapLiveApp.tapGiveApprovalButton();
       await app.send.summaryContinue();
