@@ -14,3 +14,11 @@
 
 - Before finishing any agentic code change, run static checks for the affected scope
 - See [/docs/validate-before-finishing.md](/docs/validate-before-finishing.md)
+
+## Contacts feature (internal alpha)
+
+- If working on the Contacts feature in Ledger Wallet Desktop, also read
+  [`apps/ledger-live-desktop/docs/contacts.md`](apps/ledger-live-desktop/docs/contacts.md).
+- All new Contacts UI must use the Lumen design system
+  (`@ledgerhq/lumen-ui-react` + `@ledgerhq/lumen-ui-react/symbols`). No
+  `styled-components`, no `@ledgerhq/react-ui` in new Contacts code.

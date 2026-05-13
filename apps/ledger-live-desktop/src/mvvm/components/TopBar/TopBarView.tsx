@@ -8,6 +8,7 @@ import { TopBarActionsList } from "./components/ActionsList";
 import FirmwareUpdateBanner from "~/renderer/components/FirmwareUpdateBanner";
 import Updater from "LLD/features/Updater";
 import { MyWallet } from "LLD/features/MyWallet";
+import { Contacts } from "LLD/features/Contacts";
 import { InformationDrawer } from "~/renderer/components/TopBar/NotificationIndicator/InformationDrawer";
 
 const TopBarView = ({
@@ -35,6 +36,7 @@ const TopBarView = ({
           <Updater />
           <TopBarActionsList slots={slots} />
           <MyWallet />
+          <Contacts />
         </NavBarTrailing>
       </NavBar>
     </>

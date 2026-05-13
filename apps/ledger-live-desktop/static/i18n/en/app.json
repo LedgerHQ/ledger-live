@@ -8668,7 +8668,30 @@
     },
     "myLedger": {
       "tooltip": "My Ledger"
+    },
+    "contacts": {
+      "tooltip": "Contacts (alpha)"
     }
+  },
+  "contacts": {
+    "title": "Contacts (alpha)",
+    "connect": "Connect device",
+    "connecting": "Connecting…",
+    "connected": "Connected",
+    "disconnected": "No device",
+    "actions": {
+      "addContact": "Add contact (fresh)",
+      "addAddressToContact": "Add address to existing contact",
+      "editAddressLabel": "Edit address label",
+      "editAddress": "Edit address",
+      "renameContact": "Rename contact",
+      "addLedgerAccount": "Add Ledger account",
+      "reset": "Reset local data"
+    },
+    "walletState": "Wallet state",
+    "lastResult": "Last result",
+    "lastError": "Last error",
+    "empty": "Local store is empty"
   },
   "geoBlocking": {
     "title": "Location unavailable",

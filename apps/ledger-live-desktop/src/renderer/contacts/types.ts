@@ -13,6 +13,8 @@ export type ContactEntry = {
   scope: string;
   addressHex: string;
   hmacRestHex: string;
+  derivationPath: string;
+  chainId: number;
 };
 
 export type Contact = {
