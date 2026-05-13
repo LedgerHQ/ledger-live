@@ -1,14 +1,14 @@
 import React, { useCallback } from "react";
 import { TouchableOpacity, StyleSheet, View } from "react-native";
-import { useNavigation, useTheme } from "@react-navigation/native";
+import { useTheme } from "@react-navigation/native";
 import { Icon } from "@ledgerhq/native-ui";
 import type { MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
+import { fromSwapOperation } from "@ledgerhq/live-common/exchange/transactionStatus/index";
 import LText from "~/components/LText";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import { SwapStatusIndicator } from "../SwapStatusIndicator";
-import { ScreenName } from "~/const";
-import type { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
-import type { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
+import { useDispatch } from "~/context/hooks";
+import { openSwapTransactionStatusDrawer } from "~/reducers/swapTransactionStatusDrawer";
 import { useAccountName } from "~/reducers/wallet";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 
@@ -17,17 +17,11 @@ const OperationRow = ({ item }: { item: MappedSwapOperation }) => {
   const { fromAccount, toAccount, ...routeParams } = item;
   const { swapId, fromAmount, toAmount, finalAmount, status } = routeParams;
   const displayToAmount = finalAmount?.isGreaterThan(0) ? finalAmount : toAmount;
-  const navigation = useNavigation<StackNavigatorNavigation<SwapNavigatorParamList>>();
+  const dispatch = useDispatch();
 
   const onOpenOperationDetails = useCallback(() => {
-    navigation.navigate(ScreenName.SwapOperationDetails, {
-      swapOperation: {
-        fromAccountId: fromAccount.id,
-        toAccountId: toAccount.id,
-        ...routeParams,
-      },
-    });
-  }, [navigation, routeParams, fromAccount, toAccount]);
+    dispatch(openSwapTransactionStatusDrawer(fromSwapOperation(item)));
+  }, [dispatch, item]);
 
   const fromAccountName = useAccountName(fromAccount);
   const toAccountName = useAccountName(toAccount);
