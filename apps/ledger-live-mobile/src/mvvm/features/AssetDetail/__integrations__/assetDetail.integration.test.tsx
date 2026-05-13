@@ -142,6 +142,7 @@ describe("AssetDetail screen layout", () => {
       expect(screen.getByText("Receive")).toBeVisible();
       expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.buyButton)).toBeNull();
       expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.swapButton)).toBeNull();
+      expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.fallbackBanner)).toBeNull();
     });
 
     it("shows Buy + Receive when Buy is available but wallet has no funds", () => {
@@ -183,15 +184,18 @@ describe("AssetDetail screen layout", () => {
       expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.buyButton)).toBeVisible();
       expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.swapButton)).toBeNull();
       expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.footerReceiveButton)).toBeNull();
+      expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.fallbackBanner)).toBeNull();
     });
 
-    it("hides the floating bar when wallet has funds, swap unavailable, and buy unavailable", () => {
+    it("shows fallback banner instead of floating bar when wallet has funds but Buy and Swap both unavailable", () => {
       render(
         <AssetDetailTestNavigator />,
         withAccounts([{ seed: "btc-0", currencyId: "bitcoin", balance: 1000 }]),
       );
 
       expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.ctas)).toBeNull();
+      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.fallbackBanner)).toBeVisible();
+      expect(screen.getByText("Swap and Buy are not supported for this asset.")).toBeVisible();
     });
 
     it("shows Swap when another asset has funds and swap is available (no Buy)", () => {
@@ -205,6 +209,7 @@ describe("AssetDetail screen layout", () => {
       expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.ctas)).toBeVisible();
       expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.swapButton)).toBeVisible();
       expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.buyButton)).toBeNull();
+      expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.fallbackBanner)).toBeNull();
     });
 
     it("hides BalanceGraph Receive when footer shows Receive (no funds)", () => {

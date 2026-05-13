@@ -11,6 +11,7 @@ import { BalanceDetails } from "./components/BalanceDetails";
 import { Addresses } from "./components/Addresses";
 import { Transactions } from "./components/Transactions";
 import { Footer } from "./components/Footer";
+import { FallbackBanner } from "./components/FallbackBanner";
 import { MarketData } from "./components/MarketData";
 import { CTAS_HEIGHT } from "./utils/constants";
 
@@ -21,6 +22,7 @@ type Props = Readonly<{
   onRefresh: () => void;
   hasFooter: boolean;
   hideReceiveInBalanceGraph: boolean;
+  showFallbackBanner: boolean;
 }>;
 
 export function AssetDetailView({
@@ -30,6 +32,7 @@ export function AssetDetailView({
   onRefresh,
   hasFooter,
   hideReceiveInBalanceGraph,
+  showFallbackBanner,
 }: Props) {
   const { bottom } = useSafeAreaInsets();
   const scrollPaddingBottom = useMemo(
@@ -51,6 +54,7 @@ export function AssetDetailView({
           <Addresses currency={currency} />
           <MarketData currency={currency} />
           <Transactions currency={currency} />
+          <FallbackBanner show={showFallbackBanner} />
         </Box>
       </ScrollView>
       <Footer currency={currency} />

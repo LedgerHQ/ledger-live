@@ -19,4 +19,5 @@ export const ASSET_DETAIL_TEST_IDS = {
   buyButton: "asset-detail-buy-button",
   swapButton: "asset-detail-swap-button",
   footerReceiveButton: "asset-detail-footer-receive-button",
+  fallbackBanner: "asset-detail-fallback-banner",
 } as const;
