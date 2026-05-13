@@ -20,7 +20,9 @@ export { createMockAccount, createMockConcordiumCurrency };
 // STEP_TRANSITION_TIMEOUT in OnboardModal
 export const T = 1500;
 export const SESSION_TOPIC = "ABCDsession-topic-rest";
-export const WAIT_OPTS = { timeout: 2 * T + 500 };
+// Pairing/account creation success is emitted after T + 200ms and then delayed
+// by another transition timeout before it renders. Keep enough CI coverage margin.
+export const WAIT_OPTS = { timeout: 3 * T + 1000 };
 
 export const defaultConcordiumResources: ConcordiumResources = {
   isOnboarded: false,

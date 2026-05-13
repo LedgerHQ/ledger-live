@@ -10,7 +10,9 @@ import updateAccountSwapStatus from "@ledgerhq/live-common/exchange/swap/updateA
 import { MappedSwapOperation, SwapHistorySection } from "@ledgerhq/live-common/exchange/swap/types";
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import { mappedSwapOperationsToCSV } from "@ledgerhq/live-common/exchange/swap/csvExport";
+import { fromSwapOperation } from "@ledgerhq/live-common/exchange/transactionStatus/index";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
+import { openSwapTransactionStatusDialog } from "LLD/features/SwapTransactionStatusDialog/swapTransactionStatusDialog";
 import useInterval from "~/renderer/hooks/useInterval";
 import Text from "~/renderer/components/Text";
 import Box from "~/renderer/components/Box";
@@ -19,8 +21,6 @@ import SectionTitle from "~/renderer/components/OperationsList/SectionTitle";
 import { FakeLink } from "~/renderer/components/Link";
 import styled from "styled-components";
 import IconDownloadCloud from "~/renderer/icons/DownloadCloud";
-import { setDrawer } from "~/renderer/drawers/Provider";
-import SwapOperationDetails from "~/renderer/drawers/SwapOperationDetails";
 import HistoryLoading from "./HistoryLoading";
 import HistoryPlaceholder from "./HistoryPlaceholder";
 import { useLocation } from "react-router";
@@ -117,14 +117,12 @@ const History = () => {
           ({ swapId }) => swapId === defaultOpenedSwapOperationId,
         );
         if (openedOperation) {
-          setDrawer(SwapOperationDetails, {
-            mappedSwapOperation: openedOperation,
-          });
+          dispatch(openSwapTransactionStatusDialog(fromSwapOperation(openedOperation)));
         }
         return !!openedOperation;
       });
     }
-  }, [mappedSwapOperations, defaultOpenedSwapOperationId]);
+  }, [dispatch, mappedSwapOperations, defaultOpenedSwapOperationId]);
   const updateSwapStatus = useCallback(() => {
     let cancelled = false;
     async function fetchUpdatedSwapStatus() {
@@ -159,10 +157,8 @@ const History = () => {
   }, 10000);
   const openSwapOperationDetailsModal = useCallback(
     (mappedSwapOperation: MappedSwapOperation) =>
-      setDrawer(SwapOperationDetails, {
-        mappedSwapOperation,
-      }),
-    [],
+      dispatch(openSwapTransactionStatusDialog(fromSwapOperation(mappedSwapOperation))),
+    [dispatch],
   );
   return (
     <>

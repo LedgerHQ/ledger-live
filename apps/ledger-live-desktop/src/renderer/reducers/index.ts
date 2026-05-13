@@ -26,6 +26,7 @@ import { lldRTKApiReducers, LLDRTKApiState } from "./rtkQueryApi";
 import { identitiesSlice, IdentitiesState } from "@ledgerhq/client-ids/store";
 import type { PayloadAction, UnknownAction } from "@reduxjs/toolkit";
 import dialogs, { DialogsState } from "./dialogs";
+import dialogsWithData, { DialogsWithDataState } from "./dialogsWithData";
 import ptxInfoDialog, { PtxInfoDialogState } from "./ptxInfoDialog";
 import actionDialog, { ActionDialogState } from "./actionDialog";
 import liveAppModal, { LiveAppModalState } from "./liveAppModal";
@@ -64,6 +65,7 @@ export type State = LLDRTKApiState & {
   wallet: WalletState;
   walletSync: WalletSyncState;
   dialogs: DialogsState;
+  dialogsWithData: DialogsWithDataState;
   ptxInfoDialog: PtxInfoDialogState;
   actionDialog: ActionDialogState;
   liveAppModal: LiveAppModalState;
@@ -97,6 +99,7 @@ const appReducer = combineReducers({
   walletSync,
   trustchain,
   dialogs,
+  dialogsWithData,
   ptxInfoDialog,
   actionDialog,
   liveAppModal,
