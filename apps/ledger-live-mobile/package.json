@@ -69,7 +69,7 @@
     "typecheck": "NODE_OPTIONS=--max-old-space-size=8192 node scripts/typecheck.js",
     "test:env": "node ./scripts/mobile-env-md.mjs",
     "test": "pnpm test:jest:coverage && pnpm test:env",
-    "test:jest": "NODE_OPTIONS=--max-old-space-size=8192 jest --maxWorkers=50%",
+    "test:jest": "NODE_OPTIONS=--max-old-space-size=8192 jest",
     "test:jest:watch": "pnpm test:jest --watch",
     "test:jest:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
     "test:jest:coverage": "pnpm test:jest --ci --coverage",
