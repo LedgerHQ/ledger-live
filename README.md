@@ -32,18 +32,15 @@ git clone git@github.com:LedgerHQ/ledger-live.git
 cd ledger-live
 ```
 
-### Proto
+### Mise
 
-**⚠️ Important**: In order to install the right version of the tools you will need to install the [`proto`](https://moonrepo.dev/proto) toolchain manager.
-Please follow the instructions on the [**proto**](https://moonrepo.dev/docs/proto/install) website to install it.
-
-Once you have installed `proto`, please run the following command:
+**⚠️ Important**: Install the pinned toolchain (Node, pnpm, npm, and other tools) with [mise](https://mise.jdx.dev/). Follow the [installation guide](https://mise.jdx.dev/getting-started.html), then from the repository root:
 
 ```bash
-# Will download and install the supported versions of nodejs, npm and pnpm.
-# Run it from the root or a subfolder of the repository.
-proto use
+mise install
 ```
+
+Versions are defined in `mise.toml` at the repo root.
 
 ### Dependencies
 
@@ -148,7 +145,7 @@ You may encounter this error when running `pnpm i`. Try:
 
 ```sh
 rm -rf ~/.cocoapods/
-pnpm clean && pnpm store prune && proto use && pnpm i && pnpm build:llm:deps
+pnpm clean && pnpm store prune && mise install && pnpm i && pnpm build:llm:deps
 pnpm mobile pod
 ```
 
