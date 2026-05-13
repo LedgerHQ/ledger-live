@@ -39,6 +39,7 @@ import LoadingApp from "~/components/LoadingApp";
 import StyledStatusBar from "~/components/StyledStatusBar";
 import AnalyticsConsole from "~/components/AnalyticsConsole";
 import DebugTheme from "~/components/DebugTheme";
+import AssetDetailFab from "~/screens/Settings/Debug/Features/AssetDetailFab";
 import SyncNewAccounts from "~/bridge/SyncNewAccounts";
 import SegmentSetup from "~/analytics/SegmentSetup";
 import HookNotifications from "~/notifications/HookNotifications";
@@ -257,6 +258,7 @@ function App() {
       <AnalyticsConsole />
 
       <DebugTheme />
+      <AssetDetailFab />
       <JsThreadMonitor />
       <Modals />
       <FeatureToggle featureId="llmMmkvMigration">

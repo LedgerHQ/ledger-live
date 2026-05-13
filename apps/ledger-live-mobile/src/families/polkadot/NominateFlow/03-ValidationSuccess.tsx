@@ -16,7 +16,6 @@ import type {
 import { PolkadotNominateFlowParamList } from "./types";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
-import { useNotifications } from "LLM/features/NotificationsPrompt";
 
 type Props = BaseComposite<
   StackNavigatorProps<PolkadotNominateFlowParamList, ScreenName.PolkadotNominateValidationSuccess>
@@ -25,7 +24,6 @@ type Props = BaseComposite<
 export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useAccountScreen(route);
-  const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
   invariant(account, "account is required");
   const onClose = useCallback(() => {
     navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
@@ -49,8 +47,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
       delegation: "nomination",
       flow: "stake",
     });
-    tryTriggerPushNotificationDrawerAfterAction("stake");
-  }, [source, validators, tryTriggerPushNotificationDrawerAfterAction]);
+  }, [source, validators]);
 
   const goToOperationDetails = useCallback(() => {
     if (!account) return;

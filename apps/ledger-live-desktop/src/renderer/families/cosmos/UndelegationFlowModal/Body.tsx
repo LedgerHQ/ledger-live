@@ -8,9 +8,9 @@ import { useDispatch } from "LLD/hooks/redux";
 import { createStructuredSelector } from "reselect";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Account, Operation } from "@ledgerhq/types-live";
 import { StepId, St } from "./types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -22,7 +22,7 @@ import Track from "~/renderer/analytics/Track";
 import Stepper from "~/renderer/components/Stepper";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { useSteps } from "./steps";
-import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
+import { CosmosAccount, Transaction as CosmosTransaction } from "@ledgerhq/live-common/families/cosmos/types";
 
 export type Data = {
   account: CosmosAccount;
@@ -62,6 +62,7 @@ function Body({
   const [optimisticOperation, setOptimisticOperation] = useState<Operation | null>(null);
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
+  const bridge = useAccountBridge<CosmosTransaction>(accountProp, undefined);
   const {
     account,
     transaction,
@@ -70,13 +71,12 @@ function Body({
     updateTransaction,
     bridgePending,
     status,
-  } = useBridgeTransaction(() => {
+  } = useBridgeTransaction(bridge, () => {
     invariant(accountProp.cosmosResources, "cosmos: account and cosmos resources required");
     const delegations = accountProp.cosmosResources.delegations || [];
-    const bridge = getAccountBridge(accountProp, undefined);
     const initTx = bridge.createTransaction(accountProp);
     const newTx = {
-      mode: "undelegate",
+      mode: "undelegate" as const,
       validators: delegations
         .filter(d => d.validatorAddress === validatorAddress)
         .slice(0, 1)

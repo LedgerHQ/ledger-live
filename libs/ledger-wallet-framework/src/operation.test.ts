@@ -192,6 +192,26 @@ describe("Operation.ts", () => {
 
       expect(isOldestPendingOperation(testAccount, new BigNumber(0))).toBe(true);
     });
+
+    it("returns true when the nonce is the lowest across a digit boundary", () => {
+      const pendingOpHigh: Operation = {
+        ...pendingCoinOperation0,
+        transactionSequenceNumber: new BigNumber(10),
+      };
+      const testAccount = { ...account, pendingOperations: [pendingOpHigh] };
+
+      expect(isOldestPendingOperation(testAccount, new BigNumber(9))).toBe(true);
+    });
+
+    it("returns false when a pending operation's seq is lower than the nonce across a digit boundary (pendingSeq=9, nonce=10)", () => {
+      const pendingOpLow: Operation = {
+        ...pendingCoinOperation0,
+        transactionSequenceNumber: new BigNumber(9),
+      };
+      const testAccount = { ...account, pendingOperations: [pendingOpLow] };
+
+      expect(isOldestPendingOperation(testAccount, new BigNumber(10))).toBe(false);
+    });
   });
 
   describe("isOldestBitcoinPendingOperation", () => {

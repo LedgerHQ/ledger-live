@@ -3,6 +3,7 @@ import React, { memo, useCallback, useMemo } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import type { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import { dependenciesToAppRequests } from "@ledgerhq/live-common/hw/actions/app";
@@ -38,7 +39,8 @@ function ConnectDevice({ navigation, route }: SignTransactionConnectDeviceProps)
   invariant(account, "account is required");
   const { appName, dependencies, onSuccess } = route.params;
   const mainAccount = getMainAccount(account, parentAccount);
-  const { transaction, status } = useBridgeTransaction(() => ({
+  const bridge = useAccountBridge(account, parentAccount);
+  const { transaction, status } = useBridgeTransaction(bridge, () => ({
     account: mainAccount,
     transaction: route.params.transaction,
   }));

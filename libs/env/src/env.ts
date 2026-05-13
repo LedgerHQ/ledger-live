@@ -52,6 +52,11 @@ const envDefinitions = {
     parser: boolParser,
     desc: "Show tracking overlays on the app UI",
   },
+  DEBUG_ASSET_DETAIL_FAB: {
+    def: false,
+    parser: boolParser,
+    desc: "Show floating button to open Asset Detail (BTC)",
+  },
   DEBUG_THEME: {
     def: false,
     parser: boolParser,

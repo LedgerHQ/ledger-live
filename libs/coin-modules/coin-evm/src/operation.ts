@@ -89,7 +89,7 @@ export const getStuckAccountAndOperation = (
   const oldestStuckOperation = stuckOperations.reduce((oldestOp, currentOp) => {
     return oldestOp.transactionSequenceNumber !== undefined &&
       currentOp.transactionSequenceNumber !== undefined &&
-      oldestOp.transactionSequenceNumber > currentOp.transactionSequenceNumber
+      oldestOp.transactionSequenceNumber.gt(currentOp.transactionSequenceNumber)
       ? currentOp
       : oldestOp;
   });

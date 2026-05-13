@@ -73,6 +73,7 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
   const [infoModalOpen, setInfoModalOpen] = useState<boolean>();
 
   const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
+    bridge,
     () => {
       const t = bridge.createTransaction(account);
 
@@ -85,7 +86,7 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
     },
   );
 
-  const options = useMemo(
+  const options = useMemo<Array<{ value: TronResource; label: string }>>(
     () => [
       {
         value: "BANDWIDTH",
@@ -169,7 +170,7 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
       if (!transaction) return;
       setTransaction(
         bridge.updateTransaction(transaction, {
-          resource: options[optionIndex].value as TronResource,
+          resource: options[optionIndex].value,
         }),
       );
     },

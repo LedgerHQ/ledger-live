@@ -4,7 +4,11 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { getMaxDelegationAvailable } from "@ledgerhq/live-common/families/cosmos/logic";
 import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";
-import { CosmosAccount, CosmosValidatorItem, Transaction as CosmosTransaction } from "@ledgerhq/live-common/families/cosmos/types";
+import {
+  CosmosAccount,
+  CosmosValidatorItem,
+  Transaction as CosmosTransaction,
+} from "@ledgerhq/live-common/families/cosmos/types";
 import cosmosBase from "@ledgerhq/coin-cosmos/chain/cosmosBase";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Text, Icons } from "@ledgerhq/native-ui";
@@ -61,7 +65,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
   }, [validators, validator, mainAccount.currency.id]);
 
   const { transaction, updateTransaction, setTransaction, status, bridgePending, bridgeError } =
-    useBridgeTransaction(() => {
+    useBridgeTransaction(bridge, () => {
       const tx = route.params.transaction;
 
       if (!tx) {

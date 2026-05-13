@@ -1,4 +1,5 @@
 import { BigNumber } from "bignumber.js";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import React, { useCallback, useState, useEffect } from "react";
 import {
@@ -17,7 +18,6 @@ import { useTheme } from "@react-navigation/native";
 import type { Transaction as PolkadotTransaction } from "@ledgerhq/live-common/families/polkadot/types";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { isFirstBond } from "@ledgerhq/live-common/families/polkadot/logic";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { urls } from "~/utils/urls";
@@ -84,7 +84,7 @@ export default function PolkadotBondAmount({ navigation, route }: Props) {
   const mainAccount = getMainAccount(account, parentAccount) as PolkadotAccount;
   const [maxSpendable, setMaxSpendable] = useState<BigNumber | null>(null);
   const [infoModalOpen, setInfoModalOpen] = useState<boolean>();
-  const bridgeTransaction = useBridgeTransaction(() => {
+  const bridgeTransaction = useBridgeTransaction(bridge, () => {
     const t = bridge.createTransaction(mainAccount);
     const transaction = bridge.updateTransaction(t, {
       mode: "bond",
@@ -108,7 +108,7 @@ export default function PolkadotBondAmount({ navigation, route }: Props) {
         parentAccount,
         transaction: debouncedTransaction,
       })
-      .then(estimate => {
+      .then((estimate: BigNumber) => {
         if (cancelled) return;
         setMaxSpendable(estimate);
       });
@@ -116,7 +116,7 @@ export default function PolkadotBondAmount({ navigation, route }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [account, parentAccount, debouncedTransaction, bridge]);
+  }, [bridge, account, parentAccount, debouncedTransaction]);
   const onChange = useCallback(
     (amount: BigNumber) => {
       if (!amount.isNaN()) {

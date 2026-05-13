@@ -13,12 +13,11 @@ import type {
 import { isOldestBitcoinPendingOperation } from "@ledgerhq/ledger-wallet-framework/operation";
 import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 import { getEnv } from "@ledgerhq/live-env";
 import { Flex } from "@ledgerhq/native-ui";
-import type { Account, AccountBridge } from "@ledgerhq/types-live";
 import { urls } from "~/utils/urls";
 import invariant from "invariant";
 import React, { memo, useCallback, useEffect, useState } from "react";
@@ -41,6 +40,7 @@ function MethodSelectionComponent({ navigation, route }: Props) {
   const [haveFundToSpeedup, setHaveFundToSpeedup] = useState(false);
 
   const mainAccount = getMainAccount(account, parentAccount);
+  const bridge = useAccountBridge<BtcTransaction>(account, parentAccount);
 
   const [transactionToEdit, setTransactionToEdit] = useState<BtcTransaction | undefined>(
     undefined,
@@ -66,7 +66,7 @@ function MethodSelectionComponent({ navigation, route }: Props) {
     };
   }, [operation.hash, mainAccount.freshAddress]);
 
-  const { transaction, setTransaction } = useBridgeTransaction<BtcTransaction>(() => ({
+  const { transaction, setTransaction } = useBridgeTransaction<BtcTransaction>(bridge, () => ({
     account,
     parentAccount,
     transaction: transactionToEdit,
@@ -100,7 +100,6 @@ function MethodSelectionComponent({ navigation, route }: Props) {
 
   const isOldestEditableOperation = isOldestBitcoinPendingOperation(mainAccount, operation.date);
 
-  const bridge = useAccountBridge<BtcTransaction>(account, parentAccount as Account);
 
   const onSelect = useCallback(
     async (option: EditType) => {

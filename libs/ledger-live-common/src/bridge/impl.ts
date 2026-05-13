@@ -11,13 +11,19 @@ import {
   AccountBridge,
   AccountLike,
   CurrencyBridge,
+  ResolvedAccountBridge,
   TransactionCommon,
   TransactionStatusCommon,
 } from "@ledgerhq/types-live";
-import { getAlpacaAccountBridge } from "./generic-alpaca/accountBridge";
-import { getAlpacaCurrencyBridge } from "./generic-alpaca/currencyBridge";
+import { getAlpacaAccountBridge } from "./generic-coin-framework/accountBridge";
+import { getAlpacaCurrencyBridge } from "./generic-coin-framework/currencyBridge";
 import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
-import { loadSetupForFamily, loadMockBridgeForFamily } from "../coin-modules/registry";
+import {
+  loadSetupForFamily,
+  loadMockBridgeForFamily,
+  loadBridgeExtensionsForFamily,
+} from "../coin-modules/registry";
+import { defaultBridgeExtensions } from "./defaultBridgeExtensions";
 
 const alpacaized = {
   evm: true,
@@ -30,8 +36,20 @@ const alpacaized = {
 // Alpacaized currency bridges are created on demand; cache ensures referential stability.
 const currencyBridgeCache: Record<string, CurrencyBridge> = {};
 // All account bridges are wrapped (wrapAccountBridge); cache ensures referential stability.
-const accountBridgeCache: Record<string, AccountBridge<any>> = {};
+const accountBridgeCache: Record<string, ResolvedAccountBridge<any>> = {};
 
+/**
+ * Returns the CurrencyBridge for a given CryptoCurrency.
+ *
+ * **Ongoing migration**: this function will become async as part of the ESM coin modules migration
+ * (dynamic `import()` replacing synchronous `require()`). Write call sites that are async-compatible today:
+ *
+ * - **React component**: use the `useCurrencyBridge(currency)` hook instead — it handles loading states.
+ * - **RxJS observable**: wrap with `from(Promise.resolve(getCurrencyBridge(currency))).pipe(mergeMap(bridge => ...))`
+ * - **async function**:
+ *   - ❌ `const bridge = getCurrencyBridge(currency)` — not forward-compatible
+ *   - ✅ `const bridge = await Promise.resolve(getCurrencyBridge(currency))` — compatible with both sync and future async forms.
+ */
 export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
   if (getEnv("MOCK")) {
     const mockBridge = loadMockBridgeForFamily(currency.family);
@@ -61,10 +79,22 @@ export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
   return setup.bridge.currencyBridge;
 };
 
+/**
+ * Returns the AccountBridge for a given account (and optional parent account).
+ *
+ * **Ongoing migration**: this function will become async as part of the ESM coin modules migration
+ * (dynamic `import()` replacing synchronous `require()`). Write call sites that are async-compatible today:
+ *
+ * - **React component**: use the `useAccountBridge(account)` hook instead — it handles loading states.
+ * - **RxJS observable**: wrap with `from(Promise.resolve(getAccountBridge(account))).pipe(mergeMap(bridge => ...))`
+ * - **async function**:
+ *   - ❌ `const bridge = getAccountBridge(account)` — not forward-compatible
+ *   - ✅ `const bridge = await Promise.resolve(getAccountBridge(account))` — compatible with both sync and future async forms.
+ */
 export const getAccountBridge = (
   account: AccountLike,
   parentAccount?: Account | null,
-): AccountBridge<any> => {
+): ResolvedAccountBridge<any> => {
   const mainAccount = getMainAccount(account, parentAccount);
   const { currency } = mainAccount;
   const supportedError = checkAccountSupported(mainAccount);
@@ -82,7 +112,10 @@ export const getAccountBridge = (
   }
 };
 
-export function getAccountBridgeByFamily(family: string, accountId?: string): AccountBridge<any> {
+export function getAccountBridgeByFamily(
+  family: string,
+  accountId?: string,
+): ResolvedAccountBridge<any> {
   if (accountId) {
     const { type } = decodeAccountId(accountId);
 
@@ -91,7 +124,7 @@ export function getAccountBridgeByFamily(family: string, accountId?: string): Ac
       // TODO Remove once we delete mock bridges tests
       if (mockBridge) {
         mockBridge.loadCoinConfig?.();
-        return wrapAccountBridge(mockBridge.accountBridge);
+        return wrapAccountBridge(mockBridge.accountBridge, family);
       }
     }
   }
@@ -107,16 +140,19 @@ export function getAccountBridgeByFamily(family: string, accountId?: string): Ac
       }
       rawBridge = setup.bridge.accountBridge;
     }
-    accountBridgeCache[family] = wrapAccountBridge(rawBridge);
+    accountBridgeCache[family] = wrapAccountBridge(rawBridge, family);
   }
   return accountBridgeCache[family];
 }
 
 function wrapAccountBridge<T extends TransactionCommon>(
   bridge: AccountBridge<T>,
-): AccountBridge<T> {
+  family: string,
+): ResolvedAccountBridge<T> {
   return {
+    ...defaultBridgeExtensions,
     ...bridge,
+    ...loadBridgeExtensionsForFamily(family),
     getTransactionStatus: async (...args) => {
       const blockchainTransactionStatus = await bridge.getTransactionStatus(...args);
 
@@ -128,7 +164,7 @@ function wrapAccountBridge<T extends TransactionCommon>(
       const commonTransactionStatus = await commonGetTransactionStatus(...args);
       return mergeResults(blockchainTransactionStatus, commonTransactionStatus);
     },
-  };
+  } as ResolvedAccountBridge<T>;
 }
 
 function mergeResults(

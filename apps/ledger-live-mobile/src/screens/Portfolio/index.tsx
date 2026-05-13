@@ -9,18 +9,17 @@ import { useTheme } from "styled-components/native";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 
 import WalletTabSafeAreaView from "~/components/WalletTab/WalletTabSafeAreaView";
-import { useRefreshAccountsOrdering } from "~/actions/general";
+import { useDistribution, useRefreshAccountsOrdering } from "~/actions/general";
 import Carousel from "~/components/Carousel";
 import { ScreenName } from "~/const";
 import FirmwareUpdateBanner from "LLM/features/FirmwareUpdate/components/UpdateBanner";
 import CheckLanguageAvailability from "~/components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "~/components/CheckTermOfUseUpdate";
-import RecoverBanner from "~/components/RecoverBanner";
 import PortfolioEmptyState from "./PortfolioEmptyState";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import SectionContainer from "../WalletCentricSections/SectionContainer";
 import AllocationsSection from "../WalletCentricSections/Allocations";
-import { track } from "~/analytics";
+import { track, TrackScreen } from "~/analytics";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
 import CollapsibleHeaderFlatList from "~/components/WalletTab/CollapsibleHeaderFlatList";
@@ -34,6 +33,7 @@ import {
   hasTokenAccountsNotBlacklistedSelector,
   hasTokenAccountsNotBlackListedWithPositiveBalanceSelector,
 } from "~/reducers/accounts";
+import { discreetModeSelector } from "~/reducers/settings";
 import PortfolioAssets from "./PortfolioAssets";
 import { UpdateStep } from "../FirmwareUpdate";
 import ContentCardsLocation from "~/dynamicContent/ContentCardsLocation";
@@ -50,9 +50,11 @@ import storage from "LLM/storage";
 import type { Feature_LlmMmkvMigration } from "@ledgerhq/types-live";
 import { DdRum } from "@datadog/mobile-react-native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { ddAddViewLoadingTime } from "LLM/utils/ddAddViewLoadingTime";
 import { PORTFOLIO_VIEW_ID, TOP_CHAINS } from "~/utils/constants";
 import { buildFeatureFlagTags } from "~/utils/datadogUtils";
 import { renderItem } from "LLM/utils/renderItem";
+import RecoverBanner from "LLM/features/Portfolio/components/RecoverBanner";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<WalletTabNavigatorStackParamList, ScreenName.Portfolio>
@@ -119,7 +121,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
       { topChains, featureFlags: buildFeatureFlagTags() },
       Date.now(),
     );
-    DdRum.addViewLoadingTime(true);
+    ddAddViewLoadingTime();
   }, [allAccounts, llmDatadog?.enabled]);
 
   const hasTokenAccounts = useSelector(hasTokenAccountsNotBlacklistedSelector);
@@ -145,12 +147,21 @@ function PortfolioScreen({ navigation }: NavigationProps) {
 
   const isLNSUpsellBannerShown = useLNSUpsellBannerState("wallet").isShown;
 
+  const distribution = useDistribution({ showEmptyAccounts: true, hideEmptyTokenAccount });
+  const discreetMode = useSelector(discreetModeSelector);
+
   const onPressAllocations = useCallback(() => {
     navigation.navigate(ScreenName.AnalyticsAllocation);
   }, [navigation]);
 
   const data = useMemo(
     () => [
+      <TrackScreen
+        key="trackWallet"
+        category="Wallet"
+        accountsLength={distribution.list?.length}
+        discreet={discreetMode}
+      />,
       <WalletTabSafeAreaView key="portfolioHeaderElements" edges={["left", "right"]}>
         <Flex px={6} key="FirmwareUpdateBanner">
           <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
@@ -244,6 +255,8 @@ function PortfolioScreen({ navigation }: NavigationProps) {
       hideEmptyTokenAccount,
       openAddModal,
       isAWalletCardDisplayed,
+      distribution.list?.length,
+      discreetMode,
       t,
     ],
   );

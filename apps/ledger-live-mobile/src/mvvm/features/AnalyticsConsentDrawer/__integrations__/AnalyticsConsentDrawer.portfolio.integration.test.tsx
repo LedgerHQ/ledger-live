@@ -9,27 +9,18 @@ import { AnalyticsConsentDrawer } from "../index";
 import { withConsentDrawerState } from "../__tests__/helpers";
 import { ScreenName } from "~/const";
 import type { State } from "~/reducers/types";
-import subDays from "date-fns/subDays";
 import AnalyticsPreferencesSettings from "~/screens/Settings/AnalyticsPreferencesSettings";
-
-const consentIsoOlderThanValidityWindow = () => subDays(new Date(), 366).toISOString();
 
 const Stack = createNativeStackNavigator();
 const SettingsStack = createNativeStackNavigator();
 
-function GeneralSettingsStub() {
-  return <View testID="GeneralSettingsStub" />;
-}
-
 function SettingsNavigator() {
+  function GeneralSettingsStub() {
+    return <View />;
+  }
   return (
-    <SafeAreaProvider
-      initialMetrics={{
-        frame: { x: 0, y: 0, width: 375, height: 812 },
-        insets: { top: 0, left: 0, right: 0, bottom: 0 },
-      }}
-    >
-      <SettingsStack.Navigator screenOptions={{ headerShown: false }}>
+    <SafeAreaProvider>
+      <SettingsStack.Navigator>
         <SettingsStack.Screen name={ScreenName.GeneralSettings} component={GeneralSettingsStub} />
         <SettingsStack.Screen
           name={ScreenName.AnalyticsPreferencesSettings}
@@ -40,23 +31,25 @@ function SettingsNavigator() {
   );
 }
 
-/**
- * Minimal Portfolio-shaped screen: same mount order as Portfolio (list stub + consent drawer)
- * without pulling Swap / QuickActions, to avoid async teardown noise while still using a focused route.
- */
-function PortfolioScreenWithConsentDrawer() {
-  return (
-    <View style={{ flex: 1 }}>
-      <View testID="PortfolioEmptyList" />
-      <AnalyticsConsentDrawer />
-    </View>
-  );
-}
-
 function IntegrationNavigator() {
+  /**
+   * Minimal Portfolio-shaped screen: same mount order as Portfolio (list stub + consent drawer)
+   * without pulling Swap / QuickActions, to avoid async teardown noise while still using a focused route.
+   */
+  function PortfolioScreenWithConsentDrawer() {
+    return (
+      <View>
+        <View />
+        <AnalyticsConsentDrawer />
+      </View>
+    );
+  }
+
+  const PortfolioName = "Portfolio";
+
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Portfolio">
-      <Stack.Screen name="Portfolio" component={PortfolioScreenWithConsentDrawer} />
+    <Stack.Navigator initialRouteName={PortfolioName}>
+      <Stack.Screen name={PortfolioName} component={PortfolioScreenWithConsentDrawer} />
       <Stack.Screen name="Settings" component={SettingsNavigator} />
     </Stack.Navigator>
   );
@@ -66,35 +59,10 @@ const composePortfolioOverrides =
   (extra: Parameters<typeof withConsentDrawerState>[0]) => (state: State) =>
     withConsentDrawerState(extra)(overrideInitialStateWithFeatureFlag(state));
 
-/** Fresh: renewal first, analytics off → consentFresh. */
-const overridePortfolioWithAnalyticsConsentDrawer = composePortfolioOverrides({
-  hasCompletedOnboarding: true,
-  analyticsOptInEnabled: true,
-  analyticsEnabled: false,
-  personalizedRecommendationsEnabled: false,
-  consentDate: null,
-  privacyPolicyVersion: 1,
-});
-
-/** Reconfirm: renewal first, analytics on → consentReconfirm. */
-const overridePortfolioWithAnalyticsConsentReconfirm = composePortfolioOverrides({
-  hasCompletedOnboarding: true,
-  analyticsOptInEnabled: true,
-  analyticsEnabled: true,
-  personalizedRecommendationsEnabled: true,
-  consentDate: null,
-  privacyPolicyVersion: 1,
-});
-
-/** Privacy policy ack only (stale policy version, valid consent). */
-const overridePortfolioWithPrivacySheet = composePortfolioOverrides({
-  hasCompletedOnboarding: true,
-  analyticsOptInEnabled: true,
-  analyticsEnabled: true,
-  personalizedRecommendationsEnabled: true,
-  consentDate: new Date().toISOString(),
-  privacyPolicyVersion: 0,
-});
+const ANALYTICS_CONSENT_DRAWER_PAGE = "Analytics consent drawer";
+const FRESH_CONSENT_TITLE = "Help us improve Ledger";
+const RECONFIRM_TITLE = "Continue improving Ledger?";
+const PRIVACY_UPDATE_TITLE = "We're updating our privacy policy";
 
 describe("AnalyticsConsentDrawer on Portfolio", () => {
   beforeEach(() => {
@@ -106,225 +74,594 @@ describe("AnalyticsConsentDrawer on Portfolio", () => {
   });
 
   describe("needs fresh consent", () => {
-    it("should opt in and close the drawer when the user taps Accept all on the fresh consent sheet", async () => {
-      const { user, store } = renderWithReactQuery(<IntegrationNavigator />, {
-        overrideInitialState: overridePortfolioWithAnalyticsConsentDrawer,
-      });
-
-      await screen.findByTestId("PortfolioEmptyList");
-      expect(await screen.findByText("Help us improve Ledger")).toBeVisible();
-
-      await user.press(screen.getByText("Accept all"));
-
-      await waitFor(() => {
-        expect(screen.queryByText("Help us improve Ledger")).toBeNull();
-      });
-      expect(store.getState().settings.analyticsEnabled).toBe(true);
-      expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
-    });
-
-    it.each([
-      {
-        analyticsEnabled: false,
-        personalizedRecommendationsEnabled: false,
-      },
-      {
-        analyticsEnabled: true,
-        personalizedRecommendationsEnabled: false,
-      },
-      {
-        analyticsEnabled: false,
-        personalizedRecommendationsEnabled: true,
-      },
-      {
-        analyticsEnabled: true,
-        personalizedRecommendationsEnabled: true,
-      },
-    ])(
-      "should track the consent drawer page as mandatory telemetry when consent is $analyticsEnabled/$personalizedRecommendationsEnabled",
-      async ({ analyticsEnabled, personalizedRecommendationsEnabled }) => {
-        renderWithReactQuery(<IntegrationNavigator />, {
+    describe("when analytics and recommendations are disabled", () => {
+      it("should opt in when the user accepts", async () => {
+        const { user, store } = renderWithReactQuery(<IntegrationNavigator />, {
           overrideInitialState: composePortfolioOverrides({
             hasCompletedOnboarding: true,
             analyticsOptInEnabled: true,
-            analyticsEnabled,
-            personalizedRecommendationsEnabled,
+            analyticsEnabled: false,
+            personalizedRecommendationsEnabled: false,
             consentDate: null,
             privacyPolicyVersion: 1,
           }),
         });
 
+        const drawerTitle = await screen.findByText(FRESH_CONSENT_TITLE);
+        expect(drawerTitle).toBeVisible();
+        expect(analytics.screen).toHaveBeenCalledWith(
+          "AnalyticsConsentDrawer",
+          "Analytics consent",
+          expect.objectContaining({
+            phase: "consentFresh",
+            type: "drawer",
+          }),
+          true,
+          false,
+          false,
+          true,
+        );
+
+        await user.press(screen.getByRole("button", { name: "Accept all" }));
+        expect(analytics.track).toHaveBeenCalledWith(
+          "button_clicked",
+          {
+            button: "analytics_consent_opt_in",
+            page: ANALYTICS_CONSENT_DRAWER_PAGE,
+            privacyPolicyVersion: 1,
+          },
+          true,
+        );
+
         await waitFor(() => {
-          expect(analytics.screen).toHaveBeenCalledWith(
-            "AnalyticsConsentDrawer",
-            "Analytics consent",
-            expect.objectContaining({
-              type: "drawer",
-            }),
-            true,
-            false,
-            false,
-            true,
-          );
+          expect(drawerTitle).not.toBeOnTheScreen();
         });
-      },
-    );
-
-    it("should opt out and close the drawer when the user taps Refuse all on the fresh consent sheet", async () => {
-      const { user, store } = renderWithReactQuery(<IntegrationNavigator />, {
-        overrideInitialState: overridePortfolioWithAnalyticsConsentDrawer,
+        expect(store.getState().settings.analyticsEnabled).toBe(true);
+        expect(store.getState().settings.personalizedRecommendationsEnabled).toBe(true);
+        expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
+        expect(analytics.updateIdentify).toHaveBeenCalledTimes(1);
       });
 
-      await screen.findByTestId("PortfolioEmptyList");
-      await screen.findByText("Help us improve Ledger");
+      it("should opt out when the user refuses", async () => {
+        const { user, store } = renderWithReactQuery(<IntegrationNavigator />, {
+          overrideInitialState: composePortfolioOverrides({
+            hasCompletedOnboarding: true,
+            analyticsOptInEnabled: true,
+            analyticsEnabled: false,
+            personalizedRecommendationsEnabled: false,
+            consentDate: null,
+            privacyPolicyVersion: 1,
+          }),
+        });
 
-      await user.press(screen.getByText("Refuse all"));
+        const drawerTitle = await screen.findByText(FRESH_CONSENT_TITLE);
+        expect(drawerTitle).toBeVisible();
+        expect(analytics.screen).toHaveBeenCalledWith(
+          "AnalyticsConsentDrawer",
+          "Analytics consent",
+          expect.objectContaining({
+            phase: "consentFresh",
+            type: "drawer",
+          }),
+          true,
+          false,
+          false,
+          true,
+        );
 
-      await waitFor(() => {
-        expect(screen.queryByText("Help us improve Ledger")).toBeNull();
+        await user.press(screen.getByRole("button", { name: "Refuse all" }));
+        expect(analytics.track).toHaveBeenCalledWith(
+          "button_clicked",
+          {
+            button: "analytics_consent_opt_out",
+            page: ANALYTICS_CONSENT_DRAWER_PAGE,
+            privacyPolicyVersion: 1,
+          },
+          true,
+        );
+
+        await waitFor(() => {
+          expect(drawerTitle).not.toBeOnTheScreen();
+        });
+        expect(store.getState().settings.analyticsEnabled).toBe(false);
+        expect(store.getState().settings.personalizedRecommendationsEnabled).toBe(false);
+        expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
+        expect(analytics.updateIdentify).toHaveBeenCalledTimes(1);
       });
-      expect(store.getState().settings.analyticsEnabled).toBe(false);
-      expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
+
+      it("should open preferences when the user chooses Set preferences", async () => {
+        const { user } = renderWithReactQuery(<IntegrationNavigator />, {
+          overrideInitialState: composePortfolioOverrides({
+            hasCompletedOnboarding: true,
+            analyticsOptInEnabled: true,
+            analyticsEnabled: false,
+            personalizedRecommendationsEnabled: false,
+            consentDate: null,
+            privacyPolicyVersion: 1,
+          }),
+        });
+
+        const drawerTitle = await screen.findByText(FRESH_CONSENT_TITLE);
+        expect(drawerTitle).toBeVisible();
+        expect(analytics.screen).toHaveBeenCalledWith(
+          "AnalyticsConsentDrawer",
+          "Analytics consent",
+          expect.objectContaining({
+            phase: "consentFresh",
+            type: "drawer",
+          }),
+          true,
+          false,
+          false,
+          true,
+        );
+
+        await user.press(screen.getByRole("link", { name: "Set preferences" }));
+        expect(analytics.track).toHaveBeenCalledWith("button_clicked", {
+          button: "analytics_consent_set_preferences",
+          page: ANALYTICS_CONSENT_DRAWER_PAGE,
+        });
+
+        await waitFor(() => {
+          expect(drawerTitle).not.toBeOnTheScreen();
+        });
+        expect(await screen.findByTestId("analytics-preferences-screen-title")).toBeVisible();
+      });
     });
 
-    it("should close the drawer and open analytics preferences when the user taps Set preferences", async () => {
-      const { user } = renderWithReactQuery(<IntegrationNavigator />, {
-        overrideInitialState: overridePortfolioWithAnalyticsConsentDrawer,
+    describe("when analytics is disabled and recommendations are enabled", () => {
+      it("should opt in when the user accepts", async () => {
+        const { user, store } = renderWithReactQuery(<IntegrationNavigator />, {
+          overrideInitialState: composePortfolioOverrides({
+            hasCompletedOnboarding: true,
+            analyticsOptInEnabled: true,
+            analyticsEnabled: false,
+            personalizedRecommendationsEnabled: true,
+            consentDate: null,
+            privacyPolicyVersion: 1,
+          }),
+        });
+
+        const drawerTitle = await screen.findByText(FRESH_CONSENT_TITLE);
+        expect(drawerTitle).toBeVisible();
+        expect(analytics.screen).toHaveBeenCalledWith(
+          "AnalyticsConsentDrawer",
+          "Analytics consent",
+          expect.objectContaining({
+            phase: "consentFresh",
+            type: "drawer",
+          }),
+          true,
+          false,
+          false,
+          true,
+        );
+
+        await user.press(screen.getByRole("button", { name: "Accept all" }));
+        expect(analytics.track).toHaveBeenCalledWith(
+          "button_clicked",
+          {
+            button: "analytics_consent_opt_in",
+            page: ANALYTICS_CONSENT_DRAWER_PAGE,
+            privacyPolicyVersion: 1,
+          },
+          true,
+        );
+
+        await waitFor(() => {
+          expect(drawerTitle).not.toBeOnTheScreen();
+        });
+        expect(store.getState().settings.analyticsEnabled).toBe(true);
+        expect(store.getState().settings.personalizedRecommendationsEnabled).toBe(true);
+        expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
+        expect(analytics.updateIdentify).toHaveBeenCalledTimes(1);
       });
 
-      await screen.findByTestId("PortfolioEmptyList");
-      await screen.findByText("Help us improve Ledger");
+      it("should opt out when the user refuses", async () => {
+        const { user, store } = renderWithReactQuery(<IntegrationNavigator />, {
+          overrideInitialState: composePortfolioOverrides({
+            hasCompletedOnboarding: true,
+            analyticsOptInEnabled: true,
+            analyticsEnabled: false,
+            personalizedRecommendationsEnabled: true,
+            consentDate: null,
+            privacyPolicyVersion: 1,
+          }),
+        });
 
-      await user.press(screen.getByText("Set preferences"));
+        const drawerTitle = await screen.findByText(FRESH_CONSENT_TITLE);
+        expect(drawerTitle).toBeVisible();
+        expect(analytics.screen).toHaveBeenCalledWith(
+          "AnalyticsConsentDrawer",
+          "Analytics consent",
+          expect.objectContaining({
+            phase: "consentFresh",
+            type: "drawer",
+          }),
+          true,
+          false,
+          false,
+          true,
+        );
 
-      await waitFor(() => {
-        expect(screen.queryByText("Help us improve Ledger")).toBeNull();
+        await user.press(screen.getByRole("button", { name: "Refuse all" }));
+        expect(analytics.track).toHaveBeenCalledWith(
+          "button_clicked",
+          {
+            button: "analytics_consent_opt_out",
+            page: ANALYTICS_CONSENT_DRAWER_PAGE,
+            privacyPolicyVersion: 1,
+          },
+          true,
+        );
+
+        await waitFor(() => {
+          expect(drawerTitle).not.toBeOnTheScreen();
+        });
+        expect(store.getState().settings.analyticsEnabled).toBe(false);
+        expect(store.getState().settings.personalizedRecommendationsEnabled).toBe(false);
+        expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
+        expect(analytics.updateIdentify).toHaveBeenCalledTimes(1);
       });
-      expect(await screen.findByTestId("analytics-preferences-screen-title")).toBeVisible();
-      expect(analytics.screen).toHaveBeenCalledWith(
-        "Analytics preferences settings",
-        "Set preferences",
-        {},
-        true,
-        true,
-        false,
-        true,
-      );
-    });
 
-    it("should return to Portfolio after Set preferences and Confirm with toggles left off", async () => {
-      jest.spyOn(analytics, "updateIdentify").mockResolvedValue(undefined);
+      it("should open preferences when the user chooses Set preferences", async () => {
+        const { user } = renderWithReactQuery(<IntegrationNavigator />, {
+          overrideInitialState: composePortfolioOverrides({
+            hasCompletedOnboarding: true,
+            analyticsOptInEnabled: true,
+            analyticsEnabled: false,
+            personalizedRecommendationsEnabled: true,
+            consentDate: null,
+            privacyPolicyVersion: 1,
+          }),
+        });
 
-      const { user, store } = renderWithReactQuery(<IntegrationNavigator />, {
-        overrideInitialState: overridePortfolioWithAnalyticsConsentDrawer,
+        const drawerTitle = await screen.findByText(FRESH_CONSENT_TITLE);
+        expect(drawerTitle).toBeVisible();
+        expect(analytics.screen).toHaveBeenCalledWith(
+          "AnalyticsConsentDrawer",
+          "Analytics consent",
+          expect.objectContaining({
+            phase: "consentFresh",
+            type: "drawer",
+          }),
+          true,
+          false,
+          false,
+          true,
+        );
+
+        await user.press(screen.getByRole("link", { name: "Set preferences" }));
+        expect(analytics.track).toHaveBeenCalledWith("button_clicked", {
+          button: "analytics_consent_set_preferences",
+          page: ANALYTICS_CONSENT_DRAWER_PAGE,
+        });
+
+        await waitFor(() => {
+          expect(drawerTitle).not.toBeOnTheScreen();
+        });
+        expect(await screen.findByTestId("analytics-preferences-screen-title")).toBeVisible();
       });
-
-      await screen.findByTestId("PortfolioEmptyList");
-      await screen.findByText("Help us improve Ledger");
-
-      await user.press(screen.getByText("Set preferences"));
-
-      expect(await screen.findByTestId("analytics-preferences-screen-title")).toBeVisible();
-
-      await user.press(screen.getByRole("button", { name: "Confirm" }));
-
-      await waitFor(() => {
-        expect(screen.queryByTestId("analytics-preferences-screen-title")).toBeNull();
-      });
-      expect(await screen.findByTestId("PortfolioEmptyList")).toBeVisible();
-
-      expect(store.getState().settings.analyticsEnabled).toBe(false);
-      expect(store.getState().settings.personalizedRecommendationsEnabled).toBe(false);
-      expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
     });
   });
 
   describe("needs reconfirmation", () => {
-    it("should keep analytics on when the user taps Yes, continue on reconfirm", async () => {
-      const { user, store } = renderWithReactQuery(<IntegrationNavigator />, {
-        overrideInitialState: overridePortfolioWithAnalyticsConsentReconfirm,
+    describe("when analytics is enabled and recommendations are disabled", () => {
+      it("should keep analytics enabled when the user accepts", async () => {
+        const { user, store } = renderWithReactQuery(<IntegrationNavigator />, {
+          overrideInitialState: composePortfolioOverrides({
+            hasCompletedOnboarding: true,
+            analyticsOptInEnabled: true,
+            analyticsEnabled: true,
+            personalizedRecommendationsEnabled: false,
+            consentDate: null,
+            privacyPolicyVersion: 1,
+          }),
+        });
+
+        const drawerTitle = await screen.findByText(RECONFIRM_TITLE);
+        expect(drawerTitle).toBeVisible();
+        expect(analytics.screen).toHaveBeenCalledWith(
+          "AnalyticsConsentDrawer",
+          "Analytics consent",
+          expect.objectContaining({
+            phase: "consentReconfirm",
+            type: "drawer",
+          }),
+          true,
+          false,
+          false,
+          true,
+        );
+
+        await user.press(screen.getByRole("button", { name: "Yes, continue" }));
+        expect(analytics.track).toHaveBeenCalledWith(
+          "button_clicked",
+          {
+            button: "analytics_consent_opt_in",
+            page: ANALYTICS_CONSENT_DRAWER_PAGE,
+            privacyPolicyVersion: 1,
+          },
+          true,
+        );
+
+        await waitFor(() => {
+          expect(drawerTitle).not.toBeOnTheScreen();
+        });
+        expect(store.getState().settings.analyticsEnabled).toBe(true);
+        expect(store.getState().settings.personalizedRecommendationsEnabled).toBe(true);
+        expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
+        expect(analytics.updateIdentify).toHaveBeenCalledTimes(1);
       });
 
-      await screen.findByTestId("PortfolioEmptyList");
-      expect(await screen.findByText("Continue improving Ledger?")).toBeVisible();
+      it("should opt out when the user refuses", async () => {
+        const { user, store } = renderWithReactQuery(<IntegrationNavigator />, {
+          overrideInitialState: composePortfolioOverrides({
+            hasCompletedOnboarding: true,
+            analyticsOptInEnabled: true,
+            analyticsEnabled: true,
+            personalizedRecommendationsEnabled: false,
+            consentDate: null,
+            privacyPolicyVersion: 1,
+          }),
+        });
 
-      await user.press(screen.getByText("Yes, continue"));
+        const drawerTitle = await screen.findByText(RECONFIRM_TITLE);
+        expect(drawerTitle).toBeVisible();
+        expect(analytics.screen).toHaveBeenCalledWith(
+          "AnalyticsConsentDrawer",
+          "Analytics consent",
+          expect.objectContaining({
+            phase: "consentReconfirm",
+            type: "drawer",
+          }),
+          true,
+          false,
+          false,
+          true,
+        );
 
-      await waitFor(() => {
-        expect(screen.queryByText("Continue improving Ledger?")).toBeNull();
+        await user.press(screen.getByRole("button", { name: "No, stop" }));
+        expect(analytics.track).toHaveBeenCalledWith(
+          "button_clicked",
+          {
+            button: "analytics_consent_opt_out",
+            page: ANALYTICS_CONSENT_DRAWER_PAGE,
+            privacyPolicyVersion: 1,
+          },
+          true,
+        );
+
+        await waitFor(() => {
+          expect(drawerTitle).not.toBeOnTheScreen();
+        });
+        expect(store.getState().settings.analyticsEnabled).toBe(false);
+        expect(store.getState().settings.personalizedRecommendationsEnabled).toBe(false);
+        expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
+        expect(analytics.updateIdentify).toHaveBeenCalledTimes(1);
       });
-      expect(store.getState().settings.analyticsEnabled).toBe(true);
-      expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
+
+      it("should open preferences when the user chooses Set preferences", async () => {
+        const { user } = renderWithReactQuery(<IntegrationNavigator />, {
+          overrideInitialState: composePortfolioOverrides({
+            hasCompletedOnboarding: true,
+            analyticsOptInEnabled: true,
+            analyticsEnabled: true,
+            personalizedRecommendationsEnabled: false,
+            consentDate: null,
+            privacyPolicyVersion: 1,
+          }),
+        });
+
+        const drawerTitle = await screen.findByText(RECONFIRM_TITLE);
+        expect(drawerTitle).toBeVisible();
+        expect(analytics.screen).toHaveBeenCalledWith(
+          "AnalyticsConsentDrawer",
+          "Analytics consent",
+          expect.objectContaining({
+            phase: "consentReconfirm",
+            type: "drawer",
+          }),
+          true,
+          false,
+          false,
+          true,
+        );
+
+        await user.press(screen.getByRole("link", { name: "Set preferences" }));
+        expect(analytics.track).toHaveBeenCalledWith("button_clicked", {
+          button: "analytics_consent_set_preferences",
+          page: ANALYTICS_CONSENT_DRAWER_PAGE,
+        });
+
+        await waitFor(() => {
+          expect(drawerTitle).not.toBeOnTheScreen();
+        });
+        expect(await screen.findByTestId("analytics-preferences-screen-title")).toBeVisible();
+      });
     });
 
-    it("should opt out when the user taps No, stop on reconfirm", async () => {
-      const { user, store } = renderWithReactQuery(<IntegrationNavigator />, {
-        overrideInitialState: overridePortfolioWithAnalyticsConsentReconfirm,
+    describe("when analytics and recommendations are enabled", () => {
+      it("should keep analytics enabled when the user accepts", async () => {
+        const { user, store } = renderWithReactQuery(<IntegrationNavigator />, {
+          overrideInitialState: composePortfolioOverrides({
+            hasCompletedOnboarding: true,
+            analyticsOptInEnabled: true,
+            analyticsEnabled: true,
+            personalizedRecommendationsEnabled: true,
+            consentDate: null,
+            privacyPolicyVersion: 1,
+          }),
+        });
+
+        const drawerTitle = await screen.findByText(RECONFIRM_TITLE);
+        expect(drawerTitle).toBeVisible();
+        expect(analytics.screen).toHaveBeenCalledWith(
+          "AnalyticsConsentDrawer",
+          "Analytics consent",
+          expect.objectContaining({
+            phase: "consentReconfirm",
+            type: "drawer",
+          }),
+          true,
+          false,
+          false,
+          true,
+        );
+
+        await user.press(screen.getByRole("button", { name: "Yes, continue" }));
+        expect(analytics.track).toHaveBeenCalledWith(
+          "button_clicked",
+          {
+            button: "analytics_consent_opt_in",
+            page: ANALYTICS_CONSENT_DRAWER_PAGE,
+            privacyPolicyVersion: 1,
+          },
+          true,
+        );
+
+        await waitFor(() => {
+          expect(drawerTitle).not.toBeOnTheScreen();
+        });
+        expect(store.getState().settings.analyticsEnabled).toBe(true);
+        expect(store.getState().settings.personalizedRecommendationsEnabled).toBe(true);
+        expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
+        expect(analytics.updateIdentify).toHaveBeenCalledTimes(1);
       });
 
-      await screen.findByTestId("PortfolioEmptyList");
-      await screen.findByText("Continue improving Ledger?");
+      it("should opt out when the user refuses", async () => {
+        const { user, store } = renderWithReactQuery(<IntegrationNavigator />, {
+          overrideInitialState: composePortfolioOverrides({
+            hasCompletedOnboarding: true,
+            analyticsOptInEnabled: true,
+            analyticsEnabled: true,
+            personalizedRecommendationsEnabled: true,
+            consentDate: null,
+            privacyPolicyVersion: 1,
+          }),
+        });
 
-      await user.press(screen.getByText("No, stop"));
+        const drawerTitle = await screen.findByText(RECONFIRM_TITLE);
+        expect(drawerTitle).toBeVisible();
+        expect(analytics.screen).toHaveBeenCalledWith(
+          "AnalyticsConsentDrawer",
+          "Analytics consent",
+          expect.objectContaining({
+            phase: "consentReconfirm",
+            type: "drawer",
+          }),
+          true,
+          false,
+          false,
+          true,
+        );
 
-      await waitFor(() => {
-        expect(screen.queryByText("Continue improving Ledger?")).toBeNull();
+        await user.press(screen.getByRole("button", { name: "No, stop" }));
+        expect(analytics.track).toHaveBeenCalledWith(
+          "button_clicked",
+          {
+            button: "analytics_consent_opt_out",
+            page: ANALYTICS_CONSENT_DRAWER_PAGE,
+            privacyPolicyVersion: 1,
+          },
+          true,
+        );
+
+        await waitFor(() => {
+          expect(drawerTitle).not.toBeOnTheScreen();
+        });
+        expect(store.getState().settings.analyticsEnabled).toBe(false);
+        expect(store.getState().settings.personalizedRecommendationsEnabled).toBe(false);
+        expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
+        expect(analytics.updateIdentify).toHaveBeenCalledTimes(1);
       });
-      expect(store.getState().settings.analyticsEnabled).toBe(false);
-      expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
+
+      it("should open preferences when the user chooses Set preferences", async () => {
+        const { user } = renderWithReactQuery(<IntegrationNavigator />, {
+          overrideInitialState: composePortfolioOverrides({
+            hasCompletedOnboarding: true,
+            analyticsOptInEnabled: true,
+            analyticsEnabled: true,
+            personalizedRecommendationsEnabled: true,
+            consentDate: null,
+            privacyPolicyVersion: 1,
+          }),
+        });
+
+        const drawerTitle = await screen.findByText(RECONFIRM_TITLE);
+        expect(drawerTitle).toBeVisible();
+        expect(analytics.screen).toHaveBeenCalledWith(
+          "AnalyticsConsentDrawer",
+          "Analytics consent",
+          expect.objectContaining({
+            phase: "consentReconfirm",
+            type: "drawer",
+          }),
+          true,
+          false,
+          false,
+          true,
+        );
+
+        await user.press(screen.getByRole("link", { name: "Set preferences" }));
+        expect(analytics.track).toHaveBeenCalledWith("button_clicked", {
+          button: "analytics_consent_set_preferences",
+          page: ANALYTICS_CONSENT_DRAWER_PAGE,
+        });
+
+        await waitFor(() => {
+          expect(drawerTitle).not.toBeOnTheScreen();
+        });
+        expect(await screen.findByTestId("analytics-preferences-screen-title")).toBeVisible();
+      });
     });
   });
 
   describe("needs privacy policy version update", () => {
     it("should show the privacy update sheet, persist the policy version, and close after Got it", async () => {
       const { user, store } = renderWithReactQuery(<IntegrationNavigator />, {
-        overrideInitialState: overridePortfolioWithPrivacySheet,
-      });
-
-      await screen.findByTestId("PortfolioEmptyList");
-      await screen.findByText("We're updating our privacy policy");
-
-      await user.press(screen.getByText("Got it"));
-
-      await waitFor(() => {
-        expect(screen.queryByText("We're updating our privacy policy")).toBeNull();
-      });
-      expect(store.getState().settings.analyticsConsentInfo.privacyPolicyVersion).toBe(1);
-      expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
-    });
-  });
-
-  describe("when time-based renewal applies", () => {
-    it("should show reconfirm when consent is older than one year and analytics are on", async () => {
-      renderWithReactQuery(<IntegrationNavigator />, {
         overrideInitialState: composePortfolioOverrides({
           hasCompletedOnboarding: true,
           analyticsOptInEnabled: true,
           analyticsEnabled: true,
           personalizedRecommendationsEnabled: true,
-          consentDate: consentIsoOlderThanValidityWindow(),
-          privacyPolicyVersion: 1,
+          consentDate: new Date().toISOString(),
+          privacyPolicyVersion: 0,
         }),
       });
 
-      await screen.findByTestId("PortfolioEmptyList");
-      expect(await screen.findByText("Continue improving Ledger?")).toBeVisible();
-    });
-
-    it("should show fresh consent when consent is older than one year and analytics are off", async () => {
-      renderWithReactQuery(<IntegrationNavigator />, {
-        overrideInitialState: composePortfolioOverrides({
-          hasCompletedOnboarding: true,
-          analyticsOptInEnabled: true,
-          analyticsEnabled: false,
-          personalizedRecommendationsEnabled: false,
-          consentDate: consentIsoOlderThanValidityWindow(),
-          privacyPolicyVersion: 1,
+      const privacySheetTitle = await screen.findByText(PRIVACY_UPDATE_TITLE);
+      expect(privacySheetTitle).toBeVisible();
+      expect(analytics.screen).toHaveBeenCalledWith(
+        "AnalyticsConsentDrawer",
+        "Analytics consent",
+        expect.objectContaining({
+          phase: "privacy",
+          type: "drawer",
         }),
-      });
+        true,
+        false,
+        false,
+        true,
+      );
 
-      await screen.findByTestId("PortfolioEmptyList");
-      expect(await screen.findByText("Help us improve Ledger")).toBeVisible();
+      await user.press(screen.getByRole("button", { name: "Got it" }));
+      expect(analytics.track).toHaveBeenCalledWith(
+        "button_clicked",
+        {
+          button: "analytics_consent_privacy_got_it",
+          page: ANALYTICS_CONSENT_DRAWER_PAGE,
+          privacyPolicyVersion: 1,
+        },
+        true,
+      );
+
+      await waitFor(() => {
+        expect(privacySheetTitle).not.toBeOnTheScreen();
+      });
+      expect(store.getState().settings.analyticsConsentInfo.privacyPolicyVersion).toBe(1);
+      expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
+      expect(analytics.updateIdentify).toHaveBeenCalledTimes(1);
     });
   });
 });

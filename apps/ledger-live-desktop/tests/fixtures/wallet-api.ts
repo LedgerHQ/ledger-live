@@ -1196,15 +1196,6 @@ export const expectedCurrencyList = [
   },
   {
     type: "CryptoCurrency",
-    id: "sonic_blaze",
-    ticker: "S",
-    name: "Sonic Blaze",
-    family: "ethereum",
-    color: "#FFFFFF",
-    decimals: 18,
-  },
-  {
-    type: "CryptoCurrency",
     id: "babylon",
     ticker: "BABY",
     name: "Babylon",

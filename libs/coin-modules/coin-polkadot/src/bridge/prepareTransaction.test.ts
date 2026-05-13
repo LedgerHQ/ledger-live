@@ -1,4 +1,3 @@
-import { faker } from "@faker-js/faker";
 import BigNumber from "bignumber.js";
 import coinConfig from "../config";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
@@ -39,7 +38,7 @@ describe("prepareTransaction", () => {
 
   it("returns a new Transaction with new fees", async () => {
     // Given
-    const fees = new BigNumber(faker.number.int(50));
+    const fees = new BigNumber(42);
     mockEstimateFees.mockResolvedValue(fees);
     const tx = createFixtureTransaction();
 
@@ -60,7 +59,7 @@ describe("prepareTransaction", () => {
 
   it("returns the passed transaction if fees are the same", async () => {
     // Given
-    const fees = new BigNumber(faker.number.int(50));
+    const fees = new BigNumber(42);
     mockEstimateFees.mockResolvedValue(fees);
     const tx = createFixtureTransaction({ fees });
 

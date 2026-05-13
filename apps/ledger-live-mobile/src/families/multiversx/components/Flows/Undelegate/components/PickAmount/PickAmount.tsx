@@ -3,7 +3,7 @@ import { View, Keyboard, TouchableOpacity, TouchableWithoutFeedback, Platform } 
 import { Trans } from "~/context/Locale";
 import { BigNumber } from "bignumber.js";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import type { Transaction as MultiversXTransaction } from "@ledgerhq/live-common/families/multiversx/types";
+import { Transaction as MultiversXTransaction } from "@ledgerhq/live-common/families/multiversx/types";
 import { denominate } from "@ledgerhq/live-common/families/multiversx/helpers";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
@@ -43,7 +43,7 @@ const PickAmount = (props: PickAmountPropsType) => {
    * Instantiate the transaction when opening the flow. Only gets runned once.
    */
 
-  const { transaction, updateTransaction } = useBridgeTransaction(() => ({
+  const { transaction, updateTransaction } = useBridgeTransaction(bridge, () => ({
     account,
     transaction: bridge.updateTransaction(bridge.createTransaction(account), {
       recipient: validator.contract,

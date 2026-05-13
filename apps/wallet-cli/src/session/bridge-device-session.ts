@@ -46,6 +46,25 @@ export async function withCurrencyDeviceSession<T>(
 }
 
 /**
+ * Runs a callback with a DMK transport available, without opening or switching Ledger apps.
+ */
+export async function withDmkDeviceSession<T>(fn: () => Promise<T>): Promise<T> {
+  walletCliDebug("Ensuring DMK transport…");
+  try {
+    await ensureWalletCliDmkTransport();
+  } catch (e) {
+    throw WalletCliDeviceError.fromUnknown(e, { expectedApp: "Ledger dashboard" });
+  }
+  walletCliDebug("DMK device session ready.");
+  try {
+    return await fn();
+  } finally {
+    walletCliDebug("Resetting device session…");
+    await resetWalletCliDmkSession();
+  }
+}
+
+/**
  * Legacy helper for commands that still work with a currency family name.
  * Maps family → canonical currency ID, then delegates to withCurrencyDeviceSession.
  */

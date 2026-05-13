@@ -34,7 +34,7 @@ For a smooth and quick integration:
 
 **Extends Eth**
 
-Heavily inspiried by celo-web-wallet
+Heavily inspired by celo-web-wallet
 <https://github.com/celo-tools/celo-web-wallet/blob/master/src/features/ledger/CeloLedgerApp.ts>
 
 #### Parameters

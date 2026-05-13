@@ -11,7 +11,9 @@ import countervalues from "./countervalues";
 import deeplinkInstallApp from "./deeplinkInstallApp";
 import dynamicContent from "./dynamicContent";
 import earn from "./earn";
+import history from "./history";
 import inView from "./inView";
+import knownDevices from "./knownDevices";
 import largeMover from "./largeMover";
 import market from "./market";
 import modularDrawer from "./modularDrawer";
@@ -31,6 +33,8 @@ import walletconnect from "./walletconnect";
 import walletSync from "./walletSync";
 import portfolioRefresh from "./portfolioRefresh";
 import portfolioBalanceDisplay from "./portfolioBalanceDisplay";
+import recoverState from "./recoverState";
+import liveAppModal from "./liveAppModal";
 import { identitiesSlice } from "@ledgerhq/client-ids/store";
 import type { UnknownAction } from "@reduxjs/toolkit";
 
@@ -46,8 +50,10 @@ const appReducer = combineReducers({
   dynamicContent,
   earn,
   featureFlags,
+  history,
   identities: identitiesSlice.reducer,
   inView,
+  knownDevices,
   largeMover,
   market,
   modularDrawer,
@@ -68,6 +74,8 @@ const appReducer = combineReducers({
   walletSync,
   portfolioRefresh,
   portfolioBalanceDisplay,
+  recoverState,
+  liveAppModal,
   ...llmRTKApiReducers,
 });
 

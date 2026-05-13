@@ -88,6 +88,12 @@ const expectConsentReconfirm = (viewModel: ViewModel) => {
 
 const renderReconfirmViewModel = () => renderViewModel();
 
+const createStaleConsentDate = () => {
+  const staleConsentDate = new Date(FIXED_NOW);
+  staleConsentDate.setUTCDate(staleConsentDate.getUTCDate() - 366);
+  return staleConsentDate.toISOString();
+};
+
 describe("useAnalyticsConsentDialogViewModel", () => {
   beforeEach(() => {
     jest.useFakeTimers({ doNotFake: ["queueMicrotask"] });
@@ -146,6 +152,85 @@ describe("useAnalyticsConsentDialogViewModel", () => {
     expect(settings.analyticsConsentInfo.consentDate).not.toBeNull();
     expect(settings.analyticsConsentInfo.privacyPolicyVersion).toBe(1);
     expectClosed(result.current);
+  });
+
+  it("tracks opt-out as mandatory when user was already fully opted out", async () => {
+    const { result } = renderViewModel({
+      shareAnalytics: false,
+      sharePersonalizedRecommandations: false,
+      analyticsConsentInfo: {
+        consentDate: createStaleConsentDate(),
+        privacyPolicyVersion: 1,
+      },
+    });
+
+    await flushEffects();
+    expect(result.current.phase).toBe("consentFresh");
+
+    await act(async () => {
+      await result.current.applyOptOut();
+    });
+
+    expect(jest.mocked(track)).toHaveBeenCalledWith(
+      "button_clicked",
+      {
+        button: "analytics_consent_opt_out",
+        page: ANALYTICS_CONSENT_DIALOG_PAGE,
+        privacyPolicyVersion: 1,
+      },
+      true,
+    );
+  });
+
+  it("tracks privacy acknowledgement as mandatory", async () => {
+    const { result } = renderViewModel({
+      analyticsConsentInfo: {
+        consentDate: FIXED_NOW.toISOString(),
+        privacyPolicyVersion: 0,
+      },
+    });
+
+    await flushEffects();
+    expect(result.current.phase).toBe("privacy");
+
+    await act(async () => {
+      await result.current.onPrivacyGotIt();
+    });
+
+    expect(jest.mocked(track)).toHaveBeenCalledWith(
+      "button_clicked",
+      {
+        button: "analytics_consent_privacy_got_it",
+        page: ANALYTICS_CONSENT_DIALOG_PAGE,
+        privacyPolicyVersion: 1,
+      },
+      true,
+    );
+  });
+
+  it("tracks preferences confirmation as mandatory", async () => {
+    const { result } = renderReconfirmViewModel();
+
+    await flushEffects();
+    expectConsentReconfirm(result.current);
+
+    act(() => {
+      result.current.onSetPreferences();
+    });
+
+    await act(async () => {
+      await result.current.applyPreferences();
+    });
+
+    expect(jest.mocked(track)).toHaveBeenCalledWith(
+      "button_clicked",
+      {
+        button: "analytics_consent_preferences_confirm",
+        page: ANALYTICS_CONSENT_DIALOG_PAGE,
+        privacyPolicyVersion: 1,
+      },
+      true,
+    );
   });
 
   it("tracks drawer_closed when leaving portfolio while modal is open", async () => {

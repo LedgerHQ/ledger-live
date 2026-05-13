@@ -21,7 +21,12 @@ import { usePTXCustomHandlers } from "../WebPTXPlayer/CustomHandlers";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import { useCurrentAccountHistDB } from "~/screens/Platform/v2/hooks";
 import { flattenAccountsSelector } from "~/reducers/accounts";
-import { useACRECustomHandlers, useDeeplinkCustomHandlers } from "./CustomHandlers";
+import {
+  useACRECustomHandlers,
+  useDeeplinkCustomHandlers,
+  useLiveAppModalCustomHandlers,
+} from "./CustomHandlers";
+import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
 
 type Props = {
   manifest: LiveAppManifest;
@@ -32,6 +37,8 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
   const [isInfoPanelOpened, setIsInfoPanelOpened] = useState(false);
+  const hasBroadcastedWalletApiTransactionRef = useRef(false);
+  const { notifyFlowCompleted } = useNotificationsContext();
 
   const navigation =
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
@@ -50,6 +57,23 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
 
     return false;
   }, [webviewState.canGoBack, webviewAPIRef]);
+
+  const onWalletApiTransactionBroadcast = useCallback(() => {
+    hasBroadcastedWalletApiTransactionRef.current = true;
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("beforeRemove", () => {
+      if (!hasBroadcastedWalletApiTransactionRef.current) return;
+
+      hasBroadcastedWalletApiTransactionRef.current = false;
+      notifyFlowCompleted("dapp_complete");
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [navigation, notifyFlowCompleted]);
 
   useEffect(() => {
     if (Platform.OS === "android") {
@@ -88,6 +112,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
   const customACREHandlers = useACRECustomHandlers(manifest, accounts);
   const customPTXHandlers = usePTXCustomHandlers(manifest, accounts);
   const customDeeplinkHandlers = useDeeplinkCustomHandlers();
+  const customLiveAppModalHandlers = useLiveAppModalCustomHandlers(manifest);
 
   const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
     return {
@@ -95,8 +120,9 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
       ...customACREHandlers,
       ...customPTXHandlers,
       ...customDeeplinkHandlers,
+      ...customLiveAppModalHandlers,
     };
-  }, [customACREHandlers, customPTXHandlers, customDeeplinkHandlers]);
+  }, [customACREHandlers, customPTXHandlers, customDeeplinkHandlers, customLiveAppModalHandlers]);
 
   return (
     <SafeAreaView style={[styles.root]}>
@@ -109,6 +135,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
         inputs={inputs}
         onStateChange={setWebviewState}
         customHandlers={customHandlers}
+        onWalletApiTransactionBroadcast={onWalletApiTransactionBroadcast}
       />
       <BottomBar
         manifest={manifest}

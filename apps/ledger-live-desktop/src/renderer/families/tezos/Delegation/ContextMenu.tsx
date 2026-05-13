@@ -4,6 +4,7 @@ import { Trans } from "react-i18next";
 import { useDispatch } from "LLD/hooks/redux";
 import { useDelegation } from "@ledgerhq/live-common/families/tezos/react";
 import { openModal } from "~/renderer/actions/modals";
+import { RECEIVE_SOURCE_PAGE } from "LLD/features/Receive/types";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import DropDownSelector, { DropDownItem } from "~/renderer/components/DropDownSelector";
@@ -48,6 +49,7 @@ const ContextMenu = ({ account }: Props) => {
             account,
             eventType: "tezos",
             startWithWarning: receiveShouldWarnDelegation,
+            sourcePage: RECEIVE_SOURCE_PAGE.ACCOUNT_PAGE,
           }),
         ),
     },

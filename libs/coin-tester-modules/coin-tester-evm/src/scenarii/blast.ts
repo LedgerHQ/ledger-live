@@ -11,7 +11,7 @@ import { killAnvil, spawnAnvil } from "../anvil";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { MIM_ON_BLAST } from "../tokenFixtures";
 import { buildSigner } from "../signer";
-import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-alpaca/types";
+import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 
 type BlastScenarioTransaction = ScenarioTransaction<GenericTransaction, Account>;
 

@@ -49,6 +49,7 @@ import type {
 } from "../types";
 import { ensureAddressFormat, normalizeSuiAddressForComparison } from "../utils";
 import { getCurrentSuiPreloadData } from "./preload-data";
+import { mapDryRunError } from "../logic/mapDryRunError";
 
 type AsyncApiFunction<T> = (api: SuiJsonRpcClient) => Promise<T>;
 
@@ -1431,21 +1432,25 @@ export const paymentInfo = async (
   currencyId?: string,
 ) =>
   withApi(async api => {
-    const { unsigned: txb } = await createTransaction(
-      sender,
-      fakeTransaction,
-      false,
-      undefined,
-      currencyId,
-    );
-    const dryRunTxResponse = await api.dryRunTransactionBlock({ transactionBlock: txb });
-    const fees = getTotalGasUsed(dryRunTxResponse.effects);
+    try {
+      const { unsigned: txb } = await createTransaction(
+        sender,
+        fakeTransaction,
+        false,
+        undefined,
+        currencyId,
+      );
 
-    return {
-      gasBudget: dryRunTxResponse.input.gasData.budget,
-      totalGasUsed: fees,
-      fees,
-    };
+      const dryRunTxResponse = await api.dryRunTransactionBlock({ transactionBlock: txb });
+      const fees = getTotalGasUsed(dryRunTxResponse.effects);
+      return {
+        gasBudget: dryRunTxResponse.input.gasData.budget,
+        totalGasUsed: fees,
+        fees,
+      };
+    } catch (error) {
+      throw mapDryRunError(error);
+    }
   }, currencyId);
 
 export const executeTransactionBlock = async (

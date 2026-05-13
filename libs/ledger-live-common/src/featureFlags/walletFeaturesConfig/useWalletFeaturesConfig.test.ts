@@ -51,7 +51,10 @@ const makeConfig = (
   shouldDisplayOperationsList: value,
   shouldDisplayMyWallet: value,
   shouldDisplayAggregatedAssets: value,
+  shouldDisplayPnl: value,
   shouldDisplayFinishOnboardingWidget: value,
+  shouldDisplayEarnUpselling: value,
+  shouldDisplayEarnSimulator: value,
   ...overrides,
 });
 
@@ -71,7 +74,10 @@ const makeParams = (value: boolean): Wallet40Params => ({
   operationsList: value,
   aggregatedAssets: value,
   myWallet: value,
+  pnl: value,
   finishOnboardingWidget: value,
+  earnUpselling: value,
+  earnSimulator: value,
 });
 
 const DISABLED_CONFIG = makeConfig(false);
@@ -139,7 +145,14 @@ describe("useWalletFeaturesConfig hook", () => {
         ["operationsList", { operationsList: true }, { shouldDisplayOperationsList: true }],
         ["aggregatedAssets", { aggregatedAssets: true }, { shouldDisplayAggregatedAssets: true }],
         ["myWallet", { myWallet: true }, { shouldDisplayMyWallet: true }],
-        ["finishOnboardingWidget", { finishOnboardingWidget: true }, { shouldDisplayFinishOnboardingWidget: true }],
+        [
+          "finishOnboardingWidget",
+          { finishOnboardingWidget: true },
+          { shouldDisplayFinishOnboardingWidget: true },
+        ],
+        ["earnUpselling", { earnUpselling: true }, { shouldDisplayEarnUpselling: true }],
+        ["earnSimulator", { earnSimulator: true }, { shouldDisplayEarnSimulator: true }],
+        ["pnl", { pnl: true }, { shouldDisplayPnl: true }],
       ])("should return correct config when only %s is enabled", (_, params, expectedOverrides) => {
         const { result } = renderWalletFeaturesConfig(platform, {
           [flagKey]: createFeatureFlag(true, params),

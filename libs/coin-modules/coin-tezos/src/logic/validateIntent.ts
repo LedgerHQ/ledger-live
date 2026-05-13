@@ -14,11 +14,35 @@ import {
 import { validateAddress, ValidationResult } from "@taquito/utils";
 import api from "../network/tzkt";
 import type { APIAccount } from "../network/types";
-import { InvalidAddressBecauseAlreadyDelegated } from "../types/errors";
+import { InvalidAddressBecauseAlreadyDelegated, MustDelegateBeforeStaking } from "../types/errors";
 import { parseTezosTokenAsset, resolveTezosOperationMode } from "../utils";
 import { estimateFees } from "./estimateFees";
+import type { TezosOperationMode } from "../types/model";
 
 type APIUserAccount = Extract<APIAccount, { type: "user" }>;
+
+function resolveValidationOperationMode(intent: TransactionIntent): TezosOperationMode {
+  switch (intent.type) {
+    case "stake":
+    case "unstake":
+    case "finalize_unstake":
+      return intent.type;
+    default:
+      return resolveTezosOperationMode(intent.type, intent.asset);
+  }
+}
+
+function validateStrictlyPositiveAmount(amount: bigint): Error | undefined {
+  if (amount === 0n) {
+    return new AmountRequired();
+  }
+
+  if (amount < 0n) {
+    return new NotEnoughBalance();
+  }
+
+  return undefined;
+}
 
 /**
  * Validates basic recipient and amount for send transactions
@@ -47,34 +71,71 @@ function validateBasicSendParams(intent: TransactionIntent): Record<string, Erro
   return errors;
 }
 
-/**
- * Validates specific transaction constraints based on account state
- */
-function validateTransactionConstraints(
+// send max not allowed on delegated accounts (must undelegate acc first); native XTZ only
+function validateSendConstraints(
   intent: TransactionIntent,
   senderInfo: APIUserAccount,
 ): Record<string, Error> {
-  const errors: Record<string, Error> = {};
-
-  // send max not allowed on delegated accounts (must undelegate acc first); native XTZ only
   if (
-    intent.type === "send" &&
     intent.useAllAmount &&
-    resolveTezosOperationMode(intent.type, intent.asset) === "send" &&
+    resolveValidationOperationMode(intent) === "send" &&
     senderInfo.delegate?.address
   ) {
-    errors.amount = new RecommendUndelegation();
+    return { amount: new RecommendUndelegation() };
   }
+  return {};
+}
 
-  // stake requires non-zero balance
-  if (intent.type === "stake") {
-    const balance = BigInt(senderInfo.balance || "0");
-    if (balance === 0n) {
-      errors.amount = new NotEnoughBalanceToDelegate();
-    }
+function validateStakeConstraints(
+  intent: TransactionIntent,
+  senderInfo: APIUserAccount,
+): Record<string, Error> {
+  if (!senderInfo.delegate?.address) {
+    return { amount: new MustDelegateBeforeStaking() };
   }
+  const amountError = validateStrictlyPositiveAmount(intent.amount);
+  return amountError ? { amount: amountError } : {};
+}
 
-  return errors;
+function validateUnstakeConstraints(
+  intent: TransactionIntent,
+  senderInfo: APIUserAccount,
+): Record<string, Error> {
+  const stakedBalance = BigInt(senderInfo.stakedBalance ?? 0);
+  if (stakedBalance <= 0n) {
+    return { amount: new NotEnoughBalance() };
+  }
+  const amountError = validateStrictlyPositiveAmount(intent.amount);
+  if (amountError) {
+    return { amount: amountError };
+  }
+  if (intent.amount > stakedBalance) {
+    return { amount: new NotEnoughBalance() };
+  }
+  return {};
+}
+
+function validateFinalizeUnstakeConstraints(finalizable: bigint): Record<string, Error> {
+  return finalizable <= 0n ? { amount: new NotEnoughBalance() } : {};
+}
+
+function validateTransactionConstraints(
+  intent: TransactionIntent,
+  senderInfo: APIUserAccount,
+  finalizable: bigint,
+): Record<string, Error> {
+  switch (intent.type) {
+    case "send":
+      return validateSendConstraints(intent, senderInfo);
+    case "stake":
+      return validateStakeConstraints(intent, senderInfo);
+    case "unstake":
+      return validateUnstakeConstraints(intent, senderInfo);
+    case "finalize_unstake":
+      return validateFinalizeUnstakeConstraints(finalizable);
+    default:
+      return {};
+  }
 }
 
 /**
@@ -89,6 +150,10 @@ function mapTaquitoErrors(taquitoError: string, intentType: string): Record<stri
     } else {
       errors.amount = new NotEnoughBalance();
     }
+  } else if (taquitoError.endsWith("staking.too_much_unstaked")) {
+    errors.amount = new NotEnoughBalance();
+  } else if (taquitoError.endsWith("contract.must_be_delegated_to_stake")) {
+    errors.amount = new MustDelegateBeforeStaking();
   } else if (taquitoError.endsWith("delegate.unchanged") && intentType === "stake") {
     errors.recipient = new InvalidAddressBecauseAlreadyDelegated();
   } else if (taquitoError.includes("empty_implicit_contract")) {
@@ -124,7 +189,15 @@ function calculateAmounts(
   estimatedAmount: bigint | undefined,
   tokenBalanceForSendMax?: bigint,
 ): { amount: bigint; totalSpent: bigint } {
-  if (intent.type === "stake" || intent.type === "unstake") {
+  if (intent.type === "stake") {
+    return { amount: intent.amount, totalSpent: intent.amount + estimatedFees };
+  }
+
+  if (intent.type === "unstake") {
+    return { amount: intent.amount, totalSpent: estimatedFees };
+  }
+
+  if (intent.type === "finalize_unstake") {
     return { amount: 0n, totalSpent: estimatedFees };
   }
 
@@ -170,7 +243,7 @@ async function estimateFeesForIntent(
     return { estimatedFees: 2000n, estimatedAmount: undefined, errors: {} };
   }
 
-  const tezosMode = resolveTezosOperationMode(intent.type, intent.asset);
+  const tezosMode = resolveValidationOperationMode(intent);
   const tokenInfo = tezosMode === "send_token" ? parseTezosTokenAsset(intent.asset)! : undefined;
   const estimation = await estimateFees({
     account: {
@@ -182,7 +255,9 @@ async function estimateFeesForIntent(
     transaction: {
       mode: tezosMode,
       recipient: intent.recipient,
-      amount: intent.amount,
+      // finalize_unstake is a parameter-less operation; normalize amount to 0n so
+      // fee estimation and the returned validation amount stay consistent.
+      amount: intent.type === "finalize_unstake" ? 0n : intent.amount,
       useAllAmount: !!intent.useAllAmount,
       ...(tokenInfo && {
         contractAddress: tokenInfo.contractAddress,
@@ -249,7 +324,14 @@ export async function validateIntent(intent: TransactionIntent): Promise<Transac
     const senderInfo = await api.getAccountByAddress(intent.sender);
     if (senderInfo.type !== "user") throw new Error("unexpected account type");
 
-    const constraintErrors = validateTransactionConstraints(intent, senderInfo);
+    // Finalizable amount lives on /v1/staking/unstake_requests, not the account
+    // endpoint; only `finalize_unstake` validation needs it.
+    const finalizable =
+      intent.type === "finalize_unstake"
+        ? await api.getUnstakeRequestsFinalizable(intent.sender)
+        : 0n;
+
+    const constraintErrors = validateTransactionConstraints(intent, senderInfo, finalizable);
     Object.assign(errors, constraintErrors);
 
     if (Object.keys(errors).length > 0) {

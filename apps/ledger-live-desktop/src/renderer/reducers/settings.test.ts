@@ -122,6 +122,44 @@ describe("INITIAL_STATE defaults", () => {
   it("should default theme to dark", () => {
     expect(SETTINGS_INITIAL_STATE.theme).toBe("dark");
   });
+
+  it("should default analytics consent flags to false", () => {
+    expect(SETTINGS_INITIAL_STATE.shareAnalytics).toBe(false);
+    expect(SETTINGS_INITIAL_STATE.sharePersonalizedRecommandations).toBe(false);
+  });
+});
+
+describe("FETCH_SETTINGS preserves persisted analytics consent", () => {
+  it("should keep persisted shareAnalytics=true (returning opted-in users not regressed)", () => {
+    const initialState = SETTINGS_INITIAL_STATE;
+    const action = {
+      type: "FETCH_SETTINGS" as const,
+      payload: {
+        shareAnalytics: true,
+        sharePersonalizedRecommandations: true,
+      } as Partial<SettingsState>,
+    };
+    const newState = reducer(initialState, action);
+
+    expect(newState.shareAnalytics).toBe(true);
+    expect(newState.sharePersonalizedRecommandations).toBe(true);
+    expect(newState.loaded).toBe(true);
+  });
+
+  it("should keep persisted shareAnalytics=false for returning opted-out users", () => {
+    const initialState = SETTINGS_INITIAL_STATE;
+    const action = {
+      type: "FETCH_SETTINGS" as const,
+      payload: {
+        shareAnalytics: false,
+        sharePersonalizedRecommandations: false,
+      } as Partial<SettingsState>,
+    };
+    const newState = reducer(initialState, action);
+
+    expect(newState.shareAnalytics).toBe(false);
+    expect(newState.sharePersonalizedRecommandations).toBe(false);
+  });
 });
 
 describe("action: purgeAnonymousUserNotifications", () => {

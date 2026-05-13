@@ -8,7 +8,8 @@ import { Flex } from "@ledgerhq/native-ui";
 import Button from "../Button";
 import Trash from "~/icons/Trash";
 import QueuedDrawer from "~/components/QueuedDrawer";
-import { removeKnownDevice } from "~/actions/ble";
+import { removeKnownBleDevice } from "~/actions/ble";
+import { removeKnownDevice } from "~/reducers/knownDevices";
 import { DeviceIllustration } from "~/components/DeviceIllustration";
 
 const RemoveDeviceMenu = ({
@@ -24,6 +25,7 @@ const RemoveDeviceMenu = ({
 
   const onRemoveDevice = useCallback(async () => {
     dispatch(removeKnownDevice(device.deviceId));
+    dispatch(removeKnownBleDevice(device.deviceId));
     onHideMenu();
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     await disconnect(device.deviceId).catch(() => {});

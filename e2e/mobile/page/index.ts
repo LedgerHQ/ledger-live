@@ -26,6 +26,7 @@ import SwapPage from "./trade/swap.page";
 import SwapLiveAppPage from "./liveApps/swapLiveApp";
 import WalletTabNavigatorPage from "./wallet/walletTabNavigator.page";
 import MainNavigationPage from "./wallet/mainNavigation.page";
+import OperationPage from "./wallet/operation.page";
 import CeloManageAssetsPage from "./trade/celoManageAssets.page";
 import TransferMenuDrawer from "./wallet/transferMenu.drawer";
 import BuySellPage from "./trade/buySell.page";
@@ -79,6 +80,7 @@ export class Application {
   private swapPageInstance = lazyInit(SwapPage);
   private walletTabNavigatorPageInstance = lazyInit(WalletTabNavigatorPage);
   private mainNavigationPageInstance = lazyInit(MainNavigationPage);
+  private operationPageInstance = lazyInit(OperationPage);
   private celoManageAssetsPageInstance = lazyInit(CeloManageAssetsPage);
   private TransferMenuDrawerInstance = lazyInit(TransferMenuDrawer);
   private buySellPageInstance = lazyInit(BuySellPage);
@@ -202,6 +204,10 @@ export class Application {
 
   public get mainNavigation() {
     return this.mainNavigationPageInstance();
+  }
+
+  public get operation() {
+    return this.operationPageInstance();
   }
 
   public get celoManageAssets() {

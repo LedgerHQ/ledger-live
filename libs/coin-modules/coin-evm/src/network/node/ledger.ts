@@ -8,7 +8,7 @@ import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import ERC20Abi from "../../abis/erc20.abi.json";
 import OptimismGasPriceOracleAbi from "../../abis/optimismGasPriceOracle.abi.json";
-import { LedgerNodeConfig } from "../../config";
+import { BlockFinalizationTag, LedgerNodeConfig } from "../../config";
 import { GasEstimationError } from "../../errors";
 import { LedgerExplorerOperation } from "../../types";
 import { padHexString, safeEncodeEIP55 } from "../../utils";
@@ -237,10 +237,10 @@ async function getBlockByHeight(
   fetch: LedgerFetch,
   config: LedgerNodeConfig,
   _currency: CryptoCurrency,
-  blockHeight: number | "latest" = "latest",
+  blockHeight: number | BlockFinalizationTag = "latest",
   _prefetchTxs = false,
 ): Promise<BlockByHeightResult> {
-  if (blockHeight === "latest") {
+  if (typeof blockHeight !== "number") {
     const { hash, height, time, txs, prevHash } = await fetch<{
       hash: string;
       height: number;

@@ -108,6 +108,13 @@ jobs:
     uses: LedgerHQ/ledger-live/.github/workflows/test-domain-reusable.yml@develop
     secrets: inherit
 
+  test-devtools:
+    name: "Test DevTools"
+    needs: determine-affected
+    if: ${{contains(needs.determine-affected.outputs.paths, 'devtools') && !github.event.pull_request.head.repo.fork}}
+    uses: LedgerHQ/ledger-live/.github/workflows/test-devtools-reusable.yml@develop
+    secrets: inherit
+
   enforce-boundaries:
     name: "Enforce Module Boundaries"
     needs: determine-affected
@@ -185,10 +192,11 @@ jobs:
       - test-features
       - test-shared
       - test-domain
+      - test-devtools
       - build-wallet-cli
       - determine-affected
     uses: LedgerHQ/ledger-live/.github/workflows/scan-sonar-reusable.yml@develop
-    if: ${{ always() && !cancelled() && !github.event.pull_request.head.repo.fork && (needs.test-desktop.result == 'success' || needs.test-mobile.result == 'success' || needs.test-libraries.result == 'success' || needs.test-features.result == 'success' || needs.test-shared.result == 'success' || needs.test-domain.result == 'success' || needs.build-wallet-cli.result == 'success' || contains(needs.determine-affected.outputs.paths, 'e2e')) }}
+    if: ${{ always() && !cancelled() && !github.event.pull_request.head.repo.fork && (needs.test-desktop.result == 'success' || needs.test-mobile.result == 'success' || needs.test-libraries.result == 'success' || needs.test-features.result == 'success' || needs.test-shared.result == 'success' || needs.test-domain.result == 'success' || needs.test-devtools.result == 'success' || needs.build-wallet-cli.result == 'success' || contains(needs.determine-affected.outputs.paths, 'e2e')) }}
     secrets: inherit
     with:
       should_download_desktop_coverage: ${{ needs.test-desktop.outputs.coverage_generated }}
@@ -197,6 +205,7 @@ jobs:
       should_download_features_coverage: ${{ needs.test-features.outputs.coverage_generated }}
       should_download_shared_coverage: ${{ needs.test-shared.outputs.coverage_generated }}
       should_download_domain_coverage: ${{ needs.test-domain.outputs.coverage_generated }}
+      should_download_devtools_coverage: ${{ needs.test-devtools.outputs.coverage_generated }}
       should_download_wallet_cli_coverage: ${{ needs.build-wallet-cli.outputs.coverage_generated }}
 
   # Final Check required
@@ -211,6 +220,7 @@ jobs:
       - test-features
       - test-shared
       - test-domain
+      - test-devtools
       - test-design-system
       - build-web-tools
       - test-cli

@@ -1,6 +1,12 @@
 import type { AccountLike } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import { useEffect, useMemo, useState } from "react";
-import { Baker, Delegation, StakingPosition } from "@ledgerhq/coin-tezos/types/index";
+import {
+  Baker,
+  Delegation,
+  StakingPosition,
+  isTezosAccount,
+} from "@ledgerhq/coin-tezos/types/index";
 import { bakers } from "@ledgerhq/coin-tezos/network/index";
 
 export function useBakers(whitelistAddresses: string[]): Baker[] {
@@ -69,8 +75,76 @@ export function useStakingPositions(account: AccountLike): StakingPosition[] {
         delegate: delegation.address,
         state: "active" as const,
         asset: { type: "native" as const },
-        amount: BigInt(account.balance.toString()),
+        amount: account.balance,
       },
     ];
+  }, [account, delegation]);
+}
+
+export type TezosStakingInfo = {
+  isDelegated: boolean;
+  isStaked: boolean;
+  hasUnstaking: boolean;
+  delegation: Delegation | null | undefined;
+  stakedBalance: BigNumber;
+  unstakedBalance: BigNumber;
+  unstakedFinalizable: BigNumber;
+  availableBalance: BigNumber;
+  delegateAddress: string | undefined;
+};
+
+const ZERO = new BigNumber(0);
+
+/**
+ * Derived Tezos staking view over `account.stakingPositions[]` (populated by
+ * `genericGetAccountShape` when `BridgeApi.usesStakingPositions` is true).
+ * Positions are matched by uid prefix per the Paris-upgrade convention from
+ * `buildStakesForAccount`: `delegation-*` / `stake-*` / `unstaking-*` /
+ * `finalizable-*`. `availableBalance` is the non-staked delegated portion
+ * (= `delegation` position amount when delegated, else full balance).
+ */
+export function useTezosStakingInfo(account: AccountLike): TezosStakingInfo {
+  const delegation = useDelegation(account);
+
+  return useMemo(() => {
+    if (account.type !== "Account" || !isTezosAccount(account)) {
+      return {
+        isDelegated: false,
+        isStaked: false,
+        hasUnstaking: false,
+        delegation,
+        stakedBalance: ZERO,
+        unstakedBalance: ZERO,
+        unstakedFinalizable: ZERO,
+        availableBalance: ZERO,
+        delegateAddress: undefined,
+      };
+    }
+
+    const positions: StakingPosition[] = account.stakingPositions ?? [];
+    const findByPrefix = (prefix: string) => positions.find(p => p.uid.startsWith(prefix));
+
+    const delegationPos = findByPrefix("delegation-");
+    const stakePos = findByPrefix("stake-");
+    const unstakingPos = findByPrefix("unstaking-");
+    const finalizablePos = findByPrefix("finalizable-");
+
+    const stakedBalance = stakePos?.amount ?? ZERO;
+    const unstakedBalance = unstakingPos?.amount ?? ZERO;
+    const unstakedFinalizable = finalizablePos?.amount ?? ZERO;
+    const availableBalance = delegationPos?.amount ?? account.balance;
+    const delegateAddress = delegationPos?.delegate;
+
+    return {
+      isDelegated: !!delegateAddress,
+      isStaked: stakedBalance.gt(0),
+      hasUnstaking: unstakedBalance.gt(0) || unstakedFinalizable.gt(0),
+      delegation,
+      stakedBalance,
+      unstakedBalance,
+      unstakedFinalizable,
+      availableBalance,
+      delegateAddress,
+    };
   }, [account, delegation]);
 }

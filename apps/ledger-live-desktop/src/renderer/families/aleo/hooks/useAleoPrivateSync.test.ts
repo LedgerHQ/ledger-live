@@ -172,7 +172,7 @@ describe("useAleoPrivateSync", () => {
       expect(result.current.progress).toBe(100);
     });
 
-    it("should retry when complete fires without any result (scanner not yet ready)", () => {
+    it("should retry when complete fires without any result (scanner not yet ready)", async () => {
       jest.useFakeTimers();
       const firstSubject = new Subject<(acc: AleoAccount) => AleoAccount>();
       const secondSubject = new Subject<(acc: AleoAccount) => AleoAccount>();
@@ -185,6 +185,7 @@ describe("useAleoPrivateSync", () => {
       act(() => {
         result.current.start();
       });
+      await Promise.resolve(); // flush from(Promise.resolve(bridge)) microtask
 
       // Complete without emitting next — scanner returned null, retry expected
       act(() => {
@@ -197,6 +198,7 @@ describe("useAleoPrivateSync", () => {
       act(() => {
         jest.advanceTimersByTime(MANDATORY_SYNC_POLLING_DELAY);
       });
+      await Promise.resolve(); // flush from(Promise.resolve(bridge)) microtask for retry
 
       expect(mockSync).toHaveBeenCalledTimes(2);
 
@@ -208,7 +210,7 @@ describe("useAleoPrivateSync", () => {
       expect(result.current.isSyncing).toBe(false);
     });
 
-    it("should retry after polling delay when complete fires without any result", () => {
+    it("should retry after polling delay when complete fires without any result", async () => {
       jest.useFakeTimers();
       const firstSubject = new Subject<(acc: AleoAccount) => AleoAccount>();
       const secondSubject = new Subject<(acc: AleoAccount) => AleoAccount>();
@@ -221,6 +223,7 @@ describe("useAleoPrivateSync", () => {
       act(() => {
         result.current.start();
       });
+      await Promise.resolve(); // flush from(Promise.resolve(bridge)) microtask
 
       // Complete without any next emission — triggers retry after delay
       act(() => {
@@ -232,6 +235,7 @@ describe("useAleoPrivateSync", () => {
       act(() => {
         jest.advanceTimersByTime(MANDATORY_SYNC_POLLING_DELAY);
       });
+      await Promise.resolve(); // flush from(Promise.resolve(bridge)) microtask for retry
 
       expect(mockSync).toHaveBeenCalledTimes(2);
 
@@ -241,13 +245,14 @@ describe("useAleoPrivateSync", () => {
       });
     });
 
-    it("should not retry when stop() is called before complete fires", () => {
+    it("should not retry when stop() is called before complete fires", async () => {
       jest.useFakeTimers();
       const { result } = renderHook(() => useAleoPrivateSync({ account: makeAleoAccount() }));
 
       act(() => {
         result.current.start();
       });
+      await Promise.resolve(); // flush from(Promise.resolve(bridge)) microtask
 
       // stop() unsubscribes before the observable completes naturally
       act(() => {
@@ -298,8 +303,9 @@ describe("useAleoPrivateSync", () => {
   });
 
   describe("autoStart: true", () => {
-    it("should call sync immediately on mount", () => {
+    it("should call sync immediately on mount", async () => {
       renderHook(() => useAleoPrivateSync({ account: makeAleoAccount(), autoStart: true }));
+      await Promise.resolve(); // flush from(Promise.resolve(bridge)) microtask
 
       expect(mockSync).toHaveBeenCalledTimes(1);
     });
@@ -316,6 +322,8 @@ describe("useAleoPrivateSync", () => {
       const { result } = renderHook(() =>
         useAleoPrivateSync({ account: makeAleoAccount(), autoStart: true }),
       );
+
+      await Promise.resolve(); // flush from(Promise.resolve(bridge)) microtask
 
       await act(async () => {
         syncSubject.next(() => makeAleoAccount(100, true));
@@ -624,6 +632,9 @@ describe("useAleoPrivateSync", () => {
         { initialState },
       );
 
+      // Flush from(Promise.resolve(bridge)) microtask so mockSync is subscribed
+      await Promise.resolve();
+
       // Advance some progress via the progress subject
       act(() => {
         aleoPrivateSyncProgress$.next({ accountId: account.id, progress: 55 });
@@ -721,6 +732,8 @@ describe("useAleoPrivateSync", () => {
         { initialState },
       );
 
+      await Promise.resolve(); // flush from(Promise.resolve(bridge)) microtask for second sync
+
       expect(mockSync).toHaveBeenCalledTimes(2);
       expect(second.current.isSyncing).toBe(true);
     });
@@ -753,6 +766,8 @@ describe("useAleoPrivateSync", () => {
         () => useAleoPrivateSync({ account, keepAliveOnUnmount: true, autoStart: true }),
         { initialState },
       );
+
+      await Promise.resolve(); // flush from(Promise.resolve(bridge)) microtask for second sync
 
       expect(mockSync).toHaveBeenCalledTimes(2);
       expect(second.current.isSyncing).toBe(true);
@@ -818,7 +833,7 @@ describe("useAleoPrivateSync", () => {
   });
 
   describe("external completion via aleoPrivateSyncProgress$", () => {
-    it("should call onAccountUpdated immediately when Redux has already flushed lastPrivateSyncDate", () => {
+    it("should call onAccountUpdated immediately when Redux has already flushed lastPrivateSyncDate", async () => {
       jest.useFakeTimers();
       const onAccountUpdated = jest.fn();
       const syncDate = new Date();
@@ -839,6 +854,7 @@ describe("useAleoPrivateSync", () => {
       act(() => {
         result.current.start();
       });
+      await Promise.resolve(); // flush from(Promise.resolve(bridge)) microtask
 
       // Complete without a result — subscriptionRef becomes null, retry timer pending
       act(() => {
@@ -856,7 +872,7 @@ describe("useAleoPrivateSync", () => {
       expect(onAccountUpdated).toHaveBeenCalledWith(syncedAccount);
     });
 
-    it("should defer onAccountUpdated via the liveAccount effect when Redux has not yet flushed", () => {
+    it("should defer onAccountUpdated via the liveAccount effect when Redux has not yet flushed", async () => {
       jest.useFakeTimers();
       const onAccountUpdated = jest.fn();
       const account = makeAleoAccount();
@@ -869,6 +885,7 @@ describe("useAleoPrivateSync", () => {
       act(() => {
         result.current.start();
       });
+      await Promise.resolve(); // flush from(Promise.resolve(bridge)) microtask
 
       // Complete without a result — subscriptionRef becomes null, retry timer pending
       act(() => {

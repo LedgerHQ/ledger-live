@@ -17,7 +17,8 @@ export function usePortfolioSectionActions(
   isReadOnly: boolean,
   variant: "crypto" | "stablecoin" | "all",
 ): PortfolioSectionActions {
-  const { shouldDisplayAssetSection } = useWalletFeaturesConfig("mobile");
+  const { shouldDisplayAssetSection, shouldDisplayAggregatedAssets } =
+    useWalletFeaturesConfig("mobile");
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
   const { track } = useAnalytics();
 
@@ -48,7 +49,15 @@ export function usePortfolioSectionActions(
         asset: asset.currency.name,
         page: "Wallet",
       });
-      if (asset.isPlaceholder) {
+      if (shouldDisplayAggregatedAssets) {
+        navigation.navigate(NavigatorName.AssetDetail, {
+          screen: ScreenName.AssetDetail,
+          params: {
+            currencyId: asset.currency.id,
+            source: "portfolio",
+          },
+        });
+      } else if (asset.isPlaceholder) {
         const currencyId = dadaIdToMarketId(asset.marketId ?? asset.currency.id);
         navigation.navigate(ScreenName.MarketDetail, {
           currencyId,
@@ -62,7 +71,7 @@ export function usePortfolioSectionActions(
         });
       }
     },
-    [navigation, track],
+    [navigation, track, shouldDisplayAggregatedAssets],
   );
 
   return { onPressShowAll, onItemPress };

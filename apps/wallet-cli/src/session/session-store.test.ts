@@ -1,6 +1,9 @@
-import { describe, expect, it } from "bun:test";
+import { describe, expect, it, afterEach } from "bun:test";
 import { YAML } from "bun";
-import { generateLabel, Session } from "./session-store";
+import { statSync, mkdtempSync, mkdirSync, writeFileSync, chmodSync, rmSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { tmpdir } from "node:os";
+import { generateLabel, getSessionPath, Session } from "./session-store";
 import type { AccountDescriptorV1 } from "../shared/accountDescriptor";
 
 const btcNative: AccountDescriptorV1 = {
@@ -180,5 +183,46 @@ describe("YAML round-trip", () => {
     const yaml = YAML.stringify({ accounts: entries });
     const parsed = YAML.parse(yaml);
     expect(parsed).toEqual({ accounts: entries });
+  });
+});
+
+describe("Session.write() permissions", () => {
+  let tmpDir: string | undefined;
+  let savedEnv: string | undefined;
+
+  afterEach(() => {
+    if (savedEnv === undefined) delete process.env.XDG_STATE_HOME;
+    else process.env.XDG_STATE_HOME = savedEnv;
+    if (tmpDir) rmSync(tmpDir, { recursive: true, force: true });
+  });
+
+  it("creates state dir 0700 and session file 0600", () => {
+    savedEnv = process.env.XDG_STATE_HOME;
+    tmpDir = mkdtempSync(join(tmpdir(), "wallet-cli-perm-"));
+    process.env.XDG_STATE_HOME = tmpDir;
+
+    Session.from([]).write();
+
+    const sessionFile = getSessionPath();
+    expect(statSync(dirname(sessionFile)).mode & 0o777).toBe(0o700);
+    expect(statSync(sessionFile).mode & 0o777).toBe(0o600);
+  });
+
+  it("corrects too-permissive existing dir and file to 0700/0600", () => {
+    savedEnv = process.env.XDG_STATE_HOME;
+    tmpDir = mkdtempSync(join(tmpdir(), "wallet-cli-perm-"));
+    process.env.XDG_STATE_HOME = tmpDir;
+
+    // Pre-create with permissive modes (simulating a prior installation)
+    const stateDirectory = dirname(getSessionPath());
+    mkdirSync(stateDirectory, { recursive: true });
+    chmodSync(stateDirectory, 0o755);
+    writeFileSync(getSessionPath(), "", { mode: 0o644 });
+    chmodSync(getSessionPath(), 0o644);
+
+    Session.from([]).write();
+
+    expect(statSync(stateDirectory).mode & 0o777).toBe(0o700);
+    expect(statSync(getSessionPath()).mode & 0o777).toBe(0o600);
   });
 });

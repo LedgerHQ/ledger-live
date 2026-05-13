@@ -2,21 +2,36 @@ import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { Text, Button } from "@ledgerhq/lumen-ui-rnative";
+import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { setProductTourCompleted } from "~/actions/settings";
 import { productTourCompletedSelector } from "~/reducers/settings";
+import { ProductTourControlsProvider } from "../context/ProductTourControlsContext";
 import { useProductTourDrawer, ProductTourDrawer } from "../Drawer";
 import { SectionCard, ToggleRow } from "./components";
 
+const LWM_PRODUCT_TOUR_FLAG = "lwmProductTour";
+
 function ProductTourScreenDebug() {
   const dispatch = useDispatch();
+  const { getFeature, overrideFeature } = useFeatureFlags();
 
   const productTourCompleted = useSelector(productTourCompletedSelector);
-  const { isDrawerOpen, openDrawer, closeDrawer, onSlideChange } = useProductTourDrawer();
+  const lwmProductTourFeature = getFeature(LWM_PRODUCT_TOUR_FLAG);
+  const isLwmProductTourEnabled = lwmProductTourFeature?.enabled ?? false;
+  const { isDrawerOpen, openProductTour, closeProductTour, onSlideChange, onPrimaryAction } =
+    useProductTourDrawer();
 
   const handleToggleProductTourCompleted = useCallback(() => {
     dispatch(setProductTourCompleted(!productTourCompleted));
   }, [dispatch, productTourCompleted]);
+
+  const handleToggleLwmProductTourEnabled = useCallback(() => {
+    overrideFeature(LWM_PRODUCT_TOUR_FLAG, {
+      ...lwmProductTourFeature,
+      enabled: !isLwmProductTourEnabled,
+    });
+  }, [lwmProductTourFeature, isLwmProductTourEnabled, overrideFeature]);
 
   return (
     <View style={styles.root}>
@@ -25,6 +40,19 @@ function ProductTourScreenDebug() {
           <Text typography="body2" lx={{ color: "muted" }}>
             {"Allows you to test the UI of the Product Tour drawer."}
           </Text>
+        </SectionCard>
+
+        <SectionCard title="Feature Flag">
+          <ToggleRow
+            label="lwmProductTour enabled"
+            value={isLwmProductTourEnabled}
+            onChange={handleToggleLwmProductTourEnabled}
+            description={
+              isLwmProductTourEnabled
+                ? "Feature flag is enabled. Toggle to disable."
+                : "Feature flag is disabled. Toggle to enable."
+            }
+          />
         </SectionCard>
 
         <SectionCard title="Tour State">
@@ -48,16 +76,22 @@ function ProductTourScreenDebug() {
       </ScrollView>
 
       <View style={styles.footer}>
-        <Button size="lg" appearance="accent" onPress={openDrawer}>
+        <Button size="lg" appearance="accent" onPress={openProductTour}>
           {"Open Drawer"}
         </Button>
       </View>
 
-      <ProductTourDrawer
-        isDrawerOpen={isDrawerOpen}
-        closeDrawer={closeDrawer}
-        onSlideChange={onSlideChange}
-      />
+      <ProductTourControlsProvider
+        value={{
+          openProductTour,
+          closeProductTour,
+          onSlideChange,
+          isDrawerOpen,
+          onPrimaryAction,
+        }}
+      >
+        <ProductTourDrawer />
+      </ProductTourControlsProvider>
     </View>
   );
 }

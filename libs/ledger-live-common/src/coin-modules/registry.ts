@@ -5,9 +5,6 @@ import type {
   CoinModuleLoader,
   DeviceTransactionConfigFn,
   FamilySetup,
-  GetStuckAccountAndOperationFn,
-  IsEditableOperationFn,
-  IsStuckOperationFn,
   MockAccountModule,
   MockBridgeModule,
   PlatformAdapterModule,
@@ -15,7 +12,7 @@ import type {
   ValidateAddressFn,
   WalletApiAdapterModule,
 } from "./types";
-import type { Account } from "@ledgerhq/types-live";
+import type { AccountBridgeExtensions } from "@ledgerhq/types-live";
 
 const loaders = new Map<string, CoinModuleLoader>();
 
@@ -87,33 +84,11 @@ export const loadMockBridgeForFamily = (family: string): MockBridgeModule | unde
 export const loadMockAccountForFamily = (family: string): MockAccountModule | undefined =>
   loaders.get(family)?.loadMockAccount?.();
 
-export const loadIsAccountEmptyForFamily = (
-  family: string,
-): ((account: Account) => boolean) | undefined => loaders.get(family)?.loadIsAccountEmpty?.();
-
-export const loadGetVotesCountForFamily = (
-  family: string,
-): ((account: Account) => number) | undefined => loaders.get(family)?.loadGetVotesCount?.();
-
-export const loadClearAccountForFamily = (
-  family: string,
-): ((account: Account) => void) | undefined => loaders.get(family)?.loadClearAccount?.();
-
 export const loadValidateAddressForFamily = (family: string): ValidateAddressFn | undefined =>
   loaders.get(family)?.loadValidateAddress?.();
 
 export const loadSignerForFamily = (family: string): AlpacaSigner | undefined =>
   loaders.get(family)?.loadSigner?.();
 
-export const loadIsEditableOperationForFamily = (
-  family: string,
-): IsEditableOperationFn | undefined => loaders.get(family)?.loadIsEditableOperation?.();
-
-export const loadIsStuckOperationForFamily = (
-  family: string,
-): IsStuckOperationFn | undefined => loaders.get(family)?.loadIsStuckOperation?.();
-
-export const loadGetStuckAccountAndOperationForFamily = (
-  family: string,
-): GetStuckAccountAndOperationFn | undefined =>
-  loaders.get(family)?.loadGetStuckAccountAndOperation?.();
+export const loadBridgeExtensionsForFamily = (family: string): AccountBridgeExtensions =>
+  loaders.get(family)?.loadBridgeExtensions?.() ?? {};

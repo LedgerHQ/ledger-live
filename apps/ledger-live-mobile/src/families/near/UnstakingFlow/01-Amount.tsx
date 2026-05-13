@@ -19,15 +19,15 @@ type Props = BaseComposite<
 function UnstakingAmount({ navigation, route }: Props) {
   const { account } = useAccountScreen(route);
   invariant(account, "account required");
-  const bridge = useAccountBridge<Transaction>(account, undefined);
   const mainAccount = getMainAccount(account, undefined);
+  const bridge = useAccountBridge<Transaction>(account, undefined);
   const { validatorId } = route.params.stakingPosition;
   const {
     transaction: bridgeTransaction,
     updateTransaction,
     status,
     bridgePending,
-  } = useBridgeTransaction(() => {
+  } = useBridgeTransaction(bridge, () => {
     const t = bridge.createTransaction(mainAccount);
     return {
       account,

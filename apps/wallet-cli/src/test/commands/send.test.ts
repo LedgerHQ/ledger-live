@@ -1,6 +1,7 @@
-import { describe, it, expect, beforeAll, afterAll } from "bun:test";
+import { describe, it, expect, beforeAll, afterAll, afterEach } from "bun:test";
 import { MockServer } from "../helpers/mock-server";
 import { runCli } from "../helpers/cli-runner";
+import { makeSessionDir } from "../helpers/session-fixture";
 import { ETH_SYNC_ROUTES } from "../helpers/eth-sync-routes";
 import { MOCK_ETH_DESCRIPTOR, MOCK_ETH_ADDRESS, MOCK_ETH_PUBKEY } from "../helpers/constants";
 
@@ -34,15 +35,22 @@ const SEND_ROUTES = [
 describe("send (non-dry-run): device model resolution", () => {
   const server = new MockServer([]);
 
+  let sessionCleanup: (() => void) | undefined;
   beforeAll(() => server.start());
   afterAll(() => server.stop());
+  afterEach(() => {
+    sessionCleanup?.();
+    sessionCleanup = undefined;
+  });
 
   it("exits with a clear error when deviceModelId cannot be resolved from the DMK session", async () => {
+    const fixture = makeSessionDir([{ label: "ethereum-1", descriptor: MOCK_ETH_DESCRIPTOR }]);
+    sessionCleanup = fixture.cleanup;
     const { stdout, exitCode } = await runCli(
       [
         "send",
         "--account",
-        MOCK_ETH_DESCRIPTOR,
+        "ethereum-1",
         "--to",
         "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
         "--amount",
@@ -57,6 +65,7 @@ describe("send (non-dry-run): device model resolution", () => {
         WALLET_CLI_MOCK_APP_RESULTS: JSON.stringify({
           Ethereum: { publicKey: MOCK_ETH_PUBKEY, address: MOCK_ETH_ADDRESS },
         }),
+        ...fixture.env,
       },
     );
     expect(exitCode).toBe(1);
@@ -69,15 +78,22 @@ describe("send (non-dry-run): device model resolution", () => {
 describe("send --dry-run command", () => {
   const server = new MockServer(SEND_ROUTES);
 
+  let sessionCleanup: (() => void) | undefined;
   beforeAll(() => server.start());
   afterAll(() => server.stop());
+  afterEach(() => {
+    sessionCleanup?.();
+    sessionCleanup = undefined;
+  });
 
   it("json output: exits 0 and returns a dry-run send envelope for ETH", async () => {
+    const fixture = makeSessionDir([{ label: "ethereum-1", descriptor: MOCK_ETH_DESCRIPTOR }]);
+    sessionCleanup = fixture.cleanup;
     const { stdout, exitCode, stderr } = await runCli(
       [
         "send",
         "--account",
-        MOCK_ETH_DESCRIPTOR,
+        "ethereum-1",
         "--to",
         "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
         "--amount",
@@ -92,6 +108,7 @@ describe("send --dry-run command", () => {
         WALLET_CLI_MOCK_APP_RESULTS: JSON.stringify({
           Ethereum: { publicKey: MOCK_ETH_PUBKEY, address: MOCK_ETH_ADDRESS },
         }),
+        ...fixture.env,
       },
     );
     expect(exitCode, `stderr: ${stderr}`).toBe(0);

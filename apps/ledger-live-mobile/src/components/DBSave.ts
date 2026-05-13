@@ -13,7 +13,9 @@ import {
   saveCountervalues,
   saveCryptoAssetsCacheState,
   saveFeatureFlagsState,
+  saveHistory,
   saveIdentities,
+  saveKnownDevices,
   saveLargeMoverState,
   saveMarketState,
   savePostOnboardingState,
@@ -24,6 +26,7 @@ import {
 import { exportSelector as accountsExportSelector } from "~/reducers/accounts";
 import { countervaluesStateSelector } from "~/reducers/countervalues";
 import { exportSelector as bleSelector } from "~/reducers/ble";
+import { exportSelector as knownDevicesExportSelector } from "~/reducers/knownDevices";
 import { exportLargeMoverSelector } from "~/reducers/largeMover";
 import { exportMarketSelector } from "~/reducers/market";
 import { settingsStoreSelector } from "~/reducers/settings";
@@ -165,6 +168,7 @@ const accountsDbSaveSliceSelector = createSelector(
   (accounts, wallet) => ({ accounts, wallet }),
 );
 const bleNotEquals = (a: State, b: State) => a.ble !== b.ble;
+const knownDevicesNotEquals = (a: State, b: State) => a.knownDevices !== b.knownDevices;
 
 const getPostOnboardingStateChanged = (a: State, b: State) =>
   !isEqual(a.postOnboarding, b.postOnboarding);
@@ -184,6 +188,7 @@ const featureFlagsLense = (state: State) => ({
   overrides: state.featureFlags.overrides,
   bannerVisible: state.featureFlags.bannerVisible,
 });
+const historyNotEquals = (a: State, b: State) => a.history !== b.history;
 const identitiesNotEquals = (a: State, b: State) => a.identities !== b.identities;
 
 const extractIdentitiesForPersistence = (state: State) =>
@@ -231,6 +236,14 @@ export const ConfigureDBSaveEffects = () => {
     lense: bleSelector,
   });
   useDBSaveEffect({
+    stateSelector: (state: State) => state.knownDevices,
+    save: saveKnownDevices,
+    throttle: 500,
+    getChangesStats: knownDevicesNotEquals,
+    lense: knownDevicesExportSelector,
+    saveAtStart: true,
+  });
+  useDBSaveEffect({
     stateSelector: (state: State) => state.postOnboarding,
     save: savePostOnboardingState,
     throttle: 500,
@@ -276,6 +289,14 @@ export const ConfigureDBSaveEffects = () => {
     throttle: 1000,
     getChangesStats: cryptoAssetsNotEquals,
     lense: extractPersistedCALFromState,
+  });
+
+  useDBSaveEffect({
+    stateSelector: (state: State) => state.history,
+    save: saveHistory,
+    throttle: 500,
+    getChangesStats: historyNotEquals,
+    lense: (state: State) => state.history,
   });
 
   useDBSaveEffect({

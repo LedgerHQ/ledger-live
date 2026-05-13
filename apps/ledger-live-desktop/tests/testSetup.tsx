@@ -306,6 +306,8 @@ function renderHook<Result, Props>(
     store?: ReduxStore;
     minimal?: boolean;
     skipRouter?: boolean;
+    /** When set, MemoryRouter starts at this location (e.g. `/history?accountIds=foo`). */
+    initialRoute?: string;
     wrapper?: React.ComponentType<{ children: React.ReactNode }>;
   } = {},
 ): RenderHookResult<Result, Props> & { store: ReduxStore } {
@@ -316,6 +318,7 @@ function renderHook<Result, Props>(
     store = createStore({ state: initialState as State, dbMiddleware }),
     minimal = true,
     skipRouter = false,
+    initialRoute,
     wrapper: Wrapper,
   } = options;
 
@@ -323,7 +326,12 @@ function renderHook<Result, Props>(
     store,
     ...rtlRenderHook(hook, {
       wrapper: ({ children }) => (
-        <Providers store={store} minimal={minimal} skipRouter={skipRouter}>
+        <Providers
+          store={store}
+          minimal={minimal}
+          skipRouter={skipRouter}
+          initialRoute={initialRoute}
+        >
           {Wrapper ? <Wrapper>{children}</Wrapper> : children}
         </Providers>
       ),

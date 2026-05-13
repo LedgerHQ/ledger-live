@@ -13,6 +13,7 @@ import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAle
 import { StepProps } from "..";
 import { useDispatch } from "LLD/hooks/redux";
 import { openModal } from "~/renderer/actions/modals";
+import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import { NetworkDown } from "@ledgerhq/errors";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -91,9 +92,11 @@ export const StepChooseCurrencyFooter = ({
             ? {
                 account: tokenAccount,
                 parentAccount: parentTokenAccount,
+                sourcePage: HOOKS_TRACKING_LOCATIONS.addAccountModal,
               }
             : {
                 account: parentTokenAccount, // else receive to parent account
+                sourcePage: HOOKS_TRACKING_LOCATIONS.addAccountModal,
               },
         ),
       );

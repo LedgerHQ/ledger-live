@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { applyMemoToTransaction } from "@ledgerhq/live-common/bridge/descriptor/send/memo";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { useAccountBridgeOrNull } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type {
   SendFlowTransactionState,
@@ -24,6 +24,7 @@ export function useSendFlowTransaction({
   account,
   parentAccount,
 }: UseSendFlowTransactionParams): UseSendFlowTransactionResult {
+  const bridge = useAccountBridgeOrNull<Transaction>(account, parentAccount);
   const {
     transaction,
     setTransaction: bridgeSetTransaction,
@@ -32,7 +33,7 @@ export function useSendFlowTransaction({
     bridgeError,
     bridgePending,
     setAccount,
-  } = useBridgeTransaction(() => {
+  } = useBridgeTransaction(bridge, () => {
     if (!account) return {};
     return { account, parentAccount: parentAccount ?? undefined };
   });
@@ -49,9 +50,8 @@ export function useSendFlowTransaction({
 
   const setRecipient = useCallback(
     (recipient: RecipientData) => {
-      if (!account || !transaction) return;
+      if (!account || !transaction || !bridge) return;
 
-      const bridge = getAccountBridge(account, parentAccount);
       const updates: Partial<Transaction> = { recipient: recipient.address };
 
       if (recipient.memo !== undefined) {
@@ -78,7 +78,7 @@ export function useSendFlowTransaction({
 
       bridgeSetTransaction(bridge.updateTransaction(transaction, updates));
     },
-    [account, parentAccount, transaction, bridgeSetTransaction],
+    [account, bridge, transaction, bridgeSetTransaction],
   );
 
   const setAccountForTransaction = useCallback(

@@ -10,6 +10,7 @@ import { handlers as acreHandlers } from "@ledgerhq/live-common/wallet-api/ACRE/
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/ACRE/tracking";
 import { track } from "~/renderer/analytics/segment";
 import { openModal } from "~/renderer/actions/modals";
+import { setLiveAppModal } from "~/renderer/reducers/liveAppModal";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
@@ -17,6 +18,8 @@ import { replaceAccounts, updateAccountWithUpdater } from "~/renderer/actions/ac
 import { WebviewProps } from "../Web3AppWebview/types";
 import { setAccountName } from "@ledgerhq/live-wallet/store";
 import { handlers as deeplinkHandlers } from "@ledgerhq/live-common/wallet-api/CustomDeeplink/server";
+import { handlers as liveAppModalHandlers } from "@ledgerhq/live-common/wallet-api/LiveAppModal/server";
+import { resolveLiveAppModalParams } from "@ledgerhq/live-common/wallet-api/LiveAppModal/types";
 
 export function useACRECustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
   const { pushToast } = useToasts();
@@ -165,4 +168,19 @@ export function useDeeplinkCustomHandlers() {
       }),
     };
   }, []);
+}
+
+export function useLiveAppModalCustomHandlers(manifest: WebviewProps["manifest"]) {
+  const dispatch = useDispatch();
+  return useMemo<WalletAPICustomHandlers>(() => {
+    return {
+      ...liveAppModalHandlers({
+        uiHooks: {
+          "custom.liveApp.modal.open": input => {
+            dispatch(setLiveAppModal(resolveLiveAppModalParams(input, manifest.id)));
+          },
+        },
+      }),
+    };
+  }, [dispatch, manifest.id]);
 }

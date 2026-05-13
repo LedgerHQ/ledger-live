@@ -1,10 +1,12 @@
 import type { BlockInfo } from "@ledgerhq/coin-module-framework/api/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCoinConfig } from "../config";
 import { getNodeApi } from "../network/node";
 
 export async function lastBlock(currency: CryptoCurrency): Promise<BlockInfo> {
   const api = getNodeApi(currency);
-  const result = await api.getBlockByHeight(currency, "latest");
+  const { finalizationLevel = "latest" } = getCoinConfig(currency.id).info;
+  const result = await api.getBlockByHeight(currency, finalizationLevel);
 
   return {
     height: result.height,

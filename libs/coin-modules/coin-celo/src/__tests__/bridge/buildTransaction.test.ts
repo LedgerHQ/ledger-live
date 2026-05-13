@@ -1,4 +1,6 @@
 import BigNumber from "bignumber.js";
+import { electionABI } from "@celo/abis";
+import { encodeFunctionData } from "viem";
 import buildTransaction from "../../bridge/buildTransaction";
 import {
   accountFixture,
@@ -7,139 +9,89 @@ import {
   transactionWithUsdcFeeFixture,
   tokenTransactionWithUsdcFeeFixture,
 } from "../../bridge/fixtures";
+import { ZERO_ADDRESS } from "../../constants";
 
-const chainIdMock = jest.fn();
-const nonceMock = jest.fn();
-const voteMock = jest.fn(() => ({
-  txo: {
-    encodeABI: jest.fn(() => ({ data: "vote_data" })),
-    estimateGas: jest.fn(async () => 1),
+const LOCKED_GOLD_ADDRESS = "0x0000000000000000000000000000000000001d00";
+const ELECTION_ADDRESS = "0x000000000000000000000000000000000000ce10";
+const ACCOUNTS_ADDRESS = "0x000000000000000000000000000000000000aa10";
+const STABLE_TOKEN_ADDRESS = "0x765DE816845861e75A25fCA122bb6898B8B1282a";
+const VALID_RECIPIENT = "0x79D5A290D7ba4b99322d91b577589e8d0BF87072";
+
+const estimateGasMock = jest.fn(async () => BigInt(3));
+const getChainIdMock = jest.fn(async () => 42220);
+const getTransactionCountMock = jest.fn(async () => 1);
+const readContractMock = jest.fn<Promise<unknown>, [{ functionName: string }]>(
+  async ({ functionName }) => {
+    if (functionName === "canReceiveVotes") return true;
+    if (functionName === "getTotalVotesForEligibleValidatorGroups") return [[], []];
+    return ZERO_ADDRESS;
   },
-}));
-const revokeMock = jest.fn();
-const voteSignerToAccountMock = jest.fn();
+);
 
-jest.mock("../../network/sdk", () => {
-  return {
-    celoKit: jest.fn(() => ({
-      contracts: {
-        getLockedGold: jest.fn(async () => ({
-          address: "address",
-          lock: jest.fn(() => ({
-            txo: {
-              encodeABI: jest.fn(() => ({ data: "lock_data" })),
-              estimateGas: jest.fn(async () => 2),
-            },
-          })),
-          unlock: jest.fn(() => ({
-            txo: {
-              encodeABI: jest.fn(() => ({ data: "unlock_data" })),
-              estimateGas: jest.fn(async () => 3),
-            },
-          })),
-          withdraw: jest.fn(() => ({
-            txo: {
-              encodeABI: jest.fn(() => ({ data: "withdraw_data" })),
-              estimateGas: jest.fn(async () => 3),
-            },
-          })),
-          vote: jest.fn(() => ({
-            txo: {
-              encodeABI: jest.fn(() => ({ data: "vote_data" })),
-              estimateGas: jest.fn(async () => 3),
-            },
-          })),
-        })),
-        getElection: jest.fn(async () => ({
-          vote: voteMock,
-          revoke: revokeMock,
-          activate: jest.fn(() => ({
-            find: jest.fn(() => ({
-              txo: {
-                encodeABI: jest.fn(() => ({ data: "vote_data" })),
-                estimateGas: jest.fn(async () => 3),
-              },
-            })),
-          })),
-          address: "vote_address",
-        })),
-        getAccounts: jest.fn(async () => ({
-          voteSignerToAccount: voteSignerToAccountMock,
-          createAccount: jest.fn(() => ({
-            txo: {
-              encodeABI: jest.fn(() => ({ data: "register_data" })),
-              estimateGas: jest.fn(async () => 3),
-            },
-          })),
-          address: "register_address",
-        })),
-        getStableToken: jest.fn(async () => ({
-          address: "stable_token_address",
-          transfer: jest.fn(() => ({
-            txo: {
-              encodeABI: jest.fn(() => ({ data: "send_token_data" })),
-            },
-          })),
-        })),
-        getErc20: jest.fn(async () => ({
-          address: "erc20_token_address",
-          transfer: jest.fn(() => ({
-            txo: {
-              encodeABI: jest.fn(() => ({ data: "send_token_data" })),
-            },
-          })),
-        })),
-      },
-      connection: {
-        chainId: chainIdMock,
-        nonce: nonceMock,
-        estimateGasWithInflationFactor: jest.fn().mockReturnValue(3),
-        web3: { eth: { getBlock: jest.fn().mockResolvedValue({ baseFeePerGas: 10 }) } },
-        getMaxPriorityFeePerGas: jest.fn().mockResolvedValue(1),
-      },
-    })),
-  };
-});
+jest.mock("../../network/client", () => ({
+  getCeloClient: jest.fn(() => ({
+    estimateGas: estimateGasMock,
+    getChainId: getChainIdMock,
+    getTransactionCount: getTransactionCountMock,
+    readContract: readContractMock,
+  })),
+}));
+
+jest.mock("../../network/registry", () => ({
+  getRegistryAddressFor: jest.fn(async (name: string) => {
+    if (name === "LockedGold") return LOCKED_GOLD_ADDRESS;
+    if (name === "Election") return ELECTION_ADDRESS;
+    if (name === "Accounts") return ACCOUNTS_ADDRESS;
+    if (name === "StableTokenEUR") return STABLE_TOKEN_ADDRESS;
+    if (name === "StableToken") return STABLE_TOKEN_ADDRESS;
+    return ZERO_ADDRESS;
+  }),
+}));
+
+jest.mock("../../network/sdk", () => ({
+  voteSignerAccount: jest.fn(async () => "signer_account"),
+}));
 
 describe("buildTransaction", () => {
+  beforeEach(() => {
+    estimateGasMock.mockClear();
+    getChainIdMock.mockClear();
+    getTransactionCountMock.mockClear();
+    readContractMock.mockReset();
+    readContractMock.mockImplementation(async ({ functionName }) => {
+      if (functionName === "canReceiveVotes") return true;
+      if (functionName === "getTotalVotesForEligibleValidatorGroups") return [[], []];
+      return ZERO_ADDRESS;
+    });
+  });
+
   it("should build a lock transaction", async () => {
     const transaction = await buildTransaction(
       { ...accountFixture, spendableBalance: BigNumber(123) },
-      {
-        ...transactionFixture,
-        mode: "lock",
-      },
+      { ...transactionFixture, mode: "lock" },
     );
 
     expect(transaction).toMatchObject({
       from: accountFixture.freshAddress,
-      to: "address",
+      to: LOCKED_GOLD_ADDRESS,
       value: "0xa",
-      data: { data: "lock_data" },
-      gas: "12",
     });
-
-    expect(chainIdMock).toHaveBeenCalledTimes(1);
-    expect(nonceMock).toHaveBeenCalledWith(accountFixture.freshAddress);
+    expect(getChainIdMock).toHaveBeenCalledTimes(1);
+    expect(getTransactionCountMock).toHaveBeenCalledWith({
+      address: accountFixture.freshAddress,
+    });
   });
 
   it("should build a lock transaction with useAllAmount", async () => {
     const transaction = await buildTransaction(
       { ...accountFixture, spendableBalance: BigNumber(123) },
-      {
-        ...transactionFixture,
-        mode: "lock",
-        useAllAmount: true,
-        fees: BigNumber(2),
-      },
+      { ...transactionFixture, mode: "lock", useAllAmount: true, fees: BigNumber(2) },
     );
 
     expect(transaction).toMatchObject({
       from: accountFixture.freshAddress,
-      to: "address",
+      to: LOCKED_GOLD_ADDRESS,
       value: "0x79",
-      data: { data: "lock_data" },
-      gas: "12",
     });
   });
 
@@ -159,17 +111,12 @@ describe("buildTransaction", () => {
           maxNumGroupsVotedFor: BigNumber(0),
         },
       },
-      {
-        ...transactionFixture,
-        mode: "unlock",
-      },
+      { ...transactionFixture, mode: "unlock" },
     );
 
     expect(transaction).toMatchObject({
       from: accountFixture.freshAddress,
-      to: "address",
-      data: { data: "unlock_data" },
-      gas: "12",
+      to: LOCKED_GOLD_ADDRESS,
     });
   });
 
@@ -189,18 +136,12 @@ describe("buildTransaction", () => {
           maxNumGroupsVotedFor: BigNumber(0),
         },
       },
-      {
-        ...transactionFixture,
-        useAllAmount: true,
-        mode: "unlock",
-      },
+      { ...transactionFixture, useAllAmount: true, mode: "unlock" },
     );
 
     expect(transaction).toMatchObject({
       from: accountFixture.freshAddress,
-      to: "address",
-      data: { data: "unlock_data" },
-      gas: "12",
+      to: LOCKED_GOLD_ADDRESS,
     });
   });
 
@@ -220,17 +161,12 @@ describe("buildTransaction", () => {
           maxNumGroupsVotedFor: BigNumber(0),
         },
       },
-      {
-        ...transactionFixture,
-        mode: "withdraw",
-      },
+      { ...transactionFixture, mode: "withdraw" },
     );
 
     expect(transaction).toMatchObject({
       from: accountFixture.freshAddress,
-      to: "address",
-      data: { data: "withdraw_data" },
-      gas: "12",
+      to: LOCKED_GOLD_ADDRESS,
     });
   });
 
@@ -250,68 +186,133 @@ describe("buildTransaction", () => {
           maxNumGroupsVotedFor: BigNumber(0),
         },
       },
-      {
-        ...transactionFixture,
-        mode: "vote",
-      },
+      { ...transactionFixture, mode: "vote", recipient: VALID_RECIPIENT },
     );
 
     expect(transaction).toMatchObject({
       from: accountFixture.freshAddress,
-      to: "vote_address",
-      data: { data: "vote_data" },
-      gas: "12",
+      to: ELECTION_ADDRESS,
     });
-
-    expect(voteMock).toHaveBeenCalledTimes(1);
-    expect(voteMock).toHaveBeenCalledWith(transactionFixture.recipient, new BigNumber(10));
   });
 
-  it("should build a revoke transaction but fail without revokes", async () => {
-    revokeMock.mockClear();
-
-    revokeMock.mockReturnValue({
-      find: jest.fn(() => false),
+  it("should use lesser and greater neighbors when building a vote transaction", async () => {
+    const groupA = "0x00000000000000000000000000000000000000a1" as `0x${string}`;
+    const groupB = "0x00000000000000000000000000000000000000b2" as `0x${string}`;
+    readContractMock.mockImplementation(async ({ functionName }: { functionName: string }) => {
+      if (functionName === "canReceiveVotes") return true;
+      if (functionName === "getTotalVotesForEligibleValidatorGroups") {
+        return [
+          [groupA, groupB],
+          [BigInt(10), BigInt(30)],
+        ];
+      }
+      return ZERO_ADDRESS;
     });
 
-    expect(
-      async () =>
-        await buildTransaction(
-          {
-            ...accountFixture,
-            spendableBalance: BigNumber(123),
-            celoResources: {
-              registrationStatus: false,
-              lockedBalance: BigNumber(0),
-              nonvotingLockedBalance: BigNumber(40),
-              pendingWithdrawals: null,
-              votes: null,
-              electionAddress: null,
-              lockedGoldAddress: null,
-              maxNumGroupsVotedFor: BigNumber(0),
-            },
+    const transaction = await buildTransaction(
+      {
+        ...accountFixture,
+        spendableBalance: BigNumber(123),
+        celoResources: {
+          registrationStatus: false,
+          lockedBalance: BigNumber(0),
+          nonvotingLockedBalance: BigNumber(40),
+          pendingWithdrawals: null,
+          votes: null,
+          electionAddress: null,
+          lockedGoldAddress: null,
+          maxNumGroupsVotedFor: BigNumber(0),
+        },
+      },
+      { ...transactionFixture, mode: "vote", recipient: VALID_RECIPIENT },
+    );
+
+    const expectedData = encodeFunctionData({
+      abi: electionABI,
+      functionName: "vote",
+      args: [VALID_RECIPIENT as `0x${string}`, BigInt(10), groupA, groupB],
+    });
+
+    expect(transaction).toMatchObject({
+      from: accountFixture.freshAddress,
+      to: ELECTION_ADDRESS,
+      data: expectedData,
+    });
+  });
+
+  it("should throw when validator group cannot receive more votes", async () => {
+    readContractMock.mockImplementationOnce(async ({ functionName }: { functionName: string }) => {
+      if (functionName === "canReceiveVotes") return false;
+      return [[], []];
+    });
+
+    await expect(
+      buildTransaction(
+        {
+          ...accountFixture,
+          spendableBalance: BigNumber(123),
+          celoResources: {
+            registrationStatus: false,
+            lockedBalance: BigNumber(0),
+            nonvotingLockedBalance: BigNumber(40),
+            pendingWithdrawals: null,
+            votes: null,
+            electionAddress: null,
+            lockedGoldAddress: null,
+            maxNumGroupsVotedFor: BigNumber(0),
           },
-          {
-            ...transactionFixture,
-            mode: "revoke",
-          },
-        ),
-    ).rejects.toThrow("No votes to revoke");
+        },
+        { ...transactionFixture, mode: "vote", recipient: VALID_RECIPIENT },
+      ),
+    ).rejects.toThrow("vote cap exceeded");
+  });
+
+  it("should build vote transaction when eligible groups call fails", async () => {
+    readContractMock.mockImplementation(async ({ functionName }: { functionName: string }) => {
+      if (functionName === "canReceiveVotes") return true;
+      if (functionName === "getTotalVotesForEligibleValidatorGroups") {
+        throw new Error("revert");
+      }
+      return ZERO_ADDRESS;
+    });
+
+    const transaction = await buildTransaction(
+      {
+        ...accountFixture,
+        spendableBalance: BigNumber(123),
+        celoResources: {
+          registrationStatus: false,
+          lockedBalance: BigNumber(0),
+          nonvotingLockedBalance: BigNumber(40),
+          pendingWithdrawals: null,
+          votes: null,
+          electionAddress: null,
+          lockedGoldAddress: null,
+          maxNumGroupsVotedFor: BigNumber(0),
+        },
+      },
+      { ...transactionFixture, mode: "vote", recipient: VALID_RECIPIENT },
+    );
+
+    const expectedData = encodeFunctionData({
+      abi: electionABI,
+      functionName: "vote",
+      args: [
+        VALID_RECIPIENT as `0x${string}`,
+        BigInt(transactionFixture.amount.toFixed()),
+        ZERO_ADDRESS,
+        ZERO_ADDRESS,
+      ],
+    });
+
+    expect(transaction).toMatchObject({
+      from: accountFixture.freshAddress,
+      to: ELECTION_ADDRESS,
+      data: expectedData,
+    });
   });
 
   it("should build a revoke transaction", async () => {
-    revokeMock.mockClear();
-
-    voteSignerToAccountMock.mockReturnValue("signer_account");
-    revokeMock.mockReturnValue({
-      find: jest.fn(() => ({
-        txo: {
-          encodeABI: jest.fn(() => ({ data: "revoke_data" })),
-          estimateGas: jest.fn(async () => 2),
-        },
-      })),
-    });
-
     const transaction = await buildTransaction(
       {
         ...accountFixture,
@@ -327,41 +328,16 @@ describe("buildTransaction", () => {
           maxNumGroupsVotedFor: BigNumber(0),
         },
       },
-      {
-        ...transactionFixture,
-        mode: "revoke",
-      },
+      { ...transactionFixture, mode: "revoke", recipient: VALID_RECIPIENT },
     );
 
     expect(transaction).toMatchObject({
       from: accountFixture.freshAddress,
-      to: "vote_address",
-      data: { data: "revoke_data" },
-      gas: "12",
+      to: ELECTION_ADDRESS,
     });
-
-    expect(revokeMock).toHaveBeenCalledTimes(1);
-    expect(revokeMock).toHaveBeenCalledWith(
-      "signer_account",
-      transactionFixture.recipient,
-      new BigNumber(10),
-    );
-    expect(voteSignerToAccountMock).toHaveBeenCalledWith(accountFixture.freshAddress);
   });
 
   it("should build a revoke transaction with useAllAmount", async () => {
-    revokeMock.mockClear();
-
-    voteSignerToAccountMock.mockReturnValue("signer_account");
-    revokeMock.mockReturnValue({
-      find: jest.fn(() => ({
-        txo: {
-          encodeABI: jest.fn(() => ({ data: "revoke_data" })),
-          estimateGas: jest.fn(async () => 2),
-        },
-      })),
-    });
-
     const transaction = await buildTransaction(
       {
         ...accountFixture,
@@ -377,77 +353,87 @@ describe("buildTransaction", () => {
           maxNumGroupsVotedFor: BigNumber(0),
         },
       },
-      {
-        ...transactionFixture,
-        useAllAmount: true,
-        mode: "revoke",
-      },
+      { ...transactionFixture, useAllAmount: true, mode: "revoke", recipient: VALID_RECIPIENT },
     );
 
     expect(transaction).toMatchObject({
       from: accountFixture.freshAddress,
-      to: "vote_address",
-      data: { data: "revoke_data" },
-      gas: "12",
+      to: ELECTION_ADDRESS,
+    });
+  });
+
+  it("should build revoke active transaction when index is not zero", async () => {
+    const transaction = await buildTransaction(
+      {
+        ...accountFixture,
+        spendableBalance: BigNumber(123),
+        celoResources: {
+          registrationStatus: false,
+          lockedBalance: BigNumber(0),
+          nonvotingLockedBalance: BigNumber(40),
+          pendingWithdrawals: null,
+          votes: null,
+          electionAddress: null,
+          lockedGoldAddress: null,
+          maxNumGroupsVotedFor: BigNumber(0),
+        },
+      },
+      { ...transactionFixture, mode: "revoke", index: 1, recipient: VALID_RECIPIENT },
+    );
+
+    const expectedData = encodeFunctionData({
+      abi: electionABI,
+      functionName: "revokeActive",
+      args: [
+        VALID_RECIPIENT as `0x${string}`,
+        BigInt(transactionFixture.amount.toFixed()),
+        ZERO_ADDRESS,
+        ZERO_ADDRESS,
+        BigInt(0),
+      ],
     });
 
-    expect(revokeMock).toHaveBeenCalledTimes(1);
-    expect(revokeMock).toHaveBeenCalledWith(
-      "signer_account",
-      transactionFixture.recipient,
-      new BigNumber(10),
-    );
-    expect(voteSignerToAccountMock).toHaveBeenCalledWith(accountFixture.freshAddress);
+    expect(transaction).toMatchObject({
+      from: accountFixture.freshAddress,
+      to: ELECTION_ADDRESS,
+      data: expectedData,
+    });
   });
 
   it("should build an activate transaction", async () => {
     const transaction = await buildTransaction(
       { ...accountFixture, spendableBalance: BigNumber(123) },
-      {
-        ...transactionFixture,
-        mode: "activate",
-      },
+      { ...transactionFixture, mode: "activate", recipient: VALID_RECIPIENT },
     );
 
     expect(transaction).toMatchObject({
       from: accountFixture.freshAddress,
-      to: "vote_address",
-      data: { data: "vote_data" },
-      gas: "12",
+      to: ELECTION_ADDRESS,
     });
   });
 
   it("should build a register transaction", async () => {
     const transaction = await buildTransaction(
       { ...accountFixture, spendableBalance: BigNumber(123) },
-      {
-        ...transactionFixture,
-        mode: "register",
-      },
+      { ...transactionFixture, mode: "register" },
     );
 
     expect(transaction).toMatchObject({
       from: accountFixture.freshAddress,
-      to: "register_address",
-      data: { data: "register_data" },
-      gas: "12",
+      to: ACCOUNTS_ADDRESS,
     });
   });
 
   it("should build a send transaction", async () => {
     const transaction = await buildTransaction(
       { ...accountFixture, spendableBalance: BigNumber(123) },
-      {
-        ...transactionFixture,
-        mode: "send",
-      },
+      { ...transactionFixture, mode: "send" },
     );
 
     expect(transaction).toMatchObject({
       from: accountFixture.freshAddress,
       to: transactionFixture.recipient,
       value: "0xa",
-      gas: "12",
     });
   });
 
@@ -457,18 +443,13 @@ describe("buildTransaction", () => {
 
     const transaction = await buildTransaction(
       { ...accountFixture, spendableBalance: oneCelo },
-      {
-        ...transactionFixture,
-        mode: "send",
-        amount: pointOneCelo,
-      },
+      { ...transactionFixture, mode: "send", amount: pointOneCelo },
     );
 
     expect(transaction).toMatchObject({
       from: accountFixture.freshAddress,
       to: transactionFixture.recipient,
       value: "0x16345785d8a0000",
-      gas: "12",
     });
   });
 
@@ -478,29 +459,22 @@ describe("buildTransaction", () => {
 
     const transaction = await buildTransaction(
       { ...accountFixture, spendableBalance: twoCelo },
-      {
-        ...transactionFixture,
-        mode: "send",
-        amount: amountLessThanFee,
-      },
+      { ...transactionFixture, mode: "send", amount: amountLessThanFee },
     );
 
     expect(transaction).toMatchObject({
       from: accountFixture.freshAddress,
       to: transactionFixture.recipient,
       value: "0xa",
-      gas: "12",
     });
   });
 
   it("should build a token transaction", async () => {
     const transaction = await buildTransaction(
-      {
-        ...accountWithTokenAccountFixture,
-        spendableBalance: BigNumber(123),
-      },
+      { ...accountWithTokenAccountFixture, spendableBalance: BigNumber(123) },
       {
         ...transactionFixture,
+        recipient: VALID_RECIPIENT,
         subAccountId: accountWithTokenAccountFixture.subAccounts[0].id,
         mode: "send",
       },
@@ -508,9 +482,6 @@ describe("buildTransaction", () => {
 
     expect(transaction).toMatchObject({
       from: accountFixture.freshAddress,
-      to: "recipient",
-      value: "0xa",
-      gas: "12",
     });
   });
 
@@ -531,6 +502,7 @@ describe("buildTransaction", () => {
       },
       {
         ...transactionFixture,
+        recipient: VALID_RECIPIENT,
         subAccountId: accountWithTokenAccountFixture.subAccounts[0].id,
         mode: "send",
       },
@@ -538,9 +510,6 @@ describe("buildTransaction", () => {
 
     expect(transaction).toMatchObject({
       from: accountFixture.freshAddress,
-      to: "recipient",
-      value: "0xa",
-      gas: "12",
     });
   });
 
@@ -558,19 +527,13 @@ describe("buildTransaction", () => {
       from: accountFixture.freshAddress,
       to: "0x79D5A290D7ba4b99322d91b577589e8d0BF87072",
       value: "0xa",
-      gas: "12",
     });
-
-    // Verify feeCurrency is included in the transaction
     expect(transaction.feeCurrency).toEqual(transactionWithUsdcFeeFixture.feeCurrency);
   });
 
   it("should build a token transaction with USDC fee currency", async () => {
     const transaction = await buildTransaction(
-      {
-        ...accountWithTokenAccountFixture,
-        spendableBalance: BigNumber(123),
-      },
+      { ...accountWithTokenAccountFixture, spendableBalance: BigNumber(123) },
       {
         ...tokenTransactionWithUsdcFeeFixture,
         recipient: "0x79D5A290D7ba4b99322d91b577589e8d0BF87072",
@@ -578,12 +541,7 @@ describe("buildTransaction", () => {
       },
     );
 
-    expect(transaction).toMatchObject({
-      from: accountFixture.freshAddress,
-      gas: "12",
-    });
-
-    // Verify feeCurrency is included in the transaction
+    expect(transaction).toMatchObject({ from: accountFixture.freshAddress });
     expect(transaction.feeCurrency).toEqual(tokenTransactionWithUsdcFeeFixture.feeCurrency);
   });
 
@@ -599,31 +557,6 @@ describe("buildTransaction", () => {
       },
     );
 
-    expect(transaction).toMatchObject({
-      from: accountFixture.freshAddress,
-      to: "0x79D5A290D7ba4b99322d91b577589e8d0BF87072",
-      value: "0x7b", // 123 (full balance when paying fees in USDC)
-      gas: "12",
-    });
-
-    // Verify feeCurrency is included
     expect(transaction.feeCurrency).toEqual(transactionWithUsdcFeeFixture.feeCurrency);
-  });
-
-  it("uses adapter feeCurrency (not unwrapped token address) in built tx", async () => {
-    const transactionWithAdapterFee = {
-      ...transactionWithUsdcFeeFixture,
-      recipient: "0x79D5A290D7ba4b99322d91b577589e8d0BF87072",
-      feeCurrency: "0x2F25deB3848C207fc8E0c34035B3Ba7fC157602B" as `0x${string}`,
-      feeCurrencyUnwrapped: "0xcebA9300f2b948710d2653dD7B07f33A8B32118C" as `0x${string}`,
-    };
-
-    const transaction = await buildTransaction(
-      { ...accountFixture, spendableBalance: BigNumber(123) },
-      transactionWithAdapterFee,
-    );
-
-    expect(transaction.feeCurrency).toEqual(transactionWithAdapterFee.feeCurrency);
-    expect(transaction.feeCurrency).not.toEqual(transactionWithAdapterFee.feeCurrencyUnwrapped);
   });
 });

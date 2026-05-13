@@ -30,7 +30,7 @@ export function MyWalletTopBarAction({ onPress, showNotification }: Readonly<Pro
         backgroundColor: pressed ? theme.colors.bg[pressedBackgroundColor] : undefined,
       })}
     >
-      <UserAvatar size="md" lx={{ backgroundColor }} showNotification={showNotification} />
+      <UserAvatar size="lg" lx={{ backgroundColor }} showNotification={showNotification} />
     </Pressable>
   );
 }

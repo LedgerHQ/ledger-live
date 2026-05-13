@@ -19,6 +19,8 @@ jest.mock("@react-navigation/native", () => ({
 }));
 
 jest.mock("@ledgerhq/live-dmk-mobile", () => ({
+  rnBleTransportIdentifier: "react-native-ble",
+  rnHidTransportIdentifier: "react-native-hid",
   findMatchingNewDevice: jest.fn(() => null),
   useBleDevicesScanning: jest.fn(() => ({ scannedDevices: [] })),
 }));
@@ -39,6 +41,17 @@ const withKnownDevice = (state: State): State => ({
   ble: {
     ...state.ble,
     knownDevices: [{ id: "device-1", name: "Flex Pro", modelId: DeviceModelId.europa }],
+  },
+  knownDevices: {
+    ...state.knownDevices,
+    knownDevices: [
+      {
+        id: "device-1",
+        name: "Flex Pro",
+        deviceModelId: DeviceModelId.europa,
+        transport: "react-native-ble",
+      },
+    ],
   },
 });
 
@@ -218,6 +231,7 @@ describe("useDeviceSectionViewModel", () => {
       expect(result.current.isRemoveDrawerOpen).toBe(false);
       expect(result.current.deviceToRemove).toBeNull();
       expect(store.getState().ble.knownDevices).toEqual([]);
+      expect(store.getState().knownDevices.knownDevices).toEqual([]);
     });
 
     it("should do nothing when no device is selected", async () => {

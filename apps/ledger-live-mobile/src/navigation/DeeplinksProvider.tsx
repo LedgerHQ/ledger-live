@@ -26,7 +26,7 @@ import {
   makeSetEarnMenuModalAction,
   makeSetEarnProtocolInfoModalAction,
 } from "~/actions/earn";
-import { blockPasswordLock } from "../actions/appstate";
+import { blockPasswordLock, tickProductTourDeeplink } from "../actions/appstate";
 import { handleModularDrawerDeeplink } from "LLM/features/ModularDrawer";
 import { isValidInstallApp } from "LLM/features/DeeplinkInstallApp";
 import { openDeeplinkInstallAppDrawer } from "~/actions/deeplinkInstallApp";
@@ -48,6 +48,7 @@ import {
 } from "./deeplinks/validation";
 import { handleWallet40Deeplink } from "./deeplinks/handleWallet40Deeplink";
 import { handleMarketBannerDeeplink } from "./deeplinks/handleMarketBannerDeeplink";
+import { useProductTourEligibility } from "LLM/features/ProductTour";
 import { SplashScreenHandle } from "LLM/features/LaunchScreen/SplashScreenHandle";
 import { useDeeplinkDrawerCleanup } from "./deeplinks/useDeeplinkDrawerCleanup";
 
@@ -350,6 +351,7 @@ export const DeeplinksProvider = ({
   const { shouldDisplayMarketBanner, shouldDisplayWallet40MainNav, shouldDisplayAssetSection } =
     useWalletFeaturesConfig("mobile");
   const web3hubFlag = useFeature("web3hub");
+  const { isProductTourEligible } = useProductTourEligibility();
 
   const buySellUiManifestId = buySellUiFlag?.params?.manifestId;
 
@@ -815,6 +817,7 @@ export const DeeplinksProvider = ({
             const fromCurrency = searchParams.get("fromCurrency");
             const toCurrency = searchParams.get("toCurrency");
             const toAccountId = searchParams.get("toAccountId");
+            const fromAccountId = searchParams.get("fromAccountId");
             if (fromPath) swapParams.set("fromPath", fromPath);
             if (fromToken) swapParams.set("fromTokenId", fromToken);
             if (toToken) swapParams.set("toTokenId", toToken);
@@ -823,10 +826,17 @@ export const DeeplinksProvider = ({
             if (amountFrom) swapParams.set("amountFrom", amountFrom);
             if (affiliate) swapParams.set("affiliate", affiliate);
             if (toAccountId) swapParams.set("toAccountId", toAccountId);
+            if (fromAccountId) swapParams.set("fromAccountId", fromAccountId);
             const swapSearch = swapParams.toString();
             const pathWithParams = swapSearch ? `swap?${swapSearch}` : "swap";
             return getStateFromPath(pathWithParams, config);
           }
+
+          if (hostname === "product-tour" && isProductTourEligible) {
+            dispatch(tickProductTourDeeplink());
+            return getStateFromPath("portfolio", config);
+          }
+
           // Handle wallet deeplink with installApp param
           // ledgerlive://wallet?installApp=RecoveryKeyUpdater
           if (
@@ -886,6 +896,7 @@ export const DeeplinksProvider = ({
     liveAppProviderInitialized,
     manifests,
     web3hubFlag?.enabled,
+    isProductTourEligible,
   ]);
   const [isReady, setIsReady] = React.useState(false);
   const [isNavigationContainerReady, setIsNavigationContainerReady] = React.useState(false);

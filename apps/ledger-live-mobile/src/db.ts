@@ -17,6 +17,12 @@ import type {
   ProtectState,
   SettingsState,
 } from "./reducers/types";
+import type { HistoryState } from "./reducers/history";
+import {
+  mapPersistedKnownDeviceToKnownDevice,
+  type KnownDevicesState,
+  type PersistedKnownDevicesState,
+} from "./reducers/knownDevices";
 import type { FeatureFlagsState } from "@shared/feature-flags";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { ExportedWalletState } from "@ledgerhq/live-wallet/store";
@@ -92,6 +98,30 @@ export async function getBle(): Promise<BleState> {
 }
 export async function saveBle(obj: BleState): Promise<void> {
   await storage.save("ble", obj);
+}
+
+export function getHistory(): Promise<HistoryState | null> {
+  return storage.get("history") as Promise<HistoryState | null>;
+}
+export async function saveHistory(obj: HistoryState): Promise<void> {
+  await storage.save("history", obj);
+}
+export async function getKnownDevices(): Promise<KnownDevicesState | null> {
+  const persistedKnownDevices = await storage.get<PersistedKnownDevicesState>("knownDevices");
+
+  if (!persistedKnownDevices || Array.isArray(persistedKnownDevices)) {
+    return null;
+  }
+
+  return {
+    knownDevices: persistedKnownDevices.knownDevices.flatMap(device => {
+      const knownDevice = mapPersistedKnownDeviceToKnownDevice(device);
+      return knownDevice ? [knownDevice] : [];
+    }),
+  };
+}
+export async function saveKnownDevices(obj: PersistedKnownDevicesState): Promise<void> {
+  await storage.save("knownDevices", obj);
 }
 
 const formatAccountDBKey = (id: string): string => `${ACCOUNTS_DB_PREFIX}${id}`;

@@ -32,13 +32,30 @@ describe("Page utils", () => {
       expect(isWallet40Page("/market/trending")).toBe(false);
       expect(isWallet40Page("/cryptos/extra")).toBe(false);
     });
+
+    describe("/asset prefix (conditional on shouldDisplayAggregatedAssets)", () => {
+      it("returns false for /asset routes when shouldDisplayAggregatedAssets is not provided", () => {
+        expect(isWallet40Page("/asset")).toBe(false);
+        expect(isWallet40Page("/asset/btc")).toBe(false);
+      });
+
+      it("returns false for /asset routes when shouldDisplayAggregatedAssets is false", () => {
+        expect(isWallet40Page("/asset", { shouldDisplayAggregatedAssets: false })).toBe(false);
+        expect(isWallet40Page("/asset/btc", { shouldDisplayAggregatedAssets: false })).toBe(false);
+      });
+
+      it("returns true for /asset routes when shouldDisplayAggregatedAssets is true", () => {
+        expect(isWallet40Page("/asset", { shouldDisplayAggregatedAssets: true })).toBe(true);
+        expect(isWallet40Page("/asset/btc", { shouldDisplayAggregatedAssets: true })).toBe(true);
+      });
+    });
   });
 
   describe("shouldDisplayRightPanel", () => {
     it("returns true only for routes that show the swap sidebar", () => {
       expect(shouldDisplayRightPanel("/")).toBe(true);
       expect(shouldDisplayRightPanel("/analytics")).toBe(true);
-      expect(shouldDisplayRightPanel("/cryptos")).toBe(true);
+      expect(shouldDisplayRightPanel("/cryptos")).toBe(false);
     });
 
     it("returns false for other wallet 4.0 pages", () => {

@@ -458,6 +458,10 @@ export type Feature_BrazePushNotifications = Feature<{
       enabled: boolean;
       timer: number;
     };
+    dapp_complete: {
+      enabled: boolean;
+      timer: number;
+    };
   };
   inactivity_enabled: boolean;
   inactivity_reprompt: {
@@ -868,6 +872,7 @@ type Feature_Wallet40_Params = {
   operationsList: boolean;
   aggregatedAssets: boolean;
   myWallet: boolean;
+  pnl: boolean;
   // Specifics
   brazePlacement?: boolean;
   newReceiveDialog?: boolean;

@@ -1,3 +1,4 @@
+import { validatePublicKey, ValidationResult } from "@taquito/utils";
 import {
   normalizePublicKeyForAddress,
   parseTezosTokenAsset,
@@ -65,13 +66,23 @@ describe("resolveTezosOperationMode", () => {
     expect(resolveTezosOperationMode("send", { type: "native" })).toBe("send");
   });
 
-  it("maps stake to delegate regardless of asset", () => {
+  it("maps staking intents to real staking modes regardless of asset", () => {
     expect(
       resolveTezosOperationMode("stake", {
         type: "token",
         assetReference: "KT1CpeSQKdkhWi4pinYcseCFKmDhs5M74BkU:0",
       }),
-    ).toBe("delegate");
+    ).toBe("stake");
+
+    expect(resolveTezosOperationMode("unstake", { type: "native" })).toBe("unstake");
+    expect(resolveTezosOperationMode("finalize_unstake", { type: "native" })).toBe(
+      "finalize_unstake",
+    );
+  });
+
+  it("maps delegation intents to delegation modes", () => {
+    expect(resolveTezosOperationMode("delegate", { type: "native" })).toBe("delegate");
+    expect(resolveTezosOperationMode("undelegate", { type: "native" })).toBe("undelegate");
   });
 });
 
@@ -86,5 +97,45 @@ describe("normalizePublicKeyForAddress", () => {
 
     // Then: should return the correct base58 encoded public key
     expect(result).toBe(expectedPublicKey);
+  });
+
+  it("should normalize a 33-byte Ledger ED25519 payload (prefix byte + raw key) to a valid edpk", () => {
+    const tz1Address = "tz1SVgE7L6xzEY2UpQ4UvtPkRDDMwSmcqVqr";
+    const ledgerEd25519Hex = "02b053b74eab7e21c5a8fc1d945ee9fa6dbe2fedb6d47a43299ff33b7f28ea179b";
+
+    const result = normalizePublicKeyForAddress(ledgerEd25519Hex, tz1Address);
+
+    expect(result).toBeDefined();
+    expect(result!.startsWith("edpk")).toBe(true);
+    expect(validatePublicKey(result!)).toBe(ValidationResult.VALID);
+  });
+
+  it("should normalize a 32-byte raw ED25519 key to a valid edpk", () => {
+    const tz1Address = "tz1SVgE7L6xzEY2UpQ4UvtPkRDDMwSmcqVqr";
+    const rawEd25519Hex = "b053b74eab7e21c5a8fc1d945ee9fa6dbe2fedb6d47a43299ff33b7f28ea179b";
+
+    const result = normalizePublicKeyForAddress(rawEd25519Hex, tz1Address);
+
+    expect(result).toBeDefined();
+    expect(result!.startsWith("edpk")).toBe(true);
+    expect(validatePublicKey(result!)).toBe(ValidationResult.VALID);
+  });
+
+  it("should refuse to encode a malformed tz1 input (e.g. a non-hex b58 string parsed to 0 bytes)", () => {
+    const tz1Address = "tz1SVgE7L6xzEY2UpQ4UvtPkRDDMwSmcqVqr";
+    const garbage = "3s7xnj2xf2q7au3rrpg7j9k5zf3djfqgbtrswxf8d69vh94hfdtsbpni";
+
+    const result = normalizePublicKeyForAddress(garbage, tz1Address);
+
+    expect(result).toBeUndefined();
+  });
+
+  it("should refuse to encode a 65-byte SEC1 input for a tz1 (ED25519) address", () => {
+    const tz1Address = "tz1SVgE7L6xzEY2UpQ4UvtPkRDDMwSmcqVqr";
+    const sec1Hex = "04" + "ab".repeat(64); // 65 bytes
+
+    const result = normalizePublicKeyForAddress(sec1Hex, tz1Address);
+
+    expect(result).toBeUndefined();
   });
 });

@@ -89,7 +89,6 @@
     "rxjs": "catalog:"
   },
   "devDependencies": {
-    "@faker-js/faker": "^8.4.1",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@swc/core": "catalog:",

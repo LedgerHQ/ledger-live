@@ -3,7 +3,8 @@ import { View, StyleSheet, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "~/context/Locale";
 import i18next from "i18next";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import type { Transaction as CardanoTransaction } from "@ledgerhq/live-common/families/cardano/types";
 import { useTheme } from "@react-navigation/native";
 import KeyboardView from "~/components/KeyboardView";
 import Button from "~/components/Button";
@@ -22,8 +23,8 @@ function CardanoEditMemo({ navigation, route }: Props) {
   const { t } = useTranslation();
   const [memo, setMemo] = useState(route.params.transaction.memo);
   const account = route.params.account;
+  const bridge = useAccountBridge<CardanoTransaction>(account);
   const onValidateText = useCallback(() => {
-    const bridge = getAccountBridge(account);
     const { transaction } = route.params;
     popToScreen(navigation, ScreenName.SendSummary, {
       accountId: account.id,
@@ -33,7 +34,7 @@ function CardanoEditMemo({ navigation, route }: Props) {
       currentNavigation: ScreenName.SendSummary,
       nextNavigation: ScreenName.SendSelectDevice,
     });
-  }, [navigation, route.params, account, memo]);
+  }, [navigation, route.params, account, bridge, memo]);
   return (
     <SafeAreaView style={styles.root}>
       <KeyboardView

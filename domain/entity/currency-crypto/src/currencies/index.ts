@@ -164,7 +164,6 @@ export * from "./solana_testnet";
 export * from "./somnia";
 export * from "./songbird";
 export * from "./sonic";
-export * from "./sonic_blaze";
 export * from "./stacks";
 export * from "./stakenet";
 export * from "./stargaze";

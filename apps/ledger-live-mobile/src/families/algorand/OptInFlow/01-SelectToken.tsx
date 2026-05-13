@@ -3,14 +3,17 @@ import React, { useCallback, useState } from "react";
 import { View, StyleSheet, SafeAreaView, FlatList, TouchableOpacity } from "react-native";
 import { Trans } from "~/context/Locale";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
-import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useTokensData } from "@ledgerhq/cryptoassets/cal-client/hooks/useTokensData";
 import { extractTokenId } from "@ledgerhq/live-common/families/algorand/tokens";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
-import { AlgorandAccount, Transaction as AlgorandTransaction } from "@ledgerhq/live-common/families/algorand/types";
+import {
+  AlgorandAccount,
+  AlgorandTransaction,
+} from "@ledgerhq/live-common/families/algorand/types";
 import { ScreenName } from "~/const";
 import LText from "~/components/LText";
 import { TrackScreen } from "~/analytics";
@@ -89,7 +92,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
   const mainAccount = getMainAccount(account) as AlgorandAccount;
   const bridge = useAccountBridge<AlgorandTransaction>(mainAccount);
   invariant(mainAccount && mainAccount.algorandResources, "algorand Account required");
-  const { transaction } = useBridgeTransaction(() => {
+  const { transaction } = useBridgeTransaction(bridge, () => {
     const t = bridge.createTransaction(mainAccount);
     return {
       account,

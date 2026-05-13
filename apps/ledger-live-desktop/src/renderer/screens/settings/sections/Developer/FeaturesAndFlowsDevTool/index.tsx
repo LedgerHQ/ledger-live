@@ -6,10 +6,7 @@ import { productTourCompletedSelector } from "~/renderer/reducers/settings";
 import { setProductTourCompleted } from "~/renderer/actions/settings";
 import { SettingsSectionRow as Row } from "../../../SettingsSection";
 import { ProductTourSection } from "./ProductTourSection";
-import {
-  useProductTourDialogViewModel,
-  ProductTourDialog,
-} from "LLD/features/ProductTour/Drawer";
+import { useProductTourDialogViewModel, ProductTourDialog } from "LLD/features/ProductTour/Drawer";
 
 const FeaturesAndFlowsDevTool = () => {
   const { t } = useTranslation();
@@ -18,12 +15,12 @@ const FeaturesAndFlowsDevTool = () => {
   const [contentExpanded, setContentExpanded] = useState(false);
 
   const {
-    isDialogOpen: isProductTourOpen,
+    isOpen,
     openDialog: openProductTourDialog,
-    closeDialog: closeProductTourDialog,
-    completeProductTour,
-    onPrimaryAction: onProductTourPrimaryAction,
-    onSlideChange: onProductTourSlideChange,
+    onClose,
+    onComplete,
+    onPrimaryAction,
+    onSlideChange,
   } = useProductTourDialogViewModel();
 
   const toggleContentVisibility = () => {
@@ -64,11 +61,11 @@ const FeaturesAndFlowsDevTool = () => {
         </Button>
       </Row>
       <ProductTourDialog
-        isOpen={isProductTourOpen}
-        onClose={closeProductTourDialog}
-        onComplete={completeProductTour}
-        onPrimaryAction={onProductTourPrimaryAction}
-        onSlideChange={onProductTourSlideChange}
+        isOpen={isOpen}
+        onClose={onClose}
+        onComplete={onComplete}
+        onPrimaryAction={onPrimaryAction}
+        onSlideChange={onSlideChange}
       />
     </>
   );

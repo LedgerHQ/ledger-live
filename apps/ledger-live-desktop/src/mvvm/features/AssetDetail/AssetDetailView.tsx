@@ -1,63 +1,46 @@
 import React, { useCallback } from "react";
 import { useNavigate } from "react-router";
-import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
-import { AssetDetailSection } from "./components/AssetDetailSection";
+import { CryptoIcon } from "@ledgerhq/crypto-icons";
+import { getValidCryptoIconSize } from "~/renderer/utils/cryptoIconSize";
 import { AssetHeader } from "./components/AssetHeader/AssetHeader";
-import { TotalBalance } from "./components/PortfolioSection/TotalBalance";
-import { useAssetDetailSections } from "./hooks/useAssetDetailSections";
-import type { AssetDetailViewModel } from "./hooks/useAssetDetailViewModel";
+import { MarketDataSection } from "./components/MarketDataSection";
+import { PortfolioSection } from "./components/PortfolioSection/PortfolioSection";
+import { TransactionsSection } from "./components/TransactionsSection";
+import type { AssetDetailReady } from "./types";
 
-export function AssetDetailView({ distributionItem }: Readonly<AssetDetailViewModel>) {
+type AssetDetailViewProps = Readonly<{
+  viewModel: AssetDetailReady;
+}>;
+
+export function AssetDetailView({ viewModel }: AssetDetailViewProps) {
   const navigate = useNavigate();
+  const { distributionItem, marketInfo, market, assetName, assetTicker, ledgerId } = viewModel;
+
   const onBack = useCallback(() => {
     navigate(-1);
   }, [navigate]);
 
-  const { topSections, sections, notFoundContent } = useAssetDetailSections(distributionItem);
-
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-32">
-      {distributionItem ? (
-        <AssetHeader
-          assetLabel={distributionItem.currency.name}
-          icon={<CryptoCurrencyIcon currency={distributionItem.currency} size={24} />}
-          onBack={onBack}
-        />
-      ) : null}
+    <div className="flex w-full shrink-0 flex-col gap-32 pb-32">
+      <AssetHeader
+        assetLabel={assetName}
+        icon={
+          ledgerId && (
+            <CryptoIcon
+              ledgerId={ledgerId}
+              ticker={assetTicker}
+              size={getValidCryptoIconSize(24)}
+            />
+          )
+        }
+        onBack={onBack}
+      />
 
-      {distributionItem ? <TotalBalance distributionItem={distributionItem} /> : null}
+      {distributionItem && <PortfolioSection distributionItem={distributionItem} />}
 
-      <section className="grid grid-cols-2 gap-24">
-        {topSections.map(section => (
-          <AssetDetailSection
-            key={section.id}
-            title={section.title}
-            actionLabel={section.actionLabel}
-            actionHref={section.actionHref}
-            tooltipContent={section.tooltipContent}
-          >
-            {section.content}
-          </AssetDetailSection>
-        ))}
-      </section>
+      {marketInfo && <MarketDataSection market={market} />}
 
-      {sections.map(section => (
-        <AssetDetailSection
-          key={section.id}
-          title={section.title}
-          actionLabel={section.actionLabel}
-          actionHref={section.actionHref}
-          tooltipContent={section.tooltipContent}
-        >
-          {section.content}
-        </AssetDetailSection>
-      ))}
-
-      {distributionItem ? null : (
-        <section className="rounded-16 border border-dashed border-neutral-c70/30 p-16 text-body text-neutral-c70">
-          {notFoundContent}
-        </section>
-      )}
+      {distributionItem && <TransactionsSection distributionItem={distributionItem} />}
     </div>
   );
 }

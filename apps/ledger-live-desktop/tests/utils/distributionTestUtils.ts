@@ -40,11 +40,16 @@ export function setupDistributionRouteMocks(
   useParamsMock: jest.Mock,
   useDistributionMock: jest.Mock,
   routeAssetId: string,
-  distribution: { bySlug?: Record<string, DistributionItem>; list: DistributionItem[] },
+  distribution: {
+    bySlug?: Record<string, DistributionItem>;
+    list: DistributionItem[];
+    isLoading?: boolean;
+  },
 ): void {
   useParamsMock.mockReturnValue({ "*": routeAssetId });
   useDistributionMock.mockReturnValue({
     bySlug: distribution.bySlug ?? {},
     list: distribution.list,
+    isLoading: distribution.isLoading ?? false,
   });
 }

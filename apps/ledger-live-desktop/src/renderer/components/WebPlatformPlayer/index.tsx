@@ -14,7 +14,11 @@ import { usePTXCustomHandlers } from "../WebPTXPlayer/CustomHandlers";
 import { useCurrentAccountHistDB } from "~/renderer/screens/platform/v2/hooks";
 import { useMobileView, WebViewWrapperProps } from "~/renderer/hooks/useMobileView";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
-import { useACRECustomHandlers, useDeeplinkCustomHandlers } from "./CustomHandlers";
+import {
+  useACRECustomHandlers,
+  useDeeplinkCustomHandlers,
+  useLiveAppModalCustomHandlers,
+} from "./CustomHandlers";
 
 export const Container = styled.div`
   display: flex;
@@ -62,6 +66,7 @@ export default function WebPlatformPlayer({
   const customACREHandlers = useACRECustomHandlers(manifest, accounts);
   const customPTXHandlers = usePTXCustomHandlers(manifest, accounts);
   const customDeeplinkHandlers = useDeeplinkCustomHandlers();
+  const customLiveAppModalHandlers = useLiveAppModalCustomHandlers(manifest);
   const { mobileView, setMobileView } = useMobileView();
 
   const customPerpsHandlers = usePerpsHandlers(accounts);
@@ -72,6 +77,7 @@ export default function WebPlatformPlayer({
       ...customACREHandlers,
       ...customPTXHandlers,
       ...customDeeplinkHandlers,
+      ...customLiveAppModalHandlers,
       ...props.customHandlers,
       ...customPerpsHandlers,
     };
@@ -80,6 +86,7 @@ export default function WebPlatformPlayer({
     customPTXHandlers,
     props.customHandlers,
     customDeeplinkHandlers,
+    customLiveAppModalHandlers,
     customPerpsHandlers,
   ]);
 

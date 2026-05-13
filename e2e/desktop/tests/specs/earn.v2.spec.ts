@@ -175,9 +175,9 @@ test.describe("Earn [v2]", () => {
     });
   }
 
-  // --- Inline Add Account ---
+  // --- Earn v2 inline Add Account ---
 
-  test.describe("Inline Add Account", () => {
+  test.describe("Earn v2 inline Add Account", () => {
     const account = Account.ETH_1;
     const xrayTicket = "B2CQA-4642";
 
@@ -267,7 +267,6 @@ test.describe("Earn [v2]", () => {
 
   const ethProviders = [
     { provider: Provider.LIDO, xrayTickets: ["B2CQA-4722", "B2CQA-4644"] },
-    { provider: Provider.STADER_LABS, xrayTickets: ["B2CQA-4723"] },
     { provider: Provider.KILN, xrayTickets: ["B2CQA-4724"] },
   ];
 

@@ -6,6 +6,7 @@ import { Feature, FeatureId, Features } from "@ledgerhq/types-live";
 import { enabledExperimentalFeatures } from "~/renderer/experimental";
 import { sentryLogsSelector } from "~/renderer/reducers/settings";
 import { initDatadog, setTags, isDatadogAvailable } from "~/datadog/renderer";
+import { initDatadogLogs } from "~/datadog/logs";
 
 const MAX_KEYLEN = 32;
 
@@ -50,6 +51,7 @@ export const ConnectEnvsToDatadog = () => {
     initInFlightRef.current = true;
 
     const shouldSend = () => sentryLogsSelector(store.getState());
+    initDatadogLogs(shouldSend);
     initDatadog(
       shouldSend,
       {

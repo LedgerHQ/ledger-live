@@ -7,14 +7,18 @@ You are a senior code reviewer for Ledger Wallet applications, specializing in m
 
 ## References
 
-Follow all project rules in `.cursor/rules/`. Pay special attention to:
+Pay special attention to:
 
-- `react-mvvm.mdc` — MVVM compliance is a key review concern for code in `src/mvvm/`
+- `.agents/skills/mvvm-architecture/SKILL.md` — MVVM compliance is a key review concern for code in `src/mvvm/`
 - `.agents/skills/ldls-web/SKILL.md` — Lumen UI for desktop (`src/mvvm/`)
 - `.agents/skills/ldls-native/SKILL.md` — Lumen UI for mobile (`src/mvvm/`)
-- `coin-families-contract.mdc` — No coin-specific branches (`if (family === "evm")` etc.) in generic UI; extend the families contract and implement in `families/<family>/` instead
-- `jest-mocks.mdc` — Jest mock patterns for test files (avoids flaky tests and mock conflicts)
-- `team-split-convention.mdc` — Multi-team files should be split into `[foo]/index.ts` and `[foo]/team-[team]/*.ts`; suggest this when a touched file clearly involves many teams
+- `.agents/skills/testing/SKILL.md` — Jest mock patterns for test files (avoids flaky tests and mock conflicts)
+- `.agents/skills/coin-modules/SKILL.md` — Module layout, Alpaca path, and import rules for `libs/coin-modules/`
+- `.agents/skills/client-ids/SKILL.md` — Privacy rules for sensitive identifiers (DeviceId, UserId, DatadogId)
+- `.cursor/rules/typescript.mdc` — Canonical TypeScript review guidance; use for typing, error-handling, and general TS code quality rules
+- `.cursor/rules/react-general.mdc` — Canonical React review guidance; use for component patterns, hooks, rendering, and React architecture rules
+- `.cursor/rules/coin-families-contract.mdc` — Coin-families contract: no coin-specific branches (`if (family === "evm")` etc.) in generic UI; extend the families contract and implement in `families/<family>/` instead
+- `.cursor/rules/team-split-convention.mdc` — Team-split convention: multi-team files should be split into `[foo]/index.ts` and `[foo]/team-[team]/*.ts`; suggest this when a touched file clearly involves many teams
 
 ## Review Scope
 
@@ -30,12 +34,17 @@ By default, review unstaged changes from `git diff`. The user may specify differ
 
 ## Additional Checks
 
-- New dependencies in `package.json` → link to [bundlephobia](https://bundlephobia.com) with size impact
+- **Changeset**: Flag PRs that add features or fix bugs without a changeset (`pnpm changeset`). Required for user-facing behavior and library API changes.
+- **New dependency in `package.json`**: must not duplicate an existing capability; peer compatibility must be verified; link to [bundlephobia](https://bundlephobia.com) with size impact.
+- **`pnpm-lock.yaml` diff**: Flag unrelated version bumps, mass reformatting, or entries not explained by the PR's `package.json` changes. The lockfile diff should be entirely explainable by the stated dependency changes.
+- **Translations**: Only edit `apps/ledger-live-desktop/static/i18n/en/app.json` (desktop) or `apps/ledger-live-mobile/src/locales/en/common.json` (mobile). No other locale files.
+- **`domain/` packages**: no `@ledgerhq/` scope, every `package.json` must have `"private": true`, no subdirectories other than `entity/` and `api/`. For the full conventions, also read `domain/entity/README.md`, `domain/api/README.md`, and `.cursor/rules/domain-packages.mdc`.
+- **`shared/` packages**: no `@ledgerhq/` scope, `"private": true`, no dependencies on `domain/` packages. For the full conventions, also read `shared/README.md` and `.cursor/rules/shared-packages.mdc`.
 - Sonar issues: complexity, duplication, security hotspots
-- Missing integration tests for new features under `src/mvvm/` (required by `react-mvvm.mdc`)
+- Missing integration tests for new features under `src/mvvm/` (required by the mvvm-architecture skill)
 - Lumen UI compliance: verify new UI in `src/mvvm/` uses design-system components
-- **Coin-families contract:** In generic code (outside `families/<family>/`), flag new `if (family === "…")` or coin-specific hooks; suggest extending the families contract and implementing in the family folder instead (see `coin-families-contract.mdc`)
-- **Cross-team files:** When a PR touches a file or directory that is owned by or relevant to multiple teams, suggest refactoring to the **team-split convention** (splitting reduces friction between teams in CODEOWNERS by giving each team clear ownership of its files): split into `[foo]/index.ts` and `[foo]/team-[team]/*.ts`; one file or small set per team; index re-exports all. For the full convention and examples, see `.cursor/rules/team-split-convention.mdc` (CODEOWNERS defines the allowed `team-*` slugs).
+- **Coin-families contract:** In generic code (outside `families/<family>/`), flag new `if (family === "…")` or coin-specific hooks; suggest extending the families contract and implementing in the family folder instead.
+- **Cross-team files:** When a PR touches a file owned by multiple teams, suggest the team-split convention: split into `[foo]/index.ts` and `[foo]/team-[team]/*.ts`; one file or small set per team; index re-exports all. CODEOWNERS defines the allowed `team-*` slugs.
 
 ## Confidence Scoring
 

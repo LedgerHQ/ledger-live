@@ -11,6 +11,14 @@ import "../.bunli/commands.gen";
 import bunliConfig from "../bunli.config";
 import { CliProcessExitError } from "./cli-process-exit-error";
 import { disposeWalletCliDmkTransportFully } from "./device/register-dmk-transport";
+import AccountGroup from "./commands/account/index";
+import SessionGroup from "./commands/session/index";
+import BalancesCommand from "./commands/balances";
+import OperationsCommand from "./commands/operations";
+import ReceiveCommand from "./commands/receive";
+import SendCommand from "./commands/send";
+import SwapGroup from "./commands/swap/index";
+import GenuineCheckCommand from "./commands/genuine-check";
 
 emitTestingBuildBannerIfNeeded();
 
@@ -23,8 +31,21 @@ emitTestingBuildBannerIfNeeded();
  */
 export async function runMain(argv: string[] = process.argv.slice(2)): Promise<number> {
   const cli = await createCLI(bunliConfig as unknown as Parameters<typeof createCLI>[0]);
-  const code = await cli.run(argv, { noExit: true });
+  cli.command(AccountGroup);
+  cli.command(SessionGroup);
+  cli.command(BalancesCommand);
+  cli.command(OperationsCommand);
+  cli.command(ReceiveCommand);
+  cli.command(SendCommand);
+  cli.command(SwapGroup);
+  cli.command(GenuineCheckCommand);
+  const code = await cli.run(normalizeNegatedFlags(argv), { noExit: true });
   return code ?? 0;
+}
+
+// bunli silently drops unknown --no-foo flags; rewrite to --foo=false for GNU-style negation.
+function normalizeNegatedFlags(argv: string[]): string[] {
+  return argv.map(arg => (arg.startsWith("--no-") ? `--${arg.slice(5)}=false` : arg));
 }
 
 if (import.meta.main) {

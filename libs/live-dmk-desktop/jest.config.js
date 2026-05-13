@@ -17,5 +17,9 @@ module.exports = {
       "<rootDir>/tests/__mocks__/device-transport-kit-web-hid.ts",
   },
   coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../" }], "text"],
-  reporters: ["default", ...(process.env.CI ? ["github-actions"] : [])],
+  reporters: [
+    "default",
+    ...(process.env.CI ? ["github-actions"] : []),
+    ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
+  ],
 };

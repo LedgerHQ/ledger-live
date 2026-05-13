@@ -1,6 +1,5 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
 
-import { DerivationType, LedgerSigner } from "@taquito/ledger-signer";
 import type { TezosSigner } from "@ledgerhq/coin-tezos/types/index";
 import makeCliTools from "@ledgerhq/coin-tezos/test/cli";
 import type { CliTools } from "@ledgerhq/coin-tezos/test/cli";
@@ -29,10 +28,6 @@ const createSigner: CreateSigner<TezosSigner> = (transport: Transport) => {
         curve?: Curve;
       },
     ) => xtz.signOperation(path, rawTxHex, options),
-    // Tezos [LedgerSigner](https://www.npmjs.com/package/@taquito/ledger-signer)
-    createLedgerSigner: (path: string, prompt: boolean, derivationType: DerivationType) => {
-      return new LedgerSigner(transport, path, prompt, derivationType);
-    },
   };
 };
 

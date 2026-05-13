@@ -5,10 +5,10 @@ import Switch from "~/components/Switch";
 import SafeAreaView from "~/components/SafeAreaView";
 import { Trans, useTranslation } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
-import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { ScreenName } from "~/const";
@@ -64,6 +64,7 @@ function SendAmountCoinContent({ navigation, route, account, parentAccount }: Co
   const [infoModalOpen, setInfoModalOpen] = useState(false);
 
   const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
+    bridge,
     () => ({
       transaction: route.params.transaction,
       account,
@@ -79,7 +80,7 @@ function SendAmountCoinContent({ navigation, route, account, parentAccount }: Co
         parentAccount,
         transaction: debouncedTransaction,
       })
-      .then(estimate => {
+      .then((estimate: BigNumber) => {
         if (cancelled) return;
         setMaxSpendable(estimate);
       });
@@ -90,7 +91,8 @@ function SendAmountCoinContent({ navigation, route, account, parentAccount }: Co
   }, [account, parentAccount, debouncedTransaction, bridge]);
   const onChange = useCallback(
     (amount: BigNumber) => {
-      if (!amount.isNaN() && transaction) {
+      if (!amount.isNaN()) {
+        if (!account || !transaction) return;
         setTransaction(
           bridge.updateTransaction(transaction, {
             amount,
@@ -98,7 +100,7 @@ function SendAmountCoinContent({ navigation, route, account, parentAccount }: Co
         );
       }
     },
-    [setTransaction, bridge, transaction],
+    [setTransaction, bridge, account, transaction],
   );
   const toggleUseAllAmount = useCallback(() => {
     if (!transaction) return;

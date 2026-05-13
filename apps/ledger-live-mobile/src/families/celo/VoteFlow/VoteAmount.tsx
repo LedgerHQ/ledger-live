@@ -13,6 +13,7 @@ import { Trans } from "~/context/Locale";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import type { Transaction as CeloTransaction } from "@ledgerhq/live-common/families/celo/types";
 import { ScreenName } from "~/const";
 import { TrackScreen } from "~/analytics";
 import LText from "~/components/LText";
@@ -25,7 +26,6 @@ import SendRowsFee from "../SendRowsFee";
 import { getFirstStatusError } from "../../helpers";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { CeloVoteFlowParamList } from "./types";
-import type { Transaction as CeloTransaction } from "@ledgerhq/live-common/families/celo/types";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 
@@ -41,14 +41,14 @@ export default function VoteAmount({ navigation, route }: Props) {
 
   const bridge = useAccountBridge<CeloTransaction>(account);
 
-  const { transaction, setTransaction, status, bridgePending } = useBridgeTransaction<CeloTransaction>(() => {
+  const { transaction, setTransaction, status, bridgePending } = useBridgeTransaction<CeloTransaction>(bridge, () => {
     return {
       account,
       transaction: {
         ...route.params.transaction,
         amount: new BigNumber(route.params.amount ?? 0),
         mode: "vote",
-      },
+      } as CeloTransaction,
     };
   });
 

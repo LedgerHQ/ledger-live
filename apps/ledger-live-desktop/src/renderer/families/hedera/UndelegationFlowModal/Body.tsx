@@ -7,12 +7,12 @@ import { Trans, withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import type { Account, AccountBridge, Operation } from "@ledgerhq/types-live";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import type { Account, Operation } from "@ledgerhq/types-live";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
-import type { HederaAccount } from "@ledgerhq/live-common/families/hedera/types";
+import type { HederaAccount, Transaction as HederaTransaction } from "@ledgerhq/live-common/families/hedera/types";
 import type { Device } from "@ledgerhq/types-devices";
 import Track from "~/renderer/analytics/Track";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
@@ -84,9 +84,9 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
+  const bridge = useAccountBridge<HederaTransaction>(account);
   const { transaction, setTransaction, updateTransaction, status, bridgeError, bridgePending } =
-    useBridgeTransaction(() => {
-      const bridge: AccountBridge<Transaction> = getAccountBridge(account);
+    useBridgeTransaction(bridge, () => {
       const t = bridge.createTransaction(account);
 
       const transaction = bridge.updateTransaction(t, {

@@ -11,7 +11,7 @@ import {
   Mailbox,
   PenEdit,
   Snow,
-  Star,
+  StarFill,
   Unlink,
 } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { Spinner } from "@ledgerhq/lumen-ui-rnative";
@@ -39,7 +39,7 @@ const symbolMap: Record<TransactionalDotSymbol, TransactionalDotIcon> = {
   Mailbox,
   PenEdit,
   Snow,
-  Star,
+  StarFill,
   Unlink,
   Spinner,
 };

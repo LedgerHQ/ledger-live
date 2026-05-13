@@ -9,8 +9,8 @@ import { createStructuredSelector } from "reselect";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import Track from "~/renderer/analytics/Track";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { StepId, StepProps, St } from "./types";
 import { Account, Operation } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -26,6 +26,7 @@ import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmati
 import logger from "~/renderer/logger";
 import type { StakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
 import { isStakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
+import type { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
 
 export type Data = {
   account: StakingAccount;
@@ -90,6 +91,7 @@ const Body = ({ onClose, t, stepId, device, openModal, onChangeStepId, params }:
   const dispatch = useDispatch();
   const { account, source = "Account Page" } = params;
 
+  const bridge = useAccountBridge<EvmTransaction>(account, undefined);
   const {
     transaction,
     setTransaction,
@@ -98,13 +100,12 @@ const Body = ({ onClose, t, stepId, device, openModal, onChangeStepId, params }:
     status,
     bridgeError,
     bridgePending,
-  } = useBridgeTransaction(() => {
+  } = useBridgeTransaction(bridge, () => {
     invariant(isStakingAccount(account), "evm: account with staking resources required");
-    const bridge = getAccountBridge(account, undefined);
     const baseTransaction = bridge.createTransaction(account);
     // NB: `mode` is intentionally not set here. It is set later together with `valAddress`
     // (see StepDelegation → updateValidator) once the user has picked a validator.
-    // Setting `mode: "delegate"` while `valAddress` is still empty makes the generic-alpaca
+    // Setting `mode: "delegate"` while `valAddress` is still empty makes the generic-coin-framework
     // bridge build a staking intent without a `mode`, which throws
     // "Invalid staking operation: undefined" during the first status computation.
     const transaction = bridge.updateTransaction(baseTransaction, {

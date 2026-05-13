@@ -15,6 +15,7 @@ import {
   useWalletV4TourDrawerViewModel,
   WalletV4TourDialog,
 } from "LLD/features/WalletV4Tour/Drawer";
+import { LineChartPreview } from "../components/LineChartPreview";
 
 export const WalletFeaturesDevToolContent = ({ expanded }: WalletFeaturesDevToolContentProps) => {
   const { t } = useTranslation();
@@ -88,6 +89,14 @@ export const WalletFeaturesDevToolContent = ({ expanded }: WalletFeaturesDevTool
             />
             <FeatureFlagPreview featureFlag={featureFlag} />
           </div>
+
+          {isEnabled && params.aggregatedAssets && (
+            <div className="flex flex-col gap-4">
+              <span className="body-2-semi-bold text-muted">Aggregated Assets Preview</span>
+              <Divider />
+              <LineChartPreview />
+            </div>
+          )}
         </div>
       )}
     </div>

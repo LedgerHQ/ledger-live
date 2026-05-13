@@ -27,9 +27,9 @@ describe("signAndFinalize", () => {
   describe("createWalletPolicy", () => {
     it("returns a WalletPolicy with descriptor from account type and key from masterFp, path and xpub", () => {
       const policy = createWalletPolicy(masterFp, accountPath, accountXpub, {
-        getDescriptorTemplate: () => "wpkh(@0)",
+        getDescriptorTemplate: () => "wpkh(@0/**)",
       } as any);
-      expect(policy.descriptorTemplate).toBe("wpkh(@0)");
+      expect(policy.descriptorTemplate).toBe("wpkh(@0/**)");
       expect(policy.keys).toHaveLength(1);
       expect(policy.keys[0]).toContain(accountXpub);
       expect(policy.keys[0]).toContain(masterFp.toString("hex"));

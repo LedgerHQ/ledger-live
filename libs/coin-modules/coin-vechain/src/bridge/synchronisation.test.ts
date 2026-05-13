@@ -1,4 +1,3 @@
-import { faker } from "@faker-js/faker";
 import { createEmptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account";
 import { makeScanAccounts } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
@@ -161,8 +160,8 @@ describe("scanAccounts", () => {
       path: "path",
       publicKey: "publicKey",
     };
-    const balance = new BigNumber(faker.number.int({ min: 100_000, max: 1_000_000 }));
-    const energy = new BigNumber(faker.number.int({ min: 100_000, max: 1_000_000 }));
+    const balance = new BigNumber(500_000);
+    const energy = new BigNumber(750_000);
     mockGetAccount.mockResolvedValueOnce({ balance, energy });
     mockGetOperations.mockResolvedValueOnce([]);
     mockGetTokenOperations.mockResolvedValueOnce([]);
@@ -209,7 +208,7 @@ describe("scanAccounts", () => {
       energy: "0",
       operations: [
         {
-          date: faker.date.recent(),
+          date: new Date("2024-01-01"),
         },
       ] as unknown as Operation,
     },

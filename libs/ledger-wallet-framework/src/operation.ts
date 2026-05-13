@@ -289,7 +289,7 @@ export const isOldestPendingOperation = (account: Account, nonce: BigNumber): bo
       "transactionSequenceNumber required",
     );
 
-    return pendingOp.transactionSequenceNumber < nonce;
+    return pendingOp.transactionSequenceNumber.lt(nonce);
   });
 };
 

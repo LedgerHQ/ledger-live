@@ -1,6 +1,5 @@
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Transaction } from "@ledgerhq/live-common/families/cosmos/types";
-import { AccountBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { useCallback } from "react";
@@ -25,9 +24,9 @@ export default function StepDelegation({
   invariant(transaction && transaction.validators, "transaction required");
   const { cosmosResources } = account;
   const delegations = cosmosResources.delegations || [];
+  const bridge = useAccountBridge<Transaction>(account, parentAccount);
   const updateValidator = useCallback(
     ({ address }: { address: string }) => {
-      const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
       onUpdateTransaction(_tx => {
         return bridge.updateTransaction(transaction, {
           validators: [
@@ -39,7 +38,7 @@ export default function StepDelegation({
         });
       });
     },
-    [onUpdateTransaction, account, transaction, parentAccount],
+    [bridge, onUpdateTransaction, transaction],
   );
   const chosenVoteAccAddr = transaction.validators[0]?.address || "";
 

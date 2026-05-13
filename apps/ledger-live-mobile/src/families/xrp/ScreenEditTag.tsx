@@ -1,9 +1,11 @@
+import invariant from "invariant";
 import React, { useCallback, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation, i18n } from "~/context/Locale";
 import { BigNumber } from "bignumber.js";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import type { Transaction as XrpTransaction } from "@ledgerhq/live-common/families/xrp/types";
 import { useTheme } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import KeyboardView from "~/components/KeyboardView";
@@ -30,6 +32,8 @@ const options = {
 function XrpEditTag({ route, navigation }: NavigationProps) {
   const { colors } = useTheme();
   const { account } = useAccountScreen(route);
+  invariant(account, "account is required");
+  const bridge = useAccountBridge<XrpTransaction>(account);
   const { t } = useTranslation();
   const transaction = route.params?.transaction;
   const [tag, setTag] = useState<BigNumber | null | undefined>(() => {
@@ -53,15 +57,13 @@ function XrpEditTag({ route, navigation }: NavigationProps) {
   }
 
   const onValidateText = useCallback(() => {
-    if (!account) return;
-    const bridge = getAccountBridge(account);
     popToScreen(navigation, ScreenName.SendSummary, {
       accountId: account.id,
       transaction: bridge.updateTransaction(transaction, {
         tag: tag && tag.toNumber(),
       }),
     });
-  }, [navigation, account, tag, transaction]);
+  }, [navigation, account, bridge, tag, transaction]);
   return (
     <SafeAreaView
       style={{

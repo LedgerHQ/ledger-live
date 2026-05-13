@@ -14,7 +14,7 @@ export function shouldRetainPendingOperation(account: Account, op: Operation): b
     last &&
     last.transactionSequenceNumber &&
     op.transactionSequenceNumber &&
-    op.transactionSequenceNumber <= last.transactionSequenceNumber
+    op.transactionSequenceNumber.lte(last.transactionSequenceNumber)
   ) {
     return false;
   }

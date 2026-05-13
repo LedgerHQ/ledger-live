@@ -174,7 +174,6 @@ async function init() {
     deepLinkUrl = url;
   });
   const initialSettings = (await getKey("app", "settings")) || {};
-  startAnalytics(store);
 
   liveBlindSigningReporter.setConsentSource(() => trackingEnabledSelector(store.getState()));
 
@@ -189,6 +188,7 @@ async function init() {
   }
 
   fetchSettings(settingsToLoad)(store.dispatch);
+  startAnalytics(store);
   const state = store.getState();
   const language = languageSelector(state);
 

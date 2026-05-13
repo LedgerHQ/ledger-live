@@ -24,17 +24,19 @@ function keyExtractor(item: Operation) {
   return `${item.accountId}_${item.id}_${item.type}`;
 }
 
-export default function OperationsList(_: Props) {
+export default function OperationsList({ route }: Props) {
   const { bottom } = useSafeAreaInsets();
+  const currencyId = route.params?.currencyId;
   const {
     accounts,
     flattenedAccounts,
     accountByAddress,
+    lastSeenTs,
     sections,
     completed,
     isEmpty,
     onEndReached,
-  } = useOperationsListViewModel();
+  } = useOperationsListViewModel(currencyId);
 
   const listContentStyle = useMemo(
     () => ({
@@ -61,10 +63,11 @@ export default function OperationsList(_: Props) {
           parentAccount={parentAccount}
           accountByAddress={accountByAddress}
           isPending={section.isPending ?? false}
+          lastSeenTs={lastSeenTs}
         />
       );
     },
-    [flattenedAccounts, accounts, accountByAddress],
+    [flattenedAccounts, accounts, accountByAddress, lastSeenTs],
   );
 
   const renderSectionHeader = useCallback(

@@ -81,6 +81,31 @@ const api = {
     });
     return data;
   },
+
+  /**
+   * Returns the total `actualAmount` (mutez) summed over the account's `finalizable`
+   * unstake requests — the portion of `unstakedBalance` whose unlock cycle has been
+   * reached and that can be reclaimed via `finalize_unstake`. The complementary
+   * `unstakedBalance - finalizable` portion is still in the deactivation delay window.
+   *
+   * TzKT's account endpoint does not expose this split, so we sum from
+   * `/v1/staking/unstake_requests`. https://api.tzkt.io/#operation/Staking_GetUnstakeRequests
+   *
+   * `limit=1000` covers any realistic number of concurrent finalizable requests for
+   * a single staker — we do not paginate.
+   */
+  async getUnstakeRequestsFinalizable(address: string): Promise<bigint> {
+    const { data } = await network<number[]>({
+      url: `${getExplorerUrl()}/v1/staking/unstake_requests`,
+      params: {
+        "staker.eq": address,
+        status: "finalizable",
+        "select.values": "actualAmount",
+        limit: 1000,
+      },
+    });
+    return data.reduce<bigint>((sum, n) => sum + BigInt(n), 0n);
+  },
   // https://api.tzkt.io/#operation/Accounts_GetOperations
   async getAccountOperations(
     address: string,

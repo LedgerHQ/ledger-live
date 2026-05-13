@@ -1,0 +1,41 @@
+[
+  {
+    "id": "usd-coin",
+    "ledgerIds": [
+      "ethereum/erc20/usd__coin",
+      "solana/spl/epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v",
+      "base/erc20/usd_coin",
+      "arbitrum/erc20/usd_coin"
+    ],
+    "ticker": "usdc",
+    "name": "USDC",
+    "image": "https://proxycgassets.api.live.ledger.com/coins/images/6319/large/USDC.png",
+    "marketCap": 78266265619,
+    "marketCapRank": 6,
+    "fullyDilutedValuation": 78271258740,
+    "totalVolume": 15811674201,
+    "high24h": 0.999884,
+    "low24h": 0.999617,
+    "price": 0.999774,
+    "priceChange24h": -6.15579233365e-7,
+    "priceChangePercentage1h": -0.008038974827952818,
+    "priceChangePercentage24h": -0.00006157182143781277,
+    "priceChangePercentage7d": 0.008250519758414612,
+    "priceChangePercentage30d": -0.01310630690040936,
+    "priceChangePercentage1y": -0.022279510247496335,
+    "marketCapChange24h": 170889701,
+    "marketCapChangePercentage24h": 0.21882,
+    "circulatingSupply": 78284315113.4221,
+    "totalSupply": 78289309385.33514,
+    "maxSupply": null,
+    "allTimeHigh": 1.043,
+    "allTimeLow": 0.877647,
+    "allTimeHighDate": "2018-11-15T00:00:00Z",
+    "allTimeLowDate": "2023-03-11T08:02:13.981Z",
+    "sparkline": [
+      0.999768, 0.9997047, 0.9996813, 0.9997035, 0.99967927, 0.9996469, 0.9997382, 0.99971086,
+      0.99973553, 0.99974775
+    ],
+    "updatedAt": "2026-05-07T07:27:08.669Z"
+  }
+]

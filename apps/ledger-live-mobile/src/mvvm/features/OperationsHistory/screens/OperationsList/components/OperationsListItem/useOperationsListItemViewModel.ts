@@ -8,6 +8,7 @@ import { ScreenName } from "~/const";
 import { track } from "~/analytics";
 import { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
+import { isOperationUnread } from "LLM/features/OperationsHistory/utils/unreadOperations";
 import { useMaybeAccountName } from "~/reducers/wallet";
 
 type Params = {
@@ -15,6 +16,7 @@ type Params = {
   account: AccountLike;
   parentAccount: Account | undefined;
   accountByAddress: Map<string, AccountLike>;
+  lastSeenTs: number | null;
 };
 
 type AmountColorType = "base" | "success";
@@ -24,6 +26,7 @@ export function useOperationsListItemViewModel({
   account,
   parentAccount,
   accountByAddress,
+  lastSeenTs,
 }: Params) {
   const navigation = useNavigation<BaseNavigation>();
 
@@ -32,6 +35,8 @@ export function useOperationsListItemViewModel({
   const mainAccount = getMainAccount(account, parentAccount);
   const amount = getOperationAmountNumber(operation);
   const hasFailed = !!operation.hasFailed;
+
+  const isUnread = isOperationUnread(operation.date, lastSeenTs);
 
   const operationType = operation.type;
   const isOutgoing = amount.isNegative();
@@ -68,6 +73,7 @@ export function useOperationsListItemViewModel({
     operationType,
     isOutgoing,
     isASendOrReceive,
+    isUnread,
     currency,
     unit,
     amount,

@@ -14,7 +14,7 @@ export const FirebaseFeatureFlagsProvider = ({
   children,
   getFeature,
 }: Props): React.JSX.Element => {
-  const { config: remoteConfig } = useFirebaseRemoteConfig();
+  const { config: remoteConfig, lastFetchTime } = useFirebaseRemoteConfig();
 
   const dispatch = useDispatch();
   const localOverrides = useSelector(featureFlagsOverridesSelector);
@@ -75,7 +75,8 @@ export const FirebaseFeatureFlagsProvider = ({
       resetFeature,
       resetFeatures,
     }),
-    [wrappedGetFeature, overrideFeature, resetFeature, resetFeatures],
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
+    [wrappedGetFeature, overrideFeature, resetFeature, resetFeatures, lastFetchTime],
   );
 
   return <FeatureFlagsProvider value={contextValue}>{children}</FeatureFlagsProvider>;

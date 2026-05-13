@@ -1,9 +1,8 @@
-import { isValidAddress } from "@celo/utils/lib/address";
+import { ierc20ABI } from "@celo/abis";
 import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { CELO_STABLE_TOKENS } from "../constants";
-import { celoKit } from "../network/sdk";
+import { encodeFunctionData, isAddress } from "viem";
 import { CeloAccount, Transaction } from "../types";
 import getFeesForTransaction from "./getFeesForTransaction";
 import { isSameTokenAsFee } from "./utils";
@@ -12,9 +11,7 @@ export const prepareTransaction: AccountBridge<
   Transaction,
   CeloAccount
 >["prepareTransaction"] = async (account, transaction) => {
-  const kit = celoKit();
-
-  if (transaction.recipient && !isValidAddress(transaction.recipient)) return transaction;
+  if (transaction.recipient && !isAddress(transaction.recipient)) return transaction;
 
   if (["send", "vote"].includes(transaction.mode) && !transaction.recipient) return transaction;
 
@@ -41,28 +38,25 @@ export const prepareTransaction: AccountBridge<
       ? tokenAccount?.spendableBalance
       : transaction.amount;
 
-  let token;
   if (isTokenTransaction) {
-    if (CELO_STABLE_TOKENS.includes(tokenAccount.token.id)) {
-      token = await kit.contracts.getStableToken();
-    } else {
-      token = await kit.contracts.getErc20(tokenAccount.token.contractAddress);
-    }
-  } else {
-    token = await kit.contracts.getGoldToken();
+    const data = encodeFunctionData({
+      abi: ierc20ABI,
+      functionName: "transfer",
+      args: [transaction.recipient as `0x${string}`, BigInt(amount.toFixed())],
+    });
+
+    return {
+      ...transaction,
+      amount,
+      fees,
+      data: Buffer.from(data.slice(2), "hex"),
+    };
   }
 
   return {
     ...transaction,
     amount,
     fees,
-    ...(isTokenTransaction
-      ? {
-          data: Buffer.from(
-            token.transfer(transaction.recipient, amount.toFixed()).txo.encodeABI(),
-          ),
-        }
-      : {}),
   };
 };
 

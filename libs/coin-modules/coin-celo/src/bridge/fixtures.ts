@@ -1,4 +1,3 @@
-import { faker } from "@faker-js/faker";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -10,17 +9,17 @@ const currency = getCryptoCurrencyById("celo");
 
 const accountFixture: CeloAccount = {
   type: "Account",
-  id: faker.string.uuid(),
-  seedIdentifier: faker.string.uuid(),
+  id: "celo:fixture-account",
+  seedIdentifier: "fixture-seed",
   derivationMode: "",
-  index: faker.number.int(),
+  index: 0,
   freshAddress: "address",
   freshAddressPath: "derivationPath",
   used: true,
   balance: new BigNumber(0),
   spendableBalance: new BigNumber(0),
-  creationDate: faker.date.past(),
-  blockHeight: faker.number.int({ min: 100_000, max: 200_000 }),
+  creationDate: new Date("2024-01-01"),
+  blockHeight: 100_000,
   currency,
   operationsCount: 0,
   operations: [],
@@ -79,7 +78,7 @@ const usdcTokenAccount: TokenAccount = {
   token: usdcToken,
   balance: BigNumber(1000000000), // 1000 USDC in 6 decimals
   spendableBalance: BigNumber(1000000000),
-  creationDate: faker.date.past(),
+  creationDate: new Date("2024-01-01"),
   operationsCount: 0,
   operations: [],
   pendingOperations: [],
@@ -107,7 +106,7 @@ const usdtTokenAccount: TokenAccount = {
   token: usdtToken,
   balance: BigNumber(500000000), // 500 USDT in 6 decimals
   spendableBalance: BigNumber(500000000),
-  creationDate: faker.date.past(),
+  creationDate: new Date("2024-01-01"),
   operationsCount: 0,
   operations: [],
   pendingOperations: [],
@@ -141,7 +140,7 @@ const subAccounts = [
     } as TokenCurrency,
     balance: BigNumber(212),
     spendableBalance: BigNumber(212),
-    creationDate: faker.date.past(),
+    creationDate: new Date("2024-01-01"),
     operationsCount: 0,
     operations: [],
     pendingOperations: [],

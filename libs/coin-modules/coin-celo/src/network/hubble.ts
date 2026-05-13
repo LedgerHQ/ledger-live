@@ -1,9 +1,11 @@
+import { electionABI } from "@celo/abis";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
 import { BigNumber } from "bignumber.js";
 import { isDefaultValidatorGroup } from "../logic";
-import { celoKit } from "./sdk";
 import { CeloValidatorGroup } from "../types/types";
+import { getCeloClient } from "./client";
+import { getRegistryAddressFor } from "./registry";
 
 const getUrl = (route: string): string => `${getEnv("API_CELO_INDEXER")}${route || ""}`;
 
@@ -16,19 +18,34 @@ const fetchValidatorGroups = async () => {
 };
 
 export const getValidatorGroups = async (): Promise<CeloValidatorGroup[]> => {
-  const [rawGroups, election] = await Promise.all([
+  const client = getCeloClient();
+  const electionAddress = await getRegistryAddressFor("Election");
+
+  const [rawGroups, eligibleGroups] = await Promise.all([
     fetchValidatorGroups(),
-    celoKit().contracts.getElection(),
+    client.readContract({
+      address: electionAddress,
+      abi: electionABI,
+      functionName: "getEligibleValidatorGroups",
+    }),
   ]);
 
+  const eligibleSet = new Set(eligibleGroups.map(a => a.toLowerCase()));
+
   // Check on-chain capacity for every group in parallel.
-  // getValidatorGroupVotes returns the exact capacity (numVotesReceivable - currentVotes)
-  // computed by the contract, which is more accurate than estimating from members_count.
+  // A group must be in the eligible set and have remaining vote capacity (getNumVotesReceivable > 0),
+  // which matches the semantics of ContractKit's getValidatorGroupVotes { eligible, capacity }.
   const canReceiveVotes = await Promise.all(
-    rawGroups.map(async (vg: { address: string }) => {
+    rawGroups.map(async (vg: { address: `0x${string}` }) => {
       try {
-        const { eligible, capacity } = await election.getValidatorGroupVotes(vg.address);
-        return eligible && capacity.gt(0);
+        if (!eligibleSet.has(vg.address.toLowerCase())) return false;
+        const capacity = await client.readContract({
+          address: electionAddress,
+          abi: electionABI,
+          functionName: "getNumVotesReceivable",
+          args: [vg.address],
+        });
+        return capacity > BigInt(0);
       } catch {
         return true;
       }

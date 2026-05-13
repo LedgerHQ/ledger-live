@@ -33,7 +33,7 @@ export default function Features() {
 
       <SettingsRow
         title="Device Intent Executor"
-        desc="Test the DeviceIntentExecutor with dummy intents"
+        desc="Test DeviceIntentExecutor orchestration and initialization"
         iconLeft={<IconsLegacy.NanoXFoldedMedium size={24} color="black" />}
         onPress={() => navigation.navigate(ScreenName.DebugDeviceIntentExecutor)}
       />

@@ -36,6 +36,10 @@ import type { FirebaseMessagingTypes } from "@react-native-firebase/messaging";
 import { RebornBuyDeviceDrawerState } from "./rebornBuyDeviceDrawer";
 import type { PortfolioRefreshState } from "./portfolioRefresh";
 import type { PortfolioBalanceDisplayState } from "./portfolioBalanceDisplay";
+import type { HistoryState } from "./history";
+import type { RecoverStateSliceState } from "./recoverState";
+import type { LiveAppModalState } from "./liveAppModal";
+import type { KnownDevicesState } from "./knownDevices";
 
 // === ACCOUNT STATE ===
 
@@ -85,6 +89,8 @@ export type AppState = {
   isPasswordLockBlocked: boolean;
   /** Reboot ID for triggering app remount */
   rebootId: number;
+  /** Incremented when `ledgerlive://product-tour` is handled so the Product Tour subtree can open after navigation to Portfolio. */
+  productTourDeeplinkNonce: number;
 };
 
 // === AUTH STATE ===
@@ -120,6 +126,7 @@ export type NotificationsState = {
   drawerSource?:
     | "onboarding"
     | "send"
+    | "dapp_complete"
     | "receive"
     | "swap"
     | "stake"
@@ -406,8 +413,10 @@ export type State = LLMRTKApiState & {
   dynamicContent: DynamicContentState;
   earn: EarnState;
   featureFlags: FeatureFlagsState;
+  history: HistoryState;
   identities: IdentitiesState;
   inView: InViewState;
+  knownDevices: KnownDevicesState;
   largeMover: LargeMoverState;
   market: MarketState;
   modularDrawer: ModularDrawerState;
@@ -428,4 +437,6 @@ export type State = LLMRTKApiState & {
   walletSync: WalletSyncState;
   portfolioRefresh: PortfolioRefreshState;
   portfolioBalanceDisplay: PortfolioBalanceDisplayState;
+  recoverState: RecoverStateSliceState;
+  liveAppModal: LiveAppModalState;
 };

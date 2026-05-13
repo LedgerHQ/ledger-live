@@ -1,6 +1,7 @@
-import { describe, it, expect, beforeAll, afterAll } from "bun:test";
+import { describe, it, expect, beforeAll, afterAll, afterEach } from "bun:test";
 import { MockServer } from "../helpers/mock-server";
 import { runCli } from "../helpers/cli-runner";
+import { makeSessionDir } from "../helpers/session-fixture";
 import { ETH_DESCRIPTOR, ETH_ADDRESS } from "../helpers/constants";
 
 const CURRENT_BLOCK = {
@@ -81,13 +82,20 @@ function baseRoutes(txsFixture: object) {
 describe("operations command — empty history", () => {
   const server = new MockServer(baseRoutes({ data: [], token: null }));
 
+  let sessionCleanup: (() => void) | undefined;
   beforeAll(() => server.start());
   afterAll(() => server.stop());
+  afterEach(() => {
+    sessionCleanup?.();
+    sessionCleanup = undefined;
+  });
 
   it("json output: returns empty operations array", async () => {
+    const fixture = makeSessionDir([{ label: "ethereum-1", descriptor: ETH_DESCRIPTOR }]);
+    sessionCleanup = fixture.cleanup;
     const { stdout, exitCode, stderr } = await runCli(
-      ["operations", "--account", ETH_DESCRIPTOR, "--output", "json"],
-      { WALLET_CLI_MOCK_PORT: String(server.port) },
+      ["operations", "--account", "ethereum-1", "--output", "json"],
+      { WALLET_CLI_MOCK_PORT: String(server.port), ...fixture.env },
     );
     expect(exitCode, `stderr: ${stderr}`).toBe(0);
 
@@ -102,13 +110,20 @@ describe("operations command — empty history", () => {
 describe("operations command — one OUT transaction", () => {
   const server = new MockServer(baseRoutes({ data: [POINT_ONE_ETH_OUT_TX], token: null }));
 
+  let sessionCleanup: (() => void) | undefined;
   beforeAll(() => server.start());
   afterAll(() => server.stop());
+  afterEach(() => {
+    sessionCleanup?.();
+    sessionCleanup = undefined;
+  });
 
   it("json output: returns one OUT operation", async () => {
+    const fixture = makeSessionDir([{ label: "ethereum-1", descriptor: ETH_DESCRIPTOR }]);
+    sessionCleanup = fixture.cleanup;
     const { stdout, exitCode, stderr } = await runCli(
-      ["operations", "--account", ETH_DESCRIPTOR, "--output", "json"],
-      { WALLET_CLI_MOCK_PORT: String(server.port) },
+      ["operations", "--account", "ethereum-1", "--output", "json"],
+      { WALLET_CLI_MOCK_PORT: String(server.port), ...fixture.env },
     );
     expect(exitCode, `stderr: ${stderr}`).toBe(0);
 

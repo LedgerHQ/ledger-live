@@ -6,6 +6,7 @@ import { Platform, StyleSheet } from "react-native";
 import { BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
 import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 import { TrackScreen } from "~/analytics";
+import { useProductTourControls } from "../context/ProductTourControlsContext";
 import { useProductTourDrawerViewModel } from "./hooks/useProductTourDrawerViewModel";
 import { SlideItem } from "./components/SlideItem";
 import { SlideFooterButton } from "./components/SlideFooterButton";
@@ -16,22 +17,16 @@ export const useProductTourDrawer = () => useProductTourDrawerViewModel();
 
 const AnimatedGestureHandlerFlatList = Animated.createAnimatedComponent(FlatList);
 
-type ProductTourDrawerProps = Omit<
-  ReturnType<typeof useProductTourDrawerViewModel>,
-  "openDrawer" | "productTourCompleted" | "handleCloseDrawer"
->;
+export const ProductTourDrawer = () => {
+  const { isDrawerOpen, closeProductTour, onSlideChange, onPrimaryAction } =
+    useProductTourControls();
 
-export const ProductTourDrawer = ({
-  isDrawerOpen,
-  closeDrawer,
-  onSlideChange,
-}: ProductTourDrawerProps) => {
   if (!isDrawerOpen) {
     return null;
   }
 
   return (
-    <QueuedDrawerBottomSheet isRequestingToBeOpened={isDrawerOpen} onClose={closeDrawer}>
+    <QueuedDrawerBottomSheet isRequestingToBeOpened={isDrawerOpen} onClose={closeProductTour}>
       <BottomSheetView>
         <BottomSheetHeader />
         <TrackScreen page={PAGE_TRACKING_PRODUCT_TOUR} />
@@ -56,7 +51,7 @@ export const ProductTourDrawer = ({
           </Slides.ProgressIndicator>
 
           <Slides.Footer>
-            <SlideFooterButton closeDrawer={closeDrawer} />
+            <SlideFooterButton onPrimaryAction={onPrimaryAction} />
           </Slides.Footer>
         </Slides>
       </BottomSheetView>

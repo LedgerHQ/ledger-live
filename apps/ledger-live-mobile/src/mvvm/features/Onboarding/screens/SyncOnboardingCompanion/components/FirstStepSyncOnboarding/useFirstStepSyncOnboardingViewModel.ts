@@ -15,7 +15,7 @@ import {
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import { isAllowedOnboardingStatePollingErrorDmk } from "@ledgerhq/live-dmk-mobile";
 import { SeedPhraseType } from "@ledgerhq/types-live";
-import { addKnownDevice } from "~/actions/ble";
+import { addKnownBleDevice } from "~/actions/ble";
 import { setIsReborn, setLastConnectedDevice, setOnboardingHasDevice } from "~/actions/settings";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
@@ -31,6 +31,7 @@ import { screen } from "~/analytics";
 import { useTrackOnboardingFlow } from "~/analytics/hooks/useTrackOnboardingFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { SeedPathStatus, UseFirstStepSyncOnboardingViewModelProps } from "./types";
+import { addKnownDevice, mapDeviceToKnownDevice } from "~/reducers/knownDevices";
 
 const POLLING_PERIOD_MS = 1000;
 const OPACITY_DURATION = 400;
@@ -177,13 +178,16 @@ export const useFirstStepSyncOnboardingViewModel = ({
    */
   const addToKnownDevices = useCallback(() => {
     dispatchRedux(setLastConnectedDevice(device));
-    dispatchRedux(
-      addKnownDevice({
-        id: device.deviceId,
-        name: device.deviceName ?? device.modelId,
-        modelId: device.modelId,
-      }),
-    );
+    dispatchRedux(addKnownDevice(mapDeviceToKnownDevice(device)));
+    if (!device.wired) {
+      dispatchRedux(
+        addKnownBleDevice({
+          id: device.deviceId,
+          name: device.deviceName ?? device.modelId,
+          modelId: device.modelId,
+        }),
+      );
+    }
   }, [device, dispatchRedux]);
 
   const handleNextStep = useCallback(() => {

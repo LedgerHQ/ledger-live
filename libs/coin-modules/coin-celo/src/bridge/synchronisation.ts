@@ -1,3 +1,4 @@
+import { electionABI, lockedGoldABI } from "@celo/abis";
 import { createApi } from "@ledgerhq/coin-evm/api/index";
 import { getCoinConfig } from "@ledgerhq/coin-evm/config";
 import { createSwapHistoryMap, mergeSubAccounts, getSyncHash } from "@ledgerhq/coin-evm/logic";
@@ -16,12 +17,11 @@ import type {
 import { getEnv } from "@ledgerhq/live-env";
 import type { TokenAccount, SyncConfig } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import { celoKit } from "../network/sdk";
+import { getCeloClient } from "../network/client";
+import { getRegistryAddressFor } from "../network/registry";
 import { getAccountRegistrationStatus, getPendingWithdrawals, getVotes } from "../network/sdk";
 import { CeloAccount } from "../types/types";
 import { getTokenFromAsset } from "./getTokenFromAsset";
-
-const kit = celoKit();
 
 const operationsTypes = [
   "IN",
@@ -209,9 +209,32 @@ const getSubAccounts = async ({
 export const getAccountShape: GetAccountShape<CeloAccount> = async (info, config) => {
   const { address, currency, initialAccount, derivationMode } = info;
   const oldOperations = initialAccount?.operations || [];
-  const election = await kit.contracts.getElection();
-  const electionConfig = await election.getConfig();
-  const lockedGold = await kit.contracts.getLockedGold();
+  const client = getCeloClient();
+  const [electionAddress, lockedGoldAddress] = await Promise.all([
+    getRegistryAddressFor("Election"),
+    getRegistryAddressFor("LockedGold"),
+  ]);
+
+  const [maxNumGroupsVotedFor, lockedBalance, nonvotingLockedBalance] = await Promise.all([
+    client.readContract({
+      address: electionAddress,
+      abi: electionABI,
+      functionName: "maxNumGroupsVotedFor",
+    }),
+    client.readContract({
+      address: lockedGoldAddress,
+      abi: lockedGoldABI,
+      functionName: "getAccountTotalLockedGold",
+      args: [address as `0x${string}`],
+    }),
+    client.readContract({
+      address: lockedGoldAddress,
+      abi: lockedGoldABI,
+      functionName: "getAccountNonvotingLockedGold",
+      args: [address as `0x${string}`],
+    }),
+  ]);
+
   const accountId = encodeAccountId({
     type: "js",
     version: "2",
@@ -224,8 +247,8 @@ export const getAccountShape: GetAccountShape<CeloAccount> = async (info, config
   const pendingWithdrawals = accountRegistrationStatus ? await getPendingWithdrawals(address) : [];
   const votes = accountRegistrationStatus ? await getVotes(address) : [];
 
-  const lockedBalance = await lockedGold.getAccountTotalLockedGold(address);
-  const nonvotingLockedBalance = await lockedGold.getAccountNonvotingLockedGold(address);
+  const lockedBalanceBN = new BigNumber(lockedBalance.toString());
+  const nonvotingLockedBalanceBN = new BigNumber(nonvotingLockedBalance.toString());
 
   const configEvm = {
     ...getCoinConfig(currency.id).info,
@@ -242,7 +265,7 @@ export const getAccountShape: GetAccountShape<CeloAccount> = async (info, config
     info,
     config,
     accountId,
-    contracts: { locked: lockedGold.address, election: election.address },
+    contracts: { locked: lockedGoldAddress, election: electionAddress },
     api,
   });
 
@@ -275,7 +298,7 @@ export const getAccountShape: GetAccountShape<CeloAccount> = async (info, config
 
   const shape: Partial<CeloAccount> = {
     id: accountId,
-    balance: balance.plus(lockedBalance),
+    balance: balance.plus(lockedBalanceBN),
     blockHeight: blockInfo.height || 0,
     operations,
     operationsCount: operations.length,
@@ -284,13 +307,13 @@ export const getAccountShape: GetAccountShape<CeloAccount> = async (info, config
     syncHash: syncHash,
     celoResources: {
       registrationStatus: accountRegistrationStatus,
-      lockedBalance,
-      nonvotingLockedBalance,
+      lockedBalance: lockedBalanceBN,
+      nonvotingLockedBalance: nonvotingLockedBalanceBN,
       pendingWithdrawals,
       votes,
-      electionAddress: election.address,
-      lockedGoldAddress: lockedGold.address,
-      maxNumGroupsVotedFor: electionConfig.maxNumGroupsVotedFor,
+      electionAddress,
+      lockedGoldAddress,
+      maxNumGroupsVotedFor: new BigNumber(maxNumGroupsVotedFor.toString()),
     },
   };
 

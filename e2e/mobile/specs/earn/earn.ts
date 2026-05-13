@@ -2,22 +2,22 @@ import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { setEnv } from "@ledgerhq/live-env";
 import { waitEarnReady } from "../../bridge/server";
-import { ApplicationOptions } from "page";
 import { isWallet40 } from "../../helpers/commonHelpers";
+
+import type { ApplicationOptions } from "page";
+import type { PartialFeatures } from "@shared/feature-flags";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
-let earnReady: Promise<string>;
-
-const stakeProgramOverride = {
+const FF_STAKE_PROGRAM_OVERRIDE: PartialFeatures = {
   // TODO: sync Firebase environments and remove this override when final variant is chosen
   stakePrograms: {
     enabled: true,
     params: {
-      list: ["ethereum"],
+      list: ["ethereum", "cosmos"],
       redirects: {
         "ethereum/erc20/usd__coin": {
-          platform: "earn" as const,
+          platform: "earn",
           name: "Earn - Deposit",
           queryParams: {
             cryptoAssetId: "ethereum/erc20/usd__coin",
@@ -29,6 +29,12 @@ const stakeProgramOverride = {
     },
   },
 };
+
+const FF_PTX_EARN_UI_V1: PartialFeatures = {
+  ptxEarnUi: { enabled: false, params: { value: "v1" } },
+};
+
+let earnReady: Promise<string>;
 
 async function beforeAllFunction(options: ApplicationOptions) {
   await app.init(options);
@@ -47,7 +53,7 @@ export async function runInlineAddAccountTest(
       await beforeAllFunction({
         userdata: "skip-onboarding",
         speculosApp: account.currency.speculosApp,
-        featureFlags: stakeProgramOverride,
+        featureFlags: FF_STAKE_PROGRAM_OVERRIDE,
       });
     });
 
@@ -96,14 +102,14 @@ export async function runStartETHStakingFromEarnDashboardTest(
   tmsLinks: string[],
   tags: string[],
 ) {
-  describe("Start ETH staking flow from Earn Dashboard v1", () => {
+  describe("Earn V1 - Start ETH staking flow from Earn Dashboard", () => {
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "skip-onboarding",
         speculosApp: account.currency.speculosApp,
         featureFlags: {
-          ptxEarnUi: { enabled: false, params: { value: "v1" } },
-          ...stakeProgramOverride,
+          ...FF_PTX_EARN_UI_V1,
+          ...FF_STAKE_PROGRAM_OVERRIDE,
         },
         cliCommands: [liveDataWithAddressCommand(account)],
       });
@@ -131,12 +137,15 @@ export async function runCorrectEarnPageIsLoadedDependingOnUserStakingSituationT
   tmsLinks: string[],
   tags: string[],
 ) {
-  describe("Correct Earn page is loaded depending on user's staking situation", () => {
+  describe("Earn V1 - Correct Earn Page is loaded depending on user's staking situation", () => {
     beforeAll(async () => {
       await beforeAllFunction({
         userdata: "skip-onboarding",
         speculosApp: account.currency.speculosApp,
         cliCommands: [liveDataCommand(account)],
+        featureFlags: {
+          ...FF_PTX_EARN_UI_V1,
+        },
       });
     });
 

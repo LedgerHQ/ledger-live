@@ -81,7 +81,8 @@ export function useActionsListViewModel(): ActionsListViewModel {
         page: MY_WALLET_TRACKING_PAGE_NAME,
       });
     }
-  }, [referralProgramConfig, navigate]);
+    close();
+  }, [referralProgramConfig, navigate, close]);
 
   const actions: Action[] = [
     ...(recoverFeature?.enabled

@@ -1,6 +1,6 @@
 import { getGasLimit, DEFAULT_GAS_LIMIT } from "@ledgerhq/coin-evm/utils";
 import { Transaction } from "@ledgerhq/coin-evm/types/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Button } from "@ledgerhq/react-ui";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
@@ -22,10 +22,10 @@ const AdvancedOptions: NonNullable<EvmFamily["sendAmountFields"]>["component"] =
   invariant(account, "Account required");
   const [editable, setEditable] = useState(false);
   const { t } = useTranslation();
+  const bridge = useAccountBridge<Transaction>(account);
 
   const onGasLimitChange = useCallback(
     (str: string) => {
-      const bridge = getAccountBridge(account);
       let gasLimit = new BigNumber(str || 0);
       if (!gasLimit.isFinite()) {
         gasLimit = DEFAULT_GAS_LIMIT;
@@ -34,7 +34,7 @@ const AdvancedOptions: NonNullable<EvmFamily["sendAmountFields"]>["component"] =
         bridge.updateTransaction(transaction, { customGasLimit: gasLimit }),
       );
     },
-    [account, updateTransaction],
+    [bridge, updateTransaction],
   );
 
   const onEditClick = useCallback(() => setEditable(true), [setEditable]);

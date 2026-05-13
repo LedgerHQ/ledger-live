@@ -613,6 +613,39 @@ describe("tzkt network API", () => {
   });
 
   // -------------------------------------------------------------------------
+  // api.getUnstakeRequestsFinalizable
+  // -------------------------------------------------------------------------
+
+  describe("api.getUnstakeRequestsFinalizable", () => {
+    it("queries finalizable unstake requests and sums actualAmount", async () => {
+      mockedNetwork.mockReturnValue(networkResponse([100, 250, 7]) as ReturnType<typeof network>);
+
+      const result = await api.getUnstakeRequestsFinalizable("tz1abc");
+
+      expect(result).toEqual(357n);
+      expect(mockedNetwork).toHaveBeenCalledWith(
+        expect.objectContaining({
+          url: expect.stringContaining("/v1/staking/unstake_requests"),
+          params: {
+            "staker.eq": "tz1abc",
+            status: "finalizable",
+            "select.values": "actualAmount",
+            limit: 1000,
+          },
+        }),
+      );
+    });
+
+    it("returns 0n when no finalizable requests exist", async () => {
+      mockedNetwork.mockReturnValue(networkResponse([]) as ReturnType<typeof network>);
+
+      const result = await api.getUnstakeRequestsFinalizable("tz1empty");
+
+      expect(result).toEqual(0n);
+    });
+  });
+
+  // -------------------------------------------------------------------------
   // api.getTokensBalances
   // -------------------------------------------------------------------------
 

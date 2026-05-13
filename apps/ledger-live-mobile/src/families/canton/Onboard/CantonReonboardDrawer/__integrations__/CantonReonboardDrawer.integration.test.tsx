@@ -102,6 +102,54 @@ describe("CantonReonboardDrawer integration", () => {
     jest.clearAllMocks();
   });
 
+  async function acceptDisclaimer(user: ReturnType<typeof render>["user"]) {
+    await user.press(screen.getByTestId("canton-disclaimer-agree-row"));
+    await waitFor(() => {
+      expect(screen.getByText("Agree")).not.toBeDisabled();
+    });
+    await user.press(screen.getByText("Agree"));
+  }
+
+  it("should show the disclaimer first and require agreement before reonboarding", async () => {
+    const onClose = jest.fn();
+
+    const { user } = render(
+      <CantonReonboardDrawer
+        isOpen
+        currency={currency}
+        accountToReonboard={accountToReonboard}
+        onClose={onClose}
+      />,
+      { overrideInitialState: overrideInitialStateWithDevice },
+    );
+
+    expect(screen.getByText("Setup Canton Network")).toBeOnTheScreen();
+    expect(screen.queryByText("Confirm")).not.toBeOnTheScreen();
+
+    await acceptDisclaimer(user);
+
+    await waitFor(() => {
+      expect(screen.getByText("Confirm")).toBeOnTheScreen();
+    });
+  });
+
+  it("Cancel from disclaimer closes the drawer without reonboarding", async () => {
+    const onClose = jest.fn();
+
+    const { user } = render(
+      <CantonReonboardDrawer
+        isOpen
+        currency={currency}
+        accountToReonboard={accountToReonboard}
+        onClose={onClose}
+      />,
+      { overrideInitialState: overrideInitialStateWithDevice },
+    );
+
+    await user.press(screen.getByText("Cancel"));
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
   it("should complete reonboarding and call onClose", async () => {
     const onClose = jest.fn();
 
@@ -114,6 +162,8 @@ describe("CantonReonboardDrawer integration", () => {
       />,
       { overrideInitialState: overrideInitialStateWithDevice },
     );
+
+    await acceptDisclaimer(user);
 
     await user.press(screen.getByText("Confirm"));
 
@@ -148,6 +198,8 @@ describe("CantonReonboardDrawer integration", () => {
       />,
       { overrideInitialState: overrideInitialStateWithDevice },
     );
+
+    await acceptDisclaimer(user);
 
     await user.press(screen.getByText("Confirm"));
 

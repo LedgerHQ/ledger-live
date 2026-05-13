@@ -1,5 +1,5 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import {
   AccountBridge,
   AccountLike,
@@ -81,10 +81,10 @@ export const useStepMethodContinue = <T extends TransactionCommon>({
   transitionTo,
   getPatch,
 }: UseStepMethodContinueParams<T>) => {
+  const bridge = useAccountBridge<T>(account, parentAccount);
   return useCallback(async () => {
     invariant(editType, "editType required");
 
-    const bridge: AccountBridge<T> = getAccountBridge(account, parentAccount);
     const mainAccount = getMainAccount(account, parentAccount);
     const patch = await getPatch({
       account: mainAccount,
@@ -95,6 +95,7 @@ export const useStepMethodContinue = <T extends TransactionCommon>({
     updateTransaction(tx => bridge.updateTransaction(tx, patch));
     transitionTo("summary");
   }, [
+    bridge,
     editType,
     account,
     parentAccount,

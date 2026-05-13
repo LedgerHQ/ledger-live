@@ -12,6 +12,7 @@ import { add, sub, type Duration } from "date-fns";
 import { ABTestingVariants } from "@ledgerhq/types-live";
 import { Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import { NotificationsState } from "~/reducers/types";
+import { createNotificationsPromptFeatureFlags } from "../testUtils";
 
 // Mock QueuedDrawer to bypass animation issues with Reanimated 4 in tests
 jest.mock("LLM/components/QueuedDrawer", () => {
@@ -143,88 +144,43 @@ describe("NotificationsPrompt Integration", () => {
       </NotificationsPromptProvider>,
       {
         overrideInitialState: withFlagOverrides(
-          {
-            brazePushNotifications: {
-              enabled: true,
-              params: {
-                action_events: {
-                  complete_onboarding: {
-                    enabled: true,
-                    timer: 0,
-                  },
-
-                  add_favorite_coin: {
-                    enabled: true,
-                    timer: 0,
-                  },
-
-                  send: {
-                    enabled: true,
-                    timer: 0,
-                  },
-                  receive: {
-                    enabled: true,
-                    timer: 0,
-                  },
-                  buy: {
-                    enabled: true,
-                    timer: 0,
-                  },
-                  swap: {
-                    enabled: true,
-                    timer: 0,
-                  },
-                  stake: {
-                    enabled: true,
-                    timer: 0,
-                  },
-                },
-                reprompt_schedule: REPROMPT_SCHEDULE.map(s => ({
-                  months: 0,
-                  hours: 0,
-                  minutes: 0,
-                  seconds: 0,
-                  days: "days" in s ? s.days : 0,
-                })),
-
-                notificationsCategories: [
-                  {
-                    displayed: true,
-                    category: "announcementsCategory",
-                  },
-                  {
-                    displayed: true,
-                    category: "recommendationsCategory",
-                  },
-                  {
-                    displayed: true,
-                    category: "largeMoverCategory",
-                  },
-                  {
-                    displayed: true,
-                    category: "transactionsAlertsCategory",
-                  },
-                  {
-                    displayed: true,
-                    category: "totalMarketCap",
-                  },
-                  {
-                    displayed: true,
-                    category: "topGainersLosers",
-                  },
-                ],
-
-                inactivity_enabled: true,
-                inactivity_reprompt: { months: 6, days: 0, hours: 0, minutes: 0, seconds: 0 },
+          createNotificationsPromptFeatureFlags({
+            variant,
+            repromptSchedule: REPROMPT_SCHEDULE.map(s => ({
+              months: 0,
+              hours: 0,
+              minutes: 0,
+              seconds: 0,
+              days: "days" in s ? s.days : 0,
+            })),
+            notificationsCategories: [
+              {
+                displayed: true,
+                category: "announcementsCategory",
               },
-            },
-            lwmNewWordingOptInNotificationsDrawer: {
-              enabled: true,
-              params: {
-                variant,
+              {
+                displayed: true,
+                category: "recommendationsCategory",
               },
-            },
-          },
+              {
+                displayed: true,
+                category: "largeMoverCategory",
+              },
+              {
+                displayed: true,
+                category: "transactionsAlertsCategory",
+              },
+              {
+                displayed: true,
+                category: "totalMarketCap",
+              },
+              {
+                displayed: true,
+                category: "topGainersLosers",
+              },
+            ],
+            inactivityEnabled: true,
+          }),
           state => ({
             ...state,
             settings: {

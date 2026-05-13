@@ -20,5 +20,13 @@ export type BridgeApi = {
    * Whether the chain surfaces staking data through `getBalance`
    */
   stakingSupported?: boolean;
+  /**
+   * When true, the chain consumes per-stake positions via
+   * `account.stakingPositions` (raw `Stake[]` from `getBalance`) instead of
+   * the EVM-style `stakingResources` aggregate. Used by chains where each
+   * stake position must be preserved individually (e.g., Tezos Paris upgrade
+   * distinguishes delegation vs staking vs unstaking via uid prefix).
+   */
+  usesStakingPositions?: boolean;
   balanceOptions?: BalanceOptions;
 };

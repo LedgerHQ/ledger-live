@@ -127,7 +127,6 @@ setSupportedCurrencies([
   "sui",
   "zenrock",
   "sonic",
-  "sonic_blaze",
   "mina",
   "babylon",
   "canton_network",

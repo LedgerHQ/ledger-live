@@ -1,16 +1,18 @@
 import { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import { GetAddressOptions } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
-import type { TezosSigner } from "./types";
+import { normalizePublicKeyForAddress } from "@ledgerhq/coin-tezos/utils";
+import type { TezosSigner, Curve } from "@ledgerhq/coin-tezos/types/index";
 
 const getAddress = (signerContext: SignerContext<TezosSigner>): GetAddressFn => {
   return async (deviceId: string, { path, verify, derivationMode }: GetAddressOptions) => {
-    const curve = derivationMode === "tezosSecp256k1" ? 1 : 0;
+    const curve: Curve = derivationMode === "tezosSecp256k1" ? 0x01 : 0x00;
     const r = await signerContext(deviceId, async signer => {
-      const ledgerSigner = signer.createLedgerSigner(path, !!verify, curve);
-      const address = await ledgerSigner.publicKeyHash();
-      const publicKey = await ledgerSigner.publicKey();
-      return { address, publicKey };
+      const { address, publicKey: raw } = await signer.getAddress(path, {
+        verify: !!verify,
+        curve,
+      });
+      return { address, publicKey: normalizePublicKeyForAddress(raw, address) ?? raw };
     });
     return { ...r, path };
   };

@@ -138,7 +138,21 @@ jobs:
       - name: Parse speculos device input
         id: parse
         run: |
-          if [ "${{ inputs.speculos_device }}" = "nanoSP and stax" ]; then
+          declare -A WEEKDAY_DEVICE=(
+            [1]=nanoSP    # Monday     - LNSP
+            [2]=stax      # Tuesday    - Stax
+            [3]=nanoX     # Wednesday  - LNX
+            [4]=flex      # Thursday   - Flex
+            [5]=nanoGen5  # Friday     - NG5
+          )
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            DOW=$(date -u +%u)
+            DEVICE="${WEEKDAY_DEVICE[$DOW]:-nanoSP}"
+            echo "device_1=$DEVICE" >> $GITHUB_OUTPUT
+            echo "device_2=skipped" >> $GITHUB_OUTPUT
+            echo "is_dual=false"   >> $GITHUB_OUTPUT
+            printf 'e2e_matrix={"include":[{"device":"%s","is_primary":true,"artifact_suffix":""}]}\n' "$DEVICE" >> $GITHUB_OUTPUT
+          elif [ "${{ inputs.speculos_device }}" = "nanoSP and stax" ]; then
             echo "device_1=nanoSP" >> $GITHUB_OUTPUT
             echo "device_2=stax" >> $GITHUB_OUTPUT
             echo "is_dual=true" >> $GITHUB_OUTPUT
@@ -530,7 +544,7 @@ jobs:
                   "type": "header",
                   "text": {
                     "type": "plain_text",
-                    "text": `:ledger-logo: Ledger Live Desktop E2E tests results on ${{ inputs.ref || github.ref_name }} - ${{ inputs.speculos_device || 'nanoSP' }}${{ inputs.smoke_tests && ' (Smoke Tests)' || '' }}`,
+                    "text": `:ledger-logo: Ledger Live Desktop E2E tests results on ${{ inputs.ref || github.ref_name }} - ${device1}${{ inputs.smoke_tests && ' (Smoke Tests)' || '' }}`,
                     "emoji": true
                   }
                 },

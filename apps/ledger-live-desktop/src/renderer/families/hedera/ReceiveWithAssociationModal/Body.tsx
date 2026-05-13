@@ -7,7 +7,7 @@ import { createStructuredSelector } from "reselect";
 import invariant from "invariant";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
 import type { Transaction } from "@ledgerhq/live-common/families/hedera/types";
 import { isTokenAssociationRequired } from "@ledgerhq/live-common/families/hedera/utils";
@@ -146,6 +146,7 @@ const Body = ({
   const currencyName = currency ? currency.name : undefined;
   const mainAccount = getMainAccount(account, parentAccount);
 
+  const bridgeInstance = useAccountBridge<Transaction>(account, parentAccount);
   const {
     transaction,
     status,
@@ -153,11 +154,10 @@ const Body = ({
     bridgePending,
     updateTransaction,
     setAccount: updateTransactionAccount,
-  } = useBridgeTransaction(() => {
+  } = useBridgeTransaction(bridgeInstance, () => {
     invariant(account, "hedera: account is required");
 
-    const bridge = getAccountBridge(account, parentAccount);
-    const transaction = bridge.createTransaction(account);
+    const transaction = bridgeInstance.createTransaction(account);
 
     return {
       account,
@@ -190,7 +190,7 @@ const Body = ({
       setParentAccount(parentAccount);
 
       updateTransactionAccount(account, parentAccount);
-      updateTransaction(prev => ({ ...prev, ...getTransactionProperties(token) }));
+      updateTransaction(prev => ({ ...prev, ...getTransactionProperties(token) }) as Transaction);
     },
     [
       token,
@@ -206,7 +206,7 @@ const Body = ({
     (token?: TokenCurrency | null) => {
       setToken(token ?? null);
 
-      updateTransaction(prev => ({ ...prev, ...getTransactionProperties(token) }));
+      updateTransaction(prev => ({ ...prev, ...getTransactionProperties(token) }) as Transaction);
     },
     [getTransactionProperties, updateTransaction],
   );

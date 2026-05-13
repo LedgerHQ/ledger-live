@@ -27,6 +27,10 @@ jest.mock("react-native-ble-plx", () => ({
       this.reason = message;
     }
     reason: string;
+    errorCode?: number;
+  },
+  BleErrorCode: {
+    BluetoothPoweredOff: 102,
   },
   State: {
     PoweredOn: "PoweredOn",

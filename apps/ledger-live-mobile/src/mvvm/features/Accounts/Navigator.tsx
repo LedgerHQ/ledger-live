@@ -15,7 +15,7 @@ import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackBut
 import AddAccountsSuccess from "./screens/AddAccountSuccess";
 import AddAccountsWarning from "./screens/AddAccountWarning";
 import NoAssociatedAccountsView from "./screens/NoAssociatedAccountsView";
-import OnboardScreen from "~/families/canton/Onboard/OnboardScreen";
+import CantonOnboardNavigator from "~/families/canton/Onboard/Onboard";
 import CloseWithConfirmation from "LLM/components/CloseWithConfirmation";
 import {
   BaseComposite,
@@ -117,8 +117,8 @@ export default function Navigator() {
       )}
       <Stack.Screen
         name={ScreenName.CantonOnboardAccount}
-        component={OnboardScreen}
-        options={{ headerTitle: "" }}
+        component={CantonOnboardNavigator}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name={ScreenName.AddAccountsSuccess}

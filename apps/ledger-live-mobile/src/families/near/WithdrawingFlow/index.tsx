@@ -12,12 +12,14 @@ import ConnectDevice from "~/screens/ConnectDevice";
 import WithdrawingValidationError from "./03-ValidationError";
 import WithdrawingValidationSuccess from "./03-ValidationSuccess";
 import { NearWithdrawingFlowParamList } from "./types";
+import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
 
 const totalSteps = "3";
 
 function WithdrawingFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
+  const { notifyFlowCompleted } = useNotificationsContext();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   return (
     <Stack.Navigator
@@ -86,6 +88,11 @@ function WithdrawingFlow() {
           headerTitle: "",
           headerRight: undefined,
           gestureEnabled: false,
+        }}
+        listeners={{
+          beforeRemove: () => {
+            notifyFlowCompleted("stake");
+          },
         }}
       />
     </Stack.Navigator>

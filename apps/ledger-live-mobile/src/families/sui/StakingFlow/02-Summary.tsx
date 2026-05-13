@@ -45,10 +45,10 @@ export default function StakingSummary({ navigation, route }: Props) {
   const validators = useLedgerFirstShuffledValidatorsSui("");
   const chosenValidator = validator || validators[0];
   const mainAccount = getMainAccount(account, parentAccount);
-  const bridge = useAccountBridge<SuiTransaction>(account, undefined);
+  const bridge = useAccountBridge<SuiTransaction>(account, parentAccount);
 
   const { transaction, updateTransaction, setTransaction, status, bridgePending, bridgeError } =
-    useBridgeTransaction(() => {
+    useBridgeTransaction(bridge, () => {
       const tx = route.params.transaction;
 
       if (!tx) {

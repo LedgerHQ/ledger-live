@@ -8,3 +8,6 @@ export const UnsupportedTransactionMode = createCustomErrorClass<
   { mode: string },
   LedgerErrorConstructor<{ mode: string }>
 >("UnsupportedTransactionMode");
+export const MustDelegateBeforeStaking = createCustomErrorClass(
+  "MustDelegateBeforeStaking",
+);

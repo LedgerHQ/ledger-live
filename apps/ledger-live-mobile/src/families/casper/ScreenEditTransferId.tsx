@@ -4,7 +4,8 @@ import { View, StyleSheet, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "~/context/Locale";
 import i18next from "i18next";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import type { Transaction as CasperTransaction } from "@ledgerhq/live-common/families/casper/types";
 import { useIsFocused, useTheme } from "@react-navigation/native";
 import KeyboardView from "~/components/KeyboardView";
 import Button from "~/components/Button";
@@ -30,6 +31,7 @@ function CasperEditTransferId({ navigation, route }: NavigationProps) {
   const { t } = useTranslation();
   const { account } = useAccountScreen(route);
   invariant(account, "account is required");
+  const bridge = useAccountBridge<CasperTransaction>(account);
   const [transferId, setTransferId] = useState(route.params?.transaction.transferId);
   const onChangeTransferIdValue = useCallback((str: string) => {
     let value: string = str;
@@ -37,7 +39,6 @@ function CasperEditTransferId({ navigation, route }: NavigationProps) {
     setTransferId(value === "" ? undefined : value);
   }, []);
   const onValidateText = useCallback(() => {
-    const bridge = getAccountBridge(account);
     const { transaction } = route.params;
 
     popToScreen(navigation, ScreenName.SendSummary, {
@@ -46,7 +47,7 @@ function CasperEditTransferId({ navigation, route }: NavigationProps) {
         transferId: transferId && transferId.toString(),
       }),
     });
-  }, [navigation, route.params, account, transferId]);
+  }, [navigation, route.params, account, bridge, transferId]);
   return (
     <SafeAreaView style={styles.root}>
       <KeyboardView

@@ -77,6 +77,7 @@ export function OperationsList({
   return (
     <Flex flex={1} px={4}>
       <SectionList
+        testID="operations-list-section-list"
         sections={sections}
         style={{ flex: 1 }}
         contentContainerStyle={{ flexGrow: 1 }}

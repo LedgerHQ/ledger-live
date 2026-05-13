@@ -19,42 +19,15 @@ jest.mock("../../bridge/preload", () => ({
   getCurrentCeloPreloadData: () => mockGetCurrentCeloPreloadData(),
 }));
 
-jest.mock("../../network/sdk", () => {
-  return {
-    celoKit: jest.fn(() => ({
-      contracts: {
-        getLockedGold: jest.fn(async () => ({
-          address: "address",
-          lock: jest.fn(() => ({
-            txo: {
-              encodeABI: jest.fn(() => ({ data: "lock_data" })),
-              estimateGas: jest.fn(async () => 2),
-            },
-          })),
-          unlock: jest.fn(() => ({
-            txo: {
-              encodeABI: jest.fn(() => ({ data: "unlock_data" })),
-              estimateGas: jest.fn(async () => 3),
-            },
-          })),
-          withdraw: jest.fn(() => ({
-            txo: {
-              encodeABI: jest.fn(() => ({ data: "withdraw_data" })),
-              estimateGas: jest.fn(async () => 3),
-            },
-          })),
-          vote: jest.fn(() => ({
-            txo: {
-              encodeABI: jest.fn(() => ({ data: "vote_data" })),
-              estimateGas: jest.fn(async () => 3),
-            },
-          })),
-          getAccountNonvotingLockedGold: jest.fn(() => BigNumber(100)),
-        })),
-      },
-    })),
-  };
-});
+jest.mock("../../network/client", () => ({
+  getCeloClient: jest.fn(() => ({
+    readContract: jest.fn(async () => BigInt(100)),
+  })),
+}));
+
+jest.mock("../../network/registry", () => ({
+  getRegistryAddressFor: jest.fn(async () => "0x0000000000000000000000000000000000001d00"),
+}));
 
 describe("getTransactionStatus", () => {
   it("should return an InvalidAddressBecauseDestinationIsAlsoSource error in case the recipient is also the sender", async () => {

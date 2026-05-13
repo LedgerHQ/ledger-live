@@ -16,7 +16,6 @@ import type { CosmosRedelegationFlowParamList } from "./types";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { getTrackingDelegationType } from "../../helpers";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
-import { useNotifications } from "LLM/features/NotificationsPrompt";
 
 type Props = BaseComposite<
   StackNavigatorProps<
@@ -28,7 +27,6 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useAccountScreen(route);
   const { ticker } = getAccountCurrency(account);
-  const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
   const onClose = useCallback(() => {
     navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
@@ -57,9 +55,8 @@ export default function ValidationSuccess({ navigation, route }: Props) {
         delegation,
         flow: "stake",
       });
-      tryTriggerPushNotificationDrawerAfterAction("stake");
     }
-  }, [source, validator, delegation, ticker, account, tryTriggerPushNotificationDrawerAfterAction]);
+  }, [source, validator, delegation, ticker, account]);
   return (
     <View
       style={[

@@ -23,4 +23,3 @@ describe("celo fee currency constants", () => {
     expect(FEE_CURRENCY_BY_CONTRACT.get(upperContract.toLowerCase())?.name).toBe("USDC");
   });
 });
-

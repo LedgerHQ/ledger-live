@@ -1,6 +1,7 @@
 import type { MakeModalsType } from "~/renderer/modals/types";
 import OnboardModal, { type UserProps } from "./OnboardModal";
 import TooManyUtxosModal from "./TooManyUtxosModal";
+import CantonTermsModal from "./CantonTermsModal";
 import { CantonAccount } from "@ledgerhq/live-common/families/canton/types";
 
 // TODO: Remove MODAL_CANTON_ONBOARD_ACCOUNT when both `lldNetworkBasedAddAccount`
@@ -12,11 +13,13 @@ import { CantonAccount } from "@ledgerhq/live-common/families/canton/types";
 export type ModalsData = {
   MODAL_CANTON_ONBOARD_ACCOUNT: UserProps;
   MODAL_CANTON_TOO_MANY_UTXOS: { account: CantonAccount };
+  MODAL_CANTON_TERMS: undefined;
 };
 
 const modals: MakeModalsType<ModalsData> = {
   MODAL_CANTON_ONBOARD_ACCOUNT: OnboardModal,
   MODAL_CANTON_TOO_MANY_UTXOS: TooManyUtxosModal,
+  MODAL_CANTON_TERMS: CantonTermsModal,
 };
 
 export default modals;

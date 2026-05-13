@@ -40,6 +40,8 @@ export enum ScreenName {
   DebugCustomImageGraphics = "DebugCustomImageGraphics",
   DebugDebugging = "DebugDebugging",
   DebugDeviceIntentExecutor = "DebugDeviceIntentExecutor",
+  DebugDeviceIntentExecutorInitialization = "DebugDeviceIntentExecutorInitialization",
+  DebugDeviceIntentExecutorOrchestration = "DebugDeviceIntentExecutorOrchestration",
   DebugQueuedDrawers = "DebugQueuedDrawers",
   DebugQueuedDrawerScreen0 = "DebugQueuedDrawerScreen0",
   DebugQueuedDrawerScreen1 = "DebugQueuedDrawerScreen1",
@@ -227,6 +229,16 @@ export enum ScreenName {
   CeloWithdrawConnectDevice = "CeloWithdrawConnectDevice",
   CeloWithdrawAmount = "CeloWithdrawAmount",
 
+  // evm staking
+  EvmDelegationStarted = "EvmDelegationStarted",
+  EvmDelegationValidatorSelect = "EvmDelegationValidatorSelect",
+  EvmDelegationSelectDevice = "EvmDelegationSelectDevice",
+  EvmDelegationConnectDevice = "EvmDelegationConnectDevice",
+  EvmDelegationValidationError = "EvmDelegationValidationError",
+  EvmDelegationValidationSuccess = "EvmDelegationValidationSuccess",
+  EvmDelegationValidator = "EvmDelegationValidator",
+  EvmDelegationAmount = "EvmDelegationAmount",
+
   // cosmos
   CosmosFamilyEditMemo = "CosmosFamilyEditMemo",
   CosmosDelegationStarted = "CosmosDelegationStarted",
@@ -356,6 +368,7 @@ export enum ScreenName {
   StellarAddAssetValidationError = "StellarAddAssetValidationError",
   StellarAddAssetValidationSuccess = "StellarAddAssetValidationSuccess",
   // Canton
+  CantonDisclaimer = "CantonDisclaimer",
   CantonOnboardAccount = "CantonOnboardAccount",
   // Concordium
   ConcordiumOnboardAccount = "ConcordiumOnboardAccount",
@@ -580,6 +593,9 @@ export enum ScreenName {
   NoAssociatedAccounts = "NoAssociatedAccounts",
   LargeMoverLandingPage = "LargeMoverLandingPage",
   OperationsList = "OperationsList",
+
+  // Live App generic modal screen (renders an earn/live-app webview as a modal presentation)
+  LiveAppModal = "LiveAppModal",
 }
 
 export enum NavigatorName {
@@ -596,6 +612,7 @@ export enum NavigatorName {
   Base = "Base",
   BaseOnboarding = "BaseOnboarding",
   BuyDevice = "BuyDevice",
+  EvmDelegationFlow = "EvmDelegationFlow",
   CosmosClaimRewardsFlow = "CosmosClaimRewardsFlow",
   CosmosDelegationFlow = "CosmosDelegationFlow",
   CosmosRedelegationFlow = "CosmosRedelegationFlow",

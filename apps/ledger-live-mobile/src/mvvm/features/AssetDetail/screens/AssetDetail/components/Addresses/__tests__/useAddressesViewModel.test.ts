@@ -3,6 +3,7 @@ import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import {
   mockBtcCryptoCurrency,
   mockEthCryptoCurrency,
+  usdcToken,
 } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
@@ -68,27 +69,6 @@ describe("useAddressesViewModel", () => {
     });
   });
 
-  describe("onAccountPress", () => {
-    it("navigates to account screen and fires analytics", () => {
-      const { result } = renderHook(
-        () => useAddressesViewModel(mockBtcCryptoCurrency),
-        withAccounts("bitcoin", 1),
-      );
-
-      const account = result.current.accounts[0].account;
-      act(() => result.current.onAccountPress(account));
-
-      expect(mockNavigate).toHaveBeenCalledWith(ScreenName.Account, {
-        accountId: account.id,
-      });
-      expect(track).toHaveBeenCalledWith("account_clicked", {
-        currency: "bitcoin",
-        accountId: account.id,
-        page: "Asset Detail",
-      });
-    });
-  });
-
   describe("onAddAccount", () => {
     it("navigates to device selection and fires analytics", () => {
       const { result } = renderHook(
@@ -119,6 +99,25 @@ describe("useAddressesViewModel", () => {
 
       expect(mockNavigate).not.toHaveBeenCalled();
       expect(track).not.toHaveBeenCalled();
+    });
+
+    it("navigates with parentCurrency when currency is a token", () => {
+      const { result } = renderHook(() => useAddressesViewModel(usdcToken));
+
+      act(() => result.current.onAddAccount());
+
+      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.DeviceSelection, {
+        screen: ScreenName.SelectDevice,
+        params: {
+          currency: mockEthCryptoCurrency,
+          context: AddAccountContexts.AddAccounts,
+        },
+      });
+      expect(track).toHaveBeenCalledWith("button_clicked", {
+        button: "add_account",
+        currency: usdcToken.id,
+        page: "Asset Detail",
+      });
     });
   });
 });

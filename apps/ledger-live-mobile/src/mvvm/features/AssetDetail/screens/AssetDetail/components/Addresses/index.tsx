@@ -1,13 +1,9 @@
 import React from "react";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { AssetDetailCurrencyProps } from "LLM/features/AssetDetail/types";
 import { useAddressesViewModel } from "./useAddressesViewModel";
 import { AddressesView } from "./AddressesView";
 
-type Props = Readonly<{
-  currency: CryptoCurrency | undefined;
-}>;
-
-export function Addresses({ currency }: Props) {
+export function Addresses({ currency }: Readonly<{ currency: AssetDetailCurrencyProps }>) {
   const viewModel = useAddressesViewModel(currency);
   return <AddressesView {...viewModel} />;
 }

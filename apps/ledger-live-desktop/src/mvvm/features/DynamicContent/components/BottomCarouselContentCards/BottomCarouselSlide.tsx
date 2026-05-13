@@ -54,7 +54,7 @@ function BottomCarouselSlide({
   }
 
   return (
-    <LogContentCardWrapper id={id} location={location}>
+    <LogContentCardWrapper id={id} displayedPosition={index} location={location}>
       <MediaCard
         imageUrl={image ?? ""}
         onClick={hasClickTarget ? handleClick : undefined}

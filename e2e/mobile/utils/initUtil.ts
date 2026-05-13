@@ -334,6 +334,7 @@ export class InitializationManager {
           operationsList: false,
           aggregatedAssets: false,
           myWallet: isWallet40,
+          pnl: false,
         },
       },
       llmModularDrawer: {

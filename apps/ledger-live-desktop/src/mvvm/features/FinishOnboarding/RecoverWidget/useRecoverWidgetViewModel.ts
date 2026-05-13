@@ -1,11 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router";
 import { isRecoverDisplayed, useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useUpsellPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-import { getStoreValue } from "~/renderer/store";
+import { useRecoverBannerState } from "~/renderer/hooks/useRecoverBannerState";
 import { track } from "~/renderer/analytics/segment";
-import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
 import { shouldShowRecoverPortfolioWidget } from "./recoverPortfolioWidgetVisibility";
 
 const TRACK = {
@@ -20,36 +19,26 @@ export type RecoverWidgetViewProps = {
   readonly onOpenRecover: () => void;
 };
 
+/** View-model output; includes portfolio-only gating so parents read `useRecoverBannerState` once (here). */
+export type RecoverWidgetViewModelResult = RecoverWidgetViewProps & {
+  /** Same as rendering `RecoverWidget` in the Wallet40 portfolio row: offer visible and banner not dismissed. */
+  readonly shouldDisplayRecoverInPortfolioBannerRow: boolean;
+};
+
 export const RECOVER_WIDGET_TITLE_I18N_KEY = "postOnboarding.dialog.actions.recover.title";
 export const RECOVER_WIDGET_DESCRIPTION_I18N_KEY =
   "postOnboarding.dialog.actions.recover.description";
 
-export function useRecoverWidgetViewModel(): RecoverWidgetViewProps {
+export function useRecoverWidgetViewModel(): RecoverWidgetViewModelResult {
   const navigate = useNavigate();
   const recoverServices = useFeature("protectServicesDesktop");
   const upsellPath = useUpsellPath(recoverServices);
   const { deviceModelId } = usePostOnboardingHubState();
 
   const protectId = recoverServices?.params?.protectId ?? "protect-prod";
-  const [subscriptionState, setSubscriptionState] = useState<LedgerRecoverSubscriptionStateEnum | undefined>(
-    () => {
-      try {
-        return getStoreValue<LedgerRecoverSubscriptionStateEnum>("SUBSCRIPTION_STATE", protectId);
-      } catch {
-        return undefined;
-      }
-    },
-  );
-
-  useEffect(() => {
-    try {
-      setSubscriptionState(
-        getStoreValue<LedgerRecoverSubscriptionStateEnum>("SUBSCRIPTION_STATE", protectId),
-      );
-    } catch {
-      setSubscriptionState(undefined);
-    }
-  }, [protectId]);
+  const {
+    data: { subscriptionState, displayBanner },
+  } = useRecoverBannerState(protectId);
 
   const isRecoverOfferAvailable = isRecoverDisplayed(recoverServices, deviceModelId ?? undefined);
 
@@ -66,6 +55,11 @@ export function useRecoverWidgetViewModel(): RecoverWidgetViewProps {
     return true;
   }, [isRecoverOfferAvailable, subscriptionState, upsellPath]);
 
+  const shouldDisplayRecoverInPortfolioBannerRow = useMemo(
+    () => isVisible && displayBanner,
+    [displayBanner, isVisible],
+  );
+
   const onOpenRecover = useCallback(() => {
     if (!upsellPath) {
       return;
@@ -80,10 +74,11 @@ export function useRecoverWidgetViewModel(): RecoverWidgetViewProps {
   return useMemo(
     () => ({
       isVisible,
+      shouldDisplayRecoverInPortfolioBannerRow,
       titleKey: RECOVER_WIDGET_TITLE_I18N_KEY,
       descriptionKey: RECOVER_WIDGET_DESCRIPTION_I18N_KEY,
       onOpenRecover,
     }),
-    [isVisible, onOpenRecover],
+    [isVisible, onOpenRecover, shouldDisplayRecoverInPortfolioBannerRow],
   );
 }

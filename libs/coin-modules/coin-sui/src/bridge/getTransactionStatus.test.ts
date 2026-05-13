@@ -7,6 +7,7 @@ import {
   AmountRequired,
   FeeNotLoaded,
 } from "@ledgerhq/errors";
+
 import BigNumber from "bignumber.js";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import getTransactionStatus from "./getTransactionStatus";

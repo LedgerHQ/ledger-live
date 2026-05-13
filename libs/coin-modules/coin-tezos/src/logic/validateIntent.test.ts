@@ -1,3 +1,4 @@
+import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import {
   RecipientRequired,
   InvalidAddress,
@@ -8,10 +9,9 @@ import {
   NotEnoughBalanceToDelegate,
 } from "@ledgerhq/errors";
 import coinConfig from "../config";
-import { InvalidAddressBecauseAlreadyDelegated } from "../types/errors";
+import { InvalidAddressBecauseAlreadyDelegated, MustDelegateBeforeStaking } from "../types/errors";
 import { validateIntent } from "./validateIntent";
 
-// Module-level mocks
 const mockEstimateFees = jest.fn();
 jest.mock("./estimateFees", () => ({
   estimateFees: (...args: unknown[]) => mockEstimateFees(...args),
@@ -19,17 +19,34 @@ jest.mock("./estimateFees", () => ({
 
 const mockGetAccountByAddress = jest.fn();
 const mockGetTokensBalances = jest.fn();
+const mockGetUnstakeRequestsFinalizable = jest.fn();
 jest.mock("../network/tzkt", () => ({
   __esModule: true,
   default: {
     getAccountByAddress: (...args: unknown[]) => mockGetAccountByAddress(...args),
     getTokensBalances: (...args: unknown[]) => mockGetTokensBalances(...args),
+    getUnstakeRequestsFinalizable: (...args: unknown[]) =>
+      mockGetUnstakeRequestsFinalizable(...args),
   },
 }));
 
 describe("validateIntent", () => {
   const senderAddress = "tz1TzrmTBSuiVHV2VfMnGRMYvTEPCP42oSM8";
   const validRecipient = "tz1KqTpEZ7Yob7QbPE4Hy4Wo8fHG8LhKxZSx";
+
+  const makeUserAccount = (overrides: Record<string, unknown> = {}) => ({
+    type: "user" as const,
+    address: senderAddress,
+    publicKey: "edpk...",
+    balance: 5000000,
+    revealed: true,
+    counter: 0,
+    delegationLevel: 0,
+    delegationTime: "2021-01-01T00:00:00Z",
+    numTransactions: 0,
+    firstActivityTime: "2021-01-01T00:00:00Z",
+    ...overrides,
+  });
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -49,26 +66,15 @@ describe("validateIntent", () => {
     }));
 
     mockEstimateFees.mockResolvedValue({
-      fees: BigInt(1000),
-      gasLimit: BigInt(10000),
-      storageLimit: BigInt(0),
-      estimatedFees: BigInt(1000),
+      fees: 1000n,
+      gasLimit: 10000n,
+      storageLimit: 0n,
+      estimatedFees: 1000n,
     });
 
-    mockGetAccountByAddress.mockResolvedValue({
-      type: "user",
-      address: senderAddress,
-      publicKey: "edpk...",
-      balance: 5000000,
-      revealed: true,
-      counter: 0,
-      delegationLevel: 0,
-      delegationTime: "2021-01-01T00:00:00Z",
-      numTransactions: 0,
-      firstActivityTime: "2021-01-01T00:00:00Z",
-    });
-
+    mockGetAccountByAddress.mockResolvedValue(makeUserAccount());
     mockGetTokensBalances.mockResolvedValue([]);
+    mockGetUnstakeRequestsFinalizable.mockResolvedValue(0n);
   });
 
   describe("recipient validation", () => {
@@ -79,7 +85,7 @@ describe("validateIntent", () => {
         type: "send",
         sender: senderAddress,
         recipient: "",
-        amount: BigInt(1000),
+        amount: 1000n,
       });
 
       expect(result.errors.recipient).toBeInstanceOf(RecipientRequired);
@@ -92,7 +98,7 @@ describe("validateIntent", () => {
         type: "send",
         sender: senderAddress,
         recipient: "invalid_address",
-        amount: BigInt(1000),
+        amount: 1000n,
       });
 
       expect(result.errors.recipient).toBeInstanceOf(InvalidAddress);
@@ -105,7 +111,7 @@ describe("validateIntent", () => {
         type: "send",
         sender: senderAddress,
         recipient: senderAddress,
-        amount: BigInt(1000),
+        amount: 1000n,
       });
 
       expect(result.errors.recipient).toBeInstanceOf(InvalidAddressBecauseDestinationIsAlsoSource);
@@ -120,7 +126,7 @@ describe("validateIntent", () => {
         type: "send",
         sender: senderAddress,
         recipient: validRecipient,
-        amount: BigInt(0),
+        amount: 0n,
         useAllAmount: false,
       });
 
@@ -134,7 +140,7 @@ describe("validateIntent", () => {
         type: "send",
         sender: senderAddress,
         recipient: validRecipient,
-        amount: BigInt(0),
+        amount: 0n,
         useAllAmount: true,
       });
 
@@ -154,45 +160,83 @@ describe("validateIntent", () => {
       expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
     });
 
-    it.each([["stake"], ["unstake"]])(
-      "returns 0 as amount when the transaction intent is '%s'",
-      async intentType => {
-        const result = await validateIntent({
-          intentType: "transaction",
-          asset: { type: "native" },
-          type: intentType,
-          sender: "tz1TzrmTBSuiVHV2VfMnGRMYvTEPCP42oSM8",
-          recipient: "tz1KqTpEZ7Yob7QbPE4Hy4Wo8fHG8LhKxZSx",
-          amount: BigInt(0),
-          useAllAmount: true,
-        });
+    it("uses the staked amount as amount and amount + fees as totalSpent for stake", async () => {
+      mockGetAccountByAddress.mockResolvedValue(
+        makeUserAccount({
+          delegate: { alias: "baker", address: validRecipient, active: true },
+          delegationLevel: 1,
+        }),
+      );
 
-        expect(result).toEqual({
-          errors: {},
-          warnings: {},
-          estimatedFees: 1000n,
-          amount: 0n,
-          totalSpent: 1000n,
-        });
-      },
-    );
+      const result = await validateIntent({
+        intentType: "staking",
+        asset: { type: "native" },
+        type: "stake",
+        sender: senderAddress,
+        recipient: "",
+        amount: 2500n,
+      });
+
+      expect(result).toEqual({
+        errors: {},
+        warnings: {},
+        estimatedFees: 1000n,
+        amount: 2500n,
+        totalSpent: 3500n,
+      });
+    });
+
+    it("uses only fees as totalSpent for unstake", async () => {
+      mockGetAccountByAddress.mockResolvedValue(makeUserAccount({ stakedBalance: 4000 }));
+
+      const result = await validateIntent({
+        intentType: "staking",
+        asset: { type: "native" },
+        type: "unstake",
+        sender: senderAddress,
+        recipient: "",
+        amount: 2500n,
+      });
+
+      expect(result).toEqual({
+        errors: {},
+        warnings: {},
+        estimatedFees: 1000n,
+        amount: 2500n,
+        totalSpent: 1000n,
+      });
+    });
+
+    it("uses amount 0 and only fees as totalSpent for finalize_unstake", async () => {
+      mockGetUnstakeRequestsFinalizable.mockResolvedValue(1234n);
+
+      const result = await validateIntent({
+        intentType: "staking",
+        asset: { type: "native" },
+        type: "finalize_unstake",
+        sender: senderAddress,
+        recipient: "",
+        amount: 0n,
+      } satisfies TransactionIntent);
+
+      expect(result).toEqual({
+        errors: {},
+        warnings: {},
+        estimatedFees: 1000n,
+        amount: 0n,
+        totalSpent: 1000n,
+      });
+    });
   });
 
   describe("transaction constraints", () => {
     it("should return RecommendUndelegation when send-max native XTZ on a delegated account", async () => {
-      mockGetAccountByAddress.mockResolvedValue({
-        type: "user",
-        address: senderAddress,
-        publicKey: "edpk...",
-        balance: 5000000,
-        revealed: true,
-        counter: 0,
-        delegate: { alias: "baker", address: validRecipient, active: true },
-        delegationLevel: 1,
-        delegationTime: "2021-01-01T00:00:00Z",
-        numTransactions: 0,
-        firstActivityTime: "2021-01-01T00:00:00Z",
-      });
+      mockGetAccountByAddress.mockResolvedValue(
+        makeUserAccount({
+          delegate: { alias: "baker", address: validRecipient, active: true },
+          delegationLevel: 1,
+        }),
+      );
 
       const result = await validateIntent({
         intentType: "transaction",
@@ -208,51 +252,112 @@ describe("validateIntent", () => {
       expect(mockEstimateFees).not.toHaveBeenCalled();
     });
 
-    it("should return NotEnoughBalanceToDelegate when stake intent and balance is zero", async () => {
-      mockGetAccountByAddress.mockResolvedValue({
-        type: "user",
-        address: senderAddress,
-        publicKey: "edpk...",
-        balance: 0,
-        revealed: true,
-        counter: 0,
-        delegationLevel: 0,
-        delegationTime: "2021-01-01T00:00:00Z",
-        numTransactions: 0,
-        firstActivityTime: "2021-01-01T00:00:00Z",
+    it("should return MustDelegateBeforeStaking when stake intent has no delegate", async () => {
+      const result = await validateIntent({
+        intentType: "staking",
+        asset: { type: "native" },
+        type: "stake",
+        sender: senderAddress,
+        recipient: "",
+        amount: 1n,
       });
+
+      expect(result.errors.amount).toBeInstanceOf(MustDelegateBeforeStaking);
+      expect(mockEstimateFees).not.toHaveBeenCalled();
+    });
+
+    it("should return AmountRequired when stake amount is zero", async () => {
+      mockGetAccountByAddress.mockResolvedValue(
+        makeUserAccount({
+          delegate: { alias: "baker", address: validRecipient, active: true },
+          delegationLevel: 1,
+        }),
+      );
 
       const result = await validateIntent({
         intentType: "staking",
         asset: { type: "native" },
         type: "stake",
         sender: senderAddress,
-        recipient: validRecipient,
-        amount: BigInt(0),
+        recipient: "",
+        amount: 0n,
       });
 
-      expect(result.errors.amount).toBeInstanceOf(NotEnoughBalanceToDelegate);
+      expect(result.errors.amount).toBeInstanceOf(AmountRequired);
+      expect(mockEstimateFees).not.toHaveBeenCalled();
+    });
+
+    it("should return NotEnoughBalance when unstake has no staked balance", async () => {
+      mockGetAccountByAddress.mockResolvedValue(makeUserAccount({ stakedBalance: 0 }));
+
+      const result = await validateIntent({
+        intentType: "staking",
+        asset: { type: "native" },
+        type: "unstake",
+        sender: senderAddress,
+        recipient: "",
+        amount: 1n,
+      });
+
+      expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+      expect(mockEstimateFees).not.toHaveBeenCalled();
+    });
+
+    it("should return AmountRequired when unstake amount is zero", async () => {
+      mockGetAccountByAddress.mockResolvedValue(makeUserAccount({ stakedBalance: 4000 }));
+
+      const result = await validateIntent({
+        intentType: "staking",
+        asset: { type: "native" },
+        type: "unstake",
+        sender: senderAddress,
+        recipient: "",
+        amount: 0n,
+      });
+
+      expect(result.errors.amount).toBeInstanceOf(AmountRequired);
+      expect(mockEstimateFees).not.toHaveBeenCalled();
+    });
+
+    it("should return NotEnoughBalance when unstake amount exceeds staked balance", async () => {
+      mockGetAccountByAddress.mockResolvedValue(makeUserAccount({ stakedBalance: 4000 }));
+
+      const result = await validateIntent({
+        intentType: "staking",
+        asset: { type: "native" },
+        type: "unstake",
+        sender: senderAddress,
+        recipient: "",
+        amount: 5000n,
+      });
+
+      expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+      expect(mockEstimateFees).not.toHaveBeenCalled();
+    });
+
+    it("should return NotEnoughBalance when finalize_unstake has nothing finalizable", async () => {
+      mockGetUnstakeRequestsFinalizable.mockResolvedValue(0n);
+
+      const result = await validateIntent({
+        intentType: "staking",
+        asset: { type: "native" },
+        type: "finalize_unstake",
+        sender: senderAddress,
+        recipient: "",
+        amount: 0n,
+      } satisfies TransactionIntent);
+
+      expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
       expect(mockEstimateFees).not.toHaveBeenCalled();
     });
   });
 
   describe("balance validation", () => {
     it("should return NotEnoughBalance error when amount exceeds balance", async () => {
-      const balance = 1000000; // 1 XTZ
-      const amount = 2000000; // 2 XTZ
+      const balance = 1000000;
+      const amount = 2000000;
 
-      mockGetAccountByAddress.mockResolvedValue({
-        type: "user",
-        address: senderAddress,
-        publicKey: "edpk...",
-        balance,
-        revealed: true,
-        counter: 0,
-        delegationLevel: 0,
-        delegationTime: "2021-01-01T00:00:00Z",
-        numTransactions: 0,
-        firstActivityTime: "2021-01-01T00:00:00Z",
-      });
+      mockGetAccountByAddress.mockResolvedValue(makeUserAccount({ balance }));
 
       const result = await validateIntent({
         intentType: "transaction",
@@ -267,33 +372,18 @@ describe("validateIntent", () => {
     });
 
     it("should pass validation when amount is within balance", async () => {
-      const balance = 5000000; // 5 XTZ
-      const amount = 1000000; // 1 XTZ
-
-      mockGetAccountByAddress.mockResolvedValue({
-        type: "user",
-        address: senderAddress,
-        publicKey: "edpk...",
-        balance,
-        revealed: true,
-        counter: 0,
-        delegationLevel: 0,
-        delegationTime: "2021-01-01T00:00:00Z",
-        numTransactions: 0,
-        firstActivityTime: "2021-01-01T00:00:00Z",
-      });
-
+      const amount = 1000000n;
       const result = await validateIntent({
         intentType: "transaction",
         asset: { type: "native" },
         type: "send",
         sender: senderAddress,
         recipient: validRecipient,
-        amount: BigInt(amount),
+        amount,
       });
 
       expect(result.errors.amount).toBeUndefined();
-      expect(result.amount).toBe(BigInt(amount));
+      expect(result.amount).toBe(amount);
     });
   });
 
@@ -305,7 +395,7 @@ describe("validateIntent", () => {
         type: "delegate",
         sender: senderAddress,
         recipient: validRecipient,
-        amount: BigInt(0),
+        amount: 0n,
       });
 
       expect(result.errors).toEqual({});
@@ -318,34 +408,58 @@ describe("validateIntent", () => {
         type: "undelegate",
         sender: senderAddress,
         recipient: "",
-        amount: BigInt(0),
+        amount: 0n,
       });
 
       expect(result.errors).toEqual({});
     });
 
-    it("should handle stake intent (mapped to delegate)", async () => {
+    it("should pass validation for stake transaction when already delegated", async () => {
+      mockGetAccountByAddress.mockResolvedValue(
+        makeUserAccount({
+          delegate: { alias: "baker", address: validRecipient, active: true },
+          delegationLevel: 1,
+        }),
+      );
+
       const result = await validateIntent({
         intentType: "staking",
         asset: { type: "native" },
         type: "stake",
         sender: senderAddress,
-        recipient: validRecipient,
-        amount: BigInt(0),
+        recipient: "",
+        amount: 1000n,
       });
 
       expect(result.errors).toEqual({});
     });
 
-    it("should handle unstake intent (mapped to undelegate)", async () => {
+    it("should pass validation for unstake transaction", async () => {
+      mockGetAccountByAddress.mockResolvedValue(makeUserAccount({ stakedBalance: 4000 }));
+
       const result = await validateIntent({
         intentType: "staking",
         asset: { type: "native" },
         type: "unstake",
         sender: senderAddress,
         recipient: "",
-        amount: BigInt(0),
+        amount: 1000n,
       });
+
+      expect(result.errors).toEqual({});
+    });
+
+    it("should pass validation for finalize_unstake transaction", async () => {
+      mockGetUnstakeRequestsFinalizable.mockResolvedValue(4000n);
+
+      const result = await validateIntent({
+        intentType: "staking",
+        asset: { type: "native" },
+        type: "finalize_unstake",
+        sender: senderAddress,
+        recipient: "",
+        amount: 0n,
+      } satisfies TransactionIntent);
 
       expect(result.errors).toEqual({});
     });
@@ -374,6 +488,13 @@ describe("validateIntent", () => {
     });
 
     it("maps balance_too_low to NotEnoughBalanceToDelegate for stake", async () => {
+      mockGetAccountByAddress.mockResolvedValue(
+        makeUserAccount({
+          delegate: { alias: "baker", address: validRecipient, active: true },
+          delegationLevel: 1,
+        }),
+      );
+
       mockEstimateFees.mockResolvedValue({
         fees: 0n,
         gasLimit: 0n,
@@ -387,8 +508,8 @@ describe("validateIntent", () => {
         asset: { type: "native" },
         type: "stake",
         sender: senderAddress,
-        recipient: validRecipient,
-        amount: 0n,
+        recipient: "",
+        amount: 1n,
       });
 
       expect(result.errors.amount).toBeInstanceOf(NotEnoughBalanceToDelegate);
@@ -416,6 +537,13 @@ describe("validateIntent", () => {
     });
 
     it("maps delegate.unchanged to InvalidAddressBecauseAlreadyDelegated for stake", async () => {
+      mockGetAccountByAddress.mockResolvedValue(
+        makeUserAccount({
+          delegate: { alias: "baker", address: validRecipient, active: true },
+          delegationLevel: 1,
+        }),
+      );
+
       mockEstimateFees.mockResolvedValue({
         fees: 0n,
         gasLimit: 0n,
@@ -429,8 +557,8 @@ describe("validateIntent", () => {
         asset: { type: "native" },
         type: "stake",
         sender: senderAddress,
-        recipient: validRecipient,
-        amount: 0n,
+        recipient: "",
+        amount: 1n,
       });
 
       expect(result.errors.recipient).toBeInstanceOf(InvalidAddressBecauseAlreadyDelegated);
@@ -455,6 +583,55 @@ describe("validateIntent", () => {
       });
 
       expect(result.errors.amount).toBeInstanceOf(NotEnoughBalanceToDelegate);
+    });
+
+    it("maps staking.too_much_unstaked to NotEnoughBalance for unstake", async () => {
+      mockGetAccountByAddress.mockResolvedValue(makeUserAccount({ stakedBalance: 4000 }));
+      mockEstimateFees.mockResolvedValue({
+        fees: 0n,
+        gasLimit: 0n,
+        storageLimit: 0n,
+        estimatedFees: 500n,
+        taquitoError: "proto.alpha.staking.too_much_unstaked",
+      });
+
+      const result = await validateIntent({
+        intentType: "staking",
+        asset: { type: "native" },
+        type: "unstake",
+        sender: senderAddress,
+        recipient: "",
+        amount: 1000n,
+      });
+
+      expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+    });
+
+    it("maps contract.must_be_delegated_to_stake to MustDelegateBeforeStaking", async () => {
+      mockGetAccountByAddress.mockResolvedValue(
+        makeUserAccount({
+          delegate: { alias: "baker", address: validRecipient, active: true },
+          delegationLevel: 1,
+        }),
+      );
+      mockEstimateFees.mockResolvedValue({
+        fees: 0n,
+        gasLimit: 0n,
+        storageLimit: 0n,
+        estimatedFees: 500n,
+        taquitoError: "proto.alpha.contract.must_be_delegated_to_stake",
+      });
+
+      const result = await validateIntent({
+        intentType: "staking",
+        asset: { type: "native" },
+        type: "stake",
+        sender: senderAddress,
+        recipient: "",
+        amount: 1000n,
+      });
+
+      expect(result.errors.amount).toBeInstanceOf(MustDelegateBeforeStaking);
     });
 
     it("maps unknown taquito errors to a generic Error on amount", async () => {
@@ -482,18 +659,7 @@ describe("validateIntent", () => {
 
   describe("account fetch and reveal", () => {
     it("uses fixed estimated fees when account is not revealed and skips estimateFees", async () => {
-      mockGetAccountByAddress.mockResolvedValue({
-        type: "user",
-        address: senderAddress,
-        publicKey: "edpk...",
-        balance: 5000000,
-        revealed: false,
-        counter: 0,
-        delegationLevel: 0,
-        delegationTime: "2021-01-01T00:00:00Z",
-        numTransactions: 0,
-        firstActivityTime: "2021-01-01T00:00:00Z",
-      });
+      mockGetAccountByAddress.mockResolvedValue(makeUserAccount({ revealed: false }));
 
       const amount = 1000000n;
       const result = await validateIntent({
@@ -610,7 +776,7 @@ describe("validateIntent", () => {
         type: "send",
         sender: senderAddress,
         recipient: validRecipient,
-        amount: BigInt(1_000_000),
+        amount: 1000000n,
       });
 
       expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
@@ -638,10 +804,10 @@ describe("validateIntent", () => {
   describe("native XTZ send max", () => {
     it("should fall back to balance minus fees when estimateFees returns amount 0n", async () => {
       mockEstimateFees.mockResolvedValue({
-        fees: BigInt(1000),
-        gasLimit: BigInt(10000),
-        storageLimit: BigInt(0),
-        estimatedFees: BigInt(1000),
+        fees: 1000n,
+        gasLimit: 10000n,
+        storageLimit: 0n,
+        estimatedFees: 1000n,
         amount: 0n,
       });
 
@@ -661,12 +827,12 @@ describe("validateIntent", () => {
     });
 
     it("should prefer positive estimatedAmount from estimateFees over balance minus fees", async () => {
-      const estimatedFromTaquito = 3_000_000n;
+      const estimatedFromTaquito = 3000000n;
       mockEstimateFees.mockResolvedValue({
-        fees: BigInt(1000),
-        gasLimit: BigInt(10000),
-        storageLimit: BigInt(0),
-        estimatedFees: BigInt(1000),
+        fees: 1000n,
+        gasLimit: 10000n,
+        storageLimit: 0n,
+        estimatedFees: 1000n,
         amount: estimatedFromTaquito,
       });
 
@@ -687,13 +853,13 @@ describe("validateIntent", () => {
 
   describe("successful validation", () => {
     it("should return valid result with correct values", async () => {
-      const amount = BigInt(1000000);
-      const estimatedFees = BigInt(1500);
+      const amount = 1000000n;
+      const estimatedFees = 1500n;
 
       mockEstimateFees.mockResolvedValue({
-        fees: BigInt(1000),
-        gasLimit: BigInt(10000),
-        storageLimit: BigInt(0),
+        fees: 1000n,
+        gasLimit: 10000n,
+        storageLimit: 0n,
         estimatedFees,
       });
 

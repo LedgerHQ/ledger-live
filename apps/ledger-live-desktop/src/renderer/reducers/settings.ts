@@ -178,8 +178,8 @@ export const INITIAL_STATE: SettingsState = {
   pairExchanges: {},
   developerMode: !!process.env.__DEV__,
   loaded: false,
-  shareAnalytics: true,
-  sharePersonalizedRecommandations: true,
+  shareAnalytics: false,
+  sharePersonalizedRecommandations: false,
   analyticsConsentInfo: {
     consentDate: null,
     privacyPolicyVersion: null,

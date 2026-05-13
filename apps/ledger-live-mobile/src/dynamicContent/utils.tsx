@@ -1,4 +1,5 @@
 import { appendDeeplinkLocationIfDefined } from "@ledgerhq/live-common/deeplinks/index";
+import { parseOrder, sanitizeExtras } from "@ledgerhq/live-common/braze/contentCardExtras";
 import { Size } from "~/contentCards/cards/vertical/types";
 import { WidthFactor } from "~/contentCards/layouts/types";
 import {
@@ -19,6 +20,8 @@ import {
   LandingPageStickyCtaContentCard,
   LandingPageUseCase,
 } from "~/dynamicContent/types";
+
+export { parseOrder, sanitizeExtras };
 
 export const getMobileContentCards = (array: BrazeContentCard[]) =>
   array.filter(elem => !elem.extras.platform || elem.extras.platform === "mobile");
@@ -86,25 +89,32 @@ export const formatCategories = (
   return categoriesWithAtLeastOneCard;
 };
 
-export const mapAsCategoryContentCard = (card: BrazeContentCard): CategoryContentCard => ({
-  id: card.id,
-  categoryId: card.extras.id,
-  location: card.extras.location as ContentCardLocation,
-  createdAt: card.created,
-  viewed: card.viewed,
-  order: parseInt(card.extras.order) ?? undefined,
-  cardsLayout: card.extras.cardsLayout as ContentCardsLayout,
-  cardsType: card.extras.cardsType as ContentCardsType,
-  type: card.extras.type as ContentCardsType.category,
-  title: card.extras.title,
-  description: card.extras.description,
-  link: appendDeeplinkLocationIfDefined(card.extras.link, card.extras.location),
-  cta: card.extras.cta,
-  isDismissable: Boolean(card.extras?.isDismissable === "true"),
-  hasPagination: Boolean(card.extras?.hasPagination === "true"),
-  centeredText: Boolean(card.extras?.centeredText === "true"),
-  extras: card.extras,
-});
+export const mapAsCategoryContentCard = (card: BrazeContentCard): CategoryContentCard => {
+  const location =
+    card.extras.id === "alwayson"
+      ? ContentCardLocation.TopWallet
+      : (card.extras.location as ContentCardLocation);
+
+  return {
+    id: card.id,
+    categoryId: card.extras.id,
+    location: location,
+    createdAt: card.created,
+    viewed: card.viewed,
+    order: parseOrder(card.extras.order),
+    cardsLayout: card.extras.cardsLayout as ContentCardsLayout,
+    cardsType: card.extras.cardsType as ContentCardsType,
+    type: card.extras.type as ContentCardsType.category,
+    title: card.extras.title,
+    description: card.extras.description,
+    link: appendDeeplinkLocationIfDefined(card.extras.link, location),
+    cta: card.extras.cta,
+    isDismissable: Boolean(card.extras?.isDismissable === "true"),
+    hasPagination: Boolean(card.extras?.hasPagination === "true"),
+    centeredText: Boolean(card.extras?.centeredText === "true"),
+    extras: card.extras,
+  };
+};
 
 export const mapAsWalletContentCard = (card: BrazeContentCard): WalletContentCard => ({
   id: card.id,
@@ -118,7 +128,7 @@ export const mapAsWalletContentCard = (card: BrazeContentCard): WalletContentCar
   background: Background[card.extras.background as Background] || Background.purple,
   viewed: card.viewed,
   createdAt: card.created,
-  order: parseInt(card.extras.order) ?? undefined,
+  order: parseOrder(card.extras.order),
   extras: card.extras,
 });
 
@@ -134,7 +144,7 @@ export const mapAsAssetContentCard = (card: BrazeContentCard): AssetContentCard 
   displayOnEveryAssets: Boolean(card.extras.displayOnEveryAssets),
   createdAt: card.created,
   viewed: card.viewed,
-  order: parseInt(card.extras.order) ?? undefined,
+  order: parseOrder(card.extras.order),
   extras: card.extras,
 });
 
@@ -148,7 +158,7 @@ export const mapAsNotificationContentCard = (card: BrazeContentCard): Notificati
   cta: card.extras.cta,
   createdAt: card.created,
   viewed: card.viewed,
-  order: parseInt(card.extras.order) ?? undefined,
+  order: parseOrder(card.extras.order),
   extras: card.extras,
 });
 
@@ -164,7 +174,7 @@ export const mapAsHorizontalContentCard = (card: BrazeContentCard): HorizontalCo
   link: appendDeeplinkLocationIfDefined(card.extras.link, card.extras.location),
   createdAt: card.created,
   viewed: card.viewed,
-  order: parseInt(card.extras.order) ?? undefined,
+  order: parseOrder(card.extras.order),
   gridWidthFactor: WidthFactor.Full,
   extras: card.extras,
 });
@@ -189,7 +199,7 @@ const mapAsSquareContentCard = (
   link: appendDeeplinkLocationIfDefined(card.extras.link, card.extras.location),
   createdAt: card.created,
   viewed: card.viewed,
-  order: parseInt(card.extras.order) ?? undefined,
+  order: parseOrder(card.extras.order),
   carouselWidthFactor,
   gridWidthFactor,
   mediaType: card.extras.mediaType as VerticalContentCard["mediaType"],
@@ -210,7 +220,7 @@ export const mapAsHeroContentCard = (card: BrazeContentCard): HeroContentCard =>
   link: appendDeeplinkLocationIfDefined(card.extras.link, card.extras.location),
   createdAt: card.created,
   viewed: card.viewed,
-  order: parseInt(card.extras.order) ?? undefined,
+  order: parseOrder(card.extras.order),
   extras: card.extras,
 });
 

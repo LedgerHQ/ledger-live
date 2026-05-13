@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { Icons } from "@ledgerhq/react-ui/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
+import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import Box from "~/renderer/components/Box";
 import { StepProps } from "../Body";
 import { useNavigate } from "react-router";
@@ -46,13 +47,14 @@ const Content = styled(Box)`
 `;
 
 export default function StepOptions(props: Readonly<StepProps>) {
-  const { transitionTo, closeModal } = props;
+  const { transitionTo, closeModal, sourcePage } = props;
   const navigate = useNavigate();
+  const page = sourcePage ?? HOOKS_TRACKING_LOCATIONS.receiveModal;
 
   function handleGoToBankProvider() {
     track("button_clicked", {
       button: "fiat",
-      page: "receive_drawer",
+      page,
     });
     closeModal();
     navigate("/bank");
@@ -61,14 +63,14 @@ export default function StepOptions(props: Readonly<StepProps>) {
   function handleGoToReceiveAccount() {
     track("button_clicked", {
       button: "crypto",
-      page: "receive_drawer",
+      page,
     });
     transitionTo("account");
   }
 
   return (
     <Box data-testid="receive-step-options">
-      <TrackPage category="receive_drawer" type="drawer" />
+      <TrackPage category={page} type="drawer" />
       <Option onClick={handleGoToBankProvider} data-testid="receive-step-options-bank">
         <IconWrapper>
           <Icons.Bank size={"M"} />

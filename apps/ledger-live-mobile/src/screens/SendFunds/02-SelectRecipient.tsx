@@ -2,13 +2,13 @@ import { isConfirmedOperation } from "@ledgerhq/ledger-wallet-framework/operatio
 import { RecipientRequired } from "@ledgerhq/errors";
 import { Text } from "@ledgerhq/native-ui";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/helpers";
-import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import {
   SyncOneAccountOnMount,
   SyncSkipUnderPriority,
 } from "@ledgerhq/live-common/bridge/react/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { getStuckAccountAndOperation } from "@ledgerhq/live-common/operation";
@@ -75,6 +75,7 @@ export default function SendSelectRecipient({ route }: Props) {
     params?.supportedCurrencyIds?.includes(mainAccount.currency.id) || false;
 
   const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
+    bridge,
     () => ({
       account,
       parentAccount,
@@ -225,8 +226,6 @@ export default function SendSelectRecipient({ route }: Props) {
 
   if (!account || !transaction) return null;
 
-  const stuckAccountAndOperation = getStuckAccountAndOperation(account, mainAccount);
-
   const error = withoutHiddenError(status.errors.recipient);
   const warning = status.warnings.recipient;
   const isSomeIncomingTxPending = account.operations?.some(
@@ -255,6 +254,7 @@ export default function SendSelectRecipient({ route }: Props) {
     !!status.errors.transaction ||
     !!status.errors.sender;
 
+  const stuckAccountAndOperation = getStuckAccountAndOperation(account, mainAccount);
   const extensions = getTokenExtensions(account);
 
   return (

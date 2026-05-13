@@ -1,0 +1,36 @@
+{
+  "name": "@devtools/feature-flags",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Ledger Live feature flags' Devtools",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "sideEffects": false,
+  "scripts": {
+    "format": "prettier --write 'src/**/*.{ts,tsx}' 'jest/**/*.{ts,tsx}'",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage"
+  },
+  "dependencies": {
+    "@shared/feature-flags": "workspace:^"
+  },
+  "devDependencies": {
+    "@testing-library/react": "catalog:",
+    "@testing-library/dom": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/react": "catalog:",
+    "jest": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "typescript": "catalog:",
+    "@swc/jest": "catalog:",
+    "@swc/core": "catalog:",
+    "jest-environment-jsdom": "catalog:"
+  },
+  "peerDependencies": {
+    "react": ">=19"
+  }
+
+}

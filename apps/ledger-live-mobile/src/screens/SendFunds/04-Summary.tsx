@@ -1,3 +1,4 @@
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import React, { useState, useCallback, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
@@ -55,7 +56,9 @@ function SendSummary({ navigation, route }: Props) {
 
   invariant(account, "account is missing");
 
-  const { transaction, setTransaction, status, bridgePending } = useBridgeTransaction(() => ({
+  const bridge = useAccountBridge(account, parentAccount);
+
+  const { transaction, setTransaction, status, bridgePending } = useBridgeTransaction(bridge, () => ({
     transaction: route.params.transaction,
     account,
     parentAccount,
