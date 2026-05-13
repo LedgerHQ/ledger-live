@@ -29,7 +29,8 @@ export const AmountInput = ({
         onChange={onAmountChange}
         value={amount ?? ""}
         type="text"
-        errorMessage={errorMessage ?? undefined}
+        helperText={errorMessage ?? undefined}
+        status={errorMessage ? "error" : undefined}
       />
     </div>
   );

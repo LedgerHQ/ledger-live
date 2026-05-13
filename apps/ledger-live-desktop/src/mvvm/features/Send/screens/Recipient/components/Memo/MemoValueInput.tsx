@@ -78,7 +78,8 @@ function MemoValueInputComponent({
       className="w-full"
       value={value}
       maxLength={isTagType ? undefined : maxLength}
-      errorMessage={errorMessage}
+      helperText={errorMessage}
+      status={errorMessage ? "error" : undefined}
     />
   );
 }
