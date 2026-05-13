@@ -1,6 +1,7 @@
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { AppDispatch } from "~/state-manager/configureStore";
+import type { SwapTransactionStatusRawParams } from "@ledgerhq/live-common/exchange/transactionStatus/index";
 
 export type NavigateFn = (
   pathname: string,
@@ -128,6 +129,10 @@ export interface SwapRoute {
   toAccountId?: string;
 }
 
+export interface SwapTransactionStatusRoute extends SwapTransactionStatusRawParams {
+  type: "transaction-status";
+}
+
 export interface BridgeRoute {
   type: "bridge";
   origin?: string;
@@ -228,6 +233,7 @@ export type DeeplinkRoute =
   | BorrowRoute
   | ManagerRoute
   | SwapRoute
+  | SwapTransactionStatusRoute
   | BridgeRoute
   | SendRoute
   | ReceiveRoute

@@ -181,6 +181,21 @@ describe("parseDeepLink", () => {
       });
     });
 
+    it("creates transaction-status swap route", () => {
+      const parsed = parseDeepLink(
+        "ledgerwallet://connect/swap/transaction-status?swapId=swap-1&provider=lifi&redirectUrl=https%3A%2F%2Fexample.com",
+      );
+      const route = createRoute(parsed);
+
+      expect(route).toEqual({
+        type: "transaction-status",
+        kind: "swap",
+        swapId: "swap-1",
+        provider: "lifi",
+        redirectUrl: "https://example.com",
+      });
+    });
+
     it("creates bridge route", () => {
       const parsed = parseDeepLink("ledgerwallet://bridge?origin=https://example.com&appName=Test");
       const route = createRoute(parsed);

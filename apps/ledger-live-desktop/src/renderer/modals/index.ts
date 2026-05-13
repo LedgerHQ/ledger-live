@@ -18,6 +18,7 @@ import MODAL_SYSTEM_LANGUAGE_AVAILABLE from "./SystemLanguageAvailable";
 import MODAL_START_STAKE from "./StartStake";
 import MODAL_TERM_OF_USE_UPDATE from "./TermOfUseUpdate";
 import MODAL_EXCHANGE_CRYPTO_DEVICE from "./ExchangeDeviceConfirm";
+import MODAL_SWAP_TRANSACTION_STATUS from "./SwapTransactionStatus";
 import MODAL_PLATFORM_EXCHANGE_START from "./Platform/Exchange/StartExchange";
 import MODAL_PLATFORM_EXCHANGE_COMPLETE from "./Platform/Exchange/CompleteExchange";
 import MODAL_CONNECT_DEVICE from "./ConnectDevice";
@@ -52,6 +53,7 @@ const globalModals: GlobalModals = {
   MODAL_TERM_OF_USE_UPDATE,
   MODAL_BLACKLIST_TOKEN,
   MODAL_EXCHANGE_CRYPTO_DEVICE,
+  MODAL_SWAP_TRANSACTION_STATUS,
   MODAL_LOTTIE_DEBUGGER,
   MODAL_START_STAKE,
   MODAL_PROTECT_DISCOVER,
