@@ -6,8 +6,8 @@ import { swapProviderRequiresOperationId } from "../../../exchange/swap/provider
 import {
   getSwapTransactionLegStatusesFromAccounts,
   isTransactionStatusValue,
-} from "../../../exchange/transactionStatus";
-import { fetchTransactionSwapStatus } from "../../../exchange/transactionStatus/fetchSwapStatus";
+} from "../../../exchange/swapTransactionStatus";
+import { fetchTransactionSwapStatus } from "../../../exchange/swapTransactionStatus/api/fetchSwapStatus";
 import type {
   MappedSwapOperation,
   SwapStatus,

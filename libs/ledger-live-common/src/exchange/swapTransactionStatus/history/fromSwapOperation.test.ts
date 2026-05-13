@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import type { Account, Operation } from "@ledgerhq/types-live";
-import type { MappedSwapOperation } from "../swap/types";
+import type { MappedSwapOperation } from "../../swap/types";
 import { fromSwapOperation } from "./fromSwapOperation";
 
 function makeAccount(id: string): Account {

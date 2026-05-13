@@ -1,25 +1,25 @@
-import { act, renderHook, waitFor } from "tests/testSetup";
+import { Linking } from "react-native";
+import { act, renderHook, waitFor } from "@testing-library/react-native";
 import { getTransactionStatus } from "@ledgerhq/live-common/wallet-api/Exchange/transactionStatus/index";
 import type { GetTransactionStatusResponse } from "@ledgerhq/live-common/wallet-api/Exchange/transactionStatus/index";
-import { openURL } from "~/renderer/linking";
+import { useSelector } from "~/context/hooks";
+import { accountsSelector } from "~/reducers/accounts";
 import { useSwapTransactionStatus } from "../hooks/useSwapTransactionStatus";
 
 const mockBridgeSync = jest.fn();
 
+jest.mock("~/context/hooks", () => ({
+  useSelector: jest.fn(),
+}));
 jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
   useBridgeSync: () => mockBridgeSync,
 }));
-
 jest.mock("@ledgerhq/live-common/wallet-api/Exchange/transactionStatus/index", () => ({
   getTransactionStatus: jest.fn(),
 }));
 
-jest.mock("~/renderer/linking", () => ({
-  openURL: jest.fn(),
-}));
-
+const mockedUseSelector = jest.mocked(useSelector);
 const mockedGetTransactionStatus = jest.mocked(getTransactionStatus);
-const mockedOpenURL = jest.mocked(openURL);
 const STATUS_POLL_INTERVAL_MS = 60_000;
 let setTimeoutSpy: jest.SpiedFunction<typeof global.setTimeout> | undefined;
 
@@ -58,6 +58,11 @@ function captureStatusPollTimeout() {
 describe("useSwapTransactionStatus", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockedUseSelector.mockImplementation(selector => {
+      if (selector === accountsSelector) return [];
+      return undefined;
+    });
+    jest.spyOn(Linking, "openURL").mockResolvedValue(undefined);
   });
 
   afterEach(() => {
@@ -72,7 +77,10 @@ describe("useSwapTransactionStatus", () => {
       .mockResolvedValueOnce(makeTransactionStatusResponse());
 
     const { unmount } = renderHook(() =>
-      useSwapTransactionStatus({ swapId: "swap-1", provider: "lifi" }),
+      useSwapTransactionStatus({
+        params: { swapId: "swap-1", provider: "lifi" },
+        onClose: jest.fn(),
+      }),
     );
 
     await waitFor(() => {
@@ -95,7 +103,10 @@ describe("useSwapTransactionStatus", () => {
     );
 
     const { result, unmount } = renderHook(() =>
-      useSwapTransactionStatus({ swapId: "swap-1", provider: "lifi" }),
+      useSwapTransactionStatus({
+        params: { swapId: "swap-1", provider: "lifi" },
+        onClose: jest.fn(),
+      }),
     );
 
     await waitFor(() => {
@@ -107,24 +118,26 @@ describe("useSwapTransactionStatus", () => {
     unmount();
   });
 
-  it("should auto-redirect when a terminal status arrives while the dialog is hidden", async () => {
+  it("should auto-redirect and close the drawer when a terminal status arrives while hidden", async () => {
+    const onClose = jest.fn();
     mockedGetTransactionStatus.mockResolvedValueOnce(
       makeTransactionStatusResponse({ status: "finished" }),
     );
 
     const { unmount } = renderHook(() =>
       useSwapTransactionStatus({
-        swapId: "swap-1",
-        provider: "lifi",
-        redirectUrl: "ledgerlive://swap/done",
+        params: {
+          swapId: "swap-1",
+          provider: "lifi",
+          redirectUrl: "ledgerlive://swap/done",
+        },
+        onClose,
       }),
     );
 
     await waitFor(() => {
-      expect(mockedOpenURL).toHaveBeenCalledWith(
-        "ledgerlive://swap/done",
-        "SwapTransactionStatus_AutoRedirect",
-      );
+      expect(Linking.openURL).toHaveBeenCalledWith("ledgerlive://swap/done");
+      expect(onClose).toHaveBeenCalledTimes(1);
     });
     unmount();
   });
