@@ -8,16 +8,10 @@ import type {
   BitcoinOutput,
   BitcoinAccountRaw,
   BitcoinAccount,
-  ZcashAccount,
-  ZcashAccountRaw,
 } from "./types";
-import {
-  ZcashPrivateInfo,
-  ZcashPrivateInfoRaw,
-  ZcashSyncState,
-} from "@ledgerhq/zcash-shielded/types";
 import wallet from "./wallet-btc";
 import { Account, AccountRaw } from "@ledgerhq/types-live";
+import { getChainAdapter } from "./chain-adapters/registry";
 
 export function toBitcoinInputRaw({
   address,
@@ -85,66 +79,6 @@ export function fromBitcoinResourcesRaw(r: BitcoinResourcesRaw): BitcoinResource
   };
 }
 
-function toZcashPrivateInfoRaw(info: ZcashPrivateInfo): ZcashPrivateInfoRaw {
-  return {
-    saplingBalance: info.saplingBalance.toString(),
-    orchardBalance: info.orchardBalance.toString(),
-    lastSyncTimestamp: info.lastSyncTimestamp,
-    ufvk: info.ufvk,
-    syncState: info.syncState,
-    progress: info.progress,
-    estimatedTimeRemaining: info.estimatedTimeRemaining,
-    birthday: info.birthday,
-    lastProcessedBlock: info.lastProcessedBlock,
-    transactions: info.transactions.map(tx => ({
-      ...tx,
-      fee: tx.fee.toString(),
-      decryptedData: {
-        orchard_outputs:
-          tx.decryptedData?.orchard_outputs.map(output => ({
-            ...output,
-            amount: output.amount.toString(),
-          })) || [],
-        sapling_outputs:
-          tx.decryptedData?.sapling_outputs.map(output => ({
-            ...output,
-            amount: output.amount.toString(),
-          })) || [],
-      },
-    })),
-  };
-}
-
-function fromZcashPrivateInfoRaw(info: ZcashPrivateInfoRaw): ZcashPrivateInfo {
-  return {
-    saplingBalance: new BigNumber(info.saplingBalance),
-    orchardBalance: new BigNumber(info.orchardBalance),
-    lastSyncTimestamp: info.lastSyncTimestamp,
-    ufvk: info.ufvk,
-    syncState: info.syncState as ZcashSyncState,
-    progress: info.progress,
-    estimatedTimeRemaining: info.estimatedTimeRemaining,
-    birthday: info.birthday,
-    lastProcessedBlock: info.lastProcessedBlock,
-    transactions: info.transactions.map(tx => ({
-      ...tx,
-      fee: new BigNumber(tx.fee),
-      decryptedData: {
-        orchard_outputs:
-          tx.decryptedData?.orchard_outputs.map(output => ({
-            ...output,
-            amount: new BigNumber(output.amount),
-          })) || [],
-        sapling_outputs:
-          tx.decryptedData?.sapling_outputs.map(output => ({
-            ...output,
-            amount: new BigNumber(output.amount),
-          })) || [],
-      },
-    })),
-  };
-}
-
 export function assignToAccountRaw(account: Account, accountRaw: AccountRaw) {
   const bitcoinAccount = account as BitcoinAccount;
   if (bitcoinAccount.bitcoinResources) {
@@ -153,10 +87,7 @@ export function assignToAccountRaw(account: Account, accountRaw: AccountRaw) {
     );
   }
 
-  const zcashAccount = account as ZcashAccount;
-  if (zcashAccount.privateInfo) {
-    (accountRaw as ZcashAccountRaw).privateInfo = toZcashPrivateInfoRaw(zcashAccount.privateInfo);
-  }
+  getChainAdapter(account.currency?.id ?? "").assignToAccountRaw?.(account, accountRaw);
 }
 
 export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account) {
@@ -164,8 +95,5 @@ export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account) {
   if (bitcoinResourcesRaw)
     (account as BitcoinAccount).bitcoinResources = fromBitcoinResourcesRaw(bitcoinResourcesRaw);
 
-  const zcashPrivateInfoRaw = (accountRaw as ZcashAccountRaw).privateInfo;
-  if (zcashPrivateInfoRaw) {
-    (account as ZcashAccount).privateInfo = fromZcashPrivateInfoRaw(zcashPrivateInfoRaw);
-  }
+  getChainAdapter(account.currency?.id ?? "").assignFromAccountRaw?.(accountRaw, account);
 }

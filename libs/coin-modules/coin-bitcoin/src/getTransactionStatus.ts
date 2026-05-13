@@ -19,6 +19,7 @@ import { TaprootNotActivated } from "./errors";
 import { Currency } from "./wallet-btc";
 import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
 import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
+import { getChainAdapter } from "./chain-adapters/registry";
 
 export const MAX_BLOCK_HEIGHT_FOR_TAPROOT = 709632;
 
@@ -27,6 +28,10 @@ export const getTransactionStatus: AccountBridge<
   Account,
   TransactionStatus
 >["getTransactionStatus"] = async (account: Account, transaction: Transaction) => {
+  const adapter = getChainAdapter(account.currency.id);
+  const custom = adapter.getTransactionStatus?.(account, transaction);
+  if (custom) return custom;
+
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
   const useAllAmount = !!transaction.useAllAmount;

@@ -1,7 +1,7 @@
 import { ZcashAccount } from "@ledgerhq/coin-bitcoin/types";
-import { ZcashPrivateInfo } from "@ledgerhq/zcash-shielded/types";
+import { ZcashPrivateInfo } from "@ledgerhq/coin-bitcoin/chain-adapters/zcash/types";
 import { updateAccountWithUpdater, UpdateAccountAction } from "~/renderer/actions/accounts";
-import { DEFAULT_ZCASH_PRIVATE_INFO } from "@ledgerhq/zcash-shielded/constants";
+import { DEFAULT_ZCASH_PRIVATE_INFO } from "@ledgerhq/coin-bitcoin/chain-adapters/zcash/constants";
 
 export const syncStateUpdater = (
   account: ZcashAccount,
