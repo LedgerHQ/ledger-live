@@ -26,6 +26,11 @@ export default function DebugDeviceIntentExecutor() {
         onPress={() => navigation.navigate(ScreenName.DebugDeviceIntentExecutorContent)}
       />
       <DebugEntry
+        title="Info State"
+        description="Preview the reusable mobile state component for presets, copy, banners, and actions."
+        onPress={() => navigation.navigate(ScreenName.DebugDeviceIntentExecutorInfoState)}
+      />
+      <DebugEntry
         title="Orchestration"
         description="Run the existing chained intent playground to test DIE core orchestration."
         onPress={() => navigation.navigate(ScreenName.DebugDeviceIntentExecutorOrchestration)}
