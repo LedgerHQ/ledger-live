@@ -7,7 +7,8 @@ export class MarketPage extends AppPage {
   private readonly navbarTitle = this.page.getByTestId("page-header-title");
   private searchInput = this.page.getByTestId("market-search-input");
   private loadingPlaceholder = this.page.getByTestId("loading-placeholder");
-  private coinRow = (ticker: string) => this.page.getByTestId(`market-${ticker}-row`).first();
+  private readonly coinRow = (ticker: string) =>
+    this.page.getByTestId(`market-${ticker}-row`).first();
   private coinPageContainer = this.page.getByTestId("market-coin-page-container");
   private swapButtonOnAsset = this.page.getByTestId("market-coin-swap-button");
 
@@ -18,7 +19,7 @@ export class MarketPage extends AppPage {
   private stakeButtonLegacy = (ticker: string) =>
     this.page.locator(`[data-testid="market-${ticker}-stake-button"]:visible`).first();
 
-  private buyButton = (ticker: string) =>
+  private readonly buyButton = (ticker: string) =>
     this.coinRow(ticker).getByTestId(`market-${ticker}-buy-button-icon`);
   private swapButton = (ticker: string) =>
     this.coinRow(ticker).getByTestId(`market-${ticker}-swap-button-icon`);
