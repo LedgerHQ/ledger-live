@@ -22,3 +22,11 @@ See examples:
 - **Entity packages** (`domain/entity/`): read `domain/entity/README.md`
 - **API packages** (`domain/api/`): read `domain/api/README.md`
 - **Shared packages** (`shared/**`): read `shared/README.md`
+
+## Contacts feature (internal alpha)
+
+- If working on the Contacts feature in Ledger Wallet Desktop, also read
+  [`apps/ledger-live-desktop/docs/contacts.md`](apps/ledger-live-desktop/docs/contacts.md).
+- All new Contacts UI must use the Lumen design system
+  (`@ledgerhq/lumen-ui-react` + `@ledgerhq/lumen-ui-react/symbols`). No
+  `styled-components`, no `@ledgerhq/react-ui` in new Contacts code.
