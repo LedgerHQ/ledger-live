@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { getValidCryptoIconSize } from "~/renderer/utils/cryptoIconSize";
 import { AssetHeader } from "./components/AssetHeader/AssetHeader";
+import { ActionBar } from "./components/ActionBar";
 import { MarketDataSection } from "./components/MarketDataSection";
 import { PortfolioSection } from "./components/PortfolioSection/PortfolioSection";
 import { TransactionsSection } from "./components/TransactionsSection";
@@ -14,7 +15,8 @@ type AssetDetailViewProps = Readonly<{
 
 export function AssetDetailView({ viewModel }: AssetDetailViewProps) {
   const navigate = useNavigate();
-  const { distributionItem, marketInfo, market, assetName, assetTicker, ledgerId } = viewModel;
+  const { distributionItem, marketInfo, market, assetName, assetTicker, ledgerId, ledgerCurrency } =
+    viewModel;
 
   const onBack = useCallback(() => {
     navigate(-1);
@@ -22,19 +24,27 @@ export function AssetDetailView({ viewModel }: AssetDetailViewProps) {
 
   return (
     <div className="flex w-full shrink-0 flex-col gap-32 pb-32">
-      <AssetHeader
-        assetLabel={assetName}
-        icon={
-          ledgerId && (
-            <CryptoIcon
-              ledgerId={ledgerId}
-              ticker={assetTicker}
-              size={getValidCryptoIconSize(24)}
-            />
-          )
-        }
-        onBack={onBack}
-      />
+      <div className="flex flex-col gap-24">
+        <AssetHeader
+          assetLabel={assetName}
+          icon={
+            ledgerId && (
+              <CryptoIcon
+                ledgerId={ledgerId}
+                ticker={assetTicker}
+                size={getValidCryptoIconSize(24)}
+              />
+            )
+          }
+          onBack={onBack}
+        />
+
+        <ActionBar
+          distributionItem={distributionItem}
+          ledgerCurrency={ledgerCurrency}
+          tickerHint={assetTicker}
+        />
+      </div>
 
       {distributionItem && <PortfolioSection distributionItem={distributionItem} />}
 

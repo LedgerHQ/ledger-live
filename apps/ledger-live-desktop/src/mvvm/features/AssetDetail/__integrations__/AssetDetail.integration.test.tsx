@@ -10,6 +10,7 @@ import {
 import { mockDada, mockMarket } from "tests/utils/assetDetailMocks";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import type { DistributionItem } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import AssetDetail from "../index";
 
@@ -25,6 +26,10 @@ const TEST_ID = {
   ADDRESS_LIST: "asset-detail-address-list",
   MARKET_SECTION: "asset-detail-market-data-section",
   TRANSACTIONS_SECTION: "asset-detail-transactions-section",
+  ACTION_BUY: "asset-detail-action-buy",
+  ACTION_RECEIVE: "asset-detail-action-receive",
+  ACTION_SELL: "asset-detail-action-sell",
+  ACTION_SEND: "asset-detail-action-send",
 } as const;
 
 jest.mock("react-router", () => ({
@@ -360,6 +365,84 @@ describe("AssetDetail integration", () => {
       expect(marketSection.compareDocumentPosition(transactionsSection)).toBe(
         Node.DOCUMENT_POSITION_FOLLOWING,
       );
+    });
+  });
+
+  describe("action bar states", () => {
+    it("enables buy and receive, and disables sell and send when there is no address", async () => {
+      mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+      setupRoute("bitcoin", { list: [] });
+
+      render(<AssetDetail />);
+
+      await waitFor(() => {
+        expectHeader();
+      });
+
+      expect(screen.getByTestId(TEST_ID.ACTION_RECEIVE)).toBeEnabled();
+      expect(screen.getByTestId(TEST_ID.ACTION_BUY)).toBeEnabled();
+      expect(screen.getByTestId(TEST_ID.ACTION_SELL)).toBeDisabled();
+      expect(screen.getByTestId(TEST_ID.ACTION_SEND)).toBeDisabled();
+    });
+
+    it("keeps sell and send disabled when the address exists but balance is zero", async () => {
+      mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+      const account = genAccount("asset-detail-zero-balance-account", { currency: btc });
+      account.balance = new BigNumber(0);
+      account.spendableBalance = new BigNumber(0);
+      const item = buildDistributionItem({ accounts: [account] });
+      setupRoute("bitcoin", { bySlug: { bitcoin: item }, list: [item] });
+
+      renderWithMockedCounterValuesProvider(<AssetDetail />);
+
+      await waitFor(() => {
+        expectHeader();
+      });
+
+      expect(screen.getByTestId(TEST_ID.ACTION_RECEIVE)).toBeEnabled();
+      expect(screen.getByTestId(TEST_ID.ACTION_BUY)).toBeEnabled();
+      expect(screen.getByTestId(TEST_ID.ACTION_SELL)).toBeDisabled();
+      expect(screen.getByTestId(TEST_ID.ACTION_SEND)).toBeDisabled();
+    });
+
+    it("enables sell and send when the address has a positive spendable balance", async () => {
+      mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+      const account = genAccount("asset-detail-positive-balance-account", { currency: btc });
+      account.balance = new BigNumber(10);
+      account.spendableBalance = new BigNumber(10);
+      const item = buildDistributionItem({ accounts: [account] });
+      setupRoute("bitcoin", { bySlug: { bitcoin: item }, list: [item] });
+
+      renderWithMockedCounterValuesProvider(<AssetDetail />);
+
+      await waitFor(() => {
+        expectHeader();
+      });
+
+      expect(screen.getByTestId(TEST_ID.ACTION_RECEIVE)).toBeEnabled();
+      expect(screen.getByTestId(TEST_ID.ACTION_BUY)).toBeEnabled();
+      expect(screen.getByTestId(TEST_ID.ACTION_SELL)).toBeEnabled();
+      expect(screen.getByTestId(TEST_ID.ACTION_SEND)).toBeEnabled();
+    });
+
+    it("enables sell and send when the address has an earn deposit", async () => {
+      mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+      const account = genAccount("asset-detail-earn-deposit-account", { currency: btc });
+      account.balance = new BigNumber(10);
+      account.spendableBalance = new BigNumber(0);
+      const item = buildDistributionItem({ accounts: [account] });
+      setupRoute("bitcoin", { bySlug: { bitcoin: item }, list: [item] });
+
+      renderWithMockedCounterValuesProvider(<AssetDetail />);
+
+      await waitFor(() => {
+        expectHeader();
+      });
+
+      expect(screen.getByTestId(TEST_ID.ACTION_RECEIVE)).toBeEnabled();
+      expect(screen.getByTestId(TEST_ID.ACTION_BUY)).toBeEnabled();
+      expect(screen.getByTestId(TEST_ID.ACTION_SELL)).toBeEnabled();
+      expect(screen.getByTestId(TEST_ID.ACTION_SEND)).toBeEnabled();
     });
   });
 
