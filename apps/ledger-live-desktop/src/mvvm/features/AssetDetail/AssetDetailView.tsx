@@ -9,6 +9,7 @@ import { MarketDataSection } from "./components/MarketDataSection";
 import { PortfolioSection } from "./components/PortfolioSection/PortfolioSection";
 import { TransactionsSection } from "./components/TransactionsSection";
 import type { AssetDetailReady } from "./types";
+import { PnLSection } from "./components/PnL";
 
 type AssetDetailViewProps = Readonly<{
   viewModel: AssetDetailReady;
@@ -55,6 +56,8 @@ export function AssetDetailView({ viewModel }: AssetDetailViewProps) {
       </div>
 
       {distributionItem && <PortfolioSection distributionItem={distributionItem} />}
+
+      {distributionItem && <PnLSection distributionItem={distributionItem} />}
 
       {marketInfo && <MarketDataSection market={market} />}
 

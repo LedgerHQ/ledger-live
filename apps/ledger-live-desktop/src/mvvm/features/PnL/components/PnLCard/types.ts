@@ -10,9 +10,9 @@ type InfoCard = {
 };
 
 type PnLCardProps = {
+  id: string;
   title: string;
   value: string;
-  discreet?: boolean;
 } & (InteractiveCard | InfoCard);
 
 export type { InteractiveCard, InfoCard, PnLCardProps };
