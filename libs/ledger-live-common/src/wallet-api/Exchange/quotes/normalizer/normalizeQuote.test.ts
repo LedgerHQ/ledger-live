@@ -385,7 +385,7 @@ describe("normalizeQuote", () => {
     });
   });
 
-  describe("warning.unrealisticQuote — fiat gain detection", () => {
+  describe("warnings — fiat gain detection", () => {
     // Canonical "doubled in fiat" fixture: 1 unit from × 1.0 / 1 unit to × 2.0.
     // Keeps spot values symmetric and gainPercent expressible as an exact
     // integer (100%) so the tests assert on precise numeric output.
@@ -405,7 +405,7 @@ describe("normalizeQuote", () => {
           spotPrices: {},
         },
       );
-      expect(quote.warning).toBeNull();
+      expect(quote.warnings).toEqual([]);
     });
 
     it("returns no warning when only the `from` spot price is available", () => {
@@ -418,7 +418,7 @@ describe("normalizeQuote", () => {
           spotPrices: { ethereum: 1 },
         },
       );
-      expect(quote.warning).toBeNull();
+      expect(quote.warnings).toEqual([]);
     });
 
     it("emits `unknownReceiveFiatPrice` when the receive spot price is zero", () => {
@@ -432,7 +432,6 @@ describe("normalizeQuote", () => {
         },
       );
 
-      expect(quote.warning).toEqual({ code: QuoteWarningCodes.UNKNOWN_RECEIVE_FIAT_PRICE });
       expect(quote.warnings).toEqual([{ code: QuoteWarningCodes.UNKNOWN_RECEIVE_FIAT_PRICE }]);
     });
 
@@ -445,13 +444,6 @@ describe("normalizeQuote", () => {
         spotPrices: {},
       });
 
-      expect(quote.warning).toEqual({
-        code: QuoteWarningCodes.LEDGER_LIVE_VERSION_INCOMPATIBILITY,
-        currencyId: "aptos",
-        platform: "lld",
-        currentVersion: "2.70.0",
-        requiredVersion: "2.75.0",
-      });
       expect(quote.warnings).toEqual([
         {
           code: QuoteWarningCodes.LEDGER_LIVE_VERSION_INCOMPATIBILITY,
@@ -472,13 +464,15 @@ describe("normalizeQuote", () => {
         spotPrices: {},
       });
 
-      expect(quote.warning).toEqual({
-        code: QuoteWarningCodes.LEDGER_LIVE_VERSION_INCOMPATIBILITY,
-        currencyId: "solana/spl/usdc",
-        platform: "llm-ios",
-        currentVersion: "4.0.0",
-        requiredVersion: "4.5.0",
-      });
+      expect(quote.warnings).toEqual([
+        {
+          code: QuoteWarningCodes.LEDGER_LIVE_VERSION_INCOMPATIBILITY,
+          currencyId: "solana/spl/usdc",
+          platform: "llm-ios",
+          currentVersion: "4.0.0",
+          requiredVersion: "4.5.0",
+        },
+      ]);
     });
 
     it("does not emit Ledger Live version incompatibility when the host app version is new enough", () => {
@@ -490,7 +484,6 @@ describe("normalizeQuote", () => {
         spotPrices: {},
       });
 
-      expect(quote.warning).toBeNull();
       expect(quote.warnings).toEqual([]);
     });
 
@@ -506,10 +499,6 @@ describe("normalizeQuote", () => {
         },
       );
 
-      expect(quote.warning).toEqual({
-        code: QuoteWarningCodes.HIGH_VALUE_LOSS,
-        lossPercent: 20,
-      });
       expect(quote.warnings).toEqual([
         {
           code: QuoteWarningCodes.HIGH_VALUE_LOSS,
@@ -530,10 +519,12 @@ describe("normalizeQuote", () => {
         },
       );
 
-      expect(quote.warning).toEqual({
-        code: QuoteWarningCodes.HIGH_VALUE_LOSS,
-        lossPercent: 10,
-      });
+      expect(quote.warnings).toEqual([
+        {
+          code: QuoteWarningCodes.HIGH_VALUE_LOSS,
+          lossPercent: 10,
+        },
+      ]);
     });
 
     it("does not emit `highValueLoss` when the loss is below the configured threshold", () => {
@@ -548,7 +539,6 @@ describe("normalizeQuote", () => {
         },
       );
 
-      expect(quote.warning).toBeNull();
       expect(quote.warnings).toEqual([]);
     });
 
@@ -563,7 +553,6 @@ describe("normalizeQuote", () => {
         },
       );
 
-      expect(quote.warning).toBeNull();
       expect(quote.warnings).toEqual([]);
     });
 
@@ -575,10 +564,6 @@ describe("normalizeQuote", () => {
         spotPrices: {},
       });
 
-      expect(quote.warning).toEqual({
-        code: QuoteWarningCodes.NANO_S_PROVIDER_INCOMPATIBILITY,
-        provider: "okx",
-      });
       expect(quote.warnings).toEqual([
         {
           code: QuoteWarningCodes.NANO_S_PROVIDER_INCOMPATIBILITY,
@@ -596,7 +581,6 @@ describe("normalizeQuote", () => {
         spotPrices: {},
       });
 
-      expect(quote.warning).toBeNull();
       expect(quote.warnings).toEqual([]);
     });
 
@@ -608,10 +592,6 @@ describe("normalizeQuote", () => {
         spotPrices: {},
       });
 
-      expect(quote.warning).toEqual({
-        code: QuoteWarningCodes.NANO_S_CURRENCY_INCOMPATIBILITY,
-        currencyId: "ton",
-      });
       expect(quote.warnings).toEqual([
         {
           code: QuoteWarningCodes.NANO_S_CURRENCY_INCOMPATIBILITY,
@@ -629,10 +609,6 @@ describe("normalizeQuote", () => {
         spotPrices: {},
       });
 
-      expect(quote.warning).toEqual({
-        code: QuoteWarningCodes.NANO_S_CURRENCY_INCOMPATIBILITY,
-        currencyId: "solana",
-      });
       expect(quote.warnings).toEqual([
         {
           code: QuoteWarningCodes.NANO_S_CURRENCY_INCOMPATIBILITY,
@@ -647,7 +623,7 @@ describe("normalizeQuote", () => {
         emptyProviderData,
         doubledInFiat,
       );
-      expect(quote.warning).toBeNull();
+      expect(quote.warnings).toEqual([]);
     });
 
     it("returns no warning when `amountFrom` is missing", () => {
@@ -656,7 +632,7 @@ describe("normalizeQuote", () => {
         emptyProviderData,
         doubledInFiat,
       );
-      expect(quote.warning).toBeNull();
+      expect(quote.warnings).toEqual([]);
     });
 
     it("returns no warning when the gain is non-positive (output fiat ≤ input fiat)", () => {
@@ -666,7 +642,7 @@ describe("normalizeQuote", () => {
         emptyProviderData,
         doubledInFiat,
       );
-      expect(quote.warning).toBeNull();
+      expect(quote.warnings).toEqual([]);
     });
 
     it("emits `unrealisticQuote` with a positive `gainPercent` when output fiat exceeds input fiat", () => {
@@ -676,10 +652,9 @@ describe("normalizeQuote", () => {
         emptyProviderData,
         doubledInFiat,
       );
-      expect(quote.warning).toEqual({
-        code: QuoteWarningCodes.UNREALISTIC_QUOTE,
-        gainPercent: 100,
-      });
+      expect(quote.warnings).toEqual([
+        { code: QuoteWarningCodes.UNREALISTIC_QUOTE, gainPercent: 100 },
+      ]);
     });
 
     it("preserves fractional `gainPercent` values", () => {
@@ -693,10 +668,9 @@ describe("normalizeQuote", () => {
           spotPrices: { ethereum: 1, bitcoin: 1 },
         },
       );
-      expect(quote.warning).toEqual({
-        code: QuoteWarningCodes.UNREALISTIC_QUOTE,
-        gainPercent: 1.5,
-      });
+      expect(quote.warnings).toEqual([
+        { code: QuoteWarningCodes.UNREALISTIC_QUOTE, gainPercent: 1.5 },
+      ]);
     });
   });
 
@@ -707,7 +681,7 @@ describe("normalizeQuote", () => {
       spotPrices: {},
     };
 
-    it("populates both fields and leaves error = null when approval is needed and balance is sufficient", () => {
+    it("populates both fields and leaves errors empty when approval is needed and balance is sufficient", () => {
       const quote = normalizeQuote(
         makeRawQuote({ tokenAllowanceData: { isApproved: false } }),
         emptyProviderData,
@@ -726,7 +700,7 @@ describe("normalizeQuote", () => {
         amount: "1500000000000000",
         currencyId: "ethereum",
       });
-      expect(quote.error).toBeNull();
+      expect(quote.errors).toEqual([]);
     });
 
     it("emits `notEnoughBalanceForFees` when the fee estimate reports insufficient balance", () => {
@@ -735,9 +709,6 @@ describe("normalizeQuote", () => {
         approvalNetworkFee: undefined,
         notEnoughBalance: true,
       });
-      // Object union shape: matched by `code`, not by bare string.
-      expect(quote.error).toEqual({ code: QuoteErrorCodes.NOT_ENOUGH_BALANCE_FOR_FEES });
-      // Mirrored into `errors[]` for the migration window.
       expect(quote.errors).toEqual([{ code: QuoteErrorCodes.NOT_ENOUGH_BALANCE_FOR_FEES }]);
     });
 
@@ -747,7 +718,7 @@ describe("normalizeQuote", () => {
       expect(quote.warnings).toEqual([]);
     });
 
-    it("mirrors `warning` into `warnings[]` when the unrealistic-quote check fires", () => {
+    it("emits `unrealisticQuote` in `warnings[]` when the unrealistic-quote check fires", () => {
       // amountFromFiat = 1 * 1 = 1, amountToFiat = 1 * 2 = 2 -> gain = 100%
       const quote = normalizeQuote(
         makeRawQuote({ amountFrom: 1, amountTo: 1 }),
@@ -758,20 +729,16 @@ describe("normalizeQuote", () => {
           spotPrices: { ethereum: 1, bitcoin: 2 },
         },
       );
-      expect(quote.warning).toEqual({
-        code: QuoteWarningCodes.UNREALISTIC_QUOTE,
-        gainPercent: 100,
-      });
       expect(quote.warnings).toEqual([
         { code: QuoteWarningCodes.UNREALISTIC_QUOTE, gainPercent: 100 },
       ]);
     });
 
-    it("omits both fields and leaves error = null when the fee estimate is undefined", () => {
+    it("omits fee fields and leaves errors empty when the fee estimate is undefined", () => {
       const quote = normalizeQuote(makeRawQuote(), emptyProviderData, emptyUnrealisticInput);
       expect(quote.quoteDetails.estimatedNetworkFee).toBeUndefined();
       expect(quote.quoteDetails.approvalNetworkFee).toBeUndefined();
-      expect(quote.error).toBeNull();
+      expect(quote.errors).toEqual([]);
     });
 
     it("omits fields individually when the fee estimate marks them undefined", () => {

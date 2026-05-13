@@ -1,14 +1,7 @@
 import BigNumber from "bignumber.js";
 
 import type { RawQuoteError } from "./service/types";
-import type { QuotesError } from "./types";
-
-/**
- * Aggregator rejection rows carry a free-form `code` string. Only this
- * one is consumed by `computeQuotesErrors`; everything else is left in
- * `providerErrors` for the consumer to inspect directly.
- */
-const AMOUNT_OFF_LIMITS = "amount_off_limits";
+import { ProviderErrorCodes, QuotesErrorCodes, type QuotesError } from "./types";
 
 /**
  * Inputs the producer reads. `amountFrom` is the user-input atomic amount
@@ -52,10 +45,12 @@ export function computeQuotesErrors(args: ComputeQuotesErrorsArgs): QuotesError[
     return [];
   }
 
-  const errors: QuotesError[] = [{ code: "noQuotes" }];
+  const errors: QuotesError[] = [{ code: QuotesErrorCodes.NO_QUOTES }];
 
   const amountFromBn = new BigNumber(args.amountFrom);
-  const amountOffLimits = args.providerErrors.filter(row => row.code === AMOUNT_OFF_LIMITS);
+  const amountOffLimits = args.providerErrors.filter(
+    row => row.code === ProviderErrorCodes.AMOUNT_OFF_LIMITS,
+  );
 
   const tooLowCandidates = amountOffLimits
     .map(row => ({ minAmount: row.parameter?.minAmount }))
@@ -65,7 +60,7 @@ export function computeQuotesErrors(args: ComputeQuotesErrorsArgs): QuotesError[
 
   const lowest = tooLowCandidates[0];
   if (lowest) {
-    errors.push({ code: "amountTooLow", minAmount: lowest.minAmount });
+    errors.push({ code: QuotesErrorCodes.AMOUNT_TOO_LOW, minAmount: lowest.minAmount });
   }
 
   const tooHighCandidates = amountOffLimits
@@ -76,7 +71,7 @@ export function computeQuotesErrors(args: ComputeQuotesErrorsArgs): QuotesError[
 
   const highest = tooHighCandidates[0];
   if (highest) {
-    errors.push({ code: "amountTooHigh", maxAmount: highest.maxAmount });
+    errors.push({ code: QuotesErrorCodes.AMOUNT_TOO_HIGH, maxAmount: highest.maxAmount });
   }
 
   return errors;

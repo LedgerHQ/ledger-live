@@ -27,4 +27,9 @@ export type {
   QuoteApprovalNetworkFee,
 } from "@ledgerhq/wallet-api-exchange-module";
 
-export { QuoteErrorCodes, QuoteWarningCodes } from "@ledgerhq/wallet-api-exchange-module";
+export {
+  ProviderErrorCodes,
+  QuoteErrorCodes,
+  QuoteWarningCodes,
+  QuotesErrorCodes,
+} from "@ledgerhq/wallet-api-exchange-module";

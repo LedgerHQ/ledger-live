@@ -11,17 +11,6 @@ import { isGasLess, normalizedProviderId, resolveQuoteId } from "./quoteHelpers"
 import { buildQuoteWarnings, NormalizationContext } from "./buildQuoteWarnings";
 import { buildQuoteErrors } from "./buildQuoteErrors";
 
-enum ProviderErrorCodes {
-  FAILED_TO_GET_QUOTE_ERROR = "failed_to_get_quote_error",
-  AMOUNT_OFF_LIMITS = "amount_off_limits",
-}
-
-interface ProviderError {
-  code: string;
-  originalCode: string;
-  message: string;
-}
-
 const EMPTY_CONTEXT: NormalizationContext = {
   sendCurrencyId: "",
   receiveCurrencyId: "",
@@ -42,7 +31,7 @@ const EMPTY_CONTEXT: NormalizationContext = {
  * @param feeEstimate - Wallet-side default-strategy fee estimate from
  *   {@link computeFeeEstimate}. When absent, `estimatedNetworkFee` /
  *   `approvalNetworkFee` stay undefined and `notEnoughBalanceForFees` is
- *   not emitted.
+ *   not included in `errors`.
  * @param formatContext - Locale / counter-value fiat / resolved currency
  *   metadata needed to produce `Quote.formatted`. When absent, the
  *   returned quote omits `formatted` and consumers fall back to their
@@ -70,8 +59,6 @@ export function normalizeQuote(
     provider,
     providerDetails: buildProviderDetails(rawQuote, providerData),
     quoteDetails,
-    warning: warnings[0] ?? null,
-    error: errors[0] ?? null,
     warnings,
     errors,
   };

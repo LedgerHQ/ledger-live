@@ -373,20 +373,6 @@ export type Quote = {
    */
   errors: QuoteError[];
   /**
-   * @deprecated Migration shim — populated alongside {@link warnings} during
-   * the wallet-side errors/warnings rollout. Holds the highest-priority
-   * warning, or `null` when none. Will be removed once consumers have
-   * migrated to {@link warnings}.
-   */
-  warning: QuoteWarning | null;
-  /**
-   * @deprecated Migration shim — populated alongside {@link errors} during
-   * the wallet-side errors/warnings rollout. Holds the highest-priority
-   * error, or `null` when none. Will be removed once consumers have
-   * migrated to {@link errors}.
-   */
-  error: QuoteError | null;
-  /**
    * Optional wallet-formatted display strings. Additive field:
    * producers that cannot format (no locale / counter-value fiat context)
    * omit it, and consumers must handle `undefined`.
@@ -394,9 +380,14 @@ export type Quote = {
   formatted?: FormattedQuoteValues;
 };
 
+export enum ProviderErrorCodes {
+  AMOUNT_OFF_LIMITS = "amount_off_limits",
+  FAILED_TO_GET_QUOTE_ERROR = "failed_to_get_quote_error",
+}
+
 /** Error rows returned next to quotes (swap API error objects). */
 export type QuoteProviderError = {
-  code: string;
+  code: ProviderErrorCodes | (string & {});
   type: TradeMethod;
   provider: string;
   message: string;
@@ -410,10 +401,16 @@ export type QuoteProviderError = {
  *
  * Producers live wallet-side; this is the contract consumers read.
  */
+export enum QuotesErrorCodes {
+  AMOUNT_TOO_HIGH = "amountTooHigh",
+  AMOUNT_TOO_LOW = "amountTooLow",
+  NO_QUOTES = "noQuotes",
+}
+
 export type QuotesError =
-  | { code: "noQuotes" }
-  | { code: "amountTooLow"; minAmount: string }
-  | { code: "amountTooHigh"; maxAmount: string };
+  | { code: QuotesErrorCodes.NO_QUOTES }
+  | { code: QuotesErrorCodes.AMOUNT_TOO_LOW; minAmount: string }
+  | { code: QuotesErrorCodes.AMOUNT_TOO_HIGH; maxAmount: string };
 
 export type GetQuotesResponse = {
   quotes: Quote[];
