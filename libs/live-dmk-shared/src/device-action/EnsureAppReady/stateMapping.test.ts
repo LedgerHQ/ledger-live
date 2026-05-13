@@ -213,7 +213,7 @@ describe("mapConnectAppDAPendingStatus", () => {
       expect(result).toBeNull();
     });
 
-    it("WHEN there is an install plan THEN it maps install progress", () => {
+    it("WHEN there is an install plan THEN it emits the installing app state", () => {
       // GIVEN
       const state = makePending(UserInteractionRequired.None, {
         installPlan: makeInstallPlan(),
@@ -227,37 +227,9 @@ describe("mapConnectAppDAPendingStatus", () => {
       });
 
       // THEN
-      expect(result).toEqual({
-        type: LoadingStateType.InstallingApp,
-        appName: "Ethereum",
-        progress: 0.42,
-        index: 1,
-        total: 2,
-      });
-    });
-
-    it("WHEN the current install entry is missing THEN it falls back to the requested app name", () => {
-      // GIVEN
-      const state = makePending(UserInteractionRequired.None, {
-        installPlan: makeInstallPlan({
-          currentIndex: 99,
-        }),
-      });
-
-      // WHEN
-      const result = mapConnectAppDAPendingStatus({
-        state,
-        appName,
-        deprecationDismissedCurrencyNames: [],
-      });
-
-      // THEN
-      expect(result).toEqual(
-        expect.objectContaining({
-          type: LoadingStateType.InstallingApp,
-          appName: "Ethereum",
-        }),
-      );
+      // The installing app state intentionally carries no payload so consecutive
+      // emissions deduplicate via the use case's deep-equality comparison.
+      expect(result).toEqual({ type: LoadingStateType.InstallingApp });
     });
   });
 

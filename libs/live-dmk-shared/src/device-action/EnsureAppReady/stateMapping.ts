@@ -76,15 +76,7 @@ export function mapConnectAppDAPendingStatus(params: {
 
     case UserInteractionRequired.None:
       if (!intermediateValue.installPlan) return null;
-      return {
-        type: LoadingStateType.InstallingApp,
-        appName:
-          intermediateValue.installPlan.installPlan[intermediateValue.installPlan.currentIndex]
-            ?.versionName ?? appName,
-        progress: intermediateValue.installPlan.currentProgress,
-        index: intermediateValue.installPlan.currentIndex,
-        total: intermediateValue.installPlan.installPlan.length,
-      };
+      return { type: LoadingStateType.InstallingApp };
 
     case UserInteractionRequiredLL.DeviceDeprecation:
       return mapDeprecationState({
