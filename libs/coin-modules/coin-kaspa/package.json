@@ -106,7 +106,6 @@
     "bip32": "4.0.0",
     "bip32-path": "^0.4.2",
     "eip55": "^2.1.0",
-    "expect": "catalog:",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
     "lru-cache": "^7.14.1",
