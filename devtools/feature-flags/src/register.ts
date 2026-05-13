@@ -9,11 +9,13 @@ declare module "@devtools/shell" {
   }
 }
 
-registerTool({
-  id: FEATURE_FLAGS_ID,
-  label: "Feature Flags",
-  category: Category.CONFIGURATION,
-  component: FeatureFlags,
-  owner: "Platform",
-  desc: "Toggle feature flags at runtime.",
-});
+export function registerFeatureFlagsTool() {
+  registerTool({
+    id: FEATURE_FLAGS_ID,
+    label: "Feature Flags",
+    category: Category.CONFIGURATION,
+    component: FeatureFlags,
+    owner: "Platform",
+    desc: "Toggle feature flags at runtime.",
+  });
+}
