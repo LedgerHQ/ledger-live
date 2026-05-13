@@ -1,5 +1,29 @@
 # @ledgerhq/errors
 
+## 6.35.0
+
+### Minor Changes
+
+- [#16919](https://github.com/LedgerHQ/ledger-live/pull/16919) [`d308b1a`](https://github.com/LedgerHQ/ledger-live/commit/d308b1a6b9c629839f051cf367a527f4232120c7) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Wire live-signer-concordium to new DMK verifyAddress trusted backend based
+
+## 6.35.0-next.0
+
+### Minor Changes
+
+- [#16919](https://github.com/LedgerHQ/ledger-live/pull/16919) [`d308b1a`](https://github.com/LedgerHQ/ledger-live/commit/d308b1a6b9c629839f051cf367a527f4232120c7) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Wire live-signer-concordium to new DMK verifyAddress trusted backend based
+
+## 6.34.1
+
+### Patch Changes
+
+- [#17154](https://github.com/LedgerHQ/ledger-live/pull/17154) [`202cc42`](https://github.com/LedgerHQ/ledger-live/commit/202cc423b09662b5b25012b84124aecd4dc7245d) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - handle new bootloader CLA_NOT_SUPPORTED error code
+
+## 6.34.1-hotfix.0
+
+### Patch Changes
+
+- [#17154](https://github.com/LedgerHQ/ledger-live/pull/17154) [`202cc42`](https://github.com/LedgerHQ/ledger-live/commit/202cc423b09662b5b25012b84124aecd4dc7245d) Thanks [@paoun-ledger](https://github.com/paoun-ledger)! - handle new bootloader CLA_NOT_SUPPORTED error code
+
 ## 6.34.0
 
 ### Minor Changes

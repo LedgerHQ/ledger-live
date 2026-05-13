@@ -1,5 +1,21 @@
 # @ledgerhq/native-ui
 
+## 0.62.0
+
+### Minor Changes
+
+- [#16849](https://github.com/LedgerHQ/ledger-live/pull/16849) [`d44eed1`](https://github.com/LedgerHQ/ledger-live/commit/d44eed1c2a7a7dbdb0a806082ff227045d0be615) Thanks [@LucasWerey](https://github.com/LucasWerey)! - bump @ledgerhq/crypto-icons to v2.0.1 and migrate breaking changes
+
+- [#16977](https://github.com/LedgerHQ/ledger-live/pull/16977) [`177494c`](https://github.com/LedgerHQ/ledger-live/commit/177494c5020375e49eaea26cead9cbbd14cd63be) Thanks [@CremaFR](https://github.com/CremaFR)! - Fix native crash caused by invalid `width: "fit-content"` in MarketPriceIndicator and MarketPercentIndicator components, and improve Redux selector memoization for market/interest-rate hooks
+
+## 0.62.0-next.0
+
+### Minor Changes
+
+- [#16849](https://github.com/LedgerHQ/ledger-live/pull/16849) [`d44eed1`](https://github.com/LedgerHQ/ledger-live/commit/d44eed1c2a7a7dbdb0a806082ff227045d0be615) Thanks [@LucasWerey](https://github.com/LucasWerey)! - bump @ledgerhq/crypto-icons to v2.0.1 and migrate breaking changes
+
+- [#16977](https://github.com/LedgerHQ/ledger-live/pull/16977) [`177494c`](https://github.com/LedgerHQ/ledger-live/commit/177494c5020375e49eaea26cead9cbbd14cd63be) Thanks [@CremaFR](https://github.com/CremaFR)! - Fix native crash caused by invalid `width: "fit-content"` in MarketPriceIndicator and MarketPercentIndicator components, and improve Redux selector memoization for market/interest-rate hooks
+
 ## 0.61.0
 
 ### Minor Changes

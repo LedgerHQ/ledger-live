@@ -1,5 +1,33 @@
 # ledger-live-mobile-e2e-tests
 
+## 0.22.0
+
+### Minor Changes
+
+- [#16417](https://github.com/LedgerHQ/ledger-live/pull/16417) [`ab011dd`](https://github.com/LedgerHQ/ledger-live/commit/ab011dd9d3636d3f951e13b9316bde9940323c52) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Align desktop and mobile send E2E coverage with release validation for ZEC and SOL/SPL
+
+- [#16702](https://github.com/LedgerHQ/ledger-live/pull/16702) [`890bc73`](https://github.com/LedgerHQ/ledger-live/commit/890bc7390737386ac12972372968078ac658aac9) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Add mobile E2E coverage for receive warning messages and the default Solana delegation validator flow.
+
+- [#16051](https://github.com/LedgerHQ/ledger-live/pull/16051) [`772a16e`](https://github.com/LedgerHQ/ledger-live/commit/772a16eb188ac03fb9c3c509282ea58b7a840831) Thanks [@amaslakov](https://github.com/amaslakov)! - Add E2E send test for Concordium testnet (mobile)
+
+- [#16466](https://github.com/LedgerHQ/ledger-live/pull/16466) [`1ff42c2`](https://github.com/LedgerHQ/ledger-live/commit/1ff42c2658cb8afbe0143c284a1581fb6a872d7b) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Add mobile swap E2E tests matching desktop send.swap pairs and TMS IDs
+
+- [#16716](https://github.com/LedgerHQ/ledger-live/pull/16716) [`df992ba`](https://github.com/LedgerHQ/ledger-live/commit/df992ba149c629f70290506045e11944821874a5) Thanks [@jeportie](https://github.com/jeportie)! - Add ERC20 swap history export E2E test coverage (QAA-702).
+
+## 0.22.0-next.0
+
+### Minor Changes
+
+- [#16417](https://github.com/LedgerHQ/ledger-live/pull/16417) [`ab011dd`](https://github.com/LedgerHQ/ledger-live/commit/ab011dd9d3636d3f951e13b9316bde9940323c52) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Align desktop and mobile send E2E coverage with release validation for ZEC and SOL/SPL
+
+- [#16702](https://github.com/LedgerHQ/ledger-live/pull/16702) [`890bc73`](https://github.com/LedgerHQ/ledger-live/commit/890bc7390737386ac12972372968078ac658aac9) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Add mobile E2E coverage for receive warning messages and the default Solana delegation validator flow.
+
+- [#16051](https://github.com/LedgerHQ/ledger-live/pull/16051) [`772a16e`](https://github.com/LedgerHQ/ledger-live/commit/772a16eb188ac03fb9c3c509282ea58b7a840831) Thanks [@amaslakov](https://github.com/amaslakov)! - Add E2E send test for Concordium testnet (mobile)
+
+- [#16466](https://github.com/LedgerHQ/ledger-live/pull/16466) [`1ff42c2`](https://github.com/LedgerHQ/ledger-live/commit/1ff42c2658cb8afbe0143c284a1581fb6a872d7b) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Add mobile swap E2E tests matching desktop send.swap pairs and TMS IDs
+
+- [#16716](https://github.com/LedgerHQ/ledger-live/pull/16716) [`df992ba`](https://github.com/LedgerHQ/ledger-live/commit/df992ba149c629f70290506045e11944821874a5) Thanks [@jeportie](https://github.com/jeportie)! - Add ERC20 swap history export E2E test coverage (QAA-702).
+
 ## 0.21.0
 
 ### Minor Changes

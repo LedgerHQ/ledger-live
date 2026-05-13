@@ -1,5 +1,17 @@
 # @actions/live-common-affected
 
+## 1.6.0
+
+### Minor Changes
+
+- [#16903](https://github.com/LedgerHQ/ledger-live/pull/16903) [`8a0e9ff`](https://github.com/LedgerHQ/ledger-live/commit/8a0e9ff8a730090b7ec81974d0c382f8eaba58b7) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - [CI] run ledger-wallet-framework integration test in github workflow
+
+## 1.6.0-next.0
+
+### Minor Changes
+
+- [#16903](https://github.com/LedgerHQ/ledger-live/pull/16903) [`8a0e9ff`](https://github.com/LedgerHQ/ledger-live/commit/8a0e9ff8a730090b7ec81974d0c382f8eaba58b7) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - [CI] run ledger-wallet-framework integration test in github workflow
+
 ## 1.5.0
 
 ### Minor Changes

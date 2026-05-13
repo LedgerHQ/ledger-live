@@ -1,5 +1,78 @@
 # @ledgerhq/coin-celo
 
+## 2.2.0
+
+### Minor Changes
+
+- [#16974](https://github.com/LedgerHQ/ledger-live/pull/16974) [`f7df0c0`](https://github.com/LedgerHQ/ledger-live/commit/f7df0c0b946d5ad010ea8c5d17f6af65de57608f) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Enhance voting flow on Celo with validator group eligibility checks
+
+### Patch Changes
+
+- Updated dependencies [[`ed0dc8a`](https://github.com/LedgerHQ/ledger-live/commit/ed0dc8abc2c8f5054e655c4e12efe6fb433fbaca), [`2def56d`](https://github.com/LedgerHQ/ledger-live/commit/2def56d641c0d08f5b1c57d35b068c114faf7c24), [`4ddd97a`](https://github.com/LedgerHQ/ledger-live/commit/4ddd97a99bab5b581ad5ccfd36eb420ec4ee6352), [`7fafa10`](https://github.com/LedgerHQ/ledger-live/commit/7fafa10d8af581f4433a60ea908980a726d3a777), [`ac26c8b`](https://github.com/LedgerHQ/ledger-live/commit/ac26c8bffa9b5cc9f28bed5ce3d44e32982d655c), [`fb79639`](https://github.com/LedgerHQ/ledger-live/commit/fb79639eb81258bae4830ed6ffe375ae625054ad), [`e9886ec`](https://github.com/LedgerHQ/ledger-live/commit/e9886ec8f6a5835a745b4e3c25920cae4f1bb11f), [`78557fd`](https://github.com/LedgerHQ/ledger-live/commit/78557fdbee0b7c7702fc20d8a89ac62525c9aef7), [`0d11df6`](https://github.com/LedgerHQ/ledger-live/commit/0d11df6ef8dc781171071824ad1c39e3beed7730), [`b866ea6`](https://github.com/LedgerHQ/ledger-live/commit/b866ea67bcbd408a33dbc9233ef55298e2a8ef25), [`321a0e2`](https://github.com/LedgerHQ/ledger-live/commit/321a0e2ce948fac11f7bdf0e106eb0af57168caa), [`d308b1a`](https://github.com/LedgerHQ/ledger-live/commit/d308b1a6b9c629839f051cf367a527f4232120c7), [`21e69fe`](https://github.com/LedgerHQ/ledger-live/commit/21e69fea49cffc0b1204903e539a64b83e4b28f0), [`e6dc658`](https://github.com/LedgerHQ/ledger-live/commit/e6dc658b83ebd2102e19a1fead021443457c05d9), [`7f80800`](https://github.com/LedgerHQ/ledger-live/commit/7f80800b3949541e54a6000cfe9398844e23ccff), [`ef08282`](https://github.com/LedgerHQ/ledger-live/commit/ef08282513f27162b3ebc411315b29f6bd1a367d), [`fb4d165`](https://github.com/LedgerHQ/ledger-live/commit/fb4d1656be8dc8e933e55600970a2e991fbaeebb), [`b8800ee`](https://github.com/LedgerHQ/ledger-live/commit/b8800ee391b24bd878a2a5e8b86008b9f3142786), [`5bd95a9`](https://github.com/LedgerHQ/ledger-live/commit/5bd95a9ceaac4d08c87d635f721265357368f8ee), [`73bfe05`](https://github.com/LedgerHQ/ledger-live/commit/73bfe055ec23e0d630f2da9f4dbc9731b6fe5190)]:
+  - @ledgerhq/types-live@6.107.0
+  - @ledgerhq/coin-evm@3.6.0
+  - @ledgerhq/ledger-wallet-framework@1.4.0
+  - @ledgerhq/live-env@2.34.0
+  - @ledgerhq/errors@6.35.0
+  - @ledgerhq/cryptoassets@13.47.0
+  - @ledgerhq/live-network@2.6.0
+  - @ledgerhq/hw-app-eth@7.8.2
+  - @ledgerhq/devices@8.14.2
+
+## 2.2.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`e6dc658`](https://github.com/LedgerHQ/ledger-live/commit/e6dc658b83ebd2102e19a1fead021443457c05d9)]:
+  - @ledgerhq/cryptoassets@13.47.0-next.1
+  - @ledgerhq/ledger-wallet-framework@1.4.0-next.1
+  - @ledgerhq/coin-evm@3.6.0-next.1
+
+## 2.2.0-next.0
+
+### Minor Changes
+
+- [#16974](https://github.com/LedgerHQ/ledger-live/pull/16974) [`f7df0c0`](https://github.com/LedgerHQ/ledger-live/commit/f7df0c0b946d5ad010ea8c5d17f6af65de57608f) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Enhance voting flow on Celo with validator group eligibility checks
+
+### Patch Changes
+
+- Updated dependencies [[`ed0dc8a`](https://github.com/LedgerHQ/ledger-live/commit/ed0dc8abc2c8f5054e655c4e12efe6fb433fbaca), [`2def56d`](https://github.com/LedgerHQ/ledger-live/commit/2def56d641c0d08f5b1c57d35b068c114faf7c24), [`4ddd97a`](https://github.com/LedgerHQ/ledger-live/commit/4ddd97a99bab5b581ad5ccfd36eb420ec4ee6352), [`7fafa10`](https://github.com/LedgerHQ/ledger-live/commit/7fafa10d8af581f4433a60ea908980a726d3a777), [`ac26c8b`](https://github.com/LedgerHQ/ledger-live/commit/ac26c8bffa9b5cc9f28bed5ce3d44e32982d655c), [`fb79639`](https://github.com/LedgerHQ/ledger-live/commit/fb79639eb81258bae4830ed6ffe375ae625054ad), [`e9886ec`](https://github.com/LedgerHQ/ledger-live/commit/e9886ec8f6a5835a745b4e3c25920cae4f1bb11f), [`78557fd`](https://github.com/LedgerHQ/ledger-live/commit/78557fdbee0b7c7702fc20d8a89ac62525c9aef7), [`0d11df6`](https://github.com/LedgerHQ/ledger-live/commit/0d11df6ef8dc781171071824ad1c39e3beed7730), [`b866ea6`](https://github.com/LedgerHQ/ledger-live/commit/b866ea67bcbd408a33dbc9233ef55298e2a8ef25), [`321a0e2`](https://github.com/LedgerHQ/ledger-live/commit/321a0e2ce948fac11f7bdf0e106eb0af57168caa), [`d308b1a`](https://github.com/LedgerHQ/ledger-live/commit/d308b1a6b9c629839f051cf367a527f4232120c7), [`21e69fe`](https://github.com/LedgerHQ/ledger-live/commit/21e69fea49cffc0b1204903e539a64b83e4b28f0), [`7f80800`](https://github.com/LedgerHQ/ledger-live/commit/7f80800b3949541e54a6000cfe9398844e23ccff), [`ef08282`](https://github.com/LedgerHQ/ledger-live/commit/ef08282513f27162b3ebc411315b29f6bd1a367d), [`fb4d165`](https://github.com/LedgerHQ/ledger-live/commit/fb4d1656be8dc8e933e55600970a2e991fbaeebb), [`b8800ee`](https://github.com/LedgerHQ/ledger-live/commit/b8800ee391b24bd878a2a5e8b86008b9f3142786), [`5bd95a9`](https://github.com/LedgerHQ/ledger-live/commit/5bd95a9ceaac4d08c87d635f721265357368f8ee), [`73bfe05`](https://github.com/LedgerHQ/ledger-live/commit/73bfe055ec23e0d630f2da9f4dbc9731b6fe5190)]:
+  - @ledgerhq/types-live@6.107.0-next.0
+  - @ledgerhq/coin-evm@3.6.0-next.0
+  - @ledgerhq/ledger-wallet-framework@1.4.0-next.0
+  - @ledgerhq/live-env@2.34.0-next.0
+  - @ledgerhq/errors@6.35.0-next.0
+  - @ledgerhq/cryptoassets@13.47.0-next.0
+  - @ledgerhq/live-network@2.6.0-next.0
+  - @ledgerhq/hw-app-eth@7.8.2-next.0
+  - @ledgerhq/devices@8.14.2-next.0
+
+## 2.1.1
+
+### Patch Changes
+
+- Updated dependencies [[`202cc42`](https://github.com/LedgerHQ/ledger-live/commit/202cc423b09662b5b25012b84124aecd4dc7245d)]:
+  - @ledgerhq/errors@6.34.1
+  - @ledgerhq/coin-evm@3.5.1
+  - @ledgerhq/ledger-wallet-framework@1.3.2
+  - @ledgerhq/cryptoassets@13.46.2
+  - @ledgerhq/devices@8.14.2
+  - @ledgerhq/hw-app-eth@7.8.2
+  - @ledgerhq/live-network@2.5.2
+
+## 2.1.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`202cc42`](https://github.com/LedgerHQ/ledger-live/commit/202cc423b09662b5b25012b84124aecd4dc7245d)]:
+  - @ledgerhq/errors@6.34.1-hotfix.0
+  - @ledgerhq/coin-evm@3.5.1-hotfix.0
+  - @ledgerhq/ledger-wallet-framework@1.3.2-hotfix.0
+  - @ledgerhq/cryptoassets@13.46.2-hotfix.0
+  - @ledgerhq/devices@8.14.2-hotfix.0
+  - @ledgerhq/hw-app-eth@7.8.2-hotfix.0
+  - @ledgerhq/live-network@2.5.2-hotfix.0
+
 ## 2.1.0
 
 ### Minor Changes
