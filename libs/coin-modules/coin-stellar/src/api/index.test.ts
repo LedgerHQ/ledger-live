@@ -1,6 +1,5 @@
 import { BalanceOptions, TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import { InvalidParameterError } from "@ledgerhq/errors";
-import expect from "expect";
 import { StellarMemo } from "../types";
 import { createApi, envelopeFromAnyXDR } from "./index";
 
