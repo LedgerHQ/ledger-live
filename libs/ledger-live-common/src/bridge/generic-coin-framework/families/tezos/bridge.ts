@@ -23,15 +23,19 @@ export function getAssetFromToken(token: TokenCurrency, owner: string): AssetInf
 }
 
 export function computeIntentType(transaction: Record<string, unknown>): string {
-  switch (transaction.mode) {
+  const { mode } = transaction;
+  if (mode == null) return "send";
+  if (typeof mode !== "string") throw new Error(`Unsupported transaction mode: ${String(mode)}`);
+  switch (mode) {
+    case "send":
     case "delegate":
     case "undelegate":
     case "stake":
     case "unstake":
     case "finalize_unstake":
-      return transaction.mode;
+      return mode;
     default:
-      return "send";
+      throw new Error(`Unsupported transaction mode: ${mode}`);
   }
 }
 
