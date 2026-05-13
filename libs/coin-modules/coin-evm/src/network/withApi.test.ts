@@ -109,7 +109,7 @@ describe("withApi", () => {
     expect(p2).toBeInstanceOf(JsonRpcProvider);
   });
 
-  it("should use withRetries when retry policy is app-retries", async () => {
+  it("should use withRetries when retry policy is application", async () => {
     await withApi(
       makeUniqueRandomCurrency(),
       (_api: JsonRpcProvider) => Promise.resolve(),
@@ -120,7 +120,7 @@ describe("withApi", () => {
     expect(withRetriesSpy).toHaveBeenCalled();
   });
 
-  it("should set ethers retry limit to 1 when policy is app-retries", async () => {
+  it("should set ethers retry limit to 1 when policy is application", async () => {
     const setThrottleParamsSpy = jest.spyOn(FetchRequest.prototype, "setThrottleParams");
 
     await withApi(

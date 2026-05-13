@@ -13,7 +13,7 @@ import { BlockFinalizationTag, ExternalNodeConfig } from "../../config";
 import { GasEstimationError, InsufficientFunds, UnsupportedRpcMethodError } from "../../errors";
 import { Transaction as EvmTransaction, FeeData, FeeHistory } from "../../types";
 import { isSmartContractInput, normalizeAddress, safeEncodeEIP55 } from "../../utils";
-import { RetryStrategy, withApi } from "../withApi";
+import { PROVIDERS_BY_RPC, RetryStrategy, withApi } from "../withApi";
 import { gethCallTracerToTraceBlockItems } from "./gethCallTracerToTraceBlockItems";
 import {
   hasErrorCode,
@@ -122,6 +122,21 @@ export function parseERC20TransfersFromLogs(logs: ReadonlyArray<LogWithAddress>)
     }
     return [];
   });
+}
+
+/**
+ * Destroys every cached JsonRpcProvider and clears the module-level cache.
+ * Intended for test teardown (afterAll) so that ethers' background polling
+ * timers are stopped and Jest can exit cleanly.
+ *
+ * @internal — Test-only not exported from the package index; consume via the deep-import
+ * path `@ledgerhq/coin-evm/network/node/rpc.common` in tests only.
+ */
+export function destroyAllRpcProviders(): void {
+  for (const [key, provider] of Object.entries(PROVIDERS_BY_RPC)) {
+    provider.destroy();
+    delete PROVIDERS_BY_RPC[key];
+  }
 }
 
 async function getTransaction(

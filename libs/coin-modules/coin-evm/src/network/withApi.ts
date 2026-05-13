@@ -33,8 +33,8 @@ function providerCacheKey(
 /**
  * Retry policy for API call on node
  *
- * Ethers has a built-in retry mechanism on http 429 status code, use `ethers-http-only` to use it only,
- * otherwise `app-retries` to couple it with the application retries mechanism (function `withRetries`)
+ * Ethers has a built-in retry mechanism on http 429 status code, use `library` to use it only,
+ * otherwise `application` to couple it with the application retries mechanism (function `withRetries`)
  */
 export type RetryStrategy = "application" | "library";
 
@@ -47,7 +47,7 @@ function buildProvider(
   const fetchRequest = new FetchRequest(uri);
   fetchRequest.setThrottleParams({
     // Math.max is only a safety net
-    maxAttempts: retryStrategy === "library" ? Math.max(retries, 1) : 1,
+    maxAttempts: retryStrategy === "library" ? Math.max(retries + 1, 1) : 1,
   });
   return new JsonRpcProvider(fetchRequest, chainId);
 }

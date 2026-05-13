@@ -13,7 +13,7 @@ import { getCoinConfig } from "../../config";
 import { GasEstimationError, InsufficientFunds, UnsupportedRpcMethodError } from "../../errors";
 import { makeAccount } from "../../fixtures/common.fixtures";
 import { EvmTransactionEIP1559, EvmTransactionLegacy } from "../../types";
-import { DEFAULT_RETRIES_RPC_METHODS, withApi } from "../withApi";
+import { DEFAULT_RETRIES_RPC_METHODS } from "../withApi";
 import { createNodeApi, parseERC20TransfersFromLogs } from "./rpc.common";
 
 const nodeApi = createNodeApi({
@@ -148,106 +148,6 @@ describe("EVM Family", () => {
   });
 
   describe("network/rpc/rpc.common.ts", () => {
-    describe("withApi", () => {
-      it("should retry on fail", async () => {
-        let retries = 2;
-        const spy = jest.fn(async () => {
-          if (retries) {
-            --retries;
-            throw new Error();
-          }
-          return true;
-        });
-        const nodeConfig = { type: "external" as const, uri: "my-rpc.com", retries: 2 };
-        const response = await withApi(fakeCurrency as CryptoCurrency, spy, nodeConfig);
-
-        expect(response).toBe(true);
-        // it should fail 2 times and succeed on the next try
-        expect(spy).toHaveBeenCalledTimes(3);
-      });
-
-      it("should throw after too many retries", async () => {
-        const SpyError = class SpyError extends Error {};
-
-        let retries = DEFAULT_RETRIES_RPC_METHODS + 1;
-        const spy = jest.fn(async () => {
-          if (retries) {
-            --retries;
-            throw new SpyError();
-          }
-          return true;
-        });
-
-        const nodeConfig = {
-          type: "external" as const,
-          uri: "my-rpc.com",
-          retries: DEFAULT_RETRIES_RPC_METHODS,
-        };
-
-        try {
-          await withApi(fakeCurrency as CryptoCurrency, spy, nodeConfig);
-          fail("Promise should have been rejected");
-        } catch (e) {
-          if (e instanceof AssertionError) {
-            throw e;
-          }
-          expect(e).toBeInstanceOf(SpyError);
-        }
-      });
-
-      it("provider cache should reuse the same JsonRpcProvider for the same currency id and same uri", async () => {
-        const currency = {
-          ...fakeCurrency,
-          id: "provider_cache_by_currency" as CryptoCurrencyId,
-        } as CryptoCurrency;
-        const nodeConfig = { type: "external" as const, uri: "https://rpc-a.example", retries: 0 };
-        const first = await withApi(currency, api => Promise.resolve(api), nodeConfig);
-        const second = await withApi(currency, api => Promise.resolve(api), nodeConfig);
-
-        expect(first).toBe(second);
-        expect(first).toBeInstanceOf(JsonRpcProvider);
-      });
-
-      it("provider cache should use distinct JsonRpcProviders for the same currency id but different uri", async () => {
-        const currency = {
-          ...fakeCurrency,
-          id: "provider_cache_by_currency" as CryptoCurrencyId,
-        } as CryptoCurrency;
-
-        const nodeConfig1 = { type: "external" as const, uri: "https://rpc-a.example", retries: 0 };
-        const first = await withApi(currency, api => Promise.resolve(api), nodeConfig1);
-
-        const nodeConfig2 = { ...nodeConfig1, uri: "https://rpc-b.example" };
-        const second = await withApi(currency, api => Promise.resolve(api), nodeConfig2);
-
-        expect(first).not.toBe(second);
-        expect(first).toBeInstanceOf(JsonRpcProvider);
-        expect(second).toBeInstanceOf(JsonRpcProvider);
-      });
-
-      it("provider cache should use distinct JsonRpcProviders for different currency ids", async () => {
-        const nodeConfig = {
-          type: "external" as const,
-          uri: "https://shared-rpc.example",
-          retries: 0,
-        };
-        const c1 = {
-          ...fakeCurrency,
-          id: "provider_cache_currency_one" as CryptoCurrencyId,
-        } as CryptoCurrency;
-        const c2 = {
-          ...fakeCurrency,
-          id: "provider_cache_currency_two" as CryptoCurrencyId,
-        } as CryptoCurrency;
-        const p1 = await withApi(c1, api => Promise.resolve(api), nodeConfig);
-        const p2 = await withApi(c2, api => Promise.resolve(api), nodeConfig);
-
-        expect(p1).not.toBe(p2);
-        expect(p1).toBeInstanceOf(JsonRpcProvider);
-        expect(p2).toBeInstanceOf(JsonRpcProvider);
-      });
-    });
-
     describe("getTransaction", () => {
       it("should return the expected payload", async () => {
         expect(
