@@ -62,7 +62,9 @@ export function InfoState(props: InfoStateProps) {
 }
 
 function renderPresetVisual(presetProps: InfoStateProps): React.ReactNode {
-  switch (presetProps.preset) {
+  const preset = presetProps.preset;
+
+  switch (preset) {
     case "illustration":
       return (
         <Box lx={illustrationSlotStyle} style={styles.illustrationSlot}>
@@ -79,7 +81,13 @@ function renderPresetVisual(presetProps: InfoStateProps): React.ReactNode {
       return <Spot appearance="info" size={72} />;
     case "text":
       return null;
+    default:
+      return assertNever(preset);
   }
+}
+
+function assertNever(value: never): never {
+  throw new Error(`Unhandled info state preset: ${value}`);
 }
 
 function InfoStateButton({

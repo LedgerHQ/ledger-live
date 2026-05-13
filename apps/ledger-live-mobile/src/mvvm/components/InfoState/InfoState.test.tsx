@@ -2,7 +2,9 @@ import React from "react";
 import { fireEvent, render, screen } from "@tests/test-renderer";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { Search } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { InfoState } from ".";
+import { InfoState, type InfoStatePreset } from ".";
+
+type VisualInfoStatePreset = Exclude<InfoStatePreset, "text">;
 
 describe("InfoState", () => {
   it("renders title, description, banner, and actions", () => {
@@ -76,7 +78,7 @@ describe("InfoState", () => {
 });
 
 function getPresetProps(
-  preset: "success" | "error" | "info" | "spot" | "illustration",
+  preset: VisualInfoStatePreset,
 ): React.ComponentProps<typeof InfoState> {
   switch (preset) {
     case "illustration":
@@ -93,5 +95,11 @@ function getPresetProps(
     case "error":
     case "info":
       return { preset };
+    default:
+      return assertNever(preset);
   }
+}
+
+function assertNever(value: never): never {
+  throw new Error(`Unhandled info state preset: ${value}`);
 }

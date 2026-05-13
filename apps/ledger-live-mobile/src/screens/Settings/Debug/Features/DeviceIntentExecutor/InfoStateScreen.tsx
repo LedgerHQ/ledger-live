@@ -198,7 +198,13 @@ function renderInfoStatePreview({
       return <InfoState {...commonProps} preset="info" testID="info-state-preview" />;
     case "text":
       return <InfoState {...commonProps} preset="text" testID="info-state-preview" />;
+    default:
+      return assertNever(preset);
   }
+}
+
+function assertNever(value: never): never {
+  throw new Error(`Unhandled info state preset: ${value}`);
 }
 
 function SettingSection({
