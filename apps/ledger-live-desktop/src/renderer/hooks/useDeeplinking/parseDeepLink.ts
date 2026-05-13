@@ -10,6 +10,7 @@ import {
   BorrowRoute,
   ManagerRoute,
   SwapRoute,
+  SwapTransactionStatusRoute,
   BridgeRoute,
   SendRoute,
   ReceiveRoute,
@@ -171,6 +172,33 @@ export function createRoute(parsed: ParsedDeeplink): DeeplinkRoute {
         fromCurrency: query.fromCurrency,
         toCurrency: query.toCurrency,
         toAccountId: query.toAccountId,
+      };
+      return route;
+    }
+
+    case "connect": {
+      if (path === "swap/transaction-status") {
+        const route: SwapTransactionStatusRoute = {
+          type: "swap-transaction-status",
+          swapId: query.swapId,
+          provider: query.provider,
+          redirectUrl: query.redirectUrl,
+        };
+        return route;
+      }
+      return { type: "default" };
+    }
+
+    case "transaction-status": {
+      if (path && path !== "swap") {
+        return { type: "default" };
+      }
+
+      const route: SwapTransactionStatusRoute = {
+        type: "swap-transaction-status",
+        swapId: query.swapId,
+        provider: query.provider,
+        redirectUrl: query.redirectUrl,
       };
       return route;
     }
