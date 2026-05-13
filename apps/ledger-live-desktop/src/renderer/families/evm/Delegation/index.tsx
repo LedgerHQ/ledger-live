@@ -110,7 +110,7 @@ const Delegation = ({ account }: { account: StakingAccount }) => {
   // unbondings so showing the header would be misleading.
   const hasUnbondings = unbondings.length > 0 && hasUnbondingPeriod(account.currency.id);
   const hasRedelegations = redelegations.length > 0;
-  const hasRewards = true; //pendingRewardsBalance.gt(0);
+  const hasRewards = pendingRewardsBalance.gt(0);
 
   return (
     <>

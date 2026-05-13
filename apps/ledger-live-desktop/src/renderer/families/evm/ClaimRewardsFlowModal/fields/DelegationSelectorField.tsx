@@ -8,7 +8,7 @@ import {
 import { Account } from "@ledgerhq/types-live";
 import { TFunction } from "i18next";
 import invariant from "invariant";
-import React, { useCallback } from "react";
+import React from "react";
 import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
 import Select from "~/renderer/components/Select";
@@ -69,7 +69,7 @@ export default function DelegationSelectorField({
         value={value}
         options={options}
         getOptionValue={({ validatorAddress }) => validatorAddress}
-        filterOption={({ data }) => data.pendingRewards.gte(0)}
+        filterOption={({ data }) => data.pendingRewards.gt(0)}
         renderValue={renderItem}
         renderOption={renderItem}
         onInputChange={setQuery}
