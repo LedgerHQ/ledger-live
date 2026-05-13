@@ -15,6 +15,7 @@ import styled from "styled-components";
 import { mevProtectionSelector } from "~/renderer/reducers/settings";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { useRedirectToSwapHistory } from "~/renderer/screens/exchange/Swap2/utils";
+import { broadcastLogger } from "~/datadog/logs";
 import { BodyContent } from "./BodyContent";
 
 export enum ExchangeModeEnum {
@@ -161,7 +162,12 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
     [mevProtected, sponsored, provider],
   );
 
-  const broadcast = useBroadcast({ account, parentAccount, broadcastConfig });
+  const broadcast = useBroadcast({
+    account,
+    parentAccount,
+    broadcastConfig,
+    logger: broadcastLogger,
+  });
   const [transaction, setTransaction] = useState<Transaction>();
   const [signedOperation, setSignedOperation] = useState<SignedOperation>();
   const [error, setError] = useState<Error>();
