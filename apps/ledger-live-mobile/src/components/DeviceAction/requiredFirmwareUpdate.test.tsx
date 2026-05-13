@@ -1,13 +1,9 @@
 import React from "react";
-import { render, screen } from "@tests/test-renderer";
+import { act, render, screen } from "@tests/test-renderer";
 import { RequiredFirmwareUpdate } from "./rendering";
-import { NavigatorName, ScreenName } from "~/const";
+import { ScreenName } from "~/const";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import * as useWalletFeaturesConfigModule from "@ledgerhq/live-common/featureFlags/index";
-import type { WalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/types";
 import type { State } from "~/reducers/types";
-
-jest.mock("@ledgerhq/live-common/featureFlags/index");
 
 jest.mock("~/analytics", () => ({
   TrackScreen: () => null,
@@ -15,8 +11,12 @@ jest.mock("~/analytics", () => ({
   track: jest.fn(),
 }));
 
-const mockUseWalletFeaturesConfig = jest.mocked(
-  useWalletFeaturesConfigModule.useWalletFeaturesConfig,
+jest.mock("@ledgerhq/live-common/device/use-cases/getLatestFirmwareForDeviceUseCase", () => ({
+  getLatestFirmwareForDeviceUseCase: jest.fn(),
+}));
+
+const { getLatestFirmwareForDeviceUseCase } = jest.requireMock(
+  "@ledgerhq/live-common/device/use-cases/getLatestFirmwareForDeviceUseCase",
 );
 
 const nanoX = {
@@ -25,86 +25,128 @@ const nanoX = {
   wired: true,
 };
 
-const mockReset = jest.fn();
-const mockNavigation = { reset: mockReset } as never;
+const fakeFirmwareContext = { final: { name: "2.4.0" } };
+const fakeDeviceInfo = { version: "2.0.0", seVersion: "2.0.0" };
 
 const stateWithLastSeenDevice = (state: State): State => ({
   ...state,
   settings: {
     ...state.settings,
-    seenDevices: [{ modelId: DeviceModelId.nanoX } as never],
+    seenDevices: [{ modelId: DeviceModelId.nanoX, deviceInfo: fakeDeviceInfo } as never],
   },
 });
 
+type MockNav = {
+  navigate: jest.Mock;
+  goBack: jest.Mock;
+  reset: jest.Mock;
+  getState: jest.Mock;
+  getParent: jest.Mock;
+};
+
+const makeNavigation = (routeNames: string[], parent?: MockNav): MockNav => ({
+  navigate: jest.fn(),
+  goBack: jest.fn(),
+  reset: jest.fn(),
+  getState: jest.fn(() => ({ routeNames })),
+  getParent: jest.fn(() => parent),
+});
+
 describe("RequiredFirmwareUpdate", () => {
-  beforeEach(() => jest.clearAllMocks());
-
-  it("should navigate to MyLedger via Main (not Base) when shouldDisplayWallet40MainNav is false", async () => {
-    mockUseWalletFeaturesConfig.mockReturnValue({
-      shouldDisplayWallet40MainNav: false,
-    } as WalletFeaturesConfig);
-
-    const { user } = render(
-      <RequiredFirmwareUpdate navigation={mockNavigation} device={nanoX} />,
-      { overrideInitialState: stateWithLastSeenDevice },
-    );
-
-    await user.press(screen.getByText("Go to My Ledger"));
-
-    expect(mockReset).toHaveBeenCalledWith({
-      index: 0,
-      routes: [
-        {
-          name: NavigatorName.Main,
-          state: {
-            routes: [
-              {
-                name: NavigatorName.MyLedger,
-                state: {
-                  routes: [
-                    {
-                      name: ScreenName.MyLedgerChooseDevice,
-                      params: { device: nanoX, firmwareUpdate: true },
-                    },
-                  ],
-                },
-              },
-            ],
-          },
-        },
-      ],
-    });
-    expect(mockReset.mock.calls[0][0].routes[0].name).not.toBe(NavigatorName.Base);
+  beforeEach(() => {
+    jest.clearAllMocks();
+    getLatestFirmwareForDeviceUseCase.mockResolvedValue(fakeFirmwareContext);
   });
 
-  it("should navigate to MyLedger with wallet40 layout when shouldDisplayWallet40MainNav is true", async () => {
-    mockUseWalletFeaturesConfig.mockReturnValue({
-      shouldDisplayWallet40MainNav: true,
-    } as WalletFeaturesConfig);
+  it("renames the CTA to 'Go to OS Update'", async () => {
+    const nav = makeNavigation([ScreenName.FirmwareUpdate]);
+    render(<RequiredFirmwareUpdate navigation={nav as never} device={nanoX} />, {
+      overrideInitialState: stateWithLastSeenDevice,
+    });
 
+    expect(screen.getByText("Go to OS Update")).toBeOnTheScreen();
+  });
+
+  it("navigates to FirmwareUpdate on the same navigator when it registers the screen", async () => {
+    const nav = makeNavigation([ScreenName.FirmwareUpdate]);
+    const { user } = render(<RequiredFirmwareUpdate navigation={nav as never} device={nanoX} />, {
+      overrideInitialState: stateWithLastSeenDevice,
+    });
+
+    await act(async () => {
+      await user.press(screen.getByText("Go to OS Update"));
+    });
+
+    expect(nav.navigate).toHaveBeenCalledWith(
+      ScreenName.FirmwareUpdate,
+      expect.objectContaining({
+        device: nanoX,
+        deviceInfo: fakeDeviceInfo,
+        firmwareUpdateContext: fakeFirmwareContext,
+        onBackFromUpdate: expect.any(Function),
+      }),
+    );
+  });
+
+  it("walks up to the ancestor navigator that registers FirmwareUpdate", async () => {
+    const root = makeNavigation([ScreenName.FirmwareUpdate, "Portfolio"]);
+    const middle = makeNavigation(["SomeOtherScreen"], root);
+    const inner = makeNavigation(["ExchangeStart", "ExchangeComplete"], middle);
+
+    const { user } = render(<RequiredFirmwareUpdate navigation={inner as never} device={nanoX} />, {
+      overrideInitialState: stateWithLastSeenDevice,
+    });
+
+    await act(async () => {
+      await user.press(screen.getByText("Go to OS Update"));
+    });
+
+    expect(inner.navigate).not.toHaveBeenCalled();
+    expect(middle.navigate).not.toHaveBeenCalled();
+    expect(root.navigate).toHaveBeenCalledWith(
+      ScreenName.FirmwareUpdate,
+      expect.objectContaining({ firmwareUpdateContext: fakeFirmwareContext }),
+    );
+  });
+
+  it("calls onClose after navigating so the drawer dismisses cleanly", async () => {
+    const nav = makeNavigation([ScreenName.FirmwareUpdate]);
+    const onClose = jest.fn();
     const { user } = render(
-      <RequiredFirmwareUpdate navigation={mockNavigation} device={nanoX} />,
+      <RequiredFirmwareUpdate navigation={nav as never} device={nanoX} onClose={onClose} />,
       { overrideInitialState: stateWithLastSeenDevice },
     );
 
-    await user.press(screen.getByText("Go to My Ledger"));
-
-    expect(mockReset).toHaveBeenCalledWith({
-      index: 1,
-      routes: [
-        { name: NavigatorName.Main },
-        {
-          name: NavigatorName.MyLedger,
-          state: {
-            routes: [
-              {
-                name: ScreenName.MyLedgerChooseDevice,
-                params: { device: nanoX, firmwareUpdate: true },
-              },
-            ],
-          },
-        },
-      ],
+    await act(async () => {
+      await user.press(screen.getByText("Go to OS Update"));
     });
+
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it("prefetches the firmware context on mount so the first tap has data", async () => {
+    const nav = makeNavigation([ScreenName.FirmwareUpdate]);
+    render(<RequiredFirmwareUpdate navigation={nav as never} device={nanoX} />, {
+      overrideInitialState: stateWithLastSeenDevice,
+    });
+
+    expect(getLatestFirmwareForDeviceUseCase).toHaveBeenCalledWith(fakeDeviceInfo);
+  });
+
+  it("still navigates with undefined context if the prefetch rejects", async () => {
+    getLatestFirmwareForDeviceUseCase.mockRejectedValueOnce(new Error("network"));
+    const nav = makeNavigation([ScreenName.FirmwareUpdate]);
+    const { user } = render(<RequiredFirmwareUpdate navigation={nav as never} device={nanoX} />, {
+      overrideInitialState: stateWithLastSeenDevice,
+    });
+
+    await act(async () => {
+      await user.press(screen.getByText("Go to OS Update"));
+    });
+
+    expect(nav.navigate).toHaveBeenCalledWith(
+      ScreenName.FirmwareUpdate,
+      expect.objectContaining({ firmwareUpdateContext: undefined }),
+    );
   });
 });
