@@ -8,6 +8,7 @@ export type Props = {
   size?: ProviderIconSize;
   boxed?: boolean;
   alt?: string;
+  borderRadius?: number;
 };
 
 const ProviderIcon = ({
@@ -15,9 +16,10 @@ const ProviderIcon = ({
   size = "S",
   boxed = true,
   alt = `${name} icon`,
+  borderRadius = 8,
 }: Props): React.JSX.Element | null => {
   const iconUrl = getProviderIconUrl({ boxed, name });
-  return <Styles.Icon src={iconUrl} size={size} alt={alt} />;
+  return <Styles.Icon src={iconUrl} size={size} alt={alt} $borderRadius={borderRadius} />;
 };
 
 export default ProviderIcon;
