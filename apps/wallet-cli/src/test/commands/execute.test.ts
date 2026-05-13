@@ -116,11 +116,6 @@ async function runExecuteSwapCommand(flags: SwapExecuteFlags = baseFlags) {
   return JSON.parse(writes.join("").trim());
 }
 
-/**
- * Keep this file focused on CLI-level registration/validation. Pipeline wiring is
- * covered in apps/wallet-cli/src/commands/swap/execute.test.ts with explicit
- * dependency injection, so this test does not need process-wide Bun module mocks.
- */
 describe("swap execute command", () => {
   const server = new MockServer(ETH_SYNC_ROUTES);
 
@@ -163,26 +158,67 @@ describe("swap execute command", () => {
     expect(pipelineInput.getAccountBridge).toBe(getAccountBridgeMock);
   });
 
-  it("json: exits 1 when --to-account is missing", async () => {
-    const { exitCode, stderr } = await runCli(
-      [
-        "swap",
-        "execute",
-        "--from",
-        "ethereum",
-        "--to",
-        "bitcoin",
-        "--provider",
-        "changelly",
-        "--amount",
-        "0.001",
-        "--account",
-        MOCK_ETH_DESCRIPTOR,
-        "--output",
-        "json",
-      ],
-      { WALLET_CLI_MOCK_PORT: String(server.port) },
-    );
-    expect(exitCode, `stderr: ${stderr}`).toBe(1);
+  it("rejects an unsupported --provider before running the pipeline", async () => {
+    await expect(
+      runExecuteSwapCommand({ ...baseFlags, provider: "unknown_provider" }),
+    ).rejects.toThrow(/Unsupported swap provider/);
+    expect(runFullSwapPipelineMock).not.toHaveBeenCalled();
+  });
+
+  it("passes changelly_v2 through to the pipeline when --provider is changelly_v2", async () => {
+    await runExecuteSwapCommand({ ...baseFlags, provider: "changelly_v2" });
+    const pipelineInput = runFullSwapPipelineMock.mock.calls[0][0];
+    expect(pipelineInput.provider).toBe("changelly_v2");
+  });
+  it("should reject an unknown --from currency id", async () => {
+    await expect(
+      executeSwapCommand({
+        flags: { ...baseFlags, from: "test" },
+        positional: [],
+        resolveAccountDescriptor: resolveAccountDescriptorMock,
+        integrateNewAccountDescriptor: integrateNewAccountDescriptorMock,
+        getAccountBridge: getAccountBridgeMock,
+        runFullSwapPipeline: runFullSwapPipelineMock,
+      }),
+    ).rejects.toThrow("Unknown source currency (--from): test");
+  });
+
+  it("should reject an unknown --to currency id", async () => {
+    await expect(
+      executeSwapCommand({
+        flags: { ...baseFlags, to: "test" },
+        positional: [],
+        resolveAccountDescriptor: resolveAccountDescriptorMock,
+        integrateNewAccountDescriptor: integrateNewAccountDescriptorMock,
+        getAccountBridge: getAccountBridgeMock,
+        runFullSwapPipeline: runFullSwapPipelineMock,
+      }),
+    ).rejects.toThrow("Unknown destination currency (--to): test");
+  });
+
+  it("should reject when --from does not match the source account chain", async () => {
+    await expect(
+      executeSwapCommand({
+        flags: { ...baseFlags, from: "bitcoin", output: undefined },
+        positional: [],
+        resolveAccountDescriptor: resolveAccountDescriptorMock,
+        integrateNewAccountDescriptor: integrateNewAccountDescriptorMock,
+        getAccountBridge: getAccountBridgeMock,
+        runFullSwapPipeline: runFullSwapPipelineMock,
+      }),
+    ).rejects.toThrow("--from account is ethereum but --from is bitcoin.");
+  });
+
+  it("should reject when --to does not match the destination account chain", async () => {
+    await expect(
+      executeSwapCommand({
+        flags: { ...baseFlags, to: "ethereum", output: undefined },
+        positional: [],
+        resolveAccountDescriptor: resolveAccountDescriptorMock,
+        integrateNewAccountDescriptor: integrateNewAccountDescriptorMock,
+        getAccountBridge: getAccountBridgeMock,
+        runFullSwapPipeline: runFullSwapPipelineMock,
+      }),
+    ).rejects.toThrow("--to account is bitcoin but --to is ethereum.");
   });
 });
