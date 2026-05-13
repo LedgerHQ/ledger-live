@@ -1,30 +1,30 @@
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { TransactionStatus } from "@ledgerhq/coin-evm/types/index";
+import type {
+  StakingMappedDelegation,
+  StakingValidatorItem,
+} from "@ledgerhq/live-common/families/evm/staking/types";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import type { StakingValidatorItem } from "@ledgerhq/live-common/families/evm/staking/types";
 import type { Operation } from "@ledgerhq/types-live";
-import { ParamListBase, RouteProp } from "@react-navigation/native";
 import { ScreenName } from "~/const";
 
 type AccountRouteParams = {
   accountId: string;
   parentId?: string | null;
-  source?: RouteProp<ParamListBase, ScreenName>;
 };
 
-export type EvmDelegationFlowParamList = {
-  [ScreenName.EvmDelegationValidator]: AccountRouteParams;
-  [ScreenName.EvmDelegationStarted]: AccountRouteParams;
-  [ScreenName.EvmDelegationAmount]: AccountRouteParams & {
-    transaction: Transaction;
-    validator: StakingValidatorItem;
+export type EvmUndelegationFlowParamList = {
+  [ScreenName.EvmUndelegationAmount]: AccountRouteParams & {
+    delegation: StakingMappedDelegation;
+    transaction?: Transaction;
+    status?: TransactionStatus;
   };
-  [ScreenName.EvmDelegationSelectDevice]: AccountRouteParams & {
+  [ScreenName.EvmUndelegationSelectDevice]: AccountRouteParams & {
     transaction: Transaction;
     status: TransactionStatus;
     validatorName?: StakingValidatorItem["name"];
   };
-  [ScreenName.EvmDelegationConnectDevice]: AccountRouteParams & {
+  [ScreenName.EvmUndelegationConnectDevice]: AccountRouteParams & {
     device: Device;
     transaction: Transaction;
     status: TransactionStatus;
@@ -35,11 +35,11 @@ export type EvmDelegationFlowParamList = {
     forceSelectDevice?: boolean;
     validatorName?: StakingValidatorItem["name"];
   };
-  [ScreenName.EvmDelegationValidationError]: AccountRouteParams & {
+  [ScreenName.EvmUndelegationValidationError]: AccountRouteParams & {
     transaction: Transaction;
     error: Error;
   };
-  [ScreenName.EvmDelegationValidationSuccess]: AccountRouteParams & {
+  [ScreenName.EvmUndelegationValidationSuccess]: AccountRouteParams & {
     transaction: Transaction;
     result: Operation;
     validatorName?: StakingValidatorItem["name"];
