@@ -62,11 +62,11 @@ import {
   renderRequestQuitApp,
   renderRequiresAppInstallation,
   renderWarningOutdated,
-  RequiredFirmwareUpdate,
   NanoSNotSupportedComponent,
   UnsupportedFeatureComponent,
 } from "./rendering";
 import { useStuckDeviceActionHint } from "../StuckDeviceActionHint/useStuckDeviceActionHint";
+import { RequiredFirmwareUpdate } from "LLM/features/FirmwareUpdate/components/RequiredFirmwareUpdate";
 import { ThorSwapIncompatibility } from "./ThorSwapIncompatibility";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import { DeviceId } from "@ledgerhq/client-ids/ids";
@@ -436,12 +436,12 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     });
   }
 
-  if (repairModalOpened && repairModalOpened.auto) {
+  if (repairModalOpened && repairModalOpened.auto && device) {
     return (
       <AutoRepair
         t={t}
         onDone={closeRepairModal!}
-        device={device!}
+        device={device}
         navigation={navigation}
         colors={colors}
         theme={theme}
@@ -534,8 +534,8 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   // level instead of being an exception here.
   if (imageRemoveRequested) {
     if (error) {
-      const refused = (error as Status["error"]) instanceof UserRefusedOnDevice;
-      const noImage = (error as Status["error"]) instanceof ImageDoesNotExistOnDevice;
+      const refused = error instanceof UserRefusedOnDevice;
+      const noImage = error instanceof ImageDoesNotExistOnDevice;
       if (refused || noImage) {
         return renderError({
           t,
@@ -659,7 +659,9 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     }
 
     if (error instanceof LatestFirmwareVersionRequired) {
-      return <RequiredFirmwareUpdate navigation={navigation} device={selectedDevice} />;
+      return (
+        <RequiredFirmwareUpdate navigation={navigation} device={selectedDevice} onClose={onClose} />
+      );
     }
 
     if (error instanceof UnsupportedFeatureError) {
@@ -673,7 +675,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
       return <NanoSNotSupportedComponent />;
     }
 
-    if ((error as Status["error"]) instanceof UserRefusedDeviceNameChange) {
+    if (error instanceof UserRefusedDeviceNameChange) {
       return renderError({
         t,
         navigation,
@@ -691,9 +693,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
       navigation,
       error,
       managerAppName:
-        (error as Status["error"])?.name === "UpdateYourApp"
-          ? (error as Status["error"])?.managerAppName
-          : undefined,
+        error?.name === "UpdateYourApp" ? (error as Status["error"])?.managerAppName : undefined,
       onRetry,
       colors,
       theme,

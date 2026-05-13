@@ -9,7 +9,7 @@ import { BaseNavigation } from "./RootNavigator/types/helpers";
 import { NavigatorName, ScreenName } from "~/const";
 import { MANAGER_TABS } from "~/const/manager";
 import { UpdateYourApp, LatestFirmwareVersionRequired } from "@ledgerhq/errors";
-import { RequiredFirmwareUpdate } from "./DeviceAction/rendering";
+import { RequiredFirmwareUpdate } from "LLM/features/FirmwareUpdate/components/RequiredFirmwareUpdate";
 import { useSelector } from "~/context/hooks";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
 import { LedgerError } from "~/types/error";
