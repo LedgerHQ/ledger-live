@@ -308,8 +308,8 @@ export function transactionToIntent(
   const isStaking = ["stake", "unstake", "finalize_unstake"].includes(intentType);
   const delegationMode = isDelegationMode(transaction.mode) ? transaction.mode : undefined;
   const isDelegation = delegationMode !== undefined;
-  const amount = isStaking ? 0n : fromBigNumberToBigInt(transaction.amount, 0n);
-  const useAllAmount = isStaking || !!transaction.useAllAmount;
+  const amount = fromBigNumberToBigInt(transaction.amount, 0n);
+  const useAllAmount = !!transaction.useAllAmount;
   const res: GenericAlpacaTransactionIntent = {
     intentType: isStaking || isDelegation ? "staking" : "transaction",
     type: intentType,
