@@ -12,7 +12,7 @@ export default function StepDeviceStaking({
   onOperationBroadcasted,
   onTransactionError,
   setSigned,
-}: StepProps) {
+}: Readonly<StepProps>) {
   return (
     <>
       <TrackPage

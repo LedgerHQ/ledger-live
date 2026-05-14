@@ -188,7 +188,7 @@ function buildStakingOperations(op: APIStakingType): BlockOperation[] {
       amount: 0n,
       details: {
         operationType,
-        stakedAmount: BigInt(op.amount),
+        stakedAmount: BigInt(op.amount ?? 0),
         ...(bakerAddr && { delegate: bakerAddr }),
         counter: op.counter,
         gasLimit: op.gasLimit,

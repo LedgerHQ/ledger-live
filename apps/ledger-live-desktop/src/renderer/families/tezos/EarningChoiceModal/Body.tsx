@@ -86,6 +86,7 @@ const Body = ({ onClose, params }: Props) => {
   }, [dispatch, account, parentAccount, source]);
 
   const onStake = useCallback(() => {
+    if (account.type !== "Account") return;
     dispatch(closeModal(MODAL_NAME));
     dispatch(openModal("MODAL_TEZOS_STAKE", { account, parentAccount, source }));
   }, [dispatch, account, parentAccount, source]);

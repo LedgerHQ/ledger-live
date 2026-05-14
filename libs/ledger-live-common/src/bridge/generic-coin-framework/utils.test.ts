@@ -424,18 +424,25 @@ describe("Alpaca utils", () => {
         ).toThrow("Unsupported transaction mode: any");
       });
 
-      it.each(["stake", "unstake", "finalize_unstake"] as const)(
-        "preserves user-typed amount and useAllAmount for %s staking intent",
-        mode => {
+      it.each([
+        { mode: "stake", useAllAmount: false },
+        { mode: "stake", useAllAmount: true },
+        { mode: "unstake", useAllAmount: false },
+        { mode: "unstake", useAllAmount: true },
+        { mode: "finalize_unstake", useAllAmount: false },
+        { mode: "finalize_unstake", useAllAmount: true },
+      ] as const)(
+        "preserves user-typed amount and useAllAmount=$useAllAmount for $mode staking intent",
+        ({ mode, useAllAmount }) => {
           const intent = transactionToIntent(
             { currency: { name: "tezos", units: [{}] } } as Account,
-            { mode, amount: new BigNumber(100) } as GenericTransaction,
+            { mode, amount: new BigNumber(100), useAllAmount } as GenericTransaction,
           );
           expect(intent).toMatchObject({
             intentType: "staking",
             type: mode,
             amount: 100n,
-            useAllAmount: false,
+            useAllAmount,
           });
         },
       );

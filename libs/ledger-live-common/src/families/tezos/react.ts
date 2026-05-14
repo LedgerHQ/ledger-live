@@ -33,7 +33,7 @@ export function useDelegation(account: AccountLike): Delegation | null | undefin
       })
       .catch(err => {
         if (cancelled) return;
-        log("coin:tezos", `useDelegation: loadAccountDelegation failed: ${String(err)}`);
+        log("coin:tezos", "useDelegation: loadAccountDelegation failed", { error: err });
       });
     return () => {
       cancelled = true;

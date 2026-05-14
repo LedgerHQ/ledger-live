@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { Trans, useTranslation } from "react-i18next";
 import invariant from "invariant";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { Operation, TokenAccount } from "@ledgerhq/types-live";
+import { Operation } from "@ledgerhq/types-live";
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -23,10 +23,10 @@ import StepDeviceDelegation from "./steps/StepDeviceDelegation";
 import StepAmount, { StepAmountFooter } from "./steps/StepAmount";
 import StepDeviceStaking from "./steps/StepDeviceStaking";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
-import { St, StepId, StepProps } from "./types";
+import { Step, StepId, StepProps } from "./types";
 
 export type Data = {
-  account: TezosAccount | TokenAccount;
+  account: TezosAccount;
   parentAccount?: TezosAccount | null;
   source?: string;
   skipDelegation?: boolean;
@@ -39,7 +39,7 @@ type Props = {
   params: Data;
 };
 
-const fullSteps: Array<St> = [
+const fullSteps: Array<Step> = [
   {
     id: "validator",
     label: <Trans i18nKey="tezos.stake.flow.steps.validator.title" />,
@@ -73,7 +73,7 @@ const fullSteps: Array<St> = [
   },
 ];
 
-const stakeOnlySteps: Array<St> = fullSteps.filter(
+const stakeOnlySteps: Array<Step> = fullSteps.filter(
   s => s.id !== "validator" && s.id !== "device-delegation",
 );
 
@@ -175,7 +175,7 @@ const Body = ({ stepId, params, onClose, onChangeStepId }: Props) => {
     [account, bridge, dispatch, effectiveStepId, parentAccount, setTransaction],
   );
 
-  const handleStepChange = useCallback((e: St) => onChangeStepId(e.id), [onChangeStepId]);
+  const handleStepChange = useCallback((e: Step) => onChangeStepId(e.id), [onChangeStepId]);
 
   const errorSteps: number[] = [];
   if (transactionError && failedStep) {

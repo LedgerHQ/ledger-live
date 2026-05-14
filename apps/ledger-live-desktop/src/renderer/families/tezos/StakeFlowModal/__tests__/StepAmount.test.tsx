@@ -1,6 +1,6 @@
 import React from "react";
 import BigNumber from "bignumber.js";
-import { act, render } from "tests/testSetup";
+import { act, fireEvent, render, screen } from "tests/testSetup";
 import {
   getCryptoCurrencyById,
   setSupportedCurrencies,
@@ -11,21 +11,23 @@ import type { StepProps } from "../types";
 
 const syncDispatchMock = jest.fn();
 const useDelegationMock = jest.fn().mockReturnValue(null);
+const stakingInfoMock = jest.fn(() => ({
+  isDelegated: false,
+  isStaked: false,
+  hasUnstaking: false,
+  delegation: null,
+  stakedBalance: new BigNumber(0),
+  unstakedBalance: new BigNumber(0),
+  unstakedFinalizable: new BigNumber(0),
+  availableBalance: new BigNumber(1_000_000),
+  delegateAddress: undefined,
+}));
+const updateTransactionMock = jest.fn((tx, patch) => ({ ...tx, ...patch }));
 
 jest.mock("@ledgerhq/live-common/families/tezos/react", () => ({
   __esModule: true,
   useDelegation: () => useDelegationMock(),
-  useTezosStakingInfo: () => ({
-    isDelegated: false,
-    isStaked: false,
-    hasUnstaking: false,
-    delegation: null,
-    stakedBalance: new BigNumber(0),
-    unstakedBalance: new BigNumber(0),
-    unstakedFinalizable: new BigNumber(0),
-    availableBalance: new BigNumber(1_000_000),
-    delegateAddress: undefined,
-  }),
+  useTezosStakingInfo: () => stakingInfoMock(),
 }));
 
 jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
@@ -37,7 +39,7 @@ jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
   __esModule: true,
   useAccountBridge: () => ({
     createTransaction: jest.fn(),
-    updateTransaction: jest.fn((tx, patch) => ({ ...tx, ...patch })),
+    updateTransaction: updateTransactionMock,
     getTransactionStatus: jest.fn(),
   }),
 }));
@@ -57,7 +59,11 @@ jest.mock("~/renderer/components/SpendableBanner", () => ({
 }));
 jest.mock("~/renderer/components/RequestAmount", () => ({
   __esModule: true,
-  default: () => null,
+  default: ({ onChange }: { onChange: (amount: BigNumber) => void }) => (
+    <button data-testid="request-amount-fire" onClick={() => onChange(new BigNumber(123_456))}>
+      onChange
+    </button>
+  ),
 }));
 jest.mock("~/renderer/modals/Send/AccountFooter", () => ({
   __esModule: true,
@@ -193,5 +199,65 @@ describe("StakeFlowModal/StepAmount await-delegation", () => {
       jest.advanceTimersByTime(5000 * 3);
     });
     expect(syncDispatchMock).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("StakeFlowModal/StepAmount delegated state", () => {
+  beforeEach(() => {
+    syncDispatchMock.mockClear();
+    updateTransactionMock.mockClear();
+    useDelegationMock.mockReturnValue({ address: "tz1baker", isPending: false });
+  });
+
+  it("onMax sets amount = availableBalance - reserve", () => {
+    const props = makeProps();
+    act(() => {
+      render(<StepAmount {...props} />);
+    });
+    act(() => {
+      fireEvent.click(screen.getByTestId("tezos-stake-amount-max-button"));
+    });
+    expect(updateTransactionMock).toHaveBeenCalledTimes(1);
+    const [, patch] = updateTransactionMock.mock.calls[0];
+    // availableBalance (1_000_000) - reserve (0.5 XTZ × 1e6 = 500_000) = 500_000
+    expect((patch.amount as BigNumber).toString()).toBe("500000");
+    expect(props.onChangeTransaction).toHaveBeenCalledTimes(1);
+  });
+
+  it("onMax clamps to 0 when the reserve exceeds availableBalance", () => {
+    stakingInfoMock.mockReturnValueOnce({
+      isDelegated: true,
+      isStaked: false,
+      hasUnstaking: false,
+      delegation: null,
+      stakedBalance: new BigNumber(0),
+      unstakedBalance: new BigNumber(0),
+      unstakedFinalizable: new BigNumber(0),
+      availableBalance: new BigNumber(100),
+      delegateAddress: undefined,
+    });
+    const props = makeProps();
+    act(() => {
+      render(<StepAmount {...props} />);
+    });
+    act(() => {
+      fireEvent.click(screen.getByTestId("tezos-stake-amount-max-button"));
+    });
+    const [, patch] = updateTransactionMock.mock.calls[0];
+    expect((patch.amount as BigNumber).toString()).toBe("0");
+  });
+
+  it("onChange from RequestAmount propagates via bridge.updateTransaction", () => {
+    const props = makeProps();
+    act(() => {
+      render(<StepAmount {...props} />);
+    });
+    act(() => {
+      fireEvent.click(screen.getByTestId("request-amount-fire"));
+    });
+    expect(updateTransactionMock).toHaveBeenCalledTimes(1);
+    const [, patch] = updateTransactionMock.mock.calls[0];
+    expect((patch.amount as BigNumber).toString()).toBe("123456");
+    expect(props.onChangeTransaction).toHaveBeenCalledTimes(1);
   });
 });

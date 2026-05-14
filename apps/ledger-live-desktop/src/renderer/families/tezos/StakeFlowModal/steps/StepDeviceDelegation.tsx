@@ -13,7 +13,7 @@ export default function StepDeviceDelegation({
   onOperationBroadcasted,
   onTransactionError,
   setSigned,
-}: StepProps) {
+}: Readonly<StepProps>) {
   // GenericStepConnectDevice always calls transitionTo("confirmation") after broadcast
   // (success or failure). We want success to land on "amount" so the user signs the
   // staking op next, while errors must still go to "confirmation".

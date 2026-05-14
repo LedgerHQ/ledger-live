@@ -113,7 +113,7 @@ const StepValidator = ({
         <Box style={{ maxHeight: 255, margin: -20, marginTop: 0 }}>
           <ModalContent ref={contentRef}>
             {bakers.map(baker => (
-              <BakerRow baker={baker} key={baker.name} onClick={onBakerClick} />
+              <BakerRow baker={baker} key={baker.address} onClick={onBakerClick} />
             ))}
           </ModalContent>
         </Box>

@@ -40,7 +40,7 @@ const StepConfirmation = ({
   transaction,
   source,
 }: StepProps) => {
-  invariant(transaction && transaction.family === "tezos", "tezos transaction required");
+  invariant(transaction?.family === "tezos", "tezos transaction required");
 
   useEffect(() => {
     if (optimisticOperation) {
@@ -128,6 +128,22 @@ export const StepConfirmationFooter = ({
     transitionTo(failedStep ?? "amount");
   }, [failedStep, onRetry, transitionTo]);
 
+  let action: React.ReactNode = null;
+  if (optimisticOperation) {
+    action = (
+      <Button
+        ml={2}
+        id="tezos-stake-confirmation-visit-earn-button"
+        primary
+        onClick={onVisitEarnDashboard}
+      >
+        <Trans i18nKey="tezos.stake.flow.steps.confirmation.success.cta" />
+      </Button>
+    );
+  } else if (error) {
+    action = <RetryButton ml={2} primary onClick={onRetryClick} />;
+  }
+
   return (
     <>
       <Box mr={2} ff="Inter|SemiBold" fontSize={4}>
@@ -136,18 +152,7 @@ export const StepConfirmationFooter = ({
           onClick={() => openURL(stakingUrl)}
         />
       </Box>
-      {optimisticOperation ? (
-        <Button
-          ml={2}
-          id="tezos-stake-confirmation-visit-earn-button"
-          primary
-          onClick={onVisitEarnDashboard}
-        >
-          <Trans i18nKey="tezos.stake.flow.steps.confirmation.success.cta" />
-        </Button>
-      ) : error ? (
-        <RetryButton ml={2} primary onClick={onRetryClick} />
-      ) : null}
+      {action}
     </>
   );
 };

@@ -40,7 +40,7 @@ const StepAmount = ({
   bridgePending,
 }: StepProps) => {
   invariant(account, "account required");
-  invariant(transaction && transaction.family === "tezos", "tezos transaction required");
+  invariant(transaction?.family === "tezos", "tezos transaction required");
 
   const mainAccount = getMainAccount(account, parentAccount);
   // useBridgeTransaction snapshots the account; use the live one to see post-broadcast delegation state.
