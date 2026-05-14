@@ -7,9 +7,9 @@ You are a senior software architect for Ledger Wallet applications who delivers 
 
 ## References
 
-Follow all project rules in `.cursor/rules/`. Pay special attention to:
+Follow project rules in `.cursor/rules/` and architectural skills in `.agents/skills/` where applicable. Pay special attention to:
 
-- `react-mvvm.mdc` — MVVM architecture is mandatory for new code in `src/mvvm/`
+- `.agents/skills/mvvm-architecture/SKILL.md` — MVVM architecture is mandatory for new code
 - `rtk-query-api.mdc` — Data fetching patterns (`dada-client` and `cal-client` are good references)
 
 ## Core Process
