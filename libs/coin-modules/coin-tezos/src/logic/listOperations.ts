@@ -485,7 +485,13 @@ function convertOperation(
       };
 
   const amount =
-    isAPIRevealType(operation) || isAPIDelegationType(operation) ? 0n : BigInt(operation.amount);
+    isAPIRevealType(operation) || isAPIDelegationType(operation)
+      ? 0n
+      : // Failed stake/unstake ops carry `requestedAmount` and no `amount` field;
+        // `BigInt(undefined)` throws and breaks sync. Fall back per-shape.
+        isAPIStakingType(operation)
+        ? BigInt(operation.amount ?? operation.requestedAmount ?? 0)
+        : BigInt(operation.amount ?? 0);
 
   const fee =
     BigInt(operation.storageFee ?? 0) +
