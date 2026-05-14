@@ -232,6 +232,8 @@ export const getTransactionStatus: AccountBridge<
 >["getTransactionStatus"] = async (account, transaction) => {
   const allowSelfTransfer = isSelfTransferTransaction(transaction);
 
+  console.log("aleo tx state", { account, transaction });
+
   return handleTransferTransaction({
     account,
     transaction,
