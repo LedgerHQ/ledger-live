@@ -355,6 +355,13 @@ jobs:
           echo "EOF" >> $GITHUB_ENV
           echo "Using pre-computed shard ${{ matrix.shard }}/${{ matrix.total }} with $(echo '${{ matrix.files }}' | wc -w) test files"
 
+      # Warm simulators before Detox; worker_count matches JEST_MAX_WORKERS (and iOS Simulator … N names in detox.config.js).
+      - name: Boot iOS Simulators in Background
+        uses: LedgerHQ/ledger-live/tools/actions/composites/boot-ios-simulators-background@develop
+        with:
+          worker_count: ${{ env.JEST_MAX_WORKERS }}
+          artifacts_root: ${{ env.MOBILE_ARTIFACTS_ROOT }}
+
       - uses: nick-fields/retry@v3
         name: install dependencies
         id: install-dependencies
