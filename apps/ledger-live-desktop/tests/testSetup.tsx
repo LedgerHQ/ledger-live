@@ -220,6 +220,7 @@ function renderWithMockedCounterValuesProvider(
     store = createStore({ state: initialState as State, dbMiddleware }),
     userEventOptions = {},
     skipRouter = false,
+    withRampCatalog = false,
     ...renderOptions
   } = options;
 
@@ -233,6 +234,7 @@ function renderWithMockedCounterValuesProvider(
           store={store}
           initialCountervalues={initialCountervaluesMock}
           skipRouter={skipRouter}
+          withRampCatalog={withRampCatalog}
         >
           {children}
         </Providers>
