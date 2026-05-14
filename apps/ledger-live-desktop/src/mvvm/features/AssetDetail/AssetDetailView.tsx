@@ -24,41 +24,40 @@ export function AssetDetailView({ viewModel }: AssetDetailViewProps) {
   }, [navigate]);
 
   return (
-    <div className="flex w-full shrink-0 flex-col gap-32 pb-32">
-      <div className="flex flex-col gap-24">
-        <AssetHeader
-          assetLabel={assetName}
-          icon={
-            ledgerId && (
-              <CryptoIcon
-                ledgerId={ledgerId}
-                ticker={assetTicker}
-                size={getValidCryptoIconSize(24)}
-              />
-            )
-          }
-          onBack={onBack}
-        />
+    <div className="flex w-full shrink-0 flex-col gap-24 pb-32">
+      <AssetHeader
+        assetLabel={assetName}
+        icon={
+          ledgerId && (
+            <CryptoIcon
+              ledgerId={ledgerId}
+              ticker={assetTicker}
+              size={getValidCryptoIconSize(24)}
+            />
+          )
+        }
+        onBack={onBack}
+      />
 
-        <MarketPriceSection
-          distributionItem={distributionItem}
-          marketInfo={marketInfo}
-          ledgerId={ledgerId}
-          market={market}
-        />
+      <MarketPriceSection
+        distributionItem={distributionItem}
+        marketInfo={marketInfo}
+        ledgerId={ledgerId}
+        market={market}
+      />
 
-        <ActionBar
-          distributionItem={distributionItem}
-          ledgerCurrency={ledgerCurrency}
-          tickerHint={assetTicker}
-        />
+      <ActionBar
+        distributionItem={distributionItem}
+        ledgerCurrency={ledgerCurrency}
+        tickerHint={assetTicker}
+      />
+      <div className="flex flex-col gap-32">
+        {distributionItem && <PortfolioSection distributionItem={distributionItem} />}
+
+        {marketInfo && <MarketDataSection market={market} />}
+
+        {distributionItem && <TransactionsSection distributionItem={distributionItem} />}
       </div>
-
-      {distributionItem && <PortfolioSection distributionItem={distributionItem} />}
-
-      {marketInfo && <MarketDataSection market={market} />}
-
-      {distributionItem && <TransactionsSection distributionItem={distributionItem} />}
     </div>
   );
 }
