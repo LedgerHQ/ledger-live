@@ -27,9 +27,9 @@
   "types": "lib-es/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/coin-bitcoin": "workspace:^",
     "@ledgerhq/device-management-kit": "catalog:",
-    "@ledgerhq/device-signer-kit-zcash": "0.2.0"
+    "@ledgerhq/device-signer-kit-zcash": "0.2.0",
+    "rxjs": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/types-live": "workspace:^",

@@ -5,7 +5,7 @@ import type {
   ZcashTrustedInput,
   ZcashSigner,
   ZcashSignerEvent,
-} from "@ledgerhq/coin-bitcoin/chain-adapters/zcash/signer";
+} from "./types";
 import {
   DeviceActionStatus,
   type DeviceActionState,

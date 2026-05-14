@@ -6,22 +6,27 @@ import {
 import { UnsupportedDerivation } from "@ledgerhq/ledger-wallet-framework/errors";
 import { AddressFormat, BitcoinAddress, SignerContext } from "./signer";
 import { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
+import { getChainAdapter } from "./chain-adapters/registry";
 
 const resolver = (signerContext: SignerContext): GetAddressFn => {
-  return async (
-    deviceId: string,
-    { currency, path, verify, derivationMode, forceFormat }: GetAddressOptions,
-  ) => {
+  return async (deviceId: string, options: GetAddressOptions) => {
+    const { currency, path, verify, derivationMode, forceFormat } = options;
     const format = (forceFormat as AddressFormat) || getAddressFormatDerivationMode(derivationMode);
+    const adapter = getChainAdapter(currency.id);
 
-    let result;
+    let result: BitcoinAddress;
     try {
-      result = (await signerContext(deviceId, currency, signer =>
-        signer.getWalletPublicKey(path, {
-          verify: verify || false,
-          format,
-        }),
-      )) as BitcoinAddress;
+      const custom = adapter.getAddress?.(deviceId, options, signerContext);
+      if (custom) {
+        result = await custom;
+      } else {
+        result = await signerContext(deviceId, currency, signer =>
+          signer.getWalletPublicKey(path, {
+            verify: verify || false,
+            format,
+          }),
+        );
+      }
     } catch (e: any) {
       // TODO Should normalize error returned from ledgerjs
       if (
@@ -44,7 +49,7 @@ const resolver = (signerContext: SignerContext): GetAddressFn => {
       address: bitcoinAddress,
       path,
       publicKey,
-      chainCode,
+      ...(chainCode ? { chainCode } : {}),
     };
   };
 };

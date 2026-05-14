@@ -1,11 +1,32 @@
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
 import type { ChainAdapter } from "../types";
-import type { SignerContext } from "../../signer";
+import type { BitcoinAddress, SignerContext } from "../../signer";
 import type { Transaction } from "../../types";
+import { DmkSignerZcash, ZcashAddress } from "@ledgerhq/live-signer-zcash";
 import { registerChainAdapter } from "../registry";
 import type { ZcashAccount, ZcashAccountRaw } from "./types";
 import { toZcashPrivateInfoRaw, fromZcashPrivateInfoRaw } from "./serialization";
 import { buildExtraSyncObservable } from "./sync";
+
+type DmkTransport = {
+  dmk: ConstructorParameters<typeof DmkSignerZcash>[0];
+  sessionId: string;
+};
+
+const isDmkTransport = (transport: unknown): transport is DmkTransport =>
+  !!transport &&
+  typeof transport === "object" &&
+  "dmk" in transport &&
+  "sessionId" in transport &&
+  typeof (transport as { sessionId: unknown }).sessionId === "string";
+
+const isZcashSigner = (
+  signer: unknown,
+): signer is { getAddress: (path: string, display?: boolean) => Promise<ZcashAddress> } =>
+  !!signer &&
+  typeof signer === "object" &&
+  "getAddress" in signer &&
+  typeof signer.getAddress === "function";
 
 const zcashChainAdapter: ChainAdapter = {
   id: "zcash",
@@ -59,6 +80,27 @@ const zcashChainAdapter: ChainAdapter = {
   prepareTransaction(_account: Account, _transaction: Transaction) {
     // TODO: implement PCZT transaction preparation (ZIP-317 fee info)
     return undefined;
+  },
+
+  getAddress(deviceId, { currency, path, verify }, signerContext: SignerContext) {
+    return signerContext(deviceId, currency, async signer => {
+      if (!isZcashSigner(signer)) {
+        throw new Error("Zcash signer must implement getAddress(path, display?)");
+      }
+      const { address } = await signer.getAddress(path, verify || false);
+      return {
+        bitcoinAddress: address,
+        publicKey: "",
+        chainCode: "",
+      } satisfies BitcoinAddress;
+    });
+  },
+
+  createSigner(transport, _currency) {
+    if (!isDmkTransport(transport)) {
+      throw new Error("Zcash requires DMK transport");
+    }
+    return new DmkSignerZcash(transport.dmk, transport.sessionId);
   },
 };
 

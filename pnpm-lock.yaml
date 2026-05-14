@@ -3932,6 +3932,9 @@ importers:
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../../live-network
+      '@ledgerhq/live-signer-zcash':
+        specifier: workspace:^
+        version: link:../../live-signer-zcash
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
@@ -11411,15 +11414,15 @@ importers:
 
   libs/live-signer-zcash:
     dependencies:
-      '@ledgerhq/coin-bitcoin':
-        specifier: workspace:^
-        version: link:../coin-modules/coin-bitcoin
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
-        version: 1.4.1
+        version: 1.4.1(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-zcash':
         specifier: 0.2.0
-        version: 0.2.0(@ledgerhq/device-management-kit@1.4.1)
+        version: 0.2.0(@ledgerhq/device-management-kit@1.4.1(rxjs@7.8.2))
+      rxjs:
+        specifier: 'catalog:'
+        version: 7.8.2
     devDependencies:
       '@ledgerhq/types-live':
         specifier: workspace:^
@@ -21462,7 +21465,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: 19.0.0
       react-dom: 19.0.0
-      webpack: ^5.89.0
+      webpack: '*'
     peerDependenciesMeta:
       '@react-native/babel-preset':
         optional: true
@@ -23745,7 +23748,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: ^5.5.10
+      rxjs: '*'
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -45429,10 +45432,10 @@ snapshots:
       - typescript
       - utf-8-validate
 
-  '@ledgerhq/device-signer-kit-zcash@0.2.0(@ledgerhq/device-management-kit@1.4.1)':
+  '@ledgerhq/device-signer-kit-zcash@0.2.0(@ledgerhq/device-management-kit@1.4.1(rxjs@7.8.2))':
     dependencies:
-      '@ledgerhq/device-management-kit': 1.4.1
-      '@ledgerhq/signer-utils': 1.2.0(@ledgerhq/device-management-kit@1.4.1)
+      '@ledgerhq/device-management-kit': 1.4.1(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 1.2.0(@ledgerhq/device-management-kit@1.4.1(rxjs@7.8.2))
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
@@ -45711,11 +45714,6 @@ snapshots:
   '@ledgerhq/signer-utils@1.2.0(@ledgerhq/device-management-kit@1.4.1(rxjs@7.8.2))':
     dependencies:
       '@ledgerhq/device-management-kit': 1.4.1(rxjs@7.8.2)
-      semver: 7.7.2
-
-  '@ledgerhq/signer-utils@1.2.0(@ledgerhq/device-management-kit@1.4.1)':
-    dependencies:
-      '@ledgerhq/device-management-kit': 1.4.1
       semver: 7.7.2
 
   '@ledgerhq/speculos-device-controller@0.2.3(@ledgerhq/device-management-kit@1.4.1(rxjs@7.8.2))':
