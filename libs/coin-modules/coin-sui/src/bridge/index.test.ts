@@ -96,7 +96,7 @@ describe("bridge/index", () => {
     // Setup mock functions
     mockSignerGetAddress.mockReturnValue(jest.fn());
     mockBuildSignOperation.mockReturnValue(jest.fn());
-    mockGetAccountShape.mockResolvedValue({} as any);
+    mockGetAccountShape.mockReturnValue({} as any);
     mockSync.mockReturnValue({} as any);
     mockBroadcast.mockResolvedValue({} as any);
     mockCreateTransaction.mockReturnValue({} as any);
