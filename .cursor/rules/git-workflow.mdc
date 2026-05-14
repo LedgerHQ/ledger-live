@@ -3,6 +3,8 @@ description: Git workflow and commit conventions for Ledger Wallet
 alwaysApply: true
 ---
 
+<!-- cursor-doctor: conflicts with testing.mdc — review manually -->
+
 # Git Workflow & Commit Conventions
 
 ## Branch Naming

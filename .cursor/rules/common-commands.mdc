@@ -1,5 +1,5 @@
 ---
-description: Use pnpm commands for build, dev, linting and testing.
+description: Use pnpm commands for build, dev, linting and testing
 alwaysApply: true
 ---
 

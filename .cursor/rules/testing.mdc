@@ -3,6 +3,7 @@ description: General, Desktop, and Mobile testing patterns for Ledger Wallet
 globs: ["*.test.*", "*.spec.*", "**/tests/**", "**/__tests__/**"]
 alwaysApply: false
 ---
+<!-- cursor-doctor: conflicts with git-workflow.mdc — review manually -->
 
 # Testing Rules
 

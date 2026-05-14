@@ -18,27 +18,27 @@ alwaysApply: false
 
 ## Do (correct pattern)
 
-1. **Define a slot on the contract**  
+- **Define a slot on the contract**
    - **Desktop:** Add an optional property to `LLDCoinFamily` in `apps/ledger-live-desktop/src/renderer/families/types.ts` (e.g. `NoAssociatedAccounts?: React.ComponentType<...>`).
    - **Mobile:** Use the same idea: a typed contract (or generated map like `noAssociatedAccountsByFamily`) that families can optionally fill.
 
-2. **Implement only in the family**  
+- **Implement only in the family**
    - Put the component or logic in `families/<family>/` (e.g. `families/hedera/NoAssociatedAccounts.tsx`) and export it from the family index (Desktop: in the object passed to `generated`; Mobile: in the generated aggregation if applicable).
 
-3. **Use the contract in generic code**  
+- **Use the contract in generic code**
    - Generic code looks up by family and uses the slot if present, with **no** `if (family === "hedera")`:
    - **Desktop:** `getLLDCoinFamily(currency.family).NoAssociatedAccounts` → use it when defined.
    - **Mobile:** e.g. `getCustomNoAssociatedAccounts(currency)` returning a component from a family map, then pass it to the screen (e.g. as `CustomNoAssociatedAccounts` in route params).
 
 ## Reference example: Scan Device “no associated accounts”
 
-- **Contract (Desktop):**  
+- **Contract (Desktop):**
   `apps/ledger-live-desktop/src/renderer/families/types.ts` — `NoAssociatedAccounts?: React.ComponentType<AddAccountsStepProps>` on `LLDCoinFamily`.
-- **Family implementation:**  
+- **Family implementation:**
   `apps/ledger-live-desktop/src/renderer/families/hedera/NoAssociatedAccounts.tsx` and `hedera/index.ts` exporting it in the family object.
-- **Generic usage (Desktop):**  
+- **Generic usage (Desktop):**
   `StepImport.tsx` / `useScanAccounts.ts`: `getLLDCoinFamily(mainCurrency.family).NoAssociatedAccounts` — no Hedera-specific branch.
-- **Generic usage (Mobile):**  
+- **Generic usage (Mobile):**
   `useScanDeviceAccountsViewModel.ts`: `getCustomNoAssociatedAccounts(currency)` from `~/generated/NoAssociatedAccounts`; result passed as `CustomNoAssociatedAccounts` to the NoAssociatedAccounts screen. No `if (family === "hedera")` in the VM.
 
 When you need **new** coin-specific behavior in a generic flow (e.g. post-add-account navigation, custom empty state): **extend the contract** (add a new optional slot and document it), implement it in the relevant family folder, and have the generic code only read from the contract. Do not add new `if (family === "…")` branches in shared UI.
