@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from "bun:test";
-import { MockServer } from "../helpers/mock-server";
-import { runCli } from "../helpers/cli-runner";
+import { MockServer } from "../../helpers/mock-server";
+import { runCli } from "../../helpers/cli-runner";
 
 const SWAP_ID = "swap-123";
 const PROVIDER = "exodus";

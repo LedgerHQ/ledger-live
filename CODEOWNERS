@@ -167,6 +167,7 @@ libs/coin-modules/coin-aleo/                                             @ledger
 # PTX team
 apps/cli/src/commands/ptx                                            					@ledgerhq/ptx
 apps/wallet-cli/src/commands/swap/                                            @ledgerhq/ptx
+apps/wallet-cli/src/test/commands/swap/                                       @ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/components/ProviderIcon/       					@ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/components/WebPTXPlayer/       					@ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/hooks/swap-migrations/         					@ledgerhq/ptx
