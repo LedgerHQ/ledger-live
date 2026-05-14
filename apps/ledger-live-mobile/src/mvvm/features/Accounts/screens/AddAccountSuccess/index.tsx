@@ -1,15 +1,12 @@
-import { Flex, Icons, rgba, Text } from "@ledgerhq/native-ui";
+import { Button, Flex, Icons, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import React from "react";
 import { useTranslation } from "~/context/Locale";
 import { FlatList, ListRenderItemInfo, StyleSheet, View as RNView } from "react-native";
 import { TrackScreen } from "~/analytics";
 import { AccountLikeEnhanced } from "../ScanDeviceAccounts/types";
 import SafeAreaView from "~/components/SafeAreaView";
-import Circle from "~/components/Circle";
 import VerticalGradientBackground from "../../components/VerticalGradientBackground";
-import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import AddFundsButton from "../../components/AddFundsButton";
-import CloseWithConfirmation from "LLM/components/CloseWithConfirmation";
 import AnimatedAccountItem from "../../components/AccountsListView/components/AnimatedAccountItem";
 import useAddAccountSuccessViewModel, { type Props } from "./useAddAccountSuccessViewModel";
 import { AnalyticPages } from "LLM/hooks/useAnalytics/enums";
@@ -26,11 +23,19 @@ function View({
   onCloseNavigation,
 }: ViewProps) {
   const { t } = useTranslation();
+  const isAleo = currency?.type === "CryptoCurrency" && currency.family === "aleo";
 
   const renderItem = ({ item, index }: ListRenderItemInfo<AccountLikeEnhanced>) => {
     return (
-      <AnimatedAccountItem item={item} index={index} onPress={goToAccounts(item.id)}>
-        <Icons.ChevronRight color="primary.c100" />
+      <AnimatedAccountItem
+        item={item}
+        index={index}
+        onPress={goToAccounts(item.id)}
+        showUnitOnly={isAleo}
+      >
+        <Flex width={24} alignItems="flex-end" justifyContent="center">
+          <IconsLegacy.PenMedium size={16} color="neutral.c70" />
+        </Flex>
       </AnimatedAccountItem>
     );
   };
@@ -38,13 +43,11 @@ function View({
   return (
     <SafeAreaView edges={["left", "right", "bottom", "top"]} isFlex>
       <TrackScreen category="AddAccounts" name="Success" currency={currency?.name} />
-      <VerticalGradientBackground stopColor={getCurrencyColor(currency)} />
+      <VerticalGradientBackground stopColor={statusColor} stopOpacity={0.3} topOffset={-116} />
       <Flex alignItems="center" style={styles.root} pt={space[10]}>
-        <RNView style={[styles.iconWrapper, { backgroundColor: rgba(statusColor, 0.1) }]}>
-          <Circle size={24}>
-            <Icons.CheckmarkCircleFill size="L" color={statusColor} />
-          </Circle>
-        </RNView>
+        <Flex bg="opacityDefault.c05" style={styles.iconWrapper}>
+          <Icons.CheckmarkCircleFill size="L" />
+        </Flex>
         <Text style={styles.title} textAlign="center" width="60%">
           {t("addAccounts.added", { count: accountsToAdd.length })}
         </Text>
@@ -66,11 +69,15 @@ function View({
           currency={currency}
           sourceScreenName={AnalyticPages.AddAccountSuccess}
         />
-        <CloseWithConfirmation
-          showButton
-          buttonText={t("addAccounts.addAccountsSuccess.ctaClose")}
-          onClose={onCloseNavigation}
-        />
+        <Button
+          size="large"
+          type="main"
+          outline
+          testID="button-close-add-account"
+          onPress={onCloseNavigation}
+        >
+          {t("addAccounts.addAccountsSuccess.ctaClose")}
+        </Button>
       </Flex>
     </SafeAreaView>
   );

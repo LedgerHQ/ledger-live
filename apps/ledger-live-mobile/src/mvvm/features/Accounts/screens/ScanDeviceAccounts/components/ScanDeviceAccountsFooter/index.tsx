@@ -17,6 +17,7 @@ const ScanDeviceAccountsFooter = ({
   canDone,
   onRetry,
   onDone,
+  continueTitle,
 }: ScanDeviceAccountsFooterProps) => {
   const { animatedSelectableAccount } = useSelectableAccountAnimation();
 
@@ -49,7 +50,7 @@ const ScanDeviceAccountsFooter = ({
           testID="add-accounts-continue-button"
           event="AddAccountsSelected"
           type="primary"
-          title={<Trans i18nKey="addAccounts.scanDeviceAccounts.confirm" />}
+          title={continueTitle ?? <Trans i18nKey="addAccounts.scanDeviceAccounts.confirm" />}
           onPress={isDisabled ? undefined : onContinue}
         />
       )}

@@ -3,6 +3,7 @@ import { Platform } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "styled-components/native";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { Flex, Icons } from "@ledgerhq/native-ui";
 import { NavigatorName, ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { track } from "~/analytics";
@@ -16,6 +17,9 @@ import AddAccountsSuccess from "./screens/AddAccountSuccess";
 import AddAccountsWarning from "./screens/AddAccountWarning";
 import NoAssociatedAccountsView from "./screens/NoAssociatedAccountsView";
 import CantonOnboardNavigator from "~/families/canton/Onboard/Onboard";
+import AleoViewKeyWarningScreen from "~/families/aleo/AddAccountFlow/AleoViewKeyWarningScreen";
+import AleoViewKeyApproveScreen from "~/families/aleo/AddAccountFlow/AleoViewKeyApproveScreen";
+import AleoViewKeyConfirmationScreen from "~/families/aleo/AddAccountFlow/AleoViewKeyConfirmationScreen";
 import CloseWithConfirmation from "LLM/components/CloseWithConfirmation";
 import {
   BaseComposite,
@@ -28,10 +32,32 @@ import { AddAccountsNavigatorParamList } from "~/components/RootNavigator/types/
 import { AnalyticContexts } from "LLM/hooks/useAnalytics/enums";
 import AccountsListHeaderRight from "LLM/features/LedgerSyncEntryPoint/components/AccountsListHeaderRight";
 import TransparentHeaderNavigationOptions from "~/navigation/TransparentHeaderNavigationOptions";
+import Touchable from "~/components/Touchable";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<AddAccountsNavigatorParamList, NavigatorName.AddAccounts>
 >;
+
+const SuccessHeaderCloseButton = ({ onPress }: { onPress: () => void }) => (
+  <Touchable
+    touchableTestID="NavigationHeaderCloseButton"
+    event="HeaderRightClose"
+    onPress={onPress}
+  >
+    <Flex
+      bg="opacityDefault.c10"
+      width={32}
+      height={32}
+      alignItems="center"
+      justifyContent="center"
+      borderRadius={32}
+      mr={6}
+    >
+      <Icons.Close color="neutral.c100" />
+    </Flex>
+  </Touchable>
+);
+
 export default function Navigator() {
   const { colors } = useTheme();
   const route = useRoute<NavigationProps["route"]>();
@@ -121,11 +147,27 @@ export default function Navigator() {
         options={{ headerShown: false }}
       />
       <Stack.Screen
+        name={ScreenName.AleoViewKeyWarning}
+        component={AleoViewKeyWarningScreen}
+        options={{ headerTitle: "" }}
+      />
+      <Stack.Screen
+        name={ScreenName.AleoViewKeyApprove}
+        component={AleoViewKeyApproveScreen}
+        options={{ headerTitle: "" }}
+      />
+      <Stack.Screen
+        name={ScreenName.AleoViewKeyConfirmation}
+        component={AleoViewKeyConfirmationScreen}
+        options={{ headerTitle: "" }}
+      />
+      <Stack.Screen
         name={ScreenName.AddAccountsSuccess}
         component={AddAccountsSuccess}
         options={{
           ...TransparentHeaderNavigationOptions,
           headerLeft: () => null,
+          headerRight: () => <SuccessHeaderCloseButton onPress={onClose} />,
         }}
         initialParams={{
           onCloseNavigation: onClose,

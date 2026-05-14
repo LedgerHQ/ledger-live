@@ -5,6 +5,7 @@ import { Account } from "@ledgerhq/types-live";
 import { Props as TouchableProps } from "~/components/Touchable";
 import { AddAccountContexts } from "./enums";
 import { CantonOnboardAccountParamList } from "~/families/canton/Onboard/types";
+import { AleoViewKeyFlowParamList } from "~/families/aleo/AddAccountFlow/types";
 
 export type AddAccountContextType = `${AddAccountContexts}`;
 
@@ -21,6 +22,7 @@ export type NetworkBasedAddAccountNavigator = {
     device: Device;
     inline?: boolean;
     returnToSwap?: boolean;
+    skipAleoWarning?: boolean;
     onSuccess?: (res: { scannedAccounts: Account[]; selected: Account[] }) => void;
   };
   [ScreenName.AddAccountsSuccess]: CommonParams & {
@@ -40,4 +42,7 @@ export type NetworkBasedAddAccountNavigator = {
     }) => React.JSX.Element;
   };
   [ScreenName.CantonOnboardAccount]: CantonOnboardAccountParamList[ScreenName.CantonOnboardAccount];
+  [ScreenName.AleoViewKeyWarning]: AleoViewKeyFlowParamList[ScreenName.AleoViewKeyWarning];
+  [ScreenName.AleoViewKeyApprove]: AleoViewKeyFlowParamList[ScreenName.AleoViewKeyApprove];
+  [ScreenName.AleoViewKeyConfirmation]: AleoViewKeyFlowParamList[ScreenName.AleoViewKeyConfirmation];
 };

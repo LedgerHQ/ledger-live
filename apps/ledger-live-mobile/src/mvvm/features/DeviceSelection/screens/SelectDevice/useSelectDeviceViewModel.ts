@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from "~/context/hooks";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { openRebornBuyDeviceDrawer } from "~/reducers/rebornBuyDeviceDrawer";
 import { setOriginFlow } from "~/analytics/originFlow";
+import { isCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 
 export default function useSelectDeviceViewModel(
   route: RouteProp<
@@ -55,6 +56,33 @@ export default function useSelectDeviceViewModel(
         sourceScreenName: ScreenName.SelectDevice,
       };
 
+      const isAleo = isCryptoCurrency(currency) && currency.family === "aleo";
+
+      if (isAleo) {
+        navigation.navigate(NavigatorName.AddAccounts, {
+          screen: ScreenName.AleoViewKeyWarning,
+          params: {
+            currency,
+            device: meta.device,
+            onCancelFlow: () => {
+              onCloseNavigation?.();
+              navigation.getParent()?.goBack();
+            },
+            onContinueFromWarning: () => {
+              navigation.navigate(NavigatorName.AddAccounts, {
+                screen: ScreenName.ScanDeviceAccounts,
+                params: {
+                  ...params,
+                  skipAleoWarning: true,
+                },
+              });
+            },
+          },
+        });
+
+        return;
+      }
+
       // Always use navigate instead of replace to keep SelectDevice in the stack.
       // This allows retry navigation when device errors occur (e.g., device locked).
       // Previously, inline flows used replace which prevented retry navigation.
@@ -63,7 +91,7 @@ export default function useSelectDeviceViewModel(
         params,
       });
     },
-    [navigation, route, context],
+    [currency, navigation, onCloseNavigation, route, context],
   );
 
   useEffect(() => {

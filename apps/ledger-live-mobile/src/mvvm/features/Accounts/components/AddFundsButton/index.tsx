@@ -25,7 +25,7 @@ function View({
     <>
       <Button
         size="large"
-        type="shade"
+        type="main"
         testID="button-add-funds"
         onPress={openFundOrAccountListDrawer}
       >

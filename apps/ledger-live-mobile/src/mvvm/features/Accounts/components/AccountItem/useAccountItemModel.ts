@@ -17,6 +17,7 @@ export interface AccountItemProps {
   account: Account | TokenAccount;
   balance: BigNumber;
   showUnit?: boolean;
+  showUnitOnly?: boolean;
   hideBalanceInfo?: boolean;
   withPlaceholder?: boolean;
   squaredIcon?: boolean;
@@ -26,6 +27,7 @@ const useAccountItemModel = ({
   account,
   balance,
   showUnit,
+  showUnitOnly,
   hideBalanceInfo,
   withPlaceholder,
   squaredIcon,
@@ -59,6 +61,7 @@ const useAccountItemModel = ({
     currency,
     unit,
     showUnit,
+    showUnitOnly,
     hideBalanceInfo,
     withPlaceholder,
     accountId,

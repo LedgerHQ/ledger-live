@@ -13,9 +13,16 @@ type AnimatedAccountItemProps = {
   index?: number;
   children?: ReactNode;
   onPress: () => void;
+  showUnitOnly?: boolean;
 };
 
-const AnimatedAccountItem = ({ item, index = 0, children, onPress }: AnimatedAccountItemProps) => {
+const AnimatedAccountItem = ({
+  item,
+  index = 0,
+  children,
+  onPress,
+  showUnitOnly,
+}: AnimatedAccountItemProps) => {
   const { space } = useTheme();
   const { animatedStyle, startAnimation } = useItemAnimation(index);
 
@@ -37,7 +44,11 @@ const AnimatedAccountItem = ({ item, index = 0, children, onPress }: AnimatedAcc
           backgroundColor="opacityDefault.c05"
           width="100%"
         >
-          <AccountItem account={item as Account} balance={item.balance} />
+          <AccountItem
+            account={item as Account}
+            balance={item.balance}
+            showUnitOnly={showUnitOnly}
+          />
           {children}
         </Flex>
       </Pressable>

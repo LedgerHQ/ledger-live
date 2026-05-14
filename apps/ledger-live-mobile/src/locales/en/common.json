@@ -9253,5 +9253,44 @@
       "unavailable": "Not connected",
       "menuAccessibilityLabel": "Device options"
     }
+  },
+  "aleo": {
+    "addAccount": {
+      "stepViewKeyWarning": {
+        "title": "Set up Aleo private balance",
+        "description": "Ledger Wallet stores your view key to display your private balance and uses third-party services to process private transactions. <0>Learn more</0>",
+        "bullets": [
+          "Read-only access to decrypt your private balance",
+          "Ledger cannot send or spend your funds",
+          "Only you can sign and spend your funds",
+          "Proof generation is handled by third-party prover services to ensure fast processing",
+          "Provers cannot access or spend your funds"
+        ],
+        "cta": {
+          "allow": "Allow",
+          "cancel": "Cancel"
+        }
+      },
+      "stepViewKeyApprove": {
+        "title": "Approve on your Ledger",
+        "description": "Confirm sharing the view key on your device",
+        "cancelAlert": "You can reject individual accounts on your device. Cancelling all will stop adding any accounts to your portfolio.",
+        "cancelAllBtn_one": "Cancel",
+        "cancelAllBtn_other": "Cancel all"
+      },
+      "stepScanAccounts": {
+        "header_one": "New account",
+        "header_other": "New accounts",
+        "cta": {
+          "shareKey_one": "Share view key",
+          "shareKey_other": "Share view keys"
+        }
+      },
+      "warnings": {
+        "noAccountsAddedWarning": {
+          "description": "You haven't shared view keys for any of the selected accounts. View keys are required to display your private balance in Ledger Wallet."
+        }
+      }
+    }
   }
 }

@@ -12,15 +12,18 @@ import { track } from "~/analytics";
 export type Props = BaseComposite<
   StackNavigatorProps<NetworkBasedAddAccountNavigator, ScreenName.AddAccountsSuccess>
 >;
+
+const SUCCESS_COLOR = "#6EB260";
+
 export default function useAddAccountSuccessViewModel({ route }: Props) {
   const { currency, accountsToAdd, context, onCloseNavigation } = route.params || {};
-  const { colors, space } = useTheme();
+  const { space } = useTheme();
   const navigation = useNavigation();
   const { analyticsMetadata } = useAnalytics(context);
 
   const keyExtractor = useCallback((item: AccountLikeEnhanced) => item?.id, []);
 
-  const statusColor = colors.neutral.c100;
+  const statusColor = SUCCESS_COLOR;
 
   const goToAccounts = useCallback(
     (accountId: string) => () => {

@@ -9,6 +9,9 @@ import type { Account } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useCurrencyBridge } from "@ledgerhq/live-common/bridge/useCurrencyBridge";
 import { isCryptoCurrency, isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
+import { isCantonAccount } from "@ledgerhq/coin-canton/bridge/serialization";
+import { isConcordiumAccount } from "@ledgerhq/coin-concordium/bridge/serialization";
+import { patchAccountWithViewKey } from "@ledgerhq/live-common/families/aleo/utils";
 import logger from "~/logger";
 import { NavigatorName, ScreenName } from "~/const";
 import { prepareCurrency } from "~/bridge/cache";
@@ -18,8 +21,6 @@ import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/Ba
 import { groupAddAccounts, addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import { useMaybeAccountName } from "~/reducers/wallet";
 import { setAccountName } from "@ledgerhq/live-wallet/store";
-import { isCantonAccount } from "@ledgerhq/coin-canton/bridge/serialization";
-import { isConcordiumAccount } from "@ledgerhq/coin-concordium/bridge/serialization";
 import type { ScanDeviceAccountsNavigationProps, ScanDeviceAccountsViewModelProps } from "./types";
 import { track } from "~/analytics";
 
@@ -197,19 +198,81 @@ export default function useScanDeviceAccountsViewModel({
   const importAccounts = useCallback(() => {
     const accountsToAdd = scannedAccounts.filter(a => selectedIds.includes(a.id));
 
+    const handleAleoConfirmImport = (viewKeysByAccountId?: Record<string, string | null>) => {
+      const patchedAccountsToAdd = accountsToAdd.map(account => {
+        const viewKey = viewKeysByAccountId?.[account.id];
+
+        if (!viewKey) {
+          return account;
+        }
+
+        try {
+          return patchAccountWithViewKey(account, viewKey);
+        } catch {
+          return account;
+        }
+      });
+
+      setIsAddinAccounts(true);
+
+      dispatch(
+        addAccountsAction({
+          existingAccounts,
+          scannedAccounts,
+          selectedIds,
+          renamings: {},
+        }),
+      );
+
+      const { onSuccess } = route.params;
+
+      if (inline) {
+        closeInlineFlow();
+
+        if (onSuccess) {
+          onSuccess({
+            scannedAccounts,
+            selected: patchedAccountsToAdd,
+          });
+        }
+      } else {
+        navigation.replace(ScreenName.AddAccountsSuccess, {
+          ...route.params,
+          currency,
+          accountsToAdd: patchedAccountsToAdd,
+        });
+      }
+
+      const continueMetadata = analyticsMetadata?.AccountsFound?.onContinue;
+      if (continueMetadata)
+        track(continueMetadata.eventName, {
+          ...continueMetadata.payload,
+        });
+
+      const successMetadata = analyticsMetadata?.AccountsFound?.onAccountsAdded;
+      if (successMetadata)
+        track(successMetadata.eventName, {
+          ...successMetadata.payload,
+          currency: currency.name,
+          amount: patchedAccountsToAdd.length,
+        });
+    };
+
     if (currency.id.includes("canton_network")) {
       const accountsNeedingOnboarding = accountsToAdd.filter(account => {
         if (isCantonAccount(account)) {
           return !account.cantonResources.isOnboarded;
         }
+
         return true;
       });
 
       if (accountsNeedingOnboarding.length > 0) {
         navigation.replace(ScreenName.CantonOnboardAccount, {
-          accountsToAdd: accountsToAdd,
+          accountsToAdd,
           currency,
         });
+
         return;
       }
     }
@@ -219,6 +282,7 @@ export default function useScanDeviceAccountsViewModel({
         if (isConcordiumAccount(account)) {
           return !account.concordiumResources.isOnboarded;
         }
+
         return true;
       });
 
@@ -227,8 +291,60 @@ export default function useScanDeviceAccountsViewModel({
           screen: ScreenName.ConcordiumOnboardAccount,
           params: { accountsToAdd, currency },
         });
+
         return;
       }
+    }
+
+    if (isCryptoCurrency(currency) && currency.family === "aleo") {
+      if (route.params.skipAleoWarning) {
+        navigation.replace(ScreenName.AleoViewKeyApprove, {
+          accountsToAdd,
+          currency,
+          device: route.params.device,
+          onCancelFlow: () => {
+            if (inline) {
+              closeInlineFlow();
+            } else {
+              navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()?.pop();
+            }
+          },
+          onConfirmImport: handleAleoConfirmImport,
+        });
+
+        return;
+      }
+
+      navigation.replace(ScreenName.AleoViewKeyWarning, {
+        currency,
+        device: route.params.device,
+        onCancelFlow: () => {
+          if (inline) {
+            closeInlineFlow();
+          } else {
+            navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()?.pop();
+          }
+        },
+        onContinueFromWarning: () => {
+          navigation.replace(ScreenName.AleoViewKeyApprove, {
+            accountsToAdd,
+            currency,
+            device: route.params.device,
+            onCancelFlow: () => {
+              if (inline) {
+                closeInlineFlow();
+              } else {
+                navigation
+                  .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
+                  ?.pop();
+              }
+            },
+            onConfirmImport: handleAleoConfirmImport,
+          });
+        },
+      });
+
+      return;
     }
 
     setIsAddinAccounts(true);
@@ -256,7 +372,7 @@ export default function useScanDeviceAccountsViewModel({
       navigation.replace(ScreenName.AddAccountsSuccess, {
         ...route.params,
         currency,
-        accountsToAdd: accountsToAdd,
+        accountsToAdd,
       });
 
     const continueMetadata = analyticsMetadata?.AccountsFound?.onContinue;

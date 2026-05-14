@@ -4,6 +4,7 @@ import { NetworkBasedAddAccountNavigator } from "../AddAccount/types";
 import { ScreenName } from "~/const";
 import { AddAccountSupportLink } from "@ledgerhq/live-wallet/addAccounts";
 import { AnalyticMetadata } from "LLM/hooks/useAnalytics/types";
+import type React from "react";
 
 export type SubAccountEnhanced = TokenAccount & {
   parentAccount: Account;
@@ -30,6 +31,7 @@ export type ScanDeviceAccountsFooterProps = {
   onRetry: () => void;
   onDone: () => void;
   isDisabled: boolean;
+  continueTitle?: React.ReactNode;
   supportLink?: AddAccountSupportLink;
   returnToSwap?: boolean;
 };

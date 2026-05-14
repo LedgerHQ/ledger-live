@@ -266,6 +266,9 @@ export const urls = {
   canton: {
     learnMore: "https://support.ledger.com/article/Canton-Network",
   },
+  aleo: {
+    learnMore: "https://support.ledger.com/article/Aleo-ALEO",
+  },
   concordium: {
     learnMore: "https://support.ledger.com/article/Concordium-CCD",
     idApp: {

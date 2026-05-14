@@ -53,6 +53,7 @@ type Props = FlexBoxProps & {
   showHint: boolean;
   onAccountNameChange?: (name: string, changedAccount: Account) => void;
   useFullBalance?: boolean;
+  showUnitOnly?: boolean;
 };
 
 type NavigationProps = BaseComposite<
@@ -96,6 +97,7 @@ const SelectableAccountsList = ({
   index: listIndex = -1,
   onAccountNameChange,
   useFullBalance,
+  showUnitOnly,
   ...props
 }: Props) => {
   const navigation = useNavigation<NavigationProps>();
@@ -126,6 +128,7 @@ const SelectableAccountsList = ({
         isDisabled={isDisabled}
         onPress={onPressAccount}
         useFullBalance={useFullBalance}
+        showUnitOnly={showUnitOnly}
       />
     ),
     [
@@ -138,6 +141,7 @@ const SelectableAccountsList = ({
       onAccountNameChange,
       onPressAccount,
       useFullBalance,
+      showUnitOnly,
     ],
   );
 
@@ -176,6 +180,7 @@ type SelectableAccountProps = {
   navigation: NavigationProps;
   onAccountNameChange?: (name: string, changedAccount: Account) => void;
   useFullBalance?: boolean;
+  showUnitOnly?: boolean;
 };
 
 const SelectableAccount = ({
@@ -189,6 +194,7 @@ const SelectableAccount = ({
   navigation,
   onAccountNameChange,
   useFullBalance,
+  showUnitOnly,
 }: SelectableAccountProps) => {
   const [stopAnimation, setStopAnimation] = useState<boolean>(false);
   const { space } = useTheme();
@@ -312,6 +318,7 @@ const SelectableAccount = ({
           <AccountItem
             account={account as Account}
             balance={useFullBalance ? account.balance : account.spendableBalance}
+            showUnitOnly={showUnitOnly}
           />
         </Flex>
 

@@ -5,7 +5,6 @@ import { useSelector } from "~/context/hooks";
 import { Trans, useTranslation } from "~/context/Locale";
 import Config from "react-native-config";
 import styled, { useTheme } from "styled-components/native";
-import type { DerivationMode } from "@ledgerhq/types-live";
 import { accountsSelector } from "~/reducers/accounts";
 import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 import { TrackScreen } from "~/analytics";
@@ -78,6 +77,8 @@ function ScanDeviceAccounts() {
     analyticsMetadata,
   });
 
+  const isAleo = currency?.type === "CryptoCurrency" && currency.family === "aleo";
+
   const pageTrackingEvent =
     sections?.length === 0
       ? analyticsMetadata.ScanDeviceAccounts?.onAccessScreen
@@ -137,12 +138,21 @@ function ScanDeviceAccounts() {
                 showHint={selectable && i === 0 && !Config.DETOX}
                 header={
                   data.length ? (
-                    <Trans
-                      values={{
-                        count: data.length,
-                      }}
-                      i18nKey={`addAccounts.scanDeviceAccounts.sections.${id}.title`}
-                    />
+                    isAleo && id === "importable" ? (
+                      <Text variant="body" fontWeight="medium" color="neutral.c80">
+                        <Trans
+                          i18nKey="aleo.addAccount.stepScanAccounts.header"
+                          count={data.length}
+                        />
+                      </Text>
+                    ) : (
+                      <Trans
+                        values={{
+                          count: data.length,
+                        }}
+                        i18nKey={`addAccounts.scanDeviceAccounts.sections.${id}.title`}
+                      />
+                    )
                   ) : null
                 }
                 index={i}
@@ -154,16 +164,14 @@ function ScanDeviceAccounts() {
                 selectedIds={selectedIds}
                 isDisabled={!selectable}
                 forceSelected={id === "existing"}
+                showUnitOnly={isAleo}
                 style={hasMultipleSchemes ? styles.smallMarginBottom : {}}
               />
               {hasMultipleSchemes ? (
                 <View style={styles.moreAddressTypesContainer}>
                   {showAllCreatedAccounts ? (
                     currency.type === "CryptoCurrency" ? (
-                      <AddressTypeTooltip
-                        accountSchemes={newAccountSchemes as DerivationMode[]}
-                        currency={currency}
-                      />
+                      <AddressTypeTooltip accountSchemes={newAccountSchemes} currency={currency} />
                     ) : null
                   ) : (
                     <StyledPressable onPress={viewAllCreatedAccounts}>
@@ -192,6 +200,14 @@ function ScanDeviceAccounts() {
           onDone={quitFlow}
           onContinue={importAccounts}
           isDisabled={selectedIds.length === 0}
+          continueTitle={
+            isAleo ? (
+              <Trans
+                i18nKey="aleo.addAccount.stepScanAccounts.cta.shareKey"
+                count={selectedIds.length}
+              />
+            ) : undefined
+          }
           returnToSwap={returnToSwap}
         />
       )}
