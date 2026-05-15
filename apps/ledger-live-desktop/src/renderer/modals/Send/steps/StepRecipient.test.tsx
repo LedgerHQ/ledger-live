@@ -128,7 +128,7 @@ describe("StepRecipient", () => {
     expect(screen.queryByTestId("family-send-step")).toBeInTheDocument();
   });
 
-  it("renders without crashing when account bridge is not yet resolved", () => {
+  it("renders without crashing when useAccountBridgeOrNull returns null", () => {
     mockUseAccountBridgeOrNull.mockReturnValueOnce(null as never);
     mockGetLLDCoinFamily.mockReturnValue({});
 
