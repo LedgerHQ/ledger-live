@@ -1,25 +1,46 @@
 import { renderHook } from "@testing-library/react-native";
 import { useFormattedAccountBalance } from "../useFormattedAccountBalance";
 import { useSelector } from "~/context/hooks";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useCalculate } from "@ledgerhq/live-countervalues-react";
 import { useMaybeAccountUnit } from "LLM/hooks/useAccountUnit";
-import { createMockAccount } from "./accounts";
+import { discreetModeSelector } from "~/reducers/settings";
 import type { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { getCryptoCurrencyById, formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 jest.mock("~/context/hooks");
 jest.mock("@ledgerhq/live-common/currencies/index");
 jest.mock("@ledgerhq/live-common/account/index");
 jest.mock("@ledgerhq/live-countervalues-react");
 jest.mock("LLM/hooks/useAccountUnit");
+jest.mock("~/reducers/settings", () => ({
+  counterValueCurrencySelector: jest.fn(),
+  discreetModeSelector: jest.fn(),
+}));
 
 const mockedUseSelector = jest.mocked(useSelector);
 const mockedUseMaybeAccountUnit = jest.mocked(useMaybeAccountUnit);
 const mockedGetAccountCurrency = jest.mocked(getAccountCurrency);
 const mockedFormatCurrencyUnit = jest.mocked(formatCurrencyUnit);
 const mockedUseCalculate = jest.mocked(useCalculate);
+
+const createMockCurrency = (overrides?: Partial<CryptoCurrency>): CryptoCurrency => ({
+  ...getCryptoCurrencyById("bitcoin"),
+  ...overrides,
+});
+
+const createMockAccount = (overrides?: Partial<Account>): Account => ({
+  ...genAccount("mock_account"),
+  id: "mock_account_id",
+  freshAddress: "source_address",
+  balance: new BigNumber(100000000),
+  spendableBalance: new BigNumber(100000000),
+  currency: createMockCurrency(),
+  ...overrides,
+});
 
 const mockAccount = createMockAccount();
 
@@ -32,7 +53,10 @@ const mockUnit = { code: "BTC", name: "Bitcoin", magnitude: 8 };
 describe("useFormattedAccountBalance", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockedUseSelector.mockReturnValue(mockCounterValueCurrency);
+    mockedUseSelector.mockImplementation((selector: unknown) => {
+      if (selector === discreetModeSelector) return false;
+      return mockCounterValueCurrency;
+    });
     mockedUseMaybeAccountUnit.mockReturnValue(mockUnit);
     mockedGetAccountCurrency.mockReturnValue(mockAccount.currency);
     mockedFormatCurrencyUnit.mockImplementation((unit, _value, _options) => {
@@ -74,17 +98,38 @@ describe("useFormattedAccountBalance", () => {
     expect(result.current.formattedCounterValue).toBeUndefined();
   });
 
-  it("calls formatCurrencyUnit with correct parameters", () => {
+  it("calls formatCurrencyUnit with discreet option", () => {
     renderHook(() => useFormattedAccountBalance(mockAccount));
 
     expect(mockedFormatCurrencyUnit).toHaveBeenCalledWith(mockUnit, mockAccount.balance, {
       showCode: true,
+      discreet: false,
     });
 
     expect(mockedFormatCurrencyUnit).toHaveBeenCalledWith(
       mockCounterValueCurrency.units[0],
       expect.anything(),
-      { showCode: true },
+      { showCode: true, discreet: false },
+    );
+  });
+
+  it("passes discreet true when discreet mode is enabled", () => {
+    mockedUseSelector.mockImplementation((selector: unknown) => {
+      if (selector === discreetModeSelector) return true;
+      return mockCounterValueCurrency;
+    });
+
+    renderHook(() => useFormattedAccountBalance(mockAccount));
+
+    expect(mockedFormatCurrencyUnit).toHaveBeenCalledWith(mockUnit, mockAccount.balance, {
+      showCode: true,
+      discreet: true,
+    });
+
+    expect(mockedFormatCurrencyUnit).toHaveBeenCalledWith(
+      mockCounterValueCurrency.units[0],
+      expect.anything(),
+      { showCode: true, discreet: true },
     );
   });
 

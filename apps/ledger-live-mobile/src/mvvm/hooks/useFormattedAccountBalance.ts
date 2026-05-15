@@ -6,19 +6,16 @@ import { BigNumber } from "bignumber.js";
 import { useMaybeAccountUnit } from "LLM/hooks/useAccountUnit";
 import { useMemo } from "react";
 import { useSelector } from "~/context/hooks";
-import { counterValueCurrencySelector } from "~/reducers/settings";
+import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
 
 type FormattedAccountBalance = {
   formattedBalance: string | undefined;
   formattedCounterValue: string | undefined;
 };
 
-/**
- * Hook to format account balance and counter value
- * Handles both defined and undefined accounts
- */
 export function useFormattedAccountBalance(account: Account | undefined): FormattedAccountBalance {
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const discreet = useSelector(discreetModeSelector);
   const unit = useMaybeAccountUnit(account);
   const accountCurrency = account ? getAccountCurrency(account) : undefined;
 
@@ -40,15 +37,17 @@ export function useFormattedAccountBalance(account: Account | undefined): Format
     }
     return formatCurrencyUnit(counterValueCurrency.units[0], new BigNumber(counterValue), {
       showCode: true,
+      discreet,
     });
-  }, [counterValue, counterValueCurrency, account, unit]);
+  }, [counterValue, counterValueCurrency, account, unit, discreet]);
 
   const formattedBalance = useMemo(() => {
     if (!account || !unit) return undefined;
     return formatCurrencyUnit(unit, account.balance, {
       showCode: true,
+      discreet,
     });
-  }, [account, unit]);
+  }, [account, unit, discreet]);
 
   return { formattedBalance, formattedCounterValue };
 }

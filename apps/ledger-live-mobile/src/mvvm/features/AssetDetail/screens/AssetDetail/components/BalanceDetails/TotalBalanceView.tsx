@@ -7,6 +7,7 @@ import { useTranslation } from "~/context/Locale";
 import { ASSET_DETAIL_TEST_IDS } from "LLM/features/AssetDetail/testIds";
 
 type Props = Readonly<{
+  discreet: boolean;
   counterValue: number | undefined;
   counterValueFormatter: (value: number) => FormattedValue;
   formattedTotalBalance: string;
@@ -14,6 +15,7 @@ type Props = Readonly<{
 }>;
 
 export function TotalBalanceView({
+  discreet,
   counterValue,
   counterValueFormatter,
   formattedTotalBalance,
@@ -28,7 +30,7 @@ export function TotalBalanceView({
           {t("assetDetail.balanceDetails.totalBalance")}
         </Text>
         {counterValue != null && (
-          <AmountDisplay value={counterValue} formatter={counterValueFormatter} />
+          <AmountDisplay value={counterValue} formatter={counterValueFormatter} hidden={discreet} />
         )}
         <Text typography="body3" lx={{ color: "muted" }}>
           {formattedTotalBalance}

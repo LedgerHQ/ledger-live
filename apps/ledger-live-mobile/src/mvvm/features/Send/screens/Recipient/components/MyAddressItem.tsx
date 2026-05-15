@@ -1,6 +1,6 @@
 import React from "react";
 import { AddressListItem } from "./AddressListItem";
-import { useFormattedAccountBalance } from "../hooks/useFormattedAccountBalance";
+import { useFormattedAccountBalance } from "LLM/hooks/useFormattedAccountBalance";
 import { Account } from "@ledgerhq/types-live";
 import { useMaybeAccountName } from "~/reducers/wallet";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";

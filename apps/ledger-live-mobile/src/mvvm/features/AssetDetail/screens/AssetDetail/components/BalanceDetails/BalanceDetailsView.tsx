@@ -12,6 +12,7 @@ type EarnState = BalanceDetailsViewModelResult["earnState"];
 
 type Props = Readonly<{
   hasAccounts: boolean;
+  discreet: boolean;
   counterValue: number | undefined;
   counterValueFormatter: (value: number) => FormattedValue;
   formattedTotalBalance: string;
@@ -23,6 +24,7 @@ type Props = Readonly<{
 
 export function BalanceDetailsView({
   hasAccounts,
+  discreet,
   counterValue,
   counterValueFormatter,
   formattedTotalBalance,
@@ -36,6 +38,7 @@ export function BalanceDetailsView({
   return (
     <Box testID={ASSET_DETAIL_TEST_IDS.balanceDetails} lx={containerStyle}>
       <TotalBalanceView
+        discreet={discreet}
         counterValue={counterValue}
         counterValueFormatter={counterValueFormatter}
         formattedTotalBalance={formattedTotalBalance}
