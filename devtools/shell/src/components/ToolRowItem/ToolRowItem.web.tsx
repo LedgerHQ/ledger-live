@@ -9,7 +9,7 @@ interface ToolRowItemProps {
 }
 
 export function ToolRowItem({ tool, isActive, onSelect }: ToolRowItemProps) {
-  const isConfigured = useIsToolConfigured(tool.id);
+  const isConfigured = useIsToolConfigured(tool);
   return (
     <ToolRow
       title={tool.label}

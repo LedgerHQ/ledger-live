@@ -1,4 +1,5 @@
 import type { ComponentType } from "react";
+import type { DevToolsPropsRegistry } from "./index";
 
 export type ToolPlatform = "web" | "native";
 
@@ -14,7 +15,7 @@ export enum Category {
 }
 
 export interface Tool {
-  id: string;
+  id: keyof DevToolsPropsRegistry;
   label: string;
   category: Category;
   owner?: string;

@@ -1,7 +1,6 @@
 import { Tag } from "@ledgerhq/lumen-ui-react";
 import type { Tool } from "../../types";
 import { useIsToolConfigured, useToolProps } from "../../context";
-import type { DevToolsPropsRegistry } from "../../registry/propsRegistry";
 import ToolNotConfigured from "../ToolNotConfigured/ToolNotConfigured";
 
 interface ToolShellProps {
@@ -10,9 +9,9 @@ interface ToolShellProps {
 }
 
 export function ToolShell({ tool, onBack }: ToolShellProps) {
-  const isConfigured = useIsToolConfigured(tool.id);
+  const isConfigured = useIsToolConfigured(tool);
   const Component = tool.component;
-  const toolProps = useToolProps(tool.id as keyof DevToolsPropsRegistry);
+  const toolProps = useToolProps(tool.id);
 
   return (
     <>

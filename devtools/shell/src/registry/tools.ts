@@ -4,7 +4,6 @@ import type { DevToolsPropsRegistry } from "../index";
 
 export const tools: Tool[] = [];
 
-export const registeredToolIds = new Set<string>();
 const allToolIds = new Set<string>();
 
 function addTool(tool: Tool): boolean {
@@ -17,17 +16,24 @@ function addTool(tool: Tool): boolean {
   return true;
 }
 
-export function registerTool<K extends keyof DevToolsPropsRegistry>(
-  tool: Tool & {
-    id: K;
-    component: ComponentType<NonNullable<DevToolsPropsRegistry[K]>>;
-  },
+type ToolInput<K extends keyof DevToolsPropsRegistry> = Omit<
+  Tool,
+  "id" | "component" | "optional"
+> & {
+  id: K;
+  component: ComponentType<NonNullable<DevToolsPropsRegistry[K]>>;
+};
+
+export function registerToolWithRequiredProps<K extends keyof DevToolsPropsRegistry>(
+  tool: ToolInput<K>,
 ): Tool {
-  if (addTool(tool)) registeredToolIds.add(tool.id);
-  return tool;
+  const registered: Tool = { ...tool, optional: false };
+  addTool(registered);
+  return registered;
 }
 
-export function registerStandaloneTool(tool: Tool & { component: ComponentType }): Tool {
-  addTool(tool);
-  return tool;
+export function registerTool<K extends keyof DevToolsPropsRegistry>(tool: ToolInput<K>): Tool {
+  const registered: Tool = { ...tool, optional: true };
+  addTool(registered);
+  return registered;
 }

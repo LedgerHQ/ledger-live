@@ -1,10 +1,10 @@
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import { makeTool } from "../../jest/fixtures";
 import { DevTools } from "../DevTools/DevTools.native";
-import { registerStandaloneTool } from "../registry/tools";
+import { registerTool } from "../registry/tools";
 import { Category } from "../types";
 
-registerStandaloneTool(
+registerTool(
   makeTool({
     id: "native-tool",
     label: "Native Tool",
@@ -12,7 +12,7 @@ registerStandaloneTool(
     platform: "native",
   }),
 );
-registerStandaloneTool(
+registerTool(
   makeTool({
     id: "web-tool",
     label: "Web Tool",
@@ -20,7 +20,7 @@ registerStandaloneTool(
     platform: "web",
   }),
 );
-registerStandaloneTool(
+registerTool(
   makeTool({
     id: "shared-tool",
     label: "Shared Tool",

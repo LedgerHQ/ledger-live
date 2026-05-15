@@ -1,5 +1,4 @@
 import { render, screen, userEvent } from "jest/render.native";
-import "../../jest/fixtures";
 import { registerTool } from "../registry/tools";
 import { Category } from "../types";
 import { DevTools } from "./DevTools.native";

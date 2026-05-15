@@ -1,5 +1,4 @@
 import { render, screen } from "@testing-library/react";
-import "../../jest/fixtures"; // activates test registry augmentation
 import { DevToolsProvider, useToolProps } from ".";
 
 const TEST_TOOL_ID = "test-tool" as const;
