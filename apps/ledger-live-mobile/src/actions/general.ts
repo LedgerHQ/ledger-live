@@ -19,7 +19,8 @@ import {
 } from "@ledgerhq/live-common/portfolio/useAssetDistribution";
 import VersionNumber from "react-native-version-number";
 import { BehaviorSubject } from "rxjs";
-import { cleanCache, reorderAccounts } from "./accounts";
+import { replaceAccounts, reorderAccounts } from "./accounts";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { accountsSelector } from "../reducers/accounts";
 import { counterValueCurrencySelector, orderAccountsSelector } from "../reducers/settings";
 import { clearBridgeCache } from "../bridge/cache";
@@ -112,14 +113,21 @@ export function useRefreshAccountsOrderingEffect({
 }
 export function useCleanCache() {
   const dispatch = useDispatch();
+  const accounts = useSelector(accountsSelector);
   const { wipe } = useCountervaluesPolling();
   return useCallback(async () => {
-    dispatch(cleanCache());
+    const cleared = await Promise.all(
+      accounts.map(async account => {
+        const bridge = await getAccountBridge(account);
+        return bridge.clearAccount(account);
+      }),
+    );
+    dispatch(replaceAccounts(cleared));
 
     await clearBridgeCache();
     wipe();
     flushAll();
-  }, [dispatch, wipe]);
+  }, [dispatch, accounts, wipe]);
 }
 
 export function useUserSettings() {

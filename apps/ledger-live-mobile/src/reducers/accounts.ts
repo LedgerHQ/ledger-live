@@ -21,7 +21,6 @@ import {
   flattenAccounts,
   getAccountCurrency,
   isUpToDateAccount,
-  clearAccount,
   makeEmptyTokenAccount,
   isAccountBalanceUnconfirmed,
 } from "@ledgerhq/live-common/account/index";
@@ -107,10 +106,6 @@ const handlers: ReducerMap<AccountsState, Payload> = {
 
   [AccountsActionTypes.SET_ACCOUNTS]: (state, action) => ({
     active: (action as Action<AccountsReplacePayload>).payload,
-  }),
-
-  [AccountsActionTypes.CLEAN_CACHE]: (state: AccountsState) => ({
-    active: state.active.map(clearAccount),
   }),
 
   [AccountsActionTypes.DANGEROUSLY_OVERRIDE_STATE]: (
