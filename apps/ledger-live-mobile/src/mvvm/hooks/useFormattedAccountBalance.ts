@@ -1,7 +1,7 @@
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useCalculate } from "@ledgerhq/live-countervalues-react";
-import type { Account } from "@ledgerhq/types-live";
+import type { AccountLike } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { useMaybeAccountUnit } from "LLM/hooks/useAccountUnit";
 import { useMemo } from "react";
@@ -13,7 +13,9 @@ type FormattedAccountBalance = {
   formattedCounterValue: string | undefined;
 };
 
-export function useFormattedAccountBalance(account: Account | undefined): FormattedAccountBalance {
+export function useFormattedAccountBalance(
+  account: AccountLike | undefined,
+): FormattedAccountBalance {
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const discreet = useSelector(discreetModeSelector);
   const unit = useMaybeAccountUnit(account);

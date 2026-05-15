@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { shallowEqual } from "react-redux";
 import type { AssetDetailCurrencyProps } from "LLM/features/AssetDetail/types";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import { useSelector } from "~/context/hooks";
@@ -15,6 +15,7 @@ import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enu
 export type AddressAccountData = Readonly<{
   id: string;
   account: Account;
+  balanceAccount: AccountLike;
   name: string;
   truncatedAddress: string;
 }>;
@@ -37,6 +38,7 @@ export function useAddressesViewModel(currency: AssetDetailCurrencyProps) {
       return {
         id: acc.id,
         account: mainAccount,
+        balanceAccount: acc,
         name: tuple.name || accountNameWithDefaultSelector(walletState, mainAccount),
         truncatedAddress: formatAddress(mainAccount.freshAddress, {
           prefixLength: 4,
