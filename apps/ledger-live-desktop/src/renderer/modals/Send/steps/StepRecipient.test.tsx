@@ -8,8 +8,9 @@ import { getLLDCoinFamily } from "~/renderer/families";
 import StepRecipient from "./StepRecipient";
 
 jest.mock("~/renderer/families");
+const mockUseAccountBridgeOrNull = jest.fn(() => ({ getStuckAccountAndOperation: () => undefined }));
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
-  useAccountBridgeOrNull: () => ({ getStuckAccountAndOperation: () => undefined }),
+  useAccountBridgeOrNull: () => mockUseAccountBridgeOrNull(),
 }));
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
@@ -125,5 +126,14 @@ describe("StepRecipient", () => {
     render(<StepRecipient {...baseParams} />);
 
     expect(screen.queryByTestId("family-send-step")).toBeInTheDocument();
+  });
+
+  it("renders without crashing when account bridge is not yet resolved", () => {
+    mockUseAccountBridgeOrNull.mockReturnValueOnce(null as never);
+    mockGetLLDCoinFamily.mockReturnValue({});
+
+    render(<StepRecipient {...baseParams} />);
+
+    expect(screen.queryByText("send.steps.details.selectAccountDebit")).toBeInTheDocument();
   });
 });
