@@ -1,9 +1,11 @@
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 
-/** Main (chain) accounts indexed by id — used for token parent resolution and search. */
-export function buildMainAccountByIdMap(
-  accounts: readonly AccountLike[],
-): Map<string, Account> {
+/**
+ * Main (chain) accounts indexed by id. Used to resolve the parent of a
+ * `TokenAccount` exposed by `buildAssetDistribution` so the consumer can render
+ * the parent's fresh address, name, etc.
+ */
+export function buildMainAccountByIdMap(accounts: readonly AccountLike[]): Map<string, Account> {
   const map = new Map<string, Account>();
   for (const a of accounts) {
     if (a.type === "Account") {

@@ -1,17 +1,15 @@
 import { useCallback, useMemo } from "react";
-import { shallowEqual } from "react-redux";
 import BigNumber from "bignumber.js";
 import type { AssetDetailCurrencyProps } from "LLM/features/AssetDetail/types";
+import type { DistributionItem } from "@ledgerhq/types-live";
 import type { FormattedValue } from "@ledgerhq/lumen-ui-rnative";
 import {
   formatCurrencyUnit,
   formatCurrencyUnitFragment,
 } from "@ledgerhq/live-common/currencies/index";
-import { useCalculate } from "@ledgerhq/live-countervalues-react";
 import { useInterestRatesByCurrencies } from "@ledgerhq/live-common/dada-client/hooks/useInterestRatesByCurrencies";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "~/context/hooks";
-import { accountsByCryptoCurrencyScreenSelector } from "~/reducers/accounts";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
 import { NavigatorName, ScreenName } from "~/const";
 import { track } from "~/analytics";
@@ -25,37 +23,43 @@ type EarnState =
   | { type: "banner"; label: string }
   | { type: "staked"; formattedAvailable: string; formattedDeposit: string };
 
-export function useBalanceDetailsViewModel(currency: AssetDetailCurrencyProps) {
+export function useBalanceDetailsViewModel(
+  currency: AssetDetailCurrencyProps,
+  distributionItem: DistributionItem | undefined,
+) {
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const discreet = useSelector(discreetModeSelector);
   const { locale } = useLocale();
   const { t } = useTranslation();
 
-  const accountsSelector = useMemo(
-    () => (currency ? accountsByCryptoCurrencyScreenSelector(currency) : () => []),
-    [currency],
+  const hasAccounts = (distributionItem?.accounts.length ?? 0) > 0;
+
+  // `buildAssetDistribution` already aggregates `amount` and `countervalue`
+  // across every network/sub-account of the asset (e.g. USDC on ETH + on
+  // Base). We just consume the pre-computed values — same approach as
+  // `apps/ledger-live-desktop/.../PortfolioSection/TotalBalance/useTotalBalanceViewModel.ts`.
+  const totalBalance = useMemo(
+    () => new BigNumber(distributionItem?.amount ?? 0),
+    [distributionItem?.amount],
   );
-  const accountTuples = useSelector(accountsSelector, shallowEqual);
 
-  const hasAccounts = accountTuples.length > 0;
-
-  const { totalBalance, availableBalance, earnDeposit } = useMemo(() => {
-    let total = new BigNumber(0);
+  // Spendable is summed locally because the distribution item only exposes the
+  // total amount, not the spendable balance per network.
+  const { availableBalance, earnDeposit } = useMemo(() => {
     let spendable = new BigNumber(0);
-    for (const tuple of accountTuples) {
-      const acc = tuple.subAccount ?? tuple.account;
+    let total = new BigNumber(0);
+    for (const acc of distributionItem?.accounts ?? []) {
       total = total.plus(acc.balance);
       spendable = spendable.plus(acc.spendableBalance);
     }
     const deposit = total.minus(spendable);
     return {
-      totalBalance: total,
       availableBalance: spendable,
       earnDeposit: deposit.isPositive() ? deposit : new BigNumber(0),
     };
-  }, [accountTuples]);
+  }, [distributionItem?.accounts]);
 
-  const unit = currency?.units?.[0];
+  const unit = distributionItem?.currency.units?.[0] ?? currency?.units?.[0];
 
   const formattedTotalBalance = useMemo(() => {
     if (!unit) return "";
@@ -64,14 +68,7 @@ export function useBalanceDetailsViewModel(currency: AssetDetailCurrencyProps) {
 
   const counterValueUnit = counterValueCurrency.units[0];
 
-  const totalCounterValue = useCalculate({
-    from: currency ?? counterValueCurrency,
-    to: counterValueCurrency,
-    value: totalBalance.toNumber(),
-    disableRounding: true,
-  });
-
-  const counterValue = typeof totalCounterValue === "number" ? totalCounterValue : undefined;
+  const counterValue = hasAccounts ? distributionItem?.countervalue ?? 0 : undefined;
 
   const counterValueFormatter = useCallback(
     (value: number): FormattedValue =>
