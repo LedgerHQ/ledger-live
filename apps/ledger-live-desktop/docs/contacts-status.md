@@ -13,6 +13,7 @@ and DMK verb cheat sheet. This file tracks the L0–L4 rollout state.
 - [x] L3 — Validation panel enrichment for designer handoff
 - [x] L3.1 — Code simplification pass
 - [x] L3.2 — Decorated "Select account" rows in Send
+- [x] L3.3 — Recipient autocomplete from Contacts on Send → To:
 - [ ] L4 — Designer-led Contacts management UX
 - [ ] L5 — Send recipient picker
 
@@ -99,6 +100,22 @@ device session. Module-level `useSyncExternalStore` snapshot in
 `renderer/contacts/hooks.ts` so the dialog, the data source
 registration, and the Send-side decoration all observe the same wallet
 without re-mounting — closes the L2.1 store-sync follow-up.
+
+### L3.3 — Recipient autocomplete from Contacts on Send → To:
+
+Typing into the Send recipient input now opens a dropdown of saved
+Contacts (external entries + registered Ledger accounts) that match
+the typed prefix on the active chain. Clicking a suggestion fills the
+field with the full 0x-prefixed address; the existing validation
+pipeline picks up from there exactly as if the user had pasted it.
+The pure builder is in `hooks/useRecipientSuggestions.ts`
+(`buildRecipientSuggestions`) — covered by 11 unit tests: chainId
+filter, case-insensitive name prefix, hex prefix with/without 0x,
+Ledger-over-external dedup precedence, MAX_SUGGESTIONS=5 cap, full
+40-char address self-hide. Hook gates on `contactsAlpha`; component
+(`components/RecipientSuggestionsDropdown`) sits absolute under the
+`AddressInput` and uses `onMouseDown` + preventDefault to fire its
+select before the input's blur tears it down.
 
 ### L3.2 — Decorated "Select account" rows in Send
 
