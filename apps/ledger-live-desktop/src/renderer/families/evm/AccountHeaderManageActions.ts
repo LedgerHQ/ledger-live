@@ -1,7 +1,7 @@
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { useCallback } from "react";
 import { openModal } from "~/renderer/actions/modals";
-import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import { useNavigate } from "react-router";
 import { useStake } from "LLD/hooks/useStake";
@@ -18,6 +18,7 @@ type Props = {
 const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const bridge = useAccountBridge(account, parentAccount);
   const label = useGetStakeLabelLocaleBased();
   const walletState = useSelector(walletSelector);
   const { getRouteToPlatformApp } = useStake();
@@ -45,7 +46,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   );
 
   const onClickStakeModal = useCallback(() => {
-    if (isAccountEmpty(account)) {
+    if (bridge.isAccountEmpty(account)) {
       dispatch(
         openModal("MODAL_NO_FUNDS_STAKE", {
           account,
@@ -69,7 +70,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
         }),
       );
     }
-  }, [account, dispatch, parentAccount, getRouteToPlatformApp, walletState, navigate]);
+  }, [account, bridge, dispatch, parentAccount, getRouteToPlatformApp, walletState, navigate]);
 
   const getStakeAction = useCallback(() => {
     if (isEthereumAccount) {
