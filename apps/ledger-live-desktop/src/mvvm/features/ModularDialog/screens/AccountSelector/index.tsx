@@ -21,6 +21,12 @@ type Props = {
   onAccountSelected: (account: AccountLike, parentAccount?: Account) => void;
 };
 
+const getEvmChainId = (asset: CryptoOrTokenCurrency): number | undefined => {
+  if (asset.type === "CryptoCurrency") return asset.ethereumLikeInfo?.chainId;
+  if (asset.type === "TokenCurrency") return asset.parentCurrency.ethereumLikeInfo?.chainId;
+  return undefined;
+};
+
 export const AccountSelector = ({
   asset,
   onAccountSelected,
@@ -33,6 +39,7 @@ export const AccountSelector = ({
     asset,
     onAccountSelected,
   );
+  const chainId = getEvmChainId(asset);
 
   const BottomComponent = (
     <>
@@ -59,6 +66,7 @@ export const AccountSelector = ({
         detailedAccounts={detailedAccounts}
         onAccountSelected={onAccountSelected}
         bottomComponent={!hideAddAccountButton && BottomComponent}
+        chainId={chainId}
       />
     </>
   );
