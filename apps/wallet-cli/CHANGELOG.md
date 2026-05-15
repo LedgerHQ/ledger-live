@@ -1,5 +1,54 @@
 # @ledgerhq/wallet-cli
 
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#17284](https://github.com/LedgerHQ/ledger-live/pull/17284) [`446020d`](https://github.com/LedgerHQ/ledger-live/commit/446020d273d19f761920b57cefec85b5dabe2921) Thanks [@gre-ledger](https://github.com/gre-ledger)! - chore: async prep — toOperationRaw, toSignedOperationRaw and remaining bridge callers (LIVE-29186)
+
+  Make `toOperationRaw`, `toSignedOperationRaw` and `toSignOperationEventRaw` async in `@ledgerhq/live-common`,
+  widen `WalletSyncDataManagerResolutionContext.getAccountBridge` in `@ledgerhq/live-wallet` to accept a Promise,
+  and update remaining callers (apps/cli, apps/wallet-cli, apps/web-tools, mobile concordium, coin-tester-evm/solana,
+  coin-modules-monitoring) to `await` the bridge.
+
+- [#17087](https://github.com/LedgerHQ/ledger-live/pull/17087) [`f661909`](https://github.com/LedgerHQ/ledger-live/commit/f6619097fb95a83377d981b40031de555e2c1855) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add status command to cli
+
+- [#17280](https://github.com/LedgerHQ/ledger-live/pull/17280) [`37241be`](https://github.com/LedgerHQ/ledger-live/commit/37241be0225443a836511580ae64a1a3f68b90bd) Thanks [@Justkant](https://github.com/Justkant)! - Fix wallet-cli swap execution to keep the Exchange app session open across the full pipeline
+
+- [#17379](https://github.com/LedgerHQ/ledger-live/pull/17379) [`08e4ec2`](https://github.com/LedgerHQ/ledger-live/commit/08e4ec282be330d6c8ec378dfc7d75d7a69f8a5c) Thanks [@Justkant](https://github.com/Justkant)! - Fix wallet CLI USB interruption and DMK teardown handling
+
+- [#17441](https://github.com/LedgerHQ/ledger-live/pull/17441) [`24a6911`](https://github.com/LedgerHQ/ledger-live/commit/24a691176bd63bfb028d66ebedc5c0013d5c1c3a) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - limit providers for swap execute and map changelly to changelly_v2
+
+- [#17259](https://github.com/LedgerHQ/ledger-live/pull/17259) [`0d39a62`](https://github.com/LedgerHQ/ledger-live/commit/0d39a621818651365f3a4a28681493b0104802c6) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Reject raw account descriptors as CLI arguments (use session labels from `account discover`) and reject extended private keys (xprv/yprv/zprv/tprv/uprv/vprv) in descriptor parsing.
+
+- [#17370](https://github.com/LedgerHQ/ledger-live/pull/17370) [`b009632`](https://github.com/LedgerHQ/ledger-live/commit/b009632b52cf2c1a9e99122a89f1f7ee7e0737f2) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add supported currency to quote
+
+- [#17435](https://github.com/LedgerHQ/ledger-live/pull/17435) [`5f3b163`](https://github.com/LedgerHQ/ledger-live/commit/5f3b16310ce7f6c2a34066ec8f24d252e0e7b13f) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - remove Provider fee and Network fee fields from quote in swap CLI
+
+- [#16952](https://github.com/LedgerHQ/ledger-live/pull/16952) [`483bc1c`](https://github.com/LedgerHQ/ledger-live/commit/483bc1c5aa432dac9ab0413d7b7ee27e5ebb0b34) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - chore(BACK-11212): update code base after `alpaca` -> `coin-service` renaming
+
+- [#17366](https://github.com/LedgerHQ/ledger-live/pull/17366) [`334c280`](https://github.com/LedgerHQ/ledger-live/commit/334c2804622f46d7ec536e937419217c07dea97d) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add from and to to swap execute
+
+- [#17200](https://github.com/LedgerHQ/ledger-live/pull/17200) [`44f72d8`](https://github.com/LedgerHQ/ledger-live/commit/44f72d86c17234506dc2f7ef27377590d4bcee6f) Thanks [@Justkant](https://github.com/Justkant)! - Add genuine check command to wallet-cli
+
+- [#17281](https://github.com/LedgerHQ/ledger-live/pull/17281) [`24044ef`](https://github.com/LedgerHQ/ledger-live/commit/24044efdd32e46416a45ef522edfb98f3799858c) Thanks [@Justkant](https://github.com/Justkant)! - Harden wallet-cli swap execute flags and zero-amount rate output
+
+- [#17282](https://github.com/LedgerHQ/ledger-live/pull/17282) [`82045d4`](https://github.com/LedgerHQ/ledger-live/commit/82045d4e485b39fdedf7614929090b148e8b1d1f) Thanks [@Justkant](https://github.com/Justkant)! - Route human stderr messages through the shared writer for consistent capture.
+
+- [#17365](https://github.com/LedgerHQ/ledger-live/pull/17365) [`184d0f8`](https://github.com/LedgerHQ/ledger-live/commit/184d0f8c79ac7b0fe34257f3ff7b6c970cc2e876) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - remove dry run from swap execute
+
+- [#17311](https://github.com/LedgerHQ/ledger-live/pull/17311) [`7326427`](https://github.com/LedgerHQ/ledger-live/commit/7326427983098d96694f0decf9cc492cc1f12f10) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add session management with quote command
+
+- [#16948](https://github.com/LedgerHQ/ledger-live/pull/16948) [`aa545d0`](https://github.com/LedgerHQ/ledger-live/commit/aa545d07d60f68810b1aafcbf1621782f69363cf) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add swap execute to cli
+
+- [#17434](https://github.com/LedgerHQ/ledger-live/pull/17434) [`9a9611a`](https://github.com/LedgerHQ/ledger-live/commit/9a9611ac9df3e37be86ee673d3619105f382746f) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - support tokens for supported currencies
+
+- [#17367](https://github.com/LedgerHQ/ledger-live/pull/17367) [`ae62d2d`](https://github.com/LedgerHQ/ledger-live/commit/ae62d2df1e995d195d844674c8e4c21234caa3ec) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Fix `--no-verify` (and other `--no-<flag>` negations) being silently ignored. bunli's parser drops unknown flags, so `--no-verify` was a no-op and the device verification screen still appeared. argv is now pre-processed to rewrite `--no-<flag>` to `--<flag>=false`.
+
+- [#17189](https://github.com/LedgerHQ/ledger-live/pull/17189) [`d4314da`](https://github.com/LedgerHQ/ledger-live/commit/d4314daa9177c526456e0583c4e445383d656c55) Thanks [@Justkant](https://github.com/Justkant)! - Add npm binary publishing support for wallet-cli
+
+- [#17317](https://github.com/LedgerHQ/ledger-live/pull/17317) [`6935e56`](https://github.com/LedgerHQ/ledger-live/commit/6935e56e7634523c10cc1e2ef935f7d6a68b7f79) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add swap skill to skill file
+
 ## 0.3.0
 
 ### Minor Changes
