@@ -7,12 +7,15 @@ import IconCoins from "~/renderer/icons/Coins";
 import type { HederaFamily } from "~/renderer/families/hedera/types";
 import { useStake } from "LLD/hooks/useStake";
 
-const AccountHeaderActions: HederaFamily["accountHeaderManageActions"] = ({ account }) => {
+const AccountHeaderActions: HederaFamily["accountHeaderManageActions"] = ({
+  account,
+  parentAccount,
+}) => {
   const label = useGetStakeLabelLocaleBased();
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { getCanStakeCurrency } = useStake();
-  const bridge = useAccountBridge(account);
+  const bridge = useAccountBridge(account, parentAccount);
 
   if (account.type !== "Account") {
     return [];

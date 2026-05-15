@@ -6,10 +6,13 @@ import IconTransfer from "~/renderer/icons/Transfer";
 import type { AleoFamily } from "./types";
 import { AleoCustomModal } from "./constants";
 
-const AccountHeaderActions: AleoFamily["accountHeaderManageActions"] = ({ account }) => {
+const AccountHeaderActions: AleoFamily["accountHeaderManageActions"] = ({
+  account,
+  parentAccount,
+}) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const bridge = useAccountBridge(account);
+  const bridge = useAccountBridge(account, parentAccount);
 
   if (account.type !== "Account") {
     return [];
