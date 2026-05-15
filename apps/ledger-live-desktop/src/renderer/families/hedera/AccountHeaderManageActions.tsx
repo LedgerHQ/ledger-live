@@ -1,6 +1,6 @@
 import { useDispatch } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
-import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { openModal } from "~/renderer/actions/modals";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import IconCoins from "~/renderer/icons/Coins";
@@ -12,6 +12,7 @@ const AccountHeaderActions: HederaFamily["accountHeaderManageActions"] = ({ acco
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { getCanStakeCurrency } = useStake();
+  const bridge = useAccountBridge(account);
 
   if (account.type !== "Account") {
     return [];
@@ -25,7 +26,7 @@ const AccountHeaderActions: HederaFamily["accountHeaderManageActions"] = ({ acco
   }
 
   const onClick = () => {
-    const modalKey = isAccountEmpty(account) ? "MODAL_NO_FUNDS_STAKE" : "MODAL_HEDERA_DELEGATION";
+    const modalKey = bridge.isAccountEmpty(account) ? "MODAL_NO_FUNDS_STAKE" : "MODAL_HEDERA_DELEGATION";
     dispatch(openModal(modalKey, { account }));
   };
 

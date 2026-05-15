@@ -1,6 +1,6 @@
 import { useDispatch } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
-import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { openModal } from "~/renderer/actions/modals";
 import IconTransfer from "~/renderer/icons/Transfer";
 import type { AleoFamily } from "./types";
@@ -9,12 +9,13 @@ import { AleoCustomModal } from "./constants";
 const AccountHeaderActions: AleoFamily["accountHeaderManageActions"] = ({ account }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const bridge = useAccountBridge(account);
 
   if (account.type !== "Account") {
     return [];
   }
 
-  const isSelfTransferDisabled = isAccountEmpty(account);
+  const isSelfTransferDisabled = bridge.isAccountEmpty(account);
 
   const onClick = () => {
     dispatch(openModal(AleoCustomModal.SELF_TRANSFER, { account }));
