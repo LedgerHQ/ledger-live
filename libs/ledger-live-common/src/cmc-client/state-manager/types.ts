@@ -43,11 +43,6 @@ export enum AltcoinSeasonIndexTags {
 const AltcoinSeasonIndexDataSchema = z.object({
   altcoin_index: z.number().min(0).max(100),
   altcoin_marketcap: z.number(),
-  snapshot_time: z.string(),
-  yearly_high: z.number(),
-  yearly_high_date: z.string(),
-  yearly_low: z.number(),
-  yearly_low_date: z.string(),
 });
 
 const AltcoinSeasonIndexStatusSchema = z.object({
@@ -65,13 +60,8 @@ export const AltcoinSeasonIndexResponseSchema = z.object({
 });
 
 export const AltcoinSeasonIndexSchema = z.object({
-  altcoinIndex: z.number().min(0).max(100),
+  value: z.number().min(0).max(100),
   altcoinMarketcap: z.number(),
-  snapshotTime: z.string(),
-  yearlyHigh: z.number(),
-  yearlyHighDate: z.string(),
-  yearlyLow: z.number(),
-  yearlyLowDate: z.string(),
 });
 
 export type AltcoinSeasonIndexResponse = z.infer<typeof AltcoinSeasonIndexResponseSchema>;

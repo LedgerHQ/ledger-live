@@ -36,12 +36,7 @@ export function transformFearAndGreedResponse(response: unknown): FearAndGreedIn
 export function transformAltcoinSeasonIndexResponse(response: unknown): AltcoinSeasonIndex {
   const { data } = parseOrThrow(AltcoinSeasonIndexResponseSchema, response);
   return {
-    altcoinIndex: data.altcoin_index,
+    value: data.altcoin_index,
     altcoinMarketcap: data.altcoin_marketcap,
-    snapshotTime: data.snapshot_time,
-    yearlyHigh: data.yearly_high,
-    yearlyHighDate: data.yearly_high_date,
-    yearlyLow: data.yearly_low,
-    yearlyLowDate: data.yearly_low_date,
   };
 }

@@ -14,6 +14,11 @@ export const FIFTEEN_MINUTES_IN_MS = 15 * ONE_MINUTE_IN_MS;
 const ONE_MINUTE_IN_SECONDS = 60;
 const FIFTEEN_MINUTES_IN_SECONDS = 15 * ONE_MINUTE_IN_SECONDS;
 
+const ENDPOINTS = {
+  fearAndGreed: "/fear-and-greed/latest",
+  altcoinSeasonIndex: "/altcoin-season-index/latest",
+};
+
 export const cmcApi = createApi({
   reducerPath: "cmcApi",
   baseQuery: fetchBaseQuery({
@@ -23,7 +28,7 @@ export const cmcApi = createApi({
   endpoints: build => ({
     getFearAndGreedLatest: build.query<FearAndGreedIndex, void>({
       query: () => ({
-        url: "/fear-and-greed/latest",
+        url: ENDPOINTS.fearAndGreed,
       }),
       providesTags: [FearAndGreedTags.Latest],
       transformResponse: transformFearAndGreedResponse,
@@ -31,7 +36,7 @@ export const cmcApi = createApi({
     }),
     getAltcoinSeasonIndexLatest: build.query<AltcoinSeasonIndex, void>({
       query: () => ({
-        url: "/altcoin-season-index/latest",
+        url: ENDPOINTS.altcoinSeasonIndex,
       }),
       providesTags: [AltcoinSeasonIndexTags.Latest],
       transformResponse: transformAltcoinSeasonIndexResponse,
