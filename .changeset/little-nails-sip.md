@@ -1,6 +1,6 @@
 ---
 "@ledgerhq/live-common": minor
-"live-mobile": patch
+"live-mobile": minor
 ---
 
 chore(llm): wire Datadog in `useBroadcast`

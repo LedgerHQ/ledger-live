@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/wallet-cli": patch
+"@ledgerhq/wallet-cli": minor
 ---
 
 Reject raw account descriptors as CLI arguments (use session labels from `account discover`) and reject extended private keys (xprv/yprv/zprv/tprv/uprv/vprv) in descriptor parsing.

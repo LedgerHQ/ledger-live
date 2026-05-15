@@ -1,5 +1,5 @@
 ---
-"live-mobile": patch
+"live-mobile": minor
 ---
 
 [SWAP] [Mobile] rollback swap webview remount

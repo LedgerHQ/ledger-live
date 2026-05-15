@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-tezos": patch
+"@ledgerhq/coin-tezos": minor
 ---
 
 Fix "Unable to normalize sender public key" on tz1 first-tx delegation/send

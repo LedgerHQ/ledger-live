@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/ledger-wallet-framework": patch
+"@ledgerhq/ledger-wallet-framework": minor
 ---
 
 Fix shouldRetainPendingOperation dropping optimistic operations across digit boundaries

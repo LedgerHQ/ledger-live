@@ -1,6 +1,6 @@
 ---
-"@ledgerhq/coin-tezos": patch
-"@ledgerhq/live-common": patch
+"@ledgerhq/coin-tezos": minor
+"@ledgerhq/live-common": minor
 ---
 
 fix(coin-tezos): move `computeIntentType` to `BridgeApi`

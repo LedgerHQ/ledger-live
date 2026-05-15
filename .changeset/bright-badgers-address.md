@@ -1,5 +1,5 @@
 ---
-"ledger-live-desktop": patch
+"ledger-live-desktop": minor
 ---
 
 Fix asset detail section action links (pointer cursor and stray navigation on click); refactor asset detail address list to MVVM

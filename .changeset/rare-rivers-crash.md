@@ -1,9 +1,9 @@
 ---
-"live-mobile": patch
-"ledger-live-desktop": patch
-"@ledgerhq/web-tools": patch
-"@ledgerhq/native-ui": patch
-"@ledgerhq/react-ui": patch
+"live-mobile": minor
+"ledger-live-desktop": minor
+"@ledgerhq/web-tools": minor
+"@ledgerhq/native-ui": minor
+"@ledgerhq/react-ui": minor
 ---
 
 Bump crypto-icons with latest lumen bump
