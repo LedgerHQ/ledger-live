@@ -3,7 +3,7 @@ import { stakeActions } from "@ledgerhq/coin-solana/logic";
 import { LEDGER_VALIDATORS_VOTE_ACCOUNTS } from "@ledgerhq/coin-solana/utils";
 import type { SolanaAccount } from "@ledgerhq/coin-solana/types";
 import type { ValidatorsAppValidator } from "@ledgerhq/coin-solana/network/validator-app/index";
-import { isAccountEmpty } from "../../account";
+import type { ResolvedAccountBridge } from "@ledgerhq/types-live";
 
 export interface AccountBannerState {
   display: boolean;
@@ -12,7 +12,11 @@ export interface AccountBannerState {
   ledgerValidator: ValidatorsAppValidator | undefined;
 }
 
-export function getAccountBannerState(account: SolanaAccount): AccountBannerState {
+export function getAccountBannerState(
+  account: SolanaAccount,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  bridge: ResolvedAccountBridge<any>,
+): AccountBannerState {
   // Group current validator
   const solanaResources = account.solanaResources ? account.solanaResources : { stakes: [] };
   const delegations = solanaResources?.stakes.map(delegation => {
@@ -60,7 +64,7 @@ export function getAccountBannerState(account: SolanaAccount): AccountBannerStat
   }
   if (worstValidator) {
     if (LEDGER_VALIDATORS_VOTE_ACCOUNTS.includes(worstValidator?.voteAccount)) {
-      if (!isAccountEmpty(account)) {
+      if (!bridge.isAccountEmpty(account)) {
         display = true;
       }
     } else {
