@@ -8879,6 +8879,13 @@
     "explore": "Explore all Ledger devices"
   },
   "assetDetails": {
+    "header": {
+      "optionsMenu": "Asset options",
+      "addFavourite": "Add to favorites",
+      "removeFavourite": "Remove from favorites",
+      "hideFromPortfolio": "Hide from portfolio",
+      "showInPortfolio": "Show in portfolio"
+    },
     "totalBalance": "Total balance",
     "marketPrice": "Market price",
     "addresses": "Addresses",

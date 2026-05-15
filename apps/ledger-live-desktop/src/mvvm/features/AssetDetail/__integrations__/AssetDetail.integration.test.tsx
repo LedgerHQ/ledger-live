@@ -35,6 +35,7 @@ const TEST_ID = {
   ACTION_RECEIVE: "asset-detail-action-receive",
   ACTION_SELL: "asset-detail-action-sell",
   ACTION_SEND: "asset-detail-action-send",
+  HEADER_OPTIONS: "asset-detail-header-options-trigger",
 } as const;
 
 jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag", () => ({
@@ -232,6 +233,41 @@ describe("AssetDetail integration", () => {
         await waitForMarketPriceSectionShowsQuote();
       },
     );
+
+    it("shows header options menu with favorites and hide actions", async () => {
+      mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+      setupRoute("bitcoin", OWNED_ASSETS[0].buildDistribution());
+
+      const { user } = renderWithMockedCounterValuesProvider(<AssetDetail />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId(TEST_ID.HEADER_OPTIONS)).toBeVisible();
+      });
+
+      await user.click(screen.getByTestId(TEST_ID.HEADER_OPTIONS));
+
+      expect(screen.getByRole("menuitem", { name: /add to favorites/i })).toBeVisible();
+      expect(screen.getByRole("menuitem", { name: /hide from portfolio/i })).toBeVisible();
+    });
+
+    it("shows Show in portfolio when the asset is blacklisted", async () => {
+      mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+      setupRoute("bitcoin", OWNED_ASSETS[0].buildDistribution());
+
+      const { user } = renderWithMockedCounterValuesProvider(<AssetDetail />, {
+        initialState: {
+          settings: { ...AFTER_ONBOARDING_STATE, blacklistedTokenIds: ["bitcoin"] },
+        },
+      });
+
+      await waitFor(() => {
+        expect(screen.getByTestId(TEST_ID.HEADER_OPTIONS)).toBeVisible();
+      });
+
+      await user.click(screen.getByTestId(TEST_ID.HEADER_OPTIONS));
+
+      expect(screen.getByRole("menuitem", { name: /show in portfolio/i })).toBeVisible();
+    });
 
     it.each(OWNED_ASSETS)(
       "$label - keeps balance and addresses when Market and DADA both fail",
@@ -492,7 +528,7 @@ describe("AssetDetail integration", () => {
       mockMarket.withData(MarketMockedResponse.bitcoinDetail);
       setupRoute("bitcoin", { list: [] });
 
-      render(<AssetDetail />);
+      renderWithMockedCounterValuesProvider(<AssetDetail />);
 
       await waitFor(() => {
         expect(screen.getByTestId(TEST_ID.ACTION_BUY)).toBeDisabled();

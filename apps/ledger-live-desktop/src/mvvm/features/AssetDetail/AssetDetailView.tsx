@@ -1,8 +1,7 @@
-import React, { useCallback } from "react";
-import { useNavigate } from "react-router";
+import React from "react";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { getValidCryptoIconSize } from "~/renderer/utils/cryptoIconSize";
-import { AssetHeader } from "./components/AssetHeader/AssetHeader";
+import { AssetHeader } from "./components/AssetHeader";
 import { ActionBar } from "./components/ActionBar";
 import { MarketPriceSection } from "./components/MarketPriceSection";
 import { MarketDataSection } from "./components/MarketDataSection";
@@ -15,13 +14,8 @@ type AssetDetailViewProps = Readonly<{
 }>;
 
 export function AssetDetailView({ viewModel }: AssetDetailViewProps) {
-  const navigate = useNavigate();
   const { distributionItem, marketInfo, market, assetName, assetTicker, ledgerId, ledgerCurrency } =
     viewModel;
-
-  const onBack = useCallback(() => {
-    navigate(-1);
-  }, [navigate]);
 
   return (
     <div className="flex w-full shrink-0 flex-col gap-24 pb-32">
@@ -36,7 +30,10 @@ export function AssetDetailView({ viewModel }: AssetDetailViewProps) {
             />
           )
         }
-        onBack={onBack}
+        distributionItem={distributionItem}
+        market={market}
+        marketInfo={marketInfo}
+        ledgerCurrency={ledgerCurrency}
       />
 
       <MarketPriceSection
