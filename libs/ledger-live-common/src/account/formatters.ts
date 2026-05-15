@@ -67,7 +67,7 @@ function maybeDisplaySumOfOpsIssue(ops, balance, unit) {
   );
 }
 
-const cliFormat = (account, level?: string) => {
+const cliFormat = async (account, level?: string): Promise<string> => {
   const { id, name, freshAddress, freshAddressPath, derivationMode, index, operations } = account;
   const tag = getTagDerivationMode(account.currency, derivationMode);
   const balance = formatCurrencyUnit(getAccountCurrency(account).units[0], account.balance, {
@@ -86,9 +86,9 @@ const cliFormat = (account, level?: string) => {
     getAccountCurrency(account).units[0],
   );
 
-  const formatAccountSpecifics = getAccountBridge(account).formatAccountSpecifics;
-  if (formatAccountSpecifics) {
-    str += formatAccountSpecifics(account);
+  const bridge = await getAccountBridge(account);
+  if (bridge.formatAccountSpecifics) {
+    str += bridge.formatAccountSpecifics(account);
     str += "\n";
   }
 
@@ -123,9 +123,7 @@ const cliFormat = (account, level?: string) => {
           if (ta) return getAccountCurrency(ta).units[0];
           console.error("unexpected missing token account " + id);
         },
-        (operation, unit) => {
-          return getAccountBridge(account).formatOperationSpecifics?.(operation, unit) ?? "";
-        },
+        (operation, unit) => bridge.formatOperationSpecifics?.(operation, unit) ?? "",
       ),
     )
     .join("");
@@ -198,12 +196,14 @@ export const accountFormatters: { [_: string]: (Account) => any } = {
       .map(ta => getAccountCurrency(ta).ticker)
       .join("\n"),
 };
-export function formatAccount(account: Account, format = "full"): string {
+export async function formatAccount(account: Account, format = "full"): Promise<string> {
   const f = accountFormatters[format];
   invariant(f, "missing account formatter=" + format);
   return f(account);
 }
-export function formatOperation(account: Account | null | undefined): (arg0: Operation) => string {
+export async function formatOperation(
+  account: Account | null | undefined,
+): Promise<(arg0: Operation) => string> {
   const unitByAccountId = (id: string) => {
     if (!account) return;
     if (account.id === id) return getAccountCurrency(account).units[0];
@@ -211,11 +211,9 @@ export function formatOperation(account: Account | null | undefined): (arg0: Ope
     if (ta) return getAccountCurrency(ta).units[0];
   };
 
-  const familyExtra = (operation, unit) => {
-    if (!account) return "";
-
-    return getAccountBridge(account).formatOperationSpecifics?.(operation, unit) ?? "";
-  };
+  const bridge = account ? await getAccountBridge(account) : null;
+  const familyExtra = (operation, unit) =>
+    bridge?.formatOperationSpecifics?.(operation, unit) ?? "";
 
   return formatOp(unitByAccountId, familyExtra);
 }

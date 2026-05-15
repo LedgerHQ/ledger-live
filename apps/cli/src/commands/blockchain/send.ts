@@ -66,7 +66,7 @@ export default {
         : (_l: any) => {};
     return scan(opts).pipe(
       tap(account => {
-        l(`→ FROM ${formatAccount(account, "basic")}`);
+        formatAccount(account, "basic").then(str => l(`→ FROM ${str}`));
       }),
       switchMap(account =>
         from(inferTransactions(account, opts)).pipe(
@@ -106,8 +106,8 @@ export default {
                                           })
                                           .then(async op => {
                                             l(
-                                              `✔️ broadcasted! optimistic operation: ${formatOperation(
-                                                account,
+                                              `✔️ broadcasted! optimistic operation: ${(
+                                                await formatOperation(account)
                                               )(
                                                 // @ts-expect-error we are supposed to give an OperationRaw and yet it's an Operation
                                                 await fromOperationRaw(op, account.id),
