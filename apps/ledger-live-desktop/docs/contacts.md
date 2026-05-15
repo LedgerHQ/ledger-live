@@ -11,7 +11,7 @@ for icons. Do not introduce `styled-components` or `@ledgerhq/react-ui`
 components in new Contacts code. If Lumen is missing a primitive you need,
 raise it through the usual Lumen-adoption channel for this repo.
 
-## What's working today (after L3)
+## What's working today (after L3.5)
 
 - A local Contacts store (separate from LWD's main persistence —
   `lld-contacts.json`).
@@ -29,10 +29,23 @@ raise it through the usual Lumen-adoption channel for this repo.
 - A stable hook `useContacts()` at
   `apps/ledger-live-desktop/src/renderer/contacts/useContacts.ts` that
   exposes every verb as a Promise-based method.
-- Send-side surfacing: a `ContactBadge` (Lumen `Tag`) next to the
-  recipient pill and above the sender description when either side is
-  registered, plus on-device decoration via the `liveContactsDataSource`
-  singleton registered on `DmkSignerEth`'s ContextModule.
+- Send-side surfacing across three seams:
+  - On-device decoration via the `liveContactsDataSource` singleton
+    registered on `DmkSignerEth`'s ContextModule.
+  - "Select account" rows (ModularDialog `AccountSelector`) carry an
+    inline Lumen `Tag` — green `appearance="success"` + `Devices`
+    symbol — next to any LL account whose address matches a
+    registered Ledger account in the local store. Resolution via
+    `resolveContact` (pure) in `renderer/contacts/useDisplayAddress.ts`.
+  - Recipient input on Send → To: hosts an inline `RecipientPicker`
+    (`mvvm/features/Send/components/RecipientPicker.tsx`) with two
+    sections, Contacts first and Ledger accounts second (Lumen
+    `Subheader` + `ListItem` + `Avatar`). Empty input → full
+    inventory on the active chain; typing filters both sections by
+    name or address-hex prefix; picker auto-folds when the entered
+    query is the full address of an existing entry. Click a row →
+    `recipientSearch.setValue(addressHex)` and the standard
+    validation pipeline takes over.
 
 ## What you're building (L4, L5)
 
