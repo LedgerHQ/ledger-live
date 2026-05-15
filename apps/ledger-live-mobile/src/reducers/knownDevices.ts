@@ -123,6 +123,14 @@ function findMatchingKnownDevice(
   const oldDevicesForTransport = knownDevices.filter(
     device => device.transport === newDevice.transport,
   );
+
+  if (newDevice.transport === rnHidTransportIdentifier) {
+    return (
+      oldDevicesForTransport.find(device => device.deviceModelId === newDevice.deviceModelId) ??
+      null
+    );
+  }
+
   const matchingOldDevice = findMatchingOldDevice(
     mapKnownDeviceToDeviceBaseInfo(newDevice),
     oldDevicesForTransport.map(mapKnownDeviceToDeviceBaseInfo),
