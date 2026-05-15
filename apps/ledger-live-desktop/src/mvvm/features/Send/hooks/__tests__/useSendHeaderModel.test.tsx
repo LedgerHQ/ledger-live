@@ -15,11 +15,13 @@ jest.mock("~/renderer/reducers/wallet", () => ({
 }));
 jest.mock("~/renderer/contacts/useDisplayAddress", () => ({
   useDisplayAddress: jest.fn((address: string | undefined) => address),
+  useContactResolution: jest.fn(() => null),
 }));
 
 import { useFlowWizard } from "../../../FlowWizard/FlowWizardContext";
 import { useSendFlowData, useSendFlowActions } from "../../context/SendFlowContext";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
+import { useContactResolution } from "~/renderer/contacts/useDisplayAddress";
 
 type VM = ReturnType<typeof useSendHeaderModel>;
 let container: HTMLElement;
@@ -329,6 +331,100 @@ describe("useSendHeaderModel", () => {
       const updater = (updateTransaction as jest.Mock).mock.calls[0][0];
       const ethTx = { family: "ethereum" };
       expect(updater(ethTx)).toBe(ethTx);
+    });
+  });
+
+  describe("contact decoration kinds", () => {
+    // L2.2: surface the resolution kind for both ends of the Send so the view
+    // can render a small ContactBadge next to the recipient input and the
+    // From-side description. Kinds are derived from useContactResolution.
+
+    it("recipientContactKind populates from the committed recipient address", () => {
+      mockNavigation();
+      mockActions();
+      (useContactResolution as jest.Mock).mockImplementation((address: string | undefined) =>
+        address === "0xrecipient" ? { name: "Alice", kind: "external" } : null,
+      );
+      mockData({
+        account: {
+          currency: { type: "CryptoCurrency", ticker: "ETH", ethereumLikeInfo: { chainId: 1 } },
+          account: { freshAddress: "0xself" },
+        },
+        recipient: { address: "0xrecipient" },
+        transaction: { status: {} },
+      });
+
+      renderHook("");
+
+      expect(latestVM?.recipientContactKind).toBe("external");
+    });
+
+    it("recipientContactKind falls back to the search value while the user is still typing on the Recipient step", () => {
+      mockNavigation();
+      mockActions();
+      (useContactResolution as jest.Mock).mockImplementation((address: string | undefined) =>
+        address === "0xtyped" ? { name: "Alice", kind: "external" } : null,
+      );
+      (useSendFlowData as jest.Mock).mockReturnValue({
+        state: {
+          account: {
+            currency: { type: "CryptoCurrency", ticker: "ETH", ethereumLikeInfo: { chainId: 1 } },
+            account: { freshAddress: "0xself" },
+          },
+          recipient: null,
+          transaction: { status: {} },
+        },
+        uiConfig: { hasMemo: false },
+        recipientSearch: { value: "0xtyped", setValue: jest.fn(), clear: jest.fn() },
+      });
+
+      renderHook("");
+
+      expect(latestVM?.recipientContactKind).toBe("external");
+    });
+
+    it("fromContactKind populates when the active LWD account is a registered Ledger account", () => {
+      mockNavigation();
+      mockActions();
+      (useContactResolution as jest.Mock).mockImplementation((address: string | undefined) =>
+        address === "0xself" ? { name: "Account 1", kind: "ledgerAccount" } : null,
+      );
+      mockData({
+        account: {
+          currency: { type: "CryptoCurrency", ticker: "ETH", ethereumLikeInfo: { chainId: 1 } },
+          account: { freshAddress: "0xself" },
+        },
+        recipient: { address: "0xrecipient" },
+        transaction: { status: {} },
+      });
+
+      renderHook("");
+
+      expect(latestVM?.fromContactKind).toBe("ledgerAccount");
+      // recipient is unrelated to any registered entry → no badge there
+      expect(latestVM?.recipientContactKind).toBeUndefined();
+    });
+
+    it("does not leak an external recipient resolution onto the From side", () => {
+      mockNavigation();
+      mockActions();
+      // Only the recipient resolves; the from-side lookup must return null.
+      (useContactResolution as jest.Mock).mockImplementation((address: string | undefined) =>
+        address === "0xrecipient" ? { name: "Alice", kind: "external" } : null,
+      );
+      mockData({
+        account: {
+          currency: { type: "CryptoCurrency", ticker: "ETH", ethereumLikeInfo: { chainId: 1 } },
+          account: { freshAddress: "0xself" },
+        },
+        recipient: { address: "0xrecipient" },
+        transaction: { status: {} },
+      });
+
+      renderHook("");
+
+      expect(latestVM?.recipientContactKind).toBe("external");
+      expect(latestVM?.fromContactKind).toBeUndefined();
     });
   });
 });
