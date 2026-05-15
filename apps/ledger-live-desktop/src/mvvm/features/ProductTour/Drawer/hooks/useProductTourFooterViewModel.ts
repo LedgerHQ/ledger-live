@@ -1,7 +1,12 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useSlidesContext } from "LLD/components/Slides";
-import { PRODUCT_TOUR_LAST_SLIDE_INDEX, PRODUCT_TOUR_SLIDES } from "../const";
+import { track } from "~/renderer/analytics/segment";
+import {
+  PAGE_TRACKING_PRODUCT_TOUR,
+  PRODUCT_TOUR_LAST_SLIDE_INDEX,
+  PRODUCT_TOUR_SLIDES,
+} from "../const";
 import type { ProductTourPrimaryAction } from "../const";
 
 interface ProductTourFooterViewModelProps {
@@ -32,9 +37,20 @@ export function useProductTourFooterViewModel({
       primaryLabel: t(currentSlide.primaryLabelKey),
       secondaryLabel: isLastSlide ? t("productTour.cta.done") : t("productTour.cta.continue"),
       onPrimaryClick: () => {
+        track("button_clicked", {
+          button: "CTA click",
+          page: PAGE_TRACKING_PRODUCT_TOUR,
+          card: currentIndex + 1,
+          action: currentSlide.primaryAction,
+        });
         onPrimaryAction(currentSlide.primaryAction);
       },
       onSecondaryClick: () => {
+        track("button_clicked", {
+          button: isLastSlide ? "Done" : "Continue",
+          page: PAGE_TRACKING_PRODUCT_TOUR,
+          card: currentIndex + 1,
+        });
         if (isLastSlide) {
           onComplete();
           return;
@@ -43,6 +59,6 @@ export function useProductTourFooterViewModel({
         goToNext();
       },
     }),
-    [currentSlide, goToNext, isLastSlide, onComplete, onPrimaryAction, t],
+    [currentIndex, currentSlide, goToNext, isLastSlide, onComplete, onPrimaryAction, t],
   );
 }

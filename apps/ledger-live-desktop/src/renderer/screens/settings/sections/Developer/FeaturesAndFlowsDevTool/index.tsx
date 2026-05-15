@@ -18,6 +18,7 @@ const FeaturesAndFlowsDevTool = () => {
     isOpen,
     openDialog: openProductTourDialog,
     onClose,
+    onDismiss,
     onComplete,
     onPrimaryAction,
     onSlideChange,
@@ -63,6 +64,7 @@ const FeaturesAndFlowsDevTool = () => {
       <ProductTourDialog
         isOpen={isOpen}
         onClose={onClose}
+        onDismiss={onDismiss}
         onComplete={onComplete}
         onPrimaryAction={onPrimaryAction}
         onSlideChange={onSlideChange}
