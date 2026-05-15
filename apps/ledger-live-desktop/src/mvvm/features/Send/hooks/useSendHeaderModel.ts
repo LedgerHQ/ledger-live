@@ -16,7 +16,7 @@ import BigNumber from "bignumber.js";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import { trackPage } from "~/renderer/analytics/segment";
 import { getSendFlowTrackingProperties } from "../utils/tracking";
-import { useContactResolution, useDisplayAddress } from "~/renderer/contacts/useDisplayAddress";
+import { useContactResolution } from "~/renderer/contacts/useDisplayAddress";
 import type { ContactBadgeKind } from "~/renderer/contacts/ContactBadge";
 
 type UseSendHeaderModelParams = Readonly<{
@@ -80,6 +80,38 @@ export function useSendHeaderModel({
   const isRecipientStep = currentStep === SEND_FLOW_STEP.RECIPIENT;
   const isAmountStep = currentStep === SEND_FLOW_STEP.AMOUNT;
 
+  const recipientDisplayAddress = useMemo(
+    () => getRecipientDisplayValue(state.recipient),
+    [state.recipient],
+  );
+  const currency = state.account.currency;
+  const recipientChainId =
+    currency?.type === "CryptoCurrency"
+      ? currency.ethereumLikeInfo?.chainId
+      : currency?.type === "TokenCurrency"
+        ? currency.parentCurrency.ethereumLikeInfo?.chainId
+        : undefined;
+  // recipientDisplayAddress is the truncated form (0xabc…def01) and would
+  // never match a full stored address. Resolve against the full address —
+  // committed (state.recipient.address) or, while still typing on the
+  // Recipient step, the search input.
+  const fullRecipientAddress = state.recipient?.address || recipientSearch.value || undefined;
+  const recipientResolution = useContactResolution(fullRecipientAddress, recipientChainId);
+  // The sending account's address (for resolution against Ledger-account entries).
+  // TokenAccounts ride on a parent Account; only Accounts expose `freshAddress`.
+  const fromAddress =
+    state.account.account && "freshAddress" in state.account.account
+      ? state.account.account.freshAddress
+      : undefined;
+  const fromResolution = useContactResolution(fromAddress, recipientChainId);
+
+  // The decorated recipient shown on later steps: contact name if we resolved
+  // one, otherwise the truncated address as before. This is the only place we
+  // replace text content with a contacts-storage value — the From account
+  // name stays as whatever Ledger Live has on file, and the on-device-registered
+  // identity is signalled by the `fromContactKind` badge alone.
+  const decoratedRecipient = recipientResolution?.name ?? recipientDisplayAddress;
+
   const accountSummary = useMemo(() => {
     if (accountName && availableText) return `${accountName} · ${availableText}`;
     return accountName || availableText || "";
@@ -122,29 +154,6 @@ export function useSendHeaderModel({
       close();
     }
   }, [backTarget, close, currentStep, navigation, resetViewState, transaction]);
-
-  const recipientDisplayAddress = useMemo(
-    () => getRecipientDisplayValue(state.recipient),
-    [state.recipient],
-  );
-  const currency = state.account.currency;
-  const recipientChainId =
-    currency?.type === "CryptoCurrency"
-      ? currency.ethereumLikeInfo?.chainId
-      : currency?.type === "TokenCurrency"
-        ? currency.parentCurrency.ethereumLikeInfo?.chainId
-        : undefined;
-  const decoratedRecipient = useDisplayAddress(recipientDisplayAddress, recipientChainId);
-  // recipientDisplayAddress is the truncated form (0xabc…def01) and would
-  // never match a full stored address. Resolve against the full address —
-  // committed (state.recipient.address) or, while still typing on the
-  // Recipient step, the search input.
-  const fullRecipientAddress = state.recipient?.address || recipientSearch.value || undefined;
-  const recipientResolution = useContactResolution(fullRecipientAddress, recipientChainId);
-  const fromResolution = useContactResolution(
-    state.account.account?.freshAddress,
-    recipientChainId,
-  );
 
   const addressInputValue = useMemo(() => {
     if (isRecipientStep) return recipientSearch.value;
