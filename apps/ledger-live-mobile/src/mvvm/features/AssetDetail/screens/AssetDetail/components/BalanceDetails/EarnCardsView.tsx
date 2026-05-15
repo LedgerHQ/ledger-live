@@ -15,6 +15,7 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { ChevronRight, Information } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "~/context/Locale";
 import { ASSET_DETAIL_TEST_IDS } from "LLM/features/AssetDetail/testIds";
 
@@ -26,6 +27,7 @@ type Props = Readonly<{
 
 export function EarnCardsView({ formattedAvailable, formattedDeposit, onEarnDepositPress }: Props) {
   const { t } = useTranslation();
+  const { bottom } = useSafeAreaInsets();
 
   return (
     <Box lx={rowStyle}>
@@ -45,9 +47,11 @@ export function EarnCardsView({ formattedAvailable, formattedDeposit, onEarnDepo
                     <TooltipContent
                       title={t("assetDetail.balanceDetails.availableBalance")}
                       content={
-                        <Text typography="body2" lx={{ color: "muted" }}>
-                          {t("assetDetail.balanceDetails.availableBalanceTooltip")}
-                        </Text>
+                        <Box style={{ paddingBottom: bottom + 24 }}>
+                          <Text typography="body1" lx={{ color: "base" }}>
+                            {t("assetDetail.balanceDetails.availableBalanceTooltip")}
+                          </Text>
+                        </Box>
                       }
                     />
                   </Tooltip>
