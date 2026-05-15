@@ -321,9 +321,11 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
     const family = getFamilyFromAccount(account, parentAccount);
     const currencyId = getCurrencyIdFromAccount(account, parentAccount);
     const isNewSendFlow = isEnabledForFamily(family, currencyId);
-    const sendFlowTrackingProperties = isNewSendFlow
-      ? getSendFlowTrackingProperties(account, parentAccount)
-      : { flow: "send" };
+    const sendFlowTrackingProperties = getSendFlowTrackingProperties(
+      account,
+      parentAccount,
+      isNewSendFlow,
+    );
     track("button_clicked2", {
       button: "send",
       ...buttonSharedTrackingFields,
@@ -331,7 +333,6 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
     track("button_clicked", {
       button: "send",
       page: "Account",
-      currency: currency.ticker,
       ...sendFlowTrackingProperties,
     });
     openSendFlow({
@@ -346,7 +347,6 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
     isEnabledForFamily,
     getFamilyFromAccount,
     getCurrencyIdFromAccount,
-    currency.ticker,
   ]);
 
   const onReceive = useCallback(() => {

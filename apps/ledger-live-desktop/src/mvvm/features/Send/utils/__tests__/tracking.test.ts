@@ -69,6 +69,17 @@ describe("send flow tracking", () => {
       blockchain: "",
       currency: "",
       currency_id: "",
+      newSendFlow: true,
+    });
+  });
+
+  it("returns send flow tracking properties for the old flow", () => {
+    expect(getSendFlowTrackingProperties(null, null, false)).toEqual({
+      flow: "send",
+      blockchain: "",
+      currency: "",
+      currency_id: "",
+      newSendFlow: false,
     });
   });
 
@@ -90,6 +101,7 @@ describe("send flow tracking", () => {
       blockchain: "ethereum",
       currency: "USDT",
       currency_id: "ethereum/erc20/usd_tether__erc20_",
+      newSendFlow: true,
     });
   });
 });
