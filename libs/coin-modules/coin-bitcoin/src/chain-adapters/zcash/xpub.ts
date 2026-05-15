@@ -1,6 +1,6 @@
 import bs58 from "bs58";
-import { sha256 as nobleSha256 } from "@noble/hashes/sha256";
-import { ripemd160 as nobleRipemd160 } from "@noble/hashes/ripemd160";
+import { sha256 as nobleSha256 } from "@noble/hashes/sha2";
+import { ripemd160 as nobleRipemd160 } from "@noble/hashes/legacy";
 
 /**
  * Compose a BIP32 extended public key (xpub) string from raw key material.
