@@ -1,4 +1,4 @@
-import { registerTool, Category } from "@devtools/shell";
+import { registerToolWithRequiredProps, Category } from "@devtools/shell";
 import type { FeatureFlagsToolProps } from "./types";
 import { FEATURE_FLAGS_ID } from "./constants";
 import { FeatureFlags } from "./FeatureFlags";
@@ -10,7 +10,7 @@ declare module "@devtools/shell" {
 }
 
 export function registerFeatureFlagsTool() {
-  registerTool({
+  registerToolWithRequiredProps({
     id: FEATURE_FLAGS_ID,
     label: "Feature Flags",
     category: Category.CONFIGURATION,
