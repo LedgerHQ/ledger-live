@@ -45,6 +45,11 @@ describe("quote command", () => {
     },
     {
       method: "GET",
+      match: /\/v1\/tokens(\?|$)/,
+      response: [],
+    },
+    {
+      method: "GET",
       match: /\/quote(\?|$)/,
       response: [MOCK_QUOTE_ROW],
     },

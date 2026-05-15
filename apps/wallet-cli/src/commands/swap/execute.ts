@@ -4,7 +4,8 @@ import { z } from "zod";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
 import { findCryptoCurrencyById, parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { getCurrencyForAccount } from "@ledgerhq/types-live";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCurrencyForAccount, type AccountLike } from "@ledgerhq/types-live";
 import { integrateNewAccountDescriptor } from "@ledgerhq/live-wallet/walletsync/modules/accounts";
 import { createCommandOutput } from "../../output";
 import {
@@ -17,9 +18,50 @@ import {
 import { networkStringFromCurrencyId } from "../../shared/accountDescriptor";
 import { OutputFormatSchema } from "../../wallet/models";
 import { runFullSwapPipeline as runFullSwapPipelineDefault } from "./cli-swap-pipeline";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { resolveSwapProvider, WALLET_CLI_DEFAULT_SWAP_PROVIDERS } from "./providers";
 
 type RunFullSwapPipeline = typeof runFullSwapPipelineDefault;
+
+type CryptoOrTokenCurrency = CryptoCurrency | TokenCurrency;
+
+function resolveSwapAccountForCurrency(
+  parentAccount: AccountLike,
+  userCurrencyId: string,
+  currency: CryptoOrTokenCurrency,
+  flag: "from" | "to",
+): AccountLike {
+  if (parentAccount.type !== "Account") {
+    if (getCurrencyForAccount(parentAccount).id === userCurrencyId) {
+      return parentAccount;
+    }
+    throw new Error(`--${flag} account does not match the currency ID ${userCurrencyId}.`);
+  }
+
+  if (currency.type === "CryptoCurrency") {
+    if (currency.id !== parentAccount.currency.id) {
+      throw new Error(
+        `--${flag} account is ${parentAccount.currency.id} but --${flag} is ${currency.id}.`,
+      );
+    }
+    return parentAccount;
+  }
+
+  if (currency.parentCurrency.id !== parentAccount.currency.id) {
+    throw new Error(
+      `--${flag} account is ${parentAccount.currency.id} but token ${userCurrencyId} belongs to ${currency.parentCurrency.id}.`,
+    );
+  }
+
+  const tokenSub = parentAccount.subAccounts?.find(
+    sub => sub.type === "TokenAccount" && sub.token.id === userCurrencyId,
+  );
+
+  if (!tokenSub) {
+    throw new Error(`${flag} account has no token sub-account for ${userCurrencyId}.`);
+  }
+  return tokenSub;
+}
 
 const swapExecuteFlagsSchema = z.object({
   from: z.string().min(1, "Source currency is required (--from <currencyId>)"),
@@ -55,18 +97,23 @@ export async function executeSwapCommand({
   positional: readonly string[];
 } & SwapExecuteDependencies): Promise<void> {
   const fromDescriptor = await resolveDescriptor(resolveAccountArg(flags.account, positional));
+  const fromCurrency =
+    findCryptoCurrencyById(flags.from) ?? (await getCryptoAssetsStore().findTokenById(flags.from));
+  const toCurrency =
+    findCryptoCurrencyById(flags.to) ?? (await getCryptoAssetsStore().findTokenById(flags.to));
 
-  const fromCurrencyCatalog = findCryptoCurrencyById(flags.from);
-  if (!fromCurrencyCatalog) {
+  if (!fromCurrency) {
     throw new Error(`Unknown source currency (--from): ${flags.from}`);
   }
-  if (!findCryptoCurrencyById(flags.to)) {
+
+  if (!toCurrency) {
     throw new Error(`Unknown destination currency (--to): ${flags.to}`);
   }
 
   const provider = resolveSwapProvider(flags.provider);
-
-  const network = networkStringFromCurrencyId(flags.from);
+  const networkCurrencyId =
+    fromCurrency.type === "TokenCurrency" ? fromCurrency.parentCurrency.id : fromCurrency.id;
+  const network = networkStringFromCurrencyId(networkCurrencyId);
 
   const out = createCommandOutput(resolveOutputFormat(flags.output), {
     command: "swap execute",
@@ -88,28 +135,21 @@ export async function executeSwapCommand({
     out.swapExecuteProgress(
       `[i] Syncing source (${fromDescriptor.id}) and destination (${toDescriptor.id}) accounts…`,
     );
-    const [fromAccount, toAccount] = await Promise.all([
+
+    const [fromParentAccount, toParentAccount] = await Promise.all([
       integrateDescriptor(fromDescriptor, getBridge, syncCache),
       integrateDescriptor(toDescriptor, getBridge, syncCache),
     ]);
 
-    const fromAccountCurrencyId = getCurrencyForAccount(fromAccount).id;
-    const toAccountCurrencyId = getCurrencyForAccount(toAccount).id;
-    if (fromAccountCurrencyId !== flags.from) {
-      throw new Error(
-        `Source account asset is ${fromAccountCurrencyId}, but --from was ${flags.from}. Use matching --from and source account, or pick another source account.`,
-      );
-    }
-    if (toAccountCurrencyId !== flags.to) {
-      throw new Error(
-        `Destination account asset is ${toAccountCurrencyId}, but --to was ${flags.to}. Use matching --to and destination account, or pick another destination account.`,
-      );
-    }
-
-    const amountInAtomicUnit: BigNumber = parseCurrencyUnit(
-      fromCurrencyCatalog.units[0],
-      flags.amount,
+    const fromAccount = resolveSwapAccountForCurrency(
+      fromParentAccount,
+      flags.from,
+      fromCurrency,
+      "from",
     );
+    const toAccount = resolveSwapAccountForCurrency(toParentAccount, flags.to, toCurrency, "to");
+
+    const amountInAtomicUnit: BigNumber = parseCurrencyUnit(fromCurrency.units[0], flags.amount);
 
     const result = await runFullSwapPipeline({
       out,
