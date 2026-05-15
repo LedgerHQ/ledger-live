@@ -10,6 +10,7 @@
   "files": [
     "bin/",
     "LICENSE",
+    "THIRD_PARTY_NOTICES.md",
     "README.md",
     "CHANGELOG.md",
     "package.json"
@@ -21,6 +22,7 @@
     "generate": "bunli generate",
     "build": "bunli build",
     "prepare:npm": "node ./scripts/prepare-npm.mjs",
+    "check:notices": "node ./scripts/check-third-party-notices.mjs",
     "pack:check": "node ./scripts/pack-check.mjs",
     "smoke:npm": "node ./scripts/smoke-npm.mjs",
     "typecheck": "tsc --noEmit -p tsconfig.json",

@@ -90,7 +90,7 @@ async function prepareMainPackage() {
     description: mainPackage.description,
     license: mainPackage.license,
     bin: mainPackage.bin,
-    files: ["bin/", "LICENSE", "README.md", "CHANGELOG.md"],
+    files: ["bin/", "LICENSE", "THIRD_PARTY_NOTICES.md", "README.md", "CHANGELOG.md"],
     optionalDependencies: Object.fromEntries(
       platforms.map(platform => [platform.packageName, mainPackage.version]),
     ),
@@ -103,6 +103,10 @@ async function prepareMainPackage() {
   await mkdir(packageDirectory, { recursive: true });
   await writeFile(path.join(packageDirectory, "package.json"), `${JSON.stringify(publishPackage, null, 2)}\n`);
   await copyFile(path.join(root, "LICENSE"), path.join(packageDirectory, "LICENSE"));
+  await copyFile(
+    path.join(root, "THIRD_PARTY_NOTICES.md"),
+    path.join(packageDirectory, "THIRD_PARTY_NOTICES.md"),
+  );
   await copyFile(path.join(root, "README.md"), path.join(packageDirectory, "README.md"));
   await copyFile(path.join(root, "CHANGELOG.md"), path.join(packageDirectory, "CHANGELOG.md"));
 }
@@ -120,7 +124,7 @@ async function preparePlatformBinaries() {
       bin: platform.bin,
       os: [platform.os],
       cpu: [platform.cpu],
-      files: ["bin/", "LICENSE"],
+      files: ["bin/", "LICENSE", "THIRD_PARTY_NOTICES.md"],
       publishConfig: {
         access: "public",
       },
@@ -133,6 +137,10 @@ async function preparePlatformBinaries() {
     await writeFile(path.join(packageDirectory, "package.json"), `${JSON.stringify(publishPackage, null, 2)}\n`);
     await copyFile(source, path.join(packageDirectory, platform.bin["wallet-cli"]));
     await copyFile(path.join(root, "LICENSE"), path.join(packageDirectory, "LICENSE"));
+    await copyFile(
+      path.join(root, "THIRD_PARTY_NOTICES.md"),
+      path.join(packageDirectory, "THIRD_PARTY_NOTICES.md"),
+    );
 
     if (platform.executable) {
       await chmod(target, 0o755);
