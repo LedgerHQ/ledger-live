@@ -18,7 +18,6 @@ import { MemoValueInput } from "../screens/Recipient/components/Memo/MemoValueIn
 import { SkipMemoSection } from "../screens/Recipient/components/Memo/SkipMemoSection";
 import { useRecipientMemo } from "../screens/Recipient/hooks/useRecipientMemo";
 import type { SendStepConfig } from "../types";
-import { ContactBadge } from "~/renderer/contacts/ContactBadge";
 import { RecipientPicker } from "./RecipientPicker";
 
 export function SendHeader() {
@@ -89,7 +88,6 @@ export function SendHeader() {
     title,
     transactionErrorName,
     transactionError,
-    fromContactKind,
     recipientChainId,
   } = useSendHeaderModel({ availableText, resetViewState });
 
@@ -217,11 +215,6 @@ export function SendHeader() {
           onBack={showBackButton ? handleBack : undefined}
           onClose={close}
         />
-        {fromContactKind && (
-          <div className="-mt-8 mb-8 flex justify-end px-24">
-            <ContactBadge kind={fromContactKind} />
-          </div>
-        )}
       </div>
       {recipientInputContent}
     </div>

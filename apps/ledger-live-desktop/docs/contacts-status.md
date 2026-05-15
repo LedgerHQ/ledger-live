@@ -15,6 +15,7 @@ and DMK verb cheat sheet. This file tracks the L0–L4 rollout state.
 - [x] L3.2 — Decorated "Select account" rows in Send
 - [x] L3.3 — Recipient autocomplete from Contacts on Send → To:
 - [x] L3.4 — Sectioned recipient picker + green hardware-bound badge
+- [x] L3.5 — Picker polish: drop sender pill, swap section order, contact label
 - [ ] L4 — Designer-led Contacts management UX
 - [ ] L5 — Send recipient picker
 
@@ -101,6 +102,28 @@ device session. Module-level `useSyncExternalStore` snapshot in
 `renderer/contacts/hooks.ts` so the dialog, the data source
 registration, and the Send-side decoration all observe the same wallet
 without re-mounting — closes the L2.1 store-sync follow-up.
+
+### L3.5 — Picker polish
+
+Three small moves after dogfooding the L3.4 layout:
+
+- Drop the "Account" sender pill above the recipient input. The
+  origin account is already chosen via the "Account" pill on a
+  previous screen, so re-announcing it on the recipient step is
+  redundant.
+- Flip the picker section order to Contacts first, Ledger accounts
+  second. Most sends go to external addresses; "Contacts" should
+  be the primary affordance, and "Ledger accounts" sits below as
+  the secondary (self-transfer, hardware-bound) option.
+- "Address book" → "Contacts" (rename + i18n key).
+- Tighten the section headers visually: `SubheaderTitle` switched
+  from its default `heading-4-semi-bold` to `heading-5-semi-bold`
+  via Lumen design token override.
+- For external suggestions, the row description shows the entry
+  `scope` (e.g. "main", "savings") instead of the truncated
+  address — that's what the user actually labelled the address as.
+  Ledger-account rows keep the truncated address since they have
+  no scope.
 
 ### L3.4 — Sectioned recipient picker + green hardware-bound badge
 
