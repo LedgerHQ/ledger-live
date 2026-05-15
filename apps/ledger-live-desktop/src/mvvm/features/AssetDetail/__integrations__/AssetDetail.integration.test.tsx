@@ -12,6 +12,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import type { DistributionItem } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
+import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import AssetDetail from "../index";
 
 const LABEL = {
@@ -35,6 +36,16 @@ const TEST_ID = {
   ACTION_SELL: "asset-detail-action-sell",
   ACTION_SEND: "asset-detail-action-send",
 } as const;
+
+jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag", () => ({
+  useCurrenciesUnderFeatureFlag: () => ({
+    deactivatedCurrencyIds: new Set<string>(),
+  }),
+}));
+
+jest.mock("@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog");
+
+const mockIsCurrencyAvailable = jest.fn((_currencyId: string, _mode: "onRamp" | "offRamp") => true);
 
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
@@ -195,6 +206,12 @@ describe("AssetDetail integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     setLocation();
+
+    mockIsCurrencyAvailable.mockImplementation(() => true);
+    jest.mocked(useRampCatalog).mockReturnValue({
+      isCurrencyAvailable: mockIsCurrencyAvailable,
+      getSupportedCryptoCurrencyIds: () => null,
+    } as unknown as ReturnType<typeof useRampCatalog>);
   });
 
   describe("owned mode (with account)", () => {
@@ -402,10 +419,10 @@ describe("AssetDetail integration", () => {
 
       await waitFor(() => {
         expectHeader();
+        expect(screen.getByTestId(TEST_ID.ACTION_BUY)).toBeEnabled();
       });
 
       expect(screen.getByTestId(TEST_ID.ACTION_RECEIVE)).toBeEnabled();
-      expect(screen.getByTestId(TEST_ID.ACTION_BUY)).toBeEnabled();
       expect(screen.getByTestId(TEST_ID.ACTION_SELL)).toBeDisabled();
       expect(screen.getByTestId(TEST_ID.ACTION_SEND)).toBeDisabled();
     });
@@ -422,15 +439,15 @@ describe("AssetDetail integration", () => {
 
       await waitFor(() => {
         expectHeader();
+        expect(screen.getByTestId(TEST_ID.ACTION_BUY)).toBeEnabled();
       });
 
       expect(screen.getByTestId(TEST_ID.ACTION_RECEIVE)).toBeEnabled();
-      expect(screen.getByTestId(TEST_ID.ACTION_BUY)).toBeEnabled();
       expect(screen.getByTestId(TEST_ID.ACTION_SELL)).toBeDisabled();
       expect(screen.getByTestId(TEST_ID.ACTION_SEND)).toBeDisabled();
     });
 
-    it("enables sell and send when the address has a positive spendable balance", async () => {
+    it("enables buy, sell and send when the address has a positive spendable balance", async () => {
       mockMarket.withData(MarketMockedResponse.bitcoinDetail);
       const account = genAccount("asset-detail-positive-balance-account", { currency: btc });
       account.balance = new BigNumber(10);
@@ -442,15 +459,15 @@ describe("AssetDetail integration", () => {
 
       await waitFor(() => {
         expectHeader();
+        expect(screen.getByTestId(TEST_ID.ACTION_BUY)).toBeEnabled();
+        expect(screen.getByTestId(TEST_ID.ACTION_SELL)).toBeEnabled();
+        expect(screen.getByTestId(TEST_ID.ACTION_SEND)).toBeEnabled();
       });
 
       expect(screen.getByTestId(TEST_ID.ACTION_RECEIVE)).toBeEnabled();
-      expect(screen.getByTestId(TEST_ID.ACTION_BUY)).toBeEnabled();
-      expect(screen.getByTestId(TEST_ID.ACTION_SELL)).toBeEnabled();
-      expect(screen.getByTestId(TEST_ID.ACTION_SEND)).toBeEnabled();
     });
 
-    it("enables sell and send when the address has an earn deposit", async () => {
+    it("enables buy, sell and send when the address has an earn deposit", async () => {
       mockMarket.withData(MarketMockedResponse.bitcoinDetail);
       const account = genAccount("asset-detail-earn-deposit-account", { currency: btc });
       account.balance = new BigNumber(10);
@@ -462,12 +479,48 @@ describe("AssetDetail integration", () => {
 
       await waitFor(() => {
         expectHeader();
+        expect(screen.getByTestId(TEST_ID.ACTION_BUY)).toBeEnabled();
+        expect(screen.getByTestId(TEST_ID.ACTION_SELL)).toBeEnabled();
+        expect(screen.getByTestId(TEST_ID.ACTION_SEND)).toBeEnabled();
       });
 
       expect(screen.getByTestId(TEST_ID.ACTION_RECEIVE)).toBeEnabled();
-      expect(screen.getByTestId(TEST_ID.ACTION_BUY)).toBeEnabled();
-      expect(screen.getByTestId(TEST_ID.ACTION_SELL)).toBeEnabled();
-      expect(screen.getByTestId(TEST_ID.ACTION_SEND)).toBeEnabled();
+    });
+
+    it("disables buy and sell when the ramp catalog marks the currency unavailable", async () => {
+      mockIsCurrencyAvailable.mockReturnValue(false);
+      mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+      setupRoute("bitcoin", { list: [] });
+
+      render(<AssetDetail />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId(TEST_ID.ACTION_BUY)).toBeDisabled();
+      });
+
+      expect(screen.getByTestId(TEST_ID.ACTION_SELL)).toBeDisabled();
+      expect(screen.getByTestId(TEST_ID.ACTION_RECEIVE)).toBeEnabled();
+    });
+
+    it("disables buy and sell when the currency is not on ramp despite spendable balance", async () => {
+      mockIsCurrencyAvailable.mockReturnValue(false);
+      mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+      const account = genAccount("asset-detail-ramp-off-with-balance-account", { currency: btc });
+      account.balance = new BigNumber(10);
+      account.spendableBalance = new BigNumber(10);
+      const item = buildDistributionItem({ accounts: [account] });
+      setupRoute("bitcoin", { bySlug: { bitcoin: item }, list: [item] });
+
+      renderWithMockedCounterValuesProvider(<AssetDetail />);
+
+      await waitFor(() => {
+        expectHeader();
+        expect(screen.getByTestId(TEST_ID.ACTION_BUY)).toBeDisabled();
+        expect(screen.getByTestId(TEST_ID.ACTION_SELL)).toBeDisabled();
+        expect(screen.getByTestId(TEST_ID.ACTION_SEND)).toBeEnabled();
+      });
+
+      expect(screen.getByTestId(TEST_ID.ACTION_RECEIVE)).toBeEnabled();
     });
   });
 

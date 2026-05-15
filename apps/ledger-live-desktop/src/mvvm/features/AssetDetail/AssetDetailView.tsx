@@ -49,8 +49,10 @@ export function AssetDetailView({ viewModel }: AssetDetailViewProps) {
       <ActionBar
         distributionItem={distributionItem}
         ledgerCurrency={ledgerCurrency}
+        marketCurrencyData={market.marketCurrencyData}
         tickerHint={assetTicker}
       />
+
       <div className="flex flex-col gap-32">
         {distributionItem && <PortfolioSection distributionItem={distributionItem} />}
 

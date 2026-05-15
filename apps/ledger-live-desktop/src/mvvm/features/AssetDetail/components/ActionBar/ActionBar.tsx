@@ -26,6 +26,7 @@ export function ActionBarView({ viewModel }: ActionBarViewProps) {
         size="sm"
         icon={Plus}
         onClick={viewModel.onBuy}
+        disabled={!viewModel.isBuyEnabled}
         className="rounded-full"
         data-testid="asset-detail-action-buy"
       >
