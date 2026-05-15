@@ -61,13 +61,13 @@ function resolveVerifiedToken(
   tokenInfo: { programId: string; tokenId: string | null },
   { registryTokensMap, customProgramTokensMap }: VerifiedTokenMaps,
 ): AleoVerifiedToken | undefined {
-  if (tokenInfo.programId === PROGRAM_ID.TOKEN_REGISTRY) {
-    if (tokenInfo.tokenId && tokenInfo.tokenId !== "0") {
-      return registryTokensMap.get(normalizeTokenId(tokenInfo.tokenId));
-    }
-    return undefined;
+  if (tokenInfo.programId !== PROGRAM_ID.TOKEN_REGISTRY) {
+    return customProgramTokensMap.get(tokenInfo.programId);
   }
-  return customProgramTokensMap.get(tokenInfo.programId);
+
+  return tokenInfo.tokenId && tokenInfo.tokenId !== "0"
+    ? registryTokensMap.get(normalizeTokenId(tokenInfo.tokenId))
+    : undefined;
 }
 
 function buildTokenCurrencyFromVerifiedToken(
@@ -354,26 +354,24 @@ export async function prepareTokenOperations({
       type,
     };
 
-    // Add a FEES coin operation for outgoing token transfers
-    if (type === "OUT") {
-      const feesOp: AleoOperation = {
-        ...tokenOp,
-        id: encodeOperationId(ledgerAccountId, tokenOp.hash, "FEES"),
-        accountId: ledgerAccountId,
-        type: "FEES",
-        value: tokenOp.fee,
-      };
-      updatedCoinOperations.push({ ...feesOp, subOperations: [subAccountOp] });
-    }
-
-    // attach to parent coin operation, creating a NONE parent if none exists
+    // Get or create the single parent coin op for this transaction hash.
     let parentCoinOp = coinOpsByHash.get(tokenOp.hash);
     if (!parentCoinOp) {
       parentCoinOp = makeNoneParentForOrphanTokenOp(ledgerAccountId, tokenOp);
       updatedCoinOperations.push(parentCoinOp);
       coinOpsByHash.set(tokenOp.hash, parentCoinOp);
     }
-    parentCoinOp.subOperations = [...(parentCoinOp.subOperations ?? []), subAccountOp];
+
+    // For outgoing token transfers, promote the parent to a FEES op so the native
+    // account history shows the fee cost rather than a valueless NONE entry.
+    // Only promotes once per hash — idempotent if multiple OUT sub-ops share a hash.
+    if (type === "OUT" && parentCoinOp.type !== "FEES") {
+      parentCoinOp.id = encodeOperationId(ledgerAccountId, tokenOp.hash, "FEES");
+      parentCoinOp.type = "FEES";
+      parentCoinOp.value = tokenOp.fee;
+    }
+
+    parentCoinOp.subOperations = [...parentCoinOp.subOperations, subAccountOp];
 
     const existing = tokenOperationsBySubAccountId.get(tokenAccountId) ?? [];
     tokenOperationsBySubAccountId.set(tokenAccountId, [...existing, subAccountOp]);
@@ -503,8 +501,12 @@ export async function resolveTokenSubAccounts({
   shouldSyncFromScratch: boolean;
   initialAccount: Account | undefined;
 }): Promise<{ updatedCoinOperations: AleoOperation[]; subAccounts: TokenAccount[] }> {
+  // If tokens are disabled, we should clear any existing token sub-accounts and token related operations (ops having any subOperation)
   if (!enableTokens) {
-    return { updatedCoinOperations: coinOperations, subAccounts: [] };
+    return {
+      updatedCoinOperations: coinOperations.filter(op => (op.subOperations ?? []).length === 0),
+      subAccounts: [],
+    };
   }
 
   const { updatedCoinOperations, tokenOperationsBySubAccountId } = await prepareTokenOperations({
