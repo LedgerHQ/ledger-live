@@ -3,13 +3,12 @@ import type { ContactsSubView, ContactsViewModel } from "../types";
 
 export const useContactsViewModel = (): ContactsViewModel => {
   const [isOpen, setOpen] = useState(false);
-  const [sessionId, setSessionId] = useState<string | null>(null);
-  const [subView, setSubView] = useState<ContactsSubView>("actions");
+  const [subView, setSubView] = useState<ContactsSubView>("overview");
 
   const onOpenChange = useCallback((next: boolean) => {
     setOpen(next);
-    if (!next) setSubView("actions");
+    if (!next) setSubView("overview");
   }, []);
 
-  return { isOpen, onOpenChange, sessionId, setSessionId, subView, setSubView };
+  return { isOpen, onOpenChange, subView, setSubView };
 };

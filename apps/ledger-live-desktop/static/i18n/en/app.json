@@ -8675,30 +8675,82 @@
   },
   "contacts": {
     "title": "Contacts (alpha)",
-    "storageTitle": "Local store",
-    "connect": "Connect device",
-    "disconnect": "Disconnect",
-    "connecting": "Connecting…",
-    "connected": "Connected",
-    "disconnected": "No device",
-    "actions": {
-      "addContact": "Add contact (fresh)",
-      "addAddressToContact": "Add address to existing contact",
-      "editAddressLabel": "Edit address label",
-      "editAddress": "Edit address",
-      "renameContact": "Rename contact",
-      "addLedgerAccount": "Add Ledger account",
-      "reset": "Reset local data"
-    },
-    "walletState": "Wallet state",
-    "lastResult": "Last result",
-    "lastError": "Last error",
+    "storageTitle": "Local storage",
     "empty": "Local store is empty",
-    "viewStorage": "View local store",
-    "errorHint": "Last action failed — see local store for details.",
     "badge": {
       "external": "Contact",
       "ledgerAccount": "Account"
+    },
+    "overview": {
+      "external": {
+        "title": "External addresses",
+        "description": "Manage external addresses",
+        "count_one": "{{count}} address",
+        "count_other": "{{count}} addresses"
+      },
+      "accounts": {
+        "title": "Ledger accounts",
+        "description": "Name Ledger Wallet accounts",
+        "count_one": "{{count}} account",
+        "count_other": "{{count}} accounts"
+      },
+      "storage": {
+        "title": "Local storage",
+        "description": "View and reset contact database"
+      }
+    },
+    "sections": {
+      "registerAddress": {
+        "title": "Register external address",
+        "button": "Register address"
+      },
+      "renameContact": {
+        "title": "Rename contact",
+        "button": "Rename contact"
+      },
+      "editAddressLabel": {
+        "title": "Edit address name",
+        "button": "Edit address name"
+      },
+      "editAddress": {
+        "title": "Edit address",
+        "button": "Edit address"
+      },
+      "registerAccount": {
+        "title": "Register Ledger account",
+        "button": "Register account"
+      },
+      "reset": {
+        "button": "Reset contacts"
+      },
+      "storage": {
+        "title": "Storage viewer"
+      }
+    },
+    "fields": {
+      "contactSearch": "Search contact or type to add new",
+      "selectContact": "Select contact",
+      "selectAddress": "Select address",
+      "network": "Network",
+      "accountIndex": "Account index",
+      "address": "Address",
+      "addressName": "Address name",
+      "newAddressName": "New address name",
+      "newContactName": "Contact name",
+      "accountName": "Account name"
+    },
+    "errors": {
+      "invalidAddress": "Enter a 40-character hex address (with or without 0x).",
+      "duplicateAddress": "This address is already registered on this contact for the selected network.",
+      "duplicateContact": "A contact with this name already exists.",
+      "duplicateLabel": "Another address on this contact already uses this name.",
+      "duplicateAccount": "An account with this name already exists."
+    },
+    "runner": {
+      "confirming": "Confirm on your device",
+      "error": "Something went wrong",
+      "retry": "Try again",
+      "back": "Back"
     }
   },
   "geoBlocking": {
