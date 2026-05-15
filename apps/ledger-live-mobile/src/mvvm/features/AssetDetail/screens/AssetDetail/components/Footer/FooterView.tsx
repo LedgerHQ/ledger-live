@@ -29,8 +29,8 @@ export function FooterView({
   return (
     <LinearGradient
       stops={[
-        { color: "transparent", opacity: 0 },
-        { offset: 0.2, color: "base", opacity: 1 },
+        { color: "base", opacity: 0 },
+        { offset: 0.1, color: "base", opacity: 1 },
         { offset: 1, color: "base", opacity: 1 },
       ]}
       direction="to-bottom"
