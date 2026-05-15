@@ -22,7 +22,7 @@ export function runSwapApprovalFlow(
       await app.speculos.setExchangeDependencies(fromAccount, toAccount);
       await beforeAllFunctionSwap({
         userdata: "skip-onboarding",
-        speculosApp: provider.app,
+        speculosApp: provider.app ?? fromAccount.currency.speculosApp,
         cliCommandsOnApp: [
           {
             app: fromAccount.currency.speculosApp,
@@ -54,7 +54,7 @@ export function runSwapApprovalFlow(
         true,
       );
       await app.swapLiveApp.selectSpecificProvider(provider.uiName);
-      await app.swapLiveApp.tapExecuteSwap(provider.name);
+      await app.swapLiveApp.tapExecuteSwap(provider.uiName);
       await app.swapLiveApp.expectTwoStepApprovalScreen();
       await app.swapLiveApp.tapGiveApprovalButton();
       await app.send.summaryContinue();
