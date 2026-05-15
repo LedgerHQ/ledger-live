@@ -1,4 +1,4 @@
-import { buildRecipientSuggestions } from "../useRecipientSuggestions";
+import { buildRecipientSuggestionGroups } from "../useRecipientSuggestions";
 import type { ContactsWallet } from "~/renderer/contacts/types";
 
 const wallet = (parts: Partial<ContactsWallet>): ContactsWallet => ({
@@ -6,17 +6,75 @@ const wallet = (parts: Partial<ContactsWallet>): ContactsWallet => ({
   accounts: parts.accounts ?? {},
 });
 
-describe("buildRecipientSuggestions", () => {
-  it("returns no suggestions on empty query", () => {
-    expect(buildRecipientSuggestions(wallet({}), "", 1)).toEqual([]);
-    expect(buildRecipientSuggestions(wallet({}), "   ", 1)).toEqual([]);
+describe("buildRecipientSuggestionGroups", () => {
+  it("returns empty groups on empty wallet", () => {
+    const out = buildRecipientSuggestionGroups(wallet({}), "", 1);
+    expect(out.ledgerAccounts).toEqual([]);
+    expect(out.external).toEqual([]);
+    expect(out.hasQuery).toBe(false);
   });
 
-  it("returns no suggestions on empty wallet", () => {
-    expect(buildRecipientSuggestions(wallet({}), "anything", 1)).toEqual([]);
+  it("returns full inventory on empty query (browse mode)", () => {
+    const w = wallet({
+      accounts: {
+        Alice: {
+          name: "Alice",
+          derivationPath: "x",
+          chainId: 1,
+          addressHex: "aa".repeat(20),
+          hmacProofHex: "h",
+        },
+      },
+      contacts: {
+        Bob: {
+          name: "Bob",
+          groupHandleHex: "gh",
+          hmacNameHex: "hn",
+          entries: [
+            {
+              scope: "main",
+              addressHex: "bb".repeat(20),
+              hmacRestHex: "h",
+              derivationPath: "x",
+              chainId: 1,
+            },
+          ],
+        },
+      },
+    });
+    const out = buildRecipientSuggestionGroups(w, "", 1);
+    expect(out.hasQuery).toBe(false);
+    expect(out.ledgerAccounts).toHaveLength(1);
+    expect(out.ledgerAccounts[0].name).toBe("Alice");
+    expect(out.external).toHaveLength(1);
+    expect(out.external[0].name).toBe("Bob");
   });
 
-  it("filters by chainId — only entries on the active chain surface", () => {
+  it("filters both groups by chainId", () => {
+    const w = wallet({
+      accounts: {
+        OnChain1: {
+          name: "OnChain1",
+          derivationPath: "x",
+          chainId: 1,
+          addressHex: "aa".repeat(20),
+          hmacProofHex: "h",
+        },
+        OnChain137: {
+          name: "OnChain137",
+          derivationPath: "x",
+          chainId: 137,
+          addressHex: "bb".repeat(20),
+          hmacProofHex: "h",
+        },
+      },
+    });
+    expect(buildRecipientSuggestionGroups(w, "", 1).ledgerAccounts).toHaveLength(1);
+    expect(buildRecipientSuggestionGroups(w, "", 137).ledgerAccounts).toHaveLength(1);
+    expect(buildRecipientSuggestionGroups(w, "", 56).ledgerAccounts).toHaveLength(0);
+  });
+
+  it("filters by case-insensitive name prefix when hasQuery", () => {
     const w = wallet({
       contacts: {
         Alice: {
@@ -24,33 +82,26 @@ describe("buildRecipientSuggestions", () => {
           groupHandleHex: "gh",
           hmacNameHex: "hn",
           entries: [
-            { scope: "main", addressHex: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", hmacRestHex: "h", derivationPath: "44'/60'/0'/0/0", chainId: 1 },
-            { scope: "main", addressHex: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", hmacRestHex: "h", derivationPath: "44'/60'/0'/0/0", chainId: 137 },
+            { scope: "main", addressHex: "aa".repeat(20), hmacRestHex: "h", derivationPath: "x", chainId: 1 },
           ],
         },
-      },
-    });
-    const out = buildRecipientSuggestions(w, "ali", 1);
-    expect(out).toHaveLength(1);
-    expect(out[0].addressHex).toBe("0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-  });
-
-  it("matches contact name as a case-insensitive prefix", () => {
-    const w = wallet({
-      contacts: {
         Bob: {
           name: "Bob",
           groupHandleHex: "gh",
           hmacNameHex: "hn",
-          entries: [{ scope: "main", addressHex: "cc".repeat(20), hmacRestHex: "h", derivationPath: "x", chainId: 1 }],
+          entries: [
+            { scope: "main", addressHex: "bb".repeat(20), hmacRestHex: "h", derivationPath: "x", chainId: 1 },
+          ],
         },
       },
     });
-    expect(buildRecipientSuggestions(w, "BO", 1)).toHaveLength(1);
-    expect(buildRecipientSuggestions(w, "X", 1)).toHaveLength(0);
+    const out = buildRecipientSuggestionGroups(w, "AL", 1);
+    expect(out.hasQuery).toBe(true);
+    expect(out.external).toHaveLength(1);
+    expect(out.external[0].name).toBe("Alice");
   });
 
-  it("matches address hex prefix with or without 0x", () => {
+  it("filters by address hex prefix with or without 0x", () => {
     const addr = "deadbeef".padEnd(40, "0");
     const w = wallet({
       contacts: {
@@ -62,18 +113,18 @@ describe("buildRecipientSuggestions", () => {
         },
       },
     });
-    expect(buildRecipientSuggestions(w, "dead", 1)).toHaveLength(1);
-    expect(buildRecipientSuggestions(w, "0xdead", 1)).toHaveLength(1);
-    expect(buildRecipientSuggestions(w, "deaf", 1)).toHaveLength(0);
+    expect(buildRecipientSuggestionGroups(w, "dead", 1).external).toHaveLength(1);
+    expect(buildRecipientSuggestionGroups(w, "0xdead", 1).external).toHaveLength(1);
+    expect(buildRecipientSuggestionGroups(w, "deaf", 1).external).toHaveLength(0);
   });
 
-  it("prefers ledgerAccount over external for the same address (de-dup)", () => {
+  it("prefers ledger account over external for the same address (dedup)", () => {
     const addr = "ee".repeat(20);
     const w = wallet({
       accounts: {
         MyLedger: {
           name: "MyLedger",
-          derivationPath: "44'/60'/0'/0/0",
+          derivationPath: "x",
           chainId: 1,
           addressHex: addr,
           hmacProofHex: "h",
@@ -88,34 +139,49 @@ describe("buildRecipientSuggestions", () => {
         },
       },
     });
-    const out = buildRecipientSuggestions(w, addr.slice(0, 4), 1);
-    expect(out).toHaveLength(1);
-    expect(out[0].kind).toBe("ledgerAccount");
-    expect(out[0].name).toBe("MyLedger");
+    const out = buildRecipientSuggestionGroups(w, "", 1);
+    expect(out.ledgerAccounts).toHaveLength(1);
+    expect(out.ledgerAccounts[0].name).toBe("MyLedger");
+    expect(out.external).toHaveLength(0);
   });
 
-  it("caps results at 5 suggestions", () => {
-    const contacts: ContactsWallet["contacts"] = {};
-    for (let i = 0; i < 10; i++) {
-      contacts[`Contact${i}`] = {
-        name: `Contact${i}`,
-        groupHandleHex: "gh",
-        hmacNameHex: "hn",
-        entries: [
-          {
-            scope: "main",
-            addressHex: i.toString().padStart(40, "0"),
-            hmacRestHex: "h",
-            derivationPath: "x",
-            chainId: 1,
-          },
-        ],
-      };
-    }
-    expect(buildRecipientSuggestions(wallet({ contacts }), "contact", 1)).toHaveLength(5);
+  it("folds the picker when query is a full 40-char address matching an entry", () => {
+    const addr = "deadbeef".padEnd(40, "0");
+    const w = wallet({
+      contacts: {
+        Carol: {
+          name: "Carol",
+          groupHandleHex: "gh",
+          hmacNameHex: "hn",
+          entries: [{ scope: "main", addressHex: addr, hmacRestHex: "h", derivationPath: "x", chainId: 1 }],
+        },
+      },
+    });
+    const out = buildRecipientSuggestionGroups(w, `0x${addr}`, 1);
+    expect(out.ledgerAccounts).toEqual([]);
+    expect(out.external).toEqual([]);
+    expect(out.hasQuery).toBe(true);
   });
 
-  it("outputs 0x-prefixed lowercased addresses regardless of storage casing", () => {
+  it("still surfaces suggestions for a full 40-char address that does NOT match any entry", () => {
+    const stored = "aa".repeat(20);
+    const unknown = "ff".repeat(20);
+    const w = wallet({
+      contacts: {
+        Carol: {
+          name: "Carol",
+          groupHandleHex: "gh",
+          hmacNameHex: "hn",
+          entries: [{ scope: "main", addressHex: stored, hmacRestHex: "h", derivationPath: "x", chainId: 1 }],
+        },
+      },
+    });
+    const out = buildRecipientSuggestionGroups(w, `0x${unknown}`, 1);
+    expect(out.ledgerAccounts).toEqual([]);
+    expect(out.external).toEqual([]);
+  });
+
+  it("outputs 0x-prefixed lowercased addressHex regardless of storage casing", () => {
     const w = wallet({
       contacts: {
         Mixed: {
@@ -134,67 +200,7 @@ describe("buildRecipientSuggestions", () => {
         },
       },
     });
-    const out = buildRecipientSuggestions(w, "mix", 1);
-    expect(out[0].addressHex).toBe("0xaaaabbbbccccddddeeee0011223344556677889900");
-  });
-
-  it("returns no suggestions when query is a full 40-char address that matches a wallet entry exactly", () => {
-    const addr = "deadbeef".padEnd(40, "0");
-    const w = wallet({
-      contacts: {
-        Carol: {
-          name: "Carol",
-          groupHandleHex: "gh",
-          hmacNameHex: "hn",
-          entries: [{ scope: "main", addressHex: addr, hmacRestHex: "h", derivationPath: "x", chainId: 1 }],
-        },
-      },
-    });
-    expect(buildRecipientSuggestions(w, `0x${addr}`, 1)).toEqual([]);
-    expect(buildRecipientSuggestions(w, addr, 1)).toEqual([]);
-    // mixed case input still hides
-    expect(buildRecipientSuggestions(w, `0x${addr.toUpperCase()}`, 1)).toEqual([]);
-  });
-
-  it("still surfaces suggestions for a full 40-char address that does NOT match any entry", () => {
-    const stored = "aa".repeat(20);
-    const unknown = "ff".repeat(20);
-    const w = wallet({
-      contacts: {
-        Carol: {
-          name: "Carol",
-          groupHandleHex: "gh",
-          hmacNameHex: "hn",
-          entries: [{ scope: "main", addressHex: stored, hmacRestHex: "h", derivationPath: "x", chainId: 1 }],
-        },
-      },
-    });
-    expect(buildRecipientSuggestions(w, `0x${unknown}`, 1)).toEqual([]);
-  });
-
-  it("returns ledger account before external when both match the same query", () => {
-    const w = wallet({
-      accounts: {
-        MainWallet: {
-          name: "MainWallet",
-          derivationPath: "x",
-          chainId: 1,
-          addressHex: "11".repeat(20),
-          hmacProofHex: "h",
-        },
-      },
-      contacts: {
-        Maybe: {
-          name: "Maybe",
-          groupHandleHex: "gh",
-          hmacNameHex: "hn",
-          entries: [{ scope: "main", addressHex: "22".repeat(20), hmacRestHex: "h", derivationPath: "x", chainId: 1 }],
-        },
-      },
-    });
-    const out = buildRecipientSuggestions(w, "m", 1);
-    expect(out).toHaveLength(2);
-    expect(out[0].kind).toBe("ledgerAccount");
-    expect(out[1].kind).toBe("external");
+    const out = buildRecipientSuggestionGroups(w, "", 1);
+    expect(out.external[0].addressHex).toBe("0xaaaabbbbccccddddeeee0011223344556677889900");
   });
 });

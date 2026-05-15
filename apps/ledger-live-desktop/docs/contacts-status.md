@@ -14,6 +14,7 @@ and DMK verb cheat sheet. This file tracks the L0–L4 rollout state.
 - [x] L3.1 — Code simplification pass
 - [x] L3.2 — Decorated "Select account" rows in Send
 - [x] L3.3 — Recipient autocomplete from Contacts on Send → To:
+- [x] L3.4 — Sectioned recipient picker + green hardware-bound badge
 - [ ] L4 — Designer-led Contacts management UX
 - [ ] L5 — Send recipient picker
 
@@ -100,6 +101,34 @@ device session. Module-level `useSyncExternalStore` snapshot in
 `renderer/contacts/hooks.ts` so the dialog, the data source
 registration, and the Send-side decoration all observe the same wallet
 without re-mounting — closes the L2.1 store-sync follow-up.
+
+### L3.4 — Sectioned recipient picker + green hardware-bound badge
+
+Three coordinated UI polish moves on the Send surface:
+
+- `ContactBadge` for `kind="ledgerAccount"` now renders as Lumen
+  `Tag` `appearance="success"` with the `Devices` symbol icon —
+  green + a device glyph communicates "hardware-bound" inline.
+  Single source of truth, so the sender pill above the input AND the
+  L3.2 "Select account" row decoration both pick up the new look.
+- The recipient-side pill (next to the input on the Recipient and
+  Amount steps) is removed entirely. The picker rows already show
+  which kind each suggestion is, and the Amount step shows the
+  resolved contact name in the input itself — a separate pill was
+  redundant.
+- `RecipientSuggestionsDropdown` is replaced by an inline
+  `RecipientPicker`: when the recipient input is empty, it lists the
+  full inventory grouped under "Ledger accounts" and "Address book"
+  (Lumen `Subheader` headers, Lumen `ListItem` rows, Lumen `Avatar`
+  for now — per-contact avatars are a follow-up). Typing filters
+  both sections by name or address prefix and hides any section that
+  goes empty. Clicking a row sets the full 0x address; the picker
+  auto-folds when the entered query is the full address of an
+  existing entry. The pure builder is `buildRecipientSuggestionGroups`
+  in `hooks/useRecipientSuggestions.ts`, covered by 9 unit tests:
+  empty wallet, browse-mode inventory, chainId filter, name/address
+  prefix filtering, Ledger-over-external dedup, full-address self-
+  hide (matching vs. non-matching).
 
 ### L3.3 — Recipient autocomplete from Contacts on Send → To:
 

@@ -1,6 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Tag } from "@ledgerhq/lumen-ui-react";
+import { Devices } from "@ledgerhq/lumen-ui-react/symbols";
 
 export type ContactBadgeKind = "external" | "ledgerAccount";
 
@@ -15,11 +16,19 @@ export const ContactBadge = ({ kind, label }: Props) => {
   const text =
     label ??
     (kind === "ledgerAccount" ? t("contacts.badge.ledgerAccount") : t("contacts.badge.external"));
-  return (
+  return kind === "ledgerAccount" ? (
     <Tag
       data-testid={`contacts-badge-${kind}`}
       size="sm"
-      appearance={kind === "ledgerAccount" ? "accent-subtle" : "gray"}
+      appearance="success"
+      icon={Devices}
+      label={text}
+    />
+  ) : (
+    <Tag
+      data-testid={`contacts-badge-${kind}`}
+      size="sm"
+      appearance="gray"
       label={text}
     />
   );
