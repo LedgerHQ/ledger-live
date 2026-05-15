@@ -11,6 +11,7 @@ import { openModal } from "~/renderer/actions/modals";
 import { AllModalNames } from "~/renderer/modals/types";
 import { useNavigate } from "react-router";
 import { useCompleteActionCallback } from "./logic/useCompleteAction";
+import { isPostOnboardingHubActionFulfilled } from "./logic/postOnboardingHubCompletion";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { Dispatch } from "redux";
 import useLedgerSyncEntryPointViewModel from "LLD/features/LedgerSyncEntryPoints/useLedgerSyncEntryPointViewModel";
@@ -39,6 +40,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
     deviceModelId,
     shouldCompleteOnStart,
     getIsAlreadyCompletedByState,
+    getIsAlreadyCompleted,
     isLedgerSyncActive,
     accounts,
   } = props;
@@ -56,14 +58,25 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
   const completeAction = useCompleteActionCallback();
   const [isActionCompleted, setIsActionCompleted] = useState(false);
 
-  const initIsActionCompleted = useCallback(async () => {
-    const isAlreadyCompleted = getIsAlreadyCompletedByState?.({ isLedgerSyncActive, accounts });
-    setIsActionCompleted(completed || !!isAlreadyCompleted);
-  }, [setIsActionCompleted, completed, getIsAlreadyCompletedByState, isLedgerSyncActive, accounts]);
-
   useEffect(() => {
-    initIsActionCompleted();
-  }, [initIsActionCompleted]);
+    let cancelled = false;
+    isPostOnboardingHubActionFulfilled(
+      { completed, getIsAlreadyCompletedByState, getIsAlreadyCompleted },
+      { isLedgerSyncActive: !!isLedgerSyncActive, accounts, protectId },
+    ).then(result => {
+      if (!cancelled) setIsActionCompleted(result);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    completed,
+    getIsAlreadyCompletedByState,
+    getIsAlreadyCompleted,
+    isLedgerSyncActive,
+    accounts,
+    protectId,
+  ]);
 
   const handleStartAction = useCallback(() => {
     const openModalCallback = (modalName: AllModalNames) => {

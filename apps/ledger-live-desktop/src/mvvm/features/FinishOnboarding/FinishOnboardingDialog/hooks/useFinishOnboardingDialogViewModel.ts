@@ -56,8 +56,13 @@ export default function useFinishOnboardingDialogViewModel(): FinishOnboardingDi
   const isLedgerSyncActive = Boolean(useSelector(trustchainSelector)?.rootId);
   const accounts = useSelector(accountsSelector);
 
-  const { allActionsCompleted, completedActionsAmount, actionList, totalActionsAmount } =
-    usePostOnboardingFinishProgress(actionsState);
+  const {
+    allActionsCompleted,
+    completedActionsAmount,
+    actionList,
+    totalActionsAmount,
+    completionById,
+  } = usePostOnboardingFinishProgress(actionsState);
 
   const onGotIt = useCallback(() => {
     track("button_clicked2", {
@@ -86,6 +91,7 @@ export default function useFinishOnboardingDialogViewModel(): FinishOnboardingDi
           ...item,
           completed:
             item.completed ||
+            !!completionById[item.id] ||
             !!item.getIsAlreadyCompletedByState?.({
               isLedgerSyncActive,
               accounts,
@@ -114,6 +120,7 @@ export default function useFinishOnboardingDialogViewModel(): FinishOnboardingDi
       t,
       isLedgerSyncActive,
       totalActionsAmount,
+      completionById,
     ],
   );
 }

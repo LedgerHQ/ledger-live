@@ -3,6 +3,7 @@ import { ABTestingVariants } from "@ledgerhq/types-live";
 import PortfolioContentCards from "LLD/features/DynamicContent/components/PortfolioContentCards";
 import FinishOnboardingWidget from "LLD/features/FinishOnboarding/FinishOnboardingWidget";
 import RecoverWidgetView from "LLD/features/FinishOnboarding/RecoverWidget/RecoverWidgetView";
+import { usePortfolioAddRecoverPostOnboardingAction } from "LLD/features/FinishOnboarding/RecoverWidget/usePortfolioAddRecoverPostOnboardingAction";
 import { useRecoverWidgetViewModel } from "LLD/features/FinishOnboarding/RecoverWidget/useRecoverWidgetViewModel";
 import { LNSUpsellBanner } from "LLD/features/LNSUpsell";
 import PostOnboardingHubBanner from "~/renderer/components/PostOnboardingHub/PostOnboardingHubBanner";
@@ -57,6 +58,10 @@ const PortfolioBannerWallet40 = memo(function PortfolioBannerWallet40({
  *   is visible.
  * - Otherwise `RecoverBanner` wraps action cards, LNS upsell, or `PortfolioContentCards`.
  *
+ * The Recover post-onboarding action-append runs here via `usePortfolioAddRecoverPostOnboardingAction`,
+ * which is decoupled from the Recover widget render path so the hub still receives Recover when
+ * the LNS upsell is rendered instead of the finish/recover row.
+ *
  * When Wallet40 applies and LNS upsell is visible, LNS is rendered here without mounting the Recover
  * subtree. Otherwise the finish/recover row uses one `useRecoverWidgetViewModel` (→ `useRecoverBannerState`,
  * LIVE-30279); its `shouldDisplay` boolean gates the Recover tile and the same view-model output is
@@ -72,6 +77,8 @@ export const PortfolioBannerContent = memo(function PortfolioBannerContent() {
     isLNSUpsellBannerVisible,
     shouldDisplayFinishOnboardingWidget,
   } = useBannersVisibility();
+
+  usePortfolioAddRecoverPostOnboardingAction();
 
   if (shouldDisplayFinishOnboardingWidget) {
     if (isLNSUpsellBannerVisible) {

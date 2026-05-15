@@ -9,6 +9,14 @@ jest.mock("~/renderer/families", () => ({
   getLLDCoinFamily: () => ({}),
 }));
 
+jest.mock("electron-store", () => {
+  return jest.fn().mockImplementation(() => ({
+    get: jest.fn(),
+    set: jest.fn(),
+    clear: jest.fn(),
+  }));
+});
+
 jest.mock("@braze/web-sdk", () => mockGetBrazeWebSdkJestMock());
 
 describe("TopBar", () => {
