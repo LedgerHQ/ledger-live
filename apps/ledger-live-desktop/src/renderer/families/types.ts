@@ -16,6 +16,7 @@ import {
   FeeStrategy,
   Operation,
   OperationType,
+  ResolvedAccountBridge,
   TokenAccount,
   TransactionCommon,
   TransactionCommonRaw,
@@ -478,6 +479,7 @@ export type LLDCoinFamily<
     parentAccount: A | undefined;
     mainAccount: A;
     operation: O;
+    bridge: ResolvedAccountBridge<T>;
     featureFlags: EditTransactionFeatureFlags;
   }) => EditTransactionModalConfig | null;
 

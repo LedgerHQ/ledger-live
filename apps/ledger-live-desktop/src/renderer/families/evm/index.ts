@@ -1,5 +1,4 @@
 import { getMessageProperties } from "@ledgerhq/coin-evm/logic";
-import { isEditableOperation } from "@ledgerhq/live-common/operation";
 import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
 import AccountBodyHeader from "./AccountBodyHeader";
 import AccountFooter from "./AccountFooter";
@@ -23,14 +22,14 @@ const family: EvmFamily = {
   message: {
     getMessageProperties,
   },
-  handlesEditTransaction: ({ account, parentAccount, mainAccount, operation, featureFlags }) => {
+  handlesEditTransaction: ({ account, parentAccount, mainAccount, operation, bridge, featureFlags }) => {
     if (!operation.transactionRaw) {
       return null;
     }
 
     const isCurrencySupported =
       featureFlags.evm.supportedCurrencyIds?.includes(mainAccount.currency.id) || false;
-    const isEditable = isEditableOperation({ account: mainAccount, operation });
+    const isEditable = bridge.isEditableOperation(mainAccount, operation);
 
     if (!featureFlags.evm.enabled || !isCurrencySupported || !isEditable) {
       return null;
