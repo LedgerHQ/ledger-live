@@ -14,6 +14,7 @@ const packages = [
     required: [
       "package/bin/wallet-cli",
       "package/CHANGELOG.md",
+      "package/LICENSE",
       "package/README.md",
       "package/package.json",
     ],
@@ -22,22 +23,22 @@ const packages = [
   {
     name: "@ledgerhq/wallet-cli-darwin-arm64",
     cwd: path.join(root, "npm/darwin-arm64/.npm-package"),
-    required: ["package/bin/wallet-cli", "package/package.json"],
+    required: ["package/bin/wallet-cli", "package/LICENSE", "package/package.json"],
   },
   {
     name: "@ledgerhq/wallet-cli-linux-arm64",
     cwd: path.join(root, "npm/linux-arm64/.npm-package"),
-    required: ["package/bin/wallet-cli", "package/package.json"],
+    required: ["package/bin/wallet-cli", "package/LICENSE", "package/package.json"],
   },
   {
     name: "@ledgerhq/wallet-cli-linux-x64",
     cwd: path.join(root, "npm/linux-x64/.npm-package"),
-    required: ["package/bin/wallet-cli", "package/package.json"],
+    required: ["package/bin/wallet-cli", "package/LICENSE", "package/package.json"],
   },
   {
     name: "@ledgerhq/wallet-cli-windows-x64",
     cwd: path.join(root, "npm/windows-x64/.npm-package"),
-    required: ["package/bin/wallet-cli.exe", "package/package.json"],
+    required: ["package/bin/wallet-cli.exe", "package/LICENSE", "package/package.json"],
   },
 ];
 
