@@ -16,6 +16,51 @@ const beforeAllFunction = async (delegation: DelegateType) => {
   await app.portfolio.waitForPortfolioPageToLoad();
 };
 
+export function runEvmDelegateTest(
+  delegation: DelegateType,
+  tmsLinks: string[],
+  tags: string[],
+  userdata: string,
+) {
+  tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  tags.forEach(tag => $Tag(tag));
+  describe("Delegate (EVM)", () => {
+    beforeAll(async () => {
+      await app.init({
+        userdata,
+        speculosApp: delegation.account.currency.speculosApp,
+        featureFlags: {
+          llmAccountListUI: { enabled: true },
+          evmNativeStaking: {
+            enabled: true,
+            params: { supportedCurrencyIds: [delegation.account.currency.id] },
+          },
+        },
+      });
+      await app.portfolio.waitForPortfolioPageToLoad();
+    });
+
+    it(`Delegate on ${delegation.account.currency.name}`, async () => {
+      const amountWithCode = delegation.amount + " " + delegation.account.currency.ticker;
+
+      await app.portfolio.goToAccounts(delegation.account.currency.name);
+      await app.common.goToAccountByName(delegation.account.accountName);
+      await app.evmStake.tapStakeEntry();
+
+      await app.evmStake.selectValidator(0);
+      await app.evmStake.setAmount(delegation.amount);
+      await app.evmStake.amountContinue();
+
+      await verifyAppValidationStakeInfo(delegation, amountWithCode);
+      await device.disableSynchronization();
+      await app.speculos.signDelegationTransaction(delegation);
+      await app.common.successViewDetails();
+
+      await verifyStakeOperationDetailsInfo(delegation, amountWithCode);
+    });
+  });
+}
+
 export function runDelegateTest(delegation: DelegateType, tmsLinks: string[], tags: string[]) {
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));

@@ -228,4 +228,8 @@ export class Currency {
     AppInfos.CONCORDIUM,
     [Network.CONCORDIUM],
   );
+
+  static readonly SEI = new Currency("SEI Network (EVM)", "SEI", "sei_evm", AppInfos.ETHEREUM, [
+    Network.SEI_EVM,
+  ]);
 }

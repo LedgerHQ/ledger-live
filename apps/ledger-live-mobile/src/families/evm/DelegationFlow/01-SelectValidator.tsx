@@ -64,8 +64,10 @@ export default function SelectValidator({ navigation, route }: Props) {
   );
 
   const renderItem = useCallback(
-    ({ item }: { item: StakingValidatorItem }) => (
-      <ValidatorRow account={account} validator={item} onPress={onItemPress} />
+    ({ item, index }: { item: StakingValidatorItem; index: number }) => (
+      <View testID={`evm-validator-row-${index}`}>
+        <ValidatorRow account={account} validator={item} onPress={onItemPress} />
+      </View>
     ),
     [account, onItemPress],
   );

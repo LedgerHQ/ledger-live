@@ -39,4 +39,5 @@ export enum Network {
   INTERNET_COMPUTER = "Internet Computer",
   MINA = "Mina",
   CONCORDIUM = "Concordium",
+  SEI_EVM = "SEI Network (EVM)",
 }

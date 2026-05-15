@@ -196,6 +196,18 @@ export class Account {
 
   static readonly INJ_1 = new Account(Currency.INJ, "Injective 1", 0, "44'/60'/0'/0/0");
 
+  static readonly SEI_1 = new Account(
+    Currency.SEI,
+    "SEI Network (EVM) 1",
+    0,
+    "44'/60'/0'/0/0",
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    "0x6EB963EFD0FEF7A4CFAB6CE6F1421C3279D11707",
+  );
+
   static readonly KASPA_1 = new Account(Currency.KAS, "KASPA 1", 0, "44'/111111'/0'/0/2");
   static readonly KASPA_2 = new Account(Currency.KAS, "KASPA 2", 1, "44'/111111'/1'/0/1");
 
