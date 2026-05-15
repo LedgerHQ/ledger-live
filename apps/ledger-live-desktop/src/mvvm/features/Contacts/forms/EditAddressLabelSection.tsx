@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Select,
@@ -15,7 +15,8 @@ import {
 import type { UseContacts } from "~/renderer/contacts/useContacts";
 import type { RunVerb } from "../types";
 import { LIMITS } from "../constants";
-import { isPrintableAscii } from "../validation";
+import { isInvalidAsciiLabel } from "../validation";
+import { useContactEntryPicker } from "../hooks/useContactEntryPicker";
 import CharCounter from "../components/CharCounter";
 import DeviceActionButton from "../components/DeviceActionButton";
 
@@ -24,37 +25,13 @@ type Props = {
   run: RunVerb;
 };
 
-const entryValue = (addressHex: string, chainId: number) => `${addressHex}#${chainId}`;
-
 const EditAddressLabelSection = ({ contacts, run }: Props) => {
   const { t } = useTranslation();
-  const [contactName, setContactName] = useState<string | null>(null);
-  const [entryKey, setEntryKey] = useState<string | null>(null);
+  const picker = useContactEntryPicker(contacts);
+  const { contact, selectedEntry } = picker;
   const [newLabel, setNewLabel] = useState("");
 
-  const contactItems = useMemo(
-    () =>
-      Object.values(contacts.wallet.contacts).map(c => ({ value: c.name, label: c.name })),
-    [contacts.wallet.contacts],
-  );
-
-  const contact = contactName ? contacts.wallet.contacts[contactName] : null;
-  const entryItems = useMemo(
-    () =>
-      (contact?.entries ?? []).map(e => ({
-        value: entryValue(e.addressHex, e.chainId),
-        label: e.scope,
-      })),
-    [contact],
-  );
-
-  const selectedEntry = useMemo(
-    () => contact?.entries.find(e => entryValue(e.addressHex, e.chainId) === entryKey) ?? null,
-    [contact, entryKey],
-  );
-
-  const newLabelInvalid =
-    newLabel.length > LIMITS.addressLabel || !isPrintableAscii(newLabel);
+  const newLabelInvalid = isInvalidAsciiLabel(newLabel, LIMITS.addressLabel);
   const duplicateLabel =
     !!contact &&
     newLabel.length > 0 &&
@@ -79,8 +56,7 @@ const EditAddressLabelSection = ({ contacts, run }: Props) => {
       }),
     );
     if (ok) {
-      setContactName(null);
-      setEntryKey(null);
+      picker.reset();
       setNewLabel("");
     }
   };
@@ -94,13 +70,10 @@ const EditAddressLabelSection = ({ contacts, run }: Props) => {
       </Subheader>
 
       <Select
-        items={contactItems}
-        value={contactName}
-        disabled={contactItems.length === 0}
-        onValueChange={v => {
-          setContactName(v);
-          setEntryKey(null);
-        }}
+        items={picker.contactItems}
+        value={picker.contactName}
+        disabled={picker.contactItems.length === 0}
+        onValueChange={picker.selectContact}
       >
         <SelectTrigger label={t("contacts.fields.selectContact")} />
         <SelectContent>
@@ -115,10 +88,10 @@ const EditAddressLabelSection = ({ contacts, run }: Props) => {
       </Select>
 
       <Select
-        items={entryItems}
-        value={entryKey}
+        items={picker.entryItems}
+        value={picker.entryKey}
         disabled={!contact}
-        onValueChange={v => setEntryKey(v)}
+        onValueChange={picker.selectEntry}
       >
         <SelectTrigger label={t("contacts.fields.selectAddress")} />
         <SelectContent>

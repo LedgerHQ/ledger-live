@@ -10,7 +10,8 @@ and DMK verb cheat sheet. This file tracks the L0–L4 rollout state.
 - [x] L2 — Send ETH device-side decoration + recipient pill
 - [x] L2.1 — Diagnose missing device-side decoration during Send
 - [x] L2.2 — Registered Ledger account decoration (From + self-transfer To) + Send badges
-- [ ] L3 — Validation panel enrichment for designer handoff
+- [x] L3 — Validation panel enrichment for designer handoff
+- [x] L3.1 — Code simplification pass
 - [ ] L4 — Designer-led Contacts management UX
 - [ ] L5 — Send recipient picker
 
@@ -52,13 +53,12 @@ ever reached the device. Fix: strip an optional `0x` prefix in both
 `normalize()` callers; storage stays verbatim so the device-side HMAC
 on the registered address still validates. Regression test cases
 added for stored-without-prefix / stored-with-prefix in
-`contactsDataSource.test.ts`. Known follow-up (deferred to L3): each
-`useContactsStore()` instance owns its own `useState`, so a `commit()`
-from the dialog does not flow into the registration hook in
-`Default.tsx` — populating contacts and signing within the same
-session without re-mount still misses. The designer-led list/forms in
-L3 will need a single source of truth (Redux slice or broadcast)
-anyway, so we fix it there.
+`contactsDataSource.test.ts`. Cross-consumer store-sync issue
+(populating in the dialog vs. reading in the registration hook on
+`Default.tsx`) resolved in L3 via a module-level snapshot exposed
+through `useSyncExternalStore` in
+`renderer/contacts/hooks.ts` — every consumer now observes the same
+wallet object.
 
 ### L2.2 — Registered Ledger account decoration (From + self-transfer To) + Send badges
 
@@ -85,16 +85,34 @@ registration, and richer name-mismatch handling — lands in L3.
 
 ### L3 — Validation panel enrichment for designer handoff
 
-Bring the Lumen Dialog up to parity with the DMK sample app's Contacts
+Lumen Dialog brought up to parity with the DMK sample app's Contacts
 forms (`apps/sample/src/components/ContactsView/*Form.tsx` in the
-`LedgerHQ/device-sdk-ts` repo). Per-verb input fields (name, hex address,
-scope, derivation path, chain id) replacing fixtures; field-level
-validation with inline errors; surfaced device-action errors (which verb,
-which input, what the device returned); edge-case handling
-(rename-to-existing, edit with stale HMAC, contact-not-found,
-no-active-session); per-field loading / disabled states. The goal is a
-complete functional reference the designer can use to understand input
-constraints and error states without rediscovering them in Figma.
+`LedgerHQ/device-sdk-ts` repo). Five form sections, one per DMK verb
+(`RegisterExternalAddress`, `RegisterLedgerAccount`, `RenameContact`,
+`EditAddress`, `EditAddressLabel`), each with per-field validation,
+duplicate detection, char counters, and surfaced device-action errors.
+Canonical device flow via a `<DeviceAction>` connect→verify step that
+matches every other device-bound flow in LWD; `useContacts` opens its
+DMK transport via `withDevice` and verbs are scoped to the active
+device session. Module-level `useSyncExternalStore` snapshot in
+`renderer/contacts/hooks.ts` so the dialog, the data source
+registration, and the Send-side decoration all observe the same wallet
+without re-mounting — closes the L2.1 store-sync follow-up.
+
+### L3.1 — Code simplification pass
+
+Tightening sweep before Send-flow surfacing (L4+). `ContactBadge`
+switched from inline Tailwind to the Lumen `Tag` primitive
+(`size="sm"`, `appearance="accent-subtle" | "gray"`). Two-step
+"pick contact → pick entry" state machine shared between
+`EditAddressSection` and `EditAddressLabelSection` extracted into
+`hooks/useContactEntryPicker`. Five inline name/label/address
+validity expressions across the form files collapsed into two
+predicates in `validation.ts` (`isInvalidAsciiLabel`,
+`isInvalidPartialAddressHex`). `PRINTABLE_ASCII` regex inlined to
+its sole consumer in `validation.ts` and dropped from `constants.ts`.
+No behavior change — all five forms still call the same DMK verbs
+with the same payloads.
 
 ### L4 — Designer-led Contacts management UX
 

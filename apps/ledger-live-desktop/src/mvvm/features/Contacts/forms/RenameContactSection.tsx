@@ -15,7 +15,7 @@ import {
 import type { UseContacts } from "~/renderer/contacts/useContacts";
 import type { RunVerb } from "../types";
 import { LIMITS } from "../constants";
-import { isPrintableAscii } from "../validation";
+import { isInvalidAsciiLabel } from "../validation";
 import CharCounter from "../components/CharCounter";
 import DeviceActionButton from "../components/DeviceActionButton";
 
@@ -35,8 +35,7 @@ const RenameContactSection = ({ contacts, run }: Props) => {
     [contacts.wallet.contacts],
   );
 
-  const newNameInvalid =
-    newName.length > LIMITS.contactName || !isPrintableAscii(newName);
+  const newNameInvalid = isInvalidAsciiLabel(newName, LIMITS.contactName);
   const duplicate = newName.length > 0 && contacts.wallet.contacts[newName] != null;
 
   const canSubmit =

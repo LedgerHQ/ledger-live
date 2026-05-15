@@ -10,5 +10,3 @@ export const LIMITS = {
   accountName: 32,
   addressHexChars: 40,
 };
-
-export const PRINTABLE_ASCII = /^[\x20-\x7E]*$/;

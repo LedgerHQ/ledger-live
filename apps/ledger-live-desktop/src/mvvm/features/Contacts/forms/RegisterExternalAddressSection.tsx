@@ -9,7 +9,12 @@ import {
 import type { UseContacts } from "~/renderer/contacts/useContacts";
 import type { RunVerb } from "../types";
 import { LIMITS } from "../constants";
-import { isPrintableAscii, isValidAddressHex, normalizeAddressHex } from "../validation";
+import {
+  isInvalidAsciiLabel,
+  isInvalidPartialAddressHex,
+  isValidAddressHex,
+  normalizeAddressHex,
+} from "../validation";
 import CharCounter from "../components/CharCounter";
 import ContactSearchSelect, {
   type ContactPickResult,
@@ -44,11 +49,9 @@ const RegisterExternalAddressSection = ({ contacts, run }: Props) => {
     [contacts.wallet.contacts],
   );
 
-  const nameInvalid =
-    pick.name.length > LIMITS.contactName || !isPrintableAscii(pick.name);
-  const labelInvalid =
-    label.length > LIMITS.addressLabel || !isPrintableAscii(label);
-  const addressInvalid = addressHex.length > 0 && !isValidAddressHex(addressHex);
+  const nameInvalid = isInvalidAsciiLabel(pick.name, LIMITS.contactName);
+  const labelInvalid = isInvalidAsciiLabel(label, LIMITS.addressLabel);
+  const addressInvalid = isInvalidPartialAddressHex(addressHex);
 
   // Duplicate guardrail: prevent registering the same (chainId, address) pair
   // twice on the same contact — the device would reject it anyway.
