@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { log } from "@ledgerhq/logs";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
+import type { Account, Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
 import type {
   Operation as AlpacaOperation,
   MemoNotSupported,
@@ -11,6 +11,7 @@ import type {
 import {
   decodeAccountId,
   encodeAccountId,
+  encodeTokenAccountId,
 } from "@ledgerhq/ledger-wallet-framework/account/accountId";
 import { decodeOperationId, encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import aleoConfig from "../config";
@@ -62,29 +63,57 @@ export function getNetworkConfig(currency: CryptoCurrency) {
 
 export function patchAccountWithViewKey(account: Account, viewKey: string): Account {
   invariant(viewKey, `aleo: viewKey is missing in patchAccountWithViewKey ${account.freshAddress}`);
-  const accountIdParams = decodeAccountId(account.id);
+
   const updatedAccountId = encodeAccountId({
-    ...accountIdParams,
+    ...decodeAccountId(account.id),
     customData: viewKey,
   });
 
-  const updateOperations = (ops: Operation[]) =>
+  // Single source of truth for old → new sub-account IDs.
+  const subAccountIdMap = new Map<string, string>(
+    account.subAccounts?.map(sub => [sub.id, encodeTokenAccountId(updatedAccountId, sub.token)]) ??
+      [],
+  );
+
+  const updateOps = (ops: Operation[], targetAccountId: string): Operation[] =>
     ops.map(op => {
       const { hash, type } = decodeOperationId(op.id);
-      const updatedOperationId = encodeOperationId(updatedAccountId, hash, type);
+
+      const updatedSubOperations = op.subOperations?.map(subOp => {
+        const newSubAccountId = subAccountIdMap.get(subOp.accountId) ?? subOp.accountId;
+        const { hash: subHash, type: subType } = decodeOperationId(subOp.id);
+        return {
+          ...subOp,
+          id: encodeOperationId(newSubAccountId, subHash, subType),
+          accountId: newSubAccountId,
+        };
+      });
 
       return {
         ...op,
-        id: updatedOperationId,
-        accountId: updatedAccountId,
+        id: encodeOperationId(targetAccountId, hash, type),
+        accountId: targetAccountId,
+        ...(updatedSubOperations && { subOperations: updatedSubOperations }),
       };
     });
+
+  const updatedSubAccounts = account.subAccounts?.map((sub: TokenAccount) => {
+    const newTokenAccountId = subAccountIdMap.get(sub.id)!;
+    return {
+      ...sub,
+      id: newTokenAccountId,
+      parentId: updatedAccountId,
+      operations: updateOps(sub.operations, newTokenAccountId),
+      pendingOperations: updateOps(sub.pendingOperations, newTokenAccountId),
+    };
+  });
 
   return {
     ...account,
     id: updatedAccountId,
-    operations: updateOperations(account.operations),
-    pendingOperations: updateOperations(account.pendingOperations),
+    operations: updateOps(account.operations, updatedAccountId),
+    pendingOperations: updateOps(account.pendingOperations, updatedAccountId),
+    ...(updatedSubAccounts && { subAccounts: updatedSubAccounts }),
   };
 }
 
