@@ -30,20 +30,26 @@ type RowProps = {
   onSelect: (suggestion: RecipientSuggestion) => void;
 };
 
-const RecipientRow = ({ suggestion, onSelect }: RowProps) => (
-  <ListItem
-    data-testid={`send-recipient-suggestion-${suggestion.kind}-${suggestion.name}`}
-    onClick={() => onSelect(suggestion)}
-  >
-    <ListItemLeading>
-      <Avatar size="sm" alt={suggestion.name} />
-      <ListItemContent>
-        <ListItemTitle>{suggestion.name}</ListItemTitle>
-        <ListItemDescription>{shortAddress(suggestion.addressHex)}</ListItemDescription>
-      </ListItemContent>
-    </ListItemLeading>
-  </ListItem>
-);
+const RecipientRow = ({ suggestion, onSelect }: RowProps) => {
+  const description =
+    suggestion.kind === "external" && suggestion.scope
+      ? suggestion.scope
+      : shortAddress(suggestion.addressHex);
+  return (
+    <ListItem
+      data-testid={`send-recipient-suggestion-${suggestion.kind}-${suggestion.name}`}
+      onClick={() => onSelect(suggestion)}
+    >
+      <ListItemLeading>
+        <Avatar size="sm" alt={suggestion.name} />
+        <ListItemContent>
+          <ListItemTitle>{suggestion.name}</ListItemTitle>
+          <ListItemDescription>{description}</ListItemDescription>
+        </ListItemContent>
+      </ListItemLeading>
+    </ListItem>
+  );
+};
 
 export const RecipientPicker = ({ query, chainId, onSelect }: Props) => {
   const { t } = useTranslation();
@@ -53,26 +59,30 @@ export const RecipientPicker = ({ query, chainId, onSelect }: Props) => {
 
   return (
     <div className="mb-12 flex flex-col gap-8 px-24" data-testid="send-recipient-picker">
-      {ledgerAccounts.length > 0 && (
-        <section className="flex flex-col">
-          <Subheader>
-            <SubheaderRow>
-              <SubheaderTitle>{t("contacts.picker.ledgerAccounts")}</SubheaderTitle>
-            </SubheaderRow>
-          </Subheader>
-          {ledgerAccounts.map(s => (
-            <RecipientRow key={s.id} suggestion={s} onSelect={onSelect} />
-          ))}
-        </section>
-      )}
       {external.length > 0 && (
         <section className="flex flex-col">
           <Subheader>
             <SubheaderRow>
-              <SubheaderTitle>{t("contacts.picker.addressBook")}</SubheaderTitle>
+              <SubheaderTitle className="heading-5-semi-bold">
+                {t("contacts.picker.contacts")}
+              </SubheaderTitle>
             </SubheaderRow>
           </Subheader>
           {external.map(s => (
+            <RecipientRow key={s.id} suggestion={s} onSelect={onSelect} />
+          ))}
+        </section>
+      )}
+      {ledgerAccounts.length > 0 && (
+        <section className="flex flex-col">
+          <Subheader>
+            <SubheaderRow>
+              <SubheaderTitle className="heading-5-semi-bold">
+                {t("contacts.picker.ledgerAccounts")}
+              </SubheaderTitle>
+            </SubheaderRow>
+          </Subheader>
+          {ledgerAccounts.map(s => (
             <RecipientRow key={s.id} suggestion={s} onSelect={onSelect} />
           ))}
         </section>
