@@ -2,11 +2,14 @@ describe("tools registry", () => {
   let tools: typeof import("./tools").tools;
   let registerTool: typeof import("./tools").registerTool;
   let registerToolWithRequiredProps: typeof import("./tools").registerToolWithRequiredProps;
+  let setupDevTools: typeof import("./tools").setupDevTools;
   let Category: typeof import("../types").Category;
 
   beforeEach(async () => {
     await jest.isolateModulesAsync(async () => {
-      ({ tools, registerTool, registerToolWithRequiredProps } = await import("./tools"));
+      ({ tools, registerTool, registerToolWithRequiredProps, setupDevTools } = await import(
+        "./tools"
+      ));
       ({ Category } = await import("../types"));
     });
   });
@@ -79,6 +82,7 @@ describe("tools registry", () => {
 
   describe("duplicate guard", () => {
     it("ignores re-registration with the same id", () => {
+      const warn = jest.spyOn(console, "warn").mockImplementation(() => {});
       registerTool({
         id: "dup",
         label: "First",
@@ -93,9 +97,12 @@ describe("tools registry", () => {
       });
       expect(tools).toHaveLength(1);
       expect(tools[0].label).toBe("First");
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining("dup"));
+      warn.mockRestore();
     });
 
     it("preserves the optional flag from the first registration", () => {
+      const warn = jest.spyOn(console, "warn").mockImplementation(() => {});
       registerTool({
         id: "test-tool",
         label: "Optional First",
@@ -109,6 +116,50 @@ describe("tools registry", () => {
         component: () => null,
       });
       expect(tools[0].optional).toBe(true);
+      warn.mockRestore();
+    });
+  });
+
+  describe("setupDevTools", () => {
+    it("invokes each registrar in order", () => {
+      const calls: string[] = [];
+      setupDevTools([
+        () => {
+          calls.push("a");
+        },
+        () => {
+          calls.push("b");
+        },
+        () => {
+          calls.push("c");
+        },
+      ]);
+      expect(calls).toEqual(["a", "b", "c"]);
+    });
+
+    it("returns the tools produced by each registrar", () => {
+      const registered = setupDevTools([
+        () =>
+          registerTool({
+            id: "optional-tool",
+            label: "Optional",
+            category: Category.DEBUGGING,
+            component: () => null,
+          }),
+        () =>
+          registerToolWithRequiredProps({
+            id: "test-tool",
+            label: "Required",
+            category: Category.CONFIGURATION,
+            component: () => null,
+          }),
+      ]);
+      expect(registered.map(t => t.id)).toEqual(["optional-tool", "test-tool"]);
+    });
+
+    it("ignores registrars that return void", () => {
+      const registered = setupDevTools([() => {}, () => undefined]);
+      expect(registered).toEqual([]);
     });
   });
 });

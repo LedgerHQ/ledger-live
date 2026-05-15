@@ -4,16 +4,21 @@ import type { DevToolsPropsRegistry } from "../index";
 
 export const tools: Tool[] = [];
 
-const allToolIds = new Set<string>();
+const toolsById = new Map<string, Tool>();
 
-function addTool(tool: Tool): boolean {
-  if (allToolIds.has(tool.id)) {
+function addTool(tool: Tool): Tool {
+  const existing = toolsById.get(tool.id);
+  if (existing) {
     console.warn(`[@devtools/shell] duplicate tool id "${tool.id}" — second registration ignored.`);
-    return false;
+    return existing;
   }
-  allToolIds.add(tool.id);
+  toolsById.set(tool.id, tool);
   tools.push(tool);
-  return true;
+  return tool;
+}
+
+export function setupDevTools(registerFns: Array<() => Tool | void>): Tool[] {
+  return registerFns.flatMap(fn => fn() ?? []);
 }
 
 type ToolInput<K extends keyof DevToolsPropsRegistry> = Omit<
@@ -27,13 +32,9 @@ type ToolInput<K extends keyof DevToolsPropsRegistry> = Omit<
 export function registerToolWithRequiredProps<K extends keyof DevToolsPropsRegistry>(
   tool: ToolInput<K>,
 ): Tool {
-  const registered: Tool = { ...tool, optional: false };
-  addTool(registered);
-  return registered;
+  return addTool({ ...tool, optional: false });
 }
 
 export function registerTool<K extends keyof DevToolsPropsRegistry>(tool: ToolInput<K>): Tool {
-  const registered: Tool = { ...tool, optional: true };
-  addTool(registered);
-  return registered;
+  return addTool({ ...tool, optional: true });
 }

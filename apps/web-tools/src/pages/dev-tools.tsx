@@ -1,9 +1,9 @@
 import { useMemo } from "react";
-import { DevTools } from "@devtools/shell";
+import { DevTools, setupDevTools } from "@devtools/shell";
 import { registerFeatureFlagsTool, FEATURE_FLAGS_ID } from "@devtools/feature-flags";
 import { useFeatureFlagsToolProps } from "../hooks/useFeatureFlagsToolProps";
 
-registerFeatureFlagsTool();
+setupDevTools([registerFeatureFlagsTool]);
 
 export default function DevToolsPage() {
   const featureFlagsProps = useFeatureFlagsToolProps();
