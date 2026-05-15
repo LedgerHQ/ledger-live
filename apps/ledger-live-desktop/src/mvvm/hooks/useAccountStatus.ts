@@ -1,5 +1,6 @@
 import { useSelector } from "./redux";
-import { areAccountsEmptySelector, hasAccountsSelector } from "~/renderer/reducers/accounts";
+import { hasAccountsSelector } from "~/renderer/reducers/accounts";
+import { useAreAccountsEmpty } from "./useAreAccountsEmpty";
 
 /**
  * Hook to determine the status of user accounts and funds.
@@ -7,7 +8,7 @@ import { areAccountsEmptySelector, hasAccountsSelector } from "~/renderer/reduce
  */
 export const useAccountStatus = () => {
   const hasAccount = useSelector(hasAccountsSelector);
-  const areAccountsEmpty = useSelector(areAccountsEmptySelector);
+  const areAccountsEmpty = useAreAccountsEmpty();
   const hasFunds = !areAccountsEmpty && hasAccount;
 
   return {
