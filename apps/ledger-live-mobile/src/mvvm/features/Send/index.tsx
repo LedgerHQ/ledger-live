@@ -2,6 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import {
   SEND_FLOW_STEP,
   type SendFlowStep,
@@ -11,6 +12,7 @@ import type { StepRegistry } from "@ledgerhq/live-common/flows/wizard/types";
 
 import { SendFlowOrchestrator } from "./SendFlowOrchestrator";
 import { SEND_FLOW_CONFIG } from "./constants";
+import { AleoSendFlowOrchestrator } from "~/families/aleo/SendFlow/AleoSendFlowOrchestrator";
 
 import { RecipientScreen } from "./screens/Recipient";
 import { AmountScreen } from "./screens/Amount";
@@ -78,14 +80,28 @@ export default function SendWorkflow() {
     [params, routeParams],
   );
 
+  // Check if this is an Aleo account to route to family-specific orchestrator
+  const isAleoAccount = useMemo(() => {
+    const account = initParams.account;
+    const parentAccount = initParams.parentAccount;
+    if (!account) return false;
+
+    const mainAccount = getMainAccount(account, parentAccount ?? null);
+    return mainAccount.currency.family === "aleo";
+  }, [initParams.account, initParams.parentAccount]);
+
   return (
     <DomainServiceProvider>
-      <SendFlowOrchestrator
-        initParams={initParams}
-        onClose={handleClose}
-        stepRegistry={stepRegistry}
-        flowConfig={SEND_FLOW_CONFIG}
-      />
+      {isAleoAccount ? (
+        <AleoSendFlowOrchestrator initParams={initParams} onClose={handleClose} />
+      ) : (
+        <SendFlowOrchestrator
+          initParams={initParams}
+          onClose={handleClose}
+          stepRegistry={stepRegistry}
+          flowConfig={SEND_FLOW_CONFIG}
+        />
+      )}
     </DomainServiceProvider>
   );
 }

@@ -9272,6 +9272,19 @@
       "available": "Available",
       "unavailable": "Not connected",
       "menuAccessibilityLabel": "Device options"
+    },
+    "aleo": {
+      "convertBalance": "Convert Balance",
+      "privateSync": {
+        "title": "Syncing private balance",
+        "description": "Please wait while we sync your private transactions",
+        "errorTitle": "Sync failed",
+        "retry": "Retry",
+        "why": {
+          "title": "Why do we need to sync?",
+          "description": "Private transactions on Aleo require scanning the blockchain to decrypt your balance. This ensures your privacy while keeping your funds accessible."
+        }
+      }
     }
   }
 }
