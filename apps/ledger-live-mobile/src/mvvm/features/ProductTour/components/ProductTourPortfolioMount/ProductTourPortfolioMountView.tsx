@@ -8,9 +8,11 @@ export const ProductTourPortfolioMountView = ({
   isProductTourEligible,
   openProductTour,
   closeProductTour,
+  onCloseButtonPress,
   onSlideChange,
   isDrawerOpen,
   onPrimaryAction,
+  completeProductTour,
 }: UseProductTourPortfolioMountViewModelResult) => {
   if (!isProductTourEligible) {
     return null;
@@ -22,9 +24,11 @@ export const ProductTourPortfolioMountView = ({
         value={{
           openProductTour,
           closeProductTour,
+          onCloseButtonPress,
           onSlideChange,
           isDrawerOpen,
           onPrimaryAction,
+          completeProductTour,
         }}
       >
         <ProductTourDrawer />
