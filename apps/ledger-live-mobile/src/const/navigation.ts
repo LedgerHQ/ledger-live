@@ -62,6 +62,7 @@ export enum ScreenName {
   DebugLogs = "DebugLogs",
   DebugLottie = "DebugLottie",
   DebugLumen = "DebugLumen",
+  DebugLumenVisualization = "DebugLumenVisualization",
   DebugWallet40 = "DebugWallet40",
   DebugWalletV4Tour = "DebugWalletV4Tour",
   DebugProductTour = "DebugProductTour",

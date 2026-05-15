@@ -131,6 +131,7 @@
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "@ledgerhq/lumen-ui-rnative-visualization": "catalog:",
     "@ledgerhq/native-ui": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
