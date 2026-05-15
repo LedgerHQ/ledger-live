@@ -17,8 +17,7 @@ import { SkipMemoSection } from "../screens/Recipient/components/Memo/SkipMemoSe
 import { useRecipientMemo } from "../screens/Recipient/hooks/useRecipientMemo";
 import type { SendStepConfig } from "../types";
 import { ContactBadge } from "~/renderer/contacts/ContactBadge";
-import { useRecipientSuggestions } from "../hooks/useRecipientSuggestions";
-import { RecipientSuggestionsDropdown } from "./RecipientSuggestionsDropdown";
+import { RecipientPicker } from "./RecipientPicker";
 
 export function SendHeader() {
   const wizard = useFlowWizard<SendFlowStep, SendFlowBusinessContext, SendStepConfig>();
@@ -78,14 +77,11 @@ export function SendHeader() {
     title,
     transactionErrorName,
     transactionError,
-    recipientContactKind,
     fromContactKind,
     recipientChainId,
   } = useSendHeaderModel({ availableText, resetViewState });
 
   const isAmountStep = currentStep === SEND_FLOW_STEP.AMOUNT;
-
-  const { suggestions } = useRecipientSuggestions(recipientSearch.value, recipientChainId);
 
   const recipientInputContent = useMemo(() => {
     if (!showRecipientInput) return null;
@@ -95,7 +91,6 @@ export function SendHeader() {
         <div className="-mt-12 mb-24 px-24">
           <div className="relative flex items-center gap-8">
             <AddressInput className="w-full" value={addressInputValue} hideClearButton />
-            {recipientContactKind && <ContactBadge kind={recipientContactKind} />}
             <button
               type="button"
               className="absolute inset-0"
@@ -110,7 +105,7 @@ export function SendHeader() {
 
     return (
       <>
-        <div className="relative mb-12 flex items-center gap-8 px-24">
+        <div className="mb-12 flex items-center gap-8 px-24">
           <AddressInput
             className="w-full"
             id="send-recipient-input"
@@ -125,12 +120,12 @@ export function SendHeader() {
                 : t("newSendFlow.placeholderNoENS")
             }
           />
-          {recipientContactKind && <ContactBadge kind={recipientContactKind} />}
-          <RecipientSuggestionsDropdown
-            suggestions={suggestions}
-            onSelect={s => recipientSearch.setValue(s.addressHex)}
-          />
         </div>
+        <RecipientPicker
+          query={recipientSearch.value}
+          chainId={recipientChainId}
+          onSelect={s => recipientSearch.setValue(s.addressHex)}
+        />
         {showMemoControls && currencyId ? (
           <div className="px-24">
             <div className="flex flex-col gap-12">
@@ -197,8 +192,7 @@ export function SendHeader() {
     onSkipMemoCancelConfirm,
     onSkipMemoConfirm,
     handleRecipientInputClick,
-    recipientContactKind,
-    suggestions,
+    recipientChainId,
   ]);
 
   return (
