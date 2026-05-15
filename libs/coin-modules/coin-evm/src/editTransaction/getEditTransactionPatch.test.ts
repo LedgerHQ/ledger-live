@@ -1,5 +1,5 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import BigNumber from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 import { getCoinConfig } from "../config";
 import { makeAccount } from "../fixtures/common.fixtures";
 import {

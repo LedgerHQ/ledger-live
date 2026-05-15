@@ -1,6 +1,6 @@
 import { getEnv } from "@ledgerhq/live-env";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 import { getCoinConfig } from "../config";
 import type { Transaction } from "../types/index";
 import { getEstimatedFees } from "../utils";

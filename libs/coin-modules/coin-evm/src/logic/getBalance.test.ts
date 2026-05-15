@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import BigNumber from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 import { getExplorerApi } from "../network/explorer";
 import { getNodeApi } from "../network/node";
 import { mockNodeApi } from "../network/node/node.fixtures";

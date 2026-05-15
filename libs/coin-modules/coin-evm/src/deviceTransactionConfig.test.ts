@@ -4,7 +4,7 @@ import { encodeNftId } from "@ledgerhq/ledger-wallet-framework/nft/nftId";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, ProtoNFT } from "@ledgerhq/types-live";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 import eip55 from "eip55";
 import getDeviceTransactionConfig from "./deviceTransactionConfig";
 import { makeAccount, makeTokenAccount } from "./fixtures/common.fixtures";

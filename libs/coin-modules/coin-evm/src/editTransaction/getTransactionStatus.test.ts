@@ -3,7 +3,7 @@ import {
   RecipientRequired,
   ReplacementTransactionUnderpriced,
 } from "@ledgerhq/errors";
-import BigNumber from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 import { NotEnoughNftOwned, NotOwnedNft } from "../errors";
 import { EvmTransactionEIP1559, EvmTransactionLegacy, TransactionStatus } from "../types";
 import { getMinEip1559Fees, getMinLegacyFees } from "./getMinEditTransactionFees";

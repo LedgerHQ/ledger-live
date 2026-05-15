@@ -6,7 +6,7 @@ import { delay } from "@ledgerhq/live-promise";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import axios from "axios";
-import BigNumber from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 import eip55 from "eip55";
 import { getCoinConfig } from "../../config";
 import { LedgerExplorerUsedIncorrectly } from "../../errors";

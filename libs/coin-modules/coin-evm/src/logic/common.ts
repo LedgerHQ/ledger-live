@@ -6,7 +6,7 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/index";
 import { isSendTransactionIntent } from "@ledgerhq/coin-module-framework/utils";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import BigNumber from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 import { ethers } from "ethers";
 import { getNodeApi } from "../network/node";
 import { buildStakingTransactionParams } from "../staking";

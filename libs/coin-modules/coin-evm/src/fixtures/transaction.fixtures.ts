@@ -1,6 +1,6 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import BigNumber from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 
 import {
   EvmTransactionEIP1559,

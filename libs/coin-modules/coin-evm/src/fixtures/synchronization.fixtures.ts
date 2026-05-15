@@ -3,7 +3,7 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { encodeSubOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import BigNumber from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 import { getCoinConfig } from "../config";
 import {
   makeAccount,

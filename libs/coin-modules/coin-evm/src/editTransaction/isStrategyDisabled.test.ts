@@ -1,4 +1,4 @@
-import BigNumber from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 import { getCoinConfig } from "../config";
 import { isStrategyDisabled } from "./isStrategyDisabled";
 

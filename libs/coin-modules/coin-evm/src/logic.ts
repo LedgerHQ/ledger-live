@@ -5,7 +5,7 @@ import { isNFTActive } from "@ledgerhq/ledger-wallet-framework/nft/support";
 import { getEnv } from "@ledgerhq/live-env";
 import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import { Account, AnyMessage, MessageProperties, TokenAccount } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 import murmurhash from "imurmurhash";
 import { getCoinConfig } from "./config";
 import { getNodeApi } from "./network/node/index";

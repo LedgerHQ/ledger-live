@@ -1,6 +1,6 @@
 import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";
 import { Account } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 import { getCoinConfig } from "../config";
 import type { Transaction as EvmTransaction } from "../types/index";
 import { getFormattedFeeFields } from "./getFormattedFeeFields";

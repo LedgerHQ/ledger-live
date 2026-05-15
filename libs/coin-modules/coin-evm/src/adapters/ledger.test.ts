@@ -1,6 +1,6 @@
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { Operation } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 import {
   LedgerExplorerER1155TransferEvent,
   LedgerExplorerER721TransferEvent,

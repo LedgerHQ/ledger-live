@@ -6,7 +6,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 import Prando from "prando";
 import lobsterTokenData from "./fixtures/cardano-native-8654e8b350e298c80d2451beb5ed80fc9eee9f38ce6b039fb8706bc34c4f4253544552.json";
 import usdCoinTokenData from "./fixtures/ethereum-erc20-usd__coin.json";

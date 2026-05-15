@@ -1,6 +1,6 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, BroadcastConfig } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 import { BlockFinalizationTag, EvmConfigInfo } from "../../config";
 import { Transaction as EvmTransaction, FeeData } from "../../types";
 

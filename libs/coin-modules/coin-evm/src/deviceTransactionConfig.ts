@@ -9,7 +9,7 @@ import {
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import type { CommonDeviceTransactionField } from "@ledgerhq/ledger-wallet-framework/transaction/common";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 import { ethers } from "ethers";
 import { Transaction as EvmTransaction, TransactionStatus } from "./types";
 

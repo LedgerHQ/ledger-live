@@ -11,7 +11,7 @@ import {
   encodeSubOperationId,
 } from "@ledgerhq/ledger-wallet-framework/operation";
 import { Operation, OperationType } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 import eip55 from "eip55";
 import {
   LedgerExplorerOperation,

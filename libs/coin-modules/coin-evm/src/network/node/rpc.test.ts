@@ -1,7 +1,7 @@
 import { AssertionError, fail } from "assert";
 import { delay } from "@ledgerhq/live-promise";
 import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
-import BigNumber from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 import {
   FetchRequest,
   JsonRpcProvider,
