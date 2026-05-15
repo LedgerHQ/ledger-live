@@ -1,0 +1,11 @@
+{
+  "ignoreUnresolved": [
+    "@jest/expect-utils",
+    "@jest/get-type",
+    "ansi-styles",
+    "jest-util",
+    "supports-color"
+  ],
+  "ignoreUnused": [],
+  "ignoreUnimported": []
+}

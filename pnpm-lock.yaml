@@ -6817,6 +6817,91 @@ importers:
         specifier: 'catalog:'
         version: 6.0.2
 
+  libs/coin-tester-modules/coin-tester-tezos:
+    dependencies:
+      '@ledgerhq/coin-tester':
+        specifier: workspace:^
+        version: link:../../coin-tester
+      '@ledgerhq/coin-tezos':
+        specifier: workspace:^
+        version: link:../../coin-modules/coin-tezos
+      '@ledgerhq/cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/cryptoassets
+      '@ledgerhq/ledger-wallet-framework':
+        specifier: workspace:^
+        version: link:../../ledger-wallet-framework
+      '@ledgerhq/live-common':
+        specifier: workspace:^
+        version: link:../../ledger-live-common
+      '@ledgerhq/live-config':
+        specifier: workspace:^
+        version: link:../../live-config
+      '@ledgerhq/live-env':
+        specifier: workspace:^
+        version: link:../../env
+      '@ledgerhq/types-live':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-live
+      '@noble/curves':
+        specifier: ^1.9.7
+        version: 1.9.7
+      '@noble/hashes':
+        specifier: ^1.8.0
+        version: 1.8.0
+      bignumber.js:
+        specifier: 9.1.2
+        version: 9.1.2
+      bip39:
+        specifier: ^3.1.0
+        version: 3.1.0
+      bs58:
+        specifier: 'catalog:'
+        version: 4.0.1
+      chalk:
+        specifier: ^4.1.2
+        version: 4.1.2
+      docker-compose:
+        specifier: ^1.1.0
+        version: 1.1.0
+      msw:
+        specifier: 'catalog:'
+        version: 2.7.3(@types/node@24.12.0)(typescript@6.0.2)
+    devDependencies:
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/bs58':
+        specifier: 'catalog:'
+        version: 4.0.4
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(typescript@6.0.2))
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
+      rimraf:
+        specifier: ^5.0.5
+        version: 5.0.10
+      ts-node:
+        specifier: ^10.9.2
+        version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(typescript@6.0.2)
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.2
+
   libs/concordium-core:
     dependencies:
       bip32-path:
@@ -36959,11 +37044,6 @@ packages:
     resolution: {integrity: sha512-2eHWfjaoXgTBC2jNM1LRef62VQa0umtvRiDSk6HSzW7RvS5YtkabJrwYLLEKWBc8a5U2PTSCs+dJjUTJdlHsWQ==}
     engines: {node: '>= 14'}
 
-  yaml@2.4.1:
-    resolution: {integrity: sha512-pIXzoImaqmfOrL7teGUBt/T7ZDnyeGBWyXQBvOVhLkWLN37GXv8NMLK406UY6dS51JfcQHsmcW5cJ441bHg6Lg==}
-    engines: {node: '>= 14'}
-    hasBin: true
-
   yaml@2.8.1:
     resolution: {integrity: sha512-lcYcMxX2PO9XMGvAJkJ3OsNMw+/7FKes7/hgerGUYWIoWu5j/+YQqcZr5JnPZWzOsEBgMbSbiSTn/dv/69Mkpw==}
     engines: {node: '>= 14.6'}
@@ -58399,7 +58479,7 @@ snapshots:
 
   docker-compose@1.1.0:
     dependencies:
-      yaml: 2.4.1
+      yaml: 2.8.1
 
   doctrine-temporary-fork@2.1.0:
     dependencies:
@@ -72557,8 +72637,6 @@ snapshots:
   yaml@1.10.2: {}
 
   yaml@2.3.1: {}
-
-  yaml@2.4.1: {}
 
   yaml@2.8.1: {}
 
