@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getFormattedFeeFields } from "@ledgerhq/coin-bitcoin/editTransaction/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { getStuckAccountAndOperation } from "@ledgerhq/coin-bitcoin/operation";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import React from "react";
 import { render, screen, withFlagOverrides } from "tests/testSetup";
 import EditStuckTransactionPanelBodyHeader from "../EditStuckTransactionPanelBodyHeader";
@@ -20,10 +20,14 @@ jest.mock("@ledgerhq/live-common/account/index", () => ({
   getMainAccount: jest.fn(),
 }));
 
-jest.mock("@ledgerhq/coin-bitcoin/operation", () => ({
-  ...jest.requireActual("@ledgerhq/coin-bitcoin/operation"),
-  getStuckAccountAndOperation: jest.fn(),
+jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
+  useAccountBridge: jest.fn(),
 }));
+
+const mockGetStuckAccountAndOperation = jest.fn();
+(useAccountBridge as jest.Mock).mockReturnValue({
+  getStuckAccountAndOperation: mockGetStuckAccountAndOperation,
+});
 
 jest.mock("~/renderer/modals/Send/SendAmountFields", () => ({
   __esModule: true,
@@ -126,7 +130,7 @@ describe("Bitcoin EditTransaction components", () => {
   });
 
   it("EditStuckTransactionPanelBodyHeader renders panel when enabled and stuck tx exists", () => {
-    (getStuckAccountAndOperation as jest.Mock).mockReturnValue({
+    mockGetStuckAccountAndOperation.mockReturnValue({
       operation: {},
       account,
       parentAccount: undefined,

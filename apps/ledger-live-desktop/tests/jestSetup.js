@@ -1,8 +1,7 @@
-import { registerAllCoins } from "@ledgerhq/live-common/coin-modules/load-all-coins";
+import "../src/live-common-set-supported-currencies";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
 import { setCoinConfig } from "@ledgerhq/coin-evm/config";
-registerAllCoins();
 LiveConfig.setConfig(liveConfig);
 setCoinConfig(() => ({ info: {} }));
 import "@jest/globals";
