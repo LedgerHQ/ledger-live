@@ -55,8 +55,7 @@ const mockUseRecoverWidgetViewModel = jest.mocked(useRecoverWidgetViewModel);
 
 function defaultRecoverWidgetViewModelReturn() {
   return {
-    isVisible: true,
-    shouldDisplayRecoverInPortfolioBannerRow: true,
+    shouldDisplay: true,
     titleKey: "postOnboarding.dialog.actions.recover.title",
     descriptionKey: "postOnboarding.dialog.actions.recover.description",
     onOpenRecover: jest.fn(),
@@ -66,7 +65,7 @@ function defaultRecoverWidgetViewModelReturn() {
 function setWallet40RecoverInRow(show: boolean) {
   mockUseRecoverWidgetViewModel.mockReturnValue({
     ...defaultRecoverWidgetViewModelReturn(),
-    shouldDisplayRecoverInPortfolioBannerRow: show,
+    shouldDisplay: show,
   });
 }
 
@@ -211,8 +210,7 @@ describe("PortfolioBannerContent", () => {
     it("falls back to portfolio content cards when banner allows recover but RecoverWidget visibility gates are off", () => {
       mockUseRecoverWidgetViewModel.mockReturnValue({
         ...defaultRecoverWidgetViewModelReturn(),
-        isVisible: false,
-        shouldDisplayRecoverInPortfolioBannerRow: false,
+        shouldDisplay: false,
       });
       setVisibility({
         shouldDisplayFinishOnboardingWidget: true,
