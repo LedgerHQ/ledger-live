@@ -28,14 +28,23 @@ const RECOVER_UPSELL_LEDGER_LIVE_URI = "ledgerlive://protect/upsell";
 
 const protectDesktopDefaultParams = DEFAULT_FEATURES.protectServicesDesktop.params!;
 
-const protectServicesForStax = (onboardingUpsellUri: string) =>
+type ProtectFeatureOverrides = {
+  onboardingUpsellUri?: string;
+  bannerSubscriptionNotification?: boolean;
+};
+
+const protectServicesFeature = ({
+  onboardingUpsellUri = RECOVER_UPSELL_LEDGER_LIVE_URI,
+  bannerSubscriptionNotification = true,
+}: ProtectFeatureOverrides = {}) =>
   withFlagOverrides({
     protectServicesDesktop: {
       enabled: true,
       params: {
         ...protectDesktopDefaultParams,
         protectId: "protect-prod",
-        compatibleDevices: [{ name: DeviceModelId.stax, available: true, comingSoon: false }],
+        bannerSubscriptionNotification,
+        compatibleDevices: [],
         onboardingCompleted: {
           ...protectDesktopDefaultParams.onboardingCompleted,
           upsellURI: onboardingUpsellUri,
@@ -60,7 +69,10 @@ function postOnboardingActive(
   };
 }
 
-function renderWithProvider(postOnboarding: PostOnboardingState, featureFlagSlice: ReturnType<typeof withFlagOverrides>) {
+function renderWithProvider(
+  postOnboarding: PostOnboardingState,
+  featureFlagSlice: ReturnType<typeof withFlagOverrides>,
+) {
   const store = createStore({
     state: {
       postOnboarding,
@@ -94,10 +106,7 @@ describe("RecoverWidget integration", () => {
   });
 
   it("renders the recover CTA and navigates to the upsell when clicked", async () => {
-    const { user } = renderWithProvider(
-      postOnboardingActive(),
-      protectServicesForStax(RECOVER_UPSELL_LEDGER_LIVE_URI),
-    );
+    const { user } = renderWithProvider(postOnboardingActive(), protectServicesFeature());
 
     const button = await screen.findByRole("button", {
       name: /Finish securing your backup/i,
@@ -112,8 +121,12 @@ describe("RecoverWidget integration", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("renders nothing for the recover widget when the upsell is unavailable", async () => {
-    renderWithProvider(postOnboardingActive(), protectServicesForStax(""));
+  it("renders nothing when the upsellURI configuration is not available (prevents broken click)", async () => {
+    renderWithProvider(
+      postOnboardingActive(),
+      protectServicesFeature({ onboardingUpsellUri: "" }),
+    );
+
     await waitFor(() => {
       expect(screen.queryByTestId("recover-finish-onboarding-widget")).not.toBeInTheDocument();
     });
@@ -121,9 +134,16 @@ describe("RecoverWidget integration", () => {
 
   it("renders nothing when recover was never started (NO_SUBSCRIPTION)", async () => {
     mockGetStoreValue.mockReturnValue(LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION);
+    renderWithProvider(postOnboardingActive(), protectServicesFeature());
+    await waitFor(() => {
+      expect(screen.queryByTestId("recover-finish-onboarding-widget")).not.toBeInTheDocument();
+    });
+  });
+
+  it("renders nothing when bannerSubscriptionNotification feature param is false", async () => {
     renderWithProvider(
       postOnboardingActive(),
-      protectServicesForStax(RECOVER_UPSELL_LEDGER_LIVE_URI),
+      protectServicesFeature({ bannerSubscriptionNotification: false }),
     );
     await waitFor(() => {
       expect(screen.queryByTestId("recover-finish-onboarding-widget")).not.toBeInTheDocument();

@@ -19,19 +19,23 @@ const PortfolioBannerWallet40 = memo(function PortfolioBannerWallet40({
 }: {
   isFinishOnboardingWidgetVisible: boolean;
 }) {
-  const recoverVm = useRecoverWidgetViewModel();
-  const { shouldDisplayRecoverInPortfolioBannerRow } = recoverVm;
+  const {
+    shouldDisplay: shouldDisplayRecoverWidget,
+    titleKey,
+    descriptionKey,
+    onOpenRecover,
+  } = useRecoverWidgetViewModel();
 
-  if (isFinishOnboardingWidgetVisible || shouldDisplayRecoverInPortfolioBannerRow) {
+  if (isFinishOnboardingWidgetVisible || shouldDisplayRecoverWidget) {
     return (
       <div className="flex w-full gap-12">
         {isFinishOnboardingWidgetVisible && <FinishOnboardingWidget />}
-        {shouldDisplayRecoverInPortfolioBannerRow && (
+        {shouldDisplayRecoverWidget && (
           <RecoverWidgetView
-            isVisible={recoverVm.isVisible}
-            titleKey={recoverVm.titleKey}
-            descriptionKey={recoverVm.descriptionKey}
-            onOpenRecover={recoverVm.onOpenRecover}
+            shouldDisplay
+            titleKey={titleKey}
+            descriptionKey={descriptionKey}
+            onOpenRecover={onOpenRecover}
           />
         )}
       </div>
@@ -55,8 +59,8 @@ const PortfolioBannerWallet40 = memo(function PortfolioBannerWallet40({
  *
  * When Wallet40 applies and LNS upsell is visible, LNS is rendered here without mounting the Recover
  * subtree. Otherwise the finish/recover row uses one `useRecoverWidgetViewModel` (→ `useRecoverBannerState`,
- * LIVE-30279) and `shouldDisplayRecoverInPortfolioBannerRow`; the same view-model props are passed to
- * `RecoverWidgetView` so hooks are not duplicated when the Recover tile is shown.
+ * LIVE-30279); its `shouldDisplay` boolean gates the Recover tile and the same view-model output is
+ * passed to `RecoverWidgetView` so hooks are not duplicated when the Recover tile is shown.
  *
  * Used in PortfolioView (above MarketBanner) and in BannerSection (legacy dashboard).
  */

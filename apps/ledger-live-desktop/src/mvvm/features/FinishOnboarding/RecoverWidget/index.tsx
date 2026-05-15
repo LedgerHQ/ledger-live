@@ -3,10 +3,10 @@ import RecoverWidgetView from "./RecoverWidgetView";
 import { useRecoverWidgetViewModel } from "./useRecoverWidgetViewModel";
 
 const RecoverWidget = () => {
-  const { isVisible, titleKey, descriptionKey, onOpenRecover } = useRecoverWidgetViewModel();
+  const { shouldDisplay, titleKey, descriptionKey, onOpenRecover } = useRecoverWidgetViewModel();
   return (
     <RecoverWidgetView
-      isVisible={isVisible}
+      shouldDisplay={shouldDisplay}
       titleKey={titleKey}
       descriptionKey={descriptionKey}
       onOpenRecover={onOpenRecover}

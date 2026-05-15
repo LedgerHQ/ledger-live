@@ -12,7 +12,7 @@ import { ShieldCheck } from "@ledgerhq/lumen-ui-react/symbols";
 import useTheme from "~/renderer/hooks/useTheme";
 
 const RecoverWidgetView = memo(function RecoverWidgetView({
-  isVisible,
+  shouldDisplay,
   titleKey,
   descriptionKey,
   onOpenRecover,
@@ -27,7 +27,7 @@ const RecoverWidgetView = memo(function RecoverWidgetView({
     [colors],
   );
 
-  if (!isVisible) {
+  if (!shouldDisplay) {
     return null;
   }
 
