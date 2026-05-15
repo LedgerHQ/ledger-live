@@ -19,6 +19,8 @@
 
 - If working on the Contacts feature in Ledger Wallet Desktop, also read
   [`apps/ledger-live-desktop/docs/contacts.md`](apps/ledger-live-desktop/docs/contacts.md).
+- For current rollout state, also see
+  [`apps/ledger-live-desktop/docs/contacts-status.md`](apps/ledger-live-desktop/docs/contacts-status.md).
 - All new Contacts UI must use the Lumen design system
   (`@ledgerhq/lumen-ui-react` + `@ledgerhq/lumen-ui-react/symbols`). No
   `styled-components`, no `@ledgerhq/react-ui` in new Contacts code.

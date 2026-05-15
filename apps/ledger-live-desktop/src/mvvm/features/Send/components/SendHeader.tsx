@@ -16,6 +16,7 @@ import { MemoValueInput } from "../screens/Recipient/components/Memo/MemoValueIn
 import { SkipMemoSection } from "../screens/Recipient/components/Memo/SkipMemoSection";
 import { useRecipientMemo } from "../screens/Recipient/hooks/useRecipientMemo";
 import type { SendStepConfig } from "../types";
+import { ContactBadge } from "~/renderer/contacts/ContactBadge";
 
 export function SendHeader() {
   const wizard = useFlowWizard<SendFlowStep, SendFlowBusinessContext, SendStepConfig>();
@@ -75,6 +76,8 @@ export function SendHeader() {
     title,
     transactionErrorName,
     transactionError,
+    recipientContactKind,
+    fromContactKind,
   } = useSendHeaderModel({ availableText, resetViewState });
 
   const isAmountStep = currentStep === SEND_FLOW_STEP.AMOUNT;
@@ -85,8 +88,9 @@ export function SendHeader() {
     if (isAmountStep) {
       return (
         <div className="-mt-12 mb-24 px-24">
-          <div className="relative">
+          <div className="relative flex items-center gap-8">
             <AddressInput className="w-full" value={addressInputValue} hideClearButton />
+            {recipientContactKind && <ContactBadge kind={recipientContactKind} />}
             <button
               type="button"
               className="absolute inset-0"
@@ -101,20 +105,23 @@ export function SendHeader() {
 
     return (
       <>
-        <AddressInput
-          className="mb-12 px-24"
-          id="send-recipient-input"
-          data-testid="send-recipient-input"
-          autoFocus
-          value={addressInputValue}
-          onChange={e => recipientSearch.setValue(e.target.value)}
-          onClear={recipientSearch.clear}
-          placeholder={
-            uiConfig.recipientSupportsDomain
-              ? t("newSendFlow.placeholder")
-              : t("newSendFlow.placeholderNoENS")
-          }
-        />
+        <div className="mb-12 flex items-center gap-8 px-24">
+          <AddressInput
+            className="w-full"
+            id="send-recipient-input"
+            data-testid="send-recipient-input"
+            autoFocus
+            value={addressInputValue}
+            onChange={e => recipientSearch.setValue(e.target.value)}
+            onClear={recipientSearch.clear}
+            placeholder={
+              uiConfig.recipientSupportsDomain
+                ? t("newSendFlow.placeholder")
+                : t("newSendFlow.placeholderNoENS")
+            }
+          />
+          {recipientContactKind && <ContactBadge kind={recipientContactKind} />}
+        </div>
         {showMemoControls && currencyId ? (
           <div className="px-24">
             <div className="flex flex-col gap-12">
@@ -181,6 +188,7 @@ export function SendHeader() {
     onSkipMemoCancelConfirm,
     onSkipMemoConfirm,
     handleRecipientInputClick,
+    recipientContactKind,
   ]);
 
   return (
@@ -193,6 +201,11 @@ export function SendHeader() {
           onBack={showBackButton ? handleBack : undefined}
           onClose={close}
         />
+        {fromContactKind && (
+          <div className="-mt-8 mb-8 flex justify-end px-24">
+            <ContactBadge kind={fromContactKind} />
+          </div>
+        )}
       </div>
       {recipientInputContent}
     </div>

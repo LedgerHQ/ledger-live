@@ -1,8 +1,11 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { firstValueFrom } from "rxjs";
 import { Button, Link } from "@ledgerhq/lumen-ui-react";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-desktop";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "LLD/hooks/redux";
+import { accountsSelector } from "~/renderer/reducers/accounts";
+import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import { useContacts } from "~/renderer/contacts/useContacts";
 import type { ContactsPanelViewProps } from "./types";
 
@@ -17,11 +20,15 @@ const FIXTURE = {
   derivationPath: "44'/60'/0'/0/0",
   chainIdMainnet: 1,
   chainIdPolygon: 137,
-  accountName: "Account 1",
-  accountPath: "44'/60'/0'/0/1",
 };
 
-type VerbDef = { label: string; key: string; fn: () => Promise<unknown> };
+type VerbDef = {
+  label: string;
+  key: string;
+  fn: () => Promise<unknown>;
+  disabled?: boolean;
+  hint?: string;
+};
 
 const ContactsPanelView = ({
   sessionId,
@@ -32,6 +39,13 @@ const ContactsPanelView = ({
   const { t } = useTranslation();
   const dmk = useDeviceManagementKit();
   const contacts = useContacts(sessionId);
+
+  const accounts = useSelector(accountsSelector);
+  const ledgerAccount = useMemo(
+    () => accounts.find(a => a.type === "Account" && a.currency.id === "ethereum"),
+    [accounts],
+  );
+  const ledgerAccountName = useMaybeAccountName(ledgerAccount);
 
   const [lastResult, setLastResult] = useState<unknown>(null);
   const [lastError, setLastError] = useState<string | null>(null);
@@ -143,12 +157,17 @@ const ContactsPanelView = ({
     {
       key: "addLedgerAccount",
       label: t("contacts.actions.addLedgerAccount"),
-      fn: () =>
-        contacts.addLedgerAccount({
-          name: FIXTURE.accountName,
-          derivationPath: FIXTURE.accountPath,
+      disabled: !ledgerAccount || !ledgerAccountName,
+      hint: ledgerAccount && ledgerAccountName ? `${ledgerAccountName} — ${ledgerAccount.freshAddress}` : undefined,
+      fn: () => {
+        if (!ledgerAccount || !ledgerAccountName)
+          throw new Error("No Ethereum account in this wallet");
+        return contacts.addLedgerAccount({
+          name: ledgerAccountName,
+          derivationPath: ledgerAccount.freshAddressPath,
           chainId: FIXTURE.chainIdMainnet,
-        }),
+        });
+      },
     },
   ];
 
@@ -223,16 +242,20 @@ const ContactsPanelView = ({
 
       <section className="flex flex-col gap-8">
         {verbs.map(v => (
-          <Button
-            key={v.key}
-            appearance="gray"
-            size="sm"
-            loading={pendingVerb === v.key}
-            disabled={!ready || (isBusy && pendingVerb !== v.key)}
-            onClick={runVerb(v.key, v.fn)}
-          >
-            {v.label}
-          </Button>
+          <div key={v.key} className="flex flex-col gap-2">
+            <Button
+              appearance="gray"
+              size="sm"
+              loading={pendingVerb === v.key}
+              disabled={!ready || v.disabled || (isBusy && pendingVerb !== v.key)}
+              onClick={runVerb(v.key, v.fn)}
+            >
+              {v.label}
+            </Button>
+            {v.hint && (
+              <p className="body-3 text-base break-all select-text">{v.hint}</p>
+            )}
+          </div>
         ))}
       </section>
 

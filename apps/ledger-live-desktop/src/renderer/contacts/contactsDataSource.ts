@@ -6,7 +6,10 @@ import type {
 } from "@ledgerhq/context-module";
 import type { ContactsWallet } from "./types";
 
-const normalize = (addressHex: string): string => addressHex.trim().toLowerCase();
+const normalize = (addressHex: string): string => {
+  const trimmed = addressHex.trim().toLowerCase();
+  return trimmed.startsWith("0x") ? trimmed.slice(2) : trimmed;
+};
 
 const findLedgerAccount = (
   wallet: ContactsWallet,

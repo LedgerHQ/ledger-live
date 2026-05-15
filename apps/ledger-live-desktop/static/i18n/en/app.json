@@ -8695,7 +8695,11 @@
     "lastError": "Last error",
     "empty": "Local store is empty",
     "viewStorage": "View local store",
-    "errorHint": "Last action failed — see local store for details."
+    "errorHint": "Last action failed — see local store for details.",
+    "badge": {
+      "external": "Contact",
+      "ledgerAccount": "Account"
+    }
   },
   "geoBlocking": {
     "title": "Location unavailable",

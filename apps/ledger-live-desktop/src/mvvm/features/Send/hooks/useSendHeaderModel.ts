@@ -14,7 +14,8 @@ import {
 import { SendStepConfig } from "../types";
 import BigNumber from "bignumber.js";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
-import { useDisplayAddress } from "~/renderer/contacts/useDisplayAddress";
+import { useContactResolution, useDisplayAddress } from "~/renderer/contacts/useDisplayAddress";
+import type { ContactBadgeKind } from "~/renderer/contacts/ContactBadge";
 
 type UseSendHeaderModelParams = Readonly<{
   availableText: string;
@@ -31,6 +32,8 @@ type UseSendHeaderModelResult = Readonly<{
   title: string | undefined;
   transactionErrorName: string | undefined;
   transactionError: Error | undefined;
+  recipientContactKind: ContactBadgeKind | undefined;
+  fromContactKind: ContactBadgeKind | undefined;
 }>;
 
 export function useSendHeaderModel({
@@ -117,6 +120,16 @@ export function useSendHeaderModel({
         ? currency.parentCurrency.ethereumLikeInfo?.chainId
         : undefined;
   const decoratedRecipient = useDisplayAddress(recipientDisplayAddress, recipientChainId);
+  // recipientDisplayAddress is the truncated form (0xabc…def01) and would
+  // never match a full stored address. Resolve against the full address —
+  // committed (state.recipient.address) or, while still typing on the
+  // Recipient step, the search input.
+  const fullRecipientAddress = state.recipient?.address || recipientSearch.value || undefined;
+  const recipientResolution = useContactResolution(fullRecipientAddress, recipientChainId);
+  const fromResolution = useContactResolution(
+    state.account.account?.freshAddress,
+    recipientChainId,
+  );
 
   const addressInputValue = useMemo(() => {
     if (isRecipientStep) return recipientSearch.value;
@@ -149,5 +162,7 @@ export function useSendHeaderModel({
     title,
     transactionErrorName,
     transactionError: transactionError instanceof Error ? transactionError : undefined,
+    recipientContactKind: recipientResolution?.kind,
+    fromContactKind: fromResolution?.kind === "ledgerAccount" ? "ledgerAccount" : undefined,
   };
 }
