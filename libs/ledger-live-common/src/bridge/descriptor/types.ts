@@ -255,9 +255,54 @@ export type StakeDescriptor = {
 };
 
 /**
+ * One transaction entry shown in the Display POC.
+ *
+ * The descriptor extracts these from the real `account.operations` list and
+ * formats them with the family-adapted unit (BTC, ETH, …).
+ */
+export type DisplayTxItem = Readonly<{
+  hash: string;
+  type: "send" | "receive";
+  amount: string;
+  date: string;
+}>;
+
+/**
+ * One token entry shown in the Display POC.
+ *
+ * Extracted from `account.subAccounts` for families that support sub-tokens.
+ */
+export type DisplayTokenItem = Readonly<{
+  symbol: string;
+  name: string;
+  balance: string;
+}>;
+
+/**
+ * Display flow descriptor — POC.
+ *
+ * Each method below takes an account and returns family-adapted, formatted
+ * data ready for the UI. The UI never branches on `family`; it only consumes
+ * the descriptor result.
+ *
+ * - `getBalance`         → formatted balance string
+ * - `getRecentTransactions` → up to 5 latest operations, mapped to a generic shape
+ * - `hasTokens`          → enables the Tokens step in the flow
+ * - `getTokens`          → token list (only consulted when `hasTokens` is true)
+ */
+export type DisplayDescriptor = Readonly<{
+  getBalance: (account: AccountLike) => string;
+  getRecentTransactions: (account: AccountLike) => readonly DisplayTxItem[];
+  hasTokens: boolean;
+  getTokens: (account: AccountLike) => readonly DisplayTokenItem[];
+}>;
+
+/**
  * Complete flow descriptors for a coin
  */
 export type CoinDescriptor = {
   send: SendDescriptor;
   stake?: StakeDescriptor;
+  /** Optional descriptor for the Display POC flow. */
+  display?: DisplayDescriptor;
 };

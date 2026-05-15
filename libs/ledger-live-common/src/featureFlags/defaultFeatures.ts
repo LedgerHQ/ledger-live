@@ -803,6 +803,12 @@ export const DEFAULT_FEATURES: Features = {
       excludedCurrencyIds: [],
     },
   },
+  showDisplayPOC: {
+    ...DEFAULT_FEATURE,
+    params: {
+      families: [],
+    },
+  },
   zcashShielded: DEFAULT_FEATURE,
   llmNanoOnboardingFundWallet: DEFAULT_FEATURE,
   lldRebornABtest: DEFAULT_FEATURE,

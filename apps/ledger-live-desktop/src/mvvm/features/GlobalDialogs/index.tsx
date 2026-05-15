@@ -1,12 +1,15 @@
 import React, { Suspense, lazy } from "react";
 import ModularDialogRoot from "LLD/features/ModularDialog/ModularDialogRoot";
 import SendFlowRoot from "LLD/features/Send/SendFlowRoot";
+import DisplayFlowRoot from "LLD/features/Display/DisplayFlowRoot";
 import PerpsSignRoot from "LLD/features/Perps/screens/PerpsSign/PerpsSignDialog";
 import ActionConfirmationDialog from "LLD/features/ActionConfirmationDialog";
 
 const ReleaseNotes = lazy(() => import("LLD/features/ReleaseNotes"));
 const BuyDevice = lazy(() => import("LLD/features/BuyDevice"));
-const FinishOnboardingDialog = lazy(() => import("LLD/features/FinishOnboarding/FinishOnboardingDialog"));
+const FinishOnboardingDialog = lazy(
+  () => import("LLD/features/FinishOnboarding/FinishOnboardingDialog"),
+);
 const PtxInfoDialog = lazy(() => import("LLD/features/PtxInfoDialog"));
 const LiveAppModal = lazy(() => import("LLD/features/LiveAppModal"));
 
@@ -15,6 +18,7 @@ const GlobalDialogs = () => (
   <>
     <ModularDialogRoot />
     <SendFlowRoot />
+    <DisplayFlowRoot />
     <PerpsSignRoot />
     <ActionConfirmationDialog />
     <Suspense fallback={null}>
