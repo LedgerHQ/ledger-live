@@ -28,7 +28,7 @@ import {
   PROGRESS_AFTER_PARSING_RECORDS,
   PROGRESS_DONE,
 } from "../constants";
-import { getAleoSubAccounts, mergeSubAccounts } from "./tokens";
+import { resolveTokenSubAccounts } from "./tokens";
 import type {
   AleoAccount,
   AleoOperation,
@@ -103,6 +103,7 @@ export async function performPublicSync(
 
   // sort by date desc
   latestAccountPublicOperations.operations.sort((a, b) => b.date.getTime() - a.date.getTime());
+  latestAccountPublicOperations.tokenOperations.sort((a, b) => b.date.getTime() - a.date.getTime());
 
   // Already-patched ops have modified senders/recipients that differ from raw API data.
   // Filter them from the incoming ops — mergeOps then simply keeps the patched version
@@ -122,34 +123,26 @@ export async function performPublicSync(
   // They will be replaced by performPrivateSync when the private sync runs.
   const preservedPrivateOps = shouldSyncFromScratch ? [] : (oldPrivateOps as AleoOperation[]);
 
-  const operations = [...publicOperations, ...preservedPrivateOps].sort(
-    (a, b) => b.date.getTime() - a.date.getTime(),
-  );
-
   const preservedPrivateBalance = initialAccount?.aleoResources?.privateBalance ?? null;
   const totalBalance = transparentBalance.plus(preservedPrivateBalance ?? 0);
 
   // Sub-accounts are derived from token operations in publicOperations.
   // No separate transaction fetch is needed.
-  // FIXME: avoid iife
-  const subAccounts = await (async () => {
-    if (!config.enableTokens) {
-      return [];
-    }
-
-    const newSubAccounts = await getAleoSubAccounts({
+  const { updatedCoinOperations: updatedPublicOperations, subAccounts } =
+    await resolveTokenSubAccounts({
+      enableTokens: config.enableTokens,
       currency,
-      ledgerAccountId,
       address,
+      ledgerAccountId,
+      coinOperations: publicOperations,
       tokenOperations: latestAccountPublicOperations.tokenOperations,
+      shouldSyncFromScratch,
+      initialAccount,
     });
 
-    if (shouldSyncFromScratch) {
-      return newSubAccounts;
-    }
-
-    return mergeSubAccounts(initialAccount, newSubAccounts);
-  })();
+  const operations = [...updatedPublicOperations, ...preservedPrivateOps].sort(
+    (a, b) => b.date.getTime() - a.date.getTime(),
+  );
 
   return {
     type: "Account",
