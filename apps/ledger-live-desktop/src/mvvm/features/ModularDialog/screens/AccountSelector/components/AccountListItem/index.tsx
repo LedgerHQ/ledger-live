@@ -25,6 +25,8 @@ export type Account = {
 export type AccountListItemProps = {
   onClick?: () => void;
   account: Account;
+  /** Optional inline node rendered after the title — typically a small Tag/Badge. */
+  titleDecoration?: React.ReactNode;
 };
 
 const renderTrailingContent = (balance?: string, fiatValue?: string) => {
@@ -40,7 +42,7 @@ const renderTrailingContent = (balance?: string, fiatValue?: string) => {
   );
 };
 
-export const AccountListItem = ({ onClick, account }: AccountListItemProps) => {
+export const AccountListItem = ({ onClick, account, titleDecoration }: AccountListItemProps) => {
   const { name, balance, fiatValue, address, ticker, cryptoId, parentId } = account;
   const formattedAddress = formatAddress(address);
 
@@ -50,7 +52,14 @@ export const AccountListItem = ({ onClick, account }: AccountListItemProps) => {
     <ListItem className="-outline-offset-2" onClick={onClick} data-testid={`account-row-${name}`}>
       <ListItemLeading>
         <ListItemContent>
-          <ListItemTitle>{name}</ListItemTitle>
+          {titleDecoration ? (
+            <div className="flex items-center gap-6">
+              <ListItemTitle>{name}</ListItemTitle>
+              {titleDecoration}
+            </div>
+          ) : (
+            <ListItemTitle>{name}</ListItemTitle>
+          )}
           <ListItemDescription className="flex gap-6">
             {formattedAddress}
             {ticker && networkId && (

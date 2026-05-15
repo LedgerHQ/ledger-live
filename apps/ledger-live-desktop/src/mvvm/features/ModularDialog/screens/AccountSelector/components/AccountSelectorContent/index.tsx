@@ -1,6 +1,7 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { AccountVirtualList } from "../AccountVirtualList";
+import { Account as AccountRow } from "../AccountListItem";
 import { useModularDialogAnalytics } from "../../../../analytics/useModularDialogAnalytics";
 import { MODULAR_DIALOG_PAGE_NAME } from "../../../../analytics/modularDialog.types";
 import { AccountTuple } from "@ledgerhq/live-common/utils/getAccountTuplesForCurrency";
@@ -11,14 +12,20 @@ import {
   localeSelector,
   discreetModeSelector,
   counterValueCurrencySelector,
+  contactsAlphaSelector,
 } from "~/renderer/reducers/settings";
 import BigNumber from "bignumber.js";
+import { useContactsStore } from "~/renderer/contacts/hooks";
+import { resolveContact } from "~/renderer/contacts/useDisplayAddress";
+import { ContactBadge } from "~/renderer/contacts/ContactBadge";
 
 type AccountSelectorContentProps = {
   onAccountSelected: (account: AccountLike, parentAccount?: Account) => void;
   accounts: AccountTuple[];
   detailedAccounts: BaseRawDetailedAccount[];
   bottomComponent: React.ReactNode;
+  /** EVM chain id of the selected asset — drives the Contacts decoration on each row. */
+  chainId?: number;
 };
 
 export const AccountSelectorContent = ({
@@ -26,11 +33,24 @@ export const AccountSelectorContent = ({
   accounts,
   onAccountSelected,
   bottomComponent,
+  chainId,
 }: AccountSelectorContentProps) => {
   const { trackModularDialogEvent } = useModularDialogAnalytics();
   const locale = useSelector(localeSelector);
   const discreet = useSelector(discreetModeSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const contactsAlpha = useSelector(contactsAlphaSelector);
+  const { wallet, hydrated } = useContactsStore();
+
+  const getTitleDecoration = useCallback(
+    (account: AccountRow): React.ReactNode => {
+      if (!contactsAlpha || !hydrated || chainId === undefined || !account.address) return null;
+      const resolution = resolveContact(wallet, account.address, chainId);
+      if (resolution?.kind !== "ledgerAccount") return null;
+      return <ContactBadge kind="ledgerAccount" label={resolution.name} />;
+    },
+    [contactsAlpha, hydrated, wallet, chainId],
+  );
 
   const formattedAccounts = useMemo(() => {
     return detailedAccounts.map(account => ({
@@ -82,6 +102,7 @@ export const AccountSelectorContent = ({
       bottomComponent={bottomComponent}
       accounts={formattedAccounts}
       onClick={onAccountClick}
+      getTitleDecoration={getTitleDecoration}
     />
   );
 };

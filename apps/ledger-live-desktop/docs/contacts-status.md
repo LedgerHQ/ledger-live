@@ -12,6 +12,7 @@ and DMK verb cheat sheet. This file tracks the L0–L4 rollout state.
 - [x] L2.2 — Registered Ledger account decoration (From + self-transfer To) + Send badges
 - [x] L3 — Validation panel enrichment for designer handoff
 - [x] L3.1 — Code simplification pass
+- [x] L3.2 — Decorated "Select account" rows in Send
 - [ ] L4 — Designer-led Contacts management UX
 - [ ] L5 — Send recipient picker
 
@@ -98,6 +99,21 @@ device session. Module-level `useSyncExternalStore` snapshot in
 `renderer/contacts/hooks.ts` so the dialog, the data source
 registration, and the Send-side decoration all observe the same wallet
 without re-mounting — closes the L2.1 store-sync follow-up.
+
+### L3.2 — Decorated "Select account" rows in Send
+
+When the user opens the Send flow's account selector, EVM accounts that
+have been registered through Contacts now carry an inline Lumen `Tag`
+next to the account name showing the on-device-registered identity
+(e.g. "Trezor Migration"). Implementation: a pure `resolveContact`
+helper extracted from `useDisplayAddress` (sync, no hooks, safe to
+call inside a `.map`), an optional `titleDecoration` slot on
+`ModularDialog`'s `AccountListItem`, and a `getTitleDecoration`
+closure threaded through `AccountVirtualList` from
+`AccountSelectorContent` — that's the only place that knows the
+asset's `chainId` and observes the wallet snapshot. Behind the
+`contactsAlpha` flag; non-EVM assets and non-registered addresses
+render unchanged.
 
 ### L3.1 — Code simplification pass
 

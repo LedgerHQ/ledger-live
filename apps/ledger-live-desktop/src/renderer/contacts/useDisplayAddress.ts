@@ -15,14 +15,18 @@ export type ContactResolution = {
   kind: ContactBadgeKind;
 };
 
-const resolve = (
+/**
+ * Pure resolution against the in-memory wallet snapshot. Prefers a registered
+ * Ledger account over an external contact for the same address — same
+ * precedence as the data source's `lookupTo`. Safe to call from a `.map` or
+ * `useMemo` without hook-rule concerns.
+ */
+export const resolveContact = (
   wallet: ContactsWallet,
   address: string,
   chainId: number,
 ): ContactResolution | null => {
   const target = normalize(address);
-  // Prefer a registered Ledger account match over an external contact for the
-  // same address — same precedence as the data source's lookupTo.
   for (const account of Object.values(wallet.accounts)) {
     if (account.chainId === chainId && normalize(account.addressHex) === target) {
       return { name: account.name, kind: "ledgerAccount" };
@@ -46,7 +50,7 @@ export const useContactResolution = (
   const { wallet, hydrated } = useContactsStore();
   return useMemo(() => {
     if (!contactsAlpha || !hydrated || !address || chainId === undefined) return null;
-    return resolve(wallet, address, chainId);
+    return resolveContact(wallet, address, chainId);
   }, [contactsAlpha, hydrated, wallet, address, chainId]);
 };
 

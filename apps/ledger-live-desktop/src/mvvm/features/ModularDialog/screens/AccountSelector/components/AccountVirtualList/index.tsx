@@ -6,14 +6,22 @@ export const AccountVirtualList = ({
   accounts,
   onClick,
   bottomComponent,
+  getTitleDecoration,
 }: {
   accounts: Account[];
   onClick: (accountId: string) => void;
   bottomComponent?: React.ReactNode;
+  getTitleDecoration?: (account: Account) => React.ReactNode;
 }) => {
   const renderAccountListItem = useCallback(
-    (account: Account) => <AccountListItem onClick={() => onClick(account.id)} account={account} />,
-    [onClick],
+    (account: Account) => (
+      <AccountListItem
+        onClick={() => onClick(account.id)}
+        account={account}
+        titleDecoration={getTitleDecoration?.(account)}
+      />
+    ),
+    [onClick, getTitleDecoration],
   );
 
   return (
