@@ -5,6 +5,8 @@ import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpe
 import { ScreenName } from "~/const";
 import { useSelector } from "~/context/hooks";
 import { shallowAccountsSelector } from "~/reducers/accounts";
+import { useDistribution } from "~/actions/general";
+import { resolveDistributionItem } from "@ledgerhq/asset-aggregation/assetDistribution/index";
 import type { AssetDetailNavigatorParamsList } from "../../types";
 import { useIsBuyAvailable, useSecondaryButtonType } from "./components/Footer/useFooterViewModel";
 
@@ -15,6 +17,12 @@ export function useAssetDetailViewModel() {
   const { currencyId, source } = route.params;
 
   const { currency } = useCurrencyById(currencyId);
+
+  const distribution = useDistribution({ groupBy: "asset" });
+  const distributionItem = useMemo(
+    () => resolveDistributionItem({ routeAssetId: currencyId, distribution }),
+    [currencyId, distribution],
+  );
 
   const [isRefreshing, setIsRefreshing] = useState(false);
   const onRefresh = useCallback(() => {
@@ -32,6 +40,7 @@ export function useAssetDetailViewModel() {
 
   return {
     currency,
+    distributionItem,
     source,
     isRefreshing,
     onRefresh,

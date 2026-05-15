@@ -1,5 +1,9 @@
 import { renderHook, act } from "@tests/test-renderer";
-import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import BigNumber from "bignumber.js";
+import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import type { Account, DistributionItem } from "@ledgerhq/types-live";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   mockBtcCryptoCurrency,
   mockEthCryptoCurrency,
@@ -18,20 +22,49 @@ jest.mock("@react-navigation/native", () => ({
   useNavigation: () => ({ navigate: mockNavigate }),
 }));
 
-function withAccounts(currencyId: string, count: number) {
-  const currency = currencyId === "bitcoin" ? mockBtcCryptoCurrency : mockEthCryptoCurrency;
+function withRawAccounts(accounts: Account[]) {
   return {
     overrideInitialState: (state: State): State => ({
       ...state,
-      accounts: {
-        ...state.accounts,
-        active: Array.from({ length: count }, (_, i) =>
-          genAccount(`${currencyId}-${i}`, { currency, operationsSize: 0 }),
-        ),
-      },
+      accounts: { ...state.accounts, active: accounts },
     }),
   };
 }
+
+function buildDistributionItem(
+  currency: DistributionItem["currency"],
+  accounts: DistributionItem["accounts"],
+): DistributionItem {
+  return {
+    currency,
+    distribution: 1,
+    accounts,
+    amount: accounts.reduce((sum, a) => sum + a.balance.toNumber(), 0),
+    countervalue: 0,
+  };
+}
+
+const algorandCurrency = getCryptoCurrencyById("algorand");
+const usdtEthToken: TokenCurrency = {
+  type: "TokenCurrency",
+  id: "ethereum/erc20/usd_tether__erc20_",
+  contractAddress: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+  parentCurrency: mockEthCryptoCurrency,
+  tokenType: "erc20",
+  name: "Tether USD",
+  ticker: "USDT",
+  units: [{ name: "Tether USD", code: "USDT", magnitude: 6 }],
+};
+const usdtAlgoToken: TokenCurrency = {
+  type: "TokenCurrency",
+  id: "algorand/asa/312769",
+  contractAddress: "312769",
+  parentCurrency: algorandCurrency,
+  tokenType: "asa",
+  name: "Tether USDt",
+  ticker: "USDT",
+  units: [{ name: "Tether USDt", code: "USDT", magnitude: 6 }],
+};
 
 describe("useAddressesViewModel", () => {
   beforeEach(() => {
@@ -39,42 +72,86 @@ describe("useAddressesViewModel", () => {
   });
 
   describe("accounts", () => {
-    it("returns an empty array when currency is undefined", () => {
-      const { result } = renderHook(() => useAddressesViewModel(undefined));
-
+    it("returns an empty array when currency or distributionItem is undefined", () => {
+      const { result } = renderHook(() => useAddressesViewModel(undefined, undefined));
       expect(result.current.accounts).toEqual([]);
+
+      const { result: noDistribution } = renderHook(() =>
+        useAddressesViewModel(mockBtcCryptoCurrency, undefined),
+      );
+      expect(noDistribution.current.accounts).toEqual([]);
     });
 
-    it("returns accounts matching the currency", () => {
+    it("returns one tuple per top-level account in the distribution item", () => {
+      const btcAccounts = [
+        genAccount("bitcoin-0", { currency: mockBtcCryptoCurrency, operationsSize: 0 }),
+        genAccount("bitcoin-1", { currency: mockBtcCryptoCurrency, operationsSize: 0 }),
+      ];
+
       const { result } = renderHook(
-        () => useAddressesViewModel(mockBtcCryptoCurrency),
-        withAccounts("bitcoin", 2),
+        () =>
+          useAddressesViewModel(
+            mockBtcCryptoCurrency,
+            buildDistributionItem(mockBtcCryptoCurrency, btcAccounts),
+          ),
+        withRawAccounts(btcAccounts),
       );
 
       expect(result.current.accounts).toHaveLength(2);
       result.current.accounts.forEach(acc => {
         expect(acc.name).toBeDefined();
         expect(acc.truncatedAddress).toBeDefined();
-        expect(acc.account).toBeDefined();
         expect(acc.balanceAccount).toBe(acc.account);
       });
     });
 
-    it("returns no accounts when none match the currency", () => {
+    it("returns tuples across every network of a multi-network asset", () => {
+      const ethAccount = genAccount("usdt-eth", {
+        currency: mockEthCryptoCurrency,
+        operationsSize: 0,
+      });
+      const ethSub = genTokenAccount(0, ethAccount, usdtEthToken);
+      ethSub.balance = new BigNumber(120_000_000);
+      ethAccount.subAccounts = [ethSub];
+
+      const algoAccount = genAccount("usdt-algo", {
+        currency: algorandCurrency,
+        operationsSize: 0,
+      });
+      const algoSub = genTokenAccount(0, algoAccount, usdtAlgoToken);
+      algoSub.balance = new BigNumber(80_000_000);
+      algoAccount.subAccounts = [algoSub];
+
       const { result } = renderHook(
-        () => useAddressesViewModel(mockBtcCryptoCurrency),
-        withAccounts("ethereum", 2),
+        () =>
+          useAddressesViewModel(
+            usdtEthToken,
+            buildDistributionItem(usdtEthToken, [ethSub, algoSub]),
+          ),
+        withRawAccounts([ethAccount, algoAccount]),
       );
 
-      expect(result.current.accounts).toHaveLength(0);
+      const parentIds = result.current.accounts.map(a => a.account.id).sort();
+      expect(parentIds).toEqual([ethAccount.id, algoAccount.id].sort());
+      result.current.accounts.forEach(entry => {
+        expect(entry.balanceAccount.type).toBe("TokenAccount");
+      });
     });
   });
 
   describe("onAddAccount", () => {
     it("navigates to device selection and fires analytics", () => {
+      const btcAccounts = [
+        genAccount("bitcoin-0", { currency: mockBtcCryptoCurrency, operationsSize: 0 }),
+      ];
+
       const { result } = renderHook(
-        () => useAddressesViewModel(mockBtcCryptoCurrency),
-        withAccounts("bitcoin", 1),
+        () =>
+          useAddressesViewModel(
+            mockBtcCryptoCurrency,
+            buildDistributionItem(mockBtcCryptoCurrency, btcAccounts),
+          ),
+        withRawAccounts(btcAccounts),
       );
 
       act(() => result.current.onAddAccount());
@@ -94,7 +171,7 @@ describe("useAddressesViewModel", () => {
     });
 
     it("does nothing when currency is undefined", () => {
-      const { result } = renderHook(() => useAddressesViewModel(undefined));
+      const { result } = renderHook(() => useAddressesViewModel(undefined, undefined));
 
       act(() => result.current.onAddAccount());
 
@@ -103,7 +180,7 @@ describe("useAddressesViewModel", () => {
     });
 
     it("navigates with parentCurrency when currency is a token", () => {
-      const { result } = renderHook(() => useAddressesViewModel(usdcToken));
+      const { result } = renderHook(() => useAddressesViewModel(usdcToken, undefined));
 
       act(() => result.current.onAddAccount());
 
