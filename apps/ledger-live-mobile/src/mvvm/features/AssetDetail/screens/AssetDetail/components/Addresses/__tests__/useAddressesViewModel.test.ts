@@ -56,6 +56,7 @@ describe("useAddressesViewModel", () => {
         expect(acc.name).toBeDefined();
         expect(acc.truncatedAddress).toBeDefined();
         expect(acc.account).toBeDefined();
+        expect(acc.balanceAccount).toBe(acc.account);
       });
     });
 

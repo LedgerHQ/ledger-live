@@ -18,8 +18,8 @@ type Props = Readonly<{
 }>;
 
 export const AddressAccountItem = memo(function AddressAccountItem({ data }: Props) {
-  const { account, name, truncatedAddress } = data;
-  const { formattedBalance, formattedCounterValue } = useFormattedAccountBalance(account);
+  const { account, balanceAccount, name, truncatedAddress } = data;
+  const { formattedBalance, formattedCounterValue } = useFormattedAccountBalance(balanceAccount);
 
   return (
     <Card type="info" testID={`asset-detail-address-item-${account.id}`}>
