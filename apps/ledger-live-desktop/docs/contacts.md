@@ -11,31 +11,31 @@ for icons. Do not introduce `styled-components` or `@ledgerhq/react-ui`
 components in new Contacts code. If Lumen is missing a primitive you need,
 raise it through the usual Lumen-adoption channel for this repo.
 
-## What's working today (after L1)
+## What's working today (after L3)
 
 - A local Contacts store (separate from LWD's main persistence —
   `lld-contacts.json`).
 - A top-bar icon (rightmost, after "My Ledger") gated on
   `settings.contactsAlpha`. Toggle the flag in Developer settings →
   "Enable Contacts alpha". Clicking the icon opens a Lumen Dialog containing
-  the L1 validation panel.
-- The panel has one button per DMK Contacts verb, hard-coded inputs, no
-  polish. Each click maps 1:1 to a `useContacts()` hook method — this is
-  your reference implementation.
-- A stable hook `useContacts(sessionId)` at
+  the validation panel.
+- The panel has one form section per DMK Contacts verb
+  (`RegisterExternalAddress`, `RegisterLedgerAccount`, `RenameContact`,
+  `EditAddress`, `EditAddressLabel`) with field-level validation, char
+  counters, duplicate guards, and surfaced device-action errors.
+- A canonical device flow: each verb runs through a `<DeviceAction>`
+  connect→verify step (matching every other device-bound flow in LWD)
+  and `useContacts` opens its DMK transport via `withDevice`.
+- A stable hook `useContacts()` at
   `apps/ledger-live-desktop/src/renderer/contacts/useContacts.ts` that
   exposes every verb as a Promise-based method.
+- Send-side surfacing: a `ContactBadge` (Lumen `Tag`) next to the
+  recipient pill and above the sender description when either side is
+  registered, plus on-device decoration via the `liveContactsDataSource`
+  singleton registered on `DmkSignerEth`'s ContextModule.
 
-## What you're building (L3, L4, L5)
+## What you're building (L4, L5)
 
-- **L3 — Validation panel enrichment for designer handoff**: bring the
-  existing Lumen Dialog up to parity with the DMK sample app's Contacts
-  forms (`apps/sample/src/components/ContactsView/*Form.tsx` in
-  `LedgerHQ/device-sdk-ts` on `feat/contacts`). Per-verb input fields,
-  inline validation, surfaced device-action errors, edge-case handling,
-  per-field loading/disabled states. Goal: a complete functional reference
-  the designer can use to focus on UX rather than rediscovering input
-  constraints and error states.
 - **L4 — Designer-led Contacts management UX**: real list view + forms in
   the designer's Figma-driven shape, replacing the L3 enrichment panel as
   the user-facing surface. Hook contract is still frozen — no DMK or

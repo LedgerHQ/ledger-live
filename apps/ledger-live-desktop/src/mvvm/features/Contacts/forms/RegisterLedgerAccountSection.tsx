@@ -15,7 +15,7 @@ import {
 import type { UseContacts } from "~/renderer/contacts/useContacts";
 import type { RunVerb } from "../types";
 import { LIMITS } from "../constants";
-import { isPrintableAscii } from "../validation";
+import { isInvalidAsciiLabel } from "../validation";
 import CharCounter from "../components/CharCounter";
 import DeviceActionButton from "../components/DeviceActionButton";
 import NetworkSelect from "../components/NetworkSelect";
@@ -60,7 +60,7 @@ const RegisterLedgerAccountSection = ({ contacts, run }: Props) => {
     setName(`${network.name} ${accountIndex + 1}`);
   }, [network, accountIndex, nameTouched]);
 
-  const nameInvalid = name.length > LIMITS.accountName || !isPrintableAscii(name);
+  const nameInvalid = isInvalidAsciiLabel(name, LIMITS.accountName);
   const duplicateName = name.length > 0 && contacts.wallet.accounts[name] != null;
 
   const indexItems = useMemo(
