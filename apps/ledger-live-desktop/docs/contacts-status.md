@@ -16,6 +16,7 @@ and DMK verb cheat sheet. This file tracks the L0–L4 rollout state.
 - [x] L3.3 — Recipient autocomplete from Contacts on Send → To:
 - [x] L3.4 — Sectioned recipient picker + green hardware-bound badge
 - [x] L3.5 — Picker polish: drop sender pill, swap section order, contact label
+- [ ] L4.0 — Designer-handoff context (docs only)
 - [ ] L4 — Designer-led Contacts management UX
 - [ ] L5 — Send recipient picker
 
@@ -199,11 +200,28 @@ its sole consumer in `validation.ts` and dropped from `constants.ts`.
 No behavior change — all five forms still call the same DMK verbs
 with the same payloads.
 
+### L4.0 — Designer-handoff context (docs only)
+
+Pure documentation pass so a designer can clone the repo, launch Claude,
+and start co-designing Contacts UI with Figma without a verbal briefing.
+Adds a **Surface inventory** section to `contacts.md` (Frozen / Dev tool /
+Extension points), a 3-step **How to test your changes** block, a short
+**Working with Figma** pointer that delegates to the `ldls-web` skill and
+the Figma MCP, and tightens the L4 / L5 framing so the actual deliverables
+are clear. No code changes. No new infrastructure (no `AGENTS.md`, no
+skills, no slash commands) — `contacts.md` is auto-loaded by relevance
+whenever Claude touches the Contacts code. Code Connect mappings for the
+extension-point components (`ContactBadge`, `RecipientPicker`, decorated
+`AddressListItem`) are flagged as a future stretch once the designer has
+Figma frames to map against.
+
 ### L4 — Designer-led Contacts management UX
 
-Real list view + forms in the designer's Figma-driven shape, replacing the
-L3 enrichment panel as the user-facing surface. Hook contract is still
-frozen — no DMK or signer churn. Pure Lumen UI work driven by design.
+A new user-facing surface for browsing / creating / editing contacts, in
+the designer's Figma-driven shape. Consumes `useContacts()` only — hook
+contract is frozen, no DMK or signer churn. Lives in a new subtree under
+`mvvm/features/Contacts/<new-surface>/`; the existing L1 validation panel
+stays mounted in parallel as a hidden dev tool. Pure Lumen UI work.
 
 ### L5 — Send recipient picker
 
