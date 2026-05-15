@@ -17,6 +17,8 @@ import { SkipMemoSection } from "../screens/Recipient/components/Memo/SkipMemoSe
 import { useRecipientMemo } from "../screens/Recipient/hooks/useRecipientMemo";
 import type { SendStepConfig } from "../types";
 import { ContactBadge } from "~/renderer/contacts/ContactBadge";
+import { useRecipientSuggestions } from "../hooks/useRecipientSuggestions";
+import { RecipientSuggestionsDropdown } from "./RecipientSuggestionsDropdown";
 
 export function SendHeader() {
   const wizard = useFlowWizard<SendFlowStep, SendFlowBusinessContext, SendStepConfig>();
@@ -78,9 +80,12 @@ export function SendHeader() {
     transactionError,
     recipientContactKind,
     fromContactKind,
+    recipientChainId,
   } = useSendHeaderModel({ availableText, resetViewState });
 
   const isAmountStep = currentStep === SEND_FLOW_STEP.AMOUNT;
+
+  const { suggestions } = useRecipientSuggestions(recipientSearch.value, recipientChainId);
 
   const recipientInputContent = useMemo(() => {
     if (!showRecipientInput) return null;
@@ -105,7 +110,7 @@ export function SendHeader() {
 
     return (
       <>
-        <div className="mb-12 flex items-center gap-8 px-24">
+        <div className="relative mb-12 flex items-center gap-8 px-24">
           <AddressInput
             className="w-full"
             id="send-recipient-input"
@@ -121,6 +126,10 @@ export function SendHeader() {
             }
           />
           {recipientContactKind && <ContactBadge kind={recipientContactKind} />}
+          <RecipientSuggestionsDropdown
+            suggestions={suggestions}
+            onSelect={s => recipientSearch.setValue(s.addressHex)}
+          />
         </div>
         {showMemoControls && currencyId ? (
           <div className="px-24">
@@ -189,6 +198,7 @@ export function SendHeader() {
     onSkipMemoConfirm,
     handleRecipientInputClick,
     recipientContactKind,
+    suggestions,
   ]);
 
   return (

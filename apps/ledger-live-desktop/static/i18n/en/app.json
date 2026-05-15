@@ -8681,6 +8681,9 @@
       "external": "Contact",
       "ledgerAccount": "Account"
     },
+    "suggestions": {
+      "ariaLabel": "Contact suggestions"
+    },
     "overview": {
       "external": {
         "title": "External addresses",

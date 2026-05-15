@@ -34,6 +34,7 @@ type UseSendHeaderModelResult = Readonly<{
   transactionError: Error | undefined;
   recipientContactKind: ContactBadgeKind | undefined;
   fromContactKind: ContactBadgeKind | undefined;
+  recipientChainId: number | undefined;
 }>;
 
 export function useSendHeaderModel({
@@ -173,5 +174,6 @@ export function useSendHeaderModel({
     transactionError: transactionError instanceof Error ? transactionError : undefined,
     recipientContactKind: recipientResolution?.kind,
     fromContactKind: fromResolution?.kind === "ledgerAccount" ? "ledgerAccount" : undefined,
+    recipientChainId,
   };
 }
