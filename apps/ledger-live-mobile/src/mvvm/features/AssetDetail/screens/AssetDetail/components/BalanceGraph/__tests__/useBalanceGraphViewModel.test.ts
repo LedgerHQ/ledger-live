@@ -88,13 +88,13 @@ describe("useBalanceGraphViewModel", () => {
     });
   });
 
-  describe("priceFormatter (parseCurrencyString)", () => {
+  describe("priceFormatter (formatCurrencyUnitFragment)", () => {
     it("splits a USD-formatted value into FormattedValue parts", () => {
       const { result } = renderHook(() => useBalanceGraphViewModel(mockBtcCryptoCurrency));
 
       const formatted = result.current.priceFormatter(1234.56);
 
-      expect(formatted.integerPart).toBe("1234");
+      expect(formatted.integerPart).toBe("1,234");
       expect(formatted.decimalPart).toBe("56");
       expect(formatted.decimalSeparator).toBe(".");
       expect(formatted.currencyText).toBe("$");
