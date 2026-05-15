@@ -1,6 +1,6 @@
 --- a/dist/listener.js
 +++ b/dist/listener.js
-@@ -25,10 +25,16 @@
+@@ -25,10 +25,18 @@
      const onError = (0, utils_1.createErrorHandler)(onErrorOption ?? 'warn');
      const recycleBin = file_handlers_1.RecycleBin.instance(onError);
      const flushArtifacts = (0, utils_1.once)(async () => {
@@ -10,7 +10,8 @@
 -            recycleBin.clear(),
 +        // PATCH: timeout prevents indefinite hang if logkitten close() stalls (e.g. simctl log stream)
 +        let _timeoutId;
-+        const _flushTimeout = new Promise(resolve => { _timeoutId = setTimeout(resolve, 60000); _timeoutId.unref(); });
++        let _timedOut = false;
++        const _flushTimeout = new Promise(resolve => { _timeoutId = setTimeout(() => { _timedOut = true; resolve(); }, 60000); _timeoutId.unref(); });
 +        await Promise.race([
 +            Promise.all([
 +                logs?.close(),
@@ -20,8 +21,9 @@
 +            _flushTimeout,
          ]);
          workerWrapper = logs = screenshots = viewHierarchy = videoManager = undefined;
++        if (_timedOut) process.exit(0);
      });
-@@ -75,8 +81,20 @@
+@@ -75,8 +83,20 @@
                  onError,
              });
          }
@@ -44,7 +46,7 @@
              videoManager = new video_1.VideoManager({ device, options: baseOptions, onError });
          }
          if (deviceViewHierarchy && viewHierarchyFactory) {
-@@ -152,7 +170,7 @@
+@@ -152,7 +172,7 @@
      })
          .on('test_fn_failure', async () => {
          failing = true;
