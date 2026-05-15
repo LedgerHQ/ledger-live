@@ -12,7 +12,7 @@ import { useInterestRatesByCurrencies } from "@ledgerhq/live-common/dada-client/
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "~/context/hooks";
 import { accountsByCryptoCurrencyScreenSelector } from "~/reducers/accounts";
-import { counterValueCurrencySelector } from "~/reducers/settings";
+import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
 import { NavigatorName, ScreenName } from "~/const";
 import { track } from "~/analytics";
 import { useLocale, useTranslation } from "~/context/Locale";
@@ -27,6 +27,7 @@ type EarnState =
 
 export function useBalanceDetailsViewModel(currency: AssetDetailCurrencyProps) {
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const discreet = useSelector(discreetModeSelector);
   const { locale } = useLocale();
   const { t } = useTranslation();
 
@@ -58,8 +59,8 @@ export function useBalanceDetailsViewModel(currency: AssetDetailCurrencyProps) {
 
   const formattedTotalBalance = useMemo(() => {
     if (!unit) return "";
-    return formatCurrencyUnit(unit, totalBalance, { showCode: true });
-  }, [unit, totalBalance]);
+    return formatCurrencyUnit(unit, totalBalance, { showCode: true, discreet });
+  }, [unit, totalBalance, discreet]);
 
   const counterValueUnit = counterValueCurrency.units[0];
 
@@ -95,8 +96,11 @@ export function useBalanceDetailsViewModel(currency: AssetDetailCurrencyProps) {
     if (isStakeable && hasStake && unit) {
       return {
         type: "staked",
-        formattedAvailable: formatCurrencyUnit(unit, availableBalance, { showCode: true }),
-        formattedDeposit: formatCurrencyUnit(unit, earnDeposit, { showCode: true }),
+        formattedAvailable: formatCurrencyUnit(unit, availableBalance, {
+          showCode: true,
+          discreet,
+        }),
+        formattedDeposit: formatCurrencyUnit(unit, earnDeposit, { showCode: true, discreet }),
       };
     }
 
@@ -111,7 +115,17 @@ export function useBalanceDetailsViewModel(currency: AssetDetailCurrencyProps) {
     }
 
     return { type: "hidden" };
-  }, [hasAccounts, hasStake, isStakeable, unit, availableBalance, earnDeposit, interestRate, t]);
+  }, [
+    hasAccounts,
+    hasStake,
+    isStakeable,
+    unit,
+    availableBalance,
+    earnDeposit,
+    interestRate,
+    t,
+    discreet,
+  ]);
 
   const { openDrawer } = useTransferDrawerController();
   const navigation = useNavigation<BaseNavigation>();
@@ -158,6 +172,7 @@ export function useBalanceDetailsViewModel(currency: AssetDetailCurrencyProps) {
 
   return {
     hasAccounts,
+    discreet,
     counterValue,
     counterValueFormatter,
     formattedTotalBalance,

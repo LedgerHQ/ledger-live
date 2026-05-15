@@ -10,7 +10,7 @@ import {
   CardTrailing,
 } from "@ledgerhq/lumen-ui-rnative";
 import CurrencyIcon from "~/components/CurrencyIcon";
-import { useFormattedAccountBalance } from "LLM/features/Send/screens/Recipient/hooks/useFormattedAccountBalance";
+import { useFormattedAccountBalance } from "LLM/hooks/useFormattedAccountBalance";
 import type { AddressAccountData } from "../useAddressesViewModel";
 
 type Props = Readonly<{
