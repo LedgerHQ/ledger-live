@@ -33,7 +33,11 @@
   },
   "devDependencies": {
     "@ledgerhq/types-live": "workspace:^",
+    "@swc/jest": "catalog:",
+    "@swc/core": "catalog:",
+    "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "jest": "catalog:",
     "ts-node": "^10.4.0",
     "ws": "catalog:"
   },

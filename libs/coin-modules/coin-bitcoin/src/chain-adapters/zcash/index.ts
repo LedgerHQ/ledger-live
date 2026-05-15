@@ -1,12 +1,14 @@
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
+import { pathStringToArray } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import type { ChainAdapter } from "../types";
-import type { BitcoinAddress, SignerContext } from "../../signer";
+import type { BitcoinAddress, BitcoinXPub, SignerContext } from "../../signer";
 import type { Transaction } from "../../types";
 import { DmkSignerZcash, ZcashAddress } from "@ledgerhq/live-signer-zcash";
 import { registerChainAdapter } from "../registry";
 import type { ZcashAccount, ZcashAccountRaw } from "./types";
 import { toZcashPrivateInfoRaw, fromZcashPrivateInfoRaw } from "./serialization";
 import { buildExtraSyncObservable } from "./sync";
+import { composeXpub } from "./xpub";
 
 type DmkTransport = {
   dmk: ConstructorParameters<typeof DmkSignerZcash>[0];
@@ -20,9 +22,11 @@ const isDmkTransport = (transport: unknown): transport is DmkTransport =>
   "sessionId" in transport &&
   typeof (transport as { sessionId: unknown }).sessionId === "string";
 
-const isZcashSigner = (
-  signer: unknown,
-): signer is { getAddress: (path: string, display?: boolean) => Promise<ZcashAddress> } =>
+type ZcashLikeSigner = {
+  getAddress: (path: string, display?: boolean) => Promise<ZcashAddress>;
+};
+
+const isZcashSigner = (signer: unknown): signer is ZcashLikeSigner =>
   !!signer &&
   typeof signer === "object" &&
   "getAddress" in signer &&
@@ -87,12 +91,47 @@ const zcashChainAdapter: ChainAdapter = {
       if (!isZcashSigner(signer)) {
         throw new Error("Zcash signer must implement getAddress(path, display?)");
       }
-      const { address } = await signer.getAddress(path, verify || false);
+      const { address, publicKey, chainCode } = await signer.getAddress(path, verify || false);
       return {
         bitcoinAddress: address,
-        publicKey: "",
-        chainCode: "",
+        publicKey,
+        chainCode,
       } satisfies BitcoinAddress;
+    });
+  },
+
+  getWalletXpub(
+    deviceId,
+    { currency, accountPath, xpubVersion },
+    signerContext: SignerContext,
+  ): Promise<BitcoinXPub> {
+    return signerContext(deviceId, currency, async signer => {
+      if (!isZcashSigner(signer)) {
+        throw new Error("Zcash signer must implement getAddress(path, display?)");
+      }
+
+      // The DMK Zcash signer-kit only exposes `getAddress`. Replicate the
+      // legacy `BtcOld.getWalletXpub` flow: fetch both the account-level key
+      // (for chaincode + pubkey) and the parent key (for the fingerprint),
+      // then BIP32-serialize them locally.
+      const accountPathElements = pathStringToArray(accountPath);
+      if (accountPathElements.length === 0) {
+        throw new Error(`Cannot derive xpub from empty path "${accountPath}"`);
+      }
+      const parentPath = accountPath.split("/").slice(0, -1).join("/");
+      const childNumber = accountPathElements[accountPathElements.length - 1];
+
+      const parent = await signer.getAddress(parentPath, false);
+      const account = await signer.getAddress(accountPath, false);
+
+      return composeXpub({
+        xpubVersion,
+        depth: accountPathElements.length,
+        childNumber,
+        parentPublicKeyHex: parent.publicKey,
+        accountPublicKeyHex: account.publicKey,
+        accountChainCodeHex: account.chainCode,
+      });
     });
   },
 

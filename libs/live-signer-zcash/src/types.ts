@@ -3,7 +3,9 @@ export type ZcashAppConfig = {
 };
 
 export type ZcashAddress = {
+  publicKey: string;
   address: string;
+  chainCode: string;
 };
 
 export type ZcashViewKey = {

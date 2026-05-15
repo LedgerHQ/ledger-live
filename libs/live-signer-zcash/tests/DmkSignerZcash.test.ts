@@ -55,14 +55,21 @@ describe("DmkSignerZcash", () => {
   });
 
   describe("getAddress", () => {
-    it("should return address and pass checkOnDevice=false by default", async () => {
+    const publicKey = new Uint8Array([0xde, 0xad, 0xbe, 0xef]);
+    const chainCode = new Uint8Array([0xca, 0xfe, 0xba, 0xbe]);
+
+    it("should return address, publicKey, chainCode and pass checkOnDevice=false by default", async () => {
       mockSignerZcash.getAddress.mockReturnValue({
-        observable: createCompletedObservable({ address: "zs1abc" }),
+        observable: createCompletedObservable({ publicKey, address: "zs1abc", chainCode }),
       });
 
       const result = await signer.getAddress("44'/133'/0'/0/0");
 
-      expect(result).toEqual({ address: "zs1abc" });
+      expect(result).toEqual({
+        publicKey: "deadbeef",
+        address: "zs1abc",
+        chainCode: "cafebabe",
+      });
       expect(mockSignerZcash.getAddress).toHaveBeenCalledWith("44'/133'/0'/0/0", {
         checkOnDevice: false,
         skipOpenApp: true,
@@ -71,7 +78,7 @@ describe("DmkSignerZcash", () => {
 
     it("should pass checkOnDevice=true when display is true", async () => {
       mockSignerZcash.getAddress.mockReturnValue({
-        observable: createCompletedObservable({ address: "zs1display" }),
+        observable: createCompletedObservable({ publicKey, address: "zs1display", chainCode }),
       });
 
       await signer.getAddress("44'/133'/0'/0/0", true);

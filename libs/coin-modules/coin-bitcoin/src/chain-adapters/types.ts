@@ -4,7 +4,7 @@ import type { AccountShapeInfo } from "@ledgerhq/ledger-wallet-framework/bridge/
 import type { GetAddressOptions } from "@ledgerhq/ledger-wallet-framework/derivation";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, AccountRaw, SignOperationEvent, SyncConfig } from "@ledgerhq/types-live";
-import type { BitcoinAddress, SignerContext } from "../signer";
+import type { BitcoinAddress, BitcoinXPub, SignerContext } from "../signer";
 import type { BitcoinAccount, Transaction, TransactionStatus } from "../types";
 
 /**
@@ -86,6 +86,18 @@ export interface ChainAdapter {
     options: GetAddressOptions,
     signerContext: SignerContext,
   ): Promise<BitcoinAddress> | undefined;
+
+  /**
+   * Override account xpub derivation for chain-specific signer APIs.
+   * Return `undefined` to fall through to the standard `signer.getWalletXpub` path.
+   *
+   * Used during account discovery when no xpub is cached on the account.
+   */
+  getWalletXpub?(
+    deviceId: string,
+    options: { currency: CryptoCurrency; accountPath: string; xpubVersion: number },
+    signerContext: SignerContext,
+  ): Promise<BitcoinXPub> | undefined;
 
   /**
    * Override signer instantiation for chains requiring non-BTC signer implementations.

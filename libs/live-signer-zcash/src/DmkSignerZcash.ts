@@ -59,10 +59,16 @@ export class DmkSignerZcash implements ZcashSigner {
       skipOpenApp: true,
     });
 
-    const result = (await this.resolveDeviceAction(observable)) as { address: string };
+    const result = (await this.resolveDeviceAction(observable)) as {
+      publicKey: Uint8Array;
+      address: string;
+      chainCode: Uint8Array;
+    };
 
     return {
+      publicKey: Buffer.from(result.publicKey).toString("hex"),
       address: result.address,
+      chainCode: Buffer.from(result.chainCode).toString("hex"),
     };
   }
 
