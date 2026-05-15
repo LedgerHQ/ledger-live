@@ -17,7 +17,10 @@ jest.mock("@react-navigation/native", () => ({
   useScrollToTop: jest.fn(),
 }));
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
-  useAccountBridge: jest.fn().mockReturnValue({ updateTransaction: jest.fn() }),
+  useAccountBridge: jest.fn().mockReturnValue({
+    updateTransaction: jest.fn(),
+    getStuckAccountAndOperation: jest.fn(() => undefined),
+  }),
 }));
 
 describe("SendSelectRecipient", () => {
