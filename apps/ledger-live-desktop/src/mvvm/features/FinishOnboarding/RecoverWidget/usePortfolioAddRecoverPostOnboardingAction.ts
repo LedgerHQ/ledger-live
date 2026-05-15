@@ -28,8 +28,7 @@ export function usePortfolioAddRecoverPostOnboardingAction() {
     data: { subscriptionState },
   } = useRecoverBannerState(protectId);
 
-  const effectiveSubscriptionState =
-    isRecoverOfferAvailable && upsellPath ? subscriptionState : undefined;
+  const effectiveSubscriptionState = upsellPath ? subscriptionState : undefined;
 
   const recoverAlreadyInList = actionsState.some(
     action => action.id === PostOnboardingActionId.recover,

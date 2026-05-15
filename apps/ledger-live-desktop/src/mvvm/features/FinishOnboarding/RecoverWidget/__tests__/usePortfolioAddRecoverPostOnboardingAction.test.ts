@@ -16,6 +16,9 @@ jest.mock("@ledgerhq/live-common/featureFlags/index", () => ({
   ...jest.requireActual("@ledgerhq/live-common/featureFlags/index"),
   useFeature: jest.fn(),
 }));
+jest.mock("@ledgerhq/live-common/featureFlags/walletFeaturesConfig/index", () => ({
+  useWalletFeaturesConfig: () => ({ shouldDisplayFinishOnboardingWidget: true }),
+}));
 jest.mock("@ledgerhq/live-common/hooks/recoverFeatureFlag", () => ({
   useUpsellPath: () => "/protect/upsell",
 }));
@@ -53,10 +56,7 @@ function setup({
     if (key === "protectServicesDesktop") {
       return { enabled: true, params: { protectId: PROTECT_ID } };
     }
-    if (key === "lwdWallet40") {
-      return { enabled: true, params: { finishOnboardingWidget: true } };
-    }
-    return undefined;
+    return null;
   });
 
   const actionsById = Object.fromEntries(actions.map(a => [a.id, a]));
