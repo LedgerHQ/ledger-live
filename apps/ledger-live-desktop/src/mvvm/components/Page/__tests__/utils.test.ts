@@ -63,5 +63,30 @@ describe("Page utils", () => {
       expect(shouldDisplayRightPanel("/assets")).toBe(false);
       expect(shouldDisplayRightPanel("/earn")).toBe(false);
     });
+
+    describe("/asset routes (conditional on shouldDisplayAggregatedAssets)", () => {
+      it("returns false for /asset routes when shouldDisplayAggregatedAssets is not enabled", () => {
+        expect(shouldDisplayRightPanel("/asset")).toBe(false);
+        expect(shouldDisplayRightPanel("/asset/btc")).toBe(false);
+        expect(shouldDisplayRightPanel("/asset", { shouldDisplayAggregatedAssets: false })).toBe(
+          false,
+        );
+      });
+
+      it("returns true for /asset routes when shouldDisplayAggregatedAssets is true", () => {
+        expect(shouldDisplayRightPanel("/asset", { shouldDisplayAggregatedAssets: true })).toBe(
+          true,
+        );
+        expect(
+          shouldDisplayRightPanel("/asset/btc", { shouldDisplayAggregatedAssets: true }),
+        ).toBe(true);
+      });
+
+      it("does not treat /assets as an aggregated asset detail route", () => {
+        expect(
+          shouldDisplayRightPanel("/assets", { shouldDisplayAggregatedAssets: true }),
+        ).toBe(false);
+      });
+    });
   });
 });
