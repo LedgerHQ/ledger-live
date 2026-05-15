@@ -1,15 +1,15 @@
-import { ETH_SYNC_ROUTES } from "../helpers/eth-sync-routes";
-import { MockServer } from "../helpers/mock-server";
-import "../../live-common-setup";
+import { ETH_SYNC_ROUTES } from "../../helpers/eth-sync-routes";
+import { MockServer } from "../../helpers/mock-server";
+import "../../../live-common-setup";
 import { afterEach, beforeEach, describe, expect, it, mock } from "bun:test";
 import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import type { getAccountBridge as getLiveAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { installOutputCapture } from "../../shared/ui";
-import type { AccountDescriptor } from "../../wallet/models";
-import { MOCK_ETH_DESCRIPTOR } from "../../test/helpers/constants";
-import { executeSwapCommand, type SwapExecuteFlags } from "../../commands/swap/execute";
-import type { FullSwapPipelineInput } from "../../commands/swap/cli-swap-pipeline";
+import { installOutputCapture } from "../../../shared/ui";
+import type { AccountDescriptor } from "../../../wallet/models";
+import { MOCK_ETH_DESCRIPTOR } from "../../../test/helpers/constants";
+import { executeSwapCommand, type SwapExecuteFlags } from "../../../commands/swap/execute";
+import type { FullSwapPipelineInput } from "../../../commands/swap/cli-swap-pipeline";
 
 const mockPipelineResult = {
   transactionId: "mock-device-transaction-id",
