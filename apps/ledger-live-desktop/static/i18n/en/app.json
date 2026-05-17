@@ -4646,6 +4646,24 @@
           }
         }
       }
+    },
+    "unstakeRequired": {
+      "changeBaker": {
+        "title": "Unstake before changing baker",
+        "description": "You have staked XTZ with your current baker. Unstake your funds before delegating to a new baker."
+      },
+      "endDelegation": {
+        "title": "Unstake before ending delegation",
+        "description": "You have staked XTZ with your current baker. Unstake your funds before ending the delegation."
+      },
+      "steps": {
+        "0": "Open the Earn menu and select Unstake.",
+        "1": "Confirm the amount and submit the unstake transaction on your device.",
+        "2": "Wait ~4 days for the unstake period to complete.",
+        "3": "Once withdrawn, you can change baker or end delegation."
+      },
+      "learnMore": "Learn more about Tezos staking",
+      "close": "Close"
     }
   },
   "delegation": {

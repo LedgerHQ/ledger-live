@@ -2,7 +2,7 @@ import React from "react";
 import styled, { useTheme } from "styled-components";
 import { Trans } from "react-i18next";
 import { useDispatch } from "LLD/hooks/redux";
-import { useDelegation } from "@ledgerhq/live-common/families/tezos/react";
+import { useDelegation, useTezosStakingInfo } from "@ledgerhq/live-common/families/tezos/react";
 import { openModal } from "~/renderer/actions/modals";
 import { RECEIVE_SOURCE_PAGE } from "LLD/features/Receive/types";
 import Box from "~/renderer/components/Box";
@@ -34,6 +34,7 @@ type Props = {
 const ContextMenu = ({ account }: Props) => {
   const dispatch = useDispatch();
   const delegation = useDelegation(account);
+  const { isStaked } = useTezosStakingInfo(account);
   const theme = useTheme();
   const receiveShouldWarnDelegation = delegation
     ? delegation.receiveShouldWarnDelegation
@@ -59,11 +60,13 @@ const ContextMenu = ({ account }: Props) => {
       icon: <UserEdit size={16} />,
       onClick: () =>
         dispatch(
-          openModal("MODAL_DELEGATE", {
-            account,
-            eventType: "redelegate",
-            stepId: "summary",
-          }),
+          isStaked
+            ? openModal("MODAL_TEZOS_UNSTAKE_REQUIRED", { reason: "changeBaker" })
+            : openModal("MODAL_DELEGATE", {
+                account,
+                eventType: "redelegate",
+                stepId: "summary",
+              }),
         ),
     },
     {
@@ -72,12 +75,14 @@ const ContextMenu = ({ account }: Props) => {
       icon: <StopCircle size={16} />,
       onClick: () =>
         dispatch(
-          openModal("MODAL_DELEGATE", {
-            account,
-            eventType: "undelegate",
-            mode: "undelegate",
-            stepId: "summary",
-          }),
+          isStaked
+            ? openModal("MODAL_TEZOS_UNSTAKE_REQUIRED", { reason: "endDelegation" })
+            : openModal("MODAL_DELEGATE", {
+                account,
+                eventType: "undelegate",
+                mode: "undelegate",
+                stepId: "summary",
+              }),
         ),
     },
   ];
