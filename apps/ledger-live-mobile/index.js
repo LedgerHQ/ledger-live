@@ -1,3 +1,15 @@
+// Patch Promise.allSettled before anything else
+if (typeof Promise.allSettled !== "function") {
+  Promise.allSettled = promises =>
+    Promise.all(
+      promises.map(p =>
+        p
+          .then(value => ({ status: "fulfilled", value }))
+          .catch(reason => ({ status: "rejected", reason })),
+      ),
+    );
+}
+
 import "react-native-get-random-values";
 // Injects node.js shims.
 // https://github.com/parshap/node-libs-react-native
