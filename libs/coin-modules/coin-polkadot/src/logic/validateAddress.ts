@@ -1,9 +1,10 @@
 import type { AddressValidationCurrencyParameters } from "@ledgerhq/coin-module-framework/api/types";
-import { isValidAddress } from "../common";
+import { isValidAddress, getSs58Prefix } from "../common";
 
 export async function validateAddress(
   address: string,
-  _parameters: Partial<AddressValidationCurrencyParameters>,
+  parameters: Partial<AddressValidationCurrencyParameters>,
 ): Promise<boolean> {
-  return isValidAddress(address);
+  const ss58Format = getSs58Prefix(parameters.currencyId);
+  return isValidAddress(address, ss58Format);
 }

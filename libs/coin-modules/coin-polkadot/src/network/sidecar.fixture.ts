@@ -24,6 +24,20 @@ export const fixtureChainSpec: SidecarRuntimeSpec = {
   properties: { ss58Format: "0", tokenDecimals: "10", tokenSymbol: "DOT" },
 };
 
+export const bittensorRuntimeSpec: SidecarRuntimeSpec = {
+  at: {
+    height: "4000000",
+    hash: "0x0000000000000000000000000000000000000000000000000000000000000000",
+  },
+  authoringVersion: "0",
+  transactionVersion: "1",
+  implVersion: "0",
+  specName: "node-subtensor",
+  specVersion: "200",
+  chainType: {},
+  properties: { ss58Format: "42", tokenDecimals: "9", tokenSymbol: "TAO" },
+};
+
 export const fixtureStakingProgress = {
   at: {
     hash: "0x3b7c2e6a80cd7d3a323e043fdb950d5e0d51397e87e358adbbfbd3fae4c3007f",

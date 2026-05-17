@@ -94,4 +94,29 @@ export const polkadotConfig: Record<string, ConfigInfo> = {
       },
     },
   },
+  config_currency_bittensor: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+        features: [
+          { id: "blockchain_txs", status: "active" },
+          { id: "staking_txs", status: "active" },
+        ],
+      },
+      // Endpoints are provided and overridden via Firebase Remote Config (infra: T-CS-01); empty by default.
+      sidecar: {
+        url: "",
+      },
+      node: {
+        url: "",
+      },
+      indexer: {
+        url: "",
+      },
+      staking: {
+        electionStatusThreshold: 25,
+      },
+    },
+  },
 };

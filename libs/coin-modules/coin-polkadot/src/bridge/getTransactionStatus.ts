@@ -12,7 +12,7 @@ import {
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import { isValidAddress } from "../common";
+import { isValidAddress, getSs58Prefix } from "../common";
 import { loadPolkadotCrypto } from "../logic/polkadot-crypto";
 import polkadotAPI from "../network";
 import type { PolkadotAccount, Transaction, TransactionStatus } from "../types";
@@ -58,7 +58,7 @@ const getSendTransactionStatus: AccountBridge<
     errors.recipient = new RecipientRequired("");
   } else if (account.freshAddress === transaction.recipient) {
     errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
-  } else if (!isValidAddress(transaction.recipient)) {
+  } else if (!isValidAddress(transaction.recipient, getSs58Prefix(account.currency.id))) {
     errors.recipient = new InvalidAddress("", {
       currencyName: account.currency.name,
     });
@@ -173,7 +173,7 @@ export const getTransactionStatus: AccountBridge<
         // Not a stash yet -> bond method sets the controller
         if (!transaction.recipient) {
           errors.recipient = new RecipientRequired("");
-        } else if (!isValidAddress(transaction.recipient)) {
+        } else if (!isValidAddress(transaction.recipient, getSs58Prefix(account.currency.id))) {
           errors.recipient = new InvalidAddress("", {
             currencyName: account.currency.name,
           });

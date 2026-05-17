@@ -62,7 +62,7 @@ const getElectionOptimisticThreshold = (currency?: CryptoCurrency): number => {
 };
 
 const VALIDATOR_COMISSION_RATIO = 1000000000;
-const UNSUPPORTED_STAKING_NETWORKS = ["polkadot", "westend"];
+const UNSUPPORTED_STAKING_NETWORKS = ["polkadot", "westend", "bittensor"];
 
 // Fallback values used when Sidecar const endpoints are unreachable.
 const DEFAULT_CONSTANTS = {
