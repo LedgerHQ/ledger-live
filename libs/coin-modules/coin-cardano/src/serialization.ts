@@ -174,6 +174,7 @@ function toDelegationRaw({
   ticker,
   name,
   dRepHex,
+  dRepName,
   rewards,
 }: CardanoDelegation): CardanoDelegationRaw {
   return {
@@ -183,6 +184,7 @@ function toDelegationRaw({
     ticker,
     name,
     dRepHex,
+    dRepName,
     rewards: rewards.toString(),
   };
 }
@@ -194,6 +196,7 @@ function fromDelegationRaw({
   ticker,
   name,
   dRepHex,
+  dRepName,
   rewards,
 }: CardanoDelegationRaw): CardanoDelegation {
   return {
@@ -203,6 +206,7 @@ function fromDelegationRaw({
     ticker,
     name,
     dRepHex,
+    dRepName,
     rewards: new BigNumber(rewards),
   };
 }
