@@ -104,6 +104,7 @@ import { ConfigureDBSaveEffects } from "./components/DBSave";
 import HookDevTools from "./devTools/useDevTools";
 import { setSolanaLdmkEnabled } from "@ledgerhq/live-common/families/solana/setup";
 import { setCosmosLdmkEnabled } from "@ledgerhq/live-common/families/cosmos/setup";
+import { setPolkadotLdmkEnabled } from "@ledgerhq/live-common/families/polkadot/setup";
 import useCheckAccountWithFunds from "./logic/postOnboarding/useCheckAccountWithFunds";
 logStartupEvent("After js imports");
 
@@ -143,6 +144,7 @@ function App() {
   const datadogId = useSelector(datadogIdSelector);
   const ldmkSolanaSignerFeatureFlag = useFeature("ldmkSolanaSigner");
   const ldmkCosmosSignerFeatureFlag = useFeature("ldmkCosmosSigner");
+  const ldmkPolkadotSignerFeatureFlag = useFeature("ldmkPolkadotSigner");
   const datadogAutoInstrumentation: AutoInstrumentationConfiguration = useMemo(
     () => ({
       trackErrors: datadogFF?.params?.trackErrors ?? false,
@@ -172,6 +174,12 @@ function App() {
       setCosmosLdmkEnabled(ldmkCosmosSignerFeatureFlag.enabled);
     }
   }, [ldmkCosmosSignerFeatureFlag]);
+
+  useEffect(() => {
+    if (typeof ldmkPolkadotSignerFeatureFlag?.enabled === "boolean") {
+      setPolkadotLdmkEnabled(ldmkPolkadotSignerFeatureFlag.enabled);
+    }
+  }, [ldmkPolkadotSignerFeatureFlag]);
 
   useEffect(() => {
     if (providerNumber) {

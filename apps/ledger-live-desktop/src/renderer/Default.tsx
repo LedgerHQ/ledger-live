@@ -61,6 +61,7 @@ import { AppGeoBlocker } from "LLD/features/AppBlockers/components/AppGeoBlocker
 import { AppVersionBlocker } from "LLD/features/AppBlockers/components/AppVersionBlocker";
 import { setSolanaLdmkEnabled } from "@ledgerhq/live-common/families/solana/setup";
 import { setCosmosLdmkEnabled } from "@ledgerhq/live-common/families/cosmos/setup";
+import { setPolkadotLdmkEnabled } from "@ledgerhq/live-common/families/polkadot/setup";
 import { themeSelector } from "./actions/general";
 import useCheckAccountWithFunds from "./components/PostOnboardingHub/logic/useCheckAccountWithFunds";
 import GlobalDialogs from "LLD/features/GlobalDialogs";
@@ -396,6 +397,7 @@ export default function Default() {
   const providerNumber = useEnv("FORCE_PROVIDER");
   const ldmkSolanaSignerFeatureFlag = useFeature("ldmkSolanaSigner");
   const ldmkCosmosSignerFeatureFlag = useFeature("ldmkCosmosSigner");
+  const ldmkPolkadotSignerFeatureFlag = useFeature("ldmkPolkadotSigner");
 
   const dmk = useDeviceManagementKit();
   const checkAccountsWithFunds = useCheckAccountWithFunds();
@@ -421,6 +423,12 @@ export default function Default() {
       setCosmosLdmkEnabled(ldmkCosmosSignerFeatureFlag.enabled);
     }
   }, [ldmkCosmosSignerFeatureFlag]);
+
+  useEffect(() => {
+    if (typeof ldmkPolkadotSignerFeatureFlag?.enabled === "boolean") {
+      setPolkadotLdmkEnabled(ldmkPolkadotSignerFeatureFlag.enabled);
+    }
+  }, [ldmkPolkadotSignerFeatureFlag]);
 
   useEffect(() => {
     // WebHID is now always enabled, set provider if specified

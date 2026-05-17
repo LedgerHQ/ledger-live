@@ -493,6 +493,7 @@ overrides:
   bignumber.js: 9.1.2
   '@radix-ui/react-slot': ^1.2.4
   '@ledgerhq/device-signer-kit-aleo>@ledgerhq/signer-utils': 1.1.3
+  '@ledgerhq/device-signer-kit-polkadot': file:/private/tmp/claude/ledgerhq-device-signer-kit-polkadot-0.1.0.tgz
 
 packageExtensionsChecksum: sha256-oFPDBJXygat0iMzkO4oGwhSi6BtY54eC5dgXuFjN6jk=
 
@@ -569,6 +570,10 @@ patchedDependencies:
 importers:
 
   .:
+    dependencies:
+      '@ledgerhq/device-signer-kit-polkadot':
+        specifier: file:/private/tmp/claude/ledgerhq-device-signer-kit-polkadot-0.1.0.tgz
+        version: file:../../../../../../../private/tmp/claude/ledgerhq-device-signer-kit-polkadot-0.1.0.tgz
     devDependencies:
       '@changesets/changelog-github':
         specifier: 0.5.0
@@ -7636,6 +7641,9 @@ importers:
       '@ledgerhq/live-signer-hyperliquid':
         specifier: workspace:^
         version: link:../live-signer-hyperliquid
+      '@ledgerhq/live-signer-polkadot':
+        specifier: workspace:^
+        version: link:../live-signer-polkadot
       '@ledgerhq/live-signer-solana':
         specifier: workspace:^
         version: link:../live-signer-solana
@@ -11290,6 +11298,58 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../disable-network-setup
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(typescript@6.0.2))
+      rimraf:
+        specifier: ^4.4.1
+        version: 4.4.1
+      ts-node:
+        specifier: ^10.4.0
+        version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(typescript@6.0.2)
+
+  libs/live-signer-polkadot:
+    dependencies:
+      '@ledgerhq/coin-polkadot':
+        specifier: workspace:^
+        version: link:../coin-modules/coin-polkadot
+      '@ledgerhq/device-management-kit':
+        specifier: 'catalog:'
+        version: 1.4.1(rxjs@7.8.2)
+      '@ledgerhq/device-signer-kit-polkadot':
+        specifier: file:/private/tmp/claude/ledgerhq-device-signer-kit-polkadot-0.1.0.tgz
+        version: file:../../../../../../../private/tmp/claude/ledgerhq-device-signer-kit-polkadot-0.1.0.tgz(@ledgerhq/device-management-kit@1.4.1(rxjs@7.8.2))
+      '@ledgerhq/errors':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/errors
+      '@ledgerhq/hw-app-polkadot':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/hw-app-polkadot
+      '@ledgerhq/hw-transport':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/hw-transport
+      rxjs:
+        specifier: 'catalog:'
+        version: 7.8.2
+    devDependencies:
+      '@ledgerhq/disable-network-setup':
+        specifier: workspace:^
+        version: link:../disable-network-setup
+      '@ledgerhq/types-live':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/types-live
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11
@@ -17077,6 +17137,12 @@ packages:
     resolution: {integrity: sha512-vOHQRrMsUj4XMI4LC+WcerH0yyIiWw2kPHK0yN847FccKaB5x9+wiz2zWgcqk7fKHqYFr1S5GqXjmaiRWiAcwA==}
     peerDependencies:
       '@ledgerhq/device-management-kit': ^1.2.0
+
+  '@ledgerhq/device-signer-kit-polkadot@file:../../../../../../../private/tmp/claude/ledgerhq-device-signer-kit-polkadot-0.1.0.tgz':
+    resolution: {integrity: sha512-P8/cXUpBGxkuCNtHNyMsKQUfXZnRiXb9hfQbydVykMDYDh6uvxse9jZ9DP+eMgkMeTVbRrzzJvgw3ByeKPsojA==, tarball: file:../../../../../../../private/tmp/claude/ledgerhq-device-signer-kit-polkadot-0.1.0.tgz}
+    version: 0.1.0
+    peerDependencies:
+      '@ledgerhq/device-management-kit': ^1.4.1
 
   '@ledgerhq/device-signer-kit-solana@1.8.0':
     resolution: {integrity: sha512-oe0GfnHMBQHcP8FrkCEWI0lA2skuVQCl2sMIrtwsHSRxocmLftgbyzUZlcyDZ5+7GOJAHJmi347Xt4p7oQWftw==}
@@ -45387,6 +45453,23 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
+  '@ledgerhq/device-signer-kit-polkadot@file:../../../../../../../private/tmp/claude/ledgerhq-device-signer-kit-polkadot-0.1.0.tgz':
+    dependencies:
+      '@ledgerhq/signer-utils': 1.2.0
+      inversify: 7.5.1(reflect-metadata@0.2.2)
+      purify-ts: 2.1.0
+      reflect-metadata: 0.2.2
+      xstate: 5.19.2
+
+  '@ledgerhq/device-signer-kit-polkadot@file:../../../../../../../private/tmp/claude/ledgerhq-device-signer-kit-polkadot-0.1.0.tgz(@ledgerhq/device-management-kit@1.4.1(rxjs@7.8.2))':
+    dependencies:
+      '@ledgerhq/device-management-kit': 1.4.1(rxjs@7.8.2)
+      '@ledgerhq/signer-utils': 1.2.0(@ledgerhq/device-management-kit@1.4.1(rxjs@7.8.2))
+      inversify: 7.5.1(reflect-metadata@0.2.2)
+      purify-ts: 2.1.0
+      reflect-metadata: 0.2.2
+      xstate: 5.19.2
+
   '@ledgerhq/device-signer-kit-solana@1.8.0(@ledgerhq/device-management-kit@1.4.1(rxjs@7.8.2))(typescript@6.0.2)':
     dependencies:
       '@ledgerhq/context-module': 1.17.1(@ledgerhq/device-management-kit@1.4.1(rxjs@7.8.2))
@@ -45663,6 +45746,10 @@ snapshots:
   '@ledgerhq/signer-utils@1.1.3(@ledgerhq/device-management-kit@1.4.1(rxjs@7.8.2))':
     dependencies:
       '@ledgerhq/device-management-kit': 1.4.1(rxjs@7.8.2)
+      semver: 7.7.2
+
+  '@ledgerhq/signer-utils@1.2.0':
+    dependencies:
       semver: 7.7.2
 
   '@ledgerhq/signer-utils@1.2.0(@ledgerhq/device-management-kit@1.4.1(rxjs@7.8.2))':
