@@ -1,5 +1,4 @@
 import "LLM/utils/logStartup/beforeJSImports";
-require("./promise-polyfill");
 import "./polyfill";
 import "./live-common-setup";
 import "./iosWebsocketFix";
