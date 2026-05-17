@@ -109,6 +109,7 @@ export type APIDelegation = {
   dRepInfo:
     | {
         hex: string;
+        givenName: string | undefined;
       }
     | undefined;
 };

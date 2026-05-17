@@ -137,6 +137,7 @@ export type CardanoDelegation = {
   ticker: string | undefined;
   name: string | undefined;
   dRepHex: string | undefined;
+  dRepName: string | undefined;
   rewards: BigNumber;
 };
 
@@ -147,6 +148,7 @@ export type CardanoDelegationRaw = {
   ticker: string | undefined;
   name: string | undefined;
   dRepHex: string | undefined;
+  dRepName: string | undefined;
   rewards: string;
 };
 
