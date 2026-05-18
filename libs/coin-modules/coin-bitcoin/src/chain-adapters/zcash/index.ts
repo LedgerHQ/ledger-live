@@ -3,7 +3,7 @@ import { pathStringToArray } from "@ledgerhq/ledger-wallet-framework/bridge/jsHe
 import type { ChainAdapter } from "../types";
 import type { BitcoinAddress, BitcoinXPub, SignerContext } from "../../signer";
 import type { Transaction } from "../../types";
-import { DmkSignerZcash, ZcashAddress } from "@ledgerhq/live-signer-zcash";
+import { DmkSignerZcash, ZcashAddress, ZcashViewKey } from "@ledgerhq/live-signer-zcash";
 import { registerChainAdapter } from "../registry";
 import type { ZcashAccount, ZcashAccountRaw } from "./types";
 import { toZcashPrivateInfoRaw, fromZcashPrivateInfoRaw } from "./serialization";
@@ -132,6 +132,20 @@ const zcashChainAdapter: ChainAdapter = {
         accountPublicKeyHex: account.publicKey,
         accountChainCodeHex: account.chainCode,
       });
+    });
+  },
+
+  getFullViewingKey(deviceId, currency, path, signerContext: SignerContext) {
+    return signerContext(deviceId, currency, async signer => {
+      if (!("getFullViewingKey" in signer) || typeof signer.getFullViewingKey !== "function") {
+        throw new Error("Zcash signer must implement getFullViewingKey(path)");
+      }
+      const { viewKey } = await (
+        signer as unknown as {
+          getFullViewingKey: (path: string) => Promise<ZcashViewKey>;
+        }
+      ).getFullViewingKey(path);
+      return viewKey;
     });
   },
 

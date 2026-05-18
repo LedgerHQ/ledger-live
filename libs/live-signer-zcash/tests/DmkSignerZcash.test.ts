@@ -11,6 +11,7 @@ describe("DmkSignerZcash", () => {
   const dmkMock = {} as DeviceManagementKit;
   const mockSignerZcash = {
     getAddress: jest.fn(),
+    getFullViewingKey: jest.fn(),
   };
 
   let signer: DmkSignerZcash;
@@ -106,13 +107,72 @@ describe("DmkSignerZcash", () => {
     });
   });
 
+  describe("getFullViewingKey", () => {
+    it("should return UFVK and convert ZIP-44 path to ZIP-32", async () => {
+      mockSignerZcash.getFullViewingKey.mockReturnValue({
+        observable: createCompletedObservable({
+          mode: "ufvk",
+          fullViewingKey: "uview1test",
+        }),
+      });
+
+      const result = await signer.getFullViewingKey("44'/133'/0'/0/0");
+
+      expect(result).toEqual({ viewKey: "uview1test" });
+      expect(mockSignerZcash.getFullViewingKey).toHaveBeenCalledWith("32'/133'/0'", {
+        mode: "ufvk",
+        skipOpenApp: true,
+      });
+    });
+
+    it("should pass through ZIP-32 path", async () => {
+      mockSignerZcash.getFullViewingKey.mockReturnValue({
+        observable: createCompletedObservable({
+          mode: "ufvk",
+          fullViewingKey: "uview1zip32",
+        }),
+      });
+
+      await signer.getFullViewingKey("32'/133'/2'");
+
+      expect(mockSignerZcash.getFullViewingKey).toHaveBeenCalledWith("32'/133'/2'", {
+        mode: "ufvk",
+        skipOpenApp: true,
+      });
+    });
+
+    it("should reject if returned mode is not ufvk", async () => {
+      mockSignerZcash.getFullViewingKey.mockReturnValue({
+        observable: createCompletedObservable({
+          mode: "orchardFvk",
+          fullViewingKey: new Uint8Array([1, 2, 3]),
+        }),
+      });
+
+      await expect(signer.getFullViewingKey("44'/133'/0'/0/0")).rejects.toThrow(
+        "Unexpected full viewing key response mode",
+      );
+    });
+  });
+
+  describe("getViewKey", () => {
+    it("should delegate to getFullViewingKey", async () => {
+      mockSignerZcash.getFullViewingKey.mockReturnValue({
+        observable: createCompletedObservable({
+          mode: "ufvk",
+          fullViewingKey: "uview1delegate",
+        }),
+      });
+
+      const result = await signer.getViewKey("44'/133'/0'/0/0");
+
+      expect(result).toEqual({ viewKey: "uview1delegate" });
+    });
+  });
+
   describe("not implemented methods", () => {
     it("should throw for getAppConfig", async () => {
       await expect(signer.getAppConfig()).rejects.toThrow("Not implemented");
-    });
-
-    it("should throw for getViewKey", async () => {
-      await expect(signer.getViewKey("44'/133'/0'/0/0")).rejects.toThrow("Not implemented");
     });
 
     it("should throw for getTrustedInput", async () => {
