@@ -4,6 +4,7 @@ import { fireEvent, render, screen, waitFor } from "@tests/test-renderer";
 import { track } from "~/analytics";
 import { ProductTourControlsProvider } from "../../context/ProductTourControlsContext";
 import { useProductTourDrawer, ProductTourDrawer } from "../index";
+import { __resetProductTourAutoOpenForTests } from "../hooks/useProductTourDrawerViewModel";
 import { PAGE_TRACKING_PRODUCT_TOUR, PRODUCT_TOUR_SLIDES } from "../const";
 import type { ProductTourPrimaryAction } from "../const";
 
@@ -48,6 +49,10 @@ const TestComponent = ({ onPrimaryActionOverride }: TestComponentProps) => {
 };
 
 describe("ProductTourDrawer integration", () => {
+  beforeEach(() => {
+    __resetProductTourAutoOpenForTests();
+  });
+
   function renderTestComponent(
     {
       productTourCompleted,
