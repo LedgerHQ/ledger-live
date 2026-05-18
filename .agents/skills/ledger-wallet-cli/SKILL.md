@@ -1,6 +1,6 @@
 ---
 name: ledger-wallet-cli
-description: Official Ledger wallet-cli — USB-based CLI for Ledger hardware wallet flows (account discover, receive, balances, operations, send, swap quote/execute/status) built on the Device Management Kit (DMK)
+description: Official Ledger wallet-cli — USB-based CLI for Ledger hardware wallet flows (account discover, receive, balances, operations, send, swap quote/execute/status, assets token / token-by-id) built on the Device Management Kit (DMK)
 ---
 
 # wallet-cli
@@ -32,6 +32,8 @@ Run from repo root: `pnpm --silent wallet-cli start <command> [flags]`
 | `swap quote`       | No     | No           |
 | `swap execute`     | Yes    | **Required** |
 | `swap status`      | No     | No           |
+| `assets token`     | No     | No           |
+| `assets token-by-id` | No   | No           |
 
 *`send --dry-run` needs no device and no sandbox bypass.
 
@@ -134,6 +136,20 @@ pnpm --silent wallet-cli start swap status --swap-id <swapId> --provider changel
 pnpm --silent wallet-cli start swap status --swap-id <swapId> --provider changelly --output json
 ```
 Required flags: `--swap-id`, `--provider`
+
+### assets token / token-by-id
+Resolve token metadata from the cryptoassets store. No device, no session.
+
+```bash
+pnpm --silent wallet-cli start assets token ethereum 0xdac17f958d2ee523a2206206994597c13d831ec7
+pnpm --silent wallet-cli start assets token-by-id ethereum/erc20/usd_tether__erc20_
+```
+
+Use `token` when you have the contract address; use `token-by-id` when you have the id. Exits non-zero if not found.
+
+For non-EVM chains pass `--identifier`.
+
+The `id` printed here is the same id accepted by `swap quote --from` / `--to` and `swap execute --from` / `--to`.
 
 ---
 

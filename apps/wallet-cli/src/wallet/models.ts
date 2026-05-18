@@ -6,6 +6,7 @@ import { z } from "zod";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { BigNumberStrSchema, DateTimeIsoSchema } from "@shared/schema-primitives";
 import type { OperationType } from "@ledgerhq/types-live";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { parseV1, toV0 } from "../shared/accountDescriptor";
 import type { AccountDescriptorV1 } from "../shared/accountDescriptor";
 
@@ -82,6 +83,35 @@ export type SendEvent =
   | { type: "device-signature-granted" }
   | { type: "dry-run" }
   | { type: "broadcasted"; txHash: string };
+
+export const TokenInfoSchema = z.object({
+  id: z.string(),
+  ticker: z.string(),
+  name: z.string(),
+  contractAddress: z.string(),
+  parentCurrencyId: z.string(),
+  tokenType: z.string(),
+  decimals: z.number().int().nonnegative(),
+  delisted: z.boolean().optional(),
+});
+export type TokenInfo = z.infer<typeof TokenInfoSchema>;
+
+export function toTokenInfo(t: TokenCurrency): TokenInfo {
+  const magnitude = t.units[0]?.magnitude;
+  if (magnitude == null) {
+    throw new Error(`Token ${t.id} has no units; cannot determine decimals`);
+  }
+  return {
+    id: t.id,
+    ticker: t.ticker,
+    name: t.name,
+    contractAddress: t.contractAddress,
+    parentCurrencyId: t.parentCurrency.id,
+    tokenType: t.tokenType,
+    decimals: magnitude,
+    ...(t.delisted === undefined ? {} : { delisted: t.delisted }),
+  };
+}
 
 export const OperationSchema = z.object({
   id: z.string(),

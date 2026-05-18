@@ -5,6 +5,7 @@ import { JsonFormatter } from "./json";
 import type { DiscoveredAccount, AccountDescriptor } from "../models";
 import { BalanceSchema, OperationSchema } from "../models";
 import { XPUB, ETH_ADDR } from "../../shared/accountDescriptor/test-fixtures";
+import { USDT_TOKEN_INFO } from "../../test/helpers/cal-fixtures";
 
 const stubStore = {} as CryptoAssetsStore;
 
@@ -40,6 +41,47 @@ const btcDescriptor: AccountDescriptor = {
   derivationMode: "native_segwit",
   index: 2,
 };
+
+describe("HumanFormatter.formatTokenInfo", () => {
+  const formatter = new HumanFormatter(stubStore);
+
+  it("includes the token id, ticker, name, contract, parent, type, decimals", () => {
+    const out = formatter.formatTokenInfo(USDT_TOKEN_INFO);
+    expect(out).toContain("ethereum/erc20/usd_tether__erc20_");
+    expect(out).toContain("USDT");
+    expect(out).toContain("Tether USD");
+    expect(out).toContain("0xdac17f958d2ee523a2206206994597c13d831ec7");
+    expect(out).toContain("ethereum");
+    expect(out).toContain("erc20");
+    expect(out).toContain("6");
+  });
+
+  it("does not render a delisted warning by default", () => {
+    expect(formatter.formatTokenInfo(USDT_TOKEN_INFO)).not.toMatch(/delisted/i);
+  });
+
+  it("renders a delisted warning when the flag is set", () => {
+    const out = formatter.formatTokenInfo({ ...USDT_TOKEN_INFO, delisted: true });
+    expect(out).toMatch(/delisted/i);
+  });
+});
+
+describe("JsonFormatter.token", () => {
+  const json = new JsonFormatter({} as unknown as HumanFormatter);
+
+  it("returns the TokenInfo payload as-is", () => {
+    expect(json.token(USDT_TOKEN_INFO)).toEqual(USDT_TOKEN_INFO);
+  });
+
+  it("omits delisted when absent on input", () => {
+    expect("delisted" in json.token(USDT_TOKEN_INFO)).toBe(false);
+  });
+
+  it("preserves delisted=true when set", () => {
+    const out = json.token({ ...USDT_TOKEN_INFO, delisted: true });
+    expect(out.delisted).toBe(true);
+  });
+});
 
 describe("HumanFormatter.formatError", () => {
   it("returns message for Error instances", () => {
