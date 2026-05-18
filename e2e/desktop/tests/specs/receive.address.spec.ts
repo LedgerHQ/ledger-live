@@ -165,6 +165,7 @@ for (const receive of tokenAccounts) {
 
         await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(getParentAccountName(receive.account));
+        await app.account.expectAccountVisibility(getParentAccountName(receive.account));
         await app.account.navigateToTokenInAccount(receive.account);
         await app.account.expectTokenAccount(receive.account);
         await app.account.clickReceive();
