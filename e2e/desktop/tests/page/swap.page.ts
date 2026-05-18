@@ -50,8 +50,8 @@ export class SwapPage extends WebViewAppPage {
   private insufficientFundsWarning = "insufficient-funds-warning";
   private executeButtonDisabled = "execute-button-disabled";
   // Swap Steps Approval components
-  private giveApprovalButton = "give-approval-button";
-  private signPermitButton = "sign-permit-button";
+  private readonly giveApprovalButton = "give-approval-button";
+  private readonly signPermitButton = "sign-permit-button";
 
   // History Components
   readonly historyButton = this.page.getByTestId("History-tab-button");
