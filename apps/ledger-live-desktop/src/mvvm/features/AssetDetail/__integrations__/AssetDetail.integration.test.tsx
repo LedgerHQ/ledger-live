@@ -43,7 +43,22 @@ const TEST_ID = {
   ACTION_SELL: "asset-detail-action-sell",
   ACTION_SEND: "asset-detail-action-send",
   HEADER_OPTIONS: "asset-detail-header-options-trigger",
+  STAKING_SECTION: "asset-detail-staking-section",
+  EARN_BANNER: "asset-detail-earn-banner",
+  AVAILABLE_BALANCE: "asset-detail-available-balance",
+  EARN_DEPOSIT: "asset-detail-earn-deposit",
 } as const;
+
+const mockGetCanStakeCurrency = jest.fn().mockReturnValue(false);
+const mockUseInterestRatesByCurrencies = jest.fn().mockReturnValue({});
+
+jest.mock("LLD/hooks/useStake", () => ({
+  useStake: () => ({ getCanStakeCurrency: mockGetCanStakeCurrency }),
+}));
+
+jest.mock("@ledgerhq/live-common/dada-client/hooks/useInterestRatesByCurrencies", () => ({
+  useInterestRatesByCurrencies: (...args: unknown[]) => mockUseInterestRatesByCurrencies(...args),
+}));
 
 jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag", () => ({
   useCurrenciesUnderFeatureFlag: () => ({
@@ -214,6 +229,8 @@ describe("AssetDetail integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     setLocation();
+    mockGetCanStakeCurrency.mockReturnValue(false);
+    mockUseInterestRatesByCurrencies.mockReturnValue({});
 
     mockIsCurrencyAvailable.mockImplementation(() => true);
     jest.mocked(useRampCatalog).mockReturnValue({
@@ -240,6 +257,75 @@ describe("AssetDetail integration", () => {
         await waitForMarketPriceSectionShowsQuote();
       },
     );
+
+    it("hides the staking section when the asset is not stakeable", async () => {
+      mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+      setupRoute("bitcoin", OWNED_ASSETS[0].buildDistribution());
+
+      renderWithMockedCounterValuesProvider(<AssetDetail />);
+
+      await waitFor(() => {
+        expectHeader();
+        expectOwnedView();
+      });
+
+      expect(screen.queryByTestId(TEST_ID.STAKING_SECTION)).not.toBeInTheDocument();
+    });
+
+    it("shows the default earn banner when stakeable without an earn deposit and no APY", async () => {
+      mockGetCanStakeCurrency.mockReturnValue(true);
+      mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+      setupRoute("bitcoin", OWNED_ASSETS[0].buildDistribution());
+
+      renderWithMockedCounterValuesProvider(<AssetDetail />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId(TEST_ID.EARN_BANNER)).toBeVisible();
+        expect(screen.getByText("Earn with this asset")).toBeVisible();
+      });
+
+      expect(screen.queryByTestId(TEST_ID.AVAILABLE_BALANCE)).not.toBeInTheDocument();
+      expect(screen.queryByTestId(TEST_ID.EARN_DEPOSIT)).not.toBeInTheDocument();
+    });
+
+    it("shows the earn banner when the asset is stakeable without an earn deposit and APY is available", async () => {
+      mockGetCanStakeCurrency.mockReturnValue(true);
+      mockUseInterestRatesByCurrencies.mockReturnValue({
+        bitcoin: { value: 0.12, type: "APY" },
+      });
+      mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+      setupRoute("bitcoin", OWNED_ASSETS[0].buildDistribution());
+
+      renderWithMockedCounterValuesProvider(<AssetDetail />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId(TEST_ID.EARN_BANNER)).toBeVisible();
+        expect(screen.getByText("Earn up to 12.0% APY")).toBeVisible();
+      });
+
+      expect(screen.queryByTestId(TEST_ID.AVAILABLE_BALANCE)).not.toBeInTheDocument();
+      expect(screen.queryByTestId(TEST_ID.EARN_DEPOSIT)).not.toBeInTheDocument();
+    });
+
+    it("shows available balance and earn deposit cards when stakeable with an earn deposit", async () => {
+      mockGetCanStakeCurrency.mockReturnValue(true);
+      mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+      const account = genAccount("asset-detail-staking-deposit", { currency: btc });
+      account.balance = new BigNumber(10);
+      account.spendableBalance = new BigNumber(0);
+      const item = buildDistributionItem({ accounts: [account] });
+      setupRoute("bitcoin", { bySlug: { bitcoin: item }, list: [item] });
+
+      renderWithMockedCounterValuesProvider(<AssetDetail />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId(TEST_ID.STAKING_SECTION)).toBeVisible();
+        expect(screen.getByTestId(TEST_ID.AVAILABLE_BALANCE)).toBeVisible();
+        expect(screen.getByTestId(TEST_ID.EARN_DEPOSIT)).toBeVisible();
+      });
+
+      expect(screen.queryByTestId(TEST_ID.EARN_BANNER)).not.toBeInTheDocument();
+    });
 
     it("shows header options menu with favorites and hide actions for tokens", async () => {
       mockMarket.withData(MarketMockedResponse.usdcDetail);
