@@ -57,11 +57,9 @@ export function useSendFlowAmountReviewCore({
   const accountCurrency = useMemo(() => getAccountCurrency(mainAccount), [mainAccount]);
 
   const updateTransactionWithPatch = useCallback(
-    (patch: Partial<Transaction>) => {
-      transactionActions.updateTransaction(currentTx => {
-        const bridge = getAccountBridge(account, parentAccount ?? undefined);
-        return bridge.updateTransaction(currentTx, patch);
-      });
+    async (patch: Partial<Transaction>) => {
+      const bridge = await getAccountBridge(account, parentAccount ?? undefined);
+      transactionActions.updateTransaction(currentTx => bridge.updateTransaction(currentTx, patch));
     },
     [account, parentAccount, transactionActions],
   );
