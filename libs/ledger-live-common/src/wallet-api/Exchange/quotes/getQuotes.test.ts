@@ -177,6 +177,61 @@ describe("getQuotes", () => {
     expect(fetchAndMergeProviderDataMock).toHaveBeenCalledTimes(1);
   });
 
+  it("returns plain Quote objects sorted by netCounterValue", async () => {
+    const feeContext = {
+      maxFeePerGas: undefined,
+      gasPrice: undefined,
+      defaultGasLimit: "21000",
+      estimatedFeesAtomic: new BigNumber(0),
+      balanceAtomic: new BigNumber("5000000000000000000"),
+      feeCurrencyId: "ethereum",
+      feeCurrencyMagnitude: 18,
+      mainAccountCurrencyId: "ethereum",
+    };
+    fetchNetworkFeeContextMock.mockResolvedValue(feeContext);
+    computeFeeEstimateMock.mockImplementation(raw => {
+      if (raw.key === "higher-receive-with-fees") {
+        return {
+          estimatedNetworkFee: { amount: "100000000000000000", currencyId: "ethereum" },
+          approvalNetworkFee: { amount: "100000000000000000", currencyId: "ethereum" },
+          notEnoughBalance: false,
+        };
+      }
+      return {
+        estimatedNetworkFee: undefined,
+        approvalNetworkFee: undefined,
+        notEnoughBalance: false,
+      };
+    });
+    fetchQuotesMock.mockResolvedValue({
+      rawQuotes: [
+        makeRawQuote({
+          key: "higher-receive-with-fees",
+          amountTo: 1,
+          networkFees: { currency: "ethereum" },
+        }),
+        makeRawQuote({
+          key: "lower-receive-no-fees",
+          amountTo: 0.99,
+          networkFees: { currency: "ethereum" },
+        }),
+      ],
+      providerErrors: [],
+    });
+
+    const response = await getQuotes(makeArgs("ethereum", "bitcoin"), {
+      ...emptyContext,
+      spotPrices: { bitcoin: 30_000, ethereum: 2_000 },
+    });
+
+    expect(response.quotes.map(q => q.key)).toEqual([
+      "lower-receive-no-fees",
+      "higher-receive-with-fees",
+    ]);
+    expect(response.quotes[0]).not.toHaveProperty("netCounterValue");
+    expect(response.quotes[0]).not.toHaveProperty("quote");
+  });
+
   describe("digested global errors (computeQuotesErrors integration)", () => {
     it("emits `amountTooLow` alongside `noQuotes` when every provider rejected on a min bound that brackets the input", async () => {
       // amount = "1", min bounds reported = "10" and "12" -> lowest is "10".
