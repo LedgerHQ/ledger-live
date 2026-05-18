@@ -1097,6 +1097,36 @@ describe("listOperations", () => {
       expect(results[0].tx.feesPayer).toBe(stakerAddress);
     });
 
+    it("falls back to requestedAmount when amount is missing on a failed staking op", async () => {
+      const op = {
+        ...makeStaking("stake", 0),
+        status: "failed",
+        amount: undefined,
+        requestedAmount: 500_000_000,
+      } as unknown as APIStakingType;
+      mockGetAccountOperations.mockResolvedValue([op]);
+
+      const [results] = await listOperations(stakerAddress, options);
+
+      expect(results).toHaveLength(1);
+      expect(results[0].value).toBe(500_000_000n);
+    });
+
+    it("returns 0 when both amount and requestedAmount are missing on a staking op", async () => {
+      const op = {
+        ...makeStaking("stake", 0),
+        status: "failed",
+        amount: undefined,
+        requestedAmount: undefined,
+      } as unknown as APIStakingType;
+      mockGetAccountOperations.mockResolvedValue([op]);
+
+      const [results] = await listOperations(stakerAddress, options);
+
+      expect(results).toHaveLength(1);
+      expect(results[0].value).toBe(0n);
+    });
+
     it("includes staking ops alongside transfers in pagination", async () => {
       const stake = makeStaking("stake", 100);
       mockGetAccountOperations.mockResolvedValue([stake]);

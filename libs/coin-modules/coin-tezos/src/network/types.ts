@@ -79,7 +79,8 @@ export function isAPIRevealType(op: APIOperation): op is APIRevealType {
 export type APIStakingType = Omit<CommonOperationType, "block"> & {
   type: "staking";
   action: "stake" | "unstake" | "finalize";
-  amount: number;
+  /** Present on succeeded ops; failed ops omit `amount` and only carry `requestedAmount`. */
+  amount?: number;
   requestedAmount?: number;
   counter: number;
   sender: { address: string } | undefined | null;

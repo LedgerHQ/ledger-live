@@ -1,6 +1,7 @@
 import type { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { useEffect, useMemo, useState } from "react";
+import { log } from "@ledgerhq/logs";
 import {
   Baker,
   Delegation,
@@ -24,10 +25,16 @@ export function useDelegation(account: AccountLike): Delegation | null | undefin
   const [delegation, setDelegation] = useState(() => bakers.getAccountDelegationSync(account));
   useEffect(() => {
     let cancelled = false;
-    bakers.loadAccountDelegation(account).then(delegation => {
-      if (cancelled) return;
-      setDelegation(delegation);
-    });
+    bakers
+      .loadAccountDelegation(account)
+      .then(delegation => {
+        if (cancelled) return;
+        setDelegation(delegation);
+      })
+      .catch(err => {
+        if (cancelled) return;
+        log("coin:tezos", "useDelegation: loadAccountDelegation failed", { error: err });
+      });
     return () => {
       cancelled = true;
     };
