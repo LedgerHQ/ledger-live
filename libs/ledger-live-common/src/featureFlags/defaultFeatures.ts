@@ -131,6 +131,13 @@ export const CURRENCY_DEFAULT_FEATURES = {
  */
 export const DEFAULT_FEATURES: Features = {
   ...CURRENCY_DEFAULT_FEATURES,
+  concordiumIdAppLinks: initFeature({
+    enabled: true,
+    params: {
+      appStore: "https://apps.apple.com/app/concordium-id/id6746754485",
+      playStore: "https://play.google.com/store/apps/details?id=com.idwallet.app",
+    },
+  }),
   nanoOnboardingFundWallet: DEFAULT_FEATURE,
   portfolioExchangeBanner: DEFAULT_FEATURE,
   counterValue: DEFAULT_FEATURE,

@@ -72,24 +72,26 @@ export default function StepPair({
                   <Text variant="body" color="neutral.c70" mt={4} textAlign="center" px={4}>
                     <Trans i18nKey="concordium.onboard.pair.scanQRCodeOrDownload" />
                   </Text>
-                  <Flex mt={8}>
-                    <TouchableOpacity
-                      activeOpacity={0.7}
-                      onPress={() => Linking.openURL(storeUrl)}
-                      accessibilityRole="link"
-                      accessibilityLabel={
-                        Platform.OS === "ios"
-                          ? "Download on the App Store"
-                          : "Get it on Google Play"
-                      }
-                    >
-                      <Image
-                        source={storeBadge}
-                        style={{ height: 40, width: 135 }}
-                        resizeMode="contain"
-                      />
-                    </TouchableOpacity>
-                  </Flex>
+                  {storeUrl && (
+                    <Flex mt={8}>
+                      <TouchableOpacity
+                        activeOpacity={0.7}
+                        onPress={() => Linking.openURL(storeUrl)}
+                        accessibilityRole="link"
+                        accessibilityLabel={
+                          Platform.OS === "ios"
+                            ? "Download on the App Store"
+                            : "Get it on Google Play"
+                        }
+                      >
+                        <Image
+                          source={storeBadge}
+                          style={{ height: 40, width: 135 }}
+                          resizeMode="contain"
+                        />
+                      </TouchableOpacity>
+                    </Flex>
+                  )}
                 </Flex>
               )}
             </Flex>
