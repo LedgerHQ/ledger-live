@@ -1,15 +1,12 @@
 import React, { Fragment, Component, useMemo, useState } from "react";
 import { ObjectInspector } from "react-inspector";
 // @ts-expect-error react-table v6 ships an index.d.ts that is not a module
-import ReactTableLib from "react-table";
+import ReactTable from "react-table";
 import styled from "styled-components";
 import "react-table/react-table.css";
 import { AccountRaw } from "@ledgerhq/types-live";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const ReactTable = ReactTableLib as unknown as React.ComponentType<any>;
 
 type App = {
   name: string;
