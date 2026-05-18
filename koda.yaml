@@ -1,5 +1,6 @@
 snapshot: ledger-live-desktop-agent-cde
 setup: |
+  mise trust --yes
   echo "Setting up environment..."
   time pnpm install --frozen-lockfile --tui false
   echo "Building ledger-live-desktop..."
