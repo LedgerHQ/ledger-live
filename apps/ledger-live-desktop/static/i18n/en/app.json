@@ -4325,7 +4325,7 @@
             "starter": {
               "title": "Redelegation",
               "description": "Use redelegation to easily change from one validator to another. But if you change your mind again, you will then have to wait because redelegation triggers a {{ numberOfDays }}-day timelock.",
-              "warning": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately. You can have a maximum of <0>{{maxRedelegations}} pending redelegations</0>.",              
+              "warning": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately. You can have a maximum of <0>{{maxRedelegations}} pending redelegations</0>.",
               "howDelegationWorks": "How delegation works?"
             },
             "validators": {
@@ -4732,6 +4732,15 @@
       },
       "learnMore": "Learn more about Tezos staking",
       "close": "Close"
+    },
+    "account": {
+      "delegatedAssetsTooltip": "XTZ delegated to a baker. Funds remain in your wallet and can be sent at any time.",
+      "stakedAssets": "Staked assets",
+      "stakedAssetsTooltip": "XTZ locked under your baker. Unstake to make them withdrawable after ~4 days.",
+      "pendingWithdrawable": "Pending withdrawable",
+      "pendingWithdrawableTooltip": "XTZ currently unstaking. Available for withdrawal in ~4 days.",
+      "withdrawableAssets": "Withdrawable assets",
+      "withdrawableAssetsTooltip": "XTZ that finished the unstaking period and is ready to be withdrawn."
     }
   },
   "delegation": {
