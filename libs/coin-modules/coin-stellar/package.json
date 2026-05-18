@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-stellar",
-  "version": "6.21.0",
+  "version": "6.22.0",
   "description": "Ledger Stellar Coin integration",
   "license": "Apache-2.0",
   "keywords": [
@@ -104,7 +104,6 @@
     "@ledgerhq/logs": "workspace:^",
     "@stellar/stellar-sdk": "^14.0.0",
     "bignumber.js": "^9.1.2",
-    "expect": "catalog:",
     "invariant": "^2.2.2",
     "@exodus/patch-broken-hermes-typed-arrays": "1.0.0-alpha.1"
   },

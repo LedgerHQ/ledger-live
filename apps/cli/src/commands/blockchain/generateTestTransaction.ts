@@ -50,7 +50,7 @@ export type GenerateTestTransactionJobOpts = InferTransactionsOpts & ScanCommonO
 
 export default {
   description: "Generate a test for transaction (live-common dataset)",
-  args: [...scanCommonOpts, ...inferTransactionsOpts],
+  args: inferTransactionsOpts.then(opts => [...scanCommonOpts, ...opts]),
   job: (opts: GenerateTestTransactionJobOpts) =>
     scan(opts).pipe(
       switchMap(account =>
@@ -93,6 +93,9 @@ export default {
                             ),
                             mergeMap(async ([signedOperation, status]) => {
                               unsubscribe();
+                              const signedOpRaw = await toSignedOperationRaw(
+                                signedOperation as SignedOperation,
+                              );
                               return `
 {
   name: "NO_NAME",
@@ -102,10 +105,8 @@ export default {
     ${toTransactionStatusJS(status)}
   ),
   // WARNING: DO NOT commit this test publicly unless you're ok with possibility tx could leak out. (do self txs)
-  testSignedOperation: (expect, signedOperation) => {
-    expect(toSignedOperationRaw(signedOperation)).toMatchObject(${JSON.stringify(
-      toSignedOperationRaw(signedOperation as SignedOperation),
-    )})
+  testSignedOperation: async (expect, signedOperation) => {
+    expect(await toSignedOperationRaw(signedOperation)).toMatchObject(${JSON.stringify(signedOpRaw)})
   },
   apdus: \`
 ${apdus.map(a => "  " + a).join("\n")}

@@ -7,10 +7,11 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { renderHook, act } from "@testing-library/react";
 import { genAccount } from "../mock/account";
 import { setSupportedCurrencies } from "../currencies";
-import { useAccountBridge } from "./useAccountBridge";
+import { useAccountBridge, useAccountBridgeMany } from "./useAccountBridge";
 
 const BTC = getCryptoCurrencyById("bitcoin");
-setSupportedCurrencies(["bitcoin"]);
+const ETH = getCryptoCurrencyById("ethereum");
+setSupportedCurrencies(["bitcoin", "ethereum"]);
 
 const suspenseWrapper = ({ children }: { children: React.ReactNode }) =>
   React.createElement(React.Suspense, { fallback: null }, children);
@@ -41,5 +42,24 @@ describe("useAccountBridge", () => {
     expect(typeof result!.current.createTransaction).toBe("function");
     expect(typeof result!.current.updateTransaction).toBe("function");
     expect(typeof result!.current.prepareTransaction).toBe("function");
+  });
+});
+
+describe("useAccountBridgeMany", () => {
+  test("returns one bridge per account, in order", () => {
+    const accounts = [
+      genAccount("multi-btc", { currency: BTC }),
+      genAccount("multi-eth", { currency: ETH }),
+    ];
+    const { result } = renderHook(() => useAccountBridgeMany(accounts));
+
+    expect(result.current).toHaveLength(2);
+    expect(typeof result.current[0].isAccountEmpty).toBe("function");
+    expect(typeof result.current[1].isAccountEmpty).toBe("function");
+  });
+
+  test("returns an empty array for no accounts", () => {
+    const { result } = renderHook(() => useAccountBridgeMany([]));
+    expect(result.current).toEqual([]);
   });
 });

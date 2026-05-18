@@ -153,9 +153,11 @@ export function renderRequiresAppInstallation({
   t,
   navigation,
   appNames,
+  onOpenManager,
 }: RawProps & {
   navigation: NativeStackNavigationProp<ParamListBase>;
   appNames: string[];
+  onOpenManager?: () => void;
 }) {
   const appNamesCSV = appNames.join(", ");
 
@@ -172,12 +174,16 @@ export function renderRequiresAppInstallation({
           event="DeviceActionRequiresAppInstallationOpenManager"
           type="primary"
           title={t("DeviceAction.button.openManager")}
-          onPress={() =>
-            navigation.navigate(NavigatorName.MyLedger, {
-              screen: ScreenName.MyLedgerChooseDevice,
-              params: { searchQuery: appNamesCSV },
-            })
-          }
+          onPress={() => {
+            if (onOpenManager) {
+              onOpenManager();
+            } else {
+              navigation.navigate(NavigatorName.MyLedger, {
+                screen: ScreenName.MyLedgerChooseDevice,
+                params: { searchQuery: appNamesCSV },
+              });
+            }
+          }}
         />
       </ActionContainer>
     </Wrapper>

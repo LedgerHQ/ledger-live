@@ -1,28 +1,29 @@
 import { Category } from "../types";
 import { filterToolsByQuery, findCategoryForToolId } from "../utils/toolsUtils";
+import { makeTool } from "jest/fixtures";
 
 const categories = [
   {
     category: Category.CONFIGURATION,
     tools: [
-      { id: "feature-flags", label: "Feature Flags", category: Category.CONFIGURATION },
-      {
+      makeTool({ id: "feature-flags", label: "Feature Flags", category: Category.CONFIGURATION }),
+      makeTool({
         id: "env-switcher",
         label: "Env Switcher",
         category: Category.CONFIGURATION,
         owner: "platform",
-      },
+      }),
     ],
   },
   {
     category: Category.CONNECTIVITY,
     tools: [
-      {
+      makeTool({
         id: "network-inspector",
         label: "Network Inspector",
         category: Category.CONNECTIVITY,
         owner: "wallet-api",
-      },
+      }),
     ],
   },
 ];

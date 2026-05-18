@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tezos",
-  "version": "7.0.0",
+  "version": "7.1.0",
   "description": "Tezos Coin integration",
   "keywords": [
     "Ledger",
@@ -89,7 +89,6 @@
     "rxjs": "catalog:"
   },
   "devDependencies": {
-    "@faker-js/faker": "^8.4.1",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@swc/core": "catalog:",

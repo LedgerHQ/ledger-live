@@ -7,9 +7,12 @@ import {
   makeIntegrationTokenCurrency,
   setupDistributionRouteMocks,
 } from "tests/utils/distributionTestUtils";
-import { mockMarket, mockDada } from "tests/utils/assetDetailMocks";
+import { mockDada, mockMarket } from "tests/utils/assetDetailMocks";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import type { DistributionItem } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
+import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import AssetDetail from "../index";
 
 const LABEL = {
@@ -22,7 +25,28 @@ const LABEL = {
 const TEST_ID = {
   HEADER: "asset-detail-header",
   ADDRESS_LIST: "asset-detail-address-list",
+  MARKET_PRICE_SECTION: "asset-detail-market-price-section",
+  MARKET_PRICE: "asset-detail-market-price",
+  MARKET_PRICE_PERCENT: "asset-detail-market-price-percent",
+  MARKET_PRICE_FIAT_VARIATION: "asset-detail-market-price-fiat-variation",
+  MARKET_DATA_SECTION: "asset-detail-market-data-section",
+  TRANSACTIONS_SECTION: "asset-detail-transactions-section",
+  ACTION_BUY: "asset-detail-action-buy",
+  ACTION_RECEIVE: "asset-detail-action-receive",
+  ACTION_SELL: "asset-detail-action-sell",
+  ACTION_SEND: "asset-detail-action-send",
+  HEADER_OPTIONS: "asset-detail-header-options-trigger",
 } as const;
+
+jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag", () => ({
+  useCurrenciesUnderFeatureFlag: () => ({
+    deactivatedCurrencyIds: new Set<string>(),
+  }),
+}));
+
+jest.mock("@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog");
+
+const mockIsCurrencyAvailable = jest.fn((_currencyId: string, _mode: "onRamp" | "offRamp") => true);
 
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
@@ -50,9 +74,24 @@ const setLocation = (state: unknown = null, pathname = "/asset/bitcoin") =>
 const expectHeader = () => expect(screen.getByTestId(TEST_ID.HEADER)).toBeVisible();
 const expectAssetName = (name: string) => expect(screen.getByText(name)).toBeVisible();
 const expectMarketView = () => {
+  expect(screen.getByTestId(TEST_ID.MARKET_PRICE_SECTION)).toBeVisible();
+  expect(screen.getByTestId(TEST_ID.MARKET_DATA_SECTION)).toBeVisible();
   expect(screen.getByRole("heading", { name: LABEL.MARKET_STATS })).toBeVisible();
   expect(screen.getByRole("heading", { name: LABEL.PRICE_PERFORMANCE })).toBeVisible();
 };
+
+const expectMarketPriceSectionShowsQuote = () => {
+  expect(screen.getByTestId(TEST_ID.MARKET_PRICE)).toHaveTextContent(/\S/);
+  expect(screen.getByTestId(TEST_ID.MARKET_PRICE_PERCENT)).not.toHaveTextContent(
+    /^-0(?:[.,]0+)?%$/,
+  );
+  expect(screen.getByTestId(TEST_ID.MARKET_PRICE_FIAT_VARIATION)).not.toHaveTextContent(/^—$/);
+};
+
+const waitForMarketPriceSectionShowsQuote = () =>
+  waitFor(() => {
+    expectMarketPriceSectionShowsQuote();
+  });
 const expectOwnedView = () => {
   expect(screen.getByText(LABEL.TOTAL_BALANCE)).toBeVisible();
   expect(screen.getByTestId(TEST_ID.ADDRESS_LIST)).toBeVisible();
@@ -168,6 +207,12 @@ describe("AssetDetail integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     setLocation();
+
+    mockIsCurrencyAvailable.mockImplementation(() => true);
+    jest.mocked(useRampCatalog).mockReturnValue({
+      isCurrencyAvailable: mockIsCurrencyAvailable,
+      getSupportedCryptoCurrencyIds: () => null,
+    } as unknown as ReturnType<typeof useRampCatalog>);
   });
 
   describe("owned mode (with account)", () => {
@@ -185,8 +230,44 @@ describe("AssetDetail integration", () => {
           expectOwnedView();
           expectMarketView();
         });
+        await waitForMarketPriceSectionShowsQuote();
       },
     );
+
+    it("shows header options menu with favorites and hide actions", async () => {
+      mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+      setupRoute("bitcoin", OWNED_ASSETS[0].buildDistribution());
+
+      const { user } = renderWithMockedCounterValuesProvider(<AssetDetail />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId(TEST_ID.HEADER_OPTIONS)).toBeVisible();
+      });
+
+      await user.click(screen.getByTestId(TEST_ID.HEADER_OPTIONS));
+
+      expect(screen.getByRole("menuitem", { name: /add to favorites/i })).toBeVisible();
+      expect(screen.getByRole("menuitem", { name: /hide from portfolio/i })).toBeVisible();
+    });
+
+    it("shows Show in portfolio when the asset is blacklisted", async () => {
+      mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+      setupRoute("bitcoin", OWNED_ASSETS[0].buildDistribution());
+
+      const { user } = renderWithMockedCounterValuesProvider(<AssetDetail />, {
+        initialState: {
+          settings: { ...AFTER_ONBOARDING_STATE, blacklistedTokenIds: ["bitcoin"] },
+        },
+      });
+
+      await waitFor(() => {
+        expect(screen.getByTestId(TEST_ID.HEADER_OPTIONS)).toBeVisible();
+      });
+
+      await user.click(screen.getByTestId(TEST_ID.HEADER_OPTIONS));
+
+      expect(screen.getByRole("menuitem", { name: /show in portfolio/i })).toBeVisible();
+    });
 
     it.each(OWNED_ASSETS)(
       "$label - keeps balance and addresses when Market and DADA both fail",
@@ -220,6 +301,7 @@ describe("AssetDetail integration", () => {
           expectOwnedView();
           expectMarketView();
         });
+        await waitForMarketPriceSectionShowsQuote();
       },
     );
 
@@ -255,6 +337,7 @@ describe("AssetDetail integration", () => {
           expectAssetName(displayName);
           expectMarketView();
         });
+        await waitForMarketPriceSectionShowsQuote();
         expectNoOwnedView();
       },
     );
@@ -273,6 +356,7 @@ describe("AssetDetail integration", () => {
           expectAssetName(displayName);
           expectMarketView();
         });
+        await waitForMarketPriceSectionShowsQuote();
       },
     );
 
@@ -327,6 +411,152 @@ describe("AssetDetail integration", () => {
       render(<AssetDetail />);
 
       expect(screen.queryByText(LABEL.NOT_FOUND)).not.toBeInTheDocument();
+    });
+  });
+
+  describe("market section and transaction layout", () => {
+    it("surfaces market detail fields from the API and lists transaction history after the market grid when the account is in the store", async () => {
+      mockDada.empty();
+      mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+      const account = genAccount("asset-detail-market-tx-layout", { currency: btc });
+      const item = buildDistributionItem({ accounts: [account] });
+      setupRoute("bitcoin", { bySlug: { bitcoin: item }, list: [item] });
+
+      renderWithMockedCounterValuesProvider(<AssetDetail />, {
+        initialState: { accounts: [account], settings: AFTER_ONBOARDING_STATE },
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText("Market rank")).toBeVisible();
+        expect(screen.getByText("#1")).toBeVisible();
+        expect(screen.getByText("24h trading volume")).toBeVisible();
+      });
+
+      await waitForMarketPriceSectionShowsQuote();
+
+      await waitFor(() => {
+        expect(screen.getByRole("heading", { name: "Transaction history" })).toBeVisible();
+      });
+
+      const marketSection = screen.getByTestId(TEST_ID.MARKET_DATA_SECTION);
+      const transactionsSection = screen.getByTestId(TEST_ID.TRANSACTIONS_SECTION);
+      expect(marketSection.compareDocumentPosition(transactionsSection)).toBe(
+        Node.DOCUMENT_POSITION_FOLLOWING,
+      );
+    });
+  });
+
+  describe("action bar states", () => {
+    it("enables buy and receive, and disables sell and send when there is no address", async () => {
+      mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+      setupRoute("bitcoin", { list: [] });
+
+      render(<AssetDetail />);
+
+      await waitFor(() => {
+        expectHeader();
+        expect(screen.getByTestId(TEST_ID.ACTION_BUY)).toBeEnabled();
+      });
+
+      expect(screen.getByTestId(TEST_ID.ACTION_RECEIVE)).toBeEnabled();
+      expect(screen.getByTestId(TEST_ID.ACTION_SELL)).toBeDisabled();
+      expect(screen.getByTestId(TEST_ID.ACTION_SEND)).toBeDisabled();
+    });
+
+    it("keeps sell and send disabled when the address exists but balance is zero", async () => {
+      mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+      const account = genAccount("asset-detail-zero-balance-account", { currency: btc });
+      account.balance = new BigNumber(0);
+      account.spendableBalance = new BigNumber(0);
+      const item = buildDistributionItem({ accounts: [account] });
+      setupRoute("bitcoin", { bySlug: { bitcoin: item }, list: [item] });
+
+      renderWithMockedCounterValuesProvider(<AssetDetail />);
+
+      await waitFor(() => {
+        expectHeader();
+        expect(screen.getByTestId(TEST_ID.ACTION_BUY)).toBeEnabled();
+      });
+
+      expect(screen.getByTestId(TEST_ID.ACTION_RECEIVE)).toBeEnabled();
+      expect(screen.getByTestId(TEST_ID.ACTION_SELL)).toBeDisabled();
+      expect(screen.getByTestId(TEST_ID.ACTION_SEND)).toBeDisabled();
+    });
+
+    it("enables buy, sell and send when the address has a positive spendable balance", async () => {
+      mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+      const account = genAccount("asset-detail-positive-balance-account", { currency: btc });
+      account.balance = new BigNumber(10);
+      account.spendableBalance = new BigNumber(10);
+      const item = buildDistributionItem({ accounts: [account] });
+      setupRoute("bitcoin", { bySlug: { bitcoin: item }, list: [item] });
+
+      renderWithMockedCounterValuesProvider(<AssetDetail />);
+
+      await waitFor(() => {
+        expectHeader();
+        expect(screen.getByTestId(TEST_ID.ACTION_BUY)).toBeEnabled();
+        expect(screen.getByTestId(TEST_ID.ACTION_SELL)).toBeEnabled();
+        expect(screen.getByTestId(TEST_ID.ACTION_SEND)).toBeEnabled();
+      });
+
+      expect(screen.getByTestId(TEST_ID.ACTION_RECEIVE)).toBeEnabled();
+    });
+
+    it("enables buy, sell and send when the address has an earn deposit", async () => {
+      mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+      const account = genAccount("asset-detail-earn-deposit-account", { currency: btc });
+      account.balance = new BigNumber(10);
+      account.spendableBalance = new BigNumber(0);
+      const item = buildDistributionItem({ accounts: [account] });
+      setupRoute("bitcoin", { bySlug: { bitcoin: item }, list: [item] });
+
+      renderWithMockedCounterValuesProvider(<AssetDetail />);
+
+      await waitFor(() => {
+        expectHeader();
+        expect(screen.getByTestId(TEST_ID.ACTION_BUY)).toBeEnabled();
+        expect(screen.getByTestId(TEST_ID.ACTION_SELL)).toBeEnabled();
+        expect(screen.getByTestId(TEST_ID.ACTION_SEND)).toBeEnabled();
+      });
+
+      expect(screen.getByTestId(TEST_ID.ACTION_RECEIVE)).toBeEnabled();
+    });
+
+    it("disables buy and sell when the ramp catalog marks the currency unavailable", async () => {
+      mockIsCurrencyAvailable.mockReturnValue(false);
+      mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+      setupRoute("bitcoin", { list: [] });
+
+      renderWithMockedCounterValuesProvider(<AssetDetail />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId(TEST_ID.ACTION_BUY)).toBeDisabled();
+      });
+
+      expect(screen.getByTestId(TEST_ID.ACTION_SELL)).toBeDisabled();
+      expect(screen.getByTestId(TEST_ID.ACTION_RECEIVE)).toBeEnabled();
+    });
+
+    it("disables buy and sell when the currency is not on ramp despite spendable balance", async () => {
+      mockIsCurrencyAvailable.mockReturnValue(false);
+      mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+      const account = genAccount("asset-detail-ramp-off-with-balance-account", { currency: btc });
+      account.balance = new BigNumber(10);
+      account.spendableBalance = new BigNumber(10);
+      const item = buildDistributionItem({ accounts: [account] });
+      setupRoute("bitcoin", { bySlug: { bitcoin: item }, list: [item] });
+
+      renderWithMockedCounterValuesProvider(<AssetDetail />);
+
+      await waitFor(() => {
+        expectHeader();
+        expect(screen.getByTestId(TEST_ID.ACTION_BUY)).toBeDisabled();
+        expect(screen.getByTestId(TEST_ID.ACTION_SELL)).toBeDisabled();
+        expect(screen.getByTestId(TEST_ID.ACTION_SEND)).toBeEnabled();
+      });
+
+      expect(screen.getByTestId(TEST_ID.ACTION_RECEIVE)).toBeEnabled();
     });
   });
 

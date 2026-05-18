@@ -19,13 +19,14 @@ describe("datadog config", () => {
   });
 
   describe("getDatadogBuildConfig", () => {
-    it("should return config from build globals (null in Jest)", () => {
+    it("should return config from build globals (null in Jest) and default values", () => {
       const result = getDatadogBuildConfig();
       expect(result).toEqual({
         applicationId: null,
         clientToken: null,
-        site: null,
-        env: null,
+        env: "production",
+        service: "ledger-live-desktop",
+        site: "datadoghq.eu",
       });
     });
   });

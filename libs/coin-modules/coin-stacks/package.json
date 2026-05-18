@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-stacks",
-  "version": "0.21.1",
+  "version": "0.21.2",
   "description": "Ledger Stacks Coin integration",
   "keywords": [
     "Ledger",
@@ -112,7 +112,6 @@
     "rxjs": "catalog:"
   },
   "devDependencies": {
-    "@faker-js/faker": "^8.4.1",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

@@ -11,6 +11,7 @@ import type {
 import { Transaction } from "@mysten/sui/transactions";
 import { BigNumber } from "bignumber.js";
 import coinConfig from "../config";
+import { mist, ONE_SUI } from "../constants";
 import * as sdkOriginal from "./sdk";
 
 // Create a mutable copy of the sdk module for mocking specific functions
@@ -85,8 +86,8 @@ const sharedRpcMock = {
   getAllBalances: jest.fn().mockResolvedValue([
     {
       coinType: "0x2::sui::SUI",
-      totalBalance: "1000000000",
-      fundsInAddressBalance: "400000000",
+      totalBalance: mist(1),
+      fundsInAddressBalance: mist(0.4),
     },
     { coinType: "0x123::test::TOKEN", totalBalance: "500000" },
   ]),
@@ -112,7 +113,7 @@ const sharedRpcMock = {
     data: [
       {
         coinObjectId: "0xtest_coin_object_id",
-        balance: "1000000000",
+        balance: mist(1),
         coinType: "0x2::sui::SUI",
         digest: "0xdigest",
         version: "1",
@@ -268,7 +269,7 @@ const mockTransaction = {
     {
       owner: { AddressOwner: "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24" },
       coinType: "0x2::sui::SUI",
-      amount: "-10000000000",
+      amount: mist(-10),
     },
     {
       owner: { AddressOwner: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0" },
@@ -380,8 +381,8 @@ function mockUnstakingTx(address: string, amount: string) {
         type: "0x3::validator::UnstakingRequestEvent",
         parsedJson: {
           validator_address: validatorAddress,
-          principal_amount: "1200000000",
-          reward_amount: "50000000",
+          principal_amount: mist(1.2),
+          reward_amount: mist(0.05),
         },
       },
     ],
@@ -415,7 +416,9 @@ beforeAll(() => {
     },
     node: {
       url: "https://mockapi.sui.io",
+      graphqlUrl: "https://mockapi.sui.io/graphql",
     },
+    features: { graphql: false },
   }));
 });
 
@@ -423,7 +426,7 @@ const defaultGetCoinsResponse = {
   data: [
     {
       coinObjectId: "0xtest_coin_object_id",
-      balance: "1000000000",
+      balance: mist(1),
       coinType: "0x2::sui::SUI",
       digest: "0xdigest",
       version: "1",
@@ -437,9 +440,9 @@ const defaultGetAllBalancesResponse = [
   {
     coinType: "0x2::sui::SUI",
     coinObjectCount: 1,
-    totalBalance: "1000000000",
+    totalBalance: mist(1),
     lockedBalance: {},
-    fundsInAddressBalance: "400000000",
+    fundsInAddressBalance: mist(0.4),
   },
   {
     coinType: "0x123::test::TOKEN",
@@ -481,8 +484,8 @@ describe("SDK Functions", () => {
     const balances = await sdk.getAccountBalances(address);
 
     const sui = balances.find(b => b.coinType === sdk.DEFAULT_COIN_TYPE)!;
-    expect(sui.balance).toEqual(BigNumber("1000000000"));
-    expect(sui.fundsInAddressBalance).toEqual(BigNumber("400000000"));
+    expect(sui.balance).toEqual(BigNumber(mist(1)));
+    expect(sui.fundsInAddressBalance).toEqual(BigNumber(mist(0.4)));
 
     const token = balances.find(b => b.coinType === "0x123::test::TOKEN")!;
     expect(token.balance).toEqual(BigNumber("500000"));
@@ -580,7 +583,7 @@ describe("SDK Functions", () => {
             AddressOwner: "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24",
           },
           coinType: sdk.DEFAULT_COIN_TYPE,
-          amount: "-10000000000",
+          amount: mist(-10),
         },
         {
           owner: {
@@ -668,7 +671,7 @@ describe("SDK Functions", () => {
             AddressOwner: "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24",
           },
           coinType: sdk.DEFAULT_COIN_TYPE,
-          amount: "-10000000000",
+          amount: mist(-10),
         },
         {
           owner: {
@@ -833,9 +836,9 @@ describe("SDK Functions", () => {
       {
         coinType: sdk.DEFAULT_COIN_TYPE,
         coinObjectCount: 0,
-        totalBalance: "1000000000",
+        totalBalance: mist(1),
         lockedBalance: {},
-        fundsInAddressBalance: "1000000000",
+        fundsInAddressBalance: mist(1),
       },
     ]);
 
@@ -880,7 +883,7 @@ describe("SDK Functions", () => {
         data: [
           {
             coinObjectId: "0xcoin1",
-            balance: "1000000000",
+            balance: mist(1),
             coinType: sdk.DEFAULT_COIN_TYPE,
             digest: "0xd",
             version: "1",
@@ -933,13 +936,11 @@ describe("Staking Operations", () => {
   describe("Operation Type Detection", () => {
     const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
     test("getOperationType should return DELEGATE for staking transaction", () => {
-      expect(sdk.getOperationType(address, mockStakingTx(address, "-1000000000"))).toBe("DELEGATE");
+      expect(sdk.getOperationType(address, mockStakingTx(address, mist(-1)))).toBe("DELEGATE");
     });
 
     test("getOperationType should return UNDELEGATE for unstaking transaction", () => {
-      expect(sdk.getOperationType(address, mockUnstakingTx(address, "1000000000"))).toBe(
-        "UNDELEGATE",
-      );
+      expect(sdk.getOperationType(address, mockUnstakingTx(address, mist(1)))).toBe("UNDELEGATE");
     });
 
     function prependOtherMoveCall(block: SuiTransactionBlockKind) {
@@ -986,8 +987,8 @@ describe("Staking Operations", () => {
     }
 
     test("getOperationAmount should calculate staking amount", () =>
-      expect(bridgeOperationAmount(mockStakingTx(address, "-1000000000"))).toEqual(
-        new BigNumber("1000000000"),
+      expect(bridgeOperationAmount(mockStakingTx(address, mist(-1)))).toEqual(
+        new BigNumber(mist(1)),
       ));
 
     test("getOperationAmount should calculate unstaking amount of 1000", () =>
@@ -1015,7 +1016,7 @@ describe("Staking Operations", () => {
 
     test("alpaca getOperationAmount should calculate staking amount", () =>
       expect(alpacaOperationAmount(mockStakingTx(address, "-1001050000"))).toEqual(
-        new BigNumber("1000000000"),
+        new BigNumber(mist(1)),
       ));
 
     // 1000 unstaked & 1050000 gas fees = -1049000 balance change
@@ -1041,14 +1042,14 @@ describe("Staking Operations", () => {
   describe("Operation Recipients", () => {
     test("getOperationRecipients should return empty array for staking transaction", () => {
       const recipients = sdk.getOperationRecipients(
-        mockStakingTx("0xdeadbeef", "-1000000000").transaction?.data,
+        mockStakingTx("0xdeadbeef", mist(-1)).transaction?.data,
       );
       expect(recipients).toEqual([]);
     });
 
     test("getOperationRecipients should return empty array for unstaking transaction", () => {
       const recipients = sdk.getOperationRecipients(
-        mockUnstakingTx("0xdeadbeef", "1000000000").transaction?.data,
+        mockUnstakingTx("0xdeadbeef", mist(1)).transaction?.data,
       );
       expect(recipients).toEqual([]);
     });
@@ -1060,7 +1061,7 @@ describe("Staking Operations", () => {
       const transaction = {
         mode: "delegate" as const,
         coinType: sdk.DEFAULT_COIN_TYPE,
-        amount: new BigNumber(1000000000), // 1 SUI
+        amount: new BigNumber(ONE_SUI), // 1 SUI
         recipient: "0xvalidator_address_123",
       };
 
@@ -1073,7 +1074,7 @@ describe("Staking Operations", () => {
       const transaction = {
         mode: "undelegate" as const,
         coinType: sdk.DEFAULT_COIN_TYPE,
-        amount: new BigNumber(500000000), // 0.5 SUI
+        amount: new BigNumber(ONE_SUI / 2), // 0.5 SUI
         stakedSuiId: "0xstaked_sui_object_123",
         useAllAmount: false,
         recipient: "0xvalidator_address_123", // Required by type but not used for undelegate
@@ -1088,9 +1089,9 @@ describe("Staking Operations", () => {
         {
           coinType: sdk.DEFAULT_COIN_TYPE,
           coinObjectCount: 0,
-          totalBalance: "1000000000",
+          totalBalance: mist(1),
           lockedBalance: {},
-          fundsInAddressBalance: "1000000000",
+          fundsInAddressBalance: mist(1),
         },
       ]);
 
@@ -1098,7 +1099,7 @@ describe("Staking Operations", () => {
       const transaction = {
         mode: "delegate" as const,
         coinType: sdk.DEFAULT_COIN_TYPE,
-        amount: new BigNumber(1000000000),
+        amount: new BigNumber(ONE_SUI),
         recipient: "0xvalidator_address_123",
       };
 
@@ -1117,9 +1118,9 @@ describe("Staking Operations", () => {
         {
           coinType: sdk.DEFAULT_COIN_TYPE,
           coinObjectCount: 0,
-          totalBalance: "1000000000",
+          totalBalance: mist(1),
           lockedBalance: {},
-          fundsInAddressBalance: "1000000000",
+          fundsInAddressBalance: mist(1),
         },
       ]);
 
@@ -1127,7 +1128,7 @@ describe("Staking Operations", () => {
       const transaction = {
         mode: "undelegate" as const,
         coinType: sdk.DEFAULT_COIN_TYPE,
-        amount: new BigNumber(500000000),
+        amount: new BigNumber(ONE_SUI / 2),
         stakedSuiId: "0xstaked_sui_object_123",
         useAllAmount: false,
         recipient: "0xvalidator_address_123",
@@ -1163,7 +1164,7 @@ describe("Staking Operations", () => {
         mode: "delegate" as const,
         coinType: sdk.DEFAULT_COIN_TYPE,
         family: "sui" as const,
-        amount: new BigNumber(1000000000), // 1 SUI
+        amount: new BigNumber(ONE_SUI), // 1 SUI
         recipient: "0xvalidator_address_123",
         errors: {},
       };
@@ -1179,7 +1180,7 @@ describe("Staking Operations", () => {
         mode: "undelegate" as const,
         coinType: sdk.DEFAULT_COIN_TYPE,
         family: "sui" as const,
-        amount: new BigNumber(500000000), // 0.5 SUI
+        amount: new BigNumber(ONE_SUI / 2), // 0.5 SUI
         stakedSuiId: "0xstaked_sui_object_123",
         useAllAmount: false,
         recipient: "0xvalidator_address_123", // Required by type but not used for undelegate
@@ -1200,7 +1201,7 @@ describe("Staking Operations", () => {
         mode: "send" as const,
         coinType: sdk.DEFAULT_COIN_TYPE,
         family: "sui" as const,
-        amount: new BigNumber(1000000000),
+        amount: new BigNumber(ONE_SUI),
         recipient: "0xrecipient_address",
         errors: {},
       };
@@ -1216,7 +1217,7 @@ describe("Staking Operations", () => {
         mode: "send" as const,
         coinType: sdk.DEFAULT_COIN_TYPE,
         family: "sui" as const,
-        amount: new BigNumber(1000000000),
+        amount: new BigNumber(ONE_SUI),
         recipient: "0xrecipient_address",
         errors: {},
       };
@@ -1236,7 +1237,7 @@ describe("Staking Operations", () => {
       const operation = sdk.transactionToOperation(
         accountId,
         address,
-        mockStakingTx(address, "-1000000000"),
+        mockStakingTx(address, mist(-1)),
       );
 
       expect(operation).toHaveProperty("id");
@@ -1245,7 +1246,7 @@ describe("Staking Operations", () => {
       expect(operation).toHaveProperty("hash", "delegate_tx_digest_123");
       expect(operation).toHaveProperty("extra");
       expect((operation.extra as { coinType: string }).coinType).toBe(sdk.DEFAULT_COIN_TYPE);
-      expect(operation.value).toEqual(new BigNumber("1000000000")); // The function returns minus of the balance change
+      expect(operation.value).toEqual(new BigNumber(mist(1))); // The function returns minus of the balance change
       expect(operation.recipients).toEqual([]);
       expect(operation.senders).toEqual([address]);
     });
@@ -1256,7 +1257,7 @@ describe("Staking Operations", () => {
       const operation = sdk.transactionToOperation(
         accountId,
         address,
-        mockUnstakingTx(address, "1000000000"),
+        mockUnstakingTx(address, mist(1)),
       );
 
       expect(operation).toHaveProperty("id");
@@ -1265,7 +1266,7 @@ describe("Staking Operations", () => {
       expect(operation).toHaveProperty("hash", "undelegate_tx_digest_456");
       expect(operation).toHaveProperty("extra");
       expect((operation.extra as { coinType: string }).coinType).toBe(sdk.DEFAULT_COIN_TYPE);
-      expect(operation.value).toEqual(new BigNumber("-1000000000"));
+      expect(operation.value).toEqual(new BigNumber(mist(-1)));
       expect(operation.recipients).toEqual([]);
       expect(operation.senders).toEqual([address]);
     });
@@ -1288,7 +1289,7 @@ describe("Staking Operations", () => {
         asset: { type: "native" },
         tx: { block: expect.any(Object), feesPayer: address },
         details: {
-          stakedAmount: 1000000000n,
+          stakedAmount: BigInt(ONE_SUI),
           validatorAddress: "0x3d9fb148e35ef4d74fcfc36995da14fc504b885d5f2bfeca37d6ea2cc044a32d",
           stakedObjectId: "0xstaked_object_id_123",
         },
@@ -1312,10 +1313,10 @@ describe("Staking Operations", () => {
         asset: { type: "native" },
         tx: { block: expect.any(Object), feesPayer: address },
         details: {
-          stakedAmount: 1000000000n,
+          stakedAmount: BigInt(ONE_SUI),
           validatorAddress: "0x3d9fb148e35ef4d74fcfc36995da14fc504b885d5f2bfeca37d6ea2cc044a32d",
-          rewardAmount: 50000000n,
-          withdrawnAmount: 1200000000n,
+          rewardAmount: BigInt(ONE_SUI / 20),
+          withdrawnAmount: BigInt((6 * ONE_SUI) / 5),
         },
       });
     });
@@ -1327,7 +1328,7 @@ describe("Staking Operations", () => {
 
       const operation = sdk.alpacaTransactionToOp(address, tx, "mockCheckpointHash");
 
-      expect(operation.details).toEqual({ stakedAmount: 1000000000n });
+      expect(operation.details).toEqual({ stakedAmount: BigInt(ONE_SUI) });
     });
 
     test("transactionToOp should return unstaking details without events", () => {
@@ -1337,7 +1338,7 @@ describe("Staking Operations", () => {
 
       const operation = sdk.alpacaTransactionToOp(address, tx, "mockCheckpointHash");
 
-      expect(operation.details).toEqual({ stakedAmount: 1000000000n });
+      expect(operation.details).toEqual({ stakedAmount: BigInt(ONE_SUI) });
     });
 
     test("transactionToOp should handle partial staking event fields", () => {
@@ -1353,7 +1354,7 @@ describe("Staking Operations", () => {
       const operation = sdk.alpacaTransactionToOp(address, tx, "mockCheckpointHash");
 
       expect(operation.details).toEqual({
-        stakedAmount: 1000000000n,
+        stakedAmount: BigInt(ONE_SUI),
         validatorAddress: "0xabc",
       });
     });
@@ -1371,7 +1372,7 @@ describe("Staking Operations", () => {
       const operation = sdk.alpacaTransactionToOp(address, tx, "mockCheckpointHash");
 
       expect(operation.details).toEqual({
-        stakedAmount: 1000000000n,
+        stakedAmount: BigInt(ONE_SUI),
         validatorAddress: "0xdef",
       });
     });
@@ -1429,15 +1430,15 @@ describe("getStakingEventDetails", () => {
         type: "0x3::validator::UnstakingRequestEvent",
         parsedJson: {
           validator_address: "0xdef",
-          reward_amount: "50000000",
-          principal_amount: "1200000000",
+          reward_amount: mist(0.05),
+          principal_amount: mist(1.2),
         },
       },
     ]);
     expect(sdk.getStakingEventDetails(tx)).toEqual({
       validatorAddress: "0xdef",
-      rewardAmount: 50000000n,
-      withdrawnAmount: 1200000000n,
+      rewardAmount: BigInt(ONE_SUI / 20),
+      withdrawnAmount: BigInt((6 * ONE_SUI) / 5),
     });
   });
 
@@ -3017,7 +3018,7 @@ describe("filterOperations", () => {
               AddressOwner: "0x65449f57946938c84c5127",
             },
             coinType: sdk.DEFAULT_COIN_TYPE,
-            amount: "-10000000000",
+            amount: mist(-10),
           },
           BigNumber(0),
         ),
@@ -3026,7 +3027,7 @@ describe("filterOperations", () => {
           type: "transfer",
           address: "0x65449f57946938c84c5127",
           peer: "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24",
-          amount: -10000000000n,
+          amount: BigInt(-10 * ONE_SUI),
           asset: { type: "native" },
         },
       ]);
@@ -3043,7 +3044,7 @@ describe("filterOperations", () => {
               },
             },
             coinType: sdk.DEFAULT_COIN_TYPE,
-            amount: "-10000000000",
+            amount: mist(-10),
           },
           BigNumber(0),
         ),
@@ -3059,7 +3060,7 @@ describe("filterOperations", () => {
               ObjectOwner: "test",
             },
             coinType: sdk.DEFAULT_COIN_TYPE,
-            amount: "-10000000000",
+            amount: mist(-10),
           },
           BigNumber(0),
         ),
@@ -3073,7 +3074,7 @@ describe("filterOperations", () => {
           {
             owner: "Immutable",
             coinType: sdk.DEFAULT_COIN_TYPE,
-            amount: "-10000000000",
+            amount: mist(-10),
           },
           BigNumber(0),
         ),
@@ -3092,7 +3093,7 @@ describe("filterOperations", () => {
               },
             },
             coinType: sdk.DEFAULT_COIN_TYPE,
-            amount: "-10000000000",
+            amount: mist(-10),
           },
           BigNumber(0),
         ),
@@ -3130,11 +3131,11 @@ describe("filterOperations", () => {
       const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
       expect(
         sdk.toBlockOperation(
-          mockStakingTx(address, "-1000000000"),
+          mockStakingTx(address, mist(-1)),
           {
             owner: { AddressOwner: address },
             coinType: sdk.DEFAULT_COIN_TYPE,
-            amount: "-10000000000",
+            amount: mist(-10),
           },
           BigNumber(0),
         ),
@@ -3144,7 +3145,7 @@ describe("filterOperations", () => {
           operationType: "DELEGATE",
           address: address,
           asset: { type: "native" },
-          stakedAmount: -10000000000n,
+          stakedAmount: BigInt(-10 * ONE_SUI),
         },
       ]);
     });
@@ -3153,11 +3154,11 @@ describe("filterOperations", () => {
       const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
       expect(
         sdk.toBlockOperation(
-          mockUnstakingTx(address, "1000000000"),
+          mockUnstakingTx(address, mist(1)),
           {
             owner: { AddressOwner: address },
             coinType: sdk.DEFAULT_COIN_TYPE,
-            amount: "10000000000",
+            amount: mist(10),
           },
           BigNumber(0),
         ),
@@ -3167,7 +3168,7 @@ describe("filterOperations", () => {
           operationType: "UNDELEGATE",
           address: address,
           asset: { type: "native" },
-          stakedAmount: 10000000000n,
+          stakedAmount: BigInt(10 * ONE_SUI),
         },
       ]);
     });
@@ -3956,7 +3957,7 @@ describe("accumulator events through modified functions", () => {
           address: recipient,
           operation: "merge",
           ty: coinType,
-          value: { integer: "5000000000" },
+          value: { integer: mist(5) },
         },
       ],
     },
@@ -3965,17 +3966,17 @@ describe("accumulator events through modified functions", () => {
 
   test("getOperationAmount includes accumulator merge for recipient", () => {
     const amount = sdk.getOperationAmount(recipient, baseTxWithAccumulator, coinType);
-    expect(amount).toEqual(new BigNumber("5000000000"));
+    expect(amount).toEqual(new BigNumber(mist(5)));
   });
 
   test("getOperationAmount returns sender's balance change unaffected", () => {
     const amount = sdk.getOperationAmount(sender, baseTxWithAccumulator, coinType);
-    expect(amount).toEqual(new BigNumber("6000000000"));
+    expect(amount).toEqual(new BigNumber(mist(6)));
   });
 
   test("alpacaGetOperationAmount includes accumulator merge for recipient", () => {
     const amount = sdk.alpacaGetOperationAmount(recipient, baseTxWithAccumulator, coinType);
-    expect(amount).toEqual(new BigNumber("5000000000"));
+    expect(amount).toEqual(new BigNumber(mist(5)));
   });
 
   test("getOperationCoinType detects token from accumulator event", () => {
@@ -4006,7 +4007,7 @@ describe("accumulator events through modified functions", () => {
     expect(result.operations[1]).toMatchObject({
       type: "transfer",
       address: recipient,
-      amount: 5000000000n,
+      amount: BigInt(5 * ONE_SUI),
       asset: { type: "native" },
     });
   });
@@ -4062,7 +4063,7 @@ describe("settlement transaction filtering in operations", () => {
       {
         owner: { AddressOwner: userAddr },
         coinType: "0x2::sui::SUI",
-        amount: "500000000",
+        amount: mist(0.5),
       },
     ],
   } as unknown as SuiTransactionBlockResponse;

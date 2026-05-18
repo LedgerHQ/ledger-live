@@ -101,14 +101,13 @@ pnpm test:family solana
 pnpm test:family polkadot
 pnpm test:family cosmos
 pnpm test:family internet_computer     # note: underscore, not hyphen
-pnpm test:family zcash-shielded
 ```
 
 ### All supported families
 
 Any folder under `libs/coin-modules/` is a valid family name (strip the `coin-` prefix):
 
-`aleo` · `algorand` · `aptos` · `bitcoin` · `canton` · `cardano` · `casper` · `celo` · `concordium` · `cosmos` · `evm` · `filecoin` · `hedera` · `icon` · `internet_computer` · `kaspa` · `mina` · `multiversx` · `near` · `polkadot` · `solana` · `stacks` · `stellar` · `sui` · `tezos` · `ton` · `tron` · `vechain` · `zcash-shielded`
+`aleo` · `algorand` · `aptos` · `bitcoin` · `canton` · `cardano` · `casper` · `celo` · `concordium` · `cosmos` · `evm` · `filecoin` · `hedera` · `icon` · `internet_computer` · `kaspa` · `mina` · `multiversx` · `near` · `polkadot` · `solana` · `stacks` · `stellar` · `sui` · `tezos` · `ton` · `tron` · `vechain`
 
 ---
 

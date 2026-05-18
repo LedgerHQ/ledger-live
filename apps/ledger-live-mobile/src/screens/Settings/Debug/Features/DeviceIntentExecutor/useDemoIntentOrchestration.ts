@@ -5,7 +5,7 @@ import {
   type DeviceConnectionParams,
   type ExecutorState,
 } from "@ledgerhq/device-intent";
-import type { ConnectAppDeviceInitializationInput } from "LLM/components/device-intent-executor/types";
+import type { InitializationInput } from "LLM/components/DeviceIntentExecutor/types";
 import type {
   AnyDemoJobState,
   AnyDemoInput,
@@ -23,19 +23,19 @@ const DEFAULT_CONNECTION_PARAMS: DeviceConnectionParams = {
   acceptedDeviceModelIds: [],
 };
 
-const BOLOS_INITIALIZATION_INPUT: ConnectAppDeviceInitializationInput = {
+const BOLOS_INITIALIZATION_INPUT: InitializationInput = {
   appName: "BOLOS",
   dependencies: [],
   requireLatestFirmware: false,
   allowPartialDependencies: true,
 };
 
-const ETHEREUM_INITIALIZATION_INPUT: ConnectAppDeviceInitializationInput = {
+const ETHEREUM_INITIALIZATION_INPUT: InitializationInput = {
   ...BOLOS_INITIALIZATION_INPUT,
   appName: "Ethereum",
 };
 
-const BITCOIN_INITIALIZATION_INPUT: ConnectAppDeviceInitializationInput = {
+const BITCOIN_INITIALIZATION_INPUT: InitializationInput = {
   ...BOLOS_INITIALIZATION_INPUT,
   appName: "Bitcoin",
 };
@@ -63,7 +63,7 @@ function buildPhase(
   phase: DemoPhase["phase"],
   defs: DemoIntentDefinitions,
   tickCount: number,
-  currentDeviceInitializationInput: ConnectAppDeviceInitializationInput,
+  currentDeviceInitializationInput: InitializationInput,
 ): DemoPhase {
   switch (phase) {
     case "idle":
@@ -148,7 +148,7 @@ export type DemoOrchestrationResult = {
         AnyDemoJobState,
         AnyDemoInput,
         AnyDemoExtraProps,
-        ConnectAppDeviceInitializationInput
+        InitializationInput
       >;
     }
   | {
@@ -233,7 +233,7 @@ export function useDemoIntentOrchestration({
         AnyDemoJobState,
         AnyDemoInput,
         AnyDemoExtraProps,
-        ConnectAppDeviceInitializationInput
+        InitializationInput
       >
     | undefined => {
     if (!enabled || !isActive) {

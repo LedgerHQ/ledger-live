@@ -17,7 +17,7 @@
  */
 
 import path from "node:path";
-import { CliProcessExitError } from "../../cli-process-exit-error";
+import { getCliProcessExitCode } from "../../cli-process-exit-error";
 import { installOutputCapture } from "../../shared/ui";
 
 // ---------------------------------------------------------------------------
@@ -161,9 +161,9 @@ async function installInterceptors(): Promise<void> {
     return {
       hostname: "localhost",
       port: currentMockPort,
-      path: (o.path as string) ?? "/",
-      method: (o.method as string) ?? "GET",
-      headers: (o.headers as Record<string, unknown>) ?? {},
+      path: o.path ?? "/",
+      method: o.method ?? "GET",
+      headers: o.headers ?? {},
     };
   }
 
@@ -314,11 +314,9 @@ export async function runCli(args: string[], env: Record<string, string> = {}): 
   try {
     exitCode = await runMain(args);
   } catch (e) {
-    if (e instanceof CliProcessExitError && e.isCliProcessExitError) {
-      exitCode = e.code;
-    } else {
-      throw e;
-    }
+    const code = getCliProcessExitCode(e);
+    if (code === null) throw e;
+    exitCode = code;
   } finally {
     restoreOutputCapture();
 

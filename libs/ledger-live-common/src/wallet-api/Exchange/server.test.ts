@@ -168,6 +168,8 @@ describe("handlers", () => {
         accounts,
         tracking: mockTracking,
         manifest: testAppManifest,
+        locale: "en-US",
+        counterValueCurrency: "USD",
         uiHooks: mockUiHooks,
       });
 
@@ -207,6 +209,8 @@ describe("handlers", () => {
         accounts,
         tracking: mockTracking,
         manifest: testAppManifest,
+        locale: "en-US",
+        counterValueCurrency: "USD",
         uiHooks: mockUiHooks,
       });
 
@@ -240,6 +244,8 @@ describe("handlers", () => {
         accounts,
         tracking: mockTracking,
         manifest: testAppManifest,
+        locale: "en-US",
+        counterValueCurrency: "USD",
         uiHooks: mockUiHooks,
       });
 
@@ -304,6 +310,8 @@ describe("handlers", () => {
 
       const handler = handlers({
         accounts,
+        locale: "en",
+        counterValueCurrency: "USD",
         tracking: mockTracking,
         manifest: testAppManifest,
         uiHooks: mockUiHooks,
@@ -353,6 +361,8 @@ describe("handlers", () => {
         accounts,
         tracking: mockTracking,
         manifest: testAppManifest,
+        locale: "en-US",
+        counterValueCurrency: "USD",
         uiHooks: mockUiHooks,
       });
 
@@ -401,6 +411,8 @@ describe("handlers", () => {
         accounts,
         tracking: mockTracking,
         manifest: testAppManifest,
+        locale: "en-US",
+        counterValueCurrency: "USD",
         uiHooks: mockUiHooks,
       });
 

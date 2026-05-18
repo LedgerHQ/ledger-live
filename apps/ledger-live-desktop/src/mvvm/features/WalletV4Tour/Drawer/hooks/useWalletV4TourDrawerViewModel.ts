@@ -64,6 +64,7 @@ export const useWalletV4TourDrawerViewModel = (
 
   const openDrawerWithTracking = useCallback((source: "portfolio" | "debug") => {
     isClosingRef.current = false;
+    currentIndexRef.current = 0;
     setIsDialogOpen(true);
     trackPage(
       PAGE_TRACKING_WALLET_V4_TOUR,
@@ -72,6 +73,10 @@ export const useWalletV4TourDrawerViewModel = (
       true,
       false,
     );
+    track("product_tour_card", {
+      page: PAGE_TRACKING_WALLET_V4_TOUR,
+      card: 1,
+    });
   }, []);
 
   useEffect(() => {

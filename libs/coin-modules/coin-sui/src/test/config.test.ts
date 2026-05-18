@@ -16,27 +16,26 @@ describe("Configuration", () => {
     explorerViews: [],
   };
 
+  const baseConfig = {
+    node: { url: "123", graphqlUrl: "456" },
+    status: { type: "active" as const },
+    features: { graphql: false },
+  };
+
   beforeEach(() => {
     // Reset the config before each test
-    coinConfig.setCoinConfig(() => ({
-      node: {
-        url: "123",
-      },
-      status: {
-        type: "active",
-      },
-    }));
+    coinConfig.setCoinConfig(() => baseConfig);
   });
 
   describe("getCoinConfig", () => {
     it("should return default config when no currency is provided", () => {
       const config = coinConfig.getCoinConfig();
-      expect(config).toEqual({ node: { url: "123" }, status: { type: "active" } });
+      expect(config).toEqual(baseConfig);
     });
 
     it("should return config for specific currency", () => {
       const config = coinConfig.getCoinConfig(mockCurrency.id);
-      expect(config).toEqual({ node: { url: "123" }, status: { type: "active" } });
+      expect(config).toEqual(baseConfig);
     });
   });
 });

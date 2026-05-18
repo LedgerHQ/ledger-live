@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-icon",
-  "version": "0.22.1",
+  "version": "0.23.0",
   "description": "Ledger Icon Coin integration",
   "keywords": [
     "Ledger",
@@ -45,7 +45,6 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@faker-js/faker": "^8.4.1",
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:*",

@@ -30,6 +30,7 @@ import { useLocation } from "react-router";
 import { useVersionedStakePrograms } from "LLD/hooks/useVersionedStakePrograms";
 import { NetworkErrorScreen } from "~/renderer/components/Web3AppWebview/NetworkError";
 import Box from "~/renderer/components/Box";
+import { computeEarnUiVersion } from "@ledgerhq/live-common/domain/computeEarnUiVersion";
 
 const DEFAULT_MANIFEST_ID =
   process.env.DEFAULT_EARN_MANIFEST_ID || DEFAULT_FEATURES.ptxEarnLiveApp.params?.manifest_id;
@@ -42,14 +43,25 @@ const Earn = () => {
   const devMode = useSelector(developerModeSelector);
   const earnFlag = useFeature("ptxEarnLiveApp");
   const earnManifestId = earnFlag?.enabled ? earnFlag.params?.manifest_id : DEFAULT_MANIFEST_ID;
-  const earnUiVersion = useFeature("ptxEarnUi")?.params?.value ?? "v1";
+  const earnUiVersion = useFeature("ptxEarnUi")?.params?.value ?? "v2";
   const localManifest = useLocalLiveAppManifest(earnManifestId);
   const remoteManifest = useRemoteLiveAppManifest(earnManifestId);
   const manifest = localManifest || remoteManifest;
   const themeType = useTheme().theme;
   const discreetMode = useDiscreetMode();
   const countryLocale = getParsedSystemDeviceLocale().region;
-  const { isEnabled: isLwd40Enabled } = useWalletFeaturesConfig("desktop");
+  const {
+    isEnabled: isLwd40Enabled,
+    shouldDisplayEarnUpselling,
+    shouldDisplayEarnSimulator,
+  } = useWalletFeaturesConfig("desktop");
+
+  const computedUiVersion = computeEarnUiVersion({
+    baseUiVersion: earnUiVersion,
+    shouldDisplayEarnUpselling,
+    shouldDisplayEarnSimulator,
+  });
+
   useDeepLinkListener();
 
   const stakePrograms = useVersionedStakePrograms();
@@ -98,7 +110,7 @@ const Earn = () => {
             ? JSON.stringify(stakeCurrenciesParam)
             : undefined,
           ethDepositCohort,
-          uiVersion: isLwd40Enabled ? earnUiVersion : "v1",
+          uiVersion: isLwd40Enabled ? computedUiVersion : "v1",
           lw40enabled: isLwd40Enabled ? "true" : "false",
         }}
       />

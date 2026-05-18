@@ -3,6 +3,7 @@ import type { Operation } from "@ledgerhq/types-live";
 import { getJsonRpcFullnodeUrl, type SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import BigNumber from "bignumber.js";
 import coinConfig from "../config";
+import { FIGMENT_SUI_VALIDATOR_ADDRESS } from "../constants";
 import { normalizeSuiAddressForComparison } from "../utils";
 import {
   createTransaction,
@@ -10,7 +11,6 @@ import {
   getAccountBalances,
   getListOperations,
   getOperations,
-  getCheckpoint,
   getOperationAmount,
   getOperationFee,
   getUnifiedBalanceChanges,
@@ -23,8 +23,6 @@ import {
   withApi,
 } from "./sdk";
 
-const ACCOUNT_WITH_STAKES = "0x3d9fb148e35ef4d74fcfc36995da14fc504b885d5f2bfeca37d6ea2cc044a32d";
-
 describe("SUI SDK Integration tests", () => {
   beforeAll(() => {
     coinConfig.setCoinConfig(() => ({
@@ -33,15 +31,15 @@ describe("SUI SDK Integration tests", () => {
       },
       node: {
         url: getEnv("API_SUI_NODE_PROXY"),
+        graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
       },
+      features: { graphql: false },
     }));
   });
 
   describe("getOperations", () => {
     describe("Account 0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164", () => {
       // https://suiscan.xyz/mainnet/account/0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164/activity
-
-      // 5 as of 14/05/2025
       const IN_OPERATIONS_COUNT = 2;
       const OUT_OPERATIONS_COUNT = 3;
       const TOTAL_OPERATIONS_COUNT = IN_OPERATIONS_COUNT + OUT_OPERATIONS_COUNT;
@@ -301,7 +299,7 @@ describe("SUI SDK Integration tests", () => {
       const validatorAddress = "0xcb7530490045f19514eed2f7efa4bca56854e54470fa23e8c91c46eb8a78d72f";
 
       const result = await createTransaction(
-        ACCOUNT_WITH_STAKES,
+        FIGMENT_SUI_VALIDATOR_ADDRESS,
         {
           mode: "delegate",
           coinType: DEFAULT_COIN_TYPE,
@@ -339,7 +337,7 @@ describe("SUI SDK Integration tests", () => {
     test("paymentInfo returns valid gas budget for delegate", async () => {
       const validatorAddress = "0xcb7530490045f19514eed2f7efa4bca56854e54470fa23e8c91c46eb8a78d72f";
 
-      const info = await paymentInfo(ACCOUNT_WITH_STAKES, {
+      const info = await paymentInfo(FIGMENT_SUI_VALIDATOR_ADDRESS, {
         mode: "delegate" as const,
         family: "sui" as const,
         coinType: DEFAULT_COIN_TYPE,
@@ -355,8 +353,16 @@ describe("SUI SDK Integration tests", () => {
 
   describe("getCheckpoint", () => {
     test("getCheckpoint", async () => {
-      const checkpointById = await getCheckpoint("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
-      const checkpointBySequenceNumber = await getCheckpoint("164167623");
+      // This test asserts on the wider JSON-RPC `Checkpoint` shape
+      // (epoch, previousDigest, transactions) — fields the public
+      // `getCheckpoint` export intentionally drops to keep the dual-path
+      // contract honest. Talk to the JSON-RPC client directly here.
+      const checkpointById = await withApi(api =>
+        api.getCheckpoint({ id: "3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS" }),
+      );
+      const checkpointBySequenceNumber = await withApi(api =>
+        api.getCheckpoint({ id: "164167623" }),
+      );
       expect(checkpointById.epoch).toEqual("814");
       expect(checkpointById.sequenceNumber).toEqual("164167623");
       expect(checkpointById.timestampMs).toEqual("1751696298663");
@@ -507,7 +513,11 @@ describe("SUI SDK Integration tests", () => {
     afterAll(() => {
       coinConfig.setCoinConfig(() => ({
         status: { type: "active" },
-        node: { url: getEnv("API_SUI_NODE_PROXY") },
+        node: {
+          url: getEnv("API_SUI_NODE_PROXY"),
+          graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
+        },
+        features: { graphql: false },
       }));
     });
 
@@ -524,7 +534,11 @@ describe("SUI SDK Integration tests", () => {
       beforeAll(() => {
         coinConfig.setCoinConfig(() => ({
           status: { type: "active" },
-          node: { url: getJsonRpcFullnodeUrl("mainnet") },
+          node: {
+            url: getJsonRpcFullnodeUrl("mainnet"),
+            graphqlUrl: "https://graphql.mainnet.sui.io/graphql",
+          },
+          features: { graphql: false },
         }));
       });
 
@@ -613,7 +627,11 @@ describe("SUI SDK Integration tests", () => {
       beforeAll(() => {
         coinConfig.setCoinConfig(() => ({
           status: { type: "active" },
-          node: { url: getJsonRpcFullnodeUrl("testnet") },
+          node: {
+            url: getJsonRpcFullnodeUrl("testnet"),
+            graphqlUrl: "https://graphql.testnet.sui.io/graphql",
+          },
+          features: { graphql: false },
         }));
       });
 

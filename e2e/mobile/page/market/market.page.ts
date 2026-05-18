@@ -8,7 +8,8 @@ export default class MarketPage {
   marketFilterCurrencyButton = () => getElementById("market-filter-currency");
   searchBar = () => getElementById("search-box");
   starButton = () => getElementById("star-asset");
-  assetDetailBackBtn = () => getElementById("market-back-btn");
+  backButtonId = "market-back-btn";
+  assetDetailBackBtn = () => getElementById(this.backButtonId);
   marketRowTitle = (ticker: string) => getElementById(`${this.marketRowTitleBaseId}${ticker}`);
   starMarketListButton = () => getElementById("toggle-starred-currencies");
   marketQuickActionButton = (action: "send" | "receive" | "buy" | "sell" | "swap") =>
@@ -32,7 +33,8 @@ export default class MarketPage {
 
   @Step("Leave market detail page")
   async leaveMarketDetailPage() {
-    await tapByElement(this.assetDetailBackBtn());
+    await waitForElementById(this.backButtonId, 5000);
+    await tapById(this.backButtonId);
   }
 
   @Step("Search for asset")

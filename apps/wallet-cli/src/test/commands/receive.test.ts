@@ -16,7 +16,7 @@ describe("receive --verify command (mock DMK)", () => {
     sessionCleanup = undefined;
   });
 
-  it("json output: returns the verified address from mock device", async () => {
+  it("json output: returns verified address with verified=true and source=device", async () => {
     const fixture = makeSessionDir([{ label: "ethereum-1", descriptor: MOCK_ETH_DESCRIPTOR }]);
     sessionCleanup = fixture.cleanup;
     const { stdout, exitCode, stderr } = await runCli(
@@ -33,7 +33,19 @@ describe("receive --verify command (mock DMK)", () => {
     expect(exitCode, `stderr: ${stderr}`).toBe(0);
 
     const lines = stdout.split("\n").map(line => JSON.parse(line));
-    expect(lines[0]).toMatchObject({
+
+    const preVerify = lines.find(l => l.type === "pre-verify-address");
+    expect(preVerify).toMatchObject({
+      type: "pre-verify-address",
+      command: "receive",
+      network: "ethereum:main",
+      address: MOCK_ETH_ADDRESS,
+    });
+
+    const deviceState = lines.find(
+      l => l.type === "device-state" && l.state?.reason === "verify_address",
+    );
+    expect(deviceState).toMatchObject({
       type: "device-state",
       command: "receive",
       network: "ethereum:main",
@@ -44,9 +56,47 @@ describe("receive --verify command (mock DMK)", () => {
     const data = lines.at(-1);
     expect(data.command).toBe("receive");
     expect(data.network).toBe("ethereum:main");
-    expect(lines[0].account).toBe(data.account);
-    expect(typeof data.address).toBe("string");
-    // The mock device returns our known address
+    expect(deviceState.account).toBe(data.account);
     expect(data.address.toLowerCase()).toBe(MOCK_ETH_ADDRESS.toLowerCase());
+    expect(data.verified).toBe(true);
+    expect(data.source).toBe("device");
+  });
+
+  it("json output: verified=false and source=software-derivation when --verify=false", async () => {
+    const fixture = makeSessionDir([{ label: "ethereum-1", descriptor: MOCK_ETH_DESCRIPTOR }]);
+    sessionCleanup = fixture.cleanup;
+    const { stdout, exitCode, stderr } = await runCli(
+      ["receive", "--account", "ethereum-1", "--verify=false", "--output", "json"],
+      { WALLET_CLI_MOCK_PORT: String(server.port), ...fixture.env },
+    );
+    expect(exitCode, `stderr: ${stderr}`).toBe(0);
+    const data = JSON.parse(stdout);
+    expect(data.verified).toBe(false);
+    expect(data.source).toBe("software-derivation");
+  });
+
+  it("human output: warns when --verify=false", async () => {
+    const fixture = makeSessionDir([{ label: "ethereum-1", descriptor: MOCK_ETH_DESCRIPTOR }]);
+    sessionCleanup = fixture.cleanup;
+    const { stdout, stderr, exitCode } = await runCli(
+      ["receive", "--account", "ethereum-1", "--verify=false", "--output", "human"],
+      { WALLET_CLI_MOCK_PORT: String(server.port), ...fixture.env },
+    );
+    expect(exitCode, `stderr: ${stderr}`).toBe(0);
+    expect(stdout).toBe(MOCK_ETH_ADDRESS);
+    expect(stderr).toContain("Warning: address was NOT verified on device");
+  });
+
+  it("--no-verify is equivalent to --verify=false", async () => {
+    const fixture = makeSessionDir([{ label: "ethereum-1", descriptor: MOCK_ETH_DESCRIPTOR }]);
+    sessionCleanup = fixture.cleanup;
+    const { stdout, stderr, exitCode } = await runCli(
+      ["receive", "--account", "ethereum-1", "--no-verify", "--output", "json"],
+      { WALLET_CLI_MOCK_PORT: String(server.port), ...fixture.env },
+    );
+    expect(exitCode, `stderr: ${stderr}`).toBe(0);
+    const data = JSON.parse(stdout);
+    expect(data.verified).toBe(false);
+    expect(data.source).toBe("software-derivation");
   });
 });

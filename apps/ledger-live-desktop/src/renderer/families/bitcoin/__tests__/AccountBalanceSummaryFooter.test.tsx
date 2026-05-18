@@ -1,6 +1,6 @@
 import React from "react";
 import { Observable } from "rxjs";
-import { DEFAULT_ZCASH_PRIVATE_INFO } from "@ledgerhq/zcash-shielded/constants";
+import { DEFAULT_ZCASH_PRIVATE_INFO } from "@ledgerhq/coin-bitcoin/chain-adapters/zcash/constants";
 import { render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
 import AccountBalanceSummaryFooter from "../AccountBalanceSummaryFooter";
 import { createFixtureAccount } from "@ledgerhq/coin-bitcoin/fixtures/common.fixtures";
@@ -250,9 +250,7 @@ describe("Bitcoin Account Balance Summary Footer", () => {
         paginationConfig: {},
         syncType: SYNC_TYPE_SHIELDED,
       });
-      expect(logSpy).toHaveBeenCalledWith(
-        `Zcash shielded sync completed on account ${account.id}`,
-      );
+      expect(logSpy).toHaveBeenCalledWith(`Zcash shielded sync completed on account ${account.id}`);
     });
   });
 

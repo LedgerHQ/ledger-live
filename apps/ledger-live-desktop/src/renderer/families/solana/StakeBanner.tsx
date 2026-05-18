@@ -7,6 +7,7 @@ import React from "react";
 import { StakeAccountBannerParams } from "~/renderer/screens/account/types";
 import { useSolanaStakesWithMeta } from "@ledgerhq/live-common/families/solana/react";
 import { getAccountBannerState as getSolanaBannerState } from "@ledgerhq/live-common/families/solana/banner";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { openModal } from "~/renderer/actions/modals";
 import { useDispatch } from "LLD/hooks/redux";
 import { SolanaAccount } from "@ledgerhq/live-common/families/solana/types";
@@ -21,7 +22,8 @@ const StakeBanner: React.FC<{ account: SolanaAccount }> = ({ account }) => {
   );
   const stakeAccountBannerParams: StakeAccountBannerParams | null =
     stakeAccountBanner?.params ?? null;
-  const state = getSolanaBannerState(account);
+  const bridge = useAccountBridge(account);
+  const state = getSolanaBannerState(account, bridge);
   const { redelegate, display, ledgerValidator, stakeAccAddr } = state;
 
   if (redelegate && !stakeAccountBannerParams?.solana?.redelegate) return null;

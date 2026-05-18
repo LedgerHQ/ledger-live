@@ -19,6 +19,24 @@
     },
     "build": {
       "cache": false
+    },
+    "prepare:npm": {
+      "dependsOn": ["build"],
+      "outputs": [
+        "{projectRoot}/.npm-package/**",
+        "{projectRoot}/bin/wallet-cli",
+        "{projectRoot}/npm/*/.npm-package/**",
+        "{projectRoot}/npm/*/bin/**"
+      ],
+      "cache": false
+    },
+    "pack:check": {
+      "dependsOn": ["prepare:npm"],
+      "cache": false
+    },
+    "smoke:npm": {
+      "dependsOn": ["prepare:npm"],
+      "cache": false
     }
   }
 }

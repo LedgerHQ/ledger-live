@@ -17,7 +17,7 @@ import {
 import { log } from "@ledgerhq/logs";
 import { getCurrencyBridge, getAccountBridge } from "../bridge";
 import { promiseAllBatched, delay } from "../promise";
-import { isAccountEmpty, formatAccount } from "../account";
+import { formatAccount } from "../account";
 import { getOperationConfirmationNumber } from "../operation";
 import { getEnv } from "@ledgerhq/live-env";
 import {
@@ -179,15 +179,21 @@ export async function runWithAppSpec<T extends TransactionCommon>(
       invariant(accounts.length > 0, "unexpected empty accounts for " + currency.name);
     }
     const preloadStats = preloadDuration > 10 ? ` (preload: ${formatTime(preloadDuration)})` : "";
+    const formattedAccountHeads = (
+      await Promise.all(accounts.map(a => formatAccount(a, "head")))
+    ).join("\n");
     reportLog(
       `Spec ${spec.name} found ${accounts.length} ${
         currency.name
       } accounts${preloadStats}. Will use ${formatAppCandidate(
         appCandidate as AppCandidate,
-      )}\n${accounts.map(a => formatAccount(a, "head")).join("\n")}\n`,
+      )}\n${formattedAccountHeads}\n`,
     );
 
-    if (accounts.every(isAccountEmpty)) {
+    const emptyChecks = await Promise.all(
+      accounts.map(async a => (await getAccountBridge(a)).isAccountEmpty(a)),
+    );
+    if (emptyChecks.every(Boolean)) {
       reportLog(
         `This SEED does not have ${currency.name}. Please send funds to ${accounts
           .map(a => a.freshAddress)

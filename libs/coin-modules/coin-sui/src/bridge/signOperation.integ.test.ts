@@ -12,7 +12,9 @@ describe("signOperation", () => {
       },
       node: {
         url: getEnv("API_SUI_NODE_PROXY"),
+        graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
       },
+      features: { graphql: false },
     }));
   });
 

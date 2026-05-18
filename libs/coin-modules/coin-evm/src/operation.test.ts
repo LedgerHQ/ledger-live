@@ -226,6 +226,33 @@ describe("EVM Family", () => {
           expect(res?.account.id).toBe(account.id);
           expect(res?.parentAccount).toBe(undefined);
         });
+
+        it("returns the oldest pending transaction when sequence numbers cross a digit boundary", () => {
+          const account = genAccount("myAccount", { currency: ethereum });
+          const tokenAccount = genTokenAccount(0, account, usdc);
+          const transactionRaw = {
+            family: "evm",
+            amount: "1",
+            recipient: "MockRecipient",
+          };
+          const pendingOperationHigh = {
+            ...genOperation(account, tokenAccount, account.operations, new Prando("")),
+            transactionRaw,
+            blockHeight: null,
+            value: new BigNumber(0),
+            date: new Date(1986, 0, 1),
+            transactionSequenceNumber: new BigNumber(10),
+          };
+          const pendingOperationLow = {
+            ...pendingOperationHigh,
+            transactionSequenceNumber: new BigNumber(9),
+          };
+          account.pendingOperations.push(pendingOperationHigh, pendingOperationLow);
+
+          const res = getStuckAccountAndOperation(account, undefined, () => true);
+
+          expect(res?.operation.transactionSequenceNumber).toStrictEqual(new BigNumber(9));
+        });
       });
 
       describe("pending transaction is a token transaction", () => {

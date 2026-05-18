@@ -5,7 +5,22 @@ import { getSwapAPIBaseURL } from "../../../../exchange/swap";
 import type { GetQuotesArgs } from "../types";
 import type { FetchQuotesResult, RawQuote, RawQuoteError } from "./types";
 
-export async function fetchQuotes(args: GetQuotesArgs): Promise<FetchQuotesResult> {
+/**
+ * Fetch the raw list of quotes from the aggregator API for a single
+ * `custom.exchange.getQuotes` request.
+ *
+ * @param args - Wire-level `getQuotes` arguments (providers, quotes
+ *   input, optional headers, abort signal).
+ * @param counterValueCurrency - Fiat ticker (e.g. `"USD"`) the
+ *   aggregator should use for quote countervalues. Sourced from the
+ *   wallet's counter-value setting at the handler factory call site.
+ * @returns The raw aggregator payload split into successful quotes and
+ *   per-provider error entries.
+ */
+export async function fetchQuotes(
+  args: GetQuotesArgs,
+  counterValueCurrency: string,
+): Promise<FetchQuotesResult> {
   const { providers, data: quotesInput, headers: customHeaders, signal } = args;
   const baseURL = getSwapAPIBaseURL();
 
@@ -16,8 +31,8 @@ export async function fetchQuotes(args: GetQuotesArgs): Promise<FetchQuotesResul
     lang: "en",
     theme: "dark",
     "providers-whitelist": providers.join(","),
-    fiatForCounterValue: quotesInput.counterValueCurrency,
-    currencyTicker: quotesInput.counterValueCurrency,
+    fiatForCounterValue: counterValueCurrency,
+    currencyTicker: counterValueCurrency,
     networkFees: "0",
     uniswapOrderType: quotesInput.uniswapOrderType ?? "classic",
     from: quotesInput.sendCurrencyId,

@@ -58,6 +58,12 @@ export default class PortfolioPage {
   transferBottomSheetReceiveButton = "transfer-action-receive";
   transferBottomSheetSendButton = "transfer-action-send";
   transferBottomSheetBankTransferButton = "transfer-action-bank-transfer";
+  portfolioCryptosListId = "PortfolioCryptosList";
+  portfolioStablecoinsListId = "PortfolioStablecoinsList";
+  cryptoListId = "CryptoList";
+  stablecoinListId = "StablecoinList";
+  cryptosSectionHeaderId = "portfolio-cryptos-section-header";
+  stablecoinsSectionHeaderId = "portfolio-stablecoins-section-header";
 
   portfolioSettingsButton = async () => getElementById(this.portfolioSettingsId);
   assetItemId = (currencyName: string) => `${this.baseAssetItem}${currencyName}`;
@@ -439,5 +445,78 @@ export default class PortfolioPage {
   @Step("Press transfer bottom sheet bank transfer button")
   async pressTransferBottomSheetBankTransferButton() {
     await tapById(this.transferBottomSheetBankTransferButton);
+  }
+
+  private async checkSectionVisible(sectionId: string, isEmptyPortfolio: boolean) {
+    const scrollViewId = isEmptyPortfolio ? this.emptyPortfolioListId : this.accountsListView;
+    await scrollToId(sectionId, scrollViewId);
+    await detoxExpect(getElementById(sectionId)).toBeVisible();
+  }
+
+  @Step("Check cryptos list section is visible")
+  async checkCryptosListSectionVisible(isEmptyPortfolio = false) {
+    await this.checkSectionVisible(this.portfolioCryptosListId, isEmptyPortfolio);
+  }
+
+  @Step("Check stablecoins list section is visible")
+  async checkStablecoinsListSectionVisible(isEmptyPortfolio = false) {
+    await this.checkSectionVisible(this.portfolioStablecoinsListId, isEmptyPortfolio);
+  }
+
+  @Step("Check add account CTA is visible")
+  async checkAddAccountCtaVisible() {
+    await scrollToId(this.addAccountCta, this.emptyPortfolioListId, 500);
+    await detoxExpect(getElementById(this.addAccountCta)).toBeVisible();
+  }
+
+  @Step("Check total asset item count on page")
+  async checkTotalAssetItemCount(expected: number) {
+    const count = await countElements(getElementsById(this.assetItemRegExp));
+    jestExpect(count).toBe(expected);
+  }
+
+  @Step("Tap first asset item (wallet 4.0) and return its currency name")
+  async tapFirstAssetItemW40(): Promise<string> {
+    const testId = await getIdByRegexp(this.assetItemRegExp, 0);
+    const currencyName = testId.replace("assetItem-", "");
+    await tapByElement(getElementById(this.assetItemRegExp, 0));
+    return currencyName;
+  }
+
+  @Step("Check asset is visible on page")
+  async checkAssetVisible(currencyName: string) {
+    await detoxExpect(getElementById(`assetItem-${currencyName}`)).toExist();
+  }
+
+  @Step("Tap cryptos section title")
+  async tapCryptosSectionTitle() {
+    await scrollToId(this.quickActionTransferButtonV4, this.accountsListView, 150, "up");
+    await tapById(this.cryptosSectionHeaderId);
+  }
+
+  @Step("Tap stablecoins section title")
+  async tapStablecoinsSectionTitle() {
+    await scrollToId(this.stablecoinsSectionHeaderId, this.accountsListView);
+    await tapById(this.stablecoinsSectionHeaderId);
+  }
+
+  private async checkListPageVisible(listId: string) {
+    await waitForElementById(listId);
+    await detoxExpect(getElementById(listId)).toBeVisible();
+  }
+
+  @Step("Check full crypto list page is visible")
+  async checkCryptoListPageVisible() {
+    await this.checkListPageVisible(this.cryptoListId);
+  }
+
+  @Step("Check full stablecoin list page is visible")
+  async checkStablecoinListPageVisible() {
+    await this.checkListPageVisible(this.stablecoinListId);
+  }
+
+  @Step("Scroll to the top of the portfolio page")
+  async scrollToTopOfPortfolioPage() {
+    await scrollToId(this.portfolioBalanceNormal, this.accountsListView, 1000, "up");
   }
 }

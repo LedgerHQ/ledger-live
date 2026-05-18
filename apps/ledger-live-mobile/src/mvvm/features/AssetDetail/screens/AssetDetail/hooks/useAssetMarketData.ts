@@ -1,25 +1,27 @@
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { useGetCurrencyDataQuery } from "@ledgerhq/live-common/market/state-manager/marketApi";
-import { REFETCH_TIME_ONE_MINUTE, BASIC_REFETCH } from "@ledgerhq/live-common/market/utils/timers";
+import VersionNumber from "react-native-version-number";
+import { useAssetMarketData as useSharedAssetMarketData } from "@ledgerhq/asset-detail";
 import { useSelector } from "~/context/hooks";
 import { marketParamsSelector } from "~/reducers/market";
+import type { AssetDetailCurrencyProps } from "LLM/features/AssetDetail/types";
 
-export function useAssetMarketData(currency: CryptoCurrency | undefined) {
+export function useAssetMarketData(currency: AssetDetailCurrencyProps) {
   const marketParams = useSelector(marketParamsSelector);
   const { counterCurrency = "usd" } = marketParams;
 
-  const { data, isFetching, isError } = useGetCurrencyDataQuery(
-    { id: currency?.id ?? "", counterCurrency },
-    {
-      pollingInterval: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
-      skip: !currency?.id,
-    },
-  );
+  const knownLedgerIds = currency ? [currency.id] : undefined;
+
+  const { marketCurrencyData, isLoading, isError } = useSharedAssetMarketData({
+    marketApiCurrencyId: currency?.id,
+    knownLedgerIds,
+    counterCurrency,
+    product: "llm",
+    version: VersionNumber.appVersion,
+  });
 
   return {
-    marketCurrency: data,
+    marketCurrency: marketCurrencyData,
     counterCurrency,
-    isLoading: isFetching,
+    isLoading,
     isError,
   };
 }

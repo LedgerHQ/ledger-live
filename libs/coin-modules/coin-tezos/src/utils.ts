@@ -114,13 +114,23 @@ export function normalizePublicKeyForAddress(
       prefix = PrefixV2.P256PublicKey;
     }
 
-    // uncompressed public key is 65 bytes, compressed is 33 bytes
-    const compressedPubKeyLength = 33;
-    if (keyBuf.length > compressedPubKeyLength) {
-      return b58Encode(compressPublicKey(keyBuf, derivationType), prefix);
-    } else {
+    const RAW_ED25519_KEY_LENGTH = 32;
+    const COMPRESSED_SEC1_LENGTH = 33;
+    const UNCOMPRESSED_SEC1_LENGTH = 65;
+    const isEd25519 = derivationType === DerivationType.ED25519;
+    if (isEd25519) {
+      if (keyBuf.length === COMPRESSED_SEC1_LENGTH) {
+        return b58Encode(keyBuf.slice(1), prefix);
+      }
+      if (keyBuf.length !== RAW_ED25519_KEY_LENGTH) {
+        return undefined;
+      }
       return b58Encode(keyBuf, prefix);
     }
+    if (keyBuf.length === UNCOMPRESSED_SEC1_LENGTH) {
+      return b58Encode(compressPublicKey(keyBuf, derivationType), prefix);
+    }
+    return b58Encode(keyBuf, prefix);
   } catch {
     return undefined;
   }

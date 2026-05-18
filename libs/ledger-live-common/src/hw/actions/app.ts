@@ -20,12 +20,12 @@ import { getImplementation, ImplementationType } from "./implementations";
 import {
   resolveAppRequestRequirements,
   toConnectAppRequest,
-} from "../deviceInitialization/resolveAppRequestRequirements";
-import type { AppRequestInput } from "../deviceInitialization/types";
+} from "../deviceInitialization/helpers/resolveAppRequestRequirements";
+import type { AppRequestInput } from "../../device/use-cases/ensureAppReady/types";
 import {
   buildExpectedAccountIdentity,
   validateDerivedAddress,
-} from "../deviceInitialization/wrongDeviceValidation";
+} from "../deviceInitialization/helpers/wrongDeviceValidation";
 
 export type State = {
   isLoading: boolean;

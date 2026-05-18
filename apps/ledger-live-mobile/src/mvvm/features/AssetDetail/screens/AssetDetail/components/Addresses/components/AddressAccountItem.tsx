@@ -10,7 +10,7 @@ import {
   CardTrailing,
 } from "@ledgerhq/lumen-ui-rnative";
 import CurrencyIcon from "~/components/CurrencyIcon";
-import { useFormattedAccountBalance } from "LLM/features/Send/screens/Recipient/hooks/useFormattedAccountBalance";
+import { useFormattedAccountBalance } from "LLM/hooks/useFormattedAccountBalance";
 import type { AddressAccountData } from "../useAddressesViewModel";
 
 type Props = Readonly<{
@@ -18,8 +18,8 @@ type Props = Readonly<{
 }>;
 
 export const AddressAccountItem = memo(function AddressAccountItem({ data }: Props) {
-  const { account, name, truncatedAddress } = data;
-  const { formattedBalance, formattedCounterValue } = useFormattedAccountBalance(account);
+  const { account, balanceAccount, name, truncatedAddress } = data;
+  const { formattedBalance, formattedCounterValue } = useFormattedAccountBalance(balanceAccount);
 
   return (
     <Card type="info" testID={`asset-detail-address-item-${account.id}`}>

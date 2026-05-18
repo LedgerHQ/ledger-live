@@ -5,6 +5,7 @@ import { getAccountNetworkInfo } from "./getAccountNetworkInfo";
 import type { BitcoinAccount, Transaction } from "./types";
 import { inferFeePerByte } from "./logic";
 import { getWalletAccount } from "./wallet-btc";
+import { getChainAdapter } from "./chain-adapters/registry";
 /**
  * Build a list of UTXOs to exclude because their transactions can't be fetched.
  * This includes UTXOs from pending operations that were replaced, and any other
@@ -71,6 +72,10 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
   account,
   transaction,
 ) => {
+  const adapter = getChainAdapter(account.currency.id);
+  const custom = adapter.prepareTransaction?.(account, transaction);
+  if (custom) return custom;
+
   let networkInfo = transaction.networkInfo;
 
   if (!networkInfo) {

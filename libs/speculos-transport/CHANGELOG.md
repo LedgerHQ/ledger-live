@@ -1,5 +1,51 @@
 # @ledgerhq/speculos-transport
 
+## 0.10.0
+
+### Minor Changes
+
+- [#16713](https://github.com/LedgerHQ/ledger-live/pull/16713) [`537b277`](https://github.com/LedgerHQ/ledger-live/commit/537b277c998887dd762887f1102e50f9791c6152) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Pin smoke Speculos versions and restore latest firmware selection for non-smoke runs
+
+### Patch Changes
+
+- Updated dependencies [[`b866ea6`](https://github.com/LedgerHQ/ledger-live/commit/b866ea67bcbd408a33dbc9233ef55298e2a8ef25)]:
+  - @ledgerhq/live-env@2.34.0
+  - @ledgerhq/live-dmk-speculos@0.8.6
+  - @ledgerhq/devices@8.14.2
+  - @ledgerhq/hw-transport-node-speculos@6.34.2
+
+## 0.10.0-next.0
+
+### Minor Changes
+
+- [#16713](https://github.com/LedgerHQ/ledger-live/pull/16713) [`537b277`](https://github.com/LedgerHQ/ledger-live/commit/537b277c998887dd762887f1102e50f9791c6152) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Pin smoke Speculos versions and restore latest firmware selection for non-smoke runs
+
+### Patch Changes
+
+- Updated dependencies [[`b866ea6`](https://github.com/LedgerHQ/ledger-live/commit/b866ea67bcbd408a33dbc9233ef55298e2a8ef25)]:
+  - @ledgerhq/live-env@2.34.0-next.0
+  - @ledgerhq/live-dmk-speculos@0.8.6-next.0
+  - @ledgerhq/devices@8.14.2-next.0
+  - @ledgerhq/hw-transport-node-speculos@6.34.2-next.0
+
+## 0.9.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/devices@8.14.2
+  - @ledgerhq/hw-transport-node-speculos@6.34.2
+  - @ledgerhq/live-dmk-speculos@0.8.6
+
+## 0.9.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/devices@8.14.2-hotfix.0
+  - @ledgerhq/hw-transport-node-speculos@6.34.2-hotfix.0
+  - @ledgerhq/live-dmk-speculos@0.8.6-hotfix.0
+
 ## 0.9.0
 
 ### Minor Changes

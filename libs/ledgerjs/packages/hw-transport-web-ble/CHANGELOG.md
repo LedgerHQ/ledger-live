@@ -1,5 +1,41 @@
 # @ledgerhq/hw-transport-web-ble
 
+## 6.34.2
+
+### Patch Changes
+
+- Updated dependencies [[`d308b1a`](https://github.com/LedgerHQ/ledger-live/commit/d308b1a6b9c629839f051cf367a527f4232120c7)]:
+  - @ledgerhq/errors@6.35.0
+  - @ledgerhq/devices@8.14.2
+  - @ledgerhq/hw-transport@6.35.2
+
+## 6.34.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`d308b1a`](https://github.com/LedgerHQ/ledger-live/commit/d308b1a6b9c629839f051cf367a527f4232120c7)]:
+  - @ledgerhq/errors@6.35.0-next.0
+  - @ledgerhq/devices@8.14.2-next.0
+  - @ledgerhq/hw-transport@6.35.2-next.0
+
+## 6.34.2
+
+### Patch Changes
+
+- Updated dependencies [[`202cc42`](https://github.com/LedgerHQ/ledger-live/commit/202cc423b09662b5b25012b84124aecd4dc7245d)]:
+  - @ledgerhq/errors@6.34.1
+  - @ledgerhq/devices@8.14.2
+  - @ledgerhq/hw-transport@6.35.2
+
+## 6.34.2-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`202cc42`](https://github.com/LedgerHQ/ledger-live/commit/202cc423b09662b5b25012b84124aecd4dc7245d)]:
+  - @ledgerhq/errors@6.34.1-hotfix.0
+  - @ledgerhq/devices@8.14.2-hotfix.0
+  - @ledgerhq/hw-transport@6.35.2-hotfix.0
+
 ## 6.34.1
 
 ### Patch Changes

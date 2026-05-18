@@ -1,5 +1,19 @@
 # @ledgerhq/evm-tools
 
+## 1.12.5
+
+### Patch Changes
+
+- Updated dependencies [[`b866ea6`](https://github.com/LedgerHQ/ledger-live/commit/b866ea67bcbd408a33dbc9233ef55298e2a8ef25)]:
+  - @ledgerhq/live-env@2.34.0
+
+## 1.12.5-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`b866ea6`](https://github.com/LedgerHQ/ledger-live/commit/b866ea67bcbd408a33dbc9233ef55298e2a8ef25)]:
+  - @ledgerhq/live-env@2.34.0-next.0
+
 ## 1.12.4
 
 ### Patch Changes

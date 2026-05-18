@@ -56,8 +56,8 @@ export function CustomFeesScreenView({
               value={input.value}
               onChange={e => onInputChange(input.key, e.target.value)}
               onClear={() => onInputClear(input.key)}
-              aria-invalid={input.error !== null}
-              errorMessage={input.error ?? undefined}
+              helperText={input.error ?? undefined}
+              status={input.error ? "error" : undefined}
               inputMode="decimal"
               autoComplete="off"
             />

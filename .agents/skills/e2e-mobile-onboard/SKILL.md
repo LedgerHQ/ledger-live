@@ -43,13 +43,13 @@ Store the selection and use it throughout all subsequent phases to **skip irrele
 
 | Tool            | Source of truth                                | How to read                                                              |
 | --------------- | ---------------------------------------------- | ------------------------------------------------------------------------ |
-| Node            | `.prototools`                                  | `grep "^node" .prototools`                                               |
-| pnpm            | `.prototools`                                  | `grep "^pnpm" .prototools`                                               |
+| Node            | `mise.toml`                                    | `grep "^node" mise.toml`                                                 |
+| pnpm            | `mise.toml`                                    | `grep "^pnpm" mise.toml`                                                 |
 | Java            | `apps/ledger-live-mobile/android/build.gradle` | Look for `JavaVersion.VERSION_XX` in `sourceCompatibility`               |
 | Android SDK API | `apps/ledger-live-mobile/android/build.gradle` | Look for `compileSdkVersion`                                             |
 | Ruby            | No pinned version in repo                      | Just check `ruby --version` returns >= 3.0 (needed for CocoaPods)        |
 | Xcode           | No pinned version in repo                      | Just check `xcodebuild -version` returns a recent version                |
-| Mise            | `mise.toml`                                    | Just check `mise --version` returns a version compatible with the config |
+| Mise            | `mise.toml`                                    | `mise --version` (see `min_version` at top of `mise.toml`)               |
 
 First, read the config files to determine expected versions. Then run these checks (skip those not relevant to the selected platform):
 
@@ -58,19 +58,19 @@ First, read the config files to determine expected versions. Then run these chec
 | Check  | Command            | Expected                              |
 | ------ | ------------------ | ------------------------------------- |
 | Docker | `docker --version` | Installed                             |
-| Proto  | `proto --version`  | Installed (recommended, not required) |
+| Mise   | `mise --version`   | Installed (required)                  |
 | Node   | `node --version`   | See version policy below              |
 | pnpm   | `pnpm --version`   | See version policy below              |
 
 **Node / pnpm version policy:**
 
-`.prototools` is the source of truth for the **recommended** versions. The check should:
+The `[tools]` section in `mise.toml` is the source of truth for the **recommended** Node and pnpm versions. The check should:
 
 - **PASS** if the active version matches the pinned version exactly.
 - **WARN** if the active major version matches but the minor/patch differs (e.g. pinned `22.13.1`, active `22.14.0`). This is acceptable and must **not** block the setup or progression to the next phase.
 - **FAIL** only if the active major version is different or older than the pinned major version (e.g. pinned Node 22, active Node 20). Only **FAIL** results are hard blockers that must be resolved before proceeding.
 
-Do not fail just because the binary path is not under `~/.proto/`. The version is what matters, not the install method. If Proto is installed, suggest running `proto use` from the repo root to align versions.
+The version is what matters, not how Node or pnpm were installed. If versions drift, suggest running `mise install` from the repo root (after [installing mise](https://mise.jdx.dev/getting-started.html)).
 
 **iOS checks (skip if Android only):**
 
@@ -102,7 +102,6 @@ Do not fail just because the binary path is not under `~/.proto/`. The version i
 - applesimutils: `brew tap wix/brew && brew install applesimutils`
 - Java: `brew install openjdk@<version>` (use the version from `build.gradle`)
 - Docker: Install Docker Desktop from https://www.docker.com/products/docker-desktop/
-- Proto: `curl -fsSL https://moonrepo.dev/install/proto.sh | bash` then `proto use` from repo root
 - Mise: `curl https://mise.run | sh` then `mise install` from repo root
 - Android SDK / `ANDROID_HOME`: Add to `~/.zshrc`:
   ```
@@ -111,7 +110,7 @@ Do not fail just because the binary path is not under `~/.proto/`. The version i
   export PATH=$PATH:$ANDROID_HOME/emulator:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin
   ```
 
-**Do not proceed to Phase 2 until all relevant FAIL-level checks are resolved.** WARN-only results (Proto absence, `sdkmanager` missing, Node/pnpm minor/patch drift) should be surfaced but must not block progression.
+**Do not proceed to Phase 2 until all relevant FAIL-level checks are resolved.** WARN-only results (`sdkmanager` missing, Node/pnpm minor/patch drift versus `mise.toml`) should be surfaced but must not block progression.
 
 ---
 
@@ -375,7 +374,7 @@ Print a final checklist summarizing everything. Only include rows for checks tha
 | Java                   | ✅ / ❌ / skipped |
 | Android SDK            | ✅ / ❌ / skipped |
 | Docker                 | ✅ / ❌           |
-| Proto / Node / pnpm    | ✅ / ❌           |
+| Mise / Node / pnpm    | ✅ / ❌           |
 | Environment variables  | ✅ / ❌           |
 | iOS Simulator          | ✅ / ❌ / skipped |
 | Android Emulator       | ✅ / ❌ / skipped |

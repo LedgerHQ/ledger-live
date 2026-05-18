@@ -338,14 +338,11 @@
     "src/wallet-api/validation/validateUrl.ts",
     "src/wallet-api/validation/validateInfoDialogParams.ts",
     "src/wallet-api/validation/actionDialogParams.ts",
-    "src/domain/isMinEarnUiVersion.ts"
+    "src/domain/isMinEarnUiVersion.ts",
+    "src/domain/computeEarnUiVersion.ts",
+    "src/domain/earnUiVersion.ts"
   ],
-  "extensions": [
-    ".ts",
-    ".js",
-    ".jsx",
-    ".tsx"
-  ],
+  "extensions": [".ts", ".js", ".jsx", ".tsx"],
   "ignorePatterns": [
     "**/node_modules/**",
     "**/__tests__/**",
@@ -416,6 +413,13 @@
     "src/device/use-cases/appDataBackup/deleteAppData.ts",
     "src/device/use-cases/appDataBackup/deleteAppDataUseCase.ts",
     "src/device/use-cases/appDataBackup/deleteAppDataUseCaseDI.ts",
+    "src/device/use-cases/ensureAppReady/buildEnsureAppReadyInput.ts",
+    "src/device/use-cases/ensureAppReady/ensureAppReadyUseCase.ts",
+    "src/device/use-cases/ensureAppReady/helpers/ConnectAppSideEffectsHandler.ts",
+    "src/device/use-cases/ensureAppReady/helpers/buildConnectAppDAInput.ts",
+    "src/device/use-cases/ensureAppReady/helpers/buildFinalState.ts",
+    "src/device/use-cases/ensureAppReady/helpers/runEnsureAppReadyAttempt.ts",
+    "src/device/use-cases/ensureAppReady/helpers/withRetryableRepeat.ts",
     "src/device/use-cases/getDeviceHasBattery.ts",
     "src/device/use-cases/isDeviceLocalizationSupported.ts",
     "src/device/use-cases/isEditDeviceNameSupported.ts",
@@ -668,12 +672,7 @@
     "@react-native/virtualized-lists",
     "@solana/buffer-layout",
     "@solana/codecs-numbers",
-    [
-      "@solana/codecs-numbers",
-      [
-        "node_modules/@solana/web3.js/lib/index.cjs.js"
-      ]
-    ],
+    ["@solana/codecs-numbers", ["node_modules/@solana/web3.js/lib/index.cjs.js"]],
     "abort-controller/dist/abort-controller",
     "anser",
     "base64-js",

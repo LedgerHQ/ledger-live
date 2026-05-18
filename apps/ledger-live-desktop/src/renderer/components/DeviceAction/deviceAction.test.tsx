@@ -228,6 +228,38 @@ describe("DeviceAction - Deprecation", () => {
     expect(mockOnContinue).toHaveBeenCalled();
   });
 
+  it("should call onOpenManager (not onError) when clicking 'Open My Ledger' on the missing app screen", () => {
+    const mockAction = {
+      useHook: jest.fn(() => ({
+        deviceDeprecationRules: null,
+        requiresAppInstallation: {
+          appName: "Hyperliquid",
+          appNames: ["Hyperliquid"],
+        },
+      })),
+      mapResult: jest.fn(),
+    };
+
+    const onOpenManager = jest.fn();
+    const onError = jest.fn();
+
+    render(
+      <DeviceAction
+        action={mockAction}
+        request={{ account: ETH_ACCOUNT }}
+        location={HOOKS_TRACKING_LOCATIONS.sendModal}
+        onOpenManager={onOpenManager}
+        onError={onError}
+      />,
+    );
+
+    const openManagerButton = screen.getByText("Open My Ledger");
+    fireEvent.click(openManagerButton);
+
+    expect(onOpenManager).toHaveBeenCalledTimes(1);
+    expect(onError).not.toHaveBeenCalled();
+  });
+
   it("should display Error Screen", () => {
     const device: Device = {
       modelId: DeviceModelId.nanoS,

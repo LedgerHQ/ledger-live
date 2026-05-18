@@ -7,13 +7,25 @@ import { useProductTourDrawer, ProductTourDrawer } from "../index";
 import { PAGE_TRACKING_PRODUCT_TOUR, PRODUCT_TOUR_SLIDES } from "../const";
 import type { ProductTourPrimaryAction } from "../const";
 
+const FIRST_SLIDE_TITLE = "Start by funding your wallet";
+const FIRST_SLIDE_SUBTITLE =
+  "Fund your Ledger Wallet your way — transfer, buy, or convert cash to stablecoins.";
+const FIRST_SLIDE_CTA = "Fund your wallet";
+
 type TestComponentProps = {
   readonly onPrimaryActionOverride?: (action: ProductTourPrimaryAction) => void;
 };
 
 const TestComponent = ({ onPrimaryActionOverride }: TestComponentProps) => {
-  const { isDrawerOpen, openProductTour, closeProductTour, onSlideChange, onPrimaryAction } =
-    useProductTourDrawer();
+  const {
+    isDrawerOpen,
+    openProductTour,
+    closeProductTour,
+    onCloseButtonPress,
+    onSlideChange,
+    onPrimaryAction,
+    completeProductTour,
+  } = useProductTourDrawer();
 
   return (
     <>
@@ -22,9 +34,11 @@ const TestComponent = ({ onPrimaryActionOverride }: TestComponentProps) => {
         value={{
           openProductTour,
           closeProductTour,
+          onCloseButtonPress,
           onSlideChange,
           isDrawerOpen,
           onPrimaryAction: onPrimaryActionOverride ?? onPrimaryAction,
+          completeProductTour,
         }}
       >
         <ProductTourDrawer />
@@ -82,15 +96,15 @@ describe("ProductTourDrawer integration", () => {
     const rendered = renderTestComponent(props);
     await rendered.user.press(screen.getByText("Open Drawer"));
     rendered.resizeScreenWidth();
-    await screen.findByText("Slide 1 title");
+    await screen.findByText(FIRST_SLIDE_TITLE);
     return rendered;
   }
 
   it("should auto-open and display the first slide when the tour is not completed", async () => {
     await openTourOnFirstSlide({ productTourCompleted: false, featureFlagEnabled: true });
 
-    await waitFor(() => expect(screen.getByText("Slide 1 title")).toBeOnTheScreen());
-    expect(screen.getByText("Slide 1 description")).toBeOnTheScreen();
+    await waitFor(() => expect(screen.getByText(FIRST_SLIDE_TITLE)).toBeVisible());
+    expect(screen.getByText(FIRST_SLIDE_SUBTITLE)).toBeVisible();
   });
 
   it("should not open the drawer when product tour is already completed", async () => {
@@ -98,8 +112,8 @@ describe("ProductTourDrawer integration", () => {
 
     await user.press(screen.getByText("Open Drawer"));
 
-    expect(screen.queryByText("Slide 1 title")).not.toBeOnTheScreen();
-    expect(screen.queryByText("Slide 1 description")).not.toBeOnTheScreen();
+    expect(screen.queryByText(FIRST_SLIDE_TITLE)).not.toBeVisible();
+    expect(screen.queryByText(FIRST_SLIDE_SUBTITLE)).not.toBeVisible();
   });
 
   it("should not open the drawer when the feature flag is disabled", async () => {
@@ -110,8 +124,8 @@ describe("ProductTourDrawer integration", () => {
 
     await user.press(screen.getByText("Open Drawer"));
 
-    expect(screen.queryByText("Slide 1 title")).not.toBeOnTheScreen();
-    expect(screen.queryByText("Slide 1 description")).not.toBeOnTheScreen();
+    expect(screen.queryByText(FIRST_SLIDE_TITLE)).not.toBeVisible();
+    expect(screen.queryByText(FIRST_SLIDE_SUBTITLE)).not.toBeVisible();
   });
 
   describe("footer buttons on the first slide", () => {
@@ -120,7 +134,7 @@ describe("ProductTourDrawer integration", () => {
       const { user } = await openTourOnFirstSlide({ onPrimaryActionOverride });
 
       const expectedAction = PRODUCT_TOUR_SLIDES[0].primaryAction;
-      await user.press(screen.getByRole("button", { name: "View your portfolio" }));
+      await user.press(screen.getByRole("button", { name: FIRST_SLIDE_CTA }));
 
       expect(onPrimaryActionOverride).toHaveBeenCalledTimes(1);
       expect(onPrimaryActionOverride).toHaveBeenCalledWith(expectedAction);
@@ -129,7 +143,7 @@ describe("ProductTourDrawer integration", () => {
     it("should track button_clicked when the primary CTA is pressed", async () => {
       const { user } = await openTourOnFirstSlide({ onPrimaryActionOverride: jest.fn() });
 
-      await user.press(screen.getByRole("button", { name: "View your portfolio" }));
+      await user.press(screen.getByRole("button", { name: FIRST_SLIDE_CTA }));
 
       expect(track).toHaveBeenCalledWith("button_clicked", {
         button: "CTA click",

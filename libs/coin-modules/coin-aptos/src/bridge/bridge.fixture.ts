@@ -1,4 +1,3 @@
-import { faker } from "@faker-js/faker";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -15,17 +14,17 @@ export function createFixtureAccount(account?: Partial<AptosAccount>): AptosAcco
 
   return {
     type: "Account",
-    id: faker.string.uuid(),
-    seedIdentifier: faker.string.uuid(),
+    id: "aptos:fixture-account",
+    seedIdentifier: "fixture-seed",
     derivationMode: "",
-    index: faker.number.int(),
+    index: 0,
     freshAddress: freshAddress.address,
     freshAddressPath: freshAddress.derivationPath,
     used: true,
     balance: new BigNumber(0),
     spendableBalance: new BigNumber(0),
-    creationDate: faker.date.past(),
-    blockHeight: faker.number.int({ min: 100_000, max: 200_000 }),
+    creationDate: new Date("2024-01-01"),
+    blockHeight: 100_000,
     currency,
     operationsCount: 0,
     operations: [],
@@ -52,21 +51,21 @@ export function createFixtureAccountWithSubAccount(
     derivationPath: "derivation_path",
   };
 
-  const id = faker.string.uuid();
+  const id = "aptos:fixture-account-sub";
 
   return {
     type: "Account",
     id,
-    seedIdentifier: faker.string.uuid(),
+    seedIdentifier: "fixture-seed",
     derivationMode: "",
-    index: faker.number.int(),
+    index: 0,
     freshAddress: freshAddress.address,
     freshAddressPath: freshAddress.derivationPath,
     used: true,
     balance: new BigNumber(0),
     spendableBalance: new BigNumber(0),
-    creationDate: faker.date.past(),
-    blockHeight: faker.number.int({ min: 100_000, max: 200_000 }),
+    creationDate: new Date("2024-01-01"),
+    blockHeight: 100_000,
     currency,
     operationsCount: 0,
     operations: [],

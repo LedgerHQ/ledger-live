@@ -79,7 +79,7 @@ export function useAssetsViewModel(): AssetsViewProps {
       navigate(
         item.isPlaceholder
           ? shouldDisplayAggregatedAssets
-            ? `/asset/${rawId}`
+            ? `/asset/${encodeURIComponent(dadaIdToMarketId(rawId))}`
             : `/market/${encodeURIComponent(dadaIdToMarketId(rawId))}`
           : `/asset/${item.currency.id}`,
       );

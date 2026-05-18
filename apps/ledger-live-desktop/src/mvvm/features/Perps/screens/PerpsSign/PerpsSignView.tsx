@@ -11,6 +11,7 @@ export function PerpsSignView({
   request,
   handleDeviceResult,
   handleDeviceError,
+  handleOpenManager,
 }: Readonly<PerpsSignViewModel>) {
   if (phase === "sign" && device) {
     return (
@@ -30,6 +31,7 @@ export function PerpsSignView({
           request={request}
           onResult={handleDeviceResult}
           onError={handleDeviceError}
+          onOpenManager={handleOpenManager}
         />
       </DialogBody>
     </>

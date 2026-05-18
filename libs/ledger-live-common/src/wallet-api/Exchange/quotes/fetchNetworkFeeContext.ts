@@ -40,7 +40,7 @@ export async function fetchNetworkFeeContext(
 
     const fromParentAccount = getParentAccount(fromAccount, args.accounts);
     let mainAccount = getMainAccount(fromAccount, fromParentAccount);
-    const bridge = getAccountBridge(fromAccount, fromParentAccount);
+    const bridge = await getAccountBridge(fromAccount, fromParentAccount);
 
     // Bitcoin requires a fresh sync before `prepareTransaction` can compute
     // fees because UTXO selection depends on confirmed inputs.

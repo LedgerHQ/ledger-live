@@ -155,7 +155,7 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
           page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
           privacyPolicyVersion: 1,
         },
-        false,
+        true,
       );
       expect(track).toHaveBeenCalledWith("drawer_closed", drawerEventPayload);
     });
@@ -322,11 +322,15 @@ describe("useAnalyticsConsentDrawerViewModel", () => {
       expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
       expect(store.getState().settings.analyticsConsentInfo.privacyPolicyVersion).toBe(1);
       expect(updateIdentify).toHaveBeenCalled();
-      expect(track).toHaveBeenCalledWith("button_clicked", {
-        button: "analytics_consent_privacy_got_it",
-        page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
-        privacyPolicyVersion: 1,
-      });
+      expect(track).toHaveBeenCalledWith(
+        "button_clicked",
+        {
+          button: "analytics_consent_privacy_got_it",
+          page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
+          privacyPolicyVersion: 1,
+        },
+        true,
+      );
       expect(track).toHaveBeenCalledWith("drawer_closed", drawerEventPayload);
     });
 

@@ -1,10 +1,10 @@
 import { CLI } from "tests/utils/cliUtils";
 import { activateLedgerSync } from "@ledgerhq/live-common/e2e/speculos";
 import { accountNames, accounts } from "tests/testdata/ledgerSyncTestData";
-import { Page } from "@playwright/test";
+import { expect, Page, Response } from "@playwright/test";
 import { Application } from "tests/page";
 import { getEnv } from "@ledgerhq/live-env";
-import invariant from "invariant";
+
 interface LedgerKeyRingProtocolArgs {
   pubKey: string;
   privateKey: string;
@@ -38,6 +38,10 @@ interface LedgerOutput {
   rootId?: string;
   walletSyncEncryptionKey?: string;
   applicationPath?: string;
+}
+
+function isLedgerOutput(output: unknown): output is LedgerOutput {
+  return typeof output === "object" && output !== null;
 }
 
 export class LedgerSyncCliHelper {
@@ -83,8 +87,8 @@ export class LedgerSyncCliHelper {
     cloudSyncApiBaseUrl: LedgerSyncCliHelper.cloudSyncApiBaseUrl,
   };
 
-  private static updateKeysAndArgs(output: LedgerOutput) {
-    if (!output) return;
+  private static updateKeysAndArgs(output: unknown) {
+    if (!isLedgerOutput(output)) return;
     LedgerSyncCliHelper.updateKeyRingCredentials(output);
     LedgerSyncCliHelper.updateSyncArgs(output);
   }
@@ -114,31 +118,18 @@ export class LedgerSyncCliHelper {
     }
   }
 
-  static parseData(pulledData: string | void) {
-    invariant(pulledData, "Ledger Sync: pulledData is undefined");
-    try {
-      return JSON.parse(pulledData);
-    } catch (error) {
-      throw new Error(`Failed to parse pulledData: ${error}`);
-    }
-  }
-
-  static getCloudSyncResponse(page: Page) {
-    return new Promise(resolve => {
-      page.on("response", response => {
-        if (
-          response.url().startsWith(LedgerSyncCliHelper.cloudSyncApiBaseUrl + "/atomic/v1/live") &&
-          response.status() === 200
-        ) {
-          resolve(response);
-        }
-      });
-    });
+  static getCloudSyncResponse(page: Page): Promise<Response> {
+    return page.waitForResponse(
+      response =>
+        response.url().startsWith(LedgerSyncCliHelper.cloudSyncApiBaseUrl + "/atomic/v1/live") &&
+        response.status() === 200,
+      { timeout: 60_000 },
+    );
   }
 
   static async initializeLedgerKeyRingProtocol() {
     return CLI.ledgerKeyRingProtocol({ initMemberCredentials: true }).then(output => {
-      LedgerSyncCliHelper.updateKeysAndArgs(output as LedgerOutput);
+      LedgerSyncCliHelper.updateKeysAndArgs(output);
       return output;
     });
   }
@@ -148,7 +139,7 @@ export class LedgerSyncCliHelper {
       getKeyRingTree: true,
       ...LedgerSyncCliHelper.ledgerKeyRingProtocolArgs,
     }).then(out => {
-      LedgerSyncCliHelper.updateKeysAndArgs(out as LedgerOutput);
+      LedgerSyncCliHelper.updateKeysAndArgs(out);
       return out;
     });
     await activateLedgerSync();
@@ -169,23 +160,12 @@ export class LedgerSyncCliHelper {
     });
   }
 
-  static checkSynchronizationSuccess(page: Page, app: Application) {
-    app.layout.waitForAccountsSyncToBeDone();
-    return LedgerSyncCliHelper.getCloudSyncResponse(page);
-  }
-
-  static checkAccountDeletion(parsedData: any, accountId: string): any {
-    return parsedData.updateEvent.data.accounts?.find(
-      (account: { id: string }) => account.id === accountId,
-    );
-  }
-
-  static isAccountRenamedCorrectly(
-    parsedData: any,
-    accountId: string,
-    expectedName: string,
-  ): boolean {
-    const data = parsedData.updateEvent.data;
-    return data.accountNames?.[accountId] === expectedName;
+  static async checkSynchronizationSuccess(
+    cloudSyncResponse: Promise<Response>,
+    app: Application,
+  ): Promise<void> {
+    await app.layout.waitForAccountsSyncToBeDone();
+    const response = await cloudSyncResponse;
+    expect(response.ok(), "Cloud Sync response should complete").toBe(true);
   }
 }

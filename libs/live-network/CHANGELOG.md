@@ -1,5 +1,43 @@
 # @ledgerhq/live-network
 
+## 2.6.0
+
+### Minor Changes
+
+- [#16989](https://github.com/LedgerHQ/ledger-live/pull/16989) [`5bd95a9`](https://github.com/LedgerHQ/ledger-live/commit/5bd95a9ceaac4d08c87d635f721265357368f8ee) Thanks [@Justkant](https://github.com/Justkant)! - Set Axios User-Agent from LEDGER_CLIENT_VERSION in Node and Bun runtimes
+
+### Patch Changes
+
+- Updated dependencies [[`b866ea6`](https://github.com/LedgerHQ/ledger-live/commit/b866ea67bcbd408a33dbc9233ef55298e2a8ef25), [`d308b1a`](https://github.com/LedgerHQ/ledger-live/commit/d308b1a6b9c629839f051cf367a527f4232120c7)]:
+  - @ledgerhq/live-env@2.34.0
+  - @ledgerhq/errors@6.35.0
+
+## 2.6.0-next.0
+
+### Minor Changes
+
+- [#16989](https://github.com/LedgerHQ/ledger-live/pull/16989) [`5bd95a9`](https://github.com/LedgerHQ/ledger-live/commit/5bd95a9ceaac4d08c87d635f721265357368f8ee) Thanks [@Justkant](https://github.com/Justkant)! - Set Axios User-Agent from LEDGER_CLIENT_VERSION in Node and Bun runtimes
+
+### Patch Changes
+
+- Updated dependencies [[`b866ea6`](https://github.com/LedgerHQ/ledger-live/commit/b866ea67bcbd408a33dbc9233ef55298e2a8ef25), [`d308b1a`](https://github.com/LedgerHQ/ledger-live/commit/d308b1a6b9c629839f051cf367a527f4232120c7)]:
+  - @ledgerhq/live-env@2.34.0-next.0
+  - @ledgerhq/errors@6.35.0-next.0
+
+## 2.5.2
+
+### Patch Changes
+
+- Updated dependencies [[`202cc42`](https://github.com/LedgerHQ/ledger-live/commit/202cc423b09662b5b25012b84124aecd4dc7245d)]:
+  - @ledgerhq/errors@6.34.1
+
+## 2.5.2-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`202cc42`](https://github.com/LedgerHQ/ledger-live/commit/202cc423b09662b5b25012b84124aecd4dc7245d)]:
+  - @ledgerhq/errors@6.34.1-hotfix.0
+
 ## 2.5.1
 
 ### Patch Changes

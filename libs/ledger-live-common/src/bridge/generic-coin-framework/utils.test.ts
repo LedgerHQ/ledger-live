@@ -16,7 +16,7 @@ import {
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
 import { Account } from "@ledgerhq/types-live";
-import { GenericTransaction, OperationCommon } from "./types";
+import { GenericTransaction, GenericTransactionMode, OperationCommon } from "./types";
 import * as craftTransactionDataModule from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 
 jest.mock("@ledgerhq/coin-module-framework/logic/craftTransactionData", () => {
@@ -180,6 +180,17 @@ describe("Alpaca utils", () => {
       ],
       [
         "coin",
+        "finalize_unstake",
+        {},
+        {
+          parentType: "FINALIZE_UNSTAKE",
+          subType: undefined,
+          parentValue: new BigNumber(50),
+          parentRecipient: "recipient-address",
+        },
+      ],
+      [
+        "coin",
         "send",
         {},
         {
@@ -240,6 +251,17 @@ describe("Alpaca utils", () => {
         {
           parentType: "FEES",
           subType: "UNDELEGATE",
+          parentValue: new BigNumber(12),
+          parentRecipient: "contract-address",
+        },
+      ],
+      [
+        "token",
+        "finalize_unstake",
+        { subAccountId: "sub-account-id" },
+        {
+          parentType: "FEES",
+          subType: "FINALIZE_UNSTAKE",
           parentValue: new BigNumber(12),
           parentRecipient: "contract-address",
         },
@@ -376,6 +398,7 @@ describe("Alpaca utils", () => {
         ["send-eip1559", "send-eip1559"],
         ["stake", "stake"],
         ["unstake", "unstake"],
+        ["finalize_unstake", "finalize_unstake"],
         ["delegate", "stake"],
         ["undelegate", "unstake"],
       ])(
@@ -400,6 +423,29 @@ describe("Alpaca utils", () => {
           ),
         ).toThrow("Unsupported transaction mode: any");
       });
+
+      it.each([
+        { mode: "stake", useAllAmount: false },
+        { mode: "stake", useAllAmount: true },
+        { mode: "unstake", useAllAmount: false },
+        { mode: "unstake", useAllAmount: true },
+        { mode: "finalize_unstake", useAllAmount: false },
+        { mode: "finalize_unstake", useAllAmount: true },
+      ] as const)(
+        "preserves user-typed amount and useAllAmount=$useAllAmount for $mode staking intent",
+        ({ mode, useAllAmount }) => {
+          const intent = transactionToIntent(
+            { currency: { name: "tezos", units: [{}] } } as Account,
+            { mode, amount: new BigNumber(100), useAllAmount } as GenericTransaction,
+          );
+          expect(intent).toMatchObject({
+            intentType: "staking",
+            type: mode,
+            amount: 100n,
+            useAllAmount,
+          });
+        },
+      );
 
       it("supersedes the logic with a custom function", () => {
         const computeIntentType = (transaction: GenericTransaction) =>
@@ -499,6 +545,81 @@ describe("Alpaca utils", () => {
         expect(defaultCraftTransactionDataSpy).not.toHaveBeenCalled();
       });
     });
+
+    it.each(["delegate", "undelegate", "redelegate", "claimReward"] as GenericTransactionMode[])(
+      "should return a correct intent for a delegation transaction with mode %s",
+      mode => {
+        const valAddress = "0x5A7FC11397E9a8AD41BF10bf13F22B0a63f96f6d";
+        const dstValAddress = "0x82eB45562F991329ED2867F43fc60F0Ba52C3Dab";
+        const transaction: GenericTransaction = {
+          amount: BigNumber(1),
+          family: "evm",
+          mode,
+          recipient: "0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1",
+          valAddress,
+          dstValAddress,
+        };
+        const computeIntentType = transaction => transaction.mode;
+
+        const intent = transactionToIntent(
+          {
+            currency: {
+              name: "ethereum",
+              units: [
+                {
+                  name: "ethereum",
+                  code: "ETH",
+                  magnitude: 1,
+                },
+              ],
+            },
+          } as Account,
+          transaction,
+          computeIntentType,
+        );
+        expect(intent).toMatchObject({
+          intentType: "staking",
+          mode,
+          valAddress,
+          dstValAddress,
+        });
+      },
+    );
+
+    it.each(["delegate", "undelegate", "redelegate", "claimReward"] as GenericTransactionMode[])(
+      "should return an intent without delegation fields when missing from transaction for mode %s",
+      mode => {
+        const transaction: GenericTransaction = {
+          amount: BigNumber(1),
+          family: "evm",
+          mode,
+          recipient: "0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1",
+        };
+        const computeIntentType = transaction => transaction.mode;
+
+        const intent = transactionToIntent(
+          {
+            currency: {
+              name: "ethereum",
+              units: [
+                {
+                  name: "ethereum",
+                  code: "ETH",
+                  magnitude: 1,
+                },
+              ],
+            },
+          } as Account,
+          transaction,
+          computeIntentType,
+        );
+
+        expect(intent.intentType).toBe("staking");
+        expect(intent.mode).toBe(undefined);
+        expect(intent.valAddress).toBe(undefined);
+        expect(intent.dstValAddress).toBe(undefined);
+      },
+    );
   });
 
   describe("findCryptoCurrencyByNetwork", () => {
@@ -683,7 +804,7 @@ describe("Alpaca utils", () => {
       });
     });
 
-    it.each([["FEES"], ["DELEGATE"], ["UNDELEGATE"]])(
+    it.each([["FEES"], ["DELEGATE"], ["UNDELEGATE"], ["REDELEGATE"]])(
       "handles %s operation where value = value + fees",
       operationType => {
         const op = {

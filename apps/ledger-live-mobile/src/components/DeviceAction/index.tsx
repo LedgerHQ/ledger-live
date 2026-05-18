@@ -138,6 +138,7 @@ type Status = PartialNullable<{
 type Props<H extends Status, P> = {
   onResult?: (_: NonNullable<P>) => Promise<void> | void;
   onError?: (_: Error) => Promise<void> | void;
+  onOpenManager?: () => void;
   renderOnResult?: (_: P) => React.JSX.Element | null;
   status: H;
   device: Device;
@@ -181,6 +182,7 @@ export default function DeviceAction<R, H extends Status, P>({
 export function DeviceActionDefaultRendering<R, H extends Status, P>({
   onResult,
   onError,
+  onOpenManager,
   device: selectedDevice,
   renderOnResult,
   onSelectDeviceLink,
@@ -488,6 +490,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
       t,
       navigation,
       appNames,
+      onOpenManager,
       colors,
       theme,
     });

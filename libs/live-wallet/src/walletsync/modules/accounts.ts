@@ -255,12 +255,12 @@ export function diffWalletSyncState(
  * make it work) and that it has all the necessary fields automatically filled.
  * in case of failure, the promise would fail and it's your responsability to re-try later in case of failure. we will have to implement a retrial strategy and minimize calls to integrateNewAccountDescriptor
  * @param account
- * @param getAccountBridge: implementation of live-common's getAccountBridge (since this lib don't depends on live-common)
+ * @param getAccountBridge: implementation of live-common's getAccountBridge (since this lib don't depends on live-common). May return AccountBridge or Promise<AccountBridge> — both are awaited.
  *
  */
 export async function integrateNewAccountDescriptor<T extends TransactionCommon>(
   accountDescriptor: AccountDescriptor,
-  getAccountBridge: (account: Account) => AccountBridge<T>,
+  getAccountBridge: (account: Account) => AccountBridge<T> | Promise<AccountBridge<T>>,
   bridgeCache: BridgeCacheSystem,
   blacklistedTokenIds?: string[],
 ): Promise<Account> {

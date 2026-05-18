@@ -5,6 +5,10 @@ on:
     - cron: "0 2 * * TUE-SAT" # At 02:00 on Tuesday, Wednesday, Thursday, Friday and Saturday (UTC)
   workflow_dispatch:
 
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   nightly-release:
     name: Nightly Release
@@ -61,6 +65,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm changeset version --snapshot nightly
 
+      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
+        id: post-wallet-cli-version
+        with:
+          path: ${{ github.workspace }}/apps/wallet-cli
+
       - name: authenticate with npm
         uses: actions/setup-node@v4
         with:
@@ -116,6 +125,24 @@ jobs:
               workflow_id: "nightly-mobile.yml",
               inputs: {
                   version_override: "${{ steps.post-mobile-version.outputs.version }}"
+              }
+            });
+
+      - uses: actions/github-script@v7
+        name: trigger nightly wallet-cli sign and JFrog publish
+        with:
+          github-token: ${{ steps.generate-token.outputs.token }}
+          script: |
+            github.rest.actions.createWorkflowDispatch({
+              owner: "ledgerhq",
+              repo: "ledger-live-build",
+              ref: "main",
+              workflow_id: "nightly-wallet-cli.yml",
+              inputs: {
+                ref: "${{ steps.get-sha.outputs.sha }}",
+                version_override: "${{ steps.post-wallet-cli-version.outputs.version }}",
+                publish_to_jfrog: "true",
+                jfrog_registry: "jfrog.ledgerlabs.net/artifactory/api/npm/ledgerlive-npm-prod-public"
               }
             });
 

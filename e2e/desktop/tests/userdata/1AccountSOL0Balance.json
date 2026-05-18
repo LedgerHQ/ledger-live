@@ -1,0 +1,229 @@
+{
+  "data": {
+    "PLAYWRIGHT_RUN": {
+      "localStorage": {
+        "acceptedTermsVersion": "2042-01-01"
+      }
+    },
+    "settings": {
+      "hasCompletedOnboarding": true,
+      "counterValue": "USD",
+      "language": "en",
+      "locale": "en-US",
+      "theme": null,
+      "region": null,
+      "orderAccounts": "balance|desc",
+      "countervalueFirst": false,
+      "autoLockTimeout": 10,
+      "selectedTimeRange": "month",
+      "currenciesSettings": {},
+      "pairExchanges": {},
+      "developerMode": false,
+      "loaded": true,
+      "shareAnalytics": false,
+      "sharePersonalizedRecommandations": false,
+      "hasSeenAnalyticsOptInPrompt": true,
+      "sentryLogs": true,
+      "lastUsedVersion": "99.99.99",
+      "dismissedBanners": [],
+      "accountsViewMode": "list",
+      "showAccountsHelperBanner": true,
+      "hideEmptyTokenAccounts": false,
+      "filterTokenOperationsZeroAmount": true,
+      "sidebarCollapsed": false,
+      "discreetMode": false,
+      "preferredDeviceModel": "stax",
+      "hasInstalledApps": true,
+      "lastSeenDevice": {
+        "modelId": "stax",
+        "deviceInfo": {
+          "version": "1.9.1",
+          "mcuVersion": "5.31.3",
+          "seVersion": "1.9.1",
+          "majMin": "1.9.1",
+          "providerName": null,
+          "targetId": 857735172,
+          "hasDevFirmware": false,
+          "seTargetId": 857735172,
+          "isOSU": false,
+          "isBootloader": false,
+          "isRecoveryMode": false,
+          "managerAllowed": true,
+          "pinValidated": true,
+          "onboarded": true,
+          "bootloaderVersion": "4.55.3",
+          "hardwareVersion": 0,
+          "languageId": 0,
+          "seFlags": {
+            "0": 238,
+            "1": 0,
+            "2": 0,
+            "3": 0
+          }
+        },
+        "apps": []
+      },
+      "mevProtection": true,
+      "devicesModelList": ["stax"],
+      "lastSeenCustomImage": {
+        "size": 0,
+        "hash": ""
+      },
+      "latestFirmware": {
+        "osu": {
+          "id": 1091,
+          "perso": "perso_11",
+          "firmware": "stax/1.10.0/fw_1.9.1/upgrade_osu_1.10.0",
+          "firmware_key": "stax/1.10.0/fw_1.9.1/upgrade_osu_1.10.0_key",
+          "hash": "",
+          "next_se_firmware_final_version": 559,
+          "name": "",
+          "date_creation": "",
+          "date_last_modified": "",
+          "device_versions": [],
+          "providers": [],
+          "previous_se_firmware_final_version": []
+        },
+        "final": {
+          "id": 559,
+          "name": "1.10.0",
+          "version": "1.10.0",
+          "perso": "perso_11",
+          "firmware": "",
+          "firmware_key": "",
+          "hash": "",
+          "bytes": 494080,
+          "mcu_versions": [245],
+          "se_firmware": 0,
+          "date_creation": "",
+          "date_last_modified": "",
+          "device_versions": [],
+          "application_versions": [],
+          "osu_versions": [],
+          "providers": []
+        },
+        "shouldFlashMCU": true
+      },
+      "blacklistedTokenIds": [],
+      "deepLinkUrl": null,
+      "firstTimeLend": false,
+      "showClearCacheBanner": false,
+      "allowDebugApps": false,
+      "allowReactQueryDebug": false,
+      "allowExperimentalApps": false,
+      "enablePlatformDevTools": false,
+      "catalogProvider": "production",
+      "enableLearnPageStagingUrl": false,
+      "swap": {
+        "hasAcceptedIPSharing": false,
+        "acceptedProviders": [],
+        "selectableCurrencies": []
+      },
+      "overriddenFeatureFlags": {},
+      "featureFlagsButtonVisible": false,
+      "vaultSigner": {
+        "enabled": false,
+        "host": "",
+        "token": "",
+        "workspace": ""
+      },
+      "supportedCounterValues": [],
+      "dismissedContentCards": {},
+      "anonymousBrazeId": "anonymous_id_10",
+      "starredMarketCoins": [],
+      "hasBeenUpsoldRecover": true,
+      "hasBeenRedirectedToPostOnboarding": true,
+      "onboardingUseCase": null,
+      "lastOnboardedDevice": {
+        "deviceId": "",
+        "modelId": "stax",
+        "wired": false
+      },
+      "alwaysShowMemoTagInfo": true,
+      "anonymousUserNotifications": {},
+      "hasSeenWalletV4Tour": true,
+      "doNotAskAgainSkipMemo": false,
+      "deprecationDoNotRemind": []
+    },
+    "accounts": [
+      {
+        "data": {
+          "id": "js:2:solana:fF5MNTvjSTomYN1CdC5NgeNj1hK7kSczvJqkSTaDzKu:solanaSub",
+          "seedIdentifier": "3LxBt1bxrv2GXy43gpq5sbewy1bewxP4yArPqJnh2ZAe",
+          "used": false,
+          "derivationMode": "solanaSub",
+          "index": 0,
+          "freshAddress": "fF5MNTvjSTomYN1CdC5NgeNj1hK7kSczvJqkSTaDzKu",
+          "freshAddressPath": "44'/501'/0'",
+          "blockHeight": 419019196,
+          "creationDate": "2026-05-11T10:04:28.237Z",
+          "operationsCount": 0,
+          "operations": [],
+          "pendingOperations": [],
+          "currencyId": "solana",
+          "balance": "0",
+          "spendableBalance": "0",
+          "balanceHistoryCache": {
+            "HOUR": {
+              "latestDate": 1778493600000,
+              "balances": []
+            },
+            "DAY": {
+              "latestDate": 1778450400000,
+              "balances": []
+            },
+            "WEEK": {
+              "latestDate": 1778364000000,
+              "balances": []
+            }
+          },
+          "subAccounts": [],
+          "solanaResources": {
+            "stakes": "[]",
+            "unstakeReserve": "0"
+          },
+          "swapHistory": [],
+          "nfts": [],
+          "name": "Solana 1",
+          "starred": false
+        },
+        "version": 1
+      }
+    ],
+    "countervalues": {},
+    "postOnboarding": {
+      "deviceModelId": "stax",
+      "walletEntryPointDismissed": false,
+      "entryPointFirstDisplayedDate": "2026-05-11T10:01:39.965Z",
+      "walletEntryPointEligibleForPortfolio": null,
+      "actionsToComplete": ["assetsTransfer", "buyCrypto", "syncAccounts", "customImage"],
+      "actionsCompleted": {
+        "assetsTransfer": false,
+        "buyCrypto": false,
+        "syncAccounts": false,
+        "customImage": false
+      },
+      "lastActionCompleted": null,
+      "postOnboardingInProgress": true
+    },
+    "wallet": {
+      "walletSyncState": {
+        "data": null,
+        "version": 0
+      },
+      "nonImportedAccountInfos": [],
+      "accountsData": {
+        "accountNames": [],
+        "starredAccountIds": []
+      },
+      "recentAddresses": {}
+    },
+    "identities": {
+      "userId": "08cf3393-c5eb-4ea7-92de-0deea22e3971",
+      "datadogId": "4d0922a5-fed4-429c-b711-34b50f7917a7",
+      "deviceIds": ["e108d2a253aef4919c7647dd1082943573afd3003f5c9499ac77d6082dc51125"],
+      "pushDevicesSyncState": "unsynced",
+      "pushDevicesServiceUrl": null
+    }
+  }
+}

@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { AssetDetailCurrencyProps } from "LLM/features/AssetDetail/types";
 import { useTranslation, useLocale } from "~/context/Locale";
 import { counterValueFormatter } from "LLM/features/Market/utils";
 import { useAssetMarketData } from "../../hooks/useAssetMarketData";
@@ -43,7 +43,7 @@ function formatPercentage(value: number): string {
   return `${sign}${value.toFixed(2)}%`;
 }
 
-export function usePricePerformanceViewModel(currency: CryptoCurrency | undefined) {
+export function usePricePerformanceViewModel(currency: AssetDetailCurrencyProps) {
   const { t } = useTranslation();
   const { locale } = useLocale();
   const { marketCurrency, counterCurrency, isLoading, isError } = useAssetMarketData(currency);

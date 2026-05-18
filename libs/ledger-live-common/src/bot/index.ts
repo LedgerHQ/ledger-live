@@ -19,7 +19,8 @@ import type {
 } from "./types";
 import { promiseAllBatched } from "../promise";
 import { isCurrencySupported, formatCurrencyUnit, getFiatCurrencyByTicker } from "../currencies";
-import { formatAccount, isAccountEmpty, toAccountRaw } from "../account";
+import { formatAccount, toAccountRaw } from "../account";
+import { getAccountBridge } from "../bridge";
 import { runWithAppSpec } from "./engine";
 import { formatReportForConsole, formatError, formatTime } from "./formatters";
 import {
@@ -291,10 +292,18 @@ export async function bot({ disabled, filter }: Arg = {}): Promise<void> {
     );
   }
 
+  const allAccountsBefore = results.flatMap(s => s.accountsBefore ?? []);
+  const emptyById = new Map(
+    await Promise.all(
+      allAccountsBefore.map(
+        async a => [a.id, (await getAccountBridge(a)).isAccountEmpty(a)] as const,
+      ),
+    ),
+  );
   const specsWithoutFunds = results.filter(
     s =>
       !s.fatalError &&
-      ((s.accountsBefore && s.accountsBefore.every(isAccountEmpty)) ||
+      (s.accountsBefore?.every(a => emptyById.get(a.id)) ||
         (s.mutations && s.mutations.every(r => !r.mutation))),
   );
 
@@ -607,7 +616,7 @@ export async function bot({ disabled, filter }: Arg = {}): Promise<void> {
   });
 
   appendBody("\n```\n");
-  appendBody(allAccountsAfter.map(a => formatAccount(a, "head")).join("\n"));
+  appendBody((await Promise.all(allAccountsAfter.map(a => formatAccount(a, "head")))).join("\n"));
   appendBody("\n```\n");
 
   appendBody("\n</details>\n\n");

@@ -72,13 +72,15 @@ jobs:
 
       - name: lint
         run: pnpm desktop lint:ci
+
       - name: lint (guardrails)
         run: pnpm desktop lint:guardrails
+
       - name: typecheck
         run: pnpm desktop typecheck
+
       - name: check for dead code
         run: pnpm desktop knip-check
-        shell: bash
 
   unit-tests:
     name: "Desktop Unit Tests"
@@ -87,6 +89,7 @@ jobs:
       NODE_OPTIONS: "--max-old-space-size=7168 --no-network-family-autoselection"
       FORCE_COLOR: 3
       CI_OS: ubuntu-22.04
+      JEST_MAX_WORKERS: "75%"
     runs-on: ubuntu-22.04
     outputs:
       coverage_generated: ${{ contains(steps.generate_coverage.outcome, 'success') }}
@@ -110,13 +113,39 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
 
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
-        id: setup-test-desktop
-        with:
-          skip_builds: true
-          turborepo-server-port: ${{ steps.setup-caches.outputs.port }}
+      - name: Install dependencies
+        run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live"
+
+      - name: Build dependencies
+        run: pnpm exec nx run ledger-live-desktop:build-lib-deps
+
       - name: Run unit tests
-        run: pnpm desktop test:jest:coverage
+        shell: bash
+        run: |
+          set -euo pipefail
+          CPUS="$(nproc 2>/dev/null || echo "?")"
+          echo "::group::Jest CI metrics (desktop coverage)"
+          echo "runner_os=${CI_OS:-unknown} cpu_count=${CPUS} JEST_MAX_WORKERS=${JEST_MAX_WORKERS:-}"
+          node -e '
+            const os = require("os");
+            const n = os.cpus().length;
+            const w = process.env.JEST_MAX_WORKERS || "50%";
+            let m;
+            if (String(w).endsWith("%")) {
+              m = Math.max(1, Math.floor((n * parseFloat(String(w))) / 100));
+            } else if (/^\d+$/.test(String(w))) {
+              m = Math.max(1, parseInt(w, 10));
+            } else {
+              m = w;
+            }
+            console.log("effective_max_workers_estimate=" + m);
+          '
+          echo "::endgroup::"
+          START_TS=$(date +%s)
+          pnpm desktop test:jest:coverage
+          END_TS=$(date +%s)
+          echo "::notice::jest_ci_metrics app=ledger-live-desktop jest_wall_seconds=$((END_TS - START_TS)) cpu_count=${CPUS} JEST_MAX_WORKERS=${JEST_MAX_WORKERS:-}"
+
       - name: Upload unit test coverage
         id: generate_coverage
         if: ${{ !cancelled() }}

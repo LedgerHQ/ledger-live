@@ -1,0 +1,35 @@
+import React from "react";
+import { SectionHeader } from "../../SectionHeader";
+import { PricePerformanceSectionSkeleton } from "../components/PricePerformanceSectionSkeleton";
+import { PricePerformanceListRow } from "./components/PricePerformanceListRow";
+import type { PricePerformanceViewModelResult } from "./hooks/usePricePerformanceViewModel";
+
+type Props = Readonly<PricePerformanceViewModelResult>;
+
+export function PricePerformanceView({ sectionTitle, athBlock, atlBlock, showSkeleton }: Props) {
+  return (
+    <div className="flex min-w-0 flex-col gap-16">
+      <SectionHeader title={sectionTitle} />
+      <div className="text-body">
+        {showSkeleton ? (
+          <PricePerformanceSectionSkeleton />
+        ) : (
+          <div className="flex flex-col gap-12">
+            <PricePerformanceListRow
+              leadingTitle={athBlock.title}
+              leadingDescription={athBlock.dateLine}
+              trailingTitle={athBlock.priceText}
+              trailingDescription={athBlock.changeText}
+            />
+            <PricePerformanceListRow
+              leadingTitle={atlBlock.title}
+              leadingDescription={atlBlock.dateLine}
+              trailingTitle={atlBlock.priceText}
+              trailingDescription={atlBlock.changeText}
+            />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

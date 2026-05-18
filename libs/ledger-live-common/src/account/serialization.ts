@@ -26,21 +26,22 @@ export function toBalanceHistoryRaw(b: BalanceHistory): BalanceHistoryRaw {
   return b.map(({ date, value }) => [date.toISOString(), value.toString()]);
 }
 
-export const toOperationRaw = (
+export const toOperationRaw = async (
   operation: Operation,
   preserveSubOperation?: boolean,
-): OperationRaw => {
-  let toOperationRaw: AccountBridge<TransactionCommon>["toOperationExtraRaw"] | undefined;
+): Promise<OperationRaw> => {
+  let toOperationExtraRaw: AccountBridge<TransactionCommon>["toOperationExtraRaw"] | undefined;
+
   if (operation.extra) {
     const family = inferFamilyFromAccountId(operation.accountId);
 
     if (family) {
-      const bridge = getAccountBridgeByFamily(family, operation.accountId);
-      toOperationRaw = bridge.toOperationExtraRaw;
+      const bridge = await getAccountBridgeByFamily(family, operation.accountId);
+      toOperationExtraRaw = bridge.toOperationExtraRaw;
     }
   }
 
-  return commonToOperationRaw(operation, preserveSubOperation, toOperationRaw);
+  return commonToOperationRaw(operation, preserveSubOperation, toOperationExtraRaw);
 };
 
 export const fromOperationRaw = async (
@@ -64,7 +65,7 @@ export const fromOperationRaw = async (
 
 export async function fromAccountRaw(rawAccount: AccountRaw): Promise<Account> {
   const currency = getCryptoCurrencyById(rawAccount.currencyId);
-  const bridge = getAccountBridgeByFamily(currency.family, rawAccount.id);
+  const bridge = await getAccountBridgeByFamily(currency.family, rawAccount.id);
 
   return await commonFromAccountRaw(rawAccount, {
     assignFromAccountRaw: bridge.assignFromAccountRaw,

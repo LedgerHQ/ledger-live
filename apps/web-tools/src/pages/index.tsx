@@ -23,6 +23,9 @@ export default function Home() {
           <Link to="/networkTroubleshoot">Network Troubleshooting</Link>
         </li>
         <li>
+          <Link to="/pnl-calculator">PnL Calculator</Link>
+        </li>
+        <li>
           <Link to="/sync">Synchronisation</Link>
         </li>
         <li>

@@ -1,13 +1,15 @@
 import React from "react";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { DistributionItem } from "@ledgerhq/types-live";
+import type { AssetDetailCurrencyProps } from "LLM/features/AssetDetail/types";
 import { useBalanceDetailsViewModel } from "./useBalanceDetailsViewModel";
 import { BalanceDetailsView } from "./BalanceDetailsView";
 
 type Props = Readonly<{
-  currency: CryptoCurrency | undefined;
+  currency: AssetDetailCurrencyProps;
+  distributionItem: DistributionItem | undefined;
 }>;
 
-export function BalanceDetails({ currency }: Props) {
-  const viewModel = useBalanceDetailsViewModel(currency);
+export function BalanceDetails({ currency, distributionItem }: Props) {
+  const viewModel = useBalanceDetailsViewModel(currency, distributionItem);
   return <BalanceDetailsView {...viewModel} />;
 }

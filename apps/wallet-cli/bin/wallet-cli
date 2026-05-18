@@ -1,0 +1,48 @@
+#!/usr/bin/env node
+"use strict";
+
+const { spawnSync } = require("node:child_process");
+
+const platformPackages = {
+  "darwin:arm64": ["@ledgerhq/wallet-cli-darwin-arm64", "bin/wallet-cli"],
+  "linux:arm64": ["@ledgerhq/wallet-cli-linux-arm64", "bin/wallet-cli"],
+  "linux:x64": ["@ledgerhq/wallet-cli-linux-x64", "bin/wallet-cli"],
+  "win32:x64": ["@ledgerhq/wallet-cli-windows-x64", "bin/wallet-cli.exe"],
+};
+
+const platformKey = `${process.platform}:${process.arch}`;
+const platformPackage = platformPackages[platformKey];
+
+if (!platformPackage) {
+  console.error(`wallet-cli does not provide a binary for ${platformKey}.`);
+  process.exit(1);
+}
+
+const [packageName, binaryPath] = platformPackage;
+let executable;
+
+try {
+  executable = require.resolve(`${packageName}/${binaryPath}`);
+} catch (error) {
+  console.error(
+    `The wallet-cli binary package for ${platformKey} is not installed. ` +
+      `Try reinstalling @ledgerhq/wallet-cli and ensure optional dependencies are enabled.`,
+  );
+  process.exit(1);
+}
+
+const result = spawnSync(executable, process.argv.slice(2), {
+  stdio: "inherit",
+  windowsHide: false,
+});
+
+if (result.error) {
+  console.error(result.error.message);
+  process.exit(1);
+}
+
+if (typeof result.status === "number") {
+  process.exit(result.status);
+}
+
+process.exit(1);

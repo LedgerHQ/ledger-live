@@ -1,31 +1,22 @@
-import { renderHook } from "@tests/test-renderer";
+import { renderHook, waitFor } from "@tests/test-renderer";
+import { server, http, HttpResponse } from "@tests/server";
 import { useAssetMarketData } from "../useAssetMarketData";
-import { useGetCurrencyDataQuery } from "@ledgerhq/live-common/market/state-manager/marketApi";
 import { mockBtcCryptoCurrency } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
-import { marketCurrencyData } from "../../__fixtures__/marketCurrencyData";
 
-jest.mock("@ledgerhq/live-common/market/state-manager/marketApi", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/market/state-manager/marketApi"),
-  useGetCurrencyDataQuery: jest.fn(),
-}));
-
-const mockUseGetCurrencyDataQuery = jest.mocked(useGetCurrencyDataQuery);
+const COUNTERVALUES_API = "https://countervalues.live.ledger.com";
 
 describe("useAssetMarketData", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-    mockUseGetCurrencyDataQuery.mockReturnValue({
-      data: marketCurrencyData,
-      isFetching: false,
-      isError: false,
-    } as unknown as ReturnType<typeof useGetCurrencyDataQuery>);
-  });
-
   describe("data forwarding", () => {
-    it("returns marketCurrency from the query", () => {
+    it("returns marketCurrency from the market API", async () => {
       const { result } = renderHook(() => useAssetMarketData(mockBtcCryptoCurrency));
 
-      expect(result.current.marketCurrency).toBe(marketCurrencyData);
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false);
+        expect(result.current.marketCurrency).toBeDefined();
+      });
+
+      expect(result.current.marketCurrency?.price).toBeDefined();
+      expect(result.current.isError).toBe(false);
     });
 
     it("returns counterCurrency from market params", () => {
@@ -36,50 +27,36 @@ describe("useAssetMarketData", () => {
   });
 
   describe("loading state", () => {
-    it("reflects isFetching from the query", () => {
-      mockUseGetCurrencyDataQuery.mockReturnValue({
-        data: undefined,
-        isFetching: true,
-        isError: false,
-      } as unknown as ReturnType<typeof useGetCurrencyDataQuery>);
-
+    it("starts with isLoading true before data resolves", () => {
       const { result } = renderHook(() => useAssetMarketData(mockBtcCryptoCurrency));
 
       expect(result.current.isLoading).toBe(true);
+      expect(result.current.marketCurrency).toBeUndefined();
     });
   });
 
   describe("error state", () => {
-    it("reflects isError from the query", () => {
-      mockUseGetCurrencyDataQuery.mockReturnValue({
-        data: undefined,
-        isFetching: false,
-        isError: true,
-      } as unknown as ReturnType<typeof useGetCurrencyDataQuery>);
+    it("returns isError true when the market API fails", async () => {
+      server.use(
+        http.get(`${COUNTERVALUES_API}/v3/markets`, () => HttpResponse.json(null, { status: 500 })),
+      );
 
       const { result } = renderHook(() => useAssetMarketData(mockBtcCryptoCurrency));
+
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false);
+      });
 
       expect(result.current.isError).toBe(true);
     });
   });
 
   describe("skip query", () => {
-    it("skips the query when currency is undefined", () => {
-      renderHook(() => useAssetMarketData(undefined));
+    it("does not fetch when currency is undefined", () => {
+      const { result } = renderHook(() => useAssetMarketData(undefined));
 
-      expect(mockUseGetCurrencyDataQuery).toHaveBeenCalledWith(
-        expect.objectContaining({ id: "" }),
-        expect.objectContaining({ skip: true }),
-      );
-    });
-
-    it("passes the currency id to the query", () => {
-      renderHook(() => useAssetMarketData(mockBtcCryptoCurrency));
-
-      expect(mockUseGetCurrencyDataQuery).toHaveBeenCalledWith(
-        expect.objectContaining({ id: "bitcoin" }),
-        expect.objectContaining({ skip: false }),
-      );
+      expect(result.current.marketCurrency).toBeUndefined();
+      expect(result.current.isLoading).toBe(false);
     });
   });
 });
