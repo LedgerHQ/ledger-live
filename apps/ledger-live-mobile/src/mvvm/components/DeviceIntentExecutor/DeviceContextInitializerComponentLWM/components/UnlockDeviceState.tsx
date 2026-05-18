@@ -1,6 +1,6 @@
 import React from "react";
 import { DeviceInteractionRequiredType, type EnsureAppReadyState } from "@ledgerhq/live-dmk-shared";
-import { UnlockDevice } from "LLM/components/DeviceGenericStates/UnlockDevice";
+import { UnlockDevice } from "LLM/components/DeviceIntentExecutor/components/DeviceGenericStates/UnlockDevice";
 import type { BaseInitializerStateProps } from "../types";
 
 type UnlockDeviceStateProps = BaseInitializerStateProps<

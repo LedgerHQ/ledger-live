@@ -1,6 +1,6 @@
 import React from "react";
 import { RetryableStateType, type EnsureAppReadyState } from "@ledgerhq/live-dmk-shared";
-import { RetryableDeviceLocked } from "LLM/components/DeviceGenericStates/RetryableDeviceLocked";
+import { RetryableDeviceLocked } from "LLM/components/DeviceIntentExecutor/components/DeviceGenericStates/RetryableDeviceLocked";
 import type { BaseInitializerStateProps } from "../types";
 
 type RetryableDeviceLockedStateProps = BaseInitializerStateProps<

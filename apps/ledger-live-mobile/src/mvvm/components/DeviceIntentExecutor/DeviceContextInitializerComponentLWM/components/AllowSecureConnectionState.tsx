@@ -1,6 +1,6 @@
 import React from "react";
 import { DeviceInteractionRequiredType, type EnsureAppReadyState } from "@ledgerhq/live-dmk-shared";
-import { ContinueOnDevice } from "LLM/components/DeviceGenericStates/ContinueOnDevice";
+import { ContinueOnDevice } from "LLM/components/DeviceIntentExecutor/components/DeviceGenericStates/ContinueOnDevice";
 import type { BaseInitializerStateProps } from "../types";
 
 type AllowSecureConnectionStateProps = BaseInitializerStateProps<
