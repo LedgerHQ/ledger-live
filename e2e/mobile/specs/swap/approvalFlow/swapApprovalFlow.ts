@@ -1,11 +1,11 @@
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
 import { performSwapUntilQuoteSelectionStep, revokeTokenApproval } from "../../../utils/swapUtils";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { beforeAllFunctionSwap } from "../swap.setup";
 import { getAmountFromUSD } from "@ledgerhq/live-common/e2e/swap";
 
 export function runSwapApprovalFlow(
-  fromAccount: Account,
+  fromAccount: TokenAccount,
   toAccount: Account,
   provider: Provider,
   tmsLinks: string[],
