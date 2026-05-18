@@ -31,6 +31,11 @@ function inferTags(projectRoot, packageName) {
 
   if (projectRoot.startsWith("features/")) {
     tags.add("scope:features");
+    if (projectRoot.startsWith("features/platform/")) {
+      tags.add("type:feature-platform");
+    } else if (projectRoot.startsWith("features/flow/")) {
+      tags.add("type:feature-flow");
+    }
   }
 
   if (projectRoot.startsWith("domain/")) {

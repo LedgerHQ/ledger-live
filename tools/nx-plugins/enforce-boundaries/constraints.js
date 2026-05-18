@@ -25,6 +25,19 @@ const DEP_CONSTRAINTS = [
     sourceTag: "type:domain-api",
     onlyDependOnLibsWithTags: ["type:domain-entity", "type:domain-api", "scope:shared"],
   },
+  {
+    sourceTag: "type:feature-platform",
+    onlyDependOnLibsWithTags: ["type:feature-platform", "scope:domain", "scope:shared"],
+  },
+  {
+    sourceTag: "type:feature-flow",
+    onlyDependOnLibsWithTags: [
+      "type:feature-flow",
+      "type:feature-platform",
+      "scope:domain",
+      "scope:shared",
+    ],
+  },
 ];
 
 module.exports = { DEP_CONSTRAINTS };
