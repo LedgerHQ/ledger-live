@@ -23,6 +23,6 @@
         "noUnusedParameters": true,
         "noFallthroughCasesInSwitch": true
     },
-    "include": ["./**/*.ts", "wdio.conf.ts"],
-    "exclude": ["node_modules"]
+    "include": ["./**/*.ts"],
+    "exclude": ["node_modules", "allure-*", "logs"]
 }
