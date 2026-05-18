@@ -596,9 +596,9 @@ export class SwapPage extends WebViewAppPage {
   @step("Click Give Authorization button")
   async clickGiveAuthorizationButton() {
     const webview = await this.getWebView();
-    const autorizationButton = webview.getByTestId(this.signPermitButton);
-    await expect(autorizationButton).toBeVisible();
-    await expect(autorizationButton).toBeEnabled();
-    await autorizationButton.click();
+    const authorizationButton = webview.getByTestId(this.signPermitButton);
+    await expect(authorizationButton).toBeVisible();
+    await expect(authorizationButton).toBeEnabled();
+    await authorizationButton.click();
   }
 }
