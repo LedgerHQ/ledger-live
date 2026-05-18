@@ -123,6 +123,21 @@ describe("AssetDetail screen layout", () => {
     expect(screen.getByText("Add")).toBeVisible();
   });
 
+  it("hides the See all addresses button when fewer than 5 accounts exist", () => {
+    render(<AssetDetailTestNavigator />, withBtcAccounts(3));
+
+    expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.addresses)).toBeVisible();
+    expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.seeAllAddresses)).toBeNull();
+  });
+
+  it("caps the addresses preview at 5 items and shows See all when 6+ accounts exist", () => {
+    render(<AssetDetailTestNavigator />, withBtcAccounts(6));
+
+    expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.addresses)).toBeVisible();
+    expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.seeAllAddresses)).toBeVisible();
+    expect(screen.getByText("See all")).toBeVisible();
+  });
+
   it("hides the transactions section when there are no operations", () => {
     render(<AssetDetailTestNavigator />, withBtcAccounts(2, 0));
 

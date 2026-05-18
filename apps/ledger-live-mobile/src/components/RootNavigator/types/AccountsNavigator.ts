@@ -34,6 +34,8 @@ export type AccountsNavigatorParamList = {
   };
   [ScreenName.CryptoAddresses]: {
     sourceScreenName: ScreenName;
+    accountIds?: string[];
+    hideAddAccount?: boolean;
   };
   [ScreenName.Crypto]: {
     sourceScreenName: ScreenName;
