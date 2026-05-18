@@ -1,8 +1,8 @@
 import { describe, it, expect, afterEach } from "bun:test";
 import { join } from "node:path";
 import { YAML } from "bun";
-import { runCli } from "../../test/helpers/cli-runner";
-import { makeSessionDir } from "../../test/helpers/session-fixture";
+import { runCli } from "../../helpers/cli-runner";
+import { makeSessionDir } from "../../helpers/session-fixture";
 
 const SAMPLE_ENTRIES = [
   {

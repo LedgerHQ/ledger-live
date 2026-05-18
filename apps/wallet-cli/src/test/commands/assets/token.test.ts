@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll } from "bun:test";
-import { MockServer } from "../helpers/mock-server";
-import { runCli } from "../helpers/cli-runner";
-import { USDT_CONTRACT, USDT_API_RESPONSE } from "../helpers/cal-fixtures";
+import { MockServer } from "../../helpers/mock-server";
+import { runCli } from "../../helpers/cli-runner";
+import { USDT_CONTRACT, USDT_API_RESPONSE } from "../../helpers/cal-fixtures";
 
 describe("assets token command", () => {
   const server = new MockServer([
