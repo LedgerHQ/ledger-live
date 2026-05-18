@@ -53,7 +53,8 @@ const Body = ({ onClose, params }: Props) => {
             name="Unstake Required"
             type="modal"
             flow="stake"
-            action={reason}
+            action="delegation"
+            reason={reason}
             currency="xtz"
           />
           <Text ff="Inter|Medium" fontSize={13} color="neutral.c80" style={{ lineHeight: 1.57 }}>

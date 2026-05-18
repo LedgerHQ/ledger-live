@@ -8,7 +8,7 @@ const UnstakeRequiredModal = () => (
   <Modal
     name={MODAL_NAME}
     centered
-    render={({ onClose, data }) => <Body onClose={onClose} params={data} />}
+    render={({ onClose, data }) => (data ? <Body onClose={onClose} params={data} /> : null)}
   />
 );
 
