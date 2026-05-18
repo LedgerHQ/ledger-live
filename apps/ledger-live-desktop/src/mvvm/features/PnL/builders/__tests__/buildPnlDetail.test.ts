@@ -5,6 +5,7 @@ import { buildPnlDetail } from "../buildPnlDetail";
 const fakeT = ((key: string) => key) as unknown as TFunction;
 
 const makeInput = (overrides: Partial<Parameters<typeof buildPnlDetail>[0]> = {}) => ({
+  namespace: "pnl.asset" as const,
   totalPnL: new BigNumber(100),
   unrealisedPnL: new BigNumber(60),
   realisedPnL: new BigNumber(40),
@@ -14,15 +15,25 @@ const makeInput = (overrides: Partial<Parameters<typeof buildPnlDetail>[0]> = {}
 });
 
 describe("buildPnlDetail", () => {
-  it("returns dialog title, description, and items in [unrealised, realised, total] order", () => {
-    const detail = buildPnlDetail(makeInput());
+  it("uses the asset namespace for translation keys", () => {
+    const detail = buildPnlDetail(makeInput({ namespace: "pnl.asset" }));
 
     expect(detail.title).toBe("pnl.asset.dialog.title");
-    expect(detail.description).toBe("pnl.asset.dialog.description");
     expect(detail.items.map(i => i.title)).toEqual([
       "pnl.asset.dialog.unrealisedReturn.title",
       "pnl.asset.dialog.realisedReturn.title",
       "pnl.asset.dialog.totalReturn.title",
+    ]);
+  });
+
+  it("uses the portfolio namespace for translation keys", () => {
+    const detail = buildPnlDetail(makeInput({ namespace: "pnl.portfolio" }));
+
+    expect(detail.title).toBe("pnl.portfolio.dialog.title");
+    expect(detail.items.map(i => i.title)).toEqual([
+      "pnl.portfolio.dialog.unrealisedReturn.title",
+      "pnl.portfolio.dialog.realisedReturn.title",
+      "pnl.portfolio.dialog.totalReturn.title",
     ]);
   });
 

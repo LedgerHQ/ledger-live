@@ -2,9 +2,6 @@ import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
-import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
-import { useAssetGroupPnL } from "@ledgerhq/wallet-pnl/hooks";
-import type { DistributionItem } from "@ledgerhq/types-live";
 import { useSelector } from "LLD/hooks/redux";
 import {
   counterValueCurrencySelector,
@@ -12,34 +9,36 @@ import {
   localeSelector,
 } from "~/renderer/reducers/settings";
 import { formatPrice } from "LLD/utils/formatPrice";
-import { buildPnlCards } from "./buildPnlCards";
-import { buildPnlDetail } from "./buildPnlDetail";
-import type { PnlViewModel } from "./types";
+import { buildPnlDetail } from "../builders/buildPnlDetail";
+import { buildUnrealisedReturnCard } from "../builders/buildUnrealisedReturnCard";
+import { buildInfoCard } from "../builders/buildInfoCard";
+import type { PnlNamespace, PnlNumbers, PnlSecondaryCardConfig, PnlViewModel } from "../types";
 
 const ZERO = new BigNumber(0);
 
-type Props = {
-  distributionItem: DistributionItem;
+export type UsePnlViewModelBaseInput = {
+  namespace: PnlNamespace;
+  pnlData: PnlNumbers | null;
+  secondaryCard: PnlSecondaryCardConfig;
+  accountsCount: number;
 };
 
-export function usePnlViewModel({ distributionItem }: Props): PnlViewModel {
+export function usePnlViewModelBase({
+  namespace,
+  pnlData,
+  secondaryCard,
+  accountsCount,
+}: UsePnlViewModelBaseInput): PnlViewModel {
   const { t } = useTranslation();
   const { shouldDisplayPnl: isPnlFlagOn } = useWalletFeaturesConfig("desktop");
   const discreet = useSelector(discreetModeSelector);
   const locale = useSelector(localeSelector);
   const fiatCurrency = useSelector(counterValueCurrencySelector);
-  const countervalues = useCountervaluesState();
 
   const [isDetailOpen, setDetailOpen] = useState(false);
   const openDetail = useCallback(() => setDetailOpen(true), []);
 
-  const groupPnl = useAssetGroupPnL(distributionItem.accounts, countervalues, fiatCurrency);
-  const {
-    unrealisedPnL = ZERO,
-    realisedPnL = ZERO,
-    totalPnL = ZERO,
-    averageEntryPrice = ZERO,
-  } = groupPnl ?? {};
+  const { unrealisedPnL = ZERO, realisedPnL = ZERO, totalPnL = ZERO } = pnlData ?? {};
 
   const formatFiat = useCallback(
     (value: BigNumber) =>
@@ -48,30 +47,33 @@ export function usePnlViewModel({ distributionItem }: Props): PnlViewModel {
   );
 
   const items = useMemo(
-    () =>
-      buildPnlCards({
+    () => [
+      buildUnrealisedReturnCard({
+        namespace,
         unrealisedPnL,
-        averageEntryPrice,
         formatFiat,
-        onUnrealisedReturnClick: openDetail,
+        onClick: openDetail,
         t,
       }),
-    [unrealisedPnL, averageEntryPrice, formatFiat, openDetail, t],
+      buildInfoCard({ ...secondaryCard, formatFiat, t }),
+    ],
+    [namespace, unrealisedPnL, formatFiat, openDetail, secondaryCard, t],
   );
 
   const detail = useMemo(
     () =>
       buildPnlDetail({
+        namespace,
         totalPnL,
         unrealisedPnL,
         realisedPnL,
         formatFiat,
         t,
       }),
-    [totalPnL, unrealisedPnL, realisedPnL, formatFiat, t],
+    [namespace, totalPnL, unrealisedPnL, realisedPnL, formatFiat, t],
   );
 
-  const shouldDisplayPnl = isPnlFlagOn && distributionItem.accounts.length > 0;
+  const shouldDisplayPnl = isPnlFlagOn && accountsCount > 0;
 
   return {
     shouldDisplayPnl,

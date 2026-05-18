@@ -1,26 +1,13 @@
 import React from "react";
 import type { DistributionItem } from "@ledgerhq/types-live";
-import { PnlDetail } from "LLD/features/PnL/components/PnlDetail";
-import { usePnlViewModel } from "./usePnlViewModel";
-import { PnLView } from "./PnLView";
+import { PnLSection as SharedPnLSection } from "LLD/features/PnL/components/PnLSection";
+import { useAssetPnlViewModel } from "./useAssetPnlViewModel";
 
 type Props = Readonly<{
   distributionItem: DistributionItem;
 }>;
 
 export function PnLSection({ distributionItem }: Props) {
-  const viewModel = usePnlViewModel({ distributionItem });
-
-  if (!viewModel.shouldDisplayPnl) return null;
-
-  return (
-    <>
-      <PnLView items={viewModel.items} />
-      <PnlDetail
-        open={viewModel.dialog.isOpen}
-        onOpenChange={viewModel.dialog.onOpenChange}
-        {...viewModel.detail}
-      />
-    </>
-  );
+  const viewModel = useAssetPnlViewModel({ distributionItem });
+  return <SharedPnLSection viewModel={viewModel} direction="row" />;
 }
