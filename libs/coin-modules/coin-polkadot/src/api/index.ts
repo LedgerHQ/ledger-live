@@ -2,8 +2,6 @@ import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBal
 import type {
   CoinModuleApi,
   Balance,
-  Block,
-  BlockInfo,
   BroadcastConfig,
   CraftedTransaction,
   Cursor,
@@ -27,6 +25,8 @@ import {
   defaultExtrinsicArg,
   estimateFees,
   getBalance,
+  getBlock,
+  getBlockInfo,
   lastBlock,
   listOperations,
 } from "../logic";
@@ -55,12 +55,8 @@ export function createApi(config: PolkadotConfig): CoinModuleApi {
       rejectBalanceOptions(() => getBalance(address), options),
     lastBlock,
     listOperations: operations,
-    getBlock(_height): Promise<Block> {
-      throw new Error("getBlock is not supported");
-    },
-    getBlockInfo(_height: number): Promise<BlockInfo> {
-      throw new Error("getBlockInfo is not supported");
-    },
+    getBlock,
+    getBlockInfo,
     getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
       throw new Error("getStakes is not supported");
     },

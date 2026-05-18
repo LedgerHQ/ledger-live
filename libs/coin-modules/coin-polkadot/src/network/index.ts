@@ -20,6 +20,7 @@ import {
   verifyValidatorAddresses as sidecarVerifyValidatorAddresses,
   getMetadata as sidecarGetMetadata,
   getLastBlock,
+  getBlockByHeight,
 } from "./sidecar";
 
 type PolkadotAPIAccount = {
@@ -128,6 +129,7 @@ export default {
   ): Promise<PolkadotAPIBalanceInfo> => sidecardGetBalances(address, currency),
   getOperations: bisonGetOperations,
   getLastBlock,
+  getBlockByHeight,
   getMinimumBondBalance,
   getRegistry,
   getStakingProgress: sidecarGetStakingProgress,

@@ -744,6 +744,17 @@ export const getLastBlock = async (
   return { hash: data.hash, height: parseInt(data.number), time: new Date() };
 };
 
+/**
+ * Get block info by height
+ */
+export const getBlockByHeight = async (
+  height: number,
+  currency?: CryptoCurrency,
+): Promise<BlockInfo> => {
+  const { data } = await callSidecar<BlockInfo>(`/blocks/${height}`, currency);
+  return data;
+};
+
 /*
  * CACHED REQUESTS
  * NOTE: we don't use the cache from family's `cache.js` to avoid cyclic imports.

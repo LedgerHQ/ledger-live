@@ -1,4 +1,4 @@
-import { SidecarRuntimeSpec, SidecarTransactionMaterial } from "./types";
+import { BlockInfo, SidecarRuntimeSpec, SidecarTransactionMaterial } from "./types";
 
 export const fixtureTransactionParams = {
   blockHash: "0x7346af1ba9531cffafd7b5cb30632ccf920f0770832b4215a49fe34519479c7a",
@@ -36,6 +36,63 @@ export const bittensorRuntimeSpec: SidecarRuntimeSpec = {
   specVersion: "200",
   chainType: {},
   properties: { ss58Format: "42", tokenDecimals: "9", tokenSymbol: "TAO" },
+};
+
+export const fixtureBlockByHeight: BlockInfo = {
+  number: "100",
+  hash: "0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890ab",
+  parentHash: "0xdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcd",
+  stateRoot: "0x0000000000000000000000000000000000000000000000000000000000000000",
+  extrinsicsRoot: "0x0000000000000000000000000000000000000000000000000000000000000000",
+  authorId: "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
+  logs: [],
+  extrinsics: [
+    // Unsigned inherent: timestamp.set — should be filtered out by getBlock
+    {
+      method: { pallet: "timestamp", method: "set" },
+      signature: null,
+      nonce: null,
+      args: { now: "1700000000000" },
+      tip: null,
+      hash: "0x1111111111111111111111111111111111111111111111111111111111111111",
+      era: { immortalEra: "0x00" },
+      events: [],
+      success: true,
+      paysFee: false,
+    },
+    // Signed transfer: balances.transferKeepAlive
+    {
+      method: { pallet: "balances", method: "transferKeepAlive" },
+      signature: { signer: "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY", signature: "0xaabb" },
+      nonce: "42",
+      args: {},
+      tip: "0",
+      hash: "0x2222222222222222222222222222222222222222222222222222222222222222",
+      era: { immortalEra: "0x00" },
+      events: [
+        {
+          method: { pallet: "balances", method: "Transfer" },
+          data: [
+            "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
+            "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty",
+            "1000000000",
+          ],
+        },
+        {
+          method: { pallet: "transactionPayment", method: "TransactionFeePaid" },
+          data: [
+            "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
+            "125000000",
+            "0",
+          ],
+        },
+      ],
+      success: true,
+      paysFee: true,
+    },
+  ] as BlockInfo["extrinsics"],
+  onFinalize: { events: [] },
+  finalized: true,
 };
 
 export const fixtureStakingProgress = {

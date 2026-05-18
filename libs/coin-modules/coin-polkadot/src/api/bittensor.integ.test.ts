@@ -38,4 +38,39 @@ describeBittensor("Bittensor Api", () => {
       expect(result[0].value).toBe(BigInt(0));
     }, 10000);
   });
+
+  describe("lastBlock", () => {
+    it("should return last block info", async () => {
+      const result = await module.lastBlock();
+      expect(result.hash).toMatch(/^0x[a-fA-F0-9]{64}$/);
+      expect(result.height).toBeGreaterThan(0);
+      expect(result.time).toBeInstanceOf(Date);
+    }, 10000);
+  });
+
+  describe("getBlockInfo", () => {
+    it("should return block info for a specific height", async () => {
+      const lastBlockResult = await module.lastBlock();
+      const result = await module.getBlockInfo(lastBlockResult.height);
+      expect(result.height).toBe(lastBlockResult.height);
+      expect(result.hash).toMatch(/^0x[a-fA-F0-9]{64}$/);
+      expect(result.time).toBeInstanceOf(Date);
+    }, 10000);
+  });
+
+  describe("getBlock", () => {
+    it("should return block with transactions for a specific height", async () => {
+      const lastBlockResult = await module.lastBlock();
+      const result = await module.getBlock(lastBlockResult.height);
+      expect(result.info.height).toBe(lastBlockResult.height);
+      expect(result.info.hash).toMatch(/^0x[a-fA-F0-9]{64}$/);
+      expect(result.info.time).toBeInstanceOf(Date);
+      expect(Array.isArray(result.transactions)).toBe(true);
+      for (const tx of result.transactions) {
+        expect(tx.hash).toMatch(/^0x[a-fA-F0-9]+$/);
+        expect(typeof tx.fees).toBe("bigint");
+        expect(tx.fees).toBeGreaterThanOrEqual(BigInt(0));
+      }
+    }, 15000);
+  });
 });

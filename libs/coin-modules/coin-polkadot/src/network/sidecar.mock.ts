@@ -1,6 +1,7 @@
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 import {
+  fixtureBlockByHeight,
   fixtureChainSpec,
   fixtureStakingProgress,
   fixtureTxMaterialWithMetadata,
@@ -9,6 +10,13 @@ import {
 export const SIDECAR_BASE_URL_TEST = "https://polkadot-mainnet-rest-api.coin.ledger.com/v1";
 
 const handlers = [
+  http.get(`${SIDECAR_BASE_URL_TEST}/blocks/:height`, ({ params }) => {
+    const height = parseInt(params.height as string, 10);
+    return HttpResponse.json({
+      ...fixtureBlockByHeight,
+      number: String(height),
+    });
+  }),
   http.get(`${SIDECAR_BASE_URL_TEST}/accounts/:addr/balance-info`, () => {
     return HttpResponse.json({});
   }),

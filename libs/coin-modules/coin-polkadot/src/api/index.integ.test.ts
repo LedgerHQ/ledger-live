@@ -78,6 +78,32 @@ describe("Polkadot Api", () => {
     });
   });
 
+  describe("getBlockInfo", () => {
+    it("returns block info for a specific height", async () => {
+      const lastBlockResult = await module.lastBlock();
+      const result = await module.getBlockInfo(lastBlockResult.height);
+      expect(result.height).toBe(lastBlockResult.height);
+      expect(result.hash).toMatch(/^0x[a-fA-F0-9]{64}$/);
+      expect(result.time).toBeInstanceOf(Date);
+    });
+  });
+
+  describe("getBlock", () => {
+    it("returns block with transactions for a specific height", async () => {
+      const lastBlockResult = await module.lastBlock();
+      const result = await module.getBlock(lastBlockResult.height);
+      expect(result.info.height).toBe(lastBlockResult.height);
+      expect(result.info.hash).toMatch(/^0x[a-fA-F0-9]{64}$/);
+      expect(result.info.time).toBeInstanceOf(Date);
+      expect(Array.isArray(result.transactions)).toBe(true);
+      for (const tx of result.transactions) {
+        expect(tx.hash).toMatch(/^0x[a-fA-F0-9]+$/);
+        expect(typeof tx.fees).toBe("bigint");
+        expect(tx.fees).toBeGreaterThanOrEqual(BigInt(0));
+      }
+    });
+  });
+
   describe("getBalance", () => {
     it("should fetch balance", async () => {
       // When

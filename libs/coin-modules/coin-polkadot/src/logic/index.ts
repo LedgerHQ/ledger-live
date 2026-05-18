@@ -17,4 +17,6 @@ export { broadcast } from "./broadcast";
 export { getBalance } from "./getBalance";
 export { estimateFees } from "./estimateFees";
 export { lastBlock } from "./lastBlock";
+export { getBlockInfo } from "./getBlockInfo";
+export { getBlock } from "./getBlock";
 export { listOperations } from "./listOperations";

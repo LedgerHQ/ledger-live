@@ -81,16 +81,16 @@ describe("index", () => {
   });
 
   describe("getBlock", () => {
-    it("should throw an error", () => {
+    it("should be wired to the getBlock logic function", () => {
       const api = generateApi();
-      expect(() => api.getBlock(0)).toThrow("getBlock is not supported");
+      expect(api.getBlock).toBe(logic.getBlock);
     });
   });
 
   describe("getBlockInfo", () => {
-    it("should throw an error", () => {
+    it("should be wired to the getBlockInfo logic function", () => {
       const api = generateApi();
-      expect(() => api.getBlockInfo(0)).toThrow("getBlockInfo is not supported");
+      expect(api.getBlockInfo).toBe(logic.getBlockInfo);
     });
   });
 
