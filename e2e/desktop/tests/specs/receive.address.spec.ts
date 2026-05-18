@@ -25,7 +25,7 @@ const nativeAccounts = [
   //{ account: Account.BSC_1, xrayTicket: "B2CQA-2686, B2CQA-2696, B2CQA-2698" },
 ];
 
-const tokenAccounts = [{ account: TokenAccount.ETH_USDT_1, xrayTicket: "B2CQA-5694" }];
+const tokenAccount = { account: TokenAccount.ETH_USDT_1, xrayTicket: "B2CQA-5694" };
 
 async function verifySendCurrencyTokensWarning(app: Application, account: Account) {
   switch (account) {
@@ -132,50 +132,48 @@ test.describe("Receive TRX empty balance", () => {
   );
 });
 
-for (const receive of tokenAccounts) {
-  test.describe("Receive token", () => {
-    test.use({
-      teamOwner: Team.WALLET_XP,
-      userdata: "speculos-subAccount",
-      speculosApp: receive.account.currency.speculosApp,
-    });
-
-    const family = getFamilyByCurrencyId(receive.account.currency.id);
-
-    test(
-      `[${receive.account.currency.name}] Receive`,
-      {
-        tag: [
-          "@NanoSP",
-          "@LNS",
-          "@NanoX",
-          "@Stax",
-          "@Flex",
-          "@NanoGen5",
-          `@${receive.account.currency.id}`,
-          ...(family ? [`@family-${family}`] : []),
-        ],
-        annotation: {
-          type: "TMS",
-          description: receive.xrayTicket,
-        },
-      },
-      async ({ app }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
-        await app.mainNavigation.openTargetFromMainNavigation("accounts");
-        await app.accounts.navigateToAccountByName(getParentAccountName(receive.account));
-        await app.account.expectAccountVisibility(getParentAccountName(receive.account));
-        await app.account.navigateToTokenInAccount(receive.account);
-        await app.account.expectTokenAccount(receive.account);
-        await app.account.clickReceive();
-        await app.receive.continue();
-
-        const displayedAddress = await app.receive.getAddressDisplayed();
-        await app.receive.expectValidReceiveAddress(displayedAddress);
-        await app.speculos.expectValidAddressDevice(receive.account, displayedAddress);
-        await app.receive.expectApproveLabel();
-      },
-    );
+test.describe("Receive token", () => {
+  test.use({
+    teamOwner: Team.WALLET_XP,
+    userdata: "speculos-subAccount",
+    speculosApp: tokenAccount.account.currency.speculosApp,
   });
-}
+
+  const family = getFamilyByCurrencyId(tokenAccount.account.currency.id);
+
+  test(
+    `[${tokenAccount.account.currency.name}] Receive`,
+    {
+      tag: [
+        "@NanoSP",
+        "@LNS",
+        "@NanoX",
+        "@Stax",
+        "@Flex",
+        "@NanoGen5",
+        `@${tokenAccount.account.currency.id}`,
+        ...(family ? [`@family-${family}`] : []),
+      ],
+      annotation: {
+        type: "TMS",
+        description: tokenAccount.xrayTicket,
+      },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      await app.mainNavigation.openTargetFromMainNavigation("accounts");
+      await app.accounts.navigateToAccountByName(getParentAccountName(tokenAccount.account));
+      await app.account.expectAccountVisibility(getParentAccountName(tokenAccount.account));
+      await app.account.navigateToTokenInAccount(tokenAccount.account);
+      await app.account.expectTokenAccount(tokenAccount.account);
+      await app.account.clickReceive();
+      await app.receive.continue();
+
+      const displayedAddress = await app.receive.getAddressDisplayed();
+      await app.receive.expectValidReceiveAddress(displayedAddress);
+      await app.speculos.expectValidAddressDevice(tokenAccount.account, displayedAddress);
+      await app.receive.expectApproveLabel();
+    },
+  );
+});
