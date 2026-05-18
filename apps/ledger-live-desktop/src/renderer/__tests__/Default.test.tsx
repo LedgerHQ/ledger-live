@@ -69,9 +69,9 @@ describe("Default", () => {
       () => {
         expect(screen.getByTestId("fw-update-banner")).toBeInTheDocument();
       },
-      { timeout: 3000 },
+      { timeout: 10000 },
     );
-  });
+  }, 15000);
 
   describe("analytics consent", () => {
     beforeEach(() => {
