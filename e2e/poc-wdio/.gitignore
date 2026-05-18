@@ -1,0 +1,10 @@
+// app files
+*.app
+*.apk
+
+// logging
+logs/
+*.log
+
+// reports
+allure-*/
