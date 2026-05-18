@@ -1,9 +1,13 @@
 snapshot: ledger-live-desktop-agent-cde
+setup: |
+  echo "Setting up environment..."
+  time pnpm install --frozen-lockfile --tui false
+  echo "Building ledger-live-desktop..."
+  time pnpm build:lld --tui false
+  echo "Done"
 lint: |
   echo "Running lint..."
   time pnpm lint --tui false
-  echo "Building ledger-live-desktop..."
-  time pnpm build:lld --tui false
   echo "Done"
 env:
   IS_KODA: "1"
