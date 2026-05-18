@@ -1,12 +1,13 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { render, screen, waitFor } from "@tests/test-renderer";
+import { render, screen, waitFor, within } from "@tests/test-renderer";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { NavigatorName, ScreenName } from "~/const";
 import type { State } from "~/reducers/types";
 import AssetDetailNavigator from "../Navigator";
 import { ASSET_DETAIL_TEST_IDS } from "../testIds";
+import { QUICK_ACTIONS_TEST_IDS } from "LLM/features/QuickActions/testIds";
 
 const mockIsCurrencyAvailable = jest.fn().mockReturnValue(false);
 const mockIsAcceptedCurrency = jest.fn().mockReturnValue(false);
@@ -96,9 +97,21 @@ describe("AssetDetail screen layout", () => {
       expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.balanceDetails)).toBeVisible(),
     );
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.totalBalance)).toBeVisible();
-    expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.transferButton)).toBeVisible();
+    const transferButton = screen.getByTestId(ASSET_DETAIL_TEST_IDS.transferButton);
+    expect(transferButton).toBeVisible();
     expect(screen.getByText("Total balance")).toBeVisible();
-    expect(screen.getByText("Transfer")).toBeVisible();
+    expect(within(transferButton).getByText("Transfer")).toBeVisible();
+  });
+
+  it("opens the transfer drawer on the asset detail screen when the transfer button is pressed", async () => {
+    const { user } = render(<AssetDetailTestNavigator />, withBtcAccounts(2));
+
+    const transferButton = await screen.findByTestId(ASSET_DETAIL_TEST_IDS.transferButton);
+    await user.press(transferButton);
+
+    await waitFor(() => {
+      expect(screen.getByTestId(QUICK_ACTIONS_TEST_IDS.transferDrawer.container)).toBeVisible();
+    });
   });
 
   it("renders the market price section with title and chart placeholder", () => {

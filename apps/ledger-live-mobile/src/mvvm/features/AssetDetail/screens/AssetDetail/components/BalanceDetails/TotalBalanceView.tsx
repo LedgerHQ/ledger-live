@@ -37,7 +37,7 @@ export function TotalBalanceView({
         </Text>
       </Box>
       <Button
-        appearance="base"
+        appearance="gray"
         size="md"
         icon={TransferVertical}
         onPress={onTransferPress}

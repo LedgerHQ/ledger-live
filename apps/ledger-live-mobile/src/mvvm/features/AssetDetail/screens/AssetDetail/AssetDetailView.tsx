@@ -6,6 +6,7 @@ import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import type { DistributionItem } from "@ledgerhq/types-live";
 import { TrackScreen } from "~/analytics";
 import type { AssetDetailCurrencyProps } from "LLM/features/AssetDetail/types";
+import { TransferDrawer } from "LLM/features/QuickActions";
 import { ASSET_DETAIL_TEST_IDS } from "../../testIds";
 import { BalanceGraph } from "./components/BalanceGraph";
 import { BalanceDetails } from "./components/BalanceDetails";
@@ -65,6 +66,7 @@ export function AssetDetailView({
         </Box>
       </ScrollView>
       <Footer currency={currency} />
+      <TransferDrawer />
       <AssetCoinOptionsSheetView
         isOpen={coinOptions.isCoinOptionsSheetOpen}
         onClose={coinOptions.closeCoinOptions}
