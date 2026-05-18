@@ -18,6 +18,8 @@ export type DeviceConnectionComponent = React.ComponentType<{
   deviceConnectionParams: DeviceConnectionParams;
   onConnected: (connectionResult: DeviceConnectionResult) => void;
   onError: (error: unknown) => void;
+  /** Call to request the executor to close (forwards to `DeviceIntentExecutorProps.onUserCancel`). */
+  onClose: () => void;
 }>;
 
 /**
@@ -34,6 +36,8 @@ export type DeviceContextInitializerComponent<
   deviceInitializationInput: InitInput;
   onContextInitialized: (context: DeviceExtractedContext) => void;
   config?: InitializerConfig;
+  /** Call to request the executor to close (forwards to `DeviceIntentExecutorProps.onUserCancel`). */
+  onClose: () => void;
 }>;
 
 /**
@@ -45,6 +49,8 @@ export type DeviceContextInitializerComponent<
 export type ErrorComponent = React.ComponentType<{
   error: unknown;
   onRetry: () => void;
+  /** Call to request the executor to close (forwards to `DeviceIntentExecutorProps.onUserCancel`). */
+  onClose: () => void;
 }>;
 
 /**
@@ -120,9 +126,14 @@ export interface DeviceIntentExecutorProps<JobState, Input, ExtraProps, InitInpu
   onIntentJobError: (error: unknown) => void;
   /** When `false` the executor is hidden and inactive; setting to `false` terminates any running job. */
   enabled: boolean;
-  /** Whether the UI allows the user to cancel the current execution (e.g. close a bottom sheet). */
+  /**
+   * Whether the UI allows the user to cancel the current execution
+   * (e.g. close the bottom sheet containing the executor).
+   */
   cancellableUI: boolean;
-  /** Called when the user cancels the current execution (e.g. closes a bottom sheet). */
+  /** Called when the user perfoms an action that cancels the current execution
+   * (e.g. user closes the bottom sheet containing the executor, or clicks a "Close" CTA in a given error state, etc.).
+   */
   onUserCancel: () => void;
   /** Set to a new value to request cancellation of the ongoing job. */
   cancelIntentRequestId: string | undefined;
