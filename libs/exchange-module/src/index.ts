@@ -10,6 +10,8 @@ import {
   ExchangeSwapParams,
   SwapResult,
   SwapLiveError,
+  type GetBestQuoteResponse,
+  type GetBestQuoteWireArgs,
   type GetQuotesResponse,
   type GetQuotesWireArgs,
   type GetTransactionStatusResponse,
@@ -187,6 +189,16 @@ export class ExchangeModule extends CustomModule {
    */
   async getQuotes(params: GetQuotesWireArgs): Promise<GetQuotesResponse> {
     return this.request<GetQuotesWireArgs, GetQuotesResponse>("custom.exchange.getQuotes", params);
+  }
+
+  /**
+   * Fetch the best swap quote from the Ledger swap backend (via Wallet API host).
+   */
+  async getBestQuote(params: GetBestQuoteWireArgs): Promise<GetBestQuoteResponse> {
+    return this.request<GetBestQuoteWireArgs, GetBestQuoteResponse>(
+      "custom.exchange.getBestQuote",
+      params,
+    );
   }
 
   /**
