@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { StakingOperation } from "./../types/staking";
+import { StakingOperation } from "../types/staking";
 import { detectEvmStakingOperationType, isStakingOperation } from "./detectOperationType";
 
 describe("isStakingOperation", () => {

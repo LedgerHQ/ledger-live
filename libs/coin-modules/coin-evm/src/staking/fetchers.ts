@@ -4,12 +4,12 @@ import { delay } from "@ledgerhq/live-promise";
 import { getCoinConfig } from "../config";
 import { withApi } from "../network/node/rpc.common";
 import { isExternalNodeConfig } from "../network/node/types";
+import type { StakingValidatorItem } from "@ledgerhq/types-live";
 import type {
   StakeCreate,
   StakingContractConfig,
-  StakingStrategy,
   StakingExtractor,
-  StakingValidatorItem,
+  StakingStrategy,
 } from "../types/staking";
 import { extractSeiDelegation, getSeiDelegationAmount, getCeloAmount } from "../utils";
 import { encodeStakingData, decodeStakingResult } from "./encoder";
