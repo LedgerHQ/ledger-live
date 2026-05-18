@@ -4,23 +4,57 @@ import {
   featureFlagsReducer,
   setOverride,
   setAllOverrides,
-  syncRemoteConfig,
   setBannerVisible,
   importState,
 } from "./slice";
-import { createFeatureFlagsMiddleware } from "./middleware";
-import type { ResolutionConfig, FeatureFlagsState } from "./schema";
-import { FEATURE_FLAGS_DEFAULTS } from "../constants";
+import { createFeatureFlagsMiddleware, type FeatureFlagsMiddlewareConfig } from "./middleware";
+import type { ResolutionConfig, FeatureFlagsState, PartialFeatures } from "./schema";
+import { FEATURE_FLAGS_DEFAULTS, FEATURE_FLAGS_REMOTE_POLLING_INTERVAL_MS } from "../constants";
 
 const defaults = FEATURE_FLAGS_DEFAULTS;
 
-function createStore(preloadedState?: FeatureFlagsState, resolutionConfig?: ResolutionConfig) {
+// Yields several times to drain multi-await chains (e.g. the middleware's `tick()`
+// fetches and then dispatches inside the same async function). Uses Promise.resolve()
+// rather than queueMicrotask/setImmediate so it works under jest.useFakeTimers().
+const flushPromises = async () => {
+  for (let i = 0; i < 5; i++) await Promise.resolve();
+};
+
+// Fake timers are enabled globally so the middleware's setInterval doesn't leak
+// real timers into Jest's worker (otherwise the process can't exit cleanly).
+beforeEach(() => {
+  jest.useFakeTimers();
+});
+
+afterEach(() => {
+  jest.clearAllTimers();
+  jest.useRealTimers();
+});
+
+function createStore(
+  preloadedState?: FeatureFlagsState,
+  middlewareConfig: Partial<FeatureFlagsMiddlewareConfig> = {},
+) {
   return configureStore({
     reducer: { featureFlags: featureFlagsReducer },
     preloadedState: preloadedState ? { featureFlags: preloadedState } : undefined,
     middleware: getDefaultMiddleware =>
-      getDefaultMiddleware().concat(createFeatureFlagsMiddleware(resolutionConfig ?? {})),
+      getDefaultMiddleware().concat(
+        createFeatureFlagsMiddleware({ resolutionConfig: {}, ...middlewareConfig }),
+      ),
   });
+}
+
+async function createStoreWithRemote(
+  remote: PartialFeatures = {},
+  resolutionConfig: ResolutionConfig = {},
+) {
+  const store = createStore(undefined, {
+    resolutionConfig,
+    fetchRemoteFlags: () => Promise.resolve(remote),
+  });
+  await flushPromises();
+  return store;
 }
 
 describe("featureFlagsSlice reducers", () => {
@@ -28,7 +62,6 @@ describe("featureFlagsSlice reducers", () => {
     const store = createStore();
     expect(store.getState().featureFlags).toEqual({
       overrides: {},
-      remote: {},
       resolved: defaults,
       bannerVisible: false,
     });
@@ -45,7 +78,6 @@ describe("featureFlagsSlice reducers", () => {
     it("updates an existing override", () => {
       const store = createStore({
         overrides: { mockFeature: { enabled: true } },
-        remote: {},
         resolved: { ...defaults, mockFeature: { enabled: true } },
         bannerVisible: false,
       });
@@ -61,12 +93,18 @@ describe("featureFlagsSlice reducers", () => {
     it("removes an override when value is undefined", () => {
       const store = createStore({
         overrides: { mockFeature: { enabled: true } },
-        remote: {},
         resolved: { ...defaults, mockFeature: { enabled: true } },
         bannerVisible: false,
       });
       store.dispatch(setOverride({ key: "mockFeature", value: undefined }));
       expect(store.getState().featureFlags.overrides.mockFeature).toBeUndefined();
+    });
+
+    it("removing an override falls back to default when no remote exists", () => {
+      const store = createStore();
+      store.dispatch(setOverride({ key: "mockFeature", value: { enabled: true } }));
+      store.dispatch(setOverride({ key: "mockFeature", value: undefined }));
+      expect(store.getState().featureFlags.resolved.mockFeature).toEqual(defaults.mockFeature);
     });
   });
 
@@ -74,42 +112,12 @@ describe("featureFlagsSlice reducers", () => {
     it("replaces the entire overrides map and re-resolves", () => {
       const store = createStore({
         overrides: { mockFeature: { enabled: true } },
-        remote: {},
         resolved: { ...defaults, mockFeature: { enabled: true } },
         bannerVisible: false,
       });
       store.dispatch(setAllOverrides({ ptxCard: { enabled: false } }));
       expect(store.getState().featureFlags.overrides).toEqual({ ptxCard: { enabled: false } });
       expect(store.getState().featureFlags.overrides.mockFeature).toBeUndefined();
-    });
-  });
-
-  describe("syncRemoteConfig", () => {
-    it("stores remote flags into resolved", () => {
-      const store = createStore();
-      store.dispatch(
-        syncRemoteConfig({
-          mockFeature: { enabled: true, params: { v: 1 } },
-          ptxCard: { enabled: false },
-        }),
-      );
-      const { resolved } = store.getState().featureFlags;
-      expect(resolved.mockFeature).toEqual({ enabled: true, params: { v: 1 } });
-      expect(resolved.ptxCard).toEqual({ enabled: false });
-    });
-
-    it("local overrides take priority over remote", () => {
-      const store = createStore({
-        overrides: { mockFeature: { enabled: false, overridesRemote: true } },
-        remote: {},
-        resolved: defaults,
-        bannerVisible: false,
-      });
-      store.dispatch(syncRemoteConfig({ mockFeature: { enabled: true } }));
-      expect(store.getState().featureFlags.resolved.mockFeature).toEqual({
-        enabled: false,
-        overridesRemote: true,
-      });
     });
   });
 
@@ -126,7 +134,6 @@ describe("featureFlagsSlice reducers", () => {
       const store = createStore();
       const newState: FeatureFlagsState = {
         overrides: { mockFeature: { enabled: true, params: "test" } },
-        remote: {},
         resolved: { ...defaults, mockFeature: { enabled: true, params: "test" } },
         bannerVisible: true,
       };
@@ -136,124 +143,177 @@ describe("featureFlagsSlice reducers", () => {
   });
 });
 
-describe("resolution logic", () => {
-  it("version filtering disables flag when version does not match", () => {
-    const store = createStore(undefined, { platform: "desktop", appVersion: "1.0.0" });
+describe("resolution via meta", () => {
+  it("remote flags from middleware are reflected in resolved state", async () => {
+    const store = await createStoreWithRemote({
+      mockFeature: { enabled: true, params: { v: 1 } },
+      ptxCard: { enabled: false },
+    });
+    const { resolved } = store.getState().featureFlags;
+    expect(resolved.mockFeature).toEqual({ enabled: true, params: { v: 1 } });
+    expect(resolved.ptxCard).toEqual({ enabled: false });
+  });
+
+  it("local overrides take priority over remote", async () => {
+    const store = await createStoreWithRemote({ mockFeature: { enabled: true } });
     store.dispatch(
-      syncRemoteConfig({
-        mockFeature: { enabled: true, desktop_version: ">=2.0.0" },
+      setOverride({
+        key: "mockFeature",
+        value: { enabled: false, overridesRemote: true },
       }),
+    );
+    expect(store.getState().featureFlags.resolved.mockFeature).toEqual({
+      enabled: false,
+      overridesRemote: true,
+    });
+  });
+
+  it("version filtering disables flag when version does not match", async () => {
+    const store = await createStoreWithRemote(
+      { mockFeature: { enabled: true, desktop_version: ">=2.0.0" } },
+      { platform: "desktop", appVersion: "1.0.0" },
     );
     const resolved = store.getState().featureFlags.resolved.mockFeature;
     expect(resolved.enabled).toBe(false);
     expect(resolved.enabledOverriddenForCurrentVersion).toBe(true);
   });
 
-  it("version filtering keeps flag when version matches", () => {
-    const store = createStore(undefined, { platform: "desktop", appVersion: "3.0.0" });
-    store.dispatch(
-      syncRemoteConfig({
-        mockFeature: { enabled: true, desktop_version: ">=2.0.0" },
-      }),
+  it("version filtering keeps flag when version matches", async () => {
+    const store = await createStoreWithRemote(
+      { mockFeature: { enabled: true, desktop_version: ">=2.0.0" } },
+      { platform: "desktop", appVersion: "3.0.0" },
     );
     expect(store.getState().featureFlags.resolved.mockFeature.enabled).toBe(true);
   });
 
-  it("mobile_version is used for ios/android platforms", () => {
-    const store = createStore(undefined, { platform: "ios", appVersion: "1.0.0" });
-    store.dispatch(
-      syncRemoteConfig({
-        mockFeature: { enabled: true, mobile_version: ">=2.0.0" },
-      }),
+  it("mobile_version is used for ios/android platforms", async () => {
+    const store = await createStoreWithRemote(
+      { mockFeature: { enabled: true, mobile_version: ">=2.0.0" } },
+      { platform: "ios", appVersion: "1.0.0" },
     );
     expect(store.getState().featureFlags.resolved.mockFeature.enabled).toBe(false);
   });
 
-  it("language whitelist disables flag when language is not whitelisted", () => {
-    const store = createStore(undefined, { appLanguage: "de" });
-    store.dispatch(
-      syncRemoteConfig({
-        mockFeature: { enabled: true, languages_whitelisted: ["en", "fr"] },
-      }),
+  it("language whitelist disables flag when language is not whitelisted", async () => {
+    const store = await createStoreWithRemote(
+      { mockFeature: { enabled: true, languages_whitelisted: ["en", "fr"] } },
+      { appLanguage: "de" },
     );
     const resolved = store.getState().featureFlags.resolved.mockFeature;
     expect(resolved.enabled).toBe(false);
     expect(resolved.enabledOverriddenForCurrentLanguage).toBe(true);
   });
 
-  it("language blacklist disables flag when language is blacklisted", () => {
-    const store = createStore(undefined, { appLanguage: "de" });
-    store.dispatch(
-      syncRemoteConfig({
-        mockFeature: { enabled: true, languages_blacklisted: ["de"] },
-      }),
+  it("language blacklist disables flag when language is blacklisted", async () => {
+    const store = await createStoreWithRemote(
+      { mockFeature: { enabled: true, languages_blacklisted: ["de"] } },
+      { appLanguage: "de" },
     );
     expect(store.getState().featureFlags.resolved.mockFeature.enabled).toBe(false);
   });
 
   it("language filtering does not apply to local overrides", () => {
-    const store = createStore(
-      {
-        overrides: { mockFeature: { enabled: true, languages_whitelisted: ["en"] } },
-        remote: {},
-        resolved: defaults,
-        bannerVisible: false,
-      },
-      { appLanguage: "de" },
+    const store = createStore(undefined, { resolutionConfig: { appLanguage: "de" } });
+    store.dispatch(
+      setOverride({
+        key: "mockFeature",
+        value: { enabled: true, languages_whitelisted: ["en"] },
+      }),
     );
-    store.dispatch(syncRemoteConfig({}));
     expect(store.getState().featureFlags.resolved.mockFeature.enabled).toBe(true);
   });
 
-  it("env flags override remote config", () => {
-    const store = createStore(undefined, {
-      envFlags: { mockFeature: { enabled: true, params: { envOverride: true } } },
-    });
-    store.dispatch(syncRemoteConfig({ mockFeature: { enabled: false } }));
+  it("env flags override remote config", async () => {
+    const store = await createStoreWithRemote(
+      { mockFeature: { enabled: false } },
+      { envFlags: { mockFeature: { enabled: true, params: { envOverride: true } } } },
+    );
     const resolved = store.getState().featureFlags.resolved.mockFeature;
     expect(resolved.enabled).toBe(true);
     expect(resolved.overriddenByEnv).toBe(true);
     expect(resolved.overridesRemote).toBe(true);
   });
 
-  it("resolution priority: local override > env > remote", () => {
-    const store = createStore(
-      {
-        overrides: { mockFeature: { enabled: true, overridesRemote: true } },
-        remote: {},
-        resolved: defaults,
-        bannerVisible: false,
-      },
+  it("resolution priority: local override > env > remote", async () => {
+    const store = await createStoreWithRemote(
+      { mockFeature: { enabled: false } },
       { envFlags: { mockFeature: { enabled: false } } },
     );
-    store.dispatch(syncRemoteConfig({ mockFeature: { enabled: false } }));
+    store.dispatch(
+      setOverride({
+        key: "mockFeature",
+        value: { enabled: true, overridesRemote: true },
+      }),
+    );
     expect(store.getState().featureFlags.resolved.mockFeature.enabled).toBe(true);
   });
 });
 
-describe("remote state management", () => {
-  it("syncRemoteConfig persists raw remote values in state.remote", () => {
-    const store = createStore();
-    const remotePayload = {
-      mockFeature: { enabled: true, params: { v: 1 } },
-      ptxCard: { enabled: false },
-    };
-    store.dispatch(syncRemoteConfig(remotePayload));
-    expect(store.getState().featureFlags.remote).toEqual(remotePayload);
+describe("middleware behavior", () => {
+  it("dispatches an initial fetch and updates resolved state", async () => {
+    const fetcher = jest.fn().mockResolvedValue({ mockFeature: { enabled: true } });
+    const store = createStore(undefined, { fetchRemoteFlags: fetcher });
+    await flushPromises();
+    expect(fetcher).toHaveBeenCalledTimes(1);
+    expect(store.getState().featureFlags.resolved.mockFeature.enabled).toBe(true);
   });
 
-  it("syncRemoteConfig replaces previous remote values", () => {
-    const store = createStore();
-    store.dispatch(syncRemoteConfig({ mockFeature: { enabled: true } }));
-    store.dispatch(syncRemoteConfig({ mockFeature: { enabled: false, params: { v: 2 } } }));
-    expect(store.getState().featureFlags.remote).toEqual({
-      mockFeature: { enabled: false, params: { v: 2 } },
+  it("polls every refreshInterval", async () => {
+    const fetcher = jest.fn().mockResolvedValue({ mockFeature: { enabled: true } });
+    createStore(undefined, { fetchRemoteFlags: fetcher, refreshInterval: 1_000 });
+    await flushPromises();
+    expect(fetcher).toHaveBeenCalledTimes(1);
+
+    jest.advanceTimersByTime(1_000);
+    await flushPromises();
+    expect(fetcher).toHaveBeenCalledTimes(2);
+
+    jest.advanceTimersByTime(1_000);
+    await flushPromises();
+    expect(fetcher).toHaveBeenCalledTimes(3);
+  });
+
+  it("uses FEATURE_FLAGS_REMOTE_POLLING_INTERVAL_MS when refreshInterval is omitted", async () => {
+    const fetcher = jest.fn().mockResolvedValue({});
+    createStore(undefined, { fetchRemoteFlags: fetcher });
+    await flushPromises();
+    expect(fetcher).toHaveBeenCalledTimes(1);
+
+    jest.advanceTimersByTime(FEATURE_FLAGS_REMOTE_POLLING_INTERVAL_MS - 1);
+    await flushPromises();
+    expect(fetcher).toHaveBeenCalledTimes(1);
+
+    jest.advanceTimersByTime(1);
+    await flushPromises();
+    expect(fetcher).toHaveBeenCalledTimes(2);
+  });
+
+  it("does not crash and keeps last good cache when fetchRemoteFlags rejects", async () => {
+    const fetcher = jest
+      .fn()
+      .mockResolvedValueOnce({ mockFeature: { enabled: true } })
+      .mockRejectedValueOnce(new Error("network down"));
+    const store = createStore(undefined, { fetchRemoteFlags: fetcher, refreshInterval: 1_000 });
+
+    await flushPromises();
+    expect(store.getState().featureFlags.resolved.mockFeature.enabled).toBe(true);
+
+    jest.advanceTimersByTime(1_000);
+    await flushPromises();
+    // Reducer state is unchanged because syncRemoteConfig is not dispatched on failure;
+    // the previous resolved value remains visible.
+    expect(store.getState().featureFlags.resolved.mockFeature.enabled).toBe(true);
+  });
+
+  it("does not schedule any timer when fetchRemoteFlags is omitted", () => {
+    createStore();
+    expect(jest.getTimerCount()).toBe(0);
+  });
+
+  it("setOverride uses remote flags from middleware cache", async () => {
+    const store = await createStoreWithRemote({
+      mockFeature: { enabled: true, params: { remote: true } },
     });
-  });
-
-  it("removing an override reverts to stored remote value", () => {
-    const store = createStore();
-    store.dispatch(syncRemoteConfig({ mockFeature: { enabled: true, params: { remote: true } } }));
     store.dispatch(setOverride({ key: "mockFeature", value: { enabled: false } }));
     expect(store.getState().featureFlags.resolved.mockFeature.enabled).toBe(false);
 
@@ -264,53 +324,15 @@ describe("remote state management", () => {
     });
   });
 
-  it("removing an override falls back to default when no remote exists", () => {
-    const store = createStore();
-    store.dispatch(setOverride({ key: "mockFeature", value: { enabled: true } }));
-    store.dispatch(setOverride({ key: "mockFeature", value: undefined }));
-    expect(store.getState().featureFlags.resolved.mockFeature).toEqual(defaults.mockFeature);
-  });
-
-  it("setAllOverrides uses stored remote values for non-overridden flags", () => {
-    const store = createStore();
-    store.dispatch(syncRemoteConfig({ mockFeature: { enabled: true, params: { v: 1 } } }));
+  it("setAllOverrides uses remote flags for non-overridden keys", async () => {
+    const store = await createStoreWithRemote({
+      mockFeature: { enabled: true, params: { v: 1 } },
+    });
     store.dispatch(setAllOverrides({ ptxCard: { enabled: true } }));
     expect(store.getState().featureFlags.resolved.mockFeature).toEqual({
       enabled: true,
       params: { v: 1 },
     });
     expect(store.getState().featureFlags.resolved.ptxCard.enabled).toBe(true);
-  });
-
-  it("clearing all overrides reverts every flag to remote or default", () => {
-    const store = createStore();
-    store.dispatch(syncRemoteConfig({ mockFeature: { enabled: true, params: { v: 1 } } }));
-    store.dispatch(setOverride({ key: "mockFeature", value: { enabled: false } }));
-    store.dispatch(setAllOverrides({}));
-    expect(store.getState().featureFlags.resolved.mockFeature).toEqual({
-      enabled: true,
-      params: { v: 1 },
-    });
-  });
-
-  it("remote values are not mutated by override operations", () => {
-    const store = createStore();
-    const remoteValue = { enabled: true, params: { original: true } };
-    store.dispatch(syncRemoteConfig({ mockFeature: remoteValue }));
-    store.dispatch(setOverride({ key: "mockFeature", value: { enabled: false } }));
-    store.dispatch(setOverride({ key: "mockFeature", value: undefined }));
-    expect(store.getState().featureFlags.remote.mockFeature).toEqual(remoteValue);
-  });
-
-  it("importState preserves the remote field", () => {
-    const store = createStore();
-    const newState: FeatureFlagsState = {
-      overrides: {},
-      remote: { mockFeature: { enabled: true, params: { imported: true } } },
-      resolved: { ...defaults, mockFeature: { enabled: true, params: { imported: true } } },
-      bannerVisible: false,
-    };
-    store.dispatch(importState(newState));
-    expect(store.getState().featureFlags.remote).toEqual(newState.remote);
   });
 });
