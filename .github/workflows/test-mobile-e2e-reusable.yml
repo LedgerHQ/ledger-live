@@ -981,6 +981,50 @@ jobs:
           path: android-ai
           retention-days: 7
 
+  qaa-allure-upload-ios:
+    name: "QAA Allure Upload - iOS (Experimental)"
+    runs-on: [ledger-live-medium]
+    if: ${{ !cancelled() && needs.detox-tests-ios.outputs.artifact && inputs.tests_type != 'Android Only' }}
+    continue-on-error: true
+    needs: [detox-tests-ios]
+    timeout-minutes: 15
+    steps:
+      - name: Download Allure Results
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          path: ios-test-artifacts
+          pattern: ios-test-artifacts*
+          merge-multiple: true
+      - name: Upload to qaa-allure (sandbox)
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@develop
+        with:
+          api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
+          path: ios-test-artifacts
+          name: "mobile-e2e-ios-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}-#${{ github.run_id }}"
+          tags: ${{ format('["mobile","ios",{0},{1}]', toJSON(github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual')), toJSON(inputs.ref || github.ref_name)) }}
+
+  qaa-allure-upload-android:
+    name: "QAA Allure Upload - Android (Experimental)"
+    runs-on: [ledger-live-medium]
+    if: ${{ !cancelled() && needs.detox-tests-android.outputs.artifact && inputs.tests_type != 'iOS Only' }}
+    continue-on-error: true
+    needs: [detox-tests-android]
+    timeout-minutes: 15
+    steps:
+      - name: Download Allure Results
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          path: android-test-artifacts
+          pattern: android-test-artifacts*
+          merge-multiple: true
+      - name: Upload to qaa-allure (sandbox)
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@develop
+        with:
+          api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
+          path: android-test-artifacts
+          name: "mobile-e2e-android-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}-#${{ github.run_id }}"
+          tags: ${{ format('["mobile","android",{0},{1}]', toJSON(github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual')), toJSON(inputs.ref || github.ref_name)) }}
+
   upload-to-xray:
     name: "Test Mobile E2E > XRAY Report"
     runs-on: [ledger-live-medium]

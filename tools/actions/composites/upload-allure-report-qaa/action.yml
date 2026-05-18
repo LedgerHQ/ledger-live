@@ -1,0 +1,49 @@
+name: "Upload Allure Report (QAA)"
+description: "Experimental upload of allure-results to the qaa-allure portal (Allure 3)."
+inputs:
+  api_key:
+    required: true
+    description: "API key for the qaa-allure server (passed as x-api-key)."
+  path:
+    required: true
+    description: "Path to the allure-results directory to upload."
+  name:
+    required: true
+    description: "Human-readable name for the report run."
+  tags:
+    required: false
+    default: ""
+    description: "JSON array of tag strings, e.g. '[\"desktop\",\"smoke\"]'."
+  history_level:
+    required: false
+    default: "50"
+    description: "Number of prior runs to keep in trend history (1-200)."
+  job_url:
+    required: false
+    default: "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+    description: "URL pointing back to the CI run that produced this report. Pass empty string to disable."
+outputs:
+  report_id:
+    description: "ID of the uploaded report."
+    value: ${{ steps.upload.outputs.report_id }}
+  report_url:
+    description: "Dashboard URL for the report."
+    value: ${{ steps.upload.outputs.report_url }}
+  view_url:
+    description: "Direct view (pre-signed redirect) URL for the report."
+    value: ${{ steps.upload.outputs.view_url }}
+
+runs:
+  using: composite
+  steps:
+    - name: Upload allure-results to qaa-allure
+      id: upload
+      shell: bash
+      env:
+        QAA_ALLURE_API_KEY: ${{ inputs.api_key }}
+        QAA_ALLURE_PATH: ${{ inputs.path }}
+        QAA_ALLURE_NAME: ${{ inputs.name }}
+        QAA_ALLURE_TAGS: ${{ inputs.tags }}
+        QAA_ALLURE_HISTORY: ${{ inputs.history_level }}
+        QAA_ALLURE_JOB_URL: ${{ inputs.job_url }}
+      run: ${{ github.action_path }}/upload.sh
