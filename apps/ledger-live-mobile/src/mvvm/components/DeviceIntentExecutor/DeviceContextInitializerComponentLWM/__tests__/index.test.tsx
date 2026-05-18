@@ -5,6 +5,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { LoadingStateType } from "@ledgerhq/live-dmk-shared";
 import type { EnsureAppReadyUseCaseDependencies } from "@ledgerhq/live-common/device/use-cases/ensureAppReady/ensureAppReadyUseCase";
 import DeviceContextInitializerComponentLWM from "..";
+import { DeviceContextInitializerComponentLWMView } from "../DeviceContextInitializerComponentLWMView";
 import { useDeviceContextInitializerComponentLWMViewModel } from "../useDeviceContextInitializerComponentLWMViewModel";
 import type { InitializationInput } from "../../types";
 
@@ -12,7 +13,12 @@ jest.mock("../useDeviceContextInitializerComponentLWMViewModel", () => ({
   useDeviceContextInitializerComponentLWMViewModel: jest.fn(),
 }));
 
+jest.mock("../DeviceContextInitializerComponentLWMView", () => ({
+  DeviceContextInitializerComponentLWMView: jest.fn(() => null),
+}));
+
 const mockedUseViewModel = jest.mocked(useDeviceContextInitializerComponentLWMViewModel);
+const mockedView = jest.mocked(DeviceContextInitializerComponentLWMView);
 
 const connectionResult: DeviceConnectionResult = {
   compatDeviceId: "device-id",
@@ -86,5 +92,36 @@ describe("DeviceContextInitializerComponentLWM", () => {
       onContextInitialized,
       dependencies,
     });
+  });
+
+  it("should forward config.onCancel as the view onCancel prop", () => {
+    const onCancel = jest.fn();
+
+    render(
+      <DeviceContextInitializerComponentLWM
+        connectionResult={connectionResult}
+        deviceInitializationInput={deviceInitializationInput}
+        onContextInitialized={jest.fn()}
+        config={{ onCancel }}
+      />,
+    );
+
+    expect(mockedView).toHaveBeenCalledTimes(1);
+    expect(mockedView.mock.calls[0][0].onCancel).toBe(onCancel);
+  });
+
+  it("should fall back to a noop onCancel prop when config.onCancel is omitted", () => {
+    render(
+      <DeviceContextInitializerComponentLWM
+        connectionResult={connectionResult}
+        deviceInitializationInput={deviceInitializationInput}
+        onContextInitialized={jest.fn()}
+      />,
+    );
+
+    expect(mockedView).toHaveBeenCalledTimes(1);
+    const { onCancel } = mockedView.mock.calls[0][0];
+    expect(typeof onCancel).toBe("function");
+    expect(() => onCancel()).not.toThrow();
   });
 });
