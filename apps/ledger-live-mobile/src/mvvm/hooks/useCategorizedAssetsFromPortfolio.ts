@@ -1,7 +1,7 @@
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { useStablecoinTickers } from "@ledgerhq/live-common/dada-client/hooks/useStablecoinTickers";
 import { useCategorizedAssets } from "@ledgerhq/asset-aggregation/assetCategorization/index";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import VersionNumber from "react-native-version-number";
 import { useDistribution } from "~/actions/general";
 

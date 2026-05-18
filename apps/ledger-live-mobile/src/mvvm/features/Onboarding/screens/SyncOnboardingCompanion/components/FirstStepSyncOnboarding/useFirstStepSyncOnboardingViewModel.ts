@@ -7,7 +7,7 @@ import {
   withTiming,
 } from "react-native-reanimated";
 import { useIsFocused } from "@react-navigation/core";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import {
   OnboardingStep,
   fromSeedPhraseTypeToNbOfSeedWords,

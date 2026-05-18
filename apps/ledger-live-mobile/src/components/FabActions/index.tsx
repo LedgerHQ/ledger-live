@@ -15,7 +15,7 @@ import { NavigatorName } from "~/const";
 import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
 import { useSelector } from "~/context/hooks";
 import { hasOrderedNanoSelector, readOnlyModeEnabledSelector } from "~/reducers/settings";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 export type ModalOnDisabledClickComponentProps = {
   account?: AccountLike;

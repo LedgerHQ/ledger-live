@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { userIdSelector } from "@ledgerhq/client-ids/store";
 import { getStoreValue } from "~/renderer/store";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { saveSettings } from "~/renderer/actions/settings";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 

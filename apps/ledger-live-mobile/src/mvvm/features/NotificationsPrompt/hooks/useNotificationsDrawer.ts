@@ -3,7 +3,7 @@ import { InteractionManager } from "react-native";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { useNavigation } from "@react-navigation/core";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@features/platform-feature-flags";
 import { ABTestingVariants } from "@ledgerhq/types-live";
 import {
   notificationsModalOpenSelector,

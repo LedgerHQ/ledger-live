@@ -1,4 +1,4 @@
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { Flex, Icon, ProgressLoader, Text, Icons } from "@ledgerhq/native-ui";
 import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { useCustomURI } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";

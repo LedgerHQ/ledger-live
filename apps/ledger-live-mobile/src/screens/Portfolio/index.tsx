@@ -44,7 +44,7 @@ import { LNSUpsellBanner, useLNSUpsellBannerState } from "LLM/features/LNSUpsell
 import { useAutoRedirectToPostOnboarding } from "~/hooks/useAutoRedirectToPostOnboarding";
 export { default as PortfolioTabIcon } from "./TabIcon";
 import Animated, { useSharedValue } from "react-native-reanimated";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import AnimatedContainer from "./AnimatedContainer";
 import storage from "LLM/storage";
 import type { Feature_LlmMmkvMigration } from "@ledgerhq/types-live";

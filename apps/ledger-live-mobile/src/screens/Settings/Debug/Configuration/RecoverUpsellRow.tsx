@@ -1,7 +1,8 @@
 import React from "react";
 import SettingsRow from "~/components/SettingsRow";
 import Switch from "~/components/Switch";
-import { useFeature, useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
+import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
 
 export function RecoverUpsellRow() {
   const { overrideFeature, resetFeature } = useFeatureFlags();

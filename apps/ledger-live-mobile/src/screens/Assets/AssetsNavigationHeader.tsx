@@ -6,7 +6,7 @@ import AddAccount from "../Accounts/AddAccount";
 import Touchable from "~/components/Touchable";
 import { track } from "~/analytics";
 import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 type Props = {
   readOnly?: boolean;

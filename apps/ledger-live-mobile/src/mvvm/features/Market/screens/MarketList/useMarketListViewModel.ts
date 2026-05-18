@@ -6,13 +6,12 @@ import { ScreenName } from "~/const";
 import { useRoute } from "@react-navigation/native";
 import { useMarketData as useMarketDataHook } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
 import { setMarketCurrentPage, setMarketRequestParams } from "~/actions/market";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useMarket } from "../../hooks/useMarket";
 import { getCurrentPage, isDataStale } from "../../utils";
 import { ViewToken } from "react-native";
 import { Order } from "@ledgerhq/live-common/market/utils/types";
 import { useQueryClient } from "@tanstack/react-query";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<MarketNavigatorStackParamList, ScreenName.MarketList>

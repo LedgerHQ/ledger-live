@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "~/context/Locale";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { Text, BottomSheetView, BottomSheetHeader } from "@ledgerhq/lumen-ui-rnative";
 import FearAndGreedCard from "./components/FearAndGreedCard";
 import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";

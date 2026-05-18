@@ -7,7 +7,7 @@ import Video from "react-native-video";
 import { Linking, StyleSheet } from "react-native";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { useDispatch } from "~/context/hooks";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@features/platform-feature-flags";
 import { NavigatorName, ScreenName } from "~/const";
 import StyledStatusBar from "~/components/StyledStatusBar";
 import { urls } from "~/utils/urls";

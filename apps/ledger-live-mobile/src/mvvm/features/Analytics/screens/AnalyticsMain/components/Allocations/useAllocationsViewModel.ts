@@ -5,7 +5,7 @@ import { useTheme } from "styled-components/native";
 import { useTheme as useLumenTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useSelector } from "~/context/hooks";
 import chunk from "lodash/chunk";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { ensureContrast } from "~/colors";
 import { useDistribution } from "~/actions/general";
 import { track } from "~/analytics";

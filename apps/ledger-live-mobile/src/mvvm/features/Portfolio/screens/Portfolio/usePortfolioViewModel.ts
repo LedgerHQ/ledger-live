@@ -3,7 +3,7 @@ import { shallowEqual } from "react-redux";
 import { useSelector } from "~/context/hooks";
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
-import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useSharedValue } from "react-native-reanimated";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import type { Feature_LlmMmkvMigration } from "@ledgerhq/types-live";

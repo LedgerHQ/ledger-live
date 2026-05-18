@@ -15,7 +15,7 @@ import { useModularDrawerVisibility } from "@ledgerhq/live-common/modularDrawer/
 import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDialog";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import { setOriginFlow } from "~/renderer/analytics/originFlow";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@features/platform-feature-flags";
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 
 const DRAWER_FLOW = "stake";

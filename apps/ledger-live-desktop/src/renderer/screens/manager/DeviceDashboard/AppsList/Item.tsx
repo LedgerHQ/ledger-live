@@ -16,7 +16,8 @@ import IconInfoCircleFull from "~/renderer/icons/InfoCircleFull";
 import AppActions from "./AppActions";
 import AppIcon from "./AppIcon";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { useFeature, useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
+import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
 import ToolTip from "~/renderer/components/Tooltip";
 
 const AppRowContainer = styled.div`

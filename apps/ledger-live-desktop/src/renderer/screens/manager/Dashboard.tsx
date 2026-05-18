@@ -15,7 +15,7 @@ import FirmwareUpdate from "./FirmwareUpdate";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { getEnv } from "@ledgerhq/live-env";
 import { context as drawerContext } from "~/renderer/drawers/Provider";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { useAppDataStorageProvider } from "~/renderer/hooks/storage-provider/useAppDataStorage";
 import { useLocation } from "react-router";
 

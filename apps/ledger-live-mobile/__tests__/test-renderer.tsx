@@ -48,7 +48,11 @@ import { INITIAL_STATE as SEND_FLOW_INITIAL_STATE } from "~/reducers/sendFlow";
 import { INITIAL_STATE as HISTORY_INITIAL_STATE } from "~/reducers/history";
 import { INITIAL_STATE as PORTFOLIO_REFRESH_INITIAL_STATE } from "~/reducers/portfolioRefresh";
 import { INITIAL_STATE as DEEPLINK_INSTALL_APP_INITIAL_STATE } from "~/reducers/deeplinkInstallApp";
-import { FEATURE_FLAGS_INITIAL_STATE, FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
+import {
+  FEATURE_FLAGS_INITIAL_STATE,
+  FEATURE_FLAGS_DEFAULTS,
+  setAllOverrides,
+} from "@shared/feature-flags";
 import type { FeatureId, Features, PartialFeatures, Feature } from "@shared/feature-flags";
 import StyleProvider from "~/StyleProvider";
 import CustomLiveAppProvider from "./CustomLiveAppProvider";
@@ -108,7 +112,7 @@ type WrapperProps = { children?: NavigationChildren };
 function createStore({ overrideInitialState }: { overrideInitialState: (state: State) => State }) {
   const state = overrideInitialState(INITIAL_STATE);
 
-  return configureStore({
+  const store = configureStore({
     reducer: reducers,
     middleware: getDefaultMiddleware =>
       applyLlmRTKApiMiddlewares(
@@ -117,6 +121,18 @@ function createStore({ overrideInitialState }: { overrideInitialState: (state: S
     preloadedState: state,
     devTools: false,
   });
+
+  /**
+   * Re-dispatches preloaded overrides through the slice so `resolved` is recomputed.
+   * Tests that only set `featureFlags.overrides` in initialState would otherwise leave
+   * `resolved` at defaults — which the new Redux-backed `useFeature` reads.
+   */
+  const overrides = store.getState().featureFlags?.overrides;
+  if (overrides && Object.keys(overrides).length > 0) {
+    store.dispatch(setAllOverrides(overrides));
+  }
+
+  return store;
 }
 
 export type ReduxStore = ReturnType<typeof createStore>;
@@ -165,14 +181,16 @@ function withFlagOverrides(
         }),
       };
     }
+    const overrides: PartialFeatures = {
+      ...base.featureFlags.overrides,
+      ...(merged as unknown as PartialFeatures),
+    };
     return {
       ...base,
       featureFlags: {
         ...base.featureFlags,
-        overrides: {
-          ...base.featureFlags.overrides,
-          ...(merged as unknown as PartialFeatures),
-        },
+        overrides,
+        resolved: { ...base.featureFlags.resolved, ...overrides },
       },
     };
   };

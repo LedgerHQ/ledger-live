@@ -2,12 +2,11 @@ import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router";
+import { useFeature, useHasLocallyOverriddenFeatureFlags } from "@features/platform-feature-flags";
 import {
   DEFAULT_FEATURES,
   groupedFeatures,
-  useFeature,
   useFeatureFlags,
-  useHasLocallyOverriddenFeatureFlags,
 } from "@ledgerhq/live-common/featureFlags/index";
 import { Flex, SearchInput, Alert, Tag, Text } from "@ledgerhq/react-ui";
 import { Switch, Button } from "@ledgerhq/lumen-ui-react";

@@ -14,7 +14,7 @@ import { AnalyticsPage, useLedgerSyncAnalytics } from "../../hooks/useLedgerSync
 import { useLedgerSyncInfo } from "../../hooks/useLedgerSyncInfo";
 import { AlertError } from "../../components/AlertError";
 import { AlertLedgerSyncDown } from "../../components/AlertLedgerSyncDown";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@features/platform-feature-flags";
 
 const Separator = () => {
   const { colors } = useTheme();

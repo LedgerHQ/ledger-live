@@ -1,5 +1,5 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { getStuckAccountAndOperation } from "@ledgerhq/coin-bitcoin/operation";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike } from "@ledgerhq/types-live";

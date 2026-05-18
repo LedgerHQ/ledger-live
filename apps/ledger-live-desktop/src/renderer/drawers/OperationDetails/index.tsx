@@ -9,7 +9,7 @@ import {
   getDefaultExplorerView,
   getTransactionExplorer as getDefaultTransactionExplorer,
 } from "@ledgerhq/live-common/explorers";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import {
   findOperationInAccount,
   getOperationAmountNumber,

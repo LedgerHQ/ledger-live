@@ -1,5 +1,6 @@
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
-import { useFeature, isRecoverDisplayed } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
+import { isRecoverDisplayed } from "@ledgerhq/live-common/featureFlags/index";
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useState } from "react";

@@ -1,7 +1,7 @@
 import React from "react";
 import { setEnvUnsafe, isEnvDefault, getEnv } from "@ledgerhq/live-env";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { FeatureId } from "@ledgerhq/types-live";
 import { Feature, isReadOnly } from "../../../experimental";
 import SettingsRow from "~/components/SettingsRow";

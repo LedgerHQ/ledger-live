@@ -1,5 +1,5 @@
 import { useSelector } from "LLD/hooks/redux";
-import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { usePostOnboardingEntryPointVisibleOnWallet, usePostOnboardingPortfolioWidgetVisibility } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { showClearCacheBannerSelector } from "~/renderer/reducers/settings";
 import { portfolioContentCardSelector } from "~/renderer/reducers/dynamicContent";

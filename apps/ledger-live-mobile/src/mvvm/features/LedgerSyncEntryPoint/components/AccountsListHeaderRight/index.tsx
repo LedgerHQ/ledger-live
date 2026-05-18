@@ -1,7 +1,7 @@
 import React from "react";
 import LedgerSyncEntryPoint from "LLM/features/LedgerSyncEntryPoint";
 import { EntryPoint } from "LLM/features/LedgerSyncEntryPoint/types";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@features/platform-feature-flags";
 
 export default function AccountsListHeaderRight() {
   const lwmLedgerSyncOptimisation = useFeature("lwmLedgerSyncOptimisation");

@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useSelector } from "~/context/hooks";
 import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";

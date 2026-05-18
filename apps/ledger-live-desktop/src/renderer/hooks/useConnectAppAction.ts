@@ -22,7 +22,7 @@ import { createAction as createRawTransactionAction } from "@ledgerhq/live-commo
 import { createAction as createStartExchangeAction } from "@ledgerhq/live-common/hw/actions/startExchange";
 import { getEnv } from "@ledgerhq/live-env";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { Action } from "@ledgerhq/live-common/hw/actions/types";
 import { isDeviceNotOnboardedError } from "@ledgerhq/live-common/device-action/utils";
 

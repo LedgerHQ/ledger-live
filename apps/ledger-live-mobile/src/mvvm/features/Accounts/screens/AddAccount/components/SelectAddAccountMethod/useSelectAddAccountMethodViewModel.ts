@@ -2,7 +2,7 @@ import { useSelector } from "~/context/hooks";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { useCallback } from "react";
 import { track } from "~/analytics";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useModularDrawerController } from "LLM/features/ModularDrawer";
 

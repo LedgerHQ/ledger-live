@@ -5,7 +5,7 @@ import { lastUsedVersionSelector } from "~/renderer/reducers/settings";
 import { saveSettings } from "~/renderer/actions/settings";
 import { openModal } from "~/renderer/actions/modals";
 import { openReleaseNotes } from "LLD/features/ReleaseNotes/releaseNotesDialog";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/useWalletFeaturesConfig";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 const IsNewVersion = () => {
   const dispatch = useDispatch();

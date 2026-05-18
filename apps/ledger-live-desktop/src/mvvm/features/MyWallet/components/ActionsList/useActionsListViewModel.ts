@@ -9,7 +9,7 @@ import {
 } from "@ledgerhq/lumen-ui-react/symbols";
 import { track } from "~/renderer/analytics/segment";
 import type { Action } from "./types";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { useAccountPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { openModal } from "~/renderer/actions/modals";

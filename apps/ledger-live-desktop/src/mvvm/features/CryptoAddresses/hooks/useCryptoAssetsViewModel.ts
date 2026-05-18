@@ -16,7 +16,7 @@ import { buildPlaceholderAssetItemsFromAssetsData } from "LLD/features/Assets/ut
 import { parseAssetsPageCategory } from "LLD/features/Assets/utils/buildAssetsPagePath";
 import { padItems } from "LLD/features/Assets/utils/assetTableHelpers";
 import { dadaIdToMarketId } from "@ledgerhq/live-common/market/utils/index";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import {
   ASSETS_PAGE_CATEGORY_CRYPTOS,
   ASSETS_PAGE_CATEGORY_STABLECOINS,

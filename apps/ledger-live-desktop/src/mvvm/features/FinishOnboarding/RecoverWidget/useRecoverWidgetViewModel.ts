@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
-import { isRecoverDisplayed, useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
+import { isRecoverDisplayed } from "@ledgerhq/live-common/featureFlags/index";
 import { useUpsellPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { getStoreValue } from "~/renderer/store";

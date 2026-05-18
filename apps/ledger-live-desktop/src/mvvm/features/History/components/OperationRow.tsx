@@ -1,7 +1,7 @@
 import React, { useCallback, memo } from "react";
 import { DotIndicator, TableRow, TableCell, TableCellContent } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import TransactionalIcon from "LLD/components/TransactionalIcon";
 import { SquaredCryptoIcon } from "LLD/components/SquaredCryptoIcon";
 import { BalanceCell } from "LLD/components/Cells/BalanceCell";

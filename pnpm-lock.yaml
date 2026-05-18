@@ -921,6 +921,9 @@ importers:
       '@features/market-banner':
         specifier: workspace:^
         version: link:../../features/market-banner
+      '@features/platform-feature-flags':
+        specifier: workspace:^
+        version: link:../../features/platform/feature-flags
       '@ledgerhq/asset-aggregation':
         specifier: workspace:^
         version: link:../../libs/asset-aggregation
@@ -2079,6 +2082,9 @@ importers:
       '@features/market-banner':
         specifier: workspace:^
         version: link:../../features/market-banner
+      '@features/platform-feature-flags':
+        specifier: workspace:^
+        version: link:../../features/platform/feature-flags
       '@jest/reporters':
         specifier: 'catalog:'
         version: 30.2.0

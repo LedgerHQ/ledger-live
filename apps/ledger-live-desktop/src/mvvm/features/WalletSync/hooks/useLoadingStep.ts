@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { setFlow } from "~/renderer/actions/walletSync";
 import { walletSyncFlowSelector, walletSyncNextStepSelector } from "~/renderer/reducers/walletSync";
 import { useWalletSyncUserState } from "../components/WalletSyncContext";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 
 export function useLoadingStep() {
   const dispatch = useDispatch();

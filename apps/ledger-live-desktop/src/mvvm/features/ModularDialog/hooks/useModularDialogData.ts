@@ -9,7 +9,7 @@ import {
   modularDialogSearchedSelector,
 } from "~/renderer/reducers/modularDialog";
 import { useSelector } from "LLD/hooks/redux";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 

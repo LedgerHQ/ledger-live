@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
-import FeatureToggle from "@ledgerhq/live-common/featureFlags/FeatureToggle";
+import { FeatureToggle } from "@features/platform-feature-flags";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import SettingsRow from "~/components/SettingsRow";
 import { ScreenName } from "~/const";

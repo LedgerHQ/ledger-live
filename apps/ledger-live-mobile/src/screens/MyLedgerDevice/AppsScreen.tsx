@@ -51,7 +51,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import LedgerSyncEntryPoint from "LLM/features/LedgerSyncEntryPoint";
 import { EntryPoint } from "LLM/features/LedgerSyncEntryPoint/types";
 import { LNSUpsellBanner } from "LLM/features/LNSUpsell";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 type Props = {
   state: State;

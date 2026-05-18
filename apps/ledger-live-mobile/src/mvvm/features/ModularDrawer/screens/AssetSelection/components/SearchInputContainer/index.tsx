@@ -3,7 +3,7 @@ import { useTranslation } from "~/context/Locale";
 import { SearchProps, useSearch } from "./useSearch";
 import { Flex } from "@ledgerhq/native-ui";
 import { Search } from "@ledgerhq/native-ui/pre-ldls/index";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@features/platform-feature-flags";
 
 type Props = SearchProps & {
   withHorizontalPadding?: boolean;

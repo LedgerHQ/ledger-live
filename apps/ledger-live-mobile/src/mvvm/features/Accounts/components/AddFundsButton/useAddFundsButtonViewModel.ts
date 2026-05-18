@@ -9,7 +9,7 @@ import { useNavigation } from "@react-navigation/core";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { NavigatorName, ScreenName } from "~/const";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 
 export type Props = {
   accounts: Account[];

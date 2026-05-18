@@ -5,7 +5,7 @@ import {
   TransactionStatus,
 } from "@ledgerhq/live-common/families/internet_computer/types";
 import { Account } from "@ledgerhq/types-live";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 
 const Root = (props: {
   account: Account;

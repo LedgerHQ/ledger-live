@@ -2,7 +2,7 @@ import {
   groupedFeatures,
   GroupedFeature,
 } from "@ledgerhq/live-common/featureFlags/groupedFeatures";
-import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/FeatureFlagsContext";
+import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
 import { Flex, Link, Tag, Box, Text } from "@ledgerhq/react-ui";
 import { Switch } from "@ledgerhq/lumen-ui-react";
 import React, { useCallback, useMemo, useState } from "react";

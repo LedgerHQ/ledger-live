@@ -12,7 +12,7 @@ import { ScreenName } from "~/const/navigation";
 import { OnboardingType } from "~/reducers/types";
 import { SelectionCards } from "./Cards/SelectionCard";
 import OnboardingView from "./OnboardingView";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { logDrawer } from "LLM/components/QueuedDrawer/utils/logDrawer";
 import ActivationDrawer from "LLM/features/WalletSync/screens/Activation/ActivationDrawer";
 import { Steps } from "LLM/features/WalletSync/types/Activation";

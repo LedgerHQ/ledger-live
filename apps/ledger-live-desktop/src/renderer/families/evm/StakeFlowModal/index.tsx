@@ -1,5 +1,5 @@
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { Box, Button, Flex, Icons, Text } from "@ledgerhq/react-ui";
 import { AccountLike, EthStakingProvider, EthStakingProviderCategory } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";

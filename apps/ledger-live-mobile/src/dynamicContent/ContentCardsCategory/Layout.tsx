@@ -1,7 +1,7 @@
 import React from "react";
 import { Linking } from "react-native";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import HorizontalCard from "../../contentCards/cards/horizontal";
 import { ContentBannerActionCard } from "../../contentCards/cards/contentBannerAction";
 import {

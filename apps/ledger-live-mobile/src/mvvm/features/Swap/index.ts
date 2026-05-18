@@ -12,7 +12,7 @@ import { shallowAccountsSelector, flattenAccountsSelector } from "~/reducers/acc
 import { NavigatorName, ScreenName } from "~/const";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { useModularDrawerController } from "../ModularDrawer";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 type UseOpenSwapProps = {
   currency?: CryptoOrTokenCurrency;

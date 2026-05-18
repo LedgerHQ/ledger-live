@@ -7,8 +7,13 @@ import * as config from "@ledgerhq/live-common/config/index";
 import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import type { Account, TokenAccount, Operation } from "@ledgerhq/types-live";
 import { ActionButtonEvent } from "~/components/FabActions";
-import * as featureFlagsIndex from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import * as accountIndex from "@ledgerhq/live-common/account/index";
+
+jest.mock("@features/platform-feature-flags", () => ({
+  ...jest.requireActual("@features/platform-feature-flags"),
+  useFeature: jest.fn(),
+}));
 import type { TFunction } from "i18next";
 import { render } from "@testing-library/react-native";
 import React from "react";
@@ -31,7 +36,7 @@ describe("Testing ListHeaderComponent Component", () => {
     beforeEach(() => {
       jest.clearAllMocks();
 
-      jest.spyOn(featureFlagsIndex, "useFeature").mockImplementation(jest.fn());
+      jest.mocked(useFeature).mockReturnValue(null);
       jest
         .spyOn(accountIndex, "getMainAccount")
         .mockImplementation((account: TokenAccount | Account, _: unknown) => account as Account);

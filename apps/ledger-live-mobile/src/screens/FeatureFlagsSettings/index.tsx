@@ -1,11 +1,10 @@
 import React, { useCallback, useState, useMemo } from "react";
 import { useTranslation } from "~/context/Locale";
+import { useFeature, useHasLocallyOverriddenFeatureFlags } from "@features/platform-feature-flags";
 import {
   DEFAULT_FEATURES,
   groupedFeatures,
-  useFeature,
   useFeatureFlags,
-  useHasLocallyOverriddenFeatureFlags,
 } from "@ledgerhq/live-common/featureFlags/index";
 import type { FeatureId } from "@ledgerhq/types-live";
 

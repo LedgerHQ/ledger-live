@@ -21,7 +21,7 @@ import { track, updateIdentify } from "~/analytics";
 import { hasSeenAnalyticsOptInPromptSelector, trackingEnabledSelector } from "~/reducers/settings";
 import { EntryPoint } from "~/components/RootNavigator/types/AnalyticsOptInPromptNavigator";
 import { ABTestingVariants } from "@ledgerhq/types-live";
-import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useNotifications } from "LLM/features/NotificationsPrompt";
 import { resolveAnalyticsOptInParams } from "@ledgerhq/live-common/analyticsConsent/index";
 

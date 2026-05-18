@@ -19,7 +19,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import QueuedDrawerGorhom, {
   BottomSheetView as GorhomBottomSheetView,
 } from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 
 const items = [

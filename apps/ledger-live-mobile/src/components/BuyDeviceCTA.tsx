@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { Linking } from "react-native";
 import { Text } from "@ledgerhq/native-ui";
 import { Trans } from "~/context/Locale";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { useNavigation } from "@react-navigation/native";
 
 import { urls } from "~/utils/urls";

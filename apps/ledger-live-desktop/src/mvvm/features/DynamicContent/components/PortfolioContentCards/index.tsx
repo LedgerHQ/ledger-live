@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import styled from "styled-components";
 
 import { Carousel } from "@ledgerhq/react-ui";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { track } from "~/renderer/analytics/segment";
 import { openURL } from "~/renderer/linking";
 import type { PortfolioContentCard as PortfolioCardType } from "~/types/dynamicContent";

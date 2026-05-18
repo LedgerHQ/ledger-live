@@ -2,7 +2,7 @@ import {
   stakeProgramsToEarnParam,
   getEthDepositScreenSetting,
 } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/index";
 import {
   useRemoteLiveAppContext,
@@ -28,7 +28,6 @@ import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
 import { EarnWebview } from "./EarnWebview";
 import { useVersionedStakePrograms } from "LLM/hooks/useStake/useVersionedStakePrograms";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/useWalletFeaturesConfig";
 import { EarnV2Webview } from "./EarnV2Webview";
 
 export type Props = StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenName.Earn>;

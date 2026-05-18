@@ -6,7 +6,7 @@ import {
   MaterialTopTabBarProps,
 } from "@react-navigation/material-top-tabs";
 import { NavigationContainerEventMap } from "@react-navigation/native";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useWallet40Theme } from "LLM/hooks/useWallet40Theme";
 import MarketWalletTabNavigator from "LLM/features/Market/WalletTabNavigator";
 import { PortfolioBalanceSync } from "LLM/features/Portfolio/components/PortfolioBalanceSync";

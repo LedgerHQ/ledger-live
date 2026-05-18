@@ -1,4 +1,4 @@
-import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 export interface RightPanelViewModelResult {
   readonly shouldDisplay: boolean;

@@ -7,7 +7,7 @@ import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@features/platform-feature-flags";
 import { StyleProp, ViewStyle } from "react-native";
 import { track } from "~/analytics";
 import { AnalyticButtons, AnalyticEvents } from "LLM/hooks/useAnalytics/enums";

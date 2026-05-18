@@ -1,7 +1,7 @@
 import React from "react";
 import { Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "~/context/Locale";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@features/platform-feature-flags";
 import { ABTestingVariants } from "@ledgerhq/types-live";
 
 export const NotificationsPromptContent = () => {

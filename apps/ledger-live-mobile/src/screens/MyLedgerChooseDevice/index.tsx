@@ -24,7 +24,7 @@ import ContentCardsLocation from "~/dynamicContent/ContentCardsLocation";
 import { ContentCardLocation } from "~/dynamicContent/types";
 import { useAutoRedirectToPostOnboarding } from "~/hooks/useAutoRedirectToPostOnboarding";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import SafeAreaView from "~/components/SafeAreaView";
 import { wallet40HeaderOptions } from "~/screens/MyLedgerChooseDevice/wallet40HeaderOptions";
 

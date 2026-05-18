@@ -1,6 +1,6 @@
 import { isCantonAccount } from "@ledgerhq/coin-canton";
 import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { useCantonAcceptOrRejectOffer } from "@ledgerhq/live-common/families/canton/react";
 import { Account } from "@ledgerhq/types-live";
 import { useDispatch, useSelector } from "LLD/hooks/redux";

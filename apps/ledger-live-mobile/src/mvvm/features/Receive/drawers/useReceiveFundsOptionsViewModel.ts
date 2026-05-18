@@ -6,7 +6,7 @@ import { track } from "~/analytics";
 import { isCryptoOrTokenCurrency } from "LLM/utils/isCryptoOrTokenCurrency";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
 import { useReceiveOptionsDrawerController } from "../useReceiveOptionsDrawerController";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 // Fiat provider manifest ID for Noah integration
 const FIAT_PROVIDER_MANIFEST_ID = "noah";
