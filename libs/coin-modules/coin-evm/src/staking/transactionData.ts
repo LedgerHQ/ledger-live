@@ -36,6 +36,7 @@ const STAKING_PROTOCOLS: Record<string, Record<string, OperationFn>> = {
       }
       return [delegator, dstValAddress];
     },
+    claimReward: valAddress => [valAddress],
   },
   celo: {
     delegate: (valAddress, amount) => [valAddress, amount],
@@ -103,7 +104,7 @@ export function buildStakingTransactionParams(
     sender, // delegator address
   );
 
-  const to = config.contractAddress;
+  const to = config.specificContractAddressByOperation?.[mode] ?? config.contractAddress;
   const data = Buffer.from(
     encodeStakingData({
       currencyId: currency.id,

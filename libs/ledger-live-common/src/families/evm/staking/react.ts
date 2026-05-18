@@ -1,6 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
-import { getValidators, getCachedValidators } from "@ledgerhq/coin-evm/staking/index";
-import type { StakingValidatorItem } from "@ledgerhq/coin-evm/types/index";
+import {
+  getValidators,
+  getCachedValidators,
+  mapDelegations,
+} from "@ledgerhq/coin-evm/staking/index";
+import type {
+  StakingAccount,
+  StakingMappedDelegation,
+  StakingValidatorItem,
+} from "@ledgerhq/coin-evm/types/index";
+import { GenericTransaction } from "bridge/generic-coin-framework/types";
+import { Unit } from "@ledgerhq/types-cryptoassets";
 
 export type EvmStakingValidatorsState = {
   validators: StakingValidatorItem[];
@@ -77,5 +87,44 @@ export function useEvmStakingValidators(
     validators: filtered,
     loading: fetchState.loading,
     error: fetchState.error,
+  };
+}
+
+export function useEvmFamilyDelegationsQuerySelector(
+  account: StakingAccount,
+  transaction: GenericTransaction,
+  unit: Unit,
+): {
+  query: string;
+  setQuery: (query: string) => void;
+  options: StakingMappedDelegation[];
+  value: StakingMappedDelegation | null | undefined;
+} {
+  const [query, setQuery] = useState<string>("");
+  const delegations = account.stakingResources.delegations; /*.filter(delegation =>
+    delegation.pendingRewards.gt(0),
+  );*/
+  const validators = account.stakingResources.validators ?? [];
+  const mappedDelegations = mapDelegations(delegations, validators, unit);
+
+  const options = useMemo<StakingMappedDelegation[]>(
+    () =>
+      mappedDelegations.filter(delegation =>
+        delegation.validator?.name.toLowerCase().includes(query.toLowerCase().trim()),
+      ),
+    [query, delegations],
+  );
+
+  const value = useMemo(() => {
+    return mappedDelegations.find(
+      ({ validatorAddress }) => validatorAddress === transaction.valAddress,
+    );
+  }, [delegations, transaction]);
+
+  return {
+    query,
+    setQuery,
+    options,
+    value,
   };
 }

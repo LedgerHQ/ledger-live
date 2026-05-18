@@ -20,6 +20,7 @@ export function isStakingOperation(value: string): value is StakingOperation {
     "redelegate",
     "getStakedBalance",
     "getUnstakedBalance",
+    "claimReward",
   ];
   return stakingOperations.includes(value as StakingOperation);
 }
