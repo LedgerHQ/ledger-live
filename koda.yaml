@@ -1,0 +1,9 @@
+snapshot: ledger-live-desktop-agent-cde
+setup: |
+  mise install --locked   # Install pinned Node, pnpm, and other tools (see mise.toml)
+  pnpm i --ignore-scripts # Install all dependencies
+  pnpm build:lld --tui false
+lint: |
+  pnpm lint --tui false
+env:
+  IS_KODA: "1"

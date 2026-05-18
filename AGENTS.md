@@ -1,5 +1,9 @@
 # Project Context
 
+## Koda
+
+If you are a Koda agent, check [koda](./skills/koda/SKILL.md) for more information about your role and responsibilities.
+
 ## Overview
 
 - "Ledger Wallet" (formerly "ledger-live") is a crypto wallet
