@@ -12,6 +12,7 @@ import bunliConfig from "../bunli.config";
 import { getCliProcessExitCode } from "./cli-process-exit-error";
 import { disposeWalletCliDmkTransportFully } from "./device/register-dmk-transport";
 import AccountGroup from "./commands/account/index";
+import AssetsGroup from "./commands/assets/index";
 import SessionGroup from "./commands/session/index";
 import BalancesCommand from "./commands/balances";
 import OperationsCommand from "./commands/operations";
@@ -32,6 +33,7 @@ emitTestingBuildBannerIfNeeded();
 export async function runMain(argv: string[] = process.argv.slice(2)): Promise<number> {
   const cli = await createCLI(bunliConfig as unknown as Parameters<typeof createCLI>[0]);
   cli.command(AccountGroup);
+  cli.command(AssetsGroup);
   cli.command(SessionGroup);
   cli.command(BalancesCommand);
   cli.command(OperationsCommand);

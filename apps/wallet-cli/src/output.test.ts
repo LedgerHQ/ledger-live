@@ -98,4 +98,28 @@ describe("HumanCommandOutput", () => {
     expect(spin.text).toBe("[⧖] Review on device. Approve or reject.");
     expect(createdSpinners).toHaveLength(1);
   });
+
+  it("token() writes the formatted token info to stdout", async () => {
+    const { installOutputCapture } = await import("./shared/ui");
+    const { USDT_TOKEN_INFO } = await import("./test/helpers/cal-fixtures");
+    const writes: string[] = [];
+    const restore = installOutputCapture({
+      stdout: chunk => {
+        writes.push(chunk);
+      },
+    });
+    try {
+      const out = createCommandOutput("human", {
+        command: "assets token",
+        network: "ethereum",
+      });
+      out.token(USDT_TOKEN_INFO);
+    } finally {
+      restore();
+    }
+    const joined = writes.join("");
+    expect(joined).toContain(USDT_TOKEN_INFO.id);
+    expect(joined).toContain(USDT_TOKEN_INFO.ticker);
+    expect(joined).toContain(USDT_TOKEN_INFO.contractAddress);
+  });
 });

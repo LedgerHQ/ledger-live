@@ -1,5 +1,5 @@
 import { serializeV1 } from "../../shared/accountDescriptor";
-import type { Balance, Operation, DiscoveredAccount } from "../models";
+import type { Balance, Operation, DiscoveredAccount, TokenInfo } from "../models";
 import type { HumanFormatter } from "./human";
 
 export type JsonBalance = { asset: string; amount: string };
@@ -54,5 +54,9 @@ export class JsonFormatter {
 
   static discoveredAccounts(accounts: DiscoveredAccount[]): string[] {
     return accounts.map(a => serializeV1(a.descriptor));
+  }
+
+  token(t: TokenInfo): TokenInfo {
+    return t;
   }
 }

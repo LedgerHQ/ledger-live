@@ -4,7 +4,13 @@ import type { Unit } from "@ledgerhq/types-cryptoassets";
 import type { CryptoAssetsStore, OperationType } from "@ledgerhq/types-live";
 import { colors } from "../../shared/ui";
 import { serializeV1 } from "../../shared/accountDescriptor";
-import type { AccountDescriptor, Balance, Operation, DiscoveredAccount } from "../models";
+import type {
+  AccountDescriptor,
+  Balance,
+  Operation,
+  DiscoveredAccount,
+  TokenInfo,
+} from "../models";
 
 const TYPE_COLORS: Partial<Record<OperationType, (s: string) => string>> = {
   IN: colors.green,
@@ -57,6 +63,22 @@ export class HumanFormatter {
   async formatBalance(b: Balance): Promise<string> {
     const amount = await this.formatAmount(b.balance, b.assetId);
     return b.balance === "0" ? colors.dim(amount) : colors.green(amount);
+  }
+
+  formatTokenInfo(t: TokenInfo): string {
+    const lines = [
+      `ID:        ${colors.bold(t.id)}`,
+      `Ticker:    ${t.ticker}`,
+      `Name:      ${t.name}`,
+      `Contract:  ${t.contractAddress}`,
+      `Parent:    ${t.parentCurrencyId}`,
+      `Type:      ${t.tokenType}`,
+      `Decimals:  ${t.decimals}`,
+    ];
+    if (t.delisted) {
+      lines.push(colors.yellow("Warning: this token is delisted"));
+    }
+    return lines.join("\n");
   }
 
   static formatError(e: unknown): string {

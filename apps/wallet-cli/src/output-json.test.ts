@@ -2,6 +2,7 @@ import "./live-common-setup";
 import { beforeEach, describe, expect, it } from "bun:test";
 import { installOutputCapture } from "./shared/ui";
 import { CliProcessExitError } from "./cli-process-exit-error";
+import { USDT_TOKEN_INFO } from "./test/helpers/cal-fixtures";
 
 const { createCommandOutput } = await import("./output");
 
@@ -209,6 +210,31 @@ describe("JsonCommandOutput", () => {
       provider_errors: [providerError],
     });
     expect(lines[0].quotes[0]).toMatchObject({ quoteId: "quote-1", provider: "paraswap" });
+  });
+
+  it("emits a token() envelope containing the resolved TokenInfo", () => {
+    try {
+      const out = createCommandOutput("json", {
+        command: "assets token",
+        network: "ethereum",
+      });
+      out.token(USDT_TOKEN_INFO);
+    } finally {
+      restore();
+    }
+
+    const lines = writes
+      .join("")
+      .trim()
+      .split("\n")
+      .map(line => JSON.parse(line));
+    expect(lines).toHaveLength(1);
+    expect(lines[0]).toMatchObject({
+      status: "success",
+      command: "assets token",
+      network: "ethereum",
+      token: USDT_TOKEN_INFO,
+    });
   });
 
   it("emits swap quote unavailability as an NDJSON error envelope", () => {
