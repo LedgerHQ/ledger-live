@@ -81,6 +81,7 @@ describe("AssetDetail screen layout", () => {
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.screen)).toBeVisible();
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.balanceGraph)).toBeVisible();
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.marketStats)).toBeVisible();
+    expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.coinOptionsTrailing)).toBeVisible();
     expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.transactions)).toBeNull();
   });
 
