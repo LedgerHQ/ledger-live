@@ -89,7 +89,9 @@ export class MainNavigationPage extends AppPage {
   }
   @step("Open $0 from main navigation")
   async openTargetFromMainNavigation(target: TargetName) {
-    await this.sidebarTargets[target].selector.click();
+    const { selector } = this.sidebarTargets[target];
+    await expect(selector).toBeEnabled();
+    await selector.click();
   }
 
   @step("Validate $0 target from main navigation is selected and redirect to the expected path")
