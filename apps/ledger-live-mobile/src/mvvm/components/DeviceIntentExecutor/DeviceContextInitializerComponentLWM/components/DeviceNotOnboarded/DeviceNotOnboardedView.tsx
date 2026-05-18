@@ -15,7 +15,9 @@ export function DeviceNotOnboardedView({
     <InfoState
       preset="info"
       size="hug"
-      title={<Trans i18nKey="deviceIntentExecutor.initialization.blocking.deviceNotOnboarded.title" />}
+      title={
+        <Trans i18nKey="deviceIntentExecutor.initialization.blocking.deviceNotOnboarded.title" />
+      }
       description={
         <Trans
           i18nKey="deviceIntentExecutor.initialization.blocking.deviceNotOnboarded.description"

@@ -11,7 +11,9 @@ export function UnsupportedFeatureView({ onContactSupport }: UnsupportedFeatureV
     <InfoState
       preset="info"
       size="hug"
-      title={<Trans i18nKey="deviceIntentExecutor.initialization.blocking.unsupportedFeature.title" />}
+      title={
+        <Trans i18nKey="deviceIntentExecutor.initialization.blocking.unsupportedFeature.title" />
+      }
       description={
         <Trans i18nKey="deviceIntentExecutor.initialization.blocking.unsupportedFeature.description" />
       }

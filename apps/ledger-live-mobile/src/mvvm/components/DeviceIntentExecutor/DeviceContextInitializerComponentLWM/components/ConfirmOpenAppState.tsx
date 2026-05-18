@@ -1,8 +1,5 @@
 import React from "react";
-import {
-  DeviceInteractionRequiredType,
-  type EnsureAppReadyState,
-} from "@ledgerhq/live-dmk-shared";
+import { DeviceInteractionRequiredType, type EnsureAppReadyState } from "@ledgerhq/live-dmk-shared";
 import { Trans } from "~/context/Locale";
 import { DeviceActionContent } from "LLM/components/DeviceActionContent";
 import type { BaseInitializerStateProps } from "../types";

@@ -15,7 +15,9 @@ export function WrongDeviceForAccountView({
     <InfoState
       preset="info"
       size="hug"
-      title={<Trans i18nKey="deviceIntentExecutor.initialization.blocking.wrongDeviceForAccount.title" />}
+      title={
+        <Trans i18nKey="deviceIntentExecutor.initialization.blocking.wrongDeviceForAccount.title" />
+      }
       description={
         <Trans i18nKey="deviceIntentExecutor.initialization.blocking.wrongDeviceForAccount.description" />
       }

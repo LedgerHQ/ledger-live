@@ -8,11 +8,7 @@ function renderView(error: Error) {
 
   return {
     ...render(
-      <FinalErrorView
-        error={error}
-        onCancel={onCancel}
-        onContactSupport={onContactSupport}
-      />,
+      <FinalErrorView error={error} onCancel={onCancel} onContactSupport={onContactSupport} />,
     ),
     onCancel,
     onContactSupport,
