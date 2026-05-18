@@ -8,6 +8,11 @@ export const estimateMaxSpendable: AccountBridge<
   AleoTransaction,
   AleoAccount
 >["estimateMaxSpendable"] = async ({ account, parentAccount, transaction }) => {
+  // FIX: extend for private balance
+  if (account.type === "TokenAccount") {
+    return account.balance;
+  }
+
   const mainAccount = getMainAccount(account, parentAccount);
   const t = transaction ?? createTransaction(mainAccount);
 
