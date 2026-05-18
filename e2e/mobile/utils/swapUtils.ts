@@ -47,11 +47,11 @@ export async function performSwapUntilQuoteSelectionStep(
   }
 }
 export async function ensureTokenApproval(
-  fromAccount: Account | TokenAccount,
+  fromAccount: TokenAccount,
   provider: Provider,
   minAmount: string,
 ) {
-  if (!provider.contractAddress || !fromAccount.parentAccount) return;
+  if (!provider.contractAddress) return;
 
   const currentAllowance = await isTokenAllowanceSufficientCommand(
     fromAccount,
@@ -79,22 +79,8 @@ export async function ensureTokenApproval(
   }
 }
 
-/**
- * Revokes the ERC-20 token allowance previously granted to a swap provider's
- * spender contract by setting it back to 0 on-chain.
- *
- * No-ops when the provider has no spender contract, when the token account has
- * no parent account to sign with, or when the current allowance is already 0.
- * Otherwise launches a Speculos device, broadcasts the revoke via CLI, and
- * restores the previous Speculos port on cleanup.
- *
- * @param fromAccount - Token account whose allowance is being revoked. Must
- * expose a `parentAccount` (the EVM account that signs the revoke transaction).
- * @param provider - Swap provider whose `contractAddress` is the spender to
- * revoke. Its `uiName` is also used as the Allure description label.
- */
-export async function revokeTokenApproval(fromAccount: Account | TokenAccount, provider: Provider) {
-  if (!provider.contractAddress || !fromAccount.parentAccount) return;
+export async function revokeTokenApproval(fromAccount: TokenAccount, provider: Provider) {
+  if (!provider.contractAddress) return;
 
   const allowance = await getTokenAllowanceCommand(fromAccount, provider.contractAddress);
   if (allowance === "0") return;

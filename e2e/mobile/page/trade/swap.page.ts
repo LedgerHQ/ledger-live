@@ -6,11 +6,7 @@ import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import fs from "fs/promises";
 import * as path from "path";
 import { FileUtils } from "../../utils/fileUtils";
-import {
-  Account,
-  getParentAccountName,
-  TokenAccount,
-} from "@ledgerhq/live-common/e2e/enum/Account";
+import { getParentAccountName, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
 
 export default class SwapPage extends CommonPage {
   baseLink = "swap";
@@ -202,7 +198,7 @@ export default class SwapPage extends CommonPage {
   }
 
   @Step("Ensure token approval has been revoked")
-  async ensureRevokeTokenApproval(fromAccount: Account | TokenAccount, provider: Provider) {
+  async ensureRevokeTokenApproval(fromAccount: TokenAccount, provider: Provider) {
     if (!provider.contractAddress) {
       throw new Error(
         `Provider "${provider.name}" has no contractAddress — revoke requires an EVM token provider`,
