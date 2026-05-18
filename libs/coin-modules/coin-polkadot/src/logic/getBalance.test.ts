@@ -25,4 +25,67 @@ describe("getBalance", () => {
       { value: BigInt(100), asset: { type: "native" } },
     ]);
   });
+
+  describe("Bittensor", () => {
+    // Bittensor uses SS58 address prefix 42 (generic Substrate)
+    const bittensorAddress = "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY";
+
+    beforeEach(() => {
+      coinConfig.setCoinConfig(
+        () =>
+          ({
+            status: { type: "active" },
+            sidecar: { url: "http://bittensor-sidecar.test" },
+          }) as unknown as PolkadotCoinConfig,
+      );
+    });
+
+    afterAll(() => {
+      // Restore Polkadot config so other tests are not affected
+      coinConfig.setCoinConfig(
+        () =>
+          ({
+            status: { type: "active" },
+            sidecar: { url: "http://polkadot.explorer.com" },
+          }) as unknown as PolkadotCoinConfig,
+      );
+      mockServer.close();
+    });
+
+    it("gets the balance of a Bittensor account", async () => {
+      mockServer.use(
+        http.get(
+          `http://bittensor-sidecar.test/accounts/${bittensorAddress}/balance-info`,
+          () =>
+            HttpResponse.json({
+              locks: [],
+              free: 1000000000,
+              at: { height: 4000000 },
+            }),
+        ),
+      );
+
+      expect(await getBalance(bittensorAddress)).toEqual([
+        { value: BigInt(1000000000), asset: { type: "native" } },
+      ]);
+    });
+
+    it("returns zero balance for an empty Bittensor account", async () => {
+      mockServer.use(
+        http.get(
+          `http://bittensor-sidecar.test/accounts/${bittensorAddress}/balance-info`,
+          () =>
+            HttpResponse.json({
+              locks: [],
+              free: 0,
+              at: { height: 4000000 },
+            }),
+        ),
+      );
+
+      expect(await getBalance(bittensorAddress)).toEqual([
+        { value: BigInt(0), asset: { type: "native" } },
+      ]);
+    });
+  });
 });
