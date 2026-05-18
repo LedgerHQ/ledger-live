@@ -9,7 +9,7 @@ import { Signature } from "ethers";
 import type { DomainServiceResolution } from "@ledgerhq/types-live";
 import resolver from "@ledgerhq/coin-evm/hw-getAddress";
 import { CreateSigner, executeWithSigner } from "../../../setup";
-import type { AlpacaSigner } from "../../types";
+import type { CoinFrameworkSigner } from "../../types";
 
 export type Signer = {
   getAddress: (
@@ -93,4 +93,4 @@ const context = executeWithSigner(createSigner);
 export default {
   context,
   getAddress: resolver(context),
-} satisfies AlpacaSigner;
+} satisfies CoinFrameworkSigner;

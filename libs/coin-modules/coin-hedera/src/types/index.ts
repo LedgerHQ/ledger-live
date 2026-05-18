@@ -1,4 +1,4 @@
-export * from "./alpaca";
+export * from "./coinframework";
 export * from "./bridge";
 export * from "./logic";
 export * from "./hgraph";

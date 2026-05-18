@@ -3,7 +3,7 @@ import Transport from "@ledgerhq/hw-transport";
 import { normalizePublicKeyForAddress } from "@ledgerhq/coin-tezos/utils";
 import type { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
 import type { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
-import type { AlpacaSigner } from "../../types";
+import type { CoinFrameworkSigner } from "../../types";
 import { CreateSigner, executeWithSigner } from "../../../setup";
 
 /**
@@ -82,4 +82,4 @@ const getAddress = tezosGetAddress(context);
 export default {
   context,
   getAddress,
-} satisfies AlpacaSigner;
+} satisfies CoinFrameworkSigner;

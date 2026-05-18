@@ -40,7 +40,7 @@ describe("index", () => {
       jest.clearAllMocks();
     });
 
-    it("should generate an instance of AlpacaApi", () => {
+    it("should generate an instance of CoinModuleApi", () => {
       const api = generateApi();
       expect(api).toEqual({
         broadcast: expect.any(Function),

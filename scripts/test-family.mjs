@@ -7,8 +7,8 @@
  *  1. Find every workspace package whose `name` field contains the family name
  *     and run its test script.
  *  2. Auto-detect test directories inside @ledgerhq/live-common:
- *       src/families/<family>/                       → split into Logic + UI runs
- *       src/bridge/generic-alpaca/families/<family>/ → Logic
+ *       src/families/<family>/                               → split into Logic + UI runs
+ *       src/bridge/generic-coin-framework/families/<family>/ → Logic
  *
  * coin-tester-* packages require Docker infrastructure (Anvil, Agave, Atlas…)
  * and are always skipped — run them manually once Docker is up.
@@ -151,13 +151,13 @@ function liveCommonJestCmd(testPathPattern) {
 
 async function runLiveCommonTests(family) {
   const familiesDir = join(LIVE_COMMON_SRC, "families", family);
-  const alpacaDir = join(LIVE_COMMON_SRC, "bridge", "generic-alpaca", "families", family);
+  const familyDir = join(LIVE_COMMON_SRC, "bridge", "generic-coin-framework", "families", family);
 
-  // generic-alpaca/<family>/ — all Logic
-  if (existsSync(alpacaDir) && statSync(alpacaDir).isDirectory()) {
-    const pattern = dirToJestPattern(alpacaDir.replace(LIVE_COMMON_SRC + "/", ""));
+  // generic-coin-framework/<family>/ — all Logic
+  if (existsSync(familyDir) && statSync(familyDir).isDirectory()) {
+    const pattern = dirToJestPattern(familyDir.replace(LIVE_COMMON_SRC + "/", ""));
     await run(
-      `live-common: bridge/generic-alpaca/families/${family}`,
+      `live-common: bridge/generic-coin-framework/families/${family}`,
       "logic",
       liveCommonJestCmd(pattern),
     );
@@ -165,7 +165,7 @@ async function runLiveCommonTests(family) {
 
   // families/<family>/ — split into Logic and UI.
   // Anchored to "src/families/" so it never overlaps with
-  // "bridge/generic-alpaca/families/" which is handled above.
+  // "bridge/generic-coin-framework/families/" which is handled above.
   if (existsSync(familiesDir) && statSync(familiesDir).isDirectory()) {
     const base = dirToJestPattern(`src/families/${family}`);
     const uiFrag = UI_FILE_FRAGMENTS.join("|");

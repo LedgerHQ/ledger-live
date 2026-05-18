@@ -18,12 +18,12 @@ import { genericSignRawOperation } from "./signRawOperation";
 import { postSync } from "./postSync";
 import { getValidateAddress } from "./validateAddress";
 import { getAccountRawAssignHooks } from "./accountRawAssign";
-import type { GenericTransaction, AlpacaSigner } from "./types";
+import type { GenericTransaction, CoinFrameworkSigner } from "./types";
 
-export function getAlpacaAccountBridge(
+export function getCoinFrameworkAccountBridge(
   network: string,
   kind: string,
-  customSigner?: AlpacaSigner,
+  customSigner?: CoinFrameworkSigner,
 ): AccountBridge<GenericTransaction> {
   const signer = customSigner ?? getSigner(network);
   const { assignFromAccountRaw, assignToAccountRaw } = getAccountRawAssignHooks(network);

@@ -106,11 +106,11 @@ function isDelegationMode(mode: GenericTransaction["mode"]): mode is StakingOper
   );
 }
 
-type GenericAlpacaMemo = { type: string; value?: string };
-type GenericAlpacaTxData = { type: string; value?: unknown };
-type GenericAlpacaTransactionIntent = TransactionIntent & {
-  memo?: GenericAlpacaMemo;
-  data?: GenericAlpacaTxData;
+type GenericCoinFrameworkMemo = { type: string; value?: string };
+type GenericCoinFrameworkTxData = { type: string; value?: unknown };
+type GenericCoinFrameworkTransactionIntent = TransactionIntent & {
+  memo?: GenericCoinFrameworkMemo;
+  data?: GenericCoinFrameworkTxData;
   mode?: StakingOperation;
   valAddress?: string;
   dstValAddress?: string;
@@ -119,7 +119,7 @@ type GenericAlpacaTransactionIntent = TransactionIntent & {
 function getDelegationIntentFields(
   delegationMode: StakingOperation | undefined,
   transaction: GenericTransaction,
-): Partial<Pick<GenericAlpacaTransactionIntent, "mode" | "valAddress" | "dstValAddress">> {
+): Partial<Pick<GenericCoinFrameworkTransactionIntent, "mode" | "valAddress" | "dstValAddress">> {
   return {
     ...(delegationMode !== undefined && transaction.valAddress
       ? { mode: delegationMode, valAddress: transaction.valAddress }
@@ -303,14 +303,14 @@ export function transactionToIntent(
   transaction: GenericTransaction,
   computeIntentType?: (transaction: GenericTransaction) => string,
   craftTransactionData?: (intent: TransactionIntent) => TxData,
-): GenericAlpacaTransactionIntent {
+): GenericCoinFrameworkTransactionIntent {
   const intentType = (computeIntentType ?? defaultComputeIntentType)(transaction);
   const isStaking = ["stake", "unstake", "finalize_unstake"].includes(intentType);
   const delegationMode = isDelegationMode(transaction.mode) ? transaction.mode : undefined;
   const isDelegation = delegationMode !== undefined;
   const amount = fromBigNumberToBigInt(transaction.amount, 0n);
   const useAllAmount = !!transaction.useAllAmount;
-  const res: GenericAlpacaTransactionIntent = {
+  const res: GenericCoinFrameworkTransactionIntent = {
     intentType: isStaking || isDelegation ? "staking" : "transaction",
     type: intentType,
     sender: account.freshAddress,

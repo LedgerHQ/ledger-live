@@ -1,6 +1,6 @@
 import resolver from "../../../../families/xrp/getAddress";
 import { executeWithSigner } from "../../../setup";
-import type { AlpacaSigner } from "../../types";
+import type { CoinFrameworkSigner } from "../../types";
 import Xrp from "@ledgerhq/hw-app-xrp";
 import Transport from "@ledgerhq/hw-transport";
 
@@ -35,4 +35,4 @@ const context = executeWithSigner(createSigner);
 export default {
   context,
   getAddress: resolver(context),
-} satisfies AlpacaSigner;
+} satisfies CoinFrameworkSigner;

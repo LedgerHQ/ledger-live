@@ -12,7 +12,7 @@ type AccountRawAssignHooks = {
  * Dispatch per-family hooks that persist family-specific account resources
  * through the `fromAccountRaw` / `toAccountRaw` cycle.
  *
- * The default Alpaca pipeline only knows about generic account fields; each
+ * The default coin-framework pipeline only knows about generic account fields; each
  * family can expose a local adapter here when it needs extra raw assignment.
  */
 export function getAccountRawAssignHooks(network: string): AccountRawAssignHooks {

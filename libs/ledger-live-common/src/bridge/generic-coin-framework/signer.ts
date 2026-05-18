@@ -1,4 +1,4 @@
-import type { AlpacaSigner } from "./types";
+import type { CoinFrameworkSigner } from "./types";
 import { loadSignerForFamily } from "../../coin-modules/registry";
 
 const networkToFamily = (network: string) => {
@@ -6,7 +6,7 @@ const networkToFamily = (network: string) => {
   return network;
 };
 
-export function getSigner(network: string): AlpacaSigner {
+export function getSigner(network: string): CoinFrameworkSigner {
   const family = networkToFamily(network);
   const signer = loadSignerForFamily(family);
   if (!signer) throw new Error(`No signer registered for network ${network}`);
