@@ -23,7 +23,6 @@ const mockedDeviceDeprecationScreen = jest.mocked(DeviceDeprecationScreen);
 const device: InitializerDevice = {
   id: "device-id",
   modelId: DeviceModelId.europa,
-  supportedModelId: DeviceModelId.europa,
   name: "Lily's Ledger",
   productName: "Flex",
   wired: false,

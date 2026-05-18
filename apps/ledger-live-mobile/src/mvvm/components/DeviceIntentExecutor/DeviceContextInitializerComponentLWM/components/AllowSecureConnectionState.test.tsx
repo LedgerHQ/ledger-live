@@ -8,7 +8,6 @@ import type { InitializerDevice } from "../types";
 const device: InitializerDevice = {
   id: "device-id",
   modelId: DeviceModelId.europa,
-  supportedModelId: DeviceModelId.europa,
   name: "Lily's Ledger",
   productName: "Flex",
   wired: false,
@@ -24,7 +23,9 @@ describe("AllowSecureConnectionState", () => {
       />,
     );
 
-    expect(screen.getByText("Action pending on your Flex")).toBeVisible();
-    expect(screen.getByText("Finish the action to continue.")).toBeVisible();
+    expect(screen.getByText("Continue on your Ledger Flex")).toBeVisible();
+    expect(
+      screen.getByText(/Follow the instructions displayed on your Secure.Screen/),
+    ).toBeVisible();
   });
 });

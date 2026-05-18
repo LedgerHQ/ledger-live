@@ -188,7 +188,6 @@ describe("mapConnectAppDAPendingStatus", () => {
       // WHEN
       const result = mapConnectAppDAPendingStatus({
         state,
-        appName,
         deprecationDismissedCurrencyNames: [],
       });
 
@@ -205,7 +204,6 @@ describe("mapConnectAppDAPendingStatus", () => {
       // WHEN
       const result = mapConnectAppDAPendingStatus({
         state,
-        appName,
         deprecationDismissedCurrencyNames: [],
       });
 
@@ -222,7 +220,6 @@ describe("mapConnectAppDAPendingStatus", () => {
       // WHEN
       const result = mapConnectAppDAPendingStatus({
         state,
-        appName,
         deprecationDismissedCurrencyNames: [],
       });
 
@@ -241,7 +238,6 @@ describe("mapConnectAppDAPendingStatus", () => {
       // WHEN
       const result = mapConnectAppDAPendingStatus({
         state,
-        appName,
         deprecationDismissedCurrencyNames: [],
       });
 
@@ -260,7 +256,6 @@ describe("mapConnectAppDAPendingStatus", () => {
       // WHEN
       const result = mapConnectAppDAPendingStatus({
         state,
-        appName,
         deprecationDismissedCurrencyNames: [],
       });
 
@@ -281,7 +276,6 @@ describe("mapConnectAppDAPendingStatus", () => {
       // WHEN
       const result = mapConnectAppDAPendingStatus({
         state,
-        appName,
         deprecation: {
           flow: FlowName.send,
           currencyName: "Ethereum",
@@ -307,7 +301,6 @@ describe("mapConnectAppDAPendingStatus", () => {
       // WHEN
       const result = mapConnectAppDAPendingStatus({
         state,
-        appName,
         deprecation: {
           flow: FlowName.send,
           currencyName: "Ethereum",
@@ -345,7 +338,6 @@ describe("mapConnectAppDAPendingStatus", () => {
       // WHEN
       const result = mapConnectAppDAPendingStatus({
         state,
-        appName,
         deprecation: {
           flow: FlowName.send,
           currencyName: "Ethereum",
@@ -375,7 +367,6 @@ describe("mapConnectAppDAPendingStatus", () => {
       expect(() =>
         mapConnectAppDAPendingStatus({
           state,
-          appName,
           deprecationDismissedCurrencyNames: [],
         }),
       ).toThrow("Unhandled value: unknown-interaction");
@@ -558,11 +549,14 @@ describe("mapConnectAppDAErrorStatus", () => {
   });
 
   it("GIVEN a legacy LedgerJS locked device error shape WHEN it is mapped THEN it returns a retryable locked state", () => {
-    const legacyLockedDeviceError = Object.assign(new Error("Ledger device: Locked device (0x5515)"), {
-      name: "LockedDeviceError",
-      statusCode: StatusCodes.LOCKED_DEVICE,
-      statusText: "LOCKED_DEVICE",
-    }) as unknown as ConnectAppDAError;
+    const legacyLockedDeviceError = Object.assign(
+      new Error("Ledger device: Locked device (0x5515)"),
+      {
+        name: "LockedDeviceError",
+        statusCode: StatusCodes.LOCKED_DEVICE,
+        statusText: "LOCKED_DEVICE",
+      },
+    ) as unknown as ConnectAppDAError;
 
     // WHEN
     const result = mapConnectAppDAErrorStatus({

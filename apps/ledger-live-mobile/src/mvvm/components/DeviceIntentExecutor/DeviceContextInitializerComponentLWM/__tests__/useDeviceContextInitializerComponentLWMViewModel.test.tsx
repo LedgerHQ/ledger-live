@@ -98,7 +98,6 @@ describe("useDeviceContextInitializerComponentLWMViewModel", () => {
       expect.objectContaining({
         id: "device-id",
         modelId: DeviceModelId.nanoX,
-        supportedModelId: DeviceModelId.nanoX,
         name: "Ledger Nano X",
         wired: false,
       }),

@@ -50,11 +50,10 @@ function hasStatusCode(value: unknown, statusCode: number): value is { statusCod
 
 export function mapConnectAppDAPendingStatus(params: {
   state: Extract<ConnectAppDAState, { status: DeviceActionStatus.Pending }>;
-  appName: string;
   deprecation?: DeprecationPresentationInput;
   deprecationDismissedCurrencyNames: string[];
 }): EnsureAppReadyState | null {
-  const { state, appName, deprecation, deprecationDismissedCurrencyNames } = params;
+  const { state, deprecation, deprecationDismissedCurrencyNames } = params;
   const { intermediateValue } = state;
 
   switch (intermediateValue.requiredUserInteraction) {

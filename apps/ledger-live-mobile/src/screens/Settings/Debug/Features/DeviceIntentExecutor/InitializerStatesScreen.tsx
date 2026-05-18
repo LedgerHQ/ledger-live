@@ -28,7 +28,6 @@ const noop = () => undefined;
 const mockDevice: InitializerDevice = {
   id: "debug-device-id",
   modelId: DeviceModelId.europa,
-  supportedModelId: DeviceModelId.europa,
   name: "Lily's Ledger",
   productName: getDeviceModel(DeviceModelId.europa).productName,
   wired: false,

@@ -18,16 +18,16 @@ describe("DeviceNotOnboardedView", () => {
     expect(screen.getByText("Your Ledger is not ready to use yet")).toBeVisible();
     expect(
       screen.getByText(
-        "You need to setup your Flex first. We will guide you through the device setup process",
+        "You need to set up your Flex first. We will guide you through the device setup process",
       ),
     ).toBeVisible();
-    expect(screen.getByText("Setup device")).toBeVisible();
+    expect(screen.getByText("Set up device")).toBeVisible();
   });
 
   it("should call onSetupDevice when the primary action is pressed", async () => {
     const { user, onSetupDevice } = renderView();
 
-    await user.press(screen.getByText("Setup device"));
+    await user.press(screen.getByText("Set up device"));
 
     expect(onSetupDevice).toHaveBeenCalledTimes(1);
   });

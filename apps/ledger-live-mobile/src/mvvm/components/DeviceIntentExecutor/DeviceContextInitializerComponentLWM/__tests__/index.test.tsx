@@ -39,7 +39,6 @@ describe("DeviceContextInitializerComponentLWM", () => {
       device: {
         id: "device-id",
         modelId: DeviceModelId.nanoX,
-        supportedModelId: DeviceModelId.nanoX,
         name: "Ledger Nano X",
         productName: "Ledger Nano X",
         wired: false,
