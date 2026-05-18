@@ -50,6 +50,8 @@ const transformIncludePatterns = [
   "@mysten",
   "@scure",
   "@noble",
+  "d3-.*",
+  "internmap",
 ];
 
 /** @type {import('@swc/jest').JestConfigWithTsJest} */

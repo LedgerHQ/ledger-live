@@ -5,8 +5,11 @@ import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpe
 import { ScreenName } from "~/const";
 import { useSelector } from "~/context/hooks";
 import { shallowAccountsSelector } from "~/reducers/accounts";
+import { useDistribution } from "~/actions/general";
+import { resolveDistributionItem } from "@ledgerhq/asset-aggregation/assetDistribution/index";
 import type { AssetDetailNavigatorParamsList } from "../../types";
 import { useIsBuyAvailable, useSecondaryButtonType } from "./components/Footer/useFooterViewModel";
+import { useAssetCoinOptionsViewModel } from "./components/CoinOptions/useAssetCoinOptionsViewModel";
 
 type Route = StackNavigatorProps<AssetDetailNavigatorParamsList, ScreenName.AssetDetail>["route"];
 
@@ -15,6 +18,12 @@ export function useAssetDetailViewModel() {
   const { currencyId, source } = route.params;
 
   const { currency } = useCurrencyById(currencyId);
+
+  const distribution = useDistribution({ groupBy: "asset" });
+  const distributionItem = useMemo(
+    () => resolveDistributionItem({ routeAssetId: currencyId, distribution }),
+    [currencyId, distribution],
+  );
 
   const [isRefreshing, setIsRefreshing] = useState(false);
   const onRefresh = useCallback(() => {
@@ -29,14 +38,17 @@ export function useAssetDetailViewModel() {
   const accounts = useSelector(shallowAccountsSelector);
   const walletHasFunds = useMemo(() => accounts.some(a => a.balance.gt(0)), [accounts]);
   const showFallbackBanner = !hasFooter && walletHasFunds && !!currency;
+  const coinOptions = useAssetCoinOptionsViewModel({ currency, currencyId });
 
   return {
     currency,
+    distributionItem,
     source,
     isRefreshing,
     onRefresh,
     hasFooter,
     hideReceiveInBalanceGraph,
     showFallbackBanner,
+    coinOptions,
   };
 }

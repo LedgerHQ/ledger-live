@@ -26,10 +26,12 @@ export const usePageViewModel = (): PageViewModelResult => {
     isEnabled: isWallet40Enabled,
     shouldDisplayWallet40MainNav,
     shouldDisplayBrazePlacement,
+    shouldDisplayAggregatedAssets,
   } = useWalletFeaturesConfig("desktop");
   const { shouldDisplay: isRightPanelEnabled } = useRightPanelViewModel();
 
-  const shouldRenderRightPanel = isRightPanelPage(pathname) && isRightPanelEnabled;
+  const shouldRenderRightPanel =
+    isRightPanelPage(pathname, { shouldDisplayAggregatedAssets }) && isRightPanelEnabled;
 
   // Callback ref to capture the scroller element
   const pageScrollerRef = useCallback((node: HTMLDivElement | null) => {

@@ -15,7 +15,7 @@ import {
   isAvailableOnBuy,
   isAvailableOnSell,
   type MarketCurrencyRampLedgerIds,
-} from "~/renderer/screens/market/utils";
+} from "LLD/features/Market/utils/rampCatalogAvailability";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { openModal } from "~/renderer/actions/modals";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";

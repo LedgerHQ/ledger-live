@@ -13,21 +13,18 @@ const SWIPE_CONFIG = {
   MULTIPLIER_Y: 1.5,
   VELOCITY_THRESHOLD: 400,
   VELOCITY_Y_MULTIPLIER: 0.3,
+  VERTICAL_RESISTANCE_DISTANCE: height * 0.25,
   THRESHOLD_X: width * 0.3,
   THRESHOLD_Y: height * 0.3,
   TIMEOUT: 250,
 };
 
-function resetGesture({ swipeX, swipeY, velocityX, velocityY }: GestureParams) {
+function resetGesture({ swipeX, swipeY }: GestureParams) {
   "worklet";
   swipeX.value = withSpring(0, {
-    velocity: velocityX,
-    damping: SWIPE_CONFIG.DAMPING,
     overshootClamping: true,
   });
   swipeY.value = withSpring(0, {
-    velocity: velocityY,
-    damping: SWIPE_CONFIG.DAMPING,
     overshootClamping: true,
   });
 }
@@ -77,7 +74,12 @@ function isHorizontalAngle(angle: number): boolean {
   return (angle > -40 && angle < 40) || angle > 140 || angle < -140;
 }
 
-function createGesture(swipeX: SwipeValues, swipeY: SwipeValues, handleSwipeComplete: () => void) {
+function createGesture(
+  swipeX: SwipeValues,
+  swipeY: SwipeValues,
+  handleSwipeComplete: () => void,
+  canSwipeAway: boolean,
+) {
   // Wrapper that delays the completion callback to let the swipe animation finish
   const delayedComplete = () => {
     setTimeout(handleSwipeComplete, SWIPE_CONFIG.TIMEOUT);
@@ -86,11 +88,11 @@ function createGesture(swipeX: SwipeValues, swipeY: SwipeValues, handleSwipeComp
   return Gesture.Pan()
     .withTestId("pan")
     .onUpdate(event => {
-      const angle = Math.atan2(event.translationY, event.translationX) * (180 / Math.PI);
-      if (isHorizontalAngle(angle)) {
-        swipeX.value = event.translationX;
-        swipeY.value = event.translationY;
-      }
+      const resistance =
+        SWIPE_CONFIG.VERTICAL_RESISTANCE_DISTANCE /
+        (SWIPE_CONFIG.VERTICAL_RESISTANCE_DISTANCE + Math.abs(event.translationY));
+      swipeX.value = event.translationX;
+      swipeY.value = event.translationY * resistance;
     })
     .onEnd(event => {
       const angle = Math.atan2(event.translationY, event.translationX) * (180 / Math.PI);
@@ -103,6 +105,7 @@ function createGesture(swipeX: SwipeValues, swipeY: SwipeValues, handleSwipeComp
       };
 
       if (
+        canSwipeAway &&
         isHorizontalAngle(angle) &&
         canSwipeHorizontal(params.swipeX.value, params.velocityX, SWIPE_CONFIG.THRESHOLD_X)
       ) {

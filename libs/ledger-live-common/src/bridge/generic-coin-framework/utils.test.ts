@@ -424,18 +424,28 @@ describe("Alpaca utils", () => {
         ).toThrow("Unsupported transaction mode: any");
       });
 
-      it("treats finalize_unstake as a staking intent with forced amount=0 and useAllAmount=true", () => {
-        const intent = transactionToIntent(
-          { currency: { name: "tezos", units: [{}] } } as Account,
-          { mode: "finalize_unstake", amount: new BigNumber(100) } as GenericTransaction,
-        );
-        expect(intent).toMatchObject({
-          intentType: "staking",
-          type: "finalize_unstake",
-          amount: 0n,
-          useAllAmount: true,
-        });
-      });
+      it.each([
+        { mode: "stake", useAllAmount: false },
+        { mode: "stake", useAllAmount: true },
+        { mode: "unstake", useAllAmount: false },
+        { mode: "unstake", useAllAmount: true },
+        { mode: "finalize_unstake", useAllAmount: false },
+        { mode: "finalize_unstake", useAllAmount: true },
+      ] as const)(
+        "preserves user-typed amount and useAllAmount=$useAllAmount for $mode staking intent",
+        ({ mode, useAllAmount }) => {
+          const intent = transactionToIntent(
+            { currency: { name: "tezos", units: [{}] } } as Account,
+            { mode, amount: new BigNumber(100), useAllAmount } as GenericTransaction,
+          );
+          expect(intent).toMatchObject({
+            intentType: "staking",
+            type: mode,
+            amount: 100n,
+            useAllAmount,
+          });
+        },
+      );
 
       it("supersedes the logic with a custom function", () => {
         const computeIntentType = (transaction: GenericTransaction) =>
@@ -794,7 +804,7 @@ describe("Alpaca utils", () => {
       });
     });
 
-    it.each([["FEES"], ["DELEGATE"], ["UNDELEGATE"]])(
+    it.each([["FEES"], ["DELEGATE"], ["UNDELEGATE"], ["REDELEGATE"]])(
       "handles %s operation where value = value + fees",
       operationType => {
         const op = {

@@ -1,0 +1,40 @@
+name: "Boot iOS simulators (background)"
+description: "Boot N named iOS simulators in the background (iOS Simulator, iOS Simulator 2, …) for Detox CI"
+
+inputs:
+  worker_count:
+    description: "Number of simulator workers; names are iOS Simulator and iOS Simulator 2 … N"
+    required: true
+  artifacts_root:
+    description: "Directory for simulator-boot.log (created if missing)"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Boot iOS simulators in background
+      shell: bash
+      run: |
+        set -euo pipefail
+        N="${{ inputs.worker_count }}"
+        if ! [[ "$N" =~ ^[1-9][0-9]*$ ]]; then
+          echo "::error::worker_count must be a positive integer, got: $N"
+          exit 1
+        fi
+        ROOT="${{ inputs.artifacts_root }}"
+        mkdir -p "$ROOT"
+        LOG_FILE="$ROOT/simulator-boot.log"
+        nohup bash -c "
+        set -euo pipefail
+        N=$N
+        for ((i=1; i<=N; i++)); do
+          if [[ \$i -eq 1 ]]; then name='iOS Simulator'; else name=\"iOS Simulator \$i\"; fi
+          xcrun simctl boot \"\$name\" || true
+        done
+        for ((i=1; i<=N; i++)); do
+          if [[ \$i -eq 1 ]]; then name='iOS Simulator'; else name=\"iOS Simulator \$i\"; fi
+          xcrun simctl bootstatus \"\$name\"
+        done
+        echo '✅ All simulators booted'
+        " > "$LOG_FILE" 2>&1 &
+        echo "ℹ️ Simulator boot started in background (log: $LOG_FILE)."

@@ -3,6 +3,7 @@ import { RefreshControl, ScrollView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
+import type { DistributionItem } from "@ledgerhq/types-live";
 import { TrackScreen } from "~/analytics";
 import type { AssetDetailCurrencyProps } from "LLM/features/AssetDetail/types";
 import { ASSET_DETAIL_TEST_IDS } from "../../testIds";
@@ -14,25 +15,31 @@ import { Footer } from "./components/Footer";
 import { FallbackBanner } from "./components/FallbackBanner";
 import { MarketData } from "./components/MarketData";
 import { CTAS_HEIGHT } from "./utils/constants";
+import { AssetCoinOptionsSheetView } from "./components/CoinOptions/AssetCoinOptionsSheetView";
+import type { AssetCoinOptionsViewModel } from "./components/CoinOptions/useAssetCoinOptionsViewModel";
 
 type Props = Readonly<{
   currency: AssetDetailCurrencyProps;
+  distributionItem: DistributionItem | undefined;
   source?: string;
   isRefreshing: boolean;
   onRefresh: () => void;
   hasFooter: boolean;
   hideReceiveInBalanceGraph: boolean;
   showFallbackBanner: boolean;
+  coinOptions: AssetCoinOptionsViewModel;
 }>;
 
 export function AssetDetailView({
   currency,
+  distributionItem,
   source,
   isRefreshing,
   onRefresh,
   hasFooter,
   hideReceiveInBalanceGraph,
   showFallbackBanner,
+  coinOptions,
 }: Props) {
   const { bottom } = useSafeAreaInsets();
   const scrollPaddingBottom = useMemo(
@@ -50,14 +57,22 @@ export function AssetDetailView({
       >
         <Box lx={contentStyle}>
           <BalanceGraph currency={currency} hideReceive={hideReceiveInBalanceGraph} />
-          <BalanceDetails currency={currency} />
-          <Addresses currency={currency} />
+          <BalanceDetails currency={currency} distributionItem={distributionItem} />
+          <Addresses currency={currency} distributionItem={distributionItem} />
           <MarketData currency={currency} />
           <Transactions currency={currency} />
           <FallbackBanner show={showFallbackBanner} />
         </Box>
       </ScrollView>
       <Footer currency={currency} />
+      <AssetCoinOptionsSheetView
+        isOpen={coinOptions.isCoinOptionsSheetOpen}
+        onClose={coinOptions.closeCoinOptions}
+        isHidden={coinOptions.isHidden}
+        isStarred={coinOptions.isStarred}
+        onToggleFavourite={coinOptions.onToggleFavourite}
+        onToggleHideFromPortfolio={coinOptions.onToggleHideFromPortfolio}
+      />
     </Box>
   );
 }

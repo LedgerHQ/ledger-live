@@ -4,6 +4,14 @@ import { getBrazeWebSdkJestMock as mockGetBrazeWebSdkJestMock } from "tests/mock
 import TopBarView from "../TopBarView";
 import { TopBarSlot } from "../types";
 
+jest.mock("electron-store", () => {
+  return jest.fn().mockImplementation(() => ({
+    get: jest.fn(),
+    set: jest.fn(),
+    clear: jest.fn(),
+  }));
+});
+
 jest.mock("@braze/web-sdk", () => mockGetBrazeWebSdkJestMock());
 
 jest.mock("../components/ActionsList", () => ({

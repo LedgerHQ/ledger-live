@@ -179,12 +179,15 @@ export async function runWithAppSpec<T extends TransactionCommon>(
       invariant(accounts.length > 0, "unexpected empty accounts for " + currency.name);
     }
     const preloadStats = preloadDuration > 10 ? ` (preload: ${formatTime(preloadDuration)})` : "";
+    const formattedAccountHeads = (
+      await Promise.all(accounts.map(a => formatAccount(a, "head")))
+    ).join("\n");
     reportLog(
       `Spec ${spec.name} found ${accounts.length} ${
         currency.name
       } accounts${preloadStats}. Will use ${formatAppCandidate(
         appCandidate as AppCandidate,
-      )}\n${accounts.map(a => formatAccount(a, "head")).join("\n")}\n`,
+      )}\n${formattedAccountHeads}\n`,
     );
 
     const emptyChecks = await Promise.all(

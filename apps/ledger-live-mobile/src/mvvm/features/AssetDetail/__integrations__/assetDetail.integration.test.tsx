@@ -1,6 +1,6 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { render, screen } from "@tests/test-renderer";
+import { render, screen, waitFor } from "@tests/test-renderer";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { NavigatorName, ScreenName } from "~/const";
@@ -64,6 +64,7 @@ function withBtcAccounts(count: number, operationsSize = 0) {
       seed: `bitcoin-${i}`,
       currencyId: "bitcoin",
       operationsSize,
+      balance: 100_000_000,
     })),
   );
 }
@@ -80,6 +81,7 @@ describe("AssetDetail screen layout", () => {
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.screen)).toBeVisible();
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.balanceGraph)).toBeVisible();
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.marketStats)).toBeVisible();
+    expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.coinOptionsTrailing)).toBeVisible();
     expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.transactions)).toBeNull();
   });
 
@@ -88,9 +90,11 @@ describe("AssetDetail screen layout", () => {
     expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.balanceDetails)).toBeNull();
   });
 
-  it("renders balance details with transfer button when accounts exist", () => {
+  it("renders balance details with transfer button when accounts exist", async () => {
     render(<AssetDetailTestNavigator />, withBtcAccounts(2));
-    expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.balanceDetails)).toBeVisible();
+    await waitFor(() =>
+      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.balanceDetails)).toBeVisible(),
+    );
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.totalBalance)).toBeVisible();
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.transferButton)).toBeVisible();
     expect(screen.getByText("Total balance")).toBeVisible();
@@ -111,10 +115,10 @@ describe("AssetDetail screen layout", () => {
     expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.addresses)).toBeNull();
   });
 
-  it("renders the addresses section when accounts exist", () => {
+  it("renders the addresses section when accounts exist", async () => {
     render(<AssetDetailTestNavigator />, withBtcAccounts(2));
 
-    expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.addresses)).toBeVisible();
+    await waitFor(() => expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.addresses)).toBeVisible());
     expect(screen.getByText("Addresses")).toBeVisible();
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.addAccount)).toBeVisible();
     expect(screen.getByText("Add")).toBeVisible();

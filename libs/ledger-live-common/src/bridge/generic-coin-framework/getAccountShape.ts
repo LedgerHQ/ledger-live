@@ -1,6 +1,7 @@
 import { encodeAccountId, getSyncHash } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { GetAccountShape, mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
+import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import groupBy from "lodash/groupBy";
 import { getAlpacaApi } from "./api";
@@ -504,11 +505,32 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       stakingResources?: StakingResources;
       stakingPositions?: StakingPositionOnAccount[];
     } = {};
+
+    if (stakingEnabled && bridgeApi.enrichStakingResources) {
+      try {
+        const enriched = await bridgeApi.enrichStakingResources(
+          currency,
+          address,
+          operations,
+          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+          stakingResources as unknown as Record<string, unknown>,
+        );
+        Object.assign(stakingResources ?? {}, enriched);
+      } catch (e) {
+        log(
+          "generic-coin-framework",
+          "enrichStakingResources failed, falling back to base staking resources",
+          { error: e instanceof Error ? e.message : String(e) },
+        );
+      }
+    }
+
     if (usesStakingPositions) {
       stakingShape = { stakingPositions };
     } else if (stakingEnabled) {
       stakingShape = { stakingResources };
     }
+
     const res: Partial<Account> & {
       stakingResources?: StakingResources;
       stakingPositions?: StakingPositionOnAccount[];

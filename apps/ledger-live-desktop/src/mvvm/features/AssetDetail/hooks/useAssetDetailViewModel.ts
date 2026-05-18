@@ -9,7 +9,7 @@ import { useSelector } from "LLD/hooks/redux";
 import { useDistribution } from "~/renderer/actions/general";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { decodeRouteParam } from "../utils/decodeRouteParam";
-import { resolveDistributionItem } from "../utils/resolveDistributionItem";
+import { resolveDistributionItem } from "@ledgerhq/asset-aggregation/assetDistribution/index";
 import { type AssetDetailViewModel } from "../types";
 
 export function useAssetDetailViewModel(): AssetDetailViewModel {

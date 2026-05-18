@@ -1401,8 +1401,9 @@
         "actionCompletedPopupLabel": "Accounts synced"
       },
       "recover": {
-        "title": "Subscribe to Ledger Recover",
-        "description": "Restore access to your wallet without needing your Secret Recovery Phrase.",
+        "title": "Finish securing your backup",
+        "titleCompleted": "Backup secured",
+        "description": "Complete activating Ledger Recover",
         "actionCompletedPopupLabel": "Successfully subscribed to Ledger Recover"
       }
     }
@@ -1781,6 +1782,8 @@
       "votesAddress": "<0>{{votes}}</0> to <2>{{name}}</2>",
       "validators": "Validators",
       "redelegated": "Redelegated",
+      "delegatedTo": "Delegated to",
+      "delegatedAmount": "Delegated amount",
       "redelegatedFrom": "Redelegated from",
       "redelegatedTo": "Redelegated to",
       "redelegatedAmount": "Redelegated amount",
@@ -4315,7 +4318,38 @@
         }
       },
       "redelegation": {
-        "header": "Redelegation(s)"
+        "header": "Redelegation(s)",
+        "flow": {
+          "title": "Redelegate assets",
+          "steps": {
+            "starter": {
+              "title": "Redelegation",
+              "description": "Use redelegation to easily change from one validator to another. But if you change your mind again, you will then have to wait because redelegation triggers a {{ numberOfDays }}-day timelock.",
+              "warning": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately. You can have a maximum of <0>{{maxRedelegations}} pending redelegations</0>.",              
+              "howDelegationWorks": "How delegation works?"
+            },
+            "validators": {
+              "title": "Validators",
+              "currentDelegation": "Current delegation",
+              "newDelegation": "New delegation",
+              "chooseValidator": "Choose a validator",
+              "warning": "You will have to wait <0>{{numberOfDays}} days</0> to redelegate from the new validator, if you change your mind again",
+              "amountLabel": "Amount to redelegate"
+            },
+            "connectDevice": {
+              "title": "Device"
+            },
+            "confirmation": {
+              "title": "Confirmation",
+              "success": {
+                "title": "You have successfully redelegated your assets",
+                "text": "The redelegation will update once the blockchain has confirmed the transaction",
+                "cta": "View details"
+              },
+              "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+            }
+          }
+        }
       },
       "undelegation": {
         "header": "Undelegation(s)",
@@ -4619,6 +4653,40 @@
           "3": "Risk: Low (Slashing)"
         },
         "cta": "Stake"
+      }
+    },
+    "stake": {
+      "flow": {
+        "title": "Stake",
+        "amount": {
+          "disclaimer": "Unstaking will take 4 days.",
+          "awaitingDelegation": "Confirming your delegation. This usually takes less than a minute…"
+        },
+        "steps": {
+          "validator": {
+            "title": "Validator",
+            "description": "Choose a baker to delegate to. You will be able to stake your XTZ after the delegation is confirmed."
+          },
+          "deviceDelegation": {
+            "title": "Confirm Delegation"
+          },
+          "amount": {
+            "title": "Amount"
+          },
+          "deviceStaking": {
+            "title": "Confirm Staking"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully staked your assets",
+              "text": "You staked {{amount}}. Your account balance will be updated when the blockchain confirms the transaction.",
+              "cta": "Visit Earn Dashboard"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again.",
+            "howItWorks": "How staking works"
+          }
+        }
       }
     }
   },
@@ -4942,6 +5010,13 @@
           "completed": "Product tour is marked as completed.",
           "notCompleted": "Product tour is not completed yet.",
           "open": "Open"
+        },
+        "recover": {
+          "title": "Recover",
+          "description": "Set the local Ledger Recover subscription state to test the post-onboarding hub and recover banner.",
+          "noSubscription": "No subscription",
+          "inProgress": "In progress",
+          "backupDone": "Backup done"
         }
       },
       "walletFeaturesDevTool": {
@@ -8799,6 +8874,28 @@
       "growYourRewards": "Grow your rewards",
       "spendYourCrypto": "Spend your crypto",
       "everythingAtAGlance": "Everything at a glance"
+    },
+    "slides": {
+      "fund": {
+        "title": "Start by funding your wallet",
+        "subTitle": "Fund your Ledger Wallet your way — transfer, buy, or convert cash to stablecoins."
+      },
+      "portfolio": {
+        "title": "Stay ahead of the market",
+        "subTitle": "Keep track of your assets, rewards, and market trends easily."
+      },
+      "earn": {
+        "title": "Enjoy rewards on your crypto",
+        "subTitle": "Put your crypto to work via Earn."
+      },
+      "card": {
+        "title": "Spend crypto in real life",
+        "subTitle": "Pay with your crypto card and earn cashback, online or in-store"
+      },
+      "swap": {
+        "title": "Swap without switching apps",
+        "subTitle": "Enjoy limitless trading on thousands of assets via our trusted swap partners."
+      }
     }
   },
   "history": {
@@ -8857,6 +8954,13 @@
     "explore": "Explore all Ledger devices"
   },
   "assetDetails": {
+    "header": {
+      "optionsMenu": "Asset options",
+      "addFavourite": "Add to favorites",
+      "removeFavourite": "Remove from favorites",
+      "hideFromPortfolio": "Hide from portfolio",
+      "showInPortfolio": "Show in portfolio"
+    },
     "totalBalance": "Total balance",
     "marketPrice": "Market price",
     "addresses": "Addresses",
