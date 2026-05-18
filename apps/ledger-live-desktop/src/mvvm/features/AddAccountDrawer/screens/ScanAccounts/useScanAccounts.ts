@@ -1,9 +1,8 @@
-import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { concat, from, Subscription } from "rxjs";
 import { prepareCurrency } from "~/renderer/bridge/cache";
@@ -20,11 +19,7 @@ import {
 } from "../../analytics/addAccount.types";
 import useAddAccountAnalytics from "../../analytics/useAddAccountAnalytics";
 import { WARNING_REASON, WarningReason } from "../../domain";
-import {
-  determineSelectedIds,
-  getGroupedAccounts,
-  getUnimportedAccounts,
-} from "./utils/processAccounts";
+import { computeSelectedIdsFromScan, getGroupedAccounts } from "./utils/processAccounts";
 import { useConcordiumCreatableAccounts } from "./hooks/concordium/useConcordiumCreatableAccounts";
 
 const selectImportable = (importable: Account[]) => (selected: string[]) => {
@@ -66,6 +61,10 @@ export function useScanAccounts({
 
   const [hasImportedAccounts, setHasImportedAccounts] = useState(false);
   const scanSubscriptionRef = useRef<Subscription | null>(null);
+  const existingAccountsRef = useRef(existingAccounts);
+  existingAccountsRef.current = existingAccounts;
+  const scannedAccountsRef = useRef(scannedAccounts);
+  scannedAccountsRef.current = scannedAccounts;
 
   const newAccountSchemes = useMemo(() => {
     const accountSchemes = scannedAccounts
@@ -108,6 +107,9 @@ export function useScanAccounts({
         .subscribe({
           next: (accounts: Account[]) => {
             setScannedAccounts(accounts);
+            setSelectedIds(current =>
+              computeSelectedIdsFromScan(accounts, existingAccountsRef.current, current),
+            );
             setScanning(true);
           },
           error: setError,
@@ -121,21 +123,11 @@ export function useScanAccounts({
     };
   }, [blacklistedTokenIds, currency, deviceId, stopSubscription]);
 
-  useEffect(() => {
-    const unimportedAccounts = getUnimportedAccounts(scannedAccounts, existingAccounts);
-    const onlyNewAccounts = unimportedAccounts.every(isAccountEmpty);
-
-    const processedAccountIds = new Set<string>();
-    const freshAccounts = unimportedAccounts.filter(acc => {
-      if (processedAccountIds.has(acc.id)) {
-        return false;
-      }
-      processedAccountIds.add(acc.id);
-      return true;
-    });
-
-    setSelectedIds(current => determineSelectedIds(freshAccounts, onlyNewAccounts, current));
-  }, [existingAccounts, scannedAccounts]);
+  useLayoutEffect(() => {
+    setSelectedIds(current =>
+      computeSelectedIdsFromScan(scannedAccountsRef.current, existingAccounts, current),
+    );
+  }, [existingAccounts]);
 
   const {
     importableAccounts,

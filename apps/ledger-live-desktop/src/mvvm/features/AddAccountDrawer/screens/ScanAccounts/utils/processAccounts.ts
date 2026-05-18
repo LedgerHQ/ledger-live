@@ -30,6 +30,26 @@ export const determineSelectedIds = (
     : currentSelectedIds;
 };
 
+export const computeSelectedIdsFromScan = (
+  scannedAccounts: Account[],
+  existingAccounts: Account[],
+  currentSelectedIds: string[],
+): string[] => {
+  const unimportedAccounts = getUnimportedAccounts(scannedAccounts, existingAccounts);
+  const onlyNewAccounts = unimportedAccounts.every(isAccountEmpty);
+
+  const processedAccountIds = new Set<string>();
+  const freshAccounts = unimportedAccounts.filter(acc => {
+    if (processedAccountIds.has(acc.id)) {
+      return false;
+    }
+    processedAccountIds.add(acc.id);
+    return true;
+  });
+
+  return determineSelectedIds(freshAccounts, onlyNewAccounts, currentSelectedIds);
+};
+
 export const getGroupedAccounts = (
   existingAccounts: Account[],
   scannedAccounts: Account[],
