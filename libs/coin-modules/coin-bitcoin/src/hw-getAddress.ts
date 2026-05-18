@@ -14,12 +14,10 @@ const resolver = (signerContext: SignerContext): GetAddressFn => {
     const format = (forceFormat as AddressFormat) || getAddressFormatDerivationMode(derivationMode);
     const adapter = getChainAdapter(currency.id);
 
-    let result: BitcoinAddress;
+    let result: BitcoinAddress | undefined;
     try {
-      const custom = adapter.getAddress?.(deviceId, options, signerContext);
-      if (custom) {
-        result = await custom;
-      } else {
+      result = await adapter.getAddress?.(deviceId, options, signerContext);
+      if (!result) {
         result = await signerContext(deviceId, currency, signer =>
           signer.getWalletPublicKey(path, {
             verify: verify || false,
