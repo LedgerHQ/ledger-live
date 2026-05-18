@@ -9,6 +9,7 @@ import { currentAccountAtomFamily, useDappLogic } from "./useDappLogic";
 import { AppBranch, AppPlatform, Visibility } from "./types";
 import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
 
 jest.mock("./converters", () => ({
   getWalletAPITransactionSignFlowInfos: jest.fn(),
@@ -313,5 +314,147 @@ describe("useDappLogic — onDappMessage async paths", () => {
     expect(txSignUiHook).toHaveBeenCalled();
     expect(postMessage).toHaveBeenCalledWith(expect.stringContaining('"result":"0xtxhash"'));
     expect(mockTracking.dappSendTransactionSuccess).toHaveBeenCalled();
+  });
+});
+
+describe("useDappLogic — liveBlindSigningReporter live-app context", () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
+    const { getEnv } = jest.requireMock("@ledgerhq/live-env");
+    getEnv.mockReturnValue(true);
+    const { getCryptoAssetsStore } = jest.requireMock("@ledgerhq/cryptoassets/state");
+    getCryptoAssetsStore.mockReturnValue({
+      findTokenByAddressInCurrency: jest.fn().mockResolvedValue(null),
+      findTokenById: jest.fn().mockResolvedValue(null),
+    });
+    liveBlindSigningReporter.setContext({ liveAppContext: null });
+  });
+
+  it("eth_sendTransaction: tags the active sign call with manifest.id and clears it after", async () => {
+    const { getWalletAPITransactionSignFlowInfos } = jest.requireMock("./converters");
+    getWalletAPITransactionSignFlowInfos.mockResolvedValue({
+      canEditFees: true,
+      hasFeesProvided: false,
+      liveTx: { family: "evm", recipient: "0xRECIPIENT", amount: new BigNumber(0) },
+    });
+
+    let contextDuringSign: string | null | undefined = "not-called";
+    const txSignUiHook = jest.fn().mockImplementation(({ onSuccess }) => {
+      contextDuringSign = liveBlindSigningReporter.getContext().liveAppContext;
+      onSuccess({
+        operation: {
+          hash: "0xtxhash",
+          id: "op1",
+          recipients: [],
+          senders: [],
+          fee: new BigNumber(0),
+          value: new BigNumber(0),
+          blockHeight: null,
+          blockHash: null,
+          transactionSequenceNumber: 0,
+          accountId: mockAccount.id,
+          type: "OUT" as const,
+          date: new Date(),
+          extra: {},
+        },
+        signature: "0xsig",
+      });
+    });
+
+    const { result } = await renderWithAccount({
+      "transaction.sign": txSignUiHook,
+      "transaction.broadcast": jest.fn(),
+    });
+
+    await act(async () => {
+      await result.current.onDappMessage({
+        jsonrpc: "2.0",
+        method: "eth_sendTransaction",
+        params: [{ from: mockAccount.freshAddress, to: "0xRECIPIENT", value: "0x0" }],
+        id: 1,
+      });
+    });
+
+    expect(contextDuringSign).toBe(mockManifest.id);
+    expect(liveBlindSigningReporter.getContext().liveAppContext).toBeNull();
+  });
+
+  it("personal_sign: tags the active sign call with manifest.id and clears it after", async () => {
+    const { prepareMessageToSign } = jest.requireMock("../hw/signMessage/index");
+    prepareMessageToSign.mockResolvedValue({ type: "message", message: "deadbeef" });
+
+    let contextDuringSign: string | null | undefined = "not-called";
+    const messageSignUiHook = jest.fn().mockImplementation(({ onSuccess }) => {
+      contextDuringSign = liveBlindSigningReporter.getContext().liveAppContext;
+      onSuccess("0xsignature");
+    });
+
+    const { result } = await renderWithAccount({ "message.sign": messageSignUiHook });
+
+    await act(async () => {
+      await result.current.onDappMessage({
+        jsonrpc: "2.0",
+        method: "personal_sign",
+        params: ["0xdeadbeef", mockAccount.freshAddress],
+        id: 2,
+      });
+    });
+
+    expect(contextDuringSign).toBe(mockManifest.id);
+    expect(liveBlindSigningReporter.getContext().liveAppContext).toBeNull();
+  });
+
+  it("eth_signTypedData: tags the active sign call with manifest.id and clears it after", async () => {
+    const { prepareMessageToSign } = jest.requireMock("../hw/signMessage/index");
+    prepareMessageToSign.mockResolvedValue({ type: "eip712", message: {} });
+
+    let contextDuringSign: string | null | undefined = "not-called";
+    const messageSignUiHook = jest.fn().mockImplementation(({ onSuccess }) => {
+      contextDuringSign = liveBlindSigningReporter.getContext().liveAppContext;
+      onSuccess("0xtypedsig");
+    });
+
+    const { result } = await renderWithAccount({ "message.sign": messageSignUiHook });
+
+    await act(async () => {
+      await result.current.onDappMessage({
+        jsonrpc: "2.0",
+        method: "eth_signTypedData",
+        params: [mockAccount.freshAddress, '{"types":{},"domain":{},"message":{}}'],
+        id: 3,
+      });
+    });
+
+    expect(contextDuringSign).toBe(mockManifest.id);
+    expect(liveBlindSigningReporter.getContext().liveAppContext).toBeNull();
+  });
+
+  it("clears the live-app context even when the user rejects an eth_sendTransaction", async () => {
+    const { getWalletAPITransactionSignFlowInfos } = jest.requireMock("./converters");
+    getWalletAPITransactionSignFlowInfos.mockResolvedValue({
+      canEditFees: true,
+      hasFeesProvided: false,
+      liveTx: { family: "evm", recipient: "0xRECIPIENT", amount: new BigNumber(0) },
+    });
+
+    const txSignUiHook = jest.fn().mockImplementation(({ onError }) => {
+      onError(new Error("user rejected"));
+    });
+
+    const { result } = await renderWithAccount({
+      "transaction.sign": txSignUiHook,
+      "transaction.broadcast": jest.fn(),
+    });
+
+    await act(async () => {
+      await result.current.onDappMessage({
+        jsonrpc: "2.0",
+        method: "eth_sendTransaction",
+        params: [{ from: mockAccount.freshAddress, to: "0xRECIPIENT", value: "0x0" }],
+        id: 4,
+      });
+    });
+
+    expect(liveBlindSigningReporter.getContext().liveAppContext).toBeNull();
   });
 });
