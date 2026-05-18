@@ -33,9 +33,9 @@ jest.mock("../bridge", () => ({
 }));
 const defaultBridgeApi = () => ({
   getTokenFromAsset: getTokenFromAssetMock,
-  getChainSpecificRules: () => ({
+  getChainSpecificRules: {
     getAccountShape: (...a: any[]) => chainSpecificGetAccountShapeMock(...a),
-  }),
+  },
 });
 getBridgeApiMock.mockImplementation(defaultBridgeApi);
 
