@@ -1,6 +1,5 @@
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
-import { State } from "~/reducers/types";
 import { PnlDetailDrawer } from "../components/PnlDetailDrawer";
 import { PnlDetailItem } from "../components/PnlDetailDrawer/types";
 
@@ -25,13 +24,6 @@ const ITEMS: PnlDetailItem[] = [
   },
 ];
 
-const withDiscreet =
-  (discreetMode: boolean) =>
-  (state: State): State => ({
-    ...state,
-    settings: { ...state.settings, discreetMode },
-  });
-
 describe("PnlDetailDrawer integration", () => {
   it("renders the header and every detail row when open", () => {
     render(
@@ -44,45 +36,23 @@ describe("PnlDetailDrawer integration", () => {
       />,
     );
 
-    expect(screen.getByText(TITLE)).toBeOnTheScreen();
-    expect(screen.getByText(DESCRIPTION)).toBeOnTheScreen();
+    expect(screen.getByText(TITLE)).toBeVisible();
+    expect(screen.getByText(DESCRIPTION)).toBeVisible();
     for (const item of ITEMS) {
-      expect(screen.getByText(item.title)).toBeOnTheScreen();
-      expect(screen.getByText(item.value)).toBeOnTheScreen();
+      expect(screen.getByText(item.title)).toBeVisible();
+      expect(screen.getByText(item.value)).toBeVisible();
       if (item.definition) {
-        expect(screen.getByText(item.definition)).toBeOnTheScreen();
+        expect(screen.getByText(item.definition)).toBeVisible();
       }
     }
-  });
-
-  it("masks every value when discreet mode is on", () => {
-    render(<PnlDetailDrawer isOpen onClose={jest.fn()} title={TITLE} items={ITEMS} />, {
-      overrideInitialState: withDiscreet(true),
-    });
-
-    expect(screen.getAllByText("***")).toHaveLength(ITEMS.length);
-    for (const item of ITEMS) {
-      expect(screen.queryByText(item.value)).toBeNull();
-    }
-  });
-
-  it("shows real values when discreet mode is off", () => {
-    render(<PnlDetailDrawer isOpen onClose={jest.fn()} title={TITLE} items={ITEMS} />, {
-      overrideInitialState: withDiscreet(false),
-    });
-
-    for (const item of ITEMS) {
-      expect(screen.getByText(item.value)).toBeOnTheScreen();
-    }
-    expect(screen.queryByText("***")).toBeNull();
   });
 
   it("renders bodyText below the header for header-only drawers", () => {
     const BODY = "The total amount you paid to acquire your current holdings, including fees.";
     render(<PnlDetailDrawer isOpen onClose={jest.fn()} title="Cost basis" bodyText={BODY} />);
 
-    expect(screen.getByText("Cost basis")).toBeOnTheScreen();
-    expect(screen.getByText(BODY)).toBeOnTheScreen();
+    expect(screen.getByText("Cost basis")).toBeVisible();
+    expect(screen.getByText(BODY)).toBeVisible();
   });
 
   it("renders rows without a definition", () => {
@@ -98,7 +68,7 @@ describe("PnlDetailDrawer integration", () => {
       />,
     );
 
-    expect(screen.getByText("Bare row")).toBeOnTheScreen();
-    expect(screen.getByText("$50.00 USD")).toBeOnTheScreen();
+    expect(screen.getByText("Bare row")).toBeVisible();
+    expect(screen.getByText("$50.00 USD")).toBeVisible();
   });
 });

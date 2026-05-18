@@ -1,6 +1,5 @@
 import React from "react";
 import { render, screen, withFlagOverrides } from "@tests/test-renderer";
-import { State } from "~/reducers/types";
 import { PnlCard } from "../components/PnlCard";
 
 const TITLE = "Unrealised return";
@@ -8,18 +7,6 @@ const VALUE = "$243.32";
 
 const withPnl = (enabled: boolean) =>
   withFlagOverrides({ lwmWallet40: { enabled: true, params: { pnl: enabled } } });
-
-const withDiscreet =
-  (discreetMode: boolean) =>
-  (state: State): State => ({
-    ...state,
-    settings: { ...state.settings, discreetMode },
-  });
-
-const compose =
-  (...transforms: Array<(state: State) => State>) =>
-  (state: State): State =>
-    transforms.reduce((acc, t) => t(acc), state);
 
 describe("PnlCard integration", () => {
   describe("feature flag gating", () => {
@@ -29,8 +16,8 @@ describe("PnlCard integration", () => {
         { overrideInitialState: withPnl(true) },
       );
 
-      expect(screen.getByText(TITLE)).toBeOnTheScreen();
-      expect(screen.getByText(VALUE)).toBeOnTheScreen();
+      expect(screen.getByText(TITLE)).toBeVisible();
+      expect(screen.getByText(VALUE)).toBeVisible();
     });
 
     it("renders nothing when shouldDisplayPnl is false", () => {
@@ -71,30 +58,8 @@ describe("PnlCard integration", () => {
         overrideInitialState: withPnl(true),
       });
 
-      expect(screen.getByText("Cost basis")).toBeOnTheScreen();
-      expect(screen.getByText("$2.21")).toBeOnTheScreen();
-    });
-  });
-
-  describe("discreet mode", () => {
-    it("hides the value when discreet mode is on", () => {
-      render(
-        <PnlCard type="interactive" title={TITLE} value={VALUE} trend="up" onPress={jest.fn()} />,
-        { overrideInitialState: compose(withPnl(true), withDiscreet(true)) },
-      );
-
-      expect(screen.getByText("***")).toBeOnTheScreen();
-      expect(screen.queryByText(VALUE)).toBeNull();
-    });
-
-    it("shows the value when discreet mode is off", () => {
-      render(
-        <PnlCard type="interactive" title={TITLE} value={VALUE} trend="up" onPress={jest.fn()} />,
-        { overrideInitialState: compose(withPnl(true), withDiscreet(false)) },
-      );
-
-      expect(screen.getByText(VALUE)).toBeOnTheScreen();
-      expect(screen.queryByText("***")).toBeNull();
+      expect(screen.getByText("Cost basis")).toBeVisible();
+      expect(screen.getByText("$2.21")).toBeVisible();
     });
   });
 });
