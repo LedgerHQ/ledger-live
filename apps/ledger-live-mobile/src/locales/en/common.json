@@ -8690,6 +8690,7 @@
     "addresses": {
       "title": "Addresses",
       "addAccount": "Add",
+      "seeAll": "See all",
       "empty": "No addresses yet. Tap Add to get started."
     },
     "marketStats": {

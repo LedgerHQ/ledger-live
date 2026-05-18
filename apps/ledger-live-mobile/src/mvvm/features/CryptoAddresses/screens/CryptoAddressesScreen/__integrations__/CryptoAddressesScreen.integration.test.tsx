@@ -51,6 +51,7 @@ const baseViewModel: ReturnType<typeof useCryptoAddressesViewModel> = {
   emptyStateLabel: "No accounts yet",
   trackingPage: ScreenName.Accounts,
   sourceScreenName: undefined,
+  hideAddAccount: false,
 };
 
 function renderScreen(vmOverrides: Partial<ReturnType<typeof useCryptoAddressesViewModel>> = {}) {
@@ -80,6 +81,12 @@ describe("CryptoAddressesScreen", () => {
     it("should render the add account label", () => {
       renderScreen();
       expect(screen.getByText("Add account")).toBeVisible();
+    });
+
+    it("should hide the add account footer when hideAddAccount is true", () => {
+      renderScreen({ hideAddAccount: true });
+      expect(screen.queryByTestId("crypto-addresses-add-button")).toBeNull();
+      expect(screen.queryByText("Add account")).toBeNull();
     });
   });
 

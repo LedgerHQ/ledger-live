@@ -13,6 +13,8 @@ import { track } from "~/analytics";
 import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
 import { buildMainAccountByIdMap } from "@ledgerhq/asset-aggregation/assetDistribution/index";
 
+export const MAX_PREVIEW_ADDRESSES = 5;
+
 export type AddressAccountData = Readonly<{
   id: string;
   account: Account;
@@ -58,6 +60,15 @@ export function useAddressesViewModel(
     });
   }, [currency, distributionItem, sortedAccounts, mainAccountById, walletState]);
 
+  const displayedAccounts = useMemo(() => accounts.slice(0, MAX_PREVIEW_ADDRESSES), [accounts]);
+
+  const hasMore = accounts.length > MAX_PREVIEW_ADDRESSES;
+
+  const allAccountIds = useMemo(
+    () => Array.from(new Set(accounts.map(a => a.account.id))),
+    [accounts],
+  );
+
   const onAddAccount = useCallback(() => {
     if (!currency) return;
     track("button_clicked", {
@@ -75,8 +86,27 @@ export function useAddressesViewModel(
     });
   }, [navigation, currency]);
 
+  const onSeeAll = useCallback(() => {
+    if (!currency) return;
+    track("button_clicked", {
+      button: "see_all_addresses",
+      currency: currency.id,
+      page: "Asset Detail",
+    });
+    navigation.navigate(NavigatorName.Accounts, {
+      screen: ScreenName.CryptoAddresses,
+      params: {
+        sourceScreenName: ScreenName.AssetDetail,
+        accountIds: allAccountIds,
+        hideAddAccount: true,
+      },
+    });
+  }, [navigation, currency, allAccountIds]);
+
   return {
-    accounts,
+    displayedAccounts,
+    hasMore,
     onAddAccount,
+    onSeeAll,
   };
 }

@@ -27,12 +27,22 @@ type NavigationProp = BaseNavigationComposite<
   StackNavigatorNavigation<AccountsNavigatorParamList, ScreenName.CryptoAddresses>
 >;
 
-export default function useCryptoAddressesViewModel(sourceScreenName?: ScreenName) {
+export default function useCryptoAddressesViewModel(
+  sourceScreenName?: ScreenName,
+  accountIds?: string[],
+  hideAddAccount?: boolean,
+) {
   const { t } = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const countervalueState = useCountervaluesState();
   const toCurrency = useSelector(counterValueCurrencySelector);
   const allAccounts = useSelector(accountsSelector, isEqual);
+
+  const filteredAccounts = useMemo(() => {
+    if (!accountIds) return allAccounts;
+    const idSet = new Set(accountIds);
+    return allAccounts.filter(a => idSet.has(a.id));
+  }, [allAccounts, accountIds]);
 
   const aggregatedAccountsData = useMemo(() => {
     const calculateCv: CalculateCountervalue = (from, value) => {
@@ -44,16 +54,16 @@ export default function useCryptoAddressesViewModel(sourceScreenName?: ScreenNam
       });
       return raw == null ? undefined : new BigNumber(raw);
     };
-    return computeAggregatedAccountsData(allAccounts, calculateCv);
-  }, [allAccounts, countervalueState, toCurrency]);
+    return computeAggregatedAccountsData(filteredAccounts, calculateCv);
+  }, [filteredAccounts, countervalueState, toCurrency]);
 
   const accounts = useMemo((): Account[] => {
-    return [...allAccounts].sort((a, b) => {
+    return [...filteredAccounts].sort((a, b) => {
       const aCV = aggregatedAccountsData.get(a.id)?.countervalue ?? new BigNumber(0);
       const bCV = aggregatedAccountsData.get(b.id)?.countervalue ?? new BigNumber(0);
       return bCV.comparedTo(aCV);
     });
-  }, [allAccounts, aggregatedAccountsData]);
+  }, [filteredAccounts, aggregatedAccountsData]);
 
   const hasNoAccount = accounts.length === 0;
 
@@ -101,5 +111,6 @@ export default function useCryptoAddressesViewModel(sourceScreenName?: ScreenNam
     emptyStateLabel: t("cryptoAddresses.emptyState"),
     trackingPage: ScreenName.Accounts,
     sourceScreenName,
+    hideAddAccount: hideAddAccount ?? false,
   };
 }
