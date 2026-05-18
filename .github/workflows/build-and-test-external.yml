@@ -15,7 +15,7 @@ permissions:
 
 jobs:
   determine-affected:
-    name: "Turbo Affected"
+    name: "Nx Affected"
     if: ${{github.event.pull_request.head.repo.fork }}
     uses: LedgerHQ/ledger-live/.github/workflows/nx-affected-reusable.yml@develop
     with:

@@ -66,7 +66,6 @@ runs:
       with:
         skip-pnpm-cache: "true"
         skip-pod-cache: "true"
-        skip-turbo-cache: "true"
         skip-nx-cache: "true"
         cache-develop-role-arn: ${{ inputs.cache-develop-role-arn }}
         cache-branch-role-arn: ${{ inputs.cache-branch-role-arn }}

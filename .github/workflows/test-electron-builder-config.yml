@@ -47,7 +47,6 @@ jobs:
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
-          skip-turbo-cache: "true"
 
       - name: Install system dependencies
         run: |
