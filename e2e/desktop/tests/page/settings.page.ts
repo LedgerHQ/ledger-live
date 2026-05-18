@@ -162,11 +162,15 @@ export class SettingsPage extends AppPage {
 
   @step("Expect exported logs file to be created")
   async expectExportLogsFileCreated() {
+    const timeout = 5000;
     const fileExists = await FileUtils.waitForFileToExist(
       SettingsPage.EXPORT_LOGS_SOURCE_PATH,
-      5000,
+      timeout,
     );
-    expect(fileExists).toBeTruthy();
+    expect(
+      fileExists,
+      `Export file was not created at ${SettingsPage.EXPORT_LOGS_SOURCE_PATH} within ${timeout}ms`,
+    ).toBeTruthy();
   }
 
   // Electron writes the logs to process.cwd(); move them under tests/artifacts so Playwright/CI collects them and the repo root stays clean (same pattern as swap.page.ts and history.page.ts).
