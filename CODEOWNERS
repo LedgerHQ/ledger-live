@@ -371,6 +371,7 @@ apps/ledger-live-mobile/src/screens/Settings/Notifications                      
 apps/ledger-live-mobile/src/logic/postOnboarding/                                              @ledgerhq/engagement
 apps/ledger-live-mobile/src/contentCards/                                                      @ledgerhq/engagement
 apps/ledger-live-mobile/src/dynamicContent/                                                    @ledgerhq/engagement
+apps/ledger-live-mobile/src/mvvm/features/AnalyticsConsent/                                    @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/WelcomePage/                                         @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/Onboarding/                                          @ledgerhq/engagement
 apps/ledger-live-mobile/src/mvvm/features/PostOnboardingHubDrawer/                             @ledgerhq/engagement
