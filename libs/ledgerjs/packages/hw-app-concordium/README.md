@@ -6,6 +6,12 @@
 
 ## @ledgerhq/hw-app-concordium
 
+> ⚠️ **DEPRECATED — this package is deprecated and will be removed in a future release.**
+>
+> Ledger Live has migrated to the Device Management Kit (DMK). New integrations should use `@ledgerhq/device-signer-kit-concordium` instead. The DMK signer provides the same Concordium device operations through the unified DMK transport layer.
+>
+> No further features or fixes will be shipped here. Pin a version if you still depend on it.
+
 Ledger Hardware Wallet Concordium JavaScript bindings.
 
 **Low-level device communication library. Depends on `@ledgerhq/hw-transport` and `@ledgerhq/concordium-core` (shared Concordium protocol types and serialization).**
