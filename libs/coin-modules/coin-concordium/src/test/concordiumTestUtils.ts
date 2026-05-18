@@ -87,7 +87,11 @@ export function createMockSigner(keyPair: ConcordiumTestKeyPair): ConcordiumSign
       return keyPair.publicKeyHex;
     },
 
-    signTransaction: async (tx: Transaction, path: string): Promise<SigningResult> => {
+    signTransaction: async (
+      tx: Transaction,
+      path: string,
+      _maxFee: bigint,
+    ): Promise<SigningResult> => {
       const serializedTx = JSON.stringify({
         transaction: tx,
         path,
