@@ -9,7 +9,12 @@ type CompletionFields = Pick<
 
 export async function isPostOnboardingHubActionFulfilled(
   action: CompletionFields,
-  context: { isLedgerSyncActive: boolean; accounts?: Account[]; protectId: string },
+  context: {
+    isLedgerSyncActive: boolean;
+    accounts?: Account[];
+    protectId: string;
+    productTourCompleted?: boolean;
+  },
 ): Promise<boolean> {
   if (action.completed) return true;
 
@@ -27,6 +32,7 @@ export async function isPostOnboardingHubActionFulfilled(
     action.getIsAlreadyCompletedByState?.({
       isLedgerSyncActive: !!context.isLedgerSyncActive,
       accounts: context.accounts,
+      productTourCompleted: context.productTourCompleted,
     }),
   );
 }

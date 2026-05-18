@@ -1,5 +1,6 @@
 import {
   LedgerDevices,
+  Lightbulb,
   PictureImage,
   Plus,
   Refresh,
@@ -24,6 +25,8 @@ export function getLumenSymbolForActionId(id: PostOnboardingActionId): FinishFlo
       return Plus as FinishFlowLumenSymbol;
     case PostOnboardingActionId.customImage:
       return PictureImage as FinishFlowLumenSymbol;
+    case PostOnboardingActionId.discoverWallet:
+      return Lightbulb as FinishFlowLumenSymbol;
     case PostOnboardingActionId.deviceOnboarded:
       return LedgerDevices as FinishFlowLumenSymbol;
     case PostOnboardingActionId.recover:
@@ -54,6 +57,7 @@ const ACTION_ID_TO_DIALOG_GROUP: Readonly<Partial<Record<PostOnboardingActionId,
   [PostOnboardingActionId.assetsTransfer]: "assetsTransfer",
   [PostOnboardingActionId.syncAccounts]: "syncAccounts",
   [PostOnboardingActionId.customImage]: "customImage",
+  [PostOnboardingActionId.discoverWallet]: "discoverWallet",
   [PostOnboardingActionId.recover]: "recover",
 };
 
@@ -62,6 +66,7 @@ const DIALOG_GROUPS_WITH_DESCRIPTION: ReadonlySet<string> = new Set([
   "assetsTransfer",
   "syncAccounts",
   "customImage",
+  "discoverWallet",
   "recover",
 ]);
 

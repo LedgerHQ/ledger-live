@@ -1360,6 +1360,10 @@
           "title": "Customize the lock screen",
           "description": "Display your favorite digital art or photo as your device’s lock screen."
         },
+        "discoverWallet": {
+          "title": "Discover what your wallet can do",
+          "description": "Dive into your wallet’s features"
+        },
         "recover": {
           "title": "Finish securing your backup",
           "description": "Complete activating Ledger Recover"
@@ -1399,6 +1403,12 @@
         "titleCompleted": "Your accounts are synchronized",
         "description": "Activate Ledger Sync to sync your crypto accounts",
         "actionCompletedPopupLabel": "Accounts synced"
+      },
+      "discoverWallet": {
+        "title": "Discover what your wallet can do",
+        "titleCompleted": "Discovered what your wallet can do",
+        "description": "Dive into your wallet’s features",
+        "actionCompletedPopupLabel": "Product tour completed"
       },
       "recover": {
         "title": "Finish securing your backup",

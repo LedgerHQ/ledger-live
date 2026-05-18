@@ -17,16 +17,18 @@ const PostOnboardingHub = () => {
 
   const postOnboardingRows = useMemo(
     () =>
-      actionsState.map((action, index) => (
-        <React.Fragment key={index}>
-          <PostOnboardingActionRow
-            {...action}
-            deviceModelId={deviceModelId}
-            isLedgerSyncActive={isLedgerSyncActive}
-            accounts={accounts}
-          />
-        </React.Fragment>
-      )),
+      actionsState
+        .filter(action => action.id !== PostOnboardingActionId.discoverWallet)
+        .map((action, index) => (
+          <React.Fragment key={index}>
+            <PostOnboardingActionRow
+              {...action}
+              deviceModelId={deviceModelId}
+              isLedgerSyncActive={isLedgerSyncActive}
+              accounts={accounts}
+            />
+          </React.Fragment>
+        )),
     [actionsState, deviceModelId, isLedgerSyncActive, accounts],
   );
 
