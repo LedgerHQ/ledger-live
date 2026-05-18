@@ -4,6 +4,7 @@ import {
   type BlindSigningPlatform,
   type BlindSigningReporter,
   type BlindSigningReportParams,
+  ContextModuleChainID,
   DEFAULT_CONFIG,
   DefaultBlindSigningReporter,
   HttpBlindSigningReporterDatasource,
@@ -85,6 +86,7 @@ export function buildDefaultHttpBlindSigningReporter(
       ...DEFAULT_CONFIG,
       appSource,
       originToken,
+      chain: ContextModuleChainID.Ethereum,
       loggerFactory: noopLoggerFactory,
     }),
   );

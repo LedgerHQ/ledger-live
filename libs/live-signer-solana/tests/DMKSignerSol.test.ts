@@ -15,6 +15,7 @@ import { of, throwError } from "rxjs";
 // Mock the SignerSolanaBuilder to avoid actual builder logic
 jest.mock("@ledgerhq/device-signer-kit-solana", () => ({
   SignerSolanaBuilder: jest.fn().mockImplementation(() => ({
+    withContextModule: jest.fn().mockReturnThis(),
     build: () => ({}),
   })),
   SignMessageVersion: { Raw: "raw", Legacy: "legacy", V0: "v0", V1: "v1" },

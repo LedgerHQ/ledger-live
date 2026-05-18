@@ -227,6 +227,9 @@ export const ConcordiumTrustedMetadataServiceError = createCustomErrorClass(
 export const ConcordiumAddressVerificationFailedError = createCustomErrorClass(
   "ConcordiumAddressVerificationFailedError",
 );
+export const ConcordiumInvalidMaxFeeError = createCustomErrorClass(
+  "ConcordiumInvalidMaxFeeError",
+);
 
 // Language
 export const LanguageNotFound = createCustomErrorClass("LanguageNotFound");

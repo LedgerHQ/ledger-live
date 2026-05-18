@@ -16,6 +16,7 @@ import {
   TransactionResolutionContext,
   SignMessageVersion,
 } from "@ledgerhq/device-signer-kit-solana";
+import { ContextModuleBuilder, ContextModuleChainID } from "@ledgerhq/context-module";
 import { DeviceActionStatus, DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import bs58 from "bs58";
 import {
@@ -45,11 +46,16 @@ export class DmkSignerSol implements SolanaSigner {
    * @param sessionId - active session ID of the connected device
    */
   constructor(dmk: DeviceManagementKit, sessionId: string) {
+    const contextModule = new ContextModuleBuilder({ originToken: "Solana" })
+      .setChain(ContextModuleChainID.Solana)
+      .build();
     this.dmkSigner = new SignerSolanaBuilder({
       dmk,
       sessionId,
       originToken: "Solana",
-    }).build();
+    })
+      .withContextModule(contextModule)
+      .build();
   }
 
   private _mapError<E extends DAError>(error: E): Error {
