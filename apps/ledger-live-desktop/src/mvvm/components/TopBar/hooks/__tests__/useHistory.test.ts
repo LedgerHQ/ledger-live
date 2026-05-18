@@ -3,7 +3,7 @@ import { renderHook, act } from "tests/testSetup";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { useHistory } from "../useHistory";
 import { useNavigate, useLocation } from "react-router";
-import { BTC_ACCOUNT } from "src/mvvm/features/__mocks__/accounts.mock";
+import { BTC_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
 
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),

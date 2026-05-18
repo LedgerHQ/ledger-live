@@ -5,7 +5,7 @@ import {
   isOperationUnread,
   parseLastSeenMs,
 } from "../historyOperationItems";
-import { BTC_ACCOUNT } from "src/mvvm/features/__mocks__/accounts.mock";
+import { BTC_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
 
 const bitcoinCurrency = BTC_ACCOUNT.currency;
 

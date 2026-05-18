@@ -5,7 +5,7 @@ import {
   EMPTY_BTC_ACCOUNT,
   ETH_ACCOUNT,
   ETH_ACCOUNT_WITH_USDC,
-} from "src/mvvm/features/__mocks__/accounts.mock";
+} from "LLD/features/__mocks__/accounts.mock";
 import historyReducer, {
   type HistoryState,
   markOperationsAsSeen,
