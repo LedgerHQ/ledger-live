@@ -11,6 +11,7 @@ import {
 } from "~/renderer/actions/settings";
 import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
+import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { useRedirectToPostOnboardingCallback } from "~/renderer/hooks/useAutoRedirectToPostOnboarding";
 import useFinishOnboardingDialog from "LLD/features/FinishOnboarding/FinishOnboardingDialog/hooks/useFinishOnboardingDialog";
 
@@ -35,6 +36,7 @@ export function useCompletionScreenViewModel(): ViewProps {
   }, [currentDevice, lastSeenDevice]);
 
   const { shouldDisplayFinishOnboardingWidget = false } = useWalletFeaturesConfig("desktop");
+  const startPostOnboarding = useStartPostOnboardingCallback();
   const redirectToPostOnboarding = useRedirectToPostOnboardingCallback();
   const { handleOpen: openFinishOnboardingDialog } = useFinishOnboardingDialog();
 
@@ -45,6 +47,7 @@ export function useCompletionScreenViewModel(): ViewProps {
     dispatch(setLastOnboardedDevice(currentDevice));
     const timeout = setTimeout(() => {
       if (shouldDisplayFinishOnboardingWidget) {
+        startPostOnboarding({ deviceModelId, skipNavigateToHub: true });
         navigate("/");
         openFinishOnboardingDialog();
       } else {
@@ -56,11 +59,13 @@ export function useCompletionScreenViewModel(): ViewProps {
     };
   }, [
     currentDevice,
+    deviceModelId,
     dispatch,
     navigate,
     openFinishOnboardingDialog,
     redirectToPostOnboarding,
     shouldDisplayFinishOnboardingWidget,
+    startPostOnboarding,
   ]);
 
   return {

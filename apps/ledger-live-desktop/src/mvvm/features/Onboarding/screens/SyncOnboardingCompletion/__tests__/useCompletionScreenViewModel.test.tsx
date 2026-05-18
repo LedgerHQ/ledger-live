@@ -11,6 +11,7 @@ import { SettingsState } from "~/renderer/reducers/settings";
 const mockNavigate = jest.fn();
 const mockOpenFinishOnboardingDialog = jest.fn();
 const mockRedirectToPostOnboarding = jest.fn();
+const mockStartPostOnboarding = jest.fn();
 
 jest.mock("~/renderer/hooks/useAutoRedirectToPostOnboarding", () => ({
   useRedirectToPostOnboardingCallback: jest.fn(),
@@ -32,6 +33,11 @@ jest.mock(
   }),
 );
 
+jest.mock("@ledgerhq/live-common/postOnboarding/hooks/index", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/postOnboarding/hooks/index"),
+  useStartPostOnboardingCallback: () => mockStartPostOnboarding,
+}));
+
 const getInitialState = (modelId: DeviceModelId = DeviceModelId.stax): Partial<State> => ({
   devices: {
     devices: [],
@@ -45,6 +51,7 @@ describe("useCompletionScreenViewModel", () => {
     mockRedirectToPostOnboarding.mockClear();
     mockNavigate.mockClear();
     mockOpenFinishOnboardingDialog.mockClear();
+    mockStartPostOnboarding.mockClear();
     jest
       .mocked(useRedirectToPostOnboardingCallback)
       .mockReturnValue(mockRedirectToPostOnboarding);
@@ -67,6 +74,7 @@ describe("useCompletionScreenViewModel", () => {
       });
 
       expect(mockRedirectToPostOnboarding).toHaveBeenCalledTimes(1);
+      expect(mockStartPostOnboarding).not.toHaveBeenCalled();
       expect(mockNavigate).not.toHaveBeenCalled();
       expect(mockOpenFinishOnboardingDialog).not.toHaveBeenCalled();
 
@@ -78,7 +86,7 @@ describe("useCompletionScreenViewModel", () => {
     }),
   );
 
-  it("should navigate home and open finish-onboarding dialog when Wallet40 finish widget is enabled", () => {
+  it("should init post-onboarding, navigate home, and open finish-onboarding dialog when Wallet40 finish widget is enabled", () => {
     const deviceId = DeviceModelId.stax;
     const initialState = {
       ...getInitialState(deviceId),
@@ -97,7 +105,19 @@ describe("useCompletionScreenViewModel", () => {
     });
 
     expect(mockRedirectToPostOnboarding).not.toHaveBeenCalled();
+    expect(mockStartPostOnboarding).toHaveBeenCalledWith({
+      deviceModelId: deviceId,
+      skipNavigateToHub: true,
+    });
     expect(mockNavigate).toHaveBeenCalledWith("/");
     expect(mockOpenFinishOnboardingDialog).toHaveBeenCalledTimes(1);
+
+    const [startOrder, navigateOrder, openDialogOrder] = [
+      mockStartPostOnboarding.mock.invocationCallOrder[0],
+      mockNavigate.mock.invocationCallOrder[0],
+      mockOpenFinishOnboardingDialog.mock.invocationCallOrder[0],
+    ];
+    expect(startOrder).toBeLessThan(navigateOrder);
+    expect(navigateOrder).toBeLessThan(openDialogOrder);
   });
 });

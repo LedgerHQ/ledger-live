@@ -12,6 +12,8 @@ type StartPostOnboardingOptions = {
   fallbackIfNoAction?: () => void;
   resetNavigationStack?: boolean;
   canShowRecover?: boolean;
+  /** When true, only initializes Redux state without navigating to the post-onboarding hub. */
+  skipNavigateToHub?: boolean;
 };
 
 /**
@@ -32,7 +34,13 @@ export function useStartPostOnboardingCallback(): (options: StartPostOnboardingO
 
   return useCallback(
     (options: StartPostOnboardingOptions) => {
-      const { deviceModelId, mock = false, fallbackIfNoAction, resetNavigationStack } = options;
+      const {
+        deviceModelId,
+        mock = false,
+        fallbackIfNoAction,
+        resetNavigationStack,
+        skipNavigateToHub = false,
+      } = options;
       const actions = getPostOnboardingActionsForDevice(deviceModelId, mock).filter(
         actionWithState =>
           (!actionWithState.featureFlagId || getFeature(actionWithState.featureFlagId)?.enabled) &&
@@ -50,7 +58,9 @@ export function useStartPostOnboardingCallback(): (options: StartPostOnboardingO
         if (fallbackIfNoAction) fallbackIfNoAction();
         return;
       }
-      navigateToPostOnboardingHub(resetNavigationStack);
+      if (!skipNavigateToHub) {
+        navigateToPostOnboardingHub(resetNavigationStack);
+      }
     },
     [dispatch, getFeature, getPostOnboardingActionsForDevice, navigateToPostOnboardingHub],
   );
