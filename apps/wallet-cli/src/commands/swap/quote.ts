@@ -73,17 +73,17 @@ export default defineCommand({
       short: "t",
     }),
     "from-fresh-address": option(z.string().min(1).optional(), {
-      description: "Source account fresh receive address is required",
+      description: "Source account fresh receive address (alternative to --from-account)",
     }),
     "to-fresh-address": option(z.string().min(1).optional(), {
-      description: "Destination account fresh receive address is required",
+      description: "Destination account fresh receive address (alternative to --to-account)",
     }),
     "from-account": option(z.string().min(1).optional(), {
-      description: "Source account descriptor or session label (used to resolve fresh address)",
+      description: "Source account session label (used to resolve fresh address)",
     }),
     "to-account": option(z.string().min(1).optional(), {
       description:
-        "Destination account descriptor or session label (used to resolve fresh address)",
+        "Destination account session label (used to resolve fresh address)",
     }),
     amount: option(z.string().min(1, "Amount is required"), {
       description: "Amount to swap in source currency",

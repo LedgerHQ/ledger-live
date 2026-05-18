@@ -14,16 +14,15 @@ import {
 
 export default defineCommand({
   name: "operations",
-  description: "List operations for an account descriptor (no device required)",
+  description: "List operations for an account (no device required)",
   options: {
     account: accountOption,
     limit: option(z.coerce.number().int().min(1).optional(), {
-      description: "Max number of operations to return (coin-framework families only)",
+      description: "Max number of operations to return",
       short: "l",
     }),
     cursor: option(z.string().min(1).optional(), {
-      description:
-        "Pagination cursor from a previous call's nextCursor (coin-framework families only)",
+      description: "Pagination cursor from a previous call's nextCursor",
     }),
     output: outputOption,
   },

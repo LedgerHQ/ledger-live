@@ -14,14 +14,15 @@ wallet-cli is **not production-ready**. Behavior and flags may change without no
 
 | Command | Role |
 | -------- | ---- |
-| `account discover` | Discover accounts for a currency on the **connected Ledger** (USB). Outputs short **account descriptors** (human table or `--output json`). |
-| `balances` | Given an account descriptor from discovery, fetch **native and token balances**. **No device** required. |
-| `operations` | Given an account descriptor, **list operations**. **No device** required. For Alpaca-backed families, optional pagination via `--limit` and `--cursor`. |
+| `account discover` | Discover accounts for a currency on the **connected Ledger** (USB). Each discovered account is saved to the session under a **label** (e.g. `ethereum-1`). |
+| `session view` / `session reset` | List or wipe accounts stored in the session. |
+| `balances` | Fetch **native and token balances** for an account (by session label). **No device** required. |
+| `operations` | **List operations** for an account (by session label). **No device** required. Optional pagination via `--limit` and `--cursor`. |
 | `send` | Sign and broadcast a transaction. Requires `--amount` with ticker (e.g. `0.001 BTC`, `0.01 ETH`). Use `--dry-run` to validate without signing. |
 | `receive` | Get the receive address for an account (optionally verify on device). |
 | `swap execute` | Execute the full swap flow with `--provider` and `--amount`: prepare the swap, interact with the connected device as needed, complete the exchange, then sign and broadcast the transaction. |
 
-Typical flow: run `account discover` with a currency id (e.g. `bitcoin`, `ethereum`), then pass the printed descriptor to `balances`, `operations`, or `send`.
+Typical flow: run `account discover` with a currency id (e.g. `bitcoin`, `ethereum`), then pass the assigned **session label** (e.g. `--account ethereum-1`) to `balances`, `operations`, `send`, or `receive`. Use `session view` to see what's saved.
 
 For exact flags and defaults (from repo root):
 

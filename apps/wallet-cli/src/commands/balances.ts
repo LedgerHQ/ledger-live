@@ -13,7 +13,7 @@ import {
 
 export default defineCommand({
   name: "balances",
-  description: "Fetch native and token balances for an account descriptor (no device required)",
+  description: "Fetch native and token balances for an account (no device required)",
   options: {
     account: accountOption,
     output: outputOption,
