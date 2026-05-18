@@ -32,10 +32,10 @@ function renderState() {
 }
 
 describe("RetryableDeviceLockedState", () => {
-  it("should render the unlock title interpolated with the product name", () => {
+  it("should render the locked title and the retry CTA", () => {
     renderState();
 
-    expect(screen.getByText("Unlock your Flex")).toBeVisible();
+    expect(screen.getByText("Device is locked")).toBeVisible();
     expect(screen.getByText("Retry")).toBeVisible();
   });
 

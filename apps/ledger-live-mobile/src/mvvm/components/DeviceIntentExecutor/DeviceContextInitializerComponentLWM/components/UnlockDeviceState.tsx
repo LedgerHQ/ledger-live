@@ -1,7 +1,6 @@
 import React from "react";
 import { DeviceInteractionRequiredType, type EnsureAppReadyState } from "@ledgerhq/live-dmk-shared";
-import { Trans } from "~/context/Locale";
-import { DeviceActionContent } from "LLM/components/DeviceActionContent";
+import { UnlockDevice } from "LLM/components/DeviceGenericStates/UnlockDevice";
 import type { BaseInitializerStateProps } from "../types";
 
 type UnlockDeviceStateProps = BaseInitializerStateProps<
@@ -10,16 +9,9 @@ type UnlockDeviceStateProps = BaseInitializerStateProps<
 
 export function UnlockDeviceState({ device }: UnlockDeviceStateProps) {
   return (
-    <DeviceActionContent
-      action="power-and-unlock"
-      deviceModelId={device.supportedModelId}
+    <UnlockDevice
+      deviceModelId={device.modelId}
       deviceName={device.name}
-      title={
-        <Trans
-          i18nKey="deviceIntentExecutor.initialization.deviceAction.unlock.title"
-          values={{ productName: device.productName }}
-        />
-      }
       testID="device-initializer-unlock-device"
     />
   );

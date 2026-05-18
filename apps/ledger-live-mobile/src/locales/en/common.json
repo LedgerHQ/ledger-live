@@ -4824,6 +4824,19 @@
     "chooseAccountToFund": "Choose an account to add funds"
   },
   "deviceIntentExecutor": {
+    "genericStates": {
+      "retryableDeviceLocked": {
+        "title": "Device is locked",
+        "description": "Unlock your device to continue."
+      },
+      "unlockDevice": {
+        "title": "Unlock your {{productName}}"
+      },
+      "continueOnDevice": {
+        "title": "Continue on your {{productName}}",
+        "description": "Follow the instructions displayed on your Secure Screen"
+      }
+    },
     "initialization": {
       "loading": {
         "title": "Loading"
@@ -4831,24 +4844,11 @@
       "installingApp": {
         "title": "Installing app"
       },
-      "deviceAction": {
-        "unlock": {
-          "title": "Unlock your {{productName}}"
-        },
-        "continue": {
-          "title": "Continue on your {{productName}}",
-          "description": "Follow the instructions displayed on your Secure Screen"
-        }
-      },
       "outdatedAppWarning": {
         "title": "App version outdated",
         "description": "An important update is available for the {{appName}} application on your device. Please go to My Ledger to update it."
       },
       "retryable": {
-        "locked": {
-          "title": "Device is locked",
-          "description": "Unlock your device to continue."
-        },
         "userRefused": {
           "title": "Operation rejected on device"
         },
@@ -4885,7 +4885,7 @@
       "cta": {
         "openMyLedger": "Open My Ledger",
         "goToMyLedger": "Go to My Ledger",
-        "setupDevice": "Setup device",
+        "setupDevice": "Set up device",
         "updateLedgerOs": "Update Ledger OS",
         "cancelOperation": "Cancel operation",
         "contactLedgerSupport": "Contact Ledger support"

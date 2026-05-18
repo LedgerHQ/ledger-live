@@ -1,7 +1,6 @@
 import React from "react";
 import { DeviceInteractionRequiredType, type EnsureAppReadyState } from "@ledgerhq/live-dmk-shared";
-import { Trans } from "~/context/Locale";
-import { DeviceActionContent } from "LLM/components/DeviceActionContent";
+import { ContinueOnDevice } from "LLM/components/DeviceGenericStates/ContinueOnDevice";
 import type { BaseInitializerStateProps } from "../types";
 
 type ConfirmOpenAppStateProps = BaseInitializerStateProps<
@@ -10,19 +9,9 @@ type ConfirmOpenAppStateProps = BaseInitializerStateProps<
 
 export function ConfirmOpenAppState({ device }: ConfirmOpenAppStateProps) {
   return (
-    <DeviceActionContent
-      action="continue"
-      deviceModelId={device.supportedModelId}
+    <ContinueOnDevice
+      deviceModelId={device.modelId}
       deviceName={device.name}
-      title={
-        <Trans
-          i18nKey="deviceIntentExecutor.initialization.deviceAction.continue.title"
-          values={{ productName: device.productName }}
-        />
-      }
-      description={
-        <Trans i18nKey="deviceIntentExecutor.initialization.deviceAction.continue.description" />
-      }
       testID="device-initializer-confirm-open-app"
     />
   );

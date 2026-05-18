@@ -24,6 +24,6 @@ describe("UnlockDeviceState", () => {
       />,
     );
 
-    expect(screen.getByText("Unlock your Flex")).toBeVisible();
+    expect(screen.getByText("Unlock your Ledger Flex")).toBeVisible();
   });
 });
