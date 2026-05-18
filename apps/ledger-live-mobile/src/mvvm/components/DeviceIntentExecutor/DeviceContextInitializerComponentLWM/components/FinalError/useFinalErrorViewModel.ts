@@ -21,10 +21,10 @@ export function useFinalErrorViewModel({ state, device, onCancel }: Params) {
   };
 }
 
-function getTranslatedErrorInput(error: unknown): Error | DmkError | null {
+function getTranslatedErrorInput(error: unknown): Error | DmkError {
   if (error instanceof Error || isDmkError(error)) {
     return error;
   }
 
-  return null;
+  return new Error("Unknown error");
 }
