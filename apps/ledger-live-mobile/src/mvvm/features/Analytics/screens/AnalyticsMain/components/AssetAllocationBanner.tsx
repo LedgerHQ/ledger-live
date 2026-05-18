@@ -39,7 +39,6 @@ export default React.memo(AssetAllocationBanner);
 
 const Container: LumenViewStyle = {
   flex: 1,
-  marginTop: "s40",
   flexDirection: "column",
   gap: "s24",
 };

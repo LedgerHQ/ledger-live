@@ -1,4 +1,5 @@
 import React, { JSX } from "react";
+import { ScrollView } from "react-native";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { TrackScreen } from "~/analytics";
 import SafeAreaView from "~/components/SafeAreaView";
@@ -8,6 +9,7 @@ import { AnalyticsNavigatorParamsList } from "../../types";
 import AssetAllocationBanner from "./components/AssetAllocationBanner";
 import FooterButton from "./components/FooterButton";
 import MainGraph from "./components/MainGraph";
+import PnlSection from "./components/PnlSection";
 import { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { ANALYTICS_PAGE } from "../../const";
 import useAnalyticsMainViewModel from "./useAnalyticsMainViewModel";
@@ -23,12 +25,15 @@ export default function AnalyticsMain({ route }: Props): JSX.Element {
     <SafeAreaView edges={["left", "right", "bottom"]} isFlex>
       <TrackScreen name={ANALYTICS_PAGE} source={sourceScreenName} />
       <Box lx={Container}>
-        <Box lx={FlexContainer}>
-          <MainGraph />
-          <Box lx={AssetAllocationBannerContainer}>
-            <AssetAllocationBanner />
+        <ScrollView style={scrollViewStyle} contentContainerStyle={scrollViewContentStyle}>
+          <Box lx={ContentContainer}>
+            <MainGraph />
+            <PnlSection />
+            <Box lx={AssetAllocationBannerContainer}>
+              <AssetAllocationBanner />
+            </Box>
           </Box>
-        </Box>
+        </ScrollView>
         {isExchangeEnabled && (
           <Box lx={FooterButtonContainer}>
             <FooterButton />
@@ -39,6 +44,9 @@ export default function AnalyticsMain({ route }: Props): JSX.Element {
   );
 }
 
+const scrollViewStyle = { flex: 1 } as const;
+const scrollViewContentStyle = { flexGrow: 1 } as const;
+
 const FlexContainer: LumenViewStyle = {
   flex: 1,
 };
@@ -46,12 +54,17 @@ const FlexContainer: LumenViewStyle = {
 const Container: LumenViewStyle = {
   ...FlexContainer,
   flexDirection: "column",
-  justifyContent: "space-between",
+};
+
+const ContentContainer: LumenViewStyle = {
+  ...FlexContainer,
+  flexDirection: "column",
+  gap: "s16",
 };
 
 const AssetAllocationBannerContainer: LumenViewStyle = {
-  marginHorizontal: "s16",
   ...FlexContainer,
+  marginHorizontal: "s16",
 };
 
 const FooterButtonContainer: LumenViewStyle = {
