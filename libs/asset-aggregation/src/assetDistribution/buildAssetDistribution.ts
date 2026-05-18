@@ -1,4 +1,4 @@
-import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { findCryptoCurrencyById, legacyIdToApiId } from "@ledgerhq/cryptoassets";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
@@ -84,11 +84,12 @@ export function buildAssetDistribution(
 
   for (const account of allAccounts) {
     const currency = getAccountCurrency(account);
-    currencyById.set(currency.id, currency);
+    const apiId = legacyIdToApiId(currency.id);
+    currencyById.set(apiId, currency);
 
     if (shouldSkipAccount(account, showEmptyAccounts, hideEmptyTokenAccount)) continue;
 
-    const metaCurrencyId = currencyToMetaId[currency.id] ?? currency.id;
+    const metaCurrencyId = currencyToMetaId[apiId] ?? currency.id;
     const balance = account.balance.toNumber();
 
     let group = groups.get(metaCurrencyId);
@@ -106,7 +107,7 @@ export function buildAssetDistribution(
 
     group.accounts.push(account);
     group.amount += balance;
-    group.marketId ??= assetsData.markets[currency.id]?.id;
+    group.marketId ??= assetsData.markets[apiId]?.id;
 
     let network = group.networks.get(currency.id);
     if (!network) {
