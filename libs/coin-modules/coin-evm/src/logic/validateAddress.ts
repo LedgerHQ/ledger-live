@@ -11,5 +11,5 @@ export async function validateAddress(
     return address === ethers.getAddress(address);
   }
 
-  return address.endsWith(".eth");
+  return ethers.isValidName(address);
 }
