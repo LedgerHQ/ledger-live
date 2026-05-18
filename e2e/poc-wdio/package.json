@@ -21,6 +21,7 @@
   },
   "scripts": {
     "android": "wdio run ./config/wdio.android.conf.ts",
-    "ios": "wdio run ./config/wdio.ios.conf.ts"
+    "ios": "wdio run ./config/wdio.ios.conf.ts",
+    "typecheck": "tsc --noEmit --project tsconfig.json"
   }
 }
