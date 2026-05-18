@@ -8,10 +8,7 @@ function renderView() {
 
   return {
     ...render(
-      <UnsupportedFirmwareVersionView
-        onUpdateLedgerOs={onUpdateLedgerOs}
-        onCancel={onCancel}
-      />,
+      <UnsupportedFirmwareVersionView onUpdateLedgerOs={onUpdateLedgerOs} onCancel={onCancel} />,
     ),
     onUpdateLedgerOs,
     onCancel,

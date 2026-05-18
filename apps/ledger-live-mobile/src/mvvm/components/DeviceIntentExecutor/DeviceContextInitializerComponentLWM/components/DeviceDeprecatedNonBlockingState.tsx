@@ -17,9 +17,7 @@ type DeviceDeprecatedNonBlockingStateProps = BaseInitializerStateProps<
   >
 >;
 
-export function DeviceDeprecatedNonBlockingState({
-  state,
-}: DeviceDeprecatedNonBlockingStateProps) {
+export function DeviceDeprecatedNonBlockingState({ state }: DeviceDeprecatedNonBlockingStateProps) {
   const { decision, onContinue } = state;
   const displayClearSigningWarning = decision.screenSequence.includes("clearSigning");
 

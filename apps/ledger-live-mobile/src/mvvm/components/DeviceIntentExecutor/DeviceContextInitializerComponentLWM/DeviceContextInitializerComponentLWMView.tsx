@@ -27,7 +27,6 @@ import { WrongDeviceForAccount } from "./components/WrongDeviceForAccount";
 import { DeviceOutOfStorageSpace } from "./components/DeviceOutOfStorageSpace";
 import { DeviceNotOnboarded } from "./components/DeviceNotOnboarded";
 import { FinalError } from "./components/FinalError";
-import { SuccessState } from "./components/SuccessState";
 
 function assertNever(value: never): never {
   throw new Error(`Unhandled ensure app ready state: ${JSON.stringify(value)}`);
@@ -45,9 +44,9 @@ export function DeviceContextInitializerComponentLWMView({
       {(() => {
         switch (state.type) {
           case LoadingStateType.Loading:
-            return <LoadingState state={state} {...commonProps} />;
+            return <LoadingState />;
           case LoadingStateType.InstallingApp:
-            return <InstallingAppState state={state} {...commonProps} />;
+            return <InstallingAppState />;
           case DeviceInteractionRequiredType.UnlockDevice:
             return <UnlockDeviceState state={state} {...commonProps} />;
           case DeviceInteractionRequiredType.AllowSecureConnection:
@@ -81,7 +80,7 @@ export function DeviceContextInitializerComponentLWMView({
           case FinalStateType.Error:
             return <FinalError state={state} {...commonProps} />;
           case FinalStateType.Success:
-            return <SuccessState state={state} {...commonProps} />;
+            return null;
           default:
             return assertNever(state);
         }
