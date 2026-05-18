@@ -25,7 +25,7 @@ const nativeAccounts = [
   //{ account: Account.BSC_1, xrayTicket: "B2CQA-2686, B2CQA-2696, B2CQA-2698" },
 ];
 
-const tokenAccounts = [{ account: TokenAccount.ETH_USDT_1, xrayTicket: "B2CQA-XXX" }];
+const tokenAccounts = [{ account: TokenAccount.ETH_USDT_1, xrayTicket: "B2CQA-5694" }];
 
 async function verifySendCurrencyTokensWarning(app: Application, account: Account) {
   switch (account) {
