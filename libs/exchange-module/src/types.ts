@@ -153,6 +153,9 @@ export type GetQuotesArgs = {
 
 export type GetQuotesWireArgs = Omit<GetQuotesArgs, "signal">;
 
+export type GetBestQuoteArgs = GetQuotesArgs;
+export type GetBestQuoteWireArgs = GetQuotesWireArgs;
+
 // Swap transaction status (`custom.exchange.getTransactionStatus`).
 
 export type TransactionStatusInput = {
@@ -468,3 +471,10 @@ export type GetQuotesResponse = {
    */
   errors: QuotesError[];
 };
+
+export type GetBestQuoteResponse =
+  | Quote
+  | {
+      providerErrors: QuoteProviderError[];
+      errors: QuotesError[];
+    };

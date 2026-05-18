@@ -27,6 +27,8 @@ import {
   ExchangeType,
   SwapLiveError,
   SwapResult,
+  type GetBestQuoteResponse,
+  type GetBestQuoteWireArgs,
   type GetQuotesResponse,
   type GetQuotesWireArgs,
 } from "@ledgerhq/wallet-api-exchange-module";
@@ -61,7 +63,7 @@ import { createStepError, StepError, toError } from "./parser";
 import { handleErrors } from "./handleSwapErrors";
 import get from "lodash/get";
 import { SwapError } from "./SwapError";
-import { getQuotes } from "./quotes";
+import { getBestQuote, getQuotes } from "./quotes";
 import { fetchSpotPrices } from "./quotes/service/fetchSpotPrices";
 import {
   getTransactionStatus,
@@ -81,6 +83,7 @@ type Handlers = {
   "custom.isReady": RPCHandler<void, void>;
   "custom.exchange.swap": RPCHandler<SwapResult, ExchangeSwapParams>;
   "custom.exchange.getQuotes": RPCHandler<GetQuotesResponse, GetQuotesWireArgs>;
+  "custom.exchange.getBestQuote": RPCHandler<GetBestQuoteResponse, GetBestQuoteWireArgs>;
   "custom.exchange.getTransactionStatus": RPCHandler<
     GetTransactionStatusResponse,
     GetTransactionStatusWireArgs
@@ -785,6 +788,23 @@ export const handlers = ({
           counterValue: counterValueCurrency,
         });
         return getQuotes(params, { accounts, spotPrices, locale, counterValueCurrency });
+      },
+    ),
+
+    "custom.exchange.getBestQuote": customWrapper<GetBestQuoteWireArgs, GetBestQuoteResponse>(
+      async params => {
+        if (!params) {
+          throw new ServerError(createUnknownError({ message: "params is undefined" }));
+        }
+        const spotPrices = await fetchSpotPrices({
+          currencyIds: [
+            params.data.sendCurrencyId,
+            params.data.receiveCurrencyId,
+            params.data.networkFeesCurrencyId,
+          ],
+          counterValue: counterValueCurrency,
+        });
+        return getBestQuote(params, { accounts, spotPrices, locale, counterValueCurrency });
       },
     ),
 
