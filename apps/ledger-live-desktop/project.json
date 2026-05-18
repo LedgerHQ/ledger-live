@@ -2,12 +2,29 @@
   "name": "ledger-live-desktop",
   "targets": {
     "build": {
-      "cache": false,
+      "cache": true,
       "inputs": [
         "default",
         "^default",
         "desktopEnv",
-        "sharedEnv"
+        "sharedEnv",
+        {
+          "env": "RUNNER_OS"
+        },
+        {
+          "env": "CI_OS"
+        },
+        {
+          "runtime": "node -p \"process.platform + '-' + process.arch\""
+        }
+      ],
+      "outputs": [
+        "{projectRoot}/dist/**",
+        "{projectRoot}/.webpack/**",
+        "{projectRoot}/metafile.*.json",
+        "{projectRoot}/lib/**",
+        "{projectRoot}/lib-es/**",
+        "{projectRoot}/build/**"
       ]
     },
     "build:testing": {
