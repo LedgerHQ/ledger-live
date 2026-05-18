@@ -225,7 +225,7 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
     value = bnFees;
   } else if (
     op.asset.type === "native" &&
-    ["OUT", "FEES", "DELEGATE", "UNDELEGATE"].includes(opType)
+    ["OUT", "FEES", "DELEGATE", "UNDELEGATE", "REDELEGATE"].includes(opType)
   ) {
     value = new BigNumber(op.value.toString()).plus(bnFees);
   } else {

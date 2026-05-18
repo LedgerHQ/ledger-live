@@ -169,6 +169,9 @@ export const getValidatorExplorerUrl = (currencyId: string, address: string): st
 export const getUnbondingPeriodDays = (currencyId: string): number | undefined =>
   STAKING_CONTRACTS[currencyId]?.unbondingPeriodDays;
 
+export const getMaxRedelegations = (currencyId: string): number | undefined =>
+  STAKING_CONTRACTS[currencyId]?.maxRedelegations;
+
 export const hasUnbondingPeriod = (currencyId: string): boolean => {
   const days = getUnbondingPeriodDays(currencyId);
   return typeof days === "number" && days > 0;

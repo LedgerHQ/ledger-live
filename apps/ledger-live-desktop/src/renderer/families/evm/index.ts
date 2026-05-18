@@ -6,11 +6,14 @@ import accountHeaderManageActions from "./AccountHeaderManageActions";
 import sendAmountFields from "./SendAmountFields";
 import StepSummaryNetworkFeesRow from "./StepSummaryNetworkFeesRow";
 import transactionConfirmFields from "./TransactionConfirmFields";
+import OperationDetailsExtra, { amountCellExtra, amountCell } from "./operationDetails";
 import { EvmFamily } from "./types";
 
 const family: EvmFamily = {
   operationDetails: {
-    OperationDetailsExtra: () => null,
+    OperationDetailsExtra,
+    amountCellExtra,
+    amountCell,
   },
   AccountBalanceSummaryFooter,
   AccountBodyHeader,
