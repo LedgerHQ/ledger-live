@@ -1,5 +1,6 @@
 ---
 "ledger-live-desktop": patch
+"@ledgerhq/live-common": patch
 ---
 
-Open finish-onboarding dialog from sync onboarding completion when Wallet40 finish widget is enabled
+Fix post-onboarding flow to open finish-onboarding dialog instead of legacy hub after closing Recover
