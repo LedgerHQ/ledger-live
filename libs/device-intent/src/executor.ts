@@ -131,7 +131,7 @@ export interface DeviceIntentExecutorProps<JobState, Input, ExtraProps, InitInpu
    * (e.g. close the bottom sheet containing the executor).
    */
   cancellableUI: boolean;
-  /** Called when the user perfoms an action that cancels the current execution
+  /** Called when the user performs an action that cancels the current execution
    * (e.g. user closes the bottom sheet containing the executor, or clicks a "Close" CTA in a given error state, etc.).
    */
   onUserCancel: () => void;

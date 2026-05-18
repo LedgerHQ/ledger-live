@@ -60,6 +60,7 @@ describe("DeviceContextInitializerComponentLWM", () => {
         connectionResult={connectionResult}
         deviceInitializationInput={deviceInitializationInput}
         onContextInitialized={onContextInitialized}
+        onClose={jest.fn()}
       />,
     );
 
@@ -82,6 +83,7 @@ describe("DeviceContextInitializerComponentLWM", () => {
         deviceInitializationInput={deviceInitializationInput}
         onContextInitialized={onContextInitialized}
         config={{ dependencies }}
+        onClose={jest.fn()}
       />,
     );
 
@@ -94,34 +96,19 @@ describe("DeviceContextInitializerComponentLWM", () => {
     });
   });
 
-  it("should forward config.onCancel as the view onCancel prop", () => {
-    const onCancel = jest.fn();
+  it("should forward the onClose prop as the view onCancel prop", () => {
+    const onClose = jest.fn();
 
     render(
       <DeviceContextInitializerComponentLWM
         connectionResult={connectionResult}
         deviceInitializationInput={deviceInitializationInput}
         onContextInitialized={jest.fn()}
-        config={{ onCancel }}
+        onClose={onClose}
       />,
     );
 
     expect(mockedView).toHaveBeenCalledTimes(1);
-    expect(mockedView.mock.calls[0][0].onCancel).toBe(onCancel);
-  });
-
-  it("should fall back to a noop onCancel prop when config.onCancel is omitted", () => {
-    render(
-      <DeviceContextInitializerComponentLWM
-        connectionResult={connectionResult}
-        deviceInitializationInput={deviceInitializationInput}
-        onContextInitialized={jest.fn()}
-      />,
-    );
-
-    expect(mockedView).toHaveBeenCalledTimes(1);
-    const { onCancel } = mockedView.mock.calls[0][0];
-    expect(typeof onCancel).toBe("function");
-    expect(() => onCancel()).not.toThrow();
+    expect(mockedView.mock.calls[0][0].onCancel).toBe(onClose);
   });
 });

@@ -7,12 +7,13 @@ import { BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
 import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 import React from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { ConnectionError } from "./components/ConnectionError";
+import { IntentError } from "./components/IntentError";
+import { InvalidOperation } from "./components/InvalidOperation";
 import DeviceConnectionComponentLWM from "./DeviceConnectionComponentLWM";
 import DeviceContextInitializerComponentLWM, {
   InitializerConfig,
 } from "./DeviceContextInitializerComponentLWM";
-import ErrorComponentLWM from "./ErrorComponentLWM";
-import InvalidOperationComponentLWM from "./InvalidOperationComponentLWM";
 import type { InitializationInput } from "./types";
 
 type Props<JobState, Input, ExtraProps> = DeviceIntentExecutorProps<
@@ -27,9 +28,9 @@ type Props<JobState, Input, ExtraProps> = DeviceIntentExecutorProps<
 const platformConfig: ExecutorPlatformConfiguration<InitializationInput, InitializerConfig> = {
   DeviceConnectionComponent: DeviceConnectionComponentLWM,
   DeviceContextInitializerComponent: DeviceContextInitializerComponentLWM,
-  ConnectionErrorComponent: ErrorComponentLWM,
-  IntentErrorComponent: ErrorComponentLWM,
-  InvalidOperationComponent: InvalidOperationComponentLWM,
+  ConnectionErrorComponent: ConnectionError,
+  IntentErrorComponent: IntentError,
+  InvalidOperationComponent: InvalidOperation,
 };
 
 /**
@@ -47,10 +48,6 @@ export function DeviceIntentExecutorLWM<JobState, Input, ExtraProps>(
   props: Props<JobState, Input, ExtraProps>,
 ): React.ReactElement {
   const { bottom: bottomInset } = useSafeAreaInsets();
-  const initializerConfig = {
-    ...props.initializerConfig,
-    onCancel: props.onUserCancel,
-  };
 
   return (
     <QueuedDrawerBottomSheet
@@ -64,7 +61,7 @@ export function DeviceIntentExecutorLWM<JobState, Input, ExtraProps>(
         <DeviceIntentExecutor
           {...props}
           platformConfig={platformConfig}
-          initializerConfig={initializerConfig}
+          initializerConfig={props.initializerConfig}
         />
       </BottomSheetView>
     </QueuedDrawerBottomSheet>

@@ -4837,6 +4837,20 @@
         "description": "Follow the instructions displayed on your Secure Screen"
       }
     },
+    "errors": {
+      "connectionError": {
+        "title": "Device disconnected",
+        "description": "Your Ledger is no longer connected. Make sure it's powered on and within Bluetooth range or plugged in."
+      },
+      "intentError": {
+        "title": "Unknown error",
+        "description": "An error occurred. Please try again or contact Ledger support if the issue persists."
+      },
+      "invalidOperation": {
+        "title": "Invalid state",
+        "description": "An error occurred. Please try again or contact Ledger support if the issue persists."
+      }
+    },
     "initialization": {
       "loading": {
         "title": "Loading"
