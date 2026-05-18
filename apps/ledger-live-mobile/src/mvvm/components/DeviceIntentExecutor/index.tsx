@@ -3,10 +3,7 @@ import {
   type DeviceIntentExecutorProps,
   type ExecutorPlatformConfiguration,
 } from "@ledgerhq/device-intent";
-import {
-  BottomSheetHeader,
-  BottomSheetScrollView,
-} from "@ledgerhq/lumen-ui-rnative";
+import { BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
 import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 import React from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -50,22 +47,26 @@ export function DeviceIntentExecutorLWM<JobState, Input, ExtraProps>(
   props: Props<JobState, Input, ExtraProps>,
 ): React.ReactElement {
   const { bottom: bottomInset } = useSafeAreaInsets();
+  const initializerConfig = {
+    ...props.initializerConfig,
+    onCancel: props.onUserCancel,
+  };
+
   return (
     <QueuedDrawerBottomSheet
       isRequestingToBeOpened={props.enabled}
       onClose={props.onUserCancel}
       preventBackdropClick={!props.cancellableUI}
-      enableDynamicSizing={false}
-      snapPoints="medium"
+      enableDynamicSizing
     >
-      <BottomSheetScrollView style={{ paddingBottom: bottomInset + 16 }}>
+      <BottomSheetView style={{ paddingBottom: bottomInset + 16 }}>
         {props.cancellableUI && <BottomSheetHeader density="expanded" />}
         <DeviceIntentExecutor
           {...props}
           platformConfig={platformConfig}
-          initializerConfig={props.initializerConfig}
+          initializerConfig={initializerConfig}
         />
-      </BottomSheetScrollView>
+      </BottomSheetView>
     </QueuedDrawerBottomSheet>
   );
 }

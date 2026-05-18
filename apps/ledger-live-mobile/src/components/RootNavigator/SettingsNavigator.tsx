@@ -45,6 +45,7 @@ import TooltipDemo from "~/screens/Settings/Debug/Features/TooltipDemo";
 import DebugDeviceActionContentScreen from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/DeviceActionContentScreen";
 import DebugInfoStateScreen from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/InfoStateScreen";
 import DebugDeviceIntentExecutorInitialization from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/InitializationScreen";
+import DebugInitializerStatesScreen from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/InitializerStatesScreen";
 import DebugDeviceIntentExecutorOrchestration from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/OrchestrationScreen";
 import Settings from "~/screens/Settings";
 import AccountsSettings from "~/screens/Settings/Accounts";
@@ -331,6 +332,13 @@ export default function SettingsNavigator() {
         component={DebugDeviceIntentExecutorInitialization}
         options={{
           title: "DIE Initialization",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugDeviceIntentExecutorInitializerStates}
+        component={DebugInitializerStatesScreen}
+        options={{
+          title: "DIE Initializer States",
         }}
       />
       <Stack.Screen
