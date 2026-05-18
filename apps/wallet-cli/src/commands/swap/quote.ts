@@ -1,6 +1,8 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import { getQuotes } from "@ledgerhq/live-common/wallet-api/Exchange/index";
+import { WALLET_CLI_SUPPORTED_CRYPTO_CURRENCY_IDS } from "../../live-common-setup";
 import { createCommandOutput } from "../../output";
 import { walletCliDebug } from "../../shared/log";
 import { WalletAdapter } from "../../wallet";
@@ -10,17 +12,24 @@ import {
   resolveAccountDescriptorV1,
   resolveOutputFormat,
 } from "../inputs";
-import { mapSwapQuoteLine } from "./quote-shared";
+import { mapSwapQuoteLine, WALLET_CLI_DEFAULT_SWAP_PROVIDERS } from "./quote-shared";
 
-const DEFAULT_PROVIDERS = [
-  "changelly_v2",
-  "changelly",
-  "cic_v2",
-  "cic",
-  "exodus",
-  "nearintents",
-  "swapsxyz",
-];
+const walletCliSupportedSwapCurrencyIds = new Set<string>(WALLET_CLI_SUPPORTED_CRYPTO_CURRENCY_IDS);
+
+async function assertWalletCliSwapCurrencyId(id: string, role: "from" | "to"): Promise<void> {
+  if (walletCliSupportedSwapCurrencyIds.has(id)) {
+    return;
+  }
+
+  const token = await getCryptoAssetsStore().findTokenById(id);
+  if (token && walletCliSupportedSwapCurrencyIds.has(token.parentCurrency.id)) {
+    return;
+  }
+
+  throw new Error(
+    `Unsupported swap ${role} currency "${id}". Wallet CLI supports: ${WALLET_CLI_SUPPORTED_CRYPTO_CURRENCY_IDS.join(", ")} (and tokens on those chains).`,
+  );
+}
 
 type SwapAddressFlags = {
   accountFlag: "--from-account" | "--to-account";
@@ -87,6 +96,9 @@ export default defineCommand({
     const out = createCommandOutput(output, { command: "swap quote", network: flags.from });
 
     await out.run(async () => {
+      await assertWalletCliSwapCurrencyId(flags.from, "from");
+      await assertWalletCliSwapCurrencyId(flags.to, "to");
+
       const wallet = new WalletAdapter();
       const resolveSwapAddress = createSwapAddressResolver(wallet);
 
@@ -104,10 +116,9 @@ export default defineCommand({
       const s = out.spin("Fetching swap quotes…");
       const result = await getQuotes(
         {
-          providers: DEFAULT_PROVIDERS,
+          providers: [...WALLET_CLI_DEFAULT_SWAP_PROVIDERS],
           data: {
             amount: flags.amount,
-            counterValueCurrency: "USD",
             uniswapOrderType: "classic",
             sendCurrencyId: flags.from,
             receiveCurrencyId: flags.to,
@@ -117,7 +128,7 @@ export default defineCommand({
             receiveAccountId: "",
           },
         },
-        { accounts: [], spotPrices: {} },
+        { accounts: [], spotPrices: {}, locale: "en", counterValueCurrency: "USD" },
       );
 
       if (result.quotes.length === 0 && result.errors.length > 0) {

@@ -2,11 +2,11 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import polkadotAPI from "../network";
 import { loadPolkadotCrypto } from "./polkadot-crypto";
 
-export async function broadcast(signature: string, currencyId?: string): Promise<string> {
+export async function broadcast(signedExtrinsic: string, currencyId?: string): Promise<string> {
   await loadPolkadotCrypto();
-  if (currencyId) {
-    const currency = getCryptoCurrencyById(currencyId);
-    return await polkadotAPI.submitExtrinsic(signature, currency);
-  }
-  return await polkadotAPI.submitExtrinsic(signature);
+
+  const currency = getCryptoCurrencyById(currencyId ?? "polkadot");
+
+  await polkadotAPI.submitExtrinsicDryRun(signedExtrinsic, currency);
+  return await polkadotAPI.submitExtrinsic(signedExtrinsic, currency);
 }

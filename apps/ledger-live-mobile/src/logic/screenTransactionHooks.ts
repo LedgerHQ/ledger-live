@@ -105,7 +105,7 @@ export const useSignWithDevice = ({
       gestureEnabled: false,
     });
     setSigning(true);
-    log("transaction-summary", `→ FROM ${formatAccount(mainAccount, "basic")}`);
+    formatAccount(mainAccount, "basic").then(str => log("transaction-summary", `→ FROM ${str}`));
     log(
       "transaction-summary",
       `✔️ transaction ${formatTransaction(transaction, mainAccount)}`,
@@ -157,11 +157,11 @@ export const useSignWithDevice = ({
               break;
 
             case "broadcasted":
-              log(
-                "transaction-summary",
-                `✔️ broadcasted! optimistic operation: ${formatOperation(mainAccount)(
-                  e.operation,
-                )}`,
+              formatOperation(mainAccount).then(fmt =>
+                log(
+                  "transaction-summary",
+                  `✔️ broadcasted! optimistic operation: ${fmt(e.operation)}`,
+                ),
               );
               (navigation as NativeStackNavigationProp<{ [key: string]: object }>).replace(
                 context + "ValidationSuccess",
@@ -247,10 +247,10 @@ export const broadcastSignedTx = async (
         signedOperation,
         broadcastConfig,
       })
-      .then(op => {
+      .then(async op => {
         log(
           "transaction-summary",
-          `✔️ broadcasted! optimistic operation: ${formatOperation(mainAccount)(op)}`,
+          `✔️ broadcasted! optimistic operation: ${(await formatOperation(mainAccount))(op)}`,
         );
         return op;
       }),
@@ -308,7 +308,7 @@ export function useSignedTxHandler({
 
         log(
           "transaction-summary",
-          `✔️ broadcasted! optimistic operation: ${formatOperation(mainAccount)(operation)}`,
+          `✔️ broadcasted! optimistic operation: ${(await formatOperation(mainAccount))(operation)}`,
         );
         (navigation as NativeStackNavigationProp<{ [key: string]: object }>).replace(
           route.name.replace("ConnectDevice", "ValidationSuccess"),

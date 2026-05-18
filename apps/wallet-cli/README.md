@@ -41,7 +41,7 @@ Most commands support `--output human` (default) or `--output json`.
 ## Prerequisites
 
 - **[Bun](https://bun.sh)** ≥ 1.1.0 (`engines` in `package.json`)
-- **pnpm** and this monorepo checked out; install dependencies per [common commands](../../docs/common-commands.md) (e.g. `proto use`, `pnpm i`)
+- **pnpm** and this monorepo checked out; install dependencies per [common commands](../../docs/common-commands.md) (e.g. `mise install`, `pnpm i`)
 - A **Ledger** on USB when using `account discover`, `send`, or `receive --verify`
 - **Linux:** USB/HID build deps, for example:
 

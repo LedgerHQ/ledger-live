@@ -1,5 +1,37 @@
 # @shared/feature-flags
 
+## 0.6.0
+
+### Minor Changes
+
+- [#16655](https://github.com/LedgerHQ/ledger-live/pull/16655) [`ed0dc8a`](https://github.com/LedgerHQ/ledger-live/commit/ed0dc8abc2c8f5054e655c4e12efe6fb433fbaca) Thanks [@sarneijim](https://github.com/sarneijim)! - Add `lwmProductTour` feature flag under `team-engagement` (off by default), persisted `productTourCompleted` in mobile settings, and a QA-focused Product Tour block under Settings → Debug → Wallet V4 features. [LIVE-28094](https://ledgerhq.atlassian.net/browse/LIVE-28094)
+
+- [#17031](https://github.com/LedgerHQ/ledger-live/pull/17031) [`4ddd97a`](https://github.com/LedgerHQ/ledger-live/commit/4ddd97a99bab5b581ad5ccfd36eb420ec4ee6352) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(ff): update newSendFlow FF to includes excludedCurrencyIds
+
+- [#16786](https://github.com/LedgerHQ/ledger-live/pull/16786) [`7fafa10`](https://github.com/LedgerHQ/ledger-live/commit/7fafa10d8af581f4433a60ea908980a726d3a777) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - fix feature falg for new AB test POC
+
+- [#16637](https://github.com/LedgerHQ/ledger-live/pull/16637) [`21e69fe`](https://github.com/LedgerHQ/ledger-live/commit/21e69fea49cffc0b1204903e539a64b83e4b28f0) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Firebase A/B testing POC for the Transfer entry button and bottom sheet copy on mobile via the new `transferButtonCopyVariant` feature flag
+
+- [#16799](https://github.com/LedgerHQ/ledger-live/pull/16799) [`9f50129`](https://github.com/LedgerHQ/ledger-live/commit/9f50129d6b4d7769524fcb6cd4f86bd0597418d6) Thanks [@ysitbon](https://github.com/ysitbon)! - Wire SonarQube coverage aggregation for `shared/*` and `domain/entity/*` packages (LIVE-29779): add `coverage` scripts and jest-sonar reporter config, tag the packages via the Nx project-tags plugin, and introduce dedicated `test-shared` / `test-domain` reusable workflows that feed coverage into both the PR and scheduled Sonar scans.
+
+- [#16867](https://github.com/LedgerHQ/ledger-live/pull/16867) [`73bfe05`](https://github.com/LedgerHQ/ledger-live/commit/73bfe055ec23e0d630f2da9f4dbc9731b6fe5190) Thanks [@cfloume](https://github.com/cfloume)! - feat: add generic awareness modal feature flags
+
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#16655](https://github.com/LedgerHQ/ledger-live/pull/16655) [`ed0dc8a`](https://github.com/LedgerHQ/ledger-live/commit/ed0dc8abc2c8f5054e655c4e12efe6fb433fbaca) Thanks [@sarneijim](https://github.com/sarneijim)! - Add `lwmProductTour` feature flag under `team-engagement` (off by default), persisted `productTourCompleted` in mobile settings, and a QA-focused Product Tour block under Settings → Debug → Wallet V4 features. [LIVE-28094](https://ledgerhq.atlassian.net/browse/LIVE-28094)
+
+- [#17031](https://github.com/LedgerHQ/ledger-live/pull/17031) [`4ddd97a`](https://github.com/LedgerHQ/ledger-live/commit/4ddd97a99bab5b581ad5ccfd36eb420ec4ee6352) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(ff): update newSendFlow FF to includes excludedCurrencyIds
+
+- [#16786](https://github.com/LedgerHQ/ledger-live/pull/16786) [`7fafa10`](https://github.com/LedgerHQ/ledger-live/commit/7fafa10d8af581f4433a60ea908980a726d3a777) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - fix feature falg for new AB test POC
+
+- [#16637](https://github.com/LedgerHQ/ledger-live/pull/16637) [`21e69fe`](https://github.com/LedgerHQ/ledger-live/commit/21e69fea49cffc0b1204903e539a64b83e4b28f0) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Firebase A/B testing POC for the Transfer entry button and bottom sheet copy on mobile via the new `transferButtonCopyVariant` feature flag
+
+- [#16799](https://github.com/LedgerHQ/ledger-live/pull/16799) [`9f50129`](https://github.com/LedgerHQ/ledger-live/commit/9f50129d6b4d7769524fcb6cd4f86bd0597418d6) Thanks [@ysitbon](https://github.com/ysitbon)! - Wire SonarQube coverage aggregation for `shared/*` and `domain/entity/*` packages (LIVE-29779): add `coverage` scripts and jest-sonar reporter config, tag the packages via the Nx project-tags plugin, and introduce dedicated `test-shared` / `test-domain` reusable workflows that feed coverage into both the PR and scheduled Sonar scans.
+
+- [#16867](https://github.com/LedgerHQ/ledger-live/pull/16867) [`73bfe05`](https://github.com/LedgerHQ/ledger-live/commit/73bfe055ec23e0d630f2da9f4dbc9731b6fe5190) Thanks [@cfloume](https://github.com/cfloume)! - feat: add generic awareness modal feature flags
+
 ## 0.5.0
 
 ### Minor Changes

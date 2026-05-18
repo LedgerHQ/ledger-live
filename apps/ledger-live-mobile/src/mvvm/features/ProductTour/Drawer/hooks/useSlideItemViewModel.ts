@@ -1,22 +1,30 @@
 import { useCallback, useDeferredValue, useState } from "react";
 import { type LayoutChangeEvent } from "react-native";
 import { useSlidesContext } from "@ledgerhq/native-ui";
-import animation01 from "../animations/01.lottie";
 import {
   Extrapolation,
   interpolate,
   useAnimatedStyle,
   useReducedMotion,
 } from "react-native-reanimated";
+import { useTranslation } from "~/context/Locale";
+import { PRODUCT_TOUR_SLIDES } from "../const";
 
 export const useSlideItemViewModel = (index: number) => {
+  const { t } = useTranslation();
   const { currentIndex, scrollProgressSharedValue } = useSlidesContext();
 
   const deferredCurrentIndex = useDeferredValue(currentIndex);
   const isActive = deferredCurrentIndex === index;
   const shouldRender = Math.abs(deferredCurrentIndex - index) <= 1;
 
-  const source = animation01 as unknown as string;
+  const slide = PRODUCT_TOUR_SLIDES[index];
+  // LottieView accepts an asset id (number) at runtime but its types don't.
+  const lottieSrc = slide.lottieSrc;
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  const source = lottieSrc as unknown as string;
+  const title = t(slide.titleKey);
+  const subTitle = t(slide.subTitleKey);
 
   const [slideWidth, setSlideWidth] = useState(0);
 
@@ -95,6 +103,9 @@ export const useSlideItemViewModel = (index: number) => {
     isActive,
     shouldRender,
     source,
+    lottieSrc,
+    title,
+    subTitle,
     textAnimatedStyle,
     animatedStyle,
     handleLayout,

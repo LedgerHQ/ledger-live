@@ -15,7 +15,7 @@ import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetF
 import { MAD_SOURCE_PAGES } from "LLD/features/ModularDialog/analytics/modularDialog.types";
 import { track } from "~/renderer/analytics/segment";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
-import { buildMainAccountByIdMap } from "LLD/features/CryptoAddresses/utils/parentAccountLookup";
+import { buildMainAccountByIdMap } from "@ledgerhq/asset-aggregation/assetDistribution/index";
 import { ASSET_DETAIL_TRACKING_PAGE_NAME } from "LLD/features/AssetDetail/constants";
 
 export function useAddressListViewModel(distributionItem: DistributionItem) {

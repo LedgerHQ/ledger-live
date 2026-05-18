@@ -1,5 +1,52 @@
 # @ledgerhq/live-signer-concordium
 
+## 0.3.0
+
+### Minor Changes
+
+- [#16919](https://github.com/LedgerHQ/ledger-live/pull/16919) [`d308b1a`](https://github.com/LedgerHQ/ledger-live/commit/d308b1a6b9c629839f051cf367a527f4232120c7) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Wire live-signer-concordium to new DMK verifyAddress trusted backend based
+
+### Patch Changes
+
+- Updated dependencies [[`3be5049`](https://github.com/LedgerHQ/ledger-live/commit/3be5049c9462d5760d6fec2c99647f0b9773b5b2), [`d308b1a`](https://github.com/LedgerHQ/ledger-live/commit/d308b1a6b9c629839f051cf367a527f4232120c7), [`e6dc658`](https://github.com/LedgerHQ/ledger-live/commit/e6dc658b83ebd2102e19a1fead021443457c05d9)]:
+  - @ledgerhq/coin-concordium@0.10.0
+  - @ledgerhq/errors@6.35.0
+
+## 0.3.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`e6dc658`](https://github.com/LedgerHQ/ledger-live/commit/e6dc658b83ebd2102e19a1fead021443457c05d9)]:
+  - @ledgerhq/coin-concordium@0.10.0-next.1
+
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#16919](https://github.com/LedgerHQ/ledger-live/pull/16919) [`d308b1a`](https://github.com/LedgerHQ/ledger-live/commit/d308b1a6b9c629839f051cf367a527f4232120c7) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Wire live-signer-concordium to new DMK verifyAddress trusted backend based
+
+### Patch Changes
+
+- Updated dependencies [[`3be5049`](https://github.com/LedgerHQ/ledger-live/commit/3be5049c9462d5760d6fec2c99647f0b9773b5b2), [`d308b1a`](https://github.com/LedgerHQ/ledger-live/commit/d308b1a6b9c629839f051cf367a527f4232120c7)]:
+  - @ledgerhq/coin-concordium@0.10.0-next.0
+  - @ledgerhq/errors@6.35.0-next.0
+
+## 0.2.2
+
+### Patch Changes
+
+- Updated dependencies [[`202cc42`](https://github.com/LedgerHQ/ledger-live/commit/202cc423b09662b5b25012b84124aecd4dc7245d)]:
+  - @ledgerhq/errors@6.34.1
+  - @ledgerhq/coin-concordium@0.9.2
+
+## 0.2.2-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`202cc42`](https://github.com/LedgerHQ/ledger-live/commit/202cc423b09662b5b25012b84124aecd4dc7245d)]:
+  - @ledgerhq/errors@6.34.1-hotfix.0
+  - @ledgerhq/coin-concordium@0.9.2-hotfix.0
+
 ## 0.2.1
 
 ### Patch Changes

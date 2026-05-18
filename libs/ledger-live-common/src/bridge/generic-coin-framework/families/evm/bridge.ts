@@ -1,8 +1,14 @@
 import type { AssetInfo, BalanceOptions } from "@ledgerhq/coin-module-framework/api/types";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
+import type { Operation as LiveOperation } from "@ledgerhq/types-live";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import eip55 from "eip55";
+import {
+  fetchRedelegations,
+  buildRedelegationsFromOps,
+} from "@ledgerhq/coin-evm/staking/redelegations";
+import type { StakingRedelegation } from "@ledgerhq/coin-evm/types/staking";
 
 export async function getTokenFromAsset(
   currency: CryptoCurrency,
@@ -42,7 +48,7 @@ export function computeIntentType(transaction: Record<string, unknown>): string 
     return transaction.mode;
   }
 
-  if (["delegate", "redelegate", "undelegate"].includes(transaction.mode)) {
+  if (["delegate", "redelegate", "undelegate", "claimReward"].includes(transaction.mode)) {
     return transaction.type === 2 ? "staking-eip1559" : "staking-legacy";
   }
 
@@ -66,6 +72,31 @@ function getBalanceOptions(currency: CryptoCurrency): BalanceOptions {
   };
 }
 
+async function enrichStakingResources(
+  currency: CryptoCurrency,
+  address: string,
+  operations: LiveOperation[],
+  stakingResources: Record<string, unknown>,
+): Promise<Record<string, unknown>> {
+  // Fetch redelegations from the Cosmos REST API (may return empty for
+  // EVM-precompile-originated redelegations on chains like Sei).
+  const apiRedelegations = await fetchRedelegations(currency.id, address).catch(() => []);
+
+  // Reconstruct active redelegations from the REDELEGATE operation history by
+  // decoding the ABI-encoded calldata fetched directly from the RPC node.
+  const opsRedelegations = await buildRedelegationsFromOps(currency, operations);
+
+  // Merge both sources, deduplicating by (src, dst) validator pair.
+  const key = (r: StakingRedelegation) => `${r.validatorSrcAddress}|${r.validatorDstAddress}`;
+  const existing = new Set(apiRedelegations.map(key));
+  const merged: StakingRedelegation[] = [
+    ...apiRedelegations,
+    ...opsRedelegations.filter(r => !existing.has(key(r))),
+  ];
+
+  return { ...stakingResources, redelegations: merged };
+}
+
 export default function evmBridge(currency: CryptoCurrency): BridgeApi {
   return {
     getTokenFromAsset: async (asset: AssetInfo) => getTokenFromAsset(currency, asset),
@@ -73,5 +104,6 @@ export default function evmBridge(currency: CryptoCurrency): BridgeApi {
       getAssetFromToken(currency, token, owner),
     computeIntentType: (transaction: Record<string, unknown>) => computeIntentType(transaction),
     balanceOptions: getBalanceOptions(currency),
+    enrichStakingResources: (c, addr, ops, sr) => enrichStakingResources(c, addr, ops, sr),
   };
 }

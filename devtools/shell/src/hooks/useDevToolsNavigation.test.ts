@@ -1,11 +1,12 @@
 import { act, renderHook } from "@testing-library/react";
 import { useDevToolsNavigation } from "./useDevToolsNavigation";
-import { Category, type Tool } from "../types";
+import { Category } from "../types";
+import { makeTool } from "../../jest/fixtures";
 
-const tools: Tool[] = [
-  { id: "feature-flags", label: "Feature Flags", category: Category.CONFIGURATION },
-  { id: "another-tool", label: "Another Tool", category: Category.CONFIGURATION },
-  { id: "network-inspector", label: "Network Inspector", category: Category.CONNECTIVITY },
+const tools = [
+  makeTool({ id: "feature-flags", label: "Feature Flags", category: Category.CONFIGURATION }),
+  makeTool({ id: "another-tool", label: "Another Tool", category: Category.CONFIGURATION }),
+  makeTool({ id: "network-inspector", label: "Network Inspector", category: Category.CONNECTIVITY }),
 ];
 
 describe("useDevToolsNavigation", () => {

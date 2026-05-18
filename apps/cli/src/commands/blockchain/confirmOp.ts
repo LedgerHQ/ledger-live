@@ -31,7 +31,7 @@ export default {
       switchMap(async account => {
         const op = findOperationInAccount(account, id);
         if (!op) throw new Error("operation was not found in account " + account.id);
-        return format === "text" ? formatOperation(account)(op) : toOperationRaw(op);
+        return format === "text" ? (await formatOperation(account))(op) : await toOperationRaw(op);
       }),
     );
   },

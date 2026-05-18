@@ -45,7 +45,8 @@ import type { InfoDialogParams } from "@ledgerhq/live-common/wallet-api/validati
 import { makeSetEarnInfoBottomSheetAction, makeSetEarnMenuBottomSheetAction } from "~/actions/earn";
 import { createOpenActionDialogHandler } from "./actionDialogStore";
 import type { Dispatch } from "redux";
-import { useDispatch } from "~/context/hooks";
+import { useDispatch, useSelector } from "~/context/hooks";
+import { counterValueCurrencySelector, localeSelector } from "~/reducers/settings";
 import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 
@@ -78,6 +79,8 @@ export function useCustomExchangeHandlers({
   const dispatch = useDispatch();
   const { isEnabled } = useWalletFeaturesConfig("mobile");
   const flags = useMemo(() => ({ wallet40Ux: isEnabled }), [isEnabled]);
+  const locale = useSelector(localeSelector);
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const { state: liveAppRegistryState } = useRemoteLiveAppContext();
   const { state: localLiveAppState } = useLocalLiveAppContext();
 
@@ -302,6 +305,8 @@ export function useCustomExchangeHandlers({
         tracking,
         manifest,
         flags,
+        locale,
+        counterValueCurrency: counterValueCurrency.ticker,
         uiHooks: {
           "custom.exchange.start": ({ exchangeParams, onSuccess, onCancel }) => {
             const promiseId = `start-${Date.now()}`;
@@ -494,6 +499,8 @@ export function useCustomExchangeHandlers({
     onCompleteResult,
     handleLoaderDrawer,
     flags,
+    locale,
+    counterValueCurrency,
     sendAppReady,
     syncAccountById,
     tracking,

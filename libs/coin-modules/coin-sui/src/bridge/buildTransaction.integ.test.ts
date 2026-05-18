@@ -14,7 +14,9 @@ describe("buildTransaction", () => {
       },
       node: {
         url: getJsonRpcFullnodeUrl("mainnet"),
+        graphqlUrl: "https://graphql.mainnet.sui.io/graphql",
       },
+      features: { graphql: false },
     }));
   });
 

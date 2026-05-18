@@ -102,6 +102,11 @@ export class SettingsPage extends AppPage {
     await this.manageWalletSyncButton.click();
   }
 
+  @step("Expect Ledger Sync settings entry point to be visible")
+  async expectLedgerSyncSettingsEntryPoint() {
+    await expect(this.manageWalletSyncButton.or(this.syncWalletSyncButton)).toBeVisible();
+  }
+
   @step("Enable Wallet Sync")
   async enableWalletSync() {
     if (await this.turnOnLedgerSyncButton.isVisible()) {

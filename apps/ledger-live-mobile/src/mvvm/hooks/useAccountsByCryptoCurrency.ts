@@ -20,7 +20,7 @@ import {
  * @returns
  * The accounts for the currency.
  */
-export function useAccountsByCryptoCurrency(currency: CryptoOrTokenCurrency) {
+export function useAccountsByCryptoCurrency(currency?: CryptoOrTokenCurrency) {
   const selector = useMemo(() => accountsByCryptoCurrencyScreenSelector(currency), [currency]);
   return useSelector(selector, shallowEqual);
 }

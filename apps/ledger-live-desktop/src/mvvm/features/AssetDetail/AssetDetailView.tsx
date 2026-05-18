@@ -1,11 +1,12 @@
-import React, { useCallback } from "react";
-import { useNavigate } from "react-router";
+import React from "react";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { getValidCryptoIconSize } from "~/renderer/utils/cryptoIconSize";
-import { AssetDetailSection } from "./components/AssetDetailSection";
-import { AssetHeader } from "./components/AssetHeader/AssetHeader";
+import { AssetHeader } from "./components/AssetHeader";
+import { ActionBar } from "./components/ActionBar";
+import { MarketPriceSection } from "./components/MarketPriceSection";
+import { MarketDataSection } from "./components/MarketDataSection";
 import { PortfolioSection } from "./components/PortfolioSection/PortfolioSection";
-import { useAssetDetailSections } from "./hooks/useAssetDetailSections";
+import { TransactionsSection } from "./components/TransactionsSection";
 import type { AssetDetailReady } from "./types";
 
 type AssetDetailViewProps = Readonly<{
@@ -13,17 +14,11 @@ type AssetDetailViewProps = Readonly<{
 }>;
 
 export function AssetDetailView({ viewModel }: AssetDetailViewProps) {
-  const navigate = useNavigate();
-  const { distributionItem, marketInfo, assetName, assetTicker, ledgerId } = viewModel;
-
-  const onBack = useCallback(() => {
-    navigate(-1);
-  }, [navigate]);
-
-  const { topSections, sections } = useAssetDetailSections();
+  const { distributionItem, marketInfo, market, assetName, assetTicker, ledgerId, ledgerCurrency } =
+    viewModel;
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-32">
+    <div className="flex w-full shrink-0 flex-col gap-24 pb-32">
       <AssetHeader
         assetLabel={assetName}
         icon={
@@ -35,47 +30,33 @@ export function AssetDetailView({ viewModel }: AssetDetailViewProps) {
             />
           )
         }
-        onBack={onBack}
+        distributionItem={distributionItem}
+        market={market}
+        marketInfo={marketInfo}
+        ledgerCurrency={ledgerCurrency}
       />
 
-      {distributionItem && <PortfolioSection distributionItem={distributionItem} />}
+      <MarketPriceSection
+        distributionItem={distributionItem}
+        marketInfo={marketInfo}
+        ledgerId={ledgerId}
+        market={market}
+      />
 
-      {marketInfo && (
-        <>
-          <section className="grid grid-cols-2 gap-24">
-            {topSections.map(section => (
-              <AssetDetailSection
-                key={section.id}
-                title={section.title}
-                actionLabel={section.actionLabel}
-                onActionClick={section.onActionClick}
-                tooltipContent={section.tooltipContent}
-              >
-                {section.content}
-              </AssetDetailSection>
-            ))}
-          </section>
+      <ActionBar
+        distributionItem={distributionItem}
+        ledgerCurrency={ledgerCurrency}
+        marketCurrencyData={market.marketCurrencyData}
+        tickerHint={assetTicker}
+      />
 
-          {sections.map(section => (
-            <AssetDetailSection
-              key={section.id}
-              title={section.title}
-              actionLabel={section.actionLabel}
-              onActionClick={section.onActionClick}
-              tooltipContent={section.tooltipContent}
-            >
-              {section.content}
-            </AssetDetailSection>
-          ))}
+      <div className="flex flex-col gap-32">
+        {distributionItem && <PortfolioSection distributionItem={distributionItem} />}
 
-          <div className="text-white p-16 rounded-16">
-            <h1>Market</h1>
-            <p>{marketInfo.id}</p>
-            <p>{marketInfo.price}</p>
-            <p>{marketInfo.ledgerIds[0]}</p>
-          </div>
-        </>
-      )}
+        {marketInfo && <MarketDataSection market={market} />}
+
+        {distributionItem && <TransactionsSection distributionItem={distributionItem} />}
+      </div>
     </div>
   );
 }

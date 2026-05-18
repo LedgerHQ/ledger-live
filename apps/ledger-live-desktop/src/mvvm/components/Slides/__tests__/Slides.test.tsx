@@ -1,103 +1,97 @@
 import React from "react";
-import { render, screen, waitFor } from "tests/testSetup";
-import userEvent from "@testing-library/user-event";
+import { fireEvent, render, screen } from "tests/testSetup";
 import { Slides, useSlidesContext } from "../index";
 
-function TestFooter() {
-  const { goToNext } = useSlidesContext();
-  return (
-    <div>
-      <button type="button" onClick={goToNext}>
-        Continue
-      </button>
-    </div>
-  );
-}
+type RenderComponentOptions = {
+  initialSlideIndex?: number;
+  onSlideChange?: (index: number) => void;
+  withProgressIndicator?: boolean;
+};
 
-function TestProgressIndicator() {
-  const { currentIndex, totalSlides } = useSlidesContext();
-  return (
-    <div data-testid="progress">
-      {currentIndex + 1} / {totalSlides}
-    </div>
+function renderComponent({
+  initialSlideIndex = 0,
+  onSlideChange,
+  withProgressIndicator = true,
+}: RenderComponentOptions = {}) {
+  function TestFooter() {
+    const { goToNext } = useSlidesContext();
+    return (
+      <div>
+        <button type="button" onClick={goToNext}>
+          Continue
+        </button>
+      </div>
+    );
+  }
+
+  function TestProgressIndicator() {
+    const { currentIndex, totalSlides } = useSlidesContext();
+    return (
+      <div>
+        {currentIndex + 1} / {totalSlides}
+      </div>
+    );
+  }
+
+  return render(
+    <Slides initialSlideIndex={initialSlideIndex} onSlideChange={onSlideChange}>
+      <Slides.Content>
+        <Slides.Content.Item>
+          <div>Slide 0</div>
+        </Slides.Content.Item>
+        <Slides.Content.Item>
+          <div>Slide 1</div>
+        </Slides.Content.Item>
+      </Slides.Content>
+      <Slides.Footer>
+        <TestFooter />
+      </Slides.Footer>
+      {withProgressIndicator ? (
+        <Slides.ProgressIndicator>
+          <TestProgressIndicator />
+        </Slides.ProgressIndicator>
+      ) : null}
+    </Slides>,
   );
 }
 
 describe("Slides", () => {
   it("renders first slide and exposes navigation via context", () => {
-    render(
-      <Slides initialSlideIndex={0}>
-        <Slides.Content>
-          <Slides.Content.Item>
-            <div data-testid="slide-0">Slide 0</div>
-          </Slides.Content.Item>
-          <Slides.Content.Item>
-            <div data-testid="slide-1">Slide 1</div>
-          </Slides.Content.Item>
-        </Slides.Content>
-        <Slides.Footer>
-          <TestFooter />
-        </Slides.Footer>
-        <Slides.ProgressIndicator>
-          <TestProgressIndicator />
-        </Slides.ProgressIndicator>
-      </Slides>,
-    );
+    renderComponent();
 
-    expect(screen.getByTestId("slide-0")).toBeInTheDocument();
-    expect(screen.queryByTestId("slide-1")).not.toBeInTheDocument();
-    expect(screen.getByTestId("progress")).toHaveTextContent("1 / 2");
+    expect(screen.getByText("Slide 0")).toBeInTheDocument();
+    expect(screen.queryByText("Slide 1")).not.toBeInTheDocument();
+    expect(screen.getByText("1 / 2")).toBeInTheDocument();
   });
 
   it("advances to next slide when Continue is clicked", async () => {
-    const user = userEvent.setup();
-    render(
-      <Slides initialSlideIndex={0}>
-        <Slides.Content>
-          <Slides.Content.Item>
-            <div data-testid="slide-0">Slide 0</div>
-          </Slides.Content.Item>
-          <Slides.Content.Item>
-            <div data-testid="slide-1">Slide 1</div>
-          </Slides.Content.Item>
-        </Slides.Content>
-        <Slides.Footer>
-          <TestFooter />
-        </Slides.Footer>
-        <Slides.ProgressIndicator>
-          <TestProgressIndicator />
-        </Slides.ProgressIndicator>
-      </Slides>,
-    );
+    const { user } = renderComponent();
 
     await user.click(screen.getByRole("button", { name: "Continue" }));
-
-    await waitFor(() => {
-      expect(screen.queryByTestId("slide-0")).not.toBeInTheDocument();
-      expect(screen.getByTestId("slide-1")).toBeInTheDocument();
+    const slideOutAnimationStart = new Event("animationstart", {
+      bubbles: true,
     });
-    expect(screen.getByTestId("progress")).toHaveTextContent("2 / 2");
+    Object.defineProperty(slideOutAnimationStart, "animationName", {
+      value: "slide-out-to-left",
+    });
+    fireEvent(screen.getByText("Slide 0"), slideOutAnimationStart);
+
+    expect(screen.queryByText("Slide 0")).not.toBeInTheDocument();
+    expect(screen.getByText("Slide 1")).toBeInTheDocument();
+    expect(screen.getByText("2 / 2")).toBeInTheDocument();
+  });
+
+  it("can start at index other than 0", () => {
+    renderComponent({ initialSlideIndex: 1, withProgressIndicator: false });
+
+    expect(screen.getByText("Slide 1")).toBeInTheDocument();
+    expect(screen.queryByText("Slide 0")).not.toBeInTheDocument();
   });
 
   it("calls onSlideChange when index changes", async () => {
-    const user = userEvent.setup();
     const onSlideChange = jest.fn();
 
-    render(
-      <Slides initialSlideIndex={0} onSlideChange={onSlideChange}>
-        <Slides.Content>
-          <Slides.Content.Item>
-            <div data-testid="slide-0">Slide 0</div>
-          </Slides.Content.Item>
-          <Slides.Content.Item>
-            <div data-testid="slide-1">Slide 1</div>
-          </Slides.Content.Item>
-        </Slides.Content>
-        <Slides.Footer>
-          <TestFooter />
-        </Slides.Footer>
-      </Slides>,
-    );
+    const { user } = renderComponent({ onSlideChange, withProgressIndicator: false });
 
     expect(onSlideChange).not.toHaveBeenCalled();
 

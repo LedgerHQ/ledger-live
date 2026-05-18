@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-dmk-speculos",
-  "version": "0.8.5",
+  "version": "0.8.6",
   "description": "Ledger Device Management Kit transport module for LLD",
   "private": true,
   "license": "Apache-2.0",
@@ -44,6 +44,7 @@
     "lint:fix": "pnpm lint --fix",
     "typecheck": "tsc --noEmit --customConditions node",
     "unimported": "unimported",
+    "coverage": "jest --coverage",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage"

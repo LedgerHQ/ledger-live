@@ -1,5 +1,5 @@
 import { ScreenName } from "~/const";
 
 export type OperationsHistoryNavigatorParamsList = {
-  [ScreenName.OperationsList]: undefined;
+  [ScreenName.OperationsList]: { currencyId?: string } | undefined;
 };

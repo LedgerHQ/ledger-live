@@ -17,4 +17,11 @@ export const ASSET_DETAIL_TEST_IDS = {
   transactions: "asset-detail-transactions",
   ctas: "asset-detail-ctas",
   buyButton: "asset-detail-buy-button",
+  swapButton: "asset-detail-swap-button",
+  footerReceiveButton: "asset-detail-footer-receive-button",
+  fallbackBanner: "asset-detail-fallback-banner",
+  coinOptionsTrailing: "asset-detail-coin-options-trailing",
+  coinOptionsSheet: "asset-detail-coin-options-sheet",
+  coinOptionsFavouriteRow: "asset-detail-coin-options-favourite-row",
+  coinOptionsHideRow: "asset-detail-coin-options-hide-row",
 } as const;

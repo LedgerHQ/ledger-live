@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-concordium",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "description": "Ledger Hardware Wallet Concordium Application API",
   "keywords": [
     "Ledger",

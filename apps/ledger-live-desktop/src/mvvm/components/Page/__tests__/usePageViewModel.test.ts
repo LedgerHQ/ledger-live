@@ -41,6 +41,33 @@ describe("usePageViewModel", () => {
     expect(result.current.shouldRenderRightPanel).toBe(false);
   });
 
+  it("shows the right panel on aggregated asset detail routes when swap and aggregated assets are enabled", () => {
+    mockedUseLocation.mockReturnValue(createLocation("/asset/bitcoin"));
+    const { result } = renderHook(() => usePageViewModel(), {
+      initialState: withFlagOverrides({
+        lwdWallet40: { enabled: true, params: { mainNavigation: true, aggregatedAssets: true } },
+        ptxSwapLiveAppOnPortfolio: { enabled: true },
+      }),
+    });
+
+    expect(result.current.shouldRenderRightPanel).toBe(true);
+  });
+
+  it("hides the right panel on /asset routes when aggregated assets is disabled", () => {
+    mockedUseLocation.mockReturnValue(createLocation("/asset/bitcoin"));
+    const { result } = renderHook(() => usePageViewModel(), {
+      initialState: withFlagOverrides({
+        lwdWallet40: {
+          enabled: true,
+          params: { mainNavigation: true, aggregatedAssets: false },
+        },
+        ptxSwapLiveAppOnPortfolio: { enabled: true },
+      }),
+    });
+
+    expect(result.current.shouldRenderRightPanel).toBe(false);
+  });
+
   it("tracks scroll state and scrolls to top on user action", () => {
     mockedUseLocation.mockReturnValue(createLocation("/"));
     const { result } = renderHook(() => usePageViewModel(), {

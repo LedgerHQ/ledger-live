@@ -5,7 +5,7 @@ All commands must be run from the **repo root** unless stated otherwise.
 ## Setup
 
 ```bash
-proto use               # Install correct Node/pnpm versions
+mise install            # Install pinned Node, pnpm, and other tools (see mise.toml)
 pnpm i --ignore-scripts # Install all dependencies
 ```
 

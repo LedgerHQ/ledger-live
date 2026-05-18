@@ -5,6 +5,7 @@ import { fetchAndMergeProviderData } from "../../../exchange/providers/swap";
 import { fetchNetworkFeeContext } from "./fetchNetworkFeeContext";
 import { fetchQuotes } from "./service/fetchQuotes";
 import { computeFeeEstimate } from "./normalizer/networkFeeEstimate";
+import { buildFormatContext } from "./normalizer/buildFormatContext";
 import { normalizeQuote } from "./normalizer";
 import type { GetQuotesArgs, GetQuotesResponse } from "./types";
 import { isUnsupportedPair } from "./unsupportedPairs";
@@ -16,31 +17,56 @@ import { isUnsupportedPair } from "./unsupportedPairs";
  * the wallet state it already has on hand.
  *
  * The wallet-api RPC handler in `server.ts` fills this from the
- * `handlers({ accounts, ... })` factory arg. Native callers inside
- * ledger-live-desktop or ledger-live-mobile would build it from their
- * Redux store. Tests build it inline.
+ * `handlers({ accounts, locale, counterValueCurrency, ... })` factory
+ * arg. Native callers inside ledger-live-desktop or ledger-live-mobile
+ * build it from their Redux store. Tests build it inline.
  *
  * Fields:
  *   - `accounts`: the wallet's accounts, used by downstream wallet-side
  *     steps (fee estimation via account bridges — not consumed yet).
- *   - `spotPrices`: map of currencyId → USD spot price, keyed the same
- *     way as `QuotesInput.sendCurrencyId` / `receiveCurrencyId`. Used
- *     by `normalizeQuote` to emit the `unrealisticQuote` warning when
- *     the quote's output fiat value exceeds its input fiat value.
- *     Callers without spot prices on hand pass an empty `{}` — the
- *     unrealistic check then short-circuits and no warning is emitted,
- *     matching the legacy "missing prices ⇒ no decision" branch.
+ *   - `spotPrices`: map of currencyId → counter-value spot price, keyed
+ *     the same way as `QuotesInput.sendCurrencyId` /
+ *     `receiveCurrencyId`. Used by `normalizeQuote` to emit the
+ *     `unrealisticQuote` warning when the quote's output fiat value
+ *     exceeds its input fiat value. Callers without spot prices on
+ *     hand pass an empty `{}` — the unrealistic check then
+ *     short-circuits and no warning is emitted, matching the legacy
+ *     "missing prices ⇒ no decision" branch.
+ *   - `locale`: BCP 47 tag (e.g. `"en-US"`) used to format
+ *     `Quote.formatted` strings (decimal / thousands separators).
+ *     Sourced from the wallet's i18n state.
+ *   - `counterValueCurrency`: fiat ticker (e.g. `"USD"`) used for the
+ *     aggregator's counter-value params, spot-price fetches, and
+ *     countervalue strings on `Quote.formatted`. Sourced from the
+ *     wallet's counter-value setting.
  */
 export type GetQuotesContext = {
   accounts: AccountLike[];
   spotPrices: Record<string, number>;
+  locale: string;
+  counterValueCurrency: string;
 };
 
+/**
+ * Fetch + normalize swap quotes for a single wallet-api `getQuotes`
+ * invocation. Fans out to the aggregator, joins provider / fee /
+ * formatting context, and returns the wire-shaped response ready for
+ * the handler to forward to the caller.
+ *
+ * @param args - Wire-level `getQuotes` arguments (providers, quotes
+ *   input, headers, abort signal).
+ * @param context - Handler-side dependencies — see
+ *   {@link GetQuotesContext}. `locale` + `counterValueCurrency` come
+ *   from the wallet's Redux store and drive both the aggregator call
+ *   and the `Quote.formatted` strings on each returned quote.
+ * @returns The response emitted back to the caller: normalized quotes
+ *   (filtered for unsupported pairs) plus the raw aggregator errors.
+ */
 export async function getQuotes(
   args: GetQuotesArgs,
   context: GetQuotesContext,
 ): Promise<GetQuotesResponse> {
-  const { rawQuotes, errors } = await fetchQuotes(args);
+  const { rawQuotes, errors } = await fetchQuotes(args, context.counterValueCurrency);
 
   // Drop every successful quote when the pair is on the wallet-side blocklist
   // and skip the provider-data fetch (CAL + CDN) entirely since nothing would
@@ -77,9 +103,20 @@ export async function getQuotes(
     spotPrices: context.spotPrices,
   };
 
+  // Resolve once per request: send / receive / fee currency metadata +
+  // counter-value fiat do not vary across quotes in a single response.
+  const formatContext = buildFormatContext({
+    args,
+    accounts: context.accounts,
+    spotPrices: context.spotPrices,
+    feeContext,
+    locale: context.locale,
+    counterValueCurrency: context.counterValueCurrency,
+  });
+
   const quotes = rawQuotes.map(raw => {
     const feeEstimate = feeContext ? computeFeeEstimate(raw, feeContext) : undefined;
-    return normalizeQuote(raw, providerData, normalizationContext, feeEstimate);
+    return normalizeQuote(raw, providerData, normalizationContext, feeEstimate, formatContext);
   });
 
   return { quotes, errors };

@@ -617,7 +617,7 @@ describe("Portfolio (Wallet V4 Tour)", () => {
   });
 
   it("shows Wallet V4 Tour dialog when tour enabled and not seen", async () => {
-    render(<PortfolioPage />, {
+    const { user } = render(<PortfolioPage />, {
       initialState: {
         settings: {
           ...AFTER_ONBOARDING_STATE,
@@ -633,6 +633,18 @@ describe("Portfolio (Wallet V4 Tour)", () => {
     expect(track).toHaveBeenCalledWith("product_tour_card", {
       page: "Product Tour WV4",
       card: 1,
+    });
+
+    await user.click(screen.getByRole("button", { name: "Continue" }));
+    expect(track).toHaveBeenCalledWith("product_tour_card", {
+      page: "Product Tour WV4",
+      card: 2,
+    });
+
+    await user.click(screen.getByRole("button", { name: "Continue" }));
+    expect(track).toHaveBeenCalledWith("product_tour_card", {
+      page: "Product Tour WV4",
+      card: 3,
     });
   });
 

@@ -1,5 +1,65 @@
 # @ledgerhq/wallet-api-exchange-module
 
+## 0.28.0
+
+### Minor Changes
+
+- [#16529](https://github.com/LedgerHQ/ledger-live/pull/16529) [`8bf2ba7`](https://github.com/LedgerHQ/ledger-live/commit/8bf2ba7039d42a8c50394e3ac10685be79698f91) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Wallet-side Swap quotes: emit network-fee estimate on each quote
+
+  - Add `QuoteDetails.estimatedNetworkFee` and the new `QuoteDetails.approvalNetworkFee` (shaped identically) so consumers can display a split breakdown ("Network: X, Token approval: Y") or sum the two for a total cost. `approvalNetworkFee` is only emitted when a pre-swap ERC-20 approval is required.
+  - `custom.exchange.getQuotes` now computes fees wallet-side: one upfront bridge call per invocation gathers default-strategy gas parameters and the fee-paying account balance, then each quote is normalized against that context. EVM uses `maxFeePerGas`/`gasPrice` × `gasLimit` (+`APPROVAL_GAS_LIMIT` when needed); non-EVM chains fall back to the bridge-reported estimate; Solana uses a hardcoded 0.003 SOL override.
+  - Start emitting `QuoteError = "notEnoughBalanceForFees"` per quote when the fee-paying account balance can't cover `estimatedNetworkFee + approvalNetworkFee`, gated on the quote actually having an on-chain cost (non-zero `networkFees.value` or `isTokenApprovalRequired`).
+
+- [#16081](https://github.com/LedgerHQ/ledger-live/pull/16081) [`bc99a32`](https://github.com/LedgerHQ/ledger-live/commit/bc99a32703ac5b4a30de79c2eebac0f1936a7f83) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Add custom handler for Swap quotes fetching to Wallet common
+
+  - add simple quote fetch service
+  - add data normalisation
+  - make accessable through wallet api
+
+- [#16526](https://github.com/LedgerHQ/ledger-live/pull/16526) [`4135055`](https://github.com/LedgerHQ/ledger-live/commit/4135055cd19e68b064f27454c536fcc5b047ffbb) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Normalize additional Swap quote fields inside the Wallet API
+
+  - Normalize `payoutNetworkFees` and `tokenAllowance` to the wallet schema (remapping `currency` → `currencyId`, preserving deep structure).
+  - Expose raw `tags` (`isRegistrationRequired`, `isTokenApprovalRequired`) on `QuoteDetails` so KYC and token-approval gating is driven by the normalized shape.
+  - Hoist the legacy `customFields` permit bag into a single optional `permitData` envelope, preferring `customFields.permitData` (UniswapX) over `customFields.quoteResponse.typedData` (1inch-fusion) and carrying `orderHash`, `priceRoute`, and `providerTag` alongside.
+  - Drop quotes for an unsupported-pair blocklist (currently `near <-> stellar`, direction-agnostic) inside `getQuotes`; aggregator errors for the same pair still flow through.
+
+- [#16525](https://github.com/LedgerHQ/ledger-live/pull/16525) [`02d837c`](https://github.com/LedgerHQ/ledger-live/commit/02d837c6cbb4387e3957eee11cc8b4512a70fe97) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Move more Swap quote normalization to Wallet common
+
+  - Extend `QuoteDetails` with additive optional fields: `liquiditySource`, `payoutNetworkFees`, `tokenAllowance`, `tags`, `permitData`, `estimatedNetworkFee`.
+  - Reshape `QuoteWarning` into a discriminated union: `{ code: "highSpread" } | { code: "unrealisticQuote"; gainPercent: number }`. Consumers that compared against the `"highSpread"` string literal must switch to `warning.code === "highSpread"`.
+  - Normalize fractional provider slippage to one decimal place; safe-integer presets pass through untouched.
+  - Derive `liquiditySource` (RFQ/AMM) from the provider id and `customFields["@type"]` so `oneinchfusion` and UniswapX rows are classified consistently instead of relying on the unreliable raw API field.
+
+## 0.28.0-next.0
+
+### Minor Changes
+
+- [#16529](https://github.com/LedgerHQ/ledger-live/pull/16529) [`8bf2ba7`](https://github.com/LedgerHQ/ledger-live/commit/8bf2ba7039d42a8c50394e3ac10685be79698f91) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Wallet-side Swap quotes: emit network-fee estimate on each quote
+
+  - Add `QuoteDetails.estimatedNetworkFee` and the new `QuoteDetails.approvalNetworkFee` (shaped identically) so consumers can display a split breakdown ("Network: X, Token approval: Y") or sum the two for a total cost. `approvalNetworkFee` is only emitted when a pre-swap ERC-20 approval is required.
+  - `custom.exchange.getQuotes` now computes fees wallet-side: one upfront bridge call per invocation gathers default-strategy gas parameters and the fee-paying account balance, then each quote is normalized against that context. EVM uses `maxFeePerGas`/`gasPrice` × `gasLimit` (+`APPROVAL_GAS_LIMIT` when needed); non-EVM chains fall back to the bridge-reported estimate; Solana uses a hardcoded 0.003 SOL override.
+  - Start emitting `QuoteError = "notEnoughBalanceForFees"` per quote when the fee-paying account balance can't cover `estimatedNetworkFee + approvalNetworkFee`, gated on the quote actually having an on-chain cost (non-zero `networkFees.value` or `isTokenApprovalRequired`).
+
+- [#16081](https://github.com/LedgerHQ/ledger-live/pull/16081) [`bc99a32`](https://github.com/LedgerHQ/ledger-live/commit/bc99a32703ac5b4a30de79c2eebac0f1936a7f83) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Add custom handler for Swap quotes fetching to Wallet common
+
+  - add simple quote fetch service
+  - add data normalisation
+  - make accessable through wallet api
+
+- [#16526](https://github.com/LedgerHQ/ledger-live/pull/16526) [`4135055`](https://github.com/LedgerHQ/ledger-live/commit/4135055cd19e68b064f27454c536fcc5b047ffbb) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Normalize additional Swap quote fields inside the Wallet API
+
+  - Normalize `payoutNetworkFees` and `tokenAllowance` to the wallet schema (remapping `currency` → `currencyId`, preserving deep structure).
+  - Expose raw `tags` (`isRegistrationRequired`, `isTokenApprovalRequired`) on `QuoteDetails` so KYC and token-approval gating is driven by the normalized shape.
+  - Hoist the legacy `customFields` permit bag into a single optional `permitData` envelope, preferring `customFields.permitData` (UniswapX) over `customFields.quoteResponse.typedData` (1inch-fusion) and carrying `orderHash`, `priceRoute`, and `providerTag` alongside.
+  - Drop quotes for an unsupported-pair blocklist (currently `near <-> stellar`, direction-agnostic) inside `getQuotes`; aggregator errors for the same pair still flow through.
+
+- [#16525](https://github.com/LedgerHQ/ledger-live/pull/16525) [`02d837c`](https://github.com/LedgerHQ/ledger-live/commit/02d837c6cbb4387e3957eee11cc8b4512a70fe97) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Move more Swap quote normalization to Wallet common
+
+  - Extend `QuoteDetails` with additive optional fields: `liquiditySource`, `payoutNetworkFees`, `tokenAllowance`, `tags`, `permitData`, `estimatedNetworkFee`.
+  - Reshape `QuoteWarning` into a discriminated union: `{ code: "highSpread" } | { code: "unrealisticQuote"; gainPercent: number }`. Consumers that compared against the `"highSpread"` string literal must switch to `warning.code === "highSpread"`.
+  - Normalize fractional provider slippage to one decimal place; safe-integer presets pass through untouched.
+  - Derive `liquiditySource` (RFQ/AMM) from the provider id and `customFields["@type"]` so `oneinchfusion` and UniswapX rows are classified consistently instead of relying on the unreliable raw API field.
+
 ## 0.27.0
 
 ### Minor Changes

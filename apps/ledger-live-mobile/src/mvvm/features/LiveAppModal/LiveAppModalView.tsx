@@ -46,7 +46,11 @@ const LiveAppModalContent = ({
       header: {
         paddingHorizontal: theme.spacings.s16,
         paddingTop: theme.spacings.s12,
-        paddingBottom: theme.spacings.s16,
+        paddingBottom: theme.spacings.s12,
+      },
+      backButton: {
+        alignSelf: "flex-start",
+        marginLeft: -theme.spacings.s12,
       },
       placeholder: {
         flex: 1,
@@ -58,7 +62,7 @@ const LiveAppModalContent = ({
         marginTop: theme.spacings.s12,
       },
       description: {
-        marginTop: theme.spacings.s4,
+        marginTop: theme.spacings.s8,
       },
       webviewContainer: {
         flex: 1,
@@ -86,10 +90,11 @@ const LiveAppModalContent = ({
       <Box style={styles.header}>
         <IconButton
           appearance="no-background"
-          size="sm"
+          size="md"
           icon={ArrowLeft}
           accessibilityLabel={t("common.close")}
           onPress={onClose}
+          style={styles.backButton}
         />
         {title ? (
           <Text typography="heading3SemiBold" style={styles.title}>

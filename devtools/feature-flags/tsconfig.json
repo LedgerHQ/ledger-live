@@ -1,0 +1,18 @@
+{
+    "extends": "../../tsconfig.base.json",
+    "compilerOptions": {
+        "paths": {
+            "jest/*": ["./jest/*"],
+        },
+        "lib": ["ES2024", "DOM"],
+        "target": "ESNext",
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "moduleSuffixes": [".web", ""],
+        "jsx": "react-jsx",
+        "noEmit": true,
+        "types": ["jest"]
+    },
+    "include": ["src/**/*", "jest.setup.ts", "jest/**/*", "**/*.d.ts"],
+    "exclude": ["node_modules"]
+}

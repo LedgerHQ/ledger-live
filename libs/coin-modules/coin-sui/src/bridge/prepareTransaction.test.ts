@@ -1,4 +1,3 @@
-import { faker } from "@faker-js/faker";
 import { NotEnoughBalance, NotEnoughBalanceFees } from "@ledgerhq/errors";
 import BigNumber from "bignumber.js";
 import { DEFAULT_COIN_TYPE } from "../network/sdk";
@@ -42,7 +41,7 @@ describe("prepareTransaction", () => {
 
   it("returns a new Transaction with new fees", async () => {
     // GIVEN
-    const fees = new BigNumber(faker.number.int({ min: 1, max: 50 }));
+    const fees = new BigNumber(42);
     mockGetFeesForTransaction.mockResolvedValue(fees);
     const tx = createFixtureTransaction();
 
@@ -63,8 +62,8 @@ describe("prepareTransaction", () => {
 
   it("calculates amount when useAllAmount is true", async () => {
     // GIVEN
-    const fees = new BigNumber(faker.number.int({ min: 1, max: 50 }));
-    const calculatedAmount = new BigNumber(faker.number.int({ min: 1000, max: 5000 }));
+    const fees = new BigNumber(42);
+    const calculatedAmount = new BigNumber(2000);
     mockGetFeesForTransaction.mockResolvedValue(fees);
     mockCalculateAmount.mockReturnValue(calculatedAmount);
     const tx = createFixtureTransaction({ useAllAmount: true });
@@ -80,7 +79,7 @@ describe("prepareTransaction", () => {
 
   it("sets mode to token.send and updates coinType for token transactions", async () => {
     // GIVEN
-    const fees = new BigNumber(faker.number.int({ min: 1, max: 50 }));
+    const fees = new BigNumber(42);
     mockGetFeesForTransaction.mockResolvedValue(fees);
     const tx = createFixtureTransaction({
       subAccountId: "tokenSubAccountId",

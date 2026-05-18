@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from "react";
+import invariant from "invariant";
 import { Trans, useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
@@ -58,6 +59,10 @@ const Body = ({ stepId, params, onChangeStepId, onClose }: Props) => {
   const dispatch = useDispatch();
   const device = useSelector(getCurrentDevice);
   const { account, parentAccount, source = "Account Page" } = params;
+  invariant(
+    account && account.type === "Account" && account.currency.family === "tezos",
+    "UnstakeFlowModal requires a Tezos account in modal params",
+  );
 
   const bridge = useAccountBridge<Transaction>(account, parentAccount);
 

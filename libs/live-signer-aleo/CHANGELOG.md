@@ -1,5 +1,44 @@
 # @ledgerhq/live-signer-aleo
 
+## 0.16.2
+
+### Patch Changes
+
+- Updated dependencies [[`2a9b637`](https://github.com/LedgerHQ/ledger-live/commit/2a9b637916076295e048a43e9e4613693e0fc674), [`c48ebba`](https://github.com/LedgerHQ/ledger-live/commit/c48ebba05aa578c7c25e6bf30c469b6ffba6ac01), [`054a8e8`](https://github.com/LedgerHQ/ledger-live/commit/054a8e8c7d4e1be511232a53a015d0bcc111e62e), [`cb0987a`](https://github.com/LedgerHQ/ledger-live/commit/cb0987a8dcad760c194838a61a6675535cee67c9), [`add6026`](https://github.com/LedgerHQ/ledger-live/commit/add60262f879ec9288802a687f31fcc476b81ff9), [`802a58c`](https://github.com/LedgerHQ/ledger-live/commit/802a58c742513f73322deb5777b804674c33e529), [`d308b1a`](https://github.com/LedgerHQ/ledger-live/commit/d308b1a6b9c629839f051cf367a527f4232120c7), [`465447d`](https://github.com/LedgerHQ/ledger-live/commit/465447d5227e2ee395f9507d846b3b2aa54899cf), [`f65aae9`](https://github.com/LedgerHQ/ledger-live/commit/f65aae969b9cfde47c7cd52a8af6789fbab032e2), [`ca0b7ff`](https://github.com/LedgerHQ/ledger-live/commit/ca0b7ff2fe93d465e05282356ffabd3b1b544b3d), [`bc980b8`](https://github.com/LedgerHQ/ledger-live/commit/bc980b842addd8b1d2a76d19383ab6ae06ae9aab), [`ce84add`](https://github.com/LedgerHQ/ledger-live/commit/ce84addfa3a9c955ea20f1f5ac4d7b959893c580)]:
+  - @ledgerhq/coin-aleo@1.11.0
+  - @ledgerhq/errors@6.35.0
+
+## 0.16.2-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-aleo@1.11.0-next.1
+
+## 0.16.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`2a9b637`](https://github.com/LedgerHQ/ledger-live/commit/2a9b637916076295e048a43e9e4613693e0fc674), [`c48ebba`](https://github.com/LedgerHQ/ledger-live/commit/c48ebba05aa578c7c25e6bf30c469b6ffba6ac01), [`054a8e8`](https://github.com/LedgerHQ/ledger-live/commit/054a8e8c7d4e1be511232a53a015d0bcc111e62e), [`cb0987a`](https://github.com/LedgerHQ/ledger-live/commit/cb0987a8dcad760c194838a61a6675535cee67c9), [`add6026`](https://github.com/LedgerHQ/ledger-live/commit/add60262f879ec9288802a687f31fcc476b81ff9), [`802a58c`](https://github.com/LedgerHQ/ledger-live/commit/802a58c742513f73322deb5777b804674c33e529), [`d308b1a`](https://github.com/LedgerHQ/ledger-live/commit/d308b1a6b9c629839f051cf367a527f4232120c7), [`465447d`](https://github.com/LedgerHQ/ledger-live/commit/465447d5227e2ee395f9507d846b3b2aa54899cf), [`f65aae9`](https://github.com/LedgerHQ/ledger-live/commit/f65aae969b9cfde47c7cd52a8af6789fbab032e2), [`ca0b7ff`](https://github.com/LedgerHQ/ledger-live/commit/ca0b7ff2fe93d465e05282356ffabd3b1b544b3d), [`bc980b8`](https://github.com/LedgerHQ/ledger-live/commit/bc980b842addd8b1d2a76d19383ab6ae06ae9aab), [`ce84add`](https://github.com/LedgerHQ/ledger-live/commit/ce84addfa3a9c955ea20f1f5ac4d7b959893c580)]:
+  - @ledgerhq/coin-aleo@1.11.0-next.0
+  - @ledgerhq/errors@6.35.0-next.0
+
+## 0.16.2
+
+### Patch Changes
+
+- Updated dependencies [[`202cc42`](https://github.com/LedgerHQ/ledger-live/commit/202cc423b09662b5b25012b84124aecd4dc7245d)]:
+  - @ledgerhq/errors@6.34.1
+  - @ledgerhq/coin-aleo@1.10.2
+
+## 0.16.2-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`202cc42`](https://github.com/LedgerHQ/ledger-live/commit/202cc423b09662b5b25012b84124aecd4dc7245d)]:
+  - @ledgerhq/errors@6.34.1-hotfix.0
+  - @ledgerhq/coin-aleo@1.10.2-hotfix.0
+
 ## 0.16.1
 
 ### Patch Changes

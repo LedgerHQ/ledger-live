@@ -1,5 +1,47 @@
 # @ledgerhq/live-dmk-mobile
 
+## 0.21.4
+
+### Patch Changes
+
+- Updated dependencies [[`b866ea6`](https://github.com/LedgerHQ/ledger-live/commit/b866ea67bcbd408a33dbc9233ef55298e2a8ef25), [`d308b1a`](https://github.com/LedgerHQ/ledger-live/commit/d308b1a6b9c629839f051cf367a527f4232120c7), [`561b86b`](https://github.com/LedgerHQ/ledger-live/commit/561b86be1f972908ae950e362912519e3904917d)]:
+  - @ledgerhq/live-env@2.34.0
+  - @ledgerhq/errors@6.35.0
+  - @ledgerhq/live-dmk-shared@0.23.0
+  - @ledgerhq/devices@8.14.2
+  - @ledgerhq/hw-transport@6.35.2
+
+## 0.21.4-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`b866ea6`](https://github.com/LedgerHQ/ledger-live/commit/b866ea67bcbd408a33dbc9233ef55298e2a8ef25), [`d308b1a`](https://github.com/LedgerHQ/ledger-live/commit/d308b1a6b9c629839f051cf367a527f4232120c7), [`561b86b`](https://github.com/LedgerHQ/ledger-live/commit/561b86be1f972908ae950e362912519e3904917d)]:
+  - @ledgerhq/live-env@2.34.0-next.0
+  - @ledgerhq/errors@6.35.0-next.0
+  - @ledgerhq/live-dmk-shared@0.23.0-next.0
+  - @ledgerhq/devices@8.14.2-next.0
+  - @ledgerhq/hw-transport@6.35.2-next.0
+
+## 0.21.4
+
+### Patch Changes
+
+- Updated dependencies [[`202cc42`](https://github.com/LedgerHQ/ledger-live/commit/202cc423b09662b5b25012b84124aecd4dc7245d)]:
+  - @ledgerhq/errors@6.34.1
+  - @ledgerhq/devices@8.14.2
+  - @ledgerhq/hw-transport@6.35.2
+  - @ledgerhq/live-dmk-shared@0.22.3
+
+## 0.21.4-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`202cc42`](https://github.com/LedgerHQ/ledger-live/commit/202cc423b09662b5b25012b84124aecd4dc7245d)]:
+  - @ledgerhq/errors@6.34.1-hotfix.0
+  - @ledgerhq/devices@8.14.2-hotfix.0
+  - @ledgerhq/hw-transport@6.35.2-hotfix.0
+  - @ledgerhq/live-dmk-shared@0.22.3-hotfix.0
+
 ## 0.21.3
 
 ### Patch Changes

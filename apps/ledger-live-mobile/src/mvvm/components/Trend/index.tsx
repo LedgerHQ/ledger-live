@@ -28,12 +28,14 @@ export function Trend({ percentage, formattedChange, timeLabel, testID }: Props)
 
   return (
     <Box lx={rowStyle} testID={testID}>
-      <Box style={iconStyle} testID={iconTestID}>
-        <Icon size={16} color={color} />
+      <Box lx={iconContainerStyle}>
+        <Box lx={iconStyle} testID={iconTestID}>
+          <Icon size={16} color={color} />
+        </Box>
+        <Text typography="body3" lx={{ color }}>
+          {Math.abs(percentage).toFixed(2)}%
+        </Text>
       </Box>
-      <Text typography="body3" lx={{ color }}>
-        {Math.abs(percentage).toFixed(2)}%
-      </Text>
       {formattedChange != null && (
         <Text typography="body3" lx={{ color: "base" }}>
           {formattedChange}
@@ -58,9 +60,15 @@ const MIDDLE_DOT = "·";
 const rowStyle: LumenViewStyle = {
   flexDirection: "row",
   alignItems: "center",
+  gap: "s4",
+};
+
+const iconContainerStyle: LumenViewStyle = {
+  flexDirection: "row",
+  alignItems: "center",
   gap: "s2",
 };
 
-const iconStyle = {
-  marginVertical: -2,
+const iconStyle: LumenViewStyle = {
+  marginVertical: "-s2",
 };

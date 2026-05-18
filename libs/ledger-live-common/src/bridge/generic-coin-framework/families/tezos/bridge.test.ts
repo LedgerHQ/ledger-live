@@ -71,6 +71,31 @@ describe("generic-coin-framework Tezos token", () => {
     });
   });
 
+  describe("computeIntentType", () => {
+    it.each(["delegate", "undelegate", "stake", "unstake", "finalize_unstake", "send"] as const)(
+      "returns '%s' unchanged",
+      mode => {
+        expect(computeIntentType({ mode })).toBe(mode);
+      },
+    );
+
+    it("returns 'send' when mode is absent", () => {
+      expect(computeIntentType({})).toBe("send");
+    });
+
+    it("throws for unsupported string modes", () => {
+      expect(() => computeIntentType({ mode: "changeTrust" })).toThrow(
+        "Unsupported transaction mode: changeTrust",
+      );
+    });
+
+    it("throws when mode is a non-string value", () => {
+      expect(() => computeIntentType({ mode: 42 })).toThrow(
+        "Unsupported transaction mode: 42",
+      );
+    });
+  });
+
   describe("getAssetFromToken", () => {
     it("returns asset with contractAddress as assetReference and owner as assetOwner", () => {
       const tezos = getCryptoCurrencyById("tezos");
@@ -98,17 +123,4 @@ describe("generic-coin-framework Tezos token", () => {
     });
   });
 
-  describe("computeIntentType", () => {
-    it.each([
-      ["delegate", "delegate"],
-      ["undelegate", "undelegate"],
-      ["stake", "stake"],
-      ["unstake", "unstake"],
-      ["finalize_unstake", "finalize_unstake"],
-      ["send", "send"],
-      ["unknown", "send"],
-    ])("computes the intent type related to the '%s' mode", (mode, expectedIntentType) => {
-      expect(computeIntentType({ mode } as any)).toEqual(expectedIntentType);
-    });
-  });
 });

@@ -182,6 +182,14 @@ describe("evm bridge", () => {
       ["send-legacy", "a 'send-legacy' mode", { mode: "send-legacy" }],
       ["send-legacy", "a 'send' mode and '0' type", { mode: "send", type: 0 }],
       ["send-legacy", "a 'send' mode no type", { mode: "send" }],
+      ["staking-eip1559", "a 'delegate' mode and '2' type", { mode: "delegate", type: 2 }],
+      ["staking-eip1559", "a 'redelegate' mode and '2' type", { mode: "redelegate", type: 2 }],
+      ["staking-eip1559", "a 'undelegate' mode and '2' type", { mode: "undelegate", type: 2 }],
+      ["staking-eip1559", "a 'claimReward' mode and '2' type", { mode: "claimReward", type: 2 }],
+      ["staking-legacy", "a 'delegate' mode", { mode: "delegate" }],
+      ["staking-legacy", "a 'redelegate' mode", { mode: "redelegate" }],
+      ["staking-legacy", "a 'undelegate' mode", { mode: "undelegate" }],
+      ["staking-legacy", "a 'claimReward' mode", { mode: "claimReward" }],
     ])("detects a '%s' type from %s", (expectedType, _s, transaction) => {
       expect(computeIntentType(transaction)).toEqual(expectedType);
     });

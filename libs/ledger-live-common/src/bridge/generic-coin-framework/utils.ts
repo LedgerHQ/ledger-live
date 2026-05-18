@@ -101,7 +101,9 @@ function isStringArray(value: unknown): value is string[] {
 }
 
 function isDelegationMode(mode: GenericTransaction["mode"]): mode is StakingOperation {
-  return mode === "delegate" || mode === "undelegate" || mode === "redelegate";
+  return (
+    mode === "delegate" || mode === "undelegate" || mode === "redelegate" || mode === "claimReward"
+  );
 }
 
 type GenericAlpacaMemo = { type: string; value?: string };
@@ -223,7 +225,7 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
     value = bnFees;
   } else if (
     op.asset.type === "native" &&
-    ["OUT", "FEES", "DELEGATE", "UNDELEGATE"].includes(opType)
+    ["OUT", "FEES", "DELEGATE", "UNDELEGATE", "REDELEGATE"].includes(opType)
   ) {
     value = new BigNumber(op.value.toString()).plus(bnFees);
   } else {
@@ -265,7 +267,9 @@ function defaultComputeIntentType(transaction: GenericTransaction): string {
   };
   const mode = modeRemap[transaction.mode] ?? transaction.mode;
 
-  if (["changeTrust", "send", "send-legacy", "send-eip1559", "stake", "unstake"].includes(mode))
+  if (
+    ["changeTrust", "send", "send-legacy", "send-eip1559", "stake", "unstake", "finalize_unstake"].includes(mode)
+  )
     return mode;
 
   throw new Error(`Unsupported transaction mode: ${transaction.mode}`);
@@ -301,11 +305,11 @@ export function transactionToIntent(
   craftTransactionData?: (intent: TransactionIntent) => TxData,
 ): GenericAlpacaTransactionIntent {
   const intentType = (computeIntentType ?? defaultComputeIntentType)(transaction);
-  const isStaking = ["stake", "unstake"].includes(intentType);
+  const isStaking = ["stake", "unstake", "finalize_unstake"].includes(intentType);
   const delegationMode = isDelegationMode(transaction.mode) ? transaction.mode : undefined;
   const isDelegation = delegationMode !== undefined;
-  const amount = isStaking ? 0n : fromBigNumberToBigInt(transaction.amount, 0n);
-  const useAllAmount = isStaking || !!transaction.useAllAmount;
+  const amount = fromBigNumberToBigInt(transaction.amount, 0n);
+  const useAllAmount = !!transaction.useAllAmount;
   const res: GenericAlpacaTransactionIntent = {
     intentType: isStaking || isDelegation ? "staking" : "transaction",
     type: intentType,
@@ -486,6 +490,9 @@ export const buildOptimisticOperation = (
     case "undelegate":
     case "unstake":
       type = "UNDELEGATE";
+      break;
+    case "finalize_unstake":
+      type = "FINALIZE_UNSTAKE";
       break;
     default:
       type = "OUT";

@@ -9,7 +9,11 @@ describe("Broadcast", () => {
   beforeAll(() => {
     coinConfig.setCoinConfig(() => ({
       status: { type: "active" },
-      node: { url: "https://sui.coin.ledger.com" },
+      node: {
+        url: "https://sui.coin.ledger.com",
+        graphqlUrl: "https://graphql.mainnet.sui.io/graphql",
+      },
+      features: { graphql: false },
     }));
   });
 

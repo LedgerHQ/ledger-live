@@ -13,24 +13,14 @@ import {
   isNativeSegwitDerivationMode,
   isTaprootDerivationMode,
 } from "@ledgerhq/ledger-wallet-framework/derivation";
-import {
-  DerivationMode,
-  SYNC_TYPE_TRANSPARENT,
-  SYNC_TYPE_SHIELDED,
-  SyncConfig,
-  OperationType,
-} from "@ledgerhq/types-live";
+import { DerivationMode, SYNC_TYPE_TRANSPARENT, SyncConfig } from "@ledgerhq/types-live";
 import type { Currency, Output as WalletOutput } from "./wallet-btc";
 import wallet, { DerivationModes as WalletDerivationModes } from "./wallet-btc";
-import { BitcoinAccount, BitcoinOutput, BtcOperation, ZcashAccount } from "./types";
-import type { ZcashPrivateInfo } from "@ledgerhq/zcash-shielded/types";
+import { BitcoinAccount, BitcoinOutput, BtcOperation } from "./types";
 import { perCoinLogic, mapTxToOperations } from "./logic";
 import { BitcoinXPub, SignerContext } from "./signer";
-import { map, merge, Observable, scan } from "rxjs";
-import { ShieldedTransaction, ShieldedSyncResult } from "@ledgerhq/zcash-shielded/types";
-import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
-import { DEFAULT_ZCASH_PRIVATE_INFO } from "@ledgerhq/zcash-shielded/constants";
-import { getCoinConfig } from "./config";
+import { merge, Observable } from "rxjs";
+import { getChainAdapter } from "./chain-adapters/registry";
 
 const TWO_HOUR_MS = 2 * 60 * 60 * 1000;
 const COINBASE_INPUT_PREFIX = "0000000000000000000000000000000000000000000000000000000000000000";
@@ -222,40 +212,6 @@ const deduplicateOperations = (operations: (BtcOperation | undefined)[]): BtcOpe
   return out;
 };
 
-export const getTxType = (tx: ShieldedTransaction): OperationType => {
-  if (!tx.decryptedData) return "UNKNOWN";
-
-  const orchardOutputs = tx.decryptedData.orchard_outputs ?? [];
-  const saplingOutputs = tx.decryptedData.sapling_outputs ?? [];
-
-  // Net balance delta: Σ incoming − Σ outgoing across all notes.
-  // "internal" notes (self-sends within the shielded pool) are intentionally
-  // excluded — they do not affect the account's net balance.
-  let netDelta = new BigNumber(0);
-  for (const note of [...orchardOutputs, ...saplingOutputs]) {
-    if (note.transfer_type === "incoming") netDelta = netDelta.plus(note.amount);
-    else if (note.transfer_type === "outgoing") netDelta = netDelta.minus(note.amount);
-  }
-
-  if (netDelta.isGreaterThan(0)) {
-    return orchardOutputs.some(n => n.transfer_type === "incoming")
-      ? "SHIELDED_TX_ORCHARD_IN"
-      : "SHIELDED_TX_SAPLING_IN";
-  }
-  if (netDelta.isLessThan(0)) {
-    return orchardOutputs.some(n => n.transfer_type === "outgoing")
-      ? "SHIELDED_TX_ORCHARD_OUT"
-      : "SHIELDED_TX_SAPLING_OUT";
-  }
-  // net === 0 → only internal notes, or equal in/out (self-send).
-  return "SHIELDED_TX_INTERNAL";
-};
-
-type ShieldedScanAccumulated = {
-  processedOperations: ShieldedTransaction[];
-  accountUpdate: Partial<ZcashAccount>;
-};
-
 export async function performTransparentSync(
   info: AccountShapeInfo<BitcoinAccount>,
   signerContext: SignerContext,
@@ -408,160 +364,6 @@ export async function performTransparentSync(
   };
 }
 
-function applyOutputDelta(
-  balance: BigNumber,
-  outputs: { transfer_type: string; amount: BigNumber }[],
-): BigNumber {
-  let result = balance;
-  for (const n of outputs) {
-    if (n.transfer_type === "incoming") result = result.plus(n.amount);
-    else if (n.transfer_type === "outgoing") result = result.minus(n.amount);
-  }
-  return result;
-}
-
-function computeProtocolDeltas(transactions: ShieldedTransaction[]): {
-  deltaSapling: BigNumber;
-  deltaOrchard: BigNumber;
-} {
-  let deltaSapling = new BigNumber(0);
-  let deltaOrchard = new BigNumber(0);
-  for (const tx of transactions) {
-    deltaSapling = applyOutputDelta(deltaSapling, tx.decryptedData?.sapling_outputs ?? []);
-    deltaOrchard = applyOutputDelta(deltaOrchard, tx.decryptedData?.orchard_outputs ?? []);
-  }
-  return { deltaSapling, deltaOrchard };
-}
-
-function computeOutgoingFees(transactions: ShieldedTransaction[]): BigNumber {
-  let fees = new BigNumber(0);
-  for (const tx of transactions) {
-    if (getTxType(tx).endsWith("_OUT")) {
-      fees = fees.plus(tx.fee ?? new BigNumber(0));
-    }
-  }
-  return fees;
-}
-
-export function reduceShieldedSyncResult(
-  accumulated: ShieldedScanAccumulated,
-  result: ShieldedSyncResult,
-  info: AccountShapeInfo<ZcashAccount>,
-  accountId: string,
-): ShieldedScanAccumulated {
-  const existingPrivateInfo =
-    accumulated.accountUpdate.privateInfo ||
-    info.initialAccount?.privateInfo ||
-    DEFAULT_ZCASH_PRIVATE_INFO;
-  const processedIds = new Set(accumulated.processedOperations.map(tx => tx.id));
-  const newTransactions = result.transactions.filter(tx => !processedIds.has(tx.id));
-
-  if (newTransactions.length === 0) {
-    const totalBlocks = result.processedBlocks + result.remainingBlocks;
-    return {
-      ...accumulated,
-      accountUpdate: {
-        ...accumulated.accountUpdate,
-        blockHeight: result.lastProcessedBlock ?? accumulated.accountUpdate.blockHeight ?? 0,
-        privateInfo: {
-          ...existingPrivateInfo,
-          syncState: result.remainingBlocks > 0 ? ("running" as const) : ("complete" as const),
-          progress:
-            totalBlocks > 0 ? Math.round((result.processedBlocks / totalBlocks) * 100) : 100,
-          lastProcessedBlock: result.lastProcessedBlock ?? null,
-          lastSyncTimestamp: Date.now(),
-        },
-      },
-    };
-  }
-
-  const newOperations = convertShieldedTransactionsToOperations(newTransactions, accountId);
-
-  const currentOperations = (accumulated.accountUpdate.operations || []) as BtcOperation[];
-  const mergedOperations = mergeOps(currentOperations, newOperations);
-  const operations = removeReplaced(mergedOperations as BtcOperation[]);
-
-  // Accumulate all shielded transactions for note-level data and balance breakdown
-  const allShieldedTx: ShieldedTransaction[] = [
-    ...(accumulated.accountUpdate.privateInfo?.transactions ?? []),
-    ...newTransactions,
-  ];
-
-  // Previous accumulated balances — needed to compute deltas and transparent portion.
-  const prevSapling = accumulated.accountUpdate.privateInfo?.saplingBalance ?? new BigNumber(0);
-  const prevOrchard = accumulated.accountUpdate.privateInfo?.orchardBalance ?? new BigNumber(0);
-
-  // Compute per-protocol balance delta from NEW transactions only, then accumulate on top of the
-  // previous balance. Iterating over allShieldedTx would ignore the initial balance from a
-  // snapshot (old transactions are cleared when initializing the accumulated state), causing
-  // the balance to reset to 0 on every incremental sync from a snapshot.
-  const { deltaSapling, deltaOrchard } = computeProtocolDeltas(newTransactions);
-  const saplingBalance = prevSapling.plus(deltaSapling);
-  const orchardBalance = prevOrchard.plus(deltaOrchard);
-
-  // Deduct fees only for NEW outgoing transactions in this chunk.
-  // Fees from previous chunks are already baked into baseBalance, so deducting them again
-  // (from allShieldedTx) would double-count them.
-  const newFeesPaid = computeOutgoingFees(newTransactions);
-
-  // Derive account.balance from note-based shielded balance to avoid double-counting.
-  // Transparent portion = previous total balance - previous shielded balance.
-  const baseBalance =
-    accumulated.accountUpdate.balance || info.initialAccount?.balance || new BigNumber(0);
-  const transparentPortion = baseBalance.minus(prevSapling).minus(prevOrchard);
-  const balance = (transparentPortion.isNegative() ? new BigNumber(0) : transparentPortion)
-    .plus(saplingBalance)
-    .plus(orchardBalance)
-    .minus(newFeesPaid);
-
-  const totalBlocks = result.processedBlocks + result.remainingBlocks;
-  const privateInfo: ZcashPrivateInfo = {
-    saplingBalance,
-    orchardBalance,
-    syncState: result.remainingBlocks > 0 ? ("running" as const) : ("complete" as const),
-    progress: totalBlocks > 0 ? Math.round((result.processedBlocks / totalBlocks) * 100) : 100,
-    estimatedTimeRemaining: existingPrivateInfo.estimatedTimeRemaining ?? { hours: 0, minutes: 0 },
-    ufvk: existingPrivateInfo?.ufvk ?? null,
-    birthday: existingPrivateInfo?.birthday ?? null,
-    lastSyncTimestamp: Date.now(),
-    lastProcessedBlock: result.lastProcessedBlock ?? null,
-    transactions: allShieldedTx,
-  };
-
-  log(
-    "bitcoin/reduceShieldedSyncResult",
-    `Processed ${newOperations.length} new shielded operations`,
-    {
-      accountId,
-      totalOperations: operations.length,
-      lastProcessedBlock: result.lastProcessedBlock ?? 0,
-      orchardBalance: orchardBalance.toString(),
-      previousOperations: currentOperations.length,
-    },
-  );
-
-  // The initial account may declare more operations than are present in its operations array
-  // (e.g. when the account was serialized with a truncated operations list but a correct total
-  // count). The offset bridges that gap so the emitted operationsCount stays accurate.
-  const missingOpsCount = Math.max(
-    0,
-    (info.initialAccount?.operationsCount ?? 0) - (info.initialAccount?.operations?.length ?? 0),
-  );
-
-  return {
-    processedOperations: [...result.transactions],
-    accountUpdate: {
-      ...accumulated.accountUpdate,
-      operations,
-      operationsCount: missingOpsCount + operations.length,
-      balance,
-      spendableBalance: balance,
-      blockHeight: result.lastProcessedBlock ?? info.initialAccount?.blockHeight ?? 0,
-      privateInfo,
-    },
-  };
-}
-
 export function createTransparentSyncObservable(
   info: AccountShapeInfo<BitcoinAccount>,
   signerContext: SignerContext,
@@ -591,131 +393,25 @@ export function createTransparentSyncObservable(
   });
 }
 
-export function createShieldedSyncObservable(
-  info: AccountShapeInfo<ZcashAccount>,
-  shieldedSyncRaw: Observable<ShieldedSyncResult>,
-): Observable<Partial<ZcashAccount>> {
-  const accountId =
-    info.initialAccount?.id ??
-    encodeAccountId({
-      type: "js",
-      version: "2",
-      currencyId: info.currency.id,
-      xpubOrAddress: info.initialAccount?.xpub || "",
-      derivationMode: info.derivationMode,
-    });
-
-  const initialAccountUpdate: ShieldedScanAccumulated["accountUpdate"] = {
-    operations: (info.initialAccount?.operations || []) as BtcOperation[],
-    ...(info.initialAccount?.balance !== undefined && { balance: info.initialAccount.balance }),
-    ...(info.initialAccount?.blockHeight !== undefined && {
-      blockHeight: info.initialAccount.blockHeight,
-    }),
-    ...(info.initialAccount?.privateInfo && {
-      // Preserve existing transactions from the initial account so that allShieldedTx in
-      // reduceShieldedSyncResult includes them and the shielded tx count stays accurate
-      // during an incremental sync that starts from a pre-existing account state.
-      privateInfo: { ...info.initialAccount.privateInfo, syncState: "running" as const },
-    }),
-  };
-
-  const initialAccumulated: ShieldedScanAccumulated = {
-    processedOperations: [],
-    accountUpdate: initialAccountUpdate,
-  };
-
-  return shieldedSyncRaw.pipe(
-    scan(
-      (accumulated, result) => reduceShieldedSyncResult(accumulated, result, info, accountId),
-      initialAccumulated,
-    ),
-    map(accumulated => accumulated.accountUpdate),
-  );
-}
-
-/**
- * Converts raw shielded transactions to BtcOperation format.
- * This function processes the blockchain-agnostic shielded transaction data
- * and converts it to Bitcoin-specific operation types.
- */
-export function convertShieldedTransactionsToOperations(
-  shieldedTransactions: ShieldedTransaction[],
-  accountId: string,
-): BtcOperation[] {
-  return shieldedTransactions.map(tx => {
-    const txType = getTxType(tx);
-    const allNotes = [
-      ...(tx.decryptedData?.orchard_outputs ?? []),
-      ...(tx.decryptedData?.sapling_outputs ?? []),
-    ];
-    // op.value shows the amount relevant to the op type: incoming notes for IN, outgoing for OUT
-    let relevantTransferType: string | null = null;
-    if (txType.endsWith("_IN")) {
-      relevantTransferType = "incoming";
-    } else if (txType.endsWith("_OUT")) {
-      relevantTransferType = "outgoing";
-    }
-    const value = allNotes
-      .filter(n => n.transfer_type === relevantTransferType)
-      .reduce((sum, n) => sum.plus(n.amount), new BigNumber(0));
-
-    const operation: BtcOperation = {
-      id: encodeOperationId(accountId, tx.id, txType),
-      hash: tx.id,
-      accountId,
-      blockHash: tx.blockHash,
-      blockHeight: tx.blockHeight,
-      type: txType,
-      senders: [],
-      recipients: [],
-      date: new Date(tx.timestamp),
-      value,
-      fee: new BigNumber(tx.fee),
-      extra: {},
-      transactionSequenceNumber: new BigNumber(tx.blockHeight),
-      subOperations: [],
-      nftOperations: [],
-    };
-
-    return operation;
-  });
-}
-
 export function buildSyncObservables(
   info: AccountShapeInfo<BitcoinAccount>,
   syncConfig: SyncConfig,
   signerContext: SignerContext,
-): { syncs: Observable<Partial<BitcoinAccount> | Partial<ZcashAccount>>[]; syncType: number } {
-  const { currency, initialAccount } = info;
+): { syncs: Observable<Partial<BitcoinAccount>>[]; syncType: number } {
+  const { currency } = info;
   const syncType = syncConfig.syncType ?? SYNC_TYPE_TRANSPARENT;
 
-  const syncs: Observable<Partial<BitcoinAccount> | Partial<ZcashAccount>>[] = [];
+  const syncs: Observable<Partial<BitcoinAccount>>[] = [];
 
   if (syncType & SYNC_TYPE_TRANSPARENT) {
     syncs.push(createTransparentSyncObservable(info, signerContext));
   }
 
-  const isZcash = currency.id === "zcash";
-  const zcashInitialAccount = isZcash ? (initialAccount as ZcashAccount | undefined) : undefined;
-  const ufvkIsPresent =
-    isZcash &&
-    !!zcashInitialAccount &&
-    !!zcashInitialAccount.privateInfo?.ufvk &&
-    zcashInitialAccount.privateInfo.ufvk.length > 0;
-  const syncStateIsEnabled =
-    isZcash &&
-    !!zcashInitialAccount &&
-    (zcashInitialAccount.privateInfo?.syncState === "ready" ||
-      zcashInitialAccount.privateInfo?.syncState === "running" ||
-      zcashInitialAccount.privateInfo?.syncState === "stopped" ||
-      zcashInitialAccount.privateInfo?.syncState === "outdated");
-  const shieldedEnabled = ufvkIsPresent && syncStateIsEnabled;
-
-  if (syncType & SYNC_TYPE_SHIELDED && shieldedEnabled) {
-    const shieldedSyncRaw = getCoinConfig(currency.id).family?.sync?.(info, syncConfig);
-    if (shieldedSyncRaw) {
-      syncs.push(createShieldedSyncObservable(info, shieldedSyncRaw));
-    }
+  // Chain adapter guards (syncType flags, ufvk, syncState) are checked internally
+  const adapter = getChainAdapter(currency.id);
+  const extraSync = adapter.buildExtraSyncObservable?.(info, syncConfig);
+  if (extraSync) {
+    syncs.push(extraSync);
   }
 
   return { syncs, syncType };
@@ -737,7 +433,7 @@ export function makeGetAccountShape(
 
       log("bitcoin/makeGetAccountShape", `Merging ${syncs.length} sync(s) for ${currency.id}`, {
         hasTransparent: !!(syncType & SYNC_TYPE_TRANSPARENT),
-        hasShielded: !!(syncType & SYNC_TYPE_SHIELDED),
+        syncCount: syncs.length,
       });
 
       const sub = merge(...syncs).subscribe({

@@ -35,11 +35,17 @@
     "src/tokens.ts"
   ],
   "ignoreUnimported": [
-    "src/constants/env.ts",
-    "src/constants/index.ts",
-    "src/supportedFeatures.ts",
-    "src/fixtures/common.fixtures.ts",
     "src/buildRbfTransaction.ts",
+    "src/chain-adapters/zcash/ZCashIPC.ts",
+    "src/chain-adapters/zcash/ipc/contract.ts",
+    "src/chain-adapters/zcash/ipc/main-host.ts",
+    "src/chain-adapters/zcash/ipc/one-shot-router.ts",
+    "src/chain-adapters/zcash/ipc/utility-entry.ts",
+    "src/chain-adapters/zcash/native-engine/engine.ts",
+    "src/chain-adapters/zcash/serialization/rehydrate.ts",
+    "src/chain-adapters/zcash/sync-estimator.ts",
+    "src/chain-adapters/zcash/ZCash.ts",
+    "src/chain-adapters/zcash/stubs/ZCash.native.ts",
     "src/editTransaction/getEditTransactionPatch.ts",
     "src/editTransaction/getFormattedFeeFields.ts",
     "src/editTransaction/getMinEditTransactionFees.ts",
@@ -48,8 +54,15 @@
     "src/editTransaction/index.ts",
     "src/editTransaction/isStrategyDisabled.ts",
     "src/editTransaction/isTransactionConfirmed.ts",
-    "src/operation.ts"
+    "src/fixtures/common.fixtures.ts",
+    "src/operation.ts",
+    "src/supportedFeatures.ts"
   ],
-  "ignoreUnresolved": ["@jest/expect-utils", "@jest/get-type", "jest-util"],
-  "ignoreUnused": []
+  "ignoreUnresolved": [
+    "@jest/expect-utils",
+    "@jest/get-type",
+    "@ledgerhq/coin-bitcoin/chain-adapters/zcash/ZCash",
+    "jest-util"
+  ],
+  "ignoreUnused": ["@ledgerhq/zcash-utils"]
 }

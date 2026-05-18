@@ -1,4 +1,5 @@
 import type {
+  GetAppAndVersionResponse,
   GetDeviceMetadataDAOutput,
   InstallOrUpdateAppsDAOutput,
   OpenAppWithDependenciesDAError,
@@ -16,6 +17,7 @@ export type ConnectAppDAOutput = {
   readonly installResult?: InstallOrUpdateAppsDAOutput;
   readonly derivation?: ConnectAppDerivation;
   readonly deviceDeprecation?: DeviceDeprecationRules;
+  readonly currentApp?: GetAppAndVersionResponse;
 };
 
 export type ConnectAppDAInput = OpenAppWithDependenciesDAInput & {
@@ -104,6 +106,7 @@ export type ConnectAppDAIntermediateValue = {
   installPlan: InstallPlan | null;
   deviceId?: Uint8Array;
   deviceDeprecation: DeviceDeprecationRules | undefined;
+  deviceMetadata: GetDeviceMetadataDAOutput | undefined;
 };
 
 export type ConnectAppDAState = DeviceActionState<

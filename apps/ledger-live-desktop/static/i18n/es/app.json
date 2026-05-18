@@ -308,6 +308,7 @@
     "exchange" : "Comprar / Vender",
     "swap" : "Permutar",
     "perps" : "Perpetuos",
+    "borrow" : "Pedir un préstamo",
     "home" : "Inicio",
     "refer" : "Refer a friend",
     "lend" : "Prestar",
@@ -785,6 +786,9 @@
         }
       }
     }
+  },
+  "borrow" : {
+    "pageHeader" : "Pedir un préstamo"
   },
   "exchange" : {
     "pageHeader" : "Comprar o vender",
@@ -1334,6 +1338,33 @@
     "widget" : {
       "title" : "A continuación, termina de configurar la wallet",
       "subtitle" : "Para empezar, agrega fondos a tu wallet."
+    },
+    "dialog" : {
+      "title" : "A continuación, termina de configurar la wallet",
+      "titleCompleted" : "Todo listo.",
+      "primaryLabel" : "Entendido",
+      "actionCompletedLabel" : "Completo",
+      "actions" : {
+        "deviceOnboarded" : {
+          "title" : "Configurar tu Ledger"
+        },
+        "assetsTransfer" : {
+          "title" : "Agregar criptomonedas",
+          "description" : "Recibe o compra cripto para agregar fondos a tu wallet"
+        },
+        "syncAccounts" : {
+          "title" : "Sincroniza tu wallet",
+          "description" : "Mantén tus cuentas cripto sincronizadas"
+        },
+        "customImage" : {
+          "title" : "Personalizar la pantalla de bloqueo",
+          "description" : "Exhibe tu ilustración digital o foto favoritos como pantalla de bloqueo de tu dispositivo."
+        },
+        "recover" : {
+          "title" : "Termina de proteger tu copia de respaldo",
+          "description" : "Completa la activación de Ledger Recover"
+        }
+      }
     },
     "postOnboardingScreen" : {
       "title" : "¿Y ahora qué?",
@@ -4212,6 +4243,8 @@
         "activeTooltip" : "Los importes delegados generan recompensas",
         "inactiveTooltip" : "Los importes no delegados no generan recompensas",
         "minSafeWarning" : "No hay fondos suficientes",
+        "commission" : "Comisión",
+        "totalStake" : "Participación total",
         "flow" : {
           "title" : "Delegar",
           "steps" : {
@@ -4226,7 +4259,8 @@
               "title" : "Importe"
             },
             "validator" : {
-              "title" : "Validadores"
+              "title" : "Validadores",
+              "noResults" : "No hay ningún validador que coincida con tu búsqueda"
             },
             "connectDevice" : {
               "title" : "Dispositivo"
@@ -4248,7 +4282,35 @@
       },
       "undelegation" : {
         "header" : "Desdelegaciones",
-        "inactiveTooltip" : "Los importes desdelegados no generan recompensas."
+        "headerTooltip" : "Disponible después de un bloqueo temporal de {{numberOfDays}} días",
+        "inactiveTooltip" : "Los importes desdelegados no generan recompensas.",
+        "flow" : {
+          "title" : "Dejar de poner en participación",
+          "steps" : {
+            "amount" : {
+              "title" : "Importe",
+              "subtitle" : "El proceso de desdelegación tarda <0>{{numberOfDays}} días</0> en finalizar.",
+              "warningWithTimelock" : "Las recompensas se reclamarán automáticamente. Los montos no delegados volverán al saldo disponible luego del <0>bloqueo de tiempo de{{numberOfDays}}días</0>.",
+              "warningInstant" : "Las recompensas se reclamarán automáticamente. La cantidad que dejes de delegar estará disponible inmediatamente en tu saldo.",
+              "fields" : {
+                "validator" : "Validador",
+                "amount" : "Importe a desdelegar"
+              }
+            },
+            "connectDevice" : {
+              "title" : "Dispositivo"
+            },
+            "confirmation" : {
+              "title" : "Confirmación",
+              "success" : {
+                "title" : "Has desdelegado con éxito tus activos.",
+                "description" : "<0>{{amount}}</0> fueron desdelegados de <0>{{validator}}</0>.",
+                "cta" : "Ver detalles"
+              },
+              "broadcastError" : "Tu transacción puede haber fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
+            }
+          }
+        }
       }
     }
   },
@@ -4635,7 +4697,7 @@
       "walletSyncDesc" : "Sincroniza tus cuentas de cripto de Ledger Wallet entre distintos teléfonos y PCs.",
       "walletSyncDescription" : "Mantén tu portfolio actualizado al cambiar de PC o si usas un móvil",
       "mevProtection" : "Protección contra MEV",
-      "mevProtectionDesc" : "Activa la Protección contra MEV para lograr transacciones más fiables en Ethereum.",
+      "mevProtectionDesc" : "Activa la Protección contra MEV para lograr transacciones más fiables.",
       "mevProtectionLearnMore" : "Aviso de privacidad"
     },
     "developer" : {
@@ -4802,6 +4864,17 @@
         "openDrawer" : "Abrir drawer",
         "debugDialog" : "Diálogo de depuración",
         "debugDuplicates" : "Depurar duplicados"
+      },
+      "featuresAndFlowsDevTool" : {
+        "title" : "Características y flujos",
+        "description" : "Herramientas para desarrolladores para flujos relacionados con características.",
+        "productTour" : {
+          "title" : "Recorrido por el producto",
+          "label" : "Recorrido por el producto",
+          "completed" : "El recorrido del producto se marca como completado.",
+          "notCompleted" : "El tour del producto no ha finalizado todavía.",
+          "open" : "Abrir"
+        }
       },
       "walletFeaturesDevTool" : {
         "title" : "Herramienta de desarrollo de funciones de wallet",
@@ -6300,6 +6373,9 @@
     "CeloAllFundsWarning" : {
       "title" : "Asegúrate de que tienes un saldo restante suficiente para cubrir las tarifas de transacciones futuras"
     },
+    "CeloGroupNotVotable" : {
+      "title" : "Este grupo de validadores no puede recibir votos. Puede que esté lleno o que ya no sea elegible."
+    },
     "ClaimRewardsFeesWarning" : {
       "title" : "Las recompensas son inferiores a las tarifas estimadas para reclamarlas",
       "description" : ""
@@ -7137,6 +7213,9 @@
       "title" : "Sesión expirada",
       "description" : "La sesión de la aplicación Concordium ID ya no está activa. Empareja de nuevo."
     },
+    "ConcordiumAddressVerificationFailedError" : {
+      "title" : "La verificación de la dirección ha fallado"
+    },
     "StacksMemoTooLong" : {
       "title" : "El memo es demasiado largo"
     },
@@ -7337,6 +7416,9 @@
     "AleoFeeRecordInsufficientBalance" : {
       "title" : "Ningún registro privado puede cubrir la tarifa de red.",
       "description" : "Selecciona un registro diferente para la transferencia o recarga tu saldo con fondos adicionales."
+    },
+    "AleoApiConfigurationResetError" : {
+      "title" : "Se ha restablecido la configuración del escáner de registros. Sincroniza tu cuenta de nuevo."
     },
     "BackupAppDataError" : {
       "title" : "Error al hacer la copia de respaldo de datos de la aplicación"
@@ -8258,6 +8340,12 @@
       "description" : "Opera con apalancamiento",
       "cta" : "Discover"
     },
+    "borrowEntry" : {
+      "title" : "Préstamos",
+      "cardTitle" : "Pedir moneda estable prestada",
+      "cardDescription" : "Desbloquear liquidez",
+      "cta" : "Explorar"
+    },
     "noDeviceTitle" : "Tu wallet cripto segura"
   },
   "marketBanner" : {
@@ -8537,7 +8625,8 @@
       "mandatoryPrivateSync" : {
         "title" : "Sincronizando tu saldo privado ({{percentage}}%)",
         "desc" : "Espera",
-        "error" : "La sincronización privada ha fallado. Inténtalo de nuevo más tarde."
+        "errorTitle" : "La sincronización privada ha fallado.",
+        "errorDesc" : "Algo salió mal, por favor inténtalo de nuevo"
       }
     }
   },
@@ -8565,6 +8654,17 @@
     "cta" : {
       "continue" : "Continuar",
       "explore" : "Explorar mi nuevo portfolio"
+    }
+  },
+  "productTour" : {
+    "cta" : {
+      "continue" : "Continuar",
+      "done" : "Listo",
+      "fundYourWallet" : "Agrega fondos a tu wallet",
+      "discoverSwap" : "Descubre permutas",
+      "growYourRewards" : "Haz crecer tus recompensas",
+      "spendYourCrypto" : "Gasta tus cripto",
+      "everythingAtAGlance" : "Todo de un vistazo"
     }
   },
   "history" : {
@@ -8605,6 +8705,12 @@
     }
   },
   "myWallet" : {
+    "title" : "Mi wallet",
+    "avatar" : {
+      "label" : "Avatar",
+      "labelWithNotifications_one" : "Avatar, {{count}} notificaciones sin ver",
+      "labelWithNotifications_other" : "Avatar, {{count}} notificaciones sin ver"
+    },
     "actionsList" : {
       "help" : "Ayuda",
       "recover" : "[L] Recover",
@@ -8615,5 +8721,8 @@
       "description" : "Gestiona tu dispositivo Ledger"
     },
     "explore" : "Explora todos los dispositivos Ledger"
+  },
+  "assetDetails" : {
+    "totalBalance" : "Saldo total"
   }
 }

@@ -1,0 +1,3 @@
+export const DEFAULT_MAX_DECIMALS = 8;
+
+export const COUNTERVALUE_MAX_DECIMALS = 7;

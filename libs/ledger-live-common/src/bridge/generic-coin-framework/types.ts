@@ -40,6 +40,22 @@ export type GasOptionsRaw = {
   [key in Strategy]: FeeDataRaw;
 };
 
+export const GENERIC_TRANSACTION_MODE = [
+  "send",
+  "changeTrust",
+  "send-legacy",
+  "send-eip1559",
+  "delegate",
+  "redelegate",
+  "stake",
+  "undelegate",
+  "unstake",
+  "finalize_unstake",
+  "claimReward",
+] as const;
+
+export type GenericTransactionMode = (typeof GENERIC_TRANSACTION_MODE)[number];
+
 export type GenericTransaction = TransactionCommon & {
   family: string;
   fees?: BigNumber | null;
@@ -52,16 +68,7 @@ export type GenericTransaction = TransactionCommon & {
   memoType?: string | null;
   memoValue?: string | null;
   data?: Buffer;
-  mode?:
-    | "send"
-    | "changeTrust"
-    | "send-legacy"
-    | "send-eip1559"
-    | "delegate"
-    | "redelegate"
-    | "stake"
-    | "undelegate"
-    | "unstake";
+  mode?: GenericTransactionMode;
   type?: number | null;
   assetReference?: string;
   assetOwner?: string;
@@ -91,16 +98,7 @@ export type GenericTransactionRaw = TransactionCommonRaw & {
   memoType?: string | null;
   memoValue?: string | null;
   data?: string;
-  mode?:
-    | "send"
-    | "changeTrust"
-    | "send-legacy"
-    | "send-eip1559"
-    | "delegate"
-    | "redelegate"
-    | "stake"
-    | "undelegate"
-    | "unstake";
+  mode?: GenericTransactionMode;
   type?: number | null;
   assetReference?: string | null;
   assetOwner?: string | null;

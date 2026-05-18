@@ -75,7 +75,7 @@ export const StepConfirmationFooter = ({
   onClose,
   optimisticOperation,
 }: StepProps) => (
-  <Box horizontal alignItems="right">
+  <Box horizontal justifyContent="flex-end">
     <Button data-testid="modal-close-button" ml={2} onClick={onClose}>
       <Trans i18nKey="common.close" />
     </Button>

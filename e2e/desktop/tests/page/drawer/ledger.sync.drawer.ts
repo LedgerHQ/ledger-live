@@ -20,8 +20,11 @@ export class LedgerSyncDrawer extends Drawer {
     "Your Ledger Wallet app on CLI is no longer connected to Ledger Sync",
   );
   private displayInstances = this.page.getByTestId("walletSync-manage-instances-label");
-  private removeCLI = this.page.getByTestId("walletSync-manage-instance-CLI").getByText("Remove");
-  private fromNowOnYourPortfolioIsSyncedText = this.page.getByText("From now on, your portfolio");
+  private readonly cliMember = this.page.getByTestId("walletSync-manage-instance-CLI");
+  private readonly removeCLI = this.cliMember.getByText("Remove");
+  private readonly synchronizationSuccessText = this.page.getByText(
+    /From now on, your portfolio|Sync successful!/,
+  );
 
   @step("Synchronize accounts")
   async syncAccounts() {
@@ -52,6 +55,12 @@ export class LedgerSyncDrawer extends Drawer {
 
   async waitForDeleteSyncButton() {
     await this.deleteSyncButton.waitFor({ state: "visible" });
+  }
+
+  @step("Check if Ledger Sync management drawer is visible")
+  async expectLedgerSyncManagementVisible() {
+    await expect(this.deleteSyncButton).toBeVisible();
+    await expect(this.displayInstances).toBeVisible();
   }
 
   @step("Delete Sync")
@@ -86,7 +95,7 @@ export class LedgerSyncDrawer extends Drawer {
 
   @step("Check if synchronization was successful")
   async expectSynchronizationSuccess() {
-    await expect(this.fromNowOnYourPortfolioIsSyncedText).toBeVisible();
+    await expect(this.synchronizationSuccessText).toBeVisible();
   }
 
   @step("Check if the backup deletion was successful")
@@ -109,6 +118,16 @@ export class LedgerSyncDrawer extends Drawer {
   @step("Remove ClI member")
   async removeCLIMember() {
     await this.removeCLI.click();
+  }
+
+  @step("Check if the CLI member is visible")
+  async expectCLIMemberVisible() {
+    await expect(this.cliMember).toBeVisible();
+  }
+
+  @step("Check if the CLI member is not visible")
+  async expectCLIMemberRemoved() {
+    await expect(this.cliMember).not.toBeVisible();
   }
 
   @step("Check if the member removal was successful")

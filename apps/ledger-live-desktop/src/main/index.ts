@@ -26,7 +26,7 @@ import { setupTransportHandlers, cleanupTransports } from "./transportHandler";
 import {
   setupZcashNativeHost,
   cleanupZcashNativeHost,
-} from "@ledgerhq/zcash-shielded/ipc/main-host";
+} from "@ledgerhq/coin-bitcoin/chain-adapters/zcash/ipc/main-host";
 import { setupWebviewHandlers } from "./webviewHandlers";
 // End import timing, start initialization
 console.timeEnd("T-imports");
@@ -125,7 +125,7 @@ app.on("ready", async () => {
 
   // Set up ZCash native host: lazy-spawn a UtilityProcess hosting the
   // napi-rs engine, bridged to the renderer via IPC.
-  // See @ledgerhq/zcash-shielded/ipc/main-host.
+  // See @ledgerhq/coin-bitcoin/chain-adapters/zcash/ipc/main-host.
   setupZcashNativeHost();
 
   /**

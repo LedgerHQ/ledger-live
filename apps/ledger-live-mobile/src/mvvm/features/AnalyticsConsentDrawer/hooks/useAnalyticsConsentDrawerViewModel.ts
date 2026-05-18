@@ -7,7 +7,6 @@ import {
   analyticsConsentInfoSelector,
   analyticsEnabledSelector,
   hasCompletedOnboardingSelector,
-  personalizedRecommendationsEnabledSelector,
 } from "~/reducers/settings";
 import {
   setAnalytics,
@@ -44,9 +43,6 @@ export function useAnalyticsConsentDrawerViewModel() {
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const consentInfo = useSelector(analyticsConsentInfoSelector);
   const analyticsEnabled = useSelector(analyticsEnabledSelector);
-  const personalizedRecommendationsEnabled = useSelector(
-    personalizedRecommendationsEnabledSelector,
-  );
 
   const needsUpdatePrivacy = needsPrivacyPolicyAck(consentInfo.privacyPolicyVersion, policyVersion);
   const needsRenewal = needsConsentRenewal(consentInfo.consentDate, consentValidityDays);
@@ -113,8 +109,6 @@ export function useAnalyticsConsentDrawerViewModel() {
   }, [dispatch, persistConsentCompletion, handleCloseDrawer, policyVersion]);
 
   const applyOptOut = useCallback(async () => {
-    const isPreviouslyOptedOutCompletely = !analyticsEnabled && !personalizedRecommendationsEnabled;
-    const trackMandatory = !isPreviouslyOptedOutCompletely;
     track(
       "button_clicked",
       {
@@ -122,27 +116,24 @@ export function useAnalyticsConsentDrawerViewModel() {
         page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
         privacyPolicyVersion: policyVersion,
       },
-      trackMandatory,
+      true,
     );
     dispatch(setAnalytics(false));
     dispatch(setPersonalizedRecommendations(false));
     await persistConsentCompletion();
     handleCloseDrawer();
-  }, [
-    analyticsEnabled,
-    dispatch,
-    handleCloseDrawer,
-    personalizedRecommendationsEnabled,
-    persistConsentCompletion,
-    policyVersion,
-  ]);
+  }, [dispatch, handleCloseDrawer, persistConsentCompletion, policyVersion]);
 
   const onPrivacyGotIt = useCallback(async () => {
-    track("button_clicked", {
-      button: "analytics_consent_privacy_got_it",
-      page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
-      privacyPolicyVersion: policyVersion,
-    });
+    track(
+      "button_clicked",
+      {
+        button: "analytics_consent_privacy_got_it",
+        page: ANALYTICS_CONSENT_DRAWER_ANALYTICS_PAGE,
+        privacyPolicyVersion: policyVersion,
+      },
+      true,
+    );
     dispatch(
       setAnalyticsConsentInfo({
         consentDate: new Date().toISOString(),

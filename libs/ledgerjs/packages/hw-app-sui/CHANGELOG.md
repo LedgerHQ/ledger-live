@@ -1,5 +1,51 @@
 # @ledgerhq/hw-app-sui
 
+## 1.11.0
+
+### Minor Changes
+
+- [#15767](https://github.com/LedgerHQ/ledger-live/pull/15767) [`7e1c22a`](https://github.com/LedgerHQ/ledger-live/commit/7e1c22ab71cae31784a5414c471392951ae32de6) Thanks [@ishaba](https://github.com/ishaba)! - chore: revert upstream bundle workaround, upgrade to 0.8.0
+
+### Patch Changes
+
+- Updated dependencies [[`d308b1a`](https://github.com/LedgerHQ/ledger-live/commit/d308b1a6b9c629839f051cf367a527f4232120c7)]:
+  - @ledgerhq/errors@6.35.0
+  - @ledgerhq/devices@8.14.2
+
+## 1.11.0-next.0
+
+### Minor Changes
+
+- [#15767](https://github.com/LedgerHQ/ledger-live/pull/15767) [`7e1c22a`](https://github.com/LedgerHQ/ledger-live/commit/7e1c22ab71cae31784a5414c471392951ae32de6) Thanks [@ishaba](https://github.com/ishaba)! - chore: revert upstream bundle workaround, upgrade to 0.8.0
+
+### Patch Changes
+
+- Updated dependencies [[`d308b1a`](https://github.com/LedgerHQ/ledger-live/commit/d308b1a6b9c629839f051cf367a527f4232120c7)]:
+  - @ledgerhq/errors@6.35.0-next.0
+  - @ledgerhq/devices@8.14.2-next.0
+
+## 1.10.1
+
+### Patch Changes
+
+- Updated dependencies [[`202cc42`](https://github.com/LedgerHQ/ledger-live/commit/202cc423b09662b5b25012b84124aecd4dc7245d)]:
+  - @ledgerhq/errors@6.34.1
+  - @ledgerhq/devices@8.14.2
+  - @ledgerhq/hw-transport@6.35.2
+  - @ledgerhq/hw-bolos@6.36.2
+  - @ledgerhq/ledger-cal-service@1.16.1
+
+## 1.10.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`202cc42`](https://github.com/LedgerHQ/ledger-live/commit/202cc423b09662b5b25012b84124aecd4dc7245d)]:
+  - @ledgerhq/errors@6.34.1-hotfix.0
+  - @ledgerhq/devices@8.14.2-hotfix.0
+  - @ledgerhq/hw-transport@6.35.2-hotfix.0
+  - @ledgerhq/hw-bolos@6.36.2-hotfix.0
+  - @ledgerhq/ledger-cal-service@1.16.1-hotfix.0
+
 ## 1.10.0
 
 ### Minor Changes

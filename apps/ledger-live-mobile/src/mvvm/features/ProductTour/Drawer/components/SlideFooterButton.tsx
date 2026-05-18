@@ -5,11 +5,12 @@ import type { ProductTourPrimaryAction } from "../const";
 
 interface SlideFooterButtonProps {
   readonly onPrimaryAction: (action: ProductTourPrimaryAction) => void;
+  readonly onComplete: () => void;
 }
 
-export const SlideFooterButton = ({ onPrimaryAction }: SlideFooterButtonProps) => {
+export const SlideFooterButton = ({ onPrimaryAction, onComplete }: SlideFooterButtonProps) => {
   const { primaryLabel, secondaryLabel, handleCTA, handleContinue } = useSlideFooterButtonViewModel(
-    { onPrimaryAction },
+    { onPrimaryAction, onComplete },
   );
 
   return (

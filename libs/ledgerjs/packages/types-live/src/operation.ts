@@ -54,6 +54,8 @@ export type OperationType =
   | "STAKE"
   | "UNSTAKE"
   | "WITHDRAW_UNSTAKED"
+  // TEZOS
+  | "FINALIZE_UNSTAKE"
   // SOLANA
   | "BURN"
   // HEDERA

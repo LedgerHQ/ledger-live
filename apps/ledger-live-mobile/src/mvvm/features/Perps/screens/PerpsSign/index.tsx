@@ -48,12 +48,14 @@ function ConnectDeviceAction({
   device,
   onResult,
   onClose,
+  onOpenManager,
 }: Readonly<{
   action: PerpsSignViewModel["action"];
   request: PerpsSignViewModel["request"];
   device: Device;
   onResult: (result: AppResult) => void;
   onClose: () => void;
+  onOpenManager: () => void;
 }>) {
   return (
     <Box lx={{ alignItems: "center" }} testID="device-action-modal">
@@ -72,6 +74,7 @@ function ConnectDeviceAction({
           onResult={onResult}
           analyticsPropertyFlow="perps sign"
           onClose={onClose}
+          onOpenManager={onOpenManager}
         />
       </Box>
     </Box>
@@ -91,6 +94,7 @@ export function PerpsSignView({
   handleAppResult,
   handleDrawerClose,
   handleDrawerHidden,
+  handleOpenManager,
   requestToSetHeaderOptions,
 }: Readonly<PerpsSignViewModel>) {
   return (
@@ -121,6 +125,7 @@ export function PerpsSignView({
                 device={selectedDevice}
                 onResult={handleAppResult}
                 onClose={handleDrawerClose}
+                onOpenManager={handleOpenManager}
               />
             )
           )}

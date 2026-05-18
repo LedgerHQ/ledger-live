@@ -64,4 +64,3 @@ export const replaceAccounts = createAction<AccountsReplacePayload>(
   AccountsActionTypes.SET_ACCOUNTS,
 );
 
-export const cleanCache = createAction(AccountsActionTypes.CLEAN_CACHE);

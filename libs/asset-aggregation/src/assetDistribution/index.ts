@@ -1,5 +1,12 @@
 export { buildAssetDistribution } from "./buildAssetDistribution";
 export { toSlug } from "./toSlug";
+export { resolveDistributionItem } from "./resolveDistributionItem";
+export type {
+  DistributionLookup,
+  MarketStateSlice,
+  ResolveDistributionItemParams,
+} from "./resolveDistributionItem";
+export { buildMainAccountByIdMap, lookupParentAccountFromMap } from "./parentAccountLookup";
 export type {
   AssetsDataLike,
   BuildAssetDistributionOpts,

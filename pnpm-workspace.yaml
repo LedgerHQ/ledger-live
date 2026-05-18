@@ -1,5 +1,6 @@
 packages:
   - "apps/*"
+  - "apps/wallet-cli/npm/*"
   - "e2e/*"
   - "features/*"
   - "libs/*"
@@ -20,10 +21,10 @@ packages:
 catalog:
   "@jest/globals": 30.2.0
   "@ledgerhq/context-module": 1.17.1
-  "@ledgerhq/crypto-icons": "2.0.1"
-  "@ledgerhq/device-management-kit": 1.4.0
+  "@ledgerhq/crypto-icons": "2.0.3"
+  "@ledgerhq/device-management-kit": 1.4.1
   "@ledgerhq/device-signer-kit-concordium": 0.3.0
-  "@ledgerhq/device-signer-kit-ethereum": 1.15.0
+  "@ledgerhq/device-signer-kit-ethereum": 1.15.1
   "@ledgerhq/device-signer-kit-hyperliquid": 1.0.2
   "@ledgerhq/device-signer-kit-solana": 1.8.0
   "@ledgerhq/device-signer-kit-cosmos": 1.0.0
@@ -33,10 +34,11 @@ catalog:
   "@ledgerhq/signer-utils": 1.2.0
   "@ledgerhq/device-transport-kit-web-hid": 1.2.3
   "@ledgerhq/speculos-device-controller": 0.2.3
-  "@ledgerhq/lumen-design-core": 0.1.12
-  "@ledgerhq/lumen-ui-react": 0.1.30
-  "@ledgerhq/lumen-ui-rnative": 0.1.29
-  "@ledgerhq/lumen-ui-react-visualization": 0.1.8
+  "@ledgerhq/lumen-design-core": 0.1.14
+  "@ledgerhq/lumen-ui-react": 0.1.32
+  "@ledgerhq/lumen-ui-rnative": 0.1.33
+  "@ledgerhq/lumen-ui-rnative-visualization": 0.1.10
+  "@ledgerhq/lumen-ui-react-visualization": 0.1.10
   "@ledgerhq/zcash-utils": 0.2.0
   # React Native
   react-native: 0.79.7

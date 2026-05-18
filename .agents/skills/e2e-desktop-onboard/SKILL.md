@@ -30,8 +30,8 @@ Work through each phase sequentially. For each check, run the shell command, rep
 
 | Tool | Source of truth | How to read                |
 | ---- | --------------- | -------------------------- |
-| Node | `.prototools`   | `grep "^node" .prototools` |
-| pnpm | `.prototools`   | `grep "^pnpm" .prototools` |
+| Node | `mise.toml`     | `grep "^node" mise.toml`   |
+| pnpm | `mise.toml`     | `grep "^pnpm" mise.toml`   |
 
 First, read the config files to determine expected versions. Then run these checks:
 
@@ -39,29 +39,27 @@ First, read the config files to determine expected versions. Then run these chec
 | -------------- | ------------------------------ | ----------------------------------------------- |
 | Docker         | `docker --version`             | Installed (required -- Speculos runs in Docker) |
 | Docker running | `docker info > /dev/null 2>&1` | Docker Desktop is running                       |
-| Proto          | `proto --version`              | Installed (recommended, not required)           |
+| Mise           | `mise --version`               | Installed (required)                            |
 | Node           | `node --version`               | See version policy below                        |
 | pnpm           | `pnpm --version`               | See version policy below                        |
-| mise           | `mise --version`               | Installed (required)                            |
 
 **Node / pnpm version policy:**
 
-`.prototools` is the source of truth for the **recommended** versions. The check should:
+The `[tools]` section in `mise.toml` is the source of truth for the **recommended** versions. The check should:
 
 - **PASS** if the active version matches the pinned version exactly.
 - **WARN** if the active major version matches but the minor/patch differs (e.g. pinned `22.13.1`, active `22.14.0`). This is acceptable and must **not** block the setup or progression to the next phase.
 - **FAIL** only if the active major version is different or older than the pinned major version (e.g. pinned Node 22, active Node 20). Only **FAIL** results are hard blockers that must be resolved before proceeding.
 
-Do not fail just because the binary path is not under `~/.proto/`. The version is what matters, not the install method. If Proto is installed, suggest running `proto use` from the repo root to align versions.
+The version is what matters, not how Node or pnpm were installed. If versions drift, suggest running `mise install` from the repo root (after [installing mise](https://mise.jdx.dev/getting-started.html)).
 
 **Fix commands for common failures:**
 
 - Docker: Install Docker Desktop from https://www.docker.com/products/docker-desktop/
 - Docker not running: Open Docker Desktop and wait for it to start
-- Proto: `curl -fsSL https://moonrepo.dev/install/proto.sh | bash` then `proto use` from repo root
 - Mise: `curl https://mise.run | sh` then `mise install` from repo root
 
-**Do not proceed to Phase 2 until all relevant FAIL-level checks are resolved.** WARN-only results (Proto absence, Node/pnpm minor/patch drift) should be surfaced but must not block progression.
+**Do not proceed to Phase 2 until all relevant FAIL-level checks are resolved.** WARN-only results (Node/pnpm minor/patch drift versus `mise.toml`) should be surfaced but must not block progression.
 
 ---
 
@@ -263,7 +261,7 @@ Use `⚠️ manual` for the smoke test row when the GUI fallback was triggered (
 | Check                  | Status              |
 | ---------------------- | ------------------- |
 | Docker                 | ✅ / ❌             |
-| Proto / Node / pnpm    | ✅ / ❌             |
+| Mise / Node / pnpm    | ✅ / ❌             |
 | Environment variables  | ✅ / ❌             |
 | Speculos image         | ✅ / ❌             |
 | Dependencies installed | ✅ / ❌             |

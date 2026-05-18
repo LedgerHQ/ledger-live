@@ -8,8 +8,13 @@ jest.mock("~/datadog/renderer", () => ({
   isDatadogAvailable: jest.fn().mockReturnValue(true),
 }));
 
+jest.mock("~/datadog/logs", () => ({
+  initDatadogLogs: jest.fn().mockReturnValue(true),
+}));
+
 const initDatadog = jest.mocked(jest.requireMock("~/datadog/renderer").initDatadog);
 const isDatadogAvailable = jest.mocked(jest.requireMock("~/datadog/renderer").isDatadogAvailable);
+const initDatadogLogs = jest.mocked(jest.requireMock("~/datadog/logs").initDatadogLogs);
 
 describe("ConnectEnvsToDatadog", () => {
   beforeEach(() => {
@@ -52,6 +57,19 @@ describe("ConnectEnvsToDatadog", () => {
       expect.objectContaining({}),
       expect.anything(),
     );
+  });
+
+  it("should call initDatadogLogs with a shouldSend callback under the same gating", async () => {
+    render(<ConnectEnvsToDatadog />, {
+      initialState: {
+        ...withFlagOverrides({ lldDatadog: { enabled: true, params: {} } }),
+        settings: {
+          sentryLogs: true,
+        },
+      },
+    });
+    await new Promise(r => setImmediate(r));
+    expect(initDatadogLogs).toHaveBeenCalledWith(expect.any(Function));
   });
 
   it("should pass shouldSend that reads current store so opt-out is respected after init", async () => {

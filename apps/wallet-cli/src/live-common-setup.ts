@@ -1,5 +1,6 @@
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client";
 import { setSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
+import type { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { walletCliConfig } from "./config";
 import { registerCoinModules } from "@ledgerhq/live-common/coin-modules/registry";
 import type { CoinModuleLoader } from "@ledgerhq/live-common/coin-modules/types";
@@ -79,9 +80,15 @@ const walletCliLoaders: CoinModuleLoader[] = [
   },
 ];
 
+export const WALLET_CLI_SUPPORTED_CRYPTO_CURRENCY_IDS: readonly CryptoCurrencyId[] = [
+  "bitcoin",
+  "ethereum",
+  "solana",
+];
+
 setWalletAPIVersion(WALLET_API_VERSION);
 registerCoinModules(walletCliLoaders);
-setSupportedCurrencies(["bitcoin", "ethereum", "solana"]);
+setSupportedCurrencies([...WALLET_CLI_SUPPORTED_CRYPTO_CURRENCY_IDS]);
 // Set config on the ESM singleton (used by alpacaized families like EVM whose
 // bridge code is reached through ESM imports).
 LiveConfig.setConfig(walletCliConfig);

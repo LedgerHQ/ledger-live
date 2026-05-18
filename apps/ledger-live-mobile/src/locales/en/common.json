@@ -1683,19 +1683,29 @@
   },
   "productTour": {
     "swap": {
-      "cta": "Discover swap"
+      "cta": "Discover Swap",
+      "title": "Swap without switching apps",
+      "subTitle": "Enjoy limitless trading on thousands of assets via our trusted swap partners."
     },
     "stake": {
-      "cta": "Discover earn"
+      "cta": "Discover Earn",
+      "title": "Enjoy rewards on your crypto",
+      "subTitle": "Put your crypto to work via Earn."
     },
     "card": {
-      "cta": "Get your card"
+      "cta": "Get a card",
+      "title": "Spend crypto in real life",
+      "subTitle": "Pay with your crypto card and earn cashback, online or in-store"
     },
     "portfolio": {
-      "cta": "View your portfolio"
+      "cta": "View your portfolio",
+      "title": "Stay ahead of the market",
+      "subTitle": "Keep track of your assets, rewards, and market trends easily."
     },
-    "done": {
-      "cta": "Start again"
+    "fund": {
+      "cta": "Fund your wallet",
+      "title": "Start by funding your wallet",
+      "subTitle": "Fund your Ledger Wallet your way — transfer, buy, or convert cash to stablecoins."
     }
   },
   "discover": {
@@ -8705,6 +8715,12 @@
       "justNow": "just now",
       "error": "Unable to load price performance"
     },
+    "transactions": {
+      "title": "Transactions"
+    },
+    "fallbackBanner": {
+      "title": "Swap and Buy are not supported for this asset."
+    },
     "balanceDetails": {
       "totalBalance": "Total balance",
       "transfer": "Transfer",
@@ -8715,6 +8731,13 @@
       "earnBannerSubtitle": "Hold and earn with this asset",
       "earnBannerAction": "Go to Earn",
       "availableBalanceTooltip": "Funds available for immediate use, excluding staked or delegated amounts."
+    },
+    "coinOptions": {
+      "openMenuA11yLabel": "Coin options",
+      "addFavourite": "Add to favourites",
+      "removeFavourite": "Remove from favourites",
+      "hideFromPortfolio": "Hide from portfolio",
+      "showInPortfolio": "Show in portfolio"
     }
   },
   "assetSelection": {

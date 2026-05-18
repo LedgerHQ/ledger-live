@@ -14,20 +14,11 @@ import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { type Operation } from "@ledgerhq/types-live";
 import type { SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { getAccountBalances, getOperations, getStakesRaw } from "../network";
-import { AccountBalance, DEFAULT_COIN_TYPE } from "../network/sdk";
+import { BLOCK_HEIGHT } from "../constants";
+import { getAccountBalances, getOperations, getDelegatedStakes } from "../network";
+import { DEFAULT_COIN_TYPE } from "../network/sdk";
 import { SuiOperationExtra, SuiAccount } from "../types";
 
-/**
- * Get the shape of the account including its operations and balance.
- * @function getAccountShape
- * @param {Object} info - The information needed to retrieve the account shape.
- * @param {string} info.address - The address of the account.
- * @param {SuiAccount} info.initialAccount - The initial account data.
- * @param {Object} info.currency - The currency information.
- * @param {string} info.derivationMode - The derivation mode for the account.
- * @returns {Promise<Object>} A promise that resolves to the account shape including balance and operations.
- */
 export const getAccountShape: GetAccountShape<SuiAccount> = async (info, syncConfig) => {
   const { address, initialAccount, currency, derivationMode } = info;
 
@@ -40,12 +31,11 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async (info, syncCon
     derivationMode,
   });
 
-  let operations: Operation[] = [];
-  const stakes = await getStakesRaw(address, currency.id);
+  const stakes = await getDelegatedStakes(address, currency.id);
 
   let syncHash = initialAccount?.syncHash ?? latestHash(oldOperations);
   const newOperations = await getOperations(accountId, address, syncHash, undefined, currency.id);
-  operations = mergeOps(oldOperations, newOperations);
+  const operations = mergeOps(oldOperations, newOperations);
   syncHash = latestHash(operations);
 
   const mainAccountOperations = operations.filter(
@@ -54,24 +44,16 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async (info, syncCon
 
   const accountBalances = await getAccountBalances(address, currency.id);
   const balance =
-    accountBalances.find(({ coinType }) => coinType === DEFAULT_COIN_TYPE)?.balance ?? BigNumber(0);
+    accountBalances.find(({ coinType }) => coinType === DEFAULT_COIN_TYPE)?.balance ??
+    BigNumber(0);
 
-  const subAccountsBalances: AccountBalance[] = [];
-  for (const accountBalance of accountBalances) {
-    const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(
-      accountBalance.coinType,
-      currency.id,
-    );
-    if (token) {
-      subAccountsBalances.push(accountBalance);
-    }
-  }
-
+  // `buildSubAccounts` batches `findTokenByAddressInCurrency` lookups internally
+  // (concurrency 3); pre-filtering here would only serialise the same work.
   const subAccounts =
     (await buildSubAccounts({
       accountId,
       operations,
-      subAccountsBalances,
+      subAccountsBalances: accountBalances,
       syncConfig,
       currencyId: currency.id,
       subAccounts: initialAccount?.subAccounts ?? [],
@@ -83,7 +65,7 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async (info, syncCon
     balance,
     spendableBalance: balance,
     operationsCount: mainAccountOperations.length,
-    blockHeight: 5,
+    blockHeight: BLOCK_HEIGHT,
     subAccounts,
     suiResources: {
       stakes,
@@ -199,7 +181,7 @@ function buildSubAccount({
     operations: tokenOperations,
     creationDate:
       tokenOperations.length > 0 ? tokenOperations[tokenOperations.length - 1].date : new Date(),
-    blockHeight: 5,
+    blockHeight: BLOCK_HEIGHT,
     pendingOperations: initialTokenAccount?.pendingOperations || [],
     balanceHistoryCache: initialTokenAccount?.balanceHistoryCache || emptyHistoryCache,
     swapHistory: [],

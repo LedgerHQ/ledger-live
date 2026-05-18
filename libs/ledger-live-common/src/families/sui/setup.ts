@@ -16,9 +16,22 @@ const createSigner: CreateSigner<SuiSigner> = (transport: Transport) => {
   return new Sui(transport, "default_sui_scramble_key");
 };
 
+/**
+ * Module-level toggle for the `suiGraphqlTransport` feature flag. Set by the
+ * app at startup (via `useFeature` → `setSuiGraphqlEnabled`); read by every
+ * `getCurrencyConfig` call. Mirrors the `ldmkCosmosSigner` pattern.
+ */
+let _suiGraphqlEnabled = false;
+
+export const setSuiGraphqlEnabled = (enabled: boolean): void => {
+  _suiGraphqlEnabled = enabled;
+};
+
 const getCurrencyConfig = (currencyId?: string): SuiCoinConfig => {
   if (!currencyId) throw new Error("sui: currency not defined");
-  return getCurrencyConfiguration<SuiCoinConfig>(currencyId);
+  const base = getCurrencyConfiguration<SuiCoinConfig>(currencyId);
+  // `features.graphql` is owned by the central feature flag, not LiveConfig.
+  return { ...base, features: { graphql: _suiGraphqlEnabled } };
 };
 
 const bridge: Bridge<Transaction, SuiAccount, TransactionStatus> = createBridges(

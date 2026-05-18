@@ -128,7 +128,7 @@ export function genericPrepareTransaction(
 
       if (
         transaction.useAllAmount ||
-        ["stake", "unstake", "delegate", "undelegate", "redelegate"].includes(
+        ["stake", "unstake", "finalize_unstake", "delegate", "undelegate", "redelegate"].includes(
           transaction.mode ?? "",
         )
       ) {

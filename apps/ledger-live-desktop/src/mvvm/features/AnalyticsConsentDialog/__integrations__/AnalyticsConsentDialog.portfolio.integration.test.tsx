@@ -1,9 +1,9 @@
 import React from "react";
 import { Route, Routes } from "react-router";
-import { render, screen, waitFor, within } from "tests/testSetup";
+import { render, screen, waitFor } from "tests/testSetup";
 import { FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
-import { trackPage } from "~/renderer/analytics/segment";
+import { track, trackPage, updateIdentify } from "~/renderer/analytics/segment";
 import { AnalyticsConsentDialog } from "../index";
 
 const featureFlagsWithAnalyticsOptIn = {
@@ -49,296 +49,649 @@ function TestRouter() {
   );
 }
 
+const ANALYTICS_CONSENT_DIALOG_PAGE = "Analytics consent dialog";
+const FRESH_CONSENT_TITLE = "Help us improve Ledger";
+const RECONFIRM_TITLE = "Continue improving Ledger?";
+const PRIVACY_UPDATE_TITLE = "We're updating our privacy policy";
+
 describe("AnalyticsConsentDialog on portfolio route", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it("shows fresh consent when renewal is needed and share analytics is off", async () => {
-    render(<TestRouter />, {
-      initialRoute: "/",
-      initialState: {
-        featureFlags: featureFlagsWithAnalyticsOptIn,
-        settings: baseSettings({
-          shareAnalytics: false,
-          sharePersonalizedRecommandations: false,
-        }),
-      },
+  describe("needs fresh consent", () => {
+    describe("when analytics and recommendations are disabled", () => {
+      it("should opt in when the user accepts", async () => {
+        const { user, store } = render(<TestRouter />, {
+          initialRoute: "/",
+          initialState: {
+            featureFlags: featureFlagsWithAnalyticsOptIn,
+            settings: baseSettings({
+              shareAnalytics: false,
+              sharePersonalizedRecommandations: false,
+            }),
+          },
+        });
+
+        const title = await screen.findByRole("heading", { name: FRESH_CONSENT_TITLE });
+        expect(title).toBeVisible();
+        expect(screen.queryByRole("button", { name: /close/i })).not.toBeInTheDocument();
+        expect(trackPage).toHaveBeenCalledWith(
+          "AnalyticsConsentDialog",
+          "Analytics consent",
+          expect.objectContaining({
+            phase: "consentFresh",
+            type: "modal",
+          }),
+          true,
+          false,
+          true,
+        );
+
+        await user.click(screen.getByRole("button", { name: "Accept all" }));
+        expect(track).toHaveBeenCalledWith(
+          "button_clicked",
+          {
+            button: "analytics_consent_opt_in",
+            page: ANALYTICS_CONSENT_DIALOG_PAGE,
+            privacyPolicyVersion: 1,
+          },
+          true,
+        );
+
+        await waitFor(() => {
+          expect(title).not.toBeInTheDocument();
+        });
+        expect(store.getState().settings.shareAnalytics).toBe(true);
+        expect(store.getState().settings.sharePersonalizedRecommandations).toBe(true);
+        expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
+        expect(updateIdentify).toHaveBeenCalledWith({ force: true });
+      });
+
+      it("should opt out when the user refuses", async () => {
+        const { user, store } = render(<TestRouter />, {
+          initialRoute: "/",
+          initialState: {
+            featureFlags: featureFlagsWithAnalyticsOptIn,
+            settings: baseSettings({
+              shareAnalytics: false,
+              sharePersonalizedRecommandations: false,
+            }),
+          },
+        });
+
+        const title = await screen.findByRole("heading", { name: FRESH_CONSENT_TITLE });
+        expect(title).toBeVisible();
+        expect(trackPage).toHaveBeenCalledWith(
+          "AnalyticsConsentDialog",
+          "Analytics consent",
+          expect.objectContaining({
+            phase: "consentFresh",
+            type: "modal",
+          }),
+          true,
+          false,
+          true,
+        );
+
+        await user.click(screen.getByRole("button", { name: "Refuse all" }));
+        expect(track).toHaveBeenCalledWith(
+          "button_clicked",
+          {
+            button: "analytics_consent_opt_out",
+            page: ANALYTICS_CONSENT_DIALOG_PAGE,
+            privacyPolicyVersion: 1,
+          },
+          true,
+        );
+
+        await waitFor(() => {
+          expect(title).not.toBeInTheDocument();
+        });
+        expect(store.getState().settings.shareAnalytics).toBe(false);
+        expect(store.getState().settings.sharePersonalizedRecommandations).toBe(false);
+        expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
+        expect(updateIdentify).toHaveBeenCalledWith({ force: true });
+      });
+
+      it("should open preferences when the user chooses Set preferences", async () => {
+        const { user } = render(<TestRouter />, {
+          initialRoute: "/",
+          initialState: {
+            featureFlags: featureFlagsWithAnalyticsOptIn,
+            settings: baseSettings({
+              shareAnalytics: false,
+              sharePersonalizedRecommandations: false,
+            }),
+          },
+        });
+
+        const title = await screen.findByRole("heading", { name: FRESH_CONSENT_TITLE });
+        expect(title).toBeVisible();
+        expect(trackPage).toHaveBeenCalledWith(
+          "AnalyticsConsentDialog",
+          "Analytics consent",
+          expect.objectContaining({
+            phase: "consentFresh",
+            type: "modal",
+          }),
+          true,
+          false,
+          true,
+        );
+        const setPreferencesLink = screen.getByRole("link", { name: "Set preferences" });
+        expect(setPreferencesLink).toHaveAttribute("href", "#");
+
+        await user.click(setPreferencesLink);
+        expect(track).toHaveBeenCalledWith("button_clicked", {
+          button: "analytics_consent_set_preferences",
+          page: ANALYTICS_CONSENT_DIALOG_PAGE,
+        });
+
+        await waitFor(() => {
+          expect(screen.getByRole("heading", { name: "Set preferences" })).toBeVisible();
+        });
+        expect(trackPage).toHaveBeenCalledWith(
+          "AnalyticsConsentDialog",
+          "Analytics consent",
+          expect.objectContaining({
+            phase: "preferences",
+            type: "modal",
+          }),
+          true,
+          false,
+          true,
+        );
+        expect(screen.getByRole("button", { name: "Confirm" })).toBeVisible();
+      });
     });
 
-    expect(
-      await screen.findByRole("heading", { name: "Help us improve Ledger" }),
-    ).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /close/i })).not.toBeInTheDocument();
-    expect(trackPage).toHaveBeenCalledWith(
-      "AnalyticsConsentDialog",
-      "Analytics consent",
-      {
-        type: "modal",
-        phase: "consentFresh",
-      },
-      true,
-      false,
-      true,
-    );
+    describe("when analytics is disabled and recommendations are enabled", () => {
+      it("should opt in when the user accepts", async () => {
+        const { user, store } = render(<TestRouter />, {
+          initialRoute: "/",
+          initialState: {
+            featureFlags: featureFlagsWithAnalyticsOptIn,
+            settings: baseSettings({
+              shareAnalytics: false,
+              sharePersonalizedRecommandations: true,
+            }),
+          },
+        });
+
+        const title = await screen.findByRole("heading", { name: FRESH_CONSENT_TITLE });
+        expect(title).toBeVisible();
+        expect(trackPage).toHaveBeenCalledWith(
+          "AnalyticsConsentDialog",
+          "Analytics consent",
+          expect.objectContaining({
+            phase: "consentFresh",
+            type: "modal",
+          }),
+          true,
+          false,
+          true,
+        );
+
+        await user.click(screen.getByRole("button", { name: "Accept all" }));
+        expect(track).toHaveBeenCalledWith(
+          "button_clicked",
+          {
+            button: "analytics_consent_opt_in",
+            page: ANALYTICS_CONSENT_DIALOG_PAGE,
+            privacyPolicyVersion: 1,
+          },
+          true,
+        );
+
+        await waitFor(() => {
+          expect(title).not.toBeInTheDocument();
+        });
+        expect(store.getState().settings.shareAnalytics).toBe(true);
+        expect(store.getState().settings.sharePersonalizedRecommandations).toBe(true);
+        expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
+        expect(updateIdentify).toHaveBeenCalledWith({ force: true });
+      });
+
+      it("should opt out when the user refuses", async () => {
+        const { user, store } = render(<TestRouter />, {
+          initialRoute: "/",
+          initialState: {
+            featureFlags: featureFlagsWithAnalyticsOptIn,
+            settings: baseSettings({
+              shareAnalytics: false,
+              sharePersonalizedRecommandations: true,
+            }),
+          },
+        });
+
+        const title = await screen.findByRole("heading", { name: FRESH_CONSENT_TITLE });
+        expect(title).toBeVisible();
+        expect(trackPage).toHaveBeenCalledWith(
+          "AnalyticsConsentDialog",
+          "Analytics consent",
+          expect.objectContaining({
+            phase: "consentFresh",
+            type: "modal",
+          }),
+          true,
+          false,
+          true,
+        );
+
+        await user.click(screen.getByRole("button", { name: "Refuse all" }));
+        expect(track).toHaveBeenCalledWith(
+          "button_clicked",
+          {
+            button: "analytics_consent_opt_out",
+            page: ANALYTICS_CONSENT_DIALOG_PAGE,
+            privacyPolicyVersion: 1,
+          },
+          true,
+        );
+
+        await waitFor(() => {
+          expect(title).not.toBeInTheDocument();
+        });
+        expect(store.getState().settings.shareAnalytics).toBe(false);
+        expect(store.getState().settings.sharePersonalizedRecommandations).toBe(false);
+        expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
+        expect(updateIdentify).toHaveBeenCalledWith({ force: true });
+      });
+
+      it("should open preferences when the user chooses Set preferences", async () => {
+        const { user } = render(<TestRouter />, {
+          initialRoute: "/",
+          initialState: {
+            featureFlags: featureFlagsWithAnalyticsOptIn,
+            settings: baseSettings({
+              shareAnalytics: false,
+              sharePersonalizedRecommandations: true,
+            }),
+          },
+        });
+
+        const title = await screen.findByRole("heading", { name: FRESH_CONSENT_TITLE });
+        expect(title).toBeVisible();
+        expect(trackPage).toHaveBeenCalledWith(
+          "AnalyticsConsentDialog",
+          "Analytics consent",
+          expect.objectContaining({
+            phase: "consentFresh",
+            type: "modal",
+          }),
+          true,
+          false,
+          true,
+        );
+        const setPreferencesLink = screen.getByRole("link", { name: "Set preferences" });
+        expect(setPreferencesLink).toHaveAttribute("href", "#");
+
+        await user.click(setPreferencesLink);
+        expect(track).toHaveBeenCalledWith("button_clicked", {
+          button: "analytics_consent_set_preferences",
+          page: ANALYTICS_CONSENT_DIALOG_PAGE,
+        });
+
+        await waitFor(() => {
+          expect(screen.getByRole("heading", { name: "Set preferences" })).toBeVisible();
+        });
+        expect(trackPage).toHaveBeenCalledWith(
+          "AnalyticsConsentDialog",
+          "Analytics consent",
+          expect.objectContaining({
+            phase: "preferences",
+            type: "modal",
+          }),
+          true,
+          false,
+          true,
+        );
+        expect(screen.getByRole("button", { name: "Confirm" })).toBeVisible();
+      });
+    });
   });
 
-  it.each([
-    { shareAnalytics: false, sharePersonalizedRecommandations: false },
-    { shareAnalytics: true, sharePersonalizedRecommandations: false },
-    { shareAnalytics: false, sharePersonalizedRecommandations: true },
-    { shareAnalytics: true, sharePersonalizedRecommandations: true },
-  ])(
-    "tracks the consent dialog page as mandatory telemetry when consent is $shareAnalytics/$sharePersonalizedRecommandations",
-    async ({ shareAnalytics, sharePersonalizedRecommandations }) => {
-      render(<TestRouter />, {
+  describe("needs reconfirmation", () => {
+    describe("when analytics is enabled and recommendations are disabled", () => {
+      it("should keep analytics enabled when the user accepts", async () => {
+        const { user, store } = render(<TestRouter />, {
+          initialRoute: "/",
+          initialState: {
+            featureFlags: featureFlagsWithAnalyticsOptIn,
+            settings: baseSettings({
+              shareAnalytics: true,
+              sharePersonalizedRecommandations: false,
+            }),
+          },
+        });
+
+        const title = await screen.findByRole("heading", { name: RECONFIRM_TITLE });
+        expect(title).toBeVisible();
+        expect(trackPage).toHaveBeenCalledWith(
+          "AnalyticsConsentDialog",
+          "Analytics consent",
+          expect.objectContaining({
+            phase: "consentReconfirm",
+            type: "modal",
+          }),
+          true,
+          false,
+          true,
+        );
+
+        await user.click(screen.getByRole("button", { name: "Yes, continue" }));
+        expect(track).toHaveBeenCalledWith(
+          "button_clicked",
+          {
+            button: "analytics_consent_opt_in",
+            page: ANALYTICS_CONSENT_DIALOG_PAGE,
+            privacyPolicyVersion: 1,
+          },
+          true,
+        );
+
+        await waitFor(() => {
+          expect(title).not.toBeInTheDocument();
+        });
+        expect(store.getState().settings.shareAnalytics).toBe(true);
+        expect(store.getState().settings.sharePersonalizedRecommandations).toBe(true);
+        expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
+        expect(updateIdentify).toHaveBeenCalledWith({ force: true });
+      });
+
+      it("should opt out when the user refuses", async () => {
+        const { user, store } = render(<TestRouter />, {
+          initialRoute: "/",
+          initialState: {
+            featureFlags: featureFlagsWithAnalyticsOptIn,
+            settings: baseSettings({
+              shareAnalytics: true,
+              sharePersonalizedRecommandations: false,
+            }),
+          },
+        });
+
+        const title = await screen.findByRole("heading", { name: RECONFIRM_TITLE });
+        expect(title).toBeVisible();
+        expect(trackPage).toHaveBeenCalledWith(
+          "AnalyticsConsentDialog",
+          "Analytics consent",
+          expect.objectContaining({
+            phase: "consentReconfirm",
+            type: "modal",
+          }),
+          true,
+          false,
+          true,
+        );
+
+        await user.click(screen.getByRole("button", { name: "No, stop" }));
+        expect(track).toHaveBeenCalledWith(
+          "button_clicked",
+          {
+            button: "analytics_consent_opt_out",
+            page: ANALYTICS_CONSENT_DIALOG_PAGE,
+            privacyPolicyVersion: 1,
+          },
+          true,
+        );
+
+        await waitFor(() => {
+          expect(title).not.toBeInTheDocument();
+        });
+        expect(store.getState().settings.shareAnalytics).toBe(false);
+        expect(store.getState().settings.sharePersonalizedRecommandations).toBe(false);
+        expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
+        expect(updateIdentify).toHaveBeenCalledWith({ force: true });
+      });
+
+      it("should open preferences when the user chooses Set preferences", async () => {
+        const { user } = render(<TestRouter />, {
+          initialRoute: "/",
+          initialState: {
+            featureFlags: featureFlagsWithAnalyticsOptIn,
+            settings: baseSettings({
+              shareAnalytics: true,
+              sharePersonalizedRecommandations: false,
+            }),
+          },
+        });
+
+        const title = await screen.findByRole("heading", { name: RECONFIRM_TITLE });
+        expect(title).toBeVisible();
+        expect(trackPage).toHaveBeenCalledWith(
+          "AnalyticsConsentDialog",
+          "Analytics consent",
+          expect.objectContaining({
+            phase: "consentReconfirm",
+            type: "modal",
+          }),
+          true,
+          false,
+          true,
+        );
+        const setPreferencesLink = screen.getByRole("link", { name: "Set preferences" });
+        expect(setPreferencesLink).toHaveAttribute("href", "#");
+
+        await user.click(setPreferencesLink);
+        expect(track).toHaveBeenCalledWith("button_clicked", {
+          button: "analytics_consent_set_preferences",
+          page: ANALYTICS_CONSENT_DIALOG_PAGE,
+        });
+
+        await waitFor(() => {
+          expect(screen.getByRole("heading", { name: "Set preferences" })).toBeVisible();
+        });
+        expect(trackPage).toHaveBeenCalledWith(
+          "AnalyticsConsentDialog",
+          "Analytics consent",
+          expect.objectContaining({
+            phase: "preferences",
+            type: "modal",
+          }),
+          true,
+          false,
+          true,
+        );
+        expect(screen.getByRole("button", { name: "Confirm" })).toBeVisible();
+      });
+    });
+
+    describe("when analytics and recommendations are enabled", () => {
+      it("should keep analytics enabled when the user accepts", async () => {
+        const { user, store } = render(<TestRouter />, {
+          initialRoute: "/",
+          initialState: {
+            featureFlags: featureFlagsWithAnalyticsOptIn,
+            settings: baseSettings({
+              shareAnalytics: true,
+              sharePersonalizedRecommandations: true,
+            }),
+          },
+        });
+
+        const title = await screen.findByRole("heading", { name: RECONFIRM_TITLE });
+        expect(title).toBeVisible();
+        expect(trackPage).toHaveBeenCalledWith(
+          "AnalyticsConsentDialog",
+          "Analytics consent",
+          expect.objectContaining({
+            phase: "consentReconfirm",
+            type: "modal",
+          }),
+          true,
+          false,
+          true,
+        );
+
+        await user.click(screen.getByRole("button", { name: "Yes, continue" }));
+        expect(track).toHaveBeenCalledWith(
+          "button_clicked",
+          {
+            button: "analytics_consent_opt_in",
+            page: ANALYTICS_CONSENT_DIALOG_PAGE,
+            privacyPolicyVersion: 1,
+          },
+          true,
+        );
+
+        await waitFor(() => {
+          expect(title).not.toBeInTheDocument();
+        });
+        expect(store.getState().settings.shareAnalytics).toBe(true);
+        expect(store.getState().settings.sharePersonalizedRecommandations).toBe(true);
+        expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
+        expect(updateIdentify).toHaveBeenCalledWith({ force: true });
+      });
+
+      it("should opt out when the user refuses", async () => {
+        const { user, store } = render(<TestRouter />, {
+          initialRoute: "/",
+          initialState: {
+            featureFlags: featureFlagsWithAnalyticsOptIn,
+            settings: baseSettings({
+              shareAnalytics: true,
+              sharePersonalizedRecommandations: true,
+            }),
+          },
+        });
+
+        const title = await screen.findByRole("heading", { name: RECONFIRM_TITLE });
+        expect(title).toBeVisible();
+        expect(trackPage).toHaveBeenCalledWith(
+          "AnalyticsConsentDialog",
+          "Analytics consent",
+          expect.objectContaining({
+            phase: "consentReconfirm",
+            type: "modal",
+          }),
+          true,
+          false,
+          true,
+        );
+
+        await user.click(screen.getByRole("button", { name: "No, stop" }));
+        expect(track).toHaveBeenCalledWith(
+          "button_clicked",
+          {
+            button: "analytics_consent_opt_out",
+            page: ANALYTICS_CONSENT_DIALOG_PAGE,
+            privacyPolicyVersion: 1,
+          },
+          true,
+        );
+
+        await waitFor(() => {
+          expect(title).not.toBeInTheDocument();
+        });
+        expect(store.getState().settings.shareAnalytics).toBe(false);
+        expect(store.getState().settings.sharePersonalizedRecommandations).toBe(false);
+        expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
+        expect(updateIdentify).toHaveBeenCalledWith({ force: true });
+      });
+
+      it("should open preferences when the user chooses Set preferences", async () => {
+        const { user } = render(<TestRouter />, {
+          initialRoute: "/",
+          initialState: {
+            featureFlags: featureFlagsWithAnalyticsOptIn,
+            settings: baseSettings({
+              shareAnalytics: true,
+              sharePersonalizedRecommandations: true,
+            }),
+          },
+        });
+
+        const title = await screen.findByRole("heading", { name: RECONFIRM_TITLE });
+        expect(title).toBeVisible();
+        expect(trackPage).toHaveBeenCalledWith(
+          "AnalyticsConsentDialog",
+          "Analytics consent",
+          expect.objectContaining({
+            phase: "consentReconfirm",
+            type: "modal",
+          }),
+          true,
+          false,
+          true,
+        );
+        const setPreferencesLink = screen.getByRole("link", { name: "Set preferences" });
+        expect(setPreferencesLink).toHaveAttribute("href", "#");
+
+        await user.click(setPreferencesLink);
+        expect(track).toHaveBeenCalledWith("button_clicked", {
+          button: "analytics_consent_set_preferences",
+          page: ANALYTICS_CONSENT_DIALOG_PAGE,
+        });
+
+        await waitFor(() => {
+          expect(screen.getByRole("heading", { name: "Set preferences" })).toBeVisible();
+        });
+        expect(trackPage).toHaveBeenCalledWith(
+          "AnalyticsConsentDialog",
+          "Analytics consent",
+          expect.objectContaining({
+            phase: "preferences",
+            type: "modal",
+          }),
+          true,
+          false,
+          true,
+        );
+        expect(screen.getByRole("button", { name: "Confirm" })).toBeVisible();
+      });
+    });
+  });
+
+  describe("needs privacy policy version update", () => {
+    it("should show the privacy update sheet, persist the policy version, and close after Got it", async () => {
+      const { user, store } = render(<TestRouter />, {
         initialRoute: "/",
         initialState: {
           featureFlags: featureFlagsWithAnalyticsOptIn,
           settings: baseSettings({
-            shareAnalytics,
-            sharePersonalizedRecommandations,
+            shareAnalytics: true,
+            sharePersonalizedRecommandations: true,
+            analyticsConsentInfo: {
+              consentDate: new Date().toISOString(),
+              privacyPolicyVersion: 0,
+            },
           }),
         },
       });
 
-      await screen.findByTestId("analytics-consent-dialog");
-
+      const title = await screen.findByRole("heading", { name: PRIVACY_UPDATE_TITLE });
+      expect(title).toBeVisible();
       expect(trackPage).toHaveBeenCalledWith(
         "AnalyticsConsentDialog",
         "Analytics consent",
         expect.objectContaining({
+          phase: "privacy",
           type: "modal",
         }),
         true,
         false,
         true,
       );
-    },
-  );
 
-  it("shows reconfirm copy when renewal is needed and share analytics is on", async () => {
-    render(<TestRouter />, {
-      initialRoute: "/",
-      initialState: {
-        featureFlags: featureFlagsWithAnalyticsOptIn,
-        settings: baseSettings({
-          shareAnalytics: true,
-          sharePersonalizedRecommandations: true,
-        }),
-      },
-    });
-
-    expect(
-      await screen.findByRole("heading", { name: "Continue improving Ledger?" }),
-    ).toBeInTheDocument();
-  });
-
-  it("opts in and closes when Accept all is used (fresh phase)", async () => {
-    const { user, store } = render(<TestRouter />, {
-      initialRoute: "/",
-      initialState: {
-        featureFlags: featureFlagsWithAnalyticsOptIn,
-        settings: baseSettings({
-          shareAnalytics: false,
-          sharePersonalizedRecommandations: false,
-        }),
-      },
-    });
-
-    const freshTitle = await screen.findByRole("heading", { name: "Help us improve Ledger" });
-    await user.click(screen.getByRole("button", { name: /accept all/i }));
-
-    await waitFor(() => {
-      expect(freshTitle).not.toBeInTheDocument();
-    });
-    expect(store.getState().settings.shareAnalytics).toBe(true);
-    expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
-  });
-
-  it("opts out and closes when Refuse all is used (fresh phase)", async () => {
-    const { user, store } = render(<TestRouter />, {
-      initialRoute: "/",
-      initialState: {
-        featureFlags: featureFlagsWithAnalyticsOptIn,
-        settings: baseSettings({
-          shareAnalytics: false,
-          sharePersonalizedRecommandations: false,
-        }),
-      },
-    });
-
-    const freshTitle = await screen.findByRole("heading", { name: "Help us improve Ledger" });
-    await user.click(screen.getByRole("button", { name: /refuse all/i }));
-
-    await waitFor(() => {
-      expect(freshTitle).not.toBeInTheDocument();
-    });
-    expect(store.getState().settings.shareAnalytics).toBe(false);
-    expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
-  });
-
-  it("keeps analytics on when Yes, continue is used (reconfirm)", async () => {
-    const { user, store } = render(<TestRouter />, {
-      initialRoute: "/",
-      initialState: {
-        featureFlags: featureFlagsWithAnalyticsOptIn,
-        settings: baseSettings({
-          shareAnalytics: true,
-          sharePersonalizedRecommandations: true,
-        }),
-      },
-    });
-
-    const reconfirmTitle = await screen.findByRole("heading", {
-      name: "Continue improving Ledger?",
-    });
-    await user.click(screen.getByRole("button", { name: /yes, continue/i }));
-
-    await waitFor(() => {
-      expect(reconfirmTitle).not.toBeInTheDocument();
-    });
-    expect(store.getState().settings.shareAnalytics).toBe(true);
-    expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
-  });
-
-  it("opts out when No, stop is used (reconfirm)", async () => {
-    const { user, store } = render(<TestRouter />, {
-      initialRoute: "/",
-      initialState: {
-        featureFlags: featureFlagsWithAnalyticsOptIn,
-        settings: baseSettings({
-          shareAnalytics: true,
-          sharePersonalizedRecommandations: true,
-        }),
-      },
-    });
-
-    const reconfirmTitle = await screen.findByRole("heading", {
-      name: "Continue improving Ledger?",
-    });
-    await user.click(screen.getByRole("button", { name: /no, stop/i }));
-
-    await waitFor(() => {
-      expect(reconfirmTitle).not.toBeInTheDocument();
-    });
-    expect(store.getState().settings.shareAnalytics).toBe(false);
-    expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
-  });
-
-  it("shows privacy update and closes after Got it", async () => {
-    const { user, store } = render(<TestRouter />, {
-      initialRoute: "/",
-      initialState: {
-        featureFlags: featureFlagsWithAnalyticsOptIn,
-        settings: baseSettings({
-          shareAnalytics: true,
-          sharePersonalizedRecommandations: true,
-          analyticsConsentInfo: {
-            consentDate: new Date().toISOString(),
-            privacyPolicyVersion: 0,
-          },
-        }),
-      },
-    });
-
-    const privacyTitle = await screen.findByRole("heading", {
-      name: "We're updating our privacy policy",
-    });
-    await user.click(screen.getByRole("button", { name: /got it/i }));
-
-    await waitFor(() => expect(privacyTitle).not.toBeInTheDocument());
-    expect(store.getState().settings.analyticsConsentInfo.privacyPolicyVersion).toBe(1);
-    expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
-  });
-
-  it("shows preferences step when Set preferences is clicked", async () => {
-    const { user } = render(<TestRouter />, {
-      initialRoute: "/",
-      initialState: {
-        featureFlags: featureFlagsWithAnalyticsOptIn,
-        settings: baseSettings({
-          shareAnalytics: false,
-          sharePersonalizedRecommandations: false,
-        }),
-      },
-    });
-
-    await screen.findByRole("heading", { name: "Help us improve Ledger" });
-    const setPreferencesLink = screen.getByRole("link", { name: /set preferences/i });
-
-    // make sure the link is a11y compliant and does not navigate to a new page
-    expect(setPreferencesLink).toHaveAttribute("href", "#");
-
-    await user.click(setPreferencesLink);
-
-    await waitFor(() => {
-      expect(screen.getByRole("heading", { name: "Set preferences" })).toBeInTheDocument();
-    });
-    expect(screen.getByRole("button", { name: "Confirm" })).toBeInTheDocument();
-  });
-
-  it.each([
-    {
-      label: "both toggles on",
-      expectShareAnalytics: true,
-      expectSharePersonalized: true,
-    },
-    {
-      label: "only App performance on",
-      expectShareAnalytics: true,
-      expectSharePersonalized: false,
-    },
-    {
-      label: "only Personalized experience on",
-      expectShareAnalytics: false,
-      expectSharePersonalized: true,
-    },
-    {
-      label: "all toggles off",
-      expectShareAnalytics: false,
-      expectSharePersonalized: false,
-    },
-  ])(
-    "Set preferences: Confirm closes the modal and sets shareAnalytics and sharePersonalizedRecommandations ($label)",
-    async ({ expectShareAnalytics, expectSharePersonalized }) => {
-      const { user, store } = render(<TestRouter />, {
-        initialRoute: "/",
-        initialState: {
-          featureFlags: featureFlagsWithAnalyticsOptIn,
-          settings: baseSettings({
-            shareAnalytics: false,
-            sharePersonalizedRecommandations: false,
-          }),
+      await user.click(screen.getByRole("button", { name: "Got it" }));
+      expect(track).toHaveBeenCalledWith(
+        "button_clicked",
+        {
+          button: "analytics_consent_privacy_got_it",
+          page: ANALYTICS_CONSENT_DIALOG_PAGE,
+          privacyPolicyVersion: 1,
         },
-      });
-
-      await screen.findByRole("heading", { name: "Help us improve Ledger" });
-      await user.click(screen.getByRole("link", { name: /set preferences/i }));
-      const modal = await screen.findByTestId("analytics-consent-dialog");
-      await screen.findByRole("heading", { name: "Set preferences" });
-
-      // Set preferences opens with both switches OFF (`onSetPreferences` seeds drafts to false).
-      const switches = within(modal).getAllByRole("switch");
-      expect(switches).toHaveLength(2);
-      const [appPerformanceSwitch, personalizedSwitch] = switches;
-      if (expectShareAnalytics) {
-        await user.click(appPerformanceSwitch);
-      }
-      if (expectSharePersonalized) {
-        await user.click(personalizedSwitch);
-      }
-
-      await user.click(screen.getByRole("button", { name: "Confirm" }));
+        true,
+      );
 
       await waitFor(() => {
-        expect(modal).not.toBeInTheDocument();
+        expect(title).not.toBeInTheDocument();
       });
-      const { settings: s } = store.getState();
-      expect(s.shareAnalytics).toBe(expectShareAnalytics);
-      expect(s.sharePersonalizedRecommandations).toBe(expectSharePersonalized);
-      expect(s.hasSeenAnalyticsOptInPrompt).toBe(true);
-      expect(s.analyticsConsentInfo.consentDate).not.toBeNull();
-    },
-  );
+      expect(store.getState().settings.analyticsConsentInfo.privacyPolicyVersion).toBe(1);
+      expect(store.getState().settings.hasSeenAnalyticsOptInPrompt).toBe(true);
+      expect(updateIdentify).toHaveBeenCalledWith({ force: true });
+    });
+  });
 });

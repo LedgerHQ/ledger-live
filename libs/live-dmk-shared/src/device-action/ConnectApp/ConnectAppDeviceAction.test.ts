@@ -15,6 +15,7 @@ import {
 import { makeDeviceActionInternalApiMock } from "../__test-utils__/makeInternalApi";
 import {
   setupGetDeviceStatusMock,
+  setupGetDeviceStatusSequenceMock,
   setupGetDeviceMetadataMock,
   setupInstallOrUpdateAppsMock,
   setupOpenAppWithDependenciesMock,
@@ -27,6 +28,7 @@ import {
 import { ConnectAppDeviceAction } from "./ConnectAppDeviceAction";
 import {
   UserInteractionRequiredLL,
+  type ConnectAppDAIntermediateValue,
   type ConnectAppDAState,
   type DeviceDeprecationConfigs,
   type DeviceDeprecationConfig,
@@ -57,9 +59,17 @@ jest.mock("@ledgerhq/device-management-kit", () => {
 describe("OpenAppWithDependenciesDeviceAction", () => {
   const apiMock = makeDeviceActionInternalApiMock();
 
-  const DEVICE_STATUS = {
+  const DEVICE_STATUS_ETHEREUM = {
     currentApp: "Ethereum",
     currentAppVersion: "3.4.5",
+  };
+  const DEVICE_STATUS_BOLOS = {
+    currentApp: "BOLOS",
+    currentAppVersion: "0.0.0",
+  };
+  const CURRENT_APP = {
+    name: "Ethereum",
+    version: "3.4.5",
   };
 
   const DEVICE_METADATA = {
@@ -93,6 +103,30 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
     step: "os.openAppWithDependencies.steps.installOrUpdateApps",
   };
 
+  const DEFAULT_INTERMEDIATE_VALUE: ConnectAppDAIntermediateValue = {
+    requiredUserInteraction: UserInteractionRequired.None,
+    installPlan: null,
+    deviceDeprecation: undefined,
+    deviceMetadata: undefined,
+  };
+
+  const DEFAULT_INTERMEDIATE_VALUE_WITH_METADATA: ConnectAppDAIntermediateValue = {
+    ...DEFAULT_INTERMEDIATE_VALUE,
+    deviceMetadata: DEVICE_METADATA,
+  };
+
+  const INSTALL_INTERMEDIATE_VALUE_WITH_METADATA: ConnectAppDAIntermediateValue = {
+    ...INSTALL_INTERMEDIATE_VALUE,
+    deviceDeprecation: undefined,
+    deviceMetadata: DEVICE_METADATA,
+  };
+  const REFRESH_DEVICE_STATUS_PENDING = {
+    intermediateValue: expect.objectContaining({
+      installPlan: null,
+    }),
+    status: DeviceActionStatus.Pending,
+  } as unknown as ConnectAppDAState;
+
   beforeEach(() => {
     jest.clearAllMocks();
     apiMock.getDeviceSessionState.mockReturnValue({
@@ -105,7 +139,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
       new Promise<void>((resolve, reject) => {
         setupGetDeviceMetadataMock(DEVICE_METADATA);
         setupInstallOrUpdateAppsMock(INSTALL_RESULT, INSTALL_INTERMEDIATE_VALUE);
-        setupGetDeviceStatusMock(DEVICE_STATUS);
+        setupGetDeviceStatusMock(DEVICE_STATUS_ETHEREUM);
         const deviceAction = new ConnectAppDeviceAction({
           input: {
             application: { name: "BOLOS" },
@@ -118,57 +152,41 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
         const expectedStates: Array<ConnectAppDAState> = [
           // GetDeviceStatus
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           // GetDeviceMetadata
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           // OpenAppWithDependencies
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE_WITH_METADATA,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: { ...INSTALL_INTERMEDIATE_VALUE, deviceDeprecation: undefined },
+            intermediateValue: INSTALL_INTERMEDIATE_VALUE_WITH_METADATA,
             status: DeviceActionStatus.Pending,
           },
+          // RefreshDeviceStatus
+          REFRESH_DEVICE_STATUS_PENDING,
+          REFRESH_DEVICE_STATUS_PENDING,
           // Success
           {
-            output: {
+            output: expect.objectContaining({
               deviceMetadata: DEVICE_METADATA,
               installResult: INSTALL_RESULT,
-            },
+              currentApp: CURRENT_APP,
+            }),
             status: DeviceActionStatus.Completed,
           },
         ];
@@ -179,11 +197,62 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
         });
       }));
 
+    it("exposes device metadata in the intermediate value after fetching it", () =>
+      new Promise<void>((resolve, reject) => {
+        setupGetDeviceMetadataMock(DEVICE_METADATA);
+        setupOpenAppWithDependenciesMock(OPEN_APP_RESULT, OPEN_APP_INTERMEDIATE_VALUE);
+        setupGetDeviceStatusMock(DEVICE_STATUS_ETHEREUM);
+
+        const deviceAction = new ConnectAppDeviceAction({
+          input: {
+            application: { name: "Ethereum" },
+            dependencies: [{ name: "Uniswap" }, { name: "1inch" }],
+            requireLatestFirmware: false,
+            allowMissingApplication: false,
+          },
+        });
+
+        const observedStates: Array<ConnectAppDAState> = [];
+        const { observable } = deviceAction._execute(apiMock);
+
+        observable.subscribe({
+          next: state => {
+            observedStates.push(state);
+          },
+          error: reject,
+          complete: () => {
+            try {
+              expect(observedStates).toContainEqual(
+                expect.objectContaining({
+                  status: DeviceActionStatus.Pending,
+                  intermediateValue: expect.objectContaining({
+                    installPlan: null,
+                    deviceMetadata: DEVICE_METADATA,
+                  }),
+                }),
+              );
+              expect(observedStates).toContainEqual(
+                expect.objectContaining({
+                  status: DeviceActionStatus.Pending,
+                  intermediateValue: expect.objectContaining({
+                    installPlan: INSTALL_INTERMEDIATE_VALUE.installPlan,
+                    deviceMetadata: DEVICE_METADATA,
+                  }),
+                }),
+              );
+              resolve();
+            } catch (error) {
+              reject(error);
+            }
+          },
+        });
+      }));
+
     it("Connect app without derivation", () =>
       new Promise<void>((resolve, reject) => {
         setupGetDeviceMetadataMock(DEVICE_METADATA);
         setupOpenAppWithDependenciesMock(OPEN_APP_RESULT, OPEN_APP_INTERMEDIATE_VALUE);
-        setupGetDeviceStatusMock(DEVICE_STATUS);
+        setupGetDeviceStatusMock(DEVICE_STATUS_ETHEREUM);
         const deviceAction = new ConnectAppDeviceAction({
           input: {
             application: { name: "Ethereum" },
@@ -196,57 +265,41 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
         const expectedStates: Array<ConnectAppDAState> = [
           // GetDeviceStatus
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           // GetDeviceMetadata
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           // InstallOrUpdateApps
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE_WITH_METADATA,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: { ...INSTALL_INTERMEDIATE_VALUE, deviceDeprecation: undefined },
+            intermediateValue: INSTALL_INTERMEDIATE_VALUE_WITH_METADATA,
             status: DeviceActionStatus.Pending,
           },
+          // RefreshDeviceStatus
+          REFRESH_DEVICE_STATUS_PENDING,
+          REFRESH_DEVICE_STATUS_PENDING,
           // Success
           {
-            output: {
+            output: expect.objectContaining({
               deviceMetadata: DEVICE_METADATA,
               installResult: INSTALL_RESULT,
-            },
+              currentApp: CURRENT_APP,
+            }),
             status: DeviceActionStatus.Completed,
           },
         ];
@@ -261,7 +314,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
       new Promise<void>((resolve, reject) => {
         setupGetDeviceMetadataMock(DEVICE_METADATA);
         setupOpenAppWithDependenciesMock(OPEN_APP_RESULT, OPEN_APP_INTERMEDIATE_VALUE);
-        setupGetDeviceStatusMock(DEVICE_STATUS);
+        setupGetDeviceStatusMock(DEVICE_STATUS_ETHEREUM);
         const deviceAction = new ConnectAppDeviceAction({
           input: {
             application: { name: "Ethereum" },
@@ -275,63 +328,47 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
         const expectedStates: Array<ConnectAppDAState> = [
           // GetDeviceStatus
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           // GetDeviceMetadata
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           // InstallOrUpdateApps
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE_WITH_METADATA,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: { ...INSTALL_INTERMEDIATE_VALUE, deviceDeprecation: undefined },
+            intermediateValue: INSTALL_INTERMEDIATE_VALUE_WITH_METADATA,
             status: DeviceActionStatus.Pending,
           },
           // GetDerivation
           {
-            intermediateValue: { ...INSTALL_INTERMEDIATE_VALUE, deviceDeprecation: undefined },
+            intermediateValue: INSTALL_INTERMEDIATE_VALUE_WITH_METADATA,
             status: DeviceActionStatus.Pending,
           },
+          // RefreshDeviceStatus
+          REFRESH_DEVICE_STATUS_PENDING,
+          REFRESH_DEVICE_STATUS_PENDING,
           // Success
           {
-            output: {
+            output: expect.objectContaining({
               deviceMetadata: DEVICE_METADATA,
               installResult: INSTALL_RESULT,
               derivation: "eth-address",
-            },
+              currentApp: CURRENT_APP,
+            }),
             status: DeviceActionStatus.Completed,
           },
         ];
@@ -344,7 +381,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
 
     it("Connect app without dependencies without derivation, app already opened", () =>
       new Promise<void>((resolve, reject) => {
-        setupGetDeviceStatusMock(DEVICE_STATUS);
+        setupGetDeviceStatusMock(DEVICE_STATUS_ETHEREUM);
         const deviceAction = new ConnectAppDeviceAction({
           input: {
             application: { name: "Ethereum" },
@@ -357,24 +394,18 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
         const expectedStates: Array<ConnectAppDAState> = [
           // GetDeviceStatus
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           // Success
           {
-            output: {},
+            output: expect.objectContaining({
+              currentApp: CURRENT_APP,
+            }),
             status: DeviceActionStatus.Completed,
           },
         ];
@@ -387,7 +418,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
 
     it("Connect app without dependencies with derivation, app already opened", () =>
       new Promise<void>((resolve, reject) => {
-        setupGetDeviceStatusMock(DEVICE_STATUS);
+        setupGetDeviceStatusMock(DEVICE_STATUS_ETHEREUM);
         const deviceAction = new ConnectAppDeviceAction({
           input: {
             application: { name: "Ethereum" },
@@ -401,35 +432,27 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
         const expectedStates: Array<ConnectAppDAState> = [
           // GetDeviceStatus
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           // GetDerivation
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
+          // RefreshDeviceStatus
+          REFRESH_DEVICE_STATUS_PENDING,
+          REFRESH_DEVICE_STATUS_PENDING,
           // Success
           {
-            output: {
+            output: expect.objectContaining({
               derivation: "eth-address",
-            },
+              currentApp: CURRENT_APP,
+            }),
             status: DeviceActionStatus.Completed,
           },
         ];
@@ -442,7 +465,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
 
     it("Connect app without dependencies without derivation, app not opened", () =>
       new Promise<void>((resolve, reject) => {
-        setupGetDeviceStatusMock(DEVICE_STATUS);
+        setupGetDeviceStatusMock(DEVICE_STATUS_ETHEREUM);
         setupGetDeviceMetadataMock(DEVICE_METADATA);
         setupOpenAppWithDependenciesMock(OPEN_APP_RESULT, OPEN_APP_INTERMEDIATE_VALUE);
         const deviceAction = new ConnectAppDeviceAction({
@@ -457,57 +480,41 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
         const expectedStates: Array<ConnectAppDAState> = [
           // GetDeviceStatus
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           // GetDeviceMetadata
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           // InstallOrUpdateApps
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE_WITH_METADATA,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: { ...INSTALL_INTERMEDIATE_VALUE, deviceDeprecation: undefined },
+            intermediateValue: INSTALL_INTERMEDIATE_VALUE_WITH_METADATA,
             status: DeviceActionStatus.Pending,
           },
+          // RefreshDeviceStatus
+          REFRESH_DEVICE_STATUS_PENDING,
+          REFRESH_DEVICE_STATUS_PENDING,
           // Success
           {
-            output: {
+            output: expect.objectContaining({
               deviceMetadata: DEVICE_METADATA,
               installResult: INSTALL_RESULT,
-            },
+              currentApp: CURRENT_APP,
+            }),
             status: DeviceActionStatus.Completed,
           },
         ];
@@ -517,12 +524,63 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
           onError: reject,
         });
       }));
+
+    it("uses the refreshed device status in the final output after opening the requested app", () =>
+      new Promise<void>((resolve, reject) => {
+        setupGetDeviceStatusSequenceMock([DEVICE_STATUS_BOLOS, DEVICE_STATUS_ETHEREUM]);
+        setupGetDeviceMetadataMock(DEVICE_METADATA);
+        setupOpenAppWithDependenciesMock(OPEN_APP_RESULT, OPEN_APP_INTERMEDIATE_VALUE);
+
+        const deviceAction = new ConnectAppDeviceAction({
+          input: {
+            application: { name: "Ethereum" },
+            dependencies: [],
+            requireLatestFirmware: false,
+            allowMissingApplication: false,
+          },
+        });
+
+        const observedStates: Array<ConnectAppDAState> = [];
+        const { observable } = deviceAction._execute(apiMock);
+
+        observable.subscribe({
+          next: state => {
+            observedStates.push(state);
+          },
+          error: reject,
+          complete: () => {
+            try {
+              expect(observedStates[observedStates.length - 1]).toEqual(
+                expect.objectContaining({
+                  status: DeviceActionStatus.Completed,
+                  output: expect.objectContaining({
+                    currentApp: CURRENT_APP,
+                  }),
+                }),
+              );
+              expect(observedStates[observedStates.length - 1]).not.toEqual(
+                expect.objectContaining({
+                  output: expect.objectContaining({
+                    currentApp: {
+                      name: DEVICE_STATUS_BOLOS.currentApp,
+                      version: DEVICE_STATUS_BOLOS.currentAppVersion,
+                    },
+                  }),
+                }),
+              );
+              resolve();
+            } catch (error) {
+              reject(error);
+            }
+          },
+        });
+      }));
   });
 
   describe("error cases", () => {
     it("Get device status error", () =>
       new Promise<void>((resolve, reject) => {
-        setupGetDeviceStatusMock(DEVICE_STATUS, true);
+        setupGetDeviceStatusMock(DEVICE_STATUS_ETHEREUM, true);
 
         const deviceAction = new ConnectAppDeviceAction({
           input: {
@@ -536,19 +594,11 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
         const expectedStates: Array<ConnectAppDAState> = [
           // GetDeviceStatus
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           // Error
@@ -567,7 +617,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
     it("Get device metadata error", () =>
       new Promise<void>((resolve, reject) => {
         setupGetDeviceMetadataMock(DEVICE_METADATA, true);
-        setupGetDeviceStatusMock(DEVICE_STATUS);
+        setupGetDeviceStatusMock(DEVICE_STATUS_ETHEREUM);
         const deviceAction = new ConnectAppDeviceAction({
           input: {
             application: { name: "BOLOS" },
@@ -580,36 +630,20 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
         const expectedStates: Array<ConnectAppDAState> = [
           // GetDeviceStatus
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           // GetDeviceMetadata
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           // Error
@@ -628,7 +662,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
     it("Install apps error", () =>
       new Promise<void>((resolve, reject) => {
         setupGetDeviceMetadataMock(DEVICE_METADATA);
-        setupGetDeviceStatusMock(DEVICE_STATUS);
+        setupGetDeviceStatusMock(DEVICE_STATUS_ETHEREUM);
         setupInstallOrUpdateAppsMock(INSTALL_RESULT, INSTALL_INTERMEDIATE_VALUE, true);
 
         const deviceAction = new ConnectAppDeviceAction({
@@ -643,49 +677,29 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
         const expectedStates: Array<ConnectAppDAState> = [
           // GetDeviceStatus
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           // GetDeviceMetadata
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           // InstallOrUpdateApps
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE_WITH_METADATA,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: { ...INSTALL_INTERMEDIATE_VALUE, deviceDeprecation: undefined },
+            intermediateValue: INSTALL_INTERMEDIATE_VALUE_WITH_METADATA,
             status: DeviceActionStatus.Pending,
           },
           // Error
@@ -705,7 +719,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
       new Promise<void>((resolve, reject) => {
         setupGetDeviceMetadataMock(DEVICE_METADATA);
         setupOpenAppWithDependenciesMock(OPEN_APP_RESULT, OPEN_APP_INTERMEDIATE_VALUE, true);
-        setupGetDeviceStatusMock(DEVICE_STATUS);
+        setupGetDeviceStatusMock(DEVICE_STATUS_ETHEREUM);
 
         const deviceAction = new ConnectAppDeviceAction({
           input: {
@@ -719,49 +733,29 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
         const expectedStates: Array<ConnectAppDAState> = [
           // GetDeviceStatus
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           // GetDeviceMetadata
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           // OpenAppWithDependencies
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE_WITH_METADATA,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: { ...INSTALL_INTERMEDIATE_VALUE, deviceDeprecation: undefined },
+            intermediateValue: INSTALL_INTERMEDIATE_VALUE_WITH_METADATA,
             status: DeviceActionStatus.Pending,
           },
           // Error
@@ -781,7 +775,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
       new Promise<void>((resolve, reject) => {
         setupGetDeviceMetadataMock(DEVICE_METADATA);
         setupOpenAppWithDependenciesMock(OPEN_APP_RESULT, OPEN_APP_INTERMEDIATE_VALUE);
-        setupGetDeviceStatusMock(DEVICE_STATUS);
+        setupGetDeviceStatusMock(DEVICE_STATUS_ETHEREUM);
 
         const deviceAction = new ConnectAppDeviceAction({
           input: {
@@ -798,54 +792,34 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
         const expectedStates: Array<ConnectAppDAState> = [
           // GetDeviceStatus
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           // GetDeviceMetadata
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
             status: DeviceActionStatus.Pending,
           },
           // OpenAppWithDependencies
           {
-            intermediateValue: {
-              requiredUserInteraction: UserInteractionRequired.None,
-              installPlan: null,
-              deviceDeprecation: undefined,
-            },
+            intermediateValue: DEFAULT_INTERMEDIATE_VALUE_WITH_METADATA,
             status: DeviceActionStatus.Pending,
           },
           {
-            intermediateValue: { ...INSTALL_INTERMEDIATE_VALUE, deviceDeprecation: undefined },
+            intermediateValue: INSTALL_INTERMEDIATE_VALUE_WITH_METADATA,
             status: DeviceActionStatus.Pending,
           },
           // GetDerivation
           {
-            intermediateValue: { ...INSTALL_INTERMEDIATE_VALUE, deviceDeprecation: undefined },
+            intermediateValue: INSTALL_INTERMEDIATE_VALUE_WITH_METADATA,
             status: DeviceActionStatus.Pending,
           },
           // Error
@@ -1018,11 +992,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
 
     const PENDING_NONE: ConnectAppDAState = {
       status: DeviceActionStatus.Pending,
-      intermediateValue: {
-        requiredUserInteraction: UserInteractionRequired.None,
-        installPlan: null,
-        deviceDeprecation: undefined,
-      },
+      intermediateValue: DEFAULT_INTERMEDIATE_VALUE,
     };
 
     beforeEach(() => {
@@ -1096,7 +1066,7 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
 
     it("Deprecation flow (info screen past) → user continues → success", () =>
       new Promise<void>((resolve, reject) => {
-        setupGetDeviceStatusMock(DEVICE_STATUS);
+        setupGetDeviceStatusMock(DEVICE_STATUS_ETHEREUM);
 
         const deviceAction = new ConnectAppDeviceAction({
           input: {
@@ -1125,7 +1095,12 @@ describe("OpenAppWithDependenciesDeviceAction", () => {
               }),
             }),
           }) as any,
-          { status: DeviceActionStatus.Completed, output: expect.any(Object) } as unknown,
+          {
+            status: DeviceActionStatus.Completed,
+            output: expect.objectContaining({
+              currentApp: CURRENT_APP,
+            }),
+          } as unknown,
         ];
 
         testDeviceActionStatesWithUI(deviceAction, expectedStates, apiMock, {

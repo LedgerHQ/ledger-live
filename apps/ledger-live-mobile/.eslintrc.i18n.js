@@ -36,7 +36,11 @@ module.exports = {
         "src/screens/Settings/Experimental/**/*",
         "src/components/PerformanceConsole/**/*",
         "src/components/CustomImage/TestImage.tsx",
-        "src/mvvm/components/device-intent-executor/**/*",
+        /**
+         * TODO(LIVE-29434): drop this entry once the polished, translated DIE
+         * initializer view ships and replaces this debug-quality view.
+         */
+        "src/mvvm/components/DeviceIntentExecutor/DeviceContextInitializerComponentLWM/DeviceContextInitializerComponentLWMView.tsx",
         "**/*Mock*",
         "__tests__/**/*",
         "e2e/**/*",

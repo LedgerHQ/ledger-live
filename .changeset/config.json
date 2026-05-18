@@ -7,12 +7,24 @@
     }
   ],
   "commit": false,
-  "fixed": [],
+  "fixed": [
+    [
+      "@ledgerhq/wallet-cli",
+      "@ledgerhq/wallet-cli-darwin-arm64",
+      "@ledgerhq/wallet-cli-linux-arm64",
+      "@ledgerhq/wallet-cli-linux-x64",
+      "@ledgerhq/wallet-cli-windows-x64"
+    ]
+  ],
   "linked": [],
   "access": "public",
   "baseBranch": "develop",
   "updateInternalDependencies": "patch",
   "ignore": [],
+  "privatePackages": {
+    "version": true,
+    "tag": false
+  },
   "snapshot": {
     "useCalculatedVersion": true,
     "prereleaseTemplate": "{tag}.{datetime}"

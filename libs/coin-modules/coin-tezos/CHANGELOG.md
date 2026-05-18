@@ -1,5 +1,99 @@
 # @ledgerhq/coin-tezos
 
+## 7.1.0
+
+### Minor Changes
+
+- [#16850](https://github.com/LedgerHQ/ledger-live/pull/16850) [`e1f72f7`](https://github.com/LedgerHQ/ledger-live/commit/e1f72f7f22db6ffbf5cb12ef97a040cffc12628d) Thanks [@acewf](https://github.com/acewf)! - fix Tezos operation pagination so native and FA2 ops sharing the same tx hash stay on one page
+
+- [#16824](https://github.com/LedgerHQ/ledger-live/pull/16824) [`8d53b53`](https://github.com/LedgerHQ/ledger-live/commit/8d53b53ea1fb9468c9fc8e4212283385c0588eb4) Thanks [@amaslakov](https://github.com/amaslakov)! - Declare stake, unstake, finalize_unstake intents in supportedFeatures.staking_txs
+
+- [#16711](https://github.com/LedgerHQ/ledger-live/pull/16711) [`b26a2d4`](https://github.com/LedgerHQ/ledger-live/commit/b26a2d42ed85ab9acca1edd33e14543fa702c691) Thanks [@acewf](https://github.com/acewf)! - include only transactions with block and transfer hash
+
+- [#16912](https://github.com/LedgerHQ/ledger-live/pull/16912) [`f5575f3`](https://github.com/LedgerHQ/ledger-live/commit/f5575f3a7ce0506454d0333a533232d945368f12) Thanks [@amaslakov](https://github.com/amaslakov)! - Reflect Paris staking positions in `getBalance` and `getStakes`. Both now expose up to three native staking entries per account: a delegation position (uid `delegation-{address}`, amount = `balance - stakedBalance`) when a delegate is set, an active staking position (uid `stake-{address}`, amount = `stakedBalance`) when `stakedBalance > 0`, and a deactivating unstake position (uid `unstaking-{address}`, amount = `unstakedBalance`, state `deactivating`) when `unstakedBalance > 0`. The native `Balance.value` continues to reflect `apiAccount.balance`.
+
+- [#16966](https://github.com/LedgerHQ/ledger-live/pull/16966) [`422b893`](https://github.com/LedgerHQ/ledger-live/commit/422b8932c56c348828b508d5f808bdc8a1acc400) Thanks [@amaslakov](https://github.com/amaslakov)! - Surface Paris staking operations through `listOperations` and `getBlock`. TzKT `type: "staking"` ops are now parsed and emitted with operation types `STAKE`, `UNSTAKE`, and `FINALIZE_UNSTAKE`. `getBlock` additionally fetches `staking` ops via `fetchBlockStaking` and merges them into the block's `BlockTransaction` list with `details.operationType` set. `APIStakingType` was corrected to use `action` (the actual TzKT field name) rather than `kind`, with `staker`, `baker`, `requestedAmount`, `stakingUpdatesCount`, and `counter` typed as well.
+
+- [#16534](https://github.com/LedgerHQ/ledger-live/pull/16534) [`6a5014d`](https://github.com/LedgerHQ/ledger-live/commit/6a5014dde4f6248d571c8d650ca4daac76038c8a) Thanks [@UmbrellaHoodies](https://github.com/UmbrellaHoodies)! - add support for fetching staking operations at block level
+
+- [#16926](https://github.com/LedgerHQ/ledger-live/pull/16926) [`a66dc98`](https://github.com/LedgerHQ/ledger-live/commit/a66dc9868a6dbd977c2dcb392e61f412819dd5a2) Thanks [@amaslakov](https://github.com/amaslakov)! - Migrate Tezos integration tests off Ghostnet to Shadownet (Ghostnet was deprecated in early 2026, its TzKT and RPC endpoints stopped resolving). Pinned a persistent Shadownet test account (`tz1dKrT1...`) with reveal/delegation/stake/unstake history, plus a tz2 (`tz29GPjg...`) and a registered baker as a delegate target. `getBlock` and `getBlockInfo` integ tests now pin block 3113219. `craftTransaction.integ.test.ts` only had a stale Ghostnet docstring — updated to reflect that it actually runs against mainnet via the Ledger vault explorer.
+
+- [#16868](https://github.com/LedgerHQ/ledger-live/pull/16868) [`c84fde4`](https://github.com/LedgerHQ/ledger-live/commit/c84fde4096549ce023b582618e862b1106333681) Thanks [@amaslakov](https://github.com/amaslakov)! - Support stake, unstake, finalize_unstake in craftTransaction
+
+- [#16614](https://github.com/LedgerHQ/ledger-live/pull/16614) [`270dba5`](https://github.com/LedgerHQ/ledger-live/commit/270dba5f4a80dd66527bf2ebfe961710118141d1) Thanks [@UmbrellaHoodies](https://github.com/UmbrellaHoodies)! - Add stake/unstake/finalize_unstake support in fee estimation
+
+### Patch Changes
+
+- Updated dependencies [[`ed0dc8a`](https://github.com/LedgerHQ/ledger-live/commit/ed0dc8abc2c8f5054e655c4e12efe6fb433fbaca), [`4ddd97a`](https://github.com/LedgerHQ/ledger-live/commit/4ddd97a99bab5b581ad5ccfd36eb420ec4ee6352), [`7fafa10`](https://github.com/LedgerHQ/ledger-live/commit/7fafa10d8af581f4433a60ea908980a726d3a777), [`ac26c8b`](https://github.com/LedgerHQ/ledger-live/commit/ac26c8bffa9b5cc9f28bed5ce3d44e32982d655c), [`fb79639`](https://github.com/LedgerHQ/ledger-live/commit/fb79639eb81258bae4830ed6ffe375ae625054ad), [`0d11df6`](https://github.com/LedgerHQ/ledger-live/commit/0d11df6ef8dc781171071824ad1c39e3beed7730), [`321a0e2`](https://github.com/LedgerHQ/ledger-live/commit/321a0e2ce948fac11f7bdf0e106eb0af57168caa), [`d308b1a`](https://github.com/LedgerHQ/ledger-live/commit/d308b1a6b9c629839f051cf367a527f4232120c7), [`21e69fe`](https://github.com/LedgerHQ/ledger-live/commit/21e69fea49cffc0b1204903e539a64b83e4b28f0), [`e6dc658`](https://github.com/LedgerHQ/ledger-live/commit/e6dc658b83ebd2102e19a1fead021443457c05d9), [`fb4d165`](https://github.com/LedgerHQ/ledger-live/commit/fb4d1656be8dc8e933e55600970a2e991fbaeebb), [`5bd95a9`](https://github.com/LedgerHQ/ledger-live/commit/5bd95a9ceaac4d08c87d635f721265357368f8ee), [`73bfe05`](https://github.com/LedgerHQ/ledger-live/commit/73bfe055ec23e0d630f2da9f4dbc9731b6fe5190)]:
+  - @ledgerhq/types-live@6.107.0
+  - @ledgerhq/ledger-wallet-framework@1.4.0
+  - @ledgerhq/errors@6.35.0
+  - @ledgerhq/cryptoassets@13.47.0
+  - @ledgerhq/live-network@2.6.0
+  - @ledgerhq/devices@8.14.2
+
+## 7.1.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`e6dc658`](https://github.com/LedgerHQ/ledger-live/commit/e6dc658b83ebd2102e19a1fead021443457c05d9)]:
+  - @ledgerhq/cryptoassets@13.47.0-next.1
+  - @ledgerhq/ledger-wallet-framework@1.4.0-next.1
+
+## 7.1.0-next.0
+
+### Minor Changes
+
+- [#16850](https://github.com/LedgerHQ/ledger-live/pull/16850) [`e1f72f7`](https://github.com/LedgerHQ/ledger-live/commit/e1f72f7f22db6ffbf5cb12ef97a040cffc12628d) Thanks [@acewf](https://github.com/acewf)! - fix Tezos operation pagination so native and FA2 ops sharing the same tx hash stay on one page
+
+- [#16824](https://github.com/LedgerHQ/ledger-live/pull/16824) [`8d53b53`](https://github.com/LedgerHQ/ledger-live/commit/8d53b53ea1fb9468c9fc8e4212283385c0588eb4) Thanks [@amaslakov](https://github.com/amaslakov)! - Declare stake, unstake, finalize_unstake intents in supportedFeatures.staking_txs
+
+- [#16711](https://github.com/LedgerHQ/ledger-live/pull/16711) [`b26a2d4`](https://github.com/LedgerHQ/ledger-live/commit/b26a2d42ed85ab9acca1edd33e14543fa702c691) Thanks [@acewf](https://github.com/acewf)! - include only transactions with block and transfer hash
+
+- [#16912](https://github.com/LedgerHQ/ledger-live/pull/16912) [`f5575f3`](https://github.com/LedgerHQ/ledger-live/commit/f5575f3a7ce0506454d0333a533232d945368f12) Thanks [@amaslakov](https://github.com/amaslakov)! - Reflect Paris staking positions in `getBalance` and `getStakes`. Both now expose up to three native staking entries per account: a delegation position (uid `delegation-{address}`, amount = `balance - stakedBalance`) when a delegate is set, an active staking position (uid `stake-{address}`, amount = `stakedBalance`) when `stakedBalance > 0`, and a deactivating unstake position (uid `unstaking-{address}`, amount = `unstakedBalance`, state `deactivating`) when `unstakedBalance > 0`. The native `Balance.value` continues to reflect `apiAccount.balance`.
+
+- [#16966](https://github.com/LedgerHQ/ledger-live/pull/16966) [`422b893`](https://github.com/LedgerHQ/ledger-live/commit/422b8932c56c348828b508d5f808bdc8a1acc400) Thanks [@amaslakov](https://github.com/amaslakov)! - Surface Paris staking operations through `listOperations` and `getBlock`. TzKT `type: "staking"` ops are now parsed and emitted with operation types `STAKE`, `UNSTAKE`, and `FINALIZE_UNSTAKE`. `getBlock` additionally fetches `staking` ops via `fetchBlockStaking` and merges them into the block's `BlockTransaction` list with `details.operationType` set. `APIStakingType` was corrected to use `action` (the actual TzKT field name) rather than `kind`, with `staker`, `baker`, `requestedAmount`, `stakingUpdatesCount`, and `counter` typed as well.
+
+- [#16534](https://github.com/LedgerHQ/ledger-live/pull/16534) [`6a5014d`](https://github.com/LedgerHQ/ledger-live/commit/6a5014dde4f6248d571c8d650ca4daac76038c8a) Thanks [@UmbrellaHoodies](https://github.com/UmbrellaHoodies)! - add support for fetching staking operations at block level
+
+- [#16926](https://github.com/LedgerHQ/ledger-live/pull/16926) [`a66dc98`](https://github.com/LedgerHQ/ledger-live/commit/a66dc9868a6dbd977c2dcb392e61f412819dd5a2) Thanks [@amaslakov](https://github.com/amaslakov)! - Migrate Tezos integration tests off Ghostnet to Shadownet (Ghostnet was deprecated in early 2026, its TzKT and RPC endpoints stopped resolving). Pinned a persistent Shadownet test account (`tz1dKrT1...`) with reveal/delegation/stake/unstake history, plus a tz2 (`tz29GPjg...`) and a registered baker as a delegate target. `getBlock` and `getBlockInfo` integ tests now pin block 3113219. `craftTransaction.integ.test.ts` only had a stale Ghostnet docstring — updated to reflect that it actually runs against mainnet via the Ledger vault explorer.
+
+- [#16868](https://github.com/LedgerHQ/ledger-live/pull/16868) [`c84fde4`](https://github.com/LedgerHQ/ledger-live/commit/c84fde4096549ce023b582618e862b1106333681) Thanks [@amaslakov](https://github.com/amaslakov)! - Support stake, unstake, finalize_unstake in craftTransaction
+
+- [#16614](https://github.com/LedgerHQ/ledger-live/pull/16614) [`270dba5`](https://github.com/LedgerHQ/ledger-live/commit/270dba5f4a80dd66527bf2ebfe961710118141d1) Thanks [@UmbrellaHoodies](https://github.com/UmbrellaHoodies)! - Add stake/unstake/finalize_unstake support in fee estimation
+
+### Patch Changes
+
+- Updated dependencies [[`ed0dc8a`](https://github.com/LedgerHQ/ledger-live/commit/ed0dc8abc2c8f5054e655c4e12efe6fb433fbaca), [`4ddd97a`](https://github.com/LedgerHQ/ledger-live/commit/4ddd97a99bab5b581ad5ccfd36eb420ec4ee6352), [`7fafa10`](https://github.com/LedgerHQ/ledger-live/commit/7fafa10d8af581f4433a60ea908980a726d3a777), [`ac26c8b`](https://github.com/LedgerHQ/ledger-live/commit/ac26c8bffa9b5cc9f28bed5ce3d44e32982d655c), [`fb79639`](https://github.com/LedgerHQ/ledger-live/commit/fb79639eb81258bae4830ed6ffe375ae625054ad), [`0d11df6`](https://github.com/LedgerHQ/ledger-live/commit/0d11df6ef8dc781171071824ad1c39e3beed7730), [`321a0e2`](https://github.com/LedgerHQ/ledger-live/commit/321a0e2ce948fac11f7bdf0e106eb0af57168caa), [`d308b1a`](https://github.com/LedgerHQ/ledger-live/commit/d308b1a6b9c629839f051cf367a527f4232120c7), [`21e69fe`](https://github.com/LedgerHQ/ledger-live/commit/21e69fea49cffc0b1204903e539a64b83e4b28f0), [`fb4d165`](https://github.com/LedgerHQ/ledger-live/commit/fb4d1656be8dc8e933e55600970a2e991fbaeebb), [`5bd95a9`](https://github.com/LedgerHQ/ledger-live/commit/5bd95a9ceaac4d08c87d635f721265357368f8ee), [`73bfe05`](https://github.com/LedgerHQ/ledger-live/commit/73bfe055ec23e0d630f2da9f4dbc9731b6fe5190)]:
+  - @ledgerhq/types-live@6.107.0-next.0
+  - @ledgerhq/ledger-wallet-framework@1.4.0-next.0
+  - @ledgerhq/errors@6.35.0-next.0
+  - @ledgerhq/cryptoassets@13.47.0-next.0
+  - @ledgerhq/live-network@2.6.0-next.0
+  - @ledgerhq/devices@8.14.2-next.0
+
+## 7.0.1
+
+### Patch Changes
+
+- Updated dependencies [[`202cc42`](https://github.com/LedgerHQ/ledger-live/commit/202cc423b09662b5b25012b84124aecd4dc7245d)]:
+  - @ledgerhq/errors@6.34.1
+  - @ledgerhq/ledger-wallet-framework@1.3.2
+  - @ledgerhq/cryptoassets@13.46.2
+  - @ledgerhq/devices@8.14.2
+  - @ledgerhq/live-network@2.5.2
+
+## 7.0.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`202cc42`](https://github.com/LedgerHQ/ledger-live/commit/202cc423b09662b5b25012b84124aecd4dc7245d)]:
+  - @ledgerhq/errors@6.34.1-hotfix.0
+  - @ledgerhq/ledger-wallet-framework@1.3.2-hotfix.0
+  - @ledgerhq/cryptoassets@13.46.2-hotfix.0
+  - @ledgerhq/devices@8.14.2-hotfix.0
+  - @ledgerhq/live-network@2.5.2-hotfix.0
+
 ## 7.0.0
 
 ### Major Changes

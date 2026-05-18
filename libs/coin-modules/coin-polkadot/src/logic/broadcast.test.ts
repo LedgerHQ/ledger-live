@@ -3,38 +3,47 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { broadcast } from "./broadcast";
 
 const submitExtrinsicMock = jest.fn();
-jest.mock("../network", () => {
-  return {
-    submitExtrinsic: (extrinsic: string, currency?: CryptoCurrency) =>
-      submitExtrinsicMock(extrinsic, currency),
-  };
-});
+const submitExtrinsicDryRunMock = jest.fn();
+
+jest.mock("../network", () => ({
+  submitExtrinsic: (extrinsic: string, currency?: CryptoCurrency) =>
+    submitExtrinsicMock(extrinsic, currency),
+  submitExtrinsicDryRun: (extrinsic: string, currency?: CryptoCurrency) =>
+    submitExtrinsicDryRunMock(extrinsic, currency),
+}));
 
 describe("broadcast", () => {
   beforeEach(() => {
     submitExtrinsicMock.mockClear();
+    submitExtrinsicDryRunMock.mockClear();
   });
 
   it.each(["polkadot", "assethub_polkadot", "westend", "assethub_westend"])(
     "should broadcast using %s when provided",
     async currencyId => {
-      const signature = "some random signature";
-      await broadcast(signature, currencyId);
-
-      expect(submitExtrinsicMock).toHaveBeenCalledTimes(1);
-      expect(submitExtrinsicMock.mock.lastCall[0]).toEqual(signature);
+      const signedExtrinsic = "some signed extrinsic";
+      await broadcast(signedExtrinsic, currencyId);
 
       const currency = getCryptoCurrencyById(currencyId);
-      expect(submitExtrinsicMock.mock.lastCall[1]).toEqual(currency);
+
+      expect(submitExtrinsicDryRunMock).toHaveBeenCalledTimes(1);
+      expect(submitExtrinsicDryRunMock.mock.lastCall).toEqual([signedExtrinsic, currency]);
+
+      expect(submitExtrinsicMock).toHaveBeenCalledTimes(1);
+      expect(submitExtrinsicMock.mock.lastCall).toEqual([signedExtrinsic, currency]);
     },
   );
 
-  it("should broadcast using only signature when no currency provided", async () => {
-    const signature = "some random signature";
-    await broadcast(signature);
+  it("defaults to polkadot currency when no currencyId is provided", async () => {
+    const signedExtrinsic = "some signed extrinsic";
+    await broadcast(signedExtrinsic);
+
+    const polkadot = getCryptoCurrencyById("polkadot");
+
+    expect(submitExtrinsicDryRunMock).toHaveBeenCalledTimes(1);
+    expect(submitExtrinsicDryRunMock.mock.lastCall).toEqual([signedExtrinsic, polkadot]);
 
     expect(submitExtrinsicMock).toHaveBeenCalledTimes(1);
-    expect(submitExtrinsicMock.mock.lastCall[0]).toEqual(signature);
-    expect(submitExtrinsicMock.mock.lastCall[1]).toEqual(undefined);
+    expect(submitExtrinsicMock.mock.lastCall).toEqual([signedExtrinsic, polkadot]);
   });
 });

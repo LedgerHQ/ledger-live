@@ -144,30 +144,23 @@ async function connectLedgerAppOnce(
   }, silenceTimeoutMs);
 
   let lastRequiredInteraction: ConnectAppDARequiredInteraction | undefined;
-  try {
-    finalState = await lastValueFrom(
-      observable.pipe(
-        tap((state: ConnectAppState) => {
-          if (state.status !== DeviceActionStatus.Pending) return;
-          const r = state.intermediateValue?.requiredUserInteraction;
-          if (r == null || r === UserInteractionRequired.None || r === lastRequiredInteraction) {
-            return;
-          }
-          lastRequiredInteraction = r;
-          walletCliDebug(
-            "ConnectApp pending: requiredUserInteraction=%s app=%s",
-            r,
-            managerAppName,
-          );
+  const onIntermediateState = (state: ConnectAppState) => {
+    if (state.status !== DeviceActionStatus.Pending) return;
+    const r = state.intermediateValue?.requiredUserInteraction;
+    if (r == null || r === UserInteractionRequired.None || r === lastRequiredInteraction) {
+      return;
+    }
+    lastRequiredInteraction = r;
+    walletCliDebug("ConnectApp pending: requiredUserInteraction=%s app=%s", r, managerAppName);
 
-          if (r === UserInteractionRequired.UnlockDevice) {
-            onStateChange?.({ code: "awaiting_approval", reason: "unlock" });
-          } else if (r === UserInteractionRequired.ConfirmOpenApp) {
-            onStateChange?.({ code: "awaiting_approval", reason: "open_app" });
-          }
-        }),
-      ),
-    );
+    if (r === UserInteractionRequired.UnlockDevice) {
+      onStateChange?.({ code: "awaiting_approval", reason: "unlock" });
+    } else if (r === UserInteractionRequired.ConfirmOpenApp) {
+      onStateChange?.({ code: "awaiting_approval", reason: "open_app" });
+    }
+  };
+  try {
+    finalState = await lastValueFrom(observable.pipe(tap(onIntermediateState)));
   } catch (e) {
     if (e instanceof EmptyError) {
       throw new WalletCliDeviceError({ code: "disconnected" }, { cause: e });

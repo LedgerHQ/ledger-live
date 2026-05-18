@@ -35,10 +35,12 @@ jobs:
     runs-on: ubuntu-24.04
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
+      NPM_REGISTRY: jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-prod-public
     permissions:
       contents: write
       pull-requests: write
       packages: write
+      id-token: write
     steps:
       - name: generate token
         id: generate-token
@@ -72,7 +74,7 @@ jobs:
           ruby-version: 3.3.0
 
       - name: install dependencies
-        run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli"
+        run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli" -F "@ledgerhq/wallet-cli..." -F "@ledgerhq/wallet-cli-*"
 
       - name: build libs
         run: pnpm exec nx run-many -t build --projects=tag:scope:libs
@@ -86,6 +88,23 @@ jobs:
         run: pnpm changeset publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_TOKEN }}
+
+      - uses: actions/github-script@v7
+        name: trigger release wallet-cli sign and JFrog publish
+        with:
+          github-token: ${{ steps.generate-token.outputs.token }}
+          script: |
+            github.rest.actions.createWorkflowDispatch({
+              owner: "ledgerhq",
+              repo: "ledger-live-build",
+              ref: "main",
+              workflow_id: "release-wallet-cli.yml",
+              inputs: {
+                ref: "${{ inputs.ref }}",
+                publish_to_jfrog: "true",
+                jfrog_registry: "${{ env.NPM_REGISTRY }}"
+              }
+            });
 
       - name: check if desktop versions are different
         if: ${{ inputs.caller == 'release-prepare' || inputs.caller == 'release-prepare-hotfix' }}

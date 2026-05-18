@@ -1,5 +1,53 @@
 # @ledgerhq/coin-stellar
 
+## 6.22.0
+
+### Minor Changes
+
+- [#16813](https://github.com/LedgerHQ/ledger-live/pull/16813) [`94416f5`](https://github.com/LedgerHQ/ledger-live/commit/94416f54e33e14df431db668cb98941aef11ea2d) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-stellar): use original protocol when following links
+
+- [#16423](https://github.com/LedgerHQ/ledger-live/pull/16423) [`026cc79`](https://github.com/LedgerHQ/ledger-live/commit/026cc79bb6fb6167361c6f6eb73bbd71b3bde202) Thanks [@scavassa-yld](https://github.com/scavassa-yld)! - Add Stellar Horizon-backed getBlock and getBlockInfo to AlpacaApi
+
+- [#16687](https://github.com/LedgerHQ/ledger-live/pull/16687) [`2274e2a`](https://github.com/LedgerHQ/ledger-live/commit/2274e2a9f2cb7f248a016f15db8ce911c12188bd) Thanks [@qperrot](https://github.com/qperrot)! - Fix: stellar `Horizon.AxiosClient` interceptors in `coin-stellar/src/network/horizon.ts` resilient to `coinConfig` not being initialised yet.
+
+### Patch Changes
+
+- Updated dependencies [[`d308b1a`](https://github.com/LedgerHQ/ledger-live/commit/d308b1a6b9c629839f051cf367a527f4232120c7), [`5bd95a9`](https://github.com/LedgerHQ/ledger-live/commit/5bd95a9ceaac4d08c87d635f721265357368f8ee)]:
+  - @ledgerhq/errors@6.35.0
+  - @ledgerhq/live-network@2.6.0
+
+## 6.22.0-next.0
+
+### Minor Changes
+
+- [#16813](https://github.com/LedgerHQ/ledger-live/pull/16813) [`94416f5`](https://github.com/LedgerHQ/ledger-live/commit/94416f54e33e14df431db668cb98941aef11ea2d) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-stellar): use original protocol when following links
+
+- [#16423](https://github.com/LedgerHQ/ledger-live/pull/16423) [`026cc79`](https://github.com/LedgerHQ/ledger-live/commit/026cc79bb6fb6167361c6f6eb73bbd71b3bde202) Thanks [@scavassa-yld](https://github.com/scavassa-yld)! - Add Stellar Horizon-backed getBlock and getBlockInfo to AlpacaApi
+
+- [#16687](https://github.com/LedgerHQ/ledger-live/pull/16687) [`2274e2a`](https://github.com/LedgerHQ/ledger-live/commit/2274e2a9f2cb7f248a016f15db8ce911c12188bd) Thanks [@qperrot](https://github.com/qperrot)! - Fix: stellar `Horizon.AxiosClient` interceptors in `coin-stellar/src/network/horizon.ts` resilient to `coinConfig` not being initialised yet.
+
+### Patch Changes
+
+- Updated dependencies [[`d308b1a`](https://github.com/LedgerHQ/ledger-live/commit/d308b1a6b9c629839f051cf367a527f4232120c7), [`5bd95a9`](https://github.com/LedgerHQ/ledger-live/commit/5bd95a9ceaac4d08c87d635f721265357368f8ee)]:
+  - @ledgerhq/errors@6.35.0-next.0
+  - @ledgerhq/live-network@2.6.0-next.0
+
+## 6.21.1
+
+### Patch Changes
+
+- Updated dependencies [[`202cc42`](https://github.com/LedgerHQ/ledger-live/commit/202cc423b09662b5b25012b84124aecd4dc7245d)]:
+  - @ledgerhq/errors@6.34.1
+  - @ledgerhq/live-network@2.5.2
+
+## 6.21.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`202cc42`](https://github.com/LedgerHQ/ledger-live/commit/202cc423b09662b5b25012b84124aecd4dc7245d)]:
+  - @ledgerhq/errors@6.34.1-hotfix.0
+  - @ledgerhq/live-network@2.5.2-hotfix.0
+
 ## 6.21.0
 
 ### Minor Changes

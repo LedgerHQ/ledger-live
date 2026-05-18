@@ -16,6 +16,7 @@ import {
   isElectionClosed as sidecarIsElectionClosed,
   paymentInfo as sidecarPaymentInfo,
   submitExtrinsic as sidecarSubmitExtrinsic,
+  submitExtrinsicDryRun as sidecarSubmitExtrinsicDryRun,
   verifyValidatorAddresses as sidecarVerifyValidatorAddresses,
   getMetadata as sidecarGetMetadata,
   getLastBlock,
@@ -149,6 +150,8 @@ export default {
     validators: string[],
     currency?: CryptoCurrency,
   ): Promise<string[]> => sidecarVerifyValidatorAddresses(validators, currency),
+  submitExtrinsicDryRun: async (extrinsic: string, currency?: CryptoCurrency) =>
+    sidecarSubmitExtrinsicDryRun(extrinsic, currency),
 };
 
 /**

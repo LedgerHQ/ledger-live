@@ -63,7 +63,7 @@ export async function formatReportForConsole<T extends Transaction>({
   str += `▬ ${formatAppCandidate(appCandidate)}\n`;
 
   if (account) {
-    str += `→ FROM ${formatAccount(account, "basic")}\n`;
+    str += `→ FROM ${await formatAccount(account, "basic")}\n`;
   }
 
   if (account && maxSpendable) {
@@ -96,7 +96,7 @@ export async function formatReportForConsole<T extends Transaction>({
   }
 
   if (destination) {
-    str += `→ TO ${formatAccount(destination, "head")}\n`;
+    str += `→ TO ${await formatAccount(destination, "head")}\n`;
   }
 
   if (transaction && account) {
@@ -129,7 +129,7 @@ export async function formatReportForConsole<T extends Transaction>({
 
   if (signedOperation) {
     str += `✔️ has been signed! (${formatDt(statusTime, signedTime)}) ${
-      !optimisticOperation ? JSON.stringify(toSignedOperationRaw(signedOperation)) : ""
+      !optimisticOperation ? JSON.stringify(await toSignedOperationRaw(signedOperation)) : ""
     }\n`;
   }
 
@@ -137,17 +137,17 @@ export async function formatReportForConsole<T extends Transaction>({
     str += `✔️ broadcasted! (${formatDt(
       signedTime,
       broadcastedTime,
-    )}) optimistic operation: ${formatOperation(account)(optimisticOperation)}\n`;
+    )}) optimistic operation: ${(await formatOperation(account))(optimisticOperation)}\n`;
   }
 
   if (operation) {
-    str += `✔️ operation confirmed (${formatDt(broadcastedTime, confirmedTime)}): ${formatOperation(
-      finalAccount || account,
+    str += `✔️ operation confirmed (${formatDt(broadcastedTime, confirmedTime)}): ${(
+      await formatOperation(finalAccount || account)
     )(operation)}\n`;
   }
 
   if (finalAccount) {
-    str += `✔️ ${formatAccount(finalAccount, "basic")}`;
+    str += `✔️ ${await formatAccount(finalAccount, "basic")}`;
   }
 
   if (testDuration) {
@@ -155,7 +155,7 @@ export async function formatReportForConsole<T extends Transaction>({
   }
 
   if (finalDestination && finalDestinationOperation) {
-    str += `✔️ destination operation ${formatOperation(finalDestination)(
+    str += `✔️ destination operation ${(await formatOperation(finalDestination))(
       finalDestinationOperation,
     )}\n`;
   }

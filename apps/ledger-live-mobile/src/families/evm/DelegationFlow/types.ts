@@ -14,6 +14,7 @@ type AccountRouteParams = {
 
 export type EvmDelegationFlowParamList = {
   [ScreenName.EvmDelegationValidator]: AccountRouteParams;
+  [ScreenName.EvmDelegationStarted]: AccountRouteParams;
   [ScreenName.EvmDelegationAmount]: AccountRouteParams & {
     transaction: Transaction;
     validator: StakingValidatorItem;

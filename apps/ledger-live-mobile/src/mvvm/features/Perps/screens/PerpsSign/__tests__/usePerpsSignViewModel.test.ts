@@ -12,6 +12,7 @@ function createNavigationProps(overrides: Record<string, unknown> = {}) {
     navigation: {
       goBack: jest.fn(),
       setOptions: jest.fn(),
+      replace: jest.fn(),
     },
     route: {
       params: {
@@ -173,7 +174,7 @@ describe("usePerpsSignViewModel", () => {
 
   it("should navigate back on handleDrawerHidden when signing completed", async () => {
     const onSuccess = jest.fn();
-    const navigation = { goBack: jest.fn(), setOptions: jest.fn() };
+    const navigation = { goBack: jest.fn(), setOptions: jest.fn(), replace: jest.fn() };
     const props = {
       navigation,
       route: {
@@ -201,5 +202,72 @@ describe("usePerpsSignViewModel", () => {
     });
 
     expect(navigation.goBack).toHaveBeenCalled();
+  });
+
+  it("should silently dismiss without calling onCancel and replace to MyLedger on handleOpenManager", () => {
+    const onCancel = jest.fn();
+    const onError = jest.fn();
+    const navigation = { goBack: jest.fn(), setOptions: jest.fn(), replace: jest.fn() };
+    const props = {
+      navigation,
+      route: {
+        params: {
+          appName: "Hyperliquid",
+          signFactory: jest.fn().mockResolvedValue({ signatures: [] }),
+          onSuccess: jest.fn(),
+          onError,
+          onCancel,
+          onClose: jest.fn(),
+        },
+      },
+    } as never;
+
+    const { result } = renderHook(() => usePerpsSignViewModel(props));
+
+    act(() => {
+      result.current.setSelectedDevice(mockDevice);
+    });
+    expect(result.current.drawerOpen).toBe(true);
+
+    act(() => {
+      result.current.handleOpenManager();
+    });
+
+    expect(onCancel).not.toHaveBeenCalled();
+    expect(onError).not.toHaveBeenCalled();
+    expect(navigation.replace).toHaveBeenCalledWith("MyLedger", {
+      screen: "MyLedgerChooseDevice",
+      params: { searchQuery: "Hyperliquid" },
+    });
+  });
+
+  it("should not call onCancel after handleOpenManager + unmount", () => {
+    const onCancel = jest.fn();
+    const props = createNavigationProps({ onCancel });
+    const { result, unmount } = renderHook(() => usePerpsSignViewModel(props));
+
+    act(() => {
+      result.current.handleOpenManager();
+    });
+
+    unmount();
+
+    expect(onCancel).not.toHaveBeenCalled();
+  });
+
+  it("should not call onCancel when handleDrawerClose fires after handleOpenManager", () => {
+    const onCancel = jest.fn();
+    const props = createNavigationProps({ onCancel });
+    const { result } = renderHook(() => usePerpsSignViewModel(props));
+
+    act(() => {
+      result.current.handleOpenManager();
+    });
+
+    act(() => {
+      result.current.handleDrawerClose();
+    });
+
+    expect(onCancel).not.toHaveBeenCalled();
   });
 });

@@ -68,8 +68,14 @@ export interface CommandOutput {
 
   balances(items: Balance[]): Promise<void>;
   operations(items: Operation[], currencyId: string, nextCursor?: string): Promise<void>;
-  /** Output a receive / fresh address. */
-  address(addr: string): void;
+  /** Output a receive / fresh address. `verified` indicates whether the device attested it. */
+  address(addr: string, verified: boolean): void;
+  /**
+   * Surface the derived address before device confirmation so the user (or an agent
+   * watching the stream) can compare it with what the Ledger displays.
+   * Human: stderr line. Json: NDJSON `pre-verify-address` event.
+   */
+  preVerifyAddress(addr: string): void;
   /** Output the result of a successful device genuine check. */
   genuineCheck(): void;
 
@@ -122,6 +128,8 @@ export interface CommandOutput {
   }): void;
   /** Print full-pipeline swap execute result. */
   swapExecuteFullResult(args: {
+    from: string;
+    to: string;
     provider: string;
     amount: string;
     transactionId: string;
@@ -130,7 +138,6 @@ export interface CommandOutput {
     swapId?: string;
     amountExpectedTo?: string;
     magnitudeAwareRate?: string;
-    dryRun?: boolean;
   }): void;
 }
 
@@ -202,7 +209,7 @@ class HumanCommandOutput implements CommandOutput {
       writeStderr(displayText + "\n");
     }
     this._activeSpin = null;
-    process.exit(err.exitCode);
+    throw new CliProcessExitError(err.exitCode);
   }
 
   async balances(items: Balance[]): Promise<void> {
@@ -221,8 +228,16 @@ class HumanCommandOutput implements CommandOutput {
     }
   }
 
-  address(addr: string): void {
+  address(addr: string, verified: boolean): void {
+    if (!verified) {
+      writeStderr("Warning: address was NOT verified on device\n");
+    }
     writeStdout(addr);
+  }
+
+  preVerifyAddress(addr: string): void {
+    writeStderr(addr + "\n");
+    writeStderr("Compare the address above with what's shown on your Ledger…\n");
   }
 
   genuineCheck(): void {
@@ -402,6 +417,8 @@ class HumanCommandOutput implements CommandOutput {
   }
 
   swapExecuteFullResult(args: {
+    from: string;
+    to: string;
     provider: string;
     amount: string;
     transactionId: string;
@@ -410,8 +427,9 @@ class HumanCommandOutput implements CommandOutput {
     swapId?: string;
     amountExpectedTo?: string;
     magnitudeAwareRate?: string;
-    dryRun?: boolean;
   }): void {
+    writeStdout(`${colors.bold("From:")} ${args.from}\n`);
+    writeStdout(`${colors.bold("To:")} ${args.to}\n`);
     this.swapExecutePayloadResult(args);
     if (args.amountExpectedTo) {
       writeStdout(
@@ -420,9 +438,6 @@ class HumanCommandOutput implements CommandOutput {
     }
     if (args.operationHash) {
       writeStdout(`${colors.bold("Operation hash:")} ${args.operationHash}\n`);
-    }
-    if (args.dryRun) {
-      writeStdout(`${colors.bold("Dry run:")} yes (not signed or broadcasted)\n`);
     }
   }
 }
@@ -533,8 +548,24 @@ class JsonCommandOutput implements CommandOutput {
     this._writeNdjson(this._envelope({ operations, nextCursor }));
   }
 
-  address(addr: string): void {
-    this._writeNdjson(this._envelope({ address: addr }));
+  address(addr: string, verified: boolean): void {
+    this._writeNdjson(
+      this._envelope({
+        address: addr,
+        verified,
+        source: verified ? "device" : "software-derivation",
+      }),
+    );
+  }
+
+  preVerifyAddress(addr: string): void {
+    this._writeNdjson({
+      type: "pre-verify-address",
+      command: this._ctx.command,
+      network: this._ctx.network,
+      ...(this._ctx.account == null ? {} : { account: this._ctx.account }),
+      address: addr,
+    });
   }
 
   genuineCheck(): void {
@@ -629,6 +660,8 @@ class JsonCommandOutput implements CommandOutput {
   }
 
   swapExecuteFullResult(args: {
+    from: string;
+    to: string;
     provider: string;
     amount: string;
     transactionId: string;
@@ -637,10 +670,11 @@ class JsonCommandOutput implements CommandOutput {
     swapId?: string;
     amountExpectedTo?: string;
     magnitudeAwareRate?: string;
-    dryRun?: boolean;
   }): void {
     this._writeNdjson(
       this._envelope({
+        from: args.from,
+        to: args.to,
         provider: args.provider,
         amount: args.amount,
         transactionId: args.transactionId,
@@ -649,7 +683,6 @@ class JsonCommandOutput implements CommandOutput {
         swapId: args.swapId,
         amountExpectedTo: args.amountExpectedTo,
         magnitudeAwareRate: args.magnitudeAwareRate,
-        ...(args.dryRun ? { dry_run: true } : {}),
       }),
     );
   }

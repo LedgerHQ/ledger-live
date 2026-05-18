@@ -11,7 +11,7 @@ on:
         description: "Specify branch to checkout and test or leave blank to use the workflow branch"
         required: false
       test_filter:
-        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@bitcoin,@family-evm" or "Accounts @smoke|Settings")
+        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@generic-coin-framework,@solana", "@bitcoin,@family-evm" or "Accounts @smoke|Settings")
         required: false
       invert_filter:
         description: Ignore test having name pattern (entered in the previous field)
@@ -80,7 +80,7 @@ on:
         required: false
         type: string
       test_filter:
-        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@bitcoin,@evm" or "Accounts @smoke|Settings")
+        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@generic-coin-framework,@solana", "@bitcoin,@family-evm" or "Accounts @smoke|Settings")
         required: false
         type: string
       invert_filter:
@@ -138,7 +138,21 @@ jobs:
       - name: Parse speculos device input
         id: parse
         run: |
-          if [ "${{ inputs.speculos_device }}" = "nanoSP and stax" ]; then
+          declare -A WEEKDAY_DEVICE=(
+            [1]=nanoSP    # Monday     - LNSP
+            [2]=stax      # Tuesday    - Stax
+            [3]=nanoX     # Wednesday  - LNX
+            [4]=flex      # Thursday   - Flex
+            [5]=nanoGen5  # Friday     - NG5
+          )
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            DOW=$(date -u +%u)
+            DEVICE="${WEEKDAY_DEVICE[$DOW]:-nanoSP}"
+            echo "device_1=$DEVICE" >> $GITHUB_OUTPUT
+            echo "device_2=skipped" >> $GITHUB_OUTPUT
+            echo "is_dual=false"   >> $GITHUB_OUTPUT
+            printf 'e2e_matrix={"include":[{"device":"%s","is_primary":true,"artifact_suffix":""}]}\n' "$DEVICE" >> $GITHUB_OUTPUT
+          elif [ "${{ inputs.speculos_device }}" = "nanoSP and stax" ]; then
             echo "device_1=nanoSP" >> $GITHUB_OUTPUT
             echo "device_2=stax" >> $GITHUB_OUTPUT
             echo "is_dual=true" >> $GITHUB_OUTPUT
@@ -250,20 +264,15 @@ jobs:
       - name: Build Playwright grep filter from inputs
         id: test-filter
         run: |
-          BASE_FILTER="${{ inputs.test_filter }}"
-          if [ -n "$BASE_FILTER" ]; then
-            BASE_FILTER="${BASE_FILTER//,/|}"
-          fi
-          if [ "${{ inputs.smoke_tests }}" = "true" ]; then
-            if [ -n "$BASE_FILTER" ]; then
-              echo "filter=@smoke $BASE_FILTER" >> $GITHUB_OUTPUT
-            else
-              echo "filter=@smoke" >> $GITHUB_OUTPUT
-            fi
-          else
-            echo "filter=$BASE_FILTER" >> $GITHUB_OUTPUT
-          fi
+          RESOLVED_FILTER="$(node scripts/resolve-e2e-test-filter.mjs \
+            --input "$TEST_FILTER_INPUT" \
+            --smoke-tests "$SMOKE_TESTS_INPUT" \
+            --check-dir "e2e/desktop/tests")"
+          echo "filter=$RESOLVED_FILTER" >> $GITHUB_OUTPUT
         shell: bash
+        env:
+          TEST_FILTER_INPUT: ${{ inputs.test_filter }}
+          SMOKE_TESTS_INPUT: ${{ inputs.smoke_tests }}
 
       - name: Write workflow context to GitHub Summary
         run: |
@@ -530,7 +539,7 @@ jobs:
                   "type": "header",
                   "text": {
                     "type": "plain_text",
-                    "text": `:ledger-logo: Ledger Live Desktop E2E tests results on ${{ inputs.ref || github.ref_name }} - ${{ inputs.speculos_device || 'nanoSP' }}${{ inputs.smoke_tests && ' (Smoke Tests)' || '' }}`,
+                    "text": `:ledger-logo: Ledger Live Desktop E2E tests results on ${{ inputs.ref || github.ref_name }} - ${device1}${{ inputs.smoke_tests && ' (Smoke Tests)' || '' }}`,
                     "emoji": true
                   }
                 },
