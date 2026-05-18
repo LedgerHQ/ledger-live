@@ -1,8 +1,30 @@
 /** Pure helpers backing the GraphQL pipelines: shape adapters, drift guards, pool math, and predicates. */
 import { log } from "@ledgerhq/logs";
+import type { SuiClientTypes } from "@mysten/sui/client";
 import type { DelegatedStake, StakeObject } from "@mysten/sui/jsonRpc";
 import type { SuiValidatorSummary } from "../../types";
 import type { StakedSuiObjectsResult } from "./queries";
+
+/**
+ * Envelope handler for `SuiGraphQLClient.query()`: throws on populated
+ * `errors[]` (joined) or missing `data`. Shared between the read-side
+ * (`sdk.graphql.ts`) and the build-side (`sui-client-adapter.ts`).
+ *
+ * Part 1 cleanup applied: removed `as NonNullable<T>` cast — TS narrows
+ * `res.data` after the null/undefined guard on its own.
+ */
+export function unwrapGraphQL<T>(
+  label: string,
+  res: { data?: T | null; errors?: readonly { message: string }[] | null },
+): NonNullable<T> {
+  if (res.errors?.length) {
+    throw new Error(`GraphQL ${label} failed: ${res.errors.map(e => e.message).join("; ")}`);
+  }
+  if (res.data === null || res.data === undefined) {
+    throw new Error(`GraphQL ${label} failed: no data`);
+  }
+  return res.data;
+}
 
 // ----- JSON shape coming out of `MoveValue.json` --------------------------
 
@@ -123,6 +145,7 @@ function validatorJsonToSummary(v: ValidatorJson): SuiValidatorSummary {
     description: m.description,
     imageUrl: m.image_url,
     projectUrl: m.project_url,
+    stakingPoolId: v.staking_pool.id,
     stakingPoolSuiBalance: str(v.staking_pool.sui_balance),
     commissionRate: str(v.commission_rate),
   };
@@ -236,7 +259,41 @@ export function computeEstimatedReward(
   return currentValue > p ? currentValue - p : 0n;
 }
 
-// ----- Pool current-rate map for stake reward -----------------------------
+/**
+ * APY mirroring Mysten's `getValidatorsApy`:
+ *   APY = (cur_ratio / past_ratio) ^ (epochsPerYear / epochsBetween) − 1
+ * SUI epochs ~24h → `epochsPerYear ≈ 365`. Returns 0 for degenerate inputs (zero division,
+ * non-positive growth window). Precision is safe for the SUI rate range; see inline note below.
+ */
+export function computeApy(
+  currentRate: ExchangeRate,
+  pastRate: ExchangeRate,
+  epochsBetween: number,
+  epochsPerYear = 365,
+): number {
+  if (epochsBetween <= 0) return 0;
+  const past_sui = BigInt(pastRate.sui_amount);
+  const past_pt = BigInt(pastRate.pool_token_amount);
+  const cur_sui = BigInt(currentRate.sui_amount);
+  const cur_pt = BigInt(currentRate.pool_token_amount);
+  if (past_sui === 0n || past_pt === 0n || cur_pt === 0n) return 0;
+  // Bigint division throughout, with `RATIO_SCALE=10^9` retained on the
+  // ratio numerator so the bigint→Number step lands at ~10^9 (well under
+  // 2^53) instead of ~10^18 where pool-token magnitudes lose precision.
+  const SCALE = 10n ** 18n;
+  const pastRatioScaled = (past_sui * SCALE) / past_pt;
+  const curRatioScaled = (cur_sui * SCALE) / cur_pt;
+  if (pastRatioScaled === 0n) return 0;
+  const RATIO_SCALE = 10n ** 9n;
+  const ratioScaled = (curRatioScaled * RATIO_SCALE) / pastRatioScaled;
+  const ratio = Number(ratioScaled) / Number(RATIO_SCALE);
+  if (!Number.isFinite(ratio) || ratio <= 0) return 0;
+  const perEpoch = Math.pow(ratio, 1 / epochsBetween);
+  const apy = Math.pow(perEpoch, epochsPerYear) - 1;
+  return Number.isFinite(apy) ? Math.max(apy, 0) : 0;
+}
+
+// ----- Pool current-rate map for stake reward + APY -----------------------
 
 /**
  * Pool data for client-side APY + reward: the rates-table id, the
@@ -382,4 +439,116 @@ export function parseExchangeRateNode(node: ExchangeRateAddrNode): ExchangeRate 
   if (value?.__typename !== "MoveValue") return null;
   if (!isExchangeRateJson(value.json)) return null;
   return { sui_amount: value.json.sui_amount, pool_token_amount: value.json.pool_token_amount };
+}
+
+// ----- Failure-error extraction from gRPC `ExecutionStatus` ---------------
+
+function prettifyEnumKind(kind: string): string {
+  return kind.toLowerCase().replace(/_+/g, " ").trim();
+}
+
+/**
+ * Extract a human-readable error from the gRPC-proto `ExecutionStatus` shape carried in
+ * `effectsJson`: prefer `description`, fall back to a prettified `kind` enum, then a generic placeholder.
+ */
+export function extractFailureError(effectsJson: Record<string, unknown>): string {
+  const status = effectsJson.status;
+  const err =
+    status && typeof status === "object" && !Array.isArray(status)
+      ? (status as Record<string, unknown>).error
+      : undefined;
+  if (err && typeof err === "object" && !Array.isArray(err)) {
+    const e = err as Record<string, unknown>;
+    if (typeof e.description === "string" && e.description.length > 0) return e.description;
+    if (typeof e.kind === "string" && e.kind.length > 0) return prettifyEnumKind(e.kind);
+  }
+  return "transaction execution failed";
+}
+
+// ----- OpenMoveType signature projection ----------------------------------
+
+/**
+ * GraphQL `OpenMoveTypeSignature` JSON-scalar shape — opaque structured value
+ * the SDK's `Transaction.build` resolver reads via `getMoveFunction`. Body is
+ * a tagged union: primitive string, vector wrapper, datatype struct, or type
+ * parameter index.
+ */
+export type OpenMoveSigJson = {
+  ref?: "&" | "&mut" | null;
+  body: OpenMoveSigBodyJson;
+};
+
+export type OpenMoveSigBodyJson =
+  | "address"
+  | "bool"
+  | "u8"
+  | "u16"
+  | "u32"
+  | "u64"
+  | "u128"
+  | "u256"
+  | { vector: OpenMoveSigBodyJson }
+  | { typeParameter: number }
+  | {
+      datatype: {
+        package: string;
+        module: string;
+        type: string;
+        typeParameters: OpenMoveSigBodyJson[];
+      };
+    };
+
+const PRIMITIVE_KINDS = ["address", "bool", "u8", "u16", "u32", "u64", "u128", "u256"] as const;
+type PrimitiveKind = (typeof PRIMITIVE_KINDS)[number];
+
+const isPrimitiveKind = (s: string): s is PrimitiveKind =>
+  (PRIMITIVE_KINDS as readonly string[]).includes(s);
+
+/** Recursive `OpenMoveSigBodyJson` → SDK `OpenSignatureBody` projection. */
+export function projectOpenMoveBody(body: unknown): SuiClientTypes.OpenSignatureBody {
+  if (typeof body === "string") {
+    return isPrimitiveKind(body) ? { $kind: body } : { $kind: "unknown" };
+  }
+  if (body && typeof body === "object") {
+    const obj = body as Record<string, unknown>;
+    if ("vector" in obj) {
+      return { $kind: "vector", vector: projectOpenMoveBody(obj.vector) };
+    }
+    if ("typeParameter" in obj) {
+      return { $kind: "typeParameter", index: Number(obj.typeParameter) };
+    }
+    if ("datatype" in obj) {
+      const dt = obj.datatype as {
+        package: string;
+        module: string;
+        type: string;
+        typeParameters?: unknown[];
+      };
+      return {
+        $kind: "datatype",
+        datatype: {
+          typeName: `${dt.package}::${dt.module}::${dt.type}`,
+          typeParameters: (dt.typeParameters ?? []).map(projectOpenMoveBody),
+        },
+      };
+    }
+  }
+  return { $kind: "unknown" };
+}
+
+const moveRefToOpenSignatureReference = (
+  ref: string | null | undefined,
+): "mutable" | "immutable" | null => {
+  if (ref === "&mut") return "mutable";
+  if (ref === "&") return "immutable";
+  return null;
+};
+
+/** GraphQL `parameters[i].signature` JSON scalar → SDK `OpenSignature`. */
+export function projectOpenMoveSignature(sigJson: unknown): SuiClientTypes.OpenSignature {
+  const sig = sigJson as OpenMoveSigJson;
+  return {
+    reference: moveRefToOpenSignatureReference(sig?.ref),
+    body: projectOpenMoveBody(sig?.body),
+  };
 }

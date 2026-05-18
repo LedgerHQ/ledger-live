@@ -1,6 +1,7 @@
 /**
  * Typed `graphql` template tag bound to the SUI production schema. Introspection
- * lives at `./introspection.json` (mirrored at `./graphql-env.d.ts`); regenerate via codegen.
+ * lives at `./introspection.json` (mirrored at `./graphql-env.d.ts`); regenerate
+ * via `pnpm --filter @ledgerhq/coin-sui graphql:codegen:fetch` to detect upstream drift.
  */
 import { initGraphQLTada } from "gql.tada";
 import type { introspection } from "./graphql-env";
