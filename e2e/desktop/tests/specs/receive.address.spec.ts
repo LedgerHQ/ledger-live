@@ -8,8 +8,11 @@ import {
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
-import { liveDataCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 import type { Application } from "tests/page";
+import {
+  addEmptyAccountCommand,
+  liveDataCommand,
+} from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 
 const nativeAccounts = [
   { account: Account.BTC_NATIVE_SEGWIT_1, xrayTicket: "B2CQA-2559, B2CQA-2687" },
@@ -96,7 +99,7 @@ test.describe("Receive TRX empty balance", () => {
     teamOwner: Team.WALLET_XP,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: account.currency.speculosApp,
-    cliCommands: [liveDataCommand(account)],
+    cliCommands: [addEmptyAccountCommand(account)],
   });
 
   const family = getFamilyByCurrencyId(account.currency.id);
