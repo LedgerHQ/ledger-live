@@ -5,9 +5,8 @@ import type { SendFlowTransactionActions } from "@ledgerhq/live-common/flows/sen
 import {
   getAccountCurrency,
   getMainAccount,
-} from "@ledgerhq/ledger-wallet-framework/account/helpers";
+} from "@ledgerhq/live-common/account/index";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
-import { EvmGasOptionsSyncPlugin } from "./plugins/EvmGasOptionsSyncPlugin";
 import { CeloFeeCurrencyPlugin } from "./plugins/CeloFeeCurrencyPlugin";
 
 type AmountPluginProps = Readonly<{
@@ -20,7 +19,6 @@ type AmountPluginProps = Readonly<{
 type AmountPluginComponent = (props: AmountPluginProps) => React.ReactElement | null;
 
 const pluginRegistry: Readonly<Record<string, AmountPluginComponent>> = {
-  evmGasOptionsSync: EvmGasOptionsSyncPlugin,
   celoFeeCurrency: CeloFeeCurrencyPlugin,
 };
 

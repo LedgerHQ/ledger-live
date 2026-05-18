@@ -210,13 +210,22 @@ const getFeesForTransaction = async ({
       args: [transaction.recipient as `0x${string}`, BigInt(value.toFixed())],
     });
 
-    const estimatedGas = await client.estimateGas({
-      account: account.freshAddress as `0x${string}`,
+    // Use eth_estimateGas directly so we can pass feeCurrency (viem's estimateGas doesn't expose it).
+    const estimateParams: Record<string, string | undefined> = {
+      from: account.freshAddress,
       to: tokenAddress,
       data,
-      maxFeePerGas: tokenMaxFeePerGas,
-      maxPriorityFeePerGas,
-    });
+      maxFeePerGas: `0x${tokenMaxFeePerGas.toString(16)}`,
+      maxPriorityFeePerGas: `0x${maxPriorityFeePerGas.toString(16)}`,
+    };
+    if (transaction.feeCurrency) {
+      estimateParams.feeCurrency = transaction.feeCurrency;
+    }
+    const estimatedGasHex = await client.request({
+      method: "eth_estimateGas",
+      params: [estimateParams],
+    } as Parameters<typeof client.request>[0]);
+    const estimatedGas = BigInt(estimatedGasHex as string);
 
     gas = Number(Math.ceil(Number(estimatedGas) * MAX_FEES_THRESHOLD_MULTIPLIER).toString());
   } else {

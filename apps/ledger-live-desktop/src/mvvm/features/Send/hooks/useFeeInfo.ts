@@ -3,7 +3,7 @@ import { BigNumber } from "bignumber.js";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
 import { useCalculate } from "@ledgerhq/live-countervalues-react";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import type { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
@@ -17,9 +17,15 @@ type UseFeeInfoParams = Readonly<{
   account: AccountLike;
   parentAccount: Account | null;
   status: TransactionStatus;
+  feeCurrencyAccountId?: string | null;
 }>;
 
-export function useFeeInfo({ account, parentAccount, status }: UseFeeInfoParams) {
+export function useFeeInfo({
+  account,
+  parentAccount,
+  status,
+  feeCurrencyAccountId,
+}: UseFeeInfoParams) {
   const { t } = useTranslation();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const locale = useSelector(localeSelector);
@@ -33,12 +39,24 @@ export function useFeeInfo({ account, parentAccount, status }: UseFeeInfoParams)
   const accountUnit = useMaybeAccountUnit(mainAccount) ?? accountCurrency.units[0];
   const fiatUnit = counterValueCurrency.units[0];
 
+  const feeCurrencySubAccount = useMemo(() => {
+    if (!feeCurrencyAccountId) return null;
+    return (
+      ((mainAccount.subAccounts ?? []).find(
+        sub => sub.id === feeCurrencyAccountId && sub.type === "TokenAccount",
+      ) as TokenAccount | undefined) ?? null
+    );
+  }, [feeCurrencyAccountId, mainAccount.subAccounts]);
+
+  const displayUnit = feeCurrencySubAccount?.token.units[0] ?? accountUnit;
+  const displayCurrency = feeCurrencySubAccount?.token ?? accountCurrency;
+
   const estimatedFees = useMemo(
     () => status.estimatedFees ?? new BigNumber(0),
     [status.estimatedFees],
   );
   const estimatedFeesCountervalue = useCalculate({
-    from: accountCurrency,
+    from: displayCurrency,
     to: counterValueCurrency,
     value: estimatedFees.toNumber(),
     disableRounding: true,
@@ -61,9 +79,9 @@ export function useFeeInfo({ account, parentAccount, status }: UseFeeInfoParams)
               locale,
             }),
             cryptoLabel: t("newSendFlow.feesAmount", {
-              unit: accountUnit.code,
+              unit: displayUnit.code,
             }),
-            cryptoValue: formatCurrencyUnit(accountUnit, estimatedFees, {
+            cryptoValue: formatCurrencyUnit(displayUnit, estimatedFees, {
               showCode: true,
               disableRounding: true,
               locale,
@@ -72,7 +90,7 @@ export function useFeeInfo({ account, parentAccount, status }: UseFeeInfoParams)
           }
         : null,
     [
-      accountUnit,
+      displayUnit,
       counterValueCurrency.ticker,
       estimatedFees,
       estimatedFeesFiat,

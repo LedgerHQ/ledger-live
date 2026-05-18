@@ -62,7 +62,7 @@ const celoCustomInputs: readonly CustomFeeInputDescriptor[] = [
 export const fees: FeeDescriptor = {
   hasPresets: false,
   hasCustom: true,
-  hasCustomAssets: true,
+  hasCustomAssets: false,
   custom: {
     inputs: celoCustomInputs,
     getInitialValues: (transaction): Record<string, string> => {
@@ -83,15 +83,5 @@ export const fees: FeeDescriptor = {
 
       return patch;
     },
-  },
-  customAssets: {
-    options: [
-      { id: "eth", ticker: "ETH", label: "Ethereum", unitLabel: "Gwei" },
-      { id: "btc", ticker: "BTC", label: "Bitcoin", unitLabel: "sat" },
-      { id: "usdc", ticker: "USDC", label: "USD Coin", unitLabel: "USDC" },
-      { id: "usdt", ticker: "USDT", label: "Tether", unitLabel: "USDT" },
-      { id: "celo", ticker: "Celo", label: "Celo", unitLabel: "Gwei" },
-    ],
-    defaultId: "eth",
   },
 };
