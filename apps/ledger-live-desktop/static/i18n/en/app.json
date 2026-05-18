@@ -4325,7 +4325,7 @@
             "starter": {
               "title": "Redelegation",
               "description": "Use redelegation to easily change from one validator to another. But if you change your mind again, you will then have to wait because redelegation triggers a {{ numberOfDays }}-day timelock.",
-              "warning": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately. You can have a maximum of <0>{{maxRedelegations}} pending redelegations</0>.",              
+              "warning": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately. You can have a maximum of <0>{{maxRedelegations}} pending redelegations</0>.",
               "howDelegationWorks": "How delegation works?"
             },
             "validators": {
@@ -9022,6 +9022,31 @@
         "realisedReturn": {
           "title": "Realised return",
           "description": "Profit or loss confirmed from previous sales or transfers."
+        }
+      }
+    },
+    "portfolio": {
+      "return": {
+        "title": "Unrealised return"
+      },
+      "costBasis": {
+        "title": "Cost basis",
+        "tooltip": "The total amount you paid to acquire your current holdings, including fees."
+      },
+      "dialog": {
+        "title": "Profit and loss",
+        "description": "Your portfolio performance broken down into realised and unrealised returns.",
+        "totalReturn": {
+          "title": "Total return",
+          "description": "Realised and unrealised returns combined, reflecting your overall position."
+        },
+        "unrealisedReturn": {
+          "title": "Unrealised return",
+          "description": "Estimated gain or loss on your current holdings."
+        },
+        "realisedReturn": {
+          "title": "Realised return",
+          "description": "Profit or loss confirmed from previous sales or outgoing transfers."
         }
       }
     }

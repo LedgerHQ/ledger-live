@@ -1,8 +1,10 @@
 import { BigNumber } from "bignumber.js";
 import type { TFunction } from "i18next";
-import type { PnlDetailItem } from "LLD/features/PnL/components/PnlDetail";
+import type { PnlDetailItem } from "../components/PnlDetail";
+import type { PnlNamespace } from "../types";
 
 export type BuildPnlDetailInput = {
+  namespace: PnlNamespace;
   totalPnL: BigNumber;
   unrealisedPnL: BigNumber;
   realisedPnL: BigNumber;
@@ -17,29 +19,31 @@ export type PnlDetailData = {
 };
 
 export function buildPnlDetail({
+  namespace,
   totalPnL,
   unrealisedPnL,
   realisedPnL,
   formatFiat,
   t,
 }: BuildPnlDetailInput): PnlDetailData {
+  const key = (suffix: string) => `${namespace}.dialog.${suffix}`;
   return {
-    title: t("pnl.asset.dialog.title"),
-    description: t("pnl.asset.dialog.description"),
+    title: t(key("title")),
+    description: t(key("description")),
     items: [
       {
-        title: t("pnl.asset.dialog.unrealisedReturn.title"),
-        description: t("pnl.asset.dialog.unrealisedReturn.description"),
+        title: t(key("unrealisedReturn.title")),
+        description: t(key("unrealisedReturn.description")),
         value: formatFiat(unrealisedPnL),
       },
       {
-        title: t("pnl.asset.dialog.realisedReturn.title"),
-        description: t("pnl.asset.dialog.realisedReturn.description"),
+        title: t(key("realisedReturn.title")),
+        description: t(key("realisedReturn.description")),
         value: formatFiat(realisedPnL),
       },
       {
-        title: t("pnl.asset.dialog.totalReturn.title"),
-        description: t("pnl.asset.dialog.totalReturn.description"),
+        title: t(key("totalReturn.title")),
+        description: t(key("totalReturn.description")),
         value: formatFiat(totalPnL),
       },
     ],
