@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeAll, afterAll, afterEach } from "bun:test";
 import { join } from "node:path";
 import { YAML } from "bun";
-import { MockServer } from "../helpers/mock-server";
-import { runCli } from "../helpers/cli-runner";
-import { makeSessionDir } from "../helpers/session-fixture";
-import { ETH_SYNC_ROUTES } from "../helpers/eth-sync-routes";
-import { MOCK_ETH_ADDRESS, MOCK_ETH_PUBKEY } from "../helpers/constants";
+import { MockServer } from "../../helpers/mock-server";
+import { runCli } from "../../helpers/cli-runner";
+import { makeSessionDir } from "../../helpers/session-fixture";
+import { ETH_SYNC_ROUTES } from "../../helpers/eth-sync-routes";
+import { MOCK_ETH_ADDRESS, MOCK_ETH_PUBKEY } from "../../helpers/constants";
 
 const MOCK_ENV = (port: number) => ({
   WALLET_CLI_MOCK_PORT: String(port),
