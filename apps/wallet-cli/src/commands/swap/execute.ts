@@ -159,6 +159,8 @@ export async function executeSwapCommand({
       feeStrategy: flags["fee-strategy"],
       fromAccount,
       toAccount,
+      fromParentAccount,
+      toParentAccount,
       getAccountBridge: getBridge,
     });
 

@@ -80,6 +80,8 @@ export type FullSwapPipelineInput = {
   feeStrategy: string;
   fromAccount: AccountLike;
   toAccount: AccountLike;
+  fromParentAccount?: Account;
+  toParentAccount?: Account;
   getAccountBridge?: typeof getAccountBridge;
   getDeviceModelId?: typeof getWalletCliDeviceModelId;
 };
@@ -265,11 +267,15 @@ export async function runFullSwapPipeline(
     feeStrategy,
     fromAccount,
     toAccount,
+    fromParentAccount: fromParent,
+    toParentAccount: toParent,
     getAccountBridge: getBridge = getAccountBridge,
     getDeviceModelId = getWalletCliDeviceModelId,
   } = input;
 
-  const accounts: AccountLike[] = [fromAccount, toAccount];
+  const accounts: AccountLike[] = [fromAccount, toAccount, fromParent, toParent].filter(
+    (a): a is AccountLike => a != null,
+  );
   const fromParentAccount = getParentAccount(fromAccount, accounts);
   const toParentAccount = getParentAccount(toAccount, accounts);
   const fromCurrency = getCurrencyForAccount(fromAccount);
