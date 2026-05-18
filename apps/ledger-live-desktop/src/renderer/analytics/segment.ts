@@ -49,6 +49,7 @@ import { getOnboardingStatusAttributes } from "./onboardingStatus";
 import { hubStateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { getTotalStakeableAssets } from "@ledgerhq/live-common/domain/getTotalStakeableAssets";
 import { getWallet40Attributes } from "@ledgerhq/live-common/analytics/featureFlagHelpers/wallet40";
+import { getNewSendFlowAttribute } from "@ledgerhq/live-common/analytics/featureFlagHelpers/newSendFlow";
 
 type ReduxStore = Redux.MiddlewareAPI<Redux.Dispatch<Redux.UnknownAction>, State>;
 
@@ -287,6 +288,7 @@ const extraProperties = (store: ReduxStore) => {
   const tokenWithFunds = getTokensWithFunds(accounts);
 
   const wallet40Attributes = getWallet40Attributes(analyticsFeatureFlagMethod, "lwd");
+  const newSendFlow = getNewSendFlowAttribute(analyticsFeatureFlagMethod);
 
   return {
     ...mandatoryProperties,
@@ -328,6 +330,7 @@ const extraProperties = (store: ReduxStore) => {
     totalStakeableAssets: combinedIds.size,
     stakeableAssets: stakeableAssetsList,
     wallet40Attributes,
+    newSendFlow,
   };
 };
 

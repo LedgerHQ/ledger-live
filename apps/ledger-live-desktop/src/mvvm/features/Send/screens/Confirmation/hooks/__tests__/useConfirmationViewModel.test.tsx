@@ -179,6 +179,7 @@ describe("useConfirmationViewModel", () => {
       blockchain: "",
       currency: "",
       currency_id: "",
+      newSendFlow: true,
     });
 
     expect(latestVM?.status).toBe("IDLE");
@@ -214,6 +215,7 @@ describe("useConfirmationViewModel", () => {
       blockchain: "",
       currency: "",
       currency_id: "",
+      newSendFlow: true,
     });
     expect(setDrawer).toHaveBeenCalledWith(OperationDetails, {
       operationId: "child1",
@@ -331,6 +333,7 @@ describe("useConfirmationViewModel", () => {
       blockchain: "",
       currency: "",
       currency_id: "",
+      newSendFlow: true,
     });
     expect(close).toHaveBeenCalled();
   });
