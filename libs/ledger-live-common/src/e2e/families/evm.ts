@@ -145,7 +145,7 @@ export async function signTypedMessageTouchDevices() {
   await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
 }
 
-export const signTypedMessagButtonDevice = withDeviceController(
+export const signTypedMessageButtonDevice = withDeviceController(
   ({ getButtonsController }) =>
     async () => {
       await waitFor(DeviceLabels.REVIEW_TYPED_MESSAGE);
@@ -158,5 +158,5 @@ export async function signTypedMessage() {
   if (isTouchDevice()) {
     return signTypedMessageTouchDevices();
   }
-  return signTypedMessagButtonDevice();
+  return signTypedMessageButtonDevice();
 }

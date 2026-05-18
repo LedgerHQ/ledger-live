@@ -564,7 +564,7 @@ export class SwapPage extends WebViewAppPage {
   }
 
   @step("Ensure token approval has been revoked")
-  async ensureRevokeTokenApproval(fromAccount: Account | TokenAccount, provider: Provider) {
+  async ensureRevokeTokenApproval(fromAccount: TokenAccount, provider: Provider) {
     if (!provider.contractAddress) {
       throw new Error(
         `Provider "${provider.name}" has no contractAddress - revoke requires an EVM token provider`,
