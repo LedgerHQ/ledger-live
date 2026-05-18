@@ -227,8 +227,15 @@ const Body = ({
   const [signed, setSigned] = useState(false);
   const currency = account ? getAccountCurrency(account) : undefined;
   const currencyName = currency ? currency.name : undefined;
+
+  const mainAccountForFamily = account ? getMainAccount(account, parentAccount) : null;
+  const mainCurrencyForFamily = mainAccountForFamily
+    ? getAccountCurrency(mainAccountForFamily)
+    : undefined;
   const specific =
-    currency && isCryptoCurrency(currency) ? getLLDCoinFamily(currency.family) : null;
+    mainCurrencyForFamily && isCryptoCurrency(mainCurrencyForFamily)
+      ? getLLDCoinFamily(mainCurrencyForFamily.family)
+      : null;
 
   const [defaultSteps] = useState(() => defaultCreateSteps(params.disableBacks));
   const customSteps = useMemo(() => {
