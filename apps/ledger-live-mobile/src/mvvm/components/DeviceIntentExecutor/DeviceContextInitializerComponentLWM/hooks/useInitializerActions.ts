@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import { Linking } from "react-native";
 import { useNavigation, type NavigationProp, type ParamListBase } from "@react-navigation/native";
 import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { NavigatorName, ScreenName } from "~/const";
 import { urls } from "~/utils/urls";
@@ -11,20 +12,25 @@ import type { InitializerDevice } from "../types";
 export function useInitializerActions(device: InitializerDevice) {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const contactSupportUrl = useLocalizedUrl(urls.contact);
+  const { shouldDisplayMyWallet } = useWalletFeaturesConfig("mobile");
 
   const openMyLedger = useCallback(
     (searchQuery?: string) => {
-      resetToMyLedger(navigation, { searchQuery });
+      resetToMyLedger(navigation, { searchQuery }, shouldDisplayMyWallet);
     },
-    [navigation],
+    [navigation, shouldDisplayMyWallet],
   );
 
   const openMyLedgerFirmwareUpdate = useCallback(() => {
-    resetToMyLedger(navigation, {
-      device: toLiveDevice(device),
-      firmwareUpdate: device.wired,
-    });
-  }, [device, navigation]);
+    resetToMyLedger(
+      navigation,
+      {
+        device: toLiveDevice(device),
+        firmwareUpdate: device.wired,
+      },
+      shouldDisplayMyWallet,
+    );
+  }, [device, navigation, shouldDisplayMyWallet]);
 
   const openOnboarding = useCallback(() => {
     const liveDevice = toLiveDevice(device);
@@ -88,7 +94,22 @@ function getRootNavigation(
 function resetToMyLedger(
   navigation: NavigationProp<ParamListBase>,
   params: Record<string, unknown>,
+  shouldDisplayMyWallet: boolean,
 ) {
+  const managerRoute = shouldDisplayMyWallet
+    ? {
+        name: NavigatorName.MyWallet,
+        state: {
+          routes: [{ name: ScreenName.MyWallet, params }],
+        },
+      }
+    : {
+        name: NavigatorName.MyLedger,
+        state: {
+          routes: [{ name: ScreenName.MyLedgerChooseDevice, params }],
+        },
+      };
+
   getRootNavigation(navigation).reset({
     index: 0,
     routes: [
@@ -96,15 +117,7 @@ function resetToMyLedger(
         name: NavigatorName.Base,
         state: {
           index: 1,
-          routes: [
-            { name: NavigatorName.Main },
-            {
-              name: NavigatorName.MyLedger,
-              state: {
-                routes: [{ name: ScreenName.MyLedgerChooseDevice, params }],
-              },
-            },
-          ],
+          routes: [{ name: NavigatorName.Main }, managerRoute],
         },
       },
     ],
