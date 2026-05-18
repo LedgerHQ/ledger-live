@@ -10,6 +10,7 @@ import { log } from "@ledgerhq/logs";
 import { concat, merge, Observable, of } from "rxjs";
 import { concatMap } from "rxjs/operators";
 import { SyncConfig, SYNC_TYPE_SHIELDED, SYNC_TYPE_TRANSPARENT } from "@ledgerhq/types-live";
+import type { TokenAccount } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import { AleoApiConfigurationResetError } from "../errors";
 import { getBalance, lastBlock, listOperations } from "../logic";
@@ -27,8 +28,9 @@ import {
   PROGRESS_AFTER_LIST_OPS,
   PROGRESS_AFTER_PARSING_RECORDS,
   PROGRESS_DONE,
+  TOKENS_PROGRAMS,
 } from "../constants";
-import { resolveTokenSubAccounts } from "./tokens";
+import { resolveTokenSubAccounts, buildSubAccountsFromPrivateRecords } from "./tokens";
 import type {
   AleoAccount,
   AleoOperation,
@@ -207,6 +209,7 @@ export async function performPrivateSync(
   freshTransparentBalance?: BigNumber,
   onProgress?: (progress: number) => void,
   signal?: AbortSignal,
+  publicSubAccounts?: TokenAccount[],
 ): Promise<Partial<AleoAccount> | null> {
   const { initialAccount, address, derivationMode, currency } = info;
   invariant(initialAccount, "aleo: performPrivateSync requires initialAccount");
@@ -271,20 +274,32 @@ export async function performPrivateSync(
   const [oldPrivateOps] = splitPrivateAndPublicOperations(allOldOperations);
   const lastPrivateBlockHeight = oldPrivateOps[0]?.blockHeight ?? 0;
 
-  const [rawNewPrivateRecords, rawUnspentPrivateRecords] = await Promise.all([
-    fetchAllOwnedRecords({
-      currency,
-      uuid: provableApi.uuid,
-      start: lastPrivateBlockHeight,
-      ...(signal && { signal }),
-    }),
-    fetchAllOwnedRecords({
-      currency,
-      uuid: provableApi.uuid,
-      unspent: true,
-      ...(signal && { signal }),
-    }),
-  ]);
+  const [rawNewPrivateRecords, rawUnspentPrivateRecords, rawTokenPrivateRecords] =
+    await Promise.all([
+      fetchAllOwnedRecords({
+        currency,
+        uuid: provableApi.uuid,
+        start: lastPrivateBlockHeight,
+        ...(signal && { signal }),
+      }),
+      fetchAllOwnedRecords({
+        currency,
+        uuid: provableApi.uuid,
+        unspent: true,
+        ...(signal && { signal }),
+      }),
+      fetchAllOwnedRecords({
+        currency,
+        uuid: provableApi.uuid,
+        start: 0,
+        programs: [...TOKENS_PROGRAMS],
+        functions: [],
+        ...(signal && { signal }),
+      }),
+    ]);
+
+  // eslint-disable-next-line no-console
+  console.log("aleo: token private records fetched", rawTokenPrivateRecords);
 
   signal?.throwIfAborted();
 
@@ -373,6 +388,19 @@ export async function performPrivateSync(
 
   onProgress?.(PROGRESS_DONE);
 
+  let privateTokenSubAccounts: TokenAccount[] = [];
+  if (config.enableTokens) {
+    const baseSubAccounts = publicSubAccounts ?? initialAccount.subAccounts ?? [];
+    const existingSubAccountIds = new Set(baseSubAccounts.map(sa => sa.id));
+    privateTokenSubAccounts = await buildSubAccountsFromPrivateRecords({
+      currency,
+      ledgerAccountId,
+      privateRecords: rawTokenPrivateRecords,
+      existingSubAccountIds,
+      viewKey,
+    });
+  }
+
   return {
     type: "Account",
     id: ledgerAccountId,
@@ -382,6 +410,12 @@ export async function performPrivateSync(
     operations,
     operationsCount: operations.length,
     lastSyncDate: initialAccount?.lastSyncDate,
+    ...(config.enableTokens && {
+      subAccounts: [
+        ...(publicSubAccounts ?? initialAccount.subAccounts ?? []),
+        ...privateTokenSubAccounts,
+      ],
+    }),
     aleoResources: {
       transparentBalance,
       provableApi,
@@ -398,6 +432,7 @@ export function createPrivateSyncObservable(
   syncConfig: SyncConfig,
   publicOps: AleoOperation[],
   freshTransparentBalance?: BigNumber,
+  publicSubAccounts?: TokenAccount[],
 ): Observable<Partial<AleoAccount>> {
   const { initialAccount } = info;
   const currencyId = info.currency.id;
@@ -431,6 +466,7 @@ export function createPrivateSyncObservable(
       freshTransparentBalance,
       onProgress,
       controller.signal,
+      publicSubAccounts,
     )
       .then(result => {
         releaseLock();
@@ -526,6 +562,7 @@ export function buildSyncObservables(
               // would cause them to be re-processed and duplicated in the final result.
               splitPrivateAndPublicOperations(publicResult.operations ?? [])[1] as AleoOperation[],
               publicResult.aleoResources?.transparentBalance,
+              publicResult.subAccounts,
             ),
           ),
         ),

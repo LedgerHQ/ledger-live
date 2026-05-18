@@ -3,9 +3,11 @@ import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets
 import type { Account, OperationType, TokenAccount } from "@ledgerhq/types-live";
 import { encodeTokenAccountId, emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
-import type { AleoVerifiedToken } from "../types/api";
+import { log } from "@ledgerhq/logs";
+import type { AleoVerifiedToken, AleoPrivateRecord } from "../types/api";
 import type { AleoOperation, AleoOperationExtra } from "../types/bridge";
 import { apiClient } from "../network/api";
+import { sdkClient } from "../network/sdk";
 import { PROGRAM_ID } from "../constants";
 import { mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 
@@ -15,7 +17,9 @@ import { mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
  * so that a mismatch in suffix presence never causes a lookup miss.
  */
 function normalizeTokenId(tokenId: string): string {
-  return tokenId.endsWith("field") ? tokenId.slice(0, -"field".length).trimEnd() : tokenId;
+  // Strip visibility suffix (e.g. "field.private", "field.public") then bare "field"
+  const stripped = tokenId.replace(/\.private$|\.public$/, "");
+  return stripped.endsWith("field") ? stripped.slice(0, -"field".length).trimEnd() : stripped;
 }
 
 async function computeTokenBalanceKey(tokenId: string, ownerAddress: string): Promise<string> {
@@ -534,4 +538,106 @@ export async function resolveTokenSubAccounts({
     : mergeSubAccounts(initialAccount, newSubAccounts);
 
   return { updatedCoinOperations, subAccounts };
+}
+
+/**
+ * Builds token sub-accounts discovered from private records.
+ * Creates sub-accounts with 0 balance for each custom-program token found in the records
+ * that does not already exist in existingSubAccountIds.
+ *
+ * Custom-program tokens (e.g. usad, usdcx) are identified directly by program_name.
+ * token_registry.aleo records are decrypted to extract the token_id from the record data.
+ */
+export async function buildSubAccountsFromPrivateRecords({
+  currency,
+  ledgerAccountId,
+  privateRecords,
+  existingSubAccountIds,
+  viewKey,
+}: {
+  currency: CryptoCurrency;
+  ledgerAccountId: string;
+  privateRecords: AleoPrivateRecord[];
+  existingSubAccountIds: Set<string>;
+  viewKey: string;
+}): Promise<TokenAccount[]> {
+  if (privateRecords.length === 0) return [];
+
+  const allVerified = await apiClient.getVerifiedTokens({ currency });
+  const { customProgramTokensMap, registryTokensMap } = buildVerifiedTokenMaps(allVerified);
+
+  const result: TokenAccount[] = [];
+  const seenIds = new Set<string>();
+
+  // Handle custom-program tokens — identified directly by program_name, no decryption needed
+  const uniqueCustomPrograms = [
+    ...new Set(
+      privateRecords
+        .filter(r => r.program_name !== PROGRAM_ID.TOKEN_REGISTRY)
+        .map(r => r.program_name),
+    ),
+  ];
+
+  for (const programId of uniqueCustomPrograms) {
+    const verifiedToken = customProgramTokensMap.get(programId);
+    if (!verifiedToken) continue;
+
+    const tokenCurrency = buildTokenCurrencyFromVerifiedToken(currency, verifiedToken);
+    const id = encodeTokenAccountId(ledgerAccountId, tokenCurrency);
+    if (existingSubAccountIds.has(id) || seenIds.has(id)) {
+      // eslint-disable-next-line no-console
+      console.log("aleo: skipped existing custom-program sub-account", { programId, id });
+      continue;
+    }
+
+    seenIds.add(id);
+    result.push(buildTokenAccount(id, ledgerAccountId, tokenCurrency));
+  }
+
+  // Handle token_registry.aleo records — decrypt each to extract token_id from record data
+  const registryRecords = privateRecords.filter(r => r.program_name === PROGRAM_ID.TOKEN_REGISTRY);
+
+  // Dedupe by commitment to avoid re-decrypting the same physical record
+  const uniqueRegistryRecords = [...new Map(registryRecords.map(r => [r.commitment, r])).values()];
+  const seenTokenIds = new Set<string>();
+
+  for (const record of uniqueRegistryRecords) {
+    try {
+      const decrypted = await sdkClient.decryptRecord({
+        currency,
+        ciphertext: record.record_ciphertext,
+        viewKey,
+      });
+
+      // eslint-disable-next-line no-console
+      console.log("aleo: decrypted token_registry record data", decrypted.data);
+
+      const rawTokenId = decrypted.data?.token_id;
+      if (!rawTokenId) continue;
+
+      if (seenTokenIds.has(rawTokenId)) continue;
+      seenTokenIds.add(rawTokenId);
+
+      const verifiedToken = registryTokensMap.get(normalizeTokenId(rawTokenId));
+      if (!verifiedToken) continue;
+
+      const tokenCurrency = buildTokenCurrencyFromVerifiedToken(currency, verifiedToken);
+      const id = encodeTokenAccountId(ledgerAccountId, tokenCurrency);
+      if (existingSubAccountIds.has(id) || seenIds.has(id)) {
+        // eslint-disable-next-line no-console
+        console.log("aleo: skipped existing registry sub-account", { rawTokenId, id });
+        continue;
+      }
+
+      seenIds.add(id);
+      result.push(buildTokenAccount(id, ledgerAccountId, tokenCurrency));
+    } catch (err) {
+      log("aleo/sync", "buildSubAccountsFromPrivateRecords: failed to decrypt registry record", {
+        commitment: record.commitment,
+        err,
+      });
+    }
+  }
+
+  return result;
 }
