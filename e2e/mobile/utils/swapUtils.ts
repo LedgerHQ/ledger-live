@@ -47,11 +47,11 @@ export async function performSwapUntilQuoteSelectionStep(
   }
 }
 export async function ensureTokenApproval(
-  fromAccount: TokenAccount,
+  fromAccount: Account | TokenAccount,
   provider: Provider,
   minAmount: string,
 ) {
-  if (!provider.contractAddress) return;
+  if (!provider.contractAddress || !fromAccount.parentAccount) return;
 
   const currentAllowance = await isTokenAllowanceSufficientCommand(
     fromAccount,
