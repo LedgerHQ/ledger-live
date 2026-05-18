@@ -1,9 +1,9 @@
 import React from "react";
-import { Box, Button } from "@ledgerhq/lumen-ui-rnative";
+import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { RetryableStateType, type EnsureAppReadyState } from "@ledgerhq/live-dmk-shared";
 import { Trans } from "~/context/Locale";
-import { DeviceActionContent } from "LLM/components/DeviceActionContent";
 import type { BaseInitializerStateProps } from "../types";
+import { InfoState } from "LLM/components/InfoState";
 
 type RetryableDeviceLockedStateProps = BaseInitializerStateProps<
   Extract<EnsureAppReadyState, { type: RetryableStateType.DeviceLocked }>
@@ -12,21 +12,27 @@ type RetryableDeviceLockedStateProps = BaseInitializerStateProps<
 export function RetryableDeviceLockedState({ state, device }: RetryableDeviceLockedStateProps) {
   return (
     <Box lx={rootStyle}>
-      <DeviceActionContent
-        action="power-and-unlock"
-        deviceModelId={device.supportedModelId}
-        deviceName={device.name}
+      <InfoState
+        preset="info"
+        size="hug"
         title={
           <Trans
-            i18nKey="deviceIntentExecutor.initialization.deviceAction.unlock.title"
+            i18nKey="deviceIntentExecutor.initialization.retryable.locked.title"
             values={{ productName: device.productName }}
           />
         }
+        description={
+          <Trans
+            i18nKey="deviceIntentExecutor.initialization.retryable.locked.description"
+            values={{ productName: device.productName }}
+          />
+        }
+        primaryCta={{
+          label: <Trans i18nKey="common.retry" />,
+          onPress: state.retry,
+        }}
         testID="device-initializer-retryable-device-locked"
       />
-      <Button appearance="base" size="lg" lx={{ width: "full" }} onPress={state.retry}>
-        <Trans i18nKey="common.retry" />
-      </Button>
     </Box>
   );
 }

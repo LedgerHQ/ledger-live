@@ -16,12 +16,12 @@ export function ConfirmOpenAppState({ device }: ConfirmOpenAppStateProps) {
       deviceName={device.name}
       title={
         <Trans
-          i18nKey="deviceIntentExecutor.initialization.deviceAction.pending.title"
+          i18nKey="deviceIntentExecutor.initialization.deviceAction.continue.title"
           values={{ productName: device.productName }}
         />
       }
       description={
-        <Trans i18nKey="deviceIntentExecutor.initialization.deviceAction.pending.description" />
+        <Trans i18nKey="deviceIntentExecutor.initialization.deviceAction.continue.description" />
       }
       testID="device-initializer-confirm-open-app"
     />
