@@ -16,6 +16,7 @@ export const createMockContext = (
   currentSearch: "",
   currentLocationState: undefined,
   accountsPath: "/accounts",
+  shouldDisplayAggregatedAssets: false,
   isProductTourEnabled: true,
   ...overrides,
 });

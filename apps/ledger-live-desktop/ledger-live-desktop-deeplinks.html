@@ -380,7 +380,7 @@
                     section: "Asset",
                     title: "Asset Page",
                     url: "ledgerlive://asset/:currencyId",
-                    description: "Opens the asset page for a specific currency.",
+                    description: "Opens the asset page for a specific currency. When the Wallet 4.0 aggregated assets flag is enabled, navigates to Asset Detail with the raw path (resolution happens on the page). Otherwise validates the currency id and opens the legacy asset screen; an unrecognized currencyId falls back to the portfolio.",
                     parameters: [
                         { name: "currencyId", required: true, description: "The currency ID (e.g., bitcoin, ethereum)" }
                     ],
@@ -546,7 +546,7 @@
                     section: "Market",
                     title: "Market Detail Page",
                     url: "ledgerlive://market/:currencyId",
-                    description: "Opens the market detail page for a specific cryptocurrency.",
+                    description: "Opens the market detail page for a specific cryptocurrency. When the Wallet 4.0 aggregated assets flag is enabled, opens Asset Detail instead of Market Detail. An unrecognized currencyId falls back to the market list when the flag is off.",
                     parameters: [
                         { name: "currencyId", required: true, description: "The ID of the cryptocurrency (e.g., bitcoin, ethereum)" }
                     ],
