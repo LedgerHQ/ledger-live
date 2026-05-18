@@ -2,7 +2,6 @@ import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
 import { performSwapUntilQuoteSelectionStep, revokeTokenApproval } from "../../../utils/swapUtils";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { beforeAllFunctionSwap } from "../swap.setup";
-import { getAmountFromUSD } from "@ledgerhq/live-common/e2e/swap";
 
 export function runSwapApprovalFlow(
   fromAccount: TokenAccount,
@@ -42,15 +41,12 @@ export function runSwapApprovalFlow(
     it(`Swap - ${provider.uiName} approval flow`, async () => {
       await revokeTokenApproval(fromAccount, provider);
       await app.swap.ensureRevokeTokenApproval(fromAccount, provider);
-      const amountToSwap = await getAmountFromUSD(fromAccount.currency.id, 5);
-      if (amountToSwap === null) {
-        throw new Error(`Could not resolve USD amount for ${fromAccount.currency.id}`);
-      }
-      const swap = new Swap(fromAccount, toAccount, amountToSwap.toString(), provider);
+      const minAmount = await app.swapLiveApp.getMinimumAmount(fromAccount, toAccount);
+      const swap = new Swap(fromAccount, toAccount, minAmount, provider);
       await performSwapUntilQuoteSelectionStep(
         swap.accountToDebit,
         swap.accountToCredit,
-        amountToSwap.toString(),
+        minAmount,
         true,
       );
       await app.swapLiveApp.selectSpecificProvider(provider.uiName);
