@@ -30,7 +30,7 @@ const tooLowAmountForQuoteSwaps = [
   // Enable test when "Sponsored" program is over
 
   // {
-  //   swap: new Swap(TokenAccount.ETH_USDT_2, Account.BTC_NATIVE_SEGWIT_1, "24"),
+  //   swap: new Swap(TokenAccount.ETH_USDT_2, Account.BTC_NATIVE_SEGWIT_1, "USE_MIN_AMOUNT"),
   //   xrayTicket: "B2CQA-3241",
   //   errorMessage: new RegExp(`\\d+(\\.\\d{1,10})? ETH needed for network fees\\.\\s*$`),
   //   ctaBanner: true,
@@ -113,7 +113,12 @@ for (const swap of tooLowAmountForQuoteSwaps) {
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-        await performSwapUntilQuoteSelectionStep(app, swap.swap, swap.swap.amount ?? "0");
+        const swapAmount =
+          swap.swap.amount === "USE_MIN_AMOUNT"
+            ? await app.swap.getMinimumAmount(accountToDebit, accountToCredit)
+            : swap.swap.amount ?? "0";
+
+        await performSwapUntilQuoteSelectionStep(app, swap.swap, swapAmount);
         if (swap.quotesVisible) {
           await app.swap.checkQuotes();
           await app.swap.selectExchange();
