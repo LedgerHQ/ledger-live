@@ -12,7 +12,7 @@ export function useNavigateToPostOnboardingHubCallback() {
   const { handleOpen: openFinishOnboardingDialog } = useFinishOnboardingDialog();
 
   return useCallback(
-    (_resetNavigationStack?: boolean) => {
+    (resetNavigationStack?: boolean) => {
       if (shouldDisplayFinishOnboardingWidget) {
         navigate("/", { replace: true });
         if (!hasBeenRedirectedToPostOnboarding) {
@@ -20,7 +20,7 @@ export function useNavigateToPostOnboardingHubCallback() {
         }
         return;
       }
-      navigate("/post-onboarding");
+      navigate("/post-onboarding", { replace: !!resetNavigationStack });
     },
     [
       hasBeenRedirectedToPostOnboarding,

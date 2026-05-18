@@ -77,7 +77,18 @@ describe("useNavigateToPostOnboardingHubCallback", () => {
       result.current();
     });
 
-    expect(mockNavigate).toHaveBeenCalledWith("/post-onboarding");
+    expect(mockNavigate).toHaveBeenCalledWith("/post-onboarding", { replace: false });
+    expect(mockOpenFinishOnboardingDialog).not.toHaveBeenCalled();
+  });
+
+  it("should replace history when navigating to post-onboarding hub with resetNavigationStack", () => {
+    const { result } = renderHook(() => useNavigateToPostOnboardingHubCallback());
+
+    act(() => {
+      result.current(true);
+    });
+
+    expect(mockNavigate).toHaveBeenCalledWith("/post-onboarding", { replace: true });
     expect(mockOpenFinishOnboardingDialog).not.toHaveBeenCalled();
   });
 });
