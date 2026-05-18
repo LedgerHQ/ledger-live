@@ -1,7 +1,10 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { hidePostOnboardingWalletEntryPoint } from "@ledgerhq/live-common/postOnboarding/actions";
+import {
+  hidePostOnboardingWalletEntryPoint,
+  postOnboardingSetFinished,
+} from "@ledgerhq/live-common/postOnboarding/actions";
 import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { type StartActionArgs } from "@ledgerhq/types-live";
@@ -63,6 +66,18 @@ export default function useFinishOnboardingDialogViewModel(): FinishOnboardingDi
     totalActionsAmount,
     completionById,
   } = usePostOnboardingFinishProgress(actionsState);
+
+  const hasActions = actionList.length > 0;
+  useEffect(() => {
+    if (!allActionsCompleted || !hasActions) return;
+    track("Post-onboarding widget completed", {
+      deviceModelId,
+      flow: "post-onboarding",
+    });
+    dispatch(closeFinishPostOnboarding());
+    dispatch(hidePostOnboardingWalletEntryPoint());
+    dispatch(postOnboardingSetFinished());
+  }, [allActionsCompleted, hasActions, deviceModelId, dispatch]);
 
   const onGotIt = useCallback(() => {
     track("button_clicked2", {
