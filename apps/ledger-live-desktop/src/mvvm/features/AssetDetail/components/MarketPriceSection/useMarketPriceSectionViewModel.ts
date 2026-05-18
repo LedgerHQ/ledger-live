@@ -2,11 +2,10 @@ import { useCallback, useMemo } from "react";
 import type { AssetDetailMarketInfo, AssetMarketData } from "@ledgerhq/asset-detail";
 import type { DistributionItem, ValueChange } from "@ledgerhq/types-live";
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
-import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/index";
+import { fiatFloatToSmallestUnit, formatFiatPriceFragment } from "LLD/utils/fiatPriceFormat";
 import { useTrendViewModel } from "LLD/features/Portfolio/hooks/useTrendViewModel";
 import { useSelector } from "LLD/hooks/redux";
 import type { FormattedValue } from "@ledgerhq/lumen-ui-react";
-import { BigNumber } from "bignumber.js";
 import { useTranslation } from "react-i18next";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
 import {
@@ -67,11 +66,9 @@ export function useMarketPriceSectionViewModel({
 
   const priceFormatter = useCallback(
     (value: number): FormattedValue =>
-      formatCurrencyUnitFragment(fiatUnit, new BigNumber(value), {
+      formatFiatPriceFragment(fiatUnit, fiatFloatToSmallestUnit(fiatUnit, value), {
         locale,
         showCode: true,
-        disableRounding: true,
-        showAllDigits: true,
       }),
     [fiatUnit, locale],
   );

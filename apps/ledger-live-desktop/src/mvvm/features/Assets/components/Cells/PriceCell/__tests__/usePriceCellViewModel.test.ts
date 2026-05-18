@@ -1,21 +1,21 @@
 import { renderHook } from "tests/testSetup";
 import { usePriceCellViewModel } from "../usePriceCellViewModel";
 import {
-  formatCurrencyUnit,
   getCryptoCurrencyById,
   getFiatCurrencyByTicker,
 } from "@ledgerhq/live-common/currencies/index";
+import { formatFiatPrice } from "LLD/utils/fiatPriceFormat";
 import { usePrice } from "~/renderer/hooks/usePrice";
 import { BigNumber } from "bignumber.js";
 
-jest.mock("@ledgerhq/live-common/currencies/index", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/currencies/index"),
-  formatCurrencyUnit: jest.fn(),
+jest.mock("LLD/utils/fiatPriceFormat", () => ({
+  ...jest.requireActual("LLD/utils/fiatPriceFormat"),
+  formatFiatPrice: jest.fn(),
 }));
 
 jest.mock("~/renderer/hooks/usePrice");
 
-const mockedFormatCurrencyUnit = jest.mocked(formatCurrencyUnit);
+const mockedFormatFiatPrice = jest.mocked(formatFiatPrice);
 const mockedUsePrice = jest.mocked(usePrice);
 
 const mockCurrency = getCryptoCurrencyById("bitcoin");
@@ -34,7 +34,7 @@ describe("usePriceCellViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockedUsePrice.mockReturnValue(mockUsePriceReturn(new BigNumber(50000)));
-    mockedFormatCurrencyUnit.mockReturnValue("$50,000.00");
+    mockedFormatFiatPrice.mockReturnValue("$50,000.00");
   });
 
   it("should return formatted price when counterValue is valid", () => {
@@ -49,69 +49,81 @@ describe("usePriceCellViewModel", () => {
     const { result } = renderHook(() => usePriceCellViewModel(mockCurrency));
 
     expect(result.current.formattedPrice).toBe("-");
-    expect(mockedFormatCurrencyUnit).not.toHaveBeenCalled();
+    expect(mockedFormatFiatPrice).not.toHaveBeenCalled();
   });
 
-  it("should use subMagnitude 0 and no disableRounding when price >= 1", () => {
+  it("delegates rounding policy to formatFiatPrice (high-value counterValue)", () => {
     renderHook(() => usePriceCellViewModel(mockCurrency));
 
-    expect(mockedFormatCurrencyUnit).toHaveBeenCalledWith(
+    expect(mockedFormatFiatPrice).toHaveBeenCalledWith(
       mockCounterValueCurrency.units[0],
       new BigNumber(50000),
-      { showCode: true, disableRounding: false, subMagnitude: 0 },
+      { showCode: true },
     );
   });
 
-  it("should use subMagnitude 1 and disableRounding when price < 1", () => {
+  it("delegates rounding policy to formatFiatPrice (sub-dollar counterValue)", () => {
     mockedUsePrice.mockReturnValue(mockUsePriceReturn(new BigNumber(0.5)));
 
     renderHook(() => usePriceCellViewModel(mockCurrency));
 
-    expect(mockedFormatCurrencyUnit).toHaveBeenCalledWith(
+    expect(mockedFormatFiatPrice).toHaveBeenCalledWith(
       mockCounterValueCurrency.units[0],
       new BigNumber(0.5),
-      { showCode: true, disableRounding: true, subMagnitude: 1 },
+      { showCode: true },
     );
   });
 
   it("should fall back to placeholderPrice (high value) when counterValue is undefined", () => {
     mockedUsePrice.mockReturnValue(mockUsePriceReturn(undefined));
-    mockedFormatCurrencyUnit.mockReturnValue("USD 43,000.00");
+    mockedFormatFiatPrice.mockReturnValue("USD 43,000.00");
 
     const { result } = renderHook(() => usePriceCellViewModel(mockCurrency, 43000));
 
     expect(result.current.formattedPrice).toBe("USD 43,000.00");
     const expectedValue = new BigNumber(43000).times(10 ** usdMagnitude);
-    expect(mockedFormatCurrencyUnit).toHaveBeenCalledWith(
+    expect(mockedFormatFiatPrice).toHaveBeenCalledWith(
       mockCounterValueCurrency.units[0],
       expectedValue,
-      { showCode: true, disableRounding: false, subMagnitude: 0 },
+      { showCode: true },
     );
   });
 
-  it("should fall back to placeholderPrice with subMagnitude for small values when counterValue is undefined", () => {
+  it("should fall back to placeholderPrice for small values when counterValue is undefined", () => {
     mockedUsePrice.mockReturnValue(mockUsePriceReturn(undefined));
-    mockedFormatCurrencyUnit.mockReturnValue("USD 0.07");
+    mockedFormatFiatPrice.mockReturnValue("USD 0.07");
 
     const { result } = renderHook(() => usePriceCellViewModel(mockCurrency, 0.07));
 
     expect(result.current.formattedPrice).toBe("USD 0.07");
     const expectedValue = new BigNumber(0.07).times(10 ** usdMagnitude);
-    expect(mockedFormatCurrencyUnit).toHaveBeenCalledWith(
+    expect(mockedFormatFiatPrice).toHaveBeenCalledWith(
       mockCounterValueCurrency.units[0],
       expectedValue,
-      { showCode: true, disableRounding: true, subMagnitude: 1 },
+      { showCode: true },
+    );
+  });
+
+  it("forwards micro-cap counterValues to formatFiatPrice (e.g. 0.000591 cents = $0.00000591)", () => {
+    mockedUsePrice.mockReturnValue(mockUsePriceReturn(new BigNumber(0.000591)));
+
+    renderHook(() => usePriceCellViewModel(mockCurrency));
+
+    expect(mockedFormatFiatPrice).toHaveBeenCalledWith(
+      mockCounterValueCurrency.units[0],
+      new BigNumber(0.000591),
+      { showCode: true },
     );
   });
 
   it("should use counterValue over placeholderPrice when both are available", () => {
     mockedUsePrice.mockReturnValue(mockUsePriceReturn(new BigNumber(50000)));
-    mockedFormatCurrencyUnit.mockReturnValue("$50,000.00");
+    mockedFormatFiatPrice.mockReturnValue("$50,000.00");
 
     const { result } = renderHook(() => usePriceCellViewModel(mockCurrency, 43000));
 
     expect(result.current.formattedPrice).toBe("$50,000.00");
-    expect(mockedFormatCurrencyUnit).toHaveBeenCalledWith(
+    expect(mockedFormatFiatPrice).toHaveBeenCalledWith(
       mockCounterValueCurrency.units[0],
       new BigNumber(50000),
       expect.objectContaining({ showCode: true }),
