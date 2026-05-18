@@ -43,7 +43,7 @@ Run from repo root: `pnpm --silent wallet-cli start <command> [flags]`
 
 `account discover` persists accounts. Each gets a label: `<network>[-derivation][-env]-<n>` (e.g. `ethereum-1`, `bitcoin-native-1`, `ethereum-goerli-2`).
 
-All `--account` flags accept a label or a full descriptor.
+All `--account` flags accept a session label (e.g. `ethereum-1`). Run `account discover` first to populate the session.
 
 ---
 
@@ -110,7 +110,7 @@ Fetches quotes in parallel from the built-in provider list (no device when addre
 
 **Default providers queried by `swap quote` and usable by `swap execute`:** `changelly`, `cic`, `exodus`, `nearintents`, `swapsxyz`.
 
-**Addresses (pick one per side):** `--from-fresh-address` or `--from-account`; `--to-fresh-address` or `--to-account`. Account flags accept a session label or descriptor; the CLI resolves a fresh receive address like `receive`.
+**Addresses (pick one per side):** `--from-fresh-address` or `--from-account`; `--to-fresh-address` or `--to-account`. Account flags accept a session label only; the CLI resolves a fresh receive address like `receive`.
 
 ```bash
 pnpm --silent wallet-cli start swap quote --from ethereum --to bitcoin --amount 0.1 --from-fresh-address 0xABC... --to-fresh-address bc1q...

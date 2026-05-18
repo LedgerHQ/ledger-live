@@ -128,7 +128,7 @@ export async function executeSwapCommand({
 
     const toAccountArg = flags["to-account"];
     if (typeof toAccountArg !== "string" || toAccountArg.trim().length === 0) {
-      throw new Error("Swap execute requires --to-account <descriptor-or-label>.");
+      throw new Error("Swap execute requires --to-account <session-label>.");
     }
     const toDescriptor = await resolveDescriptor(toAccountArg);
 
@@ -199,7 +199,7 @@ export default defineCommand({
       description: "Swap source amount in human units",
     }),
     "to-account": option(swapExecuteFlagsSchema.shape["to-account"], {
-      description: "Destination account descriptor or session label (required for full pipeline)",
+      description: "Destination account session label (required for full pipeline)",
     }),
     account: accountOption,
     "fee-strategy": option(swapExecuteFlagsSchema.shape["fee-strategy"], {

@@ -54,7 +54,8 @@ async function discoverAccounts({
 
 export default defineCommand({
   name: "discover",
-  description: "Discover accounts for a network on the connected device",
+  description:
+    "Discover accounts for a network on the connected device (saves each to the session as --account <label>, e.g. ethereum-1).",
   options: {
     network: option(z.string().min(1).optional(), {
       description:
