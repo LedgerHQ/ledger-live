@@ -29,12 +29,15 @@ describe("useNavigateToPostOnboardingHubCallback", () => {
 
   it("should navigate to portfolio and open finish dialog when Wallet40 finish widget is enabled", () => {
     const { result } = renderHook(() => useNavigateToPostOnboardingHubCallback(), {
-      initialState: withFlagOverrides({
-        lwdWallet40: {
-          enabled: true,
-          params: { finishOnboardingWidget: true },
-        },
-      }),
+      initialState: {
+        ...withFlagOverrides({
+          lwdWallet40: {
+            enabled: true,
+            params: { finishOnboardingWidget: true },
+          },
+        }),
+        settings: { hasBeenRedirectedToPostOnboarding: false },
+      },
     });
 
     act(() => {
@@ -44,6 +47,27 @@ describe("useNavigateToPostOnboardingHubCallback", () => {
     expect(mockNavigate).toHaveBeenCalledWith("/", { replace: true });
     expect(mockOpenFinishOnboardingDialog).toHaveBeenCalledTimes(1);
     expect(mockNavigate).not.toHaveBeenCalledWith("/post-onboarding");
+  });
+
+  it("should not reopen finish dialog when already redirected with Wallet40 enabled", () => {
+    const { result } = renderHook(() => useNavigateToPostOnboardingHubCallback(), {
+      initialState: {
+        ...withFlagOverrides({
+          lwdWallet40: {
+            enabled: true,
+            params: { finishOnboardingWidget: true },
+          },
+        }),
+        settings: { hasBeenRedirectedToPostOnboarding: true },
+      },
+    });
+
+    act(() => {
+      result.current();
+    });
+
+    expect(mockNavigate).toHaveBeenCalledWith("/", { replace: true });
+    expect(mockOpenFinishOnboardingDialog).not.toHaveBeenCalled();
   });
 
   it("should navigate to post-onboarding hub when finish widget is disabled", () => {

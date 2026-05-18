@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useLocation } from "react-router";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -32,11 +32,15 @@ export function useCompletionScreenViewModel(): ViewProps {
   }, [currentDevice, lastSeenDevice]);
 
   const redirectToPostOnboarding = useRedirectToPostOnboardingCallback();
+  const hasPreparedPostOnboardingRedirect = useRef(false);
 
   useEffect(() => {
     dispatch(saveSettings({ hasCompletedOnboarding: true }));
-    dispatch(setHasRedirectedToPostOnboarding(false));
-    dispatch(setHasBeenUpsoldRecover(false));
+    if (!hasPreparedPostOnboardingRedirect.current) {
+      hasPreparedPostOnboardingRedirect.current = true;
+      dispatch(setHasRedirectedToPostOnboarding(false));
+      dispatch(setHasBeenUpsoldRecover(false));
+    }
     dispatch(setLastOnboardedDevice(currentDevice));
     const timeout = setTimeout(() => {
       redirectToPostOnboarding();
