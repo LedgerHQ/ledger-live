@@ -202,7 +202,7 @@ describe("QuickAmountSelector", () => {
       />,
     );
 
-    expect(screen.queryByTestId("record-summary")).not.toBeInTheDocument();
+    expect(screen.getByTestId("record-summary")).not.toBeVisible();
   });
 
   it("does not render record summary when amountRecordCommitments is empty", () => {
@@ -220,7 +220,7 @@ describe("QuickAmountSelector", () => {
       />,
     );
 
-    expect(screen.queryByTestId("record-summary")).not.toBeInTheDocument();
+    expect(screen.getByTestId("record-summary")).not.toBeVisible();
   });
 
   it("renders record summary for private transaction", () => {

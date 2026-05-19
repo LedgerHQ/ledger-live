@@ -167,13 +167,17 @@ const QuickAmountSelector = ({ account, transaction, updateTransaction, onSelect
   return (
     <>
       <Box flexDirection="column" gap="4px">
-        {selectedRecordsCount > 0 && (
-          <Box horizontal alignItems="center" gap="4px" data-testid="record-summary">
-            <Label>
-              {`${t("aleo.shared.quickAmountSelector.recordCount", { count: selectedRecordsCount })} · ${selectedRecordsSigningTime}`}
-            </Label>
-          </Box>
-        )}
+        <Box
+          horizontal
+          alignItems="center"
+          gap="4px"
+          data-testid="record-summary"
+          style={{ visibility: selectedRecordsCount > 0 ? "visible" : "hidden" }}
+        >
+          <Label>
+            {`${t("aleo.shared.quickAmountSelector.recordCount", { count: selectedRecordsCount })} · ${selectedRecordsSigningTime}`}
+          </Label>
+        </Box>
         <Box horizontal alignItems="center" gap="4px">
           <Label>{t("aleo.shared.quickAmountSelector.spendableBalance")}</Label>
           <FormattedVal
