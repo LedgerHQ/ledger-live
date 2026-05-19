@@ -1,9 +1,0 @@
----
-description: Shared package structure and conventions — read shared/README.md before creating or modifying packages under shared/
-globs: ["shared/**"]
-alwaysApply: false
----
-
-# Shared Packages
-
-Before creating or modifying any package under `shared/`, read `shared/README.md` and follow its conventions for naming, structure, dependencies, and barrel exports.
