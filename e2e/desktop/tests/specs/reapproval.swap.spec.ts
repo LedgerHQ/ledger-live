@@ -76,7 +76,7 @@ test.describe(`Token re-approval - ${provider.uiName} flow`, () => {
       const swap = new Swap(fromAccount, toAccount, minAmount, provider);
       await performSwapUntilQuoteSelectionStep(app, swap, minAmount);
       await app.swap.selectSpecificProvider(provider);
-      await app.swap.clickExchangeButton(provider.uiName);
+      await app.swap.clickExchangeButton(provider.name);
       await app.swap.expectTwoStepApprovalScreen();
       await app.swap.clickGiveApprovalButton();
       await app.swap.clickContinueButton();
