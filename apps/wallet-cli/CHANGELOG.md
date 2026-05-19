@@ -1,5 +1,33 @@
 # @ledgerhq/wallet-cli
 
+## 1.0.0
+
+### Major Changes
+
+- Promote wallet-cli to its first stable `1.0.0` release.
+- Add npm binary publishing support for the wallet-cli wrapper and platform packages.
+- Add swap quote and execute flows, including session management, `from`/`to` execution inputs, provider filtering, Changelly mapping to `changelly_v2`, token-to-token swaps, and supported currency data in quotes.
+- `account discover` no longer exposes the raw V1 descriptor. Human output shows the session label in bold as the primary identifier; JSON output replaces descriptor strings with `{ label, freshAddress }` objects.
+- Reject raw account descriptors as CLI arguments, require session labels from `account discover`, and reject extended private keys in descriptor parsing.
+- Add token support for supported currencies.
+- Add status and genuine check commands.
+- Update wallet-cli for the `alpaca` to `coin-service` rename.
+- Rename `AlpacaApi` references to `CoinModuleApi`.
+- Await async operation serialization bridge calls.
+- Update the wallet-cli skill file with swap coverage.
+- Fix wallet CLI USB interruption and DMK teardown handling.
+
+### Patch Changes
+
+- Fix swap execution to keep the Exchange app session open across the full pipeline.
+- Harden swap execute flags and zero-amount rate output.
+- Fix `--no-verify` and other `--no-<flag>` negations being silently ignored.
+- Route human stderr messages through the shared writer for consistent capture.
+- Remove provider fee and network fee fields from swap CLI quotes.
+- Remove dry-run mode from swap execute.
+- Bundle `THIRD_PARTY_NOTICES.md` to satisfy upstream attribution.
+- Ship the Apache-2.0 `LICENSE` file in wrapper and platform tarballs.
+
 ## 0.3.0
 
 ### Minor Changes

@@ -16,7 +16,6 @@
 "@ledgerhq/coin-evm": minor
 "@ledgerhq/coin-sui": minor
 "@ledgerhq/live-common": minor
-"@ledgerhq/wallet-cli": minor
 ---
 
 chore(ADR-025): rename `AlpacaApi` -> `CoinModuleApi`
