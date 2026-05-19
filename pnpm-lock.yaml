@@ -10733,6 +10733,9 @@ importers:
       purify-ts:
         specifier: ^2.1.0
         version: 2.1.0
+      xstate:
+        specifier: 'catalog:'
+        version: 5.19.2
     devDependencies:
       '@ledgerhq/device-transport-kit-react-native-hid':
         specifier: 'catalog:'

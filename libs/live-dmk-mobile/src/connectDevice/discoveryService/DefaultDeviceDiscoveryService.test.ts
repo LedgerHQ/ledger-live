@@ -4,7 +4,7 @@ import type {
   TransportIdentifier,
 } from "@ledgerhq/device-management-kit";
 import { Subject, type Observable } from "rxjs";
-import { DiscoveryErrors, type DiscoveryError } from "../types";
+import { DiscoveryErrorTypes, type DiscoveryError } from "../types";
 import { DefaultDeviceDiscoveryService } from "./DefaultDeviceDiscoveryService";
 import type {
   DeviceDiscoverySource,
@@ -44,9 +44,9 @@ const createSource = (
   listen: jest.fn((): Observable<DeviceDiscoverySourceEvent> => subject.asObservable()),
 });
 
-const unknownErrorFor = (transportID: TransportIdentifier, error: unknown): DiscoveryError => ({
-  type: DiscoveryErrors.Unknown,
-  transportID,
+const unknownErrorFor = (transportId: TransportIdentifier, error: unknown): DiscoveryError => ({
+  type: DiscoveryErrorTypes.Unknown,
+  transportId,
   error,
 });
 
