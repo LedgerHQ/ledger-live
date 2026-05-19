@@ -274,6 +274,53 @@ describe("zcash chain adapter — getWalletXpub", () => {
   });
 });
 
+// ─── getFullViewingKey ─────────────────────────────────────────────────
+
+describe("zcash chain adapter — getFullViewingKey", () => {
+  it("forwards path to the signer and unwraps viewKey from its response", async () => {
+    const signer = {
+      getFullViewingKey: jest.fn().mockResolvedValue({ viewKey: "uview1key" }),
+    };
+    const signerContext = makeSignerContext(signer);
+
+    const result = await adapter.getFullViewingKey!(
+      "device-id",
+      currency,
+      "44'/133'/0'",
+      signerContext,
+    );
+
+    expect(signerContext).toHaveBeenCalledWith("device-id", currency, expect.any(Function));
+    expect(signer.getFullViewingKey).toHaveBeenCalledWith("44'/133'/0'");
+    expect(result).toBe("uview1key");
+  });
+
+  it("rejects with a descriptive error when the resolved signer cannot getFullViewingKey", async () => {
+    // Non-Zcash signers (e.g. hw-app-btc) won't expose `getFullViewingKey`;
+    // hitting this branch means the dispatcher handed us the wrong signer.
+    const wrongSigner = { getAddress: () => {} };
+
+    await expect(
+      adapter.getFullViewingKey!(
+        "device-id",
+        currency,
+        "44'/133'/0'",
+        makeSignerContext(wrongSigner),
+      ),
+    ).rejects.toThrow(/Zcash signer must implement getFullViewingKey/);
+  });
+
+  it("propagates errors thrown by the underlying signer", async () => {
+    const signer = {
+      getFullViewingKey: jest.fn().mockRejectedValue(new Error("device locked")),
+    };
+
+    await expect(
+      adapter.getFullViewingKey!("device-id", currency, "44'/133'/0'", makeSignerContext(signer)),
+    ).rejects.toThrow("device locked");
+  });
+});
+
 // ─── createSigner ─────────────────────────────────────────────────────
 
 describe("zcash chain adapter — createSigner", () => {

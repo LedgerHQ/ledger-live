@@ -11445,6 +11445,9 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.2.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(typescript@6.0.2))
+      rimraf:
+        specifier: ^4.4.1
+        version: 4.4.1
       ts-node:
         specifier: ^10.4.0
         version: 10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(typescript@6.0.2)
@@ -18206,6 +18209,7 @@ packages:
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [x64]
     os: [linux]
+    libc: [glibc]
 
   '@oxlint/binding-linux-x64-musl@1.51.0':
     resolution: {integrity: sha512-wD8HGTWhYBKXvRDvoBVB1y+fEYV01samhWQSy1Zkxq2vpezvMnjaFKRuiP6tBNITLGuffbNDEXOwcAhJ3gI5Ug==}
