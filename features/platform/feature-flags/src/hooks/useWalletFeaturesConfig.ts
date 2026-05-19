@@ -35,15 +35,15 @@ export function useWalletFeaturesConfig(platform: WalletPlatform): WalletFeature
       shouldDisplayBalanceRefreshRework: isEnabled && Boolean(params?.balanceRefreshRework),
       shouldDisplayTour: isEnabled && Boolean(params?.tour),
       shouldDisplayAssetSection: isEnabled && Boolean(params?.assetSection),
-      shouldDisplayOnboardingWidget:
-        isEnabled && Boolean(params && "onboardingWidget" in params && params.onboardingWidget),
+      shouldDisplayOnboardingWidget: isEnabled && Boolean(params?.onboardingWidget),
       shouldDisplayBrazePlacement: isEnabled && Boolean(params?.brazePlacement),
       shouldDisplayOperationsList: isEnabled && Boolean(params?.operationsList),
       shouldDisplayAggregatedAssets: isEnabled && Boolean(params?.aggregatedAssets),
       shouldDisplayMyWallet: isEnabled && Boolean(params?.myWallet),
-      shouldDisplayFinishOnboardingWidget:
-        isEnabled &&
-        Boolean(params && "finishOnboardingWidget" in params && params.finishOnboardingWidget),
+      shouldDisplayPnl: isEnabled && Boolean(params?.pnl),
+      shouldDisplayFinishOnboardingWidget: isEnabled && Boolean(params?.finishOnboardingWidget),
+      shouldDisplayEarnUpselling: isEnabled && Boolean(params?.earnUpselling),
+      shouldDisplayEarnSimulator: isEnabled && Boolean(params?.earnSimulator),
     };
   }, [walletFeatureFlag]);
 }
@@ -101,6 +101,12 @@ export interface WalletFeaturesConfig {
   readonly shouldDisplayAggregatedAssets: boolean;
   /** Whether to show the My Wallet component */
   readonly shouldDisplayMyWallet: boolean;
+  /** Whether to show the PNL component */
+  readonly shouldDisplayPnl: boolean;
   /** Whether to show the Finish Onboarding widget on Portfolio (desktop / lwdWallet40) */
   readonly shouldDisplayFinishOnboardingWidget: boolean;
+  /** Whether to show the Earn Upselling component */
+  readonly shouldDisplayEarnUpselling: boolean;
+  /** Whether to show the Earn Simulator component */
+  readonly shouldDisplayEarnSimulator: boolean;
 }

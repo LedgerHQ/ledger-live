@@ -12,8 +12,8 @@ export function FeatureToggle({ featureId, fallback, children }: Props): React.J
   const feature = useFeature(featureId);
 
   if (!feature || !feature.enabled) {
-    return <>{fallback || null}</>;
+    return <>{fallback ?? null}</>;
   }
 
-  return <>{children || null}</>;
+  return <>{children ?? null}</>;
 }
