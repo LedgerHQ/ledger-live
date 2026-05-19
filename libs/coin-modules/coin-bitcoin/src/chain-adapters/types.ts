@@ -4,7 +4,7 @@ import type { AccountShapeInfo } from "@ledgerhq/ledger-wallet-framework/bridge/
 import type { GetAddressOptions } from "@ledgerhq/ledger-wallet-framework/derivation";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, AccountRaw, SignOperationEvent, SyncConfig } from "@ledgerhq/types-live";
-import type { BitcoinAddress, BitcoinXPub, SignerContext } from "../signer";
+import type { BitcoinAddress, BitcoinSigner, BitcoinXPub, SignerContext } from "../signer";
 import type { BitcoinAccount, Transaction, TransactionStatus } from "../types";
 
 /**
@@ -112,7 +112,13 @@ export interface ChainAdapter {
 
   /**
    * Override signer instantiation for chains requiring non-BTC signer implementations.
-   * Return `undefined` to fall through to the standard hw-app-btc signer.
+   * `defaultSigner` is the standard hw-app-btc signer — chain adapters can augment it
+   * with chain-specific methods (e.g. overlay DmkSignerZcash.getAddress).
+   * Return `undefined` to use `defaultSigner` as-is.
    */
-  createSigner?(transport: unknown, currency: CryptoCurrency): unknown | undefined;
+  createSigner?(
+    transport: unknown,
+    currency: CryptoCurrency,
+    defaultSigner: BitcoinSigner,
+  ): BitcoinSigner | undefined;
 }
