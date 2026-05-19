@@ -1,29 +1,34 @@
 import { ThemeProvider, Box, Text } from "@ledgerhq/lumen-ui-rnative";
 import { ledgerLiveThemes } from "@ledgerhq/lumen-design-core";
 import { ScrollView, TextInput, Pressable } from "react-native";
-import { useState } from "react";
-import { tools } from "../registry/tools";
+import { Suspense, useMemo, useState } from "react";
+import type { ReactNode } from "react";
 import { Category } from "@devtools/core";
-import type { DevToolsPropsRegistry, Tool } from "@devtools/core";
+import type { DevToolsPropsRegistry, Tool, ToolLoaders } from "@devtools/core";
 import { DevToolsProvider } from "../context";
 import { filterToolsByPlatform } from "../utils/toolsUtils";
+import { useResolvedTools } from "../registry/useResolvedTools";
+import { Loading } from "../components/Loading/Loading.native";
 
 export interface DevToolsProps {
+  toolLoaders: ToolLoaders;
   toolProps?: Partial<DevToolsPropsRegistry>;
+  fallback?: ReactNode;
 }
 
 type Screen = "home" | "category" | "tool";
 
 const CATEGORIES = Object.values(Category);
 
-const DevToolsShell = () => {
+const DevToolsShell = ({ toolLoaders }: { toolLoaders: ToolLoaders }) => {
   const [screen, setScreen] = useState<Screen>("home");
   const [activeCategory, setActiveCategory] = useState<Category | null>(null);
   const [activeTool, setActiveTool] = useState<Tool | null>(null);
   const [query, setQuery] = useState("");
 
+  const { tools } = useResolvedTools(toolLoaders);
   const q = query.trim().toLowerCase();
-  const nativeTools = filterToolsByPlatform(tools, "native");
+  const nativeTools = useMemo(() => filterToolsByPlatform(tools, "native"), [tools]);
 
   const toolsByCategory = CATEGORIES.map(cat => ({
     category: cat,
@@ -207,10 +212,12 @@ const DevToolsShell = () => {
   );
 };
 
-export const DevTools = ({ toolProps }: DevToolsProps) => (
+export const DevTools = ({ toolLoaders, toolProps, fallback }: DevToolsProps) => (
   <ThemeProvider themes={ledgerLiveThemes}>
     <DevToolsProvider value={toolProps}>
-      <DevToolsShell />
+      <Suspense fallback={fallback ?? <Loading />}>
+        <DevToolsShell toolLoaders={toolLoaders} />
+      </Suspense>
     </DevToolsProvider>
   </ThemeProvider>
 );

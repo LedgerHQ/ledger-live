@@ -1,10 +1,10 @@
 import { ChevronRight } from "@ledgerhq/lumen-ui-react/symbols";
-import type { Tool } from "@devtools/core";
+import type { Tool, ToolId } from "@devtools/core";
 import { IconSquare } from "../IconSquare/IconSquare.web";
 
 interface ToolCardProps {
   tool: Tool;
-  onSelect: (id: string) => void;
+  onSelect: (id: ToolId) => void;
 }
 
 export function ToolCard({ tool, onSelect }: ToolCardProps) {

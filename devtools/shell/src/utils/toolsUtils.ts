@@ -1,4 +1,4 @@
-import type { Category, Tool, ToolPlatform } from "@devtools/core";
+import type { Category, Tool, ToolId, ToolPlatform } from "@devtools/core";
 
 type CategoryEntry = { category: Category; tools: Tool[] };
 
@@ -20,7 +20,7 @@ export function filterToolsByQuery(categories: CategoryEntry[], query: string): 
 
 export function findCategoryForToolId(
   categories: CategoryEntry[],
-  toolId: string | undefined,
+  toolId: ToolId | undefined,
 ): Category | null {
   if (!toolId) return null;
   return categories.find(({ tools }) => tools.some(t => t.id === toolId))?.category ?? null;

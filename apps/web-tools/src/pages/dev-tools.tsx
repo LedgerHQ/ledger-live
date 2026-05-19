@@ -1,11 +1,13 @@
 import { useMemo } from "react";
-import { DevTools, setupDevTools } from "@devtools/shell";
-import { registerFeatureFlagsTool, FEATURE_FLAGS_ID } from "@devtools/feature-flags";
+import { DevTools } from "@devtools/shell";
+import { FEATURE_FLAGS_ID } from "@devtools/core";
+import { getToolLoaders } from "@devtools/registry";
 import { useFeatureFlagsToolProps } from "../hooks/useFeatureFlagsToolProps";
 
-setupDevTools([registerFeatureFlagsTool]);
+const TOOL_IDS = new Set([FEATURE_FLAGS_ID]);
 
 export default function DevToolsPage() {
+  const toolLoaders = useMemo(() => getToolLoaders(TOOL_IDS), []);
   const featureFlagsProps = useFeatureFlagsToolProps();
 
   const devToolsProps = useMemo(
@@ -15,7 +17,7 @@ export default function DevToolsPage() {
 
   return (
     <div style={{ height: "100vh" }}>
-      <DevTools toolProps={devToolsProps} />
+      <DevTools toolLoaders={toolLoaders} toolProps={devToolsProps} />
     </div>
   );
 }

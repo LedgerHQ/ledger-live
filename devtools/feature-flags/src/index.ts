@@ -15,7 +15,6 @@ const tool = createTool(descriptor);
 export default tool;
 
 export { FEATURE_FLAGS_ID } from "@devtools/core";
-export { registerFeatureFlagsTool } from "./register";
 export type { FeatureFlagsToolProps, FlagDisplayState, FlagFilter } from "./types";
 export { ALL_FLAG_IDS } from "./constants";
 export { useFeatureFlagsState, useFeatureFlagsFilters } from "./hooks";

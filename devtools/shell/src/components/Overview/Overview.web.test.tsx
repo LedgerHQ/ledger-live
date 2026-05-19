@@ -2,7 +2,7 @@ import userEvent from "@testing-library/user-event";
 import { render, screen } from "jest/render";
 import { makeTool } from "jest/fixtures";
 import { Overview } from "./Overview.web";
-import { Category } from "@devtools/core";
+import { Category, parse } from "@devtools/core";
 
 const categories = [
   {
@@ -42,7 +42,11 @@ describe("Overview", () => {
 
   it("renders the Recent section when recentToolIds contains known tool ids", () => {
     render(
-      <Overview categories={categories} recentToolIds={["feature-flags"]} onSelect={jest.fn()} />,
+      <Overview
+        categories={categories}
+        recentToolIds={[parse("feature-flags")]}
+        onSelect={jest.fn()}
+      />,
     );
     expect(screen.getByText("Recent")).toBeInTheDocument();
     expect(screen.getByText("Feature Flags")).toBeInTheDocument();
@@ -62,7 +66,7 @@ describe("Overview", () => {
     render(
       <Overview
         categories={categories}
-        recentToolIds={["network-inspector"]}
+        recentToolIds={[parse("network-inspector")]}
         onSelect={onSelect}
       />,
     );

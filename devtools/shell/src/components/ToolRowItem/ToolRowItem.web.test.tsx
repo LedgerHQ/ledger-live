@@ -1,21 +1,20 @@
 import { render, screen } from "jest/render";
 import { ToolRowItem } from "./ToolRowItem.web";
-import { registerTool, registerToolWithRequiredProps } from "../../registry/tools";
-import { Category } from "../../types";
+import { makeTool } from "jest/fixtures";
 import { DevToolsProvider } from "../../context";
+import { Category } from "@devtools/core";
 
-const optionalTool = registerTool({
+const optionalTool = makeTool({
   id: "optional-tool",
   label: "Optional Tool",
   category: Category.DEBUGGING,
-  component: () => null,
 });
 
-const requiredPropsTool = registerToolWithRequiredProps({
+const requiredPropsTool = makeTool({
   id: "test-tool",
   label: "Test Tool",
   category: Category.CONFIGURATION,
-  component: () => null,
+  optional: false,
 });
 
 describe("ToolRowItem", () => {

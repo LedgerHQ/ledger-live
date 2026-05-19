@@ -2475,9 +2475,15 @@ importers:
       '@codemirror/view':
         specifier: ^6.39.5
         version: 6.39.5
+      '@devtools/core':
+        specifier: workspace:*
+        version: link:../../devtools/core
       '@devtools/feature-flags':
         specifier: workspace:*
         version: link:../../devtools/feature-flags
+      '@devtools/registry':
+        specifier: workspace:*
+        version: link:../../devtools/registry
       '@devtools/shell':
         specifier: workspace:*
         version: link:../../devtools/shell
@@ -2782,6 +2788,9 @@ importers:
 
   devtools/feature-flags:
     dependencies:
+      '@devtools/core':
+        specifier: workspace:*
+        version: link:../core
       '@devtools/shell':
         specifier: workspace:*
         version: link:../shell
@@ -21490,7 +21499,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: 19.0.0
       react-dom: 19.0.0
-      webpack: ^5.89.0
+      webpack: '*'
     peerDependenciesMeta:
       '@react-native/babel-preset':
         optional: true

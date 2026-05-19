@@ -1,5 +1,5 @@
 import { ChevronDown, ChevronRight } from "@ledgerhq/lumen-ui-react/symbols";
-import type { Category, Tool } from "@devtools/core";
+import type { Category, Tool, ToolId } from "@devtools/core";
 import type { IconComponent } from "../../categoryConfig";
 import { ToolRowItem } from "../ToolRowItem/ToolRowItem.web";
 
@@ -9,8 +9,8 @@ interface CategoryRowProps {
   icon: IconComponent;
   isExpanded: boolean;
   onToggle: () => void;
-  activeToolId: string | undefined;
-  onSelectTool: (id: string) => void;
+  activeToolId: ToolId | undefined;
+  onSelectTool: (id: ToolId) => void;
 }
 
 export function CategoryRow({

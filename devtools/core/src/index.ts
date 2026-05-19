@@ -51,3 +51,14 @@ export type ToolDescriptor<K extends ToolId = ToolId> = Tool<K>;
 
 export type ToolLoader = () => Promise<{ default: Tool }>;
 export type ToolLoaders = Partial<Record<ToolId, ToolLoader>>;
+
+export type LoadResult = { id: ToolId; descriptor: Tool } | { id: ToolId; error: Error };
+
+export async function loadTool(id: ToolId, load: ToolLoader): Promise<LoadResult> {
+  try {
+    const mod = await load();
+    return { id, descriptor: mod.default };
+  } catch (error) {
+    return { id, error: error instanceof Error ? error : new Error(String(error)) };
+  }
+}
