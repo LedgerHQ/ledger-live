@@ -11,6 +11,7 @@ import { AccountsActionTypes } from "./types";
 import logger from "../logger";
 import { initAccounts } from "@ledgerhq/live-wallet/store";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { checkAccountSupported } from "@ledgerhq/live-common/account/index";
 
 const version = 0; // FIXME this needs to come from user data
 
@@ -35,8 +36,15 @@ export const importStore = async (rawAccounts: { active: { data: AccountRaw }[] 
     (tuple): tuple is [Account, AccountUserData] => tuple !== null,
   );
 
-  const accounts = tuples.map(([account]) => account);
-  const accountsUserData = tuples
+  const supported = tuples.filter(([account]) => {
+    const error = checkAccountSupported(account);
+    if (!error) return true;
+    console.warn(`dropping account ${account.id}: ${error.message}`);
+    return false;
+  });
+
+  const accounts = supported.map(([account]) => account);
+  const accountsUserData = supported
     .filter(([account, userData]) => userData.name !== getDefaultAccountName(account))
     .map(([, userData]) => userData);
   return initAccounts(accounts, accountsUserData);
