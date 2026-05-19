@@ -1,5 +1,6 @@
 import type { Account, AccountRaw, AccountUserData } from "@ledgerhq/types-live";
 import { createAction } from "redux-actions";
+import { UnknownAction } from "redux";
 import accountModel from "../logic/accountModel";
 import type {
   AccountsDeleteAccountPayload,
@@ -9,13 +10,18 @@ import type {
 } from "./types";
 import { AccountsActionTypes } from "./types";
 import logger from "../logger";
-import { initAccounts } from "@ledgerhq/live-wallet/store";
+import {
+  addNonImportedAccounts,
+  initAccounts,
+  splitSupportedAccounts,
+} from "@ledgerhq/live-wallet/store";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
-import { checkAccountSupported } from "@ledgerhq/live-common/account/index";
 
 const version = 0; // FIXME this needs to come from user data
 
-export const importStore = async (rawAccounts: { active: { data: AccountRaw }[] }) => {
+export const importStore = async (
+  rawAccounts: { active: { data: AccountRaw }[] },
+): Promise<UnknownAction[]> => {
   const decodePromises: Array<Promise<[Account, AccountUserData] | null>> = [];
 
   if (rawAccounts && Array.isArray(rawAccounts.active)) {
@@ -36,18 +42,20 @@ export const importStore = async (rawAccounts: { active: { data: AccountRaw }[] 
     (tuple): tuple is [Account, AccountUserData] => tuple !== null,
   );
 
-  const supported = tuples.filter(([account]) => {
-    const error = checkAccountSupported(account);
-    if (!error) return true;
-    console.warn(`dropping account ${account.id}: ${error.message}`);
-    return false;
-  });
+  const { supported, dropped } = splitSupportedAccounts(tuples, (id, message) =>
+    console.warn(`dropping account ${id}: ${message}`),
+  );
 
   const accounts = supported.map(([account]) => account);
   const accountsUserData = supported
     .filter(([account, userData]) => userData.name !== getDefaultAccountName(account))
     .map(([, userData]) => userData);
-  return initAccounts(accounts, accountsUserData);
+
+  const actions: UnknownAction[] = [initAccounts(accounts, accountsUserData) as UnknownAction];
+  if (dropped.length > 0) {
+    actions.push(addNonImportedAccounts(dropped) as UnknownAction);
+  }
+  return actions;
 };
 export const reorderAccounts = createAction<AccountsReorderPayload>(
   AccountsActionTypes.REORDER_ACCOUNTS,
