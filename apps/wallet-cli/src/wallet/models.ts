@@ -23,12 +23,17 @@ export const accountDescriptorSchema = z.object({
 export type AccountDescriptor = z.infer<typeof accountDescriptorSchema>;
 
 /**
- * Bundled result of account discovery: the V1 descriptor and the fresh receive address.
- * V1 does not store freshAddress (it is dynamic); it is carried separately here.
+ * Raw discovery result from the bridge: V1 descriptor and fresh receive address.
+ * The session label is assigned downstream (see DiscoveredAccount).
  */
-export type DiscoveredAccount = {
+export type DiscoveredAccountRaw = {
   descriptor: AccountDescriptorV1;
   freshAddress: string;
+};
+
+/** Labeled discovered account — what commands surface to the user. */
+export type DiscoveredAccount = DiscoveredAccountRaw & {
+  label: string;
 };
 
 // Short form: "{id}:{index}" — e.g. "js:2:bitcoin:xpub...:native_segwit:0"

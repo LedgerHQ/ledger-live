@@ -111,19 +111,25 @@ export class Session {
     return count;
   }
 
+  /**
+   * Add (or look up) a single descriptor. Returns the assigned label and whether a new entry
+   * was appended. Used to attach labels at discovery time before the session is persisted.
+   */
+  addDescriptor(descriptor: AccountDescriptorV1): { label: string; added: boolean } {
+    const serialized = serializeV1(descriptor);
+    const existing = this.entries.find(e => e.descriptor === serialized);
+    if (existing) return { label: existing.label, added: false };
+    const knownLabels = new Set(this.entries.map(e => e.label));
+    const label = generateLabel(descriptor, knownLabels);
+    this.entries.push({ label, descriptor: serialized });
+    return { label, added: true };
+  }
+
   /** Merge new descriptors in-place. Returns count of newly added entries. */
   addDescriptors(descriptors: AccountDescriptorV1[]): number {
-    const knownDescriptors = new Set(this.entries.map(e => e.descriptor));
-    const knownLabels = new Set(this.entries.map(e => e.label));
     let added = 0;
     for (const d of descriptors) {
-      const serialized = serializeV1(d);
-      if (knownDescriptors.has(serialized)) continue;
-      const label = generateLabel(d, knownLabels);
-      knownLabels.add(label);
-      knownDescriptors.add(serialized);
-      this.entries.push({ label, descriptor: serialized });
-      added++;
+      if (this.addDescriptor(d).added) added++;
     }
     return added;
   }
