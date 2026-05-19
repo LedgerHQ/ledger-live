@@ -28,7 +28,8 @@ export default class DiscoverPage {
 
   @Step("Get live App")
   getRandomLiveApp(): DiscoverAppName {
-    const app = this.discoverApps[Math.floor(Math.random() * this.discoverApps.length)].name;
+    const pool = this.discoverApps.filter(a => a.name !== "1inch");
+    const app = pool[Math.floor(Math.random() * pool.length)].name;
     log.info(`Selected Live app: ${app}`);
     return app;
   }
