@@ -6,11 +6,9 @@ import { useDeviceConnectionComponentLWMViewModel } from "./useDeviceConnectionC
 const DeviceConnectionComponentLWM: DeviceConnectionComponent = ({
   deviceConnectionParams: _deviceConnectionParams,
   onConnected,
-  onError,
 }) => {
   const viewModel = useDeviceConnectionComponentLWMViewModel({
     onConnected,
-    onError,
   });
 
   return <DeviceConnectionComponentLWMView {...viewModel} />;

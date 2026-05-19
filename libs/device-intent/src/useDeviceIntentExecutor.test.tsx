@@ -169,30 +169,25 @@ describe("useDeviceIntentExecutor — integration smoke tests (real SM)", () => 
 
       inPhase(result.current, "deviceInitialization");
     });
-
-    it("WHEN onError is called THEN it transitions to connectionError", () => {
-      const { result } = renderIntegration();
-      const state = inPhase(result.current, "deviceConnection");
-
-      const err = new Error("connection failed");
-      act(() => state.onError(err));
-
-      const updated = inPhase(result.current, "connectionError");
-      expect(updated.error).toBe(err);
-    });
   });
 
-  describe("GIVEN the hook is in connectionError phase", () => {
+  describe("GIVEN the hook is in deviceDisconnected phase", () => {
     it("WHEN onRetry is called THEN it transitions back to deviceConnection", () => {
-      const { result } = renderIntegration();
+      const { result } = renderIntegration({ intent: makeIntent(() => NEVER) });
 
+      const connectionResult = makeConnectionResult();
       act(() => {
-        inPhase(result.current, "deviceConnection").onError(new Error("fail"));
+        inPhase(result.current, "deviceConnection").onConnected(connectionResult);
       });
-      inPhase(result.current, "connectionError");
+      inPhase(result.current, "deviceInitialization");
 
       act(() => {
-        inPhase(result.current, "connectionError").onRetry();
+        connectionResult._sessionStateSubject.next({ deviceStatus: "not-connected" });
+      });
+      inPhase(result.current, "deviceDisconnected");
+
+      act(() => {
+        inPhase(result.current, "deviceDisconnected").onRetry();
       });
       inPhase(result.current, "deviceConnection");
     });
@@ -300,7 +295,7 @@ describe("useDeviceIntentExecutor — integration smoke tests (real SM)", () => 
       expect(props.onIntentJobError).toHaveBeenCalledWith(jobError);
     });
 
-    it("WHEN the device disconnects THEN it transitions to connectionError", () => {
+    it("WHEN the device disconnects THEN it transitions to deviceDisconnected", () => {
       const { result, connectionResult } = driveToExecution({
         intent: makeIntent(() => NEVER),
       });
@@ -309,7 +304,7 @@ describe("useDeviceIntentExecutor — integration smoke tests (real SM)", () => 
         connectionResult._sessionStateSubject.next({ deviceStatus: "not-connected" });
       });
 
-      inPhase(result.current, "connectionError");
+      inPhase(result.current, "deviceDisconnected");
     });
   });
 
@@ -342,7 +337,7 @@ describe("useDeviceIntentExecutor — integration smoke tests (real SM)", () => 
   });
 
   describe("device disconnection monitoring", () => {
-    it("WHEN the device emits NOT_CONNECTED THEN the hook transitions to connectionError", () => {
+    it("WHEN the device emits NOT_CONNECTED THEN the hook transitions to deviceDisconnected", () => {
       const { result } = renderIntegration({ intent: makeIntent(() => NEVER) });
 
       const connectionResult = makeConnectionResult();
@@ -355,7 +350,7 @@ describe("useDeviceIntentExecutor — integration smoke tests (real SM)", () => 
         connectionResult._sessionStateSubject.next({ deviceStatus: "not-connected" });
       });
 
-      inPhase(result.current, "connectionError");
+      inPhase(result.current, "deviceDisconnected");
     });
 
     it("WHEN the device disconnects and reconnects THEN a new subscription is made", () => {
@@ -372,10 +367,10 @@ describe("useDeviceIntentExecutor — integration smoke tests (real SM)", () => 
       act(() => {
         connectionResult1._sessionStateSubject.next({ deviceStatus: "not-connected" });
       });
-      inPhase(result.current, "connectionError");
+      inPhase(result.current, "deviceDisconnected");
 
       act(() => {
-        inPhase(result.current, "connectionError").onRetry();
+        inPhase(result.current, "deviceDisconnected").onRetry();
       });
 
       const connectionResult2 = makeConnectionResult("session-2");
@@ -608,15 +603,17 @@ describe("useDeviceIntentExecutor — integration smoke tests (real SM)", () => 
       // Update the callback prop
       rerender({ p: { ...props, onExecutorStateChanged: secondCallback } });
 
-      // Trigger a transition
+      // Trigger a transition via device disconnection from deviceInitialization
+      const connectionResult = makeConnectionResult();
       act(() => {
-        inPhase(result.current, "deviceConnection").onError(new Error("fail"));
+        inPhase(result.current, "deviceConnection").onConnected(connectionResult);
+      });
+      act(() => {
+        connectionResult._sessionStateSubject.next({ deviceStatus: "not-connected" });
       });
 
       // The second (latest) callback should be called, not the first
-      expect(secondCallback).toHaveBeenCalledWith(
-        expect.objectContaining({ type: "connectingDeviceError" }),
-      );
+      expect(secondCallback).toHaveBeenCalledWith({ type: "deviceDisconnected" });
     });
 
     it("WHEN onUserCancel prop changes between renders THEN onClose forwards to the latest callback", () => {
@@ -655,7 +652,6 @@ function renderWithMockSM(overrides: Partial<TestProps> = {}) {
   ) {
     const mock: MockSM = {
       deviceConnected: jest.fn(),
-      connectionError: jest.fn(),
       deviceContextInitialized: jest.fn(),
       deviceDisconnected: jest.fn(),
       retry: jest.fn(),
@@ -753,17 +749,6 @@ describe("useDeviceIntentExecutor — unit (mocked SM)", () => {
       expect(sm.deviceConnected).toHaveBeenCalledWith(connectionResult);
     });
 
-    it("WHEN onError (connection) is called THEN sm.connectionError is called", () => {
-      const { result, sm } = renderWithMockSM();
-
-      const err = new Error("fail");
-      act(() => {
-        inPhase(result.current, "deviceConnection").onError(err);
-      });
-
-      expect(sm.connectionError).toHaveBeenCalledWith(err);
-    });
-
     it("WHEN onContextInitialized is called THEN sm.deviceContextInitialized is called", () => {
       const { result, sm, listeners } = renderWithMockSM();
 
@@ -785,14 +770,11 @@ describe("useDeviceIntentExecutor — unit (mocked SM)", () => {
       const { result, sm, listeners } = renderWithMockSM();
 
       act(() => {
-        listeners.onExecutorStateChanged({
-          type: "connectingDeviceError",
-          error: new Error("fail"),
-        });
+        listeners.onExecutorStateChanged({ type: "deviceDisconnected" });
       });
 
       act(() => {
-        inPhase(result.current, "connectionError").onRetry();
+        inPhase(result.current, "deviceDisconnected").onRetry();
       });
 
       expect(sm.retry).toHaveBeenCalled();
@@ -854,7 +836,7 @@ describe("useDeviceIntentExecutor — unit (mocked SM)", () => {
       inPhase(result.current, "deviceConnection");
     });
 
-    it("WHEN SM emits connectingDeviceError THEN connectionResult and latestJobState are reset", () => {
+    it("WHEN SM emits deviceDisconnected THEN connectionResult and latestJobState are reset", () => {
       const { result, listeners } = renderWithMockSM();
 
       const connectionResult = makeConnectionResult();
@@ -864,13 +846,10 @@ describe("useDeviceIntentExecutor — unit (mocked SM)", () => {
       });
 
       act(() => {
-        listeners.onExecutorStateChanged({
-          type: "connectingDeviceError",
-          error: new Error("disconnected"),
-        });
+        listeners.onExecutorStateChanged({ type: "deviceDisconnected" });
       });
 
-      inPhase(result.current, "connectionError");
+      inPhase(result.current, "deviceDisconnected");
     });
 
     it("WHEN SM emits onIntentJobStateChanged THEN lastIntentSnapshot is updated with the latest jobState", () => {
@@ -953,18 +932,11 @@ describe("useDeviceIntentExecutor — unit (mocked SM)", () => {
       rerender({ p: { ...props, onExecutorStateChanged: secondCallback } });
 
       act(() => {
-        listeners.onExecutorStateChanged({
-          type: "connectingDeviceError",
-          error: new Error("fail"),
-        });
+        listeners.onExecutorStateChanged({ type: "deviceDisconnected" });
       });
 
-      expect(secondCallback).toHaveBeenCalledWith(
-        expect.objectContaining({ type: "connectingDeviceError" }),
-      );
-      expect(firstCallback).not.toHaveBeenCalledWith(
-        expect.objectContaining({ type: "connectingDeviceError" }),
-      );
+      expect(secondCallback).toHaveBeenCalledWith({ type: "deviceDisconnected" });
+      expect(firstCallback).not.toHaveBeenCalledWith({ type: "deviceDisconnected" });
     });
   });
 
@@ -1108,12 +1080,9 @@ describe("useDeviceIntentExecutor — unit (mocked SM)", () => {
       expect(onUserCancel).toHaveBeenCalledTimes(1);
 
       act(() => {
-        listeners.onExecutorStateChanged({
-          type: "connectingDeviceError",
-          error: new Error("fail"),
-        });
+        listeners.onExecutorStateChanged({ type: "deviceDisconnected" });
       });
-      inPhase(result.current, "connectionError").onClose();
+      inPhase(result.current, "deviceDisconnected").onClose();
       expect(onUserCancel).toHaveBeenCalledTimes(2);
 
       act(() => {

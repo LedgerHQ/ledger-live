@@ -1,13 +1,13 @@
 import React from "react";
-import type { ErrorComponent } from "@ledgerhq/device-intent";
+import type { DeviceDisconnectedComponent } from "@ledgerhq/device-intent";
 import { Trans } from "~/context/Locale";
 import { InfoState } from "LLM/components/InfoState";
 
 /**
- * Generic error displayed when the device disconnects in the middle of an intent
- * (either during the "connect app" step or during execution).
+ * Generic state displayed when the device disconnects mid-flow (during the
+ * device-context initialization, intent execution, or while idle).
  */
-export const ConnectionError: ErrorComponent = ({ onRetry, onClose }) => (
+export const DeviceDisconnected: DeviceDisconnectedComponent = ({ onRetry, onClose }) => (
   <InfoState
     preset="error"
     size="hug"
@@ -21,6 +21,6 @@ export const ConnectionError: ErrorComponent = ({ onRetry, onClose }) => (
       label: <Trans i18nKey="common.close" />,
       onPress: onClose,
     }}
-    testID="device-intent-executor-connection-error"
+    testID="device-intent-executor-device-disconnected"
   />
 );

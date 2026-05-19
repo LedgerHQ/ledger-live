@@ -1,14 +1,12 @@
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
-import { ConnectionError } from "./ConnectionError";
+import { DeviceDisconnected } from "./DeviceDisconnected";
 
-describe("ConnectionError", () => {
+describe("DeviceDisconnected", () => {
   it("renders title, description and the primary Retry / secondary Close CTAs", () => {
-    render(
-      <ConnectionError error={new Error("disconnected")} onRetry={jest.fn()} onClose={jest.fn()} />,
-    );
+    render(<DeviceDisconnected onRetry={jest.fn()} onClose={jest.fn()} />);
 
-    expect(screen.getByTestId("device-intent-executor-connection-error")).toBeVisible();
+    expect(screen.getByTestId("device-intent-executor-device-disconnected")).toBeVisible();
     expect(screen.getByText("Device disconnected")).toBeVisible();
     expect(
       screen.getByText(
@@ -23,9 +21,7 @@ describe("ConnectionError", () => {
     const onRetry = jest.fn();
     const onClose = jest.fn();
 
-    const { user } = render(
-      <ConnectionError error={new Error("disconnected")} onRetry={onRetry} onClose={onClose} />,
-    );
+    const { user } = render(<DeviceDisconnected onRetry={onRetry} onClose={onClose} />);
 
     await user.press(screen.getByText("Retry"));
 
@@ -37,9 +33,7 @@ describe("ConnectionError", () => {
     const onRetry = jest.fn();
     const onClose = jest.fn();
 
-    const { user } = render(
-      <ConnectionError error={new Error("disconnected")} onRetry={onRetry} onClose={onClose} />,
-    );
+    const { user } = render(<DeviceDisconnected onRetry={onRetry} onClose={onClose} />);
 
     await user.press(screen.getByText("Close"));
 

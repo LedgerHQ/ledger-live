@@ -100,7 +100,6 @@ function renderViewModel(callbacks = {}, stateParams?: ViewModelStateParams) {
     () =>
       useDeviceConnectionComponentLWMViewModel({
         onConnected: jest.fn(),
-        onError: jest.fn(),
         ...callbacks,
       }),
     withViewModelState(stateParams),
@@ -174,14 +173,20 @@ describe("useDeviceConnectionComponentLWMViewModel", () => {
     expect(result.current.state).toBe(discoveringState);
   });
 
-  it("should forward connect device use case errors", () => {
-    const onError = jest.fn();
+  it("should rethrow connect device use case errors so an ErrorBoundary can catch them", () => {
     const error = new Error("Discovery failed");
-    renderViewModel({ onError });
+    const { result } = renderViewModel();
 
-    act(() => connectDeviceObserver?.error(error));
+    const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      expect(() => {
+        act(() => connectDeviceObserver?.error(error));
+      }).toThrow(error);
+    } finally {
+      consoleErrorSpy.mockRestore();
+    }
 
-    expect(onError).toHaveBeenCalledWith(error);
+    expect(result).toBeDefined();
   });
 
   it("should unsubscribe from the connect device use case on unmount", () => {
@@ -192,13 +197,16 @@ describe("useDeviceConnectionComponentLWMViewModel", () => {
     expect(mockUnsubscribe).toHaveBeenCalledTimes(1);
   });
 
-  it("should report an error when the Device Management Kit is not available", () => {
-    const onError = jest.fn();
+  it("should throw when the Device Management Kit is not available so an ErrorBoundary can catch it", () => {
     mockedUseDeviceManagementKit.mockReturnValue(null);
 
-    renderViewModel({ onError });
+    const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      expect(() => renderViewModel()).toThrow("Device Management Kit is not available");
+    } finally {
+      consoleErrorSpy.mockRestore();
+    }
 
-    expect(onError).toHaveBeenCalledWith(new Error("Device Management Kit is not available"));
     expect(mockedConnectDeviceUseCase).not.toHaveBeenCalled();
   });
 
