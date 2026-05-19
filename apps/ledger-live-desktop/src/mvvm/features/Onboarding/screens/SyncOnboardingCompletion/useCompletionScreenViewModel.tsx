@@ -11,6 +11,8 @@ import {
 import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { useRedirectToPostOnboardingCallback } from "~/renderer/hooks/useAutoRedirectToPostOnboarding";
+import { useOpenRecoverCallback } from "~/renderer/hooks/useAutoRedirectToPostOnboarding/useOpenRecoverCallback";
+import useFinishOnboardingDialog from "LLD/features/FinishOnboarding/FinishOnboardingDialog/hooks/useFinishOnboardingDialog";
 
 const COMPLETION_SCREEN_TIMEOUT = 6000;
 
@@ -32,7 +34,8 @@ export function useCompletionScreenViewModel(): ViewProps {
   }, [currentDevice, lastSeenDevice]);
 
   const redirectToPostOnboarding = useRedirectToPostOnboardingCallback();
-  const hasPreparedPostOnboardingRedirect = useRef(false);
+  const openRecoverUpsell = useOpenRecoverCallback();
+  const { handleOpen: openFinishOnboardingDialog } = useFinishOnboardingDialog();
 
   useEffect(() => {
     dispatch(saveSettings({ hasCompletedOnboarding: true }));
@@ -47,12 +50,28 @@ export function useCompletionScreenViewModel(): ViewProps {
       (lastSeenDevice ? { deviceId: "", modelId: lastSeenDevice.modelId, wired: false } : null);
     dispatch(setLastOnboardedDevice(onboardedDevice));
     const timeout = setTimeout(() => {
-      redirectToPostOnboarding();
+      if (shouldDisplayFinishOnboardingWidget) {
+        navigate("/");
+        openRecoverUpsell({
+          fallbackRedirection: openFinishOnboardingDialog,
+          navigationState: { afterUpsell: "openFinishOnboardingDialog" },
+        });
+      } else {
+        redirectToPostOnboarding();
+      }
     }, COMPLETION_SCREEN_TIMEOUT);
     return () => {
       clearTimeout(timeout);
     };
-  }, [currentDevice, lastSeenDevice, dispatch, redirectToPostOnboarding]);
+  }, [
+    currentDevice,
+    dispatch,
+    navigate,
+    openFinishOnboardingDialog,
+    openRecoverUpsell,
+    redirectToPostOnboarding,
+    shouldDisplayFinishOnboardingWidget,
+  ]);
 
   return {
     seedConfiguration: state?.seedConfiguration,

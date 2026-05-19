@@ -3,15 +3,21 @@
  */
 import { renderHook, act, withFlagOverrides } from "tests/testSetup";
 import { useRedirectToPostOnboardingCallback } from "~/renderer/hooks/useAutoRedirectToPostOnboarding";
+import { useOpenRecoverCallback } from "~/renderer/hooks/useAutoRedirectToPostOnboarding/useOpenRecoverCallback";
 import { State } from "~/renderer/reducers";
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import { useCompletionScreenViewModel } from "../useCompletionScreenViewModel";
 import { AFTER_ONBOARDING_STATE, SettingsState } from "~/renderer/reducers/settings";
 
 const mockRedirectToPostOnboarding = jest.fn();
+const mockOpenRecoverUpsell = jest.fn();
 
 jest.mock("~/renderer/hooks/useAutoRedirectToPostOnboarding", () => ({
   useRedirectToPostOnboardingCallback: jest.fn(),
+}));
+
+jest.mock("~/renderer/hooks/useAutoRedirectToPostOnboarding/useOpenRecoverCallback", () => ({
+  useOpenRecoverCallback: jest.fn(),
 }));
 
 jest.mock("react-router", () => ({
@@ -30,7 +36,11 @@ describe("useCompletionScreenViewModel", () => {
   beforeEach(() => {
     jest.useFakeTimers();
     mockRedirectToPostOnboarding.mockClear();
+    mockNavigate.mockClear();
+    mockOpenFinishOnboardingDialog.mockClear();
+    mockOpenRecoverUpsell.mockClear();
     jest.mocked(useRedirectToPostOnboardingCallback).mockReturnValue(mockRedirectToPostOnboarding);
+    jest.mocked(useOpenRecoverCallback).mockReturnValue(mockOpenRecoverUpsell);
   });
 
   afterEach(() => {
@@ -50,6 +60,9 @@ describe("useCompletionScreenViewModel", () => {
       });
 
       expect(mockRedirectToPostOnboarding).toHaveBeenCalledTimes(1);
+      expect(mockNavigate).not.toHaveBeenCalled();
+      expect(mockOpenFinishOnboardingDialog).not.toHaveBeenCalled();
+      expect(mockOpenRecoverUpsell).not.toHaveBeenCalled();
 
       const { settings } = store.getState() as { settings: SettingsState };
       expect(settings.hasCompletedOnboarding).toBe(true);
@@ -59,7 +72,7 @@ describe("useCompletionScreenViewModel", () => {
     }),
   );
 
-  it("should redirect via useRedirectToPostOnboardingCallback when onboarding widget is enabled", () => {
+  it("should navigate home and open recover upsell with finish-onboarding continuation when Wallet40 finish widget is enabled", () => {
     const deviceId = DeviceModelId.stax;
     const initialState = {
       ...getInitialState(deviceId),
@@ -74,29 +87,13 @@ describe("useCompletionScreenViewModel", () => {
       jest.advanceTimersByTime(6000);
     });
 
-    expect(mockRedirectToPostOnboarding).toHaveBeenCalledTimes(1);
-  });
-
-  it("falls back to lastSeenDevice when currentDevice is null (disconnected)", () => {
-    const deviceId = DeviceModelId.stax;
-    const initialState: Partial<State> = {
-      devices: {
-        devices: [],
-        currentDevice: null,
-      },
-      settings: {
-        ...AFTER_ONBOARDING_STATE,
-        lastSeenDevice: {
-          modelId: deviceId,
-          deviceInfo: {} as never,
-          apps: [],
-        },
-      },
-    };
-
-    const { store } = renderHook(() => useCompletionScreenViewModel(), { initialState });
-
-    const { settings } = store.getState() as { settings: SettingsState };
-    expect(settings.lastOnboardedDevice).toHaveProperty("modelId", deviceId);
+    expect(mockRedirectToPostOnboarding).not.toHaveBeenCalled();
+    expect(mockNavigate).toHaveBeenCalledWith("/");
+    expect(mockOpenRecoverUpsell).toHaveBeenCalledTimes(1);
+    expect(mockOpenRecoverUpsell).toHaveBeenCalledWith({
+      fallbackRedirection: mockOpenFinishOnboardingDialog,
+      navigationState: { afterUpsell: "openFinishOnboardingDialog" },
+    });
+    expect(mockOpenFinishOnboardingDialog).not.toHaveBeenCalled();
   });
 });

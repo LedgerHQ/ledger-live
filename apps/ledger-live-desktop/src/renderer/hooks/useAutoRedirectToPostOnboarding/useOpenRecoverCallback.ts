@@ -30,9 +30,15 @@ export function useOpenRecoverCallback() {
   const lastOnboardedDevice = useSelector(lastOnboardedDeviceSelector);
 
   return useCallback(
-    async ({ fallbackRedirection }: { fallbackRedirection: () => void }) => {
+    async ({
+      fallbackRedirection,
+      navigationState,
+    }: {
+      fallbackRedirection: () => void;
+      navigationState?: object;
+    }) => {
       function redirect(path: string) {
-        navigate(path);
+        navigate(path, { state: navigationState });
         dispatch(setHasBeenUpsoldRecover(true));
       }
       if (!navigator.onLine) {

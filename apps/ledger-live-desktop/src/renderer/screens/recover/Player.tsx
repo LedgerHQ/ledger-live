@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo } from "react";
-import { useSelector } from "LLD/hooks/redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useNavigate, useLocation, useParams } from "react-router";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
@@ -20,6 +20,7 @@ import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalL
 import { SeedOriginType } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { getCountryCodeFromLocale } from "@ledgerhq/live-common/locale/index";
+import { openFinishPostOnboarding } from "LLD/features/FinishOnboarding/FinishOnboardingDialog/finishOnboardingDialog";
 
 const pollingPeriodMs = 1000;
 
@@ -33,6 +34,8 @@ export type RecoverState = {
   seedConfiguration?: SeedOriginType;
   /** Bumped on repeated same-URL Recover deeplinks so the webview remounts with a fresh load. */
   recoverDeeplinkAt?: string;
+  /** When set, the player will open this continuation after the upsell instead of navigate(-1). */
+  afterUpsell?: "openFinishOnboardingDialog";
 };
 
 const FullscreenWrapper = styled.div`
@@ -53,6 +56,7 @@ export default function RecoverPlayer() {
   const { search } = location;
   const state = location.state as RecoverState | undefined;
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const queryParams = useMemo(() => Object.fromEntries(new URLSearchParams(search)), [search]);
   const locale = useSelector(languageSelector);
   const userLocale = useSelector(localeSelector);
@@ -67,7 +71,14 @@ export default function RecoverPlayer() {
   const remoteManifest = useRemoteLiveAppManifest(params.appId || "");
   const manifest = localManifest || remoteManifest;
   const theme = useTheme().theme;
-  const onClose = useCallback(() => navigate(-1), [navigate]);
+  const onClose = useCallback(() => {
+    if (state?.afterUpsell === "openFinishOnboardingDialog") {
+      navigate("/");
+      dispatch(openFinishPostOnboarding());
+    } else {
+      navigate(-1);
+    }
+  }, [dispatch, navigate, state?.afterUpsell]);
   const recoverConfig = useFeature("protectServicesDesktop");
 
   const availableOnDesktop = recoverConfig?.enabled && recoverConfig?.params?.availableOnDesktop;
