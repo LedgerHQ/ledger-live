@@ -3,6 +3,7 @@ import { useReactNavigationDevTools } from "@rozenite/react-navigation-plugin";
 import { useMMKVDevTools } from "@rozenite/mmkv-plugin";
 import { mmkv } from "LLM/storage/mmkvStorageWrapper";
 import { navigationRef } from "~/rootnavigation";
+import { useDevMenu } from "~/hooks/useDevMenu";
 
 const config = {
   inspectors: {
@@ -21,6 +22,7 @@ const HookDevTools = () => {
   useMMKVDevTools({
     storages: [mmkv],
   });
+  useDevMenu();
 
   return null;
 };
