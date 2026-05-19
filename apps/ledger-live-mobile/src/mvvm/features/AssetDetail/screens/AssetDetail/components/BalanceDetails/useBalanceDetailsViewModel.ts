@@ -8,14 +8,12 @@ import {
   formatCurrencyUnitFragment,
 } from "@ledgerhq/live-common/currencies/index";
 import { useInterestRatesByCurrencies } from "@ledgerhq/live-common/dada-client/hooks/useInterestRatesByCurrencies";
-import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "~/context/hooks";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
-import { NavigatorName, ScreenName } from "~/const";
 import { track } from "~/analytics";
 import { useLocale, useTranslation } from "~/context/Locale";
-import type { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 import { useStake } from "LLM/hooks/useStake/useStake";
+import { useOpenStakeDrawer } from "LLM/features/Stake";
 import { useTransferDrawerController } from "LLM/features/QuickActions/hooks/useTransferDrawerController";
 
 type EarnState =
@@ -125,20 +123,11 @@ export function useBalanceDetailsViewModel(
   ]);
 
   const { openDrawer } = useTransferDrawerController();
-  const navigation = useNavigation<BaseNavigation>();
 
-  const navigateToEarn = useCallback(() => {
-    navigation.navigate(NavigatorName.Base, {
-      screen: NavigatorName.Earn,
-      params: {
-        screen: ScreenName.Earn,
-        params: {
-          intent: "deposit",
-          ...(currency?.id && { currencyId: currency.id }),
-        },
-      },
-    });
-  }, [navigation, currency?.id]);
+  const { handleOpenStakeDrawer } = useOpenStakeDrawer({
+    sourceScreenName: "Asset Detail",
+    currencies: currency?.id ? [currency.id] : undefined,
+  });
 
   const onTransferPress = useCallback(() => {
     track("button_clicked", {
@@ -155,8 +144,8 @@ export function useBalanceDetailsViewModel(
       currency: currency?.id,
       page: "Asset Detail",
     });
-    navigateToEarn();
-  }, [currency?.id, navigateToEarn]);
+    handleOpenStakeDrawer();
+  }, [currency?.id, handleOpenStakeDrawer]);
 
   const onEarnDepositPress = useCallback(() => {
     track("button_clicked", {
@@ -164,8 +153,8 @@ export function useBalanceDetailsViewModel(
       currency: currency?.id,
       page: "Asset Detail",
     });
-    navigateToEarn();
-  }, [currency?.id, navigateToEarn]);
+    handleOpenStakeDrawer();
+  }, [currency?.id, handleOpenStakeDrawer]);
 
   return {
     hasAccounts,
