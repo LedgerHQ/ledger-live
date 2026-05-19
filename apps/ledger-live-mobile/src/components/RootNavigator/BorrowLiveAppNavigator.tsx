@@ -20,16 +20,6 @@ const Borrow = (props: NavigationProps) => {
   const paramAction = props.route.params?.action;
   const navigation: BorrowNavigation = props.navigation as unknown as BorrowNavigation;
 
-  const triggerGoBackAction = useCallback(() => {
-    navigation.navigate(NavigatorName.Borrow, {
-      screen: ScreenName.Borrow,
-      params: {
-        ...props.route.params,
-        action: "go-back",
-      },
-    });
-  }, [navigation, props.route.params]);
-
   const clearDeepLink = useCallback(() => {
     navigation.setParams({ action: undefined });
   }, [navigation]);
@@ -64,7 +54,6 @@ const Borrow = (props: NavigationProps) => {
       action={paramAction}
       onNativeGoBack={goBackNative}
       onActionHandled={clearDeepLink}
-      onWalletApiGoBack={triggerGoBackAction}
     />
   );
 };
@@ -75,11 +64,7 @@ export default function BorrowLiveAppNavigator() {
 
   return (
     <Stack.Navigator screenOptions={{ ...stackNavigationConfig }}>
-      <Stack.Screen
-        name={ScreenName.Borrow}
-        component={Borrow}
-        options={{ headerShown: false }}
-      />
+      <Stack.Screen name={ScreenName.Borrow} component={Borrow} options={{ headerShown: false }} />
     </Stack.Navigator>
   );
 }

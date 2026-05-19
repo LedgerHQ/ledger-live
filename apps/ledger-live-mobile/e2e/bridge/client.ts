@@ -233,6 +233,12 @@ export function sendEarnLiveAppReady() {
   });
 }
 
+export function sendBorrowLiveAppReady() {
+  postMessage({
+    type: "borrowLiveAppReady",
+  });
+}
+
 async function postMessage(message: ServerData) {
   log(`Message sending\n${JSON.stringify(message, null, 2)}`);
   try {
