@@ -104,6 +104,12 @@ const HeaderRow = styled.div`
   }
 `;
 
+const dmkLoggerTags = ["live-dmk-logger", "DMK"]; // "live-dmk-logger" is kept for backward compatibility
+
+function isDmkLog(log: Log): boolean {
+  return dmkLoggerTags.some(tag => log.type.startsWith(tag));
+}
+
 const Header = ({
   logs,
   logsMeta,
@@ -185,14 +191,10 @@ const Header = ({
       logs
         .slice(0)
         .reverse()
-        .filter(
-          l =>
-            l.type === "apdu" ||
-            (l.type === "live-dmk-logger" && l.message.startsWith("[exchange]")),
-        )
+        .filter(l => l.type === "apdu" || (isDmkLog(l) && l.message.startsWith("[exchange]")))
         // filter out live-dmk-tracer logs that are not APDUs
         .map(l => {
-          if (l.type === "live-dmk-logger") {
+          if (isDmkLog(l)) {
             l.message = l.message.replace(/^\[exchange\] /, ""); // remove `[exchange] ` prefix
           }
           return l;
