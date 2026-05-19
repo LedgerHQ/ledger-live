@@ -1,3 +1,4 @@
+import { randomInt } from "node:crypto";
 import { Step } from "jest-allure2-reporter/api";
 import { log } from "detox";
 import { openDeeplink } from "../../helpers/commonHelpers";
@@ -29,7 +30,7 @@ export default class DiscoverPage {
   @Step("Get live App")
   getRandomLiveApp(): DiscoverAppName {
     const pool = this.discoverApps.filter(a => a.name !== "1inch");
-    const app = pool[Math.floor(Math.random() * pool.length)].name;
+    const app = pool[randomInt(0, pool.length)].name;
     log.info(`Selected Live app: ${app}`);
     return app;
   }
