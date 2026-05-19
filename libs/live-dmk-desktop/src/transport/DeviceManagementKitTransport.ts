@@ -2,11 +2,10 @@ import {
   type DeviceId,
   DeviceManagementKit,
   DeviceStatus,
-  type DeviceSessionState,
   DiscoveredDevice,
 } from "@ledgerhq/device-management-kit";
 import Transport from "@ledgerhq/hw-transport";
-import { dmkToLedgerDeviceIdMap, activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
+import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import { LocalTracer } from "@ledgerhq/logs";
 import { DescriptorEvent } from "@ledgerhq/types-devices";
 import { firstValueFrom, Observer, startWith, pairwise, map, Subscription } from "rxjs";
@@ -30,7 +29,6 @@ export class DeviceManagementKitTransport extends Transport {
       next: (state: { deviceStatus: DeviceStatus }) => {
         if (state.deviceStatus === DeviceStatus.NOT_CONNECTED) {
           tracer.trace("[listenToDisconnect] Device disconnected, closing transport");
-          activeDeviceSessionSubject.next(null);
           this.emit("disconnect");
         }
       },
@@ -49,24 +47,12 @@ export class DeviceManagementKitTransport extends Transport {
   };
 
   static async open(): Promise<DeviceManagementKitTransport> {
-    const activeSessionId = activeDeviceSessionSubject.value?.sessionId;
+    const reusableSession = getDeviceManagementKit().listConnectedDevices()[0];
 
-    if (activeSessionId) {
-      tracer.trace(`[open] checking existing session ${activeSessionId}`);
-      const deviceSessionState: DeviceSessionState | null = await firstValueFrom(
-        getDeviceManagementKit().getDeviceSessionState({ sessionId: activeSessionId }),
-      ).catch(e => {
-        tracer.trace("[SDKTransport][open] error getting device session state", e);
-        return null;
-      });
-
-      if (
-        deviceSessionState?.deviceStatus !== DeviceStatus.NOT_CONNECTED &&
-        activeDeviceSessionSubject.value?.transport
-      ) {
-        tracer.trace("[open] reusing existing session and instantiating a new SdkTransport");
-        return activeDeviceSessionSubject.value.transport;
-      }
+    if (reusableSession) {
+      tracer.trace(`[open] checking existing session ${reusableSession.sessionId}`);
+      tracer.trace("[open] reusing existing session and instantiating a new SdkTransport");
+      return new DeviceManagementKitTransport(getDeviceManagementKit(), reusableSession.sessionId);
     }
 
     tracer.trace("[open] No active session found, starting discovery");
@@ -83,7 +69,6 @@ export class DeviceManagementKitTransport extends Transport {
       getDeviceManagementKit(),
       connectedSessionId,
     );
-    activeDeviceSessionSubject.next({ sessionId: connectedSessionId, transport });
 
     return transport;
   }

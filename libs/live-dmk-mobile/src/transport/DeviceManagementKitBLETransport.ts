@@ -11,7 +11,7 @@ import {
   PairingRefusedError,
   rnBleTransportIdentifier,
 } from "@ledgerhq/device-transport-kit-react-native-ble";
-import { activeDeviceSessionSubject, dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
+import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import { LocalTracer, TraceContext } from "@ledgerhq/logs";
 import {
   catchError,
@@ -29,7 +29,12 @@ import type {
   Observer as TransportObserver,
   Subscription as TransportSubscription,
 } from "@ledgerhq/hw-transport";
-import { HwTransportError, PairingFailed, PeerRemovedPairing } from "@ledgerhq/errors";
+import {
+  DisconnectedDevice,
+  HwTransportError,
+  PairingFailed,
+  PeerRemovedPairing,
+} from "@ledgerhq/errors";
 import { getDeviceManagementKit } from "../hooks/useDeviceManagementKit";
 import { BlePlxManager } from "./BlePlxManager";
 import { isPeerRemovedPairingError } from "../errors";
@@ -122,67 +127,47 @@ export class DeviceManagementKitBLETransport extends Transport {
     _context?: TraceContext,
     options?: { matchDeviceByName?: string },
   ): Promise<DeviceManagementKitBLETransport> {
-    const activeSessionId = activeDeviceSessionSubject.value?.sessionId;
+    const reusableSession = getDeviceManagementKit()
+      .listConnectedDevices()
+      .find(connectedDevice => {
+        const isSameDeviceId =
+          typeof deviceOrId === "string"
+            ? connectedDevice.id === deviceOrId
+            : connectedDevice.id === deviceOrId.id;
+        const isSameDeviceNameButDifferentId =
+          !isSameDeviceId &&
+          matchDeviceByName({
+            oldDevice: { deviceName: options?.matchDeviceByName },
+            newDevice: { deviceName: connectedDevice.name },
+          });
+
+        return connectedDevice.type === "BLE" && (isSameDeviceId || isSameDeviceNameButDifferentId);
+      });
 
     tracer.trace(
-      "[DMKTransport] [open] activeSessionId: " + activeSessionId + " and deviceId: " + deviceOrId,
+      "[DMKTransport] [open] activeSessionId: " +
+        reusableSession?.sessionId +
+        " and deviceId: " +
+        deviceOrId,
       { options },
     );
 
-    if (activeSessionId) {
-      tracer.trace(`[DMKTransport] [open] checking existing session ${activeSessionId}`);
-
-      const deviceSessionState: DeviceSessionState | null = await firstValueFrom(
-        getDeviceManagementKit().getDeviceSessionState({ sessionId: activeSessionId }),
-      ).catch(e => {
-        tracer.trace("[open] error getting device session state", { error: e });
-        return null;
-      });
-
-      const connectedDevice = getDeviceManagementKit().getConnectedDevice({
-        sessionId: activeSessionId,
-      });
-
-      const isSameDeviceId = connectedDevice.id === deviceOrId;
-      const isSameDeviceNameButDifferentId =
-        !isSameDeviceId &&
-        matchDeviceByName({
-          oldDevice: { deviceName: options?.matchDeviceByName },
-          newDevice: { deviceName: connectedDevice.name },
-        });
-
-      if (
-        deviceSessionState?.deviceStatus !== DeviceStatus.NOT_CONNECTED &&
-        connectedDevice.type === "BLE" &&
-        activeDeviceSessionSubject.value?.transport &&
-        (isSameDeviceId || isSameDeviceNameButDifferentId)
-      ) {
-        tracer.trace(
-          "[DMKTransport] [open] reusing existing session and instantiating a new DmkTransport",
-          {
-            data: {
-              isSameDeviceId,
-              isSameDeviceNameButDifferentId,
-              status: deviceSessionState?.deviceStatus,
-              transport: activeDeviceSessionSubject.value?.transport,
-              oldDevice: { deviceName: options?.matchDeviceByName },
-              newDevice: { deviceName: connectedDevice.name },
-            },
-          },
-        );
-        return activeDeviceSessionSubject.value.transport;
-      } else {
-        tracer.trace("[DMKTransport] [open] not reusing existing session", {
+    if (reusableSession) {
+      tracer.trace(`[DMKTransport] [open] checking existing session ${reusableSession.sessionId}`);
+      tracer.trace(
+        "[DMKTransport] [open] reusing existing session and instantiating a new DmkTransport",
+        {
           data: {
-            isSameDeviceId,
-            isSameDeviceNameButDifferentId,
-            status: deviceSessionState?.deviceStatus,
-            transport: activeDeviceSessionSubject.value?.transport,
+            sessionId: reusableSession.sessionId,
             oldDevice: { deviceName: options?.matchDeviceByName },
-            newDevice: { deviceName: connectedDevice.name },
+            newDevice: { deviceName: reusableSession.name },
           },
-        });
-      }
+        },
+      );
+      return new DeviceManagementKitBLETransport(
+        getDeviceManagementKit(),
+        reusableSession.sessionId,
+      );
     }
 
     if (typeof deviceOrId === "string") {
@@ -219,8 +204,6 @@ export class DeviceManagementKitBLETransport extends Transport {
             getDeviceManagementKit(),
             sessionId,
           );
-
-          activeDeviceSessionSubject.next({ sessionId, transport });
           getDeviceManagementKit().stopDiscovering();
 
           return transport;
@@ -266,7 +249,6 @@ export class DeviceManagementKitBLETransport extends Transport {
         sessionRefresherOptions: { isRefresherDisabled: true },
       });
       const transport = new DeviceManagementKitBLETransport(getDeviceManagementKit(), sessionId);
-      activeDeviceSessionSubject.next({ sessionId, transport });
 
       return transport;
     }
@@ -323,10 +305,6 @@ export class DeviceManagementKitBLETransport extends Transport {
           tracer.trace(
             "[DMKTransport] [listenToDisconnect] Device disconnected, closing transport",
           );
-
-          if (activeDeviceSessionSubject.value?.sessionId === this.sessionId) {
-            activeDeviceSessionSubject.next(null);
-          }
           this.emit("disconnect");
         }
       },
@@ -362,14 +340,17 @@ export class DeviceManagementKitBLETransport extends Transport {
     apdu: Buffer,
     { abortTimeoutMs }: { abortTimeoutMs?: number } = {},
   ): Promise<Buffer> {
-    const activeSessionId = activeDeviceSessionSubject.value?.sessionId;
-    if (!activeSessionId) {
-      throw new Error("No active session found");
+    const isSessionConnected = this.dmk
+      .listConnectedDevices()
+      .some(device => device.sessionId === this.sessionId);
+
+    if (!isSessionConnected) {
+      throw new DisconnectedDevice();
     }
 
     return await this.dmk
       .sendApdu({
-        sessionId: activeSessionId,
+        sessionId: this.sessionId,
         apdu: new Uint8Array(apdu),
         abortTimeout: abortTimeoutMs,
       })
