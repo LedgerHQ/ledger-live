@@ -9015,7 +9015,16 @@
     "pricePerformance": "Price performance",
     "marketRank": "Market rank",
     "tradingVolume24h": "24h trading volume",
-    "day": "1 day"
+    "day": "1 day",
+    "staking": {
+      "availableBalance": "Available balance",
+      "availableBalanceTooltip": "The portion of your holdings you can use right now, free to send, swap, or withdraw at any time.",
+      "earnDeposit": "Earn deposit",
+      "earnBanner": "Earn up to {{apy}}% {{type}}",
+      "earnBannerDefault": "Earn with this asset",
+      "earnBannerSubtitle": "Hold and earn with this asset",
+      "earnBannerAction": "Go to Earn"
+    }
   },
   "pnl": {
     "asset": {

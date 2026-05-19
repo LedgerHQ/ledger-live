@@ -6,6 +6,7 @@ import { ActionBar } from "./components/ActionBar";
 import { MarketPriceSection } from "./components/MarketPriceSection";
 import { MarketDataSection } from "./components/MarketDataSection";
 import { PortfolioSection } from "./components/PortfolioSection/PortfolioSection";
+import { StakingSection } from "./components/StakingSection";
 import { TransactionsSection } from "./components/TransactionsSection";
 import type { AssetDetailReady } from "./types";
 import { PnLSection } from "./components/PnL";
@@ -53,6 +54,8 @@ export function AssetDetailView({ viewModel }: AssetDetailViewProps) {
         {distributionItem && <PortfolioSection distributionItem={distributionItem} />}
 
         {distributionItem && <PnLSection distributionItem={distributionItem} />}
+
+        {distributionItem && <StakingSection distributionItem={distributionItem} />}
 
         {marketData.marketCurrencyData && <MarketDataSection marketData={marketData} />}
 
