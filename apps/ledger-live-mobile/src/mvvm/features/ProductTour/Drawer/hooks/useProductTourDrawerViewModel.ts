@@ -11,7 +11,7 @@ import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/typ
 import type { ProductTourDrawerViewModel } from "../types";
 import { track } from "~/analytics";
 import { NavigatorName } from "~/const/navigation";
-import { PAGE_TRACKING_PRODUCT_TOUR } from "../const";
+import { PAGE_TRACKING_PRODUCT_TOUR, PRODUCT_TOUR_LAST_SLIDE_INDEX } from "../const";
 import type { ProductTourPrimaryAction } from "../const";
 
 type CloseSource = "cross" | "external" | "internal";
@@ -25,9 +25,7 @@ export const useProductTourDrawerViewModel = (): ProductTourDrawerViewModel => {
   const lwmProductTour = useFeature("lwmProductTour");
   const isLWMProductTourEnabled = !!lwmProductTour?.enabled;
   const { shouldDisplayWallet40MainNav } = useWalletFeaturesConfig("mobile");
-  const [isDrawerOpen, setIsDrawerOpen] = useState(
-    !productTourCompleted && isLWMProductTourEnabled,
-  );
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const dispatch = useDispatch();
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
   const { openDrawer: openModularDrawer } = useModularDrawerController();
@@ -103,13 +101,19 @@ export const useProductTourDrawerViewModel = (): ProductTourDrawerViewModel => {
     [handleCloseDrawer, navigation, openModularDrawer, shouldDisplayWallet40MainNav],
   );
 
-  const onSlideChange = useCallback((index: number) => {
-    currentIndexRef.current = index;
-    track("product_tour_card", {
-      page: PAGE_TRACKING_PRODUCT_TOUR,
-      card: index + 1,
-    });
-  }, []);
+  const onSlideChange = useCallback(
+    (index: number) => {
+      currentIndexRef.current = index;
+      track("product_tour_card", {
+        page: PAGE_TRACKING_PRODUCT_TOUR,
+        card: index + 1,
+      });
+      if (index === PRODUCT_TOUR_LAST_SLIDE_INDEX) {
+        dispatch(setProductTourCompleted(true));
+      }
+    },
+    [dispatch],
+  );
 
   const completeProductTour = useCallback(() => {
     closeSourceRef.current = "internal";
@@ -118,11 +122,11 @@ export const useProductTourDrawerViewModel = (): ProductTourDrawerViewModel => {
   }, [dispatch, handleCloseDrawer]);
 
   useEffect(() => {
-    if (isDrawerOpen && (productTourCompleted || !isLWMProductTourEnabled)) {
+    if (isDrawerOpen && !isLWMProductTourEnabled) {
       closeSourceRef.current = "internal";
       setIsDrawerOpen(false);
     }
-  }, [isDrawerOpen, productTourCompleted, isLWMProductTourEnabled]);
+  }, [isDrawerOpen, isLWMProductTourEnabled]);
 
   useEffect(() => {
     if (deeplinkNonce === 0) {

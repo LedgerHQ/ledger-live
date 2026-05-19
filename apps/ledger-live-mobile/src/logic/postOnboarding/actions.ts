@@ -1,12 +1,17 @@
+import React from "react";
 import {
   PostOnboardingAction,
   PostOnboardingActionId,
   StartActionArgs,
 } from "@ledgerhq/types-live";
 import { Icons } from "@ledgerhq/native-ui";
+import { Lightbulb } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { NavigatorName, ScreenName } from "~/const";
 import { getStoreValue } from "~/store";
 import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
+
+const discoverWalletIcon: PostOnboardingAction["Icon"] = () =>
+  React.createElement(Lightbulb, { size: 24, color: "base" });
 
 export const assetsTransferAction: PostOnboardingAction = {
   id: PostOnboardingActionId.assetsTransfer,
@@ -109,4 +114,19 @@ export const recoverAction: PostOnboardingAction = {
       },
     },
   ],
+};
+
+export const discoverWalletAction: PostOnboardingAction = {
+  id: PostOnboardingActionId.discoverWallet,
+  featureFlagId: "lwmProductTour",
+  disabled: false,
+  Icon: discoverWalletIcon,
+  title: "postOnboarding.drawer.actions.discoverWallet.title",
+  titleCompleted: "postOnboarding.actions.discoverWallet.titleCompleted",
+  description: "postOnboarding.drawer.actions.discoverWallet.description",
+  buttonLabelForAnalyticsEvent: "Discover wallet",
+  shouldCompleteOnStart: false,
+  startAction: () => {},
+  getIsAlreadyCompletedByState: ({ productTourCompleted }) =>
+    Boolean(productTourCompleted),
 };

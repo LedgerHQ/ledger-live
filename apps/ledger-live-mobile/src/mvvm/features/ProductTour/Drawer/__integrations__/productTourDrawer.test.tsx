@@ -100,7 +100,7 @@ describe("ProductTourDrawer integration", () => {
     return rendered;
   }
 
-  it("should auto-open and display the first slide when the tour is not completed", async () => {
+  it("should open and display the first slide when openProductTour is triggered and the tour is not completed", async () => {
     await openTourOnFirstSlide({ productTourCompleted: false, featureFlagEnabled: true });
 
     await waitFor(() => expect(screen.getByText(FIRST_SLIDE_TITLE)).toBeVisible());

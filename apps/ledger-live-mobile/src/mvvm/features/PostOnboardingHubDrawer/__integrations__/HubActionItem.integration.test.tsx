@@ -3,6 +3,7 @@ import { render, screen } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import {
   assetsTransferAction,
+  discoverWalletAction,
   recoverAction,
   syncAccountsAction,
 } from "~/logic/postOnboarding/actions";
@@ -76,6 +77,62 @@ describe("HubActionItem Integration", () => {
     );
 
     const actionRow = await screen.findByRole("button", { name: /backup secured/i });
+
+    expect(actionRow).toBeDisabled();
+    expect(screen.getByText("Complete")).toBeVisible();
+  });
+
+  it("should show the pending discover wallet row when the tour is not completed", async () => {
+    render(
+      <HubActionItem
+        {...baseProps({
+          ...discoverWalletAction,
+          completed: false,
+          completionStatus: { isCompleted: false, isLoading: false },
+        })}
+      />,
+      {
+        overrideInitialState: state => ({
+          ...state,
+          settings: {
+            ...state.settings,
+            productTourCompleted: false,
+          },
+        }),
+      },
+    );
+
+    const actionRow = await screen.findByRole("button", {
+      name: /discover your wallet/i,
+    });
+
+    expect(actionRow).not.toBeDisabled();
+    expect(screen.getByText(/what.*new in your portfolio/i)).toBeVisible();
+    expect(screen.queryByText("Complete")).toBeNull();
+  });
+
+  it("should show the completed row when the product tour is already completed", async () => {
+    render(
+      <HubActionItem
+        {...baseProps({
+          ...discoverWalletAction,
+          completed: false,
+        })}
+      />,
+      {
+        overrideInitialState: state => ({
+          ...state,
+          settings: {
+            ...state.settings,
+            productTourCompleted: true,
+          },
+        }),
+      },
+    );
+
+    const actionRow = await screen.findByRole("button", {
+      name: /wallet tour opened/i,
+    });
 
     expect(actionRow).toBeDisabled();
     expect(screen.getByText("Complete")).toBeVisible();

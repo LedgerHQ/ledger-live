@@ -11,6 +11,7 @@ export enum PostOnboardingActionId {
   syncAccounts = "syncAccounts",
   customImage = "customImage",
   recover = "recover",
+  discoverWallet = "discoverWallet",
   // Mocks for desktop development and tests
   assetsTransferMock = "assetsTransferMock",
   buyCryptoMock = "buyCryptoMock",
@@ -20,6 +21,7 @@ export enum PostOnboardingActionId {
   personalizeMock = "personalizeMock",
   recoverMock = "recoverMock",
   syncAccountsMock = "syncAccountsMock",
+  discoverWalletMock = "discoverWalletMock",
 }
 
 export type WithNavigationParams = {
@@ -124,6 +126,8 @@ export type PostOnboardingAction = {
   getIsAlreadyCompletedByState?: (args: {
     isLedgerSyncActive?: boolean;
     accounts?: Account[];
+    /** LWM product tour finished (settings), used e.g. for discoverWallet on mobile */
+    productTourCompleted?: boolean;
   }) => boolean;
 
   /**

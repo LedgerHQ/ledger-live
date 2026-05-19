@@ -1,10 +1,11 @@
+import { discoverWalletAction } from "../actions";
 import { isPostOnboardingHubActionFulfilled } from "../postOnboardingHubCompletion";
 
 describe("isPostOnboardingHubActionFulfilled", () => {
   it("is true when Redux marks the action completed", async () => {
     const isFulfilled = await isPostOnboardingHubActionFulfilled(
       { completed: true, getIsAlreadyCompletedByState: () => false },
-      { isLedgerSyncActive: false, protectId: "" },
+      { isLedgerSyncActive: false, protectId: "", productTourCompleted: false },
     );
     expect(isFulfilled).toBe(true);
   });
@@ -15,7 +16,7 @@ describe("isPostOnboardingHubActionFulfilled", () => {
         completed: false,
         getIsAlreadyCompletedByState: ({ isLedgerSyncActive }) => !!isLedgerSyncActive,
       },
-      { isLedgerSyncActive: true, accounts: [], protectId: "" },
+      { isLedgerSyncActive: true, accounts: [], protectId: "", productTourCompleted: false },
     );
     expect(isFulfilled).toBe(true);
 
@@ -24,7 +25,7 @@ describe("isPostOnboardingHubActionFulfilled", () => {
         completed: false,
         getIsAlreadyCompletedByState: ({ isLedgerSyncActive }) => !!isLedgerSyncActive,
       },
-      { isLedgerSyncActive: false, protectId: "" },
+      { isLedgerSyncActive: false, protectId: "", productTourCompleted: false },
     );
     expect(isFulfilled).toBe(false);
   });
@@ -37,7 +38,7 @@ describe("isPostOnboardingHubActionFulfilled", () => {
           return true;
         },
       },
-      { isLedgerSyncActive: true, accounts: [], protectId: "" },
+      { isLedgerSyncActive: true, accounts: [], protectId: "", productTourCompleted: false },
     );
     expect(isFulfilled).toBe(true);
 
@@ -48,7 +49,37 @@ describe("isPostOnboardingHubActionFulfilled", () => {
           return false;
         },
       },
-      { isLedgerSyncActive: false, protectId: "" },
+      { isLedgerSyncActive: false, protectId: "", productTourCompleted: false },
+    );
+    expect(isFulfilled).toBe(false);
+  });
+
+  it("uses productTourCompleted in discoverWalletAction completion check", async () => {
+    let isFulfilled = await isPostOnboardingHubActionFulfilled(
+      {
+        completed: false,
+        getIsAlreadyCompletedByState: discoverWalletAction.getIsAlreadyCompletedByState,
+      },
+      {
+        isLedgerSyncActive: false,
+        accounts: [],
+        protectId: "",
+        productTourCompleted: true,
+      },
+    );
+    expect(isFulfilled).toBe(true);
+
+    isFulfilled = await isPostOnboardingHubActionFulfilled(
+      {
+        completed: false,
+        getIsAlreadyCompletedByState: discoverWalletAction.getIsAlreadyCompletedByState,
+      },
+      {
+        isLedgerSyncActive: false,
+        accounts: [],
+        protectId: "",
+        productTourCompleted: false,
+      },
     );
     expect(isFulfilled).toBe(false);
   });
