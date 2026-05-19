@@ -17,6 +17,7 @@
     "bundle:ios:prod": "NODE_OPTIONS=--max-old-space-size=8192 react-native bundle --platform ios --entry-file index.js --dev false --bundle-output main.ios.jsbundle",
     "bundle:android": "NODE_OPTIONS=--max-old-space-size=8192 react-native bundle --platform android --entry-file index.js --bundle-output main.jsbundle",
     "bundle:android:prod": "NODE_OPTIONS=--max-old-space-size=8192 react-native bundle --platform android --entry-file index.js --dev false --bundle-output main.android.jsbundle",
+    "minify:bundle": "zx ./scripts/minify-jsbundle.mjs",
     "ios": "react-native run-ios --target ledgerlivemobile",
     "android": "react-native run-android --appIdSuffix=debug --active-arch-only",
     "android:gradleClean": "cd android && ./gradlew clean",
