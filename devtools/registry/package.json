@@ -1,0 +1,27 @@
+{
+  "name": "@devtools/registry",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Static registry of lazy-loaded DevTools modules",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "sideEffects": false,
+  "scripts": {
+    "format": "prettier --write 'src/**/*.ts'",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage"
+  },
+  "dependencies": {
+    "@devtools/core": "workspace:*",
+    "@devtools/feature-flags": "workspace:*"
+  },
+  "devDependencies": {
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/jest": "catalog:",
+    "jest": "catalog:",
+    "typescript": "catalog:"
+  }
+}
