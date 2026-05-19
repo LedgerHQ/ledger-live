@@ -1,5 +1,11 @@
 # @ledgerhq/wallet-cli
 
+## 1.0.1
+
+### Patch Changes
+
+- Refresh README documentation for the stable v1 release and add agent guidance for wallet-cli command usage.
+
 ## 1.0.0
 
 ### Major Changes
