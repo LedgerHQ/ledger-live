@@ -1,3 +1,4 @@
+import BigNumber from "bignumber.js";
 import { resolveIntents } from "./resolver";
 
 function makeCosmosAccount(overrides: Record<string, unknown> = {}) {
@@ -18,40 +19,60 @@ function makeCosmosAccount(overrides: Record<string, unknown> = {}) {
       pendingRewardsBalance: { gt: (n: number) => n === 0 },
       unbondingBalance: { gt: () => false },
     },
+    spendableBalance: new BigNumber(1_000_000),
+    balance: new BigNumber(1_000_000),
+    ...overrides,
+  };
+}
+
+function makeSolanaAccount(overrides: Record<string, unknown> = {}) {
+  return {
+    id: "solana-account-1",
+    type: "Account" as const,
+    currency: { family: "solana", id: "solana" },
+    balance: { isZero: () => false },
+    spendableBalance: { isZero: () => false },
+    solanaResources: {
+      stakes: [
+        {
+          activation: { state: "active" },
+          withdrawable: 0,
+        },
+      ],
+    },
     ...overrides,
   };
 }
 
 describe("resolveIntents", () => {
   describe("cosmos family", () => {
-    it("returns all intents for account with active delegations", () => {
+    it("returns generic intents with family-specific labels", () => {
       const account = makeCosmosAccount();
       const intents = resolveIntents(account as never);
 
       expect(intents).toHaveLength(4);
-      expect(intents.map(i => i.name)).toEqual([
-        "delegate",
-        "redelegate",
-        "unbond",
-        "claimRewards",
+      expect(intents.map(i => i.intent)).toEqual(["stake", "unstake", "restake", "claimRewards"]);
+      expect(intents.map(i => i.label)).toEqual([
+        "Delegate",
+        "Undelegate",
+        "Redelegate",
+        "Claim rewards",
       ]);
     });
 
-    it("delegate is always enabled", () => {
-      const account = makeCosmosAccount();
-      const intents = resolveIntents(account as never);
-      const delegate = intents.find(i => i.name === "delegate");
-      expect(delegate?.enabled).toBe(true);
+    it("stake is always enabled", () => {
+      const intents = resolveIntents(makeCosmosAccount() as never);
+      const stake = intents.find(i => i.intent === "stake");
+      expect(stake?.enabled).toBe(true);
     });
 
-    it("redelegate requires validatorAddress", () => {
-      const account = makeCosmosAccount();
-      const intents = resolveIntents(account as never);
-      const redelegate = intents.find(i => i.name === "redelegate");
-      expect(redelegate?.params).toContain("validatorAddress");
+    it("restake requires validatorAddress", () => {
+      const intents = resolveIntents(makeCosmosAccount() as never);
+      const restake = intents.find(i => i.intent === "restake");
+      expect(restake?.params).toContain("validatorAddress");
     });
 
-    it("unbond is disabled when unbondings at max (7)", () => {
+    it("unstake is disabled when unbondings at max (7)", () => {
       const account = makeCosmosAccount({
         cosmosResources: {
           delegations: [{ validatorAddress: "v1", pendingRewards: { gt: () => false } }],
@@ -62,12 +83,11 @@ describe("resolveIntents", () => {
           unbondingBalance: { gt: () => true },
         },
       });
-      const intents = resolveIntents(account as never);
-      const unbond = intents.find(i => i.name === "unbond");
-      expect(unbond?.enabled).toBe(false);
+      const unstake = resolveIntents(account as never).find(i => i.intent === "unstake");
+      expect(unstake?.enabled).toBe(false);
     });
 
-    it("redelegate is disabled when redelegations at max (7)", () => {
+    it("restake is disabled when redelegations at max (7)", () => {
       const account = makeCosmosAccount({
         cosmosResources: {
           delegations: [{ validatorAddress: "v1", pendingRewards: { gt: () => false } }],
@@ -78,9 +98,8 @@ describe("resolveIntents", () => {
           unbondingBalance: { gt: () => false },
         },
       });
-      const intents = resolveIntents(account as never);
-      const redelegate = intents.find(i => i.name === "redelegate");
-      expect(redelegate?.enabled).toBe(false);
+      const restake = resolveIntents(account as never).find(i => i.intent === "restake");
+      expect(restake?.enabled).toBe(false);
     });
 
     it("claimRewards is disabled when no pending rewards", () => {
@@ -94,42 +113,45 @@ describe("resolveIntents", () => {
           unbondingBalance: { gt: () => false },
         },
       });
-      const intents = resolveIntents(account as never);
-      const claim = intents.find(i => i.name === "claimRewards");
+      const claim = resolveIntents(account as never).find(i => i.intent === "claimRewards");
       expect(claim?.enabled).toBe(false);
     });
+  });
 
-    it("redelegate/unbond/claimRewards disabled when no delegations", () => {
-      const account = makeCosmosAccount({
-        cosmosResources: {
-          delegations: [],
-          redelegations: [],
-          unbondings: [],
-          delegatedBalance: { gt: () => false },
-          pendingRewardsBalance: { gt: () => false },
-          unbondingBalance: { gt: () => false },
-        },
-      });
+  describe("solana family", () => {
+    it("returns stake, unstake, restake, and withdraw intents", () => {
+      const intents = resolveIntents(makeSolanaAccount() as never);
+      expect(intents.map(i => i.intent)).toEqual(["stake", "unstake", "restake", "withdraw"]);
+    });
+
+    it("enables unstake when a stake can be deactivated", () => {
+      const unstake = resolveIntents(makeSolanaAccount() as never).find(i => i.intent === "unstake");
+      expect(unstake?.enabled).toBe(true);
+      expect(unstake?.label).toBe("Deactivate");
+    });
+  });
+
+  describe("near family", () => {
+    it("returns stake, unstake, and withdraw intents", () => {
+      const account = {
+        id: "near-account",
+        type: "Account" as const,
+        currency: { family: "near", id: "near" },
+        balance: new BigNumber(1000),
+        nearResources: { stakingPositions: [] },
+      };
       const intents = resolveIntents(account as never);
-
-      const redelegate = intents.find(i => i.name === "redelegate");
-      const unbond = intents.find(i => i.name === "unbond");
-      const claim = intents.find(i => i.name === "claimRewards");
-
-      expect(redelegate?.enabled).toBe(false);
-      expect(unbond?.enabled).toBe(false);
-      expect(claim?.enabled).toBe(false);
+      expect(intents.map(i => i.intent)).toEqual(["stake", "unstake", "withdraw"]);
     });
   });
 
   it("returns empty array for unsupported family", () => {
     const account = {
-      id: "eth-account",
+      id: "btc-account",
       type: "Account" as const,
-      currency: { family: "ethereum", id: "ethereum" },
+      currency: { family: "bitcoin", id: "bitcoin" },
     };
-    const intents = resolveIntents(account as never);
-    expect(intents).toEqual([]);
+    expect(resolveIntents(account as never)).toEqual([]);
   });
 
   it("returns empty array for token accounts", () => {
@@ -137,7 +159,6 @@ describe("resolveIntents", () => {
       id: "token-1",
       type: "TokenAccount" as const,
     };
-    const intents = resolveIntents(tokenAccount as never);
-    expect(intents).toEqual([]);
+    expect(resolveIntents(tokenAccount as never)).toEqual([]);
   });
 });

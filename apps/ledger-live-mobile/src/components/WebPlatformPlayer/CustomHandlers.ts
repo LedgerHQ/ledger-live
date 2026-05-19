@@ -20,6 +20,7 @@ import { resolveLiveAppModalParams } from "@ledgerhq/live-common/wallet-api/Live
 import { handlers as stakingIntentHandlers } from "@ledgerhq/live-common/wallet-api/StakingIntent/server";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 import type { StakingIntentOpenParams } from "@ledgerhq/live-common/wallet-api/StakingIntent/types";
+import { openStakingIntentMobile } from "~/wallet-api/openStakingIntent";
 import { setLiveAppModal } from "~/reducers/liveAppModal";
 import { Linking } from "react-native";
 
@@ -169,46 +170,7 @@ export function useStakingIntentCustomHandlers(accounts: AccountLike[]) {
             const account = accounts.find(a => a.id === realAccountId);
             if (!account || account.type !== "Account") return;
 
-            const family = account.currency.family;
-
-            if (family === "cosmos") {
-              const nav = navigation as { navigate: (route: string, p: object) => void };
-              switch (params.intent) {
-                case "delegate":
-                  nav.navigate(NavigatorName.CosmosDelegationFlow, {
-                    screen: ScreenName.CosmosDelegationValidator,
-                    params: {
-                      accountId: account.id,
-                    },
-                  });
-                  break;
-                case "redelegate":
-                  nav.navigate(NavigatorName.CosmosRedelegationFlow, {
-                    screen: ScreenName.CosmosRedelegationValidator,
-                    params: {
-                      accountId: account.id,
-                      validatorSrcAddress: params.validatorAddress ?? "",
-                    },
-                  });
-                  break;
-                case "unbond":
-                  nav.navigate(NavigatorName.CosmosUndelegationFlow, {
-                    screen: ScreenName.CosmosUndelegationAmount,
-                    params: {
-                      accountId: account.id,
-                    },
-                  });
-                  break;
-                case "claimRewards":
-                  nav.navigate(NavigatorName.CosmosClaimRewardsFlow, {
-                    screen: ScreenName.CosmosClaimRewardsValidator,
-                    params: {
-                      accountId: account.id,
-                    },
-                  });
-                  break;
-              }
-            }
+            openStakingIntentMobile(navigation, account, params);
           },
         },
       }),

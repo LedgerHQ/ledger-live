@@ -1,8 +1,10 @@
-export type StakingIntentName = "delegate" | "redelegate" | "unbond" | "claimRewards";
+import type { Account } from "@ledgerhq/types-live";
+
+export type StakingIntent = "stake" | "unstake" | "restake" | "claimRewards" | "withdraw";
 
 export type StakingIntentOpenParams = {
   accountId: string;
-  intent: StakingIntentName;
+  intent: StakingIntent;
   validatorAddress?: string;
   validatorDstAddress?: string;
 };
@@ -14,7 +16,8 @@ export type StakingIntentListParams = {
 };
 
 export type StakingIntentDescriptor = {
-  name: StakingIntentName;
+  intent: StakingIntent;
+  label: string;
   enabled: boolean;
   params?: string[];
 };
@@ -23,9 +26,25 @@ export type StakingIntentListResult = {
   intents: StakingIntentDescriptor[];
 };
 
-export const VALID_INTENTS: StakingIntentName[] = [
-  "delegate",
-  "redelegate",
-  "unbond",
+export type FamilyIntentConfig = {
+  intent: StakingIntent;
+  label: string;
+  params?: string[];
+  isEnabled: (account: Account) => boolean;
+};
+
+export type FamilyIntentRegistry = {
+  family: string;
+  intents: FamilyIntentConfig[];
+};
+
+export const VALID_INTENTS: StakingIntent[] = [
+  "stake",
+  "unstake",
+  "restake",
   "claimRewards",
+  "withdraw",
 ];
+
+/** @deprecated Use StakingIntent */
+export type StakingIntentName = StakingIntent;

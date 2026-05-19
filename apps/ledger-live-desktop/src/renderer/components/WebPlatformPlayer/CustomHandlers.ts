@@ -22,8 +22,8 @@ import { handlers as liveAppModalHandlers } from "@ledgerhq/live-common/wallet-a
 import { resolveLiveAppModalParams } from "@ledgerhq/live-common/wallet-api/LiveAppModal/types";
 import { handlers as stakingIntentHandlers } from "@ledgerhq/live-common/wallet-api/StakingIntent/server";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
-import type { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import type { StakingIntentOpenParams } from "@ledgerhq/live-common/wallet-api/StakingIntent/types";
+import { openStakingIntentDesktop } from "~/renderer/wallet-api/openStakingIntent";
 
 export function useACRECustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
   const { pushToast } = useToasts();
@@ -204,47 +204,12 @@ export function useStakingIntentCustomHandlers(accounts: AccountLike[]) {
             const account = accounts.find(a => a.id === realAccountId);
             if (!account || account.type !== "Account") return;
 
-            const family = account.currency.family;
-
-            if (family === "cosmos") {
-              const cosmosAccount = account as unknown as CosmosAccount;
-              switch (params.intent) {
-                case "delegate":
-                  dispatch(
-                    openModal("MODAL_COSMOS_DELEGATE", {
-                      account: cosmosAccount,
-                      source: "earn",
-                    }),
-                  );
-                  break;
-                case "redelegate":
-                  dispatch(
-                    openModal("MODAL_COSMOS_REDELEGATE", {
-                      account: cosmosAccount,
-                      validatorAddress: params.validatorAddress,
-                      validatorDstAddress: params.validatorDstAddress,
-                      source: "earn",
-                    }),
-                  );
-                  break;
-                case "unbond":
-                  dispatch(
-                    openModal("MODAL_COSMOS_UNDELEGATE", {
-                      account: cosmosAccount,
-                      validatorAddress: params.validatorAddress ?? "",
-                    }),
-                  );
-                  break;
-                case "claimRewards":
-                  dispatch(
-                    openModal("MODAL_COSMOS_CLAIM_REWARDS", {
-                      account: cosmosAccount,
-                      validatorAddress: params.validatorAddress,
-                    }),
-                  );
-                  break;
-              }
-            }
+            openStakingIntentDesktop(
+              (name, data) =>
+                dispatch(openModal(name as Parameters<typeof openModal>[0], data as never)),
+              account,
+              params,
+            );
           },
         },
       }),

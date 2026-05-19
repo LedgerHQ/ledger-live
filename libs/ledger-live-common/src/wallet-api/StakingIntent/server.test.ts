@@ -15,10 +15,12 @@ jest.mock("@ledgerhq/wallet-api-core", () => ({
 jest.mock("../converters", () => ({
   getAccountIdFromWalletAccountId: jest.fn((id: string) => {
     if (id === "known-wallet-id") return "real-account-id";
+    if (id === "solana-wallet-id") return "solana-account-id";
     return undefined;
   }),
 }));
 
+import BigNumber from "bignumber.js";
 import { handlers } from "./server";
 
 describe("StakingIntent server handlers", () => {
@@ -41,8 +43,19 @@ describe("StakingIntent server handlers", () => {
       pendingRewardsBalance: { gt: (n: number) => n === 0 },
       unbondingBalance: { gt: (n: number) => false },
     },
-    spendableBalance: { gt: () => true },
-    balance: { gt: () => true },
+    spendableBalance: new BigNumber(1_000_000),
+    balance: new BigNumber(1_000_000),
+  };
+
+  const solanaAccount = {
+    id: "solana-account-id",
+    type: "Account" as const,
+    currency: { family: "solana", id: "solana" },
+    balance: { isZero: () => false, gt: () => true },
+    spendableBalance: { isZero: () => false, gt: () => true },
+    solanaResources: {
+      stakes: [{ activation: { state: "active" }, withdrawable: 0 }],
+    },
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -51,7 +64,7 @@ describe("StakingIntent server handlers", () => {
   beforeEach(() => {
     mockUiOpen.mockClear();
     h = handlers({
-      accounts: [cosmosAccount as never],
+      accounts: [cosmosAccount as never, solanaAccount as never],
       uiHooks: { "custom.earn.intent.open": mockUiOpen },
     });
   });
@@ -60,23 +73,23 @@ describe("StakingIntent server handlers", () => {
     it("calls uiHook with valid params", () => {
       h["custom.earn.intent.open"]({
         accountId: "known-wallet-id",
-        intent: "delegate",
+        intent: "stake",
       });
       expect(mockUiOpen).toHaveBeenCalledWith({
         accountId: "known-wallet-id",
-        intent: "delegate",
+        intent: "stake",
       });
     });
 
-    it("passes validatorAddress for redelegate", () => {
+    it("passes validatorAddress for restake", () => {
       h["custom.earn.intent.open"]({
         accountId: "known-wallet-id",
-        intent: "redelegate",
+        intent: "restake",
         validatorAddress: "cosmosvaloper1",
       });
       expect(mockUiOpen).toHaveBeenCalledWith({
         accountId: "known-wallet-id",
-        intent: "redelegate",
+        intent: "restake",
         validatorAddress: "cosmosvaloper1",
       });
     });
@@ -111,29 +124,41 @@ describe("StakingIntent server handlers", () => {
       expect(result).toHaveProperty("intents");
       expect(result.intents).toEqual(
         expect.arrayContaining([
-          expect.objectContaining({ name: "delegate" }),
-          expect.objectContaining({ name: "redelegate" }),
-          expect.objectContaining({ name: "unbond" }),
-          expect.objectContaining({ name: "claimRewards" }),
+          expect.objectContaining({ intent: "stake", label: "Delegate" }),
+          expect.objectContaining({ intent: "unstake", label: "Undelegate" }),
+          expect.objectContaining({ intent: "restake", label: "Redelegate" }),
+          expect.objectContaining({ intent: "claimRewards", label: "Claim rewards" }),
         ]),
       );
     });
 
-    it("returns delegate as enabled", () => {
+    it("returns intents for a solana account", () => {
       const result = h["custom.earn.intent.list"]({
-        accountId: "known-wallet-id",
+        accountId: "solana-wallet-id",
       });
-      const delegate = result.intents.find((i: { name: string }) => i.name === "delegate");
-      expect(delegate?.enabled).toBe(true);
+      expect(result.intents).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ intent: "stake", label: "Delegate" }),
+          expect.objectContaining({ intent: "unstake", label: "Deactivate" }),
+        ]),
+      );
     });
 
-    it("returns unbond as enabled when delegations exist and unbondings < 7", () => {
+    it("returns stake as enabled for cosmos", () => {
       const result = h["custom.earn.intent.list"]({
         accountId: "known-wallet-id",
       });
-      const unbond = result.intents.find((i: { name: string }) => i.name === "unbond");
-      expect(unbond?.enabled).toBe(true);
-      expect(unbond?.params).toContain("validatorAddress");
+      const stake = result.intents.find((i: { intent: string }) => i.intent === "stake");
+      expect(stake?.enabled).toBe(true);
+    });
+
+    it("returns unstake as enabled when delegations exist and unbondings < 7", () => {
+      const result = h["custom.earn.intent.list"]({
+        accountId: "known-wallet-id",
+      });
+      const unstake = result.intents.find((i: { intent: string }) => i.intent === "unstake");
+      expect(unstake?.enabled).toBe(true);
+      expect(unstake?.params).toContain("validatorAddress");
     });
 
     it("rejects without accountId", () => {
