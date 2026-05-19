@@ -1,6 +1,7 @@
 [
   {
     "id": "usd-coin",
+    "currencyId": "usd-coin",
     "ledgerIds": [
       "ethereum/erc20/usd__coin",
       "solana/spl/epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v",
@@ -27,7 +28,7 @@
     "marketCapChangePercentage24h": 0.21882,
     "circulatingSupply": 78284315113.4221,
     "totalSupply": 78289309385.33514,
-    "maxSupply": null,
+    "maxSupply": 0,
     "allTimeHigh": 1.043,
     "allTimeLow": 0.877647,
     "allTimeHighDate": "2018-11-15T00:00:00Z",
