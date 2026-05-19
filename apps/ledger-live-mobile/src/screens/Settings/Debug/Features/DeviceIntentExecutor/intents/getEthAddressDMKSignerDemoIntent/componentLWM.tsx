@@ -10,6 +10,7 @@ export function GetEthAddressDMKSignerDemoIntentComponentLWM({
 }: {
   jobState: GetEthAddressDMKSignerDemoIntentJobState | undefined;
   extraProps: GetEthAddressDMKSignerDemoIntentExtraProps;
+  onClose: () => void;
 }) {
   return (
     <Flex p={4}>

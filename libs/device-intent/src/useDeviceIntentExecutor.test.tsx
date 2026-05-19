@@ -618,6 +618,24 @@ describe("useDeviceIntentExecutor — integration smoke tests (real SM)", () => 
         expect.objectContaining({ type: "connectingDeviceError" }),
       );
     });
+
+    it("WHEN onUserCancel prop changes between renders THEN onClose forwards to the latest callback", () => {
+      const firstCancel = jest.fn();
+      const secondCancel = jest.fn();
+      const { result, rerender, props } = renderIntegration({ onUserCancel: firstCancel });
+
+      const state1 = inPhase(result.current, "deviceConnection");
+      state1.onClose();
+      expect(firstCancel).toHaveBeenCalledTimes(1);
+      expect(secondCancel).not.toHaveBeenCalled();
+
+      rerender({ p: { ...props, onUserCancel: secondCancel } });
+
+      const state2 = inPhase(result.current, "deviceConnection");
+      state2.onClose();
+      expect(secondCancel).toHaveBeenCalledTimes(1);
+      expect(firstCancel).toHaveBeenCalledTimes(1);
+    });
   });
 });
 
@@ -1078,6 +1096,61 @@ describe("useDeviceIntentExecutor — unit (mocked SM)", () => {
 
       rerender({ p: { ...props, cancelIntentRequestId: "cancel-2" } });
       expect(sm.stopIntent).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe("onUserCancel forwarding as onClose", () => {
+    it("THEN every phase exposes onClose that calls props.onUserCancel", () => {
+      const onUserCancel = jest.fn();
+      const { result, listeners } = renderWithMockSM({ onUserCancel });
+
+      inPhase(result.current, "deviceConnection").onClose();
+      expect(onUserCancel).toHaveBeenCalledTimes(1);
+
+      act(() => {
+        listeners.onExecutorStateChanged({
+          type: "connectingDeviceError",
+          error: new Error("fail"),
+        });
+      });
+      inPhase(result.current, "connectionError").onClose();
+      expect(onUserCancel).toHaveBeenCalledTimes(2);
+
+      act(() => {
+        listeners.onExecutorStateChanged({ type: "initializingDeviceContext" });
+      });
+      inPhase(result.current, "deviceInitialization").onClose();
+      expect(onUserCancel).toHaveBeenCalledTimes(3);
+
+      act(() => {
+        listeners.onExecutorStateChanged({ type: "executingIntent" });
+      });
+      inPhase(result.current, "intentExecution").onClose();
+      expect(onUserCancel).toHaveBeenCalledTimes(4);
+
+      act(() => {
+        listeners.onExecutorStateChanged({
+          type: "executingIntentError",
+          error: new Error("e"),
+        });
+      });
+      inPhase(result.current, "intentError").onClose();
+      expect(onUserCancel).toHaveBeenCalledTimes(5);
+
+      act(() => {
+        listeners.onExecutorStateChanged({
+          type: "invalidOperation",
+          error: new Error("e"),
+        });
+      });
+      inPhase(result.current, "invalidOperation").onClose();
+      expect(onUserCancel).toHaveBeenCalledTimes(6);
+
+      act(() => {
+        listeners.onExecutorStateChanged({ type: "idle" });
+      });
+      inPhase(result.current, "idle").onClose();
+      expect(onUserCancel).toHaveBeenCalledTimes(7);
     });
   });
 
