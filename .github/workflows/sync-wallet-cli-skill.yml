@@ -5,7 +5,7 @@ on:
     branches:
       - develop
     paths:
-      - ".agents/skills/ledger-wallet-cli/SKILL.md"
+      - ".agents/skills/ledger-wallet-cli/**"
   workflow_dispatch:
     inputs:
       source_ref:
@@ -33,12 +33,11 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     env:
-      SOURCE_SKILL: .agents/skills/ledger-wallet-cli/SKILL.md
+      SOURCE_SKILL_DIR: .agents/skills/ledger-wallet-cli
       TARGET_REPOSITORY: LedgerHQ/agent-skills
       TARGET_BASE: ${{ inputs.target_base || 'main' }}
       SYNC_BRANCH: ${{ inputs.sync_branch || 'sync/wallet-cli-skill' }}
-      TARGET_SKILL_DIR: skills/wallet-cli/ledger-wallet-cli
-      TARGET_SKILL_SET_DIR: skills/wallet-cli
+      TARGET_SKILL_DIR: skills/wallet-cli/wallet-cli-usage
     steps:
       - name: Generate token
         id: generate-token
@@ -69,54 +68,37 @@ jobs:
         run: |
           set -euo pipefail
 
-          source_path="$GITHUB_WORKSPACE/ledger-live/$SOURCE_SKILL"
+          source_skill_dir="$GITHUB_WORKSPACE/ledger-live/$SOURCE_SKILL_DIR"
           target_skill_dir="$GITHUB_WORKSPACE/agent-skills/$TARGET_SKILL_DIR"
-          target_skill_set_dir="$GITHUB_WORKSPACE/agent-skills/$TARGET_SKILL_SET_DIR"
 
+          rm -rf "$target_skill_dir"
           mkdir -p "$target_skill_dir"
 
-          sed -E 's#pnpm --silent wallet-cli start ?#wallet-cli #g' "$source_path" > "$target_skill_dir/SKILL.md"
+          cp -R "$source_skill_dir/references" "$target_skill_dir/references"
 
-          cat > "$target_skill_set_dir/README.md" <<'EOF'
-          # wallet-cli Skill Set
-
-          Skills for using Ledger wallet-cli, the USB-based command-line tool for Ledger Wallet flows built on the Device Management Kit (DMK).
-
-          ## Structure
-
-          ```text
-          skills/wallet-cli/
-          |-- README.md
-          |-- manifest.json
-          `-- ledger-wallet-cli/
-              `-- SKILL.md
-          ```
-
-          ## How to load
-
-          Load `skills/wallet-cli/ledger-wallet-cli/SKILL.md` when the user asks to interact with Ledger wallet-cli, discover accounts, get receive addresses, inspect balances or operations, send funds, run genuine checks, or execute swap flows.
-          EOF
-
-          cat > "$target_skill_set_dir/manifest.json" <<'EOF'
-          {
-            "name": "wallet-cli",
-            "displayName": "Ledger wallet-cli",
-            "description": "Skill for using Ledger wallet-cli, the USB-based command-line tool for Ledger Wallet flows.",
-            "version": "1.0.0",
-            "skills": [
-              {
-                "name": "ledger-wallet-cli",
-                "description": "Official Ledger wallet-cli commands for account discovery, receive, balances, operations, send, genuine check, and swap flows."
-              }
-            ],
-            "concatenationOrder": [
-              "ledger-wallet-cli/SKILL.md"
-            ]
-          }
-          EOF
+          sed -E \
+            -e 's|^name: ledger-wallet-cli$|name: wallet-cli-usage|' \
+            -e 's|Run from repo root: `pnpm --silent wallet-cli start <command> \[flags\]`|Install globally with a user-preferred package manager — `npm i -g @ledgerhq/wallet-cli`, `pnpm add -g @ledgerhq/wallet-cli`, `yarn global add @ledgerhq/wallet-cli`, or `bun add -g @ledgerhq/wallet-cli`. Run: `wallet-cli [flags]`.|' \
+            -e 's|pnpm --silent wallet-cli start ?|wallet-cli |g' \
+            "$source_skill_dir/SKILL.md" > "$target_skill_dir/SKILL.md"
 
           if grep -Fq "pnpm --silent wallet-cli start" "$target_skill_dir/SKILL.md"; then
             echo "Exported skill still contains monorepo-only wallet-cli commands."
+            exit 1
+          fi
+
+          if grep -Fq "Run from repo root" "$target_skill_dir/SKILL.md"; then
+            echo "Exported skill still contains monorepo-only run instructions."
+            exit 1
+          fi
+
+          if ! grep -Fq "name: wallet-cli-usage" "$target_skill_dir/SKILL.md"; then
+            echo "Exported skill frontmatter does not match the agent-skills skill name."
+            exit 1
+          fi
+
+          if [ ! -f "$target_skill_dir/references/business-logic.md" ]; then
+            echo "Exported skill is missing references/business-logic.md."
             exit 1
           fi
 
@@ -129,7 +111,7 @@ jobs:
           # NOTE: $SYNC_BRANCH is fully managed by this workflow and force-pushed on every run.
           # Do not commit to it directly — manual commits will be lost.
           git checkout -B "$SYNC_BRANCH"
-          git add "$TARGET_SKILL_SET_DIR"
+          git add "$TARGET_SKILL_DIR"
 
           if git diff --cached --quiet; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
