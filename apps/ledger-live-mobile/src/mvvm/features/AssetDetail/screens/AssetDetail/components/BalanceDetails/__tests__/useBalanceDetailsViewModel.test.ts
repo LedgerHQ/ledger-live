@@ -32,6 +32,13 @@ jest.mock("LLM/features/Stake", () => ({
   useOpenStakeDrawer: (props: unknown) => mockUseOpenStakeDrawer(props),
 }));
 
+const mockUseInterestRatesByCurrencies = jest.fn().mockReturnValue({});
+
+jest.mock("@ledgerhq/live-common/dada-client/hooks/useInterestRatesByCurrencies", () => ({
+  useInterestRatesByCurrencies: (currencies: unknown) =>
+    mockUseInterestRatesByCurrencies(currencies),
+}));
+
 function buildDistributionItem(
   currency: DistributionItem["currency"],
   accounts: AccountLike[],
@@ -50,6 +57,7 @@ describe("useBalanceDetailsViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockGetCanStakeCurrency.mockReturnValue(false);
+    mockUseInterestRatesByCurrencies.mockReturnValue({});
   });
 
   it("returns defaults when currency is undefined", () => {
@@ -193,6 +201,78 @@ describe("useBalanceDetailsViewModel", () => {
       );
 
       expect(result.current.earnState.type).toBe("banner");
+    });
+
+    it("formats the banner APY by converting the decimal fraction to a percentage", () => {
+      mockGetCanStakeCurrency.mockReturnValue(true);
+      mockUseInterestRatesByCurrencies.mockReturnValue({
+        bitcoin: { value: 0.0345, type: "APY" },
+      });
+
+      const btcAccount = genAccount("bitcoin-0", {
+        currency: mockBtcCryptoCurrency,
+        operationsSize: 0,
+      });
+
+      const { result } = renderHook(() =>
+        useBalanceDetailsViewModel(
+          mockBtcCryptoCurrency,
+          buildDistributionItem(mockBtcCryptoCurrency, [btcAccount]),
+        ),
+      );
+
+      expect(result.current.earnState.type).toBe("banner");
+      if (result.current.earnState.type === "banner") {
+        expect(result.current.earnState.label).toContain("3.45");
+      }
+    });
+
+    it("falls back to the generic banner when the rounded percentage is 0%", () => {
+      mockGetCanStakeCurrency.mockReturnValue(true);
+      mockUseInterestRatesByCurrencies.mockReturnValue({
+        bitcoin: { value: 0.00001, type: "APY" },
+      });
+
+      const btcAccount = genAccount("bitcoin-0", {
+        currency: mockBtcCryptoCurrency,
+        operationsSize: 0,
+      });
+
+      const { result } = renderHook(() =>
+        useBalanceDetailsViewModel(
+          mockBtcCryptoCurrency,
+          buildDistributionItem(mockBtcCryptoCurrency, [btcAccount]),
+        ),
+      );
+
+      expect(result.current.earnState.type).toBe("banner");
+      if (result.current.earnState.type === "banner") {
+        expect(result.current.earnState.label).toBe("Earn with this asset");
+        expect(result.current.earnState.label).not.toContain("Earn up to");
+      }
+    });
+
+    it("falls back to the generic banner when no interest rate is available", () => {
+      mockGetCanStakeCurrency.mockReturnValue(true);
+      mockUseInterestRatesByCurrencies.mockReturnValue({});
+
+      const btcAccount = genAccount("bitcoin-0", {
+        currency: mockBtcCryptoCurrency,
+        operationsSize: 0,
+      });
+
+      const { result } = renderHook(() =>
+        useBalanceDetailsViewModel(
+          mockBtcCryptoCurrency,
+          buildDistributionItem(mockBtcCryptoCurrency, [btcAccount]),
+        ),
+      );
+
+      expect(result.current.earnState.type).toBe("banner");
+      if (result.current.earnState.type === "banner") {
+        expect(result.current.earnState.label).toBe("Earn with this asset");
+        expect(result.current.earnState.label).not.toContain("Earn up to");
+      }
     });
 
     it("shows staked state when balance > spendableBalance", () => {
