@@ -5,7 +5,6 @@
 "@ledgerhq/coin-tester-evm": minor
 "@ledgerhq/coin-tester-solana": minor
 "@ledgerhq/web-tools": minor
-"@ledgerhq/wallet-cli": minor
 "@ledgerhq/live-cli": minor
 "live-mobile": minor
 ---
