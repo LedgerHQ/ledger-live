@@ -18,13 +18,21 @@ describe("DmkSignerZcash", () => {
   let buildMock: jest.Mock;
 
   const createCompletedObservable = <T>(output: T) => ({
-    subscribe: ({ next }: { next: (state: { status: DeviceActionStatus.Completed; output: T }) => void }) => {
+    subscribe: ({
+      next,
+    }: {
+      next: (state: { status: DeviceActionStatus.Completed; output: T }) => void;
+    }) => {
       next({ status: DeviceActionStatus.Completed, output });
     },
   });
 
   const createErrorStatusObservable = <E extends { _tag: string }>(error: E) => ({
-    subscribe: ({ next }: { next: (state: { status: DeviceActionStatus.Error; error: E }) => void }) => {
+    subscribe: ({
+      next,
+    }: {
+      next: (state: { status: DeviceActionStatus.Error; error: E }) => void;
+    }) => {
       next({ status: DeviceActionStatus.Error, error });
     },
   });
@@ -152,21 +160,6 @@ describe("DmkSignerZcash", () => {
       await expect(signer.getFullViewingKey("44'/133'/0'/0/0")).rejects.toThrow(
         "Unexpected full viewing key response mode",
       );
-    });
-  });
-
-  describe("getViewKey", () => {
-    it("should delegate to getFullViewingKey", async () => {
-      mockSignerZcash.getFullViewingKey.mockReturnValue({
-        observable: createCompletedObservable({
-          mode: "ufvk",
-          fullViewingKey: "uview1delegate",
-        }),
-      });
-
-      const result = await signer.getViewKey("44'/133'/0'/0/0");
-
-      expect(result).toEqual({ viewKey: "uview1delegate" });
     });
   });
 

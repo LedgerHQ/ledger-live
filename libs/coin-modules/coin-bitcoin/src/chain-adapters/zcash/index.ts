@@ -3,7 +3,8 @@ import { pathStringToArray } from "@ledgerhq/ledger-wallet-framework/bridge/jsHe
 import type { ChainAdapter } from "../types";
 import type { BitcoinAddress, BitcoinXPub, SignerContext } from "../../signer";
 import type { Transaction } from "../../types";
-import { DmkSignerZcash, ZcashAddress, ZcashViewKey } from "@ledgerhq/live-signer-zcash";
+import { DmkSignerZcash } from "@ledgerhq/live-signer-zcash";
+import type { ZcashAddress, ZcashViewKey } from "@ledgerhq/live-signer-zcash";
 import { registerChainAdapter } from "../registry";
 import type { ZcashAccount, ZcashAccountRaw } from "./types";
 import { toZcashPrivateInfoRaw, fromZcashPrivateInfoRaw } from "./serialization";
@@ -24,13 +25,19 @@ const isDmkTransport = (transport: unknown): transport is DmkTransport =>
 
 type ZcashLikeSigner = {
   getAddress: (path: string, display?: boolean) => Promise<ZcashAddress>;
+  getFullViewingKey: (path: string) => Promise<ZcashViewKey>;
 };
 
 const isZcashSigner = (signer: unknown): signer is ZcashLikeSigner =>
-  !!signer &&
-  typeof signer === "object" &&
-  "getAddress" in signer &&
-  typeof signer.getAddress === "function";
+  !!signer && typeof signer === "object";
+
+const hasGetAddressFunction = (signer: unknown): signer is ZcashLikeSigner =>
+  isZcashSigner(signer) && "getAddress" in signer && typeof signer.getAddress === "function";
+
+const hasGetFullViewingKeyFunction = (signer: unknown): signer is ZcashLikeSigner =>
+  isZcashSigner(signer) &&
+  "getFullViewingKey" in signer &&
+  typeof signer.getFullViewingKey === "function";
 
 const zcashChainAdapter: ChainAdapter = {
   id: "zcash",
@@ -88,7 +95,7 @@ const zcashChainAdapter: ChainAdapter = {
 
   getAddress(deviceId, { currency, path, verify }, signerContext: SignerContext) {
     return signerContext(deviceId, currency, async signer => {
-      if (!isZcashSigner(signer)) {
+      if (!hasGetAddressFunction(signer)) {
         throw new Error("Zcash signer must implement getAddress(path, display?)");
       }
       const { address, publicKey, chainCode } = await signer.getAddress(path, verify || false);
@@ -106,7 +113,7 @@ const zcashChainAdapter: ChainAdapter = {
     signerContext: SignerContext,
   ): Promise<BitcoinXPub> {
     return signerContext(deviceId, currency, async signer => {
-      if (!isZcashSigner(signer)) {
+      if (!hasGetAddressFunction(signer)) {
         throw new Error("Zcash signer must implement getAddress(path, display?)");
       }
 
@@ -137,14 +144,10 @@ const zcashChainAdapter: ChainAdapter = {
 
   getFullViewingKey(deviceId, currency, path, signerContext: SignerContext) {
     return signerContext(deviceId, currency, async signer => {
-      if (!("getFullViewingKey" in signer) || typeof signer.getFullViewingKey !== "function") {
+      if (!hasGetFullViewingKeyFunction(signer)) {
         throw new Error("Zcash signer must implement getFullViewingKey(path)");
       }
-      const { viewKey } = await (
-        signer as unknown as {
-          getFullViewingKey: (path: string) => Promise<ZcashViewKey>;
-        }
-      ).getFullViewingKey(path);
+      const { viewKey } = await signer.getFullViewingKey(path);
       return viewKey;
     });
   },

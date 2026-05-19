@@ -11,7 +11,23 @@ import {
   type DeviceActionState,
   type DeviceManagementKit,
 } from "@ledgerhq/device-management-kit";
-import { SignerZcash, SignerZcashBuilder } from "@ledgerhq/device-signer-kit-zcash";
+import {
+  GetAddressDAError,
+  GetFullViewingKeyDAError,
+  SignerZcash,
+  SignerZcashBuilder,
+} from "@ledgerhq/device-signer-kit-zcash";
+
+type ZcashGetAddressResult = {
+  publicKey: Uint8Array;
+  address: string;
+  chainCode: Uint8Array;
+};
+
+type ZcashGetFullViewingKeyResult = {
+  mode: "ufvk" | "orchardFvk";
+  fullViewingKey: string | Uint8Array;
+};
 
 export class DmkSignerZcash implements ZcashSigner {
   private readonly signer: SignerZcash;
@@ -57,11 +73,9 @@ export class DmkSignerZcash implements ZcashSigner {
       skipOpenApp: true,
     });
 
-    const result = (await this.resolveDeviceAction(observable)) as {
-      publicKey: Uint8Array;
-      address: string;
-      chainCode: Uint8Array;
-    };
+    const result = await this.resolveDeviceAction<ZcashGetAddressResult, GetAddressDAError>(
+      observable,
+    );
 
     return {
       publicKey: Buffer.from(result.publicKey).toString("hex"),
@@ -95,10 +109,10 @@ export class DmkSignerZcash implements ZcashSigner {
       skipOpenApp: true,
     });
 
-    const result = (await this.resolveDeviceAction(observable)) as {
-      mode: "ufvk" | "orchardFvk";
-      fullViewingKey: string | Uint8Array;
-    };
+    const result = await this.resolveDeviceAction<
+      ZcashGetFullViewingKeyResult,
+      GetFullViewingKeyDAError
+    >(observable);
 
     if (result.mode !== "ufvk" || typeof result.fullViewingKey !== "string") {
       throw new Error("Unexpected full viewing key response mode");
