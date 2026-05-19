@@ -1,7 +1,8 @@
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import React, { useCallback, useMemo } from "react";
-import { FlatList, StyleSheet, View, SafeAreaView, ListRenderItem } from "react-native";
+import { FlatList, StyleSheet, View, ListRenderItem } from "react-native";
+import SafeAreaView from "~/components/SafeAreaView";
 import {
   CeloAccount,
   CeloValidatorGroup,

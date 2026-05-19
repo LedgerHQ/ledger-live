@@ -1,5 +1,6 @@
 import React, { ComponentProps, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { View, StyleSheet, SafeAreaView, BackHandler, Platform } from "react-native";
+import { View, StyleSheet, BackHandler, Platform } from "react-native";
+import SafeAreaView from "~/components/SafeAreaView";
 import { useSelector } from "~/context/hooks";
 
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
