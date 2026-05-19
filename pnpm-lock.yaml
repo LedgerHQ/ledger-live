@@ -3494,6 +3494,9 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 6.0.2
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.6
 
   libs/asset-aggregation:
     dependencies:
@@ -21533,7 +21536,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: 19.0.0
       react-dom: 19.0.0
-      webpack: ^5.89.0
+      webpack: '*'
     peerDependenciesMeta:
       '@react-native/babel-preset':
         optional: true

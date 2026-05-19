@@ -33,6 +33,7 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-redux": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "zod": "catalog:"
   }
 }
