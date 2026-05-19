@@ -1,71 +1,56 @@
 ---
-description: React and React Native development patterns for Ledger Wallet
+name: typescript
+description: TypeScript + React typing conventions for Ledger Wallet. Read when writing or reviewing .ts and .tsx files.
 globs: ["**/*.ts", "**/*.tsx"]
-alwaysApply: false
+disable-model-invocation: true
 ---
 
-## **Components**
+## Components
 
-- Use **function components** with typed props.
-- Prefer **React.FC** only when children typing is needed; otherwise avoid.
+- Use function components with typed props.
+- Prefer `React.FC` only when children typing is needed; otherwise avoid.
 - Memoize when beneficial (`React.memo`, `useMemo`, `useCallback`).
 
----
+## Props & State
 
-## **Props & State**
-
-- Type props with **interfaces** or **type aliases** (PascalCase).
+- Type props with interfaces or type aliases (PascalCase).
 - Use `readonly` for immutable props/state shapes.
 - Avoid `any`; use `unknown` when necessary.
 - Prefer discriminated unions for state machines.
 
----
+## Hooks
 
-## **Hooks**
-
-- Extract logic into **custom hooks**.
+- Extract logic into custom hooks.
 - Type hook return values explicitly.
 - Avoid unnecessary dependencies in hook arrays.
 
----
-
-## **Data & Types**
+## Data & Types
 
 - Store types in `types.ts` files.
-- Use **Zod** for runtime validation.
+- Use Zod for runtime validation.
 
----
+## Imports & Exports
 
-## **Imports & Exports**
-
-- Prefer **named imports** and **named exports**.
+- Prefer named imports and named exports.
 - Always declare imports at the beginning of source files.
 - Import order:
-
   1. External libs
   2. Internal modules
   3. Types
-
 - Avoid default exports.
 
----
-
-## **Error Handling**
+## Error Handling
 
 - Use custom error classes with `code` and optional context.
-- Prefer **Result<T, E>** patterns for recoverable failures.
+- Prefer `Result<T, E>` patterns for recoverable failures.
 
----
-
-## **Async Patterns**
+## Async Patterns
 
 - Use `async/await`.
 - Wrap async code with `try/catch`.
 - Avoid inline Promises inside JSX.
 
----
-
-## **Performance**
+## Performance
 
 - Use `as const` for literals.
 - Use mapped types for transformations.
