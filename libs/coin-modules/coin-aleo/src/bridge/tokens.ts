@@ -17,8 +17,8 @@ import { mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
  * so that a mismatch in suffix presence never causes a lookup miss.
  */
 function normalizeTokenId(tokenId: string): string {
-  // Strip visibility suffix (e.g. "field.private", "field.public") then bare "field"
-  const stripped = tokenId.replace(/\.private$|\.public$/, "");
+  // Strip visibility suffix (e.g. "field.private") then bare "field"
+  const stripped = tokenId.replace(/\.private$/, "");
   return stripped.endsWith("field") ? stripped.slice(0, -"field".length).trimEnd() : stripped;
 }
 
@@ -585,8 +585,6 @@ export async function buildSubAccountsFromPrivateRecords({
     const tokenCurrency = buildTokenCurrencyFromVerifiedToken(currency, verifiedToken);
     const id = encodeTokenAccountId(ledgerAccountId, tokenCurrency);
     if (existingSubAccountIds.has(id) || seenIds.has(id)) {
-      // eslint-disable-next-line no-console
-      console.log("aleo: skipped existing custom-program sub-account", { programId, id });
       continue;
     }
 
@@ -609,9 +607,6 @@ export async function buildSubAccountsFromPrivateRecords({
         viewKey,
       });
 
-      // eslint-disable-next-line no-console
-      console.log("aleo: decrypted token_registry record data", decrypted.data);
-
       const rawTokenId = decrypted.data?.token_id;
       if (!rawTokenId) continue;
 
@@ -624,8 +619,6 @@ export async function buildSubAccountsFromPrivateRecords({
       const tokenCurrency = buildTokenCurrencyFromVerifiedToken(currency, verifiedToken);
       const id = encodeTokenAccountId(ledgerAccountId, tokenCurrency);
       if (existingSubAccountIds.has(id) || seenIds.has(id)) {
-        // eslint-disable-next-line no-console
-        console.log("aleo: skipped existing registry sub-account", { rawTokenId, id });
         continue;
       }
 
