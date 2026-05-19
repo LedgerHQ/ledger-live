@@ -44,7 +44,7 @@ function featureFlagsWithRecover() {
         ...protectDesktopDefaultParams,
         protectId: PROTECT_ID,
         availableOnDesktop: true,
-        compatibleDevices: [{ name: DeviceModelId.nanoX, available: true }],
+        compatibleDevices: [{ name: DeviceModelId.nanoX, available: true, comingSoon: false }],
         onboardingCompleted: {
           ...protectDesktopDefaultParams.onboardingCompleted,
           upsellURI: RECOVER_UPSELL_URI,
@@ -67,9 +67,11 @@ function postOnboardingState(deviceModelId = DeviceModelId.nanoX) {
   };
 }
 
-function renderNavigateHook(
-  initialState: Parameters<typeof renderHook>[1]["initialState"] = {},
-) {
+type NavigateHookInitialState = NonNullable<
+  Parameters<typeof renderHook>[1]
+>["initialState"];
+
+function renderNavigateHook(initialState: NavigateHookInitialState = {}) {
   const Wrapper = ({ children }: { children: React.ReactNode }) =>
     React.createElement(
       PostOnboardingProvider,
@@ -108,6 +110,25 @@ describe("useNavigateToPostOnboardingHubCallback", () => {
     expect(store.getState().dialogs.FINISH_POST_ONBOARDING).toBe(true);
     expect(mockNavigate).not.toHaveBeenCalledWith("/");
     expect(mockNavigate).not.toHaveBeenCalledWith("/post-onboarding");
+  });
+
+  it("reads subscription state when navigation runs, not at hook render time", () => {
+    mockGetStoreValue.mockReturnValue(LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION);
+
+    const { result } = renderNavigateHook({
+      ...featureFlagsWithRecover(),
+      postOnboarding: postOnboardingState(),
+      settings: { hasBeenRedirectedToPostOnboarding: false },
+    });
+
+    mockGetStoreValue.mockReturnValue(LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE);
+
+    act(() => {
+      result.current();
+    });
+
+    expect(mockNavigate).toHaveBeenCalledWith(RECOVER_LANDING_PATH, { replace: true });
+    expect(mockGetStoreValue).toHaveBeenCalledWith("SUBSCRIPTION_STATE", PROTECT_ID);
   });
 
   it("should navigate to portfolio and open finish dialog when Wallet40 is enabled without recover", () => {

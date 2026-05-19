@@ -10,6 +10,16 @@ import useFinishOnboardingDialog from "LLD/features/FinishOnboarding/FinishOnboa
 import { getStoreValue } from "~/renderer/store";
 import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
 
+function readRecoverSubscriptionState(
+  protectId: string,
+): LedgerRecoverSubscriptionStateEnum | undefined {
+  try {
+    return getStoreValue<LedgerRecoverSubscriptionStateEnum>("SUBSCRIPTION_STATE", protectId);
+  } catch {
+    return undefined;
+  }
+}
+
 export function useNavigateToPostOnboardingHubCallback() {
   const navigate = useNavigate();
   const hasBeenRedirectedToPostOnboarding = useSelector(hasBeenRedirectedToPostOnboardingSelector);
@@ -20,23 +30,13 @@ export function useNavigateToPostOnboardingHubCallback() {
   const upsellPath = useUpsellPath(recoverServices);
   const protectId = recoverServices?.params?.protectId ?? "protect-prod";
 
-  let subscriptionState: LedgerRecoverSubscriptionStateEnum | undefined;
-  try {
-    subscriptionState = getStoreValue<LedgerRecoverSubscriptionStateEnum>(
-      "SUBSCRIPTION_STATE",
-      protectId,
-    );
-  } catch {
-    subscriptionState = undefined;
-  }
-
-  const shouldNavigateToRecoverLanding =
-    isRecoverDisplayed(recoverServices, deviceModelId ?? undefined) &&
-    !!upsellPath &&
-    hasStartedLedgerRecoverFlowForPostOnboarding(subscriptionState);
-
   return useCallback(
     (resetNavigationStack?: boolean) => {
+      const shouldNavigateToRecoverLanding =
+        isRecoverDisplayed(recoverServices, deviceModelId ?? undefined) &&
+        !!upsellPath &&
+        hasStartedLedgerRecoverFlowForPostOnboarding(readRecoverSubscriptionState(protectId));
+
       if (shouldDisplayFinishOnboardingWidget) {
         const replace = resetNavigationStack ?? true;
         if (shouldNavigateToRecoverLanding) {
@@ -55,12 +55,14 @@ export function useNavigateToPostOnboardingHubCallback() {
       navigate("/post-onboarding", { replace: !!resetNavigationStack });
     },
     [
+      deviceModelId,
       hasBeenRedirectedToPostOnboarding,
       navigate,
       openFinishOnboardingDialog,
       protectId,
+      recoverServices,
       shouldDisplayFinishOnboardingWidget,
-      shouldNavigateToRecoverLanding,
+      upsellPath,
     ],
   );
 }
