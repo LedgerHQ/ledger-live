@@ -4,7 +4,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 
 $TmsLink("B2CQA-651");
 $TmsLink("B2CQA-1854");
-describe("Receive different currency", () => {
+describe("Receive different currency (polkadot, cosmos)", () => {
   let deviceAction: DeviceAction;
   let first = true;
   const knownDevice = knownDevices.nanoX;
@@ -25,18 +25,9 @@ describe("Receive different currency", () => {
   });
 
   it.each([
-    ["bitcoin"],
-    ["ethereum", "ethereum"],
-    ["bsc"],
-    ["ripple"],
-    //["solana"], // TOFIX Error during flow
-    ["cardano"],
-    ["dogecoin"],
-    // ["tron"], // TO FIX, scenario hangs
-    ["avalanche_c_chain"],
-    ["polygon", "polygon"],
     ["polkadot", "assethub_polkadot"],
     ["cosmos", "cosmos"],
+    // ["solana"], // TOFIX Error during flow
   ])("receive on %p (through scanning)", async (currencyId: string, network: string = "") => {
     const currency = getCryptoCurrencyById(currencyId);
     const currencyName = getCryptoCurrencyById(currencyId).name;
@@ -49,7 +40,10 @@ describe("Receive different currency", () => {
     await app.modularDrawer.selectCurrencyByTicker(currency.ticker);
     await app.modularDrawer.selectNetworkIfAsked(currency.name);
     await app.modularDrawer.tapAddNewOrExistingAccountButtonMAD();
-    first && (await deviceAction.selectMockDevice(), (first = false));
+    if (first) {
+      await deviceAction.selectMockDevice();
+      first = false;
+    }
     await deviceAction.openApp();
     await app.addAccount.addAccountAtIndex(currency.name, network || currency.id, 1);
     await app.receive.doNotVerifyAddress();
