@@ -20,6 +20,10 @@ import { setAccountName } from "@ledgerhq/live-wallet/store";
 import { handlers as deeplinkHandlers } from "@ledgerhq/live-common/wallet-api/CustomDeeplink/server";
 import { handlers as liveAppModalHandlers } from "@ledgerhq/live-common/wallet-api/LiveAppModal/server";
 import { resolveLiveAppModalParams } from "@ledgerhq/live-common/wallet-api/LiveAppModal/types";
+import { handlers as stakingIntentHandlers } from "@ledgerhq/live-common/wallet-api/StakingIntent/server";
+import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
+import type { StakingIntentOpenParams } from "@ledgerhq/live-common/wallet-api/StakingIntent/types";
+import { openStakingIntentDesktop } from "~/renderer/wallet-api/openStakingIntent";
 
 export function useACRECustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
   const { pushToast } = useToasts();
@@ -183,4 +187,32 @@ export function useLiveAppModalCustomHandlers(manifest: WebviewProps["manifest"]
       }),
     };
   }, [dispatch, manifest.id]);
+}
+
+export function useStakingIntentCustomHandlers(accounts: AccountLike[]) {
+  const dispatch = useDispatch();
+
+  return useMemo<WalletAPICustomHandlers>(() => {
+    return {
+      ...stakingIntentHandlers({
+        accounts,
+        uiHooks: {
+          "custom.earn.intent.open": (params: StakingIntentOpenParams) => {
+            const realAccountId = getAccountIdFromWalletAccountId(params.accountId);
+            if (!realAccountId) return;
+
+            const account = accounts.find(a => a.id === realAccountId);
+            if (!account || account.type !== "Account") return;
+
+            openStakingIntentDesktop(
+              (name, data) =>
+                dispatch(openModal(name as Parameters<typeof openModal>[0], data as never)),
+              account,
+              params,
+            );
+          },
+        },
+      }),
+    };
+  }, [accounts, dispatch]);
 }

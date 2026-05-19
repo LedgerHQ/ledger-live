@@ -37,7 +37,7 @@ const Earn = (props: NavigationProps) => {
   const paramAccountId = props.route.params?.accountId;
   const paramCurrencyId = props.route.params?.currencyId;
   const paramCryptoAssetId = props.route.params?.cryptoAssetId;
-  const navigation: EarnNavigation = props.navigation as unknown as EarnNavigation;
+  const navigation: EarnNavigation = props.navigation;
   const accounts = useSelector(flattenAccountsSelector);
   const route = useRoute();
 
