@@ -1,9 +1,9 @@
-import { registerToolWithRequiredProps, Category } from "@devtools/shell";
+import { registerToolWithRequiredProps } from "@devtools/shell";
+import { Category, FEATURE_FLAGS_ID } from "@devtools/core";
 import type { FeatureFlagsToolProps } from "./types";
-import { FEATURE_FLAGS_ID } from "./constants";
 import { FeatureFlags } from "./FeatureFlags";
 
-declare module "@devtools/shell" {
+declare module "@devtools/core" {
   interface DevToolsPropsRegistry {
     [FEATURE_FLAGS_ID]?: FeatureFlagsToolProps;
   }

@@ -14,6 +14,7 @@
     "coverage": "jest --coverage"
   },
   "dependencies": {
+    "@devtools/core": "workspace:*",
     "@devtools/shell": "workspace:*",
     "@shared/feature-flags": "workspace:^"
   },
