@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Linking } from "react-native";
+import { Linking, Platform } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { DeviceConnectionResult } from "@ledgerhq/device-intent";
@@ -19,6 +19,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { urls } from "~/utils/urls";
 import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
+import type { AppPlatform } from "@ledgerhq/live-common/platform/types";
 
 type UseDeviceConnectionComponentLWMViewModelParams = {
   onConnected: (connectionResult: DeviceConnectionResult) => void;
@@ -27,6 +28,7 @@ type UseDeviceConnectionComponentLWMViewModelParams = {
 
 export type DeviceConnectionComponentLWMViewModel = {
   state: ConnectDeviceUIState;
+  platform: Exclude<AppPlatform, "desktop">;
   onConnectLedgerDevice: () => void;
   onBuyLedgerDevice: () => void;
 };
@@ -35,6 +37,7 @@ export function useDeviceConnectionComponentLWMViewModel({
   onConnected,
   onError,
 }: UseDeviceConnectionComponentLWMViewModelParams): DeviceConnectionComponentLWMViewModel {
+  const platform = Platform.OS === "ios" ? "ios" : "android";
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
   const dispatch = useDispatch();
   const dmk = useDeviceManagementKit();
@@ -131,6 +134,7 @@ export function useDeviceConnectionComponentLWMViewModel({
 
   return {
     state,
+    platform,
     onConnectLedgerDevice,
     onBuyLedgerDevice,
   };
