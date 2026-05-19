@@ -1,65 +1,122 @@
 /**
  * @jest-environment jsdom
  */
+import React from "react";
+import { PostOnboardingProvider } from "@ledgerhq/live-common/postOnboarding/PostOnboardingProvider";
+import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/defaultFeatures";
 import { act, renderHook, withFlagOverrides } from "tests/testSetup";
+import { DeviceModelId } from "@ledgerhq/types-devices";
+import { PostOnboardingActionId } from "@ledgerhq/types-live";
+import { getStoreValue } from "~/renderer/store";
 import { useNavigateToPostOnboardingHubCallback } from "../useNavigateToPostOnboardingHubCallback";
+import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
 
 const mockNavigate = jest.fn();
-const mockOpenFinishOnboardingDialog = jest.fn();
 
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
   useNavigate: () => mockNavigate,
 }));
 
-jest.mock(
-  "LLD/features/FinishOnboarding/FinishOnboardingDialog/hooks/useFinishOnboardingDialog",
-  () => ({
-    __esModule: true,
-    default: () => ({
-      handleOpen: mockOpenFinishOnboardingDialog,
-    }),
-  }),
-);
+jest.mock("~/renderer/store", () => ({
+  getStoreValue: jest.fn(),
+  setStoreValue: jest.fn(),
+  resetStore: jest.fn(),
+}));
+
+const PROTECT_ID = "protect-prod";
+const RECOVER_UPSELL_URI = "ledgerlive://recover/protect-prod?redirectTo=upsell&source=lld-onboarding-24";
+const RECOVER_LANDING_PATH = `/recover/${PROTECT_ID}?redirectTo=upsell&source=lld-post-onboarding-banner`;
+
+const protectDesktopDefaultParams = DEFAULT_FEATURES.protectServicesDesktop.params!;
+
+const mockGetStoreValue = jest.mocked(getStoreValue);
+
+function featureFlagsWithRecover() {
+  return withFlagOverrides({
+    lwdWallet40: {
+      enabled: true,
+      params: { finishOnboardingWidget: true },
+    },
+    protectServicesDesktop: {
+      enabled: true,
+      params: {
+        ...protectDesktopDefaultParams,
+        protectId: PROTECT_ID,
+        availableOnDesktop: true,
+        compatibleDevices: [{ name: DeviceModelId.nanoX, available: true }],
+        onboardingCompleted: {
+          ...protectDesktopDefaultParams.onboardingCompleted,
+          upsellURI: RECOVER_UPSELL_URI,
+        },
+      },
+    },
+  });
+}
+
+function postOnboardingState(deviceModelId = DeviceModelId.nanoX) {
+  return {
+    deviceModelId,
+    walletEntryPointDismissed: false,
+    entryPointFirstDisplayedDate: null,
+    walletEntryPointEligibleForPortfolio: null,
+    actionsToComplete: [PostOnboardingActionId.syncAccounts],
+    actionsCompleted: { [PostOnboardingActionId.syncAccounts]: false },
+    lastActionCompleted: null,
+    postOnboardingInProgress: true,
+  };
+}
+
+function renderNavigateHook(
+  initialState: Parameters<typeof renderHook>[1]["initialState"] = {},
+) {
+  const Wrapper = ({ children }: { children: React.ReactNode }) =>
+    React.createElement(
+      PostOnboardingProvider,
+      {
+        navigateToPostOnboardingHub: jest.fn(),
+        getPostOnboardingActionsForDevice: () => [],
+        getPostOnboardingAction: () => undefined,
+      },
+      children,
+    );
+
+  return renderHook(() => useNavigateToPostOnboardingHubCallback(), {
+    wrapper: Wrapper,
+    initialState,
+  });
+}
 
 describe("useNavigateToPostOnboardingHubCallback", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockGetStoreValue.mockReturnValue(LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE);
   });
 
-  it("should navigate to portfolio and open finish dialog when Wallet40 finish widget is enabled", () => {
-    const { result } = renderHook(() => useNavigateToPostOnboardingHubCallback(), {
-      initialState: {
-        ...withFlagOverrides({
-          lwdWallet40: {
-            enabled: true,
-            params: { finishOnboardingWidget: true },
-          },
-        }),
-        settings: { hasBeenRedirectedToPostOnboarding: false },
-      },
+  it("should navigate to recover landing and open finish dialog when Wallet40 and recover apply", () => {
+    const { result, store } = renderNavigateHook({
+      ...featureFlagsWithRecover(),
+      postOnboarding: postOnboardingState(),
+      settings: { hasBeenRedirectedToPostOnboarding: false },
     });
 
     act(() => {
       result.current();
     });
 
-    expect(mockNavigate).toHaveBeenCalledWith("/", { replace: true });
-    expect(mockOpenFinishOnboardingDialog).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(RECOVER_LANDING_PATH, { replace: true });
+    expect(store.getState().dialogs.FINISH_POST_ONBOARDING).toBe(true);
+    expect(mockNavigate).not.toHaveBeenCalledWith("/");
     expect(mockNavigate).not.toHaveBeenCalledWith("/post-onboarding");
   });
 
-  it("should not reopen finish dialog when already redirected with Wallet40 enabled", () => {
-    const { result } = renderHook(() => useNavigateToPostOnboardingHubCallback(), {
-      initialState: {
-        ...withFlagOverrides({
-          lwdWallet40: {
-            enabled: true,
-            params: { finishOnboardingWidget: true },
-          },
-        }),
-        settings: { hasBeenRedirectedToPostOnboarding: true },
-      },
+  it("should navigate to portfolio and open finish dialog when Wallet40 is enabled without recover", () => {
+    mockGetStoreValue.mockReturnValue(LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION);
+
+    const { result, store } = renderNavigateHook({
+      ...featureFlagsWithRecover(),
+      postOnboarding: postOnboardingState(),
+      settings: { hasBeenRedirectedToPostOnboarding: false },
     });
 
     act(() => {
@@ -67,28 +124,68 @@ describe("useNavigateToPostOnboardingHubCallback", () => {
     });
 
     expect(mockNavigate).toHaveBeenCalledWith("/", { replace: true });
-    expect(mockOpenFinishOnboardingDialog).not.toHaveBeenCalled();
+    expect(store.getState().dialogs.FINISH_POST_ONBOARDING).toBe(true);
+    expect(mockNavigate).not.toHaveBeenCalledWith(RECOVER_LANDING_PATH);
+  });
+
+  it("should not reopen finish dialog when already redirected with Wallet40 enabled", () => {
+    const { result, store } = renderNavigateHook({
+      ...featureFlagsWithRecover(),
+      postOnboarding: postOnboardingState(),
+      settings: { hasBeenRedirectedToPostOnboarding: true },
+      dialogs: { FINISH_POST_ONBOARDING: false },
+    });
+
+    act(() => {
+      result.current();
+    });
+
+    expect(mockNavigate).toHaveBeenCalledWith(RECOVER_LANDING_PATH, { replace: true });
+    expect(store.getState().dialogs.FINISH_POST_ONBOARDING).toBe(false);
+  });
+
+  it("should use resetNavigationStack for recover landing navigation", () => {
+    const { result } = renderNavigateHook({
+      ...featureFlagsWithRecover(),
+      postOnboarding: postOnboardingState(),
+      settings: { hasBeenRedirectedToPostOnboarding: false },
+    });
+
+    act(() => {
+      result.current(false);
+    });
+
+    expect(mockNavigate).toHaveBeenCalledWith(RECOVER_LANDING_PATH, { replace: false });
   });
 
   it("should navigate to post-onboarding hub when finish widget is disabled", () => {
-    const { result } = renderHook(() => useNavigateToPostOnboardingHubCallback());
+    const { result, store } = renderNavigateHook({
+      ...withFlagOverrides({
+        lwdWallet40: { enabled: false },
+        protectServicesDesktop: { enabled: true },
+      }),
+      postOnboarding: postOnboardingState(),
+    });
 
     act(() => {
       result.current();
     });
 
     expect(mockNavigate).toHaveBeenCalledWith("/post-onboarding", { replace: false });
-    expect(mockOpenFinishOnboardingDialog).not.toHaveBeenCalled();
+    expect(store.getState().dialogs.FINISH_POST_ONBOARDING).not.toBe(true);
   });
 
   it("should replace history when navigating to post-onboarding hub with resetNavigationStack", () => {
-    const { result } = renderHook(() => useNavigateToPostOnboardingHubCallback());
+    const { result } = renderNavigateHook({
+      ...withFlagOverrides({ lwdWallet40: { enabled: false } }),
+      postOnboarding: postOnboardingState(),
+    });
 
     act(() => {
       result.current(true);
     });
 
     expect(mockNavigate).toHaveBeenCalledWith("/post-onboarding", { replace: true });
-    expect(mockOpenFinishOnboardingDialog).not.toHaveBeenCalled();
+    expect(mockNavigate).not.toHaveBeenCalledWith("/");
   });
 });
