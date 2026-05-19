@@ -12,6 +12,7 @@ import {
 import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { useRedirectToPostOnboardingCallback } from "~/renderer/hooks/useAutoRedirectToPostOnboarding";
+import { useOpenRecoverCallback } from "~/renderer/hooks/useAutoRedirectToPostOnboarding/useOpenRecoverCallback";
 import useFinishOnboardingDialog from "LLD/features/FinishOnboarding/FinishOnboardingDialog/hooks/useFinishOnboardingDialog";
 
 const COMPLETION_SCREEN_TIMEOUT = 6000;
@@ -36,6 +37,7 @@ export function useCompletionScreenViewModel(): ViewProps {
 
   const { shouldDisplayFinishOnboardingWidget = false } = useWalletFeaturesConfig("desktop");
   const redirectToPostOnboarding = useRedirectToPostOnboardingCallback();
+  const openRecoverUpsell = useOpenRecoverCallback();
   const { handleOpen: openFinishOnboardingDialog } = useFinishOnboardingDialog();
 
   useEffect(() => {
@@ -46,7 +48,10 @@ export function useCompletionScreenViewModel(): ViewProps {
     const timeout = setTimeout(() => {
       if (shouldDisplayFinishOnboardingWidget) {
         navigate("/");
-        openFinishOnboardingDialog();
+        openRecoverUpsell({
+          fallbackRedirection: openFinishOnboardingDialog,
+          navigationState: { afterUpsell: "openFinishOnboardingDialog" },
+        });
       } else {
         redirectToPostOnboarding();
       }
@@ -59,6 +64,7 @@ export function useCompletionScreenViewModel(): ViewProps {
     dispatch,
     navigate,
     openFinishOnboardingDialog,
+    openRecoverUpsell,
     redirectToPostOnboarding,
     shouldDisplayFinishOnboardingWidget,
   ]);
