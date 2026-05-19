@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect } from "react";
 import { View, StyleSheet, Animated, TextStyle, StyleProp } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans, useTranslation } from "~/context/Locale";
@@ -37,7 +37,7 @@ import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import { NotEnoughBalanceToDelegate } from "@ledgerhq/errors";
 import NotEnoughFundFeesAlert from "~/families/shared/StakingErrors/NotEnoughFundFeesAlert";
-import Config from "react-native-config";
+import { useChangeValidatorRotateAnim } from "../../shared/useChangeValidatorRotateAnim";
 import TranslatedError from "~/components/TranslatedError";
 import SupportLinkError from "~/components/SupportLinkError";
 
@@ -151,49 +151,16 @@ export default function DelegationSummary({ navigation, route }: Props) {
     }
   }, [account, bridge, defaultBaker, navigation, setTransaction, transaction, route.params]);
 
-  const [rotateAnim] = useState(() => new Animated.Value(0));
-  useEffect(() => {
-    if (!Config.DETOX) {
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(rotateAnim, {
-            toValue: 1,
-            duration: 200,
-            useNativeDriver: true,
-          }),
-          Animated.timing(rotateAnim, {
-            toValue: -1,
-            duration: 300,
-            useNativeDriver: true,
-          }),
-          Animated.timing(rotateAnim, {
-            toValue: 0,
-            duration: 200,
-            useNativeDriver: true,
-          }),
-          Animated.delay(1000),
-        ]),
-      ).start();
-    }
-    return () => {
-      rotateAnim.setValue(0);
-    };
-  }, [rotateAnim]);
-
-  const rotate = rotateAnim.interpolate({
-    inputRange: [0, 1],
-
-    outputRange: ["0deg", "30deg"],
-  });
+  const { rotate, resetRotation } = useChangeValidatorRotateAnim();
 
   const onChangeDelegator = useCallback(() => {
-    rotateAnim.setValue(0);
+    resetRotation();
     navigation.navigate(ScreenName.DelegationSelectValidator, {
       ...route.params,
       transaction: transaction as TezosTransaction,
       status,
     });
-  }, [rotateAnim, navigation, route.params, transaction, status]);
+  }, [resetRotation, navigation, route.params, transaction, status]);
 
   const delegation = useDelegation(account);
   const stakingPositions = useStakingPositions(account);
