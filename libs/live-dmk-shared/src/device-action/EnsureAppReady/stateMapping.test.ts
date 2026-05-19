@@ -197,7 +197,7 @@ describe("mapConnectAppDAPendingStatus", () => {
   });
 
   describe("GIVEN no user interaction is required", () => {
-    it("WHEN there is no install plan THEN it returns null", () => {
+    it("WHEN there is no install plan THEN it emits the loading state", () => {
       // GIVEN
       const state = makePending(UserInteractionRequired.None);
 
@@ -208,7 +208,7 @@ describe("mapConnectAppDAPendingStatus", () => {
       });
 
       // THEN
-      expect(result).toBeNull();
+      expect(result).toEqual({ type: LoadingStateType.Loading });
     });
 
     it("WHEN there is an install plan THEN it emits the installing app state", () => {
