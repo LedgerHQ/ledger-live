@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { render, screen, waitFor, within } from "@tests/test-renderer";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import type { Account } from "@ledgerhq/types-live";
 import { NavigatorName, ScreenName } from "~/const";
 import type { State } from "~/reducers/types";
 import AssetDetailNavigator from "../Navigator";
@@ -18,6 +19,16 @@ jest.mock("@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampC
 
 jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () => ({
   useAcceptedCurrency: () => mockIsAcceptedCurrency,
+}));
+
+// useAccountBridgeMany suspends on the dynamic coin-module import — bypass it
+// so tests don't need a Suspense boundary and don't depend on import resolution timing.
+jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
+  useAccountBridge: jest.fn(),
+  useAccountBridgeOrNull: jest.fn(),
+  useAccountBridgeMany: jest.fn((accounts: Account[]) =>
+    accounts.map(() => ({ isAccountEmpty: () => false })),
+  ),
 }));
 
 const Stack = createNativeStackNavigator();

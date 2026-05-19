@@ -17,6 +17,17 @@ import { ScreenName } from "~/const";
 
 const StepRecipientCustomAlert = SendSelectRecipient.StepRecipientCustomAlert;
 
+jest.mock("@ledgerhq/live-common/bridge/index", () => {
+  const currencyBridge = {};
+  const currencyBridgePromise = Object.assign(Promise.resolve(currencyBridge), {
+    status: "fulfilled" as const,
+    value: currencyBridge,
+  });
+  return {
+    getCurrencyBridge: jest.fn(() => currencyBridgePromise),
+  };
+});
+
 jest.mock("./TooManyUtxosModal", () => ({
   component: function MockTooManyUtxosModal({
     isOpened,

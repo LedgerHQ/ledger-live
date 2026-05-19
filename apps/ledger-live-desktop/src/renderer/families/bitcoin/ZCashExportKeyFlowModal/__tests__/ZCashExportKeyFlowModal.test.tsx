@@ -147,9 +147,10 @@ describe("ZCash Export UFVK Flow", () => {
     const mockReceive = jest.fn(() => ({
       subscribe: jest.fn(),
     }));
-    jest.spyOn(require("@ledgerhq/live-common/bridge/index"), "getAccountBridge").mockReturnValue({
-      receive: mockReceive,
-    });
+    const bridge = { receive: mockReceive };
+    jest
+      .spyOn(require("@ledgerhq/live-common/bridge/index"), "getAccountBridge")
+      .mockReturnValue(Object.assign(Promise.resolve(bridge), { status: "fulfilled", value: bridge }));
 
     render(
       <Body

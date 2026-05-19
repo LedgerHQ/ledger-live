@@ -8,6 +8,7 @@ import { renderHook, act } from "@testing-library/react";
 import { genAccount } from "../mock/account";
 import { setSupportedCurrencies } from "../currencies";
 import { useAccountBridge, useAccountBridgeMany } from "./useAccountBridge";
+import { getAccountBridge } from ".";
 
 const BTC = getCryptoCurrencyById("bitcoin");
 const ETH = getCryptoCurrencyById("ethereum");
@@ -17,6 +18,12 @@ const suspenseWrapper = ({ children }: { children: React.ReactNode }) =>
   React.createElement(React.Suspense, { fallback: null }, children);
 
 describe("useAccountBridge", () => {
+  beforeAll(async () => {
+    // Warm the bridge cache so the synchronous test can read it without suspending.
+    await getAccountBridge(genAccount("warmup-btc", { currency: BTC }));
+    await getAccountBridge(genAccount("warmup-eth", { currency: ETH }));
+  });
+
   test("returns bridge synchronously without a Suspense boundary", () => {
     const account = genAccount("mocked-account-sync", { currency: BTC });
 
@@ -46,6 +53,11 @@ describe("useAccountBridge", () => {
 });
 
 describe("useAccountBridgeMany", () => {
+  beforeAll(async () => {
+    await getAccountBridge(genAccount("warmup-many-btc", { currency: BTC }));
+    await getAccountBridge(genAccount("warmup-many-eth", { currency: ETH }));
+  });
+
   test("returns one bridge per account, in order", () => {
     const accounts = [
       genAccount("multi-btc", { currency: BTC }),

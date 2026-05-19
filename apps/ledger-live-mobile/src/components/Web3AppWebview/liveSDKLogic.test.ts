@@ -48,7 +48,7 @@ describe("prepareSignTransaction", () => {
 
     const { liveTx } = await getPlatformTransactionSignFlowInfos(tx);
 
-    const result = prepareSignTransaction(childAccount, parentAccount, liveTx);
+    const result = await prepareSignTransaction(childAccount, parentAccount, liveTx);
 
     // Then
     expect(result).toEqual(expectedResult);
@@ -85,7 +85,7 @@ describe("prepareSignTransaction", () => {
       account: childAccount,
     });
 
-    const result = prepareSignTransaction(childAccount, parentAccount, liveTx);
+    const result = await prepareSignTransaction(childAccount, parentAccount, liveTx);
 
     // Then
     expect(result).toEqual(expectedResult);

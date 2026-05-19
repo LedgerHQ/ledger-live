@@ -58,7 +58,7 @@ describe("useSendFlowAmountReviewCore", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     const getAccountBridge = jest.requireMock("../../../../bridge/impl").getAccountBridge;
-    getAccountBridge.mockReturnValue({
+    getAccountBridge.mockResolvedValue({
       updateTransaction: (tx: Transaction, patch: Partial<Transaction>) => ({
         ...tx,
         ...patch,

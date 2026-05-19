@@ -5,7 +5,23 @@ import { ALEO_ACCOUNT_1 } from "../__mocks__/account.mock";
 import { OperationsList } from "~/renderer/components/OperationsList";
 import type { AleoOperation } from "@ledgerhq/live-common/families/aleo/types";
 
+jest.mock("@ledgerhq/live-common/bridge/impl");
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
+const mockedGetAccountBridge = jest.mocked(getAccountBridge);
+
 const mockT = jest.fn() as unknown as TFunction;
+
+beforeEach(() => {
+  const bridge = {
+    isEditableOperation: jest.fn(() => false),
+    isStuckOperation: jest.fn(() => false),
+  };
+  const settledPromise = Object.assign(Promise.resolve(bridge), {
+    status: "fulfilled",
+    value: bridge,
+  });
+  mockedGetAccountBridge.mockReturnValue(settledPromise as unknown as ReturnType<typeof getAccountBridge>);
+});
 
 describe("OperationsList", () => {
   it("should render custom metadata cell with transaction type", () => {

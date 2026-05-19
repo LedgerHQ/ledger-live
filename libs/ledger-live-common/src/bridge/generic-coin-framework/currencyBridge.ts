@@ -5,12 +5,12 @@ import { getSigner } from "./signer";
 import type { CoinFrameworkSigner } from "./types";
 import { postSync } from "./postSync";
 
-export function getCoinFrameworkCurrencyBridge(
+export async function getCoinFrameworkCurrencyBridge(
   network: string,
   kind: string,
   customSigner?: CoinFrameworkSigner,
-): CurrencyBridge {
-  const signer = customSigner ?? getSigner(network);
+): Promise<CurrencyBridge> {
+  const signer = customSigner ?? (await getSigner(network));
   return {
     preload: () => Promise.resolve({}),
     hydrate: () => undefined,

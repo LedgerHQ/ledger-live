@@ -114,9 +114,10 @@ describe("useStepMethodContinue", () => {
     const bridgeUpdateTransaction = jest.fn().mockReturnValue(updatedTransaction);
 
     (getMainAccount as jest.Mock).mockReturnValue(account);
-    (getAccountBridge as jest.Mock).mockReturnValue({
-      updateTransaction: bridgeUpdateTransaction,
-    });
+    const bridge = { updateTransaction: bridgeUpdateTransaction };
+    (getAccountBridge as jest.Mock).mockReturnValue(
+      Object.assign(Promise.resolve(bridge), { status: "fulfilled", value: bridge }),
+    );
 
     const { result } = renderHook(() =>
       useStepMethodContinue({

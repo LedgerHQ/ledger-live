@@ -45,6 +45,13 @@ const { useTranslatedBridgeError } = jest.requireMock(
 );
 const { getAccountBridge } = jest.requireMock("@ledgerhq/live-common/bridge/impl");
 
+function makeSettledBridgePromise(bridge: object): ReturnType<typeof getAccountBridge> {
+  return Object.assign(Promise.resolve(bridge), {
+    status: "fulfilled" as const,
+    value: bridge,
+  }) as ReturnType<typeof getAccountBridge>;
+}
+
 // --- Bitcoin & formatting ---
 jest.mock("@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit", () => ({
   formatCurrencyUnit: jest.fn((_unit: unknown, value: BigNumber) => `${value.toString()} BTC`),
@@ -100,12 +107,14 @@ function buildBaseParams(overrides?: {
     return acc;
   });
   (getAccountCurrency as jest.Mock).mockReturnValue(currency);
-  (getAccountBridge as jest.Mock).mockReturnValue({
-    updateTransaction: (tx: Record<string, unknown>, patch: Record<string, unknown>) => ({
-      ...tx,
-      ...patch,
+  (getAccountBridge as jest.Mock).mockReturnValue(
+    makeSettledBridgePromise({
+      updateTransaction: (tx: Record<string, unknown>, patch: Record<string, unknown>) => ({
+        ...tx,
+        ...patch,
+      }),
     }),
-  });
+  );
 
   const transaction = createBitcoinTransaction(overrides?.transaction);
   const status = createTransactionStatus(overrides?.status);

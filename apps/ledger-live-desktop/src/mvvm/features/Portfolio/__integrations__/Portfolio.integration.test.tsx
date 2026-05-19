@@ -36,6 +36,19 @@ jest.mock("react-router", () => ({
   useNavigate: jest.fn(() => mockNavigate),
 }));
 
+jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => {
+  type AccountLike = { balance: { isZero: () => boolean } };
+  return {
+    useAccountBridge: jest.fn(),
+    useAccountBridgeOrNull: jest.fn(),
+    useAccountBridgeMany: jest.fn((accounts: AccountLike[]) =>
+      accounts.map(() => ({
+        isAccountEmpty: (a: AccountLike) => a.balance.isZero(),
+      })),
+    ),
+  };
+});
+
 const mockedUseNavigate = jest.mocked(useNavigate);
 
 jest.mock("~/renderer/screens/dashboard/components/SwapWebViewEmbedded", () => ({

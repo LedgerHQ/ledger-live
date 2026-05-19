@@ -14,6 +14,10 @@ import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import RecipientField from "./RecipientField";
 
+jest.mock("@ledgerhq/live-common/bridge/impl");
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
+const mockedGetAccountBridge = jest.mocked(getAccountBridge);
+
 // Temp mock to prevent error on sentry init
 jest.mock("../../../../sentry/install", () => ({
   init: () => null,
@@ -140,6 +144,17 @@ const setup = (
     featureFlagOverrides ? { initialState: withFlagOverrides(featureFlagOverrides) } : undefined,
   );
 };
+
+beforeEach(() => {
+  const bridge = {
+    updateTransaction: jest.fn((tx, patch) => ({ ...tx, ...patch })),
+  };
+  const settledPromise = Object.assign(Promise.resolve(bridge), {
+    status: "fulfilled",
+    value: bridge,
+  });
+  mockedGetAccountBridge.mockReturnValue(settledPromise as unknown as ReturnType<typeof getAccountBridge>);
+});
 
 describe("RecipientField", () => {
   beforeAll(() => {

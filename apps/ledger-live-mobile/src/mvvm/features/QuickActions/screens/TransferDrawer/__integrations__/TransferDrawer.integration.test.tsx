@@ -4,9 +4,18 @@ import { NavigatorName, ScreenName } from "~/const";
 import { track } from "~/analytics";
 import { overrideStateWithFunds } from "LLM/features/QuickActions/__integrations__/shared";
 import { State } from "~/reducers/types";
+import type { Account } from "@ledgerhq/types-live";
 
 const mockNavigate = jest.fn();
 const mockHandleOpenReceiveDrawer = jest.fn();
+
+jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
+  useAccountBridge: jest.fn(),
+  useAccountBridgeOrNull: jest.fn(),
+  useAccountBridgeMany: jest.fn((accounts: Account[]) =>
+    accounts.map(() => ({ isAccountEmpty: () => false })),
+  ),
+}));
 
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),

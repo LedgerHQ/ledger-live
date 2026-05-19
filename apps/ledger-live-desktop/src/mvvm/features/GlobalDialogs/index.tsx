@@ -14,7 +14,9 @@ const LiveAppModal = lazy(() => import("LLD/features/LiveAppModal"));
 const GlobalDialogs = () => (
   <>
     <ModularDialogRoot />
-    <SendFlowRoot />
+    <Suspense fallback={null}>
+      <SendFlowRoot />
+    </Suspense>
     <PerpsSignRoot />
     <ActionConfirmationDialog />
     <Suspense fallback={null}>

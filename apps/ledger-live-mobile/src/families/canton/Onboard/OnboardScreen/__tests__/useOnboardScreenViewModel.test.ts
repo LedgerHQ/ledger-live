@@ -12,11 +12,18 @@ const mockObservable = () => ({
 
 const mockOnboardAccount = jest.fn(mockObservable);
 
-jest.mock("@ledgerhq/live-common/bridge/index", () => ({
-  getCurrencyBridge: jest.fn(() => ({
+jest.mock("@ledgerhq/live-common/bridge/index", () => {
+  const currencyBridge = {
     onboardAccount: mockOnboardAccount,
-  })),
-}));
+  };
+  const currencyBridgePromise = Object.assign(Promise.resolve(currencyBridge), {
+    status: "fulfilled" as const,
+    value: currencyBridge,
+  });
+  return {
+    getCurrencyBridge: jest.fn(() => currencyBridgePromise),
+  };
+});
 
 describe("useOnboardScreenViewModel", () => {
   const mockNavigation = createMockNavigation();

@@ -222,8 +222,14 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           { manifest, accounts, tracking },
           accountId,
           transaction,
-          (account, parentAccount, { liveTx }) => {
-            const tx = prepareSignTransaction(account, parentAccount, liveTx);
+          async (account, parentAccount, { liveTx }) => {
+            let tx: Transaction;
+            try {
+              tx = await prepareSignTransaction(account, parentAccount, liveTx);
+            } catch (error) {
+              tracking.platformSignTransactionFail(manifest);
+              throw error;
+            }
 
             return new Promise((resolve, reject) => {
               let done = false;

@@ -9,6 +9,15 @@ import TestNavigator, {
   BLACKLISTED_TOKEN_IDS,
 } from "./shared";
 import { track } from "~/analytics";
+import type { Account } from "@ledgerhq/types-live";
+
+jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
+  useAccountBridge: jest.fn(),
+  useAccountBridgeOrNull: jest.fn(),
+  useAccountBridgeMany: jest.fn((accounts: Account[]) =>
+    accounts.map(() => ({ isAccountEmpty: () => false })),
+  ),
+}));
 
 beforeEach(() => {
   jest.clearAllMocks();

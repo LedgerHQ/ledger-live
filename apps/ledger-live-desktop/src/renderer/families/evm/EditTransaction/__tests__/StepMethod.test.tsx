@@ -98,9 +98,10 @@ describe("EVM EditTransaction StepMethod", () => {
     const transitionTo = jest.fn();
     const patch = { gasPrice: new BigNumber(10) };
 
-    (getAccountBridge as jest.Mock).mockReturnValue({
-      updateTransaction: bridgeUpdateTransaction,
-    });
+    const bridge = { updateTransaction: bridgeUpdateTransaction };
+    (getAccountBridge as jest.Mock).mockReturnValue(
+      Object.assign(Promise.resolve(bridge), { status: "fulfilled", value: bridge }),
+    );
     (getEditTransactionPatch as jest.Mock).mockResolvedValue(patch);
 
     const props = createProps({ updateTransaction, transitionTo, editType: "cancel" });
@@ -128,9 +129,10 @@ describe("EVM EditTransaction StepMethod", () => {
     const transitionTo = jest.fn();
     const patch = { gasPrice: new BigNumber(10) };
 
-    (getAccountBridge as jest.Mock).mockReturnValue({
-      updateTransaction: bridgeUpdateTransaction,
-    });
+    const bridge2 = { updateTransaction: bridgeUpdateTransaction };
+    (getAccountBridge as jest.Mock).mockReturnValue(
+      Object.assign(Promise.resolve(bridge2), { status: "fulfilled", value: bridge2 }),
+    );
     (getEditTransactionPatch as jest.Mock).mockResolvedValue(patch);
 
     const props = createProps({ updateTransaction, transitionTo, editType: "speedup" });

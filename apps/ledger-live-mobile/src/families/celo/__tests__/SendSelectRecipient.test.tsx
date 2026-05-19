@@ -11,11 +11,18 @@ const mockUpdateTransaction = jest.fn((_tx: unknown, patch: unknown) => ({
   ...(patch as object),
 }));
 
-jest.mock("@ledgerhq/live-common/bridge/index", () => ({
-  getAccountBridge: jest.fn().mockReturnValue({
+jest.mock("@ledgerhq/live-common/bridge/index", () => {
+  const bridge = {
     updateTransaction: (tx: unknown, patch: unknown) => mockUpdateTransaction(tx, patch),
-  }),
-}));
+  };
+  const settledPromise = Object.assign(Promise.resolve(bridge), {
+    status: "fulfilled",
+    value: bridge,
+  });
+  return {
+    getAccountBridge: jest.fn().mockReturnValue(settledPromise),
+  };
+});
 
 jest.mock("@ledgerhq/live-common/account/index", () => ({
   ...jest.requireActual("@ledgerhq/live-common/account/index"),

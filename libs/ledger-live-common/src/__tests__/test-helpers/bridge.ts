@@ -21,6 +21,7 @@ import type {
   AccountBridge,
   AccountLike,
   AccountRawLike,
+  CurrencyBridge,
   SyncConfig,
   DatasetTest,
   CurrenciesData,
@@ -113,7 +114,7 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
   const accountsFoundInScanAccountsMap = {};
 
   currenciesRelated.forEach(({ currencyData, currency }) => {
-    const bridge = getCurrencyBridge(currency);
+    let bridge: CurrencyBridge;
 
     const scanAccounts = async apdus => {
       const deviceId = await mockDeviceWithAPDUs(apdus, currencyData.mockDeviceOptions);
@@ -146,6 +147,9 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
       scanAccountsCaches[apdus] || (scanAccountsCaches[apdus] = scanAccounts(apdus));
 
     describe(currency.id + " currency bridge", () => {
+      beforeAll(async () => {
+        bridge = await getCurrencyBridge(currency);
+      });
       const {
         scanAccounts,
         FIXME_ignoreAccountFields,
@@ -256,7 +260,7 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
               const accounts = await scanAccountsCached(sa.apdus);
 
               for (const account of accounts) {
-                const accountBridge = getAccountBridge(account);
+                const accountBridge = await getAccountBridge(account);
                 const estimation = await accountBridge.estimateMaxSpendable({
                   account,
                 });
@@ -355,10 +359,10 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
 
       const getBridge = async () => {
         if (!bridgePromise) {
-          bridgePromise = getAccount().then(account => {
-            const bridge = getAccountBridge(account, null);
-            if (!bridge) throw new Error("no bridge for " + account.id);
-            return bridge;
+          bridgePromise = getAccount().then(async account => {
+            const accountBridge = await getAccountBridge(account, null);
+            if (!accountBridge) throw new Error("no bridge for " + account.id);
+            return accountBridge;
           });
         }
         return bridgePromise;

@@ -128,9 +128,9 @@ describe("deviceInitialization requirements", () => {
   });
 
   it("includes family-specific injected address params", async () => {
-    mockLoadAccountModuleForFamily.mockReturnValue({
-      injectGetAddressParams: jest.fn(() => ({ forceFormat: "cashaddr" })),
-    });
+    mockLoadAccountModuleForFamily.mockReturnValue(
+      Promise.resolve({ injectGetAddressParams: jest.fn(() => ({ forceFormat: "cashaddr" })) }),
+    );
 
     const account = createFixtureAccount("03", bitcoinCashCurrency);
     account.derivationMode = "unsplit";
