@@ -126,5 +126,5 @@ export type RawQuoteAPIResponse = Array<RawQuoteAPI>;
 
 export type FetchQuotesResult = {
   rawQuotes: RawQuote[];
-  errors: RawQuoteError[];
+  providerErrors: RawQuoteError[];
 };

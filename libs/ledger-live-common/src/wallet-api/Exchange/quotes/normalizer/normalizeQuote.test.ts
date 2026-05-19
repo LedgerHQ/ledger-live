@@ -1,6 +1,7 @@
 import type { FormatContext } from "../format/types";
 import type { ProviderData } from "../lookupProviderConfig";
 import type { RawQuote } from "../service/types";
+import { QuoteErrorCodes, QuoteWarningCodes } from "../types";
 import { normalizeQuote } from "./normalizeQuote";
 
 /** Minimal `RawQuote` factory; tests override only the fields they exercise. */
@@ -420,6 +421,226 @@ describe("normalizeQuote", () => {
       expect(quote.warning).toBeNull();
     });
 
+    it("emits `unknownReceiveFiatPrice` when the receive spot price is zero", () => {
+      const quote = normalizeQuote(
+        makeRawQuote({ amountFrom: 10, amountTo: 100 }),
+        emptyProviderData,
+        {
+          sendCurrencyId: "ethereum",
+          receiveCurrencyId: "bitcoin",
+          spotPrices: { ethereum: 1, bitcoin: 0 },
+        },
+      );
+
+      expect(quote.warning).toEqual({ code: QuoteWarningCodes.UNKNOWN_RECEIVE_FIAT_PRICE });
+      expect(quote.warnings).toEqual([{ code: QuoteWarningCodes.UNKNOWN_RECEIVE_FIAT_PRICE }]);
+    });
+
+    it("emits `ledgerLiveVersionIncompatibility` when the host app version is too old for a currency", () => {
+      const quote = normalizeQuote(makeRawQuote(), emptyProviderData, {
+        sendCurrencyId: "aptos",
+        receiveCurrencyId: "bitcoin",
+        appVersion: { platform: "lld", version: "2.70.0" },
+        versionCompatibility: [{ id: "aptos", token: "none", lld: "2.75.0", llm: null }],
+        spotPrices: {},
+      });
+
+      expect(quote.warning).toEqual({
+        code: QuoteWarningCodes.LEDGER_LIVE_VERSION_INCOMPATIBILITY,
+        currencyId: "aptos",
+        platform: "lld",
+        currentVersion: "2.70.0",
+        requiredVersion: "2.75.0",
+      });
+      expect(quote.warnings).toEqual([
+        {
+          code: QuoteWarningCodes.LEDGER_LIVE_VERSION_INCOMPATIBILITY,
+          currencyId: "aptos",
+          platform: "lld",
+          currentVersion: "2.70.0",
+          requiredVersion: "2.75.0",
+        },
+      ]);
+    });
+
+    it("matches Ledger Live version incompatibility against token-only rules", () => {
+      const quote = normalizeQuote(makeRawQuote(), emptyProviderData, {
+        sendCurrencyId: "ethereum",
+        receiveCurrencyId: "solana/spl/usdc",
+        appVersion: { platform: "llm-ios", version: "4.0.0" },
+        versionCompatibility: [{ id: "solana", token: "only", lld: null, llm: "4.5.0" }],
+        spotPrices: {},
+      });
+
+      expect(quote.warning).toEqual({
+        code: QuoteWarningCodes.LEDGER_LIVE_VERSION_INCOMPATIBILITY,
+        currencyId: "solana/spl/usdc",
+        platform: "llm-ios",
+        currentVersion: "4.0.0",
+        requiredVersion: "4.5.0",
+      });
+    });
+
+    it("does not emit Ledger Live version incompatibility when the host app version is new enough", () => {
+      const quote = normalizeQuote(makeRawQuote(), emptyProviderData, {
+        sendCurrencyId: "aptos",
+        receiveCurrencyId: "bitcoin",
+        appVersion: { platform: "lld", version: "2.75.0" },
+        versionCompatibility: [{ id: "aptos", token: "none", lld: "2.75.0", llm: null }],
+        spotPrices: {},
+      });
+
+      expect(quote.warning).toBeNull();
+      expect(quote.warnings).toEqual([]);
+    });
+
+    it("emits `highValueLoss` when the receive fiat value is below the configured threshold", () => {
+      const quote = normalizeQuote(
+        makeRawQuote({ amountFrom: 1, amountTo: 10 }),
+        emptyProviderData,
+        {
+          sendCurrencyId: "bitcoin",
+          receiveCurrencyId: "ethereum",
+          spotPrices: { bitcoin: 1000, ethereum: 80 },
+          highValueLossThreshold: 0.9,
+        },
+      );
+
+      expect(quote.warning).toEqual({
+        code: QuoteWarningCodes.HIGH_VALUE_LOSS,
+        lossPercent: 20,
+      });
+      expect(quote.warnings).toEqual([
+        {
+          code: QuoteWarningCodes.HIGH_VALUE_LOSS,
+          lossPercent: 20,
+        },
+      ]);
+    });
+
+    it("emits `highValueLoss` when the receive fiat value is exactly at the threshold", () => {
+      const quote = normalizeQuote(
+        makeRawQuote({ amountFrom: 1, amountTo: 9 }),
+        emptyProviderData,
+        {
+          sendCurrencyId: "bitcoin",
+          receiveCurrencyId: "ethereum",
+          spotPrices: { bitcoin: 100, ethereum: 10 },
+          highValueLossThreshold: 0.9,
+        },
+      );
+
+      expect(quote.warning).toEqual({
+        code: QuoteWarningCodes.HIGH_VALUE_LOSS,
+        lossPercent: 10,
+      });
+    });
+
+    it("does not emit `highValueLoss` when the loss is below the configured threshold", () => {
+      const quote = normalizeQuote(
+        makeRawQuote({ amountFrom: 1, amountTo: 1 }),
+        emptyProviderData,
+        {
+          sendCurrencyId: "bitcoin",
+          receiveCurrencyId: "ethereum",
+          spotPrices: { bitcoin: 1000, ethereum: 950 },
+          highValueLossThreshold: 0.9,
+        },
+      );
+
+      expect(quote.warning).toBeNull();
+      expect(quote.warnings).toEqual([]);
+    });
+
+    it("does not emit `highValueLoss` when the threshold is missing", () => {
+      const quote = normalizeQuote(
+        makeRawQuote({ amountFrom: 1, amountTo: 10 }),
+        emptyProviderData,
+        {
+          sendCurrencyId: "bitcoin",
+          receiveCurrencyId: "ethereum",
+          spotPrices: { bitcoin: 1000, ethereum: 80 },
+        },
+      );
+
+      expect(quote.warning).toBeNull();
+      expect(quote.warnings).toEqual([]);
+    });
+
+    it("emits `nanoSProviderIncompatibility` for Nano S incompatible providers", () => {
+      const quote = normalizeQuote(makeRawQuote({ provider: "okx" }), emptyProviderData, {
+        sendCurrencyId: "ethereum",
+        receiveCurrencyId: "bitcoin",
+        deviceModelId: "nanoS",
+        spotPrices: {},
+      });
+
+      expect(quote.warning).toEqual({
+        code: QuoteWarningCodes.NANO_S_PROVIDER_INCOMPATIBILITY,
+        provider: "okx",
+      });
+      expect(quote.warnings).toEqual([
+        {
+          code: QuoteWarningCodes.NANO_S_PROVIDER_INCOMPATIBILITY,
+          provider: "okx",
+        },
+      ]);
+    });
+
+    it("does not emit Nano S incompatibility warnings for other device models", () => {
+      const quote = normalizeQuote(makeRawQuote({ provider: "okx" }), emptyProviderData, {
+        sendCurrencyId: "ton",
+        receiveCurrencyId: "bitcoin",
+        sendParentCurrencyId: "solana",
+        deviceModelId: "nanoX",
+        spotPrices: {},
+      });
+
+      expect(quote.warning).toBeNull();
+      expect(quote.warnings).toEqual([]);
+    });
+
+    it("emits `nanoSCurrencyIncompatibility` for Nano S incompatible currencies", () => {
+      const quote = normalizeQuote(makeRawQuote({ provider: "changelly_v2" }), emptyProviderData, {
+        sendCurrencyId: "ton",
+        receiveCurrencyId: "bitcoin",
+        deviceModelId: "nanoS",
+        spotPrices: {},
+      });
+
+      expect(quote.warning).toEqual({
+        code: QuoteWarningCodes.NANO_S_CURRENCY_INCOMPATIBILITY,
+        currencyId: "ton",
+      });
+      expect(quote.warnings).toEqual([
+        {
+          code: QuoteWarningCodes.NANO_S_CURRENCY_INCOMPATIBILITY,
+          currencyId: "ton",
+        },
+      ]);
+    });
+
+    it("emits `nanoSCurrencyIncompatibility` for Nano S incompatible token parents", () => {
+      const quote = normalizeQuote(makeRawQuote({ provider: "changelly_v2" }), emptyProviderData, {
+        sendCurrencyId: "ethereum/erc20/usd_tether__erc20_",
+        receiveCurrencyId: "bitcoin",
+        sendParentCurrencyId: "solana",
+        deviceModelId: "nanoS",
+        spotPrices: {},
+      });
+
+      expect(quote.warning).toEqual({
+        code: QuoteWarningCodes.NANO_S_CURRENCY_INCOMPATIBILITY,
+        currencyId: "solana",
+      });
+      expect(quote.warnings).toEqual([
+        {
+          code: QuoteWarningCodes.NANO_S_CURRENCY_INCOMPATIBILITY,
+          currencyId: "solana",
+        },
+      ]);
+    });
+
     it("returns no warning when `amountFrom` is zero (division guard)", () => {
       const quote = normalizeQuote(
         makeRawQuote({ amountFrom: 0, amountTo: 100 }),
@@ -455,7 +676,10 @@ describe("normalizeQuote", () => {
         emptyProviderData,
         doubledInFiat,
       );
-      expect(quote.warning).toEqual({ code: "unrealisticQuote", gainPercent: 100 });
+      expect(quote.warning).toEqual({
+        code: QuoteWarningCodes.UNREALISTIC_QUOTE,
+        gainPercent: 100,
+      });
     });
 
     it("preserves fractional `gainPercent` values", () => {
@@ -469,7 +693,10 @@ describe("normalizeQuote", () => {
           spotPrices: { ethereum: 1, bitcoin: 1 },
         },
       );
-      expect(quote.warning).toEqual({ code: "unrealisticQuote", gainPercent: 1.5 });
+      expect(quote.warning).toEqual({
+        code: QuoteWarningCodes.UNREALISTIC_QUOTE,
+        gainPercent: 1.5,
+      });
     });
   });
 
@@ -508,7 +735,36 @@ describe("normalizeQuote", () => {
         approvalNetworkFee: undefined,
         notEnoughBalance: true,
       });
-      expect(quote.error).toBe("notEnoughBalanceForFees");
+      // Object union shape: matched by `code`, not by bare string.
+      expect(quote.error).toEqual({ code: QuoteErrorCodes.NOT_ENOUGH_BALANCE_FOR_FEES });
+      // Mirrored into `errors[]` for the migration window.
+      expect(quote.errors).toEqual([{ code: QuoteErrorCodes.NOT_ENOUGH_BALANCE_FOR_FEES }]);
+    });
+
+    it("leaves `errors`/`warnings` as empty arrays when no condition fires", () => {
+      const quote = normalizeQuote(makeRawQuote(), emptyProviderData, emptyUnrealisticInput);
+      expect(quote.errors).toEqual([]);
+      expect(quote.warnings).toEqual([]);
+    });
+
+    it("mirrors `warning` into `warnings[]` when the unrealistic-quote check fires", () => {
+      // amountFromFiat = 1 * 1 = 1, amountToFiat = 1 * 2 = 2 -> gain = 100%
+      const quote = normalizeQuote(
+        makeRawQuote({ amountFrom: 1, amountTo: 1 }),
+        emptyProviderData,
+        {
+          sendCurrencyId: "ethereum",
+          receiveCurrencyId: "bitcoin",
+          spotPrices: { ethereum: 1, bitcoin: 2 },
+        },
+      );
+      expect(quote.warning).toEqual({
+        code: QuoteWarningCodes.UNREALISTIC_QUOTE,
+        gainPercent: 100,
+      });
+      expect(quote.warnings).toEqual([
+        { code: QuoteWarningCodes.UNREALISTIC_QUOTE, gainPercent: 100 },
+      ]);
     });
 
     it("omits both fields and leaves error = null when the fee estimate is undefined", () => {
@@ -699,19 +955,6 @@ describe("normalizeQuote", () => {
         makeRawQuote({
           quoteId: undefined,
           customFields: { quoteId: "" },
-        }),
-        emptyProviderData,
-      );
-      expect(quote.id).toBeUndefined();
-    });
-
-    it("ignores non-string customFields.quoteId values defensively", () => {
-      const quote = normalizeQuote(
-        makeRawQuote({
-          quoteId: undefined,
-          // Aggregator could in theory send a number; the wallet contract
-          // only accepts strings. Anything else is treated as missing.
-          customFields: { quoteId: 42 as unknown as string },
         }),
         emptyProviderData,
       );

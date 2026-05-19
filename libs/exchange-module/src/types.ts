@@ -113,6 +113,14 @@ export type SwapLiveError = {
 // Swap quotes (`custom.exchange.getQuotes`). Internal HTTP shapes live in ledger-live-common only.
 
 export type UniswapOrderType = "classic" | "uniswapxv2" | "all";
+export type QuotesAppPlatform = "lld" | "llm-ios" | "llm-android" | "unknown";
+
+export type QuotesVersionCompatibility = {
+  id: string;
+  token: "none" | "only" | "all";
+  lld: string | null;
+  llm: string | null;
+};
 
 export type QuotesInput = {
   amount: string;
@@ -123,6 +131,13 @@ export type QuotesInput = {
   sendCurrencyId: string;
   receiveCurrencyId: string;
   networkFeesCurrencyId?: string;
+  deviceModelId?: string;
+  appVersion?: {
+    platform: QuotesAppPlatform;
+    version: string | null;
+  };
+  versionCompatibility?: QuotesVersionCompatibility[];
+  highValueLossThreshold?: number;
   slippage?: number;
   uniswapOrderType?: UniswapOrderType;
 };
@@ -140,9 +155,46 @@ export type TradeMethod = "fixed" | "float";
 
 export type ProviderTypes = "DEX" | "CEX";
 
-export type QuoteWarning = { code: "unrealisticQuote"; gainPercent: number };
+/**
+ * Per-quote warning. Discriminated by `code`. Adding a new variant is a
+ * one-line change here plus a producer in the wallet pipeline. Consumers
+ * match by switching on `code` or by direct comparison
+ * (`warning.code === "unrealisticQuote"`).
+ */
+export enum QuoteWarningCodes {
+  HIGH_VALUE_LOSS = "highValueLoss",
+  LEDGER_LIVE_VERSION_INCOMPATIBILITY = "ledgerLiveVersionIncompatibility",
+  NANO_S_CURRENCY_INCOMPATIBILITY = "nanoSCurrencyIncompatibility",
+  NANO_S_PROVIDER_INCOMPATIBILITY = "nanoSProviderIncompatibility",
+  UNREALISTIC_QUOTE = "unrealisticQuote",
+  UNKNOWN_RECEIVE_FIAT_PRICE = "unknownReceiveFiatPrice",
+}
 
-export type QuoteError = "notEnoughBalanceForFees";
+export type QuoteWarning =
+  | { code: QuoteWarningCodes.HIGH_VALUE_LOSS; lossPercent: number }
+  | {
+      code: QuoteWarningCodes.LEDGER_LIVE_VERSION_INCOMPATIBILITY;
+      currencyId: string;
+      platform: QuotesAppPlatform;
+      currentVersion: string;
+      requiredVersion: string;
+    }
+  | { code: QuoteWarningCodes.NANO_S_CURRENCY_INCOMPATIBILITY; currencyId: string }
+  | { code: QuoteWarningCodes.NANO_S_PROVIDER_INCOMPATIBILITY; provider: string }
+  | { code: QuoteWarningCodes.UNREALISTIC_QUOTE; gainPercent: number }
+  | { code: QuoteWarningCodes.UNKNOWN_RECEIVE_FIAT_PRICE };
+
+/**
+ * Per-quote error. Discriminated by `code` so future variants can carry
+ * payload (e.g. `{ code: "quoteExpired"; expiredAt: number }`). Consumers
+ * match by switching on `code` or by direct comparison
+ * (`error.code === "notEnoughBalanceForFees"`).
+ */
+export enum QuoteErrorCodes {
+  NOT_ENOUGH_BALANCE_FOR_FEES = "notEnoughBalanceForFees",
+}
+
+export type QuoteError = { code: QuoteErrorCodes.NOT_ENOUGH_BALANCE_FOR_FEES };
 
 export type ProviderDetails = {
   name: string;
@@ -308,7 +360,31 @@ export type Quote = {
   provider: string;
   providerDetails: ProviderDetails;
   quoteDetails: QuoteDetails;
+  /**
+   * All warnings that apply to this quote. Empty array means "none".
+   * Multiple variants can stack. Consumers match by switching on `code`.
+   */
+  warnings: QuoteWarning[];
+  /**
+   * All errors that apply to this quote. Empty array means "none". A
+   * non-empty `errors` array signals a quote that should not be actioned
+   * without resolving the listed conditions. Consumers match by switching
+   * on `code`.
+   */
+  errors: QuoteError[];
+  /**
+   * @deprecated Migration shim — populated alongside {@link warnings} during
+   * the wallet-side errors/warnings rollout. Holds the highest-priority
+   * warning, or `null` when none. Will be removed once consumers have
+   * migrated to {@link warnings}.
+   */
   warning: QuoteWarning | null;
+  /**
+   * @deprecated Migration shim — populated alongside {@link errors} during
+   * the wallet-side errors/warnings rollout. Holds the highest-priority
+   * error, or `null` when none. Will be removed once consumers have
+   * migrated to {@link errors}.
+   */
   error: QuoteError | null;
   /**
    * Optional wallet-formatted display strings. Additive field:
@@ -327,7 +403,32 @@ export type QuoteProviderError = {
   parameter: { [key: string]: string };
 };
 
+/**
+ * Digested global state attached to {@link GetQuotesResponse.errors}.
+ * Discriminated by `code`; multiple variants can stack (e.g. `noQuotes`
+ * alongside `amountTooLow`). Empty array means "nothing to surface".
+ *
+ * Producers live wallet-side; this is the contract consumers read.
+ */
+export type QuotesError =
+  | { code: "noQuotes" }
+  | { code: "amountTooLow"; minAmount: string }
+  | { code: "amountTooHigh"; maxAmount: string };
+
 export type GetQuotesResponse = {
   quotes: Quote[];
-  errors: QuoteProviderError[];
+  /**
+   * Per-provider rejection rows from the aggregator. Each row is one
+   * provider declining to quote with a reason (e.g. `amount_off_limits`).
+   * Pure pass-through of the aggregator response — the wallet does not
+   * digest these into globals here, that lives in {@link errors}.
+   */
+  providerErrors: QuoteProviderError[];
+  /**
+   * Digested global state for the whole batch (e.g. `noQuotes` when no
+   * successful quotes came back, `amountTooLow` / `amountTooHigh` when
+   * every provider rejected on amount bounds). Empty array when there is
+   * nothing to surface.
+   */
+  errors: QuotesError[];
 };
