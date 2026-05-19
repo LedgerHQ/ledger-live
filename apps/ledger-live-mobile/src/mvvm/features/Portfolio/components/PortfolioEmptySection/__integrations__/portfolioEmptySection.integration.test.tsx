@@ -10,8 +10,17 @@ import {
   overrideInitialStateWithOnboardingWidgetVisible,
 } from "../../../__integrations__/shared";
 import { QUICK_ACTIONS_TEST_IDS } from "LLM/features/QuickActions/testIds";
+import type { Account } from "@ledgerhq/types-live";
 
 const mockNavigate = jest.fn();
+
+jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
+  useAccountBridge: jest.fn(),
+  useAccountBridgeOrNull: jest.fn(),
+  useAccountBridgeMany: jest.fn((accounts: Account[]) =>
+    accounts.map(() => ({ isAccountEmpty: () => false })),
+  ),
+}));
 
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
