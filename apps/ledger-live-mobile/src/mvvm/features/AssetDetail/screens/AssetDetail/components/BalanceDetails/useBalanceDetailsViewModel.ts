@@ -8,6 +8,7 @@ import {
   formatCurrencyUnitFragment,
 } from "@ledgerhq/live-common/currencies/index";
 import { useInterestRatesByCurrencies } from "@ledgerhq/live-common/dada-client/hooks/useInterestRatesByCurrencies";
+import { getInterestRateForAsset } from "@ledgerhq/live-common/modularDrawer/utils/getInterestRateForAsset";
 import { useSelector } from "~/context/hooks";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
 import { track } from "~/analytics";
@@ -83,7 +84,13 @@ export function useBalanceDetailsViewModel(
 
   const currencies = useMemo(() => (currency ? [currency] : []), [currency]);
   const interestRates = useInterestRatesByCurrencies(currencies);
-  const interestRate = currency ? interestRates[currency.id] : undefined;
+  const { interestRate, interestRatePercentageRounded } = useMemo(
+    () =>
+      currency
+        ? getInterestRateForAsset(currency, interestRates)
+        : { interestRate: undefined, interestRatePercentageRounded: 0 },
+    [currency, interestRates],
+  );
 
   const earnState: EarnState = useMemo(() => {
     if (!hasAccounts) return { type: "hidden" };
@@ -100,11 +107,14 @@ export function useBalanceDetailsViewModel(
     }
 
     if (isStakeable) {
-      const apyValue = interestRate?.value;
-      const apyType = interestRate?.type ?? "APY";
+      // Fall back to the generic banner when the rounded rate is 0% to avoid
+      // surfacing a meaningless "Earn up to 0% APY" label.
       const label =
-        apyValue && apyValue > 0
-          ? t("assetDetail.balanceDetails.earnBanner", { apy: apyValue.toFixed(1), type: apyType })
+        interestRate && interestRatePercentageRounded > 0
+          ? t("assetDetail.balanceDetails.earnBanner", {
+              apy: interestRatePercentageRounded,
+              type: interestRate.type,
+            })
           : t("assetDetail.balanceDetails.earnBannerGeneric");
       return { type: "banner", label };
     }
@@ -118,6 +128,7 @@ export function useBalanceDetailsViewModel(
     availableBalance,
     earnDeposit,
     interestRate,
+    interestRatePercentageRounded,
     t,
     discreet,
   ]);
