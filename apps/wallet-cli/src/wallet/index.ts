@@ -6,7 +6,7 @@ import { Observable, from } from "rxjs";
 import { map, switchMap } from "rxjs/operators";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
-import type { AccountDescriptor, Balance, SendEvent, DiscoveredAccount } from "./models";
+import type { AccountDescriptor, Balance, SendEvent, DiscoveredAccountRaw } from "./models";
 // BridgeAdapter and CoinFrameworkAdapter are loaded lazily via dynamic import() inside getters
 // to avoid pulling in live-common/bridge/index (~328ms) and coinframework/local/evm (~105ms)
 // at module load time for every subprocess regardless of which command is invoked.
@@ -43,7 +43,7 @@ export class WalletAdapter {
    * Returns V1 descriptors plus the fresh receive address for each account.
    * deviceId is the live-common device id (or "" for the first detected device).
    */
-  discoverAccounts(network: Network, deviceId: string): Observable<DiscoveredAccount> {
+  discoverAccounts(network: Network, deviceId: string): Observable<DiscoveredAccountRaw> {
     const currencyId = currencyIdFromNetwork(network);
     return from(this.getBridge()).pipe(
       switchMap(bridge =>
