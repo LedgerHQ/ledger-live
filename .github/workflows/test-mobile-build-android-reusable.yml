@@ -207,16 +207,10 @@ jobs:
           command: pnpm i --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --unsafe-perm
           new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --unsafe-perm
 
-      - name: Build JS Bundle app for Detox test run
+      - name: Build JS bundle and minify for size analysis
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
         with:
-          command: pnpm exec nx run live-mobile:e2e:ci -- -p android --bundle
-          disable_cache: ${{ inputs.disable-turbo-cache || false }}
-
-      - name: Build minified JS Bundle for size analysis
-        uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
-        with:
-          command: pnpm exec nx run live-mobile:e2e:ci -- -p android --bundle-size
+          command: pnpm exec nx run live-mobile:e2e:ci -- -p android --bundle --bundle-size
           disable_cache: ${{ inputs.disable-turbo-cache || false }}
 
       - name: Output bundle size for analysis
