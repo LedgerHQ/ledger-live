@@ -1,5 +1,5 @@
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import React, { useMemo, type RefObject } from "react";
+import React, { type RefObject } from "react";
 import { Web3AppWebview } from "~/renderer/components/Web3AppWebview";
 import {
   WebviewAPI,
@@ -10,8 +10,8 @@ import {
 import { TopBar } from "~/renderer/components/WebPlatformPlayer/TopBar";
 import { BorrowLoader } from "LLD/features/Borrow/components/BorrowLoader";
 import type { BorrowWebviewInputs } from "../BorrowApp/useBorrowAppViewModel";
-import { useDeeplinkCustomHandlers } from "~/renderer/components/WebPlatformPlayer/CustomHandlers";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
+import { useBorrowWebViewViewModel } from "./useBorrowWebViewViewModel";
 
 export type BorrowWebProps = {
   manifest: LiveAppManifest;
@@ -20,6 +20,7 @@ export type BorrowWebProps = {
   webviewState: WebviewState;
   onStateChange: WebviewProps["onStateChange"];
   enablePlatformDevTools: boolean;
+  customHandlers?: WalletAPICustomHandlers;
   Loader?: WebviewLoader;
 };
 
@@ -30,13 +31,10 @@ export const BorrowWebView = ({
   webviewState,
   onStateChange,
   enablePlatformDevTools,
+  customHandlers,
   Loader = BorrowLoader,
 }: BorrowWebProps) => {
-  const customDeeplinkHandlers = useDeeplinkCustomHandlers();
-  const customHandlers = useMemo<WalletAPICustomHandlers>(
-    () => ({ ...customDeeplinkHandlers }),
-    [customDeeplinkHandlers],
-  );
+  const { mergedCustomHandlers } = useBorrowWebViewViewModel({ customHandlers });
 
   return (
     <>
@@ -50,7 +48,7 @@ export const BorrowWebView = ({
           inputs={{
             ...inputs,
           }}
-          customHandlers={customHandlers}
+          customHandlers={mergedCustomHandlers}
           onStateChange={onStateChange}
           ref={webviewAPIRef}
           Loader={Loader}

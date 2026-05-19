@@ -9,7 +9,7 @@ import { useWallet40Theme } from "LLM/hooks/useWallet40Theme";
 import type { BorrowWebviewInputs } from "./useBorrowLiveAppViewModel";
 
 type BorrowLiveAppViewProps = Readonly<{
-  manifest: LiveAppManifest | undefined;
+  manifest: LiveAppManifest;
   error: Error | null;
   isLoading: boolean;
   webviewRef: RefObject<WebviewAPI | null>;
@@ -29,7 +29,7 @@ export function BorrowLiveAppView({
 }: BorrowLiveAppViewProps) {
   const { backgroundColor } = useWallet40Theme("mobile");
 
-  if (error) {
+  if (error || isLoading) {
     return (
       <Flex flex={1} justifyContent="center" alignItems="center">
         {isLoading ? <InfiniteLoader /> : <GenericErrorView error={error} />}
@@ -39,15 +39,13 @@ export function BorrowLiveAppView({
 
   return (
     <Flex flex={1} testID="borrow-screen" backgroundColor={backgroundColor}>
-      {manifest && (
-        <BorrowWebView
-          ref={webviewRef}
-          manifest={manifest}
-          setWebviewState={onWebviewStateChange}
-          inputs={webviewInputs}
-          customHandlers={customHandlers}
-        />
-      )}
+      <BorrowWebView
+        ref={webviewRef}
+        manifest={manifest}
+        setWebviewState={onWebviewStateChange}
+        inputs={webviewInputs}
+        customHandlers={customHandlers}
+      />
     </Flex>
   );
 }

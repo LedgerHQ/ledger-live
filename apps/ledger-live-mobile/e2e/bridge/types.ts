@@ -43,7 +43,8 @@ export type ServerData =
   | { type: "ACK"; id: string }
   | { type: "swapSetupDone" }
   | { type: "swapLiveAppReady" }
-  | { type: "earnLiveAppReady" };
+  | { type: "earnLiveAppReady" }
+  | { type: "borrowLiveAppReady" };
 
 export type MessageData =
   | {

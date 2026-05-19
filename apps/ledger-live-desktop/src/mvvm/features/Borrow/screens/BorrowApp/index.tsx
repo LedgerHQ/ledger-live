@@ -4,6 +4,10 @@ import PageHeader from "LLD/components/PageHeader";
 import { NetworkErrorScreen } from "~/renderer/components/Web3AppWebview/NetworkError";
 import { BorrowWebView } from "LLD/features/Borrow/screens/BorrowWebView";
 import { useBorrowAppViewModel } from "./useBorrowAppViewModel";
+import { usePTXCustomHandlers } from "~/renderer/components/WebPTXPlayer/CustomHandlers";
+import { useSelector } from "LLD/hooks/redux";
+import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
+import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 export function BorrowApp() {
   const { t } = useTranslation();
@@ -17,6 +21,9 @@ export function BorrowApp() {
     onStateChange,
     onBack,
   } = useBorrowAppViewModel();
+
+  const accounts = useSelector(flattenAccountsSelector);
+  const customHandlers = usePTXCustomHandlers(manifest as LiveAppManifest, accounts);
 
   if (!manifest) {
     return <NetworkErrorScreen refresh={refreshManifests} type="warning" />;
@@ -32,6 +39,7 @@ export function BorrowApp() {
         webviewAPIRef={webviewAPIRef}
         webviewState={webviewState}
         onStateChange={onStateChange}
+        customHandlers={customHandlers}
       />
     </div>
   );
