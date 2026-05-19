@@ -241,9 +241,9 @@ describe("AssetDetail integration", () => {
       },
     );
 
-    it("shows header options menu with favorites and hide actions", async () => {
-      mockMarket.withData(MarketMockedResponse.bitcoinDetail);
-      setupRoute("bitcoin", OWNED_ASSETS[0].buildDistribution());
+    it("shows header options menu with favorites and hide actions for tokens", async () => {
+      mockMarket.withData(MarketMockedResponse.usdcDetail);
+      setupRoute("ethereum/erc20/usd__coin", OWNED_ASSETS[1].buildDistribution());
 
       const { user } = renderWithMockedCounterValuesProvider(<AssetDetail />);
 
@@ -258,12 +258,15 @@ describe("AssetDetail integration", () => {
     });
 
     it("shows Show in portfolio when the asset is blacklisted", async () => {
-      mockMarket.withData(MarketMockedResponse.bitcoinDetail);
-      setupRoute("bitcoin", OWNED_ASSETS[0].buildDistribution());
+      mockMarket.withData(MarketMockedResponse.usdcDetail);
+      setupRoute("ethereum/erc20/usd__coin", OWNED_ASSETS[1].buildDistribution());
 
       const { user } = renderWithMockedCounterValuesProvider(<AssetDetail />, {
         initialState: {
-          settings: { ...AFTER_ONBOARDING_STATE, blacklistedTokenIds: ["bitcoin"] },
+          settings: {
+            ...AFTER_ONBOARDING_STATE,
+            blacklistedTokenIds: ["ethereum/erc20/usd__coin"],
+          },
         },
       });
 

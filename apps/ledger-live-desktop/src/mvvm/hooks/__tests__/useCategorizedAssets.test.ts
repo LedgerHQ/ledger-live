@@ -36,4 +36,43 @@ describe("useCategorizedAssetsFromPortfolio", () => {
 
     expect(result.current.categorizedAssets.cryptos[0].currency.id).toBe("bitcoin");
   });
+
+  it.each([
+    {
+      name: "does not filter out coins when a coin currency.id is included in blacklistedTokenIds",
+      blacklistedTokenIds: ["bitcoin"],
+      expectedCryptoIds: ["bitcoin", "ethereum"],
+      expectedStablecoinTickers: ["USDC"],
+    },
+    {
+      name: "filters out stablecoins when their currency.id is blacklisted",
+      blacklistedTokenIds: ["ethereum/erc20/usd__coin"],
+      expectedCryptoIds: ["bitcoin", "ethereum"],
+      expectedStablecoinTickers: [],
+    },
+    {
+      name: "preserves the underlying categorized result when blacklistedTokenIds is empty",
+      blacklistedTokenIds: [],
+      expectedCryptoIds: ["bitcoin", "ethereum"],
+      expectedStablecoinTickers: ["USDC"],
+    },
+  ])("$name", async ({ blacklistedTokenIds, expectedCryptoIds, expectedStablecoinTickers }) => {
+    const { result } = renderHook(() => useCategorizedAssetsFromPortfolio(), {
+      initialState: {
+        settings: { counterValue: "USD", blacklistedTokenIds },
+        accounts: [BTC_ACCOUNT, ETH_ACCOUNT_WITH_USDC],
+      },
+    });
+
+    await waitFor(() => {
+      expect(result.current.categorizedAssets.cryptos).toHaveLength(expectedCryptoIds.length);
+    });
+
+    expect(result.current.categorizedAssets.cryptos.map(c => c.currency.id)).toEqual(
+      expectedCryptoIds,
+    );
+    expect(result.current.categorizedAssets.stablecoins.map(s => s.currency.ticker)).toEqual(
+      expectedStablecoinTickers,
+    );
+  });
 });
