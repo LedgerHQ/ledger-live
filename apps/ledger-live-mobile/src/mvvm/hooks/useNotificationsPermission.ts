@@ -18,20 +18,25 @@ export const useNotificationsPermission = () => {
   );
 
   const requestPushNotificationsPermission = useCallback(async () => {
-    const { requestPermission } = getMessaging();
+    const { requestPermission, hasPermission } = getMessaging();
 
-    if (permissionStatus === AuthorizationStatus.NOT_DETERMINED) {
+    const resolvedStatus =
+      permissionStatus !== undefined && permissionStatus !== null
+        ? permissionStatus
+        : await hasPermission();
+
+    if (resolvedStatus === AuthorizationStatus.NOT_DETERMINED) {
       const permission = await requestPermission();
       setPermissionStatus(permission);
       updateIdentify();
       return permission;
     }
 
-    if (permissionStatus === AuthorizationStatus.DENIED) {
+    if (resolvedStatus === AuthorizationStatus.DENIED) {
       return Linking.openSettings();
     }
 
-    return permissionStatus;
+    return resolvedStatus;
   }, [permissionStatus, setPermissionStatus]);
 
   return {
