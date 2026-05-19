@@ -1,4 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import { getGenericAwarenessModalContentCard } from "@ledgerhq/live-common/genericAwarenessModal/getGenericAwarenessModalContentCard";
 import type { GenericAwarenessModalContentCard } from "@ledgerhq/live-common/genericAwarenessModal/types";
 
 export type GenericAwarenessModalSliceState = {
@@ -20,22 +21,20 @@ const genericAwarenessModalSlice = createSlice({
       state.contentCards = action.payload;
     },
   },
+  selectors: {
+    selectGenericAwarenessModalContentCards: state => state.contentCards,
+    selectGenericAwarenessModalContentCardByCampaignId:
+      state => (campaignId: string | undefined) => {
+        return getGenericAwarenessModalContentCard(state.contentCards, campaignId);
+      },
+  },
 });
 
 export const { setGenericAwarenessModalContentCards } = genericAwarenessModalSlice.actions;
 
-export const selectGenericAwarenessModalContentCards = (state: {
-  genericAwarenessModal: GenericAwarenessModalSliceState;
-}) => state.genericAwarenessModal.contentCards;
-
-export const selectGenericAwarenessModalContentCardByCampaignId = (
-  state: { genericAwarenessModal: GenericAwarenessModalSliceState },
-  campaignId: string | undefined,
-): GenericAwarenessModalContentCard | undefined => {
-  if (!campaignId) {
-    return undefined;
-  }
-  return state.genericAwarenessModal.contentCards.find(card => card.id === campaignId);
-};
+export const {
+  selectGenericAwarenessModalContentCardByCampaignId,
+  selectGenericAwarenessModalContentCards,
+} = genericAwarenessModalSlice.selectors;
 
 export default genericAwarenessModalSlice.reducer;

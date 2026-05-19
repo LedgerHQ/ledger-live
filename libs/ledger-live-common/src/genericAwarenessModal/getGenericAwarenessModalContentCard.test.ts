@@ -1,4 +1,4 @@
-import { useGenericAwarenessModal } from "./useGenericAwarenessModal";
+import { getGenericAwarenessModalContentCard } from "./getGenericAwarenessModalContentCard";
 import { GenericAwarenessModalContentCard, GenericAwarenessModalLayout } from "./types";
 
 const contentCards: GenericAwarenessModalContentCard[] = [
@@ -21,20 +21,22 @@ const contentCards: GenericAwarenessModalContentCard[] = [
   },
 ];
 
-describe("useGenericAwarenessModal", () => {
+describe("getGenericAwarenessModalContentCard", () => {
   it("should return the first app start card when id is not provided", () => {
-    expect(useGenericAwarenessModal(contentCards)).toBe(contentCards[0]);
+    expect(getGenericAwarenessModalContentCard(contentCards)).toBe(contentCards[0]);
   });
 
   it("should return the card matching the provided id", () => {
-    expect(useGenericAwarenessModal(contentCards, "feature-intro")).toBe(contentCards[1]);
+    expect(getGenericAwarenessModalContentCard(contentCards, "feature-intro")).toBe(
+      contentCards[1],
+    );
   });
 
   it("should return undefined when no app start card exists and id is not provided", () => {
-    expect(useGenericAwarenessModal([contentCards[1]])).toBeUndefined();
+    expect(getGenericAwarenessModalContentCard([contentCards[1]])).toBeUndefined();
   });
 
   it("should return undefined when no card matches the provided id", () => {
-    expect(useGenericAwarenessModal(contentCards, "missing")).toBeUndefined();
+    expect(getGenericAwarenessModalContentCard(contentCards, "missing")).toBeUndefined();
   });
 });
