@@ -73,4 +73,32 @@ describeBittensor("Bittensor Api", () => {
       }
     }, 15000);
   });
+
+  describe("estimateFees", () => {
+    it("should return a fee estimate > 0 for a Bittensor transfer", async () => {
+      const { value } = await module.estimateFees({
+        intentType: "transaction",
+        asset: { type: "native" },
+        type: "send",
+        sender: fundedAddress,
+        recipient: pristineAddress,
+        amount: BigInt(100),
+      });
+      expect(value).toBeGreaterThanOrEqual(BigInt(1));
+    }, 10000);
+  });
+
+  describe("craftTransaction", () => {
+    it("should return a SCALE-encoded unsigned transaction", async () => {
+      const result = await module.craftTransaction({
+        intentType: "transaction",
+        asset: { type: "native" },
+        type: "send",
+        sender: fundedAddress,
+        recipient: pristineAddress,
+        amount: BigInt(100),
+      });
+      expect(result.transaction).toMatch(/^0x[a-fA-F0-9]+$/);
+    }, 10000);
+  });
 });
