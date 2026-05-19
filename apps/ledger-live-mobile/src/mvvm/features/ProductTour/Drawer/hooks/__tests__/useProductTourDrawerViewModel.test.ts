@@ -2,11 +2,8 @@ import { act, renderHook } from "@tests/test-renderer";
 import { State } from "~/reducers/types";
 import { NavigatorName } from "~/const/navigation";
 import { track } from "~/analytics";
-import {
-  __resetProductTourAutoOpenForTests,
-  useProductTourDrawerViewModel,
-} from "../useProductTourDrawerViewModel";
-import { PAGE_TRACKING_PRODUCT_TOUR } from "../../const";
+import { useProductTourDrawerViewModel } from "../useProductTourDrawerViewModel";
+import { PAGE_TRACKING_PRODUCT_TOUR, PRODUCT_TOUR_LAST_SLIDE_INDEX } from "../../const";
 import { productTourCompletedSelector } from "~/reducers/settings";
 import { setProductTourCompleted } from "~/actions/settings";
 import * as featureFlagsModule from "@ledgerhq/live-common/featureFlags/index";
@@ -37,19 +34,18 @@ const mockUseWalletFeaturesConfig = jest.spyOn(featureFlagsModule, "useWalletFea
 describe("useProductTourDrawerViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    __resetProductTourAutoOpenForTests();
     mockUseWalletFeaturesConfig.mockReturnValue({
       shouldDisplayWallet40MainNav: true,
     } as WalletFeaturesConfig);
   });
 
   describe("initial drawer state", () => {
-    it("should open drawer when feature is enabled and tour is not completed", () => {
+    it("should keep drawer closed on mount even when feature is enabled and tour is not completed", () => {
       const { result } = renderHook(() => useProductTourDrawerViewModel(), {
         overrideInitialState: withFeatureEnabled,
       });
 
-      expect(result.current.isDrawerOpen).toBe(true);
+      expect(result.current.isDrawerOpen).toBe(false);
     });
 
     it("should keep drawer closed when feature flag is disabled", () => {
@@ -64,21 +60,6 @@ describe("useProductTourDrawerViewModel", () => {
       });
 
       expect(result.current.isDrawerOpen).toBe(false);
-    });
-
-    it("should not re-auto-open when the hook remounts after the user has dismissed it", () => {
-      const first = renderHook(() => useProductTourDrawerViewModel(), {
-        overrideInitialState: withFeatureEnabled,
-      });
-      expect(first.result.current.isDrawerOpen).toBe(true);
-      act(() => first.result.current.onCloseButtonPress());
-      expect(first.result.current.isDrawerOpen).toBe(false);
-      first.unmount();
-
-      const second = renderHook(() => useProductTourDrawerViewModel(), {
-        overrideInitialState: withFeatureEnabled,
-      });
-      expect(second.result.current.isDrawerOpen).toBe(false);
     });
   });
 
@@ -120,6 +101,7 @@ describe("useProductTourDrawerViewModel", () => {
         overrideInitialState: withFeatureEnabled,
       });
 
+      act(() => result.current.openProductTour());
       act(() => result.current.closeProductTour());
 
       expect(result.current.isDrawerOpen).toBe(false);
@@ -134,6 +116,7 @@ describe("useProductTourDrawerViewModel", () => {
         overrideInitialState: withFeatureEnabled,
       });
 
+      act(() => result.current.openProductTour());
       act(() => result.current.onCloseButtonPress());
       act(() => result.current.closeProductTour());
 
@@ -148,6 +131,7 @@ describe("useProductTourDrawerViewModel", () => {
         overrideInitialState: withFeatureEnabled,
       });
 
+      act(() => result.current.openProductTour());
       act(() => result.current.onCloseButtonPress());
       act(() => result.current.closeProductTour());
       act(() => result.current.closeProductTour());
@@ -163,6 +147,7 @@ describe("useProductTourDrawerViewModel", () => {
         overrideInitialState: withFeatureEnabled,
       });
 
+      act(() => result.current.openProductTour());
       act(() => result.current.onPrimaryAction("stake"));
       act(() => result.current.closeProductTour());
 
@@ -177,6 +162,7 @@ describe("useProductTourDrawerViewModel", () => {
         overrideInitialState: withFeatureEnabled,
       });
 
+      act(() => result.current.openProductTour());
       act(() => result.current.completeProductTour());
       act(() => result.current.closeProductTour());
 
@@ -186,20 +172,18 @@ describe("useProductTourDrawerViewModel", () => {
       );
     });
 
-    it("should not track modal_dismissed when invoked after the auto-close effect fires", () => {
+    it("should keep drawer open when productTourCompleted is set without an explicit dismiss", () => {
       const { result, store } = renderHook(() => useProductTourDrawerViewModel(), {
         overrideInitialState: withFeatureEnabled,
       });
 
+      act(() => result.current.openProductTour());
       act(() => {
         store.dispatch(setProductTourCompleted(true));
       });
-      act(() => result.current.closeProductTour());
 
-      expect(track).not.toHaveBeenCalledWith(
-        "modal_dismissed",
-        expect.objectContaining({ page: PAGE_TRACKING_PRODUCT_TOUR }),
-      );
+      expect(result.current.isDrawerOpen).toBe(true);
+      expect(productTourCompletedSelector(store.getState())).toBe(true);
     });
   });
 
@@ -209,6 +193,7 @@ describe("useProductTourDrawerViewModel", () => {
         overrideInitialState: withFeatureEnabled,
       });
 
+      act(() => result.current.openProductTour());
       act(() => result.current.onSlideChange(2));
       act(() => result.current.onCloseButtonPress());
 
@@ -233,6 +218,21 @@ describe("useProductTourDrawerViewModel", () => {
         page: PAGE_TRACKING_PRODUCT_TOUR,
         card: 4,
       });
+    });
+
+    it("should mark tour completed but keep drawer open when reaching the last slide", () => {
+      const { result, store } = renderHook(() => useProductTourDrawerViewModel(), {
+        overrideInitialState: withFeatureEnabled,
+      });
+
+      act(() => result.current.openProductTour());
+      expect(result.current.isDrawerOpen).toBe(true);
+      expect(productTourCompletedSelector(store.getState())).toBe(false);
+
+      act(() => result.current.onSlideChange(PRODUCT_TOUR_LAST_SLIDE_INDEX));
+
+      expect(productTourCompletedSelector(store.getState())).toBe(true);
+      expect(result.current.isDrawerOpen).toBe(true);
     });
   });
 
@@ -313,6 +313,7 @@ describe("useProductTourDrawerViewModel", () => {
         overrideInitialState: withFeatureEnabled,
       });
 
+      act(() => result.current.openProductTour());
       act(() => result.current.completeProductTour());
 
       expect(result.current.isDrawerOpen).toBe(false);
@@ -321,19 +322,20 @@ describe("useProductTourDrawerViewModel", () => {
     });
   });
 
-  describe("useEffect auto-close", () => {
-    it("should close the drawer when productTourCompleted becomes true externally", () => {
+  describe("productTourCompleted while drawer is open", () => {
+    it("should keep the drawer open when productTourCompleted becomes true externally", () => {
       const { result, store } = renderHook(() => useProductTourDrawerViewModel(), {
         overrideInitialState: withFeatureEnabled,
       });
 
+      act(() => result.current.openProductTour());
       expect(result.current.isDrawerOpen).toBe(true);
 
       act(() => {
         store.dispatch(setProductTourCompleted(true));
       });
 
-      expect(result.current.isDrawerOpen).toBe(false);
+      expect(result.current.isDrawerOpen).toBe(true);
     });
   });
 
