@@ -11,7 +11,8 @@ import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import { Trans } from "~/context/Locale";
-import { Animated, SafeAreaView, StyleSheet, View, TextStyle, StyleProp } from "react-native";
+import { SafeAreaView, StyleSheet, View, TextStyle, StyleProp } from "react-native";
+import Animated from "react-native-reanimated";
 import { TrackScreen } from "~/analytics";
 import { rgba } from "../../../colors";
 import Button from "~/components/Button";
@@ -103,7 +104,7 @@ export default function StakingSummary({ navigation, route }: Props) {
     route.params.transaction,
   ]);
 
-  const { rotate, resetRotation } = useChangeValidatorRotateAnim();
+  const { transformStyle, resetRotation } = useChangeValidatorRotateAnim();
 
   const onChangeValidator = useCallback(() => {
     resetRotation();
@@ -166,15 +167,7 @@ export default function StakingSummary({ navigation, route }: Props) {
           right={
             <Touchable event="StakingFlowSummaryChangeCircleBtn" onPress={onChangeValidator}>
               <Circle size={64} style={[styles.validatorCircle, { borderColor: colors.primary }]}>
-                <Animated.View
-                  style={{
-                    transform: [
-                      {
-                        rotate,
-                      },
-                    ],
-                  }}
-                >
+                <Animated.View style={transformStyle}>
                   <ValidatorImage url={chosenValidator?.imageUrl} name={chosenValidator?.name} />
                 </Animated.View>
                 <ChangeValidator />

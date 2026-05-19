@@ -1,5 +1,6 @@
 import React, { useMemo, useEffect, useCallback } from "react";
-import { Image, View, Animated } from "react-native";
+import { Image, View } from "react-native";
+import Animated from "react-native-reanimated";
 import { useChangeValidatorRotateAnim } from "~/families/shared/useChangeValidatorRotateAnim";
 import { useTheme } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -97,8 +98,7 @@ const SetDelegation = (props: SetDelegationPropsType) => {
 
   const { error } = useMemo(() => handleTransactionStatus(status), [status]);
 
-  const { rotate } = useChangeValidatorRotateAnim();
-  const transform = useMemo(() => [{ rotate }], [rotate]);
+  const { transformStyle } = useChangeValidatorRotateAnim();
 
   /*
    * Callback function to be called when wanting to continue to the select device panel.
@@ -235,7 +235,7 @@ const SetDelegation = (props: SetDelegationPropsType) => {
 
           <Touchable event="DelegationFlowSummaryChangeCircleBtn" onPress={onChangeValidator}>
             <Circle size={70} style={[styles.validatorCircle, { borderColor: colors.primary }]}>
-              <Animated.View style={{ transform }}>
+              <Animated.View style={transformStyle}>
                 <Circle crop size={64}>
                   {chosenValidator ? (
                     MULTIVERSX_LEDGER_VALIDATOR_ADDRESS === chosenValidator.contract ? (

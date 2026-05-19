@@ -15,7 +15,8 @@ import { Text, Icons } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import { Trans, useTranslation } from "~/context/Locale";
-import { Animated, StyleSheet, View, TextStyle, StyleProp } from "react-native";
+import { StyleSheet, View, TextStyle, StyleProp } from "react-native";
+import Animated from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
@@ -70,7 +71,7 @@ export default function DelegationSummary({ navigation, route }: Readonly<Props>
   invariant(transaction, "transaction must be defined");
   invariant(isStakingTransaction(transaction), "hedera: staking tx expected");
 
-  const { rotate, resetRotation } = useChangeValidatorRotateAnim();
+  const { transformStyle, resetRotation } = useChangeValidatorRotateAnim();
 
   const onChangeDelegator = useCallback(() => {
     resetRotation();
@@ -132,11 +133,7 @@ export default function DelegationSummary({ navigation, route }: Readonly<Props>
           right={
             <Touchable event="DelegationFlowSummaryChangeCircleBtn" onPress={onChangeDelegator}>
               <Circle size={70} style={[styles.validatorCircle, { borderColor: colors.primary }]}>
-                <Animated.View
-                  style={{
-                    transform: [{ rotate }],
-                  }}
-                >
+                <Animated.View style={transformStyle}>
                   <ValidatorIcon validator={selectedValidator} />
                 </Animated.View>
                 <ChangeDelegator />

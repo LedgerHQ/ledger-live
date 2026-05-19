@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect } from "react";
-import { View, StyleSheet, Animated, TextStyle, StyleProp } from "react-native";
+import { View, StyleSheet, TextStyle, StyleProp } from "react-native";
+import Animated from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans, useTranslation } from "~/context/Locale";
 import invariant from "invariant";
@@ -151,7 +152,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
     }
   }, [account, bridge, defaultBaker, navigation, setTransaction, transaction, route.params]);
 
-  const { rotate, resetRotation } = useChangeValidatorRotateAnim();
+  const { transformStyle, resetRotation } = useChangeValidatorRotateAnim();
 
   const onChangeDelegator = useCallback(() => {
     resetRotation();
@@ -216,15 +217,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
             transaction.mode === "delegate" ? (
               <Touchable event="DelegationFlowSummaryChangeCircleBtn" onPress={onChangeDelegator}>
                 <Circle size={70} style={[styles.bakerCircle, { borderColor: colors.grey }]}>
-                  <Animated.View
-                    style={{
-                      transform: [
-                        {
-                          rotate,
-                        },
-                      ],
-                    }}
-                  >
+                  <Animated.View style={transformStyle}>
                     <BakerImage baker={baker} />
                   </Animated.View>
                   <ChangeDelegator />

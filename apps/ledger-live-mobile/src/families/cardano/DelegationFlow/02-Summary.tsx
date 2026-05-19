@@ -3,7 +3,8 @@ import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { Trans, useTranslation } from "~/context/Locale";
-import { Animated, SafeAreaView, StyleSheet, View } from "react-native";
+import { SafeAreaView, StyleSheet, View } from "react-native";
+import Animated from "react-native-reanimated";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
@@ -364,7 +365,7 @@ function SummaryWords({
   const unit = useAccountUnit(account);
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const { rotate } = useChangeValidatorRotateAnim();
+  const { transformStyle } = useChangeValidatorRotateAnim();
 
   const formatConfig = {
     disableRounding: true,
@@ -473,15 +474,7 @@ function SummaryWords({
                 ]}
               >
                 <Circle size={50} style={[styles.poolCircle, { borderColor: colors.primary }]}>
-                  <Animated.View
-                    style={{
-                      transform: [
-                        {
-                          rotate,
-                        },
-                      ],
-                    }}
-                  >
+                  <Animated.View style={transformStyle}>
                     {chosenPool ? (
                       <PoolImage
                         size={LEDGER_POOL_IDS.includes(chosenPool?.poolId) ? 40 : 50}

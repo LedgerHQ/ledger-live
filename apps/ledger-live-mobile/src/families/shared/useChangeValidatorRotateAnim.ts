@@ -1,45 +1,46 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Animated } from "react-native";
-import Config from "react-native-config";
+import { useEffect } from "react";
+import {
+  cancelAnimation,
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withRepeat,
+  withSequence,
+  withTiming,
+} from "react-native-reanimated";
 
 // Looping wiggle used on staking/delegation summary screens to hint at the
-// "change validator" affordance. Skipped under Detox so the JS bridge can
-// reach an idle state — an unbounded Animated.loop schedules a JS callback
-// every iteration and prevents Detox's sync from ever settling.
+// "change validator" affordance. Runs entirely on the UI thread via worklets,
+// so the JS bridge stays idle (RN's Animated.loop + Animated.sequence would
+// fire a JS callback between iterations and deadlock Detox sync).
+const TIMING = { easing: Easing.linear };
+
 export function useChangeValidatorRotateAnim() {
-  const [rotateAnim] = useState(() => new Animated.Value(0));
+  const rotation = useSharedValue(0);
 
   useEffect(() => {
-    if (Config.DETOX) return;
-
-    const loop = Animated.loop(
-      Animated.sequence([
-        Animated.timing(rotateAnim, { toValue: 1, duration: 200, useNativeDriver: true }),
-        Animated.timing(rotateAnim, { toValue: -1, duration: 300, useNativeDriver: true }),
-        Animated.timing(rotateAnim, { toValue: 0, duration: 200, useNativeDriver: true }),
-        Animated.delay(1000),
-      ]),
+    rotation.value = withRepeat(
+      withSequence(
+        withTiming(30, { ...TIMING, duration: 200 }),
+        withTiming(-30, { ...TIMING, duration: 300 }),
+        withTiming(0, { ...TIMING, duration: 200 }),
+        withDelay(1000, withTiming(0, { duration: 0 })),
+      ),
+      -1,
+      false,
     );
-    loop.start();
+    return () => cancelAnimation(rotation);
+  }, [rotation]);
 
-    return () => {
-      loop.stop();
-      rotateAnim.setValue(0);
-    };
-  }, [rotateAnim]);
+  const transformStyle = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${rotation.value}deg` }],
+  }));
 
-  const rotate = useMemo(
-    () =>
-      rotateAnim.interpolate({
-        inputRange: [0, 1],
-        outputRange: ["0deg", "30deg"],
-      }),
-    [rotateAnim],
-  );
+  const resetRotation = () => {
+    cancelAnimation(rotation);
+    rotation.value = 0;
+  };
 
-  const resetRotation = useCallback(() => {
-    rotateAnim.setValue(0);
-  }, [rotateAnim]);
-
-  return { rotate, resetRotation };
+  return { transformStyle, resetRotation };
 }

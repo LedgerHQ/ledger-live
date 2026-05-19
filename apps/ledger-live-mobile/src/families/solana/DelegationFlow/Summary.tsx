@@ -19,7 +19,8 @@ import invariant from "invariant";
 import { capitalize } from "lodash/fp";
 import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
 import { Trans } from "~/context/Locale";
-import { Animated, StyleSheet, View, TextStyle, StyleProp } from "react-native";
+import { StyleSheet, View, TextStyle, StyleProp } from "react-native";
+import Animated from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TrackScreen } from "~/analytics";
 import { rgba } from "../../../colors";
@@ -102,7 +103,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
   invariant(transaction, "transaction must be defined");
   invariant(transaction.family === "solana", "transaction solana");
 
-  const { rotate, resetRotation } = useChangeValidatorRotateAnim();
+  const { transformStyle, resetRotation } = useChangeValidatorRotateAnim();
 
   const onChangeDelegator = useCallback(() => {
     resetRotation();
@@ -166,15 +167,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
             supportValidatorChange(delegationAction) ? (
               <Touchable event="DelegationFlowSummaryChangeCircleBtn" onPress={onChangeDelegator}>
                 <Circle size={70} style={[styles.validatorCircle, { borderColor: colors.primary }]}>
-                  <Animated.View
-                    style={{
-                      transform: [
-                        {
-                          rotate,
-                        },
-                      ],
-                    }}
-                  >
+                  <Animated.View style={transformStyle}>
                     <ValidatorImage
                       imgUrl={chosenValidator?.avatarUrl}
                       name={chosenValidator?.name ?? chosenValidator?.voteAccount}

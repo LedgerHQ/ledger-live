@@ -15,7 +15,8 @@ import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { Trans } from "~/context/Locale";
-import { Animated, SafeAreaView, StyleSheet, View } from "react-native";
+import { SafeAreaView, StyleSheet, View } from "react-native";
+import Animated from "react-native-reanimated";
 import { TrackScreen } from "~/analytics";
 import { rgba } from "../../../colors";
 import Button from "~/components/Button";
@@ -92,7 +93,7 @@ export default function VoteSummary({ navigation, route }: Props) {
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [route.params.amount, updateTransaction, bridge, setTransaction, chosenValidator]);
 
-  const { rotate, resetRotation } = useChangeValidatorRotateAnim();
+  const { transformStyle, resetRotation } = useChangeValidatorRotateAnim();
 
   const onChangeDelegator = useCallback(() => {
     resetRotation();
@@ -140,15 +141,7 @@ export default function VoteSummary({ navigation, route }: Props) {
           right={
             <Touchable event="VoteFlowSummaryChangeCircleBtn" onPress={onChangeDelegator}>
               <Circle size={70} style={[styles.validatorCircle, { borderColor: colors.primary }]}>
-                <Animated.View
-                  style={{
-                    transform: [
-                      {
-                        rotate,
-                      },
-                    ],
-                  }}
-                >
+                <Animated.View style={transformStyle}>
                   <ValidatorImage
                     isLedger={chosenValidator.address === defaultValidatorGroupAddress()}
                     name={chosenValidator?.name ?? chosenValidator?.address}
