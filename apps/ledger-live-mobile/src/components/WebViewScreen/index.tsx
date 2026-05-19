@@ -7,7 +7,7 @@ import { Flex } from "@ledgerhq/native-ui";
 import { Track } from "~/analytics";
 import WebViewNoConnectionError from "./NoConnectionError";
 import WebViewLoading from "./Loading";
-import { SafeAreaView } from "react-native";
+import SafeAreaView from "~/components/SafeAreaView";
 import Config from "react-native-config";
 import {
   E2E_WEBVIEW_CONSOLE_LOG_TYPE,

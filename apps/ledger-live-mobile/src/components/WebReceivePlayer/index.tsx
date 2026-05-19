@@ -1,6 +1,7 @@
 import { useTranslation } from "~/context/Locale";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { StyleSheet, SafeAreaView, BackHandler, Platform } from "react-native";
+import { StyleSheet, BackHandler, Platform } from "react-native";
+import SafeAreaView from "~/components/SafeAreaView";
 import { useNavigation } from "@react-navigation/native";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { Web3AppWebview } from "../Web3AppWebview";

@@ -1,5 +1,6 @@
 import React, { useCallback } from "react";
-import { StyleSheet, ScrollView, View, Linking, SafeAreaView } from "react-native";
+import { StyleSheet, ScrollView, View, Linking } from "react-native";
+import SafeAreaView from "~/components/SafeAreaView";
 import { Trans } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";

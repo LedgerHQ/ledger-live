@@ -1,6 +1,7 @@
 import invariant from "invariant";
 import React, { useCallback, useMemo, useState } from "react";
-import { View, StyleSheet, SafeAreaView, FlatList, TouchableOpacity } from "react-native";
+import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
+import SafeAreaView from "~/components/SafeAreaView";
 import { Trans } from "~/context/Locale";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";

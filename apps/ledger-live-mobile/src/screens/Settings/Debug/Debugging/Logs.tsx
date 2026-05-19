@@ -1,6 +1,7 @@
 import React, { useMemo, useEffect, useState } from "react";
 import { listen, Log } from "@ledgerhq/logs";
-import { View, StyleSheet, SafeAreaView, FlatList } from "react-native";
+import { View, StyleSheet, FlatList } from "react-native";
+import SafeAreaView from "~/components/SafeAreaView";
 import { Flex, Tag, Text } from "@ledgerhq/native-ui";
 import logReport from "../../../../log-report";
 import Button from "~/components/Button";
