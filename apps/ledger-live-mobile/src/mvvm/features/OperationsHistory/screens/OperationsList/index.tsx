@@ -26,7 +26,7 @@ function keyExtractor(item: Operation) {
 
 export default function OperationsList({ route }: Props) {
   const { bottom } = useSafeAreaInsets();
-  const currencyId = route.params?.currencyId;
+  const accountIds = route.params?.accountIds;
   const {
     accounts,
     flattenedAccounts,
@@ -36,7 +36,7 @@ export default function OperationsList({ route }: Props) {
     completed,
     isEmpty,
     onEndReached,
-  } = useOperationsListViewModel(currencyId);
+  } = useOperationsListViewModel(accountIds);
 
   const listContentStyle = useMemo(
     () => ({
