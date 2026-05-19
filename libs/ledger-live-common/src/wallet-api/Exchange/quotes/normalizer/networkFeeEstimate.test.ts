@@ -177,6 +177,22 @@ describe("computeFeeEstimate — non-EVM fallback (no override)", () => {
     expect(result.approvalNetworkFee).toBeUndefined();
   });
 
+  it("falls back to the provider fee when bridge estimatedFeesAtomic is zero", () => {
+    const result = computeFeeEstimate(
+      makeRawQuote({ networkFees: { currency: "bitcoin", value: 0.00001 } }),
+      makeEvmContext({
+        maxFeePerGas: undefined,
+        gasPrice: undefined,
+        feeCurrencyId: "bitcoin",
+        feeCurrencyMagnitude: 8,
+        mainAccountCurrencyId: "bitcoin",
+        estimatedFeesAtomic: new BigNumber(0),
+      }),
+    );
+
+    expect(result.estimatedNetworkFee).toEqual({ amount: "1000", currencyId: "bitcoin" });
+  });
+
   it("emits nothing for a gasless quote on a non-EVM chain without gas config", () => {
     const result = computeFeeEstimate(
       makeRawQuote({ provider: "oneinchfusion", networkFees: { currency: "cosmos" } }),

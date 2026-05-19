@@ -191,6 +191,7 @@ describe("fetchNetworkFeeContext", () => {
     expect(result?.feeCurrencyId).toBe("bitcoin");
     expect(result?.estimatedFeesAtomic).toEqual(new BigNumber("3000"));
     const [, preparedArg] = bridge.prepareTransaction.mock.calls[0];
+    expect(preparedArg.feesStrategy).toBe("fast");
     expect(preparedArg.recipient).toBe("bc1qed3mqr92zvq2s782aqkyx785u23723w02qfrgs");
   });
 
@@ -278,6 +279,46 @@ describe("fetchNetworkFeeContext", () => {
     const [, preparedArg] = bridge.prepareTransaction.mock.calls[0];
     // 10% of 5 ETH in wei.
     expect(preparedArg.amount.toFixed()).toBe("500000000000000000");
+  });
+
+  it("keeps a tiny balance-based sample non-zero", async () => {
+    const account = makeEvmAccount({
+      spendableBalance: new BigNumber("1"),
+    } as Partial<Account>);
+    mockedResolveId.mockReturnValue(account.id);
+    mockedGetParent.mockReturnValue(undefined as unknown as Account);
+    mockedGetMain.mockReturnValue(account);
+    const bridge = makeBridge();
+    mockedGetBridge.mockReturnValue(bridge as unknown as ReturnType<typeof getAccountBridge>);
+
+    await fetchNetworkFeeContext({
+      accounts: [account as unknown as AccountLike],
+      fromAccountId: "wallet:evm:1",
+      amountFrom: "0",
+    });
+
+    const [, preparedArg] = bridge.prepareTransaction.mock.calls[0];
+    expect(preparedArg.amount.toFixed()).toBe("1");
+  });
+
+  it("keeps a smallest-unit input non-zero after the safety reduction", async () => {
+    const account = makeBtcAccount({
+      spendableBalance: new BigNumber("100000000"),
+    } as Partial<Account>);
+    mockedResolveId.mockReturnValue(account.id);
+    mockedGetParent.mockReturnValue(undefined as unknown as Account);
+    mockedGetMain.mockReturnValue(account);
+    const bridge = makeBridge();
+    mockedGetBridge.mockReturnValue(bridge as unknown as ReturnType<typeof getAccountBridge>);
+
+    await fetchNetworkFeeContext({
+      accounts: [account as unknown as AccountLike],
+      fromAccountId: "wallet:btc:1",
+      amountFrom: "0.00000001",
+    });
+
+    const [, preparedArg] = bridge.prepareTransaction.mock.calls[0];
+    expect(preparedArg.amount.toFixed()).toBe("1");
   });
 
   it("uses fromAccount.id as subAccountId for token sub-accounts", async () => {

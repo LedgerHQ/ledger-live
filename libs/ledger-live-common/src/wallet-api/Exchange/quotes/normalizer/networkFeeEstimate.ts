@@ -1,9 +1,6 @@
 import BigNumber from "bignumber.js";
 
-import type {
-  QuoteApprovalNetworkFee,
-  QuoteEstimatedNetworkFee,
-} from "@ledgerhq/wallet-api-exchange-module";
+import type { QuoteNetworkFeeAmount } from "@ledgerhq/wallet-api-exchange-module";
 
 import type { RawQuote } from "../service/types";
 import { isGasLess } from "./quoteHelpers";
@@ -39,8 +36,8 @@ export type NetworkFeeContext = {
 };
 
 export type FeeEstimate = {
-  estimatedNetworkFee?: QuoteEstimatedNetworkFee;
-  approvalNetworkFee?: QuoteApprovalNetworkFee;
+  estimatedNetworkFee?: QuoteNetworkFeeAmount;
+  approvalNetworkFee?: QuoteNetworkFeeAmount;
   notEnoughBalance: boolean;
 };
 
@@ -76,7 +73,7 @@ export function computeFeeEstimate(quote: RawQuote, context: NetworkFeeContext):
   } else {
     // No gas price available: fall back to the bridge-reported estimate
     // for base; approval gas is unknowable without a price.
-    baseFeeAtomic = gasLess ? new BigNumber(0) : context.estimatedFeesAtomic;
+    baseFeeAtomic = gasLess ? new BigNumber(0) : fallbackBaseFeeAtomic(quote, context);
     approvalFeeAtomic = new BigNumber(0);
   }
 
@@ -123,6 +120,26 @@ function pickGasPrice(context: NetworkFeeContext): BigNumber | undefined {
 }
 
 /**
+ * Use the provider fee only when the bridge cannot provide a positive estimate.
+ */
+function fallbackBaseFeeAtomic(quote: RawQuote, context: NetworkFeeContext): BigNumber {
+  if (context.estimatedFeesAtomic.gt(0)) {
+    return context.estimatedFeesAtomic;
+  }
+
+  if (quote.networkFees.currency !== context.feeCurrencyId) {
+    return context.estimatedFeesAtomic;
+  }
+
+  const providerFee = new BigNumber(quote.networkFees.value ?? 0);
+  if (!providerFee.gt(0)) {
+    return context.estimatedFeesAtomic;
+  }
+
+  return providerFee.shiftedBy(context.feeCurrencyMagnitude).integerValue(BigNumber.ROUND_DOWN);
+}
+
+/**
  * Skip the balance check for quotes with zero network fees and no
  * approval requirement (RFQ swap of an already-approved token has no
  * on-chain cost). `needsApproval` mirrors the signal used to compute
@@ -141,7 +158,7 @@ function shouldCheckBalance(quote: RawQuote, needsApproval: boolean): boolean {
 function toAtomicFeeField(
   amount: BigNumber,
   currencyId: string,
-): QuoteEstimatedNetworkFee | undefined {
+): QuoteNetworkFeeAmount | undefined {
   if (!amount.gt(0)) {
     return undefined;
   }

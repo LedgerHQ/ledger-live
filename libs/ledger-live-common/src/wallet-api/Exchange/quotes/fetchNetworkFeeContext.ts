@@ -67,7 +67,7 @@ export async function fetchNetworkFeeContext(
       subAccountId,
       recipient,
       amount: amountInAtomicUnits,
-      feesStrategy: "medium",
+      feesStrategy: resolveFeeStrategy(mainAccount),
     } as Parameters<typeof bridge.prepareTransaction>[1]);
 
     const status = await bridge.getTransactionStatus(mainAccount, preparedTx);
@@ -106,12 +106,12 @@ function resolveFeeEstimationAmount(input: {
       : input.mainAccount.spendableBalance;
 
   if (displayAmount.isNaN() || displayAmount.isZero()) {
-    return balanceForCap.multipliedBy(0.1).integerValue(BigNumber.ROUND_DOWN);
+    return roundPositiveAtomicAmount(balanceForCap.multipliedBy(0.1));
   }
 
   const desired = displayAmount.shiftedBy(magnitude).multipliedBy(0.9);
   const cap = balanceForCap.multipliedBy(0.9);
-  return BigNumber.min(desired, cap).integerValue(BigNumber.ROUND_DOWN);
+  return roundPositiveAtomicAmount(BigNumber.min(desired, cap));
 }
 
 function magnitudeOf(account: AccountLike): number {
@@ -119,6 +119,21 @@ function magnitudeOf(account: AccountLike): number {
     return account.token.units[0]?.magnitude ?? 0;
   }
   return account.currency.units[0]?.magnitude ?? 0;
+}
+
+/**
+ * Round fee samples down without turning positive values into zero.
+ */
+function roundPositiveAtomicAmount(amount: BigNumber): BigNumber {
+  const rounded = amount.integerValue(BigNumber.ROUND_DOWN);
+  return amount.gt(0) && rounded.isZero() ? new BigNumber(1) : rounded;
+}
+
+/**
+ * Resolve the default fee strategy used for quote fee estimation.
+ */
+function resolveFeeStrategy(account: Account): "fast" | "medium" {
+  return account.currency.id === "bitcoin" ? "fast" : "medium";
 }
 
 function buildContext(
