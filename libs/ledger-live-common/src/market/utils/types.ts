@@ -64,6 +64,16 @@ export enum KeysPriceChange {
   year = "1y",
 }
 
+/**
+ * Shape of market data once normalized to a single currency.
+ *
+ * USD-denominated numeric fields (`price`, `marketcap`, `totalVolume`,
+ * `high24h`, `low24h`, `ath`, `atl`) are converted to the user's fiat by
+ * {@link applyUsdRateToMarket}. When adding a new numeric USD-denominated
+ * field here, update that helper as well.
+ *
+ * @see applyUsdRateToMarket
+ */
 export type MarketCurrencyData = {
   id: string;
   ledgerIds: string[];
