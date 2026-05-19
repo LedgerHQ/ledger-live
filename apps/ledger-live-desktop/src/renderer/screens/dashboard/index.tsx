@@ -26,7 +26,7 @@ import { Flex, Grid } from "@ledgerhq/react-ui";
 import AnalyticsOptInPrompt from "LLD/features/AnalyticsOptInPrompt/screens";
 import { useDisplayOnPortfolioAnalytics } from "LLD/features/AnalyticsOptInPrompt/hooks/useDisplayOnPortfolio";
 import SwapWebViewEmbedded from "./components/SwapWebViewEmbedded";
-import { MarketBanner as MarketBannerFeature } from "@features/market-banner";
+import { MarketBanner as MarketBannerFeature } from "@features/flow-market-banner";
 import Portfolio from "LLD/features/Portfolio";
 import { PerpsEntryPoint } from "LLD/features/Portfolio/components/PerpsEntryPoint";
 import BannerSection from "./components/Banners/BannerSection";

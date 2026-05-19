@@ -1,5 +1,5 @@
 {
-  "name": "@features/market-banner",
+  "name": "@features/flow-market-banner",
   "version": "0.7.0",
   "private": true,
   "main": "src/index.ts",

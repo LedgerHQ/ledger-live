@@ -22,10 +22,7 @@ module.exports = {
   },
   settings: {
     "better-tailwindcss": {
-      entryPoint: path.join(
-        __dirname,
-        "../../apps/ledger-live-desktop/src/renderer/global.css",
-      ),
+      entryPoint: path.join(__dirname, "../../../apps/ledger-live-desktop/src/renderer/global.css"),
       callees: ["cn"],
     },
   },
