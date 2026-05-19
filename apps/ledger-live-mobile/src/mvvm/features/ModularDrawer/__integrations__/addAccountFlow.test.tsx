@@ -113,6 +113,7 @@ jest.mock("@ledgerhq/live-common/bridge/index", () => ({
     preload: () => Promise.resolve(true),
     hydrate: () => true,
   }),
+  getAccountBridge: () => ({ isAccountEmpty: () => false }),
 }));
 
 const mockScanAccountsSubscription = async (accounts: Account[]) => {
