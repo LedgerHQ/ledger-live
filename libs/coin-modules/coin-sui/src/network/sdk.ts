@@ -73,7 +73,7 @@ const MULTI_GET_OBJECTS_LIMIT = 50;
 
 export const DEFAULT_COIN_TYPE = "0x2::sui::SUI";
 
-const STAKING_REQUEST_EVENT = "0x3::staking_pool::StakingRequestEvent";
+const STAKING_REQUEST_EVENT = "0x3::validator::StakingRequestEvent";
 const UNSTAKING_REQUEST_EVENT = "0x3::validator::UnstakingRequestEvent";
 
 /** Default options for querying transactions. */
