@@ -53,9 +53,12 @@ const headerRowStyle: LumenViewStyle = {
   flexDirection: "row",
   justifyContent: "space-between",
   alignItems: "center",
+  gap: "s12",
 };
 
 const balanceContainerStyle: LumenViewStyle = {
   gap: "s4",
   flex: 1,
+  flexShrink: 1,
+  overflow: "hidden",
 };

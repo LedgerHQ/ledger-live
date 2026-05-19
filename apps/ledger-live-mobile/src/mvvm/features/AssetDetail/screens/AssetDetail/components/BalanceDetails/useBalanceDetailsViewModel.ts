@@ -17,6 +17,7 @@ import { useLocale, useTranslation } from "~/context/Locale";
 import type { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 import { useStake } from "LLM/hooks/useStake/useStake";
 import { useTransferDrawerController } from "LLM/features/QuickActions/hooks/useTransferDrawerController";
+import { capFormattedValue } from "./capFormattedValue";
 
 type EarnState =
   | { type: "hidden" }
@@ -71,11 +72,13 @@ export function useBalanceDetailsViewModel(
   const counterValue = hasAccounts ? distributionItem?.countervalue ?? 0 : undefined;
 
   const counterValueFormatter = useCallback(
-    (value: number): FormattedValue =>
-      formatCurrencyUnitFragment(counterValueUnit, new BigNumber(value), {
+    (value: number): FormattedValue => {
+      const formatted = formatCurrencyUnitFragment(counterValueUnit, new BigNumber(value), {
         locale,
         showCode: true,
-      }),
+      });
+      return capFormattedValue(formatted);
+    },
     [counterValueUnit, locale],
   );
 
