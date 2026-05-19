@@ -2,8 +2,14 @@ import React from "react";
 import { render, screen, waitFor } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-import { assetsTransferAction, recoverAction, syncAccountsAction } from "~/logic/postOnboarding/actions";
+import {
+  assetsTransferAction,
+  discoverWalletAction,
+  recoverAction,
+  syncAccountsAction,
+} from "~/logic/postOnboarding/actions";
 import type { State } from "~/reducers/types";
+import { productTourDeeplinkNonceSelector } from "~/reducers/appstate";
 import { PostOnboardingHubDrawerWrapper } from "../PostOnboardingHubDrawerWrapper";
 
 jest.mock("@ledgerhq/live-common/postOnboarding/hooks/index", () => ({
@@ -15,7 +21,14 @@ jest.mock("LLM/features/WalletSync/screens/Activation/ActivationDrawer", () => (
   default: () => null,
 }));
 
+jest.mock("~/navigation/navigateToPortfolioWalletTab", () => ({
+  navigateToPortfolioWalletTab: jest.fn(),
+}));
+
+import { navigateToPortfolioWalletTab } from "~/navigation/navigateToPortfolioWalletTab";
+
 const mockedUsePostOnboardingHubState = jest.mocked(usePostOnboardingHubState);
+const mockNavigateToPortfolioWalletTab = jest.mocked(navigateToPortfolioWalletTab);
 
 function openedDrawerState(state: State): State {
   return {
@@ -51,6 +64,7 @@ function openedDrawerWithLedgerSyncState(state: State): State {
 describe("PostOnboardingHubDrawer Integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockNavigateToPortfolioWalletTab.mockClear();
   });
 
   it("should render the device step with the drawer title and no action rows when no actions exist", async () => {
@@ -207,6 +221,27 @@ describe("PostOnboardingHubDrawer Integration", () => {
     });
     expect(screen.getByRole("button", { name: /Got it/i })).toBeVisible();
     expect(getIsAlreadyCompleted).toHaveBeenCalledTimes(1);
+  });
+
+  it("should tick the product tour deeplink and navigate to portfolio when Discover wallet is pressed", async () => {
+    mockedUsePostOnboardingHubState.mockReturnValue({
+      deviceModelId: DeviceModelId.stax,
+      actionsState: [{ ...discoverWalletAction, completed: false }],
+      lastActionCompleted: null,
+      postOnboardingInProgress: true,
+    });
+
+    const { user, store } = render(<PostOnboardingHubDrawerWrapper />, {
+      overrideInitialState: openedDrawerState,
+    });
+
+    const discoverRow = await screen.findByRole("button", {
+      name: /discover your wallet/i,
+    });
+    await user.press(discoverRow);
+
+    expect(productTourDeeplinkNonceSelector(store.getState())).toBe(1);
+    expect(mockNavigateToPortfolioWalletTab).toHaveBeenCalledTimes(1);
   });
 
   it("should complete post-onboarding and close the drawer when 'Got it' is pressed", async () => {
