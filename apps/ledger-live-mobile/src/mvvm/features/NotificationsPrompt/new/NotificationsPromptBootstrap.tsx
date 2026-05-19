@@ -2,8 +2,6 @@ import { useCallback, useEffect } from "react";
 import { AppState } from "react-native";
 import { getNotificationPermissionStatus } from "~/logic/getNotificationPermissionStatus";
 import { useNotificationsPermission } from "LLM/hooks/useNotificationsPermission";
-import { useSelector } from "~/context/hooks";
-import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import {
   getPushNotificationsDataOfUserFromStorage,
   type InitPushNotificationsDataResult,
@@ -12,8 +10,7 @@ import {
 } from "LLM/features/NotificationsPrompt";
 
 export function NotificationsPromptBootstrap() {
-  const { onInitialDataLoaded } = useNotificationsContext();
-  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+  const { tryTriggerPushNotificationDrawerAfterInactivity } = useNotificationsContext();
   const { setPermissionStatus } = useNotificationsPermission();
   const {
     notifications,
@@ -92,21 +89,7 @@ export function NotificationsPromptBootstrap() {
     ]);
 
   useEffect(() => {
-    if (!hasCompletedOnboarding) {
-      return;
-    }
-
-    let isCurrentEffect = true;
-    initPushNotificationsData().then(data => {
-      if (isCurrentEffect) {
-        onInitialDataLoaded(data);
-      }
-    });
-
-    return () => {
-      isCurrentEffect = false;
-    };
-
+    initPushNotificationsData().then(tryTriggerPushNotificationDrawerAfterInactivity);
     // Run this effect only once
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);

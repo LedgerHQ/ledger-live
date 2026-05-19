@@ -11,7 +11,7 @@ type NotificationsPromptProviderProps = {
 
 export type NotificationsPromptContextValue = {
   notifyFlowCompleted: (source: NotificationsPromptAfterActionSource) => void;
-  onInitialDataLoaded: (data: InitPushNotificationsDataResult) => void;
+  tryTriggerPushNotificationDrawerAfterInactivity: (data: InitPushNotificationsDataResult) => void;
 };
 
 export const NotificationsPromptContext = createContext<NotificationsPromptContextValue | null>(
@@ -35,7 +35,7 @@ export function NotificationsPromptProvider({ children }: NotificationsPromptPro
   const value = useMemo(
     () => ({
       notifyFlowCompleted,
-      onInitialDataLoaded: tryTriggerPushNotificationDrawerAfterInactivity,
+      tryTriggerPushNotificationDrawerAfterInactivity,
     }),
     [notifyFlowCompleted, tryTriggerPushNotificationDrawerAfterInactivity],
   );
