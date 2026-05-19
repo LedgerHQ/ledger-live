@@ -9,15 +9,15 @@ describe("celo fee currency constants", () => {
     const usdc = FEE_CURRENCY_OPTIONS.find(option => option.name === "USDC");
     const usdt = FEE_CURRENCY_OPTIONS.find(option => option.name === "USDT");
 
-    expect(usdc?.adapterAddress).toBeDefined();
-    expect(usdt?.adapterAddress).toBeDefined();
+    expect(usdc?.adapterAddress).toEqual(expect.any(String));
+    expect(usdt?.adapterAddress).toEqual(expect.any(String));
     expect(usdc?.adapterAddress).not.toEqual(usdc?.contractAddress);
     expect(usdt?.adapterAddress).not.toEqual(usdt?.contractAddress);
   });
 
   it("supports case-insensitive lookup by token contract address", () => {
     const usdc = FEE_CURRENCY_OPTIONS.find(option => option.name === "USDC");
-    expect(usdc?.contractAddress).toBeDefined();
+    expect(usdc?.contractAddress).toEqual(expect.any(String));
 
     const upperContract = usdc!.contractAddress!.toUpperCase();
     expect(FEE_CURRENCY_BY_CONTRACT.get(upperContract.toLowerCase())?.name).toBe("USDC");
