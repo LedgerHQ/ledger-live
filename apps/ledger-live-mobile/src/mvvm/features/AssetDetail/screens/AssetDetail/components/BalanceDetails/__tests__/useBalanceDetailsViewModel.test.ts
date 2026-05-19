@@ -23,6 +23,15 @@ jest.mock("LLM/hooks/useStake/useStake", () => ({
   useStake: () => ({ getCanStakeCurrency: mockGetCanStakeCurrency }),
 }));
 
+const mockHandleOpenStakeDrawer = jest.fn();
+const mockUseOpenStakeDrawer = jest.fn((_props: unknown) => ({
+  handleOpenStakeDrawer: mockHandleOpenStakeDrawer,
+}));
+
+jest.mock("LLM/features/Stake", () => ({
+  useOpenStakeDrawer: (props: unknown) => mockUseOpenStakeDrawer(props),
+}));
+
 function buildDistributionItem(
   currency: DistributionItem["currency"],
   accounts: AccountLike[],
@@ -235,7 +244,7 @@ describe("useBalanceDetailsViewModel", () => {
       });
     });
 
-    it("onEarnBannerPress and onEarnDepositPress fire analytics", () => {
+    it("onEarnBannerPress and onEarnDepositPress fire analytics and open the stake drawer", () => {
       const btcAccount = genAccount("bitcoin-0", {
         currency: mockBtcCryptoCurrency,
         operationsSize: 0,
@@ -254,12 +263,42 @@ describe("useBalanceDetailsViewModel", () => {
         currency: "bitcoin",
         page: "Asset Detail",
       });
+      expect(mockHandleOpenStakeDrawer).toHaveBeenCalledTimes(1);
 
       act(() => result.current.onEarnDepositPress());
       expect(track).toHaveBeenCalledWith("button_clicked", {
         button: "earn_deposit",
         currency: "bitcoin",
         page: "Asset Detail",
+      });
+      expect(mockHandleOpenStakeDrawer).toHaveBeenCalledTimes(2);
+    });
+
+    it("configures useOpenStakeDrawer with the current currency and Asset Detail source", () => {
+      const btcAccount = genAccount("bitcoin-0", {
+        currency: mockBtcCryptoCurrency,
+        operationsSize: 0,
+      });
+
+      renderHook(() =>
+        useBalanceDetailsViewModel(
+          mockBtcCryptoCurrency,
+          buildDistributionItem(mockBtcCryptoCurrency, [btcAccount]),
+        ),
+      );
+
+      expect(mockUseOpenStakeDrawer).toHaveBeenCalledWith({
+        sourceScreenName: "Asset Detail",
+        currencies: [mockBtcCryptoCurrency.id],
+      });
+    });
+
+    it("calls useOpenStakeDrawer with undefined currencies when no currency is provided", () => {
+      renderHook(() => useBalanceDetailsViewModel(undefined, undefined));
+
+      expect(mockUseOpenStakeDrawer).toHaveBeenCalledWith({
+        sourceScreenName: "Asset Detail",
+        currencies: undefined,
       });
     });
   });
