@@ -7,7 +7,7 @@ description: |
 
 # Create or Update Docs
 
-Create minimal docs, avoid duplication and make content discoverable. 
+Create minimal docs, avoid duplication and make content discoverable.
 Treat docs for both human and AI agents together.
 Follow our principles of progressive disclosure, locality and canonicalization.
 
@@ -54,7 +54,7 @@ the best way to document knowledge in each case.
 - Skill and agent definitions should use frontmatter to be discoverable by tools.
 - Frontmatter for READMEs is optional. If it's useful for you, include it
 - Tool-discoverable docs and skills should have `name` and `description`
-- Add `applies_to`, `allowed-tools`, or `compatibility` only when they help.
+- Add `allowed-tools`, or `compatibility` only when they help.
 - Use `disable-model-invocation: true` for user-invoked skills (commands)
 - Use `user-invocable: false` for agent-only skills
 
@@ -64,8 +64,6 @@ the best way to document knowledge in each case.
 ---
 name: desktop-swap-guidance
 description: Read when editing swap flows in Ledger Live Desktop.
-applies_to:
-  - apps/ledger-live-desktop
 ---
 ```
 
