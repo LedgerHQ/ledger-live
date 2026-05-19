@@ -176,6 +176,7 @@ async function fetchData(message: MessageData, timeout = RESPONSE_TIMEOUT): Prom
     postMessage(message);
     const timeoutId = setTimeout(() => {
       global.pendingCallbacks?.delete(message.type);
+      delete webSocket.messages[message.id];
       console.warn(`Timeout while waiting for ${message.type}`);
       resolve("");
     }, timeout);

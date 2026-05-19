@@ -5,6 +5,7 @@ import {
   type DeviceControllerClient,
   type ButtonKey,
 } from "@ledgerhq/speculos-device-controller";
+import { retryAxiosRequest } from "./retryAxiosRequest";
 
 // temp type until DeviceControllerClient exposes buttonFactory type
 type ButtonsController = {
@@ -42,7 +43,17 @@ export const getButtonsWithMemo = (getController: () => DeviceControllerClient) 
   return () => {
     const ctrl = getController();
     if (!cache || cache.ctrl !== ctrl) {
-      cache = { ctrl, buttons: ctrl.buttonFactory() };
+      const inner = ctrl.buttonFactory();
+      cache = {
+        ctrl,
+        buttons: {
+          left: () => retryAxiosRequest(() => inner.left()),
+          right: () => retryAxiosRequest(() => inner.right()),
+          both: () => retryAxiosRequest(() => inner.both()),
+          pressSequence: (keys, delayMs) =>
+            retryAxiosRequest(() => inner.pressSequence(keys, delayMs)),
+        },
+      };
     }
     return cache.buttons;
   };

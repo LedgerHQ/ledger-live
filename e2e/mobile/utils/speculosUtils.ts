@@ -112,7 +112,7 @@ export async function launchSpeculos(appName: string) {
 
   if (!device) {
     const note =
-      "[E2E Setup] Speculos not started: no device returned. Check SEED, COINAPPS, and Docker (local) or CI workflow (remote).";
+      "[E2E Setup] Speculos not started: no device returned. Check SEED, COINAPPS, Docker (local), or SPECULINHO_URL + Speculinho /acquire (remote).";
     globalThis.speculosStartupErrorMessage = note;
     globalThis.speculosFailureStderr = getCapturedStderr();
     log.error("E2E Setup", "[E2E Setup] Speculos not started");
@@ -120,7 +120,7 @@ export async function launchSpeculos(appName: string) {
   }
   if (!device.port) {
     const remoteHint = isSpeculosRemote()
-      ? " Remote Speculos workflow may have failed (port 0). Check CI/GitHub Actions."
+      ? " Remote Speculos (Speculinho) did not return an API port — check logs above for POST /acquire errors, SPECULINHO_URL, and SEED."
       : "";
     const message = [
       "[E2E Setup] Speculos port not set.",

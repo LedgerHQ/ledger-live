@@ -67,6 +67,7 @@ function createDetoxURLBlacklistRegex(): string {
     ".*127.0.0.1.*",
     ".*speculos.*ldg-tech.com.*",
     ".*optimism.*",
+    ".*speculos.ledgerlabs.net.*",
   ];
 
   return `\\("${patterns.join('","')}"\\)`;
@@ -107,24 +108,28 @@ export function setupEnvironment() {
   setEnv("DISABLE_TRANSACTION_BROADCAST", !shouldBroadcast);
 }
 
-export const logMemoryUsage = async (): Promise<void> => {
+export const logMemoryUsage = (): Promise<void> => {
   const pid = process.pid;
   const isLinux = process.platform !== "darwin";
   const topArgs = isLinux ? `-b -n 1 -p ${pid}` : `-l 1 -pid ${pid}`;
-  exec(
-    `top ${topArgs} | grep "${pid}" | awk '{print ${isLinux ? "$6" : "$8"}}'`,
-    async (error: Error | null, stdout: string, stderr: string): Promise<void> => {
-      if (error || stderr) {
-        log.error(
-          `Error getting memory usage:\n Error: ${sanitizeError(error)}\n Stderr: ${stderr}`,
-        );
-        return;
-      }
-      const logMessage = `📦 Detox Memory Usage: ${stdout.trim()}`;
-      await allure.attachment("Memory Usage Details", logMessage, "text/plain");
-      log.warn(logMessage);
-    },
-  );
+  return new Promise<void>(resolve => {
+    exec(
+      `top ${topArgs} | grep "${pid}" | awk '{print ${isLinux ? "$6" : "$8"}}'`,
+      async (error: Error | null, stdout: string, stderr: string): Promise<void> => {
+        if (error || stderr) {
+          log.error(
+            `Error getting memory usage:\n Error: ${sanitizeError(error)}\n Stderr: ${stderr}`,
+          );
+          resolve();
+          return;
+        }
+        const logMessage = `📦 Detox Memory Usage: ${stdout.trim()}`;
+        await allure.attachment("Memory Usage Details", logMessage, "text/plain");
+        log.warn(logMessage);
+        resolve();
+      },
+    );
+  });
 };
 
 export async function takeAppScreenshot(screenshotName: string) {

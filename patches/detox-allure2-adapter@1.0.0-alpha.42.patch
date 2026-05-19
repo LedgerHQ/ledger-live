@@ -1,6 +1,29 @@
 --- a/dist/listener.js
 +++ b/dist/listener.js
-@@ -75,8 +75,20 @@
+@@ -25,10 +25,18 @@
+     const onError = (0, utils_1.createErrorHandler)(onErrorOption ?? 'warn');
+     const recycleBin = file_handlers_1.RecycleBin.instance(onError);
+     const flushArtifacts = (0, utils_1.once)(async () => {
+-        await Promise.all([
+-            logs?.close(),
+-            videoManager?.stopAndAttach($hook, failing),
+-            recycleBin.clear(),
++        // PATCH: timeout prevents indefinite hang if logkitten close() stalls (e.g. simctl log stream)
++        let _timeoutId;
++        let _timedOut = false;
++        const _flushTimeout = new Promise(resolve => { _timeoutId = setTimeout(() => { _timedOut = true; resolve(); }, 60000); _timeoutId.unref(); });
++        await Promise.race([
++            Promise.all([
++                logs?.close(),
++                videoManager?.stopAndAttach($hook, failing),
++                recycleBin.clear(),
++            ]).then(r => { clearTimeout(_timeoutId); return r; }),
++            _flushTimeout,
+         ]);
+         workerWrapper = logs = screenshots = viewHierarchy = videoManager = undefined;
++        if (_timedOut) process.exit(0);
+     });
+@@ -75,8 +83,20 @@
                  onError,
              });
          }
@@ -23,7 +46,7 @@
              videoManager = new video_1.VideoManager({ device, options: baseOptions, onError });
          }
          if (deviceViewHierarchy && viewHierarchyFactory) {
-@@ -152,7 +164,7 @@
+@@ -152,7 +172,7 @@
      })
          .on('test_fn_failure', async () => {
          failing = true;
@@ -32,3 +55,26 @@
      })
          .on('test_fn_success', async () => {
          await Promise.all([logs?.attachAfterSuccess(api_1.allure), screenshots?.attachSuccess(api_1.allure)]);
+--- a/dist/logs/log-buffer.js
++++ b/dist/logs/log-buffer.js
+@@ -76,15 +76,15 @@
+     }
+     _attachLogs = (allure, failed, after) => {
+         const saveAll = this._options.saveAll ?? false;
+-        if (!saveAll && !failed) {
+-            return;
+-        }
+-        const appContent = this._appEntries.flushAsString();
++        const appContent = this._appEntries.flushAsString();
++        const detoxContent = this._detoxEntries.flushAsString();
++        if (!saveAll && !failed) {
++            return;
++        }
+         if (appContent) {
+             const name = after ? 'app.log' : 'app-before.log';
+             allure.attachment(name, appContent, 'text/plain');
+         }
+-        const detoxContent = this._detoxEntries.flushAsString();
+         if (detoxContent) {
+             const name = after ? 'detox.log' : 'detox-before.log';
+             allure.attachment(name, detoxContent, 'text/plain');
