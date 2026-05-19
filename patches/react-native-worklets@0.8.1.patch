@@ -1,0 +1,71 @@
+diff --git a/android/src/main/java/com/swmansion/worklets/JSCallInvokerResolver.java b/android/src/main/java/com/swmansion/worklets/JSCallInvokerResolver.java
+index b8f77c550e06cffc8ee67833422ae7b66ac71bd8..6f865c2c80746e2e06c32afcf664a7b62e968012 100644
+--- a/android/src/main/java/com/swmansion/worklets/JSCallInvokerResolver.java
++++ b/android/src/main/java/com/swmansion/worklets/JSCallInvokerResolver.java
+@@ -7,21 +7,53 @@ import com.facebook.react.turbomodule.core.CallInvokerHolderImpl;
+ 
+ public class JSCallInvokerResolver {
+ 
++  private static final int MAX_ATTEMPTS = 10;
++  private static final long RETRY_SLEEP_MS = 20;
++
+   @OptIn(markerClass = FrameworkAPI.class)
+   public static CallInvokerHolderImpl getJSCallInvokerHolder(ReactApplicationContext context) {
+-    try {
+-      var method = context.getClass().getMethod("getJSCallInvokerHolder");
+-      return (CallInvokerHolderImpl) method.invoke(context);
+-    } catch (Exception ignored) {
+-      // In newer implementations, the method is in CatalystInstance, continue.
+-    }
+-    try {
+-      var catalystInstance = context.getClass().getMethod("getCatalystInstance").invoke(context);
+-      assert catalystInstance != null;
+-      var method = catalystInstance.getClass().getMethod("getJSCallInvokerHolder");
+-      return (CallInvokerHolderImpl) method.invoke(catalystInstance);
+-    } catch (Exception e) {
+-      throw new RuntimeException("Failed to get JSCallInvokerHolder", e);
++    // In RN 0.81 bridgeless mode, getJSCallInvokerHolder() can return null when
++    // ReactHostImpl.reactInstance has not been set yet (race condition during reload
++    // or fast startup). Retry with short sleeps to allow the instance to initialize.
++    Exception lastException = null;
++    for (int attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
++      try {
++        var method = context.getClass().getMethod("getJSCallInvokerHolder");
++        var holder = (CallInvokerHolderImpl) method.invoke(context);
++        if (holder != null) {
++          return holder;
++        }
++        lastException = new NullPointerException("getJSCallInvokerHolder() on context returned null");
++      } catch (Exception e) {
++        lastException = e;
++        // In newer implementations, the method is in CatalystInstance, continue.
++      }
++      try {
++        var catalystInstance = context.getClass().getMethod("getCatalystInstance").invoke(context);
++        if (catalystInstance == null) {
++          lastException = new NullPointerException("getCatalystInstance() returned null");
++        } else {
++          var method = catalystInstance.getClass().getMethod("getJSCallInvokerHolder");
++          var holder = (CallInvokerHolderImpl) method.invoke(catalystInstance);
++          if (holder != null) {
++            return holder;
++          }
++          lastException = new NullPointerException("getJSCallInvokerHolder() on catalystInstance returned null");
++        }
++      } catch (Exception e) {
++        lastException = e;
++      }
++      if (attempt < MAX_ATTEMPTS - 1) {
++        try {
++          Thread.sleep(RETRY_SLEEP_MS);
++        } catch (InterruptedException e) {
++          Thread.currentThread().interrupt();
++          break;
++        }
++      }
+     }
++    throw new RuntimeException(
++        "Failed to get JSCallInvokerHolder after " + MAX_ATTEMPTS
++            + " attempts. React instance may not be initialized.", lastException);
+   }
+ }

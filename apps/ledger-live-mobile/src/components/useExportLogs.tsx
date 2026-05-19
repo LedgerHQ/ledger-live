@@ -52,9 +52,7 @@ export default function useExportLogs() {
 
     try {
       const logs = logReport.getLogs();
-      const base64 = Buffer.from(JSON.stringify(logs, getJSONStringifyReplacer(), 2)).toString(
-        "base64",
-      );
+      const serialized = JSON.stringify(logs, getJSONStringifyReplacer(), 2);
 
       const version = getFullAppVersion(undefined, undefined, "-");
       const date = new Date().toISOString().split("T")[0];
@@ -62,7 +60,7 @@ export default function useExportLogs() {
       const humanReadableName = `ledgerwallet-mob-${version}-${date}-logs.txt`;
       const filePath = `${RNFetchBlob.fs.dirs.DocumentDir}/${humanReadableName}`;
 
-      await RNFetchBlob.fs.writeFile(filePath, base64, "base64");
+      await RNFetchBlob.fs.writeFile(filePath, serialized, "utf8");
       const options = {
         failOnCancel: false,
         saveToFiles: true,

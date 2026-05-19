@@ -103,7 +103,7 @@ describe("CantonReonboardDrawer integration", () => {
   });
 
   async function acceptDisclaimer(user: ReturnType<typeof render>["user"]) {
-    await user.press(screen.getByTestId("canton-disclaimer-agree-row"));
+    await user.press(await screen.findByTestId("canton-disclaimer-agree-row"));
     await waitFor(() => {
       expect(screen.getByText("Agree")).not.toBeDisabled();
     });
@@ -123,7 +123,7 @@ describe("CantonReonboardDrawer integration", () => {
       { overrideInitialState: overrideInitialStateWithDevice },
     );
 
-    expect(screen.getByText("Setup Canton Network")).toBeOnTheScreen();
+    expect(await screen.findByText("Setup Canton Network")).toBeOnTheScreen();
     expect(screen.queryByText("Confirm")).not.toBeOnTheScreen();
 
     await acceptDisclaimer(user);
@@ -146,7 +146,7 @@ describe("CantonReonboardDrawer integration", () => {
       { overrideInitialState: overrideInitialStateWithDevice },
     );
 
-    await user.press(screen.getByText("Cancel"));
+    await user.press(await screen.findByText("Cancel"));
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 

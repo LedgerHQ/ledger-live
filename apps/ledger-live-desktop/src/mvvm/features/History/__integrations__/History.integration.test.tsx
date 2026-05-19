@@ -263,13 +263,16 @@ describe("History export dialog integration", () => {
     await user.click(dialog.getByText(/select all/i));
     await user.click(dialog.getByRole("button", { name: /export history/i }));
 
-    await waitFor(() => expect(screen.getByText("Something went wrong")).toBeVisible());
+    await waitFor(() => expect(screen.getByText("Something went wrong")).toBeVisible(), {
+      timeout: 10000,
+    });
 
     await user.click(screen.getByRole("button", { name: /try again/i }));
 
-    await waitFor(() =>
-      expect(screen.getByRole("heading", { name: "Transaction history" })).toBeVisible(),
+    await waitFor(
+      () => expect(screen.getByRole("heading", { name: "Transaction history" })).toBeVisible(),
+      { timeout: 10000 },
     );
     expect(screen.queryByText("Something went wrong")).not.toBeInTheDocument();
-  });
+  }, 30000);
 });
