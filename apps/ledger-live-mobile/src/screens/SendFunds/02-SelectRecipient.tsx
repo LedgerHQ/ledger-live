@@ -446,7 +446,10 @@ export default function SendSelectRecipient({ route }: Props) {
         onModalHide={
           () => requestAnimationFrame(() => setFocusMemoInput(true)) // Focus memo input after drawer finishes animating
         }
-        onNext={onPressContinue}
+        onNext={() => {
+          setMemoTagDrawerState(MemoTagDrawerState.SHOWN);
+          onPressContinue();
+        }}
       />
 
       <GenericErrorBottomModal

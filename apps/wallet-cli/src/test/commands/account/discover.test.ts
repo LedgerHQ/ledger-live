@@ -32,6 +32,13 @@ describe("account discover command (mock DMK)", () => {
     expect(data.command).toBe("account discover");
     expect(data.network).toBe("ethereum:main");
     expect(Array.isArray(data.accounts)).toBe(true);
+    expect(data.accounts.length).toBeGreaterThan(0);
+    for (const account of data.accounts) {
+      expect(typeof account.label).toBe("string");
+      expect(account.label.length).toBeGreaterThan(0);
+      expect(typeof account.freshAddress).toBe("string");
+      expect("descriptor" in account).toBe(false);
+    }
   });
 });
 

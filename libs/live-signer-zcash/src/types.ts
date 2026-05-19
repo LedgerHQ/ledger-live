@@ -39,7 +39,7 @@ export type ZcashSignerEvent =
 export type ZcashSigner = {
   getAppConfig: () => Promise<ZcashAppConfig>;
   getAddress: (path: string, display?: boolean) => Promise<ZcashAddress>;
-  getViewKey: (path: string) => Promise<ZcashViewKey>;
+  getFullViewingKey: (path: string) => Promise<ZcashViewKey>;
   signTransaction: (path: string, rawTxHex: string) => Promise<ZcashSignerEvent>;
   signMessage: (path: string, messageHex: string) => Promise<ZcashSignerEvent>;
 };

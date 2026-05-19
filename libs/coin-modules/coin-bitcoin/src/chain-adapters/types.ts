@@ -100,6 +100,17 @@ export interface ChainAdapter {
   ): Promise<BitcoinXPub> | undefined;
 
   /**
+   * Override full viewing key export for chains that expose non-BTC signer APIs.
+   * Return `undefined` to indicate that the chain does not support this operation.
+   */
+  getFullViewingKey?(
+    deviceId: string,
+    currency: CryptoCurrency,
+    path: string,
+    signerContext: SignerContext,
+  ): Promise<string> | undefined;
+
+  /**
    * Override signer instantiation for chains requiring non-BTC signer implementations.
    * Return `undefined` to fall through to the standard hw-app-btc signer.
    */

@@ -83,7 +83,8 @@ export type StakingOperation =
   | "undelegate"
   | "redelegate"
   | "getStakedBalance"
-  | "getUnstakedBalance";
+  | "getUnstakedBalance"
+  | "claimReward";
 
 /**
  * Per-chain strategy for fetching active redelegations from an off-chain source.
@@ -109,6 +110,7 @@ export type RedelegationStrategy =
 
 export type StakingContractConfig = {
   contractAddress: string;
+  specificContractAddressByOperation?: Partial<Record<StakingOperation, string>>;
   functions: Partial<Record<StakingOperation, string>> & {
     // necessary function names below
     delegate: string;

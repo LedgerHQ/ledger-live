@@ -17,13 +17,14 @@ import type {
 } from "@ledgerhq/types-cryptoassets";
 import isEqual from "lodash/isEqual";
 import {
-  isAccountEmpty,
   flattenAccounts,
   getAccountCurrency,
   isUpToDateAccount,
   makeEmptyTokenAccount,
   isAccountBalanceUnconfirmed,
 } from "@ledgerhq/live-common/account/index";
+import { useAccountBridgeMany } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import { useSelector } from "~/context/hooks";
 
 import type { AccountsState, State } from "./types";
 import type {
@@ -175,10 +176,12 @@ export const flattenAccountsSelector = createSelector(accountsSelector, flattenA
 export const accountsCountSelector = createSelector(accountsSelector, acc => acc.length);
 /** Returns a boolean that is true if and only if there is no account */
 export const hasNoAccountsSelector = createSelector(accountsSelector, acc => acc.length <= 0);
-/** Returns a boolean that is true if and only if all accounts are empty */
-export const areAccountsEmptySelector = createSelector(accountsSelector, accounts =>
-  accounts.every(isAccountEmpty),
-);
+
+export function useAreAccountsEmpty(): boolean {
+  const accounts = useSelector(shallowAccountsSelector);
+  const bridges = useAccountBridgeMany(accounts);
+  return accounts.every((a, i) => bridges[i].isAccountEmpty(a));
+}
 
 export const currenciesSelector = createSelector(accountsSelector, accounts =>
   uniq(flattenAccounts(accounts).map(a => getAccountCurrency(a))).sort((a, b) =>

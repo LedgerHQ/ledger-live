@@ -1,8 +1,10 @@
 import { Account, AccountUserData } from "@ledgerhq/types-live";
 import { AccountComparator } from "@ledgerhq/live-wallet/ordering";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getKey } from "~/renderer/storage";
 import { PasswordIncorrectError } from "@ledgerhq/errors";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { accountsSelector } from "~/renderer/reducers/accounts";
 import { ThunkResult } from "./types";
 
 export const removeAccount = (payload: Account) => ({
@@ -68,4 +70,15 @@ export const updateAccount: UpdateAccount = payload => ({
   },
 });
 
-export const cleanAccountsCache = () => ({ type: "CLEAN_ACCOUNTS_CACHE" });
+export const cleanAccountsCache =
+  (): ThunkResult<Promise<void>> =>
+  async (dispatch, getState) => {
+    const accounts = accountsSelector(getState());
+    const cleared = await Promise.all(
+      accounts.map(async account => {
+        const bridge = await getAccountBridge(account);
+        return bridge.clearAccount(account);
+      }),
+    );
+    dispatch(replaceAccounts(cleared));
+  };

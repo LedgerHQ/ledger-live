@@ -10,7 +10,7 @@ import { AccountLike } from "@ledgerhq/types-live";
 import { NavigatorName, ScreenName } from "~/const";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { EntryOf } from "~/types/helpers";
-import { accountsCountSelector, areAccountsEmptySelector } from "../reducers/accounts";
+import { accountsCountSelector, useAreAccountsEmpty } from "../reducers/accounts";
 import { readOnlyModeEnabledSelector } from "../reducers/settings";
 import { useStake } from "LLM/hooks/useStake/useStake";
 import { useOpenStakeDrawer } from "LLM/features/Stake";
@@ -45,7 +45,7 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
 
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const hasAnyAccounts = useSelector(accountsCountSelector) > 0;
-  const hasFunds = !useSelector(areAccountsEmptySelector) && hasAnyAccounts;
+  const hasFunds = !useAreAccountsEmpty() && hasAnyAccounts;
   const hasCurrency = currency ? !!accounts?.some(({ balance }) => balance.gt(0)) : hasFunds;
 
   const recoverEntryPoint = useFeature("protectServicesMobile");

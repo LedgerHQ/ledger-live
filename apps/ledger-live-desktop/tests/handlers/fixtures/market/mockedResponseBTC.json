@@ -1,6 +1,7 @@
 [
   {
     "id": "bitcoin",
+    "currencyId": "bitcoin",
     "ledgerIds": ["bitcoin"],
     "ticker": "btc",
     "name": "Bitcoin",

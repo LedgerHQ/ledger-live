@@ -94,6 +94,13 @@ describe("buildTransactionParams", () => {
         );
       }).toThrow("SEI getStakedBalance requires delegator and dstValAddress");
     });
+
+    it("should return the correct params for a claim rewards", () => {
+      const transactionType: StakingOperation = "claimReward";
+      const params = buildTransactionParams(currencyId, transactionType, validatorAddress, amount);
+
+      expect(params).toEqual([validatorAddress]);
+    });
   });
 
   describe("CELO", () => {
