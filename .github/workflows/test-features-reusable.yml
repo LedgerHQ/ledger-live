@@ -52,7 +52,7 @@ jobs:
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
 
       - name: Install dependencies
-        run: pnpm i --filter="./features/**"
+        run: pnpm i --filter="./features/**" --filter="./shared/**" --filter="./domain/**"
 
       - name: Run coverage on feature packages
         env:
