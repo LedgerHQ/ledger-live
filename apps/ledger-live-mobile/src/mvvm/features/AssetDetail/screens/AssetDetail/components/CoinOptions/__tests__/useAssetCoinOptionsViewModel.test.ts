@@ -15,12 +15,14 @@ const bitcoin = getCryptoCurrencyById("bitcoin");
 function renderViewModel({
   blacklistedTokenIds = [],
   starredMarketCoins = [],
+  marketId,
 }: {
   blacklistedTokenIds?: string[];
   starredMarketCoins?: string[];
+  marketId?: string;
 } = {}) {
   return renderHook(
-    () => useAssetCoinOptionsViewModel({ currency: bitcoin, currencyId: bitcoin.id }),
+    () => useAssetCoinOptionsViewModel({ currency: bitcoin, currencyId: bitcoin.id, marketId }),
     {
       overrideInitialState: (state: State): State => ({
         ...state,
@@ -57,6 +59,16 @@ describe("useAssetCoinOptionsViewModel", () => {
         is_favourite: false,
       }),
     );
+  });
+
+  it("prefers marketId over currencyId as the star key so favourites stay aligned with the Market list", () => {
+    const { result, store } = renderViewModel({ marketId: "bitcoin-coingecko-id" });
+
+    act(() => result.current.onToggleFavourite());
+
+    const { starredMarketCoins } = store.getState().settings;
+    expect(starredMarketCoins).toContain("bitcoin-coingecko-id");
+    expect(starredMarketCoins).not.toContain(bitcoin.id);
   });
 
   it("persists the hidden state and tracks analytics in both directions", () => {

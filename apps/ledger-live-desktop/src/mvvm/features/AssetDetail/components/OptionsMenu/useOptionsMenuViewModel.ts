@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import type { AssetDetailMarketInfo, AssetMarketData } from "@ledgerhq/asset-detail";
+import type { AssetMarketData } from "@ledgerhq/asset-detail";
 import type { DistributionItem } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
@@ -16,9 +16,8 @@ import {
 } from "~/renderer/reducers/settings";
 
 export type UseOptionsMenuViewModelProps = Readonly<{
-  distributionItem: DistributionItem | undefined;
-  market: AssetMarketData;
-  marketInfo: AssetDetailMarketInfo | undefined;
+  distributionItem?: DistributionItem;
+  marketData: AssetMarketData;
   currency: CryptoOrTokenCurrency;
 }>;
 
@@ -40,8 +39,7 @@ export type OptionsMenuViewModel = Readonly<{
 
 export function useOptionsMenuViewModel({
   distributionItem,
-  market,
-  marketInfo,
+  marketData,
   currency,
 }: UseOptionsMenuViewModelProps): OptionsMenuViewModel {
   const { t } = useTranslation();
@@ -49,11 +47,11 @@ export function useOptionsMenuViewModel({
   const starredMarketCoins = useSelector(starredMarketCoinsSelector);
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector) ?? [];
 
-  const { marketCurrencyData } = market;
+  const { marketId } = marketData;
 
   const starMarketId = useMemo(
-    () => distributionItem?.marketId ?? marketCurrencyData?.id ?? marketInfo?.id ?? undefined,
-    [distributionItem?.marketId, marketCurrencyData?.id, marketInfo?.id],
+    () => marketId ?? distributionItem?.marketId ?? distributionItem?.slug,
+    [marketId, distributionItem?.marketId, distributionItem?.slug],
   );
 
   const portfolioCurrencyId = currency.id;

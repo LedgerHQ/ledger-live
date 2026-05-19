@@ -27,9 +27,9 @@ import { useBuyNavigation } from "LLD/features/Market/hooks/useBuyNavigation";
 import { useSellNavigation } from "LLD/features/Market/hooks/useSellNavigation";
 
 type UseActionBarViewModelProps = Readonly<{
-  distributionItem: DistributionItem | undefined;
-  ledgerCurrency: CryptoOrTokenCurrency | undefined;
-  marketCurrencyData: MarketCurrencyData | undefined;
+  distributionItem?: DistributionItem;
+  ledgerCurrency?: CryptoOrTokenCurrency;
+  marketCurrencyData?: MarketCurrencyData;
   tickerHint: string;
 }>;
 

@@ -11,7 +11,12 @@ describe("useMarketDataSectionCurrencyData", () => {
   it("forwards the resolved market data and adds counter value + locale", () => {
     const marketCurrencyData = createMockMarketCurrencyData();
     const { result } = renderHook(
-      () => useMarketDataSectionCurrencyData({ marketCurrencyData, isLoading: false }),
+      () =>
+        useMarketDataSectionCurrencyData({
+          marketCurrencyData,
+          marketId: undefined,
+          isLoading: false,
+        }),
       hookOptions(),
     );
 
@@ -23,7 +28,12 @@ describe("useMarketDataSectionCurrencyData", () => {
 
   it("shows the skeleton while the upstream hook is still loading without data", () => {
     const { result } = renderHook(
-      () => useMarketDataSectionCurrencyData({ marketCurrencyData: undefined, isLoading: true }),
+      () =>
+        useMarketDataSectionCurrencyData({
+          marketCurrencyData: undefined,
+          marketId: undefined,
+          isLoading: true,
+        }),
       hookOptions(),
     );
 
@@ -36,6 +46,7 @@ describe("useMarketDataSectionCurrencyData", () => {
       () =>
         useMarketDataSectionCurrencyData({
           marketCurrencyData: createMockMarketCurrencyData(),
+          marketId: undefined,
           isLoading: true,
         }),
       hookOptions(),
@@ -46,7 +57,12 @@ describe("useMarketDataSectionCurrencyData", () => {
 
   it("does not show the skeleton when neither data nor loading is reported", () => {
     const { result } = renderHook(
-      () => useMarketDataSectionCurrencyData({ marketCurrencyData: undefined, isLoading: false }),
+      () =>
+        useMarketDataSectionCurrencyData({
+          marketCurrencyData: undefined,
+          marketId: undefined,
+          isLoading: false,
+        }),
       hookOptions(),
     );
 
