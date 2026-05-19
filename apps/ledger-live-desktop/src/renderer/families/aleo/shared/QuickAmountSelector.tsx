@@ -166,33 +166,30 @@ const QuickAmountSelector = ({ account, transaction, updateTransaction, onSelect
 
   return (
     <>
-      {selectedRecordsCount > 0 && (
-        <Box horizontal alignItems="center" gap="4px" data-testid="record-summary">
-          <Label>
-            {`${t("aleo.shared.quickAmountSelector.recordCount", { count: selectedRecordsCount })} · ${selectedRecordsSigningTime}`}
-          </Label>
+      <Box flexDirection="column" gap="4px">
+        {selectedRecordsCount > 0 && (
+          <Box horizontal alignItems="center" gap="4px" data-testid="record-summary">
+            <Label>
+              {`${t("aleo.shared.quickAmountSelector.recordCount", { count: selectedRecordsCount })} · ${selectedRecordsSigningTime}`}
+            </Label>
+          </Box>
+        )}
+        <Box horizontal alignItems="center" gap="4px">
+          <Label>{t("aleo.shared.quickAmountSelector.spendableBalance")}</Label>
+          <FormattedVal
+            noShrink
+            inline
+            marginTop={0.5}
+            color="neutral.c100"
+            fontSize={3}
+            fontWeight="600"
+            val={totalSpendableBalance}
+            unit={accountUnit}
+            showCode
+            alwaysShowValue
+            showAllDigits
+          />
         </Box>
-      )}
-      <Box
-        horizontal
-        alignItems="center"
-        gap="4px"
-        {...(selectedRecordsCount > 0 && { marginTop: 0 })}
-      >
-        <Label>{t("aleo.shared.quickAmountSelector.spendableBalance")}</Label>
-        <FormattedVal
-          noShrink
-          inline
-          marginTop={0.5}
-          color="neutral.c100"
-          fontSize={3}
-          fontWeight="600"
-          val={totalSpendableBalance}
-          unit={accountUnit}
-          showCode
-          alwaysShowValue
-          showAllDigits
-        />
       </Box>
       <Box horizontal justifyContent="center" flexWrap="wrap" gap="16px">
         {strategyData.map(
