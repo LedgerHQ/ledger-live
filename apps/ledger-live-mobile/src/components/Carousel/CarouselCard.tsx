@@ -7,7 +7,6 @@ import { useTheme } from "styled-components/native";
 import { WalletContentCard } from "~/dynamicContent/types";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import ForceTheme from "../theme/ForceTheme";
-
 import { renderWalletCarouselMediaTitleChildren } from "./renderWalletCarouselMediaTitleChildren";
 import { useCarouselCardModel } from "./useCarouselCardModel";
 
