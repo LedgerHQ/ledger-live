@@ -52,7 +52,9 @@ export const getValidGenericAwarenessModalCards = (
   );
 };
 
-const buildCarouselSlide = (extras: Record<string, string>): GenericAwarenessModalCarouselSlide => ({
+const buildCarouselSlide = (
+  extras: Record<string, string>,
+): GenericAwarenessModalCarouselSlide => ({
   title: extras.title ?? "",
   subtitle: extras.subtitle ?? "",
   imageUrl: extras.imageUrl ?? "",
@@ -131,7 +133,9 @@ export const buildGenericAwarenessModalContentCards = (
 
 export const processGenericAwarenessModalBrazeCards = (
   cards: GenericAwarenessModalBrazeCard[],
-): GenericAwarenessModalContentCard[] =>
-  buildGenericAwarenessModalContentCards(
-    getValidGenericAwarenessModalCards(groupByCampaignId(cards)),
-  );
+): GenericAwarenessModalContentCard[] => {
+  const cardsByCampaignId = groupByCampaignId(cards);
+  const validCards = getValidGenericAwarenessModalCards(cardsByCampaignId);
+
+  return buildGenericAwarenessModalContentCards(validCards);
+};
