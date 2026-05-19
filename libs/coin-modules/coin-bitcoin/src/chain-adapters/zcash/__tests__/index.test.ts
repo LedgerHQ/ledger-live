@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import type { BitcoinAccountRaw } from "../../../types";
-import type { SignerContext } from "../../../signer";
+import type { BitcoinSigner, SignerContext } from "../../../signer";
 import type { ZcashAccount, ZcashAccountRaw, ZcashPrivateInfo } from "../types";
 import { getChainAdapter } from "../../registry";
 
@@ -13,7 +13,12 @@ const dmkSignerCtor = jest.fn();
 jest.mock("@ledgerhq/live-signer-zcash", () => ({
   DmkSignerZcash: jest.fn().mockImplementation((...args) => {
     dmkSignerCtor(...args);
-    return { __mockedDmkSignerZcash: true, args };
+    return {
+      __mockedDmkSignerZcash: true,
+      args,
+      getAddress: jest.fn(),
+      getFullViewingKey: jest.fn(),
+    };
   }),
 }));
 
@@ -32,8 +37,7 @@ const currency = getCryptoCurrencyById("zcash");
  */
 const MASTER_PUBKEY_HEX = "0339a36013301597daef41fbe593a02cc513d0b55527ec2df1050e2e8ff49c85c2";
 const ACCOUNT_PUBKEY_HEX = "035a784662a4a20a65bf6aab9ae98a6c068a81c52e4b032c0fb5400c706cfccc56";
-const ACCOUNT_CHAIN_CODE_HEX =
-  "47fdacbd0f1097043b78c63c20c34ef4ed9a111d980047ad16282c7ae6236141";
+const ACCOUNT_CHAIN_CODE_HEX = "47fdacbd0f1097043b78c63c20c34ef4ed9a111d980047ad16282c7ae6236141";
 const EXPECTED_M_0H_XPUB =
   "xpub68Gmy5EdvgibQVfPdqkBBCHxA5htiqg55crXYuXoQRKfDBFA1WEjWgP6LHhwBZeNK1VTsfTFUHCdrfp1bgwQ9xv5ski8PX9rL2dZXvgGDnw";
 const XPUB_MAINNET_VERSION = 0x0488b21e;
@@ -324,28 +328,29 @@ describe("zcash chain adapter — getFullViewingKey", () => {
 // ─── createSigner ─────────────────────────────────────────────────────
 
 describe("zcash chain adapter — createSigner", () => {
-  it("instantiates DmkSignerZcash from a DMK transport", () => {
+  it("augments the default signer with DmkSignerZcash methods for DMK transport", () => {
     const dmk = { dmkSentinel: true };
     const sessionId = "session-42";
+    const defaultSigner = { splitTransaction: jest.fn() } as unknown as BitcoinSigner;
 
-    const signer = adapter.createSigner!({ dmk, sessionId }, currency);
+    const signer = adapter.createSigner!({ dmk, sessionId }, currency, defaultSigner);
 
     expect(dmkSignerCtor).toHaveBeenCalledWith(dmk, sessionId);
-    expect(signer).toEqual({
-      __mockedDmkSignerZcash: true,
-      args: [dmk, sessionId],
-    });
+    // Default signer is augmented in-place with DMK methods
+    expect(signer).toBe(defaultSigner);
+    expect(signer).toHaveProperty("getAddress");
+    expect(signer).toHaveProperty("getFullViewingKey");
+    expect(signer).toHaveProperty("splitTransaction");
   });
 
-  it("rejects non-DMK transports (e.g. legacy hw-transport)", () => {
-    expect(() => adapter.createSigner!({}, currency)).toThrow(/Zcash requires DMK transport/);
-    expect(() => adapter.createSigner!({ dmk: {} }, currency)).toThrow(
-      /Zcash requires DMK transport/,
-    );
+  it("returns undefined for non-DMK transports (falls through to standard Btc)", () => {
+    const defaultSigner = {} as BitcoinSigner;
+    expect(adapter.createSigner!({}, currency, defaultSigner)).toBeUndefined();
+    expect(adapter.createSigner!({ dmk: {} }, currency, defaultSigner)).toBeUndefined();
     // sessionId must be a string
-    expect(() => adapter.createSigner!({ dmk: {}, sessionId: 123 }, currency)).toThrow(
-      /Zcash requires DMK transport/,
-    );
+    expect(
+      adapter.createSigner!({ dmk: {}, sessionId: 123 }, currency, defaultSigner),
+    ).toBeUndefined();
   });
 });
 

@@ -152,11 +152,17 @@ const zcashChainAdapter: ChainAdapter = {
     });
   },
 
-  createSigner(transport, _currency) {
-    if (!isDmkTransport(transport)) {
-      throw new Error("Zcash requires DMK transport");
-    }
-    return new DmkSignerZcash(transport.dmk, transport.sessionId);
+  createSigner(transport, _currency, defaultSigner) {
+    if (!isDmkTransport(transport)) return undefined;
+
+    // Augment the default BitcoinSigner with DmkSignerZcash methods.
+    // This gives chain adapter overrides (getAddress, getWalletXpub, getFullViewingKey)
+    // access to the DMK signer, while signOperation keeps using BitcoinSigner methods from Btc.
+    const dmk = new DmkSignerZcash(transport.dmk, transport.sessionId);
+    return Object.assign(defaultSigner, {
+      getAddress: dmk.getAddress.bind(dmk),
+      getFullViewingKey: dmk.getFullViewingKey.bind(dmk),
+    });
   },
 };
 
