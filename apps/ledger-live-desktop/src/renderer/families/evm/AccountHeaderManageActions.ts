@@ -2,6 +2,9 @@ import { Account, AccountLike } from "@ledgerhq/types-live";
 import { useCallback } from "react";
 import { openModal } from "~/renderer/actions/modals";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { canDelegate } from "@ledgerhq/live-common/families/evm/staking/logic";
+import { isStakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import { useNavigate } from "react-router";
 import { useStake } from "LLD/hooks/useStake";
@@ -22,6 +25,8 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   const label = useGetStakeLabelLocaleBased();
   const walletState = useSelector(walletSelector);
   const { getRouteToPlatformApp } = useStake();
+  const { enabled: isEvmNativeStakingEnabled, params: evmNativeStakingParams } =
+    useFeature("evmNativeStaking") ?? {};
 
   const isEthereumAccount = account.type === "Account" && account.currency.id === "ethereum";
   const isBscAccount = account.type === "Account" && account.currency.id === "bsc";
@@ -29,6 +34,11 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
     account.type === "TokenAccount" &&
     account.token.id === "ethereum/erc20/polygon_ecosystem_token";
   const isAvaxAccount = account.type === "Account" && account.currency.id === "avalanche_c_chain";
+  const canShowEvmNativeStake =
+    account.type === "Account" &&
+    isStakingAccount(account) &&
+    (isEvmNativeStakingEnabled ?? false) &&
+    (evmNativeStakingParams?.supportedCurrencyIds?.includes(account.currency.id) ?? false);
 
   const onClickStakekit = useCallback(
     (yieldId: string) => {
@@ -72,6 +82,14 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
     }
   }, [account, bridge, dispatch, parentAccount, getRouteToPlatformApp, walletState, navigate]);
 
+  const onClickEvmNativeStake = useCallback(() => {
+    if (account.type === "Account" && isStakingAccount(account) && canDelegate(account)) {
+      dispatch(openModal("MODAL_EVM_DELEGATE", { account }));
+    } else {
+      dispatch(openModal("MODAL_NO_FUNDS_STAKE", { account, parentAccount }));
+    }
+  }, [account, dispatch, parentAccount]);
+
   const getStakeAction = useCallback(() => {
     if (isEthereumAccount) {
       onClickStakeModal();
@@ -81,6 +99,8 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
       onClickStakekit("ethereum-matic-native-staking");
     } else if (isAvaxAccount) {
       onClickStakekit("avalanche-avax-liquid-staking");
+    } else if (canShowEvmNativeStake) {
+      onClickEvmNativeStake();
     }
   }, [
     isEthereumAccount,
@@ -89,9 +109,11 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
     onClickStakeModal,
     onClickStakekit,
     isPOLAccount,
+    canShowEvmNativeStake,
+    onClickEvmNativeStake,
   ]);
 
-  if (isEthereumAccount || isBscAccount || isPOLAccount || isAvaxAccount) {
+  if (isEthereumAccount || isBscAccount || isPOLAccount || isAvaxAccount || canShowEvmNativeStake) {
     return [
       {
         key: "Stake",
