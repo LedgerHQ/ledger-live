@@ -11,23 +11,22 @@ import {
 import { liveDataWithAddressCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
+import { pickRotatingProvider } from "@ledgerhq/live-common/e2e/swap";
 
 const xrayTicket = "B2CQA-5632";
 const fromAccount = TokenAccount.ETH_USDC_1;
 const toAccount = Account.ETH_1;
 const eligibleProviders = [
-  { provider: Provider.THORCHAIN },
-  { provider: Provider.UNISWAP },
-  { provider: Provider.LIFI },
-  { provider: Provider.OKX },
-  // { provider: Provider.ONE_INCH },
-  // { provider: Provider.VELORA },
+  Provider.THORCHAIN,
+  Provider.UNISWAP,
+  Provider.LIFI,
+  Provider.OKX,
+  // Provider.ONE_INCH,
+  // Provider.VELORA,
 ];
-const seed = Math.floor(Date.now() / 60_000);
-const randomizedSeed = Math.abs(Math.sin(seed + 1));
-const { provider } = eligibleProviders[Math.floor(randomizedSeed * eligibleProviders.length)];
+const provider = pickRotatingProvider(eligibleProviders);
 
-test.describe(`Token approval - ${provider.uiName} flow`, () => {
+test.describe(`Token approval - flow`, () => {
   test.skip(
     process.env.DISABLE_TRANSACTION_BROADCAST !== "0",
     "Token approval flow requires broadcast to be enabled — runs on Monday nightly only",
@@ -56,7 +55,7 @@ test.describe(`Token approval - ${provider.uiName} flow`, () => {
   });
 
   test(
-    `Swap - ${provider.uiName} approval flow`,
+    `Swap - token approval flow`,
     {
       tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
       annotation: [
@@ -67,6 +66,7 @@ test.describe(`Token approval - ${provider.uiName} flow`, () => {
       ],
     },
     async ({ app }) => {
+      await app.swap.getSelectedProvider(provider.uiName);
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await revokeTokenApproval(fromAccount, provider);
       await app.swap.ensureRevokeTokenApproval(fromAccount, provider);
@@ -84,6 +84,7 @@ test.describe(`Token approval - ${provider.uiName} flow`, () => {
         await app.speculos.signTypedMessage();
       }
       await app.swap.expectTwoStepSignScreen();
+      await app.swap.expectTransactionSentToasterToBeVisible();
     },
   );
 });

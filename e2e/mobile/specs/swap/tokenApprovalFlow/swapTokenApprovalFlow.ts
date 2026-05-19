@@ -3,7 +3,7 @@ import { performSwapUntilQuoteSelectionStep, revokeTokenApproval } from "../../.
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { beforeAllFunctionSwap } from "../swap.setup";
 
-export function runSwapApprovalFlow(
+export function runSwapTokenApprovalFlow(
   fromAccount: TokenAccount,
   toAccount: Account,
   provider: Provider,
@@ -16,7 +16,7 @@ export function runSwapApprovalFlow(
       "[approval.swap.spec] Skipping — requires DISABLE_TRANSACTION_BROADCAST=0 (Monday nightly only)",
     );
   }
-  (isBroadcastEnabled ? describe : describe.skip)("Swap - ERC20 Approval flow", () => {
+  (isBroadcastEnabled ? describe : describe.skip)("Token approval - flow", () => {
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(fromAccount, toAccount);
       await beforeAllFunctionSwap({
@@ -38,7 +38,8 @@ export function runSwapApprovalFlow(
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
 
-    it(`Swap - ${provider.uiName} approval flow`, async () => {
+    it(`Swap - token approval flow`, async () => {
+      await app.swap.getSelectedProvider(provider.uiName);
       await revokeTokenApproval(fromAccount, provider);
       await app.swap.ensureRevokeTokenApproval(fromAccount, provider);
       const minAmount = await app.swapLiveApp.getMinimumAmount(fromAccount, toAccount);
