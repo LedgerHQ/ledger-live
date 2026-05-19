@@ -2,4 +2,4 @@
 "ledger-live-desktop": patch
 ---
 
-Open finish-onboarding dialog from sync onboarding completion when Wallet40 finish widget is enabled
+Fix Wallet40 post-onboarding to show Recover landing behind the finish-onboarding dialog and route to the portfolio dialog instead of the legacy hub after closing Recover (LIVE-30572)

@@ -36,6 +36,17 @@ describe("useFinishOnboardingDialogViewModel", () => {
     expect(result.current.isOpen).toBe(true);
   });
 
+  it("should mark hasBeenRedirectedToPostOnboarding when the dialog is open", () => {
+    const { store } = renderHook(() => useFinishOnboardingDialogViewModel(), {
+      initialState: {
+        dialogs: { FINISH_POST_ONBOARDING: true },
+        settings: { hasBeenRedirectedToPostOnboarding: false },
+      },
+    });
+
+    expect(store.getState().settings.hasBeenRedirectedToPostOnboarding).toBe(true);
+  });
+
   it("should exclude buyCrypto from actions", () => {
     const actionsState = [
       { id: PostOnboardingActionId.deviceOnboarded, completed: true },
