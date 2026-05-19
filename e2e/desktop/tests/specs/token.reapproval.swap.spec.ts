@@ -13,20 +13,15 @@ import { liveDataWithAddressCommand } from "@ledgerhq/live-common/e2e/cliCommand
 import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import BigNumber from "bignumber.js";
+import { pickRotatingProvider } from "@ledgerhq/live-common/e2e/swap";
 
 const xrayTicket = "B2CQA-4012";
 const fromAccount = TokenAccount.ETH_USDC_1;
 const toAccount = Account.ETH_1;
-const eligibleProviders = [
-  { provider: Provider.THORCHAIN },
-  { provider: Provider.LIFI },
-  { provider: Provider.OKX },
-];
-const seed = Math.floor(Date.now() / 60_000);
-const randomizedSeed = Math.abs(Math.sin(seed + 1));
-const { provider } = eligibleProviders[Math.floor(randomizedSeed * eligibleProviders.length)];
+const eligibleProviders = [Provider.THORCHAIN, Provider.LIFI, Provider.OKX];
+const provider = pickRotatingProvider(eligibleProviders);
 
-test.describe(`Token re-approval - ${provider.uiName} flow`, () => {
+test.describe("Token reapproval - flow", () => {
   test.skip(
     process.env.DISABLE_TRANSACTION_BROADCAST !== "0",
     "Token re-approval (bigger amount) flow requires broadcast to be enabled — runs on Monday nightly only",
@@ -55,7 +50,7 @@ test.describe(`Token re-approval - ${provider.uiName} flow`, () => {
   });
 
   test(
-    `Swap - ${provider.uiName} reapproval flow`,
+    "Swap - token reapproval flow",
     {
       tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
       annotation: [
@@ -66,13 +61,12 @@ test.describe(`Token re-approval - ${provider.uiName} flow`, () => {
       ],
     },
     async ({ app }) => {
+      await app.swap.getSelectedProvider(provider.uiName);
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
-
       await revokeTokenApproval(fromAccount, provider);
       const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
       const smallAmount = new BigNumber(minAmount).div(4).toFixed();
       await ensureTokenApproval(fromAccount, provider, smallAmount);
-
       const swap = new Swap(fromAccount, toAccount, minAmount, provider);
       await performSwapUntilQuoteSelectionStep(app, swap, minAmount);
       await app.swap.selectSpecificProvider(provider);
@@ -82,6 +76,7 @@ test.describe(`Token re-approval - ${provider.uiName} flow`, () => {
       await app.swap.clickContinueButton();
       await app.speculos.signTokenApproval();
       await app.swap.expectTwoStepSignScreen();
+      await app.swap.expectTransactionSentToasterToBeVisible();
     },
   );
 });

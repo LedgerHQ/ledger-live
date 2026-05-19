@@ -38,7 +38,7 @@ export function runSwapTokenApprovalFlow(
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
 
-    it(`Swap - token approval flow`, async () => {
+    it("Swap - token approval flow", async () => {
       await app.swap.getSelectedProvider(provider.uiName);
       await revokeTokenApproval(fromAccount, provider);
       await app.swap.ensureRevokeTokenApproval(fromAccount, provider);

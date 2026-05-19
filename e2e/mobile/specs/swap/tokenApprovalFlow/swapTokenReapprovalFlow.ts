@@ -8,7 +8,7 @@ import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { beforeAllFunctionSwap } from "../swap.setup";
 import BigNumber from "bignumber.js";
 
-export function runSwapReapprovalFlow(
+export function runSwapTokenReapprovalFlow(
   fromAccount: TokenAccount,
   toAccount: Account,
   provider: Provider,
@@ -21,7 +21,7 @@ export function runSwapReapprovalFlow(
       "[reapproval.swap.spec] Skipping — requires DISABLE_TRANSACTION_BROADCAST=0 (Monday nightly only)",
     );
   }
-  (isBroadcastEnabled ? describe : describe.skip)("Swap - ERC20 Reapproval flow", () => {
+  (isBroadcastEnabled ? describe : describe.skip)("Token reapproval - flow", () => {
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(fromAccount, toAccount);
       await beforeAllFunctionSwap({
@@ -43,12 +43,12 @@ export function runSwapReapprovalFlow(
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
 
-    it(`Swap - ${provider.uiName} reapproval flow`, async () => {
+    it("Swap - token reapproval flow", async () => {
+      await app.swap.getSelectedProvider(provider.uiName);
       await revokeTokenApproval(fromAccount, provider);
       const minAmount = await app.swapLiveApp.getMinimumAmount(fromAccount, toAccount);
       const smallAmount = new BigNumber(minAmount).div(4).toFixed();
       await ensureTokenApproval(fromAccount, provider, smallAmount);
-
       const swap = new Swap(fromAccount, toAccount, minAmount, provider);
       await performSwapUntilQuoteSelectionStep(
         swap.accountToDebit,
@@ -63,6 +63,7 @@ export function runSwapReapprovalFlow(
       await app.send.summaryContinue();
       await app.speculos.signTokenApproval();
       await app.swapLiveApp.expectTwoStepSignScreen();
+      await app.swapLiveApp.expectExecuteSwapOnStepApproval();
     });
   });
 }

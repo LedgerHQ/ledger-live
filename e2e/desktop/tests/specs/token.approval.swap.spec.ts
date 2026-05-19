@@ -26,7 +26,7 @@ const eligibleProviders = [
 ];
 const provider = pickRotatingProvider(eligibleProviders);
 
-test.describe(`Token approval - flow`, () => {
+test.describe("Token approval - flow", () => {
   test.skip(
     process.env.DISABLE_TRANSACTION_BROADCAST !== "0",
     "Token approval flow requires broadcast to be enabled — runs on Monday nightly only",
@@ -55,7 +55,7 @@ test.describe(`Token approval - flow`, () => {
   });
 
   test(
-    `Swap - token approval flow`,
+    "Swap - token approval flow",
     {
       tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],
       annotation: [
