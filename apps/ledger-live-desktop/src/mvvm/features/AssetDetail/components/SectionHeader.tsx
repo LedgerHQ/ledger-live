@@ -2,7 +2,9 @@ import React from "react";
 import {
   Link,
   Subheader,
+  SubheaderCount,
   SubheaderRow,
+  SubheaderShowMore,
   SubheaderTitle,
   Tooltip,
   TooltipContent,
@@ -16,6 +18,10 @@ export type SectionHeaderProps = Readonly<{
   onActionClick?: () => void;
   actionTestId?: string;
   tooltipContent?: string;
+  itemCount?: number;
+  showSeeAll?: boolean;
+  onSeeAllClick?: () => void;
+  seeAllTestId?: string;
 }>;
 
 export function SectionHeader({
@@ -24,12 +30,34 @@ export function SectionHeader({
   onActionClick,
   actionTestId,
   tooltipContent,
+  itemCount,
+  showSeeAll,
+  onSeeAllClick,
+  seeAllTestId,
 }: SectionHeaderProps) {
   return (
     <Subheader>
       <SubheaderRow className="min-w-0 items-center justify-between gap-8">
-        <div className="flex min-w-0 items-center gap-8">
+        <div
+          className={`flex min-w-0 items-center gap-8${showSeeAll ? " cursor-pointer" : ""}`}
+          onClick={showSeeAll ? onSeeAllClick : undefined}
+          onKeyDown={
+            showSeeAll
+              ? e => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    onSeeAllClick?.();
+                  }
+                }
+              : undefined
+          }
+          role={showSeeAll ? "button" : undefined}
+          tabIndex={showSeeAll ? 0 : undefined}
+          data-testid={showSeeAll ? seeAllTestId : undefined}
+        >
           <SubheaderTitle>{title}</SubheaderTitle>
+          {showSeeAll && itemCount !== undefined ? <SubheaderCount value={itemCount} /> : null}
+          {showSeeAll ? <SubheaderShowMore /> : null}
           {tooltipContent ? (
             <Tooltip>
               <TooltipTrigger asChild>
