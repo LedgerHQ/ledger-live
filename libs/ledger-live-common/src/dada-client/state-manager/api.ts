@@ -8,6 +8,7 @@ import {
 import { convertApiAssets, legacyIdToApiId } from "@ledgerhq/cryptoassets";
 import { RawApiResponse, AssetsData } from "../entities";
 import { getEnv } from "@ledgerhq/live-env";
+import { injectAleoMockData } from "./aleo.mock";
 import {
   AssetsAdditionalData,
   AssetsDataTags,
@@ -44,12 +45,15 @@ function transformAssetsResponse(
   response: RawApiResponse,
   meta?: FetchBaseQueryMeta,
 ): AssetsDataWithPagination {
-  const enrichedCryptoOrTokenCurrencies = convertApiAssets(response.cryptoOrTokenCurrencies);
+  const responseWithMocks = injectAleoMockData(response);
+  const enrichedCryptoOrTokenCurrencies = convertApiAssets(
+    responseWithMocks.cryptoOrTokenCurrencies,
+  );
 
   const nextCursor = meta?.response?.headers.get("x-ledger-next") || undefined;
 
   return {
-    ...response,
+    ...responseWithMocks,
     cryptoOrTokenCurrencies: enrichedCryptoOrTokenCurrencies,
     pagination: {
       nextCursor,
@@ -116,10 +120,13 @@ async function fetchAssetsPage(
   }
 
   const raw: RawApiResponse = await response.json();
-  const enrichedCryptoOrTokenCurrencies = convertApiAssets(raw.cryptoOrTokenCurrencies);
+  const responseWithMocks = injectAleoMockData(raw);
+  const enrichedCryptoOrTokenCurrencies = convertApiAssets(
+    responseWithMocks.cryptoOrTokenCurrencies,
+  );
 
   return {
-    ...raw,
+    ...responseWithMocks,
     cryptoOrTokenCurrencies: enrichedCryptoOrTokenCurrencies,
   };
 }
