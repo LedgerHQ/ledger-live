@@ -101,3 +101,23 @@ export const recoverMock: PostOnboardingAction = {
     },
   ],
 };
+
+export const discoverWalletMock: PostOnboardingAction = {
+  id: PostOnboardingActionId.discoverWalletMock,
+  disabled: false,
+  Icon: Icons.WalletInput,
+  title: "postOnboarding.drawer.actions.discoverWallet.title",
+  titleCompleted: "postOnboarding.actions.discoverWallet.titleCompleted",
+  description: "postOnboarding.drawer.actions.discoverWallet.description",
+  actionCompletedPopupLabel: "postOnboarding.actions.discoverWallet.popupLabel",
+  getNavigationParams: () => [
+    NavigatorName.PostOnboarding,
+    {
+      screen: ScreenName.PostOnboardingMockActionScreen,
+      params: {
+        id: PostOnboardingActionId.discoverWalletMock,
+        title: PostOnboardingActionId.discoverWalletMock,
+      },
+    },
+  ],
+};
