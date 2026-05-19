@@ -1,4 +1,4 @@
-import type { Tool } from "../../types";
+import type { Tool } from "@devtools/core";
 import { ToolRow } from "../ToolRow/ToolRow.web";
 import { useIsToolConfigured } from "../../context";
 

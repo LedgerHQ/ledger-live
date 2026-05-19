@@ -2,7 +2,7 @@ import userEvent from "@testing-library/user-event";
 import { render, screen } from "jest/render";
 import { makeTool } from "jest/fixtures";
 import { Sidebar } from "./Sidebar.web";
-import { Category } from "../../types";
+import { Category } from "@devtools/core";
 
 const categories = [
   {

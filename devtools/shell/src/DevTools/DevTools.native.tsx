@@ -3,10 +3,9 @@ import { ledgerLiveThemes } from "@ledgerhq/lumen-design-core";
 import { ScrollView, TextInput, Pressable } from "react-native";
 import { useState } from "react";
 import { tools } from "../registry/tools";
-import { Category } from "../types";
-import type { Tool } from "../types";
+import { Category } from "@devtools/core";
+import type { DevToolsPropsRegistry, Tool } from "@devtools/core";
 import { DevToolsProvider } from "../context";
-import type { DevToolsPropsRegistry } from "../context";
 import { filterToolsByPlatform } from "../utils/toolsUtils";
 
 export interface DevToolsProps {

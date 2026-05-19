@@ -1,6 +1,6 @@
 import { SearchInput } from "@ledgerhq/lumen-ui-react";
-import { Category } from "../../types";
-import type { Tool } from "../../types";
+import { Category } from "@devtools/core";
+import type { Tool } from "@devtools/core";
 import { CategoryRow } from "../CategoryRow/CategoryRow.web";
 import { IconSquare } from "../IconSquare/IconSquare.web";
 import { useSidebarViewModel, type SidebarViewProps } from "./useSidebarViewModel.web";

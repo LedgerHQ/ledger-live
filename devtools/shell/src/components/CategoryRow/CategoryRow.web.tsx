@@ -1,5 +1,5 @@
 import { ChevronDown, ChevronRight } from "@ledgerhq/lumen-ui-react/symbols";
-import type { Category, Tool } from "../../types";
+import type { Category, Tool } from "@devtools/core";
 import type { IconComponent } from "../../categoryConfig";
 import { ToolRowItem } from "../ToolRowItem/ToolRowItem.web";
 

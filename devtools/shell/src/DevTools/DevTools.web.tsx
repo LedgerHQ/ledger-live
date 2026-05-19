@@ -2,7 +2,7 @@ import { ThemeProvider, Divider } from "@ledgerhq/lumen-ui-react";
 import { Sidebar, ToolShell, Overview } from "../components";
 import { useDevToolsViewModel, type DevToolsViewProps } from "./useDevToolsViewModel.web";
 import { DevToolsProvider } from "../context";
-import type { DevToolsPropsRegistry } from "../context";
+import type { DevToolsPropsRegistry } from "@devtools/core";
 
 type ColorScheme = "light" | "dark" | "system";
 

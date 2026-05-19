@@ -1,6 +1,6 @@
 import { Star, Clock } from "@ledgerhq/lumen-ui-react/symbols";
-import { Category } from "../../types";
-import type { Tool } from "../../types";
+import { Category } from "@devtools/core";
+import type { Tool } from "@devtools/core";
 import { SectionHeader } from "../SectionHeader/SectionHeader.web";
 import { CategoryCard } from "../CategoryCard/CategoryCard.web";
 import { ToolCard } from "../ToolCard/ToolCard.web";

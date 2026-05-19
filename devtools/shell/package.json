@@ -15,6 +15,9 @@
     "test:watch": "jest --watch",
     "coverage": "jest --coverage"
   },
+  "dependencies": {
+    "@devtools/core": "workspace:*"
+  },
   "peerDependencies": {
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",

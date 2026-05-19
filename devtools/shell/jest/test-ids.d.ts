@@ -1,6 +1,6 @@
 export {};
 
-declare module "../src/index" {
+declare module "@devtools/core" {
   interface DevToolsPropsRegistry {
     "test-tool"?: { value: string };
     "optional-tool"?: { value?: string };

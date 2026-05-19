@@ -1,5 +1,5 @@
 import { ChevronRight } from "@ledgerhq/lumen-ui-react/symbols";
-import type { Tool } from "../../types";
+import type { Tool } from "@devtools/core";
 import { IconSquare } from "../IconSquare/IconSquare.web";
 
 interface ToolCardProps {

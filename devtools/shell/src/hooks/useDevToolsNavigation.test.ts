@@ -1,6 +1,6 @@
 import { act, renderHook } from "@testing-library/react";
 import { useDevToolsNavigation } from "./useDevToolsNavigation";
-import { Category } from "../types";
+import { Category } from "@devtools/core";
 import { makeTool } from "../../jest/fixtures";
 
 const tools = [

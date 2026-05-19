@@ -1,7 +1,7 @@
 import { tools } from "../registry/tools";
 import { useDevToolsNavigation } from "../hooks";
 import { useDevToolsStorage } from "../hooks/useDevToolsStorage.web";
-import type { Category, Tool } from "../types";
+import type { Category, Tool } from "@devtools/core";
 import { filterToolsByPlatform } from "../utils/toolsUtils";
 
 type ColorScheme = "light" | "dark" | "system";

@@ -1,2 +1,2 @@
-export type { DevToolsPropsRegistry } from "../index";
+export type { DevToolsPropsRegistry } from "@devtools/core";
 export { DevToolsProvider, useToolProps, useIsToolConfigured } from "./context";

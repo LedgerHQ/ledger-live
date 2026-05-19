@@ -1,5 +1,4 @@
-import { Category } from "../types";
-import type { Tool, ToolPlatform } from "../types";
+import type { Category, Tool, ToolPlatform } from "@devtools/core";
 
 type CategoryEntry = { category: Category; tools: Tool[] };
 

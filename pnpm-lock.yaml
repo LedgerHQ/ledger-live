@@ -2849,6 +2849,10 @@ importers:
         version: 6.0.2
 
   devtools/shell:
+    dependencies:
+      '@devtools/core':
+        specifier: workspace:*
+        version: link:../core
     devDependencies:
       '@babel/plugin-transform-export-namespace-from':
         specifier: 7.27.1
@@ -20719,6 +20723,7 @@ packages:
   '@snyk/github-codeowners@1.1.0':
     resolution: {integrity: sha512-lGFf08pbkEac0NYgVf4hdANpAgApRjNByLXB+WBip3qj1iendOIyAwP2GKkKbQMNVy2r1xxDf0ssfWscoiC+Vw==}
     engines: {node: '>=8.10'}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
     hasBin: true
 
   '@socket.io/component-emitter@3.1.2':

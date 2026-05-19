@@ -1,7 +1,6 @@
 import { createContext, createElement, useContext } from "react";
 import type { ReactNode } from "react";
-import type { DevToolsPropsRegistry } from "../index";
-import type { Tool } from "../types";
+import type { DevToolsPropsRegistry, Tool } from "@devtools/core";
 
 const EMPTY_VALUE: Partial<DevToolsPropsRegistry> = {};
 const DevToolsContext = createContext<Partial<DevToolsPropsRegistry>>(EMPTY_VALUE);
@@ -24,6 +23,7 @@ export function useToolProps<K extends keyof DevToolsPropsRegistry>(
 
 export function useIsToolConfigured(tool: Tool): boolean {
   if (tool.optional) return true;
-  const props = useToolProps(tool.id);
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  const props = useToolProps(tool.id as keyof DevToolsPropsRegistry);
   return props !== undefined;
 }

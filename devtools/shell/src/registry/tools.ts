@@ -1,6 +1,6 @@
 import type { ComponentType } from "react";
-import type { Tool } from "../types";
-import type { DevToolsPropsRegistry } from "../index";
+import { parse } from "@devtools/core";
+import type { DevToolsPropsRegistry, Tool } from "@devtools/core";
 
 export const tools: Tool[] = [];
 
@@ -32,9 +32,9 @@ type ToolInput<K extends keyof DevToolsPropsRegistry> = Omit<
 export function registerToolWithRequiredProps<K extends keyof DevToolsPropsRegistry>(
   tool: ToolInput<K>,
 ): Tool {
-  return addTool({ ...tool, optional: false });
+  return addTool({ ...tool, id: parse(tool.id), optional: false });
 }
 
 export function registerTool<K extends keyof DevToolsPropsRegistry>(tool: ToolInput<K>): Tool {
-  return addTool({ ...tool, optional: true });
+  return addTool({ ...tool, id: parse(tool.id), optional: true });
 }

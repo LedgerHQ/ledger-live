@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
-import { Category } from "../types";
-import type { Tool } from "../types";
+import { Category } from "@devtools/core";
+import type { Tool } from "@devtools/core";
 
 export const useDevToolsNavigation = (tools: Tool[]) => {
   const [activeToolId, setActiveToolId] = useState<string | null>(null);
