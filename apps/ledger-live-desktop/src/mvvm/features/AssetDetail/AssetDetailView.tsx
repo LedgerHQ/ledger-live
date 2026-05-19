@@ -15,40 +15,38 @@ type AssetDetailViewProps = Readonly<{
 }>;
 
 export function AssetDetailView({ viewModel }: AssetDetailViewProps) {
-  const { distributionItem, marketInfo, market, assetName, assetTicker, ledgerId, ledgerCurrency } =
+  const { distributionItem, marketData, displayName, displayTicker, ledgerId, ledgerCurrency } =
     viewModel;
 
   return (
     <div className="flex w-full shrink-0 flex-col gap-24 pb-32">
       <AssetHeader
-        assetLabel={assetName}
+        assetLabel={displayName}
         icon={
           ledgerId && (
             <CryptoIcon
               ledgerId={ledgerId}
-              ticker={assetTicker}
+              ticker={displayTicker}
               size={getValidCryptoIconSize(24)}
             />
           )
         }
         distributionItem={distributionItem}
-        market={market}
-        marketInfo={marketInfo}
+        marketData={marketData}
         ledgerCurrency={ledgerCurrency}
       />
 
       <MarketPriceSection
         distributionItem={distributionItem}
-        marketInfo={marketInfo}
         ledgerId={ledgerId}
-        market={market}
+        marketData={marketData}
       />
 
       <ActionBar
         distributionItem={distributionItem}
         ledgerCurrency={ledgerCurrency}
-        marketCurrencyData={market.marketCurrencyData}
-        tickerHint={assetTicker}
+        marketCurrencyData={marketData.marketCurrencyData}
+        tickerHint={displayTicker}
       />
 
       <div className="flex flex-col gap-32">
@@ -56,7 +54,7 @@ export function AssetDetailView({ viewModel }: AssetDetailViewProps) {
 
         {distributionItem && <PnLSection distributionItem={distributionItem} />}
 
-        {marketInfo && <MarketDataSection market={market} />}
+        {marketData.marketCurrencyData && <MarketDataSection marketData={marketData} />}
 
         {distributionItem && <TransactionsSection distributionItem={distributionItem} />}
       </div>

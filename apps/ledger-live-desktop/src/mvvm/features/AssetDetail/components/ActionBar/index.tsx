@@ -6,9 +6,9 @@ import { ActionBarView } from "./ActionBar";
 import { useActionBarViewModel } from "./useActionBarViewModel";
 
 type ActionBarProps = Readonly<{
-  distributionItem: DistributionItem | undefined;
-  ledgerCurrency: CryptoOrTokenCurrency | undefined;
-  marketCurrencyData: MarketCurrencyData | undefined;
+  distributionItem?: DistributionItem;
+  ledgerCurrency?: CryptoOrTokenCurrency;
+  marketCurrencyData?: MarketCurrencyData;
   tickerHint: string;
 }>;
 

@@ -257,6 +257,38 @@ describe("AssetDetail integration", () => {
       expect(screen.getByRole("menuitem", { name: /hide from portfolio/i })).toBeVisible();
     });
 
+    it("USDC - enables the favorite action and stores the coingecko id when toggled", async () => {
+      mockMarket.withData(MarketMockedResponse.usdcDetail);
+      const account = genAccount("asset-detail-usdc-star-account", { currency: btc });
+      const item = buildDistributionItem({
+        currency: makeIntegrationTokenCurrency("ethereum/erc20/usd__coin", "USDC", "USD Coin"),
+        accounts: [account],
+        slug: "usd-coin",
+      });
+      setupRoute("ethereum/erc20/usd__coin", { bySlug: {}, list: [item] });
+
+      const { user, store } = renderWithMockedCounterValuesProvider(<AssetDetail />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId(TEST_ID.HEADER_OPTIONS)).toBeVisible();
+      });
+
+      await user.click(screen.getByTestId(TEST_ID.HEADER_OPTIONS));
+
+      const favoriteItem = await screen.findByRole("menuitem", { name: /add to favorites/i });
+      expect(favoriteItem).toBeVisible();
+      expect(favoriteItem).not.toHaveAttribute("aria-disabled", "true");
+
+      await user.click(favoriteItem);
+
+      await waitFor(() => {
+        expect(store.getState().settings.starredMarketCoins).toContain("usd-coin");
+      });
+      expect(store.getState().settings.starredMarketCoins).not.toContain(
+        "ethereum/erc20/usd__coin",
+      );
+    });
+
     it("shows Show in portfolio when the asset is blacklisted", async () => {
       mockMarket.withData(MarketMockedResponse.usdcDetail);
       setupRoute("ethereum/erc20/usd__coin", OWNED_ASSETS[1].buildDistribution());

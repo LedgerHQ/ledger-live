@@ -11,21 +11,22 @@ import { selectCurrency } from "@ledgerhq/live-common/dada-client/utils/currency
 import type { AssetMarketDataInput, AssetMarketDataResult } from "../types";
 
 export function useAssetMarketData({
-  marketApiCurrencyId,
+  marketApiId,
   knownLedgerIds,
   counterCurrency,
   product,
   version,
   isStaging = false,
+  knownMarketId,
 }: AssetMarketDataInput): AssetMarketDataResult {
   const {
     data: marketFromHook,
     isLoading: isLoadingMarket,
     isError: isErrorMarket,
   } = useGetCurrencyDataQuery(
-    { id: marketApiCurrencyId ?? "", counterCurrency },
+    { id: marketApiId ?? "", counterCurrency },
     {
-      skip: !marketApiCurrencyId,
+      skip: !marketApiId,
       pollingInterval: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
     },
   );
@@ -65,6 +66,7 @@ export function useAssetMarketData({
 
   return {
     marketCurrencyData,
+    marketId: marketFromHook?.id ?? knownMarketId,
     ledgerCurrencyFromDada,
     isLoading: isLoadingMarket || isLoadingDada,
     isError: isErrorMarket || isErrorDada,

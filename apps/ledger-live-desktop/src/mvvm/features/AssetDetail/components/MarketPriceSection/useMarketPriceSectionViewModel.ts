@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import type { AssetDetailMarketInfo, AssetMarketData } from "@ledgerhq/asset-detail";
+import type { AssetMarketData } from "@ledgerhq/asset-detail";
 import type { DistributionItem, ValueChange } from "@ledgerhq/types-live";
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/index";
@@ -18,10 +18,9 @@ import {
 } from "./utils";
 
 type UseMarketPriceSectionViewModelProps = Readonly<{
-  distributionItem: DistributionItem | undefined;
-  marketInfo: AssetDetailMarketInfo | undefined;
-  ledgerId: string | undefined;
-  market: AssetMarketData;
+  distributionItem?: DistributionItem;
+  ledgerId?: string;
+  marketData: AssetMarketData;
 }>;
 
 type UseMarketPriceSectionViewModelResult = Readonly<{
@@ -40,24 +39,23 @@ type UseMarketPriceSectionViewModelResult = Readonly<{
 
 export function useMarketPriceSectionViewModel({
   distributionItem,
-  marketInfo,
   ledgerId,
-  market,
+  marketData,
 }: UseMarketPriceSectionViewModelProps): UseMarketPriceSectionViewModelResult {
   const { t } = useTranslation();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const locale = useSelector(localeSelector);
   const fiatUnit = counterValueCurrency.units[0];
   const marketAssetId = resolveMarketPriceSectionSourceId({
-    marketInfo,
+    marketId: marketData.marketId,
     distributionItem,
     ledgerId,
   });
   const shouldRenderSection = Boolean(marketAssetId);
-  const data = market.marketCurrencyData;
+  const data = marketData.marketCurrencyData;
 
   const hasPriceData = Number.isFinite(data?.price);
-  const showSkeleton = Boolean(marketAssetId && market.isLoading && !hasPriceData);
+  const showSkeleton = Boolean(marketAssetId && marketData.isLoading && !hasPriceData);
   const dayPercentage = data?.priceChangePercentage?.[KeysPriceChange.day];
   const normalizedDayPercentage = clampDayChangePercentPointsNearZero(dayPercentage);
   const dayVariationFiat = getFiatPriceVariationFromPercentChange(

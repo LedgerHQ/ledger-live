@@ -15,9 +15,10 @@ import { useTranslation } from "~/context/Locale";
 type Params = Readonly<{
   currency: AssetDetailCurrencyProps;
   currencyId: string;
+  marketId?: string;
 }>;
 
-export function useAssetCoinOptionsViewModel({ currency, currencyId }: Params) {
+export function useAssetCoinOptionsViewModel({ currency, currencyId, marketId }: Params) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
@@ -27,8 +28,9 @@ export function useAssetCoinOptionsViewModel({ currency, currencyId }: Params) {
 
   const [isCoinOptionsSheetOpen, setCoinOptionsSheetOpen] = useState(false);
 
+  const starKey = marketId ?? currencyId;
   const isHidden = !!currency && blacklistedTokenIds.includes(currency.id);
-  const isStarred = starredMarketCoins.includes(currencyId);
+  const isStarred = starredMarketCoins.includes(starKey);
 
   const blacklistedTokenIdsSet = useMemo(() => new Set(blacklistedTokenIds), [blacklistedTokenIds]);
 
@@ -49,18 +51,18 @@ export function useAssetCoinOptionsViewModel({ currency, currencyId }: Params) {
     });
 
     if (nextStarred) {
-      if (!starredMarketCoins.includes(currencyId)) {
-        dispatch(addStarredMarketCoins(currencyId));
+      if (!starredMarketCoins.includes(starKey)) {
+        dispatch(addStarredMarketCoins(starKey));
       }
       tryTriggerPushNotificationDrawerAfterAction("add_favorite_coin");
-    } else if (starredMarketCoins.includes(currencyId)) {
-      dispatch(removeStarredMarketCoins(currencyId));
+    } else if (starredMarketCoins.includes(starKey)) {
+      dispatch(removeStarredMarketCoins(starKey));
     }
     closeCoinOptions();
   }, [
     currency,
     isStarred,
-    currencyId,
+    starKey,
     dispatch,
     starredMarketCoins,
     tryTriggerPushNotificationDrawerAfterAction,

@@ -10,8 +10,8 @@ export function useAssetMarketData(currency: AssetDetailCurrencyProps) {
 
   const knownLedgerIds = currency ? [currency.id] : undefined;
 
-  const { marketCurrencyData, isLoading, isError } = useSharedAssetMarketData({
-    marketApiCurrencyId: currency?.id,
+  const { marketCurrencyData, marketId, isLoading, isError } = useSharedAssetMarketData({
+    marketApiId: currency?.id,
     knownLedgerIds,
     counterCurrency,
     product: "llm",
@@ -20,6 +20,7 @@ export function useAssetMarketData(currency: AssetDetailCurrencyProps) {
 
   return {
     marketCurrency: marketCurrencyData,
+    marketId,
     counterCurrency,
     isLoading,
     isError,
