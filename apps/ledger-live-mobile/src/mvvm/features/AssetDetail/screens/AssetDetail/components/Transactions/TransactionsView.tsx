@@ -10,6 +10,7 @@ import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { useTranslation } from "~/context/Locale";
 import OperationsListItem from "LLM/features/OperationsHistory/screens/OperationsList/components/OperationsListItem";
 import { ASSET_DETAIL_TEST_IDS } from "LLM/features/AssetDetail/testIds";
+import { SectionSkeleton } from "../SectionSkeleton";
 
 type Props = Readonly<{
   operations: readonly Operation[];
@@ -19,6 +20,8 @@ type Props = Readonly<{
     accountId: string,
   ) => { account: AccountLike; parentAccount: Account | undefined } | null;
   onHeaderPress: () => void;
+  hasData: boolean;
+  isLoading: boolean;
 }>;
 
 export function TransactionsView({
@@ -27,10 +30,16 @@ export function TransactionsView({
   lastSeenTs,
   findAccount,
   onHeaderPress,
+  hasData,
+  isLoading,
 }: Props) {
   const { t } = useTranslation();
 
-  if (operations.length === 0) return null;
+  if (isLoading && !hasData) {
+    return <SectionSkeleton rows={1} rowHeight="s56" />;
+  }
+
+  if (!hasData) return null;
 
   return (
     <Box testID={ASSET_DETAIL_TEST_IDS.transactions}>

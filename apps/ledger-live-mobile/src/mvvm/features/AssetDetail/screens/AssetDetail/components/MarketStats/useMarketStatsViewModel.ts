@@ -5,14 +5,6 @@ import { track } from "~/analytics";
 import { counterValueFormatter } from "LLM/features/Market/utils";
 import { useAssetMarketData } from "../../hooks/useAssetMarketData";
 
-export const STAT_KEYS = [
-  "market_cap",
-  "market_rank",
-  "circulating_supply",
-  "max_supply",
-  "trading_volume",
-] as const;
-
 type StatRow = {
   key: string;
   label: string;

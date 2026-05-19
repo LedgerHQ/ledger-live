@@ -24,6 +24,7 @@ export function useAssetDetailViewModel() {
     () => resolveDistributionItem({ routeAssetId: currencyId, distribution }),
     [currencyId, distribution],
   );
+  const isLoading = distribution.isLoading;
 
   const [isRefreshing, setIsRefreshing] = useState(false);
   const onRefresh = useCallback(() => {
@@ -50,5 +51,6 @@ export function useAssetDetailViewModel() {
     hideReceiveInBalanceGraph,
     showFallbackBanner,
     coinOptions,
+    isLoading,
   };
 }

@@ -29,6 +29,7 @@ type Props = Readonly<{
   hideReceiveInBalanceGraph: boolean;
   showFallbackBanner: boolean;
   coinOptions: AssetCoinOptionsViewModel;
+  isLoading: boolean;
 }>;
 
 export function AssetDetailView({
@@ -41,6 +42,7 @@ export function AssetDetailView({
   hideReceiveInBalanceGraph,
   showFallbackBanner,
   coinOptions,
+  isLoading,
 }: Props) {
   const { bottom } = useSafeAreaInsets();
   const scrollPaddingBottom = useMemo(
@@ -58,10 +60,18 @@ export function AssetDetailView({
       >
         <Box lx={contentStyle}>
           <BalanceGraph currency={currency} hideReceive={hideReceiveInBalanceGraph} />
-          <BalanceDetails currency={currency} distributionItem={distributionItem} />
-          <Addresses currency={currency} distributionItem={distributionItem} />
+          <BalanceDetails
+            currency={currency}
+            distributionItem={distributionItem}
+            isLoading={isLoading}
+          />
+          <Addresses
+            currency={currency}
+            distributionItem={distributionItem}
+            isLoading={isLoading}
+          />
           <MarketData currency={currency} />
-          <Transactions currency={currency} />
+          <Transactions currency={currency} isLoading={isLoading} />
           <FallbackBanner show={showFallbackBanner} />
         </Box>
       </ScrollView>
@@ -85,5 +95,5 @@ const screenStyle: LumenViewStyle = {
 
 const contentStyle: LumenViewStyle = {
   padding: "s16",
-  gap: "s24",
+  gap: "s32",
 };

@@ -106,6 +106,7 @@ export function useAddressesViewModel(
   return {
     displayedAccounts,
     hasMore,
+    hasData: displayedAccounts.length > 0,
     onAddAccount,
     onSeeAll,
   };

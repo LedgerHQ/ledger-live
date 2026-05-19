@@ -78,5 +78,6 @@ export function useTransactionsViewModel(currency: CryptoOrTokenCurrency | undef
     lastSeenTs,
     findAccount,
     onHeaderPress,
+    hasData: operations.length > 0,
   };
 }

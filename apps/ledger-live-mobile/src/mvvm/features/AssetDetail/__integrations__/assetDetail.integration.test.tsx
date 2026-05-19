@@ -114,10 +114,11 @@ describe("AssetDetail screen layout", () => {
     });
   });
 
-  it("renders the market price section with title and chart placeholder", () => {
+  it("renders the BalanceGraph with chart placeholder", () => {
     render(<AssetDetailTestNavigator />);
 
-    expect(screen.getByText("Market price")).toBeVisible();
+    // While market data is loading, the header is rendered as a skeleton (no
+    // "Market price" text). The chart placeholder is still mounted.
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.chartPlaceholder)).toBeVisible();
     expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.receiveButton)).toBeNull();
   });
@@ -160,10 +161,12 @@ describe("AssetDetail screen layout", () => {
     expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.transactions)).toBeNull();
   });
 
-  it("renders the transactions section when operations exist", () => {
+  it("renders the transactions section when operations exist", async () => {
     render(<AssetDetailTestNavigator />, withBtcAccounts(1, 5));
 
-    expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.transactions)).toBeVisible();
+    await waitFor(() =>
+      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.transactions)).toBeVisible(),
+    );
     expect(screen.getByText("Transactions")).toBeVisible();
   });
 
