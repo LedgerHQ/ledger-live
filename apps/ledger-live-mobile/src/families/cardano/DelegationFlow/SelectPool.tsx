@@ -1,7 +1,8 @@
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import React, { useCallback } from "react";
-import { FlatList, StyleSheet, View, SafeAreaView } from "react-native";
+import { FlatList, StyleSheet, View } from "react-native";
+import SafeAreaView from "~/components/SafeAreaView";
 import type { StakePool } from "@ledgerhq/live-common/families/cardano/staking";
 import { useCardanoFamilyPools } from "@ledgerhq/live-common/families/cardano/react";
 import { TrackScreen } from "~/analytics";

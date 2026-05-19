@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { Trans, useTranslation } from "~/context/Locale";
-import { StyleSheet, View, FlatList, SafeAreaView, ListRenderItem } from "react-native";
+import { StyleSheet, View, FlatList, ListRenderItem } from "react-native";
+import SafeAreaView from "~/components/SafeAreaView";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "~/const";

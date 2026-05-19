@@ -7,7 +7,7 @@ import { LandingPagesNavigatorParamList } from "~/components/RootNavigator/types
 import { NavigatorName, ScreenName } from "~/const";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { StickyHeader } from "./components/StickyHeader";
-import { SafeAreaView } from "react-native";
+import SafeAreaView from "~/components/SafeAreaView";
 import { useTheme } from "styled-components/native";
 import { rangeMap } from "./utils";
 import { SwiperComponent } from "LLM/components/Swiper/components/Swiper";

@@ -1,6 +1,7 @@
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { StyleSheet, SafeAreaView, BackHandler, Platform } from "react-native";
+import { StyleSheet, BackHandler, Platform } from "react-native";
+import SafeAreaView from "~/components/SafeAreaView";
 import { useSelector } from "~/context/hooks";
 
 import { useNavigation } from "@react-navigation/native";
