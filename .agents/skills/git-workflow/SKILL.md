@@ -1,6 +1,6 @@
 ---
+name: git-workflow
 description: Git workflow and commit conventions for Ledger Wallet
-alwaysApply: true
 ---
 
 # Git Workflow & Commit Conventions
@@ -35,13 +35,11 @@ Follow the **Conventional Commits** standard.
 ### Format
 
 ```
-
 <type>[optional scope]: <description>
 
 [optional body]
 
 [optional footer(s)]
-
 ```
 
 ### Rules
