@@ -3,12 +3,17 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box, BottomSheetHeader, BottomSheetView, Text } from "@ledgerhq/lumen-ui-rnative";
 import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 import { PnlDetailDrawerProps } from "./types";
-import { usePnlDetailDrawerViewModel } from "./usePnlDetailDrawerViewModel";
 import { PnlDetailRow } from "./PnlDetailRow";
 
-export function PnlDetailDrawer(props: Readonly<PnlDetailDrawerProps>) {
-  const { isOpen, onClose, title, description, bodyText, items, testID } =
-    usePnlDetailDrawerViewModel(props);
+export function PnlDetailDrawer({
+  isOpen,
+  onClose,
+  title,
+  description,
+  bodyText,
+  items = [],
+  testID,
+}: Readonly<PnlDetailDrawerProps>) {
   const { bottom: bottomInset } = useSafeAreaInsets();
 
   return (

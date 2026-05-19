@@ -129,6 +129,7 @@
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/live-wallet": "workspace:^",
+    "@ledgerhq/wallet-pnl": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",

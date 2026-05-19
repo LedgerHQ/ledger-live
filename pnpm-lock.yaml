@@ -1730,6 +1730,9 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/types-live
+      '@ledgerhq/wallet-pnl':
+        specifier: workspace:^
+        version: link:../../libs/wallet-pnl
       '@react-native-async-storage/async-storage':
         specifier: 2.1.2
         version: 2.1.2(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0))
@@ -23767,7 +23770,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: '*'
+      rxjs: ^5.5.10
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:

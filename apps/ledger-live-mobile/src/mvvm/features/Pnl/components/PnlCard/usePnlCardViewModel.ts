@@ -2,11 +2,7 @@ import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/inde
 import { TriangleDown, TriangleUp } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { LumenTextStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import type { CardType } from "@ledgerhq/lumen-ui-rnative";
-import { useSelector } from "~/context/hooks";
-import { discreetModeSelector } from "~/reducers/settings";
 import { PnlCardProps } from "./types";
-
-const DISCREET_PLACEHOLDER = "***";
 
 const TREND_ICON = {
   up: TriangleUp,
@@ -35,8 +31,6 @@ export type PnlCardViewModel = {
 
 export function usePnlCardViewModel(props: PnlCardProps): PnlCardViewModel {
   const { shouldDisplayPnl } = useWalletFeaturesConfig("mobile");
-  const discreet = useSelector(discreetModeSelector);
-  const displayedValue = discreet ? DISCREET_PLACEHOLDER : props.value;
 
   const isInteractive = props.type === "interactive";
   const onPress = props.onPress;
@@ -45,7 +39,7 @@ export function usePnlCardViewModel(props: PnlCardProps): PnlCardViewModel {
   return {
     shouldRender: shouldDisplayPnl,
     title: props.title,
-    displayedValue,
+    displayedValue: props.value,
     cardType,
     showInfoIcon: props.type === "info",
     showChevron: isInteractive,

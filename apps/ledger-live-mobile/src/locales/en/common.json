@@ -7989,6 +7989,34 @@
       "title": "Transaction history"
     }
   },
+  "pnl": {
+    "unrealisedReturn": {
+      "title": "Unrealised return"
+    },
+    "costBasis": {
+      "title": "Cost basis",
+      "drawer": {
+        "title": "Cost basis",
+        "body": "The total amount you paid to acquire your current holdings, including fees."
+      }
+    },
+    "drawer": {
+      "title": "Profit and loss",
+      "description": "Your portfolio performance broken down into realised and unrealised returns.",
+      "totalReturn": {
+        "title": "Total return",
+        "definition": "Realised and unrealised returns combined, reflecting your overall position."
+      },
+      "unrealisedReturn": {
+        "title": "Unrealised return",
+        "definition": "Estimated gain or loss on your current holdings."
+      },
+      "realisedReturn": {
+        "title": "Realised return",
+        "definition": "Profit or loss confirmed from previous sales or outgoing transfers."
+      }
+    }
+  },
   "hedera": {
     "name": "hedera",
     "createHederaAccountHelp": {
