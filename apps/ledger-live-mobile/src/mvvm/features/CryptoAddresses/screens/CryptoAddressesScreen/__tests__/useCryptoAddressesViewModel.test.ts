@@ -22,9 +22,11 @@ jest.mock("@ledgerhq/live-common/bridge/react/useGlobalSyncState", () => ({
 
 const bitcoin = getCryptoCurrencyById("bitcoin");
 const ethereum = getCryptoCurrencyById("ethereum");
+const polygon = getCryptoCurrencyById("polygon");
 
 const btcAccount = genAccount("btc1", { currency: bitcoin });
 const ethAccount = genAccount("eth1", { currency: ethereum });
+const polygonAccount = genAccount("polygon1", { currency: polygon });
 const tokenAccount = genTokenAccount(0, ethAccount, usdcToken);
 
 const withAccounts =
@@ -88,6 +90,74 @@ describe("useCryptoAddressesViewModel", () => {
     const entry = result.current.aggregatedAccountsData.get(parentWithToken.id);
     expect(entry).toBeDefined();
     expect(entry?.subAccountsCount).toBe(1);
+  });
+
+  describe("accountIds filtering", () => {
+    it("should return all store accounts when no accountIds are provided", () => {
+      const { result } = renderHook(() => useCryptoAddressesViewModel(), {
+        overrideInitialState: withAccounts([btcAccount, ethAccount, polygonAccount]),
+      });
+
+      expect(result.current.accounts).toHaveLength(3);
+      expect(result.current.accounts.map(a => a.id).sort()).toEqual(
+        [btcAccount.id, ethAccount.id, polygonAccount.id].sort(),
+      );
+    });
+
+    it("should return only the requested accounts when accountIds are provided", () => {
+      const { result } = renderHook(
+        () => useCryptoAddressesViewModel(undefined, [btcAccount.id, polygonAccount.id]),
+        {
+          overrideInitialState: withAccounts([btcAccount, ethAccount, polygonAccount]),
+        },
+      );
+
+      expect(result.current.accounts).toHaveLength(2);
+      expect(result.current.accounts.map(a => a.id).sort()).toEqual(
+        [btcAccount.id, polygonAccount.id].sort(),
+      );
+      expect(result.current.accounts.some(a => a.id === ethAccount.id)).toBe(false);
+    });
+
+    it("should aggregate countervalue data on the filtered subset only", () => {
+      const parentWithToken = { ...ethAccount, subAccounts: [tokenAccount] };
+
+      const { result } = renderHook(
+        () => useCryptoAddressesViewModel(undefined, [parentWithToken.id]),
+        {
+          overrideInitialState: withAccounts([btcAccount, parentWithToken, polygonAccount]),
+        },
+      );
+
+      expect(result.current.accounts).toHaveLength(1);
+      expect(result.current.accounts[0]?.id).toBe(parentWithToken.id);
+      expect(result.current.aggregatedAccountsData.get(parentWithToken.id)?.subAccountsCount).toBe(
+        1,
+      );
+      expect(result.current.aggregatedAccountsData.get(btcAccount.id)).toBeUndefined();
+      expect(result.current.aggregatedAccountsData.get(polygonAccount.id)).toBeUndefined();
+    });
+
+    it("should return an empty list when accountIds is an empty array", () => {
+      const { result } = renderHook(() => useCryptoAddressesViewModel(undefined, []), {
+        overrideInitialState: withAccounts([btcAccount, ethAccount]),
+      });
+
+      expect(result.current.accounts).toHaveLength(0);
+      expect(result.current.hasNoAccount).toBe(true);
+    });
+
+    it("should ignore unknown accountIds and only return matching ones", () => {
+      const { result } = renderHook(
+        () => useCryptoAddressesViewModel(undefined, [btcAccount.id, "non-existent-id"]),
+        {
+          overrideInitialState: withAccounts([btcAccount, ethAccount]),
+        },
+      );
+
+      expect(result.current.accounts).toHaveLength(1);
+      expect(result.current.accounts[0]?.id).toBe(btcAccount.id);
+    });
   });
 
   describe("loading and error states", () => {

@@ -71,15 +71,15 @@ describe("useAddressesViewModel", () => {
     jest.clearAllMocks();
   });
 
-  describe("accounts", () => {
+  describe("displayedAccounts", () => {
     it("returns an empty array when currency or distributionItem is undefined", () => {
       const { result } = renderHook(() => useAddressesViewModel(undefined, undefined));
-      expect(result.current.accounts).toEqual([]);
+      expect(result.current.displayedAccounts).toEqual([]);
 
       const { result: noDistribution } = renderHook(() =>
         useAddressesViewModel(mockBtcCryptoCurrency, undefined),
       );
-      expect(noDistribution.current.accounts).toEqual([]);
+      expect(noDistribution.current.displayedAccounts).toEqual([]);
     });
 
     it("returns one tuple per top-level account in the distribution item", () => {
@@ -97,8 +97,8 @@ describe("useAddressesViewModel", () => {
         withRawAccounts(btcAccounts),
       );
 
-      expect(result.current.accounts).toHaveLength(2);
-      result.current.accounts.forEach(acc => {
+      expect(result.current.displayedAccounts).toHaveLength(2);
+      result.current.displayedAccounts.forEach(acc => {
         expect(acc.name).toBeDefined();
         expect(acc.truncatedAddress).toBeDefined();
         expect(acc.balanceAccount).toBe(acc.account);
@@ -131,10 +131,140 @@ describe("useAddressesViewModel", () => {
         withRawAccounts([ethAccount, algoAccount]),
       );
 
-      const parentIds = result.current.accounts.map(a => a.account.id).sort();
+      const parentIds = result.current.displayedAccounts.map(a => a.account.id).sort();
       expect(parentIds).toEqual([ethAccount.id, algoAccount.id].sort());
-      result.current.accounts.forEach(entry => {
+      result.current.displayedAccounts.forEach(entry => {
         expect(entry.balanceAccount.type).toBe("TokenAccount");
+      });
+    });
+  });
+
+  describe("preview cap and See all", () => {
+    const buildBtcSetup = (count: number) => {
+      const btcAccounts = Array.from({ length: count }, (_, i) =>
+        genAccount(`bitcoin-${i}`, { currency: mockBtcCryptoCurrency, operationsSize: 0 }),
+      );
+      return {
+        btcAccounts,
+        distributionItem: buildDistributionItem(mockBtcCryptoCurrency, btcAccounts),
+      };
+    };
+
+    describe("displayedAccounts", () => {
+      it("caps displayedAccounts to 5 when more accounts exist", () => {
+        const { btcAccounts, distributionItem } = buildBtcSetup(7);
+        const { result } = renderHook(
+          () => useAddressesViewModel(mockBtcCryptoCurrency, distributionItem),
+          withRawAccounts(btcAccounts),
+        );
+
+        expect(result.current.displayedAccounts).toHaveLength(5);
+      });
+    });
+
+    describe("hasMore", () => {
+      it("is false when there are fewer than 5 accounts", () => {
+        const { btcAccounts, distributionItem } = buildBtcSetup(4);
+        const { result } = renderHook(
+          () => useAddressesViewModel(mockBtcCryptoCurrency, distributionItem),
+          withRawAccounts(btcAccounts),
+        );
+
+        expect(result.current.hasMore).toBe(false);
+      });
+
+      it("is false when there are exactly 5 accounts (all fit in the preview)", () => {
+        const { btcAccounts, distributionItem } = buildBtcSetup(5);
+        const { result } = renderHook(
+          () => useAddressesViewModel(mockBtcCryptoCurrency, distributionItem),
+          withRawAccounts(btcAccounts),
+        );
+
+        expect(result.current.hasMore).toBe(false);
+      });
+
+      it("is true when there are more than 5 accounts", () => {
+        const { btcAccounts, distributionItem } = buildBtcSetup(8);
+        const { result } = renderHook(
+          () => useAddressesViewModel(mockBtcCryptoCurrency, distributionItem),
+          withRawAccounts(btcAccounts),
+        );
+
+        expect(result.current.hasMore).toBe(true);
+      });
+    });
+
+    describe("onSeeAll", () => {
+      it("navigates to the CryptoAddresses screen with the parent accountIds and fires analytics", () => {
+        const { btcAccounts, distributionItem } = buildBtcSetup(6);
+
+        const { result } = renderHook(
+          () => useAddressesViewModel(mockBtcCryptoCurrency, distributionItem),
+          withRawAccounts(btcAccounts),
+        );
+
+        act(() => result.current.onSeeAll());
+
+        const expectedIds = btcAccounts.map(a => a.id);
+        expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Accounts, {
+          screen: ScreenName.CryptoAddresses,
+          params: {
+            sourceScreenName: ScreenName.AssetDetail,
+            accountIds: expect.arrayContaining(expectedIds),
+            hideAddAccount: true,
+          },
+        });
+        const navParams = mockNavigate.mock.calls[0][1].params;
+        expect(navParams.accountIds).toHaveLength(expectedIds.length);
+        expect(track).toHaveBeenCalledWith("button_clicked", {
+          button: "see_all_addresses",
+          currency: "bitcoin",
+          page: "Asset Detail",
+        });
+      });
+
+      it("passes deduplicated parent ids for multi-network tokens", () => {
+        const ethAccount = genAccount("usdt-eth", {
+          currency: mockEthCryptoCurrency,
+          operationsSize: 0,
+        });
+        const ethSub = genTokenAccount(0, ethAccount, usdtEthToken);
+        ethSub.balance = new BigNumber(120_000_000);
+        ethAccount.subAccounts = [ethSub];
+
+        const algoAccount = genAccount("usdt-algo", {
+          currency: algorandCurrency,
+          operationsSize: 0,
+        });
+        const algoSub = genTokenAccount(0, algoAccount, usdtAlgoToken);
+        algoSub.balance = new BigNumber(80_000_000);
+        algoAccount.subAccounts = [algoSub];
+
+        const { result } = renderHook(
+          () =>
+            useAddressesViewModel(
+              usdtEthToken,
+              buildDistributionItem(usdtEthToken, [ethSub, algoSub]),
+            ),
+          withRawAccounts([ethAccount, algoAccount]),
+        );
+
+        act(() => result.current.onSeeAll());
+
+        const navParams = mockNavigate.mock.calls[0][1].params;
+        expect(navParams.accountIds).toEqual(
+          expect.arrayContaining([ethAccount.id, algoAccount.id]),
+        );
+        expect(navParams.accountIds).toHaveLength(2);
+      });
+
+      it("does nothing when currency is undefined", () => {
+        const { result } = renderHook(() => useAddressesViewModel(undefined, undefined));
+
+        act(() => result.current.onSeeAll());
+
+        expect(mockNavigate).not.toHaveBeenCalled();
+        expect(track).not.toHaveBeenCalled();
       });
     });
   });

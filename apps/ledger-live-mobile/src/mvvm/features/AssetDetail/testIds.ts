@@ -12,6 +12,7 @@ export const ASSET_DETAIL_TEST_IDS = {
   earnDeposit: "asset-detail-earn-deposit",
   addresses: "asset-detail-addresses",
   addAccount: "asset-detail-add-account",
+  seeAllAddresses: "asset-detail-see-all-addresses",
   marketStats: "asset-detail-market-stats",
   pricePerformance: "asset-detail-price-performance",
   transactions: "asset-detail-transactions",

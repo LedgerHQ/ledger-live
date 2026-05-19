@@ -1,6 +1,7 @@
 import React from "react";
 import {
   Box,
+  Button,
   Pressable,
   Subheader,
   SubheaderRow,
@@ -14,14 +15,16 @@ import { AddressAccountItem } from "./components/AddressAccountItem";
 import type { AddressAccountData } from "./useAddressesViewModel";
 
 type Props = Readonly<{
-  accounts: readonly AddressAccountData[];
+  displayedAccounts: readonly AddressAccountData[];
+  hasMore: boolean;
   onAddAccount: () => void;
+  onSeeAll: () => void;
 }>;
 
-export function AddressesView({ accounts, onAddAccount }: Props) {
+export function AddressesView({ displayedAccounts, hasMore, onAddAccount, onSeeAll }: Props) {
   const { t } = useTranslation();
 
-  if (accounts.length === 0) return null;
+  if (displayedAccounts.length === 0) return null;
 
   return (
     <Box testID={ASSET_DETAIL_TEST_IDS.addresses}>
@@ -42,10 +45,22 @@ export function AddressesView({ accounts, onAddAccount }: Props) {
         </SubheaderRow>
       </Subheader>
       <Box lx={{ gap: "s8" }}>
-        {accounts.map(data => (
+        {displayedAccounts.map(data => (
           <AddressAccountItem key={data.id} data={data} />
         ))}
       </Box>
+      {hasMore && (
+        <Button
+          appearance="gray"
+          size="lg"
+          isFull
+          onPress={onSeeAll}
+          testID={ASSET_DETAIL_TEST_IDS.seeAllAddresses}
+          lx={{ marginTop: "s12" }}
+        >
+          {t("assetDetail.addresses.seeAll")}
+        </Button>
+      )}
     </Box>
   );
 }
