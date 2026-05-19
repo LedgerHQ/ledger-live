@@ -8,7 +8,6 @@ import type { FlattenAccountsOptions } from "@ledgerhq/live-common/account/index
 import type { TrackingPair } from "@ledgerhq/live-countervalues/types";
 import {
   useCalculateCountervalueCallback as useCalculateCountervalueCallbackCommon,
-  useCountervaluesPolling,
   useTrackingPairForAccounts,
 } from "@ledgerhq/live-countervalues-react";
 import { useDistribution as useLegacyDistribution } from "@ledgerhq/live-countervalues-react/portfolio";
@@ -112,14 +111,12 @@ export function useRefreshAccountsOrderingEffect({
 }
 export function useCleanCache() {
   const dispatch = useDispatch();
-  const { wipe } = useCountervaluesPolling();
   return useCallback(async () => {
     dispatch(cleanCache());
 
     await clearBridgeCache();
-    wipe();
     flushAll();
-  }, [dispatch, wipe]);
+  }, [dispatch]);
 }
 
 export function useUserSettings() {
