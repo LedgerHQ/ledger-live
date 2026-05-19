@@ -4,21 +4,8 @@ import { useNavigate } from "react-router";
 import { isRecoverDisplayed, useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { useUpsellPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-import { hasStartedLedgerRecoverFlowForPostOnboarding } from "LLD/features/FinishOnboarding/RecoverWidget/recoverPortfolioWidgetVisibility";
 import { hasBeenRedirectedToPostOnboardingSelector } from "~/renderer/reducers/settings";
 import useFinishOnboardingDialog from "LLD/features/FinishOnboarding/FinishOnboardingDialog/hooks/useFinishOnboardingDialog";
-import { getStoreValue } from "~/renderer/store";
-import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
-
-function readRecoverSubscriptionState(
-  protectId: string,
-): LedgerRecoverSubscriptionStateEnum | undefined {
-  try {
-    return getStoreValue<LedgerRecoverSubscriptionStateEnum>("SUBSCRIPTION_STATE", protectId);
-  } catch {
-    return undefined;
-  }
-}
 
 export function useNavigateToPostOnboardingHubCallback() {
   const navigate = useNavigate();
@@ -34,8 +21,7 @@ export function useNavigateToPostOnboardingHubCallback() {
     (resetNavigationStack?: boolean) => {
       const shouldNavigateToRecoverLanding =
         isRecoverDisplayed(recoverServices, deviceModelId ?? undefined) &&
-        !!upsellPath &&
-        hasStartedLedgerRecoverFlowForPostOnboarding(readRecoverSubscriptionState(protectId));
+        !!upsellPath;
 
       if (shouldDisplayFinishOnboardingWidget) {
         const replace = resetNavigationStack ?? true;

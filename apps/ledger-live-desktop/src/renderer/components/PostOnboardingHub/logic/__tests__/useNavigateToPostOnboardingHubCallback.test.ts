@@ -7,9 +7,7 @@ import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/defaultFeat
 import { act, renderHook, withFlagOverrides } from "tests/testSetup";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
-import { getStoreValue } from "~/renderer/store";
 import { useNavigateToPostOnboardingHubCallback } from "../useNavigateToPostOnboardingHubCallback";
-import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
 
 const mockNavigate = jest.fn();
 
@@ -18,19 +16,11 @@ jest.mock("react-router", () => ({
   useNavigate: () => mockNavigate,
 }));
 
-jest.mock("~/renderer/store", () => ({
-  getStoreValue: jest.fn(),
-  setStoreValue: jest.fn(),
-  resetStore: jest.fn(),
-}));
-
 const PROTECT_ID = "protect-prod";
 const RECOVER_UPSELL_URI = "ledgerlive://recover/protect-prod?redirectTo=upsell&source=lld-onboarding-24";
 const RECOVER_LANDING_PATH = `/recover/${PROTECT_ID}?redirectTo=upsell&source=lld-post-onboarding-banner`;
 
 const protectDesktopDefaultParams = DEFAULT_FEATURES.protectServicesDesktop.params!;
-
-const mockGetStoreValue = jest.mocked(getStoreValue);
 
 function featureFlagsWithRecover() {
   return withFlagOverrides({
@@ -51,6 +41,16 @@ function featureFlagsWithRecover() {
         },
       },
     },
+  });
+}
+
+function featureFlagsWithWallet40WithoutRecover() {
+  return withFlagOverrides({
+    lwdWallet40: {
+      enabled: true,
+      params: { finishOnboardingWidget: true },
+    },
+    protectServicesDesktop: { enabled: false },
   });
 }
 
@@ -92,7 +92,6 @@ function renderNavigateHook(initialState: NavigateHookInitialState = {}) {
 describe("useNavigateToPostOnboardingHubCallback", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockGetStoreValue.mockReturnValue(LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE);
   });
 
   it("should navigate to recover landing and open finish dialog when Wallet40 and recover apply", () => {
@@ -112,30 +111,9 @@ describe("useNavigateToPostOnboardingHubCallback", () => {
     expect(mockNavigate).not.toHaveBeenCalledWith("/post-onboarding");
   });
 
-  it("reads subscription state when navigation runs, not at hook render time", () => {
-    mockGetStoreValue.mockReturnValue(LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION);
-
-    const { result } = renderNavigateHook({
-      ...featureFlagsWithRecover(),
-      postOnboarding: postOnboardingState(),
-      settings: { hasBeenRedirectedToPostOnboarding: false },
-    });
-
-    mockGetStoreValue.mockReturnValue(LedgerRecoverSubscriptionStateEnum.STARGATE_SUBSCRIBE);
-
-    act(() => {
-      result.current();
-    });
-
-    expect(mockNavigate).toHaveBeenCalledWith(RECOVER_LANDING_PATH, { replace: true });
-    expect(mockGetStoreValue).toHaveBeenCalledWith("SUBSCRIPTION_STATE", PROTECT_ID);
-  });
-
   it("should navigate to portfolio and open finish dialog when Wallet40 is enabled without recover", () => {
-    mockGetStoreValue.mockReturnValue(LedgerRecoverSubscriptionStateEnum.NO_SUBSCRIPTION);
-
     const { result, store } = renderNavigateHook({
-      ...featureFlagsWithRecover(),
+      ...featureFlagsWithWallet40WithoutRecover(),
       postOnboarding: postOnboardingState(),
       settings: { hasBeenRedirectedToPostOnboarding: false },
     });
