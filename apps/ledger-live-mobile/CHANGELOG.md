@@ -1,5 +1,11 @@
 # live-mobile
 
+## 4.5.0-next.1
+
+### Minor Changes
+
+- [#17596](https://github.com/LedgerHQ/ledger-live/pull/17596) [`a167575`](https://github.com/LedgerHQ/ledger-live/commit/a16757534cae4784ff3325593b5503a894dd261d) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Make sure push notifications data is initialized even if the user is not onboarded
+
 ## 4.5.0-next.0
 
 ### Minor Changes
