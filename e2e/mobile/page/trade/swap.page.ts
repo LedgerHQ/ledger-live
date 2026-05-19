@@ -208,7 +208,7 @@ export default class SwapPage extends CommonPage {
     jestExpect(remaining).toBe("0");
   }
 
-  @Step("Selected prodvider: $0")
+  @Step("Selected provider: $0")
   async getSelectedProvider(providerName: string) {
     jestExpect(providerName).toBeDefined();
   }

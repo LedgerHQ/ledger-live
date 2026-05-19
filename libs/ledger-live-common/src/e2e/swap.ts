@@ -136,7 +136,7 @@ export function pickRotatingProvider(eligibleProviders: Provider[]): Provider {
     if (!match) {
       throw new Error(
         `[pickRotatingProvider] - "${override}" did not match any of: ` +
-          eligibleProviders.map(p => p.uiName).join(", "),
+          eligibleProviders.map(p => `${p.uiName} (or ${p.name})`).join(", "),
       );
     }
     return match;
