@@ -34,7 +34,6 @@ jest.mock("@ledgerhq/live-dmk-mobile", () => {
 
 type ConnectDeviceObserver = {
   next: (state: ConnectDeviceUIState) => void;
-  error: (error: unknown) => void;
 };
 
 const mockedUseDeviceManagementKit = jest.mocked(useDeviceManagementKit);
@@ -173,20 +172,17 @@ describe("useDeviceConnectionComponentLWMViewModel", () => {
     expect(result.current.state).toBe(discoveringState);
   });
 
-  it("should rethrow connect device use case errors so an ErrorBoundary can catch them", () => {
-    const error = new Error("Discovery failed");
+  it("should expose the UnknownError UI state when the use case emits it", () => {
+    const error = new Error("boom");
     const { result } = renderViewModel();
+    const unknownErrorState: ConnectDeviceUIState = {
+      type: ConnectDeviceUIStateTypes.UnknownError,
+      error,
+    };
 
-    const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
-    try {
-      expect(() => {
-        act(() => connectDeviceObserver?.error(error));
-      }).toThrow(error);
-    } finally {
-      consoleErrorSpy.mockRestore();
-    }
+    act(() => connectDeviceObserver?.next(unknownErrorState));
 
-    expect(result).toBeDefined();
+    expect(result.current.state).toBe(unknownErrorState);
   });
 
   it("should unsubscribe from the connect device use case on unmount", () => {

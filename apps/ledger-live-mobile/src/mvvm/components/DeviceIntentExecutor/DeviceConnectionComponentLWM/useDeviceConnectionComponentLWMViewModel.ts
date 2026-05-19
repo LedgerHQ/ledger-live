@@ -45,19 +45,14 @@ export function useDeviceConnectionComponentLWMViewModel({
   const [state, setState] = useState<ConnectDeviceUIState>({
     type: ConnectDeviceUIStateTypes.Loading,
   });
-  // DMK unavailability is checked synchronously during render so the throw
-  // reaches the nearest React ErrorBoundary (throws inside useEffect do not).
+  // DMK unavailability is a misconfiguration (LWM provider missing) rather than a
+  // runtime connection failure: throw synchronously so the nearest React
+  // ErrorBoundary catches it. Runtime errors that escape the inner state machine
+  // are funnelled by `connectDeviceUseCase` into a terminal `UnknownError` UI state
+  // and reach this hook via `next`, never via the observable's error channel.
   if (!dmk) {
     log(LOG_TYPE, "DMK unavailable");
     throw new Error("Device Management Kit is not available");
-  }
-  // The defensive rxjs `error` fallback arrives asynchronously inside the
-  // effect; capture it in state and throw on the next render so it can also
-  // be caught by an ErrorBoundary. Handled connection failures arrive as
-  // ConnectDeviceUIState values and are NOT routed through here.
-  const [rxjsFatalError, setRxjsFatalError] = useState<unknown>(null);
-  if (rxjsFatalError !== null) {
-    throw rxjsFatalError;
   }
 
   const onConnectLedgerDevice = useCallback(() => {
@@ -131,13 +126,7 @@ export function useDeviceConnectionComponentLWMViewModel({
       knownDevices,
       dmk,
       onConnected: wrappedOnConnected,
-    }).subscribe({
-      next: setState,
-      error: (error: unknown) => {
-        log(LOG_TYPE, "connectDeviceUseCase emitted an unhandled error", { error });
-        setRxjsFatalError(error);
-      },
-    });
+    }).subscribe({ next: setState });
 
     return () => subscription.unsubscribe();
   }, [dmk, knownDevices, wrappedOnConnected]);

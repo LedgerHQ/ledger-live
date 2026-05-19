@@ -327,6 +327,17 @@ function renderConnectDeviceState(state: ConnectDeviceUIState): React.ReactNode 
           Connected. The onConnected callback should have received the connection result.
         </Text>
       );
+    case ConnectDeviceUIStateTypes.UnknownError:
+      return (
+        <Flex p={3} backgroundColor="error.c10" borderRadius={8}>
+          <Text variant="small" color="neutral.c70">
+            Unknown error escaped the connect-device state machine.
+          </Text>
+          <Text variant="small" color="neutral.c70" mt={2}>
+            {formatUnknown(state.error)}
+          </Text>
+        </Flex>
+      );
     default:
       return assertNever(state);
   }
@@ -350,6 +361,8 @@ function formatStateDetails(state: ConnectDeviceUIState): string {
       return `Connection error: ${state.error.type}.`;
     case ConnectDeviceUIStateTypes.Connected:
       return "Connected.";
+    case ConnectDeviceUIStateTypes.UnknownError:
+      return "Unknown error escaped the connect-device state machine.";
     default:
       return assertNever(state);
   }
@@ -394,6 +407,11 @@ function toSerializableState(state: ConnectDeviceUIState): unknown {
         error: state.error,
         retry: "[Function]",
         ignore: "[Function]",
+      };
+    case ConnectDeviceUIStateTypes.UnknownError:
+      return {
+        type: state.type,
+        error: formatUnknown(state.error),
       };
     default:
       return assertNever(state);
