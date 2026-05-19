@@ -236,11 +236,6 @@ export enum ScreenName {
   EvmDelegationValidationSuccess = "EvmDelegationValidationSuccess",
   EvmDelegationValidator = "EvmDelegationValidator",
   EvmDelegationAmount = "EvmDelegationAmount",
-  EvmUndelegationAmount = "EvmUndelegationAmount",
-  EvmUndelegationSelectDevice = "EvmUndelegationSelectDevice",
-  EvmUndelegationConnectDevice = "EvmUndelegationConnectDevice",
-  EvmUndelegationValidationError = "EvmUndelegationValidationError",
-  EvmUndelegationValidationSuccess = "EvmUndelegationValidationSuccess",
 
   // cosmos
   CosmosFamilyEditMemo = "CosmosFamilyEditMemo",
@@ -616,7 +611,6 @@ export enum NavigatorName {
   BaseOnboarding = "BaseOnboarding",
   BuyDevice = "BuyDevice",
   EvmDelegationFlow = "EvmDelegationFlow",
-  EvmUndelegationFlow = "EvmUndelegationFlow",
   CosmosClaimRewardsFlow = "CosmosClaimRewardsFlow",
   CosmosDelegationFlow = "CosmosDelegationFlow",
   CosmosRedelegationFlow = "CosmosRedelegationFlow",
