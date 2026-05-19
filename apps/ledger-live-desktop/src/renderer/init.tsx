@@ -208,8 +208,7 @@ async function init() {
   );
   const accountData = await getKey("app", "accounts", []);
   if (accountData) {
-    const e = initAccounts(accountData);
-    store.dispatch(e);
+    dispatch(initAccounts(accountData));
   } else {
     // if accountData is falsy, it's a lock case, we need to globally decrypted the app data, we use app.accounts as general safe guard for possible other app.* encrypted fields
     store.dispatch(lock());

@@ -9,6 +9,7 @@ import {
   accountUserDataExportSelector,
 } from "@ledgerhq/live-wallet/store";
 import { getKey } from "~/renderer/storage";
+import type { AppDispatch } from "~/state-manager/configureStore";
 import { Account, AccountUserData } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { v4 as uuidv4 } from "uuid";
@@ -53,8 +54,7 @@ export const injectMockAccounts = async (
   const store = window.ledger.store;
 
   const newAccountData = accountData?.concat(accounts);
-  const e = initAccounts(newAccountData || []);
-  store.dispatch(e);
+  (store.dispatch as AppDispatch)(initAccounts(newAccountData || []));
 };
 
 export const generateRandomAccounts = (count: number): [Account, AccountUserData][] => {

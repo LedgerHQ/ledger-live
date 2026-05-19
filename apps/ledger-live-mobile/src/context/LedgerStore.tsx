@@ -154,7 +154,9 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
 
       // Handle account import with error recovery for async issues
       try {
-        store.dispatch(await importAccountsRaw(accountsData));
+        for (const action of await importAccountsRaw(accountsData)) {
+          store.dispatch(action);
+        }
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error("Failed to import accounts during initialization:", error);

@@ -13,8 +13,31 @@ import {
 import { getDefaultAccountName, getDefaultAccountNameForCurrencyIndex } from "./accountName";
 import { AddAccountsAction } from "./addAccounts";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { checkAccountSupported } from "@ledgerhq/ledger-wallet-framework/account/support";
 import { DistantState } from "./walletsync";
 import { NonImportedAccountInfo } from "./walletsync/modules/accounts";
+
+export type { NonImportedAccountInfo };
+
+export function splitSupportedAccounts(
+  tuples: [Account, AccountUserData][],
+  onDrop?: (id: string, message: string) => void,
+): { supported: [Account, AccountUserData][]; dropped: NonImportedAccountInfo[] } {
+  const dropped: NonImportedAccountInfo[] = [];
+  const supported = tuples.filter(([account]) => {
+    const error = checkAccountSupported(account);
+    if (!error) return true;
+    onDrop?.(account.id, error.message);
+    dropped.push({
+      id: account.id,
+      attempts: 0,
+      attemptsLastTimestamp: 0,
+      error: { name: error.name, message: error.message },
+    });
+    return false;
+  });
+  return { supported, dropped };
+}
 
 export type WSState = {
   data: DistantState | null;
@@ -62,6 +85,7 @@ export enum WalletHandlerType {
   WALLET_SYNC_UPDATE = "WALLET_SYNC_UPDATE",
   IMPORT_WALLET_SYNC = "IMPORT_WALLET_SYNC",
   SET_NON_IMPORTED_ACCOUNTS = "SET_NON_IMPORTED_ACCOUNTS",
+  ADD_NON_IMPORTED_ACCOUNTS = "ADD_NON_IMPORTED_ACCOUNTS",
   UPDATE_RECENT_ADDRESSES = "UPDATE_RECENT_ADDRESSES",
 }
 
@@ -77,6 +101,7 @@ export type HandlersPayloads = {
   };
   IMPORT_WALLET_SYNC: Partial<ExportedWalletState>;
   SET_NON_IMPORTED_ACCOUNTS: NonImportedAccountInfo[];
+  ADD_NON_IMPORTED_ACCOUNTS: NonImportedAccountInfo[];
   UPDATE_RECENT_ADDRESSES: RecentAddressesState;
 };
 
@@ -155,6 +180,19 @@ export const handlers: WalletHandlers = {
   SET_NON_IMPORTED_ACCOUNTS: (state, { payload }) => {
     return { ...state, nonImportedAccountInfos: payload };
   },
+  ADD_NON_IMPORTED_ACCOUNTS: (state, { payload }) => {
+    if (payload.length === 0) return state;
+    if (state.nonImportedAccountInfos.length === 0) {
+      return { ...state, nonImportedAccountInfos: payload };
+    }
+    const existingIds = new Set(state.nonImportedAccountInfos.map(n => n.id));
+    const toAdd = payload.filter(n => !existingIds.has(n.id));
+    if (toAdd.length === 0) return state;
+    return {
+      ...state,
+      nonImportedAccountInfos: [...state.nonImportedAccountInfos, ...toAdd],
+    };
+  },
   UPDATE_RECENT_ADDRESSES: (state, { payload }) => {
     return { ...state, recentAddresses: { ...payload } };
   },
@@ -205,6 +243,11 @@ export const walletSyncUpdate = (data: DistantState | null, version: number) => 
 
 export const setNonImportedAccounts = (payload: NonImportedAccountInfo[]) => ({
   type: "SET_NON_IMPORTED_ACCOUNTS",
+  payload,
+});
+
+export const addNonImportedAccounts = (payload: NonImportedAccountInfo[]) => ({
+  type: "ADD_NON_IMPORTED_ACCOUNTS",
   payload,
 });
 
