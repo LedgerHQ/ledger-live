@@ -99,7 +99,9 @@ async function onMessage(event: WebSocketMessageEvent) {
         acceptGeneralTerms(store);
         break;
       case "importAccounts": {
-        store.dispatch(await importAccountsRaw({ active: msg.payload }));
+        for (const action of await importAccountsRaw({ active: msg.payload })) {
+          store.dispatch(action);
+        }
         break;
       }
       case "mockDeviceEvent": {

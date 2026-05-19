@@ -4,6 +4,7 @@ import {
   accountNameWithDefaultSelector,
   accountRawToAccountUserData,
   accountUserDataExportSelector,
+  addNonImportedAccounts,
   exportWalletState,
   handlers,
   importWalletState,
@@ -445,5 +446,53 @@ describe("Wallet store", () => {
     expect(walletStateExportShouldDiffer(initialState, result)).toBe(true);
     expect(walletStateExportShouldDiffer(initialState, initialState)).toBe(false);
     expect(walletStateExportShouldDiffer(result, result)).toBe(false);
+  });
+
+  describe("ADD_NON_IMPORTED_ACCOUNTS", () => {
+    const makeInfo = (id: string, errorName = "CurrencyNotSupported") => ({
+      id,
+      attempts: 0,
+      attemptsLastTimestamp: 0,
+      error: { name: errorName, message: `error for ${id}` },
+    });
+
+    it("appends entries to an empty list", () => {
+      const a = makeInfo("a");
+      const b = makeInfo("b");
+      const result = handlers.ADD_NON_IMPORTED_ACCOUNTS(initialState, addNonImportedAccounts([a, b]));
+      expect(result.nonImportedAccountInfos).toEqual([a, b]);
+    });
+
+    it("merges with existing entries", () => {
+      const existing = makeInfo("a");
+      const fresh = makeInfo("b");
+      const state = { ...initialState, nonImportedAccountInfos: [existing] };
+      const result = handlers.ADD_NON_IMPORTED_ACCOUNTS(state, addNonImportedAccounts([fresh]));
+      expect(result.nonImportedAccountInfos).toEqual([existing, fresh]);
+    });
+
+    it("dedups by id and preserves the existing entry (does not overwrite)", () => {
+      const existing = { ...makeInfo("a"), attempts: 3, attemptsLastTimestamp: 12345 };
+      const incoming = makeInfo("a");
+      const state = { ...initialState, nonImportedAccountInfos: [existing] };
+      const result = handlers.ADD_NON_IMPORTED_ACCOUNTS(state, addNonImportedAccounts([incoming]));
+      expect(result.nonImportedAccountInfos).toEqual([existing]);
+    });
+
+    it("returns the same state when payload is empty", () => {
+      const state = { ...initialState, nonImportedAccountInfos: [makeInfo("a")] };
+      const result = handlers.ADD_NON_IMPORTED_ACCOUNTS(state, addNonImportedAccounts([]));
+      expect(result).toBe(state);
+    });
+
+    it("returns the same state when all payload ids already exist", () => {
+      const existing = makeInfo("a");
+      const state = { ...initialState, nonImportedAccountInfos: [existing] };
+      const result = handlers.ADD_NON_IMPORTED_ACCOUNTS(
+        state,
+        addNonImportedAccounts([makeInfo("a")]),
+      );
+      expect(result).toBe(state);
+    });
   });
 });
