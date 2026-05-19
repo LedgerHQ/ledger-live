@@ -61,6 +61,7 @@ export function runSwapTokenApprovalFlow(
         await app.speculos.signTypedMessage();
       }
       await app.swapLiveApp.expectTwoStepSignScreen();
+      await app.swapLiveApp.expectExecuteSwapOnStepApproval();
     });
   });
 }
