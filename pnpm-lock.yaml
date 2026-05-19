@@ -2100,7 +2100,7 @@ importers:
       '@callstack/repack-plugin-reanimated':
         specifier: 5.2.3
         version: 5.2.3(@babel/core@7.28.5)(@callstack/repack@5.2.3(patch_hash=8d7db4e65c8982b51b689b97af043f6e2c411605b19084c3781cb5ec5e635b60)(@babel/core@7.28.5)(@rspack/core@1.7.3(@swc/helpers@0.5.17))(@swc/core@1.15.11(@swc/helpers@0.5.17))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.1.4)))
-      '@features/market-banner':
+      '@features/flow-market-banner':
         specifier: workspace:^
         version: link:../../features/flow/market-banner
       '@jest/reporters':
