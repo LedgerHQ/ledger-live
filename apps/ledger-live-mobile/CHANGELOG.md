@@ -1,5 +1,11 @@
 # live-mobile
 
+## 4.5.0-next.2
+
+### Minor Changes
+
+- [#17598](https://github.com/LedgerHQ/ledger-live/pull/17598) [`474c32c`](https://github.com/LedgerHQ/ledger-live/commit/474c32c5763fd25727eb5a83f723e84978288b69) Thanks [@qperrot](https://github.com/qperrot)! - Fix: Topping up account fails - data length exceed 256 bytes limit
+
 ## 4.5.0-next.1
 
 ### Minor Changes
