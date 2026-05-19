@@ -1,5 +1,16 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import type { Unit } from "@ledgerhq/types-cryptoassets";
+
+jest.mock("@ledgerhq/live-common/bridge/index", () => {
+  const currencyBridge = {};
+  const currencyBridgePromise = Object.assign(Promise.resolve(currencyBridge), {
+    status: "fulfilled" as const,
+    value: currencyBridge,
+  });
+  return {
+    getCurrencyBridge: jest.fn(() => currencyBridgePromise),
+  };
+});
 import { fireEvent, render, screen } from "@tests/test-renderer";
 import React from "react";
 import { View } from "../index";

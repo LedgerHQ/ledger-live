@@ -9,10 +9,13 @@ const mockOnboardAccount = jest.fn();
 const mockAuthorizePreapproval = jest.fn();
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
-  getCurrencyBridge: jest.fn(() => ({
-    onboardAccount: mockOnboardAccount,
-    authorizePreapproval: mockAuthorizePreapproval,
-  })),
+  getCurrencyBridge: jest.fn(() => {
+    const bridge = {
+      onboardAccount: mockOnboardAccount,
+      authorizePreapproval: mockAuthorizePreapproval,
+    };
+    return Object.assign(Promise.resolve(bridge), { status: "fulfilled", value: bridge });
+  }),
 }));
 
 describe("OnboardModal", () => {

@@ -3,7 +3,7 @@
  */
 import "../../__tests__/test-helpers/dom-polyfill";
 import React, { useEffect } from "react";
-import { render, screen } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import type { Account } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Observable } from "rxjs";
@@ -54,6 +54,19 @@ const renderBridgeSync = (props: BridgeSyncRenderProps = {}, children: React.Rea
     </BridgeSync>,
   );
 
+// Async variant that flushes the microtask from getAccountBridge(account).then(...)
+// inside act, so the resulting setAccountSyncState happens within an act() boundary.
+const renderBridgeSyncAsync = async (
+  props: BridgeSyncRenderProps = {},
+  children: React.ReactNode = null,
+) => {
+  let result!: ReturnType<typeof render>;
+  await act(async () => {
+    result = renderBridgeSync(props, children);
+  });
+  return result;
+};
+
 type AccountUpdater = (arg0: Account) => Account;
 
 // Import the mocked getAccountBridge from impl
@@ -67,15 +80,15 @@ const withMockedAccountBridge = (
   account: Account,
   syncFactory: () => Observable<AccountUpdater>,
 ) => {
-  const originalBridge = originalGetAccountBridge(account);
   const mockBridge = {
-    ...originalBridge,
     sync: syncFactory,
+    // minimal default so production code can call bridge.getStakesCount in trackSyncSuccessEnd
+    getStakesCount: () => 0,
   };
 
   mockedGetAccountBridge.mockImplementation(acc => {
     if (acc.id === account.id) {
-      return mockBridge;
+      return Promise.resolve(mockBridge) as unknown as ReturnType<typeof originalGetAccountBridge>;
     }
     return originalGetAccountBridge(acc);
   });
@@ -113,12 +126,12 @@ describe("BridgeSync", () => {
     expect(screen.getByText("LOADED")).not.toBeNull();
   });
 
-  test("executes a sync at start tracked as reason=initial", done => {
+  test("executes a sync at start tracked as reason=initial", async () => {
     const account = createAccount("btc1", bitcoin);
     const futureOpLength = account.operations.length;
     // we remove the first operation to feed it back as a broadcasted one, the mock impl will make it go back to operations
     const lastOp = account.operations.splice(0, 1)[0];
-    Bridge.getAccountBridge(account).broadcast({
+    (await Bridge.getAccountBridge(account)).broadcast({
       account,
       signedOperation: {
         operation: lastOp,
@@ -128,20 +141,22 @@ describe("BridgeSync", () => {
     const accounts = [account];
     expect(accounts[0].operations.length).toBe(futureOpLength - 1);
 
-    function track(type, opts) {
-      if (type === "SyncSuccess") {
-        expect(opts).toMatchObject({
-          reason: "initial",
-          currencyName: "Bitcoin",
-          operationsLength: futureOpLength,
-        });
-        done();
+    await new Promise<void>(done => {
+      function track(type, opts) {
+        if (type === "SyncSuccess") {
+          expect(opts).toMatchObject({
+            reason: "initial",
+            currencyName: "Bitcoin",
+            operationsLength: futureOpLength,
+          });
+          done();
+        }
       }
-    }
-    renderBridgeSync({ accounts, trackAnalytics: track });
+      void renderBridgeSyncAsync({ accounts, trackAnalytics: track });
+    });
   });
 
-  test("sync all accounts in parallel at start tracked as reason=initial", done => {
+  test("sync all accounts in parallel at start tracked as reason=initial", async () => {
     const accounts = [
       createAccount("2btc1", bitcoin),
       createAccount("2btc2", bitcoin),
@@ -167,24 +182,26 @@ describe("BridgeSync", () => {
       resolveFirst();
       return Promise.resolve();
     }
-    function track(type, opts) {
-      expect(type).not.toEqual("SyncError");
-      if (type === "SyncSuccess") {
-        synced.push(opts);
-        expect(opts).toMatchObject({
-          reason: "initial",
-        });
-        if (synced.length === accounts.length) done();
+    await new Promise<void>(done => {
+      function track(type, opts) {
+        expect(type).not.toEqual("SyncError");
+        if (type === "SyncSuccess") {
+          synced.push(opts);
+          expect(opts).toMatchObject({
+            reason: "initial",
+          });
+          if (synced.length === accounts.length) done();
+        }
       }
-    }
-    renderBridgeSync({
-      accounts,
-      prepareCurrency,
-      trackAnalytics: track,
+      void renderBridgeSyncAsync({
+        accounts,
+        prepareCurrency,
+        trackAnalytics: track,
+      });
     });
   });
 
-  test("provides context values correctly", () => {
+  test("provides context values correctly", async () => {
     const account = createAccount("btc1", bitcoin);
     const accounts = [account];
 
@@ -197,7 +214,7 @@ describe("BridgeSync", () => {
       return <div data-testid="test-component">Test</div>;
     }
 
-    renderBridgeSync({ accounts }, <TestComponent />);
+    await renderBridgeSyncAsync({ accounts }, <TestComponent />);
 
     expect(syncFunction).toBeDefined();
     expect(typeof syncFunction).toBe("function");
@@ -205,7 +222,7 @@ describe("BridgeSync", () => {
     expect(typeof syncState).toBe("object");
   });
 
-  test("handles sync errors with recoverError function", done => {
+  test("handles sync errors with recoverError function", async () => {
     const account = createAccount("btc1", bitcoin);
     const accounts = [account];
 
@@ -217,33 +234,30 @@ describe("BridgeSync", () => {
 
     // Mock the account bridge to return an Observable that emits an error
     mockBridgeSync(account, observer => {
-      const timeout = setTimeout(() => observer.error(mockError), 100);
+      const timeout = setTimeout(() => act(() => observer.error(mockError)), 100);
       return () => clearTimeout(timeout);
     });
 
-    let syncStateChecked = false;
     let syncStateRef: BridgeSyncState;
     function TestComponent() {
       const syncState = useBridgeSyncState();
       syncStateRef = syncState;
-
-      // After the error is silenced, the sync state should show no error
-      setTimeout(() => {
-        if (!syncStateChecked && syncStateRef[account.id]) {
-          syncStateChecked = true;
-          expect(syncStateRef[account.id].error).toBe(mockError);
-          expect(recoverError).toHaveBeenCalledWith(mockError);
-          done();
-        }
-      }, 200);
-
       return <div>Test</div>;
     }
 
-    renderBridgeSync({ accounts, recoverError }, <TestComponent />);
+    await renderBridgeSyncAsync({ accounts, recoverError }, <TestComponent />);
+
+    await waitFor(
+      () => {
+        expect(syncStateRef[account.id]?.error).toBe(mockError);
+      },
+      // wait > SYNC_BOOT_DELAY (default 2s) + observer.error setTimeout (100ms)
+      { timeout: 5000 },
+    );
+    expect(recoverError).toHaveBeenCalledWith(mockError);
   });
 
-  test("silences errors when recoverError returns null", done => {
+  test("silences errors when recoverError returns null", async () => {
     const account = createAccount("btc1", bitcoin);
     const accounts = [account];
 
@@ -252,43 +266,40 @@ describe("BridgeSync", () => {
 
     // Mock the account bridge to return an Observable that emits an error
     mockBridgeSync(account, observer => {
-      const timeout = setTimeout(() => observer.error(mockError), 100);
+      const timeout = setTimeout(() => act(() => observer.error(mockError)), 100);
       return () => clearTimeout(timeout);
     });
 
-    let syncStateChecked = false;
     let syncStateRef: BridgeSyncState;
     function TestComponent() {
       const syncState = useBridgeSyncState();
       syncStateRef = syncState;
-
-      // After the error is silenced, the sync state should show no error
-      setTimeout(() => {
-        if (!syncStateChecked && syncStateRef[account.id]) {
-          syncStateChecked = true;
-          expect(syncStateRef[account.id].error).toBeNull();
-          expect(recoverError).toHaveBeenCalledWith(mockError);
-          done();
-        }
-      }, 200);
-
       return <div>Test</div>;
     }
 
-    renderBridgeSync({ accounts, recoverError }, <TestComponent />);
+    await renderBridgeSyncAsync({ accounts, recoverError }, <TestComponent />);
+
+    await waitFor(
+      () => {
+        expect(recoverError).toHaveBeenCalledWith(mockError);
+      },
+      // wait > SYNC_BOOT_DELAY (default 2s) + observer.error setTimeout (100ms)
+      { timeout: 5000 },
+    );
+    expect(syncStateRef![account.id]?.error).toBeNull();
   });
 
-  test("handles blacklisted token IDs in sync config", () => {
+  test("handles blacklisted token IDs in sync config", async () => {
     const account = createAccount("btc1", bitcoin);
     const blacklistedTokenIds = ["token1", "token2"];
 
-    renderBridgeSync({ accounts: [account], blacklistedTokenIds });
+    await renderBridgeSyncAsync({ accounts: [account], blacklistedTokenIds });
 
     // Test passes if component renders without errors with blacklisted tokens
     expect(blacklistedTokenIds).toHaveLength(2);
   });
 
-  test("handles sync actions correctly", () => {
+  test("handles sync actions correctly", async () => {
     const account1 = createAccount("btc1", bitcoin);
     const account2 = createAccount("eth1", ethereum);
     const accounts = [account1, account2];
@@ -300,7 +311,7 @@ describe("BridgeSync", () => {
       return <div>Test</div>;
     }
 
-    renderBridgeSync({ accounts }, <TestComponent />);
+    await renderBridgeSyncAsync({ accounts }, <TestComponent />);
 
     expect(sync).toBeDefined();
 
@@ -331,7 +342,7 @@ describe("BridgeSync", () => {
     }).not.toThrow();
   });
 
-  test("handles pending operations sync", () => {
+  test("handles pending operations sync", async () => {
     const account = createAccount("btc1", bitcoin);
 
     // Create account with pending operations
@@ -364,7 +375,7 @@ describe("BridgeSync", () => {
       return <div>Test</div>;
     }
 
-    renderBridgeSync({ accounts }, <TestComponent />);
+    await renderBridgeSyncAsync({ accounts }, <TestComponent />);
 
     expect(sync).toBeDefined();
 
@@ -382,10 +393,12 @@ describe("BridgeSync", () => {
 
     const hydrateCurrency = jest.fn(() => Promise.resolve());
 
-    renderBridgeSync({ accounts, hydrateCurrency });
+    await renderBridgeSyncAsync({ accounts, hydrateCurrency });
 
     // Wait for hydration to complete
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await act(async () => {
+      await new Promise(resolve => setTimeout(resolve, 50));
+    });
 
     // Should only hydrate each currency once, not once per account
     expect(hydrateCurrency).toHaveBeenCalledTimes(2); // BTC and ETH
@@ -393,7 +406,7 @@ describe("BridgeSync", () => {
     expect(hydrateCurrency).toHaveBeenCalledWith(ethereum);
   });
 
-  test("handles different sync actions", () => {
+  test("handles different sync actions", async () => {
     const account = createAccount("btc1", bitcoin);
     const accounts = [account];
 
@@ -404,7 +417,7 @@ describe("BridgeSync", () => {
       return <div>Test</div>;
     }
 
-    renderBridgeSync({ accounts }, <TestComponent />);
+    await renderBridgeSyncAsync({ accounts }, <TestComponent />);
 
     expect(sync).toBeDefined();
 
@@ -429,16 +442,18 @@ describe("BridgeSync", () => {
 
     const trackAnalytics = jest.fn();
 
-    renderBridgeSync({ accounts, trackAnalytics });
+    await renderBridgeSyncAsync({ accounts, trackAnalytics });
 
     // Wait for potential analytics calls
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await act(async () => {
+      await new Promise(resolve => setTimeout(resolve, 100));
+    });
 
     // The component should not throw when tracking analytics
     expect(accounts).toHaveLength(2);
   });
 
-  test("handles non-existent account sync gracefully", () => {
+  test("handles non-existent account sync gracefully", async () => {
     const account = createAccount("btc1", bitcoin);
     const accounts = [account];
 
@@ -449,7 +464,7 @@ describe("BridgeSync", () => {
       return <div>Test</div>;
     }
 
-    renderBridgeSync({ accounts }, <TestComponent />);
+    await renderBridgeSyncAsync({ accounts }, <TestComponent />);
 
     // Try to sync an account that doesn't exist - should not throw
     expect(sync).toBeDefined();
@@ -465,7 +480,7 @@ describe("BridgeSync", () => {
     }).not.toThrow();
   });
 
-  test("does not send analytics for background sync reason", done => {
+  test("does not send analytics for background sync reason", async () => {
     const account = createAccount("btc1", bitcoin);
     const accounts = [account];
 
@@ -473,8 +488,10 @@ describe("BridgeSync", () => {
 
     // Mock the account bridge to complete successfully
     mockBridgeSync(account, observer => {
-      observer.next((acc: typeof account) => acc);
-      observer.complete();
+      act(() => {
+        observer.next((acc: typeof account) => acc);
+        observer.complete();
+      });
     });
 
     function TestComponent() {
@@ -492,22 +509,22 @@ describe("BridgeSync", () => {
       return <div>Test</div>;
     }
 
-    renderBridgeSync({ accounts, trackAnalytics }, <TestComponent />);
+    await renderBridgeSyncAsync({ accounts, trackAnalytics }, <TestComponent />);
 
     // Wait for sync to complete and verify no analytics were sent
-    setTimeout(() => {
-      // Should not have called trackAnalytics with SyncSuccess for background syncs
-      const syncSuccessCalls = trackAnalytics.mock.calls.filter(call => call[0] === "SyncSuccess");
-      expect(syncSuccessCalls).toHaveLength(0);
+    await act(async () => {
+      await new Promise(resolve => setTimeout(resolve, 200));
+    });
 
-      // Verify trackAnalytics was not called at all with SyncSuccess
-      expect(trackAnalytics).not.toHaveBeenCalledWith("SyncSuccess", expect.anything());
+    // Should not have called trackAnalytics with SyncSuccess for background syncs
+    const syncSuccessCalls = trackAnalytics.mock.calls.filter(call => call[0] === "SyncSuccess");
+    expect(syncSuccessCalls).toHaveLength(0);
 
-      done();
-    }, 200);
+    // Verify trackAnalytics was not called at all with SyncSuccess
+    expect(trackAnalytics).not.toHaveBeenCalledWith("SyncSuccess", expect.anything());
   });
 
-  test("sends analytics for non-background sync reason", done => {
+  test("sends analytics for non-background sync reason", async () => {
     const account = createAccount("btc1", bitcoin);
     const accounts = [account];
 
@@ -515,8 +532,10 @@ describe("BridgeSync", () => {
 
     // Mock the account bridge to complete successfully
     mockBridgeSync(account, observer => {
-      observer.next((acc: typeof account) => acc);
-      observer.complete();
+      act(() => {
+        observer.next((acc: typeof account) => acc);
+        observer.complete();
+      });
     });
 
     function TestComponent() {
@@ -534,11 +553,10 @@ describe("BridgeSync", () => {
       return <div>Test</div>;
     }
 
-    renderBridgeSync({ accounts, trackAnalytics }, <TestComponent />);
+    await renderBridgeSyncAsync({ accounts, trackAnalytics }, <TestComponent />);
 
     // Wait for sync to complete and verify analytics were sent
-    setTimeout(() => {
-      // Should have called trackAnalytics with SyncSuccess for manual syncs
+    await waitFor(() => {
       expect(trackAnalytics).toHaveBeenCalledWith(
         "SyncSuccess",
         expect.objectContaining({
@@ -546,12 +564,10 @@ describe("BridgeSync", () => {
           currencyName: account.currency.name,
         }),
       );
-
-      done();
-    }, 400);
+    });
   });
 
-  test("provides sync state context", () => {
+  test("provides sync state context", async () => {
     const account = createAccount("btc1", bitcoin);
     const accounts = [account];
 
@@ -562,7 +578,7 @@ describe("BridgeSync", () => {
       return <div>Test</div>;
     }
 
-    renderBridgeSync({ accounts }, <TestComponent />);
+    await renderBridgeSyncAsync({ accounts }, <TestComponent />);
 
     expect(syncState).toBeDefined();
     expect(typeof syncState).toBe("object");

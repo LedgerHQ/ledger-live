@@ -3,8 +3,7 @@ import React, { useCallback, useMemo } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { BigNumber } from "bignumber.js";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import type { AccountBridge } from "@ledgerhq/types-live";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 import type { StakingMappedDelegation } from "@ledgerhq/live-common/families/evm/staking/types";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -65,7 +64,7 @@ export default function StepValidators({
 }: StepProps) {
   invariant(transaction, "transaction required");
 
-  const bridge = getAccountBridge(account, parentAccount) as AccountBridge<GenericTransaction>;
+  const bridge = useAccountBridge<GenericTransaction>(account, parentAccount);
   const updateRedelegation = useCallback(
     (patch: Partial<GenericTransaction>) => {
       onUpdateTransaction(tx => bridge.updateTransaction(tx, patch));

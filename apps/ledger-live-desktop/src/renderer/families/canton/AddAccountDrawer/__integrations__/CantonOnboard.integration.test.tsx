@@ -23,6 +23,10 @@ import { INITIAL_STATE as SETTINGS_INITIAL_STATE } from "~/renderer/reducers/set
 import CantonOnboard from "../CantonOnboard";
 import { createMockAccount } from "../../__tests__/testUtils";
 
+jest.mock("@ledgerhq/live-common/bridge/impl");
+import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/impl";
+const mockedGetCurrencyBridge = jest.mocked(getCurrencyBridge);
+
 jest.mock("@ledgerhq/live-common/hw/deviceAccess", () => ({
   withDevice: jest.fn(() => (job: (transport: unknown) => unknown) => job({})),
 }));
@@ -113,7 +117,7 @@ describe("CantonOnboard (MAD) Integration", () => {
   const mockDevice = createMockDevice();
   let previousCantonNodeIdOverride: string;
 
-  beforeAll(() => {
+  beforeAll(async () => {
     previousCantonNodeIdOverride = getEnv("CANTON_NODE_ID_OVERRIDE") ?? "";
     setEnv("CANTON_NODE_ID_OVERRIDE", "");
 
@@ -126,6 +130,18 @@ describe("CantonOnboard (MAD) Integration", () => {
       useGateway: true,
       nativeInstrumentId: "Amulet",
     }));
+
+    const currency = getCryptoCurrencyById("canton_network_devnet");
+    const realGetCurrencyBridge =
+      jest.requireActual<typeof import("@ledgerhq/live-common/bridge/impl")>(
+        "@ledgerhq/live-common/bridge/impl",
+      ).getCurrencyBridge;
+    const bridge = await realGetCurrencyBridge(currency);
+    const settledPromise = Object.assign(Promise.resolve(bridge), {
+      status: "fulfilled",
+      value: bridge,
+    });
+    mockedGetCurrencyBridge.mockReturnValue(settledPromise);
   });
 
   afterAll(() => {

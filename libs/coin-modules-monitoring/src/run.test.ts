@@ -16,7 +16,7 @@ describe("Coin Modules Monitoring", () => {
 
   describe("run", () => {
     it("produces log entries to be submitted, skipping failures", async () => {
-      jest.spyOn(bridgeModule, "getAccountBridgeByFamily").mockReturnValue({
+      jest.spyOn(bridgeModule, "getAccountBridgeByFamily").mockResolvedValue({
         sync: makeSync({
           getAccountShape: async info => {
             if (info.address === "2ojv9BAiHUrvsm9gxDe7fJSzbNZSJcxZvf8dqmWGHG8S") {

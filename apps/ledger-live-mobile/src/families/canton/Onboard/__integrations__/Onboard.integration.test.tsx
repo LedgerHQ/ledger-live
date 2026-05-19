@@ -19,6 +19,26 @@ jest.mock("@ledgerhq/live-common/hw/deviceAccess", () => ({
   withDevice: jest.fn(() => (job: (transport: unknown) => unknown) => job({})),
 }));
 
+jest.mock("@ledgerhq/live-common/bridge/index", () => {
+  const { bridge } = jest.requireActual<typeof import("@ledgerhq/live-common/families/canton/setup")>(
+    "@ledgerhq/live-common/families/canton/setup",
+  );
+  const currencyBridge = bridge.currencyBridge;
+  const currencyBridgePromise = Object.assign(Promise.resolve(currencyBridge), {
+    status: "fulfilled" as const,
+    value: currencyBridge,
+  });
+  const accountBridge = bridge.accountBridge;
+  const accountBridgePromise = Object.assign(Promise.resolve(accountBridge), {
+    status: "fulfilled" as const,
+    value: accountBridge,
+  });
+  return {
+    getCurrencyBridge: jest.fn(() => currencyBridgePromise),
+    getAccountBridge: jest.fn(() => accountBridgePromise),
+  };
+});
+
 jest.mock(
   "@ledgerhq/hw-app-canton",
   () => {
