@@ -8428,6 +8428,10 @@
         "recover": {
           "title": "Finish securing your backup",
           "description": "Complete activating Ledger Recover"
+        },
+        "discoverWallet": {
+          "title": "Discover your wallet",
+          "description": "See what’s new in your portfolio and how to get around."
         }
       }
     },
@@ -8460,6 +8464,10 @@
       "syncAccounts": {
         "titleCompleted": "Your accounts are synchronized",
         "popupLabel": "Accounts synced"
+      },
+      "discoverWallet": {
+        "titleCompleted": "Wallet tour opened",
+        "popupLabel": "Wallet tour opened"
       }
     }
   },
