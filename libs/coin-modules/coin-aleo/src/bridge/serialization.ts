@@ -16,6 +16,9 @@ export function toAleoResourcesRaw(resources: AleoResources): AleoResourcesRaw {
     ...(resources.hasMigratedTokens !== undefined && {
       hasMigratedTokens: resources.hasMigratedTokens,
     }),
+    ...(resources.hasMigratedPrivateTokens !== undefined && {
+      hasMigratedPrivateTokens: resources.hasMigratedPrivateTokens,
+    }),
   };
 }
 
@@ -32,6 +35,9 @@ export function fromAleoResourcesRaw(rawResources: AleoResourcesRaw): AleoResour
       : null,
     ...(rawResources.hasMigratedTokens !== undefined && {
       hasMigratedTokens: rawResources.hasMigratedTokens,
+    }),
+    ...(rawResources.hasMigratedPrivateTokens !== undefined && {
+      hasMigratedPrivateTokens: rawResources.hasMigratedPrivateTokens,
     }),
   };
 }

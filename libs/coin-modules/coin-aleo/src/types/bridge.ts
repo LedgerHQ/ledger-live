@@ -79,6 +79,7 @@ export interface AleoResources {
   unspentPrivateRecords: AleoUnspentRecord[] | null;
   lastPrivateSyncDate: Date | null;
   hasMigratedTokens?: boolean;
+  hasMigratedPrivateTokens?: boolean;
 }
 
 export interface AleoResourcesRaw {
@@ -88,6 +89,7 @@ export interface AleoResourcesRaw {
   unspentPrivateRecords: string | null;
   lastPrivateSyncDate: string | null;
   hasMigratedTokens?: boolean;
+  hasMigratedPrivateTokens?: boolean;
 }
 
 export type AleoAccount = Account & {

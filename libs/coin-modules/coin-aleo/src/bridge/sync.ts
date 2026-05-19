@@ -274,6 +274,12 @@ export async function performPrivateSync(
   const [oldPrivateOps] = splitPrivateAndPublicOperations(allOldOperations);
   const lastPrivateBlockHeight = oldPrivateOps[0]?.blockHeight ?? 0;
 
+  // Determine whether we should fetch private token records this cycle.
+  const hasMigratedPrivateTokens = initialAccount.aleoResources?.hasMigratedPrivateTokens ?? false;
+  const shouldFetchPrivateTokens = config.enableTokens;
+  const tokenSyncStartHeight =
+    shouldFetchPrivateTokens && hasMigratedPrivateTokens ? lastPrivateBlockHeight : 0;
+
   const [rawNewPrivateRecords, rawUnspentPrivateRecords, rawTokenPrivateRecords] =
     await Promise.all([
       fetchAllOwnedRecords({
@@ -288,14 +294,16 @@ export async function performPrivateSync(
         unspent: true,
         ...(signal && { signal }),
       }),
-      fetchAllOwnedRecords({
-        currency,
-        uuid: provableApi.uuid,
-        start: 0,
-        programs: [...TOKENS_PROGRAMS],
-        functions: [],
-        ...(signal && { signal }),
-      }),
+      shouldFetchPrivateTokens
+        ? fetchAllOwnedRecords({
+            currency,
+            uuid: provableApi.uuid,
+            start: tokenSyncStartHeight,
+            programs: [...TOKENS_PROGRAMS],
+            functions: [],
+            ...(signal && { signal }),
+          })
+        : Promise.resolve([]),
     ]);
 
   // eslint-disable-next-line no-console
@@ -423,6 +431,7 @@ export async function performPrivateSync(
       unspentPrivateRecords,
       lastPrivateSyncDate: new Date(),
       ...(config.enableTokens && { hasMigratedTokens: true }),
+      ...(config.enableTokens && { hasMigratedPrivateTokens: true }),
     },
   };
 }
