@@ -171,7 +171,7 @@ describe("ProductTour dialog from debug (view model)", () => {
     expect(screen.getByTestId("product-tour-slide-0")).toBeVisible();
   });
 
-  it("should mark product tour completed when reaching the fifth slide", async () => {
+  it("should mark completed but keep dialog open when reaching the fifth slide", async () => {
     const { user, store } = render(<TestHarness />, {
       initialState: getProductTourTestInitialState(),
     });
