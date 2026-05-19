@@ -20,7 +20,7 @@ const baseConfig = {
   transform: baseTransform,
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json"],
   coverageDirectory: "./coverage/",
-  coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../" }], "text"],
+  coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
 };
 
 module.exports = {

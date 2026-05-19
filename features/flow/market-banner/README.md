@@ -5,7 +5,7 @@ Cross-platform banner component for Ledger Live.
 ## Usage
 
 ```tsx
-import { MarketBanner } from "@features/market-banner";
+import { MarketBanner } from "@features/flow-market-banner";
 
 <MarketBanner />;
 ```

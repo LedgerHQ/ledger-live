@@ -930,9 +930,9 @@ importers:
       '@electron/fuses':
         specifier: 2.0.0
         version: 2.0.0
-      '@features/market-banner':
+      '@features/flow-market-banner':
         specifier: workspace:^
-        version: link:../../features/market-banner
+        version: link:../../features/flow/market-banner
       '@ledgerhq/asset-aggregation':
         specifier: workspace:^
         version: link:../../libs/asset-aggregation
@@ -2097,9 +2097,9 @@ importers:
       '@callstack/repack-plugin-reanimated':
         specifier: 5.2.3
         version: 5.2.3(@babel/core@7.28.5)(@callstack/repack@5.2.3(patch_hash=8d7db4e65c8982b51b689b97af043f6e2c411605b19084c3781cb5ec5e635b60)(@babel/core@7.28.5)(@rspack/core@1.7.3(@swc/helpers@0.5.17))(@swc/core@1.15.11(@swc/helpers@0.5.17))(react-native@0.79.7(patch_hash=4744872a4d5177ec833786050853390422679378b06f4cf3a90ad6e27b560053)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(typescript@6.0.2))(@types/react@19.0.14)(react@19.0.0)))
-      '@features/market-banner':
+      '@features/flow-market-banner':
         specifier: workspace:^
-        version: link:../../features/market-banner
+        version: link:../../features/flow/market-banner
       '@jest/reporters':
         specifier: 'catalog:'
         version: 30.2.0
@@ -3336,7 +3336,7 @@ importers:
         specifier: 1.51.0
         version: 1.51.0
 
-  features/market-banner:
+  features/flow/market-banner:
     dependencies:
       clsx:
         specifier: 'catalog:'
@@ -18158,6 +18158,7 @@ packages:
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [x64]
     os: [linux]
+    libc: [glibc]
 
   '@oxlint/binding-linux-x64-musl@1.51.0':
     resolution: {integrity: sha512-wD8HGTWhYBKXvRDvoBVB1y+fEYV01samhWQSy1Zkxq2vpezvMnjaFKRuiP6tBNITLGuffbNDEXOwcAhJ3gI5Ug==}
@@ -21432,7 +21433,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: 19.0.0
       react-dom: 19.0.0
-      webpack: '*'
+      webpack: ^5.89.0
     peerDependenciesMeta:
       '@react-native/babel-preset':
         optional: true
@@ -33006,7 +33007,6 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
-
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -58756,7 +58756,7 @@ snapshots:
   enhanced-resolve@5.17.1:
     dependencies:
       graceful-fs: 4.2.11
-      tapable: 2.2.1
+      tapable: 2.2.3
 
   enhanced-resolve@5.18.4:
     dependencies:

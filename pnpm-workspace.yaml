@@ -3,6 +3,7 @@ packages:
   - "apps/wallet-cli/npm/*"
   - "e2e/*"
   - "features/*"
+  - "features/flow/*"
   - "libs/*"
   - "tests/*"
   - "libs/coin-modules/*"

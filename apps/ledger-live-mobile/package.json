@@ -260,7 +260,7 @@
     "@callstack/repack": "5.2.3",
     "@callstack/repack-plugin-expo-modules": "5.2.3",
     "@callstack/repack-plugin-reanimated": "5.2.3",
-    "@features/market-banner": "workspace:^",
+    "@features/flow-market-banner": "workspace:^",
     "@jest/reporters": "catalog:",
     "@ledgerhq/asset-aggregation": "workspace:^",
     "@ledgerhq/asset-detail": "workspace:^",
