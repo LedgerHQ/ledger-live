@@ -11,12 +11,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@ledgerhq/lumen-ui-react";
-import {
-  ChevronRight,
-  Information,
-  TriangleUp,
-  TriangleDown,
-} from "@ledgerhq/lumen-ui-react/symbols";
+import { ChevronRight, Information } from "@ledgerhq/lumen-ui-react/symbols";
 import type { PnLCardProps } from "./types";
 
 export const PnLCard = (props: PnLCardProps) => {
@@ -46,11 +41,7 @@ export const PnLCard = (props: PnLCardProps) => {
               <div className="flex items-center align-center gap-4">
                 {type === "interactive" && (
                   <span className="text-muted body-3">
-                    {props.trend === "up" ? (
-                      <TriangleUp size={16} className="text-success" />
-                    ) : (
-                      <TriangleDown size={16} className="text-error" />
-                    )}
+                    <props.trendIcon.Icon size={16} className={props.trendIcon.className} />
                   </span>
                 )}
                 <span className="text-base body-2-semi-bold">{value}</span>

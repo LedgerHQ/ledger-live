@@ -2,6 +2,7 @@ import { BigNumber } from "bignumber.js";
 import type { TFunction } from "i18next";
 import type { PnLCardProps } from "../../components/PnLCard/types";
 import { buildUnrealisedReturnCard } from "../buildUnrealisedReturnCard";
+import { getTrendIcon } from "../trend";
 
 const fakeT = ((key: string) => key) as unknown as TFunction;
 
@@ -47,15 +48,11 @@ describe("buildUnrealisedReturnCard", () => {
     expect(onClick).toHaveBeenCalledTimes(1);
   });
 
-  describe("trend", () => {
-    it.each([
-      [new BigNumber(10), "up"],
-      [new BigNumber(-10), "down"],
-      [new BigNumber(0), "up"],
-    ] as const)("is %s for %s", (unrealisedPnL, expected) => {
-      const card = buildUnrealisedReturnCard(makeInput({ unrealisedPnL }));
-      assertInteractive(card);
-      expect(card.trend).toBe(expected);
-    });
+  it("wires trendIcon through getTrendIcon", () => {
+    const unrealisedPnL = new BigNumber(-7);
+    const card = buildUnrealisedReturnCard(makeInput({ unrealisedPnL }));
+
+    assertInteractive(card);
+    expect(card.trendIcon).toEqual(getTrendIcon(unrealisedPnL));
   });
 });
