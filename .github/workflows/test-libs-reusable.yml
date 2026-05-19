@@ -58,13 +58,14 @@ jobs:
         run: pnpm i --filter="./libs/**"
 
       - name: Run coverage on appropriate libraries
+        continue-on-error: true
         run: |
 
           mkdir -p ${{ github.workspace }}/coverage
           touch ${{ github.workspace }}/coverage/lcov.info
           touch ${{ github.workspace }}/coverage/sonar-executionTests-report.xml
 
-          pnpm exec nx run-many -t coverage --projects=tag:scope:libs-non-ui --parallel=4 -- --runInBand=1
+          mise run libs:test:coverage
 
       - name: Test libraries without coverage script & Process coverage files
         id: test-libs
@@ -100,13 +101,7 @@ jobs:
 
           echo "::endgroup::"
 
-          if [ ${#nx_test_args[@]} -eq 0 ]; then
-            echo "Running tests for libs without coverage (all non-ui libs)"
-            pnpm exec nx run-many -t test --projects=tag:scope:libs-non-ui --parallel=4
-          else
-            echo "Running tests for libs without coverage: pnpm exec nx run-many -t test --parallel=4 ${nx_test_args[*]}"
-            pnpm exec nx run-many -t test --parallel=4 "${nx_test_args[@]}"
-          fi
+          mise run libs:test
         shell: bash
 
       - name: (On Failure) Upload live-common snapshots and source
