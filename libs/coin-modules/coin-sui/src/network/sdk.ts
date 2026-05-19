@@ -567,12 +567,14 @@ export const getOperationAmountCoinFramework = (
       return removeFeesFromAmountForNative(changes[0], getOperationFee(transaction)).abs();
     return BigNumber(0);
   } else {
+    const normalizedAddress = normalizeSuiAddressForComparison(address);
     return changes
       .filter(
         balanceChange =>
           typeof balanceChange.owner !== "string" &&
           "AddressOwner" in balanceChange.owner &&
-          balanceChange.owner.AddressOwner === address &&
+          normalizeSuiAddressForComparison(balanceChange.owner.AddressOwner) ===
+            normalizedAddress &&
           balanceChange.coinType === coinType,
       )
       .map(change => {
