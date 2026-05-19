@@ -17,6 +17,9 @@ import { setAccountName } from "@ledgerhq/live-wallet/store";
 import { handlers as deeplinkHandlers } from "@ledgerhq/live-common/wallet-api/CustomDeeplink/server";
 import { handlers as liveAppModalHandlers } from "@ledgerhq/live-common/wallet-api/LiveAppModal/server";
 import { resolveLiveAppModalParams } from "@ledgerhq/live-common/wallet-api/LiveAppModal/types";
+import { handlers as stakingIntentHandlers } from "@ledgerhq/live-common/wallet-api/StakingIntent/server";
+import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
+import type { StakingIntentOpenParams } from "@ledgerhq/live-common/wallet-api/StakingIntent/types";
 import { setLiveAppModal } from "~/reducers/liveAppModal";
 import { Linking } from "react-native";
 
@@ -149,4 +152,66 @@ export function useLiveAppModalCustomHandlers(manifest: WebviewProps["manifest"]
       }),
     };
   }, [navigation, dispatch, manifest.id]);
+}
+
+export function useStakingIntentCustomHandlers(accounts: AccountLike[]) {
+  const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
+
+  return useMemo<WalletAPICustomHandlers>(() => {
+    return {
+      ...stakingIntentHandlers({
+        accounts,
+        uiHooks: {
+          "custom.earn.intent.open": (params: StakingIntentOpenParams) => {
+            const realAccountId = getAccountIdFromWalletAccountId(params.accountId);
+            if (!realAccountId) return;
+
+            const account = accounts.find(a => a.id === realAccountId);
+            if (!account || account.type !== "Account") return;
+
+            const family = account.currency.family;
+
+            if (family === "cosmos") {
+              const nav = navigation as { navigate: (route: string, p: object) => void };
+              switch (params.intent) {
+                case "delegate":
+                  nav.navigate(NavigatorName.CosmosDelegationFlow, {
+                    screen: ScreenName.CosmosDelegationValidator,
+                    params: {
+                      accountId: account.id,
+                    },
+                  });
+                  break;
+                case "redelegate":
+                  nav.navigate(NavigatorName.CosmosRedelegationFlow, {
+                    screen: ScreenName.CosmosRedelegationValidator,
+                    params: {
+                      accountId: account.id,
+                      validatorSrcAddress: params.validatorAddress ?? "",
+                    },
+                  });
+                  break;
+                case "unbond":
+                  nav.navigate(NavigatorName.CosmosUndelegationFlow, {
+                    screen: ScreenName.CosmosUndelegationAmount,
+                    params: {
+                      accountId: account.id,
+                    },
+                  });
+                  break;
+                case "claimRewards":
+                  nav.navigate(NavigatorName.CosmosClaimRewardsFlow, {
+                    screen: ScreenName.CosmosClaimRewardsValidator,
+                    params: {
+                      accountId: account.id,
+                    },
+                  });
+                  break;
+              }
+            }
+          },
+        },
+      }),
+    };
+  }, [accounts, navigation]);
 }

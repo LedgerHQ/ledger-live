@@ -18,6 +18,7 @@ import {
   useACRECustomHandlers,
   useDeeplinkCustomHandlers,
   useLiveAppModalCustomHandlers,
+  useStakingIntentCustomHandlers,
 } from "./CustomHandlers";
 
 export const Container = styled.div`
@@ -70,6 +71,7 @@ export default function WebPlatformPlayer({
   const { mobileView, setMobileView } = useMobileView();
 
   const customPerpsHandlers = usePerpsHandlers(accounts);
+  const customStakingIntentHandlers = useStakingIntentCustomHandlers(accounts);
 
   const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
     return {
@@ -78,6 +80,7 @@ export default function WebPlatformPlayer({
       ...customPTXHandlers,
       ...customDeeplinkHandlers,
       ...customLiveAppModalHandlers,
+      ...customStakingIntentHandlers,
       ...props.customHandlers,
       ...customPerpsHandlers,
     };
@@ -87,6 +90,7 @@ export default function WebPlatformPlayer({
     props.customHandlers,
     customDeeplinkHandlers,
     customLiveAppModalHandlers,
+    customStakingIntentHandlers,
     customPerpsHandlers,
   ]);
 
@@ -95,8 +99,11 @@ export default function WebPlatformPlayer({
     props.onStateChange?.(state);
   };
 
-  const [currentAccountHistDb, setCurrentAccountHistDb, currentAccountHistDbLoaded]:
-    CurrentAccountHistDB = useCurrentAccountHistDB();
+  const [
+    currentAccountHistDb,
+    setCurrentAccountHistDb,
+    currentAccountHistDbLoaded,
+  ]: CurrentAccountHistDB = useCurrentAccountHistDB();
 
   return (
     <Container>

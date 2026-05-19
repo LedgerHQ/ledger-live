@@ -15,6 +15,7 @@ import { useEarnCustomHandlers } from "./useEarnWebviewCustomHandlers";
 import {
   useDeeplinkCustomHandlers,
   useLiveAppModalCustomHandlers,
+  useStakingIntentCustomHandlers,
 } from "~/components/WebPlatformPlayer/CustomHandlers";
 import { initialWebviewState } from "~/components/Web3AppWebview/helpers";
 import { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
@@ -138,13 +139,20 @@ export const EarnWebview = ({ manifest, inputs, isLwm40Enabled, onScroll }: Prop
   const customEarnHandlers = useEarnCustomHandlers(manifest, accounts);
   const customDeeplinkHandlers = useDeeplinkCustomHandlers();
   const customLiveAppModalHandlers = useLiveAppModalCustomHandlers(manifest);
+  const customStakingIntentHandlers = useStakingIntentCustomHandlers(accounts);
   const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
     return {
       ...customEarnHandlers,
       ...customDeeplinkHandlers,
       ...customLiveAppModalHandlers,
+      ...customStakingIntentHandlers,
     };
-  }, [customEarnHandlers, customDeeplinkHandlers, customLiveAppModalHandlers]);
+  }, [
+    customEarnHandlers,
+    customDeeplinkHandlers,
+    customLiveAppModalHandlers,
+    customStakingIntentHandlers,
+  ]);
 
   const Container = isLwm40Enabled ? View : SafeAreaView;
 

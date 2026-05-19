@@ -20,6 +20,10 @@ import { setAccountName } from "@ledgerhq/live-wallet/store";
 import { handlers as deeplinkHandlers } from "@ledgerhq/live-common/wallet-api/CustomDeeplink/server";
 import { handlers as liveAppModalHandlers } from "@ledgerhq/live-common/wallet-api/LiveAppModal/server";
 import { resolveLiveAppModalParams } from "@ledgerhq/live-common/wallet-api/LiveAppModal/types";
+import { handlers as stakingIntentHandlers } from "@ledgerhq/live-common/wallet-api/StakingIntent/server";
+import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
+import type { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
+import type { StakingIntentOpenParams } from "@ledgerhq/live-common/wallet-api/StakingIntent/types";
 
 export function useACRECustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
   const { pushToast } = useToasts();
@@ -183,4 +187,67 @@ export function useLiveAppModalCustomHandlers(manifest: WebviewProps["manifest"]
       }),
     };
   }, [dispatch, manifest.id]);
+}
+
+export function useStakingIntentCustomHandlers(accounts: AccountLike[]) {
+  const dispatch = useDispatch();
+
+  return useMemo<WalletAPICustomHandlers>(() => {
+    return {
+      ...stakingIntentHandlers({
+        accounts,
+        uiHooks: {
+          "custom.earn.intent.open": (params: StakingIntentOpenParams) => {
+            const realAccountId = getAccountIdFromWalletAccountId(params.accountId);
+            if (!realAccountId) return;
+
+            const account = accounts.find(a => a.id === realAccountId);
+            if (!account || account.type !== "Account") return;
+
+            const family = account.currency.family;
+
+            if (family === "cosmos") {
+              const cosmosAccount = account as unknown as CosmosAccount;
+              switch (params.intent) {
+                case "delegate":
+                  dispatch(
+                    openModal("MODAL_COSMOS_DELEGATE", {
+                      account: cosmosAccount,
+                      source: "earn",
+                    }),
+                  );
+                  break;
+                case "redelegate":
+                  dispatch(
+                    openModal("MODAL_COSMOS_REDELEGATE", {
+                      account: cosmosAccount,
+                      validatorAddress: params.validatorAddress,
+                      validatorDstAddress: params.validatorDstAddress,
+                      source: "earn",
+                    }),
+                  );
+                  break;
+                case "unbond":
+                  dispatch(
+                    openModal("MODAL_COSMOS_UNDELEGATE", {
+                      account: cosmosAccount,
+                      validatorAddress: params.validatorAddress ?? "",
+                    }),
+                  );
+                  break;
+                case "claimRewards":
+                  dispatch(
+                    openModal("MODAL_COSMOS_CLAIM_REWARDS", {
+                      account: cosmosAccount,
+                      validatorAddress: params.validatorAddress,
+                    }),
+                  );
+                  break;
+              }
+            }
+          },
+        },
+      }),
+    };
+  }, [accounts, dispatch]);
 }

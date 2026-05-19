@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { flagWith } from "../../define";
 
-const platformManifestIdSchema = z.enum(["stakekit", "kiln-widget", "earn"]);
+const platformManifestIdSchema = z.enum(["stakekit", "kiln-widget", "earn", "p2p-ton-staking"]);
 
 const redirectSchema = z.object({
   platform: platformManifestIdSchema,
