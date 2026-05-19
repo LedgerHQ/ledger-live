@@ -155,7 +155,17 @@ export default function UndelegationAmount({ navigation, route }: Props) {
                 </View>
               ) : null}
               <SummaryRow
-                title={<Trans i18nKey="evm.delegation.flow.steps.amount.amountDelegated" />}
+                title={
+                  <Trans
+                    i18nKey="evm.delegation.flow.steps.validator.totalAvailable"
+                    values={{
+                      amount: formatCurrencyUnit(unit, maxAmount, {
+                        showCode: true,
+                        locale,
+                      }),
+                    }}
+                  />
+                }
               >
                 <LText semiBold>
                   <CurrencyUnitValue unit={unit} value={maxAmount} showCode />
@@ -242,14 +252,16 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   remainingContainer: {
-    width: "100%",
+    flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
     paddingBottom: 16,
   },
   remainingText: {
     fontSize: 14,
     textAlign: "center",
-    lineHeight: 20,
+    lineHeight: 32,
+    paddingHorizontal: 10,
   },
   errorContainer: {
     width: "100%",
