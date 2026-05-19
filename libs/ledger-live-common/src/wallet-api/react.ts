@@ -139,7 +139,7 @@ export interface UiHook {
     options: Parameters<WalletHandlers["transaction.sign"]>[0]["options"];
     onSuccess: (signedOperation: SignedOperation) => void;
     onError: (error: Error) => void;
-  }) => void;
+  }) => void | Promise<void>;
   "transaction.broadcast": (
     account: AccountLike,
     parentAccount: Account | undefined,
