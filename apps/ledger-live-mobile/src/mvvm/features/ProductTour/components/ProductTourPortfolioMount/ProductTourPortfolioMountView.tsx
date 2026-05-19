@@ -14,7 +14,7 @@ export const ProductTourPortfolioMountView = ({
   onPrimaryAction,
   completeProductTour,
 }: UseProductTourPortfolioMountViewModelResult) => {
-  if (!isProductTourEligible) {
+  if (!isProductTourEligible && !isDrawerOpen) {
     return null;
   }
 
