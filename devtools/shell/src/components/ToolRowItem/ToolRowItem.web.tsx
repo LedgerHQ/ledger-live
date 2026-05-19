@@ -1,6 +1,6 @@
 import type { Tool } from "@devtools/core";
 import { ToolRow } from "../ToolRow/ToolRow.web";
-import { useIsToolConfigured } from "../../context";
+import { useToolBinding } from "../../context";
 
 interface ToolRowItemProps {
   tool: Tool;
@@ -9,7 +9,7 @@ interface ToolRowItemProps {
 }
 
 export function ToolRowItem({ tool, isActive, onSelect }: ToolRowItemProps) {
-  const isConfigured = useIsToolConfigured(tool);
+  const { isConfigured } = useToolBinding(tool);
   return (
     <ToolRow
       title={tool.label}

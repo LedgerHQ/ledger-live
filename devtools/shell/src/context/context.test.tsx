@@ -1,7 +1,8 @@
 import { render, screen } from "@testing-library/react";
+import { parse } from "@devtools/core";
 import { DevToolsProvider, useToolProps } from ".";
 
-const TEST_TOOL_ID = "test-tool" as const;
+const TEST_TOOL_ID = parse("test-tool");
 const testProps = { value: "hello" };
 
 const ToolPropsConsumer = ({ toolId }: { toolId: typeof TEST_TOOL_ID }) => {

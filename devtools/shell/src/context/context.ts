@@ -1,29 +1,35 @@
 import { createContext, createElement, useContext } from "react";
 import type { ReactNode } from "react";
-import type { DevToolsPropsRegistry, Tool } from "@devtools/core";
+import type { DevToolsPropsRegistry, Tool, ToolId } from "@devtools/core";
 
-const EMPTY_VALUE: Partial<DevToolsPropsRegistry> = {};
-const DevToolsContext = createContext<Partial<DevToolsPropsRegistry>>(EMPTY_VALUE);
+type DevToolsContextValue = Partial<DevToolsPropsRegistry>;
+
+const EMPTY_VALUE: DevToolsContextValue = {};
+const DevToolsContext = createContext<DevToolsContextValue>(EMPTY_VALUE);
 
 export function DevToolsProvider({
   value,
   children,
 }: {
-  value?: Partial<DevToolsPropsRegistry>;
+  value?: DevToolsContextValue;
   children: ReactNode;
 }) {
   return createElement(DevToolsContext.Provider, { value: value ?? EMPTY_VALUE }, children);
 }
 
-export function useToolProps<K extends keyof DevToolsPropsRegistry>(
-  id: K,
-): DevToolsPropsRegistry[K] | undefined {
-  return useContext(DevToolsContext)[id];
+export function useToolProps(id: ToolId): unknown {
+  return useContext(DevToolsContext)[asRegisteredToolId(id)];
 }
 
-export function useIsToolConfigured(tool: Tool): boolean {
-  if (tool.optional) return true;
+export function useToolBinding(tool: Tool) {
+  const props = useContext(DevToolsContext)[asRegisteredToolId(tool.id)];
+  return {
+    isConfigured: tool.optional || props !== undefined,
+    props: props ?? {},
+  };
+}
+
+export function asRegisteredToolId(id: ToolId): keyof DevToolsPropsRegistry {
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  const props = useToolProps(tool.id as keyof DevToolsPropsRegistry);
-  return props !== undefined;
+  return id as keyof DevToolsPropsRegistry; // safe: only registered tool ids reach the context
 }

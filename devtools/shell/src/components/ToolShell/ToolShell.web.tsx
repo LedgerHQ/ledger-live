@@ -1,6 +1,6 @@
 import { Tag } from "@ledgerhq/lumen-ui-react";
-import type { DevToolsPropsRegistry, Tool } from "@devtools/core";
-import { useIsToolConfigured, useToolProps } from "../../context";
+import type { Tool } from "@devtools/core";
+import { useToolBinding } from "../../context";
 import ToolNotConfigured from "../ToolNotConfigured/ToolNotConfigured";
 
 interface ToolShellProps {
@@ -9,10 +9,8 @@ interface ToolShellProps {
 }
 
 export function ToolShell({ tool, onBack }: ToolShellProps) {
-  const isConfigured = useIsToolConfigured(tool);
+  const { isConfigured, props: toolProps } = useToolBinding(tool);
   const Component = tool.component;
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  const toolProps = useToolProps(tool.id as keyof DevToolsPropsRegistry);
 
   return (
     <>
