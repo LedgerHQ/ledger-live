@@ -41,6 +41,10 @@ import DebugStore from "~/screens/Settings/Debug/Debugging/Store";
 import DebugSwap from "~/screens/Settings/Debug/Features/Swap";
 import DebugVideos from "~/screens/Settings/Debug/Features/Videos";
 import TooltipDemo from "~/screens/Settings/Debug/Features/TooltipDemo";
+import DebugDeviceActionContentScreen from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/DeviceActionContentScreen";
+import DebugInfoStateScreen from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/InfoStateScreen";
+import DebugDeviceIntentExecutorInitialization from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/InitializationScreen";
+import DebugDeviceIntentExecutorOrchestration from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/OrchestrationScreen";
 import Settings from "~/screens/Settings";
 import AccountsSettings from "~/screens/Settings/Accounts";
 import AboutSettings from "~/screens/Settings/About";
@@ -305,6 +309,34 @@ export default function SettingsNavigator() {
         component={DebugDeviceIntentExecutor}
         options={{
           title: "Device Intent Executor",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugDeviceIntentExecutorContent}
+        component={DebugDeviceActionContentScreen}
+        options={{
+          title: "DIE Device Action Content",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugDeviceIntentExecutorInfoState}
+        component={DebugInfoStateScreen}
+        options={{
+          title: "DIE Info State",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugDeviceIntentExecutorInitialization}
+        component={DebugDeviceIntentExecutorInitialization}
+        options={{
+          title: "DIE Initialization",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugDeviceIntentExecutorOrchestration}
+        component={DebugDeviceIntentExecutorOrchestration}
+        options={{
+          title: "DIE Orchestration",
         }}
       />
       <Stack.Screen

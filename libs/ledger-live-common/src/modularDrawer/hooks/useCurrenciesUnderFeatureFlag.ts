@@ -71,7 +71,6 @@ export function useCurrenciesUnderFeatureFlag() {
   const xion = useFeature("currencyXion");
   const zenrock = useFeature("currencyZenrock");
   const sonic = useFeature("currencySonic");
-  const sonicBlaze = useFeature("currencySonicBlaze");
   const sui = useFeature("currencySui");
   const suiTestnet = useFeature("currencySuiTestnet");
   const mina = useFeature("currencyMina");
@@ -167,7 +166,6 @@ export function useCurrenciesUnderFeatureFlag() {
       xion,
       zenrock,
       sonic,
-      sonic_blaze: sonicBlaze,
       sui,
       sui_testnet: suiTestnet,
       mina,
@@ -259,7 +257,6 @@ export function useCurrenciesUnderFeatureFlag() {
       xion,
       zenrock,
       sonic,
-      sonicBlaze,
       sui,
       suiTestnet,
       mina,

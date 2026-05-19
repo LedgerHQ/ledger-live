@@ -122,31 +122,30 @@ export class SendModal extends Modal {
   }
 
   @step("Check if the error message is the same as expected")
-  async checkErrorMessage(errorMessage: string | null) {
-    if (errorMessage !== null) {
-      await this.inputError.waitFor({ state: "visible" });
-      const errorText: any = await this.inputError.textContent();
-      const normalize = (str: string) => str.replace(/\u00A0/g, " ").trim();
-      expect(normalize(errorText)).toEqual(normalize(errorMessage));
-    }
+  async checkErrorMessage(errorMessage: string) {
+    await this.inputError.waitFor({ state: "visible" });
+    const errorText: string = await this.inputError.innerText();
+    const normalize = (str: string) => str.replace(/\u00A0/g, " ").trim();
+    expect(normalize(errorText)).toEqual(normalize(errorMessage));
   }
 
   @step("Check warning message")
   async checkAmountWarningMessage(expectedWarningMessage: RegExp) {
-    if (expectedWarningMessage !== null) {
-      await expect(this.insufficientFundsWarning).toBeVisible();
-      const warningText = await this.insufficientFundsWarning.innerText();
-      expect(warningText).toMatch(expectedWarningMessage);
-    }
+    await expect(this.insufficientFundsWarning).toBeVisible();
+    const warningText = await this.insufficientFundsWarning.innerText();
+    expect(warningText).toMatch(expectedWarningMessage);
   }
 
   @step("Check warning message")
-  async checkInputWarningMessage(expectedWarningMessage: string | null) {
-    if (expectedWarningMessage !== null) {
-      await expect(this.inputWarning).toBeVisible();
-      const warningText = await this.inputWarning.innerText();
-      expect(warningText).toMatch(expectedWarningMessage);
-    }
+  async checkInputWarningMessage(expectedWarningMessage: string) {
+    await expect(this.inputWarning).toBeVisible();
+    const warningText = await this.inputWarning.innerText();
+    expect(warningText).toMatch(expectedWarningMessage);
+  }
+
+  @step("Check input warning state visibility: $0")
+  async checkInputWarningVisibility(expectedState: "visible" | "hidden") {
+    await this.inputWarning.waitFor({ state: expectedState });
   }
 
   @step("Select currency to debit")

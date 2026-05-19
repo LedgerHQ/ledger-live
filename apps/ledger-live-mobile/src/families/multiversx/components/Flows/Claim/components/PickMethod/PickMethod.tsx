@@ -86,7 +86,7 @@ const PickMethod = (props: PickMethodPropsType) => {
    * If no transaction sent through the parameters of the navigation, instantiate a new one, otherwise, return the old one.
    */
 
-  const { transaction, status, updateTransaction } = useBridgeTransaction(() => {
+  const { transaction, status, updateTransaction } = useBridgeTransaction(bridge, () => {
     if (route.params.transaction) {
       return {
         account,

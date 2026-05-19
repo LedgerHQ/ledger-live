@@ -38,7 +38,26 @@
       "hasInstalledApps": true,
       "lastSeenDevice":  {
         "modelId": "nanoSP",
-        "deviceInfo": {},
+        "deviceInfo": {
+          "version": "1.0.2",
+          "mcuVersion": "4.02",
+          "seVersion": "1.0.2",
+          "majMin": "1.0.2",
+          "providerName": null,
+          "targetId": 856686596,
+          "hasDevFirmware": false,
+          "seTargetId": 856686596,
+          "isOSU": false,
+          "isBootloader": false,
+          "isRecoveryMode": false,
+          "managerAllowed": false,
+          "pinValidated": true,
+          "onboarded": true,
+          "bootloaderVersion": "3.12",
+          "hardwareVersion": 0,
+          "languageId": 0,
+          "seFlags": []
+        },
         "apps": []
       },
       "mevProtection": true,

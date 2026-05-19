@@ -26,6 +26,7 @@ import { useWallet40Theme } from "LLM/hooks/useWallet40Theme";
 import storage from "LLM/storage";
 import { DdRum } from "@datadog/mobile-react-native";
 import { PORTFOLIO_VIEW_ID, TOP_CHAINS } from "~/utils/constants";
+import { ddAddViewLoadingTime } from "LLM/utils/ddAddViewLoadingTime";
 import { buildFeatureFlagTags } from "~/utils/datadogUtils";
 import { ScreenName } from "~/const";
 
@@ -118,7 +119,7 @@ const usePortfolioViewModel = (navigation: {
       { topChains, featureFlags: buildFeatureFlagTags() },
       Date.now(),
     );
-    DdRum.addViewLoadingTime(true);
+    ddAddViewLoadingTime();
   }, [allAccounts, llmDatadog?.enabled]);
 
   const hasTokenAccounts = useSelector(hasTokenAccountsNotBlacklistedSelector);

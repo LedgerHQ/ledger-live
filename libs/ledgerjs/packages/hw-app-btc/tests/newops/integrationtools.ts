@@ -81,10 +81,10 @@ export async function runSignTransaction(
 export function addressFormatFromDescriptorTemplate(
   descTemp: DefaultDescriptorTemplate,
 ): AddressFormat {
-  if (descTemp == "tr(@0)") return "bech32m";
-  if (descTemp == "pkh(@0)") return "legacy";
-  if (descTemp == "wpkh(@0)") return "bech32";
-  if (descTemp == "sh(wpkh(@0))") return "p2sh";
+  if (descTemp == "tr(@0/**)") return "bech32m";
+  if (descTemp == "pkh(@0/**)") return "legacy";
+  if (descTemp == "wpkh(@0/**)") return "bech32";
+  if (descTemp == "sh(wpkh(@0/**))") return "p2sh";
   throw new Error();
 }
 

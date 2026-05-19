@@ -27,7 +27,7 @@ export type Result<T extends Transaction = Transaction> = {
   updateTransaction: (updater: (arg0: T) => T) => void;
   account: AccountLike | null | undefined;
   parentAccount: Account | null | undefined;
-  setAccount: (arg0: AccountLike, arg1: Account | null | undefined) => void;
+  setAccount: (arg0: AccountLike, arg1: Account | null | undefined) => Promise<void>;
   updateAccount: (account: AccountLike) => void;
   status: TransactionStatus;
   bridgeError: Error | null | undefined;
@@ -39,6 +39,7 @@ type Actions<T extends Transaction = Transaction> =
       type: "setAccount";
       account: AccountLike;
       parentAccount: Account | null | undefined;
+      bridge: AccountBridge<any>;
     }
   | {
       type: "setTransaction";
@@ -107,6 +108,7 @@ export const shouldSyncBeforeTx = (currency: CryptoCurrency): boolean => {
 
 const makeInit =
   <T extends Transaction = Transaction>(
+    bridge: AccountBridge<any> | null | undefined,
     optionalInit: (() => Partial<State<T>>) | null | undefined,
   ) =>
   (): State<T> => {
@@ -116,11 +118,12 @@ const makeInit =
       const patch = optionalInit();
       const { account, parentAccount, transaction } = patch;
 
-      if (account) {
+      if (account && bridge) {
         s = (reducer as Reducer<T>)(s, {
           type: "setAccount",
           account,
           parentAccount,
+          bridge,
         });
       }
 
@@ -141,11 +144,10 @@ const reducer = <T extends Transaction = Transaction>(
 ): State<T> => {
   switch (action.type) {
     case "setAccount": {
-      const { account, parentAccount } = action;
+      const { account, parentAccount, bridge } = action;
 
       try {
         const mainAccount = getMainAccount(account, parentAccount);
-        const bridge = getAccountBridge(account, parentAccount) as AccountBridge<T>;
         const subAccountId = account.type !== "Account" && account.id;
         let t = bridge.createTransaction(mainAccount);
 
@@ -234,6 +236,7 @@ const ERROR_RETRY_DELAY_MULTIPLIER = 1.5;
 const DEBOUNCE_STATUS_DELAY = 300;
 
 const useBridgeTransaction = <T extends Transaction = Transaction>(
+  bridge: AccountBridge<any> | null | undefined,
   optionalInit?: (() => Partial<State<T>>) | null | undefined,
 ): Result<T> => {
   const [
@@ -249,14 +252,18 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
       errorStatus,
     },
     dispatch,
-  ] = useReducer(reducer as Reducer<T>, undefined, makeInit<T>(optionalInit));
+  ] = useReducer(reducer as Reducer<T>, undefined, makeInit(bridge, optionalInit));
+
   const setAccount = useCallback(
-    (account, parentAccount) =>
+    async (account, parentAccount) => {
+      const bridge = await getAccountBridge(account, parentAccount);
       dispatch({
         type: "setAccount",
         account,
         parentAccount,
-      }),
+        bridge,
+      });
+    },
     [dispatch],
   );
 

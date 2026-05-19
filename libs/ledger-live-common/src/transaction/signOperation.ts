@@ -25,13 +25,13 @@ export const fromSignedOperationRaw = async (
 
   return out;
 };
-export const toSignedOperationRaw = (
+export const toSignedOperationRaw = async (
   signedOp: SignedOperation,
   preserveSubOperation?: boolean,
-): SignedOperationRaw => {
+): Promise<SignedOperationRaw> => {
   const { operation, signature, expirationDate, rawData } = signedOp;
   const out: SignedOperationRaw = {
-    operation: toOperationRaw(operation, preserveSubOperation),
+    operation: await toOperationRaw(operation, preserveSubOperation),
     signature,
   };
 
@@ -60,12 +60,12 @@ export const fromSignOperationEventRaw = async (
       return e;
   }
 };
-export const toSignOperationEventRaw = (e: SignOperationEvent): SignOperationEventRaw => {
+export const toSignOperationEventRaw = async (e: SignOperationEvent): Promise<SignOperationEventRaw> => {
   switch (e.type) {
     case "signed":
       return {
         type: "signed",
-        signedOperation: toSignedOperationRaw(e.signedOperation, true),
+        signedOperation: await toSignedOperationRaw(e.signedOperation, true),
       };
 
     default:

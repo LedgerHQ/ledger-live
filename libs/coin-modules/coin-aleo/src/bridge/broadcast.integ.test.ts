@@ -21,6 +21,7 @@ describe("Broadcast", () => {
       },
       feeSafetyMultiplier: 1.0,
       isFeeSponsored: false,
+      enableTokens: false,
       useEncryptedProve: true,
       recordPickingStrategy: "manual",
     }));

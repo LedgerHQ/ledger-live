@@ -1,3 +1,4 @@
+import network from "@ledgerhq/live-network";
 import { RpcRequest } from "@ledgerhq/wallet-api-core";
 import {
   ExchangeCompleteParams,
@@ -5,8 +6,10 @@ import {
   ExchangeStartSellParams,
   ExchangeStartSwapParams,
   ExchangeStartFundParams,
+  ExchangeSwapParams,
 } from "@ledgerhq/wallet-api-exchange-module";
 import { WalletContext, WalletHandlers } from "@ledgerhq/wallet-api-server";
+import BigNumber from "bignumber.js";
 import { genAccount } from "../../mock/account";
 import { AppBranch, AppPlatform, Visibility } from "../types";
 import { handlers } from "./server";
@@ -94,6 +97,64 @@ jest.mock("../../bridge", () => ({
   getAccountBridge: jest.fn().mockResolvedValue({}),
 }));
 
+jest.mock("@ledgerhq/live-network", () => ({
+  __esModule: true,
+  default: jest.fn().mockResolvedValue({}),
+}));
+
+jest.mock("@ledgerhq/live-env", () => ({
+  getEnv: jest.fn((key: string) => {
+    if (key === "SWAP_API_BASE") return "https://swap.ledger.com/v5";
+    if (key === "DISABLE_TRANSACTION_BROADCAST") return false;
+    return "";
+  }),
+}));
+
+jest.mock("../../exchange/swap/utils/isIntegrationTestEnv", () => ({
+  isIntegrationTestEnv: () => false,
+}));
+
+jest.mock("../../exchange/swap/api/v5/actions", () => ({
+  retrieveSwapPayload: jest.fn().mockResolvedValue({
+    binaryPayload: "deadbeef",
+    signature: "abcdef",
+    payinAddress: "payinAddr",
+    swapId: "swap-123",
+    payinExtraId: undefined,
+    extraTransactionParameters: undefined,
+  }),
+}));
+
+jest.mock("../../exchange/swap/transactionStrategies", () => ({
+  transactionStrategy: {
+    bitcoin: jest.fn().mockResolvedValue({
+      family: "bitcoin",
+      recipient: "payinAddr",
+      amount: new (jest.requireActual("bignumber.js").default)("1000000"),
+    }),
+    evm: jest.fn().mockResolvedValue({
+      family: "evm",
+      recipient: "payinAddr",
+      amount: new (jest.requireActual("bignumber.js").default)("1000000"),
+    }),
+  },
+}));
+
+jest.mock("@ledgerhq/hw-app-exchange", () => ({
+  decodeSwapPayload: jest.fn().mockResolvedValue({
+    amountToWallet: "500000",
+    refundAddress: "refundAddr",
+    payoutAddress: "payoutAddr",
+    currencyTo: "ETH",
+  }),
+}));
+
+jest.mock("../../crypto", () => ({
+  sha256: jest.fn().mockReturnValue(Buffer.from("fakehash")),
+}));
+
+const mockedNetwork = jest.mocked(network);
+
 describe("handlers", () => {
   describe("custom.exchange.start", () => {
     beforeEach(() => {
@@ -107,6 +168,8 @@ describe("handlers", () => {
         accounts,
         tracking: mockTracking,
         manifest: testAppManifest,
+        locale: "en-US",
+        counterValueCurrency: "USD",
         uiHooks: mockUiHooks,
       });
 
@@ -146,6 +209,8 @@ describe("handlers", () => {
         accounts,
         tracking: mockTracking,
         manifest: testAppManifest,
+        locale: "en-US",
+        counterValueCurrency: "USD",
         uiHooks: mockUiHooks,
       });
 
@@ -179,6 +244,8 @@ describe("handlers", () => {
         accounts,
         tracking: mockTracking,
         manifest: testAppManifest,
+        locale: "en-US",
+        counterValueCurrency: "USD",
         uiHooks: mockUiHooks,
       });
 
@@ -206,6 +273,83 @@ describe("handlers", () => {
     });
   });
 
+  describe("custom.exchange.swap", () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it("calls /swap/accepted on successful swap", async () => {
+      const accounts = [genAccount("accountId1"), genAccount("accountId2")];
+      const fromAccount = accounts[0];
+      const toAccount = accounts[1];
+
+      const { getMainAccount } = jest.requireMock(
+        "@ledgerhq/ledger-wallet-framework/account/index",
+      );
+      getMainAccount.mockReturnValue(fromAccount);
+
+      const { getAccountBridge } = jest.requireMock("../../bridge");
+      getAccountBridge.mockResolvedValue({
+        createTransaction: jest.fn().mockReturnValue({ family: "bitcoin", recipient: "" }),
+        updateTransaction: jest
+          .fn()
+          .mockImplementation((tx: object, upd: object) => ({
+            ...tx,
+            ...upd,
+            amount: new BigNumber("1000000"),
+          })),
+      });
+
+      mockUiStartExchange.mockImplementation(({ onSuccess }) => {
+        onSuccess("NONCE", { modelId: "nanoX", deviceId: "device-1" });
+      });
+
+      mockUiSwap.mockImplementation(({ onSuccess }) => {
+        onSuccess({ operationHash: "0xhash", swapId: "swap-123" });
+      });
+
+      const handler = handlers({
+        accounts,
+        locale: "en",
+        counterValueCurrency: "USD",
+        tracking: mockTracking,
+        manifest: testAppManifest,
+        uiHooks: mockUiHooks,
+      });
+
+      const params: ExchangeSwapParams = {
+        exchangeType: "SWAP",
+        provider: "TestProvider",
+        fromAccountId: fromAccount.id,
+        toAccountId: toAccount.id,
+        tokenCurrency: undefined,
+        fromAmount: "1000000",
+        fromAmountAtomic: new BigNumber("1000000"),
+        feeStrategy: "medium",
+      };
+
+      const request = {
+        jsonrpc: "2.0",
+        method: "custom.exchange.swap",
+        params,
+        id: "test",
+      } as unknown as RpcRequest<string, ExchangeSwapParams>;
+      const context = {
+        config: { userId: "u", tracking: false, wallet: { name: "w", version: "2" }, appId: "a" },
+      };
+
+      const result = await handler["custom.exchange.swap"](request, context, {});
+
+      expect(result).toEqual({ operationHash: "0xhash", swapId: "swap-123" });
+
+      const networkCall = mockedNetwork.mock.calls.find(([req]) =>
+        (req as { url?: string }).url?.includes("/swap/accepted"),
+      );
+      expect(networkCall).toBeDefined();
+      expect((networkCall![0] as { url: string }).url).toContain("/swap/accepted");
+    });
+  });
+
   describe("custom.exchange.complete", () => {
     beforeEach(() => {
       jest.clearAllMocks();
@@ -217,6 +361,8 @@ describe("handlers", () => {
         accounts,
         tracking: mockTracking,
         manifest: testAppManifest,
+        locale: "en-US",
+        counterValueCurrency: "USD",
         uiHooks: mockUiHooks,
       });
 
@@ -231,6 +377,7 @@ describe("handlers", () => {
       const result = await handler["custom.exchange.complete"](request, context, {});
       expect(result).toEqual({ transactionHash: "" });
       expect(mockTracking.completeExchangeNoParams).toHaveBeenCalledWith(testAppManifest);
+
     });
 
     it("calls getWalletAPITransactionSignFlowInfos on SELL exchange", async () => {
@@ -264,6 +411,8 @@ describe("handlers", () => {
         accounts,
         tracking: mockTracking,
         manifest: testAppManifest,
+        locale: "en-US",
+        counterValueCurrency: "USD",
         uiHooks: mockUiHooks,
       });
 

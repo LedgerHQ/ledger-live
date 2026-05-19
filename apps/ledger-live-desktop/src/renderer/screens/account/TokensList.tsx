@@ -16,6 +16,7 @@ import { supportLinkByTokenType } from "~/config/urls";
 import LabelWithExternalIcon from "~/renderer/components/LabelWithExternalIcon";
 import { openURL } from "~/renderer/linking";
 import { track } from "~/renderer/analytics/segment";
+import { RECEIVE_SOURCE_PAGE } from "LLD/features/Receive/types";
 import AccountContextMenu from "~/renderer/components/ContextMenu/AccountContextMenu";
 import { useTimeRange } from "~/renderer/actions/settings";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
@@ -49,6 +50,7 @@ function TokensList({ account }: Props) {
       openModal("MODAL_RECEIVE", {
         account,
         receiveTokenMode: true,
+        sourcePage: RECEIVE_SOURCE_PAGE.ACCOUNT_PAGE,
       }),
     );
   }, [dispatch, account]);

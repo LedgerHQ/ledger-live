@@ -7,7 +7,12 @@ import { setOverride, setAllOverrides, featureFlagsOverridesSelector } from "@sh
 import { importStore as importAccountsRaw } from "~/actions/accounts";
 import { acceptGeneralTerms } from "~/logic/terms";
 import { navigate } from "~/rootnavigation";
-import { addKnownDevice, importBle, removeKnownDevice, removeKnownDevices } from "~/actions/ble";
+import {
+  addKnownBleDevice,
+  importBle,
+  removeKnownBleDevice,
+  removeKnownBleDevices,
+} from "~/actions/ble";
 import { LaunchArguments } from "react-native-launch-arguments";
 import { DeviceEventEmitter } from "react-native";
 import logReport from "../../src/log-report";
@@ -161,7 +166,7 @@ async function onMessage(event: WebSocketMessageEvent) {
           .map(device => device.id)
           .filter(id => id.startsWith("speculos|"));
         if (knownSpeculosIds.length) {
-          store.dispatch(removeKnownDevices(knownSpeculosIds));
+          store.dispatch(removeKnownBleDevices(knownSpeculosIds));
         }
         store.dispatch(
           setLastConnectedDevice({
@@ -172,7 +177,7 @@ async function onMessage(event: WebSocketMessageEvent) {
           }),
         );
         store.dispatch(
-          addKnownDevice({
+          addKnownBleDevice({
             id: `speculos|${address}`,
             name: `${address}`,
             modelId: model,
@@ -184,7 +189,7 @@ async function onMessage(event: WebSocketMessageEvent) {
       case "removeKnownSpeculos": {
         const address = msg.payload;
         await disconnectAllSpeculosSessions();
-        store.dispatch(removeKnownDevice(`speculos|${address}`));
+        store.dispatch(removeKnownBleDevice(`speculos|${address}`));
         setEnv("DEVICE_PROXY_URL", "");
         break;
       }

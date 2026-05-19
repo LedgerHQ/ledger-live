@@ -1,5 +1,4 @@
 import BigNumber from "bignumber.js";
-import expect from "expect";
 import coinConfig from "../config";
 import {
   craftStandardTransaction,

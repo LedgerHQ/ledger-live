@@ -19,6 +19,7 @@ wallet-cli is **not production-ready**. Behavior and flags may change without no
 | `operations` | Given an account descriptor, **list operations**. **No device** required. For Alpaca-backed families, optional pagination via `--limit` and `--cursor`. |
 | `send` | Sign and broadcast a transaction. Requires `--amount` with ticker (e.g. `0.001 BTC`, `0.01 ETH`). Use `--dry-run` to validate without signing. |
 | `receive` | Get the receive address for an account (optionally verify on device). |
+| `swap execute` | Execute the full swap flow with `--provider` and `--amount`: prepare the swap, interact with the connected device as needed, complete the exchange, then sign and broadcast the transaction. |
 
 Typical flow: run `account discover` with a currency id (e.g. `bitcoin`, `ethereum`), then pass the printed descriptor to `balances`, `operations`, or `send`.
 
@@ -30,6 +31,7 @@ pnpm wallet-cli start -- account discover --help
 pnpm wallet-cli start -- balances --help
 pnpm wallet-cli start -- operations --help
 pnpm wallet-cli start -- send --help
+pnpm wallet-cli start -- swap execute --help
 ```
 
 From `apps/wallet-cli`, use `pnpm start` in place of `pnpm wallet-cli start` (same args after `--`).
@@ -39,7 +41,7 @@ Most commands support `--output human` (default) or `--output json`.
 ## Prerequisites
 
 - **[Bun](https://bun.sh)** ≥ 1.1.0 (`engines` in `package.json`)
-- **pnpm** and this monorepo checked out; install dependencies per [common commands](../../docs/common-commands.md) (e.g. `proto use`, `pnpm i`)
+- **pnpm** and this monorepo checked out; install dependencies per [common commands](../../docs/common-commands.md) (e.g. `mise install`, `pnpm i`)
 - A **Ledger** on USB when using `account discover`, `send`, or `receive --verify`
 - **Linux:** USB/HID build deps, for example:
 

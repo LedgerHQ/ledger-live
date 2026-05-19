@@ -12,6 +12,8 @@ import GenericErrorView from "~/components/GenericErrorView";
 import { useNavigationBarHeights } from "LLM/hooks/useNavigationBarHeights";
 import { EarnWebview } from "../EarnWebview";
 import { LiveAppBackground } from "LLM/components/LiveAppBackground";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/useWalletFeaturesConfig";
+import { computeEarnUiVersion } from "@ledgerhq/live-common/domain/computeEarnUiVersion";
 
 type Props = {
   manifest?: LiveAppManifest;
@@ -36,8 +38,18 @@ export const EarnV2Webview = ({
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
   const insets = useSafeAreaInsets();
   const { topBarHeight, bottomBarHeight } = useNavigationBarHeights();
-  const earnUiVersion = useFeature("ptxEarnUi")?.params?.value ?? "v1";
-  const isPtxUiMinV2 = isMinEarnUiVersion(earnUiVersion, "v2");
+  const { shouldDisplayEarnUpselling, shouldDisplayEarnSimulator } =
+    useWalletFeaturesConfig("mobile");
+
+  const earnUiVersion = useFeature("ptxEarnUi")?.params?.value ?? "v2";
+
+  const computedUiVersion = computeEarnUiVersion({
+    baseUiVersion: earnUiVersion,
+    shouldDisplayEarnUpselling,
+    shouldDisplayEarnSimulator,
+  });
+
+  const isPtxUiMinV2 = isMinEarnUiVersion(computedUiVersion, "v2");
 
   const scrollY = useRef(new Animated.Value(0)).current;
   const handleScroll = useCallback<NonNullable<ComponentProps<typeof WebView>["onScroll"]>>(
@@ -55,7 +67,7 @@ export const EarnV2Webview = ({
     safeAreaRight: insets.right.toString(),
     topNavigationHeightOffset: topBarHeight.toString(),
     bottomNavigationHeightOffset: bottomBarHeight.toString(),
-    uiVersion: earnUiVersion,
+    uiVersion: computedUiVersion,
     lw40enabled: isLwm40Enabled ? "true" : "false",
   };
 

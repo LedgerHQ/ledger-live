@@ -91,6 +91,24 @@ export function spinner(text: string): Spinner {
   return activeSpinner;
 }
 
+/**
+ * Best-effort terminal cursor restore.
+ *
+ * yocto-spinner hides the cursor (`\x1b[?25l`) while spinning and only restores it on
+ * stop/success/error. When the CLI is force-killed via SIGINT/SIGTERM mid-spin, the
+ * show-cursor escape is never written and the user's terminal is left without a visible
+ * cursor. We write `\x1b[?25h` directly to stderr (where the spinner stream lives) as a
+ * safety net before termination.
+ */
+export function restoreTerminalCursor(): void {
+  if (!process.stderr.isTTY) return;
+  try {
+    writeStderr("\x1b[?25h");
+  } catch {
+    // stderr may already be closed during teardown; ignore.
+  }
+}
+
 export async function withSpinner<T>(
   text: string,
   successText: string,

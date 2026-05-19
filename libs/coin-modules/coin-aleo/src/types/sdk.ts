@@ -21,12 +21,19 @@ export interface PreparedRequestResponse {
   tlv: string;
 }
 
-interface TransferPrivateIntent {
-  type: "transfer_private";
-  amount: string;
-  to: string;
-  record: AleoDecryptedRecordResponse;
-}
+type TransferPrivateIntent =
+  | {
+      type: "transfer_private";
+      amount: string;
+      to: string;
+      record: AleoDecryptedRecordResponse;
+    }
+  | {
+      type: `transfer_private_${number}`;
+      amount: string;
+      to: string;
+      records: AleoDecryptedRecordResponse[];
+    };
 
 interface TransferPublicIntent {
   type: "transfer_public";
@@ -34,12 +41,19 @@ interface TransferPublicIntent {
   to: string;
 }
 
-interface TransferPrivateToPublicIntent {
-  type: "transfer_private_to_public";
-  amount: string;
-  to: string;
-  record: AleoDecryptedRecordResponse;
-}
+type TransferPrivateToPublicIntent =
+  | {
+      type: "transfer_private_to_public";
+      amount: string;
+      to: string;
+      record: AleoDecryptedRecordResponse;
+    }
+  | {
+      type: `transfer_private_to_public_${number}`;
+      amount: string;
+      to: string;
+      records: AleoDecryptedRecordResponse[];
+    };
 
 interface TransferPublicToPrivateIntent {
   type: "transfer_public_to_private";

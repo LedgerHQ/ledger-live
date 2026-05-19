@@ -13,6 +13,7 @@ export type WebviewProps = {
   onStateChange?: (webviewState: WebviewState) => void;
   allowsBackForwardNavigationGestures?: boolean;
   customHandlers?: WalletAPICustomHandlers;
+  onWalletApiTransactionBroadcast?: () => void;
   onScroll?: ComponentProps<typeof WebView>["onScroll"];
   Loader?: () => React.JSX.Element;
 };

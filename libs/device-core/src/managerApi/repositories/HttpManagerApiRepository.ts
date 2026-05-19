@@ -83,6 +83,8 @@ export class HttpManagerApiRepository implements ManagerApiRepository {
 
   readonly getDeviceVersion: ManagerApiRepository["getDeviceVersion"] = makeLRUCache(
     async ({ targetId, providerId }) => {
+      if (!targetId) throw new TypeError("targetId is required");
+
       const {
         data,
       }: {
@@ -114,6 +116,8 @@ export class HttpManagerApiRepository implements ManagerApiRepository {
 
   readonly getCurrentOSU: ManagerApiRepository["getCurrentOSU"] = makeLRUCache(
     async input => {
+      if (!input.version) throw new TypeError("version is required");
+
       const { data } = await network({
         method: "GET",
         url: URL.format({
@@ -133,6 +137,8 @@ export class HttpManagerApiRepository implements ManagerApiRepository {
 
   readonly getCurrentFirmware: ManagerApiRepository["getCurrentFirmware"] = makeLRUCache(
     async input => {
+      if (!input.version) throw new TypeError("version is required");
+
       const {
         data,
       }: {
@@ -209,6 +215,9 @@ export class HttpManagerApiRepository implements ManagerApiRepository {
   readonly catalogForDevice: ManagerApiRepository["catalogForDevice"] = makeLRUCache(
     async params => {
       const { provider, targetId, firmwareVersion } = params;
+      if (!targetId) throw new TypeError("targetId is required");
+      if (!firmwareVersion) throw new TypeError("firmwareVersion is required");
+
       const {
         data,
       }: {
@@ -239,15 +248,20 @@ export class HttpManagerApiRepository implements ManagerApiRepository {
     deviceInfo: DeviceInfoEntity,
     forceProvider?: number,
   ) => {
+    if (!deviceInfo.targetId) throw new TypeError("targetId is required");
+    if (!deviceInfo.version) throw new TypeError("version is required");
+
+    const providerId = getProviderIdUseCase({ deviceInfo, forceProvider });
+
     const deviceVersion = await this.getDeviceVersion({
       targetId: deviceInfo.targetId,
-      providerId: getProviderIdUseCase({ deviceInfo, forceProvider }),
+      providerId,
     });
 
     const seFirmwareVersion = await this.getCurrentFirmware({
       version: deviceInfo.version,
       deviceId: deviceVersion.id,
-      providerId: getProviderIdUseCase({ deviceInfo, forceProvider }),
+      providerId,
     });
 
     const { data }: { data: LanguagePackageResponseEntity[] } = await network({
@@ -260,7 +274,7 @@ export class HttpManagerApiRepository implements ManagerApiRepository {
       }),
     });
 
-    const allPackages: LanguagePackageEntity[] = data.reduce(
+    const allPackages = data.reduce<LanguagePackageEntity[]>(
       (acc, response) => [
         ...acc,
         ...response.language_package_version.map(p => ({
@@ -268,7 +282,7 @@ export class HttpManagerApiRepository implements ManagerApiRepository {
           language: response.language,
         })),
       ],
-      [] as LanguagePackageEntity[],
+      [],
     );
 
     const packages = allPackages.filter(

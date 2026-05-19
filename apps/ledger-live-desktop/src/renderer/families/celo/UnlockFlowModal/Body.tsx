@@ -7,8 +7,8 @@ import { TFunction } from "i18next";
 import { createStructuredSelector } from "reselect";
 import Track from "~/renderer/analytics/Track";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
@@ -22,7 +22,7 @@ import logger from "~/renderer/logger";
 import { StepId, StepProps, St } from "./types";
 import { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { CeloAccount } from "@ledgerhq/live-common/families/celo/types";
+import { CeloAccount, Transaction as CeloTransaction } from "@ledgerhq/live-common/families/celo/types";
 
 export type Data = {
   account: CeloAccount | TokenAccount;
@@ -73,6 +73,7 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
+  const bridge = useAccountBridge<CeloTransaction>(params.account, params.parentAccount);
   const {
     transaction,
     setTransaction,
@@ -81,9 +82,8 @@ const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     status,
     bridgeError,
     bridgePending,
-  } = useBridgeTransaction(() => {
+  } = useBridgeTransaction(bridge, () => {
     const { account, parentAccount } = params;
-    const bridge = getAccountBridge(account, parentAccount);
     const t = bridge.createTransaction(account);
     const transaction = bridge.updateTransaction(t, {
       mode: "unlock",

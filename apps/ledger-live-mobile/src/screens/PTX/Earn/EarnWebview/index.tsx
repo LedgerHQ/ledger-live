@@ -12,7 +12,10 @@ import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 
 import { useEarnCustomHandlers } from "./useEarnWebviewCustomHandlers";
-import { useDeeplinkCustomHandlers } from "~/components/WebPlatformPlayer/CustomHandlers";
+import {
+  useDeeplinkCustomHandlers,
+  useLiveAppModalCustomHandlers,
+} from "~/components/WebPlatformPlayer/CustomHandlers";
 import { initialWebviewState } from "~/components/Web3AppWebview/helpers";
 import { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
 import { Web3AppWebview } from "~/components/Web3AppWebview";
@@ -134,12 +137,14 @@ export const EarnWebview = ({ manifest, inputs, isLwm40Enabled, onScroll }: Prop
   const accounts = useSelector(flattenAccountsSelector);
   const customEarnHandlers = useEarnCustomHandlers(manifest, accounts);
   const customDeeplinkHandlers = useDeeplinkCustomHandlers();
+  const customLiveAppModalHandlers = useLiveAppModalCustomHandlers(manifest);
   const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
     return {
       ...customEarnHandlers,
       ...customDeeplinkHandlers,
+      ...customLiveAppModalHandlers,
     };
-  }, [customEarnHandlers, customDeeplinkHandlers]);
+  }, [customEarnHandlers, customDeeplinkHandlers, customLiveAppModalHandlers]);
 
   const Container = isLwm40Enabled ? View : SafeAreaView;
 

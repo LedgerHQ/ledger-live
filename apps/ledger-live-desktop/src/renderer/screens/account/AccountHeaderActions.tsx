@@ -17,6 +17,7 @@ import { compose } from "redux";
 import styled from "styled-components";
 import { openModal } from "~/renderer/actions/modals";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { RECEIVE_SOURCE_PAGE } from "LLD/features/Receive/types";
 import Box, { Tabbable } from "~/renderer/components/Box";
 import Star from "~/renderer/components/Stars/Star";
 import Tooltip from "~/renderer/components/Tooltip";
@@ -356,6 +357,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
     openModal("MODAL_RECEIVE", {
       parentAccount,
       account,
+      sourcePage: RECEIVE_SOURCE_PAGE.ACCOUNT_PAGE,
     });
   }, [openModal, parentAccount, account, buttonSharedTrackingFields]);
 

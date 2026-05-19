@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { DevTools } from "@devtools/shell";
 
 export default function Home() {
   return (
@@ -24,6 +23,9 @@ export default function Home() {
           <Link to="/networkTroubleshoot">Network Troubleshooting</Link>
         </li>
         <li>
+          <Link to="/pnl-calculator">PnL Calculator</Link>
+        </li>
+        <li>
           <Link to="/sync">Synchronisation</Link>
         </li>
         <li>
@@ -35,8 +37,10 @@ export default function Home() {
         <li>
           <Link to="/crypto-icons">Crypto Icons</Link>
         </li>
+        <li>
+          <Link to="/dev-tools">Dev Tools</Link>
+        </li>
       </ul>
-      <DevTools />
     </main>
   );
 }

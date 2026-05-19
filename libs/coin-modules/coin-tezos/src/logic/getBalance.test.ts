@@ -111,7 +111,7 @@ describe("getBalance", () => {
         value: BigInt("2000"),
         asset: {
           type: "fa2",
-          assetReference: "KT1T87QbpXEVgkwsNPzz8iRoah3SS3D1MDmh",
+          assetReference: "KT1T87QbpXEVgkwsNPzz8iRoah3SS3D1MDmh:0",
           assetOwner: "tz1TzrmTBSuiVHV2VfMnGRMYvTEPCP42oSM8",
           name: "BTCtz",
           unit: { magnitude: 8, name: "BTCtez", code: "BTCtz" },
@@ -141,7 +141,7 @@ describe("getBalance", () => {
         value: 2000n,
         asset: {
           type: "fa2",
-          assetReference: "KT1T87QbpXEVgkwsNPzz8iRoah3SS3D1MDmh",
+          assetReference: "KT1T87QbpXEVgkwsNPzz8iRoah3SS3D1MDmh:0",
           assetOwner: "tz1TzrmTBSuiVHV2VfMnGRMYvTEPCP42oMMM",
           name: "BTCtz",
           unit: {
@@ -164,6 +164,9 @@ describe("getBalance", () => {
           HttpResponse.json({ type: "user", ...account }),
         ),
         http.get("http://tezos.explorer.com/v1/tokens/balances", () => HttpResponse.json([])),
+        http.get("http://tezos.explorer.com/v1/staking/unstake_requests", () =>
+          HttpResponse.json([]),
+        ),
       );
     }
 
@@ -286,6 +289,53 @@ describe("getBalance", () => {
           amount: 10n,
         },
       });
+    });
+
+    it("splits unstakedBalance into deactivating and finalizable Stakes when finalizable > 0", async () => {
+      mockServer.use(
+        http.get(`http://tezos.explorer.com/v1/accounts/${address}`, () =>
+          HttpResponse.json({
+            type: "user",
+            balance: 100,
+            unstakedBalance: 50,
+            delegate: { address: delegateAddress },
+          }),
+        ),
+        http.get("http://tezos.explorer.com/v1/staking/unstake_requests", () =>
+          HttpResponse.json([20, 10]),
+        ),
+        http.get("http://tezos.explorer.com/v1/tokens/balances", () => HttpResponse.json([])),
+      );
+
+      const result = await getBalance(address);
+
+      const stakes = result.filter(b => b.stake).map(b => b.stake);
+      expect(stakes).toEqual([
+        {
+          uid: `delegation-${address}`,
+          address,
+          delegate: delegateAddress,
+          state: "active",
+          asset: { type: "native" },
+          amount: 100n,
+        },
+        {
+          uid: `unstaking-${address}`,
+          address,
+          delegate: delegateAddress,
+          state: "deactivating",
+          asset: { type: "native" },
+          amount: 20n,
+        },
+        {
+          uid: `finalizable-${address}`,
+          address,
+          delegate: delegateAddress,
+          state: "inactive",
+          asset: { type: "native" },
+          amount: 30n,
+        },
+      ]);
     });
 
     it("returns only the primary native Balance when no staking activity", async () => {

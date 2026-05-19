@@ -4,7 +4,8 @@ import { View, StyleSheet, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "~/context/Locale";
 import i18next from "i18next";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import type { Transaction as TonTransaction } from "@ledgerhq/live-common/families/ton/types";
 import { useIsFocused, useTheme } from "@react-navigation/native";
 import KeyboardView from "~/components/KeyboardView";
 import Button from "~/components/Button";
@@ -29,6 +30,7 @@ function TonEditComment({ navigation, route }: NavigationProps) {
   const { t } = useTranslation();
   const { account } = useAccountScreen(route);
   invariant(account, "account is required");
+  const bridge = useAccountBridge<TonTransaction>(account);
   const [comment, setComment] = useState(
     !route.params.transaction.comment.isEncrypted ? route.params.transaction.comment.text : "",
   );
@@ -36,7 +38,6 @@ function TonEditComment({ navigation, route }: NavigationProps) {
     setComment(str);
   }, []);
   const onValidateText = useCallback(() => {
-    const bridge = getAccountBridge(account);
     const { transaction } = route.params;
     popToScreen(navigation, ScreenName.SendSummary, {
       accountId: account.id,
@@ -44,7 +45,7 @@ function TonEditComment({ navigation, route }: NavigationProps) {
         comment: { isEncrypted: false, text: comment },
       }),
     });
-  }, [navigation, route.params, account, comment]);
+  }, [navigation, route.params, account, bridge, comment]);
   return (
     <SafeAreaView style={styles.root}>
       <KeyboardView

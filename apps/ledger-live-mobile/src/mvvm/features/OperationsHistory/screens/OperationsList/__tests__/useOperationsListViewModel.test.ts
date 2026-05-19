@@ -51,6 +51,56 @@ describe("useOperationsListViewModel", () => {
     expect(mockUseOperationsV1.mock.calls.length).toBe(callsBefore);
   });
 
+  describe("markOperationsAsSeen on unmount", () => {
+    it("sets lastSeenOperationDate in store when the hook unmounts", () => {
+      const { unmount, store } = renderHook(() => useOperationsListViewModel());
+
+      expect(store.getState().history.lastSeenOperationDate).toBeNull();
+
+      act(() => {
+        unmount();
+      });
+
+      expect(store.getState().history.lastSeenOperationDate).not.toBeNull();
+    });
+  });
+
+  describe("currencyId filtering", () => {
+    it("filters accounts and flattenedAccounts to the given currency", () => {
+      const ethereum = getCryptoCurrencyById("ethereum");
+      const bitcoin = getCryptoCurrencyById("bitcoin");
+      const ethAccount = genAccount("eth-filter", { currency: ethereum });
+      const btcAccount = genAccount("btc-filter", { currency: bitcoin });
+
+      const { result } = renderHook(() => useOperationsListViewModel("bitcoin"), {
+        overrideInitialState: (state: State) => ({
+          ...state,
+          accounts: { ...state.accounts, active: [ethAccount, btcAccount] },
+        }),
+      });
+
+      expect(result.current.accounts).toHaveLength(1);
+      expect(result.current.accounts[0].currency.id).toBe("bitcoin");
+      expect(result.current.flattenedAccounts.every(a => a.id.includes("btc"))).toBe(true);
+    });
+
+    it("returns all accounts when currencyId is undefined", () => {
+      const ethereum = getCryptoCurrencyById("ethereum");
+      const bitcoin = getCryptoCurrencyById("bitcoin");
+      const ethAccount = genAccount("eth-nofilter", { currency: ethereum });
+      const btcAccount = genAccount("btc-nofilter", { currency: bitcoin });
+
+      const { result } = renderHook(() => useOperationsListViewModel(), {
+        overrideInitialState: (state: State) => ({
+          ...state,
+          accounts: { ...state.accounts, active: [ethAccount, btcAccount] },
+        }),
+      });
+
+      expect(result.current.accounts).toHaveLength(2);
+    });
+  });
+
   describe("accountByAddress", () => {
     // EVM chains share the same address format — Base, OP Mainnet, and Ethereum accounts
     // all have identical 0x addresses. The map must key by currencyId:address so that

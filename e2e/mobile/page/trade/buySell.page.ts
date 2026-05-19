@@ -6,6 +6,7 @@ import { openDeeplink, normalizeText, isIos } from "../../helpers/commonHelpers"
 import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
 
 export default class BuySellPage {
+  appContainerCssSelector = "#app-container";
   amountInputSectionBaseId = "amount-input-section";
   countryDrawerSearchInput = "countries-drawer-search-input";
   cryptoAccountSelector = "account-details";
@@ -20,6 +21,7 @@ export default class BuySellPage {
   paymentSelector = "payment_selector";
   providersList = "providers_list";
   saveRegionFiatOptionsSelector = "save-region-and-fiat-options";
+  providerTitleCssSelector = "[data-testid^='provider_title_'][data-testid$='_title_container']";
 
   currencyRow = (currencyId: string) => `currency-row-${currencyId}`;
   buyQuickAmountButtonId = (amount: "400" | "800" | "1600") => `buy-amount-button-${amount}`;
@@ -157,7 +159,8 @@ export default class BuySellPage {
       await tapWebElementByTestId(this.expandButtonId);
     }
     const providerNames = await getWebElementsText(
-      '[data-testid^="provider_title_"][data-testid$="_title_container"]',
+      getWebElementByCssSelector(this.appContainerCssSelector),
+      this.providerTitleCssSelector,
     );
     return providerNames;
   }

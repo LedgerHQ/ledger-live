@@ -1,2 +1,6 @@
 dist/
 *.bun-build
+.bunli/commands.gen.ts
+.npm-package/
+npm/*/.npm-package/
+npm/*/bin/

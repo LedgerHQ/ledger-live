@@ -1,6 +1,7 @@
 import React, { useCallback } from "react";
 import { useNavigate } from "react-router";
 import { MarketItemPerformer } from "@ledgerhq/live-common/market/utils/types";
+import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/index";
 import { ViewAllTile } from "./ViewAllTile";
 import { TrendingAssetTile } from "./TrendingAssetTile";
 import { track } from "~/renderer/analytics/segment";
@@ -15,6 +16,7 @@ type TrendingAssetsListProps = {
 
 export const TrendingAssetsList = ({ items }: TrendingAssetsListProps) => {
   const navigate = useNavigate();
+  const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
   const { scrollContainerRef, isAtStart, isAtEnd, scrollLeft, scrollRight } = useHorizontalScroll();
 
   const onAssetClick = useCallback(
@@ -24,9 +26,9 @@ export const TrendingAssetsList = ({ items }: TrendingAssetsListProps) => {
         currency: id,
         page: PORTFOLIO_TRACKING_PAGE_NAME,
       });
-      navigate(`/market/${id}`);
+      navigate(shouldDisplayAggregatedAssets ? `/asset/${id}` : `/market/${id}`);
     },
-    [navigate],
+    [navigate, shouldDisplayAggregatedAssets],
   );
 
   return (

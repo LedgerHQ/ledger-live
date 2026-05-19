@@ -1,5 +1,6 @@
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import React, { useCallback, useState, useEffect } from "react";
 import {
@@ -15,7 +16,6 @@ import { useTheme } from "@react-navigation/native";
 import type { Transaction as PolkadotTransaction } from "@ledgerhq/live-common/families/polkadot/types";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { ScreenName } from "~/const";
 import { TrackScreen } from "~/analytics";
 import LText from "~/components/LText";
@@ -44,6 +44,7 @@ export default function PolkadotUnbondAmount({ navigation, route }: Props) {
   const mainAccount = getMainAccount(account, parentAccount);
   const [maxSpendable, setMaxSpendable] = useState<BigNumber | null>(null);
   const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
+    bridge,
     () => {
       const t = bridge.createTransaction(mainAccount);
       const transaction = bridge.updateTransaction(t, {
@@ -65,7 +66,7 @@ export default function PolkadotUnbondAmount({ navigation, route }: Props) {
         parentAccount,
         transaction: debouncedTransaction,
       })
-      .then(estimate => {
+      .then((estimate: BigNumber) => {
         if (cancelled) return;
         setMaxSpendable(estimate);
       });
@@ -73,7 +74,7 @@ export default function PolkadotUnbondAmount({ navigation, route }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [account, parentAccount, debouncedTransaction, bridge]);
+  }, [bridge, account, parentAccount, debouncedTransaction]);
   const onChange = useCallback(
     (amount: BigNumber) => {
       if (!amount.isNaN() && transaction) {

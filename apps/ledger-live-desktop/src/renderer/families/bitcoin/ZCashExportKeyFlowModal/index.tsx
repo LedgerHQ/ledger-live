@@ -4,8 +4,11 @@ import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import {
   ZCASH_ACTIVATION_DATE,
   ZCASH_ACTIVATION_DATE_STRING,
-} from "@ledgerhq/zcash-shielded/constants";
-import type { ZcashSyncState, ZcashPrivateInfo } from "@ledgerhq/zcash-shielded/types";
+} from "@ledgerhq/coin-bitcoin/chain-adapters/zcash/constants";
+import type {
+  ZcashSyncState,
+  ZcashPrivateInfo,
+} from "@ledgerhq/coin-bitcoin/chain-adapters/zcash/types";
 import type { ZcashAccount } from "@ledgerhq/live-common/families/bitcoin/types";
 import Modal from "~/renderer/components/Modal";
 import logger from "~/renderer/logger";

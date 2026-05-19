@@ -9,7 +9,7 @@ import { ethers, FetchRequest, JsonRpcProvider } from "ethers";
 import ERC20Abi from "../../abis/erc20.abi.json";
 import OptimismGasPriceOracleAbi from "../../abis/optimismGasPriceOracle.abi.json";
 import ScrollGasPriceOracleAbi from "../../abis/scrollGasPriceOracle.abi.json";
-import { ExternalNodeConfig } from "../../config";
+import { BlockFinalizationTag, ExternalNodeConfig } from "../../config";
 import { GasEstimationError, InsufficientFunds, UnsupportedRpcMethodError } from "../../errors";
 import { FeeHistory, FeeData, Transaction as EvmTransaction } from "../../types";
 import { isSmartContractInput, safeEncodeEIP55, normalizeAddress } from "../../utils";
@@ -101,7 +101,7 @@ function makeErc20Transfer(log: LogWithAddress, from: string, to: string): ERC20
  * - topic[1]: src address (indexed, padded to 32 bytes)
  * - data: wad (uint256, 32 bytes)
  * - log.address: token contract address
- * 
+ *
  *  Other standards (not supported yet):
  * - ERC721:  4 topics (sig, from, to, tokenId) - filtered out by topics.length === 3
  * - ERC1155: different event signature - filtered out by topic[0] check
@@ -110,19 +110,18 @@ function makeErc20Transfer(log: LogWithAddress, from: string, to: string): ERC20
  * @returns Array of parsed ERC20 transfers
  */
 export function parseERC20TransfersFromLogs(logs: ReadonlyArray<LogWithAddress>): ERC20Transfer[] {
-  return logs
-    .flatMap(log => {
-      if (isTransfer(log)) {
-        return [makeErc20Transfer(log, topicToAddress(log.topics[1]), topicToAddress(log.topics[2]))];
-      }
-      if (isWethDeposit(log)) {
-        return [makeErc20Transfer(log, ZERO_ADDRESS_HEX, topicToAddress(log.topics[1]))];
-      }
-      if (isWethWithdrawal(log)) {
-        return [makeErc20Transfer(log, topicToAddress(log.topics[1]), ZERO_ADDRESS_HEX)];
-      }
-      return [];
-    });
+  return logs.flatMap(log => {
+    if (isTransfer(log)) {
+      return [makeErc20Transfer(log, topicToAddress(log.topics[1]), topicToAddress(log.topics[2]))];
+    }
+    if (isWethDeposit(log)) {
+      return [makeErc20Transfer(log, ZERO_ADDRESS_HEX, topicToAddress(log.topics[1]))];
+    }
+    if (isWethWithdrawal(log)) {
+      return [makeErc20Transfer(log, topicToAddress(log.topics[1]), ZERO_ADDRESS_HEX)];
+    }
+    return [];
+  });
 }
 
 export const RPC_TIMEOUT =
@@ -145,6 +144,21 @@ const PROVIDERS_BY_RPC: Record<string, JsonRpcProvider> = {};
 
 function providerCacheKey(currencyId: string, uri: string): string {
   return `${currencyId}:${uri}`;
+}
+
+/**
+ * Destroys every cached JsonRpcProvider and clears the module-level cache.
+ * Intended for test teardown (afterAll) so that ethers' background polling
+ * timers are stopped and Jest can exit cleanly.
+ *
+ * @internal — Test-only not exported from the package index; consume via the deep-import
+ * path `@ledgerhq/coin-evm/network/node/rpc.common` in tests only.
+ */
+export function destroyAllRpcProviders(): void {
+  for (const [key, provider] of Object.entries(PROVIDERS_BY_RPC)) {
+    provider.destroy();
+    delete PROVIDERS_BY_RPC[key];
+  }
 }
 
 /**
@@ -205,11 +219,9 @@ async function getTransaction(
     from: tx.from,
     to: tx.to ?? undefined,
     ...(tx.data !== null && tx.data !== undefined && isSmartContractInput(tx.data)
-        ? { input: tx.data }
-        : {}),
-    ...(receipt.contractAddress
-      ? { contractAddress: receipt.contractAddress }
+      ? { input: tx.data }
       : {}),
+    ...(receipt.contractAddress ? { contractAddress: receipt.contractAddress } : {}),
     erc20Transfers: parseERC20TransfersFromLogs(receipt.logs),
   };
 }
@@ -386,7 +398,7 @@ async function broadcastTransaction(
 async function getBlockByHeight(
   api: JsonRpcProvider,
   _currency: CryptoCurrency,
-  blockHeight: number | "latest",
+  blockHeight: number | BlockFinalizationTag,
   prefetchTxs?: boolean,
 ): Promise<BlockByHeightResult> {
   let block: ethers.Block | null;
@@ -439,8 +451,8 @@ async function getBlockByHeight(
       from: tx.from,
       to: tx.to ?? undefined,
       ...(rawTx.data !== null && rawTx.data !== undefined && isSmartContractInput(rawTx.data)
-          ? { input: rawTx.data }
-          : {}),
+        ? { input: rawTx.data }
+        : {}),
     };
   });
 
@@ -484,10 +496,10 @@ function parseRpcHexQuantity(value: unknown, fieldName: string): number {
  */
 async function getBlockByHeightFromRawRpc(
   api: JsonRpcProvider,
-  blockHeight: number | "latest",
+  blockHeight: number | BlockFinalizationTag,
   prefetchTxs: boolean,
 ): Promise<BlockByHeightResult> {
-  const blockTag = blockHeight === "latest" ? "latest" : ethers.toQuantity(blockHeight);
+  const blockTag = typeof blockHeight === "number" ? ethers.toQuantity(blockHeight) : blockHeight;
   const rawBlock = await api.send("eth_getBlockByNumber", [blockTag, prefetchTxs]);
   if (typeof rawBlock !== "object" || rawBlock === null)
     throw new Error("Invalid eth_getBlockByNumber response");
@@ -549,9 +561,7 @@ async function getBlockByHeightFromRawRpc(
             value: BigInt(tx.value ?? "0x0").toString(),
             from: tx.from,
             to: tx.to ?? undefined,
-            ...("input" in tx &&
-            typeof tx.input === "string" &&
-            isSmartContractInput(tx.input)
+            ...("input" in tx && typeof tx.input === "string" && isSmartContractInput(tx.input)
               ? { input: tx.input }
               : {}),
           };

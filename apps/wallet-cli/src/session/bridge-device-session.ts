@@ -6,6 +6,7 @@ import {
   ensureWalletCliDmkTransport,
   resetWalletCliDmkSession,
 } from "../device/register-dmk-transport";
+import { withWalletCliDeviceInterruptScope } from "../device/interrupt-scope";
 import { walletCliDebug } from "../shared/log";
 
 export type CurrencyDeviceSessionOptions = {
@@ -19,30 +20,53 @@ export function getManagerAppNameForCurrencyId(currencyId: string): string {
   return getCryptoCurrencyById(currencyId).managerAppName;
 }
 
-export async function withCurrencyDeviceSession<T>(
+export function withCurrencyDeviceSession<T>(
   currencyId: string,
   fn: () => Promise<T>,
   options: CurrencyDeviceSessionOptions = {},
 ): Promise<T> {
-  const managerAppName = getManagerAppNameForCurrencyId(currencyId);
-  walletCliDebug("Ensuring DMK transport…");
-  try {
-    const transport = await ensureWalletCliDmkTransport();
-    walletCliDebug(`Connecting Ledger app (${managerAppName})…`);
-    await connectLedgerApp(transport.dmk, transport.sessionId, managerAppName, {
-      onStateChange: options.onStateChange,
-      deviceTimeoutMs: options.deviceTimeoutMs,
-    });
-  } catch (e) {
-    throw WalletCliDeviceError.fromUnknown(e, { expectedApp: managerAppName });
-  }
-  walletCliDebug("Device session ready.");
-  try {
-    return await fn();
-  } finally {
-    walletCliDebug("Resetting device session…");
-    await resetWalletCliDmkSession();
-  }
+  return withWalletCliDeviceInterruptScope(async () => {
+    const managerAppName = getManagerAppNameForCurrencyId(currencyId);
+    walletCliDebug("Ensuring DMK transport…");
+    try {
+      const transport = await ensureWalletCliDmkTransport();
+      walletCliDebug(`Connecting Ledger app (${managerAppName})…`);
+      await connectLedgerApp(transport.dmk, transport.sessionId, managerAppName, {
+        onStateChange: options.onStateChange,
+        deviceTimeoutMs: options.deviceTimeoutMs,
+      });
+    } catch (e) {
+      throw WalletCliDeviceError.fromUnknown(e, { expectedApp: managerAppName });
+    }
+    walletCliDebug("Device session ready.");
+    try {
+      return await fn();
+    } finally {
+      walletCliDebug("Resetting device session…");
+      await resetWalletCliDmkSession();
+    }
+  });
+}
+
+/**
+ * Runs a callback with a DMK transport available, without opening or switching Ledger apps.
+ */
+export function withDmkDeviceSession<T>(fn: () => Promise<T>): Promise<T> {
+  return withWalletCliDeviceInterruptScope(async () => {
+    walletCliDebug("Ensuring DMK transport…");
+    try {
+      await ensureWalletCliDmkTransport();
+    } catch (e) {
+      throw WalletCliDeviceError.fromUnknown(e, { expectedApp: "Ledger dashboard" });
+    }
+    walletCliDebug("DMK device session ready.");
+    try {
+      return await fn();
+    } finally {
+      walletCliDebug("Resetting device session…");
+      await resetWalletCliDmkSession();
+    }
+  });
 }
 
 /**
@@ -55,7 +79,7 @@ const FAMILY_CURRENCY_ID: Record<string, string> = {
   solana: "solana",
 };
 
-export async function withBridgeDeviceSession<T>(
+export function withBridgeDeviceSession<T>(
   family: string,
   fn: () => Promise<T>,
   options: CurrencyDeviceSessionOptions = {},

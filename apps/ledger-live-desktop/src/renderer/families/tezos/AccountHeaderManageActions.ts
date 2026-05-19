@@ -1,5 +1,6 @@
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
-import { useDelegation } from "@ledgerhq/live-common/families/tezos/react";
+import { useTezosStakingInfo } from "@ledgerhq/live-common/families/tezos/react";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useCallback } from "react";
 import { useDispatch } from "LLD/hooks/redux";
 import { openModal } from "~/renderer/actions/modals";
@@ -15,8 +16,9 @@ const AccountHeaderManageActions: TezosFamily["accountHeaderManageActions"] = ({
 }) => {
   const dispatch = useDispatch();
   const label = useGetStakeLabelLocaleBased();
+  const lldTezosStaking = useFeature("lldTezosStaking");
 
-  const delegation = useDelegation(account);
+  const { delegation, isDelegated, isStaked } = useTezosStakingInfo(account);
 
   const onClick = useCallback(() => {
     if (isAccountEmpty(account)) {
@@ -24,6 +26,16 @@ const AccountHeaderManageActions: TezosFamily["accountHeaderManageActions"] = ({
         openModal("MODAL_NO_FUNDS_STAKE", {
           account,
           parentAccount,
+        }),
+      );
+      return;
+    }
+    if (lldTezosStaking?.enabled && !isDelegated && !isStaked) {
+      dispatch(
+        openModal("MODAL_TEZOS_EARNING_CHOICE", {
+          account,
+          parentAccount,
+          source,
         }),
       );
       return;
@@ -42,7 +54,16 @@ const AccountHeaderManageActions: TezosFamily["accountHeaderManageActions"] = ({
           source,
         };
     dispatch(openModal("MODAL_DELEGATE", options));
-  }, [account, delegation, parentAccount, dispatch, source]);
+  }, [
+    account,
+    delegation,
+    isDelegated,
+    isStaked,
+    lldTezosStaking?.enabled,
+    parentAccount,
+    dispatch,
+    source,
+  ]);
 
   if (parentAccount) return null;
 

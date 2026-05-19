@@ -1,11 +1,10 @@
 import { renderHook } from "tests/testSetup";
-import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { maticEth, usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import { useHistoryOperations } from "../useHistoryOperations";
-
-const bitcoinCurrency = getCryptoCurrencyById("bitcoin");
-const ethereumCurrency = getCryptoCurrencyById("ethereum");
+import { BTC_ACCOUNT, ETH_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
 
 describe("useHistoryOperations", () => {
   it("returns an empty array when there are no accounts", () => {
@@ -17,10 +16,7 @@ describe("useHistoryOperations", () => {
   });
 
   it("collects, sorts, and shapes operations from multiple accounts", () => {
-    const accounts = [
-      genAccount("btc-1", { currency: bitcoinCurrency, operationsSize: 2 }),
-      genAccount("eth-1", { currency: ethereumCurrency, operationsSize: 2 }),
-    ];
+    const accounts = [BTC_ACCOUNT, ETH_ACCOUNT];
 
     const { result } = renderHook(() => useHistoryOperations(), {
       initialState: { accounts, settings: INITIAL_STATE },
@@ -46,9 +42,42 @@ describe("useHistoryOperations", () => {
     expect(items[0].amount).toBeDefined();
   });
 
+  it("scopes operations to accountIds query when provided", () => {
+    const { result } = renderHook(() => useHistoryOperations(), {
+      initialState: { accounts: [BTC_ACCOUNT, ETH_ACCOUNT], settings: INITIAL_STATE },
+      initialRoute: `/history?accountIds=${encodeURIComponent(ETH_ACCOUNT.id)}`,
+    });
+
+    const items = result.current;
+    expect(items.length).toBeGreaterThan(0);
+    expect(
+      items.every(item => getMainAccount(item.account, item.parentAccount).id === ETH_ACCOUNT.id),
+    ).toBe(true);
+  });
+
+  it("when accountIds references a token, excludes native and sibling-token operations", () => {
+    const ethRoot = genAccount("eth-tok-scope", {
+      currency: ETH_ACCOUNT.currency,
+      subAccountsCount: 0,
+      operationsSize: 2,
+    });
+    const usdc = genTokenAccount(0, ethRoot, usdcToken);
+    const matic = genTokenAccount(1, ethRoot, maticEth);
+    const ethTree = { ...ethRoot, subAccounts: [usdc, matic] };
+
+    const { result } = renderHook(() => useHistoryOperations(), {
+      initialState: { accounts: [ethTree], settings: INITIAL_STATE },
+      initialRoute: `/history?accountIds=${encodeURIComponent(usdc.id)}`,
+    });
+
+    const items = result.current;
+    expect(items.length).toBeGreaterThan(0);
+    expect(items.every(item => item.account.id === usdc.id)).toBe(true);
+  });
+
   describe("isUnread flag", () => {
     it("is false for all operations when lastSeenOperationDate is null", () => {
-      const accounts = [genAccount("btc-null", { currency: bitcoinCurrency, operationsSize: 3 })];
+      const accounts = [BTC_ACCOUNT];
 
       const { result } = renderHook(() => useHistoryOperations(), {
         initialState: {
@@ -63,7 +92,7 @@ describe("useHistoryOperations", () => {
     });
 
     it("marks all operations as unread when lastSeenOperationDate is in the distant past", () => {
-      const accounts = [genAccount("btc-old", { currency: bitcoinCurrency, operationsSize: 3 })];
+      const accounts = [BTC_ACCOUNT];
       // epoch = older than any real operation genAccount produces
       const epoch = new Date(0).toISOString();
 
@@ -80,7 +109,7 @@ describe("useHistoryOperations", () => {
     });
 
     it("marks no operations as unread when lastSeenOperationDate is in the future", () => {
-      const accounts = [genAccount("btc-future", { currency: bitcoinCurrency, operationsSize: 3 })];
+      const accounts = [BTC_ACCOUNT];
       const future = new Date("2099-01-01").toISOString();
 
       const { result } = renderHook(() => useHistoryOperations(), {

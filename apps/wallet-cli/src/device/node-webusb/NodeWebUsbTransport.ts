@@ -152,6 +152,10 @@ export class NodeWebUsbTransport implements Transport {
     DeviceConnectionStateMachine<NodeWebUsbApduSenderDependencies>,
     Promise<unknown>
   >();
+  private readonly _deviceApduSendersByConnectionMachine = new WeakMap<
+    DeviceConnectionStateMachine<NodeWebUsbApduSenderDependencies>,
+    NodeWebUsbApduSender
+  >();
 
   private readonly _logger: LoggerPublisherService;
   private readonly connectionType = "USB" as const;
@@ -159,6 +163,7 @@ export class NodeWebUsbTransport implements Transport {
   private _usbAttachHandler: ((d: NativeUsbDevice) => void) | null = null;
   private _usbDetachHandler: ((d: NativeUsbDevice) => void) | null = null;
   private _discoveryPollInterval: NodeWebUsbIntervalHandle | null = null;
+  private _explicitConnectionClosesInFlight = 0;
   // In-flight discovery refresh promise. While a scan is running, additional
   // callers (e.g. a Windows polling tick overlapping with startDiscovering()
   // or with the attach handler) get a queued follow-up scan instead of an
@@ -235,6 +240,37 @@ export class NodeWebUsbTransport implements Transport {
     if (!stillReferenced) {
       this._activeConnectionMachines.delete(machine);
     }
+  }
+
+  private deleteActiveConnectionsForMachine(
+    machine: DeviceConnectionStateMachine<NodeWebUsbApduSenderDependencies>,
+  ): void {
+    for (const [dev, sm] of this._deviceConnectionsByWebUsbDevice) {
+      if (sm === machine) this.deleteActiveConnection(dev);
+    }
+    this._deviceConnectionsPendingReconnection.delete(machine);
+    // Safety: drop activeMachines flag in case the device map had no entry for this machine.
+    this._activeConnectionMachines.delete(machine);
+    this._deviceApduSendersByConnectionMachine.delete(machine);
+  }
+
+  private async closeMachineConnection(
+    machine: DeviceConnectionStateMachine<NodeWebUsbApduSenderDependencies>,
+  ): Promise<void> {
+    const apduSender = this._deviceApduSendersByConnectionMachine.get(machine);
+    this._explicitConnectionClosesInFlight++;
+    try {
+      machine.closeConnection();
+      await apduSender?.closeConnection();
+    } finally {
+      this.deleteActiveConnectionsForMachine(machine);
+      this._explicitConnectionClosesInFlight--;
+    }
+  }
+
+  private async refreshDiscoveredDevicesAfterExplicitClose(): Promise<void> {
+    this._transportDiscoveredDevices.next([]);
+    await this.updateTransportDiscoveredDevices();
   }
 
   private makeTransportConnectedDevice({
@@ -496,6 +532,9 @@ export class NodeWebUsbTransport implements Transport {
   }
 
   private startListeningToConnectionEvents(): void {
+    if (this._usbAttachHandler || this._usbDetachHandler) {
+      return;
+    }
     this._logger.debug("startListeningToConnectionEvents (WebUSB)");
     this._usbAttachHandler = (d: NativeUsbDevice) => {
       void this.handleDeviceConnection(d);
@@ -506,11 +545,6 @@ export class NodeWebUsbTransport implements Transport {
     this._platformBindings.usbBindings.on("attach", this._usbAttachHandler);
     this._platformBindings.usbBindings.on("detach", this._usbDetachHandler);
     this.startWindowsDiscoveryPolling();
-
-    process.on("exit", () => {
-      this.stopListeningToConnectionEvents();
-      this._platformBindings.usbBindings.unrefHotplugEvents();
-    });
   }
 
   private stopListeningToConnectionEvents(): void {
@@ -566,6 +600,8 @@ export class NodeWebUsbTransport implements Transport {
         this.resumeDiscoveryAfterDisconnect();
       },
       onTerminated: () => {
+        // _deviceApduSendersByConnectionMachine is a WeakMap keyed by `machine`, so its entries
+        // are reclaimed automatically once the machine becomes unreachable below.
         this._deviceConnectionsPendingReconnection.forEach(sm => {
           if (sm.getDeviceId() === deviceId) {
             this._deviceConnectionsPendingReconnection.delete(sm);
@@ -581,10 +617,12 @@ export class NodeWebUsbTransport implements Transport {
         this.resumeDiscoveryAfterDisconnect();
       },
     });
+    this._deviceApduSendersByConnectionMachine.set(machine, apduSender);
 
     try {
       await machine.setupConnection();
     } catch (e) {
+      this._deviceApduSendersByConnectionMachine.delete(machine);
       this._logger.error("Error while setting up device connection", { data: { error: e } });
       return Left(new OpeningConnectionError(e));
     }
@@ -605,13 +643,25 @@ export class NodeWebUsbTransport implements Transport {
       });
       return Left(new UnknownDeviceError(`Unknown device ${params.connectedDevice.id}`));
     }
-    sm.closeConnection();
+    this.stopListeningToConnectionEvents();
+    try {
+      await this.closeMachineConnection(sm);
+      await this.refreshDiscoveredDevicesAfterExplicitClose();
+    } finally {
+      this.startListeningToConnectionEvents();
+    }
     return Right(undefined);
   }
 
   async handleDeviceDisconnection(native: NativeUsbDevice): Promise<void> {
     const { idVendor, idProduct } = native.deviceDescriptor;
     if (idVendor !== LEDGER_VENDOR_ID) {
+      return;
+    }
+    if (this._explicitConnectionClosesInFlight > 0) {
+      this._logger.debug("[handleDeviceDisconnection] Ignoring detach during explicit close", {
+        data: { vendorId: idVendor, productId: idProduct },
+      });
       return;
     }
     this._logger.info("[handleDeviceDisconnection] Device disconnected (WebUSB)", {
@@ -668,6 +718,12 @@ export class NodeWebUsbTransport implements Transport {
     if (idVendor !== LEDGER_VENDOR_ID) {
       return;
     }
+    if (this._explicitConnectionClosesInFlight > 0) {
+      this._logger.debug("[handleDeviceConnection] Ignoring attach during explicit close", {
+        data: { vendorId: idVendor, productId: idProduct },
+      });
+      return;
+    }
     this._logger.info("[handleDeviceConnection] New device connected (WebUSB)", {
       data: { vendorId: idVendor, productId: idProduct },
     });
@@ -689,11 +745,18 @@ export class NodeWebUsbTransport implements Transport {
     }
   }
 
-  destroy(): void {
+  async destroy(): Promise<void> {
     this.stopListeningToConnectionEvents();
-    this._deviceConnectionsByWebUsbDevice.forEach(sm => sm.closeConnection());
+    await Promise.all(
+      [...this._deviceConnectionsByWebUsbDevice.values()].map(sm =>
+        this.closeMachineConnection(sm),
+      ),
+    );
     this._deviceConnectionsPendingReconnection.clear();
     this._activeConnectionMachines.clear();
+    // Unref last, after in-flight close transfers have settled, so we don't
+    // release hotplug refs while native USB ops are still running.
+    this._platformBindings.usbBindings.unrefHotplugEvents();
   }
 }
 

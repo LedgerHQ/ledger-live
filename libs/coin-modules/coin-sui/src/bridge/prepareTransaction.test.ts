@@ -1,4 +1,4 @@
-import { faker } from "@faker-js/faker";
+import { NotEnoughBalance, NotEnoughBalanceFees } from "@ledgerhq/errors";
 import BigNumber from "bignumber.js";
 import { DEFAULT_COIN_TYPE } from "../network/sdk";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
@@ -41,7 +41,7 @@ describe("prepareTransaction", () => {
 
   it("returns a new Transaction with new fees", async () => {
     // GIVEN
-    const fees = new BigNumber(faker.number.int({ min: 1, max: 50 }));
+    const fees = new BigNumber(42);
     mockGetFeesForTransaction.mockResolvedValue(fees);
     const tx = createFixtureTransaction();
 
@@ -57,12 +57,13 @@ describe("prepareTransaction", () => {
       mode: "send",
       coinType: DEFAULT_COIN_TYPE,
     });
+    expect(mockCalculateAmount).not.toHaveBeenCalled();
   });
 
   it("calculates amount when useAllAmount is true", async () => {
     // GIVEN
-    const fees = new BigNumber(faker.number.int({ min: 1, max: 50 }));
-    const calculatedAmount = new BigNumber(faker.number.int({ min: 1000, max: 5000 }));
+    const fees = new BigNumber(42);
+    const calculatedAmount = new BigNumber(2000);
     mockGetFeesForTransaction.mockResolvedValue(fees);
     mockCalculateAmount.mockReturnValue(calculatedAmount);
     const tx = createFixtureTransaction({ useAllAmount: true });
@@ -78,7 +79,7 @@ describe("prepareTransaction", () => {
 
   it("sets mode to token.send and updates coinType for token transactions", async () => {
     // GIVEN
-    const fees = new BigNumber(faker.number.int({ min: 1, max: 50 }));
+    const fees = new BigNumber(42);
     mockGetFeesForTransaction.mockResolvedValue(fees);
     const tx = createFixtureTransaction({
       subAccountId: "tokenSubAccountId",
@@ -92,17 +93,35 @@ describe("prepareTransaction", () => {
     expect(newTx.mode).toEqual("token.send");
     expect(newTx.coinType).toEqual(TEST_TOKEN_COIN_TYPE);
     expect(newTx.fees).toEqual(fees);
+    expect(newTx.tokenId).toEqual("tokenSubAccountId");
   });
 
-  it("uses default fee of 0 when fee estimation fails", async () => {
+  it("rejects when fee estimation fails with an unrecognised error", async () => {
     // GIVEN
-    mockGetFeesForTransaction.mockRejectedValue(new Error("Fee estimation failed"));
+    mockGetFeesForTransaction.mockRejectedValue(new Error("fee estimation failed"));
     const tx = createFixtureTransaction();
 
-    // WHEN
-    const newTx = await prepareTransaction(createFixtureAccount(), tx);
+    // WHEN / THEN
+    await expect(prepareTransaction(createFixtureAccount(), tx)).rejects.toThrow();
+  });
 
-    // THEN
-    expect(newTx.fees).toEqual(new BigNumber(0));
+  it("rejects when fee estimation fails with NotEnoughBalanceFees", async () => {
+    // GIVEN — gas-shortage errors must propagate so the UI can act on them
+    mockGetFeesForTransaction.mockRejectedValue(new NotEnoughBalanceFees());
+    const tx = createFixtureTransaction();
+
+    // WHEN / THEN
+    await expect(prepareTransaction(createFixtureAccount(), tx)).rejects.toThrow(
+      NotEnoughBalanceFees,
+    );
+  });
+
+  it("rejects when fee estimation fails with NotEnoughBalance", async () => {
+    // GIVEN — amount > balance: error propagates so the caller can act on it
+    mockGetFeesForTransaction.mockRejectedValue(new NotEnoughBalance());
+    const tx = createFixtureTransaction();
+
+    // WHEN / THEN
+    await expect(prepareTransaction(createFixtureAccount(), tx)).rejects.toThrow(NotEnoughBalance);
   });
 });

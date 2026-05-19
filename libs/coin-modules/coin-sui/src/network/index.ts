@@ -4,7 +4,7 @@ import {
   getOperations,
   getBlock,
   getBlockInfo,
-  getStakesRaw,
+  getDelegatedStakes,
   paymentInfo,
   createTransaction,
   executeTransactionBlock,
@@ -18,13 +18,13 @@ export {
   getOperations,
   getBlock,
   getBlockInfo,
-  getStakesRaw,
+  getDelegatedStakes,
   paymentInfo,
   createTransaction,
   executeTransactionBlock,
   getStakes,
   getValidators,
-};
+} from "./sdk";
 
 export default {
   getAccountBalances,
@@ -32,7 +32,7 @@ export default {
   getOperations,
   getBlock,
   getBlockInfo,
-  getStakesRaw,
+  getDelegatedStakes,
   paymentInfo,
   createTransaction,
   executeTransactionBlock,

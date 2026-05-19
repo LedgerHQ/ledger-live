@@ -1,6 +1,6 @@
 import React from "react";
-import { render, screen, waitFor } from "tests/testSetup";
-import { ProductTourDialog } from "../ProductTourDialog";
+import { fireEvent, render, screen, waitFor } from "tests/testSetup";
+import { ProductTourDialog } from "../ProductTourDialogView";
 import { useProductTourDialogViewModel } from "../hooks/useProductTourDialogViewModel";
 
 const CONTINUE_LABEL = "Continue";
@@ -26,27 +26,13 @@ jest.mock("LLD/features/ModularDialog/hooks/useOpenAssetFlow", () => ({
 }));
 
 function TestHarness() {
-  const {
-    isDialogOpen,
-    openDialog,
-    closeDialog,
-    completeProductTour,
-    onPrimaryAction,
-    onSlideChange,
-  } = useProductTourDialogViewModel();
-
+  const { openDialog, ...productTourDialogViewModel } = useProductTourDialogViewModel();
   return (
     <div>
       <button type="button" onClick={openDialog}>
         Open
       </button>
-      <ProductTourDialog
-        isOpen={isDialogOpen}
-        onClose={closeDialog}
-        onComplete={completeProductTour}
-        onPrimaryAction={onPrimaryAction}
-        onSlideChange={onSlideChange}
-      />
+      <ProductTourDialog {...productTourDialogViewModel} />
     </div>
   );
 }
@@ -57,6 +43,22 @@ function getProductTourTestInitialState(overrides?: { productTourCompleted?: boo
       productTourCompleted: overrides?.productTourCompleted ?? false,
     },
   };
+}
+
+function completeSlideOutAnimation(fromIndex: number) {
+  const slideOutAnimationStart = new Event("animationstart", {
+    bubbles: true,
+  });
+  Object.defineProperty(slideOutAnimationStart, "animationName", {
+    value: "slide-out-to-left",
+  });
+
+  fireEvent(screen.getByTestId(`product-tour-slide-${fromIndex}`), slideOutAnimationStart);
+}
+
+async function goToNextSlide(user: ReturnType<typeof render>["user"], fromIndex: number) {
+  await user.click(screen.getByRole("button", { name: CONTINUE_LABEL }));
+  completeSlideOutAnimation(fromIndex);
 }
 
 describe("ProductTourDialog", () => {
@@ -95,10 +97,10 @@ describe("ProductTourDialog", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: CONTINUE_LABEL }));
-    await user.click(screen.getByRole("button", { name: CONTINUE_LABEL }));
-    await user.click(screen.getByRole("button", { name: CONTINUE_LABEL }));
-    await user.click(screen.getByRole("button", { name: CONTINUE_LABEL }));
+    await goToNextSlide(user, 0);
+    await goToNextSlide(user, 1);
+    await goToNextSlide(user, 2);
+    await goToNextSlide(user, 3);
 
     expect(await screen.findByTestId("product-tour-slide-4")).toBeVisible();
     expect(screen.getByRole("button", { name: PORTFOLIO_LABEL })).toBeVisible();
@@ -140,6 +142,28 @@ describe("ProductTour dialog from debug (view model)", () => {
     });
   });
 
+  it("should reset to first slide on each open", async () => {
+    const { user } = render(<TestHarness />, {
+      initialState: getProductTourTestInitialState(),
+    });
+
+    await user.click(screen.getByRole("button", { name: /open/i }));
+    await user.click(screen.getByRole("button", { name: CONTINUE_LABEL }));
+
+    expect(await screen.findByRole("button", { name: SWAP_LABEL })).toBeVisible();
+
+    await user.click(screen.getByRole("button", { name: /close/i }));
+
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    });
+
+    await user.click(screen.getByRole("button", { name: /open/i }));
+
+    expect(await screen.findByRole("button", { name: FUND_LABEL })).toBeVisible();
+    expect(screen.getByTestId("product-tour-slide-0")).toBeVisible();
+  });
+
   it("should mark product tour completed when reaching the fifth slide", async () => {
     const { user, store } = render(<TestHarness />, {
       initialState: getProductTourTestInitialState(),
@@ -153,10 +177,10 @@ describe("ProductTour dialog from debug (view model)", () => {
 
     expect(screen.getByTestId("product-tour-slide-0")).toBeVisible();
 
-    await user.click(screen.getByRole("button", { name: CONTINUE_LABEL }));
-    await user.click(screen.getByRole("button", { name: CONTINUE_LABEL }));
-    await user.click(screen.getByRole("button", { name: CONTINUE_LABEL }));
-    await user.click(screen.getByRole("button", { name: CONTINUE_LABEL }));
+    await goToNextSlide(user, 0);
+    await goToNextSlide(user, 1);
+    await goToNextSlide(user, 2);
+    await goToNextSlide(user, 3);
 
     expect(await screen.findByTestId("product-tour-slide-4")).toBeVisible();
     expect(store.getState().settings.productTourCompleted).toBe(true);

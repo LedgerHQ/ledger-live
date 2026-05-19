@@ -194,6 +194,7 @@ for (const token of subAccounts) {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
         await app.mainNavigation.openTargetFromMainNavigation("accounts");
+        await app.layout.waitForSyncButtonToBeEnabled();
         await app.accounts.navigateToAccountByName(getParentAccountName(token.account));
         await app.account.expectTokenToBePresent(token.account);
       },

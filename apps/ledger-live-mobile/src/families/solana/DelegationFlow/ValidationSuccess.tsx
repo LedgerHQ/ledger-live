@@ -17,7 +17,6 @@ import { SolanaDelegationFlowParamList } from "./types";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { getTrackingDelegationType } from "../../helpers";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
-import { useNotifications } from "LLM/features/NotificationsPrompt";
 
 type Props = BaseComposite<
   StackNavigatorProps<SolanaDelegationFlowParamList, ScreenName.DelegationValidationSuccess>
@@ -26,7 +25,6 @@ type Props = BaseComposite<
 export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useAccountScreen(route);
-  const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
 
   const validator = route.params.validatorName ?? "unknown";
   const source = route.params.source?.name ?? "unknown";
@@ -48,9 +46,8 @@ export default function ValidationSuccess({ navigation, route }: Props) {
         delegation,
         flow: "stake",
       });
-      tryTriggerPushNotificationDrawerAfterAction("stake");
     }
-  }, [source, validator, delegation, ticker, tryTriggerPushNotificationDrawerAfterAction]);
+  }, [source, validator, delegation, ticker]);
 
   const goToOperationDetails = useCallback(() => {
     if (!account) return;

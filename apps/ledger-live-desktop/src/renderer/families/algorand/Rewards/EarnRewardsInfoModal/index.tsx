@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch } from "LLD/hooks/redux";
 import { TokenAccount } from "@ledgerhq/types-live";
 import { openModal } from "~/renderer/actions/modals";
+import { RECEIVE_SOURCE_PAGE } from "LLD/features/Receive/types";
 import EarnRewardsInfoModal from "~/renderer/components/EarnRewardsInfoModal";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
@@ -17,7 +18,7 @@ export default function AlgorandEarnRewardsInfoModal({ account }: Props) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const onNext = useCallback(() => {
-    dispatch(openModal("MODAL_RECEIVE", { account }));
+    dispatch(openModal("MODAL_RECEIVE", { account, sourcePage: RECEIVE_SOURCE_PAGE.ACCOUNT_PAGE }));
   }, [account, dispatch]);
 
   const algorandStakingRewards = useLocalizedUrl(urls.algorandStakingRewards);

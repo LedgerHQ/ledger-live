@@ -55,7 +55,7 @@ export function CryptoAddressesView({
               data-testid="crypto-add-address-button"
               className="shrink-0 whitespace-nowrap"
             >
-              {t("cryptoAddresses.tableActions.addAddress")}
+              {t("cryptoAddresses.tableActions.addAccount")}
             </Button>
           </TableActionBarTrailing>
         </TableActionBar>

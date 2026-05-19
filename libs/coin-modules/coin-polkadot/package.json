@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-polkadot",
-  "version": "6.25.0",
+  "version": "6.26.0-next.0",
   "description": "Ledger Polkadot Coin integration",
   "keywords": [
     "Ledger",
@@ -161,7 +161,6 @@
     "rxjs": "catalog:"
   },
   "devDependencies": {
-    "@faker-js/faker": "^8.4.1",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/hw-app-polkadot": "workspace:^",
     "@polkadot/rpc-provider": "catalog:",

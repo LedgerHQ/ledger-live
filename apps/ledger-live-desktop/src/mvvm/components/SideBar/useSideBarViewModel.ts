@@ -13,6 +13,7 @@ import { openModal } from "~/renderer/actions/modals";
 import { setSidebarCollapsed } from "~/renderer/actions/settings";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
+import { RECEIVE_SOURCE_PAGE } from "LLD/features/Receive/types";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
 import { HIDE_BAR_THRESHOLD } from "~/renderer/screens/dashboard/AssetDistribution/constants";
@@ -224,7 +225,7 @@ export function useSideBarViewModel(): SideBarViewModel {
   const handleOpenReceiveModal = useCallback(() => {
     maybeRedirectToAccounts();
     trackEntry("receive");
-    dispatch(openModal("MODAL_RECEIVE", undefined));
+    dispatch(openModal("MODAL_RECEIVE", { sourcePage: RECEIVE_SOURCE_PAGE.SIDEBAR }));
   }, [dispatch, maybeRedirectToAccounts, trackEntry]);
 
   const handleClickRecover = useCallback(() => {

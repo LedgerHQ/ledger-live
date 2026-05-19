@@ -1,5 +1,7 @@
 import React from "react";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { AnalyticsConsentDialog } from "LLD/features/AnalyticsConsentDialog";
+import { ProductTourDialog, useProductTourDialogViewModel } from "LLD/features/ProductTour/Drawer";
 import {
   useWalletV4TourDrawerViewModel,
   WalletV4TourDialog,
@@ -9,17 +11,20 @@ import { PortfolioView } from "./PortfolioView";
 
 const Portfolio = () => {
   const viewModel = usePortfolioViewModel();
+  const lwdProductTour = useFeature("lwdProductTour");
   const {
     isDialogOpen: isWalletV4TourOpen,
     closeDrawer: handleCloseWalletV4Tour,
     completeDrawer: handleCompleteWalletV4Tour,
     onSlideChange: onWalletV4TourSlideChange,
   } = useWalletV4TourDrawerViewModel({ isOnPortfolioPage: true });
+  const productTourDialogViewModel = useProductTourDialogViewModel();
 
   return (
     <>
       <PortfolioView {...viewModel} />
       <AnalyticsConsentDialog />
+      {lwdProductTour?.enabled ? <ProductTourDialog {...productTourDialogViewModel} /> : null}
       <WalletV4TourDialog
         isOpen={isWalletV4TourOpen}
         onClose={handleCloseWalletV4Tour}

@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { Platform } from "react-native";
 import Animated from "react-native-reanimated";
+import { ProductTourPortfolioMount } from "LLM/features/ProductTour";
 import CheckLanguageAvailability from "~/components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "~/components/CheckTermOfUseUpdate";
 import CollapsibleHeaderFlatList from "~/components/WalletTab/CollapsibleHeaderFlatList";
@@ -12,6 +13,7 @@ import { ScreenName } from "~/const";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
 import { AnalyticsConsentDrawer } from "LLM/features/AnalyticsConsentDrawer";
+import TrackScreen from "~/analytics/TrackScreen";
 import { usePortfolioBorrowSectionViewModel } from "../../components/PortfolioBorrowSection/usePortfolioBorrowSectionViewModel";
 import {
   PROGRESS_VIEW_OFFSET_LEGACY_ANDROID,
@@ -109,6 +111,8 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
       return sections;
     }
 
+    sections.push(<TrackScreen key="trackWallet" category="Wallet" />);
+
     if (shouldDisplayQuickActionCtas && !shouldDisplayGraphRework) {
       sections.push(
         <Box px={6} pt={6} key="quickActions">
@@ -119,12 +123,14 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     }
 
     sections.push(
-      <PortfolioBannersSection
-        key="banners"
-        isFirst={true}
-        isLNSUpsellBannerShown={isLNSUpsellBannerShown}
-        showAssets={showAssets}
-      />,
+      <Box key="portfolioBannersSection" px={6} backgroundColor="background.contrast">
+        <PortfolioBannersSection
+          key="banners"
+          isFirst={true}
+          isLNSUpsellBannerShown={isLNSUpsellBannerShown}
+          showAssets={showAssets}
+        />
+      </Box>,
     );
 
     if (shouldDisplayMarketBanner) {
@@ -225,6 +231,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
         onSlideChange={onSlideChange}
         slides={slides}
       />
+      <ProductTourPortfolioMount />
       <AnalyticsConsentDrawer />
     </>
   );

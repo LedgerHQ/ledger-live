@@ -11,7 +11,9 @@ export default function PageHeader({ title, onBack, trailing }: Props) {
   return (
     <NavBar data-testid="page-header">
       {onBack ? <NavBarBackButton onClick={onBack} /> : null}
-      <NavBarTitle>{title}</NavBarTitle>
+      <NavBarTitle>
+        <span data-testid="page-header-title">{title}</span>
+      </NavBarTitle>
       {trailing ? <NavBarTrailing>{trailing}</NavBarTrailing> : null}
     </NavBar>
   );

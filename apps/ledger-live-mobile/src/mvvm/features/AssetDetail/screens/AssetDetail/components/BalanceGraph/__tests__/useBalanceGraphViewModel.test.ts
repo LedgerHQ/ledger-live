@@ -3,7 +3,6 @@ import { useBalanceGraphViewModel } from "../useBalanceGraphViewModel";
 import { track } from "~/analytics";
 import { useGetCurrencyDataQuery } from "@ledgerhq/live-common/market/state-manager/marketApi";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
-import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import {
   mockBtcCryptoCurrency,
   mockEthCryptoCurrency,
@@ -11,6 +10,7 @@ import {
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import BigNumber from "bignumber.js";
 import type { State } from "~/reducers/types";
+import { marketCurrencyData } from "../../../__fixtures__/marketCurrencyData";
 
 jest.mock("@ledgerhq/live-common/market/state-manager/marketApi", () => ({
   ...jest.requireActual("@ledgerhq/live-common/market/state-manager/marketApi"),
@@ -21,18 +21,6 @@ jest.mock("LLM/features/Receive");
 const mockUseGetCurrencyDataQuery = jest.mocked(useGetCurrencyDataQuery);
 const mockUseOpenReceiveDrawer = jest.mocked(useOpenReceiveDrawer);
 const mockHandleOpenReceiveDrawer = jest.fn();
-
-const marketCurrencyData = {
-  id: "bitcoin",
-  price: 50000,
-  priceChangePercentage: {
-    [KeysPriceChange.hour]: 0.5,
-    [KeysPriceChange.day]: 2.35,
-    [KeysPriceChange.week]: -5.12,
-    [KeysPriceChange.month]: 10.0,
-    [KeysPriceChange.year]: 150.0,
-  },
-};
 
 function withAccounts(accounts: Array<{ currencyId: string; balance: number }>) {
   return {
@@ -100,13 +88,13 @@ describe("useBalanceGraphViewModel", () => {
     });
   });
 
-  describe("priceFormatter (parseCurrencyString)", () => {
+  describe("priceFormatter (formatCurrencyUnitFragment)", () => {
     it("splits a USD-formatted value into FormattedValue parts", () => {
       const { result } = renderHook(() => useBalanceGraphViewModel(mockBtcCryptoCurrency));
 
       const formatted = result.current.priceFormatter(1234.56);
 
-      expect(formatted.integerPart).toBe("1234");
+      expect(formatted.integerPart).toBe("1,234");
       expect(formatted.decimalPart).toBe("56");
       expect(formatted.decimalSeparator).toBe(".");
       expect(formatted.currencyText).toBe("$");
@@ -203,6 +191,18 @@ describe("useBalanceGraphViewModel", () => {
         withAccounts([
           { currencyId: "bitcoin", balance: 0 },
           { currencyId: "ethereum", balance: 0 },
+        ]),
+      );
+
+      expect(result.current.showReceive).toBe(false);
+    });
+
+    it("is false when hideReceive is true even if conditions are met", () => {
+      const { result } = renderHook(
+        () => useBalanceGraphViewModel(mockBtcCryptoCurrency, true),
+        withAccounts([
+          { currencyId: "bitcoin", balance: 0 },
+          { currencyId: "ethereum", balance: 1000 },
         ]),
       );
 

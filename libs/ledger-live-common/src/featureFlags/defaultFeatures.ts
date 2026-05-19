@@ -522,7 +522,7 @@ export const DEFAULT_FEATURES: Features = {
   ptxEarnUi: {
     enabled: false,
     params: {
-      value: "v1",
+      value: "v2",
     },
   },
 
@@ -741,6 +741,7 @@ export const DEFAULT_FEATURES: Features = {
   },
   ldmkSolanaSigner: DEFAULT_FEATURE,
   ldmkCosmosSigner: DEFAULT_FEATURE,
+  suiGraphqlTransport: DEFAULT_FEATURE,
   ldmkConnectApp: DEFAULT_FEATURE,
   lldNetworkBasedAddAccount: DEFAULT_FEATURE,
   llmDatadog: {
@@ -834,6 +835,7 @@ export const DEFAULT_FEATURES: Features = {
       operationsList: true,
       aggregatedAssets: true,
       myWallet: true,
+      pnl: true,
     },
   },
   lwdWallet40: {
@@ -853,6 +855,7 @@ export const DEFAULT_FEATURES: Features = {
       brazePlacement: true,
       aggregatedAssets: true,
       myWallet: true,
+      pnl: true,
       finishOnboardingWidget: false,
     },
   },

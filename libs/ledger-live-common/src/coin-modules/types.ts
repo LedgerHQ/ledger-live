@@ -1,21 +1,20 @@
 import type {
   Account,
   AccountBridge,
+  AccountBridgeExtensions,
   AccountLike,
   AnyMessage,
   AddressValidationCurrencyParameters,
   CurrencyBridge,
-  Operation,
   TransactionCommon,
   TransactionStatusCommon,
 } from "@ledgerhq/types-live";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { CommonDeviceTransactionField } from "@ledgerhq/ledger-wallet-framework/transaction/common";
 import type { Transaction as WalletAPITransaction } from "@ledgerhq/wallet-api-core";
 import type { Resolver } from "../hw/getAddress/types";
 import type { SignMessage } from "../hw/signMessage/types";
 import type { GetWalletAPITransactionSignFlowInfos } from "../wallet-api/types";
-import type { AlpacaSigner } from "../bridge/generic-alpaca/types";
+import type { AlpacaSigner } from "../bridge/generic-coin-framework/types";
 export type { AlpacaSigner };
 
 export type MessageSignerModule = {
@@ -86,22 +85,6 @@ export type ValidateAddressFn = (
   parameters: Partial<AddressValidationCurrencyParameters>,
 ) => Promise<boolean>;
 
-export type HasGasTrackerFn = (currency: CryptoCurrency) => boolean;
-
-export type IsEditableOperationFn = (
-  account: Account,
-  operation: Operation,
-  hasGasTracker: HasGasTrackerFn,
-) => boolean;
-
-export type IsStuckOperationFn = (operation: Operation) => boolean;
-
-export type GetStuckAccountAndOperationFn = (
-  account: AccountLike,
-  parentAccount: Account | null | undefined,
-  hasGasTracker: HasGasTrackerFn,
-) => { account: AccountLike; parentAccount: Account | undefined; operation: Operation } | undefined;
-
 export type CoinModuleLoader = {
   family: string;
   loadSetup: () => FamilySetup;
@@ -112,12 +95,7 @@ export type CoinModuleLoader = {
   loadAccount?: () => AccountModule;
   loadMockBridge?: () => MockBridgeModule;
   loadMockAccount?: () => MockAccountModule;
-  loadIsEditableOperation?: () => IsEditableOperationFn;
-  loadIsStuckOperation?: () => IsStuckOperationFn;
-  loadGetStuckAccountAndOperation?: () => GetStuckAccountAndOperationFn;
-  loadIsAccountEmpty?: () => (account: Account) => boolean;
-  loadGetVotesCount?: () => (account: Account) => number;
-  loadClearAccount?: () => (account: Account) => void;
   loadValidateAddress?: () => ValidateAddressFn;
   loadSigner?: () => AlpacaSigner;
+  loadBridgeExtensions?: () => AccountBridgeExtensions;
 };

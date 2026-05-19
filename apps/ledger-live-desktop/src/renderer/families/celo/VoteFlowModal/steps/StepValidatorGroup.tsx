@@ -1,4 +1,4 @@
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import invariant from "invariant";
 import React from "react";
 import { Trans } from "react-i18next";
@@ -10,7 +10,6 @@ import LedgerByFigmentTC from "../components/LedgerByFigmentTCLink";
 import ValidatorGroupsField from "../fields/ValidatorGroupsField";
 import { isDefaultValidatorGroupAddress } from "@ledgerhq/live-common/families/celo/logic";
 import { Transaction } from "@ledgerhq/live-common/families/celo/types";
-import { AccountBridge } from "@ledgerhq/types-live";
 import { StepProps } from "../types";
 export const StepValidatorGroupFooter = ({
   transitionTo,
@@ -55,8 +54,8 @@ const StepValidatorGroup = ({
     account && account.celoResources && transaction,
     "celo account, resources and transaction required",
   );
+  const bridge = useAccountBridge<Transaction>(account, parentAccount);
   const updateValidatorGroup = ({ address }: { address: string }) => {
-    const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
     onUpdateTransaction(_tx => {
       return bridge.updateTransaction(transaction, {
         recipient: address,

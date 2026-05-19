@@ -105,7 +105,7 @@ export default function ConcordiumReceiveVerifyAddress({ navigation, route }: Pr
               map(() => ({})),
               rejectionOp(),
             )
-          : getAccountBridge(mainAccount).receive(mainAccount, {
+          : (await getAccountBridge(mainAccount)).receive(mainAccount, {
               deviceId: device.deviceId,
               verify: true,
             })

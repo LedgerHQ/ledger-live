@@ -11,7 +11,6 @@ import type {
   Cursor,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
-import { getEnv } from "@ledgerhq/live-env";
 import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import { log } from "@ledgerhq/logs";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
@@ -19,6 +18,7 @@ import { getInputObjects } from "@mysten/signers/ledger";
 import {
   BalanceChange,
   Checkpoint,
+  CoinBalance,
   DelegatedStake,
   ExecuteTransactionBlockParams,
   JsonRpcHTTPTransport,
@@ -39,7 +39,7 @@ import { SUI_SYSTEM_STATE_OBJECT_ID } from "@mysten/sui/utils";
 import { BigNumber } from "bignumber.js";
 import uniqBy from "lodash/unionBy";
 import coinConfig from "../config";
-import { ONE_SUI } from "../constants";
+import { BLOCK_HEIGHT, ONE_SUI } from "../constants";
 import type {
   CoreTransaction,
   CreateExtrinsicArg,
@@ -48,21 +48,28 @@ import type {
   Transaction as TransactionType,
 } from "../types";
 import { ensureAddressFormat, normalizeSuiAddressForComparison } from "../utils";
+import { fetcher, inferNetworkFromUrl } from "./fetcher";
 import { getCurrentSuiPreloadData } from "./preload-data";
+import { mapDryRunError } from "../logic/mapDryRunError";
+import {
+  type AsyncGraphQLApiFunction,
+  getAllBalancesCachedGraphQL,
+  getCheckpointGraphQL,
+  getLastBlockGraphQL,
+  getDelegatedStakesGraphQL,
+  withGraphQLApi,
+} from "./sdk.graphql";
 
 type AsyncApiFunction<T> = (api: SuiJsonRpcClient) => Promise<T>;
 
-function inferNetworkFromUrl(url: string): string {
-  if (url.includes("testnet")) return "testnet";
-  if (url.includes("devnet")) return "devnet";
-  if (url.includes("127.0.0.1") || url.includes("localhost")) return "localnet";
-  return "mainnet";
+/** Read-side feature flag; transaction execution always stays on JSON-RPC. */
+export function isGraphQLEnabled(currencyId?: string): boolean {
+  return coinConfig.getCoinConfig(currencyId).features?.graphql === true;
 }
 
 export const TRANSACTIONS_LIMIT_PER_QUERY = 50;
 export const TRANSACTIONS_LIMIT = 300;
 const MULTI_GET_OBJECTS_LIMIT = 50;
-const BLOCK_HEIGHT = 5; // sui has no block height metainfo, we use it simulate proper icon statuses in apps
 
 export const DEFAULT_COIN_TYPE = "0x2::sui::SUI";
 
@@ -76,27 +83,7 @@ const TRANSACTIONS_QUERY_OPTIONS: SuiTransactionBlockResponseOptions = {
   showEffects: true, // To get transaction status and gas fee details
 };
 
-type GenericInput<T> = T extends (...args: infer K) => unknown ? K : never;
-type Inputs = GenericInput<typeof fetch>;
-
-const fetcher = (url: Inputs[0], options: Inputs[1], retry = 3): Promise<Response> => {
-  const version = getEnv("LEDGER_CLIENT_VERSION") || "";
-  const isCI = version.includes("ll-ci") || version === "";
-  if (options) {
-    options.headers = {
-      ...options.headers,
-      "X-Ledger-Client-Version": isCI ? "lld/2.124.0-dev" : version, // for integration cli tests
-    };
-  }
-  if (retry === 1) return fetch(url, options);
-
-  return fetch(url, options).catch(() => fetcher(url, options, retry - 1));
-};
-
-/**
- * Connects to Sui Api.
- * A fresh client is created each call — SuiJsonRpcClient is stateless (HTTP JSON-RPC)
- */
+/** Fresh JSON-RPC client per call — SuiJsonRpcClient is stateless. */
 export async function withApi<T>(execute: AsyncApiFunction<T>, currencyId?: string) {
   const url = coinConfig.getCoinConfig(currencyId).node.url;
   const network = inferNetworkFromUrl(url);
@@ -107,6 +94,19 @@ export async function withApi<T>(execute: AsyncApiFunction<T>, currencyId?: stri
 
   const api = new SuiJsonRpcClient({ transport, network });
   return execute(api);
+}
+
+/** Dispatcher gated on `features.graphql`. No silent fallback — flip the flag to revert. */
+export function withTransport<T>(
+  currencyId: string | undefined,
+  impls: {
+    jsonRpc: AsyncApiFunction<T>;
+    graphql: AsyncGraphQLApiFunction<T>;
+  },
+): Promise<T> {
+  return isGraphQLEnabled(currencyId)
+    ? withGraphQLApi(impls.graphql, currencyId)
+    : withApi(impls.jsonRpc, currencyId);
 }
 
 /**
@@ -143,23 +143,46 @@ export function withBatchedMultiGetObjects(client: SuiJsonRpcClient): SuiJsonRpc
 }
 
 /**
- * Cached wrapper around `suix_getAllBalances`.
- *
- * Post SIP-58 the response includes `fundsInAddressBalance` for each coin type,
- * allowing callers to distinguish between coin-object balances and address-level
- * balances. The RPC returns "fake coin" objects for backward compatibility so
- * existing `getCoins` callers continue to work transparently.
+ * Subset both transports populate. Narrows the dispatcher's surface so the
+ * GraphQL path's neutral fillers for JSON-RPC-only fields (`coinObjectCount`,
+ * `lockedBalance`) can't leak to a future caller via the cached value.
+ */
+export type DispatchedCoinBalance = Pick<
+  CoinBalance,
+  "coinType" | "totalBalance" | "fundsInAddressBalance"
+>;
+
+const toDispatchedCoinBalance = (b: CoinBalance): DispatchedCoinBalance => ({
+  coinType: b.coinType,
+  totalBalance: b.totalBalance,
+  // `exactOptionalPropertyTypes` rejects an explicit `undefined`; conditional
+  // spread preserves the optionality contract of `DispatchedCoinBalance`.
+  ...(b.fundsInAddressBalance !== undefined && {
+    fundsInAddressBalance: b.fundsInAddressBalance,
+  }),
+});
+
+/**
+ * Cached `suix_getAllBalances` / `Address.balances`. Post-SIP-58 surfaces
+ * `fundsInAddressBalance`; the GraphQL path paginates `BalanceConnection`
+ * and remaps each node into the shared {@link DispatchedCoinBalance} shape.
  */
 export const getAllBalancesCached = makeLRUCache(
-  async (owner: string, currencyId?: string) =>
-    withApi(
-      async api =>
-        await api.getAllBalances({
-          owner,
-        }),
-      currencyId,
-    ),
-  (owner: string, currencyId?: string) => `${currencyId ?? "sui"}:${owner}`,
+  async (owner: string, currencyId?: string): Promise<DispatchedCoinBalance[]> => {
+    // Pick<> is compile-time only — explicitly project both transports' results
+    // so the cache never stores transport-specific fields (`coinObjectCount`,
+    // `lockedBalance` from JSON-RPC; GraphQL's neutral fillers for the same).
+    const balances = await withTransport(currencyId, {
+      jsonRpc: api => api.getAllBalances({ owner }),
+      graphql: api => getAllBalancesCachedGraphQL(api, owner),
+    });
+    return balances.map(toDispatchedCoinBalance);
+  },
+  // Key includes the transport so flipping the flag mid-rollout doesn't
+  // cross-pollinate cached entries between JSON-RPC and GraphQL.
+  // Inputs are colon-free (owner = `0x` + hex; currencyId is wallet-set).
+  (owner: string, currencyId?: string) =>
+    `${currencyId ?? "sui"}:${isGraphQLEnabled(currencyId) ? "g" : "j"}:${owner}`,
   minutes(1),
 );
 
@@ -465,10 +488,19 @@ export const getOperationDate = (transaction: SuiTransactionBlockResponse): Date
 export const getFeesPayer = (transaction: SuiTransactionBlockResponse): string | undefined =>
   transaction.transaction?.data?.gasData?.owner || undefined;
 
-export const getStakesRaw = (owner: string, currencyId?: string) =>
-  withApi(async api => {
-    return api.getStakes({ owner });
-  }, currencyId);
+/**
+ * `DelegatedStake[]` regardless of transport. GraphQL reconstructs from
+ * `StakedSui` objects + system-state (one extra dynamicField per Active
+ * stake, deduped); rate failures degrade `estimatedReward` to `"0"`.
+ */
+export const getDelegatedStakes = (
+  owner: string,
+  currencyId?: string,
+): Promise<DelegatedStake[]> =>
+  withTransport(currencyId, {
+    jsonRpc: api => api.getStakes({ owner }),
+    graphql: api => getDelegatedStakesGraphQL(api, owner),
+  });
 
 /**
  * Extract operation coin type from transaction
@@ -775,13 +807,17 @@ export function toSuiAsset(coinType: string): AssetInfo {
   }
 }
 
-export const getLastBlock = (currencyId?: string) =>
-  withApi(async api => {
-    const checkpoint = await api.getLatestCheckpointSequenceNumber();
-    const { digest, sequenceNumber, timestampMs } = await api.getCheckpoint({ id: checkpoint });
-
-    return { digest, sequenceNumber, timestampMs };
-  }, currencyId);
+export const getLastBlock = (
+  currencyId?: string,
+): Promise<{ digest: string; sequenceNumber: string; timestampMs: string }> =>
+  withTransport(currencyId, {
+    jsonRpc: async api => {
+      const checkpoint = await api.getLatestCheckpointSequenceNumber();
+      const { digest, sequenceNumber, timestampMs } = await api.getCheckpoint({ id: checkpoint });
+      return { digest, sequenceNumber, timestampMs };
+    },
+    graphql: getLastBlockGraphQL,
+  });
 
 /**
  * Fetch operation list
@@ -1091,12 +1127,51 @@ export const getListOperations = async (
   }, currencyId);
 
 /**
- * Get a checkpoint (a.k.a, a block) metadata.
+ * Subset of `Checkpoint` populated by both transports. Narrowed at the
+ * public surface so flipping the flag can't silently null out a wider
+ * field — callers needing more should route through {@link withApi}.
+ */
+export type MinimalCheckpoint = Pick<Checkpoint, "digest" | "sequenceNumber" | "timestampMs">;
+
+/**
+ * Get a checkpoint (a.k.a, a block) metadata. JSON-RPC accepts either a
+ * sequence number or a digest; GraphQL only accepts a sequence number
+ * — digest IDs throw. Returns the narrow {@link MinimalCheckpoint}.
  *
  * @param id the checkpoint digest or sequence number (as a string)
  */
-export const getCheckpoint = async (id: string, currencyId?: string): Promise<Checkpoint> =>
-  withApi(async api => api.getCheckpoint({ id }), currencyId);
+export const getCheckpoint = async (
+  id: string,
+  currencyId?: string,
+): Promise<MinimalCheckpoint> => {
+  // Digest guard for GraphQL: sequence numbers are UInt53 — fit in the JS
+  // safe-integer range. Base58 digests (~44 chars) fail `^\d+$` and route to
+  // JSON-RPC. The `isSafeInteger` check rules out 16-digit numeric strings
+  // above 2^53-1 that would silently lose precision via `Number(id)`.
+  const seqCandidate = Number(id);
+  const isSequenceNumber =
+    id.length > 0 &&
+    /^\d+$/.test(id) &&
+    Number.isSafeInteger(seqCandidate) &&
+    seqCandidate >= 0;
+  if (isGraphQLEnabled(currencyId) && !isSequenceNumber) {
+    throw new Error(
+      `getCheckpoint(${id}): digest-based lookups are not supported on the GraphQL transport. ` +
+        "Pass a sequence number, or route this caller through the JSON-RPC endpoint.",
+    );
+  }
+  return withTransport(currencyId, {
+    jsonRpc: async api => {
+      const cp = await api.getCheckpoint({ id });
+      return {
+        digest: cp.digest,
+        sequenceNumber: cp.sequenceNumber,
+        timestampMs: cp.timestampMs,
+      };
+    },
+    graphql: api => getCheckpointGraphQL(api, id),
+  });
+};
 
 /**
  * Get a checkpoint (a.k.a, a block) metadata only.
@@ -1431,21 +1506,25 @@ export const paymentInfo = async (
   currencyId?: string,
 ) =>
   withApi(async api => {
-    const { unsigned: txb } = await createTransaction(
-      sender,
-      fakeTransaction,
-      false,
-      undefined,
-      currencyId,
-    );
-    const dryRunTxResponse = await api.dryRunTransactionBlock({ transactionBlock: txb });
-    const fees = getTotalGasUsed(dryRunTxResponse.effects);
+    try {
+      const { unsigned: txb } = await createTransaction(
+        sender,
+        fakeTransaction,
+        false,
+        undefined,
+        currencyId,
+      );
 
-    return {
-      gasBudget: dryRunTxResponse.input.gasData.budget,
-      totalGasUsed: fees,
-      fees,
-    };
+      const dryRunTxResponse = await api.dryRunTransactionBlock({ transactionBlock: txb });
+      const fees = getTotalGasUsed(dryRunTxResponse.effects);
+      return {
+        gasBudget: dryRunTxResponse.input.gasData.budget,
+        totalGasUsed: fees,
+        fees,
+      };
+    } catch (error) {
+      throw mapDryRunError(error);
+    }
   }, currencyId);
 
 export const executeTransactionBlock = async (
@@ -1610,19 +1689,18 @@ export const toStakeAmounts = (stake: StakeObject): { deposited: bigint; rewarde
   }
 };
 
+/**
+ * Active validator set with APY. Two parallel JSON-RPC calls merged by `suiAddress`.
+ */
 export const getValidators = (currencyId?: string): Promise<SuiValidator[]> =>
   withApi(async api => {
     const [{ activeValidators }, { apys }] = await Promise.all([
       api.getLatestSuiSystemState(),
       api.getValidatorsApy(),
     ]);
-    const hash = apys.reduce(
-      (acc, item) => {
-        acc[item.address] = item.apy;
-        return acc;
-      },
-      {} as Record<string, number>,
-    );
-
+    const hash = apys.reduce<Record<string, number>>((acc, item) => {
+      acc[item.address] = item.apy;
+      return acc;
+    }, {});
     return activeValidators.map(item => ({ ...item, apy: hash[item.suiAddress] }));
   }, currencyId);

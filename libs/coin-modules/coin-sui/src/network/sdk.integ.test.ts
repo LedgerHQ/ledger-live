@@ -3,6 +3,7 @@ import type { Operation } from "@ledgerhq/types-live";
 import { getJsonRpcFullnodeUrl, type SuiJsonRpcClient } from "@mysten/sui/jsonRpc";
 import BigNumber from "bignumber.js";
 import coinConfig from "../config";
+import { FIGMENT_SUI_VALIDATOR_ADDRESS } from "../constants";
 import { normalizeSuiAddressForComparison } from "../utils";
 import {
   createTransaction,
@@ -10,7 +11,6 @@ import {
   getAccountBalances,
   getListOperations,
   getOperations,
-  getCheckpoint,
   getOperationAmount,
   getOperationFee,
   getUnifiedBalanceChanges,
@@ -23,8 +23,6 @@ import {
   withApi,
 } from "./sdk";
 
-const ACCOUNT_WITH_STAKES = "0x3d9fb148e35ef4d74fcfc36995da14fc504b885d5f2bfeca37d6ea2cc044a32d";
-
 describe("SUI SDK Integration tests", () => {
   beforeAll(() => {
     coinConfig.setCoinConfig(() => ({
@@ -33,15 +31,15 @@ describe("SUI SDK Integration tests", () => {
       },
       node: {
         url: getEnv("API_SUI_NODE_PROXY"),
+        graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
       },
+      features: { graphql: false },
     }));
   });
 
   describe("getOperations", () => {
     describe("Account 0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164", () => {
       // https://suiscan.xyz/mainnet/account/0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164/activity
-
-      // 5 as of 14/05/2025
       const IN_OPERATIONS_COUNT = 2;
       const OUT_OPERATIONS_COUNT = 3;
       const TOTAL_OPERATIONS_COUNT = IN_OPERATIONS_COUNT + OUT_OPERATIONS_COUNT;
@@ -301,7 +299,7 @@ describe("SUI SDK Integration tests", () => {
       const validatorAddress = "0xcb7530490045f19514eed2f7efa4bca56854e54470fa23e8c91c46eb8a78d72f";
 
       const result = await createTransaction(
-        ACCOUNT_WITH_STAKES,
+        FIGMENT_SUI_VALIDATOR_ADDRESS,
         {
           mode: "delegate",
           coinType: DEFAULT_COIN_TYPE,
@@ -339,7 +337,7 @@ describe("SUI SDK Integration tests", () => {
     test("paymentInfo returns valid gas budget for delegate", async () => {
       const validatorAddress = "0xcb7530490045f19514eed2f7efa4bca56854e54470fa23e8c91c46eb8a78d72f";
 
-      const info = await paymentInfo(ACCOUNT_WITH_STAKES, {
+      const info = await paymentInfo(FIGMENT_SUI_VALIDATOR_ADDRESS, {
         mode: "delegate" as const,
         family: "sui" as const,
         coinType: DEFAULT_COIN_TYPE,
@@ -355,8 +353,16 @@ describe("SUI SDK Integration tests", () => {
 
   describe("getCheckpoint", () => {
     test("getCheckpoint", async () => {
-      const checkpointById = await getCheckpoint("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
-      const checkpointBySequenceNumber = await getCheckpoint("164167623");
+      // This test asserts on the wider JSON-RPC `Checkpoint` shape
+      // (epoch, previousDigest, transactions) — fields the public
+      // `getCheckpoint` export intentionally drops to keep the dual-path
+      // contract honest. Talk to the JSON-RPC client directly here.
+      const checkpointById = await withApi(api =>
+        api.getCheckpoint({ id: "3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS" }),
+      );
+      const checkpointBySequenceNumber = await withApi(api =>
+        api.getCheckpoint({ id: "164167623" }),
+      );
       expect(checkpointById.epoch).toEqual("814");
       expect(checkpointById.sequenceNumber).toEqual("164167623");
       expect(checkpointById.timestampMs).toEqual("1751696298663");
@@ -495,38 +501,46 @@ describe("SUI SDK Integration tests", () => {
     });
   });
 
-  // Pin both transfer flows to immutable on-chain testnet transactions and
-  // verify the SDK maps each correctly. Asserts flow-specific on-chain shape
+  // Pin both transfer flows to immutable on-chain transactions and verify the
+  // SDK maps each correctly. Asserts flow-specific on-chain shape
   // (gasData.payment, accumulatorEvents) AND the resulting Operation values,
   // so both code paths in sdk.ts are exercised end-to-end against live RPC.
   //
-  // The fixtures below live on testnet, so this block overrides the coin-sui
-  // network config to testnet for the duration of these tests, then restores
-  // the suite-level config in afterAll so other tests are unaffected.
+  // Legacy flow pins to mainnet (long retention); SIP-58 stays on testnet
+  // since the accumulator-event shape is testnet-only at the moment. Each
+  // inner block sets its own RPC URL; afterAll restores the suite default.
   describe("Transfer flow comparison: legacy coin vs SIP-58 address balance", () => {
-    beforeAll(() => {
-      coinConfig.setCoinConfig(() => ({
-        status: { type: "active" },
-        node: { url: getJsonRpcFullnodeUrl("testnet") },
-      }));
-    });
-
     afterAll(() => {
       coinConfig.setCoinConfig(() => ({
         status: { type: "active" },
-        node: { url: getEnv("API_SUI_NODE_PROXY") },
+        node: {
+          url: getEnv("API_SUI_NODE_PROXY"),
+          graphqlUrl: getEnv("API_SUI_GRAPHQL_PROXY"),
+        },
+        features: { graphql: false },
       }));
     });
 
     describe("legacy flow (coin-object-funded)", () => {
-      // https://suiscan.xyz/testnet/tx/93XR6Y2bfrTFKaRa4zQTA3tMeHGb6W3tKJy23a7TTREU
-      // Plain SUI transfer of 0.1 SUI; gas paid from a real coin object.
+      // https://suiscan.xyz/mainnet/tx/rkTA5Tn9dgrWPnHgj2WK7rVnk5t9jC3ViPcHU9dewDg
+      // Plain SUI transfer of 0.15 SUI; gas paid from a real coin object.
       const SENDER = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
-      const RECIPIENT = "0x48e76327eeb7232abc5e9cb870334a2abe8a2e00140eba2b59b2b4af735ec732";
-      const TX_DIGEST = "93XR6Y2bfrTFKaRa4zQTA3tMeHGb6W3tKJy23a7TTREU";
-      const TRANSFER_AMOUNT = "100000000";
-      const FEE_AMOUNT = "1997880"; // 1_000_000 + 1_976_000 - 978_120
-      const SENDER_TOTAL_OUT = "101997880";
+      const RECIPIENT = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
+      const TX_DIGEST = "rkTA5Tn9dgrWPnHgj2WK7rVnk5t9jC3ViPcHU9dewDg";
+      const TRANSFER_AMOUNT = "150000000";
+      const FEE_AMOUNT = "1747880"; // 750_000 + 1_976_000 - 978_120
+      const SENDER_TOTAL_OUT = "151747880";
+
+      beforeAll(() => {
+        coinConfig.setCoinConfig(() => ({
+          status: { type: "active" },
+          node: {
+            url: getJsonRpcFullnodeUrl("mainnet"),
+            graphqlUrl: "https://graphql.mainnet.sui.io/graphql",
+          },
+          features: { graphql: false },
+        }));
+      });
 
       const fetchTx = () =>
         withApi(api =>
@@ -609,6 +623,17 @@ describe("SUI SDK Integration tests", () => {
       const TRANSFER_AMOUNT = "10000000";
       const FEE_AMOUNT = "1988000"; // 1_000_000 + 988_000 - 0
       const SENDER_TOTAL_OUT = "11988000";
+
+      beforeAll(() => {
+        coinConfig.setCoinConfig(() => ({
+          status: { type: "active" },
+          node: {
+            url: getJsonRpcFullnodeUrl("testnet"),
+            graphqlUrl: "https://graphql.testnet.sui.io/graphql",
+          },
+          features: { graphql: false },
+        }));
+      });
 
       const fetchTx = () =>
         withApi(api =>

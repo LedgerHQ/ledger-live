@@ -13,3 +13,8 @@ export class CliProcessExitError extends Error {
     super(`CLI exit ${code}`);
   }
 }
+
+/** Returns the exit code if `e` is a CliProcessExitError, otherwise `null`. */
+export function getCliProcessExitCode(e: unknown): number | null {
+  return e instanceof CliProcessExitError ? e.code : null;
+}

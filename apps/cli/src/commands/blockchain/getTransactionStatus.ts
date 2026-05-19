@@ -46,9 +46,9 @@ export type GetTransactionStatusJobOpts = ScanCommonOpts &
 
 export default {
   description: "Prepare a transaction and returns 'TransactionStatus' meta information",
-  args: [
+  args: inferTransactionsOpts.then(opts => [
     ...scanCommonOpts,
-    ...inferTransactionsOpts,
+    ...opts,
     {
       name: "format",
       alias: "f",
@@ -56,7 +56,7 @@ export default {
       typeDesc: Object.keys(getTransactionStatusFormatters).join(" | "),
       desc: "how to display the data",
     },
-  ],
+  ]),
   job: (
     opts: ScanCommonOpts &
       InferTransactionsOpts & {

@@ -65,6 +65,65 @@ describe("wallet-api helpers", () => {
         expect(result).toBe(mockManifest.url);
       });
 
+      describe("http scheme by build mode", () => {
+        const originalNodeEnv = process.env.NODE_ENV;
+        afterEach(() => {
+          process.env.NODE_ENV = originalNodeEnv;
+        });
+
+        it("should reject http goToURL in production even when the manifest itself is http", () => {
+          process.env.NODE_ENV = "production";
+          const httpManifest = {
+            url: "http://localhost:3000/",
+            domains: ["localhost"],
+          };
+          const inputs = {
+            goToURL: "http://localhost:3000/some/path",
+          };
+          // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
+          const result = getInitialURL(inputs, httpManifest);
+          expect(result).toBe(httpManifest.url);
+        });
+
+        it("should accept http goToURL in development when the manifest is http on the same origin", () => {
+          process.env.NODE_ENV = "development";
+          const httpManifest = {
+            url: "http://localhost:3000/",
+            domains: ["localhost"],
+          };
+          const inputs = {
+            goToURL: "http://localhost:3000/some/path",
+          };
+          // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
+          const result = getInitialURL(inputs, httpManifest);
+          expect(result).toBe(inputs.goToURL);
+        });
+
+        it("should reject http goToURL in development when the manifest is https (scheme mismatch)", () => {
+          process.env.NODE_ENV = "development";
+          const inputs = {
+            goToURL: "http://default.example.com/path",
+          };
+          // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
+          const result = getInitialURL(inputs, mockManifest);
+          expect(result).toBe(mockManifest.url);
+        });
+
+        it("should reject http goToURL in development when manifest is http but on a different port", () => {
+          process.env.NODE_ENV = "development";
+          const httpManifest = {
+            url: "http://localhost:3000/",
+            domains: ["localhost"],
+          };
+          const inputs = {
+            goToURL: "http://localhost:8080/some/path",
+          };
+          // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
+          const result = getInitialURL(inputs, httpManifest);
+          expect(result).toBe(httpManifest.url);
+        });
+      });
+
       it("should reject javascript: URLs", () => {
         const inputs = {
           goToURL: "javascript:alert(1)",

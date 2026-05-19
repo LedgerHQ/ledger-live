@@ -54,7 +54,7 @@ function Slide({
 
   return (
     <SlideContainer $isWallet40Enabled={isWallet40Enabled}>
-      <LogContentCardWrapper id={id} location={location}>
+      <LogContentCardWrapper id={id} displayedPosition={index} location={location}>
         <Card
           title={title}
           cta={cta}

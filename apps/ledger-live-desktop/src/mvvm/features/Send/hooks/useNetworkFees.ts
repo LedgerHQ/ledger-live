@@ -3,7 +3,7 @@ import {
   getMainAccount,
 } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/impl";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import {
   SendFlowTransactionActions,
   SendFlowUiConfig,
@@ -80,14 +80,15 @@ export function useNetworkFees({
     status,
   });
 
+  const bridge = useAccountBridge<Transaction>(account, parentAccount);
+
   const updateTransactionWithPatch = useCallback(
     (patch: Partial<Transaction>) => {
       transactionActions.updateTransaction(currentTx => {
-        const bridge = getAccountBridge(account, parentAccount ?? undefined);
         return bridge.updateTransaction(currentTx, patch);
       });
     },
-    [account, parentAccount, transactionActions],
+    [bridge, transactionActions],
   );
 
   const showNetworkFees = true;

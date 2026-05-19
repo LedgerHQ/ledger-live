@@ -5,22 +5,25 @@ import Config from "react-native-config";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { discoverDevices } from "@ledgerhq/live-common/hw/index";
 import { CompositeScreenProps, useNavigation, useIsFocused } from "@react-navigation/native";
-import { Text, Flex, IconsLegacy, Box, ScrollContainer } from "@ledgerhq/native-ui";
+import { Text, Flex, IconsLegacy, ScrollContainer } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/usePostOnboardingEntryPointVisibleOnWallet";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { getEnv } from "@ledgerhq/live-env";
 import { TrackScreen, track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { bleDevicesSelector } from "~/reducers/ble";
 import Touchable from "../Touchable";
-import { saveBleDeviceName, updateKnownDevice } from "~/actions/ble";
+import { saveBleDeviceName, updateKnownBleDevice } from "~/actions/ble";
+import {
+  mapDiscoveredDeviceToKnownDevice,
+  saveKnownDeviceName,
+  updateKnownDevice,
+} from "~/reducers/knownDevices";
 import { setHasConnectedDevice, updateMainNavigatorVisibility } from "~/actions/appstate";
 import { setLastConnectedDevice, setReadOnlyMode } from "~/actions/settings";
 import { BaseComposite, StackNavigatorProps } from "../RootNavigator/types/helpers";
 import { MyLedgerNavigatorStackParamList } from "../RootNavigator/types/MyLedgerNavigator";
 import { MainNavigatorParamList } from "../RootNavigator/types/MainNavigator";
-import PostOnboardingEntryPointCard from "../PostOnboarding/PostOnboardingEntryPointCard";
 import BleDevicePairingFlow, {
   PairingFlowStep,
   SetHeaderOptionsRequest,
@@ -84,7 +87,6 @@ type Props = {
    * should react to a request from this component to set or to clean its header.
    */
   requestToSetHeaderOptions: (request: SetHeaderOptionsRequest) => void;
-  hasPostOnboardingEntryPointCard?: boolean;
   /**
    * Determines what will happen when the user taps on "Add a new device" button.
    * - If false, the screen will go in a "pairing state" where all scanned BLE devices are shown.
@@ -123,7 +125,6 @@ export default function SelectDevice({
   onSelect,
   requestToSetHeaderOptions,
   isChoiceDrawerDisplayedOnAddDevice = true,
-  hasPostOnboardingEntryPointCard,
   withMyLedgerTracking,
   filterByDeviceModelId,
   children,
@@ -141,9 +142,6 @@ export default function SelectDevice({
 
   const [isAddNewDrawerOpen, setIsAddNewDrawerOpen] = useState<boolean>(false);
   const [isPairingDevices, setIsPairingDevices] = useState<boolean>(false);
-
-  const postOnboardingVisible = usePostOnboardingEntryPointVisibleOnWallet();
-  const isPostOnboardingVisible = hasPostOnboardingEntryPointCard && postOnboardingVisible;
 
   const bleKnownDevices = useSelector(bleDevicesSelector);
   const navigation = useNavigation<Navigation["navigation"]>();
@@ -213,9 +211,10 @@ export default function SelectDevice({
       dispatch(setHasConnectedDevice(true));
       onSelect(device, discoveredDevice);
       dispatch(setReadOnlyMode(false));
+      dispatch(updateKnownDevice(mapDiscoveredDeviceToKnownDevice(discoveredDevice)));
       if (!device.wired) {
         dispatch(
-          updateKnownDevice({
+          updateKnownBleDevice({
             id: device.deviceId,
             name: device.deviceName ?? "",
             modelId: device.modelId,
@@ -432,6 +431,12 @@ export default function SelectDevice({
             name: equivalentScannedDevice?.deviceName,
           }),
         );
+        dispatch(
+          saveKnownDeviceName({
+            deviceId: knownDevice.id,
+            name: equivalentScannedDevice?.deviceName,
+          }),
+        );
       }
     }
   }, [dispatch, bleKnownDevices, filteredScannedDevices]);
@@ -571,11 +576,6 @@ export default function SelectDevice({
           >
             <Flex>
               <Flex>
-                {isPostOnboardingVisible && (
-                  <Box mx={4} mb={8}>
-                    <PostOnboardingEntryPointCard />
-                  </Box>
-                )}
                 <Flex
                   flexDirection="row"
                   justifyContent="space-between"

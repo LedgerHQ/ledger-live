@@ -10,7 +10,8 @@ import type { Result } from "@ledgerhq/live-common/hw/actions/manager";
 import { findMatchingNewDevice, useBleDevicesScanning } from "@ledgerhq/live-dmk-mobile";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { bleDevicesSelector } from "~/reducers/ble";
-import { removeKnownDevice } from "~/actions/ble";
+import { removeKnownBleDevice } from "~/actions/ble";
+import { removeKnownDevice } from "~/reducers/knownDevices";
 import { NavigatorName, ScreenName } from "~/const";
 import { urls } from "~/utils/urls";
 import { track } from "~/analytics";
@@ -120,6 +121,7 @@ export const useDeviceSectionViewModel = (): DeviceSectionViewModel => {
   const onRemoveDevice = useCallback(async () => {
     if (!deviceToRemove) return;
     dispatch(removeKnownDevice(deviceToRemove.id));
+    dispatch(removeKnownBleDevice(deviceToRemove.id));
     setIsRemoveDrawerOpen(false);
     try {
       await disconnect(deviceToRemove.id);

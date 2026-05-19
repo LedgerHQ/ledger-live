@@ -12,7 +12,6 @@ export type APIAccount =
       balance: number;
       stakedBalance?: number;
       unstakedBalance?: number;
-      unstakedFinalizable?: number;
       stakingUpdatesCount?: number;
       counter: number;
       delegate?: {

@@ -4,11 +4,13 @@ import { PsbtV2 } from "@ledgerhq/psbtv2";
 import { MerkelizedPsbt } from "./merkelizedPsbt";
 import { ClientCommandInterpreter } from "./clientCommands";
 import { WalletPolicy } from "./policy";
-import { createVarint } from "../varint";
+import { createVarint, getVarint } from "../varint";
 import { hashLeaf, Merkle } from "./merkle";
 
 const CLA_BTC = 0xe1;
 const CLA_FRAMEWORK = 0xf8;
+
+const CURRENT_PROTOCOL_VERSION = 1; // supported from version 2.1.0 of the app
 
 enum BitcoinIns {
   GET_PUBKEY = 0x00,
@@ -40,7 +42,7 @@ export class AppClient {
     data: Buffer,
     cci?: ClientCommandInterpreter,
   ): Promise<Buffer> {
-    let response: Buffer = await this.transport.send(CLA_BTC, ins, 0, 0, data, [0x9000, 0xe000]);
+    let response: Buffer = await this.transport.send(CLA_BTC, ins, 0, CURRENT_PROTOCOL_VERSION, data, [0x9000, 0xe000]);
     while (response.readUInt16BE(response.length - 2) === 0xe000) {
       if (!cci) {
         throw new Error("Unexpected SW_INTERRUPTED_EXECUTION");
@@ -53,7 +55,7 @@ export class AppClient {
         CLA_FRAMEWORK,
         FrameworkIns.CONTINUE_INTERRUPTED,
         0,
-        0,
+        CURRENT_PROTOCOL_VERSION,
         commandResponse,
         [0x9000, 0xe000],
       );
@@ -87,9 +89,10 @@ export class AppClient {
       throw new Error("Invalid HMAC length");
     }
 
-    const clientInterpreter = new ClientCommandInterpreter(() => {});
+    const clientInterpreter = new ClientCommandInterpreter(() => { });
     clientInterpreter.addKnownList(walletPolicy.keys.map(k => Buffer.from(k, "ascii")));
     clientInterpreter.addKnownPreimage(walletPolicy.serialize());
+    clientInterpreter.addKnownPreimage(Buffer.from(walletPolicy.descriptorTemplate, "ascii"));
 
     const addressIndexBuffer = Buffer.alloc(4);
     addressIndexBuffer.writeUInt32BE(addressIndex, 0);
@@ -126,6 +129,7 @@ export class AppClient {
     // prepare ClientCommandInterpreter
     clientInterpreter.addKnownList(walletPolicy.keys.map(k => Buffer.from(k, "ascii")));
     clientInterpreter.addKnownPreimage(walletPolicy.serialize());
+    clientInterpreter.addKnownPreimage(Buffer.from(walletPolicy.descriptorTemplate, "ascii"));
 
     clientInterpreter.addKnownMapping(merkelizedPsbt.globalMerkleMap);
     for (const map of merkelizedPsbt.inputMerkleMaps) {
@@ -162,7 +166,12 @@ export class AppClient {
 
     const ret: Map<number, Buffer> = new Map();
     for (const inputAndSig of yielded) {
-      ret.set(inputAndSig[0], inputAndSig.slice(1));
+      // V2 yield format:
+      // <inputIndex : varint> <pubkeyLen : 1 byte> <pubkey : pubkeyLen bytes> <signature : variable length>
+      const [inputIndex, inputIndexLen] = getVarint(inputAndSig, 0);
+      const pubkeyAugmLen = inputAndSig[inputIndexLen];
+      const signature = inputAndSig.subarray(inputIndexLen + 1 + pubkeyAugmLen);
+      ret.set(inputIndex, signature);
     }
     return ret;
   }
@@ -176,7 +185,7 @@ export class AppClient {
       throw new Error("Path too long. At most 6 levels allowed.");
     }
 
-    const clientInterpreter = new ClientCommandInterpreter(() => {});
+    const clientInterpreter = new ClientCommandInterpreter(() => { });
 
     // prepare ClientCommandInterpreter
     const nChunks = Math.ceil(message.length / 64);

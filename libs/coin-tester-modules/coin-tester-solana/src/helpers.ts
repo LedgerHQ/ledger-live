@@ -6,10 +6,10 @@ import resolver from "@ledgerhq/coin-solana/hw-getAddress";
 import {
   solanaGetAddress,
   SolanaSigner as AlpacaSolanaSigner,
-} from "@ledgerhq/live-common/bridge/generic-alpaca/families/solana/signer";
-import { getAlpacaCurrencyBridge } from "@ledgerhq/live-common/bridge/generic-alpaca/currencyBridge";
-import { getAlpacaAccountBridge } from "@ledgerhq/live-common/bridge/generic-alpaca/accountBridge";
-import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-alpaca/types";
+} from "@ledgerhq/live-common/bridge/generic-coin-framework/families/solana/signer";
+import { getAlpacaCurrencyBridge } from "@ledgerhq/live-common/bridge/generic-coin-framework/currencyBridge";
+import { getAlpacaAccountBridge } from "@ledgerhq/live-common/bridge/generic-coin-framework/accountBridge";
+import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 import { registerCoinModules } from "@ledgerhq/live-common/coin-modules/registry";
 import { coinModuleLoaders } from "@ledgerhq/live-common/coin-modules/loaders";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
@@ -151,11 +151,11 @@ export async function getBridges(
   const alpacaGetAddress = solanaGetAddress(alpacaSignerContext);
 
   return {
-    currencyBridge: getAlpacaCurrencyBridge("solana", "local", {
+    currencyBridge: await getAlpacaCurrencyBridge("solana", "local", {
       context: alpacaSignerContext,
       getAddress: alpacaGetAddress,
     }),
-    accountBridge: getAlpacaAccountBridge("solana", "local", {
+    accountBridge: await getAlpacaAccountBridge("solana", "local", {
       context: alpacaSignerContext,
       getAddress: alpacaGetAddress,
     }),

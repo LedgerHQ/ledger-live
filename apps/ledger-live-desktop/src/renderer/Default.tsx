@@ -1,8 +1,8 @@
 import React, { useEffect, lazy, Suspense } from "react";
 import styled, { useTheme } from "styled-components";
 import { ipcRenderer } from "electron";
-import { Navigate, Route, Routes, useNavigate, useLocation } from "react-router";
-import { useDispatch, useSelector } from "LLD/hooks/redux";
+import { Navigate, Route, Routes, useNavigate, useLocation, useParams } from "react-router";
+import { useSelector } from "LLD/hooks/redux";
 import TrackAppStart from "~/renderer/components/TrackAppStart";
 import { LiveApp } from "~/renderer/screens/platform";
 import { BridgeSyncProvider } from "~/renderer/bridge/BridgeSyncContext";
@@ -51,12 +51,9 @@ import { accountsSelector } from "./reducers/accounts";
 import { useRecoverRestoreOnboarding } from "~/renderer/hooks/useRecoverRestoreOnboarding";
 import {
   hasCompletedOnboardingSelector,
-  hasSeenAnalyticsOptInPromptSelector,
   areSettingsLoaded,
 } from "~/renderer/reducers/settings";
-import { isLocked as isLockedSelector } from "~/renderer/reducers/application";
 import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-import { setShareAnalytics, setSharePersonalizedRecommendations } from "./actions/settings";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { useEnforceSupportedLanguage } from "./hooks/useEnforceSupportedLanguage";
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-desktop";
@@ -64,9 +61,11 @@ import { AppGeoBlocker } from "LLD/features/AppBlockers/components/AppGeoBlocker
 import { AppVersionBlocker } from "LLD/features/AppBlockers/components/AppVersionBlocker";
 import { setSolanaLdmkEnabled } from "@ledgerhq/live-common/families/solana/setup";
 import { setCosmosLdmkEnabled } from "@ledgerhq/live-common/families/cosmos/setup";
+import { setSuiGraphqlEnabled } from "@ledgerhq/live-common/families/sui/setup";
 import { themeSelector } from "./actions/general";
 import useCheckAccountWithFunds from "./components/PostOnboardingHub/logic/useCheckAccountWithFunds";
 import GlobalDialogs from "LLD/features/GlobalDialogs";
+import GlobalDrawers from "LLD/features/GlobalDrawers";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/useWalletFeaturesConfig";
 import { useShouldShowDeferredModals } from "~/renderer/hooks/useShouldShowDeferredModals";
 import {
@@ -153,6 +152,11 @@ const LetInternalSendCrashTest = () => {
     ipcRenderer.send("internalCrashTest");
   }, []);
   return null;
+};
+
+const RedirectMarketToAsset = () => {
+  const { currencyId } = useParams<{ currencyId: string }>();
+  return <Navigate to={`/asset/${currencyId ?? ""}`} replace />;
 };
 
 export const TopBannerContainer = styled.div`
@@ -283,7 +287,12 @@ const MainAppContent = ({
           element={withSuspense(shouldDisplayAggregatedAssets ? AssetDetails : Asset)({})}
         />
         <Route path="/swap/*" element={withSuspense(Swap2)({})} />
-        <Route path="/market/:currencyId" element={withSuspense(MarketCoin)({})} />
+        <Route
+          path="/market/:currencyId"
+          element={
+            shouldDisplayAggregatedAssets ? <RedirectMarketToAsset /> : withSuspense(MarketCoin)({})
+          }
+        />
         <Route
           path="/market"
           element={withSuspense(shouldDisplayMarketBanner ? Market40 : Market)({})}
@@ -316,7 +325,8 @@ export const MainAppLayout = () => {
     ? getPageBackground(pathname, theme)
     : undefined;
 
-  const useWallet40Layout = isWallet40Enabled && isWallet40Page(pathname);
+  const useWallet40Layout =
+    isWallet40Enabled && isWallet40Page(pathname, { shouldDisplayAggregatedAssets });
 
   useEffect(() => {
     if (shouldDisplayWallet40MainNav) preloadBackgrounds();
@@ -387,6 +397,7 @@ export default function Default() {
   const providerNumber = useEnv("FORCE_PROVIDER");
   const ldmkSolanaSignerFeatureFlag = useFeature("ldmkSolanaSigner");
   const ldmkCosmosSignerFeatureFlag = useFeature("ldmkCosmosSigner");
+  const suiGraphqlTransportFeatureFlag = useFeature("suiGraphqlTransport");
 
   const dmk = useDeviceManagementKit();
   const checkAccountsWithFunds = useCheckAccountWithFunds();
@@ -401,11 +412,6 @@ export default function Default() {
   useAutoDismissPostOnboardingEntryPoint();
   useEnforceSupportedLanguage();
 
-  const analyticsFF = useFeature("lldAnalyticsOptInPrompt");
-  const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
-  const isLocked = useSelector(isLockedSelector);
-  const dispatch = useDispatch();
-
   useEffect(() => {
     if (typeof ldmkSolanaSignerFeatureFlag?.enabled === "boolean") {
       setSolanaLdmkEnabled(ldmkSolanaSignerFeatureFlag?.enabled);
@@ -419,6 +425,10 @@ export default function Default() {
   }, [ldmkCosmosSignerFeatureFlag]);
 
   useEffect(() => {
+    setSuiGraphqlEnabled(suiGraphqlTransportFeatureFlag?.enabled === true);
+  }, [suiGraphqlTransportFeatureFlag]);
+
+  useEffect(() => {
     // WebHID is now always enabled, set provider if specified
     if (providerNumber) {
       dmk?.setProvider(providerNumber);
@@ -426,19 +436,6 @@ export default function Default() {
     // setting provider only at initialisation
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [dmk]);
-
-  useEffect(() => {
-    if (
-      !isLocked &&
-      analyticsFF?.enabled &&
-      (!hasCompletedOnboarding || analyticsFF?.params?.entryPoints.includes("Portfolio")) &&
-      !hasSeenAnalyticsOptInPrompt
-    ) {
-      dispatch(setShareAnalytics(false));
-      dispatch(setSharePersonalizedRecommendations(false));
-    }
-    // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLocked]);
 
   useEffect(() => {
     if (!areSettingsLoadedSelector) {
@@ -495,6 +492,7 @@ export default function Default() {
                   ) : null}
 
                   <GlobalDialogs />
+                  <GlobalDrawers />
 
                   <Routes>
                     <Route

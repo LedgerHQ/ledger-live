@@ -35,6 +35,8 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
+      CI_OS: ubuntu-22.04
+      JEST_MAX_WORKERS: "75%"
     runs-on: ubuntu-22.04
     outputs:
       coverage_generated: ${{ contains(steps.generate_coverage.outcome, 'success') }}
@@ -70,7 +72,31 @@ jobs:
       - name: Run code checkers
         run: pnpm exec nx run live-mobile:typecheck
       - name: Run unit tests
-        run: pnpm mobile test:jest:coverage
+        shell: bash
+        run: |
+          set -euo pipefail
+          CPUS="$(nproc 2>/dev/null || echo "?")"
+          echo "::group::Jest CI metrics (mobile coverage)"
+          echo "runner_os=${CI_OS:-unknown} cpu_count=${CPUS} JEST_MAX_WORKERS=${JEST_MAX_WORKERS:-}"
+          node -e '
+            const os = require("os");
+            const n = os.cpus().length;
+            const w = process.env.JEST_MAX_WORKERS || "50%";
+            let m;
+            if (String(w).endsWith("%")) {
+              m = Math.max(1, Math.floor((n * parseFloat(String(w))) / 100));
+            } else if (/^\d+$/.test(String(w))) {
+              m = Math.max(1, parseInt(w, 10));
+            } else {
+              m = w;
+            }
+            console.log("effective_max_workers_estimate=" + m);
+          '
+          echo "::endgroup::"
+          START_TS=$(date +%s)
+          pnpm mobile test:jest:coverage
+          END_TS=$(date +%s)
+          echo "::notice::jest_ci_metrics app=live-mobile jest_wall_seconds=$((END_TS - START_TS)) cpu_count=${CPUS} JEST_MAX_WORKERS=${JEST_MAX_WORKERS:-}"
       - name: upload coverage
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: ${{ !cancelled() }}

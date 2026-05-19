@@ -33,7 +33,8 @@ export const AmountInput = ({
         label={amountInputLabel}
         aria-label={amountInputLabel}
         value={amount ?? ""}
-        errorMessage={errorMessage ?? undefined}
+        helperText={errorMessage ?? undefined}
+        status={errorMessage ? "error" : undefined}
         onChangeText={onAmountChange}
       />
     </Box>

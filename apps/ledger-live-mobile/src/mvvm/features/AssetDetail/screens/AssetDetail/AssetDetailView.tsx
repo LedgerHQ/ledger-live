@@ -1,56 +1,63 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { RefreshControl, ScrollView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { TrackScreen } from "~/analytics";
+import type { AssetDetailCurrencyProps } from "LLM/features/AssetDetail/types";
 import { ASSET_DETAIL_TEST_IDS } from "../../testIds";
-import { SectionPlaceholder } from "./components/SectionPlaceholder";
 import { BalanceGraph } from "./components/BalanceGraph";
+import { BalanceDetails } from "./components/BalanceDetails";
 import { Addresses } from "./components/Addresses";
+import { Transactions } from "./components/Transactions";
 import { Footer } from "./components/Footer";
-import { CTAS_HEIGHT, SECTION_HEIGHT, PLACEHOLDER_COLORS } from "./utils/constants";
+import { FallbackBanner } from "./components/FallbackBanner";
+import { MarketData } from "./components/MarketData";
+import { CTAS_HEIGHT } from "./utils/constants";
 
 type Props = Readonly<{
-  currency: CryptoCurrency | undefined;
+  currency: AssetDetailCurrencyProps;
   source?: string;
   isRefreshing: boolean;
   onRefresh: () => void;
+  hasFooter: boolean;
+  hideReceiveInBalanceGraph: boolean;
+  showFallbackBanner: boolean;
 }>;
 
-export function AssetDetailView({ currency, source, isRefreshing, onRefresh }: Props) {
+export function AssetDetailView({
+  currency,
+  source,
+  isRefreshing,
+  onRefresh,
+  hasFooter,
+  hideReceiveInBalanceGraph,
+  showFallbackBanner,
+}: Props) {
   const { bottom } = useSafeAreaInsets();
+  const scrollPaddingBottom = useMemo(
+    () => (hasFooter ? CTAS_HEIGHT + bottom : bottom),
+    [hasFooter, bottom],
+  );
 
   return (
     <Box testID={ASSET_DETAIL_TEST_IDS.screen} lx={screenStyle}>
       <TrackScreen category="Asset" currency={currency?.name} source={source} />
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: CTAS_HEIGHT + bottom }}
+        contentContainerStyle={{ paddingBottom: scrollPaddingBottom }}
         refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
       >
         <Box lx={contentStyle}>
-          <BalanceGraph currency={currency} />
-          <SectionPlaceholder
-            testID={ASSET_DETAIL_TEST_IDS.balanceDetails}
-            backgroundColor={PLACEHOLDER_COLORS.balanceDetails}
-            height={SECTION_HEIGHT}
-          />
+          <BalanceGraph currency={currency} hideReceive={hideReceiveInBalanceGraph} />
+          <BalanceDetails currency={currency} />
           <Addresses currency={currency} />
-          <SectionPlaceholder
-            testID={ASSET_DETAIL_TEST_IDS.marketStats}
-            backgroundColor={PLACEHOLDER_COLORS.marketStats}
-            height={SECTION_HEIGHT}
-          />
-          <SectionPlaceholder
-            testID={ASSET_DETAIL_TEST_IDS.transactions}
-            backgroundColor={PLACEHOLDER_COLORS.transactions}
-            height={SECTION_HEIGHT}
-          />
+          <MarketData currency={currency} />
+          <Transactions currency={currency} />
+          <FallbackBanner show={showFallbackBanner} />
         </Box>
       </ScrollView>
-      <Footer />
+      <Footer currency={currency} />
     </Box>
   );
 }

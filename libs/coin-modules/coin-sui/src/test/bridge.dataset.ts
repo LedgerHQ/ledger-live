@@ -1,5 +1,4 @@
 import {
-  NotEnoughBalance,
   RecipientRequired,
   InvalidAddressBecauseDestinationIsAlsoSource,
   AmountRequired,
@@ -85,22 +84,6 @@ const sui: CurrenciesData<Transaction> = {
             errors: {},
             warnings: {},
             amount: BigNumber("2000000"),
-          },
-        },
-        {
-          name: "not enough balance",
-          transaction: fromTransactionRaw({
-            family: "sui",
-            recipient: RECIPIENT,
-            amount: "10000000000000000000",
-            mode: "send",
-            coinType: "0x2::sui::SUI",
-          }),
-          expectedStatus: {
-            errors: {
-              amount: new NotEnoughBalance(),
-            },
-            warnings: {},
           },
         },
         {

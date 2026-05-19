@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import "@polkadot/api/augment";
 import { cryptoWaitReady } from "@polkadot/util-crypto";
 import { type ProviderInterface } from "@polkadot/rpc-provider/types";
 import { ApiPromise, Keyring, WsProvider } from "@polkadot/api";
@@ -20,6 +21,9 @@ import {
 import { buildSigner } from "../signer";
 
 type PolkadotScenarioTransaction = ScenarioTransaction<PolkadotTransaction, PolkadotAccount>;
+
+let claimRewardEra: string | null = null;
+let claimRewardValidators: string[] | null = null;
 
 const getTransactions = () => {
   const send1DotTransaction: PolkadotScenarioTransaction = {
@@ -184,11 +188,8 @@ const getTransactions = () => {
     name: "Claim reward",
     recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
     mode: "claimReward",
-    validators: [
-      "15ANfaUMadXk65NtRqzCKuhAiVSA47Ks6fZs8rUcRQX11pzM",
-      "13TrdLhMVLcwcEhMYLcqrkxAgq9M5gnK1LZKAF4VupVfQDUg",
-      "19KaPfHSSjv4soqNW1tqPMwAnSGmG3pGydPzrPvaNLXLFDZ",
-    ],
+    era: claimRewardEra,
+    validators: claimRewardValidators ?? [],
     expect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
       expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
@@ -237,6 +238,39 @@ const getTransactions = () => {
 const LOCAL_TESTNODE_WS_URL = "ws://127.0.0.1:8000";
 const SIDECAR_BASE_URL = "http://127.0.0.1:8080";
 
+async function createUnclaimedReward(
+  api: ApiPromise,
+  wsProvider: WsProvider,
+): Promise<{ era: number; validator: string }> {
+  const activeEraOpt = await api.query.staking.activeEra();
+
+  if (activeEraOpt.isNone) {
+    throw new Error("ActiveEra is None on AssetHub fork — cannot pick a claimable era");
+  }
+  const era = activeEraOpt.unwrap().index.toNumber() - 1;
+
+  const reward = await api.query.staking.erasValidatorReward(era);
+
+  if (reward.isNone) {
+    throw new Error(`No ErasValidatorReward stored at era ${era}`);
+  }
+
+  const stakingQuery = api.query.staking;
+
+  const overviewEntries = await stakingQuery.erasStakersOverview.entries(era);
+  if (overviewEntries.length === 0) {
+    throw new Error(`No validators elected at era ${era}`);
+  }
+  const validator = String(overviewEntries[0][0].args[1]);
+
+  // Force the validator's rewards at this era to "unclaimed" via chopsticks dev_setStorage,
+  // so the claim-reward extrinsic dry-run + broadcast succeed deterministically.
+  const claimedKey = stakingQuery.claimedRewards.key(era, validator);
+  await wsProvider.send("dev_setStorage", [[[claimedKey, null]]]);
+
+  return { era, validator };
+}
+
 const wsProvider = new WsProvider(LOCAL_TESTNODE_WS_URL, false);
 let api: ApiPromise;
 let unsubscribeNewBlockListener: () => void;
@@ -266,6 +300,10 @@ export const AssetHubScenario: Scenario<PolkadotTransaction, PolkadotAccount> = 
     await cryptoWaitReady();
     await wsProvider.connect();
     api = await ApiPromise.create({ provider: wsProvider as ProviderInterface, noInitWarn: true });
+
+    const { era, validator } = await createUnclaimedReward(api, wsProvider);
+    claimRewardEra = String(era);
+    claimRewardValidators = [validator];
 
     const keyring = new Keyring({ type: "sr25519" });
     keyring.setSS58Format(0);

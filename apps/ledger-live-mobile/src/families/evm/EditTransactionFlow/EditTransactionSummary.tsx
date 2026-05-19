@@ -10,6 +10,7 @@ import { isCurrencySupported } from "@ledgerhq/ledger-wallet-framework/currencie
 import { NotEnoughGas } from "@ledgerhq/errors";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import invariant from "invariant";
 import React, { useCallback } from "react";
@@ -42,12 +43,14 @@ function EditTransactionSummaryContent({ navigation, route, transactionToUpdate 
   invariant(account, "account is missing");
   invariant(transactionRaw, "transactionRaw is missing");
 
+  const bridge = useAccountBridge(account, parentAccount);
+
   const {
     transaction,
     setTransaction,
     status: txStatus,
     bridgePending,
-  } = useBridgeTransaction(() => ({
+  } = useBridgeTransaction(bridge, () => ({
     transaction: route.params.transaction,
     account,
     parentAccount,

@@ -1,5 +1,6 @@
 import { colors } from "@bunli/utils";
 import pkg from "../../package.json" with { type: "json" };
+import { writeStderr } from "./ui";
 
 const BANNER_LINES = [
   "################################################################################",
@@ -18,8 +19,8 @@ export function emitTestingBuildBannerIfNeeded(): void {
 
   const text = BANNER_LINES.join("\n");
   if (process.stderr.isTTY) {
-    process.stderr.write(`${colors.yellow(text)}\n\n`);
+    writeStderr(`${colors.yellow(text)}\n\n`);
   } else {
-    process.stderr.write(`${text}\n\n`);
+    writeStderr(`${text}\n\n`);
   }
 }

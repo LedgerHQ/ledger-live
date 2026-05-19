@@ -2,11 +2,11 @@ import React, { useMemo, useCallback } from "react";
 import { View, FlatList } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import { Transaction as MultiversXTransaction } from "@ledgerhq/live-common/families/multiversx/types";
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account";
 
 import BigNumber from "bignumber.js";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import type { Transaction as MultiversXTransaction } from "@ledgerhq/live-common/families/multiversx/types";
 
 import { ScreenName } from "~/const";
 import Item from "./components/Item";
@@ -33,7 +33,7 @@ const PickValidator = (props: PickValidatorPropsType) => {
    * Initialize a new transaction on mount and set the mode to "claimRewards".
    */
 
-  const { transaction } = useBridgeTransaction(() => ({
+  const { transaction } = useBridgeTransaction(bridge, () => ({
     account,
     transaction: bridge.updateTransaction(bridge.createTransaction(mainAccount), {
       mode: "claimRewards",

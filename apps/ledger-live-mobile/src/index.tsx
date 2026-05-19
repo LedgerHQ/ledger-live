@@ -39,6 +39,7 @@ import LoadingApp from "~/components/LoadingApp";
 import StyledStatusBar from "~/components/StyledStatusBar";
 import AnalyticsConsole from "~/components/AnalyticsConsole";
 import DebugTheme from "~/components/DebugTheme";
+import AssetDetailFab from "~/screens/Settings/Debug/Features/AssetDetailFab";
 import SyncNewAccounts from "~/bridge/SyncNewAccounts";
 import SegmentSetup from "~/analytics/SegmentSetup";
 import HookNotifications from "~/notifications/HookNotifications";
@@ -103,6 +104,7 @@ import { ConfigureDBSaveEffects } from "./components/DBSave";
 import HookDevTools from "./devTools/useDevTools";
 import { setSolanaLdmkEnabled } from "@ledgerhq/live-common/families/solana/setup";
 import { setCosmosLdmkEnabled } from "@ledgerhq/live-common/families/cosmos/setup";
+import { setSuiGraphqlEnabled } from "@ledgerhq/live-common/families/sui/setup";
 import useCheckAccountWithFunds from "./logic/postOnboarding/useCheckAccountWithFunds";
 logStartupEvent("After js imports");
 
@@ -142,6 +144,7 @@ function App() {
   const datadogId = useSelector(datadogIdSelector);
   const ldmkSolanaSignerFeatureFlag = useFeature("ldmkSolanaSigner");
   const ldmkCosmosSignerFeatureFlag = useFeature("ldmkCosmosSigner");
+  const suiGraphqlTransportFeatureFlag = useFeature("suiGraphqlTransport");
   const datadogAutoInstrumentation: AutoInstrumentationConfiguration = useMemo(
     () => ({
       trackErrors: datadogFF?.params?.trackErrors ?? false,
@@ -171,6 +174,10 @@ function App() {
       setCosmosLdmkEnabled(ldmkCosmosSignerFeatureFlag.enabled);
     }
   }, [ldmkCosmosSignerFeatureFlag]);
+
+  useEffect(() => {
+    setSuiGraphqlEnabled(suiGraphqlTransportFeatureFlag?.enabled === true);
+  }, [suiGraphqlTransportFeatureFlag]);
 
   useEffect(() => {
     if (providerNumber) {
@@ -257,6 +264,7 @@ function App() {
       <AnalyticsConsole />
 
       <DebugTheme />
+      <AssetDetailFab />
       <JsThreadMonitor />
       <Modals />
       <FeatureToggle featureId="llmMmkvMigration">

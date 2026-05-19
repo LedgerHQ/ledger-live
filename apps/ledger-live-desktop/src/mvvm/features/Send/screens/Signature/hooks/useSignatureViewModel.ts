@@ -13,7 +13,8 @@ import { useTransactionAction } from "~/renderer/hooks/useConnectAppAction";
 import { useFlowWizard } from "../../../../FlowWizard/FlowWizardContext";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
 import { selectIsBuyDeviceOpen } from "LLD/features/BuyDevice/buyDeviceDialog";
-import { hasOnboardedDeviceSelector } from "~/renderer/reducers/settings";
+import { hasOnboardedDeviceSelector, mevProtectionSelector } from "~/renderer/reducers/settings";
+import { broadcastLogger } from "~/datadog/logs";
 
 export function useSignatureViewModel() {
   const { navigation } = useFlowWizard();
@@ -61,7 +62,16 @@ export function useSignatureViewModel() {
   }
 
   const action = useTransactionAction();
-  const broadcast = useBroadcast({ account, parentAccount });
+  const mevProtected = useSelector(mevProtectionSelector);
+  const broadcast = useBroadcast({
+    account,
+    parentAccount,
+    broadcastConfig: {
+      mevProtected,
+      source: { type: "coin-module", name: "ledger-live-desktop", flags: { newSendFlow: true } },
+    },
+    logger: broadcastLogger,
+  });
 
   const request = useMemo(() => {
     const tokenCurrency =

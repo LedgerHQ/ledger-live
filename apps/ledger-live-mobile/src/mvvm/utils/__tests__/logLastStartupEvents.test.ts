@@ -1,10 +1,13 @@
+import { DdRum } from "@datadog/mobile-react-native";
 import { DdRumReactNavigationTracking } from "@datadog/mobile-react-navigation";
 import mmkvStorageWrapper from "LLM/storage/mmkvStorageWrapper";
 import { track } from "~/analytics";
 import { navigationRef } from "~/rootnavigation";
 import { viewNamePredicate } from "~/datadog";
+import { ddAddViewLoadingTime } from "../ddAddViewLoadingTime";
 import { logStartupEvent, startupEvents, startupFirstImportTime } from "../logStartupTime";
 import {
+  LAST_EVENTS_BUFFER,
   logLastStartupEvents,
   type StorageCurrencyData,
   type StoreStorageData,
@@ -14,27 +17,41 @@ import { STARTUP_EVENTS } from "../resolveStartupEvents";
 jest.mock("@datadog/mobile-react-navigation", () => ({
   DdRumReactNavigationTracking: { startTrackingViews: jest.fn() },
 }));
+jest.mock("@datadog/mobile-react-native", () => ({
+  DdRum: { addViewLoadingTime: jest.fn() },
+}));
 jest.mock("~/analytics", () => ({ track: jest.fn() }));
 jest.mock("~/rootnavigation", () => ({ navigationRef: { current: {} } }));
 jest.mock("~/datadog", () => ({ viewNamePredicate: jest.fn() }));
 
 describe("logLastStartupEvents", () => {
-  beforeEach(() => {
-    jest.useRealTimers();
+  beforeEach(async () => {
+    jest.useFakeTimers();
     jest.clearAllMocks();
     startupEvents.splice(0);
+    await mmkvStorageWrapper.deleteAll();
   });
 
-  it("tracks all startup events once both APP_STARTED and NAV_READY are logged", async () => {
+  afterEach(async () => {
+    await mmkvStorageWrapper.deleteAll();
+    jest.clearAllTimers();
+    jest.useRealTimers();
+  });
+
+  it("tracks startup events after the buffer once both APP_STARTED and NAV_READY are logged", async () => {
     logStartupEvent("Step 1");
     await logLastStartupEvents(STARTUP_EVENTS.NAV_READY);
-    const appStartedEvent = await logLastStartupEvents(STARTUP_EVENTS.APP_STARTED);
+    const appStartedEventPromise = logLastStartupEvents(STARTUP_EVENTS.APP_STARTED);
 
     expect(DdRumReactNavigationTracking.startTrackingViews).toHaveBeenCalledTimes(1);
     expect(DdRumReactNavigationTracking.startTrackingViews).toHaveBeenCalledWith(
       navigationRef.current,
       viewNamePredicate,
     );
+    expect(track).not.toHaveBeenCalled();
+
+    jest.advanceTimersByTime(LAST_EVENTS_BUFFER);
+    const appStartedEvent = await appStartedEventPromise;
 
     expect(track).toHaveBeenCalledTimes(1);
     expect(track).toHaveBeenCalledWith("app_startup_events", {
@@ -65,24 +82,30 @@ describe("logLastStartupEvents", () => {
 
   it("triggers tracking only once", async () => {
     await logLastStartupEvents(STARTUP_EVENTS.APP_STARTED);
-    await logLastStartupEvents(STARTUP_EVENTS.NAV_READY);
+    const navReadyEventPromise = logLastStartupEvents(STARTUP_EVENTS.NAV_READY);
+
+    jest.advanceTimersByTime(LAST_EVENTS_BUFFER);
+    await navReadyEventPromise;
     expect(track).toHaveBeenCalledTimes(1);
+    expect(DdRumReactNavigationTracking.startTrackingViews).toHaveBeenCalledTimes(1);
 
     await logLastStartupEvents(STARTUP_EVENTS.APP_STARTED);
+    await logLastStartupEvents(STARTUP_EVENTS.NAV_READY);
     expect(track).toHaveBeenCalledTimes(1);
+    expect(DdRumReactNavigationTracking.startTrackingViews).toHaveBeenCalledTimes(1);
   });
 
-  it("correctly extracts the LAST_STARTUP_EVENTS time as appStartupTime", async () => {
+  it("captures startup events logged during the buffer while keeping appStartupTime based on the last startup event", async () => {
     logStartupEvent("First");
     logStartupEvent("Second");
     await logLastStartupEvents(STARTUP_EVENTS.APP_STARTED);
     const trackingCallEvent = logLastStartupEvents(STARTUP_EVENTS.NAV_READY);
+    jest.advanceTimersByTime(50);
     const last = logStartupEvent("Last");
-    expect(last).toEqual(expect.objectContaining({ event: "Last" }));
-    last.time += 50; // Make sure the last event is a few ms after NAV_READY
 
+    jest.advanceTimersByTime(LAST_EVENTS_BUFFER - 50);
     const navReadyEvent = await trackingCallEvent;
-    const expectedStartupTime = navReadyEvent!.time - startupFirstImportTime;
+    const expectedStartupTime = navReadyEvent.time - startupFirstImportTime;
     expect(track).toHaveBeenCalledWith("app_startup_events", {
       appStartupTime: expectedStartupTime,
       events: expect.arrayContaining([
@@ -90,13 +113,31 @@ describe("logLastStartupEvents", () => {
         expect.objectContaining({ event: "Second" }),
         expect.objectContaining({ event: STARTUP_EVENTS.APP_STARTED }),
         expect.objectContaining({ event: STARTUP_EVENTS.NAV_READY }),
-        expect.objectContaining({ event: "Last", time: last!.time - startupFirstImportTime }),
+        expect.objectContaining({ event: "Last", time: last.time - startupFirstImportTime }),
+      ]),
+    });
+  });
+
+  it("includes the Datadog view loading marker when the helper runs before startup finalization", async () => {
+    await logLastStartupEvents(STARTUP_EVENTS.APP_STARTED);
+    const navReadyEventPromise = logLastStartupEvents(STARTUP_EVENTS.NAV_READY);
+
+    expect(DdRumReactNavigationTracking.startTrackingViews).toHaveBeenCalledTimes(1);
+    ddAddViewLoadingTime();
+    expect(DdRum.addViewLoadingTime).toHaveBeenCalledWith(true);
+
+    jest.advanceTimersByTime(LAST_EVENTS_BUFFER);
+    await navReadyEventPromise;
+
+    expect(track).toHaveBeenCalledWith("app_startup_events", {
+      appStartupTime: expect.any(Number),
+      events: expect.arrayContaining([
+        expect.objectContaining({ event: "DD view loaded", count: 1 }),
       ]),
     });
   });
 
   it("tracks the time it took to load the storage", async () => {
-    await mmkvStorageWrapper.deleteAll();
     mmkvStorageWrapper.save("ble", "qwerty");
     mmkvStorageWrapper.save("accounts.0", "lorem ipsum");
     mmkvStorageWrapper.save("accounts.1", "lorem ipsum");
@@ -116,7 +157,10 @@ describe("logLastStartupEvents", () => {
 
     logStartupEvent<StoreStorageData>(STARTUP_EVENTS.STORE_STORAGE_READ, storageData);
     await logLastStartupEvents(STARTUP_EVENTS.APP_STARTED);
-    await logLastStartupEvents(STARTUP_EVENTS.NAV_READY);
+    const navReadyEventPromise = logLastStartupEvents(STARTUP_EVENTS.NAV_READY);
+
+    jest.advanceTimersByTime(LAST_EVENTS_BUFFER);
+    await navReadyEventPromise;
 
     expect(track).toHaveBeenCalledWith("app_startup_events", {
       appStartupTime: expect.any(Number),
@@ -133,7 +177,6 @@ describe("logLastStartupEvents", () => {
       fullStorage_keyCount: 5,
       fullStorage_size: expect.any(Number), // MMKV size is not predictable in tests
     });
-    await mmkvStorageWrapper.deleteAll();
   });
 
   it("tracks the time taken by the bridges currency hydration", async () => {
@@ -159,7 +202,10 @@ describe("logLastStartupEvents", () => {
     logStartupEvent<StorageCurrencyData>(STARTUP_EVENTS.CURRENCY_HYDRATED, currencyData);
 
     await logLastStartupEvents(STARTUP_EVENTS.APP_STARTED);
-    await logLastStartupEvents(STARTUP_EVENTS.NAV_READY);
+    const navReadyEventPromise = logLastStartupEvents(STARTUP_EVENTS.NAV_READY);
+
+    jest.advanceTimersByTime(LAST_EVENTS_BUFFER);
+    await navReadyEventPromise;
 
     expect(track).toHaveBeenCalledWith("app_startup_events", {
       appStartupTime: expect.any(Number),

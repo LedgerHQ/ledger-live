@@ -324,6 +324,19 @@
       "outputs": ["dist/**"],
       "cache": false
     },
+    "@ledgerhq/wallet-cli#prepare:npm": {
+      "dependsOn": ["build"],
+      "outputs": [".npm-package/**", "npm/*/.npm-package/**", "npm/*/bin/**"],
+      "cache": false
+    },
+    "@ledgerhq/wallet-cli#pack:check": {
+      "dependsOn": ["prepare:npm"],
+      "cache": false
+    },
+    "@ledgerhq/wallet-cli#smoke:npm": {
+      "dependsOn": ["prepare:npm"],
+      "cache": false
+    },
     "@ledgerhq/wallet-cli#typecheck": {
       "dependsOn": ["^build"],
       "outputs": []
@@ -331,6 +344,10 @@
     "@ledgerhq/wallet-cli#test": {
       "dependsOn": ["^build"],
       "outputs": []
+    },
+    "@ledgerhq/wallet-cli#coverage": {
+      "dependsOn": ["^build", "build"],
+      "outputs": ["coverage/lcov.info", "coverage/sonar-executionTests-report.xml"]
     },
     "@ledgerhq/wallet-cli#lint": {
       "env": ["CI_OS"],

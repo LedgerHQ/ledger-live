@@ -17,7 +17,10 @@ export type AssetHeaderProps = Readonly<{
 
 export function AssetHeader({ assetLabel, icon, onBack }: AssetHeaderProps) {
   return (
-    <NavBar data-testid="asset-detail-header" className="w-full min-w-0 items-center gap-4">
+    <NavBar
+      data-testid="asset-detail-header"
+      className="sticky top-0 z-10 w-full min-w-0 items-center gap-4 bg-canvas"
+    >
       <NavBarBackButton onClick={onBack} />
       <NavBarCoinCapsule className="min-w-0 max-w-full" ticker={assetLabel} icon={icon} />
       <NavBarTrailing>

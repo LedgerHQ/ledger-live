@@ -42,7 +42,10 @@ function SettingsTestStack() {
     >
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name={ScreenName.GeneralSettings} component={GeneralSettingsStub} />
-        <Stack.Screen name={ScreenName.AnalyticsPreferencesSettings} component={AnalyticsPreferencesSettings} />
+        <Stack.Screen
+          name={ScreenName.AnalyticsPreferencesSettings}
+          component={AnalyticsPreferencesSettings}
+        />
       </Stack.Navigator>
     </SafeAreaProvider>
   );
@@ -85,7 +88,9 @@ describe("AnalyticsPreferencesSettings", () => {
     it("shows title and confirm CTA", () => {
       renderAnalyticsPreferencesSettings();
 
-      expect(screen.getByTestId("analytics-preferences-screen-title")).toHaveTextContent("Set preferences");
+      expect(screen.getByTestId("analytics-preferences-screen-title")).toHaveTextContent(
+        "Set preferences",
+      );
       expect(screen.getByRole("button", { name: "Confirm" })).toBeTruthy();
     });
 
@@ -135,7 +140,7 @@ describe("AnalyticsPreferencesSettings", () => {
 
   describe("footer", () => {
     it("opens the privacy policy URL when the footer link is pressed", async () => {
-      const openSpy = jest.spyOn(Linking, "openURL").mockResolvedValue(undefined as never);
+      const openSpy = jest.spyOn(Linking, "openURL").mockImplementation(async () => undefined);
       try {
         const { user } = renderAnalyticsPreferencesSettings();
 
@@ -227,6 +232,32 @@ describe("AnalyticsPreferencesSettings", () => {
       await waitFor(() => {
         expect(screen.queryByTestId("analytics-preferences-screen-title")).toBeNull();
       });
+    });
+
+    it("should track confirm as mandatory when preferences were already fully disabled", async () => {
+      const { user } = renderAnalyticsPreferencesSettings({
+        overrideInitialState: state => ({
+          ...state,
+          settings: {
+            ...state.settings,
+            analyticsEnabled: false,
+            personalizedRecommendationsEnabled: false,
+          },
+        }),
+      });
+
+      await user.press(screen.getByRole("button", { name: "Confirm" }));
+
+      expect(analytics.track).toHaveBeenCalledWith(
+        "button_clicked",
+        expect.objectContaining({
+          button: "analytics_preferences_confirm",
+          appPerformance: false,
+          personalizedExperience: false,
+        }),
+        true,
+      );
+      expect(analytics.updateIdentify).toHaveBeenCalledWith(undefined, true);
     });
   });
 });

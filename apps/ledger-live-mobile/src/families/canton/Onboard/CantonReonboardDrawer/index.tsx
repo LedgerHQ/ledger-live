@@ -7,6 +7,7 @@ import DeviceActionModal from "~/components/DeviceActionModal";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import { Trans, useTranslation } from "~/context/Locale";
 import type { NavigationSnapshot } from "../../utils/navigationSnapshot";
+import CantonDisclaimer from "../CantonDisclaimer";
 import { useCantonReonboardDrawerViewModel } from "./useCantonReonboardDrawerViewModel";
 
 interface CantonReonboardDrawerProps {
@@ -26,6 +27,7 @@ export default function CantonReonboardDrawer({
 }: CantonReonboardDrawerProps) {
   const { t } = useTranslation();
   const [hasStarted, setHasStarted] = useState(false);
+  const [hasAgreedDisclaimer, setHasAgreedDisclaimer] = useState(false);
 
   const viewModel = useCantonReonboardDrawerViewModel({
     currency,
@@ -125,12 +127,19 @@ export default function CantonReonboardDrawer({
       <QueuedDrawer
         isRequestingToBeOpened={isOpen && !showDeviceModal}
         onClose={onClose}
-        title={t("canton.onboard.reonboard.title")}
+        title={hasAgreedDisclaimer ? t("canton.onboard.reonboard.title") : undefined}
       >
-        <Flex flexDirection="column" alignItems="stretch" px={4} pb={6}>
-          {renderContent()}
-          {renderFooter()}
-        </Flex>
+        {hasAgreedDisclaimer ? (
+          <Flex flexDirection="column" alignItems="stretch" px={4} pb={6}>
+            {renderContent()}
+            {renderFooter()}
+          </Flex>
+        ) : (
+          <CantonDisclaimer
+            onAgree={() => setHasAgreedDisclaimer(true)}
+            onCancel={onClose}
+          />
+        )}
       </QueuedDrawer>
 
       {showDeviceModal && device && (

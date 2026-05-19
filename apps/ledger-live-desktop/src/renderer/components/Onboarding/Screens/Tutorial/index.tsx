@@ -71,8 +71,6 @@ import { EnableSync } from "~/renderer/components/Onboarding/Screens/Tutorial/sc
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import useLedgerSyncEntryPointViewModel from "LLD/features/LedgerSyncEntryPoints/useLedgerSyncEntryPointViewModel";
 import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
-import WalletSyncDrawer from "LLD/features/WalletSync/components/Drawer";
-import { AnalyticsPage } from "LLD/features/WalletSync/hooks/useLedgerSyncAnalytics";
 import { walletSyncDrawerVisibilitySelector } from "~/renderer/reducers/walletSync";
 
 const FlowStepperContainer = styled(Flex)`
@@ -382,7 +380,7 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
     "MODAL_RECEIVE",
   );
 
-  const { openDrawer, closeDrawer } = useLedgerSyncEntryPointViewModel({
+  const { openDrawer } = useLedgerSyncEntryPointViewModel({
     entryPoint: EntryPoint.onboarding,
     needEligibleDevice: true,
     onboardingNewDevice: true,
@@ -1021,13 +1019,6 @@ export default function Tutorial({ useCase, deviceModelId }: Props) {
           <RecoveryWarning />
         </Flex>
       </Drawer>
-
-      <WalletSyncDrawer
-        currentPage={AnalyticsPage.Onboarding}
-        onClose={() => {
-          closeDrawer();
-        }}
-      />
 
       <FlowStepper
         illustration={CurrentScreen.Illustration}

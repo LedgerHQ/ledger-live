@@ -47,6 +47,7 @@ export default function PolkadotSimpleOperationStarted({ navigation, route }: Na
   const { polkadotResources } = mainAccount as PolkadotAccount;
   invariant(polkadotResources, "polkadotResources required");
   const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
+    bridge,
     () => {
       const t = bridge.createTransaction(mainAccount);
       const transaction = bridge.updateTransaction(t, {

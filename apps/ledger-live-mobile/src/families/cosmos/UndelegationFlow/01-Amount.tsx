@@ -1,9 +1,9 @@
 import invariant from "invariant";
 import React from "react";
 import { BigNumber } from "bignumber.js";
-import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { Transaction as CosmosTransaction } from "@ledgerhq/live-common/families/cosmos/types";
 import SelectAmount from "../shared/02-SelectAmount";
@@ -20,11 +20,11 @@ type Props = StackNavigatorProps<
 function UndelegationAmount({ navigation, route }: Props) {
   const { account } = useAccountScreen(route);
   invariant(account, "account required");
-  const bridge = useAccountBridge<CosmosTransaction>(account, undefined);
   const mainAccount = getMainAccount(account, undefined);
   const validator = route.params.delegation.validator;
   const amount = route.params.delegation.amount;
-  const { transaction } = useBridgeTransaction(() => {
+  const bridge = useAccountBridge<CosmosTransaction>(account, undefined);
+  const { transaction } = useBridgeTransaction(bridge, () => {
     const t = bridge.createTransaction(mainAccount);
     return {
       account,

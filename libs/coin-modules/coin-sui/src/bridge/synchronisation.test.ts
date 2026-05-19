@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 
-import { faker } from "@faker-js/faker";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -8,6 +7,7 @@ import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import { getJsonRpcFullnodeUrl } from "@mysten/sui/jsonRpc";
 import BigNumber from "bignumber.js";
 import coinConfig from "../config";
+import { mist, ONE_SUI } from "../constants";
 import * as networkModule from "../network";
 import { DEFAULT_COIN_TYPE } from "../network/sdk";
 import { createFixtureAccount, createFixtureOperation } from "../types/bridge.fixture";
@@ -20,7 +20,7 @@ jest.mock("../network", () => {
   return {
     getAccountBalances: mockGetAccountBalances,
     getOperations: mockGetOperations,
-    getStakesRaw: mockGetStakesRaw,
+    getDelegatedStakes: mockGetStakesRaw,
     createTransaction: jest.fn(),
   };
 });
@@ -36,7 +36,7 @@ setCryptoAssetsStore({
 describe("getAccountShape", () => {
   const mockGetAccountBalances = networkModule.getAccountBalances as jest.Mock;
   const mockGetOperations = networkModule.getOperations as jest.Mock;
-  const mockGetStakesRaw = networkModule.getStakesRaw as jest.Mock;
+  const mockGetStakesRaw = networkModule.getDelegatedStakes as jest.Mock;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -45,7 +45,11 @@ describe("getAccountShape", () => {
   beforeAll(() => {
     coinConfig.setCoinConfig(() => ({
       status: { type: "active" },
-      node: { url: getJsonRpcFullnodeUrl("mainnet") },
+      node: {
+        url: getJsonRpcFullnodeUrl("mainnet"),
+        graphqlUrl: "https://graphql.mainnet.sui.io/graphql",
+      },
+      features: { graphql: false },
     }));
   });
 
@@ -115,8 +119,8 @@ describe("getAccountShape", () => {
     // GIVEN — all funds are in address balance, coinObjectCount = 0
     const initialAccount = undefined;
     const accountBalance = createAccountBalance({
-      balance: new BigNumber("5000000000"),
-      fundsInAddressBalance: new BigNumber("5000000000"),
+      balance: new BigNumber(5 * ONE_SUI),
+      fundsInAddressBalance: new BigNumber(5 * ONE_SUI),
     });
     mockGetAccountBalances.mockResolvedValue([accountBalance]);
     mockGetOperations.mockResolvedValue([]);
@@ -136,16 +140,16 @@ describe("getAccountShape", () => {
     );
 
     // THEN — balance and spendableBalance reflect the full amount
-    expect(shape.balance).toEqual(new BigNumber("5000000000"));
-    expect(shape.spendableBalance).toEqual(new BigNumber("5000000000"));
+    expect(shape.balance).toEqual(new BigNumber(5 * ONE_SUI));
+    expect(shape.spendableBalance).toEqual(new BigNumber(5 * ONE_SUI));
   });
 
   it("handles mixed balance (coin objects + address balance)", async () => {
     // GIVEN — 6 SUI total: 4 in address balance, 2 in coin objects
     const initialAccount = undefined;
     const accountBalance = createAccountBalance({
-      balance: new BigNumber("6000000000"),
-      fundsInAddressBalance: new BigNumber("4000000000"),
+      balance: new BigNumber(6 * ONE_SUI),
+      fundsInAddressBalance: new BigNumber(4 * ONE_SUI),
     });
     mockGetAccountBalances.mockResolvedValue([accountBalance]);
     mockGetOperations.mockResolvedValue([]);
@@ -165,14 +169,14 @@ describe("getAccountShape", () => {
     );
 
     // THEN — totalBalance is the aggregated amount
-    expect(shape.balance).toEqual(new BigNumber("6000000000"));
-    expect(shape.spendableBalance).toEqual(new BigNumber("6000000000"));
+    expect(shape.balance).toEqual(new BigNumber(6 * ONE_SUI));
+    expect(shape.spendableBalance).toEqual(new BigNumber(6 * ONE_SUI));
   });
 
   it("returns an AccountShapeInfo with operations from initialAccount", async () => {
     // GIVEN
     const extra = { coinType: DEFAULT_COIN_TYPE };
-    const initialOperations = [createFixtureOperation({ id: faker.string.uuid(), extra })];
+    const initialOperations = [createFixtureOperation({ id: "sui:initial-op-1", extra })];
     const initialAccount = createFixtureAccount({ operations: initialOperations });
     const accountBalance = createAccountBalance();
     mockGetAccountBalances.mockResolvedValue([accountBalance]);
@@ -204,8 +208,8 @@ describe("getAccountShape", () => {
     mockGetAccountBalances.mockResolvedValue([accountBalance]);
     const extra = { coinType: DEFAULT_COIN_TYPE };
     const apiOperations = [
-      createFixtureOperation({ id: faker.string.uuid(), extra }),
-      createFixtureOperation({ id: faker.string.uuid(), extra }),
+      createFixtureOperation({ id: "sui:api-op-1", extra }),
+      createFixtureOperation({ id: "sui:api-op-2", extra }),
     ];
     mockGetOperations.mockResolvedValue(apiOperations);
     mockGetStakesRaw.mockResolvedValue([]);
@@ -360,7 +364,7 @@ describe("getAccountShape", () => {
   });
 
   describe("stakes functionality", () => {
-    it("calls getStakesRaw with the correct address", async () => {
+    it("calls getDelegatedStakes with the correct address", async () => {
       // GIVEN
       const address = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
       const initialAccount = undefined;
@@ -422,7 +426,7 @@ describe("getAccountShape", () => {
             {
               stakedSuiId: "0xstake1",
               status: "Active" as const,
-              principal: "1000000000",
+              principal: mist(1),
               stakeActiveEpoch: "100",
               stakeRequestEpoch: "95",
             },
@@ -434,7 +438,7 @@ describe("getAccountShape", () => {
             {
               stakedSuiId: "0xstake2",
               status: "Pending" as const,
-              principal: "2000000000",
+              principal: mist(2),
               stakeActiveEpoch: "0",
               stakeRequestEpoch: "100",
             },
@@ -474,14 +478,14 @@ describe("getAccountShape", () => {
             {
               stakedSuiId: "0xstake1",
               status: "Active" as const,
-              principal: "1000000000",
+              principal: mist(1),
               stakeActiveEpoch: "100",
               stakeRequestEpoch: "95",
             },
             {
               stakedSuiId: "0xstake2",
               status: "Active" as const,
-              principal: "1500000000",
+              principal: mist(1.5),
               stakeActiveEpoch: "100",
               stakeRequestEpoch: "95",
             },
@@ -520,21 +524,21 @@ describe("getAccountShape", () => {
             {
               stakedSuiId: "0xactive",
               status: "Active" as const,
-              principal: "1000000000",
+              principal: mist(1),
               stakeActiveEpoch: "100",
               stakeRequestEpoch: "95",
             },
             {
               stakedSuiId: "0xpending",
               status: "Pending" as const,
-              principal: "2000000000",
+              principal: mist(2),
               stakeActiveEpoch: "0",
               stakeRequestEpoch: "100",
             },
             {
               stakedSuiId: "0xunstaked",
               status: "Unstaked" as const,
-              principal: "3000000000",
+              principal: mist(3),
               stakeActiveEpoch: "0",
               stakeRequestEpoch: "0",
             },
@@ -567,7 +571,7 @@ describe("getAccountShape", () => {
       expect(stakes.find(s => s.stakedSuiId === "0xunstaked")?.status).toBe("Unstaked");
     });
 
-    it("handles getStakesRaw throwing an error gracefully", async () => {
+    it("handles getDelegatedStakes throwing an error gracefully", async () => {
       // GIVEN
       const initialAccount = undefined;
       const error = new Error("Network error");
@@ -600,7 +604,7 @@ describe("getAccountShape", () => {
             {
               stakedSuiId: "0xexistingStake",
               status: "Active" as const,
-              principal: "500000000",
+              principal: mist(0.5),
               stakeActiveEpoch: "90",
               stakeRequestEpoch: "85",
             },
@@ -617,7 +621,7 @@ describe("getAccountShape", () => {
             {
               stakedSuiId: "0xnewStake",
               status: "Active" as const,
-              principal: "1000000000",
+              principal: mist(1),
               stakeActiveEpoch: "100",
               stakeRequestEpoch: "95",
             },
@@ -689,7 +693,7 @@ describe("getAccountShape", () => {
       expect(stake?.stakeRequestEpoch).toBe("995");
     });
 
-    it("handles getStakesRaw returning null or undefined", async () => {
+    it("handles getDelegatedStakes returning null or undefined", async () => {
       // GIVEN
       const initialAccount = undefined;
       mockGetAccountBalances.mockResolvedValue([createAccountBalance()]);
@@ -719,7 +723,7 @@ function createAccountBalance(overrides = {}) {
   return {
     coinType: DEFAULT_COIN_TYPE,
     blockHeight: 10,
-    balance: new BigNumber(faker.string.numeric()),
+    balance: new BigNumber(1000),
     fundsInAddressBalance: new BigNumber(0),
     ...overrides,
   };

@@ -44,7 +44,7 @@ export default function LockAmount({ navigation, route }: Props) {
 
   const [maxSpendable, setMaxSpendable] = useState<BigNumber | null>(null);
 
-  const { transaction, setTransaction, status, bridgePending } = useBridgeTransaction(() => {
+  const { transaction, setTransaction, status, bridgePending } = useBridgeTransaction(bridge, () => {
     const t = bridge.createTransaction(mainAccount);
 
     const transaction = bridge.updateTransaction(t, {
@@ -76,7 +76,7 @@ export default function LockAmount({ navigation, route }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [bridge, account, parentAccount, debouncedTransaction]);
+  }, [account, parentAccount, debouncedTransaction, bridge]);
 
   const onChange = useCallback(
     (amount: BigNumber) => {
@@ -96,7 +96,7 @@ export default function LockAmount({ navigation, route }: Props) {
         useAllAmount: !transaction.useAllAmount,
       }),
     );
-  }, [setTransaction, bridge, transaction]);
+  }, [setTransaction, transaction, bridge]);
 
   const onContinue = useCallback(() => {
     navigation.navigate(ScreenName.CeloLockSelectDevice, {

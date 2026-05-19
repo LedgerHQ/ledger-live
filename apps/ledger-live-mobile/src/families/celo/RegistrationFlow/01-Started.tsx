@@ -1,12 +1,12 @@
 import invariant from "invariant";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import React, { useCallback } from "react";
 import { Trans } from "~/context/Locale";
 import { StyleSheet, View } from "react-native";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
-import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Transaction as CeloTransaction } from "@ledgerhq/live-common/families/celo/types";
 import { TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
@@ -28,7 +28,7 @@ export default function RegisterAccountStarted({ navigation, route }: Props) {
   const mainAccount = getMainAccount(account, parentAccount);
   const bridge = useAccountBridge<CeloTransaction>(account, parentAccount);
 
-  const { transaction, status } = useBridgeTransaction(() => {
+  const { transaction, status } = useBridgeTransaction(bridge, () => {
     const t = bridge.createTransaction(mainAccount);
 
     const transaction = bridge.updateTransaction(t, {

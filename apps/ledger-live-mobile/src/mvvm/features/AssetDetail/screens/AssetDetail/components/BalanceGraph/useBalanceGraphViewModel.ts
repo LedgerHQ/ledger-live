@@ -1,35 +1,33 @@
 import { useCallback, useMemo, useState } from "react";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { BigNumber } from "bignumber.js";
+import type { AssetDetailCurrencyProps } from "LLM/features/AssetDetail/types";
 import type { FormattedValue } from "@ledgerhq/lumen-ui-rnative";
-import { useGetCurrencyDataQuery } from "@ledgerhq/live-common/market/state-manager/marketApi";
-import { REFETCH_TIME_ONE_MINUTE, BASIC_REFETCH } from "@ledgerhq/live-common/market/utils/timers";
+import {
+  formatCurrencyUnit,
+  formatCurrencyUnitFragment,
+} from "@ledgerhq/live-common/currencies/index";
 import { useSelector } from "~/context/hooks";
 import { shallowAccountsSelector } from "~/reducers/accounts";
-import { marketParamsSelector } from "~/reducers/market";
+import { counterValueCurrencySelector } from "~/reducers/settings";
 import { track } from "~/analytics";
 import { RANGES } from "LLM/features/Market/utils";
 import { rangeDataTable } from "@ledgerhq/live-common/cg-client/utils/rangeDataTable";
 import { useTranslation, useLocale } from "~/context/Locale";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
-import { parseCurrencyString } from "../../utils/currencyFormatter";
 import { RANGE_TO_PRICE_CHANGE_KEY, type RangeKey } from "../../utils/rangeMapping";
+import { useAssetMarketData } from "../../hooks/useAssetMarketData";
 
-export function useBalanceGraphViewModel(currency: CryptoCurrency | undefined) {
+export function useBalanceGraphViewModel(
+  currency?: AssetDetailCurrencyProps,
+  hideReceive?: boolean,
+) {
   const { t } = useTranslation();
   const { locale } = useLocale();
-
-  const marketParams = useSelector(marketParamsSelector);
-  const { counterCurrency = "usd" } = marketParams;
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const counterValueUnit = counterValueCurrency.units[0];
+  const { marketCurrency, isLoading } = useAssetMarketData(currency);
 
   const [range, setRange] = useState<RangeKey>("24h");
-
-  const { data: marketCurrency, isFetching: isLoading } = useGetCurrencyDataQuery(
-    { id: currency?.id ?? "", counterCurrency },
-    {
-      pollingInterval: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
-      skip: !currency?.id,
-    },
-  );
 
   const ranges = useMemo(
     () =>
@@ -62,44 +60,37 @@ export function useBalanceGraphViewModel(currency: CryptoCurrency | undefined) {
     marketCurrency?.priceChangePercentage[RANGE_TO_PRICE_CHANGE_KEY[range]];
 
   const priceFormatter = useCallback(
-    (value: number): FormattedValue => {
-      const formatted = new Intl.NumberFormat(locale, {
-        style: "currency",
-        currency: counterCurrency,
-        numberingSystem: "latn",
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      }).format(value);
-
-      return parseCurrencyString(formatted, locale);
-    },
-    [locale, counterCurrency],
+    (value: number): FormattedValue =>
+      formatCurrencyUnitFragment(
+        counterValueUnit,
+        new BigNumber(value).times(new BigNumber(10).pow(counterValueUnit.magnitude)),
+        { locale, showCode: true },
+      ),
+    [counterValueUnit, locale],
   );
 
   const formattedPriceChange = useMemo(() => {
     if (priceChangePercentage == null || price == null) return undefined;
     const changeValue = Math.abs(price * (priceChangePercentage / 100));
     const sign = priceChangePercentage >= 0 ? "+" : "-";
-    const formatted = new Intl.NumberFormat(locale, {
-      style: "currency",
-      currency: counterCurrency,
-      numberingSystem: "latn",
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(changeValue);
+    const formatted = formatCurrencyUnit(
+      counterValueUnit,
+      new BigNumber(changeValue).times(new BigNumber(10).pow(counterValueUnit.magnitude)),
+      { locale, showCode: true },
+    );
     return `${sign}${formatted}`;
-  }, [priceChangePercentage, price, locale, counterCurrency]);
+  }, [priceChangePercentage, price, locale, counterValueUnit]);
 
   const rangeTimeLabel = t(`assetDetail.balanceGraph.timeLabel.${range}`);
 
   const accounts = useSelector(shallowAccountsSelector);
 
   const showReceive = useMemo(() => {
-    if (!currency) return false;
+    if (hideReceive || !currency) return false;
     const hasAssetFunds = accounts.some(a => a.currency.id === currency.id && a.balance.gt(0));
     const hasFundsElsewhere = accounts.some(a => a.currency.id !== currency.id && a.balance.gt(0));
     return !hasAssetFunds && hasFundsElsewhere;
-  }, [accounts, currency]);
+  }, [hideReceive, accounts, currency]);
 
   const { handleOpenReceiveDrawer } = useOpenReceiveDrawer({
     currency,

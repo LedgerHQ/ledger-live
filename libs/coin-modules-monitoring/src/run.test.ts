@@ -1,4 +1,4 @@
-import { AccountBridge, TransactionCommon } from "@ledgerhq/types-live";
+import type { ResolvedAccountBridge, TransactionCommon } from "@ledgerhq/types-live";
 import * as bridgeModule from "@ledgerhq/live-common/bridge/impl";
 import { makeSync } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accountId";
@@ -40,7 +40,7 @@ describe("Coin Modules Monitoring", () => {
             };
           },
         }),
-      } as AccountBridge<TransactionCommon>);
+      } as unknown as ResolvedAccountBridge<TransactionCommon>);
 
       const logs = await run(["solana"], ["pristine", "average", "big"]);
 

@@ -3,7 +3,7 @@ import { pathArrayToString } from "../bip32";
 import { BufferWriter } from "@ledgerhq/psbtv2";
 import { hashLeaf, Merkle } from "./merkle";
 
-export type DefaultDescriptorTemplate = "pkh(@0)" | "sh(wpkh(@0))" | "wpkh(@0)" | "tr(@0)";
+export type DefaultDescriptorTemplate = "pkh(@0/**)" | "sh(wpkh(@0/**))" | "wpkh(@0/**)" | "tr(@0/**)";
 
 /**
  * The Bitcon hardware app uses a descriptors-like thing to describe
@@ -36,9 +36,10 @@ export class WalletPolicy {
     const m = new Merkle(keyBuffers.map(k => hashLeaf(k)));
 
     const buf = new BufferWriter();
-    buf.writeUInt8(0x01); // wallet type (policy map)
+    buf.writeUInt8(0x02); // wallet policy version (2 is supported from version 2.1.0 of the app)
     buf.writeUInt8(0); // length of wallet name (empty string for default wallets)
-    buf.writeVarSlice(Buffer.from(this.descriptorTemplate, "ascii"));
+    buf.writeVarInt(this.descriptorTemplate.length); // length of descriptor template
+    buf.writeSlice(crypto.sha256(Buffer.from(this.descriptorTemplate, "ascii"))); // hash of descriptor template
     buf.writeVarInt(this.keys.length), buf.writeSlice(m.getRoot());
     return buf.buffer();
   }
@@ -46,5 +47,5 @@ export class WalletPolicy {
 
 export function createKey(masterFingerprint: Buffer, path: number[], xpub: string): string {
   const accountPath = pathArrayToString(path);
-  return `[${masterFingerprint.toString("hex")}${accountPath.substring(1)}]${xpub}/**`;
+  return `[${masterFingerprint.toString("hex")}${accountPath.substring(1)}]${xpub}`;
 }

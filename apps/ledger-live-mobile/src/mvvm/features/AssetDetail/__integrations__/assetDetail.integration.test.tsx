@@ -1,9 +1,23 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { render, screen } from "@tests/test-renderer";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { NavigatorName, ScreenName } from "~/const";
+import type { State } from "~/reducers/types";
 import AssetDetailNavigator from "../Navigator";
 import { ASSET_DETAIL_TEST_IDS } from "../testIds";
+
+const mockIsCurrencyAvailable = jest.fn().mockReturnValue(false);
+const mockIsAcceptedCurrency = jest.fn().mockReturnValue(false);
+
+jest.mock("@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog", () => ({
+  useRampCatalog: () => ({ isCurrencyAvailable: mockIsCurrencyAvailable }),
+}));
+
+jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () => ({
+  useAcceptedCurrency: () => mockIsAcceptedCurrency,
+}));
 
 const Stack = createNativeStackNavigator();
 
@@ -23,17 +37,64 @@ function AssetDetailTestNavigator() {
   );
 }
 
+function withAccounts(
+  accounts: { seed: string; currencyId: string; balance?: number; operationsSize?: number }[],
+) {
+  return {
+    overrideInitialState: (state: State): State => ({
+      ...state,
+      accounts: {
+        ...state.accounts,
+        active: accounts.map(({ seed, currencyId, balance, operationsSize = 0 }) => {
+          const currency = getCryptoCurrencyById(currencyId);
+          const account = genAccount(seed, { currency, operationsSize });
+          if (balance !== undefined) {
+            account.balance = account.balance.times(0).plus(balance);
+          }
+          return account;
+        }),
+      },
+    }),
+  };
+}
+
+function withBtcAccounts(count: number, operationsSize = 0) {
+  return withAccounts(
+    Array.from({ length: count }, (_, i) => ({
+      seed: `bitcoin-${i}`,
+      currencyId: "bitcoin",
+      operationsSize,
+    })),
+  );
+}
+
 describe("AssetDetail screen layout", () => {
+  beforeEach(() => {
+    mockIsCurrencyAvailable.mockReturnValue(false);
+    mockIsAcceptedCurrency.mockReturnValue(false);
+  });
+
   it("renders all section placeholders and BalanceGraph", () => {
     render(<AssetDetailTestNavigator />);
 
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.screen)).toBeVisible();
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.balanceGraph)).toBeVisible();
-    expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.balanceDetails)).toBeVisible();
-    expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.addresses)).toBeVisible();
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.marketStats)).toBeVisible();
-    expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.transactions)).toBeVisible();
-    expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.ctas)).toBeVisible();
+    expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.transactions)).toBeNull();
+  });
+
+  it("hides balance details when there are no accounts", () => {
+    render(<AssetDetailTestNavigator />);
+    expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.balanceDetails)).toBeNull();
+  });
+
+  it("renders balance details with transfer button when accounts exist", () => {
+    render(<AssetDetailTestNavigator />, withBtcAccounts(2));
+    expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.balanceDetails)).toBeVisible();
+    expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.totalBalance)).toBeVisible();
+    expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.transferButton)).toBeVisible();
+    expect(screen.getByText("Total balance")).toBeVisible();
+    expect(screen.getByText("Transfer")).toBeVisible();
   });
 
   it("renders the market price section with title and chart placeholder", () => {
@@ -44,12 +105,131 @@ describe("AssetDetail screen layout", () => {
     expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.receiveButton)).toBeNull();
   });
 
-  it("renders the addresses section with title and add button", () => {
+  it("hides the addresses section when there are no accounts", () => {
     render(<AssetDetailTestNavigator />);
+
+    expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.addresses)).toBeNull();
+  });
+
+  it("renders the addresses section when accounts exist", () => {
+    render(<AssetDetailTestNavigator />, withBtcAccounts(2));
 
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.addresses)).toBeVisible();
     expect(screen.getByText("Addresses")).toBeVisible();
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.addAccount)).toBeVisible();
     expect(screen.getByText("Add")).toBeVisible();
+  });
+
+  it("hides the transactions section when there are no operations", () => {
+    render(<AssetDetailTestNavigator />, withBtcAccounts(2, 0));
+
+    expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.transactions)).toBeNull();
+  });
+
+  it("renders the transactions section when operations exist", () => {
+    render(<AssetDetailTestNavigator />, withBtcAccounts(1, 5));
+
+    expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.transactions)).toBeVisible();
+    expect(screen.getByText("Transactions")).toBeVisible();
+  });
+
+  describe("floating bar CTAs", () => {
+    it("shows Receive button when wallet has no funds (no Buy, no Swap)", () => {
+      render(<AssetDetailTestNavigator />);
+
+      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.ctas)).toBeVisible();
+      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.footerReceiveButton)).toBeVisible();
+      expect(screen.getByText("Receive")).toBeVisible();
+      expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.buyButton)).toBeNull();
+      expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.swapButton)).toBeNull();
+      expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.fallbackBanner)).toBeNull();
+    });
+
+    it("shows Buy + Receive when Buy is available but wallet has no funds", () => {
+      mockIsCurrencyAvailable.mockReturnValue(true);
+
+      render(<AssetDetailTestNavigator />);
+
+      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.ctas)).toBeVisible();
+      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.buyButton)).toBeVisible();
+      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.footerReceiveButton)).toBeVisible();
+      expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.swapButton)).toBeNull();
+    });
+
+    it("shows Buy + Swap when Buy available and asset has funds with swap available", () => {
+      mockIsCurrencyAvailable.mockReturnValue(true);
+      mockIsAcceptedCurrency.mockReturnValue(true);
+
+      render(
+        <AssetDetailTestNavigator />,
+        withAccounts([{ seed: "btc-0", currencyId: "bitcoin", balance: 1000 }]),
+      );
+
+      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.ctas)).toBeVisible();
+      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.buyButton)).toBeVisible();
+      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.swapButton)).toBeVisible();
+      expect(screen.getByText("Swap")).toBeVisible();
+      expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.footerReceiveButton)).toBeNull();
+    });
+
+    it("shows only Buy when wallet has funds but swap is unavailable", () => {
+      mockIsCurrencyAvailable.mockReturnValue(true);
+
+      render(
+        <AssetDetailTestNavigator />,
+        withAccounts([{ seed: "btc-0", currencyId: "bitcoin", balance: 1000 }]),
+      );
+
+      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.ctas)).toBeVisible();
+      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.buyButton)).toBeVisible();
+      expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.swapButton)).toBeNull();
+      expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.footerReceiveButton)).toBeNull();
+      expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.fallbackBanner)).toBeNull();
+    });
+
+    it("shows fallback banner instead of floating bar when wallet has funds but Buy and Swap both unavailable", () => {
+      render(
+        <AssetDetailTestNavigator />,
+        withAccounts([{ seed: "btc-0", currencyId: "bitcoin", balance: 1000 }]),
+      );
+
+      expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.ctas)).toBeNull();
+      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.fallbackBanner)).toBeVisible();
+      expect(screen.getByText("Swap and Buy are not supported for this asset.")).toBeVisible();
+    });
+
+    it("shows Swap when another asset has funds and swap is available (no Buy)", () => {
+      mockIsAcceptedCurrency.mockReturnValue(true);
+
+      render(
+        <AssetDetailTestNavigator />,
+        withAccounts([{ seed: "eth-0", currencyId: "ethereum", balance: 500 }]),
+      );
+
+      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.ctas)).toBeVisible();
+      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.swapButton)).toBeVisible();
+      expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.buyButton)).toBeNull();
+      expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.fallbackBanner)).toBeNull();
+    });
+
+    it("hides BalanceGraph Receive when footer shows Receive (no funds)", () => {
+      render(<AssetDetailTestNavigator />);
+
+      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.footerReceiveButton)).toBeVisible();
+      expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.receiveButton)).toBeNull();
+    });
+
+    it("shows BalanceGraph Receive when footer shows Swap (funds elsewhere)", () => {
+      mockIsAcceptedCurrency.mockReturnValue(true);
+
+      render(
+        <AssetDetailTestNavigator />,
+        withAccounts([{ seed: "eth-0", currencyId: "ethereum", balance: 500 }]),
+      );
+
+      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.swapButton)).toBeVisible();
+      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.receiveButton)).toBeVisible();
+      expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.footerReceiveButton)).toBeNull();
+    });
   });
 });

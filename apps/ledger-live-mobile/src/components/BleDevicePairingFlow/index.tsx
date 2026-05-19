@@ -4,7 +4,8 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DiscoveredDevice } from "@ledgerhq/device-management-kit";
 
 import RequiresBLE from "../RequiresBLE";
-import { addKnownDevice } from "~/actions/ble";
+import { addKnownBleDevice } from "~/actions/ble";
+import { addKnownDevice, mapDeviceToKnownDevice } from "~/reducers/knownDevices";
 import type { BleDevicesScanningProps } from "./BleDevicesScanning";
 import { track } from "~/analytics";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
@@ -155,12 +156,13 @@ const BleDevicePairingFlow: React.FC<BleDevicePairingFlowProps> = ({
 
       if (onPairingSuccessAddToKnownDevices) {
         dispatchRedux(
-          addKnownDevice({
+          addKnownBleDevice({
             id: device.deviceId,
             name: device.deviceName ?? device.modelId,
             modelId: device.modelId,
           }),
         );
+        dispatchRedux(addKnownDevice(mapDeviceToKnownDevice(device)));
       }
     },
     [dispatchRedux, onPairingSuccessAddToKnownDevices],

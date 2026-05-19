@@ -7,8 +7,8 @@ import invariant from "invariant";
 import { Account, AccountLike, Operation, TokenAccount } from "@ledgerhq/types-live";
 import { useBakers } from "@ledgerhq/live-common/families/tezos/react";
 import { whitelist } from "@ledgerhq/live-common/families/tezos/staking";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount, addPendingOperation } from "@ledgerhq/live-common/account/index";
+import { useAccountBridgeOrNull } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
@@ -102,6 +102,7 @@ const Body = ({ stepId, params, onChangeStepId, onClose }: Props) => {
   const openedFromAccount = !!params.account;
   const [defaultBaker] = useBakers(whitelist);
   const steps = createSteps(params);
+  const bridge = useAccountBridgeOrNull<Transaction>(params.account ?? null, params.parentAccount ?? null);
 
   const {
     transaction,
@@ -112,7 +113,7 @@ const Body = ({ stepId, params, onChangeStepId, onClose }: Props) => {
     status,
     bridgeError,
     bridgePending,
-  } = useBridgeTransaction<Transaction>(() => {
+  } = useBridgeTransaction<Transaction>(bridge, () => {
     const account = params.account;
     const parentAccount = params.parentAccount;
 
@@ -124,7 +125,7 @@ const Body = ({ stepId, params, onChangeStepId, onClose }: Props) => {
 
   // make sure tx is in sync
   useEffect(() => {
-    if (!transaction || !account) return;
+    if (!transaction || !account || !bridge) return;
     invariant(transaction.family === "tezos", "tezos tx");
 
     // make sure the mode is in sync (an account changes can reset it)
@@ -145,11 +146,9 @@ const Body = ({ stepId, params, onChangeStepId, onClose }: Props) => {
 
     // when changes, we set again
     if (patch.mode !== transaction.mode || patch.recipient) {
-      setTransaction(
-        getAccountBridge(account, parentAccount).updateTransaction(transaction, patch),
-      );
+      setTransaction(bridge.updateTransaction(transaction, patch));
     }
-  }, [account, defaultBaker, stepId, params, parentAccount, setTransaction, transaction]);
+  }, [account, bridge, defaultBaker, stepId, params, setTransaction, transaction]);
 
   // make sure step id is in sync
   useEffect(() => {

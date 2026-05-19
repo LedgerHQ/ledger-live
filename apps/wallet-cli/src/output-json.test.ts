@@ -42,7 +42,7 @@ describe("JsonCommandOutput", () => {
       });
 
       out.deviceState({ code: "awaiting_approval", reason: "unlock" });
-      out.address("0xabc");
+      out.address("0xabc", true);
     } finally {
       restore();
     }
@@ -63,6 +63,36 @@ describe("JsonCommandOutput", () => {
     });
     expect(lines[1]).toMatchObject({
       status: "success",
+      command: "receive",
+      network: "ethereum:main",
+      account: "js:2:ethereum:0x123",
+      address: "0xabc",
+      verified: true,
+      source: "device",
+    });
+  });
+
+  it("emits a pre-verify-address NDJSON event so agents can surface the address", () => {
+    try {
+      const out = createCommandOutput("json", {
+        command: "receive",
+        network: "ethereum:main",
+        account: "js:2:ethereum:0x123",
+      });
+
+      out.preVerifyAddress("0xabc");
+    } finally {
+      restore();
+    }
+
+    const lines = writes
+      .join("")
+      .trim()
+      .split("\n")
+      .map(line => JSON.parse(line));
+    expect(lines).toHaveLength(1);
+    expect(lines[0]).toEqual({
+      type: "pre-verify-address",
       command: "receive",
       network: "ethereum:main",
       account: "js:2:ethereum:0x123",
@@ -110,6 +140,33 @@ describe("JsonCommandOutput", () => {
       fee: "0.001 ETH",
       tx_hash: "0xdeadbeef",
     });
+  });
+
+  it("emits genuine check output as a success envelope", () => {
+    try {
+      const out = createCommandOutput("json", {
+        command: "genuine-check",
+        network: "device",
+      });
+
+      out.genuineCheck();
+    } finally {
+      restore();
+    }
+
+    const lines = writes
+      .join("")
+      .trim()
+      .split("\n")
+      .map(line => JSON.parse(line));
+    expect(lines).toHaveLength(1);
+    expect(lines[0]).toMatchObject({
+      status: "success",
+      command: "genuine-check",
+      network: "device",
+      genuine: true,
+    });
+    expect(lines[0].timestamp).toEqual(expect.any(String));
   });
 
   it("emits swap quote output as NDJSON with provider errors", () => {

@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js";
 import { within } from "@testing-library/react";
 import { render, screen } from "tests/testSetup";
 import { CryptoTable } from "../CryptoTable";
-import { getCryptoTableRowFreshAddress } from "../Cell";
+import { getCryptoAccountAddress } from "LLD/features/CryptoAddresses/utils/getCryptoAccountAddress";
 import {
   ETH_ACCOUNT,
   ETH_ACCOUNT_2,
@@ -152,9 +152,9 @@ describe("CryptoTable", () => {
   });
 });
 
-describe("getCryptoTableRowFreshAddress", () => {
+describe("getCryptoAccountAddress", () => {
   it("returns the account fresh address for Account rows", () => {
-    expect(getCryptoTableRowFreshAddress(ETH_ACCOUNT, jest.fn())).toBe(ETH_ACCOUNT.freshAddress);
+    expect(getCryptoAccountAddress(ETH_ACCOUNT, jest.fn())).toBe(ETH_ACCOUNT.freshAddress);
   });
 
   it("returns the parent account fresh address for TokenAccount rows", () => {
@@ -163,7 +163,7 @@ describe("getCryptoTableRowFreshAddress", () => {
     const mainById = buildMainAccountByIdMap([parent]);
     const lookup = jest.fn((id: string) => lookupParentAccountFromMap(mainById, id));
 
-    expect(getCryptoTableRowFreshAddress(token, lookup)).toBe(parent.freshAddress);
+    expect(getCryptoAccountAddress(token, lookup)).toBe(parent.freshAddress);
     expect(lookup).toHaveBeenCalledWith(token.parentId);
   });
 });

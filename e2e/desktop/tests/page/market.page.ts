@@ -4,9 +4,11 @@ import { expect } from "@playwright/test";
 import { isWallet40Enabled } from "tests/utils/featureFlagUtils";
 
 export class MarketPage extends AppPage {
+  private readonly navbarTitle = this.page.getByTestId("page-header-title");
   private searchInput = this.page.getByTestId("market-search-input");
   private loadingPlaceholder = this.page.getByTestId("loading-placeholder");
-  private coinRow = (ticker: string) => this.page.getByTestId(`market-${ticker}-row`);
+  private readonly coinRow = (ticker: string) =>
+    this.page.getByTestId(`market-${ticker}-row`).first();
   private coinPageContainer = this.page.getByTestId("market-coin-page-container");
   private swapButtonOnAsset = this.page.getByTestId("market-coin-swap-button");
 
@@ -17,15 +19,17 @@ export class MarketPage extends AppPage {
   private stakeButtonLegacy = (ticker: string) =>
     this.page.locator(`[data-testid="market-${ticker}-stake-button"]:visible`).first();
 
-  private buyButton = (ticker: string) => this.page.getByTestId(`market-${ticker}-buy-button-icon`);
+  private readonly buyButton = (ticker: string) =>
+    this.coinRow(ticker).getByTestId(`market-${ticker}-buy-button-icon`);
   private swapButton = (ticker: string) =>
-    this.page.getByTestId(`market-${ticker}-swap-button-icon`);
+    this.coinRow(ticker).getByTestId(`market-${ticker}-swap-button-icon`);
   private stakeButton = (ticker: string) =>
-    this.page.getByTestId(`market-${ticker}-stake-button-icon`);
+    this.coinRow(ticker).getByTestId(`market-${ticker}-stake-button-icon`);
 
   // Filter controls - using text selector because react-select doesn't forward data-testid
   private filterDropdown = this.page.getByText("Show").first();
-  private starButton = (ticker: string) => this.page.getByTestId(`market-${ticker}-star-button`);
+  private readonly starButton = (ticker: string) =>
+    this.page.getByTestId(`market-${ticker}-star-button`).first();
   private starredOptionFilter = this.page.getByRole("option", { name: "Starred Assets" });
 
   @step("Search for $0")
@@ -35,8 +39,9 @@ export class MarketPage extends AppPage {
 
   @step("Validate Market List")
   async validateMarketList() {
-    await this.coinRow("btc").waitFor({ state: "visible" });
-    await this.coinRow("eth").waitFor({ state: "visible" });
+    await expect(this.navbarTitle).toHaveText("Market");
+    await expect(this.coinRow("btc")).toBeVisible();
+    await expect(this.coinRow("eth")).toBeVisible();
   }
 
   @step("Open coin page for $0")

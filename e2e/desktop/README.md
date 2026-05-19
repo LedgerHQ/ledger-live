@@ -26,13 +26,7 @@ All build and test commands below are run from the **repo root** (`ledger-live/`
 docker pull ghcr.io/ledgerhq/speculos:latest
 ```
 
-- Enable Proto for version management:
-
-```bash
-proto use
-```
-
-- Install [mise](https://mise.jdx.dev/getting-started.html#installing-mise-cli) then run:
+- Install [mise](https://mise.jdx.dev/getting-started.html#installing-mise-cli), then from the repo root install the pinned toolchain:
 
 ```bash
 mise install

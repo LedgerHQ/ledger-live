@@ -2900,6 +2900,19 @@
             "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
           }
         }
+      },
+      "selfTransactionFlow": {
+        "title": "Prepare Undelegation",
+        "steps": {
+          "starter": {
+            "description": [
+              "To close your staking account and reclaim your ADA deposit:",
+              "Cardano’s governance now requires you to define your voting status before you can undelegate.",
+              "This step involves a send transaction to your own Ledger address that simply serves to register your choice to abstain from voting. It will cost only the standard network fee and your ADA stays in your wallet.",
+              "Once this preference is recorded, you will be able to undelegate as usual."
+            ]
+          }
+        }
       }
     }
   },
@@ -4582,6 +4595,33 @@
       }
     }
   },
+  "tezos": {
+    "earnChoice": {
+      "title": "Earn Tezos Rewards: Delegate or Stake",
+      "description": "Earn rewards on your Tezos (XTZ) by delegating to a Baker, keeping full control. For higher returns, stake your XTZ, understanding the low associated risk. Choose the best way to grow your assets.",
+      "howItWorks": "How it works",
+      "delegate": {
+        "header": "Delegate",
+        "bullet": {
+          "0": "No lockup",
+          "1": "Your entire balance is delegated",
+          "2": "Send/swap your XTZ at any time",
+          "3": "Risk free"
+        },
+        "cta": "Delegate"
+      },
+      "stake": {
+        "header": "Stake",
+        "bullet": {
+          "0": "Boost earnings (2-3x)",
+          "1": "XTZ is locked for staking",
+          "2": "Unstake: 4 days",
+          "3": "Risk: Low (Slashing)"
+        },
+        "cta": "Stake"
+      }
+    }
+  },
   "delegation": {
     "title": "Earn rewards",
     "header": "Delegation",
@@ -6189,6 +6229,36 @@
       "topologyChangeError": {
         "message": "Topology change detected. Re-onboarding required."
       },
+      "disclaimer": {
+        "title": "Set up Canton Network",
+        "intro": "Canton has unique properties that require your awareness before continuing:",
+        "bullets": {
+          "utxo": {
+            "title": "UTXO-based balance",
+            "body": "Balance exists as individual coin contracts, capped at 100 per transfer. Idle contracts lose value over time and expire if fees exceed their balance."
+          },
+          "offers": {
+            "title": "Offer-based transfers",
+            "body": "Nothing settles automatically. Sent transfers can be withdrawn; received transfers need manual accept or reject. Manage offers from your Canton dashboard."
+          },
+          "dualValidator": {
+            "title": "Dual-validator security",
+            "body": "Transactions require co-signing from both Ledger and Klin. Neither can act on your behalf alone."
+          },
+          "tokenLiability": {
+            "title": "Standard token liability ⚠️",
+            "body": "Token recovery in a failure scenario is the token issuer's responsibility, not Ledger's."
+          }
+        },
+        "agreeLabel": "I agree to <1>Canton Network Terms and Ledger’s liability exclusion</1>",
+        "cancel": "Cancel",
+        "agree": "Agree",
+        "terms": {
+          "title": "Canton Network Terms",
+          "sectionTitle": "Standard Token Liability & Recovery",
+          "body": "Ledger only supports standard tokens issued through the Digital Asset (DA) Registry. Ledger is not the issuer of these tokens and holds no liability for their value, management, or underlying smart contracts.\n\nIn the event of a Ledger service disruption or \"disaster recovery\" failure, Ledger cannot recover your assets. You must contact the specific Token Issuer (Asset Admin) directly to initiate recovery via their \"Asset Freeze\" or \"Registry Recovery\" protocols. Your recourse lies solely with the Token Issuer under their existing Service Level Agreements (SLAs). By proceeding, you acknowledge that Ledger and its affiliates are excluded from all liability arising from the loss, recovery, or inability to recover these tokens."
+        }
+      },
       "tooManyUtxos": {
         "title": "Action Needed: Too Many UTXOs",
         "description": "Your account has too many small UTXOs to process this transfer. Merge them now to avoid expiration due to accumulated holding fees and enable transfers.",
@@ -6975,6 +7045,9 @@
     "RecommendUndelegation": {
       "title": "Please undelegate the account before emptying it"
     },
+    "MustDelegateBeforeStaking": {
+      "title": "Please delegate your account before staking"
+    },
     "RecommendSubAccountsToEmpty": {
       "title": "Please empty all subaccounts first"
     },
@@ -7435,6 +7508,14 @@
     "AleoAmountRecordRequired": {
       "title": "Select a valid private record for the amount.",
       "description": "Choose one of your available private records to fund the transfer amount."
+    },
+    "AleoTooManyRecordsSelected": {
+      "title": "Too many private records selected",
+      "description": "You can use at most {{count}} private records per transaction."
+    },
+    "AleoAmountTooLargeForTransaction": {
+      "title": "Amount too large for one transaction",
+      "description": "Your private records can't cover this amount in a single transaction. Try a smaller amount."
     },
     "AleoFeeRecordRequired": {
       "title": "Another private record is required to cover the network fee.",
@@ -8432,7 +8513,7 @@
     "title": "Accounts",
     "tableActions": {
       "searchAddress": "Search by name, address",
-      "addAddress": "Add address"
+      "addAccount": "Add account"
     },
     "table": {
       "columns": {
@@ -8470,8 +8551,7 @@
   },
   "topBar": {
     "history": {
-      "cta": "History",
-      "tooltip": "History"
+      "cta": "Transactions"
     },
     "activityIndicator": {
       "errorToolTip": "Your assets are safe. This is a temporary sync issue.\n Affected accounts: {{accounts}}. Tap to retry",
@@ -8616,6 +8696,21 @@
       }
     },
     "shared": {
+      "quickAmountSelector": {
+        "strategies": {
+          "fast": "Fast",
+          "balanced": "Balanced",
+          "full": "Full"
+        },
+        "recordCount_one": "{{count}} record",
+        "recordCount_other": "{{count}} records",
+        "unavailable": "Unavailable",
+        "spendableBalance": "Max Spendable Balance:"
+      },
+      "infoBanner": {
+        "descPartOne": "Sender, amount and recipient hidden on-chain.",
+        "descPartTwo": "Up to {{max}} records per send."
+      },
       "sponsoredByProvable": "Sponsored by Provable",
       "balanceSelector": {
         "private": "Private balance",
@@ -8657,7 +8752,9 @@
         "selectLabel": "Send from"
       },
       "summary": {
-        "proofGenerationWarning": "Aleo transaction requires proof generation. This may take some time."
+        "proofGenerationWarning": "Aleo transaction requires proof generation. This may take some time.",
+        "recordsUsed": "Records used",
+        "signingTime": "Signing time"
       },
       "mandatoryPrivateSync": {
         "title": "Syncing your private balance ({{percentage}}%)",
@@ -8705,7 +8802,7 @@
     }
   },
   "history": {
-    "title": "Transactions",
+    "title": "Transaction history",
     "pending": "Pending transaction",
     "pending_other": "Pending transactions",
     "columns": {
@@ -8723,10 +8820,10 @@
       "description": "Come back later to see your transactions."
     },
     "actionsBar": {
-      "csv": "CSV"
+      "csv": "Export"
     },
     "exportDialog": {
-      "title": "Transaction History",
+      "title": "Transaction history",
       "description": "Choose the accounts to include in the export",
       "disclaimer": "Estimated values only. Countervalues are provided by Kaiko for information purposes. Do not use this data for tax, legal, or accounting purposes.",
       "accountsToInclude": "Accounts to include",
@@ -8760,6 +8857,16 @@
     "explore": "Explore all Ledger devices"
   },
   "assetDetails": {
-    "totalBalance": "Total balance"
+    "totalBalance": "Total balance",
+    "marketPrice": "Market price",
+    "addresses": "Addresses",
+    "add": "Add",
+    "notFound": "Asset distribution item not found.",
+    "marketStats": "Market stats",
+    "marketStatsTooltip": "Market metrics for this asset.",
+    "pricePerformance": "Price performance",
+    "marketRank": "Market rank",
+    "tradingVolume24h": "24h trading volume",
+    "day": "1 day"
   }
 }

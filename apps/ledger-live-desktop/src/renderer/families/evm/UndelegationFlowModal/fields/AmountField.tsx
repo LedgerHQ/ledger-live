@@ -38,7 +38,7 @@ export default function AmountField({
     [delegatedAmount],
   );
 
-  // Forward only errors that make sense here: `amount` and the generic-alpaca `unbonding` bucket,
+  // Forward only errors that make sense here: `amount` and the generic-coin-framework `unbonding` bucket,
   // while skipping validator-level (`valAddress`) which is surfaced at the row selection step.
   const error = errors?.amount || errors?.unbonding;
   const warning = useMemo(() => focused && Object.values(warnings || {})[0], [focused, warnings]);

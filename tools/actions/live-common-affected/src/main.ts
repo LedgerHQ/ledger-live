@@ -1,5 +1,5 @@
 import { exec } from "child_process";
-import { GENERIC_ALPACA_CHAINS } from "./constants";
+import { GENERIC_COIN_SERVICE_CHAINS } from "./constants";
 import * as core from "@actions/core";
 
 /**
@@ -19,7 +19,7 @@ function main(ref: string) {
   ];
   const coins = new Set<string>();
 
-  const combinedRegex = new RegExp(`(${patterns.join(")|(")})`);
+  const combinedRegex = new RegExp(patterns.join("|"));
   exec(
     cmd,
     {
@@ -38,21 +38,21 @@ function main(ref: string) {
             .map(line => {
               const m = line.match(combinedRegex);
               if (m) {
-                const [first, second, third] = m;
-                if (first.startsWith("coin-modules/")) {
-                  coins.add(first.replace(/^.*coin-/, ""));
-                } else if (first.startsWith("live-common/src/families/")) {
-                  coins.add(first.replace(/^live-common\/src\/families\//, ""));
+                const [full, firstFolder, secondFolder] = m;
+                if (full.startsWith("coin-modules/")) {
+                  coins.add(full.replace(/^.*coin-/, ""));
+                } else if (full.startsWith("live-common/src/families/")) {
+                  coins.add(full.replace(/^live-common\/src\/families\//, ""));
                 }
-                if (second === "families") {
+                if (firstFolder === "families") {
                   // in case of coin implementations, we will stop at the coin family level
-                  return `${second}/${third}`;
-                } else if (second === "live-common/src/bridge/generic-alpaca") {
+                  return `${firstFolder}/${secondFolder}`;
+                } else if (firstFolder === "bridge" && secondFolder === "generic-coin-framework") {
                   // in case of live-common/src, we consider the first src/* folder level to be relevant filter
-                  return GENERIC_ALPACA_CHAINS;
+                  return GENERIC_COIN_SERVICE_CHAINS;
                 } else {
                   // in any other case, we consider the second src/* folder level to be relevant filter
-                  return second || first;
+                  return firstFolder || full;
                 }
               }
             })

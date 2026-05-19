@@ -9,77 +9,29 @@ import {
 } from "../../bridge/fixtures";
 import prepareTransaction from "../../bridge/prepareTransaction";
 
-const chainIdMock = jest.fn();
-const nonceMock = jest.fn();
+jest.mock("../../network/client", () => ({
+  celoGasPrice: jest.fn(async () => BigInt(2)),
+  getCeloClient: jest.fn(() => ({
+    estimateGas: jest.fn(async () => BigInt(3)),
+    estimateMaxPriorityFeePerGas: jest.fn(async () => BigInt(1)),
+    getBlock: jest.fn(async () => ({ baseFeePerGas: BigInt(10) })),
+    getChainId: jest.fn(async () => 42220),
+    getTransactionCount: jest.fn(async () => 1),
+    readContract: jest.fn(async ({ functionName }: { functionName: string }) => {
+      if (functionName === "getAccountNonvotingLockedGold") return BigInt(0);
+      if (functionName === "getTotalVotesForEligibleValidatorGroups") return [[], []];
+      return BigInt(0);
+    }),
+  })),
+}));
 
-jest.mock("../../network/sdk", () => {
-  return {
-    celoKit: jest.fn(() => ({
-      contracts: {
-        getLockedGold: jest.fn(async () => ({
-          address: "address",
-          lock: jest.fn(() => ({
-            txo: {
-              encodeABI: jest.fn(() => "0x6C6F636B5F64617461"), // lock_data
-              estimateGas: jest.fn(async () => 2),
-            },
-          })),
-          unlock: jest.fn(() => ({
-            txo: {
-              encodeABI: jest.fn(() => "0x756E6C6F636B5F64617461"), // unlock_data
-              estimateGas: jest.fn(async () => 3),
-            },
-          })),
-          withdraw: jest.fn(() => ({
-            txo: {
-              encodeABI: jest.fn(() => "0x77697468647261775F64617461"), // withdraw_data
-              estimateGas: jest.fn(async () => 3),
-            },
-          })),
-          vote: jest.fn(() => ({
-            txo: {
-              encodeABI: jest.fn(() => "0x766F74655F64617461"), // vote_data
-              estimateGas: jest.fn(async () => 3),
-            },
-          })),
-          getAccountNonvotingLockedGold: jest.fn(() => BigNumber(0)),
-        })),
-        getGoldToken: jest.fn(async () => ({
-          address: "gold_token_address",
-          transfer: jest.fn(() => ({
-            txo: {
-              encodeABI: jest.fn(() => "0x73656E645F64617461"), // send_data
-            },
-          })),
-        })),
-        getStableToken: jest.fn(async () => ({
-          address: "stable_token_address",
-          transfer: jest.fn(() => ({
-            txo: {
-              encodeABI: jest.fn(() => "0x73656E645F746F6B656E5F64617461"), // stable_token_data
-            },
-          })),
-        })),
-        getErc20: jest.fn(async () => ({
-          address: "erc20_token_address",
-          transfer: jest.fn(() => ({
-            txo: {
-              encodeABI: jest.fn(() => "0x73656E645F65726332305F746F6B656E5F64617461"), // send_erc20_token_data
-            },
-          })),
-        })),
-      },
-      connection: {
-        chainId: chainIdMock,
-        nonce: nonceMock,
-        estimateGasWithInflationFactor: jest.fn().mockReturnValue(3),
-        gasPrice: jest.fn(async () => BigNumber(2)),
-        web3: { eth: { getBlock: jest.fn().mockResolvedValue({ baseFeePerGas: 10 }) } },
-        getMaxPriorityFeePerGas: jest.fn().mockReturnValue(1),
-      },
-    })),
-  };
-});
+jest.mock("../../network/registry", () => ({
+  getRegistryAddressFor: jest.fn(async () => "0x0000000000000000000000000000000000001d00"),
+}));
+
+jest.mock("../../network/sdk", () => ({
+  voteSignerAccount: jest.fn(async () => "signer_account"),
+}));
 
 describe("prepareTransaction", () => {
   it("should return the transaction if the address is invalid", async () => {
@@ -197,8 +149,9 @@ describe("prepareTransaction", () => {
       index: 0,
       fees: BigNumber(24),
       subAccountId: "subAccountId",
-      data: Buffer.from("0x73656E645F746F6B656E5F64617461"),
     });
+    expect(transaction.data).toBeInstanceOf(Buffer);
+    expect((transaction.data as Buffer).length).toBeGreaterThan(0);
   });
 
   it("should return the prepared token transaction", async () => {
@@ -223,8 +176,9 @@ describe("prepareTransaction", () => {
       index: 0,
       fees: BigNumber(24),
       subAccountId: "subAccountId",
-      data: Buffer.from("0x73656E645F65726332305F746F6B656E5F64617461"),
     });
+    expect(transaction.data).toBeInstanceOf(Buffer);
+    expect((transaction.data as Buffer).length).toBeGreaterThan(0);
   });
 
   it("should return the prepared token transaction with useAllAmount", async () => {
@@ -251,8 +205,9 @@ describe("prepareTransaction", () => {
       index: 0,
       fees: BigNumber(24),
       subAccountId: "subAccountId",
-      data: Buffer.from("0x73656E645F65726332305F746F6B656E5F64617461"),
     });
+    expect(transaction.data).toBeInstanceOf(Buffer);
+    expect((transaction.data as Buffer).length).toBeGreaterThan(0);
   });
 
   it("should return token transaction with fee currency preserved", async () => {

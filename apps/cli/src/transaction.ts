@@ -50,64 +50,70 @@ export type InferTransactionsOpts = Partial<{
   tokenIds: string;
   quantities: string;
 }>;
-export const inferTransactionsOpts = uniqBy(
-  [
-    {
-      name: "self-transaction",
-      type: Boolean,
-      desc: "Pre-fill the transaction for the account to send to itself",
-    },
-    {
-      name: "use-all-amount",
-      type: Boolean,
-      desc: "Send MAX of the account balance",
-    },
-    {
-      name: "recipient",
-      type: String,
-      desc: "the address to send funds to",
-      multiple: true,
-    },
-    {
-      name: "amount",
-      type: String,
-      desc: "how much to send in the main currency unit",
-    },
-    {
-      name: "shuffle",
-      type: Boolean,
-      desc: "if using multiple token or recipient, order will be randomized",
-    },
-    {
-      name: "collection",
-      type: String,
-      desc: "collection of an NFT (in corelation with --tokenIds)",
-    },
-    {
-      name: "tokenIds",
-      type: String,
-      desc: "tokenId or list of tokenIds of an NFT separated by commas (order is kept in corelation with --quantities)",
-    },
-    {
-      name: "quantities",
-      type: String,
-      desc: "quantity or list of quantity of an ERC1155 NFT separated by commas (order is kept in corelation with --tokenIds)",
-    },
-  ].concat(
-    flatMap(
-      getRegisteredFamilies().map(family => loadSetupForFamily(family).cliTools),
-      (m: unknown) =>
-        (m && typeof m === "object" && "options" in m ? (m as any).options : []) || [],
+export const inferTransactionsOpts = (async () => {
+  const setups = await Promise.all(
+    getRegisteredFamilies().map(family => Promise.resolve(loadSetupForFamily(family))),
+  );
+  return uniqBy(
+    [
+      {
+        name: "self-transaction",
+        type: Boolean,
+        desc: "Pre-fill the transaction for the account to send to itself",
+      },
+      {
+        name: "use-all-amount",
+        type: Boolean,
+        desc: "Send MAX of the account balance",
+      },
+      {
+        name: "recipient",
+        type: String,
+        desc: "the address to send funds to",
+        multiple: true,
+      },
+      {
+        name: "amount",
+        type: String,
+        desc: "how much to send in the main currency unit",
+      },
+      {
+        name: "shuffle",
+        type: Boolean,
+        desc: "if using multiple token or recipient, order will be randomized",
+      },
+      {
+        name: "collection",
+        type: String,
+        desc: "collection of an NFT (in corelation with --tokenIds)",
+      },
+      {
+        name: "tokenIds",
+        type: String,
+        desc: "tokenId or list of tokenIds of an NFT separated by commas (order is kept in corelation with --quantities)",
+      },
+      {
+        name: "quantities",
+        type: String,
+        desc: "quantity or list of quantity of an ERC1155 NFT separated by commas (order is kept in corelation with --tokenIds)",
+      },
+    ].concat(
+      flatMap(
+        setups.map(setup => setup?.cliTools),
+        (m: unknown) =>
+          (m && typeof m === "object" && "options" in m ? (m as any).options : []) || [],
+      ),
     ),
-  ),
-  "name",
-);
+    "name",
+  );
+})();
 export async function inferTransactions(
   mainAccount: Account,
   opts: InferTransactionsOpts,
 ): Promise<[Transaction, TransactionStatusCommon][]> {
   const bridge = await getAccountBridge(mainAccount, null);
-  const specific = loadSetupForFamily(mainAccount.currency.family).cliTools;
+  const setup = await Promise.resolve(loadSetupForFamily(mainAccount.currency.family));
+  const specific = setup?.cliTools;
 
   const inferAccounts: (account: Account, opts: Record<string, unknown>) => AccountLikeArray =
     (specific && "inferAccounts" in specific && (specific.inferAccounts as any)) ||

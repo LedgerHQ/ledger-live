@@ -10,7 +10,10 @@ import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge"
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { rgba, Text, Icons } from "@ledgerhq/native-ui";
-import { CeloAccount, Transaction as CeloTransaction } from "@ledgerhq/live-common/families/celo/types";
+import {
+  CeloAccount,
+  Transaction as CeloTransaction,
+} from "@ledgerhq/live-common/families/celo/types";
 import { ScreenName } from "~/const";
 import { TrackScreen } from "~/analytics";
 import Button from "~/components/Button";
@@ -46,6 +49,7 @@ export default function WithdrawAmount({ navigation, route }: Props) {
   const mainAccount = getMainAccount(account, parentAccount);
 
   const { transaction, setTransaction, status, bridgeError, bridgePending } = useBridgeTransaction(
+    bridge,
     () => {
       const t = bridge.createTransaction(mainAccount);
       const transaction = bridge.updateTransaction(t, {

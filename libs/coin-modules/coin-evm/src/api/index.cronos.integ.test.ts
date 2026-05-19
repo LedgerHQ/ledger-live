@@ -16,7 +16,7 @@ describe("EVM Cronos Network (blockscout explorer)", () => {
     const config = {
       node: {
         type: "external",
-        uri: "https://evm.cronos.org",
+        uri: "https://cronos.coin.ledger.com",
       },
       explorer: {
         type: "blockscout",

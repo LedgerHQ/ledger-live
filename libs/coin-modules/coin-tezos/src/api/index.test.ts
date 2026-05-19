@@ -19,7 +19,7 @@ const logicCraftTransactionMock = jest.fn(
 
 jest.mock("../logic", () => ({
   listOperations: async () => logicGetTransactions(),
-  estimateFees: async () => logicEstimateFees(),
+  estimateFees: (...args: unknown[]) => logicEstimateFees(...args),
   craftTransaction: (account: unknown, transaction: { fee: { fees: string } }) =>
     logicCraftTransactionMock(account, transaction),
   rawEncode: () => Promise.resolve("tz1heMGVHQnx7ALDcDKqez8fan64Eyicw4DJ"),
@@ -305,6 +305,58 @@ describe("craftTransaction", () => {
       );
     });
   });
+  it.each(["stake", "unstake"] as const)(
+    "passes %s mode and explicit amount through to craftTransaction",
+    async type => {
+      logicEstimateFees.mockResolvedValue({
+        estimatedFees: DEFAULT_ESTIMATED_FEES,
+        fees: DEFAULT_ESTIMATED_FEES,
+        gasLimit: DEFAULT_GAS_LIMIT,
+        storageLimit: DEFAULT_STORAGE_LIMIT,
+      });
+
+      await api.craftTransaction({
+        intentType: "staking",
+        type,
+        sender: "tz1test",
+        recipient: "",
+        amount: 1234n,
+      } as TransactionIntent);
+
+      expect(logicCraftTransactionMock).toHaveBeenCalledWith(
+        expect.objectContaining({ address: "tz1test" }),
+        expect.objectContaining({
+          type,
+          amount: 1234n,
+        }),
+      );
+    },
+  );
+
+  it("passes finalize_unstake mode with zero amount through to craftTransaction", async () => {
+    logicEstimateFees.mockResolvedValue({
+      estimatedFees: DEFAULT_ESTIMATED_FEES,
+      fees: DEFAULT_ESTIMATED_FEES,
+      gasLimit: DEFAULT_GAS_LIMIT,
+      storageLimit: DEFAULT_STORAGE_LIMIT,
+    });
+
+    await api.craftTransaction({
+      intentType: "staking",
+      type: "finalize_unstake",
+      sender: "tz1test",
+      recipient: "",
+      amount: 999n,
+    } as TransactionIntent);
+
+    expect(logicCraftTransactionMock).toHaveBeenCalledWith(
+      expect.objectContaining({ address: "tz1test" }),
+      expect.objectContaining({
+        type: "finalize_unstake",
+        amount: 0n,
+      }),
+    );
+  });
 });
 
 describe("estimateFees", () => {
@@ -468,6 +520,37 @@ describe("estimateFees", () => {
     expect(result.value).toBe(expectedTotalFees);
     expect(result.parameters.gasLimit).toBe(DEFAULT_GAS_LIMIT);
     expect(result.parameters.storageLimit).toBe(DEFAULT_STORAGE_LIMIT);
+  });
+
+  it.each([
+    ["stake", 1234n, 1234n],
+    ["unstake", 1234n, 1234n],
+    ["finalize_unstake", 999n, 0n],
+  ] as const)("delegates %s estimation to the logic layer", async (type, intentAmount, amount) => {
+    logicEstimateFees.mockResolvedValue({
+      estimatedFees: DEFAULT_ESTIMATED_FEES,
+      fees: DEFAULT_ESTIMATED_FEES,
+      gasLimit: DEFAULT_GAS_LIMIT,
+      storageLimit: DEFAULT_STORAGE_LIMIT,
+    });
+
+    const result = await api.estimateFees({
+      intentType: "staking",
+      type,
+      sender: "tz1test",
+      recipient: "",
+      amount: intentAmount,
+    } as TransactionIntent);
+
+    expect(result.value).toBe(DEFAULT_ESTIMATED_FEES);
+    expect(logicEstimateFees).toHaveBeenCalledWith(
+      expect.objectContaining({
+        transaction: expect.objectContaining({
+          mode: type,
+          amount,
+        }),
+      }),
+    );
   });
 
   it("fallback when Taquito throws Public key not found returns total with minFees for reveal (unrevealed)", async () => {

@@ -5,6 +5,7 @@ import { track } from "~/analytics";
 import { setDismissedContentCard } from "~/actions/settings";
 import { trackingEnabledSelector } from "~/reducers/settings";
 import { localMobileCardsSelector, localWalletCardsSelector } from "~/reducers/dynamicContent";
+import { sanitizeExtras } from "~/dynamicContent/utils";
 
 const isLocalCard = (
   cardId: string,
@@ -60,7 +61,7 @@ export const useBrazeContentCard = (mobileCards: Braze.ContentCard[]) => {
 
       if (!card) return;
       track("contentcard_impression", {
-        ...card.extras,
+        ...sanitizeExtras(card.extras),
         page: card.extras.location,
         displayedPosition,
       });

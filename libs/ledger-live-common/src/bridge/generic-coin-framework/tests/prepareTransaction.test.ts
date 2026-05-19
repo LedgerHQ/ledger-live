@@ -1,0 +1,249 @@
+import { genericPrepareTransaction } from "../prepareTransaction";
+import { getAlpacaApi } from "../api";
+import { getBridgeApi } from "../bridge";
+import { transactionToIntent } from "../utils";
+import BigNumber from "bignumber.js";
+import { GenericTransaction } from "../types";
+import { setupMockCryptoAssetsStore } from "@ledgerhq/cryptoassets/cal-client/test-helpers";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { decodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
+
+jest.mock("../api", () => ({
+  getAlpacaApi: jest.fn(),
+}));
+jest.mock("../bridge", () => ({
+  getBridgeApi: jest.fn(),
+}));
+jest.mock("@ledgerhq/ledger-wallet-framework/account/index", () => {
+  const actual = jest.requireActual("@ledgerhq/ledger-wallet-framework/account/index");
+  return {
+    ...actual,
+    decodeTokenAccountId: jest.fn(actual.decodeTokenAccountId),
+  };
+});
+
+jest.mock("../utils", () => ({
+  ...jest.requireActual("../utils"),
+  transactionToIntent: jest.fn(),
+  extractBalances: jest.fn(),
+}));
+
+describe("genericPrepareTransaction", () => {
+  const account = {
+    id: "test-account",
+    address: "0xabc",
+    currency: { id: "ethereum" },
+  } as any;
+
+  const baseTransaction = {
+    amount: new BigNumber(100_000),
+    fees: new BigNumber(500),
+    recipient: "0xrecipient",
+    family: "family",
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    setupMockCryptoAssetsStore({
+      findTokenById: () => Promise.resolve(undefined),
+    });
+    (transactionToIntent as jest.Mock).mockReturnValue({ mock: "intent" });
+    (getBridgeApi as jest.Mock).mockReturnValue({
+      getAssetFromToken: jest.fn().mockReturnValue(undefined),
+    });
+  });
+
+  it("updates fees if they differ", async () => {
+    const newFee = new BigNumber(700);
+
+    (getAlpacaApi as jest.Mock).mockReturnValue({
+      estimateFees: jest.fn().mockResolvedValue({ value: newFee }),
+    });
+
+    const prepareTransaction = genericPrepareTransaction("testnet", "local");
+    const result = await prepareTransaction(account, { ...baseTransaction });
+
+    expect((result as any).fees.toString()).toBe(newFee.toString());
+    expect(transactionToIntent).toHaveBeenCalledWith(
+      account,
+      expect.objectContaining(baseTransaction),
+      undefined,
+      undefined,
+    );
+  });
+
+  it("returns original transaction if fees are the same", async () => {
+    const sameFee = baseTransaction.fees;
+
+    (getAlpacaApi as jest.Mock).mockReturnValue({
+      estimateFees: jest.fn().mockResolvedValue({ value: sameFee }),
+    });
+
+    const prepareTransaction = genericPrepareTransaction("testnet", "local");
+    const result = await prepareTransaction(account, baseTransaction);
+
+    expect(result).toBe(baseTransaction);
+  });
+
+  it("sets fee if original fees are undefined", async () => {
+    const newFee = new BigNumber(1234);
+    (getAlpacaApi as jest.Mock).mockReturnValue({
+      estimateFees: jest.fn().mockResolvedValue({ value: newFee }),
+    });
+
+    const txWithoutFees = { ...baseTransaction, fees: undefined as any };
+    const prepareTransaction = genericPrepareTransaction("testnet", "local");
+    const result = await prepareTransaction(account, txWithoutFees);
+
+    expect((result as any).fees.toString()).toBe(newFee.toString());
+    expect(result).not.toBe(txWithoutFees);
+  });
+
+  it("returns original if fees are BigNumber-equal but different instance", async () => {
+    const sameValue = new BigNumber(baseTransaction.fees.toString()); // different instance
+    (getAlpacaApi as jest.Mock).mockReturnValue({
+      estimateFees: jest.fn().mockResolvedValue({ value: sameValue }),
+    });
+
+    const prepareTransaction = genericPrepareTransaction("testnet", "local");
+    const result = await prepareTransaction(account, baseTransaction);
+
+    expect(result).toBe(baseTransaction); // still same reference
+  });
+
+  it.each([
+    ["type", 2, 2],
+    ["storageLimit", 300n, new BigNumber(300)],
+    ["gasLimit", 300n, new BigNumber(300)],
+    ["gasPrice", 300n, new BigNumber(300)],
+    ["maxFeePerGas", 300n, new BigNumber(300)],
+    ["maxPriorityFeePerGas", 300n, new BigNumber(300)],
+    ["additionalFees", 300n, new BigNumber(300)],
+  ])(
+    "propagates %s from estimation parameters",
+    async (parameterName, parameterValue, expectedValue) => {
+      (getAlpacaApi as jest.Mock).mockReturnValue({
+        estimateFees: jest.fn().mockResolvedValue({
+          value: new BigNumber(491),
+          parameters: { [parameterName]: parameterValue },
+        }),
+      });
+
+      const txWithoutCustomFees = { ...baseTransaction, customFees: undefined };
+      const prepareTransaction = genericPrepareTransaction("testnet", "local");
+      const result = await prepareTransaction(account, txWithoutCustomFees);
+
+      expect(result).toEqual(
+        expect.objectContaining({
+          fees: new BigNumber(491),
+          [parameterName]: expectedValue,
+          customFees: {
+            parameters: {
+              fees: undefined,
+            },
+          },
+        }),
+      );
+    },
+  );
+
+  it("does not propagate the custom gas limit", async () => {
+    (getAlpacaApi as jest.Mock).mockReturnValue({
+      estimateFees: jest.fn().mockResolvedValue({
+        value: 100000n,
+        parameters: { gasLimit: 22000n }, // custom gasLimit in parameter
+      }),
+    });
+
+    const txWithoutCustomFees = {
+      ...baseTransaction,
+      gasLimit: new BigNumber(21000),
+      customGasLimit: new BigNumber(22000),
+    };
+    const prepareTransaction = genericPrepareTransaction("testnet", "local");
+    const result = await prepareTransaction(account, txWithoutCustomFees);
+
+    expect(result).toEqual(
+      expect.objectContaining({
+        fees: new BigNumber(100000),
+        gasLimit: new BigNumber(21000),
+        customGasLimit: new BigNumber(22000),
+      }),
+    );
+  });
+
+  it("estimates using the token account spendable balance when sending all amount", async () => {
+    (decodeTokenAccountId as jest.Mock).mockResolvedValueOnce({
+      accountId: "test-sub-account",
+      token: undefined,
+    });
+    const estimateFees = jest.fn().mockResolvedValue({ value: new BigNumber(50) });
+    (transactionToIntent as jest.Mock).mockImplementation((_, transaction) => ({
+      amount: BigInt(transaction.amount.toFixed()),
+    }));
+    (getAlpacaApi as jest.Mock).mockReturnValue({
+      estimateFees,
+      validateIntent: intent => Promise.resolve({ amount: intent.amount }),
+    });
+    const prepareTransaction = genericPrepareTransaction("testnet", "local");
+
+    await prepareTransaction(
+      {
+        ...account,
+        subAccounts: [{ id: "test-sub-account", spendableBalance: new BigNumber(100) }],
+      },
+      {
+        subAccountId: "test-sub-account",
+        useAllAmount: true,
+        amount: new BigNumber(0),
+      } as GenericTransaction,
+    );
+
+    expect(estimateFees).toHaveBeenCalledWith(expect.objectContaining({ amount: 100n }), {});
+  });
+
+  it("fills 'assetOwner' and 'assetReference' from 'subAccountId' for retro compatibility", async () => {
+    setupMockCryptoAssetsStore({
+      findTokenById: tokenId =>
+        Promise.resolve(tokenId === "usdc" ? ({ id: tokenId } as TokenCurrency) : undefined),
+    });
+    (getAlpacaApi as jest.Mock).mockReturnValue({
+      estimateFees: () => Promise.resolve({ value: 0n }),
+    });
+    (getBridgeApi as jest.Mock).mockReturnValue({
+      getAssetFromToken: jest.fn().mockImplementation((token: TokenCurrency, owner: string) => ({
+        assetOwner: owner,
+        assetReference: token.id,
+      })),
+    });
+    const prepareTransaction = genericPrepareTransaction("testnet", "local");
+
+    await prepareTransaction(
+      {
+        ...account,
+        freshAddress: "test-account-address",
+        subAccounts: [{ id: "test-sub-account+usdc" }],
+      },
+      {
+        subAccountId: "test-sub-account+usdc",
+        amount: new BigNumber(10),
+      } as GenericTransaction,
+    );
+
+    expect(transactionToIntent).toHaveBeenCalledWith(
+      {
+        ...account,
+        freshAddress: "test-account-address",
+        subAccounts: [{ id: "test-sub-account+usdc" }],
+      },
+      {
+        subAccountId: "test-sub-account+usdc",
+        amount: new BigNumber(10),
+        assetOwner: "test-account-address",
+        assetReference: "usdc",
+      },
+      undefined,
+      undefined,
+    );
+  });
+});

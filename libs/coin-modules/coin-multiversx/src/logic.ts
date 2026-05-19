@@ -76,8 +76,6 @@ export const computeDelegationBalance = (delegations: MultiversXDelegation[]): B
   return totalDelegationBalance;
 };
 
-export const addPrefixToken = (tokenId: string) => `multiversx/esdt/${tokenId}`;
-
 export const extractTokenId = (tokenId: string) => {
   return tokenId.split("/")[2];
 };

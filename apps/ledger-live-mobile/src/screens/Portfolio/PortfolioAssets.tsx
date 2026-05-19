@@ -6,11 +6,10 @@ import { GestureResponderEvent } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Button, IconsLegacy, Box } from "@ledgerhq/native-ui";
 import { useDistribution } from "~/actions/general";
-import { track, TrackScreen } from "~/analytics";
+import { track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import {
   blacklistedTokenIdsSelector,
-  discreetModeSelector,
   selectedTabPortfolioAssetsSelector,
 } from "~/reducers/settings";
 import { setSelectedTabPortfolioAssets } from "~/actions/settings";
@@ -66,7 +65,6 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
     showEmptyAccounts: true,
     hideEmptyTokenAccount,
   });
-  const discreetMode = useSelector(discreetModeSelector);
 
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const blacklistedTokenIdsSet = useMemo(() => new Set(blacklistedTokenIds), [blacklistedTokenIds]);
@@ -141,14 +139,9 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
 
   return (
     <>
-      <TrackScreen
-        category="Wallet"
-        accountsLength={distribution.list && distribution.list.length}
-        discreet={discreetMode}
-      />
 
       {!shouldDisplayQuickActionCtas && (
-        <Box my={24}>
+        <Box pt={24}>
           <PortfolioQuickActionsBar />
         </Box>
       )}
@@ -156,7 +149,7 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
       {!isWallet40Enabled && <PortfolioPerpsEntryPoint />}
 
       {shouldDisplayMarketBanner && __DEV__ && (
-        <Box my={24}>
+        <Box pb={24}>
           <MarketBannerFeature />
         </Box>
       )}

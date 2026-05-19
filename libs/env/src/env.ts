@@ -52,6 +52,11 @@ const envDefinitions = {
     parser: boolParser,
     desc: "Show tracking overlays on the app UI",
   },
+  DEBUG_ASSET_DETAIL_FAB: {
+    def: false,
+    parser: boolParser,
+    desc: "Show floating button to open Asset Detail (BTC)",
+  },
   DEBUG_THEME: {
     def: false,
     parser: boolParser,
@@ -221,6 +226,16 @@ const envDefinitions = {
     parser: stringParser,
     def: "https://sui.coin.ledger.com",
     desc: "reverse proxy url for sui node",
+  },
+  API_SUI_GRAPHQL_PROXY: {
+    parser: stringParser,
+    def: "https://sui.coin.ledger.com/graphql",
+    desc: "reverse proxy url for sui graphql",
+  },
+  API_SUI_TESTNET_GRAPHQL_PROXY: {
+    parser: stringParser,
+    def: "https://graphql.testnet.sui.io/graphql",
+    desc: "GraphQL endpoint url for sui testnet",
   },
   SUI_ENABLE_TOKENS: {
     parser: boolParser,

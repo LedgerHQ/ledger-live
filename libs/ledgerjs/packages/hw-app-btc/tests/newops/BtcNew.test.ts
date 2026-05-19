@@ -59,20 +59,20 @@ import {
 } from "./testtx";
 
 test("getWalletPublicKey p2pkh", async () => {
-  await testGetWalletPublicKey("m/44'/1'/0'", "pkh(@0)");
-  await testGetWalletPublicKey("m/44'/0'/17'", "pkh(@0)");
+  await testGetWalletPublicKey("m/44'/1'/0'", "pkh(@0/**)");
+  await testGetWalletPublicKey("m/44'/0'/17'", "pkh(@0/**)");
 });
 test("getWalletPublicKey p2wpkh", async () => {
-  await testGetWalletPublicKey("m/84'/1'/0'", "wpkh(@0)");
-  await testGetWalletPublicKey("m/84'/0'/17'", "wpkh(@0)");
+  await testGetWalletPublicKey("m/84'/1'/0'", "wpkh(@0/**)");
+  await testGetWalletPublicKey("m/84'/0'/17'", "wpkh(@0/**)");
 });
 test("getWalletPublicKey wrapped p2wpkh", async () => {
-  await testGetWalletPublicKey("m/49'/1'/0'", "sh(wpkh(@0))");
-  await testGetWalletPublicKey("m/49'/0'/17'", "sh(wpkh(@0))");
+  await testGetWalletPublicKey("m/49'/1'/0'", "sh(wpkh(@0/**))");
+  await testGetWalletPublicKey("m/49'/0'/17'", "sh(wpkh(@0/**))");
 });
 test("getWalletPublicKey p2tr", async () => {
-  await testGetWalletPublicKey("m/86'/1'/0'", "tr(@0)");
-  await testGetWalletPublicKey("m/86'/0'/17'", "tr(@0)");
+  await testGetWalletPublicKey("m/86'/1'/0'", "tr(@0/**)");
+  await testGetWalletPublicKey("m/86'/0'/17'", "tr(@0/**)");
 });
 
 test("getWalletXpub normal path", async () => {
@@ -197,7 +197,7 @@ async function testGetWalletPublicKey(
     "tpubDHcN44A4UHqdHJZwBxgTbu8Cy87ZrZkN8tQnmJGhcijHqe4rztuvGcD4wo36XSviLmiqL5fUbDnekYaQ7LzAnaqauBb9RsyahsTTFHdeJGd";
   client.mockGetPubkeyResponse(accountPath, accountXpub);
   client.mockGetPubkeyResponse(path, keyXpub);
-  const key = `[${masterFingerprint.toString("hex")}${accountPath.substring(1)}]${accountXpub}/**`;
+  const key = `[${masterFingerprint.toString("hex")}${accountPath.substring(1)}]${accountXpub}`;
   client.mockGetWalletAddressResponse(
     new WalletPolicy(expectedDescriptorTemplate, key),
     0,

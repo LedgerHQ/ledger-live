@@ -9,7 +9,7 @@ import {
   Mailbox,
   PenEdit,
   Snow,
-  Star,
+  StarFill,
   Unlink,
 } from "@ledgerhq/lumen-ui-react/symbols";
 import { Spinner } from "@ledgerhq/lumen-ui-react";
@@ -34,7 +34,7 @@ const symbolMap: Record<TransactionalDotSymbol, TransactionalDotIcon> = {
   Mailbox,
   PenEdit,
   Snow,
-  Star,
+  StarFill,
   Unlink,
   Spinner,
 };

@@ -22,8 +22,10 @@ import {
   type SwapQuoteLine,
   type SwapQuoteProviderError,
 } from "./commands/swap/quote-shared";
+import { formatSwapStatusHuman, type SwapStatusLine } from "./commands/swap/status-shared";
 import type { Balance, Operation, DiscoveredAccount, SendEvent } from "./wallet/models";
 import type { SessionEntry } from "./session/session-store";
+import type { SwapPayloadResponse } from "@ledgerhq/live-common/exchange/swap/types";
 
 // ---------------------------------------------------------------------------
 // Context & interface
@@ -66,8 +68,16 @@ export interface CommandOutput {
 
   balances(items: Balance[]): Promise<void>;
   operations(items: Operation[], currencyId: string, nextCursor?: string): Promise<void>;
-  /** Output a receive / fresh address. */
-  address(addr: string): void;
+  /** Output a receive / fresh address. `verified` indicates whether the device attested it. */
+  address(addr: string, verified: boolean): void;
+  /**
+   * Surface the derived address before device confirmation so the user (or an agent
+   * watching the stream) can compare it with what the Ledger displays.
+   * Human: stderr line. Json: NDJSON `pre-verify-address` event.
+   */
+  preVerifyAddress(addr: string): void;
+  /** Output the result of a successful device genuine check. */
+  genuineCheck(): void;
 
   /** Stream one discovered account (human: print immediately; json: buffer). */
   discoveredAccount(d: DiscoveredAccount): void;
@@ -90,6 +100,8 @@ export interface CommandOutput {
 
   /** Print swap quotes (human: formatted blocks; json: success envelope with `quotes`). */
   swapQuotes(args: { quotes: SwapQuoteLine[]; partialErrors: SwapQuoteProviderError[] }): void;
+  /** Print swap status result. */
+  swapStatus(status: SwapStatusLine): void;
 
   /**
    * No quotes returned while providers reported errors. Json: error envelope + exit 1.
@@ -105,6 +117,28 @@ export interface CommandOutput {
    * WalletCliDeviceError handling in run()/fail().
    */
   deviceState(state: DeviceState): void;
+  /** Print one progress line for swap execute long-running steps. */
+  swapExecuteProgress(line: string): void;
+  /** Print payload-only swap execute result. */
+  swapExecutePayloadResult(args: {
+    provider: string;
+    amount: string;
+    transactionId?: string;
+    payload: SwapPayloadResponse;
+  }): void;
+  /** Print full-pipeline swap execute result. */
+  swapExecuteFullResult(args: {
+    from: string;
+    to: string;
+    provider: string;
+    amount: string;
+    transactionId: string;
+    payload: SwapPayloadResponse;
+    operationHash?: string;
+    swapId?: string;
+    amountExpectedTo?: string;
+    magnitudeAwareRate?: string;
+  }): void;
 }
 
 // ---------------------------------------------------------------------------
@@ -118,7 +152,7 @@ class HumanCommandOutput implements CommandOutput {
 
   spin(text: string): Spinner | null {
     if (!isInteractive()) {
-      process.stderr.write(text + "\n");
+      writeStderr(text + "\n");
       return null;
     }
     const s = spinner(text);
@@ -172,10 +206,10 @@ class HumanCommandOutput implements CommandOutput {
     if (isInteractive() && this._activeSpin) {
       this._activeSpin.error(displayText);
     } else {
-      process.stderr.write(displayText + "\n");
+      writeStderr(displayText + "\n");
     }
     this._activeSpin = null;
-    process.exit(err.exitCode);
+    throw new CliProcessExitError(err.exitCode);
   }
 
   async balances(items: Balance[]): Promise<void> {
@@ -194,8 +228,25 @@ class HumanCommandOutput implements CommandOutput {
     }
   }
 
-  address(addr: string): void {
+  address(addr: string, verified: boolean): void {
+    if (!verified) {
+      writeStderr("Warning: address was NOT verified on device\n");
+    }
     writeStdout(addr);
+  }
+
+  preVerifyAddress(addr: string): void {
+    writeStderr(addr + "\n");
+    writeStderr("Compare the address above with what's shown on your Ledger…\n");
+  }
+
+  genuineCheck(): void {
+    if (this._activeSpin?.isSpinning) {
+      this._activeSpin.success("Device is genuine");
+      this._activeSpin = null;
+      return;
+    }
+    writeStdout("Device is genuine");
   }
 
   discoveredAccount(d: DiscoveredAccount): void {
@@ -296,9 +347,9 @@ class HumanCommandOutput implements CommandOutput {
       return;
     }
 
-    process.stderr.write(message + "\n");
+    writeStderr(message + "\n");
     for (const e of errors) {
-      process.stderr.write(this._renderSwapProviderError(e) + "\n");
+      writeStderr(this._renderSwapProviderError(e) + "\n");
     }
   }
 
@@ -313,6 +364,10 @@ class HumanCommandOutput implements CommandOutput {
         false,
       );
     }
+  }
+
+  swapStatus(status: SwapStatusLine): void {
+    writeStdout(formatSwapStatusHuman(status));
   }
 
   swapQuotesUnavailable(message: string, errors: SwapQuoteProviderError[]): never {
@@ -334,7 +389,55 @@ class HumanCommandOutput implements CommandOutput {
         this.spin(text);
       }
     } else {
-      process.stderr.write(text + "\n");
+      writeStderr(text + "\n");
+    }
+  }
+  swapExecuteProgress(line: string): void {
+    if (this._activeSpin?.isSpinning) {
+      this._activeSpin.success(line);
+      this._activeSpin = null;
+      return;
+    }
+    writeStderr(`${line}\n`);
+  }
+
+  swapExecutePayloadResult(args: {
+    provider: string;
+    amount: string;
+    transactionId?: string;
+    payload: SwapPayloadResponse;
+  }): void {
+    writeStdout(`${colors.bold("Provider:")} ${args.provider}\n`);
+    writeStdout(`${colors.bold("Amount:")} ${args.amount}\n`);
+    if (args.transactionId) {
+      writeStdout(`${colors.bold("Device transaction id:")} ${args.transactionId}\n`);
+    }
+    writeStdout(`${colors.bold("Swap ID:")} ${args.payload.swapId ?? "(none)"}\n`);
+    writeStdout(`${colors.bold("Payin address:")} ${args.payload.payinAddress}\n`);
+  }
+
+  swapExecuteFullResult(args: {
+    from: string;
+    to: string;
+    provider: string;
+    amount: string;
+    transactionId: string;
+    payload: SwapPayloadResponse;
+    operationHash?: string;
+    swapId?: string;
+    amountExpectedTo?: string;
+    magnitudeAwareRate?: string;
+  }): void {
+    writeStdout(`${colors.bold("From:")} ${args.from}\n`);
+    writeStdout(`${colors.bold("To:")} ${args.to}\n`);
+    this.swapExecutePayloadResult(args);
+    if (args.amountExpectedTo) {
+      writeStdout(
+        `${colors.bold("Amount expected to (decoded payload):")} ${args.amountExpectedTo}\n`,
+      );
+    }
+    if (args.operationHash) {
+      writeStdout(`${colors.bold("Operation hash:")} ${args.operationHash}\n`);
     }
   }
 }
@@ -445,8 +548,28 @@ class JsonCommandOutput implements CommandOutput {
     this._writeNdjson(this._envelope({ operations, nextCursor }));
   }
 
-  address(addr: string): void {
-    this._writeNdjson(this._envelope({ address: addr }));
+  address(addr: string, verified: boolean): void {
+    this._writeNdjson(
+      this._envelope({
+        address: addr,
+        verified,
+        source: verified ? "device" : "software-derivation",
+      }),
+    );
+  }
+
+  preVerifyAddress(addr: string): void {
+    this._writeNdjson({
+      type: "pre-verify-address",
+      command: this._ctx.command,
+      network: this._ctx.network,
+      ...(this._ctx.account == null ? {} : { account: this._ctx.account }),
+      address: addr,
+    });
+  }
+
+  genuineCheck(): void {
+    this._writeNdjson(this._envelope({ genuine: true }));
   }
 
   discoveredAccount(d: DiscoveredAccount): void {
@@ -507,9 +630,61 @@ class JsonCommandOutput implements CommandOutput {
     );
   }
 
+  swapStatus(status: SwapStatusLine): void {
+    this._writeNdjson(this._envelope(status));
+  }
+
   swapQuotesUnavailable(message: string, errors: SwapQuoteProviderError[]): never {
     this._writeNdjson(this._swapQuoteErrorEnvelope(message, errors));
     throw new CliProcessExitError(1);
+  }
+
+  swapExecuteProgress(_line: string): void {
+    // Keep JSON mode stdout clean and machine-readable.
+  }
+
+  swapExecutePayloadResult(args: {
+    provider: string;
+    amount: string;
+    transactionId?: string;
+    payload: SwapPayloadResponse;
+  }): void {
+    this._writeNdjson(
+      this._envelope({
+        provider: args.provider,
+        amount: args.amount,
+        transactionId: args.transactionId,
+        payload: args.payload,
+      }),
+    );
+  }
+
+  swapExecuteFullResult(args: {
+    from: string;
+    to: string;
+    provider: string;
+    amount: string;
+    transactionId: string;
+    payload: SwapPayloadResponse;
+    operationHash?: string;
+    swapId?: string;
+    amountExpectedTo?: string;
+    magnitudeAwareRate?: string;
+  }): void {
+    this._writeNdjson(
+      this._envelope({
+        from: args.from,
+        to: args.to,
+        provider: args.provider,
+        amount: args.amount,
+        transactionId: args.transactionId,
+        payload: args.payload,
+        operationHash: args.operationHash,
+        swapId: args.swapId,
+        amountExpectedTo: args.amountExpectedTo,
+        magnitudeAwareRate: args.magnitudeAwareRate,
+      }),
+    );
   }
 }
 

@@ -1,14 +1,18 @@
+import { accountsABI, electionABI, ierc20ABI, lockedGoldABI } from "@celo/abis";
 import { findSubAccountById } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { BigNumber } from "bignumber.js";
+import { encodeFunctionData } from "viem";
 import {
   CELO_STABLE_TOKENS,
-  getStableTokenEnum,
+  getStableTokenRegistryName,
   MAX_FEES_THRESHOLD_MULTIPLIER,
   MIN_GAS_FOR_NATIVE_TRANSFER,
+  ZERO_ADDRESS,
 } from "../constants";
 import { getPendingStakingOperationAmounts, getVote } from "../logic";
-import { celoKit } from "../network/sdk";
-import type { CeloAccount, RevokeTxo, Transaction } from "../types";
+import { celoGasPrice, getCeloClient } from "../network/client";
+import { getRegistryAddressFor } from "../network/registry";
+import type { CeloAccount, Transaction } from "../types";
 import buildTransaction from "./buildTransaction";
 import { valueToHex } from "./utils";
 
@@ -20,16 +24,25 @@ const getFeesForTransaction = async ({
   transaction: Transaction;
 }): Promise<BigNumber> => {
   const { amount, index } = transaction;
-  const kit = celoKit();
+  const client = getCeloClient();
 
   // A workaround - estimating gas throws an error if value > funds
   let value: BigNumber = new BigNumber(0);
 
   const pendingOperationAmounts = getPendingStakingOperationAmounts(account);
-  const lockedGold = await kit.contracts.getLockedGold();
-  const nonvotingLockedGoldBalance = await lockedGold.getAccountNonvotingLockedGold(
-    account.freshAddress,
+  const lockedGoldAddress = await getRegistryAddressFor("LockedGold");
+
+  const nonvotingLockedGoldBalance = new BigNumber(
+    (
+      await client.readContract({
+        address: lockedGoldAddress,
+        abi: lockedGoldABI,
+        functionName: "getAccountNonvotingLockedGold",
+        args: [account.freshAddress as `0x${string}`],
+      })
+    ).toString(),
   );
+
   // Deduct pending vote operations from the non-voting locked balance
   const totalNonVotingLockedBalance = nonvotingLockedGoldBalance.minus(
     pendingOperationAmounts.vote,
@@ -39,13 +52,13 @@ const getFeesForTransaction = async ({
 
   const tokenAccount = findSubAccountById(account, transaction.subAccountId || "");
   const isTokenTransaction = tokenAccount?.type === "TokenAccount";
-  const maxPriorityFeePerGas = await kit.connection.getMaxPriorityFeePerGas();
 
+  const maxPriorityFeePerGas = BigInt(await client.estimateMaxPriorityFeePerGas());
   // Align with @celo/connect setFeeMarketGas: used for final fee for all modes.
-  const gasPrice = await kit.connection.gasPrice(transaction.feeCurrency ?? undefined);
-  const maxFeePerGas =
-    ((BigInt(gasPrice) - BigInt(maxPriorityFeePerGas)) * BigInt(120)) / BigInt(100) +
-    BigInt(maxPriorityFeePerGas);
+  const gasPrice = await celoGasPrice(transaction.feeCurrency ?? undefined);
+  const baseFeePerGas =
+    gasPrice > maxPriorityFeePerGas ? gasPrice - maxPriorityFeePerGas : BigInt(0);
+  const maxFeePerGas = (baseFeePerGas * BigInt(120)) / BigInt(100) + maxPriorityFeePerGas;
   const maxFeePerGasNumber = new BigNumber(maxFeePerGas.toString());
 
   if ((transaction.mode === "unlock" || transaction.mode === "vote") && account.celoResources) {
@@ -64,92 +77,148 @@ const getFeesForTransaction = async ({
   }
 
   let gas: number | null = null;
+
   if (transaction.mode === "lock") {
-    gas = await lockedGold
-      .lock()
-      .txo.estimateGas({ from: account.freshAddress, value: valueToHex(value) });
-  } else if (transaction.mode === "unlock") {
-    const lockedGold = await kit.contracts.getLockedGold();
-
-    gas = await lockedGold.unlock(value).txo.estimateGas({ from: account.freshAddress });
-  } else if (transaction.mode === "withdraw") {
-    const lockedGold = await kit.contracts.getLockedGold();
-
-    gas = await lockedGold.withdraw(index || 0).txo.estimateGas({ from: account.freshAddress });
-  } else if (transaction.mode === "vote") {
-    const election = await kit.contracts.getElection();
-
-    const vote = await election.vote(transaction.recipient, new BigNumber(value));
-
-    gas = await vote.txo.estimateGas({ from: account.freshAddress });
-  } else if (transaction.mode === "revoke") {
-    const election = await kit.contracts.getElection();
-    const accounts = await kit.contracts.getAccounts();
-    const voteSignerAccount = await accounts.voteSignerToAccount(account.freshAddress);
-    const revokeTxs = await election.revoke(
-      voteSignerAccount,
-      transaction.recipient,
-      new BigNumber(value),
+    const data = encodeFunctionData({ abi: lockedGoldABI, functionName: "lock" });
+    gas = Number(
+      await client.estimateGas({
+        account: account.freshAddress as `0x${string}`,
+        to: lockedGoldAddress,
+        data,
+        value: BigInt(valueToHex(value)),
+      }),
     );
-
-    const revokeTx = revokeTxs.find(transactionObject => {
-      return (
-        (transactionObject.txo as unknown as RevokeTxo)._method.name ===
-        (transaction.index === 0 ? "revokePending" : "revokeActive")
-      );
+  } else if (transaction.mode === "unlock") {
+    const data = encodeFunctionData({
+      abi: lockedGoldABI,
+      functionName: "unlock",
+      args: [BigInt(value.toFixed())],
     });
-    if (!revokeTx) return new BigNumber(0);
+    gas = Number(
+      await client.estimateGas({
+        account: account.freshAddress as `0x${string}`,
+        to: lockedGoldAddress,
+        data,
+      }),
+    );
+  } else if (transaction.mode === "withdraw") {
+    const data = encodeFunctionData({
+      abi: lockedGoldABI,
+      functionName: "withdraw",
+      args: [BigInt(index || 0)],
+    });
+    gas = Number(
+      await client.estimateGas({
+        account: account.freshAddress as `0x${string}`,
+        to: lockedGoldAddress,
+        data,
+      }),
+    );
+  } else if (transaction.mode === "vote") {
+    const electionAddress = await getRegistryAddressFor("Election");
+    const data = encodeFunctionData({
+      abi: electionABI,
+      functionName: "vote",
+      args: [
+        transaction.recipient as `0x${string}`,
+        BigInt(value.toFixed()),
+        ZERO_ADDRESS,
+        ZERO_ADDRESS,
+      ],
+    });
+    try {
+      gas = Number(
+        await client.estimateGas({
+          account: account.freshAddress as `0x${string}`,
+          to: electionAddress,
+          data,
+        }),
+      );
+    } catch {
+      gas = MIN_GAS_FOR_NATIVE_TRANSFER * MAX_FEES_THRESHOLD_MULTIPLIER;
+    }
+  } else if (transaction.mode === "revoke") {
+    const electionAddress = await getRegistryAddressFor("Election");
+    const isPending = transaction.index === 0;
+    const revokeArgs = [
+      transaction.recipient as `0x${string}`,
+      BigInt(value.toFixed()),
+      ZERO_ADDRESS,
+      ZERO_ADDRESS,
+      BigInt(0),
+    ] as const;
+    const data = isPending
+      ? encodeFunctionData({ abi: electionABI, functionName: "revokePending", args: revokeArgs })
+      : encodeFunctionData({ abi: electionABI, functionName: "revokeActive", args: revokeArgs });
 
-    gas = await revokeTx.txo.estimateGas({ from: account.freshAddress });
+    try {
+      gas = Number(
+        await client.estimateGas({
+          account: account.freshAddress as `0x${string}`,
+          to: electionAddress,
+          data,
+        }),
+      );
+    } catch {
+      return new BigNumber(0);
+    }
   } else if (transaction.mode === "activate") {
-    const election = await kit.contracts.getElection();
-    const accounts = await kit.contracts.getAccounts();
-    const voteSignerAccount = await accounts.voteSignerToAccount(account.freshAddress);
-
-    const activates = await election.activate(voteSignerAccount);
-
-    const activate = activates.find(a => a.txo.arguments[0] === transaction.recipient);
-    if (!activate) return new BigNumber(0);
-
-    gas = await activate.txo.estimateGas({ from: account.freshAddress });
+    const electionAddress = await getRegistryAddressFor("Election");
+    const data = encodeFunctionData({
+      abi: electionABI,
+      functionName: "activate",
+      args: [transaction.recipient as `0x${string}`],
+    });
+    try {
+      gas = Number(
+        await client.estimateGas({
+          account: account.freshAddress as `0x${string}`,
+          to: electionAddress,
+          data,
+        }),
+      );
+    } catch {
+      return new BigNumber(0);
+    }
   } else if (transaction.mode === "register") {
-    const accounts = await kit.contracts.getAccounts();
-
-    gas = await accounts.createAccount().txo.estimateGas({ from: account.freshAddress });
+    const accountsAddress = await getRegistryAddressFor("Accounts");
+    const data = encodeFunctionData({ abi: accountsABI, functionName: "createAccount" });
+    gas = Number(
+      await client.estimateGas({
+        account: account.freshAddress as `0x${string}`,
+        to: accountsAddress,
+        data,
+      }),
+    );
   } else if (isTokenTransaction) {
     value = transaction.useAllAmount ? tokenAccount.balance : transaction.amount;
 
-    const block = await kit.connection.web3.eth.getBlock("latest");
-    const baseFee = BigInt(block.baseFeePerGas || maxPriorityFeePerGas);
-    const maxFeePerGas = baseFee + BigInt(maxPriorityFeePerGas);
+    const block = await client.getBlock({ blockTag: "latest" });
+    const baseFee = block.baseFeePerGas ?? maxPriorityFeePerGas;
+    const tokenMaxFeePerGas = baseFee + maxPriorityFeePerGas;
 
-    let token;
+    let tokenAddress: `0x${string}`;
     if (CELO_STABLE_TOKENS.includes(tokenAccount.token.id)) {
-      token = await kit.contracts.getStableToken(getStableTokenEnum(tokenAccount.token.id));
+      tokenAddress = await getRegistryAddressFor(getStableTokenRegistryName(tokenAccount.token.id));
     } else {
-      token = await kit.contracts.getErc20(tokenAccount.token.contractAddress);
+      tokenAddress = tokenAccount.token.contractAddress as `0x${string}`;
     }
 
-    const celoTransaction = {
-      from: account.freshAddress,
-      to: transaction.recipient,
-      data: token.transfer(transaction.recipient, value.toFixed()).txo.encodeABI(),
-      maxFeePerGas: maxFeePerGas.toString(),
-      maxPriorityFeePerGas,
-      value: valueToHex(value),
-      ...(transaction.feeCurrency
-        ? {
-            feeCurrency: transaction.feeCurrency,
-          }
-        : {}),
-    };
+    const data = encodeFunctionData({
+      abi: ierc20ABI,
+      functionName: "transfer",
+      args: [transaction.recipient as `0x${string}`, BigInt(value.toFixed())],
+    });
 
-    gas = Number(
-      (
-        (await kit.connection.estimateGasWithInflationFactor(celoTransaction)) *
-        MAX_FEES_THRESHOLD_MULTIPLIER
-      ).toFixed(),
-    );
+    const estimatedGas = await client.estimateGas({
+      account: account.freshAddress as `0x${string}`,
+      to: tokenAddress,
+      data,
+      maxFeePerGas: tokenMaxFeePerGas,
+      maxPriorityFeePerGas,
+    });
+
+    gas = Number(Math.ceil(Number(estimatedGas) * MAX_FEES_THRESHOLD_MULTIPLIER).toString());
   } else {
     // Send: use estimated gas, or fallback so prepareTransaction succeeds and user can edit amount.
     try {

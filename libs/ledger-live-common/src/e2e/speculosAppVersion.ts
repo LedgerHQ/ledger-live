@@ -98,10 +98,10 @@ export async function getDeviceFirmwareVersion(device: DeviceModelId): Promise<s
     );
   }
 
-  // Nano S uses latest firmware; other devices use n-1.
-  const sortedByIdDesc = [...providerFirmwares].sort((a, b) => b.id - a.id);
-  const firmwareIndex = device === DeviceModelId.nanoS ? 0 : 1;
-  const firmware = sortedByIdDesc[firmwareIndex] ?? sortedByIdDesc[0]!;
+  // Latest is chosen by highest numeric ID
+  const firmware = providerFirmwares.reduce((latest, current) =>
+    current.id > latest.id ? current : latest,
+  );
 
   firmwareVersionCache.set(device, firmware.version);
   process.env.SPECULOS_FIRMWARE_VERSION = firmware.version;

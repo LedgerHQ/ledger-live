@@ -42,13 +42,11 @@ import { usesEncodedAccountIdFormat } from "@ledgerhq/live-common/wallet-api/uti
 import { updateAccountWithUpdater } from "~/actions/accounts";
 import { validateInfoDialogParams } from "@ledgerhq/live-common/wallet-api/validation/validateInfoDialogParams";
 import type { InfoDialogParams } from "@ledgerhq/live-common/wallet-api/validation/validateInfoDialogParams";
-import {
-  makeSetEarnInfoBottomSheetAction,
-  makeSetEarnMenuBottomSheetAction,
-} from "~/actions/earn";
+import { makeSetEarnInfoBottomSheetAction, makeSetEarnMenuBottomSheetAction } from "~/actions/earn";
 import { createOpenActionDialogHandler } from "./actionDialogStore";
 import type { Dispatch } from "redux";
-import { useDispatch } from "~/context/hooks";
+import { useDispatch, useSelector } from "~/context/hooks";
+import { counterValueCurrencySelector, localeSelector } from "~/reducers/settings";
 import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 
@@ -81,6 +79,8 @@ export function useCustomExchangeHandlers({
   const dispatch = useDispatch();
   const { isEnabled } = useWalletFeaturesConfig("mobile");
   const flags = useMemo(() => ({ wallet40Ux: isEnabled }), [isEnabled]);
+  const locale = useSelector(localeSelector);
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const { state: liveAppRegistryState } = useRemoteLiveAppContext();
   const { state: localLiveAppState } = useLocalLiveAppContext();
 
@@ -305,6 +305,8 @@ export function useCustomExchangeHandlers({
         tracking,
         manifest,
         flags,
+        locale,
+        counterValueCurrency: counterValueCurrency.ticker,
         uiHooks: {
           "custom.exchange.start": ({ exchangeParams, onSuccess, onCancel }) => {
             const promiseId = `start-${Date.now()}`;
@@ -497,6 +499,8 @@ export function useCustomExchangeHandlers({
     onCompleteResult,
     handleLoaderDrawer,
     flags,
+    locale,
+    counterValueCurrency,
     sendAppReady,
     syncAccountById,
     tracking,
@@ -518,7 +522,6 @@ export function createOpenInfoBottomSheetHandler(dispatch: Dispatch) {
     dispatch(makeSetEarnInfoBottomSheetAction(validated));
   };
 }
-
 
 export function createOpenMenuBottomSheetHandler(dispatch: Dispatch) {
   return async (request: {

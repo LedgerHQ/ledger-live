@@ -7,7 +7,7 @@ import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { accountSelector } from "~/renderer/reducers/accounts";
 import type { State } from "~/renderer/reducers";
 import { aleoPrivateSyncProgress$ } from "@ledgerhq/live-common/families/aleo/privateSyncProgress";
-import { asyncScheduler, throttleTime } from "rxjs";
+import { asyncScheduler, from, mergeMap, throttleTime } from "rxjs";
 import { MANDATORY_SYNC_POLLING_DELAY, PROGRESS_THROTTLE_INTERVAL_MS } from "../constants";
 import { isAleoAccount } from "../modals/send/steps/utils";
 
@@ -104,8 +104,9 @@ export const useAleoPrivateSync = ({
 
     const currentAccountId = acc.id;
     let receivedFinalResult = false;
-    const bridge = getAccountBridge(acc);
-    const sub = bridge.sync(acc, { paginationConfig: {}, syncType: SYNC_TYPE_SHIELDED }).subscribe({
+    const sub = from(Promise.resolve(getAccountBridge(acc)))
+      .pipe(mergeMap(bridge => bridge.sync(acc, { paginationConfig: {}, syncType: SYNC_TYPE_SHIELDED })))
+      .subscribe({
       next: updater => {
         const currentAcc = accountRef.current;
         if (currentAcc?.type !== "Account" || !isAleoAccount(currentAcc)) return;

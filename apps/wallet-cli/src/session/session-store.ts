@@ -1,7 +1,7 @@
 import { YAML } from "bun";
 import { stateDir } from "@bunli/utils";
 import { join } from "node:path";
-import { mkdirSync } from "node:fs";
+import { chmodSync, mkdirSync, writeFileSync } from "node:fs";
 import { z } from "zod";
 import type { AccountDescriptorV1 } from "../shared/accountDescriptor";
 import { serializeV1 } from "../shared/accountDescriptor";
@@ -10,7 +10,10 @@ export const APP_NAME = "ledger-wallet-cli";
 const SESSION_FILE = "session.yaml";
 
 const SessionEntrySchema = z.object({
-  label: z.string(),
+  label: z
+    .string()
+    .min(1)
+    .regex(/^[A-Za-z0-9_-]+$/, "Session label must not contain ':' or other special characters"),
   descriptor: z.string(),
 });
 
@@ -45,10 +48,13 @@ async function readEntries(): Promise<SessionEntry[]> {
   return parseSessionData(content);
 }
 
-async function writeEntries(entries: SessionEntry[]): Promise<void> {
+function writeEntries(entries: SessionEntry[]): void {
   const dir = stateDir(APP_NAME);
-  mkdirSync(dir, { recursive: true });
-  await Bun.write(getSessionPath(), YAML.stringify({ accounts: entries }));
+  mkdirSync(dir, { recursive: true, mode: 0o700 });
+  chmodSync(dir, 0o700); // enforce on existing dirs created by prior versions
+  const sessionPath = getSessionPath();
+  writeFileSync(sessionPath, YAML.stringify({ accounts: entries }), { mode: 0o600 });
+  chmodSync(sessionPath, 0o600); // enforce on existing files created by prior versions
 }
 
 function derivationLabel(path: string): string {
@@ -122,7 +128,7 @@ export class Session {
     return added;
   }
 
-  async write(): Promise<void> {
-    await writeEntries(this.entries);
+  write(): void {
+    writeEntries(this.entries);
   }
 }

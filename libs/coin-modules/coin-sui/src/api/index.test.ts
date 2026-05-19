@@ -14,8 +14,9 @@ jest.mock("../config", () => ({
 }));
 
 const mockConfig: SuiCoinConfig = {
-  node: { url: "http://localhost:1234" },
+  node: { url: "http://localhost:1234", graphqlUrl: "http://localhost:1234/graphql" },
   status: { type: "active" },
+  features: { graphql: false },
 };
 
 describe("api/index", () => {

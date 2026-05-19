@@ -6,7 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { addKnownDevice } from "~/actions/ble";
+import { addKnownBleDevice } from "~/actions/ble";
 import TextInput from "~/components/TextInput";
 import Button from "~/components/Button";
 import NavigationScrollView from "~/components/NavigationScrollView";
@@ -34,7 +34,7 @@ const DebugHttpTransport = () => {
     if (!port) port = "8435";
 
     dispatch(
-      addKnownDevice({
+      addKnownBleDevice({
         id: `httpdebug|ws://${ip}:${port}`,
         name: name || address,
         modelId: model,

@@ -322,7 +322,13 @@ export async function listOperations(
   const nativeTrimmed = trimPartialLastLevel(nativePage.sliced, nativePage.full);
   const tokenTrimmed = trimPartialLastLevel(tokenPage.sliced, tokenPage.full);
 
-  const boundary = computeBoundary(nativeTrimmed.trimmed, tokenTrimmed.trimmed, sort);
+  // when both streams are exhausted (neither hit the page limit),
+  // we already have every op — alignment would silently discard ops
+  // beyond the boundary with no cursor to retrieve them later. Skip it.
+  const bothExhausted = !nativePage.full && !tokenPage.full;
+  const boundary = bothExhausted
+    ? undefined
+    : computeBoundary(nativeTrimmed.trimmed, tokenTrimmed.trimmed, sort);
 
   const nativeAligned =
     boundary === undefined
@@ -385,8 +391,7 @@ function resolveBlockHash(
   operation: ConvertibleOperation,
   stakingBlockHashes: Map<number, string>,
 ): string {
-  const fromOp =
-    typeof operation.block === "string" ? operation.block : operation.block?.hash;
+  const fromOp = typeof operation.block === "string" ? operation.block : operation.block?.hash;
   return fromOp ?? stakingBlockHashes.get(operation.level) ?? "";
 }
 
@@ -543,7 +548,8 @@ function convertTokenOperation(
     : 0n;
   const feesPayer = parent?.initiator?.address ?? parent?.sender?.address;
 
-  const assetReference = transfer.token.contract.address;
+  const tokenId = transfer.token.tokenId ?? "0";
+  const assetReference = `${transfer.token.contract.address}:${tokenId}`;
 
   return {
     id: `${transfer.hash}-token-${transfer.id}`,

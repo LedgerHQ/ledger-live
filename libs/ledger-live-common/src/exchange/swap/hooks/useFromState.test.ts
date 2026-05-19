@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import "../../../__tests__/test-helpers/dom-polyfill";
+import React from "react";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import { renderHook, act } from "@testing-library/react";
@@ -12,9 +13,11 @@ import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account
 import { genAccount } from "../../../mock/account";
 import { useFromState } from "./useFromState";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { setSupportedCurrencies } from "../../../currencies";
 
 const BTC = getCryptoCurrencyById("bitcoin");
 const ETH = getCryptoCurrencyById("ethereum");
+setSupportedCurrencies(["bitcoin", "ethereum"]);
 LiveConfig.setConfig({
   config_currency_bitcoin: {
     type: "object",
@@ -55,28 +58,40 @@ const mockedAccounts: Account[] = [
 const mockedTokenAccount = genTokenAccount(1, mockedAccounts[1], USDT);
 const allAccounts = [...mockedAccounts, mockedTokenAccount] as Account[];
 
+const suspenseWrapper = ({ children }: { children: React.ReactNode }) =>
+  React.createElement(React.Suspense, { fallback: null }, children);
+
+// Settle useBridgeTransaction's async init inside a Suspense boundary.
+// Four microtask ticks: one for the async makeInit return, three for React Suspense wakeUp.
+async function initHook<T>(fn: () => T) {
+  let result!: { current: T };
+  await act(async () => {
+    ({ result } = renderHook(fn, { wrapper: suspenseWrapper }));
+    await Promise.resolve();
+    await Promise.resolve();
+    await Promise.resolve();
+    await Promise.resolve();
+  });
+  return result;
+}
+
 describe("useFromState", () => {
-  test("call hook without arguments", () => {
-    const { result } = renderHook(() => {
-      const bridgeTransaction = useBridgeTransaction();
-      return useFromState({
-        bridgeTransaction,
-      });
+  test("call hook without arguments", async () => {
+    const result = await initHook(() => {
+      const bridgeTransaction = useBridgeTransaction(null);
+      return useFromState({ bridgeTransaction });
     });
     expect(result.current).toMatchObject({
       fromState: selectorStateDefaultValues,
     });
   });
 
-  test("call hook with default currency", () => {
+  test("call hook with default currency", async () => {
     const defaultCurrency = BTC;
 
-    const { result } = renderHook(() => {
-      const bridgeTransaction = useBridgeTransaction();
-      return useFromState({
-        defaultCurrency,
-        bridgeTransaction,
-      });
+    const result = await initHook(() => {
+      const bridgeTransaction = useBridgeTransaction(null);
+      return useFromState({ defaultCurrency, bridgeTransaction });
     });
     expect(result.current).toMatchObject({
       fromState: {
@@ -86,17 +101,13 @@ describe("useFromState", () => {
     });
   });
 
-  test("call hook with default accounts", () => {
+  test("call hook with default accounts", async () => {
     const defaultAccount = mockedTokenAccount;
     const defaultParentAccount = mockedAccounts[1];
 
-    const { result } = renderHook(() => {
-      const bridgeTransaction = useBridgeTransaction();
-      return useFromState({
-        defaultAccount,
-        defaultParentAccount,
-        bridgeTransaction,
-      });
+    const result = await initHook(() => {
+      const bridgeTransaction = useBridgeTransaction(null);
+      return useFromState({ defaultAccount, defaultParentAccount, bridgeTransaction });
     });
     expect(result.current).toMatchObject({
       fromState: {
@@ -107,14 +118,11 @@ describe("useFromState", () => {
     });
   });
 
-  test("call hook and set the account and all the related properties", () => {
-    const { result } = renderHook(() => {
-      const bridgeTransaction = useBridgeTransaction();
+  test("call hook and set the account and all the related properties", async () => {
+    const result = await initHook(() => {
+      const bridgeTransaction = useBridgeTransaction(null);
       return {
-        ...useFromState({
-          accounts: allAccounts,
-          bridgeTransaction,
-        }),
+        ...useFromState({ accounts: allAccounts, bridgeTransaction }),
         bridgeTransaction,
       };
     });
@@ -123,8 +131,11 @@ describe("useFromState", () => {
       fromState: selectorStateDefaultValues,
     });
 
-    act(() => {
+    // setAccount is async (awaits getAccountBridge); use await act to flush the microtask.
+    await act(async () => {
       result.current.setFromAccount(mockedTokenAccount);
+      await Promise.resolve();
+      await Promise.resolve();
     });
 
     expect(result.current).toMatchObject({
@@ -142,13 +153,10 @@ describe("useFromState", () => {
     });
   });
 
-  test("call hook and set the amount after 400ms", () => {
-    const { result } = renderHook(() => {
-      const bridgeTransaction = useBridgeTransaction();
-      return useFromState({
-        accounts: allAccounts,
-        bridgeTransaction,
-      });
+  test("call hook and set the amount after 400ms", async () => {
+    const result = await initHook(() => {
+      const bridgeTransaction = useBridgeTransaction(null);
+      return useFromState({ accounts: allAccounts, bridgeTransaction });
     });
 
     expect(result.current).toMatchObject({
@@ -178,13 +186,10 @@ describe("useFromState", () => {
     });
   });
 
-  test("call hook and set the the most recent amount input after 400ms", () => {
-    const { result } = renderHook(() => {
-      const bridgeTransaction = useBridgeTransaction();
-      return useFromState({
-        accounts: allAccounts,
-        bridgeTransaction,
-      });
+  test("call hook and set the the most recent amount input after 400ms", async () => {
+    const result = await initHook(() => {
+      const bridgeTransaction = useBridgeTransaction(null);
+      return useFromState({ accounts: allAccounts, bridgeTransaction });
     });
 
     expect(result.current).toMatchObject({

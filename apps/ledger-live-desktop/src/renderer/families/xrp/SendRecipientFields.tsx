@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { BigNumber } from "bignumber.js";
 import { Account } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/families/xrp/types";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import MemoTagField from "LLD/features/MemoTag/components/MemoTagField";
 type Props = {
   onChange: (a: Transaction) => void;
@@ -12,9 +12,9 @@ type Props = {
 };
 const uint32maxPlus1 = BigNumber(2).pow(32);
 const TagField = ({ onChange, account, transaction, autoFocus }: Props) => {
+  const bridge = useAccountBridge<Transaction>(account);
   const onChangeTag = useCallback(
     (str: string) => {
-      const bridge = getAccountBridge(account);
       const tag = BigNumber(str.replace(/[^0-9]/g, ""));
       const patch = {
         tag:
@@ -30,7 +30,7 @@ const TagField = ({ onChange, account, transaction, autoFocus }: Props) => {
       };
       onChange(bridge.updateTransaction(transaction, patch));
     },
-    [onChange, account, transaction],
+    [bridge, onChange, transaction],
   );
   return (
     <MemoTagField

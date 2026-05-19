@@ -35,6 +35,10 @@ import { useStake } from "LLD/hooks/useStake";
 import { StakeFlowProps } from "~/renderer/screens/stake";
 import { useNavigate } from "react-router";
 import { walletSelector } from "~/renderer/reducers/wallet";
+import {
+  counterValueCurrencySelector,
+  localeSelector,
+} from "~/renderer/reducers/settings";
 import { objectToURLSearchParams } from "@ledgerhq/live-common/wallet-api/helpers";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
@@ -52,6 +56,8 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
   const navigate = useNavigate();
   const { isEnabled } = useWalletFeaturesConfig("desktop");
   const walletState = useSelector(walletSelector);
+  const locale = useSelector(localeSelector);
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const { state: liveAppRegistryState } = useRemoteLiveAppContext();
   const { state: localLiveAppState } = useLocalLiveAppContext();
   const syncAccountsById = useSyncAccountsById();
@@ -171,6 +177,8 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
         tracking,
         manifest,
         flags,
+        locale,
+        counterValueCurrency: counterValueCurrency.ticker,
         uiHooks: {
           "custom.exchange.start": ({ exchangeParams, onSuccess, onCancel }) => {
             dispatch(
@@ -392,6 +400,8 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"], account
     tracking,
     manifest,
     flags,
+    locale,
+    counterValueCurrency,
     dispatch,
     setDrawer,
     navigate,

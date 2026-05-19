@@ -3,7 +3,10 @@ import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge"
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useValidatorGroups } from "@ledgerhq/live-common/families/celo/react";
-import { CeloValidatorGroup, Transaction as CeloTransaction } from "@ledgerhq/live-common/families/celo/types";
+import {
+  CeloValidatorGroup,
+  Transaction as CeloTransaction,
+} from "@ledgerhq/live-common/families/celo/types";
 import { defaultValidatorGroupAddress } from "@ledgerhq/live-common/families/celo/logic";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Text, Icons } from "@ledgerhq/native-ui";
@@ -56,7 +59,7 @@ export default function VoteSummary({ navigation, route }: Props) {
   }, [validators, validator]);
 
   const { transaction, updateTransaction, setTransaction, status, bridgePending, bridgeError } =
-    useBridgeTransaction(() => {
+    useBridgeTransaction(bridge, () => {
       const tx = route.params.transaction;
 
       if (!tx) {

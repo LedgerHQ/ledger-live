@@ -73,26 +73,26 @@ describe("accountTypeResolver", () => {
   describe("createAccountTypeFromScriptType", () => {
     it("returns account type with wpkh template for p2wpkh", () => {
       const accountType = createAccountTypeFromScriptType("p2wpkh", psbt, masterFp);
-      expect(accountType.getDescriptorTemplate()).toBe("wpkh(@0)");
+      expect(accountType.getDescriptorTemplate()).toBe("wpkh(@0/**)");
     });
 
     it("returns account type with tr template for p2tr", () => {
       const accountType = createAccountTypeFromScriptType("p2tr", psbt, masterFp);
-      expect(accountType.getDescriptorTemplate()).toBe("tr(@0)");
+      expect(accountType.getDescriptorTemplate()).toBe("tr(@0/**)");
     });
 
     it("returns account type with sh(wpkh) template for p2sh and p2sh-p2wpkh", () => {
       expect(createAccountTypeFromScriptType("p2sh", psbt, masterFp).getDescriptorTemplate()).toBe(
-        "sh(wpkh(@0))",
+        "sh(wpkh(@0/**))",
       );
       expect(
         createAccountTypeFromScriptType("p2sh-p2wpkh", psbt, masterFp).getDescriptorTemplate(),
-      ).toBe("sh(wpkh(@0))");
+      ).toBe("sh(wpkh(@0/**))");
     });
 
     it("returns account type with pkh template for p2pkh", () => {
       const accountType = createAccountTypeFromScriptType("p2pkh", psbt, masterFp);
-      expect(accountType.getDescriptorTemplate()).toBe("pkh(@0)");
+      expect(accountType.getDescriptorTemplate()).toBe("pkh(@0/**)");
     });
   });
 
@@ -110,7 +110,7 @@ describe("accountTypeResolver", () => {
       } as unknown as PsbtV2;
       const result = determineAccountTypeFromWitnessUtxo(psbtWithWitness, 0, masterFp);
       expect(result).not.toBeNull();
-      expect(result!.getDescriptorTemplate()).toBe("wpkh(@0)");
+      expect(result!.getDescriptorTemplate()).toBe("wpkh(@0/**)");
     });
 
     it("throws when witness UTXO has unsupported script type", () => {
@@ -126,22 +126,22 @@ describe("accountTypeResolver", () => {
   describe("createAccountTypeFromAddressFormat", () => {
     it("returns p2pkh for legacy format", () => {
       const accountType = createAccountTypeFromAddressFormat("legacy", psbt, masterFp);
-      expect(accountType.getDescriptorTemplate()).toBe("pkh(@0)");
+      expect(accountType.getDescriptorTemplate()).toBe("pkh(@0/**)");
     });
 
     it("returns p2wpkhWrapped for p2sh format", () => {
       const accountType = createAccountTypeFromAddressFormat("p2sh", psbt, masterFp);
-      expect(accountType.getDescriptorTemplate()).toBe("sh(wpkh(@0))");
+      expect(accountType.getDescriptorTemplate()).toBe("sh(wpkh(@0/**))");
     });
 
     it("returns p2wpkh for bech32 format", () => {
       const accountType = createAccountTypeFromAddressFormat("bech32", psbt, masterFp);
-      expect(accountType.getDescriptorTemplate()).toBe("wpkh(@0)");
+      expect(accountType.getDescriptorTemplate()).toBe("wpkh(@0/**)");
     });
 
     it("returns p2tr for bech32m format", () => {
       const accountType = createAccountTypeFromAddressFormat("bech32m", psbt, masterFp);
-      expect(accountType.getDescriptorTemplate()).toBe("tr(@0)");
+      expect(accountType.getDescriptorTemplate()).toBe("tr(@0/**)");
     });
 
     it("throws for unsupported address format", () => {
@@ -163,7 +163,7 @@ describe("accountTypeResolver", () => {
         masterFp,
       );
       expect(result).not.toBeNull();
-      expect(result!.getDescriptorTemplate()).toBe("pkh(@0)");
+      expect(result!.getDescriptorTemplate()).toBe("pkh(@0/**)");
     });
 
     it("returns p2wpkhWrapped for purpose 49'", () => {
@@ -173,7 +173,7 @@ describe("accountTypeResolver", () => {
         masterFp,
       );
       expect(result).not.toBeNull();
-      expect(result!.getDescriptorTemplate()).toBe("sh(wpkh(@0))");
+      expect(result!.getDescriptorTemplate()).toBe("sh(wpkh(@0/**))");
     });
 
     it("returns p2wpkh for purpose 84'", () => {
@@ -183,7 +183,7 @@ describe("accountTypeResolver", () => {
         masterFp,
       );
       expect(result).not.toBeNull();
-      expect(result!.getDescriptorTemplate()).toBe("wpkh(@0)");
+      expect(result!.getDescriptorTemplate()).toBe("wpkh(@0/**)");
     });
 
     it("returns p2tr for purpose 86'", () => {
@@ -193,7 +193,7 @@ describe("accountTypeResolver", () => {
         masterFp,
       );
       expect(result).not.toBeNull();
-      expect(result!.getDescriptorTemplate()).toBe("tr(@0)");
+      expect(result!.getDescriptorTemplate()).toBe("tr(@0/**)");
     });
 
     it("returns null for unknown purpose", () => {
@@ -204,7 +204,7 @@ describe("accountTypeResolver", () => {
   describe("determineAccountType", () => {
     it("uses detectedScriptType when provided", () => {
       const result = determineAccountType(psbt, 0, masterFp, "p2tr", [], undefined);
-      expect(result.getDescriptorTemplate()).toBe("tr(@0)");
+      expect(result.getDescriptorTemplate()).toBe("tr(@0/**)");
     });
 
     it("falls back to witness UTXO when no detectedScriptType", () => {
@@ -213,7 +213,7 @@ describe("accountTypeResolver", () => {
         getInputRedeemScript: () => undefined,
       } as unknown as PsbtV2;
       const result = determineAccountType(psbtWithWitness, 0, masterFp, undefined, [], undefined);
-      expect(result.getDescriptorTemplate()).toBe("wpkh(@0)");
+      expect(result.getDescriptorTemplate()).toBe("wpkh(@0/**)");
     });
 
     it("falls back to redeem script (p2sh-p2wpkh) when no witness UTXO", () => {
@@ -222,7 +222,7 @@ describe("accountTypeResolver", () => {
         getInputRedeemScript: () => Buffer.alloc(1),
       } as unknown as PsbtV2;
       const result = determineAccountType(psbtWithRedeem, 0, masterFp, undefined, [], undefined);
-      expect(result.getDescriptorTemplate()).toBe("sh(wpkh(@0))");
+      expect(result.getDescriptorTemplate()).toBe("sh(wpkh(@0/**))");
     });
 
     it("falls back to addressFormat when no witness or redeem script", () => {
@@ -231,7 +231,7 @@ describe("accountTypeResolver", () => {
         getInputRedeemScript: () => undefined,
       } as unknown as PsbtV2;
       const result = determineAccountType(psbtEmpty, 0, masterFp, undefined, [], "bech32m");
-      expect(result.getDescriptorTemplate()).toBe("tr(@0)");
+      expect(result.getDescriptorTemplate()).toBe("tr(@0/**)");
     });
 
     it("falls back to purpose from account path when no addressFormat", () => {
@@ -247,7 +247,7 @@ describe("accountTypeResolver", () => {
         [0x80000054, 0x80000000, 0x80000000],
         undefined,
       );
-      expect(result.getDescriptorTemplate()).toBe("wpkh(@0)");
+      expect(result.getDescriptorTemplate()).toBe("wpkh(@0/**)");
     });
 
     it("defaults to p2wpkh when no other source available", () => {
@@ -263,7 +263,7 @@ describe("accountTypeResolver", () => {
         [0x80000000],
         undefined,
       );
-      expect(result.getDescriptorTemplate()).toBe("wpkh(@0)");
+      expect(result.getDescriptorTemplate()).toBe("wpkh(@0/**)");
     });
   });
 });

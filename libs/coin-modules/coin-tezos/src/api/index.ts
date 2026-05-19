@@ -42,7 +42,6 @@ import api from "../network/tzkt";
 import {
   DUST_MARGIN_MUTEZ,
   hasEmptyBalance,
-  mapIntentTypeToTezosMode,
   normalizePublicKeyForAddress,
   parseTezosTokenAsset,
   resolveTezosOperationMode,
@@ -91,10 +90,9 @@ export function createApi(config: TezosConfig): AlpacaApi {
 
 function isTezosTransactionType(
   type: string,
-): type is "send" | "delegate" | "undelegate" | "stake" | "unstake" {
-  return ["send", "delegate", "undelegate", "stake", "unstake"].includes(type);
+): type is "send" | "delegate" | "undelegate" | "stake" | "unstake" | "finalize_unstake" {
+  return ["send", "delegate", "undelegate", "stake", "unstake", "finalize_unstake"].includes(type);
 }
-
 async function craft(
   transactionIntent: TransactionIntent,
   customFees?: FeeEstimation,
@@ -113,12 +111,12 @@ async function craft(
 
   const tezosMode = resolveTezosOperationMode(transactionIntent.type, transactionIntent.asset);
   const mappedType: TezosOperationMode =
-    tezosMode === "send_token" ? "send_token" : mapIntentTypeToTezosMode(transactionIntent.type);
+    tezosMode === "send_token" ? "send_token" : (transactionIntent.type as TezosOperationMode);
   const tokenCraftInfo =
     tezosMode === "send_token" ? parseTezosTokenAsset(transactionIntent.asset)! : undefined;
 
   // Guard: send max is incompatible with delegated accounts (native XTZ only)
-  let amountToUse = transactionIntent.amount;
+  let amountToUse = tezosMode === "finalize_unstake" ? 0n : transactionIntent.amount;
   if (tezosMode === "send" && transactionIntent.useAllAmount) {
     const senderInfo = await api.getAccountByAddress(transactionIntent.sender);
     if (senderInfo.type === "user" && senderInfo.delegate?.address) {
@@ -254,7 +252,7 @@ async function estimate(transactionIntent: TransactionIntent): Promise<TezosFeeE
   const transaction: CoreTransactionInfo = {
     mode: tezosModeForEstimate,
     recipient: transactionIntent.recipient,
-    amount: transactionIntent.amount,
+    amount: tezosModeForEstimate === "finalize_unstake" ? 0n : transactionIntent.amount,
     useAllAmount: !!transactionIntent.useAllAmount,
     ...(tokenEstimationInfo && {
       contractAddress: tokenEstimationInfo.contractAddress,

@@ -90,3 +90,17 @@ export function navigateBackToSwapTab({
 
   parentNavigation.dispatch(getResetToSwapTabAction());
 }
+
+export function isGoingToSwapHistory(payload: unknown) {
+  if (!payload || typeof payload !== "object" || !("routes" in payload)) {
+    return false;
+  }
+
+  const routes = payload.routes;
+
+  if (!Array.isArray(routes)) {
+    return false;
+  }
+
+  return routes.some(route => route?.name === ScreenName.SwapHistory);
+}

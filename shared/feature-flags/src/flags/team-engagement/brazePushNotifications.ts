@@ -17,6 +17,7 @@ const actionEventSchema = z.object({
 const actionEventsSchema = z.object({
   complete_onboarding: actionEventSchema,
   send: actionEventSchema,
+  dapp_complete: actionEventSchema,
   receive: actionEventSchema,
   buy: actionEventSchema,
   swap: actionEventSchema,

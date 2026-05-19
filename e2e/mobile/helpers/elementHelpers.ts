@@ -148,6 +148,15 @@ export const NativeElementHelpers = {
     }
   },
 
+    async countElements(element: NativeElement): Promise<number> {
+    try {
+      const attributes = await element.getAttributes();
+      return "elements" in attributes ? attributes.elements.length : 1;
+    } catch {
+      return 0;
+    }
+  },
+
   getElementsById(id: string | RegExp) {
     return element(by.id(id));
   },
@@ -178,6 +187,23 @@ export const NativeElementHelpers = {
     for (const text of texts) {
       const descendantText = typeof text === "string" ? new RegExp(`.*${text}.*`, "i") : text;
       matcher = matcher.withDescendant(by.text(descendantText));
+    }
+
+    return element(matcher);
+  },
+
+  /**
+   * Builds a Detox element matcher scoped by test id and constrained by ancestor test ids.
+   *
+   * @param id - Test id of the target element
+   * @param ancestorIds - Ancestor test id constraints (plain strings or RegExp)
+   * @returns Detox element matching id that is nested inside all given ancestor ids
+   */
+  getElementByIdWithAncestorIds(id: string | RegExp, ...ancestorIds: Array<string | RegExp>) {
+    let matcher = by.id(id);
+
+    for (const ancestorId of ancestorIds) {
+      matcher = matcher.withAncestor(by.id(ancestorId));
     }
 
     return element(matcher);
@@ -352,23 +378,20 @@ export const WebElementHelpers = {
     return index > 0 ? base.atIndex(index) : base;
   },
 
-  async getWebElementsText(selector: string): Promise<string[]> {
-    const texts: string[] = [];
-    let i = 0;
-
-    while (true) {
-      try {
-        const el = WebElementHelpers.getWebElementByCssSelector(selector, i);
-        const text: string = await el.runScript((node: HTMLElement) =>
-          (node.innerText || node.textContent || "").trim(),
-        );
-        texts.push(text);
-        i++;
-      } catch {
-        break;
-      }
-    }
-
+  async getWebElementsText(
+    containerWebElement: WebElement,
+    childrenCssSelector: string,
+  ): Promise<string[]> {
+    const raw = await containerWebElement.runScript(
+      (el: HTMLElement, sel: string) =>
+        JSON.stringify(
+          Array.from(el.querySelectorAll<HTMLElement>(sel)).map(node =>
+            (node.innerText || node.textContent || "").trim(),
+          ),
+        ),
+      [childrenCssSelector],
+    );
+    const texts: string[] = JSON.parse(raw);
     return texts.filter(Boolean);
   },
 

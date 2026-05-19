@@ -7,6 +7,7 @@ import { useManifestWithSessionId } from "@ledgerhq/live-common/hooks/useManifes
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { openModal } from "~/renderer/actions/modals";
+import { RECEIVE_SOURCE_PAGE } from "LLD/features/Receive/types";
 import Card from "~/renderer/components/Box/Card";
 import WebPlatformPlayer from "~/renderer/components/WebPlatformPlayer";
 import { WebviewLoader } from "~/renderer/components/Web3AppWebview/types";
@@ -37,7 +38,7 @@ const Bank = () => {
 
   function handleClose() {
     navigate(-1);
-    dispatch(openModal("MODAL_RECEIVE", undefined));
+    dispatch(openModal("MODAL_RECEIVE", { sourcePage: RECEIVE_SOURCE_PAGE.BANK }));
   }
 
   return (

@@ -58,7 +58,13 @@ jobs:
       - name: Build, lint, typecheck and test wallet-cli
         run: |
           mkdir -p apps/wallet-cli/coverage
-          pnpm exec nx run-many --projects=@ledgerhq/wallet-cli --targets=generate:check,lint:ci,typecheck,build,coverage
+          pnpm exec nx run-many --projects=@ledgerhq/wallet-cli --targets=generate,lint:ci,typecheck,build,coverage
+
+      - name: Prepare and validate wallet-cli npm packages
+        run: |
+          pnpm --filter "@ledgerhq/wallet-cli" prepare:npm
+          pnpm --filter "@ledgerhq/wallet-cli" pack:check
+          pnpm --filter "@ledgerhq/wallet-cli" smoke:npm
 
       - name: Upload wallet-cli unit test coverage
         id: generate_coverage
@@ -72,22 +78,22 @@ jobs:
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: wallet-cli-darwin-arm64
-          path: ${{ github.workspace }}/apps/wallet-cli/dist/darwin-arm64/cli
+          path: ${{ github.workspace }}/apps/wallet-cli/npm/darwin-arm64/bin/wallet-cli
 
       - name: Upload linux-x64 binary
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: wallet-cli-linux-x64
-          path: ${{ github.workspace }}/apps/wallet-cli/dist/linux-x64/cli
+          path: ${{ github.workspace }}/apps/wallet-cli/npm/linux-x64/bin/wallet-cli
 
       - name: Upload linux-arm64 binary
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: wallet-cli-linux-arm64
-          path: ${{ github.workspace }}/apps/wallet-cli/dist/linux-arm64/cli
+          path: ${{ github.workspace }}/apps/wallet-cli/npm/linux-arm64/bin/wallet-cli
 
       - name: Upload windows-x64 binary
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: wallet-cli-windows-x64
-          path: ${{ github.workspace }}/apps/wallet-cli/dist/windows-x64/cli.exe
+          path: ${{ github.workspace }}/apps/wallet-cli/npm/windows-x64/bin/wallet-cli.exe

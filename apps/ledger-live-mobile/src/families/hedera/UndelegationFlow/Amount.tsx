@@ -36,8 +36,8 @@ function UndelegationAmount({ navigation, route }: Props) {
   invariant(account.type === "Account", "account type must be Account");
 
   const unit = useAccountUnit(account);
-  const bridge = useAccountBridge<Transaction>(account);
-  const { transaction, status, bridgePending, bridgeError } = useBridgeTransaction(() => {
+  const bridge: AccountBridge<Transaction> = useAccountBridge(account);
+  const { transaction, status, bridgePending, bridgeError } = useBridgeTransaction(bridge, () => {
     const t = bridge.createTransaction(account);
 
     const transaction = bridge.updateTransaction(t, {

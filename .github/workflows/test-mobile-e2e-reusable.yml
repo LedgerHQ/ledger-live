@@ -18,7 +18,7 @@ on:
         description: "Specify branch to checkout and test or leave blank to use the workflow branch"
         required: false
       test_filter:
-        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@bitcoin,@family-evm" or "addAccount deeplinks")
+        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@generic-coin-framework,@solana", "@bitcoin,@family-evm" or "addAccount deeplinks")
         required: false
         type: string
       tests_type:
@@ -88,7 +88,7 @@ on:
         required: false
         type: string
       test_filter:
-        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@bitcoin,@family-evm" or "addAccount deeplinks")
+        description: Filter pattern(s) to execute only selected test suites by test name, file path or tag, separated by ',' or '|' (e.g. "Accounts @smoke", "@generic-coin-framework,@solana", "@bitcoin,@family-evm" or "addAccount deeplinks")
         required: false
         type: string
       tests_type:
@@ -162,6 +162,8 @@ jobs:
     name: "Determine Builds & Generate Shards"
     runs-on: ubuntu-24.04
     outputs:
+      ios_device: ${{ steps.devices.outputs.ios_device }}
+      android_device: ${{ steps.devices.outputs.android_device }}
       matrix_ios: ${{ steps.generate-shards.outputs.matrix_ios }}
       matrix_android: ${{ steps.generate-shards.outputs.matrix_android }}
       test_files_for_sharding: ${{ steps.generate-shards.outputs.test_files_for_sharding }}
@@ -198,6 +200,8 @@ jobs:
           sparse-checkout: |
             apps/ledger-live-mobile
             e2e/mobile
+            libs/ledger-live-common/src/bridge/generic-coin-framework/genericCoinFrameworkFamilies.json
+            scripts/resolve-e2e-test-filter.mjs
             .pnpmfile.cjs
             tools
             .mise/tasks
@@ -221,10 +225,30 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
 
+      - name: Resolve per-platform Speculos device
+        id: devices
+        shell: bash
+        run: |
+          # Per-platform mapping for scheduled nightly runs (QAA-1193)
+          declare -A PLATFORM_DEVICE=(
+            [ios]=stax        # iOS     - Stax
+            [android]=nanoX   # Android - LNX
+          )
+
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            echo "ios_device=${PLATFORM_DEVICE[ios]}"           >> $GITHUB_OUTPUT
+            echo "android_device=${PLATFORM_DEVICE[android]}"  >> $GITHUB_OUTPUT
+          else
+            INPUT_DEVICE="${{ inputs.speculos_device || 'nanoX' }}"
+            echo "ios_device=$INPUT_DEVICE"     >> $GITHUB_OUTPUT
+            echo "android_device=$INPUT_DEVICE" >> $GITHUB_OUTPUT
+          fi
+
       - name: Write summary
         run: |
           FILTER_PATTERN="${{ inputs.test_filter || '' }}"
-          DEVICE="${{ inputs.speculos_device || 'nanoX' }}"
+          IOS_DEVICE="${{ steps.devices.outputs.ios_device }}"
+          ANDROID_DEVICE="${{ steps.devices.outputs.android_device }}"
           BUILD_TYPE="${{ inputs.production_firebase && 'production' || 'testing' }}"
           BROADCAST_ENABLED="${{ inputs.enable_broadcast }}"
           SMOKE_TESTS="${{ inputs.smoke_tests }}"
@@ -240,7 +264,8 @@ jobs:
           echo "- **Workflow source branch:** ${{ github.ref_name }}"
           echo "- **Triggered branch:** ${{ inputs.ref || github.ref_name }}"
           echo "- **Commit SHA:** ${{ github.sha }}"
-          echo "- **Device selected:** $DEVICE"
+          echo "- **iOS device:** $IOS_DEVICE"
+          echo "- **Android device:** $ANDROID_DEVICE"
           echo "- **Filtered pattern:** $FILTER_PATTERN"
           echo "- **Smoke tests:** $SMOKE_TESTS"
           echo "- **Test Execution ticket ID (Android):** $TEST_EXECUTION_ANDROID"
@@ -268,21 +293,23 @@ jobs:
       - name: Prepare test filter
         id: test-filter
         run: |
-          BASE_FILTER="${{ inputs.test_filter }}"
+          RESOLVED_FILTER="$(node scripts/resolve-e2e-test-filter.mjs \
+            --input "$TEST_FILTER_INPUT" \
+            --smoke-tests "$SMOKE_TESTS_INPUT" \
+            --check-dir "e2e/mobile/specs")"
+          echo "filter=$RESOLVED_FILTER" >> $GITHUB_OUTPUT
+        shell: bash
+        env:
+          TEST_FILTER_INPUT: ${{ inputs.test_filter }}
+          SMOKE_TESTS_INPUT: ${{ inputs.smoke_tests }}
 
-          if [ -n "$BASE_FILTER" ]; then
-            BASE_FILTER="${BASE_FILTER//,/|}"
+      - name: Write resolved filter to GitHub Summary
+        run: |
+          FILTER_PATTERN="${{ steps.test-filter.outputs.filter }}"
+          if [ -z "$FILTER_PATTERN" ]; then
+            FILTER_PATTERN="(none)"
           fi
-
-          if [ "${{ inputs.smoke_tests }}" = "true" ]; then
-            if [ -n "$BASE_FILTER" ]; then
-              echo "filter=@smoke $BASE_FILTER" >> $GITHUB_OUTPUT
-            else
-              echo "filter=@smoke" >> $GITHUB_OUTPUT
-            fi
-          else
-            echo "filter=$BASE_FILTER" >> $GITHUB_OUTPUT
-          fi
+          echo "- **Resolved filtered pattern:** $FILTER_PATTERN" >> $GITHUB_STEP_SUMMARY
         shell: bash
 
       - name: Generate shards matrix and test files
@@ -434,6 +461,7 @@ jobs:
       LANG: en_US.UTF-8
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
+      SPECULOS_DEVICE: ${{ needs.determine-builds.outputs.ios_device }}
     outputs:
       status: ${{ steps.run-ios.outcome }}
       artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
@@ -633,6 +661,7 @@ jobs:
       LANG: en_US.UTF-8
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
+      SPECULOS_DEVICE: ${{ needs.determine-builds.outputs.android_device }}
     outputs:
       status: ${{ steps.run-android.outcome }}
       artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
@@ -1050,7 +1079,7 @@ jobs:
   report-on-slack:
     name: "Test Mobile E2E > Slack Report"
     runs-on: ubuntu-22.04
-    needs: [allure-report-android, allure-report-ios]
+    needs: [determine-builds, allure-report-android, allure-report-ios]
     if: ${{ !cancelled() && (needs.allure-report-ios.outputs.finalStatus || needs.allure-report-android.outputs.finalStatus) }}
     env:
       IOS_STATUS: ${{ needs.allure-report-ios.outputs.finalStatus }}
@@ -1073,7 +1102,7 @@ jobs:
                 "type": "header",
                 "text": {
                   "type": "plain_text",
-                  "text": ":ledger-logo: Ledger Live Mobile E2E tests results on ${{ inputs.ref || github.ref_name }} - ${{ inputs.speculos_device || 'nanoX' }}${{ inputs.smoke_tests && ' (Smoke Tests)' || '' }}",
+                  "text": ":ledger-logo: Ledger Live Mobile E2E tests results on ${{ inputs.ref || github.ref_name }} - iOS:${{ needs.determine-builds.outputs.ios_device }} / Android:${{ needs.determine-builds.outputs.android_device }}${{ inputs.smoke_tests && ' (Smoke Tests)' || '' }}",
                   "emoji": true
                 }
               },
@@ -1087,7 +1116,7 @@ jobs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": `- 🍏 iOS - ${{ inputs.speculos_device }}: ${process.env.IOS_STATUS !== 'success' ? '❌' : '✅'} ${{ needs.allure-report-ios.outputs.result || 'No test results' }}`
+                  "text": `- 🍏 iOS - ${{ needs.determine-builds.outputs.ios_device }}: ${process.env.IOS_STATUS !== 'success' ? '❌' : '✅'} ${{ needs.allure-report-ios.outputs.result || 'No test results' }}`
                 }
               }
             ];
@@ -1097,7 +1126,7 @@ jobs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": `- 🤖 Android - ${{ inputs.speculos_device }}: ${process.env.ANDROID_STATUS !== 'success' ? '❌' : '✅'} ${{ needs.allure-report-android.outputs.result || 'No test results' }}`
+                  "text": `- 🤖 Android - ${{ needs.determine-builds.outputs.android_device }}: ${process.env.ANDROID_STATUS !== 'success' ? '❌' : '✅'} ${{ needs.allure-report-android.outputs.result || 'No test results' }}`
                 }
               }
             ];

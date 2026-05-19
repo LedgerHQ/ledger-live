@@ -12,6 +12,7 @@ import wallet, { getWalletAccount } from "./wallet-btc";
 import { perCoinLogic } from "./logic";
 import { SignerContext } from "./signer";
 import { fromAsyncOperation } from "./observable";
+import { getChainAdapter } from "./chain-adapters/registry";
 
 type SignOperationObserverEvent =
   | { type: "device-signature-granted" }
@@ -150,7 +151,14 @@ async function executeSignOperation(
 
 export const buildSignOperation =
   (signerContext: SignerContext): AccountBridge<Transaction>["signOperation"] =>
-  ({ account, deviceId, transaction }) =>
-    fromAsyncOperation(o => executeSignOperation(o, account, deviceId, transaction, signerContext));
+  ({ account, deviceId, transaction }) => {
+    const adapter = getChainAdapter(account.currency.id);
+    const custom = adapter.signOperation?.(account, deviceId, transaction, signerContext);
+    if (custom) return custom;
+
+    return fromAsyncOperation(o =>
+      executeSignOperation(o, account, deviceId, transaction, signerContext),
+    );
+  };
 
 export default buildSignOperation;

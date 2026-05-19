@@ -14,8 +14,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation, Trans } from "~/context/Locale";
 import { Icons } from "@ledgerhq/native-ui";
 import { RecipientRequired } from "@ledgerhq/errors";
-import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import type {
   Transaction as TezosTransaction,
   Baker,
@@ -160,6 +160,7 @@ export default function SelectValidator({ navigation, route }: Props) {
   invariant(account, "account is undefined");
   const bridge = useAccountBridge<TezosTransaction>(account, parentAccount);
   const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
+    bridge,
     () => ({
       account,
       parentAccount,
