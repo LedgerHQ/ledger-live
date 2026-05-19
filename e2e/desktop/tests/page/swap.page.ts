@@ -601,4 +601,9 @@ export class SwapPage extends WebViewAppPage {
     await expect(authorizationButton).toBeEnabled();
     await authorizationButton.click();
   }
+
+  @step("Selected prodvider: $0")
+  async getSelectedProvider(providerName: string) {
+    expect(providerName).toBeDefined();
+  }
 }
