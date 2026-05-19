@@ -659,28 +659,17 @@ export const userThemeSelector = (state: State): "dark" | "light" | null => {
   return null;
 };
 
-type LanguageAndUseSystemLanguage = {
-  language: Language;
-};
-
-const languageAndUseSystemLangSelector = (state: State): LanguageAndUseSystemLanguage => {
+/** Use this for translations */
+export const languageSelector = (state: State): Language => {
   const { language } = state.settings;
   if (language && LanguageIds.includes(language)) {
-    return {
-      language,
-    };
-  } else {
-    return {
-      language: getInitialLanguageAndLocale().language,
-    };
+    return language;
   }
+  return getInitialLanguageAndLocale().language;
 };
 
-/** Use this for translations */
-export const languageSelector = createSelector(languageAndUseSystemLangSelector, o => o.language);
-
 const isValidRegionLocale = (locale: string) => {
-  return regionsByKey.hasOwnProperty(locale);
+  return Object.hasOwn(regionsByKey, locale);
 };
 const localeFallbackToLanguageSelector = (
   state: State,
@@ -815,7 +804,9 @@ export const enableLearnPageStagingUrlSelector = (state: State) =>
 export const blacklistedTokenIdsSelector = (state: State) => state.settings.blacklistedTokenIds;
 export const hasCompletedOnboardingSelector = (state: State) =>
   state.settings.hasCompletedOnboarding || getEnv("SKIP_ONBOARDING");
-export const dismissedBannersSelector = (state: State) => state.settings.dismissedBanners || [];
+const EMPTY_DISMISSED_BANNERS: string[] = [];
+export const dismissedBannersSelector = (state: State) =>
+  state.settings.dismissedBanners || EMPTY_DISMISSED_BANNERS;
 export const hideEmptyTokenAccountsSelector = (state: State) =>
   state.settings.hideEmptyTokenAccounts;
 export const filterTokenOperationsZeroAmountSelector = (state: State) =>

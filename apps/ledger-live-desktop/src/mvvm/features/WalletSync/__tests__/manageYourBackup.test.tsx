@@ -18,11 +18,16 @@ jest.mock("@tanstack/react-query", () => {
     ...jest.requireActual("@tanstack/react-query"),
   };
 });
-jest
-  .spyOn(ReactQuery, "useQuery")
-  .mockImplementation(jest.fn().mockReturnValue({ data: [], isLoading: false, isSuccess: true }));
 
 describe("ManageYourBackup", () => {
+  beforeEach(() => {
+    jest
+      .spyOn(ReactQuery, "useQuery")
+      .mockImplementation(
+        jest.fn().mockReturnValue({ data: [], isLoading: false, isSuccess: true }),
+      );
+  });
+
   it("should open drawer and display Wallet Sync Manage flow and delete your backup", async () => {
     const { user } = render(<WalletSyncTestApp />, {
       initialState: {
