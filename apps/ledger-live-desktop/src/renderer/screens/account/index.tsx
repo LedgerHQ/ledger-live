@@ -8,11 +8,8 @@ import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index"
 import { isAddressPoisoningOperation } from "@ledgerhq/live-common/operation";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
 import { accountsSelector } from "~/renderer/reducers/accounts";
-import {
-  findSubAccountById,
-  getMainAccount,
-  isAccountEmpty,
-} from "@ledgerhq/live-common/account/index";
+import { findSubAccountById, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { useAccountBridgeOrNull } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { findAccountById, findSubAccountByIdWithFallback } from "~/renderer/utils";
 import {
   setCountervalueFirst,
@@ -90,6 +87,7 @@ const AccountPage = ({
   const { shouldDisplayAssetSection } = useWalletFeaturesConfig("desktop");
   const fallbackPath = getAccountsSidebarPath(shouldDisplayAssetSection);
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
+  const bridge = useAccountBridgeOrNull(account ?? null, parentAccount);
   const specific = mainAccount ? getLLDCoinFamily(mainAccount.currency.family) : null;
   const AccountBodyHeader = specific?.AccountBodyHeader;
   const AccountSubHeader = specific?.AccountSubHeader;
@@ -160,7 +158,9 @@ const AccountPage = ({
       {AccountSubHeader ? (
         <AccountSubHeader account={account} parentAccount={parentAccount} />
       ) : null}
-      {!isAccountEmpty(account) ? (
+      {bridge?.isAccountEmpty(account) ? (
+        <EmptyStateAccount account={account} parentAccount={parentAccount} />
+      ) : (
         <>
           <Box mb={7}>
             <BalanceSummary
@@ -192,8 +192,6 @@ const AccountPage = ({
             filterOperation={filterOperations}
           />
         </>
-      ) : (
-        <EmptyStateAccount account={account} parentAccount={parentAccount} />
       )}
     </Box>
   );

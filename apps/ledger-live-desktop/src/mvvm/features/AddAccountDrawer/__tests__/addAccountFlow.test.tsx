@@ -40,6 +40,8 @@ const mockAccountBridge = {
   assignToAccountRaw: () => {},
   assignToTokenAccountRaw: () => {},
   toOperationExtraRaw: (extra: unknown) => extra,
+  isAccountEmpty: (a: { operationsCount: number; balance: { isZero: () => boolean } }) =>
+    a.operationsCount === 0 && a.balance.isZero(),
 };
 
 jest.mock("~/renderer/bridge/cache", () => ({

@@ -1,4 +1,4 @@
-import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
+import { getAccountBridge, getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
@@ -65,6 +65,14 @@ export function useScanAccounts({
   existingAccountsRef.current = existingAccounts;
   const scannedAccountsRef = useRef(scannedAccounts);
   scannedAccountsRef.current = scannedAccounts;
+  // Emptiness is resolved per discovered account in the scan pipeline (getAccountBridge
+  // is not safe to call synchronously); the predicate passed to computeSelectedIdsFromScan
+  // reads from this ref.
+  const emptyByIdRef = useRef<Map<string, boolean>>(new Map());
+  const isAccountEmpty = useCallback(
+    (account: Account) => emptyByIdRef.current.get(account.id) ?? false,
+    [],
+  );
 
   const newAccountSchemes = useMemo(() => {
     const accountSchemes = scannedAccounts
@@ -87,6 +95,7 @@ export function useScanAccounts({
 
   useEffect(() => {
     let cancelled = false;
+    emptyByIdRef.current = new Map();
     (async () => {
       const bridge = await getCurrencyBridge(currency);
       if (cancelled) return;
@@ -103,12 +112,24 @@ export function useScanAccounts({
           },
         }),
       )
-        .pipe(RX.scan((acc: Account[], { account }) => [...acc, account], []))
+        .pipe(
+          RX.concatMap(async ({ account }) => {
+            const accountBridge = await getAccountBridge(account);
+            emptyByIdRef.current.set(account.id, accountBridge.isAccountEmpty(account));
+            return account;
+          }),
+          RX.scan((acc: Account[], account: Account) => [...acc, account], []),
+        )
         .subscribe({
           next: (accounts: Account[]) => {
             setScannedAccounts(accounts);
             setSelectedIds(current =>
-              computeSelectedIdsFromScan(accounts, existingAccountsRef.current, current),
+              computeSelectedIdsFromScan(
+                accounts,
+                existingAccountsRef.current,
+                current,
+                isAccountEmpty,
+              ),
             );
             setScanning(true);
           },
@@ -121,13 +142,14 @@ export function useScanAccounts({
       cancelled = true;
       stopSubscription(false);
     };
-  }, [blacklistedTokenIds, currency, deviceId, stopSubscription]);
+  }, [blacklistedTokenIds, currency, deviceId, isAccountEmpty, stopSubscription]);
 
   useLayoutEffect(() => {
+    const resolved = scannedAccountsRef.current.filter(a => emptyByIdRef.current.has(a.id));
     setSelectedIds(current =>
-      computeSelectedIdsFromScan(scannedAccountsRef.current, existingAccounts, current),
+      computeSelectedIdsFromScan(resolved, existingAccounts, current, isAccountEmpty),
     );
-  }, [existingAccounts]);
+  }, [existingAccounts, isAccountEmpty]);
 
   const {
     importableAccounts,
