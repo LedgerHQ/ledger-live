@@ -9072,6 +9072,15 @@
     },
     "explore": "Explore all Ledger devices"
   },
+  "contactsManagement": {
+    "title": "Contacts",
+    "searchPlaceholder": "Search contacts",
+    "addContact": "Add contact",
+    "addAddress": "Add address",
+    "contactActions": "More options",
+    "addresses_one": "{{count}} address",
+    "addresses_other": "{{count}} addresses"
+  },
   "assetDetails": {
     "header": {
       "optionsMenu": "Asset options",
