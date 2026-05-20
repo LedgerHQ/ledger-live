@@ -9303,6 +9303,10 @@
         "description": "Protect against fire"
       }
     },
+    "contacts": {
+      "title": "Contacts",
+      "description": "Manage your contacts"
+    },
     "myLedger": {
       "title": "My Ledger",
       "description": "Manage your Ledger device"

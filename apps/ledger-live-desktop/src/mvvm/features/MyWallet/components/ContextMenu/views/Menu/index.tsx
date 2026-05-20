@@ -1,6 +1,7 @@
 import React from "react";
 import TopBar from "../../../TopBar";
 import { ActionsList } from "../../../ActionsList";
+import { Contacts } from "../../../Contacts";
 import { MyLedger } from "../../../MyLedger";
 import { Explore } from "../../../Explore";
 import { useMenuViewModel } from "./useMenuViewModel";
@@ -13,6 +14,7 @@ export function MenuView() {
       <TopBar />
       <ActionsList onRecoverClick={onRecoverClick} />
       <div className="flex flex-col gap-12">
+        <Contacts />
         <MyLedger />
         <Explore />
       </div>
