@@ -18,6 +18,8 @@ export const lwdWallet40 = flagWith(
     myWallet: z.boolean(),
     finishOnboardingWidget: z.boolean().optional(),
     pnl: z.boolean(),
+    earnUpselling: z.boolean().optional(),
+    earnSimulator: z.boolean().optional(),
   },
   {
     enabled: false,
