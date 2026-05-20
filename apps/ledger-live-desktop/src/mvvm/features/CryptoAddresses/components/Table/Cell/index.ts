@@ -5,3 +5,4 @@ export { AccountValueCell } from "./AccountValueCell";
 export { AccountRowActionCell } from "./AccountRowActionCell";
 export { AggregatedAccountNameCell } from "./AggregatedAccountNameCell";
 export { AggregatedAccountValueCell } from "./AggregatedAccountValueCell";
+export { AccountAssetsCell } from "./AccountAssetsCell";
