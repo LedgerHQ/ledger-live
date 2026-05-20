@@ -36,6 +36,9 @@ import countervaluesExtraTracking, {
   CountervaluesExtraTrackingState,
 } from "./countervaluesExtraTracking";
 import { recoverStateReducer, RecoverStateSliceState } from "./recoverState";
+import genericAwarenessModal, {
+  GenericAwarenessModalSliceState,
+} from "./genericAwarenessModalSlice";
 
 export type State = LLDRTKApiState & {
   accounts: AccountsState;
@@ -65,6 +68,7 @@ export type State = LLDRTKApiState & {
   shieldedSyncSubscriptions: ShieldedSyncSubscriptionsState;
   countervaluesExtraTracking: CountervaluesExtraTrackingState;
   recoverState: RecoverStateSliceState;
+  genericAwarenessModal: GenericAwarenessModalSliceState;
 };
 
 const appReducer = combineReducers({
@@ -95,6 +99,7 @@ const appReducer = combineReducers({
   shieldedSyncSubscriptions,
   countervaluesExtraTracking,
   recoverState: recoverStateReducer,
+  genericAwarenessModal,
   ...lldRTKApiReducers,
   ...(getEnv("PLAYWRIGHT_RUN") && { lastAction: (_: unknown, action: PayloadAction) => action }),
 });
