@@ -52,6 +52,7 @@ describe("CryptoAddresses (Crypto page)", () => {
     // Account list: column headers and at least one data row
     expect(within(pageContent).getByRole("columnheader", { name: "Name" })).toBeVisible();
     expect(within(pageContent).getByRole("columnheader", { name: "Address" })).toBeVisible();
+    expect(within(pageContent).getByRole("columnheader", { name: "Asset" })).toBeVisible();
     expect(within(pageContent).getByRole("columnheader", { name: "Value" })).toBeVisible();
 
     const nameCell = within(pageContent).getByRole("button", { name: /My ETH account/ });
