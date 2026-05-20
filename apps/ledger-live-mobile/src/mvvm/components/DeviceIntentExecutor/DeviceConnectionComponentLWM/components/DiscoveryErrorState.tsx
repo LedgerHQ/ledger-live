@@ -4,86 +4,215 @@ import {
   DiscoveryErrorTypes,
   type ConnectDeviceUIState,
 } from "@ledgerhq/live-dmk-mobile";
+import type { AppPlatform } from "@ledgerhq/live-common/platform/types";
 import { InfoState } from "LLM/components/InfoState";
 import { useTranslation } from "~/context/Locale";
-
+import { Box, Spinner, Text } from "@ledgerhq/lumen-ui-rnative";
 type DiscoveryErrorStateProps = {
   state: Extract<ConnectDeviceUIState, { type: ConnectDeviceUIStateTypes.DiscoveryError }>;
+  platform: Exclude<AppPlatform, "desktop">;
 };
 
 type InfoStateCta = React.ComponentProps<typeof InfoState>["primaryCta"];
 
-const discoveryErrorTranslationBaseKeys: Record<DiscoveryErrorTypes, string> = {
-  [DiscoveryErrorTypes.BluetoothPermissionDeniedPromptable]:
-    "deviceIntentExecutor.connectDevice.states.discoveryError.errors.bluetoothPermissionDeniedPromptable",
-  [DiscoveryErrorTypes.BluetoothPermissionDeniedManualSettings]:
-    "deviceIntentExecutor.connectDevice.states.discoveryError.errors.bluetoothPermissionDeniedManualSettings",
-  [DiscoveryErrorTypes.BluetoothPermissionUnauthorizedManualSettings]:
-    "deviceIntentExecutor.connectDevice.states.discoveryError.errors.bluetoothPermissionUnauthorizedManualSettings",
-  [DiscoveryErrorTypes.BluetoothDisabledPromptable]:
-    "deviceIntentExecutor.connectDevice.states.discoveryError.errors.bluetoothDisabledPromptable",
-  [DiscoveryErrorTypes.BluetoothDisabledManualAction]:
-    "deviceIntentExecutor.connectDevice.states.discoveryError.errors.bluetoothDisabledManualAction",
-  [DiscoveryErrorTypes.BluetoothStateUnknownCheckOnly]:
-    "deviceIntentExecutor.connectDevice.states.discoveryError.errors.bluetoothStateUnknownCheckOnly",
-  [DiscoveryErrorTypes.BluetoothUnsupported]:
-    "deviceIntentExecutor.connectDevice.states.discoveryError.errors.bluetoothUnsupported",
-  [DiscoveryErrorTypes.LocationPermissionDeniedPromptable]:
-    "deviceIntentExecutor.connectDevice.states.discoveryError.errors.locationPermissionDeniedPromptable",
-  [DiscoveryErrorTypes.LocationPermissionDeniedManualSettings]:
-    "deviceIntentExecutor.connectDevice.states.discoveryError.errors.locationPermissionDeniedManualSettings",
-  [DiscoveryErrorTypes.LocationDisabledPromptable]:
-    "deviceIntentExecutor.connectDevice.states.discoveryError.errors.locationDisabledPromptable",
-  [DiscoveryErrorTypes.LocationDisabledManualAction]:
-    "deviceIntentExecutor.connectDevice.states.discoveryError.errors.locationDisabledManualAction",
-  [DiscoveryErrorTypes.LocationServicePermissionMissing]:
-    "deviceIntentExecutor.connectDevice.states.discoveryError.errors.locationServicePermissionMissing",
-  [DiscoveryErrorTypes.Unknown]:
-    "deviceIntentExecutor.connectDevice.states.discoveryError.errors.unknown",
+type DiscoveryErrorViewState = {
+  preset: "info" | "error";
+  title: string;
+  description?: string;
+  primaryCta?: InfoStateCta;
+  secondaryCta?: InfoStateCta;
 };
 
-const getDiscoveryErrorTranslationKey = (
-  errorType: DiscoveryErrorTypes,
-  key: "title" | "description",
-) => `${discoveryErrorTranslationBaseKeys[errorType]}.${key}`;
+const discoveryErrorTranslationBaseKey =
+  "deviceIntentExecutor.connectDevice.states.discoveryError.errors";
 
-export function DiscoveryErrorState({ state }: Readonly<DiscoveryErrorStateProps>): React.ReactNode {
+function assertNever(value: never): never {
+  throw new Error(`Unhandled discovery error type: ${JSON.stringify(value)}`);
+}
+
+export function DiscoveryErrorState({
+  state,
+  platform,
+}: Readonly<DiscoveryErrorStateProps>): React.ReactNode {
   const { t } = useTranslation();
-  const isUnknownError = state.error.type === DiscoveryErrorTypes.Unknown;
 
-  const closeCta: InfoStateCta = {
-    label: t("deviceIntentExecutor.connectDevice.common.close"),
-    onPress: state.ignore,
-  };
+  if (state.error.type === DiscoveryErrorTypes.BluetoothStateUnknownCheckOnly) {
+    const key = `${discoveryErrorTranslationBaseKey}.bluetoothStateUnknownCheckOnly`;
 
-  const retryCta: InfoStateCta = state.retry
-    ? {
-        label: t("deviceIntentExecutor.connectDevice.common.tryAgain"),
-        onPress: state.retry,
-      }
-    : undefined;
-
-  const continueWithUsbCta: InfoStateCta = {
-    label: t("deviceIntentExecutor.connectDevice.states.discoveryError.continueWithUsb"),
-    onPress: state.ignore,
-  };
-
-  let primaryCta: InfoStateCta = retryCta;
-  let secondaryCta: InfoStateCta = continueWithUsbCta;
-
-  if (isUnknownError) {
-    primaryCta = retryCta ?? closeCta;
-    secondaryCta = retryCta ? closeCta : undefined;
+    return (
+      <Box lx={{ width: "full", alignItems: "center", paddingTop: "s16" }}>
+      <Spinner size={32} color="base" />
+      <Text
+        typography="heading4SemiBold"
+        lx={{ color: "base", textAlign: "center", paddingTop: "s16", paddingBottom: "s32" }}
+      >
+        {t(`${key}.title`)}
+      </Text>
+    </Box>
+    );
   }
+
+  const retryCta = (labelKey: string): InfoStateCta | undefined =>
+    state.retry
+      ? {
+          label: t(labelKey),
+          onPress: state.retry,
+        }
+      : undefined;
+
+  const ignoreCta = (labelKey: string): InfoStateCta => ({
+    label: t(labelKey),
+    onPress: state.ignore,
+  });
+
+  const errorState: DiscoveryErrorViewState = (() => {
+    switch (state.error.type) {
+      case DiscoveryErrorTypes.BluetoothPermissionDeniedPromptable: {
+        const key = `${discoveryErrorTranslationBaseKey}.bluetoothPermissionDeniedPromptable`;
+        return {
+          preset: "info",
+          title: t(`${key}.title`),
+          description: t(`${key}.description`),
+          primaryCta: retryCta(`${key}.cta.retry`),
+          secondaryCta: ignoreCta(`${key}.cta.ignore`),
+        };
+      }
+
+      case DiscoveryErrorTypes.BluetoothPermissionDeniedManualSettings: {
+        const key = `${discoveryErrorTranslationBaseKey}.bluetoothPermissionDeniedManualSettings`;
+        return {
+          preset: "info",
+          title: t(`${key}.title`),
+          description: t(`${key}.description`),
+          primaryCta: retryCta(`${key}.cta.retry`),
+          secondaryCta: ignoreCta(`${key}.cta.ignore`),
+        };
+      }
+
+      case DiscoveryErrorTypes.BluetoothPermissionUnauthorizedManualSettings: {
+        const key = `${discoveryErrorTranslationBaseKey}.bluetoothPermissionUnauthorizedManualSettings`;
+        return {
+          preset: "info",
+          title: t(`${key}.title`),
+          description: t(`${key}.description`),
+          primaryCta: retryCta(`${key}.cta.platform.${platform}.retry`),
+          secondaryCta:
+            platform === "android" ? ignoreCta(`${key}.cta.platform.android.ignore`) : undefined,
+        };
+      }
+
+      case DiscoveryErrorTypes.BluetoothDisabledPromptable: {
+        const key = `${discoveryErrorTranslationBaseKey}.bluetoothDisabledPromptable`;
+        return {
+          preset: "info",
+          title: t(`${key}.title`),
+          description: t(`${key}.description`),
+          primaryCta: retryCta(`${key}.cta.retry`),
+          secondaryCta: ignoreCta(`${key}.cta.ignore`),
+        };
+      }
+
+      case DiscoveryErrorTypes.BluetoothDisabledManualAction: {
+        const key = `${discoveryErrorTranslationBaseKey}.bluetoothDisabledManualAction`;
+        return {
+          preset: "info",
+          title: t(`${key}.title`),
+          description: t(`${key}.description`),
+          primaryCta: retryCta(`${key}.cta.platform.${platform}.retry`),
+          secondaryCta:
+            platform === "android" ? ignoreCta(`${key}.cta.platform.android.ignore`) : undefined,
+        };
+      }
+
+      case DiscoveryErrorTypes.BluetoothUnsupported: {
+        const key = `${discoveryErrorTranslationBaseKey}.bluetoothUnsupported`;
+        return {
+          preset: "error",
+          title: t(`${key}.title`),
+          description: t(`${key}.description.platform.${platform}`),
+          primaryCta:
+            platform === "android" ? ignoreCta(`${key}.cta.platform.android.ignore`) : undefined,
+        };
+      }
+
+      case DiscoveryErrorTypes.LocationPermissionDeniedPromptable: {
+        const key = `${discoveryErrorTranslationBaseKey}.locationPermissionDeniedPromptable`;
+        return {
+          preset: "info",
+          title: t(`${key}.title`),
+          description: t(`${key}.description`),
+          primaryCta: retryCta(`${key}.cta.retry`),
+          secondaryCta: ignoreCta(`${key}.cta.ignore`),
+        };
+      }
+
+      case DiscoveryErrorTypes.LocationPermissionDeniedManualSettings: {
+        const key = `${discoveryErrorTranslationBaseKey}.locationPermissionDeniedManualSettings`;
+        return {
+          preset: "info",
+          title: t(`${key}.title`),
+          description: t(`${key}.description`),
+          primaryCta: retryCta(`${key}.cta.retry`),
+          secondaryCta: ignoreCta(`${key}.cta.ignore`),
+        };
+      }
+
+      case DiscoveryErrorTypes.LocationDisabledPromptable: {
+        const key = `${discoveryErrorTranslationBaseKey}.locationDisabledPromptable`;
+        return {
+          preset: "info",
+          title: t(`${key}.title`),
+          description: t(`${key}.description`),
+          primaryCta: retryCta(`${key}.cta.retry`),
+          secondaryCta: ignoreCta(`${key}.cta.ignore`),
+        };
+      }
+
+      case DiscoveryErrorTypes.LocationDisabledManualAction: {
+        const key = `${discoveryErrorTranslationBaseKey}.locationDisabledManualAction`;
+        return {
+          preset: "info",
+          title: t(`${key}.title`),
+          description: t(`${key}.description`),
+          primaryCta: retryCta(`${key}.cta.retry`),
+          secondaryCta: ignoreCta(`${key}.cta.ignore`),
+        };
+      }
+
+      case DiscoveryErrorTypes.LocationServicePermissionMissing: {
+        const key = `${discoveryErrorTranslationBaseKey}.locationServicePermissionMissing`;
+        return {
+          preset: "info",
+          title: t(`${key}.title`),
+          description: t(`${key}.description`),
+          primaryCta: retryCta(`${key}.cta.retry`),
+          secondaryCta: ignoreCta(`${key}.cta.ignore`),
+        };
+      }
+
+      case DiscoveryErrorTypes.Unknown: {
+        const key = `${discoveryErrorTranslationBaseKey}.unknown`;
+        return {
+          preset: "error",
+          title: t(`${key}.title`),
+          description: t(`${key}.description`),
+          primaryCta: retryCta(`${key}.cta.retry`),
+        };
+      }
+
+      default:
+        return assertNever(state.error);
+    }
+  })();
 
   return (
     <InfoState
-      preset="info"
+      preset={errorState.preset}
       size="hug"
-      title={t(getDiscoveryErrorTranslationKey(state.error.type, "title"))}
-      description={t(getDiscoveryErrorTranslationKey(state.error.type, "description"))}
-      primaryCta={primaryCta}
-      secondaryCta={secondaryCta}
+      title={errorState.title}
+      description={errorState.description}
+      primaryCta={errorState.primaryCta}
+      secondaryCta={errorState.secondaryCta}
     />
   );
 }

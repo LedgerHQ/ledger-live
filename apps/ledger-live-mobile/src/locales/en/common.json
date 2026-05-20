@@ -4907,11 +4907,9 @@
     },
     "connectDevice": {
       "common": {
-        "available": "Available",
-        "close": "Close",
         "ledgerDevice": "Ledger device",
-        "notConnected": "Not connected",
-        "tryAgain": "Try again"
+        "available": "Available",
+        "notConnected": "Not connected"
       },
       "states": {
         "connecting": {
@@ -4921,15 +4919,26 @@
           "errors": {
             "blePairingRefused": {
               "title": "Pairing was refused",
-              "description": "Pairing was refused"
+              "cta": {
+                "retry": "Retry pairing"
+              } 
             },
             "blePairingPeerRemovedPairing": {
-              "title": "Pairing was removed",
-              "description": "Pairing was removed"
+              "title": "Go to your phone’s Bluetooth settings to unpair {{productName}}",
+              "description": "To fix the pairing issue, remove {{productName}} from your phone’s Bluetooth list, then return to this app and try again.",
+              "cta": {
+                "retry": "I unpaired, try again",
+                "help": "Learn how to fix"
+              }
             },
             "unknown": {
-              "title": "Unable to connect",
-              "description": "Unknown error"
+              "title": "Pairing unsuccessful",
+              "description": "Please try again or read our Bluetooth troubleshooting article below.",
+              "tip": "Make sure your device is unlocked.",
+              "cta": {
+                "retry": "Try again",
+                "help": "Get help"
+              }
             }
           }
         },
@@ -4937,59 +4946,126 @@
           "title": "Select a device"
         },
         "discoveryError": {
-          "continueWithUsb": "I want to continue with USB",
           "errors": {
             "bluetoothPermissionDeniedPromptable": {
-              "title": "Bluetooth permission needed",
-              "description": "Please enable Bluetooth permission to use Bluetooth"
+              "title": "Allow Bluetooth access",
+              "description": "Allow Bluetooth to scan for nearby Ledger devices.",
+              "cta": {
+                "retry": "Allow",
+                "ignore": "Continue with USB"
+              }
             },
             "bluetoothPermissionDeniedManualSettings": {
-              "title": "Bluetooth permission needed",
-              "description": "Please enable Bluetooth permission in your phone settings to use Bluetooth"
+              "title": "Allow Bluetooth access",
+              "description": "Bluetooth permission is required. Go to Settings → Apps → Ledger Wallet → Permissions → Nearby devices, then come back.",
+              "cta": {
+                "retry": "I enabled it, try again",
+                "ignore": "Continue with USB"
+              }
             },
             "bluetoothPermissionUnauthorizedManualSettings": {
-              "title": "Bluetooth permission needed",
-              "description": "Please enable Bluetooth permission in your phone settings to use Bluetooth"
+              "title": "Allow Bluetooth access",
+              "description": "Ledger Wallet needs Bluetooth permission to find your device. Enable it in Settings.",
+              "cta": {
+                "platform": {
+                  "ios": {
+                    "retry": "I enabled it, try again"
+                  },
+                  "android": {
+                    "retry": "I enabled it, try again",
+                    "ignore": "Continue with USB"
+                  }
+                }
+              }
             },
             "bluetoothDisabledPromptable": {
-              "title": "Bluetooth settings disabled",
-              "description": "Please enable Bluetooth settings to use Bluetooth"
+              "title": "Turn on Bluetooth",
+              "description": "Bluetooth is off. Turn it on to find your Ledger device.",
+              "cta": {
+                "retry": "Turn on Bluetooth",
+                "ignore": "Continue with USB"
+              }
             },
             "bluetoothDisabledManualAction": {
-              "title": "Bluetooth settings disabled",
-              "description": "Please enable Bluetooth settings in your phone settings to use Bluetooth"
+              "title": "Turn on Bluetooth",
+              "description": "Bluetooth is off. Turn it on in your Settings → Bluetooth, then come back.",
+              "cta": {
+                "platform": {
+                  "ios": {
+                    "retry": "I enabled Bluetooth, try again"
+                  },
+                  "android": {
+                    "retry": "I enabled Bluetooth, try again",
+                    "ignore": "Continue with USB"
+                  }
+                }
+              }
             },
             "bluetoothStateUnknownCheckOnly": {
-              "title": "Bluetooth is not ready",
-              "description": "Please check your Bluetooth settings to use Bluetooth"
+              "title": "Checking Bluetooth..."
             },
             "bluetoothUnsupported": {
-              "title": "Bluetooth is not supported",
-              "description": "Bluetooth is not supported. Please check your Bluetooth settings."
+              "title": "Bluetooth not supported",
+              "description": {
+                "platform": {
+                  "android": "This phone doesn’t support Bluetooth. You can connect your Ledger device via USB instead.",
+                  "ios": "This phone doesn’t support Bluetooth. Please use Ledger Wallet desktop or contact Ledger support."
+                }
+              },
+              "cta": {
+                "platform": {
+                  "android": {
+                    "ignore": "Continue with USB"
+                  }
+                }
+              }
             },
             "locationPermissionDeniedPromptable": {
-              "title": "Location permission needed",
-              "description": "Please enable Location permission to use Bluetooth"
+              "title": "Allow location access",
+              "description": "Android needs Location permission to scan for Bluetooth devices.",
+              "cta": {
+                "retry": "Allow",
+                "ignore": "Continue with USB"
+              }
             },
             "locationPermissionDeniedManualSettings": {
-              "title": "Location permission needed",
-              "description": "Please enable Location permission in your phone settings to use Bluetooth"
+              "title": "Allow location access",
+              "description": "Location permission is required to scan for Bluetooth devices. Go to Settings → Apps → Ledger Wallet → Permissions → Location, then come back.",
+              "cta": {
+                "retry": "I enabled it, try again",
+                "ignore": "Continue with USB"
+              }
             },
             "locationDisabledPromptable": {
-              "title": "Location settings disabled",
-              "description": "Please enable Location settings to use Bluetooth"
+              "title": "Turn on Location",
+              "description": "Location services are off. Turn them on to scan for Bluetooth devices.",
+              "cta": {
+                "retry": "Turn on Location",
+                "ignore": "Continue with USB"
+              }
             },
             "locationDisabledManualAction": {
-              "title": "Location settings disabled",
-              "description": "Please enable Location settings in your phone settings to use Bluetooth"
+              "title": "Turn on Location",
+              "description": "Location services are off. Turn them on from Settings → Location, then come back.",
+              "cta": {
+                "retry": "I enabled Location, try again",
+                "ignore": "Continue with USB"
+              }
             },
             "locationServicePermissionMissing": {
-              "title": "Location permission needed",
-              "description": "Please enable Location permission to use Bluetooth"
+              "title": "Allow location access",
+              "description": "Location permission seems missing. Tap below to try again.",
+              "cta": {
+                "retry": "Try again",
+                "ignore": "Continue with USB"
+              }
             },
             "unknown": {
-              "title": "Unable to discover devices",
-              "description": "Unable to discover devices."
+              "title": "Something went wrong",
+              "description": "We couldn’t start the Bluetooth scan. Please try again or contact Ledger support.",
+              "cta": {
+                "retry": "Try again"
+              }
             }
           }
         },

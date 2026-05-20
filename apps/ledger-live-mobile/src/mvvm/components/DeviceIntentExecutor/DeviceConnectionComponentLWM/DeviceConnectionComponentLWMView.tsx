@@ -6,8 +6,8 @@ import { DiscoveringState } from "./components/DiscoveringState";
 import { WaitingForSelectedDeviceState } from "./components/WaitingForSelectedDeviceState";
 import { DiscoveryErrorState } from "./components/DiscoveryErrorState";
 import { ConnectingState } from "./components/ConnectingState";
-import { ConnectionErrorState } from "./components/ConnectionErrorState";
 import { ConnectedState } from "./components/ConnectedState";
+import { ConnectionErrorState } from "./components/ConnectionErrorState";
 import type { DeviceConnectionComponentLWMViewModel } from "./useDeviceConnectionComponentLWMViewModel";
 
 function assertNever(value: never): never {
@@ -16,6 +16,7 @@ function assertNever(value: never): never {
 
 export function DeviceConnectionComponentLWMView({
   state,
+  platform,
   onConnectLedgerDevice,
   onBuyLedgerDevice,
 }: Readonly<DeviceConnectionComponentLWMViewModel>) {
@@ -38,7 +39,7 @@ export function DeviceConnectionComponentLWMView({
       return <WaitingForSelectedDeviceState state={state} />;
 
     case ConnectDeviceUIStateTypes.DiscoveryError:
-      return <DiscoveryErrorState state={state} />;
+      return <DiscoveryErrorState state={state} platform={platform} />;
 
     case ConnectDeviceUIStateTypes.Connecting:
       return <ConnectingState />;
