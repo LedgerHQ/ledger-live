@@ -15,12 +15,17 @@ type Props = {
 };
 
 /**
- * Left pane: search bar + alphabetically-grouped contact list.
+ * Left pane of the Contacts management page.
  *
- * The pinned "me" group renders without a letter divider; lettered groups
- * render their letter via `LetterDivider`. Groups with zero surviving
- * contacts after the search filter are never produced by `groupContacts`,
- * so no empty-bucket guard is needed here.
+ * Layout (matches Figma frame 13802:2833):
+ * - Outer container: rounded `bg-surface-transparent` panel, padding 16,
+ *   gap 8 vertical, full height.
+ * - Top: Lumen `SearchInput` with `appearance="plain"`, placeholder
+ *   "Search contact". Wired to `searchQuery` / `setSearchQuery`.
+ * - Below: vertical stack of groups produced by `groupContacts`. The
+ *   pinned "me" group renders without a letter divider; lettered groups
+ *   render their letter via `LetterDivider`. Empty buckets are never
+ *   produced by `groupContacts`, so no per-group guard is needed.
  */
 export function ContactList({
   groups,
@@ -42,36 +47,33 @@ export function ContactList({
 
   return (
     <div
-      className="flex flex-col gap-8 w-360 shrink-0 border-r border-base h-full"
       data-testid="contacts-management-list"
+      className="flex flex-col gap-8 h-full overflow-y-auto rounded-lg bg-surface-transparent p-16"
     >
-      <div className="px-24 pt-16">
-        <SearchInput
-          value={searchQuery}
-          placeholder={t("contactsManagement.searchPlaceholder")}
-          onChange={e => onSearchQueryChange(e.target.value)}
-          onClear={() => onSearchQueryChange("")}
-          data-testid="contacts-management-search"
-        />
-      </div>
+      <SearchInput
+        appearance="plain"
+        value={searchQuery}
+        placeholder={t("contactsManagement.searchPlaceholder")}
+        onChange={e => onSearchQueryChange(e.target.value)}
+        onClear={() => onSearchQueryChange("")}
+        data-testid="contacts-management-search"
+      />
 
-      <div className="flex-1 overflow-y-auto px-8">
-        {groups.map(group => {
-          if (group.kind === "pinned") {
-            return (
-              <div key="pinned" className="flex flex-col">
-                {group.contacts.map(renderContact)}
-              </div>
-            );
-          }
+      {groups.map(group => {
+        if (group.kind === "pinned") {
           return (
-            <div key={group.letter} className="flex flex-col">
-              <LetterDivider letter={group.letter} />
+            <div key="pinned" className="flex flex-col">
               {group.contacts.map(renderContact)}
             </div>
           );
-        })}
-      </div>
+        }
+        return (
+          <div key={group.letter} className="flex flex-col">
+            <LetterDivider letter={group.letter} />
+            {group.contacts.map(renderContact)}
+          </div>
+        );
+      })}
     </div>
   );
 }

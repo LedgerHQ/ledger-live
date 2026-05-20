@@ -17,11 +17,14 @@ export type ManagementViewProps = {
 /**
  * Pure view for the Contacts management page.
  *
- * Layout: full-height column with a header strip on top, then a flex row
- * that splits into the contact list (LEFT, fixed-ish width) and the
- * details pane (RIGHT, flex-1). The route is registered at top-level in
- * `Default.tsx`, so the page renders inside the standard LWD `<Page>`
- * shell — no extra chrome here.
+ * Layout (Figma frame 13802:2833):
+ * - Full-height vertical stack inside the standard LWD `<Page>` shell.
+ * - Top: Lumen `NavBar` with the page title and "Add contact" trailing
+ *   Button.
+ * - Body: a CSS grid with two columns — `0.75fr` (list pane) +
+ *   `1fr` (details pane) — separated by a 16px gap. Both panes are
+ *   rounded `bg-surface-transparent` panels; the list scrolls
+ *   independently of the details.
  */
 export function ManagementView({
   groups,
@@ -33,11 +36,14 @@ export function ManagementView({
 }: ManagementViewProps) {
   return (
     <div
-      className="flex flex-col h-full min-h-0"
       data-testid="contacts-management-page"
+      className="flex flex-col gap-24 h-full min-h-0"
     >
       <Header />
-      <div className="flex flex-1 min-h-0">
+      <div
+        className="grid flex-1 min-h-0 gap-16"
+        style={{ gridTemplateColumns: "minmax(0, 0.75fr) minmax(0, 1fr)" }}
+      >
         <ContactList
           groups={groups}
           searchQuery={searchQuery}

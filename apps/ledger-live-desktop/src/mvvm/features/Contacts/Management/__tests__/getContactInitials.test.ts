@@ -26,12 +26,13 @@ describe("getContactInitials", () => {
     expect(getContactInitials("john doe")).toBe("JD");
   });
 
-  it("works with non-letter characters as the leading char of a token", () => {
-    // "brian (me)" → first token "brian", last token "(me)"
-    expect(getContactInitials("brian (me)")).toBe("B(");
+  it("skips tokens that don't start with an ASCII letter (parenthesized suffix)", () => {
+    // "Brian (Me)" → first letter token "Brian", "(Me)" is filtered out
+    expect(getContactInitials("Brian (Me)")).toBe("B");
   });
 
-  it("handles digit-only names without crashing", () => {
-    expect(getContactInitials("123")).toBe("1");
+  it("returns '' for digit-only or symbol-only input", () => {
+    expect(getContactInitials("123")).toBe("");
+    expect(getContactInitials("###")).toBe("");
   });
 });
