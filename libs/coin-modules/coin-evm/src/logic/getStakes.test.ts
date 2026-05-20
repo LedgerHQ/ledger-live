@@ -2,8 +2,8 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { JsonRpcProvider } from "ethers";
 import { getCoinConfig } from "../config";
-import { withApi } from "../network/node/rpc.common";
-import { encodeStakingData, decodeStakingResult } from "../staking/encoder";
+import { withApi } from "../network/withApi";
+import { decodeStakingResult, encodeStakingData } from "../staking/encoder";
 import { getValidators } from "../staking/validators";
 import { getStakes } from "./getStakes";
 
@@ -12,8 +12,8 @@ jest.mock("../config", () => ({
   getCoinConfig: jest.fn(),
 }));
 
-jest.mock("../network/node/rpc.common", () => ({
-  ...jest.requireActual("../network/node/rpc.common"),
+jest.mock("../network/withApi", () => ({
+  ...jest.requireActual("../network/withApi"),
   withApi: jest.fn(),
 }));
 

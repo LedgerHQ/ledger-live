@@ -2,8 +2,8 @@ import { Stake } from "@ledgerhq/coin-module-framework/api/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { delay } from "@ledgerhq/live-promise";
 import { getCoinConfig } from "../config";
-import { withApi } from "../network/node/rpc.common";
 import { isExternalNodeConfig } from "../network/node/types";
+import { withApi } from "../network/withApi";
 import type {
   StakeCreate,
   StakingContractConfig,
