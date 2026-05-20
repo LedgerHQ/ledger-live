@@ -11,6 +11,13 @@ export default {
 };
 
 /**
+ * Verbosity mode for the `ConsoleLogger`:
+ * - "env": filter logs based on the `VERBOSE` env variable (default behavior)
+ * - "all": print every log, regardless of `VERBOSE`
+ */
+export type Verbosity = "all" | "env";
+
+/**
  * Simple logger displaying on the console/stdout logs
  *
  * The filtering is set from the `VERBOSE` env variable.
@@ -23,6 +30,7 @@ export class ConsoleLogger {
   private static instance: ConsoleLogger | undefined;
   private everyLogs: boolean = false;
   private filters: Array<string> = [];
+  private verbosity: Verbosity = "env";
 
   /**
    * Sets up debug console printing of logs
@@ -47,17 +55,24 @@ export class ConsoleLogger {
   }
 
   /**
-   * Refreshes the logger config from the `VERBOSE` env variable
+   * Refreshes the logger config based on the current verbosity mode:
+   * - "all": prints every log
+   * - "env": filters from the `VERBOSE` env variable
    */
   refreshSetup() {
+    if (this.verbosity === "all") {
+      this.everyLogs = true;
+      this.filters = [];
+      console.log("Logs console display setup (verbosity: all)");
+      return;
+    }
+
     const logVerbose = getEnv("VERBOSE");
 
     if (logVerbose) {
       this.everyLogs =
         logVerbose.length === 1 && (logVerbose[0] === "true" || logVerbose[0] === "1");
       this.filters = this.everyLogs ? [] : logVerbose;
-
-      // eslint-disable-next-line no-console
     } else {
       this.everyLogs = false;
       this.filters = [];
@@ -69,6 +84,18 @@ export class ConsoleLogger {
         filters: this.filters,
       })}`,
     );
+  }
+
+  /**
+   * Switches the verbosity mode and immediately applies it.
+   */
+  setVerbosity(mode: Verbosity) {
+    this.verbosity = mode;
+    this.refreshSetup();
+  }
+
+  getVerbosity(): Verbosity {
+    return this.verbosity;
   }
 
   /**
