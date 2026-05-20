@@ -1,4 +1,4 @@
-import { Category } from "../../types";
+import { Category } from "@devtools/core";
 import { CATEGORY_ICONS } from "../../categoryConfig";
 
 interface IconSquareProps {

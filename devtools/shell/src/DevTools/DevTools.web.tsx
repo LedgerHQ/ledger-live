@@ -1,8 +1,21 @@
+import { Suspense } from "react";
+import type { ReactNode } from "react";
 import { ThemeProvider, Divider } from "@ledgerhq/lumen-ui-react";
 import { Sidebar, ToolShell, Overview } from "../components";
+import { Loading } from "../components/Loading/Loading.web";
 import { useDevToolsViewModel, type DevToolsViewProps } from "./useDevToolsViewModel.web";
+import { DevToolsProvider } from "../context";
+import type { DevToolsPropsRegistry, ToolLoaders } from "@devtools/core";
+import { useResolvedTools } from "../registry/useResolvedTools";
 
 type ColorScheme = "light" | "dark" | "system";
+
+export interface DevToolsProps {
+  toolLoaders: ToolLoaders;
+  toolProps?: Partial<DevToolsPropsRegistry>;
+  colorScheme?: ColorScheme;
+  fallback?: ReactNode;
+}
 
 function DevToolsView({
   colorScheme,
@@ -51,10 +64,21 @@ function DevToolsView({
   );
 }
 
-interface DevToolsProps {
+function DevToolsInner({
+  toolLoaders,
+  colorScheme,
+}: {
+  toolLoaders: ToolLoaders;
   colorScheme?: ColorScheme;
+}) {
+  const { tools } = useResolvedTools(toolLoaders);
+  return <DevToolsView {...useDevToolsViewModel({ tools, colorScheme })} />;
 }
 
-export const DevTools = ({ colorScheme }: DevToolsProps) => (
-  <DevToolsView {...useDevToolsViewModel({ colorScheme })} />
+export const DevTools = ({ toolLoaders, colorScheme, toolProps, fallback }: DevToolsProps) => (
+  <Suspense fallback={fallback ?? <Loading />}>
+    <DevToolsProvider value={toolProps}>
+      <DevToolsInner toolLoaders={toolLoaders} colorScheme={colorScheme} />
+    </DevToolsProvider>
+  </Suspense>
 );

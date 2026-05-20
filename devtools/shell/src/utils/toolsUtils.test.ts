@@ -1,4 +1,4 @@
-import { Category } from "../types";
+import { Category, parse } from "@devtools/core";
 import { filterToolsByQuery, findCategoryForToolId } from "../utils/toolsUtils";
 import { makeTool } from "jest/fixtures";
 
@@ -78,11 +78,13 @@ describe("findCategoryForToolId", () => {
   });
 
   it("returns the correct category for a known tool id", () => {
-    expect(findCategoryForToolId(categories, "network-inspector")).toBe(Category.CONNECTIVITY);
-    expect(findCategoryForToolId(categories, "feature-flags")).toBe(Category.CONFIGURATION);
+    expect(findCategoryForToolId(categories, parse("network-inspector"))).toBe(
+      Category.CONNECTIVITY,
+    );
+    expect(findCategoryForToolId(categories, parse("feature-flags"))).toBe(Category.CONFIGURATION);
   });
 
   it("returns null for an unknown tool id", () => {
-    expect(findCategoryForToolId(categories, "does-not-exist")).toBeNull();
+    expect(findCategoryForToolId(categories, parse("does-not-exist"))).toBeNull();
   });
 });

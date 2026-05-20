@@ -2478,6 +2478,15 @@ importers:
       '@codemirror/view':
         specifier: ^6.39.5
         version: 6.39.5
+      '@devtools/core':
+        specifier: workspace:*
+        version: link:../../devtools/core
+      '@devtools/feature-flags':
+        specifier: workspace:*
+        version: link:../../devtools/feature-flags
+      '@devtools/registry':
+        specifier: workspace:*
+        version: link:../../devtools/registry
       '@devtools/shell':
         specifier: workspace:*
         version: link:../../devtools/shell
@@ -2756,8 +2765,38 @@ importers:
         specifier: 'catalog:'
         version: 4.1.18
 
+  devtools/core:
+    devDependencies:
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.0.14
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0
+      react:
+        specifier: 19.0.0
+        version: 19.0.0
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.2
+
   devtools/feature-flags:
     dependencies:
+      '@devtools/core':
+        specifier: workspace:*
+        version: link:../core
+      '@devtools/shell':
+        specifier: workspace:*
+        version: link:../shell
       '@shared/feature-flags':
         specifier: workspace:^
         version: link:../../shared/feature-flags
@@ -2796,7 +2835,36 @@ importers:
         specifier: 'catalog:'
         version: 6.0.2
 
+  devtools/registry:
+    dependencies:
+      '@devtools/core':
+        specifier: workspace:*
+        version: link:../core
+      '@devtools/feature-flags':
+        specifier: workspace:*
+        version: link:../feature-flags
+    devDependencies:
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.2.0
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.2
+
   devtools/shell:
+    dependencies:
+      '@devtools/core':
+        specifier: workspace:*
+        version: link:../core
     devDependencies:
       '@babel/plugin-transform-export-namespace-from':
         specifier: 7.27.1
@@ -20718,6 +20786,7 @@ packages:
   '@snyk/github-codeowners@1.1.0':
     resolution: {integrity: sha512-lGFf08pbkEac0NYgVf4hdANpAgApRjNByLXB+WBip3qj1iendOIyAwP2GKkKbQMNVy2r1xxDf0ssfWscoiC+Vw==}
     engines: {node: '>=8.10'}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
     hasBin: true
 
   '@socket.io/component-emitter@3.1.2':

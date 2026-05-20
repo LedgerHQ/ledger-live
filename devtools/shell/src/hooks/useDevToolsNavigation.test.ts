@@ -1,12 +1,16 @@
 import { act, renderHook } from "@testing-library/react";
 import { useDevToolsNavigation } from "./useDevToolsNavigation";
-import { Category } from "../types";
+import { Category, parse } from "@devtools/core";
 import { makeTool } from "../../jest/fixtures";
 
 const tools = [
   makeTool({ id: "feature-flags", label: "Feature Flags", category: Category.CONFIGURATION }),
   makeTool({ id: "another-tool", label: "Another Tool", category: Category.CONFIGURATION }),
-  makeTool({ id: "network-inspector", label: "Network Inspector", category: Category.CONNECTIVITY }),
+  makeTool({
+    id: "network-inspector",
+    label: "Network Inspector",
+    category: Category.CONNECTIVITY,
+  }),
 ];
 
 describe("useDevToolsNavigation", () => {
@@ -37,14 +41,14 @@ describe("useDevToolsNavigation", () => {
 
   it("updates activeToolId and derives activeTool via setActiveToolId", () => {
     const { result } = renderHook(() => useDevToolsNavigation(tools));
-    act(() => result.current.setActiveToolId("feature-flags"));
+    act(() => result.current.setActiveToolId(parse("feature-flags")));
     expect(result.current.activeToolId).toBe("feature-flags");
     expect(result.current.activeTool).toBe(tools[0]);
   });
 
   it("activeTool is null for an unknown id", () => {
     const { result } = renderHook(() => useDevToolsNavigation(tools));
-    act(() => result.current.setActiveToolId("does-not-exist"));
+    act(() => result.current.setActiveToolId(parse("does-not-exist")));
     expect(result.current.activeTool).toBeNull();
   });
 });

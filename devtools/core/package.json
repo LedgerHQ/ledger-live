@@ -1,0 +1,25 @@
+{
+  "name": "@devtools/core",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Core contract types for the Ledger Live DevTools platform (tool shape, ids, lazy-load contract)",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "sideEffects": false,
+  "scripts": {
+    "format": "prettier --write 'src/**/*.ts'",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage"
+  },
+  "devDependencies": {
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/react": "catalog:",
+    "jest": "catalog:",
+    "react": "catalog:",
+    "typescript": "catalog:"
+  }
+}

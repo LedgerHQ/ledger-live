@@ -8,7 +8,7 @@ import {
   SpeedFast,
   Planet,
 } from "@ledgerhq/lumen-ui-react/symbols";
-import { Category } from "./types";
+import { Category } from "@devtools/core";
 
 // IconProps and IconSize are not exported from @ledgerhq/lumen-ui-react.
 // Settings is already imported and shares the same props shape as all lumen symbols,

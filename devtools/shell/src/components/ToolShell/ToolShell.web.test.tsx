@@ -2,7 +2,7 @@ import userEvent from "@testing-library/user-event";
 import { render, screen } from "jest/render";
 import { makeTool } from "jest/fixtures";
 import { ToolShell } from "./ToolShell.web";
-import { Category } from "../../types";
+import { Category } from "@devtools/core";
 
 const baseTool = makeTool({
   id: "feature-flags",

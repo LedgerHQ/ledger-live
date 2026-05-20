@@ -6,10 +6,11 @@ The shell is the navigation and layout layer of the `devtools/` namespace. It ow
 
 - Render the navigation shell (sidebar, overview, category grouping)
 - Route to the active tool
-- Expose `<DevTools />` as the single entry point for host apps
-- Maintain `tools.config.ts` — the registry that maps tool descriptors to their component entry points
+- Expose `<DevTools toolLoaders={...} toolProps={...} />` as the single entry point for host apps
+- Await each host-provided loader inside a Suspense boundary
+- Surface failed tool loads as disabled rows without breaking the rest of the shell
 
-The shell is the only package in `devtools/` that imports from tool packages. It does so exclusively through `tools.config.ts`.
+The shell is tool-agnostic — it imports no tool packages. The contract types (`Category`, `DevToolsPropsRegistry`, `ToolId`, id constants) live in the sibling `@devtools/core` package.
 
 ## What is implemented
 
@@ -28,21 +29,16 @@ The shell is the only package in `devtools/` that imports from tool packages. It
 shell/
 ├── src/
 │   ├── DevTools/            # <DevTools /> entry point (web + native)
-│   ├── components/          # Shell UI components
-│   ├── hooks/               # Shell hooks
-│   ├── tools.config.ts      # Tool registry
+│   ├── components/          # Shell UI components (incl. Loading)
+│   ├── context/             # DevToolsProvider, useToolProps, useToolBinding
+│   ├── hooks/               # Shell hooks (navigation, accordion, storage)
+│   ├── registry/            # useResolvedTools (lazy-load runtime)
+│   ├── utils/               # Pure helpers (platform filter)
 │   ├── categoryConfig.ts    # Category metadata
-│   ├── types.ts             # Tool & Category types
+│   ├── types.ts             # Tool / ToolDescriptor type
 │   ├── index.ts             # Web exports
 │   └── index.native.ts      # Native exports
 ├── jest/                    # Test helpers and mocks
 ├── package.json
 └── tsconfig.json
 ```
-
-## Notes
-
-- `"private": true` — not published to npm.
-- React `>=19` is a peer dependency — the host app provides it.
-- No build step: `main` and `types` in `package.json` point directly at `src/index.ts`. The consuming bundler compiles the TypeScript source.
-
