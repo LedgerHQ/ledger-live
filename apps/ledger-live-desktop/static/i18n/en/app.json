@@ -8657,14 +8657,12 @@
       "columns": {
         "name": "Name",
         "address": "Address",
+        "asset": "Asset",
         "value": "Value"
       },
       "editName": "Edit name",
       "emptyState": "No crypto address yet",
-      "emptySearchState": "No accounts match your search",
-      "assetCount_zero": "{{count}} asset",
-      "assetCount_one": "{{count}} asset",
-      "assetCount_other": "{{count}} assets"
+      "emptySearchState": "No accounts match your search"
     },
     "editName": {
       "title": "Edit address name",

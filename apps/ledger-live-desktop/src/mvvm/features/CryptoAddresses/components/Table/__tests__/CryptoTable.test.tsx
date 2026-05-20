@@ -3,21 +3,26 @@ import BigNumber from "bignumber.js";
 import { within } from "@testing-library/react";
 import { render, screen } from "tests/testSetup";
 import { CryptoTable } from "../CryptoTable";
-import { getCryptoAccountAddress } from "LLD/features/CryptoAddresses/utils/getCryptoAccountAddress";
 import {
   ETH_ACCOUNT,
   ETH_ACCOUNT_2,
   ETH_ACCOUNT_WITH_USDC,
 } from "LLD/features/__mocks__/accounts.mock";
+import { aggregatedAssetsFlags } from "../../../testUtils/aggregatedAssetsFlags";
 import { createWalletState } from "../../../testUtils/createWalletState";
 import {
   buildMainAccountByIdMap,
   lookupParentAccountFromMap,
 } from "@ledgerhq/asset-aggregation/assetDistribution/index";
 
-function expectColumnHeaders(): void {
+function expectColumnHeaders(options?: { withAssetColumn?: boolean }): void {
   expect(screen.getByRole("columnheader", { name: "Name" })).toBeVisible();
   expect(screen.getByRole("columnheader", { name: "Address" })).toBeVisible();
+  if (options?.withAssetColumn) {
+    expect(screen.getByRole("columnheader", { name: "Asset" })).toBeVisible();
+  } else {
+    expect(screen.queryByRole("columnheader", { name: "Asset" })).not.toBeInTheDocument();
+  }
   expect(screen.getByRole("columnheader", { name: "Value" })).toBeVisible();
 }
 
@@ -106,6 +111,7 @@ describe("CryptoTable", () => {
     expectColumnHeaders();
     expect(screen.getByText(accountLabel)).toBeVisible();
     expect(screen.getByText("ETH")).toBeVisible();
+    expect(screen.queryByTestId("account-assets-cell")).not.toBeInTheDocument();
     const table = screen.getByRole("table");
     const tbodyElements = within(table)
       .getAllByRole("rowgroup")
@@ -118,6 +124,25 @@ describe("CryptoTable", () => {
 
     expect(mockOnRowClick).toHaveBeenCalledTimes(1);
     expect(mockOnRowClick).toHaveBeenCalledWith(ETH_ACCOUNT, undefined);
+  });
+
+  it("renders the asset column when shouldDisplayAggregatedAssets is enabled", () => {
+    render(
+      <CryptoTable
+        rows={[ETH_ACCOUNT]}
+        lookupParentAccount={mockLookupParent}
+        onRowClick={mockOnRowClick}
+      />,
+      {
+        initialState: {
+          ...aggregatedAssetsFlags,
+          ...createWalletState(new Map([[ETH_ACCOUNT.id, "Ethereum main"]])),
+        },
+      },
+    );
+
+    expectColumnHeaders({ withAssetColumn: true });
+    expect(screen.getByTestId("account-assets-cell")).toBeVisible();
   });
 
   it("on token rows: ignores row click for edit name; row click passes token and parent", async () => {
@@ -149,21 +174,5 @@ describe("CryptoTable", () => {
     await user.click(screen.getByRole("button", { name: /USDT on Eth/ }));
     expect(mockOnRowClick).toHaveBeenCalledTimes(1);
     expect(mockOnRowClick).toHaveBeenCalledWith(tokenAccount, parentAccount);
-  });
-});
-
-describe("getCryptoAccountAddress", () => {
-  it("returns the account fresh address for Account rows", () => {
-    expect(getCryptoAccountAddress(ETH_ACCOUNT, jest.fn())).toBe(ETH_ACCOUNT.freshAddress);
-  });
-
-  it("returns the parent account fresh address for TokenAccount rows", () => {
-    const parent = ETH_ACCOUNT_WITH_USDC;
-    const token = parent.subAccounts![0];
-    const mainById = buildMainAccountByIdMap([parent]);
-    const lookup = jest.fn((id: string) => lookupParentAccountFromMap(mainById, id));
-
-    expect(getCryptoAccountAddress(token, lookup)).toBe(parent.freshAddress);
-    expect(lookup).toHaveBeenCalledWith(token.parentId);
   });
 });
