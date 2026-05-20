@@ -6,7 +6,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "~/context/Locale";
 import { ASSET_DETAIL_TEST_IDS } from "LLM/features/AssetDetail/testIds";
 import { SectionContentState } from "../SectionContentState";
-import { STAT_KEYS } from "./useMarketStatsViewModel";
+import { SectionSkeleton } from "../SectionSkeleton";
 
 type StatRow = {
   key: string;
@@ -27,19 +27,23 @@ export function MarketStatsView({ stats, isLoading, isError, hasData, onTooltipO
   const { t } = useTranslation();
   const { bottom } = useSafeAreaInsets();
 
+  if (isLoading && !hasData) {
+    return (
+      <Box testID={ASSET_DETAIL_TEST_IDS.marketStats}>
+        <SectionSkeleton rows={1} rowHeight="s56" />
+      </Box>
+    );
+  }
+
   return (
     <Box testID={ASSET_DETAIL_TEST_IDS.marketStats} lx={containerStyle}>
       <Text typography="heading5SemiBold" lx={{ color: "base" }}>
         {t("assetDetail.marketStats.title")}
       </Text>
       <SectionContentState
-        isLoading={isLoading}
         isError={isError}
         hasData={hasData}
         errorMessage={t("assetDetail.marketStats.error")}
-        skeletonKeys={STAT_KEYS}
-        listStyle={listStyle}
-        skeletonStyle={skeletonRowStyle}
       >
         <Box lx={listStyle}>
           {stats.map(stat => (
@@ -95,10 +99,4 @@ const labelContainerStyle: LumenViewStyle = {
   flexDirection: "row",
   alignItems: "center",
   gap: "s4",
-};
-
-const skeletonRowStyle: LumenViewStyle = {
-  height: "s24",
-  backgroundColor: "surface",
-  borderRadius: "sm",
 };

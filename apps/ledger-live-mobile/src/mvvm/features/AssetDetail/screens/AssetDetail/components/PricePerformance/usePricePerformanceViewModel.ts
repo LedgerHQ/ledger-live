@@ -4,8 +4,6 @@ import { useTranslation, useLocale } from "~/context/Locale";
 import { counterValueFormatter } from "LLM/features/Market/utils";
 import { useAssetMarketData } from "../../hooks/useAssetMarketData";
 
-export const RECORD_KEYS = ["ath", "atl"] as const;
-
 type PriceRecord = {
   id: string;
   label: string;
@@ -108,7 +106,7 @@ export function usePricePerformanceViewModel(currency: AssetDetailCurrencyProps)
     records,
     isLoading,
     isError,
-    hasData: !!marketCurrency,
+    hasData: !!marketCurrency && records.length > 0,
   };
 }
 

@@ -7,6 +7,7 @@ import type { BalanceDetailsViewModelResult } from "./useBalanceDetailsViewModel
 import { TotalBalanceView } from "./TotalBalanceView";
 import { EarnBannerView } from "./EarnBannerView";
 import { EarnCardsView } from "./EarnCardsView";
+import { SectionSkeleton } from "../SectionSkeleton";
 
 type EarnState = BalanceDetailsViewModelResult["earnState"];
 
@@ -20,6 +21,7 @@ type Props = Readonly<{
   onTransferPress: () => void;
   onEarnBannerPress: () => void;
   onEarnDepositPress: () => void;
+  isLoading: boolean;
 }>;
 
 export function BalanceDetailsView({
@@ -32,7 +34,12 @@ export function BalanceDetailsView({
   onTransferPress,
   onEarnBannerPress,
   onEarnDepositPress,
+  isLoading,
 }: Props) {
+  if (isLoading && !hasAccounts) {
+    return <SectionSkeleton rows={1} rowHeight="s56" />;
+  }
+
   if (!hasAccounts) return null;
 
   return (

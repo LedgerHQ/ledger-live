@@ -13,18 +13,32 @@ import { useTranslation } from "~/context/Locale";
 import { ASSET_DETAIL_TEST_IDS } from "LLM/features/AssetDetail/testIds";
 import { AddressAccountItem } from "./components/AddressAccountItem";
 import type { AddressAccountData } from "./useAddressesViewModel";
+import { SectionSkeleton } from "../SectionSkeleton";
 
 type Props = Readonly<{
   displayedAccounts: readonly AddressAccountData[];
   hasMore: boolean;
+  hasData: boolean;
   onAddAccount: () => void;
   onSeeAll: () => void;
+  isLoading: boolean;
 }>;
 
-export function AddressesView({ displayedAccounts, hasMore, onAddAccount, onSeeAll }: Props) {
+export function AddressesView({
+  displayedAccounts,
+  hasMore,
+  hasData,
+  onAddAccount,
+  onSeeAll,
+  isLoading,
+}: Props) {
   const { t } = useTranslation();
 
-  if (displayedAccounts.length === 0) return null;
+  if (isLoading && !hasData) {
+    return <SectionSkeleton rows={1} rowHeight="s56" />;
+  }
+
+  if (!hasData) return null;
 
   return (
     <Box testID={ASSET_DETAIL_TEST_IDS.addresses}>

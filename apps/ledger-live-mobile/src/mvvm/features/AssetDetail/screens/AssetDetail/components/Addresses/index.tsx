@@ -7,9 +7,10 @@ import { AddressesView } from "./AddressesView";
 type Props = Readonly<{
   currency: AssetDetailCurrencyProps;
   distributionItem: DistributionItem | undefined;
+  isLoading: boolean;
 }>;
 
-export function Addresses({ currency, distributionItem }: Props) {
+export function Addresses({ currency, distributionItem, isLoading }: Props) {
   const viewModel = useAddressesViewModel(currency, distributionItem);
-  return <AddressesView {...viewModel} />;
+  return <AddressesView {...viewModel} isLoading={isLoading} />;
 }
