@@ -1,4 +1,4 @@
-import type { ChangeEvent } from "react";
+import type { ChangeEvent, ReactNode } from "react";
 import type { FeePresetOption } from "../../hooks/useFeePresetOptions";
 import type { FeeFiatMap } from "../../hooks/useFeePresetFiatValues";
 import type { FeePresetLegendMap } from "../../hooks/useFeePresetLegends";
@@ -70,7 +70,10 @@ type ReviewProps = Readonly<{
   onGetFunds?: () => void;
 }>;
 
-export type AmountScreenViewProps = AmountInputProps & FeesProps & QuickActionsProps & ReviewProps;
+export type AmountScreenViewProps = AmountInputProps &
+  FeesProps &
+  QuickActionsProps &
+  ReviewProps & { pluginsSlot?: ReactNode };
 
 export type AmountScreenViewModel = Omit<AmountScreenViewProps, "onReview" | "onGetFunds"> &
   Readonly<{
