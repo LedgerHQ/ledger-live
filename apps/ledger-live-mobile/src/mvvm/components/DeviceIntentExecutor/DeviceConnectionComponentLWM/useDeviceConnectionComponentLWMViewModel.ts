@@ -3,6 +3,7 @@ import { Linking } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { DeviceConnectionResult } from "@ledgerhq/device-intent";
+import { log } from "@ledgerhq/logs";
 import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import {
   connectDeviceUseCase,
@@ -20,9 +21,10 @@ import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/typ
 import { urls } from "~/utils/urls";
 import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 
+const LOG_TYPE = "DeviceConnectionComponentLWM";
+
 type UseDeviceConnectionComponentLWMViewModelParams = {
   onConnected: (connectionResult: DeviceConnectionResult) => void;
-  onError: (error: unknown) => void;
 };
 
 export type DeviceConnectionComponentLWMViewModel = {
@@ -33,7 +35,6 @@ export type DeviceConnectionComponentLWMViewModel = {
 
 export function useDeviceConnectionComponentLWMViewModel({
   onConnected,
-  onError,
 }: UseDeviceConnectionComponentLWMViewModelParams): DeviceConnectionComponentLWMViewModel {
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
   const dispatch = useDispatch();
@@ -44,6 +45,15 @@ export function useDeviceConnectionComponentLWMViewModel({
   const [state, setState] = useState<ConnectDeviceUIState>({
     type: ConnectDeviceUIStateTypes.Loading,
   });
+  // DMK unavailability is a misconfiguration (LWM provider missing) rather than a
+  // runtime connection failure: throw synchronously so the nearest React
+  // ErrorBoundary catches it. Runtime errors that escape the inner state machine
+  // are funnelled by `connectDeviceUseCase` into a terminal `UnknownError` UI state
+  // and reach this hook via `next`, never via the observable's error channel.
+  if (!dmk) {
+    log(LOG_TYPE, "DMK unavailable");
+    throw new Error("Device Management Kit is not available");
+  }
 
   const onConnectLedgerDevice = useCallback(() => {
     const params = undefined;
@@ -112,22 +122,14 @@ export function useDeviceConnectionComponentLWMViewModel({
   );
 
   useEffect(() => {
-    if (!dmk) {
-      onError(new Error("Device Management Kit is not available"));
-      return;
-    }
-
     const subscription = connectDeviceUseCase({
       knownDevices,
       dmk,
       onConnected: wrappedOnConnected,
-    }).subscribe({
-      next: setState,
-      error: onError,
-    });
+    }).subscribe({ next: setState });
 
     return () => subscription.unsubscribe();
-  }, [dmk, knownDevices, onError, wrappedOnConnected]);
+  }, [dmk, knownDevices, wrappedOnConnected]);
 
   return {
     state,

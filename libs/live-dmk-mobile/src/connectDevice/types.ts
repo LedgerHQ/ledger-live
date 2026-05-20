@@ -308,6 +308,12 @@ export enum ConnectDeviceUIStateTypes {
   Connecting = "connecting",
   ConnectionError = "connection-error",
   Connected = "connected",
+  /**
+   * Terminal state emitted by the use case when an unexpected error escapes the inner
+   * state machine. Has no retry / ignore: the host UI is expected to display a generic
+   * error and let the user dismiss the surrounding flow.
+   */
+  UnknownError = "unknown-error",
 }
 
 export type ConnectDeviceUIState =
@@ -342,4 +348,8 @@ export type ConnectDeviceUIState =
     }
   | {
       type: ConnectDeviceUIStateTypes.Connected;
+    }
+  | {
+      type: ConnectDeviceUIStateTypes.UnknownError;
+      error: unknown;
     };

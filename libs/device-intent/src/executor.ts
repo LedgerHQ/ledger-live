@@ -13,11 +13,13 @@ import type {
  *
  * Injected into the executor via {@link ExecutorPlatformConfiguration} so each
  * platform (LWM / LWD) can provide its own implementation.
+ *
+ * The component is expected to handle its own internal failures (e.g. pairing
+ * errors, transport setup issues): they never surface to the executor.
  */
 export type DeviceConnectionComponent = React.ComponentType<{
   deviceConnectionParams: DeviceConnectionParams;
   onConnected: (connectionResult: DeviceConnectionResult) => void;
-  onError: (error: unknown) => void;
   /** Call to request the executor to close (forwards to `DeviceIntentExecutorProps.onUserCancel`). */
   onClose: () => void;
 }>;
@@ -41,13 +43,24 @@ export type DeviceContextInitializerComponent<
 }>;
 
 /**
- * React component rendered when an error occurs during one of the executor
- * phases (connection or intent execution).
+ * React component rendered when an error occurs during intent execution.
  *
  * Injected into the executor via {@link ExecutorPlatformConfiguration}.
  */
 export type ErrorComponent = React.ComponentType<{
   error: unknown;
+  onRetry: () => void;
+  /** Call to request the executor to close (forwards to `DeviceIntentExecutorProps.onUserCancel`). */
+  onClose: () => void;
+}>;
+
+/**
+ * React component rendered when the executor detects that the device has
+ * disconnected during initialization, intent execution, or while idle.
+ *
+ * Injected into the executor via {@link ExecutorPlatformConfiguration}.
+ */
+export type DeviceDisconnectedComponent = React.ComponentType<{
   onRetry: () => void;
   /** Call to request the executor to close (forwards to `DeviceIntentExecutorProps.onUserCancel`). */
   onClose: () => void;
@@ -74,7 +87,7 @@ export interface ExecutorPlatformConfiguration<InitInput = void, InitializerConf
     InitInput,
     InitializerConfig
   >;
-  ConnectionErrorComponent: ErrorComponent;
+  DeviceDisconnectedComponent: DeviceDisconnectedComponent;
   IntentErrorComponent: ErrorComponent;
   InvalidOperationComponent: InvalidOperationComponent;
 }
@@ -87,7 +100,7 @@ export interface ExecutorPlatformConfiguration<InitInput = void, InitializerConf
  */
 export type ExecutorState =
   | { type: "connectingDevice" }
-  | { type: "connectingDeviceError"; error: unknown }
+  | { type: "deviceDisconnected" }
   | { type: "initializingDeviceContext" }
   | { type: "executingIntent" }
   | { type: "executingIntentError"; error: unknown }
