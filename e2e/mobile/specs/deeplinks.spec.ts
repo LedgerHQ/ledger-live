@@ -83,6 +83,11 @@ describe("DeepLinks Tests", () => {
     },
   );
 
+  (isSmokeTestRun ? it.skip : it)("should open discovery to Kiln live App", async () => {
+    await app.discover.openViaDeeplink("Kiln");
+    await app.discover.expectApp("Kiln");
+  });
+
   (isSmokeTestRun ? it.skip : it)("should open Swap Form page", async () => {
     await swapSetup();
     await app.swap.openViaDeeplink();
