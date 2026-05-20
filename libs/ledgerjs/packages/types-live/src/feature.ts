@@ -322,6 +322,7 @@ export type Features = CurrencyFeatures & {
   lwdGenericAwarenessModal: DefaultFeature;
   lwmAnalyticsConsentOnboarding: DefaultFeature;
   lwmGenericAwarenessModal: DefaultFeature;
+  lwmNewNotificationsOptIn: DefaultFeature;
   lwmProductTour: DefaultFeature;
   lwmWallet40: Feature_LwmWallet40;
   lwdWallet40: Feature_LwdWallet40;

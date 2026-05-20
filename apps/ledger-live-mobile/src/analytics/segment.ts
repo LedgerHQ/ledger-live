@@ -98,6 +98,7 @@ const getFeatureFlagProperties = () => {
     const lwmAnalyticsConsentOnboardingFlag = analyticsFeatureFlagMethod(
       "lwmAnalyticsConsentOnboarding",
     );
+    const lwmNewNotificationsOptInFlag = analyticsFeatureFlagMethod("lwmNewNotificationsOptIn");
 
     const isBatch1Enabled =
       !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
@@ -112,6 +113,7 @@ const getFeatureFlagProperties = () => {
     const ptxSwapLiveAppKycWarningEnabled = Boolean(ptxSwapLiveAppKycWarning?.enabled);
     const llmSyncOnboardingIncr1 = Boolean(llmSyncOnboardingIncr1Flag?.enabled);
     const lwmAnalyticsConsentOnboarding = Boolean(lwmAnalyticsConsentOnboardingFlag?.enabled);
+    const lwmNewNotificationsOptIn = Boolean(lwmNewNotificationsOptInFlag?.enabled);
 
     // Apply versioned redirects logic to the stakePrograms feature flag
     const appVersion = LiveConfig.instance.appVersion || "0.0.0";
@@ -147,6 +149,7 @@ const getFeatureFlagProperties = () => {
       ptxSwapLiveAppKycWarningEnabled,
       llmSyncOnboardingIncr1,
       lwmAnalyticsConsentOnboarding,
+      lwmNewNotificationsOptIn,
     });
   })();
 };
@@ -197,6 +200,7 @@ const getMandatoryProperties = (store: AppStore) => {
   const devModeEnabled = getEnv("MANAGER_DEV_MODE");
   const analyticsInfo = analyticsConsentInfoSelector(state);
   const analyticsConsentOnboardingAttributes = getAnalyticsConsentOnboardingAttributes();
+  const newNotificationsOptInAttributes = getNewNotificationsOptInAttributes();
 
   return {
     userId: userIdStr,
@@ -208,6 +212,7 @@ const getMandatoryProperties = (store: AppStore) => {
     readOnlyMode,
     analyticsInfo,
     ...analyticsConsentOnboardingAttributes,
+    ...newNotificationsOptInAttributes,
   };
 };
 
@@ -248,6 +253,14 @@ const getAnalyticsConsentOnboardingAttributes = () => {
   const flag = analyticsFeatureFlagMethod("lwmAnalyticsConsentOnboarding");
   return {
     lwmAnalyticsConsentOnboarding: !!flag?.enabled,
+  };
+};
+
+const getNewNotificationsOptInAttributes = () => {
+  if (!analyticsFeatureFlagMethod) return { lwmNewNotificationsOptIn: false };
+  const flag = analyticsFeatureFlagMethod("lwmNewNotificationsOptIn");
+  return {
+    lwmNewNotificationsOptIn: !!flag?.enabled,
   };
 };
 
