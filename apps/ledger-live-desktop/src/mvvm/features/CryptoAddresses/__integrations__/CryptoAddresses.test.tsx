@@ -5,6 +5,7 @@ import { ETH_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
 import CryptoAddresses from "../index";
 import useCryptoAddressesViewModel from "../hooks/useCryptoAddressesViewModel";
 import type { CryptoAddressesViewModel } from "../types";
+import { aggregatedAssetsFlags } from "../testUtils/aggregatedAssetsFlags";
 import { createWalletState } from "../testUtils/createWalletState";
 
 jest.mock("../hooks/useCryptoAddressesViewModel");
@@ -39,7 +40,10 @@ describe("CryptoAddresses (Crypto page)", () => {
     });
 
     const { user } = render(<CryptoAddresses />, {
-      initialState: createWalletState(new Map([[ETH_ACCOUNT.id, "My ETH account"]])),
+      initialState: {
+        ...aggregatedAssetsFlags,
+        ...createWalletState(new Map([[ETH_ACCOUNT.id, "My ETH account"]])),
+      },
     });
 
     // Land on the Crypto page — page title in the header
@@ -52,6 +56,7 @@ describe("CryptoAddresses (Crypto page)", () => {
     // Account list: column headers and at least one data row
     expect(within(pageContent).getByRole("columnheader", { name: "Name" })).toBeVisible();
     expect(within(pageContent).getByRole("columnheader", { name: "Address" })).toBeVisible();
+    expect(within(pageContent).getByRole("columnheader", { name: "Asset" })).toBeVisible();
     expect(within(pageContent).getByRole("columnheader", { name: "Value" })).toBeVisible();
 
     const nameCell = within(pageContent).getByRole("button", { name: /My ETH account/ });
