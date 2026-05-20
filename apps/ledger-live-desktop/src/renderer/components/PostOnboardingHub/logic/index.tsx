@@ -10,6 +10,7 @@ import PostOnboardingMockAction from "~/renderer/components/PostOnboardingHub/Po
 import CustomImage from "~/renderer/screens/customImage";
 import { getStoreValue } from "~/renderer/store";
 import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
+import { openProductTour } from "LLD/features/ProductTour/Drawer/productTourDialog";
 
 const assetsTransfer: PostOnboardingAction = {
   id: PostOnboardingActionId.assetsTransfer,
@@ -97,6 +98,21 @@ const customImage: PostOnboardingAction = {
   buttonLabelForAnalyticsEvent: "Set lock screen picture",
 };
 
+const discoverWallet: PostOnboardingAction = {
+  id: PostOnboardingActionId.discoverWallet,
+  featureFlagId: "lwdProductTour",
+  Icon: Icons.PictureImage,
+  title: "postOnboarding.actions.discoverWallet.title",
+  titleCompleted: "postOnboarding.actions.discoverWallet.titleCompleted",
+  description: "postOnboarding.actions.discoverWallet.description",
+  actionCompletedPopupLabel: "postOnboarding.actions.discoverWallet.actionCompletedPopupLabel",
+  buttonLabelForAnalyticsEvent: "Discover what your wallet can do",
+  startAction: ({ dispatch }: StartActionArgs) => {
+    dispatch?.(openProductTour());
+  },
+  getIsAlreadyCompletedByState: ({ productTourCompleted }) => !!productTourCompleted,
+};
+
 const claimMock: PostOnboardingAction = {
   id: PostOnboardingActionId.claimMock,
   Icon: Icons.Gift,
@@ -182,6 +198,7 @@ const postOnboardingActions: { [id in PostOnboardingActionId]?: PostOnboardingAc
   buyCrypto,
   syncAccounts,
   customImage,
+  discoverWallet,
   recover,
   // Mocks for desktop development and tests
   assetsTransferMock,
@@ -223,22 +240,22 @@ export function getPostOnboardingActionsForDevice(
   switch (deviceModelId) {
     case DeviceModelId.stax:
       if (mock) return staxPostOnboardingActionsMock;
-      return [assetsTransfer, buyCrypto, syncAccounts, customImage, recover];
+      return [assetsTransfer, buyCrypto, syncAccounts, customImage, discoverWallet, recover];
     case DeviceModelId.europa:
       if (mock) return europaPostOnboardingActionsMock;
-      return [assetsTransfer, buyCrypto, syncAccounts, customImage, recover];
+      return [assetsTransfer, buyCrypto, syncAccounts, customImage, discoverWallet, recover];
     case DeviceModelId.apex:
       if (mock) return apexPostOnboardingActionsMock;
-      return [assetsTransfer, buyCrypto, syncAccounts, customImage, recover];
+      return [assetsTransfer, buyCrypto, syncAccounts, customImage, discoverWallet, recover];
     case DeviceModelId.nanoS:
       // Post-onboarding actions for Nano S (no custom lock screen step).
       return [assetsTransfer, buyCrypto];
     case DeviceModelId.nanoSP:
       // Post-onboarding actions for Nano S Plus (no custom lock screen step).
-      return [assetsTransfer, buyCrypto, syncAccounts];
+      return [assetsTransfer, buyCrypto, syncAccounts, discoverWallet];
     case DeviceModelId.nanoX:
       // Post-onboarding actions for Nano X (no custom lock screen step).
-      return [assetsTransfer, buyCrypto, syncAccounts];
+      return [assetsTransfer, buyCrypto, syncAccounts, discoverWallet];
     default:
       return [];
   }

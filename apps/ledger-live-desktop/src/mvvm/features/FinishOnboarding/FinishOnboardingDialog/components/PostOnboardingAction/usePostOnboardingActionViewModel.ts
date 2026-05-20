@@ -55,6 +55,7 @@ export function usePostOnboardingActionViewModel(
         deviceModelId,
         openActivationDrawer,
         protectId,
+        dispatch,
       });
       if (buttonLabelForAnalyticsEvent) {
         track("button_clicked2", {
@@ -64,7 +65,9 @@ export function usePostOnboardingActionViewModel(
         });
       }
     }
-    if (shouldCompleteOnStart) { completeAction(postOnboardingActionId); }
+    if (shouldCompleteOnStart) {
+      completeAction(postOnboardingActionId);
+    }
   }, [
     buttonLabelForAnalyticsEvent,
     completeAction,

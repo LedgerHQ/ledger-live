@@ -29,6 +29,36 @@ describe("isPostOnboardingHubActionFulfilled", () => {
     expect(isFulfilled).toBe(false);
   });
 
+  it("uses productTourCompleted in getIsAlreadyCompletedByState for discover wallet actions", async () => {
+    let isFulfilled = await isPostOnboardingHubActionFulfilled(
+      {
+        completed: false,
+        getIsAlreadyCompletedByState: ({ productTourCompleted }) => Boolean(productTourCompleted),
+      },
+      {
+        isLedgerSyncActive: false,
+        accounts: [],
+        protectId: "",
+        productTourCompleted: true,
+      },
+    );
+    expect(isFulfilled).toBe(true);
+
+    isFulfilled = await isPostOnboardingHubActionFulfilled(
+      {
+        completed: false,
+        getIsAlreadyCompletedByState: ({ productTourCompleted }) => Boolean(productTourCompleted),
+      },
+      {
+        isLedgerSyncActive: false,
+        accounts: [],
+        protectId: "",
+        productTourCompleted: false,
+      },
+    );
+    expect(isFulfilled).toBe(false);
+  });
+
   it("uses getIsAlreadyCompleted to get async state", async () => {
     let isFulfilled = await isPostOnboardingHubActionFulfilled(
       {
