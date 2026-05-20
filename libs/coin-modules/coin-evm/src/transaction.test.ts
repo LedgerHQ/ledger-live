@@ -1,5 +1,5 @@
 import { toErrorRaw } from "@ledgerhq/ledger-wallet-framework/serialization/transaction";
-import BigNumber from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 import {
   eip1559Tx,
   legacyTx,

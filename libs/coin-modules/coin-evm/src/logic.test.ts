@@ -3,7 +3,7 @@ import * as EVM_TOOLS from "@ledgerhq/evm-tools/message/EIP712/index";
 import { getSyncHash as baseGetSyncHash } from "@ledgerhq/ledger-wallet-framework/account/sync";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { CryptoCurrencyId, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import BigNumber from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 
 jest.mock("./network/node/index", () => ({
   ...jest.requireActual("./network/node/index"),

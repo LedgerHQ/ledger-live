@@ -4,7 +4,7 @@ import {
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import BigNumber from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 import { ethers } from "ethers";
 import { EvmCoinConfig, getCoinConfig, setCoinConfig } from "../config";
 import { getNodeApi } from "../network/node";

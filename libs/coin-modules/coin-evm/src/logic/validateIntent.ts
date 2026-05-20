@@ -27,7 +27,7 @@ import {
 } from "@ledgerhq/errors";
 import { getFeesUnit } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import BigNumber from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 import { getGasTracker } from "../network/gasTracker";
 import { isNative, TransactionTypes } from "../types";
 import { DEFAULT_GAS_LIMIT, isEthAddress, isStakingIntent } from "../utils";

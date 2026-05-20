@@ -5,7 +5,7 @@ import type {
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import BigNumber from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 import { Transaction, TransactionLike } from "ethers";
 import { getAdditionalLayer2Fees } from "../logic";
 import { getGasTracker } from "../network/gasTracker";

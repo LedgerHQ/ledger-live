@@ -1,6 +1,6 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 import { EvmCoinConfig, setCoinConfig } from "../config";
 import etherscanExplorer from "../network/explorer/etherscan";
 import ledgerExplorer from "../network/explorer/ledger";

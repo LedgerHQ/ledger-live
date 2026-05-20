@@ -4,7 +4,7 @@ import { Batcher } from "@ledgerhq/live-network/batcher/types";
 import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import axios, { AxiosRequestConfig } from "axios";
-import BigNumber from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 import { ethers } from "ethers";
 import ERC20Abi from "../../abis/erc20.abi.json";
 import OptimismGasPriceOracleAbi from "../../abis/optimismGasPriceOracle.abi.json";

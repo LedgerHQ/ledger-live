@@ -17,7 +17,7 @@ import {
   TransactionRes,
 } from "@ledgerhq/ledger-wallet-framework/bot/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import BigNumber from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 import expect from "expect";
 import invariant from "invariant";
 import sample from "lodash/sample";

@@ -6,7 +6,7 @@ import type {
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import BigNumber from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 import { EvmCoinConfig, setCoinConfig } from "../config";
 import { GasEstimationError } from "../errors";
 import { getGasTracker } from "../network/gasTracker";
