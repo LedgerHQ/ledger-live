@@ -1,7 +1,8 @@
 ---
+name: team-split-convention
 description: Team-split convention for multi-team files — split into team-* folders to reduce CODEOWNERS friction
 globs: ["**/team-*/**"]
-alwaysApply: false
+disable-model-invocation: false
 ---
 
 # Team-split convention
