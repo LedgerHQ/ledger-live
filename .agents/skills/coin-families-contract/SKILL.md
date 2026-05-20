@@ -1,7 +1,8 @@
 ---
+name: coin-families-contract
 description: Coin-specific logic must live in families/; generic UI uses the families contract only (no if (family === "evm") in shared code)
 globs: ["**/families/**", "**/mvvm/**", "**/renderer/**", "**/screens/**"]
-alwaysApply: false
+disable-model-invocation: true
 ---
 
 # Coin families contract (Desktop & Mobile UI)
@@ -18,19 +19,19 @@ alwaysApply: false
 
 ## Do (correct pattern)
 
-1. **Define a slot on the contract**  
+1. **Define a slot on the contract**
    - **Desktop:** Add an optional property to `LLDCoinFamily` in `apps/ledger-live-desktop/src/renderer/families/types.ts` (e.g. `NoAssociatedAccounts?: React.ComponentType<...>`).
    - **Mobile:** Use the same idea: a typed contract (or generated map like `noAssociatedAccountsByFamily`) that families can optionally fill.
 
-2. **Implement only in the family**  
+2. **Implement only in the family**
    - Put the component or logic in `families/<family>/` (e.g. `families/hedera/NoAssociatedAccounts.tsx`) and export it from the family index (Desktop: in the object passed to `generated`; Mobile: in the generated aggregation if applicable).
 
-3. **Use the contract in generic code**  
+3. **Use the contract in generic code**
    - Generic code looks up by family and uses the slot if present, with **no** `if (family === "hedera")`:
    - **Desktop:** `getLLDCoinFamily(currency.family).NoAssociatedAccounts` → use it when defined.
    - **Mobile:** e.g. `getCustomNoAssociatedAccounts(currency)` returning a component from a family map, then pass it to the screen (e.g. as `CustomNoAssociatedAccounts` in route params).
 
-## Reference example: Scan Device “no associated accounts”
+## Reference example: Scan Device "no associated accounts"
 
 - **Contract (Desktop):**  
   `apps/ledger-live-desktop/src/renderer/families/types.ts` — `NoAssociatedAccounts?: React.ComponentType<AddAccountsStepProps>` on `LLDCoinFamily`.
