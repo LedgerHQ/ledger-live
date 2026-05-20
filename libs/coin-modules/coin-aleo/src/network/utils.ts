@@ -147,6 +147,12 @@ export async function fetchAllOwnedRecords({
   start,
   resultsPerPage = DEFAULT_RECORDS_PAGE_SIZE,
   signal,
+  programs = [PROGRAM_ID.CREDITS],
+  functions = [
+    EXPLORER_TRANSFER_TYPES.PRIVATE,
+    EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE,
+    EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC,
+  ],
 }: {
   currency: CryptoCurrency;
   uuid: string;
@@ -154,6 +160,8 @@ export async function fetchAllOwnedRecords({
   start?: number;
   resultsPerPage?: number;
   signal?: AbortSignal;
+  programs?: string[];
+  functions?: string[];
 }): Promise<AleoPrivateRecord[]> {
   const allRecords: AleoPrivateRecord[] = [];
   let page = 0;
@@ -168,12 +176,8 @@ export async function fetchAllOwnedRecords({
       ...(typeof start === "number" && { start }),
       resultsPerPage,
       page,
-      programs: [PROGRAM_ID.CREDITS],
-      functions: [
-        EXPLORER_TRANSFER_TYPES.PRIVATE,
-        EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE,
-        EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC,
-      ],
+      programs,
+      functions,
     });
 
     allRecords.push(...records);
