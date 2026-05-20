@@ -50,6 +50,10 @@ describe("useLifeCycle", () => {
     jest.spyOn(console, "error").mockImplementation(() => {});
   });
 
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   it("should expose handleError function", () => {
     const { result } = renderHook(() => useLifeCycle());
     expect(result.current.handleError).toBeInstanceOf(Function);

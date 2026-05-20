@@ -21,17 +21,16 @@ jest.mock("../ZCashExportKeyFlowModal/sync", () => ({
 const mockedGetAccountBridge = jest.mocked(getAccountBridge);
 const mockedSyncStateUpdater = jest.mocked(syncStateUpdater);
 
-// Patch Date.prototype.toLocaleString with explicit typing to avoid "this" implicit any error.
-const origDate = global.Date.prototype.toLocaleString;
-jest.spyOn(global.Date.prototype, "toLocaleString").mockImplementation(function (this: Date) {
-  return origDate.call(this, "en-GB");
-});
+const origToLocaleString = global.Date.prototype.toLocaleString;
 
 describe("Bitcoin Account Balance Summary Footer", () => {
   const account = createFixtureAccount();
 
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.spyOn(global.Date.prototype, "toLocaleString").mockImplementation(function (this: Date) {
+      return origToLocaleString.call(this, "en-GB");
+    });
   });
 
   it("should render a private balance field", async () => {

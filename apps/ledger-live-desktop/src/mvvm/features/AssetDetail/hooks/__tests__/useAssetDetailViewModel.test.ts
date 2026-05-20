@@ -1,4 +1,5 @@
 import { renderHook, waitFor } from "tests/testSetup";
+import { server } from "tests/server";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { buildDistributionItem } from "tests/utils/distributionTestUtils";
 import { mockMarket, mockDada } from "tests/utils/assetDetailMocks";
@@ -58,6 +59,10 @@ describe("useAssetDetailViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     locationState(null);
+  });
+
+  afterEach(() => {
+    server.resetHandlers();
   });
 
   describe("mode", () => {

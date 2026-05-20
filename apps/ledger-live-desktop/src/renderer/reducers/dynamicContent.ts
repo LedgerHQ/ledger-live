@@ -1,5 +1,6 @@
 import type { Card as BrazeCard } from "@braze/web-sdk";
 import { handleActions } from "redux-actions";
+import { createSelector } from "reselect";
 import {
   ActionContentCard,
   NotificationContentCard,
@@ -93,18 +94,21 @@ export const bottomPortfolioContentCardSelector = (state: {
 export const actionContentCardSelector = (state: { dynamicContent: DynamicContentState }) =>
   state.dynamicContent.actionCards;
 
-export const notificationsContentCardSelector = (state: {
+type NotificationsContentCardState = {
   dynamicContent: DynamicContentState;
   settings: SettingsState;
-}) => {
-  const { settings, dynamicContent } = state;
-  return dynamicContent.notificationsCards.map(n => ({
-    ...n,
-    viewed: trackingEnabledSelector(state as State)
-      ? n.viewed
-      : !!settings.anonymousUserNotifications[n.id],
-  }));
 };
+
+export const notificationsContentCardSelector = createSelector(
+  (state: NotificationsContentCardState) => state.dynamicContent.notificationsCards,
+  (state: NotificationsContentCardState) => state.settings.anonymousUserNotifications,
+  (state: NotificationsContentCardState) => trackingEnabledSelector(state as State),
+  (notificationsCards, anonymousUserNotifications, trackingEnabled) =>
+    notificationsCards.map(n => ({
+      ...n,
+      viewed: trackingEnabled ? n.viewed : !!anonymousUserNotifications[n.id],
+    })),
+);
 
 // Exporting reducer
 
