@@ -1,0 +1,25 @@
+{
+  "name": "@ledger/evals-cursor-cli",
+  "private": true,
+  "type": "module",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "better-sqlite3",
+      "esbuild",
+      "@swc/core",
+      "sharp",
+      "protobufjs"
+    ]
+  },
+  "scripts": {
+    "eval": "promptfoo eval -c ./promptfooconfig.yaml",
+    "eval:mvvm": "EVAL_SUITE=$(git rev-parse --show-toplevel)/.agents/skills/mvvm-architecture/evals.json pnpm eval",
+    "view": "promptfoo view"
+  },
+  "devDependencies": {
+    "promptfoo": "latest",
+    "tsx": "latest",
+    "typescript": "latest",
+    "@types/node": "latest"
+  }
+}

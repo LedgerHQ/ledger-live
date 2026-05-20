@@ -1,0 +1,13 @@
+description: Cursor CLI skill evals (shared rig)
+
+prompts:
+  - "{{prompt}}"
+
+providers:
+  - id: file://./cursor_wrapper.ts
+    label: cursor-agent
+    config:
+      mode: plan
+      # workspace auto-resolves to repo root if omitted
+
+tests: file://./tests_loader.ts

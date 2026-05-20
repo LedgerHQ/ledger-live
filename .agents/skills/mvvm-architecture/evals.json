@@ -1,0 +1,27 @@
+{
+  "prompt": "Implement a new feature on mobile. I'd like to display the current local time in the top-right corner of the app via an expandable overlay.",
+  "vars": { "mode": "plan" },
+  "expected": [
+    {
+      "description": "Trace: mvvm-architecture/SKILL.md was read",
+      "assert": [
+        {
+          "type": "javascript",
+          "value": "(() => { const meta = context.providerResponse?.metadata || {}; const filesRead = meta.filesRead || []; const hit = filesRead.some((p) => p && p.includes('mvvm-architecture/SKILL.md')); return { pass: hit, score: hit ? 1 : 0, reason: hit ? 'Read mvvm-architecture/SKILL.md' : 'mvvm-architecture/SKILL.md NOT read. filesRead=' + JSON.stringify(filesRead) }; })()"
+        }
+      ]
+    },
+    {
+      "description": "Output: plan references MVVM paths and Lumen",
+      "assert": [
+        { "type": "icontains", "value": "src/mvvm/features/" },
+        {
+          "type": "icontains-any",
+          "value": ["Lumen", "lumen-ui", "ldls-native", "@ledgerhq/lumen"]
+        },
+        { "type": "icontains", "value": "ViewModel" },
+        { "type": "icontains", "value": "__integrations__" }
+      ]
+    }
+  ]
+}
