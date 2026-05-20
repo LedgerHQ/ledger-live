@@ -2,6 +2,7 @@ import { BigNumber } from "bignumber.js";
 import type { TFunction } from "i18next";
 import type { PnLCardProps } from "../components/PnLCard/types";
 import type { PnlNamespace } from "../types";
+import { getTrendIcon } from "./trend";
 
 export type BuildUnrealisedReturnCardInput = {
   namespace: PnlNamespace;
@@ -23,7 +24,7 @@ export function buildUnrealisedReturnCard({
     title: t(`${namespace}.return.title`),
     value: formatFiat(unrealisedPnL),
     type: "interactive",
-    trend: unrealisedPnL.isNegative() ? "down" : "up",
+    trendIcon: getTrendIcon(unrealisedPnL),
     onClick,
   };
 }

@@ -1,4 +1,5 @@
 import React from "react";
+import { TriangleUp, TriangleDown } from "@ledgerhq/lumen-ui-react/symbols";
 import { render, screen, waitFor } from "tests/testSetup";
 import { PnLCard } from "../index";
 
@@ -11,6 +12,10 @@ const TITLE = "Unrealised return";
 const VALUE = "243.32";
 const TOOLTIP = "This is a tooltip";
 
+const UP_ICON = { Icon: TriangleUp, className: "text-success" } as const;
+const DOWN_ICON = { Icon: TriangleDown, className: "text-error" } as const;
+const NEUTRAL_ICON = { Icon: TriangleUp, className: "text-disabled" } as const;
+
 const makeInteractiveProps = (
   overrides: Partial<Omit<InteractiveProps, "type">> = {},
 ): InteractiveProps => ({
@@ -18,7 +23,7 @@ const makeInteractiveProps = (
   id: ID,
   title: TITLE,
   value: VALUE,
-  trend: "up",
+  trendIcon: UP_ICON,
   onClick: jest.fn(),
   ...overrides,
 });
@@ -60,18 +65,17 @@ describe("PnLCard", () => {
       expect(onClick).toHaveBeenCalledTimes(1);
     });
 
-    it("should render an up arrow when trend is 'up'", () => {
-      const { container } = render(<PnLCard {...makeInteractiveProps({ trend: "up" })} />);
+    it.each([
+      [UP_ICON, ".text-success", [".text-error", ".text-disabled"]],
+      [DOWN_ICON, ".text-error", [".text-success", ".text-disabled"]],
+      [NEUTRAL_ICON, ".text-disabled", [".text-success", ".text-error"]],
+    ] as const)("renders the trend icon with %o", (trendIcon, expectedClass, otherClasses) => {
+      const { container } = render(<PnLCard {...makeInteractiveProps({ trendIcon })} />);
 
-      expect(container.querySelector(".text-success")).toBeInTheDocument();
-      expect(container.querySelector(".text-error")).not.toBeInTheDocument();
-    });
-
-    it("should render a down arrow when trend is 'down'", () => {
-      const { container } = render(<PnLCard {...makeInteractiveProps({ trend: "down" })} />);
-
-      expect(container.querySelector(".text-error")).toBeInTheDocument();
-      expect(container.querySelector(".text-success")).not.toBeInTheDocument();
+      expect(container.querySelector(expectedClass)).toBeInTheDocument();
+      otherClasses.forEach(cls => {
+        expect(container.querySelector(cls)).not.toBeInTheDocument();
+      });
     });
 
     it("should not render any tooltip", () => {

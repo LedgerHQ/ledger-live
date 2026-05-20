@@ -1,6 +1,13 @@
+import type { TriangleUp, TriangleDown } from "@ledgerhq/lumen-ui-react/symbols";
+
+type TrendIconConfig = {
+  Icon: typeof TriangleUp | typeof TriangleDown;
+  className: string;
+};
+
 type InteractiveCard = {
   type: "interactive";
-  trend: "up" | "down";
+  trendIcon: TrendIconConfig;
   onClick: () => void;
 };
 
@@ -15,4 +22,4 @@ type PnLCardProps = {
   value: string;
 } & (InteractiveCard | InfoCard);
 
-export type { InteractiveCard, InfoCard, PnLCardProps };
+export type { InteractiveCard, InfoCard, PnLCardProps, TrendIconConfig };
