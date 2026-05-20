@@ -154,7 +154,7 @@
       }
     },
     "ConnectManagerTimeout" : {
-      "title" : "Ne yazık ki Ledger cihazıyla güvenli bağlantı başarısız oldu",
+      "title" : "Ledger ile güvenli bağlantı kurulamadı",
       "description" : {
         "ios" : {
           "nanoX" : "{{productName}} cihazınızın kilidinin açıldığından ve Bluetooth'un etkin olduğundan emin olun."
@@ -168,6 +168,9 @@
     },
     "CeloAllFundsWarning" : {
       "title" : "Gelecekteki işlem ücretleri için yeterli bakiyenizin kaldığından emin olun"
+    },
+    "CeloGroupNotVotable" : {
+      "title" : "Bu doğrulayıcı grubu oy alamaz. Dolu olabilir veya artık uygun olmayabilir."
     },
     "CeloMissingWithdrawalsError" : {
       "title" : "Bir hata oluştu, çekilecek hiçbir fon getirilemedi"
@@ -889,6 +892,9 @@
     "RecommendUndelegation" : {
       "title" : "Hesabı boşaltmadan önce lütfen yetki devrini iptal edin"
     },
+    "MustDelegateBeforeStaking" : {
+      "title" : "Lütfen stake etmeden önce hesabınızla yetki devredin"
+    },
     "RecommendSubAccountsToEmpty" : {
       "title" : "Lütfen önce tüm alt hesapları boşaltın"
     },
@@ -1321,6 +1327,13 @@
     "tryEnablingAgain" : "Konumu yeniden etkinleştirmeyi deneyin",
     "noInfos" : "Ledger konum bilgilerinize erişmez."
   },
+  "borrow" : {
+    "title" : "Borç al",
+    "appNotFound" : "Borrow uygulaması bulunamadı",
+    "infoModal" : {
+      "close" : "Kapat"
+    }
+  },
   "earn" : {
     "deposit" : {
       "protocolInfoModal" : {
@@ -1667,6 +1680,23 @@
     "headerTitle" : "Alım başarıyla gerçekleşti",
     "title" : "Ledger'a güvendiğiniz için teşekkürler",
     "desc" : "Siparişiniz işleniyor. \nSipariş onayınız için lütfen e-postanızı kontrol edin."
+  },
+  "productTour" : {
+    "swap" : {
+      "cta" : "Takası keşfedin"
+    },
+    "stake" : {
+      "cta" : "Kazan bölümünü keşfet"
+    },
+    "card" : {
+      "cta" : "Karta eriş"
+    },
+    "portfolio" : {
+      "cta" : "Portföyü görüntüle"
+    },
+    "done" : {
+      "cta" : "Baştan başla"
+    }
   },
   "discover" : {
     "title" : "Keşfedin",
@@ -2743,6 +2773,12 @@
       "title" : "Perpetuals",
       "description" : "Kaldıraçlı işlem yapın"
     },
+    "borrowEntry" : {
+      "title" : "Borçlar",
+      "cardTitle" : "Stabil coin ile borç alın",
+      "cardDescription" : "Likidite elinizin altında",
+      "cta" : "Keşfedin"
+    },
     "recommended" : {
       "title" : "Önerilen"
     },
@@ -2803,15 +2839,8 @@
       }
     },
     "recoverBanner" : {
-      "subscribeDone" : {
-        "title" : "Hatırlatma: Ledger Recover'a abone olma işlemini tamamlayın"
-      },
-      "verifyIdentity" : {
-        "title" : "Cüzdan erişiminiz henüz yedeklenmedi"
-      },
-      "connectDevice" : {
-        "title" : "Cüzdan erişiminiz henüz yedeklenmedi"
-      }
+      "title" : "Yedeklemenizi güvenceye alın",
+      "description" : "Ledger Recover’ı etkinleştirme işlemini tamamlayın"
     },
     "refreshStatus" : {
       "refreshing" : "Yenileniyor...",
@@ -2933,7 +2962,8 @@
   },
   "operationsList" : {
     "to" : "Alıcı",
-    "from" : "Gönderici"
+    "from" : "Gönderici",
+    "pending" : "Beklemede"
   },
   "operationDetails" : {
     "title" : "İşlem bilgileri",
@@ -3217,7 +3247,9 @@
     "title" : "Hesaplar",
     "addAccount" : "Hesap ekle",
     "emptyState" : "Henüz hesap yok",
-    "errorState" : "Hesaplarınız yüklenirken bir hata oluştu"
+    "errorState" : "Hesaplarınız yüklenirken bir hata oluştu",
+    "assetsCount" : "{{count}} varlık",
+    "assetsCount_one" : "{{count}} varlık"
   },
   "crypto" : {
     "title" : "Kripto",
@@ -3348,7 +3380,7 @@
       "analytics" : "Uygulama performansı",
       "analyticsDesc" : "Deneyimi iyileştirmek için Ledger'ın uygulama kullanım verilerini toplamasına izin verin",
       "mevProtection" : "MEV Koruması",
-      "mevProtectionDesc" : "Ethereum'da daha güvenilir işlemler için MEV Korumasını etkinleştirin.",
+      "mevProtectionDesc" : "Daha güvenilir işlemler için MEV Korumasını etkinleştirin.",
       "mevProtectionLearnMore" : "Gizlilik bildirimi",
       "personalizedRecommendations" : "Kişiselleştirilmiş deneyim",
       "personalizedRecommendationsDesc" : "Kişiselleştirilmiş içerikler sunmamız için Ledger'ın uygulama kullanım verilerini toplamasına izin verin",
@@ -5464,7 +5496,11 @@
     "undelegation" : {
       "undelegate" : "Yetki İptali",
       "undelegationMessage" : "Yetki devrini iptal ettiğinizde mevcut ve sonraki epoch'lar için hiçbir ödül almayacaksınız",
-      "verificationSuccessTitle" : "Varlıklarınızdaki yetki devrini başarıyla iptal ettiniz"
+      "verificationSuccessTitle" : "Varlıklarınızdaki yetki devrini başarıyla iptal ettiniz",
+      "dRepDelegationSelfTransactionDrawer" : {
+        "title" : "Yetki Devri Sonlandırmaya Hazırlık",
+        "description" : "Staking hesabınızı kapatmak ve ADA depozitonuzu geri almak için:\n\nCardano'nun yönetişim sistemi, artık yetki devrini sonlandırmadan önce oylama durumunuzu belirlemenizi gerektiriyor.\n\nBu işlem, çekimser kalma tercihinizi kaydetmek için kendi adresinize bir transfer yapmanızı gerektirir. Sadece standart ağ ücretini ödersiniz, ADA bakiyeniz cüzdanınızda güvende kalır\n\nBu tercih kaydedildikten sonra her zamanki gibi yetki devrini sonlandırabilirsiniz."
+      }
     },
     "delegation" : {
       "pool" : "Havuz",
@@ -6235,6 +6271,208 @@
     },
     "delegation" : {
       "addCustomValidator" : "+ Özel doğrulayıcı ekle"
+    }
+  },
+  "evm" : {
+    "info" : {
+      "available" : {
+        "title" : "{{currencyTicker}} mevcut",
+        "description" : "Bu tutar, kullanabileceğiniz fondur."
+      },
+      "delegated" : {
+        "title" : "Yetkisi devredilen varlıklar",
+        "description" : "Yetkisi devredilen varlıklar {{currencyName}} oylaması için kullanılır. Bu, toplam oy sayınızdır."
+      },
+      "undelegating" : {
+        "title" : "Yetki devrinin iptali",
+        "description" : "Yetki devirleri iptal edilen varlıklar, kullanıma açılmadan önce {{numberOfDays}} gün boyunca zaman kilidinde tutulurlar."
+      },
+      "delegationUnavailable" : {
+        "title" : "Yetki devri yapılamıyor",
+        "description" : "Yeni bir yetkili seçmek için hesabınızda yeterli bakiye yok."
+      }
+    },
+    "delegation" : {
+      "delegationEarn" : "Varlıklarınızla yetki devrederek {{ticker}} ödülleri kazanabilirsiniz.",
+      "info" : "Yetki Devri nasıl çalışır?",
+      "claimRewards" : "Ödüllerinizi alın",
+      "claimAvailableRewards" : "{{amount}} topla",
+      "commission" : "Komisyon",
+      "header" : "Yetki Devirleri",
+      "Amount" : "Miktar",
+      "noRewards" : "Ödül yok",
+      "delegate" : "Yetki Devret",
+      "undelegate" : "Yetki devrini iptal et",
+      "redelegate" : "Yetki devret",
+      "reward" : "Ödüllerinizi alın",
+      "totalStake" : "Toplam Stake",
+      "stepperHeader" : {
+        "starter" : "Ödüller kazanın",
+        "validator" : "Varlıklarınızla yetki devredin",
+        "amountSubTitle" : "Yetkisi devredilecek tutar",
+        "summary" : "Özet",
+        "verification" : "Doğrulama",
+        "selectDevice" : "Cihaz seçin",
+        "connectDevice" : "Cihazı bağlayın",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "{{ticker}} varlıklarınızın yetkisini devrederek hem güvenle ödül kazanın hem de varlıkların kontrolünü elinizde tutun.",
+            "steps" : {
+              "0" : "Yetkisi devredilen varlıklar size ait olmaya devam eder.",
+              "1" : "Yetki devri iptalinin tamamlanması için {{numberOfDays}} gün beklemeniz gerekir.",
+              "2" : "Ledger cihazınızı kullanarak güvenle yetki devredin."
+            },
+            "warning" : {
+              "description" : "Doğrulayıcınızı dikkatle seçin: Doğrulayıcının yanlış kararlar vermesi halinde yetki devrinde kullandığınız varlıkların bir kısmını geri dönülemez bir şekilde kaybedebilirsiniz."
+            },
+            "cta" : "Devam"
+          },
+          "validator" : {
+            "validators" : "Doğrulayıcılar",
+            "myDelegations" : "Yetki devirlerim",
+            "cta" : "Devam",
+            "estYield" : "Tahmini getiri: {{amount}}",
+            "totalAvailable" : "Toplam mevcut: <0>{{amount}}</0>",
+            "allAssetsUsed" : "Tüm varlıklar kullanıldı",
+            "noResultsFound" : "<0>{{search}}</0> için doğrulayıcı bulunamadı",
+            "currentAmount" : "(+ <0>{{amount}}</0>)"
+          },
+          "amount" : {
+            "assetsRemaining" : "Kalan varlıklar: <0>{{amount}}</0>",
+            "allAssetsUsed" : "Tüm varlıklar kullanıldı",
+            "minAmount" : "Minimum tutar: <0>{{min}}</0>",
+            "incorrectAmount" : "Maksimum tutar: <0>{{max}}</0>",
+            "cta" : "Devam"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Varlıklarınızla yetki devretmeyi tamamladınız",
+              "text" : "İşlem, ağ tarafından onaylanınca hesap bakiyeniz güncellenecek.",
+              "cta" : "Ayrıntıları gör"
+            },
+            "pending" : {
+              "title" : "İşlem yayınlanıyor..."
+            },
+            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      },
+      "drawer" : {
+        "status" : "Durum",
+        "rewards" : "Ödüller",
+        "active" : "Aktif",
+        "inactive" : "Devre Dışı",
+        "completionDate" : "Tamamlanma tarihi",
+        "redelegatedFrom" : "Yetkiyi bırakan taraf"
+      }
+    },
+    "redelegation" : {
+      "estYield" : "tahmini getiri",
+      "stepperHeader" : {
+        "validator" : "Yeni doğrulayıcı seçin",
+        "amountSubTitle" : "Yetkisi devredilecek tutar",
+        "amountTitle" : "{{from}} → {{to}}",
+        "summary" : "Özet",
+        "selectDevice" : "Cihaz seçin",
+        "connectDevice" : "Cihazı bağlayın",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "validator" : {
+            "validators" : "Doğrulayıcılar",
+            "myDelegations" : "Yetki devirlerim",
+            "cta" : "Devam",
+            "estYield" : "Tahmini getiri: {{amount}}",
+            "totalAvailable" : "Toplam mevcut: <0>{{amount}}</0>",
+            "allAssetsUsed" : "Tüm varlıklar kullanıldı",
+            "noResultsFound" : "<0>{{search}}</0> için doğrulayıcı bulunamadı"
+          },
+          "amount" : {
+            "newRedelegatedBalance" : "İşlemden sonra <0>{{name}}</0> için yeni toplam: <0>{{amount}}</0>",
+            "allAssetsUsed" : "Tüm varlıklar kullanıldı"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Varlıklarınızla başarıyla yeniden yetki devrettiniz",
+              "text" : "İşlem, ağ tarafından onaylandığında hesap bakiyeniz güncellenecek.",
+              "cta" : "Ayrıntıları gör"
+            },
+            "pending" : {
+              "title" : "İşlem yayınlanıyor..."
+            },
+            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      }
+    },
+    "undelegation" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Yetki devri sonlandırılan tutar",
+        "summary" : "Özet",
+        "selectDevice" : "Cihaz seçin",
+        "connectDevice" : "Cihazı bağlayın",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "allAssetsUsed" : "Tüm varlıkların yetki devri iptal edildi"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Varlıklarınızdaki yetki devrini sonlandırdınız",
+              "text" : "İşlem, ağ tarafından onaylandığında hesap bakiyeniz güncellenecek.",
+              "cta" : "Ayrıntıları gör"
+            },
+            "pending" : {
+              "title" : "İşlem yayınlanıyor..."
+            },
+            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      }
+    },
+    "claimRewards" : {
+      "stepperHeader" : {
+        "validator" : "Alınacak ödülü seçin",
+        "method" : "Ödüllerinizi alın",
+        "summary" : "Özet",
+        "selectDevice" : "Cihaz seçin",
+        "connectDevice" : "Cihazı bağlayın",
+        "stepRange" : "Adım {{currentStep}} / {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "method" : {
+            "youEarned" : "Varlıkları şuna tayin ederek",
+            "byDelegationAssetsTo" : "kazandınız:",
+            "claimReward" : "Hesaba al",
+            "claimRewardCompound" : "Birleştir",
+            "claimRewardInfo" : "Bu ödüller şimdi alınacak ve mevcut bakiyenize eklenecektir.",
+            "claimRewardCompoundInfo" : "Bu ödüller şimdi alınacak ve otomatik olarak aynı doğrulayıcıya devredilecektir.",
+            "compoundOrCashIn" : "Birleştirilsin mi, hesaba mı alınsın?",
+            "claimRewardTooltip" : "Ödüller mevcut bakiyeye eklenecek",
+            "claimRewardCompoundTooltip" : "Ödüller, yetkisi devredilen tutara eklenecektir",
+            "cta" : "Devam"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Ödüllerinizi başarıyla aldınız. Ödül tutarı mevcut bakiyenize eklendi.",
+              "titleCompound" : "Ödüllerinizin yetkileri aynı doğrulayıcıya devredildi.",
+              "text" : "İşlem, ağ tarafından onaylandığında hesap bakiyeniz güncellenecek.",
+              "cta" : "Ayrıntıları gör"
+            },
+            "pending" : {
+              "title" : "İşlem yayınlanıyor..."
+            },
+            "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
+          }
+        }
+      }
     }
   },
   "tron" : {
@@ -7211,6 +7449,11 @@
         "redelegate" : "Yetkisi iptal edilen varlıkların kullanılabilir bakiyeye geri dönmesi için {{numberOfDays}} gün beklemeniz gerekir.",
         "undelegate" : "Yetkisi iptal edilen varlıkların kullanılabilir bakiyeye geri dönmesi için {{numberOfDays}} gün beklemeniz gerekir."
       },
+      "evm" : {
+        "claimReward" : "Seçilen doğrulayıcıda bekleyen ödüller varsa ödüller otomatik olarak alınır.",
+        "redelegate" : "Yetkisi iptal edilen varlıkların kullanılabilir bakiyeye geri dönmesi için {{numberOfDays}} gün beklemeniz gerekir.",
+        "undelegate" : "Yetkisi iptal edilen varlıkların kullanılabilir bakiyeye geri dönmesi için {{numberOfDays}} gün beklemeniz gerekir."
+      },
       "lending" : "Göndermeden önce işlem bilgilerini cihazınızdan doğrulayın."
     },
     "amount" : "Tutar",
@@ -7809,27 +8052,48 @@
   "postOnboarding" : {
     "hub" : {
       "title" : "Sırada ne mi var?",
-      "areAllPostOnboardingActionsCompletedTitle" : "Her şey hazır! Şimdi portföyünüzü keşfetmeye başlayabilirsiniz.",
+      "areAllPostOnboardingActionsCompletedTitle" : "İşte bu kadar!",
       "skip" : "Daha sonra yapacağım",
-      "viewWallet" : "Portföyümü keşfet"
+      "viewWallet" : "Portföyümü keşfet",
+      "deviceStepComplete" : "Tamam"
     },
-    "entryPointCard" : {
-      "title" : "{{productName}} cihazınız için sırada ne var?",
-      "description" : "Yalnızca varlıklarınızı güvenceye almakla kalmayın.",
-      "buttonLabel" : "Sırada ne var?"
+    "drawer" : {
+      "title" : "Şimdi, cüzdan kurulumunu tamamlayın",
+      "titleCompleted" : "İşte bu kadar!",
+      "primaryLabel" : "Anladım",
+      "actionCompletedLabel" : "Tamam",
+      "actions" : {
+        "deviceOnboarded" : {
+          "title" : "Ledger cihazınızı kurun"
+        },
+        "assetsTransfer" : {
+          "title" : "Kripto Ekle",
+          "description" : "Cüzdanınızı fonlamak için kripto satın alın veya transfer alın"
+        },
+        "syncAccounts" : {
+          "title" : "Cüzdanınızı senkronize edin",
+          "description" : "Kripto hesaplarınızı senkronize tutun"
+        },
+        "customImage" : {
+          "title" : "Kilit ekranını kişiselleştirin",
+          "description" : "En sevdiğiniz dijital sanat eserini veya fotoğrafı cihazınızın kilitli ekranında görüntüleyin."
+        },
+        "recover" : {
+          "title" : "Yedeklemenizi güvenceye alın",
+          "description" : "Ledger Recover’ı etkinleştirme işlemini tamamlayın"
+        }
+      }
     },
     "widget" : {
       "title" : "Şimdi, cüzdan kurulumunu tamamlayın",
-      "subtitle" : "Cüzdanınıza fon aktararak başlayın."
+      "subtitle" : "Yalnızca varlıklarınızı güvenceye almakla kalmayın."
     },
     "actions" : {
       "deviceOnboarded" : {
-        "titleCompleted" : "Ledger cihazınızın kurulumunu yapın"
+        "titleCompleted" : "Ledger cihazınızı kurun"
       },
       "assetsTransfer" : {
-        "title" : "Varlıklarınızı aktarın",
         "titleCompleted" : "Varlıklar Ledger’a taşındı",
-        "description" : "Tüm borsalar ve cüzdanlardan aktarım yapabilirsiniz.",
         "popupLabel" : "Varlıklar aktarıldı"
       },
       "buyCrypto" : {
@@ -7839,21 +8103,15 @@
         "popupLabel" : "Kripto satın alındı"
       },
       "customImage" : {
-        "title" : "Kilit ekranını kişiselleştirin",
         "titleCompleted" : "Kilit ekranı kişiselleştirildi",
-        "description" : "En sevdiğiniz dijital sanat eserini veya fotoğrafı cihazınızın kilitli ekranında görüntüleyin.",
         "popupLabel" : "Kilitli ekran başarıyla özelleştirildi"
       },
       "recover" : {
-        "title" : "Yedeklemenizi güvenceye alın",
         "titleCompleted" : "Yedekleme güvenceye alındı",
-        "description" : "Ledger Recover’ı etkinleştirme işlemini tamamlayın",
         "popupLabel" : "Ledger Recover'a başarıyla abone oldunuz"
       },
       "syncAccounts" : {
-        "title" : "Kripto hesaplarınızı senkronize edin",
         "titleCompleted" : "Hesaplarınız senkronize edildi",
-        "description" : "Kripto hesaplarınızı senkronize etmek için Ledger Sync’i etkinleştirin",
         "popupLabel" : "Hesaplar senkronize edildi"
       }
     }
@@ -8400,6 +8658,64 @@
       }
     }
   },
+  "assetDetail" : {
+    "balanceGraph" : {
+      "marketPrice" : "Piyasa fiyatı",
+      "timeframeSelector" : "Zaman aralığı",
+      "timeLabel" : {
+        "24h" : "1 gün",
+        "7d" : "1 hafta",
+        "30d" : "1 ay",
+        "1y" : "1 yıl"
+      },
+      "chartPlaceholder" : "Grafik"
+    },
+    "addresses" : {
+      "title" : "Adresler",
+      "addAccount" : "Ekle",
+      "empty" : "Henüz adres yok. Başlamak için Ekle seçeneğine dokunun."
+    },
+    "marketStats" : {
+      "title" : "Piyasa istatistikleri",
+      "marketCap" : "Piyasa değeri",
+      "marketRank" : "Piyasa sıralaması",
+      "circulatingSupply" : "Dolaşımdaki arz",
+      "circulatingSupplyTooltip" : "An itibarıyla piyasada alım satım için mevcut ve dolaşımda olan coin miktarı.",
+      "maxSupply" : "Maksimum arz",
+      "maxSupplyTooltip" : "Bu kripto para için var olacak maksimum coin sayısı.",
+      "tradingVolume" : "24 saatlik işlem hacmi",
+      "error" : "Piyasa istatistikleri yüklenemiyor."
+    },
+    "pricePerformance" : {
+      "title" : "Fiyat performansı",
+      "allTimeHigh" : "Tüm zamanlar en yüksek",
+      "allTimeLow" : "Tüm zamanlar en düşük",
+      "yearsAgo" : "{{count}} yıl önce",
+      "monthsAgo" : "{{count}} ay önce",
+      "daysAgo" : "{{count}} g. önce",
+      "hoursAgo" : "{{count}} sa. önce",
+      "minutesAgo" : "{{count}} dk. önce",
+      "justNow" : "Şimdi",
+      "error" : "Fiyat performansı yüklenemiyor"
+    },
+    "transactions" : {
+      "title" : "İşlemler"
+    },
+    "fallbackBanner" : {
+      "title" : "Takas ve Satın Alma bu varlıkta desteklenmemektedir."
+    },
+    "balanceDetails" : {
+      "totalBalance" : "Toplam bakiye",
+      "transfer" : "Transfer",
+      "availableBalance" : "Mevcut bakiye",
+      "earnDeposit" : "Getiri bakiyesi",
+      "earnBanner" : "%{{apy}} {{type}} oranına kadar kazanın",
+      "earnBannerGeneric" : "Bu varlıkla kazanın",
+      "earnBannerSubtitle" : "Bu varlığı elinizde tutarak kazanın",
+      "earnBannerAction" : "Kazan bölümüne gidin",
+      "availableBalanceTooltip" : "Stake edilen veya yetkisi devredilen tutarlar hariç olmak üzere, anında kullanıma hazır varlıklar."
+    }
+  },
   "assetSelection" : {
     "selectCrypto" : {
       "title" : "Varlık Seçin"
@@ -8617,6 +8933,36 @@
       "lockedBalanceTooltip" : "Fonlarınız, başkalarına gönderdiğiniz tekliflerde kilitlenmiş durumda. Bu teklifleri istediğiniz zaman iptal edebilir veya alıcının kabul etmesini ya da reddetmesini bekleyebilirsiniz.",
       "withdrawableBalance" : "Çekilebilir bakiye",
       "withdrawableBalanceTooltip" : "Gönderdiğiniz ve süresi dolmuş tekliflerden geri alabileceğiniz fonlar. Bunları çekip kullanılabilir bakiyenize geri taşıyın."
+    },
+    "disclaimer" : {
+      "title" : "Canton Network'ü kurun",
+      "intro" : "Canton, devam etmeden önce bilmeniz gereken kendine has özelliklere sahiptir:",
+      "bullets" : {
+        "utxo" : {
+          "title" : "UTXO tabanlı bakiye",
+          "body" : "Bakiyeler, her transferde en fazla 100 adetle sınırlandırılmış münferit coin sözleşmeleri şeklinde tutulur. Atıl durumdaki sözleşmeler zamanla değer kaybeder; biriken masraflar sözleşme bakiyesini aştığında ise bu sözleşmeler geçerliliğini yitirir."
+        },
+        "offers" : {
+          "title" : "Teklif bazlı transferler",
+          "body" : "Hiçbir işlem otomatik olarak tamamlanmaz. Gönderilen transferler geri çekilebilir; gelen transferlerin ise manuel olarak kabul edilmesi veya reddedilmesi gerekir. Teklifleri Canton panelinizden yönetebilirsiniz."
+        },
+        "dualValidator" : {
+          "title" : "Çift doğrulayıcılı güvenlik",
+          "body" : "İşlemler hem Ledger hem de Kiln'in ortak imzasını gerektirir. Taraflardan hiçbiri, sizin adınıza tek başına işlem yapamaz."
+        },
+        "tokenLiability" : {
+          "title" : "Standart token sorumluluğu ⚠️",
+          "body" : "Başarısızlık senaryosunda token'ın kurtarılması, Ledger'ın değil, token ihraççısının sorumluluğundadır."
+        }
+      },
+      "agreeLabel" : "<1>Canton Network Hükümlerini ve Ledger'ın sorumluluk reddini kabul ediyorum</1>",
+      "cancel" : "İptal et",
+      "agree" : "Kabul Ediyorum",
+      "terms" : {
+        "title" : "Canton Ağı Terimleri",
+        "sectionTitle" : "Standart Token Yükümlülüğü ve Kurtarma",
+        "body" : "Ledger yalnızca Dijital Varlık Kaydı (Digital Asset Registry) üzerinden ihraç edilen standart token'ları destekler. Ledger bu token'ların ihraççısı değildir; bu varlıkların değeri, yönetimi veya dayanak akıllı sözleşmeleri konusunda hiçbir sorumluluk taşımaz.\n\nLedger'da bir hizmet kesintisi veya \"felaket kurtarma\" hatası yaşanırsa Ledger, varlıklarınızı kurtaramaz. Kurtarma işlemini başlatmak için belirli bir Token İhraççısı (Varlık Yöneticisi) ile doğrudan iletişime geçerek Varlık Dondurma (Asset Freeze) veya Kayıt Kurtarma (Registry Recovery) protokollerini kullanmanız gerekir. Token İhraççısına karşı mevcut Hizmet Seviyesi Anlaşmaları (Service Level Agreements) çerçevesinde rücu edebilirsiniz. Devam ettiğinizde, Ledger ve satış ortaklarının bu token'ların kaybı, kurtarılması veya kurtarılamaması durumunda ortaya çıkabilecek tüm sorumluluklardan muaf tutulduğunu kabul etmiş olursunuz."
+      }
     },
     "onboard" : {
       "account" : "Hesap",
@@ -8900,7 +9246,8 @@
       "addDevice" : "Bir Ledger cihazı ekleyin",
       "exploreAllDevices" : "Tüm Ledger cihazlarını keşfedin",
       "available" : "Mevcut",
-      "unavailable" : "Bağlı değil"
+      "unavailable" : "Bağlı değil",
+      "menuAccessibilityLabel" : "Cihaz seçenekleri"
     }
   }
 }
