@@ -21,6 +21,7 @@ import BigNumber from "bignumber.js";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import AssetDetail from "../index";
+import { MAX_ADDRESSES_PREVIEW } from "../components/AddressList/constants";
 
 const LABEL = {
   TOTAL_BALANCE: "Total balance",
@@ -32,6 +33,7 @@ const LABEL = {
 const TEST_ID = {
   HEADER: "asset-detail-header",
   ADDRESS_LIST: "asset-detail-address-list",
+  ADDRESSES_SEE_ALL: "asset-detail-addresses-see-all",
   MARKET_PRICE_SECTION: "asset-detail-market-price-section",
   MARKET_PRICE: "asset-detail-market-price",
   MARKET_PRICE_PERCENT: "asset-detail-market-price-percent",
@@ -325,6 +327,59 @@ describe("AssetDetail integration", () => {
       });
 
       expect(screen.queryByTestId(TEST_ID.EARN_BANNER)).not.toBeInTheDocument();
+    });
+
+    describe("addresses see all", () => {
+      it("opens the all addresses dialog when see all is clicked", async () => {
+        mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+        const accounts = Array.from({ length: MAX_ADDRESSES_PREVIEW + 1 }, (_, index) =>
+          genAccount(`asset-detail-addresses-see-all-${index}`, { currency: btc }),
+        );
+        const item = buildDistributionItem({ accounts });
+        setupRoute("bitcoin", { bySlug: { bitcoin: item }, list: [item] });
+
+        const { user } = renderWithMockedCounterValuesProvider(<AssetDetail />, {
+          initialState: { accounts },
+        });
+
+        await waitFor(() => {
+          expect(screen.getByTestId(TEST_ID.ADDRESS_LIST)).toBeVisible();
+        });
+
+        expect(screen.getAllByTestId(/asset-detail-address-row-/)).toHaveLength(MAX_ADDRESSES_PREVIEW);
+        expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+
+        await user.click(screen.getByTestId(TEST_ID.ADDRESSES_SEE_ALL));
+
+        const dialog = await screen.findByRole("dialog");
+        expect(within(dialog).getByRole("heading", { name: "Addresses" })).toBeVisible();
+        expect(within(dialog).getAllByText(/all your addresses holding btc\./i).length).toBeGreaterThan(
+          0,
+        );
+        expect(within(dialog).getAllByTestId(/asset-detail-address-row-/)).toHaveLength(
+          MAX_ADDRESSES_PREVIEW + 1,
+        );
+      });
+
+      it("does not show see all when there are five or fewer addresses", async () => {
+        mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+        const accounts = Array.from({ length: MAX_ADDRESSES_PREVIEW }, (_, index) =>
+          genAccount(`asset-detail-addresses-no-see-all-${index}`, { currency: btc }),
+        );
+        const item = buildDistributionItem({ accounts });
+        setupRoute("bitcoin", { bySlug: { bitcoin: item }, list: [item] });
+
+        renderWithMockedCounterValuesProvider(<AssetDetail />, {
+          initialState: { accounts },
+        });
+
+        await waitFor(() => {
+          expect(screen.getByTestId(TEST_ID.ADDRESS_LIST)).toBeVisible();
+        });
+
+        expect(screen.queryByTestId(TEST_ID.ADDRESSES_SEE_ALL)).not.toBeInTheDocument();
+        expect(screen.getAllByTestId(/asset-detail-address-row-/)).toHaveLength(MAX_ADDRESSES_PREVIEW);
+      });
     });
 
     it("shows header options menu with favorites and hide actions for tokens", async () => {

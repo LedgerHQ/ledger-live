@@ -1,12 +1,13 @@
 import { renderHook, act, withFlagOverrides } from "tests/testSetup";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { getAccountUrl } from "~/renderer/utils/accountUrl";
 import { getAccountsSidebarPath } from "LLD/components/SideBar/utils";
 import { useAddressListViewModel } from "../useAddressListViewModel";
 import { buildDistributionItem } from "tests/utils/distributionTestUtils";
 import { ETH_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
+import { MAX_ADDRESSES_PREVIEW } from "../../constants";
 
 const mockNavigate = jest.fn();
 
@@ -37,6 +38,32 @@ describe("useAddressListViewModel", () => {
 
     expect(result.current.sectionTitle).toBe("Addresses");
     expect(result.current.sectionActionLabel).toBe("Add");
+    expect(result.current.shouldShowSeeAll).toBe(false);
+    expect(result.current.previewAccounts).toEqual([]);
+  });
+
+  it("limits preview accounts and exposes see all when there are more than five addresses", () => {
+    const accounts = Array.from({ length: MAX_ADDRESSES_PREVIEW + 1 }, (_, index) =>
+      genAccount(`asset-detail-address-preview-${index}`, { currency: btc }),
+    );
+
+    const { result } = renderHook(() =>
+      useAddressListViewModel(buildDistributionItem({ currency: btc, accounts })),
+    );
+
+    expect(result.current.shouldShowSeeAll).toBe(true);
+    expect(result.current.addressCount).toBe(MAX_ADDRESSES_PREVIEW + 1);
+    expect(result.current.previewAccounts).toHaveLength(MAX_ADDRESSES_PREVIEW);
+    expect(result.current.allAddressesDialog.open).toBe(false);
+    expect(result.current.allAddressesDialog.description).toBe(
+      `All your addresses holding ${btc.ticker}.`,
+    );
+
+    act(() => {
+      result.current.onSeeAll();
+    });
+
+    expect(result.current.allAddressesDialog.open).toBe(true);
   });
 
   it("navigates to the token account URL when a parent account is provided", () => {
