@@ -9,19 +9,16 @@ jest.mock("../api", () => ({
 
 jest.mock("../utils", () => ({
   ...jest.requireActual("../utils"),
-  transactionToIntent: jest.fn(),
-  applyMemoToIntent: jest.fn(),
   extractBalances: jest.fn(),
 }));
 
-const mockTransactionToIntent = utils.transactionToIntent as jest.Mock;
-const mockApplyMemoToIntent = utils.applyMemoToIntent as jest.Mock;
 const mockExtractBalances = utils.extractBalances as jest.Mock;
 
 describe("genericGetTransactionStatus", () => {
   const account = {
     id: "test-account",
-    currency: { id: "ethereum" },
+    freshAddress: "0xSender",
+    currency: { id: "ethereum", name: "ethereum", units: [{ name: "ether", code: "ETH" }] },
     pendingOperations: [],
   } as any;
 
@@ -35,14 +32,13 @@ describe("genericGetTransactionStatus", () => {
     totalFees: 50n,
   };
 
+  const validateIntent = jest.fn();
+
   beforeEach(() => {
     jest.clearAllMocks();
-    mockTransactionToIntent.mockReturnValue({ intent: true });
-    mockApplyMemoToIntent.mockImplementation((intent: unknown) => intent);
+    validateIntent.mockResolvedValue(validateIntentResult);
     mockExtractBalances.mockReturnValue({});
-    (getCoinModuleApi as jest.Mock).mockReturnValue({
-      validateIntent: jest.fn().mockResolvedValue(validateIntentResult),
-    });
+    (getCoinModuleApi as jest.Mock).mockReturnValue({ validateIntent });
   });
 
   it.each([
@@ -68,4 +64,29 @@ describe("genericGetTransactionStatus", () => {
       expect(result.amount).toEqual(expected);
     },
   );
+
+  it("forwards a destination tag through transactionToIntent to validateIntent", async () => {
+    const xrpAccount = {
+      ...account,
+      freshAddress: "rSender",
+      currency: { id: "ripple", name: "ripple", units: [{ name: "ripple", code: "XRP" }] },
+    };
+
+    const getStatus = genericGetTransactionStatus("mainnet", "xrp");
+    await getStatus(xrpAccount, {
+      amount: new BigNumber(100),
+      useAllAmount: false,
+      recipient: "rRecipient",
+      family: "xrp",
+      tag: 1234,
+    } as any);
+
+    expect(validateIntent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        memo: { type: "map", memos: new Map([["destinationTag", "1234"]]) },
+      }),
+      expect.anything(),
+      expect.anything(),
+    );
+  });
 });

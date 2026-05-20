@@ -4,7 +4,6 @@ import type { Account, DeviceId, SignOperationEvent, AccountBridge } from "@ledg
 import { getCoinModuleApi } from "./api";
 import { getBridgeApi } from "./bridge";
 import {
-  applyMemoToIntent,
   bigNumberToBigIntDeep,
   buildOptimisticOperation,
   extractBalances,
@@ -12,27 +11,10 @@ import {
 } from "./utils";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import { Result } from "@ledgerhq/ledger-wallet-framework/derivation";
-import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import { GenericTransaction } from "./types";
 
-/**
- * Enriches transaction intent with memo and asset information
- */
-function enrichTransactionIntent(
-  transactionIntent: TransactionIntent,
-  transaction: GenericTransaction,
-  publicKey: string,
-): TransactionIntent {
-  // Set sender public key
-  transactionIntent.senderPublicKey = publicKey;
-
-  // Apply memo information
-  transactionIntent = applyMemoToIntent(transactionIntent, transaction);
-
-  return transactionIntent;
-}
 /**
  * Sign Transaction with Ledger hardware
  */
@@ -72,6 +54,9 @@ export const genericSignOperation =
             assetReference: transaction?.assetReference || "",
             assetOwner: transaction?.assetOwner || "",
             subAccountId: transaction.subAccountId || "",
+            memoType: transaction.memoType || "",
+            memoValue: transaction.memoValue || "",
+            tag: transaction.tag,
             family: transaction.family,
             feesStrategy: transaction.feesStrategy,
             data: transaction.data,
@@ -96,16 +81,13 @@ export const genericSignOperation =
             derivationMode: account.derivationMode,
           })) as Result;
 
-          let transactionIntent = transactionToIntent(
+          const transactionIntent = transactionToIntent(
             account,
             { ...transaction },
             bridgeApi.computeIntentType,
             coinModuleApi.craftTransactionData,
           );
           transactionIntent.senderPublicKey = publicKey;
-
-          // Enrich with memo and asset information
-          transactionIntent = enrichTransactionIntent(transactionIntent, transaction, publicKey);
 
           if (typeof transactionIntent.sequence !== "bigint" || transactionIntent.sequence < 0n) {
             // TODO: should compute it and pass it down to craftTransaction (duplicate call right now)
