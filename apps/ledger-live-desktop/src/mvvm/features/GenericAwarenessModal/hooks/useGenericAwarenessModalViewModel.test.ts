@@ -1,6 +1,9 @@
 import { act, renderHook } from "tests/testSetup";
 import type { AppDispatch } from "~/state-manager/configureStore";
-import { closeGenericAwarenessModalDialog, openGenericAwarenessModalDialog } from "./genericAwarenessModalDialog";
+import {
+  closeGenericAwarenessModalDialog,
+  openGenericAwarenessModalDialog,
+} from "../genericAwarenessModalDialog";
 import useGenericAwarenessModalViewModel from "./useGenericAwarenessModalViewModel";
 
 const dispatchThunk = (

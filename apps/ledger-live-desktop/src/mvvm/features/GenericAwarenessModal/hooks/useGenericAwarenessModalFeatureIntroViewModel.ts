@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useDispatch } from "LLD/hooks/redux";
-import { closeGenericAwarenessModalDialog } from "./genericAwarenessModalDialog";
-import type { FeatureIntroContentItem } from "./components/FeatureIntroContent";
+import { closeGenericAwarenessModalDialog } from "../genericAwarenessModalDialog";
+import type { FeatureIntroContentItem } from "../components/FeatureIntroContent";
 import { openURL } from "~/renderer/linking";
 
 const FEATURE_INTRO_ITEMS: FeatureIntroContentItem[] = [

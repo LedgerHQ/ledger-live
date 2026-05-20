@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useDispatch } from "LLD/hooks/redux";
-import { closeGenericAwarenessModalDialog } from "./genericAwarenessModalDialog";
-import type { AwarenessCarouselSlide } from "./components/CarouselContent";
+import { closeGenericAwarenessModalDialog } from "../genericAwarenessModalDialog";
+import type { AwarenessCarouselSlide } from "../components/CarouselContent";
 import { openURL } from "~/renderer/linking";
 
 const CAROUSEL_SLIDES: AwarenessCarouselSlide[] = [

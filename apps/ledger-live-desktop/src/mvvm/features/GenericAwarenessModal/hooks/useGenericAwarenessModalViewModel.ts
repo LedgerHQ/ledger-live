@@ -6,7 +6,7 @@ import {
   selectGenericAwarenessModalCampaignId,
   selectIsGenericAwarenessModalOpen,
   type GenericAwarenessModalContentVariant,
-} from "./genericAwarenessModalDialog";
+} from "../genericAwarenessModalDialog";
 
 export interface GenericAwarenessModalViewProps {
   isOpen: boolean;

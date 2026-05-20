@@ -1,8 +1,8 @@
 import React from "react";
 import { Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
-import type { GenericAwarenessModalViewProps } from "./useGenericAwarenessModalViewModel";
-import useGenericAwarenessModalFeatureIntroViewModel from "./useGenericAwarenessModalFeatureIntroViewModel";
-import useGenericAwarenessModalCarouselViewModel from "./useGenericAwarenessModalCarouselViewModel";
+import type { GenericAwarenessModalViewProps } from "./hooks/useGenericAwarenessModalViewModel";
+import useGenericAwarenessModalFeatureIntroViewModel from "./hooks/useGenericAwarenessModalFeatureIntroViewModel";
+import useGenericAwarenessModalCarouselViewModel from "./hooks/useGenericAwarenessModalCarouselViewModel";
 import CarouselContent from "./components/CarouselContent";
 import FeatureIntroContent from "./components/FeatureIntroContent";
 

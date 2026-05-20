@@ -35,9 +35,11 @@ describe("resolveGenericAwarenessModalContentVariant", () => {
   });
 });
 
-describe("genericAwarenessModal", () => {
+describe("genericAwarenessModalDialog", () => {
   it("open thunk stores campaign id and opens dialog", () => {
-    const actions = collectThunkDispatches(openGenericAwarenessModalDialog({ campaignId: "campaign-a" }));
+    const actions = collectThunkDispatches(
+      openGenericAwarenessModalDialog({ campaignId: "campaign-a" }),
+    );
 
     expect(actions[0]).toEqual(setGenericAwarenessModalCampaignId("campaign-a"));
     expect(actions[1]).toEqual(openDialog("GENERIC_AWARENESS_MODAL"));

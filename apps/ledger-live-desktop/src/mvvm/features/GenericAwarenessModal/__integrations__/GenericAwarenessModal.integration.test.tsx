@@ -2,7 +2,10 @@ import React from "react";
 import { render, screen, waitFor, act } from "tests/testSetup";
 import type { AppDispatch } from "~/state-manager/configureStore";
 import GenericAwarenessModal from "..";
-import { closeGenericAwarenessModalDialog, openGenericAwarenessModalDialog } from "../genericAwarenessModalDialog";
+import {
+  closeGenericAwarenessModalDialog,
+  openGenericAwarenessModalDialog,
+} from "../genericAwarenessModalDialog";
 
 describe("GenericAwarenessModal Integration", () => {
   const dispatchThunk = (
