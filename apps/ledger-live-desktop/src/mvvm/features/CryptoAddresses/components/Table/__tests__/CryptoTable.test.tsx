@@ -18,6 +18,7 @@ import {
 function expectColumnHeaders(): void {
   expect(screen.getByRole("columnheader", { name: "Name" })).toBeVisible();
   expect(screen.getByRole("columnheader", { name: "Address" })).toBeVisible();
+  expect(screen.getByRole("columnheader", { name: "Asset" })).toBeVisible();
   expect(screen.getByRole("columnheader", { name: "Value" })).toBeVisible();
 }
 
@@ -106,13 +107,14 @@ describe("CryptoTable", () => {
     expectColumnHeaders();
     expect(screen.getByText(accountLabel)).toBeVisible();
     expect(screen.getByText("ETH")).toBeVisible();
+    expect(screen.getByTestId("account-assets-cell")).toBeVisible();
     const table = screen.getByRole("table");
     const tbodyElements = within(table)
       .getAllByRole("rowgroup")
       .filter((el): el is HTMLElement => el.tagName === "TBODY");
     expect(tbodyElements).toHaveLength(1);
     const dataCells = within(tbodyElements[0]).getAllByRole("cell");
-    expect(dataCells).toHaveLength(4);
+    expect(dataCells).toHaveLength(5);
 
     await user.click(screen.getByRole("button", { name: new RegExp(accountLabel) }));
 
