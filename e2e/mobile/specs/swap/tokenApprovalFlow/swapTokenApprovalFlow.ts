@@ -1,25 +1,28 @@
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { ensureTokenApproval, performSwapUntilQuoteSelectionStep } from "../../../utils/swapUtils";
+import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
+import { performSwapUntilQuoteSelectionStep, revokeTokenApproval } from "../../../utils/swapUtils";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
-import { setEnv } from "@ledgerhq/live-env";
 import { beforeAllFunctionSwap } from "../swap.setup";
 import { getAmountFromUSD } from "@ledgerhq/live-common/e2e/swap";
 
-setEnv("DISABLE_TRANSACTION_BROADCAST", true);
-
-export function runSwapDexNativeFlow(
-  fromAccount: Account,
+export function runSwapTokenApprovalFlow(
+  fromAccount: TokenAccount,
   toAccount: Account,
   provider: Provider,
   tmsLinks: string[],
   tags: string[],
 ) {
-  describe("Swap - DEX Native flow", () => {
+  const isBroadcastEnabled = process.env.DISABLE_TRANSACTION_BROADCAST === "0";
+  if (!isBroadcastEnabled) {
+    console.warn(
+      "[approval.swap.spec] Skipping — requires DISABLE_TRANSACTION_BROADCAST=0 (Monday nightly only)",
+    );
+  }
+  (isBroadcastEnabled ? describe : describe.skip)("Token approval - flow", () => {
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(fromAccount, toAccount);
       await beforeAllFunctionSwap({
         userdata: "skip-onboarding",
-        speculosApp: provider.app,
+        speculosApp: provider.app ?? fromAccount.currency.speculosApp,
         cliCommandsOnApp: [
           {
             app: fromAccount.currency.speculosApp,
@@ -35,28 +38,33 @@ export function runSwapDexNativeFlow(
 
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`Swap test DEX provider native flow - (${provider.uiName})`, async () => {
+
+    it("Swap - token approval flow", async () => {
+      await app.swap.getSelectedProvider(provider.uiName);
+      await revokeTokenApproval(fromAccount, provider);
+      await app.swap.ensureRevokeTokenApproval(fromAccount, provider);
       const amountToSwap = await getAmountFromUSD(fromAccount.currency.id, 5);
       if (amountToSwap === null) {
         throw new Error(`Could not resolve USD amount for ${fromAccount.currency.id}`);
       }
       const swap = new Swap(fromAccount, toAccount, amountToSwap.toString(), provider);
-      await ensureTokenApproval(fromAccount, provider, amountToSwap.toString());
-
       await performSwapUntilQuoteSelectionStep(
         swap.accountToDebit,
         swap.accountToCredit,
         amountToSwap.toString(),
         true,
       );
-
       await app.swapLiveApp.selectSpecificProvider(provider.uiName);
       await app.swapLiveApp.tapExecuteSwap(provider.uiName);
-      await app.swapLiveApp.tapExecuteSwapOnStepApproval();
+      await app.swapLiveApp.expectTwoStepApprovalScreen();
+      await app.swapLiveApp.tapGiveApprovalButton();
       await app.send.summaryContinue();
-      await app.send.dismissHighFeeModal();
-
-      await app.swap.verifyAmountsAndAcceptSwap(swap, Number(amountToSwap).toFixed(8));
+      await app.speculos.signTokenApproval();
+      if (provider === Provider.UNISWAP) {
+        await app.swapLiveApp.tapGiveAuthorizationButton();
+        await app.speculos.signTypedMessage();
+      }
+      await app.swapLiveApp.expectTwoStepSignScreen();
       await app.swapLiveApp.expectExecuteSwapOnStepApproval();
     });
   });

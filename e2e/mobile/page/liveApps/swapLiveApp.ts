@@ -30,6 +30,8 @@ export default class SwapLiveAppPage {
   switchButton = "to-account-switch-accounts";
   lnsUnsupportedBannerPattern =
     /Ledger Nano S[\s\S]*(not supported|unsupported|does not support|not compatible)/i;
+  giveApprovalButton = "give-approval-button";
+  signPermitButton = "sign-permit-button";
   specificQuoteCardProviderName = (provider: string) =>
     `compact-quote-card-provider-name-${provider}`;
   baseProviderCssSelector = (provider: string) =>
@@ -443,5 +445,31 @@ export default class SwapLiveAppPage {
   async verifyLiveAppTitle(expectedText: string) {
     const liveAppTitle = await getTextOfElement("live-app-title");
     jestExpect(liveAppTitle.toLowerCase()).toContain(expectedText.toLowerCase());
+  }
+
+  @Step("Expect TwoStepApprovalScreen")
+  async expectTwoStepApprovalScreen() {
+    await waitWebElementByTestId(this.giveApprovalButton);
+    await detoxExpect(getWebElementByTestId(this.giveApprovalButton)).toExist();
+  }
+
+  @Step("Tap give Approval button")
+  async tapGiveApprovalButton() {
+    await waitWebElementByTestId(this.giveApprovalButton);
+    await waitForWebElementToBeEnabled(this.giveApprovalButton);
+    await tapWebElementByTestId(this.giveApprovalButton);
+  }
+
+  @Step("Tap Give Authorization button")
+  async tapGiveAuthorizationButton() {
+    await waitWebElementByTestId(this.signPermitButton);
+    await waitForWebElementToBeEnabled(this.signPermitButton);
+    await tapWebElementByTestId(this.signPermitButton);
+  }
+
+  @Step("Expect TwoStepSign screen to be displayed")
+  async expectTwoStepSignScreen() {
+    await waitWebElementByTestId(this.executeSwapButtonStepApproval);
+    await detoxExpect(getWebElementByTestId(this.executeSwapButtonStepApproval)).toExist();
   }
 }
