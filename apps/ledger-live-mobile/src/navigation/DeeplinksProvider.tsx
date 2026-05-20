@@ -49,6 +49,7 @@ import {
 import { handleWallet40Deeplink } from "./deeplinks/handleWallet40Deeplink";
 import { handleMarketBannerDeeplink } from "./deeplinks/handleMarketBannerDeeplink";
 import { handleAssetDetailDeeplink } from "./deeplinks/handleAssetDetailDeeplink";
+import { handleGenericAwarenessModalDeeplink } from "./deeplinks/handleGenericAwarenessModalDeeplink";
 import { useProductTourEligibility } from "LLM/features/ProductTour";
 import { SplashScreenHandle } from "LLM/features/LaunchScreen/SplashScreenHandle";
 import { useDeeplinkDrawerCleanup } from "./deeplinks/useDeeplinkDrawerCleanup";
@@ -857,6 +858,17 @@ export const DeeplinksProvider = ({
           if (hostname === "product-tour" && isProductTourEligible) {
             dispatch(tickProductTourDeeplink());
             return getStateFromPath("portfolio", config);
+          }
+
+          if (hostname === "generic-awareness-modal") {
+            return handleGenericAwarenessModalDeeplink({
+              // TODO: replace with feature flag value when the flag is available.
+              isGenericAwarenessModalEnabled: true,
+              hasCompletedOnboarding,
+              searchParams,
+              dispatch,
+              config,
+            });
           }
 
           // Handle wallet deeplink with installApp param
