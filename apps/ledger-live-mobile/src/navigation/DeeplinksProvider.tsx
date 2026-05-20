@@ -856,7 +856,11 @@ export const DeeplinksProvider = ({
             return getStateFromPath(pathWithParams, config);
           }
 
-          if (hostname === "product-tour" && (lwmProductTourFlag?.enabled ?? false)) {
+          if (
+            hostname === "product-tour" &&
+            (lwmProductTourFlag?.enabled ?? false) &&
+            hasCompletedOnboarding
+          ) {
             dispatch(tickProductTourDeeplink());
             return getStateFromPath("portfolio", config);
           }
