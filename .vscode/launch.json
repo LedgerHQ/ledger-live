@@ -22,6 +22,36 @@
       "type": "node",
       "request": "attach",
       "port": 9229
-    }
+    },
+    {
+    "name": "e2e mobile android",
+    "type": "node",
+    "request": "launch",
+    "args": ["config/wdio.android.conf.js", "--spec", "${file}"],
+    "cwd": "${workspaceFolder}/e2e/poc-wdio",
+    "autoAttachChildProcesses": true,
+    "program": "${workspaceFolder}/e2e/poc-wdio/node_modules/@wdio/cli/bin/wdio.js",
+    "console": "integratedTerminal",
+    "skipFiles": [
+        "${workspaceFolder}/**/node_modules/**/*.js",
+        "${workspaceFolder}/lib/**/*.js",
+        "<node_internals>/**/*.js"
+      ]
+    },
+    {
+    "name": "e2e mobile ios",
+    "type": "node",
+    "request": "launch",
+    "args": ["config/wdio.ios.conf.js", "--spec", "${file}"],
+    "cwd": "${workspaceFolder}/e2e/poc-wdio",
+    "autoAttachChildProcesses": true,
+    "program": "${workspaceFolder}/e2e/poc-wdio/node_modules/@wdio/cli/bin/wdio.js",
+    "console": "integratedTerminal",
+    "skipFiles": [
+        "${workspaceFolder}/**/node_modules/**/*.js",
+        "${workspaceFolder}/lib/**/*.js",
+        "<node_internals>/**/*.js"
+      ]
+    },
   ]
 }
