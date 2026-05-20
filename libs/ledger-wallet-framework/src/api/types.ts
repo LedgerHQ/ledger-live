@@ -1,6 +1,6 @@
 import type { AssetInfo, BalanceOptions } from "@ledgerhq/coin-module-framework/api/types";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type { Operation as LiveOperation } from "@ledgerhq/types-live";
+import type { Operation as LiveOperation, StakingResources } from "@ledgerhq/types-live";
 
 export type ChainSpecificRules = {
   getAccountShape: (address: string) => void;
@@ -45,6 +45,6 @@ export type BridgeApi = {
     currency: CryptoCurrency,
     address: string,
     operations: LiveOperation[],
-    stakingResources: Record<string, unknown>,
-  ) => Promise<Record<string, unknown>>;
+    stakingResources: StakingResources,
+  ) => Promise<StakingResources>;
 };

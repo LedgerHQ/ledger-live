@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { StakingAccount, StakingDelegation } from "../types";
+import type { StakingAccount, StakingDelegation } from "@ledgerhq/types-live";
 import { canRedelegate, getMaxEstimatedBalance } from "./logic";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────

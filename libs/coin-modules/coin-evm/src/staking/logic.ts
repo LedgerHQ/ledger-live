@@ -17,8 +17,8 @@ import type {
   StakingSearchFilter,
   StakingUnbonding,
   StakingValidatorItem,
-  Transaction,
-} from "../types/index";
+} from "@ledgerhq/types-live";
+import type { Transaction } from "../types/index";
 
 export function mapDelegations(
   delegations: StakingDelegation[],
