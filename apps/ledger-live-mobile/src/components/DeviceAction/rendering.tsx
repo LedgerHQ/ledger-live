@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import type { TFunction } from "i18next";
 import { Image, Linking, ScrollView } from "react-native";
 import { useSelector } from "~/context/hooks";
@@ -20,6 +20,10 @@ import {
 } from "@ledgerhq/errors";
 import { isCounterfeitError } from "@ledgerhq/live-common/hw/isCounterfeitError";
 import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
+import {
+  getLatestFirmwareForDeviceUseCase,
+  type FirmwareUpdateContextEntity,
+} from "@ledgerhq/live-common/device/use-cases/getLatestFirmwareForDeviceUseCase";
 import { ExchangeRate, ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
@@ -38,7 +42,6 @@ import { TrackScreen, track, useTrack } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { MANAGER_TABS } from "~/const/manager";
 import { getDeviceAnimation, getDeviceAnimationStyles } from "~/helpers/getDeviceAnimation";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { lastSeenDeviceSelector } from "~/reducers/settings";
 import { SettingsState } from "~/reducers/types";
 import { urls } from "~/utils/urls";
@@ -772,82 +775,56 @@ export function NanoSNotSupportedComponent() {
 export function RequiredFirmwareUpdate({
   device,
   navigation,
+  onClose,
 }: Omit<RawProps, "t"> & {
   navigation: NativeStackNavigationProp<ParamListBase>;
   device: Device;
+  onClose?: () => void;
 }) {
   const { t } = useTranslation();
   const track = useTrack();
   const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(lastSeenDeviceSelector);
-  const { shouldDisplayWallet40MainNav, shouldDisplayMyWallet } = useWalletFeaturesConfig("mobile");
 
-  const usbFwUpdateActivated = !!lastSeenDevice;
+  const deviceInfo = lastSeenDevice?.deviceInfo;
+  const usbFwUpdateActivated = !!deviceInfo;
   const deviceName = getDeviceModel(device.modelId).productName;
-  const isDeviceConnectedViaUSB = device.wired;
 
-  // Goes to the manager if a firmware update is available, but only automatically
-  // displays the firmware update drawer if the device is already connected via USB
-  const onPress = () => {
+  const latestFirmwarePromiseRef = useRef<Promise<FirmwareUpdateContextEntity | null> | null>(null);
+  const fetchLatestFirmware = useCallback(() => {
+    if (!deviceInfo) return Promise.resolve(null);
+    if (!latestFirmwarePromiseRef.current) {
+      latestFirmwarePromiseRef.current = getLatestFirmwareForDeviceUseCase(deviceInfo).catch(() => {
+        // Drop the cached failure so a re-tap retries the fetch.
+        latestFirmwarePromiseRef.current = null;
+        return null;
+      });
+    }
+    return latestFirmwarePromiseRef.current;
+  }, [deviceInfo]);
+  useEffect(() => {
+    fetchLatestFirmware();
+  }, [fetchLatestFirmware]);
+
+  const onPress = async () => {
     track("button_clicked", {
-      button: "OpenMyLedger",
+      button: "GoToOSUpdate",
       page: "Update_OS_To_Continue",
     });
-
-    if (shouldDisplayMyWallet) {
-      const myWalletState = {
-        routes: [
-          {
-            name: ScreenName.MyWallet,
-            params: { device, firmwareUpdate: isDeviceConnectedViaUSB },
-          },
-        ],
-      };
-      navigation.reset({
-        index: 0,
-        routes: [
-          {
-            name: NavigatorName.Base,
-            state: {
-              index: 1,
-              routes: [
-                { name: NavigatorName.Main },
-                { name: NavigatorName.MyWallet, state: myWalletState },
-              ],
-            },
-          },
-        ],
-      });
-    } else {
-      const myLedgerState = {
-        routes: [
-          {
-            name: ScreenName.MyLedgerChooseDevice,
-            params: { device, firmwareUpdate: isDeviceConnectedViaUSB },
-          },
-        ],
-      };
-      if (shouldDisplayWallet40MainNav) {
-        navigation.reset({
-          index: 1,
-          routes: [
-            { name: NavigatorName.Main },
-            { name: NavigatorName.MyLedger, state: myLedgerState },
-          ],
-        });
-      } else {
-        navigation.reset({
-          index: 0,
-          routes: [
-            {
-              name: NavigatorName.Main,
-              state: {
-                routes: [{ name: NavigatorName.MyLedger, state: myLedgerState }],
-              },
-            },
-          ],
-        });
-      }
+    const firmwareUpdateContext = await fetchLatestFirmware();
+    if (!firmwareUpdateContext || !deviceInfo) return;
+    let targetNav: NativeStackNavigationProp<ParamListBase> = navigation;
+    while (!targetNav.getState()?.routeNames?.includes(ScreenName.FirmwareUpdate)) {
+      const parent = targetNav.getParent();
+      if (!parent) break;
+      targetNav = parent as NativeStackNavigationProp<ParamListBase>;
     }
+    targetNav.navigate(ScreenName.FirmwareUpdate, {
+      device,
+      deviceInfo,
+      firmwareUpdateContext,
+      onBackFromUpdate: () => targetNav.goBack(),
+    });
+    onClose?.();
   };
 
   return (
