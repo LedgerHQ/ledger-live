@@ -169,6 +169,9 @@
     "CeloAllFundsWarning" : {
       "title" : "今後のトランザクション手数料に十分な残高を、確保しておいてください。"
     },
+    "CeloGroupNotVotable" : {
+      "title" : "このバリデータグループは投票を受け取ることができません。満額であるか、または対象外となる場合があります。"
+    },
     "CeloMissingWithdrawalsError" : {
       "title" : "不具合が発生し、出金用の資金が利用できません"
     },
@@ -889,6 +892,9 @@
     "RecommendUndelegation" : {
       "title" : "アカウントを空にする前に、デリゲートを解除してください。"
     },
+    "MustDelegateBeforeStaking" : {
+      "title" : "ステーキングする前に、アカウントをデリゲートしてください"
+    },
     "RecommendSubAccountsToEmpty" : {
       "title" : "まず、すべてのサブアカウントを空にしてください。"
     },
@@ -1321,6 +1327,13 @@
     "tryEnablingAgain" : "位置情報を再度有効にしてみてください",
     "noInfos" : "Ledgerがあなたの位置情報にアクセスすることはありません。"
   },
+  "borrow" : {
+    "title" : "借入",
+    "appNotFound" : "借入アプリが見つかりません",
+    "infoModal" : {
+      "close" : "閉じる"
+    }
+  },
   "earn" : {
     "deposit" : {
       "protocolInfoModal" : {
@@ -1667,6 +1680,23 @@
     "headerTitle" : "購入手続きに成功",
     "title" : "Ledgerをご信頼いただきありがとうございます",
     "desc" : "ご注文を処理しています。\nご注文確認のメールをご確認ください。"
+  },
+  "productTour" : {
+    "swap" : {
+      "cta" : "スワップを見る"
+    },
+    "stake" : {
+      "cta" : "報酬獲得を確認"
+    },
+    "card" : {
+      "cta" : "カードを入手"
+    },
+    "portfolio" : {
+      "cta" : "ポートフォリオを見る"
+    },
+    "done" : {
+      "cta" : "もう一度やり直してください"
+    }
   },
   "discover" : {
     "title" : "アプリ一覧",
@@ -2743,6 +2773,12 @@
       "title" : "無期限先物",
       "description" : "レバレッジ取引"
     },
+    "borrowEntry" : {
+      "title" : "ローン",
+      "cardTitle" : "ステーブルコインを借りる",
+      "cardDescription" : "資産を自由に使う",
+      "cta" : "探索"
+    },
     "recommended" : {
       "title" : "おすすめ"
     },
@@ -2803,15 +2839,8 @@
       }
     },
     "recoverBanner" : {
-      "subscribeDone" : {
-        "title" : "Ledger Recoverのサブスクリプション契約が完了していません"
-      },
-      "verifyIdentity" : {
-        "title" : "ウォレットへのアクセスはまだバックアップされていません"
-      },
-      "connectDevice" : {
-        "title" : "ウォレットへのアクセスはまだバックアップされていません"
-      }
+      "title" : "バックアップの保護を完了",
+      "description" : "Ledger Recoverの有効化を完了してください"
     },
     "refreshStatus" : {
       "refreshing" : "更新中...",
@@ -2933,7 +2962,8 @@
   },
   "operationsList" : {
     "to" : "送付先",
-    "from" : "送付元"
+    "from" : "送付元",
+    "pending" : "保留中"
   },
   "operationDetails" : {
     "title" : "トランザクションの詳細",
@@ -3217,7 +3247,9 @@
     "title" : "アカウント",
     "addAccount" : "アカウントを追加",
     "emptyState" : "まだアカウントがありません",
-    "errorState" : "アカウントの読み込み中にエラーが発生しました。"
+    "errorState" : "アカウントの読み込み中にエラーが発生しました。",
+    "assetsCount" : "{{count}}資産",
+    "assetsCount_one" : "{{count}}資産"
   },
   "crypto" : {
     "title" : "暗号資産",
@@ -3348,7 +3380,7 @@
       "analytics" : "アプリのパフォーマンス",
       "analyticsDesc" : "Ledgerがアプリの使用状況を収集できるようにして、ユーザー体験を向上させる",
       "mevProtection" : "MEV保護",
-      "mevProtectionDesc" : "MEV保護を有効にすると、イーサリアムでのトランザクションの信頼性が高まります。",
+      "mevProtectionDesc" : "より信頼性の高いトランザクションのためにMEV保護を有効にしてください。",
       "mevProtectionLearnMore" : "プライバシーに関する通知",
       "personalizedRecommendations" : "好みに合わせてコンテンツをカスタマイズ",
       "personalizedRecommendationsDesc" : "Ledgerがアプリの使用状況を収集して、パーソナライズされたコンテンツを提供できるようにします。",
@@ -5464,7 +5496,11 @@
     "undelegation" : {
       "undelegate" : "デリゲート解除",
       "undelegationMessage" : "デリゲートを解除すると、現在および今後のエポックを対象とした報酬を受け取ることができなくなります",
-      "verificationSuccessTitle" : "資産のデリゲートを正常に解除しました。"
+      "verificationSuccessTitle" : "資産のデリゲートを正常に解除しました。",
+      "dRepDelegationSelfTransactionDrawer" : {
+        "title" : "デリゲート解除の準備",
+        "description" : "ステーキングアカウントを閉鎖して、ADAのデポジットを取り戻す方法：\n\nCardanoのガバナンスにより、デリゲートを解除する前に投票ステータスを定義する必要があります。\n\nこのステップでは、投票を棄権する選択を登録するために、自分のLedgerアドレスに送信トランザクションを行います。費用は標準的なネットワーク手数料のみで、ADAはウォレットに保管されます。\n\nこの設定が記録されると、通常どおりデリゲートを解除できるようになります。"
+      }
     },
     "delegation" : {
       "pool" : "プール",
@@ -6235,6 +6271,208 @@
     },
     "delegation" : {
       "addCustomValidator" : "+ カスタムバリデーターを追加"
+    }
+  },
+  "evm" : {
+    "info" : {
+      "available" : {
+        "title" : "{{currencyTicker}} がご利用可能です",
+        "description" : "これは利用可能額です。"
+      },
+      "delegated" : {
+        "title" : "デリゲートされた資産",
+        "description" : "デリゲートされた資産は、{{currencyName}}の投票に使われます。これがお客様の合計票数です。"
+      },
+      "undelegating" : {
+        "title" : "デリゲート解除中",
+        "description" : "デリゲートを解除した資産は、{{numberOfDays}}日間のロック期間後に再び利用可能になります。"
+      },
+      "delegationUnavailable" : {
+        "title" : "デリゲート不可",
+        "description" : "アカウントの利用可能残高が不足しているため、新たなデリゲートを開始できません。"
+      }
+    },
+    "delegation" : {
+      "delegationEarn" : "資産をデリゲートすることで、{{ticker}}で報酬を獲得できます。",
+      "info" : "デリゲートの仕組み",
+      "claimRewards" : "報酬獲得を申請",
+      "claimAvailableRewards" : "{{amount}}を申請",
+      "commission" : "コミッション",
+      "header" : "デリゲート",
+      "Amount" : "数量",
+      "noRewards" : "受け取り可能な報酬はありません。",
+      "delegate" : "デリゲート",
+      "undelegate" : "デリゲート解除",
+      "redelegate" : "再デリゲート",
+      "reward" : "報酬獲得を申請",
+      "totalStake" : "合計ステーキング量",
+      "stepperHeader" : {
+        "starter" : "報酬を獲得する",
+        "validator" : "資産をデリゲートする",
+        "amountSubTitle" : "デリゲート数量",
+        "summary" : "概要",
+        "verification" : "認証",
+        "selectDevice" : "デバイスを選択",
+        "connectDevice" : "デバイスを接続",
+        "stepRange" : "ステップ{{currentStep}}/{{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "資産を管理しながら、{{ticker}}をデリゲートして報酬を獲得しましょう。",
+            "steps" : {
+              "0" : "資産をデリゲートしても、資産の所有者は変わりません。",
+              "1" : "デリゲート解除が完了するまで、{{numberOfDays}}日待つ必要があります。",
+              "2" : "Ledgerデバイスを使って安全にデリゲートできます。"
+            },
+            "warning" : {
+              "description" : "バリデーターは慎重に選択してください。不適切なバリデーターに資産を預けると、資産の一部がペナルティによって失われてしまう危険があります。"
+            },
+            "cta" : "続行"
+          },
+          "validator" : {
+            "validators" : "バリデーター",
+            "myDelegations" : "デリゲート",
+            "cta" : "続行",
+            "estYield" : "推定利回り：{{amount}}",
+            "totalAvailable" : "合計利用可能額：<0>{{amount}}</0>",
+            "allAssetsUsed" : "全ての資産を使用中",
+            "noResultsFound" : "<0>{{search}}</0>のバリデーターが見つかりませんでした。",
+            "currentAmount" : "(+ <0>{{amount}}</0>)"
+          },
+          "amount" : {
+            "assetsRemaining" : "残りの資産：<0>{{amount}}</0>",
+            "allAssetsUsed" : "全ての資産を使用中",
+            "minAmount" : "最低金額: <0>{{min}}</0>",
+            "incorrectAmount" : "最大金額: <0>{{max}}</0>",
+            "cta" : "続行"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "資産が正常にデリゲートされました。",
+              "text" : "ネットワークによるトランザクションの承認後、アカウントの残高が更新されます。",
+              "cta" : "詳細を表示"
+            },
+            "pending" : {
+              "title" : "トランザクションをブロードキャスト中…"
+            },
+            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+          }
+        }
+      },
+      "drawer" : {
+        "status" : "ステータス",
+        "rewards" : "報酬",
+        "active" : "アクティブ",
+        "inactive" : "停止中",
+        "completionDate" : "完了日",
+        "redelegatedFrom" : "再デリゲート元"
+      }
+    },
+    "redelegation" : {
+      "estYield" : "推定利回り",
+      "stepperHeader" : {
+        "validator" : "新しいバリデーターを選ぶ",
+        "amountSubTitle" : "再デリゲート額",
+        "amountTitle" : "{{from}} → {{to}}",
+        "summary" : "概要",
+        "selectDevice" : "デバイスを選択",
+        "connectDevice" : "デバイスを接続",
+        "stepRange" : "ステップ{{currentStep}}/{{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "validator" : {
+            "validators" : "バリデーター",
+            "myDelegations" : "デリゲート",
+            "cta" : "続行",
+            "estYield" : "推定利回り：{{amount}}",
+            "totalAvailable" : "合計利用可能額：<0>{{amount}}</0>",
+            "allAssetsUsed" : "全ての資産を使用中",
+            "noResultsFound" : "<0>{{search}}</0>のバリデーターが見つかりませんでした。"
+          },
+          "amount" : {
+            "newRedelegatedBalance" : "処理後の<0>{{name}}</0>に対する合計額：<0>{{amount}}</0>",
+            "allAssetsUsed" : "全ての資産を使用中"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "資産を正常に再デリゲートしました。",
+              "text" : "ネットワークによるトランザクションの承認後、アカウントの残高が更新されます。",
+              "cta" : "詳細を表示"
+            },
+            "pending" : {
+              "title" : "トランザクションをブロードキャスト中…"
+            },
+            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+          }
+        }
+      }
+    },
+    "undelegation" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "デリゲート解除額",
+        "summary" : "概要",
+        "selectDevice" : "デバイスを選択",
+        "connectDevice" : "デバイスを接続",
+        "stepRange" : "ステップ{{currentStep}}/{{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "allAssetsUsed" : "全資産のデリゲート解除済み"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "資産のデリゲートを正常に解除しました。",
+              "text" : "ネットワークによるトランザクションの承認後、アカウントの残高が更新されます。",
+              "cta" : "詳細を表示"
+            },
+            "pending" : {
+              "title" : "トランザクションをブロードキャスト中…"
+            },
+            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+          }
+        }
+      }
+    },
+    "claimRewards" : {
+      "stepperHeader" : {
+        "validator" : "受け取る報酬を選択",
+        "method" : "報酬獲得を申請",
+        "summary" : "概要",
+        "selectDevice" : "デバイスを選択",
+        "connectDevice" : "デバイスを接続",
+        "stepRange" : "ステップ{{currentStep}}/{{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "method" : {
+            "youEarned" : "獲得額",
+            "byDelegationAssetsTo" : "資産のデリゲート先：",
+            "claimReward" : "キャッシュイン",
+            "claimRewardCompound" : "Compound",
+            "claimRewardInfo" : "報酬獲得を申請し、報酬は利用可能残高に加算されます。",
+            "claimRewardCompoundInfo" : "報酬獲得を申請し、自動的に同じバリデーターにデリゲートされます。",
+            "compoundOrCashIn" : "コンパウンドとキャッシュイン？",
+            "claimRewardTooltip" : "報酬は利用可能残高に加算されます。",
+            "claimRewardCompoundTooltip" : "報酬はデリゲート額に加算されます。",
+            "cta" : "続行"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "報酬を正常に獲得しました。報酬は利用可能残高に加算されました。",
+              "titleCompound" : "報酬が同じバリデータにデリゲートされました。",
+              "text" : "ネットワークによるトランザクションの承認後、アカウントの残高が更新されます。",
+              "cta" : "詳細を表示"
+            },
+            "pending" : {
+              "title" : "トランザクションをブロードキャスト中…"
+            },
+            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+          }
+        }
+      }
     }
   },
   "tron" : {
@@ -7211,6 +7449,11 @@
         "redelegate" : "デリゲート解除済みの資産が利用可能残高に戻るまで、{{numberOfDays}}日間待機する必要があります。",
         "undelegate" : "デリゲート解除済みの資産が利用可能残高に戻るまで、{{numberOfDays}}日間待機する必要があります。"
       },
+      "evm" : {
+        "claimReward" : "選択したバリデーターに未請求の報酬がある場合は、自動的に請求されます。",
+        "redelegate" : "デリゲート解除済みの資産が利用可能残高に戻るまで、{{numberOfDays}}日間待機する必要があります。",
+        "undelegate" : "デリゲート解除済みの資産が利用可能残高に戻るまで、{{numberOfDays}}日間待機する必要があります。"
+      },
       "lending" : "送信する前に、取引の詳細をデバイスで確認してください。"
     },
     "amount" : "数量",
@@ -7809,27 +8052,48 @@
   "postOnboarding" : {
     "hub" : {
       "title" : "次のステップ",
-      "areAllPostOnboardingActionsCompletedTitle" : "これで準備完了です！引き続きポートフォリオの探索をお楽しみください",
+      "areAllPostOnboardingActionsCompletedTitle" : "これで準備完了です。",
       "skip" : "これは後でやります",
-      "viewWallet" : "ポートフォリオを探索"
+      "viewWallet" : "ポートフォリオを探索",
+      "deviceStepComplete" : "完了"
     },
-    "entryPointCard" : {
-      "title" : "{{productName}}の次のステップは何ですか？",
-      "description" : "資産を保護して、さらに活用しましょう。",
-      "buttonLabel" : "次のステップを見る"
+    "drawer" : {
+      "title" : "次は、ウォレット設定を完了します。",
+      "titleCompleted" : "これで準備完了です。",
+      "primaryLabel" : "了解",
+      "actionCompletedLabel" : "完了",
+      "actions" : {
+        "deviceOnboarded" : {
+          "title" : "Ledgerを設定する"
+        },
+        "assetsTransfer" : {
+          "title" : "暗号資産を追加",
+          "description" : "暗号資産を受け取る、または購入してウォレットに資金を追加する"
+        },
+        "syncAccounts" : {
+          "title" : "ウォレットを同期",
+          "description" : "暗号資産アカウントの同期を維持する"
+        },
+        "customImage" : {
+          "title" : "ロック画面をカスタマイズ",
+          "description" : "お気に入りのデジタルアートや写真を、デバイスのロック画面に表示しましょう。"
+        },
+        "recover" : {
+          "title" : "バックアップの保護を完了",
+          "description" : "Ledger Recoverの有効化を完了してください"
+        }
+      }
     },
     "widget" : {
       "title" : "次は、ウォレット設定を完了します。",
-      "subtitle" : "まずはウォレットへの入金から始めましょう。"
+      "subtitle" : "資産を保護して、さらに活用しましょう。"
     },
     "actions" : {
       "deviceOnboarded" : {
-        "titleCompleted" : "Ledgerデバイスのセットアップ"
+        "titleCompleted" : "Ledgerを設定する"
       },
       "assetsTransfer" : {
-        "title" : "資産を転送する",
         "titleCompleted" : "資産がLedgerに転送されました",
-        "description" : "取引所やウォレットから転送。",
         "popupLabel" : "資産が転送されました"
       },
       "buyCrypto" : {
@@ -7839,21 +8103,15 @@
         "popupLabel" : "暗号資産を購入しました"
       },
       "customImage" : {
-        "title" : "ロック画面をカスタマイズ",
         "titleCompleted" : "ロック画面がカスタマイズされました",
-        "description" : "お気に入りのデジタルアートや写真を、デバイスのロック画面に表示しましょう。",
         "popupLabel" : "ロック画面のカスタマイズに成功しました"
       },
       "recover" : {
-        "title" : "バックアップの保護を完了",
         "titleCompleted" : "バックアップ保護完了",
-        "description" : "Ledger Recoverの有効化を完了してください",
         "popupLabel" : "Ledger Recoverのサブスクリプション契約を正常に完了しました"
       },
       "syncAccounts" : {
-        "title" : "暗号資産アカウントを同期する",
         "titleCompleted" : "アカウントの同期が完了しました",
-        "description" : "Ledger Syncを有効にして、暗号資産アカウントを同期してください。",
         "popupLabel" : "アカウント同期済み"
       }
     }
@@ -8400,6 +8658,64 @@
       }
     }
   },
+  "assetDetail" : {
+    "balanceGraph" : {
+      "marketPrice" : "市場価格",
+      "timeframeSelector" : "期間",
+      "timeLabel" : {
+        "24h" : "1日間",
+        "7d" : "1週間",
+        "30d" : "1か月",
+        "1y" : "1年"
+      },
+      "chartPlaceholder" : "グラフィック"
+    },
+    "addresses" : {
+      "title" : "アドレス",
+      "addAccount" : "追加",
+      "empty" : "まだアドレスがありません「追加」ボタンをタップして開始します。"
+    },
+    "marketStats" : {
+      "title" : "マーケット統計",
+      "marketCap" : "マーケットキャップ",
+      "marketRank" : "マーケットランキング",
+      "circulatingSupply" : "循環供給",
+      "circulatingSupplyTooltip" : "現在、市場でトレード・流通可能なコインの数。",
+      "maxSupply" : "最大供給量",
+      "maxSupplyTooltip" : "この暗号資産で将来的に存在し得るコインの最大数。",
+      "tradingVolume" : "24時間取引量",
+      "error" : "マーケット統計を読み込めません"
+    },
+    "pricePerformance" : {
+      "title" : "価格パフォーマンス",
+      "allTimeHigh" : "最高値",
+      "allTimeLow" : "最安値",
+      "yearsAgo" : "{{count}}年前",
+      "monthsAgo" : "{{count}}分前",
+      "daysAgo" : "{{count}}日前",
+      "hoursAgo" : "{{count}}時間前",
+      "minutesAgo" : "{{count}}分前",
+      "justNow" : "たった今",
+      "error" : "価格パフォーマンスを読み込むことができません"
+    },
+    "transactions" : {
+      "title" : "トランザクション"
+    },
+    "fallbackBanner" : {
+      "title" : "この資産は、スワップと購入に対応していません。"
+    },
+    "balanceDetails" : {
+      "totalBalance" : "総資産",
+      "transfer" : "送金",
+      "availableBalance" : "利用可能残高",
+      "earnDeposit" : "報酬獲得デポジット",
+      "earnBanner" : "最大{{apy}}％{{type}}を獲得",
+      "earnBannerGeneric" : "この資産で報酬獲得",
+      "earnBannerSubtitle" : "この資産を保有して稼ぐ",
+      "earnBannerAction" : "報酬獲得へ移動",
+      "availableBalanceTooltip" : "ステーキングまたはデリゲートされた金額を除く、すぐにご利用可能な資金。"
+    }
+  },
   "assetSelection" : {
     "selectCrypto" : {
       "title" : "「暗号資産」を選択"
@@ -8617,6 +8933,36 @@
       "lockedBalanceTooltip" : "他者に送信したオファーによりロックされている資金です。オファーはいつでもキャンセル可能です。あるいは、受取人が承諾または拒否するのを待つこともできます。",
       "withdrawableBalance" : "出金可能",
       "withdrawableBalanceTooltip" : "期限切れのオファーから回収可能な資金です。「引き出し」を行うと、利用可能残高に戻すことができます。"
+    },
+    "disclaimer" : {
+      "title" : "Canton Networkの設定",
+      "intro" : "Cantonには、続行する前に認識が必要な特性があります。",
+      "bullets" : {
+        "utxo" : {
+          "title" : "UTXOベースの残高",
+          "body" : "残高は個々のコインコントラクトとして存在し、転送あたりの上限は100です。休眠中のコントラクトは時間の経過とともに価値が減少し、手数料が残高を上回った場合は失効します。"
+        },
+        "offers" : {
+          "title" : "オファー型送金",
+          "body" : "自動的に決済されることはありません。送信した送金は引き出すことができます。受け取った送金は、手動で承認または拒否する必要があります。Cantonダッシュボードからオファーを管理しましょう。"
+        },
+        "dualValidator" : {
+          "title" : "デュアルバリデーターのセキュリティ",
+          "body" : "トランザクションには、LedgerとKlinの両方の連署が必要です。いずれも単独でお客様の代わりに行動することはできません。"
+        },
+        "tokenLiability" : {
+          "title" : "標準トークンの責任 ⚠️",
+          "body" : "失敗した場合のトークンの復元は、トークン発行者の責任であり、Ledgerの責任ではありません。"
+        }
+      },
+      "agreeLabel" : "私は<1>Canton Network規約とLedgerの免責事項</1>に同意します",
+      "cancel" : "キャンセル",
+      "agree" : "同意する",
+      "terms" : {
+        "title" : "Canton Network規約",
+        "sectionTitle" : "標準トークンの責任と復旧",
+        "body" : "Ledgerは、暗号資産 (DA) 登録を通じて発行された標準トークンのみをサポートしています。Ledgerはこれらのトークンの発行者ではなく、その価値、管理、および基盤となるスマートコントラクトについて一切責任を負いません。\n\nLedgerのサービス停止や「障害復旧」の障害が発生した場合、Ledgerはお客様の資産を復元することができません。「Asset 凍結」または「Registry Recovery」プロトコルを介して復元を開始するには、特定のトークン発行者（資産管理者）に直接連絡する必要があります。お客様の救済措置は、既存のサービス水準合意（SLA）に基づき、トークン発行者にのみ存在します。手続きを進めることにより、お客様は、Ledgerとそのアフィリエイトが、これらのトークンの損失、復元、または復元不能によって生じるすべての責任から除外されることを了承するものとします。"
+      }
     },
     "onboard" : {
       "account" : "アカウント",
@@ -8900,7 +9246,8 @@
       "addDevice" : "Ledgerデバイスを追加する",
       "exploreAllDevices" : "すべてのLedgerデバイスを探索する",
       "available" : "利用可能",
-      "unavailable" : "接続されていません"
+      "unavailable" : "接続されていません",
+      "menuAccessibilityLabel" : "デバイスオプション"
     }
   }
 }
