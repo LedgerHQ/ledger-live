@@ -818,6 +818,7 @@ export const DEFAULT_FEATURES: Features = {
   lwdGenericAwarenessModal: DEFAULT_FEATURE,
   lwmAnalyticsConsentOnboarding: DEFAULT_FEATURE,
   lwmGenericAwarenessModal: DEFAULT_FEATURE,
+  lwmNewNotificationsOptIn: DEFAULT_FEATURE,
   lwmProductTour: DEFAULT_FEATURE,
   lwmWallet40: {
     ...DEFAULT_FEATURE,
