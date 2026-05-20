@@ -2,6 +2,7 @@ import React from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { AccountOnboardStatus } from "@ledgerhq/coin-concordium/types";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { urls } from "~/config/urls";
 import Text from "~/renderer/components/Text";
 import Alert from "~/renderer/components/Alert";
@@ -30,8 +31,9 @@ export default function StepOnboard({
   sessionTopic,
 }: StepProps) {
   const learnMoreUrl = useLocalizedUrl(urls.concordium.learnMore);
-  const appStoreUrl = useLocalizedUrl(urls.concordium.appStore);
-  const playStoreUrl = useLocalizedUrl(urls.concordium.playStore);
+  const idAppLinks = useFeature("concordiumIdAppLinks");
+  const appStoreUrl = idAppLinks?.params?.appStore;
+  const playStoreUrl = idAppLinks?.params?.playStore;
 
   if (onboardingStatus === AccountOnboardStatus.INIT && !isPairing) {
     return (
@@ -91,24 +93,28 @@ export default function StepOnboard({
                     <Trans i18nKey="families.concordium.addAccount.identity.downloadApp" />
                   </Text>
                   <AppStoreLinks horizontal justifyContent="center">
-                    <AppStoreLink
-                      href={playStoreUrl}
-                      onClick={e => {
-                        e.preventDefault();
-                        openURL(playStoreUrl);
-                      }}
-                    >
-                      <AppStoreImage src={GetItOnGooglePlayImage} alt="Get it on Google Play" />
-                    </AppStoreLink>
-                    <AppStoreLink
-                      href={appStoreUrl}
-                      onClick={e => {
-                        e.preventDefault();
-                        openURL(appStoreUrl);
-                      }}
-                    >
-                      <AppStoreImage src={GetItOnAppleStoreImage} alt="Get it on Apple Store" />
-                    </AppStoreLink>
+                    {playStoreUrl && (
+                      <AppStoreLink
+                        href={playStoreUrl}
+                        onClick={e => {
+                          e.preventDefault();
+                          openURL(playStoreUrl);
+                        }}
+                      >
+                        <AppStoreImage src={GetItOnGooglePlayImage} alt="Get it on Google Play" />
+                      </AppStoreLink>
+                    )}
+                    {appStoreUrl && (
+                      <AppStoreLink
+                        href={appStoreUrl}
+                        onClick={e => {
+                          e.preventDefault();
+                          openURL(appStoreUrl);
+                        }}
+                      >
+                        <AppStoreImage src={GetItOnAppleStoreImage} alt="Get it on Apple Store" />
+                      </AppStoreLink>
+                    )}
                   </AppStoreLinks>
                 </AppStoreSection>
               </Box>
