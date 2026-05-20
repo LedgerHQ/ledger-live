@@ -1,6 +1,7 @@
 import React from "react";
 import { Popover, PopoverContent } from "@ledgerhq/lumen-ui-react";
 import { ActionsList } from "../ActionsList";
+import { Contacts } from "../Contacts";
 import { MyLedger } from "../MyLedger";
 import ContextMenuContext from "../ContextMenuContext";
 import { ContextMenuTrigger } from "../ContextMenuTrigger";
@@ -24,6 +25,7 @@ export function ContextMenuView({ open, onOpenChange, contextValue }: ContextMen
           <TopBar />
           <ActionsList />
           <div className="flex flex-col gap-12">
+            <Contacts />
             <MyLedger />
             <Explore />
           </div>
