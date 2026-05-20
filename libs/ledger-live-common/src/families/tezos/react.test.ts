@@ -17,7 +17,13 @@ jest.mock("@ledgerhq/coin-tezos/network/index", () => ({
   },
 }));
 
-import { useTezosStakingInfo } from "./react";
+import { bakers } from "@ledgerhq/coin-tezos/network/index";
+import { useBaker, useTezosStakingInfo } from "./react";
+
+const mockBakers = bakers as unknown as {
+  getBakerSync: jest.Mock;
+  loadBaker: jest.Mock;
+};
 
 const ADDRESS = "tz1abc";
 const DELEGATE = "tz1baker";
@@ -53,8 +59,8 @@ const stakePos = (amount: number | string): StakingPosition => ({
   actions: [],
 });
 
-const unstakingPos = (amount: number | string): StakingPosition => ({
-  uid: `unstaking-${ADDRESS}`,
+const unstakingPos = (amount: number | string, id = ADDRESS): StakingPosition => ({
+  uid: `unstaking-${id}`,
   address: ADDRESS,
   delegate: DELEGATE,
   state: "deactivating",
@@ -63,8 +69,8 @@ const unstakingPos = (amount: number | string): StakingPosition => ({
   actions: [],
 });
 
-const finalizablePos = (amount: number | string): StakingPosition => ({
-  uid: `finalizable-${ADDRESS}`,
+const finalizablePos = (amount: number | string, id = ADDRESS): StakingPosition => ({
+  uid: `finalizable-${id}`,
   address: ADDRESS,
   delegate: DELEGATE,
   state: "inactive",
@@ -106,6 +112,15 @@ describe("useTezosStakingInfo", () => {
     expect(result.current.isDelegated).toBe(true);
     expect(result.current.isStaked).toBe(true);
     expect(result.current.hasUnstaking).toBe(false);
+    expect(result.current.stakedBalance).toEqual(new BigNumber(300));
+    expect(result.current.availableBalance).toEqual(new BigNumber(700));
+  });
+
+  it("non-delegated stake: availableBalance = balance - stakedBalance", () => {
+    const account = makeTezosAccount([stakePos(300)]);
+    const { result } = renderHook(() => useTezosStakingInfo(account));
+    expect(result.current.isDelegated).toBe(false);
+    expect(result.current.isStaked).toBe(true);
     expect(result.current.stakedBalance).toEqual(new BigNumber(300));
     expect(result.current.availableBalance).toEqual(new BigNumber(700));
   });
@@ -174,5 +189,86 @@ describe("useTezosStakingInfo", () => {
       isDelegated: false,
       availableBalance: new BigNumber(0),
     });
+    expect(result.current.unstakingPositions).toEqual([]);
+  });
+
+  it("sums multiple unstaking-* positions into unstakedBalance", () => {
+    const account = makeTezosAccount([
+      delegationPos(500),
+      unstakingPos(40, "1"),
+      unstakingPos(60, "2"),
+    ]);
+    const { result } = renderHook(() => useTezosStakingInfo(account));
+    expect(result.current.unstakedBalance).toEqual(new BigNumber(100));
+    expect(result.current.hasUnstaking).toBe(true);
+    expect(result.current.unstakingPositions).toHaveLength(2);
+  });
+
+  it("sums multiple finalizable-* positions into unstakedFinalizable", () => {
+    const account = makeTezosAccount([
+      delegationPos(500),
+      finalizablePos(15, "1"),
+      finalizablePos(25, "2"),
+    ]);
+    const { result } = renderHook(() => useTezosStakingInfo(account));
+    expect(result.current.unstakedFinalizable).toEqual(new BigNumber(40));
+    expect(result.current.unstakingPositions).toHaveLength(2);
+  });
+
+  it("exposes unstakingPositions in pending-then-finalizable order", () => {
+    const account = makeTezosAccount([
+      delegationPos(500),
+      finalizablePos(20, "fin1"),
+      unstakingPos(30, "pen1"),
+      unstakingPos(10, "pen2"),
+    ]);
+    const { result } = renderHook(() => useTezosStakingInfo(account));
+    expect(result.current.unstakingPositions.map(p => p.uid)).toEqual([
+      "unstaking-pen1",
+      "unstaking-pen2",
+      "finalizable-fin1",
+    ]);
+  });
+});
+
+describe("useBaker", () => {
+  beforeEach(() => {
+    mockBakers.getBakerSync.mockReset().mockReturnValue(undefined);
+    mockBakers.loadBaker.mockReset().mockResolvedValue(undefined);
+  });
+
+  it("does not call loadBaker on every render (only on addr change)", async () => {
+    const { rerender } = renderHook(({ addr }: { addr: string }) => useBaker(addr), {
+      initialProps: { addr: "tz1abc" },
+    });
+    await Promise.resolve();
+    rerender({ addr: "tz1abc" });
+    rerender({ addr: "tz1abc" });
+    expect(mockBakers.loadBaker).toHaveBeenCalledTimes(1);
+  });
+
+  it("calls loadBaker again when addr changes", async () => {
+    const { rerender } = renderHook(({ addr }: { addr: string }) => useBaker(addr), {
+      initialProps: { addr: "tz1a" },
+    });
+    await Promise.resolve();
+    rerender({ addr: "tz1b" });
+    await Promise.resolve();
+    expect(mockBakers.loadBaker).toHaveBeenNthCalledWith(1, "tz1a");
+    expect(mockBakers.loadBaker).toHaveBeenNthCalledWith(2, "tz1b");
+  });
+
+  it("skips loadBaker when addr is empty", () => {
+    renderHook(() => useBaker(""));
+    expect(mockBakers.loadBaker).not.toHaveBeenCalled();
+    expect(mockBakers.getBakerSync).not.toHaveBeenCalled();
+  });
+
+  it("swallows loadBaker rejection (no unhandled error)", async () => {
+    mockBakers.loadBaker.mockRejectedValueOnce(new Error("network down"));
+    const { result } = renderHook(() => useBaker("tz1abc"));
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(result.current).toBeUndefined();
   });
 });

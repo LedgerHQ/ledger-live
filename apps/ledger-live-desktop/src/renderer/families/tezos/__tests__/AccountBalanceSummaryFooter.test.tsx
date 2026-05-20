@@ -57,6 +57,7 @@ const defaultStakingInfo: StakingInfo = {
   unstakedFinalizable: new BigNumber(0),
   availableBalance: new BigNumber(0),
   delegateAddress: undefined,
+  unstakingPositions: [],
 };
 
 const delegatedInfo: StakingInfo = {

@@ -118,6 +118,8 @@ export type StakingPositionRaw = {
   delegate?: string;
   state: "inactive" | "activating" | "active" | "deactivating";
   amount: string;
+  /** ISO timestamp; present on unstake positions only. */
+  createdAt?: string;
 };
 
 export type TezosAccountRaw = AccountRaw & {

@@ -1,14 +1,8 @@
 import type { Balance } from "@ledgerhq/coin-module-framework/api/index";
 import api from "../network/tzkt";
-import { buildStakesForAccount } from "./getStakes";
+import { buildStakesForAccount, fetchUnstakeRequests } from "./getStakes";
 
-/**
- * Returns the balances of the given address as an array of Balance objects.
- * The first entry represents the native balance (with value 0n for empty accounts).
- * For delegated/staked accounts, additional native entries are appended carrying each
- * staking position (delegation, active staking, deactivating unstake, finalizable
- * unstake) per the Paris upgrade. Token balances are appended after.
- */
+/** Returns `[native, ...stakes, ...tokens]` per the Paris upgrade. */
 export async function getBalance(address: string): Promise<Balance[]> {
   const [apiAccountResult, tokensBalancesResult] = await Promise.allSettled([
     api.getAccountByAddress(address),
@@ -24,16 +18,14 @@ export async function getBalance(address: string): Promise<Balance[]> {
     tokensBalancesResult.status === "fulfilled" ? tokensBalancesResult.value : [];
   const normalized = apiAccount.type === "user" ? BigInt(apiAccount.balance) : 0n;
 
-  // Finalizable unstakes are not on the account endpoint; query them only when the
-  // account has an unstaked balance, otherwise the result is necessarily 0n.
-  const finalizable =
-    apiAccount.type === "user" && (apiAccount.unstakedBalance ?? 0) > 0
-      ? await api.getUnstakeRequestsFinalizable(address)
-      : 0n;
+  const unstakeRequests = await fetchUnstakeRequests(
+    address,
+    apiAccount.type === "user" && (apiAccount.unstakedBalance ?? 0) > 0,
+  );
 
   const stakeBalances: Balance[] =
     apiAccount.type === "user"
-      ? buildStakesForAccount(address, apiAccount, finalizable).map(stake => ({
+      ? buildStakesForAccount(address, apiAccount, unstakeRequests).map(stake => ({
           value: stake.amount,
           asset: { type: "native" },
           stake,

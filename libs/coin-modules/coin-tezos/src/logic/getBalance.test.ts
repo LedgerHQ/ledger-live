@@ -266,13 +266,32 @@ describe("getBalance", () => {
       ]);
     });
 
-    it("attaches an unstaking Stake with state 'deactivating' when unstakedBalance > 0", async () => {
-      mockAccount({
-        balance: 100,
-        stakedBalance: 30,
-        unstakedBalance: 10,
-        delegate: { address: delegateAddress },
-      });
+    it("attaches an unstaking Stake with state 'deactivating' when a pending request exists", async () => {
+      mockServer.use(
+        http.get(`http://tezos.explorer.com/v1/accounts/${address}`, () =>
+          HttpResponse.json({
+            type: "user",
+            balance: 100,
+            stakedBalance: 30,
+            unstakedBalance: 10,
+            delegate: { address: delegateAddress },
+          }),
+        ),
+        http.get("http://tezos.explorer.com/v1/staking/unstake_requests", () =>
+          HttpResponse.json([
+            {
+              id: 77,
+              cycle: 100,
+              baker: { address: delegateAddress },
+              staker: { address },
+              firstTime: "2026-05-01T00:00:00Z",
+              status: "pending",
+              actualAmount: 10,
+            },
+          ]),
+        ),
+        http.get("http://tezos.explorer.com/v1/tokens/balances", () => HttpResponse.json([])),
+      );
 
       const result = await getBalance(address);
 
@@ -280,24 +299,21 @@ describe("getBalance", () => {
       expect(result[0]).toEqual({ value: 100n, asset: { type: "native" } });
       expect(result[3]).toEqual({
         value: 10n,
-        asset: {
-          type: "native",
-        },
+        asset: { type: "native" },
         stake: {
-          uid: `unstaking-${address}`,
+          uid: `unstaking-77`,
           address,
           delegate: delegateAddress,
           state: "deactivating",
-          asset: {
-            type: "native",
-          },
+          createdAt: new Date("2026-05-01T00:00:00Z"),
+          asset: { type: "native" },
           amount: 10n,
           actions: [],
         },
       });
     });
 
-    it("splits unstakedBalance into deactivating and finalizable Stakes when finalizable > 0", async () => {
+    it("emits per-request unstaking and finalizable Stakes when both statuses are present", async () => {
       mockServer.use(
         http.get(`http://tezos.explorer.com/v1/accounts/${address}`, () =>
           HttpResponse.json({
@@ -308,7 +324,26 @@ describe("getBalance", () => {
           }),
         ),
         http.get("http://tezos.explorer.com/v1/staking/unstake_requests", () =>
-          HttpResponse.json([20, 10]),
+          HttpResponse.json([
+            {
+              id: 1,
+              cycle: 100,
+              baker: { address: delegateAddress },
+              staker: { address },
+              firstTime: "2026-05-01T00:00:00Z",
+              status: "pending",
+              actualAmount: 20,
+            },
+            {
+              id: 2,
+              cycle: 99,
+              baker: { address: delegateAddress },
+              staker: { address },
+              firstTime: "2026-04-25T00:00:00Z",
+              status: "finalizable",
+              actualAmount: 30,
+            },
+          ]),
         ),
         http.get("http://tezos.explorer.com/v1/tokens/balances", () => HttpResponse.json([])),
       );
@@ -327,19 +362,21 @@ describe("getBalance", () => {
           actions: [],
         },
         {
-          uid: `unstaking-${address}`,
+          uid: `unstaking-1`,
           address,
           delegate: delegateAddress,
           state: "deactivating",
+          createdAt: new Date("2026-05-01T00:00:00Z"),
           asset: { type: "native" },
           amount: 20n,
           actions: [],
         },
         {
-          uid: `finalizable-${address}`,
+          uid: `finalizable-2`,
           address,
           delegate: delegateAddress,
           state: "inactive",
+          createdAt: new Date("2026-04-25T00:00:00Z"),
           asset: { type: "native" },
           amount: 30n,
           actions: [],
@@ -351,6 +388,29 @@ describe("getBalance", () => {
       mockAccount({ balance: 50 });
 
       expect(await getBalance(address)).toEqual([{ value: 50n, asset: { type: "native" } }]);
+    });
+
+    it("falls back to no unstake stakes when the unstake_requests endpoint fails", async () => {
+      mockServer.use(
+        http.get(`http://tezos.explorer.com/v1/accounts/${address}`, () =>
+          HttpResponse.json({
+            type: "user",
+            balance: 100,
+            unstakedBalance: 10,
+            delegate: { address: delegateAddress },
+          }),
+        ),
+        http.get("http://tezos.explorer.com/v1/staking/unstake_requests", () =>
+          HttpResponse.json({ error: "internal" }, { status: 500 }),
+        ),
+        http.get("http://tezos.explorer.com/v1/tokens/balances", () => HttpResponse.json([])),
+      );
+
+      const result = await getBalance(address);
+
+      expect(result[0]).toEqual({ value: 100n, asset: { type: "native" } });
+      expect(result.find(b => b.stake?.uid.startsWith("unstaking-"))).toBeUndefined();
+      expect(result.find(b => b.stake?.uid.startsWith("delegation-"))).toBeDefined();
     });
   });
 });

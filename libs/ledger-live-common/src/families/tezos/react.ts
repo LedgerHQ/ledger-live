@@ -44,9 +44,28 @@ export function useDelegation(account: AccountLike): Delegation | null | undefin
 }
 
 export function useBaker(addr: string): Baker | undefined {
-  const [baker, setBaker] = useState(() => bakers.getBakerSync(addr));
+  const [baker, setBaker] = useState(() => (addr ? bakers.getBakerSync(addr) : undefined));
 
-  bakers.loadBaker(addr).then(setBaker);
+  useEffect(() => {
+    if (!addr) {
+      setBaker(undefined);
+      return;
+    }
+    let cancelled = false;
+    bakers
+      .loadBaker(addr)
+      .then(b => {
+        if (cancelled) return;
+        setBaker(b);
+      })
+      .catch(err => {
+        if (cancelled) return;
+        log("coin:tezos", "useBaker: loadBaker failed", { error: err });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [addr]);
 
   return baker;
 }
@@ -99,17 +118,19 @@ export type TezosStakingInfo = {
   unstakedFinalizable: BigNumber;
   availableBalance: BigNumber;
   delegateAddress: string | undefined;
+  /** Pending then finalizable, in TzKT request-id order within each group. */
+  unstakingPositions: StakingPosition[];
 };
 
 const ZERO = new BigNumber(0);
 
+const sumAmounts = (positions: StakingPosition[]) =>
+  positions.reduce<BigNumber>((sum, p) => sum.plus(p.amount), ZERO);
+
 /**
- * Derived Tezos staking view over `account.stakingPositions[]` (populated by
- * `genericGetAccountShape` when `BridgeApi.usesStakingPositions` is true).
- * Positions are matched by uid prefix per the Paris-upgrade convention from
- * `buildStakesForAccount`: `delegation-*` / `stake-*` / `unstaking-*` /
- * `finalizable-*`. `availableBalance` is the non-staked delegated portion
- * (= `delegation` position amount when delegated, else full balance).
+ * Derived staking view over `account.stakingPositions[]` (populated by
+ * `genericGetAccountShape` when `BridgeApi.usesStakingPositions`). Classifies positions
+ * via the uid prefixes set by `buildStakesForAccount`.
  */
 export function useTezosStakingInfo(account: AccountLike): TezosStakingInfo {
   const delegation = useDelegation(account);
@@ -126,21 +147,21 @@ export function useTezosStakingInfo(account: AccountLike): TezosStakingInfo {
         unstakedFinalizable: ZERO,
         availableBalance: ZERO,
         delegateAddress: undefined,
+        unstakingPositions: [],
       };
     }
 
     const positions: StakingPosition[] = account.stakingPositions ?? [];
-    const findByPrefix = (prefix: string) => positions.find(p => p.uid.startsWith(prefix));
-
-    const delegationPos = findByPrefix("delegation-");
-    const stakePos = findByPrefix("stake-");
-    const unstakingPos = findByPrefix("unstaking-");
-    const finalizablePos = findByPrefix("finalizable-");
+    const delegationPos = positions.find(p => p.uid.startsWith("delegation-"));
+    const stakePos = positions.find(p => p.uid.startsWith("stake-"));
+    const pendingPositions = positions.filter(p => p.uid.startsWith("unstaking-"));
+    const finalizablePositions = positions.filter(p => p.uid.startsWith("finalizable-"));
 
     const stakedBalance = stakePos?.amount ?? ZERO;
-    const unstakedBalance = unstakingPos?.amount ?? ZERO;
-    const unstakedFinalizable = finalizablePos?.amount ?? ZERO;
-    const availableBalance = delegationPos?.amount ?? account.balance;
+    const unstakedBalance = sumAmounts(pendingPositions);
+    const unstakedFinalizable = sumAmounts(finalizablePositions);
+    // account.balance includes the staked portion on Tezos — subtract when no delegation-* position.
+    const availableBalance = delegationPos?.amount ?? account.balance.minus(stakedBalance);
     const delegateAddress = delegationPos?.delegate;
 
     return {
@@ -153,6 +174,7 @@ export function useTezosStakingInfo(account: AccountLike): TezosStakingInfo {
       unstakedFinalizable,
       availableBalance,
       delegateAddress,
+      unstakingPositions: [...pendingPositions, ...finalizablePositions],
     };
   }, [account, delegation]);
 }

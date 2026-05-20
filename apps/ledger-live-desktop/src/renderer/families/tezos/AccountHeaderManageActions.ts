@@ -22,6 +22,7 @@ const AccountHeaderManageActions: TezosFamily["accountHeaderManageActions"] = ({
   const { delegation, isDelegated, isStaked } = useTezosStakingInfo(account);
 
   const onClick = useCallback(() => {
+    if (account.type !== "Account") return;
     if (bridge.isAccountEmpty(account)) {
       dispatch(
         openModal("MODAL_NO_FUNDS_STAKE", {

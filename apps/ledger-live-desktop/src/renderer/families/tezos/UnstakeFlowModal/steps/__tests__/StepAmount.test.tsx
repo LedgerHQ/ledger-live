@@ -26,9 +26,7 @@ jest.mock("~/renderer/hooks/useAccountUnit");
 jest.mock("~/renderer/analytics/TrackPage", () => ({ __esModule: true, default: () => null }));
 jest.mock("~/renderer/components/ErrorBanner", () => ({
   __esModule: true,
-  default: ({ error }: { error: Error }) => (
-    <div data-testid="error-banner">{error?.message}</div>
-  ),
+  default: ({ error }: { error: Error }) => <div data-testid="error-banner">{error?.message}</div>,
 }));
 jest.mock("~/renderer/components/FormattedVal", () => ({
   __esModule: true,
@@ -66,6 +64,7 @@ const makeStakingInfo = (overrides: Partial<StakingInfo> = {}): StakingInfo => (
   unstakedFinalizable: new BigNumber(0),
   availableBalance: new BigNumber(1000),
   delegateAddress: undefined,
+  unstakingPositions: [],
   ...overrides,
 });
 
@@ -77,27 +76,26 @@ const makeStatus = (overrides: Partial<TransactionStatus> = {}) =>
     ...overrides,
   }) as unknown as TransactionStatus;
 
-const makeProps = (overrides: Partial<StepProps> = {}): StepProps =>
-  ({
-    t: ((k: string) => k) as unknown as StepProps["t"],
-    transitionTo: jest.fn(),
-    device: null,
-    account,
-    parentAccount: null,
-    transaction: { mode: "unstake", amount: new BigNumber(0) } as unknown as Transaction,
-    status: makeStatus(),
-    bridgePending: false,
-    signed: false,
-    optimisticOperation: null,
-    error: null,
-    onClose: jest.fn(),
-    onChangeTransaction: jest.fn(),
-    onOperationBroadcasted: jest.fn(),
-    onTransactionError: jest.fn(),
-    onRetry: jest.fn(),
-    setSigned: jest.fn(),
-    ...overrides,
-  });
+const makeProps = (overrides: Partial<StepProps> = {}): StepProps => ({
+  t: ((k: string) => k) as unknown as StepProps["t"],
+  transitionTo: jest.fn(),
+  device: null,
+  account,
+  parentAccount: null,
+  transaction: { mode: "unstake", amount: new BigNumber(0) } as unknown as Transaction,
+  status: makeStatus(),
+  bridgePending: false,
+  signed: false,
+  optimisticOperation: null,
+  error: null,
+  onClose: jest.fn(),
+  onChangeTransaction: jest.fn(),
+  onOperationBroadcasted: jest.fn(),
+  onTransactionError: jest.fn(),
+  onRetry: jest.fn(),
+  setSigned: jest.fn(),
+  ...overrides,
+});
 
 const setupHooks = (overrides: Partial<StakingInfo> = {}) => {
   const updateTransaction = jest.fn((tx: Transaction, patch: Partial<Transaction>) => ({

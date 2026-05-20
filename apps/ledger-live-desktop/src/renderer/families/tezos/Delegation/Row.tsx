@@ -26,6 +26,7 @@ type Props = {
   delegation: Delegation;
   account: TezosAccount | TokenAccount;
   parentAccount: TezosAccount | undefined | null;
+  stakingEnabled: boolean;
 };
 const Wrapper = styled.div<{
   isPending: boolean;
@@ -75,7 +76,7 @@ const CTA = styled.div`
   display: flex;
   justify-content: flex-end;
 `;
-const Row = ({ account, parentAccount, delegation }: Props) => {
+const Row = ({ account, parentAccount, delegation, stakingEnabled }: Props) => {
   const unit = useAccountUnit(account);
   const currency = getAccountCurrency(account);
   const mainAccount = getMainAccount(account, parentAccount);
@@ -142,7 +143,7 @@ const Row = ({ account, parentAccount, delegation }: Props) => {
       </Base>
       {account.type === "Account" && !delegation.isPending ? (
         <CTA>
-          <ContextMenu account={account} />
+          <ContextMenu account={account} stakingEnabled={stakingEnabled} />
         </CTA>
       ) : (
         <CTA />

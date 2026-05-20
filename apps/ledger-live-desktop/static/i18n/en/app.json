@@ -4751,6 +4751,22 @@
       "pendingWithdrawableTooltip": "XTZ currently unstaking. Available for withdrawal in ~4 days.",
       "withdrawableAssets": "Withdrawable assets",
       "withdrawableAssetsTooltip": "XTZ that finished the unstaking period and is ready to be withdrawn."
+    },
+    "delegation": {
+      "contextMenu": {
+        "stake": "Stake your XTZ"
+      }
+    },
+    "staking": {
+      "header": "Staking",
+      "contextMenu": {
+        "stakeMore": "Stake more",
+        "unstake": "Unstake"
+      }
+    },
+    "unstaking": {
+      "header": "Unstaking",
+      "processing": "Processing"
     }
   },
   "delegation": {

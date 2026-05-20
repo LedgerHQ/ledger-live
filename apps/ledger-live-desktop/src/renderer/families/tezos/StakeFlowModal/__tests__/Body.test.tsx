@@ -133,6 +133,7 @@ const defaultStakingInfo: StakingInfo = {
   unstakedFinalizable: new BigNumber(0),
   availableBalance: new BigNumber(1_000_000),
   delegateAddress: undefined,
+  unstakingPositions: [],
 };
 
 beforeEach(() => {
