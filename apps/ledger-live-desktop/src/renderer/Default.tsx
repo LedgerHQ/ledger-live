@@ -112,6 +112,7 @@ const CryptoAddresses = lazy(() => import("LLD/features/CryptoAddresses"));
 const CryptoAssets = lazy(() => import("LLD/features/CryptoAddresses/CryptoAssets"));
 const CardW40 = lazy(() => import("LLD/features/Card"));
 const History = lazy(() => import("LLD/features/History"));
+const ContactsManagement = lazy(() => import("LLD/features/Contacts/Management"));
 
 const LoaderWrapper = styled.div`
   padding: 24px;
@@ -334,6 +335,7 @@ const MainAppContent = ({
         <Route path="/bank/*" element={withSuspense(Bank)({})} />
         <Route path="/analytics" element={withSuspense(Analytics)({})} />
         <Route path="/history" element={withSuspense(History)({})} />
+        <Route path="/contacts" element={withSuspense(ContactsManagement)({})} />
       </Routes>
     </Page>
     <Drawer />

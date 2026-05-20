@@ -1,4 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router";
+import { useContextMenuClose } from "../../ContextMenuContext";
 
 export type ContactsViewModel = {
   title: string;
@@ -8,12 +10,13 @@ export type ContactsViewModel = {
 
 export function useContactsViewModel(): ContactsViewModel {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const close = useContextMenuClose();
 
-  // TODO(contacts-L4): wire to the designer-led Contacts management surface
-  // (a new subtree under mvvm/features/Contacts/<new-surface>/). Inert for
-  // now so the row holds its place in the user-menu popover without
-  // navigating anywhere.
-  const handleClick = () => {};
+  const handleClick = () => {
+    navigate("/contacts");
+    close();
+  };
 
   return {
     title: t("myWallet.contacts.title"),
