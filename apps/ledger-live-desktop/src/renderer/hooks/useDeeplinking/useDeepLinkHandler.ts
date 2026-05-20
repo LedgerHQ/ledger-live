@@ -43,6 +43,8 @@ export function useDeepLinkHandler() {
   const recoverAppId = recoverFF?.params?.protectId;
   const lwdProductTour = useFeature("lwdProductTour");
   const isProductTourEnabled = lwdProductTour?.enabled === true;
+  const lwdGenericAwarenessModal = useFeature("lwdGenericAwarenessModal");
+  const isGenericAwarenessModalEnabled = lwdGenericAwarenessModal?.enabled === true;
   const { shouldDisplayAssetSection } = useWalletFeaturesConfig("desktop");
   const accountsPath = getAccountsSidebarPath(shouldDisplayAssetSection);
 
@@ -81,6 +83,7 @@ export function useDeepLinkHandler() {
       accountsPath,
       recoverAppId,
       isProductTourEnabled,
+      isGenericAwarenessModalEnabled,
     }),
     [
       dispatch,
@@ -98,6 +101,7 @@ export function useDeepLinkHandler() {
       accountsPath,
       recoverAppId,
       isProductTourEnabled,
+      isGenericAwarenessModalEnabled,
     ],
   );
 

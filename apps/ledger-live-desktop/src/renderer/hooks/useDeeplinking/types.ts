@@ -48,6 +48,8 @@ export interface DeeplinkHandlerContext {
   recoverAppId?: string;
   /** `lwdProductTour` — Product Tour dialog is only mounted on Portfolio when enabled; avoid opening dialog Redux state when false. */
   isProductTourEnabled: boolean;
+  /** `lwdGenericAwarenessModal` — deeplink opens the modal only when this flag is enabled. */
+  isGenericAwarenessModalEnabled: boolean;
 }
 
 export interface ParsedDeeplink {
@@ -215,6 +217,11 @@ export interface ProductTourRoute {
   type: "product-tour";
 }
 
+export interface GenericAwarenessModalRoute {
+  type: "generic-awareness-modal";
+  id?: string;
+}
+
 export interface DefaultRoute {
   type: "default";
 }
@@ -244,6 +251,7 @@ export type DeeplinkRoute =
   | PostOnboardingRoute
   | LedgerSyncRoute
   | ProductTourRoute
+  | GenericAwarenessModalRoute
   | DefaultRoute;
 
 export type RouteByType<T extends DeeplinkRoute["type"]> = Extract<DeeplinkRoute, { type: T }>;

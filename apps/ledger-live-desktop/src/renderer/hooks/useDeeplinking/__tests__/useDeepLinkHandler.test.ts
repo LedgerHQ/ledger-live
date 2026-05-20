@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 
-import { renderHook, waitFor } from "tests/testSetup";
+import { renderHook, waitFor, withFlagOverrides } from "tests/testSetup";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
@@ -322,6 +322,57 @@ describe("useDeepLinkHandler", () => {
           expect(mockOpenAddAccountFlow).not.toHaveBeenCalled();
           expect(mockOpenAssetFlow).not.toHaveBeenCalled();
         });
+      });
+    });
+  });
+
+  describe("generic-awareness-modal deeplink", () => {
+    it("sets GENERIC_AWARENESS_MODAL when flag is enabled and onboarding is complete", async () => {
+      const { result, store } = renderHook(() => useDeepLinkHandler(), {
+        initialState: {
+          ...withFlagOverrides({ lwdGenericAwarenessModal: { enabled: true } }),
+          settings: { hasCompletedOnboarding: true },
+        },
+      });
+
+      result.current.handler("ledgerwallet://generic-awareness-modal", false);
+
+      await waitFor(() => {
+        expect(store.getState().dialogs.GENERIC_AWARENESS_MODAL).toBe(true);
+      });
+
+      expect(store.getState().genericAwarenessModal.campaignId).toBeUndefined();
+    });
+
+    it("stores campaign id from query when modal opens", async () => {
+      const { result, store } = renderHook(() => useDeepLinkHandler(), {
+        initialState: {
+          ...withFlagOverrides({ lwdGenericAwarenessModal: { enabled: true } }),
+          settings: { hasCompletedOnboarding: true },
+        },
+      });
+
+      result.current.handler("ledgerwallet://generic-awareness-modal?id=welcome-v2", false);
+
+      await waitFor(() => {
+        expect(store.getState().dialogs.GENERIC_AWARENESS_MODAL).toBe(true);
+      });
+
+      expect(store.getState().genericAwarenessModal.campaignId).toBe("welcome-v2");
+    });
+
+    it("does not set GENERIC_AWARENESS_MODAL when lwdGenericAwarenessModal is disabled", async () => {
+      const { result, store } = renderHook(() => useDeepLinkHandler(), {
+        initialState: {
+          ...withFlagOverrides({ lwdGenericAwarenessModal: { enabled: false } }),
+          settings: { hasCompletedOnboarding: true },
+        },
+      });
+
+      result.current.handler("ledgerwallet://generic-awareness-modal", false);
+
+      await waitFor(() => {
+        expect(store.getState().dialogs.GENERIC_AWARENESS_MODAL).toBeFalsy();
       });
     });
   });

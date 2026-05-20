@@ -17,6 +17,7 @@ import { perpsHandler } from "./handlers/perps.handler";
 import { postOnboardingHandler } from "./handlers/postOnboarding.handler";
 import { ledgerSyncHandler } from "./handlers/ledgerSync.handler";
 import { productTourHandler } from "./handlers/productTour.handler";
+import { genericAwarenessModalHandler } from "./handlers/genericAwarenessModal.handler";
 import { defaultHandler } from "./handlers/default.handler";
 
 export const deeplinkRegistry: DeeplinkHandlerRegistry = {
@@ -44,6 +45,7 @@ export const deeplinkRegistry: DeeplinkHandlerRegistry = {
   "post-onboarding": postOnboardingHandler,
   ledgersync: ledgerSyncHandler,
   "product-tour": productTourHandler,
+  "generic-awareness-modal": genericAwarenessModalHandler,
   default: defaultHandler,
 };
 

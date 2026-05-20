@@ -339,6 +339,25 @@ describe("parseDeepLink", () => {
       });
     });
 
+    it("creates generic awareness modal route", () => {
+      const parsed = parseDeepLink("ledgerwallet://generic-awareness-modal");
+      const route = createRoute(parsed);
+
+      expect(route).toEqual({
+        type: "generic-awareness-modal",
+      });
+    });
+
+    it("creates generic awareness modal route with id from query", () => {
+      const parsed = parseDeepLink("ledgerwallet://generic-awareness-modal?id=welcome-v2");
+      const route = createRoute(parsed);
+
+      expect(route).toEqual({
+        type: "generic-awareness-modal",
+        id: "welcome-v2",
+      });
+    });
+
     it("creates default route for unknown URLs", () => {
       const parsed = parseDeepLink("ledgerwallet://unknown-route");
       const route = createRoute(parsed);

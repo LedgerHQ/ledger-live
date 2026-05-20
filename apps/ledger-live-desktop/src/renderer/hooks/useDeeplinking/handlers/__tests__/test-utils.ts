@@ -17,5 +17,6 @@ export const createMockContext = (
   currentLocationState: undefined,
   accountsPath: "/accounts",
   isProductTourEnabled: true,
+  isGenericAwarenessModalEnabled: true,
   ...overrides,
 });
