@@ -17,8 +17,10 @@ import { AmountScreen } from "./screens/Amount";
 import { ConfirmationScreen } from "./screens/Confirmation";
 import { SignatureScreen } from "./screens/Signature";
 import { CoinControlScreen } from "./screens/CoinControl";
+import { aleoSendStepRegistry } from "~/families/aleo/send";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 
-const stepRegistry: StepRegistry<SendFlowStep> = {
+const baseStepRegistry: StepRegistry<SendFlowStep> = {
   [SEND_FLOW_STEP.RECIPIENT]: RecipientScreen,
   [SEND_FLOW_STEP.RECENT_HISTORY]: () => <></>,
   [SEND_FLOW_STEP.AMOUNT]: AmountScreen,
@@ -77,6 +79,37 @@ export default function SendWorkflow() {
     }),
     [params, routeParams],
   );
+
+  // Determine if we need Aleo-specific step registry
+  const stepRegistry = useMemo(() => {
+    console.log("[SendFlow] stepRegistry useMemo triggered");
+    const account = initParams.account;
+    console.log("[SendFlow] Account:", account?.id, account?.currency);
+
+    if (!account) {
+      console.log("[SendFlow] No account, using base registry");
+      return baseStepRegistry;
+    }
+
+    const currency = getAccountCurrency(account);
+    console.log("[SendFlow] Currency ID:", currency?.id, "name:", currency?.name);
+
+    const isAleo = currency?.id === "aleo" || currency?.id === "aleo_testnet";
+    console.log("[SendFlow] isAleo:", isAleo);
+
+    if (isAleo) {
+      console.log("[SendFlow] ✅ Using Aleo step registry - merging overrides");
+      console.log("[SendFlow] Aleo steps:", Object.keys(aleoSendStepRegistry));
+      // Merge Aleo-specific steps with base registry
+      return {
+        ...baseStepRegistry,
+        ...aleoSendStepRegistry,
+      };
+    }
+
+    console.log("[SendFlow] Using base step registry (not Aleo)");
+    return baseStepRegistry;
+  }, [initParams.account]);
 
   return (
     <DomainServiceProvider>

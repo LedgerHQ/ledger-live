@@ -334,6 +334,22 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     }
   }, [error, onError]);
 
+  // Update navigation options when device signature is requested
+  useEffect(() => {
+    if (request && device && deviceSignatureRequested) {
+      const { account, status, transaction } =
+        request as unknown as React.ComponentProps<typeof ValidateOnDevice>;
+
+      if (account && status && transaction) {
+        navigation.setOptions({
+          headerLeft: undefined,
+          headerRight: undefined,
+          gestureEnabled: false,
+        });
+      }
+    }
+  }, [request, device, deviceSignatureRequested, navigation]);
+
   const walletState = useSelector(walletSelector);
   const settingsState = useSelector(settingsStoreSelector);
 
@@ -725,11 +741,6 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
       request as unknown as React.ComponentProps<typeof ValidateOnDevice>;
 
     if (account && status && transaction) {
-      navigation.setOptions({
-        headerLeft: undefined,
-        headerRight: undefined,
-        gestureEnabled: false,
-      });
       return (
         <>
           <PreventNativeBack />

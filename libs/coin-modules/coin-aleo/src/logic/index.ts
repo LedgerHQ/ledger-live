@@ -5,5 +5,6 @@ export { estimateFees } from "./estimateFees";
 export { getBalance } from "./getBalance";
 export { lastBlock } from "./lastBlock";
 export { listOperations } from "./listOperations";
+export { extractViewKey, tryExtractViewKey } from "./utils";
 export { validateIntent } from "./validateIntent";
 export { validateAddress } from "./validateAddress";

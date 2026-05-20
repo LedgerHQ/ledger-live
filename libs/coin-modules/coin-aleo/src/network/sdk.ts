@@ -134,7 +134,7 @@ async function createAuthorization({
   currency: CryptoCurrency;
   request: PreparedRequestResponse;
   signatures: string;
-  viewKey: string;
+  viewKey?: string;
 }) {
   const { sdkUrl } = getNetworkConfig(currency);
 
@@ -144,7 +144,7 @@ async function createAuthorization({
     data: {
       request,
       signatures,
-      view_key: viewKey,
+      ...(viewKey && { view_key: viewKey }),
     },
   });
 

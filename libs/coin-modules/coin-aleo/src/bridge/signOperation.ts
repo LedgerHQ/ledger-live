@@ -20,6 +20,7 @@ import {
   isPrivateTransaction,
   resolveConfig,
   toHex,
+  tryExtractViewKey,
 } from "../logic/utils";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 
@@ -30,14 +31,14 @@ interface SigningParams {
   config: ReturnType<typeof resolveConfig>;
   baseFee: BigNumber;
   priorityFee: BigNumber;
-  viewKey: string;
+  viewKey?: string;
 }
 
 async function buildRootAuthorization(
   signer: AleoSigner,
   account: AleoAccount,
   request: PreparedRequestResponse,
-  viewKey: string,
+  viewKey?: string,
 ) {
   const { signature } = await signer.signRootIntent(
     account.freshAddressPath,
@@ -48,7 +49,7 @@ async function buildRootAuthorization(
     currency: account.currency,
     request,
     signatures: signature,
-    viewKey,
+    ...(viewKey !== undefined && { viewKey }),
   });
 }
 
@@ -62,7 +63,6 @@ async function buildFeeAuthorization(
   // craft fee request even if it's zero, because device needs the second APDU in signing flow to move forward
   const craftedFeeRequest = await craftTransaction({
     currency: account.currency,
-    viewKey,
     feeConfiguration: null,
     txIntent: createFeeTransactionIntent({
       account,
@@ -72,6 +72,7 @@ async function buildFeeAuthorization(
       priorityFee,
       isFeeSponsored: config.isFeeSponsored,
     }),
+    ...(viewKey !== undefined && { viewKey }),
   });
 
   const feeRequest = fromHex<PreparedRequestResponse>(craftedFeeRequest.transaction);
@@ -82,7 +83,7 @@ async function buildFeeAuthorization(
     currency: account.currency,
     request: feeRequest,
     signatures: signature,
-    viewKey,
+    ...(viewKey !== undefined && { viewKey }),
   });
 
   return result.authorization;
@@ -117,22 +118,25 @@ export const buildSignOperation =
             type: "device-signature-requested",
           });
 
-          const viewKey = extractViewKey(account);
+          // For private transactions, view key is required. For public transactions, it's optional.
+          const isPrivateTx = isPrivateTransaction(transaction);
+          const viewKey = isPrivateTx ? extractViewKey(account) : tryExtractViewKey(account);
+
           const config = resolveConfig(account.currency.id);
           const baseFee = transaction.fees;
           const priorityFee = new BigNumber(0);
 
           const feeConfiguration: FeeConfiguration = {
-            function_name: isPrivateTransaction(transaction) ? "fee_private" : "fee_public",
+            function_name: isPrivateTx ? "fee_private" : "fee_public",
             max_base_fee: baseFee.toString(),
             max_priority_fee: priorityFee.toString(),
           };
 
           const craftedRequest = await craftTransaction({
             currency: account.currency,
-            viewKey,
             feeConfiguration,
             txIntent: createTransactionIntent({ account, transaction }),
+            ...(viewKey !== undefined && { viewKey }),
           });
 
           const request = fromHex<PreparedRequestResponse>(craftedRequest.transaction);
@@ -145,7 +149,7 @@ export const buildSignOperation =
               config,
               baseFee,
               priorityFee,
-              viewKey,
+              ...(viewKey !== undefined && { viewKey }),
             }),
           );
 

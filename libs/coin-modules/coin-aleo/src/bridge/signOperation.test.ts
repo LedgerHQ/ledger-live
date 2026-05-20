@@ -289,14 +289,44 @@ describe("buildSignOperation", () => {
     ).rejects.toThrow("device disconnected");
   });
 
-  it("should propagate an error when account id has no viewKey", async () => {
+  it("should work without viewKey for public transactions", async () => {
     const accountWithoutViewKey = getMockedAccount({ id: "js:2:aleo:aleo1test:" });
+    const publicTransaction = getMockedTransaction({
+      fees: new BigNumber(1000),
+      mode: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+    });
+
+    const events = await firstValueFrom(
+      mockSignOperation({
+        account: accountWithoutViewKey,
+        transaction: publicTransaction,
+        deviceId: "test-device",
+      }).pipe(toArray()),
+    );
+
+    expect(events.map(e => e.type)).toEqual([
+      "device-signature-requested",
+      "device-signature-granted",
+      "signed",
+    ]);
+  });
+
+  it("should propagate an error when account has no viewKey for private transactions", async () => {
+    const accountWithoutViewKey = getMockedAccount({ id: "js:2:aleo:aleo1test:" });
+    const privateTransaction = getMockedTransaction({
+      fees: new BigNumber(1000),
+      mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+      properties: {
+        amountRecordCommitments: [mockUnspentRecord1.commitment],
+        feeRecordCommitment: mockUnspentRecord2.commitment,
+      },
+    });
 
     await expect(
       firstValueFrom(
         mockSignOperation({
           account: accountWithoutViewKey,
-          transaction: mockTransaction,
+          transaction: privateTransaction,
           deviceId: "test-device",
         }).pipe(toArray()),
       ),

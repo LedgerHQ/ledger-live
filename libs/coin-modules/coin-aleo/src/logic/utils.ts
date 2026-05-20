@@ -687,6 +687,14 @@ export function extractViewKey(account: AleoAccount): string {
 }
 
 /**
+ * Safely extracts view key from account, returning undefined if not present.
+ * Use this for operations that may work without a view key (e.g., public transactions).
+ */
+export function tryExtractViewKey(account: AleoAccount): string | undefined {
+  return decodeAccountId(account.id).customData;
+}
+
+/**
  * Selects the minimum set of private records needed to cover `targetAmount` using a greedy largest-first strategy.
  *
  * - If `targetAmount` is `null`, returns the top `MAX_PRIVATE_RECORDS_PER_TRANSACTION` records by value (useAllAmount mode).

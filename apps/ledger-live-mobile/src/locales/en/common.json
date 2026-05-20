@@ -5594,6 +5594,29 @@
   "StepLegacyModal": {
     "description": "Imported accounts synchronize with the network only, not between Mobile and Desktop versions of Ledger Wallet."
   },
+  "aleo": {
+    "send": {
+      "balanceSelector": {
+        "label": "Select balance type",
+        "public": "Public balance",
+        "private": "Private balance",
+        "lastSync": "Last synced: {{date}}",
+        "notSynced": "Private balance not synced"
+      },
+      "recordPicker": {
+        "placeholder": "Record selection will be implemented in a future update. Records are automatically selected."
+      },
+      "selfTransfer": {
+        "button": "Self Transfer"
+      }
+    },
+    "selfTransfer": {
+      "comingSoon": {
+        "title": "Self-Transfer Coming Soon",
+        "description": "Convert between public and private balances. This feature will be available in a future update."
+      }
+    }
+  },
   "algorand": {
     "token": "ASA (Assets)",
     "claimRewards": {

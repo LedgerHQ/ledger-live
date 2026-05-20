@@ -18,6 +18,7 @@ import {
   isProvableApiConfigured,
   isRecordScannerReady,
   splitPrivateAndPublicOperations,
+  tryExtractViewKey,
 } from "../logic/utils";
 import { aleoPrivateSyncProgress$ } from "./privateSyncProgress";
 import { accessProvableApi, fetchAllOwnedRecords, patchPublicOperations } from "../network/utils";
@@ -50,7 +51,7 @@ export async function performPublicSync(
   _syncConfig: SyncConfig,
 ): Promise<Partial<AleoAccount>> {
   const { initialAccount, address, derivationMode, currency } = info;
-  const viewKey = initialAccount ? extractViewKey(initialAccount) : undefined;
+  const viewKey = initialAccount ? tryExtractViewKey(initialAccount) : undefined;
 
   const ledgerAccountId = encodeAccountId({
     type: "js",
@@ -461,7 +462,7 @@ export function buildSyncObservables(
   const { initialAccount } = info;
   const syncType = syncConfig.syncType ?? SYNC_TYPE_TRANSPARENT | SYNC_TYPE_SHIELDED;
 
-  const viewKey = initialAccount ? extractViewKey(initialAccount) : undefined;
+  const viewKey = initialAccount ? tryExtractViewKey(initialAccount) : undefined;
   const privateEnabled = !!initialAccount && !!viewKey;
 
   const isPublicSync = !!(syncType & SYNC_TYPE_TRANSPARENT);
