@@ -137,8 +137,8 @@ export default class Algorand {
 
       let signature = null;
 
-      if (response.length > 0) {
-        signature = response.slice(0, response.length);
+      if (response.length === 66 && ((response[64] << 8) | response[65]) === SW_OK) {
+        signature = response.slice(0, 64);
       }
 
       return {
