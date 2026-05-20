@@ -38,7 +38,7 @@ const ValidatorRow = ({
         validatorName: validator.name || validator.address,
       }}
       onPress={onPressT}
-      testID={`celo-validator-item-${validator.name ?? validator.address}`}
+      testID={`provider-row-${validator.name ?? validator.address}`}
     >
       <View style={styles.validator}>
         <ValidatorImage

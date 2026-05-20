@@ -148,12 +148,13 @@ export async function runVoteCelo(
 
       await app.celoManageAssets.checkManagePage();
       await app.celoManageAssets.clickVote();
+      await app.stake.selectValidator(delegation.account.currency.id, delegation.provider);
 
       await app.stake.openCeloVoteAmount();
       await app.stake.setCeloVoteAmount(delegation.amount);
 
-      await device.disableSynchronization();
       await app.stake.validateCeloVoteAmount();
+      await device.disableSynchronization();
       await app.stake.celoVoteSummaryContinue();
 
       await verifyAppValidationStakeInfo(delegation, amountWithCode);
