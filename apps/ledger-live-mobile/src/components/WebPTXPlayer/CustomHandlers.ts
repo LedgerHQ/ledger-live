@@ -419,6 +419,7 @@ export function useCustomExchangeHandlers({
             }
           },
           "custom.exchange.swap": ({ exchangeParams, onSuccess, onCancel }) => {
+            alert("custom.exchange.swap");
             if (handleLoaderDrawer) {
               navigation.pop();
             }
@@ -450,6 +451,7 @@ export function useCustomExchangeHandlers({
                 device: currentDevice,
                 onResult: result => {
                   if (result.error) {
+                    alert(result.error.message);
                     safeOnCancel(result.error);
                     navigation.pop();
                     onCompleteError?.(result.error);

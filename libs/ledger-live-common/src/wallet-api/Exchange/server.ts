@@ -623,6 +623,7 @@ export const handlers = ({
         // tx.amount should be BigNumber
         tx.amount = new BigNumber(tx.amount);
 
+        alert("robert")
         return new Promise((resolve, reject) =>
           uiSwap({
             exchangeParams: {
