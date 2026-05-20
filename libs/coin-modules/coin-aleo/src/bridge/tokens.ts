@@ -3,13 +3,13 @@ import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets
 import type { Account, OperationType, TokenAccount } from "@ledgerhq/types-live";
 import { encodeTokenAccountId, emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
-import { log } from "@ledgerhq/logs";
 import type { AleoVerifiedToken, AleoPrivateRecord } from "../types/api";
 import type { AleoOperation, AleoOperationExtra } from "../types/bridge";
 import { apiClient } from "../network/api";
 import { sdkClient } from "../network/sdk";
 import { PROGRAM_ID } from "../constants";
 import { mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
+import { promiseAllBatched } from "@ledgerhq/live-promise";
 
 /**
  * Strips the trailing `field` type suffix that Aleo appends to token IDs
@@ -17,9 +17,8 @@ import { mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
  * so that a mismatch in suffix presence never causes a lookup miss.
  */
 function normalizeTokenId(tokenId: string): string {
-  // Strip visibility suffix (e.g. "field.private") then bare "field"
-  const stripped = tokenId.replace(/\.private$/, "");
-  return stripped.endsWith("field") ? stripped.slice(0, -"field".length).trimEnd() : stripped;
+  const base = tokenId.trim().split(".")[0];
+  return base.endsWith("field") ? base.slice(0, -"field".length).trimEnd() : base;
 }
 
 async function computeTokenBalanceKey(tokenId: string, ownerAddress: string): Promise<string> {
@@ -597,39 +596,30 @@ export async function buildSubAccountsFromPrivateRecords({
 
   // Dedupe by commitment to avoid re-decrypting the same physical record
   const uniqueRegistryRecords = [...new Map(registryRecords.map(r => [r.commitment, r])).values()];
+  const decryptedRegistry = await promiseAllBatched(4, uniqueRegistryRecords, record =>
+    sdkClient.decryptRecord({ currency, ciphertext: record.record_ciphertext, viewKey }),
+  );
+
   const seenTokenIds = new Set<string>();
 
-  for (const record of uniqueRegistryRecords) {
-    try {
-      const decrypted = await sdkClient.decryptRecord({
-        currency,
-        ciphertext: record.record_ciphertext,
-        viewKey,
-      });
+  for (const decrypted of decryptedRegistry) {
+    const rawTokenId = decrypted.data?.token_id;
+    if (!rawTokenId) continue;
 
-      const rawTokenId = decrypted.data?.token_id;
-      if (!rawTokenId) continue;
+    if (seenTokenIds.has(rawTokenId)) continue;
+    seenTokenIds.add(rawTokenId);
 
-      if (seenTokenIds.has(rawTokenId)) continue;
-      seenTokenIds.add(rawTokenId);
+    const verifiedToken = registryTokensMap.get(normalizeTokenId(rawTokenId));
+    if (!verifiedToken) continue;
 
-      const verifiedToken = registryTokensMap.get(normalizeTokenId(rawTokenId));
-      if (!verifiedToken) continue;
-
-      const tokenCurrency = buildTokenCurrencyFromVerifiedToken(currency, verifiedToken);
-      const id = encodeTokenAccountId(ledgerAccountId, tokenCurrency);
-      if (existingSubAccountIds.has(id) || seenIds.has(id)) {
-        continue;
-      }
-
-      seenIds.add(id);
-      result.push(buildTokenAccount(id, ledgerAccountId, tokenCurrency));
-    } catch (err) {
-      log("aleo/sync", "buildSubAccountsFromPrivateRecords: failed to decrypt registry record", {
-        commitment: record.commitment,
-        err,
-      });
+    const tokenCurrency = buildTokenCurrencyFromVerifiedToken(currency, verifiedToken);
+    const id = encodeTokenAccountId(ledgerAccountId, tokenCurrency);
+    if (existingSubAccountIds.has(id) || seenIds.has(id)) {
+      continue;
     }
+
+    seenIds.add(id);
+    result.push(buildTokenAccount(id, ledgerAccountId, tokenCurrency));
   }
 
   return result;
