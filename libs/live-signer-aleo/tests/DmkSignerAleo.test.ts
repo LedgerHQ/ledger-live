@@ -20,6 +20,7 @@ describe("DmkSignerAleo", () => {
     getViewKey: jest.fn(),
     signRootIntent: jest.fn(),
     signFeeIntent: jest.fn(),
+    signNestedCall: jest.fn(),
   };
 
   const dmkMock = {
@@ -357,6 +358,60 @@ describe("DmkSignerAleo", () => {
 
       // WHEN / THEN
       await expect(signer.signFeeIntent(feeIntent)).rejects.toThrow(UserRefusedOnDevice);
+    });
+  });
+
+  describe("signNestedCall", () => {
+    it("should return the nested call signature and call signer with correct params", async () => {
+      // GIVEN
+      const nestedCallRequest = Buffer.from("deadbeef", "hex");
+      const signNestedCallMock: jest.Mock = mockSignerAleo.signNestedCall;
+      signNestedCallMock.mockReturnValue({
+        observable: of({
+          status: DeviceActionStatus.Completed,
+          output: { tlvSignature: "nested-sig-hex" },
+        }),
+      });
+
+      // WHEN
+      const result = await signer.signNestedCall(nestedCallRequest);
+
+      // THEN
+      expect(result).toEqual({ signature: "nested-sig-hex" });
+      expect(mockSignerAleo.signNestedCall).toHaveBeenCalledWith(
+        new Uint8Array(nestedCallRequest),
+        { skipOpenApp: true },
+      );
+    });
+
+    it("should throw LockedDeviceError when device is locked", async () => {
+      // GIVEN
+      const nestedCallRequest = Buffer.from([]);
+      const signNestedCallMock: jest.Mock = mockSignerAleo.signNestedCall;
+      signNestedCallMock.mockReturnValue({
+        observable: of({
+          status: DeviceActionStatus.Error,
+          error: { _tag: "SignNestedCallDARejected", errorCode: "5515" },
+        }),
+      });
+
+      // WHEN / THEN
+      await expect(signer.signNestedCall(nestedCallRequest)).rejects.toThrow(LockedDeviceError);
+    });
+
+    it("should throw UserRefusedOnDevice when user refuses", async () => {
+      // GIVEN
+      const nestedCallRequest = Buffer.from([]);
+      const signNestedCallMock: jest.Mock = mockSignerAleo.signNestedCall;
+      signNestedCallMock.mockReturnValue({
+        observable: of({
+          status: DeviceActionStatus.Error,
+          error: { _tag: "SignNestedCallDARejected", errorCode: "69f0" },
+        }),
+      });
+
+      // WHEN / THEN
+      await expect(signer.signNestedCall(nestedCallRequest)).rejects.toThrow(UserRefusedOnDevice);
     });
   });
 });

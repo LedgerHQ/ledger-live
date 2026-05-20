@@ -23,7 +23,8 @@ catalog:
   "@jest/globals": 30.2.0
   "@ledgerhq/context-module": 1.17.1
   "@ledgerhq/crypto-icons": "2.0.3"
-  "@ledgerhq/device-management-kit": 1.4.1
+  "@ledgerhq/device-management-kit": 1.5.0
+  "@ledgerhq/device-signer-kit-aleo": 0.3.0
   "@ledgerhq/device-signer-kit-concordium": 0.3.0
   "@ledgerhq/device-signer-kit-ethereum": 1.15.1
   "@ledgerhq/device-signer-kit-hyperliquid": 1.0.2
