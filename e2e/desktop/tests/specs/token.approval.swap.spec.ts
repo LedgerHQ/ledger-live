@@ -21,6 +21,9 @@ const eligibleProviders = [
   Provider.UNISWAP,
   Provider.LIFI,
   Provider.OKX,
+  // 1inch and Velora are Ethereum plugin apps (applicationType: "plugin", parent: Ethereum).
+  // They cannot be launched as a main Speculos app — the process exits before the signing step,
+  // causing ECONNREFUSED on the Speculos API port at speculos.signTokenApproval(). See QAA-1236.
   // Provider.ONE_INCH,
   // Provider.VELORA,
 ];
