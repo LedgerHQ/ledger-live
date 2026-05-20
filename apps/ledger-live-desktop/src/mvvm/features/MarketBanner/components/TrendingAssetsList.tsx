@@ -9,6 +9,7 @@ import FearAndGreed from "LLD/features/FearAndGreed";
 import { useHorizontalScroll } from "../hooks/useHorizontalScroll";
 import { ScrollArrowButton } from "./ScrollArrowButton";
 import { PORTFOLIO_TRACKING_PAGE_NAME } from "LLD/utils/constants";
+import { getMarketOrAssetDetailPath } from "LLD/utils/marketAssetNavigation";
 
 type TrendingAssetsListProps = {
   readonly items: MarketItemPerformer[];
@@ -26,7 +27,7 @@ export const TrendingAssetsList = ({ items }: TrendingAssetsListProps) => {
         currency: id,
         page: PORTFOLIO_TRACKING_PAGE_NAME,
       });
-      navigate(shouldDisplayAggregatedAssets ? `/asset/${id}` : `/market/${id}`);
+      navigate(getMarketOrAssetDetailPath(id, shouldDisplayAggregatedAssets));
     },
     [navigate, shouldDisplayAggregatedAssets],
   );

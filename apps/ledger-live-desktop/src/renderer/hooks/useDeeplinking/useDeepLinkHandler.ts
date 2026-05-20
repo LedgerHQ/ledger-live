@@ -43,7 +43,8 @@ export function useDeepLinkHandler() {
   const recoverAppId = recoverFF?.params?.protectId;
   const lwdProductTour = useFeature("lwdProductTour");
   const isProductTourEnabled = lwdProductTour?.enabled === true;
-  const { shouldDisplayAssetSection } = useWalletFeaturesConfig("desktop");
+  const { shouldDisplayAssetSection, shouldDisplayAggregatedAssets } =
+    useWalletFeaturesConfig("desktop");
   const accountsPath = getAccountsSidebarPath(shouldDisplayAssetSection);
 
   const navigate: NavigateFn = useCallback(
@@ -79,6 +80,7 @@ export function useDeepLinkHandler() {
       currentSearch: location.search,
       currentLocationState: location.state,
       accountsPath,
+      shouldDisplayAggregatedAssets,
       recoverAppId,
       isProductTourEnabled,
     }),
@@ -96,6 +98,7 @@ export function useDeepLinkHandler() {
       location.search,
       location.state,
       accountsPath,
+      shouldDisplayAggregatedAssets,
       recoverAppId,
       isProductTourEnabled,
     ],

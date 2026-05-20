@@ -44,6 +44,8 @@ export interface DeeplinkHandlerContext {
   currentLocationState: unknown;
   /** Feature-flag-aware path to the accounts list screen (`/cryptos` or `/accounts`). */
   accountsPath: string;
+  /** `lwdWallet40` aggregated assets — market deeplinks open `/asset/` instead of `/market/`. */
+  shouldDisplayAggregatedAssets: boolean;
   /** Default Ledger Recover app id (from feature flag) for recover deeplink when no path is given */
   recoverAppId?: string;
   /** `lwdProductTour` — Product Tour dialog is only mounted on Portfolio when enabled; avoid opening dialog Redux state when false. */
