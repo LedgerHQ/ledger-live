@@ -71,7 +71,11 @@ export function AssetDetailView({
             isLoading={isLoading}
           />
           <MarketData currency={currency} />
-          <Transactions currency={currency} isLoading={isLoading} />
+          <Transactions
+            currency={currency}
+            distributionItem={distributionItem}
+            isLoading={isLoading}
+          />
           <FallbackBanner show={showFallbackBanner} />
         </Box>
       </ScrollView>

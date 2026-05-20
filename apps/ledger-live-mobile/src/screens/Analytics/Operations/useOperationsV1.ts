@@ -6,7 +6,15 @@ import { useSelector } from "~/context/hooks";
 import { filterTokenOperationsZeroAmountEnabledSelector } from "~/reducers/settings";
 import { useAddressPoisoningOperationsFamilies } from "@ledgerhq/live-common/hooks/useAddressPoisoningOperationsFamilies";
 
-export function useOperationsV1(accounts: AccountLike[], opCount: number) {
+export type UseOperationsV1Options = {
+  filterOperation?: (operation: Operation, account: AccountLike) => boolean;
+};
+
+export function useOperationsV1(
+  accounts: AccountLike[],
+  opCount: number,
+  options?: UseOperationsV1Options,
+) {
   const shouldFilterTokenOpsZeroAmount = useSelector(
     filterTokenOperationsZeroAmountEnabledSelector,
   );
@@ -15,8 +23,14 @@ export function useOperationsV1(accounts: AccountLike[], opCount: number) {
     shouldFilter: shouldFilterTokenOpsZeroAmount,
   });
 
+  const externalFilter = options?.filterOperation;
+
   const filterOperation = useCallback(
     (operation: Operation, account: AccountLike) => {
+      if (externalFilter && !externalFilter(operation, account)) {
+        return false;
+      }
+
       const isOperationPoisoned = isAddressPoisoningOperation(
         operation,
         account,
@@ -27,7 +41,7 @@ export function useOperationsV1(accounts: AccountLike[], opCount: number) {
 
       return shouldFilterOperation;
     },
-    [shouldFilterTokenOpsZeroAmount, addressPoisoningFamilies],
+    [shouldFilterTokenOpsZeroAmount, addressPoisoningFamilies, externalFilter],
   );
 
   const { sections, completed } = groupAccountsOperationsByDay(accounts, {
