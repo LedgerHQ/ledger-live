@@ -157,14 +157,22 @@ const SideBar = styled(Box).attrs(() => ({
   }
 `;
 const SideBarScrollContainer = styled(Box)`
-  overflow-y: scroll;
+  overflow-y: auto;
   overflow-x: hidden;
 
   flex: 1;
 
   &::-webkit-scrollbar {
-    width: 0;
-    height: 0;
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: ${p => p.theme.colors.neutral.c40};
+    border-radius: 3px;
   }
 `;
 
