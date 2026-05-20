@@ -8964,8 +8964,7 @@
       "csv": "Export"
     },
     "exportDialog": {
-      "title": "Transaction history",
-      "description": "Choose the accounts to include in the export",
+      "title": "Export transaction history",
       "disclaimer": "Estimated values only. Countervalues are provided by Kaiko for information purposes. Do not use this data for tax, legal, or accounting purposes.",
       "accountsToInclude": "Accounts to include",
       "selectAll": "Select all ({{count}})",
