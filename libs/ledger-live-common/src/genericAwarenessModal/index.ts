@@ -1,3 +1,12 @@
-export * from "./types";
-export * from "./buildContentCards";
-export * from "./getGenericAwarenessModalContentCard";
+export { processGenericAwarenessModalBrazeCards } from "./buildContentCards";
+export { getGenericAwarenessModalContentCard } from "./getGenericAwarenessModalContentCard";
+
+export { GenericAwarenessModalLayout } from "./types";
+export type {
+  GenericAwarenessModalContentCard,
+  GenericAwarenessModalOutput,
+  GenericAwarenessModalCarousel,
+  GenericAwarenessModalCarouselSlide,
+  GenericAwarenessModalFeatureIntro,
+  GenericAwarenessModalFeatureIntroItem,
+} from "./types";

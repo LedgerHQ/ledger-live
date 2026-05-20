@@ -1,35 +1,31 @@
+import { buildCarousel } from "./buildCarousel";
+import { buildFeatureIntro } from "./buildFeatureIntro";
 import {
-  FeatureIntroRole,
-  GenericAwarenessModalContentCard,
-  GenericAwarenessModalCarousel,
-  GenericAwarenessModalCarouselSlide,
-  GenericAwarenessModalFeatureIntro,
   GenericAwarenessModalLayout,
+  type GenericAwarenessModalBrazeCard,
+  type GenericAwarenessModalContentCard,
 } from "./types";
 
-/** Braze content card reduced to id + extras (platform-agnostic). */
-export type GenericAwarenessModalBrazeCard = {
-  id: string;
-  extras?: Record<string, string>;
-};
-
-const parseIndex = (value: string | number | undefined) => {
-  if (typeof value === "number") {
-    return value;
-  }
-  return Number.parseInt(value ?? "", 10) || 0;
-};
+export type { GenericAwarenessModalBrazeCard } from "./types";
 
 export const groupByCampaignId = (
   cards: GenericAwarenessModalBrazeCard[],
 ): Map<string, GenericAwarenessModalBrazeCard[]> => {
-  return cards.reduce((acc, card) => {
+  const cardsByCampaignId = new Map<string, GenericAwarenessModalBrazeCard[]>();
+
+  cards.forEach(card => {
     const campaignId = card.extras?.campaignId;
     if (campaignId !== undefined && campaignId !== "") {
-      acc.set(campaignId, [...(acc.get(campaignId) || []), card]);
+      const campaignCards = cardsByCampaignId.get(campaignId);
+      if (campaignCards) {
+        campaignCards.push(card);
+      } else {
+        cardsByCampaignId.set(campaignId, [card]);
+      }
     }
-    return acc;
-  }, new Map<string, GenericAwarenessModalBrazeCard[]>());
+  });
+
+  return cardsByCampaignId;
 };
 
 export const hasUniqueLayout = (cards: GenericAwarenessModalBrazeCard[]) => {
@@ -39,96 +35,35 @@ export const hasUniqueLayout = (cards: GenericAwarenessModalBrazeCard[]) => {
 export const getValidGenericAwarenessModalCards = (
   groupedCards: Map<string, GenericAwarenessModalBrazeCard[]>,
 ) => {
-  const invalidCampaignIds: string[] = [];
-  groupedCards.forEach((cards, campaignId) => {
-    if (!hasUniqueLayout(cards)) {
-      invalidCampaignIds.push(campaignId);
-    }
-  });
   return new Map<string, GenericAwarenessModalBrazeCard[]>(
-    Array.from(groupedCards.entries()).filter(
-      ([campaignId]) => !invalidCampaignIds.includes(campaignId),
-    ),
+    Array.from(groupedCards.entries()).filter(([, cards]) => hasUniqueLayout(cards)),
   );
 };
 
-const buildCarouselSlide = (
-  extras: Record<string, string>,
-): GenericAwarenessModalCarouselSlide => ({
-  title: extras.title ?? "",
-  subtitle: extras.subtitle ?? "",
-  imageUrl: extras.imageUrl ?? "",
-  primaryButtonLabel: extras.primaryButtonLabel ?? "",
-  primaryButtonLink: extras.primaryButtonLink ?? "",
-});
-
-const buildCarousel = (
+const buildContentCard = (
   campaignId: string,
   cards: GenericAwarenessModalBrazeCard[],
-): GenericAwarenessModalCarousel => ({
-  layout: GenericAwarenessModalLayout.Carousel,
-  id: campaignId,
-  data: [...cards]
-    .sort((a, b) => parseIndex(a.extras?.index) - parseIndex(b.extras?.index))
-    .map(card => buildCarouselSlide(card.extras ?? {})),
-});
+): GenericAwarenessModalContentCard | undefined => {
+  const layout = cards[0]?.extras?.layout;
 
-const buildFeatureIntro = (
-  campaignId: string,
-  cards: GenericAwarenessModalBrazeCard[],
-): GenericAwarenessModalFeatureIntro | undefined => {
-  const main = cards.find(card => card.extras?.role === FeatureIntroRole.Main);
-  if (!main) {
-    return undefined;
+  if (layout === GenericAwarenessModalLayout.Carousel) {
+    return buildCarousel(campaignId, cards);
   }
 
-  const mainExtras = main.extras ?? {};
-  const items = cards
-    .filter(card => card.extras?.role === FeatureIntroRole.Item)
-    .sort((a, b) => parseIndex(a.extras?.index) - parseIndex(b.extras?.index))
-    .map(card => {
-      const extras = card.extras ?? {};
-      return {
-        icon: extras.icon ?? "",
-        title: extras.title ?? "",
-        subtitle: extras.subtitle ?? "",
-      };
-    });
+  if (layout === GenericAwarenessModalLayout.FeatureIntro) {
+    return buildFeatureIntro(campaignId, cards);
+  }
 
-  return {
-    layout: GenericAwarenessModalLayout.FeatureIntro,
-    id: campaignId,
-    title: mainExtras.title ?? "",
-    subtitle: mainExtras.subtitle ?? "",
-    imageUrl: mainExtras.imageUrl ?? "",
-    primaryButtonLabel: mainExtras.primaryButtonLabel ?? "",
-    primaryButtonLink: mainExtras.primaryButtonLink ?? "",
-    secondaryButtonLabel: mainExtras.secondaryButtonLabel ?? "",
-    secondaryButtonLink: mainExtras.secondaryButtonLink ?? "",
-    items,
-  };
+  return undefined;
 };
 
 export const buildGenericAwarenessModalContentCards = (
   groupedCards: Map<string, GenericAwarenessModalBrazeCard[]>,
 ): GenericAwarenessModalContentCard[] => {
-  const contentCards: GenericAwarenessModalContentCard[] = [];
-
-  groupedCards.forEach((cards, campaignId) => {
-    const layout = cards[0]?.extras?.layout;
-    if (layout === GenericAwarenessModalLayout.Carousel) {
-      contentCards.push(buildCarousel(campaignId, cards));
-      return;
-    }
-    if (layout === GenericAwarenessModalLayout.FeatureIntro) {
-      const featureIntro = buildFeatureIntro(campaignId, cards);
-      if (featureIntro) {
-        contentCards.push(featureIntro);
-      }
-    }
+  return Array.from(groupedCards.entries()).flatMap(([campaignId, cards]) => {
+    const contentCard = buildContentCard(campaignId, cards);
+    return contentCard ? [contentCard] : [];
   });
-
-  return contentCards;
 };
 
 export const processGenericAwarenessModalBrazeCards = (
