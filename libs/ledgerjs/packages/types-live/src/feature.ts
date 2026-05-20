@@ -312,6 +312,7 @@ export type Features = CurrencyFeatures & {
   lldSyncOnboardingIncr1: DefaultFeature;
   noah: Feature_Noah;
   newSendFlow: Feature_NewSendFlow;
+  showDisplayPOC: Feature_ShowDisplayPOC;
   zcashShielded: DefaultFeature;
   llmNanoOnboardingFundWallet: DefaultFeature;
   lldRebornABtest: DefaultFeature;
@@ -768,6 +769,14 @@ export type Feature_Noah = Feature<{
 export type Feature_NewSendFlow = Feature<{
   families?: string[];
   excludedCurrencyIds?: string[];
+}>;
+
+/**
+ * Feature flag for the Display POC workshop flow.
+ * Gates the Display dialog per coin family (mirrors `newSendFlow`).
+ */
+export type Feature_ShowDisplayPOC = Feature<{
+  families?: string[];
 }>;
 
 export type Feature_AddressPoisoningOperationsFilter = Feature<{

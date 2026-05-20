@@ -8,6 +8,7 @@ import IconReceive from "~/renderer/icons/Receive";
 import IconSend from "~/renderer/icons/Send";
 import IconSwap from "~/renderer/icons/Swap";
 import IconCoins from "~/renderer/icons/Coins";
+import IconEye from "~/renderer/icons/Eye";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 
 type Props = {
@@ -107,3 +108,11 @@ export const StakeActionDefault = ({
     />
   );
 };
+export const DisplayActionDefault = ({ onClick }: { onClick: () => void }) => (
+  <ActionDefault
+    onClick={onClick}
+    iconComponent={<IconEye size={14} />}
+    labelComponent={<Trans i18nKey="display.title" defaults="Display" />}
+    accountActionsTestId="display-button"
+  />
+);

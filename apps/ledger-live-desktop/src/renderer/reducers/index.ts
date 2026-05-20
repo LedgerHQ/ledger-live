@@ -20,6 +20,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import countervalues, { CountervaluesState } from "./countervalues";
 import modularDialog, { ModularDialogState } from "./modularDialog";
 import sendFlow, { SendFlowState } from "./sendFlow";
+import displayFlow, { DisplayFlowState } from "./displayFlow";
 import onboarding, { OnboardingState } from "./onboarding";
 import { lldRTKApiReducers, LLDRTKApiState } from "./rtkQueryApi";
 import { identitiesSlice, IdentitiesState } from "@ledgerhq/client-ids/store";
@@ -50,6 +51,7 @@ export type State = LLDRTKApiState & {
   modals: ModalsState;
   modularDialog: ModularDialogState;
   sendFlow: SendFlowState;
+  displayFlow: DisplayFlowState;
   onboarding: OnboardingState;
   postOnboarding: PostOnboardingState;
   settings: SettingsState;
@@ -79,6 +81,7 @@ const appReducer = combineReducers({
   modals,
   modularDialog,
   sendFlow,
+  displayFlow,
   settings,
   UI,
   onboarding,

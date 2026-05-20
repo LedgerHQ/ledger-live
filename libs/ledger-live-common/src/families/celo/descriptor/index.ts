@@ -1,9 +1,20 @@
 import type { CoinDescriptor } from "../../../bridge/descriptor/types";
+import {
+  getDefaultBalance,
+  getDefaultRecentTransactions,
+  getDefaultTokens,
+} from "../../../bridge/descriptor/display/helpers";
 import { fees } from "./fees";
 
 export const descriptor: CoinDescriptor = {
   send: {
     inputs: {},
     fees,
+  },
+  display: {
+    getBalance: getDefaultBalance,
+    getRecentTransactions: getDefaultRecentTransactions,
+    hasTokens: true,
+    getTokens: getDefaultTokens,
   },
 };

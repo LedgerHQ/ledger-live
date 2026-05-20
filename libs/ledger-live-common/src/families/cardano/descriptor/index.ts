@@ -1,4 +1,9 @@
 import type { CoinDescriptor } from "../../../bridge/descriptor/types";
+import {
+  getDefaultBalance,
+  getDefaultRecentTransactions,
+  getDefaultTokens,
+} from "../../../bridge/descriptor/display/helpers";
 import { memo } from "./memo";
 
 export const descriptor: CoinDescriptor = {
@@ -9,5 +14,11 @@ export const descriptor: CoinDescriptor = {
       hasCustom: false,
     },
     selfTransfer: "free",
+  },
+  display: {
+    getBalance: getDefaultBalance,
+    getRecentTransactions: getDefaultRecentTransactions,
+    hasTokens: true,
+    getTokens: getDefaultTokens,
   },
 };

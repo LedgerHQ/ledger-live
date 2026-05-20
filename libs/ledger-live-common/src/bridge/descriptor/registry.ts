@@ -27,7 +27,7 @@ import { descriptor as tonDescriptor } from "../../families/ton/descriptor";
 import { descriptor as tronDescriptor } from "../../families/tron/descriptor";
 import { descriptor as vechainDescriptor } from "../../families/vechain/descriptor";
 import { descriptor as xrpDescriptor } from "../../families/xrp/descriptor";
-import type { CoinDescriptor, SendDescriptor, StakeDescriptor } from "./types";
+import type { CoinDescriptor, DisplayDescriptor, SendDescriptor, StakeDescriptor } from "./types";
 
 const descriptorRegistry: Record<string, CoinDescriptor> = {
   algorand: algorandDescriptor,
@@ -103,4 +103,15 @@ export function getStakeDescriptor(
 ): StakeDescriptor | null {
   const descriptor = getDescriptor(currency);
   return descriptor?.stake ?? null;
+}
+
+/**
+ * Get the display flow descriptor for a given currency.
+ * Returns null if the currency does not expose a Display descriptor.
+ */
+export function getDisplayDescriptor(
+  currency: CryptoOrTokenCurrency | undefined,
+): DisplayDescriptor | null {
+  const descriptor = getDescriptor(currency);
+  return descriptor?.display ?? null;
 }
