@@ -6,6 +6,7 @@ import { colors } from "~/renderer/styles/theme";
 import useAnalyticsViewModel from "./useAnalyticsViewModel";
 import type { AnalyticsViewModel } from "./types";
 import { AllocationSection } from "./components/Allocation/AllocationSection";
+import { PnLSection } from "./components/PnL";
 import { useTranslation } from "react-i18next";
 
 export default function Analytics() {
@@ -38,6 +39,8 @@ function AnalyticsView({ viewModel }: { readonly viewModel: AnalyticsViewModel }
           shouldDisplayGraphRework={shouldDisplayGraphRework}
         />
       </div>
+
+      <PnLSection />
 
       {shouldDisplayAssetSection && <AllocationSection />}
     </div>

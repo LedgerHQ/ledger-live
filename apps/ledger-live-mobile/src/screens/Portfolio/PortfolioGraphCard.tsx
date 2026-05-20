@@ -5,7 +5,7 @@ import { LayoutChangeEvent } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import { useSelector } from "~/context/hooks";
 import { usePortfolioAllAccounts } from "~/hooks/portfolio";
-import { areAccountsEmptySelector } from "~/reducers/accounts";
+import { useAreAccountsEmpty } from "~/reducers/accounts";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import { PortfolioBalanceSection } from "LLM/features/Portfolio/components";
 import GraphCardContainer from "./GraphCardContainer";
@@ -23,7 +23,7 @@ const PortfolioGraphCard = ({
   hideGraph,
   isReadOnlyMode = false,
 }: Props) => {
-  const areAccountsEmpty = useSelector(areAccountsEmptySelector);
+  const areAccountsEmpty = useAreAccountsEmpty();
   const portfolio = usePortfolioAllAccounts();
   const counterValueCurrency: Currency = useSelector(counterValueCurrencySelector);
 

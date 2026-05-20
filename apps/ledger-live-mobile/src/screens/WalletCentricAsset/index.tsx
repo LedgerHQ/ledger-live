@@ -8,7 +8,7 @@ import Animated, {
 import { useTranslation } from "~/context/Locale";
 import { Box, Flex } from "@ledgerhq/native-ui";
 import { getCurrencyColor, isCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
-import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
+import { useAccountBridgeMany } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useTheme } from "styled-components/native";
 import { useAssetsData } from "@ledgerhq/live-common/dada-client/hooks/useAssetsData";
 import VersionNumber from "react-native-version-number";
@@ -19,7 +19,10 @@ import BigNumber from "bignumber.js";
 import accountSyncRefreshControl from "~/components/accountSyncRefreshControl";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import SafeAreaView from "~/components/SafeAreaView";
-import { useFlattenAccountsByCryptoCurrency } from "LLM/hooks/useAccountsByCryptoCurrency";
+import {
+  useAccountsByCryptoCurrency,
+  useFlattenAccountsByCryptoCurrency,
+} from "LLM/hooks/useAccountsByCryptoCurrency";
 import SectionContainer from "../WalletCentricSections/SectionContainer";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
@@ -70,12 +73,17 @@ const AssetScreen = ({ route }: NavigationProps) => {
   }, [preloadedCurrency, currencyId, assetData]);
 
   const cryptoAccounts = useFlattenAccountsByCryptoCurrency(currency);
-
+  // useFlattenAccountsByCryptoCurrency returns only TokenAccounts for a TokenCurrency,
+  // so we pull parent Accounts from the tuples selector to resolve bridges by parentId.
+  const cryptoAccountTuples = useAccountsByCryptoCurrency(currency);
   const defaultAccount = cryptoAccounts?.length === 1 ? cryptoAccounts[0] : undefined;
-
-  const cryptoAccountsEmpty = useMemo(
-    () => cryptoAccounts.every(account => isAccountEmpty(account)),
-    [cryptoAccounts],
+  const mainCryptoAccounts = cryptoAccountTuples
+    .map(t => t.account)
+    .filter((a): a is Account => a.type === "Account");
+  const bridges = useAccountBridgeMany(mainCryptoAccounts);
+  const bridgeByParentId = new Map(mainCryptoAccounts.map((a, i) => [a.id, bridges[i]]));
+  const cryptoAccountsEmpty = cryptoAccounts.every(a =>
+    Boolean(bridgeByParentId.get(a.type === "Account" ? a.id : a.parentId)?.isAccountEmpty(a)),
   );
 
   const [graphCardEndPosition, setGraphCardEndPosition] = useState(60);

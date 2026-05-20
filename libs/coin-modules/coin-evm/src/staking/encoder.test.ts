@@ -53,6 +53,21 @@ describe("encodeStakingData", () => {
 
       expect(encoded.startsWith("0x")).toBe(true);
     });
+
+    it("should encode claim rewards operation", () => {
+      const operation: StakingOperation = "claimReward";
+      const validatorAddress = "seivaloper1abc123";
+      const params = [validatorAddress];
+
+      const encoded = encodeStakingData({
+        currencyId,
+        operation,
+        config,
+        params,
+      });
+
+      expect(encoded.startsWith("0x")).toBe(true);
+    });
   });
 
   describe("CELO", () => {

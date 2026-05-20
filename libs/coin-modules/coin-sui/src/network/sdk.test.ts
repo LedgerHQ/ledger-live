@@ -327,7 +327,7 @@ function mockStakingTx(address: string, amount: string) {
     ],
     events: [
       {
-        type: "0x3::staking_pool::StakingRequestEvent",
+        type: "0x3::validator::StakingRequestEvent",
         parsedJson: {
           validator_address: validatorAddress,
           staked_sui_id: "0xstaked_object_id_123",
@@ -722,7 +722,7 @@ describe("SDK Functions", () => {
       ],
     };
 
-    const operation = sdk.alpacaTransactionToOp(
+    const operation = sdk.transactionToCoinFrameworkOperation(
       address,
       tokenTx as SuiTransactionBlockResponse,
       "mockCheckpointHash",
@@ -1007,34 +1007,34 @@ describe("Staking Operations", () => {
         new BigNumber("500000"),
       ));
 
-    function alpacaOperationAmount(
+    function operationAmountCoinFramework(
       mock: SuiTransactionBlockResponse,
       coinType: string = sdk.DEFAULT_COIN_TYPE,
     ) {
-      return sdk.alpacaGetOperationAmount(address, mock, coinType);
+      return sdk.getOperationAmountCoinFramework(address, mock, coinType);
     }
 
-    test("alpaca getOperationAmount should calculate staking amount", () =>
-      expect(alpacaOperationAmount(mockStakingTx(address, "-1001050000"))).toEqual(
+    test("coin-framework getOperationAmount should calculate staking amount", () =>
+      expect(operationAmountCoinFramework(mockStakingTx(address, "-1001050000"))).toEqual(
         new BigNumber(mist(1)),
       ));
 
     // 1000 unstaked & 1050000 gas fees = -1049000 balance change
-    test("alpaca getOperationAmount should calculate unstaking amount of 1000", () =>
-      expect(alpacaOperationAmount(mockUnstakingTx(address, "-1049000"))).toEqual(
+    test("coin-framework getOperationAmount should calculate unstaking amount of 1000", () =>
+      expect(operationAmountCoinFramework(mockUnstakingTx(address, "-1049000"))).toEqual(
         new BigNumber("1000"),
       ));
 
-    test("alpaca getOperationAmount should calculate unstaking amount of 0", () =>
-      expect(alpacaOperationAmount(mockUnstakingTx(address, "-1050000"))).toEqual(
+    test("coin-framework getOperationAmount should calculate unstaking amount of 0", () =>
+      expect(operationAmountCoinFramework(mockUnstakingTx(address, "-1050000"))).toEqual(
         new BigNumber("0"),
       ));
 
-    test("alpaca getOperationAmount should calculate amount correctly for SUI", () =>
-      expect(alpacaOperationAmount(mockTransaction)).toEqual(new BigNumber("9998990120")));
+    test("coin-framework getOperationAmount should calculate amount correctly for SUI", () =>
+      expect(operationAmountCoinFramework(mockTransaction)).toEqual(new BigNumber("9998990120")));
 
-    test("alpaca getOperationAmount should calculate amount correctly for tokens", () =>
-      expect(alpacaOperationAmount(mockTransaction, "0x123::test::TOKEN")).toEqual(
+    test("coin-framework getOperationAmount should calculate amount correctly for tokens", () =>
+      expect(operationAmountCoinFramework(mockTransaction, "0x123::test::TOKEN")).toEqual(
         new BigNumber("500000"),
       ));
   });
@@ -1274,7 +1274,7 @@ describe("Staking Operations", () => {
     test("transactionToOp should map staking transaction correctly", () => {
       const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
 
-      const operation = sdk.alpacaTransactionToOp(
+      const operation = sdk.transactionToCoinFrameworkOperation(
         address,
         mockStakingTx(address, "-1001050000"),
         "mockCheckpointHash",
@@ -1299,7 +1299,7 @@ describe("Staking Operations", () => {
     test("transactionToOp should map unstaking transaction correctly", () => {
       const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
 
-      const operation = sdk.alpacaTransactionToOp(
+      const operation = sdk.transactionToCoinFrameworkOperation(
         address,
         mockUnstakingTx(address, "998950000"),
         "mockCheckpointHash",
@@ -1326,7 +1326,7 @@ describe("Staking Operations", () => {
       const tx = mockStakingTx(address, "-1001050000");
       delete (tx as any).events;
 
-      const operation = sdk.alpacaTransactionToOp(address, tx, "mockCheckpointHash");
+      const operation = sdk.transactionToCoinFrameworkOperation(address, tx, "mockCheckpointHash");
 
       expect(operation.details).toEqual({ stakedAmount: BigInt(ONE_SUI) });
     });
@@ -1336,7 +1336,7 @@ describe("Staking Operations", () => {
       const tx = mockUnstakingTx(address, "998950000");
       delete (tx as any).events;
 
-      const operation = sdk.alpacaTransactionToOp(address, tx, "mockCheckpointHash");
+      const operation = sdk.transactionToCoinFrameworkOperation(address, tx, "mockCheckpointHash");
 
       expect(operation.details).toEqual({ stakedAmount: BigInt(ONE_SUI) });
     });
@@ -1346,12 +1346,12 @@ describe("Staking Operations", () => {
       const tx = mockStakingTx(address, "-1001050000");
       (tx as any).events = [
         {
-          type: "0x3::staking_pool::StakingRequestEvent",
+          type: "0x3::validator::StakingRequestEvent",
           parsedJson: { validator_address: "0xabc" },
         },
       ];
 
-      const operation = sdk.alpacaTransactionToOp(address, tx, "mockCheckpointHash");
+      const operation = sdk.transactionToCoinFrameworkOperation(address, tx, "mockCheckpointHash");
 
       expect(operation.details).toEqual({
         stakedAmount: BigInt(ONE_SUI),
@@ -1369,7 +1369,7 @@ describe("Staking Operations", () => {
         },
       ];
 
-      const operation = sdk.alpacaTransactionToOp(address, tx, "mockCheckpointHash");
+      const operation = sdk.transactionToCoinFrameworkOperation(address, tx, "mockCheckpointHash");
 
       expect(operation.details).toEqual({
         stakedAmount: BigInt(ONE_SUI),
@@ -1394,7 +1394,7 @@ describe("Staking Operations", () => {
           },
         },
       };
-      const operation = sdk.alpacaTransactionToOp(
+      const operation = sdk.transactionToCoinFrameworkOperation(
         senderAddress,
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         sponsoredTx as unknown as SuiTransactionBlockResponse,
@@ -1411,7 +1411,7 @@ describe("getStakingEventDetails", () => {
   it("should extract all fields from StakingRequestEvent", () => {
     const tx = makeTx([
       {
-        type: "0x3::staking_pool::StakingRequestEvent",
+        type: "0x3::validator::StakingRequestEvent",
         parsedJson: {
           validator_address: "0xabc",
           staked_sui_id: "0xobj123",
@@ -1445,7 +1445,7 @@ describe("getStakingEventDetails", () => {
   it("should handle partial StakingRequestEvent fields", () => {
     const tx = makeTx([
       {
-        type: "0x3::staking_pool::StakingRequestEvent",
+        type: "0x3::validator::StakingRequestEvent",
         parsedJson: { validator_address: "0xabc" },
       },
     ]);
@@ -3974,8 +3974,8 @@ describe("accumulator events through modified functions", () => {
     expect(amount).toEqual(new BigNumber(mist(6)));
   });
 
-  test("alpacaGetOperationAmount includes accumulator merge for recipient", () => {
-    const amount = sdk.alpacaGetOperationAmount(recipient, baseTxWithAccumulator, coinType);
+  test("getOperationAmountCoinFramework includes accumulator merge for recipient", () => {
+    const amount = sdk.getOperationAmountCoinFramework(recipient, baseTxWithAccumulator, coinType);
     expect(amount).toEqual(new BigNumber(mist(5)));
   });
 

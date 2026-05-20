@@ -54,25 +54,26 @@ export function OptionsMenuView({ viewModel }: OptionsMenuViewProps) {
             {isStarred ? removeFavouriteLabel : addFavouriteLabel}
           </span>
         </MenuItem>
-        <MenuItem
-          disabled={!isHideFromPortfolioEnabled}
-          onSelect={() => {
-            if (isHiddenFromPortfolio) {
-              onShowInPortfolio();
-            } else {
-              onHideFromPortfolio();
-            }
-          }}
-        >
-          <span className="flex items-center gap-12">
-            {isHiddenFromPortfolio ? (
-              <Eye size={20} className="shrink-0" />
-            ) : (
-              <EyeCross size={20} className="shrink-0" />
-            )}
-            {isHiddenFromPortfolio ? showInPortfolioLabel : hideFromPortfolioLabel}
-          </span>
-        </MenuItem>
+        {isHideFromPortfolioEnabled && (
+          <MenuItem
+            onSelect={() => {
+              if (isHiddenFromPortfolio) {
+                onShowInPortfolio();
+              } else {
+                onHideFromPortfolio();
+              }
+            }}
+          >
+            <span className="flex items-center gap-12">
+              {isHiddenFromPortfolio ? (
+                <Eye size={20} className="shrink-0" />
+              ) : (
+                <EyeCross size={20} className="shrink-0" />
+              )}
+              {isHiddenFromPortfolio ? showInPortfolioLabel : hideFromPortfolioLabel}
+            </span>
+          </MenuItem>
+        )}
       </MenuContent>
     </Menu>
   );

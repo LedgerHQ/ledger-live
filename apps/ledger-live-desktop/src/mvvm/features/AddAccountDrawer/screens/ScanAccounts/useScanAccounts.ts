@@ -1,9 +1,8 @@
-import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
-import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
+import { getAccountBridge, getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { concat, from, Subscription } from "rxjs";
 import { prepareCurrency } from "~/renderer/bridge/cache";
@@ -20,11 +19,7 @@ import {
 } from "../../analytics/addAccount.types";
 import useAddAccountAnalytics from "../../analytics/useAddAccountAnalytics";
 import { WARNING_REASON, WarningReason } from "../../domain";
-import {
-  determineSelectedIds,
-  getGroupedAccounts,
-  getUnimportedAccounts,
-} from "./utils/processAccounts";
+import { computeSelectedIdsFromScan, getGroupedAccounts } from "./utils/processAccounts";
 import { useConcordiumCreatableAccounts } from "./hooks/concordium/useConcordiumCreatableAccounts";
 
 const selectImportable = (importable: Account[]) => (selected: string[]) => {
@@ -66,6 +61,18 @@ export function useScanAccounts({
 
   const [hasImportedAccounts, setHasImportedAccounts] = useState(false);
   const scanSubscriptionRef = useRef<Subscription | null>(null);
+  const existingAccountsRef = useRef(existingAccounts);
+  existingAccountsRef.current = existingAccounts;
+  const scannedAccountsRef = useRef(scannedAccounts);
+  scannedAccountsRef.current = scannedAccounts;
+  // Emptiness is resolved per discovered account in the scan pipeline (getAccountBridge
+  // is not safe to call synchronously); the predicate passed to computeSelectedIdsFromScan
+  // reads from this ref.
+  const emptyByIdRef = useRef<Map<string, boolean>>(new Map());
+  const isAccountEmpty = useCallback(
+    (account: Account) => emptyByIdRef.current.get(account.id) ?? false,
+    [],
+  );
 
   const newAccountSchemes = useMemo(() => {
     const accountSchemes = scannedAccounts
@@ -88,6 +95,7 @@ export function useScanAccounts({
 
   useEffect(() => {
     let cancelled = false;
+    emptyByIdRef.current = new Map();
     (async () => {
       const bridge = await getCurrencyBridge(currency);
       if (cancelled) return;
@@ -104,10 +112,25 @@ export function useScanAccounts({
           },
         }),
       )
-        .pipe(RX.scan((acc: Account[], { account }) => [...acc, account], []))
+        .pipe(
+          RX.concatMap(async ({ account }) => {
+            const accountBridge = await getAccountBridge(account);
+            emptyByIdRef.current.set(account.id, accountBridge.isAccountEmpty(account));
+            return account;
+          }),
+          RX.scan((acc: Account[], account: Account) => [...acc, account], []),
+        )
         .subscribe({
           next: (accounts: Account[]) => {
             setScannedAccounts(accounts);
+            setSelectedIds(current =>
+              computeSelectedIdsFromScan(
+                accounts,
+                existingAccountsRef.current,
+                current,
+                isAccountEmpty,
+              ),
+            );
             setScanning(true);
           },
           error: setError,
@@ -119,23 +142,14 @@ export function useScanAccounts({
       cancelled = true;
       stopSubscription(false);
     };
-  }, [blacklistedTokenIds, currency, deviceId, stopSubscription]);
+  }, [blacklistedTokenIds, currency, deviceId, isAccountEmpty, stopSubscription]);
 
-  useEffect(() => {
-    const unimportedAccounts = getUnimportedAccounts(scannedAccounts, existingAccounts);
-    const onlyNewAccounts = unimportedAccounts.every(isAccountEmpty);
-
-    const processedAccountIds = new Set<string>();
-    const freshAccounts = unimportedAccounts.filter(acc => {
-      if (processedAccountIds.has(acc.id)) {
-        return false;
-      }
-      processedAccountIds.add(acc.id);
-      return true;
-    });
-
-    setSelectedIds(current => determineSelectedIds(freshAccounts, onlyNewAccounts, current));
-  }, [existingAccounts, scannedAccounts]);
+  useLayoutEffect(() => {
+    const resolved = scannedAccountsRef.current.filter(a => emptyByIdRef.current.has(a.id));
+    setSelectedIds(current =>
+      computeSelectedIdsFromScan(resolved, existingAccounts, current, isAccountEmpty),
+    );
+  }, [existingAccounts, isAccountEmpty]);
 
   const {
     importableAccounts,

@@ -2,10 +2,10 @@ import { derivePath } from "ed25519-hd-key";
 import { generateMnemonic, mnemonicToSeed } from "bip39";
 import { Keypair, VersionedMessage, VersionedTransaction } from "@solana/web3.js";
 import type { SolanaSigner } from "@ledgerhq/coin-solana/signer";
-import type { SolanaSigner as AlpacaSolanaSigner } from "@ledgerhq/live-common/bridge/generic-coin-framework/families/solana/signer";
+import type { SolanaSigner as CoinFrameworkSolanaSigner } from "@ledgerhq/live-common/bridge/generic-coin-framework/families/solana/signer";
 
 export type Signers = {
-  alpaca: AlpacaSolanaSigner;
+  coinframework: CoinFrameworkSolanaSigner;
   bridge: SolanaSigner;
 };
 
@@ -35,7 +35,7 @@ export async function buildSigners(): Promise<Signers> {
     },
   };
 
-  const alpaca: AlpacaSolanaSigner = {
+  const coinframework: CoinFrameworkSolanaSigner = {
     getAddress: async (path: string) => ({
       address: keyPair(path).publicKey.toBuffer(),
     }),
@@ -47,5 +47,5 @@ export async function buildSigners(): Promise<Signers> {
     },
   };
 
-  return { alpaca, bridge };
+  return { coinframework, bridge };
 }

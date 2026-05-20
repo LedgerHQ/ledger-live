@@ -1,5 +1,5 @@
 import type {
-  AlpacaApi,
+  CoinModuleApi,
   Balance,
   Block,
   BlockInfo,
@@ -26,7 +26,7 @@ import type { AleoCoinConfig, AleoConfig, AleoTransactionIntentData } from "../t
 export function createApi(
   config: AleoConfig,
   currencyId: string,
-): AlpacaApi<MemoNotSupported, AleoTransactionIntentData> {
+): CoinModuleApi<MemoNotSupported, AleoTransactionIntentData> {
   const aleoCoinConfig: AleoCoinConfig = { ...config, status: { type: "active" } };
   coinConfig.setCoinConfig(() => aleoCoinConfig);
   const currency = getCryptoCurrencyById(currencyId);
@@ -67,7 +67,7 @@ export function createApi(
         currency,
         address,
         options,
-        mode: "alpaca",
+        mode: "coin-framework",
       });
 
       return { items: operations, next: nextCursor ?? undefined };

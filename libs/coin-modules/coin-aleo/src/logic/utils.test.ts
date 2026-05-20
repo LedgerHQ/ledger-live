@@ -38,7 +38,7 @@ import {
   parseMicrocredits,
   determineTransactionType,
   patchAccountWithViewKey,
-  toAlpacaOperation,
+  toCoinFrameworkOperation,
   toBridgeOperation,
   toPrivateBridgeOperation,
   resolveConfig,
@@ -264,14 +264,14 @@ describe("determineTransactionType", () => {
   );
 });
 
-describe("toAlpacaOperation", () => {
+describe("toCoinFrameworkOperation", () => {
   const recipientAddress = "aleo1rhgdu77hgyqd3xjj8ucu3jj9r2krwz6mnzyd80gncr5fxcwlh5rsvzp9px";
   const senderAddress = "aleo1a2ehlgqhvs3p7d4hqhs0tvgk954dr8gafu9kxse2mzu9a5sqxvpsrn98pr";
 
   it("should set type to IN when address is the recipient", () => {
     const rawTx = getMockedPublicTransaction();
 
-    const result = toAlpacaOperation(rawTx, recipientAddress);
+    const result = toCoinFrameworkOperation(rawTx, recipientAddress);
 
     expect(result.type).toBe("IN");
   });
@@ -279,7 +279,7 @@ describe("toAlpacaOperation", () => {
   it("should set type to OUT when address is the sender", () => {
     const rawTx = getMockedPublicTransaction();
 
-    const result = toAlpacaOperation(rawTx, senderAddress);
+    const result = toCoinFrameworkOperation(rawTx, senderAddress);
 
     expect(result.type).toBe("OUT");
   });
@@ -287,7 +287,7 @@ describe("toAlpacaOperation", () => {
   it("should set type to NONE when program_id is not CREDITS", () => {
     const rawTx = getMockedPublicTransaction({ program_id: "custom.aleo" });
 
-    const result = toAlpacaOperation(rawTx, recipientAddress);
+    const result = toCoinFrameworkOperation(rawTx, recipientAddress);
 
     expect(result.type).toBe("NONE");
   });
@@ -295,7 +295,7 @@ describe("toAlpacaOperation", () => {
   it("should map core fields from rawTx", () => {
     const rawTx = getMockedPublicTransaction();
 
-    const result = toAlpacaOperation(rawTx, recipientAddress);
+    const result = toCoinFrameworkOperation(rawTx, recipientAddress);
 
     expect(result.id).toBe(rawTx.transaction_id);
     expect(result.senders).toEqual([rawTx.sender_address]);
@@ -310,7 +310,7 @@ describe("toAlpacaOperation", () => {
   it("should derive fees and blockHash from rawTx", () => {
     const rawTx = getMockedPublicTransaction();
 
-    const result = toAlpacaOperation(rawTx, recipientAddress);
+    const result = toCoinFrameworkOperation(rawTx, recipientAddress);
 
     expect(result.tx.fees).toBe(BigInt(rawTx.fee));
     expect(result.tx.block.hash).toBe(rawTx.block_hash);
@@ -319,7 +319,7 @@ describe("toAlpacaOperation", () => {
   it("should set failed to true when transaction_status is not Accepted", () => {
     const rawTx = getMockedPublicTransaction({ transaction_status: "Rejected" });
 
-    const result = toAlpacaOperation(rawTx, recipientAddress);
+    const result = toCoinFrameworkOperation(rawTx, recipientAddress);
 
     expect(result.tx.failed).toBe(true);
   });
@@ -327,7 +327,7 @@ describe("toAlpacaOperation", () => {
   it("should include functionId, transactionType, and ledgerOpType in details", () => {
     const rawTx = getMockedPublicTransaction();
 
-    const result = toAlpacaOperation(rawTx, recipientAddress);
+    const result = toCoinFrameworkOperation(rawTx, recipientAddress);
 
     expect(result.details).toMatchObject({
       functionId: rawTx.function_id,

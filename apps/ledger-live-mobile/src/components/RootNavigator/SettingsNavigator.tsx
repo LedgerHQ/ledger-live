@@ -44,7 +44,9 @@ import DebugVideos from "~/screens/Settings/Debug/Features/Videos";
 import TooltipDemo from "~/screens/Settings/Debug/Features/TooltipDemo";
 import DebugDeviceActionContentScreen from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/DeviceActionContentScreen";
 import DebugInfoStateScreen from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/InfoStateScreen";
+import DebugConnectDeviceScreen from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/ConnectDeviceScreen";
 import DebugDeviceIntentExecutorInitialization from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/InitializationScreen";
+import DebugInitializerStatesScreen from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/InitializerStatesScreen";
 import DebugDeviceIntentExecutorOrchestration from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/OrchestrationScreen";
 import Settings from "~/screens/Settings";
 import AccountsSettings from "~/screens/Settings/Accounts";
@@ -327,10 +329,24 @@ export default function SettingsNavigator() {
         }}
       />
       <Stack.Screen
+        name={ScreenName.DebugDeviceIntentExecutorConnectDevice}
+        component={DebugConnectDeviceScreen}
+        options={{
+          title: "DIE Connect Device",
+        }}
+      />
+      <Stack.Screen
         name={ScreenName.DebugDeviceIntentExecutorInitialization}
         component={DebugDeviceIntentExecutorInitialization}
         options={{
           title: "DIE Initialization",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugDeviceIntentExecutorInitializerStates}
+        component={DebugInitializerStatesScreen}
+        options={{
+          title: "DIE Initializer States",
         }}
       />
       <Stack.Screen

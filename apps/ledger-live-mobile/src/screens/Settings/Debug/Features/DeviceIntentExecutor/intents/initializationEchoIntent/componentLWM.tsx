@@ -6,6 +6,8 @@ export function InitializationEchoIntentComponentLWM({
   jobState,
 }: Readonly<{
   jobState: InitializationEchoIntentJobState | undefined;
+  extraProps: Record<string, never>;
+  onClose: () => void;
 }>) {
   return (
     <Flex p={4}>

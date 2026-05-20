@@ -1,18 +1,18 @@
 import BigNumber from "bignumber.js";
 import { genericEstimateMaxSpendable } from "../estimateMaxSpendable";
-import * as alpaca from "../api";
+import * as coinframework from "../api";
 import { Account } from "@ledgerhq/types-live";
 
-// Mock the alpaca API
+// Mock the coin module API
 jest.mock("../api", () => ({
-  getAlpacaApi: jest.fn(),
+  getCoinModuleApi: jest.fn(),
 }));
 
 jest.mock("../createTransaction", () => ({
   createTransaction: jest.fn().mockReturnValue({}),
 }));
 
-const mockedGetAlpacaApi = alpaca.getAlpacaApi as jest.Mock;
+const mockedGetCoinModuleApi = coinframework.getCoinModuleApi as jest.Mock;
 
 describe("genericEstimateMaxSpendable", () => {
   const validateIntentMock = jest.fn();
@@ -37,7 +37,7 @@ describe("genericEstimateMaxSpendable", () => {
   });
 
   it("subtracts estimated fee from spendable balance", async () => {
-    mockedGetAlpacaApi.mockReturnValue({
+    mockedGetCoinModuleApi.mockReturnValue({
       estimateFees: estimateFeesMock.mockResolvedValue({ value: 10000n }),
       validateIntent: validateIntentMock.mockResolvedValue({ amount: 49990000n }),
     });
@@ -63,7 +63,7 @@ describe("genericEstimateMaxSpendable", () => {
       spendableBalance: new BigNumber(5000),
     };
 
-    mockedGetAlpacaApi.mockReturnValue({
+    mockedGetCoinModuleApi.mockReturnValue({
       estimateFees: estimateFeesMock.mockResolvedValue({ value: 10000n }),
       validateIntent: validateIntentMock.mockResolvedValue({ amount: 0n }),
     });
@@ -79,7 +79,7 @@ describe("genericEstimateMaxSpendable", () => {
   });
 
   it("returns full spendable balance if fee is 0", async () => {
-    mockedGetAlpacaApi.mockReturnValue({
+    mockedGetCoinModuleApi.mockReturnValue({
       estimateFees: estimateFeesMock.mockResolvedValue({ value: 0n }),
       validateIntent: validateIntentMock.mockResolvedValue({ amount: 50000000n }),
     });

@@ -99,6 +99,8 @@ export interface IntentPlatformDefinition<JobState, Input = undefined, ExtraProp
   readonly component: React.ComponentType<{
     jobState: JobState | undefined;
     extraProps: ExtraProps;
+    /** Call to request the executor to close (forwards to `DeviceIntentExecutorProps.onUserCancel`). */
+    onClose: () => void;
   }>;
 }
 

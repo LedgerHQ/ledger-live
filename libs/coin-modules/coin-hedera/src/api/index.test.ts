@@ -60,7 +60,7 @@ describe("createApi", () => {
     });
   });
 
-  it("should return an API object with alpaca api methods", () => {
+  it("should return an API object with coin module api methods", () => {
     expect(api.broadcast).toBeInstanceOf(Function);
     expect(api.combine).toBeInstanceOf(Function);
     expect(api.craftTransaction).toBeInstanceOf(Function);
@@ -321,7 +321,7 @@ describe("createApi", () => {
       ).rejects.toThrow("minHeight is not supported");
     });
 
-    it("should return mapped alpaca operations with correct shape", async () => {
+    it("should return mapped coin-framework operations with correct shape", async () => {
       mockListOperationsV2.mockResolvedValue({
         coinOperations: [mockOperation],
         tokenOperations: [],

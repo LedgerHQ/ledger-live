@@ -1,8 +1,9 @@
-import { serializeV1 } from "../../shared/accountDescriptor";
-import type { Balance, Operation, DiscoveredAccount } from "../models";
+import type { Balance, Operation, DiscoveredAccount, TokenInfo } from "../models";
 import type { HumanFormatter } from "./human";
 
 export type JsonBalance = { asset: string; amount: string };
+
+export type JsonDiscoveredAccount = { label: string; freshAddress: string };
 
 export type JsonOperation = {
   accountId: string;
@@ -52,7 +53,11 @@ export class JsonFormatter {
     );
   }
 
-  static discoveredAccounts(accounts: DiscoveredAccount[]): string[] {
-    return accounts.map(a => serializeV1(a.descriptor));
+  static discoveredAccounts(accounts: DiscoveredAccount[]): JsonDiscoveredAccount[] {
+    return accounts.map(a => ({ label: a.label, freshAddress: a.freshAddress }));
+  }
+
+  token(t: TokenInfo): TokenInfo {
+    return t;
   }
 }

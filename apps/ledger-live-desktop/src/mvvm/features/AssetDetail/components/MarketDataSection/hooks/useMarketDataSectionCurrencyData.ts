@@ -4,21 +4,21 @@ import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducer
 import type { AssetMarketData } from "@ledgerhq/asset-detail";
 
 export type MarketDataSectionCurrencyData = Readonly<{
-  data: MarketCurrencyData | undefined;
+  data?: MarketCurrencyData;
   showSkeleton: boolean;
   counterCurrency: string;
   locale: string;
 }>;
 
 export function useMarketDataSectionCurrencyData(
-  market: AssetMarketData,
+  marketData: AssetMarketData,
 ): MarketDataSectionCurrencyData {
   const counterCurrency = useSelector(counterValueCurrencySelector).ticker.toLowerCase();
   const locale = useSelector(localeSelector);
 
   return {
-    data: market.marketCurrencyData,
-    showSkeleton: !market.marketCurrencyData && market.isLoading,
+    data: marketData.marketCurrencyData,
+    showSkeleton: !marketData.marketCurrencyData && marketData.isLoading,
     counterCurrency,
     locale,
   };

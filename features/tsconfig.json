@@ -1,4 +1,4 @@
 {
   "files": [],
-  "references": [{ "path": "./market-banner" }]
+  "references": [{ "path": "./flow/market-banner" }]
 }

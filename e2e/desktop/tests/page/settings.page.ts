@@ -4,9 +4,14 @@ import { expect } from "@playwright/test";
 import axios from "axios";
 import * as path from "path";
 import { FileUtils } from "../utils/fileUtils";
-import { mkdir, rename } from "fs/promises";
 
 export class SettingsPage extends AppPage {
+  private static readonly EXPORT_LOGS_SOURCE_PATH = path.resolve("./ledgerwallet-logs.txt");
+  private static readonly EXPORT_LOGS_ARTIFACT_PATH = path.resolve(
+    __dirname,
+    "../artifacts/ledgerwallet-logs.txt",
+  );
+
   private syncWalletSyncButton = this.page.getByTestId("button-sync-walletSync");
   private manageWalletSyncButton = this.page.getByTestId("button-manage-walletSync");
   private readonly turnOnLedgerSyncButton = this.page.getByTestId("button-turn-on-ledger-sync");
@@ -153,15 +158,27 @@ export class SettingsPage extends AppPage {
   @step("Click on export logs")
   async clickExportLogs() {
     await this.exportLogsButton.click();
+  }
 
-    const originalFilePath = path.resolve("./ledgerwallet-logs.txt");
-    const targetFilePath = path.resolve(__dirname, "../artifacts/ledgerwallet-logs.txt");
+  @step("Expect exported logs file to be created")
+  async expectExportLogsFileCreated() {
+    const timeout = 5000;
+    const fileExists = await FileUtils.waitForFileToExist(
+      SettingsPage.EXPORT_LOGS_SOURCE_PATH,
+      timeout,
+    );
+    expect(
+      fileExists,
+      `Export file was not created at ${SettingsPage.EXPORT_LOGS_SOURCE_PATH} within ${timeout}ms`,
+    ).toBeTruthy();
+  }
 
-    const fileExists = await FileUtils.waitForFileToExist(originalFilePath, 5000);
-    expect(fileExists).toBeTruthy();
-
-    const targetDir = path.dirname(targetFilePath);
-    await mkdir(targetDir, { recursive: true });
-    await rename(originalFilePath, targetFilePath);
+  // Electron writes the logs to process.cwd(); move them under tests/artifacts so Playwright/CI collects them and the repo root stays clean (same pattern as swap.page.ts and history.page.ts).
+  @step("Move exported logs to artifacts folder")
+  async moveExportedLogsToArtifacts() {
+    await FileUtils.waitForFileAndMove(
+      SettingsPage.EXPORT_LOGS_SOURCE_PATH,
+      SettingsPage.EXPORT_LOGS_ARTIFACT_PATH,
+    );
   }
 }

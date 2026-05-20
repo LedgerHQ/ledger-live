@@ -39,6 +39,7 @@ function CryptoAddressesView({
   emptyStateLabel,
   trackingPage,
   sourceScreenName,
+  hideAddAccount,
 }: Readonly<ReturnType<typeof useCryptoAddressesViewModel>>) {
   const { bottom } = useSafeAreaInsets();
   const renderItem = useCallback(
@@ -61,6 +62,8 @@ function CryptoAddressesView({
     return <CryptoAddressesEmptyState label={emptyStateLabel} />;
   }, [isLoading, emptyStateLabel]);
 
+  const listPaddingBottom = hideAddAccount ? bottom : FOOTER_HEIGHT + bottom;
+
   return (
     <Box style={{ flex: 1 }}>
       <TrackScreen name={trackingPage} source={sourceScreenName} />
@@ -74,23 +77,35 @@ function CryptoAddressesView({
             data={accounts}
             showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: FOOTER_HEIGHT + bottom }}
+            contentContainerStyle={{ paddingBottom: listPaddingBottom }}
             ListEmptyComponent={ListEmpty}
           />
         )}
-        <CryptoAddressesFooter label={addAccountLabel} onPress={onAddAccountPress} />
+        {!hideAddAccount && (
+          <CryptoAddressesFooter label={addAccountLabel} onPress={onAddAccountPress} />
+        )}
       </Box>
-      <AddAccountDrawer
-        isOpened={isAddAccountOpen}
-        onClose={onCloseAddAccount}
-        doesNotHaveAccount={hasNoAccount}
-      />
+      {!hideAddAccount && (
+        <AddAccountDrawer
+          isOpened={isAddAccountOpen}
+          onClose={onCloseAddAccount}
+          doesNotHaveAccount={hasNoAccount}
+        />
+      )}
     </Box>
   );
 }
 
 export default withDiscreetMode(function CryptoAddressesScreen({ route }: Props) {
-  return <CryptoAddressesView {...useCryptoAddressesViewModel(route.params?.sourceScreenName)} />;
+  return (
+    <CryptoAddressesView
+      {...useCryptoAddressesViewModel(
+        route.params?.sourceScreenName,
+        route.params?.accountIds,
+        route.params?.hideAddAccount,
+      )}
+    />
+  );
 });
 
 const containerStyle: LumenViewStyle = {

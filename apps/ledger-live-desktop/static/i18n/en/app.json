@@ -4325,7 +4325,7 @@
             "starter": {
               "title": "Redelegation",
               "description": "Use redelegation to easily change from one validator to another. But if you change your mind again, you will then have to wait because redelegation triggers a {{ numberOfDays }}-day timelock.",
-              "warning": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately. You can have a maximum of <0>{{maxRedelegations}} pending redelegations</0>.",              
+              "warning": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately. You can have a maximum of <0>{{maxRedelegations}} pending redelegations</0>.",
               "howDelegationWorks": "How delegation works?"
             },
             "validators": {
@@ -4655,6 +4655,32 @@
         "cta": "Stake"
       }
     },
+    "unstake": {
+      "flow": {
+        "title": "Unstake XTZ",
+        "steps": {
+          "amount": {
+            "title": "Amount",
+            "amountLabel": "Amount to unstake",
+            "availableLabel": "Staked",
+            "maxLabel": "Max",
+            "unbondingNotice": "Unstaking takes 4 days. During this period your XTZ remains delegated and stops earning staking rewards."
+          },
+          "device": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "broadcastError": "Your unstaking transaction couldn't be sent to the network. Please try again.",
+            "success": {
+              "title": "Unstake submitted",
+              "text": "Your XTZ are unstaking and will be available for withdrawal in ~4 days.",
+              "cta": "View details"
+            }
+          }
+        }
+      }
+    },
     "stake": {
       "flow": {
         "title": "Stake",
@@ -4688,6 +4714,24 @@
           }
         }
       }
+    },
+    "unstakeRequired": {
+      "changeBaker": {
+        "title": "Unstake before changing baker",
+        "description": "You have staked XTZ with your current baker. Unstake your funds before delegating to a new baker."
+      },
+      "endDelegation": {
+        "title": "Unstake before ending delegation",
+        "description": "You have staked XTZ with your current baker. Unstake your funds before ending the delegation."
+      },
+      "steps": {
+        "0": "Open the Earn menu and select Unstake.",
+        "1": "Confirm the amount and submit the unstake transaction on your device.",
+        "2": "Wait ~4 days for the unstake period to complete.",
+        "3": "Once withdrawn, you can change baker or end delegation."
+      },
+      "learnMore": "Learn more about Tezos staking",
+      "close": "Close"
     }
   },
   "delegation": {
@@ -8920,8 +8964,7 @@
       "csv": "Export"
     },
     "exportDialog": {
-      "title": "Transaction history",
-      "description": "Choose the accounts to include in the export",
+      "title": "Export transaction history",
       "disclaimer": "Estimated values only. Countervalues are provided by Kaiko for information purposes. Do not use this data for tax, legal, or accounting purposes.",
       "accountsToInclude": "Accounts to include",
       "selectAll": "Select all ({{count}})",
@@ -8971,6 +9014,67 @@
     "pricePerformance": "Price performance",
     "marketRank": "Market rank",
     "tradingVolume24h": "24h trading volume",
-    "day": "1 day"
+    "day": "1 day",
+    "staking": {
+      "availableBalance": "Available balance",
+      "availableBalanceTooltip": "The portion of your holdings you can use right now, free to send, swap, or withdraw at any time.",
+      "earnDeposit": "Earn deposit",
+      "earnBanner": "Earn up to {{apy}}% {{type}}",
+      "earnBannerDefault": "Earn with this asset",
+      "earnBannerSubtitle": "Hold and earn with this asset",
+      "earnBannerAction": "Go to Earn"
+    }
+  },
+  "pnl": {
+    "asset": {
+      "entry": {
+        "title": "Average entry price",
+        "tooltip": "The average price you paid for this asset in this wallet, including everything you’ve bought or received from other wallets. This is used to track your profit or loss."
+      },
+      "return": {
+        "title": "Unrealised return"
+      },
+      "dialog": {
+        "title": "Profit and loss",
+        "description": "A summary of how this asset has performed in your portfolio.",
+        "totalReturn": {
+          "title": "Total return",
+          "description": "The sum of unrealised and realised returns."
+        },
+        "unrealisedReturn": {
+          "title": "Unrealised return",
+          "description": "The estimated gain or loss if sold at today's price."
+        },
+        "realisedReturn": {
+          "title": "Realised return",
+          "description": "Profit or loss confirmed from previous sales or transfers."
+        }
+      }
+    },
+    "portfolio": {
+      "return": {
+        "title": "Unrealised return"
+      },
+      "costBasis": {
+        "title": "Cost basis",
+        "tooltip": "The total amount you paid to acquire your current holdings, including fees."
+      },
+      "dialog": {
+        "title": "Profit and loss",
+        "description": "Your portfolio performance broken down into realised and unrealised returns.",
+        "totalReturn": {
+          "title": "Total return",
+          "description": "Realised and unrealised returns combined, reflecting your overall position."
+        },
+        "unrealisedReturn": {
+          "title": "Unrealised return",
+          "description": "Estimated gain or loss on your current holdings."
+        },
+        "realisedReturn": {
+          "title": "Realised return",
+          "description": "Profit or loss confirmed from previous sales or outgoing transfers."
+        }
+      }
+    }
   }
 }

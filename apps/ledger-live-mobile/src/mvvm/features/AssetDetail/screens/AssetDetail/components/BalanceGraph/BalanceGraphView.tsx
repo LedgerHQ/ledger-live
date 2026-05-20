@@ -7,6 +7,7 @@ import {
   Button,
   SegmentedControl,
   SegmentedControlButton,
+  Skeleton,
   Text,
 } from "@ledgerhq/lumen-ui-rnative";
 import type { FormattedValue } from "@ledgerhq/lumen-ui-rnative";
@@ -30,6 +31,7 @@ type Props = Readonly<{
   onRangeChange: (value: string) => void;
   showReceive: boolean;
   onReceivePress: () => void;
+  isLoading: boolean;
 }>;
 
 export function BalanceGraphView({
@@ -44,33 +46,38 @@ export function BalanceGraphView({
   onRangeChange,
   showReceive,
   onReceivePress,
+  isLoading,
 }: Props) {
   const { t } = useTranslation();
 
   return (
     <Box testID={ASSET_DETAIL_TEST_IDS.balanceGraph} lx={containerStyle}>
       {/* Box 1 — Header: label + price + trend */}
-      <Box lx={headerStyle}>
-        <Text typography="body3" lx={{ color: "muted" }}>
-          {t("assetDetail.balanceGraph.marketPrice")}
-        </Text>
+      {isLoading && !hasMarketData ? (
+        <Skeleton lx={{ height: "s56", width: "s256", borderRadius: "md" }} />
+      ) : (
+        <Box lx={headerStyle}>
+          <Text typography="body3" lx={{ color: "muted" }}>
+            {t("assetDetail.balanceGraph.marketPrice")}
+          </Text>
 
-        {hasMarketData && (
-          <>
-            <AmountDisplay
-              value={price}
-              formatter={priceFormatter}
-              testID={ASSET_DETAIL_TEST_IDS.marketPrice}
-            />
+          {hasMarketData && (
+            <>
+              <AmountDisplay
+                value={price}
+                formatter={priceFormatter}
+                testID={ASSET_DETAIL_TEST_IDS.marketPrice}
+              />
 
-            <Trend
-              percentage={priceChangePercentage}
-              formattedChange={formattedPriceChange}
-              timeLabel={rangeTimeLabel}
-            />
-          </>
-        )}
-      </Box>
+              <Trend
+                percentage={priceChangePercentage}
+                formattedChange={formattedPriceChange}
+                timeLabel={rangeTimeLabel}
+              />
+            </>
+          )}
+        </Box>
+      )}
 
       {/* Box 2 — Chart placeholder */}
       <Box

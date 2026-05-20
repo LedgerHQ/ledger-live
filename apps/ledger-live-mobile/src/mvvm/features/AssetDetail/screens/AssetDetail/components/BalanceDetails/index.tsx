@@ -7,9 +7,10 @@ import { BalanceDetailsView } from "./BalanceDetailsView";
 type Props = Readonly<{
   currency: AssetDetailCurrencyProps;
   distributionItem: DistributionItem | undefined;
+  isLoading: boolean;
 }>;
 
-export function BalanceDetails({ currency, distributionItem }: Props) {
+export function BalanceDetails({ currency, distributionItem, isLoading }: Props) {
   const viewModel = useBalanceDetailsViewModel(currency, distributionItem);
-  return <BalanceDetailsView {...viewModel} />;
+  return <BalanceDetailsView {...viewModel} isLoading={isLoading} />;
 }

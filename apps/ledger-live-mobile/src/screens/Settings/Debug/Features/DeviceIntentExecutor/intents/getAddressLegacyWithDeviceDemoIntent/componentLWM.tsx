@@ -10,6 +10,7 @@ export function GetAddressLegacyWithDeviceDemoIntentComponentLWM({
 }: {
   jobState: GetAddressLegacyWithDeviceDemoIntentJobState | undefined;
   extraProps: GetAddressLegacyWithDeviceDemoIntentExtraProps;
+  onClose: () => void;
 }) {
   return (
     <Flex p={4}>

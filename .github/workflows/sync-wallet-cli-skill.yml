@@ -1,0 +1,170 @@
+name: "[Wallet CLI] - Sync Skill - Push"
+
+on:
+  push:
+    branches:
+      - develop
+    paths:
+      - ".agents/skills/ledger-wallet-cli/**"
+  workflow_dispatch:
+    inputs:
+      source_ref:
+        description: "ledger-live ref to sync from (defaults to triggering commit)"
+        required: false
+      target_base:
+        description: "agent-skills base branch"
+        required: false
+        default: main
+      sync_branch:
+        description: "agent-skills branch updated by this workflow"
+        required: false
+        default: sync/wallet-cli-skill
+
+concurrency:
+  group: sync-wallet-cli-skill
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  sync-wallet-cli-skill:
+    name: Sync wallet-cli skill
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      SOURCE_SKILL_DIR: .agents/skills/ledger-wallet-cli
+      TARGET_REPOSITORY: LedgerHQ/agent-skills
+      TARGET_BASE: ${{ inputs.target_base || 'main' }}
+      SYNC_BRANCH: ${{ inputs.sync_branch || 'sync/wallet-cli-skill' }}
+      TARGET_SKILL_DIR: skills/wallet-cli/wallet-cli-usage
+    steps:
+      - name: Generate token
+        id: generate-token
+        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # 2.2.1
+        with:
+          app-id: ${{ secrets.GH_BOT_APP_ID }}
+          private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+          repositories: |
+            ledger-live
+            agent-skills
+
+      - name: Checkout ledger-live
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          ref: ${{ inputs.source_ref || github.sha }}
+          token: ${{ steps.generate-token.outputs.token }}
+          path: ledger-live
+
+      - name: Checkout agent-skills
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          repository: ${{ env.TARGET_REPOSITORY }}
+          ref: ${{ env.TARGET_BASE }}
+          token: ${{ steps.generate-token.outputs.token }}
+          path: agent-skills
+
+      - name: Export wallet-cli skill
+        run: |
+          set -euo pipefail
+
+          source_skill_dir="$GITHUB_WORKSPACE/ledger-live/$SOURCE_SKILL_DIR"
+          target_skill_dir="$GITHUB_WORKSPACE/agent-skills/$TARGET_SKILL_DIR"
+
+          rm -rf "$target_skill_dir"
+          mkdir -p "$target_skill_dir"
+
+          cp -R "$source_skill_dir/references" "$target_skill_dir/references"
+
+          sed -E \
+            -e 's|^name: ledger-wallet-cli$|name: wallet-cli-usage|' \
+            -e 's|Run from repo root: `pnpm --silent wallet-cli start <command> \[flags\]`|Install globally with a user-preferred package manager — `npm i -g @ledgerhq/wallet-cli`, `pnpm add -g @ledgerhq/wallet-cli`, `yarn global add @ledgerhq/wallet-cli`, or `bun add -g @ledgerhq/wallet-cli`. Run: `wallet-cli [flags]`.|' \
+            -e 's|pnpm --silent wallet-cli start ?|wallet-cli |g' \
+            "$source_skill_dir/SKILL.md" > "$target_skill_dir/SKILL.md"
+
+          if grep -Fq "pnpm --silent wallet-cli start" "$target_skill_dir/SKILL.md"; then
+            echo "Exported skill still contains monorepo-only wallet-cli commands."
+            exit 1
+          fi
+
+          if grep -Fq "Run from repo root" "$target_skill_dir/SKILL.md"; then
+            echo "Exported skill still contains monorepo-only run instructions."
+            exit 1
+          fi
+
+          if ! grep -Fq "name: wallet-cli-usage" "$target_skill_dir/SKILL.md"; then
+            echo "Exported skill frontmatter does not match the agent-skills skill name."
+            exit 1
+          fi
+
+          if [ ! -f "$target_skill_dir/references/business-logic.md" ]; then
+            echo "Exported skill is missing references/business-logic.md."
+            exit 1
+          fi
+
+      - name: Commit and push changes
+        id: commit
+        working-directory: agent-skills
+        run: |
+          set -euo pipefail
+
+          # NOTE: $SYNC_BRANCH is fully managed by this workflow and force-pushed on every run.
+          # Do not commit to it directly — manual commits will be lost.
+          git checkout -B "$SYNC_BRANCH"
+          git add "$TARGET_SKILL_DIR"
+
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No agent-skills changes to sync."
+            exit 0
+          fi
+
+          git config user.name "ledgerlive-bot"
+          git config user.email "ledgerlive-bot@ledger.fr"
+          git commit -m "chore: sync wallet-cli skill"
+
+          remote_sha=$(git ls-remote --heads origin "$SYNC_BRANCH" | awk '{print $1}')
+          if [ -n "$remote_sha" ]; then
+            git push --force-with-lease="refs/heads/$SYNC_BRANCH:$remote_sha" origin "HEAD:$SYNC_BRANCH"
+          else
+            git push origin "HEAD:$SYNC_BRANCH"
+          fi
+
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Open or update pull request
+        if: steps.commit.outputs.changed == 'true'
+        working-directory: agent-skills
+        env:
+          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
+        run: |
+          set -euo pipefail
+
+          body=$(cat <<EOF
+          Syncs the wallet-cli skill from LedgerHQ/ledger-live.
+
+          Source commit: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}
+          Workflow run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}
+          EOF
+          )
+
+          pr_number=$(gh pr list \
+            --repo "$TARGET_REPOSITORY" \
+            --head "$SYNC_BRANCH" \
+            --base "$TARGET_BASE" \
+            --state open \
+            --json number \
+            --jq '.[0].number // empty')
+
+          if [ -n "$pr_number" ]; then
+            gh pr edit "$pr_number" \
+              --repo "$TARGET_REPOSITORY" \
+              --body "$body"
+          else
+            gh pr create \
+              --repo "$TARGET_REPOSITORY" \
+              --base "$TARGET_BASE" \
+              --head "$SYNC_BRANCH" \
+              --title "chore: sync wallet-cli skill" \
+              --body "$body"
+          fi

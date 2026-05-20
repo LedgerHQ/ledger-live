@@ -41,6 +41,11 @@ describe("isPayable", () => {
       expect(result).toBe(false);
     });
 
+    it("should return false for withdrawDelegationRewards function (nonpayable)", () => {
+      const result = isPayable("sei_evm", "withdrawDelegationRewards");
+      expect(result).toBe(false);
+    });
+
     it("should return false for non-existent function", () => {
       const result = isPayable("sei_evm", "nonExistentFunction");
       expect(result).toBe(false);

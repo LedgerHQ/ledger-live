@@ -56,7 +56,7 @@ describe.each([
       craftTransactionData: expect.any(Function),
     },
   ],
-])("Alpaca methods %s", (_s, config, methods) => {
+])("coin-framework methods %s", (_s, config, methods) => {
   it("ensures methods are presents", () => {
     expect(createApi(config as EvmConfig, "ethereum")).toEqual(methods);
   });

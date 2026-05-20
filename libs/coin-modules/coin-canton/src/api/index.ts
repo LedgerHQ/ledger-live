@@ -1,5 +1,5 @@
 import {
-  AlpacaApi,
+  CoinModuleApi,
   Balance,
   Block,
   BlockInfo,
@@ -20,7 +20,7 @@ import { validateAddress } from "../bridge/validateAddress";
 import { combine } from "../common-logic/transaction/combine";
 import coinConfig, { type CantonCoinConfig } from "../config";
 
-export function createApi(config: CantonCoinConfig): AlpacaApi {
+export function createApi(config: CantonCoinConfig): CoinModuleApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {

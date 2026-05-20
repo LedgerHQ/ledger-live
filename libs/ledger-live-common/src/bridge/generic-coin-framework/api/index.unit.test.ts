@@ -1,4 +1,4 @@
-import { getAlpacaApi } from "./index";
+import { getCoinModuleApi } from "./index";
 import * as xrpModule from "@ledgerhq/coin-xrp/api/index";
 import * as stellarModule from "@ledgerhq/coin-stellar/api/index";
 import * as cantonModule from "@ledgerhq/coin-canton/api/index";
@@ -39,10 +39,10 @@ jest.mock("@ledgerhq/coin-evm/api/index", () => ({
 }));
 
 jest.mock("./network/network-coin-service", () => ({
-  getNetworkAlpacaApi: jest.fn(),
+  getNetworkCoinModuleApi: jest.fn(),
 }));
 
-describe("getAlpacaApi", () => {
+describe("getCoinModuleApi", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
@@ -73,7 +73,7 @@ describe("getAlpacaApi", () => {
     jest.spyOn(cantonModule, "createApi").mockReturnValue(mockApiInstance as any);
     jest.spyOn(tronModule, "createApi").mockReturnValue(mockApiInstance as any);
     jest.spyOn(evmModule, "createApi").mockReturnValue(mockApiInstance as any);
-    jest.spyOn(networkApi, "getNetworkAlpacaApi").mockReturnValue(mockApiInstance as any);
+    jest.spyOn(networkApi, "getNetworkCoinModuleApi").mockReturnValue(mockApiInstance as any);
   });
 
   const testCases = [
@@ -92,15 +92,15 @@ describe("getAlpacaApi", () => {
 
   testCases.forEach(({ network, module, label, params }) => {
     it(`should return ${label} API for network "${network}" and kind "local"`, async () => {
-      const result = await getAlpacaApi(network, "local");
+      const result = await getCoinModuleApi(network, "local");
       expect(result).toEqual(mockApiInstance);
       expect(module.createApi).toHaveBeenCalledWith(...params);
     });
   });
 
   it("should return network API for kind !== 'local'", async () => {
-    const result = await getAlpacaApi("xrp", "remote");
-    expect(networkApi.getNetworkAlpacaApi).toHaveBeenCalledWith("xrp");
+    const result = await getCoinModuleApi("xrp", "remote");
+    expect(networkApi.getNetworkCoinModuleApi).toHaveBeenCalledWith("xrp");
     expect(result).toEqual(mockApiInstance);
   });
 });

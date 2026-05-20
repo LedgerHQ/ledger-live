@@ -239,6 +239,12 @@ function createExecutorMachine<JobState, Input, ExtraProps>() {
       intentError: {
         entry: ({ context }) => {
           log(LOG_TYPE, "state: intentError", { error: context.error });
+          console.warn(
+            "[DeviceIntentExecutor] intent observable emitted an uncaught error. " +
+              "Intents are expected to handle their own errors; this generic fallback " +
+              "should not be reached in a correct implementation.",
+            context.error,
+          );
           context.listeners.onExecutorStateChanged({
             type: "executingIntentError",
             error: context.error,
@@ -295,6 +301,12 @@ function createExecutorMachine<JobState, Input, ExtraProps>() {
           log(LOG_TYPE, "state: invalidOperation — THIS IS A BUG", {
             error: context.error,
           });
+          console.warn(
+            "[DeviceIntentExecutor] executor entered an invalid state. This signals " +
+              "a mistake in how the executor is integrated by the caller (e.g. swapping " +
+              "intents while one is still running).",
+            context.error,
+          );
           context.listeners.onExecutorStateChanged({
             type: "invalidOperation",
             error: context.error,

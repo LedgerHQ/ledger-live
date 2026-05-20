@@ -1,11 +1,11 @@
-import type { AlpacaApi } from "@ledgerhq/coin-module-framework/api/index";
+import type { CoinModuleApi } from "@ledgerhq/coin-module-framework/api/index";
 import { createApi } from ".";
 import { ApiPromise, HttpProvider, Keyring } from "@polkadot/api";
 import { type ProviderInterface } from "@polkadot/rpc-provider/types";
 import { cryptoWaitReady, encodeAddress, hdLedger, mnemonicGenerate } from "@polkadot/util-crypto";
 
 describe("Polkadot Api", () => {
-  let module: AlpacaApi;
+  let module: CoinModuleApi;
   const address = "144HGaYrSdK3543bi26vT6Rd8Bg7pLPMipJNr2WLc3NuHgD2";
 
   beforeAll(() => {

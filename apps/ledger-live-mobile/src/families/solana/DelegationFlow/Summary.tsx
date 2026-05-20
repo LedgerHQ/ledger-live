@@ -17,7 +17,7 @@ import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import { capitalize } from "lodash/fp";
-import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
+import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
 import { Trans } from "~/context/Locale";
 import { Animated, StyleSheet, View, TextStyle, StyleProp } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -37,7 +37,7 @@ import TranslatedError from "../../../components/TranslatedError";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import NotEnoughFundFeesAlert from "../../shared/StakingErrors/NotEnoughFundFeesAlert";
 import { NotEnoughBalance } from "@ledgerhq/errors";
-import Config from "react-native-config";
+import { useChangeValidatorRotateAnim } from "../../shared/useChangeValidatorRotateAnim";
 import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
 import SupportLinkError from "~/components/SupportLinkError";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
@@ -102,46 +102,12 @@ export default function DelegationSummary({ navigation, route }: Props) {
   invariant(transaction, "transaction must be defined");
   invariant(transaction.family === "solana", "transaction solana");
 
-  const [rotateAnim] = useState(() => new Animated.Value(0));
-
-  useEffect(() => {
-    if (!Config.DETOX) {
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(rotateAnim, {
-            toValue: 1,
-            duration: 200,
-            useNativeDriver: true,
-          }),
-          Animated.timing(rotateAnim, {
-            toValue: -1,
-            duration: 300,
-            useNativeDriver: true,
-          }),
-          Animated.timing(rotateAnim, {
-            toValue: 0,
-            duration: 200,
-            useNativeDriver: true,
-          }),
-          Animated.delay(1000),
-        ]),
-      ).start();
-    }
-    return () => {
-      rotateAnim.setValue(0);
-    };
-  }, [rotateAnim]);
-
-  const rotate = rotateAnim.interpolate({
-    inputRange: [0, 1],
-
-    outputRange: ["0deg", "30deg"],
-  });
+  const { rotate, resetRotation } = useChangeValidatorRotateAnim();
 
   const onChangeDelegator = useCallback(() => {
-    rotateAnim.setValue(0);
+    resetRotation();
     navigation.navigate(ScreenName.DelegationSelectValidator, route.params);
-  }, [rotateAnim, navigation, route.params]);
+  }, [resetRotation, navigation, route.params]);
 
   const onChangeAmount = () => {
     navigation.navigate(ScreenName.SolanaEditAmount, route.params);

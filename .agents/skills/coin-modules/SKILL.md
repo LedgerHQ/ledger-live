@@ -1,8 +1,6 @@
 ---
 name: coin-modules
 description: Rules and layout for coin module packages under libs/coin-modules/. Read when adding or modifying a coin module.
-applies_to:
-  - libs/coin-modules
 ---
 
 # Coin Modules

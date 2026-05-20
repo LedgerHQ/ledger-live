@@ -802,6 +802,7 @@ describe("EVM Family", () => {
             value: 1n,
             from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
             to: "0xc2907efcce4011c491bbeda8a0fa63ba7aab596c",
+            gasPrice: "0",
           },
         ],
       } as any);
@@ -817,6 +818,7 @@ describe("EVM Family", () => {
             value: "1",
             from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
             to: "0xc2907efcce4011c491bbeda8a0fa63ba7aab596c",
+            gasPrice: "0",
           },
         ],
         transactionHashes: ["0xtx1"],
@@ -890,6 +892,7 @@ describe("EVM Family", () => {
             value: "0",
             from: "0x993aad80e425c646dab305381ff105169feedf67",
             to: "0x0000000000000000000000000000000000010003",
+            gasPrice: "0",
           },
         ],
       });
@@ -918,6 +921,32 @@ describe("EVM Family", () => {
           hash: "0x435b00d28a10febbcfefbdea080134d08ef843df122d5bc9174b09de7fce6a59",
           gasUsed: "500000",
           gasPrice: "1000000000",
+          status: 1,
+          erc20Transfers: [],
+        },
+      ]);
+    });
+
+    it("should resolve gasPrice to '0' when receipt has neither effectiveGasPrice nor gasPrice (Cronos-shaped receipt)", async () => {
+      jest.spyOn(JsonRpcProvider.prototype, "send").mockImplementationOnce(async method => {
+        if (method === "eth_getBlockReceipts") {
+          return [
+            {
+              transactionHash: "0x435b00d28a10febbcfefbdea080134d08ef843df122d5bc9174b09de7fce6a59",
+              gasUsed: "0x5208", // 21000
+              // no effectiveGasPrice, no gasPrice
+              status: "0x1",
+              logs: [],
+            },
+          ];
+        }
+        throw new Error(`Method not mocked: ${method}`);
+      });
+      expect(await nodeApi.getBlockReceipts!(fakeCurrency as CryptoCurrency, 1)).toEqual([
+        {
+          hash: "0x435b00d28a10febbcfefbdea080134d08ef843df122d5bc9174b09de7fce6a59",
+          gasUsed: "21000",
+          gasPrice: "0", // zeroed because neither effectiveGasPrice nor gasPrice were present
           status: 1,
           erc20Transfers: [],
         },

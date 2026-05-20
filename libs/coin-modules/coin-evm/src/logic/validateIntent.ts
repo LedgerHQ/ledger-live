@@ -266,7 +266,10 @@ function validateStaking(
       : 0n;
   const totalFees = estimatedFees.value + additionalFees;
 
-  if (!isStakingIntent(intent) || !["delegate", "redelegate", "undelegate"].includes(intent.mode)) {
+  if (
+    !isStakingIntent(intent) ||
+    !["delegate", "redelegate", "undelegate", "claimReward"].includes(intent.mode)
+  ) {
     return { errors: {}, warnings: {} };
   }
 

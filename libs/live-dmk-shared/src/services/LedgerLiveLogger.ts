@@ -16,6 +16,7 @@ export class LedgerLiveLogger implements LoggerSubscriberService {
     if (level !== null && level > this.maxLevel) {
       return;
     }
-    log("live-dmk-logger", message, { level, ...options });
+    // ${options.tag} looks like "[myTag]", so no need for an additional separator
+    log(`DMK${options.tag}`, message, { level, ...options });
   }
 }

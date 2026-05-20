@@ -144,7 +144,7 @@ export type TransactionInfo = {
 
 export type PrefetchedBlockTransaction = Pick<
   TransactionInfo,
-  "hash" | "value" | "from" | "to" | "input"
+  "hash" | "value" | "from" | "to" | "input" | "gasPrice"
 >;
 
 export type BlockReceiptInfo = Pick<

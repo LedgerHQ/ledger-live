@@ -4,36 +4,13 @@ import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { Warning } from "@ledgerhq/lumen-ui-rnative/symbols";
 
 type Props = Readonly<{
-  isLoading: boolean;
   isError: boolean;
   hasData: boolean;
   errorMessage: string;
-  skeletonKeys: readonly string[];
-  listStyle: LumenViewStyle;
-  skeletonStyle: LumenViewStyle;
   children: React.ReactNode;
 }>;
 
-export function SectionContentState({
-  isLoading,
-  isError,
-  hasData,
-  errorMessage,
-  skeletonKeys,
-  listStyle,
-  skeletonStyle,
-  children,
-}: Props) {
-  if (isLoading && !hasData) {
-    return (
-      <Box lx={listStyle}>
-        {skeletonKeys.map(key => (
-          <Box key={key} lx={skeletonStyle} />
-        ))}
-      </Box>
-    );
-  }
-
+export function SectionContentState({ isError, hasData, errorMessage, children }: Props) {
   if (isError && !hasData) {
     return (
       <Box lx={errorContainerStyle}>

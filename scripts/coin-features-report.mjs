@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Scans each coin-module's src/api/index.ts to detect which AlpacaApi methods
+ * Scans each coin-module's src/api/index.ts to detect which CoinModuleApi methods
  * are implemented vs stubbed ("not supported") vs missing.
  *
  * Usage:
@@ -90,7 +90,7 @@ function analyzeModule(modDir) {
   if (!existsSync(apiFile)) return null;
 
   const content = readFileSync(apiFile, "utf-8");
-  if (!content.includes("AlpacaApi") && !content.includes("createApi")) return null;
+  if (!content.includes("CoinModuleApi") && !content.includes("createApi")) return null;
 
   const returnBlock = extractReturnBlock(content);
   if (!returnBlock) return null;
@@ -126,7 +126,7 @@ function main() {
   const noApi = results.filter(r => r.methods === null);
 
   if (hasApi.length === 0) {
-    console.error("\n\x1b[31mNo coin-modules with AlpacaApi found.\x1b[0m\n");
+    console.error("\n\x1b[31mNo coin-modules with CoinModuleApi found.\x1b[0m\n");
     process.exit(1);
   }
 

@@ -1,11 +1,7 @@
 import type { DeviceSessionState, InstallPlan } from "@ledgerhq/device-management-kit";
 import { DeviceActionStatus, UserInteractionRequired } from "@ledgerhq/device-management-kit";
 import type { ConnectAppDAError, ConnectAppDAState } from "../ConnectApp/types";
-import {
-  DeviceInteractionRequiredType,
-  FinalStateType,
-  type EnsureAppReadyState,
-} from "./state";
+import { DeviceInteractionRequiredType, FinalStateType, type EnsureAppReadyState } from "./state";
 import { EnsureAppReadyStateEmitter } from "./EnsureAppReadyStateEmitter";
 import { mapConnectAppDAErrorStatus, mapConnectAppDAPendingStatus } from "./stateMapping";
 
@@ -106,7 +102,6 @@ describe("EnsureAppReadyStateEmitter", () => {
       // THEN
       expect(mapConnectAppDAPendingStatusMock).toHaveBeenCalledWith({
         state,
-        appName,
         deprecationDismissedCurrencyNames,
       });
       expect(harness.emittedStates).toEqual([mappedState]);
@@ -124,7 +119,6 @@ describe("EnsureAppReadyStateEmitter", () => {
       // THEN
       expect(mapConnectAppDAPendingStatusMock).toHaveBeenCalledWith({
         state,
-        appName,
         deprecationDismissedCurrencyNames,
       });
       expect(harness.observer.next).not.toHaveBeenCalled();

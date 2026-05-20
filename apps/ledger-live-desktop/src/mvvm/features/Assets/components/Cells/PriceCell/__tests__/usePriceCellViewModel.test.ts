@@ -58,11 +58,11 @@ describe("usePriceCellViewModel", () => {
     expect(mockedFormatCurrencyUnit).toHaveBeenCalledWith(
       mockCounterValueCurrency.units[0],
       new BigNumber(50000),
-      { showCode: true, disableRounding: false, subMagnitude: 0 },
+      expect.objectContaining({ showCode: true, disableRounding: false, subMagnitude: 0 }),
     );
   });
 
-  it("should use subMagnitude 1 and disableRounding when price < 1", () => {
+  it("should enable disableRounding and a high subMagnitude when price < 1", () => {
     mockedUsePrice.mockReturnValue(mockUsePriceReturn(new BigNumber(0.5)));
 
     renderHook(() => usePriceCellViewModel(mockCurrency));
@@ -70,7 +70,7 @@ describe("usePriceCellViewModel", () => {
     expect(mockedFormatCurrencyUnit).toHaveBeenCalledWith(
       mockCounterValueCurrency.units[0],
       new BigNumber(0.5),
-      { showCode: true, disableRounding: true, subMagnitude: 1 },
+      expect.objectContaining({ showCode: true, disableRounding: true, subMagnitude: 8 }),
     );
   });
 
@@ -85,7 +85,7 @@ describe("usePriceCellViewModel", () => {
     expect(mockedFormatCurrencyUnit).toHaveBeenCalledWith(
       mockCounterValueCurrency.units[0],
       expectedValue,
-      { showCode: true, disableRounding: false, subMagnitude: 0 },
+      expect.objectContaining({ showCode: true, disableRounding: false, subMagnitude: 0 }),
     );
   });
 
@@ -100,7 +100,7 @@ describe("usePriceCellViewModel", () => {
     expect(mockedFormatCurrencyUnit).toHaveBeenCalledWith(
       mockCounterValueCurrency.units[0],
       expectedValue,
-      { showCode: true, disableRounding: true, subMagnitude: 1 },
+      expect.objectContaining({ showCode: true, disableRounding: true, subMagnitude: 8 }),
     );
   });
 

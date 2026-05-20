@@ -10,7 +10,7 @@ export type ChainSpecificRules = {
 };
 
 export type BridgeApi = {
-  getChainSpecificRules?: () => ChainSpecificRules;
+  getChainSpecificRules?: ChainSpecificRules;
   getTokenFromAsset?: (asset: AssetInfo) => Promise<TokenCurrency | undefined>;
   getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo;
   computeIntentType?: (transaction: Record<string, unknown>) => string;

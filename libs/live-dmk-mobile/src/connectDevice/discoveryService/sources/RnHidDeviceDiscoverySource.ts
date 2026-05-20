@@ -1,7 +1,7 @@
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { rnHidTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-hid";
 import { catchError, map, of, type Observable } from "rxjs";
-import { DiscoveryErrors } from "../../types";
+import { DiscoveryErrorTypes } from "../../types";
 import {
   type DeviceDiscoverySource,
   type DeviceDiscoverySourceEvent,
@@ -25,8 +25,8 @@ export class RnHidDeviceDiscoverySource implements DeviceDiscoverySource {
         const event: DeviceDiscoverySourceEvent = {
           type: "error" as const,
           error: {
-            type: DiscoveryErrors.Unknown,
-            transportID: this.transportId,
+            type: DiscoveryErrorTypes.Unknown,
+            transportId: this.transportId,
             error,
           },
         };

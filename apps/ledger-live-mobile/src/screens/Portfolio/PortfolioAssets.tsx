@@ -18,7 +18,7 @@ import PortfolioQuickActionsBar from "./PortfolioQuickActionsBar";
 import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import TabSection, { TAB_OPTIONS, type TabListType } from "./TabSection";
 import { flattenAccountsSelector } from "~/reducers/accounts";
-import { MarketBanner as MarketBannerFeature } from "@features/market-banner";
+import { MarketBanner as MarketBannerFeature } from "@features/flow-market-banner";
 import { PortfolioPerpsEntryPoint } from "LLM/features/Portfolio/components";
 
 type Props = {

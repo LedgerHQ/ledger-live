@@ -1,5 +1,5 @@
 import type {
-  AlpacaApi,
+  CoinModuleApi,
   FeeEstimation,
   Operation,
 } from "@ledgerhq/coin-module-framework/api/types";
@@ -7,7 +7,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { createApi } from ".";
 
 describe("Sui Api", () => {
-  let module: AlpacaApi;
+  let module: CoinModuleApi;
   const SENDER = "0xc6dcb5b920f2fdb751b4a8bad800a4ee04257020d8d6e493c8103b760095016e";
   const RECIPIENT = "0xba7080172a6d957b9ed2e3eb643529860be963cf4af896fb84f1cde00f46b561";
 

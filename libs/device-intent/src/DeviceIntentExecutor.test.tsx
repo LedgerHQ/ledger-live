@@ -67,7 +67,8 @@ const makeConnectionResult = (): DeviceConnectionResult => ({
 const ConnectionComponent: React.FC<{
   onConnected: (r: DeviceConnectionResult) => void;
   onError: (e: unknown) => void;
-}> = ({ onConnected, onError }) => (
+  onClose: () => void;
+}> = ({ onConnected, onError, onClose }) => (
   <div>
     <button data-testid="connection" onClick={() => onConnected(makeConnectionResult())}>
       Connect
@@ -75,39 +76,64 @@ const ConnectionComponent: React.FC<{
     <button data-testid="connection-fail" onClick={() => onError(new Error("connection failed"))}>
       Fail
     </button>
+    <button data-testid="connection-close" onClick={onClose}>
+      Close
+    </button>
   </div>
 );
 
 const InitializerComponent: React.FC<{
   onContextInitialized: (ctx: DeviceExtractedContext) => void;
-}> = ({ onContextInitialized }) => (
-  <button
-    data-testid="initializer"
-    onClick={() =>
-      onContextInitialized({
-        currentOsVersion: "2.0.0",
-        osUpdateAvailable: false,
-        currentAppName: "Ethereum",
-        currentAppVersion: "1.10.0",
-      })
-    }
-  >
-    Initialize
-  </button>
+  onClose: () => void;
+}> = ({ onContextInitialized, onClose }) => (
+  <div>
+    <button
+      data-testid="initializer"
+      onClick={() =>
+        onContextInitialized({
+          currentOsVersion: "2.0.0",
+          osUpdateAvailable: false,
+          currentAppName: "Ethereum",
+          currentAppVersion: "1.10.0",
+        })
+      }
+    >
+      Initialize
+    </button>
+    <button data-testid="initializer-close" onClick={onClose}>
+      Close
+    </button>
+  </div>
 );
 
-const ConnectionErrorComponent: React.FC<{ error: unknown; onRetry: () => void }> = ({
-  onRetry,
-}) => (
-  <button data-testid="connection-error" onClick={onRetry}>
-    Retry Connection
-  </button>
+const ConnectionErrorComponent: React.FC<{
+  error: unknown;
+  onRetry: () => void;
+  onClose: () => void;
+}> = ({ onRetry, onClose }) => (
+  <div>
+    <button data-testid="connection-error" onClick={onRetry}>
+      Retry Connection
+    </button>
+    <button data-testid="connection-error-close" onClick={onClose}>
+      Close
+    </button>
+  </div>
 );
 
-const IntentErrorComponent: React.FC<{ error: unknown; onRetry: () => void }> = ({ onRetry }) => (
-  <button data-testid="intent-error" onClick={onRetry}>
-    Retry Intent
-  </button>
+const IntentErrorComponent: React.FC<{
+  error: unknown;
+  onRetry: () => void;
+  onClose: () => void;
+}> = ({ onRetry, onClose }) => (
+  <div>
+    <button data-testid="intent-error" onClick={onRetry}>
+      Retry Intent
+    </button>
+    <button data-testid="intent-error-close" onClick={onClose}>
+      Close
+    </button>
+  </div>
 );
 
 const InvalidOperationComponent: React.FC<{ error: unknown; onClose: () => void }> = ({
@@ -126,7 +152,12 @@ const platformConfig: ExecutorPlatformConfiguration<MockDeviceInitializationInpu
   InvalidOperationComponent,
 };
 
-type TestProps = DeviceIntentExecutorProps<unknown, unknown, unknown, MockDeviceInitializationInput> & {
+type TestProps = DeviceIntentExecutorProps<
+  unknown,
+  unknown,
+  unknown,
+  MockDeviceInitializationInput
+> & {
   platformConfig: ExecutorPlatformConfiguration<MockDeviceInitializationInput>;
 };
 
@@ -219,9 +250,12 @@ function makeMockPlatformConfig() {
 }
 
 function makeUnitProps(
-  hookReturn:
-    | DeviceIntentExecutorHookState<unknown, unknown, unknown, MockDeviceInitializationInput>
-    | null,
+  hookReturn: DeviceIntentExecutorHookState<
+    unknown,
+    unknown,
+    unknown,
+    MockDeviceInitializationInput
+  > | null,
   overrides: Partial<UnitTestProps> = {},
 ): UnitTestProps {
   return {
@@ -300,6 +334,7 @@ describe("DeviceIntentExecutor (unit)", () => {
       const mockConfig = makeMockPlatformConfig();
       const onConnected = jest.fn();
       const onError = jest.fn();
+      const onClose = jest.fn();
       const deviceConnectionParams = { acceptedDeviceModelIds: [] };
       const props = makeUnitProps(
         {
@@ -307,6 +342,7 @@ describe("DeviceIntentExecutor (unit)", () => {
           deviceConnectionParams,
           onConnected,
           onError,
+          onClose,
         },
         { platformConfig: mockConfig },
       );
@@ -314,7 +350,7 @@ describe("DeviceIntentExecutor (unit)", () => {
 
       expect(screen.getByTestId("connection")).toBeTruthy();
       expect(mockConfig.DeviceConnectionComponent).toHaveBeenCalledWith(
-        { deviceConnectionParams, onConnected, onError },
+        { deviceConnectionParams, onConnected, onError, onClose },
         undefined,
       );
     });
@@ -325,15 +361,16 @@ describe("DeviceIntentExecutor (unit)", () => {
       const mockConfig = makeMockPlatformConfig();
       const error = new Error("fail");
       const onRetry = jest.fn();
+      const onClose = jest.fn();
       const props = makeUnitProps(
-        { phase: "connectionError", error, onRetry },
+        { phase: "connectionError", error, onRetry, onClose },
         { platformConfig: mockConfig },
       );
       render(<DeviceIntentExecutor {...props} />);
 
       expect(screen.getByTestId("connection-error")).toBeTruthy();
       expect(mockConfig.ConnectionErrorComponent).toHaveBeenCalledWith(
-        { error, onRetry },
+        { error, onRetry, onClose },
         undefined,
       );
     });
@@ -344,12 +381,14 @@ describe("DeviceIntentExecutor (unit)", () => {
       const mockConfig = makeMockPlatformConfig();
       const connectionResult = makeConnectionResult();
       const onContextInitialized = jest.fn();
+      const onClose = jest.fn();
       const props = makeUnitProps(
         {
           phase: "deviceInitialization",
           connectionResult,
           deviceInitializationInput: defaultDeviceInitializationInput,
           onContextInitialized,
+          onClose,
         },
         { platformConfig: mockConfig },
       );
@@ -361,6 +400,7 @@ describe("DeviceIntentExecutor (unit)", () => {
           connectionResult,
           deviceInitializationInput: defaultDeviceInitializationInput,
           onContextInitialized,
+          onClose,
         },
         undefined,
       );
@@ -368,22 +408,27 @@ describe("DeviceIntentExecutor (unit)", () => {
   });
 
   describe("intentExecution phase", () => {
-    it("renders the intent component with jobState and extraProps", () => {
+    it("renders the intent component with jobState, extraProps and onClose", () => {
       const IntentComp = jest.fn(({ jobState }: { jobState: unknown }) => (
         <div data-testid="intent-component">{String(jobState)}</div>
       ));
       const extraProps = { custom: "data" };
+      const onClose = jest.fn();
       const props = makeUnitProps({
         phase: "intentExecution",
         intentComponent: IntentComp,
         jobState: "running",
         intentComponentExtraProps: extraProps,
+        onClose,
       });
       render(<DeviceIntentExecutor {...props} />);
 
       expect(screen.getByTestId("intent-component")).toBeTruthy();
       expect(screen.getByTestId("intent-component").textContent).toBe("running");
-      expect(IntentComp).toHaveBeenCalledWith({ jobState: "running", extraProps }, undefined);
+      expect(IntentComp).toHaveBeenCalledWith(
+        { jobState: "running", extraProps, onClose },
+        undefined,
+      );
     });
   });
 
@@ -392,14 +437,18 @@ describe("DeviceIntentExecutor (unit)", () => {
       const mockConfig = makeMockPlatformConfig();
       const error = new Error("job fail");
       const onRetry = jest.fn();
+      const onClose = jest.fn();
       const props = makeUnitProps(
-        { phase: "intentError", error, onRetry },
+        { phase: "intentError", error, onRetry, onClose },
         { platformConfig: mockConfig },
       );
       render(<DeviceIntentExecutor {...props} />);
 
       expect(screen.getByTestId("intent-error")).toBeTruthy();
-      expect(mockConfig.IntentErrorComponent).toHaveBeenCalledWith({ error, onRetry }, undefined);
+      expect(mockConfig.IntentErrorComponent).toHaveBeenCalledWith(
+        { error, onRetry, onClose },
+        undefined,
+      );
     });
   });
 
@@ -423,11 +472,12 @@ describe("DeviceIntentExecutor (unit)", () => {
   });
 
   describe("idle phase", () => {
-    it("renders the last intent snapshot component with snapshot jobState and extraProps", () => {
+    it("renders the last intent snapshot component with snapshot jobState/extraProps and the current onClose", () => {
       const IntentComp = jest.fn(({ jobState }: { jobState: unknown }) => (
         <div data-testid="intent-component">{String(jobState)}</div>
       ));
       const extraProps = { x: 42 };
+      const onClose = jest.fn();
       const props = makeUnitProps({
         phase: "idle",
         lastIntentSnapshot: {
@@ -435,18 +485,23 @@ describe("DeviceIntentExecutor (unit)", () => {
           jobState: "final",
           intentComponentExtraProps: extraProps,
         },
+        onClose,
       });
       render(<DeviceIntentExecutor {...props} />);
 
       expect(screen.getByTestId("intent-component")).toBeTruthy();
       expect(screen.getByTestId("intent-component").textContent).toBe("final");
-      expect(IntentComp).toHaveBeenCalledWith({ jobState: "final", extraProps }, undefined);
+      expect(IntentComp).toHaveBeenCalledWith(
+        { jobState: "final", extraProps, onClose },
+        undefined,
+      );
     });
 
     it("renders nothing when lastIntentSnapshot is null", () => {
       const props = makeUnitProps({
         phase: "idle",
         lastIntentSnapshot: null,
+        onClose: jest.fn(),
       });
       const { container } = render(<DeviceIntentExecutor {...props} />);
       expect(container.innerHTML).toBe("");

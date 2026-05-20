@@ -20,7 +20,7 @@ wallet/
   formatter/         ← HumanFormatter and JsonFormatter
   compatibility/
     bridge.ts        ← BridgeAdapter (full sync via live-common bridge)
-    alpaca.ts        ← AlpacaAdapter (direct Alpaca API — currently unused for ops)
+    coinframework.ts ← CoinFrameworkAdapter (direct Coin Module API — currently unused for ops)
 ```
 
 `compatibility/` is an internal implementation detail — do not import it directly from outside `wallet/`.

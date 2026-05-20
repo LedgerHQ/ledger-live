@@ -12,7 +12,7 @@ const cases = [
   { mode: "sell" as const, builder: buildSellNavigationState },
 ] as const;
 
-describe.each(cases)("build${mode}NavigationState ($mode)", ({ mode, builder }) => {
+describe.each(cases)("buildNavigationState ($mode)", ({ mode, builder }) => {
   const mockLedgerCurrency = { id: "ethereum" };
 
   beforeEach(() => {

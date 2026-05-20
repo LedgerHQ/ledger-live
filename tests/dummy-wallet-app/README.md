@@ -35,12 +35,12 @@ pnpm mobile start
 ### iOS
 pnpm build:llm:deps
 pnpm mobile e2e:build -c ios.sim.debug
-pnpm mobile e2e:test -c ios.sim.debug apps/ledger-live-mobile/e2e/specs/wallet-api.spec.ts
+pnpm mobile e2e:test -c ios.sim.debug apps/ledger-live-mobile/e2e/specs/wallet-api/accountRequest.spec.ts
 
 ### Android
 pnpm build:llm:deps
 pnpm mobile e2e:build -c android.emu.debug
-pnpm mobile e2e:test -c android.emu.debug apps/ledger-live-mobile/e2e/specs/wallet-api.spec.ts
+pnpm mobile e2e:test -c android.emu.debug apps/ledger-live-mobile/e2e/specs/wallet-api/accountRequest.spec.ts
 ```
 
 # How does it work?

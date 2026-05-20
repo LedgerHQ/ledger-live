@@ -1,6 +1,6 @@
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import type {
-  AlpacaApi,
+  CoinModuleApi,
   BalanceOptions,
   CraftedTransaction,
   Operation,
@@ -50,7 +50,7 @@ import type { EstimateFeesParams, HederaMemo, HederaOperationExtra } from "../ty
 export function createApi(
   config: HederaConfig,
   currencyId: string,
-): AlpacaApi<HederaMemo> & BridgeApi {
+): CoinModuleApi<HederaMemo> & BridgeApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
   const currency = getCryptoCurrencyById(currencyId);
 
@@ -186,7 +186,7 @@ export function createApi(
         return dateDiff;
       });
 
-      const alpacaOperations = sortedLiveOperations.map(liveOp => {
+      const coinFrameworkOperations = sortedLiveOperations.map(liveOp => {
         const asset = liveOp.contract
           ? {
               type: liveOp.standard ?? "token",
@@ -236,7 +236,10 @@ export function createApi(
         } satisfies Operation;
       });
 
-      return { items: alpacaOperations, next: latestAccountOperations.nextCursor || undefined };
+      return {
+        items: coinFrameworkOperations,
+        next: latestAccountOperations.nextCursor || undefined,
+      };
     },
     getValidators: cursor => getValidators(cursor),
     getStakes: async address => getStakes(address),

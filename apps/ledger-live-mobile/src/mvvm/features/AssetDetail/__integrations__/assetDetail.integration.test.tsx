@@ -1,12 +1,13 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { render, screen, waitFor } from "@tests/test-renderer";
+import { render, screen, waitFor, within } from "@tests/test-renderer";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { NavigatorName, ScreenName } from "~/const";
 import type { State } from "~/reducers/types";
 import AssetDetailNavigator from "../Navigator";
 import { ASSET_DETAIL_TEST_IDS } from "../testIds";
+import { QUICK_ACTIONS_TEST_IDS } from "LLM/features/QuickActions/testIds";
 
 const mockIsCurrencyAvailable = jest.fn().mockReturnValue(false);
 const mockIsAcceptedCurrency = jest.fn().mockReturnValue(false);
@@ -96,15 +97,28 @@ describe("AssetDetail screen layout", () => {
       expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.balanceDetails)).toBeVisible(),
     );
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.totalBalance)).toBeVisible();
-    expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.transferButton)).toBeVisible();
+    const transferButton = screen.getByTestId(ASSET_DETAIL_TEST_IDS.transferButton);
+    expect(transferButton).toBeVisible();
     expect(screen.getByText("Total balance")).toBeVisible();
-    expect(screen.getByText("Transfer")).toBeVisible();
+    expect(within(transferButton).getByText("Transfer")).toBeVisible();
   });
 
-  it("renders the market price section with title and chart placeholder", () => {
+  it("opens the transfer drawer on the asset detail screen when the transfer button is pressed", async () => {
+    const { user } = render(<AssetDetailTestNavigator />, withBtcAccounts(2));
+
+    const transferButton = await screen.findByTestId(ASSET_DETAIL_TEST_IDS.transferButton);
+    await user.press(transferButton);
+
+    await waitFor(() => {
+      expect(screen.getByTestId(QUICK_ACTIONS_TEST_IDS.transferDrawer.container)).toBeVisible();
+    });
+  });
+
+  it("renders the BalanceGraph with chart placeholder", () => {
     render(<AssetDetailTestNavigator />);
 
-    expect(screen.getByText("Market price")).toBeVisible();
+    // While market data is loading, the header is rendered as a skeleton (no
+    // "Market price" text). The chart placeholder is still mounted.
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.chartPlaceholder)).toBeVisible();
     expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.receiveButton)).toBeNull();
   });
@@ -124,16 +138,35 @@ describe("AssetDetail screen layout", () => {
     expect(screen.getByText("Add")).toBeVisible();
   });
 
+  it("hides the See all addresses button when 5 or fewer accounts exist", async () => {
+    render(<AssetDetailTestNavigator />, withBtcAccounts(5));
+
+    await waitFor(() => expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.addresses)).toBeVisible());
+    expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.seeAllAddresses)).toBeNull();
+  });
+
+  it("caps the addresses preview at 5 items and shows See all when 6+ accounts exist", async () => {
+    render(<AssetDetailTestNavigator />, withBtcAccounts(6));
+
+    await waitFor(() =>
+      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.seeAllAddresses)).toBeVisible(),
+    );
+    expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.addresses)).toBeVisible();
+    expect(screen.getByText("See all")).toBeVisible();
+  });
+
   it("hides the transactions section when there are no operations", () => {
     render(<AssetDetailTestNavigator />, withBtcAccounts(2, 0));
 
     expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.transactions)).toBeNull();
   });
 
-  it("renders the transactions section when operations exist", () => {
+  it("renders the transactions section when operations exist", async () => {
     render(<AssetDetailTestNavigator />, withBtcAccounts(1, 5));
 
-    expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.transactions)).toBeVisible();
+    await waitFor(() =>
+      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.transactions)).toBeVisible(),
+    );
     expect(screen.getByText("Transactions")).toBeVisible();
   });
 

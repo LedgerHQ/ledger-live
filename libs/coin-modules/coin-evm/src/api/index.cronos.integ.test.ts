@@ -1,5 +1,5 @@
 import {
-  AlpacaApi,
+  CoinModuleApi,
   BufferTxData,
   MemoNotSupported,
 } from "@ledgerhq/coin-module-framework/api/types";
@@ -9,7 +9,7 @@ import { EvmConfig } from "../config";
 import { createApi } from "./index";
 
 describe("EVM Cronos Network (blockscout explorer)", () => {
-  let module: AlpacaApi<MemoNotSupported, BufferTxData> & BridgeApi;
+  let module: CoinModuleApi<MemoNotSupported, BufferTxData> & BridgeApi;
 
   beforeAll(() => {
     setupCalClientStore();
@@ -47,6 +47,22 @@ describe("EVM Cronos Network (blockscout explorer)", () => {
       expect(page2.items.length).toBeGreaterThan(0);
       expect(page2.next?.length).toBeGreaterThan(0);
       expect(page2.next).not.toEqual(page1.next);
+    });
+  });
+
+  describe("getBlock", () => {
+    it("should return block 61398731 without failing on unsigned typed transactions", async () => {
+      const block = await module.getBlock(61398731);
+      const transaction = block.transactions.find(
+        tx => tx.hash === "0x49a46bf29edb4faf38d062ea8d799915209f45dc96c0ff1f4c919d260c76642c",
+      );
+
+      expect(block.info.height).toBe(61398731);
+      expect(block.info.hash).toBe(
+        "0x95332a689b2409de3f8c88e87d0ad4c9317fb84cd864ca0adb771abddf717f89",
+      );
+      expect(block.transactions.length).toBeGreaterThan(0);
+      expect(transaction?.fees).toBe(7959000000000000n);
     });
   });
 });

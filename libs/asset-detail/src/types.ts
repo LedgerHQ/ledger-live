@@ -10,12 +10,9 @@ export type AssetDetailMarketInfo = Readonly<{
 }>;
 
 export type AssetMarketDataInput = Readonly<{
-  marketApiCurrencyId: string | undefined;
-  /**
-   * Ledger ids known up-front (owned distribution item or location.state seed).
-   * Falls back to the Market hook's `ledgerIds` when undefined.
-   */
-  knownLedgerIds: readonly string[] | undefined;
+  marketApiId?: string;
+  knownLedgerIds?: readonly string[];
+  knownMarketId?: string;
   counterCurrency: string;
   product: "lld" | "llm";
   version: string;
@@ -23,12 +20,13 @@ export type AssetMarketDataInput = Readonly<{
 }>;
 
 export type AssetMarketData = Readonly<{
-  marketCurrencyData: MarketCurrencyData | undefined;
+  marketCurrencyData?: MarketCurrencyData;
+  marketId?: string;
   isLoading: boolean;
 }>;
 
 export type AssetMarketDataResult = AssetMarketData &
   Readonly<{
-    ledgerCurrencyFromDada: CryptoOrTokenCurrency | undefined;
+    ledgerCurrencyFromDada?: CryptoOrTokenCurrency;
     isError: boolean;
   }>;

@@ -4823,6 +4823,191 @@
     },
     "chooseAccountToFund": "Choose an account to add funds"
   },
+  "deviceIntentExecutor": {
+    "genericStates": {
+      "retryableDeviceLocked": {
+        "title": "Device is locked",
+        "description": "Unlock your device to continue."
+      },
+      "unlockDevice": {
+        "title": "Unlock your {{productName}}"
+      },
+      "continueOnDevice": {
+        "title": "Continue on your {{productName}}",
+        "description": "Follow the instructions displayed on your Secure Screen"
+      }
+    },
+    "errors": {
+      "connectionError": {
+        "title": "Device disconnected",
+        "description": "Your Ledger is no longer connected. Make sure it's powered on and within Bluetooth range or plugged in."
+      },
+      "intentError": {
+        "title": "Unknown error",
+        "description": "An error occurred. Please try again or contact Ledger support if the issue persists."
+      },
+      "invalidOperation": {
+        "title": "Invalid state",
+        "description": "An error occurred. Please try again or contact Ledger support if the issue persists."
+      }
+    },
+    "initialization": {
+      "loading": {
+        "title": "Loading"
+      },
+      "installingApp": {
+        "title": "Installing app"
+      },
+      "outdatedAppWarning": {
+        "title": "App version outdated",
+        "description": "An important update is available for the {{appName}} application on your device. Please go to My Ledger to update it."
+      },
+      "retryable": {
+        "userRefused": {
+          "title": "Operation rejected on device"
+        },
+        "deviceBusy": {
+          "title": "Action pending on your Ledger device",
+          "description": "Complete it and then select Retry."
+        }
+      },
+      "blocking": {
+        "deviceNotOnboarded": {
+          "title": "Your Ledger is not ready to use yet",
+          "description": "You need to set up your {{productName}} first. We will guide you through the device setup process"
+        },
+        "unsupportedFirmwareVersion": {
+          "title": "Ledger OS update required"
+        },
+        "unsupportedApplication": {
+          "title": "Unsupported feature",
+          "description": "The app required for this operation is not currently available on your Ledger device. Please contact Ledger support for details."
+        },
+        "unsupportedFeature": {
+          "title": "Unsupported feature",
+          "description": "The app required for this operation is not currently available on your Ledger device. Please contact Ledger support for details."
+        },
+        "wrongDeviceForAccount": {
+          "title": "Wrong Secret Recovery Phrase",
+          "description": "This Ledger isn’t set up with the recovery phrase linked to the selected account. Check that you're using the correct device."
+        },
+        "deviceOutOfStorageSpace": {
+          "title": "Not enough device memory",
+          "description": "Your device doesn’t have enough memory. Please uninstall apps and try again."
+        }
+      },
+      "cta": {
+        "openMyLedger": "Open My Ledger",
+        "goToMyLedger": "Go to My Ledger",
+        "setupDevice": "Set up device",
+        "updateLedgerOs": "Update Ledger OS",
+        "cancelOperation": "Cancel operation",
+        "contactLedgerSupport": "Contact Ledger support"
+      }
+    },
+    "connectDevice": {
+      "common": {
+        "available": "Available",
+        "close": "Close",
+        "ledgerDevice": "Ledger device",
+        "notConnected": "Not connected",
+        "tryAgain": "Try again"
+      },
+      "states": {
+        "connecting": {
+          "title": "Loading"
+        },
+        "connectionError": {
+          "errors": {
+            "blePairingRefused": {
+              "title": "Pairing was refused",
+              "description": "Pairing was refused"
+            },
+            "blePairingPeerRemovedPairing": {
+              "title": "Pairing was removed",
+              "description": "Pairing was removed"
+            },
+            "unknown": {
+              "title": "Unable to connect",
+              "description": "Unknown error"
+            }
+          }
+        },
+        "discovering": {
+          "title": "Select a device"
+        },
+        "discoveryError": {
+          "continueWithUsb": "I want to continue with USB",
+          "errors": {
+            "bluetoothPermissionDeniedPromptable": {
+              "title": "Bluetooth permission needed",
+              "description": "Please enable Bluetooth permission to use Bluetooth"
+            },
+            "bluetoothPermissionDeniedManualSettings": {
+              "title": "Bluetooth permission needed",
+              "description": "Please enable Bluetooth permission in your phone settings to use Bluetooth"
+            },
+            "bluetoothPermissionUnauthorizedManualSettings": {
+              "title": "Bluetooth permission needed",
+              "description": "Please enable Bluetooth permission in your phone settings to use Bluetooth"
+            },
+            "bluetoothDisabledPromptable": {
+              "title": "Bluetooth settings disabled",
+              "description": "Please enable Bluetooth settings to use Bluetooth"
+            },
+            "bluetoothDisabledManualAction": {
+              "title": "Bluetooth settings disabled",
+              "description": "Please enable Bluetooth settings in your phone settings to use Bluetooth"
+            },
+            "bluetoothStateUnknownCheckOnly": {
+              "title": "Bluetooth is not ready",
+              "description": "Please check your Bluetooth settings to use Bluetooth"
+            },
+            "bluetoothUnsupported": {
+              "title": "Bluetooth is not supported",
+              "description": "Bluetooth is not supported. Please check your Bluetooth settings."
+            },
+            "locationPermissionDeniedPromptable": {
+              "title": "Location permission needed",
+              "description": "Please enable Location permission to use Bluetooth"
+            },
+            "locationPermissionDeniedManualSettings": {
+              "title": "Location permission needed",
+              "description": "Please enable Location permission in your phone settings to use Bluetooth"
+            },
+            "locationDisabledPromptable": {
+              "title": "Location settings disabled",
+              "description": "Please enable Location settings to use Bluetooth"
+            },
+            "locationDisabledManualAction": {
+              "title": "Location settings disabled",
+              "description": "Please enable Location settings in your phone settings to use Bluetooth"
+            },
+            "locationServicePermissionMissing": {
+              "title": "Location permission needed",
+              "description": "Please enable Location permission to use Bluetooth"
+            },
+            "unknown": {
+              "title": "Unable to discover devices",
+              "description": "Unable to discover devices."
+            }
+          }
+        },
+        "loading": {
+          "title": "Loading"
+        },
+        "noKnownDevice": {
+          "title": "Ledger device required",
+          "description": "To continue, set up or connect your signer.",
+          "connectLedgerDevice": "Connect Ledger device",
+          "noLedgerDevice": "I don't have a Ledger device"
+        },
+        "waitingForSelectedDevice": {
+          "title": "Power on and unlock your {{productName}}"
+        }
+      }
+    }
+  },
   "DeviceAction": {
     "stayInTheAppPlz": "Stay in the Ledger Wallet app and keep your Ledger nearby.",
     "allowAppPermission": "Open the {{wording}} app on your device",
@@ -4845,7 +5030,7 @@
     "useAnotherDevice": "Use another device",
     "deviceNotOnboarded": {
       "title": "Your Ledger is not ready to use yet",
-      "description": "You need to setup {{deviceName}} first. We will guide you through the device setup process"
+      "description": "You need to set up {{deviceName}} first. We will guide you through the device setup process"
     },
     "deviceInBootloader": {
       "title": "Device in Bootloader mode.",
@@ -7804,6 +7989,34 @@
       "title": "Transaction history"
     }
   },
+  "pnl": {
+    "unrealisedReturn": {
+      "title": "Unrealised return"
+    },
+    "costBasis": {
+      "title": "Cost basis",
+      "drawer": {
+        "title": "Cost basis",
+        "body": "The total amount you paid to acquire your current holdings, including fees."
+      }
+    },
+    "drawer": {
+      "title": "Profit and loss",
+      "description": "Your portfolio performance broken down into realised and unrealised returns.",
+      "totalReturn": {
+        "title": "Total return",
+        "definition": "Realised and unrealised returns combined, reflecting your overall position."
+      },
+      "unrealisedReturn": {
+        "title": "Unrealised return",
+        "definition": "Estimated gain or loss on your current holdings."
+      },
+      "realisedReturn": {
+        "title": "Realised return",
+        "definition": "Profit or loss confirmed from previous sales or outgoing transfers."
+      }
+    }
+  },
   "hedera": {
     "name": "hedera",
     "createHederaAccountHelp": {
@@ -8690,6 +8903,7 @@
     "addresses": {
       "title": "Addresses",
       "addAccount": "Add",
+      "seeAll": "See all",
       "empty": "No addresses yet. Tap Add to get started."
     },
     "marketStats": {

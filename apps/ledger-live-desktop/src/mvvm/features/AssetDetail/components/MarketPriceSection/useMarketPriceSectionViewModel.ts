@@ -1,8 +1,8 @@
 import { useCallback, useMemo } from "react";
-import type { AssetDetailMarketInfo, AssetMarketData } from "@ledgerhq/asset-detail";
+import type { AssetMarketData } from "@ledgerhq/asset-detail";
 import type { DistributionItem, ValueChange } from "@ledgerhq/types-live";
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
-import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/index";
+import { formatCurrencyUnitFragment, valueFromUnit } from "@ledgerhq/live-common/currencies/index";
 import { useTrendViewModel } from "LLD/features/Portfolio/hooks/useTrendViewModel";
 import { useSelector } from "LLD/hooks/redux";
 import type { FormattedValue } from "@ledgerhq/lumen-ui-react";
@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
 import {
   clampDayChangePercentPointsNearZero,
+  fiatAmountToIntegerSmallestUnit,
   formatSignedFiatVariation,
   getFiatPriceVariationFromPercentChange,
   resolveMarketPriceSectionSourceId,
@@ -18,10 +19,9 @@ import {
 } from "./utils";
 
 type UseMarketPriceSectionViewModelProps = Readonly<{
-  distributionItem: DistributionItem | undefined;
-  marketInfo: AssetDetailMarketInfo | undefined;
-  ledgerId: string | undefined;
-  market: AssetMarketData;
+  distributionItem?: DistributionItem;
+  ledgerId?: string;
+  marketData: AssetMarketData;
 }>;
 
 type UseMarketPriceSectionViewModelResult = Readonly<{
@@ -40,57 +40,61 @@ type UseMarketPriceSectionViewModelResult = Readonly<{
 
 export function useMarketPriceSectionViewModel({
   distributionItem,
-  marketInfo,
   ledgerId,
-  market,
+  marketData,
 }: UseMarketPriceSectionViewModelProps): UseMarketPriceSectionViewModelResult {
   const { t } = useTranslation();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const locale = useSelector(localeSelector);
   const fiatUnit = counterValueCurrency.units[0];
   const marketAssetId = resolveMarketPriceSectionSourceId({
-    marketInfo,
+    marketId: marketData.marketId,
     distributionItem,
     ledgerId,
   });
   const shouldRenderSection = Boolean(marketAssetId);
-  const data = market.marketCurrencyData;
+  const data = marketData.marketCurrencyData;
 
   const hasPriceData = Number.isFinite(data?.price);
-  const showSkeleton = Boolean(marketAssetId && market.isLoading && !hasPriceData);
+  const showSkeleton = Boolean(marketAssetId && marketData.isLoading && !hasPriceData);
   const dayPercentage = data?.priceChangePercentage?.[KeysPriceChange.day];
   const normalizedDayPercentage = clampDayChangePercentPointsNearZero(dayPercentage);
   const dayVariationFiat = getFiatPriceVariationFromPercentChange(
     data?.price,
     normalizedDayPercentage,
   );
+  const dayVariationSmallestUnit =
+    dayVariationFiat == null
+      ? undefined
+      : fiatAmountToIntegerSmallestUnit(dayVariationFiat, fiatUnit);
 
   const priceFormatter = useCallback(
     (value: number): FormattedValue =>
-      formatCurrencyUnitFragment(fiatUnit, new BigNumber(value), {
+      formatCurrencyUnitFragment(fiatUnit, valueFromUnit(new BigNumber(value), fiatUnit), {
         locale,
         showCode: true,
         disableRounding: true,
         showAllDigits: true,
+        useGrouping: true,
       }),
     [fiatUnit, locale],
   );
 
   const hasVariationData =
-    hasPriceData && normalizedDayPercentage != null && dayVariationFiat != null;
+    hasPriceData && normalizedDayPercentage != null && dayVariationSmallestUnit != null;
   const variationText = hasVariationData
-    ? formatSignedFiatVariation(dayVariationFiat, fiatUnit, locale)
+    ? formatSignedFiatVariation(dayVariationSmallestUnit, fiatUnit, locale)
     : "—";
 
   const valueChange: ValueChange = useMemo(() => {
-    if (!hasPriceData || normalizedDayPercentage == null || dayVariationFiat == null) {
+    if (!hasPriceData || normalizedDayPercentage == null || dayVariationSmallestUnit == null) {
       return { percentage: 0, value: 0 };
     }
     return {
       percentage: normalizedDayPercentage / 100,
-      value: dayVariationFiat,
+      value: dayVariationSmallestUnit,
     };
-  }, [hasPriceData, normalizedDayPercentage, dayVariationFiat]);
+  }, [hasPriceData, normalizedDayPercentage, dayVariationSmallestUnit]);
   const { percentageText: trendPercentageText, variant: trendVariant } = useTrendViewModel({
     valueChange,
   });

@@ -3,6 +3,7 @@ packages:
   - "apps/wallet-cli/npm/*"
   - "e2e/*"
   - "features/*"
+  - "features/flow/*"
   - "libs/*"
   - "tests/*"
   - "libs/coin-modules/*"
@@ -22,7 +23,8 @@ catalog:
   "@jest/globals": 30.2.0
   "@ledgerhq/context-module": 1.17.1
   "@ledgerhq/crypto-icons": "2.0.3"
-  "@ledgerhq/device-management-kit": 1.4.1
+  "@ledgerhq/device-management-kit": 1.5.0
+  "@ledgerhq/device-signer-kit-aleo": 0.3.0
   "@ledgerhq/device-signer-kit-concordium": 0.3.0
   "@ledgerhq/device-signer-kit-ethereum": 1.15.1
   "@ledgerhq/device-signer-kit-hyperliquid": 1.0.2
@@ -194,9 +196,9 @@ catalog:
   allure-js-commons: 3.2.1
   oxlint: 1.51.0
   oxfmt: 0.36.0
-  # Modules published by Alpaca
-  "@ledgerhq/coin-module-framework": 2.2.0
-  "@ledgerhq/coin-xrp": 7.21.4
+  # Modules published by coin-modules
+  "@ledgerhq/coin-module-framework": 3.0.0
+  "@ledgerhq/coin-xrp": 7.21.5
   detox: 20.51.1
 
 overrides:

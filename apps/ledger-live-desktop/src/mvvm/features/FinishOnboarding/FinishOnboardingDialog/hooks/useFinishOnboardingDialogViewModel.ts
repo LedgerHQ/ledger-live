@@ -10,6 +10,7 @@ import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { type StartActionArgs } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { accountsSelector } from "~/renderer/reducers/accounts";
+import { setHasRedirectedToPostOnboarding } from "~/renderer/actions/settings";
 import { track } from "~/renderer/analytics/segment";
 import {
   closeFinishPostOnboarding,
@@ -78,6 +79,12 @@ export default function useFinishOnboardingDialogViewModel(): FinishOnboardingDi
     dispatch(hidePostOnboardingWalletEntryPoint());
     dispatch(postOnboardingSetFinished());
   }, [allActionsCompleted, hasActions, deviceModelId, dispatch]);
+
+  useEffect(() => {
+    if (isDialogOpen) {
+      dispatch(setHasRedirectedToPostOnboarding(true));
+    }
+  }, [dispatch, isDialogOpen]);
 
   const onGotIt = useCallback(() => {
     track("button_clicked2", {

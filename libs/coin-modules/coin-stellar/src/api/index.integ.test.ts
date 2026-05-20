@@ -1,4 +1,4 @@
-import type { AlpacaApi, Operation } from "@ledgerhq/coin-module-framework/api/index";
+import type { CoinModuleApi, Operation } from "@ledgerhq/coin-module-framework/api/index";
 import { xdr } from "@stellar/stellar-sdk";
 import { StellarMemo } from "../types";
 import { createApi, envelopeFromAnyXDR } from ".";
@@ -7,7 +7,7 @@ import { createApi, envelopeFromAnyXDR } from ".";
  * Testnet scan: https://testnet.lumenscan.io/
  */
 describe("Stellar Api", () => {
-  let module: AlpacaApi<StellarMemo>;
+  let module: CoinModuleApi<StellarMemo>;
   const ADDRESS = "GBAUZBDXMVV7HII4JWBGFMLVKVJ6OLQAKOCGXM5E2FM4TAZB6C7JO2L7";
 
   beforeAll(() => {
@@ -217,7 +217,7 @@ describe("Stellar Api", () => {
    * Live Horizon may report `tx_failed` + XDR `txFailed` (operation-level failure) while static ticket JSON showed `tx_no_source_account`.
    */
   describe("broadcast", () => {
-    let broadcastModule: AlpacaApi<StellarMemo>;
+    let broadcastModule: CoinModuleApi<StellarMemo>;
     const tx =
       "AAAAAgAAAABRUCgFba+DTbei2ifpyYt5w2Hh0VyZ+X9fayjIDne7YAAAAGQCkDOGAAAABQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAQAAAACEIuPfWXgM8WhyqjrpFdIcGV1SUVhMzPUm4YspNHF60QAAAAAAAAAAALkd2QAAAAAAAAABDne7YAAAAEAASzsT/yDIfCfEDstkfnznXjiN7rNd7PkKQEn+rRIFm9EHoirGfHipWoBdYMrc6ixQD/0y0of1piSid8TLiFAB";
     beforeAll(() => {

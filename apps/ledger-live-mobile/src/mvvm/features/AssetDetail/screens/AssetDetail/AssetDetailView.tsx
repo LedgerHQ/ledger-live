@@ -6,6 +6,7 @@ import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import type { DistributionItem } from "@ledgerhq/types-live";
 import { TrackScreen } from "~/analytics";
 import type { AssetDetailCurrencyProps } from "LLM/features/AssetDetail/types";
+import { TransferDrawer } from "LLM/features/QuickActions";
 import { ASSET_DETAIL_TEST_IDS } from "../../testIds";
 import { BalanceGraph } from "./components/BalanceGraph";
 import { BalanceDetails } from "./components/BalanceDetails";
@@ -28,6 +29,7 @@ type Props = Readonly<{
   hideReceiveInBalanceGraph: boolean;
   showFallbackBanner: boolean;
   coinOptions: AssetCoinOptionsViewModel;
+  isLoading: boolean;
 }>;
 
 export function AssetDetailView({
@@ -40,6 +42,7 @@ export function AssetDetailView({
   hideReceiveInBalanceGraph,
   showFallbackBanner,
   coinOptions,
+  isLoading,
 }: Props) {
   const { bottom } = useSafeAreaInsets();
   const scrollPaddingBottom = useMemo(
@@ -57,14 +60,23 @@ export function AssetDetailView({
       >
         <Box lx={contentStyle}>
           <BalanceGraph currency={currency} hideReceive={hideReceiveInBalanceGraph} />
-          <BalanceDetails currency={currency} distributionItem={distributionItem} />
-          <Addresses currency={currency} distributionItem={distributionItem} />
+          <BalanceDetails
+            currency={currency}
+            distributionItem={distributionItem}
+            isLoading={isLoading}
+          />
+          <Addresses
+            currency={currency}
+            distributionItem={distributionItem}
+            isLoading={isLoading}
+          />
           <MarketData currency={currency} />
-          <Transactions currency={currency} />
+          <Transactions currency={currency} isLoading={isLoading} />
           <FallbackBanner show={showFallbackBanner} />
         </Box>
       </ScrollView>
       <Footer currency={currency} />
+      <TransferDrawer />
       <AssetCoinOptionsSheetView
         isOpen={coinOptions.isCoinOptionsSheetOpen}
         onClose={coinOptions.closeCoinOptions}
@@ -83,5 +95,5 @@ const screenStyle: LumenViewStyle = {
 
 const contentStyle: LumenViewStyle = {
   padding: "s16",
-  gap: "s24",
+  gap: "s32",
 };

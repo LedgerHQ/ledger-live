@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import type {
-  AlpacaApi,
+  CoinModuleApi,
   Balance,
   BalanceOptions,
   CraftedTransaction,
@@ -107,7 +107,7 @@ describe("createApi", () => {
     );
   });
 
-  it("should return an object with all AlpacaApi methods", () => {
+  it("should return an object with all CoinModuleApi methods", () => {
     const api = createApi(mockConfig, "solana");
 
     expect(api).toEqual(
@@ -135,7 +135,7 @@ describe("createApi", () => {
   it("should pass parameters correctly to broadcast", async () => {
     jest.mocked(broadcast).mockResolvedValueOnce("txHash");
 
-    const api: AlpacaApi = createApi(mockConfig, "solana");
+    const api: CoinModuleApi = createApi(mockConfig, "solana");
     const result = await api.broadcast("transaction");
 
     expect(broadcast).toHaveBeenCalledWith(mockChainAPI, "transaction");
@@ -146,7 +146,7 @@ describe("createApi", () => {
     const mockBalances: Balance[] = [{ value: BigInt(1000), asset: { type: "native" as const } }];
     jest.mocked(getBalance).mockResolvedValueOnce(mockBalances);
 
-    const api: AlpacaApi = createApi(mockConfig, "solana");
+    const api: CoinModuleApi = createApi(mockConfig, "solana");
     const result = await api.getBalance("address");
 
     expect(getBalance).toHaveBeenCalledWith(mockChainAPI, "address", {
@@ -158,7 +158,7 @@ describe("createApi", () => {
   it("should pass parameters correctly to lastBlock", async () => {
     const mockedDate = new Date();
     jest.mocked(lastBlock).mockResolvedValueOnce({ height: 100, hash: "hash", time: mockedDate });
-    const api: AlpacaApi = createApi(mockConfig, "solana");
+    const api: CoinModuleApi = createApi(mockConfig, "solana");
     const result = await api.lastBlock();
 
     expect(lastBlock).toHaveBeenCalledWith(mockChainAPI);
@@ -167,7 +167,7 @@ describe("createApi", () => {
 
   it("should pass parameters correctly to combine", async () => {
     jest.mocked(combine).mockReturnValueOnce("txHash");
-    const api: AlpacaApi = createApi(mockConfig, "solana");
+    const api: CoinModuleApi = createApi(mockConfig, "solana");
     const result = await api.combine("transaction", "signature");
 
     expect(combine).toHaveBeenCalledWith("transaction", "signature");
@@ -185,7 +185,7 @@ describe("createApi", () => {
     };
     jest.mocked(craftTransaction).mockResolvedValueOnce(mockResult);
 
-    const api: AlpacaApi = createApi(mockConfig, "solana");
+    const api: CoinModuleApi = createApi(mockConfig, "solana");
     const intent: TransactionIntent = {
       intentType: "transaction",
       type: "send",
@@ -208,7 +208,7 @@ describe("createApi", () => {
     };
     jest.mocked(craftRawTransaction).mockResolvedValueOnce(mockResult);
 
-    const api: AlpacaApi = createApi(mockConfig, "solana");
+    const api: CoinModuleApi = createApi(mockConfig, "solana");
     const result = await api.craftRawTransaction("tx", "sender", "pubkey", 42n);
 
     expect(craftRawTransaction).toHaveBeenCalledWith("tx", "sender");
@@ -219,7 +219,7 @@ describe("createApi", () => {
     const mockResult = { value: 5000n };
     jest.mocked(estimateFees).mockResolvedValueOnce(mockResult);
 
-    const api: AlpacaApi = createApi(mockConfig, "solana");
+    const api: CoinModuleApi = createApi(mockConfig, "solana");
     const intent: TransactionIntent = {
       intentType: "transaction",
       type: "send",
@@ -238,7 +238,7 @@ describe("createApi", () => {
     const mockResult: Page<Operation> = { items: [], next: "next" };
     jest.mocked(listOperations).mockResolvedValueOnce(mockResult);
 
-    const api: AlpacaApi = createApi(mockConfig, "solana");
+    const api: CoinModuleApi = createApi(mockConfig, "solana");
     const result = await api.listOperations("address", { minHeight: 14, order: "asc" });
 
     expect(listOperations).toHaveBeenCalledWith(mockChainAPI, "address", {

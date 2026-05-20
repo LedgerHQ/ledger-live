@@ -5,7 +5,7 @@ import {
 } from "@ledgerhq/device-transport-kit-react-native-ble";
 import { BleError, BleErrorCode } from "react-native-ble-plx";
 import { catchError, from, map, mergeMap, of, type Observable } from "rxjs";
-import { DiscoveryErrors } from "../../types";
+import { DiscoveryErrorTypes } from "../../types";
 import { DefaultBleDiscoveryPreflightChecks } from "../preflight/DefaultBleDiscoveryPreflightChecks";
 import type { DiscoveryPreflightChecks } from "../preflight/preflightResult";
 import {
@@ -62,8 +62,8 @@ export class RnBleDeviceDiscoverySource implements DeviceDiscoverySource {
     return {
       type: "error",
       error: {
-        type: DiscoveryErrors.Unknown,
-        transportID: this.transportId,
+        type: DiscoveryErrorTypes.Unknown,
+        transportId: this.transportId,
         error,
       },
     };

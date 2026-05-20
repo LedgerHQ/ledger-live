@@ -5,9 +5,10 @@ import { TransactionsView } from "./TransactionsView";
 
 type Props = Readonly<{
   currency: CryptoOrTokenCurrency | undefined;
+  isLoading: boolean;
 }>;
 
-export function Transactions({ currency }: Props) {
+export function Transactions({ currency, isLoading }: Props) {
   const viewModel = useTransactionsViewModel(currency);
-  return <TransactionsView {...viewModel} />;
+  return <TransactionsView {...viewModel} isLoading={isLoading} />;
 }

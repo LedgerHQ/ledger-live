@@ -1,10 +1,10 @@
 import BigNumber from "bignumber.js";
 import { genericGetTransactionStatus } from "../getTransactionStatus";
-import { getAlpacaApi } from "../api";
+import { getCoinModuleApi } from "../api";
 import * as utils from "../utils";
 
 jest.mock("../api", () => ({
-  getAlpacaApi: jest.fn(),
+  getCoinModuleApi: jest.fn(),
 }));
 
 jest.mock("../utils", () => ({
@@ -40,7 +40,7 @@ describe("genericGetTransactionStatus", () => {
     mockTransactionToIntent.mockReturnValue({ intent: true });
     mockApplyMemoToIntent.mockImplementation((intent: unknown) => intent);
     mockExtractBalances.mockReturnValue({});
-    (getAlpacaApi as jest.Mock).mockReturnValue({
+    (getCoinModuleApi as jest.Mock).mockReturnValue({
       validateIntent: jest.fn().mockResolvedValue(validateIntentResult),
     });
   });

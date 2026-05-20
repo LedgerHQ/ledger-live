@@ -1,7 +1,7 @@
 import { Observable } from "rxjs";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { Account, DeviceId, SignOperationEvent, AccountBridge } from "@ledgerhq/types-live";
-import { getAlpacaApi } from "./api";
+import { getCoinModuleApi } from "./api";
 import { getBridgeApi } from "./bridge";
 import {
   applyMemoToIntent,
@@ -50,7 +50,7 @@ export const genericSignOperation =
   }): Observable<SignOperationEvent> =>
     new Observable(o => {
       async function main() {
-        const alpacaApi = await getAlpacaApi(account.currency.id, kind);
+        const coinModuleApi = await getCoinModuleApi(account.currency.id, kind);
         const bridgeApi = getBridgeApi(account.currency, network);
         if (!transaction.fees) throw new FeeNotLoaded();
         const customFees = bigNumberToBigIntDeep({
@@ -78,12 +78,12 @@ export const genericSignOperation =
             type: transaction.type,
           };
           // TODO Remove the call to `validateIntent` https://ledgerhq.atlassian.net/browse/LIVE-22227
-          const { amount } = await alpacaApi.validateIntent(
+          const { amount } = await coinModuleApi.validateIntent(
             transactionToIntent(
               account,
               draftTransaction,
               bridgeApi.computeIntentType,
-              alpacaApi.craftTransactionData,
+              coinModuleApi.craftTransactionData,
             ),
             extractBalances(account, bridgeApi.getAssetFromToken),
             customFees,
@@ -100,7 +100,7 @@ export const genericSignOperation =
             account,
             { ...transaction },
             bridgeApi.computeIntentType,
-            alpacaApi.craftTransactionData,
+            coinModuleApi.craftTransactionData,
           );
           transactionIntent.senderPublicKey = publicKey;
 
@@ -109,12 +109,12 @@ export const genericSignOperation =
 
           if (typeof transactionIntent.sequence !== "bigint" || transactionIntent.sequence < 0n) {
             // TODO: should compute it and pass it down to craftTransaction (duplicate call right now)
-            const sequenceNumber = await alpacaApi.getNextSequence(transactionIntent.sender);
+            const sequenceNumber = await coinModuleApi.getNextSequence(transactionIntent.sender);
             transactionIntent.sequence = sequenceNumber;
           }
 
-          /* Craft unsigned blob via Alpaca */
-          const { transaction: unsigned } = await alpacaApi.craftTransaction(
+          /* Craft unsigned blob via coin-framework */
+          const { transaction: unsigned } = await coinModuleApi.craftTransaction(
             transactionIntent,
             customFees,
           );
@@ -139,14 +139,14 @@ export const genericSignOperation =
         o.next({ type: "device-signature-granted" });
 
         /* Combine payload + signature for broadcast */
-        const combined = await alpacaApi.combine(
+        const combined = await coinModuleApi.combine(
           signedInfo.unsigned,
           signedInfo.txnSig,
           signedInfo.publicKey,
         );
         const operation = buildOptimisticOperation(account, transaction, signedInfo.sequence);
         if (!operation.id) {
-          log("Generic alpaca", "buildOptimisticOperation", operation);
+          log("Generic coin-framework", "buildOptimisticOperation", operation);
         }
         // NOTE: we set the transactionSequenceNumber before on the operation
         // now that we create it in craftTransaction, we might need to return it back from craftTransaction also

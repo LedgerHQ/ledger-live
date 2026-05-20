@@ -23,6 +23,22 @@ jest.mock("LLM/hooks/useStake/useStake", () => ({
   useStake: () => ({ getCanStakeCurrency: mockGetCanStakeCurrency }),
 }));
 
+const mockHandleOpenStakeDrawer = jest.fn();
+const mockUseOpenStakeDrawer = jest.fn((_props: unknown) => ({
+  handleOpenStakeDrawer: mockHandleOpenStakeDrawer,
+}));
+
+jest.mock("LLM/features/Stake", () => ({
+  useOpenStakeDrawer: (props: unknown) => mockUseOpenStakeDrawer(props),
+}));
+
+const mockUseInterestRatesByCurrencies = jest.fn().mockReturnValue({});
+
+jest.mock("@ledgerhq/live-common/dada-client/hooks/useInterestRatesByCurrencies", () => ({
+  useInterestRatesByCurrencies: (currencies: unknown) =>
+    mockUseInterestRatesByCurrencies(currencies),
+}));
+
 function buildDistributionItem(
   currency: DistributionItem["currency"],
   accounts: AccountLike[],
@@ -41,6 +57,7 @@ describe("useBalanceDetailsViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockGetCanStakeCurrency.mockReturnValue(false);
+    mockUseInterestRatesByCurrencies.mockReturnValue({});
   });
 
   it("returns defaults when currency is undefined", () => {
@@ -186,6 +203,78 @@ describe("useBalanceDetailsViewModel", () => {
       expect(result.current.earnState.type).toBe("banner");
     });
 
+    it("formats the banner APY by converting the decimal fraction to a percentage", () => {
+      mockGetCanStakeCurrency.mockReturnValue(true);
+      mockUseInterestRatesByCurrencies.mockReturnValue({
+        bitcoin: { value: 0.0345, type: "APY" },
+      });
+
+      const btcAccount = genAccount("bitcoin-0", {
+        currency: mockBtcCryptoCurrency,
+        operationsSize: 0,
+      });
+
+      const { result } = renderHook(() =>
+        useBalanceDetailsViewModel(
+          mockBtcCryptoCurrency,
+          buildDistributionItem(mockBtcCryptoCurrency, [btcAccount]),
+        ),
+      );
+
+      expect(result.current.earnState.type).toBe("banner");
+      if (result.current.earnState.type === "banner") {
+        expect(result.current.earnState.label).toContain("3.45");
+      }
+    });
+
+    it("falls back to the generic banner when the rounded percentage is 0%", () => {
+      mockGetCanStakeCurrency.mockReturnValue(true);
+      mockUseInterestRatesByCurrencies.mockReturnValue({
+        bitcoin: { value: 0.00001, type: "APY" },
+      });
+
+      const btcAccount = genAccount("bitcoin-0", {
+        currency: mockBtcCryptoCurrency,
+        operationsSize: 0,
+      });
+
+      const { result } = renderHook(() =>
+        useBalanceDetailsViewModel(
+          mockBtcCryptoCurrency,
+          buildDistributionItem(mockBtcCryptoCurrency, [btcAccount]),
+        ),
+      );
+
+      expect(result.current.earnState.type).toBe("banner");
+      if (result.current.earnState.type === "banner") {
+        expect(result.current.earnState.label).toBe("Earn with this asset");
+        expect(result.current.earnState.label).not.toContain("Earn up to");
+      }
+    });
+
+    it("falls back to the generic banner when no interest rate is available", () => {
+      mockGetCanStakeCurrency.mockReturnValue(true);
+      mockUseInterestRatesByCurrencies.mockReturnValue({});
+
+      const btcAccount = genAccount("bitcoin-0", {
+        currency: mockBtcCryptoCurrency,
+        operationsSize: 0,
+      });
+
+      const { result } = renderHook(() =>
+        useBalanceDetailsViewModel(
+          mockBtcCryptoCurrency,
+          buildDistributionItem(mockBtcCryptoCurrency, [btcAccount]),
+        ),
+      );
+
+      expect(result.current.earnState.type).toBe("banner");
+      if (result.current.earnState.type === "banner") {
+        expect(result.current.earnState.label).toBe("Earn with this asset");
+        expect(result.current.earnState.label).not.toContain("Earn up to");
+      }
+    });
+
     it("shows staked state when balance > spendableBalance", () => {
       mockGetCanStakeCurrency.mockReturnValue(true);
 
@@ -235,7 +324,7 @@ describe("useBalanceDetailsViewModel", () => {
       });
     });
 
-    it("onEarnBannerPress and onEarnDepositPress fire analytics", () => {
+    it("onEarnBannerPress and onEarnDepositPress fire analytics and open the stake drawer", () => {
       const btcAccount = genAccount("bitcoin-0", {
         currency: mockBtcCryptoCurrency,
         operationsSize: 0,
@@ -254,12 +343,42 @@ describe("useBalanceDetailsViewModel", () => {
         currency: "bitcoin",
         page: "Asset Detail",
       });
+      expect(mockHandleOpenStakeDrawer).toHaveBeenCalledTimes(1);
 
       act(() => result.current.onEarnDepositPress());
       expect(track).toHaveBeenCalledWith("button_clicked", {
         button: "earn_deposit",
         currency: "bitcoin",
         page: "Asset Detail",
+      });
+      expect(mockHandleOpenStakeDrawer).toHaveBeenCalledTimes(2);
+    });
+
+    it("configures useOpenStakeDrawer with the current currency and Asset Detail source", () => {
+      const btcAccount = genAccount("bitcoin-0", {
+        currency: mockBtcCryptoCurrency,
+        operationsSize: 0,
+      });
+
+      renderHook(() =>
+        useBalanceDetailsViewModel(
+          mockBtcCryptoCurrency,
+          buildDistributionItem(mockBtcCryptoCurrency, [btcAccount]),
+        ),
+      );
+
+      expect(mockUseOpenStakeDrawer).toHaveBeenCalledWith({
+        sourceScreenName: "Asset Detail",
+        currencies: [mockBtcCryptoCurrency.id],
+      });
+    });
+
+    it("calls useOpenStakeDrawer with undefined currencies when no currency is provided", () => {
+      renderHook(() => useBalanceDetailsViewModel(undefined, undefined));
+
+      expect(mockUseOpenStakeDrawer).toHaveBeenCalledWith({
+        sourceScreenName: "Asset Detail",
+        currencies: undefined,
       });
     });
   });

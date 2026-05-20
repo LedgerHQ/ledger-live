@@ -88,7 +88,7 @@ describe("useSendFlowAmountReviewCore", () => {
     expect(result.current.accountCurrency).toBeDefined();
   });
 
-  it("calls updateTransaction when updateTransactionWithPatch is invoked", () => {
+  it("calls updateTransaction when updateTransactionWithPatch is invoked", async () => {
     const account = createAccount();
     const transaction = createTransaction();
     const updateTransaction = jest.fn((fn: (tx: Transaction) => Transaction) => fn(transaction));
@@ -104,7 +104,7 @@ describe("useSendFlowAmountReviewCore", () => {
       }),
     );
 
-    result.current.updateTransactionWithPatch({ amount: new BigNumber(200) });
+    await result.current.updateTransactionWithPatch({ amount: new BigNumber(200) });
     expect(updateTransaction).toHaveBeenCalledTimes(1);
     const updater = updateTransaction.mock.calls[0][0];
     const nextTx = updater(transaction);

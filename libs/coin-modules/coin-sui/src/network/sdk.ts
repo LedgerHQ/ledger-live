@@ -73,7 +73,7 @@ const MULTI_GET_OBJECTS_LIMIT = 50;
 
 export const DEFAULT_COIN_TYPE = "0x2::sui::SUI";
 
-const STAKING_REQUEST_EVENT = "0x3::staking_pool::StakingRequestEvent";
+const STAKING_REQUEST_EVENT = "0x3::validator::StakingRequestEvent";
 const UNSTAKING_REQUEST_EVENT = "0x3::validator::UnstakingRequestEvent";
 
 /** Default options for querying transactions. */
@@ -550,10 +550,10 @@ export function transactionToOperation(
   };
 }
 
-// This function is only used by alpaca code path
+// This function is only used by coin-framework code path
 // Logic is similar to getOperationAmount, but we guarantee to return a positive amount in any case
 // If there is need to display negative amount for staking or unstaking, the view can handle it based on the type of the operation
-export const alpacaGetOperationAmount = (
+export const getOperationAmountCoinFramework = (
   address: string,
   transaction: SuiTransactionBlockResponse,
   coinType: string,
@@ -625,12 +625,12 @@ export function getStakingEventDetails(
 }
 
 /**
- * This function is only used by alpaca code path
+ * This function is only used by coin-framework code path
  *
  * @returns the operation converted. Note that if param `transaction` was retrieved as an "IN" operations, the type may be converted to "OUT".
  *    It happens for most "OUT" operations because the sender receive a new version of the coin objects.
  */
-export function alpacaTransactionToOp(
+export function transactionToCoinFrameworkOperation(
   address: string,
   transaction: SuiTransactionBlockResponse,
   checkpointHash?: string,
@@ -663,7 +663,7 @@ export function alpacaTransactionToOp(
     recipients: getOperationRecipients(transaction.transaction?.data),
     senders: getOperationSenders(transaction.transaction?.data),
     type,
-    value: BigInt(alpacaGetOperationAmount(address, transaction, coinType).toString()),
+    value: BigInt(getOperationAmountCoinFramework(address, transaction, coinType).toString()),
   };
 
   if (type === "DELEGATE" || type === "UNDELEGATE") {
@@ -1111,9 +1111,9 @@ export const getListOperations = async (
       }),
     );
 
-    // convert operations to alpaca model
+    // convert operations to coin-framework model
     const operations = pageOps.map(t =>
-      alpacaTransactionToOp(
+      transactionToCoinFrameworkOperation(
         addr,
         t,
         t.checkpoint ? checkpointHashMap.get(t.checkpoint) : undefined,

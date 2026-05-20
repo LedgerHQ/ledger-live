@@ -1,17 +1,18 @@
 import type { DistributionItem } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type { AssetDetailMarketInfo, AssetMarketData } from "@ledgerhq/asset-detail";
+import type { AssetMarketData } from "@ledgerhq/asset-detail";
 
-export type AssetDetailReady = {
+type AssetDetailLoading = Readonly<{ mode: "loading" }>;
+type AssetDetailNotFound = Readonly<{ mode: "not-found" }>;
+
+export type AssetDetailReady = Readonly<{
   mode: "ready";
-  distributionItem: DistributionItem | undefined;
-  marketInfo: AssetDetailMarketInfo | undefined;
-  market: AssetMarketData;
-  ledgerCurrency: CryptoOrTokenCurrency | undefined;
-  assetName: string;
-  assetTicker: string;
-  ledgerId: string | undefined;
-  isLoading: boolean;
-};
+  distributionItem?: DistributionItem;
+  marketData: AssetMarketData;
+  ledgerCurrency?: CryptoOrTokenCurrency;
+  displayName: string;
+  displayTicker: string;
+  ledgerId?: string;
+}>;
 
-export type AssetDetailViewModel = AssetDetailReady | { mode: "loading" } | { mode: "not-found" };
+export type AssetDetailViewModel = AssetDetailLoading | AssetDetailNotFound | AssetDetailReady;

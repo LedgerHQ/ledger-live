@@ -6,11 +6,16 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
   // Source: https://docs.sei.io/evm/precompiles/staking
   sei_evm: {
     contractAddress: "0x0000000000000000000000000000000000001005",
+    specificContractAddressByOperation: {
+      // https://docs.sei.io/evm/precompiles/distribution
+      claimReward: "0x0000000000000000000000000000000000001007",
+    },
     functions: {
       delegate: "delegate",
       undelegate: "undelegate",
       redelegate: "redelegate",
       getStakedBalance: "delegation",
+      claimReward: "withdrawDelegationRewards",
     },
     apiConfig: {
       baseUrl: "https://rest.sei-apis.com/",

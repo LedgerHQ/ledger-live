@@ -1,6 +1,13 @@
 import React from "react";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { render, renderWithMockedCounterValuesProvider, screen, waitFor } from "tests/testSetup";
+import {
+  render,
+  renderWithMockedCounterValuesProvider,
+  screen,
+  waitFor,
+  within,
+  withFlagOverrides,
+} from "tests/testSetup";
 import { MarketMockedResponse } from "tests/handlers/fixtures/market";
 import {
   buildDistributionItem,
@@ -36,7 +43,22 @@ const TEST_ID = {
   ACTION_SELL: "asset-detail-action-sell",
   ACTION_SEND: "asset-detail-action-send",
   HEADER_OPTIONS: "asset-detail-header-options-trigger",
+  STAKING_SECTION: "asset-detail-staking-section",
+  EARN_BANNER: "asset-detail-earn-banner",
+  AVAILABLE_BALANCE: "asset-detail-available-balance",
+  EARN_DEPOSIT: "asset-detail-earn-deposit",
 } as const;
+
+const mockGetCanStakeCurrency = jest.fn().mockReturnValue(false);
+const mockUseInterestRatesByCurrencies = jest.fn().mockReturnValue({});
+
+jest.mock("LLD/hooks/useStake", () => ({
+  useStake: () => ({ getCanStakeCurrency: mockGetCanStakeCurrency }),
+}));
+
+jest.mock("@ledgerhq/live-common/dada-client/hooks/useInterestRatesByCurrencies", () => ({
+  useInterestRatesByCurrencies: (...args: unknown[]) => mockUseInterestRatesByCurrencies(...args),
+}));
 
 jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag", () => ({
   useCurrenciesUnderFeatureFlag: () => ({
@@ -207,6 +229,8 @@ describe("AssetDetail integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     setLocation();
+    mockGetCanStakeCurrency.mockReturnValue(false);
+    mockUseInterestRatesByCurrencies.mockReturnValue({});
 
     mockIsCurrencyAvailable.mockImplementation(() => true);
     jest.mocked(useRampCatalog).mockReturnValue({
@@ -234,9 +258,78 @@ describe("AssetDetail integration", () => {
       },
     );
 
-    it("shows header options menu with favorites and hide actions", async () => {
+    it("hides the staking section when the asset is not stakeable", async () => {
       mockMarket.withData(MarketMockedResponse.bitcoinDetail);
       setupRoute("bitcoin", OWNED_ASSETS[0].buildDistribution());
+
+      renderWithMockedCounterValuesProvider(<AssetDetail />);
+
+      await waitFor(() => {
+        expectHeader();
+        expectOwnedView();
+      });
+
+      expect(screen.queryByTestId(TEST_ID.STAKING_SECTION)).not.toBeInTheDocument();
+    });
+
+    it("shows the default earn banner when stakeable without an earn deposit and no APY", async () => {
+      mockGetCanStakeCurrency.mockReturnValue(true);
+      mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+      setupRoute("bitcoin", OWNED_ASSETS[0].buildDistribution());
+
+      renderWithMockedCounterValuesProvider(<AssetDetail />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId(TEST_ID.EARN_BANNER)).toBeVisible();
+        expect(screen.getByText("Earn with this asset")).toBeVisible();
+      });
+
+      expect(screen.queryByTestId(TEST_ID.AVAILABLE_BALANCE)).not.toBeInTheDocument();
+      expect(screen.queryByTestId(TEST_ID.EARN_DEPOSIT)).not.toBeInTheDocument();
+    });
+
+    it("shows the earn banner when the asset is stakeable without an earn deposit and APY is available", async () => {
+      mockGetCanStakeCurrency.mockReturnValue(true);
+      mockUseInterestRatesByCurrencies.mockReturnValue({
+        bitcoin: { value: 0.12, type: "APY" },
+      });
+      mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+      setupRoute("bitcoin", OWNED_ASSETS[0].buildDistribution());
+
+      renderWithMockedCounterValuesProvider(<AssetDetail />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId(TEST_ID.EARN_BANNER)).toBeVisible();
+        expect(screen.getByText("Earn up to 12.0% APY")).toBeVisible();
+      });
+
+      expect(screen.queryByTestId(TEST_ID.AVAILABLE_BALANCE)).not.toBeInTheDocument();
+      expect(screen.queryByTestId(TEST_ID.EARN_DEPOSIT)).not.toBeInTheDocument();
+    });
+
+    it("shows available balance and earn deposit cards when stakeable with an earn deposit", async () => {
+      mockGetCanStakeCurrency.mockReturnValue(true);
+      mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+      const account = genAccount("asset-detail-staking-deposit", { currency: btc });
+      account.balance = new BigNumber(10);
+      account.spendableBalance = new BigNumber(0);
+      const item = buildDistributionItem({ accounts: [account] });
+      setupRoute("bitcoin", { bySlug: { bitcoin: item }, list: [item] });
+
+      renderWithMockedCounterValuesProvider(<AssetDetail />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId(TEST_ID.STAKING_SECTION)).toBeVisible();
+        expect(screen.getByTestId(TEST_ID.AVAILABLE_BALANCE)).toBeVisible();
+        expect(screen.getByTestId(TEST_ID.EARN_DEPOSIT)).toBeVisible();
+      });
+
+      expect(screen.queryByTestId(TEST_ID.EARN_BANNER)).not.toBeInTheDocument();
+    });
+
+    it("shows header options menu with favorites and hide actions for tokens", async () => {
+      mockMarket.withData(MarketMockedResponse.usdcDetail);
+      setupRoute("ethereum/erc20/usd__coin", OWNED_ASSETS[1].buildDistribution());
 
       const { user } = renderWithMockedCounterValuesProvider(<AssetDetail />);
 
@@ -250,13 +343,48 @@ describe("AssetDetail integration", () => {
       expect(screen.getByRole("menuitem", { name: /hide from portfolio/i })).toBeVisible();
     });
 
+    it("USDC - enables the favorite action and stores the coingecko id when toggled", async () => {
+      mockMarket.withData(MarketMockedResponse.usdcDetail);
+      const account = genAccount("asset-detail-usdc-star-account", { currency: btc });
+      const item = buildDistributionItem({
+        currency: makeIntegrationTokenCurrency("ethereum/erc20/usd__coin", "USDC", "USD Coin"),
+        accounts: [account],
+        slug: "usd-coin",
+      });
+      setupRoute("ethereum/erc20/usd__coin", { bySlug: {}, list: [item] });
+
+      const { user, store } = renderWithMockedCounterValuesProvider(<AssetDetail />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId(TEST_ID.HEADER_OPTIONS)).toBeVisible();
+      });
+
+      await user.click(screen.getByTestId(TEST_ID.HEADER_OPTIONS));
+
+      const favoriteItem = await screen.findByRole("menuitem", { name: /add to favorites/i });
+      expect(favoriteItem).toBeVisible();
+      expect(favoriteItem).not.toHaveAttribute("aria-disabled", "true");
+
+      await user.click(favoriteItem);
+
+      await waitFor(() => {
+        expect(store.getState().settings.starredMarketCoins).toContain("usd-coin");
+      });
+      expect(store.getState().settings.starredMarketCoins).not.toContain(
+        "ethereum/erc20/usd__coin",
+      );
+    });
+
     it("shows Show in portfolio when the asset is blacklisted", async () => {
-      mockMarket.withData(MarketMockedResponse.bitcoinDetail);
-      setupRoute("bitcoin", OWNED_ASSETS[0].buildDistribution());
+      mockMarket.withData(MarketMockedResponse.usdcDetail);
+      setupRoute("ethereum/erc20/usd__coin", OWNED_ASSETS[1].buildDistribution());
 
       const { user } = renderWithMockedCounterValuesProvider(<AssetDetail />, {
         initialState: {
-          settings: { ...AFTER_ONBOARDING_STATE, blacklistedTokenIds: ["bitcoin"] },
+          settings: {
+            ...AFTER_ONBOARDING_STATE,
+            blacklistedTokenIds: ["ethereum/erc20/usd__coin"],
+          },
         },
       });
 
@@ -577,6 +705,80 @@ describe("AssetDetail integration", () => {
         expectAssetName("Bitcoin Test");
         expect(screen.getByText(LABEL.TOTAL_BALANCE)).toBeVisible();
       });
+    });
+  });
+
+  describe("PnL section", () => {
+    const pnlEnabled = withFlagOverrides({
+      lwdWallet40: { enabled: true, params: { pnl: true } },
+    });
+
+    const setupBitcoinAsset = (accountId: string) => {
+      mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+      const account = genAccount(accountId, { currency: btc });
+      const item = buildDistributionItem({ accounts: [account] });
+      setupRoute("bitcoin", { bySlug: { bitcoin: item }, list: [item] });
+      return { account };
+    };
+
+    it("does not render the PnL cards when the feature flag is off", async () => {
+      const { account } = setupBitcoinAsset("asset-detail-pnl-flag-off");
+
+      renderWithMockedCounterValuesProvider(<AssetDetail />, {
+        initialState: { accounts: [account], settings: AFTER_ONBOARDING_STATE },
+      });
+
+      await waitFor(() => expectHeader());
+      expect(screen.queryByRole("button", { name: /unrealised return/i })).not.toBeInTheDocument();
+      expect(screen.queryByText("Average entry price")).not.toBeInTheDocument();
+    });
+
+    it("renders both the unrealised return and average entry price cards when the feature flag is on", async () => {
+      const { account } = setupBitcoinAsset("asset-detail-pnl-flag-on");
+
+      renderWithMockedCounterValuesProvider(<AssetDetail />, {
+        initialState: { ...pnlEnabled, accounts: [account], settings: AFTER_ONBOARDING_STATE },
+      });
+
+      await waitFor(() => {
+        expect(screen.getByRole("button", { name: /unrealised return/i })).toBeVisible();
+        expect(screen.getByText("Average entry price")).toBeVisible();
+      });
+    });
+
+    it("opens the detail dialog with the three return rows when the unrealised return card is clicked", async () => {
+      const { account } = setupBitcoinAsset("asset-detail-pnl-dialog-open");
+
+      const { user } = renderWithMockedCounterValuesProvider(<AssetDetail />, {
+        initialState: { ...pnlEnabled, accounts: [account], settings: AFTER_ONBOARDING_STATE },
+      });
+
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+
+      const card = await screen.findByRole("button", { name: /unrealised return/i });
+      await user.click(card);
+
+      const dialog = await screen.findByRole("dialog");
+      const dialogScope = within(dialog);
+      expect(dialogScope.getByText("Total return")).toBeVisible();
+      expect(dialogScope.getByText("Unrealised return")).toBeVisible();
+      expect(dialogScope.getByText("Realised return")).toBeVisible();
+    });
+
+    it("dismisses the detail dialog when the close button is clicked", async () => {
+      const { account } = setupBitcoinAsset("asset-detail-pnl-dialog-close");
+
+      const { user } = renderWithMockedCounterValuesProvider(<AssetDetail />, {
+        initialState: { ...pnlEnabled, accounts: [account], settings: AFTER_ONBOARDING_STATE },
+      });
+
+      const card = await screen.findByRole("button", { name: /unrealised return/i });
+      await user.click(card);
+
+      const dialog = await screen.findByRole("dialog");
+      await user.click(within(dialog).getByRole("button", { name: /close/i }));
+
+      await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
     });
   });
 

@@ -12,6 +12,7 @@ export type IntentExecutionSnapshot<JobState, ExtraProps> = {
   intentComponent: React.ComponentType<{
     jobState: JobState | undefined;
     extraProps: ExtraProps;
+    onClose: () => void;
   }>;
   jobState: JobState | undefined;
   intentComponentExtraProps: ExtraProps;
@@ -23,31 +24,37 @@ export type DeviceIntentExecutorHookState<JobState, _Input, ExtraProps, InitInpu
       deviceConnectionParams: DeviceConnectionParams;
       onConnected: (result: DeviceConnectionResult) => void;
       onError: (error: unknown) => void;
+      onClose: () => void;
     }
   | {
       phase: "connectionError";
       error: unknown;
       onRetry: () => void;
+      onClose: () => void;
     }
   | {
       phase: "deviceInitialization";
       connectionResult: DeviceConnectionResult;
       deviceInitializationInput: InitInput;
       onContextInitialized: (ctx: DeviceExtractedContext) => void;
+      onClose: () => void;
     }
   | {
       phase: "intentExecution";
       intentComponent: React.ComponentType<{
         jobState: JobState | undefined;
         extraProps: ExtraProps;
+        onClose: () => void;
       }>;
       jobState: JobState | undefined;
       intentComponentExtraProps: ExtraProps;
+      onClose: () => void;
     }
   | {
       phase: "intentError";
       error: unknown;
       onRetry: () => void;
+      onClose: () => void;
     }
   | {
       phase: "invalidOperation";
@@ -57,6 +64,7 @@ export type DeviceIntentExecutorHookState<JobState, _Input, ExtraProps, InitInpu
   | {
       phase: "idle";
       lastIntentSnapshot: IntentExecutionSnapshot<JobState, ExtraProps> | null;
+      onClose: () => void;
     };
 
 export type DeriveHookStateParams<JobState, ExtraProps, InitInput> = {
@@ -67,6 +75,7 @@ export type DeriveHookStateParams<JobState, ExtraProps, InitInput> = {
   intentComponent: React.ComponentType<{
     jobState: JobState | undefined;
     extraProps: ExtraProps;
+    onClose: () => void;
   }>;
   intentComponentExtraProps: ExtraProps;
   lastIntentSnapshot: IntentExecutionSnapshot<JobState, ExtraProps> | null;
@@ -88,12 +97,14 @@ export function deriveHookState<JobState, Input, ExtraProps, InitInput>(
         deviceConnectionParams: params.deviceConnectionParams,
         onConnected: params.onConnected,
         onError: params.onConnectionError,
+        onClose: params.onUserCancel,
       };
     case "connectingDeviceError":
       return {
         phase: "connectionError",
         error: executorState.error,
         onRetry: params.onRetry,
+        onClose: params.onUserCancel,
       };
     case "initializingDeviceContext":
       return {
@@ -101,6 +112,7 @@ export function deriveHookState<JobState, Input, ExtraProps, InitInput>(
         connectionResult: params.connectionResult!,
         deviceInitializationInput: params.deviceInitializationInput,
         onContextInitialized: params.onContextInitialized,
+        onClose: params.onUserCancel,
       };
     case "executingIntent":
       return {
@@ -108,12 +120,14 @@ export function deriveHookState<JobState, Input, ExtraProps, InitInput>(
         intentComponent: params.intentComponent,
         jobState: params.latestJobState,
         intentComponentExtraProps: params.intentComponentExtraProps,
+        onClose: params.onUserCancel,
       };
     case "executingIntentError":
       return {
         phase: "intentError",
         error: executorState.error,
         onRetry: params.onRetry,
+        onClose: params.onUserCancel,
       };
     case "invalidOperation":
       return {
@@ -122,6 +136,10 @@ export function deriveHookState<JobState, Input, ExtraProps, InitInput>(
         onClose: params.onUserCancel,
       };
     case "idle":
-      return { phase: "idle", lastIntentSnapshot: params.lastIntentSnapshot };
+      return {
+        phase: "idle",
+        lastIntentSnapshot: params.lastIntentSnapshot,
+        onClose: params.onUserCancel,
+      };
   }
 }

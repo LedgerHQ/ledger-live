@@ -3,8 +3,13 @@ import { findCryptoCurrencyById, formatCurrencyUnit } from "@ledgerhq/live-commo
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 import type { CryptoAssetsStore, OperationType } from "@ledgerhq/types-live";
 import { colors } from "../../shared/ui";
-import { serializeV1 } from "../../shared/accountDescriptor";
-import type { AccountDescriptor, Balance, Operation, DiscoveredAccount } from "../models";
+import type {
+  AccountDescriptor,
+  Balance,
+  Operation,
+  DiscoveredAccount,
+  TokenInfo,
+} from "../models";
 
 const TYPE_COLORS: Partial<Record<OperationType, (s: string) => string>> = {
   IN: colors.green,
@@ -44,19 +49,28 @@ export class HumanFormatter {
   }
 
   formatDiscoveredAccount(d: DiscoveredAccount): string {
-    const { descriptor, freshAddress } = d;
-    const v1str = serializeV1(descriptor);
-    const networkStr = `${descriptor.network.name}:${descriptor.network.env}`;
-    const rawIndex = descriptor.path.split("/")[3]?.replaceAll(/[h']/g, "") ?? "?";
-    const typeLabel = colors.dim(`(${descriptor.type})`);
-    const accountNum = `#${rawIndex}`;
-    const label = `${colors.bold(colors.cyan(networkStr))} account ${colors.bold(accountNum)} ${typeLabel}  ${freshAddress}`;
-    return `${label}\n  ${colors.dim(v1str)}`;
+    return `${colors.bold(d.label)}  ${d.freshAddress}`;
   }
 
   async formatBalance(b: Balance): Promise<string> {
     const amount = await this.formatAmount(b.balance, b.assetId);
     return b.balance === "0" ? colors.dim(amount) : colors.green(amount);
+  }
+
+  formatTokenInfo(t: TokenInfo): string {
+    const lines = [
+      `ID:        ${colors.bold(t.id)}`,
+      `Ticker:    ${t.ticker}`,
+      `Name:      ${t.name}`,
+      `Contract:  ${t.contractAddress}`,
+      `Parent:    ${t.parentCurrencyId}`,
+      `Type:      ${t.tokenType}`,
+      `Decimals:  ${t.decimals}`,
+    ];
+    if (t.delisted) {
+      lines.push(colors.yellow("Warning: this token is delisted"));
+    }
+    return lines.join("\n");
   }
 
   static formatError(e: unknown): string {

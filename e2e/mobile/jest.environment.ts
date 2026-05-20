@@ -58,13 +58,15 @@ async function captureFailureDiagnostics(): Promise<void> {
   );
   // getLogs has its own 10s RESPONSE_TIMEOUT inside the bridge; this outer bound
   // is just defense-in-depth in case the inner timer is starved on a wedged worker.
-  const logs = await withTimeout(getLogs(), 12_000, "getLogs");
+  let logs = await withTimeout(getLogs(), 12_000, "getLogs");
   if (logs)
     await withTimeout(
       attachFailureLogsToAllure(logs),
       SLOW_DIAGNOSTIC_TIMEOUT_MS,
       "attachFailureLogsToAllure",
     );
+  logs = "";
+
   await withTimeout(
     captureNativeViewHierarchy(),
     SLOW_DIAGNOSTIC_TIMEOUT_MS,

@@ -56,50 +56,42 @@ export class ConsoleLogger {
       this.everyLogs =
         logVerbose.length === 1 && (logVerbose[0] === "true" || logVerbose[0] === "1");
       this.filters = this.everyLogs ? [] : logVerbose;
-
-      // eslint-disable-next-line no-console
     } else {
       this.everyLogs = false;
       this.filters = [];
     }
 
-    console.log(
-      `Logs console display setup: ${JSON.stringify({
-        everyLogs: this.everyLogs,
-        filters: this.filters,
-      })}`,
-    );
+    console.log("Logs console display setup:", {
+      everyLogs: this.everyLogs,
+      filters: this.filters,
+    });
   }
 
   /**
    * Displays a log in the console, if not filtered out.
+   *
+   * Objects (context, data, ...) are passed as-is to `console.log` so that
+   * DevTools can render them as interactive, inspectable trees.
    */
-  log({ type, message, context, ...rest }: Log) {
+  log({ type, message, context, data, ...rest }: Log) {
     if (!this.everyLogs && !this.filters.includes(type)) {
       return;
     }
 
-    try {
-      if (context) {
-        // Displays the tracing context before the message for better readability in the console
-        // eslint-disable-next-line no-console
-        console.log(
-          `------------------------------\n${type}: ${JSON.stringify(context, null, 2)}\n${
-            message || ""
-          }\n${JSON.stringify(rest, null, 2)}`,
-        );
-      } else {
-        // eslint-disable-next-line no-console
-        console.log(
-          `------------------------------\n${type}: ${message || ""}${JSON.stringify(
-            rest,
-            null,
-            2,
-          )}`,
-        );
-      }
-    } catch {
-      console.error("Badly formatted log");
+    const label = `[${type}]${message ? ` ${message}` : ""}`;
+    const hasContext = !!context && Object.keys(context).length > 0;
+    const hasData = data !== undefined;
+    const hasRest = Object.keys(rest).length > 0;
+
+    if (!hasContext && !hasData && !hasRest) {
+      console.log(label);
+      return;
     }
+
+    console.groupCollapsed(label);
+    if (hasContext) console.log("context:", context);
+    if (hasData) console.log("data:", data);
+    if (hasRest) console.log("extra:", rest);
+    console.groupEnd();
   }
 }

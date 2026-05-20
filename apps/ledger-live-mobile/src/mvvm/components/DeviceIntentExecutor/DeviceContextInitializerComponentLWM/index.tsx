@@ -14,15 +14,17 @@ export type InitializerConfig =
 const DeviceContextInitializerComponentLWM: DeviceContextInitializerComponent<
   InitializationInput,
   InitializerConfig
-> = ({ connectionResult, deviceInitializationInput, onContextInitialized, config }) => {
-  const state = useDeviceContextInitializerComponentLWMViewModel({
+> = ({ connectionResult, deviceInitializationInput, onContextInitialized, config, onClose }) => {
+  const { state, device } = useDeviceContextInitializerComponentLWMViewModel({
     connectionResult,
     deviceInitializationInput,
     onContextInitialized,
     dependencies: config?.dependencies,
   });
 
-  return <DeviceContextInitializerComponentLWMView state={state} />;
+  return (
+    <DeviceContextInitializerComponentLWMView state={state} device={device} onCancel={onClose} />
+  );
 };
 
 export default DeviceContextInitializerComponentLWM;

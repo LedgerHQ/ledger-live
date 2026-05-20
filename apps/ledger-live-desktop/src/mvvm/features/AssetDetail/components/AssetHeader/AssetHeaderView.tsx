@@ -5,7 +5,7 @@ import {
   NavBarCoinCapsule,
   NavBarTrailing,
 } from "@ledgerhq/lumen-ui-react";
-import type { AssetDetailMarketInfo, AssetMarketData } from "@ledgerhq/asset-detail";
+import type { AssetMarketData } from "@ledgerhq/asset-detail";
 import type { DistributionItem } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { OptionsMenu } from "../OptionsMenu";
@@ -15,10 +15,9 @@ export type AssetHeaderViewProps = Readonly<{
   assetLabel: string;
   icon: React.ReactNode;
   viewModel: AssetHeaderViewModel;
-  distributionItem: DistributionItem | undefined;
-  market: AssetMarketData;
-  marketInfo: AssetDetailMarketInfo | undefined;
-  ledgerCurrency: CryptoOrTokenCurrency | undefined;
+  distributionItem?: DistributionItem;
+  marketData: AssetMarketData;
+  ledgerCurrency?: CryptoOrTokenCurrency;
 }>;
 
 export function AssetHeaderView({
@@ -26,8 +25,7 @@ export function AssetHeaderView({
   icon,
   viewModel,
   distributionItem,
-  market,
-  marketInfo,
+  marketData,
   ledgerCurrency,
 }: AssetHeaderViewProps) {
   const { onBack } = viewModel;
@@ -43,8 +41,7 @@ export function AssetHeaderView({
         {ledgerCurrency ? (
           <OptionsMenu
             distributionItem={distributionItem}
-            market={market}
-            marketInfo={marketInfo}
+            marketData={marketData}
             currency={ledgerCurrency}
           />
         ) : null}

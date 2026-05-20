@@ -1,7 +1,7 @@
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import {
   AddressValidationCurrencyParameters,
-  AlpacaApi,
+  CoinModuleApi,
   Balance,
   BalanceOptions,
   BroadcastConfig,
@@ -30,9 +30,9 @@ import { validateIntent } from "../logic/validateIntent";
 import { getChainAPI } from "../network";
 import { endpointByCurrencyId } from "../utils";
 
-type SolanaAlpacaApi = AlpacaApi<StringMemo | MemoNotSupported>;
+type SolanaCoinModuleApi = CoinModuleApi<StringMemo | MemoNotSupported>;
 
-export function createApi(config: SolanaCoinConfig, currencyId: string): SolanaAlpacaApi {
+export function createApi(config: SolanaCoinConfig, currencyId: string): SolanaCoinModuleApi {
   coinConfig.setCoinConfig(() => ({
     ...config,
     status: { type: "active" as const },

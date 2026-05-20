@@ -50,11 +50,10 @@ function hasStatusCode(value: unknown, statusCode: number): value is { statusCod
 
 export function mapConnectAppDAPendingStatus(params: {
   state: Extract<ConnectAppDAState, { status: DeviceActionStatus.Pending }>;
-  appName: string;
   deprecation?: DeprecationPresentationInput;
   deprecationDismissedCurrencyNames: string[];
 }): EnsureAppReadyState | null {
-  const { state, appName, deprecation, deprecationDismissedCurrencyNames } = params;
+  const { state, deprecation, deprecationDismissedCurrencyNames } = params;
   const { intermediateValue } = state;
 
   switch (intermediateValue.requiredUserInteraction) {
@@ -75,16 +74,8 @@ export function mapConnectAppDAPendingStatus(params: {
       };
 
     case UserInteractionRequired.None:
-      if (!intermediateValue.installPlan) return null;
-      return {
-        type: LoadingStateType.InstallingApp,
-        appName:
-          intermediateValue.installPlan.installPlan[intermediateValue.installPlan.currentIndex]
-            ?.versionName ?? appName,
-        progress: intermediateValue.installPlan.currentProgress,
-        index: intermediateValue.installPlan.currentIndex,
-        total: intermediateValue.installPlan.installPlan.length,
-      };
+      if (intermediateValue.installPlan) return { type: LoadingStateType.InstallingApp };
+      return { type: LoadingStateType.Loading };
 
     case UserInteractionRequiredLL.DeviceDeprecation:
       return mapDeprecationState({

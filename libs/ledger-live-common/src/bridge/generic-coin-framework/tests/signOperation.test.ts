@@ -2,11 +2,11 @@ import { lastValueFrom } from "rxjs";
 import { toArray } from "rxjs/operators";
 import { genericSignOperation } from "../signOperation";
 import { FeeNotLoaded } from "@ledgerhq/errors";
-import { getAlpacaApi } from "../api";
+import { getCoinModuleApi } from "../api";
 import { buildOptimisticOperation, transactionToIntent } from "../utils";
 
 jest.mock("../api", () => ({
-  getAlpacaApi: jest.fn(),
+  getCoinModuleApi: jest.fn(),
 }));
 
 jest.mock("../utils", () => ({
@@ -42,7 +42,7 @@ describe("genericSignOperation", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    (getAlpacaApi as jest.Mock).mockReturnValue({
+    (getCoinModuleApi as jest.Mock).mockReturnValue({
       craftTransaction: jest.fn().mockResolvedValue({ transaction: "unsignedTx" }),
       getAccountInfo: jest.fn().mockResolvedValue("pubKey"),
       combine: jest.fn().mockResolvedValue("signedTx"),

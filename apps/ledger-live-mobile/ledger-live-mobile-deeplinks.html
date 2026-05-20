@@ -408,11 +408,13 @@
                     section: "Asset",
                     title: "Asset Page",
                     url: "ledgerlive://asset/:currencyId",
-                    description: "Opens the asset page for a specific currency.",
+                    description: "Opens the asset page for a specific currency. When the Wallet 4.0 `aggregatedAssets` param is enabled, opens the Asset Detail screen with source = \"deeplink_asset\"; otherwise opens the legacy WalletCentricAsset screen. Invalid or missing currencyId falls back to portfolio.",
                     parameters: [
                         { name: "currencyId", required: true, description: "The currency ID (e.g., bitcoin, ethereum)" }
                     ],
                     examples: [
+                        "ledgerwallet://asset/bitcoin",
+                        "ledgerwallet://asset/ethereum",
                         "ledgerlive://asset/bitcoin",
                         "ledgerlive://asset/ethereum"
                     ]
@@ -489,11 +491,13 @@
                     section: "Market",
                     title: "Market Detail Page",
                     url: "ledgerlive://market/:currencyId",
-                    description: "Opens the market detail page for a specific cryptocurrency.",
+                    description: "Opens the market detail page for a specific cryptocurrency. When the Wallet 4.0 `aggregatedAssets` param is enabled, opens the Asset Detail screen with source = \"deeplink_market\"; otherwise opens the Market Detail screen (charts / stats). Invalid or missing currencyId falls back to the market list.",
                     parameters: [
                         { name: "currencyId", required: true, description: "The ID of the cryptocurrency (e.g., bitcoin, ethereum)" }
                     ],
                     examples: [
+                        "ledgerwallet://market/bitcoin",
+                        "ledgerwallet://market/ethereum",
                         "ledgerlive://market/bitcoin",
                         "ledgerlive://market/ethereum",
                         "ledgerlive://market/solana"

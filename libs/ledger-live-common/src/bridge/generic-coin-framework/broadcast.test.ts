@@ -1,13 +1,13 @@
-import { getAlpacaApi } from "./api";
+import { getCoinModuleApi } from "./api";
 import { genericBroadcast } from "./broadcast";
 
 jest.mock("./api", () => ({
-  getAlpacaApi: jest.fn(),
+  getCoinModuleApi: jest.fn(),
 }));
 
 describe("genericBroadcast", () => {
-  it("propagates errors from Alpaca", async () => {
-    (getAlpacaApi as jest.Mock).mockResolvedValue({
+  it("propagates errors from coin-framework", async () => {
+    (getCoinModuleApi as jest.Mock).mockResolvedValue({
       broadcast: jest.fn().mockRejectedValue(new Error("Broadcast Error")),
     });
 

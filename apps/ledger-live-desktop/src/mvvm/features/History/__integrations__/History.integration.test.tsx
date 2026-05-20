@@ -198,7 +198,7 @@ describe("History export dialog integration", () => {
   async function openExportDialog(user: ReturnType<typeof renderHistoryWithAccounts>["user"]) {
     await user.click(screen.getByRole("button", { name: /export/i }));
     await waitFor(() =>
-      expect(screen.getByRole("heading", { name: "Transaction history" })).toBeVisible(),
+      expect(screen.getByRole("heading", { name: "Export transaction history" })).toBeVisible(),
     );
     return within(screen.getByRole("dialog"));
   }
@@ -207,7 +207,6 @@ describe("History export dialog integration", () => {
     const { user } = renderHistoryWithAccounts();
     const dialog = await openExportDialog(user);
 
-    expect(dialog.getByText("Choose the accounts to include in the export")).toBeVisible();
     expect(dialog.getByText(/Bitcoin/)).toBeVisible();
     expect(dialog.getByText(/Ethereum/)).toBeVisible();
 
@@ -251,7 +250,7 @@ describe("History export dialog integration", () => {
     await user.click(dialog.getByRole("button", { name: /export history/i }));
 
     expect(screen.queryByText("Transaction history saved successfully")).not.toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Transaction history" })).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Export transaction history" })).toBeVisible();
   });
 
   it("should show error scene on export failure and allow retry", async () => {
@@ -268,7 +267,7 @@ describe("History export dialog integration", () => {
     await user.click(screen.getByRole("button", { name: /try again/i }));
 
     await waitFor(() =>
-      expect(screen.getByRole("heading", { name: "Transaction history" })).toBeVisible(),
+      expect(screen.getByRole("heading", { name: "Export transaction history" })).toBeVisible(),
     );
     expect(screen.queryByText("Something went wrong")).not.toBeInTheDocument();
   });

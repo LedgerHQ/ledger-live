@@ -17,7 +17,7 @@ import {
   StackNavigatorNavigation,
 } from "~/components/RootNavigator/types/helpers";
 import { languageSelector, readOnlyModeEnabledSelector } from "~/reducers/settings";
-import { accountsCountSelector, areAccountsEmptySelector } from "~/reducers/accounts";
+import { accountsCountSelector, useAreAccountsEmpty } from "~/reducers/accounts";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { resolveRemoteCopy } from "@ledgerhq/live-common/featureFlags/remoteABTesting/resolveRemoteCopy";
@@ -52,7 +52,7 @@ export const useQuickActionsCtasViewModel = ({
 
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const hasAnyAccounts = useSelector(accountsCountSelector) > 0;
-  const hasFunds = !useSelector(areAccountsEmptySelector) && hasAnyAccounts;
+  const hasFunds = !useAreAccountsEmpty() && hasAnyAccounts;
 
   const ptxServiceCtaExchangeDrawer = useFeature("ptxServiceCtaExchangeDrawer");
   const isExchangeEnabled = ptxServiceCtaExchangeDrawer?.enabled ?? true;

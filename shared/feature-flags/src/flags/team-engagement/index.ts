@@ -2,6 +2,7 @@ export * from "./brazePushNotifications";
 export * from "./buyDeviceFromLive";
 export * from "./flexibleContentCards";
 export * from "./lwdGenericAwarenessModal";
+export * from "./lwmAnalyticsConsentOnboarding";
 export * from "./lwmGenericAwarenessModal";
 export * from "./lldActionCarousel";
 export * from "./lldAnalyticsOptInPrompt";

@@ -1,5 +1,5 @@
 import type {
-  AlpacaApi,
+  CoinModuleApi,
   Balance,
   Block,
   BlockInfo,
@@ -51,7 +51,7 @@ const configs: Record<string, EvmConfig | (() => EvmCoinConfig)> = {};
 export function createApi(
   config: EvmConfig | (() => EvmCoinConfig),
   currencyId: string,
-): AlpacaApi<MemoNotSupported, BufferTxData> & BridgeApi {
+): CoinModuleApi<MemoNotSupported, BufferTxData> & BridgeApi {
   configs[currencyId] = config;
   setCoinConfig(id => {
     const evmConfig = configs[id];

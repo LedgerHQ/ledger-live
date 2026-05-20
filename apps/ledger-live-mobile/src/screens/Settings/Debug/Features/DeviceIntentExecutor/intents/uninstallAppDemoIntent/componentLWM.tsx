@@ -8,6 +8,7 @@ export function UninstallAppDemoIntentComponentLWM({
 }: {
   jobState: UninstallAppDemoIntentJobState | undefined;
   extraProps: UninstallAppDemoIntentExtraProps;
+  onClose: () => void;
 }) {
   return (
     <Flex p={4} alignItems="center">

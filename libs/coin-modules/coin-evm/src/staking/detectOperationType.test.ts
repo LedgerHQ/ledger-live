@@ -9,6 +9,7 @@ describe("isStakingOperation", () => {
     "redelegate",
     "getStakedBalance",
     "getUnstakedBalance",
+    "claimReward",
   ];
 
   const invalidOperations: string[] = [

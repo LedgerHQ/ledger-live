@@ -15,8 +15,8 @@ import {
   TransactionCommon,
   TransactionStatusCommon,
 } from "@ledgerhq/types-live";
-import { getAlpacaAccountBridge } from "./generic-coin-framework/accountBridge";
-import { getAlpacaCurrencyBridge } from "./generic-coin-framework/currencyBridge";
+import { getCoinFrameworkAccountBridge } from "./generic-coin-framework/accountBridge";
+import { getCoinFrameworkCurrencyBridge } from "./generic-coin-framework/currencyBridge";
 import { isGenericCoinFrameworkFamily } from "./generic-coin-framework/genericCoinFrameworkFamilies";
 import { AddressesSanctionedError } from "@ledgerhq/ledger-wallet-framework/sanction/errors";
 import {
@@ -58,7 +58,7 @@ export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
 
   if (isGenericCoinFrameworkFamily(currency.family)) {
     if (!currencyBridgeCache[currency.family]) {
-      currencyBridgeCache[currency.family] = getAlpacaCurrencyBridge(currency.family, "local");
+      currencyBridgeCache[currency.family] = getCoinFrameworkCurrencyBridge(currency.family, "local");
     }
     return currencyBridgeCache[currency.family];
   }
@@ -125,7 +125,7 @@ export function getAccountBridgeByFamily(
   if (!accountBridgeCache[family]) {
     let rawBridge: AccountBridge<any>;
     if (isGenericCoinFrameworkFamily(family)) {
-      rawBridge = getAlpacaAccountBridge(family, "local");
+      rawBridge = getCoinFrameworkAccountBridge(family, "local");
     } else {
       const setup = loadSetupForFamily(family);
       if (!setup?.bridge) {

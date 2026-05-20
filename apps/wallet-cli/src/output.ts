@@ -23,7 +23,7 @@ import {
   type SwapQuoteProviderError,
 } from "./commands/swap/quote-shared";
 import { formatSwapStatusHuman, type SwapStatusLine } from "./commands/swap/status-shared";
-import type { Balance, Operation, DiscoveredAccount, SendEvent } from "./wallet/models";
+import type { Balance, Operation, DiscoveredAccount, SendEvent, TokenInfo } from "./wallet/models";
 import type { SessionEntry } from "./session/session-store";
 import type { SwapPayloadResponse } from "@ledgerhq/live-common/exchange/swap/types";
 
@@ -68,6 +68,7 @@ export interface CommandOutput {
 
   balances(items: Balance[]): Promise<void>;
   operations(items: Operation[], currencyId: string, nextCursor?: string): Promise<void>;
+  token(t: TokenInfo): void;
   /** Output a receive / fresh address. `verified` indicates whether the device attested it. */
   address(addr: string, verified: boolean): void;
   /**
@@ -233,6 +234,10 @@ class HumanCommandOutput implements CommandOutput {
       writeStderr("Warning: address was NOT verified on device\n");
     }
     writeStdout(addr);
+  }
+
+  token(t: TokenInfo): void {
+    writeStdout(this._fmt.formatTokenInfo(t));
   }
 
   preVerifyAddress(addr: string): void {
@@ -556,6 +561,10 @@ class JsonCommandOutput implements CommandOutput {
         source: verified ? "device" : "software-derivation",
       }),
     );
+  }
+
+  token(t: TokenInfo): void {
+    this._writeNdjson(this._envelope({ token: this._jsonFmt.token(t) }));
   }
 
   preVerifyAddress(addr: string): void {

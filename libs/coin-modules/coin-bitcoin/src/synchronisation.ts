@@ -490,6 +490,16 @@ async function generateXpubIfNeeded(
     XPUBVersion: number;
   };
 
+  const adapter = getChainAdapter(currency.id);
+  const custom = adapter.getWalletXpub?.(
+    deviceId,
+    { currency, accountPath, xpubVersion },
+    signerContext,
+  );
+  if (custom) {
+    return custom;
+  }
+
   return signerContext(deviceId, currency, signer =>
     signer.getWalletXpub({
       path: accountPath,

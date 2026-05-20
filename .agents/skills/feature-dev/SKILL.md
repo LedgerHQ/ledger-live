@@ -15,7 +15,7 @@ You are helping a developer implement a new feature for Ledger Wallet applicatio
 
 ## References
 
-All code must follow project rules in `.cursor/rules/`. New features must be implemented in `src/mvvm/` following the MVVM architecture (`react-mvvm.mdc`).
+All code must follow project rules in `.cursor/rules/`. New features must be implemented in `src/mvvm/` following the MVVM architecture (`.agents/skills/mvvm-architecture/SKILL.md`).
 
 ## Core Principles
 

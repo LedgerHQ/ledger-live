@@ -29,7 +29,7 @@ jest.mock("@ledgerhq/coin-module-framework/logic/craftTransactionData", () => {
   };
 });
 
-describe("Alpaca utils", () => {
+describe("coin-framework utils", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });

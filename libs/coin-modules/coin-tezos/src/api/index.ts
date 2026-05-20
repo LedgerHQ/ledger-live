@@ -10,7 +10,7 @@ import {
   Validator,
 } from "@ledgerhq/coin-module-framework/api/index";
 import type {
-  AlpacaApi,
+  CoinModuleApi,
   BalanceOptions,
   FeeEstimation,
   TransactionIntent,
@@ -49,7 +49,7 @@ import {
 import type { TezosFeeEstimation } from "./types";
 import type { TezosOperationMode } from "../types/model";
 
-export function createApi(config: TezosConfig): AlpacaApi {
+export function createApi(config: TezosConfig): CoinModuleApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {

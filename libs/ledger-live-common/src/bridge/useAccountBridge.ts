@@ -48,5 +48,10 @@ export function useAccountBridgeOrNull<T extends TransactionCommon>(
 // loops and conditional statements like if." — https://react.dev/reference/react/use
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function useAccountBridgeMany(accounts: Account[]): ResolvedAccountBridge<any>[] {
-  return accounts.map(a => getAccountBridge(a));
+  // Memoize on the (id-derived) shape rather than `accounts` reference: callers that
+  // rebuild the array each render (e.g. inline `.map().filter()`) still get a stable
+  // bridge list as long as the account ids haven't changed.
+  const idsKey = accounts.map(a => a.id).join("|");
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  return useMemo(() => accounts.map(a => getAccountBridge(a)), [idsKey]);
 }

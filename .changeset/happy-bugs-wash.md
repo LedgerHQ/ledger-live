@@ -6,7 +6,6 @@
 "@ledgerhq/coin-evm": minor
 "ledger-live-desktop": minor
 "@ledgerhq/live-common": minor
-"@ledgerhq/wallet-cli": minor
 ---
 
 chore(BACK-11212): update code base after `alpaca` -> `coin-service` renaming

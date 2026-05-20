@@ -5,12 +5,18 @@ export { rnBleTransportIdentifier } from "@ledgerhq/device-transport-kit-react-n
 export { rnHidTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-hid";
 export { DefaultDeviceDiscoveryService } from "./connectDevice/discoveryService/DefaultDeviceDiscoveryService";
 export {
-  DiscoveryErrors,
+  ConnectDeviceUIStateTypes,
+  ConnectionErrorTypes,
+  DiscoveryErrorTypes,
   type DeviceDiscoveryService,
   type DeviceDiscoveryStartArgs,
   type DiscoveryError,
   type DiscoveryErrorResolution,
+  type DisplayedDevice,
+  type ConnectDeviceUIState,
+  type ConnectionError,
 } from "./connectDevice/types";
+export { connectDeviceUseCase, type ConnectDeviceUseCaseInput } from "./connectDevice/connectDeviceUseCase";
 export * from "./errors";
 export * from "./hooks";
 export * from "./utils/matchDevicesByNameOrId";

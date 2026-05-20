@@ -343,7 +343,7 @@ describe("useCoinControlScreenViewModelCore", () => {
       },
     };
 
-    it("calls buildToggleRowExclusionPatch with transaction, rowKey, and displayData then updateTransaction when custom strategy and config exist", () => {
+    it("calls buildToggleRowExclusionPatch with transaction, rowKey, and displayData then updateTransaction when custom strategy and config exist", async () => {
       const transaction = customTransaction(new BigNumber(1000));
       const displayData = displayDataForCustomRows([row("tx1", 0, false)]);
       const buildToggleRowExclusionPatch = jest.fn().mockReturnValue(togglePatch);
@@ -363,6 +363,7 @@ describe("useCoinControlScreenViewModelCore", () => {
         rowKey,
         displayData,
       });
+      await Promise.resolve();
       expect(updateTransaction).toHaveBeenCalledTimes(1);
     });
 

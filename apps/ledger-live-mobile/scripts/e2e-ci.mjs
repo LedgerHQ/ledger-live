@@ -43,12 +43,8 @@ const bundle_android = async () => {
 };
 
 // Minified bundle for size reporting (not used for E2E tests)
-const bundle_ios_minified = async () => {
-  await $`pnpm mobile bundle:ios --dev false --minify true --bundle-output main.jsbundle.minified`;
-};
-
-const bundle_android_minified = async () => {
-  await $`pnpm mobile bundle:android --dev false --minify true --bundle-output main.jsbundle.minified`;
+const minify_existing_bundle = async () => {
+  await $`pnpm mobile minify:bundle`;
 };
 
 const bundle_ios_with_cache = async () => {
@@ -102,13 +98,13 @@ const getTasksFrom = {
   ios: {
     build: build_ios,
     bundle: async () => (cache ? await bundle_ios_with_cache() : await bundle_ios()),
-    bundleSize: bundle_ios_minified,
+    bundleSize: minify_existing_bundle,
     test: test_ios,
   },
   android: {
     build: build_android,
     bundle: async () => await bundle_android(),
-    bundleSize: bundle_android_minified,
+    bundleSize: minify_existing_bundle,
     test: test_android,
   },
 };

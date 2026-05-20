@@ -6,6 +6,7 @@ import type {
   AleoViewKey,
   AleoRootIntentSignature,
   AleoFeeIntentSignature,
+  AleoNestedCallSignature,
 } from "@ledgerhq/coin-aleo/types/signer";
 import {
   DeviceActionState,
@@ -21,6 +22,7 @@ import {
   GetViewKeyDAError,
   SignRootIntentDAError,
   SignFeeIntentDAError,
+  SignNestedCallDAError,
 } from "@ledgerhq/device-signer-kit-aleo";
 
 type DAError =
@@ -28,7 +30,8 @@ type DAError =
   | GetAddressDAError
   | GetViewKeyDAError
   | SignRootIntentDAError
-  | SignFeeIntentDAError;
+  | SignFeeIntentDAError
+  | SignNestedCallDAError;
 
 export class DmkSignerAleo implements AleoSigner {
   private readonly signer: SignerAleo;
@@ -118,6 +121,18 @@ export class DmkSignerAleo implements AleoSigner {
 
   async signFeeIntent(feeIntent: Buffer): Promise<AleoFeeIntentSignature> {
     const { observable } = this.signer.signFeeIntent(new Uint8Array(feeIntent), {
+      skipOpenApp: true,
+    });
+
+    const result = this._mapResult(await lastValueFrom(observable));
+
+    return {
+      signature: result.tlvSignature,
+    };
+  }
+
+  async signNestedCall(nestedCallRequest: Buffer): Promise<AleoNestedCallSignature> {
+    const { observable } = this.signer.signNestedCall(new Uint8Array(nestedCallRequest), {
       skipOpenApp: true,
     });
 

@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { SectionList, SectionListData, SectionListRenderItem } from "react-native";
+import uniqBy from "lodash/uniqBy";
 import { Flex } from "@ledgerhq/native-ui";
 import { Account, AccountLike, DailyOperationsSection, Operation } from "@ledgerhq/types-live";
-import { flattenAccounts, isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
+import { flattenAccounts } from "@ledgerhq/live-common/account/helpers";
+import { useAccountBridgeMany } from "@ledgerhq/live-common/bridge/useAccountBridge";
 
 import { Trans } from "~/context/Locale";
 
@@ -21,16 +23,47 @@ function keyExtractor(item: Operation) {
   return item.id;
 }
 
-function ListEmptyComponent({ accountsFiltered }: { accountsFiltered: AccountLike[] }) {
-  if (accountsFiltered.length === 0) {
-    return <EmptyStatePortfolio />;
-  }
-
-  if (accountsFiltered.every(isAccountEmpty)) {
-    return <NoOpStatePortfolio />;
-  }
-
+function ListEmptyBody({
+  accountsFiltered,
+  isAllEmpty,
+}: Readonly<{
+  accountsFiltered: AccountLike[];
+  isAllEmpty: boolean;
+}>) {
+  if (accountsFiltered.length === 0) return <EmptyStatePortfolio />;
+  if (isAllEmpty) return <NoOpStatePortfolio />;
   return null;
+}
+
+function renderFooter({
+  completed,
+  hasOnEndReached,
+  isAllEmpty,
+  hasSections,
+  onTransactionButtonPress,
+}: {
+  completed: boolean;
+  hasOnEndReached: boolean;
+  isAllEmpty: boolean;
+  hasSections: boolean;
+  onTransactionButtonPress?: () => void;
+}) {
+  if (!completed) {
+    return hasOnEndReached ? (
+      <LoadingFooter />
+    ) : (
+      <Flex m={8}>
+        <Button
+          event="View Transactions"
+          type="lightPrimary"
+          title={<Trans i18nKey="common.seeAll" />}
+          onPress={onTransactionButtonPress}
+        />
+      </Flex>
+    );
+  }
+  if (isAllEmpty) return null;
+  return hasSections ? <NoMoreOperationFooter /> : <NoOperationFooter />;
 }
 
 export function OperationsList({
@@ -41,6 +74,24 @@ export function OperationsList({
   onEndReached,
   onTransactionButtonPress,
 }: ListProps) {
+  const allAccountsById = new Map(allAccounts.map(a => [a.id, a]));
+  const parentAccountsNeeded = uniqBy(
+    accountsFiltered
+      .map(a => (a.type === "Account" ? a : allAccountsById.get(a.parentId)))
+      .filter((a): a is Account => Boolean(a)),
+    a => a.id,
+  );
+  const bridges = useAccountBridgeMany(parentAccountsNeeded);
+  const bridgeById = new Map(parentAccountsNeeded.map((a, i) => [a.id, bridges[i]]));
+  const isAllEmpty =
+    accountsFiltered.length > 0 &&
+    accountsFiltered.every(a =>
+      Boolean(bridgeById.get(a.type === "Account" ? a.id : a.parentId)?.isAccountEmpty(a)),
+    );
+  const ListEmptyComponent = useCallback(
+    () => <ListEmptyBody accountsFiltered={accountsFiltered} isAllEmpty={isAllEmpty} />,
+    [accountsFiltered, isAllEmpty],
+  );
   const renderItem: SectionListRenderItem<Operation, DailyOperationsSection> = ({
     item,
     index,
@@ -88,26 +139,13 @@ export function OperationsList({
         onEndReached={onEndReached}
         onEndReachedThreshold={0.5}
         showsVerticalScrollIndicator={false}
-        ListFooterComponent={
-          !completed ? (
-            !onEndReached ? (
-              <Flex m={8}>
-                <Button
-                  event="View Transactions"
-                  type="lightPrimary"
-                  title={<Trans i18nKey="common.seeAll" />}
-                  onPress={onTransactionButtonPress}
-                />
-              </Flex>
-            ) : (
-              <LoadingFooter />
-            )
-          ) : accountsFiltered.every(isAccountEmpty) ? null : sections.length ? (
-            <NoMoreOperationFooter />
-          ) : (
-            <NoOperationFooter />
-          )
-        }
+        ListFooterComponent={renderFooter({
+          completed,
+          hasOnEndReached: !!onEndReached,
+          isAllEmpty,
+          hasSections: sections.length > 0,
+          onTransactionButtonPress,
+        })}
         ListEmptyComponent={ListEmptyComponent}
       />
       <TrackScreen category="Analytics" name="Operations" />

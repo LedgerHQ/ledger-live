@@ -444,7 +444,13 @@ async function getBlockByHeight(
         `Block ${blockHeight} contains malformed prefetched transaction at index ${index}`,
       );
 
-    const rawTx = tx as { data?: string };
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    const rawTx = tx as unknown as {
+      data?: string;
+      // ethers v6: gasPrice is null for EIP-1559 (type-2) transactions
+      gasPrice?: bigint | null;
+      maxFeePerGas?: bigint | null;
+    };
     return {
       hash: tx.hash,
       value: tx.value.toString(),
@@ -453,6 +459,8 @@ async function getBlockByHeight(
       ...(rawTx.data !== null && rawTx.data !== undefined && isSmartContractInput(rawTx.data)
         ? { input: rawTx.data }
         : {}),
+      // EIP-1559 transactions have gasPrice: null; fall back to maxFeePerGas then 0
+      gasPrice: (rawTx.gasPrice ?? rawTx.maxFeePerGas ?? 0n).toString(),
     };
   });
 
@@ -546,6 +554,10 @@ async function getBlockByHeightFromRawRpc(
             throw new Error(
               "Malformed prefetched transaction value in eth_getBlockByNumber response",
             );
+          if ("gasPrice" in tx && tx.gasPrice !== undefined && typeof tx.gasPrice !== "string")
+            throw new Error(
+              "Malformed prefetched transaction gasPrice in eth_getBlockByNumber response",
+            );
           if (
             "input" in tx &&
             tx.input !== undefined &&
@@ -564,6 +576,7 @@ async function getBlockByHeightFromRawRpc(
             ...("input" in tx && typeof tx.input === "string" && isSmartContractInput(tx.input)
               ? { input: tx.input }
               : {}),
+            gasPrice: BigInt(tx.gasPrice ?? "0x0").toString(),
           };
         })
       : undefined;
@@ -703,6 +716,13 @@ function isPrefetchedBlockTransaction(value: unknown): value is PrefetchedBlockT
     "hash" in value &&
     "value" in value &&
     "from" in value &&
+    // gasPrice is intentionally not required: EIP-1559 (type-2) transactions have gasPrice: null
+    // in ethers v6, and the mapping falls back to maxFeePerGas ?? 0n
+    ("gasPrice" in value
+      ? value.gasPrice === null ||
+        typeof value.gasPrice === "bigint" ||
+        typeof value.gasPrice === "string"
+      : true) &&
     ("to" in value
       ? typeof value.to === "string" || value.to === null || value.to === undefined
       : true) &&

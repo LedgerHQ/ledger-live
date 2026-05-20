@@ -10,7 +10,6 @@ import {
 import { walletCliDebug } from "../../shared/log";
 import { colors } from "../../shared/ui";
 import { parseNetworkArg, currencyIdFromNetwork } from "../../shared/accountDescriptor";
-import type { AccountDescriptorV1 } from "../../shared/accountDescriptor";
 import { createCommandOutput } from "../../output";
 import { Session } from "../../session/session-store";
 import { runObservable } from "../run-observable";
@@ -20,6 +19,7 @@ type DiscoverAccountsParams = {
   wallet: WalletAdapter;
   network: ReturnType<typeof parseNetworkArg>;
   managerAppName: string;
+  session: Session;
   out: ReturnType<typeof createCommandOutput>;
 };
 
@@ -27,17 +27,19 @@ async function discoverAccounts({
   wallet,
   network,
   managerAppName,
+  session,
   out,
-}: DiscoverAccountsParams): Promise<AccountDescriptorV1[]> {
+}: DiscoverAccountsParams): Promise<number> {
   const scanSpin = out.spin(`Scanning for ${colors.bold(network.name)} accounts…`);
   let count = 0;
-  const discoveredDescriptors: AccountDescriptorV1[] = [];
+  let added = 0;
 
   await runObservable({
     source$: wallet.discoverAccounts(network, WALLET_CLI_DMK_DEVICE_ID),
-    onNext: discoveredAccount => {
-      out.discoveredAccount(discoveredAccount);
-      discoveredDescriptors.push(discoveredAccount.descriptor);
+    onNext: raw => {
+      const { label, added: wasAdded } = session.addDescriptor(raw.descriptor);
+      if (wasAdded) added++;
+      out.discoveredAccount({ ...raw, label });
       count++;
       if (scanSpin) scanSpin.text = `Scanning… (${count} found so far)`;
     },
@@ -49,12 +51,13 @@ async function discoverAccounts({
 
   scanSpin?.success(`Found ${count} account${count === 1 ? "" : "s"}`);
   out.flushDiscovery();
-  return discoveredDescriptors;
+  return added;
 }
 
 export default defineCommand({
   name: "discover",
-  description: "Discover accounts for a network on the connected device",
+  description:
+    "Discover accounts for a network on the connected device (saves each to the session as --account <label>, e.g. ethereum-1).",
   options: {
     network: option(z.string().min(1).optional(), {
       description:
@@ -90,23 +93,26 @@ export default defineCommand({
         currencyId,
         async () => {
           const wallet = new WalletAdapter();
-          const discoveredDescriptors = await discoverAccounts({
+          // Surface read failures (e.g. corrupted session.yaml) before discovery so we never
+          // overwrite a recoverable file with a fresh one. Session.read() returns an empty
+          // session on ENOENT, so this only throws on parse/IO errors that need user action.
+          const session = await Session.read();
+          const added = await discoverAccounts({
             wallet,
             network,
             managerAppName,
+            session,
             out,
           });
 
-          let added = 0;
-          try {
-            const session = await Session.read();
-            added = session.addDescriptors(discoveredDescriptors);
-            if (added > 0) session.write();
-          } catch {
-            // Session persistence failure is non-fatal; discovery output is already flushed.
+          if (added > 0) {
+            try {
+              session.write();
+              out.sessionSaved(added);
+            } catch {
+              // Session persistence failure is non-fatal; discovery output is already flushed.
+            }
           }
-
-          if (added > 0) out.sessionSaved(added);
         },
         {
           deviceTimeoutMs: flags["device-timeout"],

@@ -67,7 +67,6 @@ export class EnsureAppReadyStateEmitter implements ConnectAppDASnapshotHandler {
 
     const mappedState = mapConnectAppDAPendingStatus({
       state,
-      appName: this.params.appName,
       deprecation: this.params.deprecation,
       deprecationDismissedCurrencyNames: this.params.deprecationDismissedCurrencyNames,
     });
