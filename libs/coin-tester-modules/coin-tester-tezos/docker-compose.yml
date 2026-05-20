@@ -1,0 +1,15 @@
+services:
+  flextesa:
+    image: oxheadalpha/flextesa:latest
+    container_name: flextesa
+    platform: linux/amd64
+    environment:
+      block_time: 2
+    command: oxfordbox start
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://127.0.0.1:20000/chains/main/blocks/head/header"]
+      interval: 5s
+      timeout: 10s
+      retries: 30
+    ports:
+      - "20000:20000"
