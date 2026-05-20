@@ -243,6 +243,12 @@ export enum ScreenName {
   EvmDelegationValidationSuccess = "EvmDelegationValidationSuccess",
   EvmDelegationValidator = "EvmDelegationValidator",
   EvmDelegationAmount = "EvmDelegationAmount",
+  EvmRedelegationValidator = "EvmRedelegationValidator",
+  EvmRedelegationAmount = "EvmRedelegationAmount",
+  EvmRedelegationSelectDevice = "EvmRedelegationSelectDevice",
+  EvmRedelegationConnectDevice = "EvmRedelegationConnectDevice",
+  EvmRedelegationValidationError = "EvmRedelegationValidationError",
+  EvmRedelegationValidationSuccess = "EvmRedelegationValidationSuccess",
 
   // cosmos
   CosmosFamilyEditMemo = "CosmosFamilyEditMemo",

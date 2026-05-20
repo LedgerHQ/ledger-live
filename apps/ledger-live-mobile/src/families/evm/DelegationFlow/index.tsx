@@ -13,6 +13,10 @@ import SelectAmount from "./02-SelectAmount";
 import ValidationError from "./03-ValidationError";
 import ValidationSuccess from "./03-ValidationSuccess";
 import DelegationStarted from "./01-Started";
+import SelectRedelegationValidator from "./04-SelectRedelegationValidator";
+import RedelegationAmount from "./05-RedelegationAmount";
+import RedelegationValidationError from "./06-RedelegationValidationError";
+import RedelegationValidationSuccess from "./06-RedelegationValidationSuccess";
 import type { EvmDelegationFlowParamList } from "./types";
 import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
 
@@ -117,6 +121,99 @@ function DelegationFlow() {
       <Stack.Screen
         name={ScreenName.EvmDelegationValidationSuccess}
         component={ValidationSuccess}
+        options={{
+          headerLeft: undefined,
+          headerRight: undefined,
+          headerTitle: "",
+          gestureEnabled: false,
+        }}
+        listeners={{
+          beforeRemove: () => {
+            notifyFlowCompleted("stake");
+          },
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.EvmRedelegationValidator}
+        component={SelectRedelegationValidator}
+        options={{
+          gestureEnabled: false,
+          headerTitle: () => (
+            <StepHeader
+              title={t("evm.redelegation.stepperHeader.validator")}
+              subtitle={t("evm.redelegation.stepperHeader.stepRange", {
+                currentStep: "1",
+                totalSteps,
+              })}
+            />
+          ),
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.EvmRedelegationAmount}
+        component={RedelegationAmount}
+        options={({ route }) => ({
+          headerRight: undefined,
+          headerTitle: () => (
+            <StepHeader
+              title={t("evm.redelegation.stepperHeader.amountTitle", {
+                from:
+                  route.params?.validatorSrc?.name ??
+                  route.params?.validatorSrc?.validatorAddress ??
+                  "",
+                to:
+                  route.params?.validator?.name ??
+                  route.params?.validator?.validatorAddress ??
+                  t("send.summary.amount"),
+              })}
+              subtitle={t("evm.redelegation.stepperHeader.amountSubTitle")}
+            />
+          ),
+        })}
+      />
+      <Stack.Screen
+        name={ScreenName.EvmRedelegationSelectDevice}
+        component={SelectDevice}
+        options={{
+          headerTitle: () => (
+            <StepHeader
+              title={t("evm.redelegation.stepperHeader.selectDevice")}
+              subtitle={t("evm.redelegation.stepperHeader.stepRange", {
+                currentStep: "2",
+                totalSteps,
+              })}
+            />
+          ),
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.EvmRedelegationConnectDevice}
+        component={ConnectDevice}
+        options={{
+          headerLeft: undefined,
+          gestureEnabled: false,
+          headerTitle: () => (
+            <StepHeader
+              title={t("evm.redelegation.stepperHeader.connectDevice")}
+              subtitle={t("evm.redelegation.stepperHeader.stepRange", {
+                currentStep: "3",
+                totalSteps,
+              })}
+            />
+          ),
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.EvmRedelegationValidationError}
+        component={RedelegationValidationError}
+        options={{
+          headerShown: false,
+          gestureEnabled: false,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.EvmRedelegationValidationSuccess}
+        component={RedelegationValidationSuccess}
         options={{
           headerLeft: undefined,
           headerRight: undefined,
