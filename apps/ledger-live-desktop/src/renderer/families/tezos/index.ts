@@ -1,3 +1,4 @@
+import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
 import AccountBodyHeader from "./AccountBodyHeader";
 import accountHeaderManageActions from "./AccountHeaderManageActions";
 import receiveWarning from "./ReceiveWarning";
@@ -15,6 +16,7 @@ const family: TezosFamily = {
   sendWarning,
   receiveWarning,
   AccountBodyHeader,
+  AccountBalanceSummaryFooter,
 };
 
 export default family;
