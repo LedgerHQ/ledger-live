@@ -7,7 +7,9 @@ jest.mock("@ledgerhq/logs", () => ({
 }));
 
 describe("LedgerLiveLogger", () => {
-  const options = { tag: "test", timestamp: Date.now(), data: { key: "value" } };
+  // DMK's `DefaultLogTagFormatter` always wraps tags as "[name]" before
+  // handing them to subscribers, so the fixture mirrors that shape.
+  const options = { tag: "[test]", timestamp: Date.now(), data: { key: "value" } };
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -21,7 +23,7 @@ describe("LedgerLiveLogger", () => {
     logger.log(LogLevel.Debug, "debug message", options);
 
     //then
-    expect(log).toHaveBeenCalledWith("live-dmk-logger", "debug message", {
+    expect(log).toHaveBeenCalledWith("DMK[test]", "debug message", {
       level: LogLevel.Debug,
       ...options,
     });
@@ -46,7 +48,7 @@ describe("LedgerLiveLogger", () => {
     logger.log(null, "null level message", options);
 
     //then
-    expect(log).toHaveBeenCalledWith("live-dmk-logger", "null level message", {
+    expect(log).toHaveBeenCalledWith("DMK[test]", "null level message", {
       level: null,
       ...options,
     });
