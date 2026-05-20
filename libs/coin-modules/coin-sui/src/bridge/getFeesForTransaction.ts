@@ -61,6 +61,8 @@ export default async function getEstimatedFees({
     type: transactionType,
     asset,
     currencyId: account.currency.id,
+    ...(transaction.useAllAmount !== undefined && { useAllAmount: transaction.useAllAmount }),
+    ...(transaction.stakedSuiId !== undefined && { stakedSuiId: transaction.stakedSuiId }),
   });
   return new BigNumber(fees.toString());
 }
