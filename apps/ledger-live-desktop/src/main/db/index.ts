@@ -7,6 +7,8 @@ import pick from "lodash/pick";
 import fs from "fs/promises";
 import { getEnv } from "@ledgerhq/live-env";
 import { NoDBPathGiven, DBWrongPassword } from "@ledgerhq/errors";
+import { INITIAL_STATE as trustchainInitialState } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { exportWalletState, initialState as walletInitialState } from "@ledgerhq/live-wallet/store";
 import { encryptData, decryptData } from "~/main/db/crypto";
 import { readFile, writeFile } from "~/main/db/fsHelper";
 
@@ -145,7 +147,51 @@ const encryptedDataPaths = [
   ["app", "accounts"],
   ["app", "trustchain"],
   ["app", "wallet"],
-];
+] as const;
+
+type EncryptedAppKeyPath = (typeof encryptedDataPaths)[number][1];
+
+// Empty payloads encrypted when password lock is enabled before any account exists.
+const ENCRYPTION_PATH_DEFAULTS: Record<EncryptedAppKeyPath, unknown> = {
+  accounts: [],
+  trustchain: trustchainInitialState,
+  wallet: exportWalletState(walletInitialState),
+};
+
+for (const [, keyPath] of encryptedDataPaths) {
+  if (ENCRYPTION_PATH_DEFAULTS[keyPath] === undefined) {
+    throw new Error(`[db] missing ENCRYPTION_PATH_DEFAULTS for "${keyPath}"`);
+  }
+}
+
+function ensureEncryptedPathInMemory(ns: string, keyPath: EncryptedAppKeyPath): void {
+  const memory = memoryNamespaces[ns]!;
+  const current = get(memory, keyPath);
+  if (current === undefined || current === null) {
+    set(memory, keyPath, ENCRYPTION_PATH_DEFAULTS[keyPath]);
+  }
+}
+
+function decryptEncryptedPathInMemory(
+  ns: string,
+  keyPath: EncryptedAppKeyPath,
+  encryptionKey: string,
+) {
+  const memory = memoryNamespaces[ns]!;
+  const val = get(memory, keyPath);
+  if (typeof val !== "string") return;
+
+  let decrypted = JSON.parse(decryptData(val, encryptionKey));
+
+  for (const path of encryptedDataPaths) {
+    if (ns === path[0] && keyPath === path[1] && (decrypted as { data?: unknown }).data) {
+      decrypted = (decrypted as { data: unknown }).data;
+      break;
+    }
+  }
+
+  set(memory, keyPath, decrypted);
+}
 
 /**
  * Register a keyPath in db that is encrypted
@@ -166,22 +212,13 @@ async function setEncryptionKey(encryptionKey: string): Promise<void> {
 
     // no need to decode if already decoded
     if (!val || typeof val !== "string") {
+      if (val === null || val === undefined) {
+        ensureEncryptedPathInMemory(ns, keyPath);
+      }
       continue;
     }
     try {
-      let decrypted = JSON.parse(decryptData(val, encryptionKey));
-
-      // handle the case when we just migrated from the previous storage
-      // which stored the data in binary with a `data` key
-      for (const path of encryptedDataPaths) {
-        if (ns === path[0] && keyPath === path[1] && decrypted.data) {
-          decrypted = decrypted.data;
-          break;
-        }
-      }
-
-      // only set decrypted data in memory
-      set(memoryNamespaces[ns]!, keyPath, decrypted);
+      decryptEncryptedPathInMemory(ns, keyPath, encryptionKey);
     } catch (err) {
       log("db", "setEncryptionKey failure: " + String(err));
       console.error(err);
@@ -197,6 +234,18 @@ async function removeEncryptionKey() {
   const nsToSave = new Set<string>();
   for (const [ns, keyPath] of encryptedDataPaths) {
     nsToSave.add(ns);
+    await ensureNSLoaded(ns);
+    const encryptionKey = encryptionKeys[ns]?.[keyPath];
+    if (encryptionKey) {
+      try {
+        decryptEncryptedPathInMemory(ns, keyPath, encryptionKey);
+      } catch (err) {
+        log("db", "removeEncryptionKey failure: " + String(err));
+        console.error(err);
+        throw err;
+      }
+    }
+    ensureEncryptedPathInMemory(ns, keyPath);
     set(encryptionKeys, `${ns}.${keyPath}`, undefined);
   }
 
@@ -278,10 +327,8 @@ async function saveToDisk(ns: string) {
   const triggersSet = saveTriggers.get(ns);
   const triggers = triggersSet ? Array.from(triggersSet) : [];
 
-  const raw =
-    ns === "app"
-      ? buildAppNamespacePayload(memoryNamespaces[ns] as Record<string, unknown>)
-      : memoryNamespaces[ns];
+  const memory = memoryNamespaces[ns]!;
+  const raw = ns === "app" ? buildAppNamespacePayload(memory) : memory;
   const clone = cloneDeep(raw);
 
   // encrypt fields
@@ -292,9 +339,12 @@ async function saveToDisk(ns: string) {
         const encryptionKey = namespacedEncryptionKeys[keyPath];
         if (!encryptionKey) continue; // eslint-disable-line no-continue
         const val = get(clone, keyPath);
-        if (!val) continue; // eslint-disable-line no-continue
-        const encrypted = encryptData(JSON.stringify(val), encryptionKey);
-        set(clone as object, keyPath, encrypted);
+        const payload = val ?? ENCRYPTION_PATH_DEFAULTS[keyPath as EncryptedAppKeyPath];
+        if (val === undefined || val === null) {
+          set(memory, keyPath, payload);
+        }
+        const encrypted = encryptData(JSON.stringify(payload), encryptionKey);
+        set(clone, keyPath, encrypted);
       }
     }
   }
