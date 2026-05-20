@@ -79,7 +79,7 @@ export async function performPublicSync(
   // reset the cursor to 0 so the full history is re-fetched and all operations get
   // tokenInfo populated in a single pass — no extra network call needed.
   const isTokenMigrationRequired =
-    config.enableTokens && initialAccount?.aleoResources?.hasMigratedTokens !== true;
+    config.enableTokens && initialAccount?.aleoResources?.hasMigratedPublicTokens !== true;
   const shouldSyncFromScratch = !initialAccount;
 
   const allOldOperations = shouldSyncFromScratch ? [] : initialAccount?.operations ?? [];
@@ -162,7 +162,7 @@ export async function performPublicSync(
       privateBalance: preservedPrivateBalance,
       unspentPrivateRecords: initialAccount?.aleoResources?.unspentPrivateRecords ?? null,
       lastPrivateSyncDate: initialAccount?.aleoResources?.lastPrivateSyncDate ?? null,
-      ...(config.enableTokens && { hasMigratedTokens: true }),
+      ...(config.enableTokens && { hasMigratedPublicTokens: true }),
     },
   };
 }
@@ -430,7 +430,7 @@ export async function performPrivateSync(
       privateBalance,
       unspentPrivateRecords,
       lastPrivateSyncDate: new Date(),
-      ...(config.enableTokens && { hasMigratedTokens: true }),
+      ...(config.enableTokens && { hasMigratedPublicTokens: true }),
       ...(config.enableTokens && { hasMigratedPrivateTokens: true }),
     },
   };
