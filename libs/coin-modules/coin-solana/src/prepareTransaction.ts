@@ -126,7 +126,7 @@ const prepareTransaction = async (
   api: ChainAPI,
 ): Promise<Transaction> => {
   if (tx.raw) {
-    return toLiveTransaction(api, tx.raw);
+    return toLiveTransaction(api, tx.raw, tx.templateId);
   }
 
   const txToDeriveFrom = updateModelIfSubAccountIdPresent(tx);
