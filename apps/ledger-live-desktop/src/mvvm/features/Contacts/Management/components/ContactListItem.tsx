@@ -21,9 +21,15 @@ type Props = {
  * One row in the contact list pane.
  *
  * Title = contact name. Description = pluralized address-count. Leading
- * visual = initials avatar. Selected state uses a tinted background since
- * Lumen `ListItem` ships no built-in selected variant at the pinned
- * version (verified in the exploration pass).
+ * visual = per-name InitialsAvatar.
+ *
+ * Selected state: `bg-active-subtle` — the `--background-active-subtle`
+ * token used by the Figma frame 13802:2833 (`#251a31`, the purple). Lumen
+ * `ListItem` ships no built-in `selected` variant at the pinned version,
+ * so we override `className`.
+ *
+ * TODO(lumen-adoption): swap to a real "selected" variant if/when Lumen
+ * ships one for ListItem.
  */
 export function ContactListItem({ contact, isSelected, onSelect }: Props) {
   const { t } = useTranslation();
@@ -31,13 +37,11 @@ export function ContactListItem({ contact, isSelected, onSelect }: Props) {
 
   return (
     <ListItem
+      density="expanded"
       onClick={() => onSelect(contact.name)}
       className={cn(
-        "bg-surface cursor-pointer",
-        // TODO(lumen-adoption): swap to a real "selected" variant if Lumen
-        // ships one. `bg-muted-transparent` is the closest tinted neutral
-        // token; the designer's purple is pending a Lumen palette pick.
-        isSelected && "bg-muted-transparent",
+        "cursor-pointer",
+        isSelected ? "bg-active-subtle" : "bg-transparent",
       )}
       aria-selected={isSelected}
       data-testid="contacts-management-list-item"

@@ -3,69 +3,87 @@ import { useTranslation } from "react-i18next";
 import { IconButton } from "@ledgerhq/lumen-ui-react";
 import { MoreHorizontal, Plus } from "@ledgerhq/lumen-ui-react/symbols";
 import type { Contact } from "~/renderer/contacts/types";
-import { InitialsAvatar } from "./InitialsAvatar";
+import { groupAddressesByChain } from "../utils/groupAddressesByChain";
 import { AddressRow } from "./AddressRow";
+import { InitialsAvatar } from "./InitialsAvatar";
 
 type Props = {
   contact: Contact;
 };
 
 /**
- * Right pane: large avatar + name + address-count subtitle, with two
- * icon-buttons in the top-right corner (add address, overflow menu), and
- * the list of addresses below.
+ * Right pane of the Contacts management page.
  *
- * Both icon-buttons are intentionally NOT wired in L4 — the row's
- * `onClick` is omitted so Lumen's hover/press tokens still render. The
- * address rows themselves are also non-interactive in L4 (display-only).
+ * Layout (matches Figma frame 13802:2833):
+ * - Outer container: rounded `bg-surface-transparent` panel with vertical
+ *   stack, gap 32, padding 16/32.
+ * - Header block (centered): large `InitialsAvatar` (96px) + name in
+ *   `heading-3-semi-bold` + pluralized address-count in `body-2` text-muted.
+ * - Top-right corner: two `IconButton`s (Plus + MoreHorizontal). Both
+ *   intentionally non-wired in L4 — Lumen's hover/press states still
+ *   render because we omit `disabled` and `onClick`. Wiring lands in L4.1.
+ * - Address sections: addresses grouped by chain (see
+ *   `groupAddressesByChain`), each section is a small label + a rounded
+ *   `bg-surface` container wrapping the rows.
  *
- * TODO(contacts-L4.1): wire the "+" button to "Add address to contact"
- *   (uses `useContacts().addAddressToContact`).
- * TODO(contacts-L4.1): wire the "…" button to an overflow Lumen
- *   DropdownMenu (rename, delete, edit address).
+ * If the selected contact has zero entries (e.g. the synthetic "me"
+ * placeholder), the address sections are suppressed entirely — the empty
+ * state lands in a follow-up.
  */
 export function ContactDetails({ contact }: Props) {
   const { t } = useTranslation();
   const count = contact.entries.length;
+  const sections = groupAddressesByChain(contact.entries);
 
   return (
     <div
-      className="flex flex-col gap-16 flex-1 min-w-0 h-full overflow-y-auto px-32 py-24"
       data-testid="contacts-management-details"
+      className="relative flex flex-col gap-32 h-full overflow-y-auto rounded-lg bg-surface-transparent px-16 py-32"
     >
-      <div className="flex items-start justify-between">
-        <div className="flex flex-col items-start gap-12">
-          <InitialsAvatar name={contact.name} size="lg" />
-          <div className="flex flex-col gap-4">
-            <h2 className="heading-3 text-base">{contact.name}</h2>
-            <p className="body-2 text-muted">
-              {t("contactsManagement.addresses", { count })}
-            </p>
-          </div>
-        </div>
+      {/* Top-right icon buttons (absolute so they don't push the header). */}
+      <div className="absolute top-16 right-16 flex items-center gap-8">
+        <IconButton
+          appearance="gray"
+          size="sm"
+          aria-label={t("contactsManagement.addAddress")}
+          icon={Plus}
+          data-testid="contacts-management-add-address"
+        />
+        <IconButton
+          appearance="gray"
+          size="sm"
+          aria-label={t("contactsManagement.contactActions")}
+          icon={MoreHorizontal}
+          data-testid="contacts-management-overflow"
+        />
+      </div>
 
-        <div className="flex items-center gap-8">
-          <IconButton
-            appearance="gray"
-            size="md"
-            aria-label={t("contactsManagement.addAddress")}
-            icon={Plus}
-            data-testid="contacts-management-add-address"
-          />
-          <IconButton
-            appearance="gray"
-            size="md"
-            aria-label={t("contactsManagement.contactActions")}
-            icon={MoreHorizontal}
-            data-testid="contacts-management-overflow"
-          />
+      {/* Centered identity block. */}
+      <div className="flex flex-col items-center gap-16 w-full">
+        <InitialsAvatar name={contact.name} size="lg" />
+        <div className="flex flex-col items-center gap-4 w-full text-center">
+          <h2 className="heading-3-semi-bold text-base">{contact.name}</h2>
+          <p className="body-2 text-muted">
+            {t("contactsManagement.addresses", { count })}
+          </p>
         </div>
       </div>
 
-      {count > 0 && (
-        <div className="flex flex-col gap-4">
-          {contact.entries.map(entry => (
-            <AddressRow key={`${entry.chainId}:${entry.addressHex}`} entry={entry} />
+      {/* Address sections grouped by chain. */}
+      {sections.length > 0 && (
+        <div className="flex flex-col gap-24 w-full">
+          {sections.map(section => (
+            <div key={section.chainId} className="flex flex-col gap-8 w-full">
+              <p className="body-3 text-muted">{section.shortLabel}</p>
+              <div className="flex flex-col bg-surface rounded-lg p-4">
+                {section.entries.map(entry => (
+                  <AddressRow
+                    key={`${entry.chainId}:${entry.addressHex}`}
+                    entry={entry}
+                  />
+                ))}
+              </div>
+            </div>
           ))}
         </div>
       )}

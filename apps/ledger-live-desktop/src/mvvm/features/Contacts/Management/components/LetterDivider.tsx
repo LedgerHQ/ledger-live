@@ -5,18 +5,19 @@ type Props = {
 };
 
 /**
- * Single-letter section heading for the alphabetical contact groups in
- * the list pane.
+ * Single-letter section heading for the alphabetical contact groups.
  *
- * Intentionally lighter than Lumen's `Subheader`, which is designed for
- * action-bearing section heads with optional counts/icons. This is just a
- * compact letter label.
+ * Styled as a small inline chip matching the Figma frame 13802:2833 — a
+ * full-width `bg-surface-transparent` strip with `body-3-semi-bold` text
+ * tinted muted. Lumen's `Subheader` was designed for action-bearing
+ * section heads (icons, counts), which is heavier than what this single
+ * letter needs.
  */
 export function LetterDivider({ letter }: Props) {
   return (
     <div
       role="presentation"
-      className="px-12 py-4 micro-bold text-muted uppercase"
+      className="w-full px-8 py-2 rounded-sm bg-surface-transparent body-3-semi-bold text-muted"
     >
       {letter}
     </div>
