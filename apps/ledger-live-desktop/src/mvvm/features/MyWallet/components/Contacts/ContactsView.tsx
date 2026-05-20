@@ -8,7 +8,8 @@ import {
   ListItemDescription,
   Spot,
 } from "@ledgerhq/lumen-ui-react";
-import { ChevronRight, GroupUsers } from "@ledgerhq/lumen-ui-react/symbols";
+import { ChevronRight } from "@ledgerhq/lumen-ui-react/symbols";
+import { ContactsIcon } from "./icons/ContactsIcon";
 
 export type ContactsViewProps = {
   title: string;
@@ -20,7 +21,8 @@ export function ContactsView({ title, description, onClick }: ContactsViewProps)
   return (
     <ListItem onClick={onClick} className="bg-surface">
       <ListItemLeading>
-        <Spot icon={GroupUsers} appearance="icon" />
+        {/* TODO(lumen-adoption): swap to a Lumen Contacts symbol once it ships. */}
+        <Spot icon={ContactsIcon} appearance="icon" />
         <ListItemContent>
           <ListItemTitle>{title}</ListItemTitle>
           <ListItemDescription>{description}</ListItemDescription>
