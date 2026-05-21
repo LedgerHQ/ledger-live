@@ -10,10 +10,10 @@ import {
   ListItemTrailing,
   Tag,
 } from "@ledgerhq/lumen-ui-react";
-import { MoreHorizontal } from "@ledgerhq/lumen-ui-react/symbols";
 import type { ContactEntry } from "~/renderer/contacts/types";
 import { getChainInfo } from "../utils/getChainInfo";
 import { truncateAddressLong } from "../utils/truncateAddressLong";
+import { AddressRowMenu } from "./AddressRowMenu";
 
 type Props = {
   entry: ContactEntry;
@@ -29,14 +29,11 @@ type Props = {
  *   network label, side-by-side via `ListItemContentRow`.
  * - Description: truncated 0x address (wider envelope than the inline
  *   `truncateAddress` util — see `truncateAddressLong`).
- * - Trailing: bare Lumen `MoreHorizontal` symbol — the Figma renders a
- *   plain 24px icon with no button chrome (no Spot, no tinted background).
- *   When L4.1 wires the per-row overflow menu, swap to an
- *   `IconButton appearance="no-background"` to retain hover/focus states
- *   and an accessible label.
- *
- * TODO(contacts-L4.1): wire a Lumen `DropdownMenu` against this trailing
- * affordance for edit / copy / remove on the address.
+ * - Trailing: `AddressRowMenu` — a Lumen `Popover` anchored on an
+ *   `IconButton` (`appearance="no-background"`, MoreHorizontal symbol)
+ *   with four overflow actions. The trigger and menu items both carry
+ *   hover/pressed/focus states from Lumen; the items themselves are
+ *   intentionally inert in L4 (wiring lands in L4.1).
  */
 export function AddressRow({ entry }: Props) {
   const chain = getChainInfo(entry.chainId);
@@ -64,11 +61,7 @@ export function AddressRow({ entry }: Props) {
         </ListItemContent>
       </ListItemLeading>
       <ListItemTrailing>
-        <MoreHorizontal
-          size={24}
-          className="text-muted"
-          data-testid="contacts-management-address-actions"
-        />
+        <AddressRowMenu />
       </ListItemTrailing>
     </ListItem>
   );

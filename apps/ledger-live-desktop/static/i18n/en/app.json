@@ -9079,6 +9079,12 @@
     "addAddress": "Add address",
     "contactActions": "More options",
     "addressActions": "Address options",
+    "addressMenu": {
+      "copy": "Copy address",
+      "editLabel": "Edit label",
+      "editAddress": "Edit address",
+      "remove": "Remove"
+    },
     "addresses_zero": "{{count}} address",
     "addresses_one": "{{count}} address",
     "addresses_other": "{{count}} addresses"
