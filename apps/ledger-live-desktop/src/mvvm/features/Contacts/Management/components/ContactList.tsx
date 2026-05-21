@@ -17,15 +17,22 @@ type Props = {
 /**
  * Left pane of the Contacts management page.
  *
- * Layout (matches Figma frame 13802:2833):
+ * Layout (Figma frame 13802:47227):
  * - Outer container: rounded `bg-surface-transparent` panel, padding 16,
- *   gap 8 vertical, full height.
- * - Top: Lumen `SearchInput` with `appearance="plain"`, placeholder
- *   "Search contact". Wired to `searchQuery` / `setSearchQuery`.
- * - Below: vertical stack of groups produced by `groupContacts`. The
- *   pinned "me" group renders without a letter divider; lettered groups
- *   render their letter via `LetterDivider`. Empty buckets are never
- *   produced by `groupContacts`, so no per-group guard is needed.
+ *   `gap-8` vertical between every direct child, full height.
+ * - First child: Lumen `SearchInput` with `appearance="plain"`,
+ *   placeholder "Search contact". Wired to `searchQuery` /
+ *   `setSearchQuery`.
+ * - Remaining children: a flat sequence of `LetterDivider` and
+ *   `ContactListItem` elements, rendered as direct siblings so the
+ *   container's `gap-8` applies uniformly between every divider, every
+ *   row, and between the search input and the first row. We deliberately
+ *   avoid wrapping groups in intermediate `<div>`s — each wrapper would
+ *   absorb the gap and create a 0px stretch between a divider and its
+ *   first row.
+ *
+ * `groupContacts` already guarantees no empty buckets, so no per-group
+ * guard is needed here.
  */
 export function ContactList({
   groups,
@@ -38,12 +45,24 @@ export function ContactList({
 
   const renderContact = (contact: Contact) => (
     <ContactListItem
-      key={contact.name}
+      key={`contact:${contact.name}`}
       contact={contact}
       isSelected={contact.name === selectedContactName}
       onSelect={onSelectContact}
     />
   );
+
+  const children: React.ReactNode[] = [];
+  for (const group of groups) {
+    if (group.kind === "pinned") {
+      for (const contact of group.contacts) children.push(renderContact(contact));
+    } else {
+      children.push(
+        <LetterDivider key={`divider:${group.letter}`} letter={group.letter} />,
+      );
+      for (const contact of group.contacts) children.push(renderContact(contact));
+    }
+  }
 
   return (
     <div
@@ -58,22 +77,7 @@ export function ContactList({
         onClear={() => onSearchQueryChange("")}
         data-testid="contacts-management-search"
       />
-
-      {groups.map(group => {
-        if (group.kind === "pinned") {
-          return (
-            <div key="pinned" className="flex flex-col">
-              {group.contacts.map(renderContact)}
-            </div>
-          );
-        }
-        return (
-          <div key={group.letter} className="flex flex-col">
-            <LetterDivider letter={group.letter} />
-            {group.contacts.map(renderContact)}
-          </div>
-        );
-      })}
+      {children}
     </div>
   );
 }
