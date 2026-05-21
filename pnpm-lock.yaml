@@ -3344,6 +3344,27 @@ importers:
 
   e2e/poc-wdio:
     devDependencies:
+      '@ledgerhq/ledger-key-ring-protocol':
+        specifier: workspace:^
+        version: link:../../libs/ledger-key-ring-protocol
+      '@ledgerhq/live-common':
+        specifier: workspace:^
+        version: link:../../libs/ledger-live-common
+      '@ledgerhq/live-dmk-speculos':
+        specifier: workspace:^
+        version: link:../../libs/live-dmk-speculos
+      '@ledgerhq/live-env':
+        specifier: workspace:^
+        version: link:../../libs/env
+      '@ledgerhq/live-wallet':
+        specifier: workspace:^
+        version: link:../../libs/live-wallet
+      '@ledgerhq/types-live':
+        specifier: workspace:^
+        version: link:../../libs/ledgerjs/packages/types-live
+      '@shared/feature-flags':
+        specifier: workspace:*
+        version: link:../../shared/feature-flags
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
@@ -3383,12 +3404,21 @@ importers:
       expect-webdriverio:
         specifier: 5.6.5
         version: 5.6.5(@wdio/globals@9.27.1)(@wdio/logger@9.18.0)(webdriverio@9.27.1)
+      rxjs:
+        specifier: 'catalog:'
+        version: 7.8.2
       typescript:
         specifier: 'catalog:'
         version: 6.0.2
+      uuid:
+        specifier: 14.0.0
+        version: 14.0.0
       webdriverio:
         specifier: 9.27.1
         version: 9.27.1
+      ws:
+        specifier: 'catalog:'
+        version: 8.18.3
 
   features/flow/market-banner:
     dependencies:
@@ -21082,6 +21112,7 @@ packages:
   '@snyk/github-codeowners@1.1.0':
     resolution: {integrity: sha512-lGFf08pbkEac0NYgVf4hdANpAgApRjNByLXB+WBip3qj1iendOIyAwP2GKkKbQMNVy2r1xxDf0ssfWscoiC+Vw==}
     engines: {node: '>=8.10'}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
     hasBin: true
 
   '@so-ric/colorspace@1.1.6':
@@ -21851,7 +21882,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: 19.0.0
       react-dom: 19.0.0
-      webpack: ^5.89.0
+      webpack: '*'
     peerDependenciesMeta:
       '@react-native/babel-preset':
         optional: true
@@ -34059,6 +34090,7 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
+
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:

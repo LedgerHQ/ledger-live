@@ -8,3 +8,6 @@ logs/
 
 // reports
 allure-*/
+
+// artifacts
+artifacts/

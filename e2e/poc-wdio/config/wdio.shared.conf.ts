@@ -1,3 +1,9 @@
+import { setEnv } from "@ledgerhq/live-env";
+import { init } from "../bridge/server";
+import { execSync } from "node:child_process";
+
+const NANO_APP_CATALOG_PATH = "artifacts/appVersion/nano-app-catalog.json";
+
 export const config: WebdriverIO.Config = {
   //
   // ====================
@@ -144,7 +150,7 @@ export const config: WebdriverIO.Config = {
    * @param {object} config wdio configuration object
    * @param {Array.<Object>} capabilities list of capabilities details
    */
-  // onPrepare: function (config, capabilities) {
+  // onPrepare: async function (config, capabilities) {
   // },
   /**
    * Gets executed before a worker process is spawned and can be used to initialize specific service
@@ -174,8 +180,25 @@ export const config: WebdriverIO.Config = {
    * @param {Array.<String>} specs List of spec file paths that are to be run
    * @param {string} cid worker id (e.g. 0-0)
    */
-  // beforeSession: function (config, capabilities, specs, cid) {
-  // },
+  beforeSession: async function (config, capabilities, specs, cid) {
+    globalThis.speculosDevices = new Map<string, number>();
+    globalThis.pendingCallbacks = new Map();
+    globalThis.webSocket = {
+      wss: undefined,
+      ws: undefined,
+      messages: {},
+      e2eBridgeServer: undefined,
+    };
+    await init();
+    setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
+    setEnv("MOCK", "");
+    process.env.MOCK = "";
+    setEnv("DETOX", "1");
+    setEnv("E2E_NANO_APP_VERSION_PATH", NANO_APP_CATALOG_PATH);
+    const disableBroadcastEnv = process.env.DISABLE_TRANSACTION_BROADCAST;
+    const shouldBroadcast = disableBroadcastEnv === "0";
+    setEnv("DISABLE_TRANSACTION_BROADCAST", !shouldBroadcast);
+  },
   /**
    * Gets executed before test execution begins. At this point you can access to all global
    * variables like `browser`. It is the perfect place to define custom commands.

@@ -1,7 +1,13 @@
 {
   "name": "poc-wdio",
-  "type": "module",
   "devDependencies": {
+    "@ledgerhq/ledger-key-ring-protocol": "workspace:^",
+    "@ledgerhq/live-common": "workspace:^",
+    "@ledgerhq/live-dmk-speculos": "workspace:^",
+    "@ledgerhq/live-env": "workspace:^",
+    "@ledgerhq/live-wallet": "workspace:^",
+    "@ledgerhq/types-live": "workspace:^",
+    "@shared/feature-flags": "workspace:*",
     "@types/node": "catalog:",
     "@wdio/allure-reporter": "9.27.1",
     "@wdio/appium-service": "9.27.1",
@@ -15,9 +21,11 @@
     "appium-uiautomator2-driver": "^7.2.2",
     "appium-xcuitest-driver": "11.3.0",
     "expect-webdriverio": "5.6.5",
+    "rxjs": "catalog:",
     "typescript": "catalog:",
-    "webdriverio": "9.27.1"
-
+    "uuid": "14.0.0",
+    "webdriverio": "9.27.1",
+    "ws": "catalog:"
   },
   "scripts": {
     "android": "wdio run ./config/wdio.android.conf.ts",
