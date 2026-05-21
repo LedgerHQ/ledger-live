@@ -100,10 +100,38 @@ describe("AccountHeaderManageActions (tezos)", () => {
       expect(store.getState().modals.MODAL_TEZOS_EARNING_CHOICE?.isOpened).toBe(true);
     });
 
-    it("opens MODAL_DELEGATE in redelegate mode when account is already delegated", () => {
+    it("opens MODAL_TEZOS_STAKE (skipDelegation) when delegated but not yet staked", () => {
       stakingInfoMock.mockReturnValue({
         ...defaultStakingInfo,
         isDelegated: true,
+        delegation: {
+          address: "tz1baker",
+        } as StakingInfo["delegation"],
+        delegateAddress: "tz1baker",
+      });
+      const account = makeAccount();
+      const { result, store } = renderHook(
+        () => hook({ account, parentAccount: null, source: "Account Page" }),
+        { initialState },
+      );
+
+      act(() => {
+        result.current?.[0].onClick();
+      });
+
+      expect(store.getState().modals.MODAL_TEZOS_STAKE).toMatchObject({
+        isOpened: true,
+        data: { skipDelegation: true },
+      });
+      expect(store.getState().modals.MODAL_DELEGATE?.isOpened).toBeFalsy();
+    });
+
+    it("opens MODAL_DELEGATE in redelegate mode when account is delegated AND staked", () => {
+      stakingInfoMock.mockReturnValue({
+        ...defaultStakingInfo,
+        isDelegated: true,
+        isStaked: true,
+        stakedBalance: new BigNumber(500),
         delegation: {
           address: "tz1baker",
         } as StakingInfo["delegation"],

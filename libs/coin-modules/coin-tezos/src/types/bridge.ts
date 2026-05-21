@@ -99,11 +99,11 @@ export type StakingPosition = Omit<Stake, "amount" | "amountDeposited" | "amount
 };
 
 export type TezosAccount = Account & {
-  tezosResources: TezosResources;
+  tezosResources?: TezosResources;
   stakingPositions: StakingPosition[];
 };
 export function isTezosAccount(account: Account): account is TezosAccount {
-  return "tezosResources" in account;
+  return account.currency.family === "tezos";
 }
 
 /**

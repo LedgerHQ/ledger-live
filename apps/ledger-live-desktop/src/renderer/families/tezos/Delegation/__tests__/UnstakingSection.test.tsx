@@ -13,6 +13,7 @@ import { openURL } from "~/renderer/linking";
 import UnstakingSection from "../UnstakingSection";
 
 jest.mock("@ledgerhq/live-common/families/tezos/react", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/families/tezos/react"),
   useBaker: jest.fn(),
 }));
 
@@ -24,7 +25,7 @@ const account = { ...genAccount("tezos-unstake-section", { currency }) } as unkn
 
 const mockedUseBaker = jest.mocked(useBaker);
 
-const NOW = new Date("2026-05-18T12:00:00Z").getTime();
+const MOCK_NOW = new Date("2030-01-01T00:00:00Z").getTime();
 const DAY = 24 * 60 * 60 * 1000;
 
 const makePending = (
@@ -40,7 +41,7 @@ const makePending = (
     state: "deactivating",
     asset: { type: "native" },
     amount: new BigNumber(amount),
-    createdAt: new Date(NOW - hoursAgo * 60 * 60 * 1000),
+    createdAt: new Date(MOCK_NOW - hoursAgo * 60 * 60 * 1000),
   }) as never;
 
 const makeFinalizable = (id: string, amount: number, delegate = "tz1baker"): StakingPosition =>
@@ -51,7 +52,7 @@ const makeFinalizable = (id: string, amount: number, delegate = "tz1baker"): Sta
     state: "inactive",
     asset: { type: "native" },
     amount: new BigNumber(amount),
-    createdAt: new Date(NOW - 5 * DAY),
+    createdAt: new Date(MOCK_NOW - 5 * DAY),
   }) as never;
 
 const makeInfo = (positions: StakingPosition[]): TezosStakingInfo => ({
@@ -70,7 +71,7 @@ const makeInfo = (positions: StakingPosition[]): TezosStakingInfo => ({
 beforeEach(() => {
   jest.clearAllMocks();
   jest.useFakeTimers();
-  jest.setSystemTime(NOW);
+  jest.setSystemTime(MOCK_NOW);
   mockedUseBaker.mockReturnValue({ address: "tz1baker", name: "Acme Baker" } as never);
 });
 

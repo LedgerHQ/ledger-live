@@ -51,7 +51,7 @@ const RowWrapper = styled.div`
   }
 `;
 
-const Baker = styled.div`
+const BakerCell = styled.div`
   flex: 1.5;
   color: ${p => p.theme.colors.neutral.c100};
   > :first-child {
@@ -159,12 +159,12 @@ const StakingSection = ({ account, info }: Props) => {
         <Text />
       </HeaderWrapper>
       <RowWrapper>
-        <Baker onClick={openBaker}>
+        <BakerCell onClick={openBaker}>
           <BakerImage baker={baker} />
           <Ellipsis ff="Inter|SemiBold" color="neutral.c100" fontSize={3}>
             {bakerName}
           </Ellipsis>
-        </Baker>
+        </BakerCell>
         <Base>
           <FormattedVal
             ff="Inter|SemiBold"

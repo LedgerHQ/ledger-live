@@ -42,6 +42,17 @@ const AccountHeaderManageActions: TezosFamily["accountHeaderManageActions"] = ({
       );
       return;
     }
+    if (lldTezosStaking?.enabled && isDelegated && !isStaked) {
+      dispatch(
+        openModal("MODAL_TEZOS_STAKE", {
+          account,
+          parentAccount,
+          source,
+          skipDelegation: true,
+        }),
+      );
+      return;
+    }
     const options = delegation
       ? {
           parentAccount,

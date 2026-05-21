@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Trans, useTranslation } from "react-i18next";
 import { shortAddressPreview, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
-import { useBaker } from "@ledgerhq/live-common/families/tezos/react";
+import { isFinalizablePosition, useBaker } from "@ledgerhq/live-common/families/tezos/react";
 import type { TezosStakingInfo } from "@ledgerhq/live-common/families/tezos/react";
 import type { StakingPosition, TezosAccount } from "@ledgerhq/live-common/families/tezos/types";
 import { openURL } from "~/renderer/linking";
@@ -96,7 +96,7 @@ const UnstakingRow = ({ position, account }: RowProps) => {
   const unit = useAccountUnit(account);
   const currency = getAccountCurrency(account);
   const baker = useBaker(position.delegate ?? "");
-  const isFinalizable = position.uid.startsWith("finalizable-");
+  const isFinalizable = isFinalizablePosition(position.uid);
 
   const openBaker = useCallback(() => {
     if (!position.delegate) return;

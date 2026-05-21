@@ -10,6 +10,7 @@ import {
   DUST_MARGIN_MUTEZ,
   MIN_SUGGESTED_FEE_SMALL_TRANSFER,
   OP_SIZE_XTZ_TRANSFER,
+  STAKE_USE_ALL_RESERVE_MUTEZ,
   normalizePublicKeyForAddress,
 } from "../utils";
 import { getTezosToolkit } from "./tezosToolkit";
@@ -118,12 +119,18 @@ export async function estimateFees({
           source: account.address,
         });
         break;
-      case "stake":
+      case "stake": {
+        // useAllAmount: leave the protocol-mandated reserve so the simulation passes
+        // (see STAKE_USE_ALL_RESERVE_MUTEZ).
+        const stakeAmount = transaction.useAllAmount
+          ? BigInt(account.balance) - STAKE_USE_ALL_RESERVE_MUTEZ
+          : amount;
         estimate = await tezosToolkit.estimate.stake({
-          amount: Number(amount),
+          amount: Number(stakeAmount > 0n ? stakeAmount : 1n),
           mutez: true,
         });
         break;
+      }
       case "unstake":
         estimate = await tezosToolkit.estimate.unstake({
           amount: Number(amount),
@@ -188,6 +195,11 @@ export async function estimateFees({
 
       const maxMinusBuff = maxAmount - (DUST_MARGIN_MUTEZ - incr);
       estimation.amount = maxMinusBuff > 0 ? BigInt(maxMinusBuff) : 0n;
+      estimation.fees = BigInt(mainOpFee);
+      estimation.gasLimit = BigInt(estimate.gasLimit);
+    } else if (transaction.useAllAmount && transaction.mode === "stake") {
+      const maxStakable = BigInt(account.balance) - BigInt(mainOpFee) - STAKE_USE_ALL_RESERVE_MUTEZ;
+      estimation.amount = maxStakable > 0n ? maxStakable : 0n;
       estimation.fees = BigInt(mainOpFee);
       estimation.gasLimit = BigInt(estimate.gasLimit);
     } else {

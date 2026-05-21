@@ -9,6 +9,14 @@ import {
   isTezosAccount,
 } from "@ledgerhq/coin-tezos/types/index";
 import { bakers } from "@ledgerhq/coin-tezos/network/index";
+import {
+  isDelegationPosition,
+  isFinalizablePosition,
+  isStakePosition,
+  isUnstakingPosition,
+} from "@ledgerhq/coin-tezos/logic/getStakes";
+
+export { isDelegationPosition, isFinalizablePosition, isStakePosition, isUnstakingPosition };
 
 export function useBakers(whitelistAddresses: string[]): Baker[] {
   const [whitelistedBakers, setWhitelistedBakers] = useState<Baker[]>(() =>
@@ -152,17 +160,17 @@ export function useTezosStakingInfo(account: AccountLike): TezosStakingInfo {
     }
 
     const positions: StakingPosition[] = account.stakingPositions ?? [];
-    const delegationPos = positions.find(p => p.uid.startsWith("delegation-"));
-    const stakePos = positions.find(p => p.uid.startsWith("stake-"));
-    const pendingPositions = positions.filter(p => p.uid.startsWith("unstaking-"));
-    const finalizablePositions = positions.filter(p => p.uid.startsWith("finalizable-"));
+    const delegationPos = positions.find(p => isDelegationPosition(p.uid));
+    const stakePos = positions.find(p => isStakePosition(p.uid));
+    const pendingPositions = positions.filter(p => isUnstakingPosition(p.uid));
+    const finalizablePositions = positions.filter(p => isFinalizablePosition(p.uid));
 
     const stakedBalance = stakePos?.amount ?? ZERO;
     const unstakedBalance = sumAmounts(pendingPositions);
     const unstakedFinalizable = sumAmounts(finalizablePositions);
     // account.balance includes the staked portion on Tezos — subtract when no delegation-* position.
     const availableBalance = delegationPos?.amount ?? account.balance.minus(stakedBalance);
-    const delegateAddress = delegationPos?.delegate;
+    const delegateAddress = delegationPos?.delegate ?? delegation?.address;
 
     return {
       isDelegated: !!delegateAddress,

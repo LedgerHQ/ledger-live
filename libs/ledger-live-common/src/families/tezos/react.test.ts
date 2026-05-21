@@ -125,6 +125,24 @@ describe("useTezosStakingInfo", () => {
     expect(result.current.availableBalance).toEqual(new BigNumber(700));
   });
 
+  it("falls back to legacy useDelegation when stakingPositions is empty", () => {
+    const legacyDelegation = {
+      address: DELEGATE,
+      baker: null,
+      operation: { hash: "h", date: new Date() },
+      isPending: false,
+      receiveShouldWarnDelegation: false,
+      sendShouldWarnDelegation: false,
+    };
+    (bakers as unknown as { getAccountDelegationSync: jest.Mock }).getAccountDelegationSync.mockReturnValueOnce(
+      legacyDelegation,
+    );
+    const account = makeTezosAccount([]);
+    const { result } = renderHook(() => useTezosStakingInfo(account));
+    expect(result.current.isDelegated).toBe(true);
+    expect(result.current.delegateAddress).toBe(DELEGATE);
+  });
+
   it("delegation + unstaking (still cooling): hasUnstaking=true, unstakedBalance set", () => {
     const account = makeTezosAccount([delegationPos(900), unstakingPos(100)]);
     const { result } = renderHook(() => useTezosStakingInfo(account));

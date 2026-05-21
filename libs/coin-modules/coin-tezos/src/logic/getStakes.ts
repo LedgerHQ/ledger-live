@@ -5,6 +5,19 @@ import type { APIAccount, APIUnstakeRequest } from "../network/types";
 
 type APIUserAccount = Extract<APIAccount, { type: "user" }>;
 
+const STAKING_UID_PREFIX = {
+  delegation: "delegation-",
+  stake: "stake-",
+  unstaking: "unstaking-",
+  finalizable: "finalizable-",
+} as const;
+
+export const isDelegationPosition = (uid: string) => uid.startsWith(STAKING_UID_PREFIX.delegation);
+export const isStakePosition = (uid: string) => uid.startsWith(STAKING_UID_PREFIX.stake);
+export const isUnstakingPosition = (uid: string) => uid.startsWith(STAKING_UID_PREFIX.unstaking);
+export const isFinalizablePosition = (uid: string) =>
+  uid.startsWith(STAKING_UID_PREFIX.finalizable);
+
 /** Soft-fails to `[]` on TzKT error so the unstake endpoint doesn't abort balance sync. */
 export async function fetchUnstakeRequests(
   address: string,
@@ -46,7 +59,7 @@ export function buildStakesForAccount(
       });
     }
     stakes.push({
-      uid: `delegation-${address}`,
+      uid: `${STAKING_UID_PREFIX.delegation}${address}`,
       address,
       delegate: delegateAddress,
       state: "active",
@@ -58,7 +71,7 @@ export function buildStakesForAccount(
 
   if (stakedBalance > 0n) {
     stakes.push({
-      uid: `stake-${address}`,
+      uid: `${STAKING_UID_PREFIX.stake}${address}`,
       address,
       ...(delegateAddress && { delegate: delegateAddress }),
       state: "active",
@@ -85,8 +98,9 @@ export function buildStakesForAccount(
       continue;
     }
     const isFinalizable = req.status === "finalizable";
+    const prefix = isFinalizable ? STAKING_UID_PREFIX.finalizable : STAKING_UID_PREFIX.unstaking;
     stakes.push({
-      uid: `${isFinalizable ? "finalizable" : "unstaking"}-${req.id}`,
+      uid: `${prefix}${req.id}`,
       address,
       ...(req.baker?.address && { delegate: req.baker.address }),
       state: isFinalizable ? "inactive" : "deactivating",

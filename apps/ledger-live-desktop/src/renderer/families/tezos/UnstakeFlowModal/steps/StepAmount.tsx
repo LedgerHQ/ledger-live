@@ -110,7 +110,7 @@ const StepAmount = ({
         </Box>
       </Box>
       <InputCurrency
-        autoFocus
+        autoFocus={false}
         error={amountError}
         warning={warnings.amount}
         containerProps={{ grow: true }}

@@ -88,6 +88,7 @@ const Delegation = ({ account, parentAccount }: Props) => {
               account={account}
               parentAccount={parentAccount}
               stakingEnabled={stakingEnabled}
+              delegatedAmount={info.availableBalance}
             />
           </>
         ) : (
