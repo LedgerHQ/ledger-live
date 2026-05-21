@@ -37,6 +37,7 @@ import AppJsonImporter from "./AppJsonImporter";
 import CustomLockScreenTester from "./CustomLockScreenTester";
 import WalletFeaturesDevTool from "./WalletFeaturesDevTool";
 import FeaturesAndFlowsDevTool from "./FeaturesAndFlowsDevTool";
+import GenericAwarenessModalDevTool from "./GenericAwarenessModalDevTool";
 import AnalyticsConsentOptInDevTool from "./AnalyticsConsentOptInDevTool";
 import { AnalyticsConsentOptInDevScreen } from "./AnalyticsConsentOptInDevTool/AnalyticsConsentOptInDevScreen";
 
@@ -141,6 +142,7 @@ const Default = () => {
       )}
       <WalletFeaturesDevTool />
       <FeaturesAndFlowsDevTool />
+      <GenericAwarenessModalDevTool />
       <AnalyticsConsentOptInDevTool />
       <ModularDrawerDevTool />
       <CryptoAssetsListDevTool />
