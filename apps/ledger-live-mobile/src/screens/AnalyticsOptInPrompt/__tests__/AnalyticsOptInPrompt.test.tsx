@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, withFlagOverrides } from "@tests/test-renderer";
-import { useNavigation } from "@react-navigation/native";
+import { StackActions, useNavigation } from "@react-navigation/native";
 import AnalyticsOptInPromptMain from "~/screens/AnalyticsOptInPrompt/variantA/Main";
 import { NavigatorName, ScreenName } from "~/const";
 
@@ -22,14 +22,17 @@ jest.mock("LLM/features/NotificationsPrompt", () => ({
 const mockedUseNavigation = jest.mocked(useNavigation);
 
 const mockNavigate = jest.fn();
+const mockParentDispatch = jest.fn();
 const mockAddListener = jest.fn();
 
 const renderAnalyticsOptInMain = ({
   wallet40Enabled,
   lazyOnboarding,
+  notificationsOptInEnabled = false,
 }: {
   wallet40Enabled: boolean;
   lazyOnboarding?: boolean;
+  notificationsOptInEnabled?: boolean;
 }) =>
   render(
     <AnalyticsOptInPromptMain
@@ -44,6 +47,9 @@ const renderAnalyticsOptInMain = ({
             lazyOnboarding,
           },
         },
+        lwmNotificationsOptIn: {
+          enabled: notificationsOptInEnabled,
+        },
       }),
     },
   );
@@ -52,7 +58,12 @@ describe("AnalyticsOptInPrompt", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    mockedUseNavigation.mockReturnValue({ navigate: mockNavigate });
+    mockedUseNavigation.mockReturnValue({
+      navigate: mockNavigate,
+      getParent: jest.fn(() => ({
+        dispatch: mockParentDispatch,
+      })),
+    });
   });
 
   it("navigates to onboarding device selection when lazy onboarding is disabled", async () => {
@@ -88,6 +99,20 @@ describe("AnalyticsOptInPrompt", () => {
         },
       },
     });
+  });
+
+  it("navigates to notifications opt-in when lazy onboarding and notifications opt-in are enabled", async () => {
+    const { user } = await renderAnalyticsOptInMain({
+      wallet40Enabled: true,
+      lazyOnboarding: true,
+      notificationsOptInEnabled: true,
+    });
+
+    await user.press(screen.getByTestId("enabled-accept-analytics-button"));
+
+    expect(mockParentDispatch).toHaveBeenCalledWith(
+      StackActions.push(ScreenName.OnboardingNotificationsOptIn),
+    );
   });
 
   it("keeps onboarding path when Wallet40 is disabled even with lazyOnboarding enabled", async () => {

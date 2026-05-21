@@ -1,0 +1,4 @@
+
+> @ledgerhq/wallet-api-exchange-module@0.27.0 build /Users/robin.vincent/Desktop/ledger-live/libs/exchange-module
+> tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es && node scripts/createModulePackage.mjs
+

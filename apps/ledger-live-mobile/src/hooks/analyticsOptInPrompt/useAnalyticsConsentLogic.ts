@@ -1,17 +1,13 @@
 import { useCallback } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { StackActions, useNavigation } from "@react-navigation/native";
 import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { resolveAnalyticsOptInParams } from "@ledgerhq/live-common/analyticsConsent/index";
 import { useDispatch, useSelector } from "~/context/hooks";
 import {
-  completeOnboarding,
   setAnalytics,
   setAnalyticsConsentInfo,
   setHasSeenAnalyticsOptInPrompt,
-  setIsReborn,
-  setOnboardingHasDevice,
   setPersonalizedRecommendations,
-  setReadOnlyMode,
 } from "~/actions/settings";
 import { hasSeenAnalyticsOptInPromptSelector, trackingEnabledSelector } from "~/reducers/settings";
 import { updateIdentify } from "~/analytics";
@@ -23,6 +19,7 @@ import {
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import { EntryPoint } from "~/components/RootNavigator/types/AnalyticsOptInPromptNavigator";
 import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
+import { useCompleteLazyOnboarding } from "LLM/features/NotificationsOptIn";
 
 type NavigationProp = RootNavigationComposite<
   StackNavigatorNavigation<OnboardingNavigatorParamList>
@@ -56,27 +53,16 @@ const useAnalyticsConsentLogic = ({ entryPoint }: Props): UseAnalyticsConsentLog
   const { shouldUseLazyOnboarding } = useWalletFeaturesConfig("mobile");
   const { notifyFlowCompleted } = useNotificationsContext();
   const analyticsOptInFeature = useFeature("analyticsOptIn");
+  const lwmNotificationsOptIn = useFeature("lwmNotificationsOptIn");
+  const completeLazyOnboarding = useCompleteLazyOnboarding();
   const { policyVersion } = resolveAnalyticsOptInParams(analyticsOptInFeature);
   const flow = trackingKeysByFlow[entryPoint];
 
   const skipDeviceOnboarding = useCallback(() => {
-    dispatch(completeOnboarding());
-    dispatch(setOnboardingHasDevice(false));
-    dispatch(setReadOnlyMode(true));
-    dispatch(setIsReborn(true));
-
-    navigation.navigate(NavigatorName.Base, {
-      screen: NavigatorName.Main,
-      params: {
-        screen: NavigatorName.Portfolio,
-        params: {
-          screen: NavigatorName.WalletTab,
-        },
-      },
+    completeLazyOnboarding({
+      triggerNotificationsPrompt: () => notifyFlowCompleted("onboarding"),
     });
-
-    notifyFlowCompleted("onboarding");
-  }, [dispatch, navigation, notifyFlowCompleted]);
+  }, [completeLazyOnboarding, notifyFlowCompleted]);
 
   const continueOnboarding = useCallback(() => {
     dispatch(setHasSeenAnalyticsOptInPrompt(true));
@@ -101,7 +87,13 @@ const useAnalyticsConsentLogic = ({ entryPoint }: Props): UseAnalyticsConsentLog
         break;
       case "Onboarding":
         if (shouldUseLazyOnboarding) {
-          skipDeviceOnboarding();
+          if (lwmNotificationsOptIn?.enabled) {
+            navigation
+              .getParent()
+              ?.dispatch(StackActions.push(ScreenName.OnboardingNotificationsOptIn));
+          } else {
+            skipDeviceOnboarding();
+          }
         } else {
           navigation.navigate(NavigatorName.BaseOnboarding, {
             screen: NavigatorName.Onboarding,
@@ -122,6 +114,7 @@ const useAnalyticsConsentLogic = ({ entryPoint }: Props): UseAnalyticsConsentLog
     entryPoint,
     navigation,
     shouldUseLazyOnboarding,
+    lwmNotificationsOptIn?.enabled,
     skipDeviceOnboarding,
     shouldWeTrack,
   ]);

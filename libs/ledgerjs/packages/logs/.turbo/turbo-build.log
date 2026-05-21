@@ -1,0 +1,4 @@
+
+> @ledgerhq/logs@6.17.0 build /Users/robin.vincent/Desktop/ledger-live/libs/ledgerjs/packages/logs
+> tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es
+

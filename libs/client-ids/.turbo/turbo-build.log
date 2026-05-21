@@ -1,0 +1,4 @@
+
+> @ledgerhq/client-ids@0.8.3 build /Users/robin.vincent/Desktop/ledger-live/libs/client-ids
+> tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es
+

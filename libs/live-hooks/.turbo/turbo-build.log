@@ -1,0 +1,4 @@
+
+> @ledgerhq/live-hooks@0.6.0 build /Users/robin.vincent/Desktop/ledger-live/libs/live-hooks
+> tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es
+

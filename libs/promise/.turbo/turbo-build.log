@@ -1,0 +1,4 @@
+
+> @ledgerhq/live-promise@0.2.3 build /Users/robin.vincent/Desktop/ledger-live/libs/promise
+> tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es
+

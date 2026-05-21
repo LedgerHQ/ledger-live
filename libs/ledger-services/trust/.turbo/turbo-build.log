@@ -1,0 +1,4 @@
+
+> @ledgerhq/ledger-trust-service@0.8.0 build /Users/robin.vincent/Desktop/ledger-live/libs/ledger-services/trust
+> tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es
+

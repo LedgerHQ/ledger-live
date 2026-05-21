@@ -1,0 +1,13 @@
+
+> @ledgerhq/live-dmk-shared@0.22.2 build /Users/robin.vincent/Desktop/ledger-live/libs/live-dmk-shared
+> tsc --project tsconfig.prod.json
+
+[96msrc/services/LiveBlindSigningReporter.ts[0m:[93m10[0m:[93m8[0m - [91merror[0m[90m TS2307: [0mCannot find module '@ledgerhq/context-module' or its corresponding type declarations.
+
+[7m10[0m } from "@ledgerhq/context-module";
+[7m  [0m [91m       ~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+
+Found 1 error in src/services/LiveBlindSigningReporter.ts[90m:10[0m
+
+ ELIFECYCLE  Command failed with exit code 2.

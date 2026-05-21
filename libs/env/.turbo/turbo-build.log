@@ -1,0 +1,4 @@
+
+> @ledgerhq/live-env@2.33.0 build /Users/robin.vincent/Desktop/ledger-live/libs/env
+> tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es
+

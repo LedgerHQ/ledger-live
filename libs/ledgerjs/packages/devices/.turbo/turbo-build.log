@@ -1,0 +1,4 @@
+
+> @ledgerhq/devices@8.14.1 build /Users/robin.vincent/Desktop/ledger-live/libs/ledgerjs/packages/devices
+> tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es
+

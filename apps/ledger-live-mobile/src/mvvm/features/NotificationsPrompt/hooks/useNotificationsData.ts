@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import isEqual from "lodash/isEqual";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { AuthorizationStatus } from "@react-native-firebase/messaging";
 import { notificationsSelector, INITIAL_STATE as settingsInitialState } from "~/reducers/settings";
@@ -10,6 +11,15 @@ import { setPushNotificationsDataOfUserInStorage } from "../utils/storage";
 import { type DataOfUser } from "../types";
 import { updateIdentify } from "~/analytics";
 
+const notificationSettingsKeys: Array<keyof NotificationsSettings> = [
+  "areNotificationsAllowed",
+  "announcementsCategory",
+  "largeMoverCategory",
+  "transactionsAlertsCategory",
+  "totalMarketCap",
+  "topGainersLosers",
+];
+
 export const useNotificationsData = () => {
   const notifications = useSelector(notificationsSelector);
   const pushNotificationsDataOfUser = useSelector(notificationsDataOfUserSelector);
@@ -17,10 +27,14 @@ export const useNotificationsData = () => {
 
   const updatePushNotificationsDataOfUserInStateAndStore = useCallback(
     (dataOfUserUpdated: DataOfUser) => {
+      if (isEqual(pushNotificationsDataOfUser, dataOfUserUpdated)) {
+        return;
+      }
+
       dispatch(setNotificationsDataOfUser(dataOfUserUpdated));
       setPushNotificationsDataOfUserInStorage(dataOfUserUpdated);
     },
-    [dispatch],
+    [dispatch, pushNotificationsDataOfUser],
   );
 
   const markUserAsOptIn = useCallback(() => {
@@ -64,13 +78,16 @@ export const useNotificationsData = () => {
       return;
     }
 
-    const newNotificationsState = { ...notifications };
-    for (const [key, value] of Object.entries(settingsInitialState.notifications)) {
-      if (notifications[key as keyof NotificationsSettings] === undefined) {
-        newNotificationsState[key as keyof NotificationsSettings] = value;
+    const missingNotificationSettings: Partial<NotificationsSettings> = {};
+    for (const key of notificationSettingsKeys) {
+      if (notifications[key] === undefined) {
+        missingNotificationSettings[key] = settingsInitialState.notifications[key];
       }
     }
-    dispatch(setNotifications(newNotificationsState));
+
+    if (Object.keys(missingNotificationSettings).length > 0) {
+      dispatch(setNotifications(missingNotificationSettings));
+    }
   }, [dispatch, notifications]);
 
   const syncOptOutState = useCallback(

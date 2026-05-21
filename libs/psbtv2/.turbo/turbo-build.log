@@ -1,0 +1,4 @@
+
+> @ledgerhq/psbtv2@0.4.0 build /Users/robin.vincent/Desktop/ledger-live/libs/psbtv2
+> tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es
+

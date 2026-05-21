@@ -1,0 +1,4 @@
+
+> @ledgerhq/types-live@6.105.0 build /Users/robin.vincent/Desktop/ledger-live/libs/ledgerjs/packages/types-live
+> tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es
+

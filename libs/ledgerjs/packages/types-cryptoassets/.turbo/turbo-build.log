@@ -1,0 +1,4 @@
+
+> @ledgerhq/types-cryptoassets@7.36.0 build /Users/robin.vincent/Desktop/ledger-live/libs/ledgerjs/packages/types-cryptoassets
+> tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es
+

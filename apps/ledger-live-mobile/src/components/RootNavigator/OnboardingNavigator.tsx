@@ -49,6 +49,7 @@ import AnalyticsOptInPromptNavigator from "./AnalyticsOptInPromptNavigator";
 import LandingPagesNavigator from "./LandingPagesNavigator";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import OnboardingFundSuccess from "~/screens/Onboarding/OnboardingFundSuccess";
+import NotificationsOptIn from "LLM/features/NotificationsOptIn";
 
 const Stack = createNativeStackNavigator<OnboardingNavigatorParamList>();
 const OnboardingPreQuizModalStack =
@@ -119,6 +120,11 @@ export default function OnboardingNavigator() {
           headerShown: true,
           headerLeft: () => <NavigationHeaderBackButton />,
         }}
+      />
+      <Stack.Screen
+        name={ScreenName.OnboardingNotificationsOptIn}
+        component={NotificationsOptIn}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name={ScreenName.OnboardingWelcomeBack}

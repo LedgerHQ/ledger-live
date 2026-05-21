@@ -3676,6 +3676,14 @@
       "allow": "Allow notifications",
       "later": "Maybe later"
     },
+    "optInScreen": {
+      "title": "Enable notifications?",
+      "description": "Get real-time alerts on new tokens, earning opportunities, and market shifts. Opt out at any time in settings",
+      "emptyTitle": "Notifications are already enabled",
+      "emptyDescription": "You are all set to receive real-time alerts from Ledger Wallet.",
+      "errorTitle": "Notifications are unavailable",
+      "errorDescription": "We could not check your notification settings. You can continue onboarding and update them later in settings."
+    },
     "ptxServices": {
       "toast": {
         "title": "In order to comply with Apple’s recent updates on the App Store, this feature is temporarily unavailable. You can still access it on Ledger Wallet on desktop."

@@ -1,0 +1,4 @@
+
+> @ledgerhq/concordium-core@0.4.0 build /Users/robin.vincent/Desktop/ledger-live/libs/concordium-core
+> tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es
+

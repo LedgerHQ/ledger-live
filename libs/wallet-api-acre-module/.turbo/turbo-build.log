@@ -1,0 +1,4 @@
+
+> @ledgerhq/wallet-api-acre-module@0.17.0 build /Users/robin.vincent/Desktop/ledger-live/libs/wallet-api-acre-module
+> tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es && node scripts/createModulePackage.mjs
+

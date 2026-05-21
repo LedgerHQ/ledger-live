@@ -1,0 +1,4 @@
+
+> @ledgerhq/disable-network-setup@0.3.0 build /Users/robin.vincent/Desktop/ledger-live/libs/disable-network-setup
+> tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es
+

@@ -1,0 +1,5 @@
+
+> @ledgerhq/ledger-cal-service@1.16.0 build /Users/robin.vincent/Desktop/ledger-live/libs/ledger-services/cal
+> tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es
+
+ ELIFECYCLE  Command failed.

@@ -1,0 +1,4 @@
+
+> @ledgerhq/device-intent@1.1.0 build /Users/robin.vincent/Desktop/ledger-live/libs/device-intent
+> tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es
+
