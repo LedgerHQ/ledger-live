@@ -29,3 +29,7 @@ libs/ui/packages/react/rsbuild.config.js.map
 .nx/key
 nx.cache-config.json
 rsdoctor/
+
+# Python bytecode caches (e.g. mitmproxy addon under e2e/mobile/scripts/)
+__pycache__/
+*.pyc

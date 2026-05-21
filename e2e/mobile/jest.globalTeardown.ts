@@ -20,6 +20,7 @@ import { log } from "detox";
 import { Subject } from "rxjs";
 import { NativeElementHelpers } from "./helpers/elementHelpers";
 import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
+import { stopMitm } from "./helpers/mitm";
 import { withTimeout } from "./utils/withTimeout";
 
 const ARTIFACT_ENV_PATH = path.resolve("artifacts/environment.properties");
@@ -64,6 +65,13 @@ export default async () => {
       log.warn(`Failed to delete environment.properties:`, sanitizeError(err));
     }
   }
+
+  // Stop mitmweb BEFORE Detox teardown so the HAR flushes while adb is still
+  // alive (the --clear pass needs adb to remove the system proxy from the
+  // emulator). No-op unless MITM=1.
+  await withTimeout(stopMitm(), 15_000, "stopMitm").catch(err =>
+    log.warn("mitm teardown failed:", sanitizeError(err)),
+  );
 
   // default Detox teardown with timeout protection to prevent CI hangs from proper-lockfile issues.
   // Surface real failures (orphaned simulators, broken cleanup) instead of swallowing them.
