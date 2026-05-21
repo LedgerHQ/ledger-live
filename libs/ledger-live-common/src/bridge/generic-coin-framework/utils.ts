@@ -507,6 +507,9 @@ export const buildOptimisticOperation = (
     case "finalize_unstake":
       type = "FINALIZE_UNSTAKE";
       break;
+    case "claimReward":
+      type = "REWARD";
+      break;
     default:
       type = "OUT";
       break;
