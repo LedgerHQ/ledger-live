@@ -1,7 +1,6 @@
 import React from "react";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import {
-  IconButton,
   ListItem,
   ListItemContent,
   ListItemContentRow,
@@ -12,7 +11,6 @@ import {
   Tag,
 } from "@ledgerhq/lumen-ui-react";
 import { MoreHorizontal } from "@ledgerhq/lumen-ui-react/symbols";
-import { useTranslation } from "react-i18next";
 import type { ContactEntry } from "~/renderer/contacts/types";
 import { getChainInfo } from "../utils/getChainInfo";
 import { truncateAddressLong } from "../utils/truncateAddressLong";
@@ -24,22 +22,23 @@ type Props = {
 /**
  * One address row in the contact details pane.
  *
- * Layout matches the Figma frame 13802:2833:
+ * Layout matches the Figma frame 13827:32002:
  * - Leading: `CryptoIcon` for the chain's native gas token (we don't have
  *   per-address token info today; the chain icon is the closest signal).
  * - Title row: `entry.scope` (the user's label) + a Lumen `Tag` with the
  *   network label, side-by-side via `ListItemContentRow`.
  * - Description: truncated 0x address (wider envelope than the inline
  *   `truncateAddress` util — see `truncateAddressLong`).
- * - Trailing: per-row `MoreHorizontal` icon button. Intentionally NOT
- *   wired in L4 (no `onClick`) so Lumen's hover/press states still render —
- *   the per-row edit/copy/delete actions land in L4.1.
+ * - Trailing: bare Lumen `MoreHorizontal` symbol — the Figma renders a
+ *   plain 24px icon with no button chrome (no Spot, no tinted background).
+ *   When L4.1 wires the per-row overflow menu, swap to an
+ *   `IconButton appearance="no-background"` to retain hover/focus states
+ *   and an accessible label.
  *
- * TODO(contacts-L4.1): wire the trailing IconButton to a Lumen
- * `DropdownMenu` for edit / copy / remove on the address.
+ * TODO(contacts-L4.1): wire a Lumen `DropdownMenu` against this trailing
+ * affordance for edit / copy / remove on the address.
  */
 export function AddressRow({ entry }: Props) {
-  const { t } = useTranslation();
   const chain = getChainInfo(entry.chainId);
 
   return (
@@ -65,11 +64,9 @@ export function AddressRow({ entry }: Props) {
         </ListItemContent>
       </ListItemLeading>
       <ListItemTrailing>
-        <IconButton
-          appearance="transparent"
-          size="sm"
-          icon={MoreHorizontal}
-          aria-label={t("contactsManagement.addressActions")}
+        <MoreHorizontal
+          size={24}
+          className="text-muted"
           data-testid="contacts-management-address-actions"
         />
       </ListItemTrailing>
