@@ -10,6 +10,7 @@ import type {
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import {
   AmountRequired,
+  ClaimRewardsFeesWarning,
   ETHAddressNonEIP,
   FeeNotLoaded,
   FeeTooHigh,
@@ -301,6 +302,15 @@ function validateStaking(
   }
   if (intent.mode === "delegate" && intent.amount + totalFees > spendable) {
     errors.amount = new NotEnoughBalance();
+  }
+  // Only compare fees vs rewards when both are in the same native unit.
+  if (
+    intent.mode === "claimReward" &&
+    isNative(intent.asset) &&
+    intent.amount > 0n &&
+    totalFees > intent.amount
+  ) {
+    warnings.claimRewardsFee = new ClaimRewardsFeesWarning();
   }
   return { errors, warnings };
 }

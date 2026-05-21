@@ -337,6 +337,17 @@ const stakePromptCases: StakePromptCase[] = [
     transaction: { family: "evm", mode: "undelegate" },
   },
   {
+    label: "EVM claim rewards",
+    bucket: "revoke/claim/lifecycle",
+    flowName: NavigatorName.EvmClaimRewardsFlow,
+    familyExportKey: "EvmClaimRewardsFlow",
+    successScreenName: ScreenName.EvmClaimRewardsValidationSuccess,
+    errorScreenName: ScreenName.EvmClaimRewardsValidationError,
+    accountKey: "ethereum",
+    operationType: "REWARD",
+    transaction: { family: "evm", mode: "claimReward" },
+  },
+  {
     label: "Hedera claim rewards",
     bucket: "revoke/claim/lifecycle",
     flowName: NavigatorName.HederaClaimRewardsFlow,

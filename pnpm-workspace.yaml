@@ -197,7 +197,7 @@ catalog:
   oxlint: 1.51.0
   oxfmt: 0.36.0
   # Modules published by coin-modules
-  "@ledgerhq/coin-module-framework": 3.1.0
+  "@ledgerhq/coin-module-framework": 3.2.0
   "@ledgerhq/coin-xrp": 7.21.7
   detox: 20.51.1
 

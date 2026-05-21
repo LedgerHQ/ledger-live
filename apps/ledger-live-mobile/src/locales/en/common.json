@@ -6787,30 +6787,22 @@
     "claimRewards": {
       "stepperHeader": {
         "validator": "Select reward to collect",
-        "method": "Claim rewards",
-        "summary": "Summary",
+        "claim": "Claim rewards",
         "selectDevice": "Select device",
         "connectDevice": "Connect device",
         "stepRange": "Step {{currentStep}} of {{totalSteps}}"
       },
       "flow": {
         "steps": {
-          "method": {
+          "claim": {
             "youEarned": "You earned",
             "byDelegationAssetsTo": "by delegating assets to",
-            "claimReward": "Cash in",
-            "claimRewardCompound": "Compound",
-            "claimRewardInfo": "They will be claimed now and added to your available balance.",
-            "claimRewardCompoundInfo": "They will be claimed now and automatically delegated to the same validator.",
-            "compoundOrCashIn": "Compound or Cash in?",
-            "claimRewardTooltip": "Rewards will be added to the available balance",
-            "claimRewardCompoundTooltip": "Rewards will be added to the delegated amount",
+            "description": "Rewards will be claimed now and added to your available balance.",
             "cta": "Continue"
           },
           "verification": {
             "success": {
               "title": "You have successfully claimed your rewards. They were added to your available balance.",
-              "titleCompound": "Your rewards were delegated to the same validator.",
               "text": "Your account balance will be updated when the network confirms the transaction.",
               "cta": "View details"
             },
