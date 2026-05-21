@@ -20,17 +20,23 @@ import {
   StakingMappedUnbonding,
 } from "@ledgerhq/live-common/families/evm/staking/types";
 import { useFeature } from "@features/platform-feature-flags";
+import { Text } from "@ledgerhq/native-ui";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import AccountDelegationInfo from "~/components/AccountDelegationInfo";
 import AccountSectionLabel from "~/components/AccountSectionLabel";
+import Button from "~/components/Button";
 import Circle from "~/components/Circle";
+import CounterValue from "~/components/CounterValue";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import DateFromNow from "~/components/DateFromNow";
 import DelegationDrawer, { IconProps } from "~/components/DelegationDrawer";
 import LText from "~/components/LText";
 import Touchable from "~/components/Touchable";
 import { NavigatorName, ScreenName } from "~/const";
 import { useTranslation } from "~/context/Locale";
+import { rgba } from "../../../colors";
+import ClaimRewardIcon from "~/icons/ClaimReward";
 import IlluRewards from "~/icons/images/Rewards";
 import RedelegateIcon from "~/icons/Redelegate";
 import UndelegateIcon from "~/icons/Undelegate";
@@ -67,6 +73,14 @@ function Delegations({ account }: { account: StakingAccount }) {
     () => mapUnbondings(account.stakingResources.unbondings, validators, unit),
     [account.stakingResources.unbondings, unit, validators],
   );
+  const totalRewardsAvailable = useMemo(
+    () =>
+      delegations.reduce(
+        (sum, d) => sum.plus(d.pendingRewards ?? new BigNumber(0)),
+        new BigNumber(0),
+      ),
+    [delegations],
+  );
 
   const onNavigate = useCallback(
     ({
@@ -99,6 +113,24 @@ function Delegations({ account }: { account: StakingAccount }) {
       },
     });
   }, [onNavigate, route]);
+
+  const onCollectRewards = useCallback(() => {
+    if (delegation?.validator && delegation.pendingRewards?.gt(0)) {
+      onNavigate({
+        navigator: NavigatorName.EvmClaimRewardsFlow,
+        screen: ScreenName.EvmClaimRewardsClaim,
+        params: {
+          validator: delegation.validator,
+          value: delegation.pendingRewards,
+        },
+      });
+    } else {
+      onNavigate({
+        navigator: NavigatorName.EvmClaimRewardsFlow,
+        screen: ScreenName.EvmClaimRewardsValidator,
+      });
+    }
+  }, [onNavigate, delegation]);
 
   const onRedelegate = useCallback(() => {
     if (!delegation) return;
@@ -279,8 +311,30 @@ function Delegations({ account }: { account: StakingAccount }) {
       });
     }
 
+    if (delegation.pendingRewards?.gt(0)) {
+      result.push({
+        label: t("delegation.actions.collectRewards"),
+        Icon: (props: IconProps) => (
+          <Circle {...props} bg={rgba(colors.yellow, 0.2)}>
+            <ClaimRewardIcon />
+          </Circle>
+        ),
+        onPress: onCollectRewards,
+        event: "DelegationActionCollectRewards",
+      });
+    }
+
     return result;
-  }, [account, colors.fog, delegation, onRedelegate, onUndelegate, t]);
+  }, [
+    account,
+    colors.fog,
+    colors.yellow,
+    delegation,
+    onCollectRewards,
+    onRedelegate,
+    onUndelegate,
+    t,
+  ]);
 
   const delegationDisabled = delegations.length <= 0 || !canDelegate(account);
   const selected = delegation || undelegation;
@@ -304,6 +358,27 @@ function Delegations({ account }: { account: StakingAccount }) {
         data={data}
         actions={actions}
       />
+      {totalRewardsAvailable.gt(0) && (
+        <>
+          <AccountSectionLabel name={t("account.claimReward.sectionLabel")} />
+          <View style={[styles.rewardsWrapper]}>
+            <View style={styles.column}>
+              <Text fontWeight={"semiBold"} variant={"h4"}>
+                <CurrencyUnitValue value={totalRewardsAvailable} unit={unit} />
+              </Text>
+              <LText semiBold style={styles.subLabel} color="grey">
+                <CounterValue currency={currency} value={totalRewardsAvailable} withPlaceholder />
+              </LText>
+            </View>
+            <Button
+              event="EvmDelegation AccountClaimRewardsBtn Click"
+              onPress={onCollectRewards}
+              type="primary"
+              title={t("account.claimReward.cta")}
+            />
+          </View>
+        </>
+      )}
       {delegations.length === 0 ? (
         <AccountDelegationInfo
           title={t("account.delegation.info.title")}
@@ -382,6 +457,21 @@ const styles = StyleSheet.create({
   wrapper: {},
   delegationsWrapper: {
     borderRadius: 4,
+  },
+  rewardsWrapper: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignContent: "center",
+    paddingVertical: 16,
+    marginBottom: 16,
+    borderRadius: 4,
+  },
+  column: {
+    flexDirection: "column",
+  },
+  subLabel: {
+    fontSize: 14,
+    flex: 1,
   },
   row: {
     flexDirection: "row",
