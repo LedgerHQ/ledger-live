@@ -10,6 +10,7 @@ import type {
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
 import {
   AmountRequired,
+  ClaimRewardsFeesWarning,
   ETHAddressNonEIP,
   FeeNotLoaded,
   FeeTooHigh,
@@ -30,6 +31,7 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { getGasTracker } from "../network/gasTracker";
 import { isNative, TransactionTypes } from "../types";
+import type { StakingOperation } from "../types/staking";
 import { DEFAULT_GAS_LIMIT, isEthAddress, isStakingIntent } from "../utils";
 import {
   getTransactionType,
@@ -286,6 +288,16 @@ function validateStaking(
   }
   if (intent.mode === "delegate" && intent.amount + totalFees > spendable) {
     errors.amount = new NotEnoughBalance();
+  }
+  const localMode = intent.mode as StakingOperation;
+  // Only compare fees vs rewards when both are in the same native unit.
+  if (
+    localMode === "claimReward" &&
+    isNative(intent.asset) &&
+    intent.amount > 0n &&
+    totalFees > intent.amount
+  ) {
+    warnings.claimRewardsFee = new ClaimRewardsFeesWarning();
   }
   return { errors, warnings };
 }
