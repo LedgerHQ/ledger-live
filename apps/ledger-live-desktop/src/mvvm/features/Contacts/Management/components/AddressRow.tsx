@@ -65,7 +65,12 @@ export function AddressRow({ entry, crypto, onSelect }: Props) {
       <ListItemLeading>
         <CryptoIcon
           ticker={crypto.ticker}
-          ledgerId={crypto.ledgerId}
+          // `crypto.id` is a CoinGecko slug ("usd-coin", "decentraland",
+          // "tether", …), which @ledgerhq/crypto-icons resolves against
+          // its CoinGecko fallback registry when the primary
+          // Ledger-Live id isn't a match. Pass it directly so we get
+          // the real glyph instead of the letter fallback.
+          ledgerId={crypto.id}
           network={networkBadge}
           size={48}
           alt={crypto.name}

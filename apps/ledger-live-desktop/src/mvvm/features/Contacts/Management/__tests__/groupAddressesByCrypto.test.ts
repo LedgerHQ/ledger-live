@@ -24,7 +24,7 @@ describe("groupAddressesByCrypto", () => {
     const entry = stub({ chainId: 137 }); // Polygon
     const groups = groupAddressesByCrypto([entry], {});
     expect(groups).toHaveLength(1);
-    expect(groups[0]).toMatchObject({ cryptoId: "polygon" });
+    expect(groups[0]).toMatchObject({ cryptoId: "matic-network" });
   });
 
   it("uses the sidecar `cryptoMeta` when present, ignoring the chain-native fallback", () => {
@@ -62,7 +62,7 @@ describe("groupAddressesByCrypto", () => {
   });
 
   it("section order follows the TOP_CRYPTOS market-cap ordering, not insertion order", () => {
-    // Polygon's native fallback resolves to "polygon" (rank > "ethereum").
+    // Polygon's native fallback resolves to "matic-network" (rank > "ethereum").
     // Insertion order is [POL, ETH] but we expect [ETH, POL] back.
     const ethEntry = stub({
       addressHex: "0x0000000000000000000000000000000000000001",
@@ -74,7 +74,7 @@ describe("groupAddressesByCrypto", () => {
     });
 
     const groups = groupAddressesByCrypto([polEntry, ethEntry], {});
-    expect(groups.map(g => g.cryptoId)).toEqual(["ethereum", "polygon"]);
+    expect(groups.map(g => g.cryptoId)).toEqual(["ethereum", "matic-network"]);
   });
 
   it("groups by chainId+addressHex composite — same address on two chains stays separate", () => {
@@ -86,7 +86,7 @@ describe("groupAddressesByCrypto", () => {
     const groups = groupAddressesByCrypto([onEth, onPol], {});
 
     expect(new Set(groups.map(g => g.cryptoId))).toEqual(
-      new Set(["ethereum", "polygon"]),
+      new Set(["ethereum", "matic-network"]),
     );
   });
 
