@@ -59,6 +59,7 @@ export function useBaker(addr: string): Baker | undefined {
       setBaker(undefined);
       return;
     }
+    setBaker(bakers.getBakerSync(addr));
     let cancelled = false;
     bakers
       .loadBaker(addr)
@@ -163,7 +164,8 @@ export function useTezosStakingInfo(account: AccountLike): TezosStakingInfo {
     const unstakedBalance = sumAmounts(pendingPositions);
     const unstakedFinalizable = sumAmounts(finalizablePositions);
     // account.balance includes the staked portion on Tezos — subtract when no delegation-* position.
-    const availableBalance = delegationPos?.amount ?? account.balance.minus(stakedBalance);
+    const availableBalance =
+      delegationPos?.amount ?? BigNumber.max(0, account.balance.minus(stakedBalance));
     const delegateAddress = delegationPos?.delegate ?? delegation?.address;
 
     return {

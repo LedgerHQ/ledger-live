@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import styled from "styled-components";
 import { Trans, useTranslation } from "react-i18next";
 import { shortAddressPreview, getAccountCurrency } from "@ledgerhq/live-common/account/index";
@@ -64,12 +64,9 @@ type CountdownProps = {
 };
 
 const TimeRemaining = ({ createdAt, isFinalizable }: CountdownProps) => {
-  const completionDate = useMemo(() => {
-    if (!createdAt) return undefined;
-    // Clock-skew clamp: remaining can't exceed the unstake delay.
-    const cap = Date.now() + UNSTAKE_DELAY_MS;
-    return new Date(Math.min(createdAt.getTime() + UNSTAKE_DELAY_MS, cap));
-  }, [createdAt]);
+  const completionDate = createdAt
+    ? new Date(createdAt.getTime() + UNSTAKE_DELAY_MS)
+    : undefined;
   const fromNowText = useDateFromNow(completionDate);
   const isPast = !!completionDate && completionDate.getTime() <= Date.now();
 

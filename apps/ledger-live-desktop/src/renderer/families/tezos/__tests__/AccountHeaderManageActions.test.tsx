@@ -100,7 +100,7 @@ describe("AccountHeaderManageActions (tezos)", () => {
       expect(store.getState().modals.MODAL_TEZOS_EARNING_CHOICE?.isOpened).toBe(true);
     });
 
-    it("opens MODAL_TEZOS_STAKE (skipDelegation) when delegated but not yet staked", () => {
+    it("opens MODAL_TEZOS_EARNING_CHOICE when delegated but not yet staked", () => {
       stakingInfoMock.mockReturnValue({
         ...defaultStakingInfo,
         isDelegated: true,
@@ -119,10 +119,8 @@ describe("AccountHeaderManageActions (tezos)", () => {
         result.current?.[0].onClick();
       });
 
-      expect(store.getState().modals.MODAL_TEZOS_STAKE).toMatchObject({
-        isOpened: true,
-        data: { skipDelegation: true },
-      });
+      expect(store.getState().modals.MODAL_TEZOS_EARNING_CHOICE?.isOpened).toBe(true);
+      expect(store.getState().modals.MODAL_TEZOS_STAKE?.isOpened).toBeFalsy();
       expect(store.getState().modals.MODAL_DELEGATE?.isOpened).toBeFalsy();
     });
 
