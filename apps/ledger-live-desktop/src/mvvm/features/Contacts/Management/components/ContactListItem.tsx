@@ -21,12 +21,16 @@ type Props = {
  * One row in the contact list pane.
  *
  * Title = contact name. Description = pluralized address-count. Leading
- * visual = per-name InitialsAvatar.
+ * visual = per-name `InitialsAvatar`.
  *
- * Selected state: `bg-active-subtle` — the `--background-active-subtle`
- * token used by the Figma frame 13802:2833 (`#251a31`, the purple). Lumen
- * `ListItem` ships no built-in `selected` variant at the pinned version,
- * so we override `className`.
+ * Selected state uses the `--background-active-subtle` Lumen token (the
+ * dark-purple-050 from the Figma frame 13802:2833). When `isSelected` is
+ * true, we deliberately omit `onClick` so Lumen's `interactive` flag flips
+ * off and the row stops carrying hover / pressed / focus styles plus the
+ * `cursor-pointer` (ListItem.js applies all of those via the
+ * `interactive: !!onClick` variant). This matches the Figma's behaviour:
+ * the selected row reads as a stable "current" surface rather than a
+ * clickable target.
  *
  * TODO(lumen-adoption): swap to a real "selected" variant if/when Lumen
  * ships one for ListItem.
@@ -38,11 +42,8 @@ export function ContactListItem({ contact, isSelected, onSelect }: Props) {
   return (
     <ListItem
       density="expanded"
-      onClick={() => onSelect(contact.name)}
-      className={cn(
-        "cursor-pointer",
-        isSelected ? "bg-active-subtle" : "bg-transparent",
-      )}
+      onClick={isSelected ? undefined : () => onSelect(contact.name)}
+      className={cn(isSelected ? "bg-active-subtle" : "bg-transparent")}
       aria-selected={isSelected}
       data-testid="contacts-management-list-item"
       data-selected={isSelected ? "true" : "false"}
