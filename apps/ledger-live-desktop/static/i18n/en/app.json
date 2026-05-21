@@ -9080,10 +9080,10 @@
     "contactActions": "More options",
     "addressActions": "Address options",
     "addressMenu": {
-      "copy": "Copy address",
-      "editLabel": "Edit label",
+      "qrCode": "See QR Code",
+      "send": "Send to this address",
       "editAddress": "Edit address",
-      "remove": "Remove"
+      "delete": "Delete address"
     },
     "addresses_zero": "{{count}} address",
     "addresses_one": "{{count}} address",
