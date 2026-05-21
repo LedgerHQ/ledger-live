@@ -37,7 +37,13 @@ export function ManagementView({
   return (
     <div
       data-testid="contacts-management-page"
-      className="flex flex-col gap-24 h-full min-h-0"
+      // `bg-canvas` pins the page to the `--background-canvas` token so the
+      // translucent `bg-surface-transparent` panes composite correctly
+      // against the canvas, independent of which Page layout shell
+      // (classic vs wallet 4.0) renders us. `pb-24` leaves a 24px gutter
+      // between the bottom of the panes and the bottom of the app —
+      // matches the Figma frame 13802:2833.
+      className="flex flex-col gap-24 h-full min-h-0 bg-canvas pb-24"
     >
       <Header />
       <div

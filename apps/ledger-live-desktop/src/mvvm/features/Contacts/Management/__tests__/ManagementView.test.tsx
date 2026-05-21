@@ -71,6 +71,21 @@ describe("ManagementView", () => {
     expect(onSelectContact).toHaveBeenCalledWith("Alice");
   });
 
+  it("does NOT call onSelectContact when the already-selected row is clicked", async () => {
+    // Per the Figma spec: the active (purple) row is a stable surface, not
+    // a click target — Lumen's interactive flag flips off when onClick is
+    // undefined, suppressing hover/press/cursor.
+    const onSelectContact = jest.fn();
+    const { user } = render(
+      <ManagementView {...baseProps({ onSelectContact })} />,
+    );
+
+    // baseProps() selects "me" by default.
+    await user.click(screen.getAllByText("me")[0]);
+
+    expect(onSelectContact).not.toHaveBeenCalled();
+  });
+
   it("renders one AddressRow per entry on the selected contact", () => {
     const alice = stub("Alice", 3);
     const groups = groupContacts({ alice }, "");
