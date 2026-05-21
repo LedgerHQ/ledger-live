@@ -1,6 +1,6 @@
 import React from "react";
 import { within } from "@testing-library/react";
-import { render, screen } from "tests/testSetup";
+import { render, screen, withFlagOverrides } from "tests/testSetup";
 import { ETH_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
 import CryptoAddresses from "../index";
 import useCryptoAddressesViewModel from "../hooks/useCryptoAddressesViewModel";
@@ -10,6 +10,10 @@ import { createWalletState } from "../testUtils/createWalletState";
 jest.mock("../hooks/useCryptoAddressesViewModel");
 
 const mockedUseCryptoAddressesViewModel = jest.mocked(useCryptoAddressesViewModel);
+
+const aggregatedFlags = withFlagOverrides({
+  lwdWallet40: { enabled: true, params: { aggregatedAssets: true } },
+});
 
 const baseViewModel: CryptoAddressesViewModel = {
   searchValue: "",
@@ -39,7 +43,10 @@ describe("CryptoAddresses (Crypto page)", () => {
     });
 
     const { user } = render(<CryptoAddresses />, {
-      initialState: createWalletState(new Map([[ETH_ACCOUNT.id, "My ETH account"]])),
+      initialState: {
+        ...aggregatedFlags,
+        ...createWalletState(new Map([[ETH_ACCOUNT.id, "My ETH account"]])),
+      },
     });
 
     // Land on the Crypto page — page title in the header

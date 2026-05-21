@@ -103,15 +103,19 @@ export function useCryptoDataTable({
         ),
         meta: { align: "end" },
       },
-      {
-        id: "assets",
-        header: t("cryptoAddresses.table.columns.asset"),
-        enableSorting: false,
-        cell: ({ row }) => (
-          <AccountAssetsCell currencies={getAccountAssetsCurrencies(row.original)} />
-        ),
-        meta: { align: "end" },
-      },
+      ...(shouldDisplayAggregatedAssets
+        ? [
+            {
+              id: "assets",
+              header: t("cryptoAddresses.table.columns.asset"),
+              enableSorting: false,
+              cell: ({ row }: { row: Row<AccountLike> }) => (
+                <AccountAssetsCell currencies={getAccountAssetsCurrencies(row.original)} />
+              ),
+              meta: { align: "end" },
+            } satisfies ColumnDef<AccountLike>,
+          ]
+        : []),
       {
         id: "balance",
         accessorKey: "balance",

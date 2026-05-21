@@ -1,7 +1,7 @@
 import React from "react";
 import BigNumber from "bignumber.js";
 import { within } from "@testing-library/react";
-import { render, screen } from "tests/testSetup";
+import { render, screen, withFlagOverrides } from "tests/testSetup";
 import { CryptoTable } from "../CryptoTable";
 import { getCryptoAccountAddress } from "LLD/features/CryptoAddresses/utils/getCryptoAccountAddress";
 import {
@@ -15,10 +15,18 @@ import {
   lookupParentAccountFromMap,
 } from "@ledgerhq/asset-aggregation/assetDistribution/index";
 
-function expectColumnHeaders(): void {
+const aggregatedFlags = withFlagOverrides({
+  lwdWallet40: { enabled: true, params: { aggregatedAssets: true } },
+});
+
+function expectColumnHeaders(options?: { withAssetColumn?: boolean }): void {
   expect(screen.getByRole("columnheader", { name: "Name" })).toBeVisible();
   expect(screen.getByRole("columnheader", { name: "Address" })).toBeVisible();
-  expect(screen.getByRole("columnheader", { name: "Asset" })).toBeVisible();
+  if (options?.withAssetColumn) {
+    expect(screen.getByRole("columnheader", { name: "Asset" })).toBeVisible();
+  } else {
+    expect(screen.queryByRole("columnheader", { name: "Asset" })).not.toBeInTheDocument();
+  }
   expect(screen.getByRole("columnheader", { name: "Value" })).toBeVisible();
 }
 
@@ -107,19 +115,38 @@ describe("CryptoTable", () => {
     expectColumnHeaders();
     expect(screen.getByText(accountLabel)).toBeVisible();
     expect(screen.getByText("ETH")).toBeVisible();
-    expect(screen.getByTestId("account-assets-cell")).toBeVisible();
+    expect(screen.queryByTestId("account-assets-cell")).not.toBeInTheDocument();
     const table = screen.getByRole("table");
     const tbodyElements = within(table)
       .getAllByRole("rowgroup")
       .filter((el): el is HTMLElement => el.tagName === "TBODY");
     expect(tbodyElements).toHaveLength(1);
     const dataCells = within(tbodyElements[0]).getAllByRole("cell");
-    expect(dataCells).toHaveLength(5);
+    expect(dataCells).toHaveLength(4);
 
     await user.click(screen.getByRole("button", { name: new RegExp(accountLabel) }));
 
     expect(mockOnRowClick).toHaveBeenCalledTimes(1);
     expect(mockOnRowClick).toHaveBeenCalledWith(ETH_ACCOUNT, undefined);
+  });
+
+  it("renders the asset column when shouldDisplayAggregatedAssets is enabled", () => {
+    render(
+      <CryptoTable
+        rows={[ETH_ACCOUNT]}
+        lookupParentAccount={mockLookupParent}
+        onRowClick={mockOnRowClick}
+      />,
+      {
+        initialState: {
+          ...aggregatedFlags,
+          ...createWalletState(new Map([[ETH_ACCOUNT.id, "Ethereum main"]])),
+        },
+      },
+    );
+
+    expectColumnHeaders({ withAssetColumn: true });
+    expect(screen.getByTestId("account-assets-cell")).toBeVisible();
   });
 
   it("on token rows: ignores row click for edit name; row click passes token and parent", async () => {
