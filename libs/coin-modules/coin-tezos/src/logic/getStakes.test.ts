@@ -461,13 +461,11 @@ describe("getStakes", () => {
       expect(result.items.map(i => i.uid)).toEqual(["unstaking-2"]);
     });
 
-    it("falls back to empty when getUnstakeRequests rejects", async () => {
+    it("propagates rejection when getUnstakeRequests fails", async () => {
       mockGetAccountByAddress.mockResolvedValue(makeAccount({ balance: 100, unstakedBalance: 10 }));
       mockGetUnstakeRequests.mockRejectedValueOnce(new Error("tzkt 500"));
 
-      const result = await api.getStakes(address);
-
-      expect(result.items).toEqual([]);
+      await expect(api.getStakes(address)).rejects.toThrow("tzkt 500");
     });
   });
 

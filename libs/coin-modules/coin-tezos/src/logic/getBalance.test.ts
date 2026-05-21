@@ -390,7 +390,7 @@ describe("getBalance", () => {
       expect(await getBalance(address)).toEqual([{ value: 50n, asset: { type: "native" } }]);
     });
 
-    it("falls back to no unstake stakes when the unstake_requests endpoint fails", async () => {
+    it("propagates rejection when the unstake_requests endpoint fails", async () => {
       mockServer.use(
         http.get(`http://tezos.explorer.com/v1/accounts/${address}`, () =>
           HttpResponse.json({
@@ -406,11 +406,7 @@ describe("getBalance", () => {
         http.get("http://tezos.explorer.com/v1/tokens/balances", () => HttpResponse.json([])),
       );
 
-      const result = await getBalance(address);
-
-      expect(result[0]).toEqual({ value: 100n, asset: { type: "native" } });
-      expect(result.find(b => b.stake?.uid.startsWith("unstaking-"))).toBeUndefined();
-      expect(result.find(b => b.stake?.uid.startsWith("delegation-"))).toBeDefined();
+      await expect(getBalance(address)).rejects.toThrow();
     });
   });
 });

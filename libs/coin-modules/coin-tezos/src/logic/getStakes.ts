@@ -18,18 +18,11 @@ export const isUnstakingPosition = (uid: string) => uid.startsWith(STAKING_UID_P
 export const isFinalizablePosition = (uid: string) =>
   uid.startsWith(STAKING_UID_PREFIX.finalizable);
 
-/** Soft-fails to `[]` on TzKT error so the unstake endpoint doesn't abort balance sync. */
 export async function fetchUnstakeRequests(
   address: string,
   needed: boolean,
 ): Promise<APIUnstakeRequest[]> {
-  if (!needed) return [];
-  try {
-    return await api.getUnstakeRequests(address);
-  } catch (err) {
-    log("coin:tezos", "getUnstakeRequests failed; falling back to empty", { error: err, address });
-    return [];
-  }
+  return needed ? api.getUnstakeRequests(address) : [];
 }
 
 /**
