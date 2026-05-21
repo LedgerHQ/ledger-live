@@ -849,6 +849,19 @@ jobs:
           sudo chmod +x /usr/local/bin/mitmdump
           mitmdump --version
 
+          # Pre-generate the mitmproxy CA so setup-mitmproxy.sh finds it.
+          # mitmdump writes the CA to ~/.mitmproxy/ during proxy startup; we
+          # run it briefly on an ephemeral port and SIGTERM it. Without this
+          # step, the first Detox run on a fresh runner fails because the CA
+          # is created lazily and may not exist yet when the helper checks.
+          timeout --signal=TERM 5s mitmdump --listen-port 0 > /tmp/mitm-init.log 2>&1 || true
+          if [[ ! -f "$HOME/.mitmproxy/mitmproxy-ca-cert.pem" ]]; then
+            echo "::error::mitmproxy CA was not generated"
+            cat /tmp/mitm-init.log
+            exit 1
+          fi
+          echo "✓ CA generated at $HOME/.mitmproxy/mitmproxy-ca-cert.pem"
+
       - name: Run Android Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-android
         timeout-minutes: ${{ fromJSON(needs.determine-builds.outputs.android_timeout) }}
