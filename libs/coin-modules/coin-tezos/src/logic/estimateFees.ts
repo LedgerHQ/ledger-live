@@ -120,8 +120,6 @@ export async function estimateFees({
         });
         break;
       case "stake": {
-        // useAllAmount: leave the protocol-mandated reserve so the simulation passes
-        // (see STAKE_USE_ALL_RESERVE_MUTEZ).
         const stakeAmount = transaction.useAllAmount
           ? BigInt(account.balance) - STAKE_USE_ALL_RESERVE_MUTEZ
           : amount;

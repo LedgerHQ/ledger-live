@@ -13,12 +13,7 @@ import type { TezosOperationMode } from "./types/model";
  */
 export const DUST_MARGIN_MUTEZ = 500;
 
-/**
- * Reserve kept in the account when staking with useAllAmount on a delegated
- * account. The Tezos protocol rejects operations that would empty an implicit
- * delegated contract (`empty_implicit_delegated_contract`); this buffer covers
- * fees and leaves a small post-operation balance to satisfy the protocol.
- */
+// Tezos rejects `empty_implicit_delegated_contract`; stake-max leaves this buffer.
 export const STAKE_USE_ALL_RESERVE_MUTEZ = 10_000n;
 
 /**

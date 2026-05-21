@@ -25,13 +25,6 @@ export async function fetchUnstakeRequests(
   return needed ? api.getUnstakeRequests(address) : [];
 }
 
-/**
- * Builds Paris-upgrade staking positions: `delegation-*`, `stake-*`, `unstaking-{id}`,
- * `finalizable-{id}`. The `delegate` on each unstake position is the baker at the time
- * the request was opened — may differ from the current delegate after a baker change.
- * Delegation/stake positions share the account's current baker (Tezos protocol invariant:
- * staked and non-staked balance are always with the same baker).
- */
 export function buildStakesForAccount(
   address: string,
   account: APIUserAccount,

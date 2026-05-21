@@ -66,7 +66,7 @@ type CountdownProps = {
 const TimeRemaining = ({ createdAt, isFinalizable }: CountdownProps) => {
   const completionDate = useMemo(() => {
     if (!createdAt) return undefined;
-    // Clamp future-dated createdAt (clock skew): remaining can't exceed UNSTAKE_DELAY_MS.
+    // Clock-skew clamp: remaining can't exceed the unstake delay.
     const cap = Date.now() + UNSTAKE_DELAY_MS;
     return new Date(Math.min(createdAt.getTime() + UNSTAKE_DELAY_MS, cap));
   }, [createdAt]);

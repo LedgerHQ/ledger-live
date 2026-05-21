@@ -126,7 +126,6 @@ export type TezosStakingInfo = {
   unstakedFinalizable: BigNumber;
   availableBalance: BigNumber;
   delegateAddress: string | undefined;
-  /** Pending then finalizable, in TzKT request-id order within each group. */
   unstakingPositions: StakingPosition[];
 };
 
@@ -135,11 +134,6 @@ const ZERO = new BigNumber(0);
 const sumAmounts = (positions: StakingPosition[]) =>
   positions.reduce<BigNumber>((sum, p) => sum.plus(p.amount), ZERO);
 
-/**
- * Derived staking view over `account.stakingPositions[]` (populated by
- * `genericGetAccountShape` when `BridgeApi.usesStakingPositions`). Classifies positions
- * via the uid prefixes set by `buildStakesForAccount`.
- */
 export function useTezosStakingInfo(account: AccountLike): TezosStakingInfo {
   const delegation = useDelegation(account);
 

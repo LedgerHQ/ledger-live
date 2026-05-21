@@ -190,7 +190,6 @@ function calculateAmounts(
   tokenBalanceForSendMax?: bigint,
 ): { amount: bigint; totalSpent: bigint } {
   if (intent.type === "stake") {
-    // useAllAmount: estimateFees applies the protocol reserve; use its result.
     const amount =
       intent.useAllAmount && estimatedAmount !== undefined ? estimatedAmount : intent.amount;
     return { amount, totalSpent: amount + estimatedFees };

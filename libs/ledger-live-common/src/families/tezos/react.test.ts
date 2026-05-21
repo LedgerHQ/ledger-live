@@ -195,6 +195,37 @@ describe("useTezosStakingInfo", () => {
     });
   });
 
+  it("classifies a Paris-upgrade Tezos account without tezosResources", () => {
+    const account = {
+      type: "Account",
+      freshAddress: ADDRESS,
+      balance: new BigNumber(1000),
+      spendableBalance: new BigNumber(1000),
+      currency: { family: "tezos" },
+      stakingPositions: [delegationPos(700), stakePos(300)],
+    } as unknown as TezosAccount;
+    const { result } = renderHook(() => useTezosStakingInfo(account));
+    expect(result.current.isDelegated).toBe(true);
+    expect(result.current.isStaked).toBe(true);
+    expect(result.current.stakedBalance).toEqual(new BigNumber(300));
+    expect(result.current.availableBalance).toEqual(new BigNumber(700));
+  });
+
+  it("handles a Tezos account with stakingPositions undefined", () => {
+    const account = {
+      type: "Account",
+      freshAddress: ADDRESS,
+      balance: new BigNumber(500),
+      spendableBalance: new BigNumber(500),
+      currency: { family: "tezos" },
+    } as unknown as TezosAccount;
+    const { result } = renderHook(() => useTezosStakingInfo(account));
+    expect(result.current.isDelegated).toBe(false);
+    expect(result.current.isStaked).toBe(false);
+    expect(result.current.availableBalance).toEqual(new BigNumber(500));
+    expect(result.current.unstakingPositions).toEqual([]);
+  });
+
   it("returns defaults for a non-Tezos Account (no tezosResources field)", () => {
     const ethAccount = {
       type: "Account",
