@@ -9085,6 +9085,11 @@
       "editAddress": "Edit address",
       "delete": "Delete address"
     },
+    "addressDialog": {
+      "send": "Send",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
     "addresses_zero": "{{count}} address",
     "addresses_one": "{{count}} address",
     "addresses_other": "{{count}} addresses"

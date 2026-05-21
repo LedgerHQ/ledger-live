@@ -86,6 +86,30 @@ describe("ManagementView", () => {
     expect(onSelectContact).not.toHaveBeenCalled();
   });
 
+  it("opens the address-detail dialog when an address row is clicked", async () => {
+    const alice = stub("Alice", 1);
+    const groups = groupContacts({ alice }, "");
+    const { user } = render(
+      <ManagementView
+        {...baseProps({
+          groups,
+          selectedContact: alice,
+          selectedContactName: "Alice",
+        })}
+      />,
+    );
+
+    // Dialog content is not in the DOM until the row is clicked.
+    expect(screen.queryByTestId("contacts-management-address-qr")).not.toBeInTheDocument();
+
+    await user.click(screen.getByTestId("contacts-management-address-row"));
+
+    expect(screen.getByTestId("contacts-management-address-qr")).toBeInTheDocument();
+    expect(screen.getByTestId("contacts-management-address-full")).toHaveTextContent(
+      alice.entries[0].addressHex,
+    );
+  });
+
   it("renders one AddressRow per entry on the selected contact", () => {
     const alice = stub("Alice", 3);
     const groups = groupContacts({ alice }, "");

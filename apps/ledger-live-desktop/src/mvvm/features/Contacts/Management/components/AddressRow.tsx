@@ -17,6 +17,7 @@ import { AddressRowMenu } from "./AddressRowMenu";
 
 type Props = {
   entry: ContactEntry;
+  onSelect: (entry: ContactEntry) => void;
 };
 
 /**
@@ -34,13 +35,19 @@ type Props = {
  *   with four overflow actions. The trigger and menu items both carry
  *   hover/pressed/focus states from Lumen; the items themselves are
  *   intentionally inert in L4 (wiring lands in L4.1).
+ *
+ * Clicking anywhere on the row (outside the trailing menu) opens the
+ * address-detail dialog with the full address + QR code (Figma frame
+ * 13844:9651). The dialog open state is owned by the parent
+ * (ContactDetails) — `onSelect` fires with this row's `entry`.
  */
-export function AddressRow({ entry }: Props) {
+export function AddressRow({ entry, onSelect }: Props) {
   const chain = getChainInfo(entry.chainId);
 
   return (
     <ListItem
       density="expanded"
+      onClick={() => onSelect(entry)}
       data-testid="contacts-management-address-row"
     >
       <ListItemLeading>
@@ -61,7 +68,14 @@ export function AddressRow({ entry }: Props) {
         </ListItemContent>
       </ListItemLeading>
       <ListItemTrailing>
-        <AddressRowMenu />
+        {/*
+          Wrap the trailing menu in a click-stopper so the popover trigger
+          / menu items don't bubble up to the parent ListItem's onClick
+          (which would also open the address-detail dialog).
+        */}
+        <div onClick={e => e.stopPropagation()}>
+          <AddressRowMenu />
+        </div>
       </ListItemTrailing>
     </ListItem>
   );
