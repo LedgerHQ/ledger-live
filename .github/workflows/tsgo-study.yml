@@ -19,7 +19,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: pnpm
 
       - name: Install dependencies
@@ -36,7 +36,7 @@ jobs:
           echo "## tsgo typecheck performance study" >> $GITHUB_STEP_SUMMARY
           echo "Running tsgo --noEmit on the full monorepo..." >> $GITHUB_STEP_SUMMARY
           START=$(date +%s%N)
-          pnpm tsgo --noEmit -p tsconfig.json 2>&1 | tee /tmp/tsgo-output.txt || true
+          pnpm tsgo --noEmit -p apps/ledger-live-desktop/tsconfig.json 2>&1 | tee /tmp/tsgo-output.txt || true
           END=$(date +%s%N)
           ELAPSED=$(( (END - START) / 1000000 ))
           echo "⏱ tsgo duration: ${ELAPSED}ms" >> $GITHUB_STEP_SUMMARY
