@@ -15,7 +15,7 @@ This branch replaces all `tsc` invocations with `tsgo` across the `ledger-live` 
 
 - All `tsc` calls in `package.json` scripts replaced with `tsgo` (~150 files)
 - All `tsc` calls in `.github/` CI workflows replaced with `tsgo`
-- Added `@typescript/typescript-go@nightly` as a root dev dependency
+- Added `@typescript/native-preview@7.0.0-dev.20260521.1` as a root dev dependency
 - Added `tsgo` root-level script
 - Added `.github/workflows/tsgo-study.yml` — a dedicated CI workflow that runs `tsgo` with timing output
 
@@ -32,7 +32,7 @@ It produces:
 ## How to run locally
 
 ```bash
-pnpm add -w -D @typescript/typescript-go@nightly
+pnpm add -w -D @typescript/native-preview@7.0.0-dev.20260521.1
 pnpm tsgo --version
 time pnpm tsgo --noEmit -p tsconfig.json
 ```

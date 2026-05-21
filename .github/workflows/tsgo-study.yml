@@ -26,7 +26,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Install tsgo (TypeScript v7 nightly)
-        run: pnpm add -w -D @typescript/typescript-go@nightly
+        run: pnpm add -w -D @typescript/native-preview@7.0.0-dev.20260521.1
 
       - name: Check tsgo version
         run: pnpm tsgo --version
