@@ -60,6 +60,7 @@ const SEMANTIC_OP_TYPES: Set<OperationType> = new Set([
   "DELEGATE",
   "UNDELEGATE",
   "REDELEGATE",
+  "REWARD",
   "NFT_IN",
   "NFT_OUT",
 ]);
@@ -309,6 +310,7 @@ export async function listOperations(
       "DELEGATE",
       "UNDELEGATE",
       "REDELEGATE",
+      "REWARD",
       "NFT_IN",
       "NFT_OUT",
     ].includes(operation.type);
