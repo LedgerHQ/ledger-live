@@ -48,10 +48,13 @@ function createMockPairObservable() {
       const t1 = setTimeout(() => {
         next({ status: "PREPARE", walletConnectUri: "wc:mock-uri-for-testing" });
       }, 10);
+      // SUCCESS must fire well after the PREPARE state-update setTimeout (T) has
+      // landed; otherwise setStateWithTimeout clears the pending PREPARE update
+      // and the QR step is skipped — flaky on busy CI runners.
       const t2 = setTimeout(() => {
         next({ status: "SUCCESS", sessionTopic: SESSION_TOPIC });
         complete();
-      }, T + 200);
+      }, T + 800);
 
       return {
         unsubscribe: jest.fn(() => {
@@ -72,7 +75,7 @@ function createMockOnboardObservable(completedAccount: Account) {
       const t2 = setTimeout(() => {
         next({ account: completedAccount });
         complete();
-      }, T + 200);
+      }, T + 800);
 
       return {
         unsubscribe: jest.fn(() => {
