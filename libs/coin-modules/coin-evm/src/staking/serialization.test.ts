@@ -1,11 +1,12 @@
 import { BigNumber } from "bignumber.js";
-import type { Account, AccountRaw } from "@ledgerhq/types-live";
 import type {
+  Account,
+  AccountRaw,
   StakingAccount,
   StakingAccountRaw,
   StakingResources,
   StakingValidatorItem,
-} from "../types/staking";
+} from "@ledgerhq/types-live";
 import {
   assignFromAccountRaw,
   assignToAccountRaw,

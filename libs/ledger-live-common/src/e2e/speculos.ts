@@ -8,7 +8,6 @@ import {
   SpeculosTransport,
 } from "../load/speculos";
 import { createSpeculosDeviceCI, releaseSpeculosDeviceCI } from "./speculosCI";
-import type { AppCandidate } from "@ledgerhq/ledger-wallet-framework/bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import axios from "axios";
@@ -43,7 +42,7 @@ import { AppInfos } from "./enum/AppInfos";
 import { DEVICE_LABELS_CONFIG } from "./data/deviceLabelsData";
 import { sendSui } from "./families/sui";
 import { sendConcordium } from "./families/concordium";
-import { getAppVersionFromCatalog, getSpeculosModel, isTouchDevice } from "./speculosAppVersion";
+import { getNanoAppCatalogVersionMap, getSpeculosModel, isTouchDevice } from "./speculosAppVersion";
 import {
   pressAndRelease,
   longPressAndRelease,
@@ -435,11 +434,12 @@ export async function startSpeculos(
   const appCandidates = await listAppCandidates(coinapps);
 
   const nanoAppCatalogPath = getEnv("E2E_NANO_APP_VERSION_PATH");
+  const catalogVersions = await getNanoAppCatalogVersionMap(nanoAppCatalogPath);
 
   const { appQuery, onSpeculosDeviceCreated } = spec;
   try {
     const displayName = spec.currency?.managerAppName || appQuery.appName;
-    const catalogVersion = await getAppVersionFromCatalog(displayName, nanoAppCatalogPath);
+    const catalogVersion = catalogVersions.get(displayName);
     if (catalogVersion) {
       appQuery.appVersion = catalogVersion;
     }
@@ -448,19 +448,6 @@ export async function startSpeculos(
   }
 
   const appCandidate = findLatestAppCandidate(appCandidates, appQuery);
-  const { model } = appQuery;
-  const { dependencies } = spec;
-  const newAppQuery = dependencies?.map(dep => {
-    return findLatestAppCandidate(appCandidates, {
-      model,
-      appName: dep.name,
-      firmware: appCandidate?.firmware,
-    });
-  });
-  const appVersionMap = new Map(newAppQuery?.map(app => [app?.appName, app?.appVersion]));
-  dependencies?.forEach(dependency => {
-    dependency.appVersion = appVersionMap.get(dependency.name) || "1.0.0";
-  });
   if (!appCandidate) {
     console.warn("no app found for " + testName);
     console.warn(appQuery);
@@ -471,12 +458,37 @@ export async function startSpeculos(
     testName,
     coinapps,
   );
+
+  const { model } = appQuery;
+  const { dependencies } = spec;
+  dependencies?.forEach(dependency => {
+    const catalogVersion = catalogVersions.get(dependency.name);
+    const dependencyCandidate = findLatestAppCandidate(appCandidates, {
+      model,
+      appName: dependency.name,
+      appVersion: catalogVersion,
+      firmware: appCandidate.firmware,
+    });
+
+    invariant(
+      dependencyCandidate,
+      "%s: no dependency app found for %s %s on %s %s. Are you sure your COINAPPS is up to date?",
+      testName,
+      dependency.name,
+      catalogVersion ?? "latest local version",
+      model,
+      appCandidate.firmware,
+    );
+
+    dependency.appVersion = dependencyCandidate.appVersion;
+  });
+
   log(
     "engine",
     `test ${testName} will use ${appCandidate.appName} ${appCandidate.appVersion} on ${appCandidate.model} ${appCandidate.firmware}`,
   );
   const deviceParams = {
-    ...(appCandidate as AppCandidate),
+    ...appCandidate,
     appName: spec.currency ? spec.currency.managerAppName : spec.appQuery.appName,
     seed,
     dependencies,
@@ -506,9 +518,11 @@ export async function startSpeculos(
 export async function stopSpeculos(deviceId: string | undefined) {
   if (deviceId) {
     log("engine", `test ${deviceId} finished`);
-    isSpeculosRemote
-      ? await releaseSpeculosDeviceCI(deviceId)
-      : await releaseSpeculosDevice(deviceId);
+    if (isSpeculosRemote) {
+      await releaseSpeculosDeviceCI(deviceId);
+    } else {
+      await releaseSpeculosDevice(deviceId);
+    }
   }
 }
 

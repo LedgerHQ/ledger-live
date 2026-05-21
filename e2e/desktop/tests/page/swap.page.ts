@@ -11,14 +11,7 @@ import { readFile } from "fs/promises";
 import * as path from "path";
 import { FileUtils } from "tests/utils/fileUtils";
 import { getMinimumSwapAmount } from "@ledgerhq/live-common/e2e/swap";
-import BigNumber from "bignumber.js";
-import {
-  approveTokenCommand,
-  isTokenAllowanceSufficientCommand,
-} from "@ledgerhq/live-common/e2e/cliCommandsUtils";
-import { launchSpeculos, cleanSpeculos } from "tests/utils/speculosUtils";
-import { getEnv } from "@ledgerhq/live-env";
-import * as allure from "allure-js-commons";
+import { getTokenAllowanceCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
 
 export class SwapPage extends WebViewAppPage {
   protected readonly webviewIdentifier = "swap";
@@ -567,33 +560,14 @@ export class SwapPage extends WebViewAppPage {
     await webview.getByTestId(this.swapMaxToggle).click();
   }
 
-  @step("Ensure token approval")
-  async ensureTokenApproval(
-    fromAccount: Account | TokenAccount,
-    provider: Provider,
-    minAmount: string,
-  ) {
-    if (!provider.contractAddress || !fromAccount.parentAccount) return;
-
-    const currentAllowance = await isTokenAllowanceSufficientCommand(
-      fromAccount,
-      provider.contractAddress,
-      minAmount,
-    );
-    console.log("CLI result: Current Allowance: ", currentAllowance);
-    if (currentAllowance) return;
-
-    const previousSpeculosPort = getEnv("SPECULOS_API_PORT");
-    const speculos = await launchSpeculos(fromAccount.currency.speculosApp.name);
-    try {
-      const result = await approveTokenCommand(
-        fromAccount,
-        provider.contractAddress,
-        new BigNumber(minAmount).times(12).div(10).toFixed(),
+  @step("Ensure token approval has been revoked")
+  async ensureRevokeTokenApproval(fromAccount: TokenAccount, provider: Provider) {
+    if (!provider.contractAddress) {
+      throw new Error(
+        `Provider "${provider.name}" has no contractAddress - revoke requires an EVM token provider`,
       );
-      await allure.description(`Token approval result for ${provider.uiName}:\n\n ${result}`);
-    } finally {
-      await cleanSpeculos(speculos, previousSpeculosPort);
     }
+    const remaining = await getTokenAllowanceCommand(fromAccount, provider.contractAddress);
+    expect(remaining).toBe("0");
   }
 }

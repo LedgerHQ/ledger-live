@@ -11,12 +11,13 @@ import { inferSubOperations } from "@ledgerhq/ledger-wallet-framework/serializat
 import { buildSubAccounts, mergeSubAccounts } from "./buildSubAccounts";
 import type { Balance, Operation, Stake } from "@ledgerhq/coin-module-framework/api/types";
 import type { OperationCommon } from "./types";
-import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type {
+  Account,
   StakingDelegation,
   StakingResources,
   StakingUnbonding,
-} from "@ledgerhq/coin-evm/types/staking";
+  TokenAccount,
+} from "@ledgerhq/types-live";
 
 function isNftCoreOp(operation: Operation): boolean {
   return (
@@ -506,29 +507,24 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       stakingPositions?: StakingPositionOnAccount[];
     } = {};
 
-    if (stakingEnabled && bridgeApi.enrichStakingResources) {
-      try {
-        const enriched = await bridgeApi.enrichStakingResources(
-          currency,
-          address,
-          operations,
-          // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-          stakingResources as unknown as Record<string, unknown>,
-        );
-        Object.assign(stakingResources ?? {}, enriched);
-      } catch (e) {
-        log(
-          "generic-coin-framework",
-          "enrichStakingResources failed, falling back to base staking resources",
-          { error: e instanceof Error ? e.message : String(e) },
-        );
-      }
-    }
+    const enrichedStakingResources =
+      stakingEnabled && bridgeApi.enrichStakingResources && stakingResources
+        ? await bridgeApi
+            .enrichStakingResources(currency, address, operations, stakingResources)
+            .catch(e => {
+              log(
+                "generic-coin-framework",
+                "enrichStakingResources failed, falling back to base staking resources",
+                { error: e instanceof Error ? e.message : String(e) },
+              );
+              return stakingResources;
+            })
+        : stakingResources;
 
     if (usesStakingPositions) {
       stakingShape = { stakingPositions };
     } else if (stakingEnabled) {
-      stakingShape = { stakingResources };
+      stakingShape = { stakingResources: enrichedStakingResources };
     }
 
     const res: Partial<Account> & {

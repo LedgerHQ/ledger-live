@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { performSwapUntilQuoteSelectionStep } from "../../../utils/swapUtils";
+import { ensureTokenApproval, performSwapUntilQuoteSelectionStep } from "../../../utils/swapUtils";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { setEnv } from "@ledgerhq/live-env";
 import { beforeAllFunctionSwap } from "../swap.setup";
@@ -41,7 +41,7 @@ export function runSwapDexNativeFlow(
         throw new Error(`Could not resolve USD amount for ${fromAccount.currency.id}`);
       }
       const swap = new Swap(fromAccount, toAccount, amountToSwap.toString(), provider);
-      await app.swap.ensureTokenApproval(fromAccount, provider, amountToSwap.toString());
+      await ensureTokenApproval(fromAccount, provider, amountToSwap.toString());
 
       await performSwapUntilQuoteSelectionStep(
         swap.accountToDebit,

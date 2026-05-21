@@ -149,6 +149,7 @@ export function useListHeaderComponents({
     perFamilyAccountBalanceSummaryFooter[
       family as keyof typeof perFamilyAccountBalanceSummaryFooter
     ];
+
   const AccountBalanceSummaryFooterRendered =
     AccountBalanceSummaryFooter &&
     AccountBalanceSummaryFooter({

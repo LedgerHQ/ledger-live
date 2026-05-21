@@ -1,8 +1,5 @@
-import type { Unit } from "@ledgerhq/types-cryptoassets";
 import {
   clampDayChangePercentPointsNearZero,
-  fiatAmountToIntegerSmallestUnit,
-  formatSignedFiatVariation,
   getFiatPriceVariationFromPercentChange,
   resolveTrendPercentAndVariant,
 } from "../utils/marketPriceDerivation";
@@ -16,40 +13,6 @@ describe("clampDayChangePercentPointsNearZero", () => {
   it("preserves nullish and larger values", () => {
     expect(clampDayChangePercentPointsNearZero(undefined)).toBeUndefined();
     expect(clampDayChangePercentPointsNearZero(1.5)).toBe(1.5);
-  });
-});
-
-const usdUnit: Unit = {
-  name: "US Dollar",
-  code: "USD",
-  magnitude: 2,
-  showAllDigits: true,
-  prefixCode: true,
-};
-
-describe("fiatAmountToIntegerSmallestUnit", () => {
-  it("rounds sub-cent float residue to integer cents (half-up)", () => {
-    expect(fiatAmountToIntegerSmallestUnit(0.0041, usdUnit)).toBe(0);
-    expect(fiatAmountToIntegerSmallestUnit(0.0049, usdUnit)).toBe(0);
-    expect(fiatAmountToIntegerSmallestUnit(0.005, usdUnit)).toBe(1);
-    expect(fiatAmountToIntegerSmallestUnit(1.2, usdUnit)).toBe(120);
-  });
-});
-
-describe("formatSignedFiatVariation", () => {
-  it("uses formatCurrencyUnit with sign for non-zero values", () => {
-    expect(formatSignedFiatVariation(120, usdUnit, "en-US")).toBe("+USD1.20");
-    expect(formatSignedFiatVariation(-346, usdUnit, "en-US")).toBe("-USD3.46");
-  });
-
-  it("omits leading plus when variation is zero", () => {
-    expect(formatSignedFiatVariation(0, usdUnit, "en-US")).toBe("USD0.00");
-  });
-
-  it("does not show a plus sign when sub-cent fiat rounds to zero atoms", () => {
-    expect(
-      formatSignedFiatVariation(fiatAmountToIntegerSmallestUnit(0.004, usdUnit), usdUnit, "en-US"),
-    ).toBe("USD0.00");
   });
 });
 

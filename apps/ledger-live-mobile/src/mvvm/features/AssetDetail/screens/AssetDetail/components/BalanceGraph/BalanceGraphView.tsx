@@ -117,7 +117,7 @@ export function BalanceGraphView({
       {showReceive && (
         <Box lx={receiveContainerStyle}>
           <Button
-            appearance="base"
+            appearance="gray"
             size="lg"
             isFull
             icon={ArrowDown}

@@ -11,7 +11,8 @@ const accounts = [
 ];
 
 for (const account of accounts) {
-  test.describe("Activate Private Balance", () => {
+  // TODO: Activate when next app is available
+  test.describe.skip("Activate Private Balance", () => {
     test.use({
       teamOwner: Team.BST,
       userdata: "skip-onboarding-with-last-seen-device",

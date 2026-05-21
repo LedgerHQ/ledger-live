@@ -65,6 +65,8 @@ const transformIncludePatterns = [
 
 const commonConfig = {
   testEnvironment: "jsdom",
+  clearMocks: true,
+  restoreMocks: true,
   globals: {
     __DEV__: false,
     __APP_VERSION__: "2.0.0",

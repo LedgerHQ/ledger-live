@@ -33,6 +33,20 @@ describe("db (app namespace allow list + keepLegacy)", () => {
     return parsed.data as Record<string, unknown>;
   }
 
+  function expectEncryptedAttributes(data: Record<string, unknown>) {
+    expect(typeof data.accounts).toBe("string");
+    expect(typeof data.trustchain).toBe("string");
+    expect(typeof data.wallet).toBe("string");
+  }
+
+  function expectUnencryptedAttributes(data: Record<string, unknown>) {
+    if (data.accounts !== undefined) {
+      expect(typeof data.accounts).toBe("object");
+    }
+    expect(typeof data.trustchain).toBe("object");
+    expect(typeof data.wallet).toBe("object");
+  }
+
   it("drops unknown keys at load and does not write them back", async () => {
     readFileMock.mockResolvedValueOnce(
       appJson({
@@ -95,5 +109,63 @@ describe("db (app namespace allow list + keepLegacy)", () => {
     expect(await db.getKey("app", "settings", undefined)).toEqual({ a: 1 });
     expect(await db.getKey("app", "identities", undefined)).toEqual({ userId: "u" });
     expect(await db.getKey("app", "user", undefined)).toEqual({ id: "legacy" });
+  });
+
+  it("persists password lock with no accounts", async () => {
+    readFileMock.mockResolvedValueOnce(appJson({ settings: { loaded: true } }));
+
+    await db.setEncryptionKey("test-password");
+
+    const persisted = getWrittenData();
+    expectEncryptedAttributes(persisted);
+
+    readFileMock.mockResolvedValueOnce(appJson(persisted));
+    db.init(testDir);
+    await db.load("app");
+
+    expect(await db.hasBeenDecrypted()).toBe(false);
+  });
+
+  it("decrypts persisted encrypted paths when unlocking", async () => {
+    readFileMock.mockResolvedValueOnce(appJson({ settings: { loaded: true } }));
+
+    await db.setEncryptionKey("test-password");
+    const persisted = getWrittenData();
+
+    readFileMock.mockResolvedValueOnce(appJson(persisted));
+    db.init(testDir);
+    await db.load("app");
+
+    await db.setEncryptionKey("test-password");
+
+    expect(await db.hasBeenDecrypted()).toBe(true);
+    expect(typeof (await db.getKey("app", "trustchain", undefined))).toBe("object");
+    expect(typeof (await db.getKey("app", "wallet", undefined))).toBe("object");
+  });
+
+  it("uses in-memory values when encrypting paths that are already set", async () => {
+    readFileMock.mockResolvedValueOnce(
+      appJson({
+        settings: { loaded: true },
+        accounts: [{ id: "account-1" }],
+      }),
+    );
+    await db.load("app");
+
+    await db.setEncryptionKey("test-password");
+
+    expectEncryptedAttributes(getWrittenData());
+    expect(await db.getKey("app", "accounts", undefined)).toEqual([{ id: "account-1" }]);
+  });
+
+  it("removeEncryptionKey clears encryption after empty lock", async () => {
+    readFileMock.mockResolvedValueOnce(appJson({ settings: { loaded: true } }));
+
+    await db.setEncryptionKey("test-password");
+    expectEncryptedAttributes(getWrittenData());
+
+    await db.removeEncryptionKey();
+
+    expectUnencryptedAttributes(getWrittenData());
   });
 });

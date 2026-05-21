@@ -11,12 +11,14 @@ import { bridgeHandler } from "./handlers/bridge.handler";
 import { sendHandler, receiveHandler, delegateHandler } from "./handlers/transactionFlow.handler";
 import { settingsHandler } from "./handlers/settings.handler";
 import { cardHandler, discoverHandler, walletConnectHandler } from "./handlers/discover.handler";
-import { marketHandler, assetHandler } from "./handlers/market.handler";
+import { assetHandler } from "./handlers/asset.handler";
+import { marketHandler } from "./handlers/market.handler";
 import { recoverHandler, recoverRestoreFlowHandler } from "./handlers/recover.handler";
 import { perpsHandler } from "./handlers/perps.handler";
 import { postOnboardingHandler } from "./handlers/postOnboarding.handler";
 import { ledgerSyncHandler } from "./handlers/ledgerSync.handler";
 import { productTourHandler } from "./handlers/productTour.handler";
+import { genericAwarenessModalHandler } from "./handlers/genericAwarenessModal.handler";
 import { defaultHandler } from "./handlers/default.handler";
 
 export const deeplinkRegistry: DeeplinkHandlerRegistry = {
@@ -44,6 +46,7 @@ export const deeplinkRegistry: DeeplinkHandlerRegistry = {
   "post-onboarding": postOnboardingHandler,
   ledgersync: ledgerSyncHandler,
   "product-tour": productTourHandler,
+  "generic-awareness-modal": genericAwarenessModalHandler,
   default: defaultHandler,
 };
 

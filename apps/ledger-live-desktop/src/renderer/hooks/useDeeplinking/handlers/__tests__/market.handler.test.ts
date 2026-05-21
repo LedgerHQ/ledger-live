@@ -1,76 +1,72 @@
-import { marketHandler, assetHandler } from "../market.handler";
+import { marketHandler } from "../market.handler";
 import { createMockContext } from "./test-utils";
 
-describe("market.handler", () => {
+describe("marketHandler", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  describe("marketHandler", () => {
-    it("navigates to market list when no path", () => {
-      const context = createMockContext();
+  it("navigates to market list when no path", () => {
+    const context = createMockContext();
 
-      marketHandler({ type: "market", path: "" }, context);
+    marketHandler({ type: "market", path: "" }, context);
 
-      expect(context.navigate).toHaveBeenCalledWith("/market");
-    });
-
-    it("navigates to market detail when path is provided", () => {
-      const context = createMockContext();
-
-      marketHandler({ type: "market", path: "bitcoin" }, context);
-
-      expect(context.navigate).toHaveBeenCalledWith("/market/bitcoin");
-    });
-
-    it("normalizes and navigates to market detail for a valid currency id", () => {
-      const context = createMockContext();
-
-      marketHandler({ type: "market", path: "BiTcOiN" }, context);
-
-      expect(context.navigate).toHaveBeenCalledWith("/market/bitcoin");
-    });
-
-    it("navigates to market list for an unknown currency id", () => {
-      const context = createMockContext();
-
-      marketHandler({ type: "market", path: "unknown_coin" }, context);
-
-      expect(context.navigate).toHaveBeenCalledWith("/market");
-    });
+    expect(context.navigate).toHaveBeenCalledWith("/market");
   });
 
-  describe("assetHandler", () => {
-    it("navigates to home when no path is provided", () => {
-      const context = createMockContext();
+  it("navigates to market list when path is whitespace-only", () => {
+    const context = createMockContext();
 
-      assetHandler({ type: "asset", path: "" }, context);
+    marketHandler({ type: "market", path: "   " }, context);
 
-      expect(context.navigate).toHaveBeenCalledWith("/");
-    });
+    expect(context.navigate).toHaveBeenCalledWith("/market");
+  });
 
-    it("navigates to asset page when valid currency id is provided", () => {
-      const context = createMockContext();
+  it("navigates to market detail when path is valid and aggregated assets are off", () => {
+    const context = createMockContext({ assetsPath: "/market" });
 
-      assetHandler({ type: "asset", path: "bitcoin" }, context);
+    marketHandler({ type: "market", path: "ethereum" }, context);
 
-      expect(context.navigate).toHaveBeenCalledWith("/asset/bitcoin");
-    });
+    expect(context.navigate).toHaveBeenCalledWith("/market/ethereum");
+  });
 
-    it("normalizes and navigates to asset page for a valid currency id", () => {
-      const context = createMockContext();
+  it("normalizes case when aggregated assets are off", () => {
+    const context = createMockContext({ assetsPath: "/market" });
 
-      assetHandler({ type: "asset", path: "BiTcOiN" }, context);
+    marketHandler({ type: "market", path: "BiTcOiN" }, context);
 
-      expect(context.navigate).toHaveBeenCalledWith("/asset/bitcoin");
-    });
+    expect(context.navigate).toHaveBeenCalledWith("/market/bitcoin");
+  });
 
-    it("navigates to home for an unknown currency id", () => {
-      const context = createMockContext();
+  it("falls back to market list for unknown currency when aggregated assets are off", () => {
+    const context = createMockContext({ assetsPath: "/market" });
 
-      assetHandler({ type: "asset", path: "unknown_coin" }, context);
+    marketHandler({ type: "market", path: "unknown_coin" }, context);
 
-      expect(context.navigate).toHaveBeenCalledWith("/");
-    });
+    expect(context.navigate).toHaveBeenCalledWith("/market");
+  });
+
+  it("navigates to asset detail when path is provided and aggregated assets are on", () => {
+    const context = createMockContext({ assetsPath: "/asset" });
+
+    marketHandler({ type: "market", path: "ethereum" }, context);
+
+    expect(context.navigate).toHaveBeenCalledWith("/asset/ethereum");
+  });
+
+  it("passes the path through without currency resolution when aggregated assets are on", () => {
+    const context = createMockContext({ assetsPath: "/asset" });
+
+    marketHandler({ type: "market", path: "BiTcOiN" }, context);
+
+    expect(context.navigate).toHaveBeenCalledWith("/asset/BiTcOiN");
+  });
+
+  it("does not double-encode percent-encoded deeplink path segments when aggregated assets are on", () => {
+    const context = createMockContext({ assetsPath: "/asset" });
+
+    marketHandler({ type: "market", path: "a%2Fb" }, context);
+
+    expect(context.navigate).toHaveBeenCalledWith("/asset/a%2Fb");
   });
 });

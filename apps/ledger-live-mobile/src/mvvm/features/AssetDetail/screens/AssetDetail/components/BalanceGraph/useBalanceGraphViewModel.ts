@@ -1,13 +1,10 @@
 import { useCallback, useMemo, useState } from "react";
-import { BigNumber } from "bignumber.js";
 import type { AssetDetailCurrencyProps } from "LLM/features/AssetDetail/types";
 import type { FormattedValue } from "@ledgerhq/lumen-ui-rnative";
-import {
-  formatCurrencyUnit,
-  formatCurrencyUnitFragment,
-} from "@ledgerhq/live-common/currencies/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { formatPriceFragment, formatSignedFiatVariation } from "@ledgerhq/live-currency-format";
 import { useSelector } from "~/context/hooks";
-import { shallowAccountsSelector } from "~/reducers/accounts";
+import { flattenAccountsSelector } from "~/reducers/accounts";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import { track } from "~/analytics";
 import { RANGES } from "LLM/features/Market/utils";
@@ -60,37 +57,34 @@ export function useBalanceGraphViewModel(
     marketCurrency?.priceChangePercentage[RANGE_TO_PRICE_CHANGE_KEY[range]];
 
   const priceFormatter = useCallback(
-    (value: number): FormattedValue =>
-      formatCurrencyUnitFragment(
-        counterValueUnit,
-        new BigNumber(value).times(new BigNumber(10).pow(counterValueUnit.magnitude)),
-        { locale, showCode: true },
-      ),
+    (value: number): FormattedValue => formatPriceFragment(counterValueUnit, value, locale),
     [counterValueUnit, locale],
   );
 
   const formattedPriceChange = useMemo(() => {
     if (priceChangePercentage == null || price == null) return undefined;
-    const changeValue = Math.abs(price * (priceChangePercentage / 100));
-    const sign = priceChangePercentage >= 0 ? "+" : "-";
-    const formatted = formatCurrencyUnit(
-      counterValueUnit,
-      new BigNumber(changeValue).times(new BigNumber(10).pow(counterValueUnit.magnitude)),
-      { locale, showCode: true },
-    );
-    return `${sign}${formatted}`;
+    const delta = price * (priceChangePercentage / 100);
+    return formatSignedFiatVariation(delta, counterValueUnit, locale);
   }, [priceChangePercentage, price, locale, counterValueUnit]);
 
   const rangeTimeLabel = t(`assetDetail.balanceGraph.timeLabel.${range}`);
 
-  const accounts = useSelector(shallowAccountsSelector);
+  // Flatten so token sub-accounts (e.g. ERC-20 stablecoins held inside an
+  // Ethereum parent account) are inspected too. Using parent accounts alone
+  // would miss token balances and incorrectly surface the Receive CTA on a
+  // funded token asset.
+  const flatAccounts = useSelector(flattenAccountsSelector);
 
   const showReceive = useMemo(() => {
     if (hideReceive || !currency) return false;
-    const hasAssetFunds = accounts.some(a => a.currency.id === currency.id && a.balance.gt(0));
-    const hasFundsElsewhere = accounts.some(a => a.currency.id !== currency.id && a.balance.gt(0));
+    const hasAssetFunds = flatAccounts.some(
+      a => getAccountCurrency(a).id === currency.id && a.balance.gt(0),
+    );
+    const hasFundsElsewhere = flatAccounts.some(
+      a => getAccountCurrency(a).id !== currency.id && a.balance.gt(0),
+    );
     return !hasAssetFunds && hasFundsElsewhere;
-  }, [hideReceive, accounts, currency]);
+  }, [hideReceive, flatAccounts, currency]);
 
   const { handleOpenReceiveDrawer } = useOpenReceiveDrawer({
     currency,

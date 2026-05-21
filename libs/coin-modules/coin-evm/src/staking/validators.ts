@@ -1,6 +1,6 @@
 import network from "@ledgerhq/live-network";
 import type { Page, Validator } from "@ledgerhq/coin-module-framework/api/index";
-import type { StakingValidatorItem } from "../types/staking";
+import type { StakingValidatorItem } from "@ledgerhq/types-live";
 import { STAKING_CONTRACTS } from "./contracts";
 
 export type ValidatorApi = {

@@ -1,20 +1,12 @@
 import CommonPage from "../common.page";
-import { allure, Step } from "jest-allure2-reporter/api";
+import { Step } from "jest-allure2-reporter/api";
 import { openDeeplink, normalizeText, isIos } from "../../helpers/commonHelpers";
 import { SwapType } from "@ledgerhq/live-common/e2e/models/Swap";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import fs from "fs/promises";
 import * as path from "path";
 import { FileUtils } from "../../utils/fileUtils";
-import {
-  Account,
-  getParentAccountName,
-  TokenAccount,
-} from "@ledgerhq/live-common/e2e/enum/Account";
-import { getEnv } from "@ledgerhq/live-env";
-import BigNumber from "bignumber.js";
-import { deleteSpeculos, launchSpeculos, registerSpeculos } from "../../utils/speculosUtils";
-import { log } from "detox";
+import { getParentAccountName, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
 
 export default class SwapPage extends CommonPage {
   baseLink = "swap";
@@ -205,37 +197,14 @@ export default class SwapPage extends CommonPage {
     await tapById(app.common.proceedButtonId);
   }
 
-  @Step("Ensure token approval")
-  async ensureTokenApproval(
-    fromAccount: Account | TokenAccount,
-    provider: Provider,
-    minAmount: string,
-  ) {
-    if (!provider.contractAddress || !fromAccount.parentAccount) return;
-
-    const currentAllowance = await isTokenAllowanceSufficientCommand(
-      fromAccount,
-      provider.contractAddress,
-      minAmount,
-    );
-    log.warn("CLI result: Current Allowance: ", currentAllowance);
-    if (currentAllowance) return;
-
-    const previousSpeculosPort = getEnv("SPECULOS_API_PORT");
-    const speculos = await launchSpeculos(fromAccount.currency.speculosApp.name);
-    await registerSpeculos(speculos.port);
-    try {
-      const result = await approveTokenCommand(
-        fromAccount,
-        provider.contractAddress,
-        new BigNumber(minAmount).times(12).div(10).toFixed(),
+  @Step("Ensure token approval has been revoked")
+  async ensureRevokeTokenApproval(fromAccount: TokenAccount, provider: Provider) {
+    if (!provider.contractAddress) {
+      throw new Error(
+        `Provider "${provider.name}" has no contractAddress — revoke requires an EVM token provider`,
       );
-      await allure.description(`Token approval result for ${provider.uiName}:\n\n ${result}`);
-    } finally {
-      await deleteSpeculos(speculos.id);
-      if (previousSpeculosPort > 0) {
-        await registerSpeculos(previousSpeculosPort);
-      }
     }
+    const remaining = await getTokenAllowanceCommand(fromAccount, provider.contractAddress);
+    jestExpect(remaining).toBe("0");
   }
 }

@@ -35,7 +35,7 @@ export function DeviceIntentExecutor<JobState, Input, ExtraProps, InitInput, Ini
   const {
     DeviceConnectionComponent,
     DeviceContextInitializerComponent,
-    ConnectionErrorComponent,
+    DeviceDisconnectedComponent,
     IntentErrorComponent,
     InvalidOperationComponent,
   } = platformConfig;
@@ -46,18 +46,11 @@ export function DeviceIntentExecutor<JobState, Input, ExtraProps, InitInput, Ini
         <DeviceConnectionComponent
           deviceConnectionParams={state.deviceConnectionParams}
           onConnected={state.onConnected}
-          onError={state.onError}
           onClose={state.onClose}
         />
       );
-    case "connectionError":
-      return (
-        <ConnectionErrorComponent
-          error={state.error}
-          onRetry={state.onRetry}
-          onClose={state.onClose}
-        />
-      );
+    case "deviceDisconnected":
+      return <DeviceDisconnectedComponent onRetry={state.onRetry} onClose={state.onClose} />;
     case "deviceInitialization":
       return (
         <DeviceContextInitializerComponent

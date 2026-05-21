@@ -19,6 +19,22 @@ test("Enable password lock", async ({ page, userdataFile }) => {
     return JSON.parse(jsonFile);
   };
 
+  const expectEncryptedAttributes = async () => {
+    const { data } = await getUserdata();
+    expect(typeof data.accounts).toBe("string");
+    expect(typeof data.trustchain).toBe("string");
+    expect(typeof data.wallet).toBe("string");
+  };
+
+  const expectUnencryptedAttributes = async () => {
+    const { data } = await getUserdata();
+    if (data.accounts !== undefined) {
+      expect(typeof data.accounts).toBe("object");
+    }
+    expect(typeof data.trustchain).toBe("object");
+    expect(typeof data.wallet).toBe("object");
+  };
+
   await test.step("Open password lock modal", async () => {
     await layout.goToSettings();
     await passwordlockModal.toggle();
@@ -33,7 +49,7 @@ test("Enable password lock", async ({ page, userdataFile }) => {
 
   await test.step("User data should be encrypted", async () => {
     // NOTE: this test might fail if other tests are running at the same time.
-    await expect.poll(async () => typeof (await getUserdata()).data.accounts).toBe("string");
+    await expect(expectEncryptedAttributes).toPass();
   });
 
   await test.step("Open change password modal", async () => {
@@ -90,6 +106,6 @@ test("Enable password lock", async ({ page, userdataFile }) => {
   });
 
   await test.step("User data shouldn't be encrypted", async () => {
-    await expect.poll(async () => typeof (await getUserdata()).data.accounts).toBe("object");
+    await expect(expectUnencryptedAttributes).toPass();
   });
 });

@@ -3,6 +3,7 @@ import React from "react";
 import { render, screen } from "tests/testSetup";
 import type { AleoAccount, AleoUnspentRecord } from "@ledgerhq/live-common/families/aleo/types";
 import { MAX_PRIVATE_RECORDS_PER_TRANSACTION } from "@ledgerhq/live-common/families/aleo/constants";
+import { getEstimatedSigningTime } from "@ledgerhq/live-common/families/aleo/utils";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { ALEO_ACCOUNT_1 } from "../__mocks__/account.mock";
 import { makeRecord } from "../__mocks__/record.mock";
@@ -21,6 +22,7 @@ jest.mock("~/renderer/components/Label", () => ({
   default: ({ children }: { children: React.ReactNode }) => <label>{children}</label>,
 }));
 jest.mock("@ledgerhq/live-common/families/aleo/utils", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/families/aleo/utils"),
   getEstimatedSigningTime: jest.fn((_count: number, sec: string, _min: string) => `~1${sec}`),
   sumPrivateRecords: jest.fn((records: { microcredits: string }[]) =>
     records.reduce((acc, r) => acc.plus(r.microcredits), new BigNumber(0)),
@@ -186,6 +188,58 @@ describe("QuickAmountSelector", () => {
     await user.click(screen.getByText("Fast"));
 
     expect(onSelect).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not render record summary when the transaction is not private", () => {
+    const account = makeAleoAccount([makeRecord("1000")]);
+    const transaction = makeAleoTransaction();
+
+    render(
+      <QuickAmountSelector
+        account={account}
+        transaction={transaction}
+        updateTransaction={jest.fn()}
+      />,
+    );
+
+    expect(screen.getByTestId("record-summary")).not.toBeVisible();
+  });
+
+  it("does not render record summary when amountRecordCommitments is empty", () => {
+    const account = makeAleoAccount([makeRecord("1000")]);
+    const transaction = makeAleoTransaction({
+      mode: "transfer_private",
+      properties: { amountRecordCommitments: [], feeRecordCommitment: null },
+    });
+
+    render(
+      <QuickAmountSelector
+        account={account}
+        transaction={transaction}
+        updateTransaction={jest.fn()}
+      />,
+    );
+
+    expect(screen.getByTestId("record-summary")).not.toBeVisible();
+  });
+
+  it("renders record summary for private transaction", () => {
+    const account = makeAleoAccount([makeRecord("1000")]);
+    const transaction = makeAleoTransaction({
+      mode: "transfer_private",
+      properties: { amountRecordCommitments: ["c1", "c2"], feeRecordCommitment: null },
+    });
+
+    render(
+      <QuickAmountSelector
+        account={account}
+        transaction={transaction}
+        updateTransaction={jest.fn()}
+      />,
+    );
+
+    expect(screen.getByTestId("record-summary")).toHaveTextContent("2 records · ~1sec");
+    expect(jest.mocked(getEstimatedSigningTime)).toHaveBeenCalledWith(2, "sec", expect.any(String));
   });
 
   it("renders the spendable balance label", () => {

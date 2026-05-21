@@ -185,6 +185,28 @@ describe("useBalanceDetailsViewModel", () => {
       expect(result.current.earnState.type).toBe("hidden");
     });
 
+    it("shows banner when stakeable and no accounts", () => {
+      mockGetCanStakeCurrency.mockReturnValue(true);
+
+      const { result } = renderHook(() =>
+        useBalanceDetailsViewModel(mockBtcCryptoCurrency, undefined),
+      );
+
+      expect(result.current.hasAccounts).toBe(false);
+      expect(result.current.earnState.type).toBe("banner");
+    });
+
+    it("remains hidden when not stakeable and no accounts", () => {
+      mockGetCanStakeCurrency.mockReturnValue(false);
+
+      const { result } = renderHook(() =>
+        useBalanceDetailsViewModel(mockBtcCryptoCurrency, undefined),
+      );
+
+      expect(result.current.hasAccounts).toBe(false);
+      expect(result.current.earnState.type).toBe("hidden");
+    });
+
     it("shows banner when stakeable but no stake", () => {
       mockGetCanStakeCurrency.mockReturnValue(true);
 

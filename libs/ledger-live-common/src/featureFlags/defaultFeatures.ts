@@ -97,7 +97,6 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyMantra: DEFAULT_FEATURE,
   currencyXion: DEFAULT_FEATURE,
   currencyZenrock: DEFAULT_FEATURE,
-  currencySonicBlaze: DEFAULT_FEATURE,
   currencySonic: DEFAULT_FEATURE,
   currencySui: DEFAULT_FEATURE,
   currencySuiTestnet: DEFAULT_FEATURE,
@@ -131,6 +130,13 @@ export const CURRENCY_DEFAULT_FEATURES = {
  */
 export const DEFAULT_FEATURES: Features = {
   ...CURRENCY_DEFAULT_FEATURES,
+  concordiumIdAppLinks: initFeature({
+    enabled: true,
+    params: {
+      appStore: "https://apps.apple.com/app/concordium-id/id6746754485",
+      playStore: "https://play.google.com/store/apps/details?id=com.idwallet.app",
+    },
+  }),
   nanoOnboardingFundWallet: DEFAULT_FEATURE,
   portfolioExchangeBanner: DEFAULT_FEATURE,
   counterValue: DEFAULT_FEATURE,
@@ -818,6 +824,7 @@ export const DEFAULT_FEATURES: Features = {
   lwdGenericAwarenessModal: DEFAULT_FEATURE,
   lwmAnalyticsConsentOnboarding: DEFAULT_FEATURE,
   lwmGenericAwarenessModal: DEFAULT_FEATURE,
+  lwmNotificationsOptIn: DEFAULT_FEATURE,
   lwmProductTour: DEFAULT_FEATURE,
   lwmWallet40: {
     ...DEFAULT_FEATURE,

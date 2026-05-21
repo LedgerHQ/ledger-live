@@ -3,6 +3,7 @@ import type {
   BlockInfo,
   BlockOperation,
   BlockTransaction,
+  TransferBlockOperation,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 import { log } from "@ledgerhq/logs";
@@ -19,7 +20,7 @@ import { isEtherscanLikeExplorerConfig } from "../network/explorer/types";
 import { getNodeApi } from "../network/node";
 import { BlockReceiptInfo, NodeApi, PrefetchedBlockTransaction } from "../network/node/types";
 import { dropRootTraceDuplicates } from "./rootTraceDedup";
-import { buildSmartContractDetails } from "../utils";
+import { buildSmartContractDetails, safeEncodeEIP55 } from "../utils";
 
 function internalTransactionsFetcher(
   nodeApi: NodeApi,
@@ -182,7 +183,11 @@ async function getTransactionsFromPrefetchedData(
     for (const tx of prefetchedTransactions) {
       const receipt = receiptsByHash.get(tx.hash);
       if (!receipt) return null;
-      transactions.push(prefetchedTransactionToBlockTransaction(tx, receipt));
+      const blockTx = prefetchedTransactionToBlockTransaction(tx, receipt);
+      transactions.push({
+        ...blockTx,
+        operations: applyChainSpecificCorrections(currency, blockTx.operations, receipt.type),
+      });
     }
 
     return transactions;
@@ -239,7 +244,8 @@ async function getTransactionFromHash(
   const failed = txInfo.status === 0;
   const fees = BigInt(txInfo.gasUsed) * BigInt(txInfo.gasPrice);
 
-  const operations = rpcTransactionToBlockOperations(txInfo);
+  const rawOperations = rpcTransactionToBlockOperations(txInfo);
+  const operations = applyChainSpecificCorrections(currency, rawOperations, txInfo.type);
 
   const details = buildSmartContractDetails(txInfo.to, txInfo.input, txInfo.contractAddress);
 
@@ -251,4 +257,54 @@ async function getTransactionFromHash(
     feesPayer: txInfo.from,
     ...(details ? { details } : {}),
   };
+}
+
+const ZKSYNC_MINT_PEER = safeEncodeEIP55("0x0000000000000000000000000000000000000000");
+
+function applyChainSpecificCorrections(
+  currency: CryptoCurrency,
+  operations: BlockOperation[],
+  receiptType: number | undefined,
+): BlockOperation[] {
+  switch (currency.id) {
+    case "zksync":
+      return rewriteZkSyncL1ToL2DepositOps(operations, receiptType);
+    default:
+      return operations;
+  }
+}
+
+/**
+ * On zkSync L1→L2 priority txs (receipt.type === 0xff): replace the cancelling native self
+ * pair (from `tx.value`) with a single credit op (`peer = 0x0`), and drop mint-source ops
+ * on `0x0` (noise).
+ */
+function rewriteZkSyncL1ToL2DepositOps(
+  operations: BlockOperation[],
+  receiptType: number | undefined,
+): BlockOperation[] {
+  if (receiptType !== 0xff) return operations;
+  const withoutMintSource = operations.filter(
+    op => op.type !== "transfer" || op.address.toLowerCase() !== ZKSYNC_MINT_PEER.toLowerCase(),
+  );
+  const nativeSelf = withoutMintSource.find(
+    (op): op is TransferBlockOperation =>
+      op.type === "transfer" &&
+      op.asset.type === "native" &&
+      op.amount > 0n &&
+      op.peer !== undefined &&
+      op.address.toLowerCase() === op.peer.toLowerCase(),
+  );
+  if (!nativeSelf) return withoutMintSource;
+  const nativeCredit: TransferBlockOperation = {
+    type: "transfer",
+    address: nativeSelf.address,
+    peer: ZKSYNC_MINT_PEER,
+    asset: { type: "native" },
+    amount: nativeSelf.amount,
+  };
+  return [
+    nativeCredit,
+    ...withoutMintSource.filter(op => op.type !== "transfer" || op.asset.type !== "native"),
+  ];
 }

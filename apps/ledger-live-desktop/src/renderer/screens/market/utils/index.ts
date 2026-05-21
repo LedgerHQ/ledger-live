@@ -19,10 +19,6 @@ export function getCurrentPage(scrollPosition: number, pageSize: number): number
   return Math.floor(scrollPosition / size) + 1;
 }
 
-export function formatPrice(price: number): number {
-  return parseFloat(price.toFixed(price >= 1 ? 2 : 6));
-}
-
 export function formatPercentage(percentage: number, decimals = 2): number {
   return parseFloat(percentage.toFixed(decimals));
 }

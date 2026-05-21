@@ -11,6 +11,7 @@ import { type StartActionArgs } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { setHasRedirectedToPostOnboarding } from "~/renderer/actions/settings";
+import { productTourCompletedSelector } from "~/renderer/reducers/settings";
 import { track } from "~/renderer/analytics/segment";
 import {
   closeFinishPostOnboarding,
@@ -59,6 +60,7 @@ export default function useFinishOnboardingDialogViewModel(): FinishOnboardingDi
   const { actionsState, deviceModelId } = usePostOnboardingHubState();
   const isLedgerSyncActive = Boolean(useSelector(trustchainSelector)?.rootId);
   const accounts = useSelector(accountsSelector);
+  const productTourCompleted = useSelector(productTourCompletedSelector);
 
   const {
     allActionsCompleted,
@@ -117,6 +119,7 @@ export default function useFinishOnboardingDialogViewModel(): FinishOnboardingDi
             !!item.getIsAlreadyCompletedByState?.({
               isLedgerSyncActive,
               accounts,
+              productTourCompleted,
             }),
           startAction: resolveFinishPostOnboardingStartAction(item),
         }),
@@ -141,6 +144,7 @@ export default function useFinishOnboardingDialogViewModel(): FinishOnboardingDi
       onGotIt,
       t,
       isLedgerSyncActive,
+      productTourCompleted,
       totalActionsAmount,
       completionById,
     ],

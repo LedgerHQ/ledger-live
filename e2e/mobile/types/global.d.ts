@@ -110,6 +110,8 @@ declare global {
   var liveDataWithRecipientAddressCommand: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").liveDataWithRecipientAddressCommand;
   var parseTokenAllowanceCliOutput: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").parseTokenAllowanceCliOutput;
   var isTokenAllowanceSufficientCommand: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").isTokenAllowanceSufficientCommand;
+  var getTokenAllowanceCommand: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").getTokenAllowanceCommand;
   var approveTokenCommand: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").approveTokenCommand;
+  var revokeTokenCommand: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").revokeTokenCommand;
   var setDisableTransactionBroadcastEnv: typeof import("@ledgerhq/live-common/e2e/cliCommandsUtils").setDisableTransactionBroadcastEnv;
 }

@@ -34,7 +34,6 @@ jest.mock("@ledgerhq/live-dmk-mobile", () => {
 
 type ConnectDeviceObserver = {
   next: (state: ConnectDeviceUIState) => void;
-  error: (error: unknown) => void;
 };
 
 const mockedUseDeviceManagementKit = jest.mocked(useDeviceManagementKit);
@@ -100,7 +99,6 @@ function renderViewModel(callbacks = {}, stateParams?: ViewModelStateParams) {
     () =>
       useDeviceConnectionComponentLWMViewModel({
         onConnected: jest.fn(),
-        onError: jest.fn(),
         ...callbacks,
       }),
     withViewModelState(stateParams),
@@ -174,14 +172,17 @@ describe("useDeviceConnectionComponentLWMViewModel", () => {
     expect(result.current.state).toBe(discoveringState);
   });
 
-  it("should forward connect device use case errors", () => {
-    const onError = jest.fn();
-    const error = new Error("Discovery failed");
-    renderViewModel({ onError });
+  it("should expose the UnknownError UI state when the use case emits it", () => {
+    const error = new Error("boom");
+    const { result } = renderViewModel();
+    const unknownErrorState: ConnectDeviceUIState = {
+      type: ConnectDeviceUIStateTypes.UnknownError,
+      error,
+    };
 
-    act(() => connectDeviceObserver?.error(error));
+    act(() => connectDeviceObserver?.next(unknownErrorState));
 
-    expect(onError).toHaveBeenCalledWith(error);
+    expect(result.current.state).toBe(unknownErrorState);
   });
 
   it("should unsubscribe from the connect device use case on unmount", () => {
@@ -192,13 +193,16 @@ describe("useDeviceConnectionComponentLWMViewModel", () => {
     expect(mockUnsubscribe).toHaveBeenCalledTimes(1);
   });
 
-  it("should report an error when the Device Management Kit is not available", () => {
-    const onError = jest.fn();
+  it("should throw when the Device Management Kit is not available so an ErrorBoundary can catch it", () => {
     mockedUseDeviceManagementKit.mockReturnValue(null);
 
-    renderViewModel({ onError });
+    const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      expect(() => renderViewModel()).toThrow("Device Management Kit is not available");
+    } finally {
+      consoleErrorSpy.mockRestore();
+    }
 
-    expect(onError).toHaveBeenCalledWith(new Error("Device Management Kit is not available"));
     expect(mockedConnectDeviceUseCase).not.toHaveBeenCalled();
   });
 

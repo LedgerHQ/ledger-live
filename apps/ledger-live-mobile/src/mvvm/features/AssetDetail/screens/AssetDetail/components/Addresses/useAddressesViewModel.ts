@@ -103,11 +103,39 @@ export function useAddressesViewModel(
     });
   }, [navigation, currency, allAccountIds]);
 
+  const onAccountPress = useCallback(
+    (data: AddressAccountData) => {
+      if (!currency) return;
+      const { account, balanceAccount } = data;
+      track("button_clicked", {
+        button: "address",
+        currency: currency.id,
+        chain: account.currency.id,
+        page: "Asset Detail",
+      });
+      const params =
+        balanceAccount.type === "TokenAccount"
+          ? {
+              currencyId: account.currency.id,
+              parentId: account.id,
+              accountId: balanceAccount.id,
+            }
+          : { accountId: account.id };
+      navigation.navigate(NavigatorName.Accounts, {
+        screen: ScreenName.Account,
+        params,
+      });
+    },
+    [navigation, currency],
+  );
+
   return {
     displayedAccounts,
+    addressesCount: accounts.length,
     hasMore,
     hasData: displayedAccounts.length > 0,
     onAddAccount,
     onSeeAll,
+    onAccountPress,
   };
 }

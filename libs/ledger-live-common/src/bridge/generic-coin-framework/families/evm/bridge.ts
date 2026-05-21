@@ -1,6 +1,10 @@
 import type { AssetInfo, BalanceOptions } from "@ledgerhq/coin-module-framework/api/types";
 import type { BridgeApi } from "@ledgerhq/ledger-wallet-framework/api/types";
-import type { Operation as LiveOperation } from "@ledgerhq/types-live";
+import type {
+  Operation as LiveOperation,
+  StakingRedelegation,
+  StakingResources,
+} from "@ledgerhq/types-live";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import eip55 from "eip55";
@@ -8,7 +12,6 @@ import {
   fetchRedelegations,
   buildRedelegationsFromOps,
 } from "@ledgerhq/coin-evm/staking/redelegations";
-import type { StakingRedelegation } from "@ledgerhq/coin-evm/types/staking";
 
 export async function getTokenFromAsset(
   currency: CryptoCurrency,
@@ -76,8 +79,8 @@ async function enrichStakingResources(
   currency: CryptoCurrency,
   address: string,
   operations: LiveOperation[],
-  stakingResources: Record<string, unknown>,
-): Promise<Record<string, unknown>> {
+  stakingResources: StakingResources,
+): Promise<StakingResources> {
   // Fetch redelegations from the Cosmos REST API (may return empty for
   // EVM-precompile-originated redelegations on chains like Sei).
   const apiRedelegations = await fetchRedelegations(currency.id, address).catch(() => []);

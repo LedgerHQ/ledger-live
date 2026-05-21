@@ -1,7 +1,3 @@
-import type { Unit } from "@ledgerhq/types-cryptoassets";
-import { BigNumber } from "bignumber.js";
-import { formatCurrencyUnit, valueFromUnit } from "@ledgerhq/live-common/currencies/index";
-
 export const DAY_CHANGE_PERCENT_NEAR_ZERO_EPSILON = 0.01;
 
 export type TrendVariant = "positive" | "negative" | "neutral";
@@ -26,31 +22,6 @@ export function clampDayChangePercentPointsNearZero(
 ): number | null | undefined {
   if (dayPercentage == null) return dayPercentage;
   return Math.abs(dayPercentage) < epsilon ? 0 : dayPercentage;
-}
-
-/**
- * Converts a human-unit fiat delta (e.g. USD) to the unit's smallest integer atom (e.g. cents),
- * half-up rounded, so formatters that expect integer smallest-units do not get fractional atoms from float math.
- */
-export function fiatAmountToIntegerSmallestUnit(fiatAmount: number, unit: Unit): number {
-  return valueFromUnit(new BigNumber(fiatAmount), unit)
-    .integerValue(BigNumber.ROUND_HALF_UP)
-    .toNumber();
-}
-
-/** Signed countervalue string using the same fiat options as the spot price; no leading '+' when the amount is zero. */
-export function formatSignedFiatVariation(value: number, unit: Unit, locale: string): string {
-  const bn = new BigNumber(value);
-  const base = {
-    locale,
-    showCode: true,
-    disableRounding: true,
-    showAllDigits: true,
-  } as const;
-  if (bn.isZero()) {
-    return formatCurrencyUnit(unit, bn, base);
-  }
-  return formatCurrencyUnit(unit, bn, { ...base, alwaysShowSign: true });
 }
 
 export function resolveTrendPercentAndVariant(options: {

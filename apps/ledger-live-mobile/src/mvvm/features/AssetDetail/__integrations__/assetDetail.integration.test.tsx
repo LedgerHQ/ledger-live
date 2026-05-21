@@ -70,6 +70,15 @@ function withBtcAccounts(count: number, operationsSize = 0) {
   );
 }
 
+function withBlacklistedTokens(tokenIds: string[]) {
+  return {
+    overrideInitialState: (state: State): State => ({
+      ...state,
+      settings: { ...state.settings, blacklistedTokenIds: tokenIds },
+    }),
+  };
+}
+
 describe("AssetDetail screen layout", () => {
   beforeEach(() => {
     mockIsCurrencyAvailable.mockReturnValue(false);
@@ -145,6 +154,13 @@ describe("AssetDetail screen layout", () => {
     expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.seeAllAddresses)).toBeNull();
   });
 
+  it("does not render the addresses count when 5 or fewer accounts exist", async () => {
+    render(<AssetDetailTestNavigator />, withBtcAccounts(5));
+
+    await waitFor(() => expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.addresses)).toBeVisible());
+    expect(screen.queryByText("(5)")).toBeNull();
+  });
+
   it("caps the addresses preview at 5 items and shows See all when 6+ accounts exist", async () => {
     render(<AssetDetailTestNavigator />, withBtcAccounts(6));
 
@@ -153,6 +169,14 @@ describe("AssetDetail screen layout", () => {
     );
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.addresses)).toBeVisible();
     expect(screen.getByText("See all")).toBeVisible();
+  });
+
+  it("renders the total addresses count next to the title when 6+ accounts exist", async () => {
+    render(<AssetDetailTestNavigator />, withBtcAccounts(8));
+
+    await waitFor(() => expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.addresses)).toBeVisible());
+    const header = screen.getByTestId(ASSET_DETAIL_TEST_IDS.addressesHeader);
+    expect(within(header).getByText("(8)")).toBeVisible();
   });
 
   it("hides the transactions section when there are no operations", () => {
@@ -267,6 +291,40 @@ describe("AssetDetail screen layout", () => {
       expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.swapButton)).toBeVisible();
       expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.receiveButton)).toBeVisible();
       expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.footerReceiveButton)).toBeNull();
+    });
+  });
+
+  describe("hidden asset banner", () => {
+    it("does not render the banner when the asset is not hidden", () => {
+      render(<AssetDetailTestNavigator />);
+
+      expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.hiddenAssetBanner)).toBeNull();
+    });
+
+    it("renders the banner when the asset is blacklisted", () => {
+      render(<AssetDetailTestNavigator />, withBlacklistedTokens(["bitcoin"]));
+
+      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.hiddenAssetBanner)).toBeVisible();
+      expect(screen.getByText("This asset is hidden from your portfolio.")).toBeVisible();
+      expect(screen.getByText("Show asset")).toBeVisible();
+      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.hiddenAssetBannerShowAsset)).toBeVisible();
+    });
+
+    it("hides the banner and unhides the asset when Show asset is pressed", async () => {
+      const { user, store } = render(
+        <AssetDetailTestNavigator />,
+        withBlacklistedTokens(["bitcoin"]),
+      );
+
+      const showAssetButton = await screen.findByTestId(
+        ASSET_DETAIL_TEST_IDS.hiddenAssetBannerShowAsset,
+      );
+      await user.press(showAssetButton);
+
+      await waitFor(() =>
+        expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.hiddenAssetBanner)).toBeNull(),
+      );
+      expect(store.getState().settings.blacklistedTokenIds).not.toContain("bitcoin");
     });
   });
 });

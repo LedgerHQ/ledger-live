@@ -26,6 +26,7 @@ import {
   PostOnboardingRoute,
   LedgerSyncRoute,
   ProductTourRoute,
+  GenericAwarenessModalRoute,
   DefaultRoute,
 } from "./types";
 
@@ -305,6 +306,14 @@ export function createRoute(parsed: ParsedDeeplink): DeeplinkRoute {
     case "product-tour": {
       const route: ProductTourRoute = {
         type: "product-tour",
+      };
+      return route;
+    }
+
+    case "generic-awareness-modal": {
+      const route: GenericAwarenessModalRoute = {
+        type: "generic-awareness-modal",
+        id: query.id,
       };
       return route;
     }

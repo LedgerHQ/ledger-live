@@ -7,6 +7,7 @@ import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLo
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/index";
 import { MarketCurrencyData, KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import { MarketAction } from "./types";
+import { getMarketOrAssetDetailPath } from "LLD/utils/marketAssetNavigation";
 
 type UseRowItemViewModelProps = {
   currency?: MarketCurrencyData | null;
@@ -35,11 +36,9 @@ export function useRowItemViewModel({ currency, toggleStar, range }: UseRowItemV
   const onCurrencyClick = useCallback(() => {
     if (currency) {
       setTrackingSource("Page Market");
-      if (shouldDisplayAggregatedAssets) {
-        navigate(`/asset/${currency.id}`, { state: currency });
-      } else {
-        navigate(`/market/${currency.id}`, { state: currency });
-      }
+      navigate(getMarketOrAssetDetailPath(currency.id, shouldDisplayAggregatedAssets), {
+        state: currency,
+      });
     }
   }, [currency, navigate, shouldDisplayAggregatedAssets]);
 

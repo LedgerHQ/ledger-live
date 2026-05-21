@@ -1185,7 +1185,8 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         uri: "https://zero-gravity.coin.ledger.com",
       },
       explorer: {
-        type: "none",
+        type: "blockscout",
+        uri: "https://chainscan.0g.ai/open/api",
       },
       showNfts: false,
     },

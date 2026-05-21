@@ -77,10 +77,6 @@ export function useDeviceIntentExecutor<JobState, Input, ExtraProps, InitInput>(
     smRef.current?.deviceConnected(result);
   }, []);
 
-  const onConnectionError = useCallback((error: unknown) => {
-    smRef.current?.connectionError(error);
-  }, []);
-
   const onContextInitialized = useCallback((ctx: DeviceExtractedContext) => {
     smRef.current?.deviceContextInitialized(ctx);
   }, []);
@@ -129,7 +125,7 @@ export function useDeviceIntentExecutor<JobState, Input, ExtraProps, InitInput>(
               intentComponentExtraProps: intentComponentExtraPropsRef.current,
             };
           }
-          if (state.type === "connectingDevice" || state.type === "connectingDeviceError") {
+          if (state.type === "connectingDevice" || state.type === "deviceDisconnected") {
             setConnectionResult(null);
             setLatestJobState(undefined);
           }
@@ -226,7 +222,6 @@ export function useDeviceIntentExecutor<JobState, Input, ExtraProps, InitInput>(
     intentComponentExtraProps: props.intentComponentExtraProps,
     lastIntentSnapshot: lastIntentSnapshotRef.current,
     onConnected,
-    onConnectionError,
     onContextInitialized,
     onRetry,
     onUserCancel: props.onUserCancel,

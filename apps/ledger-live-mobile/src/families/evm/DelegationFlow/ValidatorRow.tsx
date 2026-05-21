@@ -1,4 +1,4 @@
-import type { StakingValidatorItem } from "@ledgerhq/coin-evm/types/index";
+import type { StakingValidatorItem } from "@ledgerhq/live-common/families/evm/staking/types";
 import { Text } from "@ledgerhq/native-ui";
 import React, { useCallback } from "react";
 import { Trans } from "~/context/Locale";

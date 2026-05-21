@@ -2,17 +2,14 @@ import { useCallback, useMemo } from "react";
 import type { AssetMarketData } from "@ledgerhq/asset-detail";
 import type { DistributionItem, ValueChange } from "@ledgerhq/types-live";
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
-import { formatCurrencyUnitFragment, valueFromUnit } from "@ledgerhq/live-common/currencies/index";
 import { useTrendViewModel } from "LLD/features/Portfolio/hooks/useTrendViewModel";
 import { useSelector } from "LLD/hooks/redux";
+import { formatPriceFragment, formatSignedFiatVariation } from "@ledgerhq/live-currency-format";
 import type { FormattedValue } from "@ledgerhq/lumen-ui-react";
-import { BigNumber } from "bignumber.js";
 import { useTranslation } from "react-i18next";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
 import {
   clampDayChangePercentPointsNearZero,
-  fiatAmountToIntegerSmallestUnit,
-  formatSignedFiatVariation,
   getFiatPriceVariationFromPercentChange,
   resolveMarketPriceSectionSourceId,
   resolveTrendPercentAndVariant,
@@ -63,38 +60,25 @@ export function useMarketPriceSectionViewModel({
     data?.price,
     normalizedDayPercentage,
   );
-  const dayVariationSmallestUnit =
-    dayVariationFiat == null
-      ? undefined
-      : fiatAmountToIntegerSmallestUnit(dayVariationFiat, fiatUnit);
 
   const priceFormatter = useCallback(
-    (value: number): FormattedValue =>
-      formatCurrencyUnitFragment(fiatUnit, valueFromUnit(new BigNumber(value), fiatUnit), {
-        locale,
-        showCode: true,
-        disableRounding: true,
-        showAllDigits: true,
-        useGrouping: true,
-      }),
+    (value: number): FormattedValue => formatPriceFragment(fiatUnit, value, locale),
     [fiatUnit, locale],
   );
 
   const hasVariationData =
-    hasPriceData && normalizedDayPercentage != null && dayVariationSmallestUnit != null;
+    hasPriceData && normalizedDayPercentage != null && dayVariationFiat != null;
   const variationText = hasVariationData
-    ? formatSignedFiatVariation(dayVariationSmallestUnit, fiatUnit, locale)
+    ? formatSignedFiatVariation(dayVariationFiat, fiatUnit, locale)
     : "—";
 
-  const valueChange: ValueChange = useMemo(() => {
-    if (!hasPriceData || normalizedDayPercentage == null || dayVariationSmallestUnit == null) {
-      return { percentage: 0, value: 0 };
-    }
-    return {
-      percentage: normalizedDayPercentage / 100,
-      value: dayVariationSmallestUnit,
-    };
-  }, [hasPriceData, normalizedDayPercentage, dayVariationSmallestUnit]);
+  const valueChange: ValueChange = useMemo(
+    () => ({
+      percentage: hasVariationData ? normalizedDayPercentage / 100 : 0,
+      value: 0,
+    }),
+    [hasVariationData, normalizedDayPercentage],
+  );
   const { percentageText: trendPercentageText, variant: trendVariant } = useTrendViewModel({
     valueChange,
   });

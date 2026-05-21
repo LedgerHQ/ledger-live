@@ -7,7 +7,7 @@ import { BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
 import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 import React from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { ConnectionError } from "./components/ConnectionError";
+import { DeviceDisconnected } from "./components/DeviceDisconnected";
 import { IntentError } from "./components/IntentError";
 import { InvalidOperation } from "./components/InvalidOperation";
 import DeviceConnectionComponentLWM from "./DeviceConnectionComponentLWM";
@@ -28,7 +28,7 @@ type Props<JobState, Input, ExtraProps> = DeviceIntentExecutorProps<
 const platformConfig: ExecutorPlatformConfiguration<InitializationInput, InitializerConfig> = {
   DeviceConnectionComponent: DeviceConnectionComponentLWM,
   DeviceContextInitializerComponent: DeviceContextInitializerComponentLWM,
-  ConnectionErrorComponent: ConnectionError,
+  DeviceDisconnectedComponent: DeviceDisconnected,
   IntentErrorComponent: IntentError,
   InvalidOperationComponent: InvalidOperation,
 };

@@ -27,6 +27,7 @@ export const DIALOG_IDS = [
   "BUY_DEVICE",
   "FINISH_POST_ONBOARDING",
   "PRODUCT_TOUR",
+  "GENERIC_AWARENESS_MODAL",
 ] as const;
 export type DialogId = (typeof DIALOG_IDS)[number];
 

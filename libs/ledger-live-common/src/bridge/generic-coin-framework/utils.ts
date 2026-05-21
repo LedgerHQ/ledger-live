@@ -6,7 +6,6 @@ import type {
   AssetInfo,
   Balance,
   Operation as CoreOperation,
-  MapMemo,
   StakingOperation,
   TransactionIntent,
   TxData,
@@ -22,7 +21,6 @@ import type {
   GenericTransactionRaw,
   OperationCommon,
 } from "./types";
-import type { StellarMemo } from "@ledgerhq/coin-stellar/types/model";
 import { craftTransactionData as defaultCraftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 
 type BigNumberToBigIntDeep<T> = T extends BigNumber
@@ -106,7 +104,9 @@ function isDelegationMode(mode: GenericTransaction["mode"]): mode is StakingOper
   );
 }
 
-type GenericCoinFrameworkMemo = { type: string; value?: string };
+type GenericCoinFrameworkMemo =
+  | { type: string; value?: string }
+  | { type: "map"; memos: Map<string, string> };
 type GenericCoinFrameworkTxData = { type: string; value?: unknown };
 type GenericCoinFrameworkTransactionIntent = TransactionIntent & {
   memo?: GenericCoinFrameworkMemo;
@@ -268,7 +268,15 @@ function defaultComputeIntentType(transaction: GenericTransaction): string {
   const mode = modeRemap[transaction.mode] ?? transaction.mode;
 
   if (
-    ["changeTrust", "send", "send-legacy", "send-eip1559", "stake", "unstake", "finalize_unstake"].includes(mode)
+    [
+      "changeTrust",
+      "send",
+      "send-legacy",
+      "send-eip1559",
+      "stake",
+      "unstake",
+      "finalize_unstake",
+    ].includes(mode)
   )
     return mode;
 
@@ -341,7 +349,12 @@ export function transactionToIntent(
     };
   }
 
-  if (transaction.memoType && transaction.memoValue) {
+  if (typeof transaction.tag === "number") {
+    res.memo = {
+      type: "map",
+      memos: new Map([["destinationTag", String(transaction.tag)]]),
+    };
+  } else if (transaction.memoType && transaction.memoValue) {
     res.memo = {
       type: transaction.memoType,
       value: transaction.memoValue,
@@ -560,42 +573,3 @@ export const buildOptimisticOperation = (
   }
   return operation;
 };
-
-/**
- * Applies memo information to transaction intent
- * Handles both destination tags (XRP-like) and Stellar-style memos
- */
-export function applyMemoToIntent(
-  transactionIntent: TransactionIntent<any>,
-  transaction: GenericTransaction,
-): TransactionIntent<any> {
-  // Handle destination tag memo (for XRP-like chains)
-  if (typeof transaction.tag === "number") {
-    const txWithMemoTag = transactionIntent as TransactionIntent<MapMemo<string, string>>;
-    const txMemo = String(transaction.tag);
-
-    txWithMemoTag.memo = {
-      type: "map",
-      memos: new Map(),
-    };
-    txWithMemoTag.memo.memos.set("destinationTag", txMemo);
-
-    return txWithMemoTag;
-  }
-
-  // Handle Stellar-style memo
-  if (transaction.memoType && transaction.memoValue) {
-    const txWithMemo = transactionIntent as TransactionIntent<StellarMemo>;
-    const txMemoType = String(transaction.memoType);
-    const txMemoValue = String(transaction.memoValue);
-
-    txWithMemo.memo = {
-      type: txMemoType as "NO_MEMO" | "MEMO_TEXT" | "MEMO_ID" | "MEMO_HASH" | "MEMO_RETURN",
-      value: txMemoValue,
-    };
-
-    return txWithMemo;
-  }
-
-  return transactionIntent;
-}

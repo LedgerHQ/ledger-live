@@ -93,8 +93,6 @@ export function useBalanceDetailsViewModel(
   );
 
   const earnState: EarnState = useMemo(() => {
-    if (!hasAccounts) return { type: "hidden" };
-
     if (isStakeable && hasStake && unit) {
       return {
         type: "staked",
@@ -121,7 +119,6 @@ export function useBalanceDetailsViewModel(
 
     return { type: "hidden" };
   }, [
-    hasAccounts,
     hasStake,
     isStakeable,
     unit,

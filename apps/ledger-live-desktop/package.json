@@ -90,6 +90,7 @@
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-countervalues": "workspace:^",
+    "@ledgerhq/live-currency-format": "workspace:^",
     "@ledgerhq/live-countervalues-react": "workspace:^",
     "@ledgerhq/wallet-pnl": "workspace:^",
     "@ledgerhq/live-dmk-desktop": "workspace:^",

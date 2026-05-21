@@ -38,7 +38,7 @@ export function TotalBalanceView({
       </Box>
       <Button
         appearance="gray"
-        size="md"
+        size="sm"
         icon={TransferVertical}
         onPress={onTransferPress}
         testID={ASSET_DETAIL_TEST_IDS.transferButton}

@@ -1,34 +1,32 @@
-import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { DeeplinkHandler } from "../types";
+import {
+  getMarketOrAssetDetailPath,
+  resolveLegacyCryptoCurrencyId,
+} from "LLD/utils/marketAssetNavigation";
 
-export const marketHandler: DeeplinkHandler<"market"> = (route, { navigate }) => {
-  const { path } = route;
+/**
+ * Market deeplinks. When Wallet 4.0 aggregated assets is on, navigates with the raw path so
+ * Asset Detail can resolve market-api slugs (no `location.state`; unlike in-app Market row clicks).
+ * When off, validates the id and falls back to the market list — aligned with mobile (af91289).
+ */
+export const marketHandler: DeeplinkHandler<"market"> = (route, { navigate, assetsPath }) => {
+  const path = route.path.trim();
 
-  if (path) {
-    const normalizedPath = path.trim().toLowerCase();
-    const currency = findCryptoCurrencyById(normalizedPath);
-
-    if (currency) {
-      navigate(`/market/${currency.id}`);
-      return;
-    }
+  if (!path) {
+    navigate("/market");
+    return;
   }
 
-  navigate(`/market`);
-};
-
-export const assetHandler: DeeplinkHandler<"asset"> = (route, { navigate }) => {
-  const { path } = route;
-
-  if (path) {
-    const normalizedPath = path.trim().toLowerCase();
-    const currency = findCryptoCurrencyById(normalizedPath);
-
-    if (currency) {
-      navigate(`/asset/${currency.id}`);
-      return;
-    }
+  if (assetsPath === "/asset") {
+    navigate(getMarketOrAssetDetailPath(path, true));
+    return;
   }
 
-  navigate("/");
+  const currencyId = resolveLegacyCryptoCurrencyId(path);
+  if (currencyId) {
+    navigate(getMarketOrAssetDetailPath(currencyId, false));
+    return;
+  }
+
+  navigate("/market");
 };

@@ -7,7 +7,6 @@ import {
   CardContentTitle,
   CardHeader,
   CardLeading,
-  Pressable,
   Text,
   Tooltip,
   TooltipTrigger,
@@ -62,22 +61,20 @@ export function EarnCardsView({ formattedAvailable, formattedDeposit, onEarnDepo
           </CardHeader>
         </Card>
       </Box>
-      <Box lx={cardWrapperStyle} testID={ASSET_DETAIL_TEST_IDS.earnDeposit}>
-        <Pressable onPress={onEarnDepositPress}>
-          <Card type="info">
-            <CardHeader>
-              <CardLeading>
-                <CardContent>
-                  <CardContentDescription>
-                    {t("assetDetail.balanceDetails.earnDeposit")}
-                  </CardContentDescription>
-                  <CardContentTitle>{formattedDeposit}</CardContentTitle>
-                </CardContent>
-              </CardLeading>
-              <ChevronRight size={16} color="muted" />
-            </CardHeader>
-          </Card>
-        </Pressable>
+      <Box lx={cardWrapperStyle}>
+        <Card onPress={onEarnDepositPress} testID={ASSET_DETAIL_TEST_IDS.earnDeposit}>
+          <CardHeader>
+            <CardLeading>
+              <CardContent>
+                <CardContentDescription>
+                  {t("assetDetail.balanceDetails.earnDeposit")}
+                </CardContentDescription>
+                <CardContentTitle>{formattedDeposit}</CardContentTitle>
+              </CardContent>
+            </CardLeading>
+            <ChevronRight size={16} color="muted" />
+          </CardHeader>
+        </Card>
       </Box>
     </Box>
   );

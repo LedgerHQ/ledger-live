@@ -5,7 +5,7 @@ module.exports = {
   testEnvironment: "node",
   testRegex: ".integ.test.ts$",
   testPathIgnorePatterns: ["lib/", "lib-es/"],
-  testTimeout: 60_000,
+  testTimeout: 90_000,
   forceExit: true,
   passWithNoTests: true,
   transform: {

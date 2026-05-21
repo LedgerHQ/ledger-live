@@ -69,6 +69,11 @@ export function useAssetCoinOptionsViewModel({ currency, currencyId, marketId }:
     closeCoinOptions,
   ]);
 
+  const onShowAsset = useCallback(() => {
+    if (!currency) return;
+    dispatch(showToken(currency.id));
+  }, [currency, dispatch]);
+
   const onToggleHideFromPortfolio = useCallback(() => {
     if (!currency) return;
 
@@ -86,10 +91,10 @@ export function useAssetCoinOptionsViewModel({ currency, currencyId, marketId }:
         dispatch(blacklistToken(currency.id));
       }
     } else {
-      dispatch(showToken(currency.id));
+      onShowAsset();
     }
     closeCoinOptions();
-  }, [currency, isHidden, blacklistedTokenIdsSet, dispatch, closeCoinOptions]);
+  }, [currency, isHidden, blacklistedTokenIdsSet, dispatch, closeCoinOptions, onShowAsset]);
 
   return {
     isCoinOptionsSheetOpen,
@@ -100,6 +105,7 @@ export function useAssetCoinOptionsViewModel({ currency, currencyId, marketId }:
     isStarred,
     onToggleFavourite,
     onToggleHideFromPortfolio,
+    onShowAsset,
   };
 }
 

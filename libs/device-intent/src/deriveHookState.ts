@@ -23,12 +23,10 @@ export type DeviceIntentExecutorHookState<JobState, _Input, ExtraProps, InitInpu
       phase: "deviceConnection";
       deviceConnectionParams: DeviceConnectionParams;
       onConnected: (result: DeviceConnectionResult) => void;
-      onError: (error: unknown) => void;
       onClose: () => void;
     }
   | {
-      phase: "connectionError";
-      error: unknown;
+      phase: "deviceDisconnected";
       onRetry: () => void;
       onClose: () => void;
     }
@@ -80,7 +78,6 @@ export type DeriveHookStateParams<JobState, ExtraProps, InitInput> = {
   intentComponentExtraProps: ExtraProps;
   lastIntentSnapshot: IntentExecutionSnapshot<JobState, ExtraProps> | null;
   onConnected: (result: DeviceConnectionResult) => void;
-  onConnectionError: (error: unknown) => void;
   onContextInitialized: (ctx: DeviceExtractedContext) => void;
   onRetry: () => void;
   onUserCancel: () => void;
@@ -96,13 +93,11 @@ export function deriveHookState<JobState, Input, ExtraProps, InitInput>(
         phase: "deviceConnection",
         deviceConnectionParams: params.deviceConnectionParams,
         onConnected: params.onConnected,
-        onError: params.onConnectionError,
         onClose: params.onUserCancel,
       };
-    case "connectingDeviceError":
+    case "deviceDisconnected":
       return {
-        phase: "connectionError",
-        error: executorState.error,
+        phase: "deviceDisconnected",
         onRetry: params.onRetry,
         onClose: params.onUserCancel,
       };

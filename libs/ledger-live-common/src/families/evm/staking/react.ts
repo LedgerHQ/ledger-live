@@ -4,7 +4,7 @@ import {
   getCachedValidators,
   mapDelegations,
 } from "@ledgerhq/coin-evm/staking/index";
-import type { StakingValidatorItem } from "@ledgerhq/coin-evm/types/index";
+import type { StakingValidatorItem } from "@ledgerhq/types-live";
 import type { StakingAccount, StakingMappedDelegation } from "./types";
 import { getAccountCurrency } from "../../../account";
 

@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useCallback } from "react";
 import {
   Box,
   Card,
@@ -15,14 +15,21 @@ import type { AddressAccountData } from "../useAddressesViewModel";
 
 type Props = Readonly<{
   data: AddressAccountData;
+  onPress: (data: AddressAccountData) => void;
 }>;
 
-export const AddressAccountItem = memo(function AddressAccountItem({ data }: Props) {
+export const AddressAccountItem = memo(function AddressAccountItem({ data, onPress }: Props) {
   const { account, balanceAccount, name, truncatedAddress } = data;
   const { formattedBalance, formattedCounterValue } = useFormattedAccountBalance(balanceAccount);
 
+  const handlePress = useCallback(() => onPress(data), [onPress, data]);
+
   return (
-    <Card type="info" testID={`asset-detail-address-item-${account.id}`}>
+    <Card
+      type="interactive"
+      onPress={handlePress}
+      testID={`asset-detail-address-item-${account.id}`}
+    >
       <CardHeader>
         <CardLeading>
           <CardContent>

@@ -40,7 +40,14 @@ export function BalanceDetailsView({
     return <SectionSkeleton rows={1} rowHeight="s56" />;
   }
 
-  if (!hasAccounts) return null;
+  if (!hasAccounts) {
+    if (earnState.type !== "banner") return null;
+    return (
+      <Box testID={ASSET_DETAIL_TEST_IDS.balanceDetails} lx={containerStyle}>
+        <EarnBannerView label={earnState.label} onPress={onEarnBannerPress} />
+      </Box>
+    );
+  }
 
   return (
     <Box testID={ASSET_DETAIL_TEST_IDS.balanceDetails} lx={containerStyle}>

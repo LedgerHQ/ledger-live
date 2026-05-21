@@ -150,37 +150,19 @@ jest.mock("react-redux", () => {
   };
 });
 
-const originalError = console.error;
-const originalWarn = console.warn;
-// eslint-disable-next-line no-console
-const originalLog = console.log;
+/*
+ * Console output is silenced by default to keep the test output readable.
+ * Call `enableConsole()` while writing/debugging a test, `disableConsole()`
+ * to silence again. Test failures still surface via Jest's reporter.
+ */
+/* eslint-disable no-console */
+const CONSOLE_METHODS = ["error", "warn", "log", "info", "debug"];
+const ORIGINAL_CONSOLE = Object.fromEntries(
+  CONSOLE_METHODS.map(m => [m, console[m].bind(console)]),
+);
+const noop = () => {};
 
-const EXCLUDED_ERRORS = ["act(...)", "ReactDOMTestUtils.act", "Warning: findDOMNode is deprecated"];
+global.disableConsole = () => CONSOLE_METHODS.forEach(m => (console[m] = noop));
+global.enableConsole = () => CONSOLE_METHODS.forEach(m => (console[m] = ORIGINAL_CONSOLE[m]));
 
-const EXCLUDED_WARNINGS = ["@polkadot"];
-
-const EXCLUDED_LOG_MESSAGES = ["Message posted to worker"];
-
-console.error = (...args) => {
-  const error = args.join();
-  if (EXCLUDED_ERRORS.some(excluded => error.includes(excluded))) {
-    return;
-  }
-  originalError.call(console, ...args);
-};
-
-console.warn = (...args) => {
-  const warning = args.join();
-  if (EXCLUDED_WARNINGS.some(excluded => warning.includes(excluded))) {
-    return;
-  }
-  originalWarn.call(console, ...args);
-};
-// eslint-disable-next-line no-console
-console.log = (...args) => {
-  const log = args.join();
-  if (EXCLUDED_LOG_MESSAGES.some(excluded => log.includes(excluded))) {
-    return;
-  }
-  originalLog.call(console, ...args);
-};
+global.disableConsole();

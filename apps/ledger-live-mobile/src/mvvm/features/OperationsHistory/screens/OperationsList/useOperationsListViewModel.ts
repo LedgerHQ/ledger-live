@@ -1,12 +1,11 @@
 import { useState, useCallback, useEffect, useMemo } from "react";
-import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { flattenAccounts, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { flattenAccountsSelector, shallowAccountsSelector } from "~/reducers/accounts";
 import { lastSeenOperationDateSelector, markOperationsAsSeen } from "~/reducers/history";
 import { parseLastSeenMs } from "LLM/features/OperationsHistory/utils/unreadOperations";
 import { useOperationsV1 } from "~/screens/Analytics/Operations/useOperationsV1";
-import { AccountLike } from "@ledgerhq/types-live";
+import { AccountLike, Operation } from "@ledgerhq/types-live";
 import { useOperationsSections } from "./hooks/useOperationsSections";
 
 export type { OperationsListSection } from "./hooks/useOperationsSections";
@@ -14,25 +13,31 @@ export type { OperationsListSection } from "./hooks/useOperationsSections";
 const INITIAL_OP_COUNT = 50;
 const OP_COUNT_INCREMENT = 50;
 
-export function useOperationsListViewModel(currencyId?: string) {
+export function useOperationsListViewModel(accountIds?: string[]) {
   const dispatch = useDispatch();
   const allAccounts = useSelector(shallowAccountsSelector);
   const allFlattenedAccounts = useSelector(flattenAccountsSelector);
   const [opCount, setOpCount] = useState(INITIAL_OP_COUNT);
 
-  const currency = useMemo(
-    () => (currencyId ? findCryptoCurrencyById(currencyId) : undefined),
-    [currencyId],
+  const allowedIds = useMemo(
+    () => (accountIds && accountIds.length > 0 ? new Set(accountIds) : null),
+    [accountIds],
   );
 
-  const accounts = useMemo(
-    () => (currency ? allAccounts.filter(a => a.currency.id === currency.id) : allAccounts),
-    [allAccounts, currency],
-  );
+  const accounts = useMemo(() => {
+    if (!allowedIds) return allAccounts;
+    return allAccounts.filter(root => flattenAccounts([root]).some(a => allowedIds.has(a.id)));
+  }, [allAccounts, allowedIds]);
 
   const flattenedAccounts = useMemo(
-    () => (currency ? flattenAccounts(accounts) : allFlattenedAccounts),
-    [accounts, allFlattenedAccounts, currency],
+    () => (allowedIds ? flattenAccounts(accounts) : allFlattenedAccounts),
+    [accounts, allFlattenedAccounts, allowedIds],
+  );
+
+  const scopedFilter = useMemo(
+    () =>
+      allowedIds ? (_op: Operation, account: AccountLike) => allowedIds.has(account.id) : undefined,
+    [allowedIds],
   );
 
   const lastSeenDate = useSelector(lastSeenOperationDateSelector);
@@ -44,7 +49,9 @@ export function useOperationsListViewModel(currencyId?: string) {
     };
   }, [dispatch]);
 
-  const { sections: rawSections, completed } = useOperationsV1(accounts, opCount);
+  const { sections: rawSections, completed } = useOperationsV1(accounts, opCount, {
+    filterOperation: scopedFilter,
+  });
 
   const accountByAddress = useMemo(() => {
     const map = new Map<string, AccountLike>();

@@ -7,10 +7,51 @@ import {
   mockBtcCryptoCurrency,
   mockEthCryptoCurrency,
 } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
-import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import type { State } from "~/reducers/types";
 import { marketCurrencyData } from "../../../__fixtures__/marketCurrencyData";
+
+const eursToken: TokenCurrency = {
+  type: "TokenCurrency",
+  id: "ethereum/erc20/stasis_eurs",
+  contractAddress: "0xdB25f211AB05b1c97D595516F45794528a807ad8",
+  parentCurrency: mockEthCryptoCurrency,
+  tokenType: "erc20",
+  name: "STASIS EURS Token",
+  ticker: "EURS",
+  units: [{ name: "STASIS EURS Token", code: "EURS", magnitude: 2 }],
+};
+
+function withEthAndEursToken({
+  ethBalance,
+  eursBalance,
+}: {
+  ethBalance: number;
+  eursBalance: number;
+}) {
+  return {
+    overrideInitialState: (state: State): State => {
+      const parent = genAccount("ethereum-0", {
+        currency: mockEthCryptoCurrency,
+        operationsSize: 0,
+      });
+      parent.balance = new BigNumber(ethBalance);
+      parent.spendableBalance = new BigNumber(ethBalance);
+
+      const tokenAccount = genTokenAccount(0, parent, eursToken);
+      tokenAccount.balance = new BigNumber(eursBalance);
+      tokenAccount.spendableBalance = new BigNumber(eursBalance);
+      parent.subAccounts = [tokenAccount];
+
+      return {
+        ...state,
+        accounts: { ...state.accounts, active: [parent] },
+      };
+    },
+  };
+}
 
 jest.mock("@ledgerhq/live-common/market/state-manager/marketApi", () => ({
   ...jest.requireActual("@ledgerhq/live-common/market/state-manager/marketApi"),
@@ -88,7 +129,7 @@ describe("useBalanceGraphViewModel", () => {
     });
   });
 
-  describe("priceFormatter (formatCurrencyUnitFragment)", () => {
+  describe("priceFormatter", () => {
     it("splits a USD-formatted value into FormattedValue parts", () => {
       const { result } = renderHook(() => useBalanceGraphViewModel(mockBtcCryptoCurrency));
 
@@ -97,6 +138,16 @@ describe("useBalanceGraphViewModel", () => {
       expect(formatted.integerPart).toBe("1,234");
       expect(formatted.decimalPart).toBe("56");
       expect(formatted.decimalSeparator).toBe(".");
+      expect(formatted.currencyText).toBe("$");
+    });
+
+    it("preserves 6 decimals for a sub-cent BONK-like price", () => {
+      const { result } = renderHook(() => useBalanceGraphViewModel(mockBtcCryptoCurrency));
+
+      const formatted = result.current.priceFormatter(0.000006);
+
+      expect(formatted.integerPart).toBe("0");
+      expect(formatted.decimalPart).toBe("000006");
       expect(formatted.currencyText).toBe("$");
     });
   });
@@ -125,6 +176,17 @@ describe("useBalanceGraphViewModel", () => {
       const { result } = renderHook(() => useBalanceGraphViewModel(mockBtcCryptoCurrency));
 
       expect(result.current.formattedPriceChange).toBeUndefined();
+    });
+
+    it("renders a signed '<' threshold marker for a tiny BONK-like variation", () => {
+      mockUseGetCurrencyDataQuery.mockReturnValue({
+        data: { ...marketCurrencyData, price: 6e-6 },
+        isFetching: false,
+      } as unknown as ReturnType<typeof useGetCurrencyDataQuery>);
+
+      const { result } = renderHook(() => useBalanceGraphViewModel(mockBtcCryptoCurrency));
+
+      expect(result.current.formattedPriceChange).toBe("+<$0.000001");
     });
   });
 
@@ -204,6 +266,15 @@ describe("useBalanceGraphViewModel", () => {
           { currencyId: "bitcoin", balance: 0 },
           { currencyId: "ethereum", balance: 1000 },
         ]),
+      );
+
+      expect(result.current.showReceive).toBe(false);
+    });
+
+    it("is false for a token the user already holds (regression: ERC-20 detected via flattenAccounts)", () => {
+      const { result } = renderHook(
+        () => useBalanceGraphViewModel(eursToken),
+        withEthAndEursToken({ ethBalance: 0, eursBalance: 36_300_500 }),
       );
 
       expect(result.current.showReceive).toBe(false);

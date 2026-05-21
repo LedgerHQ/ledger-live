@@ -11,11 +11,13 @@ import TachometerLow from "~/renderer/icons/TachometerLow";
 import TachometerMedium from "~/renderer/icons/TachometerMedium";
 import Label from "~/renderer/components/Label";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { isAleoTransaction } from "~/renderer/families/aleo/modals/send/steps/utils";
 import type { AleoAccount, AleoUnspentRecord } from "@ledgerhq/live-common/families/aleo/types";
 import { MAX_PRIVATE_RECORDS_PER_TRANSACTION } from "@ledgerhq/live-common/families/aleo/constants";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import {
   getEstimatedSigningTime,
+  isPrivateTransaction,
   sumPrivateRecords,
 } from "@ledgerhq/live-common/families/aleo/utils";
 
@@ -124,6 +126,16 @@ const QuickAmountSelector = ({ account, transaction, updateTransaction, onSelect
   );
   const totalSpendableBalance = sumPrivateRecords(spendableRecords);
   const totalRecords = sortedRecords.length;
+  const selectedRecordsCount =
+    isAleoTransaction(transaction) && isPrivateTransaction(transaction)
+      ? transaction.properties.amountRecordCommitments.length
+      : 0;
+
+  const selectedRecordsSigningTime = getEstimatedSigningTime(
+    selectedRecordsCount,
+    t("time.second_short"),
+    t("time.minute_short"),
+  );
 
   const strategyData = useMemo(
     () =>
@@ -154,21 +166,34 @@ const QuickAmountSelector = ({ account, transaction, updateTransaction, onSelect
 
   return (
     <>
-      <Box horizontal alignItems="center" gap="4px">
-        <Label>{t("aleo.shared.quickAmountSelector.spendableBalance")}</Label>
-        <FormattedVal
-          noShrink
-          inline
-          marginTop={0.5}
-          color="neutral.c100"
-          fontSize={3}
-          fontWeight="600"
-          val={totalSpendableBalance}
-          unit={accountUnit}
-          showCode
-          alwaysShowValue
-          showAllDigits
-        />
+      <Box flexDirection="column" gap="4px">
+        <Box
+          horizontal
+          alignItems="center"
+          gap="4px"
+          data-testid="record-summary"
+          style={{ visibility: selectedRecordsCount > 0 ? "visible" : "hidden" }}
+        >
+          <Label>
+            {`${t("aleo.shared.quickAmountSelector.recordCount", { count: selectedRecordsCount })} · ${selectedRecordsSigningTime}`}
+          </Label>
+        </Box>
+        <Box horizontal alignItems="center" gap="4px">
+          <Label>{t("aleo.shared.quickAmountSelector.spendableBalance")}</Label>
+          <FormattedVal
+            noShrink
+            inline
+            marginTop={0.5}
+            color="neutral.c100"
+            fontSize={3}
+            fontWeight="600"
+            val={totalSpendableBalance}
+            unit={accountUnit}
+            showCode
+            alwaysShowValue
+            showAllDigits
+          />
+        </Box>
       </Box>
       <Box horizontal justifyContent="center" flexWrap="wrap" gap="16px">
         {strategyData.map(
@@ -185,9 +210,9 @@ const QuickAmountSelector = ({ account, transaction, updateTransaction, onSelect
             const handleClick = () => {
               if (disabled) return;
               if (isSendMax) {
-                updateTransaction(t => ({ ...t, useAllAmount: true, amount: new BigNumber(0) }));
+                updateTransaction(tx => ({ ...tx, useAllAmount: true, amount: new BigNumber(0) }));
               } else {
-                updateTransaction(t => ({ ...t, amount: rangeSum, useAllAmount: false }));
+                updateTransaction(tx => ({ ...tx, amount: rangeSum, useAllAmount: false }));
               }
               onSelect?.();
             };

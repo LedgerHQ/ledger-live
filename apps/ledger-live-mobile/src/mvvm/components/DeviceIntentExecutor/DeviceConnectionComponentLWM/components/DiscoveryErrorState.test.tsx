@@ -7,6 +7,7 @@ import {
   type ConnectDeviceUIState,
   type DiscoveryError,
 } from "@ledgerhq/live-dmk-mobile";
+import type { AppPlatform } from "@ledgerhq/live-common/platform/types";
 import { DiscoveryErrorState } from "./DiscoveryErrorState";
 
 type DiscoveryErrorUIState = Extract<
@@ -17,68 +18,71 @@ type DiscoveryErrorUIState = Extract<
 const errorCases = [
   {
     type: DiscoveryErrorTypes.BluetoothPermissionDeniedPromptable,
-    title: "Bluetooth permission needed",
-    description: "Please enable Bluetooth permission to use Bluetooth",
+    title: "Allow Bluetooth access",
+    description: "Allow Bluetooth to scan for nearby Ledger devices.",
   },
   {
     type: DiscoveryErrorTypes.BluetoothPermissionDeniedManualSettings,
-    title: "Bluetooth permission needed",
-    description: "Please enable Bluetooth permission in your phone settings to use Bluetooth",
+    title: "Allow Bluetooth access",
+    description:
+      "Bluetooth permission is required. Go to Settings → Apps → Ledger Wallet → Permissions → Nearby devices, then come back.",
   },
   {
     type: DiscoveryErrorTypes.BluetoothPermissionUnauthorizedManualSettings,
-    title: "Bluetooth permission needed",
-    description: "Please enable Bluetooth permission in your phone settings to use Bluetooth",
+    title: "Allow Bluetooth access",
+    description: "Ledger Wallet needs Bluetooth permission to find your device. Enable it in Settings.",
   },
   {
     type: DiscoveryErrorTypes.BluetoothDisabledPromptable,
-    title: "Bluetooth settings disabled",
-    description: "Please enable Bluetooth settings to use Bluetooth",
+    title: "Turn on Bluetooth",
+    description: "Bluetooth is off. Turn it on to find your Ledger device.",
   },
   {
     type: DiscoveryErrorTypes.BluetoothDisabledManualAction,
-    title: "Bluetooth settings disabled",
-    description: "Please enable Bluetooth settings in your phone settings to use Bluetooth",
+    title: "Turn on Bluetooth",
+    description: "Bluetooth is off. Turn it on in your Settings → Bluetooth, then come back.",
   },
   {
     type: DiscoveryErrorTypes.BluetoothStateUnknownCheckOnly,
-    title: "Bluetooth is not ready",
-    description: "Please check your Bluetooth settings to use Bluetooth",
+    title: "Checking Bluetooth...",
+    description: undefined,
   },
   {
     type: DiscoveryErrorTypes.BluetoothUnsupported,
-    title: "Bluetooth is not supported",
-    description: "Bluetooth is not supported. Please check your Bluetooth settings.",
+    title: "Bluetooth not supported",
+    description:
+      "This phone doesn’t support Bluetooth. You can connect your Ledger device via USB instead.",
   },
   {
     type: DiscoveryErrorTypes.LocationPermissionDeniedPromptable,
-    title: "Location permission needed",
-    description: "Please enable Location permission to use Bluetooth",
+    title: "Allow location access",
+    description: "Android needs Location permission to scan for Bluetooth devices.",
   },
   {
     type: DiscoveryErrorTypes.LocationPermissionDeniedManualSettings,
-    title: "Location permission needed",
-    description: "Please enable Location permission in your phone settings to use Bluetooth",
+    title: "Allow location access",
+    description:
+      "Location permission is required to scan for Bluetooth devices. Go to Settings → Apps → Ledger Wallet → Permissions → Location, then come back.",
   },
   {
     type: DiscoveryErrorTypes.LocationDisabledPromptable,
-    title: "Location settings disabled",
-    description: "Please enable Location settings to use Bluetooth",
+    title: "Turn on Location",
+    description: "Location services are off. Turn them on to scan for Bluetooth devices.",
   },
   {
     type: DiscoveryErrorTypes.LocationDisabledManualAction,
-    title: "Location settings disabled",
-    description: "Please enable Location settings in your phone settings to use Bluetooth",
+    title: "Turn on Location",
+    description: "Location services are off. Turn them on from Settings → Location, then come back.",
   },
   {
     type: DiscoveryErrorTypes.LocationServicePermissionMissing,
-    title: "Location permission needed",
-    description: "Please enable Location permission to use Bluetooth",
+    title: "Allow location access",
+    description: "Location permission seems missing. Tap below to try again.",
   },
   {
     type: DiscoveryErrorTypes.Unknown,
-    title: "Unable to discover devices",
-    description: "Unable to discover devices.",
+    title: "Something went wrong",
+    description: "We couldn’t start the Bluetooth scan. Please try again or contact Ledger support.",
   },
 ] as const;
 
@@ -97,9 +101,11 @@ function makeDiscoveryError(type: DiscoveryErrorTypes): DiscoveryError {
 function renderState({
   type,
   retry,
+  platform = "android",
 }: {
   type: DiscoveryErrorTypes;
   retry?: DiscoveryErrorUIState["retry"];
+  platform?: Exclude<AppPlatform, "desktop">;
 }) {
   const ignore = jest.fn();
   const state: DiscoveryErrorUIState = {
@@ -109,7 +115,7 @@ function renderState({
     ignore,
   };
 
-  const view = render(<DiscoveryErrorState state={state} />);
+  const view = render(<DiscoveryErrorState state={state} platform={platform} />);
 
   return { ...view, ignore };
 }
@@ -121,18 +127,20 @@ describe("DiscoveryErrorState", () => {
       renderState({ type });
 
       expect(screen.getByText(title)).toBeVisible();
-      expect(screen.getByText(description)).toBeVisible();
+      if (description) {
+        expect(screen.getByText(description)).toBeVisible();
+      }
     },
   );
 
-  it("should render retry when a retry callback is available", async () => {
+  it("should render the translated retry cta when a retry callback is available", async () => {
     const retry = jest.fn();
     const { user } = renderState({
       type: DiscoveryErrorTypes.BluetoothPermissionDeniedPromptable,
       retry,
     });
 
-    await user.press(screen.getByText("Try again"));
+    await user.press(screen.getByText("Allow"));
 
     expect(retry).toHaveBeenCalledTimes(1);
   });
@@ -140,24 +148,39 @@ describe("DiscoveryErrorState", () => {
   it("should not render retry when no retry callback is available", () => {
     renderState({ type: DiscoveryErrorTypes.BluetoothUnsupported });
 
-    expect(screen.queryByText("Try again")).toBeNull();
+    expect(screen.queryByText("Allow")).toBeNull();
   });
 
-  it("should render continue with USB for known discovery errors", async () => {
+  it("should render the translated continue with USB cta on Android when available", async () => {
     const { user, ignore } = renderState({
       type: DiscoveryErrorTypes.LocationDisabledManualAction,
     });
 
-    await user.press(screen.getByText("I want to continue with USB"));
+    await user.press(screen.getByText("Continue with USB"));
 
     expect(ignore).toHaveBeenCalledTimes(1);
   });
 
-  it("should render close for unknown discovery errors", async () => {
-    const { user, ignore } = renderState({ type: DiscoveryErrorTypes.Unknown });
+  it("should hide Android USB fallback on iOS-only discovery errors", () => {
+    renderState({
+      type: DiscoveryErrorTypes.BluetoothDisabledManualAction,
+      platform: "ios",
+    });
 
-    await user.press(screen.getByText("Close"));
+    expect(screen.queryByText("Continue with USB")).toBeNull();
+  });
 
-    expect(ignore).toHaveBeenCalledTimes(1);
+  it("should render the iOS Bluetooth unsupported copy without a CTA", () => {
+    renderState({
+      type: DiscoveryErrorTypes.BluetoothUnsupported,
+      platform: "ios",
+    });
+
+    expect(
+      screen.getByText(
+        "This phone doesn’t support Bluetooth. Please use Ledger Wallet desktop or contact Ledger support.",
+      ),
+    ).toBeVisible();
+    expect(screen.queryByText("Continue with USB")).toBeNull();
   });
 });

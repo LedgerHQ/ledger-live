@@ -5,7 +5,7 @@ export const sei_evm = currency({
   id: "sei_evm",
   coinType: 60,
   name: "SEI Network (EVM)",
-  managerAppName: "Ethereum",
+  managerAppName: "Sei",
   ticker: "SEI",
   scheme: "sei",
   color: "#89395b",

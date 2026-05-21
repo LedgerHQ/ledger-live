@@ -44,10 +44,17 @@ export interface DeeplinkHandlerContext {
   currentLocationState: unknown;
   /** Feature-flag-aware path to the accounts list screen (`/cryptos` or `/accounts`). */
   accountsPath: string;
+  /**
+   * Wallet 4.0 aggregated-assets routing prefix: `/asset` when enabled, `/market` when off.
+   * Used by market and asset deeplink handlers to pick Asset Detail vs legacy Market Detail.
+   */
+  assetsPath: "/asset" | "/market";
   /** Default Ledger Recover app id (from feature flag) for recover deeplink when no path is given */
   recoverAppId?: string;
   /** `lwdProductTour` — Product Tour dialog is only mounted on Portfolio when enabled; avoid opening dialog Redux state when false. */
   isProductTourEnabled: boolean;
+  /** `lwdGenericAwarenessModal` — deeplink opens the modal only when this flag is enabled. */
+  isGenericAwarenessModalEnabled: boolean;
 }
 
 export interface ParsedDeeplink {
@@ -215,6 +222,11 @@ export interface ProductTourRoute {
   type: "product-tour";
 }
 
+export interface GenericAwarenessModalRoute {
+  type: "generic-awareness-modal";
+  id?: string;
+}
+
 export interface DefaultRoute {
   type: "default";
 }
@@ -244,6 +256,7 @@ export type DeeplinkRoute =
   | PostOnboardingRoute
   | LedgerSyncRoute
   | ProductTourRoute
+  | GenericAwarenessModalRoute
   | DefaultRoute;
 
 export type RouteByType<T extends DeeplinkRoute["type"]> = Extract<DeeplinkRoute, { type: T }>;

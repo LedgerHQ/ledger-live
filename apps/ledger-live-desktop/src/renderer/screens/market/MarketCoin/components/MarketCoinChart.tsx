@@ -11,7 +11,8 @@ import ChartPlaceholder from "../../assets/ChartPlaceholder";
 import CountervalueSelect from "../../components/CountervalueSelect";
 import { useTranslation } from "react-i18next";
 import { MarketCoinDataChart } from "@ledgerhq/live-common/market/utils/types";
-import { formatPercentage, formatPrice } from "../../utils";
+import { formatPercentage } from "../../utils";
+import { roundFiatPrice } from "@ledgerhq/live-currency-format";
 
 const Title = styled(Text).attrs({ variant: "h3", color: "neutral.c100", mt: 1, mb: 5 })`
   font-size: 28px;
@@ -155,7 +156,7 @@ function MarkeCoinChartComponent({
           <Title data-testid={"market-price"}>
             {counterValueFormatter({
               currency: counterCurrency,
-              value: formatPrice(price ?? 0),
+              value: roundFiatPrice(price ?? 0),
               locale,
             })}
           </Title>

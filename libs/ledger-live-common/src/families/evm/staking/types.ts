@@ -1,5 +1,9 @@
 // Encapsulate for LLD & LLM
-export { isStakingAccount } from "@ledgerhq/coin-evm/types/index";
+export {
+  isStakingAccount,
+  isStakingOperationExtra,
+  isStakingOperationExtraRaw,
+} from "@ledgerhq/types-live";
 export type {
   StakingAccount,
   StakingAccountRaw,
@@ -20,11 +24,10 @@ export type {
   StakingResources,
   StakingResourcesRaw,
   StakingValidatorItem,
-  StakingOperation,
-  StakingContractConfig,
   StakingSearchFilter,
   StakingOperationExtra,
   StakingOperationExtraRaw,
   StakingLikeNetworkInfo,
   StakingLikeNetworkInfoRaw,
-} from "@ledgerhq/coin-evm/types/index";
+} from "@ledgerhq/types-live";
+export type { StakingContractConfig, StakingOperation } from "@ledgerhq/coin-evm/types/staking";

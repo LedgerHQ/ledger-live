@@ -420,11 +420,11 @@ export default class Eth {
   }
 
   /**
-   * Sign an EIP-721 formatted message following the specification here:
+   * Sign an EIP-712 formatted message following the specification here:
    * https://github.com/LedgerHQ/app-ethereum/blob/develop/doc/ethapp.asc#sign-eth-eip-712
    * ⚠️ This method is not compatible with nano S (LNS). Make sure to use a try/catch to fallback on the signEIP712HashedMessage method ⚠️
    @example
-   eth.signEIP721Message("44'/60'/0'/0/0", {
+   eth.signEIP712Message("44'/60'/0'/0/0", {
       domain: {
         chainId: 69,
         name: "Da Domain",

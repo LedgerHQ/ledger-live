@@ -162,6 +162,26 @@ describe("useAddressesViewModel", () => {
       });
     });
 
+    describe("addressesCount", () => {
+      it("returns the total number of accounts (not capped by the preview)", () => {
+        const { btcAccounts, distributionItem } = buildBtcSetup(8);
+        const { result } = renderHook(
+          () => useAddressesViewModel(mockBtcCryptoCurrency, distributionItem),
+          withRawAccounts(btcAccounts),
+        );
+
+        expect(result.current.addressesCount).toBe(8);
+        expect(result.current.displayedAccounts).toHaveLength(5);
+      });
+
+      it("is 0 when distributionItem is undefined", () => {
+        const { result } = renderHook(() =>
+          useAddressesViewModel(mockBtcCryptoCurrency, undefined),
+        );
+        expect(result.current.addressesCount).toBe(0);
+      });
+    });
+
     describe("hasMore", () => {
       it("is false when there are fewer than 5 accounts", () => {
         const { btcAccounts, distributionItem } = buildBtcSetup(4);
@@ -266,6 +286,92 @@ describe("useAddressesViewModel", () => {
         expect(mockNavigate).not.toHaveBeenCalled();
         expect(track).not.toHaveBeenCalled();
       });
+    });
+  });
+
+  describe("onAccountPress", () => {
+    it("navigates to the Account screen for a main account and fires analytics", () => {
+      const btcAccounts = [
+        genAccount("bitcoin-0", { currency: mockBtcCryptoCurrency, operationsSize: 0 }),
+      ];
+
+      const { result } = renderHook(
+        () =>
+          useAddressesViewModel(
+            mockBtcCryptoCurrency,
+            buildDistributionItem(mockBtcCryptoCurrency, btcAccounts),
+          ),
+        withRawAccounts(btcAccounts),
+      );
+
+      const [data] = result.current.displayedAccounts;
+      act(() => result.current.onAccountPress(data));
+
+      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Accounts, {
+        screen: ScreenName.Account,
+        params: { accountId: btcAccounts[0].id },
+      });
+      expect(track).toHaveBeenCalledWith("button_clicked", {
+        button: "address",
+        currency: "bitcoin",
+        chain: "bitcoin",
+        page: "Asset Detail",
+      });
+    });
+
+    it("navigates to the parent account for a token account and tracks the chain", () => {
+      const ethAccount = genAccount("usdt-eth", {
+        currency: mockEthCryptoCurrency,
+        operationsSize: 0,
+      });
+      const ethSub = genTokenAccount(0, ethAccount, usdtEthToken);
+      ethSub.balance = new BigNumber(120_000_000);
+      ethAccount.subAccounts = [ethSub];
+
+      const { result } = renderHook(
+        () => useAddressesViewModel(usdtEthToken, buildDistributionItem(usdtEthToken, [ethSub])),
+        withRawAccounts([ethAccount]),
+      );
+
+      const [data] = result.current.displayedAccounts;
+      act(() => result.current.onAccountPress(data));
+
+      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Accounts, {
+        screen: ScreenName.Account,
+        params: {
+          currencyId: mockEthCryptoCurrency.id,
+          parentId: ethAccount.id,
+          accountId: ethSub.id,
+        },
+      });
+      expect(track).toHaveBeenCalledWith("button_clicked", {
+        button: "address",
+        currency: usdtEthToken.id,
+        chain: mockEthCryptoCurrency.id,
+        page: "Asset Detail",
+      });
+    });
+
+    it("does nothing when currency is undefined", () => {
+      const btcAccount = genAccount("bitcoin-0", {
+        currency: mockBtcCryptoCurrency,
+        operationsSize: 0,
+      });
+
+      const { result } = renderHook(() => useAddressesViewModel(undefined, undefined));
+
+      act(() =>
+        result.current.onAccountPress({
+          id: btcAccount.id,
+          account: btcAccount,
+          balanceAccount: btcAccount,
+          name: "name",
+          truncatedAddress: "addr",
+        }),
+      );
+
+      expect(mockNavigate).not.toHaveBeenCalled();
+      expect(track).not.toHaveBeenCalled();
     });
   });
 

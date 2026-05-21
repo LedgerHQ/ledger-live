@@ -19,3 +19,4 @@ export * from "./ABTesting";
 export * from "./walletSync";
 export * from "./crypto-assets";
 export * from "./recentAddresses";
+export * from "./staking";

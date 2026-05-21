@@ -14,6 +14,7 @@ import { Addresses } from "./components/Addresses";
 import { Transactions } from "./components/Transactions";
 import { Footer } from "./components/Footer";
 import { FallbackBanner } from "./components/FallbackBanner";
+import { HiddenAssetBanner } from "./components/HiddenAssetBanner";
 import { MarketData } from "./components/MarketData";
 import { CTAS_HEIGHT } from "./utils/constants";
 import { AssetCoinOptionsSheetView } from "./components/CoinOptions/AssetCoinOptionsSheetView";
@@ -59,6 +60,7 @@ export function AssetDetailView({
         refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
       >
         <Box lx={contentStyle}>
+          <HiddenAssetBanner show={coinOptions.isHidden} onShowAsset={coinOptions.onShowAsset} />
           <BalanceGraph currency={currency} hideReceive={hideReceiveInBalanceGraph} />
           <BalanceDetails
             currency={currency}
@@ -71,7 +73,11 @@ export function AssetDetailView({
             isLoading={isLoading}
           />
           <MarketData currency={currency} />
-          <Transactions currency={currency} isLoading={isLoading} />
+          <Transactions
+            currency={currency}
+            distributionItem={distributionItem}
+            isLoading={isLoading}
+          />
           <FallbackBanner show={showFallbackBanner} />
         </Box>
       </ScrollView>

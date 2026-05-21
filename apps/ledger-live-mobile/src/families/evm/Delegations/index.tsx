@@ -1,7 +1,9 @@
 import BigNumber from "bignumber.js";
 import React, { useCallback, useState, useMemo } from "react";
 import { View, StyleSheet, Linking } from "react-native";
-import { useTheme } from "@react-navigation/native";
+import { useTheme, useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { ScreenName, NavigatorName } from "~/const";
 import { useTranslation } from "~/context/Locale";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
@@ -60,6 +62,7 @@ function Delegations({ account }: Props) {
   const mainAccount = getMainAccount(account) as StakingAccount;
   const delegations: StakingMappedDelegation[] = useEvmFamilyMappedDelegations(mainAccount);
   const currency = getAccountCurrency(mainAccount);
+  const navigation = useNavigation();
   const unit = useAccountUnit(account);
   const { validators } = useEvmFamilyPreloadData(account.currency.id);
 
@@ -77,11 +80,39 @@ function Delegations({ account }: Props) {
     BigNumber(0),
   );
 
+  const onNavigate = useCallback(
+    ({
+      route,
+      screen,
+      params,
+    }: {
+      route: string;
+      screen?: string;
+      params?: { [key: string]: unknown };
+    }) => {
+      setDelegation(undefined);
+      // This is complicated (even impossible?) to type properly…
+      (navigation as NativeStackNavigationProp<{ [key: string]: object }>).navigate(route, {
+        screen,
+        params: { ...params, accountId: account.id },
+      });
+    },
+    [navigation, account.id],
+  );
+
   const onDelegate = useCallback(() => {}, []);
   const onRedelegate = useCallback(() => {}, []);
   const onCollectRewards = useCallback(() => {}, []);
-  const onUndelegate = useCallback(() => {}, []);
-
+  const onUndelegate = useCallback(() => {
+    onNavigate({
+      route: NavigatorName.EvmUndelegationFlow,
+      screen: ScreenName.EvmUndelegationAmount,
+      params: {
+        accountId: account.id,
+        delegation,
+      },
+    });
+  }, [onNavigate, delegation, account]);
   const onCloseDrawer = useCallback(() => {
     setDelegation(undefined);
     setUndelegation(undefined);

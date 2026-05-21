@@ -36,6 +36,7 @@ function renderView(
   return render(
     <DeviceConnectionComponentLWMView
       state={state}
+      platform={callbacks.platform ?? "android"}
       onConnectLedgerDevice={callbacks.onConnectLedgerDevice ?? jest.fn()}
       onBuyLedgerDevice={callbacks.onBuyLedgerDevice ?? jest.fn()}
     />,
@@ -102,7 +103,7 @@ describe("DeviceConnectionComponentLWMView", () => {
       ignore: jest.fn(),
     });
 
-    expect(screen.getByText("Unable to discover devices")).toBeVisible();
+    expect(screen.getByText("Something went wrong")).toBeVisible();
   });
 
   it("should render the connecting state", () => {
@@ -119,7 +120,7 @@ describe("DeviceConnectionComponentLWMView", () => {
       ignore: jest.fn(),
     });
 
-    expect(screen.getByText("Unable to connect")).toBeVisible();
+    expect(screen.getByText("Pairing unsuccessful")).toBeVisible();
   });
 
   it("should render nothing when connected", () => {

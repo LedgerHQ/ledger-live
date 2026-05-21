@@ -10,6 +10,7 @@ export enum CoinType {
   ARK = 111,
   ATH = 1620,
   BANANO = 198,
+  BITTENSOR = 1005,
   BTC = 0,
   BTC_CASH = 145,
   BTC_GOLD = 156,

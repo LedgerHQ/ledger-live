@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useMarketByCurrencies } from "../../../dada-client/hooks/useMarketByCurrencies";
 import counterValueFormatter from "../../../market/utils/countervalueFormatter";
+import { useUsdToFiatRate } from "../../../counterValues/hooks/useUsdToFiatRate";
 import { AssetConfigurationOptions } from "../../utils/type";
 
 const createMarketPriceItem = ({
@@ -23,6 +24,7 @@ export const useRightMarketTrendModule = (
 ) => {
   const marketByCurrencies = useMarketByCurrencies(currencies);
   const { counterValueCurrency, locale } = useBalanceDeps();
+  const { status, rate } = useUsdToFiatRate(counterValueCurrency.ticker);
 
   return useMemo(() => {
     return currencies.map(currency => {
@@ -31,13 +33,15 @@ export const useRightMarketTrendModule = (
       if (
         !currencyMarket ||
         currencyMarket.priceChangePercentage24h === undefined ||
-        currencyMarket.price === undefined
+        currencyMarket.price === undefined ||
+        status !== "ready" ||
+        rate == null
       ) {
         return currency;
       }
 
       const priceFormatted = counterValueFormatter({
-        value: currencyMarket.price,
+        value: currencyMarket.price * rate,
         currency: counterValueCurrency.ticker,
         locale,
       });
@@ -51,5 +55,13 @@ export const useRightMarketTrendModule = (
         }),
       };
     });
-  }, [currencies, marketByCurrencies, counterValueCurrency.ticker, locale, MarketPriceIndicator]);
+  }, [
+    currencies,
+    marketByCurrencies,
+    status,
+    rate,
+    counterValueCurrency.ticker,
+    locale,
+    MarketPriceIndicator,
+  ]);
 };

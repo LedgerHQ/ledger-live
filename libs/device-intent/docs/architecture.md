@@ -47,8 +47,9 @@ business logic or state management**. Its only job is:
     `DeviceContextInitializerComponent`.
   - **Executing intent** → render `intent.component` with the current `jobState`
     and `extraProps`.
-  - **Connection / intent error** → render the corresponding platform-injected
-    error component (`ConnectionErrorComponent`, `IntentErrorComponent`).
+  - **Device disconnected** → render the platform-injected
+    `DeviceDisconnectedComponent`.
+  - **Intent error** → render the platform-injected `IntentErrorComponent`.
   - **Invalid operation** → render the platform-injected
     `InvalidOperationComponent`.
   - **Idle** → render the last intent snapshot (component + last `jobState` +
@@ -198,19 +199,18 @@ for transition semantics and state-to-state behavior.
 | From                           | Event                                  | Type                 | To                                                             |
 | ------------------------------ | -------------------------------------- | -------------------- | -------------------------------------------------------------- |
 | ●                              | start with initial intent + init input | caller               | Phase 1: Device connection                                     |
-| Phase 1: Device connection     | error                                  | internal (component) | Connection Error                                               |
 | Phase 1: Device connection     | device connected                       | internal (component) | Phase 2: Device initialization                                 |
 | Phase 1: Device connection     | terminate                              | caller               | ◉                                                              |
-| Connection Error               | user retry                             | internal (component) | Phase 1: Device connection                                     |
+| Device Disconnected            | user retry                             | internal (component) | Phase 1: Device connection                                     |
 | Phase 2: Device initialization | device context initialized             | internal (component) | Phase 3: Intent execution                                      |
 | Phase 2: Device initialization | change intent                          | caller               | Phase 2: Device initialization (self, updates stored intent)   |
 | Phase 2: Device initialization | change initialization input            | caller               | Phase 2: Device initialization (self, restarts initialization) |
-| Phase 2: Device initialization | device disconnected                    | internal (component) | Connection Error                                               |
+| Phase 2: Device initialization | device disconnected                    | internal (component) | Device Disconnected                                            |
 | Phase 2: Device initialization | terminate                              | caller               | ◉                                                              |
 | Phase 3: Intent execution      | job emits error                        | internal (job sub)   | Intent Error                                                   |
 | Phase 3: Intent execution      | intent stopped                         | caller               | Phase 4: Idle                                                  |
 | Phase 3: Intent execution      | intent completed                       | internal (job sub)   | Phase 4: Idle                                                  |
-| Phase 3: Intent execution      | device disconnected                    | internal (component) | Connection Error                                               |
+| Phase 3: Intent execution      | device disconnected                    | internal (component) | Device Disconnected                                            |
 | Phase 3: Intent execution      | change intent                          | caller               | Invalid Operation                                              |
 | Phase 3: Intent execution      | change initialization input            | caller               | Invalid Operation                                              |
 | Phase 3: Intent execution      | terminate                              | caller               | ◉                                                              |
@@ -218,7 +218,7 @@ for transition semantics and state-to-state behavior.
 | Intent Error                   | change intent                          | caller               | Phase 3: Intent execution                                      |
 | Phase 4: Idle                  | change intent                          | caller               | Phase 3: Intent execution                                      |
 | Phase 4: Idle                  | change initialization input            | caller               | Phase 2: Device initialization                                 |
-| Phase 4: Idle                  | device disconnected                    | internal (component) | Connection Error                                               |
+| Phase 4: Idle                  | device disconnected                    | internal (component) | Device Disconnected                                            |
 | Phase 4: Idle                  | terminate                              | caller               | ◉                                                              |
 
 ---

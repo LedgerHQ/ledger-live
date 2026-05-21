@@ -24,7 +24,6 @@ function makeParams(
     intentComponentExtraProps: undefined,
     lastIntentSnapshot: null,
     onConnected: noop,
-    onConnectionError: noop,
     onContextInitialized: noop,
     onRetry: noop,
     onUserCancel: noop,
@@ -35,13 +34,11 @@ function makeParams(
 describe("deriveHookState", () => {
   it("maps connectingDevice to deviceConnection phase with correct params", () => {
     const onConnected = jest.fn();
-    const onConnectionError = jest.fn();
     const onUserCancel = jest.fn();
     const deviceConnectionParams = { acceptedDeviceModelIds: [] };
     const params = makeParams({
       deviceConnectionParams,
       onConnected,
-      onConnectionError,
       onUserCancel,
     });
     const state: ExecutorState = { type: "connectingDevice" };
@@ -52,23 +49,20 @@ describe("deriveHookState", () => {
       phase: "deviceConnection",
       deviceConnectionParams,
       onConnected,
-      onError: onConnectionError,
       onClose: onUserCancel,
     });
   });
 
-  it("maps connectingDeviceError to connectionError phase with error, onRetry and onClose", () => {
+  it("maps deviceDisconnected to deviceDisconnected phase with onRetry and onClose", () => {
     const onRetry = jest.fn();
     const onUserCancel = jest.fn();
-    const error = new Error("connection failed");
     const params = makeParams({ onRetry, onUserCancel });
-    const state: ExecutorState = { type: "connectingDeviceError", error };
+    const state: ExecutorState = { type: "deviceDisconnected" };
 
     const result = deriveHookState(state, params);
 
     expect(result).toEqual({
-      phase: "connectionError",
-      error,
+      phase: "deviceDisconnected",
       onRetry,
       onClose: onUserCancel,
     });
@@ -202,7 +196,7 @@ describe("deriveHookState", () => {
 
     const phases: ExecutorState[] = [
       { type: "connectingDevice" },
-      { type: "connectingDeviceError", error: new Error("e") },
+      { type: "deviceDisconnected" },
       { type: "initializingDeviceContext" },
       { type: "executingIntent" },
       { type: "executingIntentError", error: new Error("e") },
