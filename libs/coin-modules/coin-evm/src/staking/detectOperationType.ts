@@ -8,6 +8,7 @@ const OP_MAP: Partial<Record<StakingOperation, OperationType>> = {
   delegate: "DELEGATE",
   undelegate: "UNDELEGATE",
   redelegate: "REDELEGATE",
+  claimReward: "REWARD",
 };
 
 /**
@@ -40,7 +41,7 @@ const getStakingMethodSelectors = (
   for (const [op, fn] of Object.entries(config.functions)) {
     const operation = op as StakingOperation;
     const mapped = OP_MAP[operation];
-    if (!mapped || !fn) continue; // only map delegate/undelegate/redelegate
+    if (!mapped || !fn) continue;
 
     try {
       // Find the appropriate function in the ABI by the name

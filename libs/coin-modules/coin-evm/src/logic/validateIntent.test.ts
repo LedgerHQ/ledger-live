@@ -5,6 +5,7 @@ import {
 } from "@ledgerhq/coin-module-framework/api/types";
 import {
   AmountRequired,
+  ClaimRewardsFeesWarning,
   ETHAddressNonEIP,
   FeeNotLoaded,
   FeeTooHigh,
@@ -672,6 +673,65 @@ describe("validateIntent", () => {
         expect(res.amount).toBe(900_000_000_000_000_000n);
         expect(res.errors.amount).toBeUndefined();
       });
+    });
+
+    const claimWarningCases: ReadonlyArray<{
+      name: string;
+      amount: bigint;
+      native: boolean;
+      expectedWarning: boolean;
+    }> = [
+      {
+        name: "fires when network fees exceed claim reward amount",
+        amount: 100n,
+        native: true,
+        expectedWarning: true,
+      },
+      {
+        name: "does not fire when claim rewards exceed fees",
+        amount: 1_000_000n,
+        native: true,
+        expectedWarning: false,
+      },
+      {
+        name: "does not fire when claim reward amount is zero",
+        amount: 0n,
+        native: true,
+        expectedWarning: false,
+      },
+      {
+        name: "does not fire when claim reward asset is not native",
+        amount: 100n,
+        native: false,
+        expectedWarning: false,
+      },
+    ];
+
+    it.each(claimWarningCases)("$name", async ({ amount, native, expectedWarning }) => {
+      const tokenAsset = {
+        type: "token" as const,
+        assetReference: "0x0000000000000000000000000000000000000001",
+      };
+      const res = await validateIntent(
+        stakingCurrency,
+        stakingIntent({
+          mode: "claimReward",
+          amount,
+          valAddress: "seivaloper1y82m5y3wevjneamzg0pmx87dzanyxzht0kepvn",
+          ...(native ? {} : { asset: tokenAsset }),
+        }),
+        [
+          { value: 10_000_000n, asset: { type: "native" } },
+          ...(native ? [] : [{ value: 1_000n, asset: tokenAsset }]),
+        ],
+        { value: 150n, parameters: { gasLimit: 21000n, gasPrice: 1n } },
+      );
+
+      if (expectedWarning) {
+        expect(res.warnings.claimRewardsFee).toBeInstanceOf(ClaimRewardsFeesWarning);
+      } else {
+        expect(res.warnings.claimRewardsFee).toBeUndefined();
+      }
     });
   });
 
