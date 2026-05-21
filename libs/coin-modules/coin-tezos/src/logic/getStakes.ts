@@ -18,11 +18,44 @@ export const isUnstakingPosition = (uid: string) => uid.startsWith(STAKING_UID_P
 export const isFinalizablePosition = (uid: string) =>
   uid.startsWith(STAKING_UID_PREFIX.finalizable);
 
-export async function fetchUnstakeRequests(
+export function fetchUnstakeRequests(
   address: string,
-  needed: boolean,
+  account: APIAccount,
 ): Promise<APIUnstakeRequest[]> {
-  return needed ? api.getUnstakeRequests(address) : [];
+  if (account.type !== "user") return Promise.resolve([]);
+  return (account.unstakedBalance ?? 0) > 0
+    ? api.getUnstakeRequests(address)
+    : Promise.resolve([]);
+}
+
+function unstakeRequestToStake(address: string, req: APIUnstakeRequest): Stake | null {
+  if (req.actualAmount <= 0) {
+    log("coin:tezos", "unstakeRequestToStake: dropping non-positive unstake request", {
+      requestId: req.id,
+      actualAmount: req.actualAmount,
+    });
+    return null;
+  }
+  const createdAt = new Date(req.firstTime);
+  if (!Number.isFinite(createdAt.getTime())) {
+    log("coin:tezos", "unstakeRequestToStake: dropping unstake request with invalid firstTime", {
+      requestId: req.id,
+      firstTime: req.firstTime,
+    });
+    return null;
+  }
+  const isFinalizable = req.status === "finalizable";
+  const prefix = isFinalizable ? STAKING_UID_PREFIX.finalizable : STAKING_UID_PREFIX.unstaking;
+  return {
+    uid: `${prefix}${req.id}`,
+    address,
+    ...(req.baker?.address && { delegate: req.baker.address }),
+    state: isFinalizable ? "inactive" : "deactivating",
+    createdAt,
+    asset: { type: "native" },
+    amount: BigInt(req.actualAmount),
+    actions: [],
+  };
 }
 
 export function buildStakesForAccount(
@@ -68,33 +101,8 @@ export function buildStakesForAccount(
   }
 
   for (const req of unstakeRequests) {
-    if (req.actualAmount <= 0) {
-      log("coin:tezos", "buildStakesForAccount: dropping non-positive unstake request", {
-        requestId: req.id,
-        actualAmount: req.actualAmount,
-      });
-      continue;
-    }
-    const createdAt = new Date(req.firstTime);
-    if (!Number.isFinite(createdAt.getTime())) {
-      log("coin:tezos", "buildStakesForAccount: dropping unstake request with invalid firstTime", {
-        requestId: req.id,
-        firstTime: req.firstTime,
-      });
-      continue;
-    }
-    const isFinalizable = req.status === "finalizable";
-    const prefix = isFinalizable ? STAKING_UID_PREFIX.finalizable : STAKING_UID_PREFIX.unstaking;
-    stakes.push({
-      uid: `${prefix}${req.id}`,
-      address,
-      ...(req.baker?.address && { delegate: req.baker.address }),
-      state: isFinalizable ? "inactive" : "deactivating",
-      createdAt,
-      asset: { type: "native" },
-      amount: BigInt(req.actualAmount),
-      actions: [],
-    });
+    const stake = unstakeRequestToStake(address, req);
+    if (stake) stakes.push(stake);
   }
 
   return stakes;
@@ -103,9 +111,6 @@ export function buildStakesForAccount(
 export async function getStakes(address: string, _cursor?: Cursor): Promise<Page<Stake>> {
   const accountInfo = await api.getAccountByAddress(address);
   if (accountInfo.type !== "user") return { items: [] };
-  const unstakeRequests = await fetchUnstakeRequests(
-    address,
-    (accountInfo.unstakedBalance ?? 0) > 0,
-  );
+  const unstakeRequests = await fetchUnstakeRequests(address, accountInfo);
   return { items: buildStakesForAccount(address, accountInfo, unstakeRequests) };
 }

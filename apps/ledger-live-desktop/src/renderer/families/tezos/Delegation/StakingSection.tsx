@@ -24,6 +24,7 @@ import Plus from "~/renderer/icons/Plus";
 import StopCircle from "~/renderer/icons/StopCircle";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import BakerImage from "../BakerImage";
+import SectionHeaderColumns from "./SectionHeaderColumns";
 
 const HeaderWrapper = styled(BaseHeaderWrapper)`
   > * {
@@ -65,7 +66,7 @@ const Base = styled.div`
   flex: 1;
 `;
 
-const CTA = styled.div`
+const Cta = styled.div`
   flex: 0.5;
   display: flex;
   justify-content: flex-end;
@@ -147,16 +148,7 @@ const StakingSection = ({ account, info }: Props) => {
     <TableContainer mb={6}>
       <TableHeader title={t("tezos.staking.header")} />
       <HeaderWrapper>
-        <Text ff="Inter|SemiBold" color="neutral.c70" fontSize={3}>
-          <Trans i18nKey="delegation.validator" />
-        </Text>
-        <Text ff="Inter|SemiBold" color="neutral.c70" fontSize={3}>
-          <Trans i18nKey="delegation.amount" />
-        </Text>
-        <Text ff="Inter|SemiBold" color="neutral.c70" fontSize={3}>
-          <Trans i18nKey="delegation.value" />
-        </Text>
-        <Text />
+        <SectionHeaderColumns />
       </HeaderWrapper>
       <RowWrapper>
         <BakerCell onClick={openBaker}>
@@ -184,7 +176,7 @@ const StakingSection = ({ account, info }: Props) => {
             value={stakedBalance}
           />
         </Base>
-        <CTA>
+        <Cta>
           <DropDownSelector items={items} renderItem={renderItem}>
             {() => (
               <MenuButton>
@@ -192,7 +184,7 @@ const StakingSection = ({ account, info }: Props) => {
               </MenuButton>
             )}
           </DropDownSelector>
-        </CTA>
+        </Cta>
       </RowWrapper>
     </TableContainer>
   );

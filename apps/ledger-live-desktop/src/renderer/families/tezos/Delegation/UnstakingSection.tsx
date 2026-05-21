@@ -18,6 +18,7 @@ import TableContainer, {
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useDateFromNow } from "~/renderer/hooks/useDateFormatter";
 import BakerImage from "../BakerImage";
+import SectionHeaderColumns from "./SectionHeaderColumns";
 
 const UNSTAKE_DELAY_MS = 4 * 24 * 60 * 60 * 1000;
 
@@ -152,18 +153,7 @@ const UnstakingSection = ({ account, info }: Props) => {
     <TableContainer mb={6}>
       <TableHeader title={t("tezos.unstaking.header")} />
       <HeaderWrapper>
-        <Text ff="Inter|SemiBold" color="neutral.c70" fontSize={3}>
-          <Trans i18nKey="delegation.validator" />
-        </Text>
-        <Text ff="Inter|SemiBold" color="neutral.c70" fontSize={3}>
-          <Trans i18nKey="delegation.amount" />
-        </Text>
-        <Text ff="Inter|SemiBold" color="neutral.c70" fontSize={3}>
-          <Trans i18nKey="delegation.value" />
-        </Text>
-        <Text ff="Inter|SemiBold" color="neutral.c70" fontSize={3}>
-          <Trans i18nKey="delegation.duration" />
-        </Text>
+        <SectionHeaderColumns trailingI18nKey="delegation.duration" />
       </HeaderWrapper>
       {unstakingPositions.map(position => (
         <UnstakingRow key={position.uid} position={position} account={account} />

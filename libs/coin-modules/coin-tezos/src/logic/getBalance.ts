@@ -18,10 +18,7 @@ export async function getBalance(address: string): Promise<Balance[]> {
     tokensBalancesResult.status === "fulfilled" ? tokensBalancesResult.value : [];
   const normalized = apiAccount.type === "user" ? BigInt(apiAccount.balance) : 0n;
 
-  const unstakeRequests = await fetchUnstakeRequests(
-    address,
-    apiAccount.type === "user" && (apiAccount.unstakedBalance ?? 0) > 0,
-  );
+  const unstakeRequests = await fetchUnstakeRequests(address, apiAccount);
 
   const stakeBalances: Balance[] =
     apiAccount.type === "user"
