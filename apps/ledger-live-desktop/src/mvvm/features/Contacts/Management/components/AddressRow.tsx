@@ -11,12 +11,19 @@ import {
   Tag,
 } from "@ledgerhq/lumen-ui-react";
 import type { ContactEntry } from "~/renderer/contacts/types";
+import type { CryptoOption } from "~/mvvm/features/Contacts/constants/topCryptos";
 import { getChainInfo } from "../utils/getChainInfo";
 import { truncateAddressLong } from "../utils/truncateAddressLong";
 import { AddressRowMenu } from "./AddressRowMenu";
 
 type Props = {
   entry: ContactEntry;
+  /**
+   * The crypto resolved by the grouping layer (sidecar metadata, or
+   * the chain's native gas token as a fallback). Passed in so the row
+   * never has to re-resolve — the parent already did.
+   */
+  crypto: CryptoOption;
   onSelect: (entry: ContactEntry) => void;
 };
 
@@ -24,25 +31,30 @@ type Props = {
  * One address row in the contact details pane.
  *
  * Layout matches the Figma frame 13827:32002:
- * - Leading: `CryptoIcon` for the chain's native gas token (we don't have
- *   per-address token info today; the chain icon is the closest signal).
- * - Title row: `entry.scope` (the user's label) + a Lumen `Tag` with the
- *   network label, side-by-side via `ListItemContentRow`.
+ * - Leading: the resolved crypto's icon (e.g. USDC) with a small
+ *   network-chain badge (e.g. Ethereum) — `CryptoIcon`'s built-in
+ *   `network` prop attaches the dot-symbol in the corner. Falls back
+ *   to the chain's gas token when the crypto is the chain native
+ *   (avoids the redundant ETH-on-ETH badge).
+ * - Title row: `entry.scope` (the user's label) + a Lumen `Tag` with
+ *   the network label, side-by-side via `ListItemContentRow`.
  * - Description: truncated 0x address (wider envelope than the inline
  *   `truncateAddress` util — see `truncateAddressLong`).
  * - Trailing: `AddressRowMenu` — a Lumen `Popover` anchored on an
- *   `IconButton` (`appearance="no-background"`, MoreHorizontal symbol)
- *   with four overflow actions. The trigger and menu items both carry
- *   hover/pressed/focus states from Lumen; the items themselves are
- *   intentionally inert in L4 (wiring lands in L4.1).
+ *   `IconButton` with four overflow actions. Inert in L4.
  *
  * Clicking anywhere on the row (outside the trailing menu) opens the
- * address-detail dialog with the full address + QR code (Figma frame
- * 13844:9651). The dialog open state is owned by the parent
- * (ContactDetails) — `onSelect` fires with this row's `entry`.
+ * address-detail dialog with the full address + QR code.
  */
-export function AddressRow({ entry, onSelect }: Props) {
+export function AddressRow({ entry, crypto, onSelect }: Props) {
   const chain = getChainInfo(entry.chainId);
+
+  // Don't render the chain badge when the crypto IS the chain native
+  // gas token — looks redundant (ETH icon with ETH dot, USDC icon
+  // with… still the chain it's on, so we always want the badge for
+  // tokens but skip for natives).
+  const isNativeOfChain = crypto.ticker.toLowerCase() === chain.ticker.toLowerCase();
+  const networkBadge = isNativeOfChain ? undefined : chain.ledgerId;
 
   return (
     <ListItem
@@ -52,10 +64,11 @@ export function AddressRow({ entry, onSelect }: Props) {
     >
       <ListItemLeading>
         <CryptoIcon
-          ticker={chain.ticker}
-          ledgerId={chain.ledgerId}
+          ticker={crypto.ticker}
+          ledgerId={crypto.ledgerId}
+          network={networkBadge}
           size={48}
-          alt={chain.shortLabel}
+          alt={crypto.name}
         />
         <ListItemContent>
           <ListItemContentRow>

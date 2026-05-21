@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { IconButton } from "@ledgerhq/lumen-ui-react";
 import { MoreHorizontal, Plus } from "@ledgerhq/lumen-ui-react/symbols";
 import type { Contact, ContactEntry } from "~/renderer/contacts/types";
-import { groupAddressesByChain } from "../utils/groupAddressesByChain";
+import { groupAddressesByCrypto } from "../utils/groupAddressesByCrypto";
+import { useCryptoMeta } from "../utils/cryptoMeta";
 import { AddressDetailDialog } from "./AddressDetailDialog";
 import { AddressRow } from "./AddressRow";
 import { InitialsAvatar } from "./InitialsAvatar";
@@ -23,11 +24,12 @@ type Props = {
  * - Top-right corner: two `IconButton`s (Plus + MoreHorizontal). Both
  *   intentionally non-wired in L4 — Lumen's hover/press states still
  *   render because we omit `disabled` and `onClick`. Wiring lands in L4.1.
- * - Address sections: addresses grouped by chain (see
- *   `groupAddressesByChain`), each section is a small label + a rounded
- *   `bg-surface-transparent` container wrapping the rows. Clicking a row
- *   opens the `AddressDetailDialog` with that entry (Figma frame
- *   13844:9651 dialog-sheet).
+ * - Address sections: grouped by CRYPTO (USDC, ETH, …) via
+ *   `groupAddressesByCrypto`, which reads the sidecar `cryptoMeta`
+ *   store (DEMO-only — see `utils/cryptoMeta.ts`) and falls back to
+ *   each entry's chain-native gas token. Section header shows the
+ *   crypto ticker; rows carry the crypto's icon with a chain dot
+ *   badge in the corner.
  *
  * Dialog open state lives here so a single dialog instance handles every
  * row in the pane.
@@ -39,7 +41,14 @@ type Props = {
 export function ContactDetails({ contact }: Props) {
   const { t } = useTranslation();
   const count = contact.entries.length;
-  const sections = groupAddressesByChain(contact.entries);
+  // Subscribe once at the parent so each AddressRow's grouping
+  // re-renders whenever the sidecar is updated (e.g. after registering
+  // a new address via the L1 form).
+  const cryptoMeta = useCryptoMeta();
+  const sections = useMemo(
+    () => groupAddressesByCrypto(contact.entries, cryptoMeta),
+    [contact.entries, cryptoMeta],
+  );
 
   // `null` = closed; otherwise points at the entry whose detail dialog
   // is showing. We keep the previous entry in state while the dialog is
@@ -81,29 +90,39 @@ export function ContactDetails({ contact }: Props) {
         </div>
       </div>
 
-      {/* Address sections grouped by chain. */}
+      {/* Address sections grouped by crypto.
+          `unknown` entries (entries with no sidecar metadata AND no
+          chain-native fallback for their chainId) are filtered out —
+          in normal demo flow every EVM chain in the L1 form has a
+          fallback, so this should never visibly drop anything. */}
       {sections.length > 0 && (
         <div className="flex flex-col gap-24 w-full">
-          {sections.map(section => (
-            <div key={section.chainId} className="flex flex-col gap-8 w-full">
-              <p className="body-3 text-muted">{section.shortLabel}</p>
-              {/*
-                Figma frame 13827:32002 wraps each chain's address rows in
-                a `--surface-transparent` (5% white) rounded box that sits
-                as a subtle tinted card on top of the now-opaque
-                `bg-surface` details pane.
-              */}
-              <div className="flex flex-col bg-surface-transparent rounded-lg p-4">
-                {section.entries.map(entry => (
-                  <AddressRow
-                    key={`${entry.chainId}:${entry.addressHex}`}
-                    entry={entry}
-                    onSelect={setActiveEntry}
-                  />
-                ))}
-              </div>
-            </div>
-          ))}
+          {sections
+            .filter(section => section.cryptoId !== "unknown")
+            .map(section => {
+              if (section.cryptoId === "unknown") return null; // narrow
+              return (
+                <div key={section.cryptoId} className="flex flex-col gap-8 w-full">
+                  <p className="body-3 text-muted">{section.crypto.ticker}</p>
+                  {/*
+                    Figma frame 13827:32002 wraps each section's rows in a
+                    `--surface-transparent` (5% white) rounded box that
+                    sits as a subtle tinted card on top of the now-opaque
+                    `bg-surface` details pane.
+                  */}
+                  <div className="flex flex-col bg-surface-transparent rounded-lg p-4">
+                    {section.entries.map(entry => (
+                      <AddressRow
+                        key={`${entry.chainId}:${entry.addressHex}`}
+                        entry={entry}
+                        crypto={section.crypto}
+                        onSelect={setActiveEntry}
+                      />
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
         </div>
       )}
 

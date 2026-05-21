@@ -26,6 +26,7 @@ import DeviceActionButton from "../components/DeviceActionButton";
 import type { NetworkOption } from "../constants/networks";
 import { TOP_CRYPTOS, type CryptoOption } from "../constants/topCryptos";
 import { getNetworksForCrypto } from "../utils/getNetworksForCrypto";
+import { setCryptoMeta } from "../Management/utils/cryptoMeta";
 
 const EXTERNAL_DERIVATION_PATH = "44'/60'/0'/0/0";
 
@@ -133,6 +134,13 @@ const RegisterExternalAddressSection = ({ contacts, run }: Props) => {
             }),
           );
     if (ok) {
+      // Persist the crypto annotation into the sidecar so the L4
+      // details pane can group this entry under the right crypto.
+      // DEMO-only — see `Management/utils/cryptoMeta.ts` for the
+      // rule-violation caveat and migration path.
+      if (crypto) {
+        setCryptoMeta(normAddress, network.chainId, crypto.id);
+      }
       setPick({ mode: "new", name: "" });
       setCrypto(TOP_CRYPTOS[0] ?? null);
       // `network` will be re-synced by the crypto-change effect.
