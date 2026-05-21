@@ -42,9 +42,9 @@ export function ManagementView({
       // `bg-canvas` (the `--background-canvas` token) at the topmost
       // layout level — sidebar, top-bar, and content area share the
       // canvas background. We only need to handle the bottom gutter
-      // here: `pb-24` leaves a 24px gap between the panes and the
+      // here: `pb-32` leaves a 32px gap between the panes and the
       // bottom of the app, matching the Figma frame 13802:2833.
-      className="flex flex-col gap-24 h-full min-h-0 pb-24"
+      className="flex flex-col gap-24 h-full min-h-0 pb-32"
     >
       <Header />
       <div
