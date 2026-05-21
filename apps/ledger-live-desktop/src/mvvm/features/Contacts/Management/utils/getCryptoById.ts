@@ -23,16 +23,18 @@ export function getCryptoById(id: string): CryptoOption | undefined {
  * that's the safest default visual (ETH for Ethereum, POL for
  * Polygon, etc.).
  */
+// Keep these ids in sync with the CoinGecko slugs used in
+// `constants/topCryptos.ts` — that's what `getCryptoById` looks up.
 const CHAIN_NATIVE_CRYPTO_ID: Record<number, string> = {
   1: "ethereum",
   10: "ethereum", // Optimism gas token = ETH
   56: "binancecoin",
-  137: "polygon",
+  137: "matic-network",
   8453: "ethereum", // Base gas token = ETH
   42161: "ethereum", // Arbitrum gas token = ETH
-  43114: "avalanche",
+  43114: "avalanche-2",
   59144: "ethereum", // Linea gas token = ETH
-  25: "cronos",
+  25: "crypto-com-chain",
   250: "fantom",
 };
 
