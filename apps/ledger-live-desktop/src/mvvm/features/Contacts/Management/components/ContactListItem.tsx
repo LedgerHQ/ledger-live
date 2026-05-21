@@ -43,7 +43,10 @@ export function ContactListItem({ contact, isSelected, onSelect }: Props) {
     <ListItem
       density="expanded"
       onClick={isSelected ? undefined : () => onSelect(contact.name)}
-      className={cn(isSelected ? "bg-active-subtle" : "bg-transparent")}
+      // Non-selected rows inherit Lumen's intrinsic `bg-base-transparent`
+      // (matches the Figma's `--background-base-transparent` on inactive
+      // rows). Only override for the selected state.
+      className={cn(isSelected && "bg-active-subtle")}
       aria-selected={isSelected}
       data-testid="contacts-management-list-item"
       data-selected={isSelected ? "true" : "false"}
