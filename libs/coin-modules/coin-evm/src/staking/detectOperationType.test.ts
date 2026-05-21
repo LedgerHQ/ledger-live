@@ -53,6 +53,21 @@ describe("detectEvmStakingOperationType", () => {
     expect(result).toBe("REDELEGATE");
   });
 
+  it("should return REWARD for claimReward on the distribution precompile", () => {
+    const distributionAddress = "0x0000000000000000000000000000000000001007";
+    const fn = "withdrawDelegationRewards(string)";
+    const methodId = ethers.id(fn).slice(0, 10).toLowerCase();
+    const result = detectEvmStakingOperationType("sei_evm", distributionAddress, methodId);
+    expect(result).toBe("REWARD");
+  });
+
+  it("should return undefined for claimReward selector sent to the staking contract", () => {
+    const fn = "withdrawDelegationRewards(string)";
+    const methodId = ethers.id(fn).slice(0, 10).toLowerCase();
+    const result = detectEvmStakingOperationType("sei_evm", contractAddress, methodId);
+    expect(result).toBeUndefined();
+  });
+
   it("should return undefined for invalid methodId", () => {
     const result = detectEvmStakingOperationType("sei_evm", contractAddress, "0xdeadbeef");
     expect(result).toBeUndefined();
