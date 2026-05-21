@@ -75,7 +75,13 @@ export function ContactDetails({ contact }: Props) {
           {sections.map(section => (
             <div key={section.chainId} className="flex flex-col gap-8 w-full">
               <p className="body-3 text-muted">{section.shortLabel}</p>
-              <div className="flex flex-col bg-surface rounded-lg p-4">
+              {/*
+                Figma frame 13827:32002 wraps each chain's address rows in
+                a `--surface-transparent` (5% white) rounded box that sits
+                as a subtle tinted card on top of the now-opaque
+                `bg-surface` details pane.
+              */}
+              <div className="flex flex-col bg-surface-transparent rounded-lg p-4">
                 {section.entries.map(entry => (
                   <AddressRow
                     key={`${entry.chainId}:${entry.addressHex}`}
