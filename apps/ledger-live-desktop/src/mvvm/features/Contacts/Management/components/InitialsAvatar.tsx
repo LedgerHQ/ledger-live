@@ -32,9 +32,10 @@ const SIZE_PX: Record<Size, number> = {
 // Typography token for the centered initials.
 const TEXT_CLASS: Record<Size, string> = {
   sm: "body-2-semi-bold",
-  // 36px / line-height 44, weight 600 — matches the responsive-display/3
-  // token used in the Figma details pane avatar.
-  lg: "responsive-display-3",
+  // 40px / line-height 48 / letter-spacing -2 / weight 600 — matches the
+  // `heading/1-semi-bold` token used in the Figma frame 13895:2191
+  // (large avatar in the details pane).
+  lg: "heading-1-semi-bold",
 };
 
 export function InitialsAvatar({ name, size }: Props) {
