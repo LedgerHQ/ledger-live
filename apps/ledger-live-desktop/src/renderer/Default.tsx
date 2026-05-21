@@ -49,10 +49,7 @@ import { Flex, InfiniteLoader } from "@ledgerhq/react-ui";
 import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccountsWithFundsListener";
 import { accountsSelector } from "./reducers/accounts";
 import { useRecoverRestoreOnboarding } from "~/renderer/hooks/useRecoverRestoreOnboarding";
-import {
-  hasCompletedOnboardingSelector,
-  areSettingsLoaded,
-} from "~/renderer/reducers/settings";
+import { hasCompletedOnboardingSelector, areSettingsLoaded } from "~/renderer/reducers/settings";
 import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { useEnforceSupportedLanguage } from "./hooks/useEnforceSupportedLanguage";
@@ -65,6 +62,7 @@ import { setSuiGraphqlEnabled } from "@ledgerhq/live-common/families/sui/setup";
 import { themeSelector } from "./actions/general";
 import useCheckAccountWithFunds from "./components/PostOnboardingHub/logic/useCheckAccountWithFunds";
 import GlobalDialogs from "LLD/features/GlobalDialogs";
+import GenericAwarenessModalAppStart from "LLD/features/GenericAwarenessModal/GenericAwarenessModalAppStart";
 import GlobalDrawers from "LLD/features/GlobalDrawers";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/useWalletFeaturesConfig";
 import { useShouldShowDeferredModals } from "~/renderer/hooks/useShouldShowDeferredModals";
@@ -341,6 +339,7 @@ export const MainAppLayout = () => {
           <IsTermOfUseUpdated />
         </>
       )}
+      <GenericAwarenessModalAppStart />
       <SyncNewAccounts priority={2} />
 
       <div

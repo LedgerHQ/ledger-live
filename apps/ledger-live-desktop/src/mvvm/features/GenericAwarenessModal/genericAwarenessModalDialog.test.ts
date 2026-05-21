@@ -4,7 +4,6 @@ import type { AppDispatch } from "~/state-manager/configureStore";
 import {
   closeGenericAwarenessModalDialog,
   openGenericAwarenessModalDialog,
-  resolveGenericAwarenessModalContentVariant,
   selectGenericAwarenessModalCampaignId,
   selectIsGenericAwarenessModalOpen,
 } from "./genericAwarenessModalDialog";
@@ -17,23 +16,6 @@ function collectThunkDispatches(thunkFn: (dispatch: AppDispatch) => void) {
   thunkFn(fakeDispatch);
   return dispatched;
 }
-
-describe("resolveGenericAwarenessModalContentVariant", () => {
-  it("should return carousel for even numeric campaign ids", () => {
-    expect(resolveGenericAwarenessModalContentVariant("0")).toBe("carousel");
-    expect(resolveGenericAwarenessModalContentVariant("2")).toBe("carousel");
-  });
-
-  it("should return feature intro for odd numeric campaign ids", () => {
-    expect(resolveGenericAwarenessModalContentVariant("1")).toBe("featureIntro");
-    expect(resolveGenericAwarenessModalContentVariant("3")).toBe("featureIntro");
-  });
-
-  it("should return feature intro when campaign id is missing or not numeric", () => {
-    expect(resolveGenericAwarenessModalContentVariant(undefined)).toBe("featureIntro");
-    expect(resolveGenericAwarenessModalContentVariant("welcome")).toBe("featureIntro");
-  });
-});
 
 describe("genericAwarenessModalDialog", () => {
   it("open thunk stores campaign id and opens dialog", () => {

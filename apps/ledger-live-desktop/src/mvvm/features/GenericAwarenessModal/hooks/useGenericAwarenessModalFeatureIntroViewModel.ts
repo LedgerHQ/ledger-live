@@ -1,29 +1,17 @@
 import { useCallback, useMemo } from "react";
 import { useDispatch } from "LLD/hooks/redux";
+import * as Icons from "@ledgerhq/lumen-ui-react/symbols";
+import {
+  GenericAwarenessModalLayout,
+  type GenericAwarenessModalContentCard,
+  type GenericAwarenessModalFeatureIntro,
+} from "@ledgerhq/live-common/genericAwarenessModal";
 import { closeGenericAwarenessModalDialog } from "../genericAwarenessModalDialog";
-import type { FeatureIntroContentItem } from "../components/FeatureIntroContent";
+import type {
+  FeatureIntroContentItem,
+  LumenSymbolName,
+} from "../components/FeatureIntroContent";
 import { openURL } from "~/renderer/linking";
-
-const FEATURE_INTRO_ITEMS: FeatureIntroContentItem[] = [
-  {
-    id: "swap",
-    title: "Swap and bridge",
-    description: "Move assets across networks from one place.",
-    iconName: "HandCoins",
-  },
-  {
-    id: "send",
-    title: "Send and receive",
-    description: "Share addresses and confirm transfers on your device.",
-    iconName: "Gift",
-  },
-  {
-    id: "control",
-    title: "Stay in control",
-    description: "Review every sensitive action on your Ledger screen.",
-    iconName: "Github",
-  },
-];
 
 export interface GenericAwarenessModalFeatureIntroViewModel {
   title: string;
@@ -31,37 +19,57 @@ export interface GenericAwarenessModalFeatureIntroViewModel {
   items: FeatureIntroContentItem[];
   primaryButtonLabel: string;
   secondaryButtonLabel: string;
+  imageUrl?: string;
   onPrimaryClick: () => void;
   onSecondaryClick: () => void;
-  imageUrl?: string;
 }
 
-const useGenericAwarenessModalFeatureIntroViewModel =
-  (): GenericAwarenessModalFeatureIntroViewModel => {
-    const dispatch = useDispatch();
+const isLumenSymbolName = (icon: string): icon is LumenSymbolName => icon in Icons;
 
-    const onPrimaryClick = useCallback(() => {
-      openURL("https://www.ledger.com");
+const mapFeatureIntroItems = (
+  featureIntro: GenericAwarenessModalFeatureIntro,
+): FeatureIntroContentItem[] =>
+  featureIntro.items.map(item => ({
+    title: item.title,
+    subtitle: item.subtitle,
+    icon: isLumenSymbolName(item.icon) ? item.icon : "Gift",
+  }));
+
+const useGenericAwarenessModalFeatureIntroViewModel = (
+  contentCard: GenericAwarenessModalContentCard | undefined,
+): GenericAwarenessModalFeatureIntroViewModel => {
+  const dispatch = useDispatch();
+
+  const featureIntro =
+    contentCard?.layout === GenericAwarenessModalLayout.FeatureIntro ? contentCard : undefined;
+
+  const onPrimaryClick = useCallback(() => {
+    if (featureIntro) {
+      openURL(featureIntro.primaryButtonLink);
       dispatch(closeGenericAwarenessModalDialog());
-    }, [dispatch]);
+    }
+  }, [dispatch, featureIntro]);
 
-    const onSecondaryClick = useCallback(() => {
-      openURL("https://www.ledger.com/remind-me-later");
+  const onSecondaryClick = useCallback(() => {
+    if (featureIntro) {
+      openURL(featureIntro.secondaryButtonLink);
       dispatch(closeGenericAwarenessModalDialog());
-    }, [dispatch]);
+    }
+  }, [dispatch, featureIntro]);
 
-    return useMemo(
-      () => ({
-        title: "Connect a Ledger device",
-        subtitle: "To unlock the full potential of your Ledger Wallet, connect a Ledger device.",
-        items: FEATURE_INTRO_ITEMS,
-        primaryButtonLabel: "Got it",
-        secondaryButtonLabel: "Remind me later",
-        onPrimaryClick,
-        onSecondaryClick,
-      }),
-      [onPrimaryClick, onSecondaryClick],
-    );
-  };
+  return useMemo(
+    () => ({
+      title: featureIntro?.title ?? "",
+      subtitle: featureIntro?.subtitle ?? "",
+      items: featureIntro ? mapFeatureIntroItems(featureIntro) : [],
+      primaryButtonLabel: featureIntro?.primaryButtonLabel ?? "",
+      secondaryButtonLabel: featureIntro?.secondaryButtonLabel ?? "",
+      imageUrl: featureIntro?.imageUrl || undefined,
+      onPrimaryClick,
+      onSecondaryClick,
+    }),
+    [featureIntro, onPrimaryClick, onSecondaryClick],
+  );
+};
 
 export default useGenericAwarenessModalFeatureIntroViewModel;

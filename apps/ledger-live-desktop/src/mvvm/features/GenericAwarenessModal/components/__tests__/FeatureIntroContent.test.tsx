@@ -1,5 +1,6 @@
 import React from "react";
-import { render, screen } from "tests/testSetup";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import FeatureIntroContent from "../FeatureIntroContent";
 
 const baseProps = {
@@ -7,10 +8,9 @@ const baseProps = {
   subtitle: "Test subtitle",
   items: [
     {
-      id: "item-1",
       title: "Item title",
-      description: "Item description",
-      iconName: "HandCoins" as const,
+      subtitle: "Item description",
+      icon: "HandCoins" as const,
     },
   ],
   primaryButtonLabel: "Primary",
@@ -34,7 +34,8 @@ describe("FeatureIntroContent", () => {
   });
 
   it("should call onPrimaryClick when the primary button is pressed", async () => {
-    const { user } = render(<FeatureIntroContent {...baseProps} />);
+    const user = userEvent.setup();
+    render(<FeatureIntroContent {...baseProps} />);
 
     await user.click(screen.getByTestId("generic-awareness-modal-primary-button"));
 
@@ -42,7 +43,8 @@ describe("FeatureIntroContent", () => {
   });
 
   it("should call onSecondaryClick when the secondary button is pressed", async () => {
-    const { user } = render(<FeatureIntroContent {...baseProps} />);
+    const user = userEvent.setup();
+    render(<FeatureIntroContent {...baseProps} />);
 
     await user.click(screen.getByTestId("generic-awareness-modal-secondary-button"));
 

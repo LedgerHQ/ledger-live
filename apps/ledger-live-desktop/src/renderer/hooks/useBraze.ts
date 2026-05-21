@@ -17,7 +17,8 @@ import {
   Platform,
   PortfolioContentCard,
 } from "~/types/dynamicContent";
-import { processGenericAwarenessModalBrazeCards } from "@ledgerhq/live-common/genericAwarenessModal/buildContentCards";
+import { processGenericAwarenessModalBrazeCards } from "@ledgerhq/live-common/genericAwarenessModal";
+import { resolveGenericAwarenessModalBrazeCards } from "./genericAwarenessModal/resolveGenericAwarenessModalBrazeCards";
 import {
   setActionCards,
   setDesktopCards,
@@ -188,13 +189,18 @@ export function useBraze() {
         .map(card => mapAsNotificationContentCard(card as ClassicCard))
         .sort(compareCards);
 
-      const genericAwarenessModalBrazeCards = filterByPage(
+      const genericAwarenessModalBrazeCardsFromBraze = filterByPage(
         filteredDesktopCards,
         LocationContentCard.GenericAwarenessModal,
       ).map(card => ({
         id: String(card.id),
         extras: card.extras,
       }));
+
+      const genericAwarenessModalBrazeCards = resolveGenericAwarenessModalBrazeCards(
+        genericAwarenessModalBrazeCardsFromBraze,
+      );
+
       const genericAwarenessModalContentCards = processGenericAwarenessModalBrazeCards(
         genericAwarenessModalBrazeCards,
       );
