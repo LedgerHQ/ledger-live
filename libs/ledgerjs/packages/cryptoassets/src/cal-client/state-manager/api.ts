@@ -205,7 +205,7 @@ export const cryptoAssetsApi = createApi({
           };
         }
       },
-      async onQueryStarted(currencyId, { dispatch, queryFulfilled, getCacheEntry }) {
+      async onQueryStarted(currencyId, { dispatch, queryFulfilled, getCacheEntry, api }) {
         try {
           const previousHash = getCacheEntry()?.data as string | undefined;
           const { data: newHash } = await queryFulfilled;
@@ -215,7 +215,7 @@ export const cryptoAssetsApi = createApi({
               "cryptoassets",
               `Hash changed for currencyId ${currencyId}: ${previousHash} -> ${newHash}, evicting token cache`,
             );
-            dispatch(cryptoAssetsApi.util.invalidateTags([TokensDataTags.Tokens]));
+            dispatch(api.util.invalidateTags([TokensDataTags.Tokens]));
           }
         } catch {
           // Query failed, skip eviction
