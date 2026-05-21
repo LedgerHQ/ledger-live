@@ -101,6 +101,7 @@ const RegisterLedgerAccountSection = ({ contacts, run }: Props) => {
 
       <NetworkSelect
         label={t("contacts.fields.network")}
+        networks={networks}
         value={network?.id ?? null}
         onChange={setNetwork}
       />

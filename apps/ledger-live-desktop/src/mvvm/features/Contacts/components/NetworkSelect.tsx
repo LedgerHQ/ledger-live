@@ -7,18 +7,35 @@ import {
   SelectList,
   SelectTrigger,
 } from "@ledgerhq/lumen-ui-react";
-import { useEvmNetworks, type EvmNetwork } from "../hooks/useEvmNetworks";
+import type { NetworkOption } from "../constants/networks";
 
-type Props = {
+/**
+ * Presentational network picker. The caller owns the list — for the
+ * Ledger-account form it's the EVM-only list from `useEvmNetworks()`,
+ * for the External-address form it's the crypto-filtered list from
+ * `utils/getNetworksForCrypto.ts`.
+ *
+ * Generic on `N` so consumers that store the richer `EvmNetwork`
+ * (chainId is always defined) don't have to narrow on the way back
+ * from `onChange`.
+ */
+type Props<N extends NetworkOption> = {
   label: string;
+  /** The list to render. Order is preserved. */
+  networks: N[];
   /** Currency id (e.g. "ethereum"). Null = nothing selected. */
   value: string | null;
-  onChange: (network: EvmNetwork) => void;
+  onChange: (network: N) => void;
   disabled?: boolean;
 };
 
-const NetworkSelect = ({ label, value, onChange, disabled }: Props) => {
-  const networks = useEvmNetworks();
+function NetworkSelect<N extends NetworkOption>({
+  label,
+  networks,
+  value,
+  onChange,
+  disabled,
+}: Props<N>) {
   const items = networks.map(n => ({ value: n.id, label: n.name }));
 
   return (
@@ -43,6 +60,6 @@ const NetworkSelect = ({ label, value, onChange, disabled }: Props) => {
       </SelectContent>
     </Select>
   );
-};
+}
 
 export default NetworkSelect;

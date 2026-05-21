@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Subheader,
@@ -23,8 +23,9 @@ import CryptoSelect from "../components/CryptoSelect";
 import NetworkSelect from "../components/NetworkSelect";
 import AddressInputWithRandom from "../components/AddressInputWithRandom";
 import DeviceActionButton from "../components/DeviceActionButton";
+import type { NetworkOption } from "../constants/networks";
 import { TOP_CRYPTOS, type CryptoOption } from "../constants/topCryptos";
-import { useEvmNetworks, type EvmNetwork } from "../hooks/useEvmNetworks";
+import { getNetworksForCrypto } from "../utils/getNetworksForCrypto";
 
 const EXTERNAL_DERIVATION_PATH = "44'/60'/0'/0/0";
 
@@ -35,17 +36,34 @@ type Props = {
 
 const RegisterExternalAddressSection = ({ contacts, run }: Props) => {
   const { t } = useTranslation();
-  const networks = useEvmNetworks();
   const [pick, setPick] = useState<ContactPickResult>({ mode: "new", name: "" });
-  // Default to Ethereum (first entry — `useEvmNetworks` is popularity-sorted).
-  const [network, setNetwork] = useState<EvmNetwork | null>(() => networks[0] ?? null);
   // Demo-only — see `constants/topCryptos.ts`. The selection is NOT
   // persisted into ContactEntry because its schema is frozen at the
   // DMK shape. TODO(contacts-L4.1): persist once a ticker/coinId field
   // lands in the contact schema.
   const [crypto, setCrypto] = useState<CryptoOption | null>(() => TOP_CRYPTOS[0] ?? null);
+  // Network options are derived from the selected crypto. The list can
+  // include non-EVM entries (Bitcoin, Solana, …) for UI completeness;
+  // the EVM-only submit guard below disables registration when the
+  // selected network has no `chainId`.
+  const availableNetworks = useMemo<NetworkOption[]>(
+    () => (crypto ? getNetworksForCrypto(crypto.id) : []),
+    [crypto],
+  );
+  const [network, setNetwork] = useState<NetworkOption | null>(
+    () => availableNetworks[0] ?? null,
+  );
   const [addressHex, setAddressHex] = useState("");
   const [label, setLabel] = useState("");
+
+  // When the crypto changes, snap the network to the first available
+  // entry for that crypto so the picker is never out of sync. Effect
+  // runs on crypto id only — picking the same crypto twice in a row
+  // is a no-op.
+  useEffect(() => {
+    setNetwork(availableNetworks[0] ?? null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [crypto?.id]);
 
   const contactSummaries = useMemo(
     () =>
@@ -60,18 +78,26 @@ const RegisterExternalAddressSection = ({ contacts, run }: Props) => {
   const labelInvalid = isInvalidAsciiLabel(label, LIMITS.addressLabel);
   const addressInvalid = isInvalidPartialAddressHex(addressHex);
 
+  // EVM-only submission guard: DMK Contacts can only register against
+  // EVM chains today. Non-EVM networks render in the dropdown for UI
+  // correctness but disable the Register button + show an inline hint.
+  const isEvmNetwork = typeof network?.chainId === "number";
+
   // Duplicate guardrail: prevent registering the same (chainId, address) pair
   // twice on the same contact — the device would reject it anyway.
   const duplicate = useMemo(() => {
-    if (!network || !isValidAddressHex(addressHex) || pick.mode !== "existing") return false;
+    if (!network || !isEvmNetwork || !isValidAddressHex(addressHex) || pick.mode !== "existing") {
+      return false;
+    }
     const existing = contacts.wallet.contacts[pick.name];
     if (!existing) return false;
     const norm = normalizeAddressHex(addressHex);
     return existing.entries.some(e => e.addressHex === norm && e.chainId === network.chainId);
-  }, [contacts.wallet.contacts, addressHex, network, pick]);
+  }, [contacts.wallet.contacts, addressHex, network, pick, isEvmNetwork]);
 
   const canSubmit =
     !!network &&
+    isEvmNetwork &&
     pick.name.length > 0 &&
     !nameInvalid &&
     label.length > 0 &&
@@ -80,7 +106,10 @@ const RegisterExternalAddressSection = ({ contacts, run }: Props) => {
     !duplicate;
 
   const submit = async () => {
-    if (!network) return;
+    // `canSubmit` already enforces `isEvmNetwork`, so chainId is a
+    // number here. The double-check keeps TypeScript narrowing happy
+    // without a non-null assertion.
+    if (!network || typeof network.chainId !== "number") return;
     const normAddress = normalizeAddressHex(addressHex);
     const ok =
       pick.mode === "existing"
@@ -105,8 +134,8 @@ const RegisterExternalAddressSection = ({ contacts, run }: Props) => {
           );
     if (ok) {
       setPick({ mode: "new", name: "" });
-      setNetwork(networks[0] ?? null);
       setCrypto(TOP_CRYPTOS[0] ?? null);
+      // `network` will be re-synced by the crypto-change effect.
       setAddressHex("");
       setLabel("");
     }
@@ -136,16 +165,23 @@ const RegisterExternalAddressSection = ({ contacts, run }: Props) => {
         onChange={setCrypto}
       />
 
-      <NetworkSelect
-        label={t("contacts.fields.network")}
-        value={network?.id ?? null}
-        onChange={setNetwork}
-      />
+      <div className="flex flex-col gap-4 w-full">
+        <NetworkSelect
+          label={t("contacts.fields.network")}
+          networks={availableNetworks}
+          value={network?.id ?? null}
+          onChange={setNetwork}
+          disabled={availableNetworks.length === 0}
+        />
+        {network && !isEvmNetwork && (
+          <p className="body-3 text-error">{t("contacts.errors.evmOnly")}</p>
+        )}
+      </div>
 
       <AddressInputWithRandom
         value={addressHex}
         onChange={setAddressHex}
-        disabled={!network}
+        disabled={!network || !isEvmNetwork}
         invalid={addressInvalid || duplicate}
         errorMessage={
           duplicate

@@ -8745,6 +8745,7 @@
       "accountName": "Account name"
     },
     "errors": {
+      "evmOnly": "Only EVM networks can be registered today.",
       "invalidAddress": "Enter a 40-character hex address (with or without 0x).",
       "duplicateAddress": "This address is already registered on this contact for the selected network.",
       "duplicateContact": "A contact with this name already exists.",
