@@ -37,13 +37,14 @@ export function ManagementView({
   return (
     <div
       data-testid="contacts-management-page"
-      // `bg-canvas` pins the page to the `--background-canvas` token so the
-      // translucent `bg-surface-transparent` panes composite correctly
-      // against the canvas, independent of which Page layout shell
-      // (classic vs wallet 4.0) renders us. `pb-24` leaves a 24px gutter
-      // between the bottom of the panes and the bottom of the app —
-      // matches the Figma frame 13802:2833.
-      className="flex flex-col gap-24 h-full min-h-0 bg-canvas pb-24"
+      // The page is registered in `mvvm/components/Page/utils.ts`'s
+      // `WALLET_40_PAGES` set, so the app shell in `Default.tsx` applies
+      // `bg-canvas` (the `--background-canvas` token) at the topmost
+      // layout level — sidebar, top-bar, and content area share the
+      // canvas background. We only need to handle the bottom gutter
+      // here: `pb-24` leaves a 24px gap between the panes and the
+      // bottom of the app, matching the Figma frame 13802:2833.
+      className="flex flex-col gap-24 h-full min-h-0 pb-24"
     >
       <Header />
       <div
