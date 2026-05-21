@@ -39,13 +39,13 @@
   },
   "scripts": {
     "clean": "rimraf lib",
-    "build": "pnpm run clean && rspack build -c rspack.config.mjs && tsc -p tsconfig.build.json --emitDeclarationOnly && node scripts/build-umd-json.mjs",
+    "build": "pnpm run clean && rspack build -c rspack.config.mjs && tsgo -p tsconfig.build.json --emitDeclarationOnly && node scripts/build-umd-json.mjs",
     "lint": "oxlint -c ../oxc-live-libs/.oxlintrc.json ./src",
     "lint:fix": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src && oxlint -c ../oxc-live-libs/.oxlintrc.json ./src --fix --quiet",
     "format": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src",
     "format:check": "pnpm exec oxfmt -c ../../.oxfmtrc.json ./src --check",
     "test": "jest",
-    "typecheck": "tsc --noEmit --customConditions node",
+    "typecheck": "tsgo --noEmit --customConditions node",
     "unimported": "unimported"
   },
   "exports": {

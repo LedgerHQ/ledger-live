@@ -25,7 +25,7 @@
     "check:notices": "node ./scripts/check-third-party-notices.mjs",
     "pack:check": "node ./scripts/pack-check.mjs",
     "smoke:npm": "node ./scripts/smoke-npm.mjs",
-    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "typecheck": "tsgo --noEmit -p tsconfig.json",
     "test": "bun test src/",
     "coverage": "bun test src/ --coverage",
     "lint": "oxlint src bunli.config.ts",

@@ -7,7 +7,7 @@
   "types": "src/index.ts",
   "sideEffects": false,
   "scripts": {
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsgo --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage"

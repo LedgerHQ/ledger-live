@@ -5,11 +5,11 @@
   "license": "Apache-2.0",
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "build": "tsgo --project tsconfig.build.json && tsgo --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "lint": "eslint .",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
-    "typecheck": "tsc --project ./tsconfig.json --noEmit --customConditions node",
+    "typecheck": "tsgo --project ./tsconfig.json --noEmit --customConditions node",
     "start": "node --import ./register.mjs lib/cli.js",
     "start:debug": "node --import ./register.mjs --inspect-brk lib/cli.js"
   },

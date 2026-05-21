@@ -8,7 +8,7 @@
   "sideEffects": false,
   "scripts": {
     "format": "prettier --write 'src/**/*.{ts,tsx}' 'jest/**/*.{ts,tsx}'",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsgo --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage"

@@ -30,7 +30,7 @@
     "lib"
   ],
   "scripts": {
-    "build": "tsc --project tsconfig.build.json && node scripts/transpile",
+    "build": "tsgo --project tsconfig.build.json && node scripts/transpile",
     "prepublishOnly": "npm run build",
     "clean": "rimraf lib",
     "unimported": "unimported"
