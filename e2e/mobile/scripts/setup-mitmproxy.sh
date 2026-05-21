@@ -79,10 +79,31 @@ EOF
   exit 1
 fi
 
-if ! "$ADB" get-state >/dev/null 2>&1; then
-  echo "No device/emulator connected (adb get-state failed)." >&2
-  exit 1
-fi
+# Wait for the emulator to be online AND fully booted. In CI the AVD is
+# booted asynchronously while Detox's globalSetup runs, so a one-shot
+# `adb get-state` is racy and can fire before adb sees the device or
+# before sys.boot_completed flips to 1. Override the wait window via
+# MITM_BOOT_TIMEOUT (seconds).
+WAIT_TIMEOUT="${MITM_BOOT_TIMEOUT:-180}"
+echo "→ Waiting for emulator to finish booting (timeout ${WAIT_TIMEOUT}s)..."
+deadline=$(( $(date +%s) + WAIT_TIMEOUT ))
+last_state="?"
+last_boot="?"
+while true; do
+  last_state=$("$ADB" get-state 2>/dev/null || echo "missing")
+  if [[ "$last_state" == "device" ]]; then
+    last_boot=$("$ADB" shell getprop sys.boot_completed 2>/dev/null | tr -d '\r' || echo "")
+    if [[ "$last_boot" == "1" ]]; then
+      break
+    fi
+  fi
+  if (( $(date +%s) >= deadline )); then
+    echo "Emulator not ready after ${WAIT_TIMEOUT}s (state=${last_state}, boot_completed=${last_boot:-?})." >&2
+    exit 1
+  fi
+  sleep 2
+done
+echo "✓ Emulator online"
 
 HASH=$(openssl x509 -inform PEM -subject_hash_old -in "$CERT" -noout)
 TARGET="/data/misc/user/0/cacerts-added/${HASH}.0"
