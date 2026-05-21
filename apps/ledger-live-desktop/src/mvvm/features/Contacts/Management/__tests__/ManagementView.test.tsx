@@ -115,6 +115,17 @@ describe("ManagementView", () => {
     expect(screen.queryAllByTestId("contacts-management-address-row")).toHaveLength(0);
   });
 
+  it("renders the singular 'address' word for a 0-entry contact", () => {
+    // i18next supports `_zero` as an explicit override for `count: 0`,
+    // which we use here so an empty contact reads as "0 address" rather
+    // than "0 addresses" — matches the design copy.
+    render(<ManagementView {...baseProps()} />);
+
+    // baseProps() includes `bob` with 0 entries.
+    expect(screen.getByText("0 address")).toBeInTheDocument();
+    expect(screen.queryByText("0 addresses")).not.toBeInTheDocument();
+  });
+
   it("calls onSearchQueryChange as the user types in the search input", async () => {
     const onSearchQueryChange = jest.fn();
     const { user } = render(
