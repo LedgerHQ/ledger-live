@@ -11,7 +11,7 @@ import {
   ArrowUp,
   MoreHorizontal,
   PenEdit,
-  QrCodeScanner,
+  QrCode,
   Trash,
 } from "@ledgerhq/lumen-ui-react/symbols";
 import { cn } from "LLD/utils/cn";
@@ -35,7 +35,7 @@ import { cn } from "LLD/utils/cn";
  *
  * Actions (all inert in L4 — no-op onClick preserves the hover/pressed
  * states without firing any side-effect):
- *   1. See QR Code     — QrCodeScanner
+ *   1. See QR Code     — QrCode
  *   2. Send to this address — ArrowUp
  *   3. Edit address    — PenEdit
  *   4. Delete address  — Trash, text-error (destructive)
@@ -61,7 +61,7 @@ type Action = {
 };
 
 const ACTIONS: Action[] = [
-  { id: "qr", i18nKey: "contactsManagement.addressMenu.qrCode", icon: QrCodeScanner },
+  { id: "qr", i18nKey: "contactsManagement.addressMenu.qrCode", icon: QrCode },
   { id: "send", i18nKey: "contactsManagement.addressMenu.send", icon: ArrowUp },
   { id: "edit", i18nKey: "contactsManagement.addressMenu.editAddress", icon: PenEdit },
   { id: "delete", i18nKey: "contactsManagement.addressMenu.delete", icon: Trash, destructive: true },
