@@ -19,9 +19,11 @@ import CharCounter from "../components/CharCounter";
 import ContactSearchSelect, {
   type ContactPickResult,
 } from "../components/ContactSearchSelect";
+import CryptoSelect from "../components/CryptoSelect";
 import NetworkSelect from "../components/NetworkSelect";
 import AddressInputWithRandom from "../components/AddressInputWithRandom";
 import DeviceActionButton from "../components/DeviceActionButton";
+import { TOP_CRYPTOS, type CryptoOption } from "../constants/topCryptos";
 import { useEvmNetworks, type EvmNetwork } from "../hooks/useEvmNetworks";
 
 const EXTERNAL_DERIVATION_PATH = "44'/60'/0'/0/0";
@@ -37,6 +39,11 @@ const RegisterExternalAddressSection = ({ contacts, run }: Props) => {
   const [pick, setPick] = useState<ContactPickResult>({ mode: "new", name: "" });
   // Default to Ethereum (first entry — `useEvmNetworks` is popularity-sorted).
   const [network, setNetwork] = useState<EvmNetwork | null>(() => networks[0] ?? null);
+  // Demo-only — see `constants/topCryptos.ts`. The selection is NOT
+  // persisted into ContactEntry because its schema is frozen at the
+  // DMK shape. TODO(contacts-L4.1): persist once a ticker/coinId field
+  // lands in the contact schema.
+  const [crypto, setCrypto] = useState<CryptoOption | null>(() => TOP_CRYPTOS[0] ?? null);
   const [addressHex, setAddressHex] = useState("");
   const [label, setLabel] = useState("");
 
@@ -99,6 +106,7 @@ const RegisterExternalAddressSection = ({ contacts, run }: Props) => {
     if (ok) {
       setPick({ mode: "new", name: "" });
       setNetwork(networks[0] ?? null);
+      setCrypto(TOP_CRYPTOS[0] ?? null);
       setAddressHex("");
       setLabel("");
     }
@@ -121,6 +129,12 @@ const RegisterExternalAddressSection = ({ contacts, run }: Props) => {
         />
         <CharCounter used={pick.name.length} limit={LIMITS.contactName} />
       </div>
+
+      <CryptoSelect
+        label={t("contacts.fields.crypto")}
+        value={crypto?.id ?? null}
+        onChange={setCrypto}
+      />
 
       <NetworkSelect
         label={t("contacts.fields.network")}
