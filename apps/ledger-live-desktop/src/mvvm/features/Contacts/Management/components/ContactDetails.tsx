@@ -38,7 +38,7 @@ export function ContactDetails({ contact }: Props) {
   return (
     <div
       data-testid="contacts-management-details"
-      className="relative flex flex-col gap-32 h-full overflow-y-auto rounded-lg bg-surface-transparent px-16 py-32"
+      className="relative flex flex-col gap-32 h-full overflow-y-auto rounded-lg bg-surface px-16 py-32"
     >
       {/* Top-right icon buttons (absolute so they don't push the header). */}
       <div className="absolute top-16 right-16 flex items-center gap-8">

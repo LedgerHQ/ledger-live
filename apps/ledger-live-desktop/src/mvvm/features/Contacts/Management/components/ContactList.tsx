@@ -67,7 +67,7 @@ export function ContactList({
   return (
     <div
       data-testid="contacts-management-list"
-      className="flex flex-col gap-8 h-full overflow-y-auto rounded-lg bg-surface-transparent p-16"
+      className="flex flex-col gap-8 h-full overflow-y-auto rounded-lg bg-surface p-16"
     >
       <SearchInput
         appearance="plain"
