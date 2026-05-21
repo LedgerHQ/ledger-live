@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router";
-import { isRecoverDisplayed, useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useUpsellPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { useRecoverBannerState } from "~/renderer/hooks/useRecoverBannerState";
@@ -13,23 +13,17 @@ const TRACK = {
 } as const;
 
 export type RecoverWidgetViewProps = {
-  readonly isVisible: boolean;
+  readonly shouldDisplay: boolean;
   readonly titleKey: string;
   readonly descriptionKey: string;
   readonly onOpenRecover: () => void;
-};
-
-/** View-model output; includes portfolio-only gating so parents read `useRecoverBannerState` once (here). */
-export type RecoverWidgetViewModelResult = RecoverWidgetViewProps & {
-  /** Same as rendering `RecoverWidget` in the Wallet40 portfolio row: offer visible and banner not dismissed. */
-  readonly shouldDisplayRecoverInPortfolioBannerRow: boolean;
 };
 
 export const RECOVER_WIDGET_TITLE_I18N_KEY = "postOnboarding.dialog.actions.recover.title";
 export const RECOVER_WIDGET_DESCRIPTION_I18N_KEY =
   "postOnboarding.dialog.actions.recover.description";
 
-export function useRecoverWidgetViewModel(): RecoverWidgetViewModelResult {
+export function useRecoverWidgetViewModel(): RecoverWidgetViewProps {
   const navigate = useNavigate();
   const recoverServices = useFeature("protectServicesDesktop");
   const upsellPath = useUpsellPath(recoverServices);
@@ -40,24 +34,16 @@ export function useRecoverWidgetViewModel(): RecoverWidgetViewModelResult {
     data: { subscriptionState, displayBanner },
   } = useRecoverBannerState(protectId);
 
-  const isRecoverOfferAvailable = isRecoverDisplayed(recoverServices, deviceModelId ?? undefined);
+  const bannerNotificationEnabled =
+    recoverServices?.params?.bannerSubscriptionNotification ?? false;
 
-  const isVisible = useMemo(() => {
-    if (!isRecoverOfferAvailable) {
-      return false;
-    }
-    if (!shouldShowRecoverPortfolioWidget(subscriptionState)) {
-      return false;
-    }
-    if (!upsellPath) {
-      return false;
-    }
-    return true;
-  }, [isRecoverOfferAvailable, subscriptionState, upsellPath]);
-
-  const shouldDisplayRecoverInPortfolioBannerRow = useMemo(
-    () => isVisible && displayBanner,
-    [displayBanner, isVisible],
+  const shouldDisplay = useMemo(
+    () =>
+      bannerNotificationEnabled &&
+      shouldShowRecoverPortfolioWidget(subscriptionState) &&
+      !!upsellPath &&
+      displayBanner,
+    [bannerNotificationEnabled, subscriptionState, displayBanner, upsellPath],
   );
 
   const onOpenRecover = useCallback(() => {
@@ -73,12 +59,11 @@ export function useRecoverWidgetViewModel(): RecoverWidgetViewModelResult {
 
   return useMemo(
     () => ({
-      isVisible,
-      shouldDisplayRecoverInPortfolioBannerRow,
+      shouldDisplay,
       titleKey: RECOVER_WIDGET_TITLE_I18N_KEY,
       descriptionKey: RECOVER_WIDGET_DESCRIPTION_I18N_KEY,
       onOpenRecover,
     }),
-    [isVisible, onOpenRecover, shouldDisplayRecoverInPortfolioBannerRow],
+    [shouldDisplay, onOpenRecover],
   );
 }

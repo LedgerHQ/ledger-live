@@ -1,6 +1,6 @@
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import type {
-  AlpacaApi,
+  CoinModuleApi,
   Balance,
   Block,
   BlockInfo,
@@ -32,7 +32,7 @@ import {
 } from "../logic";
 import { validateAddress } from "../logic/validateAddress";
 
-export function createApi(config: PolkadotConfig): AlpacaApi {
+export function createApi(config: PolkadotConfig): CoinModuleApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {

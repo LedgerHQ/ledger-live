@@ -5,6 +5,7 @@ import {
   getMainAccount,
   getAccountSpendableBalance,
 } from "@ledgerhq/live-common/account/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useSelector } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
 import { useRoute } from "@react-navigation/native";
@@ -76,6 +77,7 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
   const balance = getAccountSpendableBalance(account);
   const isZeroBalance = !balance.gt(0);
   const mainAccount = getMainAccount(account, parentAccount);
+  const bridge = useAccountBridge(mainAccount);
   // @ts-expect-error issue in typing
   const decorators = perFamilyAccountActions[mainAccount?.currency?.family];
 
@@ -269,8 +271,9 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
         colors,
         parentRoute: route,
         evmNativeStakingFeature,
+        bridge,
       }) ?? [],
-    [walletState, account, parentAccount, colors, route, decorators, evmNativeStakingFeature],
+    [walletState, account, parentAccount, colors, route, decorators, evmNativeStakingFeature, bridge],
   );
 
   const mainActions = useMemo(

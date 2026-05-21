@@ -12,6 +12,10 @@ jest.mock("@ledgerhq/live-common/account/index", () => ({
   getMainAccount: jest.fn(),
 }));
 
+jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
+  useAccountBridge: () => ({}),
+}));
+
 jest.mock("~/renderer/actions/modals", () => ({
   ...jest.requireActual("~/renderer/actions/modals"),
   closeModal: jest.fn(),

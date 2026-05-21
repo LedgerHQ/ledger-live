@@ -1,4 +1,4 @@
-import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { isAccountRegistrationPending } from "@ledgerhq/live-common/families/celo/logic";
 import { CeloAccount } from "@ledgerhq/live-common/families/celo/types";
 import React, { useCallback } from "react";
@@ -17,10 +17,11 @@ const AccountHeaderManageActions: CeloFamily["accountHeaderManageActions"] = ({
 }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const bridge = useAccountBridge(account, parentAccount);
   const label = useGetStakeLabelLocaleBased();
   const isRegistrationPending = isAccountRegistrationPending(account as CeloAccount);
   const onClick = useCallback(() => {
-    if (isAccountEmpty(account)) {
+    if (bridge.isAccountEmpty(account)) {
       dispatch(
         openModal("MODAL_NO_FUNDS_STAKE", {
           account,
@@ -37,7 +38,7 @@ const AccountHeaderManageActions: CeloFamily["accountHeaderManageActions"] = ({
         );
       }
     }
-  }, [account, dispatch, parentAccount, source]);
+  }, [account, bridge, dispatch, parentAccount, source]);
   const disabledLabel = isRegistrationPending
     ? `${t("celo.manage.titleWhenPendingRegistration")}`
     : "";

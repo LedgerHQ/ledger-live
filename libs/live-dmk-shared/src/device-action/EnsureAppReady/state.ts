@@ -75,13 +75,7 @@ export enum FinalStateType {
 
 export type EnsureAppReadyState =
   | { type: LoadingStateType.Loading }
-  | {
-      type: LoadingStateType.InstallingApp;
-      appName: string;
-      progress: number;
-      index: number;
-      total: number;
-    }
+  | { type: LoadingStateType.InstallingApp }
   | { type: DeviceInteractionRequiredType.UnlockDevice }
   | { type: DeviceInteractionRequiredType.AllowSecureConnection }
   | { type: DeviceInteractionRequiredType.ConfirmOpenApp }

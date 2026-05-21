@@ -54,6 +54,7 @@ describe("getBlock", () => {
       value: "1000",
       from: address1,
       to: address2,
+      gasPrice: "20000000000",
       ...overrides,
     };
   }
@@ -942,6 +943,389 @@ describe("getBlock", () => {
 
     expect(mockGetInternalTransactionsByBlock).toHaveBeenCalledWith(expect.anything(), 12345);
     expect(mockTraceBlock).toHaveBeenCalledWith(expect.anything(), 12345);
+  });
+
+  it("uses prefetched tx gasPrice as fallback when Cronos receipt omits effectiveGasPrice and gasPrice", async () => {
+    setCoinConfig(
+      () =>
+        ({
+          info: { node: { type: "external" as const, retries: 0 } },
+        }) as unknown as EvmCoinConfig,
+    );
+    const gasUsed = 21000n;
+    const txGasPrice = "568125000000";
+    const mockGetNodeApi = jest.mocked(getNodeApi);
+    mockGetNodeApi.mockReturnValue({
+      getBlockByHeight: jest.fn().mockResolvedValueOnce(
+        makeNodeBlock({
+          transactions: [makeNodeBlockTx({ hash: "0xtx1", gasPrice: txGasPrice })],
+        }),
+      ),
+      getBlockReceipts: jest.fn().mockResolvedValueOnce([
+        makeNodeBlockReceipt({
+          hash: "0xtx1",
+          gasUsed: gasUsed.toString(),
+          gasPrice: "0", // what getBlockReceipts returns for a Cronos receipt
+          erc20Transfers: [],
+        }),
+      ]),
+      getTransaction: jest.fn(),
+    } as any);
+    const result = await getBlock({} as CryptoCurrency, 12345);
+    expect(result.transactions[0].fees).toEqual(21000n * 568125000000n);
+  });
+
+  it("uses receipt effectiveGasPrice over prefetched tx gasPrice on mainnet-shaped receipts", async () => {
+    setCoinConfig(
+      () =>
+        ({
+          info: { node: { type: "external" as const, retries: 0 } },
+        }) as unknown as EvmCoinConfig,
+    );
+    const gasUsed = 21000n;
+    const receiptEffectiveGasPrice = "1000000000"; // 1 Gwei — resolved from effectiveGasPrice by getBlockReceipts
+    const txGasPrice = "568125000000"; // higher value in the prefetched tx — must NOT win
+    const mockGetNodeApi = jest.mocked(getNodeApi);
+    mockGetNodeApi.mockReturnValue({
+      getBlockByHeight: jest.fn().mockResolvedValueOnce(
+        makeNodeBlock({
+          transactions: [makeNodeBlockTx({ hash: "0xtx1", gasPrice: txGasPrice })],
+        }),
+      ),
+      getBlockReceipts: jest.fn().mockResolvedValueOnce([
+        makeNodeBlockReceipt({
+          hash: "0xtx1",
+          gasUsed: gasUsed.toString(),
+          gasPrice: receiptEffectiveGasPrice, // non-zero → receipt wins over tx.gasPrice
+          erc20Transfers: [],
+        }),
+      ]),
+      getTransaction: jest.fn(),
+    } as any);
+    const result = await getBlock({} as CryptoCurrency, 12345);
+    expect(result.transactions[0].fees).toEqual(21000n * 1000000000n);
+  });
+
+  describe("zkSync L1→L2 priority transactions (receipt type 0xff)", () => {
+    const USER = "0xbEB30f27e61eFFF46Aa27dcE18E23ee8D5A7c6a4";
+    const L2_BASE_TOKEN = "0x000000000000000000000000000000000000800A";
+    const MINT_PEER = "0x0000000000000000000000000000000000000000";
+    const ZKSYNC = { id: "zksync" } as CryptoCurrency;
+
+    function buildZksyncMocks(
+      txOverrides: Partial<PrefetchedBlockTransaction>,
+      receiptOverrides: Partial<BlockReceiptInfo>,
+    ): void {
+      setCoinConfig(
+        () => ({ info: { node: { type: "external", retries: 0 } } }) as unknown as EvmCoinConfig,
+      );
+      const mockGetNodeApi = jest.mocked(getNodeApi);
+      mockGetNodeApi.mockReturnValue({
+        getBlockByHeight: jest
+          .fn()
+          .mockResolvedValue(
+            makeNodeBlock({ transactions: [makeNodeBlockTx({ hash: "0xtx", ...txOverrides })] }),
+          ),
+        getBlockReceipts: jest
+          .fn()
+          .mockResolvedValue([makeNodeBlockReceipt({ hash: "0xtx", ...receiptOverrides })]),
+        getTransaction: jest.fn(),
+      } as any);
+    }
+
+    it("does not modify ops when receipt type is undefined (regular L2 tx)", async () => {
+      buildZksyncMocks(
+        { from: USER, to: USER, value: "270000000000000000" },
+        {
+          erc20Transfers: [
+            {
+              asset: { type: "erc20", assetReference: L2_BASE_TOKEN },
+              from: USER,
+              to: USER,
+              value: "270000000000000000",
+            },
+          ],
+        },
+      );
+      const result = await getBlock(ZKSYNC, 12345);
+      expect(result.transactions[0].operations).toEqual([
+        {
+          type: "transfer",
+          address: USER,
+          peer: USER,
+          asset: { type: "native" },
+          amount: -270000000000000000n,
+        },
+        {
+          type: "transfer",
+          address: USER,
+          peer: USER,
+          asset: { type: "native" },
+          amount: 270000000000000000n,
+        },
+        {
+          type: "transfer",
+          address: USER,
+          peer: USER,
+          asset: { type: "erc20", assetReference: L2_BASE_TOKEN },
+          amount: -270000000000000000n,
+        },
+        {
+          type: "transfer",
+          address: USER,
+          peer: USER,
+          asset: { type: "erc20", assetReference: L2_BASE_TOKEN },
+          amount: 270000000000000000n,
+        },
+      ]);
+    });
+
+    it("does not modify ops for receipt type 2 (EIP-1559)", async () => {
+      buildZksyncMocks(
+        { from: USER, to: USER, value: "270000000000000000" },
+        { type: 2, erc20Transfers: [] },
+      );
+      const result = await getBlock(ZKSYNC, 12345);
+      expect(result.transactions[0].operations).toEqual([
+        {
+          type: "transfer",
+          address: USER,
+          peer: USER,
+          asset: { type: "native" },
+          amount: -270000000000000000n,
+        },
+        {
+          type: "transfer",
+          address: USER,
+          peer: USER,
+          asset: { type: "native" },
+          amount: 270000000000000000n,
+        },
+      ]);
+    });
+
+    it("drops native self pair and prepends a synthesized native credit (peer=0x0)", async () => {
+      buildZksyncMocks(
+        { from: USER, to: USER, value: "270000000000000000" },
+        {
+          type: 0xff,
+          erc20Transfers: [
+            // Transfer log (user → user, the on-chain self transfer)
+            {
+              asset: { type: "erc20", assetReference: L2_BASE_TOKEN },
+              from: USER,
+              to: USER,
+              value: "270000000000000000",
+            },
+            // Mint event surfaced as Transfer(0x0 → user) by parseERC20TransfersFromLogs
+            {
+              asset: { type: "erc20", assetReference: L2_BASE_TOKEN },
+              from: MINT_PEER,
+              to: USER,
+              value: "270000000000000000",
+            },
+          ],
+        },
+      );
+      const result = await getBlock(ZKSYNC, 12345);
+      expect(result.transactions[0].operations).toEqual([
+        // native credit (synthesized, replaces the native self pair)
+        {
+          type: "transfer",
+          address: USER,
+          peer: MINT_PEER,
+          asset: { type: "native" },
+          amount: 270000000000000000n,
+        },
+        // 800A self pair (from Transfer log)
+        {
+          type: "transfer",
+          address: USER,
+          peer: USER,
+          asset: { type: "erc20", assetReference: L2_BASE_TOKEN },
+          amount: -270000000000000000n,
+        },
+        {
+          type: "transfer",
+          address: USER,
+          peer: USER,
+          asset: { type: "erc20", assetReference: L2_BASE_TOKEN },
+          amount: 270000000000000000n,
+        },
+        // 800A credit (from Mint event, mint-source side on 0x0 is filtered out)
+        {
+          type: "transfer",
+          address: USER,
+          peer: MINT_PEER,
+          asset: { type: "erc20", assetReference: L2_BASE_TOKEN },
+          amount: 270000000000000000n,
+        },
+      ]);
+    });
+
+    it("prepends only a native credit when no L2BaseToken events are present (type 0xff)", async () => {
+      buildZksyncMocks(
+        { from: USER, to: USER, value: "270000000000000000" },
+        { type: 0xff, erc20Transfers: [] },
+      );
+      const result = await getBlock(ZKSYNC, 12345);
+      expect(result.transactions[0].operations).toEqual([
+        {
+          type: "transfer",
+          address: USER,
+          peer: MINT_PEER,
+          asset: { type: "native" },
+          amount: 270000000000000000n,
+        },
+      ]);
+    });
+
+    it("filters mint-source ops on 0x0 even when no native self pair is found (type 0xff)", async () => {
+      buildZksyncMocks(
+        { from: USER, to: USER, value: "0" },
+        {
+          type: 0xff,
+          erc20Transfers: [
+            // Mint-derived entry: would produce {0x0, peer: user, -V} + {user, peer: 0x0, +V}
+            {
+              asset: { type: "erc20", assetReference: L2_BASE_TOKEN },
+              from: MINT_PEER,
+              to: USER,
+              value: "1000",
+            },
+          ],
+        },
+      );
+      const result = await getBlock(ZKSYNC, 12345);
+      // Only the to-side (on user) remains; the from-side (on 0x0) is filtered out.
+      expect(result.transactions[0].operations).toEqual([
+        {
+          type: "transfer",
+          address: USER,
+          peer: MINT_PEER,
+          asset: { type: "erc20", assetReference: L2_BASE_TOKEN },
+          amount: 1000n,
+        },
+      ]);
+    });
+
+    it("leaves user ERC20 (non-800A) self transfers unchanged under type 0xff", async () => {
+      const usdc = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
+      buildZksyncMocks(
+        { from: USER, to: USER, value: "0" },
+        {
+          type: 0xff,
+          erc20Transfers: [
+            {
+              asset: { type: "erc20", assetReference: usdc },
+              from: USER,
+              to: USER,
+              value: "1000000",
+            },
+          ],
+        },
+      );
+      const result = await getBlock(ZKSYNC, 12345);
+      expect(result.transactions[0].operations).toEqual([
+        {
+          type: "transfer",
+          address: USER,
+          peer: USER,
+          asset: { type: "erc20", assetReference: usdc },
+          amount: -1000000n,
+        },
+        {
+          type: "transfer",
+          address: USER,
+          peer: USER,
+          asset: { type: "erc20", assetReference: usdc },
+          amount: 1000000n,
+        },
+      ]);
+    });
+
+    it("leaves 800A non-self transfers unchanged under type 0xff", async () => {
+      const other = "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d";
+      buildZksyncMocks(
+        { from: USER, to: USER, value: "0" },
+        {
+          type: 0xff,
+          erc20Transfers: [
+            {
+              asset: { type: "erc20", assetReference: L2_BASE_TOKEN },
+              from: USER,
+              to: other,
+              value: "1000",
+            },
+          ],
+        },
+      );
+      const result = await getBlock(ZKSYNC, 12345);
+      expect(result.transactions[0].operations).toEqual([
+        {
+          type: "transfer",
+          address: USER,
+          peer: other,
+          asset: { type: "erc20", assetReference: L2_BASE_TOKEN },
+          amount: -1000n,
+        },
+        {
+          type: "transfer",
+          address: other,
+          peer: USER,
+          asset: { type: "erc20", assetReference: L2_BASE_TOKEN },
+          amount: 1000n,
+        },
+      ]);
+    });
+
+    it("does not apply zkSync corrections to other currencies (e.g. ethereum) even when receipt type is 0xff", async () => {
+      buildZksyncMocks(
+        { from: USER, to: USER, value: "270000000000000000" },
+        {
+          type: 0xff,
+          erc20Transfers: [
+            {
+              asset: { type: "erc20", assetReference: L2_BASE_TOKEN },
+              from: USER,
+              to: USER,
+              value: "270000000000000000",
+            },
+          ],
+        },
+      );
+      const result = await getBlock({ id: "ethereum" } as CryptoCurrency, 12345);
+      expect(result.transactions[0].operations).toEqual([
+        {
+          type: "transfer",
+          address: USER,
+          peer: USER,
+          asset: { type: "native" },
+          amount: -270000000000000000n,
+        },
+        {
+          type: "transfer",
+          address: USER,
+          peer: USER,
+          asset: { type: "native" },
+          amount: 270000000000000000n,
+        },
+        {
+          type: "transfer",
+          address: USER,
+          peer: USER,
+          asset: { type: "erc20", assetReference: L2_BASE_TOKEN },
+          amount: -270000000000000000n,
+        },
+        {
+          type: "transfer",
+          address: USER,
+          peer: USER,
+          asset: { type: "erc20", assetReference: L2_BASE_TOKEN },
+          amount: 270000000000000000n,
+        },
+      ]);
+    });
   });
 });
 

@@ -21,6 +21,7 @@ import { PriceCell } from "../components/Cells/PriceCell";
 import { BalanceCell } from "LLD/components/Cells/BalanceCell";
 import { CounterValueCell } from "LLD/components/Cells/CounterValueCell";
 import { TrendCell } from "../components/Cells/TrendCell";
+import { TruncatedText } from "LLD/components/TruncatedText";
 import { sanitizeAssetNameForTestId } from "../utils/assetTableHelpers";
 import type { AssetTableItem } from "../types";
 
@@ -51,23 +52,22 @@ export const useTable = (assets: AssetTableItem[], options?: UseAssetTableOption
             `${row.original.currency.name}-${row.original.currency.id}`,
           );
           return (
-            <div data-testid={`w40-asset-row-${assetTestId}`}>
-              <TableCellContent
-                leadingContent={
-                  row.original.isPlaceholder || shouldDisplayAggregatedAssets ? (
-                    <CryptoIcon
-                      ledgerId={row.original.currency.id}
-                      ticker={row.original.currency.ticker}
-                      size={getValidCryptoIconSize(32)}
-                    />
-                  ) : (
-                    <CryptoCurrencyIcon currency={row.original.currency} size={32} />
-                  )
-                }
-                title={row.original.currency.name}
-                description={row.original.currency.ticker}
-              />
-            </div>
+            <TableCellContent
+              data-testid={`w40-asset-row-${assetTestId}`}
+              leadingContent={
+                row.original.isPlaceholder || shouldDisplayAggregatedAssets ? (
+                  <CryptoIcon
+                    ledgerId={row.original.currency.id}
+                    ticker={row.original.currency.ticker}
+                    size={getValidCryptoIconSize(32)}
+                  />
+                ) : (
+                  <CryptoCurrencyIcon currency={row.original.currency} size={32} />
+                )
+              }
+              title={<TruncatedText text={row.original.currency.name} />}
+              description={row.original.currency.ticker}
+            />
           );
         },
       },
@@ -81,7 +81,7 @@ export const useTable = (assets: AssetTableItem[], options?: UseAssetTableOption
             placeholderPrice={row.original.placeholderPrice}
           />
         ),
-        meta: { align: "end" },
+        meta: { align: "end", hideBelow: "xl" },
       },
       {
         accessorKey: "balance",

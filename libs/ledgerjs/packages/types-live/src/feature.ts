@@ -137,7 +137,6 @@ export type CurrencyFeatures = {
   currencyXion: DefaultFeature;
   currencyZenrock: DefaultFeature;
   currencySonic: DefaultFeature;
-  currencySonicBlaze: DefaultFeature;
   currencySui: DefaultFeature;
   currencySuiTestnet: DefaultFeature;
   currencyMina: DefaultFeature;
@@ -320,7 +319,9 @@ export type Features = CurrencyFeatures & {
   llmOnboardingEnableSync: Feature_OnboardingEnableSync;
   lldOnboardingEnableSync: Feature_OnboardingEnableSync;
   lwdGenericAwarenessModal: DefaultFeature;
+  lwmAnalyticsConsentOnboarding: DefaultFeature;
   lwmGenericAwarenessModal: DefaultFeature;
+  lwmNotificationsOptIn: DefaultFeature;
   lwmProductTour: DefaultFeature;
   lwmWallet40: Feature_LwmWallet40;
   lwdWallet40: Feature_LwdWallet40;
@@ -878,6 +879,7 @@ type Feature_Wallet40_Params = {
   brazePlacement?: boolean;
   newReceiveDialog?: boolean;
   finishOnboardingWidget?: boolean;
+  onboardingWidget?: boolean;
 };
 
 export type Feature_LwmWallet40 = Feature<Feature_Wallet40_Params & { onboardingWidget: boolean }>;

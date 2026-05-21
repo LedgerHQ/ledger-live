@@ -5,6 +5,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { LoadingStateType } from "@ledgerhq/live-dmk-shared";
 import type { EnsureAppReadyUseCaseDependencies } from "@ledgerhq/live-common/device/use-cases/ensureAppReady/ensureAppReadyUseCase";
 import DeviceContextInitializerComponentLWM from "..";
+import { DeviceContextInitializerComponentLWMView } from "../DeviceContextInitializerComponentLWMView";
 import { useDeviceContextInitializerComponentLWMViewModel } from "../useDeviceContextInitializerComponentLWMViewModel";
 import type { InitializationInput } from "../../types";
 
@@ -12,7 +13,12 @@ jest.mock("../useDeviceContextInitializerComponentLWMViewModel", () => ({
   useDeviceContextInitializerComponentLWMViewModel: jest.fn(),
 }));
 
+jest.mock("../DeviceContextInitializerComponentLWMView", () => ({
+  DeviceContextInitializerComponentLWMView: jest.fn(() => null),
+}));
+
 const mockedUseViewModel = jest.mocked(useDeviceContextInitializerComponentLWMViewModel);
+const mockedView = jest.mocked(DeviceContextInitializerComponentLWMView);
 
 const connectionResult: DeviceConnectionResult = {
   compatDeviceId: "device-id",
@@ -34,7 +40,16 @@ const deviceInitializationInput: InitializationInput = {
 describe("DeviceContextInitializerComponentLWM", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockedUseViewModel.mockReturnValue({ type: LoadingStateType.Loading });
+    mockedUseViewModel.mockReturnValue({
+      state: { type: LoadingStateType.Loading },
+      device: {
+        id: "device-id",
+        modelId: DeviceModelId.nanoX,
+        name: "Ledger Nano X",
+        productName: "Ledger Nano X",
+        wired: false,
+      },
+    });
   });
 
   it("should pass initialization params to the view model when config is omitted", () => {
@@ -45,6 +60,7 @@ describe("DeviceContextInitializerComponentLWM", () => {
         connectionResult={connectionResult}
         deviceInitializationInput={deviceInitializationInput}
         onContextInitialized={onContextInitialized}
+        onClose={jest.fn()}
       />,
     );
 
@@ -67,6 +83,7 @@ describe("DeviceContextInitializerComponentLWM", () => {
         deviceInitializationInput={deviceInitializationInput}
         onContextInitialized={onContextInitialized}
         config={{ dependencies }}
+        onClose={jest.fn()}
       />,
     );
 
@@ -77,5 +94,21 @@ describe("DeviceContextInitializerComponentLWM", () => {
       onContextInitialized,
       dependencies,
     });
+  });
+
+  it("should forward the onClose prop as the view onCancel prop", () => {
+    const onClose = jest.fn();
+
+    render(
+      <DeviceContextInitializerComponentLWM
+        connectionResult={connectionResult}
+        deviceInitializationInput={deviceInitializationInput}
+        onContextInitialized={jest.fn()}
+        onClose={onClose}
+      />,
+    );
+
+    expect(mockedView).toHaveBeenCalledTimes(1);
+    expect(mockedView.mock.calls[0][0].onCancel).toBe(onClose);
   });
 });

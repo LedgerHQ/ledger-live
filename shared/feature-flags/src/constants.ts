@@ -1,4 +1,4 @@
-import type { Feature, Features } from "./data/schema";
+import type { Feature, Features, FeatureFlagsState } from "./data/schema";
 import * as flags from "./flags";
 
 /**
@@ -18,3 +18,13 @@ export const FEATURE_FLAGS_DEFAULTS = Object.fromEntries<Feature>(
     featureSchema.parse(undefined),
   ]),
 ) as Features;
+
+/** Initial state for the `featureFlags` slice — every flag set to its registered default. */
+export const FEATURE_FLAGS_INITIAL_STATE: FeatureFlagsState = {
+  overrides: {},
+  resolved: FEATURE_FLAGS_DEFAULTS,
+  bannerVisible: false,
+};
+
+/** Default polling interval for fetching remote flags, in milliseconds: 5 minutes. */
+export const FEATURE_FLAGS_REMOTE_POLLING_INTERVAL_MS = 5 * 60 * 1000;

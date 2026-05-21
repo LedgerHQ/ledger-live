@@ -274,7 +274,7 @@ export default {
                     signedOperation,
                   });
 
-              console.log(formatOperation(account)(optimisticOperation));
+              console.log((await formatOperation(account))(optimisticOperation));
             } catch (e) {
               console.error("Something went wrong on trying to send from " + account.id, tx, e);
             }

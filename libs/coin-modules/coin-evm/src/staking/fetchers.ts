@@ -1,16 +1,17 @@
 import { Stake } from "@ledgerhq/coin-module-framework/api/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { delay } from "@ledgerhq/live-promise";
 import { getCoinConfig } from "../config";
 import { withApi } from "../network/node/rpc.common";
 import { isExternalNodeConfig } from "../network/node/types";
+import type { StakingValidatorItem } from "@ledgerhq/types-live";
 import type {
   StakeCreate,
   StakingContractConfig,
-  StakingStrategy,
   StakingExtractor,
-  StakingValidatorItem,
+  StakingStrategy,
 } from "../types/staking";
-import { extractSeiDelegation, getSeiDelegationAmount, getCeloAmount } from "../utils";
+import { extractSeiDelegation, getCeloAmount, getSeiDelegationAmount } from "../utils";
 import { encodeStakingData, decodeStakingResult } from "./encoder";
 import { buildTransactionParams } from "./transactionData";
 import { getValidators } from "./validators";
@@ -91,6 +92,12 @@ const isMissingRevertDataCallException = (error: unknown): boolean => {
 const isSeiMissingDelegationError = (currencyId: string, error: unknown): boolean =>
   currencyId === "sei_evm" && isMissingRevertDataCallException(error);
 
+// Short retry delay for staking calls. The staking precompile returns
+// CALL_EXCEPTION with "missing revert data" both for genuine no-delegation AND
+// for transient RPC failures. A brief retry distinguishes the two cases: a real
+// "no delegation" responds consistently, a transient failure resolves quickly.
+const STAKING_RETRY_DELAY_MS = 300;
+
 // TODO: tech debt: the call should be implemented in the node API as an optional function (like traceBlock)
 const createStakeFromContract = async (stakingContract: StakeCreate): Promise<Stake | null> => {
   const { currency, config, address, currencyId, validatorAddress } = stakingContract;
@@ -102,7 +109,7 @@ const createStakeFromContract = async (stakingContract: StakeCreate): Promise<St
   return withApi(
     currency,
     async rpcProvider => {
-      try {
+      const executeCall = async (): Promise<Stake | null> => {
         const params = buildTransactionParams(
           currencyId,
           "getStakedBalance",
@@ -117,6 +124,7 @@ const createStakeFromContract = async (stakingContract: StakeCreate): Promise<St
           config,
           params,
         });
+
         const result = await rpcProvider.call({
           to: config.contractAddress,
           data: encodedData,
@@ -144,18 +152,41 @@ const createStakeFromContract = async (stakingContract: StakeCreate): Promise<St
             validator: validatorAddress,
           },
         };
+      };
+
+      try {
+        return await executeCall();
       } catch (error) {
         if (isSeiMissingDelegationError(currencyId, error)) {
-          return null;
-        }
+          // The SEI staking precompile returns CALL_EXCEPTION with "missing revert
+          // data" both when there is genuinely no delegation AND on transient RPC
+          // failures. Retry once after a brief delay: a genuine no-delegation
+          // responds consistently; a transient failure resolves on the retry.
+          await delay(STAKING_RETRY_DELAY_MS);
 
-        console.error("Staking fetch failed", error);
-        return null;
+          try {
+            return await executeCall();
+          } catch (retryError) {
+            if (isSeiMissingDelegationError(currencyId, retryError)) {
+              return null; // Consistent CALL_EXCEPTION — genuinely no delegation
+            }
+            throw new Error(
+              "Retry error: " +
+                (retryError instanceof Error ? retryError.message : String(retryError)),
+            ); // Let withRetries handle other errors
+          }
+        }
+        // Re-throw non-SEI errors so withApi's withRetries can retry them
+        throw new Error("Error: " + (error instanceof Error ? error.message : String(error)));
       }
     },
     node,
   );
 };
+
+// Limit concurrent RPC calls to avoid overloading the node and causing
+// silent failures that get incorrectly interpreted as "no delegation".
+const STAKE_FETCH_BATCH_SIZE = 10;
 
 const getStakesForValidators = async (
   address: string,
@@ -169,29 +200,38 @@ const getStakesForValidators = async (
     return [];
   }
 
-  // Parallel RPC calls for better performance
-  const stakePromises = validators.map(validator =>
-    createStakeFromContract({
-      address,
-      config,
-      currencyId: currency.id,
-      currency,
-      validatorAddress: validator,
-    }).catch(error => {
-      console.error(`Failed to fetch ${logPrefix} stake for validator`, {
-        validator,
-        currencyId: currency.id,
-        address,
-        error: error instanceof Error ? error.message : String(error),
-      });
-      return null;
-    }),
-  );
+  const allResults: PromiseSettledResult<Stake | null>[] = [];
 
-  const results = await Promise.allSettled(stakePromises);
+  // Process validators in batches to avoid overwhelming the RPC node.
+  // Firing all N validators in parallel triggers rate-limiting / connection
+  // exhaustion on the provider, which causes requests to fail silently
+  // (caught → null) and delegations to disappear from the UI.
+  for (let i = 0; i < validators.length; i += STAKE_FETCH_BATCH_SIZE) {
+    const chunk = validators.slice(i, i + STAKE_FETCH_BATCH_SIZE);
+    const chunkPromises = chunk.map(validator =>
+      createStakeFromContract({
+        address,
+        config,
+        currencyId: currency.id,
+        currency,
+        validatorAddress: validator,
+      }).catch(error => {
+        console.error(`Failed to fetch ${logPrefix} stake for validator`, {
+          validator,
+          currencyId: currency.id,
+          address,
+          error: error instanceof Error ? error.message : String(error),
+        });
+        return null;
+      }),
+    );
+    const chunkResults = await Promise.allSettled(chunkPromises);
+    allResults.push(...chunkResults);
+  }
+
   const stakes: Stake[] = [];
 
-  results.forEach(result => {
+  allResults.forEach(result => {
     if (result.status === "fulfilled" && result.value) {
       stakes.push(result.value);
     }

@@ -72,6 +72,7 @@ describe("ProductTourDialog", () => {
       <ProductTourDialog
         isOpen
         onClose={onClose}
+        onDismiss={jest.fn()}
         onComplete={jest.fn()}
         onPrimaryAction={jest.fn()}
         onSlideChange={jest.fn()}
@@ -79,8 +80,12 @@ describe("ProductTourDialog", () => {
     );
 
     expect(screen.getByRole("dialog")).toBeVisible();
-    expect(screen.getByText("title")).toBeVisible();
-    expect(screen.getByText("subtitle")).toBeVisible();
+    expect(screen.getByText("Start by funding your wallet")).toBeVisible();
+    expect(
+      screen.getByText(
+        "Fund your Ledger Wallet your way — transfer, buy, or convert cash to stablecoins.",
+      ),
+    ).toBeVisible();
     expect(screen.getByRole("button", { name: FUND_LABEL })).toBeVisible();
     expect(screen.getByRole("button", { name: CONTINUE_LABEL })).toBeVisible();
   });
@@ -91,6 +96,7 @@ describe("ProductTourDialog", () => {
       <ProductTourDialog
         isOpen
         onClose={onClose}
+        onDismiss={jest.fn()}
         onComplete={jest.fn()}
         onPrimaryAction={jest.fn()}
         onSlideChange={jest.fn()}
@@ -113,6 +119,7 @@ describe("ProductTourDialog", () => {
       <ProductTourDialog
         isOpen
         onClose={onClose}
+        onDismiss={jest.fn()}
         onComplete={jest.fn()}
         onPrimaryAction={jest.fn()}
         onSlideChange={jest.fn()}

@@ -1,4 +1,4 @@
-import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useTezosStakingInfo } from "@ledgerhq/live-common/families/tezos/react";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useCallback } from "react";
@@ -15,13 +15,14 @@ const AccountHeaderManageActions: TezosFamily["accountHeaderManageActions"] = ({
   source,
 }) => {
   const dispatch = useDispatch();
+  const bridge = useAccountBridge(account, parentAccount);
   const label = useGetStakeLabelLocaleBased();
   const lldTezosStaking = useFeature("lldTezosStaking");
 
   const { delegation, isDelegated, isStaked } = useTezosStakingInfo(account);
 
   const onClick = useCallback(() => {
-    if (isAccountEmpty(account)) {
+    if (bridge.isAccountEmpty(account)) {
       dispatch(
         openModal("MODAL_NO_FUNDS_STAKE", {
           account,
@@ -56,6 +57,7 @@ const AccountHeaderManageActions: TezosFamily["accountHeaderManageActions"] = ({
     dispatch(openModal("MODAL_DELEGATE", options));
   }, [
     account,
+    bridge,
     delegation,
     isDelegated,
     isStaked,

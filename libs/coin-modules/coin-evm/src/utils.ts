@@ -102,7 +102,7 @@ export function isSmartContractInput(input: string | null | undefined): input is
 }
 
 /**
- * Builds flat `details` fields for Alpaca when a tx has smart contract input.
+ * Builds flat `details` fields for coin-framework operation when a tx has smart contract input.
  *
  * `contractAddress` (when present) identifies the relevant contract: for
  * `SmartContractInteraction` it is the called address (`to`); for

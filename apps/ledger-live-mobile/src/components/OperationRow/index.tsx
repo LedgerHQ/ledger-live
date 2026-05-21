@@ -6,10 +6,9 @@ import { useNavigation } from "@react-navigation/native";
 import {
   getOperationAmountNumber,
   isConfirmedOperation,
-  isEditableOperation,
-  isStuckOperation,
 } from "@ledgerhq/live-common/operation";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Account, Operation, AccountLike } from "@ledgerhq/types-live";
 import { Box, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { WarningMedium } from "@ledgerhq/native-ui/assets/icons";
@@ -143,6 +142,7 @@ function OperationRow({
   const amount = getOperationAmountNumber(operation);
   const currency = getAccountCurrency(account);
   const mainAccount = getMainAccount(account, parentAccount);
+  const bridge = useAccountBridge(mainAccount);
   const accountName = useAccountName(account);
   const currencySettings = useCurrencySettingsForAccount(mainAccount);
   const isConfirmed = isConfirmedOperation(
@@ -159,8 +159,7 @@ function OperationRow({
   const text = <Trans i18nKey={`operations.types.${operation.type}`} />;
   const isOptimistic = operation.blockHeight === null;
   const isOperationStuck =
-    isEditableOperation({ account: mainAccount, operation }) &&
-    isStuckOperation({ family: mainAccount.currency.family, operation });
+    bridge.isEditableOperation(mainAccount, operation) && bridge.isStuckOperation(operation);
 
   const spinner = isOperationStuck ? (
     <WarningMedium />

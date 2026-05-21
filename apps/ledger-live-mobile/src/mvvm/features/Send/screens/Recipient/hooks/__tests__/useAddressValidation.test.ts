@@ -10,7 +10,7 @@ import {
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
 import { useBridgeRecipientValidation } from "@ledgerhq/live-common/flows/send/recipient/hooks/useBridgeRecipientValidation";
-import { useFormattedAccountBalance } from "../useFormattedAccountBalance";
+import { useFormattedAccountBalance } from "LLM/hooks/useFormattedAccountBalance";
 import { useMaybeAccountName, useBatchMaybeAccountName } from "~/reducers/wallet";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { createMockAccount, createMockCurrency } from "./accounts";
@@ -21,7 +21,7 @@ jest.mock("@ledgerhq/domain-service/hooks/index");
 jest.mock("@ledgerhq/ledger-wallet-framework/sanction/index");
 jest.mock("@ledgerhq/live-common/account/index");
 jest.mock("@ledgerhq/live-common/flows/send/recipient/hooks/useBridgeRecipientValidation");
-jest.mock("../useFormattedAccountBalance");
+jest.mock("LLM/hooks/useFormattedAccountBalance");
 jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features");
 
 const mockedUseSelector = jest.mocked(useSelector);

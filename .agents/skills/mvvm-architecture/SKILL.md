@@ -1,14 +1,17 @@
 ---
 name: mvvm-architecture
-description: MVVM architecture rules for ledger-live-desktop and ledger-live-mobile. Read when working in src/mvvm/.
-applies_to:
-  - apps/ledger-live-desktop/src/mvvm
-  - apps/ledger-live-mobile/src/mvvm
+description: Plan, review, and develop desktop and mobile app features following our MVVM architectural pattern. Applies to all new .ts and .tsx files within /apps/ledger-live-desktop or /apps/ledger-live-mobile
 ---
 
 # MVVM Architecture
 
-All code inside `src/mvvm/` must follow these rules. Code reviews enforce strict adherence. `src/mvvm/` will eventually replace `src/` entirely.
+## The new standard for desktop and mobile apps
+
+- New code for `ledger-live-desktop` and `ledger-live-mobile` must go into `src/mvvm/`
+- Eventually no feature code within these apps will live outside of `src/mvvm`
+- New features, screens, components, hooks, and utilities belong in `src/mvvm/`
+- Code changes with `src/mvvm` must conform to these `mvvm` patterns
+- Code reviews enforce strict adherence
 
 ## Folder Structure
 
@@ -26,7 +29,19 @@ src/mvvm/
 └── utils/
 ```
 
-Place elements inside the closest folder matching their reuse scope.
+### Feature Folder Responsibilities
+
+- `components/` gathers reusable UI elements across multiple screens.
+- `screens/` contains individual screen folders and their private building blocks.
+- `hooks/` contains feature-specific reusable hooks.
+- `utils/` contains feature-scoped utilities.
+
+### Nesting Guidelines
+
+- Place elements inside the closest folder matching their reuse scope.
+- Screen-specific building blocks stay inside the screen folder.
+- Feature-level components belong to `FeatureName/components/`.
+- Global shared UI belongs to `src/mvvm/components/`.
 
 ## Component & File Patterns
 
@@ -72,6 +87,7 @@ Use RTK Query (`dada-client` and `cal-client` are reference implementations). Se
 ## Design System
 
 New UI in `src/mvvm/` must use Lumen:
+
 - **Desktop**: [`ldls-web`](../ldls-web/SKILL.md) skill
 - **Mobile**: [`ldls-native`](../ldls-native/SKILL.md) skill
 

@@ -14,8 +14,8 @@ import type { Transaction as WalletAPITransaction } from "@ledgerhq/wallet-api-c
 import type { Resolver } from "../hw/getAddress/types";
 import type { SignMessage } from "../hw/signMessage/types";
 import type { GetWalletAPITransactionSignFlowInfos } from "../wallet-api/types";
-import type { AlpacaSigner } from "../bridge/generic-coin-framework/types";
-export type { AlpacaSigner };
+import type { CoinFrameworkSigner } from "../bridge/generic-coin-framework/types";
+export type { CoinFrameworkSigner };
 
 export type MessageSignerModule = {
   signMessage: SignMessage;
@@ -96,6 +96,6 @@ export type CoinModuleLoader = {
   loadMockBridge?: () => MockBridgeModule;
   loadMockAccount?: () => MockAccountModule;
   loadValidateAddress?: () => ValidateAddressFn;
-  loadSigner?: () => AlpacaSigner;
+  loadSigner?: () => CoinFrameworkSigner;
   loadBridgeExtensions?: () => AccountBridgeExtensions;
 };

@@ -17,7 +17,12 @@ import type {
   ConnectAppDAState,
 } from "../ConnectApp/types";
 import { Subject } from "rxjs";
-import { AppInteractionRequiredStateType, FinalStateType, type EnsureAppReadyState } from "./state";
+import {
+  AppInteractionRequiredStateType,
+  FinalStateType,
+  LoadingStateType,
+  type EnsureAppReadyState,
+} from "./state";
 import type { ConnectAppDASnapshotHandler, DeprecationPresentationInput } from "./types";
 import {
   EnsureAppReadyDeviceAction,
@@ -64,6 +69,10 @@ const deviceMetadata = {
 const currentApp: GetAppAndVersionResponse = {
   name: "Ethereum",
   version: "2.0.0",
+};
+
+const loadingState: EnsureAppReadyState = {
+  type: LoadingStateType.Loading,
 };
 
 const successState: EnsureAppReadyState = {
@@ -343,7 +352,7 @@ describe("EnsureAppReadyDeviceAction", () => {
       expect(harness.snapshotHandler.handleSnapshot).toHaveBeenCalledWith(
         expect.objectContaining({ status: DeviceActionStatus.Completed }),
       );
-      expect(harness.emittedStates).toEqual([successState]);
+      expect(harness.emittedStates).toEqual([loadingState, successState]);
       expect(harness.actionStates[harness.actionStates.length - 1]).toEqual({
         status: DeviceActionStatus.Completed,
         output: undefined,

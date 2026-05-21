@@ -1,12 +1,13 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { render, screen } from "@tests/test-renderer";
+import { render, screen, waitFor, within } from "@tests/test-renderer";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { NavigatorName, ScreenName } from "~/const";
 import type { State } from "~/reducers/types";
 import AssetDetailNavigator from "../Navigator";
 import { ASSET_DETAIL_TEST_IDS } from "../testIds";
+import { QUICK_ACTIONS_TEST_IDS } from "LLM/features/QuickActions/testIds";
 
 const mockIsCurrencyAvailable = jest.fn().mockReturnValue(false);
 const mockIsAcceptedCurrency = jest.fn().mockReturnValue(false);
@@ -64,8 +65,18 @@ function withBtcAccounts(count: number, operationsSize = 0) {
       seed: `bitcoin-${i}`,
       currencyId: "bitcoin",
       operationsSize,
+      balance: 100_000_000,
     })),
   );
+}
+
+function withBlacklistedTokens(tokenIds: string[]) {
+  return {
+    overrideInitialState: (state: State): State => ({
+      ...state,
+      settings: { ...state.settings, blacklistedTokenIds: tokenIds },
+    }),
+  };
 }
 
 describe("AssetDetail screen layout", () => {
@@ -80,6 +91,7 @@ describe("AssetDetail screen layout", () => {
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.screen)).toBeVisible();
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.balanceGraph)).toBeVisible();
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.marketStats)).toBeVisible();
+    expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.coinOptionsTrailing)).toBeVisible();
     expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.transactions)).toBeNull();
   });
 
@@ -88,19 +100,34 @@ describe("AssetDetail screen layout", () => {
     expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.balanceDetails)).toBeNull();
   });
 
-  it("renders balance details with transfer button when accounts exist", () => {
+  it("renders balance details with transfer button when accounts exist", async () => {
     render(<AssetDetailTestNavigator />, withBtcAccounts(2));
-    expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.balanceDetails)).toBeVisible();
+    await waitFor(() =>
+      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.balanceDetails)).toBeVisible(),
+    );
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.totalBalance)).toBeVisible();
-    expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.transferButton)).toBeVisible();
+    const transferButton = screen.getByTestId(ASSET_DETAIL_TEST_IDS.transferButton);
+    expect(transferButton).toBeVisible();
     expect(screen.getByText("Total balance")).toBeVisible();
-    expect(screen.getByText("Transfer")).toBeVisible();
+    expect(within(transferButton).getByText("Transfer")).toBeVisible();
   });
 
-  it("renders the market price section with title and chart placeholder", () => {
+  it("opens the transfer drawer on the asset detail screen when the transfer button is pressed", async () => {
+    const { user } = render(<AssetDetailTestNavigator />, withBtcAccounts(2));
+
+    const transferButton = await screen.findByTestId(ASSET_DETAIL_TEST_IDS.transferButton);
+    await user.press(transferButton);
+
+    await waitFor(() => {
+      expect(screen.getByTestId(QUICK_ACTIONS_TEST_IDS.transferDrawer.container)).toBeVisible();
+    });
+  });
+
+  it("renders the BalanceGraph with chart placeholder", () => {
     render(<AssetDetailTestNavigator />);
 
-    expect(screen.getByText("Market price")).toBeVisible();
+    // While market data is loading, the header is rendered as a skeleton (no
+    // "Market price" text). The chart placeholder is still mounted.
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.chartPlaceholder)).toBeVisible();
     expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.receiveButton)).toBeNull();
   });
@@ -111,13 +138,30 @@ describe("AssetDetail screen layout", () => {
     expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.addresses)).toBeNull();
   });
 
-  it("renders the addresses section when accounts exist", () => {
+  it("renders the addresses section when accounts exist", async () => {
     render(<AssetDetailTestNavigator />, withBtcAccounts(2));
 
-    expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.addresses)).toBeVisible();
+    await waitFor(() => expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.addresses)).toBeVisible());
     expect(screen.getByText("Addresses")).toBeVisible();
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.addAccount)).toBeVisible();
     expect(screen.getByText("Add")).toBeVisible();
+  });
+
+  it("hides the See all addresses button when 5 or fewer accounts exist", async () => {
+    render(<AssetDetailTestNavigator />, withBtcAccounts(5));
+
+    await waitFor(() => expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.addresses)).toBeVisible());
+    expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.seeAllAddresses)).toBeNull();
+  });
+
+  it("caps the addresses preview at 5 items and shows See all when 6+ accounts exist", async () => {
+    render(<AssetDetailTestNavigator />, withBtcAccounts(6));
+
+    await waitFor(() =>
+      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.seeAllAddresses)).toBeVisible(),
+    );
+    expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.addresses)).toBeVisible();
+    expect(screen.getByText("See all")).toBeVisible();
   });
 
   it("hides the transactions section when there are no operations", () => {
@@ -126,10 +170,12 @@ describe("AssetDetail screen layout", () => {
     expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.transactions)).toBeNull();
   });
 
-  it("renders the transactions section when operations exist", () => {
+  it("renders the transactions section when operations exist", async () => {
     render(<AssetDetailTestNavigator />, withBtcAccounts(1, 5));
 
-    expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.transactions)).toBeVisible();
+    await waitFor(() =>
+      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.transactions)).toBeVisible(),
+    );
     expect(screen.getByText("Transactions")).toBeVisible();
   });
 
@@ -230,6 +276,40 @@ describe("AssetDetail screen layout", () => {
       expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.swapButton)).toBeVisible();
       expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.receiveButton)).toBeVisible();
       expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.footerReceiveButton)).toBeNull();
+    });
+  });
+
+  describe("hidden asset banner", () => {
+    it("does not render the banner when the asset is not hidden", () => {
+      render(<AssetDetailTestNavigator />);
+
+      expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.hiddenAssetBanner)).toBeNull();
+    });
+
+    it("renders the banner when the asset is blacklisted", () => {
+      render(<AssetDetailTestNavigator />, withBlacklistedTokens(["bitcoin"]));
+
+      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.hiddenAssetBanner)).toBeVisible();
+      expect(screen.getByText("This asset is hidden from your portfolio.")).toBeVisible();
+      expect(screen.getByText("Show asset")).toBeVisible();
+      expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.hiddenAssetBannerShowAsset)).toBeVisible();
+    });
+
+    it("hides the banner and unhides the asset when Show asset is pressed", async () => {
+      const { user, store } = render(
+        <AssetDetailTestNavigator />,
+        withBlacklistedTokens(["bitcoin"]),
+      );
+
+      const showAssetButton = await screen.findByTestId(
+        ASSET_DETAIL_TEST_IDS.hiddenAssetBannerShowAsset,
+      );
+      await user.press(showAssetButton);
+
+      await waitFor(() =>
+        expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.hiddenAssetBanner)).toBeNull(),
+      );
+      expect(store.getState().settings.blacklistedTokenIds).not.toContain("bitcoin");
     });
   });
 });

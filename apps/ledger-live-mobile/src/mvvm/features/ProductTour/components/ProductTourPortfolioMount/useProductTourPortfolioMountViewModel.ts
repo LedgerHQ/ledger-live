@@ -9,15 +9,24 @@ export type UseProductTourPortfolioMountViewModelResult = ProductTourDrawerViewM
 export const useProductTourPortfolioMountViewModel =
   (): UseProductTourPortfolioMountViewModelResult => {
     const { isProductTourEligible } = useProductTourEligibility();
-    const { openProductTour, closeProductTour, onSlideChange, isDrawerOpen, onPrimaryAction } =
-      useProductTourDrawerViewModel();
+    const {
+      openProductTour,
+      closeProductTour,
+      onCloseButtonPress,
+      onSlideChange,
+      isDrawerOpen,
+      onPrimaryAction,
+      completeProductTour,
+    } = useProductTourDrawerViewModel();
 
     return {
       isProductTourEligible,
       openProductTour,
       closeProductTour,
+      onCloseButtonPress,
       onSlideChange,
       isDrawerOpen,
       onPrimaryAction,
+      completeProductTour,
     };
   };

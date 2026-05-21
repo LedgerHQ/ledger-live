@@ -1,6 +1,6 @@
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import {
-  AlpacaApi,
+  CoinModuleApi,
   Balance,
   CraftedTransaction,
   Cursor,
@@ -34,7 +34,7 @@ import type { TronMemo } from "../types";
 
 const MAX_TRONGRID_LIMIT = 200;
 
-export function createApi(config: TronConfig): AlpacaApi<TronMemo> {
+export function createApi(config: TronConfig): CoinModuleApi<TronMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {

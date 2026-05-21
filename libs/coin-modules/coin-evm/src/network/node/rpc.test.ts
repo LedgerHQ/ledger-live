@@ -290,6 +290,7 @@ describe("EVM Family", () => {
           from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
           to: "0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C",
           erc20Transfers: [],
+          type: 0,
         });
       });
     });
@@ -514,6 +515,29 @@ describe("EVM Family", () => {
             from: "0xbeBcf96eEEd98D495F45407CE7017179738E3552",
             to: "0x0000000000000000000000000000000000000000",
             value: "200000000000000",
+          },
+        ]);
+      });
+
+      it("parses Mint as Transfer from 0x0", () => {
+        const MINT_TOPIC = "0x0f6798a560793a54c3bcfe86a93cde1e73087d944c0ea20544137d4121396885";
+        const L2_BASE_TOKEN = "0x000000000000000000000000000000000000800A";
+        const result = parseERC20TransfersFromLogs([
+          {
+            address: L2_BASE_TOKEN,
+            topics: [
+              MINT_TOPIC,
+              "0x000000000000000000000000beb30f27e61efff46aa27dce18e23ee8d5a7c6a4",
+            ],
+            data: "0x0000000000000000000000000000000000000000000000000000000000000064",
+          },
+        ]);
+        expect(result).toEqual([
+          {
+            asset: { type: "erc20", assetReference: L2_BASE_TOKEN },
+            from: "0x0000000000000000000000000000000000000000",
+            to: "0xbEB30f27e61eFFF46Aa27dcE18E23ee8D5A7c6a4",
+            value: "100",
           },
         ]);
       });
@@ -802,6 +826,7 @@ describe("EVM Family", () => {
             value: 1n,
             from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
             to: "0xc2907efcce4011c491bbeda8a0fa63ba7aab596c",
+            gasPrice: "0",
           },
         ],
       } as any);
@@ -817,6 +842,7 @@ describe("EVM Family", () => {
             value: "1",
             from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
             to: "0xc2907efcce4011c491bbeda8a0fa63ba7aab596c",
+            gasPrice: "0",
           },
         ],
         transactionHashes: ["0xtx1"],
@@ -890,6 +916,7 @@ describe("EVM Family", () => {
             value: "0",
             from: "0x993aad80e425c646dab305381ff105169feedf67",
             to: "0x0000000000000000000000000000000000010003",
+            gasPrice: "0",
           },
         ],
       });
@@ -918,6 +945,32 @@ describe("EVM Family", () => {
           hash: "0x435b00d28a10febbcfefbdea080134d08ef843df122d5bc9174b09de7fce6a59",
           gasUsed: "500000",
           gasPrice: "1000000000",
+          status: 1,
+          erc20Transfers: [],
+        },
+      ]);
+    });
+
+    it("should resolve gasPrice to '0' when receipt has neither effectiveGasPrice nor gasPrice (Cronos-shaped receipt)", async () => {
+      jest.spyOn(JsonRpcProvider.prototype, "send").mockImplementationOnce(async method => {
+        if (method === "eth_getBlockReceipts") {
+          return [
+            {
+              transactionHash: "0x435b00d28a10febbcfefbdea080134d08ef843df122d5bc9174b09de7fce6a59",
+              gasUsed: "0x5208", // 21000
+              // no effectiveGasPrice, no gasPrice
+              status: "0x1",
+              logs: [],
+            },
+          ];
+        }
+        throw new Error(`Method not mocked: ${method}`);
+      });
+      expect(await nodeApi.getBlockReceipts!(fakeCurrency as CryptoCurrency, 1)).toEqual([
+        {
+          hash: "0x435b00d28a10febbcfefbdea080134d08ef843df122d5bc9174b09de7fce6a59",
+          gasUsed: "21000",
+          gasPrice: "0", // zeroed because neither effectiveGasPrice nor gasPrice were present
           status: 1,
           erc20Transfers: [],
         },

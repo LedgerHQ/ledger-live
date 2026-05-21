@@ -15,9 +15,8 @@ import {
   getOperationAmountNumber,
   getOperationConfirmationDisplayableNumber,
   isConfirmedOperation,
-  isEditableOperation,
-  isStuckOperation,
 } from "@ledgerhq/live-common/operation";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { getEnv } from "@ledgerhq/live-env";
 import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike, Operation, OperationType } from "@ledgerhq/types-live";
@@ -143,6 +142,7 @@ const OperationD = (props: Props) => {
   const navigate = useNavigate();
   const location = useLocation();
   const mainAccount = getMainAccount(account, parentAccount);
+  const bridge = useAccountBridge(mainAccount);
   const { hash, date, senders, type, fee, recipients: _recipients } = operation;
 
   const dateFormatted = useDateFormatted(date, dayAndHourFormat);
@@ -260,7 +260,7 @@ const OperationD = (props: Props) => {
     // Check for Bitcoin RBF support
     if (currencyFamily === "bitcoin") {
       // RBF only works for unconfirmed (pending) transactions
-      const isEditable = isEditableOperation({ account: mainAccount, operation });
+      const isEditable = bridge.isEditableOperation(mainAccount, operation);
       if (
         !isEditable ||
         !bitcoinParams?.supportedCurrencyIds?.includes(mainAccount.currency.id as CryptoCurrencyId)
@@ -290,7 +290,7 @@ const OperationD = (props: Props) => {
       const isCurrencySupported =
         params?.supportedCurrencyIds?.includes(mainAccount.currency.id as CryptoCurrencyId) ||
         false;
-      const isEditable = isEditableOperation({ account: mainAccount, operation });
+      const isEditable = bridge.isEditableOperation(mainAccount, operation);
 
       if (isEditEvmTxEnabled && isCurrencySupported && isEditable) {
         return {
@@ -308,6 +308,7 @@ const OperationD = (props: Props) => {
     params,
     mainAccount,
     operation,
+    bridge,
     bitcoinParams?.supportedCurrencyIds,
     isEditBitcoinTxEnabled,
   ]);
@@ -374,7 +375,7 @@ const OperationD = (props: Props) => {
     operation.hash,
   ]);
 
-  const isStuck = isStuckOperation({ family: mainAccount.currency.family, operation });
+  const isStuck = bridge.isStuckOperation(operation);
   const feesCurrency = useMemo(() => getFeesCurrency(mainAccount), [mainAccount]);
   const feesUnit = useMemo(() => getFeesUnit(feesCurrency), [feesCurrency]);
 

@@ -77,7 +77,7 @@ export const useBroadcast = ({
           });
           log(
             "transaction-summary",
-            `✔️ broadcasted! optimistic operation: ${formatOperation(mainAccount)(operation)}`,
+            `✔️ broadcasted! optimistic operation: ${(await formatOperation(mainAccount))(operation)}`,
           );
           if (logger) {
             logger({

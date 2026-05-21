@@ -27,7 +27,11 @@ module.exports = {
     },
     launchApp: "auto",
     cleanup: {
-      shutdownDevice: process.env.CI ? true : false,
+      // Keep the simulator booted between specs in CI as well. Combined with
+      // the workflow's background simulator pre-warm, this avoids paying for a
+      // cold boot between spec files on the same worker. App state is still
+      // reset per spec because `behavior.init.reinstallApp` is `true`.
+      shutdownDevice: false,
     },
   },
   apps: {
@@ -88,6 +92,12 @@ module.exports = {
       type: "ios.simulator",
       device: {
         name: "iOS Simulator 3",
+      },
+    },
+    simulator4: {
+      type: "ios.simulator",
+      device: {
+        name: "iOS Simulator 4",
       },
     },
     emulator: {

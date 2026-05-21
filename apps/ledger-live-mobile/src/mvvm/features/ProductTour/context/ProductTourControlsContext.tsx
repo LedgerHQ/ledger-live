@@ -18,16 +18,20 @@ export const ProductTourControlsProvider = ({
     () => ({
       openProductTour: value.openProductTour,
       closeProductTour: value.closeProductTour,
+      onCloseButtonPress: value.onCloseButtonPress,
       onSlideChange: value.onSlideChange,
       isDrawerOpen: value.isDrawerOpen,
       onPrimaryAction: value.onPrimaryAction,
+      completeProductTour: value.completeProductTour,
     }),
     [
       value.openProductTour,
       value.closeProductTour,
+      value.onCloseButtonPress,
       value.onSlideChange,
       value.isDrawerOpen,
       value.onPrimaryAction,
+      value.completeProductTour,
     ],
   );
 

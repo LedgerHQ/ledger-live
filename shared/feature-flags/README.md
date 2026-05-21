@@ -15,28 +15,37 @@ const rootReducer = combineReducers({
 });
 ```
 
-### 2. Configure resolution at app startup
+### 2. Wire the middleware at store creation
 
 ```ts
-import { setResolutionConfig } from "@shared/feature-flags";
+import { createFeatureFlagsMiddleware } from "@shared/feature-flags";
 
-setResolutionConfig({
-  platform: "desktop", // "desktop" | "ios" | "android"
-  appVersion: "2.80.0",
-  appLanguage: "en",
-  envFlags: parsedEnvFlags, // from FEATURE_FLAGS env variable
+const store = configureStore({
+  reducer: rootReducer,
+  middleware: getDefault =>
+    getDefault().concat(
+      createFeatureFlagsMiddleware({
+        resolutionConfig: {
+          platform: "desktop", // "desktop" | "ios" | "android"
+          appVersion: "2.80.0",
+          appLanguage: "en",
+          envFlags: parsedEnvFlags, // from FEATURE_FLAGS env variable
+        },
+        // Optional — when provided, the middleware fires this on creation and
+        // every `refreshInterval` ms (default: 5 min), then dispatches
+        // `syncRemoteConfig` so reducers can re-resolve.
+        fetchRemoteFlags: async () => {
+          await fetchAndActivate(remoteConfig);
+          return Object.fromEntries(
+            Object.entries(getAll(remoteConfig)).map(([k, v]) => [k, JSON.parse(v.asString())]),
+          );
+        },
+      }),
+    ),
 });
 ```
 
-### 3. Sync remote config (Firebase / LiveConfig)
-
-```ts
-import { syncRemoteConfig } from "@shared/feature-flags";
-
-dispatch(syncRemoteConfig(remoteFlags));
-```
-
-### 4. Read flags in components
+### 3. Read flags in components
 
 ```ts
 import { selectFeature } from "@shared/feature-flags";
@@ -94,7 +103,7 @@ When a flag is resolved, the following priority chain applies (highest first):
 
 1. **Local overrides** — user-set via dev tools (`setOverride`)
 2. **Env overrides** — from `FEATURE_FLAGS` environment variable
-3. **Remote config** — from Firebase / LiveConfig (`syncRemoteConfig`)
+3. **Remote config** — from a third-party service (fetched by the middleware via `fetchRemoteFlags`)
 4. **Default** — from the flag's Zod schema default
 
 After resolution, **version filtering** (`desktop_version` / `mobile_version`) and **language filtering** (`languages_whitelisted` / `languages_blacklisted`) are applied.

@@ -1,23 +1,18 @@
 import { AccountBridge } from "@ledgerhq/types-live";
 import { AccountAwaitingSendPendingOperations } from "@ledgerhq/errors";
 import BigNumber from "bignumber.js";
-import { getAlpacaApi } from "./api";
+import { getCoinModuleApi } from "./api";
 import { getBridgeApi } from "./bridge";
-import {
-  bigNumberToBigIntDeep,
-  extractBalances,
-  applyMemoToIntent,
-  transactionToIntent,
-} from "./utils";
+import { bigNumberToBigIntDeep, extractBalances, transactionToIntent } from "./utils";
 import type { GenericTransaction } from "./types";
 
-// => alpaca validateIntent
+// => coin-framework validateIntent
 export function genericGetTransactionStatus(
   network: string,
   kind: string,
 ): AccountBridge<GenericTransaction>["getTransactionStatus"] {
   return async (account, transaction) => {
-    const alpacaApi = await getAlpacaApi(account.currency.id, kind);
+    const coinModuleApi = await getCoinModuleApi(account.currency.id, kind);
     const bridgeApi = getBridgeApi(account.currency, network);
 
     const draftTransaction = {
@@ -30,6 +25,7 @@ export function genericGetTransactionStatus(
       subAccountId: transaction.subAccountId || "",
       memoType: transaction.memoType || "",
       memoValue: transaction.memoValue || "",
+      tag: transaction.tag,
       family: transaction.family,
       feesStrategy: transaction.feesStrategy,
       data: transaction.data,
@@ -39,7 +35,7 @@ export function genericGetTransactionStatus(
       dstValAddress: transaction.dstValAddress,
     };
 
-    const chainSpecificValidation = bridgeApi.getChainSpecificRules?.();
+    const chainSpecificValidation = bridgeApi.getChainSpecificRules;
     if (chainSpecificValidation) {
       if (chainSpecificValidation.getTransactionStatus.throwIfPendingOperation) {
         if (account.pendingOperations.length > 0) {
@@ -48,13 +44,12 @@ export function genericGetTransactionStatus(
       }
     }
 
-    let intent = transactionToIntent(
+    const intent = transactionToIntent(
       account,
       draftTransaction,
       bridgeApi.computeIntentType,
-      alpacaApi.craftTransactionData,
+      coinModuleApi.craftTransactionData,
     );
-    intent = applyMemoToIntent(intent, transaction);
 
     const customFees = bigNumberToBigIntDeep({
       value: transaction.fees ?? new BigNumber(0),
@@ -69,7 +64,7 @@ export function genericGetTransactionStatus(
     });
 
     const { errors, warnings, estimatedFees, amount, totalSpent, totalFees } =
-      await alpacaApi.validateIntent(
+      await coinModuleApi.validateIntent(
         intent,
         extractBalances(account, bridgeApi.getAssetFromToken),
         customFees,

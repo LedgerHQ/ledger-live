@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { render, screen, waitFor, within } from "tests/testSetup";
+import { cleanup, render, screen, waitFor, within } from "tests/testSetup";
 import { useNavigate } from "react-router";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { useExportOperationsCsv } from "~/renderer/hooks/useExportOperationsCsv";
@@ -44,27 +44,37 @@ const mockedUseExportOperationsCsv = jest.mocked(useExportOperationsCsv);
 
 const mockedUseNavigate = jest.mocked(useNavigate);
 
+type ExportHookArgs = {
+  onSuccess?: () => void;
+  onError?: () => void;
+};
+
+function mockUseExportOperationsCsv({ onSuccess, onError }: ExportHookArgs) {
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState(false);
+
+  return {
+    success,
+    error,
+    isLoading: false,
+    exportCsv: async () => {
+      if (mockExportShouldError) {
+        setError(true);
+        onError?.();
+      } else if (mockExportShouldSucceed) {
+        setSuccess(true);
+        onSuccess?.();
+      }
+    },
+    resetState: () => {
+      setSuccess(false);
+      setError(false);
+    },
+  };
+}
+
 function mockExportHook() {
-  mockedUseExportOperationsCsv.mockImplementation(() => {
-    const [success, setSuccess] = useState(false);
-    const [error, setError] = useState(false);
-    return {
-      success,
-      error,
-      isLoading: false,
-      exportCsv: async () => {
-        if (mockExportShouldError) {
-          setError(true);
-        } else if (mockExportShouldSucceed) {
-          setSuccess(true);
-        }
-      },
-      resetState: () => {
-        setSuccess(false);
-        setError(false);
-      },
-    };
-  });
+  mockedUseExportOperationsCsv.mockImplementation(mockUseExportOperationsCsv);
 }
 
 describe("History integration", () => {
@@ -72,6 +82,10 @@ describe("History integration", () => {
     jest.clearAllMocks();
     mockedUseNavigate.mockReturnValue(mockNavigate);
     mockExportHook();
+  });
+
+  afterEach(() => {
+    cleanup();
   });
 
   function renderHistory(accounts: Account[] = [BTC_ACCOUNT]) {
@@ -186,6 +200,10 @@ describe("History export dialog integration", () => {
     mockExportHook();
   });
 
+  afterEach(() => {
+    cleanup();
+  });
+
   function renderHistoryWithAccounts() {
     return render(<History />, {
       initialState: {
@@ -196,18 +214,25 @@ describe("History export dialog integration", () => {
   }
 
   async function openExportDialog(user: ReturnType<typeof renderHistoryWithAccounts>["user"]) {
-    await user.click(screen.getByRole("button", { name: /export/i }));
-    await waitFor(() =>
-      expect(screen.getByRole("heading", { name: "Transaction history" })).toBeVisible(),
-    );
-    return within(screen.getByRole("dialog"));
+    const exportButton = await screen.findByTestId("history-export-csv-button");
+    await user.click(exportButton);
+    return within(await screen.findByRole("dialog"));
+  }
+
+  async function selectAllAndExport(
+    user: ReturnType<typeof renderHistoryWithAccounts>["user"],
+    dialog: ReturnType<typeof within>,
+  ) {
+    await user.click(dialog.getByText(/select all/i));
+    const exportButton = dialog.getByRole("button", { name: /export history/i });
+    await waitFor(() => expect(exportButton).toBeEnabled());
+    await user.click(exportButton);
   }
 
   it("should open dialog, list accounts, and toggle selection", async () => {
     const { user } = renderHistoryWithAccounts();
     const dialog = await openExportDialog(user);
 
-    expect(dialog.getByText("Choose the accounts to include in the export")).toBeVisible();
     expect(dialog.getByText(/Bitcoin/)).toBeVisible();
     expect(dialog.getByText(/Ethereum/)).toBeVisible();
 
@@ -226,50 +251,45 @@ describe("History export dialog integration", () => {
 
     await user.click(dialog.getByText(/Bitcoin/));
     expect(exportButton).toBeDisabled();
+
+    await user.keyboard("{Escape}");
   });
 
   it("should export selected accounts and show success scene", async () => {
     const { user } = renderHistoryWithAccounts();
     const dialog = await openExportDialog(user);
 
-    await user.click(dialog.getByText(/select all/i));
-    await user.click(dialog.getByRole("button", { name: /export history/i }));
+    await selectAllAndExport(user, dialog);
 
-    await waitFor(() =>
-      expect(screen.getByText("Transaction history saved successfully")).toBeVisible(),
-    );
-    expect(screen.getByRole("button", { name: /done/i })).toBeVisible();
+    expect(await screen.findByTestId("history-export-success-title")).toBeVisible();
+    await user.click(screen.getByRole("button", { name: /done/i }));
   });
 
   it("should stay on export scene when user cancels save dialog", async () => {
-    mockExportShouldSucceed = false;
-
     const { user } = renderHistoryWithAccounts();
     const dialog = await openExportDialog(user);
 
-    await user.click(dialog.getByText(/select all/i));
-    await user.click(dialog.getByRole("button", { name: /export history/i }));
+    mockExportShouldSucceed = false;
+    await selectAllAndExport(user, dialog);
 
-    expect(screen.queryByText("Transaction history saved successfully")).not.toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Transaction history" })).toBeVisible();
+    expect(screen.queryByTestId("history-export-success-title")).not.toBeInTheDocument();
+    expect(screen.getByTestId("history-export-dialog")).toBeVisible();
+
+    await user.keyboard("{Escape}");
   });
 
   it("should show error scene on export failure and allow retry", async () => {
-    mockExportShouldError = true;
-
     const { user } = renderHistoryWithAccounts();
     const dialog = await openExportDialog(user);
 
-    await user.click(dialog.getByText(/select all/i));
-    await user.click(dialog.getByRole("button", { name: /export history/i }));
+    mockExportShouldError = true;
+    await selectAllAndExport(user, dialog);
 
-    await waitFor(() => expect(screen.getByText("Something went wrong")).toBeVisible());
+    expect(await screen.findByTestId("history-export-error-title")).toBeVisible();
 
     await user.click(screen.getByRole("button", { name: /try again/i }));
 
-    await waitFor(() =>
-      expect(screen.getByRole("heading", { name: "Transaction history" })).toBeVisible(),
-    );
-    expect(screen.queryByText("Something went wrong")).not.toBeInTheDocument();
+    expect(await screen.findByTestId("history-export-dialog")).toBeVisible();
+    expect(screen.queryByTestId("history-export-error-title")).not.toBeInTheDocument();
   });
 });

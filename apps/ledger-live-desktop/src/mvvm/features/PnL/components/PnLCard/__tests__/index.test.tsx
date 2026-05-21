@@ -1,4 +1,5 @@
 import React from "react";
+import { TriangleUp, TriangleDown } from "@ledgerhq/lumen-ui-react/symbols";
 import { render, screen, waitFor } from "tests/testSetup";
 import { PnLCard } from "../index";
 
@@ -6,24 +7,30 @@ type PnLCardProps = React.ComponentProps<typeof PnLCard>;
 type InteractiveProps = Extract<PnLCardProps, { type: "interactive" }>;
 type InfoProps = Extract<PnLCardProps, { type: "info" }>;
 
+const ID = "unrealisedReturn";
 const TITLE = "Unrealised return";
 const VALUE = "243.32";
 const TOOLTIP = "This is a tooltip";
-const DISCREET_PLACEHOLDER = "***";
+
+const UP_ICON = { Icon: TriangleUp, className: "text-success" } as const;
+const DOWN_ICON = { Icon: TriangleDown, className: "text-error" } as const;
+const NEUTRAL_ICON = { Icon: TriangleUp, className: "text-disabled" } as const;
 
 const makeInteractiveProps = (
   overrides: Partial<Omit<InteractiveProps, "type">> = {},
 ): InteractiveProps => ({
   type: "interactive",
+  id: ID,
   title: TITLE,
   value: VALUE,
-  trend: "up",
+  trendIcon: UP_ICON,
   onClick: jest.fn(),
   ...overrides,
 });
 
 const makeInfoProps = (overrides: Partial<Omit<InfoProps, "type">> = {}): InfoProps => ({
   type: "info",
+  id: ID,
   title: TITLE,
   value: VALUE,
   tooltipContent: TOOLTIP,
@@ -58,18 +65,17 @@ describe("PnLCard", () => {
       expect(onClick).toHaveBeenCalledTimes(1);
     });
 
-    it("should render an up arrow when trend is 'up'", () => {
-      const { container } = render(<PnLCard {...makeInteractiveProps({ trend: "up" })} />);
+    it.each([
+      [UP_ICON, ".text-success", [".text-error", ".text-disabled"]],
+      [DOWN_ICON, ".text-error", [".text-success", ".text-disabled"]],
+      [NEUTRAL_ICON, ".text-disabled", [".text-success", ".text-error"]],
+    ] as const)("renders the trend icon with %o", (trendIcon, expectedClass, otherClasses) => {
+      const { container } = render(<PnLCard {...makeInteractiveProps({ trendIcon })} />);
 
-      expect(container.querySelector(".text-success")).toBeInTheDocument();
-      expect(container.querySelector(".text-error")).not.toBeInTheDocument();
-    });
-
-    it("should render a down arrow when trend is 'down'", () => {
-      const { container } = render(<PnLCard {...makeInteractiveProps({ trend: "down" })} />);
-
-      expect(container.querySelector(".text-error")).toBeInTheDocument();
-      expect(container.querySelector(".text-success")).not.toBeInTheDocument();
+      expect(container.querySelector(expectedClass)).toBeInTheDocument();
+      otherClasses.forEach(cls => {
+        expect(container.querySelector(cls)).not.toBeInTheDocument();
+      });
     });
 
     it("should not render any tooltip", () => {
@@ -111,28 +117,6 @@ describe("PnLCard", () => {
         const tooltips = screen.getAllByText(TOOLTIP);
         expect(tooltips.some(el => el.closest("[role='tooltip']"))).toBe(true);
       });
-    });
-  });
-
-  describe("when discreet is enabled", () => {
-    it("should hide the value behind '***' in the interactive variant", () => {
-      render(<PnLCard {...makeInteractiveProps({ discreet: true })} />);
-
-      expect(screen.getByText(DISCREET_PLACEHOLDER)).toBeVisible();
-      expect(screen.queryByText(VALUE)).not.toBeInTheDocument();
-    });
-
-    it("should hide the value behind '***' in the info variant", () => {
-      render(<PnLCard {...makeInfoProps({ discreet: true })} />);
-
-      expect(screen.getByText(DISCREET_PLACEHOLDER)).toBeVisible();
-      expect(screen.queryByText(VALUE)).not.toBeInTheDocument();
-    });
-
-    it("should still render the title when the value is hidden", () => {
-      render(<PnLCard {...makeInteractiveProps({ discreet: true })} />);
-
-      expect(screen.getByText(TITLE)).toBeVisible();
     });
   });
 });

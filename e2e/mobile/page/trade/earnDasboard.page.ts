@@ -12,6 +12,7 @@ export default class EarnDashboardPage {
   getAssetsPlaceholderHero = "get-assets-placeholder-hero";
   rewardsPotentialBalanceCard = "Rewards you could earn-balance-card";
   rewardsPotentialText = "Rewards you could earn";
+  iceColdStartEarnCta = "ice-cold-start-earn-cta";
   stakeCryptoAssetsButton = "stake-crypto-assets-button";
   stakingProviderModalTitle = "staking-provider-modal-title";
   tableEarnMoreSelector =
@@ -164,6 +165,14 @@ export default class EarnDashboardPage {
     const earnButton = getWebElementByTestId(this.stakeCryptoAssetsButton, {
       testIdAttribute: "data-test-id",
     });
+    await scrollToWebElement(earnButton);
+    await tapWebElementByElement(earnButton);
+    await app.stake.verifyChooseAssetPage();
+  }
+
+  @Step("Tap ice cold start earn CTA")
+  async tapIceColdStartEarnCta() {
+    const earnButton = getWebElementByTestId(this.iceColdStartEarnCta);
     await scrollToWebElement(earnButton);
     await tapWebElementByElement(earnButton);
     await app.stake.verifyChooseAssetPage();

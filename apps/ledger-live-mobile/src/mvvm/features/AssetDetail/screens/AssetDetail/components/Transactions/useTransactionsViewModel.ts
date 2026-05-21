@@ -1,13 +1,13 @@
 import { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
+import { Account, AccountLike, DistributionItem, Operation } from "@ledgerhq/types-live";
 import { flattenAccounts } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useSelector } from "~/context/hooks";
+import { accountsSelector } from "~/reducers/accounts";
 import { lastSeenOperationDateSelector } from "~/reducers/history";
 import { parseLastSeenMs } from "LLM/features/OperationsHistory/utils/unreadOperations";
-import { useAccountsByCryptoCurrency } from "LLM/hooks/useAccountsByCryptoCurrency";
 import { useOperationsV1 } from "~/screens/Analytics/Operations/useOperationsV1";
 import { NavigatorName, ScreenName } from "~/const";
 import { track } from "~/analytics";
@@ -15,19 +15,46 @@ import type { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 
 export const MAX_PREVIEW_OPERATIONS = 3;
 
-export function useTransactionsViewModel(currency: CryptoOrTokenCurrency | undefined) {
+export function useTransactionsViewModel(
+  currency?: CryptoOrTokenCurrency,
+  distributionItem?: DistributionItem,
+) {
   const navigation = useNavigation<BaseNavigation>();
 
-  const accountTuples = useAccountsByCryptoCurrency(currency);
+  const allAccounts = useSelector(accountsSelector);
 
-  const accounts: Account[] = useMemo(
-    () => accountTuples.map(tuple => tuple.account as Account),
-    [accountTuples],
+  // Falls back to a native-currency lookup when the asset distribution is not
+  // yet available (e.g. async load, or native account with zero balance and
+  // past operations). Token currencies still require an explicit
+  // `distributionItem` to avoid leaking sibling-token operations.
+  const allowedIds = useMemo(() => {
+    if (distributionItem) {
+      return new Set(distributionItem.accounts.map(a => a.id));
+    }
+    if (currency?.type === "CryptoCurrency") {
+      return new Set(allAccounts.filter(a => a.currency.id === currency.id).map(a => a.id));
+    }
+    return new Set<string>();
+  }, [distributionItem, currency, allAccounts]);
+
+  const rootAccounts: Account[] = useMemo(() => {
+    if (allowedIds.size === 0) return [];
+    return allAccounts.filter(root => flattenAccounts([root]).some(a => allowedIds.has(a.id)));
+  }, [allAccounts, allowedIds]);
+
+  const flattenedRootAccounts: AccountLike[] = useMemo(
+    () => flattenAccounts(rootAccounts),
+    [rootAccounts],
   );
 
-  const allAccounts: AccountLike[] = useMemo(() => flattenAccounts(accounts), [accounts]);
+  const scopedFilter = useCallback(
+    (_op: Operation, account: AccountLike) => allowedIds.has(account.id),
+    [allowedIds],
+  );
 
-  const { sections } = useOperationsV1(accounts, MAX_PREVIEW_OPERATIONS);
+  const { sections } = useOperationsV1(rootAccounts, MAX_PREVIEW_OPERATIONS, {
+    filterOperation: scopedFilter,
+  });
 
   const operations: Operation[] = useMemo(
     () => sections.flatMap(section => section.data).slice(0, MAX_PREVIEW_OPERATIONS),
@@ -39,7 +66,7 @@ export function useTransactionsViewModel(currency: CryptoOrTokenCurrency | undef
 
   const accountByAddress = useMemo(() => {
     const map = new Map<string, AccountLike>();
-    for (const account of accounts) {
+    for (const account of rootAccounts) {
       const { freshAddress } = account;
       if (freshAddress) {
         const currId = getAccountCurrency(account).id;
@@ -47,17 +74,17 @@ export function useTransactionsViewModel(currency: CryptoOrTokenCurrency | undef
       }
     }
     return map;
-  }, [accounts]);
+  }, [rootAccounts]);
 
   const findAccount = useCallback(
     (accountId: string): { account: AccountLike; parentAccount: Account | undefined } | null => {
-      const account = allAccounts.find(a => a.id === accountId);
+      const account = flattenedRootAccounts.find(a => a.id === accountId);
       if (!account) return null;
       const parentAccount: Account | undefined =
-        account.type === "Account" ? undefined : accounts.find(a => a.id === account.parentId);
+        account.type === "Account" ? undefined : rootAccounts.find(a => a.id === account.parentId);
       return { account, parentAccount };
     },
-    [allAccounts, accounts],
+    [flattenedRootAccounts, rootAccounts],
   );
 
   const onHeaderPress = useCallback(() => {
@@ -68,9 +95,9 @@ export function useTransactionsViewModel(currency: CryptoOrTokenCurrency | undef
     });
     navigation.navigate(NavigatorName.OperationsHistory, {
       screen: ScreenName.OperationsList,
-      params: { currencyId: currency?.id },
+      params: { accountIds: Array.from(allowedIds) },
     });
-  }, [navigation, currency?.id]);
+  }, [navigation, currency?.id, allowedIds]);
 
   return {
     operations,
@@ -78,5 +105,6 @@ export function useTransactionsViewModel(currency: CryptoOrTokenCurrency | undef
     lastSeenTs,
     findAccount,
     onHeaderPress,
+    hasData: operations.length > 0,
   };
 }

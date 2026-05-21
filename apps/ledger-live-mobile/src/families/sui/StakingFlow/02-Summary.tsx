@@ -28,8 +28,8 @@ import { getFirstStatusError, hasStatusError } from "../../helpers";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { SuiStakingFlowParamList } from "./types";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
-import Config from "react-native-config";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
+import { useChangeValidatorRotateAnim } from "../../shared/useChangeValidatorRotateAnim";
 
 type Props = BaseComposite<
   StackNavigatorProps<SuiStakingFlowParamList, ScreenName.SuiStakingValidator>
@@ -103,47 +103,15 @@ export default function StakingSummary({ navigation, route }: Props) {
     route.params.transaction,
   ]);
 
-  const [rotateAnim] = useState(() => new Animated.Value(0));
-  useEffect(() => {
-    if (!Config.DETOX) {
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(rotateAnim, {
-            toValue: 1,
-            duration: 200,
-            useNativeDriver: true,
-          }),
-          Animated.timing(rotateAnim, {
-            toValue: -1,
-            duration: 300,
-            useNativeDriver: true,
-          }),
-          Animated.timing(rotateAnim, {
-            toValue: 0,
-            duration: 200,
-            useNativeDriver: true,
-          }),
-          Animated.delay(1000),
-        ]),
-      ).start();
-    }
-    return () => {
-      rotateAnim.setValue(0);
-    };
-  }, [rotateAnim]);
-
-  const rotate = rotateAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: ["0deg", "30deg"],
-  });
+  const { rotate, resetRotation } = useChangeValidatorRotateAnim();
 
   const onChangeValidator = useCallback(() => {
-    rotateAnim.setValue(0);
+    resetRotation();
     navigation.navigate(ScreenName.SuiStakingValidatorSelect, {
       ...route.params,
       transaction,
     });
-  }, [rotateAnim, navigation, transaction, route.params]);
+  }, [resetRotation, navigation, transaction, route.params]);
 
   const currency = getAccountCurrency(account);
   const color = getCurrencyColor(currency);

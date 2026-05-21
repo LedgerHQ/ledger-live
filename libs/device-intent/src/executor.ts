@@ -13,11 +13,15 @@ import type {
  *
  * Injected into the executor via {@link ExecutorPlatformConfiguration} so each
  * platform (LWM / LWD) can provide its own implementation.
+ *
+ * The component is expected to handle its own internal failures (e.g. pairing
+ * errors, transport setup issues): they never surface to the executor.
  */
 export type DeviceConnectionComponent = React.ComponentType<{
   deviceConnectionParams: DeviceConnectionParams;
   onConnected: (connectionResult: DeviceConnectionResult) => void;
-  onError: (error: unknown) => void;
+  /** Call to request the executor to close (forwards to `DeviceIntentExecutorProps.onUserCancel`). */
+  onClose: () => void;
 }>;
 
 /**
@@ -34,17 +38,32 @@ export type DeviceContextInitializerComponent<
   deviceInitializationInput: InitInput;
   onContextInitialized: (context: DeviceExtractedContext) => void;
   config?: InitializerConfig;
+  /** Call to request the executor to close (forwards to `DeviceIntentExecutorProps.onUserCancel`). */
+  onClose: () => void;
 }>;
 
 /**
- * React component rendered when an error occurs during one of the executor
- * phases (connection or intent execution).
+ * React component rendered when an error occurs during intent execution.
  *
  * Injected into the executor via {@link ExecutorPlatformConfiguration}.
  */
 export type ErrorComponent = React.ComponentType<{
   error: unknown;
   onRetry: () => void;
+  /** Call to request the executor to close (forwards to `DeviceIntentExecutorProps.onUserCancel`). */
+  onClose: () => void;
+}>;
+
+/**
+ * React component rendered when the executor detects that the device has
+ * disconnected during initialization, intent execution, or while idle.
+ *
+ * Injected into the executor via {@link ExecutorPlatformConfiguration}.
+ */
+export type DeviceDisconnectedComponent = React.ComponentType<{
+  onRetry: () => void;
+  /** Call to request the executor to close (forwards to `DeviceIntentExecutorProps.onUserCancel`). */
+  onClose: () => void;
 }>;
 
 /**
@@ -68,7 +87,7 @@ export interface ExecutorPlatformConfiguration<InitInput = void, InitializerConf
     InitInput,
     InitializerConfig
   >;
-  ConnectionErrorComponent: ErrorComponent;
+  DeviceDisconnectedComponent: DeviceDisconnectedComponent;
   IntentErrorComponent: ErrorComponent;
   InvalidOperationComponent: InvalidOperationComponent;
 }
@@ -81,7 +100,7 @@ export interface ExecutorPlatformConfiguration<InitInput = void, InitializerConf
  */
 export type ExecutorState =
   | { type: "connectingDevice" }
-  | { type: "connectingDeviceError"; error: unknown }
+  | { type: "deviceDisconnected" }
   | { type: "initializingDeviceContext" }
   | { type: "executingIntent" }
   | { type: "executingIntentError"; error: unknown }
@@ -120,9 +139,14 @@ export interface DeviceIntentExecutorProps<JobState, Input, ExtraProps, InitInpu
   onIntentJobError: (error: unknown) => void;
   /** When `false` the executor is hidden and inactive; setting to `false` terminates any running job. */
   enabled: boolean;
-  /** Whether the UI allows the user to cancel the current execution (e.g. close a bottom sheet). */
+  /**
+   * Whether the UI allows the user to cancel the current execution
+   * (e.g. close the bottom sheet containing the executor).
+   */
   cancellableUI: boolean;
-  /** Called when the user cancels the current execution (e.g. closes a bottom sheet). */
+  /** Called when the user performs an action that cancels the current execution
+   * (e.g. user closes the bottom sheet containing the executor, or clicks a "Close" CTA in a given error state, etc.).
+   */
   onUserCancel: () => void;
   /** Set to a new value to request cancellation of the ongoing job. */
   cancelIntentRequestId: string | undefined;

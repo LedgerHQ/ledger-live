@@ -13,7 +13,7 @@ import { createWalletState } from "../../../testUtils/createWalletState";
 import {
   buildMainAccountByIdMap,
   lookupParentAccountFromMap,
-} from "../../../utils/parentAccountLookup";
+} from "@ledgerhq/asset-aggregation/assetDistribution/index";
 
 function expectColumnHeaders(): void {
   expect(screen.getByRole("columnheader", { name: "Name" })).toBeVisible();

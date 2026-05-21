@@ -9,15 +9,23 @@ import type { Account, TokenAccount, Operation } from "@ledgerhq/types-live";
 import { ActionButtonEvent } from "~/components/FabActions";
 import * as featureFlagsIndex from "@ledgerhq/live-common/featureFlags/index";
 import * as accountIndex from "@ledgerhq/live-common/account/index";
+import { useAccountBridgeOrNull } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import type { TFunction } from "i18next";
 import { render } from "@testing-library/react-native";
 import React from "react";
 
-/**
- * isAccountEmpty can not be spied because it is declared in multiple files
- * and overriden in ledger-live-common/src/account/helpers.ts
- */
-const mockIsAccountEmpty = jest.requireMock("@ledgerhq/live-common/account/index").isAccountEmpty;
+jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
+  useAccountBridgeOrNull: jest.fn(),
+}));
+
+const mockIsAccountEmpty = jest.fn();
+const mockIsEditableOperation = jest.fn();
+const mockIsStuckOperation = jest.fn();
+(useAccountBridgeOrNull as jest.Mock).mockReturnValue({
+  isAccountEmpty: mockIsAccountEmpty,
+  isEditableOperation: mockIsEditableOperation,
+  isStuckOperation: mockIsStuckOperation,
+});
 
 describe("Testing ListHeaderComponent Component", () => {
   describe("Testing disable delegation flag", () => {

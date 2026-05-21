@@ -28,6 +28,7 @@ import DebugPerformance from "~/screens/Settings/Debug/Performance";
 import DebugLogs from "~/screens/Settings/Debug/Debugging/Logs";
 import DebugLottie from "~/screens/Settings/Debug/Features/Lottie";
 import DebugLumen from "~/screens/Settings/Debug/Debugging/Lumen";
+import DebugLumenVisualization from "~/screens/Settings/Debug/Debugging/LumenVisualization";
 import DebugWallet40 from "~/screens/Settings/Debug/Debugging/Wallet40";
 import DebugNetwork from "~/screens/Settings/Debug/Debugging/Network";
 import DebugCommandSender from "~/screens/Settings/Debug/Connectivity/CommandSender";
@@ -43,7 +44,9 @@ import DebugVideos from "~/screens/Settings/Debug/Features/Videos";
 import TooltipDemo from "~/screens/Settings/Debug/Features/TooltipDemo";
 import DebugDeviceActionContentScreen from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/DeviceActionContentScreen";
 import DebugInfoStateScreen from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/InfoStateScreen";
+import DebugConnectDeviceScreen from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/ConnectDeviceScreen";
 import DebugDeviceIntentExecutorInitialization from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/InitializationScreen";
+import DebugInitializerStatesScreen from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/InitializerStatesScreen";
 import DebugDeviceIntentExecutorOrchestration from "~/screens/Settings/Debug/Features/DeviceIntentExecutor/OrchestrationScreen";
 import Settings from "~/screens/Settings";
 import AccountsSettings from "~/screens/Settings/Accounts";
@@ -326,10 +329,24 @@ export default function SettingsNavigator() {
         }}
       />
       <Stack.Screen
+        name={ScreenName.DebugDeviceIntentExecutorConnectDevice}
+        component={DebugConnectDeviceScreen}
+        options={{
+          title: "DIE Connect Device",
+        }}
+      />
+      <Stack.Screen
         name={ScreenName.DebugDeviceIntentExecutorInitialization}
         component={DebugDeviceIntentExecutorInitialization}
         options={{
           title: "DIE Initialization",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugDeviceIntentExecutorInitializerStates}
+        component={DebugInitializerStatesScreen}
+        options={{
+          title: "DIE Initializer States",
         }}
       />
       <Stack.Screen
@@ -379,6 +396,13 @@ export default function SettingsNavigator() {
         component={DebugLumen}
         options={{
           title: "Lumen Debug",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugLumenVisualization}
+        component={DebugLumenVisualization}
+        options={{
+          title: "Lumen Visualization",
         }}
       />
       <Stack.Screen

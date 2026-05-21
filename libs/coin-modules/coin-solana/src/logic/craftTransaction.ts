@@ -59,7 +59,7 @@ import type {
 import { assertUnreachable, DUMMY_SIGNATURE } from "../utils";
 
 // ---------------------------------------------------------------------------
-// Alpaca API: craft a transaction from a TransactionIntent
+// Coin Module API: craft a transaction from a TransactionIntent
 // ---------------------------------------------------------------------------
 
 export async function craftTransaction(

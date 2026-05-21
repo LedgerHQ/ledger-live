@@ -7,11 +7,13 @@ import type { BalanceDetailsViewModelResult } from "./useBalanceDetailsViewModel
 import { TotalBalanceView } from "./TotalBalanceView";
 import { EarnBannerView } from "./EarnBannerView";
 import { EarnCardsView } from "./EarnCardsView";
+import { SectionSkeleton } from "../SectionSkeleton";
 
 type EarnState = BalanceDetailsViewModelResult["earnState"];
 
 type Props = Readonly<{
   hasAccounts: boolean;
+  discreet: boolean;
   counterValue: number | undefined;
   counterValueFormatter: (value: number) => FormattedValue;
   formattedTotalBalance: string;
@@ -19,10 +21,12 @@ type Props = Readonly<{
   onTransferPress: () => void;
   onEarnBannerPress: () => void;
   onEarnDepositPress: () => void;
+  isLoading: boolean;
 }>;
 
 export function BalanceDetailsView({
   hasAccounts,
+  discreet,
   counterValue,
   counterValueFormatter,
   formattedTotalBalance,
@@ -30,12 +34,25 @@ export function BalanceDetailsView({
   onTransferPress,
   onEarnBannerPress,
   onEarnDepositPress,
+  isLoading,
 }: Props) {
-  if (!hasAccounts) return null;
+  if (isLoading && !hasAccounts) {
+    return <SectionSkeleton rows={1} rowHeight="s56" />;
+  }
+
+  if (!hasAccounts) {
+    if (earnState.type !== "banner") return null;
+    return (
+      <Box testID={ASSET_DETAIL_TEST_IDS.balanceDetails} lx={containerStyle}>
+        <EarnBannerView label={earnState.label} onPress={onEarnBannerPress} />
+      </Box>
+    );
+  }
 
   return (
     <Box testID={ASSET_DETAIL_TEST_IDS.balanceDetails} lx={containerStyle}>
       <TotalBalanceView
+        discreet={discreet}
         counterValue={counterValue}
         counterValueFormatter={counterValueFormatter}
         formattedTotalBalance={formattedTotalBalance}

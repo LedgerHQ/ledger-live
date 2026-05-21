@@ -1,6 +1,6 @@
 import React from "react";
 import { FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
-import { render, screen, waitFor } from "tests/testSetup";
+import { render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
 import Default from "../Default";
 import { updateIdentify } from "../analytics/segment";
 
@@ -49,8 +49,10 @@ describe("Default", () => {
   it("renders FirmwareUpdateBannerEntry in main layout when shouldDisplayWallet40MainNav is false", async () => {
     render(<Default />, {
       initialState: {
+        ...withFlagOverrides({ lwdWallet40: { enabled: false } }),
         devices: { currentDevice: null, devices: [] },
         settings: {
+          loaded: true,
           hasCompletedOnboarding: true,
           lastUsedVersion: __APP_VERSION__,
           vaultSigner: { enabled: false, host: "", token: "", workspace: "" },
@@ -67,9 +69,9 @@ describe("Default", () => {
       () => {
         expect(screen.getByTestId("fw-update-banner")).toBeInTheDocument();
       },
-      { timeout: 3000 },
+      { timeout: 5000 },
     );
-  });
+  }, 15_000); // Default mounts a large tree; CI runners need extra time
 
   describe("analytics consent", () => {
     beforeEach(() => {

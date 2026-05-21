@@ -10,6 +10,7 @@ export enum PostOnboardingActionId {
   buyCrypto = "buyCrypto",
   syncAccounts = "syncAccounts",
   customImage = "customImage",
+  discoverWallet = "discoverWallet",
   recover = "recover",
   // Mocks for desktop development and tests
   assetsTransferMock = "assetsTransferMock",
@@ -20,6 +21,7 @@ export enum PostOnboardingActionId {
   personalizeMock = "personalizeMock",
   recoverMock = "recoverMock",
   syncAccountsMock = "syncAccountsMock",
+  discoverWalletMock = "discoverWalletMock",
 }
 
 export type WithNavigationParams = {
@@ -41,6 +43,7 @@ export interface StartActionArgs {
   deviceModelId?: DeviceModelId;
   protectId?: string;
   openActivationDrawer?: () => void;
+  dispatch?: (action: { type: string; [extraProps: string]: unknown }) => unknown;
 }
 
 type WithStartActionFunction = {
@@ -124,6 +127,7 @@ export type PostOnboardingAction = {
   getIsAlreadyCompletedByState?: (args: {
     isLedgerSyncActive?: boolean;
     accounts?: Account[];
+    productTourCompleted?: boolean;
   }) => boolean;
 
   /**

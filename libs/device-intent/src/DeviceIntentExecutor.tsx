@@ -35,7 +35,7 @@ export function DeviceIntentExecutor<JobState, Input, ExtraProps, InitInput, Ini
   const {
     DeviceConnectionComponent,
     DeviceContextInitializerComponent,
-    ConnectionErrorComponent,
+    DeviceDisconnectedComponent,
     IntentErrorComponent,
     InvalidOperationComponent,
   } = platformConfig;
@@ -46,11 +46,11 @@ export function DeviceIntentExecutor<JobState, Input, ExtraProps, InitInput, Ini
         <DeviceConnectionComponent
           deviceConnectionParams={state.deviceConnectionParams}
           onConnected={state.onConnected}
-          onError={state.onError}
+          onClose={state.onClose}
         />
       );
-    case "connectionError":
-      return <ConnectionErrorComponent error={state.error} onRetry={state.onRetry} />;
+    case "deviceDisconnected":
+      return <DeviceDisconnectedComponent onRetry={state.onRetry} onClose={state.onClose} />;
     case "deviceInitialization":
       return (
         <DeviceContextInitializerComponent
@@ -58,16 +58,23 @@ export function DeviceIntentExecutor<JobState, Input, ExtraProps, InitInput, Ini
           deviceInitializationInput={state.deviceInitializationInput}
           onContextInitialized={state.onContextInitialized}
           config={initializerConfig}
+          onClose={state.onClose}
         />
       );
     case "intentExecution": {
       const IntentComponent = state.intentComponent;
       return (
-        <IntentComponent jobState={state.jobState} extraProps={state.intentComponentExtraProps} />
+        <IntentComponent
+          jobState={state.jobState}
+          extraProps={state.intentComponentExtraProps}
+          onClose={state.onClose}
+        />
       );
     }
     case "intentError":
-      return <IntentErrorComponent error={state.error} onRetry={state.onRetry} />;
+      return (
+        <IntentErrorComponent error={state.error} onRetry={state.onRetry} onClose={state.onClose} />
+      );
     case "invalidOperation":
       return <InvalidOperationComponent error={state.error} onClose={state.onClose} />;
     case "idle": {
@@ -77,6 +84,7 @@ export function DeviceIntentExecutor<JobState, Input, ExtraProps, InitInput, Ini
           <IntentComponent
             jobState={state.lastIntentSnapshot.jobState}
             extraProps={state.lastIntentSnapshot.intentComponentExtraProps}
+            onClose={state.onClose}
           />
         );
       }

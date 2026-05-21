@@ -6,7 +6,7 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/types";
 import { InvalidParameterError } from "@ledgerhq/errors";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
-import { getMockedAlpacaOperation } from "../__tests__/fixtures/operation.fixture";
+import { getMockedCoinFrameworkOperation } from "../__tests__/fixtures/operation.fixture";
 import coinConfig from "../config";
 import { craftTransaction, estimateFees, getBalance, lastBlock, listOperations } from "../logic";
 import { getTransactionType } from "../logic/utils";
@@ -18,7 +18,7 @@ jest.mock("../logic/utils");
 
 describe("createApi", () => {
   const mockConfig = getMockedConfig("testnet");
-  const mockOperation = getMockedAlpacaOperation();
+  const mockOperation = getMockedCoinFrameworkOperation();
   const mockedCraftTransaction = jest.mocked(craftTransaction);
   const mockedEstimateFees = jest.mocked(estimateFees);
   const mockedGetBalance = jest.mocked(getBalance);
@@ -62,7 +62,7 @@ describe("createApi", () => {
     expect(config).toMatchObject({ status: { type: "active" } });
   });
 
-  it("should return an API object with alpaca api methods", () => {
+  it("should return an API object with coin module api methods", () => {
     const api = createApi(mockConfig, "aleo");
 
     expect(api.broadcast).toBeInstanceOf(Function);
@@ -221,7 +221,7 @@ describe("createApi", () => {
         currency: expect.any(Object),
         address: "aleo1test",
         options,
-        mode: "alpaca",
+        mode: "coin-framework",
       });
       expect(result).toEqual({ items: [mockOperation], next: "next-cursor" });
     });

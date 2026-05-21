@@ -68,7 +68,7 @@ describe("buildTransactionParams", () => {
           validatorAddress,
           amount,
         );
-      }).toThrow("SEI redelegate requires dstValAddress");
+      }).toThrow("RedelegateDstValAddressRequired");
     });
 
     it("should build params for getStakedBalance operation", () => {
@@ -93,6 +93,13 @@ describe("buildTransactionParams", () => {
           amount,
         );
       }).toThrow("SEI getStakedBalance requires delegator and dstValAddress");
+    });
+
+    it("should return the correct params for a claim rewards", () => {
+      const transactionType: StakingOperation = "claimReward";
+      const params = buildTransactionParams(currencyId, transactionType, validatorAddress, amount);
+
+      expect(params).toEqual([validatorAddress]);
     });
   });
 

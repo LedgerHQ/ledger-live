@@ -12,6 +12,7 @@ export const ASSET_DETAIL_TEST_IDS = {
   earnDeposit: "asset-detail-earn-deposit",
   addresses: "asset-detail-addresses",
   addAccount: "asset-detail-add-account",
+  seeAllAddresses: "asset-detail-see-all-addresses",
   marketStats: "asset-detail-market-stats",
   pricePerformance: "asset-detail-price-performance",
   transactions: "asset-detail-transactions",
@@ -20,4 +21,10 @@ export const ASSET_DETAIL_TEST_IDS = {
   swapButton: "asset-detail-swap-button",
   footerReceiveButton: "asset-detail-footer-receive-button",
   fallbackBanner: "asset-detail-fallback-banner",
+  hiddenAssetBanner: "asset-detail-hidden-asset-banner",
+  hiddenAssetBannerShowAsset: "asset-detail-hidden-asset-banner-show-asset",
+  coinOptionsTrailing: "asset-detail-coin-options-trailing",
+  coinOptionsSheet: "asset-detail-coin-options-sheet",
+  coinOptionsFavouriteRow: "asset-detail-coin-options-favourite-row",
+  coinOptionsHideRow: "asset-detail-coin-options-hide-row",
 } as const;

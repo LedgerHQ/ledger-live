@@ -19,8 +19,15 @@ function ProductTourScreenDebug() {
   const productTourCompleted = useSelector(productTourCompletedSelector);
   const lwmProductTourFeature = getFeature(LWM_PRODUCT_TOUR_FLAG);
   const isLwmProductTourEnabled = lwmProductTourFeature?.enabled ?? false;
-  const { isDrawerOpen, openProductTour, closeProductTour, onSlideChange, onPrimaryAction } =
-    useProductTourDrawer();
+  const {
+    isDrawerOpen,
+    openProductTour,
+    closeProductTour,
+    onCloseButtonPress,
+    onSlideChange,
+    onPrimaryAction,
+    completeProductTour,
+  } = useProductTourDrawer();
 
   const handleToggleProductTourCompleted = useCallback(() => {
     dispatch(setProductTourCompleted(!productTourCompleted));
@@ -85,9 +92,11 @@ function ProductTourScreenDebug() {
         value={{
           openProductTour,
           closeProductTour,
+          onCloseButtonPress,
           onSlideChange,
           isDrawerOpen,
           onPrimaryAction,
+          completeProductTour,
         }}
       >
         <ProductTourDrawer />

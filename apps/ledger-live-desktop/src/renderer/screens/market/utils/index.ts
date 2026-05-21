@@ -27,20 +27,23 @@ export function formatPercentage(percentage: number, decimals = 2): number {
   return parseFloat(percentage.toFixed(decimals));
 }
 
+/** Minimal shape for ramp on/off-ramp checks (full `MarketCurrencyData` is assignable). */
+export type MarketCurrencyRampLedgerIds = Pick<MarketCurrencyData, "ledgerIds">;
+
 export function isAvailableOnBuy(
-  currency: MarketCurrencyData | null | undefined,
+  currency: MarketCurrencyRampLedgerIds | null | undefined,
   isCurrencyAvailable: (currencyId: CryptoCurrency["id"] | string, mode: "onRamp") => boolean,
 ) {
   if (!currency) return false;
-  return currency?.ledgerIds.some(lrId => isCurrencyAvailable(lrId, "onRamp")) || false;
+  return currency.ledgerIds.some(lrId => isCurrencyAvailable(lrId, "onRamp"));
 }
 
 export function isAvailableOnSell(
-  currency: MarketCurrencyData | null | undefined,
+  currency: MarketCurrencyRampLedgerIds | null | undefined,
   isCurrencyAvailable: (currencyId: CryptoCurrency["id"] | string, mode: "offRamp") => boolean,
 ) {
   if (!currency) return false;
-  return currency?.ledgerIds.some(lrId => isCurrencyAvailable(lrId, "offRamp")) || false;
+  return currency.ledgerIds.some(lrId => isCurrencyAvailable(lrId, "offRamp"));
 }
 
 export function isAvailableOnSwap(
@@ -48,7 +51,7 @@ export function isAvailableOnSwap(
   currenciesForSwapAllSet: Set<string>,
 ) {
   if (!currency) return false;
-  return currency?.ledgerIds.some(lrId => currenciesForSwapAllSet.has(lrId)) || false;
+  return currency.ledgerIds.some(lrId => currenciesForSwapAllSet.has(lrId));
 }
 
 export function isAvailableOnStake(
@@ -56,5 +59,5 @@ export function isAvailableOnStake(
   getCanStakeCurrency: (currencyId: string) => boolean,
 ) {
   if (!currency) return false;
-  return currency?.ledgerIds.some(lrId => getCanStakeCurrency(lrId)) || false;
+  return currency.ledgerIds.some(lrId => getCanStakeCurrency(lrId));
 }

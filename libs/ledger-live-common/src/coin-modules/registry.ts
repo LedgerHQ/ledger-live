@@ -1,7 +1,7 @@
 import { CurrencyNotSupported } from "@ledgerhq/errors";
 import type {
   AccountModule,
-  AlpacaSigner,
+  CoinFrameworkSigner,
   CoinModuleLoader,
   DeviceTransactionConfigFn,
   FamilySetup,
@@ -87,7 +87,7 @@ export const loadMockAccountForFamily = (family: string): MockAccountModule | un
 export const loadValidateAddressForFamily = (family: string): ValidateAddressFn | undefined =>
   loaders.get(family)?.loadValidateAddress?.();
 
-export const loadSignerForFamily = (family: string): AlpacaSigner | undefined =>
+export const loadSignerForFamily = (family: string): CoinFrameworkSigner | undefined =>
   loaders.get(family)?.loadSigner?.();
 
 export const loadBridgeExtensionsForFamily = (family: string): AccountBridgeExtensions =>

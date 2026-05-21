@@ -66,6 +66,11 @@ on:
         required: false
         type: string
         default: "true"
+      disable-turbo-cache:
+        description: Disable turbo caching
+        required: false
+        type: boolean
+        default: true
 
 permissions:
   id-token: write
@@ -321,7 +326,7 @@ jobs:
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
       SEED: ${{ vars.SEED_QAA_B2C }}
-      JEST_MAX_WORKERS: ${{ contains(inputs.macos-specificity-runner-label, 'performance-pool') && '2' || '1' }}
+      JEST_MAX_WORKERS: ${{ contains(inputs.macos-specificity-runner-label, 'performance-pool') && '3' || '2' }}
     outputs:
       status: ${{ steps.detox.outcome }}
       artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
@@ -363,6 +368,13 @@ jobs:
           timeout_minutes: 15
           command: pnpm i --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --unsafe-perm --ignore-scripts
           new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --unsafe-perm
+
+      # Warm simulators before Detox; worker_count matches JEST_MAX_WORKERS (and iOS Simulator … N names in detox.config.js).
+      - name: Boot iOS Simulators in Background
+        uses: LedgerHQ/ledger-live/tools/actions/composites/boot-ios-simulators-background@develop
+        with:
+          worker_count: ${{ env.JEST_MAX_WORKERS }}
+          artifacts_root: ${{ env.MOBILE_ARTIFACTS_ROOT }}
 
       - name: Detox Post Install
         run: node apps/ledger-live-mobile/node_modules/detox/scripts/postinstall.js

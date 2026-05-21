@@ -9,9 +9,8 @@ import {
   getOperationAmountNumber,
   isConfirmedOperation,
   getOperationConfirmationDisplayableNumber,
-  isEditableOperation,
-  isStuckOperation,
 } from "@ledgerhq/live-common/operation";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { NavigatorName, ScreenName } from "~/const";
 import LText from "~/components/LText";
@@ -100,6 +99,7 @@ export default function Content({
   }, []);
 
   const currencySettings = useCurrencySettingsForAccount(mainAccount);
+  const bridge = useAccountBridge(mainAccount);
 
   const isToken = currency.type === "TokenCurrency";
   const accountName = useAccountName(account);
@@ -122,8 +122,8 @@ export default function Content({
     currencySettings.confirmationsNb,
   );
 
-  const isEditable = isEditableOperation({ account: mainAccount, operation });
-  const isOperationStuck = isStuckOperation({ family: mainAccount.currency.family, operation });
+  const isEditable = bridge.isEditableOperation(mainAccount, operation);
+  const isOperationStuck = bridge.isStuckOperation(operation);
 
   const specificOperationDetails =
     byFamiliesOperationDetails[

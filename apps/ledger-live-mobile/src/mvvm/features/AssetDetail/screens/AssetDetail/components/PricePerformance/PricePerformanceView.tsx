@@ -4,7 +4,7 @@ import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useTranslation } from "~/context/Locale";
 import { ASSET_DETAIL_TEST_IDS } from "LLM/features/AssetDetail/testIds";
 import { SectionContentState } from "../SectionContentState";
-import { RECORD_KEYS } from "./usePricePerformanceViewModel";
+import { SectionSkeleton } from "../SectionSkeleton";
 
 type PriceRecord = {
   id: string;
@@ -25,19 +25,23 @@ type Props = Readonly<{
 export function PricePerformanceView({ records, isLoading, isError, hasData }: Props) {
   const { t } = useTranslation();
 
+  if (isLoading && !hasData) {
+    return (
+      <Box testID={ASSET_DETAIL_TEST_IDS.pricePerformance}>
+        <SectionSkeleton rows={1} rowHeight="s56" />
+      </Box>
+    );
+  }
+
   return (
     <Box testID={ASSET_DETAIL_TEST_IDS.pricePerformance} lx={containerStyle}>
       <Text typography="heading5SemiBold" lx={{ color: "base" }}>
         {t("assetDetail.pricePerformance.title")}
       </Text>
       <SectionContentState
-        isLoading={isLoading}
         isError={isError}
-        hasData={hasData && records.length > 0}
+        hasData={hasData}
         errorMessage={t("assetDetail.pricePerformance.error")}
-        skeletonKeys={RECORD_KEYS}
-        listStyle={listStyle}
-        skeletonStyle={skeletonRowStyle}
       >
         <Box lx={listStyle}>
           {records.map(record => (
@@ -87,10 +91,4 @@ const recordLeftStyle: LumenViewStyle = {
 const recordRightStyle: LumenViewStyle = {
   alignItems: "flex-end",
   gap: "s2",
-};
-
-const skeletonRowStyle: LumenViewStyle = {
-  height: "s40",
-  backgroundColor: "surface",
-  borderRadius: "sm",
 };

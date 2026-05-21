@@ -1,10 +1,9 @@
 import { Observable } from "rxjs";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { Account, DeviceId, SignOperationEvent, AccountBridge } from "@ledgerhq/types-live";
-import { getAlpacaApi } from "./api";
+import { getCoinModuleApi } from "./api";
 import { getBridgeApi } from "./bridge";
 import {
-  applyMemoToIntent,
   bigNumberToBigIntDeep,
   buildOptimisticOperation,
   extractBalances,
@@ -12,27 +11,10 @@ import {
 } from "./utils";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import { Result } from "@ledgerhq/ledger-wallet-framework/derivation";
-import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import { GenericTransaction } from "./types";
 
-/**
- * Enriches transaction intent with memo and asset information
- */
-function enrichTransactionIntent(
-  transactionIntent: TransactionIntent,
-  transaction: GenericTransaction,
-  publicKey: string,
-): TransactionIntent {
-  // Set sender public key
-  transactionIntent.senderPublicKey = publicKey;
-
-  // Apply memo information
-  transactionIntent = applyMemoToIntent(transactionIntent, transaction);
-
-  return transactionIntent;
-}
 /**
  * Sign Transaction with Ledger hardware
  */
@@ -50,7 +32,7 @@ export const genericSignOperation =
   }): Observable<SignOperationEvent> =>
     new Observable(o => {
       async function main() {
-        const alpacaApi = await getAlpacaApi(account.currency.id, kind);
+        const coinModuleApi = await getCoinModuleApi(account.currency.id, kind);
         const bridgeApi = getBridgeApi(account.currency, network);
         if (!transaction.fees) throw new FeeNotLoaded();
         const customFees = bigNumberToBigIntDeep({
@@ -72,18 +54,21 @@ export const genericSignOperation =
             assetReference: transaction?.assetReference || "",
             assetOwner: transaction?.assetOwner || "",
             subAccountId: transaction.subAccountId || "",
+            memoType: transaction.memoType || "",
+            memoValue: transaction.memoValue || "",
+            tag: transaction.tag,
             family: transaction.family,
             feesStrategy: transaction.feesStrategy,
             data: transaction.data,
             type: transaction.type,
           };
           // TODO Remove the call to `validateIntent` https://ledgerhq.atlassian.net/browse/LIVE-22227
-          const { amount } = await alpacaApi.validateIntent(
+          const { amount } = await coinModuleApi.validateIntent(
             transactionToIntent(
               account,
               draftTransaction,
               bridgeApi.computeIntentType,
-              alpacaApi.craftTransactionData,
+              coinModuleApi.craftTransactionData,
             ),
             extractBalances(account, bridgeApi.getAssetFromToken),
             customFees,
@@ -96,25 +81,22 @@ export const genericSignOperation =
             derivationMode: account.derivationMode,
           })) as Result;
 
-          let transactionIntent = transactionToIntent(
+          const transactionIntent = transactionToIntent(
             account,
             { ...transaction },
             bridgeApi.computeIntentType,
-            alpacaApi.craftTransactionData,
+            coinModuleApi.craftTransactionData,
           );
           transactionIntent.senderPublicKey = publicKey;
 
-          // Enrich with memo and asset information
-          transactionIntent = enrichTransactionIntent(transactionIntent, transaction, publicKey);
-
           if (typeof transactionIntent.sequence !== "bigint" || transactionIntent.sequence < 0n) {
             // TODO: should compute it and pass it down to craftTransaction (duplicate call right now)
-            const sequenceNumber = await alpacaApi.getNextSequence(transactionIntent.sender);
+            const sequenceNumber = await coinModuleApi.getNextSequence(transactionIntent.sender);
             transactionIntent.sequence = sequenceNumber;
           }
 
-          /* Craft unsigned blob via Alpaca */
-          const { transaction: unsigned } = await alpacaApi.craftTransaction(
+          /* Craft unsigned blob via coin-framework */
+          const { transaction: unsigned } = await coinModuleApi.craftTransaction(
             transactionIntent,
             customFees,
           );
@@ -139,14 +121,14 @@ export const genericSignOperation =
         o.next({ type: "device-signature-granted" });
 
         /* Combine payload + signature for broadcast */
-        const combined = await alpacaApi.combine(
+        const combined = await coinModuleApi.combine(
           signedInfo.unsigned,
           signedInfo.txnSig,
           signedInfo.publicKey,
         );
         const operation = buildOptimisticOperation(account, transaction, signedInfo.sequence);
         if (!operation.id) {
-          log("Generic alpaca", "buildOptimisticOperation", operation);
+          log("Generic coin-framework", "buildOptimisticOperation", operation);
         }
         // NOTE: we set the transactionSequenceNumber before on the operation
         // now that we create it in craftTransaction, we might need to return it back from craftTransaction also

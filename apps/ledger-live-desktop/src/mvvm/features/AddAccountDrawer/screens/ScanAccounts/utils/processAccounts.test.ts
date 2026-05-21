@@ -1,6 +1,11 @@
 import { Account } from "@ledgerhq/types-live";
-import { determineSelectedIds, getUnimportedAccounts } from "./processAccounts";
 import BigNumber from "bignumber.js";
+import { defaultIsAccountEmpty } from "@ledgerhq/live-common/bridge/defaultBridgeExtensions";
+import {
+  computeSelectedIdsFromScan,
+  determineSelectedIds,
+  getUnimportedAccounts,
+} from "./processAccounts";
 
 describe("getUnimportedAccounts", () => {
   it("should return accounts that are not in the existing accounts", () => {
@@ -30,7 +35,7 @@ describe("getUnimportedAccounts", () => {
 describe("determineSelectedIds", () => {
   it("should return all accounts if onlyNewAccounts is true", () => {
     const accounts = [{ id: "1" }, { id: "2" }] as Account[];
-    const result = determineSelectedIds(accounts, true, []);
+    const result = determineSelectedIds(accounts, true, [], defaultIsAccountEmpty);
     expect(result).toEqual(["1", "2"]);
   });
 
@@ -39,7 +44,7 @@ describe("determineSelectedIds", () => {
       { id: "1" },
       { id: "2", balance: BigNumber("100"), operationsCount: 1 },
     ] as Account[];
-    const result = determineSelectedIds(accounts, false, ["1"]);
+    const result = determineSelectedIds(accounts, false, ["1"], defaultIsAccountEmpty);
     expect(result).toEqual(["1", "2"]);
   });
 
@@ -48,7 +53,7 @@ describe("determineSelectedIds", () => {
       { id: "1" },
       { id: "2", balance: BigNumber("0"), operationsCount: 0 },
     ] as Account[];
-    const result = determineSelectedIds(accounts, false, ["1"]);
+    const result = determineSelectedIds(accounts, false, ["1"], defaultIsAccountEmpty);
     expect(result).toEqual(["1"]);
   });
 
@@ -57,8 +62,41 @@ describe("determineSelectedIds", () => {
       { id: "1", balance: BigNumber("0"), operationsCount: 0 },
       { id: "2", balance: BigNumber("100"), operationsCount: 1 },
     ] as Account[];
-    const result = determineSelectedIds(accounts, false, []);
+    const result = determineSelectedIds(accounts, false, [], defaultIsAccountEmpty);
     expect(result).toEqual(["2"]);
+  });
+});
+
+describe("computeSelectedIdsFromScan", () => {
+  it("should select all unimported accounts when they are all empty", () => {
+    const scannedAccounts = [
+      { id: "1", balance: BigNumber("0"), operationsCount: 0 },
+      { id: "2", balance: BigNumber("0"), operationsCount: 0 },
+    ] as Account[];
+    const existingAccounts = [{ id: "existing" }] as Account[];
+
+    const result = computeSelectedIdsFromScan(
+      scannedAccounts,
+      existingAccounts,
+      [],
+      defaultIsAccountEmpty,
+    );
+    expect(result).toEqual(["1", "2"]);
+  });
+
+  it("should add the latest non-empty account to the current selection", () => {
+    const scannedAccounts = [
+      { id: "1", balance: BigNumber("100"), operationsCount: 1 },
+      { id: "2", balance: BigNumber("200"), operationsCount: 1 },
+    ] as Account[];
+
+    const result = computeSelectedIdsFromScan(
+      scannedAccounts,
+      [],
+      ["1"],
+      defaultIsAccountEmpty,
+    );
+    expect(result).toEqual(["1", "2"]);
   });
 });
 

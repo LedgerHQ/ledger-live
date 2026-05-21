@@ -54,17 +54,3 @@ export const UnbondingHeader = () => (
     </TableLine>
   </HeaderWrapper>
 );
-
-export const RedelegationHeader = () => (
-  <HeaderWrapper>
-    <TableLine>
-      <Trans i18nKey="delegation.sourceValidator" />
-    </TableLine>
-    <TableLine>
-      <Trans i18nKey="delegation.destinationValidator" />
-    </TableLine>
-    <TableLine>
-      <Trans i18nKey="delegation.delegated" />
-    </TableLine>
-  </HeaderWrapper>
-);

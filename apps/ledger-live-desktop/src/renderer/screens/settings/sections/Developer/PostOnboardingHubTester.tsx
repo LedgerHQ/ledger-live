@@ -47,6 +47,7 @@ const PostOnboardingHubTester = () => {
                   deviceModelId,
                   mock: true,
                   fallbackIfNoAction: () => navigate("/"),
+                  canShowRecover: true,
                 })
               }
               appearance="accent"
@@ -60,6 +61,7 @@ const PostOnboardingHubTester = () => {
                   deviceModelId,
                   mock: false,
                   fallbackIfNoAction: () => navigate("/"),
+                  canShowRecover: true,
                 })
               }
               appearance="accent"

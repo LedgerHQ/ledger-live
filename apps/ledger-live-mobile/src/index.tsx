@@ -21,8 +21,6 @@ import { init } from "../e2e/bridge/client";
 import logger from "./logger";
 import { BridgeSyncProvider } from "~/bridge/BridgeSyncContext";
 import {
-  hasSeenAnalyticsOptInPromptSelector,
-  hasCompletedOnboardingSelector,
   trackingEnabledSelector,
   reportErrorsEnabledSelector,
   isOnboardingFlowSelector,
@@ -39,7 +37,6 @@ import LoadingApp from "~/components/LoadingApp";
 import StyledStatusBar from "~/components/StyledStatusBar";
 import AnalyticsConsole from "~/components/AnalyticsConsole";
 import DebugTheme from "~/components/DebugTheme";
-import AssetDetailFab from "~/screens/Settings/Debug/Features/AssetDetailFab";
 import SyncNewAccounts from "~/bridge/SyncNewAccounts";
 import SegmentSetup from "~/analytics/SegmentSetup";
 import HookNotifications from "~/notifications/HookNotifications";
@@ -59,9 +56,7 @@ import { DeeplinksProvider } from "~/navigation/DeeplinksProvider";
 import StyleProvider from "./StyleProvider";
 
 import {
-  setAnalytics,
   setOsTheme,
-  setPersonalizedRecommendations,
   setIsOnboardingFlow,
   setIsPostOnboardingFlow,
 } from "~/actions/settings";
@@ -128,11 +123,8 @@ const styles = StyleSheet.create({
 function App() {
   logStartupEvent("App render");
   const accounts = useSelector(accountsSelector);
-  const analyticsFF = useFeature("llmAnalyticsOptInPrompt");
   const datadogFF = useFeature("llmDatadog");
   const providerNumber = useEnv("FORCE_PROVIDER");
-  const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
-  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const isOnboardingFlow = useSelector(isOnboardingFlowSelector);
   const isPostOnboardingFlow = useSelector(isPostOnboardingFlowSelector);
   const initiatedIsOnboardingFlow = useRef<boolean>(isOnboardingFlow);
@@ -188,23 +180,6 @@ function App() {
   }, [dmk, providerNumber]);
 
   useEffect(() => registerTransports(), []);
-
-  useEffect(() => {
-    if (
-      !analyticsFF?.enabled ||
-      (hasCompletedOnboarding && !analyticsFF?.params?.entryPoints?.includes?.("Portfolio")) ||
-      hasSeenAnalyticsOptInPrompt
-    )
-      return;
-    dispatch(setAnalytics(false));
-    dispatch(setPersonalizedRecommendations(false));
-  }, [
-    analyticsFF?.enabled,
-    analyticsFF?.params?.entryPoints,
-    dispatch,
-    hasSeenAnalyticsOptInPrompt,
-    hasCompletedOnboarding,
-  ]);
 
   useEffect(() => {
     /*
@@ -264,7 +239,6 @@ function App() {
       <AnalyticsConsole />
 
       <DebugTheme />
-      <AssetDetailFab />
       <JsThreadMonitor />
       <Modals />
       <FeatureToggle featureId="llmMmkvMigration">

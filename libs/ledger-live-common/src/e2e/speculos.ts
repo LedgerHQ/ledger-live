@@ -11,7 +11,7 @@ import { createSpeculosDeviceCI, releaseSpeculosDeviceCI } from "./speculosCI";
 import type { AppCandidate } from "@ledgerhq/ledger-wallet-framework/bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import axios, { AxiosError, AxiosResponse } from "axios";
+import axios from "axios";
 import { getEnv } from "@ledgerhq/live-env";
 import { getCryptoCurrencyById } from "../currencies";
 import { DeviceLabels } from "./enum/DeviceLabels";
@@ -50,6 +50,7 @@ import {
   swipeRight,
 } from "./deviceInteraction/TouchDeviceSimulator";
 import { withDeviceController } from "./deviceInteraction/DeviceController";
+import { retryAxiosRequest } from "./deviceInteraction/retryAxiosRequest";
 import { sanitizeError } from ".";
 import { sendVechain } from "./families/vechain";
 import { getDeviceCoordinates } from "./deviceCoordinates";
@@ -532,47 +533,6 @@ export function drainSpeculosScreenshots(port: number): Buffer[] {
   const screenshots = _capturedSpeculosScreenshots.get(port) ?? [];
   _capturedSpeculosScreenshots.delete(port);
   return screenshots;
-}
-
-export async function retryAxiosRequest<T>(
-  requestFn: () => Promise<AxiosResponse<T>>,
-  maxRetries: number = 5,
-  baseDelay: number = 1000,
-  retryableStatusCodes: number[] = [500, 502, 503, 504],
-): Promise<AxiosResponse<T>> {
-  let lastError: AxiosError | Error;
-
-  for (let attempt = 0; attempt <= maxRetries; attempt++) {
-    try {
-      return await requestFn();
-    } catch (error) {
-      lastError = error as AxiosError | Error;
-
-      const isRetryable =
-        axios.isAxiosError(error) &&
-        error.response &&
-        retryableStatusCodes.includes(error.response.status);
-
-      const isNetworkError = axios.isAxiosError(error) && !error.response;
-
-      if ((isRetryable || isNetworkError) && attempt < maxRetries) {
-        const delay = baseDelay * (attempt + 1);
-        console.warn(
-          `Axios request failed (attempt ${attempt + 1}/${maxRetries + 1}), retrying in ${delay}ms...`,
-          {
-            status: axios.isAxiosError(error) ? error.response?.status : "network error",
-            message: error.message,
-          },
-        );
-        await new Promise(resolve => setTimeout(resolve, delay));
-        continue;
-      }
-
-      throw lastError;
-    }
-  }
-
-  throw lastError!;
 }
 
 export async function waitFor(text: string, maxAttempts = 60): Promise<string> {

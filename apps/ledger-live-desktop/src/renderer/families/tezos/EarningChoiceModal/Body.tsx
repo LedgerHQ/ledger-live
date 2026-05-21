@@ -86,6 +86,7 @@ const Body = ({ onClose, params }: Props) => {
   }, [dispatch, account, parentAccount, source]);
 
   const onStake = useCallback(() => {
+    if (account.type !== "Account") return;
     dispatch(closeModal(MODAL_NAME));
     dispatch(openModal("MODAL_TEZOS_STAKE", { account, parentAccount, source }));
   }, [dispatch, account, parentAccount, source]);
@@ -145,13 +146,7 @@ const Body = ({ onClose, params }: Props) => {
                 <Bullet i18nKey="tezos.earnChoice.stake.bullet.3" />
               </OptionCard>
               <Box alignItems="center">
-                {/* Pending LIVE-29536: enable once the Stake flow ships (https://ledgerhq.atlassian.net/browse/LIVE-29536). */}
-                <Button
-                  primary
-                  disabled
-                  data-testid="tezos-earn-choice-stake-button"
-                  onClick={onStake}
-                >
+                <Button primary data-testid="tezos-earn-choice-stake-button" onClick={onStake}>
                   <Trans i18nKey="tezos.earnChoice.stake.cta" />
                 </Button>
               </Box>

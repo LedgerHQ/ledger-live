@@ -1,4 +1,5 @@
 import { renderHook, waitFor } from "tests/testSetup";
+import { server } from "tests/server";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { buildDistributionItem } from "tests/utils/distributionTestUtils";
 import { mockMarket, mockDada } from "tests/utils/assetDetailMocks";
@@ -60,6 +61,10 @@ describe("useAssetDetailViewModel", () => {
     locationState(null);
   });
 
+  afterEach(() => {
+    server.resetHandlers();
+  });
+
   describe("mode", () => {
     it("returns loading while Market is pending and nothing else resolved", () => {
       mockMarket.hang();
@@ -95,7 +100,7 @@ describe("useAssetDetailViewModel", () => {
     });
   });
 
-  describe("marketInfo source priority", () => {
+  describe("market data source priority", () => {
     beforeEach(() => {
       route("bitcoin", { bySlug: { bitcoin: buildDistributionItem({ currency: btc }) } });
     });
@@ -113,7 +118,7 @@ describe("useAssetDetailViewModel", () => {
       assertReady(result.current);
       await waitFor(() => {
         assertReady(result.current);
-        expect(result.current.marketInfo?.name).toBe("Bitcoin DADA");
+        expect(result.current.marketData.marketCurrencyData?.name).toBe("Bitcoin DADA");
       });
     });
 
@@ -126,16 +131,17 @@ describe("useAssetDetailViewModel", () => {
       const { result } = renderVM();
       await waitFor(() => {
         assertReady(result.current);
-        expect(result.current.marketInfo?.name).toBe("Bitcoin Hook");
+        expect(result.current.marketData.marketCurrencyData?.name).toBe("Bitcoin Hook");
       });
     });
 
     it("falls back to location.state when DADA and marketFromHook are empty", async () => {
       mockMarket.empty();
       mockDada.empty();
+      route("bitcoin");
       locationState({ id: "bitcoin", ledgerIds: ["bitcoin"], name: "Bitcoin Seed", price: 9 });
 
-      expect((await waitForReady()).marketInfo?.name).toBe("Bitcoin Seed");
+      expect((await waitForReady()).displayName).toBe("Bitcoin Seed");
     });
   });
 
@@ -145,13 +151,13 @@ describe("useAssetDetailViewModel", () => {
 
       const vm = await waitForReady();
 
-      expect(vm.assetName).toBe(btc.name);
-      expect(vm.assetTicker).toBe(btc.ticker);
+      expect(vm.displayName).toBe(btc.name);
+      expect(vm.displayTicker).toBe(btc.ticker);
       expect(vm.ledgerCurrency).toBe(btc);
       expect(vm.ledgerId).toBe(btc.id);
     });
 
-    it("falls back to marketInfo for name/ticker in discovery mode", async () => {
+    it("falls back to marketCurrencyData for name/ticker in discovery mode", async () => {
       mockMarket.withData([
         { id: "bitcoin", ledgerIds: ["bitcoin"], name: "Bitcoin", ticker: "BTC", price: 100 },
       ]);
@@ -159,8 +165,8 @@ describe("useAssetDetailViewModel", () => {
 
       const vm = await waitForReady();
 
-      expect(vm.assetName).toBe("Bitcoin");
-      expect(vm.assetTicker).toBe("BTC");
+      expect(vm.displayName).toBe("Bitcoin");
+      expect(vm.displayTicker).toBe("BTC");
     });
 
     it("falls back to empty strings when neither source provides name/ticker", async () => {
@@ -170,8 +176,8 @@ describe("useAssetDetailViewModel", () => {
 
       const vm = await waitForReady();
 
-      expect(vm.assetName).toBe("");
-      expect(vm.assetTicker).toBe("");
+      expect(vm.displayName).toBe("");
+      expect(vm.displayTicker).toBe("");
     });
 
     it("derives ledgerCurrency from DADA assetData in discovery mode", async () => {
@@ -186,7 +192,7 @@ describe("useAssetDetailViewModel", () => {
       });
     });
 
-    it("exposes the resolved market dataset under viewModel.market for MarketDataSection", async () => {
+    it("exposes the resolved market dataset under viewModel.marketData for MarketDataSection", async () => {
       mockMarket.withData([
         { id: "bitcoin", ledgerIds: ["bitcoin"], name: "Bitcoin Hook", ticker: "BTC", price: 1 },
       ]);
@@ -197,8 +203,8 @@ describe("useAssetDetailViewModel", () => {
       await waitFor(() => expect(result.current.mode).toBe("ready"));
       await waitFor(() => {
         assertReady(result.current);
-        expect(result.current.market.marketCurrencyData?.name).toBe("Bitcoin Hook");
-        expect(result.current.market.isLoading).toBe(false);
+        expect(result.current.marketData.marketCurrencyData?.name).toBe("Bitcoin Hook");
+        expect(result.current.marketData.isLoading).toBe(false);
       });
     });
   });

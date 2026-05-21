@@ -1,8 +1,8 @@
-import { AlpacaApi } from "@ledgerhq/coin-module-framework/api/types";
+import { CoinModuleApi } from "@ledgerhq/coin-module-framework/api/types";
 import { createMockCoinConfigValue } from "../test/fixtures";
 import { createApi } from ".";
 
-let api: AlpacaApi;
+let api: CoinModuleApi;
 
 describe.skip("devnet", () => {
   beforeAll(() => {

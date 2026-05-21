@@ -1,8 +1,10 @@
 import BigNumber from "bignumber.js";
-import type { Operation as AlpacaOperation } from "@ledgerhq/coin-module-framework/api/index";
+import type { Operation as CoinFrameworkOperation } from "@ledgerhq/coin-module-framework/api/index";
 import type { AleoOperation } from "../../types";
 
-export function getMockedAlpacaOperation(overrides?: Partial<AlpacaOperation>): AlpacaOperation {
+export function getMockedCoinFrameworkOperation(
+  overrides?: Partial<CoinFrameworkOperation>,
+): CoinFrameworkOperation {
   return {
     id: "at1mockhashmockhashmockhashmockhash",
     type: "OUT",

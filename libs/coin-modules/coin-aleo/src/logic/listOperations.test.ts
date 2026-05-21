@@ -2,17 +2,17 @@ import { fetchAccountTransactionsFromHeight } from "../network/utils";
 import { getMockedTransaction } from "../__tests__/fixtures/api.fixture";
 import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import {
-  getMockedAlpacaOperation,
+  getMockedCoinFrameworkOperation,
   getMockedOperation,
 } from "../__tests__/fixtures/operation.fixture";
-import { toAlpacaOperation, toBridgeOperation } from "./utils";
+import { toCoinFrameworkOperation, toBridgeOperation } from "./utils";
 import { listOperations } from "./listOperations";
 
 jest.mock("../network/utils");
 jest.mock("./utils");
 
 const mockFetchAccountTransactionsFromHeight = jest.mocked(fetchAccountTransactionsFromHeight);
-const mockToAlpacaOperation = jest.mocked(toAlpacaOperation);
+const mockToCoinFrameworkOperation = jest.mocked(toCoinFrameworkOperation);
 const mockToBridgeOperation = jest.mocked(toBridgeOperation);
 
 describe("listOperations", () => {
@@ -54,7 +54,7 @@ describe("listOperations", () => {
         order: "asc",
       });
       expect(mockToBridgeOperation).toHaveBeenCalledTimes(2);
-      expect(mockToAlpacaOperation).not.toHaveBeenCalled();
+      expect(mockToCoinFrameworkOperation).not.toHaveBeenCalled();
       expect(result.operations).toEqual([mockOp1, mockOp2]);
       expect(result.nextCursor).toBe(mockTx2.block_number.toString());
     });
@@ -100,21 +100,21 @@ describe("listOperations", () => {
     });
   });
 
-  describe("alpaca mode", () => {
-    it("should fetch and transform transactions in alpaca mode", async () => {
+  describe("coin-framework mode", () => {
+    it("should fetch and transform transactions in coin-framework mode", async () => {
       const mockTx = getMockedTransaction({ transaction_id: "tx1", block_number: 100 });
-      const mockAlpacaOp = getMockedAlpacaOperation({ id: "tx1" });
+      const mockCoinFrameworkOp = getMockedCoinFrameworkOperation({ id: "tx1" });
 
       mockFetchAccountTransactionsFromHeight.mockResolvedValue({
         transactions: [mockTx],
         nextCursor: null,
       });
-      mockToAlpacaOperation.mockReturnValue(mockAlpacaOp);
+      mockToCoinFrameworkOperation.mockReturnValue(mockCoinFrameworkOp);
 
       const result = await listOperations({
         currency: mockCurrency,
         address: mockAddress,
-        mode: "alpaca",
+        mode: "coin-framework",
         options: { minHeight: 0, order: "asc" },
       });
 
@@ -126,10 +126,10 @@ describe("listOperations", () => {
         minBlockHeight: 0,
         order: "asc",
       });
-      expect(mockToAlpacaOperation).toHaveBeenCalledTimes(1);
-      expect(mockToAlpacaOperation).toHaveBeenCalledWith(mockTx, mockAddress);
+      expect(mockToCoinFrameworkOperation).toHaveBeenCalledTimes(1);
+      expect(mockToCoinFrameworkOperation).toHaveBeenCalledWith(mockTx, mockAddress);
       expect(mockToBridgeOperation).not.toHaveBeenCalled();
-      expect(result.operations).toEqual([mockAlpacaOp]);
+      expect(result.operations).toEqual([mockCoinFrameworkOp]);
       expect(result.nextCursor).toBeNull();
     });
 
@@ -142,7 +142,7 @@ describe("listOperations", () => {
       const result = await listOperations({
         currency: mockCurrency,
         address: mockAddress,
-        mode: "alpaca",
+        mode: "coin-framework",
         options: { minHeight: 0 },
       });
 
@@ -161,7 +161,7 @@ describe("listOperations", () => {
       await listOperations({
         currency: mockCurrency,
         address: mockAddress,
-        mode: "alpaca",
+        mode: "coin-framework",
         options: {
           minHeight: 1000,
           cursor: "500",

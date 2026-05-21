@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useCallback } from "react";
 import {
   Box,
   Card,
@@ -10,19 +10,26 @@ import {
   CardTrailing,
 } from "@ledgerhq/lumen-ui-rnative";
 import CurrencyIcon from "~/components/CurrencyIcon";
-import { useFormattedAccountBalance } from "LLM/features/Send/screens/Recipient/hooks/useFormattedAccountBalance";
+import { useFormattedAccountBalance } from "LLM/hooks/useFormattedAccountBalance";
 import type { AddressAccountData } from "../useAddressesViewModel";
 
 type Props = Readonly<{
   data: AddressAccountData;
+  onPress: (data: AddressAccountData) => void;
 }>;
 
-export const AddressAccountItem = memo(function AddressAccountItem({ data }: Props) {
-  const { account, name, truncatedAddress } = data;
-  const { formattedBalance, formattedCounterValue } = useFormattedAccountBalance(account);
+export const AddressAccountItem = memo(function AddressAccountItem({ data, onPress }: Props) {
+  const { account, balanceAccount, name, truncatedAddress } = data;
+  const { formattedBalance, formattedCounterValue } = useFormattedAccountBalance(balanceAccount);
+
+  const handlePress = useCallback(() => onPress(data), [onPress, data]);
 
   return (
-    <Card type="info" testID={`asset-detail-address-item-${account.id}`}>
+    <Card
+      type="interactive"
+      onPress={handlePress}
+      testID={`asset-detail-address-item-${account.id}`}
+    >
       <CardHeader>
         <CardLeading>
           <CardContent>

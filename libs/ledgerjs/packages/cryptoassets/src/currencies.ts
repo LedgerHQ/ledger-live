@@ -3551,6 +3551,36 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  bittensor: {
+    type: "CryptoCurrency",
+    id: "bittensor",
+    coinType: CoinType.BITTENSOR,
+    name: "Bittensor",
+    managerAppName: "Polkadot",
+    ticker: "TAO",
+    scheme: "bittensor",
+    color: "#252525",
+    family: "polkadot",
+    units: [
+      {
+        name: "TAO",
+        code: "TAO",
+        magnitude: 9,
+      },
+      {
+        name: "RAO",
+        code: "RAO",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        address: "https://taostats.io/account/$address",
+        tx: "https://taostats.io/extrinsic/$hash",
+      },
+    ],
+    keywords: ["tao", "bittensor"],
+  },
   bitcoin_testnet: {
     type: "CryptoCurrency",
     id: "bitcoin_testnet",
@@ -4361,7 +4391,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     id: "sei_evm",
     coinType: CoinType.ETH,
     name: "SEI Network (EVM)",
-    managerAppName: "Ethereum",
+    managerAppName: "Sei",
     ticker: "SEI",
     scheme: "sei",
     color: "#89395b",

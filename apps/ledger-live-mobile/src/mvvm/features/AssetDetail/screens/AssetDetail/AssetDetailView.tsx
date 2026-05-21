@@ -3,8 +3,10 @@ import { RefreshControl, ScrollView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
+import type { DistributionItem } from "@ledgerhq/types-live";
 import { TrackScreen } from "~/analytics";
 import type { AssetDetailCurrencyProps } from "LLM/features/AssetDetail/types";
+import { TransferDrawer } from "LLM/features/QuickActions";
 import { ASSET_DETAIL_TEST_IDS } from "../../testIds";
 import { BalanceGraph } from "./components/BalanceGraph";
 import { BalanceDetails } from "./components/BalanceDetails";
@@ -12,27 +14,36 @@ import { Addresses } from "./components/Addresses";
 import { Transactions } from "./components/Transactions";
 import { Footer } from "./components/Footer";
 import { FallbackBanner } from "./components/FallbackBanner";
+import { HiddenAssetBanner } from "./components/HiddenAssetBanner";
 import { MarketData } from "./components/MarketData";
 import { CTAS_HEIGHT } from "./utils/constants";
+import { AssetCoinOptionsSheetView } from "./components/CoinOptions/AssetCoinOptionsSheetView";
+import type { AssetCoinOptionsViewModel } from "./components/CoinOptions/useAssetCoinOptionsViewModel";
 
 type Props = Readonly<{
   currency: AssetDetailCurrencyProps;
+  distributionItem: DistributionItem | undefined;
   source?: string;
   isRefreshing: boolean;
   onRefresh: () => void;
   hasFooter: boolean;
   hideReceiveInBalanceGraph: boolean;
   showFallbackBanner: boolean;
+  coinOptions: AssetCoinOptionsViewModel;
+  isLoading: boolean;
 }>;
 
 export function AssetDetailView({
   currency,
+  distributionItem,
   source,
   isRefreshing,
   onRefresh,
   hasFooter,
   hideReceiveInBalanceGraph,
   showFallbackBanner,
+  coinOptions,
+  isLoading,
 }: Props) {
   const { bottom } = useSafeAreaInsets();
   const scrollPaddingBottom = useMemo(
@@ -49,15 +60,37 @@ export function AssetDetailView({
         refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
       >
         <Box lx={contentStyle}>
+          <HiddenAssetBanner show={coinOptions.isHidden} onShowAsset={coinOptions.onShowAsset} />
           <BalanceGraph currency={currency} hideReceive={hideReceiveInBalanceGraph} />
-          <BalanceDetails currency={currency} />
-          <Addresses currency={currency} />
+          <BalanceDetails
+            currency={currency}
+            distributionItem={distributionItem}
+            isLoading={isLoading}
+          />
+          <Addresses
+            currency={currency}
+            distributionItem={distributionItem}
+            isLoading={isLoading}
+          />
           <MarketData currency={currency} />
-          <Transactions currency={currency} />
+          <Transactions
+            currency={currency}
+            distributionItem={distributionItem}
+            isLoading={isLoading}
+          />
           <FallbackBanner show={showFallbackBanner} />
         </Box>
       </ScrollView>
       <Footer currency={currency} />
+      <TransferDrawer />
+      <AssetCoinOptionsSheetView
+        isOpen={coinOptions.isCoinOptionsSheetOpen}
+        onClose={coinOptions.closeCoinOptions}
+        isHidden={coinOptions.isHidden}
+        isStarred={coinOptions.isStarred}
+        onToggleFavourite={coinOptions.onToggleFavourite}
+        onToggleHideFromPortfolio={coinOptions.onToggleHideFromPortfolio}
+      />
     </Box>
   );
 }
@@ -68,5 +101,5 @@ const screenStyle: LumenViewStyle = {
 
 const contentStyle: LumenViewStyle = {
   padding: "s16",
-  gap: "s24",
+  gap: "s32",
 };

@@ -377,6 +377,13 @@ describe("default theme", () => {
   });
 });
 
+describe("analytics consent defaults", () => {
+  it("should default analyticsEnabled and personalizedRecommendationsEnabled to false", () => {
+    expect(SETTINGS_INITIAL_STATE.analyticsEnabled).toBe(false);
+    expect(SETTINGS_INITIAL_STATE.personalizedRecommendationsEnabled).toBe(false);
+  });
+});
+
 describe("SETTINGS_SET_THEME", () => {
   it("should update theme when setTheme action is dispatched", () => {
     const stateAfterLight = reducer(SETTINGS_INITIAL_STATE, setTheme("light"));
@@ -574,6 +581,26 @@ describe("SETTINGS_IMPORT action", () => {
     const action = importSettings({ productTourCompleted: true });
     const newState = reducer(SETTINGS_INITIAL_STATE, action);
     expect(newState.productTourCompleted).toBe(true);
+  });
+
+  it("preserves persisted analyticsEnabled=true (returning opted-in users not regressed)", () => {
+    const action = importSettings({
+      analyticsEnabled: true,
+      personalizedRecommendationsEnabled: true,
+    });
+    const newState = reducer(SETTINGS_INITIAL_STATE, action);
+    expect(newState.analyticsEnabled).toBe(true);
+    expect(newState.personalizedRecommendationsEnabled).toBe(true);
+  });
+
+  it("preserves persisted analyticsEnabled=false for returning opted-out users", () => {
+    const action = importSettings({
+      analyticsEnabled: false,
+      personalizedRecommendationsEnabled: false,
+    });
+    const newState = reducer(SETTINGS_INITIAL_STATE, action);
+    expect(newState.analyticsEnabled).toBe(false);
+    expect(newState.personalizedRecommendationsEnabled).toBe(false);
   });
 });
 

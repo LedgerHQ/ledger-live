@@ -176,7 +176,6 @@ describe("scan transactions for multiple addresses", () => {
     const exampleTx = result.find(
       res => res.hash === "9b821c66588e25a4a1c2f81b63b0624b7210a76aedcc1d13e79a3c42e1ceef07",
     );
-    expect(exampleTx).toBeDefined();
 
     expect(exampleTx?.fee.eq(BigNumber(50083))).toBe(true);
     expect(exampleTx?.value.eq(BigNumber(480000000))).toBe(true);
@@ -306,7 +305,6 @@ describe("scan transactions for multiple addresses", () => {
     const exampleTx = result.find(
       res => res.hash === "8794d061cf77f6ef3d77c3655b0f42e2a23911bd849508be6c88e75cb2f1a1a1",
     );
-    expect(exampleTx).toBeDefined();
     expect(exampleTx?.fee.eq(BigNumber(0))).toBe(true);
     expect(exampleTx?.value.eq(BigNumber(12341234))).toBe(true);
     expect(exampleTx?.type).toBe("IN");

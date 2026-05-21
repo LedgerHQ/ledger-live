@@ -1,6 +1,6 @@
 import resolver from "../../../../families/stellar/getAddress";
 import { CreateSigner, executeWithSigner } from "../../../setup";
-import type { AlpacaSigner } from "../../types";
+import type { CoinFrameworkSigner } from "../../types";
 import Transport from "@ledgerhq/hw-transport";
 import Stellar from "@ledgerhq/hw-app-str";
 import { StrKey } from "@stellar/stellar-sdk";
@@ -40,4 +40,4 @@ export const context = executeWithSigner(createSignerStellar);
 export default {
   context,
   getAddress: resolver(context),
-} satisfies AlpacaSigner;
+} satisfies CoinFrameworkSigner;

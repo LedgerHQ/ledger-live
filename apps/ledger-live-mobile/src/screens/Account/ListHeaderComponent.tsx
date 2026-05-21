@@ -1,6 +1,7 @@
 import React, { ReactNode, useMemo } from "react";
 import { LayoutChangeEvent } from "react-native";
-import { isAccountEmpty, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { useAccountBridgeOrNull } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import {
   AccountLike,
   Account,
@@ -18,7 +19,6 @@ import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { MultiversXAccount } from "@ledgerhq/live-common/families/multiversx/types";
 import { NearAccount } from "@ledgerhq/live-common/families/near/types";
 import { HederaAccount } from "@ledgerhq/live-common/families/hedera/types";
-import { isEditableOperation, isStuckOperation } from "@ledgerhq/live-common/operation";
 import AccountGraphCard from "~/components/AccountGraphCard";
 import SubAccountsList from "./SubAccountsList";
 import perFamilyAccountHeader from "../../generated/AccountHeader";
@@ -98,11 +98,12 @@ export function useListHeaderComponents({
     () => (account ? getMainAccount(account, parentAccount) : undefined),
     [account, parentAccount],
   );
+  const bridge = useAccountBridgeOrNull(account ?? null, parentAccount);
   const oldestEditableOperation = useMemo(() => {
-    if (!account || !mainAccount) return undefined;
+    if (!account || !mainAccount || !bridge) return undefined;
 
     const editablePendingOperations = account.pendingOperations.filter(pendingOperation =>
-      isEditableOperation({ account: mainAccount, operation: pendingOperation }),
+      bridge.isEditableOperation(mainAccount, pendingOperation),
     );
 
     return mainAccount.currency.family === "bitcoin"
@@ -121,13 +122,14 @@ export function useListHeaderComponents({
           }
           return 0;
         })[0];
-  }, [account, mainAccount]);
+  }, [account, mainAccount, bridge]);
 
-  if (!account || !mainAccount) return { listHeaderComponents: [], stickyHeaderIndices: undefined };
+  if (!account || !mainAccount || !bridge)
+    return { listHeaderComponents: [], stickyHeaderIndices: undefined };
 
   const family: string = mainAccount.currency.family;
 
-  const empty = isAccountEmpty(account);
+  const empty = bridge.isAccountEmpty(account);
   const shouldUseCounterValue = countervalueAvailable && useCounterValue;
 
   const AccountHeader = (perFamilyAccountHeader as Record<string, MaybeComponent>)[family];
@@ -147,6 +149,7 @@ export function useListHeaderComponents({
     perFamilyAccountBalanceSummaryFooter[
       family as keyof typeof perFamilyAccountBalanceSummaryFooter
     ];
+
   const AccountBalanceSummaryFooterRendered =
     AccountBalanceSummaryFooter &&
     AccountBalanceSummaryFooter({
@@ -163,8 +166,7 @@ export function useListHeaderComponents({
   const stickyHeaderIndices = empty ? [] : [0];
 
   const isOperationStuck = Boolean(
-    oldestEditableOperation &&
-    isStuckOperation({ family: mainAccount.currency.family, operation: oldestEditableOperation }),
+    oldestEditableOperation && bridge.isStuckOperation(oldestEditableOperation),
   );
 
   const disableDelegation =

@@ -11,7 +11,6 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
-import { getStuckAccountAndOperation } from "@ledgerhq/live-common/operation";
 import { Operation } from "@ledgerhq/types-live";
 import QrCode from "@ledgerhq/icons-ui/native/QrCode";
 import { useNavigation, useTheme } from "@react-navigation/native";
@@ -254,7 +253,7 @@ export default function SendSelectRecipient({ route }: Props) {
     !!status.errors.transaction ||
     !!status.errors.sender;
 
-  const stuckAccountAndOperation = getStuckAccountAndOperation(account, mainAccount);
+  const stuckAccountAndOperation = bridge.getStuckAccountAndOperation(account, mainAccount);
   const extensions = getTokenExtensions(account);
 
   return (
@@ -447,7 +446,10 @@ export default function SendSelectRecipient({ route }: Props) {
         onModalHide={
           () => requestAnimationFrame(() => setFocusMemoInput(true)) // Focus memo input after drawer finishes animating
         }
-        onNext={onPressContinue}
+        onNext={() => {
+          setMemoTagDrawerState(MemoTagDrawerState.SHOWN);
+          onPressContinue();
+        }}
       />
 
       <GenericErrorBottomModal

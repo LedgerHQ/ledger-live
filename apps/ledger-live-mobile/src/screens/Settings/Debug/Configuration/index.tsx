@@ -19,7 +19,6 @@ import ResetOnboardingStateRow from "./ResetOnboardingStateRow";
 import HasStaxEuropaRows from "./HasStaxEuropaRows";
 import SkipOnboardingRow from "./SkipOnboardingRow";
 import { RecoverUpsellRow } from "./RecoverUpsellRow";
-import AssetDetailFabRow from "./AssetDetailFabRow";
 
 export default function Configuration() {
   const navigation = useNavigation<StackNavigatorNavigation<SettingsNavigatorStackParamList>>();
@@ -52,7 +51,6 @@ export default function Configuration() {
       <ThemeToggleRow />
       <JsThreadMonitorRow />
       <CountervaluesStagingRow />
-      <AssetDetailFabRow />
       <SkipLock />
     </SettingsNavigationScrollView>
   );

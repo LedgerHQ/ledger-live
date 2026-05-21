@@ -71,6 +71,7 @@ test.describe("Password", () => {
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       const countAfterLock = await app.accounts.countAccounts();
       await app.accounts.compareAccountsCountFromJson(countBeforeLock, countAfterLock);
+      await app.accounts.expectCryptoAccountRowVisible(account.accountName);
       await app.accounts.navigateToAccountByName(account.accountName);
     },
   );
@@ -179,7 +180,7 @@ test.describe("Reset app", () => {
   );
 });
 
-test.describe("Settings - Help tab", () => {
+test.describe("Settings - Export Log", () => {
   test.use({
     teamOwner: Team.WALLET_XP,
     userdata: "1AccountBTC1AccountETH",
@@ -201,6 +202,8 @@ test.describe("Settings - Help tab", () => {
       await app.settings.goToHelpTab();
       await app.settings.checkViewUserDataButtonIsEnabled();
       await app.settings.clickExportLogs();
+      await app.settings.expectExportLogsFileCreated();
+      await app.settings.moveExportedLogsToArtifacts();
     },
   );
 });

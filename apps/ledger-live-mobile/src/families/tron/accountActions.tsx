@@ -3,20 +3,22 @@ import { Trans } from "~/context/Locale";
 import type { TronAccount } from "@ledgerhq/live-common/families/tron/types";
 import { NavigatorName, ScreenName } from "~/const";
 import { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
-import { getMainAccount, isAccountEmpty } from "@ledgerhq/live-common/account/index";
-import { TokenAccount } from "@ledgerhq/types-live";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import type { ResolvedAccountBridge, TokenAccount, TransactionCommon } from "@ledgerhq/types-live";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
-const getMainActions = ({
+const getMainActions = <T extends TransactionCommon>({
   account,
   parentAccount,
+  bridge,
 }: {
   account: TronAccount | TokenAccount;
   parentAccount: TronAccount | null | undefined;
+  bridge: ResolvedAccountBridge<T>;
 }): ActionButtonEvent[] => {
   const mainAccount = getMainAccount(account, parentAccount);
   const label = getStakeLabelLocaleBased();
-  const navigationParams: NavigationParamsType = isAccountEmpty(mainAccount)
+  const navigationParams: NavigationParamsType = bridge.isAccountEmpty(mainAccount)
     ? [
         NavigatorName.NoFundsFlow,
         {

@@ -71,8 +71,16 @@ jest.mock("@ledgerhq/live-common/exchange/swap/hooks/index", () => ({
   }),
 }));
 
-const mockUsePortfolioThrottled = jest.spyOn(portfolioReact, "usePortfolioThrottled");
-const mockUseCountervaluesPolling = jest.spyOn(countervaluesReact, "useCountervaluesPolling");
+// Spies are created per-test in `beforeEach` so the global `restoreMocks: true`
+// from jest config can restore them between tests cleanly.
+let mockUsePortfolioThrottled: jest.SpyInstance<
+  ReturnType<typeof portfolioReact.usePortfolioThrottled>,
+  Parameters<typeof portfolioReact.usePortfolioThrottled>
+>;
+let mockUseCountervaluesPolling: jest.SpyInstance<
+  ReturnType<typeof countervaluesReact.useCountervaluesPolling>,
+  Parameters<typeof countervaluesReact.useCountervaluesPolling>
+>;
 
 const defaultPollingMock = {
   pending: false,
@@ -146,6 +154,8 @@ describe("PortfolioView", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockUsePortfolioThrottled = jest.spyOn(portfolioReact, "usePortfolioThrottled");
+    mockUseCountervaluesPolling = jest.spyOn(countervaluesReact, "useCountervaluesPolling");
     mockUsePortfolioThrottled.mockReturnValue(defaultPortfolioMock);
     mockUseCountervaluesPolling.mockReturnValue(defaultPollingMock);
     mockedUseNavigate.mockReturnValue(mockNavigate);
@@ -610,6 +620,10 @@ const walletV4TourFlagOverrides = withFlagOverrides({
 describe("Portfolio (Wallet V4 Tour)", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockUsePortfolioThrottled = jest.spyOn(portfolioReact, "usePortfolioThrottled");
+    mockUseCountervaluesPolling = jest.spyOn(countervaluesReact, "useCountervaluesPolling");
+    mockUsePortfolioThrottled.mockReturnValue(defaultPortfolioMock);
+    mockUseCountervaluesPolling.mockReturnValue(defaultPollingMock);
   });
 
   afterEach(() => {

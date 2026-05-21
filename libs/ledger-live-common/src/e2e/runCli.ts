@@ -102,9 +102,7 @@ function parseGetAddressCliOutput(output: string): GetAddressResult {
 
   const { address, path, publicKey } = parsed as Record<string, unknown>;
   if (typeof address !== "string" || typeof path !== "string" || typeof publicKey !== "string") {
-    throw new Error(
-      `CLI getAddress output missing address/path/publicKey. Raw output:\n${output}`,
-    );
+    throw new Error(`CLI getAddress output missing address/path/publicKey. Raw output:\n${output}`);
   }
 
   return parsed as GetAddressResult;
@@ -172,7 +170,7 @@ export function runCliCommand(command: string): Promise<string> {
           errorOutput ? `🧾 CLI Error : ${errorOutput.trim()}` : "",
         ].join("\n");
 
-        reject(new Error(errorDetails));
+        reject(sanitizeError(errorDetails));
       }
     });
 

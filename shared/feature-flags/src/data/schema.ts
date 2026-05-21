@@ -25,8 +25,6 @@ export type PartialFeatures = { [K in FeatureId]?: Features[K] };
 export interface FeatureFlagsState {
   /** User-set local overrides that take priority over remote and env values during resolution. */
   overrides: PartialFeatures;
-  /** Raw remote values. Used internally to re-resolve correctly. */
-  remote: PartialFeatures;
   /** Final computed value for every flag after applying the resolution chain (override > env > remote > default). */
   resolved: Features;
   /** Whether the developer feature flags banner/button is visible in the UI. */
@@ -39,7 +37,6 @@ export const OverrideValueSchema = FeatureSchema.extend({ params: z.unknown().op
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 export const FeatureFlagsStateSchema = z.object({
   overrides: z.record(z.string(), OverrideValueSchema.optional()).default({}),
-  remote: z.record(z.string(), OverrideValueSchema.optional()).default({}),
   resolved: FlagRegistrySchema,
   bannerVisible: z.boolean(),
 }) as z.ZodType<FeatureFlagsState>;

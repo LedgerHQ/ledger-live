@@ -34,8 +34,15 @@ describe("EarningChoiceModal/Body", () => {
     expect(modals.MODAL_DELEGATE?.isOpened).toBe(true);
   });
 
-  it("Stake button is disabled until LIVE-29536 ships", () => {
-    render(<Body onClose={jest.fn()} params={{ account }} />);
-    expect(screen.getByTestId("tezos-earn-choice-stake-button")).toBeDisabled();
+  it("clicking Stake closes the choice modal and opens MODAL_TEZOS_STAKE", async () => {
+    const { user, store } = render(<Body onClose={jest.fn()} params={{ account }} />);
+
+    await act(async () => {
+      await user.click(screen.getByTestId("tezos-earn-choice-stake-button"));
+    });
+
+    const modals = store.getState().modals;
+    expect(modals.MODAL_TEZOS_EARNING_CHOICE?.isOpened).toBe(false);
+    expect(modals.MODAL_TEZOS_STAKE?.isOpened).toBe(true);
   });
 });

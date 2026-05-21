@@ -3,19 +3,17 @@ import {
   type DeviceIntentExecutorProps,
   type ExecutorPlatformConfiguration,
 } from "@ledgerhq/device-intent";
-import {
-  BottomSheetHeader,
-  BottomSheetScrollView,
-} from "@ledgerhq/lumen-ui-rnative";
+import { BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
 import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 import React from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { DeviceDisconnected } from "./components/DeviceDisconnected";
+import { IntentError } from "./components/IntentError";
+import { InvalidOperation } from "./components/InvalidOperation";
 import DeviceConnectionComponentLWM from "./DeviceConnectionComponentLWM";
 import DeviceContextInitializerComponentLWM, {
   InitializerConfig,
 } from "./DeviceContextInitializerComponentLWM";
-import ErrorComponentLWM from "./ErrorComponentLWM";
-import InvalidOperationComponentLWM from "./InvalidOperationComponentLWM";
 import type { InitializationInput } from "./types";
 
 type Props<JobState, Input, ExtraProps> = DeviceIntentExecutorProps<
@@ -30,9 +28,9 @@ type Props<JobState, Input, ExtraProps> = DeviceIntentExecutorProps<
 const platformConfig: ExecutorPlatformConfiguration<InitializationInput, InitializerConfig> = {
   DeviceConnectionComponent: DeviceConnectionComponentLWM,
   DeviceContextInitializerComponent: DeviceContextInitializerComponentLWM,
-  ConnectionErrorComponent: ErrorComponentLWM,
-  IntentErrorComponent: ErrorComponentLWM,
-  InvalidOperationComponent: InvalidOperationComponentLWM,
+  DeviceDisconnectedComponent: DeviceDisconnected,
+  IntentErrorComponent: IntentError,
+  InvalidOperationComponent: InvalidOperation,
 };
 
 /**
@@ -50,22 +48,22 @@ export function DeviceIntentExecutorLWM<JobState, Input, ExtraProps>(
   props: Props<JobState, Input, ExtraProps>,
 ): React.ReactElement {
   const { bottom: bottomInset } = useSafeAreaInsets();
+
   return (
     <QueuedDrawerBottomSheet
       isRequestingToBeOpened={props.enabled}
       onClose={props.onUserCancel}
       preventBackdropClick={!props.cancellableUI}
-      enableDynamicSizing={false}
-      snapPoints="medium"
+      enableDynamicSizing
     >
-      <BottomSheetScrollView style={{ paddingBottom: bottomInset + 16 }}>
+      <BottomSheetView style={{ paddingBottom: bottomInset + 16 }}>
         {props.cancellableUI && <BottomSheetHeader density="expanded" />}
         <DeviceIntentExecutor
           {...props}
           platformConfig={platformConfig}
           initializerConfig={props.initializerConfig}
         />
-      </BottomSheetScrollView>
+      </BottomSheetView>
     </QueuedDrawerBottomSheet>
   );
 }

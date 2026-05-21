@@ -2,13 +2,12 @@ import * as preloadedData from "@ledgerhq/coin-solana/preload-data";
 import type { SolanaAccount, SolanaPreloadDataV1, SolanaStake } from "@ledgerhq/coin-solana/types";
 import type { ValidatorsAppValidator } from "@ledgerhq/coin-solana/network/validator-app/index";
 import { getAccountBannerState } from "./banner";
-import * as helpers from "../../account/helpers";
 
 jest.mock("@ledgerhq/coin-solana/preload-data");
-jest.mock("../../account/helpers", () => ({
-  ...jest.requireActual("../../account/helpers"),
-  isAccountEmpty: jest.fn(),
-}));
+
+const mockIsAccountEmpty = jest.fn();
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const mockBridge = { isAccountEmpty: mockIsAccountEmpty } as any;
 
 import { BigNumber } from "bignumber.js";
 
@@ -116,7 +115,7 @@ const validatorsMap = {
   splTokens: null,
 } as SolanaPreloadDataV1;
 
-const mockedIsAccountEmpty = jest.mocked(helpers.isAccountEmpty);
+const mockedIsAccountEmpty = mockIsAccountEmpty;
 
 describe("solana/banner", () => {
   beforeEach(() => {
@@ -130,7 +129,7 @@ describe("solana/banner", () => {
   it("should not display the banner is account is", async () => {
     jest.spyOn(preloadedData, "getCurrentSolanaPreloadData").mockReturnValue(validatorsMap);
     mockedIsAccountEmpty.mockReturnValue(true);
-    const result = getAccountBannerState(account);
+    const result = getAccountBannerState(account, mockBridge);
     expect(result).toStrictEqual({
       display: false,
       redelegate: false,
@@ -141,7 +140,7 @@ describe("solana/banner", () => {
   it("should return display delegate mode is account is not empty", async () => {
     jest.spyOn(preloadedData, "getCurrentSolanaPreloadData").mockReturnValue(validatorsMap);
     mockedIsAccountEmpty.mockReturnValue(false);
-    const result = getAccountBannerState(account);
+    const result = getAccountBannerState(account, mockBridge);
     expect(result).toStrictEqual({
       display: true,
       redelegate: false,
@@ -166,7 +165,7 @@ describe("solana/banner", () => {
     jest.spyOn(preloadedData, "getCurrentSolanaPreloadData").mockReturnValue(validatorsMap);
     mockedIsAccountEmpty.mockReturnValue(false);
     account.solanaResources?.stakes.push(badValidator);
-    const result = getAccountBannerState(account);
+    const result = getAccountBannerState(account, mockBridge);
     expect(result).toStrictEqual({
       display: true,
       redelegate: true,

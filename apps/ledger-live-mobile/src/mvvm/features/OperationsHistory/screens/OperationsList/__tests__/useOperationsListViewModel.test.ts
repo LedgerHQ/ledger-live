@@ -1,7 +1,9 @@
 import { act } from "@testing-library/react-native";
 import { renderHook } from "@tests/test-renderer";
-import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { usdcToken, maticEth } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
+import type { Account } from "@ledgerhq/types-live";
 import type { State } from "~/reducers/types";
 import { useOperationsListViewModel } from "../useOperationsListViewModel";
 
@@ -65,14 +67,14 @@ describe("useOperationsListViewModel", () => {
     });
   });
 
-  describe("currencyId filtering", () => {
-    it("filters accounts and flattenedAccounts to the given currency", () => {
+  describe("accountIds scoping", () => {
+    it("filters root accounts to those whose tree intersects the given accountIds", () => {
       const ethereum = getCryptoCurrencyById("ethereum");
       const bitcoin = getCryptoCurrencyById("bitcoin");
       const ethAccount = genAccount("eth-filter", { currency: ethereum });
       const btcAccount = genAccount("btc-filter", { currency: bitcoin });
 
-      const { result } = renderHook(() => useOperationsListViewModel("bitcoin"), {
+      const { result } = renderHook(() => useOperationsListViewModel([btcAccount.id]), {
         overrideInitialState: (state: State) => ({
           ...state,
           accounts: { ...state.accounts, active: [ethAccount, btcAccount] },
@@ -80,11 +82,11 @@ describe("useOperationsListViewModel", () => {
       });
 
       expect(result.current.accounts).toHaveLength(1);
-      expect(result.current.accounts[0].currency.id).toBe("bitcoin");
+      expect(result.current.accounts[0].id).toBe(btcAccount.id);
       expect(result.current.flattenedAccounts.every(a => a.id.includes("btc"))).toBe(true);
     });
 
-    it("returns all accounts when currencyId is undefined", () => {
+    it("returns all accounts when accountIds is undefined", () => {
       const ethereum = getCryptoCurrencyById("ethereum");
       const bitcoin = getCryptoCurrencyById("bitcoin");
       const ethAccount = genAccount("eth-nofilter", { currency: ethereum });
@@ -98,6 +100,38 @@ describe("useOperationsListViewModel", () => {
       });
 
       expect(result.current.accounts).toHaveLength(2);
+    });
+
+    it("keeps the parent root when only a token sub-account id is provided", () => {
+      const ethereum = getCryptoCurrencyById("ethereum");
+      const ethRoot = genAccount("eth-token-scope", {
+        currency: ethereum,
+        subAccountsCount: 0,
+      });
+      const usdc = genTokenAccount(0, ethRoot, usdcToken);
+      const matic = genTokenAccount(1, ethRoot, maticEth);
+      const ethTree: Account = { ...ethRoot, subAccounts: [usdc, matic] };
+
+      const { result } = renderHook(() => useOperationsListViewModel([usdc.id]), {
+        overrideInitialState: (state: State) => ({
+          ...state,
+          accounts: { ...state.accounts, active: [ethTree] },
+        }),
+      });
+
+      expect(result.current.accounts).toHaveLength(1);
+      expect(result.current.accounts[0].id).toBe(ethTree.id);
+      expect(result.current.flattenedAccounts.map(a => a.id)).toEqual(
+        expect.arrayContaining([ethTree.id, usdc.id, matic.id]),
+      );
+
+      // The scoping filter is forwarded to useOperationsV1 so only USDC ops survive.
+      const lastCall = mockUseOperationsV1.mock.calls.at(-1);
+      const filter = lastCall?.[2]?.filterOperation;
+      expect(typeof filter).toBe("function");
+      expect(filter({} as never, usdc)).toBe(true);
+      expect(filter({} as never, matic)).toBe(false);
+      expect(filter({} as never, ethTree)).toBe(false);
     });
   });
 

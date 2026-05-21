@@ -50,6 +50,8 @@ const transformIncludePatterns = [
   "@mysten",
   "@scure",
   "@noble",
+  "d3-.*",
+  "internmap",
 ];
 
 /** @type {import('@swc/jest').JestConfigWithTsJest} */
@@ -111,7 +113,6 @@ module.exports = {
   resolver: "<rootDir>/scripts/resolver.js",
   moduleNameMapper: {
     ...pathsToModuleNameMapper(compilerOptions.paths),
-    "^@features/(.*)$": "<rootDir>/../../features/$1/src",
     "^@ledgerhq/lumen-ui-rnative$":
       "<rootDir>/node_modules/@ledgerhq/lumen-ui-rnative/src/index.ts",
     "^@ledgerhq/lumen-design-core$": "<rootDir>/node_modules/@ledgerhq/lumen-design-core",

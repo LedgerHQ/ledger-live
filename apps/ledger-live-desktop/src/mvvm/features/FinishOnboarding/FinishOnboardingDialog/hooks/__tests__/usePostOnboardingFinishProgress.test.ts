@@ -1,4 +1,4 @@
-import { renderHook } from "tests/testSetup";
+import { renderHook, waitFor } from "tests/testSetup";
 import {
   PostOnboardingActionId,
   type PostOnboardingHubState,
@@ -116,5 +116,83 @@ describe("usePostOnboardingFinishProgress", () => {
     const { result } = renderHook(() => usePostOnboardingFinishProgress(actionsState));
     expect(result.current.completedActionsAmount).toBe(1);
     expect(result.current.totalActionsAmount).toBe(2);
+  });
+
+  it("should report allActionsCompleted true when the filtered list is empty", () => {
+    const { result } = renderHook(() => usePostOnboardingFinishProgress([]));
+    expect(result.current.allActionsCompleted).toBe(true);
+  });
+
+  it("should report allActionsCompleted true when every listed action is completed", () => {
+    const actionsState = [
+      { id: PostOnboardingActionId.deviceOnboarded, completed: true },
+      { id: PostOnboardingActionId.assetsTransfer, completed: true },
+    ] as PostOnboardingHubState["actionsState"];
+
+    const { result } = renderHook(() => usePostOnboardingFinishProgress(actionsState));
+    expect(result.current.allActionsCompleted).toBe(true);
+  });
+
+  it("should report allActionsCompleted false when at least one listed action is pending", () => {
+    const actionsState = [
+      { id: PostOnboardingActionId.deviceOnboarded, completed: true },
+      { id: PostOnboardingActionId.assetsTransfer, completed: false },
+    ] as PostOnboardingHubState["actionsState"];
+
+    const { result } = renderHook(() => usePostOnboardingFinishProgress(actionsState));
+    expect(result.current.allActionsCompleted).toBe(false);
+  });
+
+  it("should mark an action complete via the async getIsAlreadyCompleted resolver", async () => {
+    const actionsState = [
+      {
+        id: PostOnboardingActionId.recover,
+        completed: false,
+        getIsAlreadyCompleted: () => Promise.resolve(true),
+      },
+      { id: PostOnboardingActionId.assetsTransfer, completed: false },
+    ] as unknown as PostOnboardingHubState["actionsState"];
+
+    const { result } = renderHook(() => usePostOnboardingFinishProgress(actionsState));
+
+    await waitFor(() => {
+      expect(result.current.completionById[PostOnboardingActionId.recover]).toBe(true);
+    });
+    expect(result.current.completionById[PostOnboardingActionId.assetsTransfer]).toBe(false);
+    expect(result.current.completedActionsAmount).toBe(2);
+    expect(result.current.totalActionsAmount).toBe(3);
+    expect(result.current.allActionsCompleted).toBe(false);
+  });
+
+  it("should recompute the list, totals, and allActionsCompleted when actionsState changes", () => {
+    const initial = [
+      { id: PostOnboardingActionId.assetsTransfer, completed: false },
+    ] as PostOnboardingHubState["actionsState"];
+
+    const { result, rerender } = renderHook(
+      (actionsState: PostOnboardingHubState["actionsState"]) =>
+        usePostOnboardingFinishProgress(actionsState),
+      { initialProps: initial },
+    );
+
+    expect(result.current.actionList.map(a => a.id)).toEqual([
+      PostOnboardingActionId.assetsTransfer,
+    ]);
+    expect(result.current.totalActionsAmount).toBe(2);
+    expect(result.current.completedActionsAmount).toBe(1);
+    expect(result.current.allActionsCompleted).toBe(false);
+
+    rerender([
+      { id: PostOnboardingActionId.assetsTransfer, completed: true },
+      { id: PostOnboardingActionId.syncAccounts, completed: true },
+    ] as PostOnboardingHubState["actionsState"]);
+
+    expect(result.current.actionList.map(a => a.id)).toEqual([
+      PostOnboardingActionId.assetsTransfer,
+      PostOnboardingActionId.syncAccounts,
+    ]);
+    expect(result.current.totalActionsAmount).toBe(3);
+    expect(result.current.completedActionsAmount).toBe(3);
+    expect(result.current.allActionsCompleted).toBe(true);
   });
 });

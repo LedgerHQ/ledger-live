@@ -8,7 +8,6 @@ import type { FlattenAccountsOptions } from "@ledgerhq/live-common/account/index
 import type { TrackingPair } from "@ledgerhq/live-countervalues/types";
 import {
   useCalculateCountervalueCallback as useCalculateCountervalueCallbackCommon,
-  useCountervaluesPolling,
   useTrackingPairForAccounts,
 } from "@ledgerhq/live-countervalues-react";
 import { useDistribution as useLegacyDistribution } from "@ledgerhq/live-countervalues-react/portfolio";
@@ -19,7 +18,8 @@ import {
 } from "@ledgerhq/live-common/portfolio/useAssetDistribution";
 import VersionNumber from "react-native-version-number";
 import { BehaviorSubject } from "rxjs";
-import { cleanCache, reorderAccounts } from "./accounts";
+import { replaceAccounts, reorderAccounts } from "./accounts";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { accountsSelector } from "../reducers/accounts";
 import { counterValueCurrencySelector, orderAccountsSelector } from "../reducers/settings";
 import { clearBridgeCache } from "../bridge/cache";
@@ -112,14 +112,19 @@ export function useRefreshAccountsOrderingEffect({
 }
 export function useCleanCache() {
   const dispatch = useDispatch();
-  const { wipe } = useCountervaluesPolling();
+  const accounts = useSelector(accountsSelector);
   return useCallback(async () => {
-    dispatch(cleanCache());
+    const cleared = await Promise.all(
+      accounts.map(async account => {
+        const bridge = await getAccountBridge(account);
+        return bridge.clearAccount(account);
+      }),
+    );
+    dispatch(replaceAccounts(cleared));
 
     await clearBridgeCache();
-    wipe();
     flushAll();
-  }, [dispatch, wipe]);
+  }, [dispatch, accounts]);
 }
 
 export function useUserSettings() {

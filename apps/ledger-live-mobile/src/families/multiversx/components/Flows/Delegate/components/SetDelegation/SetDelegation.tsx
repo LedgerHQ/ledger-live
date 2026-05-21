@@ -1,5 +1,6 @@
 import React, { useMemo, useEffect, useCallback } from "react";
 import { Image, View, Animated } from "react-native";
+import { useChangeValidatorRotateAnim } from "~/families/shared/useChangeValidatorRotateAnim";
 import { useTheme } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
@@ -33,7 +34,6 @@ import type { SetDelegationPropsType } from "./types";
 
 import styles from "./styles";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
-import Config from "react-native-config";
 
 /*
  * Handle the component declaration.
@@ -97,46 +97,8 @@ const SetDelegation = (props: SetDelegationPropsType) => {
 
   const { error } = useMemo(() => handleTransactionStatus(status), [status]);
 
-  /*
-   * Handle the rotation animation instantiation, and prepare the transform setting for the component.
-   */
-
-  const animation = useMemo(() => new Animated.Value(0), []);
-  const transform = useMemo(
-    () => [
-      {
-        rotate: animation.interpolate({
-          inputRange: [0, 1],
-          outputRange: ["0deg", "30deg"],
-        }),
-      },
-    ],
-    [animation],
-  );
-
-  /*
-   * Call the animation based on the preset sequences and loop them with a one second delay.
-   */
-
-  const handleAnimation = useCallback(() => {
-    if (Config.DETOX) {
-      return;
-    }
-    const settings = [1, -1, 0];
-    const sequence = settings.map((toValue, index) =>
-      Animated.timing(animation, {
-        toValue,
-        duration: index % 2 === 0 ? 200 : 300,
-        useNativeDriver: true,
-      }),
-    );
-
-    Animated.loop(Animated.sequence(sequence.concat([Animated.delay(1000)]))).start();
-
-    return () => {
-      animation.setValue(0);
-    };
-  }, [animation]);
+  const { rotate } = useChangeValidatorRotateAnim();
+  const transform = useMemo(() => [{ rotate }], [rotate]);
 
   /*
    * Callback function to be called when wanting to continue to the select device panel.
@@ -230,7 +192,6 @@ const SetDelegation = (props: SetDelegationPropsType) => {
    * Track all callback reference updates and run the effect conditionally.
    */
 
-  useEffect(handleAnimation, [handleAnimation]);
   useEffect(trackTransactionUpdate, [trackTransactionUpdate]);
 
   /*

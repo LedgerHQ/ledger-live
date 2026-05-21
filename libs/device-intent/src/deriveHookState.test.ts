@@ -24,7 +24,6 @@ function makeParams(
     intentComponentExtraProps: undefined,
     lastIntentSnapshot: null,
     onConnected: noop,
-    onConnectionError: noop,
     onContextInitialized: noop,
     onRetry: noop,
     onUserCancel: noop,
@@ -35,9 +34,13 @@ function makeParams(
 describe("deriveHookState", () => {
   it("maps connectingDevice to deviceConnection phase with correct params", () => {
     const onConnected = jest.fn();
-    const onConnectionError = jest.fn();
+    const onUserCancel = jest.fn();
     const deviceConnectionParams = { acceptedDeviceModelIds: [] };
-    const params = makeParams({ deviceConnectionParams, onConnected, onConnectionError });
+    const params = makeParams({
+      deviceConnectionParams,
+      onConnected,
+      onUserCancel,
+    });
     const state: ExecutorState = { type: "connectingDevice" };
 
     const result = deriveHookState(state, params);
@@ -46,31 +49,33 @@ describe("deriveHookState", () => {
       phase: "deviceConnection",
       deviceConnectionParams,
       onConnected,
-      onError: onConnectionError,
+      onClose: onUserCancel,
     });
   });
 
-  it("maps connectingDeviceError to connectionError phase with error and onRetry", () => {
+  it("maps deviceDisconnected to deviceDisconnected phase with onRetry and onClose", () => {
     const onRetry = jest.fn();
-    const error = new Error("connection failed");
-    const params = makeParams({ onRetry });
-    const state: ExecutorState = { type: "connectingDeviceError", error };
+    const onUserCancel = jest.fn();
+    const params = makeParams({ onRetry, onUserCancel });
+    const state: ExecutorState = { type: "deviceDisconnected" };
 
     const result = deriveHookState(state, params);
 
     expect(result).toEqual({
-      phase: "connectionError",
-      error,
+      phase: "deviceDisconnected",
       onRetry,
+      onClose: onUserCancel,
     });
   });
 
-  it("maps initializingDeviceContext to deviceInitialization phase with connectionResult", () => {
+  it("maps initializingDeviceContext to deviceInitialization phase with connectionResult and onClose", () => {
     const onContextInitialized = jest.fn();
+    const onUserCancel = jest.fn();
     const params = makeParams({
       connectionResult: defaultConnectionResult,
       deviceInitializationInput: defaultDeviceInitializationInput,
       onContextInitialized,
+      onUserCancel,
     });
     const state: ExecutorState = { type: "initializingDeviceContext" };
 
@@ -81,16 +86,19 @@ describe("deriveHookState", () => {
       connectionResult: defaultConnectionResult,
       deviceInitializationInput: defaultDeviceInitializationInput,
       onContextInitialized,
+      onClose: onUserCancel,
     });
   });
 
-  it("maps executingIntent to intentExecution phase with component and jobState", () => {
+  it("maps executingIntent to intentExecution phase with component, jobState and onClose", () => {
     const latestJobState = { step: "running" };
     const intentComponentExtraProps = { foo: "bar" };
+    const onUserCancel = jest.fn();
     const params = makeParams({
       latestJobState,
       intentComponent: DummyComponent,
       intentComponentExtraProps,
+      onUserCancel,
     });
     const state: ExecutorState = { type: "executingIntent" };
 
@@ -101,6 +109,7 @@ describe("deriveHookState", () => {
       intentComponent: DummyComponent,
       jobState: latestJobState,
       intentComponentExtraProps,
+      onClose: onUserCancel,
     });
   });
 
@@ -116,10 +125,11 @@ describe("deriveHookState", () => {
     });
   });
 
-  it("maps executingIntentError to intentError phase", () => {
+  it("maps executingIntentError to intentError phase with onClose", () => {
     const onRetry = jest.fn();
+    const onUserCancel = jest.fn();
     const error = new Error("job failed");
-    const params = makeParams({ onRetry });
+    const params = makeParams({ onRetry, onUserCancel });
     const state: ExecutorState = { type: "executingIntentError", error };
 
     const result = deriveHookState(state, params);
@@ -128,6 +138,7 @@ describe("deriveHookState", () => {
       phase: "intentError",
       error,
       onRetry,
+      onClose: onUserCancel,
     });
   });
 
@@ -146,26 +157,59 @@ describe("deriveHookState", () => {
     });
   });
 
-  it("maps idle to idle phase with null lastIntentSnapshot when no intent was executed", () => {
-    const params = makeParams();
+  it("maps idle to idle phase with null lastIntentSnapshot and onClose when no intent was executed", () => {
+    const onUserCancel = jest.fn();
+    const params = makeParams({ onUserCancel });
     const state: ExecutorState = { type: "idle" };
 
     const result = deriveHookState(state, params);
 
-    expect(result).toEqual({ phase: "idle", lastIntentSnapshot: null });
+    expect(result).toEqual({
+      phase: "idle",
+      lastIntentSnapshot: null,
+      onClose: onUserCancel,
+    });
   });
 
-  it("maps idle to idle phase with lastIntentSnapshot when provided", () => {
+  it("maps idle to idle phase with lastIntentSnapshot and onClose when provided", () => {
+    const onUserCancel = jest.fn();
     const snapshot = {
       intentComponent: DummyComponent,
       jobState: "final-state",
       intentComponentExtraProps: { extra: true },
     };
-    const params = makeParams({ lastIntentSnapshot: snapshot });
+    const params = makeParams({ lastIntentSnapshot: snapshot, onUserCancel });
     const state: ExecutorState = { type: "idle" };
 
     const result = deriveHookState(state, params);
 
-    expect(result).toEqual({ phase: "idle", lastIntentSnapshot: snapshot });
+    expect(result).toEqual({
+      phase: "idle",
+      lastIntentSnapshot: snapshot,
+      onClose: onUserCancel,
+    });
+  });
+
+  it("forwards onUserCancel as onClose on every non-invalid phase that exposes onClose", () => {
+    const onUserCancel = jest.fn();
+    const params = makeParams({ onUserCancel });
+
+    const phases: ExecutorState[] = [
+      { type: "connectingDevice" },
+      { type: "deviceDisconnected" },
+      { type: "initializingDeviceContext" },
+      { type: "executingIntent" },
+      { type: "executingIntentError", error: new Error("e") },
+      { type: "idle" },
+    ];
+
+    for (const state of phases) {
+      const result = deriveHookState(state, params);
+      if ("onClose" in result) {
+        result.onClose();
+      }
+    }
+
+    expect(onUserCancel).toHaveBeenCalledTimes(phases.length);
   });
 });

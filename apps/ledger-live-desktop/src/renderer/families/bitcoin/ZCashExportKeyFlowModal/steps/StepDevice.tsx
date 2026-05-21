@@ -1,7 +1,8 @@
 import React, { useMemo, useCallback, useEffect, useState } from "react";
 import invariant from "invariant";
-import { firstValueFrom } from "rxjs";
 import { Trans } from "react-i18next";
+import type { BitcoinAccount } from "@ledgerhq/coin-bitcoin/types";
+import type { BitcoinAccountBridge } from "@ledgerhq/coin-bitcoin/bridge/js";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
@@ -53,21 +54,19 @@ const StepExport = (props: StepProps) => {
   const mainAccount = account ? getMainAccount(account) : null;
   invariant(account && mainAccount, "No account given");
 
-  const bridge = useAccountBridge(mainAccount);
+  const bridge = useAccountBridge(mainAccount) as unknown as BitcoinAccountBridge;
   const requestUfvkFromDevice = useCallback(async () => {
     try {
       if (!device) {
         throw new DisconnectedDevice();
       }
-      await firstValueFrom(
-        bridge.receive(mainAccount, {
+      const { viewKey } = await bridge
+        .getFullViewingKey(mainAccount as BitcoinAccount, {
           deviceId: device.deviceId,
-          verify: true,
-        }),
-      ).finally(() => setUfvkRequestSent(true));
-      onUfvkChanged(
-        "TODO: Once we have the GET_UFVK method on the device, we can pass the UFVK string here",
-      );
+          path: mainAccount.freshAddressPath,
+        })
+        .finally(() => setUfvkRequestSent(true));
+      onUfvkChanged(viewKey);
       transitionTo("confirmation");
     } catch (error) {
       onUfvkChanged("", error as Error);

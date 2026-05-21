@@ -8,6 +8,7 @@ import Box from "../Box";
 import { WebviewAPI, WebviewProps, WebviewState } from "../Web3AppWebview/types";
 import { initialWebviewState } from "../Web3AppWebview/helpers";
 import { TopBar } from "./TopBar";
+import useRecoverStateSync from "./useRecoverStateSync";
 import { useDeeplinkCustomHandlers } from "../WebPlatformPlayer/CustomHandlers";
 
 type RecoverWebviewProps = WebviewProps & {
@@ -37,6 +38,7 @@ const recoverIdsShowTopBar = [
 ];
 
 export default function WebRecoverPlayer({ manifest, inputs, onClose }: RecoverWebviewProps) {
+  useRecoverStateSync(manifest.id);
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
   const recoverServices = useFeature("protectServicesDesktop");

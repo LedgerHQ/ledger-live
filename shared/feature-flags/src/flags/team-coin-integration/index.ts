@@ -70,7 +70,6 @@ export * from "./currencySeiNetworkEvm";
 export * from "./currencyShape";
 export * from "./currencySomnia";
 export * from "./currencySonic";
-export * from "./currencySonicBlaze";
 export * from "./currencyStacks";
 export * from "./currencyStargaze";
 export * from "./currencyStory";

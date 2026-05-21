@@ -50,9 +50,11 @@ export function getSendFlowCurrencyTicker(account: SendFlowTrackingAccount | nul
 export function getSendFlowTrackingProperties(
   account: SendFlowTrackingAccount | null,
   parentAccount?: SendFlowTrackingParentAccount | null,
+  newSendFlow = true,
 ) {
   return {
     flow: "send",
+    newSendFlow,
     blockchain: getSendFlowBlockchain(account, parentAccount),
     currency: getSendFlowCurrencyTicker(account),
     currency_id: getSendFlowCurrencyId(account),

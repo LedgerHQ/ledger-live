@@ -144,11 +144,12 @@ describe("ZCash Export UFVK Flow", () => {
     const stepId: StepId = "device";
 
     // Mock the bridge to prevent errors from the useEffect
-    const mockReceive = jest.fn(() => ({
-      subscribe: jest.fn(),
+    const mockGetFullViewingKey = jest.fn(async () => ({
+      viewKey: "uview1mocked",
+      path: account.freshAddressPath,
     }));
     jest.spyOn(require("@ledgerhq/live-common/bridge/index"), "getAccountBridge").mockReturnValue({
-      receive: mockReceive,
+      getFullViewingKey: mockGetFullViewingKey,
     });
 
     render(

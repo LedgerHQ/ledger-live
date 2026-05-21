@@ -7,6 +7,7 @@ import { useSelector } from "~/context/hooks";
 import { walletSelector } from "~/reducers/wallet";
 import { useStake } from "LLM/hooks/useStake/useStake";
 import { getAccountSpendableBalance } from "@ledgerhq/ledger-wallet-framework/account/helpers";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 
 /** Open the family main actions stake flow for a given account from any navigator. Returns to parent route on completion. */
 export function useStakingDrawer({
@@ -61,6 +62,8 @@ export function useStakingDrawer({
 
       // get the stake flow for the specific currency
 
+      const bridge = getAccountBridge(account, parentAccount);
+
       const familySpecificMainActions =
         (decorators &&
           decorators.getMainActions &&
@@ -70,6 +73,7 @@ export function useStakingDrawer({
             parentAccount,
             colors: {},
             parentRoute,
+            bridge,
           })) ||
         [];
       const familyStakeFlow = familySpecificMainActions.find(

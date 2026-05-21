@@ -6,6 +6,7 @@ import Box from "~/renderer/components/Box";
 import { TFunction } from "i18next";
 import { AccountLike, Account, Operation } from "@ledgerhq/types-live";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import ConfirmationCell from "./ConfirmationCell";
 import DateCell from "./DateCell";
 import AccountCell from "./AccountCell";
@@ -40,7 +41,6 @@ type OwnProps = {
   withAccount?: boolean;
   withAddress?: boolean;
   text?: string;
-  editable?: boolean;
 };
 type Props = OwnProps;
 
@@ -51,11 +51,11 @@ function OperationComponent({
   onOperationClick,
   t,
   text,
-  editable,
   withAddress = true,
   withAccount = false,
 }: Props) {
   const mainAccount = getMainAccount(account, parentAccount);
+  const bridge = useAccountBridge(mainAccount);
   const confirmationsNb = useSelector((state: State) =>
     confirmationsNbForCurrencySelector(state, mainAccount),
   );
@@ -73,6 +73,7 @@ function OperationComponent({
   const isConfirmed = isConfirmedOperation(operation, mainAccount, confirmationsNb);
   const specific = getLLDCoinFamily(cryptoCurrency.family);
   const CustomMetadataCell = specific ? specific.operationDetails?.customMetadataCell : null;
+  const editable = mainAccount.type === "Account" && bridge.isEditableOperation(mainAccount, operation);
 
   return (
     <OperationRow
@@ -88,10 +89,10 @@ function OperationComponent({
         isConfirmed={isConfirmed}
       />
       <DateCell
-        family={mainAccount.currency.family}
         text={text}
         operation={operation}
         editable={editable}
+        isStuck={bridge.isStuckOperation(operation)}
         t={t}
       />
       {withAccount && <AccountCell accountName={accountName} currency={currency} />}

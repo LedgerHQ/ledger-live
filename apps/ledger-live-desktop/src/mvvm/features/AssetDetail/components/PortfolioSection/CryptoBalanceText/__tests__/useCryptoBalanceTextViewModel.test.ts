@@ -2,7 +2,7 @@ import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/ind
 import { BigNumber } from "bignumber.js";
 import { renderHook } from "tests/testSetup";
 import { useCryptoBalanceTextViewModel } from "../useCryptoBalanceTextViewModel";
-import { BTC_ACCOUNT } from "src/mvvm/features/__mocks__/accounts.mock";
+import { BTC_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
 
 jest.mock("@ledgerhq/live-common/currencies/index", () => ({
   ...jest.requireActual("@ledgerhq/live-common/currencies/index"),

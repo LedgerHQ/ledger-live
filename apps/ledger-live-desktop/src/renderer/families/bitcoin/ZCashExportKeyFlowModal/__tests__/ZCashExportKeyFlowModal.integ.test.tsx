@@ -3,7 +3,6 @@ import { act, fireEvent, render, screen, userEvent, waitFor } from "tests/testSe
 import { createFixtureAccount } from "@ledgerhq/coin-bitcoin/fixtures/common.fixtures";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { of } from "rxjs";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import ExportKeyModal from "../index";
 import { StepId } from "../types";
@@ -134,17 +133,14 @@ describe("ZCash Export UFVK Flow - Integration test", () => {
 
   it("should navigate through the flow", async () => {
     // Mock the bridge to prevent errors from the useEffect in StepExport
-    // The receive function returns an Observable that emits when UFVK is received
-    // We mock it to emit immediately so firstValueFrom resolves and triggers transitionTo("confirmation")
-    const mockReceive = jest.fn(() =>
-      of({
-        address: account.freshAddress,
+    // The getFullViewingKey function resolves immediately with a UFVK value
+    // so the flow transitions directly to confirmation.
+    const mockGetFullViewingKey = jest.fn(async () => ({
+      viewKey: "uview1mocked",
         path: account.freshAddressPath,
-        publicKey: "mock-public-key",
-      }),
-    );
+      }));
     mockedUseAccountBridge.mockReturnValue({
-      receive: mockReceive,
+      getFullViewingKey: mockGetFullViewingKey,
     } as unknown as ReturnType<typeof useAccountBridge>);
 
     let stepId: StepId = "birthday";

@@ -59,11 +59,14 @@ export function useOpenSendFlow() {
                 dialogConfiguration: SEND_ACCOUNT_SELECTION_DRAWER_CONFIGURATION,
                 onAccountSelected: (account: AccountLike, parentAccount?: Account) => {
                   dispatch(closeDialog());
+                  const family = getFamilyFromAccount(account, parentAccount ?? null);
+                  const currencyId = getCurrencyIdFromAccount(account, parentAccount ?? null);
+                  const shouldUseNewFlow = isEnabledForFamily(family, currencyId);
                   track("button_clicked", {
                     button: "send",
                     buttonLocation: "quick_action",
                     page: "MAD",
-                    ...getSendFlowTrackingProperties(account, parentAccount),
+                    ...getSendFlowTrackingProperties(account, parentAccount, shouldUseNewFlow),
                   });
                   openSendFlowImpl({
                     ...nextParams,

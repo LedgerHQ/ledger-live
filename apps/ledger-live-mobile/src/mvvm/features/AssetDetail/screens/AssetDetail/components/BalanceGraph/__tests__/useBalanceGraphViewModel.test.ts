@@ -7,10 +7,51 @@ import {
   mockBtcCryptoCurrency,
   mockEthCryptoCurrency,
 } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
-import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import type { State } from "~/reducers/types";
 import { marketCurrencyData } from "../../../__fixtures__/marketCurrencyData";
+
+const eursToken: TokenCurrency = {
+  type: "TokenCurrency",
+  id: "ethereum/erc20/stasis_eurs",
+  contractAddress: "0xdB25f211AB05b1c97D595516F45794528a807ad8",
+  parentCurrency: mockEthCryptoCurrency,
+  tokenType: "erc20",
+  name: "STASIS EURS Token",
+  ticker: "EURS",
+  units: [{ name: "STASIS EURS Token", code: "EURS", magnitude: 2 }],
+};
+
+function withEthAndEursToken({
+  ethBalance,
+  eursBalance,
+}: {
+  ethBalance: number;
+  eursBalance: number;
+}) {
+  return {
+    overrideInitialState: (state: State): State => {
+      const parent = genAccount("ethereum-0", {
+        currency: mockEthCryptoCurrency,
+        operationsSize: 0,
+      });
+      parent.balance = new BigNumber(ethBalance);
+      parent.spendableBalance = new BigNumber(ethBalance);
+
+      const tokenAccount = genTokenAccount(0, parent, eursToken);
+      tokenAccount.balance = new BigNumber(eursBalance);
+      tokenAccount.spendableBalance = new BigNumber(eursBalance);
+      parent.subAccounts = [tokenAccount];
+
+      return {
+        ...state,
+        accounts: { ...state.accounts, active: [parent] },
+      };
+    },
+  };
+}
 
 jest.mock("@ledgerhq/live-common/market/state-manager/marketApi", () => ({
   ...jest.requireActual("@ledgerhq/live-common/market/state-manager/marketApi"),
@@ -204,6 +245,15 @@ describe("useBalanceGraphViewModel", () => {
           { currencyId: "bitcoin", balance: 0 },
           { currencyId: "ethereum", balance: 1000 },
         ]),
+      );
+
+      expect(result.current.showReceive).toBe(false);
+    });
+
+    it("is false for a token the user already holds (regression: ERC-20 detected via flattenAccounts)", () => {
+      const { result } = renderHook(
+        () => useBalanceGraphViewModel(eursToken),
+        withEthAndEursToken({ ethBalance: 0, eursBalance: 36_300_500 }),
       );
 
       expect(result.current.showReceive).toBe(false);

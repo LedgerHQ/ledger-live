@@ -1,6 +1,7 @@
-import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { groupAddAccounts } from "@ledgerhq/live-wallet/addAccounts";
 import { Account, DerivationMode } from "@ledgerhq/types-live";
+
+type IsAccountEmpty = (account: Account) => boolean;
 
 export const getUnimportedAccounts = (scanned: Account[], existing: Account[]): Account[] => {
   const existingIds = new Set(existing.map(acc => acc.id));
@@ -19,6 +20,7 @@ export const determineSelectedIds = (
   accounts: Account[],
   onlyNewAccounts: boolean,
   currentSelectedIds: string[],
+  isAccountEmpty: IsAccountEmpty,
 ) => {
   if (onlyNewAccounts) {
     return accounts.map(x => x.id);
@@ -28,6 +30,27 @@ export const determineSelectedIds = (
   return latestAccount && !isAccountEmpty(latestAccount)
     ? [...currentSelectedIds, latestAccount.id]
     : currentSelectedIds;
+};
+
+export const computeSelectedIdsFromScan = (
+  scannedAccounts: Account[],
+  existingAccounts: Account[],
+  currentSelectedIds: string[],
+  isAccountEmpty: IsAccountEmpty,
+): string[] => {
+  const unimportedAccounts = getUnimportedAccounts(scannedAccounts, existingAccounts);
+  const onlyNewAccounts = unimportedAccounts.every(isAccountEmpty);
+
+  const processedAccountIds = new Set<string>();
+  const freshAccounts = unimportedAccounts.filter(acc => {
+    if (processedAccountIds.has(acc.id)) {
+      return false;
+    }
+    processedAccountIds.add(acc.id);
+    return true;
+  });
+
+  return determineSelectedIds(freshAccounts, onlyNewAccounts, currentSelectedIds, isAccountEmpty);
 };
 
 export const getGroupedAccounts = (

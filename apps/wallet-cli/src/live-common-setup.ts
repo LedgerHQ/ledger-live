@@ -1,6 +1,5 @@
 import { setupCalClientStore } from "@ledgerhq/cryptoassets/cal-client";
 import { setSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
-import type { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { walletCliConfig } from "./config";
 import { registerCoinModules } from "@ledgerhq/live-common/coin-modules/registry";
 import type { CoinModuleLoader } from "@ledgerhq/live-common/coin-modules/types";
@@ -10,6 +9,7 @@ import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { setEnv } from "@ledgerhq/live-env";
 import { registerWalletCliDmkTransport } from "./device/register-dmk-transport";
 import pkg from "../package.json" with { type: "json" };
+import type { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 
 /**
  * Ensure USER_ID is set so DMK firmware distribution salt is stable for this CLI.
@@ -89,12 +89,12 @@ export const WALLET_CLI_SUPPORTED_CRYPTO_CURRENCY_IDS: readonly CryptoCurrencyId
 setWalletAPIVersion(WALLET_API_VERSION);
 registerCoinModules(walletCliLoaders);
 setSupportedCurrencies([...WALLET_CLI_SUPPORTED_CRYPTO_CURRENCY_IDS]);
-// Set config on the ESM singleton (used by alpacaized families like EVM whose
+// Set config on the ESM singleton (used by coin-framework families like EVM whose
 // bridge code is reached through ESM imports).
 LiveConfig.setConfig(walletCliConfig);
 // Also set on the CJS singleton — Bun's bundler resolves ESM imports to lib-es/
 // and require() to lib/, creating separate LiveConfig.instance singletons.
-// Non-alpacaized families (solana, bitcoin) load their bridge via require() in
+// Non-coin-framework families (solana, bitcoin) load their bridge via require() in
 // the lazy loaders above, so they read from the CJS instance.
 require("@ledgerhq/live-config/LiveConfig").LiveConfig.setConfig(walletCliConfig);
 // TODO: wallet-cli should own its Redux store setup (createRtkCryptoAssetsStore + RTK middleware)

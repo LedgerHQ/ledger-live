@@ -105,7 +105,6 @@ describe("normalizePublicKeyForAddress", () => {
 
     const result = normalizePublicKeyForAddress(ledgerEd25519Hex, tz1Address);
 
-    expect(result).toBeDefined();
     expect(result!.startsWith("edpk")).toBe(true);
     expect(validatePublicKey(result!)).toBe(ValidationResult.VALID);
   });
@@ -116,7 +115,6 @@ describe("normalizePublicKeyForAddress", () => {
 
     const result = normalizePublicKeyForAddress(rawEd25519Hex, tz1Address);
 
-    expect(result).toBeDefined();
     expect(result!.startsWith("edpk")).toBe(true);
     expect(validatePublicKey(result!)).toBe(ValidationResult.VALID);
   });

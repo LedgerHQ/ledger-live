@@ -3,6 +3,7 @@ import type {
   MemoNotSupported,
 } from "@ledgerhq/coin-module-framework/api/index";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { RedelegateDstValAddressRequired } from "@ledgerhq/errors";
 import type { StakingOperation } from "../types/staking";
 import { isStakingIntent, seiEvmAmountToUsei } from "../utils";
 import { isPayable } from "./abis";
@@ -27,7 +28,7 @@ const STAKING_PROTOCOLS: Record<string, Record<string, OperationFn>> = {
     // so we scale it down here. See `seiEvmAmountToUsei` for details.
     undelegate: (valAddress, amount) => [valAddress, seiEvmAmountToUsei(amount)],
     redelegate: (valAddress, amount, dstValAddress) => {
-      if (!dstValAddress) throw new Error("SEI redelegate requires dstValAddress");
+      if (!dstValAddress) throw new RedelegateDstValAddressRequired();
       return [valAddress, dstValAddress, seiEvmAmountToUsei(amount)];
     },
     getStakedBalance: (_recipient, _amount, dstValAddress, delegator) => {
@@ -36,6 +37,7 @@ const STAKING_PROTOCOLS: Record<string, Record<string, OperationFn>> = {
       }
       return [delegator, dstValAddress];
     },
+    claimReward: valAddress => [valAddress],
   },
   celo: {
     delegate: (valAddress, amount) => [valAddress, amount],
@@ -103,7 +105,7 @@ export function buildStakingTransactionParams(
     sender, // delegator address
   );
 
-  const to = config.contractAddress;
+  const to = config.specificContractAddressByOperation?.[mode] ?? config.contractAddress;
   const data = Buffer.from(
     encodeStakingData({
       currencyId: currency.id,

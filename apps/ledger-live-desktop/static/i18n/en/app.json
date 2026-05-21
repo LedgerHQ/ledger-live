@@ -1360,6 +1360,10 @@
           "title": "Customize the lock screen",
           "description": "Display your favorite digital art or photo as your device’s lock screen."
         },
+        "discoverWallet": {
+          "title": "Discover what your wallet can do",
+          "description": "Dive into your wallet’s features"
+        },
         "recover": {
           "title": "Finish securing your backup",
           "description": "Complete activating Ledger Recover"
@@ -1400,9 +1404,16 @@
         "description": "Activate Ledger Sync to sync your crypto accounts",
         "actionCompletedPopupLabel": "Accounts synced"
       },
+      "discoverWallet": {
+        "title": "Discover what your wallet can do",
+        "titleCompleted": "Discovered what your wallet can do",
+        "description": "Dive into your wallet’s features",
+        "actionCompletedPopupLabel": "Product tour completed"
+      },
       "recover": {
-        "title": "Subscribe to Ledger Recover",
-        "description": "Restore access to your wallet without needing your Secret Recovery Phrase.",
+        "title": "Finish securing your backup",
+        "titleCompleted": "Backup secured",
+        "description": "Complete activating Ledger Recover",
         "actionCompletedPopupLabel": "Successfully subscribed to Ledger Recover"
       }
     }
@@ -1781,6 +1792,8 @@
       "votesAddress": "<0>{{votes}}</0> to <2>{{name}}</2>",
       "validators": "Validators",
       "redelegated": "Redelegated",
+      "delegatedTo": "Delegated to",
+      "delegatedAmount": "Delegated amount",
       "redelegatedFrom": "Redelegated from",
       "redelegatedTo": "Redelegated to",
       "redelegatedAmount": "Redelegated amount",
@@ -4315,7 +4328,38 @@
         }
       },
       "redelegation": {
-        "header": "Redelegation(s)"
+        "header": "Redelegation(s)",
+        "flow": {
+          "title": "Redelegate assets",
+          "steps": {
+            "starter": {
+              "title": "Redelegation",
+              "description": "Use redelegation to easily change from one validator to another. But if you change your mind again, you will then have to wait because redelegation triggers a {{ numberOfDays }}-day timelock.",
+              "warning": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately. You can have a maximum of <0>{{maxRedelegations}} pending redelegations</0>.",
+              "howDelegationWorks": "How delegation works?"
+            },
+            "validators": {
+              "title": "Validators",
+              "currentDelegation": "Current delegation",
+              "newDelegation": "New delegation",
+              "chooseValidator": "Choose a validator",
+              "warning": "You will have to wait <0>{{numberOfDays}} days</0> to redelegate from the new validator, if you change your mind again",
+              "amountLabel": "Amount to redelegate"
+            },
+            "connectDevice": {
+              "title": "Device"
+            },
+            "confirmation": {
+              "title": "Confirmation",
+              "success": {
+                "title": "You have successfully redelegated your assets",
+                "text": "The redelegation will update once the blockchain has confirmed the transaction",
+                "cta": "View details"
+              },
+              "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+            }
+          }
+        }
       },
       "undelegation": {
         "header": "Undelegation(s)",
@@ -4620,6 +4664,84 @@
         },
         "cta": "Stake"
       }
+    },
+    "unstake": {
+      "flow": {
+        "title": "Unstake XTZ",
+        "steps": {
+          "amount": {
+            "title": "Amount",
+            "amountLabel": "Amount to unstake",
+            "availableLabel": "Staked",
+            "maxLabel": "Max",
+            "unbondingNotice": "Unstaking takes 4 days. During this period your XTZ remains delegated and stops earning staking rewards."
+          },
+          "device": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "broadcastError": "Your unstaking transaction couldn't be sent to the network. Please try again.",
+            "success": {
+              "title": "Unstake submitted",
+              "text": "Your XTZ are unstaking and will be available for withdrawal in ~4 days.",
+              "cta": "View details"
+            }
+          }
+        }
+      }
+    },
+    "stake": {
+      "flow": {
+        "title": "Stake",
+        "amount": {
+          "disclaimer": "Unstaking will take 4 days.",
+          "awaitingDelegation": "Confirming your delegation. This usually takes less than a minute…"
+        },
+        "steps": {
+          "validator": {
+            "title": "Validator",
+            "description": "Choose a baker to delegate to. You will be able to stake your XTZ after the delegation is confirmed."
+          },
+          "deviceDelegation": {
+            "title": "Confirm Delegation"
+          },
+          "amount": {
+            "title": "Amount"
+          },
+          "deviceStaking": {
+            "title": "Confirm Staking"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "You have successfully staked your assets",
+              "text": "You staked {{amount}}. Your account balance will be updated when the blockchain confirms the transaction.",
+              "cta": "Visit Earn Dashboard"
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again.",
+            "howItWorks": "How staking works"
+          }
+        }
+      }
+    },
+    "unstakeRequired": {
+      "changeBaker": {
+        "title": "Unstake before changing baker",
+        "description": "You have staked XTZ with your current baker. Unstake your funds before delegating to a new baker."
+      },
+      "endDelegation": {
+        "title": "Unstake before ending delegation",
+        "description": "You have staked XTZ with your current baker. Unstake your funds before ending the delegation."
+      },
+      "steps": {
+        "0": "Open the Earn menu and select Unstake.",
+        "1": "Confirm the amount and submit the unstake transaction on your device.",
+        "2": "Wait ~4 days for the unstake period to complete.",
+        "3": "Once withdrawn, you can change baker or end delegation."
+      },
+      "learnMore": "Learn more about Tezos staking",
+      "close": "Close"
     }
   },
   "delegation": {
@@ -4942,6 +5064,13 @@
           "completed": "Product tour is marked as completed.",
           "notCompleted": "Product tour is not completed yet.",
           "open": "Open"
+        },
+        "recover": {
+          "title": "Recover",
+          "description": "Set the local Ledger Recover subscription state to test the post-onboarding hub and recover banner.",
+          "noSubscription": "No subscription",
+          "inProgress": "In progress",
+          "backupDone": "Backup done"
         }
       },
       "walletFeaturesDevTool": {
@@ -8799,6 +8928,28 @@
       "growYourRewards": "Grow your rewards",
       "spendYourCrypto": "Spend your crypto",
       "everythingAtAGlance": "Everything at a glance"
+    },
+    "slides": {
+      "fund": {
+        "title": "Start by funding your wallet",
+        "subTitle": "Fund your Ledger Wallet your way — transfer, buy, or convert cash to stablecoins."
+      },
+      "portfolio": {
+        "title": "Stay ahead of the market",
+        "subTitle": "Keep track of your assets, rewards, and market trends easily."
+      },
+      "earn": {
+        "title": "Enjoy rewards on your crypto",
+        "subTitle": "Put your crypto to work via Earn."
+      },
+      "card": {
+        "title": "Spend crypto in real life",
+        "subTitle": "Pay with your crypto card and earn cashback, online or in-store"
+      },
+      "swap": {
+        "title": "Swap without switching apps",
+        "subTitle": "Enjoy limitless trading on thousands of assets via our trusted swap partners."
+      }
     }
   },
   "history": {
@@ -8823,8 +8974,7 @@
       "csv": "Export"
     },
     "exportDialog": {
-      "title": "Transaction history",
-      "description": "Choose the accounts to include in the export",
+      "title": "Export transaction history",
       "disclaimer": "Estimated values only. Countervalues are provided by Kaiko for information purposes. Do not use this data for tax, legal, or accounting purposes.",
       "accountsToInclude": "Accounts to include",
       "selectAll": "Select all ({{count}})",
@@ -8857,6 +9007,13 @@
     "explore": "Explore all Ledger devices"
   },
   "assetDetails": {
+    "header": {
+      "optionsMenu": "Asset options",
+      "addFavourite": "Add to favorites",
+      "removeFavourite": "Remove from favorites",
+      "hideFromPortfolio": "Hide from portfolio",
+      "showInPortfolio": "Show in portfolio"
+    },
     "totalBalance": "Total balance",
     "marketPrice": "Market price",
     "addresses": "Addresses",
@@ -8867,6 +9024,67 @@
     "pricePerformance": "Price performance",
     "marketRank": "Market rank",
     "tradingVolume24h": "24h trading volume",
-    "day": "1 day"
+    "day": "1 day",
+    "staking": {
+      "availableBalance": "Available balance",
+      "availableBalanceTooltip": "The portion of your holdings you can use right now, free to send, swap, or withdraw at any time.",
+      "earnDeposit": "Earn deposit",
+      "earnBanner": "Earn up to {{apy}}% {{type}}",
+      "earnBannerDefault": "Earn with this asset",
+      "earnBannerSubtitle": "Hold and earn with this asset",
+      "earnBannerAction": "Go to Earn"
+    }
+  },
+  "pnl": {
+    "asset": {
+      "entry": {
+        "title": "Average entry price",
+        "tooltip": "The average price you paid for this asset in this wallet, including everything you’ve bought or received from other wallets. This is used to track your profit or loss."
+      },
+      "return": {
+        "title": "Unrealised return"
+      },
+      "dialog": {
+        "title": "Profit and loss",
+        "description": "A summary of how this asset has performed in your portfolio.",
+        "totalReturn": {
+          "title": "Total return",
+          "description": "The sum of unrealised and realised returns."
+        },
+        "unrealisedReturn": {
+          "title": "Unrealised return",
+          "description": "The estimated gain or loss if sold at today's price."
+        },
+        "realisedReturn": {
+          "title": "Realised return",
+          "description": "Profit or loss confirmed from previous sales or transfers."
+        }
+      }
+    },
+    "portfolio": {
+      "return": {
+        "title": "Unrealised return"
+      },
+      "costBasis": {
+        "title": "Cost basis",
+        "tooltip": "The total amount you paid to acquire your current holdings, including fees."
+      },
+      "dialog": {
+        "title": "Profit and loss",
+        "description": "Your portfolio performance broken down into realised and unrealised returns.",
+        "totalReturn": {
+          "title": "Total return",
+          "description": "Realised and unrealised returns combined, reflecting your overall position."
+        },
+        "unrealisedReturn": {
+          "title": "Unrealised return",
+          "description": "Estimated gain or loss on your current holdings."
+        },
+        "realisedReturn": {
+          "title": "Realised return",
+          "description": "Profit or loss confirmed from previous sales or outgoing transfers."
+        }
+      }
+    }
   }
 }

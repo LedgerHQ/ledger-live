@@ -5,11 +5,11 @@ import { PricePerformance } from "./PricePerformance";
 import { useMarketDataSectionCurrencyData } from "./hooks/useMarketDataSectionCurrencyData";
 
 type MarketDataSectionProps = Readonly<{
-  market: AssetMarketData;
+  marketData: AssetMarketData;
 }>;
 
-export function MarketDataSection({ market }: MarketDataSectionProps) {
-  const currencyData = useMarketDataSectionCurrencyData(market);
+export function MarketDataSection({ marketData }: MarketDataSectionProps) {
+  const currencyData = useMarketDataSectionCurrencyData(marketData);
 
   return (
     <div className="grid grid-cols-2 gap-24" data-testid="asset-detail-market-data-section">

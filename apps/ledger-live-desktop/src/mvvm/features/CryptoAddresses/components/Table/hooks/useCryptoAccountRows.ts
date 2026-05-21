@@ -10,7 +10,7 @@ import { accountMatchesSearch } from "LLD/utils/accountMatchesSearch";
 import {
   buildMainAccountByIdMap,
   lookupParentAccountFromMap,
-} from "../../../utils/parentAccountLookup";
+} from "@ledgerhq/asset-aggregation/assetDistribution/index";
 
 export function useCryptoAccountRows(searchValue: string) {
   const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");

@@ -1,6 +1,6 @@
 import network from "@ledgerhq/live-network";
 import type { Page, Validator } from "@ledgerhq/coin-module-framework/api/index";
-import type { StakingValidatorItem } from "../types/staking";
+import type { StakingValidatorItem } from "@ledgerhq/types-live";
 import { STAKING_CONTRACTS } from "./contracts";
 
 export type ValidatorApi = {
@@ -168,6 +168,9 @@ export const getValidatorExplorerUrl = (currencyId: string, address: string): st
 
 export const getUnbondingPeriodDays = (currencyId: string): number | undefined =>
   STAKING_CONTRACTS[currencyId]?.unbondingPeriodDays;
+
+export const getMaxRedelegations = (currencyId: string): number | undefined =>
+  STAKING_CONTRACTS[currencyId]?.maxRedelegations;
 
 export const hasUnbondingPeriod = (currencyId: string): boolean => {
   const days = getUnbondingPeriodDays(currencyId);

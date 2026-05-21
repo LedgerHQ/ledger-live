@@ -106,7 +106,7 @@ describe("registerHorizonInterceptors", () => {
         registerHorizonInterceptors();
 
         const handler = last(Horizon.AxiosClient.interceptors.request.handlers);
-        expect(handler).toBeDefined();
+        expect(handler).toEqual(expect.objectContaining({ fulfilled: expect.any(Function) }));
 
         const mockConfig = {
           url: "/accounts/G123",
@@ -124,7 +124,7 @@ describe("registerHorizonInterceptors", () => {
         registerHorizonInterceptors();
 
         const handler = last(Horizon.AxiosClient.interceptors.response.handlers);
-        expect(handler).toBeDefined();
+        expect(handler).toEqual(expect.objectContaining({ fulfilled: expect.any(Function) }));
 
         const mockResponse = makeResponse();
         expect(() => handler!.fulfilled(mockResponse)).not.toThrow();

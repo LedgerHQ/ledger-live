@@ -3,7 +3,7 @@ import type { Account } from "@ledgerhq/types-live";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import { useTranslation } from "~/context/Locale";
 import { AddressListItem } from "./AddressListItem";
-import { useFormattedAccountBalance } from "../hooks/useFormattedAccountBalance";
+import { useFormattedAccountBalance } from "LLM/hooks/useFormattedAccountBalance";
 import { useMaybeAccountName } from "~/reducers/wallet";
 
 type AccountRowWithBalanceProps = Readonly<{

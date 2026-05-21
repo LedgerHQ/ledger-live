@@ -12,7 +12,7 @@
   },
   "overrides": [
     {
-      "files": ["src/**/*.test.{ts,tsx}", "src/*.test.{ts,tsx}"],
+      "files": ["**/src/**/*.test.{ts,tsx}"],
       "env": { "jest": true },
       "plugins": ["jest"]
     },

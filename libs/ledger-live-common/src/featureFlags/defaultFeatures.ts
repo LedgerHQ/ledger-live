@@ -97,7 +97,6 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyMantra: DEFAULT_FEATURE,
   currencyXion: DEFAULT_FEATURE,
   currencyZenrock: DEFAULT_FEATURE,
-  currencySonicBlaze: DEFAULT_FEATURE,
   currencySonic: DEFAULT_FEATURE,
   currencySui: DEFAULT_FEATURE,
   currencySuiTestnet: DEFAULT_FEATURE,
@@ -816,7 +815,9 @@ export const DEFAULT_FEATURES: Features = {
     },
   }),
   lwdGenericAwarenessModal: DEFAULT_FEATURE,
+  lwmAnalyticsConsentOnboarding: DEFAULT_FEATURE,
   lwmGenericAwarenessModal: DEFAULT_FEATURE,
+  lwmNotificationsOptIn: DEFAULT_FEATURE,
   lwmProductTour: DEFAULT_FEATURE,
   lwmWallet40: {
     ...DEFAULT_FEATURE,

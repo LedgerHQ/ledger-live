@@ -6,11 +6,12 @@ import { Bridge } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import Btc from "@ledgerhq/hw-app-btc";
 import { createBridges } from "@ledgerhq/coin-bitcoin/bridge/js";
-import type { SignerContext } from "@ledgerhq/coin-bitcoin/signer";
+import type { BitcoinSigner, SignerContext } from "@ledgerhq/coin-bitcoin/signer";
 import makeCliTools from "@ledgerhq/coin-bitcoin/cli-transaction";
 import bitcoinResolver from "@ledgerhq/coin-bitcoin/hw-getAddress";
 import { signMessage } from "@ledgerhq/coin-bitcoin/hw-signMessage";
 import { BitcoinAccount, Transaction, TransactionStatus } from "@ledgerhq/coin-bitcoin/types";
+import { getChainAdapter } from "@ledgerhq/coin-bitcoin/chain-adapters/registry";
 import { GetAddressOptions, Resolver } from "../../hw/getAddress/types";
 import { withDevice } from "../../hw/deviceAccess";
 import { GetAddressFn } from "@ledgerhq/ledger-wallet-framework/bridge/getAddressWrapper";
@@ -18,14 +19,16 @@ import { getCurrencyConfiguration } from "../../config";
 import { BitcoinConfigInfo } from "@ledgerhq/coin-bitcoin/config";
 import { SignMessage } from "../../hw/signMessage/types";
 
-const createSigner = (transport: Transport, currency: CryptoCurrency) => {
-  return new Btc({ transport, currency: currency.id });
+const createSigner = (transport: Transport, currency: CryptoCurrency): BitcoinSigner => {
+  const btc = new Btc({ transport, currency: currency.id });
+  const adapter = getChainAdapter(currency.id);
+  return adapter.createSigner?.(transport, currency, btc) ?? btc;
 };
 
-const signerContext: SignerContext = <T,>(
+const signerContext: SignerContext = <T>(
   deviceId: string,
   crypto: CryptoCurrency,
-  fn: (signer: Btc) => Promise<T>,
+  fn: (signer: BitcoinSigner) => Promise<T>,
 ): Promise<T> =>
   firstValueFrom(
     withDevice(deviceId)((transport: Transport) => from(fn(createSigner(transport, crypto)))),

@@ -1,7 +1,50 @@
-import type { DiscoveredDevice, TransportIdentifier } from "@ledgerhq/device-management-kit";
-import type { Observable } from "rxjs";
+import type {
+  ConnectedDevice,
+  DeviceManagementKit,
+  DiscoveredDevice,
+  TransportIdentifier,
+} from "@ledgerhq/device-management-kit";
+import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
+import type { DeviceModelId } from "@ledgerhq/types-devices";
+import type { Observable, Observer } from "rxjs";
 
-export enum DiscoveryErrors {
+
+export type MatchedDevice = {
+  knownDevice: KnownDevice;
+  discoveredDevice: DiscoveredDevice;
+};
+
+export type DisplayedDevice =
+  | {
+      type: "not-available";
+      knownDevice: KnownDevice;
+      onSelect: () => void;
+    }
+  | {
+      type: "available";
+      knownDevice: KnownDevice;
+      onSelect: () => void;
+    };
+
+export enum ConnectionErrorTypes {
+  BlePairingRefused = "ble-pairing-refused",
+  BlePairingPeerRemovedPairing = "ble-pairing-peer-removed-pairing",
+  Unknown = "unknown",
+}
+
+export type ConnectionError =
+  | {
+      type: ConnectionErrorTypes.BlePairingRefused;
+    }
+  | {
+      type: ConnectionErrorTypes.BlePairingPeerRemovedPairing;
+    }
+  | {
+      type: ConnectionErrorTypes.Unknown;
+      error?: unknown;
+    };
+
+export enum DiscoveryErrorTypes {
   /**
    * Android Bluetooth runtime permissions are denied but can be requested again.
    * Concerned permissions: `BLUETOOTH_SCAN` and `BLUETOOTH_CONNECT` on Android 12+ (API >= 31).
@@ -85,86 +128,228 @@ export enum DiscoveryErrors {
   Unknown = "unknown",
 }
 
-export type DiscoveryErrorResolution =
-  | {
-      type: "prompt";
-      retry: () => Promise<true | DiscoveryError>;
-    }
-  | {
-      type: "manual-action";
-      retry: () => Promise<true | DiscoveryError>;
-    }
-  | {
-      type: "check-only";
-      retry: () => Promise<true | DiscoveryError>;
-    }
-  | {
-      type: "none";
-    };
+export type DiscoveryErrorResolution = {
+  type: "prompt";
+  retry: () => Promise<true | DiscoveryError>;
+} | {
+  type: "manual-action";
+  retry: () => Promise<true | DiscoveryError>;
+} | {
+  type: "check-only";
+  retry: () => Promise<true | DiscoveryError>;
+} | {
+  type: "none";
+};
 
 type ResolvableDiscoveryError = {
-  transportID: TransportIdentifier;
+  transportId: TransportIdentifier;
   resolution: DiscoveryErrorResolution;
 };
 
 export type DiscoveryError =
   | ({
-      type: DiscoveryErrors.BluetoothPermissionDeniedPromptable;
+      type: DiscoveryErrorTypes.BluetoothPermissionDeniedPromptable;
       permissions: string[];
     } & ResolvableDiscoveryError)
   | ({
-      type: DiscoveryErrors.BluetoothPermissionDeniedManualSettings;
+      type: DiscoveryErrorTypes.BluetoothPermissionDeniedManualSettings;
       permissions: string[];
     } & ResolvableDiscoveryError)
   | ({
-      type: DiscoveryErrors.BluetoothPermissionUnauthorizedManualSettings;
+      type: DiscoveryErrorTypes.BluetoothPermissionUnauthorizedManualSettings;
     } & ResolvableDiscoveryError)
   | ({
-      type: DiscoveryErrors.BluetoothDisabledPromptable;
+      type: DiscoveryErrorTypes.BluetoothDisabledPromptable;
     } & ResolvableDiscoveryError)
   | ({
-      type: DiscoveryErrors.BluetoothDisabledManualAction;
+      type: DiscoveryErrorTypes.BluetoothDisabledManualAction;
       error?: unknown;
     } & ResolvableDiscoveryError)
   | ({
-      type: DiscoveryErrors.BluetoothStateUnknownCheckOnly;
+      type: DiscoveryErrorTypes.BluetoothStateUnknownCheckOnly;
       state?: string;
     } & ResolvableDiscoveryError)
   | ({
-      type: DiscoveryErrors.BluetoothUnsupported;
+      type: DiscoveryErrorTypes.BluetoothUnsupported;
     } & ResolvableDiscoveryError)
   | ({
-      type: DiscoveryErrors.LocationPermissionDeniedPromptable;
+      type: DiscoveryErrorTypes.LocationPermissionDeniedPromptable;
       permission: string;
     } & ResolvableDiscoveryError)
   | ({
-      type: DiscoveryErrors.LocationPermissionDeniedManualSettings;
+      type: DiscoveryErrorTypes.LocationPermissionDeniedManualSettings;
       permission: string;
     } & ResolvableDiscoveryError)
   | ({
-      type: DiscoveryErrors.LocationDisabledPromptable;
+      type: DiscoveryErrorTypes.LocationDisabledPromptable;
     } & ResolvableDiscoveryError)
   | ({
-      type: DiscoveryErrors.LocationDisabledManualAction;
+      type: DiscoveryErrorTypes.LocationDisabledManualAction;
       error?: unknown;
     } & ResolvableDiscoveryError)
   | ({
-      type: DiscoveryErrors.LocationServicePermissionMissing;
+      type: DiscoveryErrorTypes.LocationServicePermissionMissing;
     } & ResolvableDiscoveryError)
   | {
-      type: DiscoveryErrors.Unknown;
-      transportID?: TransportIdentifier;
+      type: DiscoveryErrorTypes.Unknown;
+      transportId?: TransportIdentifier;
       resolution?: DiscoveryErrorResolution;
       error?: unknown;
     };
 
 export type DeviceDiscoveryStartArgs = {
-  ignoreTransportIdentifiers?: TransportIdentifier[];
+  ignoreTransportIdentifiers?: Array<TransportIdentifier>;
 };
 
 export interface DeviceDiscoveryService {
-  start(args?: DeviceDiscoveryStartArgs): void;
+  start(args: DeviceDiscoveryStartArgs): void;
   stop(): void;
   discoveredDevices: Observable<DiscoveredDevice[]>;
   errors: Observable<DiscoveryError>;
 }
+
+export type ConnectDeviceConnectionService = {
+  connect: DeviceManagementKit["connect"];
+};
+
+/**
+ * Result of a successful device connection, providing everything needed to
+ * interact with the device during intent execution.
+ */
+export type DeviceConnectionResult = {
+  /** Device Management Kit instance bound to the current session. */
+  dmk: DeviceManagementKit;
+  /** Active DMK session identifier. */
+  sessionId: string;
+  /** ConnectedDevice */
+  connectedDevice: ConnectedDevice;
+  /** Legacy device identifier, usable by existing `withDevice` / `DeviceAction` flows. */
+  compatDeviceId: string;
+  compatDeviceModelId: DeviceModelId;
+  compatDeviceName: string;
+  compatDeviceWired: boolean;
+};
+
+export type ConnectDeviceStateMachineInput = {
+  knownDevices: Array<KnownDevice>;
+  sessionId: string | null;
+  dmk: DeviceManagementKit;
+  deviceDiscoveryService: DeviceDiscoveryService;
+  observer: Observer<ConnectDeviceUIState>;
+  onConnected: (result: DeviceConnectionResult) => void;
+};
+
+export type ConnectDeviceStateMachineContext = ConnectDeviceStateMachineInput & {
+  matchedDevices: Array<MatchedDevice>;
+  selectedKnownDevice: KnownDevice | null;
+  selectedMatchedDevice: MatchedDevice | null;
+  isDiscovering: boolean;
+  discoveryError: DiscoveryError | null;
+  connectionError: ConnectionError | null;
+  skipTransportIds: Array<TransportIdentifier>;
+};
+
+export enum ConnectDeviceStateMachineEventTypes {
+  DiscoveryError = "discovery-error",
+  DiscoveredNoDevice = "discovered-no-device",
+  DiscoveredOneDevice = "discovered-one-device",
+  DiscoveredManyDevices = "discovered-many-devices",
+  UserTapsAvailableDevice = "user-taps-available-device",
+  UserTapsUnavailableDevice = "user-taps-unavailable-device",
+  UserTapsDiscoveryRetry = "user-taps-discovery-retry",
+  UserTapsDiscoveryIgnore = "user-taps-discovery-ignore",
+  UserTapsConnectionRetry = "user-taps-connection-retry",
+  UserTapsConnectionIgnore = "user-taps-connection-ignore",
+}
+
+export type ConnectDeviceStateMachineEvent =
+  | {
+      type: ConnectDeviceStateMachineEventTypes.DiscoveryError;
+      error: DiscoveryError;
+    }
+  | {
+      type: ConnectDeviceStateMachineEventTypes.DiscoveredNoDevice;
+    }
+  | {
+      type: ConnectDeviceStateMachineEventTypes.DiscoveredOneDevice;
+      matchedDevices: Array<MatchedDevice>;
+    }
+  | {
+      type: ConnectDeviceStateMachineEventTypes.DiscoveredManyDevices;
+      matchedDevices: Array<MatchedDevice>;
+    }
+  | {
+      type: ConnectDeviceStateMachineEventTypes.UserTapsAvailableDevice;
+      matchedDevice: MatchedDevice;
+    }
+  | {
+      type: ConnectDeviceStateMachineEventTypes.UserTapsUnavailableDevice;
+      knownDevice: KnownDevice;
+    }
+  | {
+      type: ConnectDeviceStateMachineEventTypes.UserTapsDiscoveryRetry;
+    }
+  | {
+      type: ConnectDeviceStateMachineEventTypes.UserTapsDiscoveryIgnore;
+    }
+  | {
+      type: ConnectDeviceStateMachineEventTypes.UserTapsConnectionRetry;
+    }
+  | {
+      type: ConnectDeviceStateMachineEventTypes.UserTapsConnectionIgnore;
+    };
+
+export enum ConnectDeviceUIStateTypes {
+  Loading = "loading",
+  NoKnownDevice = "no-known-device",
+  Discovering = "discovering",
+  DiscoveryError = "discovery-error",
+  WaitingForSelectedDevice = "waiting-for-selected-device",
+  Connecting = "connecting",
+  ConnectionError = "connection-error",
+  Connected = "connected",
+  /**
+   * Terminal state emitted by the use case when an unexpected error escapes the inner
+   * state machine. Has no retry / ignore: the host UI is expected to display a generic
+   * error and let the user dismiss the surrounding flow.
+   */
+  UnknownError = "unknown-error",
+}
+
+export type ConnectDeviceUIState =
+    {
+      type: ConnectDeviceUIStateTypes.Loading;
+    }
+  | {
+      type: ConnectDeviceUIStateTypes.NoKnownDevice;
+    }
+  | {
+      type: ConnectDeviceUIStateTypes.Discovering;
+      devices: Array<DisplayedDevice>;
+    }
+  | {
+      type: ConnectDeviceUIStateTypes.WaitingForSelectedDevice;
+      device: KnownDevice;
+    }
+  | {
+      type: ConnectDeviceUIStateTypes.DiscoveryError;
+      error: DiscoveryError;
+      retry?: () => void;
+      ignore: () => void;
+    }
+  | {
+      type: ConnectDeviceUIStateTypes.Connecting;
+    }
+  | {
+      type: ConnectDeviceUIStateTypes.ConnectionError;
+      error: ConnectionError;
+      retry: () => void;
+      ignore: () => void;
+    }
+  | {
+      type: ConnectDeviceUIStateTypes.Connected;
+    }
+  | {
+      type: ConnectDeviceUIStateTypes.UnknownError;
+      error: unknown;
+    };

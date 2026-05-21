@@ -2,8 +2,20 @@ import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import type { Account, AccountLike, DistributionItem } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { flattenAccounts, isTokenAccount } from "@ledgerhq/live-common/account/index";
+import type { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
+import {
+  flattenAccounts,
+  getAccountCurrency,
+  isTokenAccount,
+} from "@ledgerhq/live-common/account/index";
 import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
+import { useCurrenciesUnderFeatureFlag } from "@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag";
+import {
+  isAvailableOnBuy,
+  isAvailableOnSell,
+  type MarketCurrencyRampLedgerIds,
+} from "LLD/features/Market/utils/rampCatalogAvailability";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { openModal } from "~/renderer/actions/modals";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
@@ -15,8 +27,9 @@ import { useBuyNavigation } from "LLD/features/Market/hooks/useBuyNavigation";
 import { useSellNavigation } from "LLD/features/Market/hooks/useSellNavigation";
 
 type UseActionBarViewModelProps = Readonly<{
-  distributionItem: DistributionItem | undefined;
-  ledgerCurrency: CryptoOrTokenCurrency | undefined;
+  distributionItem?: DistributionItem;
+  ledgerCurrency?: CryptoOrTokenCurrency;
+  marketCurrencyData?: MarketCurrencyData;
   tickerHint: string;
 }>;
 
@@ -25,6 +38,7 @@ export type ActionBarViewModel = Readonly<{
   buyLabel: string;
   sellLabel: string;
   sendLabel: string;
+  isBuyEnabled: boolean;
   isSellEnabled: boolean;
   isSendEnabled: boolean;
   onBuy: () => void;
@@ -47,6 +61,24 @@ function lookupParentAccount(accounts: Account[], child: AccountLike): Account |
   return accounts.find(account => account.id === child.parentId);
 }
 
+function ledgerIdsFromLedgerCurrency(ledgerCurrency: CryptoOrTokenCurrency): string[] {
+  const ids = new Set<string>([ledgerCurrency.id]);
+  if (ledgerCurrency.type === "TokenCurrency") {
+    ids.add(ledgerCurrency.parentCurrency.id);
+  }
+  return [...ids];
+}
+
+function collectLedgerIdsForRampFromAccounts(accounts: AccountLike[]): string[] {
+  const ids = new Set<string>();
+  for (const a of accounts) {
+    for (const id of ledgerIdsFromLedgerCurrency(getAccountCurrency(a))) {
+      ids.add(id);
+    }
+  }
+  return [...ids];
+}
+
 function resolvePrimaryAccount(
   distributionItem: DistributionItem | undefined,
   ledgerCurrency: CryptoOrTokenCurrency | undefined,
@@ -65,6 +97,7 @@ function resolvePrimaryAccount(
 export function useActionBarViewModel({
   distributionItem,
   ledgerCurrency,
+  marketCurrencyData,
   tickerHint,
 }: UseActionBarViewModelProps): ActionBarViewModel {
   const { t } = useTranslation();
@@ -73,6 +106,43 @@ export function useActionBarViewModel({
   const openSendFlow = useOpenSendFlow();
   const { navigateToBuy } = useBuyNavigation();
   const { navigateToSell } = useSellNavigation();
+  const { isCurrencyAvailable } = useRampCatalog();
+  const { deactivatedCurrencyIds } = useCurrenciesUnderFeatureFlag();
+
+  const ledgerIdsForRamp = useMemo(() => {
+    if (marketCurrencyData?.ledgerIds?.length) {
+      return marketCurrencyData.ledgerIds;
+    }
+    const accounts = distributionItem?.accounts;
+    if (accounts?.length) {
+      return collectLedgerIdsForRampFromAccounts(accounts);
+    }
+    if (ledgerCurrency?.id) {
+      return ledgerIdsFromLedgerCurrency(ledgerCurrency);
+    }
+    return [];
+  }, [marketCurrencyData, distributionItem, ledgerCurrency]);
+
+  const rampActiveLedgerIds = useMemo(
+    () => ledgerIdsForRamp.filter(id => !deactivatedCurrencyIds.has(id)),
+    [ledgerIdsForRamp, deactivatedCurrencyIds],
+  );
+
+  const rampMarketCurrencyRef = useMemo(
+    (): MarketCurrencyRampLedgerIds | undefined =>
+      rampActiveLedgerIds.length > 0 ? { ledgerIds: rampActiveLedgerIds } : undefined,
+    [rampActiveLedgerIds],
+  );
+
+  const canBuyOnRamp = useMemo(
+    () => isAvailableOnBuy(rampMarketCurrencyRef, isCurrencyAvailable),
+    [rampMarketCurrencyRef, isCurrencyAvailable],
+  );
+
+  const canSellOnRamp = useMemo(
+    () => isAvailableOnSell(rampMarketCurrencyRef, isCurrencyAvailable),
+    [rampMarketCurrencyRef, isCurrencyAvailable],
+  );
 
   const primaryAccount = useMemo(
     () => resolvePrimaryAccount(distributionItem, ledgerCurrency, allAccounts),
@@ -84,16 +154,24 @@ export function useActionBarViewModel({
     [primaryAccount, allAccounts],
   );
 
-  const { isSellEnabled, isSendEnabled } = useMemo(() => {
+  const walletAllowsSellSend = useMemo(() => {
     const accounts = distributionItem?.accounts ?? [];
     const hasAccounts = accounts.length > 0;
     const hasBalance = accounts.some(account => account.spendableBalance.gt(0));
     const hasPositiveBalanceWithZeroSpendable = accounts.some(
       account => account.spendableBalance.isZero() && account.balance.gt(0),
     );
-    const enabled = hasAccounts && (hasBalance || hasPositiveBalanceWithZeroSpendable);
-    return { isSellEnabled: enabled, isSendEnabled: enabled };
+    return hasAccounts && (hasBalance || hasPositiveBalanceWithZeroSpendable);
   }, [distributionItem]);
+
+  const { isBuyEnabled, isSellEnabled, isSendEnabled } = useMemo(
+    () => ({
+      isBuyEnabled: canBuyOnRamp,
+      isSellEnabled: canSellOnRamp && walletAllowsSellSend,
+      isSendEnabled: walletAllowsSellSend,
+    }),
+    [canBuyOnRamp, canSellOnRamp, walletAllowsSellSend],
+  );
 
   const onBuy = useCallback(() => {
     track("button_clicked2", {
@@ -149,6 +227,7 @@ export function useActionBarViewModel({
     buyLabel: t("quickActions.buy"),
     sellLabel: t("quickActions.sell"),
     sendLabel: t("quickActions.send"),
+    isBuyEnabled,
     isSellEnabled,
     isSendEnabled,
     onBuy,

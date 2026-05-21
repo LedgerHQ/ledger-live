@@ -2,7 +2,7 @@ import { assignFromAccountRaw, assignToAccountRaw } from "@ledgerhq/coin-evm/sta
 
 /**
  * EVM-specific hooks that persist `stakingResources` through the
- * `fromAccountRaw` / `toAccountRaw` cycle (the default alpaca pipeline
+ * `fromAccountRaw` / `toAccountRaw` cycle (the default coin-framework pipeline
  * does not serialize family-specific account resources).
  *
  * Kept in a dedicated adapter module — like `families/evm/signer.ts` and

@@ -616,7 +616,7 @@ export async function bot({ disabled, filter }: Arg = {}): Promise<void> {
   });
 
   appendBody("\n```\n");
-  appendBody(allAccountsAfter.map(a => formatAccount(a, "head")).join("\n"));
+  appendBody((await Promise.all(allAccountsAfter.map(a => formatAccount(a, "head")))).join("\n"));
   appendBody("\n```\n");
 
   appendBody("\n</details>\n\n");

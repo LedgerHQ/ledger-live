@@ -6,6 +6,10 @@ import AccountHeaderActions from "../AccountHeaderManageActions";
 import { AleoCustomModal } from "../constants";
 import { ALEO_ACCOUNT_1, NEW_ALEO_ACCOUNT } from "../__mocks__/account.mock";
 
+jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
+  useAccountBridge: () => ({ isAccountEmpty: (a: { balance: { isZero: () => boolean } }) => a.balance.isZero() }),
+}));
+
 describe("AccountHeaderManageActions", () => {
   const hook = AccountHeaderActions;
   invariant(hook, "aleo: type guard AccountHeaderActions");

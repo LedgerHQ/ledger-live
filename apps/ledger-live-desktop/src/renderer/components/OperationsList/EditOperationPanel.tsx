@@ -1,4 +1,5 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import React, { memo, useCallback, useMemo } from "react";
@@ -22,6 +23,7 @@ const EditOperationPanel = (props: Props) => {
   const { enabled: isEditBitcoinTxEnabled, params: bitcoinParams } =
     useFeature("editBitcoinTx") ?? {};
   const mainAccount = getMainAccount(account, parentAccount);
+  const bridge = useAccountBridge(mainAccount);
 
   // Determine if transaction editing is supported and which modal to use
   const editConfig = useMemo(() => {
@@ -31,6 +33,7 @@ const EditOperationPanel = (props: Props) => {
       parentAccount,
       mainAccount,
       operation,
+      bridge,
       featureFlags: {
         evm: {
           enabled: isEditEvmTxEnabled ?? false,
@@ -55,6 +58,7 @@ const EditOperationPanel = (props: Props) => {
     parentAccount,
     operation,
     mainAccount,
+    bridge,
     isEditEvmTxEnabled,
     params,
     isEditBitcoinTxEnabled,

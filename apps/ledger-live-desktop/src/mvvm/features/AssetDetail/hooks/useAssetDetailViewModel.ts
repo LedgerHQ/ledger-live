@@ -9,7 +9,7 @@ import { useSelector } from "LLD/hooks/redux";
 import { useDistribution } from "~/renderer/actions/general";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { decodeRouteParam } from "../utils/decodeRouteParam";
-import { resolveDistributionItem } from "../utils/resolveDistributionItem";
+import { resolveDistributionItem } from "@ledgerhq/asset-aggregation/assetDistribution/index";
 import { type AssetDetailViewModel } from "../types";
 
 export function useAssetDetailViewModel(): AssetDetailViewModel {
@@ -26,35 +26,38 @@ export function useAssetDetailViewModel(): AssetDetailViewModel {
     [routeAssetId, decodedAssetId, marketState, distribution],
   );
 
-  const marketApiCurrencyId = distributionItem?.currency.id ?? decodedAssetId;
+  const marketApiId =
+    distributionItem?.marketId ??
+    distributionItem?.slug ??
+    distributionItem?.currency.id ??
+    decodedAssetId;
   const knownLedgerIds = useMemo<readonly string[] | undefined>(() => {
     if (distributionItem) return [distributionItem.currency.id];
     return marketState?.ledgerIds;
   }, [distributionItem, marketState]);
 
-  const { marketCurrencyData, ledgerCurrencyFromDada, isLoading } = useAssetMarketData({
-    marketApiCurrencyId,
+  const { marketCurrencyData, marketId, ledgerCurrencyFromDada, isLoading } = useAssetMarketData({
+    marketApiId,
     knownLedgerIds,
     counterCurrency,
     product: "lld",
     version: __APP_VERSION__,
+    knownMarketId: marketState?.id,
   });
 
-  const marketInfo = resolveAssetDetailMarketInfo(marketCurrencyData, marketState);
+  const marketFallback = resolveAssetDetailMarketInfo(marketCurrencyData, marketState);
 
   const ledgerCurrency = distributionItem?.currency ?? ledgerCurrencyFromDada;
 
-  if (distributionItem || marketInfo) {
+  if (distributionItem || marketFallback) {
     return {
       mode: "ready",
       distributionItem,
-      marketInfo,
-      market: { marketCurrencyData, isLoading },
+      marketData: { marketCurrencyData, marketId, isLoading },
       ledgerCurrency,
-      assetName: ledgerCurrency?.name ?? marketInfo?.name ?? "",
-      assetTicker: ledgerCurrency?.ticker ?? marketInfo?.ticker ?? "",
-      ledgerId: ledgerCurrency?.id ?? marketInfo?.ledgerIds?.[0],
-      isLoading,
+      displayName: ledgerCurrency?.name ?? marketFallback?.name ?? "",
+      displayTicker: ledgerCurrency?.ticker ?? marketFallback?.ticker ?? "",
+      ledgerId: ledgerCurrency?.id ?? marketFallback?.ledgerIds?.[0],
     };
   }
 

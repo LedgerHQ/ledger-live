@@ -10,6 +10,7 @@ import { State } from ".";
 import { purgeExpiredAnonymousUserNotifications } from "../actions/settings";
 import reducer, {
   lastSeenDeviceSelector,
+  languageSelector,
   localeSelector,
   INITIAL_STATE as SETTINGS_INITIAL_STATE,
   SettingsState,
@@ -115,6 +116,56 @@ describe("lastSeenDeviceSelector", () => {
       },
     };
     expect(localeSelector(state)).toEqual("en-US");
+  });
+
+  it("should fall back to the language when the locale is unknown to regions.json", () => {
+    const state = {
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      ...({} as State),
+      settings: {
+        ...SETTINGS_INITIAL_STATE,
+        language: "en" as const,
+        locale: "xx-YY",
+      },
+    };
+    expect(localeSelector(state)).toEqual("en");
+  });
+});
+
+describe("languageSelector", () => {
+  const buildState = (settings: Partial<SettingsState>): State => ({
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    ...({} as State),
+    settings: {
+      ...SETTINGS_INITIAL_STATE,
+      ...settings,
+    },
+  });
+
+  it.each([
+    { case: "supported language", language: "fr", expected: "fr" },
+    {
+      case: "unsupported language",
+      language: "xx",
+      expected: SETTINGS_INITIAL_STATE.language,
+    },
+    {
+      case: "missing language",
+      language: undefined,
+      expected: SETTINGS_INITIAL_STATE.language,
+    },
+  ])("should resolve to $expected for $case", ({ language, expected }) => {
+    expect(
+      languageSelector(
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        buildState({ language: language as SettingsState["language"] }),
+      ),
+    ).toBe(expected);
+  });
+
+  it("should return a stable primitive across calls (no new reference allocated)", () => {
+    const state = buildState({ language: "fr" });
+    expect(languageSelector(state)).toBe(languageSelector(state));
   });
 });
 

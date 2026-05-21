@@ -8,6 +8,9 @@ import { Icons } from "@ledgerhq/react-ui";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import PostOnboardingMockAction from "~/renderer/components/PostOnboardingHub/PostOnboardingMockAction";
 import CustomImage from "~/renderer/screens/customImage";
+import { getStoreValue } from "~/renderer/store";
+import { LedgerRecoverSubscriptionStateEnum } from "~/types/recoverSubscriptionState";
+import { openProductTour } from "LLD/features/ProductTour/Drawer/productTourDialog";
 
 const assetsTransfer: PostOnboardingAction = {
   id: PostOnboardingActionId.assetsTransfer,
@@ -54,6 +57,28 @@ const syncAccounts: PostOnboardingAction = {
   },
 };
 
+const recover: PostOnboardingAction = {
+  id: PostOnboardingActionId.recover,
+  Icon: Icons.ShieldCheck,
+  title: "postOnboarding.actions.recover.title",
+  titleCompleted: "postOnboarding.actions.recover.titleCompleted",
+  description: "postOnboarding.actions.recover.description",
+  actionCompletedPopupLabel: "postOnboarding.actions.recover.actionCompletedPopupLabel",
+  buttonLabelForAnalyticsEvent: "Subscribe to Ledger Recover",
+  getIsAlreadyCompleted: async ({ protectId }) => {
+    try {
+      const recoverSubscriptionState = await getStoreValue("SUBSCRIPTION_STATE", protectId);
+      return recoverSubscriptionState === LedgerRecoverSubscriptionStateEnum.BACKUP_DONE;
+    } catch {
+      return false;
+    }
+  },
+  startAction: ({ navigationCallback, protectId }: StartActionArgs) =>
+    navigationCallback?.(
+      `/recover/${protectId}?redirectTo=upsell&source=lld-post-onboarding-banner`,
+    ),
+};
+
 const customImage: PostOnboardingAction = {
   id: PostOnboardingActionId.customImage,
   Icon: Icons.PictureImage,
@@ -71,6 +96,21 @@ const customImage: PostOnboardingAction = {
       { forceDisableFocusTrap: true },
     ),
   buttonLabelForAnalyticsEvent: "Set lock screen picture",
+};
+
+const discoverWallet: PostOnboardingAction = {
+  id: PostOnboardingActionId.discoverWallet,
+  featureFlagId: "lwdProductTour",
+  Icon: Icons.PictureImage,
+  title: "postOnboarding.actions.discoverWallet.title",
+  titleCompleted: "postOnboarding.actions.discoverWallet.titleCompleted",
+  description: "postOnboarding.actions.discoverWallet.description",
+  actionCompletedPopupLabel: "postOnboarding.actions.discoverWallet.actionCompletedPopupLabel",
+  buttonLabelForAnalyticsEvent: "Discover what your wallet can do",
+  startAction: ({ dispatch }: StartActionArgs) => {
+    dispatch?.(openProductTour());
+  },
+  getIsAlreadyCompletedByState: ({ productTourCompleted }) => !!productTourCompleted,
 };
 
 const claimMock: PostOnboardingAction = {
@@ -139,6 +179,17 @@ const buyCryptoMock: PostOnboardingAction = {
     setDrawer(PostOnboardingMockAction, { id: PostOnboardingActionId.buyCryptoMock }),
 };
 
+const recoverMock: PostOnboardingAction = {
+  id: PostOnboardingActionId.recoverMock,
+  Icon: Icons.ShieldCheck,
+  title: "postOnboarding.actions.recover.title",
+  titleCompleted: "postOnboarding.actions.recover.titleCompleted",
+  description: "postOnboarding.actions.recover.description",
+  actionCompletedPopupLabel: "postOnboarding.actions.recover.actionCompletedPopupLabel",
+  startAction: () =>
+    setDrawer(PostOnboardingMockAction, { id: PostOnboardingActionId.recoverMock }),
+};
+
 /**
  * All implemented post onboarding actions.
  */
@@ -147,6 +198,8 @@ const postOnboardingActions: { [id in PostOnboardingActionId]?: PostOnboardingAc
   buyCrypto,
   syncAccounts,
   customImage,
+  discoverWallet,
+  recover,
   // Mocks for desktop development and tests
   assetsTransferMock,
   buyCryptoMock,
@@ -154,6 +207,7 @@ const postOnboardingActions: { [id in PostOnboardingActionId]?: PostOnboardingAc
   claimMock,
   personalizeMock,
   migrateAssetsMock,
+  recoverMock,
 };
 
 const staxPostOnboardingActionsMock: PostOnboardingAction[] = [
@@ -161,15 +215,17 @@ const staxPostOnboardingActionsMock: PostOnboardingAction[] = [
   personalizeMock,
   migrateAssetsMock,
   syncAccounts,
+  recoverMock,
 ];
 
 const europaPostOnboardingActionsMock: PostOnboardingAction[] = [
   assetsTransferMock,
   buyCryptoMock,
   customImageMock,
+  recoverMock,
 ];
 
-const apexPostOnboardingActionsMock: PostOnboardingAction[] = [customImageMock];
+const apexPostOnboardingActionsMock: PostOnboardingAction[] = [customImageMock, recoverMock];
 
 export function getPostOnboardingAction(
   id: PostOnboardingActionId,
@@ -184,22 +240,22 @@ export function getPostOnboardingActionsForDevice(
   switch (deviceModelId) {
     case DeviceModelId.stax:
       if (mock) return staxPostOnboardingActionsMock;
-      return [assetsTransfer, buyCrypto, syncAccounts, customImage];
+      return [assetsTransfer, buyCrypto, syncAccounts, customImage, discoverWallet, recover];
     case DeviceModelId.europa:
       if (mock) return europaPostOnboardingActionsMock;
-      return [assetsTransfer, buyCrypto, syncAccounts, customImage];
+      return [assetsTransfer, buyCrypto, syncAccounts, customImage, discoverWallet, recover];
     case DeviceModelId.apex:
       if (mock) return apexPostOnboardingActionsMock;
-      return [assetsTransfer, buyCrypto, syncAccounts, customImage];
+      return [assetsTransfer, buyCrypto, syncAccounts, customImage, discoverWallet, recover];
     case DeviceModelId.nanoS:
       // Post-onboarding actions for Nano S (no custom lock screen step).
       return [assetsTransfer, buyCrypto];
     case DeviceModelId.nanoSP:
       // Post-onboarding actions for Nano S Plus (no custom lock screen step).
-      return [assetsTransfer, buyCrypto, syncAccounts];
+      return [assetsTransfer, buyCrypto, syncAccounts, discoverWallet];
     case DeviceModelId.nanoX:
       // Post-onboarding actions for Nano X (no custom lock screen step).
-      return [assetsTransfer, buyCrypto, syncAccounts];
+      return [assetsTransfer, buyCrypto, syncAccounts, discoverWallet];
     default:
       return [];
   }

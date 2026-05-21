@@ -2,9 +2,16 @@
  * @jest-environment jsdom
  */
 import { renderHook, waitFor } from "@testing-library/react";
-import type { StakingValidatorItem } from "@ledgerhq/coin-evm/types/index";
+import BigNumber from "bignumber.js";
+import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type { StakingValidatorItem, StakingAccount, StakingDelegation } from "@ledgerhq/types-live";
 import * as stakingIndex from "@ledgerhq/coin-evm/staking/index";
-import { useEvmStakingValidators } from "./react";
+import * as accountModule from "../../../account";
+import {
+  useEvmStakingValidators,
+  useEvmFamilyPreloadData,
+  useEvmFamilyMappedDelegations,
+} from "./react";
 
 jest.mock("@ledgerhq/coin-evm/staking/index", () => {
   const actual = jest.requireActual("@ledgerhq/coin-evm/staking/index");
@@ -14,7 +21,12 @@ jest.mock("@ledgerhq/coin-evm/staking/index", () => {
   };
 });
 
+jest.mock("../../../account", () => ({
+  getAccountCurrency: jest.fn(),
+}));
+
 const mockedGetValidators = jest.mocked(stakingIndex.getValidators);
+const mockedGetAccountCurrency = jest.mocked(accountModule.getAccountCurrency);
 
 const sampleValidators: StakingValidatorItem[] = [
   {
@@ -145,5 +157,129 @@ describe("useEvmStakingValidators", () => {
     await Promise.resolve();
 
     expect(result.current.validators.map(v => v.validatorAddress)).toEqual(["celo-addr"]);
+  });
+});
+
+const seiUnit: Unit = { name: "SEI", code: "SEI", magnitude: 6 };
+
+const makeAccount = (delegations: StakingDelegation[]): StakingAccount =>
+  ({
+    currency: { id: "sei_evm" },
+    stakingResources: { delegations },
+  }) as unknown as StakingAccount;
+
+describe("useEvmFamilyPreloadData", () => {
+  beforeEach(() => {
+    mockedGetValidators.mockReset();
+  });
+
+  it("should return validators once loaded", async () => {
+    mockedGetValidators.mockResolvedValue(sampleValidators);
+
+    const { result } = renderHook(() => useEvmFamilyPreloadData("sei_evm"));
+
+    await waitFor(() => expect(result.current.validators).toHaveLength(2));
+
+    expect(result.current.validators.map(v => v.validatorAddress)).toEqual(["addr-c", "addr-a"]);
+  });
+
+  it("should return empty validators while loading", () => {
+    mockedGetValidators.mockReturnValue(new Promise(() => {}));
+
+    const { result } = renderHook(() => useEvmFamilyPreloadData("sei_evm"));
+
+    expect(result.current.validators).toEqual([]);
+  });
+
+  it("should not expose loading or error fields", async () => {
+    mockedGetValidators.mockResolvedValue(sampleValidators);
+
+    const { result } = renderHook(() => useEvmFamilyPreloadData("sei_evm"));
+
+    await waitFor(() => expect(result.current.validators).toHaveLength(2));
+
+    expect(result.current).not.toHaveProperty("loading");
+    expect(result.current).not.toHaveProperty("error");
+  });
+});
+
+describe("useEvmFamilyMappedDelegations", () => {
+  beforeEach(() => {
+    mockedGetValidators.mockReset();
+    mockedGetAccountCurrency.mockReturnValue({ units: [seiUnit] } as ReturnType<
+      typeof accountModule.getAccountCurrency
+    >);
+  });
+
+  it("should return mapped delegations enriched with matching validator and rank", async () => {
+    mockedGetValidators.mockResolvedValue(sampleValidators);
+
+    const delegations: StakingDelegation[] = [
+      {
+        validatorAddress: "addr-c",
+        amount: new BigNumber(1_000_000),
+        pendingRewards: new BigNumber(500),
+        status: "bonded",
+      },
+    ];
+    const account = makeAccount(delegations);
+
+    const { result } = renderHook(() => useEvmFamilyMappedDelegations(account));
+
+    await waitFor(() => expect(result.current[0]?.validator).toBeDefined());
+
+    const [mapped] = result.current;
+    expect(mapped.validatorAddress).toBe("addr-c");
+    expect(mapped.validator?.name).toBe("Bruce");
+    expect(mapped.rank).toBe(0);
+    expect(mapped.formattedAmount).toMatch(/SEI/);
+    expect(mapped.formattedPendingRewards).toMatch(/SEI/);
+  });
+
+  it("should set validator to undefined when no matching validator is found", async () => {
+    mockedGetValidators.mockResolvedValue(sampleValidators);
+
+    const delegations: StakingDelegation[] = [
+      {
+        validatorAddress: "addr-unknown",
+        amount: new BigNumber(1_000_000),
+        pendingRewards: new BigNumber(0),
+        status: "bonded",
+      },
+    ];
+    const account = makeAccount(delegations);
+
+    const { result } = renderHook(() => useEvmFamilyMappedDelegations(account));
+
+    await waitFor(() => expect(mockedGetValidators).toHaveBeenCalled());
+
+    expect(result.current[0].validator).toBeUndefined();
+    expect(result.current[0].rank).toBe(-1);
+  });
+
+  it("should return an empty array when account has no delegations", async () => {
+    mockedGetValidators.mockResolvedValue(sampleValidators);
+
+    const account = makeAccount([]);
+
+    const { result } = renderHook(() => useEvmFamilyMappedDelegations(account));
+
+    await waitFor(() => expect(mockedGetValidators).toHaveBeenCalled());
+
+    expect(result.current).toEqual([]);
+  });
+
+  it("should return an empty array when stakingResources is absent", async () => {
+    mockedGetValidators.mockResolvedValue(sampleValidators);
+
+    const account = {
+      currency: { id: "sei_evm" },
+    } as unknown as StakingAccount;
+
+    const { result } = renderHook(() => useEvmFamilyMappedDelegations(account));
+
+    await waitFor(() => expect(mockedGetValidators).toHaveBeenCalled());
+
+    expect(result.current).toEqual([]);
   });
 });

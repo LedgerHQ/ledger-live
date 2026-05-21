@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import type { AssetDetailMarketInfo } from "@ledgerhq/asset-detail";
 import type { DistributionItem } from "@ledgerhq/types-live";
 import { resolveMarketPriceSectionSourceId } from "../utils/resolveMarketPriceSectionSourceId";
 
@@ -7,22 +6,21 @@ describe("resolveMarketPriceSectionSourceId", () => {
   it("returns undefined when no source is available", () => {
     expect(
       resolveMarketPriceSectionSourceId({
-        marketInfo: undefined,
+        marketId: undefined,
         distributionItem: undefined,
         ledgerId: undefined,
       }),
     ).toBeUndefined();
   });
 
-  it("prefers marketInfo.id", () => {
-    const marketInfo = { id: "usd-coin", ledgerIds: [] } as AssetDetailMarketInfo;
+  it("prefers marketId over every other source", () => {
     const distribution = {
       marketId: "ignored",
       currency: { id: "ethereum/erc20/usd__coin" },
     } as unknown as DistributionItem;
     expect(
       resolveMarketPriceSectionSourceId({
-        marketInfo,
+        marketId: "usd-coin",
         distributionItem: distribution,
         ledgerId: "ledger-fallback",
       }),
@@ -36,7 +34,7 @@ describe("resolveMarketPriceSectionSourceId", () => {
     } as unknown as DistributionItem;
     expect(
       resolveMarketPriceSectionSourceId({
-        marketInfo: undefined,
+        marketId: undefined,
         distributionItem: distribution,
         ledgerId: undefined,
       }),
@@ -44,7 +42,7 @@ describe("resolveMarketPriceSectionSourceId", () => {
 
     expect(
       resolveMarketPriceSectionSourceId({
-        marketInfo: undefined,
+        marketId: undefined,
         distributionItem: { currency: { id: "only-currency" } } as unknown as DistributionItem,
         ledgerId: undefined,
       }),
@@ -52,7 +50,7 @@ describe("resolveMarketPriceSectionSourceId", () => {
 
     expect(
       resolveMarketPriceSectionSourceId({
-        marketInfo: undefined,
+        marketId: undefined,
         distributionItem: undefined,
         ledgerId: "bitcoin",
       }),

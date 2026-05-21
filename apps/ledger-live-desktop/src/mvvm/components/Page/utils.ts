@@ -69,8 +69,19 @@ export const isWallet40Page = (pathname: string, options: IsWallet40PageOptions 
  */
 const RIGHT_PANEL_PAGES = new Set<string>(["/", "/analytics"]);
 
+const isAggregatedAssetDetailPath = (pathname: string): boolean =>
+  pathname === "/asset" || pathname.startsWith("/asset/");
+
 /**
  * Check if a pathname should display the right panel (swap sidebar).
  */
-export const shouldDisplayRightPanel = (pathname: string): boolean =>
-  RIGHT_PANEL_PAGES.has(pathname);
+export const shouldDisplayRightPanel = (
+  pathname: string,
+  options: IsWallet40PageOptions = {},
+): boolean => {
+  if (RIGHT_PANEL_PAGES.has(pathname)) return true;
+  if (isAggregatedAssetDetailPath(pathname)) {
+    return !!options.shouldDisplayAggregatedAssets;
+  }
+  return false;
+};

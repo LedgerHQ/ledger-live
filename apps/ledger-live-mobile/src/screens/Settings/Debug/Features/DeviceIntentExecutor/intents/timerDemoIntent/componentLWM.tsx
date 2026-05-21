@@ -7,6 +7,7 @@ export function TimerDemoIntentComponentLWM({
 }: {
   jobState: TimerDemoIntentJobState | undefined;
   extraProps: TimerDemoIntentExtraProps;
+  onClose: () => void;
 }) {
   return (
     <Flex p={4}>

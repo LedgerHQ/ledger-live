@@ -6,6 +6,7 @@ import coinConfig from "../config";
 import { FIGMENT_SUI_VALIDATOR_ADDRESS } from "../constants";
 import { normalizeSuiAddressForComparison } from "../utils";
 import {
+  transactionToCoinFrameworkOperation,
   createTransaction,
   DEFAULT_COIN_TYPE,
   getAccountBalances,
@@ -425,7 +426,7 @@ describe("SUI SDK Integration tests", () => {
     });
   });
 
-  describe("getListOperations (SIP-58 / alpaca path)", () => {
+  describe("getListOperations (SIP-58 / coin-framework path)", () => {
     const account = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
 
     let descPage: Awaited<ReturnType<typeof getListOperations>>;
@@ -501,8 +502,56 @@ describe("SUI SDK Integration tests", () => {
     });
   });
 
-  // Pin both transfer flows to immutable on-chain transactions and verify the
-  // SDK maps each correctly. Asserts flow-specific on-chain shape
+  // Regression guard for BACK-10134: STAKING_REQUEST_EVENT had the wrong
+  // module name (staking_pool instead of validator), causing validatorAddress
+  // and stakedObjectId to be silently dropped from DELEGATE operation details.
+  // UNSTAKING_REQUEST_EVENT was already correct. These tests fetch real
+  // on-chain transactions with showEvents:true and assert the detail fields
+  // survive the full pipeline, catching any future constant drift that unit
+  // tests cannot.
+  describe("staking operation details (BACK-10134 regression)", () => {
+    // https://suiscan.xyz/mainnet/account/0x13d73cab19d2cf14e39289b122ed93fb0f9edd00e4c829e0cefb1f0611c54a8f
+    const STAKING_ADDRESS = "0x13d73cab19d2cf14e39289b122ed93fb0f9edd00e4c829e0cefb1f0611c54a8f";
+    // https://suiscan.xyz/mainnet/tx/4UtCqCH3oNEdaprZR9UjaMGg6HgLn3V3q3FEcvs5vieM
+    const UNDELEGATE_TX_DIGEST = "4UtCqCH3oNEdaprZR9UjaMGg6HgLn3V3q3FEcvs5vieM";
+    // https://suiscan.xyz/mainnet/tx/EkJbwk9R2pmJhxfAVpRqbfDYQN1yiNap1qMPVrKedwZf
+    const DELEGATE_TX_DIGEST = "EkJbwk9R2pmJhxfAVpRqbfDYQN1yiNap1qMPVrKedwZf";
+
+    it("UNDELEGATE: validatorAddress, rewardAmount and withdrawnAmount are populated from live events", async () => {
+      const raw = await withApi(api =>
+        api.getTransactionBlock({
+          digest: UNDELEGATE_TX_DIGEST,
+          options: { showInput: true, showBalanceChanges: true, showEffects: true, showEvents: true },
+        }),
+      );
+      const op = transactionToCoinFrameworkOperation(STAKING_ADDRESS, raw, undefined);
+      expect(op.type).toBe("UNDELEGATE");
+      expect(op.details).toMatchObject({
+        validatorAddress: expect.stringMatching(/^0x[0-9a-f]+$/i),
+      });
+      expect(typeof op.details!.rewardAmount).toBe("bigint");
+      expect(typeof op.details!.withdrawnAmount).toBe("bigint");
+    });
+
+    it("DELEGATE: validatorAddress is populated from live events", async () => {
+      const raw = await withApi(api =>
+        api.getTransactionBlock({
+          digest: DELEGATE_TX_DIGEST,
+          options: { showInput: true, showBalanceChanges: true, showEffects: true, showEvents: true },
+        }),
+      );
+      const op = transactionToCoinFrameworkOperation(STAKING_ADDRESS, raw, undefined);
+      expect(op.type).toBe("DELEGATE");
+      // validatorAddress is the field that was silently dropped by the bug.
+      // stakedObjectId is not asserted as it is absent from real on-chain events.
+      expect(op.details).toMatchObject({
+        validatorAddress: expect.stringMatching(/^0x[0-9a-f]+$/i),
+      });
+    });
+  });
+
+  // Pin both transfer flows to immutable on-chain testnet transactions and
+  // verify the SDK maps each correctly. Asserts flow-specific on-chain shape
   // (gasData.payment, accumulatorEvents) AND the resulting Operation values,
   // so both code paths in sdk.ts are exercised end-to-end against live RPC.
   //

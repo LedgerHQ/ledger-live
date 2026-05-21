@@ -5,7 +5,7 @@ import type {
 } from "@ledgerhq/device-management-kit";
 import { BehaviorSubject, Subject, Subscription, type Observable } from "rxjs";
 import {
-  DiscoveryErrors,
+  DiscoveryErrorTypes,
   type DeviceDiscoveryService,
   type DeviceDiscoveryStartArgs,
   type DiscoveryError,
@@ -73,8 +73,8 @@ export class DefaultDeviceDiscoveryService implements DeviceDiscoveryService {
             devicesByTransport.set(source.transportId, []);
             this.emitDiscoveredDevices(devicesByTransport);
             this.errorsSubject.next({
-              type: DiscoveryErrors.Unknown,
-              transportID: source.transportId,
+              type: DiscoveryErrorTypes.Unknown,
+              transportId: source.transportId,
               error,
             });
           },

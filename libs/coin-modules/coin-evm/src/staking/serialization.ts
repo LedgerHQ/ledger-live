@@ -1,6 +1,7 @@
 import { BigNumber } from "bignumber.js";
-import type { Account, AccountRaw } from "@ledgerhq/types-live";
 import type {
+  Account,
+  AccountRaw,
   StakingAccount,
   StakingAccountRaw,
   StakingDelegation,
@@ -11,7 +12,7 @@ import type {
   StakingResourcesRaw,
   StakingUnbonding,
   StakingUnbondingRaw,
-} from "../types/staking";
+} from "@ledgerhq/types-live";
 
 function toStakingDelegationRaw(d: StakingDelegation): StakingDelegationRaw {
   return {

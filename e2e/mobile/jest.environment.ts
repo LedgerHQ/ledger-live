@@ -34,6 +34,46 @@ import { ServerData } from "../../apps/ledger-live-mobile/e2e/bridge/types";
 
 // @ts-expect-error detox doesn't provide type declarations for this module
 import DetoxEnvironment from "detox/runners/jest/testEnvironment";
+import { withTimeout } from "./utils/withTimeout";
+
+const FAST_DIAGNOSTIC_TIMEOUT_MS = 5_000;
+const SLOW_DIAGNOSTIC_TIMEOUT_MS = 15_000;
+
+async function captureFailureDiagnostics(): Promise<void> {
+  await withTimeout(takeSpeculosScreenshot(), FAST_DIAGNOSTIC_TIMEOUT_MS, "takeSpeculosScreenshot");
+  await withTimeout(
+    takeAppScreenshot("Test Failure"),
+    FAST_DIAGNOSTIC_TIMEOUT_MS,
+    "takeAppScreenshot",
+  );
+  await withTimeout(
+    attachTestExecutionConsoleToAllure(),
+    FAST_DIAGNOSTIC_TIMEOUT_MS,
+    "attachTestExecutionConsoleToAllure",
+  );
+  await withTimeout(
+    attachSpeculosStartupErrorToAllure(),
+    FAST_DIAGNOSTIC_TIMEOUT_MS,
+    "attachSpeculosStartupErrorToAllure",
+  );
+  // getLogs has its own 10s RESPONSE_TIMEOUT inside the bridge; this outer bound
+  // is just defense-in-depth in case the inner timer is starved on a wedged worker.
+  let logs = await withTimeout(getLogs(), 12_000, "getLogs");
+  if (logs)
+    await withTimeout(
+      attachFailureLogsToAllure(logs),
+      SLOW_DIAGNOSTIC_TIMEOUT_MS,
+      "attachFailureLogsToAllure",
+    );
+  logs = "";
+
+  await withTimeout(
+    captureNativeViewHierarchy(),
+    SLOW_DIAGNOSTIC_TIMEOUT_MS,
+    "captureNativeViewHierarchy",
+  );
+  console.info("Failure diagnostics capture completed");
+}
 
 export default class TestEnvironment extends DetoxEnvironment {
   declare global: typeof globalThis;
@@ -181,8 +221,9 @@ export default class TestEnvironment extends DetoxEnvironment {
       }
 
       try {
-        const { DeviceManagementKitTransportSpeculos } =
-          await import("@ledgerhq/live-dmk-speculos");
+        const { DeviceManagementKitTransportSpeculos } = await import(
+          "@ledgerhq/live-dmk-speculos"
+        );
         await DeviceManagementKitTransportSpeculos.disconnectAll();
       } catch {
         // Ignore cleanup errors
@@ -201,18 +242,7 @@ export default class TestEnvironment extends DetoxEnvironment {
 
     if (["hook_failure", "test_fn_failure"].includes(event.name)) {
       this.global.IS_FAILED = true;
-      await takeSpeculosScreenshot();
-      await takeAppScreenshot("Test Failure");
-      try {
-        await attachTestExecutionConsoleToAllure();
-        await attachSpeculosStartupErrorToAllure();
-        const logsPayload = await getLogs();
-        await attachFailureLogsToAllure(logsPayload);
-        await captureNativeViewHierarchy();
-        console.info("Failure logs attached to Allure report");
-      } catch (err) {
-        console.warn("Failed to attach failure logs to Allure:", err);
-      }
+      await captureFailureDiagnostics();
     }
 
     if (event.name === "run_start") {

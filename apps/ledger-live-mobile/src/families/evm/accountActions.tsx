@@ -1,8 +1,13 @@
 import React from "react";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type {
+  Account,
+  AccountLike,
+  ResolvedAccountBridge,
+  TransactionCommon,
+} from "@ledgerhq/types-live";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { Trans } from "~/context/Locale";
-import { isAccountEmpty, isTokenAccount } from "@ledgerhq/live-common/account/index";
+import { isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
 import { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
 import { NavigatorName, ScreenName } from "~/const";
@@ -27,12 +32,13 @@ type EvmNativeStakingFeature = {
   };
 };
 
-type Props = {
+type Props<T extends TransactionCommon> = {
   account: AccountLike;
   parentAccount: Account;
   parentRoute: RouteProp<ParamListBase, ScreenName>;
   walletState: WalletState;
   evmNativeStakingFeature?: EvmNativeStakingFeature | null;
+  bridge: ResolvedAccountBridge<T>;
 };
 
 type AccountTypeGetterProps = {
@@ -56,17 +62,18 @@ const getAccountType = (account: AccountLike): AccountTypeGetterProps => {
   return { isEthAccount, isPOLAccount, isBscAccount, isAvaxAccount, isStakekit };
 };
 
-function getNavigatorParams({
+function getNavigatorParams<T extends TransactionCommon>({
   parentRoute,
   account,
   parentAccount,
   walletState,
   evmNativeStakingFeature,
-}: Props): NavigationParamsType {
+  bridge,
+}: Props<T>): NavigationParamsType {
   const { isPOLAccount, isBscAccount, isAvaxAccount, isStakekit } = getAccountType(account);
   const isSeiEvmNativeStaking = getIsSeiEvmNativeStakingEnabled(account, evmNativeStakingFeature);
 
-  if (isAccountEmpty(account)) {
+  if (bridge.isAccountEmpty(account)) {
     return [
       NavigatorName.NoFundsFlow,
       {
@@ -153,13 +160,14 @@ function getNavigatorParams({
   }
 }
 
-const getMainActions = ({
+const getMainActions = <T extends TransactionCommon>({
   account,
   parentAccount,
   parentRoute,
   walletState,
   evmNativeStakingFeature,
-}: Props): ActionButtonEvent[] => {
+  bridge,
+}: Props<T>): ActionButtonEvent[] => {
   const { isPOLAccount, isBscAccount, isAvaxAccount, isStakekit, isEthAccount } =
     getAccountType(account);
   const isSeiEvmNativeStaking = getIsSeiEvmNativeStakingEnabled(account, evmNativeStakingFeature);
@@ -181,6 +189,7 @@ const getMainActions = ({
       parentRoute,
       walletState,
       evmNativeStakingFeature,
+      bridge,
     });
 
     const getCurrentCurrency = () => {

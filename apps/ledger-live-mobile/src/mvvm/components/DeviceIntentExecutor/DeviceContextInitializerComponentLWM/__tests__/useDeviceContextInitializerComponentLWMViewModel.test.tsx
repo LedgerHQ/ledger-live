@@ -24,6 +24,10 @@ const mockedEnsureAppReadyUseCase = jest.mocked(ensureAppReadyUseCase);
 const connectionResult = {
   dmk: { name: "dmk" },
   sessionId: "session-1",
+  compatDeviceId: "device-id",
+  compatDeviceModelId: DeviceModelId.nanoX,
+  compatDeviceName: "Ledger Nano X",
+  compatDeviceWired: false,
 } as unknown as DeviceConnectionResult;
 
 const deviceInitializationInput: InitializationInput = {
@@ -86,10 +90,18 @@ describe("useDeviceContextInitializerComponentLWMViewModel", () => {
     setupObservable();
   });
 
-  it("should initialise with loading state", () => {
+  it("should initialise with loading state and a normalised device", () => {
     const { result } = renderViewModel();
 
-    expect(result.current).toEqual({ type: LoadingStateType.Loading });
+    expect(result.current.state).toEqual({ type: LoadingStateType.Loading });
+    expect(result.current.device).toEqual(
+      expect.objectContaining({
+        id: "device-id",
+        modelId: DeviceModelId.nanoX,
+        name: "Ledger Nano X",
+        wired: false,
+      }),
+    );
   });
 
   it("should start ensureAppReadyUseCase with connection, input and dismissed deprecations", () => {
@@ -116,7 +128,7 @@ describe("useDeviceContextInitializerComponentLWMViewModel", () => {
       subject.next(nextState);
     });
 
-    expect(result.current).toEqual(nextState);
+    expect(result.current.state).toEqual(nextState);
   });
 
   it("should notify context initialization once when the use case succeeds", () => {
@@ -133,7 +145,7 @@ describe("useDeviceContextInitializerComponentLWMViewModel", () => {
       subject.next(successState);
     });
 
-    expect(result.current).toEqual(successState);
+    expect(result.current.state).toEqual(successState);
     expect(onContextInitialized).toHaveBeenCalledTimes(1);
     expect(onContextInitialized).toHaveBeenCalledWith(extractedContext);
   });
@@ -147,7 +159,7 @@ describe("useDeviceContextInitializerComponentLWMViewModel", () => {
       subject.error(error);
     });
 
-    expect(result.current).toEqual({
+    expect(result.current.state).toEqual({
       type: FinalStateType.Error,
       error,
     });

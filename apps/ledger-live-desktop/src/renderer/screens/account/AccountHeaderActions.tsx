@@ -1,9 +1,5 @@
-import {
-  canSend,
-  getAccountCurrency,
-  getMainAccount,
-  isAccountEmpty,
-} from "@ledgerhq/live-common/account/index";
+import { canSend, getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 
 import { Account, AccountLike } from "@ledgerhq/types-live";
@@ -191,6 +187,7 @@ const pageName = "Page Account";
 
 const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   const { data: currenciesAll } = useFetchCurrencyAll();
+  const bridge = useAccountBridge(account, parentAccount);
   const mainAccount = getMainAccount(account, parentAccount);
   const contrastText = useTheme().colors.neutral.c70;
   const swapDefaultTrack = useGetSwapTrackingProperties();
@@ -321,9 +318,11 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
     const family = getFamilyFromAccount(account, parentAccount);
     const currencyId = getCurrencyIdFromAccount(account, parentAccount);
     const isNewSendFlow = isEnabledForFamily(family, currencyId);
-    const sendFlowTrackingProperties = isNewSendFlow
-      ? getSendFlowTrackingProperties(account, parentAccount)
-      : { flow: "send" };
+    const sendFlowTrackingProperties = getSendFlowTrackingProperties(
+      account,
+      parentAccount,
+      isNewSendFlow,
+    );
     track("button_clicked2", {
       button: "send",
       ...buttonSharedTrackingFields,
@@ -331,7 +330,6 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
     track("button_clicked", {
       button: "send",
       page: "Account",
-      currency: currency.ticker,
       ...sendFlowTrackingProperties,
     });
     openSendFlow({
@@ -346,7 +344,6 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
     isEnabledForFamily,
     getFamilyFromAccount,
     getCurrencyIdFromAccount,
-    currency.ticker,
   ]);
 
   const onReceive = useCallback(() => {
@@ -403,7 +400,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
 
   return (
     <Box horizontal alignItems="center" justifyContent="flex-end" flow={2} mt={15}>
-      {!isAccountEmpty(account) ? NonEmptyAccountHeader : null}
+      {bridge.isAccountEmpty(account) ? null : NonEmptyAccountHeader}
     </Box>
   );
 };

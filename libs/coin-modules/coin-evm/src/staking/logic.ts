@@ -1,7 +1,10 @@
+import { ethers } from "ethers";
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
 import type { Unit } from "@ledgerhq/coin-module-framework/api/types";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
+import { getStakingABI } from "./abis";
+import { STAKING_CONTRACTS } from "./contracts";
 import type {
   StakingAccount,
   StakingDelegation,
@@ -14,8 +17,8 @@ import type {
   StakingSearchFilter,
   StakingUnbonding,
   StakingValidatorItem,
-  Transaction,
-} from "../types/index";
+} from "@ledgerhq/types-live";
+import type { Transaction } from "../types/index";
 
 export function mapDelegations(
   delegations: StakingDelegation[],
@@ -153,12 +156,22 @@ export function canRedelegate(
 ): boolean {
   const { stakingResources } = account;
   invariant(stakingResources, "stakingResources should exist");
-  return (
-    !!stakingResources?.redelegations &&
-    !stakingResources.redelegations.some(
-      rd => rd.validatorDstAddress === delegation.validatorAddress,
-    )
-  );
+
+  // The chain must expose a redelegate precompile function; without it the
+  // transaction will always fail, so the UI action should be hidden entirely.
+  if (!STAKING_CONTRACTS[account.currency.id]?.functions.redelegate) return false;
+
+  const redelegations = stakingResources.redelegations ?? [];
+  const now = new Date();
+  const maxRedelegations = STAKING_CONTRACTS[account.currency.id]?.maxRedelegations;
+  const activeRedelegations = redelegations.filter(rd => rd.completionDate > now);
+  if (maxRedelegations !== undefined && activeRedelegations.length >= maxRedelegations)
+    return false;
+
+  // Cannot redelegate FROM a validator that currently holds an active incoming
+  // redelegation (21-day cooldown). Check completionDate explicitly so that
+  // stale cached data does not incorrectly block redelegations after the window.
+  return !activeRedelegations.some(rd => rd.validatorDstAddress === delegation.validatorAddress);
 }
 
 export function getRedelegation(
@@ -167,10 +180,10 @@ export function getRedelegation(
 ): StakingRedelegation | null | undefined {
   const { stakingResources } = account;
   const redelegations = stakingResources?.redelegations ?? [];
-  const currentRedelegation = redelegations.find(
-    r => r.validatorDstAddress === delegation.validatorAddress,
+  const now = new Date();
+  return redelegations.find(
+    r => r.validatorDstAddress === delegation.validatorAddress && r.completionDate > now,
   );
-  return currentRedelegation;
 }
 
 export function getRedelegationCompletionDate(
@@ -183,4 +196,28 @@ export function getRedelegationCompletionDate(
 
 export function parseAmountStringToNumber(amountString: string, unitCode: string): string {
   return amountString.slice(amountString.lastIndexOf(",") + 1).replace(unitCode, "");
+}
+
+/**
+ * Decode the src/dst validator addresses from a REDELEGATE operation's
+ * `contractPayload` (ABI-encoded calldata). Returns `null` when the payload is
+ * absent or malformed so callers can fall back gracefully.
+ */
+export function decodeRedelegatePayload(
+  currencyId: string,
+  contractPayload: string,
+): { srcValidatorAddress: string; dstValidatorAddress: string } | null {
+  const config = STAKING_CONTRACTS[currencyId];
+  const functionName = config?.functions.redelegate;
+  const abi = getStakingABI(currencyId);
+  if (!abi || !functionName) return null;
+  try {
+    const iface = new ethers.Interface(abi);
+    const d = iface.decodeFunctionData(functionName, contractPayload);
+    const [src, dst] = d;
+    if (typeof src !== "string" || typeof dst !== "string") return null;
+    return { srcValidatorAddress: src, dstValidatorAddress: dst };
+  } catch {
+    return null;
+  }
 }

@@ -188,7 +188,6 @@ describe("mapConnectAppDAPendingStatus", () => {
       // WHEN
       const result = mapConnectAppDAPendingStatus({
         state,
-        appName,
         deprecationDismissedCurrencyNames: [],
       });
 
@@ -198,22 +197,21 @@ describe("mapConnectAppDAPendingStatus", () => {
   });
 
   describe("GIVEN no user interaction is required", () => {
-    it("WHEN there is no install plan THEN it returns null", () => {
+    it("WHEN there is no install plan THEN it emits the loading state", () => {
       // GIVEN
       const state = makePending(UserInteractionRequired.None);
 
       // WHEN
       const result = mapConnectAppDAPendingStatus({
         state,
-        appName,
         deprecationDismissedCurrencyNames: [],
       });
 
       // THEN
-      expect(result).toBeNull();
+      expect(result).toEqual({ type: LoadingStateType.Loading });
     });
 
-    it("WHEN there is an install plan THEN it maps install progress", () => {
+    it("WHEN there is an install plan THEN it emits the installing app state", () => {
       // GIVEN
       const state = makePending(UserInteractionRequired.None, {
         installPlan: makeInstallPlan(),
@@ -222,42 +220,13 @@ describe("mapConnectAppDAPendingStatus", () => {
       // WHEN
       const result = mapConnectAppDAPendingStatus({
         state,
-        appName,
         deprecationDismissedCurrencyNames: [],
       });
 
       // THEN
-      expect(result).toEqual({
-        type: LoadingStateType.InstallingApp,
-        appName: "Ethereum",
-        progress: 0.42,
-        index: 1,
-        total: 2,
-      });
-    });
-
-    it("WHEN the current install entry is missing THEN it falls back to the requested app name", () => {
-      // GIVEN
-      const state = makePending(UserInteractionRequired.None, {
-        installPlan: makeInstallPlan({
-          currentIndex: 99,
-        }),
-      });
-
-      // WHEN
-      const result = mapConnectAppDAPendingStatus({
-        state,
-        appName,
-        deprecationDismissedCurrencyNames: [],
-      });
-
-      // THEN
-      expect(result).toEqual(
-        expect.objectContaining({
-          type: LoadingStateType.InstallingApp,
-          appName: "Ethereum",
-        }),
-      );
+      // The installing app state intentionally carries no payload so consecutive
+      // emissions deduplicate via the use case's deep-equality comparison.
+      expect(result).toEqual({ type: LoadingStateType.InstallingApp });
     });
   });
 
@@ -269,7 +238,6 @@ describe("mapConnectAppDAPendingStatus", () => {
       // WHEN
       const result = mapConnectAppDAPendingStatus({
         state,
-        appName,
         deprecationDismissedCurrencyNames: [],
       });
 
@@ -288,7 +256,6 @@ describe("mapConnectAppDAPendingStatus", () => {
       // WHEN
       const result = mapConnectAppDAPendingStatus({
         state,
-        appName,
         deprecationDismissedCurrencyNames: [],
       });
 
@@ -309,7 +276,6 @@ describe("mapConnectAppDAPendingStatus", () => {
       // WHEN
       const result = mapConnectAppDAPendingStatus({
         state,
-        appName,
         deprecation: {
           flow: FlowName.send,
           currencyName: "Ethereum",
@@ -335,7 +301,6 @@ describe("mapConnectAppDAPendingStatus", () => {
       // WHEN
       const result = mapConnectAppDAPendingStatus({
         state,
-        appName,
         deprecation: {
           flow: FlowName.send,
           currencyName: "Ethereum",
@@ -373,7 +338,6 @@ describe("mapConnectAppDAPendingStatus", () => {
       // WHEN
       const result = mapConnectAppDAPendingStatus({
         state,
-        appName,
         deprecation: {
           flow: FlowName.send,
           currencyName: "Ethereum",
@@ -403,7 +367,6 @@ describe("mapConnectAppDAPendingStatus", () => {
       expect(() =>
         mapConnectAppDAPendingStatus({
           state,
-          appName,
           deprecationDismissedCurrencyNames: [],
         }),
       ).toThrow("Unhandled value: unknown-interaction");
@@ -586,11 +549,14 @@ describe("mapConnectAppDAErrorStatus", () => {
   });
 
   it("GIVEN a legacy LedgerJS locked device error shape WHEN it is mapped THEN it returns a retryable locked state", () => {
-    const legacyLockedDeviceError = Object.assign(new Error("Ledger device: Locked device (0x5515)"), {
-      name: "LockedDeviceError",
-      statusCode: StatusCodes.LOCKED_DEVICE,
-      statusText: "LOCKED_DEVICE",
-    }) as unknown as ConnectAppDAError;
+    const legacyLockedDeviceError = Object.assign(
+      new Error("Ledger device: Locked device (0x5515)"),
+      {
+        name: "LockedDeviceError",
+        statusCode: StatusCodes.LOCKED_DEVICE,
+        statusText: "LOCKED_DEVICE",
+      },
+    ) as unknown as ConnectAppDAError;
 
     // WHEN
     const result = mapConnectAppDAErrorStatus({

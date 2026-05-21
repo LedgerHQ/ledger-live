@@ -95,6 +95,10 @@ const getFeatureFlagProperties = () => {
     const ptxSwapLiveAppMobileFlag = analyticsFeatureFlagMethod("ptxSwapLiveAppMobile");
     const ptxSwapLiveAppKycWarning = analyticsFeatureFlagMethod("ptxSwapLiveAppKycWarning");
     const llmSyncOnboardingIncr1Flag = analyticsFeatureFlagMethod("llmSyncOnboardingIncr1");
+    const lwmAnalyticsConsentOnboardingFlag = analyticsFeatureFlagMethod(
+      "lwmAnalyticsConsentOnboarding",
+    );
+    const lwmNotificationsOptInFlag = analyticsFeatureFlagMethod("lwmNotificationsOptIn");
 
     const isBatch1Enabled =
       !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
@@ -108,6 +112,8 @@ const getFeatureFlagProperties = () => {
     const ptxSwapLiveAppMobileEnabled = Boolean(ptxSwapLiveAppMobileFlag?.enabled);
     const ptxSwapLiveAppKycWarningEnabled = Boolean(ptxSwapLiveAppKycWarning?.enabled);
     const llmSyncOnboardingIncr1 = Boolean(llmSyncOnboardingIncr1Flag?.enabled);
+    const lwmAnalyticsConsentOnboarding = Boolean(lwmAnalyticsConsentOnboardingFlag?.enabled);
+    const lwmNotificationsOptIn = Boolean(lwmNotificationsOptInFlag?.enabled);
 
     // Apply versioned redirects logic to the stakePrograms feature flag
     const appVersion = LiveConfig.instance.appVersion || "0.0.0";
@@ -142,6 +148,8 @@ const getFeatureFlagProperties = () => {
       ptxSwapLiveAppMobileEnabled,
       ptxSwapLiveAppKycWarningEnabled,
       llmSyncOnboardingIncr1,
+      lwmAnalyticsConsentOnboarding,
+      lwmNotificationsOptIn,
     });
   })();
 };
@@ -191,6 +199,8 @@ const getMandatoryProperties = (store: AppStore) => {
   const readOnlyMode = readOnlyModeEnabledSelector(state);
   const devModeEnabled = getEnv("MANAGER_DEV_MODE");
   const analyticsInfo = analyticsConsentInfoSelector(state);
+  const analyticsConsentOnboardingAttributes = getAnalyticsConsentOnboardingAttributes();
+  const notificationsOptInAttributes = getNotificationsOptInAttributes();
 
   return {
     userId: userIdStr,
@@ -201,6 +211,8 @@ const getMandatoryProperties = (store: AppStore) => {
     hasSeenAnalyticsOptInPrompt,
     readOnlyMode,
     analyticsInfo,
+    ...analyticsConsentOnboardingAttributes,
+    ...notificationsOptInAttributes,
   };
 };
 
@@ -233,6 +245,22 @@ const getOptimiseOptInNotificationsNewWordingAttributes = (): Record<string, unk
 
   return {
     pushOptInVariant: optimiseOptInNotificationsNewWording?.params?.variant,
+  };
+};
+
+const getAnalyticsConsentOnboardingAttributes = () => {
+  if (!analyticsFeatureFlagMethod) return { lwmAnalyticsConsentOnboarding: false };
+  const flag = analyticsFeatureFlagMethod("lwmAnalyticsConsentOnboarding");
+  return {
+    lwmAnalyticsConsentOnboarding: !!flag?.enabled,
+  };
+};
+
+const getNotificationsOptInAttributes = () => {
+  if (!analyticsFeatureFlagMethod) return { lwmNotificationsOptIn: false };
+  const flag = analyticsFeatureFlagMethod("lwmNotificationsOptIn");
+  return {
+    lwmNotificationsOptIn: !!flag?.enabled,
   };
 };
 

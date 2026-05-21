@@ -22,8 +22,18 @@ import { SignerContext } from "../signer";
 import { broadcast } from "../broadcast";
 import { perCoinLogic } from "../logic";
 import resolver from "../hw-getAddress";
+import getFullViewingKeyResolver, { GetFullViewingKeyResult } from "../hw-getFullViewingKey";
 import { validateAddress } from "../validateAddress";
 import buildSignRawOperation from "../signRawOperation";
+
+type GetFullViewingKeyFromBridgeFn = (
+  account: BitcoinAccount,
+  options: { deviceId: string; path?: string },
+) => Promise<GetFullViewingKeyResult>;
+
+export type BitcoinAccountBridge = AccountBridge<Transaction, BitcoinAccount> & {
+  getFullViewingKey: GetFullViewingKeyFromBridgeFn;
+};
 
 function buildCurrencyBridge(signerContext: SignerContext) {
   const getAddress = resolver(signerContext);
@@ -48,6 +58,7 @@ function buildAccountBridge(signerContext: SignerContext) {
   });
 
   const getAddress = resolver(signerContext);
+  const getFullViewingKey = getFullViewingKeyResolver(signerContext);
   const injectGetAddressParams = (account: BitcoinAccount) => {
     const perCoin = perCoinLogic[account.currency.id];
 
@@ -72,6 +83,12 @@ function buildAccountBridge(signerContext: SignerContext) {
     });
   };
 
+  const getFullViewingKeyFromBridge: GetFullViewingKeyFromBridgeFn = (account, options) =>
+    getFullViewingKey(options.deviceId, {
+      currency: account.currency,
+      path: options.path ?? account.freshAddressPath,
+    });
+
   return {
     estimateMaxSpendable,
     createTransaction,
@@ -88,6 +105,7 @@ function buildAccountBridge(signerContext: SignerContext) {
     formatAccountSpecifics: formatters.formatAccountSpecifics,
     getSerializedAddressParameters,
     validateAddress,
+    getFullViewingKey: getFullViewingKeyFromBridge,
   };
 }
 

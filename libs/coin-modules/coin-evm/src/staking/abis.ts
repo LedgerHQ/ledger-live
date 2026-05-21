@@ -1,7 +1,8 @@
 import celoAbi from "../abis/celo.abi.json";
 import seiAbi from "../abis/sei.abi.json";
+import seiDistributionAbi from "../abis/sei-distribution.abi.json";
 
-type StakingABI = typeof seiAbi | typeof celoAbi;
+type StakingABI = typeof seiDistributionAbi | typeof seiAbi | typeof celoAbi;
 
 interface ABIFunction {
   type: string;
@@ -11,7 +12,7 @@ interface ABIFunction {
 
 const STAKING_ABIS: Record<string, StakingABI> = {
   // Sei EVM staking contract
-  sei_evm: seiAbi,
+  sei_evm: [...seiAbi, ...seiDistributionAbi],
 
   // Celo staking contract
   celo: celoAbi,

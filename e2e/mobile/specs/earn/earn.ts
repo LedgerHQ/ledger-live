@@ -63,7 +63,7 @@ export async function runInlineAddAccountTest(
       if (isWallet40) {
         await app.mainNavigation.tapWallet40Tab("earn");
         await earnReady;
-        await app.earnDashboard.verifyEarnByStackingButton();
+        await app.earnDashboard.tapIceColdStartEarnCta();
       } else {
         await app.transferMenuDrawer.open();
         await app.transferMenuDrawer.navigateToStake();

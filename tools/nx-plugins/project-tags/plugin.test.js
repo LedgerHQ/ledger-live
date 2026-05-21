@@ -36,10 +36,34 @@ test("shared/* gets scope:shared", () => {
   ]);
 });
 
-test("features/* gets scope:features (regression)", () => {
-  assert.deepEqual(inferTags("features/market-banner", "@features/market-banner"), [
+test("features/* (unclassified sub-path) gets scope:features only — no type tag (regression)", () => {
+  const tags = inferTags("features/market-banner", "@features/market-banner");
+  assert.deepEqual(tags, ["scope:features", "scope:no-apps"]);
+  assert.ok(!tags.includes("type:feature-platform"));
+  assert.ok(!tags.includes("type:feature-flow"));
+});
+
+test("features/platform/* gets scope:features + type:feature-platform", () => {
+  assert.deepEqual(
+    inferTags("features/platform/feature-flags", "@features/platform-feature-flags"),
+    ["scope:features", "scope:no-apps", "type:feature-platform"],
+  );
+  assert.deepEqual(
+    inferTags("features/platform/observability", "@features/platform-observability"),
+    ["scope:features", "scope:no-apps", "type:feature-platform"],
+  );
+});
+
+test("features/flow/* gets scope:features + type:feature-flow", () => {
+  assert.deepEqual(inferTags("features/flow/wallet", "@features/flow-wallet"), [
     "scope:features",
     "scope:no-apps",
+    "type:feature-flow",
+  ]);
+  assert.deepEqual(inferTags("features/flow/market-banner", "@features/flow-market-banner"), [
+    "scope:features",
+    "scope:no-apps",
+    "type:feature-flow",
   ]);
 });
 

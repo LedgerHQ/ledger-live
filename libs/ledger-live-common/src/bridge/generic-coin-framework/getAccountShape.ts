@@ -1,21 +1,23 @@
 import { encodeAccountId, getSyncHash } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { GetAccountShape, mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
+import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import groupBy from "lodash/groupBy";
-import { getAlpacaApi } from "./api";
+import { getCoinModuleApi } from "./api";
 import { getBridgeApi } from "./bridge";
 import { adaptCoreOperationToLiveOperation, cleanedOperation, extractBalance } from "./utils";
 import { inferSubOperations } from "@ledgerhq/ledger-wallet-framework/serialization";
 import { buildSubAccounts, mergeSubAccounts } from "./buildSubAccounts";
 import type { Balance, Operation, Stake } from "@ledgerhq/coin-module-framework/api/types";
 import type { OperationCommon } from "./types";
-import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type {
+  Account,
   StakingDelegation,
   StakingResources,
   StakingUnbonding,
-} from "@ledgerhq/coin-evm/types/staking";
+  TokenAccount,
+} from "@ledgerhq/types-live";
 
 function isNftCoreOp(operation: Operation): boolean {
   return (
@@ -324,10 +326,10 @@ function buildParentOperations(
 export function genericGetAccountShape(network: string, kind: string): GetAccountShape {
   return async (info, syncConfig) => {
     const { address, initialAccount, currency, derivationMode } = info;
-    const alpacaApi = await getAlpacaApi(currency.id, kind);
+    const coinModuleApi = await getCoinModuleApi(currency.id, kind);
     const bridgeApi = getBridgeApi(currency, network);
 
-    const chainSpecificValidation = bridgeApi.getChainSpecificRules?.();
+    const chainSpecificValidation = bridgeApi.getChainSpecificRules;
     if (chainSpecificValidation) {
       chainSpecificValidation.getAccountShape(address);
     }
@@ -339,8 +341,8 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       derivationMode,
     });
 
-    const validatorsPromise = alpacaApi.stakingSupported
-      ? alpacaApi
+    const validatorsPromise = coinModuleApi.stakingSupported
+      ? coinModuleApi
           .getValidators()
           .then(page =>
             page.items.map(validator => ({
@@ -356,8 +358,8 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       : Promise.resolve([]);
 
     const [blockInfo, balanceRes, validators] = await Promise.all([
-      alpacaApi.lastBlock(),
-      alpacaApi.getBalance(address, bridgeApi.balanceOptions),
+      coinModuleApi.lastBlock(),
+      coinModuleApi.getBalance(address, bridgeApi.balanceOptions),
       validatorsPromise,
     ]);
 
@@ -431,7 +433,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       unbondingsCount = unbondings.length;
     }
 
-    // Normalize pre-alpaca operations to the new accountId to keep UI rendering consistent
+    // Normalize pre-coin-framework operations to the new accountId to keep UI rendering consistent
     const oldOps = ((initialAccount?.operations || []) as OperationCommon[]).map(op =>
       op.accountId === accountId
         ? op
@@ -444,7 +446,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     const minHeight = syncFromScratch ? 0 : (oldOps[0]?.blockHeight ?? 0) + 1;
     const paginationCursor = cursor && !syncFromScratch ? cursor : undefined;
 
-    const { items: newCoreOps } = await alpacaApi.listOperations(address, {
+    const { items: newCoreOps } = await coinModuleApi.listOperations(address, {
       minHeight,
       cursor: paginationCursor,
       order: "desc",
@@ -493,22 +495,38 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         !newOpsWithSubs.some(newOp => pendingOp.hash === newOp.hash), // operation is not confirmed yet
     );
     const confirmedOperations =
-      alpacaApi.refreshOperations && operationsToRefresh?.length
-        ? await alpacaApi.refreshOperations(operationsToRefresh)
+      coinModuleApi.refreshOperations && operationsToRefresh?.length
+        ? await coinModuleApi.refreshOperations(operationsToRefresh)
         : [];
     const newOperations = [...confirmedOperations, ...newOpsWithSubs];
     const operations = mergeOps(syncFromScratch ? [] : oldOps, newOperations) as OperationCommon[];
     const stakingEnabled =
-      alpacaApi.stakingSupported ?? (delegationsCount > 0 || unbondingsCount > 0);
+      coinModuleApi.stakingSupported ?? (delegationsCount > 0 || unbondingsCount > 0);
     let stakingShape: {
       stakingResources?: StakingResources;
       stakingPositions?: StakingPositionOnAccount[];
     } = {};
+
+    const enrichedStakingResources =
+      stakingEnabled && bridgeApi.enrichStakingResources && stakingResources
+        ? await bridgeApi
+            .enrichStakingResources(currency, address, operations, stakingResources)
+            .catch(e => {
+              log(
+                "generic-coin-framework",
+                "enrichStakingResources failed, falling back to base staking resources",
+                { error: e instanceof Error ? e.message : String(e) },
+              );
+              return stakingResources;
+            })
+        : stakingResources;
+
     if (usesStakingPositions) {
       stakingShape = { stakingPositions };
     } else if (stakingEnabled) {
-      stakingShape = { stakingResources };
+      stakingShape = { stakingResources: enrichedStakingResources };
     }
+
     const res: Partial<Account> & {
       stakingResources?: StakingResources;
       stakingPositions?: StakingPositionOnAccount[];

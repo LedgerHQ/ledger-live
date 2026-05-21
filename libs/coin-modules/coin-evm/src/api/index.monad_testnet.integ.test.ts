@@ -1,5 +1,5 @@
 import type {
-  AlpacaApi,
+  CoinModuleApi,
   BufferTxData,
   MemoNotSupported,
 } from "@ledgerhq/coin-module-framework/api/types";
@@ -9,7 +9,7 @@ import { EvmConfig } from "../config";
 import { createApi } from "./index";
 
 describe("EVM Api (Monad Testnet)", () => {
-  let module: AlpacaApi<MemoNotSupported, BufferTxData> & BridgeApi;
+  let module: CoinModuleApi<MemoNotSupported, BufferTxData> & BridgeApi;
 
   beforeAll(() => {
     setupCalClientStore();

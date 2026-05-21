@@ -1,5 +1,6 @@
 import { act, renderHook } from "tests/testSetup";
 import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
+import { initialState as postOnboardingInitialState } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { PostOnboardingActionId, type PostOnboardingHubState } from "@ledgerhq/types-live";
 import i18n from "~/renderer/i18n/init";
@@ -33,6 +34,17 @@ describe("useFinishOnboardingDialogViewModel", () => {
     });
 
     expect(result.current.isOpen).toBe(true);
+  });
+
+  it("should mark hasBeenRedirectedToPostOnboarding when the dialog is open", () => {
+    const { store } = renderHook(() => useFinishOnboardingDialogViewModel(), {
+      initialState: {
+        dialogs: { FINISH_POST_ONBOARDING: true },
+        settings: { hasBeenRedirectedToPostOnboarding: false },
+      },
+    });
+
+    expect(store.getState().settings.hasBeenRedirectedToPostOnboarding).toBe(true);
   });
 
   it("should exclude buyCrypto from actions", () => {
@@ -153,5 +165,65 @@ describe("useFinishOnboardingDialogViewModel", () => {
       deviceModelId: DeviceModelId.nanoX,
       flow: "post-onboarding",
     });
+  });
+
+  it("should auto-close the dialog and dismiss the widget when all listed actions become complete", () => {
+    const actionsState = [
+      { id: PostOnboardingActionId.assetsTransfer, completed: true },
+      { id: PostOnboardingActionId.personalizeMock, completed: true },
+      { id: PostOnboardingActionId.buyCrypto, completed: false },
+    ] as PostOnboardingHubState["actionsState"];
+
+    mockedUsePostOnboardingHubState.mockReturnValue(buildHubState({ actionsState }));
+
+    const { store } = renderHook(() => useFinishOnboardingDialogViewModel(), {
+      initialState: {
+        dialogs: { FINISH_POST_ONBOARDING: true },
+        postOnboarding: { ...postOnboardingInitialState, postOnboardingInProgress: true },
+      },
+    });
+
+    expect(store.getState().dialogs.FINISH_POST_ONBOARDING).toBe(false);
+    expect(store.getState().postOnboarding.walletEntryPointDismissed).toBe(true);
+    expect(store.getState().postOnboarding.postOnboardingInProgress).toBe(false);
+    expect(jest.mocked(track)).toHaveBeenCalledWith("Post-onboarding widget completed", {
+      deviceModelId: DeviceModelId.nanoX,
+      flow: "post-onboarding",
+    });
+  });
+
+  it("should not auto-dismiss when the action list is empty", () => {
+    mockedUsePostOnboardingHubState.mockReturnValue(buildHubState({ actionsState: [] }));
+
+    const { store } = renderHook(() => useFinishOnboardingDialogViewModel(), {
+      initialState: {
+        dialogs: { FINISH_POST_ONBOARDING: true },
+        postOnboarding: { ...postOnboardingInitialState, postOnboardingInProgress: true },
+      },
+    });
+
+    expect(store.getState().dialogs.FINISH_POST_ONBOARDING).toBe(true);
+    expect(store.getState().postOnboarding.walletEntryPointDismissed).toBe(false);
+    expect(store.getState().postOnboarding.postOnboardingInProgress).toBe(true);
+  });
+
+  it("should not auto-dismiss while any listed action is still pending", () => {
+    const actionsState = [
+      { id: PostOnboardingActionId.assetsTransfer, completed: true },
+      { id: PostOnboardingActionId.personalizeMock, completed: false },
+    ] as PostOnboardingHubState["actionsState"];
+
+    mockedUsePostOnboardingHubState.mockReturnValue(buildHubState({ actionsState }));
+
+    const { store } = renderHook(() => useFinishOnboardingDialogViewModel(), {
+      initialState: {
+        dialogs: { FINISH_POST_ONBOARDING: true },
+        postOnboarding: { ...postOnboardingInitialState, postOnboardingInProgress: true },
+      },
+    });
+
+    expect(store.getState().dialogs.FINISH_POST_ONBOARDING).toBe(true);
+    expect(store.getState().postOnboarding.walletEntryPointDismissed).toBe(false);
+    expect(store.getState().postOnboarding.postOnboardingInProgress).toBe(true);
   });
 });

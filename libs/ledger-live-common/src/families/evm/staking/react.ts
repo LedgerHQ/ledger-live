@@ -1,6 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
-import { getValidators, getCachedValidators } from "@ledgerhq/coin-evm/staking/index";
-import type { StakingValidatorItem } from "@ledgerhq/coin-evm/types/index";
+import {
+  getValidators,
+  getCachedValidators,
+  mapDelegations,
+} from "@ledgerhq/coin-evm/staking/index";
+import type { StakingValidatorItem } from "@ledgerhq/types-live";
+import type { StakingAccount, StakingMappedDelegation } from "./types";
+import { getAccountCurrency } from "../../../account";
 
 export type EvmStakingValidatorsState = {
   validators: StakingValidatorItem[];
@@ -78,4 +84,20 @@ export function useEvmStakingValidators(
     loading: fetchState.loading,
     error: fetchState.error,
   };
+}
+
+export function useEvmFamilyPreloadData(currencyId: string): {
+  validators: StakingValidatorItem[];
+} {
+  const { validators } = useEvmStakingValidators(currencyId);
+  return { validators };
+}
+
+export function useEvmFamilyMappedDelegations(account: StakingAccount): StakingMappedDelegation[] {
+  const { validators } = useEvmFamilyPreloadData(account.currency.id);
+  const delegations = account.stakingResources?.delegations;
+  const unit = getAccountCurrency(account).units[0];
+  return useMemo(() => {
+    return mapDelegations(delegations ?? [], validators, unit);
+  }, [delegations, validators, unit]);
 }

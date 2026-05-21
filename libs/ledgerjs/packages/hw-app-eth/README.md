@@ -328,7 +328,7 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 #### signEIP712Message
 
-Sign an EIP-721 formatted message following the specification here:
+Sign an EIP-712 formatted message following the specification here:
 <https://github.com/LedgerHQ/app-ethereum/blob/develop/doc/ethapp.asc#sign-eth-eip-712>
 ⚠️ This method is not compatible with nano S (LNS). Make sure to use a try/catch to fallback on the signEIP712HashedMessage method ⚠️
 
@@ -341,7 +341,7 @@ Sign an EIP-721 formatted message following the specification here:
 ##### Examples
 
 ```javascript
-eth.signEIP721Message("44'/60'/0'/0/0", {
+eth.signEIP712Message("44'/60'/0'/0/0", {
 domain: {
 chainId: 69,
 name: "Da Domain",

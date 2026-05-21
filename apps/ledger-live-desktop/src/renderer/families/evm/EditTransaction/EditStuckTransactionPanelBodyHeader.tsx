@@ -1,6 +1,6 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { getStuckAccountAndOperation } from "@ledgerhq/live-common/operation";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import invariant from "invariant";
@@ -15,6 +15,7 @@ type Props = {
 const EditStuckTransactionPanelBodyHeader = ({ account, parentAccount }: Props) => {
   invariant(account, "account required");
 
+  const bridge = useAccountBridge(account, parentAccount);
   const mainAccount = getMainAccount(account, parentAccount);
   const { enabled: isEditEvmTxEnabled, params } = useFeature("editEvmTx") ?? {};
   const isCurrencySupported =
@@ -24,7 +25,7 @@ const EditStuckTransactionPanelBodyHeader = ({ account, parentAccount }: Props) 
     return null;
   }
   // check if there is a stuck transaction. If so, display a warning panel with "speed up or cancel" button
-  const stuckAccountAndOperation = getStuckAccountAndOperation(account, parentAccount);
+  const stuckAccountAndOperation = bridge.getStuckAccountAndOperation(account, parentAccount);
 
   return (
     <SharedEditStuckTransactionPanelBodyHeader

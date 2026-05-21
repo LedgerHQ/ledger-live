@@ -13,6 +13,9 @@ export class PostOnboarding extends AppPage {
   private postOnboardingHubActionRowPersonalizeMock = this.page.getByTestId(
     "postonboarding-action-row-personalizeMock",
   );
+  private postOnboardingHubActionRowRecoverMock = this.page.getByTestId(
+    "postonboarding-action-row-recoverMock",
+  );
 
   private completeActionButton = this.page.getByTestId("postonboarding-complete-action-button");
   private postOnboardingBannerEntryPoint = this.page.getByTestId(
@@ -42,6 +45,12 @@ export class PostOnboarding extends AppPage {
 
   async startPersonalizeMock() {
     await this.postOnboardingHubActionRowPersonalizeMock.click();
+    await this.completeActionButton.waitFor({ state: "visible" });
+    await this.page.waitForTimeout(300);
+  }
+
+  async startRecoverMock() {
+    await this.postOnboardingHubActionRowRecoverMock.click();
     await this.completeActionButton.waitFor({ state: "visible" });
     await this.page.waitForTimeout(300);
   }

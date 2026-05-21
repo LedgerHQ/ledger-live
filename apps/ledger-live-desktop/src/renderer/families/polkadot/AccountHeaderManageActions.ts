@@ -5,7 +5,8 @@ import {
   hasExternalStash,
   hasPendingOperationType,
 } from "@ledgerhq/live-common/families/polkadot/logic";
-import { getMainAccount, isAccountEmpty } from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import IconCoins from "~/renderer/icons/Coins";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
@@ -23,6 +24,7 @@ const AccountHeaderManageActions = ({ account, parentAccount, source = "Account 
   const { t } = useTranslation();
   const label = useGetStakeLabelLocaleBased();
   const dispatch = useDispatch();
+  const bridge = useAccountBridge(account, parentAccount);
   const mainAccount = getMainAccount(account, parentAccount);
   const { polkadotResources } = mainAccount;
   const hasBondedBalance = polkadotResources.lockedBalance && polkadotResources.lockedBalance.gt(0);
@@ -42,27 +44,25 @@ const AccountHeaderManageActions = ({ account, parentAccount, source = "Account 
               : `/account/${account.id}`,
         },
       });
+    } else if (bridge.isAccountEmpty(mainAccount)) {
+      dispatch(
+        openModal("MODAL_NO_FUNDS_STAKE", {
+          account: mainAccount,
+        }),
+      );
+    } else if (hasBondedBalance || hasPendingBondOperation) {
+      dispatch(
+        openModal("MODAL_POLKADOT_MANAGE", {
+          account: mainAccount,
+          source,
+        }),
+      );
     } else {
-      if (isAccountEmpty(mainAccount)) {
-        dispatch(
-          openModal("MODAL_NO_FUNDS_STAKE", {
-            account: mainAccount,
-          }),
-        );
-      } else if (hasBondedBalance || hasPendingBondOperation) {
-        dispatch(
-          openModal("MODAL_POLKADOT_MANAGE", {
-            account: mainAccount,
-            source,
-          }),
-        );
-      } else {
-        dispatch(
-          openModal("MODAL_POLKADOT_REWARDS_INFO", {
-            account: mainAccount,
-          }),
-        );
-      }
+      dispatch(
+        openModal("MODAL_POLKADOT_REWARDS_INFO", {
+          account: mainAccount,
+        }),
+      );
     }
   };
 

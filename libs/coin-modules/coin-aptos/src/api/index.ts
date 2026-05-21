@@ -1,6 +1,6 @@
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import {
-  AlpacaApi,
+  CoinModuleApi,
   Block,
   BlockInfo,
   CraftedTransaction,
@@ -26,7 +26,7 @@ import { getBalances } from "../logic/getBalances";
 import { validateAddress } from "../logic/validateAddress";
 import { AptosAPI } from "../network";
 
-export function createApi(config: AptosConfigApi): AlpacaApi {
+export function createApi(config: AptosConfigApi): CoinModuleApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   const client = new AptosAPI(config.aptosSettings);

@@ -1,5 +1,5 @@
 import {
-  AlpacaApi,
+  CoinModuleApi,
   BalanceOptions,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/types";
@@ -61,7 +61,7 @@ describe("createApi", () => {
   });
 
   it("should pass parameters correctly", async () => {
-    const api: AlpacaApi = createApi(mockTronConfig);
+    const api: CoinModuleApi = createApi(mockTronConfig);
     const intent: TransactionIntent = {
       intentType: "transaction",
       type: "send",
@@ -99,7 +99,7 @@ describe("createApi", () => {
   });
 
   it("should throw when limit > 200", async () => {
-    const api: AlpacaApi = createApi(mockTronConfig);
+    const api: CoinModuleApi = createApi(mockTronConfig);
     await expect(api.listOperations("address", { minHeight: 0, limit: 201 })).rejects.toThrow(
       "limit must be <= 200 for Tron (TronGrid API restriction)",
     );
@@ -107,7 +107,7 @@ describe("createApi", () => {
   });
 
   it("should not throw when limit is exactly 200", async () => {
-    const api: AlpacaApi = createApi(mockTronConfig);
+    const api: CoinModuleApi = createApi(mockTronConfig);
     await expect(api.listOperations("address", { minHeight: 0, limit: 200 })).resolves.toEqual({
       items: [],
       next: undefined,

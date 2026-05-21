@@ -96,7 +96,7 @@ describe("useProductTourDrawerViewModel", () => {
   });
 
   describe("closeProductTour", () => {
-    it("should close the drawer and track button_clicked event", () => {
+    it("should close the drawer and track modal_dismissed when dismissed via swipe or backdrop", () => {
       const { result } = renderHook(() => useProductTourDrawerViewModel(), {
         overrideInitialState: withFeatureEnabled,
       });
@@ -104,10 +104,100 @@ describe("useProductTourDrawerViewModel", () => {
       act(() => result.current.closeProductTour());
 
       expect(result.current.isDrawerOpen).toBe(false);
+      expect(track).toHaveBeenCalledWith("modal_dismissed", {
+        page: PAGE_TRACKING_PRODUCT_TOUR,
+        card: 1,
+      });
+    });
+
+    it("should not track modal_dismissed when invoked after the close button was pressed", () => {
+      const { result } = renderHook(() => useProductTourDrawerViewModel(), {
+        overrideInitialState: withFeatureEnabled,
+      });
+
+      act(() => result.current.onCloseButtonPress());
+      act(() => result.current.closeProductTour());
+
+      expect(track).not.toHaveBeenCalledWith(
+        "modal_dismissed",
+        expect.objectContaining({ page: PAGE_TRACKING_PRODUCT_TOUR }),
+      );
+    });
+
+    it("should track modal_dismissed again on a subsequent dismiss after a close button press", () => {
+      const { result } = renderHook(() => useProductTourDrawerViewModel(), {
+        overrideInitialState: withFeatureEnabled,
+      });
+
+      act(() => result.current.onCloseButtonPress());
+      act(() => result.current.closeProductTour());
+      act(() => result.current.closeProductTour());
+
+      expect(track).toHaveBeenCalledWith("modal_dismissed", {
+        page: PAGE_TRACKING_PRODUCT_TOUR,
+        card: 1,
+      });
+    });
+
+    it("should not track modal_dismissed when invoked after a CTA action", () => {
+      const { result } = renderHook(() => useProductTourDrawerViewModel(), {
+        overrideInitialState: withFeatureEnabled,
+      });
+
+      act(() => result.current.onPrimaryAction("stake"));
+      act(() => result.current.closeProductTour());
+
+      expect(track).not.toHaveBeenCalledWith(
+        "modal_dismissed",
+        expect.objectContaining({ page: PAGE_TRACKING_PRODUCT_TOUR }),
+      );
+    });
+
+    it("should not track modal_dismissed when invoked after completeProductTour", () => {
+      const { result } = renderHook(() => useProductTourDrawerViewModel(), {
+        overrideInitialState: withFeatureEnabled,
+      });
+
+      act(() => result.current.completeProductTour());
+      act(() => result.current.closeProductTour());
+
+      expect(track).not.toHaveBeenCalledWith(
+        "modal_dismissed",
+        expect.objectContaining({ page: PAGE_TRACKING_PRODUCT_TOUR }),
+      );
+    });
+
+    it("should not track modal_dismissed when invoked after the auto-close effect fires", () => {
+      const { result, store } = renderHook(() => useProductTourDrawerViewModel(), {
+        overrideInitialState: withFeatureEnabled,
+      });
+
+      act(() => {
+        store.dispatch(setProductTourCompleted(true));
+      });
+      act(() => result.current.closeProductTour());
+
+      expect(track).not.toHaveBeenCalledWith(
+        "modal_dismissed",
+        expect.objectContaining({ page: PAGE_TRACKING_PRODUCT_TOUR }),
+      );
+    });
+  });
+
+  describe("onCloseButtonPress", () => {
+    it("should close the drawer and track button_clicked with Close button", () => {
+      const { result } = renderHook(() => useProductTourDrawerViewModel(), {
+        overrideInitialState: withFeatureEnabled,
+      });
+
+      act(() => result.current.onSlideChange(2));
+      act(() => result.current.onCloseButtonPress());
+
+      expect(result.current.isDrawerOpen).toBe(false);
       expect(track).toHaveBeenCalledWith("button_clicked", {
         button: "Close",
         page: PAGE_TRACKING_PRODUCT_TOUR,
-        card: 1,
+        card: 3,
       });
     });
   });
@@ -189,12 +279,15 @@ describe("useProductTourDrawerViewModel", () => {
       });
     });
 
-    it('should dispatch setProductTourCompleted(true) and close drawer for "done" action', () => {
+  });
+
+  describe("completeProductTour", () => {
+    it("should dispatch setProductTourCompleted(true) and close drawer", () => {
       const { result, store } = renderHook(() => useProductTourDrawerViewModel(), {
         overrideInitialState: withFeatureEnabled,
       });
 
-      act(() => result.current.onPrimaryAction("done"));
+      act(() => result.current.completeProductTour());
 
       expect(result.current.isDrawerOpen).toBe(false);
       expect(productTourCompletedSelector(store.getState())).toBe(true);

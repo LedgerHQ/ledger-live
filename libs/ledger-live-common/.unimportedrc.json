@@ -3,6 +3,7 @@
     "src/account/helpers.ts",
     "src/account/index.ts",
     "src/account/serialization.ts",
+    "src/analytics/featureFlagHelpers/newSendFlow.ts",
     "src/analytics/featureFlagHelpers/wallet40.ts",
     "src/analyticsConsent/index.ts",
     "src/apps/filtering.ts",

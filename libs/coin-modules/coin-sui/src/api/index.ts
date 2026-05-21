@@ -1,6 +1,6 @@
 import { rejectBalanceOptions } from "@ledgerhq/coin-module-framework/api/getBalance/rejectBalanceOptions";
 import {
-  AlpacaApi,
+  CoinModuleApi,
   Balance,
   BalanceOptions,
   CraftedTransaction,
@@ -26,7 +26,7 @@ import {
   listOperations as logicListOperations,
 } from "../logic";
 
-export function createApi(config: SuiConfig): AlpacaApi {
+export function createApi(config: SuiConfig): CoinModuleApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {

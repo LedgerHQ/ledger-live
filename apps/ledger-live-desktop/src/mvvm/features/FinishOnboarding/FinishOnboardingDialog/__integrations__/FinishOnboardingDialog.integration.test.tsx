@@ -17,6 +17,11 @@ jest.mock("react-router", () => ({
   useNavigate: jest.fn(() => mockNavigate),
 }));
 
+/** Real `electron-store` is not usable in Jest. */
+jest.mock("~/renderer/store", () => ({
+  getStoreValue: jest.fn(),
+}));
+
 const mockedUseNavigate = jest.mocked(useNavigate);
 
 function postOnboardingActiveState(

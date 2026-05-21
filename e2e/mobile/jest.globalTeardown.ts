@@ -20,6 +20,7 @@ import { log } from "detox";
 import { Subject } from "rxjs";
 import { NativeElementHelpers } from "./helpers/elementHelpers";
 import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
+import { withTimeout } from "./utils/withTimeout";
 
 const ARTIFACT_ENV_PATH = path.resolve("artifacts/environment.properties");
 const USERDATA_DIR = path.resolve(__dirname, "userdata");
@@ -34,30 +35,6 @@ globalThis.webSocket = {
   e2eBridgeServer: new Subject(),
 };
 globalThis.pendingCallbacks = new Map<string, { callback: (data: string) => void }>();
-
-// Helper to wrap operations with a timeout to prevent CI hangs
-async function withTimeout<T>(
-  promise: Promise<T>,
-  timeoutMs: number,
-  operationName: string,
-): Promise<T | undefined> {
-  let timeoutId: ReturnType<typeof setTimeout>;
-  const timeoutPromise = new Promise<undefined>(resolve => {
-    timeoutId = setTimeout(() => {
-      log.warn(`${operationName} timed out after ${timeoutMs}ms, continuing...`);
-      resolve(undefined);
-    }, timeoutMs);
-  });
-
-  try {
-    const result = await Promise.race([promise, timeoutPromise]);
-    clearTimeout(timeoutId!);
-    return result;
-  } catch (err) {
-    clearTimeout(timeoutId!);
-    throw err;
-  }
-}
 
 export default async () => {
   if (process.env.CI && process.env.SHARD_INDEX === "1") {
@@ -88,8 +65,9 @@ export default async () => {
     }
   }
 
-  // default Detox teardown with timeout protection to prevent CI hangs from proper-lockfile issues
-  await withTimeout(globalTeardown(), 60_000, "globalTeardown");
+  // default Detox teardown with timeout protection to prevent CI hangs from proper-lockfile issues.
+  // Surface real failures (orphaned simulators, broken cleanup) instead of swallowing them.
+  await withTimeout(globalTeardown(), 60_000, "globalTeardown", { rethrow: true });
 
   // parallel file cleanups and force close any lingering connections
   await Promise.all([cleanupUserdata(), forceGarbageCollection()]);

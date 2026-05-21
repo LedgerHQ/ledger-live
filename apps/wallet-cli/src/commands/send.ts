@@ -145,7 +145,7 @@ async function runLiveSend({
 
 export default defineCommand({
   name: "send",
-  description: "Sign and broadcast a transaction (bridge only, no Alpaca)",
+  description: "Sign and broadcast a transaction",
   options: {
     account: accountOption,
     to: option(z.string().min(1, "Recipient address is required (--to <address>)"), {

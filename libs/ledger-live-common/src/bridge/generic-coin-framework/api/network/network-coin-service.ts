@@ -1,5 +1,5 @@
 import type {
-  AlpacaApi,
+  CoinModuleApi,
   AssetInfo,
   Balance,
   Block,
@@ -31,7 +31,7 @@ function adaptOp<T extends AssetInfo>(backendOp: Operation<T>): Operation<T> {
   };
 }
 
-const ALPACA_URL = "http://0.0.0.0:3000";
+const COIN_SERVICE_URL = "http://0.0.0.0:3000";
 
 const buildBroadcast = networkFamily =>
   async function broadcast(signedOperation: string): Promise<string> {
@@ -44,7 +44,7 @@ const buildBroadcast = networkFamily =>
       }
     >({
       method: "POST",
-      url: `${ALPACA_URL}/${networkFamily}/transaction/broadcast`,
+      url: `${COIN_SERVICE_URL}/${networkFamily}/transaction/broadcast`,
       data: {
         rawTransaction: signedOperation,
       },
@@ -61,7 +61,7 @@ const buildCombine = networkFamily =>
       unknown
     >({
       method: "POST",
-      url: `${ALPACA_URL}/${networkFamily}/transaction/combine`,
+      url: `${COIN_SERVICE_URL}/${networkFamily}/transaction/combine`,
       data: {
         raw_transaction: tx,
         signature: signature,
@@ -75,7 +75,7 @@ const buildEstimateFees = networkFamily =>
   async function estimateFees(intent: TransactionIntent<any>): Promise<FeeEstimation> {
     const { data } = await network<{ fee: string }, unknown>({
       method: "POST",
-      url: `${ALPACA_URL}/${networkFamily}/transaction/estimate`,
+      url: `${COIN_SERVICE_URL}/${networkFamily}/transaction/estimate`,
       data: {
         intent: {
           ...intent,
@@ -101,7 +101,7 @@ const buildValidateIntent = networkFamily =>
       unknown
     >({
       method: "POST",
-      url: `${ALPACA_URL}/${networkFamily}/transaction/validate`,
+      url: `${COIN_SERVICE_URL}/${networkFamily}/transaction/validate`,
       data: {
         transaction,
       },
@@ -113,7 +113,7 @@ const buildGetBalance = (networkFamily: string) =>
   async function getBalance(address: string): Promise<Balance[]> {
     const { data } = await network<Balance, unknown>({
       method: "GET",
-      url: `${ALPACA_URL}/${networkFamily}/account/${address}/balance`,
+      url: `${COIN_SERVICE_URL}/${networkFamily}/account/${address}/balance`,
     });
 
     return [
@@ -129,7 +129,7 @@ const buildGetNextSequence = (networkFamily: string) =>
   async function getNextSequence(address: string): Promise<bigint> {
     const { data } = await network<bigint, unknown>({
       method: "GET",
-      url: `${ALPACA_URL}/${networkFamily}/account/${address}/info`,
+      url: `${COIN_SERVICE_URL}/${networkFamily}/account/${address}/info`,
     });
 
     return data;
@@ -142,7 +142,7 @@ const buildListOperations = networkFamily =>
   ): Promise<Page<Operation<any>>> {
     const { data } = await network<{ operations: Operation<any>[] }, unknown>({
       method: "GET",
-      url: `${ALPACA_URL}/${networkFamily}/account/${address}/operations`,
+      url: `${COIN_SERVICE_URL}/${networkFamily}/account/${address}/operations`,
       data: {
         from: minHeight,
       },
@@ -154,7 +154,7 @@ const buildLastBlock = networkFamily =>
   async function lastBlock(): Promise<BlockInfo> {
     const { data } = await network<any, unknown>({
       method: "GET",
-      url: `${ALPACA_URL}/${networkFamily}/lastblock`,
+      url: `${COIN_SERVICE_URL}/${networkFamily}/lastblock`,
     });
     return {
       height: data.height,
@@ -167,7 +167,7 @@ const buildCraftTransaction = networkFamily =>
   async function craftTransaction(intent: TransactionIntent<any>): Promise<CraftedTransaction> {
     const { data } = await network<CraftedTransaction, unknown>({
       method: "POST",
-      url: `${ALPACA_URL}/${networkFamily}/transaction/encode`,
+      url: `${COIN_SERVICE_URL}/${networkFamily}/transaction/encode`,
       data: {
         intent: {
           ...intent,
@@ -178,7 +178,7 @@ const buildCraftTransaction = networkFamily =>
     return data;
   };
 
-export const getNetworkAlpacaApi = (networkFamily: string) =>
+export const getNetworkCoinModuleApi = (networkFamily: string) =>
   ({
     broadcast: buildBroadcast(networkFamily),
     combine: buildCombine(networkFamily),
@@ -216,4 +216,4 @@ export const getNetworkAlpacaApi = (networkFamily: string) =>
       throw new Error("validateAddress is not supported");
     },
     craftTransactionData,
-  }) satisfies AlpacaApi<any> & BridgeApi;
+  }) satisfies CoinModuleApi<any> & BridgeApi;

@@ -1,7 +1,7 @@
 import { Observable } from "rxjs";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { Account, DeviceId, SignOperationEvent, AccountBridge } from "@ledgerhq/types-live";
-import { getAlpacaApi } from "./api";
+import { getCoinModuleApi } from "./api";
 import { buildOptimisticOperation } from "./utils";
 import { Result } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { log } from "@ledgerhq/logs";
@@ -25,7 +25,7 @@ export const genericSignRawOperation =
   }): Observable<SignOperationEvent> =>
     new Observable(o => {
       async function main() {
-        const alpacaApi = await getAlpacaApi(account.currency.id, kind);
+        const coinModuleApi = await getCoinModuleApi(account.currency.id, kind);
         const signedInfo = await signerContext(deviceId, async signer => {
           const derivationPath = account.freshAddressPath;
           const { publicKey } = (await signer.getAddress(derivationPath)) as Result;
@@ -33,10 +33,10 @@ export const genericSignRawOperation =
           const sender = account.freshAddress;
 
           // TODO: should compute it and pass it down to craftTransaction (duplicate call right now)
-          const sequenceNumber = await alpacaApi.getNextSequence(sender);
+          const sequenceNumber = await coinModuleApi.getNextSequence(sender);
 
-          /* Craft unsigned blob via Alpaca */
-          const { transaction: unsigned } = await alpacaApi.craftRawTransaction(
+          /* Craft unsigned blob via coin-framework */
+          const { transaction: unsigned } = await coinModuleApi.craftRawTransaction(
             transaction,
             sender,
             publicKey,
@@ -55,7 +55,7 @@ export const genericSignRawOperation =
         o.next({ type: "device-signature-granted" });
 
         /* Combine payload + signature for broadcast */
-        const combined = await alpacaApi.combine(
+        const combined = await coinModuleApi.combine(
           signedInfo.unsigned,
           signedInfo.txnSig,
           signedInfo.publicKey,
@@ -66,7 +66,7 @@ export const genericSignRawOperation =
           signedInfo.sequence,
         );
         if (!operation.id) {
-          log("Generic alpaca", "buildOptimisticOperation", operation);
+          log("Generic coin-framework", "buildOptimisticOperation", operation);
         }
         // NOTE: we set the transactionSequenceNumber before on the operation
         // now that we create it in craftTransaction, we might need to return it back from craftTransaction also

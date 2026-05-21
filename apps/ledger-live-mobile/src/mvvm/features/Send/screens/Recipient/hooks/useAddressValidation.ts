@@ -26,7 +26,7 @@ import type {
   RecentAddress,
 } from "@ledgerhq/live-common/flows/send/recipient/types";
 import { normalizeLastUsedTimestamp } from "../utils/dateFormatter";
-import { useFormattedAccountBalance } from "./useFormattedAccountBalance";
+import { useFormattedAccountBalance } from "LLM/hooks/useFormattedAccountBalance";
 
 function isDomainLoading(domain: DomainServiceStatus): boolean {
   return domain.status === "loading" || domain.status === "queued";

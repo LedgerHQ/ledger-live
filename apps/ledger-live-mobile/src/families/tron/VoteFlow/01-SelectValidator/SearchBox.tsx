@@ -20,6 +20,7 @@ export default function SelectValidatorSearchBox({
         placeholder={t("common.search")}
         value={searchQuery}
         numberOfLines={1}
+        testID="delegation-search-pool-input"
       />
     </Box>
   );

@@ -14,6 +14,7 @@ export function useSwiper<T>(
   const swipeY = useSharedValue(0);
 
   const cards = useCardRotation(cardIndex, initialCards);
+  const canSwipeAway = initialCards.length > 1;
 
   const handleSwipeComplete = useCallback(() => {
     const nextIndex = (cardIndex + 1) % initialCards.length;
@@ -30,7 +31,7 @@ export function useSwiper<T>(
     swipeY.value = 0;
   }, [cardIndex, swipeX, swipeY]);
 
-  const gesture = createGesture(swipeX, swipeY, handleSwipeComplete);
+  const gesture = createGesture(swipeX, swipeY, handleSwipeComplete, canSwipeAway);
 
   return { cards, gesture, swipeX, swipeY };
 }

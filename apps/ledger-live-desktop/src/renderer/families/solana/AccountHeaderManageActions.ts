@@ -1,4 +1,5 @@
-import { getMainAccount, isAccountEmpty } from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useCallback } from "react";
 import { useDispatch } from "LLD/hooks/redux";
 import { openModal } from "~/renderer/actions/modals";
@@ -12,12 +13,13 @@ const AccountHeaderActions: SolanaFamily["accountHeaderManageActions"] = ({
   source,
 }) => {
   const dispatch = useDispatch();
+  const bridge = useAccountBridge(account, parentAccount);
   const label = useGetStakeLabelLocaleBased();
   const mainAccount = getMainAccount(account, parentAccount);
   const { solanaResources } = mainAccount;
 
   const onClick = useCallback(() => {
-    if (isAccountEmpty(account)) {
+    if (bridge.isAccountEmpty(account)) {
       dispatch(
         openModal("MODAL_NO_FUNDS_STAKE", {
           account,
@@ -36,7 +38,7 @@ const AccountHeaderActions: SolanaFamily["accountHeaderManageActions"] = ({
         ),
       );
     }
-  }, [account, dispatch, source, solanaResources, mainAccount]);
+  }, [account, bridge, dispatch, source, solanaResources, mainAccount]);
 
   if (account.type === "TokenAccount") {
     return null;

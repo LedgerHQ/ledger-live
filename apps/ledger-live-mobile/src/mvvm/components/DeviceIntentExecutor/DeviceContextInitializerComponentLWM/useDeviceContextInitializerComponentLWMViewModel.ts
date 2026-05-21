@@ -15,6 +15,8 @@ import { setLastSeenDeviceInfo } from "~/actions/settings";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { settingsStoreSelector } from "~/reducers/settings";
 import type { InitializationInput } from "../types";
+import { buildInitializerDevice } from "./utils/buildInitializerDevice";
+import type { InitializerDevice } from "./types";
 
 type UseDeviceContextInitializerComponentLWMViewModelParams = {
   connectionResult: DeviceConnectionResult;
@@ -23,17 +25,26 @@ type UseDeviceContextInitializerComponentLWMViewModelParams = {
   dependencies?: Partial<EnsureAppReadyUseCaseDependencies>;
 };
 
+type UseDeviceContextInitializerComponentLWMViewModelResult = {
+  state: EnsureAppReadyState;
+  device: InitializerDevice;
+};
+
+const LOADING_STATE: EnsureAppReadyState = { type: LoadingStateType.Loading };
+
 export function useDeviceContextInitializerComponentLWMViewModel({
   connectionResult,
   deviceInitializationInput,
   onContextInitialized,
   dependencies,
-}: UseDeviceContextInitializerComponentLWMViewModelParams): EnsureAppReadyState {
+}: UseDeviceContextInitializerComponentLWMViewModelParams): UseDeviceContextInitializerComponentLWMViewModelResult {
   const dispatch = useDispatch();
   const deprecationDismissedCurrencyNames =
     useSelector(settingsStoreSelector).deprecationDoNotRemind;
-  const [state, setState] = useState<EnsureAppReadyState>({ type: LoadingStateType.Loading });
+  const [state, setState] = useState<EnsureAppReadyState>(LOADING_STATE);
   const completedRef = useRef(false);
+
+  const device = useMemo(() => buildInitializerDevice(connectionResult), [connectionResult]);
 
   const sideEffects = useMemo<ConnectAppInitSideEffects>(
     () => ({
@@ -56,7 +67,7 @@ export function useDeviceContextInitializerComponentLWMViewModel({
   useEffect(() => {
     const { dmk, sessionId } = connectionResult;
     completedRef.current = false;
-    setState({ type: LoadingStateType.Loading });
+    setState(LOADING_STATE);
 
     const subscription = ensureAppReadyUseCase({
       dmk,
@@ -92,5 +103,5 @@ export function useDeviceContextInitializerComponentLWMViewModel({
     sideEffects,
   ]);
 
-  return state;
+  return { state, device };
 }

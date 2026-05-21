@@ -76,7 +76,7 @@ function eip1559Intent(
 function stakingIntent(
   intent: Partial<
     TransactionIntent<MemoNotSupported, BufferTxData> & {
-      mode: "delegate" | "redelegate" | "undelegate";
+      mode: "delegate" | "redelegate" | "undelegate" | "claimReward";
       valAddress?: string;
       dstValAddress?: string;
     }
@@ -542,6 +542,64 @@ describe("validateIntent", () => {
           fees: new NotEnoughBalance(),
         }),
       );
+    });
+
+    it("should return an error when not enough balance for a claim reward", async () => {
+      const res = await validateIntent(
+        stakingCurrency,
+        stakingIntent({
+          mode: "claimReward",
+          amount: 1n,
+          valAddress: "seivaloper1y82m5y3wevjneamzg0pmx87dzanyxzht0kepvn",
+        }),
+        [{ value: 50n, asset: { type: "native" } }],
+        {
+          value: 100n,
+          parameters: { gasLimit: 21000n, gasPrice: 1n },
+        },
+      );
+
+      expect(res.errors).toMatchObject({
+        fees: new NotEnoughBalance(),
+      });
+    });
+
+    it("should return an error when no validator specified for a claim reward", async () => {
+      const res = await validateIntent(
+        stakingCurrency,
+        stakingIntent({
+          mode: "claimReward",
+          amount: 1n,
+          valAddress: "",
+        }),
+        [{ value: 500n, asset: { type: "native" } }],
+        {
+          value: 100n,
+          parameters: { gasLimit: 21000n, gasPrice: 1n },
+        },
+      );
+
+      expect(res.errors).toMatchObject({
+        valAddress: new ValAddressRequired(),
+      });
+    });
+
+    it("should return no error for a valid claim reward", async () => {
+      const res = await validateIntent(
+        stakingCurrency,
+        stakingIntent({
+          mode: "claimReward",
+          amount: 1n,
+          valAddress: "seivaloper1y82m5y3wevjneamzg0pmx87dzanyxzht0kepvn",
+        }),
+        [{ value: 500n, asset: { type: "native" } }],
+        {
+          value: 100n,
+          parameters: { gasLimit: 21000n, gasPrice: 1n },
+        },
+      );
+
+      expect(res.errors).toMatchObject({});
     });
   });
 

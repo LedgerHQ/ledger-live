@@ -419,6 +419,16 @@ function resolveStakingAddresses(op: APIStakingType): {
   return { senders: stakerArr, recipients: bakerArr };
 }
 
+// Failed stake/unstake ops carry `requestedAmount` and no `amount` field;
+// `BigInt(undefined)` throws and breaks sync. Fall back per-shape.
+function resolveAmount(operation: ConvertibleOperation): bigint {
+  if (isAPIRevealType(operation) || isAPIDelegationType(operation)) return 0n;
+  if (isAPIStakingType(operation)) {
+    return BigInt(operation.amount ?? operation.requestedAmount ?? 0);
+  }
+  return BigInt(operation.amount ?? 0);
+}
+
 function resolveNormalizedType(
   operation: ConvertibleOperation,
   address: string,
@@ -484,8 +494,7 @@ function convertOperation(
         recipients: targetAddress ? [targetAddress] : [],
       };
 
-  const amount =
-    isAPIRevealType(operation) || isAPIDelegationType(operation) ? 0n : BigInt(operation.amount);
+  const amount = resolveAmount(operation);
 
   const fee =
     BigInt(operation.storageFee ?? 0) +

@@ -27,6 +27,13 @@ Fetches the latest CMC Crypto Fear and Greed value.
 **Cache/Update frequency**: Every 15 minutes
 **Plan credit use**: 1 credit per request
 
+### Altcoin Season Index Latest
+
+Fetches the latest Altcoin Season Index with yearly high/low context.
+
+**Cache/Update frequency**: Every 15 minutes
+**Plan credit use**: 1 credit per request
+
 ## Usage
 
 ### Setup
@@ -44,23 +51,38 @@ const store = configureStore({
 });
 ```
 
-### Using the Hook
+### Using the Hooks
 
 ```typescript
-import { useGetFearAndGreedLatestQuery } from "@ledgerhq/live-common/cmc-client";
+import {
+  useGetFearAndGreedLatestQuery,
+  useGetAltcoinSeasonIndexLatestQuery,
+} from "@ledgerhq/live-common/cmc-client";
 
 function FearAndGreedIndicator() {
-  const { data, error, isLoading, isFetching, isError } = useGetFearAndGreedLatestQuery();
+  const { data, isLoading, isError } = useGetFearAndGreedLatestQuery();
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error loading data</div>;
 
   return (
     <div>
-      <h2>Fear & Greed Index</h2>
       <p>Value: {data?.value}</p>
       <p>Classification: {data?.classification}</p>
-      {isFetching && <span>Refreshing...</span>}
+    </div>
+  );
+}
+
+function AltcoinSeasonIndicator() {
+  const { data, isLoading, isError } = useGetAltcoinSeasonIndexLatestQuery();
+
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error loading data</div>;
+
+  return (
+    <div>
+      <p>Index: {data?.value}</p>
+      <p>Market Cap: {data?.altcoinMarketcap}</p>
     </div>
   );
 }
@@ -103,14 +125,25 @@ const { data, refetch } = useGetFearAndGreedLatestQuery(undefined, {
 const handleRefresh = () => refetch();
 ```
 
-## Response Structure
+## Response Structures
 
-The hook returns a simplified, transformed response:
+The hooks return simplified, transformed responses:
+
+### Fear and Greed
 
 ```typescript
 {
-  value: number; // Fear & Greed index value (0-100)
+  value: number;          // 0-100
   classification: string; // "Extreme Fear", "Fear", "Neutral", "Greed", "Extreme Greed"
+}
+```
+
+### Altcoin Season Index
+
+```typescript
+{
+  value: number;           // 0-100
+  altcoinMarketcap: number;
 }
 ```
 

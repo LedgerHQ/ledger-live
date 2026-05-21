@@ -118,6 +118,8 @@ export type TransactionReceipt = {
   gasPrice?: string;
   status: string | number | null;
   logs: LogWithAddress[];
+  /** Tx envelope type per EIP-2718, hex-prefixed (e.g. "0x2" EIP-1559). */
+  type?: string;
 };
 
 /**
@@ -140,16 +142,18 @@ export type TransactionInfo = {
   contractAddress?: string;
   /** ERC20 Transfer events extracted from receipt logs */
   erc20Transfers: ERC20Transfer[];
+  /** Tx envelope type per EIP-2718 (decimal), e.g. 2 for EIP-1559. */
+  type?: number;
 };
 
 export type PrefetchedBlockTransaction = Pick<
   TransactionInfo,
-  "hash" | "value" | "from" | "to" | "input"
+  "hash" | "value" | "from" | "to" | "input" | "gasPrice"
 >;
 
 export type BlockReceiptInfo = Pick<
   TransactionInfo,
-  "hash" | "gasUsed" | "gasPrice" | "status" | "erc20Transfers" | "contractAddress"
+  "hash" | "gasUsed" | "gasPrice" | "status" | "erc20Transfers" | "contractAddress" | "type"
 >;
 
 export type BlockByHeightResult = {

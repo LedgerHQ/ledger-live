@@ -48,7 +48,6 @@ type MachineContext<JobState, Input, ExtraProps> = {
 
 type MachineEvent<JobState, Input, ExtraProps> =
   | { type: "DEVICE_CONNECTED"; result: DeviceConnectionResult }
-  | { type: "CONNECTION_ERROR"; error: unknown }
   | { type: "DEVICE_INITIALIZED"; context: DeviceExtractedContext }
   | { type: "DEVICE_DISCONNECTED" }
   | { type: "RETRY" }
@@ -76,7 +75,7 @@ type JobInvokeInput<JobState, Input> = {
 // ---- Machine factory ----
 
 function createExecutorMachine<JobState, Input, ExtraProps>() {
-  /** @xstate-layout N4IgpgJg5mDOIC5QBEwDcCWBjMBJAdgC5hECiAHmFgK6ED2ATgHQTrZgDCd++VhG3AMTJSANVwdSAfQ4B5AHLzSHACqlkAbQAMAXUSgADnVgZ+3fSHKIAjNYAcAVibWAbHZcBmAOxeAnG60HOwAaEABPGy1rJg8PXzsAJi0PawAWa18vVIcAXxzQ1EwcAmIyShp6ZlYizm5eLDN8QTlFZRVcBSlSACVu2W7tPSQQIxNGiysEL1imB2y43wSEl2yXUIiEAFprBJjrZMyHLV8HbwdXPIK2YqISQgoqWkYmLDq+AXxSBgZGQW7SFTdACagwso1MHwmiC8SyYdhh-kyXkSvi0IXCiG2gSY8VSHlSXi0gUSSw8lxAhXYJTuDwqz2qVPwEIAhgAbDAAL2ZjWEYgk0lw8lw7QAggAZXAALXUoOG4PGw0mtjsvmcsQcLlRdh2KvRGxc0yYLnsLgc0zsHjsKPJlJupXu5SeVWueCZ-DZnO5H0EAGUAVJBWp5CpZYZjBDzIqbKk8TEHA5fKkEtZ46bTetELFUrMtAaUjCElarTaXdSyo9KixS26MB6uTyROJJFJkLgfS0lKoZboweGFaBJhbswl0saPElk14HBmEOqjVpUo5NXZsqcEiWamWHRX6dWWez697-oLhbhxVLSKGRn3IVGECnrB4mEkk-ivHmdjOEjNUosvBk7ECXMCXXfIKWre1aSdJgMFucsKm9CBuDAGD8DQOgAGsUNtV1IMdStYLwisPgQWD0KwL1uEGK95VvAcbBfJgCViXxEyCXx7C8GdbGsLxnx8FZHCtFwllAq5Nzg7c6WYQiaXw70wG+Z4DFZbkADNGAAWyYHCtyggjJP0kiyLoCjGmons5RvSN6KmDwXHnJYUxVFwVjSGd-wc78Unic5Eg8Y4N0ZIjpNQkLaG9Rt+RbNsOzabshjDMY6MsRAh2fUdHwnXjfxndiYnfexxxWXMVSCu05J3GTDPkoQ-RUANg1IYMaOs-AoQQeIHMCd8V181EfBnFcHKOLJEm1FVzjE8CJPCgy5u9H0VFkAAFRqgxDSykojdq7x2HZnwyBwEkyNiXC0LiMXvQJokLdJjqSXjvxccrcMq0LZPgiKhGPIVRQlaVWuSmzUqmXwn0m5IiQWOYEiG1IRou9JcQ4wrXr0-Dnk++4lIYP4AWBIGdo6-9dlcxJPBOC60jhq79gNOFXDmVy-wtMkwN0mqqrCmlcd9f1A2azbEuvYHdts9w7GfbVzp2E74xXbjcz4mXmc1BJkQ8XIOYg97oOxr4fjx37T3PQGttF4m7ziPj7CCQl-HsIS8vSZwDQuwksiOF6ddmvWCIgVkwH5hrBZai3aJBpVRyNY0NXidxHwJbjbCcHwpwp3NEy19GuY+wPg6i5tW3bBROzUTQI7ajqmbjQtMhjJIzUVumNa0OECVRLWVRjQLfeC-2sYL-GT3+i8if7UGUyiJi8TxXjHHSRc8vsJhpnfTJNSiLXUjyMD8DoVh4GGTm5sYXsxZr3i65VLIkx6luNm2cGmJXezdXHbwyv7iqvsrBkcBcB4O8EGkdxZTwyKqAk0x9jp3sIEGcmx4g4nOPGfwaC4ieFzmfZgrxgENA+Ibc+VlL53ibnCZupoMieCTO4Ia0R5htwyMsX8+JsGD2dBJfcnpJ5gJriOBypoThuB8AuZYM5shSw1o+eyDcUwwl3j-N6f8sZ52+uAvhe0MjtxOD4GM8IAoIw8okWYsQzE00JMsdhKjqqQVxhfK2tlYi7ELG-HwCQNQ7ETB5H8IkPbg3cFrdm4kB42JggXBxk8lTJifPsJYfhu5ThONxNuMQRyLkXIBNcwSZqhKkvrNCHoICyAMIpSiGjq53l-GnScAVYiEnHNYIa5wUGFUfNPS0dg945CAA */
+  /** @xstate-layout N4IgpgJg5mDOIC5QBEwDcCWBjMBJAdgC5hECiAHmFgK6ED2ATgHQTrZgDCd++VhG3AMTJSANVwdSAfQ4B5AHLzSHACqlkAbQAMAXUSgADnVgZ+3fSHKIAjNYAcAVibWAbHZcBmAOxeAnG60HOwAaEABPGy1rJg8PXzsAJi0PawAWa18vVIcAXxzQ1EwcAmIyShp6ZlYisGQMWCxuXixiCEEAJVIVdoBNbT0kECMTM3wLKwQ7XyctVPTfeKSEjwcvUIiEBJcmTN9vVJd7VK1HXPyQQvYSkkIKKlpGFjZi-FMMAEMAGwwAL3fR4RiCTSXDyXAqXAAQQAMrgAFrqfoWYZvcyDCa2KbOWIOFy+E7WBJTELhRAuLweJiHdyrDx2OmJXx5ArPPBEG53CqPapXV78L6-f4CfCCADKXSkoLU8hUSMGKNG4xsc0pKwcvlSCWsDlxuvWiFiqSYDi05JSXgSRLs1uZF1Z1zK90qTxqBDeAr+AJE4kkUmQuFFckUyjUml0yOMqLG6MQ9KNCXShw8S2sXgc+oQOKps0ceLs2QcydtlxepVu5QeVXtfI+309wo6pFB4KhsIRcsMkcVMYQ2uslKSmo8qS8ZsJGeWlNSvgSXgydkCppHCWL1bLnMrTAw7MdFQbEG4YC3+DQdAA1keS2z1xXndub07hQht6esELuP0O0Mu8Klb3B0wI6xAs2RTPYaykr2theEws6jqkjjWi4lorucV4OuWTqPPeHK3g2YAMAwjwGJ8-wAGaMAAtkw6E7phXLMDhu60E+L50G+oyfuG8o-mioATBS2wuFolralMLguOkqQZnO2yTvODj2MsWhMmha64VhjF0RuXpAr6-qBgoSiqIi3GdiMv49nGsGJv2KZZL4GZBL4MSjvYyaSaaUyrq62m3thfmPkI4oqJKMqkDKX4KpZ-GIPE2yBKO+bxOqWg+Bm+bbCaWSJHY9jTISPm8g+DHHiVLHBSosgAAphdKspmd+Fl8ZYNhagksEZA4CS7NkwkQRs1iBNERLpN1SSpssLhFaWGmlUx9EVSKnTNhCMLwqQUW8dGsUIH4lJTCaHhaMkCwOJqGUHMaaXzMlqaHDN15zZuC2kIRjCNt0fSNdFLUCYSVJuFscTZWkCQZkN5JMHlLjnRJM5ePSHiPRhOkBeu70MGKEpShFDUDOZUZ-u4diwTDUSWtMQTSZBkMwTDcN4rO9JnCyvnlXe2mY42q2thtW3NTtrWZpkziIV4KnUohTnpM45JpRLWQmtNans89d4QJ8YDY6FuORT921-mkriA9qebuP2I4Q7YTg+GmiTCXiqQrCjgXzZr2vesCfoBkGxmhgLRM9q4TgrESmRzEkqz5hDs5aNDI74isUxzCprsc9hHs82Ca1tptBuC0bJrRCqzupo4UkkhsimkxSo6ZHiUQrKkeTnPgdCsPAgy0RnDARoXwepjE3VTFkmqJTHkEALT2Ns9JbLYImuKOyzp+r3KslwPB8DFTVB7ttgLIBPgpArc4Lum0-xDsik6v4d9xJ4a-Mc6PI4HUDRNHwkD9-vwuZUwG6w5VgajpIjDMR8th2BPvmLUhw0rP0Wq-as7o6zviFr9IWGIExCXVLiaBEtNQuAzKBWCc5Yh4iyNqC0LdVbFXXlpDmu9MFGwyPHaYPg5jQOOgcGSiRjSxEEWDCWWxEFo0YRyTGv9uy7ViB1K0zsfAJFxISDUMlYiAWQgrPY7gVjIzobNF+mctbSN3tg-szgRKzj2EENM0xY4SxiAmBCCEL7Jn0WzehRitJoAFBAWQBgCLoNMX9RA05bZagpMkbwyQtQZUUjfNy-ZtTJBtK3IAA */
   return setup({
     types: {
       context: {} as MachineContext<JobState, Input, ExtraProps>,
@@ -123,24 +122,16 @@ function createExecutorMachine<JobState, Input, ExtraProps>() {
               deviceConnectionResult: ({ event }) => event.result,
             }),
           },
-          CONNECTION_ERROR: {
-            target: "connectionError",
-            actions: assign({ error: ({ event }) => event.error }),
-          },
         },
       },
-      connectionError: {
+      deviceDisconnected: {
         entry: ({ context }) => {
-          log(LOG_TYPE, "state: connectionError", { error: context.error });
-          context.listeners.onExecutorStateChanged({
-            type: "connectingDeviceError",
-            error: context.error,
-          });
+          log(LOG_TYPE, "state: deviceDisconnected");
+          context.listeners.onExecutorStateChanged({ type: "deviceDisconnected" });
         },
         on: {
           RETRY: {
             target: "deviceConnection",
-            actions: assign({ error: () => null }),
           },
         },
       },
@@ -162,7 +153,7 @@ function createExecutorMachine<JobState, Input, ExtraProps>() {
             actions: assign({ currentIntent: ({ event }) => event.intent }),
           },
           DEVICE_DISCONNECTED: {
-            target: "connectionError",
+            target: "deviceDisconnected",
             actions: "resetConnection",
           },
           REINITIALIZE: {
@@ -218,7 +209,7 @@ function createExecutorMachine<JobState, Input, ExtraProps>() {
         },
         on: {
           DEVICE_DISCONNECTED: {
-            target: "connectionError",
+            target: "deviceDisconnected",
             actions: "resetConnection",
           },
           SET_INTENT: {
@@ -239,6 +230,12 @@ function createExecutorMachine<JobState, Input, ExtraProps>() {
       intentError: {
         entry: ({ context }) => {
           log(LOG_TYPE, "state: intentError", { error: context.error });
+          console.warn(
+            "[DeviceIntentExecutor] intent observable emitted an uncaught error. " +
+              "Intents are expected to handle their own errors; this generic fallback " +
+              "should not be reached in a correct implementation.",
+            context.error,
+          );
           context.listeners.onExecutorStateChanged({
             type: "executingIntentError",
             error: context.error,
@@ -278,7 +275,7 @@ function createExecutorMachine<JobState, Input, ExtraProps>() {
             }),
           },
           DEVICE_DISCONNECTED: {
-            target: "connectionError",
+            target: "deviceDisconnected",
             actions: "resetConnection",
           },
           REINITIALIZE: {
@@ -295,6 +292,12 @@ function createExecutorMachine<JobState, Input, ExtraProps>() {
           log(LOG_TYPE, "state: invalidOperation — THIS IS A BUG", {
             error: context.error,
           });
+          console.warn(
+            "[DeviceIntentExecutor] executor entered an invalid state. This signals " +
+              "a mistake in how the executor is integrated by the caller (e.g. swapping " +
+              "intents while one is still running).",
+            context.error,
+          );
           context.listeners.onExecutorStateChanged({
             type: "invalidOperation",
             error: context.error,
@@ -309,7 +312,6 @@ function createExecutorMachine<JobState, Input, ExtraProps>() {
 
 export interface DeviceIntentExecutorStateMachine<JobState, Input, ExtraProps> {
   deviceConnected(result: DeviceConnectionResult): void;
-  connectionError(error: unknown): void;
   deviceContextInitialized(context: DeviceExtractedContext): void;
   deviceDisconnected(): void;
   retry(): void;
@@ -347,11 +349,6 @@ export class DefaultDeviceIntentExecutorStateMachine<JobState, Input, ExtraProps
   deviceConnected(result: DeviceConnectionResult): void {
     log(LOG_TYPE, "event: deviceConnected");
     this.actor.send({ type: "DEVICE_CONNECTED", result });
-  }
-
-  connectionError(error: unknown): void {
-    log(LOG_TYPE, "event: connectionError", { error });
-    this.actor.send({ type: "CONNECTION_ERROR", error });
   }
 
   deviceContextInitialized(context: DeviceExtractedContext): void {

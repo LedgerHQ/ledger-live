@@ -6,7 +6,7 @@ export const store = configureStore({
     featureFlags: featureFlagsReducer,
   },
   middleware: getDefaultMiddleware =>
-    getDefaultMiddleware().concat(createFeatureFlagsMiddleware({})),
+    getDefaultMiddleware().concat(createFeatureFlagsMiddleware({ resolutionConfig: {} })),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

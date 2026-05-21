@@ -8,30 +8,16 @@ import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import { useCompletionScreenViewModel } from "../useCompletionScreenViewModel";
 import { SettingsState } from "~/renderer/reducers/settings";
 
-const mockNavigate = jest.fn();
-const mockOpenFinishOnboardingDialog = jest.fn();
 const mockRedirectToPostOnboarding = jest.fn();
 
 jest.mock("~/renderer/hooks/useAutoRedirectToPostOnboarding", () => ({
-  ...jest.requireActual("~/renderer/hooks/useAutoRedirectToPostOnboarding"),
   useRedirectToPostOnboardingCallback: jest.fn(),
 }));
 
 jest.mock("react-router", () => ({
   ...jest.requireActual("react-router"),
   useLocation: jest.fn().mockReturnValue({ state: { seedConfiguration: "new_seed" } }),
-  useNavigate: () => mockNavigate,
 }));
-
-jest.mock(
-  "LLD/features/FinishOnboarding/FinishOnboardingDialog/hooks/useFinishOnboardingDialog",
-  () => ({
-    __esModule: true,
-    default: () => ({
-      handleOpen: mockOpenFinishOnboardingDialog,
-    }),
-  }),
-);
 
 const getInitialState = (modelId: DeviceModelId = DeviceModelId.stax): Partial<State> => ({
   devices: {
@@ -44,8 +30,6 @@ describe("useCompletionScreenViewModel", () => {
   beforeEach(() => {
     jest.useFakeTimers();
     mockRedirectToPostOnboarding.mockClear();
-    mockNavigate.mockClear();
-    mockOpenFinishOnboardingDialog.mockClear();
     jest
       .mocked(useRedirectToPostOnboardingCallback)
       .mockReturnValue(mockRedirectToPostOnboarding);
@@ -68,8 +52,6 @@ describe("useCompletionScreenViewModel", () => {
       });
 
       expect(mockRedirectToPostOnboarding).toHaveBeenCalledTimes(1);
-      expect(mockNavigate).not.toHaveBeenCalled();
-      expect(mockOpenFinishOnboardingDialog).not.toHaveBeenCalled();
 
       const { settings } = store.getState() as { settings: SettingsState };
       expect(settings.hasCompletedOnboarding).toBe(true);
@@ -79,7 +61,7 @@ describe("useCompletionScreenViewModel", () => {
     }),
   );
 
-  it("should navigate home and open finish-onboarding dialog when Wallet40 finish widget is enabled", () => {
+  it("should redirect via useRedirectToPostOnboardingCallback when Wallet40 finish widget is enabled", () => {
     const deviceId = DeviceModelId.stax;
     const initialState = {
       ...getInitialState(deviceId),
@@ -97,8 +79,6 @@ describe("useCompletionScreenViewModel", () => {
       jest.advanceTimersByTime(6000);
     });
 
-    expect(mockRedirectToPostOnboarding).not.toHaveBeenCalled();
-    expect(mockNavigate).toHaveBeenCalledWith("/");
-    expect(mockOpenFinishOnboardingDialog).toHaveBeenCalledTimes(1);
+    expect(mockRedirectToPostOnboarding).toHaveBeenCalledTimes(1);
   });
 });

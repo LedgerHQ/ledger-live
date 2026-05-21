@@ -11,14 +11,15 @@ import type { ProductTourPrimaryAction } from "../const";
 
 interface SlideFooterButtonViewModelProps {
   readonly onPrimaryAction: (action: ProductTourPrimaryAction) => void;
+  readonly onComplete: () => void;
 }
 
 export const useSlideFooterButtonViewModel = ({
   onPrimaryAction,
+  onComplete,
 }: SlideFooterButtonViewModelProps) => {
   const { t } = useTranslation();
-  const { totalSlides, currentIndex, goToNext, goToSlide, scrollProgressSharedValue } =
-    useSlidesContext();
+  const { totalSlides, currentIndex, goToNext, scrollProgressSharedValue } = useSlidesContext();
 
   const lastIndex = totalSlides - 1;
   const isLastSlide = currentIndex >= lastIndex;
@@ -27,21 +28,21 @@ export const useSlideFooterButtonViewModel = ({
     PRODUCT_TOUR_SLIDES[currentIndex] ?? PRODUCT_TOUR_SLIDES[PRODUCT_TOUR_LAST_SLIDE_INDEX];
 
   const primaryLabel = t(currentSlide.primaryLabelKey);
-  const secondaryLabel = isLastSlide ? t("productTour.done.cta") : t("common.continue");
+  const secondaryLabel = isLastSlide ? t("common.done") : t("common.continue");
 
   const handleContinue = useCallback(() => {
-    if (isLastSlide) {
-      goToSlide(0);
-    } else {
-      goToNext();
-    }
-
     track("button_clicked", {
-      button: isLastSlide ? "Start again" : "Continue",
+      button: isLastSlide ? "Done" : "Continue",
       page: PAGE_TRACKING_PRODUCT_TOUR,
       card: currentIndex + 1,
     });
-  }, [isLastSlide, currentIndex, goToNext, goToSlide]);
+
+    if (isLastSlide) {
+      onComplete();
+    } else {
+      goToNext();
+    }
+  }, [isLastSlide, currentIndex, goToNext, onComplete]);
 
   const handleCTA = useCallback(() => {
     onPrimaryAction(currentSlide.primaryAction);

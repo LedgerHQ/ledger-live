@@ -20,7 +20,7 @@ const getTokenFromAssetMock = jest.fn();
 const chainSpecificGetAccountShapeMock = jest.fn();
 const refreshOperationsMock = jest.fn();
 jest.mock("../api", () => ({
-  getAlpacaApi: () => ({
+  getCoinModuleApi: () => ({
     lastBlock: (...a: any[]) => lastBlockMock(...a),
     getBalance: (...a: any[]) => getBalanceMock(...a),
     listOperations: (...a: any[]) => listOperationsMock(...a),
@@ -33,9 +33,9 @@ jest.mock("../bridge", () => ({
 }));
 const defaultBridgeApi = () => ({
   getTokenFromAsset: getTokenFromAssetMock,
-  getChainSpecificRules: () => ({
+  getChainSpecificRules: {
     getAccountShape: (...a: any[]) => chainSpecificGetAccountShapeMock(...a),
-  }),
+  },
 });
 getBridgeApiMock.mockImplementation(defaultBridgeApi);
 
@@ -1199,7 +1199,7 @@ describe("genericGetAccountShape", () => {
 
     test("Case 1: simple native transfer between EOAs", async () => {
       setupSpecTest();
-      const alpacaAddress1 = toCoreOp({
+      const operationsAddress1 = toCoreOp({
         type: "OUT",
         senders: ["address1"],
         recipients: ["address2"],
@@ -1207,7 +1207,7 @@ describe("genericGetAccountShape", () => {
         fee: 1,
         feesPayer: "address1",
       });
-      const alpacaAddress2 = toCoreOp({
+      const operationsAddress2 = toCoreOp({
         type: "IN",
         senders: ["address1"],
         recipients: ["address2"],
@@ -1216,7 +1216,7 @@ describe("genericGetAccountShape", () => {
         feesPayer: "address1",
       });
       listOperationsMock.mockImplementation((addr: string) => {
-        const items = addr === "address1" ? [alpacaAddress1] : [alpacaAddress2];
+        const items = addr === "address1" ? [operationsAddress1] : [operationsAddress2];
         return Promise.resolve({ items, next: undefined });
       });
       mockNoSubAccounts();
@@ -1251,7 +1251,7 @@ describe("genericGetAccountShape", () => {
 
     test("Case 2: native self send from EOA", async () => {
       setupSpecTest();
-      // AlpacaApi returns 2 ops (OUT, IN) for self-sends per spec. getAccountShape uses them as-is.
+      // CoinModuleApi returns 2 ops (OUT, IN) for self-sends per spec. getAccountShape uses them as-is.
       const outOp = toCoreOp({
         type: "OUT",
         senders: ["address1"],
@@ -1295,7 +1295,7 @@ describe("genericGetAccountShape", () => {
     test("Case 3: simple ERC20 transfer between EOAs", async () => {
       setupSpecTest();
       const usdtContract = "0xUSDTContract";
-      const alpacaAddr1 = toCoreOp({
+      const operationsAddr1 = toCoreOp({
         type: "OUT",
         senders: ["address1"],
         recipients: ["address2"],
@@ -1304,7 +1304,7 @@ describe("genericGetAccountShape", () => {
         feesPayer: "address1",
         asset: { type: "erc20", assetReference: usdtContract, assetOwner: "address1" },
       });
-      const alpacaAddr2 = toCoreOp({
+      const operationsAddr2 = toCoreOp({
         type: "IN",
         senders: ["address1"],
         recipients: ["address2"],
@@ -1314,7 +1314,7 @@ describe("genericGetAccountShape", () => {
         asset: { type: "erc20", assetReference: usdtContract, assetOwner: "address2" },
       });
       listOperationsMock.mockImplementation((addr: string) => {
-        const items = addr === "address1" ? [alpacaAddr1] : [alpacaAddr2];
+        const items = addr === "address1" ? [operationsAddr1] : [operationsAddr2];
         return Promise.resolve({ items, next: undefined });
       });
       mockErc20SubAccounts(usdtContract);
@@ -1373,7 +1373,7 @@ describe("genericGetAccountShape", () => {
     test("Case 4: ERC20 self send from EOA", async () => {
       setupSpecTest();
       const usdtContract = "0xUSDTContract";
-      // AlpacaApi returns 2 ops (OUT, IN) for self-sends per spec.
+      // CoinModuleApi returns 2 ops (OUT, IN) for self-sends per spec.
       const outOp = toCoreOp({
         type: "OUT",
         senders: ["address1"],
@@ -1413,7 +1413,7 @@ describe("genericGetAccountShape", () => {
 
     test("Case 5: ETH transfer from smart contract", async () => {
       setupSpecTest();
-      const alpacaAddr1 = toCoreOp({
+      const operationsAddr1 = toCoreOp({
         type: "OUT",
         senders: ["address1"],
         recipients: ["contract1"],
@@ -1421,7 +1421,7 @@ describe("genericGetAccountShape", () => {
         fee: 1,
         feesPayer: "address1",
       });
-      const alpacaAddr2Internal = toCoreOp({
+      const operationsAddr2Internal = toCoreOp({
         type: "IN",
         senders: ["contract1"],
         recipients: ["address2"],
@@ -1431,7 +1431,7 @@ describe("genericGetAccountShape", () => {
         internal: true,
       });
       listOperationsMock.mockImplementation((addr: string) => {
-        const items = addr === "address1" ? [alpacaAddr1] : [alpacaAddr2Internal];
+        const items = addr === "address1" ? [operationsAddr1] : [operationsAddr2Internal];
         return Promise.resolve({ items, next: undefined });
       });
       mockNoSubAccounts();

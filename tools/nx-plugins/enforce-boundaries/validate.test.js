@@ -197,6 +197,86 @@ test("multi-tag source emits one deduped violation per edge", () => {
   assert.ok(v[0].sourceTags.includes("type:domain-api"));
 });
 
+test("feature-platform -> feature-platform is allowed", () => {
+  const graph = buildGraph(
+    [
+      { name: "a", tags: ["scope:features", "type:feature-platform"] },
+      { name: "b", tags: ["scope:features", "type:feature-platform"] },
+    ],
+    [{ source: "a", target: "b" }],
+  );
+  assert.deepEqual(findViolations(graph), []);
+});
+
+test("feature-platform -> feature-flow is forbidden (platform sits below flow)", () => {
+  const graph = buildGraph(
+    [
+      { name: "a", tags: ["scope:features", "type:feature-platform"] },
+      { name: "b", tags: ["scope:features", "type:feature-flow"] },
+    ],
+    [{ source: "a", target: "b" }],
+  );
+  const v = findViolations(graph);
+  assert.equal(v.length, 1);
+  assert.equal(v[0].sourceName, "a");
+  // scope:features rule is satisfied (target carries scope:features) — only
+  // type:feature-platform fails, so just that tag accrues to the violation.
+  assert.deepEqual(v[0].sourceTags, ["type:feature-platform"]);
+});
+
+test("feature-flow -> feature-platform is allowed", () => {
+  const graph = buildGraph(
+    [
+      { name: "a", tags: ["scope:features", "type:feature-flow"] },
+      { name: "b", tags: ["scope:features", "type:feature-platform"] },
+    ],
+    [{ source: "a", target: "b" }],
+  );
+  assert.deepEqual(findViolations(graph), []);
+});
+
+test("feature-flow -> feature-flow is allowed (sibling flows can compose)", () => {
+  const graph = buildGraph(
+    [
+      { name: "a", tags: ["scope:features", "type:feature-flow"] },
+      { name: "b", tags: ["scope:features", "type:feature-flow"] },
+    ],
+    [{ source: "a", target: "b" }],
+  );
+  assert.deepEqual(findViolations(graph), []);
+});
+
+test("feature-platform -> domain / shared is allowed", () => {
+  const graph = buildGraph(
+    [
+      { name: "a", tags: ["scope:features", "type:feature-platform"] },
+      { name: "b", tags: ["scope:domain", "type:domain-api"] },
+      { name: "c", tags: ["scope:shared"] },
+    ],
+    [
+      { source: "a", target: "b" },
+      { source: "a", target: "c" },
+    ],
+  );
+  assert.deepEqual(findViolations(graph), []);
+});
+
+test("feature-platform -> legacy libs is forbidden", () => {
+  const graph = buildGraph(
+    [
+      { name: "a", tags: ["scope:features", "type:feature-platform"] },
+      { name: "b", tags: ["scope:libs", "scope:libs-non-ui"] },
+    ],
+    [{ source: "a", target: "b" }],
+  );
+  const v = findViolations(graph);
+  assert.equal(v.length, 1);
+  // Both scope:features and type:feature-platform rules fire and both fail —
+  // findViolations dedupes per edge and accumulates both source tags.
+  assert.ok(v[0].sourceTags.includes("scope:features"));
+  assert.ok(v[0].sourceTags.includes("type:feature-platform"));
+});
+
 test("missing tags default to empty array (no crash)", () => {
   const graph = {
     nodes: {

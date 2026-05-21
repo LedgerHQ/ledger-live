@@ -5,6 +5,7 @@ import { JsonFormatter } from "./json";
 import type { DiscoveredAccount, AccountDescriptor } from "../models";
 import { BalanceSchema, OperationSchema } from "../models";
 import { XPUB, ETH_ADDR } from "../../shared/accountDescriptor/test-fixtures";
+import { USDT_TOKEN_INFO } from "../../test/helpers/cal-fixtures";
 
 const stubStore = {} as CryptoAssetsStore;
 
@@ -18,6 +19,7 @@ const btcDiscovered: DiscoveredAccount = {
     path: "m/84h/0h/0h",
   },
   freshAddress: "bc1qexample",
+  label: "bitcoin-native-1",
 };
 
 const ethDiscovered: DiscoveredAccount = {
@@ -30,6 +32,7 @@ const ethDiscovered: DiscoveredAccount = {
     path: "m/44h/60h/0h/0/0",
   },
   freshAddress: ETH_ADDR,
+  label: "ethereum-1",
 };
 
 const btcDescriptor: AccountDescriptor = {
@@ -40,6 +43,47 @@ const btcDescriptor: AccountDescriptor = {
   derivationMode: "native_segwit",
   index: 2,
 };
+
+describe("HumanFormatter.formatTokenInfo", () => {
+  const formatter = new HumanFormatter(stubStore);
+
+  it("includes the token id, ticker, name, contract, parent, type, decimals", () => {
+    const out = formatter.formatTokenInfo(USDT_TOKEN_INFO);
+    expect(out).toContain("ethereum/erc20/usd_tether__erc20_");
+    expect(out).toContain("USDT");
+    expect(out).toContain("Tether USD");
+    expect(out).toContain("0xdac17f958d2ee523a2206206994597c13d831ec7");
+    expect(out).toContain("ethereum");
+    expect(out).toContain("erc20");
+    expect(out).toContain("6");
+  });
+
+  it("does not render a delisted warning by default", () => {
+    expect(formatter.formatTokenInfo(USDT_TOKEN_INFO)).not.toMatch(/delisted/i);
+  });
+
+  it("renders a delisted warning when the flag is set", () => {
+    const out = formatter.formatTokenInfo({ ...USDT_TOKEN_INFO, delisted: true });
+    expect(out).toMatch(/delisted/i);
+  });
+});
+
+describe("JsonFormatter.token", () => {
+  const json = new JsonFormatter({} as unknown as HumanFormatter);
+
+  it("returns the TokenInfo payload as-is", () => {
+    expect(json.token(USDT_TOKEN_INFO)).toEqual(USDT_TOKEN_INFO);
+  });
+
+  it("omits delisted when absent on input", () => {
+    expect("delisted" in json.token(USDT_TOKEN_INFO)).toBe(false);
+  });
+
+  it("preserves delisted=true when set", () => {
+    const out = json.token({ ...USDT_TOKEN_INFO, delisted: true });
+    expect(out.delisted).toBe(true);
+  });
+});
 
 describe("HumanFormatter.formatError", () => {
   it("returns message for Error instances", () => {
@@ -59,26 +103,22 @@ describe("HumanFormatter.formatError", () => {
 describe("HumanFormatter.formatDiscoveredAccount", () => {
   const formatter = new HumanFormatter(stubStore);
 
-  it("contains the network name", () => {
-    expect(formatter.formatDiscoveredAccount(btcDiscovered)).toContain("bitcoin");
+  it("contains the session label", () => {
+    expect(formatter.formatDiscoveredAccount(btcDiscovered)).toContain("bitcoin-native-1");
   });
 
   it("contains the fresh address", () => {
     expect(formatter.formatDiscoveredAccount(btcDiscovered)).toContain("bc1qexample");
   });
 
-  it("contains the serialized V1 descriptor", () => {
+  it("does not leak the serialized V1 descriptor", () => {
     const out = formatter.formatDiscoveredAccount(btcDiscovered);
-    expect(out).toContain(`account:1:utxo:bitcoin:main:${XPUB}:m/84h/0h/0h`);
-  });
-
-  it("extracts account index from path (index 0)", () => {
-    expect(formatter.formatDiscoveredAccount(btcDiscovered)).toContain("#0");
+    expect(out).not.toContain(`account:1:utxo:bitcoin:main:${XPUB}:m/84h/0h/0h`);
   });
 
   it("works for address-type (ethereum)", () => {
     const out = formatter.formatDiscoveredAccount(ethDiscovered);
-    expect(out).toContain("ethereum");
+    expect(out).toContain("ethereum-1");
     expect(out).toContain(ETH_ADDR);
   });
 });
@@ -100,11 +140,11 @@ describe("HumanFormatter.formatAccountDescriptor", () => {
 });
 
 describe("JsonFormatter.discoveredAccounts", () => {
-  it("returns serialized V1 strings", () => {
+  it("returns label + freshAddress objects (no descriptor)", () => {
     const result = JsonFormatter.discoveredAccounts([btcDiscovered, ethDiscovered]);
     expect(result).toEqual([
-      `account:1:utxo:bitcoin:main:${XPUB}:m/84h/0h/0h`,
-      `account:1:address:ethereum:main:${ETH_ADDR}:m/44h/60h/0h/0/0`,
+      { label: "bitcoin-native-1", freshAddress: "bc1qexample" },
+      { label: "ethereum-1", freshAddress: ETH_ADDR },
     ]);
   });
 

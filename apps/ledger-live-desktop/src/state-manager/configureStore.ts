@@ -29,7 +29,11 @@ const customCreateStore = ({ state, dbMiddleware, analyticsMiddleware }: Props) 
             getAnalyticsConsent: (state: State) => trackingEnabledSelector(state),
           }),
         )
-        .concat(createFeatureFlagsMiddleware({ platform: "desktop", appVersion: __APP_VERSION__ })),
+        .concat(
+          createFeatureFlagsMiddleware({
+            resolutionConfig: { platform: "desktop", appVersion: __APP_VERSION__ },
+          }),
+        ),
     devTools: __DEV__,
   });
   return store;

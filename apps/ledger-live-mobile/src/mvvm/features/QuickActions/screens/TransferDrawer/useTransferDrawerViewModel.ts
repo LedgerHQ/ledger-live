@@ -7,7 +7,7 @@ import { QrCode, ArrowUp, Bank } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { NavigatorName, ScreenName } from "~/const";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { languageSelector, readOnlyModeEnabledSelector } from "~/reducers/settings";
-import { accountsCountSelector, areAccountsEmptySelector } from "~/reducers/accounts";
+import { accountsCountSelector, useAreAccountsEmpty } from "~/reducers/accounts";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { resolveRemoteCopy } from "@ledgerhq/live-common/featureFlags/remoteABTesting/resolveRemoteCopy";
 import { track } from "~/analytics";
@@ -39,7 +39,7 @@ export const useTransferDrawerViewModel = (): TransferDrawerViewModel => {
 
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const hasAnyAccounts = useSelector(accountsCountSelector) > 0;
-  const hasFunds = !useSelector(areAccountsEmptySelector) && hasAnyAccounts;
+  const hasFunds = !useAreAccountsEmpty() && hasAnyAccounts;
 
   const { handleOpenReceiveDrawer } = useOpenReceiveDrawer({
     sourceScreenName,

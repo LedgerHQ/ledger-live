@@ -2,13 +2,14 @@ import BigNumber from "bignumber.js";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getFormattedFeeFields } from "@ledgerhq/coin-evm/editTransaction/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { getStuckAccountAndOperation } from "@ledgerhq/live-common/operation";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import React from "react";
 import { render, screen, withFlagOverrides } from "tests/testSetup";
 import EditStuckTransactionPanelBodyHeader from "../EditStuckTransactionPanelBodyHeader";
 import StepFees, { StepFeesFooter } from "../steps/StepFees";
 import { StepSummaryFooter } from "../steps/StepSummaryFooter";
 import type { StepProps } from "../types";
+import evmFamily from "../../index";
 
 jest.mock("@ledgerhq/coin-evm/editTransaction/index", () => ({
   ...jest.requireActual("@ledgerhq/coin-evm/editTransaction/index"),
@@ -20,10 +21,14 @@ jest.mock("@ledgerhq/live-common/account/index", () => ({
   getMainAccount: jest.fn(),
 }));
 
-jest.mock("@ledgerhq/live-common/operation", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/operation"),
-  getStuckAccountAndOperation: jest.fn(),
+jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
+  useAccountBridge: jest.fn(),
 }));
+
+const mockGetStuckAccountAndOperation = jest.fn();
+(useAccountBridge as jest.Mock).mockReturnValue({
+  getStuckAccountAndOperation: mockGetStuckAccountAndOperation,
+});
 
 jest.mock("~/renderer/components/SpeedUpCancel/SharedStepFees", () => ({
   SharedStepFees: ({
@@ -188,7 +193,7 @@ describe("EVM EditTransaction components", () => {
   });
 
   it("EditStuckTransactionPanelBodyHeader forwards feature/status to shared header", () => {
-    (getStuckAccountAndOperation as jest.Mock).mockReturnValue({
+    mockGetStuckAccountAndOperation.mockReturnValue({
       operation: {},
       account,
       parentAccount: undefined,
@@ -199,5 +204,23 @@ describe("EVM EditTransaction components", () => {
     });
 
     expect(screen.getByTestId("shared-stuck-header")).toHaveTextContent("true-true-true");
+  });
+
+  describe("family.handlesEditTransaction", () => {
+    const mainAccount = { ...account, currency: { ...account.currency, family: "evm", id: "ethereum" } };
+    const operation = { transactionRaw: { type: 2 } } as never;
+    const featureFlags = { evm: { enabled: true, supportedCurrencyIds: ["ethereum"] } };
+
+    it("returns null when the bridge marks the operation as non-editable", () => {
+      const bridge = { isEditableOperation: jest.fn().mockReturnValue(false) } as never;
+      const result = evmFamily.handlesEditTransaction!({ account, parentAccount: undefined, mainAccount, operation, bridge, featureFlags });
+      expect(result).toBeNull();
+    });
+
+    it("returns modal config when the bridge marks the operation as editable", () => {
+      const bridge = { isEditableOperation: jest.fn().mockReturnValue(true) } as never;
+      const result = evmFamily.handlesEditTransaction!({ account, parentAccount: undefined, mainAccount, operation, bridge, featureFlags });
+      expect(result).toEqual(expect.objectContaining({ modalName: "MODAL_EVM_EDIT_TRANSACTION" }));
+    });
   });
 });

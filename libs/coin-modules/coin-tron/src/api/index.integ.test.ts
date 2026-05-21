@@ -1,5 +1,5 @@
 import { randomBytes } from "crypto";
-import type { AlpacaApi } from "@ledgerhq/coin-module-framework/api/index";
+import type { CoinModuleApi } from "@ledgerhq/coin-module-framework/api/index";
 import dotenv from "dotenv";
 import { TronWeb, providers } from "tronweb";
 import { createTronWeb } from "../logic/utils";
@@ -24,7 +24,7 @@ const wallet = {
  * Testnet faucet: https://shasta.tronex.io/
  */
 describe("API", () => {
-  let module: AlpacaApi;
+  let module: CoinModuleApi;
   let tronWeb: TronWeb;
 
   beforeAll(() => {

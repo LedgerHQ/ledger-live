@@ -1,17 +1,30 @@
 import React from "react";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+import { useProductTourSlideItemViewModel } from "../hooks/useProductTourSlideItemViewModel";
 
-type ProductTourSlideItemProps = {
-  title: string;
-  subtitle: string;
-};
+interface ProductTourSlideItemProps {
+  readonly slideIndex: number;
+}
 
-export function ProductTourSlideItem({ title, subtitle }: ProductTourSlideItemProps) {
+export function ProductTourSlideItem({ slideIndex }: ProductTourSlideItemProps) {
+  const { title, subtitle, lottieSrc, shouldAutoplay } = useProductTourSlideItemViewModel({
+    slideIndex,
+  });
+
   return (
     <div className="flex size-full flex-col">
       <div
-        className="flex w-full shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-muted/10"
-        style={{ height: 240, marginTop: -24 }}
-      />
+        className="flex w-full shrink-0 items-center justify-center overflow-hidden"
+        style={{ height: 208 }}
+      >
+        <DotLottieReact
+          src={lottieSrc}
+          loop={true}
+          autoplay={shouldAutoplay}
+          layout={{ fit: "contain" }}
+          style={{ width: 208, height: 208 }}
+        />
+      </div>
 
       <div
         className="flex flex-1 flex-col items-center px-20"

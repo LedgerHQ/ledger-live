@@ -6,7 +6,6 @@ import type {
   AssetInfo,
   Balance,
   Operation as CoreOperation,
-  MapMemo,
   StakingOperation,
   TransactionIntent,
   TxData,
@@ -22,7 +21,6 @@ import type {
   GenericTransactionRaw,
   OperationCommon,
 } from "./types";
-import type { StellarMemo } from "@ledgerhq/coin-stellar/types/model";
 import { craftTransactionData as defaultCraftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
 
 type BigNumberToBigIntDeep<T> = T extends BigNumber
@@ -106,11 +104,13 @@ function isDelegationMode(mode: GenericTransaction["mode"]): mode is StakingOper
   );
 }
 
-type GenericAlpacaMemo = { type: string; value?: string };
-type GenericAlpacaTxData = { type: string; value?: unknown };
-type GenericAlpacaTransactionIntent = TransactionIntent & {
-  memo?: GenericAlpacaMemo;
-  data?: GenericAlpacaTxData;
+type GenericCoinFrameworkMemo =
+  | { type: string; value?: string }
+  | { type: "map"; memos: Map<string, string> };
+type GenericCoinFrameworkTxData = { type: string; value?: unknown };
+type GenericCoinFrameworkTransactionIntent = TransactionIntent & {
+  memo?: GenericCoinFrameworkMemo;
+  data?: GenericCoinFrameworkTxData;
   mode?: StakingOperation;
   valAddress?: string;
   dstValAddress?: string;
@@ -119,7 +119,7 @@ type GenericAlpacaTransactionIntent = TransactionIntent & {
 function getDelegationIntentFields(
   delegationMode: StakingOperation | undefined,
   transaction: GenericTransaction,
-): Partial<Pick<GenericAlpacaTransactionIntent, "mode" | "valAddress" | "dstValAddress">> {
+): Partial<Pick<GenericCoinFrameworkTransactionIntent, "mode" | "valAddress" | "dstValAddress">> {
   return {
     ...(delegationMode !== undefined && transaction.valAddress
       ? { mode: delegationMode, valAddress: transaction.valAddress }
@@ -225,7 +225,7 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
     value = bnFees;
   } else if (
     op.asset.type === "native" &&
-    ["OUT", "FEES", "DELEGATE", "UNDELEGATE"].includes(opType)
+    ["OUT", "FEES", "DELEGATE", "UNDELEGATE", "REDELEGATE"].includes(opType)
   ) {
     value = new BigNumber(op.value.toString()).plus(bnFees);
   } else {
@@ -268,7 +268,15 @@ function defaultComputeIntentType(transaction: GenericTransaction): string {
   const mode = modeRemap[transaction.mode] ?? transaction.mode;
 
   if (
-    ["changeTrust", "send", "send-legacy", "send-eip1559", "stake", "unstake", "finalize_unstake"].includes(mode)
+    [
+      "changeTrust",
+      "send",
+      "send-legacy",
+      "send-eip1559",
+      "stake",
+      "unstake",
+      "finalize_unstake",
+    ].includes(mode)
   )
     return mode;
 
@@ -303,14 +311,14 @@ export function transactionToIntent(
   transaction: GenericTransaction,
   computeIntentType?: (transaction: GenericTransaction) => string,
   craftTransactionData?: (intent: TransactionIntent) => TxData,
-): GenericAlpacaTransactionIntent {
+): GenericCoinFrameworkTransactionIntent {
   const intentType = (computeIntentType ?? defaultComputeIntentType)(transaction);
   const isStaking = ["stake", "unstake", "finalize_unstake"].includes(intentType);
   const delegationMode = isDelegationMode(transaction.mode) ? transaction.mode : undefined;
   const isDelegation = delegationMode !== undefined;
-  const amount = isStaking ? 0n : fromBigNumberToBigInt(transaction.amount, 0n);
-  const useAllAmount = isStaking || !!transaction.useAllAmount;
-  const res: GenericAlpacaTransactionIntent = {
+  const amount = fromBigNumberToBigInt(transaction.amount, 0n);
+  const useAllAmount = !!transaction.useAllAmount;
+  const res: GenericCoinFrameworkTransactionIntent = {
     intentType: isStaking || isDelegation ? "staking" : "transaction",
     type: intentType,
     sender: account.freshAddress,
@@ -341,7 +349,12 @@ export function transactionToIntent(
     };
   }
 
-  if (transaction.memoType && transaction.memoValue) {
+  if (typeof transaction.tag === "number") {
+    res.memo = {
+      type: "map",
+      memos: new Map([["destinationTag", String(transaction.tag)]]),
+    };
+  } else if (transaction.memoType && transaction.memoValue) {
     res.memo = {
       type: transaction.memoType,
       value: transaction.memoValue,
@@ -560,42 +573,3 @@ export const buildOptimisticOperation = (
   }
   return operation;
 };
-
-/**
- * Applies memo information to transaction intent
- * Handles both destination tags (XRP-like) and Stellar-style memos
- */
-export function applyMemoToIntent(
-  transactionIntent: TransactionIntent<any>,
-  transaction: GenericTransaction,
-): TransactionIntent<any> {
-  // Handle destination tag memo (for XRP-like chains)
-  if (typeof transaction.tag === "number") {
-    const txWithMemoTag = transactionIntent as TransactionIntent<MapMemo<string, string>>;
-    const txMemo = String(transaction.tag);
-
-    txWithMemoTag.memo = {
-      type: "map",
-      memos: new Map(),
-    };
-    txWithMemoTag.memo.memos.set("destinationTag", txMemo);
-
-    return txWithMemoTag;
-  }
-
-  // Handle Stellar-style memo
-  if (transaction.memoType && transaction.memoValue) {
-    const txWithMemo = transactionIntent as TransactionIntent<StellarMemo>;
-    const txMemoType = String(transaction.memoType);
-    const txMemoValue = String(transaction.memoValue);
-
-    txWithMemo.memo = {
-      type: txMemoType as "NO_MEMO" | "MEMO_TEXT" | "MEMO_ID" | "MEMO_HASH" | "MEMO_RETURN",
-      value: txMemoValue,
-    };
-
-    return txWithMemo;
-  }
-
-  return transactionIntent;
-}
