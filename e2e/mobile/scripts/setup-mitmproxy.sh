@@ -61,6 +61,22 @@ if [[ -z "${ADB:-}" ]]; then
   fi
 fi
 
+# Portable replacement for `mapfile -t arr < <(cmd)` because macOS ships
+# bash 3.2 (no mapfile builtin). Writes each line of stdin into the
+# named global array; resets the array first.
+#   read_lines_into <array_name> <<EOF
+#   $(some_command)
+#   EOF
+# usage in this file is via process substitution: `read_lines_into arr < <(cmd)`.
+read_lines_into() {
+  local __target=$1
+  eval "$__target=()"
+  local __line
+  while IFS= read -r __line; do
+    eval "$__target+=(\"\$__line\")"
+  done
+}
+
 PROXY_HOST="${MITM_HOST:-10.0.2.2}"
 DEFAULT_PROXY_PORT="${MITM_PORT:-8080}"
 # Hosts that should bypass the proxy. The emulator's loopback to the
@@ -88,7 +104,7 @@ wait_for_emulators() {
   local last_devices=""
 
   while true; do
-    mapfile -t serials < <(list_emulator_serials)
+    read_lines_into serials < <(list_emulator_serials)
     if (( ${#serials[@]} >= 1 )); then
       local all_booted=1
       for serial in "${serials[@]}"; do
@@ -218,7 +234,7 @@ parse_serial_port() {
 # ---- subcommands ----
 
 cmd_list_serials() {
-  mapfile -t serials < <(wait_for_emulators)
+  read_lines_into serials < <(wait_for_emulators)
   if (( ${#serials[@]} == 0 )); then
     exit 1
   fi
@@ -241,7 +257,7 @@ cmd_clear() {
     clear_emulator "$OPT_SERIAL"
     return
   fi
-  mapfile -t serials < <(list_emulator_serials)
+  read_lines_into serials < <(list_emulator_serials)
   if (( ${#serials[@]} == 0 )); then
     echo "No emulators connected — nothing to clear." >&2
     return
@@ -258,7 +274,7 @@ cmd_clear() {
 cmd_default() {
   require_cert_and_openssl
   echo "→ Discovering booted emulators (timeout ${WAIT_TIMEOUT}s)..."
-  mapfile -t serials < <(wait_for_emulators)
+  read_lines_into serials < <(wait_for_emulators)
   if (( ${#serials[@]} == 0 )); then
     exit 1
   fi
