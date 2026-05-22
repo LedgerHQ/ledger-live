@@ -27,7 +27,14 @@ export function EmptyAddressState() {
   return (
     <div
       data-testid="contacts-management-empty-addresses"
-      className="flex flex-col items-center justify-center gap-24 w-full py-48"
+      // `flex-1` so the container grows to fill the vertical space
+      // left under the identity block in `ContactDetails` (which is a
+      // `flex-col h-full` parent). Without it, `justify-center` has no
+      // height to distribute and the content sits flush against the
+      // identity block. `items-center` + `justify-center` then place
+      // the title + button at the geometric centre of the available
+      // empty area (Figma frame 13922:11258).
+      className="flex flex-1 flex-col items-center justify-center gap-24 w-full"
     >
       <p className="heading-5-semi-bold text-base text-center">
         {t("contactsManagement.emptyAddresses.title")}
