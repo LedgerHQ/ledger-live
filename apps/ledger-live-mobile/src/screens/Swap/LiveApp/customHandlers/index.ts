@@ -17,6 +17,7 @@ import { saveSwapToHistory } from "./saveSwapToHistory";
 import { useCustomExchangeHandlers } from "~/components/WebPTXPlayer/CustomHandlers";
 import { ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useSwapDeviceIntentPocOrchestration } from "LLM/features/SwapDeviceIntentPOC";
 
 export type NavigationType = Omit<NavigationProp<ReactNavigation.RootParamList>, "getState"> & {
   getState(): NavigationState | undefined;
@@ -110,15 +111,24 @@ export function useSwapCustomHandlers(
     handleLoaderDrawer: handleShowLoadingDrawer,
   });
 
+  const swapPoc = useSwapDeviceIntentPocOrchestration({ accounts });
+
   const swapCustomHandlers = {
     "custom.getFee": getFee(accounts, navigation),
     "custom.getTransactionByHash": getTransactionByHash(accounts),
     "custom.saveSwapToHistory": saveSwapToHistory(accounts, dispatch),
     "custom.swapRedirectToHistory": navigateToSwapHistory,
+    "custom.swap": swapPoc.customSwapHandler,
   };
 
-  return {
+  const customHandlers = {
     ...walletAPISwapHandlers,
     ...swapCustomHandlers,
   } as WalletAPICustomHandlers;
+
+  return {
+    customHandlers,
+    swapPocExecutorProps: swapPoc.executorProps,
+    swapPocEnabled: swapPoc.enabled,
+  };
 }

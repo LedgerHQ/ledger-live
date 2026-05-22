@@ -318,6 +318,32 @@ export type Quote = {
   formatted?: FormattedQuoteValues;
 };
 
+/**
+ * Parameters for the new device-intent-based swap entry point
+ * (`custom.swap`). Currently only the EVM token-approval step is wired on
+ * the wallet side; the submit-swap and broadcast-swap steps will reuse the
+ * same input shape as they come online.
+ */
+export type CustomSwapParams = {
+  /** Quote selected by the live app (from `custom.exchange.getQuotes`). */
+  quote: Quote;
+  /** Wallet-API account id of the sending account. */
+  fromAccountId: string;
+  /** Wallet-API account id of the receiving account. */
+  toAccountId: string;
+  /** Provider name (e.g. `"uniswap"`). */
+  provider: string;
+};
+
+/**
+ * Result of `custom.swap`. Only the approval transaction hash is reported
+ * for now; submit/broadcast hashes will be added when those steps land.
+ */
+export type CustomSwapResult = {
+  /** Hash of the broadcast-and-confirmed approval transaction, when one was needed. */
+  approvalTxHash?: string;
+};
+
 /** Error rows returned next to quotes (swap API error objects). */
 export type QuoteProviderError = {
   code: string;

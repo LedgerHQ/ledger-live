@@ -67,7 +67,6 @@ export async function getQuotes(
   context: GetQuotesContext,
 ): Promise<GetQuotesResponse> {
   const { rawQuotes, errors } = await fetchQuotes(args, context.counterValueCurrency);
-
   // Drop every successful quote when the pair is on the wallet-side blocklist
   // and skip the provider-data fetch (CAL + CDN) entirely since nothing would
   // be normalized. Aggregator errors still flow through so consumers can

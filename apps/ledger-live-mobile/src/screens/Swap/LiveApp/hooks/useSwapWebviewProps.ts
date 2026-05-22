@@ -38,7 +38,11 @@ export function useSwapWebviewProps({ manifest, params }: UseSwapWebviewPropsPar
   // to avoid complexifying the logic in the shared custom handlers.
   const accounts = useSelector(flattenAccountsSelector);
   const dispatch = useDispatch();
-  const customSwapHandlers = useSwapCustomHandlers(manifest, accounts, dispatch);
+  const {
+    customHandlers: customSwapHandlers,
+    swapPocExecutorProps,
+    swapPocEnabled,
+  } = useSwapCustomHandlers(manifest, accounts, dispatch);
   const customDeeplinkHandlers = useDeeplinkCustomHandlers();
   const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
     return {
@@ -121,5 +125,7 @@ export function useSwapWebviewProps({ manifest, params }: UseSwapWebviewPropsPar
   return {
     customHandlers,
     inputs,
+    swapPocExecutorProps,
+    swapPocEnabled,
   };
 }
