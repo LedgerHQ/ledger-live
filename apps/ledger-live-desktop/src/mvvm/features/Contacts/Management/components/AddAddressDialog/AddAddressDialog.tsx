@@ -192,10 +192,14 @@ export function AddAddressDialog({ open, onOpenChange, contact }: Props) {
         )}
         <DialogBody
           scrollbarWidth="auto"
-          // Each step component provides its own internal padding (px-24
-          // pt-16 pb-24) per the Figma spacing tokens, so the body wrapper
-          // stays plain.
-          className="flex flex-col"
+          // Override Lumen's intrinsic `px-24` to `px-16` so the body
+          // matches the Figma `content-slot` spec for these picker
+          // frames (13936:12930 / 13936:19614). The Lumen
+          // `DialogHeader density="expanded"` title sits at px-24,
+          // and Lumen `ListItem` density="expanded" has its own px-8.
+          // With px-16 here: title at 24px from modal edge, row
+          // icons at 16+8=24px — everything aligns.
+          className="flex flex-col px-16"
           data-testid="contacts-management-add-address-dialog"
         >
           {step.kind === "asset" && <AssetStep onPick={handlePickAsset} />}

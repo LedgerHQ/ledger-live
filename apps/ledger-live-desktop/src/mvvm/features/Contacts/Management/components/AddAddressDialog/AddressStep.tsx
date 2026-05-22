@@ -67,10 +67,13 @@ export function AddressStep({ onSubmit }: Props) {
 
   return (
     <div
+      // `px-8` composes with DialogBody's `px-16` to land the inputs at
+      // 24px from the modal edge — same alignment as the title (which
+      // sits at the header's px-24) and the picker steps' rows.
       // `gap-16` here (not 24) because the two inputs + button stack
       // tighter in the Figma frames 13936:20087 / 13957:8439 — they
-      // form a single form group. `pt-16` matches the other steps.
-      className="flex flex-col gap-16 px-24 pt-16 pb-24"
+      // form a single form group.
+      className="flex flex-col gap-16 px-8 pb-24"
       data-testid="contacts-management-add-address-address-step"
     >
       <TextInput
