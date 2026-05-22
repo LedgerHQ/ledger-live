@@ -34,14 +34,13 @@ export function NetworkStep({ crypto, onPick }: Props) {
 
   return (
     <div
-      // Matches the AssetStep's content-slot spacing (Figma 13936:19614
-      // mirrors the spacing from 13936:12930): `px-16 pb-24`, body
-      // `gap-24` between the description + the list. Header's `pb-12`
-      // handles the title-to-content gap.
-      className="flex flex-col gap-24 px-16 pb-24"
+      // Same wrapper as AssetStep so the picker steps feel consistent:
+      // `px-8` composes with Lumen `ListItem` density="expanded"'s
+      // intrinsic px-8 → 16px from dialog edge to row content.
+      className="flex flex-col gap-24 px-8 pb-24"
       data-testid="contacts-management-add-address-network-step"
     >
-      <p className="body-2 text-muted px-8">
+      <p className="body-2 text-muted">
         {t("contactsManagement.addAddress.networkBody", { crypto: crypto.name })}{" "}
         {/* TODO(contacts-L4.1): wire to the address-networks FAQ.
             Rendered as a non-functional anchor for now so the visual
