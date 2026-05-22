@@ -127,7 +127,7 @@ const navigate = (name: string) => {
   });
 };
 
-const getFlags = () => {
+export const getFlags = () => {
   return fetchData({ type: "getFlags", id: uuid() });
 };
 

@@ -3,10 +3,10 @@ export class SwapPage {
 
   // steps
   async openDeeplink() {
-    await browser.deepLink(
+    await driver.deepLink(
       "ledgerlive://swap",
       // TODO: store app or bundle ID in a central reference
-      `com.ledger.live${browser.isAndroid ? ".detox" : ""}`,
+      `com.ledger.live${driver.isAndroid ? ".detox" : ""}`,
     );
   }
 }

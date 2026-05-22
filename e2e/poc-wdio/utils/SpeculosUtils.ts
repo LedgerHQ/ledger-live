@@ -116,7 +116,7 @@ export class SpeculosUtils {
 
   static registerSpeculos = async (speculosPort: number) => {
     const speculosAddress = process.env.SPECULOS_ADDRESS;
-    if (browser.isAndroid) {
+    if (driver.isAndroid) {
       execSync("adb reverse tcp:8081 tcp:8081");
     }
     process.env.SPECULOS_API_PORT = speculosPort.toString();

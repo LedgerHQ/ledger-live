@@ -262,7 +262,7 @@ export const config: WebdriverIO.Config = {
   // @ts-expect-error: keep unused params for de-structuring
   afterTest: async function (test, context, { error, result, duration, passed, retries }) {
     if (!passed) {
-      await browser.takeScreenshot();
+      await driver.takeScreenshot();
     }
   },
 

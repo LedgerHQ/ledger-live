@@ -1,5 +1,6 @@
 import pages from "../pages/pages.ts";
 import { swapSetup } from "../bridge/server.ts";
+import { performSwapUntilQuoteSelectionStep } from "../flows/swap.flows.ts";
 
 import { setEnv } from "@ledgerhq/live-env";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
@@ -14,13 +15,7 @@ setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
 describe("Swap", () => {
   it("ETH to USDT (without broadcast)", async () => {
-    const swap = new Swap(
-      TokenAccount.ETH_USDC_1,
-      Account.BTC_NATIVE_SEGWIT_1,
-      "65",
-      undefined,
-      Fee.MEDIUM,
-    );
+    const swap = new Swap(Account.ETH_1, TokenAccount.ETH_USDT_1, "65", undefined, Fee.MEDIUM);
 
     const options = {
       speculosApp: AppInfos.EXCHANGE,
@@ -64,6 +59,17 @@ describe("Swap", () => {
     await pages.swap.openDeeplink();
     await pages.swapLiveApp.expectLiveApp();
 
-    //TODO: execute swap flow and assertions
+    // execute swap flow and assertions
+    // amounts
+    const minAmount = await pages.swapLiveApp.getMinimumAmount(
+      swap.accountToDebit,
+      swap.accountToCredit,
+    );
+    const swapAmount =
+      swap.accountToDebit.currency.name === Account.XRP_1.currency.name
+        ? parseFloat(Number(minAmount).toFixed(6)).toString()
+        : minAmount;
+
+    await performSwapUntilQuoteSelectionStep(swap.accountToDebit, swap.accountToCredit, swapAmount);
   });
 });

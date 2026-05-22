@@ -6,6 +6,7 @@ import { SpeculosPage } from "./speculos.page.ts";
 import { PortfolioPage } from "./portfolio.page.ts";
 import { SwapPage } from "./swap.page.ts";
 import { SwapLiveAppPage } from "./swap-live-app.page.ts";
+import { ModularDrawerPage } from "./modular-drawer.page.ts";
 
 import { InitializationManager, InitOptions } from "../utils/InitialisationManager.ts";
 import { randomUUID } from "node:crypto";
@@ -26,6 +27,7 @@ class Pages {
   private portfolioPageInstance = Pages.LAZY_INIT(PortfolioPage);
   private swapPageInstance = Pages.LAZY_INIT(SwapPage);
   private swapLiveAppPageInstance = Pages.LAZY_INIT(SwapLiveAppPage);
+  private modularDrawerInstance = Pages.LAZY_INIT(ModularDrawerPage);
 
   async init(options: InitOptions) {
     // TODO: move this into initialisation manager?
@@ -60,6 +62,10 @@ class Pages {
 
   public get swapLiveApp() {
     return this.swapLiveAppPageInstance();
+  }
+
+  public get modularDrawer() {
+    return this.modularDrawerInstance();
   }
 }
 
