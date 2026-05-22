@@ -7,6 +7,7 @@ import { groupAddressesByCrypto } from "../utils/groupAddressesByCrypto";
 import { useCryptoMeta } from "../utils/cryptoMeta";
 import { AddressDetailDialog } from "./AddressDetailDialog";
 import { AddressRow } from "./AddressRow";
+import { EmptyAddressState } from "./EmptyAddressState";
 import { InitialsAvatar } from "./InitialsAvatar";
 
 type Props = {
@@ -89,6 +90,11 @@ export function ContactDetails({ contact }: Props) {
           </p>
         </div>
       </div>
+
+      {/* Empty state — surfaced when the selected contact has no
+          addresses (a freshly-added sidecar contact, or the synthetic
+          "me" placeholder). Figma frame 13922:11258. */}
+      {count === 0 && <EmptyAddressState />}
 
       {/* Address sections grouped by crypto.
           `unknown` entries (entries with no sidecar metadata AND no

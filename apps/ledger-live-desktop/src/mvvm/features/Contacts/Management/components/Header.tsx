@@ -16,15 +16,18 @@ import { Plus } from "@ledgerhq/lumen-ui-react/symbols";
  * Title "Contacts" on the leading edge, "Add contact" Button as the
  * trailing slot.
  *
- * The button is intentionally NOT wired (no `onClick`, no `disabled`) so
- * Lumen's hover and press states still render — per the L4 spec the action
- * lands in a follow-up.
+ * The "Add contact" button is wired up to open `AddContactDialog` (the
+ * parent — `ManagementView` — owns the open state and creation handler;
+ * `Header` just bubbles the click).
  *
- * TODO(contacts-L4.1): wire the "Add contact" button to a Lumen Dialog
- * that runs the L1 panel's `RegisterExternalAddress` form against
- * `useContacts().addContact`.
+ * TODO(contacts-L4.1): once DMK ships a fire-and-forget contact-add
+ * verb, the sidecar walk-into-canonical migration runs here on submit.
  */
-export function Header() {
+type Props = {
+  onAddContact: () => void;
+};
+
+export function Header({ onAddContact }: Props) {
   const { t } = useTranslation();
 
   return (
@@ -35,6 +38,7 @@ export function Header() {
           appearance="base"
           size="sm"
           icon={Plus}
+          onClick={onAddContact}
           data-testid="contacts-management-add-contact"
         >
           {t("contactsManagement.addContact")}
