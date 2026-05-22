@@ -55,11 +55,6 @@ export class MarketPage extends AppPage {
     await button.click();
   }
 
-  @step("Click on swap button on asset")
-  async clickOnSwapButtonOnAsset() {
-    await this.swapButtonOnAsset.click();
-  }
-
   @step("Click on stake button for $0")
   async stakeButtonClick(ticker: string) {
     const button = this.stakeButton(ticker.toLowerCase());

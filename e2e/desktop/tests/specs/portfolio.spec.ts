@@ -30,7 +30,8 @@ test.describe("Portfolio Wallet 4.0 - Zero balance state", () => {
       await app.portfolio.checkBuyButtonVisibility();
       await app.portfolio.checkSellButtonDisabled();
       await app.portfolio.checkSendButtonDisabled();
-      await app.portfolio.checkAddAccountButtonVisibility();
+
+      await app.portfolio.expectAddAccountButtonVisible();
       await app.portfolio.clickAddAccountButton();
     },
   );
@@ -62,7 +63,7 @@ test.describe("Portfolio Wallet 4.0 - With Account", () => {
       await app.portfolio.checkOneDayPerformanceIndicatorVisibility();
       await app.portfolio.clickOnPerformancePill();
       await app.analytics.expectAnalyticsScreenToBeVisible();
-      await app.analytics.clickBackButton();
+      await app.analytics.header.clickBack();
       await app.portfolio.expectPortfolioScreenToBeVisible();
     },
   );

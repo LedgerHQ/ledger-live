@@ -80,7 +80,7 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
     async ({ app, page }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
-      await app.portfolio.checkAddAccountButtonVisibility();
+      await app.portfolio.expectAddAccountButtonVisible();
 
       await app.mainNavigation.openSettings();
       await app.settings.enableWalletSync();
