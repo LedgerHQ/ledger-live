@@ -76,7 +76,12 @@ export function AddContactDialog({ open, onOpenChange, onSubmit, takenNames }: P
   return (
     <Dialog open={open} onOpenChange={onOpenChange} height="fit">
       <DialogContent>
+        {/* `density="expanded"` matches the Figma 13932:5068 layout:
+            close button (X) anchored top-right, title `Add contact` in
+            `heading-3-semi-bold` left-aligned beneath it. The default
+            `compact` density puts both in a single row. */}
         <DialogHeader
+          density="expanded"
           title={t("contactsManagement.addContactDialog.title")}
           onClose={() => onOpenChange(false)}
         />
