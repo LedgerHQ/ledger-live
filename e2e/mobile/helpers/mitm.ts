@@ -10,11 +10,15 @@ const DEFAULT_HAR_DIR = path.resolve(__dirname, "..", "artifacts", "mitm");
 const PID_FILE = path.resolve(__dirname, "..", "artifacts", "mitm.pid");
 
 // One entry per spawned mitmdump. Persisted as JSON in PID_FILE so the
-// globalTeardown process (different Node process from globalSetup) can
-// signal and clean up every instance.
-type MitmInstance = {
+// globalTeardown process AND the test workers (each in its own Node
+// process) can rediscover the running instances:
+//   - globalTeardown reads it to signal + clean up
+//   - per-test hooks (e2e/mobile/helpers/mitm-test.ts) read it to find
+//     the control port for their assigned worker / emulator
+export type MitmInstance = {
   serial: string;
   port: number;
+  controlPort: number;
   pid: number;
   harPath: string;
   logPath: string;
@@ -126,10 +130,12 @@ export async function startMitm(): Promise<void> {
   }
 
   const basePort = Number(process.env.MITM_PORT ?? 8080);
-  // Walk forward through the port space as we allocate, so the next probe
-  // starts past the port we just claimed. Without this, two emulators
-  // could otherwise be assigned the same "next free" port.
-  let nextSearchFrom = basePort;
+  const baseControlPort = Number(process.env.MITM_CONTROL_PORT ?? 9080);
+  // Walk forward through each port range as we allocate, so the next
+  // probe starts past the port we just claimed. Without this, two
+  // emulators could otherwise be assigned the same "next free" port.
+  let nextProxyFrom = basePort;
+  let nextControlFrom = baseControlPort;
 
   // 2. For each emulator, spawn a dedicated mitmdump and point that
   //    emulator at it. Doing the spawn+wait+configure serially per
@@ -144,8 +150,10 @@ export async function startMitm(): Promise<void> {
       // just hand it to mitmdump it crashes with EADDRINUSE while our
       // `waitForPort` sees the squatter and reports "ready" — silently
       // routing the emulator to the wrong process.
-      const port = await findFreePort(nextSearchFrom);
-      nextSearchFrom = port + 1;
+      const port = await findFreePort(nextProxyFrom);
+      nextProxyFrom = port + 1;
+      const controlPort = await findFreePort(nextControlFrom);
+      nextControlFrom = controlPort + 1;
 
       const harPath = path.join(outDir, `mitm-${serial}.har`);
       const logPath = path.join(outDir, `mitm-${serial}.log`);
@@ -157,7 +165,17 @@ export async function startMitm(): Promise<void> {
       const child = spawn(path.join(SCRIPTS_DIR, "mitm.sh"), [], {
         detached: true,
         stdio: ["ignore", logFd, logFd],
-        env: { ...process.env, MITM_PORT: String(port), MITM_HAR: harPath },
+        // MITM_CONTROL_PORT + MITM_SERIAL light up the per-test control
+        // endpoint inside mitm-emulator-addon.py. Without them the addon
+        // falls back to a plain proxy (still useful for the per-emulator
+        // fallback HAR via hardump).
+        env: {
+          ...process.env,
+          MITM_PORT: String(port),
+          MITM_HAR: harPath,
+          MITM_CONTROL_PORT: String(controlPort),
+          MITM_SERIAL: serial,
+        },
       });
       if (!child.pid) {
         throw new Error(`[mitm] failed to spawn mitm.sh for ${serial}`);
@@ -191,9 +209,10 @@ export async function startMitm(): Promise<void> {
         String(port),
       ]);
 
-      instances.push({ serial, port, pid: child.pid, harPath, logPath });
+      instances.push({ serial, port, controlPort, pid: child.pid, harPath, logPath });
       log.info(
-        `[mitm] ${serial} → :${port} (pid ${child.pid}, har ${harPath}, log ${logPath})`,
+        `[mitm] ${serial} → proxy:${port} control:${controlPort} ` +
+          `(pid ${child.pid}, har ${harPath}, log ${logPath})`,
       );
     }
 
