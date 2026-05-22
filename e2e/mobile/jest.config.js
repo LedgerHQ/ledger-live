@@ -62,7 +62,12 @@ const ESM_PACKAGES = ["ky", "@polkadot", "@ledgerhq", "@shared", "@features", "@
 const config = {
   rootDir: ".",
   modulePaths: [compilerOptions.baseUrl ?? "."],
-  maxWorkers: process.env.CI ? 3 : 1,
+  // mitm capture coordinates per-test HAR boundaries through a single
+  // mitmproxy instance; multiple parallel workers would race on
+  // start/end signals and corrupt the per-test buckets, so we fall back
+  // to a single worker whenever MITM is enabled. Capture is an opt-in
+  // debugging mode, so the 3x runtime cost is acceptable.
+  maxWorkers: process.env.MITM === "1" ? 1 : process.env.CI ? 3 : 1,
   transform: {
     "^.+\\.(js|jsx)?$": "babel-jest",
     "^.+\\.(ts|tsx)?$": [
