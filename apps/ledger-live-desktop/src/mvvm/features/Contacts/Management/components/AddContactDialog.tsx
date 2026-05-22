@@ -87,7 +87,13 @@ export function AddContactDialog({ open, onOpenChange, onSubmit, takenNames }: P
         />
         <DialogBody
           scrollbarWidth="auto"
-          className="flex flex-col gap-24 px-24 pb-24"
+          // `pt-8` so the focused input's purple ring has clearance from
+          // the bottom of the expanded header — Lumen's DialogHeader
+          // expanded variant ends with `pb-12` and the body has no
+          // intrinsic top padding, so without this the ring sits flush
+          // against the header text and the top edge of the ring reads
+          // as clipped.
+          className="flex flex-col gap-24 px-24 pt-8 pb-24"
           data-testid="contacts-management-add-contact-dialog"
         >
           <div className="flex flex-col gap-4 w-full">
