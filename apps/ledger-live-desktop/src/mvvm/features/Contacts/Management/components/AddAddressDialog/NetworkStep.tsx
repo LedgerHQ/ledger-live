@@ -34,12 +34,14 @@ export function NetworkStep({ crypto, onPick }: Props) {
 
   return (
     <div
-      // Same spacing as `AssetStep` so the dialog feels consistent
-      // step-to-step (Figma frame 13936:19614).
-      className="flex flex-col gap-24 px-24 pt-16 pb-24"
+      // Matches the AssetStep's content-slot spacing (Figma 13936:19614
+      // mirrors the spacing from 13936:12930): `px-16 pb-24`, body
+      // `gap-24` between the description + the list. Header's `pb-12`
+      // handles the title-to-content gap.
+      className="flex flex-col gap-24 px-16 pb-24"
       data-testid="contacts-management-add-address-network-step"
     >
-      <p className="body-2 text-muted">
+      <p className="body-2 text-muted px-8">
         {t("contactsManagement.addAddress.networkBody", { crypto: crypto.name })}{" "}
         {/* TODO(contacts-L4.1): wire to the address-networks FAQ.
             Rendered as a non-functional anchor for now so the visual
@@ -53,7 +55,7 @@ export function NetworkStep({ crypto, onPick }: Props) {
           {t("contactsManagement.addAddress.learnMore")}
         </a>
       </p>
-      <div className="flex flex-col gap-4 max-h-360 overflow-y-auto">
+      <div className="flex flex-col gap-0 max-h-360 overflow-y-auto w-full">
         {networks.map(n => (
           <ListItem
             key={n.id}
