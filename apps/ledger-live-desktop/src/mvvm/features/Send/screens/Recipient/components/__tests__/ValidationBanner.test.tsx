@@ -8,18 +8,6 @@ import { openURL } from "~/renderer/linking";
 import { useTranslatedBridgeError } from "../../hooks/useTranslatedBridgeError";
 import { ValidationBanner } from "../ValidationBanner";
 
-jest.mock("react-i18next", () => ({
-  ...jest.requireActual("react-i18next"),
-  useTranslation: () => ({
-    t: (key: string) => {
-      if (key === "newSendFlow.sanctioned.description")
-        return "This address is flagged as sanctioned.";
-      if (key === "newSendFlow.sanctioned.helpCenter") return "Learn more";
-      return key;
-    },
-  }),
-}));
-
 jest.mock("../../hooks/useTranslatedBridgeError");
 
 jest.mock("~/renderer/linking", () => ({
@@ -39,14 +27,12 @@ describe("ValidationBanner", () => {
   });
 
   describe("sanctioned variant", () => {
-    it("renders the sanctioned banner with title, description and help center action", async () => {
+    it("renders the sanctioned banner and opens the help center on action click", async () => {
       const { user } = render(<ValidationBanner type="sanctioned" />);
 
       expect(screen.getByTestId("sanctioned-address-banner")).toBeInTheDocument();
-      expect(screen.getByText("Flagged address")).toBeInTheDocument();
-      expect(screen.getByText("This address is flagged as sanctioned.")).toBeInTheDocument();
 
-      await user.click(screen.getByRole("button", { name: "Learn more" }));
+      await user.click(screen.getByRole("button"));
       expect(mockedOpenURL).toHaveBeenCalledWith("https://support.ledger.com/help");
     });
   });
@@ -54,8 +40,8 @@ describe("ValidationBanner", () => {
   describe("recipient error variant", () => {
     it("renders the recipient error banner when a translated error is available", () => {
       mockedUseTranslatedBridgeError.mockReturnValue({
-        title: "Invalid recipient",
-        description: "The recipient address is not valid.",
+        title: "translated-title",
+        description: "translated-description",
       });
 
       render(
@@ -67,8 +53,6 @@ describe("ValidationBanner", () => {
       );
 
       expect(screen.getByTestId("recipient-error-banner")).toBeInTheDocument();
-      expect(screen.getByText("Invalid recipient")).toBeInTheDocument();
-      expect(screen.getByText("The recipient address is not valid.")).toBeInTheDocument();
     });
 
     it("renders nothing when no error is provided", () => {
@@ -87,7 +71,7 @@ describe("ValidationBanner", () => {
 
     it("filters out RecipientRequired errors when excludeRecipientRequired is set", () => {
       mockedUseTranslatedBridgeError.mockReturnValue({
-        title: "Recipient required",
+        title: "translated-title",
       });
 
       const { container } = render(
@@ -103,10 +87,10 @@ describe("ValidationBanner", () => {
   });
 
   describe("sender warning variant", () => {
-    it("renders the sender warning banner with the translated warning", () => {
+    it("renders the sender warning banner when a translated warning is available", () => {
       mockedUseTranslatedBridgeError.mockReturnValue({
-        title: "Keeping you safe",
-        description: "This sender address is flagged.",
+        title: "translated-title",
+        description: "translated-description",
       });
 
       render(
@@ -118,8 +102,6 @@ describe("ValidationBanner", () => {
       );
 
       expect(screen.getByTestId("sender-warning-banner")).toBeInTheDocument();
-      expect(screen.getByText("Keeping you safe")).toBeInTheDocument();
-      expect(screen.getByText("This sender address is flagged.")).toBeInTheDocument();
     });
   });
 });

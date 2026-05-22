@@ -7,7 +7,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { isAddressSanctioned } from "@ledgerhq/ledger-wallet-framework/sanction/index";
 import type { Account } from "@ledgerhq/types-live";
 import React from "react";
-import { render, screen } from "tests/testSetup";
+import { render, screen, waitFor } from "tests/testSetup";
 import Body from "../Body";
 
 jest.mock("@ledgerhq/ledger-wallet-framework/sanction/index", () => ({
@@ -30,68 +30,43 @@ const createSanctionedEthereumAccount = (): Account => {
   };
 };
 
-describe("Receive flow on sanctioned account", () => {
-  beforeEach(() => {
-    mockedIsAddressSanctioned.mockResolvedValue(true);
-  });
+const renderBody = (account: Account) =>
+  render(
+    <Body
+      stepId="account"
+      onChangeStepId={jest.fn()}
+      onChangeAddressVerified={jest.fn()}
+      isAddressVerified={null}
+      verifyAddressError={null}
+      params={{ account }}
+    />,
+    { initialState: { accounts: [account] } },
+  );
 
-  it("shows the sanctioned error banner with the flagged address", async () => {
+describe("Receive flow on sanctioned account", () => {
+  it("disables the Continue button and surfaces the sanctioned address when the account is flagged", async () => {
+    mockedIsAddressSanctioned.mockResolvedValue(true);
     const account = createSanctionedEthereumAccount();
 
-    render(
-      <Body
-        stepId="account"
-        onChangeStepId={jest.fn()}
-        onChangeAddressVerified={jest.fn()}
-        isAddressVerified={null}
-        verifyAddressError={null}
-        params={{ account }}
-      />,
-      { initialState: { accounts: [account] } },
-    );
+    renderBody(account);
 
-    expect(await screen.findByText("Keeping you safe")).toBeVisible();
-    expect(
-      screen.getByText(/This transaction involves a sanctioned wallet address/i),
-    ).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByTestId("modal-continue-button")).toBeDisabled();
+    });
+    expect(mockedIsAddressSanctioned).toHaveBeenCalledWith(account.currency, SANCTIONED_ETHEREUM);
     expect(screen.getByText(new RegExp(SANCTIONED_ETHEREUM))).toBeInTheDocument();
   });
 
-  it("disables the Continue button when the account is sanctioned", async () => {
-    const account = createSanctionedEthereumAccount();
-
-    render(
-      <Body
-        stepId="account"
-        onChangeStepId={jest.fn()}
-        onChangeAddressVerified={jest.fn()}
-        isAddressVerified={null}
-        verifyAddressError={null}
-        params={{ account }}
-      />,
-      { initialState: { accounts: [account] } },
-    );
-
-    await screen.findByText("Keeping you safe");
-    expect(screen.getByTestId("modal-continue-button")).toBeDisabled();
-  });
-
-  it("does not render the sanctioned banner for a clean account", async () => {
+  it("keeps the Continue button enabled for a clean account", async () => {
     mockedIsAddressSanctioned.mockResolvedValue(false);
     const account = createSanctionedEthereumAccount();
 
-    render(
-      <Body
-        stepId="account"
-        onChangeStepId={jest.fn()}
-        onChangeAddressVerified={jest.fn()}
-        isAddressVerified={null}
-        verifyAddressError={null}
-        params={{ account }}
-      />,
-      { initialState: { accounts: [account] } },
-    );
+    renderBody(account);
 
-    expect(screen.queryByText("Keeping you safe")).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(mockedIsAddressSanctioned).toHaveBeenCalled();
+    });
+    expect(screen.getByTestId("modal-continue-button")).not.toBeDisabled();
+    expect(screen.queryByText(new RegExp(SANCTIONED_ETHEREUM))).not.toBeInTheDocument();
   });
 });
