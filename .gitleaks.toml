@@ -30,6 +30,11 @@ id = "generic-api-key"
         '''e2e/desktop/tests/.+/.+\.spec\.ts''',
         '''libs/.+/.+\.test\.ts\.snap''',
     ]
+    [[rules.allowlists]]
+    description = "Ignore web3 patch."
+    paths = [
+        '''patches/web3@1\.10\.4\.patch''',
+    ]
 
 [[rules]]
 id = "jwt"

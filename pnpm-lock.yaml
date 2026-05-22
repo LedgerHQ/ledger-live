@@ -520,6 +520,9 @@ patchedDependencies:
   usb@2.9.0:
     hash: 4b177e2b898217b7d3148dc43c0ed8922eb1fa940c3998e9c82e644d534127b5
     path: patches/usb@2.9.0.patch
+  web3@1.10.4:
+    hash: 05ae4eff8065c279a666b83f58d3fab5da94579260d696210da6863f2b91aec4
+    path: patches/web3@1.10.4.patch
 
 importers:
 
@@ -21117,7 +21120,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: 19.0.0
       react-dom: 19.0.0
-      webpack: ^5.89.0
+      webpack: '*'
     peerDependenciesMeta:
       '@react-native/babel-preset':
         optional: true
@@ -41076,7 +41079,7 @@ snapshots:
       bignumber.js: 9.1.2
       debug: 4.4.3
       utf8: 3.0.0
-      web3: 1.10.4
+      web3: 1.10.4(patch_hash=05ae4eff8065c279a666b83f58d3fab5da94579260d696210da6863f2b91aec4)
       web3-core: 1.10.4
       web3-eth: 1.10.4
       web3-eth-contract: 1.10.4
@@ -41099,7 +41102,7 @@ snapshots:
       debug: 4.4.3
       fp-ts: 2.16.9
       semver: 7.7.3
-      web3: 1.10.4
+      web3: 1.10.4(patch_hash=05ae4eff8065c279a666b83f58d3fab5da94579260d696210da6863f2b91aec4)
       web3-core-helpers: 1.10.4
     transitivePeerDependencies:
       - bufferutil
@@ -41153,7 +41156,7 @@ snapshots:
       '@types/debug': 4.1.12
       bignumber.js: 9.1.2
       debug: 4.4.3
-      web3: 1.10.4
+      web3: 1.10.4(patch_hash=05ae4eff8065c279a666b83f58d3fab5da94579260d696210da6863f2b91aec4)
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -71884,7 +71887,7 @@ snapshots:
       randombytes: 2.1.0
       utf8: 3.0.0
 
-  web3@1.10.4:
+  web3@1.10.4(patch_hash=05ae4eff8065c279a666b83f58d3fab5da94579260d696210da6863f2b91aec4):
     dependencies:
       web3-bzz: 1.10.4
       web3-core: 1.10.4

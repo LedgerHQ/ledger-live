@@ -236,6 +236,7 @@
     "@ledgerhq/create-release-hash": "workspace:*",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/pnpm-utils": "workspace:*",
+    "@nx/s3-cache": "5.0.2",
     "@react-native-community/cli": "15.1.0",
     "@react-native-community/cli-platform-android": "15.1.0",
     "@react-native-community/cli-platform-ios": "15.1.0",
@@ -256,7 +257,6 @@
     "eslint-plugin-react-hooks": "4.6.0",
     "jest-sonar": "0.2.16",
     "knip": "5.34.1",
-    "@nx/s3-cache": "5.0.2",
     "nx": "22.5.1",
     "nyc": "15.1.0",
     "oxfmt": "catalog:",
@@ -324,7 +324,8 @@
       "detox-allure2-adapter@1.0.0-alpha.42": "patches/detox-allure2-adapter@1.0.0-alpha.42.patch",
       "@callstack/repack@5.2.3": "patches/@callstack__repack@5.2.3.patch",
       "bigint-buffer@1.1.5": "patches/bigint-buffer@1.1.5.patch",
-      "usb@2.17.0": "patches/usb@2.17.0.patch"
+      "usb@2.17.0": "patches/usb@2.17.0.patch",
+      "web3@1.10.4": "patches/web3@1.10.4.patch"
     },
     "packageExtensions": {
       "eslint-config-next@*": {
