@@ -1832,9 +1832,6 @@ importers:
       date-fns:
         specifier: 2.30.0
         version: 2.30.0
-      ethers:
-        specifier: 6.15.0
-        version: 6.15.0
       expo:
         specifier: 'catalog:'
         version: 53.0.25(4b2c01f5a47d338b1c9e7803e0aed015)

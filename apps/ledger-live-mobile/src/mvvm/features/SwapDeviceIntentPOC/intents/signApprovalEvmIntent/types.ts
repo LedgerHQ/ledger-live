@@ -1,4 +1,5 @@
 import type { Intent, IntentDefinition, IntentPlatformDefinition } from "@ledgerhq/device-intent";
+import type { Account } from "@ledgerhq/types-live";
 import type { QuoteApprovalTransaction } from "@ledgerhq/live-common/wallet-api/Exchange/quotes/types";
 
 export type SignApprovalEvmJobState =
@@ -10,12 +11,14 @@ export type SignApprovalEvmJobState =
   | { type: "failed"; error: Error };
 
 export type SignApprovalEvmIntentInput = {
-  /** Derivation path of the EVM account that owns the spending allowance. */
-  derivationPath: string;
-  /** Currency id of the parent EVM chain (e.g. `"ethereum"`). */
-  currencyId: string;
+  /** Main EVM account that owns the spending allowance (signer + nonce source). */
+  account: Account;
   /** Approval transaction blob coming from the swap quote. */
   approvalTransaction: QuoteApprovalTransaction;
+  /** EVM crypto-currency id (`mainAccount.currency.id`) for chainId + node lookup. */
+  currencyId: string;
+  /** BIP-44 derivation path used by the device when signing (`mainAccount.freshAddressPath`). */
+  derivationPath: string;
 };
 
 export type SignApprovalEvmIntentExtraProps = Record<string, never>;

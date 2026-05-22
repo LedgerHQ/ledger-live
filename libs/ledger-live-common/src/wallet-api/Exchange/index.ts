@@ -26,3 +26,17 @@ export {
 // Swap quotes (Wallet API getQuotes; HTTP-only fetch stays internal to `quotes/getQuotes`)
 export { getQuotes } from "./quotes";
 export type * from "./quotes";
+
+// DEX execution helpers used by `custom.swap` device-intent flows
+export {
+  buildProviderTransactionData,
+  isDexExecutionProvider,
+  DEFAULT_DEX_GAS_LIMIT,
+  DEFAULT_DEX_GAS_LIMIT_MULTIPLIER,
+} from "./dex";
+export type {
+  DexBuildContext,
+  DexProvider,
+  DexProviderTransactionData,
+  DexTransactionData,
+} from "./dex";

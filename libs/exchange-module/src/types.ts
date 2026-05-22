@@ -316,6 +316,13 @@ export type Quote = {
    * omit it, and consumers must handle `undefined`.
    */
   formatted?: FormattedQuoteValues;
+  /**
+   * Provider-specific opaque blob forwarded verbatim to the swap-api DEX
+   * endpoints (e.g. Uniswap spreads it into the swap body, Velora reads
+   * `priceRoute` from it, OKX uses it whole). Consumers outside the DEX
+   * builders should not interpret this field.
+   */
+  customFields?: Record<string, unknown>;
 };
 
 /**
@@ -342,6 +349,8 @@ export type CustomSwapParams = {
 export type CustomSwapResult = {
   /** Hash of the broadcast-and-confirmed approval transaction, when one was needed. */
   approvalTxHash?: string;
+  /** Hash of the broadcast-and-confirmed swap transaction, when the swap step ran. */
+  swapTxHash?: string;
 };
 
 /** Error rows returned next to quotes (swap API error objects). */
