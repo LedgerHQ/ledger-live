@@ -96,7 +96,9 @@ export function AddContactDialog({ open, onOpenChange, onSubmit, takenNames }: P
           className="flex flex-col gap-24 px-24 pt-8 pb-24"
           data-testid="contacts-management-add-contact-dialog"
         >
-          <div className="flex flex-col gap-4 w-full">
+          {/* `gap-8` per the Figma spec — 8px between the input and the
+              char counter. */}
+          <div className="flex flex-col gap-8 w-full">
             <TextInput
               placeholder={t("contactsManagement.addContactDialog.placeholder")}
               value={name}
