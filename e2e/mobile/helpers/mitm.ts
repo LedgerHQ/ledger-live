@@ -165,14 +165,19 @@ export async function startMitm(): Promise<void> {
       const child = spawn(path.join(SCRIPTS_DIR, "mitm.sh"), [], {
         detached: true,
         stdio: ["ignore", logFd, logFd],
-        // MITM_CONTROL_PORT + MITM_SERIAL light up the per-test control
-        // endpoint inside mitm-emulator-addon.py. Without them the addon
-        // falls back to a plain proxy (still useful for the per-emulator
-        // fallback HAR via hardump).
+        // MITM_CONTROL_PORT + MITM_SERIAL + MITM_HAR_DIR together light
+        // up the per-test control endpoint inside mitm-emulator-addon.py.
+        // The addon checks all of them; if any is missing it stays a
+        // plain proxy (still useful for the per-emulator hardump HAR).
+        // outDir comes from process.env.MITM_HAR_DIR with a default of
+        // ./artifacts/mitm in helpers/mitm.ts, but the env var itself
+        // is only set when the workflow passes it — so explicitly
+        // forward `outDir` here regardless of how it was resolved.
         env: {
           ...process.env,
           MITM_PORT: String(port),
           MITM_HAR: harPath,
+          MITM_HAR_DIR: outDir,
           MITM_CONTROL_PORT: String(controlPort),
           MITM_SERIAL: serial,
         },
