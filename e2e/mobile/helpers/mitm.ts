@@ -49,6 +49,27 @@ const waitForPort = async (port: number, timeoutMs = 15_000): Promise<void> => {
   throw new Error(`mitmdump did not start listening on port ${port} within ${timeoutMs}ms`);
 };
 
+// Try to bind a TCP server on 127.0.0.1:<port>. If the bind succeeds the
+// port is free and we close again immediately. If we get EADDRINUSE (or
+// any other error) we treat the port as occupied. There is an unavoidable
+// TOCTOU window between this probe and the subsequent mitmdump spawn —
+// fine in practice for an opt-in capture mode.
+const isPortFree = (port: number): Promise<boolean> =>
+  new Promise(resolve => {
+    const server = net.createServer();
+    server.unref();
+    server.once("error", () => resolve(false));
+    server.once("listening", () => server.close(() => resolve(true)));
+    server.listen(port, "127.0.0.1");
+  });
+
+const findFreePort = async (start: number, span = 100): Promise<number> => {
+  for (let p = start; p < start + span; p++) {
+    if (await isPortFree(p)) return p;
+  }
+  throw new Error(`no free port in [${start}, ${start + span}) for mitmdump`);
+};
+
 const runScript = (
   script: string,
   args: string[] = [],
@@ -105,6 +126,10 @@ export async function startMitm(): Promise<void> {
   }
 
   const basePort = Number(process.env.MITM_PORT ?? 8080);
+  // Walk forward through the port space as we allocate, so the next probe
+  // starts past the port we just claimed. Without this, two emulators
+  // could otherwise be assigned the same "next free" port.
+  let nextSearchFrom = basePort;
 
   // 2. For each emulator, spawn a dedicated mitmdump and point that
   //    emulator at it. Doing the spawn+wait+configure serially per
@@ -114,7 +139,14 @@ export async function startMitm(): Promise<void> {
   try {
     for (let i = 0; i < serials.length; i++) {
       const serial = serials[i];
-      const port = basePort + i;
+      // Find an actually-free port instead of assuming basePort+i is
+      // available. On dev machines :8080 is often already taken; if we
+      // just hand it to mitmdump it crashes with EADDRINUSE while our
+      // `waitForPort` sees the squatter and reports "ready" — silently
+      // routing the emulator to the wrong process.
+      const port = await findFreePort(nextSearchFrom);
+      nextSearchFrom = port + 1;
+
       const harPath = path.join(outDir, `mitm-${serial}.har`);
       const logPath = path.join(outDir, `mitm-${serial}.log`);
 
@@ -132,16 +164,23 @@ export async function startMitm(): Promise<void> {
       }
       child.unref();
 
-      try {
-        await waitForPort(port);
-      } catch (err) {
-        log.error(`[mitm] mitmdump for ${serial} failed to bind :${port}. See ${logPath}.`);
-        try {
-          process.kill(child.pid, "SIGTERM");
-        } catch {
-          // ignore
-        }
-        throw err;
+      // Race: child exits early (e.g. mitmdump bind failure that slipped
+      // through the probe) vs. proxy port becoming reachable. The first
+      // outcome wins. Without the race a startup failure would deadlock
+      // waitForPort.
+      let earlyExit: number | null = null;
+      const exitPromise = new Promise<"exited">(resolve => {
+        child.once("exit", code => {
+          earlyExit = code ?? -1;
+          resolve("exited");
+        });
+      });
+      const portPromise = waitForPort(port).then(() => "ready" as const);
+      const outcome = await Promise.race([exitPromise, portPromise]);
+      if (outcome === "exited") {
+        throw new Error(
+          `[mitm] mitmdump for ${serial} exited during startup (code ${earlyExit}). See ${logPath}.`,
+        );
       }
 
       await runScript("setup-mitmproxy.sh", [
