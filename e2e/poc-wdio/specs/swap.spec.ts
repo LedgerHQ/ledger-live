@@ -10,13 +10,16 @@ import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
+import { verifyAmountsAndAcceptSwap } from "@ledgerhq/live-common/e2e/speculos";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
 describe("Swap", () => {
   it("ETH to USDT (without broadcast)", async () => {
+    // swap to test
     const swap = new Swap(Account.ETH_1, TokenAccount.ETH_USDT_1, "65", undefined, Fee.MEDIUM);
 
+    // init options
     const options = {
       speculosApp: AppInfos.EXCHANGE,
       cliCommandsOnApp: [
@@ -33,6 +36,7 @@ describe("Swap", () => {
 
     await pages.speculos.setExchangeDependencies(swap);
 
+    // init
     await pages.init({
       speculosApp: options.speculosApp,
       featureFlags: {
@@ -54,13 +58,12 @@ describe("Swap", () => {
       cliCommandsOnApp: options.cliCommandsOnApp,
     });
 
+    // go to swap
     await pages.portfolio.waitForPageToLoad();
     await swapSetup();
     await pages.swap.openDeeplink();
     await pages.swapLiveApp.expectLiveApp();
 
-    // execute swap flow and assertions
-    // amounts
     const minAmount = await pages.swapLiveApp.getMinimumAmount(
       swap.accountToDebit,
       swap.accountToCredit,
@@ -72,12 +75,14 @@ describe("Swap", () => {
 
     await performSwapUntilQuoteSelectionStep(swap.accountToDebit, swap.accountToCredit, swapAmount);
 
-    // TODO: implement this!
-    // const provider = await app.swapLiveApp.selectExchange();
-    // await app.swapLiveApp.checkExchangeButtonHasProviderName(provider.uiName);
-    // await app.common.disableSynchronizationForiOS();
-    // await app.swapLiveApp.tapExecuteSwap(provider.uiName);
-    // await app.swap.verifyAmountsAndAcceptSwap(swap, swapAmount);
-    // await app.swap.waitForSuccessAndContinue();
+    // select provider and run validations
+    const provider = await pages.swapLiveApp.selectExchange();
+    await pages.swapLiveApp.checkExchangeButtonHasProviderName(provider.uiName);
+    // await app.common.disableSynchronizationForiOS(); -> DETOX only
+    await pages.swapLiveApp.tapExecuteSwap(provider.uiName);
+    // await app.swap.verifyAmountsAndAcceptSwap(swap, swapAmount); -> use direct function instead!
+    await verifyAmountsAndAcceptSwap(swap, swapAmount);
+    await pages.swap.waitForSuccess();
+    await pages.common.tapProceed();
   });
 });

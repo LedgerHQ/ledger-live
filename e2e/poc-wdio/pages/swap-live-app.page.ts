@@ -1,6 +1,7 @@
 import { getMinimumSwapAmount } from "@ledgerhq/live-common/e2e/swap";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { floatNumberRegex } from "@ledgerhq/live-common/e2e/data/regexes";
+import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 
 export class SwapLiveAppPage {
   // webview components
@@ -30,6 +31,32 @@ export class SwapLiveAppPage {
 
   get numberOfQuotes() {
     return $('[data-testid="number-of-quotes"]');
+  }
+
+  get quotesCountDown() {
+    return $('[data-testid="quotes-countdown"]');
+  }
+
+  get mainContainer() {
+    return $("main");
+  }
+
+  get quoteCardProviderNames() {
+    return this.mainContainer.$$("[data-testid^='compact-quote-card-provider-']");
+  }
+
+  // dynamic components
+  public getQuoteCardByProviderName(providerName: string) {
+    return $(`[data-testid="compact-quote-card-provider-name-${providerName.toLowerCase()}"]`);
+  }
+
+  public providerExecuteButton(provider: string) {
+    return $(`${this.baseProviderCssSelector(provider)} [data-testid="execute-button"]`);
+  }
+
+  // reusable selectors
+  private baseProviderCssSelector(provider: string) {
+    return `[data-testid^="quote-container-${Provider.getNameByUiName(provider)}"]`;
   }
 
   // steps
@@ -120,8 +147,107 @@ export class SwapLiveAppPage {
   async waitForQuotes() {
     await this.switchTo();
     await this.numberOfQuotes.waitForDisplayed();
-    // TODO: implement this!
-    // await this.waitForQuotesStable();
+    await this.waitForQuotesStable();
+    await driver.switchContext("NATIVE_APP");
+  }
+
+  async waitForQuotesStable(timeout: number = 20000) {
+    await this.switchTo();
+    await driver.waitUntil(
+      async () => {
+        const countdownText = await this.quotesCountDown.getText();
+        const currentSeconds = Number.parseInt(countdownText.replaceAll(/\D/g, ""), 10);
+
+        if (Number.isNaN(currentSeconds)) {
+          throw new TypeError(`Could not parse countdown value: ${countdownText}`);
+        }
+
+        if (currentSeconds < 2 || currentSeconds > 19) {
+          console.log(`Countdown is ${currentSeconds}s, waiting for value between 2-19s`);
+          return false;
+        }
+        return currentSeconds;
+      },
+      {
+        timeout,
+        timeoutMsg: `Expected countdown to stabilize within ${timeout}ms`,
+      },
+    );
+    await driver.switchContext("NATIVE_APP");
+  }
+
+  async getProviderList() {
+    await this.switchTo();
+
+    await expect(this.numberOfQuotes).toBeDisplayed();
+    await expect(this.quotesCountDown).toBeDisplayed();
+
+    const providerList = await driver.waitUntil(
+      async () => {
+        const numberOfQuotesText = await this.numberOfQuotes.getText();
+        const providerList = await this.quoteCardProviderNames.map(card => card.getText());
+
+        if (!numberOfQuotesText.match(new RegExp(`^${providerList.length} quotes? found$`))) {
+          console.log(
+            `Quote count mismatch: UI shows "${numberOfQuotesText}" but found ${providerList.length} cards`,
+          );
+          return false;
+        }
+        return providerList;
+      },
+      {
+        timeout: 30_000,
+        timeoutMsg: "Expected provider list to be up to date within 30s",
+      },
+    );
+    await driver.switchContext("NATIVE_APP");
+    return providerList;
+  }
+
+  async selectExchange() {
+    // TODO: optimise nested webview functions
+    await this.switchTo();
+    const providers = await this.getProviderList();
+    const providersList = providers.filter(name => name !== Provider.LIFI.uiName);
+
+    const providersWithoutKYC = providersList.filter(providerName => {
+      const provider = Object.values(Provider).find(p => p.uiName === providerName);
+      // return provider && !provider.kyc; -> original
+      return provider && !provider.kyc && provider.name !== Provider.OKX.name;
+    });
+
+    let selectedProvider;
+
+    // TODO: optimise nested webview functions
+    await this.switchTo();
+    for (const providerName of providersWithoutKYC) {
+      const provider = Object.values(Provider).find(p => p.uiName === providerName);
+      if (provider?.isNative) {
+        await this.getQuoteCardByProviderName(provider.name).tap();
+        selectedProvider = provider;
+        break;
+      }
+    }
+    if (!selectedProvider) {
+      throw new Error("No providers without KYC found");
+    }
+    await driver.switchContext("NATIVE_APP");
+    return selectedProvider;
+  }
+
+  async checkExchangeButtonHasProviderName(provider: string): Promise<string> {
+    await this.switchTo();
+    await expect(this.providerExecuteButton(provider)).toHaveText(
+      new RegExp(`^(Swap|Continue) with ${provider}$`, "i"),
+    );
+    const buttonText = await this.providerExecuteButton(provider).getText();
+    await driver.switchContext("NATIVE_APP");
+    return buttonText;
+  }
+
+  async tapExecuteSwap(provider: string) {
+    await this.switchTo();
+    await this.providerExecuteButton(provider).tap();
     await driver.switchContext("NATIVE_APP");
   }
 }
