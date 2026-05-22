@@ -880,8 +880,11 @@ jobs:
           # When set to "1", e2e/mobile/jest.globalSetup spawns mitmdump and
           # installs its CA on the emulator. HAR + log are written under
           # MOBILE_ARTIFACTS_ROOT and picked up by the existing artifact upload.
+          # Use an absolute path: mitmdump is spawned with cwd=e2e/mobile (pnpm
+          # detox runs there), so a relative MOBILE_ARTIFACTS_ROOT would resolve
+          # to e2e/mobile/e2e/mobile/artifacts/ — outside the upload target.
           MITM: ${{ inputs.capture_network && '1' || '' }}
-          MITM_HAR: ${{ env.MOBILE_ARTIFACTS_ROOT }}/mitm-shard-${{ matrix.shard }}.har
+          MITM_HAR: ${{ github.workspace }}/${{ env.MOBILE_ARTIFACTS_ROOT }}/mitm-shard-${{ matrix.shard }}.har
         run: pnpm run mobile e2e:ci -p android -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}.json
 
       - name: Upload Android artifacts
