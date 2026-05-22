@@ -1,7 +1,6 @@
 import { AccountPage } from "./account.page";
 import { AccountsPage } from "./accounts.page";
 import { AnalyticsPage } from "./analytics.page";
-import { AssetsPage } from "./assets.page";
 import { AddAccountModal } from "./modal/add.account.modal";
 import { AssetDrawer } from "./drawer/asset.drawer";
 import { AssetDetailPage } from "./assetDetail.page";
@@ -41,6 +40,8 @@ import { PrivateBalanceModal } from "./modal/private.balance.modal";
 import { HistoryPage } from "./history.page";
 import { MainNavigationPage } from "./mainNavigation.page";
 import { SwapTransactionStatusDialog } from "./dialog/swap.transaction.status.dialog";
+import { MarketCoinPage } from "./marketCoin.page";
+import { CryptoAssetsPage } from "./cryptoAssets.page";
 
 export class Application extends PageHolder {
   public account = new AccountPage(this.page);
@@ -84,5 +85,7 @@ export class Application extends PageHolder {
   public swapTransactionStatusDialog = new SwapTransactionStatusDialog(this.page);
   public history = new HistoryPage(this.page);
   public mainNavigation = new MainNavigationPage(this.page);
-  public assets = new AssetsPage(this.page);
+  public marketCoin = new MarketCoinPage(this.page);
+  public cryptoAssets = new CryptoAssetsPage(this.page, "cryptos");
+  public stablecoinsAssets = new CryptoAssetsPage(this.page, "stablecoins");
 }

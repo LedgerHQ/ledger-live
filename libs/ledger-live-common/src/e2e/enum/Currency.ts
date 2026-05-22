@@ -13,6 +13,10 @@ export class Currency {
     public readonly contractAddress?: string,
   ) {}
 
+  toString() {
+    return this.ticker;
+  }
+
   static readonly CELO = new Currency("Celo", "CELO", "celo", AppInfos.CELO, [Network.CELO]);
 
   static readonly INJ = new Currency("Injective", "INJ", "injective", AppInfos.INJECTIVE, [

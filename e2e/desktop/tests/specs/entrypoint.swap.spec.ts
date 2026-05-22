@@ -72,8 +72,7 @@ test.describe("Swap flow from different entry point", () => {
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.mainNavigation.openTargetFromMainNavigation("home");
-      await app.portfolio.clickOnSelectedAssetRow(swapEntryPoint.swap.accountToDebit.currency.name);
-
+      await app.portfolio.assetsView.clickAsset(swapEntryPoint.swap.accountToDebit.currency);
       await app.swap.goAndWaitForSwapToBeReady(() => app.assetPage.startSwapFlow());
       await app.swap.checkAssetToContains(swapEntryPoint.swap.accountToDebit.currency.name);
     },
@@ -134,7 +133,7 @@ test.describe("Swap flow from different entry point", () => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.marketBanner.clickExploreMarketHeader();
       await app.market.openCoinPage(swapEntryPoint.swap.accountToDebit.currency.ticker);
-      await app.swap.goAndWaitForSwapToBeReady(() => app.market.clickOnSwapButtonOnAsset());
+      await app.swap.goAndWaitForSwapToBeReady(() => app.marketCoin.clickSwapButton());
       await app.swap.checkAssetToContains(swapEntryPoint.swap.accountToDebit.currency.name);
     },
   );

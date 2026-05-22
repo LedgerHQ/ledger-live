@@ -38,7 +38,6 @@ for (const currency of currencies) {
     });
 
     const family = getFamilyByCurrencyId(currency.currency.id);
-
     test(
       `[${currency.currency.name}] Add account`,
       {
@@ -81,6 +80,12 @@ for (const currency of currencies) {
 
         await app.portfolio.checkOperationHistory();
         await app.portfolio.expectBalanceVisibility();
+
+        await app.portfolio.assetsView.waitForAssetsToLoad();
+        await app.portfolio.assetsView.expectAssetVisibleInSection("cryptos", currency.currency);
+        await app.portfolio.cryptoAddressesBanner.expectBannerVisible();
+        await app.portfolio.cryptoAddressesBanner.expectAddAccountCTANotVisible();
+
         await app.portfolio.expectAccountsPersistedInAppJson(userdataFile, 1, 5000);
 
         await app.mainNavigation.openTargetFromMainNavigation("accounts");
