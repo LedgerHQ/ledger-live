@@ -67,7 +67,10 @@ export function AddressStep({ onSubmit }: Props) {
 
   return (
     <div
-      className="flex flex-col gap-16 px-24 pb-24"
+      // `gap-16` here (not 24) because the two inputs + button stack
+      // tighter in the Figma frames 13936:20087 / 13957:8439 — they
+      // form a single form group. `pt-16` matches the other steps.
+      className="flex flex-col gap-16 px-24 pt-16 pb-24"
       data-testid="contacts-management-add-address-address-step"
     >
       <TextInput

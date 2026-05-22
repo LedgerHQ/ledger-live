@@ -46,7 +46,10 @@ export function AssetStep({ onPick }: Props) {
 
   return (
     <div
-      className="flex flex-col gap-16 px-24 pb-24"
+      // `gap-24` between the search and the list, `pt-16` for breathing
+      // room below the header's title — both match the Figma spacing
+      // tokens (`spacing/24` and `spacing/16`) from frame 13936:12930.
+      className="flex flex-col gap-24 px-24 pt-16 pb-24"
       data-testid="contacts-management-add-address-asset-step"
     >
       <SearchInput
