@@ -120,7 +120,7 @@ test.describe("counter value selection", () => {
 
       await app.portfolio.expectBalanceDiffCounterValue("%");
 
-      await app.portfolio.expectAssetRowCounterValue(account.currency.name, "€");
+      await app.portfolio.expectAssetValueToBe(account.currency, "€");
       await app.portfolio.expectOperationCounterValue("€");
     },
   );

@@ -5,6 +5,7 @@ import { addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
+import { isAssetSectionEnabled } from "tests/utils/featureFlagUtils";
 
 const currencies = [
   {
@@ -40,7 +41,6 @@ for (const currency of currencies) {
     });
 
     const family = getFamilyByCurrencyId(currency.currency.id);
-
     test(
       `[${currency.currency.name}] Add account`,
       {
@@ -83,6 +83,12 @@ for (const currency of currencies) {
 
         await app.portfolio.checkOperationHistory();
         await app.portfolio.expectBalanceVisibility();
+        if (await isAssetSectionEnabled(app.getPage())) {
+          await app.portfolio.assetsView.waitForAssetsToLoad();
+          await app.portfolio.assetsView.expectAssetVisibleInSection("cryptos", currency.currency);
+          await app.portfolio.cryptoAddressesBanner.expectBannerVisible();
+          await app.portfolio.cryptoAddressesBanner.expectAddAccountCTANotVisible();
+        }
         await app.portfolio.expectAccountsPersistedInAppJson(userdataFile, 1, 5000);
 
         await app.mainNavigation.openTargetFromMainNavigation("accounts");

@@ -2,13 +2,14 @@ import { AppPage } from "./abstractClasses";
 import { step } from "../misc/reporters/step";
 import { expect } from "@playwright/test";
 import { isAssetDiscoverabilityEnabled } from "tests/utils/featureFlagUtils";
+import { PageHeader } from "tests/component/pageHeader.component";
 
 export class MarketPage extends AppPage {
-  private readonly navbarTitle = this.page.getByTestId("page-header-title");
+  private readonly pageHeader = new PageHeader(this.page);
   private searchInput = this.page.getByTestId("market-search-input");
-  private loadingPlaceholder = this.page.getByTestId("loading-placeholder");
   private readonly coinRow = (ticker: string) =>
     this.page.getByTestId(`market-${ticker}-row`).first();
+  private loadingPlaceholder = this.page.getByTestId("loading-placeholder");
   // aggregatedAssets ON redirects the legacy coin page to the AssetDetail page; accept either.
   private readonly coinPageContainer = this.page
     .getByTestId("market-coin-page-container")
@@ -100,7 +101,7 @@ export class MarketPage extends AppPage {
 
   @step("Validate Market List")
   async validateMarketList() {
-    await expect(this.navbarTitle).toHaveText("Market");
+    await expect(this.pageHeader.title).toHaveText("Market");
     await expect(this.coinRow("btc")).toBeVisible();
     await expect(this.coinRow("eth")).toBeVisible();
   }
@@ -210,7 +211,7 @@ export class MarketPage extends AppPage {
 
   @step("Expect Market page to be visible")
   async expectMarketPageVisible() {
-    await expect(this.navbarTitle).toHaveText("Market");
+    await expect(this.pageHeader.title).toHaveText("Market");
     await expect(this.categorySwitcher).toBeVisible();
   }
 
