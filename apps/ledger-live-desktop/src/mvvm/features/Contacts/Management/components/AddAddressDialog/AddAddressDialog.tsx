@@ -192,10 +192,10 @@ export function AddAddressDialog({ open, onOpenChange, contact }: Props) {
         )}
         <DialogBody
           scrollbarWidth="auto"
-          // `pt-8` for the same focus-ring clearance reason as
-          // AddContactDialog — the expanded header ends `pb-12` and
-          // we don't want the input ring sitting flush against it.
-          className="flex flex-col gap-16 pt-8"
+          // Each step component provides its own internal padding (px-24
+          // pt-16 pb-24) per the Figma spacing tokens, so the body wrapper
+          // stays plain.
+          className="flex flex-col"
           data-testid="contacts-management-add-address-dialog"
         >
           {step.kind === "asset" && <AssetStep onPick={handlePickAsset} />}

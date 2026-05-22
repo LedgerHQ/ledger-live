@@ -34,7 +34,9 @@ export function NetworkStep({ crypto, onPick }: Props) {
 
   return (
     <div
-      className="flex flex-col gap-16 px-24 pb-24"
+      // Same spacing as `AssetStep` so the dialog feels consistent
+      // step-to-step (Figma frame 13936:19614).
+      className="flex flex-col gap-24 px-24 pt-16 pb-24"
       data-testid="contacts-management-add-address-network-step"
     >
       <p className="body-2 text-muted">
