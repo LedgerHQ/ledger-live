@@ -5,6 +5,7 @@ import { OnboardingPage } from "./onboarding.page.ts";
 import { SpeculosPage } from "./speculos.page.ts";
 import { PortfolioPage } from "./portfolio.page.ts";
 import { SwapPage } from "./swap.page.ts";
+import { SwapLiveAppPage } from "./swap-live-app.page.ts";
 
 import { InitializationManager, InitOptions } from "../utils/InitialisationManager.ts";
 import { randomUUID } from "node:crypto";
@@ -24,8 +25,10 @@ class Pages {
   private speculosPageInstance = Pages.LAZY_INIT(SpeculosPage);
   private portfolioPageInstance = Pages.LAZY_INIT(PortfolioPage);
   private swapPageInstance = Pages.LAZY_INIT(SwapPage);
+  private swapLiveAppPageInstance = Pages.LAZY_INIT(SwapLiveAppPage);
 
   async init(options: InitOptions) {
+    // TODO: move this into initialisation manager?
     // this.modularDrawer.resetFlags(); TODO: REVIEW
     const userDataString = `temp-userdata-${randomUUID()}`;
     const userDataPathSpeculos = path.resolve("userdata", `${userDataString}.json`);
@@ -53,6 +56,10 @@ class Pages {
 
   public get swap() {
     return this.swapPageInstance();
+  }
+
+  public get swapLiveApp() {
+    return this.swapLiveAppPageInstance();
   }
 }
 

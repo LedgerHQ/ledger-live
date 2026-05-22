@@ -13,6 +13,7 @@ import { INJECTED_JAVASCRIPT } from "./dappInject";
 import { DappAccountGate } from "./DappAccountGate";
 import { E2E_WEBVIEW_NETWORK_CAPTURE_SCRIPT } from "~/e2e/webviewNetworkLogCapture";
 import { webviewLogStore } from "~/e2e/webviewLogStore";
+import { LaunchArguments } from "react-native-launch-arguments";
 
 const APPLICATION_NAME = `ledgerlivemobile/${VersionNumber.appVersion} llm-${Platform.OS}/${VersionNumber.appVersion}`;
 
@@ -127,7 +128,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         renderError={() => <NetworkError handleTryAgain={reloadWebView} />}
         testID="wallet-api-webview"
         applicationNameForUserAgent={APPLICATION_NAME}
-        webviewDebuggingEnabled={__DEV__}
+        webviewDebuggingEnabled={true}
         allowsUnsecureHttps={__DEV__ && !!Config.IGNORE_CERTIFICATE_ERRORS}
         javaScriptCanOpenWindowsAutomatically={javaScriptCanOpenWindowsAutomatically}
         injectedJavaScriptBeforeContentLoaded={manifest.dapp ? INJECTED_JAVASCRIPT : undefined}

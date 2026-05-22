@@ -16,6 +16,11 @@ export const config: WebdriverIO.Config = {
       "appium:automationName": "XCUITest",
       "appium:app":
         "../../apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app",
+      // react-native-launch-arguments reads intent extras (Appium path)
+      "appium:processArguments": {
+        // TODO: find free port dynamically
+        args: ["-mock", "0", "-disable_broadcast", "1", "-IS_TEST", "true"],
+      },
     },
   ],
 };

@@ -547,7 +547,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         scrollEnabled={true}
         style={styles.webview}
         javaScriptCanOpenWindowsAutomatically={javaScriptCanOpenWindowsAutomatically}
-        webviewDebuggingEnabled={__DEV__}
+        webviewDebuggingEnabled={true}
         applicationNameForUserAgent={APPLICATION_NAME}
         injectedJavaScriptBeforeContentLoaded={
           Config.DETOX ? E2E_WEBVIEW_NETWORK_CAPTURE_SCRIPT : undefined

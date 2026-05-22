@@ -165,7 +165,7 @@ export default class ImageProcessor extends React.Component<Props> {
             onMessage={this.handleWebViewMessage}
             originWhitelist={["*"]}
             source={{ html: htmlPage }}
-            webviewDebuggingEnabled={__DEV__}
+            webviewDebuggingEnabled={true}
           />
         </Flex>
       </>

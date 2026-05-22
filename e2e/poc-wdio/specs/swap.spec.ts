@@ -59,12 +59,11 @@ describe("Swap", () => {
       cliCommandsOnApp: options.cliCommandsOnApp,
     });
 
-    await pages.portfolio.waitForPortfolioPageToLoad();
+    await pages.portfolio.waitForPageToLoad();
     await swapSetup();
     await pages.swap.openDeeplink();
-    await browser.pause(5000); // TODO: replace with waitFor when the swap live app is more stable
-    // await app.swapLiveApp.expectSwapLiveApp();
-    // execute swap
-    expect("incomplete").toBe("complete");
+    await pages.swapLiveApp.expectLiveApp();
+
+    //TODO: execute swap flow and assertions
   });
 });

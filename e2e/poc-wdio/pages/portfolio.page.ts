@@ -7,7 +7,7 @@ export class PortfolioPage {
   }
 
   // steps
-  async waitForPortfolioPageToLoad(timeout = 120000) {
-    await this.screen.waitForDisplayed({ timeout });
+  async waitForPageToLoad() {
+    await this.screen.waitForDisplayed();
   }
 }

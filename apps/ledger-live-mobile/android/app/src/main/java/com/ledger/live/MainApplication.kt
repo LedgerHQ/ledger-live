@@ -2,6 +2,7 @@ package com.ledger.live
 
 import android.app.Application
 import android.content.res.Configuration
+import android.webkit.WebView
 import com.braze.BrazeActivityLifecycleCallbackListener
 import com.facebook.react.PackageList
 import com.facebook.react.ReactApplication
@@ -56,6 +57,11 @@ class MainApplication : Application(), ReactApplication, ShareApplication {
 
     override fun onCreate() {
     super.onCreate()
+
+    // Appium/WDIO hybrid tests need devtools sockets on release-like E2E builds (detox APK).
+    if (BuildConfig.DEBUG || packageName.endsWith(".detox")) {
+      WebView.setWebContentsDebuggingEnabled(true)
+    }
 
     SoLoader.init(this, OpenSourceMergedSoMapping)
 

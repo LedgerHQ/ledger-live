@@ -1,6 +1,5 @@
 import { setEnv } from "@ledgerhq/live-env";
 import { init } from "../bridge/server";
-import { execSync } from "node:child_process";
 
 const NANO_APP_CATALOG_PATH = "artifacts/appVersion/nano-app-catalog.json";
 
@@ -96,17 +95,27 @@ export const config: WebdriverIO.Config = {
   //
   // Default timeout in milliseconds for request
   // if browser driver or grid doesn't send response
-  connectionRetryTimeout: 60_000,
+  connectionRetryTimeout: 30_000,
   //
   // Default request retries count
-  connectionRetryCount: 3,
+  connectionRetryCount: 5,
   //
   // Test runner services
   // Services take over a specific job you don't want to take care of. They enhance
   // your test setup with almost no effort. Unlike plugins, they don't add new
   // commands. Instead, they hook themselves up into the test process.
-  services: ["appium"],
-
+  services: [
+    [
+      "appium",
+      {
+        args: {
+          // Required for UiAutomator2 to download a Chromedriver matching the emulator WebView.
+          // Appium 3 requires "driverName:feature" (colon).
+          allowInsecure: "uiautomator2:chromedriver_autodownload",
+        },
+      },
+    ],
+  ],
   // Framework you want to run your specs with.
   // The following are supported: Mocha, Jasmine, and Cucumber
   // see also: https://webdriver.io/docs/frameworks
@@ -181,6 +190,16 @@ export const config: WebdriverIO.Config = {
    * @param {string} cid worker id (e.g. 0-0)
    */
   beforeSession: async function (config, capabilities, specs, cid) {
+    setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
+    setEnv("MOCK", "");
+    process.env.MOCK = "";
+    setEnv("DETOX", "1");
+    setEnv("E2E_NANO_APP_VERSION_PATH", NANO_APP_CATALOG_PATH);
+
+    const disableBroadcastEnv = process.env.DISABLE_TRANSACTION_BROADCAST;
+    const shouldBroadcast = disableBroadcastEnv === "0";
+    setEnv("DISABLE_TRANSACTION_BROADCAST", !shouldBroadcast);
+
     globalThis.speculosDevices = new Map<string, number>();
     globalThis.pendingCallbacks = new Map();
     globalThis.webSocket = {
@@ -190,14 +209,6 @@ export const config: WebdriverIO.Config = {
       e2eBridgeServer: undefined,
     };
     await init();
-    setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
-    setEnv("MOCK", "");
-    process.env.MOCK = "";
-    setEnv("DETOX", "1");
-    setEnv("E2E_NANO_APP_VERSION_PATH", NANO_APP_CATALOG_PATH);
-    const disableBroadcastEnv = process.env.DISABLE_TRANSACTION_BROADCAST;
-    const shouldBroadcast = disableBroadcastEnv === "0";
-    setEnv("DISABLE_TRANSACTION_BROADCAST", !shouldBroadcast);
   },
   /**
    * Gets executed before test execution begins. At this point you can access to all global

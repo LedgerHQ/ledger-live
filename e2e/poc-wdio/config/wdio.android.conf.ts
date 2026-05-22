@@ -17,6 +17,14 @@ export const config: WebdriverIO.Config = {
       "appium:automationName": "UiAutomator2",
       "appium:app":
         "../../apps/ledger-live-mobile/android/app/build/outputs/apk/detox/app-arm64-v8a-detox.apk",
+      // react-native-launch-arguments reads intent extras (Appium path)
+      "appium:optionalIntentArguments": [
+        `-e mock "0"`,
+        // TODO: find free port dynamically
+        `-e wsPort ${8099}`,
+        `-e disable_broadcast 1`,
+        `-e IS_TEST true`,
+      ].join(" "),
     },
   ],
 };
