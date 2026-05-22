@@ -71,5 +71,13 @@ describe("Swap", () => {
         : minAmount;
 
     await performSwapUntilQuoteSelectionStep(swap.accountToDebit, swap.accountToCredit, swapAmount);
+
+    // TODO: implement this!
+    // const provider = await app.swapLiveApp.selectExchange();
+    // await app.swapLiveApp.checkExchangeButtonHasProviderName(provider.uiName);
+    // await app.common.disableSynchronizationForiOS();
+    // await app.swapLiveApp.tapExecuteSwap(provider.uiName);
+    // await app.swap.verifyAmountsAndAcceptSwap(swap, swapAmount);
+    // await app.swap.waitForSuccessAndContinue();
   });
 });

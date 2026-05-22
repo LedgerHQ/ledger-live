@@ -35,7 +35,6 @@ export async function performSwapUntilQuoteSelectionStep(
 ) {
   await selectCurrency(accountToDebit, true);
   await selectCurrency(accountToCredit, false);
-  await driver.debug(); // Debug to check if the correct currencies are selected before inputting the amount
   await pages.swapLiveApp.inputFromAmount(amount);
   if (continueToQuotes) {
     await pages.swapLiveApp.expectToAmountFloat();
@@ -43,37 +42,3 @@ export async function performSwapUntilQuoteSelectionStep(
     await pages.swapLiveApp.waitForQuotes();
   }
 }
-
-// TODO: implement this!
-// export async function ensureTokenApproval(
-//   fromAccount: Account | TokenAccount,
-//   provider: Provider,
-//   minAmount: string,
-// ) {
-//   if (!provider.contractAddress || !fromAccount.parentAccount) return;
-
-//   const currentAllowance = await isTokenAllowanceSufficientCommand(
-//     fromAccount,
-//     provider.contractAddress,
-//     minAmount,
-//   );
-//   log.warn("CLI result: Current Allowance: ", currentAllowance);
-//   if (currentAllowance) return;
-
-//   const previousSpeculosPort = getEnv("SPECULOS_API_PORT");
-//   const speculos = await SpeculosUtils.launchSpeculos(fromAccount.currency.speculosApp.name);
-//   await SpeculosUtils.registerSpeculos(speculos.port);
-//   try {
-//     const result = await approveTokenCommand(
-//       fromAccount,
-//       provider.contractAddress,
-//       new BigNumber(minAmount).times(12).div(10).toFixed(),
-//     );
-//     //     await allure.description(`Token approval result for ${provider.uiName}:\n\n ${result}`);
-//   } finally {
-//     await SpeculosUtils.deleteSpeculos(speculos.id);
-//     if (previousSpeculosPort > 0) {
-//       await SpeculosUtils.registerSpeculos(previousSpeculosPort);
-//     }
-//   }
-// }
