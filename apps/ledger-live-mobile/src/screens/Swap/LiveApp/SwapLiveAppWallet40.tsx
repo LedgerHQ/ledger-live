@@ -31,7 +31,13 @@ function SwapWebviewContent({
   webviewRef,
   setWebviewState,
 }: Readonly<SwapWebviewContentProps>) {
-  const { customHandlers, inputs, swapPocExecutorProps, swapPocEnabled } = useSwapWebviewProps({
+  const {
+    customHandlers,
+    inputs,
+    swapPocExecutorProps,
+    swapPocSuccessScreen,
+    swapPocEnabled,
+  } = useSwapWebviewProps({
     manifest,
     params,
   });
@@ -47,6 +53,7 @@ function SwapWebviewContent({
       />
       <SwapDeviceIntentPocHost
         executorProps={swapPocExecutorProps}
+        successScreen={swapPocSuccessScreen}
         enabled={swapPocEnabled}
       />
     </>
