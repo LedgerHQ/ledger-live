@@ -9103,6 +9103,21 @@
       "title": "No addresses for this contact",
       "cta": "Add address"
     },
+    "addAddress": {
+      "selectAsset": "Select asset",
+      "searchAsset": "Search",
+      "selectNetwork": "Select network",
+      "networkBody": "Select the network you will use to send funds to this {{crypto}} address.",
+      "learnMore": "Learn more",
+      "enterAddress": "Enter address",
+      "addressLabel": "Address",
+      "addressNameLabel": "Address name",
+      "addressValid": "Valid address",
+      "addressInvalid": "Enter a 40-character hex address (with or without 0x).",
+      "nameTooltip": "We recommend giving this address a name to easily find it when needed. It will only be visible to you.",
+      "nameTooltipAriaLabel": "About the address name",
+      "submit": "Register address"
+    },
     "addresses_zero": "{{count}} address",
     "addresses_one": "{{count}} address",
     "addresses_other": "{{count}} addresses"
