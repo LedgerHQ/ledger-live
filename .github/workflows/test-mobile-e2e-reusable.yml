@@ -884,7 +884,7 @@ jobs:
           # detox runs there), so a relative MOBILE_ARTIFACTS_ROOT would resolve
           # to e2e/mobile/e2e/mobile/artifacts/ — outside the upload target.
           MITM: ${{ inputs.capture_network && '1' || '' }}
-          MITM_HAR: ${{ github.workspace }}/${{ env.MOBILE_ARTIFACTS_ROOT }}/mitm-shard-${{ matrix.shard }}.har
+          MITM_HAR_DIR: ${{ github.workspace }}/${{ env.MOBILE_ARTIFACTS_ROOT }}/mitm
         run: pnpm run mobile e2e:ci -p android -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}.json
 
       - name: Upload Android artifacts

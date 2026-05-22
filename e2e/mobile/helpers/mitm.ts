@@ -6,9 +6,19 @@ import { log } from "detox";
 import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
 
 const SCRIPTS_DIR = path.resolve(__dirname, "..", "scripts");
-const ARTIFACTS_DIR = path.resolve(__dirname, "..", "artifacts");
-const PID_FILE = path.join(ARTIFACTS_DIR, "mitm.pid");
-const LOG_FILE = path.join(ARTIFACTS_DIR, "mitm.log");
+const DEFAULT_HAR_DIR = path.resolve(__dirname, "..", "artifacts", "mitm");
+const PID_FILE = path.resolve(__dirname, "..", "artifacts", "mitm.pid");
+
+// One entry per spawned mitmdump. Persisted as JSON in PID_FILE so the
+// globalTeardown process (different Node process from globalSetup) can
+// signal and clean up every instance.
+type MitmInstance = {
+  serial: string;
+  port: number;
+  pid: number;
+  harPath: string;
+  logPath: string;
+};
 
 const isEnabled = (): boolean => process.env.MITM === "1";
 
@@ -36,107 +46,196 @@ const waitForPort = async (port: number, timeoutMs = 15_000): Promise<void> => {
     if (reachable) return;
     await new Promise(r => setTimeout(r, 250));
   }
-  throw new Error(`mitmweb did not start listening on port ${port} within ${timeoutMs}ms`);
+  throw new Error(`mitmdump did not start listening on port ${port} within ${timeoutMs}ms`);
 };
 
-const runScript = (script: string, args: string[] = []): Promise<void> =>
+const runScript = (
+  script: string,
+  args: string[] = [],
+  opts: { capture?: boolean } = {},
+): Promise<{ stdout: string }> =>
   new Promise((resolve, reject) => {
-    const child = spawn(path.join(SCRIPTS_DIR, script), args, { stdio: "inherit" });
+    const captureStdout = opts.capture ?? false;
+    const child = spawn(path.join(SCRIPTS_DIR, script), args, {
+      stdio: captureStdout ? ["inherit", "pipe", "inherit"] : "inherit",
+    });
+    let stdout = "";
+    if (captureStdout && child.stdout) {
+      child.stdout.on("data", chunk => {
+        stdout += chunk.toString();
+      });
+    }
     child.on("error", reject);
     child.on("exit", code =>
       code === 0
-        ? resolve()
+        ? resolve({ stdout })
         : reject(new Error(`${script} ${args.join(" ")} exited with code ${code}`)),
     );
   });
 
+const harDir = (): string => process.env.MITM_HAR_DIR ?? DEFAULT_HAR_DIR;
+
 export async function startMitm(): Promise<void> {
   if (!isEnabled()) return;
   if (!isAndroidTarget()) {
-    log.warn(`[mitm] MITM=1 ignored: DETOX_CONFIGURATION="${process.env.DETOX_CONFIGURATION}" is not Android`);
+    log.warn(
+      `[mitm] MITM=1 ignored: DETOX_CONFIGURATION="${process.env.DETOX_CONFIGURATION}" is not Android`,
+    );
     return;
   }
 
-  const port = Number(process.env.MITM_PORT ?? 8080);
+  const outDir = harDir();
+  await fs.mkdir(outDir, { recursive: true });
+  await fs.mkdir(path.dirname(PID_FILE), { recursive: true });
 
-  await fs.mkdir(ARTIFACTS_DIR, { recursive: true });
-
-  // Redirect mitmdump stdout/stderr to a log file so we can diagnose startup
-  // failures without polluting Detox's own log stream.
-  const logFd = openSync(LOG_FILE, "w");
-  const child = spawn(path.join(SCRIPTS_DIR, "mitm.sh"), [], {
-    detached: true,
-    stdio: ["ignore", logFd, logFd],
-    env: { ...process.env, MITM_PORT: String(port) },
+  // 1. Discover every booted emulator. Same boot-wait the multi-emulator
+  //    setup-mitmproxy.sh uses, just exposed via the `list-serials`
+  //    subcommand so we get the list back here without re-implementing
+  //    adb parsing in TS.
+  const { stdout: listOut } = await runScript("setup-mitmproxy.sh", ["list-serials"], {
+    capture: true,
   });
+  const serials = listOut
+    .split("\n")
+    .map(s => s.trim())
+    .filter(s => /^emulator-\d+$/.test(s));
 
-  if (!child.pid) {
-    throw new Error("Failed to spawn mitm.sh (no pid assigned)");
+  if (serials.length === 0) {
+    throw new Error("[mitm] no booted emulators detected");
   }
 
-  // Detach so mitmproxy survives this globalSetup process — globalTeardown,
-  // which runs in a separate process, will SIGTERM it via the pid file.
-  child.unref();
-  await fs.writeFile(PID_FILE, String(child.pid));
+  const basePort = Number(process.env.MITM_PORT ?? 8080);
 
-  log.info(`[mitm] mitmdump spawning (pid ${child.pid}, log ${LOG_FILE})`);
-
+  // 2. For each emulator, spawn a dedicated mitmdump and point that
+  //    emulator at it. Doing the spawn+wait+configure serially per
+  //    emulator avoids interleaved log output and keeps failures easy to
+  //    attribute.
+  const instances: MitmInstance[] = [];
   try {
-    await waitForPort(port);
+    for (let i = 0; i < serials.length; i++) {
+      const serial = serials[i];
+      const port = basePort + i;
+      const harPath = path.join(outDir, `mitm-${serial}.har`);
+      const logPath = path.join(outDir, `mitm-${serial}.log`);
+
+      // Per-instance log file — when one worker's HAR looks wrong, the
+      // matching log makes it possible to diagnose which mitmdump
+      // misbehaved without grepping a giant combined log.
+      const logFd = openSync(logPath, "w");
+      const child = spawn(path.join(SCRIPTS_DIR, "mitm.sh"), [], {
+        detached: true,
+        stdio: ["ignore", logFd, logFd],
+        env: { ...process.env, MITM_PORT: String(port), MITM_HAR: harPath },
+      });
+      if (!child.pid) {
+        throw new Error(`[mitm] failed to spawn mitm.sh for ${serial}`);
+      }
+      child.unref();
+
+      try {
+        await waitForPort(port);
+      } catch (err) {
+        log.error(`[mitm] mitmdump for ${serial} failed to bind :${port}. See ${logPath}.`);
+        try {
+          process.kill(child.pid, "SIGTERM");
+        } catch {
+          // ignore
+        }
+        throw err;
+      }
+
+      await runScript("setup-mitmproxy.sh", [
+        "configure",
+        "--serial",
+        serial,
+        "--port",
+        String(port),
+      ]);
+
+      instances.push({ serial, port, pid: child.pid, harPath, logPath });
+      log.info(
+        `[mitm] ${serial} → :${port} (pid ${child.pid}, har ${harPath}, log ${logPath})`,
+      );
+    }
+
+    await fs.writeFile(PID_FILE, JSON.stringify(instances));
+    log.info(`[mitm] capture active on ${instances.length} emulator(s); HAR dir ${outDir}`);
   } catch (err) {
-    log.error(`[mitm] mitmdump failed to bind :${port}. See ${LOG_FILE}.`);
+    // On any failure during multi-instance bring-up, tear down whatever
+    // we already started so we don't leave orphan mitmdumps lying around.
+    log.error("[mitm] start failed; rolling back", sanitizeError(err));
+    await fs.writeFile(PID_FILE, JSON.stringify(instances)).catch(() => {});
     await stopMitm().catch(() => {});
     throw err;
   }
-
-  // Install CA + set system proxy on the running emulator.
-  await runScript("setup-mitmproxy.sh");
-
-  log.info(`[mitm] capture active — HAR will be written to artifacts/mitm.har on teardown`);
 }
+
+const isLiveProcess = (pid: number): boolean => {
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+const waitForExit = async (pid: number, timeoutMs: number): Promise<void> => {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    if (!isLiveProcess(pid)) return;
+    await new Promise(r => setTimeout(r, 100));
+  }
+};
 
 export async function stopMitm(): Promise<void> {
   if (!isEnabled()) return;
 
-  // Clear the emulator proxy first so any tail-end teardown traffic does not
-  // try to hit a mitmproxy that is already shutting down.
+  let instances: MitmInstance[] = [];
+  try {
+    const raw = (await fs.readFile(PID_FILE, "utf-8")).trim();
+    if (raw) instances = JSON.parse(raw);
+  } catch {
+    // No pid file → nothing to stop.
+    return;
+  }
+
+  // Clear emulator proxies first so any teardown traffic does not try to
+  // hit a mitmproxy that is already shutting down. Failures are warnings
+  // — a missing emulator does not block the rest of the teardown.
   if (isAndroidTarget()) {
-    await runScript("setup-mitmproxy.sh", ["--clear"]).catch(err =>
-      log.warn(`[mitm] setup-mitmproxy.sh --clear failed:`, sanitizeError(err)),
+    await Promise.all(
+      instances.map(({ serial }) =>
+        runScript("setup-mitmproxy.sh", ["clear", "--serial", serial]).catch(err =>
+          log.warn(
+            `[mitm] clear ${serial} failed:`,
+            sanitizeError(err instanceof Error ? err : new Error(String(err))),
+          ),
+        ),
+      ),
     );
   }
 
-  let pid: number | null = null;
-  try {
-    pid = Number((await fs.readFile(PID_FILE, "utf-8")).trim());
-  } catch {
-    // No pid file → nothing to stop.
-  }
-
-  if (pid && Number.isFinite(pid)) {
-    try {
-      // SIGTERM lets mitmproxy's `hardump` option flush the HAR before exit.
-      // SIGKILL would skip the dump.
-      process.kill(pid, "SIGTERM");
-    } catch (err) {
-      const code = (err as NodeJS.ErrnoException).code;
-      if (code !== "ESRCH") {
-        log.warn(`[mitm] could not signal mitmweb (pid ${pid}):`, sanitizeError(err));
-      }
-    }
-
-    // Poll for the process to exit so we know the HAR is flushed.
-    const deadline = Date.now() + 5_000;
-    while (Date.now() < deadline) {
+  // SIGTERM lets mitmproxy's `hardump` option flush each HAR before
+  // exit. SIGKILL would skip the dump.
+  await Promise.all(
+    instances.map(async ({ serial, pid, harPath }) => {
+      if (!Number.isFinite(pid)) return;
       try {
-        process.kill(pid, 0);
-        await new Promise(r => setTimeout(r, 100));
-      } catch {
-        break; // process is gone
+        process.kill(pid, "SIGTERM");
+      } catch (err) {
+        const code = (err as NodeJS.ErrnoException).code;
+        if (code !== "ESRCH") {
+          log.warn(
+            `[mitm] could not signal ${serial} (pid ${pid}):`,
+            sanitizeError(err instanceof Error ? err : new Error(String(err))),
+          );
+        }
+        return;
       }
-    }
-    log.info(`[mitm] mitmdump stopped — HAR at ${ARTIFACTS_DIR}/mitm.har`);
-  }
+      await waitForExit(pid, 5_000);
+      log.info(`[mitm] ${serial} stopped — HAR at ${harPath}`);
+    }),
+  );
 
   await fs.unlink(PID_FILE).catch(() => {});
 }
