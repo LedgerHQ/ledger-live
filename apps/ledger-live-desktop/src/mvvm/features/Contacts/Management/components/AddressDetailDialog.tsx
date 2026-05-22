@@ -9,6 +9,21 @@ import {
   TileButton,
 } from "@ledgerhq/lumen-ui-react";
 import { ArrowUp, PenEdit, Trash } from "@ledgerhq/lumen-ui-react/symbols";
+
+/**
+ * Wrap the destructive `Trash` symbol with an inline `color` style so
+ * the icon goes red alongside the "Delete" label. Lumen `TileButton`
+ * bakes `text-base` directly onto the icon element (see TileButton.js
+ * line 74 — `className={k(...)}` only, no spread of extra props from
+ * the caller's `className`), which our outer `text-error` className
+ * can't override via the cascade. Inline `style` has higher specificity
+ * than any utility class, so `currentColor` on the SVG strokes picks
+ * up the error color cleanly.
+ */
+const DestructiveTrash = (props: {
+  className?: string;
+  size?: 12 | 16 | 20 | 24 | 32 | 40 | 48 | 56;
+}) => <Trash {...props} style={{ color: "var(--text-error)" }} />;
 import { cn } from "LLD/utils/cn";
 import type { Contact, ContactEntry } from "~/renderer/contacts/types";
 import { getChainInfo } from "../utils/getChainInfo";
@@ -33,7 +48,7 @@ type Action = {
 const ACTIONS: Action[] = [
   { id: "send", i18nKey: "contactsManagement.addressDialog.send", icon: ArrowUp },
   { id: "edit", i18nKey: "contactsManagement.addressDialog.edit", icon: PenEdit },
-  { id: "delete", i18nKey: "contactsManagement.addressDialog.delete", icon: Trash, destructive: true },
+  { id: "delete", i18nKey: "contactsManagement.addressDialog.delete", icon: DestructiveTrash, destructive: true },
 ];
 
 const noop = () => {};
