@@ -53,6 +53,7 @@ export const StyledButton = styled.button<ButtonState>`
   border: 1px solid ${p => (p.$checked ? p.theme.colors.primary.c50 : p.theme.colors.neutral.c40)};
   border-radius: ${p => `${p.theme.radii[2]}px`};
   pointer-events: ${p => (p.disabled ? "none" : "auto")};
+  opacity: ${p => (p.disabled ? 0.5 : 1)};
   padding: 15px;
 
   &:hover {

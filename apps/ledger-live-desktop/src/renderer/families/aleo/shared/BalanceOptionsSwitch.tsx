@@ -4,9 +4,10 @@ import IconTransfer from "~/renderer/icons/Transfer";
 import { StyledButton } from "./BalanceOption";
 import { useTranslation } from "react-i18next";
 
-const Separator = styled.div`
+const Separator = styled.div<{ $disabled?: boolean }>`
   display: flex;
   align-items: center;
+  opacity: ${p => (p.$disabled ? 0.5 : 1)};
   & > div {
     flex: 1;
     height: 1px;
@@ -26,14 +27,21 @@ const StyledSwitchButton = styled(StyledButton)`
   border-radius: 100%;
 `;
 
-const BalanceOptionsSwitch = ({ onClick }: { onClick: () => void }) => {
+const BalanceOptionsSwitch = ({
+  onClick,
+  disabled,
+}: {
+  onClick: () => void;
+  disabled?: boolean;
+}) => {
   const { t } = useTranslation();
   return (
-    <Separator>
+    <Separator $disabled={disabled}>
       <div />
       <StyledSwitchButton
         type="button"
         onClick={onClick}
+        disabled={disabled}
         aria-label={t("aleo.shared.balanceSelector.switchBalance")}
       >
         <IconTransfer size={16} aria-hidden />

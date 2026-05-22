@@ -9,8 +9,9 @@ import {
   isSelfTransferTransaction,
 } from "@ledgerhq/live-common/families/aleo/utils";
 import type { AleoAccount, Transaction } from "@ledgerhq/live-common/families/aleo/types";
+import type { AccountLike } from "@ledgerhq/types-live";
 import StepRecipientSeparator from "~/renderer/components/StepRecipientSeparator";
-import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { useAccountUnit, useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useSelector } from "LLD/hooks/redux";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { dayFormat, hourFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
@@ -23,12 +24,22 @@ type Source = "public" | "private";
 interface Props {
   transaction: Transaction;
   mainAccount: AleoAccount;
+  subAccount?: AccountLike | null;
   onChange: (value: Source) => void;
+  disablePrivate?: boolean;
 }
 
-const BalanceSelector = ({ mainAccount, transaction, onChange }: Props) => {
+const BalanceSelector = ({
+  mainAccount,
+  subAccount,
+  transaction,
+  onChange,
+  disablePrivate = false,
+}: Props) => {
   const { t } = useTranslation();
-  const unit = useAccountUnit(mainAccount);
+  const mainUnit = useAccountUnit(mainAccount);
+  const subAccountUnit = useMaybeAccountUnit(subAccount);
+  const unit = subAccountUnit ?? mainUnit;
   const locale = useSelector(localeSelector);
   const formatDate = useDateFormatter(dayFormat);
   const formatTime = useDateFormatter(hourFormat);
@@ -39,8 +50,10 @@ const BalanceSelector = ({ mainAccount, transaction, onChange }: Props) => {
     locale,
   };
 
-  const privateBalance = mainAccount?.aleoResources?.privateBalance ?? null;
-  const transparentBalance = mainAccount?.aleoResources?.transparentBalance ?? new BigNumber(0);
+  const privateBalance = subAccount ? null : mainAccount?.aleoResources?.privateBalance ?? null;
+  const transparentBalance = subAccount
+    ? subAccount.balance
+    : mainAccount?.aleoResources?.transparentBalance ?? new BigNumber(0);
   const formattedPrivateBalance =
     privateBalance !== null
       ? formatCurrencyUnit(unit, privateBalance, formatConfig)
@@ -72,12 +85,13 @@ const BalanceSelector = ({ mainAccount, transaction, onChange }: Props) => {
           lastSyncDate={publicSyncDate}
           balance={formattedTransparentBalance}
           checked={isPublicTransfer}
-          onClick={() => onChange("public")}
+          onClick={() => !disablePrivate && onChange("public")}
         />
         <BalanceOptionsSwitch
           onClick={() => {
             onChange(isPublicTransfer ? "private" : "public");
           }}
+          disabled={disablePrivate}
         />
         <BalanceOption
           isSelfTransfer={isSelfTransfer}
@@ -86,6 +100,7 @@ const BalanceSelector = ({ mainAccount, transaction, onChange }: Props) => {
           lastSyncDate={privateSyncDate}
           lastSyncTime={privateSyncTime}
           checked={isPrivateTransfer}
+          disabled={disablePrivate}
           onClick={() => onChange("private")}
         />
       </Flex>
@@ -108,6 +123,7 @@ const BalanceSelector = ({ mainAccount, transaction, onChange }: Props) => {
           lastSyncDate={privateSyncDate}
           lastSyncTime={privateSyncTime}
           checked={isPrivateTransfer}
+          disabled={disablePrivate}
           onClick={() => onChange("private")}
         />
       </Flex>

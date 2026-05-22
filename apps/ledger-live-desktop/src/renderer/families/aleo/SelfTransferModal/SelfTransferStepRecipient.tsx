@@ -59,6 +59,9 @@ export const SelfTransferStepRecipient = ({
           <SelectAccount
             id="account-debit-placeholder"
             autoFocus={!openedFromAccount}
+            withSubAccounts
+            enforceHideEmptySubAccounts
+            subAccountFilter={a => !a.balance.isZero()}
             onChange={handleChangeAccount}
             value={account}
             filter={accountFilter}
@@ -71,6 +74,8 @@ export const SelfTransferStepRecipient = ({
           <BalanceSelector
             transaction={transaction}
             mainAccount={mainAccount}
+            subAccount={account.type === "TokenAccount" ? account : undefined}
+            disablePrivate={account.type === "TokenAccount"}
             onChange={value => {
               updateTransaction(t => {
                 if (t.family !== "aleo") return t;
