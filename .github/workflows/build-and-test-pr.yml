@@ -195,8 +195,8 @@ jobs:
       - test-devtools
       - build-wallet-cli
       - determine-affected
-    uses: LedgerHQ/ledger-live/.github/workflows/scan-sonar-reusable.yml@develop
-    if: ${{ always() && !cancelled() && !github.event.pull_request.head.repo.fork && (needs.test-desktop.result == 'success' || needs.test-mobile.result == 'success' || needs.test-libraries.result == 'success' || needs.test-features.result == 'success' || needs.test-shared.result == 'success' || needs.test-domain.result == 'success' || needs.test-devtools.result == 'success' || needs.build-wallet-cli.result == 'success' || contains(needs.determine-affected.outputs.paths, 'e2e')) }}
+    uses: LedgerHQ/ledger-live/.github/workflows/scan-sonar-reusable.yml@support/speed-up-sonar-scan-test
+    if: ${{ always() && !cancelled() && !github.event.pull_request.head.repo.fork }}
     secrets: inherit
     with:
       should_download_desktop_coverage: ${{ needs.test-desktop.outputs.coverage_generated }}
