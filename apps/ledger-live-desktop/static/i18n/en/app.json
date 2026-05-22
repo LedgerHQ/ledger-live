@@ -9100,8 +9100,7 @@
       "errorDuplicate": "A contact with this name already exists."
     },
     "emptyAddresses": {
-      "title": "No addresses yet",
-      "description": "Add an address to start tracking this contact across networks.",
+      "title": "No addresses for this contact",
       "cta": "Add address"
     },
     "addresses_zero": "{{count}} address",
