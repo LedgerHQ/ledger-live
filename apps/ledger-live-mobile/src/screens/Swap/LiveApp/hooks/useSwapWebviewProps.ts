@@ -41,6 +41,7 @@ export function useSwapWebviewProps({ manifest, params }: UseSwapWebviewPropsPar
   const {
     customHandlers: customSwapHandlers,
     swapPocExecutorProps,
+    swapPocSuccessScreen,
     swapPocEnabled,
   } = useSwapCustomHandlers(manifest, accounts, dispatch);
   const customDeeplinkHandlers = useDeeplinkCustomHandlers();
@@ -126,6 +127,7 @@ export function useSwapWebviewProps({ manifest, params }: UseSwapWebviewPropsPar
     customHandlers,
     inputs,
     swapPocExecutorProps,
+    swapPocSuccessScreen,
     swapPocEnabled,
   };
 }

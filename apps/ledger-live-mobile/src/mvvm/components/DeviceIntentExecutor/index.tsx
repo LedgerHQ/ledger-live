@@ -25,7 +25,16 @@ type Props<JobState, Input, ExtraProps> = DeviceIntentExecutorProps<
   initializerConfig?: InitializerConfig;
 };
 
-const platformConfig: ExecutorPlatformConfiguration<InitializationInput, InitializerConfig> = {
+/**
+ * Platform configuration for the cross-platform `DeviceIntentExecutor` on
+ * mobile (LWM). Exported so consumers that need to render the executor
+ * inside their own drawer (instead of {@link DeviceIntentExecutorLWM}) can
+ * reuse the exact same component set.
+ */
+export const LWM_EXECUTOR_PLATFORM_CONFIG: ExecutorPlatformConfiguration<
+  InitializationInput,
+  InitializerConfig
+> = {
   DeviceConnectionComponent: DeviceConnectionComponentLWM,
   DeviceContextInitializerComponent: DeviceContextInitializerComponentLWM,
   ConnectionErrorComponent: ConnectionError,
@@ -60,7 +69,7 @@ export function DeviceIntentExecutorLWM<JobState, Input, ExtraProps>(
         {props.cancellableUI && <BottomSheetHeader density="expanded" />}
         <DeviceIntentExecutor
           {...props}
-          platformConfig={platformConfig}
+          platformConfig={LWM_EXECUTOR_PLATFORM_CONFIG}
           initializerConfig={props.initializerConfig}
         />
       </BottomSheetView>

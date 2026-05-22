@@ -64,6 +64,21 @@ type PendingPromise = {
   currencyId: string;
 };
 
+/**
+ * Information needed to render the post-approval success sheet. Populated
+ * once the broadcast intent confirms on-chain and consumed by
+ * {@link SwapDeviceIntentPocHost}. Dismissing the sheet (Swap CTA, header X
+ * or backdrop) resolves the live-app `customSwap` Promise.
+ */
+export type SwapPocSuccessScreen = {
+  /** Hash of the broadcast-and-confirmed approval transaction. */
+  approvalTxHash: string;
+  /** Called when the user taps the primary "Swap" CTA. */
+  onSwapPress: () => void;
+  /** Called when the user dismisses the sheet (X or backdrop). */
+  onClose: () => void;
+};
+
 export type SwapDeviceIntentPocOrchestrationResult = {
   /** Wallet API handler to register as `custom.swap`. */
   customSwapHandler: (request: { params?: CustomSwapParams }) => Promise<CustomSwapResult>;
@@ -74,7 +89,9 @@ export type SwapDeviceIntentPocOrchestrationResult = {
     AnyExtraProps,
     InitializationInput
   > | null;
-  /** Whether the executor should be visible / active. */
+  /** Info needed to render the post-approval success sheet, or `null` if not in the success phase. */
+  successScreen: SwapPocSuccessScreen | null;
+  /** Whether the host should mount any swap-POC UI (executor or success sheet). */
   enabled: boolean;
 };
 
@@ -176,10 +193,11 @@ export function useSwapDeviceIntentPocOrchestration({
 
       if (current.phase === "broadcast-approval") {
         if (last && "type" in last && last.type === "confirmed") {
-          pending.resolve({ approvalTxHash: last.hash });
-          pendingPromiseRef.current = null;
+          // Hold the Promise: the live-app `customSwap` call only resolves
+          // once the user dismisses the success sheet (Swap CTA / X /
+          // backdrop). This keeps room for the next iteration to chain the
+          // swap-sign intent in-place from the same Swap button.
           lastJobStateRef.current = null;
-          setEnabled(false);
           return { phase: "done", approvalTxHash: last.hash };
         }
         const error =
@@ -210,6 +228,25 @@ export function useSwapDeviceIntentPocOrchestration({
   const handleUserCancel = useCallback(() => {
     rejectAndReset(new DrawerClosedError("User closed the swap drawer"));
   }, [rejectAndReset]);
+
+  /**
+   * Resolves the held `customSwap` Promise once the user dismisses the
+   * success sheet. We resolve in either case (Swap CTA or close) because
+   * the approval transaction has already confirmed on-chain at that point;
+   * the live app should always see `{ approvalTxHash }`.
+   */
+  const handleSuccessDismiss = useCallback(() => {
+    const pending = pendingPromiseRef.current;
+    setPhase(current => {
+      const result: CustomSwapResult =
+        current.phase === "done" ? { approvalTxHash: current.approvalTxHash } : {};
+      pending?.resolve(result);
+      return { phase: "idle" };
+    });
+    pendingPromiseRef.current = null;
+    lastJobStateRef.current = null;
+    setEnabled(false);
+  }, []);
 
   const customSwapHandler = useCallback<
     SwapDeviceIntentPocOrchestrationResult["customSwapHandler"]
@@ -306,5 +343,14 @@ export function useSwapDeviceIntentPocOrchestration({
     handleUserCancel,
   ]);
 
-  return { customSwapHandler, executorProps, enabled };
+  const successScreen = useMemo<SwapPocSuccessScreen | null>(() => {
+    if (phase.phase !== "done") return null;
+    return {
+      approvalTxHash: phase.approvalTxHash,
+      onSwapPress: handleSuccessDismiss,
+      onClose: handleSuccessDismiss,
+    };
+  }, [phase, handleSuccessDismiss]);
+
+  return { customSwapHandler, executorProps, successScreen, enabled };
 }

@@ -15,7 +15,13 @@ type Props = {
 
 export const WebView = forwardRef<WebviewAPI, Props>(
   ({ manifest, params, setWebviewState }, ref) => {
-    const { customHandlers, inputs, swapPocExecutorProps, swapPocEnabled } = useSwapWebviewProps({
+    const {
+      customHandlers,
+      inputs,
+      swapPocExecutorProps,
+      swapPocSuccessScreen,
+      swapPocEnabled,
+    } = useSwapWebviewProps({
       manifest,
       params,
     });
@@ -31,6 +37,7 @@ export const WebView = forwardRef<WebviewAPI, Props>(
         />
         <SwapDeviceIntentPocHost
           executorProps={swapPocExecutorProps}
+          successScreen={swapPocSuccessScreen}
           enabled={swapPocEnabled}
         />
       </SafeAreaView>

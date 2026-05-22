@@ -129,6 +129,7 @@ export function useSwapCustomHandlers(
   return {
     customHandlers,
     swapPocExecutorProps: swapPoc.executorProps,
+    swapPocSuccessScreen: swapPoc.successScreen,
     swapPocEnabled: swapPoc.enabled,
   };
 }
