@@ -118,6 +118,7 @@ export interface CommandOutput {
    * WalletCliDeviceError handling in run()/fail().
    */
   deviceState(state: DeviceState): void;
+
   /** Print one progress line for swap execute long-running steps. */
   swapExecuteProgress(line: string): void;
   /** Print payload-only swap execute result. */
@@ -140,6 +141,19 @@ export interface CommandOutput {
     amountExpectedTo?: string;
     magnitudeAwareRate?: string;
   }): void;
+
+  /** Output ring init result (human: member + rootId lines; json: envelope). */
+  ringInit(result: { memberName: string; rootId: string }): void;
+  /** Output key names table (human: table or empty message; json: envelope with keys array). */
+  ringKeys(domains: ReadonlyArray<{ domain: string; firstUsed: string }>): void;
+  /** Output ring destroy result (human: colored message; json: envelope). */
+  ringDestroy(remoteSucceeded: boolean): void;
+  /** User cancelled destroy confirmation (human: stderr line; json: envelope with cancelled:true). */
+  ringDestroyCancelled(): void;
+  /** Output encrypt-to-file result (human: ✔ line; json: envelope with output path + bytes). */
+  ringEncrypt(result: { dest: string; bytes: number }): void;
+  /** Output decrypt-to-file result (human: ✔ line; json: envelope with output path). */
+  ringDecrypt(result: { dest: string }): void;
 }
 
 // ---------------------------------------------------------------------------
@@ -383,7 +397,6 @@ class HumanCommandOutput implements CommandOutput {
 
   deviceState(state: DeviceState): void {
     if (isTerminalDeviceState(state)) {
-      // Terminal states are surfaced via thrown WalletCliDeviceError; avoid double-render.
       return;
     }
     const { glyph, message } = renderDeviceState(state);
@@ -445,6 +458,46 @@ class HumanCommandOutput implements CommandOutput {
     if (args.operationHash) {
       writeStdout(`${colors.bold("Operation hash:")} ${args.operationHash}\n`);
     }
+  }
+
+  ringInit({ memberName, rootId }: { memberName: string; rootId: string }): void {
+    writeStdout("");
+    writeStdout(`${colors.bold("Member:")}  ${memberName}`);
+    writeStdout(`${colors.bold("Root ID:")} ${rootId}`);
+    writeStdout(colors.dim("Encrypt/decrypt with: wallet-cli ring encrypt --key <name>"));
+  }
+
+  ringKeys(domains: ReadonlyArray<{ domain: string; firstUsed: string }>): void {
+    if (domains.length === 0) {
+      writeStdout(colors.dim("No keys yet. Use `ring encrypt --key <name>` to create one."));
+      return;
+    }
+    const w = Math.max(3, ...domains.map(d => d.domain.length));
+    writeStdout(`${colors.bold("Key".padEnd(w))}  ${colors.bold("First Used")}`);
+    writeStdout("─".repeat(w + 2 + 10));
+    for (const { domain, firstUsed } of domains) {
+      writeStdout(`${domain.padEnd(w)}  ${firstUsed.slice(0, 10)}`);
+    }
+  }
+
+  ringDestroy(remoteSucceeded: boolean): void {
+    writeStdout(
+      remoteSucceeded
+        ? `${colors.green("✔")} Ledger Key Ring destroyed.`
+        : `${colors.green("✔")} Ledger Key Ring local credentials wiped.`,
+    );
+  }
+
+  ringDestroyCancelled(): void {
+    writeStderr("Cancelled.\n");
+  }
+
+  ringEncrypt({ dest, bytes }: { dest: string; bytes: number }): void {
+    writeStdout(`${colors.green("✔")} Written to ${dest} (${bytes} bytes, AES-256-GCM)`);
+  }
+
+  ringDecrypt({ dest }: { dest: string }): void {
+    writeStdout(`${colors.green("✔")} Written to ${dest}`);
   }
 }
 
@@ -695,6 +748,30 @@ class JsonCommandOutput implements CommandOutput {
         magnitudeAwareRate: args.magnitudeAwareRate,
       }),
     );
+  }
+
+  ringInit({ memberName, rootId }: { memberName: string; rootId: string }): void {
+    this._writeNdjson(this._envelope({ member: memberName, rootId }));
+  }
+
+  ringKeys(domains: ReadonlyArray<{ domain: string; firstUsed: string }>): void {
+    this._writeNdjson(this._envelope({ keys: domains.map(d => ({ domain: d.domain, firstUsed: d.firstUsed })) }));
+  }
+
+  ringDestroy(remoteSucceeded: boolean): void {
+    this._writeNdjson(this._envelope({ destroyed: remoteSucceeded, local_wiped: true }));
+  }
+
+  ringDestroyCancelled(): void {
+    this._writeNdjson(this._envelope({ cancelled: true }));
+  }
+
+  ringEncrypt({ dest, bytes }: { dest: string; bytes: number }): void {
+    this._writeNdjson(this._envelope({ output: dest, bytes }));
+  }
+
+  ringDecrypt({ dest }: { dest: string }): void {
+    this._writeNdjson(this._envelope({ output: dest }));
   }
 }
 

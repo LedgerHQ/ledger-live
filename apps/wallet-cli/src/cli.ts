@@ -20,6 +20,7 @@ import ReceiveCommand from "./commands/receive";
 import SendCommand from "./commands/send";
 import SwapGroup from "./commands/swap/index";
 import GenuineCheckCommand from "./commands/genuine-check";
+import RingGroup from "./commands/ring/index";
 
 emitTestingBuildBannerIfNeeded();
 
@@ -41,6 +42,7 @@ export async function runMain(argv: string[] = process.argv.slice(2)): Promise<n
   cli.command(SendCommand);
   cli.command(SwapGroup);
   cli.command(GenuineCheckCommand);
+  cli.command(RingGroup);
   const code = await cli.run(normalizeNegatedFlags(argv), { noExit: true });
   return code ?? 0;
 }

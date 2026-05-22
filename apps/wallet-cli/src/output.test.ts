@@ -1,5 +1,6 @@
 import "./live-common-setup";
 import { afterEach, beforeEach, describe, expect, it, mock } from "bun:test";
+import { installOutputCapture } from "./shared/ui";
 
 type MockSpinner = {
   text: string;
@@ -143,5 +144,68 @@ describe("HumanCommandOutput", () => {
     expect(joined).toContain(USDT_TOKEN_INFO.id);
     expect(joined).toContain(USDT_TOKEN_INFO.ticker);
     expect(joined).toContain(USDT_TOKEN_INFO.contractAddress);
+  });
+
+  describe("ring human output", () => {
+    let writes: string[] = [];
+    let stderrWrites: string[] = [];
+    let restore: () => void;
+
+    beforeEach(() => {
+      writes = [];
+      stderrWrites = [];
+      restore = installOutputCapture({
+        stdout: chunk => writes.push(chunk),
+        stderr: chunk => stderrWrites.push(chunk),
+      });
+    });
+
+    afterEach(() => restore());
+
+    const ctx = { command: "ring", network: "all" };
+
+    it("ringKeys renders a table with key and date columns", () => {
+      createCommandOutput("human", ctx).ringKeys([
+        { domain: "prod", firstUsed: "2026-04-27T12:00:00.000Z" },
+        { domain: "staging", firstUsed: "2026-04-28T12:00:00.000Z" },
+      ]);
+      const out = writes.join("");
+      expect(out).toContain("prod");
+      expect(out).toContain("staging");
+      expect(out).toContain("2026-04-27");
+      expect(out).toContain("2026-04-28");
+    });
+
+    it("ringKeys renders dim message when empty", () => {
+      createCommandOutput("human", ctx).ringKeys([]);
+      expect(writes.join("")).toContain("No keys");
+    });
+
+    it("ringDestroy shows destroyed message when remote succeeded", () => {
+      createCommandOutput("human", ctx).ringDestroy(true);
+      expect(writes.join("")).toContain("Ledger Key Ring destroyed");
+    });
+
+    it("ringDestroy shows local-wipe message when remote failed", () => {
+      createCommandOutput("human", ctx).ringDestroy(false);
+      expect(writes.join("")).toContain("local credentials wiped");
+    });
+
+    it("ringDestroyCancelled writes Cancelled to stderr", () => {
+      createCommandOutput("human", ctx).ringDestroyCancelled();
+      expect(stderrWrites.join("")).toContain("Cancelled");
+    });
+
+    it("ringEncrypt shows written path and byte count", () => {
+      createCommandOutput("human", ctx).ringEncrypt({ dest: "/tmp/out.enc", bytes: 128 });
+      const out = writes.join("");
+      expect(out).toContain("/tmp/out.enc");
+      expect(out).toContain("128");
+    });
+
+    it("ringDecrypt shows written path", () => {
+      createCommandOutput("human", ctx).ringDecrypt({ dest: "/tmp/out.txt" });
+      expect(writes.join("")).toContain("/tmp/out.txt");
+    });
   });
 });

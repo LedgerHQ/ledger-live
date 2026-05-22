@@ -237,6 +237,110 @@ describe("JsonCommandOutput", () => {
     });
   });
 
+  it("ringInit emits member and rootId in envelope", () => {
+    try {
+      const out = createCommandOutput("json", { command: "ring init", network: "all" });
+      out.ringInit({ memberName: "my-machine (darwin)", rootId: "root-abc" });
+    } finally {
+      restore();
+    }
+    const [line] = writes.join("").trim().split("\n").map(l => JSON.parse(l));
+    expect(line).toMatchObject({
+      status: "success",
+      command: "ring init",
+      network: "all",
+      member: "my-machine (darwin)",
+      rootId: "root-abc",
+    });
+  });
+
+  it("ringKeys emits keys array in envelope", () => {
+    try {
+      const out = createCommandOutput("json", { command: "ring keys", network: "all" });
+      out.ringKeys([
+        { domain: "prod", firstUsed: "2026-04-27T00:00:00.000Z" },
+        { domain: "staging", firstUsed: "2026-04-28T00:00:00.000Z" },
+      ]);
+    } finally {
+      restore();
+    }
+    const [line] = writes.join("").trim().split("\n").map(l => JSON.parse(l));
+    expect(line).toMatchObject({
+      status: "success",
+      command: "ring keys",
+      keys: [
+        { domain: "prod", firstUsed: "2026-04-27T00:00:00.000Z" },
+        { domain: "staging", firstUsed: "2026-04-28T00:00:00.000Z" },
+      ],
+    });
+  });
+
+  it("ringKeys emits empty keys array when no keys tracked", () => {
+    try {
+      const out = createCommandOutput("json", { command: "ring keys", network: "all" });
+      out.ringKeys([]);
+    } finally {
+      restore();
+    }
+    const [line] = writes.join("").trim().split("\n").map(l => JSON.parse(l));
+    expect(line).toMatchObject({ status: "success", keys: [] });
+  });
+
+  it("ringDestroy emits destroyed=true when remote succeeded", () => {
+    try {
+      const out = createCommandOutput("json", { command: "ring destroy", network: "all" });
+      out.ringDestroy(true);
+    } finally {
+      restore();
+    }
+    const [line] = writes.join("").trim().split("\n").map(l => JSON.parse(l));
+    expect(line).toMatchObject({ status: "success", destroyed: true, local_wiped: true });
+  });
+
+  it("ringDestroy emits destroyed=false when only local wipe", () => {
+    try {
+      const out = createCommandOutput("json", { command: "ring destroy", network: "all" });
+      out.ringDestroy(false);
+    } finally {
+      restore();
+    }
+    const [line] = writes.join("").trim().split("\n").map(l => JSON.parse(l));
+    expect(line).toMatchObject({ status: "success", destroyed: false, local_wiped: true });
+  });
+
+  it("ringDestroyCancelled emits cancelled:true envelope", () => {
+    try {
+      const out = createCommandOutput("json", { command: "ring destroy", network: "all" });
+      out.ringDestroyCancelled();
+    } finally {
+      restore();
+    }
+    const [line] = writes.join("").trim().split("\n").map(l => JSON.parse(l));
+    expect(line).toMatchObject({ status: "success", cancelled: true });
+  });
+
+  it("ringEncrypt emits output path and byte count", () => {
+    try {
+      const out = createCommandOutput("json", { command: "ring encrypt", network: "all" });
+      out.ringEncrypt({ dest: "/tmp/out.enc", bytes: 64 });
+    } finally {
+      restore();
+    }
+    const [line] = writes.join("").trim().split("\n").map(l => JSON.parse(l));
+    expect(line).toMatchObject({ status: "success", output: "/tmp/out.enc", bytes: 64 });
+  });
+
+  it("ringDecrypt emits output path", () => {
+    try {
+      const out = createCommandOutput("json", { command: "ring decrypt", network: "all" });
+      out.ringDecrypt({ dest: "/tmp/out.txt" });
+    } finally {
+      restore();
+    }
+    const [line] = writes.join("").trim().split("\n").map(l => JSON.parse(l));
+    expect(line).toMatchObject({ status: "success", output: "/tmp/out.txt" });
+  });
+
   it("emits swap quote unavailability as an NDJSON error envelope", () => {
     try {
       const out = createCommandOutput("json", {

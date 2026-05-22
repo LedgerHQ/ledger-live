@@ -3,6 +3,7 @@ import { stateDir } from "@bunli/utils";
 import { join } from "node:path";
 import { chmodSync, mkdirSync, writeFileSync } from "node:fs";
 import { z } from "zod";
+import type { Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
 import type { AccountDescriptorV1 } from "../shared/accountDescriptor";
 import { serializeV1 } from "../shared/accountDescriptor";
 
@@ -17,19 +18,39 @@ const SessionEntrySchema = z.object({
   descriptor: z.string(),
 });
 
+const TrustchainMetaSchema = z.object({
+  rootId: z.string(),
+  applicationPath: z.string(),
+});
+
+const DomainEntrySchema = z.object({
+  domain: z.string(),
+  firstUsed: z.string(),
+});
+
 const SessionDataSchema = z.object({
   accounts: z.array(SessionEntrySchema).default([]),
+  trustchain: TrustchainMetaSchema.optional(),
+  domains: z.array(DomainEntrySchema).default([]),
+  passwordSalt: z.string().optional(),
 });
 
 export type SessionEntry = z.infer<typeof SessionEntrySchema>;
+export type TrustchainMeta = z.infer<typeof TrustchainMetaSchema>;
+export type DomainEntry = z.infer<typeof DomainEntrySchema>;
 
 export function getSessionPath(): string {
   return join(stateDir(APP_NAME), SESSION_FILE);
 }
 
-function parseSessionData(raw: string): SessionEntry[] {
+/** Construct a Trustchain from metadata; walletSyncEncryptionKey is left empty (sufficient for auth-only LKRP calls). */
+export function trustchainFromMeta(meta: TrustchainMeta): Trustchain {
+  return { ...meta, walletSyncEncryptionKey: "" };
+}
+
+function parseSessionData(raw: string): z.infer<typeof SessionDataSchema> {
   try {
-    return SessionDataSchema.parse(YAML.parse(raw) ?? {}).accounts;
+    return SessionDataSchema.parse(YAML.parse(raw) ?? {});
   } catch {
     throw new Error(
       `Invalid session file at ${getSessionPath()}. Run \`wallet-cli session reset\` to clear it.`,
@@ -37,24 +58,25 @@ function parseSessionData(raw: string): SessionEntry[] {
   }
 }
 
-async function readEntries(): Promise<SessionEntry[]> {
+async function readData(): Promise<z.infer<typeof SessionDataSchema>> {
   let content: string;
   try {
     content = await Bun.file(getSessionPath()).text();
   } catch (err) {
-    if (err instanceof Error && "code" in err && err.code === "ENOENT") return [];
+    if (err instanceof Error && "code" in err && err.code === "ENOENT")
+      return SessionDataSchema.parse({});
     throw err;
   }
   return parseSessionData(content);
 }
 
-function writeEntries(entries: SessionEntry[]): void {
+function writeSessionData(data: Record<string, unknown>): void {
   const dir = stateDir(APP_NAME);
   mkdirSync(dir, { recursive: true, mode: 0o700 });
-  chmodSync(dir, 0o700); // enforce on existing dirs created by prior versions
+  chmodSync(dir, 0o700);
   const sessionPath = getSessionPath();
-  writeFileSync(sessionPath, YAML.stringify({ accounts: entries }), { mode: 0o600 });
-  chmodSync(sessionPath, 0o600); // enforce on existing files created by prior versions
+  writeFileSync(sessionPath, YAML.stringify(data), { mode: 0o600 });
+  chmodSync(sessionPath, 0o600);
 }
 
 function derivationLabel(path: string): string {
@@ -90,21 +112,59 @@ export function generateLabel(
 }
 
 export class Session {
-  private constructor(private entries: SessionEntry[]) {}
+  private constructor(
+    private entries: SessionEntry[],
+    private _trustchain: TrustchainMeta | undefined,
+    private _domains: DomainEntry[],
+    private _passwordSalt: string | undefined,
+  ) {}
 
   static async read(): Promise<Session> {
-    return new Session(await readEntries());
+    const data = await readData();
+    return new Session(data.accounts, data.trustchain, data.domains, data.passwordSalt);
   }
 
   static from(entries: SessionEntry[]): Session {
-    return new Session([...entries]);
+    return new Session([...entries], undefined, [], undefined);
   }
 
   get accounts(): ReadonlyArray<SessionEntry> {
     return this.entries;
   }
 
-  /** Remove all entries. Returns count of entries that were present. */
+  get trustchain(): TrustchainMeta | undefined {
+    return this._trustchain;
+  }
+
+  get passwordSalt(): string | undefined {
+    return this._passwordSalt;
+  }
+
+  setPasswordSalt(salt: string): void {
+    this._passwordSalt = salt;
+  }
+
+  setTrustchain(t: TrustchainMeta): void {
+    this._trustchain = t;
+  }
+
+  get domains(): ReadonlyArray<DomainEntry> {
+    return this._domains;
+  }
+
+  trackDomain(domain: string): void {
+    if (!this._domains.some(d => d.domain === domain)) {
+      this._domains.push({ domain, firstUsed: new Date().toISOString() });
+    }
+  }
+
+  /** Clears Ledger Key Ring state (trustchain, tracked keys, password salt). Keeps discovered accounts. */
+  wipeRing(): void {
+    this._trustchain = undefined;
+    this._domains = [];
+    this._passwordSalt = undefined;
+  }
+
   clear(): number {
     const count = this.entries.length;
     this.entries = [];
@@ -135,6 +195,10 @@ export class Session {
   }
 
   write(): void {
-    writeEntries(this.entries);
+    const data: Record<string, unknown> = { accounts: this.entries };
+    if (this._trustchain) data.trustchain = this._trustchain;
+    if (this._domains.length > 0) data.domains = this._domains;
+    if (this._passwordSalt) data.passwordSalt = this._passwordSalt;
+    writeSessionData(data);
   }
 }

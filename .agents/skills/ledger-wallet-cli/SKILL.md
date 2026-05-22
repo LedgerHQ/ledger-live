@@ -1,6 +1,6 @@
 ---
 name: ledger-wallet-cli
-description: Official Ledger wallet-cli - USB-based CLI for Ledger hardware wallet flows (account discover, receive, balances, operations, send, swap quote/execute/status, genuine-check, assets token / token-by-id). Use for any wallet-cli command execution and for mapping informal requests to the right command.
+description: Official Ledger wallet-cli - USB-based CLI for Ledger hardware wallet flows (account discover, receive, balances, operations, send, swap quote/execute/status, genuine-check, assets token / token-by-id) and the Ledger Key Ring (ring init/encrypt/decrypt/keys/destroy — LKRP-backed encryption of files and text). Use for any wallet-cli command execution and for mapping informal requests to the right command.
 ---
 
 # wallet-cli
@@ -37,6 +37,9 @@ Map informal phrasings to commands. Account references use a session label (e.g.
 | "send X to Y", "transfer", "pay", "withdraw to an exchange"                         | `send <account> --to <address> --amount '<amount> <ticker>'` |
 | "swap A to B", "convert", "trade ETH for BTC", "exchange"                           | `swap quote` -> `swap execute` -> `swap status`              |
 | "is this Ledger real", "verify authenticity", "I bought this off eBay"              | `genuine-check`                                              |
+| "encrypt this file / these env vars / publish tokens", "GPG alternative", "secret manager", "decrypt anywhere with my Ledger" | `ring init` -> `ring encrypt --key <name>` / `ring decrypt --key <name>` |
+| "what keys do I have on my ring", "list domains/projects I've encrypted under"       | `ring keys`                                                  |
+| "wipe my key ring", "destroy the ring", "tear down LKRP membership"                 | `ring destroy`                                               |
 | "start over", "clear my session", "I switched devices"                              | `session reset`                                              |
 
 ---
@@ -46,7 +49,7 @@ Map informal phrasings to commands. Account references use a session label (e.g.
 If the user asks for any of the following, surface that wallet-cli does not support it yet rather than constructing a command:
 
 - NFTs (mint, transfer, view).
-- Encryption / OpenPGP / key-share operations.
+- OpenPGP-compatible output or key-share / multi-recipient encryption (the `ring` commands encrypt with a per-user Ledger Key Ring, not a sharable key).
 - `send`, `receive`, `operations`, or `swap execute` on testnets and layer 2s (e.g. Base).
 - Custom chains not listed in the Networks line above.
 
@@ -62,21 +65,26 @@ All `--account` flags accept a session label (e.g. `ethereum-1`). Run `account d
 
 ## Commands
 
-| Command              | Device | Sandbox      |
-| -------------------- | ------ | ------------ |
-| `session view`       | No     | No           |
-| `session reset`      | No     | No           |
-| `account discover`   | Yes    | **Required** |
-| `receive`            | Yes    | **Required** |
-| `send`               | Yes\*  | **Required** |
-| `genuine-check`      | Yes    | **Required** |
-| `balances`           | No     | No           |
-| `operations`         | No     | No           |
-| `swap quote`         | No     | No           |
-| `swap execute`       | Yes    | **Required** |
-| `swap status`        | No     | No           |
-| `assets token`       | No     | No           |
-| `assets token-by-id` | No     | No           |
+| Command              | Device | Sandbox      | Network |
+| -------------------- | ------ | ------------ | ------- |
+| `session view`       | No     | No           | No      |
+| `session reset`      | No     | No           | No      |
+| `account discover`   | Yes    | **Required** | Yes     |
+| `receive`            | Yes    | **Required** | No      |
+| `send`               | Yes\*  | **Required** | Yes     |
+| `genuine-check`      | Yes    | **Required** | Yes     |
+| `balances`           | No     | No           | Yes     |
+| `operations`         | No     | No           | Yes     |
+| `swap quote`         | No     | No           | Yes     |
+| `swap execute`       | Yes    | **Required** | Yes     |
+| `swap status`        | No     | No           | Yes     |
+| `assets token`       | No     | No           | No      |
+| `assets token-by-id` | No     | No           | No      |
+| `ring init`          | Yes    | **Required** | Yes     |
+| `ring encrypt`       | No     | No           | Yes     |
+| `ring decrypt`       | No     | No           | Yes     |
+| `ring keys`          | No     | No           | No      |
+| `ring destroy`       | No     | No           | Yes     |
 
 \*`send --dry-run` needs no device and no sandbox bypass.
 
@@ -202,6 +210,32 @@ Use `token` when you have the contract address; use `token-by-id` when you have 
 For non-EVM chains pass `--identifier`.
 
 The `id` printed here is the same id accepted by `swap quote --from` / `--to` and `swap execute --from` / `--to`.
+
+### ring — Ledger Key Ring (LKRP)
+
+Trustless, hardware-rooted encryption for files and text. The key ring is provisioned once on your Ledger via the Ledger Sync app; afterwards `encrypt`/`decrypt` run **without** the device — keys derive deterministically via HKDF-SHA256 from the LKRP-shared root and never leave AES-256-GCM. `encrypt`/`decrypt` still call the LKRP backend to restore the trustchain on each invocation, so network access is required. The ring is recoverable from your seed on any new machine.
+
+```bash
+# One-time provisioning (device required). Prompts for password; --unsecure-no-password skips it.
+pnpm --silent wallet-cli start ring init
+pnpm --silent wallet-cli start ring init --name my-laptop --unsecure-no-password
+
+# File round-trip (no device after init):
+pnpm --silent wallet-cli start ring encrypt --key my-oss-project -i .publish-tokens -o .publish-tokens.enc
+pnpm --silent wallet-cli start ring decrypt --key my-oss-project -i .publish-tokens.enc -o .publish-tokens
+
+# Text via stdin/stdout (clipboard pattern):
+pbpaste | pnpm --silent wallet-cli start ring encrypt --key personal-notes | pbcopy
+pbpaste | pnpm --silent wallet-cli start ring decrypt --key personal-notes | pbcopy
+
+# List the keys this machine has used; tear down the ring:
+pnpm --silent wallet-cli start ring keys
+pnpm --silent wallet-cli start ring destroy
+```
+
+`--key <name>` derives a per-name AES-256-GCM key; matching name at decrypt time is mandatory. Names are free-form (max 253 chars, no whitespace) — common patterns: project slugs (`my-oss-project`), env tags (`openClaw-prod`), notebooks (`personal-notes`).
+
+**Non-TTY (CI / agentic) password injection:** export `WALLET_PASS` from your OS keychain before invocation — never pass the password via flag. Example: `WALLET_PASS=$(security find-generic-password -a default -s wallet-cli -w) wallet-cli ring encrypt …`.
 
 ---
 

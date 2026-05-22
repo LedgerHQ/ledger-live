@@ -1,11 +1,17 @@
 import { option } from "@bunli/core";
 import { z } from "zod";
+import { resolve } from "node:path";
 import { DEFAULT_DEVICE_TIMEOUT_MS } from "../device/connect-ledger-app";
 import { OutputFormatSchema, parseAccountDescriptor } from "../wallet/models";
 import type { AccountDescriptor } from "../wallet/models";
 import { parseV1 } from "../shared/accountDescriptor";
 import type { AccountDescriptorV1 } from "../shared/accountDescriptor";
 import { Session } from "../session/session-store";
+
+/** Resolve a user-supplied path against the directory where pnpm/npm was invoked (INIT_CWD), not the package dir. */
+export function resolveUserPath(p: string): string {
+  return resolve(process.env.INIT_CWD ?? process.cwd(), p);
+}
 
 /**
  * Shared --output option used by all commands. If omitted, the CLI keeps
