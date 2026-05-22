@@ -4,11 +4,6 @@ import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
 import { close as closeBridge } from "./bridge/server";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { setAllureDescription } from "./helpers/allure/allure-helper";
-import {
-  endTestCapture,
-  isPerTestCaptureEnabled,
-  startTestCapture,
-} from "./helpers/mitm-test";
 
 const broadcastOriginalValue = getEnv("DISABLE_TRANSACTION_BROADCAST");
 setupEnvironment();
@@ -50,19 +45,3 @@ afterAll(
   },
   process.env.CI ? 60_000 : 30_000,
 );
-
-// Per-test HAR capture (opt-in via MITM=1 + MITM_HAR_DIR). The addon
-// running inside mitmproxy clears its flow buffer at `start` and writes
-// the test's HAR file at `end`. Failures here are logged but never fail
-// the spec — capture is a debugging aid, not test infrastructure.
-if (isPerTestCaptureEnabled()) {
-  beforeEach(async () => {
-    const name = expect.getState().currentTestName ?? "unknown";
-    await startTestCapture(name);
-  });
-
-  afterEach(async () => {
-    const name = expect.getState().currentTestName ?? "unknown";
-    await endTestCapture(name);
-  });
-}
