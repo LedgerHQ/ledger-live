@@ -171,6 +171,7 @@ export function useCryptoDataTable({
     enableSortingRemoval: false,
     state: { sorting },
     onSortingChange: handleSortingChange,
+    getRowId: row => row.id,
   });
 
   const handleRowClick = useCallback(

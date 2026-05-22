@@ -12,7 +12,7 @@ import { OptionsMenu } from "../OptionsMenu";
 import type { AssetHeaderViewModel } from "./useAssetHeaderViewModel";
 
 export type AssetHeaderViewProps = Readonly<{
-  assetLabel: string;
+  assetTicker: string;
   icon: React.ReactNode;
   viewModel: AssetHeaderViewModel;
   distributionItem?: DistributionItem;
@@ -21,7 +21,7 @@ export type AssetHeaderViewProps = Readonly<{
 }>;
 
 export function AssetHeaderView({
-  assetLabel,
+  assetTicker,
   icon,
   viewModel,
   distributionItem,
@@ -36,7 +36,7 @@ export function AssetHeaderView({
       className="sticky top-0 z-10 w-full min-w-0 items-center gap-4 bg-canvas py-12"
     >
       <NavBarBackButton onClick={onBack} />
-      <NavBarCoinCapsule className="min-w-0 max-w-full" ticker={assetLabel} icon={icon} />
+      <NavBarCoinCapsule className="min-w-0 max-w-full" ticker={assetTicker} icon={icon} />
       <NavBarTrailing className="overflow-visible">
         {ledgerCurrency ? (
           <OptionsMenu

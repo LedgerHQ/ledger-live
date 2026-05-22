@@ -9014,9 +9014,17 @@
       "hideFromPortfolio": "Hide from portfolio",
       "showInPortfolio": "Show in portfolio"
     },
+    "hiddenBanner": {
+      "description": "This asset is hidden from your portfolio.",
+      "showAsset": "Show asset"
+    },
     "totalBalance": "Total balance",
     "marketPrice": "Market price",
     "addresses": "Addresses",
+    "addressesDialog": {
+      "title": "Addresses",
+      "description": "All your addresses holding {{ticker}}."
+    },
     "add": "Add",
     "notFound": "Asset distribution item not found.",
     "marketStats": "Market stats",

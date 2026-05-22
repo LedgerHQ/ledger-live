@@ -7,8 +7,19 @@ beforeAll(() => {
   const stellar = getCryptoCurrencyById("stellar");
 
   const mockStore: Parameters<typeof setCryptoAssetsStore>[0] = {
-    findTokenById: async (id: string) => {
-      if (id === "stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN") {
+    findTokenById: async (_id: string) => {
+      return undefined;
+    },
+    findTokenByAddressInCurrency: async (
+      address: string,
+      currencyId: string,
+      tokenIdentifier?: string,
+    ) => {
+      if (
+        address === "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN" &&
+        currencyId === "stellar" &&
+        tokenIdentifier === "USDC"
+      ) {
         const usdc: TokenCurrency = {
           type: "TokenCurrency",
           id: "stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
@@ -23,9 +34,6 @@ beforeAll(() => {
         };
         return usdc;
       }
-      return undefined;
-    },
-    findTokenByAddressInCurrency: async (_address: string, _currencyId: string) => {
       return undefined;
     },
     getTokensSyncHash: async () => "",

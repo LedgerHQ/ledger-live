@@ -326,6 +326,7 @@ export type Features = CurrencyFeatures & {
   lwmWallet40: Feature_LwmWallet40;
   lwdWallet40: Feature_LwdWallet40;
   addressPoisoningOperationsFilter: Feature_AddressPoisoningOperationsFilter;
+  concordiumIdAppLinks: Feature_ConcordiumIdAppLinks;
   concordiumVerifyAddress: DefaultFeature;
   lldHideSmallValueTokenOperations: Feature_LldHideSmallValueTokenOperations;
   llmTransferButtonCopyVariant: Feature_LlmTransferButtonCopyVariant;
@@ -571,6 +572,11 @@ export type Feature_DeviceInitialApps = Feature<{
 export type Feature_BuyDeviceFromLive = Feature<{
   debug: boolean;
   url: string | null;
+}>;
+
+export type Feature_ConcordiumIdAppLinks = Feature<{
+  appStore: string;
+  playStore: string;
 }>;
 
 export type Feature_Discover = Feature<{

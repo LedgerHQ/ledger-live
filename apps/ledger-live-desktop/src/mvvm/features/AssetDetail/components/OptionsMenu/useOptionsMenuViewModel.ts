@@ -59,7 +59,7 @@ export function useOptionsMenuViewModel({
   const isHiddenFromPortfolio = blacklistedTokenIds.includes(portfolioCurrencyId);
 
   const isStarEnabled = Boolean(starMarketId);
-  const isHideFromPortfolioEnabled = currency.type === "TokenCurrency";
+  const isHideFromPortfolioEnabled = Boolean(distributionItem);
   const showMenu = isStarEnabled || isHideFromPortfolioEnabled;
 
   const starredList = starredMarketCoins ?? [];

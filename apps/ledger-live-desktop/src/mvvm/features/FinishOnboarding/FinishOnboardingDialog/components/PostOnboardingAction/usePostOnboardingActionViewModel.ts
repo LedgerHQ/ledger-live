@@ -58,10 +58,11 @@ export function usePostOnboardingActionViewModel(
         dispatch,
       });
       if (buttonLabelForAnalyticsEvent) {
-        track("button_clicked2", {
+        track("button_clicked", {
           button: buttonLabelForAnalyticsEvent,
           deviceModelId,
           flow: "post-onboarding",
+          source: "Post onboarding widget",
         });
       }
     }

@@ -116,7 +116,7 @@ describe("usePrecomputedAssetListData", () => {
 
     const firstRef = result.current.get(bitcoin.id);
 
-    mockedFormatCurrencyUnit.mockReturnValue("$60,000.00");
+    mockedCalculate.mockReturnValue(6000000);
     const newState: ReturnType<typeof useCountervaluesState> = {
       data: { btc: new Map() },
       status: {},

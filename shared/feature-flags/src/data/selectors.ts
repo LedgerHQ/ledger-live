@@ -1,6 +1,4 @@
-import type { FeatureId, Features, FeatureFlagsState } from "./schema";
-
-type WithFeatureFlags = { featureFlags: FeatureFlagsState };
+import type { FeatureId, Features, PartialFeatures, WithFeatureFlags } from "./schema";
 
 /**
  * Selects a single resolved feature flag by its identifier, returning the
@@ -16,8 +14,9 @@ type WithFeatureFlags = { featureFlags: FeatureFlagsState };
  * @return
  * The resolved feature flag value with typed params.
  */
-export const selectFeature = <T extends FeatureId>(s: WithFeatureFlags, key: T): Features[T] =>
-  s.featureFlags.resolved[key];
+export function selectFeature<T extends FeatureId>(s: WithFeatureFlags, key: T): Features[T] {
+  return s.featureFlags.resolved[key];
+}
 
 /**
  * Selects the entire local overrides map.
@@ -25,7 +24,9 @@ export const selectFeature = <T extends FeatureId>(s: WithFeatureFlags, key: T):
  * @param s
  * Any store state containing the `featureFlags` slice.
  */
-export const featureFlagsOverridesSelector = (s: WithFeatureFlags) => s.featureFlags.overrides;
+export function featureFlagsOverridesSelector(s: WithFeatureFlags): PartialFeatures {
+  return s.featureFlags.overrides;
+}
 
 /**
  * Selects whether the feature flags developer banner is visible.
@@ -33,5 +34,6 @@ export const featureFlagsOverridesSelector = (s: WithFeatureFlags) => s.featureF
  * @param s
  * Any store state containing the `featureFlags` slice.
  */
-export const featureFlagsBannerVisibleSelector = (s: WithFeatureFlags) =>
-  s.featureFlags.bannerVisible;
+export function featureFlagsBannerVisibleSelector(s: WithFeatureFlags) {
+  return s.featureFlags.bannerVisible;
+}

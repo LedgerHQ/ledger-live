@@ -18,11 +18,19 @@ export const getChainSpecificRules: ChainSpecificRules = {
 };
 
 export async function getTokenFromAsset(asset: AssetInfo): Promise<TokenCurrency | undefined> {
-  const assetId =
-    asset.type !== "native" && "assetReference" in asset && "assetOwner" in asset
-      ? `${asset.assetReference}:${asset.assetOwner}`
-      : "";
-  return await getCryptoAssetsStore().findTokenById(`stellar/asset/${assetId}`);
+  const result =
+    asset.type !== "native" &&
+    "assetOwner" in asset &&
+    typeof asset.assetOwner === "string" &&
+    "assetReference" in asset &&
+    typeof asset.assetReference === "string"
+      ? await getCryptoAssetsStore().findTokenByAddressInCurrency(
+          asset.assetOwner,
+          "stellar",
+          asset.assetReference,
+        )
+      : undefined;
+  return result;
 }
 
 export function getAssetFromToken(token: TokenCurrency): AssetInfo {

@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useSelector } from "LLD/hooks/redux";
 import { BigNumber } from "bignumber.js";
 import { formatShort } from "@ledgerhq/live-common/currencies/index";
@@ -12,12 +12,15 @@ import { discreetModeSelector } from "~/renderer/reducers/settings";
 import BalanceInfos from "~/renderer/components/BalanceInfos";
 import { usePortfolio } from "~/renderer/actions/portfolio";
 import { hourFormat, dayFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
+import type { PortfolioBalanceInfo } from "LLD/hooks/usePortfolioBalanceDisplayState";
+
 type Props = {
   counterValue: Currency;
   chartColor: string;
   range: PortfolioRange;
   isWallet40?: boolean;
   shouldDisplayGraphRework?: boolean;
+  balanceInfo?: PortfolioBalanceInfo;
 };
 export default function PortfolioBalanceSummary({
   range,
@@ -25,6 +28,7 @@ export default function PortfolioBalanceSummary({
   counterValue,
   isWallet40,
   shouldDisplayGraphRework,
+  balanceInfo,
 }: Props) {
   const portfolio = usePortfolio();
   const discreetMode = useSelector(discreetModeSelector);
@@ -50,15 +54,30 @@ export default function PortfolioBalanceSummary({
     ),
     [counterValue, dayFormatter, hourFormatter],
   );
+  const displayBalanceInfo = useMemo(
+    () =>
+      balanceInfo ?? {
+        totalBalance: portfolio.balanceHistory[portfolio.balanceHistory.length - 1]?.value ?? 0,
+        isAvailable: portfolio.balanceAvailable,
+        valueChange: portfolio.countervalueChange,
+      },
+    [
+      balanceInfo,
+      portfolio.balanceHistory,
+      portfolio.balanceAvailable,
+      portfolio.countervalueChange,
+    ],
+  );
+
   const content = (
     <>
       <Box px={6}>
         <BalanceInfos
           counterValueId={counterValue.type !== "FiatCurrency" ? counterValue.id : undefined}
           unit={counterValue.units[0]}
-          isAvailable={portfolio.balanceAvailable}
-          valueChange={portfolio.countervalueChange}
-          totalBalance={portfolio.balanceHistory[portfolio.balanceHistory.length - 1].value}
+          isAvailable={displayBalanceInfo.isAvailable}
+          valueChange={displayBalanceInfo.valueChange}
+          totalBalance={displayBalanceInfo.totalBalance}
           shouldDisplayGraphRework={shouldDisplayGraphRework}
         />
       </Box>

@@ -56,7 +56,7 @@ export function useAssetDetailViewModel(): AssetDetailViewModel {
       marketData: { marketCurrencyData, marketId, isLoading },
       ledgerCurrency,
       displayName: ledgerCurrency?.name ?? marketFallback?.name ?? "",
-      displayTicker: ledgerCurrency?.ticker ?? marketFallback?.ticker ?? "",
+      displayTicker: (ledgerCurrency?.ticker ?? marketFallback?.ticker ?? "").toUpperCase(),
       ledgerId: ledgerCurrency?.id ?? marketFallback?.ledgerIds?.[0],
     };
   }

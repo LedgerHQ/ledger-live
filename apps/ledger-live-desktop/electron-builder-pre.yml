@@ -63,6 +63,7 @@ files:
   # Include files
   - .webpack/**/*
   - "!.webpack/**/*.js.map"
+  - "node_modules/@ledgerhq/zcash-utils/**/*"
   - from: "dist/node_modules"
     to: "node_modules"
     filter:
@@ -103,3 +104,6 @@ npmRebuild: false
 publish:
   - provider: generic
     url: https://download.live.ledger.com
+
+asarUnpack:
+  - "node_modules/@ledgerhq/zcash-utils/**/*"

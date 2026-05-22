@@ -121,7 +121,7 @@ export const scenarioTezosTz1: Scenario<GenericTransaction, Account> = {
     await spawnFlextesa();
 
     const signer = await buildTz1Signer();
-    const { currencyBridge, accountBridge, getAddress } = getBridges(signer);
+    const { currencyBridge, accountBridge, getAddress } = await getBridges(signer);
 
     const { address } = await getAddress("", {
       path: "44'/1729'/0'/0'",
@@ -210,7 +210,7 @@ export const scenarioTezosTz2: Scenario<GenericTransaction, Account> = {
 
     await spawnFlextesa();
     const signer = await buildTz2Signer();
-    const { currencyBridge, accountBridge, getAddress } = getBridges(signer);
+    const { currencyBridge, accountBridge, getAddress } = await getBridges(signer);
     const { address } = await getAddress("", {
       path: "44'/1729'/0'",
       currency: TEZOS,

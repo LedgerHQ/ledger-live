@@ -129,7 +129,7 @@ describe("useBalanceGraphViewModel", () => {
     });
   });
 
-  describe("priceFormatter (formatCurrencyUnitFragment)", () => {
+  describe("priceFormatter", () => {
     it("splits a USD-formatted value into FormattedValue parts", () => {
       const { result } = renderHook(() => useBalanceGraphViewModel(mockBtcCryptoCurrency));
 
@@ -138,6 +138,16 @@ describe("useBalanceGraphViewModel", () => {
       expect(formatted.integerPart).toBe("1,234");
       expect(formatted.decimalPart).toBe("56");
       expect(formatted.decimalSeparator).toBe(".");
+      expect(formatted.currencyText).toBe("$");
+    });
+
+    it("preserves 6 decimals for a sub-cent BONK-like price", () => {
+      const { result } = renderHook(() => useBalanceGraphViewModel(mockBtcCryptoCurrency));
+
+      const formatted = result.current.priceFormatter(0.000006);
+
+      expect(formatted.integerPart).toBe("0");
+      expect(formatted.decimalPart).toBe("000006");
       expect(formatted.currencyText).toBe("$");
     });
   });
@@ -166,6 +176,17 @@ describe("useBalanceGraphViewModel", () => {
       const { result } = renderHook(() => useBalanceGraphViewModel(mockBtcCryptoCurrency));
 
       expect(result.current.formattedPriceChange).toBeUndefined();
+    });
+
+    it("renders a signed '<' threshold marker for a tiny BONK-like variation", () => {
+      mockUseGetCurrencyDataQuery.mockReturnValue({
+        data: { ...marketCurrencyData, price: 6e-6 },
+        isFetching: false,
+      } as unknown as ReturnType<typeof useGetCurrencyDataQuery>);
+
+      const { result } = renderHook(() => useBalanceGraphViewModel(mockBtcCryptoCurrency));
+
+      expect(result.current.formattedPriceChange).toBe("+<$0.000001");
     });
   });
 

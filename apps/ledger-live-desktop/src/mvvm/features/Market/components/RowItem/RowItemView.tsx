@@ -5,7 +5,8 @@ import counterValueFormatter from "@ledgerhq/live-common/market/utils/counterval
 import { SmallMarketItemChart } from "~/renderer/screens/market/MarketList/components/MarketItemChart";
 import { Button, IconButton } from "@ledgerhq/lumen-ui-react";
 import { TableRow, TableCell } from "~/renderer/screens/market/components/Table";
-import { formatPercentage, formatPrice } from "~/renderer/screens/market/utils";
+import { formatPercentage } from "~/renderer/screens/market/utils";
+import { roundFiatPrice } from "@ledgerhq/live-currency-format";
 import {
   CryptoCurrencyIconWrapper,
   CryptoNameContainer,
@@ -99,7 +100,7 @@ export const RowItemView = memo<RowItemViewProps>(function RowItemView({
         <TableCell data-testid={"market-coin-price"}>
           <Text variant="body">
             {counterValueFormatter({
-              value: formatPrice(currency.price ?? 0),
+              value: roundFiatPrice(currency.price ?? 0),
               currency: counterCurrency,
               locale,
             })}

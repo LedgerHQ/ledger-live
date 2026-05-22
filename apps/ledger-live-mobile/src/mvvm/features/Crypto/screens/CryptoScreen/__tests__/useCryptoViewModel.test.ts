@@ -1,7 +1,6 @@
 import { act } from "@testing-library/react-native";
 import { renderHook } from "@tests/test-renderer";
 import { NavigatorName, ScreenName } from "~/const";
-import { State } from "~/reducers/types";
 import { Asset } from "~/types/asset";
 import { track } from "~/analytics";
 import useCryptoViewModel from "../useCryptoViewModel";
@@ -24,13 +23,6 @@ jest.mock("~/actions/general", () => ({
   ...jest.requireActual("~/actions/general"),
   useRefreshAccountsOrdering: () => jest.fn(),
 }));
-
-const withBlacklistedTokens =
-  (tokenIds: string[]) =>
-  (state: State): State => ({
-    ...state,
-    settings: { ...state.settings, blacklistedTokenIds: tokenIds },
-  });
 
 const makeCurrency = (name: string, id: string, type = "CryptoCurrency") =>
   ({
@@ -131,42 +123,6 @@ describe("useCryptoViewModel", () => {
 
       expect(result.current.assetsToDisplay).toHaveLength(1);
       expect(result.current.assetsToDisplay[0].currency.name).toBe("Tether");
-    });
-  });
-
-  describe("blacklist filtering", () => {
-    it("should filter out blacklisted token assets", () => {
-      const btcItem = makeCategorizedItem("Bitcoin", "bitcoin");
-      const tokenItem = makeCategorizedItem("USDT", "usdt-token", "TokenCurrency");
-
-      mockCategorizedAssets.mockReturnValue({
-        ...emptyCategorizedAssets(),
-        categorizedAssets: { cryptos: [btcItem], stablecoins: [tokenItem] },
-      });
-
-      const { result } = renderHook(
-        () => useCryptoViewModel({ sourceScreenName: ScreenName.Portfolio }),
-        { overrideInitialState: withBlacklistedTokens(["usdt-token"]) },
-      );
-
-      expect(result.current.assetsToDisplay).toHaveLength(1);
-      expect(result.current.assetsToDisplay[0].currency.name).toBe("Bitcoin");
-    });
-
-    it("should keep non-blacklisted tokens", () => {
-      const tokenItem = makeCategorizedItem("USDC", "usdc-token", "TokenCurrency");
-
-      mockCategorizedAssets.mockReturnValue({
-        ...emptyCategorizedAssets(),
-        categorizedAssets: { cryptos: [], stablecoins: [tokenItem] },
-      });
-
-      const { result } = renderHook(
-        () => useCryptoViewModel({ sourceScreenName: ScreenName.Portfolio }),
-        { overrideInitialState: withBlacklistedTokens(["other-token"]) },
-      );
-
-      expect(result.current.assetsToDisplay).toHaveLength(1);
     });
   });
 

@@ -270,10 +270,6 @@ export const urls = {
   },
   concordium: {
     learnMore: "https://support.ledger.com/article/Concordium-CCD",
-    idApp: {
-      appStore: "https://apps.apple.com/app/concordium-id/id6746754485",
-      playStore: "https://play.google.com/store/apps/details?id=com.idwallet.app",
-    },
   },
   fwUpdateReleaseNotes: {
     nanoS: "https://support.ledger.com/article/360010446000-zd",

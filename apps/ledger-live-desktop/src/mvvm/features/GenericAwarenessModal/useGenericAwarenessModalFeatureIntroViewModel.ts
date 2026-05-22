@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useDispatch } from "LLD/hooks/redux";
-import { closeGenericAwarenessModal } from "./genericAwarenessModal";
+import { closeGenericAwarenessModalDialog } from "./genericAwarenessModalDialog";
 import type { FeatureIntroContentItem } from "./components/FeatureIntroContent";
 import { openURL } from "~/renderer/linking";
 
@@ -42,12 +42,12 @@ const useGenericAwarenessModalFeatureIntroViewModel =
 
     const onPrimaryClick = useCallback(() => {
       openURL("https://www.ledger.com");
-      dispatch(closeGenericAwarenessModal());
+      dispatch(closeGenericAwarenessModalDialog());
     }, [dispatch]);
 
     const onSecondaryClick = useCallback(() => {
       openURL("https://www.ledger.com/remind-me-later");
-      dispatch(closeGenericAwarenessModal());
+      dispatch(closeGenericAwarenessModalDialog());
     }, [dispatch]);
 
     return useMemo(

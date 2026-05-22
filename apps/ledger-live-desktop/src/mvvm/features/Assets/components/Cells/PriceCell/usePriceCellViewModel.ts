@@ -1,7 +1,7 @@
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { usePrice } from "~/renderer/hooks/usePrice";
-import { formatPrice } from "LLD/utils/formatPrice";
+import { formatPrice } from "@ledgerhq/live-currency-format";
 
 export function usePriceCellViewModel(currency: Currency, placeholderPrice?: number) {
   const { counterValue, counterValueCurrency } = usePrice(currency);

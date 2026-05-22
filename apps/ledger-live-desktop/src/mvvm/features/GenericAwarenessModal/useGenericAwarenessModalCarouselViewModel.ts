@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useDispatch } from "LLD/hooks/redux";
-import { closeGenericAwarenessModal } from "./genericAwarenessModal";
+import { closeGenericAwarenessModalDialog } from "./genericAwarenessModalDialog";
 import type { AwarenessCarouselSlide } from "./components/CarouselContent";
 import { openURL } from "~/renderer/linking";
 
@@ -42,7 +42,7 @@ const useGenericAwarenessModalCarouselViewModel = (): GenericAwarenessModalCarou
   const onSlidePrimaryClick = useCallback(
     (slide: AwarenessCarouselSlide) => {
       openURL(slide.primaryButtonLink);
-      dispatch(closeGenericAwarenessModal());
+      dispatch(closeGenericAwarenessModalDialog());
     },
     [dispatch],
   );

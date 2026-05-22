@@ -4,7 +4,7 @@ import logger from "~/renderer/middlewares/logger";
 import reducers, { State } from "~/renderer/reducers";
 import { applyLldRTKApiMiddlewares } from "~/renderer/reducers/rtkQueryApi";
 import { createIdentitiesSyncMiddleware } from "@ledgerhq/client-ids/store";
-import { trackingEnabledSelector } from "~/renderer/reducers/settings";
+import { canPushDeviceIdsSelector } from "~/renderer/reducers/settings";
 import { createFeatureFlagsMiddleware } from "@shared/feature-flags";
 type Props = {
   state?: State;
@@ -26,7 +26,7 @@ const customCreateStore = ({ state, dbMiddleware, analyticsMiddleware }: Props) 
         .concat(
           createIdentitiesSyncMiddleware({
             getIdentitiesState: (state: State) => state.identities,
-            getAnalyticsConsent: (state: State) => trackingEnabledSelector(state),
+            getAnalyticsConsent: canPushDeviceIdsSelector,
           }),
         )
         .concat(

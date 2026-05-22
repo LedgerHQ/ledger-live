@@ -8,7 +8,7 @@ import {
   discreetModeSelector,
   localeSelector,
 } from "~/renderer/reducers/settings";
-import { formatPrice } from "LLD/utils/formatPrice";
+import { formatPrice } from "@ledgerhq/live-currency-format";
 import { buildPnlDetail } from "../builders/buildPnlDetail";
 import { buildUnrealisedReturnCard } from "../builders/buildUnrealisedReturnCard";
 import { buildInfoCard } from "../builders/buildInfoCard";

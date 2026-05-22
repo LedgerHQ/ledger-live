@@ -134,7 +134,7 @@ describe("PortfolioEmptySection", () => {
     });
 
     it("should display the portfolio banners section", () => {
-      render(<PortfolioEmptySection isLNSUpsellBannerShown={false} />, {
+      renderWithReactQuery(<PortfolioEmptySection isLNSUpsellBannerShown={false} />, {
         overrideInitialState: state =>
           overrideInitialStateWithOnboardingWidgetVisible(createAccountState(state)),
       });

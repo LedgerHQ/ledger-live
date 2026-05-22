@@ -1,9 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { useSelector } from "~/context/hooks";
 import { useRefreshAccountsOrdering } from "~/actions/general";
 import { NavigatorName, ScreenName } from "~/const";
-import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 import { Asset } from "~/types/asset";
 import { track } from "~/analytics";
 import { useTranslation } from "~/context/Locale";
@@ -39,9 +37,6 @@ const useCryptoViewModel = ({
   const { t } = useTranslation();
   const navigation = useNavigation<NavigationProp>();
 
-  const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
-  const blacklistedTokenIdsSet = useMemo(() => new Set(blacklistedTokenIds), [blacklistedTokenIds]);
-
   const { categorizedAssets, isLoadingStablecoinTickers, isStablecoinTickersError } =
     useCategorizedAssetsFromPortfolio();
 
@@ -50,16 +45,10 @@ const useCryptoViewModel = ({
 
   const resolvedVariant: CryptoVariant = variant ?? "all";
 
-  const assetsToDisplay = useMemo((): Asset[] => {
-    const list = selectAssetList(categorizedAssets, resolvedVariant);
-
-    return list
-      .filter(
-        ({ currency }) =>
-          currency.type !== "TokenCurrency" || !blacklistedTokenIdsSet.has(currency.id),
-      )
-      .map(toAsset);
-  }, [categorizedAssets, resolvedVariant, blacklistedTokenIdsSet]);
+  const assetsToDisplay = useMemo(
+    (): Asset[] => selectAssetList(categorizedAssets, resolvedVariant).map(toAsset),
+    [categorizedAssets, resolvedVariant],
+  );
 
   const onItemPress = useCallback(
     (asset: Asset) => {

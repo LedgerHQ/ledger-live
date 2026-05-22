@@ -5,6 +5,7 @@ import { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import { CryptoCurrency, FiatCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { createFixtureCryptoCurrency } from "../../../mock/fixtures/cryptoCurrencies";
+import { counterValuesApi } from "../../../counterValues/state-manager/api";
 
 export const FIAT_CURRENCY_MAGNITUDE = 2;
 export const ETH_FIAT_CONVERSION = 4589;
@@ -92,7 +93,9 @@ export const createBalanceDeps = (
 export const mockStore = configureStore({
   reducer: {
     assetsDataApi: (state = {}, _action: { type: string }) => state,
+    [counterValuesApi.reducerPath]: counterValuesApi.reducer,
   },
+  middleware: getDefaultMiddleware => getDefaultMiddleware().concat(counterValuesApi.middleware),
   preloadedState: {
     assetsDataApi: {
       queries: {

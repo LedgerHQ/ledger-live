@@ -5,7 +5,7 @@ import {
   type StakingAccount,
 } from "@ledgerhq/live-common/families/evm/staking/types";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { Account } from "@ledgerhq/types-live";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
 import React, { useCallback, useState } from "react";
 import { ScrollView } from "react-native";
@@ -16,7 +16,7 @@ import { useTranslation } from "~/context/Locale";
 import type { ModalInfo } from "~/modals/Info";
 import InfoModal from "~/modals/Info";
 
-type Props = { account: Account };
+type Props = { account: AccountLike };
 type InfoName = "available" | "delegated" | "undelegating";
 
 function AccountBalanceSummaryFooter({ account }: { account: StakingAccount }) {
@@ -77,9 +77,10 @@ function AccountBalanceSummaryFooter({ account }: { account: StakingAccount }) {
 
 export default function AccountBalanceFooter({ account }: Props) {
   const { enabled, params } = useFeature("evmNativeStaking") ?? {};
-  const isSupported = params?.supportedCurrencyIds?.some(id => id === account.currency.id) ?? false;
 
   if (account.type !== "Account") return null;
+
+  const isSupported = params?.supportedCurrencyIds?.some(id => id === account.currency.id) ?? false;
   if (!enabled || !isSupported) return null;
   if (!isStakingAccount(account) || account.balance.lte(0)) return null;
 

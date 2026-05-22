@@ -124,10 +124,11 @@ describe("usePostOnboardingActionViewModel", () => {
       result.current.onRowActivate();
     });
 
-    expect(track).toHaveBeenCalledWith("button_clicked2", {
+    expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "cta_label",
       deviceModelId: DeviceModelId.nanoX,
       flow: "post-onboarding",
+      source: "Post onboarding widget",
     });
   });
 

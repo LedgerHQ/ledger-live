@@ -7,7 +7,7 @@ import {
 import {
   selectGenericAwarenessModalCampaignId,
   setGenericAwarenessModalCampaignId,
-} from "~/renderer/reducers/genericAwarenessModalSlice";
+} from "~/renderer/reducers/genericAwarenessModalDialogSlice";
 import type { State } from "~/renderer/reducers";
 import type { AppDispatch } from "~/state-manager/configureStore";
 
@@ -25,13 +25,13 @@ export function resolveGenericAwarenessModalContentVariant(
   return numericId % 2 === 0 ? "carousel" : "featureIntro";
 }
 
-export const openGenericAwarenessModal =
+export const openGenericAwarenessModalDialog =
   (options?: { campaignId?: string }) => (dispatch: AppDispatch) => {
     dispatch(setGenericAwarenessModalCampaignId(options?.campaignId));
     dispatch(openDialog(DIALOG_ID));
   };
 
-export const closeGenericAwarenessModal = () => (dispatch: AppDispatch) => {
+export const closeGenericAwarenessModalDialog = () => (dispatch: AppDispatch) => {
   dispatch(closeDialog(DIALOG_ID));
   dispatch(setGenericAwarenessModalCampaignId(undefined));
 };

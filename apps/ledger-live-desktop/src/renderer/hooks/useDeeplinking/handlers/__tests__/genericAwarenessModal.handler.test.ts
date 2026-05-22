@@ -1,5 +1,5 @@
 import { openDialog } from "~/renderer/reducers/dialogs";
-import { setGenericAwarenessModalCampaignId } from "~/renderer/reducers/genericAwarenessModalSlice";
+import { setGenericAwarenessModalCampaignId } from "~/renderer/reducers/genericAwarenessModalDialogSlice";
 import { genericAwarenessModalHandler } from "../genericAwarenessModal.handler";
 import { createMockContext } from "./test-utils";
 import type { AppDispatch } from "~/state-manager/configureStore";

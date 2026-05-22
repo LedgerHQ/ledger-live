@@ -9,6 +9,7 @@ import reducer, {
   resolvedThemeSelector,
   themeSelector,
   trackingEnabledSelector,
+  canPushDeviceIdsSelector,
   INITIAL_STATE as SETTINGS_INITIAL_STATE,
   filterValidSettings,
 } from "./settings";
@@ -43,6 +44,7 @@ const stateWithSettings = (settingsPatch: Partial<SettingsState>): State => ({
 const withAnalyticsOptInResolved = (
   base: State,
   params: Partial<{ policyVersion: number; consentValidityDays: number }> = {},
+  enabled = true,
 ): State =>
   ({
     ...base,
@@ -55,7 +57,7 @@ const withAnalyticsOptInResolved = (
         analyticsOptIn: {
           ...FEATURE_FLAGS_INITIAL_STATE.resolved.analyticsOptIn,
           ...base.featureFlags?.resolved?.analyticsOptIn,
-          enabled: true,
+          enabled,
           params: {
             ...FEATURE_FLAGS_INITIAL_STATE.resolved.analyticsOptIn.params,
             ...base.featureFlags?.resolved?.analyticsOptIn?.params,
@@ -245,6 +247,50 @@ describe("trackingEnabledSelector", () => {
       personalizedRecommendationsEnabled: true,
     });
     expect(trackingEnabledSelector(state)).toBe(true);
+  });
+});
+
+describe("canPushDeviceIdsSelector", () => {
+  const FIXED_NOW = new Date("2026-03-01T12:00:00.000Z");
+  beforeEach(() => {
+    jest.useFakeTimers();
+    jest.setSystemTime(FIXED_NOW);
+  });
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  const optedInState = (): State =>
+    withAnalyticsOptInResolved(
+      stateWithSettings({
+        analyticsConsentInfo: { consentDate: FIXED_NOW.toISOString(), privacyPolicyVersion: 1 },
+        analyticsEnabled: true,
+        personalizedRecommendationsEnabled: true,
+      }),
+    );
+
+  it("returns false when FF is off (regardless of user opt-in)", () => {
+    const state = withAnalyticsOptInResolved(
+      stateWithSettings({ analyticsEnabled: true }),
+      {},
+      false,
+    );
+    expect(canPushDeviceIdsSelector(state)).toBe(false);
+  });
+
+  it("returns false when FF is on but user has not opted in", () => {
+    const state = withAnalyticsOptInResolved(
+      stateWithSettings({
+        analyticsConsentInfo: { consentDate: FIXED_NOW.toISOString(), privacyPolicyVersion: 1 },
+        analyticsEnabled: false,
+        personalizedRecommendationsEnabled: false,
+      }),
+    );
+    expect(canPushDeviceIdsSelector(state)).toBe(false);
+  });
+
+  it("returns true only when FF is on and user has opted in", () => {
+    expect(canPushDeviceIdsSelector(optedInState())).toBe(true);
   });
 });
 

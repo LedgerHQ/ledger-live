@@ -17,6 +17,7 @@ import {
   Platform,
   PortfolioContentCard,
 } from "~/types/dynamicContent";
+import { processGenericAwarenessModalBrazeCards } from "@ledgerhq/live-common/genericAwarenessModal/buildContentCards";
 import {
   setActionCards,
   setDesktopCards,
@@ -24,6 +25,7 @@ import {
   setPortfolioCards,
   setBottomPortfolioCards,
 } from "../actions/dynamicContent";
+import { setGenericAwarenessModalContentCards } from "../reducers/genericAwarenessModalSlice";
 import {
   clearDismissedContentCards,
   purgeExpiredAnonymousUserNotifications,
@@ -186,11 +188,23 @@ export function useBraze() {
         .map(card => mapAsNotificationContentCard(card as ClassicCard))
         .sort(compareCards);
 
+      const genericAwarenessModalBrazeCards = filterByPage(
+        filteredDesktopCards,
+        LocationContentCard.GenericAwarenessModal,
+      ).map(card => ({
+        id: String(card.id),
+        extras: card.extras,
+      }));
+      const genericAwarenessModalContentCards = processGenericAwarenessModalBrazeCards(
+        genericAwarenessModalBrazeCards,
+      );
+
       dispatch(setDesktopCards(filteredDesktopCards));
       dispatch(setPortfolioCards(portfolioCards));
       dispatch(setBottomPortfolioCards(bottomPortfolioCards));
       dispatch(setActionCards(actionCards));
       dispatch(setNotificationsCards(notificationsCards));
+      dispatch(setGenericAwarenessModalContentCards(genericAwarenessModalContentCards));
     });
 
     braze.automaticallyShowInAppMessages();

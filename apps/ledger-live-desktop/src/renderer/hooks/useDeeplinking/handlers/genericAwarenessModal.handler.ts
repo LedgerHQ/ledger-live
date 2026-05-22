@@ -1,4 +1,4 @@
-import { openGenericAwarenessModal } from "LLD/features/GenericAwarenessModal/genericAwarenessModal";
+import { openGenericAwarenessModalDialog } from "LLD/features/GenericAwarenessModal/genericAwarenessModalDialog";
 import { DeeplinkHandler } from "../types";
 
 export const genericAwarenessModalHandler: DeeplinkHandler<"generic-awareness-modal"> = (
@@ -9,5 +9,5 @@ export const genericAwarenessModalHandler: DeeplinkHandler<"generic-awareness-mo
     return;
   }
 
-  dispatch(openGenericAwarenessModal({ campaignId: route.id }));
+  dispatch(openGenericAwarenessModalDialog({ campaignId: route.id }));
 };

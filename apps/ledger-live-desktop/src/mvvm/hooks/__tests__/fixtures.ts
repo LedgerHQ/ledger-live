@@ -46,6 +46,12 @@ export const defaultPortfolio: Portfolio = {
   countervalueChange: { percentage: 0, value: 0 },
 };
 
+export const mockPortfolioBalanceInfo = {
+  totalBalance: 9000,
+  isAvailable: true,
+  valueChange: { percentage: 12.34, value: 567 },
+};
+
 // --- usePortfolioBalance mock return ---
 
 export function makePortfolioBalanceReturn(overrides?: Partial<ReturnType<typeof getDefault>>) {

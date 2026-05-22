@@ -341,7 +341,7 @@ describe("useDeepLinkHandler", () => {
         expect(store.getState().dialogs.GENERIC_AWARENESS_MODAL).toBe(true);
       });
 
-      expect(store.getState().genericAwarenessModal.campaignId).toBeUndefined();
+      expect(store.getState().genericAwarenessModalDialog.campaignId).toBeUndefined();
     });
 
     it("stores campaign id from query when modal opens", async () => {
@@ -358,7 +358,7 @@ describe("useDeepLinkHandler", () => {
         expect(store.getState().dialogs.GENERIC_AWARENESS_MODAL).toBe(true);
       });
 
-      expect(store.getState().genericAwarenessModal.campaignId).toBe("welcome-v2");
+      expect(store.getState().genericAwarenessModalDialog.campaignId).toBe("welcome-v2");
     });
 
     it("does not set GENERIC_AWARENESS_MODAL when lwdGenericAwarenessModal is disabled", async () => {

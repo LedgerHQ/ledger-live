@@ -12,7 +12,7 @@ import { setupCryptoAssetsStore } from "~/config/bridge-setup";
 import { setupRecentAddressesStore } from "LLM/storage/recentAddresses";
 import { createIdentitiesSyncMiddleware } from "@ledgerhq/client-ids/store";
 import { State } from "~/reducers/types";
-import { trackingEnabledSelector } from "~/reducers/settings";
+import { canPushDeviceIdsSelector } from "~/reducers/settings";
 import { createFeatureFlagsMiddleware } from "@shared/feature-flags";
 
 export const store = configureStore({
@@ -26,7 +26,7 @@ export const store = configureStore({
       .concat(
         createIdentitiesSyncMiddleware({
           getIdentitiesState: (state: State) => state.identities,
-          getAnalyticsConsent: (state: State) => trackingEnabledSelector(state),
+          getAnalyticsConsent: canPushDeviceIdsSelector,
         }),
       )
       .concat(

@@ -1,14 +1,13 @@
 import { closeDialog, openDialog } from "~/renderer/reducers/dialogs";
-import { setGenericAwarenessModalCampaignId } from "~/renderer/reducers/genericAwarenessModalSlice";
-import type { State } from "~/renderer/reducers";
+import { setGenericAwarenessModalCampaignId } from "~/renderer/reducers/genericAwarenessModalDialogSlice";
 import type { AppDispatch } from "~/state-manager/configureStore";
 import {
-  closeGenericAwarenessModal,
-  openGenericAwarenessModal,
+  closeGenericAwarenessModalDialog,
+  openGenericAwarenessModalDialog,
   resolveGenericAwarenessModalContentVariant,
   selectGenericAwarenessModalCampaignId,
   selectIsGenericAwarenessModalOpen,
-} from "./genericAwarenessModal";
+} from "./genericAwarenessModalDialog";
 
 function collectThunkDispatches(thunkFn: (dispatch: AppDispatch) => void) {
   const dispatched: unknown[] = [];
@@ -38,21 +37,21 @@ describe("resolveGenericAwarenessModalContentVariant", () => {
 
 describe("genericAwarenessModal", () => {
   it("open thunk stores campaign id and opens dialog", () => {
-    const actions = collectThunkDispatches(openGenericAwarenessModal({ campaignId: "campaign-a" }));
+    const actions = collectThunkDispatches(openGenericAwarenessModalDialog({ campaignId: "campaign-a" }));
 
     expect(actions[0]).toEqual(setGenericAwarenessModalCampaignId("campaign-a"));
     expect(actions[1]).toEqual(openDialog("GENERIC_AWARENESS_MODAL"));
   });
 
   it("open thunk without campaign id clears stored campaign id", () => {
-    const actions = collectThunkDispatches(openGenericAwarenessModal());
+    const actions = collectThunkDispatches(openGenericAwarenessModalDialog());
 
     expect(actions[0]).toEqual(setGenericAwarenessModalCampaignId(undefined));
     expect(actions[1]).toEqual(openDialog("GENERIC_AWARENESS_MODAL"));
   });
 
   it("close thunk closes dialog and clears campaign id", () => {
-    const actions = collectThunkDispatches(closeGenericAwarenessModal());
+    const actions = collectThunkDispatches(closeGenericAwarenessModalDialog());
 
     expect(actions[0]).toEqual(closeDialog("GENERIC_AWARENESS_MODAL"));
     expect(actions[1]).toEqual(setGenericAwarenessModalCampaignId(undefined));
@@ -79,10 +78,10 @@ describe("genericAwarenessModal", () => {
   });
 
   it("selectGenericAwarenessModalCampaignId reads slice state", () => {
-    const state = {
-      genericAwarenessModal: { campaignId: "welcome-v2" },
-    } as State;
-
-    expect(selectGenericAwarenessModalCampaignId(state)).toBe("welcome-v2");
+    expect(
+      selectGenericAwarenessModalCampaignId({
+        genericAwarenessModalDialog: { campaignId: "welcome-v2" },
+      }),
+    ).toBe("welcome-v2");
   });
 });

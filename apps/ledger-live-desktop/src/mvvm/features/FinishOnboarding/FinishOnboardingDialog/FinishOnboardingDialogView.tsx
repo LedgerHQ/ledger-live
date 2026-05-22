@@ -11,6 +11,7 @@ import { LedgerDevices } from "@ledgerhq/lumen-ui-react/symbols";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import PostOnboardingAction from "./components/PostOnboardingAction";
 import { cn } from "LLD/utils/cn";
+import TrackPage from "~/renderer/analytics/TrackPage";
 import type { FinishOnboardingDialogViewProps } from "./hooks/useFinishOnboardingDialogViewModel";
 
 const FinishOnboardingDialogView = ({
@@ -31,6 +32,7 @@ const FinishOnboardingDialogView = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+      {isOpen && <TrackPage category="Post onboarding widget" flow="post-onboarding" />}
       <DialogContent
         className="bg-canvas flex h-auto max-h-[90vh] flex-col gap-0 overflow-hidden rounded-2xl"
         aria-describedby={undefined}

@@ -16,6 +16,7 @@ import reducer, {
   SettingsState,
   filterValidSettings,
   trackingEnabledSelector,
+  canPushDeviceIdsSelector,
 } from "./settings";
 const invalidDeviceModelIds = ["nanoFTS", undefined, "whatever"];
 const validDeviceModelIds: DeviceModelId[] = Object.values(DeviceModelId);
@@ -674,5 +675,43 @@ describe("trackingEnabledSelector", () => {
         },
       }),
     ).toBe(true);
+  });
+});
+
+describe("canPushDeviceIdsSelector", () => {
+  const FIXED_NOW = new Date("2024-06-15T12:00:00.000Z");
+
+  beforeAll(() => jest.useFakeTimers());
+  afterAll(() => jest.useRealTimers());
+  beforeEach(() => jest.setSystemTime(FIXED_NOW));
+
+  const optedInSettings: Partial<SettingsState> = {
+    lastAnalyticsConsentDate: FIXED_NOW.toISOString(),
+    privacyPolicyVersion: 1,
+    shareAnalytics: true,
+    sharePersonalizedRecommandations: true,
+  };
+
+  it("returns false when FF is off (regardless of user opt-in)", () => {
+    expect(
+      canPushDeviceIdsSelector(mockStateWithSettings(optedInSettings, { enabled: false })),
+    ).toBe(false);
+  });
+
+  it("returns false when FF is on but user has not opted in", () => {
+    expect(
+      canPushDeviceIdsSelector(
+        mockStateWithSettings({
+          lastAnalyticsConsentDate: FIXED_NOW.toISOString(),
+          privacyPolicyVersion: 1,
+          shareAnalytics: false,
+          sharePersonalizedRecommandations: false,
+        }),
+      ),
+    ).toBe(false);
+  });
+
+  it("returns true only when FF is on and user has opted in", () => {
+    expect(canPushDeviceIdsSelector(mockStateWithSettings(optedInSettings))).toBe(true);
   });
 });

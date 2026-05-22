@@ -1,5 +1,6 @@
 import { useMemo, useRef } from "react";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { formatPrice } from "@ledgerhq/live-currency-format";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import { calculate } from "@ledgerhq/live-countervalues/logic";
 import { getCurrencyPortfolio } from "@ledgerhq/live-countervalues/portfolio";
@@ -48,7 +49,7 @@ function formatCounterValue(
   if (!cvUnit) return null;
 
   if (asset.isPlaceholder) {
-    return formatCurrencyUnit(cvUnit, new BigNumber(0), fmtOpts);
+    return formatPrice(cvUnit, new BigNumber(0), fmtOpts);
   }
 
   const cv = calculate(cvState, {
@@ -59,7 +60,7 @@ function formatCounterValue(
   });
 
   if (typeof cv !== "number") return null;
-  return formatCurrencyUnit(cvUnit, new BigNumber(cv), fmtOpts);
+  return formatPrice(cvUnit, new BigNumber(cv), fmtOpts);
 }
 
 function getCountervalueChange(asset: Asset, state: SharedState): ValueChange | null {

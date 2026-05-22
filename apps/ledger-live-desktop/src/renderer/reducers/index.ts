@@ -39,6 +39,9 @@ import { recoverStateReducer, RecoverStateSliceState } from "./recoverState";
 import genericAwarenessModal, {
   GenericAwarenessModalSliceState,
 } from "./genericAwarenessModalSlice";
+import genericAwarenessModalDialog, {
+  GenericAwarenessModalDialogState,
+} from "./genericAwarenessModalDialogSlice";
 
 export type State = LLDRTKApiState & {
   accounts: AccountsState;
@@ -69,6 +72,7 @@ export type State = LLDRTKApiState & {
   countervaluesExtraTracking: CountervaluesExtraTrackingState;
   recoverState: RecoverStateSliceState;
   genericAwarenessModal: GenericAwarenessModalSliceState;
+  genericAwarenessModalDialog: GenericAwarenessModalDialogState;
 };
 
 const appReducer = combineReducers({
@@ -100,6 +104,7 @@ const appReducer = combineReducers({
   countervaluesExtraTracking,
   recoverState: recoverStateReducer,
   genericAwarenessModal,
+  genericAwarenessModalDialog,
   ...lldRTKApiReducers,
   ...(getEnv("PLAYWRIGHT_RUN") && { lastAction: (_: unknown, action: PayloadAction) => action }),
 });

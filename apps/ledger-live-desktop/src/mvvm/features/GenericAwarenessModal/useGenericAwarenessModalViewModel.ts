@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import {
-  closeGenericAwarenessModal,
+  closeGenericAwarenessModalDialog,
   resolveGenericAwarenessModalContentVariant,
   selectGenericAwarenessModalCampaignId,
   selectIsGenericAwarenessModalOpen,
   type GenericAwarenessModalContentVariant,
-} from "./genericAwarenessModal";
+} from "./genericAwarenessModalDialog";
 
 export interface GenericAwarenessModalViewProps {
   isOpen: boolean;
@@ -34,7 +34,7 @@ const useGenericAwarenessModalViewModel = (): GenericAwarenessModalViewProps => 
     : lockedContentVariantRef.current;
 
   const onClose = useCallback(() => {
-    dispatch(closeGenericAwarenessModal());
+    dispatch(closeGenericAwarenessModalDialog());
   }, [dispatch]);
 
   return {

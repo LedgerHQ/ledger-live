@@ -11,17 +11,17 @@ import type { TezosTestSigner } from "./signer";
 
 registerCoinModules(coinModuleLoaders);
 
-export function getBridges(signer: TezosTestSigner): {
+export async function getBridges(signer: TezosTestSigner): Promise<{
   currencyBridge: CurrencyBridge;
   accountBridge: AccountBridge<GenericTransaction>;
   getAddress: GetAddressFn;
-} {
+}> {
   const context: SignerContext<TezosTestSigner> = (_, fn) => fn(signer);
   const getAddress = tezosGetAddress(context);
 
   return {
-    currencyBridge: getCoinFrameworkCurrencyBridge("tezos", "local", { context, getAddress }),
-    accountBridge: getCoinFrameworkAccountBridge("tezos", "local", { context, getAddress }),
+    currencyBridge: await getCoinFrameworkCurrencyBridge("tezos", "local", { context, getAddress }),
+    accountBridge: await getCoinFrameworkAccountBridge("tezos", "local", { context, getAddress }),
     getAddress,
   };
 }

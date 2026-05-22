@@ -1,13 +1,13 @@
 import { act, renderHook } from "tests/testSetup";
 import type { AppDispatch } from "~/state-manager/configureStore";
-import { closeGenericAwarenessModal, openGenericAwarenessModal } from "./genericAwarenessModal";
+import { closeGenericAwarenessModalDialog, openGenericAwarenessModalDialog } from "./genericAwarenessModalDialog";
 import useGenericAwarenessModalViewModel from "./useGenericAwarenessModalViewModel";
 
 const dispatchThunk = (
   store: { dispatch: unknown },
   thunk:
-    | ReturnType<typeof openGenericAwarenessModal>
-    | ReturnType<typeof closeGenericAwarenessModal>,
+    | ReturnType<typeof openGenericAwarenessModalDialog>
+    | ReturnType<typeof closeGenericAwarenessModalDialog>,
 ) => {
   (store.dispatch as AppDispatch)(thunk);
 };
@@ -17,7 +17,7 @@ describe("useGenericAwarenessModalViewModel", () => {
     const { result, store } = renderHook(() => useGenericAwarenessModalViewModel());
 
     act(() => {
-      dispatchThunk(store, openGenericAwarenessModal());
+      dispatchThunk(store, openGenericAwarenessModalDialog());
     });
 
     expect(result.current.isOpen).toBe(true);
@@ -29,7 +29,7 @@ describe("useGenericAwarenessModalViewModel", () => {
     const { result, store } = renderHook(() => useGenericAwarenessModalViewModel());
 
     act(() => {
-      dispatchThunk(store, openGenericAwarenessModal({ campaignId: "2" }));
+      dispatchThunk(store, openGenericAwarenessModalDialog({ campaignId: "2" }));
     });
 
     expect(result.current.isOpen).toBe(true);
@@ -41,7 +41,7 @@ describe("useGenericAwarenessModalViewModel", () => {
     const { result, store } = renderHook(() => useGenericAwarenessModalViewModel());
 
     act(() => {
-      dispatchThunk(store, openGenericAwarenessModal({ campaignId: "3" }));
+      dispatchThunk(store, openGenericAwarenessModalDialog({ campaignId: "3" }));
     });
 
     expect(result.current.contentVariant).toBe("featureIntro");
@@ -51,13 +51,13 @@ describe("useGenericAwarenessModalViewModel", () => {
     const { result, store } = renderHook(() => useGenericAwarenessModalViewModel());
 
     act(() => {
-      dispatchThunk(store, openGenericAwarenessModal({ campaignId: "2" }));
+      dispatchThunk(store, openGenericAwarenessModalDialog({ campaignId: "2" }));
     });
 
     expect(result.current.contentVariant).toBe("carousel");
 
     act(() => {
-      dispatchThunk(store, closeGenericAwarenessModal());
+      dispatchThunk(store, closeGenericAwarenessModalDialog());
     });
 
     expect(result.current.isOpen).toBe(false);

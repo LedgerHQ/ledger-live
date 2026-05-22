@@ -21,6 +21,7 @@ import BigNumber from "bignumber.js";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import AssetDetail from "../index";
+import { MAX_ADDRESSES_PREVIEW } from "../components/AddressList/constants";
 
 const LABEL = {
   TOTAL_BALANCE: "Total balance",
@@ -32,6 +33,7 @@ const LABEL = {
 const TEST_ID = {
   HEADER: "asset-detail-header",
   ADDRESS_LIST: "asset-detail-address-list",
+  ADDRESSES_SEE_ALL: "asset-detail-addresses-see-all",
   MARKET_PRICE_SECTION: "asset-detail-market-price-section",
   MARKET_PRICE: "asset-detail-market-price",
   MARKET_PRICE_PERCENT: "asset-detail-market-price-percent",
@@ -47,6 +49,8 @@ const TEST_ID = {
   EARN_BANNER: "asset-detail-earn-banner",
   AVAILABLE_BALANCE: "asset-detail-available-balance",
   EARN_DEPOSIT: "asset-detail-earn-deposit",
+  HIDDEN_BANNER: "asset-detail-hidden-banner",
+  HIDDEN_BANNER_SHOW_ASSET: "asset-detail-hidden-banner-show-asset",
 } as const;
 
 const mockGetCanStakeCurrency = jest.fn().mockReturnValue(false);
@@ -94,7 +98,11 @@ const setLocation = (state: unknown = null, pathname = "/asset/bitcoin") =>
   useLocation.mockReturnValue({ state, pathname, search: "", hash: "" });
 
 const expectHeader = () => expect(screen.getByTestId(TEST_ID.HEADER)).toBeVisible();
-const expectAssetName = (name: string) => expect(screen.getByText(name)).toBeVisible();
+const expectAssetTicker = (ticker: string) => {
+  const header = screen.getByTestId(TEST_ID.HEADER);
+  expect(header).toBeVisible();
+  expect(within(header).getByText(ticker)).toBeVisible();
+};
 const expectMarketView = () => {
   expect(screen.getByTestId(TEST_ID.MARKET_PRICE_SECTION)).toBeVisible();
   expect(screen.getByTestId(TEST_ID.MARKET_DATA_SECTION)).toBeVisible();
@@ -129,7 +137,7 @@ const expectNotFound = () => expect(screen.getByText(LABEL.NOT_FOUND)).toBeVisib
 type OwnedAsset = {
   label: string;
   routeId: string;
-  displayName: string;
+  ticker: string;
   marketResponse: unknown[];
   buildDistribution: () => { bySlug: Record<string, DistributionItem>; list: DistributionItem[] };
 };
@@ -138,7 +146,7 @@ const OWNED_ASSETS: OwnedAsset[] = [
   {
     label: "BTC",
     routeId: "bitcoin",
-    displayName: "Bitcoin",
+    ticker: "BTC",
     marketResponse: MarketMockedResponse.bitcoinDetail,
     buildDistribution: () => {
       const account = genAccount("asset-detail-btc-account", { currency: btc });
@@ -149,7 +157,7 @@ const OWNED_ASSETS: OwnedAsset[] = [
   {
     label: "USDC",
     routeId: "ethereum/erc20/usd__coin",
-    displayName: "USD Coin",
+    ticker: "USDC",
     marketResponse: MarketMockedResponse.usdcDetail,
     buildDistribution: () => {
       const account = genAccount("asset-detail-usdc-account", { currency: btc });
@@ -165,7 +173,7 @@ const OWNED_ASSETS: OwnedAsset[] = [
 type DiscoveryAsset = {
   label: string;
   routeId: string;
-  displayName: string;
+  ticker: string;
   marketResponse: unknown[];
 };
 
@@ -173,13 +181,13 @@ const DISCOVERY_ASSETS: DiscoveryAsset[] = [
   {
     label: "BTC",
     routeId: "bitcoin",
-    displayName: "Bitcoin",
+    ticker: "BTC",
     marketResponse: MarketMockedResponse.bitcoinDetail,
   },
   {
     label: "USDC",
     routeId: "usd-coin",
-    displayName: "USDC",
+    ticker: "USDC",
     marketResponse: MarketMockedResponse.usdcDetail,
   },
 ];
@@ -188,13 +196,13 @@ const LOCATION_STATE_FALLBACK = [
   {
     label: "BTC",
     routeId: "bitcoin",
-    displayName: "Bitcoin",
+    ticker: "BTC",
     state: { id: "bitcoin", ledgerIds: ["bitcoin"], name: "Bitcoin", ticker: "BTC", price: 50000 },
   },
   {
     label: "USDC",
     routeId: "usd-coin",
-    displayName: "USDC",
+    ticker: "USDC",
     state: {
       id: "usd-coin",
       ledgerIds: ["ethereum/erc20/usd__coin"],
@@ -242,7 +250,7 @@ describe("AssetDetail integration", () => {
   describe("owned mode (with account)", () => {
     it.each(OWNED_ASSETS)(
       "$label - shows balance, addresses and market sections",
-      async ({ routeId, displayName, marketResponse, buildDistribution }) => {
+      async ({ routeId, ticker, marketResponse, buildDistribution }) => {
         mockMarket.withData(marketResponse);
         setupRoute(routeId, buildDistribution());
 
@@ -250,7 +258,7 @@ describe("AssetDetail integration", () => {
 
         await waitFor(() => {
           expectHeader();
-          expectAssetName(displayName);
+          expectAssetTicker(ticker);
           expectOwnedView();
           expectMarketView();
         });
@@ -327,6 +335,63 @@ describe("AssetDetail integration", () => {
       expect(screen.queryByTestId(TEST_ID.EARN_BANNER)).not.toBeInTheDocument();
     });
 
+    describe("addresses see all", () => {
+      it("opens the all addresses dialog when see all is clicked", async () => {
+        mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+        const accounts = Array.from({ length: MAX_ADDRESSES_PREVIEW + 1 }, (_, index) =>
+          genAccount(`asset-detail-addresses-see-all-${index}`, { currency: btc }),
+        );
+        const item = buildDistributionItem({ accounts });
+        setupRoute("bitcoin", { bySlug: { bitcoin: item }, list: [item] });
+
+        const { user } = renderWithMockedCounterValuesProvider(<AssetDetail />, {
+          initialState: { accounts },
+        });
+
+        await waitFor(() => {
+          expect(screen.getByTestId(TEST_ID.ADDRESS_LIST)).toBeVisible();
+        });
+
+        expect(screen.getAllByTestId(/asset-detail-address-row-/)).toHaveLength(
+          MAX_ADDRESSES_PREVIEW,
+        );
+        expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+
+        await user.click(screen.getByTestId(TEST_ID.ADDRESSES_SEE_ALL));
+
+        const dialog = await screen.findByRole("dialog");
+        expect(within(dialog).getByRole("heading", { name: "Addresses" })).toBeVisible();
+        expect(
+          within(dialog).getAllByText(/all your addresses holding btc\./i).length,
+        ).toBeGreaterThan(0);
+        expect(within(dialog).getAllByTestId(/asset-detail-address-row-/)).toHaveLength(
+          MAX_ADDRESSES_PREVIEW + 1,
+        );
+      });
+
+      it("does not show see all when there are five or fewer addresses", async () => {
+        mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+        const accounts = Array.from({ length: MAX_ADDRESSES_PREVIEW }, (_, index) =>
+          genAccount(`asset-detail-addresses-no-see-all-${index}`, { currency: btc }),
+        );
+        const item = buildDistributionItem({ accounts });
+        setupRoute("bitcoin", { bySlug: { bitcoin: item }, list: [item] });
+
+        renderWithMockedCounterValuesProvider(<AssetDetail />, {
+          initialState: { accounts },
+        });
+
+        await waitFor(() => {
+          expect(screen.getByTestId(TEST_ID.ADDRESS_LIST)).toBeVisible();
+        });
+
+        expect(screen.queryByTestId(TEST_ID.ADDRESSES_SEE_ALL)).not.toBeInTheDocument();
+        expect(screen.getAllByTestId(/asset-detail-address-row-/)).toHaveLength(
+          MAX_ADDRESSES_PREVIEW,
+        );
+      });
+    });
+
     it("shows header options menu with favorites and hide actions for tokens", async () => {
       mockMarket.withData(MarketMockedResponse.usdcDetail);
       setupRoute("ethereum/erc20/usd__coin", OWNED_ASSETS[1].buildDistribution());
@@ -340,6 +405,21 @@ describe("AssetDetail integration", () => {
       await user.click(screen.getByTestId(TEST_ID.HEADER_OPTIONS));
 
       expect(screen.getByRole("menuitem", { name: /add to favorites/i })).toBeVisible();
+      expect(screen.getByRole("menuitem", { name: /hide from portfolio/i })).toBeVisible();
+    });
+
+    it("offers Hide from portfolio for an owned coin (BTC) now that the action is no longer token-only", async () => {
+      mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+      setupRoute("bitcoin", OWNED_ASSETS[0].buildDistribution());
+
+      const { user } = renderWithMockedCounterValuesProvider(<AssetDetail />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId(TEST_ID.HEADER_OPTIONS)).toBeVisible();
+      });
+
+      await user.click(screen.getByTestId(TEST_ID.HEADER_OPTIONS));
+
       expect(screen.getByRole("menuitem", { name: /hide from portfolio/i })).toBeVisible();
     });
 
@@ -397,6 +477,47 @@ describe("AssetDetail integration", () => {
       expect(screen.getByRole("menuitem", { name: /show in portfolio/i })).toBeVisible();
     });
 
+    it("renders the hidden banner when the asset is blacklisted and unhides it from the banner action", async () => {
+      mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+      setupRoute("bitcoin", OWNED_ASSETS[0].buildDistribution());
+
+      const { user, store } = renderWithMockedCounterValuesProvider(<AssetDetail />, {
+        initialState: {
+          settings: {
+            ...AFTER_ONBOARDING_STATE,
+            blacklistedTokenIds: ["bitcoin"],
+          },
+        },
+      });
+
+      await waitFor(() => {
+        expect(screen.getByTestId(TEST_ID.HIDDEN_BANNER)).toBeVisible();
+      });
+
+      expect(screen.getByText("This asset is hidden from your portfolio.")).toBeVisible();
+
+      await user.click(screen.getByTestId(TEST_ID.HIDDEN_BANNER_SHOW_ASSET));
+
+      await waitFor(() => {
+        expect(store.getState().settings.blacklistedTokenIds).not.toContain("bitcoin");
+      });
+
+      expect(screen.queryByTestId(TEST_ID.HIDDEN_BANNER)).not.toBeInTheDocument();
+    });
+
+    it("does not render the hidden banner when the asset is not blacklisted", async () => {
+      mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+      setupRoute("bitcoin", OWNED_ASSETS[0].buildDistribution());
+
+      renderWithMockedCounterValuesProvider(<AssetDetail />);
+
+      await waitFor(() => {
+        expectHeader();
+      });
+
+      expect(screen.queryByTestId(TEST_ID.HIDDEN_BANNER)).not.toBeInTheDocument();
+    });
+
     it.each(OWNED_ASSETS)(
       "$label - keeps balance and addresses when Market and DADA both fail",
       async ({ routeId, buildDistribution }) => {
@@ -416,7 +537,7 @@ describe("AssetDetail integration", () => {
 
     it.each(OWNED_ASSETS)(
       "$label - falls back to Market API when DADA fails",
-      async ({ routeId, displayName, marketResponse, buildDistribution }) => {
+      async ({ routeId, ticker, marketResponse, buildDistribution }) => {
         mockMarket.withData(marketResponse);
         mockDada.fail();
         setupRoute(routeId, buildDistribution());
@@ -425,7 +546,7 @@ describe("AssetDetail integration", () => {
 
         await waitFor(() => {
           expectHeader();
-          expectAssetName(displayName);
+          expectAssetTicker(ticker);
           expectOwnedView();
           expectMarketView();
         });
@@ -435,7 +556,7 @@ describe("AssetDetail integration", () => {
 
     it.each(OWNED_ASSETS)(
       "$label - falls back to DADA when Market API fails",
-      async ({ routeId, displayName, buildDistribution }) => {
+      async ({ routeId, ticker, buildDistribution }) => {
         mockMarket.fail();
         setupRoute(routeId, buildDistribution());
 
@@ -443,7 +564,7 @@ describe("AssetDetail integration", () => {
 
         await waitFor(() => {
           expectHeader();
-          expectAssetName(displayName);
+          expectAssetTicker(ticker);
           expectOwnedView();
           expect(screen.getByRole("heading", { name: LABEL.MARKET_STATS })).toBeVisible();
         });
@@ -454,7 +575,7 @@ describe("AssetDetail integration", () => {
   describe("discovery mode (no account)", () => {
     it.each(DISCOVERY_ASSETS)(
       "$label - shows header and market sections without owned view",
-      async ({ routeId, displayName, marketResponse }) => {
+      async ({ routeId, ticker, marketResponse }) => {
         mockMarket.withData(marketResponse);
         setupRoute(routeId, { list: [] });
 
@@ -462,7 +583,7 @@ describe("AssetDetail integration", () => {
 
         await waitFor(() => {
           expectHeader();
-          expectAssetName(displayName);
+          expectAssetTicker(ticker);
           expectMarketView();
         });
         await waitForMarketPriceSectionShowsQuote();
@@ -472,7 +593,7 @@ describe("AssetDetail integration", () => {
 
     it.each(DISCOVERY_ASSETS)(
       "$label - falls back to Market API when DADA fails",
-      async ({ routeId, displayName, marketResponse }) => {
+      async ({ routeId, ticker, marketResponse }) => {
         mockMarket.withData(marketResponse);
         mockDada.fail();
         setupRoute(routeId, { list: [] });
@@ -481,7 +602,7 @@ describe("AssetDetail integration", () => {
 
         await waitFor(() => {
           expectHeader();
-          expectAssetName(displayName);
+          expectAssetTicker(ticker);
           expectMarketView();
         });
         await waitForMarketPriceSectionShowsQuote();
@@ -490,7 +611,7 @@ describe("AssetDetail integration", () => {
 
     it.each(LOCATION_STATE_FALLBACK)(
       "$label - falls back to location state when Market is empty",
-      async ({ routeId, displayName, state }) => {
+      async ({ routeId, ticker, state }) => {
         mockMarket.empty();
         setLocation(state, `/asset/${routeId}`);
         setupRoute(routeId, { list: [] });
@@ -499,7 +620,7 @@ describe("AssetDetail integration", () => {
 
         await waitFor(() => {
           expectHeader();
-          expectAssetName(displayName);
+          expectAssetTicker(ticker);
         });
       },
     );
@@ -702,7 +823,7 @@ describe("AssetDetail integration", () => {
 
       await waitFor(() => {
         expectHeader();
-        expectAssetName("Bitcoin Test");
+        expectAssetTicker("TBTC");
         expect(screen.getByText(LABEL.TOTAL_BALANCE)).toBeVisible();
       });
     });
@@ -796,7 +917,7 @@ describe("AssetDetail integration", () => {
 
       await waitFor(() => {
         expectHeader();
-        expectAssetName("Bitcoin Test");
+        expectAssetTicker("TBTC");
         expect(screen.getByText(LABEL.TOTAL_BALANCE)).toBeVisible();
       });
     });

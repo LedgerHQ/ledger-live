@@ -1,6 +1,4 @@
 import { useMemo } from "react";
-import { useSelector } from "~/context/hooks";
-import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 import { Asset } from "~/types/asset";
 import { useDefaultAssetsByCategory } from "LLM/hooks/useDefaultAssetsByCategory";
 import { useCategorizedAssetsFromPortfolio } from "LLM/hooks/useCategorizedAssetsFromPortfolio";
@@ -33,20 +31,11 @@ const usePortfolioStablecoinsSectionViewModel = ({
   const isReadOnly = variant === "readOnly";
   const { onPressShowAll, onItemPress } = usePortfolioSectionActions(isReadOnly, "stablecoin");
 
-  const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
-  const blacklistedTokenIdsSet = useMemo(() => new Set(blacklistedTokenIds), [blacklistedTokenIds]);
-
   const { categorizedAssets, stablecoinTickers } = useCategorizedAssetsFromPortfolio();
 
   const filteredStablecoins = useMemo(
-    () =>
-      categorizedAssets.stablecoins
-        .filter(
-          ({ currency }) =>
-            currency.type !== "TokenCurrency" || !blacklistedTokenIdsSet.has(currency.id),
-        )
-        .map(toAsset),
-    [categorizedAssets.stablecoins, blacklistedTokenIdsSet],
+    () => categorizedAssets.stablecoins.map(toAsset),
+    [categorizedAssets.stablecoins],
   );
 
   const needsPadding = isLimitedView || filteredStablecoins.length < EMPTY_STATE_MAX_STABLECOINS;

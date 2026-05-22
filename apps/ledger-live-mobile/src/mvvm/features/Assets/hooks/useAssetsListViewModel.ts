@@ -4,6 +4,8 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { GestureResponderEvent } from "react-native";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { useNonBlacklistedDistribution } from "~/hooks/useNonBlacklistedDistribution";
+import { useSelector } from "~/context/hooks";
+import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 import { useRefreshAccountsOrdering } from "~/actions/general";
 import { NavigatorName, ScreenName } from "~/const";
 import { Asset } from "~/types/asset";
@@ -42,12 +44,18 @@ const useAssetsListViewModel = ({
     groupBy: shouldDisplayAggregatedAssets ? "asset" : undefined,
   });
 
+  const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
+  const blacklistedTokenIdsSet = useMemo(() => new Set(blacklistedTokenIds), [blacklistedTokenIds]);
+
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   useFocusEffect(refreshAccountsOrdering);
 
   const assetsToDisplay = useMemo(
-    () => filteredDistribution.slice(0, limitNumberOfAssets),
-    [filteredDistribution, limitNumberOfAssets],
+    () =>
+      filteredDistribution
+        .filter(({ currency }) => !blacklistedTokenIdsSet.has(currency.id))
+        .slice(0, limitNumberOfAssets),
+    [filteredDistribution, blacklistedTokenIdsSet, limitNumberOfAssets],
   );
 
   const onItemPress = useCallback(

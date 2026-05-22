@@ -2,14 +2,14 @@ import React from "react";
 import { render, screen, waitFor, act } from "tests/testSetup";
 import type { AppDispatch } from "~/state-manager/configureStore";
 import GenericAwarenessModal from "..";
-import { closeGenericAwarenessModal, openGenericAwarenessModal } from "../genericAwarenessModal";
+import { closeGenericAwarenessModalDialog, openGenericAwarenessModalDialog } from "../genericAwarenessModalDialog";
 
 describe("GenericAwarenessModal Integration", () => {
   const dispatchThunk = (
     store: { dispatch: unknown },
     thunk:
-      | ReturnType<typeof openGenericAwarenessModal>
-      | ReturnType<typeof closeGenericAwarenessModal>,
+      | ReturnType<typeof openGenericAwarenessModalDialog>
+      | ReturnType<typeof closeGenericAwarenessModalDialog>,
   ) => {
     (store.dispatch as AppDispatch)(thunk);
   };
@@ -25,7 +25,7 @@ describe("GenericAwarenessModal Integration", () => {
       const { store, user } = render(<GenericAwarenessModal />);
 
       act(() => {
-        dispatchThunk(store, openGenericAwarenessModal());
+        dispatchThunk(store, openGenericAwarenessModalDialog());
       });
 
       await waitFor(() => {
@@ -42,14 +42,14 @@ describe("GenericAwarenessModal Integration", () => {
         expect(screen.queryByTestId("generic-awareness-modal")).not.toBeInTheDocument();
       });
       expect(store.getState().dialogs.GENERIC_AWARENESS_MODAL).toBe(false);
-      expect(store.getState().genericAwarenessModal.campaignId).toBeUndefined();
+      expect(store.getState().genericAwarenessModalDialog.campaignId).toBeUndefined();
     });
 
     it("should render feature intro when opened with odd campaign id", async () => {
       const { store } = render(<GenericAwarenessModal />);
 
       act(() => {
-        dispatchThunk(store, openGenericAwarenessModal({ campaignId: "1" }));
+        dispatchThunk(store, openGenericAwarenessModalDialog({ campaignId: "1" }));
       });
 
       await waitFor(() => {
@@ -66,7 +66,7 @@ describe("GenericAwarenessModal Integration", () => {
       const { store } = render(<GenericAwarenessModal />);
 
       act(() => {
-        dispatchThunk(store, openGenericAwarenessModal({ campaignId: "2" }));
+        dispatchThunk(store, openGenericAwarenessModalDialog({ campaignId: "2" }));
       });
 
       await waitFor(() => {
@@ -82,7 +82,7 @@ describe("GenericAwarenessModal Integration", () => {
       const { store } = render(<GenericAwarenessModal />);
 
       act(() => {
-        dispatchThunk(store, openGenericAwarenessModal({ campaignId: "2" }));
+        dispatchThunk(store, openGenericAwarenessModalDialog({ campaignId: "2" }));
       });
 
       await waitFor(() => {
@@ -90,7 +90,7 @@ describe("GenericAwarenessModal Integration", () => {
       });
 
       act(() => {
-        dispatchThunk(store, closeGenericAwarenessModal());
+        dispatchThunk(store, closeGenericAwarenessModalDialog());
       });
 
       expect(screen.queryByText("Connect a Ledger device")).not.toBeInTheDocument();
@@ -98,14 +98,14 @@ describe("GenericAwarenessModal Integration", () => {
       await waitFor(() => {
         expect(screen.queryByTestId("generic-awareness-modal")).not.toBeInTheDocument();
       });
-      expect(store.getState().genericAwarenessModal.campaignId).toBeUndefined();
+      expect(store.getState().genericAwarenessModalDialog.campaignId).toBeUndefined();
     });
 
     it("should close when the carousel primary button is clicked", async () => {
       const { store, user } = render(<GenericAwarenessModal />);
 
       act(() => {
-        dispatchThunk(store, openGenericAwarenessModal({ campaignId: "0" }));
+        dispatchThunk(store, openGenericAwarenessModalDialog({ campaignId: "0" }));
       });
 
       await waitFor(() => {
@@ -125,7 +125,7 @@ describe("GenericAwarenessModal Integration", () => {
     const { store } = render(<GenericAwarenessModal />);
 
     act(() => {
-      dispatchThunk(store, openGenericAwarenessModal());
+      dispatchThunk(store, openGenericAwarenessModalDialog());
     });
 
     await waitFor(() => {
@@ -133,7 +133,7 @@ describe("GenericAwarenessModal Integration", () => {
     });
 
     act(() => {
-      dispatchThunk(store, closeGenericAwarenessModal());
+      dispatchThunk(store, closeGenericAwarenessModalDialog());
     });
 
     await waitFor(() => {

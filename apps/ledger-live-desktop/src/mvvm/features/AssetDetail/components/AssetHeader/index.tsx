@@ -6,7 +6,7 @@ import { AssetHeaderView } from "./AssetHeaderView";
 import { useAssetHeaderViewModel } from "./useAssetHeaderViewModel";
 
 export type AssetHeaderProps = Readonly<{
-  assetLabel: string;
+  assetTicker: string;
   icon: React.ReactNode;
   distributionItem?: DistributionItem;
   marketData: AssetMarketData;
@@ -14,7 +14,7 @@ export type AssetHeaderProps = Readonly<{
 }>;
 
 export function AssetHeader({
-  assetLabel,
+  assetTicker,
   icon,
   distributionItem,
   marketData,
@@ -24,7 +24,7 @@ export function AssetHeader({
 
   return (
     <AssetHeaderView
-      assetLabel={assetLabel}
+      assetTicker={assetTicker}
       icon={icon}
       viewModel={viewModel}
       distributionItem={distributionItem}

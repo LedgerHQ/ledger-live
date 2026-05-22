@@ -57,6 +57,11 @@
       "require": "./lib/index.js",
       "default": "./lib-es/index.js"
     },
+    "./genericAwarenessModal": {
+      "@ledgerhq/source": "./src/genericAwarenessModal/index.ts",
+      "require": "./lib/genericAwarenessModal/index.js",
+      "default": "./lib-es/genericAwarenessModal/index.js"
+    },
     "./currencies/*": {
       "@ledgerhq/source": "./src/currencies/*.ts",
       "require": "./lib/currencies/*.js",

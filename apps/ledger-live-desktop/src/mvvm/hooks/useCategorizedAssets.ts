@@ -26,8 +26,8 @@ export function useCategorizedAssetsFromPortfolio() {
 
   const categorizedAssets = useMemo(() => {
     if (!blacklistedTokenIds?.length) return rawCategorizedAssets;
-    const isVisible = (item: { currency: { type: string; id: string } }) =>
-      item.currency.type !== "TokenCurrency" || !blacklistedTokenIds.includes(item.currency.id);
+    const isVisible = (item: { currency: { id: string } }) =>
+      !blacklistedTokenIds.includes(item.currency.id);
     return {
       ...rawCategorizedAssets,
       cryptos: rawCategorizedAssets.cryptos.filter(isVisible),

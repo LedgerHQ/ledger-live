@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { AssetDetailCurrencyProps } from "LLM/features/AssetDetail/types";
 import type { Account, AccountLike, DistributionItem } from "@ledgerhq/types-live";
@@ -69,6 +69,10 @@ export function useAddressesViewModel(
     [accounts],
   );
 
+  const [isAllAddressesDrawerOpen, setIsAllAddressesDrawerOpen] = useState(false);
+
+  const closeAllAddressesDrawer = useCallback(() => setIsAllAddressesDrawerOpen(false), []);
+
   const onAddAccount = useCallback(() => {
     if (!currency) return;
     track("button_clicked", {
@@ -93,15 +97,8 @@ export function useAddressesViewModel(
       currency: currency.id,
       page: "Asset Detail",
     });
-    navigation.navigate(NavigatorName.Accounts, {
-      screen: ScreenName.CryptoAddresses,
-      params: {
-        sourceScreenName: ScreenName.AssetDetail,
-        accountIds: allAccountIds,
-        hideAddAccount: true,
-      },
-    });
-  }, [navigation, currency, allAccountIds]);
+    setIsAllAddressesDrawerOpen(true);
+  }, [currency]);
 
   const onAccountPress = useCallback(
     (data: AddressAccountData) => {
@@ -131,10 +128,14 @@ export function useAddressesViewModel(
 
   return {
     displayedAccounts,
+    addressesCount: accounts.length,
     hasMore,
     hasData: displayedAccounts.length > 0,
     onAddAccount,
     onSeeAll,
     onAccountPress,
+    allAccountIds,
+    isAllAddressesDrawerOpen,
+    closeAllAddressesDrawer,
   };
 }

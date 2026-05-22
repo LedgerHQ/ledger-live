@@ -142,7 +142,8 @@ describe("AssetDetail screen layout", () => {
     render(<AssetDetailTestNavigator />, withBtcAccounts(2));
 
     await waitFor(() => expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.addresses)).toBeVisible());
-    expect(screen.getByText("Addresses")).toBeVisible();
+    const section = screen.getByTestId(ASSET_DETAIL_TEST_IDS.addresses);
+    expect(within(section).getByText("Addresses")).toBeVisible();
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.addAccount)).toBeVisible();
     expect(screen.getByText("Add")).toBeVisible();
   });
@@ -154,6 +155,13 @@ describe("AssetDetail screen layout", () => {
     expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.seeAllAddresses)).toBeNull();
   });
 
+  it("does not render the addresses count when 5 or fewer accounts exist", async () => {
+    render(<AssetDetailTestNavigator />, withBtcAccounts(5));
+
+    await waitFor(() => expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.addresses)).toBeVisible());
+    expect(screen.queryByText("(5)")).toBeNull();
+  });
+
   it("caps the addresses preview at 5 items and shows See all when 6+ accounts exist", async () => {
     render(<AssetDetailTestNavigator />, withBtcAccounts(6));
 
@@ -162,6 +170,14 @@ describe("AssetDetail screen layout", () => {
     );
     expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.addresses)).toBeVisible();
     expect(screen.getByText("See all")).toBeVisible();
+  });
+
+  it("renders the total addresses count next to the title when 6+ accounts exist", async () => {
+    render(<AssetDetailTestNavigator />, withBtcAccounts(8));
+
+    await waitFor(() => expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.addresses)).toBeVisible());
+    const header = screen.getByTestId(ASSET_DETAIL_TEST_IDS.addressesHeader);
+    expect(within(header).getByText("(8)")).toBeVisible();
   });
 
   it("hides the transactions section when there are no operations", () => {

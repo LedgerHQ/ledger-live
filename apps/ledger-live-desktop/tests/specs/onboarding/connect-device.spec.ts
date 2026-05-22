@@ -35,20 +35,15 @@ test.describe.parallel("Onboarding", () => {
       await test.step("Get started", async () => {
         await onboardingPage.getStarted();
         await onboardingPage.waitForDeviceToBeVisible(Nano.nanoS);
-        await onboardingPage.hoverDevice(Nano.nanoS);
-        await onboardingPage.waitForDeviceToBeHovered(Nano.nanoS);
-        await expect(page).toHaveScreenshot("v3-device-selection.png", {
-          mask: [page.locator("video")],
-        });
       });
 
       await test.step(`[${nano}] Select Device`, async () => {
         await onboardingPage.selectDevice(nano);
+        await page.getByTestId("v3-onboarding-initialized-device").waitFor({ state: "visible" });
+        await expect(page).toHaveScreenshot(`v3-device-connection-${nano}.png`);
       });
 
       await test.step(`[${nano}] Already set up`, async () => {
-        await page.getByTestId("v3-onboarding-initialized-device").waitFor({ state: "visible" });
-        await expect(page).toHaveScreenshot(`v3-device-connection-${nano}.png`);
         await onboardingPage.connectDevice();
       });
 

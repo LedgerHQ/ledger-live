@@ -1,6 +1,7 @@
 import React from "react";
 import type { DistributionItem } from "@ledgerhq/types-live";
 import { AssetDetailSection } from "../AssetDetailSection";
+import { AllAddressesDialog } from "./components/AllAddressesDialog";
 import { AddressList } from "./components/AddressList";
 import { useAddressListViewModel } from "./hooks/useAddressListViewModel";
 
@@ -12,17 +13,37 @@ export function AddressListSection({ distributionItem }: AddressListSectionProps
   const viewModel = useAddressListViewModel(distributionItem);
 
   return (
-    <AssetDetailSection
-      title={viewModel.sectionTitle}
-      actionLabel={viewModel.sectionActionLabel}
-      onActionClick={viewModel.onAddAddress}
-      actionTestId="asset-detail-add-address"
-    >
-      <AddressList
+    <>
+      <AssetDetailSection
+        title={viewModel.sectionTitle}
+        actionLabel={viewModel.sectionActionLabel}
+        onActionClick={viewModel.onAddAddress}
+        actionTestId="asset-detail-add-address"
+        {...(viewModel.shouldShowSeeAll
+          ? {
+              showSeeAll: true as const,
+              itemCount: viewModel.addressCount,
+              onSeeAllClick: viewModel.onSeeAll,
+              seeAllTestId: "asset-detail-addresses-see-all",
+            }
+          : { showSeeAll: false as const })}
+      >
+        <AddressList
+          sortedAccounts={viewModel.previewAccounts}
+          lookupParentAccount={viewModel.lookupParentAccount}
+          onAccountClick={viewModel.onAccountClick}
+        />
+      </AssetDetailSection>
+
+      <AllAddressesDialog
+        open={viewModel.allAddressesDialog.open}
+        title={viewModel.allAddressesDialog.title}
+        description={viewModel.allAddressesDialog.description}
         sortedAccounts={viewModel.sortedAccounts}
         lookupParentAccount={viewModel.lookupParentAccount}
         onAccountClick={viewModel.onAccountClick}
+        onOpenChange={viewModel.allAddressesDialog.onOpenChange}
       />
-    </AssetDetailSection>
+    </>
   );
 }
