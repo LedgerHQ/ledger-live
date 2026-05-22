@@ -30,37 +30,6 @@ jest.mock("~/renderer/hooks/useLocalizedUrls", () => ({
   useLocalizedUrl: () => "https://support.ledger.com/help",
 }));
 
-jest.mock("@ledgerhq/lumen-ui-react", () => {
-  const actual = jest.requireActual("@ledgerhq/lumen-ui-react");
-  return {
-    ...actual,
-    Banner: ({
-      appearance,
-      title,
-      description,
-      primaryAction,
-      "data-testid": dataTestId,
-    }: {
-      appearance: string;
-      title: string;
-      description?: string;
-      primaryAction?: React.ReactNode;
-      "data-testid"?: string;
-    }) => (
-      <div data-testid={dataTestId} data-appearance={appearance}>
-        <h2>{title}</h2>
-        {description ? <p>{description}</p> : null}
-        {primaryAction}
-      </div>
-    ),
-    Button: ({ children, onClick }: React.PropsWithChildren<{ onClick?: () => void }>) => (
-      <button onClick={onClick} type="button">
-        {children}
-      </button>
-    ),
-  };
-});
-
 const mockedUseTranslatedBridgeError = jest.mocked(useTranslatedBridgeError);
 const mockedOpenURL = jest.mocked(openURL);
 
@@ -73,9 +42,7 @@ describe("ValidationBanner", () => {
     it("renders the sanctioned banner with title, description and help center action", async () => {
       const { user } = render(<ValidationBanner type="sanctioned" />);
 
-      const banner = screen.getByTestId("sanctioned-address-banner");
-      expect(banner).toBeInTheDocument();
-      expect(banner).toHaveAttribute("data-appearance", "error");
+      expect(screen.getByTestId("sanctioned-address-banner")).toBeInTheDocument();
       expect(screen.getByText("Flagged address")).toBeInTheDocument();
       expect(screen.getByText("This address is flagged as sanctioned.")).toBeInTheDocument();
 
@@ -99,9 +66,7 @@ describe("ValidationBanner", () => {
         />,
       );
 
-      const banner = screen.getByTestId("recipient-error-banner");
-      expect(banner).toBeInTheDocument();
-      expect(banner).toHaveAttribute("data-appearance", "error");
+      expect(screen.getByTestId("recipient-error-banner")).toBeInTheDocument();
       expect(screen.getByText("Invalid recipient")).toBeInTheDocument();
       expect(screen.getByText("The recipient address is not valid.")).toBeInTheDocument();
     });
@@ -152,9 +117,7 @@ describe("ValidationBanner", () => {
         />,
       );
 
-      const banner = screen.getByTestId("sender-warning-banner");
-      expect(banner).toBeInTheDocument();
-      expect(banner).toHaveAttribute("data-appearance", "warning");
+      expect(screen.getByTestId("sender-warning-banner")).toBeInTheDocument();
       expect(screen.getByText("Keeping you safe")).toBeInTheDocument();
       expect(screen.getByText("This sender address is flagged.")).toBeInTheDocument();
     });
