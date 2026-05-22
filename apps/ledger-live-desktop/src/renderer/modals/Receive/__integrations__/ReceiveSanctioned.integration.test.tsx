@@ -23,7 +23,6 @@ const createSanctionedEthereumAccount = (): Account => {
   return {
     ...base,
     id: "mock-sanctioned-account",
-    name: "Sanctioned ETH",
     freshAddress: SANCTIONED_ETHEREUM,
     balance: new BigNumber(0),
     spendableBalance: new BigNumber(0),
