@@ -26,9 +26,7 @@ describe("Recipient sanctioned-address banners", () => {
     const recipientInput = await screen.findByTestId("send-recipient-input");
     await user.type(recipientInput, SANCTIONED_ETHEREUM);
 
-    expect(
-      await screen.findByTestId("sanctioned-address-banner", {}, { timeout: 5000 }),
-    ).toBeVisible();
+    expect(await screen.findByTestId("sanctioned-address-banner")).toBeVisible();
     expect(screen.getByTestId("send-matched-address-button")).toHaveClass("cursor-not-allowed");
   });
 
