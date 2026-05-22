@@ -1,5 +1,6 @@
 import { broadcastEvmIntentLWMDefinition } from "./broadcastEvmIntent/intentLWMDefinition";
 import { signApprovalEvmIntentLWMDefinition } from "./signApprovalEvmIntent/intentLWMDefinition";
+import { signSwapEvmIntentLWMDefinition } from "./signSwapEvmIntent/intentLWMDefinition";
 
 /**
  * LWM platform definitions injected into {@link useSwapDeviceIntentPocOrchestration}.
@@ -10,6 +11,7 @@ import { signApprovalEvmIntentLWMDefinition } from "./signApprovalEvmIntent/inte
  */
 export const SWAP_POC_INTENT_DEFS = {
   signApproval: signApprovalEvmIntentLWMDefinition,
+  signSwap: signSwapEvmIntentLWMDefinition,
   broadcast: broadcastEvmIntentLWMDefinition,
 } as const;
 

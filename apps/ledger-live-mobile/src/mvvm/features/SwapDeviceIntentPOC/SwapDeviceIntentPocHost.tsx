@@ -60,13 +60,23 @@ export function SwapDeviceIntentPocHost({
         {successScreen ? (
           <>
             <BottomSheetHeader density="expanded" />
-            <InfoState
-              preset="success"
-              title="Token approved"
-              description="You can now initiate your swap"
-              primaryCta={{ label: "Swap", onPress: successScreen.onSwapPress }}
-              size="hug"
-            />
+            {successScreen.kind === "approval" ? (
+              <InfoState
+                preset="success"
+                title="Token approved"
+                description="You can now initiate your swap"
+                primaryCta={{ label: "Swap", onPress: successScreen.onSwapPress }}
+                size="hug"
+              />
+            ) : (
+              <InfoState
+                preset="success"
+                title="Swap completed"
+                description="Your swap transaction was confirmed on-chain."
+                primaryCta={{ label: "Done", onPress: successScreen.onDonePress }}
+                size="hug"
+              />
+            )}
           </>
         ) : executorProps ? (
           <>
