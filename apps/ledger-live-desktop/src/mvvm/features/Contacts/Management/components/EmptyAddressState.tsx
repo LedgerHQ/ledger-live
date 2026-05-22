@@ -13,15 +13,15 @@ import { Button } from "@ledgerhq/lumen-ui-react";
  *   - Stack is centered horizontally inside the details pane and sits
  *     below the identity block with generous vertical breathing room.
  *
- * The button is non-wired in L4 — Lumen still renders hover/pressed
- * states without `onClick`. Wiring lands in L4.1 alongside the
- * "Add address" Dialog.
- *
- * TODO(contacts-L4.1): hook the CTA up to the address-registration
- * flow (reuses the L1 form's Crypto + Network selectors + the
- * cryptoMeta sidecar write).
+ * The button opens the parent-owned `AddAddressDialog`. The parent
+ * (`ContactDetails`) holds the open state and passes `onAddAddress`
+ * here.
  */
-export function EmptyAddressState() {
+type Props = {
+  onAddAddress?: () => void;
+};
+
+export function EmptyAddressState({ onAddAddress }: Props = {}) {
   const { t } = useTranslation();
 
   return (
@@ -42,7 +42,7 @@ export function EmptyAddressState() {
       <Button
         appearance="base"
         size="md"
-        // L4.1 wiring — Lumen still renders hover/pressed without onClick.
+        onClick={onAddAddress}
         data-testid="contacts-management-empty-add-address"
       >
         {t("contactsManagement.emptyAddresses.cta")}

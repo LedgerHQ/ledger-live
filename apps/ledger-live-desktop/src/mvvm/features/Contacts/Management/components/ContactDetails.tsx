@@ -5,6 +5,7 @@ import { MoreHorizontal, Plus } from "@ledgerhq/lumen-ui-react/symbols";
 import type { Contact, ContactEntry } from "~/renderer/contacts/types";
 import { groupAddressesByCrypto } from "../utils/groupAddressesByCrypto";
 import { useCryptoMeta } from "../utils/cryptoMeta";
+import { AddAddressDialog } from "./AddAddressDialog";
 import { AddressDetailDialog } from "./AddressDetailDialog";
 import { AddressRow } from "./AddressRow";
 import { EmptyAddressState } from "./EmptyAddressState";
@@ -57,6 +58,12 @@ export function ContactDetails({ contact }: Props) {
   // `onOpenChange(false)` just clears the entry on the next commit.
   const [activeEntry, setActiveEntry] = useState<ContactEntry | null>(null);
 
+  // Open state for the Add-Address Dialog flow — triggered by either
+  // the `+` IconButton (top-right) or the empty-state CTA. The dialog
+  // itself owns the step machine; we just toggle visibility.
+  const [addAddressOpen, setAddAddressOpen] = useState(false);
+  const openAddAddress = () => setAddAddressOpen(true);
+
   return (
     <div
       data-testid="contacts-management-details"
@@ -69,6 +76,7 @@ export function ContactDetails({ contact }: Props) {
           size="sm"
           aria-label={t("contactsManagement.addAddress")}
           icon={Plus}
+          onClick={openAddAddress}
           data-testid="contacts-management-add-address"
         />
         <IconButton
@@ -94,7 +102,7 @@ export function ContactDetails({ contact }: Props) {
       {/* Empty state — surfaced when the selected contact has no
           addresses (a freshly-added sidecar contact, or the synthetic
           "me" placeholder). Figma frame 13922:11258. */}
-      {count === 0 && <EmptyAddressState />}
+      {count === 0 && <EmptyAddressState onAddAddress={openAddAddress} />}
 
       {/* Address sections grouped by crypto.
           `unknown` entries (entries with no sidecar metadata AND no
@@ -139,6 +147,12 @@ export function ContactDetails({ contact }: Props) {
         }}
         contact={contact}
         entry={activeEntry}
+      />
+
+      <AddAddressDialog
+        open={addAddressOpen}
+        onOpenChange={setAddAddressOpen}
+        contact={contact}
       />
     </div>
   );

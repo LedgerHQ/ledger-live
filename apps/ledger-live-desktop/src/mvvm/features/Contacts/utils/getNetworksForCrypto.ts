@@ -12,6 +12,16 @@ import { TOP_CRYPTOS } from "../constants/topCryptos";
  * Pure / sync — see `constants/networks.ts` for the hardcoded-data
  * trade-off note and the eventual CAL-feed migration path.
  */
+/**
+ * True if the crypto has at least one EVM-compatible network — i.e.
+ * a network registry entry whose `chainId` is set. Used by the L4
+ * Add-Address picker to disable cryptos that the DMK contact verbs
+ * can't yet handle (Bitcoin, Solana, XRP, etc.).
+ */
+export function isCryptoEvmCompatible(cryptoId: string): boolean {
+  return getNetworksForCrypto(cryptoId).some(n => typeof n.chainId === "number");
+}
+
 export function getNetworksForCrypto(cryptoId: string): NetworkOption[] {
   const crypto = TOP_CRYPTOS.find(c => c.id === cryptoId);
   if (!crypto) return [];

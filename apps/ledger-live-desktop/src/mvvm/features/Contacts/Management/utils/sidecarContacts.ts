@@ -86,6 +86,27 @@ export function addSidecarContact(name: string): Contact {
   return contact;
 }
 
+/**
+ * Drop a sidecar entry by name. Called by the L4 Add-address flow
+ * after the device successfully runs `addContact(...)` — at that
+ * point the contact lives in the canonical wallet snapshot and the
+ * sidecar copy must go to avoid the merge in `useManagementViewModel`
+ * showing two of the same name.
+ */
+export function removeSidecarContact(name: string): void {
+  if (!(name in snapshot)) return;
+  const next = { ...snapshot };
+  delete next[name];
+  snapshot = next;
+  writeToStorage(snapshot);
+  notify();
+}
+
+/** Synchronous check — does the named contact live in the sidecar? */
+export function isSidecarContact(name: string): boolean {
+  return name in snapshot;
+}
+
 /** Synchronous read of the current sidecar snapshot. */
 export function getSidecarContacts(): SidecarMap {
   return snapshot;
