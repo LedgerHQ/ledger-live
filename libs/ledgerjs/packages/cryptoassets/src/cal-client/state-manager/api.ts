@@ -97,7 +97,7 @@ const baseQueryWithRetry = retry(
   },
 );
 
-export const cryptoAssetsApi = createApi({
+const cryptoAssetsApiInstance = createApi({
   reducerPath: "cryptoAssetsApi",
   baseQuery: baseQueryWithRetry,
   tagTypes: [TokensDataTags.Tokens],
@@ -215,7 +215,7 @@ export const cryptoAssetsApi = createApi({
               "cryptoassets",
               `Hash changed for currencyId ${currencyId}: ${previousHash} -> ${newHash}, evicting token cache`,
             );
-            dispatch(cryptoAssetsApi.util.invalidateTags([TokensDataTags.Tokens]));
+            dispatch(cryptoAssetsApiInstance.util.invalidateTags([TokensDataTags.Tokens]));
           }
         } catch {
           // Query failed, skip eviction
@@ -262,15 +262,16 @@ export const cryptoAssetsApi = createApi({
   }),
 });
 
+export const cryptoAssetsApi = cryptoAssetsApiInstance;
 export const {
   useGetTokensDataInfiniteQuery,
   useFindTokenByIdQuery,
   useFindTokenByAddressInCurrencyQuery,
   useGetTokensSyncHashQuery,
   endpoints,
-} = cryptoAssetsApi;
+} = cryptoAssetsApiInstance;
 
-export type CryptoAssetsApi = typeof cryptoAssetsApi;
+export type CryptoAssetsApi = typeof cryptoAssetsApiInstance;
 
 // Export internal functions for testing purposes
 export {
