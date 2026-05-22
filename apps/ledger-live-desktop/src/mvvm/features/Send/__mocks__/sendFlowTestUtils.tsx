@@ -133,6 +133,7 @@ export const resetSendFlowTestState = (family = "evm") => {
   resetBridgeState(family);
   setMockDeviceActionResult(null);
   setMockBridgeRecipientValidation({ errors: {}, warnings: {}, isLoading: false });
+  setMockSanctioned(false);
 };
 
 jest.mock("@ledgerhq/live-common/market/state-manager/api", () => ({
@@ -212,6 +213,18 @@ jest.mock("@ledgerhq/domain-service/hooks/index", () => ({
 jest.mock("@ledgerhq/ledger-wallet-framework/sanction/index", () => ({
   isAddressSanctioned: jest.fn(() => Promise.resolve(false)),
 }));
+
+export const setMockSanctioned = (
+  predicate: ((address: string) => boolean) | boolean = true,
+) => {
+  const { isAddressSanctioned } = jest.requireMock(
+    "@ledgerhq/ledger-wallet-framework/sanction/index",
+  );
+  const fn = typeof predicate === "function" ? predicate : () => predicate;
+  (isAddressSanctioned as jest.Mock).mockImplementation((_currency: unknown, address: string) =>
+    Promise.resolve(fn(address)),
+  );
+};
 
 jest.mock("@ledgerhq/live-common/flows/send/recipient/hooks/useBridgeRecipientValidation", () => ({
   useBridgeRecipientValidation: jest.fn(() => mockBridgeRecipientValidation),
