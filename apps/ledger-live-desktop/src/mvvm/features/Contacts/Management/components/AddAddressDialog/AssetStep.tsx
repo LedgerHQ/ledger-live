@@ -46,25 +46,24 @@ export function AssetStep({ onPick }: Props) {
 
   return (
     <div
-      // Spacing tokens taken from Figma frame 13936:12930 via the MCP:
-      //   content-slot:            px-16 pb-24 (NOT 24/24)
-      //   asset-selector-content:  flex-col gap-24
-      //   Search-Bar wrapper:      additional px-8 inset
-      //   Content (list):          gap-0 — Lumen ListItems stack tight
-      // The dialog header's `pb-12` covers the title-to-content gap,
-      // so we don't add our own `pt-*` here.
-      className="flex flex-col gap-24 px-16 pb-24"
+      // 16px from the dialog edge to the visible content (icon / search
+      // text). The Figma content-slot uses px-16, but Lumen `ListItem`
+      // density="expanded" already ships its own px-8 — so the body
+      // wrapper here uses `px-8` and the row's px-8 composes to land
+      // the icon exactly 16px in. Same `px-8` wrapper on the search
+      // so its left edge aligns with the rows.
+      // `gap-24` between search and list comes from .asset-selector-content;
+      // the inner list uses `gap-0` (Lumen ListItems stack tight by design).
+      className="flex flex-col gap-24 px-8 pb-24"
       data-testid="contacts-management-add-address-asset-step"
     >
-      <div className="px-8">
-        <SearchInput
-          appearance="plain"
-          placeholder={t("contactsManagement.addAddress.searchAsset")}
-          value={query}
-          onChange={e => setQuery(e.target.value)}
-          data-testid="contacts-management-add-address-asset-search"
-        />
-      </div>
+      <SearchInput
+        appearance="plain"
+        placeholder={t("contactsManagement.addAddress.searchAsset")}
+        value={query}
+        onChange={e => setQuery(e.target.value)}
+        data-testid="contacts-management-add-address-asset-search"
+      />
       <div className="flex flex-col gap-0 max-h-360 overflow-y-auto w-full">
         {filtered.map(c => {
           const enabled = isCryptoEvmCompatible(c.id);
