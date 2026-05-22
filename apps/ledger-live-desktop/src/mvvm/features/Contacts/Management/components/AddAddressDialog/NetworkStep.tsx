@@ -34,13 +34,13 @@ export function NetworkStep({ crypto, onPick }: Props) {
 
   return (
     <div
-      // Same wrapper as AssetStep so the picker steps feel consistent:
-      // `px-8` composes with Lumen `ListItem` density="expanded"'s
-      // intrinsic px-8 → 16px from dialog edge to row content.
-      className="flex flex-col gap-24 px-8 pb-24"
+      // No horizontal padding (DialogBody provides px-16). Description
+      // text and list rows align with the title at 24px from the modal
+      // edge — same composition as AssetStep.
+      className="flex flex-col gap-24 pb-24"
       data-testid="contacts-management-add-address-network-step"
     >
-      <p className="body-2 text-muted">
+      <p className="body-2 text-muted px-8">
         {t("contactsManagement.addAddress.networkBody", { crypto: crypto.name })}{" "}
         {/* TODO(contacts-L4.1): wire to the address-networks FAQ.
             Rendered as a non-functional anchor for now so the visual

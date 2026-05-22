@@ -46,24 +46,26 @@ export function AssetStep({ onPick }: Props) {
 
   return (
     <div
-      // 16px from the dialog edge to the visible content (icon / search
-      // text). The Figma content-slot uses px-16, but Lumen `ListItem`
-      // density="expanded" already ships its own px-8 — so the body
-      // wrapper here uses `px-8` and the row's px-8 composes to land
-      // the icon exactly 16px in. Same `px-8` wrapper on the search
-      // so its left edge aligns with the rows.
-      // `gap-24` between search and list comes from .asset-selector-content;
-      // the inner list uses `gap-0` (Lumen ListItems stack tight by design).
-      className="flex flex-col gap-24 px-8 pb-24"
+      // No horizontal padding here — the parent DialogBody now overrides
+      // Lumen's intrinsic `px-24` to `px-16` to match the Figma content-slot.
+      // From there:
+      //   row left edge       = 16px (modal → DialogBody px-16)
+      //   row icon             = 24px (+ Lumen ListItem's intrinsic px-8)
+      //   search input text   = 24px (+ the `px-8` wrapper below)
+      // All aligned with the title (DialogHeader's px-24).
+      // `gap-24` between search and list matches .asset-selector-content.
+      className="flex flex-col gap-24 pb-24"
       data-testid="contacts-management-add-address-asset-step"
     >
-      <SearchInput
-        appearance="plain"
-        placeholder={t("contactsManagement.addAddress.searchAsset")}
-        value={query}
-        onChange={e => setQuery(e.target.value)}
-        data-testid="contacts-management-add-address-asset-search"
-      />
+      <div className="px-8">
+        <SearchInput
+          appearance="plain"
+          placeholder={t("contactsManagement.addAddress.searchAsset")}
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+          data-testid="contacts-management-add-address-asset-search"
+        />
+      </div>
       <div className="flex flex-col gap-0 max-h-360 overflow-y-auto w-full">
         {filtered.map(c => {
           const enabled = isCryptoEvmCompatible(c.id);
