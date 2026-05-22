@@ -5,9 +5,9 @@ export const getByTestId = (testId: string): ReturnType<WebdriverIO.Browser["$"]
   return $(selector);
 };
 
-export const getByTestIdMatching = (partialId: RegExp): ReturnType<WebdriverIO.Browser["$"]> => {
+export const getByTestIdMatching = (regex: RegExp): ReturnType<WebdriverIO.Browser["$"]> => {
   const selector = driver.isAndroid
-    ? `android=new UiSelector().resourceIdMatches("${partialId.source}")`
-    : `-ios predicate string:name MATCHES "${partialId.source}"`;
+    ? `android=new UiSelector().resourceIdMatches("${regex.source}")`
+    : `-ios predicate string:name MATCHES "${regex.source}"`;
   return $(selector);
 };

@@ -1,15 +1,8 @@
 import type { SpeculosAppType } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import type { PartialFeatures } from "@shared/feature-flags";
-
 import { CLIUtils, type CliCommand } from "./CLIUtils.ts";
-
 import { SpeculosUtils } from "./SpeculosUtils.ts";
-
 import { loadConfig, setFeatureFlags } from "../bridge/server.ts";
-
-import logger from "@wdio/logger";
-
-const initialisationLogger = logger("initialisationManager");
 
 export type InitOptions = {
   speculosApp?: SpeculosAppType;

@@ -29,5 +29,6 @@ export class SwapLiveAppPage {
     await expect(this.fromSelector).toBeDisplayed();
     await expect(this.toSelector).toBeDisplayed();
     await expect(this.quotesButtonDisabled).toBeDisplayed();
+    await driver.switchContext("NATIVE_APP");
   }
 }

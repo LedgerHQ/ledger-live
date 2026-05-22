@@ -10,14 +10,11 @@ import { setEnv } from "@ledgerhq/live-env";
 import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
 import { execSync } from "node:child_process";
 import path from "node:path";
-import logger from "@wdio/logger";
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { waitForSpeculosReady } from "@ledgerhq/live-common/e2e/speculosCI";
 import { addKnownSpeculos, getEnvs, removeKnownSpeculos } from "../bridge/server.ts";
 
 import { CLIUtils } from "./CLIUtils.ts";
-
-const speculosUtilsLogger = logger("speculosUtils");
 
 export type Entry = {
   name: string;
