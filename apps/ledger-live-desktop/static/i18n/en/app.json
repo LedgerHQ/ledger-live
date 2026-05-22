@@ -9092,6 +9092,18 @@
       "edit": "Edit",
       "delete": "Delete"
     },
+    "addContactDialog": {
+      "title": "Add contact",
+      "placeholder": "Contact name",
+      "submit": "Add contact",
+      "errorAscii": "Use ASCII characters only.",
+      "errorDuplicate": "A contact with this name already exists."
+    },
+    "emptyAddresses": {
+      "title": "No addresses yet",
+      "description": "Add an address to start tracking this contact across networks.",
+      "cta": "Add address"
+    },
     "addresses_zero": "{{count}} address",
     "addresses_one": "{{count}} address",
     "addresses_other": "{{count}} addresses"
