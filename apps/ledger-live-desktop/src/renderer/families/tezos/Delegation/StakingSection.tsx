@@ -10,6 +10,7 @@ import { TezosAccount } from "@ledgerhq/live-common/families/tezos/types";
 import { openModal } from "~/renderer/actions/modals";
 import { openURL } from "~/renderer/linking";
 import Box from "~/renderer/components/Box";
+import Tabbable from "~/renderer/components/Box/Tabbable";
 import Text from "~/renderer/components/Text";
 import CounterValue from "~/renderer/components/CounterValue";
 import FormattedVal from "~/renderer/components/FormattedVal";
@@ -52,7 +53,7 @@ const RowWrapper = styled.div`
   }
 `;
 
-const BakerCell = styled.div`
+const BakerCell = styled(Tabbable)`
   flex: 1.5;
   color: ${p => p.theme.colors.neutral.c100};
   > :first-child {

@@ -9,7 +9,11 @@ import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/accou
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
-import { useBakers } from "@ledgerhq/live-common/families/tezos/react";
+import {
+  isAwaitingDelegation,
+  useBakers,
+  useDelegation,
+} from "@ledgerhq/live-common/families/tezos/react";
 import { whitelist } from "@ledgerhq/live-common/families/tezos/staking";
 import { TezosAccount, Transaction } from "@ledgerhq/live-common/families/tezos/types";
 import logger from "~/renderer/logger";
@@ -177,15 +181,18 @@ const Body = ({ stepId, params, onClose, onChangeStepId }: Props) => {
 
   const handleStepChange = useCallback((e: Step) => onChangeStepId(e.id), [onChangeStepId]);
 
+  const delegation = useDelegation(account ?? params.account);
+  const awaitingDelegation = isAwaitingDelegation(delegation, transaction);
+
   const errorSteps: number[] = [];
   if (transactionError && failedStep) {
     const idx = steps.findIndex(s => s.id === failedStep);
     if (idx >= 0) errorSteps.push(idx);
-  } else if (bridgeError) {
+  } else if (bridgeError && !awaitingDelegation) {
     errorSteps.push(0);
   }
 
-  const error = transactionError || bridgeError;
+  const error = transactionError || (awaitingDelegation ? null : bridgeError);
 
   const stepperProps = {
     title: t("tezos.stake.flow.title"),

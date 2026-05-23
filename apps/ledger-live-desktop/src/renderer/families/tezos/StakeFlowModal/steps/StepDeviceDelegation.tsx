@@ -1,6 +1,10 @@
 import React, { useCallback, useRef } from "react";
+import { Trans } from "react-i18next";
 import { Operation } from "@ledgerhq/types-live";
 import TrackPage from "~/renderer/analytics/TrackPage";
+import Box from "~/renderer/components/Box";
+import Spinner from "~/renderer/components/Spinner";
+import Text from "~/renderer/components/Text";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import { StepProps } from "../types";
 
@@ -9,6 +13,7 @@ export default function StepDeviceDelegation({
   parentAccount,
   transaction,
   status,
+  bridgePending,
   transitionTo,
   onOperationBroadcasted,
   onTransactionError,
@@ -38,6 +43,24 @@ export default function StepDeviceDelegation({
     },
     [transitionTo],
   );
+
+  if (bridgePending || !transaction?.fees) {
+    return (
+      <Box flow={4} alignItems="center" justifyContent="center" py={50}>
+        <TrackPage
+          category="Stake Flow"
+          name="Step ConnectDevice Delegation Preparing"
+          flow="stake"
+          action="stake"
+          currency="xtz"
+        />
+        <Spinner size={36} />
+        <Text ff="Inter|Medium" fontSize={4} color="neutral.c80" mt={4} textAlign="center">
+          <Trans i18nKey="tezos.stake.flow.preparingTransaction" />
+        </Text>
+      </Box>
+    );
+  }
 
   return (
     <>

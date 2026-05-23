@@ -18,7 +18,7 @@ jest.mock("@ledgerhq/coin-tezos/network/index", () => ({
 }));
 
 import { bakers } from "@ledgerhq/coin-tezos/network/index";
-import { useBaker, useTezosStakingInfo } from "./react";
+import { isAwaitingDelegation, useBaker, useTezosStakingInfo } from "./react";
 
 const mockBakers = bakers as unknown as {
   getBakerSync: jest.Mock;
@@ -134,9 +134,9 @@ describe("useTezosStakingInfo", () => {
       receiveShouldWarnDelegation: false,
       sendShouldWarnDelegation: false,
     };
-    (bakers as unknown as { getAccountDelegationSync: jest.Mock }).getAccountDelegationSync.mockReturnValueOnce(
-      legacyDelegation,
-    );
+    (
+      bakers as unknown as { getAccountDelegationSync: jest.Mock }
+    ).getAccountDelegationSync.mockReturnValueOnce(legacyDelegation);
     const account = makeTezosAccount([]);
     const { result } = renderHook(() => useTezosStakingInfo(account));
     expect(result.current.isDelegated).toBe(true);
@@ -319,5 +319,32 @@ describe("useBaker", () => {
     await Promise.resolve();
     await Promise.resolve();
     expect(result.current).toBeUndefined();
+  });
+});
+
+describe("isAwaitingDelegation", () => {
+  const tx = (mode: string) => ({ mode });
+  const pending = { isPending: true } as const;
+  const confirmed = { isPending: false } as const;
+
+  it("returns false outside stake mode", () => {
+    expect(isAwaitingDelegation(pending, tx("send"))).toBe(false);
+    expect(isAwaitingDelegation(pending, tx("delegate"))).toBe(false);
+    expect(isAwaitingDelegation(null, tx("delegate"))).toBe(false);
+  });
+
+  it("returns true in stake mode when delegation is absent or pending", () => {
+    expect(isAwaitingDelegation(null, tx("stake"))).toBe(true);
+    expect(isAwaitingDelegation(undefined, tx("stake"))).toBe(true);
+    expect(isAwaitingDelegation(pending, tx("stake"))).toBe(true);
+  });
+
+  it("returns false in stake mode once delegation is confirmed", () => {
+    expect(isAwaitingDelegation(confirmed, tx("stake"))).toBe(false);
+  });
+
+  it("returns false when transaction is null/undefined", () => {
+    expect(isAwaitingDelegation(pending, null)).toBe(false);
+    expect(isAwaitingDelegation(pending, undefined)).toBe(false);
   });
 });

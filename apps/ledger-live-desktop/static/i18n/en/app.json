@@ -4694,6 +4694,7 @@
     "stake": {
       "flow": {
         "title": "Stake",
+        "preparingTransaction": "Preparing transaction…",
         "amount": {
           "disclaimer": "Unstaking will take 4 days.",
           "awaitingDelegation": "Confirming your delegation. This usually takes less than a minute…"

@@ -2,30 +2,23 @@ import type { Cursor, Page, Stake } from "@ledgerhq/coin-module-framework/api/ty
 import { log } from "@ledgerhq/logs";
 import api from "../network/tzkt";
 import type { APIAccount, APIUnstakeRequest } from "../network/types";
+import { STAKING_UID_PREFIX } from "./positionUid";
+
+export {
+  isDelegationPosition,
+  isFinalizablePosition,
+  isStakePosition,
+  isUnstakingPosition,
+} from "./positionUid";
 
 type APIUserAccount = Extract<APIAccount, { type: "user" }>;
-
-const STAKING_UID_PREFIX = {
-  delegation: "delegation-",
-  stake: "stake-",
-  unstaking: "unstaking-",
-  finalizable: "finalizable-",
-} as const;
-
-export const isDelegationPosition = (uid: string) => uid.startsWith(STAKING_UID_PREFIX.delegation);
-export const isStakePosition = (uid: string) => uid.startsWith(STAKING_UID_PREFIX.stake);
-export const isUnstakingPosition = (uid: string) => uid.startsWith(STAKING_UID_PREFIX.unstaking);
-export const isFinalizablePosition = (uid: string) =>
-  uid.startsWith(STAKING_UID_PREFIX.finalizable);
 
 export function fetchUnstakeRequests(
   address: string,
   account: APIAccount,
 ): Promise<APIUnstakeRequest[]> {
   if (account.type !== "user") return Promise.resolve([]);
-  return (account.unstakedBalance ?? 0) > 0
-    ? api.getUnstakeRequests(address)
-    : Promise.resolve([]);
+  return (account.unstakedBalance ?? 0) > 0 ? api.getUnstakeRequests(address) : Promise.resolve([]);
 }
 
 function unstakeRequestToStake(address: string, req: APIUnstakeRequest): Stake | null {

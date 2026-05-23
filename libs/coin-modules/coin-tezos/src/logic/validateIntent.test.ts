@@ -287,6 +287,65 @@ describe("validateIntent", () => {
       expect(mockEstimateFees).not.toHaveBeenCalled();
     });
 
+    it("should skip AmountRequired and resolve max amount when stake useAllAmount is true", async () => {
+      mockGetAccountByAddress.mockResolvedValue(
+        makeUserAccount({
+          delegate: { alias: "baker", address: validRecipient, active: true },
+          delegationLevel: 1,
+        }),
+      );
+      mockEstimateFees.mockResolvedValueOnce({
+        fees: 1000n,
+        gasLimit: 10000n,
+        storageLimit: 0n,
+        estimatedFees: 1000n,
+        amount: 4_500_000n,
+      });
+
+      const result = await validateIntent({
+        intentType: "staking",
+        asset: { type: "native" },
+        type: "stake",
+        sender: senderAddress,
+        recipient: "",
+        amount: 0n,
+        useAllAmount: true,
+      });
+
+      expect(result.errors.amount).toBeUndefined();
+      expect(mockEstimateFees).toHaveBeenCalledTimes(1);
+      expect(result.amount).toBe(4_500_000n);
+    });
+
+    it("should return NotEnoughBalanceToDelegate when stake useAllAmount resolves max to 0n", async () => {
+      mockGetAccountByAddress.mockResolvedValue(
+        makeUserAccount({
+          delegate: { alias: "baker", address: validRecipient, active: true },
+          delegationLevel: 1,
+        }),
+      );
+      mockEstimateFees.mockResolvedValueOnce({
+        fees: 1000n,
+        gasLimit: 10000n,
+        storageLimit: 0n,
+        estimatedFees: 1000n,
+        amount: 0n,
+      });
+
+      const result = await validateIntent({
+        intentType: "staking",
+        asset: { type: "native" },
+        type: "stake",
+        sender: senderAddress,
+        recipient: "",
+        amount: 0n,
+        useAllAmount: true,
+      });
+
+      expect(result.errors.amount).toBeInstanceOf(NotEnoughBalanceToDelegate);
+      expect(result.amount).toBe(0n);
+    });
+
     it("should return NotEnoughBalance when unstake has no staked balance", async () => {
       mockGetAccountByAddress.mockResolvedValue(makeUserAccount({ stakedBalance: 0 }));
 

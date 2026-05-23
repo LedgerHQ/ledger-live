@@ -93,6 +93,9 @@ function validateStakeConstraints(
   if (!senderInfo.delegate?.address) {
     return { amount: new MustDelegateBeforeStaking() };
   }
+  if (intent.useAllAmount) {
+    return {};
+  }
   const amountError = validateStrictlyPositiveAmount(intent.amount);
   return amountError ? { amount: amountError } : {};
 }
@@ -356,6 +359,10 @@ export async function validateIntent(intent: TransactionIntent): Promise<Transac
     );
     amount = amounts.amount;
     totalSpent = amounts.totalSpent;
+
+    if (intent.type === "stake" && intent.useAllAmount && amount === 0n && !errors.amount) {
+      errors.amount = new NotEnoughBalanceToDelegate();
+    }
 
     const balanceErrors = validateBalanceCoverage(senderInfo, totalSpent);
     Object.assign(errors, balanceErrors);

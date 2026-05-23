@@ -14,7 +14,7 @@ import {
   isFinalizablePosition,
   isStakePosition,
   isUnstakingPosition,
-} from "@ledgerhq/coin-tezos/logic/getStakes";
+} from "@ledgerhq/coin-tezos/logic/positionUid";
 
 export { isDelegationPosition, isFinalizablePosition, isStakePosition, isUnstakingPosition };
 
@@ -49,6 +49,14 @@ export function useDelegation(account: AccountLike): Delegation | null | undefin
   }, [account]);
 
   return delegation;
+}
+
+// True while a stake op can't be estimated because the new delegation hasn't propagated.
+export function isAwaitingDelegation(
+  delegation: { isPending: boolean } | null | undefined,
+  transaction: { mode?: string } | null | undefined,
+): boolean {
+  return transaction?.mode === "stake" && (!delegation || delegation.isPending);
 }
 
 export function useBaker(addr: string): Baker | undefined {

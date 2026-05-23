@@ -15,6 +15,7 @@ import TableContainer, {
   HeaderWrapper as BaseHeaderWrapper,
   TableHeader,
 } from "~/renderer/components/TableContainer";
+import Tabbable from "~/renderer/components/Box/Tabbable";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useDateFromNow } from "~/renderer/hooks/useDateFormatter";
 import BakerImage from "../BakerImage";
@@ -45,7 +46,7 @@ const RowWrapper = styled.div`
   }
 `;
 
-const BakerCell = styled.div`
+const BakerCell = styled(Tabbable)`
   flex: 1.5;
   color: ${p => p.theme.colors.neutral.c100};
   > :first-child {
@@ -65,9 +66,7 @@ type CountdownProps = {
 };
 
 const TimeRemaining = ({ createdAt, isFinalizable }: CountdownProps) => {
-  const completionDate = createdAt
-    ? new Date(createdAt.getTime() + UNSTAKE_DELAY_MS)
-    : undefined;
+  const completionDate = createdAt ? new Date(createdAt.getTime() + UNSTAKE_DELAY_MS) : undefined;
   const fromNowText = useDateFromNow(completionDate);
   const isPast = !!completionDate && completionDate.getTime() <= Date.now();
 

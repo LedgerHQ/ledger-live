@@ -81,10 +81,10 @@ export async function estimateFees({
 
   let amount = transaction.amount;
   const coerceMinAmountForEstimation =
-    (transaction.useAllAmount && transaction.mode === "send") ||
+    (transaction.useAllAmount && (transaction.mode === "send" || transaction.mode === "stake")) ||
     (amount === 0n && transaction.mode !== "send_token");
   if (coerceMinAmountForEstimation) {
-    amount = 1n; // send max / zero-amount pre-estimation (taquito refuses 0); not used for FA2 send_token
+    amount = 1n; // send/stake max or zero-amount pre-estimation (taquito refuses 0); not used for FA2 send_token
   }
 
   try {
@@ -119,16 +119,12 @@ export async function estimateFees({
           source: account.address,
         });
         break;
-      case "stake": {
-        const stakeAmount = transaction.useAllAmount
-          ? BigInt(account.balance) - STAKE_USE_ALL_RESERVE_MUTEZ
-          : amount;
+      case "stake":
         estimate = await tezosToolkit.estimate.stake({
-          amount: Number(stakeAmount > 0n ? stakeAmount : 1n),
+          amount: Number(amount),
           mutez: true,
         });
         break;
-      }
       case "unstake":
         estimate = await tezosToolkit.estimate.unstake({
           amount: Number(amount),
