@@ -1,13 +1,14 @@
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { IconButton } from "@ledgerhq/lumen-ui-react";
-import { MoreHorizontal, Plus } from "@ledgerhq/lumen-ui-react/symbols";
+import { Plus } from "@ledgerhq/lumen-ui-react/symbols";
 import type { Contact, ContactEntry } from "~/renderer/contacts/types";
 import { groupAddressesByCrypto } from "../utils/groupAddressesByCrypto";
 import { useCryptoMeta } from "../utils/cryptoMeta";
 import { AddAddressDialog } from "./AddAddressDialog";
 import { AddressDetailDialog } from "./AddressDetailDialog";
 import { AddressRow } from "./AddressRow";
+import { ContactMenu } from "./ContactMenu";
 import { EmptyAddressState } from "./EmptyAddressState";
 import { InitialsAvatar } from "./InitialsAvatar";
 
@@ -79,13 +80,7 @@ export function ContactDetails({ contact }: Props) {
           onClick={openAddAddress}
           data-testid="contacts-management-add-address"
         />
-        <IconButton
-          appearance="gray"
-          size="sm"
-          aria-label={t("contactsManagement.contactActions")}
-          icon={MoreHorizontal}
-          data-testid="contacts-management-overflow"
-        />
+        <ContactMenu />
       </div>
 
       {/* Centered identity block. */}
