@@ -280,6 +280,14 @@ function validateStaking(
     return { errors: {}, warnings: {} };
   }
 
+  // On Sei EVM, a gasLimit of 0 after the staking estimation retry means the
+  // account's EVM key is not yet associated on-chain. The precompile rejects
+  // any call until the address is linked via a first outbound transaction.
+  if (estimatedFees.parameters?.gasLimit === 0n) {
+    errors.gasLimit = new FeeNotLoaded();
+    return { errors, warnings };
+  }
+
   if (!intent.valAddress) {
     errors.valAddress = new ValAddressRequired();
   }

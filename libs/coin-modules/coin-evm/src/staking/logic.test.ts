@@ -1,16 +1,22 @@
 import BigNumber from "bignumber.js";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { StakingAccount, StakingDelegation } from "@ledgerhq/types-live";
-import { canRedelegate, getMaxEstimatedBalance } from "./logic";
+import type { Operation, StakingAccount, StakingDelegation } from "@ledgerhq/types-live";
+import { canRedelegate, getMaxEstimatedBalance, isSeiAccountUnassociated } from "./logic";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function makeAccount(
   currencyId: string,
   redelegations: StakingAccount["stakingResources"]["redelegations"] = [],
+  {
+    freshAddress = "0xMyAddress",
+    operations = [] as Operation[],
+  }: { freshAddress?: string; operations?: Operation[] } = {},
 ): StakingAccount {
   return {
     currency: { id: currencyId } as CryptoCurrency,
+    freshAddress,
+    operations,
     balance: new BigNumber(0),
     spendableBalance: new BigNumber(0),
     stakingResources: {
@@ -22,6 +28,10 @@ function makeAccount(
       unbondingBalance: new BigNumber(0),
     },
   } as unknown as StakingAccount;
+}
+
+function makeOperation(senders: string[], blockHeight: number | null = 123): Operation {
+  return { senders, blockHeight } as unknown as Operation;
 }
 
 function makeDelegation(validatorAddress: string): StakingDelegation {
@@ -88,6 +98,48 @@ describe("evm staking logic", () => {
         },
       ]);
       expect(canRedelegate(account, makeDelegation("0xvalidator"))).toBe(true);
+    });
+  });
+
+  describe("isSeiAccountUnassociated", () => {
+    it("returns false for a non-sei_evm currency", () => {
+      const account = makeAccount("ethereum");
+      expect(isSeiAccountUnassociated(account.currency.id, account.freshAddress, account.operations)).toBe(false);
+    });
+
+    it("returns true for sei_evm with no operations", () => {
+      const account = makeAccount("sei_evm");
+      expect(isSeiAccountUnassociated(account.currency.id, account.freshAddress, account.operations)).toBe(true);
+    });
+
+    it("returns true for sei_evm when all operations are incoming (account never appeared as sender)", () => {
+      const account = makeAccount("sei_evm", [], {
+        operations: [makeOperation(["0xOtherAddress"]), makeOperation(["0xAnotherAddress"])],
+      });
+      expect(isSeiAccountUnassociated(account.currency.id, account.freshAddress, account.operations)).toBe(true);
+    });
+
+    it("returns false for sei_evm when the account appears as sender in at least one confirmed operation", () => {
+      const account = makeAccount("sei_evm", [], {
+        operations: [makeOperation(["0xOtherAddress"]), makeOperation(["0xMyAddress"])],
+      });
+      expect(isSeiAccountUnassociated(account.currency.id, account.freshAddress, account.operations)).toBe(false);
+    });
+
+    it("returns true for sei_evm when the account only appears as sender in an unconfirmed operation", () => {
+      const account = makeAccount("sei_evm", [], {
+        operations: [
+          makeOperation(["0xMyAddress"], null),
+          { senders: ["0xMyAddress"], blockHeight: undefined } as unknown as Operation,
+        ],
+      });
+      expect(isSeiAccountUnassociated(account.currency.id, account.freshAddress, account.operations)).toBe(true);
+    });
+    it("returns false for sei_evm when the account is one of multiple senders in an operation", () => {
+      const account = makeAccount("sei_evm", [], {
+        operations: [makeOperation(["0xOtherAddress", "0xMyAddress"])],
+      });
+      expect(isSeiAccountUnassociated(account.currency.id, account.freshAddress, account.operations)).toBe(false);
     });
   });
 

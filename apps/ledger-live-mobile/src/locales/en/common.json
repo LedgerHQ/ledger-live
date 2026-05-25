@@ -3199,7 +3199,6 @@
     },
     "availableBalance": "Available balance",
     "availableBalanceTooltip": "Funds you can use right now.",
-
     "claimableRewards": "Claimable rewards",
     "totalSupplied": "Amount deposited",
     "tronFrozen": "Frozen",
@@ -6668,7 +6667,8 @@
             "warning": {
               "description": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately."
             },
-            "cta": "Continue"
+            "cta": "Continue",
+            "seiAssociationWarning": "Your Sei account has not yet been linked on-chain. Delegation will fail until your account has its first outbound transaction confirmed on-chain. Send a small amount of SEI to any address first, wait for confirmation, then come back to delegate."
           },
           "validator": {
             "validators": "Validators",
