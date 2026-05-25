@@ -1,6 +1,6 @@
 # @ledgerhq/test-quarantine
 
-YAML-driven quarantine for Playwright (trial) and future Jest support.
+YAML-driven quarantine for Playwright E2E and Jest unit/integration tests.
 
 ## Layout
 
@@ -23,10 +23,10 @@ filter:
 - **`reason`**: free text (required); included in skip message / annotation.
 - **`failureMode`**:
   - `skip`: test is skipped before it runs.
-  - `optional`: test runs; failures are logged as `QUARANTINE-FLAKY` and do not fail the Playwright process if **all** failing tests were optional quarantines.
+  - `optional`: test runs; failures are logged as `QUARANTINE-FLAKY` and do not fail the test runner if **all** failing tests were optional quarantines.
 - **`filter`**: at least one of:
   - **`files`**: picomatch glob relative to the **monorepo root** (POSIX `/`).
-  - **`title`**: substring match against the full Playwright title (`describe > … > test`). Use `/pattern/flags` for a regular expression instead.
+  - **`title`**: substring match against the full test title (`describe > … > test`). Use `/pattern/flags` for a regular expression instead.
 
 When both `files` and `title` are set, **both** must match.
 
@@ -34,5 +34,24 @@ When both `files` and `title` are set, **both** must match.
 
 - **Fixture**: `import { withQuarantine } from "@ledgerhq/test-quarantine/playwright/fixture"` then wrap your base `test`.
 - **Reporter**: add `["@ledgerhq/test-quarantine/playwright/reporter"]` to `playwright.config.ts` `reporter` so optional failures can downgrade the exit code.
+
+## Jest (ledger-live-desktop)
+
+In `jest.config.js`:
+
+```js
+testEnvironment: require.resolve("@ledgerhq/test-quarantine/jest/environment"),
+reporters: [
+  "default",
+  require.resolve("@ledgerhq/test-quarantine/jest/reporter"),
+  // …other reporters
+],
+```
+
+Build `@ledgerhq/test-quarantine` before running Jest (`pnpm --filter @ledgerhq/test-quarantine build` or via desktop `^build`).
+
+Example unit-test `filter.files`:
+
+`apps/ledger-live-desktop/src/**/*.test.tsx`
 
 See [`quarantine/README.md`](../../quarantine/README.md) for contributor-facing docs.

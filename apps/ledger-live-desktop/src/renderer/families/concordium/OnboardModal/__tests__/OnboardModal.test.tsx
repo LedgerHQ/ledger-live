@@ -145,7 +145,7 @@ describe("OnboardModal", () => {
 
     const { user } = render(<OnboardModal {...defaultProps} />, { initialState });
 
-    const agreeButton = await screen.findByRole("button", { name: /agree/i });
+    const agreeButton = await screen.findByRole("button", { name: /agree1/i });
     expect(agreeButton).toBeVisible();
 
     await user.click(agreeButton);
@@ -197,7 +197,7 @@ describe("OnboardModal", () => {
 
     const { user } = render(<OnboardModal {...defaultProps} />, { initialState });
 
-    await user.click(await screen.findByRole("button", { name: /agree/i }));
+    await user.click(await screen.findByRole("button", { name: /agree1/i }));
 
     // Error is set directly (no setStateWithTimeout), no transition delay
     await waitFor(() => {

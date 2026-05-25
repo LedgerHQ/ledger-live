@@ -65,7 +65,7 @@ const transformIncludePatterns = [
 ];
 
 const commonConfig = {
-  testEnvironment: "jsdom",
+  testEnvironment: require.resolve("@ledgerhq/test-quarantine/jest/environment"),
   globals: {
     __DEV__: false,
     __APP_VERSION__: "2.0.0",
@@ -119,6 +119,7 @@ module.exports = {
   reporters: [
     "default",
     ...(process.env.CI ? ["github-actions"] : []),
+    require.resolve("@ledgerhq/test-quarantine/jest/reporter"),
     ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
   ],
   silent: false,

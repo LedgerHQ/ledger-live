@@ -11,7 +11,7 @@ Drop **one YAML file per quarantine entry** in this directory. Invalid entries f
 | `reason` | yes | Why the test is quarantined |
 | `failureMode` | yes | `skip` or `optional` |
 | `filter.files` | one of `files` / `title` | Glob from **repo root** (picomatch), e.g. `apps/ledger-live-desktop/tests/specs/send/**/*.spec.ts` |
-| `filter.title` | one of `files` / `title` | Substring on full test title, or `/regex/flags` |
+| `filter.title` | one of `files` / `title` | Substring on full test title (`describe > … > test`), or `/regex/flags` |
 
 Filename = entry id: only `[A-Za-z0-9_-]+.(yml|yaml)` (e.g. `LL-5678-flaky-send.yml`).
 
@@ -27,4 +27,4 @@ filter:
   title: "should show fee"
 ```
 
-Full API and Playwright wiring: [`libs/test-quarantine/README.md`](../libs/test-quarantine/README.md).
+Full API, Playwright, and Jest wiring: [`libs/test-quarantine/README.md`](../libs/test-quarantine/README.md).
