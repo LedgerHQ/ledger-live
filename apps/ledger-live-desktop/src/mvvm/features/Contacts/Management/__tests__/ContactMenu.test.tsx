@@ -25,14 +25,27 @@ describe("ContactMenu", () => {
     expect(screen.getByText("Delete contact")).toBeInTheDocument();
   });
 
-  it("does not throw when a menu item is clicked (items are inert in L4)", async () => {
-    const { user } = render(<ContactMenu />);
+  it("fires the onEdit callback when the Edit item is clicked", async () => {
+    const onEdit = jest.fn();
+    const onDelete = jest.fn();
+    const { user } = render(<ContactMenu onEdit={onEdit} onDelete={onDelete} />);
 
     await user.click(screen.getByTestId("contacts-management-overflow"));
     await user.click(screen.getByTestId("contacts-management-contact-menu-edit"));
-    // No throw, no callback expected — just rendering hover/pressed
-    // states. The Popover closes on the click; reopening it for the
-    // Delete item happens via the same trigger path, no need to
-    // re-test here.
+
+    expect(onEdit).toHaveBeenCalledTimes(1);
+    expect(onDelete).not.toHaveBeenCalled();
+  });
+
+  it("fires the onDelete callback when the Delete item is clicked", async () => {
+    const onEdit = jest.fn();
+    const onDelete = jest.fn();
+    const { user } = render(<ContactMenu onEdit={onEdit} onDelete={onDelete} />);
+
+    await user.click(screen.getByTestId("contacts-management-overflow"));
+    await user.click(screen.getByTestId("contacts-management-contact-menu-delete"));
+
+    expect(onDelete).toHaveBeenCalledTimes(1);
+    expect(onEdit).not.toHaveBeenCalled();
   });
 });

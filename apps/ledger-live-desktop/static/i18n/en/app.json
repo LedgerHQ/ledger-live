@@ -9096,6 +9096,11 @@
       "edit": "Edit contact",
       "delete": "Delete contact"
     },
+    "editContactDialog": {
+      "title": "Edit contact",
+      "placeholder": "Contact name",
+      "submit": "Save changes"
+    },
     "addContactDialog": {
       "title": "Add contact",
       "placeholder": "Contact name",

@@ -31,6 +31,8 @@ const baseProps = (overrides: Partial<React.ComponentProps<typeof ManagementView
     onSearchQueryChange: jest.fn(),
     onSelectContact: jest.fn(),
     onAddContact: jest.fn(),
+    onRenameContact: jest.fn(),
+    onDeleteContact: jest.fn(),
     ...overrides,
   };
 };
