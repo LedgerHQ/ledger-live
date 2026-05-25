@@ -133,6 +133,7 @@ describe("coin-tezos serialization", () => {
         state: "deactivating",
         asset: { type: "native" },
         amount: new BigNumber("123"),
+        actions: [],
         createdAt: new Date("2026-05-01T00:00:00.000Z"),
       },
       {
@@ -142,6 +143,7 @@ describe("coin-tezos serialization", () => {
         state: "inactive",
         asset: { type: "native" },
         amount: new BigNumber("45"),
+        actions: [],
         createdAt: new Date("2026-04-25T12:34:56.789Z"),
       },
     ];

@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import BigNumber from "bignumber.js";
+import type BigNumber from "bignumber.js";
 import {
   getMainAccount,
   getAccountCurrency,
