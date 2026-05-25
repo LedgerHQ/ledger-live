@@ -6,6 +6,7 @@ import invariant from "invariant";
 import { getStakingABI } from "./abis";
 import { STAKING_CONTRACTS } from "./contracts";
 import type {
+  Account,
   StakingAccount,
   StakingDelegation,
   StakingDelegationInfo,
@@ -196,6 +197,32 @@ export function getRedelegationCompletionDate(
 
 export function parseAmountStringToNumber(amountString: string, unitCode: string): string {
   return amountString.slice(amountString.lastIndexOf(",") + 1).replace(unitCode, "");
+}
+
+/**
+ * Returns true when a Sei EVM account's public key has not yet been confirmed on-chain
+ * (via an outbound transaction), meaning its EVM (0x) and Cosmos (sei1) addresses are not yet
+ * linked.  Delegation will fail in this state because the staking precompile
+ * routes internally through the Cosmos layer and cannot resolve the Cosmos
+ * address for an unregistered EVM key.
+ *
+ * Association happens automatically once the account has its first outbound
+ * transaction confirmed on-chain (send, stake, etc.). We detect the absence of
+ * any prior confirmed outbound tx by checking whether the account has ever
+ * appeared as a sender in its local confirmed operation history. For a
+ * genuinely unassociated account every recorded operation is incoming.
+ *
+ * Only applies to `sei_evm`; returns false for every other currency.
+ */
+export function isSeiAccountUnassociated(account: Account): boolean {
+  if (account.currency.id !== "sei_evm") return false;
+  const addressLower = account.freshAddress.toLowerCase();
+  return !account.operations.some(
+    op =>
+      op.blockHeight !== null &&
+      op.blockHeight !== undefined &&
+      op.senders.some(s => s.toLowerCase() === addressLower),
+  );
 }
 
 /**

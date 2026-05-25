@@ -8,6 +8,7 @@ import {
   getMaxEstimatedBalance,
   getUnbondingPeriodDays,
   hasUnbondingPeriod,
+  isSeiAccountUnassociated,
 } from "@ledgerhq/live-common/families/evm/staking/logic";
 import { isStakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
 import type { TransactionStatus } from "@ledgerhq/coin-evm/types/index";
@@ -82,6 +83,7 @@ export default function SelectAmount({ navigation, route }: Props) {
   const canContinue =
     !bridgePending && !bridgeError && !hasErrors && amount.gt(0) && maxSpendable.gte(amount);
   const showLockUpWarning = hasUnbondingPeriod(account.currency.id);
+  const showSeiAssociationWarning = useMemo(() => isSeiAccountUnassociated(account), [account]);
 
   const updateAmount = useCallback(
     (amount: BigNumber, useAllAmount = false) => {
@@ -139,6 +141,14 @@ export default function SelectAmount({ navigation, route }: Props) {
               </TouchableOpacity>
             </View>
 
+            {showSeiAssociationWarning ? (
+              <View style={styles.alertContainer}>
+                <Alert
+                  type="warning"
+                  title={t("evm.delegation.flow.steps.starter.seiAssociationWarning")}
+                />
+              </View>
+            ) : null}
             <View style={styles.footer}>
               {showLockUpWarning ? (
                 <View style={styles.alertContainer}>

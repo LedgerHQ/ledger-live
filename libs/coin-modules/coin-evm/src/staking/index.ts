@@ -27,6 +27,7 @@ export {
   getRedelegationCompletionDate,
   parseAmountStringToNumber,
   decodeRedelegatePayload,
+  isSeiAccountUnassociated,
 } from "./logic";
 export {
   assignFromAccountRaw,
