@@ -88,7 +88,7 @@ export class Application {
 
     knownDevices && (await loadBleState({ knownDevices }));
     if (testedCurrencies) {
-      this.testAccounts = initTestAccounts(testedCurrencies);
+      this.testAccounts = await initTestAccounts(testedCurrencies);
       await loadAccounts(this.testAccounts);
     }
 

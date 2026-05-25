@@ -64,18 +64,21 @@ jest.mock("@ledgerhq/live-common/bridge/useBridgeTransaction", () => ({
 }));
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
-  getAccountBridge: jest.fn(() => ({
-    createTransaction: jest.fn(() => ({ mode: "delegate", poolId: null })),
-    updateTransaction: jest.fn((t, patch) => ({ ...t, ...patch })),
-    prepareTransaction: jest.fn(t => Promise.resolve(t)),
-    getTransactionStatus: jest.fn(() =>
-      Promise.resolve({
-        errors: {},
-        warnings: {},
-        estimatedFees: new BigNumber("200000"),
-      }),
-    ),
-  })),
+  getAccountBridge: jest.fn(() => {
+    const bridge = {
+      createTransaction: jest.fn(() => ({ mode: "delegate", poolId: null })),
+      updateTransaction: jest.fn((t, patch) => ({ ...t, ...patch })),
+      prepareTransaction: jest.fn(t => Promise.resolve(t)),
+      getTransactionStatus: jest.fn(() =>
+        Promise.resolve({
+          errors: {},
+          warnings: {},
+          estimatedFees: new BigNumber("200000"),
+        }),
+      ),
+    };
+    return Object.assign(Promise.resolve(bridge), { status: "fulfilled", value: bridge });
+  }),
 }));
 
 // We still mock useCardanoFamilyPools for now to avoid complexity of live-common registration in JSDOM,

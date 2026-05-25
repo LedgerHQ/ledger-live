@@ -12,6 +12,7 @@ import { Account } from "@ledgerhq/types-live";
 import { InvalidAddress } from "@ledgerhq/errors";
 import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import { getAccountBridgeByFamily } from "@ledgerhq/live-common/bridge/impl";
 import RecipientField from "./RecipientField";
 
 // Temp mock to prevent error on sentry init
@@ -142,8 +143,9 @@ const setup = (
 };
 
 describe("RecipientField", () => {
-  beforeAll(() => {
+  beforeAll(async () => {
     setSupportedCurrencies(["polygon", "ethereum"]);
+    await getAccountBridgeByFamily("evm");
   });
 
   beforeEach(() => {
