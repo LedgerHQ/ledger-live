@@ -68,22 +68,47 @@ async function executeCliCommand(
   return result;
 }
 
-// Setup all Speculos devices in parallel for better performance
+// Setup all Speculos devices in parallel for better performance.
+// If any launch fails, release the ones that already came up to avoid leaking pods.
 async function launchSpeculosDevices(toStart: SpeculosAppType[]): Promise<Record<string, Entry>> {
-  const entries: Entry[] = await Promise.all(
+  const results = await Promise.allSettled(
     toStart.map(async app => {
       checkTestFailed();
       const device = await launchSpeculos(app.name);
-
       return {
         name: app.name,
         speculosPort: device.port,
         deviceId: device.id,
-      };
+      } satisfies Entry;
     }),
   );
 
-  return entries.reduce<Record<string, Entry>>((acc, entry) => {
+  const launched: Entry[] = [];
+  const failures: unknown[] = [];
+  for (const result of results) {
+    if (result.status === "fulfilled") launched.push(result.value);
+    else failures.push(result.reason);
+  }
+
+  if (failures.length) {
+    await Promise.all(
+      launched.map(entry =>
+        deleteSpeculos(entry.deviceId).catch(err =>
+          log.warn(
+            "E2E",
+            `Cleanup after partial launch failure: failed to delete ${entry.deviceId}: ${sanitizeError(err)}`,
+          ),
+        ),
+      ),
+    );
+    throw new Error(
+      `Failed to launch ${failures.length}/${toStart.length} Speculos device(s): ${failures
+        .map(sanitizeError)
+        .join("; ")}`,
+    );
+  }
+
+  return launched.reduce<Record<string, Entry>>((acc, entry) => {
     acc[entry.name] = entry;
     return acc;
   }, {});
