@@ -11,13 +11,11 @@ import type {
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/tezos/types";
-import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useTezosStakingInfo } from "@ledgerhq/live-common/families/tezos/react";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import StepAmount, { StepAmountFooter } from "../StepAmount";
 import type { StepProps } from "../../types";
 
-jest.mock("@ledgerhq/live-common/bridge/useAccountBridge");
 jest.mock("@ledgerhq/live-common/families/tezos/react", () => ({
   __esModule: true,
   useTezosStakingInfo: jest.fn(),
@@ -28,20 +26,39 @@ jest.mock("~/renderer/components/ErrorBanner", () => ({
   __esModule: true,
   default: ({ error }: { error: Error }) => <div data-testid="error-banner">{error?.message}</div>,
 }));
+jest.mock("~/renderer/components/CurrencyDownStatusAlert", () => ({
+  __esModule: true,
+  default: () => null,
+}));
 jest.mock("~/renderer/components/FormattedVal", () => ({
   __esModule: true,
   default: ({ val }: { val: BigNumber }) => (
     <span data-testid="formatted-val">{val.toString()}</span>
   ),
 }));
-jest.mock("~/renderer/components/InputCurrency", () => ({
+jest.mock("~/renderer/modals/Send/fields/AmountField", () => ({
   __esModule: true,
-  default: ({ value }: { value: BigNumber }) => (
-    <input data-testid="amount-input" readOnly value={value?.toString() ?? "0"} />
+  default: ({
+    transaction,
+    status,
+    withUseMaxLabel,
+  }: {
+    transaction: { useAllAmount?: boolean };
+    status: TransactionStatus;
+    withUseMaxLabel?: boolean;
+  }) => (
+    <div data-testid="amount-field">
+      <span data-testid="amount-field-amount">{status?.amount?.toString()}</span>
+      <span data-testid="amount-field-useallamount">{String(!!transaction.useAllAmount)}</span>
+      <span data-testid="amount-field-usemaxlabel">{String(!!withUseMaxLabel)}</span>
+    </div>
   ),
 }));
+jest.mock("~/renderer/modals/Send/AccountFooter", () => ({
+  __esModule: true,
+  default: () => <div data-testid="account-footer" />,
+}));
 
-const mockedUseAccountBridge = jest.mocked(useAccountBridge);
 const mockedUseTezosStakingInfo = jest.mocked(useTezosStakingInfo);
 const mockedUseAccountUnit = jest.mocked(useAccountUnit);
 
@@ -82,7 +99,12 @@ const makeProps = (overrides: Partial<StepProps> = {}): StepProps => ({
   device: null,
   account,
   parentAccount: null,
-  transaction: { mode: "unstake", amount: new BigNumber(0) } as unknown as Transaction,
+  transaction: {
+    family: "tezos",
+    mode: "unstake",
+    amount: new BigNumber(0),
+    useAllAmount: false,
+  } as unknown as Transaction,
   status: makeStatus(),
   bridgePending: false,
   signed: false,
@@ -98,16 +120,8 @@ const makeProps = (overrides: Partial<StepProps> = {}): StepProps => ({
 });
 
 const setupHooks = (overrides: Partial<StakingInfo> = {}) => {
-  const updateTransaction = jest.fn((tx: Transaction, patch: Partial<Transaction>) => ({
-    ...tx,
-    ...patch,
-  }));
-  mockedUseAccountBridge.mockReturnValue({
-    updateTransaction,
-  } as unknown as ReturnType<typeof useAccountBridge>);
   mockedUseTezosStakingInfo.mockReturnValue(makeStakingInfo(overrides));
   mockedUseAccountUnit.mockReturnValue(tezosUnit);
-  return { updateTransaction };
 };
 
 beforeEach(() => jest.clearAllMocks());
@@ -120,29 +134,30 @@ describe("UnstakeFlowModal/StepAmount", () => {
     expect(screen.getByTestId("formatted-val")).toHaveTextContent("500");
   });
 
-  it("disables Max when stakedBalance is zero", () => {
-    setupHooks({ stakedBalance: new BigNumber(0), isStaked: false });
-    render(<StepAmount {...makeProps()} />);
-    expect(screen.getByRole("button", { name: /Max/i })).toBeDisabled();
-  });
-
-  it("disables Max while bridge is pending", () => {
+  it("delegates the amount input to the shared AmountField with withUseMaxLabel", () => {
     setupHooks({ stakedBalance: new BigNumber(500) });
-    render(<StepAmount {...makeProps({ bridgePending: true })} />);
-    expect(screen.getByRole("button", { name: /Max/i })).toBeDisabled();
+    render(<StepAmount {...makeProps()} />);
+    expect(screen.getByTestId("amount-field-usemaxlabel")).toHaveTextContent("true");
+    expect(screen.getByTestId("amount-field-useallamount")).toHaveTextContent("false");
   });
 
-  it("clicking Max patches the transaction with stakedBalance and bubbles up", async () => {
-    const { updateTransaction } = setupHooks({ stakedBalance: new BigNumber(500) });
-    const onChangeTransaction = jest.fn();
-    const { user } = render(<StepAmount {...makeProps({ onChangeTransaction })} />);
-    await user.click(screen.getByRole("button", { name: /Max/i }));
-    expect(updateTransaction).toHaveBeenCalledWith(expect.anything(), {
-      amount: new BigNumber(500),
-    });
-    expect(onChangeTransaction).toHaveBeenCalledWith(
-      expect.objectContaining({ amount: new BigNumber(500) }),
+  it("forwards useAllAmount=true through the transaction to AmountField", () => {
+    setupHooks({ stakedBalance: new BigNumber(500) });
+    render(
+      <StepAmount
+        {...makeProps({
+          transaction: {
+            family: "tezos",
+            mode: "unstake",
+            amount: new BigNumber(0),
+            useAllAmount: true,
+          } as unknown as Transaction,
+          status: makeStatus({ amount: new BigNumber(500) }),
+        })}
+      />,
     );
+    expect(screen.getByTestId("amount-field-useallamount")).toHaveTextContent("true");
+    expect(screen.getByTestId("amount-field-amount")).toHaveTextContent("500");
   });
 
   it("renders ErrorBanner when the bridge surfaces an error", () => {
@@ -153,10 +168,7 @@ describe("UnstakeFlowModal/StepAmount", () => {
 });
 
 describe("UnstakeFlowModal/StepAmountFooter", () => {
-  it("disables Continue when amount is zero", () => {
-    render(<StepAmountFooter {...makeProps()} />);
-    expect(screen.getByTestId("tezos-unstake-amount-continue-button")).toBeDisabled();
-  });
+  beforeEach(() => setupHooks());
 
   it("disables Continue while bridge is pending", () => {
     render(
@@ -184,7 +196,7 @@ describe("UnstakeFlowModal/StepAmountFooter", () => {
     expect(screen.getByTestId("tezos-unstake-amount-continue-button")).toBeDisabled();
   });
 
-  it("Continue transitions to the device step when amount > 0 and no errors", async () => {
+  it("Continue transitions to the device step when no errors and bridge is idle", async () => {
     const transitionTo = jest.fn();
     const { user } = render(
       <StepAmountFooter

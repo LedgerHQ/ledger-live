@@ -81,7 +81,10 @@ export async function estimateFees({
 
   let amount = transaction.amount;
   const coerceMinAmountForEstimation =
-    (transaction.useAllAmount && (transaction.mode === "send" || transaction.mode === "stake")) ||
+    (transaction.useAllAmount &&
+      (transaction.mode === "send" ||
+        transaction.mode === "stake" ||
+        transaction.mode === "unstake")) ||
     (amount === 0n && transaction.mode !== "send_token");
   if (coerceMinAmountForEstimation) {
     amount = 1n; // send/stake max or zero-amount pre-estimation (taquito refuses 0); not used for FA2 send_token

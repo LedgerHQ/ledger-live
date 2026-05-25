@@ -394,6 +394,65 @@ describe("validateIntent", () => {
       expect(mockEstimateFees).not.toHaveBeenCalled();
     });
 
+    it("should resolve unstake useAllAmount to full stakedBalance", async () => {
+      mockGetAccountByAddress.mockResolvedValue(makeUserAccount({ stakedBalance: 4000 }));
+
+      const result = await validateIntent({
+        intentType: "staking",
+        asset: { type: "native" },
+        type: "unstake",
+        sender: senderAddress,
+        recipient: "",
+        amount: 0n,
+        useAllAmount: true,
+      });
+
+      expect(result.errors).toEqual({});
+      expect(result.amount).toBe(4000n);
+      expect(result.totalSpent).toBe(1000n);
+    });
+
+    it("should return NotEnoughBalance when unstake useAllAmount with zero stakedBalance", async () => {
+      mockGetAccountByAddress.mockResolvedValue(makeUserAccount({ stakedBalance: 0 }));
+
+      const result = await validateIntent({
+        intentType: "staking",
+        asset: { type: "native" },
+        type: "unstake",
+        sender: senderAddress,
+        recipient: "",
+        amount: 0n,
+        useAllAmount: true,
+      });
+
+      expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+      expect(mockEstimateFees).not.toHaveBeenCalled();
+    });
+
+    it("should return NotEnoughBalance when unstake useAllAmount but liquid balance can't cover fees", async () => {
+      mockGetAccountByAddress.mockResolvedValue(
+        makeUserAccount({ balance: 500, stakedBalance: 4000 }),
+      );
+      mockEstimateFees.mockResolvedValueOnce({
+        fees: 1000n,
+        gasLimit: 10000n,
+        storageLimit: 0n,
+        estimatedFees: 1000n,
+      });
+
+      const result = await validateIntent({
+        intentType: "staking",
+        asset: { type: "native" },
+        type: "unstake",
+        sender: senderAddress,
+        recipient: "",
+        amount: 0n,
+        useAllAmount: true,
+      });
+
+      expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
+    });
+
     it("should return NotEnoughBalance when finalize_unstake has nothing finalizable", async () => {
       mockGetUnstakeRequestsFinalizable.mockResolvedValue(0n);
 

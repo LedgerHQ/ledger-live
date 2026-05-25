@@ -108,6 +108,9 @@ function validateUnstakeConstraints(
   if (stakedBalance <= 0n) {
     return { amount: new NotEnoughBalance() };
   }
+  if (intent.useAllAmount) {
+    return {};
+  }
   const amountError = validateStrictlyPositiveAmount(intent.amount);
   if (amountError) {
     return { amount: amountError };
@@ -199,7 +202,9 @@ function calculateAmounts(
   }
 
   if (intent.type === "unstake") {
-    return { amount: intent.amount, totalSpent: estimatedFees };
+    const stakedBalance = BigInt(senderInfo.stakedBalance ?? 0);
+    const amount = intent.useAllAmount ? stakedBalance : intent.amount;
+    return { amount, totalSpent: estimatedFees };
   }
 
   if (intent.type === "finalize_unstake") {
