@@ -73,7 +73,11 @@ export function AddressStep({ onSubmit }: Props) {
       // `gap-16` here (not 24) because the two inputs + button stack
       // tighter in the Figma frames 13936:20087 / 13957:8439 — they
       // form a single form group.
-      className="flex flex-col gap-16 px-8 pb-24"
+      // `pt-8` so the first input's focused purple outline has clearance
+      // from the dialog's overflow-clip — same fix as AddContactDialog
+      // (the picker steps don't need this because their first child is a
+      // search bar wrapped in a div that already provides outline room).
+      className="flex flex-col gap-16 px-8 pt-8 pb-24"
       data-testid="contacts-management-add-address-address-step"
     >
       <TextInput
