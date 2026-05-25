@@ -1,6 +1,7 @@
 import { Stake } from "@ledgerhq/coin-module-framework/api/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { delay } from "@ledgerhq/live-promise";
+import { ethers } from "ethers";
 import { getCoinConfig } from "../config";
 import { withApi } from "../network/node/rpc.common";
 import { isExternalNodeConfig } from "../network/node/types";
@@ -9,9 +10,11 @@ import type {
   StakeCreate,
   StakingContractConfig,
   StakingExtractor,
+  StakingFetcher,
   StakingStrategy,
 } from "../types/staking";
 import { extractSeiDelegation, getCeloAmount, getSeiDelegationAmount } from "../utils";
+import { getStakingABI } from "./abis";
 import { encodeStakingData, decodeStakingResult } from "./encoder";
 import { buildTransactionParams } from "./transactionData";
 import { getValidators } from "./validators";
@@ -32,9 +35,104 @@ const createStakingFetcher = (
   ): Promise<Stake[]> => {
     const validators = await getValidatorsFn(config, currency);
     const validatorAddresses = validators.map(v => v.validatorAddress);
-    const logPrefix = currency.id === "sei_evm" ? "SEI" : "CELO";
-    return getStakesForValidators(address, config, currency, validatorAddresses, logPrefix);
+    return getStakesForValidators(address, config, currency, validatorAddresses, currency.name);
   };
+};
+
+// Max pagination pages for Monad on-chain validator queries (100 results/page → up to 10,000).
+const MONAD_MAX_PAGES = 100;
+
+/**
+ * Monad-specific stake fetcher.
+ *
+ * Unlike SEI/Celo, Monad validators are identified by a uint64 validatorId
+ * and there is no REST endpoint for the validator list.  We use the staking
+ * precompile directly:
+ *
+ * 1. `getDelegations(delegator, startValId)` — returns all validator IDs the
+ *    address has ever delegated to (paginated, up to 100 per call).
+ * 2. `getDelegator(validatorId, delegator)` — returns the active `stake`
+ *    (index 0) in 18-decimal MON wei.
+ *
+ * Sources:
+ *   https://docs.monad.xyz/reference/staking/api  (getDelegations, getDelegator)
+ *   https://docs.monad.xyz/reference/staking/overview (query staking state)
+ */
+const fetchMonadStakes: StakingFetcher = async (
+  address: string,
+  config: StakingContractConfig,
+  currency: CryptoCurrency,
+): Promise<Stake[]> => {
+  const node = getCoinConfig(currency.id).info.node;
+  if (!isExternalNodeConfig(node)) return [];
+
+  const abi = getStakingABI("monad");
+  if (!abi) return [];
+
+  return withApi(
+    currency,
+    async rpcProvider => {
+      const iface = new ethers.Interface(abi as ethers.InterfaceAbi);
+
+      // Step 1 — collect all validator IDs this address has delegated to.
+      const delegatedValIds: bigint[] = [];
+      let startValId = 0n;
+      let isDone = false;
+      let page = 0;
+
+      while (!isDone && page < MONAD_MAX_PAGES) {
+        page++;
+        const data = iface.encodeFunctionData("getDelegations", [address, startValId]);
+        const raw = await rpcProvider.call({ to: config.contractAddress, data });
+        const decoded = iface.decodeFunctionResult("getDelegations", raw);
+
+        isDone = decoded[0] as boolean;
+        const nextValId = decoded[1] as bigint;
+        const valIds = decoded[2] as bigint[];
+
+        delegatedValIds.push(...valIds);
+        if (!isDone) startValId = nextValId;
+      }
+
+      if (delegatedValIds.length === 0) return [];
+
+      // Step 2 — for each validator ID, read the active stake.
+      const stakes: Stake[] = [];
+
+      for (const valId of delegatedValIds) {
+        try {
+          const data = iface.encodeFunctionData("getDelegator", [valId, address]);
+          const raw = await rpcProvider.call({ to: config.contractAddress, data });
+          const decoded = iface.decodeFunctionResult("getDelegator", raw);
+          // getDelegator returns (stake, accRewardPerToken, unclaimedRewards, ...).
+          const stake = decoded[0] as bigint;
+
+          if (stake > 0n) {
+            const valIdStr = valId.toString();
+            stakes.push({
+              uid: `${config.contractAddress}-${valIdStr}-${address}`,
+              address,
+              delegate: valIdStr,
+              state: "active",
+              asset: { type: "native", name: currency.name, unit: currency.units[0] },
+              amount: stake,
+              details: { contractAddress: config.contractAddress, validator: valIdStr },
+              actions: [],
+            });
+          }
+        } catch (error) {
+          console.error("Failed to fetch Monad stake for validator", {
+            validatorId: valId.toString(),
+            address,
+            error: error instanceof Error ? error.message : String(error),
+          });
+        }
+      }
+
+      return stakes;
+    },
+    node,
+  );
 };
 
 export const STAKING_CONFIG: Record<string, StakingStrategy> = {
@@ -55,6 +153,11 @@ export const STAKING_CONFIG: Record<string, StakingStrategy> = {
       },
     ]),
   },
+  // Monad uses a custom on-chain fetcher (getDelegations precompile) instead of
+  // the generic REST-based createStakingFetcher pattern.
+  monad: {
+    fetcher: fetchMonadStakes,
+  },
 };
 
 const AMOUNT_EXTRACTORS: Record<string, StakingExtractor> = {
@@ -63,6 +166,14 @@ const AMOUNT_EXTRACTORS: Record<string, StakingExtractor> = {
     return getSeiDelegationAmount(delegation);
   },
   celo: getCeloAmount,
+  // getDelegator returns (stake, accRewardPerToken, unclaimedRewards, ...).
+  // decoded[0] is the active stake in 18-decimal MON wei (no unit conversion needed).
+  // Source: https://docs.monad.xyz/reference/staking/api (getDelegator outputs)
+  monad: (decoded: unknown): bigint => {
+    const result = decoded as ethers.Result;
+    const stake = result[0];
+    return typeof stake === "bigint" ? stake : 0n;
+  },
 };
 
 const getAmountFromDecoded = (currencyId: string, decoded: unknown): bigint => {
@@ -151,6 +262,7 @@ const createStakeFromContract = async (stakingContract: StakeCreate): Promise<St
             contractAddress: config.contractAddress,
             validator: validatorAddress,
           },
+          actions: [],
         };
       };
 

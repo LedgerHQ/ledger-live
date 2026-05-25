@@ -58,5 +58,34 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
     },
   },
 
-  // TODO: add Berachain + HyperEVM when confirmed (according to slack)
+  // Monad staking
+  // Source: https://docs.monad.xyz/reference/staking/api
+  // Source: https://docs.monad.xyz/monad-arch/consensus/staking
+  monad: {
+    // Native staking precompile — address 0x1000
+    // There is no bytecode at this address; it is a precompile, not a smart contract.
+    contractAddress: "0x0000000000000000000000000000000000001000",
+    functions: {
+      // delegate(uint64 validatorId) payable — amount is msg.value (18-decimal MON wei).
+      delegate: "delegate",
+      // undelegate(uint64 validatorId, uint256 amount, uint8 withdrawId).
+      // withdrawId is a 0-255 slot identifier per (validator, delegator) pair.
+      undelegate: "undelegate",
+      // getDelegator(uint64 validatorId, address delegator) — returns stake, rewards, pending changes.
+      getStakedBalance: "getDelegator",
+      // claimRewards(uint64 validatorId).
+      claimReward: "claimRewards",
+    },
+    explorerConfig: {
+      // Validators are identified by their authAddress on MonadScan.
+      // Source: https://monadscan.com
+      validatorUrl: "https://monadscan.com/address/$address",
+    },
+    // Monad uses epoch-based unbonding: WITHDRAWAL_DELAY = 1 epoch (~5.5 h).
+    // Including the delegation-queue delay (1–2 epochs), the maximum wait is ~3 epochs ≈ 17 h.
+    // Source: https://docs.monad.xyz/monad-arch/consensus/staking (WITHDRAWAL_DELAY constant)
+    unbondingPeriodDays: 1,
+  },
+
+  // TODO: add 0G next
 };

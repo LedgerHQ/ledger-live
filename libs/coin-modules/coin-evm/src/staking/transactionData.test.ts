@@ -163,6 +163,52 @@ describe("buildTransactionParams", () => {
     });
   });
 
+  describe("Monad", () => {
+    // Monad validators are identified by a uint64 ID passed as a decimal string.
+    const validatorId = "42";
+    const delegatorAddress = "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb";
+    const currencyId = "monad";
+
+    it("should build params for delegate — validatorId as BigInt, amount via msg.value", () => {
+      const params = buildTransactionParams(currencyId, "delegate" as StakingOperation, validatorId, amount);
+      expect(params).toEqual([42n]);
+    });
+
+    it("should build params for undelegate — includes amount in wei and default withdrawId 0", () => {
+      const params = buildTransactionParams(currencyId, "undelegate" as StakingOperation, validatorId, amount);
+      expect(params).toEqual([42n, amount, 0]);
+    });
+
+    it("should build params for getStakedBalance — getDelegator(validatorId, delegator)", () => {
+      const params = buildTransactionParams(
+        currencyId,
+        "getStakedBalance" as StakingOperation,
+        "",
+        0n,
+        validatorId,
+        delegatorAddress,
+      );
+      expect(params).toEqual([42n, delegatorAddress]);
+    });
+
+    it("should build params for claimReward — validatorId as BigInt", () => {
+      const params = buildTransactionParams(currencyId, "claimReward" as StakingOperation, validatorId, amount);
+      expect(params).toEqual([42n]);
+    });
+
+    it("should throw for redelegate (not supported on Monad)", () => {
+      expect(() => {
+        buildTransactionParams(currencyId, "redelegate" as StakingOperation, validatorId, amount, "99");
+      }).toThrow("Monad does not support native redelegate");
+    });
+
+    it("should throw for getStakedBalance without delegator or validatorId", () => {
+      expect(() => {
+        buildTransactionParams(currencyId, "getStakedBalance" as StakingOperation, "", 0n);
+      }).toThrow("Monad getStakedBalance requires delegator address and validatorId");
+    });
+  });
+
   describe("Error handling", () => {
     it("should throw error for unsupported currency", () => {
       expect(() => {

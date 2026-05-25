@@ -48,6 +48,30 @@ const STAKING_PROTOCOLS: Record<string, Record<string, OperationFn>> = {
     getStakedBalance: valAddress => [valAddress],
     getUnstakedBalance: valAddress => [valAddress],
   },
+
+  monad: {
+    // Monad validators are identified by a uint64 validatorId, not an EVM address.
+    // The caller passes the validatorId as its decimal string representation (e.g. "42").
+    // delegate(uint64 validatorId) payable — amount travels as msg.value, not calldata.
+    delegate: valAddress => [BigInt(valAddress)],
+    // undelegate(uint64 validatorId, uint256 amount, uint8 withdrawId).
+    // withdrawId is a per-(validator, delegator) slot (0-255); we default to 0.
+    // A production implementation should track which slots are in use.
+    undelegate: (valAddress, amount) => [BigInt(valAddress), amount, 0],
+    redelegate: () => {
+      throw new Error("Monad does not support native redelegate — undelegate then delegate");
+    },
+    // getDelegator(uint64 validatorId, address delegator).
+    // dstValAddress carries the validatorId string; delegator is the wallet address.
+    getStakedBalance: (_valAddress, _amount, dstValAddress, delegator) => {
+      if (!delegator || !dstValAddress) {
+        throw new Error("Monad getStakedBalance requires delegator address and validatorId");
+      }
+      return [BigInt(dstValAddress), delegator];
+    },
+    // claimRewards(uint64 validatorId).
+    claimReward: valAddress => [BigInt(valAddress)],
+  },
 };
 
 export const buildTransactionParams = (

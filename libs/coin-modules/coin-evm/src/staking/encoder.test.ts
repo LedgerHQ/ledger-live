@@ -70,6 +70,54 @@ describe("encodeStakingData", () => {
     });
   });
 
+  describe("Monad", () => {
+    const currencyId = "monad";
+    const config = STAKING_CONTRACTS[currencyId];
+    const validatorId = 42n;
+    const delegatorAddress = "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb";
+    const amount = 1000000000000000000n; // 1 MON in wei
+
+    it("should encode delegate with known selector 0x84994fec", () => {
+      const encoded = encodeStakingData({
+        currencyId,
+        operation: "delegate" as StakingOperation,
+        config,
+        params: [validatorId],
+      });
+      expect(encoded.startsWith("0x84994fec")).toBe(true);
+    });
+
+    it("should encode undelegate with known selector 0x5cf41514", () => {
+      const encoded = encodeStakingData({
+        currencyId,
+        operation: "undelegate" as StakingOperation,
+        config,
+        params: [validatorId, amount, 0],
+      });
+      expect(encoded.startsWith("0x5cf41514")).toBe(true);
+    });
+
+    it("should encode claimReward (claimRewards) with known selector 0xa76e2ca5", () => {
+      const encoded = encodeStakingData({
+        currencyId,
+        operation: "claimReward" as StakingOperation,
+        config,
+        params: [validatorId],
+      });
+      expect(encoded.startsWith("0xa76e2ca5")).toBe(true);
+    });
+
+    it("should encode getStakedBalance (getDelegator) with known selector 0x573c1ce0", () => {
+      const encoded = encodeStakingData({
+        currencyId,
+        operation: "getStakedBalance" as StakingOperation,
+        config,
+        params: [validatorId, delegatorAddress],
+      });
+      expect(encoded.startsWith("0x573c1ce0")).toBe(true);
+    });
+  });
+
   describe("CELO", () => {
     const currencyId = "celo";
     const config = STAKING_CONTRACTS[currencyId];
@@ -133,6 +181,51 @@ describe("encodeStakingData", () => {
 });
 
 describe("decodeStakingResult", () => {
+  describe("Monad", () => {
+    const currencyId = "monad";
+    const config = STAKING_CONTRACTS[currencyId];
+
+    it("should decode getDelegator result and expose stake as decoded[0]", () => {
+      const stakeAmount = 2500000000000000000n; // 2.5 MON in wei
+
+      // Build a getDelegator-shaped result using the Monad ABI.
+      const iface = new ethers.Interface([
+        {
+          type: "function",
+          name: "getDelegator",
+          inputs: [
+            { name: "validatorId", type: "uint64", internalType: "uint64" },
+            { name: "delegator", type: "address", internalType: "address" },
+          ],
+          outputs: [
+            { name: "stake", type: "uint256", internalType: "uint256" },
+            { name: "accRewardPerToken", type: "uint256", internalType: "uint256" },
+            { name: "unclaimedRewards", type: "uint256", internalType: "uint256" },
+            { name: "deltaStake", type: "uint256", internalType: "uint256" },
+            { name: "nextDeltaStake", type: "uint256", internalType: "uint256" },
+            { name: "deltaEpoch", type: "uint64", internalType: "uint64" },
+            { name: "nextDeltaEpoch", type: "uint64", internalType: "uint64" },
+          ],
+          stateMutability: "nonpayable",
+        },
+      ]);
+
+      const encodedResult = iface.encodeFunctionResult("getDelegator", [
+        stakeAmount,    // stake
+        0n,             // accRewardPerToken
+        100000000n,     // unclaimedRewards
+        0n,             // deltaStake
+        0n,             // nextDeltaStake
+        0n,             // deltaEpoch
+        0n,             // nextDeltaEpoch
+      ]);
+
+      const decoded = decodeStakingResult(currencyId, "getStakedBalance" as StakingOperation, config, encodedResult);
+
+      expect(decoded[0]).toBe(stakeAmount);
+    });
+  });
+
   describe("SEI Network", () => {
     const currencyId = "sei_evm";
     const config = STAKING_CONTRACTS[currencyId];
