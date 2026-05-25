@@ -1,5 +1,6 @@
 import { broadcastEvmIntentLWMDefinition } from "./broadcastEvmIntent/intentLWMDefinition";
 import { signApprovalEvmIntentLWMDefinition } from "./signApprovalEvmIntent/intentLWMDefinition";
+import { signPermit2EvmIntentLWMDefinition } from "./signPermit2EvmIntent/intentLWMDefinition";
 import { signSwapEvmIntentLWMDefinition } from "./signSwapEvmIntent/intentLWMDefinition";
 
 /**
@@ -12,6 +13,7 @@ import { signSwapEvmIntentLWMDefinition } from "./signSwapEvmIntent/intentLWMDef
 export const SWAP_POC_INTENT_DEFS = {
   signApproval: signApprovalEvmIntentLWMDefinition,
   signSwap: signSwapEvmIntentLWMDefinition,
+  signPermit2: signPermit2EvmIntentLWMDefinition,
   broadcast: broadcastEvmIntentLWMDefinition,
 } as const;
 

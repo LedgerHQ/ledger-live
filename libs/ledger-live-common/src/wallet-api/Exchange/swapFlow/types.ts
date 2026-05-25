@@ -1,4 +1,4 @@
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, EIP712Message } from "@ledgerhq/types-live";
 import type {
   CustomSwapResult,
   Quote,
@@ -19,12 +19,24 @@ import type {
 export type SwapFlowPlan =
   | {
       /**
-       * Nothing for the wallet to do (no approval needed and the quote is
-       * not a wallet-driven DEX execution). The caller is expected to fall
+       * Nothing for the wallet to do. The caller is expected to fall
        * back to its legacy execution path.
+       *
+       * - `no-approval-non-dex` / `already-approved-non-dex`: quote
+       *   targets a non-DEX provider that the wallet can't drive.
+       * - `rfq-not-supported`: UniswapX / 1inch-Fusion / Velora-Fusion
+       *   quotes need an off-chain order signing path that the wallet
+       *   doesn't yet implement (Task 8 Shape B).
+       * - `dex-approval-blob-missing`: DEX quote that says it needs a
+       *   token approval but did not ship the matching transaction blob;
+       *   we refuse to silently downgrade to a direct swap.
        */
       kind: "skip";
-      reason: "no-approval-non-dex" | "already-approved-non-dex";
+      reason:
+        | "no-approval-non-dex"
+        | "already-approved-non-dex"
+        | "rfq-not-supported"
+        | "dex-approval-blob-missing";
     }
   | {
       /**
@@ -51,6 +63,29 @@ export type SwapFlowPlan =
        * directly. Replaces the previous "resolve `{}`" short-circuit.
        */
       kind: "direct-swap";
+      provider: DexProvider;
+      buildContext: DexBuildContext;
+    }
+  | {
+      /**
+       * Approval already satisfied, quote requires a Permit2 signature
+       * before the swap calldata can be built. 2-step on-device flow:
+       * sign_permit → swap.
+       */
+      kind: "permit-then-swap";
+      permitTypedData: EIP712Message;
+      provider: DexProvider;
+      buildContext: DexBuildContext;
+    }
+  | {
+      /**
+       * 3-step flow: approve_token → sign_permit → swap. Mirrors the
+       * live-app `_stepMachine`'s `approve_token + sign_permit + swap`
+       * sequence for classic AMM quotes that ship Permit2 typed data.
+       */
+      kind: "approval-then-permit-then-swap";
+      approvalTransaction: QuoteApprovalTransaction;
+      permitTypedData: EIP712Message;
       provider: DexProvider;
       buildContext: DexBuildContext;
     };
@@ -122,6 +157,13 @@ export type SignSwapIntentInput = {
   derivationPath: string;
 };
 
+export type SignPermit2IntentInput = {
+  account: Account;
+  typedData: EIP712Message;
+  currencyId: string;
+  derivationPath: string;
+};
+
 export type BroadcastIntentInput = {
   signedTxHex: string;
   currencyId: string;
@@ -145,6 +187,11 @@ export type SwapFlowPorts<TIntent, TInitInput> = {
   };
   /** Build a sign-swap intent runtime instance + matching device init payload. */
   createSignSwapIntent: (input: SignSwapIntentInput) => {
+    intent: TIntent;
+    initInput: TInitInput;
+  };
+  /** Build a Permit2 EIP-712 signing intent runtime instance + matching device init payload. */
+  createSignPermit2Intent: (input: SignPermit2IntentInput) => {
     intent: TIntent;
     initInput: TInitInput;
   };
@@ -184,6 +231,7 @@ export type SwapFlowExecutorSnapshot<TIntent, TInitInput> = {
   phase:
     | "sign-approval"
     | "broadcast-approval"
+    | "sign-permit2"
     | "sign-swap"
     | "broadcast-swap";
 };

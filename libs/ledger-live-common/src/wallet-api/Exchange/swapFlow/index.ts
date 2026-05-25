@@ -17,6 +17,7 @@ export type {
   BroadcastIntentInput,
   PlanSwapFlowInput,
   SignApprovalIntentInput,
+  SignPermit2IntentInput,
   SignSwapIntentInput,
   SwapFlowExecutorSnapshot,
   SwapFlowPlan,

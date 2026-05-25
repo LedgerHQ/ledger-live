@@ -1,8 +1,9 @@
 import type { Account } from "@ledgerhq/types-live";
 import { assign, fromPromise, setup } from "xstate";
-import type { DexTransactionData } from "../dex";
+import type { DexBuildContext, DexTransactionData } from "../dex";
 import type {
   SignApprovalIntentInput,
+  SignPermit2IntentInput,
   SignSwapIntentInput,
   SwapFlowPlan,
   SwapFlowPorts,
@@ -18,9 +19,9 @@ import type {
  * to render a UI (mobile drawer, CLI status logger, etc.).
  *
  * Phase layout matches the live-app `_stepMachine` step vocabulary:
- * `approve_token` (sign + broadcast) → `swap` (build + sign + broadcast).
- * Permit2 / RFQ / revoke are out of scope for this task and surface as a
- * `skip` plan upstream.
+ * `approve_token` (sign + broadcast) → `sign_permit` (Permit2 EIP-712,
+ * optional) → `swap` (build + sign + broadcast). RFQ / revoke flows
+ * surface as a `skip` plan upstream.
  */
 export type SwapFlowStartInput<TIntent, TInitInput> = {
   plan: SwapFlowPlan;
@@ -54,6 +55,12 @@ export type SwapFlowContext<TIntent, TInitInput> = {
   signedTxHex: string | null;
   /** Hash of the broadcast-and-confirmed approval transaction. */
   approvalTxHash: string | null;
+  /**
+   * 65-byte EIP-712 signature produced by the Permit2 phase. Threaded
+   * into {@link DexBuildContext.permitSignature} so the DEX builder can
+   * forward it to the partner's swap endpoint.
+   */
+  permitSignature: string | null;
   /** Calldata produced by `buildSwapTransactionData` (consumed by `signSwap`). */
   swapBuildResult: DexTransactionData | null;
   /** Hash of the broadcast-and-confirmed swap transaction. */
@@ -64,6 +71,7 @@ export type SwapFlowContext<TIntent, TInitInput> = {
 export type SwapFlowEvent<TIntent, TInitInput> =
   | { type: "START"; input: SwapFlowStartInput<TIntent, TInitInput> }
   | { type: "JOB_SIGNED"; signedTxHex: string }
+  | { type: "JOB_PERMIT_SIGNED"; signatureHex: string }
   | { type: "JOB_CONFIRMED"; hash: string }
   | { type: "JOB_FAILED"; error: Error }
   | { type: "JOB_ERROR"; error: Error }
@@ -72,15 +80,20 @@ export type SwapFlowEvent<TIntent, TInitInput> =
   | { type: "SWAP_DISMISSED" }
   | { type: "CANCEL"; error?: Error };
 
+type SwapPlanWithBuild = Extract<
+  SwapFlowPlan,
+  {
+    kind:
+      | "approval-then-swap"
+      | "direct-swap"
+      | "permit-then-swap"
+      | "approval-then-permit-then-swap";
+  }
+>;
+
 type BuildSwapInput = {
-  provider: Extract<
-    SwapFlowPlan,
-    { kind: "approval-then-swap" | "direct-swap" }
-  >["provider"];
-  buildContext: Extract<
-    SwapFlowPlan,
-    { kind: "approval-then-swap" | "direct-swap" }
-  >["buildContext"];
+  provider: SwapPlanWithBuild["provider"];
+  buildContext: DexBuildContext;
 };
 
 function initialContext<TIntent, TInitInput>(): SwapFlowContext<
@@ -98,6 +111,7 @@ function initialContext<TIntent, TInitInput>(): SwapFlowContext<
     currentInitInput: null,
     signedTxHex: null,
     approvalTxHash: null,
+    permitSignature: null,
     swapBuildResult: null,
     swapTxHash: null,
     error: null,
@@ -145,6 +159,7 @@ export function createSwapFlowMachine<TIntent, TInitInput>(
           currentInitInput: null,
           signedTxHex: null,
           approvalTxHash: null,
+          permitSignature: null,
           swapBuildResult: null,
           swapTxHash: null,
           error: null,
@@ -154,7 +169,9 @@ export function createSwapFlowMachine<TIntent, TInitInput>(
         const plan = context.plan;
         if (
           !plan ||
-          (plan.kind !== "approval-only" && plan.kind !== "approval-then-swap")
+          (plan.kind !== "approval-only" &&
+            plan.kind !== "approval-then-swap" &&
+            plan.kind !== "approval-then-permit-then-swap")
         ) {
           return {};
         }
@@ -169,6 +186,28 @@ export function createSwapFlowMachine<TIntent, TInitInput>(
           derivationPath,
         };
         const { intent, initInput } = ports.createSignApprovalIntent(portInput);
+        return { currentIntent: intent, currentInitInput: initInput };
+      }),
+      buildSignPermit2Intent: assign(({ context }) => {
+        const plan = context.plan;
+        if (
+          !plan ||
+          (plan.kind !== "permit-then-swap" &&
+            plan.kind !== "approval-then-permit-then-swap")
+        ) {
+          return {};
+        }
+        const account = context.mainAccount;
+        const currencyId = context.currencyId;
+        const derivationPath = context.derivationPath;
+        if (!account || !currencyId || !derivationPath) return {};
+        const portInput: SignPermit2IntentInput = {
+          account,
+          typedData: plan.permitTypedData,
+          currencyId,
+          derivationPath,
+        };
+        const { intent, initInput } = ports.createSignPermit2Intent(portInput);
         return { currentIntent: intent, currentInitInput: initInput };
       }),
       buildBroadcastIntent: assign(({ context }) => {
@@ -205,6 +244,10 @@ export function createSwapFlowMachine<TIntent, TInitInput>(
       storeSignedTxHex: assign(({ event }) => {
         if (event.type !== "JOB_SIGNED") return {};
         return { signedTxHex: event.signedTxHex };
+      }),
+      storePermitSignature: assign(({ event }) => {
+        if (event.type !== "JOB_PERMIT_SIGNED") return {};
+        return { permitSignature: event.signatureHex, currentIntent: null };
       }),
       storeApprovalHash: assign(({ event }) => {
         if (event.type !== "JOB_CONFIRMED") return {};
@@ -260,16 +303,26 @@ export function createSwapFlowMachine<TIntent, TInitInput>(
       planNeedsApproval: ({ event }) => {
         if (event.type !== "START") return false;
         const k = event.input.plan.kind;
-        return k === "approval-only" || k === "approval-then-swap";
+        return (
+          k === "approval-only" ||
+          k === "approval-then-swap" ||
+          k === "approval-then-permit-then-swap"
+        );
       },
       planIsDirectSwap: ({ event }) => {
         if (event.type !== "START") return false;
         return event.input.plan.kind === "direct-swap";
       },
+      planIsPermitThenSwap: ({ event }) => {
+        if (event.type !== "START") return false;
+        return event.input.plan.kind === "permit-then-swap";
+      },
       planEndsAtApproval: ({ context }) =>
         context.plan?.kind === "approval-only",
       planContinuesToSwap: ({ context }) =>
         context.plan?.kind === "approval-then-swap",
+      planContinuesToPermit: ({ context }) =>
+        context.plan?.kind === "approval-then-permit-then-swap",
     },
   }).createMachine({
     id: "swapFlow",
@@ -287,6 +340,11 @@ export function createSwapFlowMachine<TIntent, TInitInput>(
             {
               guard: "planNeedsApproval",
               target: "signApproval",
+              actions: "acceptStart",
+            },
+            {
+              guard: "planIsPermitThenSwap",
+              target: "signPermit2",
               actions: "acceptStart",
             },
             {
@@ -325,6 +383,11 @@ export function createSwapFlowMachine<TIntent, TInitInput>(
               target: "approvalSuccess",
               actions: "storeApprovalHash",
             },
+            {
+              guard: "planContinuesToPermit",
+              target: "approvalSuccess",
+              actions: "storeApprovalHash",
+            },
           ],
           JOB_FAILED: { target: "failed", actions: "storeJobError" },
           JOB_ERROR: { target: "failed", actions: "storeJobError" },
@@ -334,8 +397,29 @@ export function createSwapFlowMachine<TIntent, TInitInput>(
 
       approvalSuccess: {
         on: {
-          SWAP_PRESSED: { target: "buildSwap" },
+          SWAP_PRESSED: [
+            {
+              guard: "planContinuesToPermit",
+              target: "signPermit2",
+            },
+            {
+              target: "buildSwap",
+            },
+          ],
           APPROVAL_DISMISSED: { target: "resolvingApprovalOnly" },
+          CANCEL: { target: "cancelled", actions: "storeCancelError" },
+        },
+      },
+
+      signPermit2: {
+        entry: "buildSignPermit2Intent",
+        on: {
+          JOB_PERMIT_SIGNED: {
+            target: "buildSwap",
+            actions: "storePermitSignature",
+          },
+          JOB_FAILED: { target: "failed", actions: "storeJobError" },
+          JOB_ERROR: { target: "failed", actions: "storeJobError" },
           CANCEL: { target: "cancelled", actions: "storeCancelError" },
         },
       },
@@ -348,13 +432,19 @@ export function createSwapFlowMachine<TIntent, TInitInput>(
             const plan = context.plan;
             if (
               !plan ||
-              (plan.kind !== "approval-then-swap" && plan.kind !== "direct-swap")
+              (plan.kind !== "approval-then-swap" &&
+                plan.kind !== "direct-swap" &&
+                plan.kind !== "permit-then-swap" &&
+                plan.kind !== "approval-then-permit-then-swap")
             ) {
               throw new Error(
                 "buildSwap actor invoked with an incompatible plan",
               );
             }
-            return { provider: plan.provider, buildContext: plan.buildContext };
+            const buildContext: DexBuildContext = context.permitSignature
+              ? { ...plan.buildContext, permitSignature: context.permitSignature }
+              : plan.buildContext;
+            return { provider: plan.provider, buildContext };
           },
           // Inline assign actions on onDone/onError. The runtime event types
           // (`xstate.done.actor.buildSwap` / `xstate.error.actor.buildSwap`)

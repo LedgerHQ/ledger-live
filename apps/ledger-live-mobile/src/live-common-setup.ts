@@ -170,6 +170,16 @@ setSupportedCurrencies([
 if (Config.FORCE_PROVIDER && !isNaN(parseInt(Config.FORCE_PROVIDER, 10)))
   setEnv("FORCE_PROVIDER", parseInt(Config.FORCE_PROVIDER, 10));
 
+// FIXME(POC dev override): hardcode swap aggregator to staging on mobile so
+// the wallet-side `custom.exchange.getQuotes` matches the live-app's
+// persisted `swapApiBase` (set to STG via the live-app dev settings). Mobile
+// has no equivalent of desktop's `apps/ledger-live-desktop/src/main/setup.ts`
+// loop that propagates `process.env.*` into `@ledgerhq/live-env`, and
+// `react-native-config` was not surfacing `Config.SWAP_API_BASE` at runtime
+// in the current build. Revert this once env wiring is unified across
+// platforms.
+setEnv("SWAP_API_BASE", "https://swap-stg.ledger-test.com/v5");
+
 let ledgerClientVersion =
   Platform.OS === "ios"
     ? `llm-ios/${VersionNumber.appVersion}`

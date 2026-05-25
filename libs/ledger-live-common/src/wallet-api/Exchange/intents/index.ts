@@ -29,3 +29,14 @@ export type {
   BroadcastEvmIntentInput,
   BroadcastEvmJobState,
 } from "./broadcastEvm";
+
+export {
+  signPermit2EvmIntentDefinition,
+  signPermit2EvmJob,
+  toEIP712Message,
+} from "./signPermit2Evm";
+export type {
+  SignPermit2EvmIntentDefinition,
+  SignPermit2EvmIntentInput,
+  SignPermit2EvmJobState,
+} from "./signPermit2Evm";

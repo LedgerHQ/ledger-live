@@ -34,6 +34,11 @@ import type {
   SignSwapEvmJobState,
 } from "./intents/signSwapEvmIntent/types";
 import type {
+  SignPermit2EvmIntent,
+  SignPermit2EvmIntentInput,
+  SignPermit2EvmJobState,
+} from "./intents/signPermit2EvmIntent/types";
+import type {
   BroadcastEvmIntent,
   BroadcastEvmIntentInput,
   BroadcastEvmJobState,
@@ -57,15 +62,18 @@ const ETHEREUM_INITIALIZATION_INPUT: InitializationInput = {
 type AnyJobState =
   | SignApprovalEvmJobState
   | SignSwapEvmJobState
+  | SignPermit2EvmJobState
   | BroadcastEvmJobState;
 type AnyInput =
   | SignApprovalEvmIntentInput
   | SignSwapEvmIntentInput
+  | SignPermit2EvmIntentInput
   | BroadcastEvmIntentInput;
 type AnyExtraProps = Record<string, never>;
 type AnyIntent =
   | SignApprovalEvmIntent
   | SignSwapEvmIntent
+  | SignPermit2EvmIntent
   | BroadcastEvmIntent;
 
 /**
@@ -189,6 +197,15 @@ const LWM_SWAP_FLOW_PORTS: SwapFlowPorts<AnyIntent, InitializationInput> = {
     }),
     initInput: ETHEREUM_INITIALIZATION_INPUT,
   }),
+  createSignPermit2Intent: ({ account, typedData, currencyId, derivationPath }) => ({
+    intent: createIntent(SWAP_POC_INTENT_DEFS.signPermit2, {
+      account,
+      typedData,
+      currencyId,
+      derivationPath,
+    }),
+    initInput: ETHEREUM_INITIALIZATION_INPUT,
+  }),
   createBroadcastIntent: ({ signedTxHex, currencyId, initInput }) => ({
     intent: createIntent(SWAP_POC_INTENT_DEFS.broadcast, { signedTxHex, currencyId }),
     // Re-use the previous phase's init input so the executor absorbs the
@@ -232,7 +249,15 @@ export function useSwapDeviceIntentPocOrchestration({
       if (!("type" in jobState)) return;
       switch (jobState.type) {
         case "signed":
-          send({ type: "JOB_SIGNED", signedTxHex: jobState.signedTxHex });
+          // Sign-approval / sign-swap jobs emit `signedTxHex`; the
+          // Permit2 job emits `signatureHex`. Discriminate on the
+          // payload shape so the host doesn't need to know which phase
+          // is currently active.
+          if ("signedTxHex" in jobState) {
+            send({ type: "JOB_SIGNED", signedTxHex: jobState.signedTxHex });
+          } else if ("signatureHex" in jobState) {
+            send({ type: "JOB_PERMIT_SIGNED", signatureHex: jobState.signatureHex });
+          }
           break;
         case "confirmed":
           send({ type: "JOB_CONFIRMED", hash: jobState.hash });
@@ -327,6 +352,7 @@ export function useSwapDeviceIntentPocOrchestration({
     const isDevicePhase =
       state.matches("signApproval") ||
       state.matches("broadcastApproval") ||
+      state.matches("signPermit2") ||
       state.matches("signSwap") ||
       state.matches("broadcastSwap");
     if (!isDevicePhase) return null;
