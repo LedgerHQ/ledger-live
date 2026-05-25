@@ -11,6 +11,7 @@ export type ManagementViewProps = {
   searchQuery: string;
   selectedContactName: string;
   selectedContact: Contact;
+  selectedContactIsMe: boolean;
   takenContactNames: string[];
   onSearchQueryChange: (next: string) => void;
   onSelectContact: (name: string) => void;
@@ -41,6 +42,7 @@ export function ManagementView({
   searchQuery,
   selectedContactName,
   selectedContact,
+  selectedContactIsMe,
   takenContactNames,
   onSearchQueryChange,
   onSelectContact,
@@ -87,6 +89,7 @@ export function ManagementView({
         <ContactDetails
           contact={selectedContact}
           takenContactNames={takenContactNames}
+          isMe={selectedContactIsMe}
           onRenameContact={onRenameContact}
           onDeleteContact={onDeleteContact}
         />

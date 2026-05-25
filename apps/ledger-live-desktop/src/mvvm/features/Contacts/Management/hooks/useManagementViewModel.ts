@@ -13,11 +13,30 @@ import {
   useDeletedContacts,
 } from "../utils/sidecarOverrides";
 
+/** Suffix appended to the user's chosen name when renaming the
+ *  protected "me" contact. Match `(Me)` exactly per the spec. */
+const ME_SUFFIX = " (Me)";
+
+/**
+ * Strip a trailing ` (Me)` so the EditContactDialog can pre-fill
+ * the user-editable portion of the display name. Idempotent.
+ */
+export function stripMeSuffix(name: string): string {
+  return name.endsWith(ME_SUFFIX) ? name.slice(0, -ME_SUFFIX.length) : name;
+}
+
 export type ManagementViewModel = {
   groups: ContactGroup[];
   searchQuery: string;
   selectedContactName: string;
   selectedContact: Contact;
+  /**
+   * True when the selected contact resolves (via the rename overlay)
+   * to the special "me" identity. Used by `ContactDetails` to hide
+   * the Delete affordance and strip the `(Me)` suffix in the edit
+   * dialog's pre-fill.
+   */
+  selectedContactIsMe: boolean;
   /** Display names that are already taken — used by Add/Edit dialogs' duplicate checks. */
   takenContactNames: string[];
   onSearchQueryChange: (next: string) => void;
@@ -123,6 +142,17 @@ export function useManagementViewModel(): ManagementViewModel {
     };
   }, [mergedContacts, selectedContactName]);
 
+  // The contact is "me" when its underlying name is the placeholder
+  // `me` key. Resolve via the renames map: a renamed `me` will have
+  // `renames["me"] === selectedContact.name`. Compare on
+  // case-insensitive trimmed names to match the synthesizer's behavior.
+  const selectedContactIsMe = useMemo(() => {
+    const display = selectedContact.name.trim().toLowerCase();
+    if (display === ME_CONTACT_NAME) return true;
+    const renamedFromMe = renames[ME_CONTACT_NAME];
+    return renamedFromMe !== undefined && renamedFromMe === selectedContact.name;
+  }, [renames, selectedContact.name]);
+
   const onAddContact = useCallback(
     (name: string) => {
       const trimmed = name.trim();
@@ -138,7 +168,7 @@ export function useManagementViewModel(): ManagementViewModel {
   const onRenameContact = useCallback(
     (currentDisplayName: string, newName: string) => {
       const trimmed = newName.trim();
-      if (!trimmed || trimmed === currentDisplayName) return;
+      if (!trimmed) return;
       // Resolve the underlying name (pre-rename) for the override key.
       // `currentDisplayName` IS the display name; find the underlying
       // that maps to it — either directly (no prior rename) or via the
@@ -146,22 +176,38 @@ export function useManagementViewModel(): ManagementViewModel {
       const underlying =
         Object.entries(renames).find(([, dn]) => dn === currentDisplayName)?.[0] ??
         currentDisplayName;
-      setContactRename(underlying, trimmed);
+      // Protected "me" contact: the user types the part they care
+      // about (e.g. "Benoit") and we append the " (Me)" suffix so the
+      // identity stays recognizable. `stripMeSuffix` first removes any
+      // suffix the user may have typed themselves so we don't end up
+      // with "Benoit (Me) (Me)". The dialog also pre-fills the
+      // stripped value, so this is a defensive idempotency.
+      const isMe = underlying.trim().toLowerCase() === ME_CONTACT_NAME;
+      const finalName = isMe ? `${stripMeSuffix(trimmed)}${ME_SUFFIX}` : trimmed;
+      // No-op when the resulting name matches what's already displayed.
+      if (finalName === currentDisplayName) return;
+      setContactRename(underlying, finalName);
       // Snap selection to the new display name so the right pane
       // doesn't unselect.
-      setSelectedContactName(trimmed);
+      setSelectedContactName(finalName);
     },
     [renames],
   );
 
   const onDeleteContact = useCallback(
     (displayName: string) => {
-      // Mark BOTH the underlying name and the current display name as
-      // deleted, so the filter catches it regardless of which side of
-      // the rename overlay the row is using.
+      // Resolve the underlying name (in case the display name is a
+      // rename overlay).
       const underlying =
         Object.entries(renames).find(([, dn]) => dn === displayName)?.[0] ??
         displayName;
+      // The "me" contact is protected — it can be renamed but never
+      // deleted. Belt-and-braces guard; the menu also hides Delete
+      // for "me" via the `canDelete` prop.
+      if (underlying.trim().toLowerCase() === ME_CONTACT_NAME) return;
+      // Mark BOTH the underlying name and the current display name as
+      // deleted, so the filter catches it regardless of which side of
+      // the rename overlay the row is using.
       markContactDeleted(underlying);
       if (underlying !== displayName) markContactDeleted(displayName);
       // Snap selection back to "me" (always available via the
@@ -176,6 +222,7 @@ export function useManagementViewModel(): ManagementViewModel {
     searchQuery,
     selectedContactName,
     selectedContact,
+    selectedContactIsMe,
     takenContactNames,
     onSearchQueryChange: setSearchQuery,
     onSelectContact: setSelectedContactName,
