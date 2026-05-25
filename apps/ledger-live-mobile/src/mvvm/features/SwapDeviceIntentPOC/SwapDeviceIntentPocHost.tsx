@@ -68,8 +68,15 @@ export function SwapDeviceIntentPocHost({
               <InfoState
                 preset="success"
                 title="Token approved"
-                description="You can now initiate your swap"
-                primaryCta={{ label: "Swap", onPress: successScreen.onSwapPress }}
+                description={
+                  successScreen.nextStep === "permit"
+                    ? "Sign the permit on your device to authorize the swap"
+                    : "You can now initiate your swap"
+                }
+                primaryCta={{
+                  label: successScreen.nextStep === "permit" ? "Sign permit" : "Swap",
+                  onPress: successScreen.onPrimaryPress,
+                }}
                 size="hug"
               />
             ) : (

@@ -88,10 +88,18 @@ type AnyIntent =
 export type SwapPocSuccessScreen =
   | {
       kind: "approval";
+      /**
+       * Next on-device step the primary CTA will trigger. Mirrors the
+       * swap-live-app `useSwapLabels` ordering (approve → sign_permit →
+       * swap) so the button copy matches what tapping it actually does:
+       * for an `approval-then-permit-then-swap` plan the next step is
+       * the Permit2 typed-data signature, not the swap calldata sign.
+       */
+      nextStep: "permit" | "swap";
       /** Hash of the broadcast-and-confirmed approval transaction. */
       approvalTxHash: string;
-      /** Called when the user taps the primary "Swap" CTA (kicks off the swap step). */
-      onSwapPress: () => void;
+      /** Called when the user taps the primary CTA (kicks off the next step). */
+      onPrimaryPress: () => void;
       /** Called when the user dismisses the sheet (X or backdrop) — resolves with approval only. */
       onClose: () => void;
     }
@@ -383,10 +391,18 @@ export function useSwapDeviceIntentPocOrchestration({
 
   const successScreen = useMemo<SwapPocSuccessScreen | null>(() => {
     if (state.matches("approvalSuccess") && state.context.approvalTxHash) {
+      // The machine already routes `SWAP_PRESSED` to `signPermit2` vs
+      // `buildSwap` via `planContinuesToPermit`; we mirror that decision
+      // here so the host can label the CTA after the actual next phase.
+      const nextStep =
+        state.context.plan?.kind === "approval-then-permit-then-swap"
+          ? "permit"
+          : "swap";
       return {
         kind: "approval",
+        nextStep,
         approvalTxHash: state.context.approvalTxHash,
-        onSwapPress: () => send({ type: "SWAP_PRESSED" }),
+        onPrimaryPress: () => send({ type: "SWAP_PRESSED" }),
         onClose: () => send({ type: "APPROVAL_DISMISSED" }),
       };
     }
