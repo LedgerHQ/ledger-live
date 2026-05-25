@@ -51,12 +51,18 @@ const ACTIONS: Action[] = [
   { id: "delete", i18nKey: "contactsManagement.contactMenu.delete", icon: Trash, destructive: true },
 ];
 
-// Empty handler keeps Lumen's interactive state on without firing
-// a side-effect — same pattern as AddressRowMenu's L4 items.
-const noop = () => {};
+type Props = {
+  onEdit?: () => void;
+  onDelete?: () => void;
+};
 
-export function ContactMenu() {
+export function ContactMenu({ onEdit, onDelete }: Props = {}) {
   const { t } = useTranslation();
+
+  const handlers: Record<ActionId, (() => void) | undefined> = {
+    edit: onEdit,
+    delete: onDelete,
+  };
 
   return (
     <Popover>
@@ -89,7 +95,7 @@ export function ContactMenu() {
             <button
               key={action.id}
               type="button"
-              onClick={noop}
+              onClick={handlers[action.id]}
               data-testid={`contacts-management-contact-menu-${action.id}`}
               className={cn(
                 "flex h-44 w-full items-center gap-12 rounded-sm px-8",

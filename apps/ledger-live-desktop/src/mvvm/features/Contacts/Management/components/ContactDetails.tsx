@@ -9,11 +9,18 @@ import { AddAddressDialog } from "./AddAddressDialog";
 import { AddressDetailDialog } from "./AddressDetailDialog";
 import { AddressRow } from "./AddressRow";
 import { ContactMenu } from "./ContactMenu";
+import { EditContactDialog } from "./EditContactDialog";
 import { EmptyAddressState } from "./EmptyAddressState";
 import { InitialsAvatar } from "./InitialsAvatar";
 
 type Props = {
   contact: Contact;
+  /** Other display names — used by EditContactDialog's duplicate check. */
+  takenContactNames: string[];
+  /** Rename the displayed contact. Forwarded from the viewmodel. */
+  onRenameContact: (currentDisplayName: string, newName: string) => void;
+  /** Delete the displayed contact. Forwarded from the viewmodel. */
+  onDeleteContact: (displayName: string) => void;
 };
 
 /**
@@ -41,7 +48,12 @@ type Props = {
  * placeholder), the address sections are suppressed entirely — the empty
  * state lands in a follow-up.
  */
-export function ContactDetails({ contact }: Props) {
+export function ContactDetails({
+  contact,
+  takenContactNames,
+  onRenameContact,
+  onDeleteContact,
+}: Props) {
   const { t } = useTranslation();
   const count = contact.entries.length;
   // Subscribe once at the parent so each AddressRow's grouping
@@ -65,6 +77,19 @@ export function ContactDetails({ contact }: Props) {
   const [addAddressOpen, setAddAddressOpen] = useState(false);
   const openAddAddress = () => setAddAddressOpen(true);
 
+  // Open state for the Edit-Contact rename Dialog. The dialog itself
+  // pre-fills the current name; on submit it bubbles the new name
+  // back into the viewmodel via `onRenameContact`.
+  const [editContactOpen, setEditContactOpen] = useState(false);
+
+  // Other display names — exclude the current contact so the dialog's
+  // duplicate check treats "rename to same name" as a no-op rather
+  // than a duplicate.
+  const otherTakenNames = useMemo(
+    () => takenContactNames.filter(n => n !== contact.name),
+    [takenContactNames, contact.name],
+  );
+
   return (
     <div
       data-testid="contacts-management-details"
@@ -80,7 +105,10 @@ export function ContactDetails({ contact }: Props) {
           onClick={openAddAddress}
           data-testid="contacts-management-add-address"
         />
-        <ContactMenu />
+        <ContactMenu
+          onEdit={() => setEditContactOpen(true)}
+          onDelete={() => onDeleteContact(contact.name)}
+        />
       </div>
 
       {/* Centered identity block. */}
@@ -148,6 +176,17 @@ export function ContactDetails({ contact }: Props) {
         open={addAddressOpen}
         onOpenChange={setAddAddressOpen}
         contact={contact}
+      />
+
+      <EditContactDialog
+        open={editContactOpen}
+        onOpenChange={setEditContactOpen}
+        currentName={contact.name}
+        takenNames={otherTakenNames}
+        onSubmit={newName => {
+          setEditContactOpen(false);
+          onRenameContact(contact.name, newName);
+        }}
       />
     </div>
   );

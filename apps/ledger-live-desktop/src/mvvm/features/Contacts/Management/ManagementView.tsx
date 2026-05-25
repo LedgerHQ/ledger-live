@@ -15,6 +15,8 @@ export type ManagementViewProps = {
   onSearchQueryChange: (next: string) => void;
   onSelectContact: (name: string) => void;
   onAddContact: (name: string) => void;
+  onRenameContact: (currentDisplayName: string, newName: string) => void;
+  onDeleteContact: (displayName: string) => void;
 };
 
 /**
@@ -43,6 +45,8 @@ export function ManagementView({
   onSearchQueryChange,
   onSelectContact,
   onAddContact,
+  onRenameContact,
+  onDeleteContact,
 }: ManagementViewProps) {
   const [addContactOpen, setAddContactOpen] = useState(false);
 
@@ -80,7 +84,12 @@ export function ManagementView({
           onSearchQueryChange={onSearchQueryChange}
           onSelectContact={onSelectContact}
         />
-        <ContactDetails contact={selectedContact} />
+        <ContactDetails
+          contact={selectedContact}
+          takenContactNames={takenContactNames}
+          onRenameContact={onRenameContact}
+          onDeleteContact={onDeleteContact}
+        />
       </div>
 
       <AddContactDialog
