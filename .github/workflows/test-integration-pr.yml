@@ -76,7 +76,36 @@ jobs:
       - name: Install dependencies
         run: pnpm i --filter="live-common..." --filter="ledger-live" --filter="@ledgerhq/ledger-wallet-framework"
 
+      # Seed the local nx cache for live-common's transitive deps in two
+      # chunks. Each chunk runs in its own nx process so the per-task fd burst
+      # inside @nx/s3-cache's createPack() stays under the Windows ceiling.
+      # Smaller libs are safe to go through nx; only live-common (built below)
+      # is too large for a single createPack call.
+      - name: Warm cache (Windows)
+        if: matrix.os == 'windows-2022'
+        shell: bash
+        env:
+          NX_DAEMON: "false"
+        run: |
+          set -euo pipefail
+          pnpm exec nx graph --focus=@ledgerhq/live-common --file=live-common-graph.json
+          node tools/nx/print-build-dep-chunks.mjs live-common-graph.json @ledgerhq/live-common 2 > warm-chunks.txt
+          echo "Warming $(wc -l < warm-chunks.txt) chunks for @ledgerhq/live-common"
+          while IFS= read -r chunk; do
+            [ -z "$chunk" ] && continue
+            echo "::group::Warming chunk: $chunk"
+            pnpm exec nx run-many -t build -p "$chunk" --parallel=1
+            echo "::endgroup::"
+          done < warm-chunks.txt
+
+      # live-common emits ~8k cached files. This results in an EMFILE in windows. Skip NX for this step on windows
+      - name: Build (Windows — bypass nx cache write)
+        if: matrix.os == 'windows-2022'
+        shell: bash
+        run: pnpm --filter @ledgerhq/live-common run build
+
       - name: Build
+        if: matrix.os != 'windows-2022'
         run: pnpm exec nx run @ledgerhq/live-common:build
 
       - name: Test
