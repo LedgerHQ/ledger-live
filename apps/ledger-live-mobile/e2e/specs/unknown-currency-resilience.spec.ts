@@ -4,8 +4,9 @@ import { initTestAccounts } from "../models/currencies";
 
 describe("Portfolio to load with unknown currency data in accounts", () => {
   beforeAll(async () => {
+    const accounts = await initTestAccounts(["bitcoin", "bitcoin"]);
     const [badAccount1, badAccount2] = await Promise.all(
-      initTestAccounts(["bitcoin", "bitcoin"]).map(account => toAccountRaw(account)),
+      accounts.map(account => toAccountRaw(account)),
     );
     badAccount1.currencyId = "DO_NOT_EXIST";
     badAccount1.id = badAccount1.id.replace("bitcoin", "DO_NOT_EXIST");

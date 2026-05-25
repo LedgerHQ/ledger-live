@@ -17,9 +17,10 @@ export const sync: AccountBridge<any>["sync"] = initialAccount =>
   new Observable(o => {
     const accountId = initialAccount.id;
 
-    const sync = () => {
+    const sync = async () => {
       const ops = broadcasted[accountId] || [];
       broadcasted[accountId] = [];
+      const perFamilyOperation = await loadMockAccountForFamily(initialAccount.currency.family);
       o.next(acc => {
         const balance = ops.reduce(
           (sum, op) => sum.plus(getOperationAmountNumber(op)),
@@ -34,15 +35,14 @@ export const sync: AccountBridge<any>["sync"] = initialAccount =>
           balance,
           spendableBalance: balance,
         };
-        const perFamilyOperation = loadMockAccountForFamily(acc.currency.family);
-        const postSyncAccount = perFamilyOperation && perFamilyOperation.postSyncAccount;
+        const postSyncAccount = perFamilyOperation?.postSyncAccount;
         if (postSyncAccount) return postSyncAccount(nextAcc);
         return nextAcc;
       });
       o.complete();
     };
 
-    syncTimeouts[accountId] = setTimeout(sync, 500);
+    syncTimeouts[accountId] = setTimeout(() => sync().catch(e => o.error(e)), 500);
 
     return () => {
       clearTimeout(syncTimeouts[accountId]);
@@ -145,8 +145,8 @@ export const scanAccounts: CurrencyBridge["scanAccounts"] = ({ currency }) =>
           account.spendableBalance = account.balance = new BigNumber(0);
         }
 
-        const perFamilyOperation = loadMockAccountForFamily(currency.family);
-        const postScanAccount = perFamilyOperation && perFamilyOperation.postScanAccount;
+        const perFamilyOperation = await loadMockAccountForFamily(currency.family);
+        const postScanAccount = perFamilyOperation?.postScanAccount;
         if (postScanAccount)
           postScanAccount(account, {
             isEmpty: isLast,

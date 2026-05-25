@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import type { Unit } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import { fireEvent, render, screen } from "@tests/test-renderer";
+import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/impl";
 import React from "react";
 import { View } from "../index";
 import type { PendingTransferProposalsViewModel } from "../usePendingTransferProposalsViewModel";
@@ -9,6 +10,8 @@ import { ACCOUNT_XPUB, createCantonAccount, createRawProposal } from "./test-uti
 
 const unit: Unit = { code: "CANTON", magnitude: 38, name: "Canton" };
 const mockAccount = createCantonAccount();
+
+beforeAll(() => getCurrencyBridge(mockAccount.currency as CryptoCurrency));
 
 const buildIncoming = (contractId = "contract-123") => {
   const { incoming } = processTransferProposals(

@@ -58,7 +58,7 @@ describe("useBridgeRecipientValidation", () => {
     jest.clearAllMocks();
     jest.useFakeTimers();
     mockedGetMainAccount.mockReturnValue(mockAccount);
-    mockedGetAccountBridge.mockReturnValue(mockBridge);
+    mockedGetAccountBridge.mockResolvedValue(mockBridge);
     mockBridge.createTransaction.mockReturnValue({ recipient: "" });
     mockBridge.updateTransaction.mockImplementation((tx, updates) => ({ ...tx, ...updates }));
     mockBridge.prepareTransaction.mockResolvedValue({ recipient: "valid_address" });

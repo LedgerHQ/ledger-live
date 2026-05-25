@@ -7,6 +7,8 @@ import {
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/canton/types";
+import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/impl";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import SendSelectRecipient from "./SendSelectRecipient";
 import {
@@ -94,6 +96,8 @@ describe("StepRecipientCustomAlert", () => {
     } satisfies Transaction,
     status: createMockTransactionStatus(),
   };
+
+  beforeAll(() => getCurrencyBridge(defaultProps.account.currency as CryptoCurrency));
 
   beforeEach(() => {
     jest.clearAllMocks();

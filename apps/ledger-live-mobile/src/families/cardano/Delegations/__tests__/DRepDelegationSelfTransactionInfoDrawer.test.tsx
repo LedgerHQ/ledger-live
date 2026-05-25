@@ -49,7 +49,9 @@ describe("DRepDelegationSelfTransactionInfoDrawer", () => {
     mockBridge.createTransaction.mockClear();
     mockBridge.updateTransaction.mockClear();
 
-    (getAccountBridge as jest.Mock).mockReturnValue(mockBridge);
+    (getAccountBridge as jest.Mock).mockReturnValue(
+      Object.assign(Promise.resolve(mockBridge), { status: "fulfilled", value: mockBridge }),
+    );
   });
 
   it("renders when isOpen is true", () => {

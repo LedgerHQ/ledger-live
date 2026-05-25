@@ -1,6 +1,8 @@
 {
   "extends": "../../../tsconfig.base",
   "compilerOptions": {
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "declaration": true,
     "declarationMap": true,
     "noImplicitAny": false,

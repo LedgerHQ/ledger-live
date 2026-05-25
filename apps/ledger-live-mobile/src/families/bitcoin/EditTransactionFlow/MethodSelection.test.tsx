@@ -24,11 +24,16 @@ jest.mock("@ledgerhq/live-common/account/index", () => {
   };
 });
 
-jest.mock("@ledgerhq/live-common/bridge/index", () => ({
-  getAccountBridge: jest.fn().mockReturnValue({
-    updateTransaction: jest.fn(),
-  }),
-}));
+jest.mock("@ledgerhq/live-common/bridge/index", () => {
+  const bridge = { updateTransaction: jest.fn() };
+  const settledPromise = Object.assign(Promise.resolve(bridge), {
+    status: "fulfilled",
+    value: bridge,
+  });
+  return {
+    getAccountBridge: jest.fn().mockReturnValue(settledPromise),
+  };
+});
 
 jest.mock("@ledgerhq/live-common/bridge/useBridgeTransaction", () => ({
   __esModule: true,
