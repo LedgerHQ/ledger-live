@@ -2,16 +2,19 @@ import type {
   Account,
   AccountBridge,
   AccountBridgeExtensions,
+  AccountLike,
+  AccountRaw,
   AnyMessage,
   AddressValidationCurrencyParameters,
   CurrencyBridge,
+  Operation,
   TransactionCommon,
   TransactionStatusCommon,
 } from "@ledgerhq/types-live";
+import type { Transaction as WalletAPITransaction } from "@ledgerhq/wallet-api-core";
 import type Prando from "prando";
 import type { Resolver } from "../hw/getAddress/types";
 import type { SignMessage } from "../hw/signMessage/types";
-import type { GetWalletAPITransactionSignFlowInfos } from "../wallet-api/types";
 import type { CoinFrameworkSigner } from "../bridge/generic-coin-framework/types";
 export type { CoinFrameworkSigner };
 
@@ -20,9 +23,6 @@ export type MessageSignerModule = {
   prepareMessageToSign?: (opts: { account: Account; message: string }) => AnyMessage;
 };
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-// Parameters are `any` because each family uses its own transaction/raw types at the loader boundary.
-// Method syntax enables bivariant param checking so family-specific implementations are assignable.
 export type TransactionModule = {
   fromTransactionRaw(raw: any): TransactionCommon;
   toTransactionRaw(tx: any): Record<string, unknown>;
@@ -32,11 +32,29 @@ export type TransactionModule = {
   formatTransactionStatus?(tx: any, status: any, mainAccount?: Account): string;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type DeviceTransactionConfigFn = (arg: any) => Promise<any[]>;
+export type DeviceTransactionConfigFn<
+  T extends TransactionCommon = any,
+  U extends TransactionStatusCommon = any,
+  A extends Account = any,
+> = (arg: {
+  account: A;
+  parentAccount: A | null | undefined;
+  transaction: T;
+  status: U;
+}) => Promise<any[]>;
 
-export type WalletApiAdapterModule = {
-  getWalletAPITransactionSignFlowInfos: GetWalletAPITransactionSignFlowInfos<any, any>;
+export type WalletApiAdapterModule<
+  W extends WalletAPITransaction = WalletAPITransaction,
+  A extends Account = Account,
+> = {
+  getWalletAPITransactionSignFlowInfos(input: {
+    walletApiTransaction: W;
+    account: AccountLike<A>;
+  }): {
+    canEditFees: boolean;
+    hasFeesProvided: boolean;
+    liveTx: Partial<TransactionCommon>;
+  };
 };
 
 export type PlatformAdapterModule = {
@@ -46,37 +64,43 @@ export type PlatformAdapterModule = {
     liveTx: Partial<TransactionCommon>;
   };
 };
-/* eslint-enable @typescript-eslint/no-explicit-any */
 
-export type AccountModule = {
-  injectGetAddressParams?: (account: any) => Record<string, unknown>;
+export type AccountModule<A extends Account = Account> = {
+  injectGetAddressParams?(account: A): Record<string, unknown>;
   [key: string]: unknown;
 };
 
-export type MockBridgeModule = {
+export type MockBridgeModule<
+  T extends TransactionCommon = any,
+  A extends Account = any,
+  U extends TransactionStatusCommon = TransactionStatusCommon,
+  O extends Operation = any,
+  R extends AccountRaw = AccountRaw,
+> = {
   currencyBridge: CurrencyBridge;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  accountBridge: AccountBridge<any, any, any, any, any>;
+  accountBridge: AccountBridge<T, A, U, O, R>;
   loadCoinConfig?: () => void;
 };
 
-// Method syntax enables bivariant param checking so family-specific implementations
-// (e.g. cosmos using CosmosAccount) are assignable.
-export type MockAccountModule = {
-  genAccountEnhanceOperations?(account: any, rng: Prando): any;
-  postSyncAccount?: (account: Account) => Account;
-  postScanAccount?: (account: Account, opts?: any) => Account;
+export type MockAccountModule<A extends Account = Account> = {
+  genAccountEnhanceOperations?(account: A, rng: Prando): A;
+  postSyncAccount?(account: A): A;
+  postScanAccount?(account: A, opts?: { isEmpty?: boolean }): A;
 };
 
-export type FamilySetup = {
+export type FamilySetup<
+  T extends TransactionCommon = any,
+  A extends Account = any,
+  U extends TransactionStatusCommon = TransactionStatusCommon,
+  O extends Operation = any,
+  R extends AccountRaw = AccountRaw,
+> = {
   bridge?: {
     currencyBridge: CurrencyBridge;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    accountBridge: AccountBridge<any, any, any, any, any>;
+    accountBridge: AccountBridge<T, A, U, O, R>;
   };
   resolver?: Resolver;
   messageSigner?: MessageSignerModule;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   cliTools?: any;
 };
 
@@ -85,16 +109,23 @@ export type ValidateAddressFn = (
   parameters: Partial<AddressValidationCurrencyParameters>,
 ) => Promise<boolean>;
 
-export type CoinModuleLoader = {
+export type CoinModuleLoader<
+  T extends TransactionCommon = any,
+  A extends Account = any,
+  U extends TransactionStatusCommon = TransactionStatusCommon,
+  O extends Operation = any,
+  R extends AccountRaw = AccountRaw,
+  W extends WalletAPITransaction = WalletAPITransaction,
+> = {
   family: string;
-  loadSetup: () => Promise<FamilySetup>;
+  loadSetup: () => Promise<FamilySetup<T, A, U, O, R>>;
   loadTransaction: () => Promise<TransactionModule>;
-  loadDeviceTxConfig?: () => Promise<DeviceTransactionConfigFn>;
-  loadWalletApiAdapter?: () => Promise<WalletApiAdapterModule>;
+  loadDeviceTxConfig?: () => Promise<DeviceTransactionConfigFn<T, any, A>>;
+  loadWalletApiAdapter?: () => Promise<WalletApiAdapterModule<W, A>>;
   loadPlatformAdapter?: () => Promise<PlatformAdapterModule>;
-  loadAccount?: () => Promise<AccountModule>;
-  loadMockBridge?: () => Promise<MockBridgeModule>;
-  loadMockAccount?: () => Promise<MockAccountModule>;
+  loadAccount?: () => Promise<AccountModule<A>>;
+  loadMockBridge?: () => Promise<MockBridgeModule<T, A, U, O, R>>;
+  loadMockAccount?: () => Promise<MockAccountModule<A>>;
   loadValidateAddress?: () => Promise<ValidateAddressFn>;
   loadSigner?: () => Promise<CoinFrameworkSigner>;
   loadBridgeExtensions?: () => Promise<AccountBridgeExtensions>;
