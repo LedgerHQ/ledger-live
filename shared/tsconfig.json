@@ -1,4 +1,9 @@
 {
   "files": [],
-  "references": [{ "path": "./feature-flags" }, { "path": "./schema-primitives" }, { "path": "./auth" }]
+  "references": [
+    { "path": "./feature-flags" },
+    { "path": "./schema-primitives" },
+    { "path": "./mobile-host-runtime" },
+    { "path": "./auth" }
+  ]
 }

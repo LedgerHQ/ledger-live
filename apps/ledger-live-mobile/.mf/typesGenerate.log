@@ -1,0 +1,49 @@
+[2026-05-26T11:54:11.505Z] [INFO] forkDevWorker - ChildProcess(74529), message: {"type":"mf_call","id":"ecb65730-adf4-4b00-b58b-e050dd4221ff","args":[{"name":"HostApp","host":{"moduleFederationConfig":{"name":"HostApp","filename":"HostApp.container.js.bundle","remotes":{"swap":"swap@http://localhost:9000/ios/mf-manifest.json"},"dts":{"consumeTypes":{"consumeAPITypes":true,"abortOnError":false},"generateTypes":false,"dev":{"disableDynamicRemoteTypeHints":true,"disableHotTypesReload":true,"disableLiveReload":true}},"shared":{"react":{"singleton":true,"eager":true},"react-native":{"singleton":true,"eager":true},"react-redux":{"singleton":true,"eager":true},"@reduxjs/toolkit":{"singleton":true,"eager":true},"@shared/mobile-host-runtime":{"singleton":true,"eager":true},"react-native/":{"singleton":true,"eager":true,"requiredVersion":"*"},"@react-native/":{"singleton":true,"eager":true,"requiredVersion":"*"}},"shareStrategy":"loaded-first","runtimePlugins":["/Users/kevin.le-seigle/WS/ledger-live/node_modules/.pnpm/@callstack+repack@5.2.3_patch_hash=8d7db4e65c89_4f824964a3db4382d466e95e60c590aa/node_modules/@callstack/repack/mf/prefetch-plugin.js","/Users/kevin.le-seigle/WS/ledger-live/node_modules/.pnpm/@callstack+repack@5.2.3_patch_hash=8d7db4e65c89_4f824964a3db4382d466e95e60c590aa/node_modules/@callstack/repack/mf/resolver-plugin.js","/Users/kevin.le-seigle/WS/ledger-live/node_modules/.pnpm/@callstack+repack@5.2.3_patch_hash=8d7db4e65c89_4f824964a3db4382d466e95e60c590aa/node_modules/@callstack/repack/mf/core-plugin.js","/Users/kevin.le-seigle/WS/ledger-live/node_modules/.pnpm/@module-federation+dts-plugin@2.5.0_typescript@6.0.2/node_modules/@module-federation/dts-plugin/dist/dynamic-remote-type-hints-plugin.js"],"implementation":"/Users/kevin.le-seigle/WS/ledger-live/node_modules/.pnpm/@module-federation+runtime-tools@2.5.0/node_modules/@module-federation/runtime-tools/dist/bundler.js"},"context":"/Users/kevin.le-seigle/WS/ledger-live/apps/ledger-live-mobile","typesFolder":"@mf-types","abortOnError":false,"consumeAPITypes":true},"extraOptions":{},"disableLiveReload":false,"disableHotTypesReload":false}]} 
+[2026-05-26T11:54:11.508Z] [INFO] Module Federation DTS - Publisher:HostApp Trying to connect to ws://10.10.128.148:16322...
+[2026-05-26T11:54:11.525Z] [INFO] Module Federation DTS - Current pid: 74529, publisher:HostApp connected to ws://10.10.128.148:16322, starting service...
+[2026-05-26T11:54:11.526Z] [INFO] Module Federation DTS - remote module:swap trying to connect to  ws://10.10.128.148:16322...
+[2026-05-26T11:54:11.536Z] [INFO] Module Federation DTS - Current pid: 74529 remote module: swap connected to ws://10.10.128.148:16322, starting service...
+[2026-05-26T11:54:43.089Z] [WARN] Module Federation DTS - [_updateSubscriber] run, options: {
+  "remoteTypeTarPath": "http://10.10.128.148:59000/@mf-types.zip",
+  "name": "swap",
+  "updateKind": "UPDATE_TYPE",
+  "updateMode": "PASSIVE",
+  "updateSourcePaths": [
+    "swap"
+  ]
+}
+[2026-05-26T11:54:43.090Z] [INFO] Module Federation DTS - [_updateSubscriber] run, updateSourcePaths:swap, current module:HostApp, update start...
+[2026-05-26T11:54:43.090Z] [INFO] forkDevWorker - sync remote module swap, types to HostApp,typesManager.updateTypes run
+[2026-05-26T11:54:43.090Z] [INFO] Module Federation DTS - update run, HostApp module update, updateKind: RELOAD_PAGE, updateMode: PASSIVE, updateSourcePaths: undefined
+[2026-05-26T11:54:43.091Z] [INFO] updateTypes - options: {
+  "updateMode": "PASSIVE",
+  "remoteName": "swap",
+  "remoteTarPath": "http://10.10.128.148:59000/@mf-types.zip"
+};
+hostName: HostApp
+[2026-05-26T11:54:43.091Z] [INFO] updateTypes - loadedRemoteInfo: undefined
+[2026-05-26T11:54:43.091Z] [INFO] updateTypes - remoteInfo: {
+  "name": "swap",
+  "url": "http://localhost:9000/ios/mf-manifest.json",
+  "zipUrl": "",
+  "apiTypeUrl": "",
+  "alias": "swap"
+}
+[2026-05-26T11:54:43.118Z] [INFO] updateTypes - consumeTypes start
+[2026-05-26T11:54:43.143Z] [INFO] downloadTypesArchive - zip.extractAllTo success destinationPath: /Users/kevin.le-seigle/WS/ledger-live/apps/ledger-live-mobile/@mf-types/swap; url: http://10.10.128.148:59000/@mf-types.zip
+[2026-05-26T11:54:43.146Z] [INFO] downloadAPITypes - success
+[2026-05-26T11:54:43.146Z] [INFO] updateTypes - consumeTypes end
+[2026-05-26T11:54:43.146Z] [INFO] Module Federation DTS - [_updateSubscriber] run, updateSourcePaths:swap,HostApp, update publisher HostApp start...
+[2026-05-26T11:54:47.445Z] [INFO] forkDevWorker - ChildProcess(74529), message: {"type":"mf_call","id":"ecb65730-adf4-4b00-b58b-e050dd4221ff","args":[null,"update"]} 
+[2026-05-26T11:54:47.446Z] [INFO] forkDevWorker - remoteModule HostApp receive devWorker update, start typesManager.updateTypes 
+[2026-05-26T11:54:47.446Z] [INFO] Module Federation DTS - update run, HostApp module update, updateKind: RELOAD_PAGE, updateMode: POSITIVE, updateSourcePaths: undefined
+[2026-05-26T11:54:47.446Z] [INFO] updateTypes - options: {
+  "updateMode": "POSITIVE",
+  "remoteName": "HostApp"
+};
+hostName: HostApp
+[2026-05-26T11:54:47.447Z] [INFO] Module Federation DTS - update run, HostApp module update, updateKind: UPDATE_TYPE, updateMode: POSITIVE, updateSourcePaths: undefined
+[2026-05-26T11:56:22.970Z] [INFO] forkDevWorker - ChildProcess(74529), message: {"type":"mf_exit","id":"ecb65730-adf4-4b00-b58b-e050dd4221ff"} 
+[2026-05-26T11:56:22.973Z] [ERROR] forkDevWorker - ChildProcess(74529) SIGTERM, Federation DevServer will exit...
+[2026-05-26T11:56:30.416Z] [INFO] downloadTypesArchive - zip.extractAllTo success destinationPath: /Users/kevin.le-seigle/WS/ledger-live/apps/ledger-live-mobile/@mf-types/swap; url: http://localhost:9000/ios/@mf-types.zip
+[2026-05-26T11:56:30.488Z] [INFO] downloadAPITypes - success

@@ -12,7 +12,7 @@
     "noEmit": true,
     "target": "esnext",
     "paths": {
-      "*": ["./*"],
+      "*": ["./*", "./@mf-types/*"],
       "~/*": ["./src/*"],
       "LLM/*": ["./src/mvvm/*"],
       "@tests/*": ["./__tests__/*"],
@@ -20,7 +20,7 @@
       "@assets/*": ["./assets/*"]
     }
   },
-  "include": ["src/**/*", "e2e/**/*", "**/*.d.ts", "services/**/*"],
+  "include": ["src/**/*", "e2e/**/*", "**/*.d.ts", "services/**/*", "./@mf-types/**/*"],
   "exclude": [
     "node_modules",
     "babel.config.js",

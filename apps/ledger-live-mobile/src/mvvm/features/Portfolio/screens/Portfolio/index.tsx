@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, lazy, Suspense } from "react";
 import { Platform } from "react-native";
 import Animated from "react-native-reanimated";
 import { ProductTourPortfolioMount } from "LLM/features/ProductTour";
@@ -40,6 +40,11 @@ import {
   PortfolioPerpsEntryPoint,
 } from "../../components";
 import { Box } from "@ledgerhq/native-ui";
+
+import { Text } from "react-native";
+
+const HelloWorld = lazy(() => import("swap/HelloWorld"));
+
 type NavigationProps = BaseComposite<
   StackNavigatorProps<PortfolioNavigatorStackParamList, ScreenName.Portfolio>
 >;
@@ -130,6 +135,11 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
 
     sections.push(<PortfolioPerpsEntryPoint key="perpsEntryPoint" />);
 
+    sections.push(
+      <Suspense fallback={<Text>Loading...</Text>}>
+        <HelloWorld name="test" />
+      </Suspense>,
+    );
     if (shouldDisplayAssetSection) {
       sections.push(<WalletAssetsView key="categorizedAssets" />);
     } else {

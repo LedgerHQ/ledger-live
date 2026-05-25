@@ -1,3 +1,7 @@
+// Registers the Re.Pack ScriptManager resolver for host async chunks + the swap
+// remote. Must run before any import() resolves, so keep it first.
+import "./src/setupScriptManager";
+
 import "react-native-get-random-values";
 // Injects node.js shims.
 // https://github.com/parshap/node-libs-react-native

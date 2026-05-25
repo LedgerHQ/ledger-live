@@ -1,0 +1,16 @@
+# macOS
+.DS_Store
+
+# Build output
+build/
+*.jsbundle
+
+# Module Federation diagnostics
+.mf/
+
+# Node
+node_modules/
+npm-debug.log
+
+# Coverage
+/coverage

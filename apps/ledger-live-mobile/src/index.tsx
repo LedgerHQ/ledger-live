@@ -2,7 +2,7 @@ import "LLM/utils/logStartup/beforeJSImports";
 require("./promise-polyfill");
 import "./polyfill";
 import "./live-common-setup";
-import "./iosWebsocketFix";
+//import "./iosWebsocketFix";
 import "./utils/tanstack-setup";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import React, { Component, useMemo, useEffect, useRef } from "react";

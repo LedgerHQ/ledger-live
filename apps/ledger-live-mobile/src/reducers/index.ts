@@ -1,7 +1,8 @@
 import postOnboarding from "@ledgerhq/live-common/postOnboarding/reducer";
 import { largeScreenUpsellModalReducer } from "@ledgerhq/live-engagement/largeScreenUpsellModal";
 import postOnboardingHubDrawer from "./postOnboardingHubDrawer";
-import { combineReducers, type Store } from "redux";
+import { type Store } from "redux";
+import { reducerRegistry } from "@shared/mobile-host-runtime";
 import { llmRTKApiReducers } from "~/context/rtkQueryApi";
 import featureFlags from "@shared/feature-flags";
 import accounts from "./accounts";
@@ -49,7 +50,7 @@ import type { UnknownAction } from "@reduxjs/toolkit";
 
 export type AppStore = Store<State>;
 
-const appReducer = combineReducers({
+reducerRegistry.setStaticReducers({
   accounts,
   appstate,
   auth,
@@ -98,9 +99,12 @@ const appReducer = combineReducers({
   ...llmRTKApiReducers,
 });
 
+// Delegate to the registry on every call so dynamic slices registered after
+// store creation (via store.replaceReducer) are also honored if this wrapper
+// is ever read directly. The store itself is updated through replaceReducer.
 // TODO: EXPORT ALL POSSIBLE ACTION TYPES AND USE ACTION<TYPES>
 const rootReducer = (state: State | undefined, action: UnknownAction) => {
-  return appReducer(state, action);
+  return reducerRegistry.getCombinedReducer()(state, action);
 };
 
 export default rootReducer;

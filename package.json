@@ -346,17 +346,18 @@
       "esbuild",
       "keccak",
       "msw",
+      "node-hid",
       "nx",
       "protobufjs",
       "secp256k1",
       "sqlite3",
       "ssh2",
       "tiny-secp256k1",
+      "usb",
       "utf-8-validate",
       "web3",
       "web3-bzz",
-      "web3-shh",
-      "usb"
+      "web3-shh"
     ]
   },
   "packageManager": "pnpm@10.24.0"

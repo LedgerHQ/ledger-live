@@ -193,15 +193,10 @@ export default withRozeniteUrlFix(
     Repack.defineRspackConfig(env => {
       const { mode, platform } = env;
 
-      const isRsdoctor = process.env.RSDOCTOR && process.env.RSDOCTOR !== "0";
       return {
         mode,
         context: __dirname,
         entry: "./index.js",
-        // Mobile uses a single Hermes bytecode bundle — async chunks are not supported
-        // and hurt performance with Hermes. Disable async chunk creation globally.
-        // When running rsdoctor, also emit main bundle as .js so it's counted as JavaScript (not Other)
-        output: { asyncChunks: false, ...(isRsdoctor && { filename: "[name].js" }) },
         // Repack 5.2.5 forces Terser for rspack ≥1.5.0 (getMinimizerConfig.js shouldUseTerserForRspack)
         // as a workaround for a SwcJsMinimizerRspackPlugin regression in rspack 1.5.0. That regression
         // was fixed in later rspack releases. Terser fails on native private class fields (#field) present
@@ -305,6 +300,36 @@ export default withRozeniteUrlFix(
           new ReanimatedPlugin({
             unstable_disableTransform: true,
           }),
+          new Repack.plugins.ModuleFederationPluginV2({
+            name: "HostApp",
+            filename: "HostApp.container.js.bundle",
+            remotes: {
+              swap: `swap@http://localhost:9000/${platform}/mf-manifest.json`,
+            },
+            dts: {
+              consumeTypes: {
+                consumeAPITypes: true,
+                abortOnError: false,
+              },
+              generateTypes: false,
+            },
+            // The dynamic-remote-type-hints runtime plugin opens a WebSocket via
+            // `isomorphic-ws`, which under Hermes/RN resolves to a value whose
+            // `prototype` is undefined and crashes the host bundle at init.
+            // `dev` is a top-level MF option, sibling of `dts`.
+            dev: {
+              disableDynamicRemoteTypeHints: true,
+              disableHotTypesReload: true,
+              disableLiveReload: true,
+            },
+            shared: {
+              react: { singleton: true, eager: true, requiredVersion: "^19.0.0" },
+              "react-native": { singleton: true, eager: true, requiredVersion: "*" },
+              "react-redux": { singleton: true, eager: true, requiredVersion: "^9.0.0" },
+              "@reduxjs/toolkit": { singleton: true, eager: true, requiredVersion: "^2.0.0" },
+              "@shared/mobile-host-runtime": { singleton: true, eager: true, requiredVersion: "*" },
+            },
+          }),
           new ExpoModulesPlugin(),
           new rspack.ProvidePlugin({
             TextDecoder: ["text-encoding-polyfill", "TextDecoder"],
@@ -313,6 +338,9 @@ export default withRozeniteUrlFix(
         ],
         stats: "errors-warnings",
         infrastructureLogging: { level: "warn" },
+        watchOptions: {
+          ignored: ["**/node_modules/**", "**/@mf-types/**"],
+        },
         devServer: {
           host: "local-ip",
           hot: true,

@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2024", "DOM"],
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-native",
+    "noEmit": true,
+    "paths": { "*": ["./*"] }
+  },
+  "include": ["src/**/*", "index.js"],
+  "exclude": ["node_modules", "build"]
+}

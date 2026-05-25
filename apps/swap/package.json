@@ -1,0 +1,36 @@
+{
+  "name": "@apps/swap",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "react-native start --port 9000",
+    "bundle:ios": "react-native bundle --platform ios --dev false --entry-file index.js --bundle-output build/ios/index.bundle",
+    "bundle:android": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output build/android/index.bundle",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@reduxjs/toolkit": "catalog:",
+    "@shared/mobile-host-runtime": "workspace:*",
+    "@swc/helpers": "catalog:",
+    "react": "catalog:",
+    "react-native": "catalog:",
+    "react-redux": "catalog:"
+  },
+  "devDependencies": {
+    "@babel/core": "7.28.5",
+    "@babel/preset-env": "7.28.5",
+    "@babel/runtime": "7.28.4",
+    "@callstack/repack": "5.2.5",
+    "@react-native/babel-plugin-codegen": "catalog:",
+    "@react-native/babel-preset": "catalog:",
+    "@module-federation/enhanced": "2.5.0",
+    "@react-native/community-cli-plugin": "0.79.7",
+    "@react-native-community/cli": "catalog:",
+    "@react-native-community/cli-platform-android": "catalog:",
+    "@react-native-community/cli-platform-ios": "catalog:",
+    "@rspack/core": "catalog:",
+    "@types/react": "catalog:",
+    "tslib": "2.6.2",
+    "typescript": "catalog:"
+  }
+}
