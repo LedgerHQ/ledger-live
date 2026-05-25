@@ -27,6 +27,7 @@ const baseProps = (overrides: Partial<React.ComponentProps<typeof ManagementView
     searchQuery: "",
     selectedContactName: ME_CONTACT_NAME,
     selectedContact: me,
+    selectedContactIsMe: true,
     takenContactNames: [me.name, alice.name, bob.name],
     onSearchQueryChange: jest.fn(),
     onSelectContact: jest.fn(),

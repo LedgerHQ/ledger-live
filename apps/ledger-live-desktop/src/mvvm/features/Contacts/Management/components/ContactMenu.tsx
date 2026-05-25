@@ -54,15 +54,27 @@ const ACTIONS: Action[] = [
 type Props = {
   onEdit?: () => void;
   onDelete?: () => void;
+  /**
+   * Hide the destructive "Delete contact" row. Set to `false` for the
+   * protected "me" identity — that contact can be renamed but never
+   * deleted (the synthesizer would just recreate it on next render
+   * anyway, so the user would see no effect).
+   */
+  canDelete?: boolean;
 };
 
-export function ContactMenu({ onEdit, onDelete }: Props = {}) {
+export function ContactMenu({ onEdit, onDelete, canDelete = true }: Props = {}) {
   const { t } = useTranslation();
 
   const handlers: Record<ActionId, (() => void) | undefined> = {
     edit: onEdit,
     delete: onDelete,
   };
+
+  // Filter out the Delete row entirely when the contact is protected.
+  // We don't render a disabled row — the menu would look surprising
+  // with a single grayed-out item that can't ever activate.
+  const visibleActions = canDelete ? ACTIONS : ACTIONS.filter(a => a.id !== "delete");
 
   return (
     <Popover>
@@ -89,7 +101,7 @@ export function ContactMenu({ onEdit, onDelete }: Props = {}) {
           "shadow-[0px_1px_3px_rgba(0,0,0,0.1),0px_1px_2px_-1px_rgba(0,0,0,0.1)]",
         )}
       >
-        {ACTIONS.map(action => {
+        {visibleActions.map(action => {
           const Icon = action.icon;
           return (
             <button

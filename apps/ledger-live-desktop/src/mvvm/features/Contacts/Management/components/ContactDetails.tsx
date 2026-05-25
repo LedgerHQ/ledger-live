@@ -5,6 +5,7 @@ import { Plus } from "@ledgerhq/lumen-ui-react/symbols";
 import type { Contact, ContactEntry } from "~/renderer/contacts/types";
 import { groupAddressesByCrypto } from "../utils/groupAddressesByCrypto";
 import { useCryptoMeta } from "../utils/cryptoMeta";
+import { stripMeSuffix } from "../hooks/useManagementViewModel";
 import { AddAddressDialog } from "./AddAddressDialog";
 import { AddressDetailDialog } from "./AddressDetailDialog";
 import { AddressRow } from "./AddressRow";
@@ -17,6 +18,8 @@ type Props = {
   contact: Contact;
   /** Other display names — used by EditContactDialog's duplicate check. */
   takenContactNames: string[];
+  /** Whether the selected contact is the protected "me" identity. */
+  isMe: boolean;
   /** Rename the displayed contact. Forwarded from the viewmodel. */
   onRenameContact: (currentDisplayName: string, newName: string) => void;
   /** Delete the displayed contact. Forwarded from the viewmodel. */
@@ -51,6 +54,7 @@ type Props = {
 export function ContactDetails({
   contact,
   takenContactNames,
+  isMe,
   onRenameContact,
   onDeleteContact,
 }: Props) {
@@ -108,6 +112,10 @@ export function ContactDetails({
         <ContactMenu
           onEdit={() => setEditContactOpen(true)}
           onDelete={() => onDeleteContact(contact.name)}
+          // Protect the "me" contact from deletion. The menu hides the
+          // Delete row entirely when this is false — `me` can be
+          // renamed but never removed.
+          canDelete={!isMe}
         />
       </div>
 
@@ -181,7 +189,10 @@ export function ContactDetails({
       <EditContactDialog
         open={editContactOpen}
         onOpenChange={setEditContactOpen}
-        currentName={contact.name}
+        // For the "me" contact we pre-fill the input WITHOUT the
+        // " (Me)" suffix — the user only edits the part they care
+        // about, and the viewmodel re-appends the suffix on submit.
+        currentName={isMe ? stripMeSuffix(contact.name) : contact.name}
         takenNames={otherTakenNames}
         onSubmit={newName => {
           setEditContactOpen(false);

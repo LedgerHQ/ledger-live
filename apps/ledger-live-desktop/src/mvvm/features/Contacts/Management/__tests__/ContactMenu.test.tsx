@@ -48,4 +48,21 @@ describe("ContactMenu", () => {
     expect(onDelete).toHaveBeenCalledTimes(1);
     expect(onEdit).not.toHaveBeenCalled();
   });
+
+  it("hides the Delete row when `canDelete` is false (protected 'me' contact)", async () => {
+    const onEdit = jest.fn();
+    const onDelete = jest.fn();
+    const { user } = render(
+      <ContactMenu onEdit={onEdit} onDelete={onDelete} canDelete={false} />,
+    );
+
+    await user.click(screen.getByTestId("contacts-management-overflow"));
+
+    expect(
+      screen.getByTestId("contacts-management-contact-menu-edit"),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByTestId("contacts-management-contact-menu-delete"),
+    ).not.toBeInTheDocument();
+  });
 });
