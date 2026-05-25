@@ -81,7 +81,12 @@ export function AssetStep({ onPick }: Props) {
               <ListItemLeading>
                 <CryptoIcon
                   ticker={c.ticker}
-                  ledgerId={c.id}
+                  // `c.ledgerId` is the Ledger Live canonical id resolved
+                  // against `crypto-icons.ledger.com/index.json` — using
+                  // the CoinGecko slug (`c.id`) misses the registry for
+                  // tokens like USDC / USDT / MANA / etc. and falls back
+                  // to the letter avatar. Same fix as `AddressRow.tsx`.
+                  ledgerId={c.ledgerId}
                   size={40}
                   alt={c.name}
                 />
