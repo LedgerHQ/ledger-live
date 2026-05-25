@@ -25,16 +25,17 @@ export function useAccountBridgeOrNull<T extends TransactionCommon>(
   return use(getAccountBridge(account, parentAccount) as Promise<ResolvedAccountBridge<T>>);
 }
 
-// Multi-account variant. use() is allowed in loops and inside useMemo's render-phase callback.
+// Multi-account variant. use() is allowed in loops at the top level of a component/hook,
+// but NOT inside useMemo/useEffect/useCallback callbacks (React 19.1 enforces this strictly).
 // See https://react.dev/reference/react/use
-// Memoize on the (id-derived) shape rather than `accounts` reference: callers that rebuild
-// the array each render (e.g. inline `.map().filter()`) still get a stable bridge list as
-// long as the account ids haven't changed.
+// Memoize on the (id-derived) shape rather than `accounts` reference so callers that rebuild
+// the array each render (e.g. inline `.map().filter()`) still get a stable list as long as
+// account ids haven't changed.
 export function useAccountBridgeMany(accounts: Account[]): ResolvedAccountBridge<any>[] {
-  const idsKey = accounts.map(a => a.id).join("|");
-  return useMemo(
-    () => accounts.map(a => use(getAccountBridge(a) as Promise<ResolvedAccountBridge<any>>)),
-    // oxlint-disable-next-line react-hooks/exhaustive-deps
-    [idsKey],
+  const bridges = accounts.map(a =>
+    use(getAccountBridge(a) as Promise<ResolvedAccountBridge<any>>),
   );
+  const idsKey = accounts.map(a => a.id).join("|");
+  // oxlint-disable-next-line react-hooks/exhaustive-deps
+  return useMemo(() => bridges, [idsKey]);
 }
