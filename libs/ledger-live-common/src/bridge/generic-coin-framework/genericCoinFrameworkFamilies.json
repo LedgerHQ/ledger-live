@@ -3,5 +3,6 @@
   "xrp": true,
   "stellar": true,
   "tezos": true,
+  "hypercore": true,
   "solana": false
 }

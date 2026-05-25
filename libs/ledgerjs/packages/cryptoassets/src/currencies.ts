@@ -1700,6 +1700,31 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  hypercore: {
+    type: "CryptoCurrency",
+    id: "hypercore",
+    coinType: CoinType.ETH,
+    name: "HyperCore",
+    managerAppName: "Ethereum",
+    ticker: "HYPE",
+    scheme: "hypercore",
+    color: "#97FCE4",
+    family: "hypercore",
+    units: [
+      {
+        name: "HYPE",
+        code: "HYPE",
+        magnitude: 8,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://app.hyperliquid.xyz/explorer/tx/$hash",
+        address: "https://app.hyperliquid.xyz/explorer/address/$address",
+      },
+    ],
+    keywords: ["hype", "hyperliquid", "hypercore"],
+  },
   hycon: {
     type: "CryptoCurrency",
     id: "hycon",

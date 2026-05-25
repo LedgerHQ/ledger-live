@@ -210,6 +210,7 @@
     "@ledgerhq/coin-filecoin": "workspace:^",
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/coin-hedera": "workspace:^",
+    "@ledgerhq/coin-hypercore": "workspace:^",
     "@ledgerhq/coin-icon": "workspace:^",
     "@ledgerhq/coin-internet_computer": "workspace:^",
     "@ledgerhq/coin-kaspa": "workspace:^",

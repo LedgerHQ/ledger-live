@@ -30,6 +30,8 @@ export async function getCoinModuleApi(
         return (await import("./local/tezos.js")).createLocalTezosApi(currency.id);
       case "solana":
         return (await import("./local/solana.js")).createLocalSolanaApi(currency.id);
+      case "hypercore":
+        return (await import("./local/hypercore.js")).createLocalHyperCoreApi(currency.id);
     }
   }
   return getNetworkCoinModuleApi(network) satisfies Partial<CoinModuleApi<any> & BridgeApi>;

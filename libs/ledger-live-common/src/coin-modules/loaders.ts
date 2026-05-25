@@ -104,6 +104,14 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadDeviceTxConfig: () => require("@ledgerhq/coin-hedera/deviceTransactionConfig").default,
   },
   {
+    family: "hypercore",
+    loadSetup: () => require("../families/hypercore/setup"),
+    loadTransaction: () => require("@ledgerhq/coin-hypercore/transaction").default,
+    // Read-only hypercore reuses the EVM signer: HyperCore L1 uses Ethereum-style
+    // addresses signed with the Ethereum device app.
+    loadSigner: () => require("../bridge/generic-coin-framework/families/evm/signer").default,
+  },
+  {
     family: "icon",
     loadSetup: () => require("../families/icon/setup"),
     loadTransaction: () => require("@ledgerhq/coin-icon/transaction").default,

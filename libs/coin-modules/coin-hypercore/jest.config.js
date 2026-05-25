@@ -1,0 +1,30 @@
+module.exports = {
+  testEnvironment: "node",
+  transform: {
+    "^.+\\.(ts|tsx)$": [
+      "@swc/jest",
+      {
+        jsc: {
+          target: "esnext",
+        },
+      },
+    ],
+  },
+  passWithNoTests: true,
+  setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],
+  collectCoverageFrom: [
+    "src/**/*.ts",
+    "!src/**/*.test.ts",
+    "!src/**/*.spec.ts",
+    "!src/test/**/*.ts",
+  ],
+  coveragePathIgnorePatterns: ["/types/"],
+  coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
+  testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.integ\\.test\\.[tj]s"],
+  workerThreads: true,
+  reporters: [
+    "default",
+    ...(process.env.CI ? ["github-actions"] : []),
+    ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
+  ],
+};
