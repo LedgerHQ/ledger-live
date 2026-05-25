@@ -1,6 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Flex, Dropdown } from "@ledgerhq/react-ui";
 import styled from "styled-components";
+import { useSelector, useDispatch } from "react-redux";
 import { useMarket } from "LLD/features/Market/hooks/useMarket";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import SearchInputComponent from "./components/SearchInputComponent";
@@ -10,6 +11,12 @@ import { useMarketListVirtualization } from "LLD/features/Market/hooks/useMarket
 import PageHeader from "LLD/components/PageHeader";
 import { useNavigate } from "react-router";
 import MarketList from "./screens/MarketList";
+import {
+  marketParamsSelector,
+  marketCurrentPageSelector,
+  marketStoreSelector,
+} from "~/renderer/reducers/market";
+import { setMarketParams } from "~/renderer/actions/market";
 
 const Container = styled(Flex).attrs({
   flex: "1",
@@ -27,6 +34,23 @@ const SelectBarContainer = styled(Flex)`
 export default function Market() {
   const marketData = useMarket();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const reduxMarketParams = useSelector(marketParamsSelector);
+  const reduxCurrentPage = useSelector(marketCurrentPageSelector);
+  const reduxMarketStore = useSelector(marketStoreSelector);
+  const [hasMounted, setHasMounted] = useState(false);
+  useEffect(() => {
+    if (!hasMounted && reduxMarketStore) {
+      dispatch(
+        setMarketParams({
+          ...reduxMarketParams,
+          page: reduxCurrentPage ?? 1,
+        }),
+      );
+      setHasMounted(true);
+    }
+  }, [hasMounted, reduxMarketStore, reduxMarketParams, reduxCurrentPage, dispatch]);
+
   const {
     refresh,
     setCounterCurrency,
@@ -74,6 +98,10 @@ export default function Market() {
     checkIfDataIsStaleAndRefetch: marketData.checkIfDataIsStaleAndRefetch,
   });
 
+  const headerTitle = reduxMarketParams?.search
+    ? `${t("market.title")} — "${reduxMarketParams.search}"`
+    : t("market.title");
+
   return (
     <Container>
       <TrackPage
@@ -82,7 +110,7 @@ export default function Market() {
         timeframe={range}
         countervalue={counterCurrency}
       />
-      <PageHeader title={t("market.title")} onBack={() => navigate("/")} />
+      <PageHeader title={headerTitle} onBack={() => navigate("/")} />
 
       <Flex flexDirection="row" pr="6px" my={2} alignItems="center" justifyContent="space-between">
         <SearchInputComponent search={search} updateSearch={updateSearch} />

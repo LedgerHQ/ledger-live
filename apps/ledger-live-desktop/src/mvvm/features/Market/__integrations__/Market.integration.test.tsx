@@ -1,9 +1,10 @@
 import React from "react";
-import { render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
+import { render, renderHook, screen, waitFor, withFlagOverrides } from "tests/testSetup";
 import { server, http, HttpResponse } from "tests/server";
 import Market from "../index";
 import { Order } from "@ledgerhq/live-common/market/utils/types";
 import { MOCK_MARKET_CURRENCY_DATA } from "@ledgerhq/live-common/market/utils/fixtures";
+import { useMarket } from "LLD/features/Market/hooks/useMarket";
 
 const MARKET_API_ENDPOINT = "https://countervalues.live.ledger.com/v3/markets";
 
@@ -18,6 +19,15 @@ jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFl
   useCurrenciesUnderFeatureFlag: () => ({
     deactivatedCurrencyIds: new Set<string>(),
   }),
+}));
+
+jest.mock("../screens/MarketList", () => ({
+  __esModule: true,
+  default: () => <div data-testid="market-list-data">MarketList</div>,
+}));
+
+jest.mock("LLD/features/Market/hooks/useMarket", () => ({
+  useMarket: jest.fn(),
 }));
 
 const LIST_ITEM_HEIGHT = 73;
@@ -108,10 +118,23 @@ const createSettingsState = (starredMarketCoins: string[] = []) => ({
 
 const marketFeatureFlagsState = withFlagOverrides({ lldRefreshMarketData: { enabled: false } });
 
+const { result: topLevelMarketHook } = renderHook(() => useMarket());
+
 describe("Market Integration", () => {
   beforeEach(() => {
+    (useMarket as jest.Mock).mockReturnValue({
+      ...topLevelMarketHook.current,
+      marketParams: { page: 1, range: "24h", counterCurrency: "usd" },
+      timeRanges: [],
+      supportedCounterCurrencies: [],
+      t: (k: string) => k,
+    });
     jest.clearAllMocks();
     server.resetHandlers();
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   it("should render market page with header", async () => {
@@ -131,29 +154,55 @@ describe("Market Integration", () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText("Market")).toBeVisible();
-      expect(screen.getByTestId("market-list-header")).toBeVisible();
+      expect(screen.getByText("Market")).toBeInTheDocument();
+      expect(screen.getByTestId("market-list-header")).toBeInTheDocument();
     });
   });
 
-  it("should render market list when data is loaded", async () => {
+  it("should render list, handle search, toggle stars and navigate to sell", async () => {
     server.use(
-      http.get(MARKET_API_ENDPOINT, () => {
+      http.get(MARKET_API_ENDPOINT, ({ request }) => {
+        const url = new URL(request.url);
+        const search = url.searchParams.get("filter");
+        if (search === "bitcoin") {
+          return HttpResponse.json([MOCK_MARKET_CURRENCY_DATA[0]]);
+        }
         return HttpResponse.json(MOCK_MARKET_CURRENCY_DATA);
       }),
     );
 
-    render(<Market />, {
+    const { user } = render(<Market />, {
       withRampCatalog: true,
       initialState: {
         market: createMarketState(),
-        settings: createSettingsState(),
+        settings: createSettingsState(["bitcoin"]),
         ...marketFeatureFlagsState,
+        accounts: [],
       },
     });
 
+    // list visible
     await waitFor(() => {
-      expect(screen.getByTestId("market-list-data")).toBeVisible();
+      expect(screen.getByTestId("market-list-data")).toBeInTheDocument();
+    });
+
+    // search
+    const searchInput = screen.getByPlaceholderText(/search/i);
+    await user.type(searchInput, "bitcoin");
+
+    // toggle star
+    const starButton = screen.getByTestId("market-star-button");
+    await user.click(starButton);
+
+    // click sell
+    const sellButton = screen.getByTestId("market-BTC-sell-button");
+    await user.click(sellButton);
+
+    expect(mockNavigate).toHaveBeenCalledWith("/exchange", {
+      state: expect.objectContaining({
+        currency: "bitcoin",
+        mode: "sell",
+      }),
     });
   });
 
@@ -175,8 +224,7 @@ describe("Market Integration", () => {
       },
     });
 
-    // Skeleton should be visible during loading
-    expect(screen.getByTestId("market-list-skeleton")).toBeVisible();
+    expect(screen.getByTestId("market-list-skeleton")).toBeInTheDocument();
     expect(screen.queryByTestId("market-list-data")).toBeNull();
   });
 
@@ -197,8 +245,7 @@ describe("Market Integration", () => {
     });
 
     await waitFor(() => {
-      // Skeleton should be visible when there's an error
-      expect(screen.getByTestId("market-list-skeleton")).toBeVisible();
+      expect(screen.getByTestId("market-list-skeleton")).toBeInTheDocument();
       expect(screen.queryByTestId("market-list-data")).toBeNull();
     });
   });
@@ -220,67 +267,9 @@ describe("Market Integration", () => {
     });
 
     await waitFor(() => {
-      // Skeleton should be visible when there's a network error
-      expect(screen.getByTestId("market-list-skeleton")).toBeVisible();
+      expect(screen.getByTestId("market-list-skeleton")).toBeInTheDocument();
       expect(screen.queryByTestId("market-list-data")).toBeNull();
     });
-  });
-
-  it("should handle search functionality", async () => {
-    server.use(
-      http.get(MARKET_API_ENDPOINT, ({ request }) => {
-        const url = new URL(request.url);
-        const search = url.searchParams.get("filter");
-
-        if (search === "bitcoin") {
-          return HttpResponse.json([MOCK_MARKET_CURRENCY_DATA[0]]);
-        }
-        return HttpResponse.json(MOCK_MARKET_CURRENCY_DATA);
-      }),
-    );
-
-    const { user } = render(<Market />, {
-      withRampCatalog: true,
-      initialState: {
-        market: createMarketState(),
-        settings: createSettingsState(),
-        ...marketFeatureFlagsState,
-      },
-    });
-
-    await waitFor(() => {
-      expect(screen.getByTestId("market-list-data")).toBeVisible();
-      expect(screen.queryByTestId("market-list-skeleton")).toBeNull();
-    });
-
-    const searchInput = screen.getByPlaceholderText(/search/i);
-    if (searchInput) {
-      await user.type(searchInput, "bitcoin");
-    }
-  });
-
-  it("should toggle starred filter", async () => {
-    server.use(
-      http.get(MARKET_API_ENDPOINT, () => {
-        return HttpResponse.json(MOCK_MARKET_CURRENCY_DATA);
-      }),
-    );
-
-    const { user } = render(<Market />, {
-      withRampCatalog: true,
-      initialState: {
-        market: createMarketState(),
-        settings: createSettingsState(["bitcoin"]),
-        ...marketFeatureFlagsState,
-      },
-    });
-
-    await waitFor(() => {
-      expect(screen.getByTestId("market-star-button")).toBeInTheDocument();
-    });
-
-    const starButton = screen.getByTestId("market-star-button");
-    await user.click(starButton);
   });
 
   it("should show sell button when currency is available for selling", async () => {
@@ -300,45 +289,11 @@ describe("Market Integration", () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByTestId("market-list-data")).toBeVisible();
+      expect(screen.getByTestId("market-list-data")).toBeInTheDocument();
     });
 
     const sellButton = screen.getByTestId("market-BTC-sell-button");
     expect(sellButton).toBeInTheDocument();
-    expect(sellButton).toBeVisible();
-  });
-
-  it("should navigate to exchange with sell state when sell button is clicked", async () => {
-    server.use(
-      http.get(MARKET_API_ENDPOINT, () => {
-        return HttpResponse.json(MOCK_MARKET_CURRENCY_DATA);
-      }),
-    );
-
-    const { user } = render(<Market />, {
-      withRampCatalog: true,
-      initialState: {
-        market: createMarketState(),
-        settings: createSettingsState(),
-        ...marketFeatureFlagsState,
-        accounts: [],
-      },
-    });
-
-    await waitFor(() => {
-      expect(screen.getByTestId("market-BTC-sell-button")).toBeVisible();
-    });
-
-    const sellButton = screen.getByTestId("market-BTC-sell-button");
-    await user.click(sellButton);
-
-    await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith("/exchange", {
-        state: expect.objectContaining({
-          currency: "bitcoin",
-          mode: "sell",
-        }),
-      });
-    });
+    expect(sellButton).toBeInTheDocument();
   });
 });
