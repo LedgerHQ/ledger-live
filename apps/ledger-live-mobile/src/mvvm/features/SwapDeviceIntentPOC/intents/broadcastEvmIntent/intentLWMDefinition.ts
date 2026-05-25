@@ -1,5 +1,5 @@
+import { broadcastEvmIntentDefinition } from "@ledgerhq/live-common/wallet-api/Exchange/intents/broadcastEvm/index";
 import { BroadcastEvmIntentComponentLWM } from "./componentLWM";
-import { broadcastEvmIntentDefinition } from "./intentDefinition";
 import type { BroadcastEvmIntentPlatformDefinition } from "./types";
 
 export const broadcastEvmIntentLWMDefinition: BroadcastEvmIntentPlatformDefinition = {

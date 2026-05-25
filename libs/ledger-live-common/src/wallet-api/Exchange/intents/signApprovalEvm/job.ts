@@ -13,44 +13,44 @@ import {
 } from "@ledgerhq/device-signer-kit-ethereum";
 import { combine } from "@ledgerhq/coin-evm/logic/combine";
 import { craftTransaction } from "@ledgerhq/coin-evm/logic/craftTransaction";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import type { DexTransactionData } from "@ledgerhq/live-common/wallet-api/Exchange/dex/index";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { Account } from "@ledgerhq/types-live";
 import type { DeviceConnectionResult, Job } from "@ledgerhq/device-intent";
-import type { SignSwapEvmIntentInput, SignSwapEvmJobState } from "./types";
+import { getCryptoCurrencyById } from "../../../../currencies";
+import type { QuoteApprovalTransaction } from "../../quotes/types";
+import type { SignApprovalEvmIntentInput, SignApprovalEvmJobState } from "./types";
 
 /**
- * RLP-encode the DEX-provided swap calldata into the unsigned EVM
- * transaction hex expected by `SignerEth.signTransaction`. DEX builders
- * only supply `to / data / value / gasLimit`; we feed those to
- * `craftTransaction` and let coin-evm pull EIP-1559 fee data from the node
- * (mirroring `walletAPI.transaction.signAndBroadcast` in the live-app).
+ * RLP-encode the approval payload from a swap quote into the unsigned legacy
+ * EVM transaction hex expected by `SignerEth.signTransaction`. Quotes always
+ * carry an explicit `gasPrice` + `gasLimit`, so we feed them straight into
+ * `craftTransaction` as `customFees` and let coin-evm own the encoding
+ * (no direct ethers import here).
  */
-async function buildUnsignedSwapTxHex(
+async function buildUnsignedApprovalTxHex(
   currency: CryptoCurrency,
-  account: Account,
-  transactionData: DexTransactionData,
+  approvalTransaction: QuoteApprovalTransaction,
 ): Promise<string> {
-  const calldataHex = transactionData.data.replace(/^0x/, "");
+  const calldataHex = approvalTransaction.calldata.replace(/^0x/, "");
   const data = calldataHex.length > 0 ? Buffer.from(calldataHex, "hex") : Buffer.alloc(0);
 
   const { transaction } = await craftTransaction(currency, {
+    // The intent shape comes from `@ledgerhq/coin-module-framework`; we cast
+    // rather than introduce a new direct dep on the framework type.
     transactionIntent: {
       intentType: "transaction",
-      type: "send-eip1559",
-      sender: account.freshAddress,
-      recipient: transactionData.to,
-      amount: BigInt(transactionData.value || "0"),
+      type: "send-legacy",
+      sender: approvalTransaction.from,
+      recipient: approvalTransaction.to,
+      amount: BigInt(approvalTransaction.value || "0"),
       asset: { type: "native" },
       data: { type: "buffer", value: data },
-      feesStrategy: "medium",
     } as Parameters<typeof craftTransaction>[1]["transactionIntent"],
     customFees: {
       value: 0n,
-      // Only gasLimit is pinned — `craftTransaction` fetches `maxFeePerGas`
-      // and `maxPriorityFeePerGas` from the node when fee params are missing.
-      parameters: { gasLimit: BigInt(transactionData.gasLimit) },
+      parameters: {
+        gasLimit: BigInt(approvalTransaction.gasLimit || "100000"),
+        gasPrice: BigInt(approvalTransaction.gasPrice),
+      },
     },
   });
 
@@ -58,19 +58,20 @@ async function buildUnsignedSwapTxHex(
 }
 
 function combineSignedTx(unsignedTxHex: string, signature: Signature): string {
+  // `combine` accepts any `SignatureLike`; the DMK `{ r, s, v }` shape is one.
   return combine(unsignedTxHex, signature);
 }
 
-function runSignSwap(
+function runSignApproval(
   connectionResult: DeviceConnectionResult,
-  input: SignSwapEvmIntentInput,
-): Observable<SignSwapEvmJobState> {
+  input: SignApprovalEvmIntentInput,
+): Observable<SignApprovalEvmJobState> {
   const currency = getCryptoCurrencyById(input.currencyId);
-  return from(buildUnsignedSwapTxHex(currency, input.account, input.transactionData)).pipe(
+  return from(buildUnsignedApprovalTxHex(currency, input.approvalTransaction)).pipe(
     switchMap(unsignedTxHex => {
       const buffer = hexaStringToBuffer(unsignedTxHex);
       if (!buffer) {
-        throw new Error("Failed to encode unsigned swap transaction to bytes");
+        throw new Error("Failed to encode unsigned approval transaction to bytes");
       }
       const { dmk, sessionId } = connectionResult;
       const signer = new SignerEthBuilder({ dmk, sessionId }).build();
@@ -80,12 +81,12 @@ function runSignSwap(
 
       return observable.pipe(
         finalize(cancel),
-        map((state): SignSwapEvmJobState | null => {
+        map((state): SignApprovalEvmJobState | null => {
           if (state.status === DeviceActionStatus.Error) {
             const tag = (state.error as { _tag?: string })._tag;
             return {
               type: "failed",
-              error: tag ? new Error(tag) : new Error("Sign swap failed"),
+              error: tag ? new Error(tag) : new Error("Sign approval failed"),
             };
           }
           if (state.status === DeviceActionStatus.Completed) {
@@ -114,11 +115,11 @@ function runSignSwap(
           }
           return null;
         }),
-        filter((s): s is SignSwapEvmJobState => s !== null),
+        filter((s): s is SignApprovalEvmJobState => s !== null),
       );
     }),
     catchError(err =>
-      of<SignSwapEvmJobState>({
+      of<SignApprovalEvmJobState>({
         type: "failed",
         error: err instanceof Error ? err : new Error(String(err)),
       }),
@@ -127,18 +128,19 @@ function runSignSwap(
 }
 
 /**
- * Job for the swap signing intent.
+ * Job for the approval signing intent.
  *
- * Mirrors {@link signApprovalEvmJob} so the orchestration can reuse the
- * same state machine: emits an initial `preparing` value synchronously,
- * surfaces device-driven progress as the DMK signer does, and converts
- * errors into a terminal `failed` state instead of an observable error.
+ * Emits an initial `preparing` state synchronously so the executor never
+ * renders the intent component with `jobState: undefined`. All errors are
+ * surfaced as a terminal `failed` value rather than an observable error, so
+ * the orchestrator can read them via `onIntentJobStateChanged` before
+ * reacting in `onIntentJobComplete`.
  */
-export const signSwapEvmJob: Job<SignSwapEvmJobState, SignSwapEvmIntentInput> = ({
+export const signApprovalEvmJob: Job<SignApprovalEvmJobState, SignApprovalEvmIntentInput> = ({
   deviceConnectionResult,
   input,
 }) =>
   concat(
-    of<SignSwapEvmJobState>({ type: "preparing" }),
-    defer(() => runSignSwap(deviceConnectionResult, input)),
+    of<SignApprovalEvmJobState>({ type: "preparing" }),
+    defer(() => runSignApproval(deviceConnectionResult, input)),
   );

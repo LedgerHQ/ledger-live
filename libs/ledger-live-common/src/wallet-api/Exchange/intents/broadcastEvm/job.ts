@@ -1,15 +1,18 @@
 import { Observable, of, concat } from "rxjs";
 import { catchError } from "rxjs/operators";
 import { getNodeApi } from "@ledgerhq/coin-evm/network/node/index";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import type { Job } from "@ledgerhq/device-intent";
+import { getCryptoCurrencyById } from "../../../../currencies";
 import type { BroadcastEvmIntentInput, BroadcastEvmJobState } from "./types";
 
 const POLL_INTERVAL_MS = 3000;
 /**
- * Hard-stop after ~5 minutes of polling. The POC never retries; if the
- * receipt never lands we surface a `failed` state and let the orchestrator
- * reject the live-app promise.
+ * Hard-stop after ~5 minutes of polling. The current implementation never
+ * retries; if the receipt never lands we surface a `failed` state and let
+ * the orchestrator reject the live-app promise.
+ *
+ * Task 6 of the productionisation plan replaces this hand-rolled loop with
+ * coin-evm's confirmation primitives.
  */
 const MAX_POLL_ATTEMPTS = 100;
 
