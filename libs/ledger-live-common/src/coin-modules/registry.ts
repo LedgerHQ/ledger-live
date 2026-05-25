@@ -18,7 +18,15 @@ export function makeLoaderCache<T>(fn: (family: string) => Promise<T> | undefine
     const hit = cache.get(family);
     if (hit !== undefined) return hit;
     const p = fn(family);
-    if (p !== undefined) cache.set(family, p);
+    if (p !== undefined) {
+      cache.set(family, p);
+      // Evict on rejection so a transient failure (HMR race, network blip
+      // on a CDN-served chunk, …) can be retried on the next call instead
+      // of poisoning the cache for the rest of the session.
+      p.catch(() => {
+        if (cache.get(family) === p) cache.delete(family);
+      });
+    }
     return p;
   };
 }

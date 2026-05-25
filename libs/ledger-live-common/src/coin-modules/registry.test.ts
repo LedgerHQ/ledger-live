@@ -122,7 +122,7 @@ describe("makeLoaderCache", () => {
     expect(loader).toHaveBeenCalledTimes(2);
   });
 
-  it("caches rejected Promises", async () => {
+  it("memoizes in-flight rejected Promises (same reference until settled)", async () => {
     const loader = jest.fn(() => Promise.reject(new Error("fail")));
     const cached = makeLoaderCache(loader);
     const p1 = cached("bitcoin");
@@ -130,5 +130,17 @@ describe("makeLoaderCache", () => {
     expect(p1).toBe(p2);
     expect(loader).toHaveBeenCalledTimes(1);
     await expect(p1).rejects.toThrow("fail");
+  });
+
+  it("evicts rejected Promises so the next call retries (transient failure recovery)", async () => {
+    let attempt = 0;
+    const loader = jest.fn(() => {
+      attempt++;
+      return attempt === 1 ? Promise.reject(new Error("blip")) : Promise.resolve(42);
+    });
+    const cached = makeLoaderCache(loader);
+    await expect(cached("bitcoin")).rejects.toThrow("blip");
+    await expect(cached("bitcoin")).resolves.toBe(42);
+    expect(loader).toHaveBeenCalledTimes(2);
   });
 });
