@@ -1,5 +1,5 @@
+import { signApprovalEvmIntentDefinition } from "@ledgerhq/live-common/wallet-api/Exchange/intents/signApprovalEvm/index";
 import { SignApprovalEvmIntentComponentLWM } from "./componentLWM";
-import { signApprovalEvmIntentDefinition } from "./intentDefinition";
 import type { SignApprovalEvmIntentPlatformDefinition } from "./types";
 
 export const signApprovalEvmIntentLWMDefinition: SignApprovalEvmIntentPlatformDefinition = {
