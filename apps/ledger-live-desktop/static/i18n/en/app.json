@@ -9333,6 +9333,10 @@
       "edit": "Edit",
       "delete": "Delete"
     },
+    "contactMenu": {
+      "edit": "Edit contact",
+      "delete": "Delete contact"
+    },
     "addContactDialog": {
       "title": "Add contact",
       "placeholder": "Contact name",
