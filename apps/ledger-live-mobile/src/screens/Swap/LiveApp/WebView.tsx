@@ -21,6 +21,7 @@ export const WebView = forwardRef<WebviewAPI, Props>(
       swapPocExecutorProps,
       swapPocSuccessScreen,
       swapPocEnabled,
+      swapPocOnUserCancel,
     } = useSwapWebviewProps({
       manifest,
       params,
@@ -39,6 +40,7 @@ export const WebView = forwardRef<WebviewAPI, Props>(
           executorProps={swapPocExecutorProps}
           successScreen={swapPocSuccessScreen}
           enabled={swapPocEnabled}
+          onUserCancel={swapPocOnUserCancel}
         />
       </SafeAreaView>
     );
