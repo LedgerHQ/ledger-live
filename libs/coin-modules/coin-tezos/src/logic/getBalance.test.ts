@@ -301,7 +301,7 @@ describe("getBalance", () => {
         value: 10n,
         asset: { type: "native" },
         stake: {
-          uid: `unstaking-77`,
+          uid: "unstaking-77",
           address,
           delegate: delegateAddress,
           state: "deactivating",
