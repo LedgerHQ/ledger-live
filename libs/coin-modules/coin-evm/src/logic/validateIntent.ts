@@ -280,6 +280,15 @@ function validateStaking(
     return { errors: {}, warnings: {} };
   }
 
+  // A gasLimit of 0 means the fee estimation failed (treated as FeeNotLoaded).
+  // On Sei EVM this typically happens when the account's EVM key is not yet
+  // associated on-chain; the staking precompile rejects calls until the first
+  // outbound transaction is confirmed.
+  if (estimatedFees.parameters?.gasLimit === 0n) {
+    errors.gasLimit = new FeeNotLoaded();
+    return { errors, warnings };
+  }
+
   if (!intent.valAddress) {
     errors.valAddress = new ValAddressRequired();
   }

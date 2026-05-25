@@ -20,4 +20,5 @@ export {
   hasUnbondingPeriod,
   getValidators,
   prefetchValidators,
+  isSeiAccountUnassociated,
 } from "@ledgerhq/coin-evm/staking/index";

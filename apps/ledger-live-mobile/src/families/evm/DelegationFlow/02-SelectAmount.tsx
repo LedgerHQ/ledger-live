@@ -8,6 +8,7 @@ import {
   getMaxEstimatedBalance,
   getUnbondingPeriodDays,
   hasUnbondingPeriod,
+  isSeiAccountUnassociated,
 } from "@ledgerhq/live-common/families/evm/staking/logic";
 import { isStakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
 import type { TransactionStatus } from "@ledgerhq/coin-evm/types/index";
@@ -17,6 +18,7 @@ import invariant from "invariant";
 import React, { useCallback, useMemo } from "react";
 import { useTheme } from "styled-components/native";
 import {
+  SafeAreaView,
   Keyboard,
   KeyboardAvoidingViewProps,
   Platform,
@@ -82,6 +84,10 @@ export default function SelectAmount({ navigation, route }: Props) {
   const canContinue =
     !bridgePending && !bridgeError && !hasErrors && amount.gt(0) && maxSpendable.gte(amount);
   const showLockUpWarning = hasUnbondingPeriod(account.currency.id);
+  const showSeiAssociationWarning = useMemo(
+    () => isSeiAccountUnassociated(account.currency.id, account.freshAddress, account.operations),
+    [account],
+  );
 
   const updateAmount = useCallback(
     (amount: BigNumber, useAllAmount = false) => {
@@ -115,7 +121,7 @@ export default function SelectAmount({ navigation, route }: Props) {
   }
 
   return (
-    <View style={[styles.root, { backgroundColor: colors.background.main }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background.main }]}>
       <KeyboardView behavior={behaviorParam}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.container}>
@@ -139,6 +145,14 @@ export default function SelectAmount({ navigation, route }: Props) {
               </TouchableOpacity>
             </View>
 
+            {showSeiAssociationWarning ? (
+              <View style={styles.alertContainer}>
+                <Alert
+                  type="warning"
+                  title={t("evm.delegation.flow.steps.starter.seiAssociationWarning")}
+                />
+              </View>
+            ) : null}
             <View style={styles.footer}>
               {showLockUpWarning ? (
                 <View style={styles.alertContainer}>
@@ -198,7 +212,7 @@ export default function SelectAmount({ navigation, route }: Props) {
           </View>
         </TouchableWithoutFeedback>
       </KeyboardView>
-    </View>
+    </SafeAreaView>
   );
 }
 
