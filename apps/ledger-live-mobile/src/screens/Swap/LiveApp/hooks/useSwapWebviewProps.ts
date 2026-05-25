@@ -43,6 +43,7 @@ export function useSwapWebviewProps({ manifest, params }: UseSwapWebviewPropsPar
     swapPocExecutorProps,
     swapPocSuccessScreen,
     swapPocEnabled,
+    swapPocOnUserCancel,
   } = useSwapCustomHandlers(manifest, accounts, dispatch);
   const customDeeplinkHandlers = useDeeplinkCustomHandlers();
   const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
@@ -127,5 +128,6 @@ export function useSwapWebviewProps({ manifest, params }: UseSwapWebviewPropsPar
     swapPocExecutorProps,
     swapPocSuccessScreen,
     swapPocEnabled,
+    swapPocOnUserCancel,
   };
 }

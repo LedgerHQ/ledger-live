@@ -37,6 +37,7 @@ function SwapWebviewContent({
     swapPocExecutorProps,
     swapPocSuccessScreen,
     swapPocEnabled,
+    swapPocOnUserCancel,
   } = useSwapWebviewProps({
     manifest,
     params,
@@ -55,6 +56,7 @@ function SwapWebviewContent({
         executorProps={swapPocExecutorProps}
         successScreen={swapPocSuccessScreen}
         enabled={swapPocEnabled}
+        onUserCancel={swapPocOnUserCancel}
       />
     </>
   );

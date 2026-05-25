@@ -9,7 +9,7 @@ import type { SwapDeviceIntentPocOrchestrationResult } from "./useSwapDeviceInte
 
 type Props = Pick<
   SwapDeviceIntentPocOrchestrationResult,
-  "executorProps" | "successScreen" | "enabled"
+  "executorProps" | "successScreen" | "enabled" | "onUserCancel"
 >;
 
 /**
@@ -29,14 +29,16 @@ export function SwapDeviceIntentPocHost({
   executorProps,
   successScreen,
   enabled,
+  onUserCancel,
 }: Props): React.ReactElement | null {
   const { bottom: bottomInset } = useSafeAreaInsets();
 
   // The drawer's onClose fires on user dismiss (X / backdrop) AND on the
-  // host unmount cleanup. The orchestration handlers are idempotent
-  // (pendingPromiseRef is cleared after the first call) so duplicate fires
-  // are safe. Success phase wins if both are set during the inter-phase
-  // re-render frame.
+  // host unmount cleanup. We dispatch to the most specific handler
+  // available so the success-phase resolution path wins over a generic
+  // CANCEL when both could match during the inter-phase re-render frame.
+  // During `buildSwap` neither executor nor success-screen is mounted, so
+  // we fall back to the orchestration's top-level `onUserCancel`.
   const onCloseDuringExecutor = executorProps?.onUserCancel;
   const onCloseDuringSuccess = successScreen?.onClose;
   const handleClose = useCallback(() => {
@@ -44,8 +46,10 @@ export function SwapDeviceIntentPocHost({
       onCloseDuringSuccess();
     } else if (onCloseDuringExecutor) {
       onCloseDuringExecutor();
+    } else {
+      onUserCancel();
     }
-  }, [onCloseDuringExecutor, onCloseDuringSuccess]);
+  }, [onCloseDuringExecutor, onCloseDuringSuccess, onUserCancel]);
 
   if (!enabled) return null;
 
