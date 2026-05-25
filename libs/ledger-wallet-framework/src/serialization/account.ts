@@ -64,6 +64,19 @@ const HARDCODED_TOKENS: Record<string, () => TokenCurrency> = {
     units: [{ name: "USDCx", code: "USDCx", magnitude: 6 }],
     disableCountervalue: true,
   }),
+  "aleo/aleo_token/2045969100091121326225168054634646230244820821909676777152465722877810201564":
+    () => ({
+      type: "TokenCurrency",
+      id: "aleo/aleo_token/2045969100091121326225168054634646230244820821909676777152465722877810201564",
+      contractAddress:
+        "2045969100091121326225168054634646230244820821909676777152465722877810201564",
+      parentCurrency: getCryptoCurrencyById("aleo"),
+      tokenType: "aleo_token",
+      name: "Solana",
+      ticker: "SOL",
+      units: [{ name: "Solana", code: "SOL", magnitude: 9 }],
+      disableCountervalue: true,
+    }),
 };
 
 export type FromFamiliyRaw = {

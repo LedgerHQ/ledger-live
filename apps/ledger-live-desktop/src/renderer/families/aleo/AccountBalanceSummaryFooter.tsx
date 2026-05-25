@@ -3,7 +3,7 @@ import { Trans, useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { useSelector } from "LLD/hooks/redux";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
+import type { AleoAccount, AleoTokenAccount } from "@ledgerhq/live-common/families/aleo/types";
 import type { TokenAccount } from "@ledgerhq/types-live";
 import { localeSelector } from "~/renderer/reducers/settings";
 import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
@@ -124,6 +124,7 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
     alwaysShowSign: false,
     showCode: true,
     discreet,
+    disableRounding: true,
     locale,
   };
 
@@ -157,11 +158,19 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
   }, [isSyncing]);
 
   if (account.type === "TokenAccount" && config?.enableTokens) {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    const aleoTokenAccount = account as AleoTokenAccount;
     const formattedTransparentBalance = formatCurrencyUnit(
       unit,
-      account.spendableBalance,
+      aleoTokenAccount.transparentBalance,
       formatConfig,
     );
+
+    console.log("DEBUG", aleoTokenAccount);
+
+    const formattedPrivateTokenBalance = aleoTokenAccount.privateBalance
+      ? formatCurrencyUnit(unit, aleoTokenAccount.privateBalance, formatConfig)
+      : PRIVATE_BALANCE_PLACEHOLDER;
 
     return (
       <Wrapper>
@@ -188,7 +197,7 @@ const AccountBalanceSummaryFooter = ({ account }: Readonly<Props>) => {
             </TitleWrapper>
           </ToolTip>
           <AmountValue>
-            <Discreet>{PRIVATE_BALANCE_PLACEHOLDER}</Discreet>
+            <Discreet>{formattedPrivateTokenBalance}</Discreet>
           </AmountValue>
         </BalanceDetail>
       </Wrapper>

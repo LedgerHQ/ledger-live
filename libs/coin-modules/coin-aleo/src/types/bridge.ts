@@ -3,6 +3,8 @@ import type {
   Account,
   AccountRaw,
   Operation,
+  TokenAccount,
+  TokenAccountRaw,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -98,6 +100,18 @@ export type AleoAccount = Account & {
 
 export type AleoAccountRaw = AccountRaw & {
   aleoResources?: AleoResourcesRaw;
+};
+
+export type AleoTokenAccount = TokenAccount & {
+  transparentBalance: BigNumber;
+  privateBalance: BigNumber | null;
+  unspentPrivateRecords: AleoUnspentRecord[] | null;
+};
+
+export type AleoTokenAccountRaw = TokenAccountRaw & {
+  transparentBalance: string;
+  privateBalance: string | null;
+  unspentPrivateRecords: string | null;
 };
 
 export type AleoOperationExtra = {

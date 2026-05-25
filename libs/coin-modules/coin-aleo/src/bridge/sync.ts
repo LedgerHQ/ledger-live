@@ -82,14 +82,14 @@ export async function performPublicSync(
     config.enableTokens && initialAccount?.aleoResources?.hasMigratedPublicTokens !== true;
   const shouldSyncFromScratch = !initialAccount;
 
-  const allOldOperations = shouldSyncFromScratch ? [] : (initialAccount?.operations ?? []);
+  const allOldOperations = shouldSyncFromScratch ? [] : initialAccount?.operations ?? [];
 
   // Keep public and private ops separate so each cursor is derived from the correct op type.
   // Mixing them risks using a private op's blockHeight as the public sync cursor.
   const [oldPrivateOps, oldPublicOps] = splitPrivateAndPublicOperations(allOldOperations);
 
   const lastBlockHeight =
-    shouldSyncFromScratch || isTokenMigrationRequired ? 0 : (oldPublicOps[0]?.blockHeight ?? 0);
+    shouldSyncFromScratch || isTokenMigrationRequired ? 0 : oldPublicOps[0]?.blockHeight ?? 0;
 
   const latestAccountPublicOperations = await listOperations({
     currency,
@@ -280,34 +280,45 @@ export async function performPrivateSync(
   const tokenSyncStartHeight =
     shouldFetchPrivateTokens && hasMigratedPrivateTokens ? lastPrivateBlockHeight : 0;
 
-  const [rawNewPrivateRecords, rawUnspentPrivateRecords, rawTokenPrivateRecords] =
-    await Promise.all([
-      fetchAllOwnedRecords({
-        currency,
-        uuid: provableApi.uuid,
-        start: lastPrivateBlockHeight,
-        ...(signal && { signal }),
-      }),
-      fetchAllOwnedRecords({
-        currency,
-        uuid: provableApi.uuid,
-        unspent: true,
-        ...(signal && { signal }),
-      }),
-      shouldFetchPrivateTokens
-        ? fetchAllOwnedRecords({
-            currency,
-            uuid: provableApi.uuid,
-            start: tokenSyncStartHeight,
-            programs: [...TOKENS_PROGRAMS],
-            functions: [],
-            ...(signal && { signal }),
-          })
-        : Promise.resolve([]),
-    ]);
-
-  // eslint-disable-next-line no-console
-  console.log("aleo: token private records fetched", rawTokenPrivateRecords);
+  const [
+    rawNewPrivateRecords,
+    rawUnspentPrivateRecords,
+    rawTokenPrivateRecords,
+    rawUnspentTokenRecords,
+  ] = await Promise.all([
+    fetchAllOwnedRecords({
+      currency,
+      uuid: provableApi.uuid,
+      start: lastPrivateBlockHeight,
+      ...(signal && { signal }),
+    }),
+    fetchAllOwnedRecords({
+      currency,
+      uuid: provableApi.uuid,
+      unspent: true,
+      ...(signal && { signal }),
+    }),
+    shouldFetchPrivateTokens
+      ? fetchAllOwnedRecords({
+          currency,
+          uuid: provableApi.uuid,
+          start: tokenSyncStartHeight,
+          programs: [...TOKENS_PROGRAMS],
+          functions: [],
+          ...(signal && { signal }),
+        })
+      : Promise.resolve([]),
+    shouldFetchPrivateTokens
+      ? fetchAllOwnedRecords({
+          currency,
+          uuid: provableApi.uuid,
+          unspent: true,
+          programs: [...TOKENS_PROGRAMS],
+          functions: [],
+          ...(signal && { signal }),
+        })
+      : Promise.resolve([]),
+  ]);
 
   signal?.throwIfAborted();
 
@@ -349,6 +360,12 @@ export async function performPrivateSync(
   // The workaround is to remove records whose tags appear as inputs in currently processed transactions.
   // Records spent before are expected to have been cleared from the scanner by then.
   const filteredUnspentRecords = rawUnspentPrivateRecords.filter(
+    record => !latestAccountPrivateOperations.consumedRecordTags.has(record.tag),
+  );
+
+  // Unspent token records fetched separately (token programs are not returned by the
+  // unfiltered unspent fetch). Apply the same consumed-tag filter as native credits.
+  const filteredUnspentTokenRecords = rawUnspentTokenRecords.filter(
     record => !latestAccountPrivateOperations.consumedRecordTags.has(record.tag),
   );
 
@@ -394,20 +411,23 @@ export async function performPrivateSync(
     privateBalance: privateBalance.toString(),
   });
 
-  onProgress?.(PROGRESS_DONE);
-
-  let privateTokenSubAccounts: TokenAccount[] = [];
+  let mergedSubAccounts: TokenAccount[] = [];
   if (config.enableTokens) {
     const baseSubAccounts = publicSubAccounts ?? initialAccount.subAccounts ?? [];
-    const existingSubAccountIds = new Set(baseSubAccounts.map(sa => sa.id));
-    privateTokenSubAccounts = await buildSubAccountsFromPrivateRecords({
+
+    const { subAccounts } = await buildSubAccountsFromPrivateRecords({
       currency,
       ledgerAccountId,
-      privateRecords: rawTokenPrivateRecords,
-      existingSubAccountIds,
+      allPrivateRecords: rawTokenPrivateRecords,
+      unspentPrivateRecords: filteredUnspentTokenRecords,
+      baseSubAccounts,
       viewKey,
     });
+
+    mergedSubAccounts = subAccounts;
   }
+
+  onProgress?.(PROGRESS_DONE);
 
   return {
     type: "Account",
@@ -418,20 +438,17 @@ export async function performPrivateSync(
     operations,
     operationsCount: operations.length,
     lastSyncDate: initialAccount?.lastSyncDate,
-    ...(config.enableTokens && {
-      subAccounts: [
-        ...(publicSubAccounts ?? initialAccount.subAccounts ?? []),
-        ...privateTokenSubAccounts,
-      ],
-    }),
+    subAccounts: config.enableTokens ? mergedSubAccounts : [],
     aleoResources: {
       transparentBalance,
       provableApi,
       privateBalance,
       unspentPrivateRecords,
       lastPrivateSyncDate: new Date(),
-      ...(config.enableTokens && { hasMigratedPublicTokens: true }),
-      ...(config.enableTokens && { hasMigratedPrivateTokens: true }),
+      ...(config.enableTokens && {
+        hasMigratedPublicTokens: true,
+        hasMigratedPrivateTokens: true,
+      }),
     },
   };
 }

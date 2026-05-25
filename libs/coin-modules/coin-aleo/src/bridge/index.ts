@@ -24,7 +24,12 @@ import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { makeGetAccountShape, sync } from "./sync";
 import { createTransaction } from "./createTransaction";
 import { prepareTransaction } from "./prepareTransaction";
-import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
+import {
+  assignFromAccountRaw,
+  assignToAccountRaw,
+  assignToTokenAccountRaw,
+  assignFromTokenAccountRaw,
+} from "./serialization";
 import { getTransactionStatus } from "./getTransactionStatus";
 import { buildSignOperation } from "./signOperation";
 
@@ -65,6 +70,8 @@ export function buildAccountBridge(
     estimateMaxSpendable,
     assignFromAccountRaw,
     assignToAccountRaw,
+    assignToTokenAccountRaw,
+    assignFromTokenAccountRaw,
     getSerializedAddressParameters,
     validateAddress,
   };
