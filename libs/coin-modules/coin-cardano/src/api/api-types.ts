@@ -173,3 +173,31 @@ export type APIEpochParams = {
     };
   }>;
 };
+
+export type DRep = {
+  active: string;
+  anchor: { url: string; hash: string };
+  deposit: string;
+  eActive: number;
+  hex: string;
+  meta: {
+    givenName: string;
+    hash: string;
+    motivations: string;
+    objectives: string;
+    paymentAddress: string;
+    qualifications: string;
+    references: Array<{ url: string }>;
+  } | null;
+  pub: string;
+  registered: string;
+  retired: string | null;
+  votes: number;
+};
+
+export type APIGetDRepList = {
+  pageNo: number;
+  limit: number;
+  count: number;
+  dRepList: Array<DRep>;
+};

@@ -18,7 +18,7 @@ describe("buildTransaction", () => {
   };
 
   describe("certificates", () => {
-    it("should not add abstain when there is no delegation", async () => {
+    it("should not add an abstain certificate when there is no delegation", async () => {
       // account with no delegation
       const account = getCardanoAccountFixture({ delegation: undefined });
       const transaction = await buildTransaction(account, txPayload);
@@ -26,7 +26,7 @@ describe("buildTransaction", () => {
       expect(certificates).toEqual([]);
     });
 
-    it("should not add abstain when there is no rewards", async () => {
+    it("should not add an abstain certificate when there are no rewards", async () => {
       const account = getCardanoAccountFixture({
         delegation: {
           dRepHex: undefined,
@@ -38,10 +38,10 @@ describe("buildTransaction", () => {
       expect(certificates).toEqual([]);
     });
 
-    it("should not add abstain vote when dRepHex is present", async () => {
+    it("should not add an abstain certificate when dRepHex is present", async () => {
       const account = getCardanoAccountFixture({
         delegation: {
-          dRepHex: "drepHex", // drepHex present
+          dRepHex: "dRepHex", // dRepHex present
           rewards: new BigNumber(10e6),
         },
       });
@@ -57,7 +57,7 @@ describe("buildTransaction", () => {
     it("should not add an abstain vote on a send when rewards exist but no dRep is set", async () => {
       const account = getCardanoAccountFixture({
         delegation: {
-          dRepHex: undefined, // drepHex absent
+          dRepHex: undefined, // dRepHex absent
           rewards: new BigNumber(10e6), // rewards available
         },
       });
@@ -68,14 +68,14 @@ describe("buildTransaction", () => {
   });
 
   describe("withdrawals", () => {
-    it("should not add withdrawal when there is no delegation", async () => {
+    it("should not add a withdrawal when there is no delegation", async () => {
       const account = getCardanoAccountFixture({ delegation: undefined });
       const transaction = await buildTransaction(account, txPayload);
       const withdrawals = transaction.getWithdrawals();
       expect(withdrawals.length).toBe(0);
     });
 
-    it("should not add withdrawal if no rewards", async () => {
+    it("should not add a withdrawal when there are no rewards", async () => {
       const account = getCardanoAccountFixture({
         delegation: {
           rewards: new BigNumber(0), // no rewards
@@ -86,10 +86,10 @@ describe("buildTransaction", () => {
       expect(withdrawals.length).toBe(0);
     });
 
-    it("should not add withdrawal when dRepHex is absent", async () => {
+    it("should not add a withdrawal when dRepHex is absent", async () => {
       const account = getCardanoAccountFixture({
         delegation: {
-          dRepHex: undefined, // drepHex absent
+          dRepHex: undefined, // dRepHex absent
           rewards: new BigNumber(10e6), // rewards available
         },
       });
@@ -103,7 +103,7 @@ describe("buildTransaction", () => {
     it("should not sweep rewards via a withdrawal on a send when delegated to a dRep", async () => {
       const account = getCardanoAccountFixture({
         delegation: {
-          dRepHex: "drepHex", // drepHex present
+          dRepHex: "dRepHex", // dRepHex present
           rewards: new BigNumber(10e6), // rewards available
         },
       });
@@ -185,7 +185,7 @@ describe("buildTransaction", () => {
   });
 
   describe("undelegate transaction", () => {
-    it("should build a undelegate transaction with correct deposit", async () => {
+    it("should build an undelegate transaction with the correct deposit", async () => {
       const account = getCardanoAccountFixture({
         delegation: {
           status: true,
@@ -237,7 +237,7 @@ describe("buildTransaction", () => {
   });
 
   describe("delegate transaction", () => {
-    it("should build delegate transaction with stake key registration", async () => {
+    it("should build a delegation transaction with stake key registration", async () => {
       const account = getCardanoAccountFixture({
         delegation: undefined, // stake key not registered
       });
@@ -262,7 +262,7 @@ describe("buildTransaction", () => {
       );
     });
 
-    it("should build delegate transaction without stake key registration", async () => {
+    it("should build a delegation transaction without stake key registration", async () => {
       const account = getCardanoAccountFixture({
         delegation: {
           status: true, // stake key already registered
@@ -436,12 +436,12 @@ describe("buildTransaction", () => {
   });
   
   describe("vote delegate transaction", () => {
-    it("should skip default abstain vote with voteDelegate tx", async () => {
+    it("should skip the default auto-abstain certificate for voteDelegate mode", async () => {
       // scenario when it might add default abstain vote
       const account = getCardanoAccountFixture({
         delegation: {
           status: true, // stake key already registered
-          dRepHex: undefined, // drepHex absent
+          dRepHex: undefined, // dRepHex absent
           rewards: new BigNumber(10e6), // rewards available
         },
       });
@@ -462,7 +462,7 @@ describe("buildTransaction", () => {
       expect(voteDelegationCertificate.cert.dRep.key?.toString("hex")).toBe("aabbcc");
     });
 
-    it("should build vote delegate transaction with stake key registration", async () => {
+    it("should build a vote delegation transaction with stake key registration", async () => {
       /**
        * if stake key is not already registered
        * it should add stake key registration certificate along with vote delegation certificate
@@ -504,7 +504,7 @@ describe("buildTransaction", () => {
       expect(voteDelegateCertificate?.cert.dRep.key?.toString("hex")).toBe("bbccdd");
     });
 
-    it("should build vote delegate transaction without stake key registration", async () => {
+    it("should build a vote delegation transaction without stake key registration", async () => {
       /**
        * if stake key is already registed it should only add vote delegation certificate
        */
@@ -544,7 +544,7 @@ describe("buildTransaction", () => {
       expect(voteDelegateCertificate?.cert.dRep.key?.toString("hex")).toBe("aacc");
     });
 
-    it("should add abstain vote certificate", async () => {
+    it("should add an abstain vote certificate", async () => {
       const account = getCardanoAccountFixture({});
       const txPayloadVoteDelegate: Transaction = {
         family: "cardano",
@@ -570,7 +570,7 @@ describe("buildTransaction", () => {
       expect(voteDelegateCertificate?.cert.dRep.key).toBeUndefined();
     });
 
-    it("should add no confidence vote certificate", async () => {
+    it("should add a no confidence vote certificate", async () => {
       const account = getCardanoAccountFixture({});
       const txPayloadVoteDelegate: Transaction = {
         family: "cardano",
@@ -596,7 +596,7 @@ describe("buildTransaction", () => {
       expect(voteDelegateCertificate?.cert.dRep.key).toBeUndefined();
     });
 
-    it("should throw for invalid dRep hex", async () => {
+    it("should throw an error for an invalid dRep hex", async () => {
       const account = getCardanoAccountFixture({});
       const txPayloadVoteDelegate: Transaction = {
         family: "cardano",

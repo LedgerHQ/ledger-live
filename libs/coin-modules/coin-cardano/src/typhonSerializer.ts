@@ -219,10 +219,6 @@ function prepareStakeDeRegistrationCertificate(
 function prepareVoteDelegationCertificate(
   certificate: TyphonTypes.VoteDelegationCertificate,
 ): VoteDelegationCertificate {
-  if (certificate.cert.dRep.type !== TyphonTypes.DRepType.ABSTAIN) {
-    throw new Error(`DRep type ${certificate.cert.dRep.type} not supported`);
-  }
-
   if (
     certificate.cert.stakeCredential.type === TyphonTypes.HashType.ADDRESS &&
     certificate.cert.stakeCredential.bipPath
