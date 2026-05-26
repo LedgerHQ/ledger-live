@@ -56,6 +56,22 @@ const ETHEREUM_INITIALIZATION_INPUT: InitializationInput = {
   allowPartialDependencies: false,
 };
 
+/**
+ * Build the device-init input for the swap leg using the partner's
+ * hardware-wallet app id surfaced by `buildProviderTransactionData()`
+ * ("Uniswap" / "1inch" / "Velora" / "Ethereum" for OKX). The subsequent
+ * broadcast phase reuses this same input so the device stays on the
+ * partner app instead of returning to the Ethereum app.
+ */
+function buildSwapInitializationInput(hwAppId: string): InitializationInput {
+  return {
+    appName: hwAppId,
+    dependencies: [],
+    requireLatestFirmware: false,
+    allowPartialDependencies: false,
+  };
+}
+
 // Every POC intent emits through the same executor, so the executor props are
 // typed as the broadest union of their job states and inputs. Each phase
 // keeps the precise Intent instance internally and we cast at the boundary.
@@ -196,14 +212,17 @@ const LWM_SWAP_FLOW_PORTS: SwapFlowPorts<AnyIntent, InitializationInput> = {
     }),
     initInput: ETHEREUM_INITIALIZATION_INPUT,
   }),
-  createSignSwapIntent: ({ account, transactionData, currencyId, derivationPath }) => ({
+  createSignSwapIntent: ({ account, transactionData, currencyId, derivationPath, hwAppId }) => ({
     intent: createIntent(SWAP_POC_INTENT_DEFS.signSwap, {
       account,
       transactionData,
       currencyId,
       derivationPath,
     }),
-    initInput: ETHEREUM_INITIALIZATION_INPUT,
+    // Open the partner's embedded app for the swap leg. The follow-up
+    // broadcast phase carries the same init input forward so it absorbs
+    // the intent change as a self-transition (see device-intent README).
+    initInput: buildSwapInitializationInput(hwAppId),
   }),
   createSignPermit2Intent: ({ account, typedData, currencyId, derivationPath }) => ({
     intent: createIntent(SWAP_POC_INTENT_DEFS.signPermit2, {
@@ -221,8 +240,11 @@ const LWM_SWAP_FLOW_PORTS: SwapFlowPorts<AnyIntent, InitializationInput> = {
     initInput,
   }),
   buildSwapTransactionData: async ({ provider, context }) => {
-    const { transactionData } = await buildProviderTransactionData(provider, context);
-    return transactionData;
+    const { transactionData, hwAppId } = await buildProviderTransactionData(
+      provider,
+      context,
+    );
+    return { transactionData, hwAppId };
   },
 };
 
