@@ -1,0 +1,70 @@
+import { execFileSync } from "child_process";
+import { setEnv } from "@ledgerhq/live-env";
+import {
+  specs,
+  SpeculosDevice,
+  startSpeculos,
+  stopSpeculos,
+} from "@ledgerhq/live-common/e2e/speculos";
+import { CLI } from "../../utils/cliUtils";
+import { MaestroProject } from "../config/projects";
+
+export type SpeculosName = keyof typeof specs;
+
+export class SpeculosDeviceManager {
+  private readonly devices: SpeculosDevice[] = [];
+
+  constructor(private readonly project: MaestroProject) {}
+
+  async start(name: SpeculosName, testName: string) {
+    const speculos = await startSpeculos(testName, specs[name]);
+    if (!speculos?.port) {
+      throw new Error(`${name} Speculos did not start with an API port`);
+    }
+
+    this.devices.push(speculos);
+    return speculos;
+  }
+
+  registerForCli(port: number) {
+    process.env.SPECULOS_API_PORT = String(port);
+    setEnv("SPECULOS_API_PORT", port);
+    CLI.registerSpeculosTransport(String(port), process.env.SPECULOS_ADDRESS);
+  }
+
+  reversePort(port: number) {
+    if (this.project.platform === "android") {
+      execFileSync("adb", ["reverse", `tcp:${port}`, `tcp:${port}`], { stdio: "inherit" });
+    }
+  }
+
+  unreversePort(port: number) {
+    if (this.project.platform === "android") {
+      execFileSync("adb", ["reverse", "--remove", `tcp:${port}`], { stdio: "ignore" });
+    }
+  }
+
+  address(port: number) {
+    const configuredAddress = process.env.SPECULOS_ADDRESS?.trim();
+    if (!configuredAddress) return `http://127.0.0.1:${port}`;
+
+    const normalizedAddress = configuredAddress.startsWith("http")
+      ? configuredAddress
+      : `http://${configuredAddress}`;
+    const withoutTrailingSlash = normalizedAddress.replace(/\/+$/, "");
+    return /:\d+$/.test(withoutTrailingSlash)
+      ? withoutTrailingSlash
+      : `${withoutTrailingSlash}:${port}`;
+  }
+
+  async cleanup() {
+    for (const speculos of this.devices) {
+      try {
+        this.unreversePort(speculos.port);
+      } catch {
+        // Best effort cleanup; the reverse may not exist if the run failed early.
+      }
+      await stopSpeculos(speculos.id);
+    }
+  }
+}
