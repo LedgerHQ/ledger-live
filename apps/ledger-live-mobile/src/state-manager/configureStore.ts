@@ -19,7 +19,25 @@ import { fetchRemoteFlags } from "~/firebase/remoteConfig";
 
 export const store = configureStore({
   reducer: reducers,
-  devTools: !!Config.DEBUG_RNDEBUGGER,
+  devTools: Config.DEBUG_RNDEBUGGER
+    ? {
+        stateSanitizer: <S>(state: S): S => {
+          const s = state as Record<string, unknown>;
+          const api = s.counterValuesApi as Record<string, unknown> | undefined;
+          if (!api?.queries) return state;
+          const queries = api.queries as Record<string, unknown>;
+          const key = "getCounterValueIdsSortedByMarketCap(undefined)";
+          if (!(key in queries)) return state;
+          return {
+            ...s,
+            counterValuesApi: {
+              ...api,
+              queries: { ...queries, [key]: "<<redacted: ~20k market cap IDs>>" },
+            },
+          } as S;
+        },
+      }
+    : false,
   middleware: getDefaultMiddleware =>
     applyLlmRTKApiMiddlewares(
       getDefaultMiddleware({ serializableCheck: false, immutableCheck: false }),
