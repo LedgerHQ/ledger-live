@@ -466,10 +466,4 @@ export default class SwapLiveAppPage {
     await waitForWebElementToBeEnabled(this.signPermitButton);
     await tapWebElementByTestId(this.signPermitButton);
   }
-
-  @Step("Expect TwoStepSign screen to be displayed")
-  async expectTwoStepSignScreen() {
-    await waitWebElementByTestId(this.executeSwapButtonStepApproval);
-    await detoxExpect(getWebElementByTestId(this.executeSwapButtonStepApproval)).toExist();
-  }
 }
