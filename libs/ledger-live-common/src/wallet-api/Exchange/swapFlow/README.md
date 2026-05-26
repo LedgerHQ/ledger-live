@@ -91,7 +91,7 @@ type CliIntent =
     };
 
 // CLI hosts don't need device-init metadata; a `void`-ish marker works.
-type CliInitInput = { appName: "Ethereum" };
+type CliInitInput = { appName: string };
 
 const CLI_INIT_INPUT: CliInitInput = { appName: "Ethereum" };
 
@@ -117,12 +117,16 @@ function createCliPorts(deps: {
       },
       initInput: CLI_INIT_INPUT,
     }),
-    createSignSwapIntent: ({ account, transactionData }) => ({
+    createSignSwapIntent: ({ account, transactionData, hwAppId }) => ({
       intent: {
         kind: "sign-swap",
         run: () => deps.signEvmSwapOnDevice({ account, transactionData }),
       },
-      initInput: CLI_INIT_INPUT,
+      // Open the partner's embedded app for the swap leg (Uniswap /
+      // 1inch / Velora / Ethereum for OKX). Mobile reuses the same
+      // init input for the follow-up broadcast so the device stays on
+      // the partner app.
+      initInput: { appName: hwAppId },
     }),
     createBroadcastIntent: ({ signedTxHex, currencyId, initInput }) => ({
       intent: {
@@ -134,8 +138,11 @@ function createCliPorts(deps: {
       initInput,
     }),
     buildSwapTransactionData: async ({ provider, context }) => {
-      const { transactionData } = await buildProviderTransactionData(provider, context);
-      return transactionData;
+      const { transactionData, hwAppId } = await buildProviderTransactionData(
+        provider,
+        context,
+      );
+      return { transactionData, hwAppId };
     },
   };
 }

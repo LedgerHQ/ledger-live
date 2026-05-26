@@ -63,6 +63,13 @@ export type SwapFlowContext<TIntent, TInitInput> = {
   permitSignature: string | null;
   /** Calldata produced by `buildSwapTransactionData` (consumed by `signSwap`). */
   swapBuildResult: DexTransactionData | null;
+  /**
+   * Partner hardware-wallet app id produced alongside
+   * {@link swapBuildResult}. Forwarded to `createSignSwapIntent` so the
+   * host opens the right embedded app for the swap leg
+   * ("Uniswap" / "1inch" / "Velora" / "Ethereum" for OKX).
+   */
+  swapHwAppId: string | null;
   /** Hash of the broadcast-and-confirmed swap transaction. */
   swapTxHash: string | null;
   error: Error | null;
@@ -113,6 +120,7 @@ function initialContext<TIntent, TInitInput>(): SwapFlowContext<
     approvalTxHash: null,
     permitSignature: null,
     swapBuildResult: null,
+    swapHwAppId: null,
     swapTxHash: null,
     error: null,
   };
@@ -161,6 +169,7 @@ export function createSwapFlowMachine<TIntent, TInitInput>(
           approvalTxHash: null,
           permitSignature: null,
           swapBuildResult: null,
+          swapHwAppId: null,
           swapTxHash: null,
           error: null,
         };
@@ -229,7 +238,14 @@ export function createSwapFlowMachine<TIntent, TInitInput>(
         const currencyId = context.currencyId;
         const derivationPath = context.derivationPath;
         const transactionData = context.swapBuildResult;
-        if (!account || !currencyId || !derivationPath || !transactionData) {
+        const hwAppId = context.swapHwAppId;
+        if (
+          !account ||
+          !currencyId ||
+          !derivationPath ||
+          !transactionData ||
+          !hwAppId
+        ) {
           return {};
         }
         const portInput: SignSwapIntentInput = {
@@ -237,6 +253,7 @@ export function createSwapFlowMachine<TIntent, TInitInput>(
           transactionData,
           currencyId,
           derivationPath,
+          hwAppId,
         };
         const { intent, initInput } = ports.createSignSwapIntent(portInput);
         return { currentIntent: intent, currentInitInput: initInput };
@@ -453,8 +470,15 @@ export function createSwapFlowMachine<TIntent, TInitInput>(
           // `event.output` / `event.error` here is the safe path.
           onDone: {
             target: "signSwap",
-            actions: assign({
-              swapBuildResult: ({ event }) => event.output as DexTransactionData,
+            actions: assign(({ event }) => {
+              const output = event.output as {
+                transactionData: DexTransactionData;
+                hwAppId: string;
+              };
+              return {
+                swapBuildResult: output.transactionData,
+                swapHwAppId: output.hwAppId,
+              };
             }),
           },
           onError: {
