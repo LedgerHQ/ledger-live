@@ -7,7 +7,6 @@ import {
   UserInteractionRequired,
 } from "@ledgerhq/device-management-kit";
 import {
-  SignerEthBuilder,
   SignTransactionDAStep,
   type Signature,
 } from "@ledgerhq/device-signer-kit-ethereum";
@@ -17,6 +16,7 @@ import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
 import type { DeviceConnectionResult, Job } from "@ledgerhq/device-intent";
 import { getCryptoCurrencyById } from "../../../../currencies";
+import { DmkSignerEth } from "@ledgerhq/live-signer-evm";
 import type { DexTransactionData } from "../../dex";
 import type { SignSwapEvmIntentInput, SignSwapEvmJobState } from "./types";
 
@@ -73,7 +73,11 @@ function runSignSwap(
         throw new Error("Failed to encode unsigned swap transaction to bytes");
       }
       const { dmk, sessionId } = connectionResult;
-      const signer = new SignerEthBuilder({ dmk, sessionId }).build();
+      // Reuse the production CAL-wired SignerEth so the device can
+      // resolve partner calldata descriptors (Uniswap UniversalRouter,
+      // 1inch AggregationRouter, …) and clear-sign the swap instead
+      // of falling back to blind signing.
+      const signer = new DmkSignerEth(dmk, sessionId).signer;
       const { observable, cancel } = signer.signTransaction(input.derivationPath, buffer, {
         skipOpenApp: true,
       });

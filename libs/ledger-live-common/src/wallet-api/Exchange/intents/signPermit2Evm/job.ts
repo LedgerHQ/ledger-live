@@ -5,11 +5,11 @@ import {
   UserInteractionRequired,
 } from "@ledgerhq/device-management-kit";
 import {
-  SignerEthBuilder,
   SignTypedDataDAStateStep,
   type Signature,
 } from "@ledgerhq/device-signer-kit-ethereum";
 import type { DeviceConnectionResult, Job } from "@ledgerhq/device-intent";
+import { DmkSignerEth } from "@ledgerhq/live-signer-evm";
 import type {
   SignPermit2EvmIntentInput,
   SignPermit2EvmJobState,
@@ -34,7 +34,13 @@ function runSignPermit2(
   input: SignPermit2EvmIntentInput,
 ): Observable<SignPermit2EvmJobState> {
   const { dmk, sessionId } = connectionResult;
-  const signer = new SignerEthBuilder({ dmk, sessionId }).build();
+  // Use the production CAL-backed signer so EIP-712 typed-data filters
+  // load on-device (Permit2 spender, token symbols, …) and the user
+  // doesn't see the blind-signing fallback.
+  // Reuse the production CAL-wired SignerEth so EIP-712 typed-data
+  // filters load on-device (Permit2 spender, token symbols, …)
+  // instead of falling back to blind signing.
+  const signer = new DmkSignerEth(dmk, sessionId).signer;
   const { observable, cancel } = signer.signTypedData(
     input.derivationPath,
     input.typedData,
