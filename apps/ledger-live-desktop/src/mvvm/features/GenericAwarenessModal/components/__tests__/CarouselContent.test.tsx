@@ -25,7 +25,13 @@ describe("CarouselContent", () => {
     const onSlidePrimaryClick = jest.fn();
     const onClose = jest.fn();
     render(
-      <CarouselContent slides={slides} onSlidePrimaryClick={onSlidePrimaryClick} onClose={onClose} />,
+      <CarouselContent
+        slides={slides}
+        onSlidePrimaryClick={onSlidePrimaryClick}
+        onSlideChange={jest.fn()}
+        onContinueClick={jest.fn()}
+        onClose={onClose}
+      />,
     );
 
     expect(screen.getByText("First slide title")).toBeVisible();
@@ -39,7 +45,13 @@ describe("CarouselContent", () => {
     const onSlidePrimaryClick = jest.fn();
     const onClose = jest.fn();
     const { user } = render(
-      <CarouselContent slides={slides} onSlidePrimaryClick={onSlidePrimaryClick} onClose={onClose} />,
+      <CarouselContent
+        slides={slides}
+        onSlidePrimaryClick={onSlidePrimaryClick}
+        onSlideChange={jest.fn()}
+        onContinueClick={jest.fn()}
+        onClose={onClose}
+      />,
     );
 
     await user.click(screen.getByTestId("generic-awareness-modal-continue-button"));
@@ -61,7 +73,13 @@ describe("CarouselContent", () => {
     const onSlidePrimaryClick = jest.fn();
     const onClose = jest.fn();
     const { user } = render(
-      <CarouselContent slides={slides} onSlidePrimaryClick={onSlidePrimaryClick} onClose={onClose} />,
+      <CarouselContent
+        slides={slides}
+        onSlidePrimaryClick={onSlidePrimaryClick}
+        onSlideChange={jest.fn()}
+        onContinueClick={jest.fn()}
+        onClose={onClose}
+      />,
     );
 
     await user.click(screen.getByTestId("generic-awareness-modal-primary-button"));
@@ -74,7 +92,13 @@ describe("CarouselContent", () => {
     const onSlidePrimaryClick = jest.fn();
     const onClose = jest.fn();
     const { user } = render(
-      <CarouselContent slides={slides} onSlidePrimaryClick={onSlidePrimaryClick} onClose={onClose} />,
+      <CarouselContent
+        slides={slides}
+        onSlidePrimaryClick={onSlidePrimaryClick}
+        onSlideChange={jest.fn()}
+        onContinueClick={jest.fn()}
+        onClose={onClose}
+      />,
     );
 
     await user.click(screen.getByTestId("generic-awareness-modal-continue-button"));

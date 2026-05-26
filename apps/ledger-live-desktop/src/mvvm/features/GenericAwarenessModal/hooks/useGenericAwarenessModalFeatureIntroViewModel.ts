@@ -1,17 +1,16 @@
-import { useCallback, useMemo } from "react";
-import { useDispatch } from "LLD/hooks/redux";
+import { useMemo } from "react";
 import * as Icons from "@ledgerhq/lumen-ui-react/symbols";
 import {
   GenericAwarenessModalLayout,
   type GenericAwarenessModalContentCard,
   type GenericAwarenessModalFeatureIntro,
 } from "@ledgerhq/live-common/genericAwarenessModal";
-import { closeGenericAwarenessModalDialog } from "../genericAwarenessModalDialog";
 import type {
   FeatureIntroContentItem,
   LumenSymbolName,
 } from "../components/FeatureIntroContent";
-import { openURL } from "~/renderer/linking";
+import type { AwarenessModalDismissMethod } from "../analytics/const";
+import useGenericAwarenessModalFeatureIntroAnalytics from "./useGenericAwarenessModalFeatureIntroAnalytics";
 
 export interface GenericAwarenessModalFeatureIntroViewModel {
   title: string;
@@ -22,6 +21,8 @@ export interface GenericAwarenessModalFeatureIntroViewModel {
   imageUrl?: string;
   onPrimaryClick: () => void;
   onSecondaryClick: () => void;
+  onHeaderClose: () => void;
+  onDismiss: (dismissMethod: AwarenessModalDismissMethod) => void;
 }
 
 // hasOwn checks only exported symbol keys; `in` would also match Object.prototype names (e.g. "toString").
@@ -38,25 +39,12 @@ const mapFeatureIntroItems = (
 
 const useGenericAwarenessModalFeatureIntroViewModel = (
   contentCard: GenericAwarenessModalContentCard | undefined,
+  isOpen: boolean,
 ): GenericAwarenessModalFeatureIntroViewModel => {
-  const dispatch = useDispatch();
-
   const featureIntro =
     contentCard?.layout === GenericAwarenessModalLayout.FeatureIntro ? contentCard : undefined;
 
-  const onPrimaryClick = useCallback(() => {
-    if (featureIntro) {
-      openURL(featureIntro.primaryButtonLink);
-      dispatch(closeGenericAwarenessModalDialog());
-    }
-  }, [dispatch, featureIntro]);
-
-  const onSecondaryClick = useCallback(() => {
-    if (featureIntro) {
-      openURL(featureIntro.secondaryButtonLink);
-      dispatch(closeGenericAwarenessModalDialog());
-    }
-  }, [dispatch, featureIntro]);
+  const analytics = useGenericAwarenessModalFeatureIntroAnalytics(contentCard, isOpen);
 
   return useMemo(
     () => ({
@@ -66,10 +54,12 @@ const useGenericAwarenessModalFeatureIntroViewModel = (
       primaryButtonLabel: featureIntro?.primaryButtonLabel ?? "",
       secondaryButtonLabel: featureIntro?.secondaryButtonLabel ?? "",
       imageUrl: featureIntro?.imageUrl || undefined,
-      onPrimaryClick,
-      onSecondaryClick,
+      onPrimaryClick: analytics.onPrimaryClick,
+      onSecondaryClick: analytics.onSecondaryClick,
+      onHeaderClose: analytics.onHeaderClose,
+      onDismiss: analytics.onDismiss,
     }),
-    [featureIntro, onPrimaryClick, onSecondaryClick],
+    [analytics, featureIntro],
   );
 };
 

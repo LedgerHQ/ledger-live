@@ -47,6 +47,8 @@ function CarouselContentSlide({ title, subtitle, imageUrl }: Readonly<CarouselCo
 export type CarouselContentProps = {
   slides: GenericAwarenessModalCarouselSlide[];
   onSlidePrimaryClick: (slide: GenericAwarenessModalCarouselSlide) => void;
+  onSlideChange: (index: number) => void;
+  onContinueClick: (slideIndex: number, isLastSlide: boolean) => void;
   onClose: () => void;
 };
 
@@ -62,10 +64,12 @@ function CarouselContentProgress() {
 function CarouselContentFooter({
   slides,
   onSlidePrimaryClick,
+  onContinueClick,
   onClose,
 }: Readonly<{
   slides: GenericAwarenessModalCarouselSlide[];
   onSlidePrimaryClick: (slide: GenericAwarenessModalCarouselSlide) => void;
+  onContinueClick: (slideIndex: number, isLastSlide: boolean) => void;
   onClose: () => void;
 }>) {
   const { t } = useTranslation();
@@ -74,12 +78,13 @@ function CarouselContentFooter({
   const currentSlide = slides[currentIndex];
 
   const handleContinue = useCallback(() => {
+    onContinueClick(currentIndex, isLastSlide);
     if (isLastSlide) {
       onClose();
     } else {
       goToNext();
     }
-  }, [goToNext, isLastSlide, onClose]);
+  }, [currentIndex, goToNext, isLastSlide, onClose, onContinueClick]);
 
   const handlePrimary = useCallback(() => {
     if (currentSlide) {
@@ -114,10 +119,12 @@ function CarouselContentFooter({
 export default function CarouselContent({
   slides,
   onSlidePrimaryClick,
+  onSlideChange,
+  onContinueClick,
   onClose,
 }: Readonly<CarouselContentProps>) {
   return (
-    <Slides initialSlideIndex={0}>
+    <Slides initialSlideIndex={0} onSlideChange={onSlideChange}>
       <Slides.Content>
         {slides.map((slide, index) => (
           <Slides.Content.Item key={`${slide.title}-carousel-slide-${index}`}>
@@ -132,6 +139,7 @@ export default function CarouselContent({
         <CarouselContentFooter
           slides={slides}
           onSlidePrimaryClick={onSlidePrimaryClick}
+          onContinueClick={onContinueClick}
           onClose={onClose}
         />
       </Slides.Footer>
