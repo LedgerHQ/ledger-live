@@ -26,20 +26,39 @@ import {
 } from "../coin-modules/registry";
 import { defaultBridgeExtensions } from "./defaultBridgeExtensions";
 
-// Promise cache per family — storing the Promise (not the value) means:
-//  1. Concurrent calls share the same in-flight Promise (no duplicate loading)
-//  2. Once settled, React's use() reads the annotated {status, value} and returns synchronously
+// Rejections stay cached: evicting would hand React.use() a fresh Promise per render and re-suspend forever.
+// Callers that want to retry a transient failure must invalidate via clearBridgeCache(family).
 const currencyBridgePromiseCache: Record<string, Promise<CurrencyBridge>> = {};
 const accountBridgePromiseCache: Record<string, Promise<ResolvedAccountBridge<any>>> = {};
 const mockBridgePromiseCache: Record<string, Promise<ResolvedAccountBridge<any>> | undefined> = {};
+// Keyed by currency.id|derivationMode. checkAccountSupported depends on mutable setSupportedCurrencies /
+// EXPERIMENTAL_CURRENCIES — callers that toggle these must invalidate via clearBridgeCache().
+const unsupportedBridgePromiseCache: Record<string, Promise<ResolvedAccountBridge<any>>> = {};
 
 // Annotate a Promise with React's use() hint fields so it returns synchronously after settlement.
-function settleAnnotate<T>(p: Promise<T>): Promise<T> {
+function annotatePromise<T>(p: Promise<T>): Promise<T> {
   p.then(
-    value => Object.assign(p, { status: "fulfilled", value }),
-    reason => Object.assign(p, { status: "rejected", reason }),
+    value => {
+      Object.assign(p, { status: "fulfilled", value });
+    },
+    reason => {
+      Object.assign(p, { status: "rejected", reason });
+    },
   );
   return p;
+}
+
+export function clearBridgeCache(family?: string): void {
+  if (family === undefined) {
+    for (const k of Object.keys(currencyBridgePromiseCache)) delete currencyBridgePromiseCache[k];
+    for (const k of Object.keys(accountBridgePromiseCache)) delete accountBridgePromiseCache[k];
+    for (const k of Object.keys(mockBridgePromiseCache)) delete mockBridgePromiseCache[k];
+    for (const k of Object.keys(unsupportedBridgePromiseCache)) delete unsupportedBridgePromiseCache[k];
+    return;
+  }
+  delete currencyBridgePromiseCache[family];
+  delete accountBridgePromiseCache[family];
+  delete mockBridgePromiseCache[family];
 }
 
 async function buildCurrencyBridge(currency: CryptoCurrency): Promise<CurrencyBridge> {
@@ -69,10 +88,11 @@ async function buildCurrencyBridge(currency: CryptoCurrency): Promise<CurrencyBr
 }
 
 export const getCurrencyBridge = (currency: CryptoCurrency): Promise<CurrencyBridge> => {
-  if (!currencyBridgePromiseCache[currency.family]) {
-    currencyBridgePromiseCache[currency.family] = settleAnnotate(buildCurrencyBridge(currency));
+  const family = currency.family;
+  if (!currencyBridgePromiseCache[family]) {
+    currencyBridgePromiseCache[family] = annotatePromise(buildCurrencyBridge(currency));
   }
-  return currencyBridgePromiseCache[currency.family];
+  return currencyBridgePromiseCache[family];
 };
 
 async function buildAccountBridgeForFamily(family: string): Promise<ResolvedAccountBridge<any>> {
@@ -91,13 +111,11 @@ async function buildAccountBridgeForFamily(family: string): Promise<ResolvedAcco
 
 function getCachedBridgePromise(family: string): Promise<ResolvedAccountBridge<any>> {
   if (!accountBridgePromiseCache[family]) {
-    accountBridgePromiseCache[family] = settleAnnotate(buildAccountBridgeForFamily(family));
+    accountBridgePromiseCache[family] = annotatePromise(buildAccountBridgeForFamily(family));
   }
   return accountBridgePromiseCache[family];
 }
 
-// Returns the same Promise reference per family after the first call.
-// For non-mock accounts this is the settled, annotated Promise — React's use() never suspends twice.
 export function getAccountBridgeByFamily(
   family: string,
   accountId?: string,
@@ -108,7 +126,7 @@ export function getAccountBridgeByFamily(
       if (!mockBridgePromiseCache[family]) {
         const mockP = loadMockBridgeForFamily(family);
         if (mockP) {
-          mockBridgePromiseCache[family] = settleAnnotate(
+          mockBridgePromiseCache[family] = annotatePromise(
             (async () => {
               const mockBridge = await mockP;
               if (mockBridge) {
@@ -130,7 +148,6 @@ export function getAccountBridgeByFamily(
   return getCachedBridgePromise(family);
 }
 
-// Returns the same settled Promise for the same family so React's use() never suspends twice.
 export function getAccountBridge(
   account: AccountLike,
   parentAccount?: Account | null,
@@ -140,7 +157,11 @@ export function getAccountBridge(
   const supportedError = checkAccountSupported(mainAccount);
 
   if (supportedError) {
-    return Promise.reject(supportedError);
+    const key = `${currency.id}|${mainAccount.derivationMode}`;
+    if (!unsupportedBridgePromiseCache[key]) {
+      unsupportedBridgePromiseCache[key] = annotatePromise(Promise.reject(supportedError));
+    }
+    return unsupportedBridgePromiseCache[key];
   }
 
   return getAccountBridgeByFamily(currency.family, mainAccount.id);

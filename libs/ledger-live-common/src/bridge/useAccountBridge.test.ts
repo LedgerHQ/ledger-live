@@ -4,7 +4,8 @@
 import "../__tests__/test-helpers/dom-polyfill";
 import React from "react";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import { renderHook, act } from "@testing-library/react";
+import { CurrencyNotSupported } from "@ledgerhq/errors";
+import { render, renderHook, act, screen } from "@testing-library/react";
 import { genAccount } from "../mock/account";
 import { setSupportedCurrencies } from "../currencies";
 import { useAccountBridge, useAccountBridgeMany } from "./useAccountBridge";
@@ -49,6 +50,104 @@ describe("useAccountBridge", () => {
     expect(typeof result!.current.createTransaction).toBe("function");
     expect(typeof result!.current.updateTransaction).toBe("function");
     expect(typeof result!.current.prepareTransaction).toBe("function");
+  });
+});
+
+describe("useAccountBridge — unsupported account", () => {
+  function makeUnsupportedAccount(id: string) {
+    const account = genAccount(id, { currency: BTC });
+    return { ...account, currency: getCryptoCurrencyById("tron") };
+  }
+
+  class Boundary extends React.Component<
+    { children: React.ReactNode },
+    { error: Error | null }
+  > {
+    state = { error: null as Error | null };
+    static getDerivedStateFromError(error: Error) {
+      return { error };
+    }
+    render() {
+      if (this.state.error) {
+        return React.createElement("span", { "data-testid": "err" }, this.state.error.message);
+      }
+      return this.props.children;
+    }
+  }
+
+  // Hard cap surfaces the loop as a wrong error message rather than a Jest timeout.
+  function HookProbe({
+    account,
+    cap = 50,
+    counter,
+  }: {
+    account: ReturnType<typeof makeUnsupportedAccount>;
+    cap?: number;
+    counter: { n: number };
+  }) {
+    counter.n++;
+    if (counter.n > cap) {
+      throw new Error(`render loop detected (>${cap} renders)`);
+    }
+    useAccountBridge(account);
+    return null;
+  }
+
+  async function flush() {
+    for (let i = 0; i < 20; i++) {
+      await Promise.resolve();
+    }
+  }
+
+  test("does not enter a render loop on an unsupported account", async () => {
+    const counter = { n: 0 };
+    const account = makeUnsupportedAccount("loop-detect");
+    await act(async () => {
+      render(
+        React.createElement(
+          Boundary,
+          null,
+          React.createElement(
+            React.Suspense,
+            { fallback: null },
+            React.createElement(HookProbe, { account, counter }),
+          ),
+        ),
+      );
+      await flush();
+    });
+    expect(counter.n).toBeLessThan(50);
+    expect(screen.getByTestId("err").textContent).toMatch(/not supported/i);
+  });
+
+  test("error from useAccountBridge propagates to the ErrorBoundary with the right message", async () => {
+    const counter = { n: 0 };
+    const account = makeUnsupportedAccount("boundary-catch");
+    await act(async () => {
+      render(
+        React.createElement(
+          Boundary,
+          null,
+          React.createElement(
+            React.Suspense,
+            { fallback: React.createElement("span", { "data-testid": "fallback" }, "loading") },
+            React.createElement(HookProbe, { account, cap: 100, counter }),
+          ),
+        ),
+      );
+      await flush();
+    });
+    expect(screen.queryByTestId("err")?.textContent).toMatch(/not supported/i);
+    expect(screen.queryByTestId("fallback")).toBeNull();
+  });
+
+  test("rejection from getAccountBridge is identity-stable across direct calls", async () => {
+    const account = makeUnsupportedAccount("direct-identity");
+    const p1 = getAccountBridge(account);
+    const p2 = getAccountBridge(account);
+    p1.catch(() => {});
+    expect(p1).toBe(p2);
+    await expect(p1).rejects.toBeInstanceOf(CurrencyNotSupported);
   });
 });
 
