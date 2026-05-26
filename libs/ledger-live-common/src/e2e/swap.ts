@@ -1,6 +1,7 @@
 import { Account } from "./enum/Account";
 import { sanitizeError } from "./index";
 import axios, { AxiosRequestConfig } from "axios";
+import { Provider } from "./enum/Provider";
 
 // Target a sensible USD amount that works for most pairs
 const FALLBACK_TARGET_USD = 50;
@@ -13,6 +14,9 @@ const PROBE_AMOUNT = 0.0001;
 const PROBE_NETWORK_FEES = 0.001;
 
 const PROVIDERS_WHITELIST = "changelly_v2,exodus,thorswap,uniswap,cic_v2,nearintents,swapsxyz";
+
+const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+const ONE_WEEK_MS = ONE_DAY_MS * 7;
 
 type QuoteErrorItem = {
   parameter?: { minAmount?: string };
@@ -119,4 +123,25 @@ export async function getMinimumSwapAmount(
       return null;
     }
   }
+}
+
+export function pickRotatingProvider(eligibleProviders: Provider[]): Provider {
+  if (eligibleProviders.length === 0) {
+    throw new Error("[pickRotatingProvider] - eligibleProviders is empty");
+  }
+
+  const override = process.env.SWAP_PROVIDER;
+
+  if (override) {
+    const match = eligibleProviders.find(p => p.uiName === override || p.name === override);
+    if (!match) {
+      throw new Error(
+        `[pickRotatingProvider] - "${override}" did not match any of: ` +
+          eligibleProviders.map(p => `${p.uiName} (or ${p.name})`).join(", "),
+      );
+    }
+    return match;
+  }
+  const weekIndex = Math.floor(Date.now() / ONE_WEEK_MS);
+  return eligibleProviders[weekIndex % eligibleProviders.length];
 }

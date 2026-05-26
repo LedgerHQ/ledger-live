@@ -153,3 +153,25 @@ export async function approveToken() {
   }
   return approveTokenButtonDevice();
 }
+
+export async function signTypedMessageTouchDevices() {
+  await waitFor(DeviceLabels.REVIEW_TYPED_MESSAGE);
+  await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN);
+  await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
+}
+
+export const signTypedMessageButtonDevice = withDeviceController(
+  ({ getButtonsController }) =>
+    async () => {
+      await waitFor(DeviceLabels.REVIEW_TYPED_MESSAGE);
+      await pressUntilTextFound(DeviceLabels.SIGN_TYPED_MESSAGE);
+      await getButtonsController().both();
+    },
+);
+
+export async function signTypedMessage() {
+  if (isTouchDevice()) {
+    return signTypedMessageTouchDevices();
+  }
+  return signTypedMessageButtonDevice();
+}
