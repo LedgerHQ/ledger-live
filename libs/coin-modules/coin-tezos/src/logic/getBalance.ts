@@ -1,4 +1,5 @@
 import type { Balance } from "@ledgerhq/coin-module-framework/api/index";
+import { log } from "@ledgerhq/logs";
 import api from "../network/tzkt";
 import { buildStakesForAccount, fetchUnstakeRequests } from "./getStakes";
 
@@ -18,7 +19,13 @@ export async function getBalance(address: string): Promise<Balance[]> {
     tokensBalancesResult.status === "fulfilled" ? tokensBalancesResult.value : [];
   const normalized = apiAccount.type === "user" ? BigInt(apiAccount.balance) : 0n;
 
-  const unstakeRequests = await fetchUnstakeRequests(address, apiAccount);
+  const unstakeRequests = await fetchUnstakeRequests(address, apiAccount).catch(error => {
+    log("coin:tezos", "getBalance: fetchUnstakeRequests failed; degrading stakes to []", {
+      error,
+      address,
+    });
+    return [];
+  });
 
   const stakeBalances: Balance[] =
     apiAccount.type === "user"

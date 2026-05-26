@@ -390,7 +390,7 @@ describe("getBalance", () => {
       expect(await getBalance(address)).toEqual([{ value: 50n, asset: { type: "native" } }]);
     });
 
-    it("propagates rejection when the unstake_requests endpoint fails", async () => {
+    it("degrades stake breakdown but keeps balance sync when unstake_requests endpoint fails", async () => {
       mockServer.use(
         http.get(`http://tezos.explorer.com/v1/accounts/${address}`, () =>
           HttpResponse.json({
@@ -406,7 +406,23 @@ describe("getBalance", () => {
         http.get("http://tezos.explorer.com/v1/tokens/balances", () => HttpResponse.json([])),
       );
 
-      await expect(getBalance(address)).rejects.toThrow();
+      const result = await getBalance(address);
+
+      expect(result).toHaveLength(2);
+      expect(result[0]).toEqual({ value: 100n, asset: { type: "native" } });
+      expect(result[1]).toEqual({
+        value: 100n,
+        asset: { type: "native" },
+        stake: {
+          uid: `delegation-${address}`,
+          address,
+          delegate: delegateAddress,
+          state: "active",
+          asset: { type: "native" },
+          amount: 100n,
+          actions: [],
+        },
+      });
     });
   });
 });
