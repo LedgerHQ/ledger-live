@@ -25,6 +25,18 @@ jest.mock("../hooks/useGenericAwarenessModalFeatureIntroViewModel", () => ({
   })),
 }));
 
+jest.mock("../hooks/useGenericAwarenessModalPromptViewModel", () => ({
+  __esModule: true,
+  default: jest.fn(() => ({
+    title: "",
+    subtitle: "",
+    primaryButtonLabel: "",
+    secondaryButtonLabel: "",
+    onPrimaryClick: jest.fn(),
+    onSecondaryClick: jest.fn(),
+  })),
+}));
+
 describe("GenericAwarenessModalView", () => {
   it("should call onClose when open without a content card while stored cards exist", async () => {
     const onClose = jest.fn();

@@ -24,6 +24,20 @@ export const buildContentCardFromForm = (
     };
   }
 
+  if (form.layout === "prompt") {
+    return {
+      layout: GenericAwarenessModalLayout.Prompt,
+      id,
+      title: form.title,
+      subtitle: form.subtitle,
+      imageUrl: form.imageUrl,
+      primaryButtonLabel: form.primaryButtonLabel,
+      primaryButtonLink: form.primaryButtonLink,
+      secondaryButtonLabel: form.secondaryButtonLabel,
+      secondaryButtonLink: form.secondaryButtonLink,
+    };
+  }
+
   return {
     layout: GenericAwarenessModalLayout.FeatureIntro,
     id,

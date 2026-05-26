@@ -48,6 +48,7 @@ import type {
 const LAYOUT_OPTIONS: SelectOption<DevLayoutMode>[] = [
   { value: "carousel", label: COPY.layoutCarousel },
   { value: "featureIntro", label: COPY.layoutFeatureIntro },
+  { value: "prompt", label: COPY.layoutPrompt },
 ];
 
 const TRIGGER_OPTIONS: SelectOption<DevTriggerMode>[] = [
@@ -261,6 +262,47 @@ export function GenericAwarenessModalDevScreen() {
                 />
               </DevFormCard>
             ))}
+          </section>
+        ) : form.layout === "prompt" ? (
+          <section className="flex flex-col gap-8">
+            <DevSectionHeader title={COPY.promptMain} />
+            <DevLabeledInput
+              label={COPY.fields.title}
+              value={form.title}
+              onChange={title => setForm(prev => ({ ...prev, title }))}
+            />
+            <DevLabeledInput
+              label={COPY.fields.subtitle}
+              value={form.subtitle}
+              onChange={subtitle => setForm(prev => ({ ...prev, subtitle }))}
+            />
+            <DevLabeledInput
+              label={COPY.fields.imageUrl}
+              value={form.imageUrl}
+              onChange={imageUrl => setForm(prev => ({ ...prev, imageUrl }))}
+            />
+            <DevLabeledInput
+              label={COPY.fields.primaryButtonLabel}
+              value={form.primaryButtonLabel}
+              onChange={primaryButtonLabel => setForm(prev => ({ ...prev, primaryButtonLabel }))}
+            />
+            <DevLabeledInput
+              label={COPY.fields.primaryButtonLink}
+              value={form.primaryButtonLink}
+              onChange={primaryButtonLink => setForm(prev => ({ ...prev, primaryButtonLink }))}
+            />
+            <DevLabeledInput
+              label={COPY.fields.secondaryButtonLabel}
+              value={form.secondaryButtonLabel}
+              onChange={secondaryButtonLabel =>
+                setForm(prev => ({ ...prev, secondaryButtonLabel }))
+              }
+            />
+            <DevLabeledInput
+              label={COPY.fields.secondaryButtonLink}
+              value={form.secondaryButtonLink}
+              onChange={secondaryButtonLink => setForm(prev => ({ ...prev, secondaryButtonLink }))}
+            />
           </section>
         ) : (
           <section className="flex flex-col gap-8">

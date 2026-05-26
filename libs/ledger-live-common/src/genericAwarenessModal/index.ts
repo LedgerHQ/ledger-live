@@ -11,4 +11,5 @@ export type {
   GenericAwarenessModalCarouselSlide,
   GenericAwarenessModalFeatureIntro,
   GenericAwarenessModalFeatureIntroItem,
+  GenericAwarenessModalPrompt,
 } from "./types";

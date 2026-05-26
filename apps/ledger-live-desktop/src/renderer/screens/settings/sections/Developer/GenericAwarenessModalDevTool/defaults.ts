@@ -45,17 +45,39 @@ const featureIntroDefaults = {
   secondaryButtonLink: "https://www.ledger.com",
 };
 
+const promptDefaults = {
+  title: "Stay in control",
+  subtitle: "Move assets to a hardware signer for true self-custody.",
+  primaryButtonLabel: "Learn more",
+  primaryButtonLink: "https://www.ledger.com/academy",
+  secondaryButtonLabel: "Maybe later",
+  secondaryButtonLink: "https://www.ledger.com",
+};
+
 export const createInitialFormState = (
   layout: DevLayoutMode = "carousel",
   trigger: DevTriggerMode = "appStart",
-): GenericAwarenessModalDevFormState => ({
-  layout,
-  trigger,
-  slides: createDefaultCarouselSlides(),
-  items: createDefaultFeatureIntroItems(),
-  ...featureIntroDefaults,
-  imageUrl: getPicsumImageUrl(),
-});
+): GenericAwarenessModalDevFormState => {
+  const sharedFields = {
+    layout,
+    trigger,
+    slides: createDefaultCarouselSlides(),
+    items: createDefaultFeatureIntroItems(),
+    imageUrl: getPicsumImageUrl(),
+  };
+
+  if (layout === "prompt") {
+    return {
+      ...sharedFields,
+      ...promptDefaults,
+    };
+  }
+
+  return {
+    ...sharedFields,
+    ...featureIntroDefaults,
+  };
+};
 
 export const createDefaultCarouselSlideAt = (index: number): CarouselSlideForm =>
   defaultCarouselSlide(index);

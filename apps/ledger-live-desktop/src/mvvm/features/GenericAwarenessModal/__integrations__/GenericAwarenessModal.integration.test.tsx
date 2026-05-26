@@ -5,6 +5,7 @@ import GenericAwarenessModal from "..";
 import {
   CAROUSEL_CAMPAIGN_ID,
   FEATURE_INTRO_CAMPAIGN_ID,
+  PROMPT_CAMPAIGN_ID,
   genericAwarenessModalTestContentCards,
 } from "../__tests__/fixtures";
 import { dispatchGenericAwarenessModalThunk } from "../__tests__/testHelpers";
@@ -85,6 +86,56 @@ describe("GenericAwarenessModal Integration", () => {
       expect(screen.getByTestId("generic-awareness-modal").getAttribute("data-campaign-id")).toBe(
         FEATURE_INTRO_CAMPAIGN_ID,
       );
+    });
+  });
+
+  describe("prompt variant", () => {
+    it("should render prompt when opened with prompt campaign id", async () => {
+      const { store } = renderModal();
+
+      act(() => {
+        seedContentCards(store);
+        dispatchGenericAwarenessModalThunk(
+          store,
+          openGenericAwarenessModalDialog({ campaignId: PROMPT_CAMPAIGN_ID }),
+        );
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText("Stay in control")).toBeVisible();
+      });
+      expect(
+        screen.getByText("Move assets to a hardware signer for true self-custody."),
+      ).toBeVisible();
+      expect(screen.getByRole("button", { name: "Learn more" })).toBeVisible();
+      expect(screen.getByRole("button", { name: "Maybe later" })).toBeVisible();
+      expect(screen.queryByTestId("generic-awareness-modal-continue-button")).not.toBeInTheDocument();
+      expect(screen.getByTestId("generic-awareness-modal").getAttribute("data-campaign-id")).toBe(
+        PROMPT_CAMPAIGN_ID,
+      );
+    });
+
+    it("should close when the prompt primary button is clicked", async () => {
+      const { store, user } = renderModal();
+
+      act(() => {
+        seedContentCards(store);
+        dispatchGenericAwarenessModalThunk(
+          store,
+          openGenericAwarenessModalDialog({ campaignId: PROMPT_CAMPAIGN_ID }),
+        );
+      });
+
+      await waitFor(() => {
+        expect(screen.getByRole("button", { name: "Learn more" })).toBeVisible();
+      });
+
+      await user.click(screen.getByTestId("generic-awareness-modal-primary-button"));
+
+      await waitFor(() => {
+        expect(screen.queryByTestId("generic-awareness-modal")).not.toBeInTheDocument();
+      });
+      expect(store.getState().dialogs.GENERIC_AWARENESS_MODAL).toBe(false);
     });
   });
 

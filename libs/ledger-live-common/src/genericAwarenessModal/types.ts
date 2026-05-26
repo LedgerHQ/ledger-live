@@ -3,6 +3,7 @@ import { z } from "zod";
 export enum GenericAwarenessModalLayout {
   Carousel = "carousel",
   FeatureIntro = "featureIntro",
+  Prompt = "prompt",
 }
 
 export enum FeatureIntroRole {
@@ -62,10 +63,24 @@ export const GenericAwarenessModalFeatureIntroItemInputSchema = z.object({
   subtitle: z.string().catch(""),
 });
 
+export const GenericAwarenessModalPromptInputSchema = z.object({
+  layout: z.literal(GenericAwarenessModalLayout.Prompt),
+  campaignId: z.string(),
+  location: z.literal("generic_awareness_modal").default("generic_awareness_modal"),
+  imageUrl: z.string().catch(""),
+  title: z.string().catch(""),
+  subtitle: z.string().catch(""),
+  primaryButtonLabel: z.string().catch(""),
+  primaryButtonLink: z.string().catch(""),
+  secondaryButtonLabel: z.string().catch(""),
+  secondaryButtonLink: z.string().catch(""),
+});
+
 export const GenericAwarenessModalInputSchema = z.union([
   GenericAwarenessModalCarouselInputSchema,
   GenericAwarenessModalFeatureIntroMainInputSchema,
   GenericAwarenessModalFeatureIntroItemInputSchema,
+  GenericAwarenessModalPromptInputSchema,
 ]);
 
 export type GenericAwarenessModalInputIndex = z.input<typeof GenericAwarenessModalInputIndexSchema>;
@@ -102,10 +117,17 @@ export type GenericAwarenessModalParsedFeatureIntroItemInput = z.output<
   typeof GenericAwarenessModalFeatureIntroItemInputSchema
 >;
 
+export type GenericAwarenessModalPromptInput = z.input<typeof GenericAwarenessModalPromptInputSchema>;
+
+export type GenericAwarenessModalParsedPromptInput = z.output<
+  typeof GenericAwarenessModalPromptInputSchema
+>;
+
 export type GenericAwarenessModalInput =
   | GenericAwarenessModalCarouselInput
   | GenericAwarenessModalFeatureIntroMainInput
-  | GenericAwarenessModalFeatureIntroItemInput;
+  | GenericAwarenessModalFeatureIntroItemInput
+  | GenericAwarenessModalPromptInput;
 
 export type GenericAwarenessModalParsedInput = z.output<typeof GenericAwarenessModalInputSchema>;
 
@@ -156,9 +178,22 @@ export type GenericAwarenessModalFeatureIntro = {
   items: GenericAwarenessModalFeatureIntroItem[];
 };
 
+export type GenericAwarenessModalPrompt = {
+  layout: GenericAwarenessModalLayout.Prompt;
+  id: string;
+  imageUrl: string;
+  title: string;
+  subtitle: string;
+  primaryButtonLabel: string;
+  primaryButtonLink: string;
+  secondaryButtonLabel: string;
+  secondaryButtonLink: string;
+};
+
 export type GenericAwarenessModalContentCard =
   | GenericAwarenessModalCarousel
-  | GenericAwarenessModalFeatureIntro;
+  | GenericAwarenessModalFeatureIntro
+  | GenericAwarenessModalPrompt;
 
 export type GenericAwarenessModalOutput = GenericAwarenessModalContentCard;
 
@@ -173,3 +208,5 @@ export type GenericAwarenessModalFeatureIntroExtrasItemType =
 export type GenericAwarenessModalFeatureIntroExtrasType =
   | GenericAwarenessModalFeatureIntroExtrasMainType
   | GenericAwarenessModalFeatureIntroExtrasItemType;
+
+export type GenericAwarenessModalPromptExtrasType = GenericAwarenessModalPromptInput;

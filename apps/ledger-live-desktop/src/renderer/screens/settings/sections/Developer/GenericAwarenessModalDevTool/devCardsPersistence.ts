@@ -3,6 +3,7 @@ import {
   type GenericAwarenessModalCarousel,
   type GenericAwarenessModalContentCard,
   type GenericAwarenessModalFeatureIntro,
+  type GenericAwarenessModalPrompt,
 } from "@ledgerhq/live-common/genericAwarenessModal";
 
 export const DEV_GENERIC_AWARENESS_MODAL_CARDS_STORAGE_KEY =
@@ -30,8 +31,20 @@ const isFeatureIntroCard = (value: unknown): value is GenericAwarenessModalFeatu
   typeof value.secondaryButtonLink === "string" &&
   Array.isArray(value.items);
 
+const isPromptCard = (value: unknown): value is GenericAwarenessModalPrompt =>
+  isRecord(value) &&
+  value.layout === GenericAwarenessModalLayout.Prompt &&
+  typeof value.id === "string" &&
+  typeof value.title === "string" &&
+  typeof value.subtitle === "string" &&
+  typeof value.imageUrl === "string" &&
+  typeof value.primaryButtonLabel === "string" &&
+  typeof value.primaryButtonLink === "string" &&
+  typeof value.secondaryButtonLabel === "string" &&
+  typeof value.secondaryButtonLink === "string";
+
 const isContentCard = (value: unknown): value is GenericAwarenessModalContentCard =>
-  isCarouselCard(value) || isFeatureIntroCard(value);
+  isCarouselCard(value) || isFeatureIntroCard(value) || isPromptCard(value);
 
 const parsePersistedDevCards = (raw: unknown): GenericAwarenessModalContentCard[] => {
   if (!Array.isArray(raw)) {
