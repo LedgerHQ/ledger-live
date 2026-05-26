@@ -8,6 +8,10 @@ jest.mock("../hooks/useGenericAwarenessModalCarouselViewModel", () => ({
   default: jest.fn(() => ({
     slides: [],
     onSlidePrimaryClick: jest.fn(),
+    onSlideChange: jest.fn(),
+    onContinueClick: jest.fn(),
+    onHeaderClose: jest.fn(),
+    onDismiss: jest.fn(),
     onClose: jest.fn(),
   })),
 }));
@@ -22,6 +26,8 @@ jest.mock("../hooks/useGenericAwarenessModalFeatureIntroViewModel", () => ({
     secondaryButtonLabel: "",
     onPrimaryClick: jest.fn(),
     onSecondaryClick: jest.fn(),
+    onHeaderClose: jest.fn(),
+    onDismiss: jest.fn(),
   })),
 }));
 

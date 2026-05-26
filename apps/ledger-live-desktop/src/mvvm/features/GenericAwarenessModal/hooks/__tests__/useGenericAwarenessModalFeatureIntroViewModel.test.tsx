@@ -1,4 +1,5 @@
 import { act } from "tests/testSetup";
+import { track, trackPage } from "~/renderer/analytics/segment";
 import { openURL } from "~/renderer/linking";
 import { closeGenericAwarenessModalDialog } from "LLD/features/GenericAwarenessModal/genericAwarenessModalDialog";
 import { appStartFeatureIntroCard, carouselCampaignCard } from "../../__tests__/fixtures";
@@ -20,7 +21,7 @@ describe("useGenericAwarenessModalFeatureIntroViewModel", () => {
 
   it("should return empty content when content card is undefined", () => {
     const { result } = renderHookWithStore(() =>
-      useGenericAwarenessModalFeatureIntroViewModel(undefined),
+      useGenericAwarenessModalFeatureIntroViewModel(undefined, false),
     );
 
     expect(result.current).toEqual({
@@ -32,12 +33,14 @@ describe("useGenericAwarenessModalFeatureIntroViewModel", () => {
       imageUrl: undefined,
       onPrimaryClick: expect.any(Function),
       onSecondaryClick: expect.any(Function),
+      onHeaderClose: expect.any(Function),
+      onDismiss: expect.any(Function),
     });
   });
 
   it("should return empty content when content card is not feature intro", () => {
     const { result } = renderHookWithStore(() =>
-      useGenericAwarenessModalFeatureIntroViewModel(carouselCampaignCard),
+      useGenericAwarenessModalFeatureIntroViewModel(carouselCampaignCard, false),
     );
 
     expect(result.current.title).toBe("");
@@ -46,7 +49,7 @@ describe("useGenericAwarenessModalFeatureIntroViewModel", () => {
 
   it("should map feature intro content from the content card", () => {
     const { result } = renderHookWithStore(() =>
-      useGenericAwarenessModalFeatureIntroViewModel(appStartFeatureIntroCard),
+      useGenericAwarenessModalFeatureIntroViewModel(appStartFeatureIntroCard, true),
     );
 
     expect(result.current.title).toBe("Connect a Ledger device");
@@ -61,6 +64,7 @@ describe("useGenericAwarenessModalFeatureIntroViewModel", () => {
       subtitle: "Build your portfolio with the simplicity of exchanges and security of a signer.",
       icon: "HandCoins",
     });
+    expect(trackPage).toHaveBeenCalled();
   });
 
   it("should fall back to Gift icon when icon name is invalid", () => {
@@ -70,7 +74,7 @@ describe("useGenericAwarenessModalFeatureIntroViewModel", () => {
     };
 
     const { result } = renderHookWithStore(() =>
-      useGenericAwarenessModalFeatureIntroViewModel(cardWithInvalidIcon),
+      useGenericAwarenessModalFeatureIntroViewModel(cardWithInvalidIcon, true),
     );
 
     expect(result.current.items[0]?.icon).toBe("Gift");
@@ -78,26 +82,34 @@ describe("useGenericAwarenessModalFeatureIntroViewModel", () => {
 
   it("should open primary link and close dialog on primary click", () => {
     const { result } = renderHookWithStore(() =>
-      useGenericAwarenessModalFeatureIntroViewModel(appStartFeatureIntroCard),
+      useGenericAwarenessModalFeatureIntroViewModel(appStartFeatureIntroCard, true),
     );
 
     act(() => {
       result.current.onPrimaryClick();
     });
 
+    expect(track).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({ button: "got it", ctaPosition: "primary" }),
+    );
     expect(openURL).toHaveBeenCalledWith("https://www.ledger.com");
     expect(jest.mocked(closeGenericAwarenessModalDialog)).toHaveBeenCalled();
   });
 
   it("should open secondary link and close dialog on secondary click", () => {
     const { result } = renderHookWithStore(() =>
-      useGenericAwarenessModalFeatureIntroViewModel(appStartFeatureIntroCard),
+      useGenericAwarenessModalFeatureIntroViewModel(appStartFeatureIntroCard, true),
     );
 
     act(() => {
       result.current.onSecondaryClick();
     });
 
+    expect(track).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({ button: "compare signers", ctaPosition: "secondary" }),
+    );
     expect(openURL).toHaveBeenCalledWith("https://www.ledger.com/compare-ledger-signers");
     expect(jest.mocked(closeGenericAwarenessModalDialog)).toHaveBeenCalled();
   });
