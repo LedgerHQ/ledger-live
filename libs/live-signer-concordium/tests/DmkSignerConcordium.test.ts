@@ -207,6 +207,7 @@ describe("DmkSignerConcordium", () => {
       expect(mockSignerConcordium.signTransaction).toHaveBeenCalledWith(
         mockPath,
         expect.any(Uint8Array),
+        mockTx.header.energyAmount,
         { skipOpenApp: true },
       );
     });

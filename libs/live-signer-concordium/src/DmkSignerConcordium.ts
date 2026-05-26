@@ -73,9 +73,12 @@ export class DmkSignerConcordium implements ConcordiumSigner {
   async signTransaction(tx: Transaction, path: string): Promise<SigningResult> {
     const serialized = serializeTransaction(tx);
 
-    const { observable } = this.signer.signTransaction(path, new Uint8Array(serialized), {
-      skipOpenApp: true,
-    });
+    const { observable } = this.signer.signTransaction(
+      path,
+      new Uint8Array(serialized),
+      tx.header.energyAmount,
+      { skipOpenApp: true },
+    );
 
     const result = this.mapResult(await lastValueFrom(observable));
     const signature = Buffer.from(result).toString("hex");
