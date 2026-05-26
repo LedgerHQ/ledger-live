@@ -65,7 +65,7 @@ const bundle_ios_with_cache = async () => {
 const test_ios = async () => {
   const result = await $`pnpm mobile ${testType}:test\
       -c ios.sim.${target} \
-      --loglevel warn \
+      --loglevel info \
       --record-logs failing \
       --take-screenshots failing \
       --forceExit \

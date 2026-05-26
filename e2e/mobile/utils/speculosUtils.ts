@@ -66,6 +66,37 @@ export const ARTIFACTS_DIR = path.resolve("artifacts");
 const SPECULOS_TRACKING_FILE = path.join(ARTIFACTS_DIR, `speculos-instances.${process.pid}.json`);
 export const SPECULOS_TRACKING_FILE_PATTERN = /^speculos-instances\.\d+\.json$/;
 
+// Append-only audit log: one JSON object per line, recording every acquire/release
+// with the test that triggered it. Reading the file and matching acquires against
+// releases by deviceId reveals exactly which tests leak Speculos pods.
+export const SPECULOS_AUDIT_LOG_FILE = path.resolve("artifacts/speculos-audit.log");
+
+async function appendAuditEntry(entry: {
+  action: "acquire" | "release";
+  deviceId: string;
+  testPath: string;
+  appName?: string;
+  error?: string;
+}) {
+  try {
+    await fs.mkdir(path.dirname(SPECULOS_AUDIT_LOG_FILE), { recursive: true });
+    await fs.appendFile(
+      SPECULOS_AUDIT_LOG_FILE,
+      JSON.stringify({ ts: new Date().toISOString(), pid: process.pid, ...entry }) + "\n",
+    );
+  } catch (error) {
+    log.warn("E2E", `⚠️ Failed to write Speculos audit entry:`, sanitizeError(error));
+  }
+}
+
+function currentTestPath(): string {
+  try {
+    return jestExpect.getState().testPath || "unknown";
+  } catch {
+    return "out-of-test";
+  }
+}
+
 // Register in tracking file for cross-process cleanup
 async function writeSpeculosInFile(deviceId: string) {
   try {
@@ -145,6 +176,12 @@ export async function launchSpeculos(appName: string) {
   speculosDevices.set(device.id, device.port);
 
   await writeSpeculosInFile(device.id);
+  await appendAuditEntry({
+    action: "acquire",
+    deviceId: device.id,
+    testPath: currentTestPath(),
+    appName,
+  });
   log.info("E2E Setup", "Device info before map set:", {
     port: device.port,
     deviceId: device.id,
@@ -212,17 +249,25 @@ export async function deleteSpeculos(deviceId?: string): Promise<number | undefi
   }
 
   const port = await findPortByDeviceId(deviceId);
+  let releaseError: unknown;
 
   try {
     await stopSpeculos(deviceId);
     log.info("E2E", `Speculos successfully stopped for device ${deviceId}`);
   } catch (error) {
+    releaseError = error;
     log.error("E2E", `Failed to stop Speculos ${deviceId}: ${sanitizeError(error)}`);
   } finally {
     speculosDevices.delete(deviceId);
     await removeSpeculosFromFile(deviceId);
     setEnv("SPECULOS_API_PORT", 0);
     delete process.env.SPECULOS_API_PORT;
+    await appendAuditEntry({
+      action: "release",
+      deviceId,
+      testPath: currentTestPath(),
+      ...(releaseError ? { error: String(sanitizeError(releaseError)) } : {}),
+    });
   }
 
   return port;
