@@ -4,7 +4,7 @@
 import BigNumber from "bignumber.js";
 import { renderHook } from "@testing-library/react";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
-import type { StakingPosition, TezosAccount } from "@ledgerhq/coin-tezos/types/index";
+import type { Baker, StakingPosition, TezosAccount } from "@ledgerhq/coin-tezos/types/index";
 
 jest.mock("@ledgerhq/coin-tezos/network/index", () => ({
   bakers: {
@@ -319,6 +319,20 @@ describe("useBaker", () => {
     await Promise.resolve();
     await Promise.resolve();
     expect(result.current).toBeUndefined();
+  });
+
+  it("returns the cached baker for the new addr immediately on addr change", () => {
+    const bakerA = { address: "tz1a", name: "A" } as unknown as Baker;
+    const bakerB = { address: "tz1b", name: "B" } as unknown as Baker;
+    mockBakers.getBakerSync.mockImplementation((a: string) =>
+      a === "tz1a" ? bakerA : a === "tz1b" ? bakerB : undefined,
+    );
+    const { result, rerender } = renderHook(({ addr }: { addr: string }) => useBaker(addr), {
+      initialProps: { addr: "tz1a" },
+    });
+    expect(result.current).toBe(bakerA);
+    rerender({ addr: "tz1b" });
+    expect(result.current).toBe(bakerB);
   });
 });
 

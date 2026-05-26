@@ -2,7 +2,6 @@ import invariant from "invariant";
 import React from "react";
 import { Trans } from "react-i18next";
 import { useTezosStakingInfo } from "@ledgerhq/live-common/families/tezos/react";
-import { Transaction } from "@ledgerhq/live-common/families/tezos/types";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -57,7 +56,7 @@ const StepAmount = ({
       <AmountField
         account={account}
         parentAccount={parentAccount}
-        transaction={transaction as Transaction}
+        transaction={transaction}
         onChangeTransaction={onChangeTransaction}
         status={status}
         bridgePending={bridgePending}

@@ -60,14 +60,13 @@ export function isAwaitingDelegation(
 }
 
 export function useBaker(addr: string): Baker | undefined {
-  const [baker, setBaker] = useState(() => (addr ? bakers.getBakerSync(addr) : undefined));
+  const [baker, setBaker] = useState<Baker | undefined>();
 
   useEffect(() => {
     if (!addr) {
       setBaker(undefined);
       return;
     }
-    setBaker(bakers.getBakerSync(addr));
     let cancelled = false;
     bakers
       .loadBaker(addr)
@@ -84,7 +83,9 @@ export function useBaker(addr: string): Baker | undefined {
     };
   }, [addr]);
 
-  return baker;
+  if (baker?.address === addr) return baker;
+  if (!addr) return undefined;
+  return bakers.getBakerSync(addr);
 }
 
 //  select a random baker for the mount time (assuming bakers length don't change)
