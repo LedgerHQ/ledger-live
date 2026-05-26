@@ -222,3 +222,38 @@ export function isMalformedTransactionTronAPI(
     (tx as MalformedTransactionTronAPI).tx_id !== undefined
   );
 }
+
+//-- Chain parameters
+export type ChainParameterEntryAPI = {
+  key: string;
+  value?: number;
+};
+
+export type ChainParametersAPI = {
+  chainParameter: ChainParameterEntryAPI[];
+};
+
+export type ChainParameters = {
+  energyFee: number;
+  transactionFee: number;
+  createAccountFee: number;
+  createNewAccountFeeInSystemContract: number;
+};
+
+//-- Trigger constant contract
+export type TriggerConstantContractParams = {
+  ownerAddress: string;
+  contractAddress: string;
+  functionSelector: string;
+  parameter: string;
+};
+
+export type TriggerConstantContractResponse = {
+  energy_used?: number;
+  constant_result?: string[];
+  result?: {
+    result?: boolean;
+    code?: string;
+    message?: string;
+  };
+};

@@ -14,7 +14,9 @@ import {
   fetchTronAccountTxs,
   getBlock,
   getBlockWithTransactions,
+  getChainParameters,
   getTransactionInfoByBlockNum,
+  triggerConstantContract,
 } from ".";
 
 const TRON_BASE_URL_TEST = "https://httpbin.org";
@@ -161,7 +163,6 @@ describe("fetchTronAccountTxs", () => {
     const results = await fetchTronAccountTxs(
       "ADDRESS",
       txs => txs.length < 100,
-      {},
       defaultFetchParams,
     );
 
@@ -215,7 +216,7 @@ describe("fetchTronAccountTxs with invalid TRC20 (see LIVE-18992)", () => {
 
   it("retry several times until result is correct", async () => {
     // WHEN
-    const results = await fetchTronAccountTxs("ADDRESS", () => true, {}, defaultFetchParams);
+    const results = await fetchTronAccountTxs("ADDRESS", () => true, defaultFetchParams);
 
     // THEN
     expect(results).toContainEqual(expect.objectContaining({ txID: tx1Hash }));
@@ -248,7 +249,7 @@ describe("Failed TRC20 txs", () => {
     );
 
   const fetchTxs = (address: string) =>
-    fetchTronAccountTxs(address, () => true, {}, defaultFetchParams);
+    fetchTronAccountTxs(address, () => true, defaultFetchParams);
 
   beforeAll(doBeforeAll(mockServer));
   beforeEach(doBeforeEach(mockServer));
@@ -320,7 +321,7 @@ describe("Transactions with internal_transactions", () => {
     );
 
   const fetchTxs = (address: string) =>
-    fetchTronAccountTxs(address, () => true, {}, defaultFetchParams);
+    fetchTronAccountTxs(address, () => true, defaultFetchParams);
 
   beforeAll(doBeforeAll(mockServer));
   beforeEach(doBeforeEach(mockServer));
@@ -409,7 +410,7 @@ describe("fetchTronAccountTxs with invalid TRC20 (see LIVE-18992): after 3 tries
 
   it("after several retry, it gives up on retry", async () => {
     await expect(
-      fetchTronAccountTxs("ADDRESS", () => true, {}, defaultFetchParams),
+      fetchTronAccountTxs("ADDRESS", () => true, defaultFetchParams),
     ).rejects.toThrow(
       "getTrc20TxsWithRetry: couldn't fetch trc20 transactions after several attempts",
     );
@@ -701,5 +702,137 @@ describe("getBlock API integration", () => {
       asset: { type: "native" },
       amount: BigInt(1000000),
     });
+  });
+});
+
+describe("getChainParameters", () => {
+  const fullParams = {
+    chainParameter: [
+      { key: "getEnergyFee", value: 100 },
+      { key: "getTransactionFee", value: 1000 },
+      { key: "getCreateAccountFee", value: 100_000 },
+      { key: "getCreateNewAccountFeeInSystemContract", value: 1_000_000 },
+      { key: "getMaintenanceTimeInterval", value: 21_600_000 },
+    ],
+  };
+
+  const handlerReturning = (body: { chainParameter: { key: string; value?: number }[] }) =>
+    http.get(`${TRON_BASE_URL_TEST}/wallet/getchainparameters`, () => HttpResponse.json(body));
+
+  const server = setupServer();
+  beforeAll(doBeforeAll(server));
+  beforeEach(() => {
+    server.resetHandlers();
+    getChainParameters.reset(); // 1h LRU shared across tests — clear it.
+  });
+  afterAll(doAfterAll(server));
+
+  it("parses the four governance-voted parameters used for fee estimation", async () => {
+    server.use(handlerReturning(fullParams));
+
+    const params = await getChainParameters();
+
+    expect(params).toEqual({
+      energyFee: 100,
+      transactionFee: 1000,
+      createAccountFee: 100_000,
+      createNewAccountFeeInSystemContract: 1_000_000,
+    });
+  });
+
+  it("falls back to hardcoded values for missing keys", async () => {
+    server.use(
+      handlerReturning({
+        chainParameter: [
+          { key: "getTransactionFee", value: 1000 },
+          { key: "getCreateAccountFee" }, // value omitted
+          // getEnergyFee and getCreateNewAccountFeeInSystemContract not returned at all
+        ],
+      }),
+    );
+
+    const params = await getChainParameters();
+
+    expect(params.transactionFee).toBe(1000);
+    expect(params.energyFee).toBe(100); // fallback
+    expect(params.createAccountFee).toBe(100_000); // fallback
+    expect(params.createNewAccountFeeInSystemContract).toBe(1_000_000); // fallback
+  });
+
+  it("caches the result across calls (no second HTTP request)", async () => {
+    let calls = 0;
+    server.use(
+      http.get(`${TRON_BASE_URL_TEST}/wallet/getchainparameters`, () => {
+        calls += 1;
+        return HttpResponse.json(fullParams);
+      }),
+    );
+
+    await getChainParameters();
+    await getChainParameters();
+    await getChainParameters();
+
+    expect(calls).toBe(1);
+  });
+});
+
+describe("triggerConstantContract", () => {
+  const okResponse = {
+    result: { result: true },
+    energy_used: 14_170,
+    constant_result: ["0".repeat(64)],
+  };
+  const revertResponse = {
+    result: { result: false, code: "REVERT", message: "transfer amount exceeds balance" },
+    energy_used: 0,
+  };
+
+  const server = setupServer();
+  beforeAll(doBeforeAll(server));
+  beforeEach(() => server.resetHandlers());
+  afterAll(doAfterAll(server));
+
+  it("forwards parameters and returns the parsed response on success", async () => {
+    let captured: any;
+    server.use(
+      http.post(`${TRON_BASE_URL_TEST}/wallet/triggerconstantcontract`, async ({ request }) => {
+        captured = await request.json();
+        return HttpResponse.json(okResponse);
+      }),
+    );
+
+    const response = await triggerConstantContract({
+      ownerAddress: "41".concat("a".repeat(40)),
+      contractAddress: "41".concat("b".repeat(40)),
+      functionSelector: "transfer(address,uint256)",
+      parameter: "deadbeef",
+    });
+
+    expect(captured).toEqual({
+      owner_address: "41".concat("a".repeat(40)),
+      contract_address: "41".concat("b".repeat(40)),
+      function_selector: "transfer(address,uint256)",
+      parameter: "deadbeef",
+    });
+    expect(response.energy_used).toBe(14_170);
+    expect(response.result?.result).toBe(true);
+  });
+
+  it("returns the revert payload without throwing (caller decides what to do)", async () => {
+    server.use(
+      http.post(`${TRON_BASE_URL_TEST}/wallet/triggerconstantcontract`, () =>
+        HttpResponse.json(revertResponse),
+      ),
+    );
+
+    const response = await triggerConstantContract({
+      ownerAddress: "41".concat("a".repeat(40)),
+      contractAddress: "41".concat("b".repeat(40)),
+      functionSelector: "transfer(address,uint256)",
+      parameter: "deadbeef",
+    });
+
+    expect(response.result?.result).toBe(false);
+    expect(response.result?.code).toBe("REVERT");
   });
 });
