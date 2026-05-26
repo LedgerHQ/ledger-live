@@ -22,7 +22,7 @@ export function runSwapTokenApprovalFlow(
       await app.speculos.setExchangeDependencies(fromAccount, toAccount);
       await beforeAllFunctionSwap({
         userdata: "skip-onboarding",
-        speculosApp: provider.app ?? fromAccount.currency.speculosApp,
+        speculosApp: fromAccount.currency.speculosApp,
         cliCommandsOnApp: [
           {
             app: fromAccount.currency.speculosApp,
