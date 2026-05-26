@@ -2,9 +2,13 @@ import { renderHook } from "@tests/test-renderer";
 import { useTransferDrawerViewModel } from "../useTransferDrawerViewModel";
 import { NavigatorName, ScreenName } from "~/const";
 import { track } from "~/analytics";
-import { overrideStateWithFunds } from "LLM/features/QuickActions/__integrations__/shared";
+import {
+  mockBitcoinCurrency,
+  overrideStateWithFunds,
+} from "LLM/features/QuickActions/__integrations__/shared";
 import { State } from "~/reducers/types";
 import type { Account } from "@ledgerhq/types-live";
+import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 const mockNavigate = jest.fn();
 const mockHandleOpenReceiveDrawer = jest.fn();
@@ -48,8 +52,8 @@ describe("TransferDrawer Navigation", () => {
     jest.clearAllMocks();
   });
 
-  const renderViewModel = () =>
-    renderHook(() => useTransferDrawerViewModel(), {
+  const renderViewModel = (currency?: CryptoOrTokenCurrency) =>
+    renderHook(() => useTransferDrawerViewModel(currency ? { currency } : undefined), {
       overrideInitialState: overrideWithOpenDrawer,
     });
 
@@ -65,6 +69,22 @@ describe("TransferDrawer Navigation", () => {
 
     expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.SendFunds, {
       screen: ScreenName.SendCoin,
+    });
+    expect(track).toHaveBeenCalledWith("button_clicked", {
+      button: "send",
+      buttonLocation: "quick_action_transfer",
+      page: SOURCE_SCREEN,
+    });
+  });
+
+  it("send navigates to SendFunds/SendCoin with selected currency when provided", () => {
+    const { result } = renderViewModel(mockBitcoinCurrency);
+
+    findAction(result, "send").onPress();
+
+    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.SendFunds, {
+      screen: ScreenName.SendCoin,
+      params: { selectedCurrency: mockBitcoinCurrency },
     });
     expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "send",

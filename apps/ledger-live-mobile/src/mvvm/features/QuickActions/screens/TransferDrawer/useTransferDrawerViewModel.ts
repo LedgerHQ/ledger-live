@@ -89,8 +89,9 @@ export const useTransferDrawerViewModel = ({
     closeDrawer();
     navigation.navigate(NavigatorName.SendFunds, {
       screen: ScreenName.SendCoin,
+      ...(currency ? { params: { selectedCurrency: currency } } : {}),
     });
-  }, [closeDrawer, navigation, sourceScreenName]);
+  }, [closeDrawer, currency, navigation, sourceScreenName]);
 
   const handleBankTransferPress = useCallback(() => {
     track("button_clicked", {
