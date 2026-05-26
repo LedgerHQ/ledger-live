@@ -6,6 +6,9 @@ import { useFooterViewModel } from "../useFooterViewModel";
 const mockHandleOpenBuySell = jest.fn();
 const mockHandleOpenSwap = jest.fn();
 const mockHandleOpenReceiveDrawer = jest.fn();
+const mockUseOpenReceiveDrawer = jest.fn((_props: unknown) => ({
+  handleOpenReceiveDrawer: mockHandleOpenReceiveDrawer,
+}));
 const mockIsCurrencyAvailable = jest.fn();
 const mockIsAcceptedCurrency = jest.fn().mockReturnValue(true);
 
@@ -26,7 +29,7 @@ jest.mock("LLM/features/Swap", () => ({
 }));
 
 jest.mock("LLM/features/Receive", () => ({
-  useOpenReceiveDrawer: () => ({ handleOpenReceiveDrawer: mockHandleOpenReceiveDrawer }),
+  useOpenReceiveDrawer: (props: unknown) => mockUseOpenReceiveDrawer(props),
 }));
 
 const bitcoin = getCryptoCurrencyById("bitcoin");
@@ -60,6 +63,15 @@ describe("useFooterViewModel", () => {
   });
 
   describe("press handlers", () => {
+    it("configures direct receive flow without asset-scoped currency ids", () => {
+      renderHook(() => useFooterViewModel(bitcoin));
+
+      expect(mockUseOpenReceiveDrawer).toHaveBeenCalledWith({
+        currency: bitcoin,
+        sourceScreenName: "Asset Detail",
+      });
+    });
+
     it("onBuyPress fires tracking and opens buy flow", () => {
       mockIsCurrencyAvailable.mockReturnValue(true);
       const { result } = renderHook(() => useFooterViewModel(bitcoin));

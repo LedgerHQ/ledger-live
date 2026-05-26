@@ -191,6 +191,38 @@ describe("useModularDrawerState", () => {
     expect(store.getState().modularDrawer.step).toBe(ModularDrawerStep.Account);
   });
 
+  it("should auto-select the only filtered asset and show Network when multiple networks exist", () => {
+    const { result, store } = renderHook(
+      () =>
+        useModularDrawerState({
+          currencyIds: [
+            mockEthCryptoCurrency.id,
+            mockArbitrumCryptoCurrency.id,
+            mockBaseCryptoCurrency.id,
+          ],
+          assetsSorted: [assetsSorted[0]],
+          isDrawerOpen: true,
+          onAccountSelected: mockOnAccountSelected,
+        }),
+      {
+        overrideInitialState: (state: State) => ({
+          ...state,
+          modularDrawer: {
+            ...state.modularDrawer,
+            enableAccountSelection: true,
+          },
+        }),
+      },
+    );
+
+    expect(store.getState().modularDrawer.step).toBe(ModularDrawerStep.Network);
+    expect(result.current.availableNetworks).toEqual([
+      mockEthCryptoCurrency,
+      mockArbitrumCryptoCurrency,
+      mockBaseCryptoCurrency,
+    ]);
+  });
+
   it("should navigate to device when there is exactly one network (no account selection)", () => {
     const singleAsset: AssetData[] = [
       {

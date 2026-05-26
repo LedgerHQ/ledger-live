@@ -11,6 +11,7 @@ import type { AssetDetailNavigatorParamsList } from "../../types";
 import { useIsBuyAvailable, useSecondaryButtonType } from "./components/Footer/useFooterViewModel";
 import { useAssetCoinOptionsViewModel } from "./components/CoinOptions/useAssetCoinOptionsViewModel";
 import { useAssetMarketData } from "./hooks/useAssetMarketData";
+import { useAssetDetailReceiveCurrencyIds } from "./hooks/useAssetDetailReceiveCurrencyIds";
 
 type Route = StackNavigatorProps<AssetDetailNavigatorParamsList, ScreenName.AssetDetail>["route"];
 
@@ -42,10 +43,12 @@ export function useAssetDetailViewModel() {
   const showFallbackBanner = !hasFooter && walletHasFunds && !!currency;
   const { marketId } = useAssetMarketData(currency);
   const coinOptions = useAssetCoinOptionsViewModel({ currency, currencyId, marketId });
+  const receiveCurrencyIds = useAssetDetailReceiveCurrencyIds(currency);
 
   return {
     currency,
     distributionItem,
+    receiveCurrencyIds,
     source,
     isRefreshing,
     onRefresh,

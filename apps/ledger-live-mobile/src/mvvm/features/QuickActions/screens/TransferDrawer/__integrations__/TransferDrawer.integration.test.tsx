@@ -1,4 +1,5 @@
 import { renderHook } from "@tests/test-renderer";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { useTransferDrawerViewModel } from "../useTransferDrawerViewModel";
 import { NavigatorName, ScreenName } from "~/const";
 import { track } from "~/analytics";
@@ -8,6 +9,9 @@ import type { Account } from "@ledgerhq/types-live";
 
 const mockNavigate = jest.fn();
 const mockHandleOpenReceiveDrawer = jest.fn();
+const mockUseOpenReceiveDrawer = jest.fn((_props: unknown) => ({
+  handleOpenReceiveDrawer: mockHandleOpenReceiveDrawer,
+}));
 
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
   useAccountBridge: jest.fn(),
@@ -23,7 +27,7 @@ jest.mock("@react-navigation/native", () => ({
 }));
 
 jest.mock("LLM/features/Receive", () => ({
-  useOpenReceiveDrawer: () => ({ handleOpenReceiveDrawer: mockHandleOpenReceiveDrawer }),
+  useOpenReceiveDrawer: (props: unknown) => mockUseOpenReceiveDrawer(props),
 }));
 
 jest.mock("LLM/features/Noah/useNoahEntryPoint", () => ({
@@ -31,6 +35,8 @@ jest.mock("LLM/features/Noah/useNoahEntryPoint", () => ({
 }));
 
 const SOURCE_SCREEN = "Portfolio";
+const bitcoinCurrency = getCryptoCurrencyById("bitcoin");
+const assetScopedCurrencyIds = [bitcoinCurrency.id];
 
 const overrideWithOpenDrawer = (state: State): State => {
   const base = overrideStateWithFunds(state);
@@ -43,20 +49,20 @@ const overrideWithOpenDrawer = (state: State): State => {
   };
 };
 
+const findAction = (
+  result: { current: ReturnType<typeof useTransferDrawerViewModel> },
+  id: string,
+) => result.current.actions.find(a => a.id === id)!;
+
 describe("TransferDrawer Navigation", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  const renderViewModel = () =>
-    renderHook(() => useTransferDrawerViewModel(), {
+  const renderViewModel = (params?: Parameters<typeof useTransferDrawerViewModel>[0]) =>
+    renderHook(() => useTransferDrawerViewModel(params), {
       overrideInitialState: overrideWithOpenDrawer,
     });
-
-  const findAction = (
-    result: { current: ReturnType<typeof useTransferDrawerViewModel> },
-    id: string,
-  ) => result.current.actions.find(a => a.id === id)!;
 
   it("send navigates to SendFunds/SendCoin and tracks", () => {
     const { result } = renderViewModel();
@@ -100,6 +106,43 @@ describe("TransferDrawer Navigation", () => {
       button: "receive",
       buttonLocation: "quick_action_transfer",
       page: SOURCE_SCREEN,
+    });
+  });
+
+  it("configures receive without a preselected currency when opened outside Asset Detail", () => {
+    renderViewModel();
+
+    expect(mockUseOpenReceiveDrawer).toHaveBeenCalledWith({
+      currency: undefined,
+      currencyIds: undefined,
+      sourceScreenName: SOURCE_SCREEN,
+      fromMenu: true,
+    });
+  });
+
+  it("configures receive with the Asset Detail currency when provided", () => {
+    const { result } = renderViewModel({ currency: bitcoinCurrency });
+
+    expect(mockUseOpenReceiveDrawer).toHaveBeenCalledWith({
+      currency: bitcoinCurrency,
+      currencyIds: undefined,
+      sourceScreenName: SOURCE_SCREEN,
+      fromMenu: true,
+    });
+
+    findAction(result, "receive").onPress();
+
+    expect(mockHandleOpenReceiveDrawer).toHaveBeenCalledTimes(1);
+  });
+
+  it("configures receive with asset-scoped currency ids when provided", () => {
+    renderViewModel({ currency: bitcoinCurrency, currencyIds: assetScopedCurrencyIds });
+
+    expect(mockUseOpenReceiveDrawer).toHaveBeenCalledWith({
+      currency: bitcoinCurrency,
+      currencyIds: assetScopedCurrencyIds,
+      sourceScreenName: SOURCE_SCREEN,
+      fromMenu: true,
     });
   });
 });

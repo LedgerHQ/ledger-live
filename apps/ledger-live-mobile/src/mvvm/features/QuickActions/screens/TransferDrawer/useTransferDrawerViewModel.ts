@@ -14,6 +14,7 @@ import { resolveRemoteCopy } from "@ledgerhq/live-common/featureFlags/remoteABTe
 import { track } from "~/analytics";
 import { useTransferDrawerController } from "../../hooks/useTransferDrawerController";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
+import type { ReceiveCurrencyIds } from "LLM/features/Receive/types";
 import { TransferAction } from "../../types";
 import { QUICK_ACTIONS_TEST_IDS } from "../../testIds";
 import { useTranslation } from "~/context/Locale";
@@ -33,10 +34,12 @@ interface TransferDrawerViewModel {
 
 interface UseTransferDrawerViewModelParams {
   currency?: CryptoOrTokenCurrency;
+  currencyIds?: ReceiveCurrencyIds;
 }
 
 export const useTransferDrawerViewModel = ({
   currency,
+  currencyIds,
 }: UseTransferDrawerViewModelParams = {}): TransferDrawerViewModel => {
   const { t } = useTranslation();
   const { bottom: bottomInset } = useSafeAreaInsets();
@@ -49,6 +52,8 @@ export const useTransferDrawerViewModel = ({
   const hasFunds = !useAreAccountsEmpty() && hasAnyAccounts;
 
   const { handleOpenReceiveDrawer } = useOpenReceiveDrawer({
+    currency,
+    currencyIds,
     sourceScreenName,
     fromMenu: true,
   });

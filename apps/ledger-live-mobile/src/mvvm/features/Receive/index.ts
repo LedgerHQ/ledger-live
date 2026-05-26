@@ -10,9 +10,11 @@ import { setOriginFlow } from "~/analytics/originFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { useReceiveNoahEntry } from "../Noah/useNoahEntryPoint";
 import { useReceiveOptionsDrawerController } from "./useReceiveOptionsDrawerController";
+import type { ReceiveCurrencyIds } from "./types";
 
 type Props = {
   currency?: CryptoOrTokenCurrency;
+  currencyIds?: ReceiveCurrencyIds;
   sourceScreenName: string;
   navigationOverride?: RootNavigation;
   hideBackButton?: boolean;
@@ -20,6 +22,7 @@ type Props = {
 };
 export function useOpenReceiveDrawer({
   currency,
+  currencyIds,
   sourceScreenName,
   navigationOverride,
   hideBackButton,
@@ -74,15 +77,18 @@ export function useOpenReceiveDrawer({
       if (showNoahMenu && !fromReceiveOptionsDrawer) {
         openReceiveOptionsDrawer({
           currency: currency,
+          currencyIds: currencyIds,
           sourceScreenName: sourceScreenName,
           fromMenu: fromMenu,
         });
       } else {
+        const preselectedCurrencies = currencyIds ?? (currency ? [currency.id] : []);
+
         return openDrawer({
-          currencies: currency ? [currency.id] : [],
+          currencies: preselectedCurrencies,
           flow: "receive_flow",
           source: sourceScreenName,
-          areCurrenciesFiltered: !!currency,
+          areCurrenciesFiltered: preselectedCurrencies.length > 0,
           enableAccountSelection: true,
           onAccountSelected: openReceiveConfirmation,
         });
@@ -90,6 +96,7 @@ export function useOpenReceiveDrawer({
     },
     [
       currency,
+      currencyIds,
       openDrawer,
       sourceScreenName,
       openReceiveConfirmation,

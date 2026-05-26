@@ -6,9 +6,11 @@ import QueuedDrawerGorhom from "LLM/components/QueuedDrawer/temp/QueuedDrawerGor
 import { TransferDrawerView } from "./TransferDrawerView";
 import { TransferDrawerViewLegacy } from "./TransferDrawerViewLegacy";
 import { useTransferDrawerViewModel } from "./useTransferDrawerViewModel";
+import type { ReceiveCurrencyIds } from "LLM/features/Receive/types";
 
 type Props = Readonly<{
   currency?: CryptoOrTokenCurrency;
+  currencyIds?: ReceiveCurrencyIds;
 }>;
 
 /**
@@ -19,9 +21,10 @@ type Props = Readonly<{
  * - Send crypto: Navigates to send flow
  * - Bank transfer: Navigates to buy flow for stablecoin purchases
  */
-export const TransferDrawer = ({ currency }: Props = {}) => {
+export const TransferDrawer = ({ currency, currencyIds }: Props = {}) => {
   const { isOpen, title, actions, handleClose, bottomInset } = useTransferDrawerViewModel({
     currency,
+    currencyIds,
   });
   const { isEnabled } = useWalletFeaturesConfig("mobile");
 

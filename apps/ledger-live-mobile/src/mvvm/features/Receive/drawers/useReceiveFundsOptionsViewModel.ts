@@ -16,11 +16,12 @@ function useReceiveFundsOptionsViewModel() {
   const navigation = useNavigation();
   const { isEnabled } = useWalletFeaturesConfig("mobile");
 
-  const { currency, sourceScreenName, fromMenu, isOpen, closeDrawer } =
+  const { currency, currencyIds, sourceScreenName, fromMenu, isOpen, closeDrawer } =
     useReceiveOptionsDrawerController();
 
   const { handleOpenReceiveDrawer } = useOpenReceiveDrawer({
     currency: isCryptoOrTokenCurrency(currency) ? currency : undefined,
+    currencyIds,
     sourceScreenName,
     fromMenu,
   });

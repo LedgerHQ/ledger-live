@@ -1,10 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { State } from "~/reducers/types";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { ReceiveCurrencyIds } from "LLM/features/Receive/types";
 
 export interface ReceiveOptionsDrawerState {
   isOpen: boolean;
   currency?: CryptoOrTokenCurrency;
+  currencyIds?: ReceiveCurrencyIds;
   sourceScreenName: string;
   fromMenu?: boolean;
 }
@@ -12,6 +14,7 @@ export interface ReceiveOptionsDrawerState {
 export const INITIAL_STATE: ReceiveOptionsDrawerState = {
   isOpen: false,
   currency: undefined,
+  currencyIds: undefined,
   sourceScreenName: "",
   fromMenu: false,
 };
@@ -27,26 +30,23 @@ const receiveOptionsDrawerSlice = createSlice({
       state,
       action: PayloadAction<{
         currency?: CryptoOrTokenCurrency;
+        currencyIds?: ReceiveCurrencyIds;
         sourceScreenName: string;
         fromMenu?: boolean;
       }>,
     ) => {
       state.isOpen = true;
-      const { currency, sourceScreenName, fromMenu } = action.payload;
+      const { currency, currencyIds, sourceScreenName, fromMenu } = action.payload;
 
-      if (currency !== undefined) {
-        state.currency = currency;
-      }
-      if (sourceScreenName !== undefined) {
-        state.sourceScreenName = sourceScreenName;
-      }
-      if (fromMenu !== undefined) {
-        state.fromMenu = fromMenu;
-      }
+      state.currency = currency;
+      state.currencyIds = currencyIds;
+      state.sourceScreenName = sourceScreenName;
+      state.fromMenu = fromMenu ?? false;
     },
     closeReceiveOptionsDrawer: state => {
       state.isOpen = false;
       state.currency = undefined;
+      state.currencyIds = undefined;
       state.sourceScreenName = "";
       state.fromMenu = false;
     },

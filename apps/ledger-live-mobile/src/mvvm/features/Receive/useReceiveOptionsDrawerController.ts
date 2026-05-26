@@ -6,6 +6,7 @@ import {
   receiveOptionsDrawerStateSelector,
 } from "~/reducers/receiveOptionsDrawer";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { ReceiveCurrencyIds } from "./types";
 /**
  * Hook to manage the global state of the Receive Options Drawer.
  *
@@ -16,19 +17,21 @@ import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 export const useReceiveOptionsDrawerController = () => {
   const dispatch = useDispatch();
 
-  const { isOpen, currency, sourceScreenName, fromMenu } = useSelector(
+  const { isOpen, currency, currencyIds, sourceScreenName, fromMenu } = useSelector(
     receiveOptionsDrawerStateSelector,
   );
 
   const openDrawer = useCallback(
     (params?: {
       currency?: CryptoOrTokenCurrency;
+      currencyIds?: ReceiveCurrencyIds;
       sourceScreenName: string;
       fromMenu?: boolean;
     }) => {
       dispatch(
         openReceiveOptionsDrawer({
           currency: params?.currency,
+          currencyIds: params?.currencyIds,
           sourceScreenName: params?.sourceScreenName ?? "",
           fromMenu: params?.fromMenu,
         }),
@@ -44,6 +47,7 @@ export const useReceiveOptionsDrawerController = () => {
   return {
     isOpen,
     currency,
+    currencyIds,
     sourceScreenName,
     fromMenu,
     openDrawer,

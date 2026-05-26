@@ -19,10 +19,12 @@ import { MarketData } from "./components/MarketData";
 import { CTAS_HEIGHT } from "./utils/constants";
 import { AssetCoinOptionsSheetView } from "./components/CoinOptions/AssetCoinOptionsSheetView";
 import type { AssetCoinOptionsViewModel } from "./components/CoinOptions/useAssetCoinOptionsViewModel";
+import type { ReceiveCurrencyIds } from "LLM/features/Receive/types";
 
 type Props = Readonly<{
   currency: AssetDetailCurrencyProps;
   distributionItem: DistributionItem | undefined;
+  receiveCurrencyIds?: ReceiveCurrencyIds;
   source?: string;
   isRefreshing: boolean;
   onRefresh: () => void;
@@ -36,6 +38,7 @@ type Props = Readonly<{
 export function AssetDetailView({
   currency,
   distributionItem,
+  receiveCurrencyIds,
   source,
   isRefreshing,
   onRefresh,
@@ -82,7 +85,7 @@ export function AssetDetailView({
         </Box>
       </ScrollView>
       <Footer currency={currency} />
-      <TransferDrawer currency={currency} />
+      <TransferDrawer currency={currency} currencyIds={receiveCurrencyIds} />
       <AssetCoinOptionsSheetView
         isOpen={coinOptions.isCoinOptionsSheetOpen}
         onClose={coinOptions.closeCoinOptions}

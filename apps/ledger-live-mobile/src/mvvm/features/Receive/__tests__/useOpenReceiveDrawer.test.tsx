@@ -12,6 +12,7 @@ const mockOpenReceiveOptionsDrawer = jest.fn();
 const mockNavigate = jest.fn();
 const mockShowNoahMenu = jest.fn(() => false);
 const mockSetOriginFlow = jest.fn();
+const customCurrencyIds = ["ethereum/erc20/usd__coin", "polygon/erc20/usd_coin"];
 
 jest.mock("~/analytics/originFlow", () => ({
   setOriginFlow: (...args: unknown[]) => mockSetOriginFlow(...args),
@@ -121,6 +122,25 @@ describe("useOpenReceiveDrawer", () => {
         onAccountSelected: expect.any(Function),
       });
     });
+
+    it("should prefer provided currency ids for asset-scoped filtering", () => {
+      const { result } = renderHook(() =>
+        useOpenReceiveDrawer(createTestProps({ currencyIds: customCurrencyIds })),
+      );
+
+      act(() => {
+        result.current.handleOpenReceiveDrawer();
+      });
+
+      expect(mockOpenDrawer).toHaveBeenCalledWith({
+        currencies: customCurrencyIds,
+        flow: "receive_flow",
+        source: "test_screen",
+        areCurrenciesFiltered: true,
+        enableAccountSelection: true,
+        onAccountSelected: expect.any(Function),
+      });
+    });
   });
 
   describe("when Noah menu is enabled", () => {
@@ -137,6 +157,7 @@ describe("useOpenReceiveDrawer", () => {
 
       expect(mockOpenReceiveOptionsDrawer).toHaveBeenCalledWith({
         currency: mockEthCryptoCurrency,
+        currencyIds: undefined,
         sourceScreenName: "test_screen",
         fromMenu: undefined,
       });
@@ -154,19 +175,46 @@ describe("useOpenReceiveDrawer", () => {
 
       expect(mockOpenReceiveOptionsDrawer).toHaveBeenCalledWith({
         currency: mockEthCryptoCurrency,
+        currencyIds: undefined,
         sourceScreenName: "test_screen",
         fromMenu: true,
       });
     });
 
-    it("should bypass Noah menu when blockNoahMenu parameter is true", () => {
-      const { result } = renderHook(() => useOpenReceiveDrawer(createTestProps()));
+    it("should keep provided currency ids when opening the receive options drawer", () => {
+      const { result } = renderHook(() =>
+        useOpenReceiveDrawer(createTestProps({ currencyIds: customCurrencyIds })),
+      );
+
+      act(() => {
+        result.current.handleOpenReceiveDrawer();
+      });
+
+      expect(mockOpenReceiveOptionsDrawer).toHaveBeenCalledWith({
+        currency: mockEthCryptoCurrency,
+        currencyIds: customCurrencyIds,
+        sourceScreenName: "test_screen",
+        fromMenu: undefined,
+      });
+    });
+
+    it("should bypass Noah menu and preserve currency ids when blockNoahMenu parameter is true", () => {
+      const { result } = renderHook(() =>
+        useOpenReceiveDrawer(createTestProps({ currencyIds: customCurrencyIds })),
+      );
 
       act(() => {
         result.current.handleOpenReceiveDrawer(true);
       });
 
-      expect(mockOpenDrawer).toHaveBeenCalled();
+      expect(mockOpenDrawer).toHaveBeenCalledWith({
+        currencies: customCurrencyIds,
+        flow: "receive_flow",
+        source: "test_screen",
+        areCurrenciesFiltered: true,
+        enableAccountSelection: true,
+        onAccountSelected: expect.any(Function),
+      });
       expect(mockOpenReceiveOptionsDrawer).not.toHaveBeenCalled();
     });
   });

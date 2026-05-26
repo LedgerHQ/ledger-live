@@ -1,7 +1,7 @@
 import { renderHook, act } from "@tests/test-renderer";
 import { useBalanceGraphViewModel } from "../useBalanceGraphViewModel";
 import { track } from "~/analytics";
-import { useGetCurrencyDataQuery } from "@ledgerhq/live-common/market/state-manager/marketApi";
+import { useAssetMarketData } from "../../../hooks/useAssetMarketData";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
 import {
   mockBtcCryptoCurrency,
@@ -53,13 +53,38 @@ function withEthAndEursToken({
   };
 }
 
-jest.mock("@ledgerhq/live-common/market/state-manager/marketApi", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/market/state-manager/marketApi"),
-  useGetCurrencyDataQuery: jest.fn(),
-}));
+jest.mock("../../../hooks/useAssetMarketData");
 jest.mock("LLM/features/Receive");
+jest.mock("@ledgerhq/live-currency-format", () => ({
+  formatPriceFragment: (_unit: unknown, value: number) => {
+    const [integerPart, decimalPart] = value
+      .toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 6,
+      })
+      .split(".");
 
-const mockUseGetCurrencyDataQuery = jest.mocked(useGetCurrencyDataQuery);
+    return {
+      integerPart,
+      decimalPart,
+      decimalSeparator: ".",
+      currencyText: "$",
+    };
+  },
+  formatSignedFiatVariation: (amount: number) => {
+    if (amount !== 0 && Math.abs(amount) < 0.000001) {
+      return `${amount > 0 ? "+" : "-"}<$0.000001`;
+    }
+
+    const sign = amount > 0 ? "+" : amount < 0 ? "-" : "";
+    return `${sign}$${Math.abs(amount).toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 6,
+    })}`;
+  },
+}));
+
+const mockUseAssetMarketData = jest.mocked(useAssetMarketData);
 const mockUseOpenReceiveDrawer = jest.mocked(useOpenReceiveDrawer);
 const mockHandleOpenReceiveDrawer = jest.fn();
 
@@ -88,10 +113,13 @@ function withAccounts(accounts: Array<{ currencyId: string; balance: number }>) 
 describe("useBalanceGraphViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseGetCurrencyDataQuery.mockReturnValue({
-      data: marketCurrencyData,
-      isFetching: false,
-    } as unknown as ReturnType<typeof useGetCurrencyDataQuery>);
+    mockUseAssetMarketData.mockReturnValue({
+      marketCurrency: marketCurrencyData,
+      marketId: "bitcoin",
+      counterCurrency: "usd",
+      isLoading: false,
+      isError: false,
+    });
     mockUseOpenReceiveDrawer.mockReturnValue({
       handleOpenReceiveDrawer: mockHandleOpenReceiveDrawer,
     });
@@ -106,10 +134,13 @@ describe("useBalanceGraphViewModel", () => {
     });
 
     it("returns price=0 and hasMarketData=false when no market data", () => {
-      mockUseGetCurrencyDataQuery.mockReturnValue({
-        data: undefined,
-        isFetching: false,
-      } as unknown as ReturnType<typeof useGetCurrencyDataQuery>);
+      mockUseAssetMarketData.mockReturnValue({
+        marketCurrency: undefined,
+        marketId: undefined,
+        counterCurrency: "usd",
+        isLoading: false,
+        isError: false,
+      });
 
       const { result } = renderHook(() => useBalanceGraphViewModel(mockBtcCryptoCurrency));
 
@@ -168,10 +199,13 @@ describe("useBalanceGraphViewModel", () => {
     });
 
     it("returns undefined when no market data", () => {
-      mockUseGetCurrencyDataQuery.mockReturnValue({
-        data: undefined,
-        isFetching: false,
-      } as unknown as ReturnType<typeof useGetCurrencyDataQuery>);
+      mockUseAssetMarketData.mockReturnValue({
+        marketCurrency: undefined,
+        marketId: undefined,
+        counterCurrency: "usd",
+        isLoading: false,
+        isError: false,
+      });
 
       const { result } = renderHook(() => useBalanceGraphViewModel(mockBtcCryptoCurrency));
 
@@ -179,10 +213,13 @@ describe("useBalanceGraphViewModel", () => {
     });
 
     it("renders a signed '<' threshold marker for a tiny BONK-like variation", () => {
-      mockUseGetCurrencyDataQuery.mockReturnValue({
-        data: { ...marketCurrencyData, price: 6e-6 },
-        isFetching: false,
-      } as unknown as ReturnType<typeof useGetCurrencyDataQuery>);
+      mockUseAssetMarketData.mockReturnValue({
+        marketCurrency: { ...marketCurrencyData, price: 6e-6 },
+        marketId: "bitcoin",
+        counterCurrency: "usd",
+        isLoading: false,
+        isError: false,
+      });
 
       const { result } = renderHook(() => useBalanceGraphViewModel(mockBtcCryptoCurrency));
 
@@ -282,6 +319,15 @@ describe("useBalanceGraphViewModel", () => {
   });
 
   describe("onReceivePress", () => {
+    it("configures direct receive drawer without asset-scoped currency ids", () => {
+      renderHook(() => useBalanceGraphViewModel(mockBtcCryptoCurrency));
+
+      expect(mockUseOpenReceiveDrawer).toHaveBeenCalledWith({
+        currency: mockBtcCryptoCurrency,
+        sourceScreenName: "Asset Detail",
+      });
+    });
+
     it("tracks analytics and opens the receive drawer", () => {
       const { result } = renderHook(() => useBalanceGraphViewModel(mockBtcCryptoCurrency));
 
@@ -307,10 +353,13 @@ describe("useBalanceGraphViewModel", () => {
 
   describe("isLoading", () => {
     it("reflects the fetching state of useCurrencyData", () => {
-      mockUseGetCurrencyDataQuery.mockReturnValue({
-        data: undefined,
-        isFetching: true,
-      } as unknown as ReturnType<typeof useGetCurrencyDataQuery>);
+      mockUseAssetMarketData.mockReturnValue({
+        marketCurrency: undefined,
+        marketId: undefined,
+        counterCurrency: "usd",
+        isLoading: true,
+        isError: false,
+      });
 
       const { result } = renderHook(() => useBalanceGraphViewModel(mockBtcCryptoCurrency));
 
