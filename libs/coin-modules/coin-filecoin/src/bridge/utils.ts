@@ -1,12 +1,8 @@
 import { AccountLike } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
 import { getEquivalentAddress } from "../network";
+import { Methods } from "../common-logic/fees";
 
-export enum Methods {
-  Transfer = 0,
-  ERC20Transfer = 1,
-  InvokeEVM = 3844450837,
-}
+export { Methods, calculateEstimatedFees } from "../common-logic/fees";
 
 export enum AccountType {
   Account = "Account",
@@ -50,8 +46,6 @@ export const getBufferFromString = (message: string): Buffer =>
       ? Buffer.from(message, "base64")
       : Buffer.from(message);
 
-export const calculateEstimatedFees = (gasFeeCap: BigNumber, gasLimit: BigNumber): BigNumber =>
-  gasFeeCap.multipliedBy(gasLimit);
 
 export function getAccountUnit(account: AccountLike) {
   if (account.type === AccountType.TokenAccount) {

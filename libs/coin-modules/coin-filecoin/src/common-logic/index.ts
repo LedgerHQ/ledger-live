@@ -6,3 +6,4 @@ export {
   getSubAccount,
   valueFromUnit,
 } from "./utils";
+export { Methods, calculateEstimatedFees } from "./fees";

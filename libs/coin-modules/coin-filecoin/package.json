@@ -133,6 +133,8 @@
     "@types/semver": "catalog:",
     "axios": "catalog:",
     "jest": "catalog:",
+    "msw": "catalog:",
+    "nock": "14.0.3",
     "oxfmt": "catalog:",
     "oxlint": "catalog:"
   },
@@ -147,6 +149,7 @@
     "lint": "oxlint src",
     "lint:fix": "oxfmt src && oxlint src --fix --quiet",
     "test": "jest",
+    "test-msw": "jest --config=jest.msw.config.js",
     "test-integ": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --config=jest.integ.config.js",
     "unimported": "unimported",
     "format": "oxfmt src",
