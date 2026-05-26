@@ -37,7 +37,7 @@ export type DeviceTransactionConfigFn<
   U extends TransactionStatusCommon = any,
   A extends Account = any,
 > = (arg: {
-  account: A;
+  account: AccountLike<A>;
   parentAccount: A | null | undefined;
   transaction: T;
   status: U;
