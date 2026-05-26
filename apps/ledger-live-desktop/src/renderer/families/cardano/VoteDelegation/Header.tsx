@@ -1,0 +1,33 @@
+import React from "react";
+import styled from "styled-components";
+import { useTranslation } from "react-i18next";
+import Text from "~/renderer/components/Text";
+import { rgba } from "~/renderer/styles/helpers";
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  padding: 10px 20px;
+  border-bottom: 1px solid ${p => p.theme.colors.neutral.c40};
+  background-color: ${p => rgba(p.theme.colors.neutral.c100, 0.02)};
+  > * {
+    width: 30%;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    box-sizing: border-box;
+  }
+`;
+
+const Header = () => {
+  const { t } = useTranslation();
+  return (
+    <Wrapper>
+      <Text ff="Inter|SemiBold" color="neutral.c70" fontSize={3}>
+        {t("cardano.voteDelegation.dRep")}
+      </Text>
+    </Wrapper>
+  );
+};
+
+export default Header;

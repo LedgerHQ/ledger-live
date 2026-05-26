@@ -3016,6 +3016,48 @@
           }
         }
       }
+    },
+    "voteDelegation": {
+      "lastActiveOn": "Last active on",
+      "dRep": "DRep",
+      "changeVoteDelegation": "Change Vote Delegation",
+      "stakeKeyRegistrationDeposit": "Stake key registration deposit",
+      "delegatingTo": "Delegating to",
+      "search": "Search by name or DRep Id...",
+      "noDRepFound": "No DRep found for \"<0>{{search}}</0>\".",
+      "tableHeader": {
+        "dRep": "DRep",
+        "lastActiveOn": "Last active on"
+      },
+      "flow": {
+        "steps": {
+          "starter": {
+            "description": "Delegate your voting power to a DRep to actively participate in Cardano governance.",
+            "bullet": [
+              "Your assets remain securely in your wallet",
+              "You can change your DRep at any time",
+              "Shape the future of the Cardano network"
+            ]
+          },
+          "dRep": {
+            "title": "DRep"
+          },
+          "summary": {
+            "title": "Summary"
+          },
+          "connectDevice": {
+            "title": "Device"
+          },
+          "confirmation": {
+            "title": "Confirmation",
+            "success": {
+              "title": "Voting power successfully delegated",
+              "text": "Your voting power will be delegated once the blockchain confirms the transaction."
+            },
+            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+          }
+        }
+      }
     }
   },
   "tron": {
@@ -5006,6 +5048,16 @@
       "topUp": "Receive more",
       "redelegate": "Change validator",
       "stopDelegation": "End delegation"
+    }
+  },
+  "voteDelegation": {
+    "header": "Vote Delegation",
+    "delegateVotePower": "Delegate your voting power to a DRep to actively participate in Cardano governance.",
+    "button": "Start vote delegation",
+    "options": {
+      "dRep": "DRep",
+      "alwaysAbstain": "Always abstain",
+      "alwaysNoConfidence": "Always no-confidence"
     }
   },
   "asset": {
