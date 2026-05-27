@@ -1,0 +1,93 @@
+services:
+  lotus:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: lotus-2k-devnet:local
+    container_name: lotus
+    volumes:
+      - lotus-params:/var/tmp/filecoin-proof-parameters
+    ports:
+      - "1234:1234"
+    healthcheck:
+      test: ["CMD", "lotus", "chain", "head"]
+      interval: 5s
+      timeout: 10s
+      retries: 120
+      start_period: 60s
+    command:
+      - /bin/bash
+      - -c
+      - |
+        set -e
+
+        export LOTUS_PATH=/var/lib/lotus
+        export LOTUS_MINER_PATH=/var/lib/lotus-miner
+        export LOTUS_SKIP_GENESIS_CHECK=_yes_
+
+        # Write config before starting daemon
+        mkdir -p $$LOTUS_PATH
+        cat > $$LOTUS_PATH/config.toml << 'TOML'
+        [API]
+          ListenAddress = "/ip4/0.0.0.0/tcp/1234/http"
+        [Chainstore]
+          EnableSplitstore = false
+        [Fevm]
+          EnableEthRPC = true
+        [ChainIndexer]
+          EnableIndexer = true
+        TOML
+
+        # Fetch proof parameters for 2KiB sectors
+        lotus fetch-params 2048
+
+        # Pre-seal 2 sectors with 2KiB size
+        lotus-seed pre-seal --sector-size 2KiB --num-sectors 2
+
+        # Create genesis template
+        lotus-seed genesis new /var/lib/localnet.json
+
+        # Add pre-sealed miner to genesis
+        lotus-seed genesis add-miner /var/lib/localnet.json \
+          /root/.genesis-sectors/pre-seal-t01000.json
+
+        # Start lotus daemon in background with genesis
+        lotus daemon \
+          --lotus-make-genesis=/var/lib/devgen.car \
+          --genesis-template=/var/lib/localnet.json \
+          --bootstrap=false &
+        DAEMON_PID=$$!
+
+        # Wait for the API to be ready
+        for i in $$(seq 1 120); do
+          if lotus chain head 2>/dev/null; then
+            echo "Lotus daemon ready"
+            break
+          fi
+          sleep 1
+        done
+
+        # Import pre-sealed wallet key (miner owner)
+        lotus wallet import --as-default \
+          /root/.genesis-sectors/pre-seal-t01000.key
+
+        # Initialize miner
+        lotus-miner init \
+          --genesis-miner \
+          --actor=t01000 \
+          --sector-size=2KiB \
+          --pre-sealed-sectors=/root/.genesis-sectors \
+          --pre-sealed-metadata=/root/.genesis-sectors/pre-seal-t01000.json \
+          --no-local-storage \
+          --nosync
+
+        # Start miner in background
+        lotus-miner run --nosync &
+
+        echo "Lotus 2K devnet ready — daemon PID $$DAEMON_PID"
+
+        # Keep container alive
+        wait $$DAEMON_PID
+
+volumes:
+  lotus-params:
