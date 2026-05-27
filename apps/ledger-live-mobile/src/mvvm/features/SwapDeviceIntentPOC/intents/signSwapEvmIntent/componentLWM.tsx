@@ -1,15 +1,18 @@
 import React from "react";
-import { Flex, Text } from "@ledgerhq/native-ui";
+import { useSelector } from "react-redux";
+import { InfoState } from "LLM/components/InfoState";
+import { ContinueOnDevice } from "LLM/components/DeviceIntentExecutor/components/DeviceGenericStates/ContinueOnDevice";
+import { lastConnectedDeviceSelector } from "~/reducers/settings";
 import type { SignSwapEvmIntentExtraProps, SignSwapEvmJobState } from "./types";
 
-const STATUS_LABEL: Record<SignSwapEvmJobState["type"], string> = {
-  preparing: "Preparing swap transaction…",
-  "loading-context": "Loading signing context on device…",
-  "awaiting-confirmation": "Confirm the swap on your device",
-  signing: "Signing swap on device…",
-  signed: "Swap signed",
-  failed: "Swap signing failed",
-};
+const LOADER_TITLE = "Preparing swap";
+const LOADER_DESCRIPTION = "Preparing swap transaction\u2026";
+
+const DEVICE_INTERACTION_STATES: ReadonlyArray<SignSwapEvmJobState["type"]> = [
+  "loading-context",
+  "awaiting-confirmation",
+  "signing",
+];
 
 export function SignSwapEvmIntentComponentLWM({
   jobState,
@@ -18,20 +21,29 @@ export function SignSwapEvmIntentComponentLWM({
   extraProps: SignSwapEvmIntentExtraProps;
   onClose: () => void;
 }) {
-  const status = jobState ? STATUS_LABEL[jobState.type] : STATUS_LABEL.preparing;
+  const device = useSelector(lastConnectedDeviceSelector);
+
+  if (jobState && DEVICE_INTERACTION_STATES.includes(jobState.type) && device) {
+    return (
+      <ContinueOnDevice
+        deviceModelId={device.modelId}
+        deviceName={device.deviceName ?? device.modelId}
+      />
+    );
+  }
+
+  if (jobState?.type === "failed") {
+    return (
+      <InfoState
+        preset="error"
+        size="hug"
+        title="Swap signing failed"
+        description={jobState.error.message}
+      />
+    );
+  }
+
   return (
-    <Flex p={4}>
-      <Text variant="h5" mb={3}>
-        Swap
-      </Text>
-      <Text variant="body" mb={2}>
-        {status}
-      </Text>
-      {jobState?.type === "failed" && (
-        <Text variant="small" color="error.c60" numberOfLines={3}>
-          {jobState.error.message}
-        </Text>
-      )}
-    </Flex>
+    <InfoState preset="loader" size="hug" title={LOADER_TITLE} description={LOADER_DESCRIPTION} />
   );
 }
