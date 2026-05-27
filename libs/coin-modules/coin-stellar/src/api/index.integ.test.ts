@@ -42,10 +42,16 @@ describe("Stellar Api", () => {
   describe("listOperations", () => {
     let txs: Operation[];
 
+    // 6-minute budget: the supplement step in `operationsFromHeight` issues
+    // one extra `/ledgers/{seq}/operations` per distinct ledger touched, and
+    // for a long-lived account like ADDRESS (hundreds of touched ledgers)
+    // that adds many sequential requests against public testnet Horizon
+    // (concurrency-capped + politely spaced to stay under the rate limit).
+    // The 60s default was no longer enough.
     beforeAll(async () => {
       const result = await module.listOperations(ADDRESS, { minHeight: 0, order: "asc" });
       txs = result.items;
-    });
+    }, 360_000);
 
     it("returns a list regarding address parameter", async () => {
       expect(txs.length).toBeGreaterThanOrEqual(100);
@@ -69,12 +75,103 @@ describe("Stellar Api", () => {
       expect(checkSet.size).toEqual(txs.length);
     });
 
-    it("returns all operations from the latest, but in asc order", async () => {
-      const { items: txsDesc } = await module.listOperations(ADDRESS, {
-        minHeight: 0,
+    // Same reasoning as the beforeAll: this does another full-history scan
+    // (now in desc order), and the supplement makes it heavy against public
+    // testnet Horizon.
+    it(
+      "returns all operations from the latest, but in asc order",
+      async () => {
+        const { items: txsDesc } = await module.listOperations(ADDRESS, {
+          minHeight: 0,
+          order: "desc",
+        });
+        expect(txsDesc[0]).toStrictEqual(txs[0]);
+      },
+      360_000,
+    );
+  });
+
+  /**
+   * Regression coverage for the Horizon recipient-gap (see
+   * {@link operationsFromHeight}). `GAIH3ULL…` is a long-lived testnet faucet
+   * account that previously surfaced the mismatch: `listOperations` (built on
+   * `/accounts/{id}/operations`) returned a different count than `getBlock`
+   * (built on `/ledgers/{seq}/operations`) for the same ledger sequence.
+   *
+   * The fix supplements forAccount results with per-ledger fetches, so for any
+   * ledger we surface in `listOperations` the address-involving op count must
+   * equal `getBlock`'s count for that same ledger. The window is bounded
+   * (relative to `lastBlock`) so we paginate at most one Horizon page even
+   * though the address has thousands of historical ops.
+   */
+  describe("listOperations / getBlock parity", () => {
+    const PARITY_ADDRESS = "GAIH3ULLFQ4DGSECF2AR555KZ4KNDGEKN4AFI4SU2M7B43MGK3QJZNSR";
+    // Recent-ledger window: large enough that the faucet account has activity
+    // most of the time (Stellar ledgers close ~every 5s, so ~1.5min of history),
+    // small enough that the supplement + per-ledger getBlock fan-out stays
+    // well below Horizon's public testnet rate-limit burst threshold.
+    const LEDGER_WINDOW = 20;
+
+    it("matches getBlock's address-involving op count for each touched ledger", async () => {
+      const { height: latest } = await module.lastBlock();
+      const minHeight = Math.max(latest - LEDGER_WINDOW, 1);
+
+      const { items } = await module.listOperations(PARITY_ADDRESS, {
+        minHeight,
         order: "desc",
       });
-      expect(txsDesc[0]).toStrictEqual(txs[0]);
+
+      // Sanity-check the precondition: the window must contain some activity,
+      // otherwise the parity claim is vacuously true and the test isn't
+      // meaningful. PARITY_ADDRESS is a long-lived testnet faucet, so this
+      // should hold unless testnet was reset right before the test ran.
+      expect(items.length).toBeGreaterThan(0);
+
+      const opsPerLedger = new Map<number, number>();
+      for (const op of items) {
+        const h = op.tx.block.height;
+        opsPerLedger.set(h, (opsPerLedger.get(h) ?? 0) + 1);
+      }
+
+      // Serialize the per-ledger getBlock calls to stay polite with public
+      // Horizon: even with a small window, fanning out via Promise.all on top
+      // of the supplement's per-ledger fetches has tipped the rate limiter.
+      const heights = Array.from(opsPerLedger.keys());
+      const blocks: Awaited<ReturnType<typeof module.getBlock>>[] = [];
+      for (const h of heights) {
+        blocks.push(await module.getBlock(h));
+      }
+
+      const blockAddressOpCount = new Map<number, number>();
+      heights.forEach((height, i) => {
+        let count = 0;
+        for (const tx of blocks[i].transactions) {
+          for (const op of tx.operations) {
+            // Each Horizon op involving PARITY_ADDRESS yields exactly one
+            // address-keyed BlockOperation: a `transfer` leg for that address,
+            // or an `other` op whose `trustor` is the address (change_trust).
+            // PARITY_ADDRESS is a one-way faucet so self-payments (which would
+            // surface both transfer legs against the same address) aren't a
+            // concern here; if that ever changes the comparison would need to
+            // dedupe by Horizon op id.
+            if (op.type === "transfer" && op.address === PARITY_ADDRESS) {
+              count++;
+            } else if (
+              op.type === "other" &&
+              (op as { trustor?: string }).trustor === PARITY_ADDRESS
+            ) {
+              count++;
+            }
+          }
+        }
+        blockAddressOpCount.set(height, count);
+      });
+
+      // Per-ledger equality first so a failing diff points at the specific
+      // ledger that desynced; total is a defensive cross-check.
+      expect(Object.fromEntries(blockAddressOpCount)).toEqual(Object.fromEntries(opsPerLedger));
+      const blockOpsTotal = Array.from(blockAddressOpCount.values()).reduce((a, b) => a + b, 0);
+      expect(blockOpsTotal).toBe(items.length);
     });
   });
 

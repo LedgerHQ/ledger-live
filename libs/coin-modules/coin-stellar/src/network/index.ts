@@ -5,6 +5,7 @@ export {
   fetchAllOperations,
   fetchLedgerRecord,
   fetchOperations,
+  fetchOpsForLedgerForAddress,
   fetchBaseFee,
   fetchSequence,
   fetchSigners,

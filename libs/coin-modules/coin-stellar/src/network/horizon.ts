@@ -631,6 +631,32 @@ export async function fetchLedgerRecord(sequence: number): Promise<Horizon.Serve
 }
 
 /**
+ * For a single ledger, fetch every operation it contains (paginating internally)
+ * and return only those that involve `address` with a supported operation type,
+ * mapped through the same `Operation` serializer used by {@link fetchOperations}.
+ *
+ * Intended as a per-ledger supplement to {@link fetchOperations} (forAccount),
+ * which is known to occasionally miss operations where `address` is only the
+ * recipient (Horizon's `history_operation_participants` index gap, which also
+ * affects `/accounts/X/payments` since both endpoints share that table).
+ *
+ * Errors from the underlying Horizon calls propagate; callers should decide
+ * whether to fail or degrade.
+ */
+export async function fetchOpsForLedgerForAddress(
+  ledgerSequence: number,
+  address: string,
+  accountId: string,
+  minHeight: number,
+): Promise<Operation[]> {
+  if (!address) {
+    return [];
+  }
+  const rawOps = await fetchAllLedgerOperations(ledgerSequence);
+  return rawOperationsToOperations(rawOps, address, accountId, minHeight);
+}
+
+/**
  * Returns all operations included in `ledgerSequence`, ascending, including failed txs,
  * with joined transaction payloads (same pattern as account operation listing).
  *

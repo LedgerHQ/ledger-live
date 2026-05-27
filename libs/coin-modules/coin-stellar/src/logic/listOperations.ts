@@ -21,7 +21,7 @@ export async function listOperations(
   return { items: mappedOperations, next: nextCursor };
 }
 
-function convertToLegacyOperation(operation: Operation): Operation {
+export function convertToLegacyOperation(operation: Operation): Operation {
   const details = operation.details;
 
   return {
