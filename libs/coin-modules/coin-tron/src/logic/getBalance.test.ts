@@ -225,65 +225,122 @@ describe("getBalance", () => {
     expect(balance).toEqual([
       { asset: { type: "native" }, value: 27781772n },
       {
-        asset: { type: "trc10", assetReference: "1002897" },
+        asset: {
+          type: "trc10",
+          assetReference: "1002897",
+          assetOwner: "41ae18eb0a9e067f8884058470ed187f44135d816d",
+        },
         value: 10000000n,
       },
       {
-        asset: { type: "trc10", assetReference: "1002775" },
+        asset: {
+          type: "trc10",
+          assetReference: "1002775",
+          assetOwner: "41ae18eb0a9e067f8884058470ed187f44135d816d",
+        },
         value: 5000000n,
       },
       {
-        asset: { type: "trc10", assetReference: "1002830" },
+        asset: {
+          type: "trc10",
+          assetReference: "1002830",
+          assetOwner: "41ae18eb0a9e067f8884058470ed187f44135d816d",
+        },
         value: 10000000n,
       },
       {
-        asset: { type: "trc10", assetReference: "1002962" },
+        asset: {
+          type: "trc10",
+          assetReference: "1002962",
+          assetOwner: "41ae18eb0a9e067f8884058470ed187f44135d816d",
+        },
         value: 10000000n,
       },
       {
-        asset: { type: "trc10", assetReference: "1002876" },
+        asset: {
+          type: "trc10",
+          assetReference: "1002876",
+          assetOwner: "41ae18eb0a9e067f8884058470ed187f44135d816d",
+        },
         value: 10000000n,
       },
       {
-        asset: { type: "trc10", assetReference: "1002398" },
+        asset: {
+          type: "trc10",
+          assetReference: "1002398",
+          assetOwner: "41ae18eb0a9e067f8884058470ed187f44135d816d",
+        },
         value: 5000000n,
       },
       {
-        asset: { type: "trc10", assetReference: "1002573" },
+        asset: {
+          type: "trc10",
+          assetReference: "1002573",
+          assetOwner: "41ae18eb0a9e067f8884058470ed187f44135d816d",
+        },
         value: 5000000n,
       },
       {
-        asset: { type: "trc10", assetReference: "1002881" },
+        asset: {
+          type: "trc10",
+          assetReference: "1002881",
+          assetOwner: "41ae18eb0a9e067f8884058470ed187f44135d816d",
+        },
         value: 10000000n,
       },
       {
-        asset: { type: "trc10", assetReference: "1002927" },
+        asset: {
+          type: "trc10",
+          assetReference: "1002927",
+          assetOwner: "41ae18eb0a9e067f8884058470ed187f44135d816d",
+        },
         value: 10000000n,
       },
       {
-        asset: { type: "trc10", assetReference: "1002736" },
+        asset: {
+          type: "trc10",
+          assetReference: "1002736",
+          assetOwner: "41ae18eb0a9e067f8884058470ed187f44135d816d",
+        },
         value: 5000000n,
       },
       {
-        asset: { type: "trc10", assetReference: "1002814" },
+        asset: {
+          type: "trc10",
+          assetReference: "1002814",
+          assetOwner: "41ae18eb0a9e067f8884058470ed187f44135d816d",
+        },
         value: 10000000n,
       },
       {
-        asset: { type: "trc10", assetReference: "1002858" },
+        asset: {
+          type: "trc10",
+          assetReference: "1002858",
+          assetOwner: "41ae18eb0a9e067f8884058470ed187f44135d816d",
+        },
         value: 10000000n,
       },
       {
-        asset: { type: "trc10", assetReference: "1002000" },
+        asset: {
+          type: "trc10",
+          assetReference: "1002000",
+          assetOwner: "41ae18eb0a9e067f8884058470ed187f44135d816d",
+        },
         value: 26888000n,
       },
       {
-        asset: { type: "trc10", assetReference: "1004031" },
+        asset: {
+          type: "trc10",
+          assetReference: "1004031",
+          assetOwner: "41ae18eb0a9e067f8884058470ed187f44135d816d",
+        },
         value: 9856699n,
       },
       {
         asset: {
           type: "trc20",
           assetReference: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
+          assetOwner: "41ae18eb0a9e067f8884058470ed187f44135d816d",
         },
         value: 46825830n,
       },
@@ -291,6 +348,7 @@ describe("getBalance", () => {
         asset: {
           type: "trc20",
           assetReference: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+          assetOwner: "41ae18eb0a9e067f8884058470ed187f44135d816d",
         },
         value: 376n,
       },

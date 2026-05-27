@@ -210,6 +210,8 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadDeviceTxConfig: () => require("@ledgerhq/coin-tron/deviceTransactionConfig").default,
     loadMockBridge: () => require("../families/tron/bridge/mock").default,
     loadBridgeExtensions: () => require("../families/tron/bridgeExtensions").default,
+    loadSigner: () => require("../bridge/generic-coin-framework/families/tron/signer").default,
+    loadValidateAddress: () => require("@ledgerhq/coin-tron/logic/validateAddress").validateAddress,
   },
   {
     family: "vechain",
@@ -228,8 +230,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadWalletApiAdapter: () => require("../families/xrp/walletApiAdapter").default,
     loadPlatformAdapter: () => require("../families/xrp/platformAdapter").default,
     loadMockBridge: () => require("../families/xrp/bridge/mock").default,
-    loadValidateAddress: () =>
-      require("@ledgerhq/coin-xrp/logic/validateAddress").validateAddress,
+    loadValidateAddress: () => require("@ledgerhq/coin-xrp/logic/validateAddress").validateAddress,
     loadSigner: () => require("../bridge/generic-coin-framework/families/xrp/signer").default,
   },
 ];

@@ -63,6 +63,16 @@ export function createTransaction(account: Account | TokenAccount): GenericTrans
         fees: null,
         mode: "send",
       };
+    case "tron":
+      return {
+        family: currency.family,
+        amount: new BigNumber(0),
+        recipient: "",
+        fees: null,
+        useAllAmount: false,
+        mode: "send",
+        networkInfo: null,
+      };
     default:
       throw new Error(`Unsupported currency family: ${currency.family}`);
   }

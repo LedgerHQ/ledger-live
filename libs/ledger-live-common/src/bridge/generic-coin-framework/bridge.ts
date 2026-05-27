@@ -4,6 +4,7 @@ import evmBridge from "./families/evm/bridge";
 import stellarBridge from "./families/stellar/bridge";
 import solanaBridge from "./families/solana/bridge";
 import tezosBridge from "./families/tezos/bridge";
+import tronBridge from "./families/tron/bridge";
 
 export function getBridgeApi(currency: CryptoCurrency, network: string): BridgeApi {
   switch (network) {
@@ -15,6 +16,8 @@ export function getBridgeApi(currency: CryptoCurrency, network: string): BridgeA
       return stellarBridge;
     case "tezos":
       return tezosBridge;
+    case "tron":
+      return tronBridge(currency);
     default:
       return {};
   }

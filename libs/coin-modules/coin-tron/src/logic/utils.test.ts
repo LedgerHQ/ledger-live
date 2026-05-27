@@ -60,7 +60,7 @@ describe("decodeTransaction", () => {
             parameter: {
               value: {
                 amount: 100,
-                asset_name: "1001304",
+                asset_name: "31303031333034",
                 owner_address: "41b183301d6301fae224c6ab9b28b19b6d1625bf23",
                 to_address: "4198927ffb9f554dc4a453c64b2e553a02d6df514b",
               },

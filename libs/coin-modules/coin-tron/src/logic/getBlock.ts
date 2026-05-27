@@ -166,15 +166,26 @@ function formatBlockTransaction(
 
 function toBlockOperations(txInfo: BlockTxInfo): BlockOperation[] {
   if (isTransfer(txInfo) && txInfo.to && txInfo.value && !txInfo.value.isZero()) {
-    const asset = inferAssetInfo(txInfo);
     const value = txInfo.value;
     if (value.isNaN() || !value.isFinite()) {
       return [{ type: "other", operationType: "NONE", contractType: txInfo.type }];
     }
     const amount = BigInt(value.integerValue().toFixed(0));
     return [
-      { type: "transfer", address: txInfo.from, peer: txInfo.to, asset, amount: -amount },
-      { type: "transfer", address: txInfo.to, peer: txInfo.from, asset, amount },
+      {
+        type: "transfer",
+        address: txInfo.from,
+        peer: txInfo.to,
+        asset: inferAssetInfo(txInfo, txInfo.from),
+        amount: -amount,
+      },
+      {
+        type: "transfer",
+        address: txInfo.to,
+        peer: txInfo.from,
+        asset: inferAssetInfo(txInfo, txInfo.to),
+        amount,
+      },
     ];
   }
 

@@ -46,7 +46,7 @@ describe("Testing craftTransaction function", () => {
               parameter: expect.objectContaining({
                 value: expect.objectContaining({
                   amount: 3,
-                  asset_name: "1002000",
+                  asset_name: "31303032303030",
                   owner_address: decode58Check(sender),
                   to_address: decode58Check(recipient),
                 }),

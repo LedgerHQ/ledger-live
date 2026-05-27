@@ -139,7 +139,7 @@ function convertTransferAssetContractFromRaw(contract: any): Trc10TransferValue 
   // despite what (tron API portal may say)[https://developers.tron.network/reference/transferasset]
   return {
     amount: transferContract.getAmount(),
-    asset_name: convertBufferToString(transferContract.getAssetName()),
+    asset_name: convertBufferToHex(transferContract.getAssetName()),
     owner_address: convertBufferToHex(transferContract.getOwnerAddress()),
     to_address: convertBufferToHex(transferContract.getToAddress()),
   };
@@ -218,10 +218,6 @@ const convertNumberToContractType = (value: number): ContractInfo => CONTRACT_TY
 
 function convertBufferToHex(address: Buffer): string {
   return utils.bytes.byteArray2hexStr(new Uint8Array(address)).toLowerCase();
-}
-
-function convertBufferToString(address: Buffer): string {
-  return utils.bytes.bytesToString(new Uint8Array(address));
 }
 
 export type AccountInfo = {
