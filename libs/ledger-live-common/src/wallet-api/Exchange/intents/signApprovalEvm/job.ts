@@ -7,7 +7,6 @@ import {
   UserInteractionRequired,
 } from "@ledgerhq/device-management-kit";
 import {
-  SignerEthBuilder,
   SignTransactionDAStep,
   type Signature,
 } from "@ledgerhq/device-signer-kit-ethereum";
@@ -16,6 +15,7 @@ import { craftTransaction } from "@ledgerhq/coin-evm/logic/craftTransaction";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { DeviceConnectionResult, Job } from "@ledgerhq/device-intent";
 import { getCryptoCurrencyById } from "../../../../currencies";
+import { DmkSignerEth } from "@ledgerhq/live-signer-evm";
 import type { QuoteApprovalTransaction } from "../../quotes/types";
 import type { SignApprovalEvmIntentInput, SignApprovalEvmJobState } from "./types";
 
@@ -74,7 +74,10 @@ function runSignApproval(
         throw new Error("Failed to encode unsigned approval transaction to bytes");
       }
       const { dmk, sessionId } = connectionResult;
-      const signer = new SignerEthBuilder({ dmk, sessionId }).build();
+      // Reuse the production CAL-wired SignerEth so the device can
+      // resolve ERC-20 / spender descriptors and clear-sign the
+      // approval instead of falling back to blind signing.
+      const signer = new DmkSignerEth(dmk, sessionId).signer;
       const { observable, cancel } = signer.signTransaction(input.derivationPath, buffer, {
         skipOpenApp: true,
       });
