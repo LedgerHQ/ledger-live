@@ -124,7 +124,10 @@ const completeSignedTxBroadcast = ({
 export const useTransactionChangeFromNavigation = (setTransaction: (_: Transaction) => void) => {
   const route = useRoute<Route>();
   const navigationTransaction = route.params?.transaction;
-  const navigationTxRef = useRef(navigationTransaction);
+  // Start at `undefined` so the first time `navigationTransaction` is set we
+  // dispatch — including the case where the screen mounts (or remounts via
+  // Suspense / native-stack) with the value already in route.params.
+  const navigationTxRef = useRef<typeof navigationTransaction>(undefined);
   useEffect(() => {
     if (navigationTransaction && navigationTxRef.current !== navigationTransaction) {
       navigationTxRef.current = navigationTransaction;

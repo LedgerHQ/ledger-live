@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Search } from "LLD/components/Search";
 import { useSearch } from "./useSearch";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@features/platform-feature-flags";
 
 const SearchInputContainer = () => {
   const { t } = useTranslation();

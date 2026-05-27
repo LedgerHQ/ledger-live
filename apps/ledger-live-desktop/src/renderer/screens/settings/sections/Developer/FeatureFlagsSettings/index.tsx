@@ -3,16 +3,18 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router";
 import {
-  DEFAULT_FEATURES,
+  FEATURE_FLAGS_DEFAULTS,
+  FeatureId,
+  FeatureIdSchema,
+  featureFlagsBannerVisibleSelector,
   groupedFeatures,
-  useFeature,
-  useFeatureFlags,
-  useHasLocallyOverriddenFeatureFlags,
-} from "@ledgerhq/live-common/featureFlags/index";
+  setAllOverrides,
+  setBannerVisible,
+} from "@shared/feature-flags";
+import { useFeature, useHasLocallyOverriddenFeatureFlags } from "@features/platform-feature-flags";
 import { Flex, SearchInput, Alert, Tag, Text } from "@ledgerhq/react-ui";
 import { Switch, Button } from "@ledgerhq/lumen-ui-react";
 import { SettingsSectionRow as Row } from "../../../SettingsSection";
-import { FeatureId } from "@ledgerhq/types-live";
 import includes from "lodash/includes";
 import lowerCase from "lodash/lowerCase";
 import trim from "lodash/trim";
@@ -20,14 +22,12 @@ import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import FeatureFlagDetails from "./FeatureFlagDetails";
 import GroupedFeatures from "./GroupedFeatures";
 import TabBar from "~/renderer/components/TabBar";
-import { featureFlagsBannerVisibleSelector, setBannerVisible } from "@shared/feature-flags";
 import { objectKeysType } from "@ledgerhq/live-common/helpers";
 
 export const FeatureFlagContent = withV3StyleProvider((props: { expanded?: boolean }) => {
   const { t } = useTranslation();
   const featureFlagsBannerVisible = useSelector(featureFlagsBannerVisibleSelector);
   const dispatch = useDispatch();
-  const { isFeature, resetFeatures } = useFeatureFlags();
   const [focusedName, setFocusedName] = useState<string | undefined>();
   const [searchInput, setSearchInput] = useState("");
   const [activeTabIndex, setActiveTabIndex] = useState(0);
@@ -36,17 +36,17 @@ export const FeatureFlagContent = withV3StyleProvider((props: { expanded?: boole
   const [focusedGroupName, setFocusedGroupName] = useState<string | undefined>();
 
   const featureFlags = useMemo(() => {
-    const featureKeys = Object.keys(DEFAULT_FEATURES);
-    if (searchInputTrimmed && !featureKeys.includes(searchInputTrimmed)) {
-      const isHiddenFeature = isFeature(searchInputTrimmed);
-
+    const featureKeys = Object.keys(FEATURE_FLAGS_DEFAULTS);
+    if (
+      searchInputTrimmed &&
+      !featureKeys.includes(searchInputTrimmed) &&
+      FeatureIdSchema.safeParse(searchInputTrimmed).success
+    ) {
       // Only adds the search input value to the featureKeys if it is an existing hidden feature
-      if (isHiddenFeature) {
-        featureKeys.push(searchInputTrimmed);
-      }
+      featureKeys.push(searchInputTrimmed);
     }
     return featureKeys;
-  }, [isFeature, searchInputTrimmed]);
+  }, [searchInputTrimmed]);
 
   const filteredFlags = useMemo(() => {
     return featureFlags
@@ -138,7 +138,7 @@ export const FeatureFlagContent = withV3StyleProvider((props: { expanded?: boole
           <Button
             style={{ alignSelf: "flex-start", marginTop: 12 }}
             appearance="accent"
-            onClick={resetFeatures}
+            onClick={() => dispatch(setAllOverrides({}))}
             disabled={!hasLocallyOverriddenFlags}
           >
             {t("settings.developer.featureFlagsRestoreAll")}

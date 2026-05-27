@@ -12,7 +12,7 @@ import { v4 as uuidv4 } from "uuid";
 import { developerModeSelector } from "~/renderer/reducers/settings";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 const SectionHelp = () => {
   const { t } = useTranslation();

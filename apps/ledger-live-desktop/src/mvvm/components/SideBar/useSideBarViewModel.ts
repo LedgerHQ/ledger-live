@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "LLD/hooks/redux";
 import { useNavigateToMyLedger } from "~/renderer/hooks/useNavigateToMyLedger";
 import { useDeviceHasUpdatesAvailable } from "@ledgerhq/live-common/manager/useDeviceHasUpdatesAvailable";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useAccountPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { accountsSelector, starredAccountsSelector } from "~/renderer/reducers/accounts";
 import { sidebarCollapsedSelector, lastSeenDeviceSelector } from "~/renderer/reducers/settings";

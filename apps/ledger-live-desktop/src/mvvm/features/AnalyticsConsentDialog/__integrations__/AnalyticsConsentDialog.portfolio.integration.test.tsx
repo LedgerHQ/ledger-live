@@ -1,20 +1,23 @@
 import React from "react";
 import { Route, Routes } from "react-router";
 import { render, screen, waitFor } from "tests/testSetup";
-import { FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
+import { FEATURE_FLAGS_DEFAULTS, FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import { track, trackPage, updateIdentify } from "~/renderer/analytics/segment";
 import { AnalyticsConsentDialog } from "../index";
 
+const analyticsOptInOverrides = {
+  ...FEATURE_FLAGS_INITIAL_STATE.overrides,
+  analyticsOptIn: {
+    ...(FEATURE_FLAGS_INITIAL_STATE.overrides.analyticsOptIn ?? {}),
+    enabled: true,
+  },
+};
 const featureFlagsWithAnalyticsOptIn = {
   ...FEATURE_FLAGS_INITIAL_STATE,
-  overrides: {
-    ...FEATURE_FLAGS_INITIAL_STATE.overrides,
-    analyticsOptIn: {
-      ...(FEATURE_FLAGS_INITIAL_STATE.overrides.analyticsOptIn ?? {}),
-      enabled: true,
-    },
-  },
+  overrides: analyticsOptInOverrides,
+  // Mirror slice resolution so hooks reading from `resolved` see the override.
+  resolved: { ...FEATURE_FLAGS_DEFAULTS, ...analyticsOptInOverrides },
 };
 
 function baseSettings(overrides: Record<string, unknown> = {}) {

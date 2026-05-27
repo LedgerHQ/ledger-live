@@ -13,7 +13,7 @@ import { track } from "~/renderer/analytics/segment";
 import { LocalTracer } from "@ledgerhq/logs";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { useKeepScreenAwake } from "~/renderer/hooks/useKeepScreenAwake";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { openURL } from "~/renderer/linking";
 import FirmwareUpdateBanner from "~/renderer/components/FirmwareUpdateBanner";
 import Text from "~/renderer/components/Text";

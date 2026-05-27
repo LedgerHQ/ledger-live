@@ -89,9 +89,19 @@ const DBMiddleware: Middleware<object, State> = store => next => action => {
   }
 
   if (action.type.startsWith("MARKET")) {
+    const oldState = store.getState();
     const res = next(action);
-    const state = store.getState();
-    setKey("app", "market", marketStoreSelector(state));
+    const newState = store.getState();
+
+    if (oldState.market !== newState.market) {
+      setKey("app", "market", marketStoreSelector(newState));
+    }
+    // Some MARKET_* actions (e.g. MARKET_ADD_STARRED_COINS) are handled by the
+    // settings reducer, so settings persistence must also run on this branch.
+    if (areSettingsLoaded(newState) && oldState.settings !== newState.settings) {
+      setKey("app", "settings", settingsStoreSelector(newState));
+    }
+
     return res;
   }
 

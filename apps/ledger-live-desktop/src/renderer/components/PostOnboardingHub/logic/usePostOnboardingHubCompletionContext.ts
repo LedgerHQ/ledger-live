@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@features/platform-feature-flags";
 import type { Account } from "@ledgerhq/types-live";
 import { useSelector } from "LLD/hooks/redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";

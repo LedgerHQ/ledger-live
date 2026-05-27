@@ -19,7 +19,7 @@ import {
   Chart5Fill,
   Compass,
 } from "@ledgerhq/lumen-ui-react/symbols";
-import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
+import { FeatureToggle } from "@features/platform-feature-flags";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import type { SideBarViewModel } from "./types";

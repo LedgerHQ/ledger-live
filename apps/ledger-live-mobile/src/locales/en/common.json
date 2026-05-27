@@ -9069,10 +9069,12 @@
       "marketCap": "Market cap",
       "marketRank": "Market rank",
       "circulatingSupply": "Circulating supply",
-      "circulatingSupplyTooltip": "The number of coins currently available for trading and circulating in the market.",
+      "circulatingSupplyTooltip": "The total number of tokens currently available in the market and held by the public. It excludes locked, reserved, or unminted tokens.",
       "maxSupply": "Max supply",
-      "maxSupplyTooltip": "The maximum number of coins that will ever exist for this cryptocurrency.",
+      "maxSupplyTooltip": "The maximum number of tokens that will ever exist. For some assets, this is fixed to prevent inflation.",
+      "marketCapTooltip": "The total value of all coins in circulation. Think of it as the crypto's total worth on the market.",
       "tradingVolume": "24h trading volume",
+      "tradingVolumeTooltip": "The total amount traded in the last 24 hours.",
       "error": "Unable to load market stats"
     },
     "pricePerformance": {
@@ -9106,7 +9108,7 @@
       "earnBannerGeneric": "Earn with this asset",
       "earnBannerSubtitle": "Hold and earn with this asset",
       "earnBannerAction": "Go to Earn",
-      "availableBalanceTooltip": "Funds available for immediate use, excluding staked or delegated amounts."
+      "availableBalanceTooltip": "The portion of the holdings you can use right now, free to send, swap, or withdraw at any time."
     },
     "coinOptions": {
       "openMenuA11yLabel": "Coin options",

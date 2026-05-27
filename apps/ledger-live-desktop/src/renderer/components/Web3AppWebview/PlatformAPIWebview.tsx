@@ -45,7 +45,7 @@ import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums
 import { useModularDrawerVisibility } from "@ledgerhq/live-common/modularDrawer/useModularDrawerVisibility";
 import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDialog";
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { setOriginFlow } from "~/renderer/analytics/originFlow";
 
 export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(

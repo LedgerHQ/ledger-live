@@ -40,7 +40,7 @@ export function runSwapTokenApprovalFlow(
     tags.forEach(tag => $Tag(tag));
 
     it("Swap - token approval flow", async () => {
-      await app.swap.getSelectedProvider(provider.uiName);
+      await app.swap.logSelectedProvider(provider.uiName);
       await revokeTokenApproval(fromAccount, provider);
       await app.swap.ensureRevokeTokenApproval(fromAccount, provider);
       const amountToSwap = await getAmountFromUSD(fromAccount.currency.id, 5);

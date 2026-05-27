@@ -1,11 +1,12 @@
 import React from "react";
-import { useFeature, useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
+import { setOverride } from "@shared/feature-flags";
+import { useDispatch } from "LLD/hooks/redux";
 import { SettingsSectionRow as Row } from "../../SettingsSection";
 import { Switch } from "@ledgerhq/lumen-ui-react";
 
 export function RecoverUpsellRow() {
-  const { overrideFeature, resetFeature } = useFeatureFlags();
-
+  const dispatch = useDispatch();
   const protectFeature = useFeature("protectServicesDesktop");
 
   if (protectFeature === null || protectFeature === undefined) return null;
@@ -14,12 +15,17 @@ export function RecoverUpsellRow() {
 
   const onChange = (enabled: boolean) => {
     if (enabled) {
-      overrideFeature("protectServicesDesktop", {
-        ...protectFeature,
-        params: { ...protectFeature?.params, protectId: "protect-prod" },
-      });
+      dispatch(
+        setOverride({
+          key: "protectServicesDesktop",
+          value: {
+            ...protectFeature,
+            params: { ...protectFeature?.params, protectId: "protect-prod" },
+          },
+        }),
+      );
     } else {
-      resetFeature("protectServicesDesktop");
+      dispatch(setOverride({ key: "protectServicesDesktop", value: undefined }));
     }
   };
 

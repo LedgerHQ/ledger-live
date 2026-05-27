@@ -7,7 +7,7 @@ import LabelInfoTooltip from "~/renderer/components/LabelInfoTooltip";
 
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/casper/types";
 import { Account } from "@ledgerhq/types-live";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 
 type Props = {
   account: Account;

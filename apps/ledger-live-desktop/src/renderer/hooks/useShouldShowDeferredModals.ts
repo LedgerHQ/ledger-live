@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { useSelector } from "LLD/hooks/redux";
 import { hasSeenWalletV4TourSelector } from "~/renderer/reducers/settings";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/useWalletFeaturesConfig";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 /**
  * Returns whether Release Notes and Terms of Use modals should be mounted.

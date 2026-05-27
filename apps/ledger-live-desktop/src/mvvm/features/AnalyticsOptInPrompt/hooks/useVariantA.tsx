@@ -10,7 +10,7 @@ import {
 } from "LLD/features/AnalyticsOptInPrompt/types/AnalyticsOptInPromptNavigator";
 import { track } from "~/renderer/analytics/segment";
 import { useAnalyticsOptInPrompt } from "./useCommonLogic";
-import { ABTestingVariants } from "@ledgerhq/types-live";
+import { AB_TESTING_VARIANTS } from "../types/variants";
 import { steps } from "LLD/features/AnalyticsOptInPrompt/const/steps";
 
 interface UseVariantAProps {
@@ -20,7 +20,7 @@ interface UseVariantAProps {
 }
 
 const useVariantA = ({ onSubmit, entryPoint, setStep }: UseVariantAProps) => {
-  const variant = ABTestingVariants.variantA;
+  const variant = AB_TESTING_VARIANTS.A;
   const dispatch = useDispatch();
 
   const [preferences, setPreferences] = useState<Record<FieldKeySwitch, boolean>>({

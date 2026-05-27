@@ -61,7 +61,7 @@ import FeesDrawerLiveApp from "./FeesDrawerLiveApp";
 import { useSwapDefaultAccounts } from "./useSwapDefaultAccounts";
 import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
-import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useDeeplinkCustomHandlers } from "~/renderer/components/WebPlatformPlayer/CustomHandlers";
 import { SwapLoader } from "./SwapLoader";
 import { useDiscreetMode } from "~/renderer/components/Discreet";

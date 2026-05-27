@@ -1,4 +1,5 @@
-import type { Account, AccountLike, Features, Operation } from "@ledgerhq/types-live";
+import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
+import type { Features } from "@shared/feature-flags";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "@ledgerhq/live-env";
 import {

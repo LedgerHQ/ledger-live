@@ -3,7 +3,7 @@ import type { Account } from "@ledgerhq/types-live";
 import { useSelector } from "LLD/hooks/redux";
 import { useFlattenSortAccounts, useSortAccountsComparator } from "~/renderer/actions/general";
 import { useHideEmptyTokenAccounts } from "~/renderer/actions/settings";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { accountMatchesSearch } from "LLD/utils/accountMatchesSearch";

@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { useNavigate } from "react-router";
 import { MarketItemPerformer } from "@ledgerhq/live-common/market/utils/types";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { ViewAllTile } from "./ViewAllTile";
 import { TrendingAssetTile } from "./TrendingAssetTile";
 import { track } from "~/renderer/analytics/segment";

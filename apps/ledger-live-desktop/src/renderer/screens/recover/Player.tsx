@@ -15,7 +15,7 @@ import WebRecoverPlayer from "~/renderer/components/WebRecoverPlayer";
 import useTheme from "~/renderer/hooks/useTheme";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import styled from "styled-components";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { SeedOriginType } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/devices";

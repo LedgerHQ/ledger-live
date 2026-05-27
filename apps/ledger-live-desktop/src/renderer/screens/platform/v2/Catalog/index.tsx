@@ -9,7 +9,7 @@ import { LocalLiveAppSection } from "./LocalLiveAppSection";
 import { useLocation } from "react-router";
 import { Categories } from "@ledgerhq/live-common/wallet-api/react";
 import PageHeader from "LLD/components/PageHeader";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 export function Catalog() {
   const recentlyUsedDB = useRecentlyUsedDB();

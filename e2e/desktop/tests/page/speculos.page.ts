@@ -15,7 +15,7 @@ import {
   exportUfvk,
   shareViewKey,
   approveToken,
-  signTypedMessage,
+  signTypedMessage as signTypedMessageDevice,
 } from "@ledgerhq/live-common/e2e/speculos";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
@@ -99,6 +99,6 @@ export class SpeculosPage extends AppPage {
 
   @step("Sign typed message on device")
   async signTypedMessage() {
-    await signTypedMessage();
+    await signTypedMessageDevice();
   }
 }

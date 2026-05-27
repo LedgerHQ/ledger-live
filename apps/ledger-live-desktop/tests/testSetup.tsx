@@ -95,6 +95,9 @@ export function withFlagOverrides(flags: LooseFlagOverrides): DeepPartial<State>
     featureFlags: {
       ...FEATURE_FLAGS_INITIAL_STATE,
       overrides: merged as unknown as PartialFeatures,
+      // Mirror the slice's resolution chain (override > default) so hooks reading
+      // from `resolved` see the override immediately, without needing an action dispatch.
+      resolved: { ...FEATURE_FLAGS_DEFAULTS, ...merged } as Features,
     },
   };
 }

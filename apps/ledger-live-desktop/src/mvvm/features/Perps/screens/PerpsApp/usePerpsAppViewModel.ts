@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from "react";
-import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/index";
+import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import {
   useRemoteLiveAppContext,
   useRemoteLiveAppManifest,
@@ -37,7 +37,7 @@ export type PerpsWebviewInputs = {
 };
 
 const DEFAULT_MANIFEST_ID =
-  process.env.DEFAULT_PERPS_MANIFEST_ID || DEFAULT_FEATURES.ptxPerpsLiveApp.params?.manifest_id;
+  process.env.DEFAULT_PERPS_MANIFEST_ID || FEATURE_FLAGS_DEFAULTS.ptxPerpsLiveApp.params?.manifest_id;
 
 export function usePerpsAppViewModel() {
   const perpsLiveEnabledFlag = usePerpsLiveConfig();

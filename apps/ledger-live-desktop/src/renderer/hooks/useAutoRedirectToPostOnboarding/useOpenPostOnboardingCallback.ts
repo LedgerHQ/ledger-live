@@ -1,7 +1,8 @@
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { useCallback } from "react";
 import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/useStartPostOnboardingCallback";
-import { isRecoverDisplayed, useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
+import { isRecoverDisplayed } from "@ledgerhq/live-common/featureFlags/index";
 import { useUpsellPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { hasStartedLedgerRecoverFlowForPostOnboarding } from "LLD/features/FinishOnboarding/RecoverWidget/recoverPortfolioWidgetVisibility";
 import { getStoreValue } from "~/renderer/store";

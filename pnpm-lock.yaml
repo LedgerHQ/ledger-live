@@ -936,6 +936,9 @@ importers:
       '@features/flow-market-banner':
         specifier: workspace:^
         version: link:../../features/flow/market-banner
+      '@features/platform-feature-flags':
+        specifier: workspace:^
+        version: link:../../features/platform/feature-flags
       '@ledgerhq/asset-aggregation':
         specifier: workspace:^
         version: link:../../libs/asset-aggregation

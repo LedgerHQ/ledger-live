@@ -1,6 +1,6 @@
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useTezosStakingInfo } from "@ledgerhq/live-common/families/tezos/react";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { useCallback } from "react";
 import { useDispatch } from "LLD/hooks/redux";
 import { openModal } from "~/renderer/actions/modals";

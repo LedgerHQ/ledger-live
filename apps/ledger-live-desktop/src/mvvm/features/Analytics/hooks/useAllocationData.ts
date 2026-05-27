@@ -6,7 +6,7 @@ import {
   blacklistedTokenIdsSelector,
 } from "~/renderer/reducers/settings";
 import { useDistribution } from "~/renderer/actions/general";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import type { AllocationTableItem, AllocationViewProps } from "../types";
 

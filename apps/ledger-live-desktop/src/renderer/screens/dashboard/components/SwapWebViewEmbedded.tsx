@@ -1,5 +1,5 @@
 import { useSwapLiveConfig } from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/index";
+import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import {
   useRemoteLiveAppContext,
   useRemoteLiveAppManifest,
@@ -13,7 +13,7 @@ import Card from "~/renderer/components/Box/Card";
 import { NetworkErrorScreen } from "~/renderer/components/Web3AppWebview/NetworkError";
 
 const DEFAULT_MANIFEST_ID =
-  process.env.DEFAULT_SWAP_MANIFEST_ID || DEFAULT_FEATURES.ptxSwapLiveApp.params?.manifest_id;
+  process.env.DEFAULT_SWAP_MANIFEST_ID || FEATURE_FLAGS_DEFAULTS.ptxSwapLiveApp.params?.manifest_id;
 
 const EmbeddedContainer = styled.div`
   display: flex;

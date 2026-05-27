@@ -10,7 +10,7 @@ import {
   verifyAmountsAndAcceptSwapForDifferentSeed,
   verifyAmountsAndRejectSwap,
   approveToken,
-  signTypedMessage,
+  signTypedMessage as signTypedMessageDevice,
 } from "@ledgerhq/live-common/e2e/speculos";
 import { setExchangeDependencies } from "../utils/speculosUtils";
 import { TransactionType } from "@ledgerhq/live-common/e2e/models/Transaction";
@@ -79,7 +79,7 @@ export default class SpeculosPage {
 
   @Step("Sign typed message on device")
   async signTypedMessage() {
-    await signTypedMessage();
+    await signTypedMessageDevice();
   }
 
   async setExchangeDependencies(swapOrFromAccount: SwapType | Account, toAccount?: Account) {

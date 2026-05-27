@@ -9,7 +9,7 @@ import Box from "~/renderer/components/Box";
 import { useFlattenSortAccounts } from "~/renderer/actions/general";
 import { accountsSelector, starredAccountsSelector } from "~/renderer/reducers/accounts";
 import { accountsViewModeSelector, selectedTimeRangeSelector } from "~/renderer/reducers/settings";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import AccountList from "./AccountList";
 import AccountsHeader from "./AccountsHeader";
 import LedgerSyncEntryPoint from "LLD/features/LedgerSyncEntryPoints";

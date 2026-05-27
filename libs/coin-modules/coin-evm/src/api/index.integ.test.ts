@@ -925,6 +925,9 @@ describe("EVM Api (Moonbeam Network)", () => {
 
 describe("EVM Api (SEI Network)", () => {
   let module: CoinModuleApi<MemoNotSupported, BufferTxData> & BridgeApi;
+  const seiStakingSender = "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3";
+  const seiStakingRecipient = "0x0000000000000000000000000000000000001005";
+  const seiStakingDelegationAmount = 1000000000000000n; // 0.001 SEI
 
   beforeAll(() => {
     // Setup CAL client store (automatically set as global store)
@@ -967,10 +970,10 @@ describe("EVM Api (SEI Network)", () => {
       const { transaction: result } = await module.craftTransaction({
         type: `staking-${mode}`,
         intentType: "staking" as const,
-        amount: 1000000000000000000n, // 1 SEI
+        amount: seiStakingDelegationAmount,
         mode: "delegate",
-        sender: "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3",
-        recipient: "0x0000000000000000000000000000000000001005",
+        sender: seiStakingSender,
+        recipient: seiStakingRecipient,
         valAddress: "seivaloper1ummny4p645xraxc4m7nphf7vxawfzt3p5hn47t",
         data: { type: "buffer", value: Buffer.from([]) },
         asset: {
@@ -980,8 +983,8 @@ describe("EVM Api (SEI Network)", () => {
 
       expect(result).toMatch(/^0x[A-Fa-f0-9]+$/);
       expect(ethers.Transaction.from(result)).toMatchObject({
-        value: 1000000000000000000n,
-        to: "0x0000000000000000000000000000000000001005",
+        value: seiStakingDelegationAmount,
+        to: seiStakingRecipient,
       });
       expectTransactionForMode(ethers.Transaction.from(result));
     });
@@ -1031,10 +1034,10 @@ describe("EVM Api (SEI Network)", () => {
       const result = await module.estimateFees({
         type: `staking-${mode}`,
         intentType: "staking" as const,
-        amount: 1000000000000000000n, // 1 SEI
+        amount: seiStakingDelegationAmount,
         mode: "delegate",
-        sender: "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3",
-        recipient: "0x0000000000000000000000000000000000001005",
+        sender: seiStakingSender,
+        recipient: seiStakingRecipient,
         valAddress: "seivaloper1ummny4p645xraxc4m7nphf7vxawfzt3p5hn47t",
         data: { type: "buffer", value: Buffer.from([]) },
         asset: {

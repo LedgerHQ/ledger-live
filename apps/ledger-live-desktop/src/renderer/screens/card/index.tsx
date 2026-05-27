@@ -11,7 +11,7 @@ import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/provide
 import useTheme from "~/renderer/hooks/useTheme";
 import WebPTXPlayer from "~/renderer/components/WebPTXPlayer";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { CARD_APP_ID, INTERNAL_APP_IDS } from "@ledgerhq/live-common/wallet-api/constants";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import CardPlatformApp from "./CardPlatformApp";

@@ -3,7 +3,7 @@ import { Button } from "@ledgerhq/lumen-ui-react";
 import { ArrowLeft } from "@ledgerhq/lumen-ui-react/symbols";
 import { useNavigate } from "react-router";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import Box from "~/renderer/components/Box";
 import {
   analyticsConsentInfoSelector,

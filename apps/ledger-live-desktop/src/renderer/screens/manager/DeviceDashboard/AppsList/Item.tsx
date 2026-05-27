@@ -3,7 +3,7 @@ import { useNotEnoughMemoryToInstall } from "@ledgerhq/live-common/apps/react";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { App } from "@ledgerhq/types-live";
 import { State, Action, InstalledItem } from "@ledgerhq/live-common/apps/types";
-import { isAppAssociatedCurrencySupported } from "@ledgerhq/live-common/apps/filtering";
+import { isAppAssociatedCurrencySupported } from "./isAppAssociatedCurrencySupported";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 
@@ -16,7 +16,7 @@ import IconInfoCircleFull from "~/renderer/icons/InfoCircleFull";
 import AppActions from "./AppActions";
 import AppIcon from "./AppIcon";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { useFeature, useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useFeatureFlags } from "@features/platform-feature-flags";
 import ToolTip from "~/renderer/components/Tooltip";
 
 const AppRowContainer = styled.div`
@@ -109,8 +109,8 @@ const Item = ({
     [app.name, state.apps],
   );
 
-  const { getFeature, isFeature } = useFeatureFlags();
-  const isLiveSupported = isAppAssociatedCurrencySupported({ app, isFeature, getFeature });
+  const features = useFeatureFlags();
+  const isLiveSupported = isAppAssociatedCurrencySupported({ app, features });
 
   const bytes = useMemo(
     () =>

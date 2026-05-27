@@ -1,6 +1,6 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import React, { memo, useCallback, useMemo } from "react";
 import { Trans } from "react-i18next";

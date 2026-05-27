@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";

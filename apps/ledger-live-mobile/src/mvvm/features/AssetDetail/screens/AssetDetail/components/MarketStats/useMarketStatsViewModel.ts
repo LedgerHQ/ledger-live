@@ -37,6 +37,10 @@ export function useMarketStatsViewModel(currency: AssetDetailCurrencyProps) {
                 t,
               })
             : "-",
+        tooltip: {
+          title: t("assetDetail.marketStats.marketCap"),
+          content: t("assetDetail.marketStats.marketCapTooltip"),
+        },
       },
       {
         key: "market_rank",
@@ -89,6 +93,10 @@ export function useMarketStatsViewModel(currency: AssetDetailCurrencyProps) {
               t,
             })
           : "-",
+        tooltip: {
+          title: t("assetDetail.marketStats.tradingVolume"),
+          content: t("assetDetail.marketStats.tradingVolumeTooltip"),
+        },
       },
     ];
   }, [marketCurrency, counterCurrency, locale, t]);

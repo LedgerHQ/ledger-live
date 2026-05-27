@@ -5,7 +5,7 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
 import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useCalculateCountervalueCallback } from "~/renderer/actions/general";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import type { ColumnDef, Row, SortingState, Updater } from "@tanstack/react-table";

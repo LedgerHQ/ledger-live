@@ -1,7 +1,8 @@
 import { useCallback } from "react";
 import { useSelector } from "LLD/hooks/redux";
 import { useNavigate } from "react-router";
-import { isRecoverDisplayed, useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { isRecoverDisplayed } from "@ledgerhq/live-common/featureFlags/index";
 import { useUpsellPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { hasBeenRedirectedToPostOnboardingSelector } from "~/renderer/reducers/settings";

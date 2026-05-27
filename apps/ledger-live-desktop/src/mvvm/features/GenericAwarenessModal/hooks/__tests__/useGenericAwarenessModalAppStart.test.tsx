@@ -16,7 +16,7 @@ const nonAppStartContentCards = [featureIntroCampaignCard, carouselCampaignCard]
 
 const mockUseFeature = jest.fn((_flag: string) => ({ enabled: true }));
 
-jest.mock("@ledgerhq/live-common/featureFlags/index", () => ({
+jest.mock("@features/platform-feature-flags", () => ({
   useFeature: (flag: string) => mockUseFeature(flag),
 }));
 

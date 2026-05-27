@@ -39,7 +39,7 @@ import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums
 import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDialog";
 import { useDrawerConfiguration } from "@ledgerhq/live-common/dada-client/hooks/useDrawerConfiguration";
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { setOriginFlow } from "~/renderer/analytics/originFlow";
 
 const wallet = { name: "ledger-live-desktop", version: __APP_VERSION__ };

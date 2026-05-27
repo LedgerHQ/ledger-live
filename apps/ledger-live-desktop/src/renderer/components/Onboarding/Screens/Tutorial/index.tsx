@@ -1,4 +1,4 @@
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { useCustomPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import {
   Aside,

@@ -36,7 +36,7 @@ import { replaceAccounts } from "~/renderer/actions/accounts";
 import { useTrustchainSdk } from "./useTrustchainSdk";
 import { useOnTrustchainRefreshNeeded } from "./useOnTrustchainRefreshNeeded";
 import { Dispatch } from "redux";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
 import { TrustchainEjected, TrustchainNotAllowed } from "@ledgerhq/ledger-key-ring-protocol/errors";
 

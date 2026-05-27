@@ -5,7 +5,7 @@ import { useSelector } from "LLD/hooks/redux";
 import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import Box from "~/renderer/components/Box";
 import TabBar from "~/renderer/components/TabBar";
-import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { SettingsSection as Section } from "./SettingsSection";
 import SectionDisplay from "./sections/General";
 import SectionExperimental from "./sections/Experimental";

@@ -40,7 +40,7 @@ import Drawer from "~/renderer/drawers/Drawer";
 import UpdateBanner from "~/renderer/components/Updater/Banner";
 import VaultSignerBanner from "~/renderer/components/VaultSignerBanner";
 import { updateIdentify } from "./analytics/segment";
-import { useFeature, FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, FeatureToggle, useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import {
   useFetchCurrencyAll,
   useFetchCurrencyFrom,
@@ -64,7 +64,6 @@ import useCheckAccountWithFunds from "./components/PostOnboardingHub/logic/useCh
 import GlobalDialogs from "LLD/features/GlobalDialogs";
 import GenericAwarenessModalAppStart from "LLD/features/GenericAwarenessModal/GenericAwarenessModalAppStart";
 import GlobalDrawers from "LLD/features/GlobalDrawers";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/useWalletFeaturesConfig";
 import { useShouldShowDeferredModals } from "~/renderer/hooks/useShouldShowDeferredModals";
 import {
   getPageBackground,

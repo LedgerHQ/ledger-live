@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
 import { selectGenericAwarenessModalAppStartContentCard } from "~/renderer/reducers/genericAwarenessModalSlice";
 import {

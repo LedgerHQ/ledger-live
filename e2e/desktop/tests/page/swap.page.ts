@@ -603,7 +603,7 @@ export class SwapPage extends WebViewAppPage {
   }
 
   @step("Selected provider: $0")
-  async getSelectedProvider(providerName: string) {
+  async logSelectedProvider(providerName: string) {
     expect(providerName).toBeDefined();
   }
 }

@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Trans, useTranslation } from "react-i18next";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import BigNumber from "bignumber.js";
-import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { TFunction } from "i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { localeSelector } from "~/renderer/reducers/settings";
@@ -209,8 +209,7 @@ type Props = {
 
 const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const { balance } = account;
-  const { getFeature } = useFeatureFlags();
-  const showPrivateBalanceComponent = getFeature("zcashShielded")?.enabled;
+  const showPrivateBalanceComponent = useFeature("zcashShielded")?.enabled;
 
   const privateInfo = "privateInfo" in account ? account.privateInfo : null;
   const { orchardBalance, saplingBalance } = privateInfo ?? {

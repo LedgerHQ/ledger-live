@@ -1,4 +1,4 @@
-import { Feature } from "@ledgerhq/types-live";
+import { Feature } from "@shared/feature-flags";
 import { WalletFeatureParamKey } from "./constants";
 
 export type WalletFeatureParams = Partial<Record<WalletFeatureParamKey, boolean>>;

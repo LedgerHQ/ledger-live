@@ -62,6 +62,7 @@
     "@braze/web-sdk": "6.4.0",
     "@electron/fuses": "2.0.0",
     "@features/flow-market-banner": "workspace:^",
+    "@features/platform-feature-flags": "workspace:^",
     "@ledgerhq/asset-aggregation": "workspace:^",
     "@ledgerhq/asset-detail": "workspace:^",
     "@ledgerhq/client-ids": "workspace:*",

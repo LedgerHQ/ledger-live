@@ -1,6 +1,6 @@
 import React from "react";
 import { PostOnboardingProvider } from "@ledgerhq/live-common/postOnboarding/PostOnboardingProvider";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { PostOnboardingAction, PostOnboardingActionId } from "@ledgerhq/types-live";
 import { render, waitFor } from "tests/testSetup";
@@ -12,11 +12,9 @@ jest.mock("~/renderer/store", () => ({
   setStoreValue: jest.fn(),
   resetStore: jest.fn(),
 }));
-jest.mock("@ledgerhq/live-common/featureFlags/index", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/featureFlags/index"),
+jest.mock("@features/platform-feature-flags", () => ({
+  ...jest.requireActual("@features/platform-feature-flags"),
   useFeature: jest.fn(),
-}));
-jest.mock("@ledgerhq/live-common/featureFlags/walletFeaturesConfig/index", () => ({
   useWalletFeaturesConfig: () => ({ shouldDisplayFinishOnboardingWidget: true }),
 }));
 jest.mock("@ledgerhq/live-common/hooks/recoverFeatureFlag", () => ({

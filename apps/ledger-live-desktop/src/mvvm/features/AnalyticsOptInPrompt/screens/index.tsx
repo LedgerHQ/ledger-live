@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { ABTestingVariants } from "@ledgerhq/types-live";
+import type { ABTestingVariants } from "../types/variants";
 import { SideDrawer } from "~/renderer/components/SideDrawer";
 import { useTheme } from "styled-components";
 import { EntryPoint } from "LLD/features/AnalyticsOptInPrompt/types/AnalyticsOptInPromptNavigator";

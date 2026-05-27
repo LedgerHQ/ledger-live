@@ -1,7 +1,7 @@
 import { Flex, ProgressLoader, Text, Icons } from "@ledgerhq/react-ui";
 import React, { useMemo } from "react";
 import { useNavigate } from "react-router";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { useCustomPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { useTranslation } from "react-i18next";
 import { RecoverBannerType } from "./types";

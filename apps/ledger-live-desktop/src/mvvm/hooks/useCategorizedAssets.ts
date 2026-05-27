@@ -7,7 +7,7 @@ import {
   blacklistedTokenIdsSelector,
   hideEmptyTokenAccountsSelector,
 } from "~/renderer/reducers/settings";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 export function useCategorizedAssetsFromPortfolio() {
   const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");

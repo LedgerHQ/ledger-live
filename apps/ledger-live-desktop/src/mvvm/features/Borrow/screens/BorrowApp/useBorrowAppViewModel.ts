@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
-import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/index";
+import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import {
   useRemoteLiveAppContext,
   useRemoteLiveAppManifest,
@@ -37,7 +37,7 @@ export type BorrowWebviewInputs = {
 
 const DEFAULT_MANIFEST_ID =
   process.env.DEFAULT_BORROW_MANIFEST_ID ||
-  DEFAULT_FEATURES.ptxBorrowLiveApp?.params?.manifest_id ||
+  FEATURE_FLAGS_DEFAULTS.ptxBorrowLiveApp?.params?.manifest_id ||
   "borrow";
 
 export function useBorrowAppViewModel() {

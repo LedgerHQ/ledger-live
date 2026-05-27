@@ -4,7 +4,7 @@ import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { Flex } from "@ledgerhq/react-ui";
 import { DeviceSelectorOption } from "./DeviceSelectorOption";
 import DeviceIllustration from "~/renderer/components/DeviceIllustration";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@features/platform-feature-flags";
 
 const DeviceSelectContainer = styled(Flex).attrs({
   flexDirection: "row",

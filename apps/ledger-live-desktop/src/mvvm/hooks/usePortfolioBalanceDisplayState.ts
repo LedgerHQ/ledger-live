@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useBalanceSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import type { SyncPhase } from "@ledgerhq/live-common/bridge/react/useSyncLifecycle";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
 import type { Portfolio, ValueChange } from "@ledgerhq/types-live";
 import { usePortfolioBalance } from "LLD/hooks/usePortfolioBalance";

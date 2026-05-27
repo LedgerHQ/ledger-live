@@ -2,7 +2,7 @@ import React from "react";
 
 import { cn } from "LLD/utils/cn";
 import { usePortfolioCarouselCards } from "../../hooks/usePortfolioCarouselCards";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 import BottomCarouselSlide from "./BottomCarouselSlide";
 

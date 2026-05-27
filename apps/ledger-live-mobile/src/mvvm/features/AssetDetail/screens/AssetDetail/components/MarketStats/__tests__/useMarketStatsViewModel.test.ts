@@ -45,12 +45,17 @@ describe("useMarketStatsViewModel", () => {
       expect(rankStat?.value).toBe("#1");
     });
 
-    it("provides tooltip only for circulating supply and max supply", () => {
+    it("provides tooltip for every stat row except market rank", () => {
       const { result } = renderHook(() => useMarketStatsViewModel(mockBtcCryptoCurrency));
 
       const withTooltip = result.current.stats.filter(s => s.tooltip);
-      expect(withTooltip).toHaveLength(2);
-      expect(withTooltip.map(s => s.key)).toEqual(["circulating_supply", "max_supply"]);
+      expect(withTooltip.map(s => s.key)).toEqual([
+        "market_cap",
+        "circulating_supply",
+        "max_supply",
+        "trading_volume",
+      ]);
+      expect(result.current.stats.find(s => s.key === "market_rank")?.tooltip).toBeUndefined();
     });
 
     it("returns an empty array when no market data", () => {

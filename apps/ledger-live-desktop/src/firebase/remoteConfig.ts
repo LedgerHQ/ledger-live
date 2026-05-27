@@ -6,7 +6,8 @@ import {
   RemoteConfig,
 } from "firebase/remote-config";
 import camelCase from "lodash/camelCase";
-import { DEFAULT_FEATURES, formatDefaultFeatures } from "@ledgerhq/live-common/featureFlags/index";
+import { formatDefaultFeatures } from "@ledgerhq/live-common/featureFlags/index";
+import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import type { PartialFeatures } from "@shared/feature-flags";
 import { getFirebaseConfig } from "~/firebase-setup";
 
@@ -31,7 +32,7 @@ function getApp(): FirebaseApp {
 /**
  * Lazy singleton accessor for the Firebase RemoteConfig instance. On first call,
  * applies the same settings as the legacy provider: zero fetch-interval cache
- * window and default values seeded from {@link DEFAULT_FEATURES}.
+ * window and default values seeded from {@link FEATURE_FLAGS_DEFAULTS}.
  */
 export function getRemoteConfigSingleton(): RemoteConfig {
   if (!remoteConfig) {
@@ -39,7 +40,7 @@ export function getRemoteConfigSingleton(): RemoteConfig {
   }
   if (!setupDone) {
     remoteConfig.settings.minimumFetchIntervalMillis = 0;
-    remoteConfig.defaultConfig = { ...formatDefaultFeatures(DEFAULT_FEATURES) };
+    remoteConfig.defaultConfig = { ...formatDefaultFeatures(FEATURE_FLAGS_DEFAULTS) };
     setupDone = true;
   }
   return remoteConfig;

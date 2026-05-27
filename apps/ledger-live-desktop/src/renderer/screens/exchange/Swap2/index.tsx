@@ -8,7 +8,7 @@ import SwapNavbar from "./Navbar";
 import { SwapApp } from "./App";
 import { cn } from "LLD/utils/cn";
 import PageHeader from "LLD/components/PageHeader";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 const Main = styled.main`
   display: flex;

@@ -142,6 +142,7 @@ export function pickRotatingProvider(eligibleProviders: Provider[]): Provider {
     }
     return match;
   }
-  const weekIndex = Math.floor(Date.now() / ONE_WEEK_MS);
+  const MONDAY_EPOCH_UTC_MS = Date.UTC(2024, 0, 1);
+  const weekIndex = Math.floor((Date.now() - MONDAY_EPOCH_UTC_MS) / ONE_WEEK_MS);
   return eligibleProviders[weekIndex % eligibleProviders.length];
 }

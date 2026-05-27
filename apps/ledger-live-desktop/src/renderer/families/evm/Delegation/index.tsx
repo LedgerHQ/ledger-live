@@ -15,7 +15,7 @@ import {
 import { isStakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
 import type { StakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { openURL } from "~/renderer/linking";
 import { openModal } from "~/renderer/actions/modals";
 import Text from "~/renderer/components/Text";

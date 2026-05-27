@@ -66,7 +66,7 @@ test.describe("Token approval - flow", () => {
       ],
     },
     async ({ app }) => {
-      await app.swap.getSelectedProvider(provider.uiName);
+      await app.swap.logSelectedProvider(provider.uiName);
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await revokeTokenApproval(fromAccount, provider);
       await app.swap.ensureRevokeTokenApproval(fromAccount, provider);

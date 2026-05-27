@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from "react";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { resolveAnalyticsOptInParams } from "@ledgerhq/live-common/analyticsConsent/index";
 import {
   hasSeenAnalyticsOptInPromptSelector,
@@ -11,11 +11,11 @@ import {
   setHasSeenAnalyticsOptInPrompt,
 } from "~/renderer/actions/settings";
 import { EntryPoint } from "../types/AnalyticsOptInPromptNavigator";
-import { ABTestingVariants } from "@ledgerhq/types-live";
 import { urls } from "~/config/urls";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { openURL } from "~/renderer/linking";
 import { track, updateIdentify } from "~/renderer/analytics/segment";
+import { AB_TESTING_VARIANTS, type ABTestingVariants } from "../types/variants";
 
 const trackingKeysByFlow: Record<EntryPoint, string> = {
   onboarding: "consent onboarding",
@@ -47,8 +47,8 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
   const trackingPolicyUrl = useLocalizedUrl(urls.trackingPolicy);
 
   const urlByVariant = {
-    [ABTestingVariants.variantA]: trackingPolicyUrl,
-    [ABTestingVariants.variantB]: privacyPolicyUrl,
+    [AB_TESTING_VARIANTS.A]: trackingPolicyUrl,
+    [AB_TESTING_VARIANTS.B]: privacyPolicyUrl,
   };
 
   const openAnalyticsOptInPrompt = useCallback(
@@ -125,5 +125,6 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
   };
 };
 
-export const getVariant = (variant?: ABTestingVariants): ABTestingVariants =>
-  variant === ABTestingVariants.variantB ? ABTestingVariants.variantB : ABTestingVariants.variantA;
+export function getVariant(variant?: ABTestingVariants | undefined): ABTestingVariants {
+  return variant === AB_TESTING_VARIANTS.B ? AB_TESTING_VARIANTS.B : AB_TESTING_VARIANTS.A;
+}
