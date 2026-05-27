@@ -15,13 +15,12 @@ import { HEDERA_OPERATION_TYPES } from "../constants";
 import { estimateFees } from "../logic/estimateFees";
 import {
   fromEVMAddress,
-  toEVMAddress,
   getMemoFromBase64,
   isTokenAssociateTransaction,
   isValidExtra,
   base64ToUrlSafeBase64,
 } from "../logic/utils";
-import { getERC20Operations, parseThirdwebTransactionParams } from "../network/utils";
+import { getERC20Operations, parseThirdwebTransactionParams, toEVMAddress } from "../network/utils";
 import type {
   HederaOperationExtra,
   Transaction,

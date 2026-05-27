@@ -41,10 +41,9 @@ import {
   getBlockHash,
   getOperationValue,
   mapIntentToSDKOperation,
-  toEVMAddress,
 } from "../logic/utils";
 import { apiClient } from "../network/api";
-import { getERC20BalancesForAccountV2 } from "../network/utils";
+import { getERC20BalancesForAccountV2, toEVMAddress } from "../network/utils";
 import type { EstimateFeesParams, HederaMemo, HederaOperationExtra } from "../types";
 
 export function createApi(

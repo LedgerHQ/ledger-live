@@ -4,14 +4,14 @@ import { LedgerAPI4xx } from "@ledgerhq/errors";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
-import hederaCoinConfig from "../config";
 import { HederaAddAccountError } from "../errors";
+import { resolveConfig } from "./utils";
 import { apiClient } from "../network/api";
 import { getERC20BalancesForAccountV2 } from "../network/utils";
 
 export async function getBalance(currency: CryptoCurrency, address: string): Promise<Balance[]> {
   try {
-    const coinConfig = hederaCoinConfig.getCoinConfig(currency.id);
+    const coinConfig = resolveConfig(currency.id);
     // Fetch only the specific staked node (or nothing at all for non-staking
     // accounts) instead of paginating the full /network/nodes list. The
     // validator lookup is chained on the account promise so it still runs

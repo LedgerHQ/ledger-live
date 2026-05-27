@@ -7,7 +7,7 @@ import type {
 import { FINALITY_MS, HEDERA_TRANSACTION_NAMES } from "../constants";
 import { apiClient } from "../network/api";
 import { hgraphClient } from "../network/hgraph";
-import { enrichERC20Transfers } from "../network/utils";
+import { enrichERC20Transfers, analyzeStakingOperation } from "../network/utils";
 import type {
   ERC20TokenTransfer,
   HederaMirrorCoinTransfer,
@@ -18,7 +18,6 @@ import type {
 import { getBlockInfo } from "./getBlockInfo";
 import {
   getMemoFromBase64,
-  analyzeStakingOperation,
   getDateRangeFromBlockHeight,
   mergeTransactionsFromDifferentSources,
   toEntityId,

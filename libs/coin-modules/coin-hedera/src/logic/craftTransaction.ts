@@ -18,9 +18,9 @@ import {
   TRANSACTION_VALID_DURATION_SECONDS,
 } from "../constants";
 import { rpcClient } from "../network/rpc";
-import { createTransactionId } from "../network/utils";
+import { createTransactionId, toEVMAddress } from "../network/utils";
 import type { HederaMemo, HederaTxData } from "../types";
-import { hasSpecificIntentData, serializeTransaction, toEVMAddress } from "./utils";
+import { hasSpecificIntentData, serializeTransaction } from "./utils";
 
 interface BuilderOperator {
   accountId: string;

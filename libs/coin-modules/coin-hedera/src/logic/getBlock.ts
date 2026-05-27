@@ -6,18 +6,14 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/types";
 import { FINALITY_MS, HEDERA_TRANSACTION_NAMES } from "../constants";
 import { apiClient } from "../network/api";
+import { analyzeStakingOperation } from "../network/utils";
 import type {
   HederaMirrorCoinTransfer,
   HederaMirrorTokenTransfer,
   HederaMirrorTransaction,
 } from "../types";
 import { getBlockInfo } from "./getBlockInfo";
-import {
-  extractFeesPayer,
-  getMemoFromBase64,
-  analyzeStakingOperation,
-  getDateRangeFromBlockHeight,
-} from "./utils";
+import { extractFeesPayer, getMemoFromBase64, getDateRangeFromBlockHeight } from "./utils";
 
 function toHederaAsset(
   mirrorTransfer: HederaMirrorCoinTransfer | HederaMirrorTokenTransfer,

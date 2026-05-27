@@ -13,13 +13,16 @@ import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
-import hederaCoinConfig from "../config";
 import { HARDCODED_BLOCK_HEIGHT } from "../constants";
 import { listOperations, listOperationsV2 } from "../logic";
-import { toEVMAddress } from "../logic/utils";
+import { resolveConfig } from "../logic/utils";
 import { apiClient } from "../network/api";
 import { thirdwebClient } from "../network/thirdweb";
-import { getERC20BalancesForAccount, getERC20BalancesForAccountV2 } from "../network/utils";
+import {
+  getERC20BalancesForAccount,
+  getERC20BalancesForAccountV2,
+  toEVMAddress,
+} from "../network/utils";
 import type { HederaAccount } from "../types";
 import {
   getSubAccounts,
@@ -139,11 +142,11 @@ export const getAccountShape: GetAccountShape<HederaAccount> = async (
   { blacklistedTokenIds },
 ): Promise<Partial<HederaAccount>> => {
   const { currency, derivationMode, address, initialAccount } = info;
+  const config = resolveConfig(currency.id);
   invariant(address, "hedera: address is expected");
   const evmAddress = await toEVMAddress(address);
   invariant(evmAddress, `hedera: evm address is missing for ${address}`);
 
-  const coinConfig = hederaCoinConfig.getCoinConfig(currency.id);
   const liveAccountId = encodeAccountId({
     type: "js",
     version: "2",
@@ -152,7 +155,7 @@ export const getAccountShape: GetAccountShape<HederaAccount> = async (
     derivationMode,
   });
 
-  if (coinConfig.useHgraphForErc20) {
+  if (config.useHgraphForErc20) {
     return getAccountShapeV2({
       address,
       evmAddress,
@@ -317,7 +320,7 @@ export const buildIterateResult: IterateResultBuilder = async ({ result: rootRes
 // TODO: remove once migration to new API is complete
 // it might be necessary to remove pending operations after ERC20 patching done by `integrateERC20Operations`
 export const postSync = (_initial: Account, synced: Account): Account => {
-  const coinConfig = hederaCoinConfig.getCoinConfig(synced.currency.id);
+  const coinConfig = resolveConfig(synced.currency.id);
 
   if (coinConfig.useHgraphForErc20) {
     return synced;

@@ -14,7 +14,7 @@ describe("Broadcast", () => {
     const recipient = AccountId.fromString("0.0.2");
     const client = await rpcClient.getInstance();
 
-    const tx = await new TransferTransaction()
+    const tx = new TransferTransaction()
       .addHbarTransfer(senderAccountId, Hbar.fromTinybars(-1))
       .addHbarTransfer(recipient, Hbar.fromTinybars(1))
       .setTransactionId(TransactionId.generate(senderAccountId))

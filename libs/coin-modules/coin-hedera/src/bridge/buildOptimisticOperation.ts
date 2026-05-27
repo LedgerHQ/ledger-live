@@ -4,11 +4,8 @@ import type { Account, Operation, OperationType, TokenAccount } from "@ledgerhq/
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import { HEDERA_TRANSACTION_MODES, MAP_STAKING_MODE_TO_OPERATION_TYPE } from "../constants";
-import {
-  safeParseAccountId,
-  isTokenAssociateTransaction,
-  isStakingTransaction,
-} from "../logic/utils";
+import { isTokenAssociateTransaction, isStakingTransaction } from "../logic/utils";
+import { safeParseAccountId } from "../network/utils";
 import type { HederaAccount, HederaOperationExtra, Transaction } from "../types";
 
 const buildOptimisticTokenAssociateOperation = async ({

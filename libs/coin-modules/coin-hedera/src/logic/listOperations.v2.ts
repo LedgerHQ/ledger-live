@@ -11,7 +11,7 @@ import BigNumber from "bignumber.js";
 import { HARDCODED_BLOCK_HEIGHT, HEDERA_TRANSACTION_NAMES } from "../constants";
 import { apiClient } from "../network/api";
 import { hgraphClient } from "../network/hgraph";
-import { parseTransfers, enrichERC20Transfers } from "../network/utils";
+import { parseTransfers, enrichERC20Transfers, analyzeStakingOperation } from "../network/utils";
 import type {
   EnrichedERC20Transfer,
   HederaERC20TokenBalance,
@@ -22,7 +22,6 @@ import type {
   StakingAnalysis,
 } from "../types";
 import {
-  analyzeStakingOperation,
   base64ToUrlSafeBase64,
   createStakingRewardOperationHash,
   extractFeesPayer,

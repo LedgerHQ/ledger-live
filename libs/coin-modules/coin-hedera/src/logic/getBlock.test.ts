@@ -1,16 +1,20 @@
 import { FINALITY_MS, HEDERA_TRANSACTION_NAMES } from "../constants";
 import { apiClient } from "../network/api";
+import { analyzeStakingOperation } from "../network/utils";
 import type { StakingAnalysis } from "../types";
 import { getBlock } from "./getBlock";
 import { getBlockInfo } from "./getBlockInfo";
-import { analyzeStakingOperation, getDateRangeFromBlockHeight } from "./utils";
+import { getDateRangeFromBlockHeight } from "./utils";
 
 jest.mock("./getBlockInfo");
 jest.mock("../network/api");
+jest.mock("../network/utils", () => ({
+  ...jest.requireActual("../network/utils"),
+  analyzeStakingOperation: jest.fn(),
+}));
 // mock all functions in utils except extractFeesPayer
 jest.mock("./utils", () => ({
   ...jest.requireActual("./utils"),
-  analyzeStakingOperation: jest.fn(),
   getDateRangeFromBlockHeight: jest.fn(),
   getMemoFromBase64: jest.fn(),
 }));

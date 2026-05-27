@@ -1,6 +1,14 @@
+import hederaCoinConfig from "../config";
+import { getMockedConfig } from "../test/fixtures/config.fixture";
 import { toEVMAddress } from "./utils";
 
 describe("toEVMAddress", () => {
+  const coinConfig = getMockedConfig();
+
+  beforeAll(() => {
+    hederaCoinConfig.setCoinConfig(() => coinConfig);
+  });
+
   it("should resolve from an account id to a long-zero EVM address for an account without EVM alias", async () => {
     const address = await toEVMAddress("0.0.12345");
     expect(address).toEqual("0x0000000000000000000000000000000000003039");

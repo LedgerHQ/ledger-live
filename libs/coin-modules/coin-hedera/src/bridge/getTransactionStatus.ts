@@ -25,12 +25,14 @@ import { estimateFees } from "../logic/estimateFees";
 import {
   isTokenAssociateTransaction,
   isTokenAssociationRequired,
-  getCurrencyToUSDRate,
-  checkAccountTokenAssociationStatus,
-  safeParseAccountId,
   isStakingTransaction,
 } from "../logic/utils";
 import { validateMemo } from "../logic/validateMemo";
+import {
+  getCurrencyToUSDRate,
+  checkAccountTokenAssociationStatus,
+  safeParseAccountId,
+} from "../network/utils";
 import { getCurrentHederaPreloadData } from "../preload-data";
 import type {
   HederaAccount,

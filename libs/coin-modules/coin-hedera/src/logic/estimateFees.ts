@@ -11,8 +11,8 @@ import {
   HEDERA_OPERATION_TYPES,
 } from "../constants";
 import { apiClient } from "../network/api";
+import { getCurrencyToUSDRate, toEVMAddress } from "../network/utils";
 import type { EstimateFeesParams, EstimateFeesResult } from "../types";
-import { getCurrencyToUSDRate, toEVMAddress } from "./utils";
 
 const estimateContractCallFees = async (
   txIntent: TransactionIntent,

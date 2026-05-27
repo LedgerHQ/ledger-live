@@ -711,7 +711,6 @@ export default function BaseNavigator() {
           component={LiveAppModalScreen}
           options={{
             headerShown: false,
-            presentation: "modal",
             gestureEnabled: true,
           }}
         />

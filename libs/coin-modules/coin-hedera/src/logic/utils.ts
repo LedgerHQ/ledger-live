@@ -7,17 +7,13 @@ import {
   TransactionId,
 } from "@hashgraph/sdk";
 import type { AssetInfo, TransactionIntent } from "@ledgerhq/coin-module-framework/api/types";
-import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { getFiatCurrencyByTicker } from "@ledgerhq/cryptoassets/fiats";
-import { InvalidAddress } from "@ledgerhq/errors";
-import cvsApi from "@ledgerhq/live-countervalues/api/index";
 import { getEnv } from "@ledgerhq/live-env";
-import { makeLRUCache, seconds } from "@ledgerhq/live-network/cache";
 import { log } from "@ledgerhq/logs";
-import type { Currency, ExplorerView, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type { AccountLike, Operation as LiveOperation, OperationType } from "@ledgerhq/types-live";
+import type { ExplorerView, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { AccountLike, Operation as LiveOperation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
+import coinConfig, { type HederaCoinConfig } from "../config";
 import {
   HEDERA_DELEGATION_STATUS,
   HEDERA_OPERATION_TYPES,
@@ -28,9 +24,6 @@ import {
   HEDERA_TRANSACTION_NAMES,
   STAKING_REWARD_HASH_SUFFIX,
 } from "../constants";
-import { HederaRecipientInvalidChecksum } from "../errors";
-import { apiClient } from "../network/api";
-import { rpcClient } from "../network/rpc";
 import { getCurrentHederaPreloadData } from "../preload-data";
 import type {
   EnrichedERC20Transfer,
@@ -42,7 +35,6 @@ import type {
   HederaValidator,
   MergedTransaction,
   OperationDetailsExtraField,
-  StakingAnalysis,
   Transaction,
   TransactionStaking,
   TransactionStatus,
@@ -274,95 +266,12 @@ export const sendRecipientCanNext = (status: TransactionStatus) => {
   return !missingAssociation && !unverifiedAssociation;
 };
 
-// note: this is currently called frequently by getTransactionStatus; LRU cache prevents duplicated requests
-export const getCurrencyToUSDRate = makeLRUCache(
-  async (currency: Currency) => {
-    try {
-      const [rate] = await cvsApi.fetchLatest([
-        {
-          from: currency,
-          to: getFiatCurrencyByTicker("USD"),
-          startDate: new Date(),
-        },
-      ]);
-
-      invariant(rate, "no value returned from cvs api");
-
-      return new BigNumber(rate);
-    } catch {
-      return null;
-    }
-  },
-  currency => currency.ticker,
-  seconds(3),
-);
-
-export const checkAccountTokenAssociationStatus = makeLRUCache(
-  async (address: string, token: TokenCurrency) => {
-    if (token.tokenType !== "hts") {
-      return true;
-    }
-
-    const [parsingError, parsingResult] = await safeParseAccountId(address);
-
-    if (parsingError) {
-      throw parsingError;
-    }
-
-    const addressWithoutChecksum = parsingResult.accountId;
-    const mirrorAccount = await apiClient.getAccount(addressWithoutChecksum);
-
-    // auto association is enabled
-    if (mirrorAccount.max_automatic_token_associations === -1) {
-      return true;
-    }
-
-    const isTokenAssociated = mirrorAccount.balance.tokens.some(t => {
-      return t.token_id === token.contractAddress;
-    });
-
-    return isTokenAssociated;
-  },
-  (accountId, token) => `${accountId}-${token.contractAddress}`,
-  seconds(30),
-);
-
 export const getChecksum = (accountId: string): string | null => {
   try {
     const entityId = EntityIdHelper.fromString(accountId);
     return entityId.checksum ?? null;
   } catch {
     return null;
-  }
-};
-
-export const safeParseAccountId = async (
-  address: string,
-): Promise<[Error, null] | [null, { accountId: string; checksum: string | null }]> => {
-  const currency = findCryptoCurrencyById("hedera");
-  const currencyName = currency?.name ?? "Hedera";
-
-  try {
-    const accountId = AccountId.fromString(address);
-    const checksum = getChecksum(address);
-
-    if (checksum) {
-      const client = await rpcClient.getInstance();
-      const expectedChecksum = accountId.toStringWithChecksum(client).split("-")[1];
-
-      if (checksum !== expectedChecksum) {
-        return [new HederaRecipientInvalidChecksum(), null];
-      }
-    }
-
-    const result = {
-      accountId: accountId.toString(),
-      checksum,
-    };
-
-    return [null, result];
-  } catch {
-    return [new InvalidAddress("", { currencyName }), null];
   }
 };
 
@@ -416,23 +325,6 @@ export const formatTransactionId = (transactionId: TransactionId): string => {
   const [secs, nanos] = timestamp.split(".");
 
   return `${accountId}-${secs}-${nanos}`;
-};
-
-/**
- * Fetches EVM address for given Hedera account ID (e.g. "0.0.1234").
- * It returns null if the fetch fails.
- *
- * @param accountId - Hedera account ID in the format `shard.realm.num`
- * @returns EVM address (`0x...`) or null if fetch fails
- */
-export const toEVMAddress = async (accountId: string): Promise<string | null> => {
-  try {
-    const account = await apiClient.getAccount(accountId);
-
-    return account.evm_address;
-  } catch {
-    return null;
-  }
 };
 
 /**
@@ -558,123 +450,6 @@ export const calculateAPY = (rewardRateStart: number): number => {
   const annualRate = dailyRate * 365;
 
   return annualRate;
-};
-
-/**
- * Calculates the uncommitted balance change for an account between two timestamps.
- *
- * This function handles the timing mismatch between Mirror Node balance snapshots and actual transactions.
- * Balance snapshots are taken at regular intervals, not at every transaction, so querying by exact timestamp
- * may return a snapshot from before moment you need.
- *
- * @param address - Hedera account ID (e.g., "0.0.12345")
- * @param startTimestamp - Start of the time range (exclusive, format: "1234567890.123456789")
- * @param endTimestamp - End of the time range (inclusive, format: "1234567890.123456789")
- * @returns The net balance change as BigInt (sum of all transfers to/from the account)
- */
-export const calculateUncommittedBalanceChange = async ({
-  address,
-  startTimestamp,
-  endTimestamp,
-}: {
-  address: string;
-  startTimestamp: string;
-  endTimestamp: string;
-}): Promise<BigNumber> => {
-  if (Number(startTimestamp) >= Number(endTimestamp)) {
-    return new BigNumber(0);
-  }
-
-  const uncommittedTransactions = await apiClient.getTransactionsByTimestampRange({
-    address,
-    startTimestamp: `gt:${startTimestamp}`,
-    endTimestamp: `lte:${endTimestamp}`,
-  });
-
-  // Sum all balance changes from transfers related to this account
-  const uncommittedBalanceChange = uncommittedTransactions.reduce((total, tx) => {
-    const transfers = tx.transfers ?? [];
-    const relevantTransfers = transfers.filter(t => t.account === address);
-    const netChange = relevantTransfers.reduce((sum, t) => sum.plus(t.amount), new BigNumber(0));
-    return total.plus(netChange);
-  }, new BigNumber(0));
-
-  return uncommittedBalanceChange;
-};
-
-/**
- * Hedera uses the AccountUpdateTransaction for multiple purposes, including staking operations.
- * Mirror node classifies all such transactions under the same name: "CRYPTOUPDATEACCOUNT".
- *
- * This function distinguishes between:
- * - DELEGATE: Account started staking (staked_node_id changed from null to a node ID)
- * - UNDELEGATE: Account stopped staking (staked_node_id changed from a node ID to null)
- * - REDELEGATE: Account changed staking node (staked_node_id changed from one node to another)
- *
- * The analysis works by:
- * 1. Fetching the account state BEFORE the transaction (using lt: timestamp filter)
- * 2. Fetching the account state AFTER the transaction (using eq: timestamp filter)
- * 3. Comparing the staked_node_id field to determine what changed
- * 4. Calculating the actual staked amount by replaying uncommitted transactions between
- *    the latest balance snapshot and the staking operation to handle snapshot timing mismatches
- *
- * @performance
- * Makes 3 API calls per operation:
- * - account state before
- * - account state after
- * - transaction history based on latest balance snapshot
- *
- * Batching would complicate code for minimal gain given low staking op frequency.
- */
-export const analyzeStakingOperation = async (
-  address: string,
-  mirrorTx: HederaMirrorTransaction,
-): Promise<StakingAnalysis | null> => {
-  const [accountBefore, accountAfter] = await Promise.all([
-    apiClient.getAccount(address, `lt:${mirrorTx.consensus_timestamp}`),
-    apiClient.getAccount(address, `eq:${mirrorTx.consensus_timestamp}`),
-  ]);
-
-  let operationType: OperationType | null = null;
-  const previousStakingNodeId = accountBefore.staked_node_id;
-  const targetStakingNodeId = accountAfter.staked_node_id;
-
-  // stake: node id changed from null -> not null
-  if (previousStakingNodeId === null && targetStakingNodeId !== null) {
-    operationType = "DELEGATE";
-  }
-  // unstake: node id changed from not null -> null
-  else if (previousStakingNodeId !== null && targetStakingNodeId === null) {
-    operationType = "UNDELEGATE";
-  }
-  // restake: node id changed from not null -> different not null
-  else if (
-    previousStakingNodeId !== null &&
-    targetStakingNodeId !== null &&
-    previousStakingNodeId !== targetStakingNodeId
-  ) {
-    operationType = "REDELEGATE";
-  }
-
-  if (!operationType) {
-    return null;
-  }
-
-  // calculate uncommitted balance changes between the last snapshot and the staking tx
-  const uncommittedBalanceChange = await calculateUncommittedBalanceChange({
-    address,
-    startTimestamp: accountAfter.balance.timestamp,
-    endTimestamp: mirrorTx.consensus_timestamp,
-  });
-
-  const actualStakedAmount = uncommittedBalanceChange.plus(accountAfter.balance.balance);
-
-  return {
-    operationType,
-    previousStakingNodeId,
-    targetStakingNodeId,
-    stakedAmount: BigInt(actualStakedAmount.toString()), // always entire balance on Hedera (fully liquid)
-  };
 };
 
 export const toEntityId = ({
@@ -836,4 +611,13 @@ export function toTimestamp(consensusTimestamp: string): Timestamp {
 
 export function createStakingRewardOperationHash(hash: string): string {
   return `${hash}${STAKING_REWARD_HASH_SUFFIX}`;
+}
+
+export function resolveConfig(configOrCurrencyId: HederaCoinConfig | string): HederaCoinConfig {
+  if (typeof configOrCurrencyId === "string") {
+    const config = coinConfig.getCoinConfig(configOrCurrencyId);
+    return config;
+  }
+
+  return configOrCurrencyId;
 }

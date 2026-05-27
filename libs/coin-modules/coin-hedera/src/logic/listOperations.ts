@@ -10,7 +10,7 @@ import type { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { HEDERA_TRANSACTION_NAMES } from "../constants";
 import { apiClient } from "../network/api";
-import { parseTransfers } from "../network/utils";
+import { parseTransfers, analyzeStakingOperation } from "../network/utils";
 import type {
   HederaMirrorToken,
   HederaMirrorTransaction,
@@ -18,7 +18,6 @@ import type {
   StakingAnalysis,
 } from "../types";
 import {
-  analyzeStakingOperation,
   base64ToUrlSafeBase64,
   createStakingRewardOperationHash,
   extractFeesPayer,

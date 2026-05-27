@@ -1,7 +1,7 @@
-import { safeParseAccountId } from "../logic/utils";
+import { safeParseAccountId } from "../network/utils";
 import { validateAddress } from "./validateAddress";
 
-jest.mock("../logic/utils");
+jest.mock("../network/utils");
 
 describe("validateAddress", () => {
   const mockedSafeParseAccountId = jest.mocked(safeParseAccountId);

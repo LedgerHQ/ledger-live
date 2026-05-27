@@ -14,7 +14,7 @@ import { apiClient } from "../network/api";
 import { getMockedAccount } from "../test/fixtures/account.fixture";
 import { getMockedERC20TokenCurrency } from "../test/fixtures/currency.fixture";
 import { estimateFees } from "./estimateFees";
-import { getCurrencyToUSDRate, toEVMAddress } from "./utils";
+import { getCurrencyToUSDRate, toEVMAddress } from "../network/utils";
 
 jest.mock("@ledgerhq/live-countervalues/api/index");
 jest.mock("../network/api");

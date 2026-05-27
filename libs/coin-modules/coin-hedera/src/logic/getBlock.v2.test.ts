@@ -4,7 +4,7 @@ import { BigNumber } from "bignumber.js";
 import { HEDERA_TRANSACTION_NAMES, FINALITY_MS } from "../constants";
 import { apiClient } from "../network/api";
 import { hgraphClient } from "../network/hgraph";
-import { enrichERC20Transfers } from "../network/utils";
+import { analyzeStakingOperation, enrichERC20Transfers } from "../network/utils";
 import { getMockedEnrichedERC20Transfer } from "../test/fixtures/common.fixture";
 import { getMockedERC20TokenCurrency } from "../test/fixtures/currency.fixture";
 import { getMockedERC20TokenTransfer } from "../test/fixtures/hgraph.fixture";
@@ -16,7 +16,7 @@ import {
 import type { StakingAnalysis } from "../types";
 import { getBlockV2 } from "./getBlock.v2";
 import { getBlockInfo } from "./getBlockInfo";
-import { analyzeStakingOperation, getDateRangeFromBlockHeight } from "./utils";
+import { getDateRangeFromBlockHeight } from "./utils";
 
 jest.mock("./getBlockInfo");
 jest.mock("../network/api");
@@ -24,11 +24,11 @@ jest.mock("../network/hgraph");
 jest.mock("../network/utils", () => ({
   ...jest.requireActual("../network/utils"),
   enrichERC20Transfers: jest.fn(),
+  analyzeStakingOperation: jest.fn().mockResolvedValue(null),
 }));
 jest.mock("./utils", () => ({
   ...jest.requireActual("./utils"),
   getDateRangeFromBlockHeight: jest.fn(),
-  analyzeStakingOperation: jest.fn().mockResolvedValue(null),
   fromEVMAddress: jest.fn().mockImplementation((evmAddress: string) => {
     const addressMap: Record<string, string> = {
       "0x0000000000000000000000000000000000000999": "0.0.999",
