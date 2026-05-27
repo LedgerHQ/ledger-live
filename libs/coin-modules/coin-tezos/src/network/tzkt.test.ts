@@ -646,6 +646,59 @@ describe("tzkt network API", () => {
   });
 
   // -------------------------------------------------------------------------
+  // api.getUnstakeRequests
+  // -------------------------------------------------------------------------
+
+  describe("api.getUnstakeRequests", () => {
+    it("queries pending and finalizable requests in chronological order", async () => {
+      const fixture = [
+        {
+          id: 1,
+          cycle: 100,
+          baker: { address: "tz1baker" },
+          staker: { address: "tz1abc" },
+          firstTime: "2026-05-01T00:00:00Z",
+          status: "pending",
+          actualAmount: 60,
+        },
+        {
+          id: 2,
+          cycle: 99,
+          baker: { address: "tz1baker" },
+          staker: { address: "tz1abc" },
+          firstTime: "2026-04-25T00:00:00Z",
+          status: "finalizable",
+          actualAmount: 40,
+        },
+      ];
+      mockedNetwork.mockReturnValue(networkResponse(fixture) as ReturnType<typeof network>);
+
+      const result = await api.getUnstakeRequests("tz1abc");
+
+      expect(result).toEqual(fixture);
+      expect(mockedNetwork).toHaveBeenCalledWith(
+        expect.objectContaining({
+          url: expect.stringContaining("/v1/staking/unstake_requests"),
+          params: {
+            "staker.eq": "tz1abc",
+            "status.in": "pending,finalizable",
+            "sort.asc": "id",
+            limit: 1000,
+          },
+        }),
+      );
+    });
+
+    it("returns an empty array when no requests match", async () => {
+      mockedNetwork.mockReturnValue(networkResponse([]) as ReturnType<typeof network>);
+
+      const result = await api.getUnstakeRequests("tz1empty");
+
+      expect(result).toEqual([]);
+    });
+  });
+
+  // -------------------------------------------------------------------------
   // api.getTokensBalances
   // -------------------------------------------------------------------------
 

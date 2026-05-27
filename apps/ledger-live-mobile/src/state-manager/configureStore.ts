@@ -12,8 +12,10 @@ import { setupCryptoAssetsStore } from "~/config/bridge-setup";
 import { setupRecentAddressesStore } from "LLM/storage/recentAddresses";
 import { createIdentitiesSyncMiddleware } from "@ledgerhq/client-ids/store";
 import { State } from "~/reducers/types";
-import { trackingEnabledSelector } from "~/reducers/settings";
-import { createFeatureFlagsMiddleware } from "@shared/feature-flags";
+import { canPushDeviceIdsSelector } from "~/reducers/settings";
+import { getEnv } from "@ledgerhq/live-env";
+import { createFeatureFlagsMiddleware, type PartialFeatures } from "@shared/feature-flags";
+import { fetchRemoteFlags } from "~/firebase/remoteConfig";
 
 export const store = configureStore({
   reducer: reducers,
@@ -26,7 +28,7 @@ export const store = configureStore({
       .concat(
         createIdentitiesSyncMiddleware({
           getIdentitiesState: (state: State) => state.identities,
-          getAnalyticsConsent: (state: State) => trackingEnabledSelector(state),
+          getAnalyticsConsent: canPushDeviceIdsSelector,
         }),
       )
       .concat(
@@ -34,7 +36,9 @@ export const store = configureStore({
           resolutionConfig: {
             platform: Platform.OS === "ios" ? "ios" : "android",
             appVersion: VersionNumber.appVersion ?? undefined,
+            envFlags: getEnv("FEATURE_FLAGS") as PartialFeatures,
           },
+          fetchRemoteFlags,
         }),
       ),
 

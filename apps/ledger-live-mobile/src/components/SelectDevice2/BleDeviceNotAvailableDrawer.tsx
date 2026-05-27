@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "~/context/Locale";
-import Button from "~/components/Button";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { ConnectYourDevice } from "../DeviceAction/rendering";
-import { Flex, Alert, IconsLegacy } from "@ledgerhq/native-ui";
+import { Banner, Box, Button } from "@ledgerhq/lumen-ui-rnative";
+import { ExternalLink } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { Linking } from "react-native";
 import { urls } from "~/utils/urls";
 import { TrackScreen } from "~/analytics";
@@ -33,6 +33,10 @@ export default function BleDeviceNotAvailableDrawer({
     redirectToScan();
   }, [onClose, redirectToScan]);
 
+  const handleOpenHelpCenter = useCallback(() => {
+    Linking.openURL(urls.errors.PeerRemovedPairing);
+  }, []);
+
   useEffect(() => {
     const timeout = setTimeout(() => {
       setShowHelp(true);
@@ -49,46 +53,34 @@ export default function BleDeviceNotAvailableDrawer({
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpen && Boolean(device)} onClose={onClose}>
       <TrackScreen name="Drawer: Power on and unlock" {...trackingProps} />
-      <Flex paddingBottom={8}>
+      <Box lx={{ paddingBottom: "s32"}}>
         <ConnectYourDevice device={device} fullScreen={false} />
-      </Flex>
+      </Box>
       {showHelp && (
-        <Flex
-          borderRadius={8}
-          pb={16}
-          backgroundColor="primary.c10"
-          flexDirection="column"
-          justifyContent="space-evenly"
-          alignItems="center"
-          alignSelf="stretch"
-        >
-          <Alert
-            type="info"
-            title={t("SelectDevice.bleDeviceNotAvailableDrawer.bannerHintTitle")}
-          />
-          <Flex
-            pl={32}
-            flexDirection="row"
-            justifyContent="flex-end"
-            alignItems="center"
-            columnGap={16}
-          >
+        <Banner
+          appearance="info"
+          title={t("SelectDevice.bleDeviceNotAvailableDrawer.bannerHintTitle")}
+          primaryAction={
+            <Button 
+              appearance="gray" 
+              size="sm" 
+              onPress={handleRedirectToScan}               
+              lx={{ flexShrink: 1}}
+            >
+              {t("SelectDevice.bleDeviceNotAvailableDrawer.scanSignersCta")}
+            </Button>
+          }
+          secondaryAction={ 
             <Button
-              type="main"
-              size="small"
-              onPress={handleRedirectToScan}
-              title={t("SelectDevice.bleDeviceNotAvailableDrawer.scanSignersCta")}
-            />
-            <Button
-              type="main"
-              outline
-              size="small"
-              onPress={() => Linking.openURL(urls.errors.PeerRemovedPairing)}
-              title={t("SelectDevice.bleDeviceNotAvailableDrawer.helpCenterCta")}
-              Icon={IconsLegacy.ExternalLinkMedium}
-            />
-          </Flex>
-        </Flex>
+              appearance="no-background"
+              size="sm"
+              icon={ExternalLink}
+              onPress={handleOpenHelpCenter}
+              lx={{ flexShrink: 1}}
+            >
+              {t("SelectDevice.bleDeviceNotAvailableDrawer.helpCenterCta")}
+            </Button>}
+        />
       )}
     </QueuedDrawer>
   );

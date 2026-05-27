@@ -14,11 +14,13 @@ import {
   resolveMarketPriceSectionSourceId,
   resolveTrendPercentAndVariant,
 } from "./utils";
+import { resolveAssetDetailSectionLoading } from "../../utils/resolveAssetDetailSectionLoading";
 
 type UseMarketPriceSectionViewModelProps = Readonly<{
   distributionItem?: DistributionItem;
   ledgerId?: string;
   marketData: AssetMarketData;
+  isDistributionLoading: boolean;
 }>;
 
 type UseMarketPriceSectionViewModelResult = Readonly<{
@@ -39,6 +41,7 @@ export function useMarketPriceSectionViewModel({
   distributionItem,
   ledgerId,
   marketData,
+  isDistributionLoading,
 }: UseMarketPriceSectionViewModelProps): UseMarketPriceSectionViewModelResult {
   const { t } = useTranslation();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
@@ -53,7 +56,10 @@ export function useMarketPriceSectionViewModel({
   const data = marketData.marketCurrencyData;
 
   const hasPriceData = Number.isFinite(data?.price);
-  const showSkeleton = Boolean(marketAssetId && marketData.isLoading && !hasPriceData);
+  const showSkeleton = Boolean(
+    marketAssetId &&
+      resolveAssetDetailSectionLoading(isDistributionLoading, marketData.isLoading, hasPriceData),
+  );
   const dayPercentage = data?.priceChangePercentage?.[KeysPriceChange.day];
   const normalizedDayPercentage = clampDayChangePercentPointsNearZero(dayPercentage);
   const dayVariationFiat = getFiatPriceVariationFromPercentChange(

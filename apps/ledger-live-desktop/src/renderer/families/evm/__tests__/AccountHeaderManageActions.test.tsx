@@ -10,6 +10,19 @@ import { Account } from "@ledgerhq/types-live";
 import { renderHook, withFlagOverrides } from "tests/testSetup";
 import AccountHeaderActions from "../AccountHeaderManageActions";
 
+jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => {
+  const {
+    defaultIsAccountEmpty,
+  } = jest.requireActual("@ledgerhq/live-common/bridge/defaultBridgeExtensions");
+  return {
+    useAccountBridge: jest.fn(() => ({ isAccountEmpty: defaultIsAccountEmpty })),
+    useAccountBridgeOrNull: jest.fn(() => ({ isAccountEmpty: defaultIsAccountEmpty })),
+    useAccountBridgeMany: jest.fn((accounts: Account[]) =>
+      accounts.map(() => ({ isAccountEmpty: defaultIsAccountEmpty })),
+    ),
+  };
+});
+
 setSupportedCurrencies(["sei_evm"]);
 const seiEvmCurrency = getCryptoCurrencyById("sei_evm");
 

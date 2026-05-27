@@ -97,6 +97,16 @@ describe("useMarketStatsViewModel", () => {
     expect(result.current.sectionTitle).toBeTruthy();
     expect(result.current.sectionTooltip).toBeTruthy();
   });
+
+  it("appends the asset ticker on supply rows", () => {
+    const { result } = renderHook(
+      () => useMarketStatsViewModel(buildCurrencyData()),
+      hookOptions(),
+    );
+
+    expect(result.current.rows.find(r => r.key === "circulating_supply")?.value).toMatch(/BTC$/);
+    expect(result.current.rows.find(r => r.key === "max_supply")?.value).toMatch(/BTC$/);
+  });
 });
 
 describe("usePricePerformanceViewModel", () => {

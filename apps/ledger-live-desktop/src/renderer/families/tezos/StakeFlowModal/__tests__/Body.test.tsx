@@ -30,6 +30,10 @@ jest.mock("@ledgerhq/live-common/families/tezos/react", () => ({
   useTezosStakingInfo: () => stakingInfoMock(),
   useDelegation: () => null,
   useBaker: () => undefined,
+  isAwaitingDelegation: (
+    delegation: { isPending?: boolean } | null | undefined,
+    transaction: { mode?: string } | null | undefined,
+  ) => transaction?.mode === "stake" && (!delegation || !!delegation.isPending),
 }));
 
 jest.mock("../steps/StepValidator", () => ({
@@ -133,6 +137,7 @@ const defaultStakingInfo: StakingInfo = {
   unstakedFinalizable: new BigNumber(0),
   availableBalance: new BigNumber(1_000_000),
   delegateAddress: undefined,
+  unstakingPositions: [],
 };
 
 beforeEach(() => {

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/wallet-cli",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "description": "Ledger Wallet CLI using Device Management Kit (USB)",
   "license": "Apache-2.0",

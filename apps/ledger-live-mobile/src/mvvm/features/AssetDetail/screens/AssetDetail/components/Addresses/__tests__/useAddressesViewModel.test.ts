@@ -215,7 +215,7 @@ describe("useAddressesViewModel", () => {
     });
 
     describe("onSeeAll", () => {
-      it("navigates to the CryptoAddresses screen with the parent accountIds and fires analytics", () => {
+      it("opens the all addresses drawer and fires analytics", () => {
         const { btcAccounts, distributionItem } = buildBtcSetup(6);
 
         const { result } = renderHook(
@@ -223,19 +223,12 @@ describe("useAddressesViewModel", () => {
           withRawAccounts(btcAccounts),
         );
 
+        expect(result.current.isAllAddressesDrawerOpen).toBe(false);
+
         act(() => result.current.onSeeAll());
 
-        const expectedIds = btcAccounts.map(a => a.id);
-        expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Accounts, {
-          screen: ScreenName.CryptoAddresses,
-          params: {
-            sourceScreenName: ScreenName.AssetDetail,
-            accountIds: expect.arrayContaining(expectedIds),
-            hideAddAccount: true,
-          },
-        });
-        const navParams = mockNavigate.mock.calls[0][1].params;
-        expect(navParams.accountIds).toHaveLength(expectedIds.length);
+        expect(result.current.isAllAddressesDrawerOpen).toBe(true);
+        expect(mockNavigate).not.toHaveBeenCalled();
         expect(track).toHaveBeenCalledWith("button_clicked", {
           button: "see_all_addresses",
           currency: "bitcoin",
@@ -243,7 +236,20 @@ describe("useAddressesViewModel", () => {
         });
       });
 
-      it("passes deduplicated parent ids for multi-network tokens", () => {
+      it("exposes the parent accountIds for the drawer", () => {
+        const { btcAccounts, distributionItem } = buildBtcSetup(6);
+
+        const { result } = renderHook(
+          () => useAddressesViewModel(mockBtcCryptoCurrency, distributionItem),
+          withRawAccounts(btcAccounts),
+        );
+
+        const expectedIds = btcAccounts.map(a => a.id);
+        expect(result.current.allAccountIds).toEqual(expect.arrayContaining(expectedIds));
+        expect(result.current.allAccountIds).toHaveLength(expectedIds.length);
+      });
+
+      it("exposes deduplicated parent accountIds for multi-network tokens", () => {
         const ethAccount = genAccount("usdt-eth", {
           currency: mockEthCryptoCurrency,
           operationsSize: 0,
@@ -269,13 +275,10 @@ describe("useAddressesViewModel", () => {
           withRawAccounts([ethAccount, algoAccount]),
         );
 
-        act(() => result.current.onSeeAll());
-
-        const navParams = mockNavigate.mock.calls[0][1].params;
-        expect(navParams.accountIds).toEqual(
+        expect(result.current.allAccountIds).toEqual(
           expect.arrayContaining([ethAccount.id, algoAccount.id]),
         );
-        expect(navParams.accountIds).toHaveLength(2);
+        expect(result.current.allAccountIds).toHaveLength(2);
       });
 
       it("does nothing when currency is undefined", () => {
@@ -283,8 +286,26 @@ describe("useAddressesViewModel", () => {
 
         act(() => result.current.onSeeAll());
 
+        expect(result.current.isAllAddressesDrawerOpen).toBe(false);
         expect(mockNavigate).not.toHaveBeenCalled();
         expect(track).not.toHaveBeenCalled();
+      });
+    });
+
+    describe("closeAllAddressesDrawer", () => {
+      it("closes the all addresses drawer", () => {
+        const { btcAccounts, distributionItem } = buildBtcSetup(6);
+
+        const { result } = renderHook(
+          () => useAddressesViewModel(mockBtcCryptoCurrency, distributionItem),
+          withRawAccounts(btcAccounts),
+        );
+
+        act(() => result.current.onSeeAll());
+        expect(result.current.isAllAddressesDrawerOpen).toBe(true);
+
+        act(() => result.current.closeAllAddressesDrawer());
+        expect(result.current.isAllAddressesDrawerOpen).toBe(false);
       });
     });
   });

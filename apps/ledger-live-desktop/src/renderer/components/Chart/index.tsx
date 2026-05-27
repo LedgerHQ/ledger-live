@@ -1,5 +1,3 @@
-/* eslint-disable react/no-unused-prop-types */
-
 /**
  *                                   Chart
  *                                   -----
@@ -39,7 +37,7 @@ import Color from "color";
 import useTheme from "~/renderer/hooks/useTheme";
 import Tooltip from "./Tooltip";
 import { Data, Item } from "./types";
-import { startOfHour, startOfDay } from "@ledgerhq/live-countervalues/portfolio";
+
 import { track } from "~/renderer/analytics/segment";
 
 export enum GraphTrackingScreenName {
@@ -116,13 +114,9 @@ export default function Chart({
           borderWidth: 2,
           data: data.map((d, i) => ({
             x:
-              tickXScale === "week"
-                ? new Date(d.date)
-                : tickXScale === "day"
-                  ? startOfHour(new Date(d.date))
-                  : tickXScale === "minute"
-                    ? new Date(new Date(d.date).getTime() - i * 5 * 60 * 1000)
-                    : startOfDay(new Date(d.date)),
+              tickXScale === "minute"
+                ? new Date(new Date(d.date).getTime() - i * 5 * 60 * 1000)
+                : new Date(d.date),
             y: d[valueKey],
           })),
         },

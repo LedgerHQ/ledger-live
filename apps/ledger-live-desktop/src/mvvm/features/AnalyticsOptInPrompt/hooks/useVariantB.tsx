@@ -3,7 +3,7 @@ import { themeSelector } from "~/renderer/actions/general";
 import { EntryPoint } from "../types/AnalyticsOptInPromptNavigator";
 import { track } from "~/renderer/analytics/segment";
 import { useAnalyticsOptInPrompt } from "./useCommonLogic";
-import { ABTestingVariants } from "@ledgerhq/types-live";
+import { AB_TESTING_VARIANTS } from "../types/variants";
 import {
   setShareAnalytics,
   setSharePersonalizedRecommendations,
@@ -18,7 +18,7 @@ interface UseVariantBProps {
 }
 
 export const useVariantB = ({ entryPoint, onSubmit, step, setStep }: UseVariantBProps) => {
-  const variant = ABTestingVariants.variantB;
+  const variant = AB_TESTING_VARIANTS.B;
   const dispatch = useDispatch();
   const currentTheme = useSelector(themeSelector);
   const { flow, shouldWeTrack, handleOpenPrivacyPolicy } = useAnalyticsOptInPrompt({ entryPoint });

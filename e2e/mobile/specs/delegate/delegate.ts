@@ -1,7 +1,6 @@
 import { setEnv } from "@ledgerhq/live-env";
 import { DelegateType } from "@ledgerhq/live-common/e2e/models/Delegate";
 import { verifyAppValidationStakeInfo, verifyStakeOperationDetailsInfo } from "../../models/stake";
-import { device } from "detox";
 import { getCurrencyManagerApp } from "../../models/currencies";
 
 const beforeAllFunction = async (delegation: DelegateType) => {
@@ -56,7 +55,6 @@ export function runDelegateTest(delegation: DelegateType, tmsLinks: string[], ta
       await app.stake.summaryContinue(currencyId);
 
       await verifyAppValidationStakeInfo(delegation, amountWithCode, fees);
-      await device.disableSynchronization();
       await app.speculos.signDelegationTransaction(delegation);
       await app.common.successViewDetails();
 
@@ -118,7 +116,6 @@ export async function runLockCelo(
       await app.stake.validateAmount(currencyId);
 
       await verifyAppValidationStakeInfo(delegation, amountWithCode);
-      await device.disableSynchronization();
       await app.speculos.signDelegationTransaction(delegation);
 
       await app.common.successViewDetails();
@@ -154,7 +151,6 @@ export async function runVoteCelo(
       await app.stake.setCeloVoteAmount(delegation.amount);
 
       await app.stake.validateCeloVoteAmount();
-      await device.disableSynchronization();
       await app.stake.celoVoteSummaryContinue();
 
       await verifyAppValidationStakeInfo(delegation, amountWithCode);
@@ -205,7 +201,6 @@ export async function runDelegateTezos(
       await app.stake.summaryContinue(currencyId);
 
       await verifyAppValidationStakeInfo(delegation, amountWithCode);
-      await device.disableSynchronization();
       await app.speculos.signDelegationTransaction(delegation);
 
       await app.common.successViewDetails();

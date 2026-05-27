@@ -1,4 +1,10 @@
-import type { Cursor, Page, Stake, StakeState } from "@ledgerhq/coin-module-framework/api/types";
+import type {
+  Cursor,
+  Page,
+  Stake,
+  StakeAction,
+  StakeState,
+} from "@ledgerhq/coin-module-framework/api/types";
 import { isStakeLockUpInForce, withdrawableFromStake } from "../logic";
 import type { ChainAPI } from "../network";
 import { getStakeAccounts, type StakeAccount } from "../network/chain/stake-activation/rpc";
@@ -12,9 +18,13 @@ export async function getStakes(
   address: string,
   _cursor?: Cursor,
 ): Promise<Page<Stake>> {
-  const stakeAccounts = await getStakeAccounts(api, address);
+  const [stakeAccounts, { epoch }] = await Promise.all([
+    getStakeAccounts(api, address),
+    api.getEpochInfo(),
+  ]);
 
-  const items: Stake[] = stakeAccounts.map(({ account, activation }) => {
+  const items: Stake[] = stakeAccounts.map(stakeAccount => {
+    const { account, activation } = stakeAccount;
     const delegation = account.info.stake?.delegation;
     const delegateAddress = delegation?.voter.toBase58();
 
@@ -24,6 +34,7 @@ export async function getStakes(
       state: activation.state as StakeState,
       asset: { type: "native" },
       amount: BigInt(account.onChainAcc.account.lamports),
+      actions: computeFrameworkStakeActions(stakeAccount, address, epoch),
       details: {
         activationEpoch: delegation?.activationEpoch.toString(),
         deactivationEpoch: delegation?.deactivationEpoch.toString(),
@@ -46,6 +57,44 @@ export async function getStakes(
   });
 
   return { items };
+}
+
+export function computeFrameworkStakeActions(
+  stakeAccount: StakeAccount,
+  mainAccountAddress: string,
+  epoch: number,
+): StakeAction[] {
+  const { account, activation } = stakeAccount;
+  const { meta } = account.info;
+  const hasWithdrawAuth =
+    meta.authorized.withdrawer.toBase58() === mainAccountAddress &&
+    !isStakeLockUpInForce({
+      lockup: meta.lockup,
+      custodianAddress: mainAccountAddress,
+      epoch,
+    });
+  const withdrawable = hasWithdrawAuth
+    ? withdrawableFromStake({
+        stakeAccBalance: account.onChainAcc.account.lamports,
+        activation,
+        rentExemptReserve: meta.rentExemptReserve.toNumber(),
+      })
+    : 0;
+
+  const actions: StakeAction[] = [];
+  if (withdrawable > 0) actions.push("claim_reward");
+
+  switch (activation.state) {
+    case "active":
+    case "activating":
+      actions.push("undelegate");
+      break;
+    case "deactivating":
+    case "inactive":
+      actions.push("delegate");
+      break;
+  }
+  return actions;
 }
 
 /**

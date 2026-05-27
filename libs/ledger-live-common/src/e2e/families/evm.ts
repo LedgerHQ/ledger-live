@@ -14,6 +14,7 @@ import {
 } from "../deviceInteraction/TouchDeviceSimulator";
 import { DeviceLabels } from "../enum/DeviceLabels";
 import { Device } from "../enum/Device";
+import { Currency } from "../enum/Currency";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { withDeviceController } from "../deviceInteraction/DeviceController";
 import { getEnv } from "@ledgerhq/live-env";
@@ -25,6 +26,17 @@ function formatEventsForError(events: string[], maxLength = 1000): string {
     return formatted;
   }
   return `${formatted.slice(0, maxLength)}...\n  (truncated, ${events.length} total events)`;
+}
+
+// TODO: remove once LIVE-28070 is fixed
+function shouldSkipTouchValidation(tx: Transaction): boolean {
+  const isPolOrBase =
+    tx.accountToCredit.currency.id === Currency.POL.id ||
+    tx.accountToCredit.currency.id === Currency.BASE.id;
+  const isStaxOrFlex =
+    process.env.SPECULOS_DEVICE === Device.STAX.name ||
+    process.env.SPECULOS_DEVICE === Device.FLEX.name;
+  return isStaxOrFlex && isPolOrBase;
 }
 
 function validateTransactionData(tx: Transaction, events: string[]) {
@@ -59,13 +71,16 @@ function validateTransactionData(tx: Transaction, events: string[]) {
 async function sendEvmTouchDevices(tx: Transaction) {
   await waitForReviewTransaction();
 
+  const skipValidation = shouldSkipTouchValidation(tx);
   const events: string[] = [];
   if (tx.accountToCredit.ensName) {
     const ensEvents = await getEnsScreenTexts(tx.accountToCredit.ensName);
     events.push(...ensEvents);
   }
   events.push(...(await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN)));
-  validateTransactionData(tx, events);
+  if (!skipValidation) {
+    validateTransactionData(tx, events);
+  }
   await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
 }
 
@@ -137,4 +152,26 @@ export async function approveToken() {
     return approveTokenTouchDevices();
   }
   return approveTokenButtonDevice();
+}
+
+export async function signTypedMessageTouchDevices() {
+  await waitFor(DeviceLabels.REVIEW_TYPED_MESSAGE);
+  await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN);
+  await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
+}
+
+export const signTypedMessageButtonDevice = withDeviceController(
+  ({ getButtonsController }) =>
+    async () => {
+      await waitFor(DeviceLabels.REVIEW_TYPED_MESSAGE);
+      await pressUntilTextFound(DeviceLabels.SIGN_TYPED_MESSAGE);
+      await getButtonsController().both();
+    },
+);
+
+export async function signTypedMessage() {
+  if (isTouchDevice()) {
+    return signTypedMessageTouchDevices();
+  }
+  return signTypedMessageButtonDevice();
 }

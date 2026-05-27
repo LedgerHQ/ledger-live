@@ -1,5 +1,5 @@
 import { DeviceModelId } from "@ledgerhq/devices";
-import { FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
+import { FEATURE_FLAGS_DEFAULTS, FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
 import { BTC_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 
@@ -32,6 +32,9 @@ export function withFeatureFlags(flags: Record<string, unknown>) {
     featureFlags: {
       ...FEATURE_FLAGS_INITIAL_STATE,
       overrides: flags,
+      // Mirror slice resolution (override > default) so hooks reading from
+      // `resolved` see the override without an action dispatch.
+      resolved: { ...FEATURE_FLAGS_DEFAULTS, ...flags },
     },
   };
 }

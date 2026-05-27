@@ -1,5 +1,5 @@
 import type { ContentCard } from "@braze/react-native-sdk";
-import { mapAsCategoryContentCard } from "./utils";
+import { filterCardsThatHaveBeenDismissed, mapAsCategoryContentCard } from "./utils";
 
 const createCategoryCard = (extras: ContentCard["extras"]): ContentCard => ({
   id: "card-id",
@@ -42,5 +42,49 @@ describe("mapAsCategoryContentCard", () => {
 
     expect(category.location).toBe("my_ledger");
     expect(category.link).toBe("ledgerlive://discover/app?deeplinkLocation=my_ledger");
+  });
+});
+
+describe("filterCardsThatHaveBeenDismissed", () => {
+  it("should filter regular content cards by card id", () => {
+    const dismissedCard = createCategoryCard({
+      id: "regular-dismissed",
+      location: "wallet",
+    });
+    const visibleCard = {
+      ...createCategoryCard({
+        id: "regular-visible",
+        location: "wallet",
+      }),
+      id: "visible-card-id",
+    };
+
+    expect(filterCardsThatHaveBeenDismissed([dismissedCard, visibleCard], ["card-id"])).toEqual([
+      visibleCard,
+    ]);
+  });
+
+  it("should filter generic awareness modal raw cards by campaign id", () => {
+    const dismissedCampaignSlide = {
+      ...createCategoryCard({
+        campaignId: "dismissed-campaign",
+        location: "generic_awareness_modal",
+      }),
+      id: "dismissed-campaign-slide-1",
+    };
+    const visibleCampaignSlide = {
+      ...createCategoryCard({
+        campaignId: "visible-campaign",
+        location: "generic_awareness_modal",
+      }),
+      id: "visible-campaign-slide-1",
+    };
+
+    expect(
+      filterCardsThatHaveBeenDismissed(
+        [dismissedCampaignSlide, visibleCampaignSlide],
+        ["dismissed-campaign"],
+      ),
+    ).toEqual([visibleCampaignSlide]);
   });
 });

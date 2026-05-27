@@ -20,13 +20,13 @@ jest.mock("@ledgerhq/live-countervalues/logic", () => ({
   calculate: jest.fn((_state, { value }: { value: number }) => value * 2),
 }));
 
-function makeCurrency(id: string, name = id): CryptoCurrency {
+function makeCurrency(id: string, name = id, magnitude = 8): CryptoCurrency {
   return {
     type: "CryptoCurrency",
     id,
     name,
     ticker: id.toUpperCase(),
-    units: [{ name: id, code: id.toUpperCase(), magnitude: 8 }],
+    units: [{ name: id, code: id.toUpperCase(), magnitude }],
   } as unknown as CryptoCurrency;
 }
 
@@ -224,6 +224,42 @@ describe("buildAssetDistribution", () => {
     );
 
     expect(result.list).toHaveLength(2);
+  });
+
+  it("should normalize cross-network amounts when tokens have different magnitudes", () => {
+    const ethUsdt = makeCurrency("ethereum/erc20/usd_tether__erc20_", "Tether USD", 6);
+    const bscUsdt = makeCurrency("bsc/bep20/binance-peg_bsc-usd", "Tether USD", 18);
+
+    mockFindCryptoCurrencyById.mockImplementation((id: string) => {
+      if (id === "tether") return ethUsdt;
+      return undefined;
+    });
+
+    const tetherAssetsData: AssetsDataLike = {
+      cryptoAssets: {
+        "urn:crypto:meta-currency:tether": {
+          id: "urn:crypto:meta-currency:tether",
+          assetsIds: {
+            ethereum: "ethereum/erc20/usd_tether__erc20_",
+            bsc: "bsc/bep20/binance-peg_bsc-usd",
+          },
+        },
+      },
+      markets: {},
+    };
+
+    const result = distribute(
+      [
+        makeAccount("eth-usdt-1", ethUsdt, 1_000_000),
+        makeAccount("bsc-usdt-1", bscUsdt, 1_000_000_000_000_000),
+      ],
+      undefined,
+      tetherAssetsData,
+    );
+
+    expect(result.list).toHaveLength(1);
+    expect(result.list[0].metaCurrencyId).toBe("urn:crypto:meta-currency:tether");
+    expect(result.list[0].amount).toBe(1_001_000);
   });
 
   describe("DADA id format normalization (LIVE-22557 / LIVE-22558)", () => {

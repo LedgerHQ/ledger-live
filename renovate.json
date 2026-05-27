@@ -71,7 +71,6 @@
         "/esbuild/",
         "/eslint/",
         "/prettier/",
-        "/turbo/",
         "/typescript/",
         "/vite/",
         "/zx/"

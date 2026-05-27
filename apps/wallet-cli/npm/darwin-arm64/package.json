@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/wallet-cli-darwin-arm64",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "description": "macOS arm64 native binary for @ledgerhq/wallet-cli",
   "license": "Apache-2.0",

@@ -16,9 +16,16 @@ describe("Password Lock Screen", () => {
     await app.settingsGeneral.togglePassword();
     await app.settingsGeneral.enterNewPassword(CORRECT_PASSWORD);
     await app.settingsGeneral.enterNewPassword(CORRECT_PASSWORD); // confirm password step
-    await device.sendToHome();
-    await delay(1000); // can be to fast for the app to be in the background
-    await device.launchApp(); // restart LLM
+    // Recurring JS timers post-RN-0.81 keep Detox's idle sync from completing during
+    // background transitions; opt out around sendToHome/launchApp to avoid the hang.
+    await device.disableSynchronization();
+    try {
+      await device.sendToHome();
+      await delay(1000); // can be to fast for the app to be in the background
+      await device.launchApp(); // restart LLM
+    } finally {
+      await device.enableSynchronization();
+    }
     await app.passwordEntry.expectLock();
   });
 

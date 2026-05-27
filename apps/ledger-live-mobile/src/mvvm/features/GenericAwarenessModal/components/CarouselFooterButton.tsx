@@ -4,16 +4,16 @@ import { Box, Button } from "@ledgerhq/lumen-ui-rnative";
 import { LayoutChangeEvent, Linking, StyleSheet } from "react-native";
 import Animated, { interpolate, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import { useTranslation } from "~/context/Locale";
-import type { CarouselSlide } from "../types";
+import type { GenericAwarenessModalCarouselSlide } from "@ledgerhq/live-common/genericAwarenessModal";
 
 type CarouselFooterButtonProps = Readonly<{
-  slides: CarouselSlide[];
+  slides: GenericAwarenessModalCarouselSlide[];
   onClose: () => void;
 }>;
 
 const PRIMARY_BUTTON_SPACING = 12;
 
-const hasPrimaryButton = (slide: CarouselSlide) =>
+const hasPrimaryButton = (slide: GenericAwarenessModalCarouselSlide) =>
   Boolean(slide.primaryButtonLink && slide.primaryButtonLabel);
 
 export function CarouselFooterButton({ slides, onClose }: CarouselFooterButtonProps) {
@@ -54,7 +54,7 @@ export function CarouselFooterButton({ slides, onClose }: CarouselFooterButtonPr
     [primaryButtonHeight],
   );
 
-  const onPrimaryPress = async (slide: CarouselSlide) => {
+  const onPrimaryPress = async (slide: GenericAwarenessModalCarouselSlide) => {
     if (!slide.primaryButtonLink) {
       return;
     }
@@ -120,9 +120,9 @@ export function CarouselFooterButton({ slides, onClose }: CarouselFooterButtonPr
 }
 
 type CarouselPrimaryButtonProps = Readonly<{
-  slide: CarouselSlide;
+  slide: GenericAwarenessModalCarouselSlide;
   slideIndex: number;
-  onPress: (slide: CarouselSlide) => void;
+  onPress: (slide: GenericAwarenessModalCarouselSlide) => void;
 }>;
 
 function CarouselPrimaryButton({ slide, slideIndex, onPress }: CarouselPrimaryButtonProps) {

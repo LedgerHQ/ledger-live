@@ -103,10 +103,10 @@ pnpm watch:ljs
 pnpm watch:coin
 
 # watch specific lib
-pnpm turbo run watch --filter="./libs/ledgerjs/packages/hw-app-btc"
+nx run @ledgerhq/hw-app-btc:watch
 
 # watch specific coin integration
-pnpm turbo run watch --filter="./libs/coin-modules/coin-bitcoin"
+nx run @ledgerhq/coin-bitcoin:watch
 ```
 
 ## Environment variables
@@ -218,3 +218,4 @@ For a smooth and quick integration:
 - Go on [Discord](https://developers.ledger.com/discord-pro/) to chat with developer support and the developer community.
 
 ---
+

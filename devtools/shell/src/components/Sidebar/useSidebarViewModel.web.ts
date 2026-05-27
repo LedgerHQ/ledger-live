@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import type { ChangeEventHandler } from "react";
-import type { Category, Tool } from "../../types";
+import type { Category, Tool, ToolId } from "@devtools/registry";
 import { useAccordion } from "../../hooks";
 import type { IconComponent } from "../../categoryConfig";
 import { CATEGORY_ICONS } from "../../categoryConfig";
@@ -8,8 +8,8 @@ import { filterToolsByQuery, findCategoryForToolId } from "../../utils/toolsUtil
 
 interface SidebarInput {
   categories: Array<{ category: Category; tools: Tool[] }>;
-  activeToolId: string | undefined;
-  onSelectTool: (id: string) => void;
+  activeToolId: ToolId | undefined;
+  onSelectTool: (id: ToolId) => void;
   onHome: () => void;
 }
 
@@ -21,8 +21,8 @@ export interface SidebarViewProps {
   isExpanded: (category: Category) => boolean;
   onToggle: (category: Category) => void;
   getCategoryIcon: (category: Category) => IconComponent;
-  activeToolId: string | undefined;
-  onSelectTool: (id: string) => void;
+  activeToolId: ToolId | undefined;
+  onSelectTool: (id: ToolId) => void;
   onHome: () => void;
 }
 

@@ -1,8 +1,9 @@
 import {
+  distribute,
   initState,
+  isOutOfMemoryState,
   reducer,
   /*
-  distribute,
   getActionPlan,
   predictOptimisticState,
   */
@@ -10,14 +11,30 @@ import {
   getNextAppOp,
 } from "./logic";
 import { /*runAll,*/ runOneAppOp } from "./runner";
-import { deviceInfo155, mockListAppsResult, mockExecWithInstalledContext } from "./mock";
+import { deviceInfo155, deviceInfo222, mockListAppsResult, mockExecWithInstalledContext } from "./mock";
 // import { prettyActionPlan, prettyInstalled } from "./formatting";
 import { setEnv } from "@ledgerhq/live-env";
 import { Action } from "./types";
 import { firstValueFrom } from "rxjs";
+import { DeviceModelId } from "@ledgerhq/devices";
+import type { Language, LanguagePackage } from "@ledgerhq/types-live";
 
 setEnv("MANAGER_INSTALL_DELAY", 0);
 // TODO reactivate this test after bitcoin 2.1.0 nano app
+
+const makeLanguagePack = (language: Language, bytes: number): LanguagePackage => ({
+  language,
+  languagePackageVersionId: 1,
+  version: "1.0.0",
+  language_package_id: 1,
+  apdu_install_url: "",
+  apdu_uninstall_url: "",
+  device_versions: [],
+  se_firmware_final_versions: [],
+  bytes,
+  date_creation: "",
+  date_last_modified: "",
+});
 
 /*
 const scenarios = [
@@ -446,4 +463,39 @@ test("global progress", async () => {
 
   expect(i).toBe(total);
   expect(updateAllProgress(state)).toBe(1);
+});
+
+describe("memory distribution", () => {
+  const createState = () =>
+    initState(mockListAppsResult("", "", deviceInfo222, DeviceModelId.stax));
+
+  test("does not count the embedded English language pack as installed storage", () => {
+    const state = createState();
+
+    state.installedLanguagePack = makeLanguagePack("english", 10 * 512);
+    expect(distribute(state).languagePackBlocks).toBe(0);
+
+    state.installedLanguagePack = makeLanguagePack("french", 10 * 512);
+    expect(distribute(state).languagePackBlocks).toBe(10);
+  });
+
+  test("predicts out of memory before the final storage block is used", () => {
+    const state = createState();
+    const { appsSpaceBlocks } = distribute(state);
+
+    state.installed = [
+      {
+        name: "Test app",
+        updated: true,
+        hash: "",
+        blocks: appsSpaceBlocks - 2,
+        version: "",
+        availableVersion: "",
+      },
+    ];
+    expect(isOutOfMemoryState(state)).toBe(false);
+
+    state.installed = [{ ...state.installed[0], blocks: appsSpaceBlocks - 1 }];
+    expect(isOutOfMemoryState(state)).toBe(true);
+  });
 });

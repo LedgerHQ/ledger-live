@@ -113,7 +113,7 @@ describe("useOptionsMenuViewModel", () => {
     expect(result.current.isStarred).toBe(true);
   });
 
-  it("disables hide-from-portfolio when the currency is a coin (CryptoCurrency)", () => {
+  it("enables hide-from-portfolio for an owned coin (CryptoCurrency) with a distribution item", () => {
     const item = buildDistributionItem({ currency: btc });
 
     const { result } = renderHook(
@@ -126,10 +126,10 @@ describe("useOptionsMenuViewModel", () => {
       { initialState: { settings: { counterValue: "USD" } } },
     );
 
-    expect(result.current.isHideFromPortfolioEnabled).toBe(false);
+    expect(result.current.isHideFromPortfolioEnabled).toBe(true);
   });
 
-  it("enables hide-from-portfolio when the currency is a token (TokenCurrency)", () => {
+  it("enables hide-from-portfolio for an owned token (TokenCurrency) with a distribution item", () => {
     const item = buildDistributionItem({ currency: usdcToken });
 
     const { result } = renderHook(
@@ -143,6 +143,20 @@ describe("useOptionsMenuViewModel", () => {
     );
 
     expect(result.current.isHideFromPortfolioEnabled).toBe(true);
+  });
+
+  it("disables hide-from-portfolio in discovery mode (no distribution item)", () => {
+    const { result } = renderHook(
+      () =>
+        useOptionsMenuViewModel({
+          distributionItem: undefined,
+          marketData: bitcoinMarket,
+          currency: btc,
+        }),
+      { initialState: { settings: { counterValue: "USD" } } },
+    );
+
+    expect(result.current.isHideFromPortfolioEnabled).toBe(false);
   });
 
   it("treats blacklisted currency as hidden from portfolio in the menu", () => {

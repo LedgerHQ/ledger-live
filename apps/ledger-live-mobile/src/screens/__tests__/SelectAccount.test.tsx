@@ -11,6 +11,19 @@ import { render, screen } from "@tests/test-renderer";
 import SelectAccount from "../SelectAccount";
 import type { State } from "~/reducers/types";
 
+jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => {
+  const {
+    defaultIsAccountEmpty,
+  } = jest.requireActual("@ledgerhq/live-common/bridge/defaultBridgeExtensions");
+  return {
+    useAccountBridge: jest.fn(),
+    useAccountBridgeOrNull: jest.fn(),
+    useAccountBridgeMany: jest.fn((accounts: Account[]) =>
+      accounts.map(() => ({ isAccountEmpty: defaultIsAccountEmpty })),
+    ),
+  };
+});
+
 jest.mock("~/components/AccountSelector", () => {
   const { View, Text } = jest.requireActual("react-native");
   return function MockAccountSelector({ list }: { list: AccountLike[] }) {

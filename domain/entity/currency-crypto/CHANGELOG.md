@@ -1,5 +1,21 @@
 # @domain/entity-currency-crypto
 
+## 0.2.0
+
+### Minor Changes
+
+- [#17322](https://github.com/LedgerHQ/ledger-live/pull/17322) [`1368afd`](https://github.com/LedgerHQ/ledger-live/commit/1368afdc7218a68c803672e6e412f8f9f6e62142) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Fix Cronos explorer URLs, update RPC node to Ledger endpoint, and remove broken explorer API link
+
+- [#17137](https://github.com/LedgerHQ/ledger-live/pull/17137) [`2257d43`](https://github.com/LedgerHQ/ledger-live/commit/2257d43630933127549300f39ade1e2b01f94cb8) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore: drop `sonic_blaze` support
+
+## 0.2.0-next.0
+
+### Minor Changes
+
+- [#17322](https://github.com/LedgerHQ/ledger-live/pull/17322) [`1368afd`](https://github.com/LedgerHQ/ledger-live/commit/1368afdc7218a68c803672e6e412f8f9f6e62142) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Fix Cronos explorer URLs, update RPC node to Ledger endpoint, and remove broken explorer API link
+
+- [#17137](https://github.com/LedgerHQ/ledger-live/pull/17137) [`2257d43`](https://github.com/LedgerHQ/ledger-live/commit/2257d43630933127549300f39ade1e2b01f94cb8) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore: drop `sonic_blaze` support
+
 ## 0.1.0
 
 ### Minor Changes

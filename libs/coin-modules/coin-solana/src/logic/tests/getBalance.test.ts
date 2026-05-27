@@ -15,6 +15,17 @@ function emptyTokenAccounts() {
   return { context: { slot: 100 }, value: [] };
 }
 
+function defaultEpochInfo() {
+  return {
+    epoch: 400,
+    slotIndex: 100,
+    slotsInEpoch: 432000,
+    absoluteSlot: 172800100,
+    blockHeight: 160000000,
+    transactionCount: 0,
+  };
+}
+
 describe("getBalance (MSW integration)", () => {
   it("should return native balance with locked rent exemption from RPC", async () => {
     server.use(
@@ -23,6 +34,7 @@ describe("getBalance (MSW integration)", () => {
         getMinimumBalanceForRentExemption: () => 890880,
         getTokenAccountsByOwner: () => emptyTokenAccounts(),
         getProgramAccounts: () => [],
+        getEpochInfo: () => defaultEpochInfo(),
       }),
     );
 
@@ -44,6 +56,7 @@ describe("getBalance (MSW integration)", () => {
         getMinimumBalanceForRentExemption: () => 890880,
         getTokenAccountsByOwner: () => emptyTokenAccounts(),
         getProgramAccounts: () => [],
+        getEpochInfo: () => defaultEpochInfo(),
       }),
     );
 
@@ -67,6 +80,7 @@ describe("getBalance (MSW integration)", () => {
         getMinimumBalanceForRentExemption: () => 890880,
         getTokenAccountsByOwner: () => emptyTokenAccounts(),
         getProgramAccounts: () => [],
+        getEpochInfo: () => defaultEpochInfo(),
       }),
     );
 
@@ -116,6 +130,7 @@ describe("getBalance (MSW integration)", () => {
             return emptyTokenAccounts();
           },
           getProgramAccounts: () => [],
+          getEpochInfo: () => defaultEpochInfo(),
         }),
       );
 
@@ -210,14 +225,7 @@ describe("getBalance (MSW integration)", () => {
         getTokenAccountsByOwner: () => emptyTokenAccounts(),
         getProgramAccounts: () => [stakeAccountRpcEntry(stakeLamports)],
         getAccountInfo: () => stakeHistoryAccountInfo(),
-        getEpochInfo: () => ({
-          epoch: 400,
-          slotIndex: 100,
-          slotsInEpoch: 432000,
-          absoluteSlot: 172800100,
-          blockHeight: 160000000,
-          transactionCount: 0,
-        }),
+        getEpochInfo: () => defaultEpochInfo(),
         getLatestBlockhash: () => ({
           context: { slot: 100 },
           value: {
@@ -290,6 +298,7 @@ describe("getBalance (MSW integration)", () => {
             return emptyTokenAccounts();
           },
           getProgramAccounts: () => [],
+          getEpochInfo: () => defaultEpochInfo(),
         }),
       );
 

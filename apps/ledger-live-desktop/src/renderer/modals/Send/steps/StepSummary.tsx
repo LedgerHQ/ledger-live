@@ -29,7 +29,7 @@ import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import MemoIcon from "~/renderer/icons/MemoIcon";
 import { Flex } from "@ledgerhq/react-ui";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { getMemoTagValueByTransactionFamily } from "LLD/features/MemoTag/utils";
 
 const FromToWrapper = styled.div``;
@@ -349,7 +349,7 @@ const StepSummary = (props: StepProps) => {
           />
         )}
 
-        {!totalSpent.eq(amount) ? (
+        {feesCurrency.id === currency.id && !totalSpent.eq(amount) ? (
           <>
             <Separator />
             <Box horizontal justifyContent="space-between">

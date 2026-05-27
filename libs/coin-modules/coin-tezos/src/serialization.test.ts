@@ -14,6 +14,7 @@ const positions: StakingPosition[] = [
     state: "active",
     asset: { type: "native" },
     amount: new BigNumber("1234567890"),
+    actions: [],
   },
   {
     uid: `stake-${ADDRESS}`,
@@ -22,6 +23,7 @@ const positions: StakingPosition[] = [
     state: "active",
     asset: { type: "native" },
     amount: new BigNumber("9999999999999999999"),
+    actions: [],
   },
   {
     uid: `unstaking-${ADDRESS}`,
@@ -30,6 +32,7 @@ const positions: StakingPosition[] = [
     state: "deactivating",
     asset: { type: "native" },
     amount: new BigNumber("42"),
+    actions: [],
   },
   {
     uid: `finalizable-${ADDRESS}`,
@@ -38,6 +41,7 @@ const positions: StakingPosition[] = [
     state: "inactive",
     asset: { type: "native" },
     amount: new BigNumber("7"),
+    actions: [],
   },
 ];
 
@@ -97,6 +101,7 @@ describe("coin-tezos serialization", () => {
       state: "active",
       asset: { type: "native" },
       amount: new BigNumber("1234567890"),
+      actions: [],
     });
     // Stake without delegate: delegate field is omitted, not set to undefined
     expect(got[1]).not.toHaveProperty("delegate");
@@ -117,5 +122,84 @@ describe("coin-tezos serialization", () => {
     const restored = {} as Account;
     assignFromAccountRaw(raw, restored);
     expect((restored as TezosAccount).stakingPositions).toEqual(positions);
+  });
+
+  test("round-trips createdAt on unstake positions", () => {
+    const withCreatedAt: StakingPosition[] = [
+      {
+        uid: "unstaking-42",
+        address: ADDRESS,
+        delegate: DELEGATE,
+        state: "deactivating",
+        asset: { type: "native" },
+        amount: new BigNumber("123"),
+        actions: [],
+        createdAt: new Date("2026-05-01T00:00:00.000Z"),
+      },
+      {
+        uid: "finalizable-43",
+        address: ADDRESS,
+        delegate: DELEGATE,
+        state: "inactive",
+        asset: { type: "native" },
+        amount: new BigNumber("45"),
+        actions: [],
+        createdAt: new Date("2026-04-25T12:34:56.789Z"),
+      },
+    ];
+    const account = makeAccount(withCreatedAt);
+    const raw = {} as AccountRaw;
+    assignToAccountRaw(account as unknown as Account, raw);
+    const persisted = (raw as TezosAccountRaw).stakingPositions;
+    expect(persisted?.[0].createdAt).toBe("2026-05-01T00:00:00.000Z");
+    expect(persisted?.[1].createdAt).toBe("2026-04-25T12:34:56.789Z");
+
+    const restored = {} as Account;
+    assignFromAccountRaw(raw, restored);
+    expect((restored as TezosAccount).stakingPositions).toEqual(withCreatedAt);
+  });
+
+  test("omits createdAt when position has none (delegation/stake positions)", () => {
+    const account = makeAccount([positions[0]]);
+    const raw = {} as AccountRaw;
+    assignToAccountRaw(account as unknown as Account, raw);
+    const persisted = (raw as TezosAccountRaw).stakingPositions;
+    expect(persisted?.[0]).not.toHaveProperty("createdAt");
+  });
+
+  test("omits createdAt on serialize when Date is invalid", () => {
+    const broken: StakingPosition[] = [
+      {
+        uid: "unstaking-bad",
+        address: ADDRESS,
+        delegate: DELEGATE,
+        state: "deactivating",
+        asset: { type: "native" },
+        amount: new BigNumber("1"),
+        createdAt: new Date("not-a-date"),
+      },
+    ];
+    const account = makeAccount(broken);
+    const raw = {} as AccountRaw;
+    assignToAccountRaw(account as unknown as Account, raw);
+    expect((raw as TezosAccountRaw).stakingPositions?.[0]).not.toHaveProperty("createdAt");
+  });
+
+  test("omits createdAt on restore when stored string is malformed", () => {
+    const raw = {
+      stakingPositions: [
+        {
+          uid: "unstaking-bad",
+          address: ADDRESS,
+          delegate: DELEGATE,
+          state: "deactivating" as const,
+          amount: "1",
+          createdAt: "not-a-date",
+        },
+      ],
+    } as AccountRaw;
+    const account = {} as Account;
+    assignFromAccountRaw(raw, account);
+    expect((account as TezosAccount).stakingPositions[0]).not.toHaveProperty("createdAt");
   });
 });

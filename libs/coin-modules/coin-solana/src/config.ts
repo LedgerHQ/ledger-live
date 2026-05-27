@@ -11,6 +11,7 @@ export type SolanaConfig = {
     solana_devnet?: string;
     solana_testnet?: string;
   };
+  validatorsUrl?: string;
 };
 
 export type SolanaCoinConfig = CurrencyConfig & SolanaConfig;

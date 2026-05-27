@@ -8,8 +8,8 @@ on:
         required: false
         type: string
         default: "general-pool"
-      disable-turbo-cache:
-        description: Disable turbo caching
+      disable-nx-cache:
+        description: Skip Nx cache for nx-step runs
         required: false
         type: boolean
         default: false
@@ -66,11 +66,6 @@ on:
         required: false
         type: string
         default: "true"
-      disable-turbo-cache:
-        description: Disable turbo caching
-        required: false
-        type: boolean
-        default: true
 
 permissions:
   id-token: write
@@ -155,7 +150,6 @@ jobs:
           use-mise: true
           skip-pnpm-cache: "true"
           skip-pod-cache: "true"
-          skip-turbo-cache: "true"
           skip-nx-cache: "true"
 
           gh-token: ${{ secrets.GITHUB_TOKEN }}
@@ -267,7 +261,7 @@ jobs:
     with:
       ref: ${{ inputs.ref || github.sha }}
       macos-specificity-runner-label: ${{ inputs.macos-specificity-runner-label }}
-      disable-turbo-cache: ${{ inputs.disable-turbo-cache || false }}
+      disable-nx-cache: ${{ inputs.disable-nx-cache || false }}
       build-ios-js: ${{ needs.determine-builds.outputs.ios_js_exists == 'false' }}
       build-ios-native: ${{ needs.determine-builds.outputs.ios_native_exists == 'false' }}
       ios-native-cache-key: ${{ needs.determine-builds.outputs.ios_native_key }}
@@ -280,7 +274,7 @@ jobs:
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@develop
     with:
       ref: ${{ inputs.ref || github.sha }}
-      disable-turbo-cache: ${{ inputs.disable-turbo-cache || false }}
+      disable-nx-cache: ${{ inputs.disable-nx-cache || false }}
       build-android-js: ${{ needs.determine-builds.outputs.android_js_exists == 'false' }}
       build-android-native: ${{ needs.determine-builds.outputs.android_native_exists == 'false' }}
       android-native-cache-key: ${{ needs.determine-builds.outputs.android_native_key }}
@@ -342,7 +336,6 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
           skip-pod-cache: "true"
-          skip-turbo-cache: "true"
           skip-pnpm-cache: "true"
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
@@ -412,7 +405,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
         with:
           command: pnpm exec nx run live-mobile:e2e:ci -- $SHARD_TEST_FILES --platform=ios --test --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}.json
-          disable_cache: ${{ inputs.disable-turbo-cache || false }}
+          disable_cache: ${{ inputs.disable-nx-cache || false }}
 
       - name: Upload test artifacts
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
@@ -490,7 +483,6 @@ jobs:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-pnpm-cache: "false"
-          skip-turbo-cache: "true"
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
           cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
           nx-key: ${{ secrets.NX_KEY }}
@@ -582,7 +574,7 @@ jobs:
           PRODUCTION: ${{ inputs.production_firebase }}
         with:
           command: pnpm exec nx run live-mobile:e2e:ci -- $SHARD_TEST_FILES --platform=android --test $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}.json
-          disable_cache: ${{ inputs.disable-turbo-cache || false }}
+          disable_cache: ${{ inputs.disable-nx-cache || false }}
 
       - name: Upload test artifacts
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
@@ -706,7 +698,6 @@ jobs:
         with:
           skip-pod-cache: "true"
           skip-pnpm-cache: "true"
-          skip-turbo-cache: "true"
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
           cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}

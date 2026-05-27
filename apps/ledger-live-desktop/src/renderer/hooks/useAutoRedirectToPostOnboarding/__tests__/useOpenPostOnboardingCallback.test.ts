@@ -1,6 +1,7 @@
 import { act, renderHook, waitFor } from "tests/testSetup";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { isRecoverDisplayed, useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
+import { isRecoverDisplayed } from "@ledgerhq/live-common/featureFlags/index";
 import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/useStartPostOnboardingCallback";
 import { useUpsellPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { getStoreValue } from "~/renderer/store";
@@ -14,6 +15,7 @@ jest.mock("~/renderer/store", () => ({
 }));
 
 jest.mock("@ledgerhq/live-common/featureFlags/index");
+jest.mock("@features/platform-feature-flags");
 jest.mock("@ledgerhq/live-common/hooks/recoverFeatureFlag", () => ({
   useUpsellPath: jest.fn(),
 }));

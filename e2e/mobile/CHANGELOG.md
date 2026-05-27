@@ -1,5 +1,17 @@
 # ledger-live-mobile-e2e-tests
 
+## 0.23.0
+
+### Minor Changes
+
+- [#17010](https://github.com/LedgerHQ/ledger-live/pull/17010) [`69984e6`](https://github.com/LedgerHQ/ledger-live/commit/69984e656ff685e969edb754ca6e0ad5a6169812) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Add mobile swap E2E coverage for QAA-1127.
+
+## 0.23.0-next.0
+
+### Minor Changes
+
+- [#17010](https://github.com/LedgerHQ/ledger-live/pull/17010) [`69984e6`](https://github.com/LedgerHQ/ledger-live/commit/69984e656ff685e969edb754ca6e0ad5a6169812) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Add mobile swap E2E coverage for QAA-1127.
+
 ## 0.22.0
 
 ### Minor Changes

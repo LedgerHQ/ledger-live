@@ -325,6 +325,7 @@ class HumanCommandOutput implements CommandOutput {
         break;
       case "broadcasted":
         s?.success(`Broadcasted  ${colors.dim(event.txHash)}`);
+        writeStdout(`hash: ${event.txHash}`);
         break;
     }
   }

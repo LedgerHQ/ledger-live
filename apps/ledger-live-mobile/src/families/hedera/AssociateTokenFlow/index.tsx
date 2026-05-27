@@ -12,7 +12,7 @@ import type { HederaAssociateTokenFlowParamList } from "./types";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
 import { NavigationHeaderCloseButtonAdvanced } from "~/components/NavigationHeaderCloseButton";
 import { ScreenName } from "~/const";
-import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import { getStackNavigatorConfig, bridgeSuspenseScreenLayout } from "~/navigation/navigatorConfig";
 import SelectDevice from "~/screens/SelectDevice";
 import ConnectDevice from "~/screens/ConnectDevice";
 
@@ -27,6 +27,7 @@ function AssociateTokenFlow() {
         ...stackNavigationConfig,
         gestureEnabled: Platform.OS === "ios",
       }}
+      screenLayout={bridgeSuspenseScreenLayout}
     >
       <Stack.Screen
         name={ScreenName.HederaAssociateTokenSelectToken}

@@ -1,5 +1,21 @@
 # @ledgerhq/wallet-api-exchange-module
 
+## 0.29.0
+
+### Minor Changes
+
+- [#16671](https://github.com/LedgerHQ/ledger-live/pull/16671) [`a24e523`](https://github.com/LedgerHQ/ledger-live/commit/a24e5239aab583b25d932d8074f87dbd6ea7685d) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Centralize swap-quote formatting on the wallet side of `custom.exchange.getQuotes`. Each returned `Quote` now carries an optional `formatted: FormattedQuoteValues`, where every field is a `FormattedNumber` triplet (`numberValue` / `withPrefix` / `withSuffix`) — letting live-app consumers display locale-aware crypto, fiat, rate, and slippage values without owning the formatting logic.
+
+  Breaking wire change: `QuotesInput.counterValueCurrency` has been removed. The wallet now sources locale and counter-value currency from its Redux store and threads them into `getQuotes` via the `handlers({ locale, counterValueCurrency, ... })` factory, so the live app no longer needs to pass them on the wire.
+
+## 0.29.0-next.0
+
+### Minor Changes
+
+- [#16671](https://github.com/LedgerHQ/ledger-live/pull/16671) [`a24e523`](https://github.com/LedgerHQ/ledger-live/commit/a24e5239aab583b25d932d8074f87dbd6ea7685d) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Centralize swap-quote formatting on the wallet side of `custom.exchange.getQuotes`. Each returned `Quote` now carries an optional `formatted: FormattedQuoteValues`, where every field is a `FormattedNumber` triplet (`numberValue` / `withPrefix` / `withSuffix`) — letting live-app consumers display locale-aware crypto, fiat, rate, and slippage values without owning the formatting logic.
+
+  Breaking wire change: `QuotesInput.counterValueCurrency` has been removed. The wallet now sources locale and counter-value currency from its Redux store and threads them into `getQuotes` via the `handlers({ locale, counterValueCurrency, ... })` factory, so the live app no longer needs to pass them on the wire.
+
 ## 0.28.0
 
 ### Minor Changes

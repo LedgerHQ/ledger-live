@@ -1,5 +1,27 @@
 # @ledgerhq/device-intent
 
+## 2.1.0
+
+### Minor Changes
+
+- [#17020](https://github.com/LedgerHQ/ledger-live/pull/17020) [`d285678`](https://github.com/LedgerHQ/ledger-live/commit/d28567854ca5ebf7c02c66403d8b2c7406c7abff) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Wire configurable device context initialization into the mobile Device Intent Executor
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/client-ids@0.9.1
+
+## 2.1.0-next.0
+
+### Minor Changes
+
+- [#17020](https://github.com/LedgerHQ/ledger-live/pull/17020) [`d285678`](https://github.com/LedgerHQ/ledger-live/commit/d28567854ca5ebf7c02c66403d8b2c7406c7abff) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Wire configurable device context initialization into the mobile Device Intent Executor
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/client-ids@0.9.1-next.0
+
 ## 2.0.0
 
 ### Minor Changes

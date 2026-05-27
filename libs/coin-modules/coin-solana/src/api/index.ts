@@ -23,6 +23,7 @@ import { estimateFees } from "../logic/estimateFees";
 import { getBalance } from "../logic/getBalance";
 import { getNextSequence } from "../logic/getNextSequence";
 import { getStakes } from "../logic/getStakes";
+import { getValidators } from "../logic/getValidators";
 import { lastBlock } from "../logic/lastBlock";
 import { listOperations } from "../logic/listOperations";
 import { validateAddress } from "../logic/validateAddress";
@@ -85,9 +86,7 @@ export function createApi(config: SolanaCoinConfig, currencyId: string): SolanaC
     getRewards: (_address: string, _cursor?: Cursor) => {
       throw new Error("getRewards is not supported");
     },
-    getValidators: () => {
-      throw new Error("getValidators is not supported");
-    },
+    getValidators: () => getValidators(config.validatorsUrl),
     getStakes: (address: string, cursor?: Cursor) => {
       return getStakes(api, address, cursor);
     },

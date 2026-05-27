@@ -1,5 +1,5 @@
 import React from "react";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { AnalyticsConsentDialog } from "LLD/features/AnalyticsConsentDialog";
 import { ProductTourDialog, useProductTourDialogViewModel } from "LLD/features/ProductTour/Drawer";
 import {

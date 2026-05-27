@@ -6,7 +6,9 @@ import ActionConfirmationDialog from "LLD/features/ActionConfirmationDialog";
 
 const ReleaseNotes = lazy(() => import("LLD/features/ReleaseNotes"));
 const BuyDevice = lazy(() => import("LLD/features/BuyDevice"));
-const FinishOnboardingDialog = lazy(() => import("LLD/features/FinishOnboarding/FinishOnboardingDialog"));
+const FinishOnboardingDialog = lazy(
+  () => import("LLD/features/FinishOnboarding/FinishOnboardingDialog"),
+);
 const PtxInfoDialog = lazy(() => import("LLD/features/PtxInfoDialog"));
 const LiveAppModal = lazy(() => import("LLD/features/LiveAppModal"));
 const GenericAwarenessModal = lazy(() => import("LLD/features/GenericAwarenessModal"));
@@ -15,7 +17,9 @@ const GenericAwarenessModal = lazy(() => import("LLD/features/GenericAwarenessMo
 const GlobalDialogs = () => (
   <>
     <ModularDialogRoot />
-    <SendFlowRoot />
+    <Suspense fallback={null}>
+      <SendFlowRoot />
+    </Suspense>
     <PerpsSignRoot />
     <ActionConfirmationDialog />
     <Suspense fallback={null}>

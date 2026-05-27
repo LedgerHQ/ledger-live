@@ -1,16 +1,16 @@
 import { ChevronDown, ChevronRight } from "@ledgerhq/lumen-ui-react/symbols";
-import type { Category, Tool } from "../../types";
-import { ToolRow } from "../ToolRow/ToolRow.web";
+import type { Category, Tool, ToolId, ValueOf } from "@devtools/registry";
 import type { IconComponent } from "../../categoryConfig";
+import { ToolRowItem } from "../ToolRowItem/ToolRowItem.web";
 
 interface CategoryRowProps {
-  category: Category;
+  category: ValueOf<typeof Category>;
   tools: Tool[];
   icon: IconComponent;
   isExpanded: boolean;
   onToggle: () => void;
-  activeToolId: string | undefined;
-  onSelectTool: (id: string) => void;
+  activeToolId: ToolId | undefined;
+  onSelectTool: (id: ToolId) => void;
 }
 
 export function CategoryRow({
@@ -43,11 +43,10 @@ export function CategoryRow({
         <ul className="flex flex-col list-none mt-4 mb-4">
           {tools.map(tool => (
             <li key={tool.id}>
-              <ToolRow
-                title={tool.label}
+              <ToolRowItem
+                tool={tool}
                 isActive={activeToolId === tool.id}
-                onClick={() => onSelectTool(tool.id)}
-                owner={tool.owner}
+                onSelect={() => onSelectTool(tool.id)}
               />
             </li>
           ))}

@@ -1,5 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import { useEffect, useReducer, useCallback, useRef } from "react";
+import { from, switchMap } from "rxjs";
 import { log } from "@ledgerhq/logs";
 import { getAccountBridge } from ".";
 import { getMainAccount } from "../account";
@@ -300,16 +301,13 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
     if (!shouldSync) return; // skip sync if not required by currency config
 
     dispatch({ type: "onStartSync" });
-    const bridge = getAccountBridge(mainAccount, null);
-    const sub = bridge.sync(mainAccount, { paginationConfig: {} }).subscribe({
-      error: (_: Error) => {
+    const sub = from(Promise.resolve(getAccountBridge(mainAccount, null)))
+      .pipe(switchMap(bridge => bridge.sync(mainAccount, { paginationConfig: {} })))
+      .subscribe({
         // we do not block the user in case of error for now but it should be the case
-        dispatch({ type: "onSync" });
-      },
-      complete: () => {
-        dispatch({ type: "onSync" });
-      },
-    });
+        error: (_: Error) => dispatch({ type: "onSync" }),
+        complete: () => dispatch({ type: "onSync" }),
+      });
 
     return () => {
       sub.unsubscribe();

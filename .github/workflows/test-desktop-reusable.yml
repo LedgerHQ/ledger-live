@@ -55,20 +55,17 @@ jobs:
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
-          skip-turbo-cache: "false"
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
           cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
           nx-key: ${{ secrets.NX_KEY }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
 
       - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
         id: setup-test-desktop
         with:
           skip_builds: true
-          turborepo-server-port: ${{ steps.setup-caches.outputs.port }}
 
       - name: lint
         run: pnpm desktop lint:ci
@@ -104,14 +101,12 @@ jobs:
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
-          skip-turbo-cache: "false"
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
           cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
           nx-key: ${{ secrets.NX_KEY }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
 
       - name: Install dependencies
         run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live"
@@ -177,19 +172,16 @@ jobs:
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
-          skip-turbo-cache: "false"
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
           cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
           nx-key: ${{ secrets.NX_KEY }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-test-desktop@develop
         id: setup-test-desktop
         with:
           build_type: testing
-          turborepo-server-port: ${{ steps.caches.outputs.port }}
       - name: Setup Speculos image and Coin Apps
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-speculos_image@develop
         with:
@@ -225,6 +217,7 @@ jobs:
           SPECULOS_FIRMWARE_VERSION: ${{ env.SMOKE_SPECULOS_FIRMWARE_VERSION }}
       - name: Upload Allure Results
         if: ${{ !cancelled() }}
+        continue-on-error: true
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: allure-results-speculos-smoke
@@ -232,6 +225,7 @@ jobs:
       - name: Publish Allure report
         id: publish-allure
         if: ${{ !cancelled() }}
+        continue-on-error: true
         uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
         with:
           login: ${{ vars.ALLURE_USERNAME }}
@@ -265,19 +259,16 @@ jobs:
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
-          skip-turbo-cache: "false"
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
           cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
           nx-key: ${{ secrets.NX_KEY }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
         id: setup-test-desktop
         with:
           skip_ruby: true
-          turborepo-server-port: ${{ steps.caches.outputs.port }}
           install_playwright: true
 
       - name: Start mitmproxy

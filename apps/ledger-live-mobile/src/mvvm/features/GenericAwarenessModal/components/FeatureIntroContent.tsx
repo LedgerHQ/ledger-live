@@ -2,10 +2,10 @@ import React from "react";
 import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import * as Icons from "@ledgerhq/lumen-ui-rnative/symbols";
 import { Image, Linking } from "react-native";
-import type { FeatureIntroContent as FeatureIntroContentData } from "../types";
+import type { GenericAwarenessModalFeatureIntro } from "@ledgerhq/live-common/genericAwarenessModal";
 
 type FeatureIntroContentProps = Readonly<{
-  content: FeatureIntroContentData;
+  content: GenericAwarenessModalFeatureIntro;
   onClose: () => void;
 }>;
 
@@ -13,7 +13,7 @@ export function FeatureIntroContent({ content, onClose }: FeatureIntroContentPro
   const {
     imageUrl,
     title,
-    description,
+    subtitle,
     items,
     primaryButtonLabel,
     primaryButtonLink,
@@ -63,12 +63,12 @@ export function FeatureIntroContent({ content, onClose }: FeatureIntroContentPro
           marginBottom: "s8",
         }}
       >
-        {description}
+        {subtitle}
       </Text>
 
       <Box lx={{ gap: "s20", marginBottom: "s20" }}>
         {items.map(item => {
-          const Icon = Icons[item.icon] ?? Icons.Wallet;
+          const Icon = Icons[item.icon as keyof typeof Icons] ?? Icons.Wallet;
 
           return (
             <Box key={item.title} lx={{ flexDirection: "row", gap: "s16", alignItems: "center" }}>
@@ -83,7 +83,7 @@ export function FeatureIntroContent({ content, onClose }: FeatureIntroContentPro
                   {item.title}
                 </Text>
                 <Text typography="body2" lx={{ color: "muted" }}>
-                  {item.description}
+                  {item.subtitle}
                 </Text>
               </Box>
             </Box>
@@ -91,18 +91,10 @@ export function FeatureIntroContent({ content, onClose }: FeatureIntroContentPro
         })}
       </Box>
 
-      <Button
-        appearance="base"
-        size="lg"
-        onPress={() => handleButtonPress(primaryButtonLink)}
-      >
+      <Button appearance="base" size="lg" onPress={() => handleButtonPress(primaryButtonLink)}>
         {primaryButtonLabel}
       </Button>
-      <Button
-        appearance="gray"
-        size="lg"
-        onPress={() => handleButtonPress(secondaryButtonLink)}
-      >
+      <Button appearance="gray" size="lg" onPress={() => handleButtonPress(secondaryButtonLink)}>
         {secondaryButtonLabel}
       </Button>
     </Box>

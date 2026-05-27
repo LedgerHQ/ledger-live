@@ -31,4 +31,9 @@ module.exports = {
     "^react-native-worklets$": "<rootDir>/jest/mocks/react-native-worklets.js",
   },
   setupFilesAfterEnv: ["<rootDir>/jest/setup.native.ts"],
+  coverageReporters: [
+    "json",
+    ["lcov", { file: "lcov.native.info", projectRoot: "../../" }],
+    "text",
+  ],
 };

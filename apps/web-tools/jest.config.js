@@ -12,5 +12,9 @@ module.exports = {
       },
     ],
   },
-  reporters: ["default", ...(process.env.CI ? ["github-actions"] : [])],
+  reporters: [
+    "default",
+    ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
+    ...(process.env.CI ? ["github-actions"] : []),
+  ],
 };

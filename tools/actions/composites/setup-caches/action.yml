@@ -16,10 +16,6 @@ inputs:
     description: "false to get cache, true by default"
     required: false
     default: "true"
-  skip-turbo-cache:
-    description: "false to get cache, true by default"
-    required: false
-    default: "true"
   skip-nx-cache:
     description: "Skip Nx local and remote task cache for the remainder of the job"
     required: false
@@ -34,10 +30,6 @@ inputs:
     description: "aws cache region"
     required: false
     default: "eu-west-1"
-  turbo-server-token:
-    description: "custom token for local s3 server"
-    required: false
-    default: "yolo"
   cache-develop-role-arn:
     description: "Full IAM OIDC role ARN for refs/heads/develop (optional; use with cache-branch-role-arn instead of accountId/roleName)"
     required: false
@@ -52,9 +44,6 @@ inputs:
     default: ""
 
 outputs:
-  port:
-    description: "The port the local server runs on"
-    value: ${{ steps.turborepo-cache-server.outputs.port }}
   nx-cache-key-prefix:
     description: "Nx S3 cacheKeyPrefix for this job when AWS cache profile ran (develop or branch)"
     value: ${{ steps.nx-remote-cache.outputs.nx-cache-key-prefix }}
@@ -155,15 +144,3 @@ runs:
         rm -rf ~/.cocoapods/
         rm -rf ~/Library/Caches/CocoaPods
         rm -rf apps/ledger-live-mobile/ios/Pods
-
-    - name: TurboRepo local caching server
-      id: turborepo-cache-server
-      if: steps.aws.conclusion == 'success' && inputs.skip_turbo_cache != 'true'
-      uses: LedgerHQ/ledger-live/tools/actions/turborepo-s3-cache@develop
-      with:
-        server-token: "${{ inputs.turbo-server-token }}"
-        cleanup-cache-folder: "false"
-        aws-access-key: ${{ env.AWS_ACCESS_KEY_ID }}
-        aws-secret-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
-        aws-session-token: ${{ env.AWS_SESSION_TOKEN }}
-        region: ${{ inputs.region }}

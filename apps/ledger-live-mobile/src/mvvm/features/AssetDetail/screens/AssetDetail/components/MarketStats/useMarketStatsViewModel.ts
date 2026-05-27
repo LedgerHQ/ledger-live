@@ -20,8 +20,8 @@ export function useMarketStatsViewModel(currency: AssetDetailCurrencyProps) {
   const stats: StatRow[] = useMemo(() => {
     if (!marketCurrency) return [];
 
-    const { marketcap, marketcapRank, circulatingSupply, maxSupply, totalVolume, ticker } =
-      marketCurrency;
+    const { marketcap, marketcapRank, circulatingSupply, maxSupply, totalVolume } = marketCurrency;
+    const supplyTicker = marketCurrency.ticker || currency?.ticker || "";
 
     return [
       {
@@ -37,6 +37,10 @@ export function useMarketStatsViewModel(currency: AssetDetailCurrencyProps) {
                 t,
               })
             : "-",
+        tooltip: {
+          title: t("assetDetail.marketStats.marketCap"),
+          content: t("assetDetail.marketStats.marketCapTooltip"),
+        },
       },
       {
         key: "market_rank",
@@ -52,7 +56,7 @@ export function useMarketStatsViewModel(currency: AssetDetailCurrencyProps) {
               shorten: true,
               locale,
               t,
-              ticker,
+              ticker: supplyTicker,
             })
           : "-",
         tooltip: {
@@ -69,7 +73,7 @@ export function useMarketStatsViewModel(currency: AssetDetailCurrencyProps) {
               shorten: true,
               locale,
               t,
-              ticker,
+              ticker: supplyTicker,
             })
           : "-",
         tooltip: {
@@ -89,9 +93,13 @@ export function useMarketStatsViewModel(currency: AssetDetailCurrencyProps) {
               t,
             })
           : "-",
+        tooltip: {
+          title: t("assetDetail.marketStats.tradingVolume"),
+          content: t("assetDetail.marketStats.tradingVolumeTooltip"),
+        },
       },
     ];
-  }, [marketCurrency, counterCurrency, locale, t]);
+  }, [marketCurrency, counterCurrency, locale, t, currency?.ticker]);
 
   const onTooltipOpen = useCallback(
     (statName: string, open: boolean) => {

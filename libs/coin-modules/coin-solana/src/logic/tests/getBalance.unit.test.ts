@@ -3,15 +3,21 @@ import type { DeepPartialReturn } from "@ledgerhq/coin-module-framework/test/uti
 import type { ChainAPI } from "../../network";
 import type { StakeAccount } from "../../network/chain/stake-activation/rpc";
 import { getBalance } from "../getBalance";
-import { getStakeAccounts, computeUnstakeReserve } from "../getStakes";
+import {
+  computeFrameworkStakeActions,
+  computeUnstakeReserve,
+  getStakeAccounts,
+} from "../getStakes";
 
 jest.mock("../getStakes", () => ({
   getStakeAccounts: jest.fn().mockResolvedValue([]),
   computeUnstakeReserve: jest.fn().mockResolvedValue(0),
+  computeFrameworkStakeActions: jest.fn().mockReturnValue([]),
 }));
 
 const mockGetStakeAccounts = jest.mocked(getStakeAccounts);
 const mockComputeUnstakeReserve = jest.mocked(computeUnstakeReserve);
+const mockComputeFrameworkStakeActions = jest.mocked(computeFrameworkStakeActions);
 
 const DEFAULT_RENT_EXEMPT_RESERVE = 2_282_880;
 
@@ -67,11 +73,16 @@ describe("getBalance", () => {
     DeepPartialReturn<ChainAPI["getParsedTokenAccountsByOwner"]>
   >;
 
+  const mockGetEpochInfo = jest.fn().mockResolvedValue({ epoch: 400 }) as jest.MockedFunction<
+    ChainAPI["getEpochInfo"]
+  >;
+
   const api = {
     getBalance: mockGetBalance,
     getMinimumBalanceForRentExemption: mockGetMinimumBalanceForRentExemption,
     getParsedTokenAccountsByOwner: mockGetParsedTokenAccountsByOwner,
     getParsedToken2022AccountsByOwner: mockGetParsedToken2022AccountsByOwner,
+    getEpochInfo: mockGetEpochInfo,
   } as unknown as ChainAPI;
 
   afterEach(() => {
@@ -299,6 +310,22 @@ describe("getBalance", () => {
         asset: { type: "native" },
         locked: 1100n,
       });
+    });
+
+    it("populates stake.actions from computeFrameworkStakeActions", async () => {
+      mockGetBalance.mockResolvedValue(1_000_000_000);
+      mockGetMinimumBalanceForRentExemption.mockResolvedValue(890880);
+      mockGetParsedTokenAccountsByOwner.mockResolvedValue({ value: [] });
+      const stakeAccount = makeStakeAccountStub(2_000_000_000);
+      mockGetStakeAccounts.mockResolvedValue([stakeAccount] as StakeAccount[]);
+      mockComputeFrameworkStakeActions.mockReturnValueOnce(["claim_reward", "undelegate"]);
+
+      const result = await getBalance(api, TEST_ADDRESS);
+
+      expect(result[1]).toMatchObject({
+        stake: { actions: ["claim_reward", "undelegate"] },
+      });
+      expect(mockComputeFrameworkStakeActions).toHaveBeenCalledWith(stakeAccount, TEST_ADDRESS, 400);
     });
 
     it("should sum lamports across multiple stake accounts", async () => {

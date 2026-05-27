@@ -70,7 +70,7 @@ export function useACRECustomHandlers(manifest: WebviewProps["manifest"], accoun
               onClose: onCancel,
             });
           },
-          "custom.acre.transactionSign": ({
+          "custom.acre.transactionSign": async ({
             account,
             parentAccount,
             signFlowInfos: { liveTx },
@@ -78,24 +78,27 @@ export function useACRECustomHandlers(manifest: WebviewProps["manifest"], accoun
             onSuccess,
             onError,
           }) => {
-            const tx = prepareSignTransaction(account, parentAccount, liveTx);
-
-            navigation.navigate(NavigatorName.SignTransaction, {
-              screen: ScreenName.SignTransactionSummary,
-              params: {
-                currentNavigation: ScreenName.SignTransactionSummary,
-                nextNavigation: ScreenName.SignTransactionSelectDevice,
-                transaction: tx,
-                accountId: account.id,
-                parentId: parentAccount ? parentAccount.id : undefined,
-                appName: options?.hwAppId,
-                dependencies: options?.dependencies,
-                isACRE: true,
-                onSuccess,
+            try {
+              const tx = await prepareSignTransaction(account, parentAccount, liveTx);
+              navigation.navigate(NavigatorName.SignTransaction, {
+                screen: ScreenName.SignTransactionSummary,
+                params: {
+                  currentNavigation: ScreenName.SignTransactionSummary,
+                  nextNavigation: ScreenName.SignTransactionSelectDevice,
+                  transaction: tx,
+                  accountId: account.id,
+                  parentId: parentAccount ? parentAccount.id : undefined,
+                  appName: options?.hwAppId,
+                  dependencies: options?.dependencies,
+                  isACRE: true,
+                  onSuccess,
+                  onError,
+                },
                 onError,
-              },
-              onError,
-            });
+              });
+            } catch (err) {
+              onError(err as Error);
+            }
           },
           "custom.acre.registerAccount": ({
             parentAccount,

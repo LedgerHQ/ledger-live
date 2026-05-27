@@ -1,28 +1,28 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import type { DistributionItem } from "@ledgerhq/types-live";
-import { TransactionsSectionView } from "./TransactionsSectionView";
-import { useTransactionsSectionViewModel } from "./useTransactionsSectionViewModel";
+import { TransactionsSectionSkeleton } from "./TransactionsSectionSkeleton";
+import { TransactionsSection as TransactionsSectionComponent } from "./TransactionsSection";
+import { shouldShowAssetDetailSectionSkeleton } from "../../utils/shouldShowAssetDetailSectionSkeleton";
 
 export type TransactionsSectionProps = Readonly<{
-  distributionItem: DistributionItem;
+  distributionItem?: DistributionItem;
+  isLoading: boolean;
 }>;
 
-export function TransactionsSection({ distributionItem }: TransactionsSectionProps) {
+export function TransactionsSection({ distributionItem, isLoading }: TransactionsSectionProps) {
   const { t } = useTranslation();
-  const { visible, table, onRowClick, onSeeAll } =
-    useTransactionsSectionViewModel(distributionItem);
 
-  if (!visible) {
-    return null;
+  if (!distributionItem) {
+    if (!shouldShowAssetDetailSectionSkeleton(isLoading, false)) return null;
+    return <TransactionsSectionSkeleton />;
   }
 
   return (
-    <TransactionsSectionView
+    <TransactionsSectionComponent
+      distributionItem={distributionItem}
+      isLoading={isLoading}
       historyLabel={t("history.title")}
-      table={table}
-      onRowClick={onRowClick}
-      onSeeAll={onSeeAll}
     />
   );
 }

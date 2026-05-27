@@ -1,6 +1,5 @@
 import { CurrenciesData } from "@ledgerhq/types-live";
-import type { CosmosAccountRaw, Transaction } from "../types";
-import { BigNumber } from "bignumber.js";
+import type { Transaction } from "../types";
 
 const dataset: CurrenciesData<Transaction> = {
   FIXME_ignoreOperationFields: ["gas"],
@@ -34,27 +33,8 @@ const dataset: CurrenciesData<Transaction> = {
         freshAddressPath: "44'/118'/1'/0/0",
         blockHeight: 6313741,
         creationDate: "2023-07-26T02:02:57.000Z",
-        operationsCount: 1,
-        operations: [
-          {
-            id: "js:2:coreum:core1sel9ys8a7jlsmrxp9692zfjncnmhxkws0qr3g9:-0B17FF19A1E8DC703A3AEC457B414DE88845DD76BB4D95F8F6368F68D59248DF-IN",
-            hash: "0B17FF19A1E8DC703A3AEC457B414DE88845DD76BB4D95F8F6368F68D59248DF",
-            type: "IN",
-            senders: ["core10l6h3qw05u7qduqgafj8wlrx3fjhr852z7r5l2"],
-            recipients: ["core1sel9ys8a7jlsmrxp9692zfjncnmhxkws0qr3g9"],
-            accountId: "js:2:coreum:core1sel9ys8a7jlsmrxp9692zfjncnmhxkws0qr3g9:",
-            blockHash: null,
-            blockHeight: "6306437",
-            extra: {
-              validators: [],
-              memo: "lb",
-            },
-            date: "2023-07-26T02:02:57.000Z",
-            value: "1000000",
-            fee: "8880",
-            transactionSequenceNumber: new BigNumber(0),
-          },
-        ],
+        operationsCount: 0,
+        operations: [],
         pendingOperations: [],
         currencyId: "coreum",
         lastSyncDate: "2023-07-26T05:46:40.684Z",
@@ -75,17 +55,8 @@ const dataset: CurrenciesData<Transaction> = {
           },
         },
         xpub: "core1sel9ys8a7jlsmrxp9692zfjncnmhxkws0qr3g9",
-        cosmosResources: {
-          delegations: [],
-          redelegations: [],
-          unbondings: [],
-          delegatedBalance: "0",
-          pendingRewardsBalance: "0",
-          unbondingBalance: "0",
-          withdrawAddress: "core1sel9ys8a7jlsmrxp9692zfjncnmhxkws0qr3g9",
-        },
         swapHistory: [],
-      } as unknown as CosmosAccountRaw,
+      },
     },
   ],
 };

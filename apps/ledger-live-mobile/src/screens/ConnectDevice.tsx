@@ -125,7 +125,8 @@ type Props =
   | StackNavigatorProps<HederaRedelegationFlowParamList, ScreenName.HederaRedelegationConnectDevice>
   | StackNavigatorProps<HederaClaimRewardsFlowParamList, ScreenName.HederaClaimRewardsConnectDevice>
   | StackNavigatorProps<EvmDelegationFlowParamList, ScreenName.EvmDelegationConnectDevice>
-  | StackNavigatorProps<EvmUndelegationFlowParamList, ScreenName.EvmUndelegationConnectDevice>;
+  | StackNavigatorProps<EvmUndelegationFlowParamList, ScreenName.EvmUndelegationConnectDevice>
+  | StackNavigatorProps<EvmDelegationFlowParamList, ScreenName.EvmRedelegationConnectDevice>;
 
 export const navigateToSelectDevice = (navigation: Props["navigation"], route: Props["route"]) =>
   // Assumes that it will always navigate to a "SelectDevice"

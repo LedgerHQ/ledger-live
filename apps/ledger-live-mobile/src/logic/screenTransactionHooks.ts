@@ -2,7 +2,7 @@ import invariant from "invariant";
 import { concat, of, from, Subscription } from "rxjs";
 import { concatMap, filter } from "rxjs/operators";
 import { useState, useCallback, useEffect, useRef } from "react";
-import { Platform } from "react-native";
+import { InteractionManager, Platform } from "react-native";
 import { log } from "@ledgerhq/logs";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import type {
@@ -48,6 +48,7 @@ import type { AlgorandClaimRewardsFlowParamList } from "~/families/algorand/Rewa
 import type { StellarAddAssetFlowParamList } from "~/families/stellar/AddAssetFlow/types";
 import { mevProtectionSelector } from "~/reducers/settings";
 import { useNewSendFlowFeature } from "LLM/features/Send/hooks/useNewSendFlowFeature";
+import type { AppDispatch } from "~/state-manager/configureStore";
 
 type Navigation =
   | StackNavigatorNavigation<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
@@ -66,10 +67,67 @@ type Route =
   | StackNavigatorRoute<AlgorandClaimRewardsFlowParamList, ScreenName.AlgorandClaimRewardsSummary>
   | StackNavigatorRoute<StellarAddAssetFlowParamList, ScreenName.StellarAddAssetValidation>;
 
+const completeSignBroadcast = ({
+  navigation,
+  context,
+  routeParams,
+  mainAccount,
+  operation,
+  updateAccountWithUpdater,
+}: {
+  navigation: NativeStackNavigationProp<{ [key: string]: object }>;
+  context: string;
+  routeParams: Route["params"];
+  mainAccount: Account;
+  operation: Operation;
+  updateAccountWithUpdater: (accountId: string, updater: (account: Account) => Account) => void;
+}): void => {
+  formatOperation(mainAccount).then(fmt =>
+    log("transaction-summary", `✔️ broadcasted! optimistic operation: ${fmt(operation)}`),
+  );
+  navigation.replace(context + "ValidationSuccess", {
+    ...routeParams,
+    result: operation,
+  });
+  InteractionManager.runAfterInteractions(() => {
+    updateAccountWithUpdater(mainAccount.id, account => addPendingOperation(account, operation));
+  });
+};
+
+const completeSignedTxBroadcast = ({
+  navigation,
+  route,
+  mainAccount,
+  operation,
+  dispatch,
+}: {
+  navigation: NativeStackNavigationProp<{ [key: string]: object }>;
+  route: { name: string; params?: object };
+  mainAccount: Account;
+  operation: Operation;
+  dispatch: AppDispatch;
+}): void => {
+  navigation.replace(route.name.replace("ConnectDevice", "ValidationSuccess"), {
+    ...route.params,
+    result: operation,
+  });
+  InteractionManager.runAfterInteractions(() => {
+    dispatch(
+      updateAccountWithUpdater({
+        accountId: mainAccount.id,
+        updater: account => addPendingOperation(account, operation),
+      }),
+    );
+  });
+};
+
 export const useTransactionChangeFromNavigation = (setTransaction: (_: Transaction) => void) => {
   const route = useRoute<Route>();
   const navigationTransaction = route.params?.transaction;
-  const navigationTxRef = useRef(navigationTransaction);
+  // Start at `undefined` so the first time `navigationTransaction` is set we
+  // dispatch — including the case where the screen mounts (or remounts via
+  // Suspense / native-stack) with the value already in route.params.
+  const navigationTxRef = useRef<typeof navigationTransaction>(undefined);
   useEffect(() => {
     if (navigationTransaction && navigationTxRef.current !== navigationTransaction) {
       navigationTxRef.current = navigationTransaction;
@@ -157,22 +215,14 @@ export const useSignWithDevice = ({
               break;
 
             case "broadcasted":
-              formatOperation(mainAccount).then(fmt =>
-                log(
-                  "transaction-summary",
-                  `✔️ broadcasted! optimistic operation: ${fmt(e.operation)}`,
-                ),
-              );
-              (navigation as NativeStackNavigationProp<{ [key: string]: object }>).replace(
-                context + "ValidationSuccess",
-                {
-                  ...route.params,
-                  result: e.operation,
-                },
-              );
-              updateAccountWithUpdater(mainAccount.id, account =>
-                addPendingOperation(account, e.operation),
-              );
+              completeSignBroadcast({
+                navigation: navigation as NativeStackNavigationProp<{ [key: string]: object }>,
+                context,
+                routeParams: route.params,
+                mainAccount,
+                operation: e.operation,
+                updateAccountWithUpdater,
+              });
               break;
 
             default:
@@ -310,16 +360,13 @@ export function useSignedTxHandler({
           "transaction-summary",
           `✔️ broadcasted! optimistic operation: ${(await formatOperation(mainAccount))(operation)}`,
         );
-        (navigation as NativeStackNavigationProp<{ [key: string]: object }>).replace(
-          route.name.replace("ConnectDevice", "ValidationSuccess"),
-          { ...route.params, result: operation },
-        );
-        dispatch(
-          updateAccountWithUpdater({
-            accountId: mainAccount.id,
-            updater: account => addPendingOperation(account, operation),
-          }),
-        );
+        completeSignedTxBroadcast({
+          navigation: navigation as NativeStackNavigationProp<{ [key: string]: object }>,
+          route,
+          mainAccount,
+          operation,
+          dispatch,
+        });
       } catch (error) {
         if (
           !(error instanceof UserRefusedOnDevice || error instanceof TransactionRefusedOnDevice)

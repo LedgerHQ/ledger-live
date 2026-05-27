@@ -200,7 +200,7 @@ describe("useMarketCoin", () => {
     expect(result.current.color).toBe("#BBB0FF");
   });
 
-  it("should return dataChart and isLoadingDataChart from useCurrencyChartData", async () => {
+  it("should return dataChart and isLoadingDataChart from useAssetChartData", async () => {
     const { result } = renderMarketCoinHook();
 
     await waitFor(() => {

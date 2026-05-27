@@ -23,6 +23,16 @@ jest.mock("react-router", () => ({
   useLocation: jest.fn(),
 }));
 
+jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
+  useAccountBridge: jest.fn(),
+  useAccountBridgeOrNull: jest.fn(),
+  useAccountBridgeMany: jest.fn((accounts: Account[]) =>
+    accounts.map(() => ({
+      isAccountEmpty: (a: Account) => a.balance.isZero(),
+    })),
+  ),
+}));
+
 const mockNavigate = jest.fn();
 const mockOpenSendFlow = jest.fn();
 const mockOpenAssetFlow = jest.fn();

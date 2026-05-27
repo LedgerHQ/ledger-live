@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { Page, useMarketActions } from "LLD/features/Market/hooks/useMarketActions";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { MarketCurrencyData, KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import { MarketAction } from "./types";
 import { getMarketOrAssetDetailPath } from "LLD/utils/marketAssetNavigation";

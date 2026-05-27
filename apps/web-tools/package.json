@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/web-tools",
-  "version": "0.40.0",
+  "version": "0.41.0",
   "private": true,
   "browser": {
     "dns": false,
@@ -13,12 +13,14 @@
     "build": "rsbuild build",
     "preview": "rsbuild preview",
     "test": "jest",
-    "typecheck": "tsc --noEmit --customConditions node"
+    "typecheck": "tsc --noEmit --customConditions node",
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "@devtools/shell": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
     "@shared/feature-flags": "workspace:*",
+    "@features/platform-feature-flags": "workspace:*",
     "react-redux": "catalog:",
     "@codemirror/lang-json": "^6.0.2",
     "@codemirror/view": "^6.39.5",

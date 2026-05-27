@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Divider } from "@ledgerhq/lumen-ui-react";
 import { Flex } from "@ledgerhq/react-ui";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { removePostOnboardingActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import { useDispatch, useSelector } from "LLD/hooks/redux";

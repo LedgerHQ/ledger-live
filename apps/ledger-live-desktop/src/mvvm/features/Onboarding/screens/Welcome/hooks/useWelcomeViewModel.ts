@@ -15,7 +15,7 @@ import { useAnalyticsOptInPrompt } from "LLD/features/AnalyticsOptInPrompt/hooks
 import { EntryPoint } from "LLD/features/AnalyticsOptInPrompt/types/AnalyticsOptInPromptNavigator";
 import { useActivationDrawer } from "LLD/features/LedgerSyncEntryPoints/hooks/useActivationDrawer";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
-import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 export function useWelcomeViewModel() {
   const { t } = useTranslation();

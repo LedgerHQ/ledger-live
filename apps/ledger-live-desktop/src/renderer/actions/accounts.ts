@@ -4,7 +4,9 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getKey } from "~/renderer/storage";
 import { PasswordIncorrectError } from "@ledgerhq/errors";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { checkAccountSupported } from "@ledgerhq/live-common/account/index";
 import { accountsSelector } from "~/renderer/reducers/accounts";
+import logger from "~/renderer/logger";
 import { ThunkResult } from "./types";
 
 export const removeAccount = (payload: Account) => ({
@@ -13,8 +15,14 @@ export const removeAccount = (payload: Account) => ({
 });
 
 export const initAccounts = (data: [Account, AccountUserData][]) => {
-  const accounts = data.map(([account]) => account);
-  const accountsUserData = data
+  const supported = data.filter(([account]) => {
+    const error = checkAccountSupported(account);
+    if (!error) return true;
+    logger.warn(`dropping account ${account.id}: ${error.message}`);
+    return false;
+  });
+  const accounts = supported.map(([account]) => account);
+  const accountsUserData = supported
     .filter(([account, userData]) => userData.name !== getDefaultAccountName(account))
     .map(([, userData]) => userData);
   return {

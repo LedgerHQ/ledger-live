@@ -26,6 +26,7 @@ export async function getStakes(address: string): Promise<Page<Stake>> {
     amount: balance + pendingReward,
     amountDeposited: balance,
     amountRewarded: pendingReward,
+    actions: [],
     details: {
       stakedNodeId,
       overstaked: delegatedNode

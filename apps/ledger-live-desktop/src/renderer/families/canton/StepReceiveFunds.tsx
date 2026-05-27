@@ -26,7 +26,7 @@ import ModalBody from "~/renderer/components/Modal/ModalBody";
 import Alert from "~/renderer/components/Alert";
 import QRCode from "~/renderer/components/QRCode";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
-import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { FeatureToggle, useFeature } from "@features/platform-feature-flags";
 import { LOCAL_STORAGE_KEY_PREFIX } from "~/renderer/modals/Receive/steps/StepReceiveStakingFlow";
 import { StepProps } from "~/renderer/modals/Receive/Body";
 import { useAccountName } from "~/renderer/reducers/wallet";

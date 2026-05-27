@@ -41,7 +41,7 @@ import { shouldRetainPendingOperation } from "../account/pending";
 import { shouldShowNewAccount } from "../account/support";
 import { UnsupportedDerivation } from "../errors";
 import getAddressWrapper, { GetAddressFn } from "./getAddressWrapper";
-import type { Result } from "../derivation";
+import type { GetAddressResult } from "../derivation";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type {
   Account,
@@ -67,19 +67,19 @@ type IterateResult = ({
   deviceId,
 }: {
   index: number;
-  derivationsCache: Record<string, Result>;
+  derivationsCache: Record<string, GetAddressResult>;
   derivationScheme: string;
   derivationMode: DerivationMode;
   currency: CryptoCurrency;
   deviceId: string;
-}) => Promise<Result | null>;
+}) => Promise<GetAddressResult | null>;
 
 export type IterateResultBuilder = ({
   result, // derivation on the "root" of the derivation
   derivationMode, // identify the current derivation scheme
   derivationScheme,
 }: {
-  result: Result;
+  result: GetAddressResult;
   derivationMode: DerivationMode;
   derivationScheme: string;
 }) => Promise<IterateResult>;
@@ -351,12 +351,12 @@ const defaultIterateResultBuilder = (getAddressFn: GetAddressFn) => () =>
       deviceId,
     }: {
       index: number | string;
-      derivationsCache: Record<string, Result>;
+      derivationsCache: Record<string, GetAddressResult>;
       derivationScheme: string;
       derivationMode: DerivationMode;
       currency: CryptoCurrency;
       deviceId: string;
-    }): Promise<Result | null> => {
+    }): Promise<GetAddressResult | null> => {
       const freshAddressPath = runDerivationScheme(derivationScheme, currency, {
         account: index,
       });
@@ -370,7 +370,7 @@ const defaultIterateResultBuilder = (getAddressFn: GetAddressFn) => () =>
         });
         derivationsCache[cacheKey] = res;
       }
-      return res as Result;
+      return res as GetAddressResult;
     },
   );
 
@@ -401,11 +401,11 @@ export const makeScanAccounts =
         finished = true;
       };
 
-      const derivationsCache: Record<string, Result> = {};
+      const derivationsCache: Record<string, GetAddressResult> = {};
 
       function stepAccount(
         index: number,
-        res: Result,
+        res: GetAddressResult,
         derivationMode: DerivationMode,
         seedIdentifier: string,
       ): Observable<Account | null> {
@@ -512,7 +512,7 @@ export const makeScanAccounts =
             const path = getSeedIdentifierDerivation(currency, derivationMode);
             log("scanAccounts", `scanning ${currency.id} on derivationMode=${derivationMode}`);
             const seedCacheKey = `${path}:${derivationMode}`;
-            let result: Result = derivationsCache[seedCacheKey];
+            let result: GetAddressResult = derivationsCache[seedCacheKey];
 
             if (!result) {
               try {

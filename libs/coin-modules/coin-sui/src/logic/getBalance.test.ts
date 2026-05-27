@@ -46,6 +46,7 @@ describe("getBalance", () => {
         state: "active",
         asset: { type: "native" },
         amount: BigInt(2000000000),
+        actions: [],
       },
     ];
 

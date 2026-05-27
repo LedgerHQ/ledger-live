@@ -1,4 +1,4 @@
-import { FeatureId } from "@ledgerhq/types-live";
+import { FeatureId } from "@shared/feature-flags";
 
 export const WALLET_FEATURES_FLAG: FeatureId = "lwdWallet40";
 

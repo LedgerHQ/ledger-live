@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { renderHook, waitFor } from "@testing-library/react";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import BigNumber from "bignumber.js";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 import type { StakingValidatorItem, StakingAccount, StakingDelegation } from "@ledgerhq/types-live";
@@ -11,7 +11,9 @@ import {
   useEvmStakingValidators,
   useEvmFamilyPreloadData,
   useEvmFamilyMappedDelegations,
+  useEvmFamilyDelegationsQuerySelector,
 } from "./react";
+import { GenericTransaction } from "bridge/generic-coin-framework/types";
 
 jest.mock("@ledgerhq/coin-evm/staking/index", () => {
   const actual = jest.requireActual("@ledgerhq/coin-evm/staking/index");
@@ -281,5 +283,222 @@ describe("useEvmFamilyMappedDelegations", () => {
     await waitFor(() => expect(mockedGetValidators).toHaveBeenCalled());
 
     expect(result.current).toEqual([]);
+  });
+});
+
+describe("useEvmFamilyDelegationsQuerySelector", () => {
+  it("should filter options on validator name according to query", () => {
+    const account = {
+      stakingResources: {
+        delegations: [
+          { pendingRewards: BigNumber(0), validatorAddress: "0x00" },
+          { pendingRewards: BigNumber(1), validatorAddress: "0x01" },
+          { pendingRewards: BigNumber(2), validatorAddress: "0x02" },
+        ],
+        validators: [
+          { name: "validator0", validatorAddress: "0x00" },
+          { name: "validator1", validatorAddress: "0x01" },
+          { name: "validator2", validatorAddress: "0x02" },
+        ],
+      },
+    } as unknown as StakingAccount;
+    const transaction = { valAddress: "0x02" } as unknown as GenericTransaction;
+    const { result } = renderHook(() =>
+      useEvmFamilyDelegationsQuerySelector(account, transaction, seiUnit),
+    );
+
+    const { query, setQuery, options, value } = result.current;
+    expect(query).toEqual("");
+    expect(options).toEqual([
+      expect.objectContaining({ validatorAddress: "0x01" }),
+      expect.objectContaining({ validatorAddress: "0x02" }),
+    ]);
+    expect(value).toMatchObject({ validatorAddress: "0x02" });
+
+    act(() => {
+      result.current.setQuery("1");
+    });
+
+    expect(result.current.query).toEqual("1");
+    expect(result.current.options).toEqual([expect.objectContaining({ validatorAddress: "0x01" })]);
+    expect(result.current.value).toMatchObject({ validatorAddress: "0x02" });
+  });
+
+  it("should filter options on validator address according to query when name not available", () => {
+    const account = {
+      stakingResources: {
+        delegations: [
+          { pendingRewards: BigNumber(0), validatorAddress: "0x00" },
+          { pendingRewards: BigNumber(1), validatorAddress: "0x01" },
+          { pendingRewards: BigNumber(2), validatorAddress: "0x02" },
+        ],
+        validators: [
+          { validatorAddress: "0x00" },
+          { validatorAddress: "0x01" },
+          { validatorAddress: "0x02" },
+        ],
+      },
+    } as unknown as StakingAccount;
+    const transaction = { valAddress: "0x02" } as unknown as GenericTransaction;
+    const { result } = renderHook(() =>
+      useEvmFamilyDelegationsQuerySelector(account, transaction, seiUnit),
+    );
+
+    const { query, options, value } = result.current;
+    expect(query).toEqual("");
+    expect(options).toEqual([
+      expect.objectContaining({ validatorAddress: "0x01" }),
+      expect.objectContaining({ validatorAddress: "0x02" }),
+    ]);
+    expect(value).toMatchObject({ validatorAddress: "0x02" });
+
+    act(() => {
+      result.current.setQuery("1");
+    });
+
+    expect(result.current.query).toEqual("1");
+    expect(result.current.options).toEqual([expect.objectContaining({ validatorAddress: "0x01" })]);
+    expect(result.current.value).toMatchObject({ validatorAddress: "0x02" });
+  });
+
+  it("should have no options when account have no delegations", () => {
+    const account = {
+      stakingResources: {
+        delegations: [],
+        validators: [
+          { validatorAddress: "0x00" },
+          { validatorAddress: "0x01" },
+          { validatorAddress: "0x02" },
+        ],
+      },
+    } as unknown as StakingAccount;
+    const transaction = { valAddress: "0x02" } as unknown as GenericTransaction;
+    const { result } = renderHook(() =>
+      useEvmFamilyDelegationsQuerySelector(account, transaction, seiUnit),
+    );
+
+    const { query, options, value } = result.current;
+    expect(query).toEqual("");
+    expect(options).toEqual([]);
+    expect(value).toBeUndefined();
+  });
+
+  it("should have no options when query match no validator", () => {
+    const account = {
+      stakingResources: {
+        delegations: [
+          { pendingRewards: BigNumber(0), validatorAddress: "0x00" },
+          { pendingRewards: BigNumber(1), validatorAddress: "0x01" },
+          { pendingRewards: BigNumber(2), validatorAddress: "0x02" },
+        ],
+        validators: [
+          { validatorAddress: "0x00" },
+          { validatorAddress: "0x01" },
+          { validatorAddress: "0x02" },
+        ],
+      },
+    } as unknown as StakingAccount;
+    const transaction = { valAddress: "0x02" } as unknown as GenericTransaction;
+    const { result } = renderHook(() =>
+      useEvmFamilyDelegationsQuerySelector(account, transaction, seiUnit),
+    );
+
+    const { query, options, value } = result.current;
+    expect(query).toEqual("");
+    expect(options).toEqual([
+      expect.objectContaining({ validatorAddress: "0x01" }),
+      expect.objectContaining({ validatorAddress: "0x02" }),
+    ]);
+    expect(value).toMatchObject({ validatorAddress: "0x02" });
+
+    act(() => {
+      result.current.setQuery("0x03");
+    });
+
+    expect(result.current.query).toEqual("0x03");
+    expect(result.current.options).toEqual([]);
+    expect(result.current.value).toMatchObject({ validatorAddress: "0x02" });
+  });
+
+  it("should change value when transaction valAddress change", () => {
+    const account = {
+      stakingResources: {
+        delegations: [
+          { pendingRewards: BigNumber(0), validatorAddress: "0x00" },
+          { pendingRewards: BigNumber(1), validatorAddress: "0x01" },
+          { pendingRewards: BigNumber(2), validatorAddress: "0x02" },
+        ],
+        validators: [
+          { name: "validator0", validatorAddress: "0x00" },
+          { name: "validator1", validatorAddress: "0x01" },
+          { name: "validator2", validatorAddress: "0x02" },
+        ],
+      },
+    } as unknown as StakingAccount;
+    const transaction = { valAddress: "0x02" } as unknown as GenericTransaction;
+    const { result, rerender } = renderHook(() =>
+      useEvmFamilyDelegationsQuerySelector(account, transaction, seiUnit),
+    );
+
+    const { query, options, value } = result.current;
+    expect(query).toEqual("");
+    expect(options).toEqual([
+      expect.objectContaining({ validatorAddress: "0x01" }),
+      expect.objectContaining({ validatorAddress: "0x02" }),
+    ]);
+    expect(value).toMatchObject({ validatorAddress: "0x02" });
+
+    act(() => {
+      transaction.valAddress = "0x01";
+    });
+    rerender();
+
+    expect(result.current.query).toEqual("");
+    expect(result.current.options).toEqual([
+      expect.objectContaining({ validatorAddress: "0x01" }),
+      expect.objectContaining({ validatorAddress: "0x02" }),
+    ]);
+    expect(result.current.value).toMatchObject({ validatorAddress: "0x01" });
+  });
+
+  it("should set value to undefined when transaction valAddress match no available validator", () => {
+    const account = {
+      stakingResources: {
+        delegations: [
+          { pendingRewards: BigNumber(0), validatorAddress: "0x00" },
+          { pendingRewards: BigNumber(1), validatorAddress: "0x01" },
+          { pendingRewards: BigNumber(2), validatorAddress: "0x02" },
+        ],
+        validators: [
+          { name: "validator0", validatorAddress: "0x00" },
+          { name: "validator1", validatorAddress: "0x01" },
+          { name: "validator2", validatorAddress: "0x02" },
+        ],
+      },
+    } as unknown as StakingAccount;
+    const transaction = { valAddress: "0x02" } as unknown as GenericTransaction;
+    const { result, rerender } = renderHook(() =>
+      useEvmFamilyDelegationsQuerySelector(account, transaction, seiUnit),
+    );
+
+    const { query, options, value } = result.current;
+    expect(query).toEqual("");
+    expect(options).toEqual([
+      expect.objectContaining({ validatorAddress: "0x01" }),
+      expect.objectContaining({ validatorAddress: "0x02" }),
+    ]);
+    expect(value).toMatchObject({ validatorAddress: "0x02" });
+
+    act(() => {
+      transaction.valAddress = "0x03";
+    });
+    rerender();
+
+    expect(result.current.query).toEqual("");
+    expect(result.current.options).toEqual([
+      expect.objectContaining({ validatorAddress: "0x01" }),
+      expect.objectContaining({ validatorAddress: "0x02" }),
+    ]);
+    expect(result.current.value).toBeUndefined();
   });
 });

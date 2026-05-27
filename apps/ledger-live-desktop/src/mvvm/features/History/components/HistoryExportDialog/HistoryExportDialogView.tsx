@@ -7,14 +7,15 @@ export function HistoryExportDialogView({
   success,
   error,
   resetState,
+  onDoneClick,
   ...props
 }: Readonly<HistoryExportDialogViewModel>) {
   if (success) {
-    return <ExportResultScene variant="success" />;
+    return <ExportResultScene variant="success" onButtonClick={onDoneClick} />;
   }
 
   if (error) {
-    return <ExportResultScene variant="error" onAction={resetState} />;
+    return <ExportResultScene variant="error" onButtonClick={resetState} />;
   }
 
   return <ExportScene {...props} />;

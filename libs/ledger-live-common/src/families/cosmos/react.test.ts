@@ -50,7 +50,7 @@ describe("cosmos/react", () => {
 
   describe("useCosmosFamilyPreloadData", () => {
     it("should return Cosmos preload data and updates", async () => {
-      const { prepare } = setup();
+      const { prepare } = await setup();
       await act(() => prepare());
       const { result } = renderHook(() => hooks.useCosmosFamilyPreloadData("cosmos"));
       const data = getCurrentCosmosPreloadData()["cosmos"];
@@ -61,7 +61,7 @@ describe("cosmos/react", () => {
 
   describe("useCosmosFormattedDelegations", () => {
     it("should return formatted delegations", async () => {
-      const { account, prepare } = setup();
+      const { account, prepare } = await setup();
       await prepare();
       const { result } = renderHook(() => hooks.useCosmosFamilyMappedDelegations(account));
       const delegations = account.cosmosResources?.delegations;
@@ -80,7 +80,7 @@ describe("cosmos/react", () => {
 
     describe("mode: claimReward", () => {
       it("should only return delegations which have some pending rewards", async () => {
-        const { account, prepare } = setup();
+        const { account, prepare } = await setup();
         await prepare();
         const { result } = renderHook(() =>
           hooks.useCosmosFamilyMappedDelegations(account, "claimReward"),
@@ -92,7 +92,7 @@ describe("cosmos/react", () => {
 
   describe("useCosmosFamilyDelegationsQuerySelector", () => {
     it("should return delegations filtered by query as options", async () => {
-      const { account, transaction, prepare } = setup();
+      const { account, transaction, prepare } = await setup();
       await prepare();
       invariant(account.cosmosResources, "cosmos: account and cosmos resources required");
       if (!account.cosmosResources)
@@ -117,7 +117,7 @@ describe("cosmos/react", () => {
       expect(result.current.options.length).toBe(0);
     });
     it("should return the first delegation as value", async () => {
-      const { account, transaction, prepare } = setup();
+      const { account, transaction, prepare } = await setup();
       await prepare();
       invariant(account.cosmosResources, "cosmos: account and cosmos resources required");
       const delegations = (account.cosmosResources as CosmosResources).delegations || [];
@@ -138,7 +138,7 @@ describe("cosmos/react", () => {
       ).toBe(delegations[0].validatorAddress);
     });
     it("should find delegation by sourceValidator field and return as value for redelegate", async () => {
-      const { account, transaction, prepare } = setup();
+      const { account, transaction, prepare } = await setup();
       await prepare();
       invariant(account.cosmosResources, "cosmos: account and cosmos resources required");
       const delegations = (account.cosmosResources as CosmosResources).delegations || [];
@@ -163,8 +163,8 @@ describe("cosmos/react", () => {
   });
 
   describe("useSortedValidators", () => {
-    it("should reutrn sorted validators", async () => {
-      const { account, prepare } = setup();
+    it("should return sorted validators", async () => {
+      const { account, prepare } = await setup();
       await prepare();
       const { result: preloadDataResult } = renderHook(() =>
         hooks.useCosmosFamilyPreloadData("cosmos"),
@@ -195,12 +195,12 @@ describe("cosmos/react", () => {
   });
 });
 
-function setup(): {
+async function setup(): Promise<{
   account: CosmosAccount;
   currencyBridge: CurrencyBridge;
   transaction: Transaction;
   prepare: () => Promise<any>;
-} {
+}> {
   setEnv("MOCK", "1");
   setEnv("EXPERIMENTAL_CURRENCIES", "cosmos");
   const seed = "cosmos-2";
@@ -208,9 +208,9 @@ function setup(): {
   const a = genAccount(seed, {
     currency,
   });
-  const account = genAddingOperationsInAccount(a, 3, seed) as CosmosAccount;
-  const currencyBridge = getCurrencyBridge(currency);
-  const bridge = getAccountBridge(account);
+  const account = (await genAddingOperationsInAccount(a, 3, seed)) as CosmosAccount;
+  const currencyBridge = await getCurrencyBridge(currency);
+  const bridge = await getAccountBridge(account);
   const transaction = bridge.createTransaction(account);
   return {
     account,

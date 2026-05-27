@@ -3,7 +3,7 @@
  */
 import React from "react";
 import { PostOnboardingProvider } from "@ledgerhq/live-common/postOnboarding/PostOnboardingProvider";
-import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/defaultFeatures";
+import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import { act, renderHook, withFlagOverrides } from "tests/testSetup";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
@@ -20,7 +20,7 @@ const PROTECT_ID = "protect-prod";
 const RECOVER_UPSELL_URI = "ledgerlive://recover/protect-prod?redirectTo=upsell&source=lld-onboarding-24";
 const RECOVER_LANDING_PATH = `/recover/${PROTECT_ID}?redirectTo=upsell&source=lld-post-onboarding-banner`;
 
-const protectDesktopDefaultParams = DEFAULT_FEATURES.protectServicesDesktop.params!;
+const protectDesktopDefaultParams = FEATURE_FLAGS_DEFAULTS.protectServicesDesktop.params!;
 
 function featureFlagsWithRecover() {
   return withFlagOverrides({

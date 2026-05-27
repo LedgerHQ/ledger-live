@@ -1,7 +1,7 @@
 import { Step } from "jest-allure2-reporter/api";
 import { removeSpeculosAndDeregisterKnownSpeculos } from "../utils/speculosUtils";
 import { Account, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
-import { delay, isIos } from "../helpers/commonHelpers";
+import { isIos } from "../helpers/commonHelpers";
 import { device } from "detox";
 import ErrorPage from "./error.page";
 
@@ -68,9 +68,8 @@ export default class CommonPage {
 
   @Step("Tap on view details")
   async successViewDetails() {
-    await waitForElementById(this.validateSuccessScreenId);
+    await waitForElementById(this.validateSuccessScreenId, 10000);
     await waitForElementById(this.successViewDetailsButtonId);
-    await delay(1000);
     await tapById(this.successViewDetailsButtonId);
   }
 

@@ -17,11 +17,29 @@ describe("getStakes", () => {
   });
 
   const mockGetAccountByAddress = jest.spyOn(tzktApi, "getAccountByAddress");
-  const mockGetUnstakeRequestsFinalizable = jest.spyOn(tzktApi, "getUnstakeRequestsFinalizable");
+  const mockGetUnstakeRequests = jest.spyOn(tzktApi, "getUnstakeRequests");
+
+  const makeRequest = (overrides: Partial<{
+    id: number;
+    cycle: number;
+    bakerAddress: string;
+    stakerAddress: string;
+    firstTime: string;
+    status: "pending" | "finalizable" | "finalized";
+    actualAmount: number;
+  }>) => ({
+    id: overrides.id ?? 1,
+    cycle: overrides.cycle ?? 100,
+    baker: { address: overrides.bakerAddress ?? "tz1KqTpEZ7Yob7QbPE4Hy4Wo8fHG8LhKxZSx" },
+    staker: { address: overrides.stakerAddress ?? "tz1TzrmTBSuiVHV2VfMnGRMYvTEPCP42oSM8" },
+    firstTime: overrides.firstTime ?? "2026-05-01T00:00:00Z",
+    status: overrides.status ?? ("pending" as const),
+    actualAmount: overrides.actualAmount ?? 10,
+  });
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockGetUnstakeRequestsFinalizable.mockResolvedValue(0n);
+    mockGetUnstakeRequests.mockResolvedValue([]);
 
     coinConfig.setCoinConfig(() => ({
       status: { type: "active" },
@@ -95,12 +113,14 @@ describe("getStakes", () => {
           state: "active",
           asset: { type: "native" },
           amount: 30n,
+          actions: [],
         },
       ]);
     });
 
     it("should return unstaking position for non-delegated account with unstakedBalance > 0", async () => {
       const address = "tz1NoDelegateUnstaker";
+      const bakerAddress = "tz1BakerOfUnstake";
       mockGetAccountByAddress.mockResolvedValue({
         type: "user",
         address,
@@ -114,16 +134,22 @@ describe("getStakes", () => {
         numTransactions: 0,
         firstActivityTime: "2021-01-01T00:00:00Z",
       });
+      mockGetUnstakeRequests.mockResolvedValue([
+        makeRequest({ id: 42, bakerAddress, actualAmount: 10, firstTime: "2026-05-01T00:00:00Z" }),
+      ]);
 
       const result = await api.getStakes(address);
 
       expect(result.items).toEqual([
         {
-          uid: `unstaking-${address}`,
+          uid: `unstaking-42`,
           address,
+          delegate: bakerAddress,
           state: "deactivating",
+          createdAt: new Date("2026-05-01T00:00:00Z"),
           asset: { type: "native" },
           amount: 10n,
+          actions: [],
         },
       ]);
     });
@@ -163,6 +189,7 @@ describe("getStakes", () => {
           state: "active",
           asset: { type: "native" },
           amount: 5000000n,
+          actions: [],
         },
       ]);
     });
@@ -180,6 +207,7 @@ describe("getStakes", () => {
           state: "active",
           asset: { type: "native" },
           amount: 0n,
+          actions: [],
         },
       ]);
     });
@@ -197,6 +225,7 @@ describe("getStakes", () => {
           state: "active",
           asset: { type: "native" },
           amount: 70n,
+          actions: [],
         },
         {
           uid: `stake-${address}`,
@@ -205,12 +234,21 @@ describe("getStakes", () => {
           state: "active",
           asset: { type: "native" },
           amount: 30n,
+          actions: [],
         },
       ]);
     });
 
     it("should return delegation + unstaking when unstakedBalance > 0", async () => {
       mockGetAccountByAddress.mockResolvedValue(makeAccount({ balance: 100, unstakedBalance: 10 }));
+      mockGetUnstakeRequests.mockResolvedValue([
+        makeRequest({
+          id: 7,
+          bakerAddress: delegateAddress,
+          actualAmount: 10,
+          firstTime: "2026-05-01T00:00:00Z",
+        }),
+      ]);
 
       const result = await api.getStakes(address);
 
@@ -222,14 +260,17 @@ describe("getStakes", () => {
           state: "active",
           asset: { type: "native" },
           amount: 100n,
+          actions: [],
         },
         {
-          uid: `unstaking-${address}`,
+          uid: `unstaking-7`,
           address,
           delegate: delegateAddress,
           state: "deactivating",
+          createdAt: new Date("2026-05-01T00:00:00Z"),
           asset: { type: "native" },
           amount: 10n,
+          actions: [],
         },
       ]);
     });
@@ -238,6 +279,14 @@ describe("getStakes", () => {
       mockGetAccountByAddress.mockResolvedValue(
         makeAccount({ balance: 100, stakedBalance: 30, unstakedBalance: 10 }),
       );
+      mockGetUnstakeRequests.mockResolvedValue([
+        makeRequest({
+          id: 11,
+          bakerAddress: delegateAddress,
+          actualAmount: 10,
+          firstTime: "2026-05-02T00:00:00Z",
+        }),
+      ]);
 
       const result = await api.getStakes(address);
 
@@ -249,6 +298,7 @@ describe("getStakes", () => {
           state: "active",
           asset: { type: "native" },
           amount: 70n,
+          actions: [],
         },
         {
           uid: `stake-${address}`,
@@ -257,14 +307,17 @@ describe("getStakes", () => {
           state: "active",
           asset: { type: "native" },
           amount: 30n,
+          actions: [],
         },
         {
-          uid: `unstaking-${address}`,
+          uid: `unstaking-11`,
           address,
           delegate: delegateAddress,
           state: "deactivating",
+          createdAt: new Date("2026-05-02T00:00:00Z"),
           asset: { type: "native" },
           amount: 10n,
+          actions: [],
         },
       ]);
     });
@@ -290,7 +343,7 @@ describe("getStakes", () => {
       };
     }
 
-    it("splits unstakedBalance into deactivating and finalizable when finalizable > 0", async () => {
+    it("emits one position per unstake request mixing pending and finalizable", async () => {
       mockGetAccountByAddress.mockResolvedValue(
         makeAccount({
           balance: 1000,
@@ -298,7 +351,22 @@ describe("getStakes", () => {
           delegate: { alias: "B", address: delegateAddress, active: true },
         }),
       );
-      mockGetUnstakeRequestsFinalizable.mockResolvedValue(40n);
+      mockGetUnstakeRequests.mockResolvedValue([
+        makeRequest({
+          id: 1,
+          bakerAddress: delegateAddress,
+          actualAmount: 60,
+          firstTime: "2026-05-01T00:00:00Z",
+          status: "pending",
+        }),
+        makeRequest({
+          id: 2,
+          bakerAddress: delegateAddress,
+          actualAmount: 40,
+          firstTime: "2026-04-25T00:00:00Z",
+          status: "finalizable",
+        }),
+      ]);
 
       const result = await api.getStakes(address);
 
@@ -310,74 +378,121 @@ describe("getStakes", () => {
           state: "active",
           asset: { type: "native" },
           amount: 1000n,
+          actions: [],
         },
         {
-          uid: `unstaking-${address}`,
+          uid: `unstaking-1`,
           address,
           delegate: delegateAddress,
           state: "deactivating",
+          createdAt: new Date("2026-05-01T00:00:00Z"),
           asset: { type: "native" },
           amount: 60n,
+          actions: [],
         },
         {
-          uid: `finalizable-${address}`,
+          uid: `finalizable-2`,
           address,
           delegate: delegateAddress,
           state: "inactive",
+          createdAt: new Date("2026-04-25T00:00:00Z"),
           asset: { type: "native" },
           amount: 40n,
+          actions: [],
         },
       ]);
     });
 
-    it("emits only finalizable when the entire unstakedBalance is finalizable", async () => {
+    it("preserves the unstake-request baker, not the account's current delegate", async () => {
+      const previousBaker = "tz1PreviousBaker";
       mockGetAccountByAddress.mockResolvedValue(
-        makeAccount({ balance: 1000, unstakedBalance: 100 }),
+        makeAccount({ balance: 1000, unstakedBalance: 50 }),
       );
-      mockGetUnstakeRequestsFinalizable.mockResolvedValue(100n);
+      mockGetUnstakeRequests.mockResolvedValue([
+        makeRequest({
+          id: 99,
+          bakerAddress: previousBaker,
+          actualAmount: 50,
+          firstTime: "2026-05-03T00:00:00Z",
+        }),
+      ]);
 
       const result = await api.getStakes(address);
 
-      expect(result.items).toEqual([
-        {
-          uid: `finalizable-${address}`,
-          address,
-          state: "inactive",
-          asset: { type: "native" },
-          amount: 100n,
-        },
-      ]);
+      const unstaking = result.items.find(i => i.uid === "unstaking-99");
+      expect(unstaking?.delegate).toBe(previousBaker);
     });
 
-    it("clamps finalizable to unstakedBalance when the two endpoints momentarily disagree", async () => {
-      // A `finalize_unstake` landing between the two TzKT calls could make
-      // `finalizable` exceed the still-cached `unstakedBalance`. Prevent a negative
-      // `unstaking-*` amount.
+    it("skips requests with non-positive actualAmount", async () => {
       mockGetAccountByAddress.mockResolvedValue(
-        makeAccount({ balance: 1000, unstakedBalance: 30 }),
+        makeAccount({ balance: 1000, unstakedBalance: 10 }),
       );
-      mockGetUnstakeRequestsFinalizable.mockResolvedValue(50n);
+      mockGetUnstakeRequests.mockResolvedValue([
+        makeRequest({ id: 3, actualAmount: 0 }),
+        makeRequest({ id: 4, actualAmount: 10, firstTime: "2026-05-04T00:00:00Z" }),
+      ]);
 
       const result = await api.getStakes(address);
 
-      expect(result.items).toEqual([
-        {
-          uid: `finalizable-${address}`,
-          address,
-          state: "inactive",
-          asset: { type: "native" },
-          amount: 30n,
-        },
-      ]);
+      expect(result.items.filter(i => i.uid.startsWith("unstaking-"))).toHaveLength(1);
+      expect(result.items.find(i => i.uid === "unstaking-4")?.amount).toBe(10n);
     });
 
-    it("skips the finalizable endpoint entirely when unstakedBalance is 0", async () => {
+    it("skips the unstake-requests endpoint entirely when unstakedBalance is 0", async () => {
       mockGetAccountByAddress.mockResolvedValue(makeAccount({ balance: 1000, unstakedBalance: 0 }));
 
       const result = await api.getStakes(address);
 
       expect(result.items).toEqual([]);
-      expect(mockGetUnstakeRequestsFinalizable).not.toHaveBeenCalled();
+      expect(mockGetUnstakeRequests).not.toHaveBeenCalled();
+    });
+
+    it("skips unstake requests with an invalid firstTime", async () => {
+      mockGetAccountByAddress.mockResolvedValue(
+        makeAccount({ balance: 1000, unstakedBalance: 30 }),
+      );
+      mockGetUnstakeRequests.mockResolvedValue([
+        makeRequest({ id: 1, actualAmount: 10, firstTime: "not-a-date" }),
+        makeRequest({ id: 2, actualAmount: 20, firstTime: "2026-05-04T00:00:00Z" }),
+      ]);
+
+      const result = await api.getStakes(address);
+
+      expect(result.items.map(i => i.uid)).toEqual(["unstaking-2"]);
+    });
+
+    it("propagates rejection when getUnstakeRequests fails", async () => {
+      mockGetAccountByAddress.mockResolvedValue(makeAccount({ balance: 100, unstakedBalance: 10 }));
+      mockGetUnstakeRequests.mockRejectedValueOnce(new Error("tzkt 500"));
+
+      await expect(api.getStakes(address)).rejects.toThrow("tzkt 500");
+    });
+  });
+
+  describe("delegation amount clamping", () => {
+    const address = "tz1Reorg";
+    const delegateAddress = "tz1Baker";
+
+    it("clamps delegation amount to 0 when balance < stakedBalance (TzKT reorg edge)", async () => {
+      mockGetAccountByAddress.mockResolvedValue({
+        type: "user",
+        address,
+        publicKey: "edpk...",
+        balance: 50,
+        stakedBalance: 80,
+        revealed: true,
+        counter: 0,
+        delegate: { alias: "B", address: delegateAddress, active: true },
+        delegationLevel: 100,
+        delegationTime: "2026-01-01T00:00:00Z",
+        numTransactions: 0,
+        firstActivityTime: "2026-01-01T00:00:00Z",
+      });
+
+      const result = await api.getStakes(address);
+
+      const delegation = result.items.find(i => i.uid === `delegation-${address}`);
+      expect(delegation?.amount).toBe(0n);
     });
   });
 });

@@ -32,7 +32,7 @@ export default class OperationDetailsPage {
 
   @Step("Wait for operation details")
   async waitForOperationDetails() {
-    await waitForElementById(this.titleId);
+    await waitForElementById(this.titleId, 10000);
   }
 
   @Step("Check account details")

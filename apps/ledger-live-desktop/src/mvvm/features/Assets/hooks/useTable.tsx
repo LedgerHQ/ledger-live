@@ -9,7 +9,7 @@ import {
 } from "@ledgerhq/lumen-ui-react";
 import { BigNumber } from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { getValidCryptoIconSize } from "~/renderer/utils/cryptoIconSize";

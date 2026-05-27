@@ -9,8 +9,9 @@ import { createStructuredSelector } from "reselect";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import Track from "~/renderer/analytics/Track";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
-import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import type { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
 import { StepId, StepProps, St } from "./types";
 import { Account, Operation } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -103,7 +104,7 @@ const Body = ({ onClose, t, stepId, device, openModal, onChangeStepId, params }:
   const dispatch = useDispatch();
   const { account, validatorAddress, source = "Account Page" } = params;
 
-  const bridge = getAccountBridge(account, undefined);
+  const bridge = useAccountBridge<EvmTransaction>(account, undefined);
   const {
     transaction,
     setTransaction,
@@ -121,9 +122,9 @@ const Body = ({ onClose, t, stepId, device, openModal, onChangeStepId, params }:
     const transaction = bridge.updateTransaction(baseTransaction, {
       mode: "redelegate",
       valAddress: validatorAddress ?? "",
-      amount: sourceDelegation?.amount,
       recipient: account.freshAddress,
-    });
+      ...(sourceDelegation && { amount: sourceDelegation.amount }),
+    } as unknown as Partial<EvmTransaction>);
     return {
       account,
       parentAccount: undefined,

@@ -7,7 +7,7 @@ import { useTheme } from "@react-navigation/native";
 import StepHeader from "~/components/StepHeader";
 import ClaimRewardsSelectDevice from "~/screens/SelectDevice";
 import ClaimRewardsConnectDevice from "~/screens/ConnectDevice";
-import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import { getStackNavigatorConfig, bridgeSuspenseScreenLayout } from "~/navigation/navigatorConfig";
 import styles from "~/navigation/styles";
 import { ScreenName } from "~/const";
 
@@ -46,6 +46,7 @@ const Claim = () => {
         ...stackNavigationConfig,
         gestureEnabled: Platform.OS === "ios",
       }}
+      screenLayout={bridgeSuspenseScreenLayout}
     >
       <Stack.Screen
         name={ScreenName.MultiversXClaimRewardsValidator}

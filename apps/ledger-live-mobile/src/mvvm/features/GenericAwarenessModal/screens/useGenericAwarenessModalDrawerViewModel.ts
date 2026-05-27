@@ -1,48 +1,59 @@
 import { useCallback } from "react";
+import { useIsFocused } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useDispatch, useSelector } from "~/context/hooks";
+import { setDismissedContentCard } from "~/actions/settings";
 import {
-  closeGenericAwarenessModal,
-  genericAwarenessModalSelector,
+  closeGenericAwarenessModalDrawer,
+  markGenericAwarenessModalContentCardAsRead,
+  openGenericAwarenessModalDrawer,
+  selectGenericAwarenessModalCampaignId,
+  selectGenericAwarenessModalContentCards,
+  selectCurrentGenericAwarenessModalContentCard,
+  selectIsGenericAwarenessModalOpen,
 } from "~/reducers/genericAwarenessModal";
-import {
-  carouselMockData,
-  carouselWithPrimaryLinksMockData,
-  carouselWithoutPrimaryLinksMockData,
-  featureIntroMockData,
-} from "../mockData";
-
-function getMockData(campaignId?: string | null) {
-  switch (campaignId) {
-    case "carousel-no-links":
-      return carouselWithoutPrimaryLinksMockData;
-    case "carousel-all-links":
-      return carouselWithPrimaryLinksMockData;
-    case "carousel-mixed-links":
-    case "carousel":
-      return carouselMockData;
-    case "feature-intro":
-    case "featureIntro":
-    default:
-      return featureIntroMockData;
-  }
-}
+import { useGenericAwarenessModalLogic } from "./useGenericAwarenessModalLogic";
 
 export function useGenericAwarenessModalDrawerViewModel() {
   const dispatch = useDispatch();
+  const isPortfolioFocused = useIsFocused();
   const { bottom: bottomInset } = useSafeAreaInsets();
-  const { isOpen, campaignId } = useSelector(genericAwarenessModalSelector);
+  const genericAwarenessModalFlag = useFeature("lwmGenericAwarenessModal");
+  const isOpen = useSelector(selectIsGenericAwarenessModalOpen);
+  const campaignId = useSelector(selectGenericAwarenessModalCampaignId);
+  const cards = useSelector(selectGenericAwarenessModalContentCards);
+  const data = useSelector(selectCurrentGenericAwarenessModalContentCard);
 
-  const data = getMockData(campaignId);
+  const open = useCallback(
+    (campaignId: string) => {
+      dispatch(openGenericAwarenessModalDrawer({ campaignId }));
+    },
+    [dispatch],
+  );
+
+  const { shouldMarkAsRead } = useGenericAwarenessModalLogic(
+    { campaignId, cards },
+    {
+      enabled: genericAwarenessModalFlag?.enabled ?? false,
+      isFocused: isPortfolioFocused,
+      isOpen,
+      open,
+    },
+  );
 
   const onClose = useCallback(() => {
-    dispatch(closeGenericAwarenessModal());
-  }, [dispatch]);
+    if (data && shouldMarkAsRead) {
+      dispatch(setDismissedContentCard({ [data.id]: Date.now() }));
+      dispatch(markGenericAwarenessModalContentCardAsRead({ id: data.id }));
+    }
+
+    dispatch(closeGenericAwarenessModalDrawer());
+  }, [data, dispatch, shouldMarkAsRead]);
 
   return {
     isOpen,
     data,
-    id: campaignId ?? "APP_START",
     bottomInset: bottomInset + 20,
     onClose,
   };

@@ -1,6 +1,6 @@
 import { useSelector } from "LLD/hooks/redux";
 import { useNavigate } from "react-router";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@features/platform-feature-flags";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { lastSeenDeviceSelector, lastOnboardedDeviceSelector } from "~/renderer/reducers/settings";
 import { DeviceModelId } from "@ledgerhq/types-devices";

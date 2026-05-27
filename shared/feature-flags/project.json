@@ -1,4 +1,5 @@
 {
+  "name": "@shared/feature-flags",
   "targets": {
     "build": {
       "executor": "nx:noop"

@@ -5,7 +5,7 @@ import { useTranslation } from "~/context/Locale";
 import { Platform } from "react-native";
 import StepHeader from "~/components/StepHeader";
 import { ScreenName } from "~/const";
-import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import { getStackNavigatorConfig, bridgeSuspenseScreenLayout } from "~/navigation/navigatorConfig";
 import ConnectDevice from "~/screens/ConnectDevice";
 import SelectDevice from "~/screens/SelectDevice";
 import VoteAmount from "./VoteAmount";
@@ -29,6 +29,7 @@ function RevokeFlow() {
         ...stackNavigationConfig,
         gestureEnabled: Platform.OS === "ios",
       }}
+      screenLayout={bridgeSuspenseScreenLayout}
     >
       <Stack.Screen
         name={ScreenName.CeloRevokeSummary}

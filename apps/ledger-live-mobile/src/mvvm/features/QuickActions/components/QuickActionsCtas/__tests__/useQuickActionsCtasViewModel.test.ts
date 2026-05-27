@@ -2,9 +2,23 @@ import { renderHook } from "@tests/test-renderer";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { setSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
+import type { Account } from "@ledgerhq/types-live";
 import type { State } from "~/reducers/types";
 import { useQuickActionsCtasViewModel } from "../useQuickActionsCtasViewModel";
 import { QUICK_ACTIONS_TEST_IDS } from "../../../testIds";
+
+jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => {
+  const {
+    defaultIsAccountEmpty,
+  } = jest.requireActual("@ledgerhq/live-common/bridge/defaultBridgeExtensions");
+  return {
+    useAccountBridge: jest.fn(),
+    useAccountBridgeOrNull: jest.fn(),
+    useAccountBridgeMany: jest.fn((accounts: Account[]) =>
+      accounts.map(() => ({ isAccountEmpty: defaultIsAccountEmpty })),
+    ),
+  };
+});
 
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),

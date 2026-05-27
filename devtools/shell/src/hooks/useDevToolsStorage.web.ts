@@ -1,14 +1,15 @@
 import { useEffect, useRef, useState } from "react";
+import type { ToolId } from "@devtools/registry";
 import { STORAGE_KEY, serialize, deserialize, addToRecent } from "../utils/devToolsStorageUtils";
 
 export function useDevToolsStorage(
-  activeToolId: string | undefined,
-  setActiveToolId: (id: string) => void,
-): { recentToolIds: string[] } {
-  const [recentToolIds, setRecentToolIds] = useState<string[]>([]);
+  activeToolId: ToolId | undefined,
+  setActiveToolId: (id: ToolId) => void,
+): { recentToolIds: ToolId[] } {
+  const [recentToolIds, setRecentToolIds] = useState<ToolId[]>([]);
   // undefined = effect has never run yet (initial mount), null/string = seen at least once
-  const prevActiveToolIdRef = useRef<string | null | undefined>(undefined);
-  const recentToolIdsRef = useRef<string[]>(recentToolIds);
+  const prevActiveToolIdRef = useRef<ToolId | null | undefined>(undefined);
+  const recentToolIdsRef = useRef<ToolId[]>(recentToolIds);
   recentToolIdsRef.current = recentToolIds;
 
   useEffect(() => {

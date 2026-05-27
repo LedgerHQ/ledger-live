@@ -13,13 +13,18 @@ type Props = {
 const useAnalyticsOptInPromptLogicVariantA = ({ entryPoint }: Props) => {
   const variant = ABTestingVariants.variantA;
   const dispatch = useDispatch();
-  const { continueOnboarding, flow, shouldWeTrack, navigation, clickOnLearnMore } =
-    useAnalyticsOptInPromptLogic({ entryPoint, variant });
+  const {
+    continueOnboarding,
+    flow,
+    shouldWeTrack,
+    navigation,
+    clickOnLearnMore,
+    handleAcceptAll,
+    handleRefuseAll,
+  } = useAnalyticsOptInPromptLogic({ entryPoint, variant });
 
   const clickOnAcceptAll = () => {
-    dispatch(setAnalytics(true));
-    dispatch(setPersonalizedRecommendations(true));
-    continueOnboarding();
+    handleAcceptAll();
     track(
       "button_clicked",
       {
@@ -32,9 +37,7 @@ const useAnalyticsOptInPromptLogicVariantA = ({ entryPoint }: Props) => {
     );
   };
   const clickOnRefuseAll = () => {
-    dispatch(setAnalytics(false));
-    dispatch(setPersonalizedRecommendations(false));
-    continueOnboarding();
+    handleRefuseAll();
     track(
       "button_clicked",
       {

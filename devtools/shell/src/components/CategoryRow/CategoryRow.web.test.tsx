@@ -2,7 +2,7 @@ import userEvent from "@testing-library/user-event";
 import { render, screen } from "jest/render";
 import { makeTool } from "jest/fixtures";
 import { CategoryRow } from "./CategoryRow.web";
-import { Category } from "../../types";
+import { Category } from "@devtools/registry";
 import { Settings } from "@ledgerhq/lumen-ui-react/symbols";
 
 const tools = [

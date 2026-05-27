@@ -99,6 +99,28 @@ describe("HumanCommandOutput", () => {
     expect(createdSpinners).toHaveLength(1);
   });
 
+  it("emits a plain greppable `hash: <txHash>` line to stdout on broadcasted", async () => {
+    const { installOutputCapture } = await import("./shared/ui");
+    const writes: string[] = [];
+    const restore = installOutputCapture({
+      stdout: chunk => {
+        writes.push(chunk);
+      },
+    });
+    try {
+      const out = createCommandOutput("human", {
+        command: "send",
+        network: "ethereum:main",
+        account: "js:2:ethereum:0x123",
+      });
+      out.spin("Broadcasting…");
+      out.sendEvent({ type: "broadcasted", txHash: "0xdeadbeef" });
+    } finally {
+      restore();
+    }
+    expect(writes.join("")).toContain("hash: 0xdeadbeef");
+  });
+
   it("token() writes the formatted token info to stdout", async () => {
     const { installOutputCapture } = await import("./shared/ui");
     const { USDT_TOKEN_INFO } = await import("./test/helpers/cal-fixtures");

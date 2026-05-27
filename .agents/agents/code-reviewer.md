@@ -15,10 +15,10 @@ Pay special attention to:
 - `.agents/skills/testing/SKILL.md` — Jest mock patterns for test files (avoids flaky tests and mock conflicts)
 - `.agents/skills/coin-modules/SKILL.md` — Module layout, Alpaca path, and import rules for `libs/coin-modules/`
 - `.agents/skills/client-ids/SKILL.md` — Privacy rules for sensitive identifiers (DeviceId, UserId, DatadogId)
-- `.cursor/rules/typescript.mdc` — Canonical TypeScript review guidance; use for typing, error-handling, and general TS code quality rules
-- `.cursor/rules/react-general.mdc` — Canonical React review guidance; use for component patterns, hooks, rendering, and React architecture rules
-- `.cursor/rules/coin-families-contract.mdc` — Coin-families contract: no coin-specific branches (`if (family === "evm")` etc.) in generic UI; extend the families contract and implement in `families/<family>/` instead
-- `.cursor/rules/team-split-convention.mdc` — Team-split convention: multi-team files should be split into `[foo]/index.ts` and `[foo]/team-[team]/*.ts`; suggest this when a touched file clearly involves many teams
+- `.agents/skills/typescript/SKILL.md` — Canonical TypeScript review guidance; use for typing, error-handling, and general TS code quality rules
+- `.agents/skills/react-general/SKILL.md` — Canonical React review guidance; use for component patterns, hooks, rendering, and React architecture rules
+- `.agents/skills/coin-families-contract/SKILL.md` — Coin-families contract: no coin-specific branches (`if (family === "evm")` etc.) in generic UI; extend the families contract and implement in `families/<family>/` instead
+- `.agents/skills/codeownership/SKILL.md` — Team-split convention: multi-team files should be split into `[foo]/index.ts` and `[foo]/team-[team]/*.ts`; suggest this when a touched file clearly involves many teams
 
 ## Review Scope
 
@@ -38,8 +38,8 @@ By default, review unstaged changes from `git diff`. The user may specify differ
 - **New dependency in `package.json`**: must not duplicate an existing capability; peer compatibility must be verified; link to [bundlephobia](https://bundlephobia.com) with size impact.
 - **`pnpm-lock.yaml` diff**: Flag unrelated version bumps, mass reformatting, or entries not explained by the PR's `package.json` changes. The lockfile diff should be entirely explainable by the stated dependency changes.
 - **Translations**: Only edit `apps/ledger-live-desktop/static/i18n/en/app.json` (desktop) or `apps/ledger-live-mobile/src/locales/en/common.json` (mobile). No other locale files.
-- **`domain/` packages**: no `@ledgerhq/` scope, every `package.json` must have `"private": true`, no subdirectories other than `entity/` and `api/`. For the full conventions, also read `domain/entity/README.md`, `domain/api/README.md`, and `.cursor/rules/domain-packages.mdc`.
-- **`shared/` packages**: no `@ledgerhq/` scope, `"private": true`, no dependencies on `domain/` packages. For the full conventions, also read `shared/README.md` and `.cursor/rules/shared-packages.mdc`.
+- **`domain/` packages**: no `@ledgerhq/` scope, every `package.json` must have `"private": true`, no subdirectories other than `entity/` and `api/`. For the full conventions, also read `domain/entity/README.md` and `domain/api/README.md`.
+- **`shared/` packages**: no `@ledgerhq/` scope, `"private": true`, no dependencies on `domain/` packages. For the full conventions, also read `shared/README.md`.
 - Sonar issues: complexity, duplication, security hotspots
 - Missing integration tests for new features under `src/mvvm/` (required by the mvvm-architecture skill)
 - Lumen UI compliance: verify new UI in `src/mvvm/` uses design-system components

@@ -68,7 +68,7 @@ export type ACREUiHooks = {
     options?: TransactionOptions;
     onSuccess: (signedOperation: SignedOperation) => void;
     onError: (error: Error) => void;
-  }) => void;
+  }) => void | Promise<void>;
   "custom.acre.transactionBroadcast"?: (
     account: AccountLike,
     parentAccount: Account | undefined,

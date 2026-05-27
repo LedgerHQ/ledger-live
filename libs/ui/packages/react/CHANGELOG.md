@@ -1,5 +1,17 @@
 # @ledgerhq/react-ui
 
+## 0.52.0
+
+### Minor Changes
+
+- [#17390](https://github.com/LedgerHQ/ledger-live/pull/17390) [`04aa5f8`](https://github.com/LedgerHQ/ledger-live/commit/04aa5f8d9a8a2916a29b70a26f3802612c357410) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Bump crypto-icons with latest lumen bump
+
+## 0.52.0-next.0
+
+### Minor Changes
+
+- [#17390](https://github.com/LedgerHQ/ledger-live/pull/17390) [`04aa5f8`](https://github.com/LedgerHQ/ledger-live/commit/04aa5f8d9a8a2916a29b70a26f3802612c357410) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Bump crypto-icons with latest lumen bump
+
 ## 0.51.0
 
 ### Minor Changes

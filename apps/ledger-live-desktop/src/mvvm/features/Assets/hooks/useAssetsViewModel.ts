@@ -24,7 +24,7 @@ import {
 import { buildAssetsPagePath } from "../utils/buildAssetsPagePath";
 import { padItems } from "../utils/assetTableHelpers";
 import { dadaIdToMarketId } from "@ledgerhq/live-common/market/utils/index";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { track } from "~/renderer/analytics/segment";
 import {
   ASSETS_TRACKING_PAGE_NAME,

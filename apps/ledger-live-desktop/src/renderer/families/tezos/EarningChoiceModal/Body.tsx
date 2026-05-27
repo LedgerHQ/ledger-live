@@ -2,6 +2,7 @@ import React, { useCallback } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { useDispatch } from "LLD/hooks/redux";
+import { useTezosStakingInfo } from "@ledgerhq/live-common/families/tezos/react";
 import { TezosAccount } from "@ledgerhq/live-common/families/tezos/types";
 import { TokenAccount } from "@ledgerhq/types-live";
 import { closeModal, openModal } from "~/renderer/actions/modals";
@@ -79,6 +80,7 @@ const Body = ({ onClose, params }: Props) => {
   const dispatch = useDispatch();
   const stakingUrl = useLocalizedUrl(urls.stakingTezos);
   const { account, parentAccount, source } = params;
+  const { isDelegated } = useTezosStakingInfo(account);
 
   const onDelegate = useCallback(() => {
     dispatch(closeModal(MODAL_NAME));
@@ -88,8 +90,15 @@ const Body = ({ onClose, params }: Props) => {
   const onStake = useCallback(() => {
     if (account.type !== "Account") return;
     dispatch(closeModal(MODAL_NAME));
-    dispatch(openModal("MODAL_TEZOS_STAKE", { account, parentAccount, source }));
-  }, [dispatch, account, parentAccount, source]);
+    dispatch(
+      openModal("MODAL_TEZOS_STAKE", {
+        account,
+        parentAccount,
+        source,
+        skipDelegation: isDelegated,
+      }),
+    );
+  }, [dispatch, account, parentAccount, source, isDelegated]);
 
   return (
     <ModalBody

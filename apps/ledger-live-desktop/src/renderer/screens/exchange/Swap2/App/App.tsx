@@ -1,5 +1,5 @@
 import { useSwapLiveConfig } from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/index";
+import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import {
   useRemoteLiveAppManifest,
   useRemoteLiveAppContext,
@@ -20,7 +20,7 @@ const Root = styled.div`
 // in case the FF is failing to load the manifest ID
 // "swap-live-app-demo-3" points to production vercel URL for the swap live app
 const DEFAULT_MANIFEST_ID =
-  process.env.DEFAULT_SWAP_MANIFEST_ID || DEFAULT_FEATURES.ptxSwapLiveApp.params?.manifest_id;
+  process.env.DEFAULT_SWAP_MANIFEST_ID || FEATURE_FLAGS_DEFAULTS.ptxSwapLiveApp.params?.manifest_id;
 
 export function SwapApp() {
   const swapLiveEnabledFlag = useSwapLiveConfig();

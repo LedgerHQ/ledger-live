@@ -1,6 +1,6 @@
 import path from "path";
 import { spawn } from "child_process";
-import type { Result as GetAddressResult } from "@ledgerhq/ledger-wallet-framework/derivation";
+import type { GetAddressResult } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { sanitizeError, sleep } from "./index";
 
 export const LEDGER_LIVE_CLI_BIN = path.resolve(__dirname, "../../../../apps/cli/bin/index.js");

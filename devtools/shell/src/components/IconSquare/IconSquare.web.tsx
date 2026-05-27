@@ -1,8 +1,8 @@
-import { Category } from "../../types";
+import { Category, ValueOf } from "@devtools/registry";
 import { CATEGORY_ICONS } from "../../categoryConfig";
 
 interface IconSquareProps {
-  category: Category;
+  category: ValueOf<typeof Category>;
   variant?: "default" | "inverted";
 }
 

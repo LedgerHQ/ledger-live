@@ -94,8 +94,9 @@ const StepValidator = ({
   const onBakerClick = useCallback(
     (baker: Baker) => {
       if (!transaction) return;
+      const tx = transaction;
       onChangeTransaction(
-        bridge.updateTransaction(transaction, {
+        bridge.updateTransaction(tx, {
           recipient: baker.address,
         }),
       );

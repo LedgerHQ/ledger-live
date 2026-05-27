@@ -235,7 +235,11 @@ export function useListHeaderComponents({
           ]
         : []),
       ...(!empty && AccountBodyHeaderRendered
-        ? [<SectionContainer key="AccountBody">{AccountBodyHeaderRendered}</SectionContainer>]
+        ? [
+            <SectionContainer key="AccountBody">
+              <React.Suspense fallback={null}>{AccountBodyHeaderRendered}</React.Suspense>
+            </SectionContainer>,
+          ]
         : []),
       ...(!empty && account.type === "Account" && account.subAccounts
         ? [

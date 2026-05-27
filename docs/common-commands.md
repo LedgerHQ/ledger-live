@@ -20,11 +20,11 @@ pnpm dev:llm:android          # Start mobile on Android
 ## Building
 
 ```bash
-pnpm build:lld                # Build desktop (builds deps first via turbo)
+pnpm build:lld                # Build desktop (builds deps first via Nx)
 pnpm build:llm:deps           # Build all mobile dependencies
 pnpm build:libs               # Build all libs
 pnpm build:llc                # Build ledger-live-common only
-pnpm turbo build --filter=@ledgerhq/<lib-name>  # Build a specific lib
+nx run @ledgerhq/<lib-name>:build               # Build a specific lib
 ```
 
 ## Linting & Typechecking

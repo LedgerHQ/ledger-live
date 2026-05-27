@@ -10,6 +10,7 @@ import Text from "~/renderer/components/Text";
 import DropDownSelector, { DropDownItem } from "~/renderer/components/DropDownSelector";
 import UserEdit from "~/renderer/icons/UserEdit";
 import ArrowDown from "~/renderer/icons/ArrowDown";
+import Plus from "~/renderer/icons/Plus";
 import StopCircle from "~/renderer/icons/StopCircle";
 import { TezosAccount } from "@ledgerhq/live-common/families/tezos/types";
 import { IconsLegacy } from "@ledgerhq/react-ui";
@@ -30,11 +31,12 @@ const Item = styled(DropDownItem)`
 `;
 type Props = {
   account: TezosAccount;
+  stakingEnabled: boolean;
 };
-const ContextMenu = ({ account }: Props) => {
+const ContextMenu = ({ account, stakingEnabled }: Props) => {
   const dispatch = useDispatch();
   const delegation = useDelegation(account);
-  const { isStaked } = useTezosStakingInfo(account);
+  const { isDelegated, isStaked } = useTezosStakingInfo(account);
   const theme = useTheme();
   const receiveShouldWarnDelegation = delegation
     ? delegation.receiveShouldWarnDelegation
@@ -54,6 +56,17 @@ const ContextMenu = ({ account }: Props) => {
           }),
         ),
     },
+    ...(stakingEnabled && isDelegated && !isStaked
+      ? [
+          {
+            key: "stake",
+            label: <Trans i18nKey="tezos.delegation.contextMenu.stake" />,
+            icon: <Plus size={16} />,
+            onClick: () =>
+              dispatch(openModal("MODAL_TEZOS_STAKE", { account, skipDelegation: true })),
+          },
+        ]
+      : []),
     {
       key: "redelegate",
       label: <Trans i18nKey="delegation.contextMenu.redelegate" />,

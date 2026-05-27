@@ -2,12 +2,12 @@ import React from "react";
 import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
 import { StyleSheet } from "react-native";
 import FastImage from "react-native-fast-image";
-import type { CarouselSlide } from "../types";
+import type { GenericAwarenessModalCarouselSlide } from "@ledgerhq/live-common/genericAwarenessModal";
 
 const TITLE_NUMBER_OF_LINES = 2;
 const SUBTITLE_NUMBER_OF_LINES = 3;
 
-type CarouselSlideItemProps = CarouselSlide &
+type CarouselSlideItemProps = GenericAwarenessModalCarouselSlide &
   Readonly<{
     isFirstSlide: boolean;
     titleLineCount: number;
@@ -27,7 +27,12 @@ export function CarouselSlideItem({
   onSubtitleTextLayout,
 }: CarouselSlideItemProps) {
   const titleMinHeight = titleLineCount > 1 ? "s80" : "s40";
-  const subtitleMinHeight = subtitleLineCount > 2 ? "s64" : subtitleLineCount > 1 ? "s40" : "s20";
+  let subtitleMinHeight: "s20" | "s40" | "s64" = "s20";
+  if (subtitleLineCount > 2) {
+    subtitleMinHeight = "s64";
+  } else if (subtitleLineCount > 1) {
+    subtitleMinHeight = "s40";
+  }
 
   return (
     <Box

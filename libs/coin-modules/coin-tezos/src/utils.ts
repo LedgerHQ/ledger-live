@@ -13,6 +13,9 @@ import type { TezosOperationMode } from "./types/model";
  */
 export const DUST_MARGIN_MUTEZ = 500;
 
+// Tezos rejects `empty_implicit_delegated_contract`; stake-max leaves this buffer.
+export const STAKE_USE_ALL_RESERVE_MUTEZ = 10_000n;
+
 /**
  * Suggested fee returned by Taquito for a minimal amount pre-estimation (mutez)
  * Used as a stable fallback for send-max when RPC estimation is unavailable.

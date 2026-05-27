@@ -17,6 +17,7 @@ import { ScreenName } from "~/const";
 import { PortfolioNoSignerContent } from "../../components/PortfolioEmptySection/PortfolioNoSignerContent";
 import { AnalyticsConsentDrawer } from "LLM/features/AnalyticsConsentDrawer";
 import useReadOnlyPortfolioViewModel from "./useReadOnlyPortfolioViewModel";
+import { GenericAwarenessModalDrawer } from "LLM/features/GenericAwarenessModal/screens/GenericAwarenessModalDrawer";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<WalletTabNavigatorStackParamList, ScreenName.Portfolio>
@@ -82,6 +83,7 @@ function ReadOnlyPortfolioScreen({ navigation }: NavigationProps) {
         testID="PortfolioReadOnlyItems"
       />
       <AnalyticsConsentDrawer />
+      <GenericAwarenessModalDrawer />
     </>
   );
 }

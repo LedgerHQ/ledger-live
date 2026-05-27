@@ -69,7 +69,38 @@ describe("reduceShieldedSyncResult", () => {
     });
   });
 
-  it("should merge new shielded operations and update balance for incoming tx, using initialAccount as base balance", () => {
+  it("should never set balance or spendableBalance on the accountUpdate when processing shielded transactions", () => {
+    const incomingTx: ShieldedTransaction = {
+      id: "tx1",
+      hex: "00",
+      blockHeight: 100,
+      blockHash: "hash1",
+      timestamp: 1700000000,
+      fee: new BigNumber(100),
+      decryptedData: {
+        orchard_outputs: [{ amount: new BigNumber(50000), memo: "", transfer_type: "incoming" }],
+        sapling_outputs: [],
+      },
+    };
+    const accumulated = {
+      processedOperations: [] as ShieldedTransaction[],
+      accountUpdate: { operations: [] as BtcOperation[] } as Partial<ZcashAccount>,
+    };
+    const result: ShieldedSyncResult = {
+      transactions: [incomingTx],
+      lastProcessedBlock: 100,
+      processedBlocks: 1,
+      remainingBlocks: 0,
+    };
+    const info = createMockInfo({ balance: new BigNumber(100000) });
+
+    const output = reduceShieldedSyncResult(accumulated, result, info, "acc-1");
+
+    expect(output.accountUpdate).not.toHaveProperty("balance");
+    expect(output.accountUpdate).not.toHaveProperty("spendableBalance");
+  });
+
+  it("should merge new shielded operations and credit orchard balance for an incoming tx", () => {
     const initialBalance = new BigNumber(100000);
     const txAmount = new BigNumber(50000);
 
@@ -113,7 +144,7 @@ describe("reduceShieldedSyncResult", () => {
     expect(output.accountUpdate.operations).toHaveLength(1);
   });
 
-  it("should merge new shielded operations and update balance for incoming tx, using accumulated balance as base balance", () => {
+  it("should merge new shielded operations and credit orchard balance when accumulated holds a transparent balance", () => {
     const accumulatedBalance = new BigNumber(1000);
     const txAmount = new BigNumber(50000);
 
@@ -160,10 +191,10 @@ describe("reduceShieldedSyncResult", () => {
     expect(output.accountUpdate.operations).toHaveLength(1);
   });
 
-  it("should deduct fee for outgoing tx but not for incoming tx", () => {
+  it("should reflect outgoing and incoming notes as a net orchard delta without touching the transparent balance", () => {
     const initialBalance = new BigNumber(100000);
     const outgoingAmount = new BigNumber(20000);
-    const outgoingFee = new BigNumber(500);
+    const incomingAmount = new BigNumber(5000);
 
     const outgoingTx: ShieldedTransaction = {
       id: "tx-out",
@@ -171,7 +202,7 @@ describe("reduceShieldedSyncResult", () => {
       blockHeight: 100,
       blockHash: "hash-out",
       timestamp: 1700000000,
-      fee: outgoingFee,
+      fee: new BigNumber(500),
       decryptedData: {
         orchard_outputs: [{ amount: outgoingAmount, memo: "", transfer_type: "outgoing" }],
         sapling_outputs: [],
@@ -185,7 +216,7 @@ describe("reduceShieldedSyncResult", () => {
       timestamp: 1700000001,
       fee: new BigNumber(300),
       decryptedData: {
-        orchard_outputs: [{ amount: new BigNumber(5000), memo: "", transfer_type: "incoming" }],
+        orchard_outputs: [{ amount: incomingAmount, memo: "", transfer_type: "incoming" }],
         sapling_outputs: [],
       },
     };
@@ -207,12 +238,14 @@ describe("reduceShieldedSyncResult", () => {
 
     const output = reduceShieldedSyncResult(accumulated, result, info, "acc-1");
 
-    expect(output.accountUpdate.balance).toEqual(
-      initialBalance.minus(outgoingAmount).minus(outgoingFee).plus(5000),
+    expect(output.accountUpdate.privateInfo?.orchardBalance).toEqual(
+      incomingAmount.minus(outgoingAmount),
     );
+    expect(output.accountUpdate).not.toHaveProperty("balance");
+    expect(output.accountUpdate).not.toHaveProperty("spendableBalance");
   });
 
-  it("should not double-count fees across chunks", () => {
+  it("should accumulate orchard delta across chunks without touching the transparent balance", () => {
     const initialBalance = new BigNumber(10000);
 
     const outgoingTx: ShieldedTransaction = {
@@ -254,7 +287,6 @@ describe("reduceShieldedSyncResult", () => {
 
     const info = createMockInfo({ balance: initialBalance });
 
-    // Chunk 1
     const chunk1 = reduceShieldedSyncResult(
       {
         processedOperations: [],
@@ -269,9 +301,9 @@ describe("reduceShieldedSyncResult", () => {
       info,
       "acc-1",
     );
-    expect(chunk1.accountUpdate.balance).toEqual(new BigNumber(10900));
+    expect(chunk1.accountUpdate.privateInfo?.orchardBalance).toEqual(new BigNumber(1000));
+    expect(chunk1.accountUpdate).not.toHaveProperty("balance");
 
-    // Chunk 2
     const chunk2 = reduceShieldedSyncResult(
       chunk1,
       {
@@ -283,7 +315,8 @@ describe("reduceShieldedSyncResult", () => {
       info,
       "acc-1",
     );
-    expect(chunk2.accountUpdate.balance).toEqual(new BigNumber(11400));
+    expect(chunk2.accountUpdate.privateInfo?.orchardBalance).toEqual(new BigNumber(1500));
+    expect(chunk2.accountUpdate).not.toHaveProperty("balance");
   });
 
   it("should populate privateInfo in accountUpdate", () => {
@@ -376,8 +409,7 @@ describe("reduceShieldedSyncResult", () => {
     expect(output.accountUpdate.privateInfo?.lastProcessedBlock).toBe(100);
   });
 
-  it("should NOT deduct fee when net balance is positive despite first note being outgoing (LIVE-27918)", () => {
-    const initialBalance = new BigNumber(100000);
+  it("should reflect net incoming notes as a positive orchard delta even when the first note is outgoing (LIVE-27918)", () => {
     const tx: ShieldedTransaction = {
       id: "tx-net-in",
       hex: "00",
@@ -396,14 +428,14 @@ describe("reduceShieldedSyncResult", () => {
     const output = reduceShieldedSyncResult(
       { processedOperations: [], accountUpdate: { operations: [] } as Partial<ZcashAccount> },
       { transactions: [tx], lastProcessedBlock: 100, processedBlocks: 1, remainingBlocks: 0 },
-      createMockInfo({ balance: initialBalance }),
+      createMockInfo({ balance: new BigNumber(100000) }),
       "acc-1",
     );
     expect(output.accountUpdate.privateInfo?.orchardBalance).toEqual(new BigNumber(800));
-    expect(output.accountUpdate.balance).toEqual(initialBalance.plus(800));
+    expect(output.accountUpdate).not.toHaveProperty("balance");
   });
 
-  it("should compute balance delta correctly for a tx with both orchard and sapling notes (LIVE-27917)", () => {
+  it("should compute private deltas for both orchard and sapling notes (LIVE-27917)", () => {
     const tx: ShieldedTransaction = {
       id: "tx-mixed",
       hex: "00",
@@ -424,11 +456,10 @@ describe("reduceShieldedSyncResult", () => {
     );
     expect(output.accountUpdate.privateInfo?.orchardBalance).toEqual(new BigNumber(5000));
     expect(output.accountUpdate.privateInfo?.saplingBalance).toEqual(new BigNumber(2000));
-    expect(output.accountUpdate.balance).toEqual(new BigNumber(7000));
+    expect(output.accountUpdate).not.toHaveProperty("balance");
   });
 
-  it("should correctly compute balance delta and NOT deduct fee for a transparent→shielded (shielding) tx", () => {
-    const initialBalance = new BigNumber(50000);
+  it("should credit orchard balance for a transparent→shielded (shielding) tx without touching the transparent balance", () => {
     const tx: ShieldedTransaction = {
       id: "tx-shielding",
       hex: "00",
@@ -444,15 +475,14 @@ describe("reduceShieldedSyncResult", () => {
     const output = reduceShieldedSyncResult(
       { processedOperations: [], accountUpdate: { operations: [] } as Partial<ZcashAccount> },
       { transactions: [tx], lastProcessedBlock: 100, processedBlocks: 1, remainingBlocks: 0 },
-      createMockInfo({ balance: initialBalance }),
+      createMockInfo({ balance: new BigNumber(50000) }),
       "acc-1",
     );
     expect(output.accountUpdate.privateInfo?.orchardBalance).toEqual(new BigNumber(9000));
-    expect(output.accountUpdate.balance).toEqual(initialBalance.plus(9000));
+    expect(output.accountUpdate).not.toHaveProperty("balance");
   });
 
-  it("should correctly compute balance delta and deduct fee for a shielded→transparent (deshielding) tx", () => {
-    const initialBalance = new BigNumber(50000);
+  it("should debit orchard balance for a shielded→transparent (deshielding) tx without touching the transparent balance", () => {
     const tx: ShieldedTransaction = {
       id: "tx-deshielding",
       hex: "00",
@@ -468,15 +498,14 @@ describe("reduceShieldedSyncResult", () => {
     const output = reduceShieldedSyncResult(
       { processedOperations: [], accountUpdate: { operations: [] } as Partial<ZcashAccount> },
       { transactions: [tx], lastProcessedBlock: 100, processedBlocks: 1, remainingBlocks: 0 },
-      createMockInfo({ balance: initialBalance }),
+      createMockInfo({ balance: new BigNumber(50000) }),
       "acc-1",
     );
     expect(output.accountUpdate.privateInfo?.orchardBalance).toEqual(new BigNumber(-8000));
-    expect(output.accountUpdate.balance).toEqual(initialBalance.minus(8000).minus(500));
+    expect(output.accountUpdate).not.toHaveProperty("balance");
   });
 
-  it("should correctly compute balance delta and deduct fee for a shielded→shielded (Orchard→Orchard) outgoing tx", () => {
-    const initialBalance = new BigNumber(100000);
+  it("should debit orchard balance for a shielded→shielded (Orchard→Orchard) outgoing tx without touching the transparent balance", () => {
     const tx: ShieldedTransaction = {
       id: "tx-shielded-out",
       hex: "00",
@@ -495,11 +524,11 @@ describe("reduceShieldedSyncResult", () => {
     const output = reduceShieldedSyncResult(
       { processedOperations: [], accountUpdate: { operations: [] } as Partial<ZcashAccount> },
       { transactions: [tx], lastProcessedBlock: 100, processedBlocks: 1, remainingBlocks: 0 },
-      createMockInfo({ balance: initialBalance }),
+      createMockInfo({ balance: new BigNumber(100000) }),
       "acc-1",
     );
     expect(output.accountUpdate.privateInfo?.orchardBalance).toEqual(new BigNumber(-5000));
-    expect(output.accountUpdate.balance).toEqual(initialBalance.minus(5000).minus(200));
+    expect(output.accountUpdate).not.toHaveProperty("balance");
   });
 
   it("should filter out already processed operations by blockHash", () => {

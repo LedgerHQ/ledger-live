@@ -32,7 +32,10 @@ export interface SyncMiddlewareConfig<State = unknown> {
 
   /**
    * Selector to get analytics consent from the global state
-   * This avoids duplicating analytics consent in the identities state
+   * This avoids duplicating analytics consent in the identities state.
+   * The app is responsible for combining all consent gates (e.g. the
+   * `analyticsOptIn` remote feature flag AND the user's stored opt-in)
+   * so the middleware only pushes device IDs when this returns true.
    */
   getAnalyticsConsent: (state: State) => boolean;
 

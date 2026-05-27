@@ -74,10 +74,10 @@ pnpm watch:es:ljs
 pnpm watch:es:coin
 
 # watch specific lib
-pnpm turbo run watch:es --filter="./libs/ledgerjs/packages/hw-app-btc"
+nx run @ledgerhq/hw-app-btc:watch:es
 
 # watch specific coin integration
-pnpm turbo run watch:es --filter="./libs/coin-modules/coin-bitcoin"
+nx run @ledgerhq/coin-bitcoin:watch:es
 ```
 
 ## Build

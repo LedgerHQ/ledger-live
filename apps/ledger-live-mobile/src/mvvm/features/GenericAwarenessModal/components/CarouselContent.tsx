@@ -3,13 +3,13 @@ import { Slides } from "@ledgerhq/native-ui";
 import { StyleSheet } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import Animated from "react-native-reanimated";
-import type { CarouselSlide } from "../types";
+import type { GenericAwarenessModalCarouselSlide } from "@ledgerhq/live-common/genericAwarenessModal";
 import { CarouselFooterButton } from "./CarouselFooterButton";
 import { CarouselProgressIndicator } from "./CarouselProgressIndicator";
 import { CarouselSlideItem } from "./CarouselSlideItem";
 
 type CarouselContentProps = Readonly<{
-  slides: CarouselSlide[];
+  slides: GenericAwarenessModalCarouselSlide[];
   onClose: () => void;
 }>;
 

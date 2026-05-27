@@ -1,4 +1,4 @@
-import { Category } from "../types";
+import { Category } from "@devtools/registry";
 import { filterToolsByQuery, findCategoryForToolId } from "../utils/toolsUtils";
 import { makeTool } from "jest/fixtures";
 
@@ -78,7 +78,9 @@ describe("findCategoryForToolId", () => {
   });
 
   it("returns the correct category for a known tool id", () => {
-    expect(findCategoryForToolId(categories, "network-inspector")).toBe(Category.CONNECTIVITY);
+    expect(findCategoryForToolId(categories, "network-inspector")).toBe(
+      Category.CONNECTIVITY,
+    );
     expect(findCategoryForToolId(categories, "feature-flags")).toBe(Category.CONFIGURATION);
   });
 

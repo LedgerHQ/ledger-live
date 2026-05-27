@@ -129,7 +129,7 @@ const row = (
 });
 
 function mockBridgeMergePatch(): void {
-  jest.requireMock("../../../../../bridge/impl").getAccountBridge.mockReturnValue({
+  jest.requireMock("../../../../../bridge/impl").getAccountBridge.mockResolvedValue({
     updateTransaction: (tx: Transaction, patch: Partial<Transaction>) => ({ ...tx, ...patch }),
   });
 }
@@ -228,7 +228,7 @@ describe("useCoinControlScreenViewModelCore", () => {
     const status = createStatus();
     const updateTransaction = jest.fn((fn: (tx: Transaction) => Transaction) => fn(transaction));
     const getAccountBridge = jest.requireMock("../../../../../bridge/impl").getAccountBridge;
-    getAccountBridge.mockReturnValue({
+    getAccountBridge.mockResolvedValue({
       updateTransaction: (tx: Transaction, patch: Partial<Transaction>) => ({ ...tx, ...patch }),
     });
 
@@ -266,7 +266,7 @@ describe("useCoinControlScreenViewModelCore", () => {
     mockGetCoinControlConfig.mockReturnValue(makeTestCoinControlConfig(() => null));
 
     const getAccountBridge = jest.requireMock("../../../../../bridge/impl").getAccountBridge;
-    getAccountBridge.mockReturnValue({
+    getAccountBridge.mockResolvedValue({
       updateTransaction: (tx: Transaction, patch: Partial<Transaction>) => ({ ...tx, ...patch }),
     });
     const account = createAccount();

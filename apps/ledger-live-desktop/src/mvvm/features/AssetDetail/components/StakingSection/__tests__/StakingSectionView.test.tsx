@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "tests/testSetup";
-import { StakingSectionView } from "../StakingSectionView";
+import { STAKING_SECTION_TEST_ID, StakingSectionView } from "../StakingSectionView";
 import type { StakingSectionViewModelResult } from "../useStakingSectionViewModel";
 
 const baseViewModel: StakingSectionViewModelResult = {
@@ -23,7 +23,8 @@ describe("StakingSectionView", () => {
   it("renders nothing when state is hidden", () => {
     render(<StakingSectionView {...baseViewModel} />);
 
-    expect(screen.queryByTestId("asset-detail-staking-section")).not.toBeInTheDocument();
+    expect(screen.queryByTestId(STAKING_SECTION_TEST_ID)).not.toBeInTheDocument();
+    expect(screen.queryByTestId("asset-detail-earn-banner")).not.toBeInTheDocument();
   });
 
   it("renders the earn banner when state is banner", () => {
@@ -34,6 +35,7 @@ describe("StakingSectionView", () => {
       />,
     );
 
+    expect(screen.getByTestId(STAKING_SECTION_TEST_ID)).toBeInTheDocument();
     expect(screen.getByTestId("asset-detail-earn-banner")).toBeVisible();
     expect(screen.getByText("Earn up to 12.0% APY")).toBeVisible();
     expect(screen.getByText("Hold and earn with this asset")).toBeVisible();
@@ -51,10 +53,21 @@ describe("StakingSectionView", () => {
       />,
     );
 
-    expect(screen.getByTestId("asset-detail-staking-section")).toBeVisible();
     expect(screen.getByTestId("asset-detail-available-balance")).toBeVisible();
     expect(screen.getByTestId("asset-detail-earn-deposit")).toBeVisible();
     expect(screen.getByText("$0.00")).toBeVisible();
     expect(screen.getByText("$200.00")).toBeVisible();
+  });
+
+  it("spans two columns for the earn banner when PnL is visible", () => {
+    render(
+      <StakingSectionView
+        {...baseViewModel}
+        pnlVisible
+        state={{ type: "banner", label: "Earn up to 12.0% APY" }}
+      />,
+    );
+
+    expect(screen.getByTestId("asset-detail-earn-banner")).toHaveClass("flex-[2]");
   });
 });

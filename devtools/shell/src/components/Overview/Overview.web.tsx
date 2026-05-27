@@ -1,14 +1,14 @@
 import { Star, Clock } from "@ledgerhq/lumen-ui-react/symbols";
-import { Category } from "../../types";
-import type { Tool } from "../../types";
+import { Category } from "@devtools/registry";
+import type { Tool, ToolId, ValueOf } from "@devtools/registry";
 import { SectionHeader } from "../SectionHeader/SectionHeader.web";
 import { CategoryCard } from "../CategoryCard/CategoryCard.web";
 import { ToolCard } from "../ToolCard/ToolCard.web";
 
 interface OverviewProps {
-  categories: Array<{ category: Category; tools: Tool[] }>;
-  recentToolIds: string[];
-  onSelect: (id: string) => void;
+  categories: Array<{ category: ValueOf<typeof Category>; tools: Tool[] }>;
+  recentToolIds: ToolId[];
+  onSelect: (id: ToolId) => void;
   "data-testid"?: string;
 }
 

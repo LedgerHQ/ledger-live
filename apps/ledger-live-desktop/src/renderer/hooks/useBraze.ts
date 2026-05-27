@@ -17,6 +17,7 @@ import {
   Platform,
   PortfolioContentCard,
 } from "~/types/dynamicContent";
+import { processGenericAwarenessModalBrazeCards } from "@ledgerhq/live-common/genericAwarenessModal";
 import {
   setActionCards,
   setDesktopCards,
@@ -24,6 +25,10 @@ import {
   setPortfolioCards,
   setBottomPortfolioCards,
 } from "../actions/dynamicContent";
+import {
+  filterDismissedGenericAwarenessModalContentCards,
+  setGenericAwarenessModalContentCards,
+} from "../reducers/genericAwarenessModalSlice";
 import {
   clearDismissedContentCards,
   purgeExpiredAnonymousUserNotifications,
@@ -155,7 +160,7 @@ export function useBraze() {
 
     braze.subscribeToContentCardsUpdates(cards => {
       const desktopCards = getDesktopCards(cards);
-      const dismissedCardIds = Object.keys(contentCardsDissmissed);
+      const dismissedCardIds = Object.keys(contentCardsDissmissed ?? {});
       const filteredDesktopCards = desktopCards.filter(
         card => !dismissedCardIds.includes(String(card.id)),
       );
@@ -186,11 +191,34 @@ export function useBraze() {
         .map(card => mapAsNotificationContentCard(card as ClassicCard))
         .sort(compareCards);
 
+      const genericAwarenessModalBrazeCards = filterByPage(
+        filteredDesktopCards,
+        LocationContentCard.GenericAwarenessModal,
+      )
+        .filter(card => {
+          const campaignId = card.extras?.campaignId;
+          return (
+            campaignId === undefined ||
+            campaignId === "" ||
+            !dismissedCardIds.includes(String(campaignId))
+          );
+        })
+        .map(card => ({
+          id: String(card.id),
+          extras: card.extras,
+        }));
+
+      const genericAwarenessModalContentCards = filterDismissedGenericAwarenessModalContentCards(
+        processGenericAwarenessModalBrazeCards(genericAwarenessModalBrazeCards),
+        dismissedCardIds,
+      );
+
       dispatch(setDesktopCards(filteredDesktopCards));
       dispatch(setPortfolioCards(portfolioCards));
       dispatch(setBottomPortfolioCards(bottomPortfolioCards));
       dispatch(setActionCards(actionCards));
       dispatch(setNotificationsCards(notificationsCards));
+      dispatch(setGenericAwarenessModalContentCards(genericAwarenessModalContentCards));
     });
 
     braze.automaticallyShowInAppMessages();

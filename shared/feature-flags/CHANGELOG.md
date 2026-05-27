@@ -1,5 +1,25 @@
 # @shared/feature-flags
 
+## 0.7.0
+
+### Minor Changes
+
+- [#17106](https://github.com/LedgerHQ/ledger-live/pull/17106) [`f39fede`](https://github.com/LedgerHQ/ledger-live/commit/f39fede0a6eb4e427a15219e5a3c8fbc3302815f) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Add mobile push notification prompt after DApp transaction completion
+
+- [#17096](https://github.com/LedgerHQ/ledger-live/pull/17096) [`abdb866`](https://github.com/LedgerHQ/ledger-live/commit/abdb8662fba3784399a747ece63a11cc4f6e23bb) Thanks [@ishaba](https://github.com/ishaba)! - Add GraphQL read-side transport for Sui (balances, stakes, lastBlock, checkpoint) behind the `suiGraphqlTransport` feature flag.
+
+- [#17320](https://github.com/LedgerHQ/ledger-live/pull/17320) [`3cd7abb`](https://github.com/LedgerHQ/ledger-live/commit/3cd7abb4d6f6072bad62073108d797faf23f9e8c) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add PnL feature flag param to wallet40 feature flags
+
+## 0.7.0-next.0
+
+### Minor Changes
+
+- [#17106](https://github.com/LedgerHQ/ledger-live/pull/17106) [`f39fede`](https://github.com/LedgerHQ/ledger-live/commit/f39fede0a6eb4e427a15219e5a3c8fbc3302815f) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Add mobile push notification prompt after DApp transaction completion
+
+- [#17096](https://github.com/LedgerHQ/ledger-live/pull/17096) [`abdb866`](https://github.com/LedgerHQ/ledger-live/commit/abdb8662fba3784399a747ece63a11cc4f6e23bb) Thanks [@ishaba](https://github.com/ishaba)! - Add GraphQL read-side transport for Sui (balances, stakes, lastBlock, checkpoint) behind the `suiGraphqlTransport` feature flag.
+
+- [#17320](https://github.com/LedgerHQ/ledger-live/pull/17320) [`3cd7abb`](https://github.com/LedgerHQ/ledger-live/commit/3cd7abb4d6f6072bad62073108d797faf23f9e8c) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add PnL feature flag param to wallet40 feature flags
+
 ## 0.6.0
 
 ### Minor Changes

@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import { Infinite } from "@ledgerhq/lumen-ui-react/symbols";
-import FeatureToggle from "@ledgerhq/live-common/featureFlags/FeatureToggle";
+import { FeatureToggle } from "@features/platform-feature-flags";
 import {
   ListItem,
   ListItemLeading,

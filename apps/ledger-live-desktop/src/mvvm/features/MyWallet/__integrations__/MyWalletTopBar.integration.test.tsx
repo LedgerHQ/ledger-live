@@ -2,6 +2,7 @@ import React from "react";
 import { render, screen, waitFor } from "tests/testSetup";
 import { useNavigate } from "react-router";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { track } from "~/renderer/analytics/segment";
 import { ContextMenu } from "../components/ContextMenu";
 import { MY_WALLET_TRACKING_BUTTON, MY_WALLET_TRACKING_PAGE_NAME } from "../constants";
@@ -36,6 +37,11 @@ describe("MyWallet ContextMenu", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockedUseNavigate.mockReturnValue(mockNavigate);
+    currentRouteNameRef.current = "/";
+  });
+
+  afterEach(() => {
+    currentRouteNameRef.current = null;
   });
 
   it("should render My Wallet trigger button", () => {

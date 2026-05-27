@@ -135,6 +135,22 @@ export type APIOperation =
       type: ""; // this is to express fact we have others and we need to always filter out others
     });
 
+/**
+ * Unstake request as returned by https://api.tzkt.io/#operation/Staking_GetUnstakeRequests.
+ * `firstTime`: ISO timestamp the request was opened; the 4-day unlock window starts here.
+ */
+export type APIUnstakeRequest = {
+  id: number;
+  cycle: number;
+  baker: { address: string; alias?: string };
+  staker: { address: string };
+  firstTime: string;
+  status: "pending" | "finalizable" | "finalized";
+  /** Net amount actually returnable (mutez), accounting for slashing/rounding. */
+  actualAmount: number;
+  requestedAmount?: number;
+};
+
 export type APIBlock = {
   cycle: number;
   level: number;

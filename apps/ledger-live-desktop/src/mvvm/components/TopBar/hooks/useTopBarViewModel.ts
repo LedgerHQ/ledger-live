@@ -1,5 +1,5 @@
 import { useLocation } from "react-router";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/useWalletFeaturesConfig";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { TopBarSlot } from "../types";
 import { useActivityIndicator } from "./useActivityIndicator";
 import { useDiscreetMode } from "./useDiscreetMode";

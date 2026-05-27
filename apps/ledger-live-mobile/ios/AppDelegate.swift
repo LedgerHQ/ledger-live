@@ -23,6 +23,8 @@ import ExpoModulesCore
 class AppDelegate: RCTAppDelegate, UNUserNotificationCenterDelegate {
 
   private var launchedFromPush = false
+  var overlayBlurView: UIVisualEffectView?
+  var overlayLogoView: UIImageView?
 
   override func application(
     _ application: UIApplication,

@@ -9,6 +9,11 @@ import {
   Spot,
 } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "react-i18next";
+import TrackPage from "~/renderer/analytics/TrackPage";
+import {
+  HISTORY_EXPORT_DIALOG_SUCCESS_TRACKING_PAGE,
+  HISTORY_EXPORT_DIALOG_TRACKING_PAGE_NAME,
+} from "../constants";
 
 const VARIANTS = {
   success: {
@@ -29,21 +34,28 @@ const VARIANTS = {
 
 type Props = Readonly<{
   variant: keyof typeof VARIANTS;
-  onAction?: () => void;
+  onButtonClick?: () => void;
 }>;
 
-export function ExportResultScene({ variant, onAction }: Props) {
+export function ExportResultScene({ variant, onButtonClick }: Props) {
   const { t } = useTranslation();
   const config = VARIANTS[variant];
 
   const button = (
-    <Button appearance="base" size="lg" isFull onClick={onAction}>
+    <Button appearance="base" size="lg" isFull onClick={onButtonClick}>
       {t(config.buttonKey)}
     </Button>
   );
 
   return (
     <DialogContent>
+      {variant === "success" ? (
+        <TrackPage
+          category={HISTORY_EXPORT_DIALOG_TRACKING_PAGE_NAME}
+          name={HISTORY_EXPORT_DIALOG_SUCCESS_TRACKING_PAGE.name}
+          refreshSource={false}
+        />
+      ) : null}
       <DialogHeader density="compact" className="relative" />
       <DialogBody>
         <div className="flex flex-col items-center gap-24">
@@ -62,7 +74,9 @@ export function ExportResultScene({ variant, onAction }: Props) {
           </div>
         </div>
       </DialogBody>
-      <DialogFooter>{onAction ? button : <DialogClose asChild>{button}</DialogClose>}</DialogFooter>
+      <DialogFooter>
+        {variant === "success" ? <DialogClose asChild>{button}</DialogClose> : button}
+      </DialogFooter>
     </DialogContent>
   );
 }

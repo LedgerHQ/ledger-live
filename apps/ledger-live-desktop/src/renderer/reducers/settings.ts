@@ -44,6 +44,7 @@ import {
   needsConsentRenewal,
   resolveAnalyticsOptInParams,
 } from "@ledgerhq/live-common/analyticsConsent/index";
+import { selectFeature } from "@shared/feature-flags";
 
 /* Initial state */
 
@@ -789,6 +790,9 @@ export const trackingEnabledSelector = (state: State) => {
 
   return s.shareAnalytics || s.sharePersonalizedRecommandations;
 };
+export const canPushDeviceIdsSelector = (state: State) =>
+  !!selectFeature(state, "analyticsOptIn")?.enabled && trackingEnabledSelector(state);
+
 export const selectedTimeRangeSelector = (state: State) => state.settings.selectedTimeRange;
 export const hasInstalledAppsSelector = (state: State) => state.settings.hasInstalledApps;
 export const USBTroubleshootingIndexSelector = (state: State) =>

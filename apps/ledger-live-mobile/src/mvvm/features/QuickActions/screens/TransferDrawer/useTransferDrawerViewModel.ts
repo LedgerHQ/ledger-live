@@ -2,6 +2,7 @@ import { useCallback, useMemo } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useSelector } from "~/context/hooks";
 import { QrCode, ArrowUp, Bank } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { NavigatorName, ScreenName } from "~/const";
@@ -30,7 +31,13 @@ interface TransferDrawerViewModel {
   bottomInset: number;
 }
 
-export const useTransferDrawerViewModel = (): TransferDrawerViewModel => {
+interface UseTransferDrawerViewModelParams {
+  currency?: CryptoOrTokenCurrency;
+}
+
+export const useTransferDrawerViewModel = ({
+  currency,
+}: UseTransferDrawerViewModelParams = {}): TransferDrawerViewModel => {
   const { t } = useTranslation();
   const { bottom: bottomInset } = useSafeAreaInsets();
   const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
@@ -46,7 +53,7 @@ export const useTransferDrawerViewModel = (): TransferDrawerViewModel => {
     fromMenu: true,
   });
 
-  const { showNoahMenu: showNoahOption } = useReceiveNoahEntry();
+  const { showNoahMenu: showNoahOption } = useReceiveNoahEntry({ currency });
 
   const transferCopyFlag = useFeature("llmTransferButtonCopyVariant");
   const language = useSelector(languageSelector);

@@ -1,6 +1,6 @@
 import React from "react";
 import { LedgerRecoverSubscriptionStateInProgressEnum } from "~/types/recoverSubscriptionState";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { Box, Icons } from "@ledgerhq/react-ui";
 import useTheme from "~/renderer/hooks/useTheme";
 import styled, { keyframes, css } from "styled-components";

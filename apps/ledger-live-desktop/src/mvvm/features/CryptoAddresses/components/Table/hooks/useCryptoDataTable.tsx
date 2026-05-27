@@ -5,7 +5,7 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
 import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useCalculateCountervalueCallback } from "~/renderer/actions/general";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import type { ColumnDef, Row, SortingState, Updater } from "@tanstack/react-table";
@@ -15,6 +15,7 @@ import { computeAggregatedAccountsData } from "@ledgerhq/asset-aggregation/index
 import { computeBalanceSortCountervalueByAccountId } from "../../../utils/aggregateAccounts";
 import {
   AccountAddressCell,
+  AccountAssetsCell,
   AccountNameCell,
   AccountRowActionCell,
   AccountValueCell,
@@ -22,6 +23,7 @@ import {
   AggregatedAccountValueCell,
 } from "../Cell";
 import { getCryptoAccountAddress } from "LLD/features/CryptoAddresses/utils/getCryptoAccountAddress";
+import { getAccountAssetsCurrencies } from "LLD/features/CryptoAddresses/utils/getAccountAssetsCurrencies";
 import { useSyncPhase } from "LLD/hooks/useSyncPhase";
 
 type UseCryptoDataTableParams = {
@@ -101,6 +103,19 @@ export function useCryptoDataTable({
         ),
         meta: { align: "end" },
       },
+      ...(shouldDisplayAggregatedAssets
+        ? [
+            {
+              id: "assets",
+              header: t("cryptoAddresses.table.columns.asset"),
+              enableSorting: false,
+              cell: ({ row }: { row: Row<AccountLike> }) => (
+                <AccountAssetsCell currencies={getAccountAssetsCurrencies(row.original)} />
+              ),
+              meta: { align: "end" },
+            } satisfies ColumnDef<AccountLike>,
+          ]
+        : []),
       {
         id: "balance",
         accessorKey: "balance",
@@ -109,12 +124,9 @@ export function useCryptoDataTable({
         header: t("cryptoAddresses.table.columns.value"),
         cell: ({ row }) => {
           const entry = aggregatedDataByAccountId?.get(row.original.id);
-          const assetsCount =
-            (entry?.subAccountsCount ?? 0) + (row.original.balance.isZero() ? 0 : 1);
           return shouldDisplayAggregatedAssets && aggregatedDataByAccountId ? (
             <AggregatedAccountValueCell
               aggregatedCountervalue={entry?.countervalue ?? new BigNumber(0)}
-              assetsCount={assetsCount}
             />
           ) : (
             <AccountValueCell account={row.original} />

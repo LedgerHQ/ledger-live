@@ -60,7 +60,7 @@ const ModalsLayer = ({ modalsState }: { modalsState: ModalsState }) => {
     >
       {state => (
         <BackDrop ref={nodeRef} state={state}>
-          {first || null}
+          <React.Suspense fallback={null}>{first || null}</React.Suspense>
         </BackDrop>
       )}
     </Transition>

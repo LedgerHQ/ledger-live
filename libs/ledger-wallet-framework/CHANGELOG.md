@@ -1,5 +1,63 @@
 # @ledgerhq/ledger-wallet-framework
 
+## 1.5.0
+
+### Minor Changes
+
+- [#17377](https://github.com/LedgerHQ/ledger-live/pull/17377) [`3b746ee`](https://github.com/LedgerHQ/ledger-live/commit/3b746eea7f3f2be633947e8e9112987457c864a5) Thanks [@ypolishchuk-ledger](https://github.com/ypolishchuk-ledger)! - Fix shouldRetainPendingOperation dropping optimistic operations across digit boundaries
+
+  The previous implementation compared `transactionSequenceNumber` values with `<=`, which
+  coerces BigNumber operands to strings via `valueOf()` and compares them lexicographically.
+  Whenever the optimistic op's sequence crossed a digit boundary (e.g. 99 → 100), the
+  string compare (`"100" < "99"`) erroneously dropped the fresh pending op, leaving the
+  OperationDetails drawer empty after a successful send (seen on Solana E2E).
+  Switched to `BigNumber.prototype.lte(...)` so the comparison is numeric.
+
+- [#17411](https://github.com/LedgerHQ/ledger-live/pull/17411) [`912e673`](https://github.com/LedgerHQ/ledger-live/commit/912e673368baa0342316c882653768d570b71262) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Use `BigNumber` comparison methods (`.gt` / `.lt`) instead of `>` / `<` operators.
+  Similar to #17377.
+
+- [#17174](https://github.com/LedgerHQ/ledger-live/pull/17174) [`6e832a0`](https://github.com/LedgerHQ/ledger-live/commit/6e832a044bd7abb704f0a45ea782e55c1b25487c) Thanks [@amaslakov](https://github.com/amaslakov)! - Surface Tezos staking positions on the synced account: the generic alpaca `getAccountShape` now branches on a new opt-in `BridgeApi.usesStakingPositions` flag and emits per-position entries (with `delegation-*` / `stake-*` / `unstaking-*` / `finalizable-*` uid prefixes from the Paris upgrade) on `account.stakingPositions` instead of the EVM-shaped `stakingResources` aggregate. Amounts are exposed as `BigNumber` to match the Account-side convention used by `balance`, `spendableBalance`, and `stakingResources`. Adds `coin-tezos` `assignTo/FromAccountRaw` hooks to round-trip these positions through persistence.
+
+- [#17089](https://github.com/LedgerHQ/ledger-live/pull/17089) [`08762c2`](https://github.com/LedgerHQ/ledger-live/commit/08762c286e38136293108c19efa72ae8fbd1286b) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Switch Concordium derivation to canonical 6-segment path `m/44'/<coin>'/0'/0'/0'/<account>'` and split mainnet/testnet coin types (`919`/`1`, the BIP-44 generic testnet). Replaces the previous non-canonical `44'/919'/404'/404'/<account>'` override and aligns with the upstream SDK and device firmware.
+
+### Patch Changes
+
+- Updated dependencies [[`f39fede`](https://github.com/LedgerHQ/ledger-live/commit/f39fede0a6eb4e427a15219e5a3c8fbc3302815f), [`b812751`](https://github.com/LedgerHQ/ledger-live/commit/b8127519474e63c543b1b937a2d3b11ad162a78e), [`1368afd`](https://github.com/LedgerHQ/ledger-live/commit/1368afdc7218a68c803672e6e412f8f9f6e62142), [`abdb866`](https://github.com/LedgerHQ/ledger-live/commit/abdb8662fba3784399a747ece63a11cc4f6e23bb), [`5177d5e`](https://github.com/LedgerHQ/ledger-live/commit/5177d5e6311047cc7485a66dbcb8971c9a8c0a5c), [`3cd7abb`](https://github.com/LedgerHQ/ledger-live/commit/3cd7abb4d6f6072bad62073108d797faf23f9e8c), [`c6170d7`](https://github.com/LedgerHQ/ledger-live/commit/c6170d7b61bc37ef80f8d3e5e608611f9b8ecd67), [`2257d43`](https://github.com/LedgerHQ/ledger-live/commit/2257d43630933127549300f39ade1e2b01f94cb8), [`08762c2`](https://github.com/LedgerHQ/ledger-live/commit/08762c286e38136293108c19efa72ae8fbd1286b)]:
+  - @ledgerhq/types-live@6.108.0
+  - @ledgerhq/cryptoassets@13.48.0
+  - @ledgerhq/live-env@2.35.0
+  - @ledgerhq/live-currency-format@0.8.3
+  - @ledgerhq/live-network@2.6.1
+
+## 1.5.0-next.0
+
+### Minor Changes
+
+- [#17377](https://github.com/LedgerHQ/ledger-live/pull/17377) [`3b746ee`](https://github.com/LedgerHQ/ledger-live/commit/3b746eea7f3f2be633947e8e9112987457c864a5) Thanks [@ypolishchuk-ledger](https://github.com/ypolishchuk-ledger)! - Fix shouldRetainPendingOperation dropping optimistic operations across digit boundaries
+
+  The previous implementation compared `transactionSequenceNumber` values with `<=`, which
+  coerces BigNumber operands to strings via `valueOf()` and compares them lexicographically.
+  Whenever the optimistic op's sequence crossed a digit boundary (e.g. 99 → 100), the
+  string compare (`"100" < "99"`) erroneously dropped the fresh pending op, leaving the
+  OperationDetails drawer empty after a successful send (seen on Solana E2E).
+  Switched to `BigNumber.prototype.lte(...)` so the comparison is numeric.
+
+- [#17411](https://github.com/LedgerHQ/ledger-live/pull/17411) [`912e673`](https://github.com/LedgerHQ/ledger-live/commit/912e673368baa0342316c882653768d570b71262) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Use `BigNumber` comparison methods (`.gt` / `.lt`) instead of `>` / `<` operators.
+  Similar to #17377.
+
+- [#17174](https://github.com/LedgerHQ/ledger-live/pull/17174) [`6e832a0`](https://github.com/LedgerHQ/ledger-live/commit/6e832a044bd7abb704f0a45ea782e55c1b25487c) Thanks [@amaslakov](https://github.com/amaslakov)! - Surface Tezos staking positions on the synced account: the generic alpaca `getAccountShape` now branches on a new opt-in `BridgeApi.usesStakingPositions` flag and emits per-position entries (with `delegation-*` / `stake-*` / `unstaking-*` / `finalizable-*` uid prefixes from the Paris upgrade) on `account.stakingPositions` instead of the EVM-shaped `stakingResources` aggregate. Amounts are exposed as `BigNumber` to match the Account-side convention used by `balance`, `spendableBalance`, and `stakingResources`. Adds `coin-tezos` `assignTo/FromAccountRaw` hooks to round-trip these positions through persistence.
+
+- [#17089](https://github.com/LedgerHQ/ledger-live/pull/17089) [`08762c2`](https://github.com/LedgerHQ/ledger-live/commit/08762c286e38136293108c19efa72ae8fbd1286b) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Switch Concordium derivation to canonical 6-segment path `m/44'/<coin>'/0'/0'/0'/<account>'` and split mainnet/testnet coin types (`919`/`1`, the BIP-44 generic testnet). Replaces the previous non-canonical `44'/919'/404'/404'/<account>'` override and aligns with the upstream SDK and device firmware.
+
+### Patch Changes
+
+- Updated dependencies [[`f39fede`](https://github.com/LedgerHQ/ledger-live/commit/f39fede0a6eb4e427a15219e5a3c8fbc3302815f), [`b812751`](https://github.com/LedgerHQ/ledger-live/commit/b8127519474e63c543b1b937a2d3b11ad162a78e), [`1368afd`](https://github.com/LedgerHQ/ledger-live/commit/1368afdc7218a68c803672e6e412f8f9f6e62142), [`abdb866`](https://github.com/LedgerHQ/ledger-live/commit/abdb8662fba3784399a747ece63a11cc4f6e23bb), [`5177d5e`](https://github.com/LedgerHQ/ledger-live/commit/5177d5e6311047cc7485a66dbcb8971c9a8c0a5c), [`3cd7abb`](https://github.com/LedgerHQ/ledger-live/commit/3cd7abb4d6f6072bad62073108d797faf23f9e8c), [`c6170d7`](https://github.com/LedgerHQ/ledger-live/commit/c6170d7b61bc37ef80f8d3e5e608611f9b8ecd67), [`2257d43`](https://github.com/LedgerHQ/ledger-live/commit/2257d43630933127549300f39ade1e2b01f94cb8), [`08762c2`](https://github.com/LedgerHQ/ledger-live/commit/08762c286e38136293108c19efa72ae8fbd1286b)]:
+  - @ledgerhq/types-live@6.108.0-next.0
+  - @ledgerhq/cryptoassets@13.48.0-next.0
+  - @ledgerhq/live-env@2.35.0-next.0
+  - @ledgerhq/live-currency-format@0.8.3-next.0
+  - @ledgerhq/live-network@2.6.1-next.0
+
 ## 1.4.0
 
 ### Minor Changes

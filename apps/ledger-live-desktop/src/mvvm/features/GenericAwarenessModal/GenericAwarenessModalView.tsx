@@ -1,25 +1,58 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useSelector } from "LLD/hooks/redux";
 import { Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
-import type { GenericAwarenessModalViewProps } from "./useGenericAwarenessModalViewModel";
-import useGenericAwarenessModalFeatureIntroViewModel from "./useGenericAwarenessModalFeatureIntroViewModel";
-import useGenericAwarenessModalCarouselViewModel from "./useGenericAwarenessModalCarouselViewModel";
+import { selectGenericAwarenessModalHasStoredContentCards } from "~/renderer/reducers/genericAwarenessModalSlice";
+import {
+  GenericAwarenessModalLayout,
+  type GenericAwarenessModalContentCard,
+} from "@ledgerhq/live-common/genericAwarenessModal";
+import type { GenericAwarenessModalViewProps } from "./hooks/useGenericAwarenessModalViewModel";
+import useGenericAwarenessModalFeatureIntroViewModel, {
+  type GenericAwarenessModalFeatureIntroViewModel,
+} from "./hooks/useGenericAwarenessModalFeatureIntroViewModel";
+import useGenericAwarenessModalCarouselViewModel, {
+  type GenericAwarenessModalCarouselViewModel,
+} from "./hooks/useGenericAwarenessModalCarouselViewModel";
 import CarouselContent from "./components/CarouselContent";
 import FeatureIntroContent from "./components/FeatureIntroContent";
+
+function renderModalContent(
+  contentCard: GenericAwarenessModalContentCard,
+  carouselViewModel: GenericAwarenessModalCarouselViewModel,
+  featureIntroViewModel: GenericAwarenessModalFeatureIntroViewModel,
+) {
+  switch (contentCard.layout) {
+    case GenericAwarenessModalLayout.Carousel:
+      return <CarouselContent {...carouselViewModel} />;
+    case GenericAwarenessModalLayout.FeatureIntro:
+      return <FeatureIntroContent {...featureIntroViewModel} />;
+    default:
+      return null;
+  }
+}
 
 const GenericAwarenessModalView = ({
   isOpen,
   onClose,
-  campaignId,
-  contentVariant,
+  contentCard,
 }: GenericAwarenessModalViewProps) => {
-  const featureIntroViewModel = useGenericAwarenessModalFeatureIntroViewModel();
-  const carouselViewModel = useGenericAwarenessModalCarouselViewModel();
+  const hasStoredContentCards = useSelector(selectGenericAwarenessModalHasStoredContentCards);
+  const carouselViewModel = useGenericAwarenessModalCarouselViewModel(contentCard);
+  const featureIntroViewModel = useGenericAwarenessModalFeatureIntroViewModel(contentCard);
 
   const handleOpenChange = (open: boolean) => {
     if (!open) onClose();
   };
 
-  const isCarousel = contentVariant === "carousel";
+  useEffect(() => {
+    if (isOpen && !contentCard && hasStoredContentCards) {
+      onClose();
+    }
+  }, [hasStoredContentCards, isOpen, contentCard, onClose]);
+
+  if (!contentCard) {
+    return null;
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
@@ -27,15 +60,11 @@ const GenericAwarenessModalView = ({
         className="max-h-[90vh] rounded-xl"
         aria-describedby={undefined}
         data-testid="generic-awareness-modal"
-        data-campaign-id={campaignId ?? undefined}
+        data-campaign-id={contentCard.id}
       >
         <DialogHeader density="expanded" onClose={onClose} />
         <DialogBody className="flex min-h-0 flex-1 flex-col gap-24 overflow-hidden">
-          {isCarousel ? (
-            <CarouselContent {...carouselViewModel} />
-          ) : (
-            <FeatureIntroContent {...featureIntroViewModel} />
-          )}
+          {renderModalContent(contentCard, carouselViewModel, featureIntroViewModel)}
         </DialogBody>
       </DialogContent>
     </Dialog>

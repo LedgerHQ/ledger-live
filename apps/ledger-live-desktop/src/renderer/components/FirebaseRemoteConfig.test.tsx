@@ -1,8 +1,29 @@
 import React from "react";
 
-const fetchAndActivate = jest.fn().mockResolvedValue(true);
-const getValueMock = jest.fn().mockReturnValue("");
-const getAllMock = jest.fn().mockReturnValue({});
+let resolveReady: (() => void) | null = null;
+let readyPromise: Promise<void>;
+const subscribeMock = jest.fn();
+const unsubscribeMock = jest.fn();
+const getRemoteConfigSingletonMock = jest.fn(() => ({
+  settings: { minimumFetchIntervalMillis: 0 },
+  defaultConfig: {} as Record<string, string>,
+}));
+
+const resetReady = () => {
+  readyPromise = new Promise<void>(resolve => {
+    resolveReady = resolve;
+  });
+};
+resetReady();
+
+jest.mock("~/firebase/remoteConfig", () => ({
+  getRemoteConfigSingleton: () => getRemoteConfigSingletonMock(),
+  subscribeToRemoteFlags: (cb: (e: { fetchedAt: number }) => void) => {
+    subscribeMock(cb);
+    return () => unsubscribeMock();
+  },
+  whenReady: () => readyPromise,
+}));
 
 jest.mock("firebase/app", () => ({
   initializeApp: jest.fn(),
@@ -11,18 +32,19 @@ jest.mock("firebase/app", () => ({
 
 jest.mock("firebase/remote-config", () => ({
   getRemoteConfig: jest.fn(() => ({ settings: {}, defaultConfig: {} })),
-  fetchAndActivate: (...args: unknown[]) => fetchAndActivate(...args),
-  getValue: (...args: unknown[]) => getValueMock(...args),
-  getAll: () => getAllMock(),
+  fetchAndActivate: jest.fn().mockResolvedValue(true),
+  getValue: jest.fn().mockReturnValue(""),
+  getAll: jest.fn().mockReturnValue({}),
 }));
 
 jest.mock("~/firebase-setup", () => ({
   getFirebaseConfig: () => ({}),
 }));
 
+const setProviderMock = jest.fn();
 jest.mock("@ledgerhq/live-config/LiveConfig", () => ({
   LiveConfig: {
-    setProvider: jest.fn(),
+    setProvider: (...args: unknown[]) => setProviderMock(...args),
     instance: { config: {} },
     getDefaultValueByKey: jest.fn(),
   },
@@ -32,29 +54,38 @@ jest.mock("@ledgerhq/live-config/providers/index", () => ({
   FirebaseRemoteConfigProvider: jest.fn().mockImplementation(() => ({})),
 }));
 
-jest.mock("@ledgerhq/live-common/featureFlags/index", () => ({
-  DEFAULT_FEATURES: {},
-  formatDefaultFeatures: () => ({}),
-}));
-
 import { act, render } from "@testing-library/react";
 import { FirebaseRemoteConfigProvider } from "./FirebaseRemoteConfig";
 
-const FIVE_MINUTES = 5 * 60 * 1000;
 const flushMicrotasks = () => act(async () => {});
 
 describe("FirebaseRemoteConfigProvider", () => {
   beforeEach(() => {
-    fetchAndActivate.mockClear();
-    fetchAndActivate.mockResolvedValue(true);
-    jest.useFakeTimers();
+    subscribeMock.mockClear();
+    unsubscribeMock.mockClear();
+    setProviderMock.mockClear();
+    getRemoteConfigSingletonMock.mockClear();
+    resetReady();
   });
 
-  afterEach(() => {
-    jest.useRealTimers();
+  it("returns null until whenReady resolves", async () => {
+    const { container } = render(
+      <FirebaseRemoteConfigProvider>
+        <div data-testid="child" />
+      </FirebaseRemoteConfigProvider>,
+    );
+
+    expect(container.querySelector('[data-testid="child"]')).toBeNull();
+
+    await act(async () => {
+      resolveReady?.();
+      await readyPromise;
+    });
+
+    expect(container.querySelector('[data-testid="child"]')).not.toBeNull();
   });
 
-  it("calls fetchAndActivate once on mount and again on each 5-minute interval tick", async () => {
+  it("installs the LiveConfig provider on mount", async () => {
     render(
       <FirebaseRemoteConfigProvider>
         <div />
@@ -62,37 +93,39 @@ describe("FirebaseRemoteConfigProvider", () => {
     );
 
     await flushMicrotasks();
-    expect(fetchAndActivate).toHaveBeenCalledTimes(1);
-
-    await act(async () => {
-      jest.advanceTimersByTime(FIVE_MINUTES);
-    });
-    expect(fetchAndActivate).toHaveBeenCalledTimes(2);
-
-    await act(async () => {
-      jest.advanceTimersByTime(FIVE_MINUTES);
-    });
-    expect(fetchAndActivate).toHaveBeenCalledTimes(3);
+    expect(setProviderMock).toHaveBeenCalledTimes(1);
   });
 
-  it("keeps polling even when a fetch rejects", async () => {
-    fetchAndActivate.mockRejectedValueOnce(new Error("network error"));
-    const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
-
-    render(
+  it("subscribes to remote-flag updates on mount and unsubscribes on unmount", async () => {
+    const { unmount } = render(
       <FirebaseRemoteConfigProvider>
         <div />
       </FirebaseRemoteConfigProvider>,
     );
 
     await flushMicrotasks();
-    expect(fetchAndActivate).toHaveBeenCalledTimes(1);
+    expect(subscribeMock).toHaveBeenCalledTimes(1);
 
+    unmount();
+    expect(unsubscribeMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("renders children even when whenReady resolves after a failed first fetch", async () => {
+    const { container } = render(
+      <FirebaseRemoteConfigProvider>
+        <div data-testid="child" />
+      </FirebaseRemoteConfigProvider>,
+    );
+
+    expect(container.querySelector('[data-testid="child"]')).toBeNull();
+
+    // Mirrors the production case where fetchRemoteFlags throws but whenReady
+    // still resolves so the app boots without remote values.
     await act(async () => {
-      jest.advanceTimersByTime(FIVE_MINUTES);
+      resolveReady?.();
+      await readyPromise;
     });
-    expect(fetchAndActivate).toHaveBeenCalledTimes(2);
 
-    consoleErrorSpy.mockRestore();
+    expect(container.querySelector('[data-testid="child"]')).not.toBeNull();
   });
 });

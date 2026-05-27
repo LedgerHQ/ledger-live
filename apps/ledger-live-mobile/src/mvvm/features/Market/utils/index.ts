@@ -68,23 +68,22 @@ export const counterValueFormatter = ({
     return "-";
   }
 
-  if (!formatters[locale]) formatters[locale] = {};
-  if (currency && !formatters[locale]?.[currency]) {
-    formatters[locale][currency] = new Intl.NumberFormat(locale, {
-      style: currency ? "currency" : "decimal",
-      currency,
-      maximumFractionDigits: 8,
-      maximumSignificantDigits: 8,
-    });
+  if (currency) {
+    if (!formatters[locale]) formatters[locale] = {};
+    if (!formatters[locale][currency]) {
+      formatters[locale][currency] = new Intl.NumberFormat(locale, {
+        style: "currency",
+        currency,
+        maximumFractionDigits: 8,
+        maximumSignificantDigits: 8,
+      });
+    }
   }
 
-  const formatter = currency
-    ? formatters[locale][currency]
-    : ticker
-      ? new Intl.NumberFormat(locale)
-      : undefined;
+  const formatter = currency ? formatters[locale][currency] : new Intl.NumberFormat(locale);
+  const upperCaseTicker = ticker.trim().toLocaleUpperCase();
 
-  if (shorten && t && formatter) {
+  if (shorten && t) {
     const sign = value > 0 ? "" : "-";
     const v = Math.abs(value);
     const index = Math.min(Math.floor(Math.log(v + 1) / Math.log(10) / 3) || 0, indexes.length - 1);
@@ -97,18 +96,13 @@ export const counterValueFormatter = ({
 
     const I = t(`numberCompactNotation.${i}`);
 
-    const formattedNumber = number.replace(/([0-9,. ]+)/, `${sign}$1 ${I} `);
+    const suffix = I ? ` ${I}` : "";
+    const formattedNumber = number.replace(/([0-9,. ]+)/, `${sign}$1${suffix}`);
 
-    return formattedNumber;
+    return `${formattedNumber} ${upperCaseTicker}`.trim();
   }
 
-  if (formatter) {
-    const formattedValue = formatter.format(value);
-    const upperCaseTicker = ticker?.trim()?.toLocaleUpperCase();
-    return `${formattedValue} ${upperCaseTicker}`.trim();
-  }
-
-  return String(value);
+  return `${formatter.format(value)} ${upperCaseTicker}`.trim();
 };
 
 export function getAnalyticsProperties<P extends object>(

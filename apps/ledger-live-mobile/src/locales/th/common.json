@@ -169,6 +169,9 @@
     "CeloAllFundsWarning" : {
       "title" : "ตรวจสอบให้แน่ใจว่าคุณมียอดคงเหลือในบัญชีเพียงพอสำหรับค่าธรรมเนียมธุรกรรมในอนาคต"
     },
+    "CeloGroupNotVotable" : {
+      "title" : "กลุ่มผู้ตรวจสอบนี้ไม่สามารถรับโหวตได้ เนื่องจากอาจได้รับโหวตเต็มแล้ว หรือไม่ผ่านคุณสมบัติ"
+    },
     "CeloMissingWithdrawalsError" : {
       "title" : "มีบางอย่างผิดปกติ ไม่สามารถถอนเงินทุนได้"
     },
@@ -889,6 +892,9 @@
     "RecommendUndelegation" : {
       "title" : "โปรด Undelegate บัญชีก่อนที่จะลบออก"
     },
+    "MustDelegateBeforeStaking" : {
+      "title" : "โปรด Delegate บัญชีของคุณก่อนทำการสเตคกิ้ง"
+    },
     "RecommendSubAccountsToEmpty" : {
       "title" : "โปรดล้างบัญชีย่อยทั้งหมดก่อน"
     },
@@ -1321,6 +1327,13 @@
     "tryEnablingAgain" : "ลองเปิดใช้งานตำแหน่งที่ตั้งอีกครั้ง",
     "noInfos" : "Ledger ไม่สามารถเข้าถึงข้อมูลตำแหน่งที่ตั้งของคุณได้"
   },
+  "borrow" : {
+    "title" : "ยืม",
+    "appNotFound" : "ไม่พบแอปที่สามารถให้ยืมได้",
+    "infoModal" : {
+      "close" : "ปิด"
+    }
+  },
   "earn" : {
     "deposit" : {
       "protocolInfoModal" : {
@@ -1667,6 +1680,23 @@
     "headerTitle" : "ซื้อสำเร็จแล้ว",
     "title" : "ขอขอบคุณที่ไว้วางใจ Ledger",
     "desc" : "คำสั่งซื้อของคุณอยู่ระหว่างดำเนินการ \nโปรดตรวจสอบอีเมลของคุณเพื่อดูการยืนยันคำสั่งซื้อ"
+  },
+  "productTour" : {
+    "swap" : {
+      "cta" : "สำรวจการสวอป"
+    },
+    "stake" : {
+      "cta" : "ดูการสร้างรายได้"
+    },
+    "card" : {
+      "cta" : "รับบัตรของคุณ"
+    },
+    "portfolio" : {
+      "cta" : "ดูพอร์ตโฟลิโอของคุณ"
+    },
+    "done" : {
+      "cta" : "เริ่มใหม่อีกครั้ง"
+    }
   },
   "discover" : {
     "title" : "ผู้ให้บริการ",
@@ -2743,6 +2773,12 @@
       "title" : "Perpetuals",
       "description" : "เทรดแบบมีเลเวอเรจ"
     },
+    "borrowEntry" : {
+      "title" : "การกู้ยืม",
+      "cardTitle" : "ยืมสเตเบิลคอยน์",
+      "cardDescription" : "ใช้จ่ายผ่านคริปโตได้ง่ายขึ้น",
+      "cta" : "สำรวจ"
+    },
     "recommended" : {
       "title" : "แนะนำ"
     },
@@ -2803,15 +2839,8 @@
       }
     },
     "recoverBanner" : {
-      "subscribeDone" : {
-        "title" : "การแจ้งเตือน: สมัครใช้งาน Ledger Recover ให้แล้วเสร็จ"
-      },
-      "verifyIdentity" : {
-        "title" : "การเข้าถึงวอลเล็ตของคุณยังไม่มีการสำรองข้อมูล"
-      },
-      "connectDevice" : {
-        "title" : "การเข้าถึงวอลเล็ตของคุณยังไม่มีการสำรองข้อมูล"
-      }
+      "title" : "สำรองข้อมูลเสร็จแล้ว",
+      "description" : "เปิดใช้งานบริการ Ledger Recover เรียบร้อยแล้ว"
     },
     "refreshStatus" : {
       "refreshing" : "กำลังรีเฟรช...",
@@ -2933,7 +2962,8 @@
   },
   "operationsList" : {
     "to" : "ไปยัง",
-    "from" : "จาก"
+    "from" : "จาก",
+    "pending" : "รอดำเนินการ"
   },
   "operationDetails" : {
     "title" : "รายละเอียดธุรกรรม",
@@ -3217,7 +3247,9 @@
     "title" : "บัญชี",
     "addAccount" : "เพิ่มบัญชี",
     "emptyState" : "ยังไม่มีบัญชีในตอนนี้",
-    "errorState" : "เกิดข้อผิดพลาดขณะโหลดบัญชีของคุณ"
+    "errorState" : "เกิดข้อผิดพลาดขณะโหลดบัญชีของคุณ",
+    "assetsCount" : "{{count}} สินทรัพย์",
+    "assetsCount_one" : "{{count}} สินทรัพย์"
   },
   "crypto" : {
     "title" : "คริปโต",
@@ -3348,7 +3380,7 @@
       "analytics" : "ประสิทธิภาพของแอป",
       "analyticsDesc" : "เปิดให้แอป Ledger Wallet เก็บข้อมูลการใช้งานแอปเพื่อพัฒนาประสบการณ์การใช้งานให้ดียิ่งขึ้น",
       "mevProtection" : "MEV Protection",
-      "mevProtectionDesc" : "เปิดใช้ Mev Protection เพื่อธุรกรรมที่เชื่อถือได้มากยิ่งขึ้นบน Ethereum",
+      "mevProtectionDesc" : "เปิดใช้ MEV Protection เพื่อเพิ่มความปลอดภัยให้ธุรกรรมของคุณ",
       "mevProtectionLearnMore" : "ประกาศความเป็นส่วนตัว",
       "personalizedRecommendations" : "ประสบการณ์ที่เป็นส่วนตัว",
       "personalizedRecommendationsDesc" : "เปิดให้แอป Ledger Wallet เก็บข้อมูลการใช้งานเพื่อนำเสนอเนื้อหาที่เหมาะสมกับคุณ",
@@ -5464,7 +5496,11 @@
     "undelegation" : {
       "undelegate" : "Undelegate",
       "undelegationMessage" : "การ Undelegate คุณจะไม่ได้รับ Reward ใด ๆ จากการ Epoch ในปัจจุบันและที่กำลังจะมาถึง",
-      "verificationSuccessTitle" : "คุณได้ Undelegate สินทรัพย์ของคุณสำเร็จแล้ว"
+      "verificationSuccessTitle" : "คุณได้ Undelegate สินทรัพย์ของคุณสำเร็จแล้ว",
+      "dRepDelegationSelfTransactionDrawer" : {
+        "title" : "เตรียมการยกเลิกการมอบหมาย",
+        "description" : "หากต้องการปิดบัญชีสเตคกิ้งและเรียกคืนเงินฝาก ADA 2 เหรียญ:\n\n การกำกับดูแลของ Cardano กำหนดให้คุณต้องระบุสถานะการโหวตของคุณก่อนจึงจะสามารถยกเลิกการมอบหมายได้\n\nขั้นตอนนี้ประกอบด้วยการส่งธุรกรรมไปยังที่อยู่ Ledger ของคุณเอง เพื่อลงทะเบียนว่าคุณเลือกที่จะงดออกเสียง โดยจะเสียเพียงค่าธรรมเนียมเครือข่ายพื้นฐานท่านั้น และ ADA ของคุณจะยังคงอยู่ในวอลเล็ตของคุณ\n\nเมื่อการตั้งค่านี้ได้รับการบันทึกแล้ว คุณจะสามารถยกเลิกการมอบหมายได้ตามปกติ"
+      }
     },
     "delegation" : {
       "pool" : "Pool",
@@ -6235,6 +6271,208 @@
     },
     "delegation" : {
       "addCustomValidator" : "+ เพิ่มผู้ตรวจสอบที่กำหนดเอง"
+    }
+  },
+  "evm" : {
+    "info" : {
+      "available" : {
+        "title" : "{{currencyTicker}} คงเหลือ",
+        "description" : "จำนวนที่สามารถใช้จ่ายได้"
+      },
+      "delegated" : {
+        "title" : "สินทรัพย์ที่ Delegate",
+        "description" : "สินทรัพย์ที่ Delegate ไปเพื่อการโหวต {{currencyName}} นี่คือจำนวนการโหวตทั้งหมดของคุณ"
+      },
+      "undelegating" : {
+        "title" : "กำลังทำการ Undelegate",
+        "description" : "สินทรัพย์ที่ทำการ Undelegate แล้วจะถูกล็อกอยู่ {{numberOfDays}} วัน ก่อนจะทำธุรกรรมอื่นได้"
+      },
+      "delegationUnavailable" : {
+        "title" : "การ Delegate ไม่พร้อมใช้งาน",
+        "description" : "ในบัญชีของคุณมียอดคงเหลือที่ใช้ได้ไม่เพียงพอสำหรับการเริ่มต้นการ Delegate ใหม่"
+      }
+    },
+    "delegation" : {
+      "delegationEarn" : "คุณสามารถรับ Reward {{ticker}} ได้ด้วยการ Delegate สินทรัพย์ของคุณ",
+      "info" : "วิธีใช้งานการ Delegate?",
+      "claimRewards" : "เคลม Reward",
+      "claimAvailableRewards" : "เคลม {{amount}}",
+      "commission" : "คอมมิชชัน",
+      "header" : "การ Delegate",
+      "Amount" : "จำนวน",
+      "noRewards" : "ไม่มี Reward",
+      "delegate" : "Delegate",
+      "undelegate" : "Undelegate",
+      "redelegate" : "Redelegate",
+      "reward" : "เคลม Reward",
+      "totalStake" : "จำนวนที่สเตคแล้วทั้งหมด",
+      "stepperHeader" : {
+        "starter" : "รับ Reward",
+        "validator" : "Delegate สินทรัพย์",
+        "amountSubTitle" : "จำนวนที่จะ Delegate",
+        "summary" : "สรุป",
+        "verification" : "การยืนยัน",
+        "selectDevice" : "เลือกอุปกรณ์",
+        "connectDevice" : "เชื่อมต่อกับอุปกรณ์",
+        "stepRange" : "ขั้นตอนที่ {{currentStep}} จาก {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "Delegate {{ticker}} ของคุณ เพื่อรับ Reward อย่างปลอดภัย โดยยังคงควบคุมสินทรัพย์ของคุณเองได้",
+            "steps" : {
+              "0" : "สินทรัพย์ที่ทำการ Delegate ยังเป็นของคุณ",
+              "1" : "คุณจะต้องรอ {{numberOfDays}} วันเพื่อให้การ Undelegate เสร็จสมบูรณ์",
+              "2" : "Delegate ด้วยอุปกรณ์ Ledger ของคุณได้อย่างปลอดภัย"
+            },
+            "warning" : {
+              "description" : "เลือกผู้ตรวจสอบของคุณอย่างรอบคอบ: สินทรัพย์ที่คุณ Delegate บางส่วนอาจสูญหายไปอย่างถาวรหากผู้ตรวจสอบทำงานอย่างไม่เหมาะสม"
+            },
+            "cta" : "ดำเนินการต่อ"
+          },
+          "validator" : {
+            "validators" : "ผู้ตรวจสอบ",
+            "myDelegations" : "การ Delegate ของฉัน",
+            "cta" : "ดำเนินการต่อ",
+            "estYield" : "ผลตอบแทนโดยประมาณ: {{amount}}",
+            "totalAvailable" : "จำนวนที่ใช้ได้: <0>{{amount}}</0>",
+            "allAssetsUsed" : "สินทรัพย์ทั้งหมดที่ใช้ไป",
+            "noResultsFound" : "ไม่พบผู้ตรวจสอบสำหรับ <0>{{search}}</0>",
+            "currentAmount" : "(+ <0>{{amount}}</0>)"
+          },
+          "amount" : {
+            "assetsRemaining" : "สินทรัพย์ที่เหลือ: <0>{{amount}}</0>",
+            "allAssetsUsed" : "สินทรัพย์ทั้งหมดที่ใช้ไป",
+            "minAmount" : "จำนวนขั้นต่ำ: <0>{{min}}</0>",
+            "incorrectAmount" : "จำนวนสูงสุด: <0>{{max}}</0>",
+            "cta" : "ดำเนินการต่อ"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "คุณได้ Delegate สินทรัพย์ของคุณเรียบร้อยแล้ว",
+              "text" : "ยอดคงเหลือในบัญชีของคุณจะอัปเดตเมื่อเครือข่ายได้ยืนยันธุรกรรมแล้ว",
+              "cta" : "ดูรายละเอียด"
+            },
+            "pending" : {
+              "title" : "กำลังประกาศธุรกรรม..."
+            },
+            "broadcastError" : "ธุรกรรมของคุณอาจล้มเหลว โปรดรอสักครู่ แล้วตรวจสอบประวัติธุรกรรมก่อนลองใหม่อีกครั้ง"
+          }
+        }
+      },
+      "drawer" : {
+        "status" : "สถานะ",
+        "rewards" : "Reward",
+        "active" : "ใช้งานอยู่",
+        "inactive" : "ไม่ได้เปิดใช้งาน",
+        "completionDate" : "วันที่เสร็จสมบูรณ์",
+        "redelegatedFrom" : "Redelegate จาก"
+      }
+    },
+    "redelegation" : {
+      "estYield" : "ผลตอบแทนโดยประมาณ",
+      "stepperHeader" : {
+        "validator" : "เลือกผู้ตรวจสอบใหม่",
+        "amountSubTitle" : "จำนวนที่จะ Redelegate",
+        "amountTitle" : "{{from}} → {{to}}",
+        "summary" : "สรุป",
+        "selectDevice" : "เลือกอุปกรณ์",
+        "connectDevice" : "เชื่อมต่อกับอุปกรณ์",
+        "stepRange" : "ขั้นตอนที่ {{currentStep}} จาก {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "validator" : {
+            "validators" : "ผู้ตรวจสอบ",
+            "myDelegations" : "การ Delegate ของฉัน",
+            "cta" : "ดำเนินการต่อ",
+            "estYield" : "ผลตอบแทนโดยประมาณ: {{amount}}",
+            "totalAvailable" : "จำนวนที่ใช้ได้: <0>{{amount}}</0>",
+            "allAssetsUsed" : "สินทรัพย์ทั้งหมดที่ใช้ไป",
+            "noResultsFound" : "ไม่พบผู้ตรวจสอบสำหรับ <0>{{search}}</0>"
+          },
+          "amount" : {
+            "newRedelegatedBalance" : "ยอดรวมใหม่ของ <0>{{name}}</0> หลังการดำเนินการ: <0>{{amount}}</0>",
+            "allAssetsUsed" : "สินทรัพย์ทั้งหมดที่ใช้ไป"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "คุณได้ Redelegate สินทรัพย์ของคุณใหม่เรียบร้อยแล้ว",
+              "text" : "ยอดคงเหลือในบัญชีของคุณจะอัปเดตเมื่อเครือข่ายได้ยืนยันธุรกรรมแล้ว",
+              "cta" : "ดูรายละเอียด"
+            },
+            "pending" : {
+              "title" : "กำลังประกาศธุรกรรม..."
+            },
+            "broadcastError" : "ธุรกรรมของคุณอาจล้มเหลว โปรดรอสักครู่ แล้วตรวจสอบประวัติธุรกรรมก่อนลองใหม่อีกครั้ง"
+          }
+        }
+      }
+    },
+    "undelegation" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "จำนวนที่จะ Undelegate",
+        "summary" : "สรุป",
+        "selectDevice" : "เลือกอุปกรณ์",
+        "connectDevice" : "เชื่อมต่อกับอุปกรณ์",
+        "stepRange" : "ขั้นตอนที่ {{currentStep}} จาก {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "allAssetsUsed" : "สินทรัพย์ที่ Undelegate แล้ว"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "คุณได้ Undelegate สินทรัพย์ของคุณสำเร็จแล้ว",
+              "text" : "ยอดคงเหลือในบัญชีของคุณจะอัปเดตเมื่อเครือข่ายได้ยืนยันธุรกรรมแล้ว",
+              "cta" : "ดูรายละเอียด"
+            },
+            "pending" : {
+              "title" : "กำลังประกาศธุรกรรม..."
+            },
+            "broadcastError" : "ธุรกรรมของคุณอาจล้มเหลว โปรดรอสักครู่ แล้วตรวจสอบประวัติธุรกรรมก่อนลองใหม่อีกครั้ง"
+          }
+        }
+      }
+    },
+    "claimRewards" : {
+      "stepperHeader" : {
+        "validator" : "เลือก Reward ที่จะเก็บ",
+        "method" : "เคลม Reward",
+        "summary" : "สรุป",
+        "selectDevice" : "เลือกอุปกรณ์",
+        "connectDevice" : "เชื่อมต่อกับอุปกรณ์",
+        "stepRange" : "ขั้นตอนที่ {{currentStep}} จาก {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "method" : {
+            "youEarned" : "คุณได้รับ",
+            "byDelegationAssetsTo" : "โดยการ Delegate สินทรัพย์ให้กับ",
+            "claimReward" : "Cash in",
+            "claimRewardCompound" : "Compound",
+            "claimRewardInfo" : "ระบบจะรับให้ตอนนี้และเพิ่มไปยังยอดคงเหลือที่ใช้ได้ของคุณ",
+            "claimRewardCompoundInfo" : "ระบบจะรับให้ตอนนี้และจะ Delegate ให้ผู้ตรวจสอบที่คุณกำลังใช้อยู่โดยอัตโนมัติ",
+            "compoundOrCashIn" : "Compound หรือ Cash in?",
+            "claimRewardTooltip" : "Reward จะถูกเพิ่มเข้าไปในยอดคงเหลือที่ใช้ได้",
+            "claimRewardCompoundTooltip" : "Reward จะถูกเพิ่มเข้าไปในจำนวนที่ Delegate",
+            "cta" : "ดำเนินการต่อ"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "คุณได้รับรางวัลเรียบร้อยแล้ว ระบบได้เพิ่มไปยังยอดคงเหลือที่ใช้ได้ของคุณแล้ว",
+              "titleCompound" : "รางวัลของคุณถูก Delegate ไปยังผู้ตรวจสอบเดียวกัน",
+              "text" : "ยอดคงเหลือในบัญชีของคุณจะอัปเดตเมื่อเครือข่ายได้ยืนยันธุรกรรมแล้ว",
+              "cta" : "ดูรายละเอียด"
+            },
+            "pending" : {
+              "title" : "กำลังประกาศธุรกรรม..."
+            },
+            "broadcastError" : "ธุรกรรมของคุณอาจล้มเหลว โปรดรอสักครู่ แล้วตรวจสอบประวัติธุรกรรมก่อนลองใหม่อีกครั้ง"
+          }
+        }
+      }
     }
   },
   "tron" : {
@@ -7211,6 +7449,11 @@
         "redelegate" : "คุณจะต้องรอ {{numberOfDays}} วันเพื่อให้สินทรัพย์ที่ Undelegate กลับสู่ยอดคงเหลือที่มีอยู่",
         "undelegate" : "คุณจะต้องรอ {{numberOfDays}} วันเพื่อให้สินทรัพย์ที่ Undelegate กลับสู่ยอดคงเหลือที่มีอยู่"
       },
+      "evm" : {
+        "claimReward" : "หากผู้ตรวจสอบที่เลือกมี Reward ที่รอดำเนินการ Reward เหล่านั้นจะถูกรับโดยอัตโนมัติ",
+        "redelegate" : "คุณจะต้องรอ {{numberOfDays}} วันเพื่อให้สินทรัพย์ที่ Undelegate กลับสู่ยอดคงเหลือที่มีอยู่",
+        "undelegate" : "คุณจะต้องรอ {{numberOfDays}} วันเพื่อให้สินทรัพย์ที่ Undelegate กลับสู่ยอดคงเหลือที่มีอยู่"
+      },
       "lending" : "ตรวจสอบรายละเอียดการดำเนินการบนอุปกรณ์ของคุณก่อนส่ง"
     },
     "amount" : "จำนวน",
@@ -7809,27 +8052,48 @@
   "postOnboarding" : {
     "hub" : {
       "title" : "ขั้นตอนถัดไปคืออะไร?",
-      "areAllPostOnboardingActionsCompletedTitle" : "เรียบร้อยแล้ว! ทำต่อไปและสำรวจพอร์ตโฟลิโอของคุณ",
+      "areAllPostOnboardingActionsCompletedTitle" : "เรียบร้อยแล้ว!",
       "skip" : "ฉันจะดำเนินการในภายหลัง",
-      "viewWallet" : "สำรวจพอร์ตโฟลิโอของฉัน"
+      "viewWallet" : "สำรวจพอร์ตโฟลิโอของฉัน",
+      "deviceStepComplete" : "เสร็จเรียบร้อย"
     },
-    "entryPointCard" : {
-      "title" : "ขั้นตอนต่อไปสำหรับ {{productName}} ของคุณคืออะไร?",
-      "description" : "รักษาสินทรัพย์ของคุณให้ปลอดภัยและไปต่อ",
-      "buttonLabel" : "ดูว่ามีอะไรอีกบ้าง"
+    "drawer" : {
+      "title" : "ถัดไป! ทำการติดตั้งวอลเล็ตให้เรียบร้อย",
+      "titleCompleted" : "เรียบร้อยแล้ว!",
+      "primaryLabel" : "เข้าใจแล้ว",
+      "actionCompletedLabel" : "เสร็จเรียบร้อย",
+      "actions" : {
+        "deviceOnboarded" : {
+          "title" : "ตั้งค่า Ledger ของคุณ"
+        },
+        "assetsTransfer" : {
+          "title" : "เพิ่มคริปโต",
+          "description" : "รับหรือซื้อคริปโตเพื่อเติมลงในวอลเล็ตของคุณ"
+        },
+        "syncAccounts" : {
+          "title" : "ซิงค์วอลเล็ตของคุณ",
+          "description" : "ดูแลบัญชีคริปโตของคุณให้มีการซิงค์อยู่เสมอ"
+        },
+        "customImage" : {
+          "title" : "ปรับแต่งหน้าจอล็อค",
+          "description" : "แสดงศิลปะดิจิทัลหรือรูปภาพโปรดของคุณเป็นล็อกสกรีนของอุปกรณ์"
+        },
+        "recover" : {
+          "title" : "สำรองข้อมูลเสร็จแล้ว",
+          "description" : "เปิดใช้งานบริการ Ledger Recover เรียบร้อยแล้ว"
+        }
+      }
     },
     "widget" : {
       "title" : "ถัดไป! ทำการติดตั้งวอลเล็ตให้เรียบร้อย",
-      "subtitle" : "เริ่มต้นด้วยการเติมเงินเข้าวอลเล็ตของคุณ"
+      "subtitle" : "รักษาสินทรัพย์ของคุณให้ปลอดภัยและไปต่อ"
     },
     "actions" : {
       "deviceOnboarded" : {
-        "titleCompleted" : "ตั้งค่าอุปกรณ์ Ledger ของคุณ"
+        "titleCompleted" : "ตั้งค่า Ledger ของคุณ"
       },
       "assetsTransfer" : {
-        "title" : "โอนสินทรัพย์ของคุณ",
         "titleCompleted" : "สินทรัพย์ที่โอนไปยัง Ledger",
-        "description" : "โอนจาก Exchange หรือวอลเล็ตใด ๆ ก็ได้",
         "popupLabel" : "สินทรัพย์ที่โอน"
       },
       "buyCrypto" : {
@@ -7839,21 +8103,15 @@
         "popupLabel" : "คริปโตที่ซื้อ"
       },
       "customImage" : {
-        "title" : "ปรับแต่งหน้าจอล็อค",
         "titleCompleted" : "หน้าจอล็อคที่ปรับแต่ง",
-        "description" : "แสดงศิลปะดิจิทัลหรือรูปภาพโปรดของคุณเป็นล็อกสกรีนของอุปกรณ์",
         "popupLabel" : "ปรับแต่งหน้าจอล็อคเรียบร้อยแล้ว"
       },
       "recover" : {
-        "title" : "สำรองข้อมูลเสร็จแล้ว",
         "titleCompleted" : "ข้อมูลสำรองได้ถูกจัดเก็บอย่างปลอดภัยแล้ว",
-        "description" : "เปิดใช้งานบริการ Ledger Recover เรียบร้อยแล้ว",
         "popupLabel" : "สมัครใช้งาน Ledger Recover สำเร็จแล้ว"
       },
       "syncAccounts" : {
-        "title" : "ซิงค์บัญชีคริปโตของคุณ",
         "titleCompleted" : "ซิงค์บัญชีของคุณแล้ว",
-        "description" : "เปิดใช้งาน Ledger Sync เพื่อซิงค์บัญชีคริปโตของคุณ",
         "popupLabel" : "ซิงค์บัญชีแล้ว"
       }
     }
@@ -8400,6 +8658,64 @@
       }
     }
   },
+  "assetDetail" : {
+    "balanceGraph" : {
+      "marketPrice" : "ราคาตลาด",
+      "timeframeSelector" : "ช่วงเวลา",
+      "timeLabel" : {
+        "24h" : "1 วัน",
+        "7d" : "1 สัปดาห์",
+        "30d" : "1 เดือน",
+        "1y" : "1 ปี"
+      },
+      "chartPlaceholder" : "กราฟิก"
+    },
+    "addresses" : {
+      "title" : "ที่อยู่",
+      "addAccount" : "เพิ่ม",
+      "empty" : "ยังไม่มีที่อยู่ใด ๆ แตะที่ เพิ่ม เพื่อเริ่มต้นใช้งาน"
+    },
+    "marketStats" : {
+      "title" : "สถิติตลาด",
+      "marketCap" : "มูลค่าหลักทรัพย์ตามราคาตลาด",
+      "marketRank" : "อันดับในตลาด",
+      "circulatingSupply" : "จำนวนเหรียญหรือโทเคนที่หมุนเวียน",
+      "circulatingSupplyTooltip" : "จำนวนเหรียญที่พร้อมซื้อขายและหมุนเวียนอยู่ในปัจจุบัน",
+      "maxSupply" : "อุปทานสูงสุด",
+      "maxSupplyTooltip" : "จำนวนเหรียญสูงสุดของคริปโตนี้",
+      "tradingVolume" : "ปริมาณการซื้อขาย 24 ชั่วโมง",
+      "error" : "ไม่สามารถโหลดสถิติตลาดได้"
+    },
+    "pricePerformance" : {
+      "title" : "การเปลี่ยนแปลงของราคา",
+      "allTimeHigh" : "สูงสุดตลอดกาล",
+      "allTimeLow" : "ต่ำสุดตลอดกาล",
+      "yearsAgo" : "{{count}} ปีที่แล้ว",
+      "monthsAgo" : "{{count}} นาทีที่แล้ว",
+      "daysAgo" : "{{count}} วันที่แล้ว",
+      "hoursAgo" : "{{count}} ชั่วโมงที่แล้ว",
+      "minutesAgo" : "{{count}} นาทีที่แล้ว",
+      "justNow" : "เมื่อสักครู่",
+      "error" : "ไม่สามารถโหลดข้อมูลผลการเปลี่ยนแปลงของราคาได้"
+    },
+    "transactions" : {
+      "title" : "ธุรกรรม"
+    },
+    "fallbackBanner" : {
+      "title" : "สินทรัพย์นี้ไม่รองรับการซื้อและการสวอป"
+    },
+    "balanceDetails" : {
+      "totalBalance" : "ยอดคงเหลือทั้งหมด",
+      "transfer" : "การโอน",
+      "availableBalance" : "ยอดคงเหลือในบัญชีที่ใช้ได้",
+      "earnDeposit" : "ฝากเพื่อสร้างรายได้",
+      "earnBanner" : "รับผลตอบแทนสูงสุด {{apy}}% {{type}}",
+      "earnBannerGeneric" : "สร้างรายได้จากสินทรัพย์นี้",
+      "earnBannerSubtitle" : "ถือครองและรับผลตอบแทนจากสินทรัพย์นี้",
+      "earnBannerAction" : "ไปที่ 'สร้างรายได้'",
+      "availableBalanceTooltip" : "ยอดเงินที่พร้อมใช้ได้ทันที ไม่รวมส่วนที่สเตคหรือมอบหมายไว้"
+    }
+  },
   "assetSelection" : {
     "selectCrypto" : {
       "title" : "เลือกสินทรัพย์"
@@ -8617,6 +8933,36 @@
       "lockedBalanceTooltip" : "มีการล็อกเงินทุนของคุณไว้ในข้อเสนอที่คุณส่งให้บุคคลอื่น คุณสามารถยกเลิกข้อเสนอเหล่านี้ได้ทุกเมื่อ หรือรอให้ผู้รับยอมรับหรือปฏิเสธ",
       "withdrawableBalance" : "สามารถถอนได้",
       "withdrawableBalanceTooltip" : "เงินทุนที่คุณสามารถเรียกคืนจากข้อเสนอที่ส่งซึ่งหมดอายุแล้ว ถอนเพื่อย้ายเงินทุนเหล่านี้กลับไปยังยอดคงเหลือในบัญชีที่ใช้ได้"
+    },
+    "disclaimer" : {
+      "title" : "ตั้งค่าเครือข่าย Canton",
+      "intro" : "Canton มีคุณสมบัติเฉพาะที่คุณควรทราบก่อนดำเนินการต่อ:",
+      "bullets" : {
+        "utxo" : {
+          "title" : "ยอดคงเหลือตาม Unspent Transaction Output (UTXO)",
+          "body" : "ยอดคงเหลือจะแสดงในรูปสัญญาเหรียญแต่ละรายการ โดยจำกัดที่ 100 รายการต่อการโอน สัญญาที่ไม่ใช้งานจะลดมูลค่าตามเวลาและหมดอายุหากค่าธรรมเนียมเกินกว่ายอดคงเหลือ"
+        },
+        "offers" : {
+          "title" : "การโอนในรูปแบบข้อเสนอ",
+          "body" : "ทุกอย่างต้องดำเนินการเอง ธุรกรรมที่โอนออกสามารถถอนคืนได้ การรับโอนต้องได้รับการยืนยันหรือปฏิเสธด้วยตัวเอง จัดการธุรกรรมทั้งหมดได้จากแดชบอร์ด Canton ของคุณ"
+        },
+        "dualValidator" : {
+          "title" : "ระบบความปลอดภัยที่ต้องมีผู้ตรวจสอบสองราย",
+          "body" : "ธุรกรรมจำเป็นต้องได้รับการลงนามร่วมกันจาก Ledger และ Kiln ไม่มีฝ่ายใดฝ่ายหนึ่งที่สามารถดำเนินการแทนคุณได้เพียงลำพัง"
+        },
+        "tokenLiability" : {
+          "title" : "มาตรฐานความรับผิดชอบของโทเคน ⚠️",
+          "body" : "การกู้คืนโทเคนเมื่อเกิดความล้มเหลวเป็นหน้าที่ของผู้ออกโทเคน ไม่ใช่ Ledger"
+        }
+      },
+      "agreeLabel" : "ฉันยอมรับ <1>ข้อกำหนดของเครือข่าย Canton และการยกเว้นความรับผิดของ Ledger</1>",
+      "cancel" : "ยกเลิก",
+      "agree" : "ตกลง",
+      "terms" : {
+        "title" : "ข้อกำหนดของเคือข่าย Canton",
+        "sectionTitle" : "มาตรฐานความรับผิดชอบของโทเคนและการกู้คืน",
+        "body" : "Ledger รองรับเฉพาะโทเคนมาตรฐานที่ออกผ่านระบบทะเบียนสินทรัพย์ดิจิทัล (Digital Asset Registry) เท่านั้น Ledger ไม่ได้เป็นผู้ออกโทเคนเหล่านี้ และไม่รับผิดชอบต่อมูลค่า การจัดการ หรือสัญญาอัจฉริยะที่เกี่ยวข้องกับโทเคนเหล่านี้\n\nในกรณีที่เกิดการหยุดชะงักของบริการ Ledger หรือเกิดความล้มเหลวในการกู้คืนฉุกเฉิน Ledger จะไม่สามารถกู้คืนสินทรัพย์ของคุณได้ คุณต้องติดต่อผู้ออกโทเคน (Asset Admin) โดยตรงเพื่อเริ่มกระบวนการกู้คืนผ่านโปรโตคอล \"Asset Freeze\" หรือ \"Registry Recovery\" การเยียวยาและสิทธิ์เรียกร้องของคุณอยู่ที่ผู้ออกโทเคนแต่เพียงผู้เดียว ภายใต้ข้อตกลงระดับการให้บริการ (SLA) ที่มีอยู่ ในการดำเนินการต่อ คุณยืนยันว่า Ledger และบริษัทในเครือนั้นได้รับการยกเว้นจากความรับผิดชอบทุกประการที่เกิดจากการสูญหาย การกู้คืน หรือการไม่สามารถกู้คืนโทเคนเหล่านี้"
+      }
     },
     "onboard" : {
       "account" : "บัญชี",
@@ -8900,7 +9246,8 @@
       "addDevice" : "เพิ่มอุปกรณ์ Ledger",
       "exploreAllDevices" : "ดูอุปกรณ์ Ledger ทั้งหมด",
       "available" : "ใช้ได้",
-      "unavailable" : "ไม่ได้เชื่อมต่อ"
+      "unavailable" : "ไม่ได้เชื่อมต่อ",
+      "menuAccessibilityLabel" : "ตัวเลือกอุปกรณ์"
     }
   }
 }

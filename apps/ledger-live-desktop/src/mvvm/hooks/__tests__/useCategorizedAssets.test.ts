@@ -39,15 +39,21 @@ describe("useCategorizedAssetsFromPortfolio", () => {
 
   it.each([
     {
-      name: "does not filter out coins when a coin currency.id is included in blacklistedTokenIds",
+      name: "filters out coins when a coin currency.id is included in blacklistedTokenIds",
       blacklistedTokenIds: ["bitcoin"],
-      expectedCryptoIds: ["bitcoin", "ethereum"],
+      expectedCryptoIds: ["ethereum"],
       expectedStablecoinTickers: ["USDC"],
     },
     {
       name: "filters out stablecoins when their currency.id is blacklisted",
       blacklistedTokenIds: ["ethereum/erc20/usd__coin"],
       expectedCryptoIds: ["bitcoin", "ethereum"],
+      expectedStablecoinTickers: [],
+    },
+    {
+      name: "filters out both coins and stablecoins when their ids are blacklisted",
+      blacklistedTokenIds: ["bitcoin", "ethereum/erc20/usd__coin"],
+      expectedCryptoIds: ["ethereum"],
       expectedStablecoinTickers: [],
     },
     {

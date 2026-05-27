@@ -1,21 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 import { useSelector, useStore } from "LLD/hooks/redux";
 import { EnvName, getEnv } from "@ledgerhq/live-env";
-import { DEFAULT_FEATURES, useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
-import { Feature, FeatureId, Features } from "@ledgerhq/types-live";
+import {
+  FEATURE_FLAGS_DEFAULTS,
+  type Feature,
+  type FeatureId,
+  type Features,
+} from "@shared/feature-flags";
+import { useFeature, useFeatureFlags } from "@features/platform-feature-flags";
 import { enabledExperimentalFeatures } from "~/renderer/experimental";
 import { sentryLogsSelector } from "~/renderer/reducers/settings";
 import { initDatadog, setTags, isDatadogAvailable } from "~/datadog/renderer";
 import { initDatadogLogs } from "~/datadog/logs";
 
 const MAX_KEYLEN = 32;
-
-function getLldDatadogFeature(featureFlags: {
-  getFeature: (id: FeatureId) => Feature | null;
-}): Features["lldDatadog"] | null {
-  const raw = featureFlags.getFeature("lldDatadog");
-  return isLldDatadogFeature(raw) ? raw : null;
-}
 
 function isLldDatadogFeature(f: Feature | null | undefined): f is Features["lldDatadog"] {
   return (
@@ -38,8 +36,9 @@ function safekey(k: string) {
 export const ConnectEnvsToDatadog = () => {
   const store = useStore();
   const featureFlags = useFeatureFlags();
+  const rawLldDatadog = useFeature("lldDatadog");
   const sentryLogs = useSelector(sentryLogsSelector);
-  const lldDatadog = getLldDatadogFeature(featureFlags);
+  const lldDatadog = isLldDatadogFeature(rawLldDatadog) ? rawLldDatadog : null;
   const [datadogInitialized, setDatadogInitialized] = useState(false);
   const initInFlightRef = useRef(false);
 
@@ -83,10 +82,10 @@ export const ConnectEnvsToDatadog = () => {
         tags[safekey(key)] = getEnv(key as EnvName) as string | number | boolean;
       });
       const features: { [key in FeatureId]?: boolean } = {};
-      Object.keys(DEFAULT_FEATURES).forEach(k => {
-        const key = k as keyof typeof DEFAULT_FEATURES;
-        const value = featureFlags.getFeature(key);
-        if (key && value && value.enabled !== DEFAULT_FEATURES[key]!.enabled) {
+      Object.keys(FEATURE_FLAGS_DEFAULTS).forEach(k => {
+        const key = k as keyof typeof FEATURE_FLAGS_DEFAULTS;
+        const value = featureFlags[key];
+        if (key && value && value.enabled !== FEATURE_FLAGS_DEFAULTS[key]!.enabled) {
           features[key] = value.enabled;
         }
       });

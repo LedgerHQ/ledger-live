@@ -1,5 +1,29 @@
 # @ledgerhq/device-core
 
+## 0.11.0
+
+### Minor Changes
+
+- [#17249](https://github.com/LedgerHQ/ledger-live/pull/17249) [`d704076`](https://github.com/LedgerHQ/ledger-live/commit/d704076eaba64edda4be36092fc8b19a4a3711f2) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Prevent malformed Manager API requests when device metadata is missing
+
+### Patch Changes
+
+- Updated dependencies [[`f39fede`](https://github.com/LedgerHQ/ledger-live/commit/f39fede0a6eb4e427a15219e5a3c8fbc3302815f), [`b812751`](https://github.com/LedgerHQ/ledger-live/commit/b8127519474e63c543b1b937a2d3b11ad162a78e), [`abdb866`](https://github.com/LedgerHQ/ledger-live/commit/abdb8662fba3784399a747ece63a11cc4f6e23bb), [`3cd7abb`](https://github.com/LedgerHQ/ledger-live/commit/3cd7abb4d6f6072bad62073108d797faf23f9e8c), [`c6170d7`](https://github.com/LedgerHQ/ledger-live/commit/c6170d7b61bc37ef80f8d3e5e608611f9b8ecd67)]:
+  - @ledgerhq/types-live@6.108.0
+  - @ledgerhq/live-network@2.6.1
+
+## 0.11.0-next.0
+
+### Minor Changes
+
+- [#17249](https://github.com/LedgerHQ/ledger-live/pull/17249) [`d704076`](https://github.com/LedgerHQ/ledger-live/commit/d704076eaba64edda4be36092fc8b19a4a3711f2) Thanks [@VicAlbr](https://github.com/VicAlbr)! - Prevent malformed Manager API requests when device metadata is missing
+
+### Patch Changes
+
+- Updated dependencies [[`f39fede`](https://github.com/LedgerHQ/ledger-live/commit/f39fede0a6eb4e427a15219e5a3c8fbc3302815f), [`b812751`](https://github.com/LedgerHQ/ledger-live/commit/b8127519474e63c543b1b937a2d3b11ad162a78e), [`abdb866`](https://github.com/LedgerHQ/ledger-live/commit/abdb8662fba3784399a747ece63a11cc4f6e23bb), [`3cd7abb`](https://github.com/LedgerHQ/ledger-live/commit/3cd7abb4d6f6072bad62073108d797faf23f9e8c), [`c6170d7`](https://github.com/LedgerHQ/ledger-live/commit/c6170d7b61bc37ef80f8d3e5e608611f9b8ecd67)]:
+  - @ledgerhq/types-live@6.108.0-next.0
+  - @ledgerhq/live-network@2.6.1-next.0
+
 ## 0.10.2
 
 ### Patch Changes

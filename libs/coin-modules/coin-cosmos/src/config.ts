@@ -10,7 +10,7 @@ export const cosmosConfig: CosmosConfig = {
   config_currency_axelar: {
     type: "object",
     default: {
-      lcd: "https://axelar-rest.publicnode.com",
+      lcd: "https://axelar.coin.ledger.com",
       minGasPrice: 0.07,
       ledgerValidator: "axelarvaloper1fgklp9hemczlwtqp9jqzq3xahh38hznx7vd805",
       status: {
@@ -129,7 +129,7 @@ export const cosmosConfig: CosmosConfig = {
   config_currency_coreum: {
     type: "object",
     default: {
-      lcd: "https://full-node.mainnet-1.coreum.dev:1317",
+      lcd: "https://coreum.coin.ledger.com",
       minGasPrice: 0.1,
       status: {
         type: "active",
@@ -139,7 +139,7 @@ export const cosmosConfig: CosmosConfig = {
   config_currency_injective: {
     type: "object",
     default: {
-      lcd: "https://injective-rest.publicnode.com",
+      lcd: "https://injective.coin.ledger.com",
       minGasPrice: 900000000,
       ledgerValidator: "injvaloper1ntn4j2lsu3k60g8xj9pqshqvdj2q5tygyvczpy",
       status: {

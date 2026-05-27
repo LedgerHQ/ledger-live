@@ -1,4 +1,4 @@
 {
   "files": [],
-  "references": [{ "path": "./flow/market-banner" }]
+  "references": [{ "path": "./flow/market-banner" }, { "path": "./platform/feature-flags" }],
 }

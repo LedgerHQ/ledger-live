@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useMatch } from "react-router";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import {
   analyticsConsentInfoSelector,
   hasCompletedOnboardingSelector,

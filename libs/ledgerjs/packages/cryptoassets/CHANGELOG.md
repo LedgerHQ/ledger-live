@@ -1,5 +1,37 @@
 # @ledgerhq/cryptoassets
 
+## 13.48.0
+
+### Minor Changes
+
+- [#17322](https://github.com/LedgerHQ/ledger-live/pull/17322) [`1368afd`](https://github.com/LedgerHQ/ledger-live/commit/1368afdc7218a68c803672e6e412f8f9f6e62142) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Fix Cronos explorer URLs, update RPC node to Ledger endpoint, and remove broken explorer API link
+
+- [#17137](https://github.com/LedgerHQ/ledger-live/pull/17137) [`2257d43`](https://github.com/LedgerHQ/ledger-live/commit/2257d43630933127549300f39ade1e2b01f94cb8) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore: drop `sonic_blaze` support
+
+- [#17089](https://github.com/LedgerHQ/ledger-live/pull/17089) [`08762c2`](https://github.com/LedgerHQ/ledger-live/commit/08762c286e38136293108c19efa72ae8fbd1286b) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Switch Concordium derivation to canonical 6-segment path `m/44'/<coin>'/0'/0'/0'/<account>'` and split mainnet/testnet coin types (`919`/`1`, the BIP-44 generic testnet). Replaces the previous non-canonical `44'/919'/404'/404'/<account>'` override and aligns with the upstream SDK and device firmware.
+
+### Patch Changes
+
+- Updated dependencies [[`f39fede`](https://github.com/LedgerHQ/ledger-live/commit/f39fede0a6eb4e427a15219e5a3c8fbc3302815f), [`b812751`](https://github.com/LedgerHQ/ledger-live/commit/b8127519474e63c543b1b937a2d3b11ad162a78e), [`abdb866`](https://github.com/LedgerHQ/ledger-live/commit/abdb8662fba3784399a747ece63a11cc4f6e23bb), [`5177d5e`](https://github.com/LedgerHQ/ledger-live/commit/5177d5e6311047cc7485a66dbcb8971c9a8c0a5c), [`3cd7abb`](https://github.com/LedgerHQ/ledger-live/commit/3cd7abb4d6f6072bad62073108d797faf23f9e8c), [`c6170d7`](https://github.com/LedgerHQ/ledger-live/commit/c6170d7b61bc37ef80f8d3e5e608611f9b8ecd67)]:
+  - @ledgerhq/types-live@6.108.0
+  - @ledgerhq/live-env@2.35.0
+
+## 13.48.0-next.0
+
+### Minor Changes
+
+- [#17322](https://github.com/LedgerHQ/ledger-live/pull/17322) [`1368afd`](https://github.com/LedgerHQ/ledger-live/commit/1368afdc7218a68c803672e6e412f8f9f6e62142) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Fix Cronos explorer URLs, update RPC node to Ledger endpoint, and remove broken explorer API link
+
+- [#17137](https://github.com/LedgerHQ/ledger-live/pull/17137) [`2257d43`](https://github.com/LedgerHQ/ledger-live/commit/2257d43630933127549300f39ade1e2b01f94cb8) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore: drop `sonic_blaze` support
+
+- [#17089](https://github.com/LedgerHQ/ledger-live/pull/17089) [`08762c2`](https://github.com/LedgerHQ/ledger-live/commit/08762c286e38136293108c19efa72ae8fbd1286b) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Switch Concordium derivation to canonical 6-segment path `m/44'/<coin>'/0'/0'/0'/<account>'` and split mainnet/testnet coin types (`919`/`1`, the BIP-44 generic testnet). Replaces the previous non-canonical `44'/919'/404'/404'/<account>'` override and aligns with the upstream SDK and device firmware.
+
+### Patch Changes
+
+- Updated dependencies [[`f39fede`](https://github.com/LedgerHQ/ledger-live/commit/f39fede0a6eb4e427a15219e5a3c8fbc3302815f), [`b812751`](https://github.com/LedgerHQ/ledger-live/commit/b8127519474e63c543b1b937a2d3b11ad162a78e), [`abdb866`](https://github.com/LedgerHQ/ledger-live/commit/abdb8662fba3784399a747ece63a11cc4f6e23bb), [`5177d5e`](https://github.com/LedgerHQ/ledger-live/commit/5177d5e6311047cc7485a66dbcb8971c9a8c0a5c), [`3cd7abb`](https://github.com/LedgerHQ/ledger-live/commit/3cd7abb4d6f6072bad62073108d797faf23f9e8c), [`c6170d7`](https://github.com/LedgerHQ/ledger-live/commit/c6170d7b61bc37ef80f8d3e5e608611f9b8ecd67)]:
+  - @ledgerhq/types-live@6.108.0-next.0
+  - @ledgerhq/live-env@2.35.0-next.0
+
 ## 13.47.0
 
 ### Minor Changes

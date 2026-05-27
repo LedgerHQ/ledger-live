@@ -51,9 +51,9 @@ export function flagWith<P extends z.ZodRawShape>(
  * @returns
  * The feature schema.
  */
-export function flagWithRecord(
-  paramsSchema: z.ZodType,
-  defaults: Partial<z.infer<typeof FeatureSchema>> & { params?: unknown } = {},
+export function flagWithRecord<T extends z.ZodTypeAny>(
+  paramsSchema: T,
+  defaults: Partial<z.infer<typeof FeatureSchema>> & { params?: z.infer<T> } = {},
 ) {
   return FeatureSchema.extend({ params: paramsSchema.optional() }).default({
     enabled: false,

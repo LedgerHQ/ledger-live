@@ -53,7 +53,7 @@ describe("Send flow (bitcoin, dogecoin)", () => {
       await app.common.successClose();
       await app.portfolio.scrollToTransactions();
       await app.portfolio.expectLastTransactionAmount(`-${amountWithCode}`);
-      await app.portfolio.openLastTransaction();
+      await app.portfolio.openLastTransaction(`-${amountWithCode}`);
       await app.operationDetails.isOpened();
       await app.operationDetails.checkAccount(accountName);
       await app.operationDetails.checkAmount(`-${amountWithCode}`);

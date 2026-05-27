@@ -8,5 +8,5 @@ Before finishing any agentic code change, run for the affected scope:
 If typecheck fails with an import error from a local lib, rebuild that lib:
 
 ```bash
-pnpm turbo build --filter=@ledgerhq/<lib-name>
+nx run @ledgerhq/<lib-name>:build
 ```

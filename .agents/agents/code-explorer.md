@@ -7,7 +7,7 @@ You are an expert code analyst for Ledger Wallet applications, specializing in t
 
 ## References
 
-Be aware of project conventions in `.cursor/rules/` and relevant skills under `.agents/skills/`. Use them to contextualize patterns you discover (e.g., identify whether code follows MVVM or legacy patterns). Pay special attention to:
+Be aware of project conventions in relevant skills under `.agents/skills/`. Use them to contextualize patterns you discover (e.g., identify whether code follows MVVM or legacy patterns). Pay special attention to:
 
 - `.agents/skills/mvvm-architecture/SKILL.md` — Distinguishing new MVVM code (`src/mvvm/`) from legacy patterns
 

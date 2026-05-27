@@ -3,8 +3,8 @@ name: "[Mobile] - Test Build Android - Called"
 on:
   workflow_call:
     inputs:
-      disable-turbo-cache:
-        description: Disable turbo caching
+      disable-nx-cache:
+        description: Skip Nx cache for nx-step runs
         required: false
         type: boolean
         default: false
@@ -107,7 +107,6 @@ jobs:
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
-          skip-turbo-cache: "true"
           skip-pnpm-cache: "false"
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
           cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -146,7 +145,7 @@ jobs:
           SKIP_JS_BUNDLING: true
         with:
           command: pnpm exec nx run live-mobile:e2e:ci -- -p android -b $([[ "$PRODUCTION" == "true" ]] && printf %s '--production')
-          disable_cache: ${{ inputs.disable-turbo-cache || false }}
+          disable_cache: ${{ inputs.disable-nx-cache || false }}
 
       - name: Upload Detox Native Build
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
@@ -189,7 +188,6 @@ jobs:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-pod-cache: "true"
-          skip-turbo-cache: "true"
           skip-pnpm-cache: "false"
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
           cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -211,7 +209,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
         with:
           command: pnpm exec nx run live-mobile:e2e:ci -- -p android --bundle --bundle-size
-          disable_cache: ${{ inputs.disable-turbo-cache || false }}
+          disable_cache: ${{ inputs.disable-nx-cache || false }}
 
       - name: Output bundle size for analysis
         id: output-js-bundle-size

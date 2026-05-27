@@ -12,6 +12,13 @@ jest.mock("@react-navigation/native", () => {
   };
 });
 
+jest.mock("LLM/features/NotificationsPrompt", () => ({
+  useNotificationsContext: () => ({
+    notifyFlowCompleted: jest.fn(),
+    tryTriggerPushNotificationDrawerAfterInactivity: jest.fn(),
+  }),
+}));
+
 const mockedUseNavigation = jest.mocked(useNavigation);
 
 const mockNavigate = jest.fn();

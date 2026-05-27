@@ -1,12 +1,15 @@
 import { DeviceAppVerifyNotSupported, StatusCodes, UserRefusedAddress } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
-import type { Result, GetAddressOptions } from "../derivation";
+import type { GetAddressResult, GetAddressOptions } from "../derivation";
 
-export type GetAddressFn = (deviceId: string, addressOpt: GetAddressOptions) => Promise<Result>;
+export type GetAddressFn = (
+  deviceId: string,
+  addressOpt: GetAddressOptions,
+) => Promise<GetAddressResult>;
 
 const getAddressWrapper =
   (getAddressFn: GetAddressFn) =>
-  async (deviceId: string, opts: GetAddressOptions): Promise<Result> => {
+  async (deviceId: string, opts: GetAddressOptions): Promise<GetAddressResult> => {
     const { currency, path, verify } = opts;
     return getAddressFn(deviceId, opts)
       .then(result => {

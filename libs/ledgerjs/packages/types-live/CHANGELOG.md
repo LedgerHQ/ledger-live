@@ -1,5 +1,43 @@
 # @ledgerhq/types-live
 
+## 6.108.0
+
+### Minor Changes
+
+- [#17106](https://github.com/LedgerHQ/ledger-live/pull/17106) [`f39fede`](https://github.com/LedgerHQ/ledger-live/commit/f39fede0a6eb4e427a15219e5a3c8fbc3302815f) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Add mobile push notification prompt after DApp transaction completion
+
+- [#17374](https://github.com/LedgerHQ/ledger-live/pull/17374) [`b812751`](https://github.com/LedgerHQ/ledger-live/commit/b8127519474e63c543b1b937a2d3b11ad162a78e) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Introduce AccountBridgeExtensions on AccountBridge (isAccountEmpty, clearAccount, getStakesCount, isEditableOperation, isStuckOperation, getStuckAccountAndOperation). Framework defaults are injected by wrapAccountBridge with per-family overrides loaded lazily through a new loadBridgeExtensions registry slot. The 6 top-level helpers in live-common (isAccountEmpty, clearAccount, getVotesCount, isEditableOperation, isStuckOperation, getStuckAccountAndOperation) are kept as @deprecated thin proxies over getAccountBridge() — no app-side change required.
+
+- [#17096](https://github.com/LedgerHQ/ledger-live/pull/17096) [`abdb866`](https://github.com/LedgerHQ/ledger-live/commit/abdb8662fba3784399a747ece63a11cc4f6e23bb) Thanks [@ishaba](https://github.com/ishaba)! - Add GraphQL read-side transport for Sui (balances, stakes, lastBlock, checkpoint) behind the `suiGraphqlTransport` feature flag.
+
+- [#17320](https://github.com/LedgerHQ/ledger-live/pull/17320) [`3cd7abb`](https://github.com/LedgerHQ/ledger-live/commit/3cd7abb4d6f6072bad62073108d797faf23f9e8c) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add PnL feature flag param to wallet40 feature flags
+
+- [#17186](https://github.com/LedgerHQ/ledger-live/pull/17186) [`c6170d7`](https://github.com/LedgerHQ/ledger-live/commit/c6170d7b61bc37ef80f8d3e5e608611f9b8ecd67) Thanks [@UmbrellaHoodies](https://github.com/UmbrellaHoodies)! - Added finalize_unstake mode support to the generic-alpaca bridge layer and wired up a Tezos-specific computeIntentType that preserves staking and delegation modes without remapping.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/client-ids@0.9.1
+
+## 6.108.0-next.0
+
+### Minor Changes
+
+- [#17106](https://github.com/LedgerHQ/ledger-live/pull/17106) [`f39fede`](https://github.com/LedgerHQ/ledger-live/commit/f39fede0a6eb4e427a15219e5a3c8fbc3302815f) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Add mobile push notification prompt after DApp transaction completion
+
+- [#17374](https://github.com/LedgerHQ/ledger-live/pull/17374) [`b812751`](https://github.com/LedgerHQ/ledger-live/commit/b8127519474e63c543b1b937a2d3b11ad162a78e) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Introduce AccountBridgeExtensions on AccountBridge (isAccountEmpty, clearAccount, getStakesCount, isEditableOperation, isStuckOperation, getStuckAccountAndOperation). Framework defaults are injected by wrapAccountBridge with per-family overrides loaded lazily through a new loadBridgeExtensions registry slot. The 6 top-level helpers in live-common (isAccountEmpty, clearAccount, getVotesCount, isEditableOperation, isStuckOperation, getStuckAccountAndOperation) are kept as @deprecated thin proxies over getAccountBridge() — no app-side change required.
+
+- [#17096](https://github.com/LedgerHQ/ledger-live/pull/17096) [`abdb866`](https://github.com/LedgerHQ/ledger-live/commit/abdb8662fba3784399a747ece63a11cc4f6e23bb) Thanks [@ishaba](https://github.com/ishaba)! - Add GraphQL read-side transport for Sui (balances, stakes, lastBlock, checkpoint) behind the `suiGraphqlTransport` feature flag.
+
+- [#17320](https://github.com/LedgerHQ/ledger-live/pull/17320) [`3cd7abb`](https://github.com/LedgerHQ/ledger-live/commit/3cd7abb4d6f6072bad62073108d797faf23f9e8c) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add PnL feature flag param to wallet40 feature flags
+
+- [#17186](https://github.com/LedgerHQ/ledger-live/pull/17186) [`c6170d7`](https://github.com/LedgerHQ/ledger-live/commit/c6170d7b61bc37ef80f8d3e5e608611f9b8ecd67) Thanks [@UmbrellaHoodies](https://github.com/UmbrellaHoodies)! - Added finalize_unstake mode support to the generic-alpaca bridge layer and wired up a Tezos-specific computeIntentType that preserves staking and delegation modes without remapping.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/client-ids@0.9.1-next.0
+
 ## 6.107.0
 
 ### Minor Changes

@@ -14,6 +14,8 @@ import {
   providePublicKey,
   exportUfvk,
   shareViewKey,
+  approveToken,
+  signTypedMessage as signTypedMessageDevice,
 } from "@ledgerhq/live-common/e2e/speculos";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
@@ -88,5 +90,15 @@ export class SpeculosPage extends AppPage {
   @step("Share view key")
   async shareViewKey() {
     await shareViewKey();
+  }
+
+  @step("Sign token approval on device")
+  async signTokenApproval() {
+    await approveToken();
+  }
+
+  @step("Sign typed message on device")
+  async signTypedMessage() {
+    await signTypedMessageDevice();
   }
 }

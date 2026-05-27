@@ -7,6 +7,7 @@ import {
   ListItemTitle,
   ListItemDescription,
 } from "@ledgerhq/lumen-ui-rnative";
+import { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import BigNumber from "bignumber.js";
 import { useSelector } from "~/context/hooks";
@@ -23,6 +24,7 @@ type Props = Readonly<{
   aggregatedCountervalue: BigNumber;
   subAccountsCount: number;
   onPress: (account: Account) => void;
+  lx?: LumenViewStyle;
 }>;
 
 export default function CryptoAddressesListItem({
@@ -30,6 +32,7 @@ export default function CryptoAddressesListItem({
   aggregatedCountervalue,
   subAccountsCount,
   onPress,
+  lx,
 }: Props) {
   const { t } = useTranslation();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
@@ -47,7 +50,7 @@ export default function CryptoAddressesListItem({
   const displayedAssetsCount = subAccountsCount + 1;
 
   return (
-    <ListItem onPress={handlePress}>
+    <ListItem onPress={handlePress} lx={lx}>
       <AccountItem
         account={account}
         balance={account.balance}

@@ -47,7 +47,6 @@ jobs:
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
-          skip-turbo-cache: "false"
           skip-nx-cache: "true"
 
       - uses: ruby/setup-ruby@v1

@@ -1,5 +1,41 @@
 # @ledgerhq/live-dmk-mobile
 
+## 0.22.0
+
+### Minor Changes
+
+- [#17329](https://github.com/LedgerHQ/ledger-live/pull/17329) [`24ed95e`](https://github.com/LedgerHQ/ledger-live/commit/24ed95e185afe174cadc4b561ca0761a9f4c25fe) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add discovery service with BLE preflight checks
+
+- [#16832](https://github.com/LedgerHQ/ledger-live/pull/16832) [`484c254`](https://github.com/LedgerHQ/ledger-live/commit/484c254bb62a86caa6bb8155e0309d647d0103e7) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Add DMK HTTP proxy transport so DMK-only coin families work via the `ledger-live proxy` CLI in dev mode
+
+- [#17277](https://github.com/LedgerHQ/ledger-live/pull/17277) [`1c92446`](https://github.com/LedgerHQ/ledger-live/commit/1c92446d0b82e8b239d1739dd046cfbf6360f5c4) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add a persisted all-transport known devices slice for Ledger Live Mobile.
+
+- [#17360](https://github.com/LedgerHQ/ledger-live/pull/17360) [`fffc4a3`](https://github.com/LedgerHQ/ledger-live/commit/fffc4a37b4a1ef2a2bc6c77e706bf22bed574329) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Remove unused useDeviceSessionState
+
+### Patch Changes
+
+- Updated dependencies [[`4625078`](https://github.com/LedgerHQ/ledger-live/commit/462507883d8bb586d243ed7815081830a1de3b4c), [`d285678`](https://github.com/LedgerHQ/ledger-live/commit/d28567854ca5ebf7c02c66403d8b2c7406c7abff), [`abdb866`](https://github.com/LedgerHQ/ledger-live/commit/abdb8662fba3784399a747ece63a11cc4f6e23bb), [`5177d5e`](https://github.com/LedgerHQ/ledger-live/commit/5177d5e6311047cc7485a66dbcb8971c9a8c0a5c), [`1c92446`](https://github.com/LedgerHQ/ledger-live/commit/1c92446d0b82e8b239d1739dd046cfbf6360f5c4), [`fffc4a3`](https://github.com/LedgerHQ/ledger-live/commit/fffc4a37b4a1ef2a2bc6c77e706bf22bed574329)]:
+  - @ledgerhq/live-dmk-shared@0.24.0
+  - @ledgerhq/live-env@2.35.0
+
+## 0.22.0-next.0
+
+### Minor Changes
+
+- [#17329](https://github.com/LedgerHQ/ledger-live/pull/17329) [`24ed95e`](https://github.com/LedgerHQ/ledger-live/commit/24ed95e185afe174cadc4b561ca0761a9f4c25fe) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add discovery service with BLE preflight checks
+
+- [#16832](https://github.com/LedgerHQ/ledger-live/pull/16832) [`484c254`](https://github.com/LedgerHQ/ledger-live/commit/484c254bb62a86caa6bb8155e0309d647d0103e7) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Add DMK HTTP proxy transport so DMK-only coin families work via the `ledger-live proxy` CLI in dev mode
+
+- [#17277](https://github.com/LedgerHQ/ledger-live/pull/17277) [`1c92446`](https://github.com/LedgerHQ/ledger-live/commit/1c92446d0b82e8b239d1739dd046cfbf6360f5c4) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add a persisted all-transport known devices slice for Ledger Live Mobile.
+
+- [#17360](https://github.com/LedgerHQ/ledger-live/pull/17360) [`fffc4a3`](https://github.com/LedgerHQ/ledger-live/commit/fffc4a37b4a1ef2a2bc6c77e706bf22bed574329) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Remove unused useDeviceSessionState
+
+### Patch Changes
+
+- Updated dependencies [[`4625078`](https://github.com/LedgerHQ/ledger-live/commit/462507883d8bb586d243ed7815081830a1de3b4c), [`d285678`](https://github.com/LedgerHQ/ledger-live/commit/d28567854ca5ebf7c02c66403d8b2c7406c7abff), [`abdb866`](https://github.com/LedgerHQ/ledger-live/commit/abdb8662fba3784399a747ece63a11cc4f6e23bb), [`5177d5e`](https://github.com/LedgerHQ/ledger-live/commit/5177d5e6311047cc7485a66dbcb8971c9a8c0a5c), [`1c92446`](https://github.com/LedgerHQ/ledger-live/commit/1c92446d0b82e8b239d1739dd046cfbf6360f5c4), [`fffc4a3`](https://github.com/LedgerHQ/ledger-live/commit/fffc4a37b4a1ef2a2bc6c77e706bf22bed574329)]:
+  - @ledgerhq/live-dmk-shared@0.24.0-next.0
+  - @ledgerhq/live-env@2.35.0-next.0
+
 ## 0.21.4
 
 ### Patch Changes

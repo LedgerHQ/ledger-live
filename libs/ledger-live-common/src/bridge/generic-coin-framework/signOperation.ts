@@ -10,7 +10,7 @@ import {
   transactionToIntent,
 } from "./utils";
 import { FeeNotLoaded } from "@ledgerhq/errors";
-import { Result } from "@ledgerhq/ledger-wallet-framework/derivation";
+import { type GetAddressResult } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import { GenericTransaction } from "./types";
@@ -79,7 +79,7 @@ export const genericSignOperation =
           const derivationPath = account.freshAddressPath;
           const { publicKey } = (await signer.getAddress(derivationPath, {
             derivationMode: account.derivationMode,
-          })) as Result;
+          })) as GetAddressResult;
 
           const transactionIntent = transactionToIntent(
             account,

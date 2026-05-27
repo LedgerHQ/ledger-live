@@ -1,6 +1,6 @@
 import React from "react";
 import { GenericProps, GenericStatusDisplay } from "./GenericStatusDisplay";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@features/platform-feature-flags";
 import { Complete } from "./Complete";
 export const Success = (props: GenericProps) => {
   const lwdLedgerSyncOptimisation = useFeature("lwdLedgerSyncOptimisation");

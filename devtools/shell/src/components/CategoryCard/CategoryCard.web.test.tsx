@@ -2,7 +2,8 @@ import userEvent from "@testing-library/user-event";
 import { render, screen } from "jest/render";
 import { makeTool } from "jest/fixtures";
 import { CategoryCard } from "./CategoryCard.web";
-import { Category } from "../../types";
+import { Category } from "@devtools/registry";
+import type { Tool } from "@devtools/registry";
 
 const tool = makeTool({
   id: "feature-flags",
@@ -22,7 +23,7 @@ describe("CategoryCard", () => {
   });
 
   it("shows plural 'tools' for multiple tools", () => {
-    const tools = [tool, { ...tool, id: "other" }];
+    const tools: Tool[] = [tool, { ...tool, id: "other" }];
     render(<CategoryCard category={Category.CONFIGURATION} tools={tools} onSelect={jest.fn()} />);
     expect(screen.getByText("2 tools")).toBeInTheDocument();
   });

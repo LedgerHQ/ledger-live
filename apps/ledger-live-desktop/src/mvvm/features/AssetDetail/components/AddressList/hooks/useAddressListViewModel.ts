@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import type { Account, AccountLike, DistributionItem } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useSortAccountsComparator } from "~/renderer/actions/general";
 import { useSelector } from "LLD/hooks/redux";

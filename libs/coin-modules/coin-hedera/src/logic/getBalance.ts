@@ -44,6 +44,7 @@ export async function getBalance(currency: CryptoCurrency, address: string): Pro
           amountDeposited: BigInt(mirrorAccount.balance.balance),
           amountRewarded: BigInt(mirrorAccount.pending_reward),
           delegate: validator.node_account_id,
+          actions: [],
           details: {
             overstaked: BigInt(validator.stake) >= BigInt(validator.max_stake),
           },

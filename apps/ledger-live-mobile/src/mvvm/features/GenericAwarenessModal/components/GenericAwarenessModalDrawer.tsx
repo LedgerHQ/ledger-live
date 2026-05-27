@@ -4,21 +4,21 @@ import { StyleSheet } from "react-native";
 import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 import { CarouselContent } from "./CarouselContent";
 import { FeatureIntroContent } from "./FeatureIntroContent";
-import type { GenericAwarenessModalData } from "../types";
+import type { GenericAwarenessModalContentCard } from "@ledgerhq/live-common/genericAwarenessModal";
 
-type GenericAwarenessModalDrawerProps = Readonly<{
+type GenericAwarenessModalDrawerViewProps = Readonly<{
   isOpen: boolean;
   onClose: () => void;
-  data: GenericAwarenessModalData;
+  data: GenericAwarenessModalContentCard | undefined;
   bottomInset: number;
 }>;
 
-export function GenericAwarenessModalDrawer({
+export function GenericAwarenessModalDrawerView({
   isOpen,
   onClose,
   data,
   bottomInset,
-}: GenericAwarenessModalDrawerProps) {
+}: GenericAwarenessModalDrawerViewProps) {
   if (!data) {
     return null;
   }
@@ -29,11 +29,11 @@ export function GenericAwarenessModalDrawer({
     if (!isOpen) return null;
 
     if (data.layout === "carousel") {
-      return <CarouselContent slides={data.content} onClose={onClose} />;
+      return <CarouselContent slides={data.data} onClose={onClose} />;
     }
 
     if (data.layout === "featureIntro") {
-      return <FeatureIntroContent content={data.content} onClose={onClose} />;
+      return <FeatureIntroContent content={data} onClose={onClose} />;
     }
 
     return null;

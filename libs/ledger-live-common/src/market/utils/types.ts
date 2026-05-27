@@ -50,6 +50,12 @@ export type MarketCurrencyRequestParams = {
   range?: string;
 };
 
+export type MarketAssetChartDataRequestParams = {
+  id?: string;
+  counterCurrency?: string;
+  range?: string;
+};
+
 export type SparklineSvgData = {
   path: string;
   viewBox: string;
@@ -79,8 +85,8 @@ export type MarketCurrencyData = {
   priceChangePercentage: Record<KeysPriceChange, number>;
   marketCapChangePercentage24h: number;
   circulatingSupply: number;
-  totalSupply: number;
-  maxSupply: number;
+  totalSupply?: number;
+  maxSupply?: number;
   ath: number;
   athDate: Date;
   atl: number;

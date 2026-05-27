@@ -1,5 +1,31 @@
 # @ledgerhq/live-signer-celo
 
+## 1.1.0
+
+### Minor Changes
+
+- [#16914](https://github.com/LedgerHQ/ledger-live/pull/16914) [`0b001f0`](https://github.com/LedgerHQ/ledger-live/commit/0b001f01a039fe4f11c508d69457350a1e3f23fd) Thanks [@pvoliveira](https://github.com/pvoliveira)! - Remove all `@celo/*` runtime dependencies (except `@celo/abis`) and replace with `viem` SDK; source contract ABIs (Registry, Accounts, Election, LockedGold, IERC20) from the official `@celo/abis` package instead of a local hand-written copy; drop `rlpEncodedTxForLedger` from the Celo signer interface in favour of viem/celo CIP-64 transaction serialization
+
+### Patch Changes
+
+- Updated dependencies [[`0b001f0`](https://github.com/LedgerHQ/ledger-live/commit/0b001f01a039fe4f11c508d69457350a1e3f23fd)]:
+  - @ledgerhq/coin-celo@2.3.0
+  - @ledgerhq/hw-app-celo@7.1.0
+  - @ledgerhq/hw-app-eth@7.8.3
+
+## 1.1.0-next.0
+
+### Minor Changes
+
+- [#16914](https://github.com/LedgerHQ/ledger-live/pull/16914) [`0b001f0`](https://github.com/LedgerHQ/ledger-live/commit/0b001f01a039fe4f11c508d69457350a1e3f23fd) Thanks [@pvoliveira](https://github.com/pvoliveira)! - Remove all `@celo/*` runtime dependencies (except `@celo/abis`) and replace with `viem` SDK; source contract ABIs (Registry, Accounts, Election, LockedGold, IERC20) from the official `@celo/abis` package instead of a local hand-written copy; drop `rlpEncodedTxForLedger` from the Celo signer interface in favour of viem/celo CIP-64 transaction serialization
+
+### Patch Changes
+
+- Updated dependencies [[`0b001f0`](https://github.com/LedgerHQ/ledger-live/commit/0b001f01a039fe4f11c508d69457350a1e3f23fd)]:
+  - @ledgerhq/coin-celo@2.3.0-next.0
+  - @ledgerhq/hw-app-celo@7.1.0-next.0
+  - @ledgerhq/hw-app-eth@7.8.3-next.0
+
 ## 1.0.2
 
 ### Patch Changes

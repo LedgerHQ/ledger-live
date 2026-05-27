@@ -3663,7 +3663,47 @@
         "addSampleWalletCarouselTag": "Add bottom wallet carousel (tag)",
         "addSampleWalletCarouselTagDesc": "One mock card with tag, title, image, link. No Braze.",
         "dismissAll": "Dismiss all local cards",
-        "dismissAllDesc": "Remove all locally generated content cards."
+        "dismissAllDesc": "Remove all locally generated content cards.",
+        "genericAwareness": {
+          "title": "Generic awareness modal",
+          "description": "Create raw Braze-like cards, process them through the generic awareness modal parser, then return to Portfolio to view the drawer.",
+          "carousel": "Carousel",
+          "featureIntro": "Feature intro",
+          "appStart": "App start",
+          "deeplink": "Deeplink",
+          "campaignId": "Campaign ID",
+          "titleField": "Title",
+          "subtitle": "Subtitle",
+          "imageUrl": "Image URL",
+          "primaryButtonLabel": "Primary button label",
+          "primaryButtonLink": "Primary button link",
+          "secondaryButtonLabel": "Secondary button label",
+          "secondaryButtonLink": "Secondary button link",
+          "icon": "Icon",
+          "slide": "Slide",
+          "item": "Item",
+          "addItem": "Add {{item}}",
+          "removeItem": "Remove",
+          "create": "Create generic awareness modal",
+          "createDesc": "Parse the form as raw Braze-like cards and add it to the existing modal list.",
+          "createCarousel": "Create Carousel Generic Awareness Modal",
+          "createCarouselDesc": "Open a form to create a carousel generic awareness modal.",
+          "createFeatureIntro": "Create Feature Intro Generic Awareness Modal",
+          "createFeatureIntroDesc": "Open a form to create a feature intro generic awareness modal.",
+          "openCurrent": "Open current campaign",
+          "openCurrentDesc": "Set the drawer state for this campaign. Return to Portfolio to view it.",
+          "clear": "Clear generic awareness modals",
+          "clearDesc": "Remove every generic awareness modal currently stored in app state.",
+          "existingTitle": "Existing generic awareness modals",
+          "existingDescription": "Tap a campaign to set it as the drawer to open, then return to Portfolio.",
+          "noExisting": "No generic awareness modal is currently stored in app state.",
+          "existingDesc": "{{layout}} • {{count}} entries",
+          "layoutLabel": "Layout",
+          "idLabel": "ID",
+          "triggerLabel": "Trigger",
+          "entriesLabel": "Entries ({{count}})",
+          "untitledEntry": "Untitled entry"
+        }
       }
     }
   },
@@ -4921,7 +4961,7 @@
               "title": "Pairing was refused",
               "cta": {
                 "retry": "Retry pairing"
-              } 
+              }
             },
             "blePairingPeerRemovedPairing": {
               "title": "Go to your phone’s Bluetooth settings to unpair {{productName}}",
@@ -8612,6 +8652,22 @@
       }
     }
   },
+  "analyticsConsent": {
+    "title": "Help us improve Ledger",
+    "subTitle": "With your consent, we’ll collect usage data to improve features and fix bugs. We won’t track your assets or portfolio details.",
+    "setPreferencesCTA": "Set preferences",
+    "refuseCTA": "Refuse all",
+    "acceptCTA": "Accept all",
+    "privacyPolicy": "You can revoke your consent anytime in settings.",
+    "privacyPolicyCTA": "Privacy policy",
+    "setPreferences": {
+      "title": "Set preferences",
+      "performance": "App performance",
+      "performanceDesc": "Enable Ledger to collect app usage to enhance the experience",
+      "experience": "Personalized experience",
+      "experienceDesc": "Enable Ledger to collect app usage to provide personalized content"
+    }
+  },
   "analyticsOptIn": {
     "variantA": {
       "main": {
@@ -9013,10 +9069,12 @@
       "marketCap": "Market cap",
       "marketRank": "Market rank",
       "circulatingSupply": "Circulating supply",
-      "circulatingSupplyTooltip": "The number of coins currently available for trading and circulating in the market.",
+      "circulatingSupplyTooltip": "The total number of tokens currently available in the market and held by the public. It excludes locked, reserved, or unminted tokens.",
       "maxSupply": "Max supply",
-      "maxSupplyTooltip": "The maximum number of coins that will ever exist for this cryptocurrency.",
+      "maxSupplyTooltip": "The maximum number of tokens that will ever exist. For some assets, this is fixed to prevent inflation.",
+      "marketCapTooltip": "The total value of all coins in circulation. Think of it as the crypto's total worth on the market.",
       "tradingVolume": "24h trading volume",
+      "tradingVolumeTooltip": "The total amount traded in the last 24 hours.",
       "error": "Unable to load market stats"
     },
     "pricePerformance": {
@@ -9050,7 +9108,7 @@
       "earnBannerGeneric": "Earn with this asset",
       "earnBannerSubtitle": "Hold and earn with this asset",
       "earnBannerAction": "Go to Earn",
-      "availableBalanceTooltip": "Funds available for immediate use, excluding staked or delegated amounts."
+      "availableBalanceTooltip": "The portion of the holdings you can use right now, free to send, swap, or withdraw at any time."
     },
     "coinOptions": {
       "openMenuA11yLabel": "Coin options",

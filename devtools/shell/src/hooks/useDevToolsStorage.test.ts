@@ -1,4 +1,5 @@
 import { renderHook } from "@testing-library/react";
+import type { ToolId } from "@devtools/registry";
 import { useDevToolsStorage } from "./useDevToolsStorage.web";
 import { MAX_RECENT_TOOLS, STORAGE_KEY, serialize } from "../utils/devToolsStorageUtils";
 
@@ -41,7 +42,7 @@ describe("useDevToolsStorage", () => {
   });
 
   describe("when activeToolId changes", () => {
-    const initialProps: { id: string | undefined } = { id: undefined };
+    const initialProps: { id: ToolId | undefined } = { id: undefined };
 
     it("prepends the new tool to recentToolIds", () => {
       const { result, rerender } = renderHook(({ id }) => useDevToolsStorage(id, jest.fn()), {

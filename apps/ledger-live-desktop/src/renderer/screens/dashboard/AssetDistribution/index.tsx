@@ -13,7 +13,7 @@ import {
   hideEmptyTokenAccountsSelector,
 } from "~/renderer/reducers/settings";
 import { useSelector } from "LLD/hooks/redux";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 export default function AssetDistribution() {
   const hideEmptyTokenAccount = useSelector(hideEmptyTokenAccountsSelector);

@@ -109,6 +109,7 @@ describe("getStakes (MSW integration)", () => {
     server.use(
       rpcHandler({
         getProgramAccounts: () => [],
+        getEpochInfo: () => epochInfo(400),
       }),
     );
 
@@ -188,6 +189,7 @@ describe("getStakes (MSW integration)", () => {
         getProgramAccounts: () => {
           throw new Error("RPC unavailable");
         },
+        getEpochInfo: () => epochInfo(400),
       }),
     );
 

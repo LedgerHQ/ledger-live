@@ -6,6 +6,10 @@ import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
 import { openModal, closeAllModal } from "~/renderer/actions/modals";
+import {
+  FEATURE_INTRO_CAMPAIGN_ID,
+  genericAwarenessModalTestContentCards,
+} from "LLD/features/GenericAwarenessModal/__tests__/fixtures";
 import { useDeepLinkHandler } from "../useDeepLinkHandler";
 import BigNumber from "bignumber.js";
 
@@ -327,12 +331,18 @@ describe("useDeepLinkHandler", () => {
   });
 
   describe("generic-awareness-modal deeplink", () => {
+    const genericAwarenessModalEnabledState = {
+      ...withFlagOverrides({ lwdGenericAwarenessModal: { enabled: true } }),
+      settings: { hasCompletedOnboarding: true, dismissedContentCards: {} },
+      genericAwarenessModal: {
+        contentCards: genericAwarenessModalTestContentCards,
+        campaignId: undefined,
+      },
+    };
+
     it("sets GENERIC_AWARENESS_MODAL when flag is enabled and onboarding is complete", async () => {
       const { result, store } = renderHook(() => useDeepLinkHandler(), {
-        initialState: {
-          ...withFlagOverrides({ lwdGenericAwarenessModal: { enabled: true } }),
-          settings: { hasCompletedOnboarding: true },
-        },
+        initialState: genericAwarenessModalEnabledState,
       });
 
       result.current.handler("ledgerwallet://generic-awareness-modal", false);
@@ -346,19 +356,19 @@ describe("useDeepLinkHandler", () => {
 
     it("stores campaign id from query when modal opens", async () => {
       const { result, store } = renderHook(() => useDeepLinkHandler(), {
-        initialState: {
-          ...withFlagOverrides({ lwdGenericAwarenessModal: { enabled: true } }),
-          settings: { hasCompletedOnboarding: true },
-        },
+        initialState: genericAwarenessModalEnabledState,
       });
 
-      result.current.handler("ledgerwallet://generic-awareness-modal?id=welcome-v2", false);
+      result.current.handler(
+        `ledgerwallet://generic-awareness-modal?id=${FEATURE_INTRO_CAMPAIGN_ID}`,
+        false,
+      );
 
       await waitFor(() => {
         expect(store.getState().dialogs.GENERIC_AWARENESS_MODAL).toBe(true);
       });
 
-      expect(store.getState().genericAwarenessModal.campaignId).toBe("welcome-v2");
+      expect(store.getState().genericAwarenessModal.campaignId).toBe(FEATURE_INTRO_CAMPAIGN_ID);
     });
 
     it("does not set GENERIC_AWARENESS_MODAL when lwdGenericAwarenessModal is disabled", async () => {

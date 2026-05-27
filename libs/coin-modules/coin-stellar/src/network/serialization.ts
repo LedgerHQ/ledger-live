@@ -186,14 +186,7 @@ function getValue(
 
   switch (operation.type) {
     case "create_account":
-      value = parseAPIValue(operation.starting_balance);
-
-      if (type === "OUT") {
-        value = value.plus(transaction.fee_charged);
-      }
-
-      return value;
-
+      return parseAPIValue(operation.starting_balance);
     case "payment":
     case "path_payment_strict_send":
     case "path_payment_strict_receive":

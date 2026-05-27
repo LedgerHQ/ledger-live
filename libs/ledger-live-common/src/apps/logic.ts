@@ -10,6 +10,8 @@ import { App } from "@ledgerhq/types-live";
 import { getEnv } from "@ledgerhq/live-env";
 import { LatestFirmwareVersionRequired } from "@ledgerhq/errors";
 
+const RESERVED_BLOCKS = 1;
+
 export const initState = (
   { deviceModelId, appsListNames, installed, appByName, ...listAppsResult }: ListAppsResult,
   appsToRestore?: string[],
@@ -389,6 +391,10 @@ const defaultConfig = {
   warnMemoryRatio: 0.1,
   sortApps: false,
 };
+
+const getLanguagePackBytes = (state: State): number =>
+  state.installedLanguagePack?.language === "english" ? 0 : state.installedLanguagePack?.bytes || 0;
+
 // calculate all size information useful for display
 export const distribute = (
   state: State,
@@ -401,7 +407,7 @@ export const distribute = (
   const totalBlocks = Math.floor(totalBytes / blockSize);
   const osBytes = (state.firmware && state.firmware.bytes) || 0;
   const osBlocks = Math.ceil(osBytes / blockSize);
-  const languagePackBytes = state.installedLanguagePack?.bytes || 0;
+  const languagePackBytes = getLanguagePackBytes(state);
   const languagePackBlocks = Math.ceil(languagePackBytes / blockSize);
   const appsSpaceBlocks = totalBlocks - osBlocks - customImageBlocks - languagePackBlocks;
   const appsSpaceBytes = appsSpaceBlocks * blockSize;
@@ -456,7 +462,7 @@ export const isIncompleteState = (state: State): boolean => state.installed.some
 // calculate if a given state (typically a predicted one) is out of memory (meaning impossible to reach with a device)
 export const isOutOfMemoryState = (state: State): boolean => {
   const { totalAppsBlocks, appsSpaceBlocks } = distribute(state);
-  return totalAppsBlocks > appsSpaceBlocks;
+  return totalAppsBlocks >= appsSpaceBlocks - RESERVED_BLOCKS;
 };
 export const isLiveSupportedApp = (app: App): boolean => {
   const currency = app?.currencyId ? findCryptoCurrencyById(app.currencyId) : null;

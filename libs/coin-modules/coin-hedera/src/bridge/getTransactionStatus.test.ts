@@ -58,6 +58,10 @@ jest.mock("../preload-data", () => ({
   getCurrentHederaPreloadData: jest.fn(),
 }));
 
+jest.mock("../network/rpc", () => ({
+  rpcClient: require("../test/fixtures/rpc.fixture").getMockedRpcClient(),
+}));
+
 import { getTransactionStatus } from "./getTransactionStatus";
 
 const mockEstimateFees = estimateFees.estimateFees as jest.Mock;

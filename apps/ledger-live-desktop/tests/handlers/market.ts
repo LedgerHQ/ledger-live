@@ -13,6 +13,14 @@ const handlers = [
       return HttpResponse.json(MarketMockedResponse.marketList);
     }
   }),
+  http.get("https://countervalues.live.ledger.com/v3/markets/chart/:range/:id", () => {
+    return HttpResponse.json({
+      values: [
+        [1700000000000, 50000],
+        [1700003600000, 50100],
+      ],
+    });
+  }),
 ];
 
 export default handlers;

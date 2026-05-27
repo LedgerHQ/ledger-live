@@ -1,4 +1,5 @@
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
+import { log } from "@ledgerhq/logs";
 import { BigNumber } from "bignumber.js";
 import type {
   StakingPosition,
@@ -7,17 +8,33 @@ import type {
   TezosAccountRaw,
 } from "./types/bridge";
 
+function safeISOString(d: Date, uid: string): string | undefined {
+  if (Number.isFinite(d.getTime())) return d.toISOString();
+  log("coin:tezos", "serialization: dropping invalid createdAt on serialize", { uid });
+  return undefined;
+}
+
+function safeDate(s: string, uid: string): Date | undefined {
+  const d = new Date(s);
+  if (Number.isFinite(d.getTime())) return d;
+  log("coin:tezos", "serialization: dropping invalid createdAt on restore", { uid, raw: s });
+  return undefined;
+}
+
 function toStakingPositionRaw(p: StakingPosition): StakingPositionRaw {
+  const createdAt = p.createdAt && safeISOString(p.createdAt, p.uid);
   return {
     uid: p.uid,
     address: p.address,
     ...(p.delegate && { delegate: p.delegate }),
     state: p.state,
     amount: p.amount.toString(),
+    ...(createdAt && { createdAt }),
   };
 }
 
 function fromStakingPositionRaw(r: StakingPositionRaw): StakingPosition {
+  const createdAt = r.createdAt && safeDate(r.createdAt, r.uid);
   return {
     uid: r.uid,
     address: r.address,
@@ -25,6 +42,8 @@ function fromStakingPositionRaw(r: StakingPositionRaw): StakingPosition {
     state: r.state,
     asset: { type: "native" },
     amount: new BigNumber(r.amount),
+    actions: [],
+    ...(createdAt && { createdAt }),
   };
 }
 

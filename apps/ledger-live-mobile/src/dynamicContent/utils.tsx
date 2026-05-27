@@ -52,7 +52,14 @@ export const filterCardsThatHaveBeenDismissed = (
   cards: BrazeContentCard[],
   dismissedContentCardsIds: string[],
 ) => {
-  const filteredCards = cards.filter(card => !dismissedContentCardsIds.includes(card.id));
+  const filteredCards = cards.filter(card => {
+    const dismissedId =
+      card.extras.location === ContentCardLocation.GenericAwarenessModal
+        ? card.extras.campaignId
+        : card.id;
+
+    return !dismissedId || !dismissedContentCardsIds.includes(dismissedId);
+  });
 
   return filteredCards;
 };

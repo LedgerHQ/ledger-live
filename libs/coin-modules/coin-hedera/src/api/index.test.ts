@@ -244,6 +244,7 @@ describe("createApi", () => {
             address: "0.0.1234",
             state: "active" as const,
             asset: { type: "native" as const },
+            actions: [],
           },
         ],
       };

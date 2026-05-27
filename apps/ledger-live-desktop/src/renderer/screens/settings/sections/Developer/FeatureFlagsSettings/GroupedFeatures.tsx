@@ -1,8 +1,6 @@
-import {
-  groupedFeatures,
-  GroupedFeature,
-} from "@ledgerhq/live-common/featureFlags/groupedFeatures";
-import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/FeatureFlagsContext";
+import { groupedFeatures, type GroupedFeature, setOverride } from "@shared/feature-flags";
+import { useFeatureFlags } from "@features/platform-feature-flags";
+import { useDispatch } from "LLD/hooks/redux";
 import { Flex, Link, Tag, Box, Text } from "@ledgerhq/react-ui";
 import { Switch } from "@ledgerhq/lumen-ui-react";
 import React, { useCallback, useMemo, useState } from "react";
@@ -20,7 +18,8 @@ const GroupedFeatures = ({ groupName, focused, setFocusedGroupName }: Props) => 
   const { featureIds } = groupedFeatures[groupName];
   const { t } = useTranslation();
 
-  const { getFeature, overrideFeature, resetFeature } = useFeatureFlags();
+  const dispatch = useDispatch();
+  const flags = useFeatureFlags();
 
   const flagsList = useMemo(
     () =>
@@ -39,8 +38,7 @@ const GroupedFeatures = ({ groupName, focused, setFocusedGroupName }: Props) => 
   let allEnabled = true;
   let someOverridden = false;
   featureIds.forEach(featureId => {
-    const val = getFeature(featureId);
-    const { enabled, overridesRemote } = val || {};
+    const { enabled, overridesRemote } = flags[featureId] ?? {};
     someEnabled = someEnabled || Boolean(enabled);
     allEnabled = allEnabled && Boolean(enabled);
     someOverridden = someOverridden || Boolean(overridesRemote);
@@ -48,13 +46,17 @@ const GroupedFeatures = ({ groupName, focused, setFocusedGroupName }: Props) => 
 
   const handleSwitchChange = useCallback(() => {
     featureIds.forEach(featureId =>
-      overrideFeature(featureId, { ...getFeature(featureId), enabled: !allEnabled }),
+      dispatch(
+        setOverride({ key: featureId, value: { ...flags[featureId], enabled: !allEnabled } }),
+      ),
     );
-  }, [allEnabled, featureIds, getFeature, overrideFeature]);
+  }, [allEnabled, featureIds, flags, dispatch]);
 
   const handleReset = useCallback(() => {
-    featureIds.forEach(featureId => resetFeature(featureId));
-  }, [featureIds, resetFeature]);
+    featureIds.forEach(featureId =>
+      dispatch(setOverride({ key: featureId, value: undefined })),
+    );
+  }, [featureIds, dispatch]);
 
   return (
     <>

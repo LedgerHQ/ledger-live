@@ -71,12 +71,31 @@ describe("counterValueFormatter", () => {
       expect(result).toContain("BTC");
     });
 
-    it("returns string value when no formatter is available", () => {
+    it("applies locale thousands separator when no currency and no ticker", () => {
       const result = counterValueFormatter({
-        value: 123.456,
+        value: 1234567,
         locale: "en-US",
       });
-      expect(result).toBe("123.456");
+      expect(result).toBe("1,234,567");
+    });
+
+    it("formats large numbers with ticker instead of returning the raw integer", () => {
+      const result = counterValueFormatter({
+        value: 124329543825,
+        locale: "en-US",
+        ticker: "xyz",
+      });
+      expect(result).not.toBe("124329543825");
+      expect(result).toBe("124,329,543,825 XYZ");
+    });
+
+    it("formats with empty ticker without trailing whitespace", () => {
+      const result = counterValueFormatter({
+        value: 1234567,
+        locale: "en-US",
+        ticker: "",
+      });
+      expect(result).toBe("1,234,567");
     });
   });
 
@@ -150,6 +169,43 @@ describe("counterValueFormatter", () => {
         t: i18next.t,
       });
       expect(result).toContain("50");
+    });
+
+    it("does not insert double whitespace when compact notation is empty (value < 1000)", () => {
+      const result = counterValueFormatter({
+        value: 500,
+        locale: "en-US",
+        shorten: true,
+        t: i18next.t,
+        ticker: "btc",
+      });
+      expect(result).not.toMatch(/\s{2,}/);
+      expect(result).toMatch(/BTC$/);
+    });
+
+    it("appends the ticker after the compact notation when no currency is given", () => {
+      const result = counterValueFormatter({
+        value: 120_685_000,
+        locale: "en-US",
+        shorten: true,
+        t: i18next.t,
+        ticker: "eth",
+      });
+      expect(result).toMatch(/120\.685/);
+      expect(result).toMatch(/M|million/i);
+      expect(result).toMatch(/ETH$/);
+    });
+
+    it("returns compact notation without ticker when ticker is missing", () => {
+      const result = counterValueFormatter({
+        value: 124_329_543_825,
+        locale: "en-US",
+        shorten: true,
+        t: i18next.t,
+      });
+      expect(result).not.toBe("124329543825");
+      expect(result).toMatch(/B|billion/i);
+      expect(result.trim()).toBe(result);
     });
   });
 

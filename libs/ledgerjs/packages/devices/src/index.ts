@@ -86,7 +86,7 @@ const devices: { [key in DeviceModelId]: DeviceModel } = {
     usbOnly: true,
     memorySize: 1533 * 1024,
     masks: [0x33100000],
-    getBlockSize: (_firmwareVersion: string): number => 32,
+    getBlockSize: (_firmwareVersion: string): number => 512,
   },
   [DeviceModelId.apex]: {
     id: DeviceModelId.apex,
@@ -96,7 +96,7 @@ const devices: { [key in DeviceModelId]: DeviceModel } = {
     usbOnly: false,
     memorySize: 1533 * 1024,
     masks: [0x33400000],
-    getBlockSize: (_firmwareVersion: string): number => 32,
+    getBlockSize: (_firmwareVersion: string): number => 512,
     bluetoothSpec: [
       {
         serviceUuid: "13d63400-2c97-8004-0000-4c6564676572",
@@ -114,7 +114,7 @@ const devices: { [key in DeviceModelId]: DeviceModel } = {
     usbOnly: false,
     memorySize: 1533 * 1024,
     masks: [0x33200000],
-    getBlockSize: (_firmwareVersion: string): number => 32,
+    getBlockSize: (_firmwareVersion: string): number => 512,
     bluetoothSpec: [
       {
         serviceUuid: "13d63400-2c97-6004-0000-4c6564676572",
@@ -132,7 +132,7 @@ const devices: { [key in DeviceModelId]: DeviceModel } = {
     usbOnly: false,
     memorySize: 1533 * 1024,
     masks: [0x33300000],
-    getBlockSize: (_firmwareVersion: string): number => 32,
+    getBlockSize: (_firmwareVersion: string): number => 512,
     bluetoothSpec: [
       {
         serviceUuid: "13d63400-2c97-3004-0000-4c6564676572",

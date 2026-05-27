@@ -8,7 +8,10 @@ import {
   makeSync,
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { updateTransaction } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
-import { Result, runDerivationScheme } from "@ledgerhq/ledger-wallet-framework/derivation";
+import {
+  type GetAddressResult,
+  runDerivationScheme,
+} from "@ledgerhq/ledger-wallet-framework/derivation";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { AccountBridge, CurrencyBridge, DerivationMode } from "@ledgerhq/types-live";
@@ -54,12 +57,12 @@ const kaspaIterateResultBuilder = (getAddressFn: GetAddressFn) => () =>
       deviceId,
     }: {
       index: number | string;
-      derivationsCache: Record<string, Result>;
+      derivationsCache: Record<string, GetAddressResult>;
       derivationScheme: string;
       derivationMode: DerivationMode;
       currency: CryptoCurrency;
       deviceId: string;
-    }): Promise<Result | null> => {
+    }): Promise<GetAddressResult | null> => {
       const accountPath = derivationScheme.split("/").slice(0, 3).join("/");
       const freshAddressPath = runDerivationScheme(accountPath, currency, {
         account: index,
@@ -73,7 +76,7 @@ const kaspaIterateResultBuilder = (getAddressFn: GetAddressFn) => () =>
         });
         derivationsCache[freshAddressPath] = res;
       }
-      return res as Result;
+      return res as GetAddressResult;
     },
   );
 

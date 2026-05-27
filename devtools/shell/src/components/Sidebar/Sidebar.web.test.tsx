@@ -2,7 +2,7 @@ import userEvent from "@testing-library/user-event";
 import { render, screen } from "jest/render";
 import { makeTool } from "jest/fixtures";
 import { Sidebar } from "./Sidebar.web";
-import { Category } from "../../types";
+import { Category } from "@devtools/registry";
 
 const categories = [
   {
@@ -74,7 +74,7 @@ describe("Sidebar", () => {
   });
 
   it("auto-expands the category matching activeToolId", () => {
-    render(<Sidebar {...defaultProps} activeToolId="feature-flags" />);
+    render(<Sidebar {...defaultProps} activeToolId={"feature-flags"} />);
     expect(screen.getByText("Feature Flags")).toBeInTheDocument();
   });
 

@@ -18,7 +18,7 @@ import { Account } from "./enum/Account";
 import { Currency } from "./enum/Currency";
 import expect from "expect";
 import { sendBTC, sendBTCBasedCoin } from "./families/bitcoin";
-import { sendEVM } from "./families/evm";
+import { sendEVM, approveToken, signTypedMessage } from "./families/evm";
 import { sendPolkadot } from "./families/polkadot";
 import { sendAlgorand } from "./families/algorand";
 import { sendTron } from "./families/tron";
@@ -1093,16 +1093,12 @@ export const exportUfvk = withDeviceController(
   ({ getButtonsController }) =>
     async (account: Account) => {
       const buttons = getButtonsController();
-      const { receiveVerifyLabel, receiveConfirmLabel } = getDeviceLabels(
-        account.currency.speculosApp,
-      );
-      await waitFor(receiveVerifyLabel);
 
       if (isTouchDevice()) {
-        await pressUntilTextFound(receiveConfirmLabel);
+        await pressUntilTextFound(DeviceLabels.CONFIRM);
         await pressAndRelease(DeviceLabels.CONFIRM);
       } else {
-        await pressUntilTextFound(receiveConfirmLabel);
+        await pressUntilTextFound(DeviceLabels.CONFIRM);
         await buttons.both();
       }
     },
@@ -1118,3 +1114,5 @@ export const shareViewKey = withDeviceController(({ getButtonsController }) => a
     await buttons.both();
   }
 });
+
+export { approveToken, signTypedMessage };

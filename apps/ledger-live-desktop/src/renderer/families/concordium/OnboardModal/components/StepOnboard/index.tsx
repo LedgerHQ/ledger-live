@@ -2,7 +2,7 @@ import React from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { AccountOnboardStatus } from "@ledgerhq/coin-concordium/types";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { urls } from "~/config/urls";
 import Text from "~/renderer/components/Text";
 import Alert from "~/renderer/components/Alert";

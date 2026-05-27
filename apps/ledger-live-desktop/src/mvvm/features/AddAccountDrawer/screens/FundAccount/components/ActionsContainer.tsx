@@ -14,7 +14,7 @@ import {
 } from "../../../analytics/addAccount.types";
 import useAddAccountAnalytics from "../../../analytics/useAddAccountAnalytics";
 import { IconContainer } from "./IconContainer";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { getAccountsSidebarPath } from "LLD/components/SideBar/utils";
 
 const ActionItem = styled(Flex)`

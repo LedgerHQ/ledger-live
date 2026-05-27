@@ -21,6 +21,7 @@ function AnalyticsView({ viewModel }: { readonly viewModel: AnalyticsViewModel }
     navigateToDashboard,
     shouldDisplayGraphRework,
     shouldDisplayAssetSection,
+    balanceInfo,
   } = viewModel;
 
   const { t } = useTranslation();
@@ -37,6 +38,7 @@ function AnalyticsView({ viewModel }: { readonly viewModel: AnalyticsViewModel }
           range={selectedTimeRange}
           isWallet40
           shouldDisplayGraphRework={shouldDisplayGraphRework}
+          balanceInfo={balanceInfo}
         />
       </div>
 

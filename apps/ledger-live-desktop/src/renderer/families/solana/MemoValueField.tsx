@@ -8,7 +8,7 @@ import {
   Transaction,
   SolanaAccount,
 } from "@ledgerhq/live-common/families/solana/types";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { SolanaRecipientMemoIsRequired } from "@ledgerhq/live-common/errors";
 import MemoTagField from "LLD/features/MemoTag/components/MemoTagField";
 

@@ -23,7 +23,7 @@ export const useHistory = (): {
     if (location.pathname !== url) {
       setTrackingSource("topbar");
       track("button_clicked", {
-        entry: "operation_list",
+        button: "operation_list",
         page: location.pathname,
       });
       navigate(url);

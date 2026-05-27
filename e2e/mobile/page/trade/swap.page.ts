@@ -207,4 +207,9 @@ export default class SwapPage extends CommonPage {
     const remaining = await getTokenAllowanceCommand(fromAccount, provider.contractAddress);
     jestExpect(remaining).toBe("0");
   }
+
+  @Step("Selected provider: $0")
+  async logSelectedProvider(providerName: string) {
+    jestExpect(providerName).toBeDefined();
+  }
 }

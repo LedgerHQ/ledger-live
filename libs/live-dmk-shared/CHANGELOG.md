@@ -1,5 +1,29 @@
 # @ledgerhq/live-dmk
 
+## 0.24.0
+
+### Minor Changes
+
+- [#17020](https://github.com/LedgerHQ/ledger-live/pull/17020) [`4625078`](https://github.com/LedgerHQ/ledger-live/commit/462507883d8bb586d243ed7815081830a1de3b4c) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add DmkCompatTransport: LedgerJS-like Transport wrapper around a DMK session
+
+- [#17020](https://github.com/LedgerHQ/ledger-live/pull/17020) [`d285678`](https://github.com/LedgerHQ/ledger-live/commit/d28567854ca5ebf7c02c66403d8b2c7406c7abff) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add DMK-native ensure-app-ready initialization with UI-ready device action states
+
+- [#17277](https://github.com/LedgerHQ/ledger-live/pull/17277) [`1c92446`](https://github.com/LedgerHQ/ledger-live/commit/1c92446d0b82e8b239d1739dd046cfbf6360f5c4) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add a persisted all-transport known devices slice for Ledger Live Mobile.
+
+- [#17360](https://github.com/LedgerHQ/ledger-live/pull/17360) [`fffc4a3`](https://github.com/LedgerHQ/ledger-live/commit/fffc4a37b4a1ef2a2bc6c77e706bf22bed574329) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Remove unused useDeviceSessionState
+
+## 0.24.0-next.0
+
+### Minor Changes
+
+- [#17020](https://github.com/LedgerHQ/ledger-live/pull/17020) [`4625078`](https://github.com/LedgerHQ/ledger-live/commit/462507883d8bb586d243ed7815081830a1de3b4c) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add DmkCompatTransport: LedgerJS-like Transport wrapper around a DMK session
+
+- [#17020](https://github.com/LedgerHQ/ledger-live/pull/17020) [`d285678`](https://github.com/LedgerHQ/ledger-live/commit/d28567854ca5ebf7c02c66403d8b2c7406c7abff) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add DMK-native ensure-app-ready initialization with UI-ready device action states
+
+- [#17277](https://github.com/LedgerHQ/ledger-live/pull/17277) [`1c92446`](https://github.com/LedgerHQ/ledger-live/commit/1c92446d0b82e8b239d1739dd046cfbf6360f5c4) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Add a persisted all-transport known devices slice for Ledger Live Mobile.
+
+- [#17360](https://github.com/LedgerHQ/ledger-live/pull/17360) [`fffc4a3`](https://github.com/LedgerHQ/ledger-live/commit/fffc4a37b4a1ef2a2bc6c77e706bf22bed574329) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Remove unused useDeviceSessionState
+
 ## 0.23.0
 
 ### Minor Changes

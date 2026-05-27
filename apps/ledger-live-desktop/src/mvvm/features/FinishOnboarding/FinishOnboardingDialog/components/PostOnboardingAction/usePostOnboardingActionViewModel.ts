@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@features/platform-feature-flags";
 import { useDispatch } from "LLD/hooks/redux";
 import { closeFinishPostOnboarding } from "LLD/features/FinishOnboarding/FinishOnboardingDialog/finishOnboardingDialog";
 import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";

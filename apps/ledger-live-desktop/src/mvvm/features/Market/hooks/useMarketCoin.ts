@@ -1,11 +1,11 @@
 import { useSelector, useDispatch } from "LLD/hooks/redux";
 import { useTheme } from "styled-components";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
+import { useMarketDataProvider } from "@ledgerhq/live-common/cg-client/hooks/useCoingeckoDataProvider";
 import {
-  useCurrencyChartData,
-  useMarketDataProvider,
-} from "@ledgerhq/live-common/cg-client/hooks/useCoingeckoDataProvider";
-import { useCurrencyData } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
+  useAssetChartData,
+  useCurrencyData,
+} from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
 import { Page, useMarketActions } from "./useMarketActions";
 import { useCallback } from "react";
 import { useParams } from "react-router";
@@ -29,7 +29,7 @@ export const useMarketCoin = () => {
 
   const { counterCurrency = "usd", range = "24h" } = marketParams;
 
-  const resCurrencyChartData = useCurrencyChartData({
+  const resAssetChartData = useAssetChartData({
     counterCurrency,
     id: currencyId,
     range,
@@ -112,8 +112,8 @@ export const useMarketCoin = () => {
     onSell,
     toggleStar,
     color,
-    dataChart: resCurrencyChartData.data,
-    isLoadingDataChart: resCurrencyChartData.isLoading,
+    dataChart: resAssetChartData.data,
+    isLoadingDataChart: resAssetChartData.isLoading,
     isLoadingCurrency: isLoading,
     changeRange,
     range,

@@ -31,6 +31,10 @@ describe("getStakes (integration)", () => {
       }
       expect(stake.details).not.toBeUndefined();
       expect(typeof stake.details?.rentExemptReserve).toBe("string");
+
+      for (const action of stake.actions) {
+        expect(["delegate", "redelegate", "undelegate", "claim_reward"]).toContain(action);
+      }
     }
   });
 

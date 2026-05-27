@@ -20,7 +20,7 @@ import {
   AnalyticsFlow,
 } from "../../hooks/useLedgerSyncAnalytics";
 import { BackRef } from "../router";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 
 type Props = {
   sourcePage: AnalyticsPage;

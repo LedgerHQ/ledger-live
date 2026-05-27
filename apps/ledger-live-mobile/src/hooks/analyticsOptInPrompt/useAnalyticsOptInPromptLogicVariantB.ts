@@ -4,7 +4,6 @@ import {
   setAnalyticsConsentInfo,
   setPersonalizedRecommendations,
 } from "~/actions/settings";
-import { NavigatorName, ScreenName } from "~/const";
 import { track } from "~/analytics";
 import { EntryPoint } from "~/components/RootNavigator/types/AnalyticsOptInPromptNavigator";
 import useAnalyticsOptInPromptLogic from "./useAnalyticsOptInPromptLogic";
@@ -21,17 +20,13 @@ const useAnalyticsOptInPromptLogicVariantB = ({ entryPoint }: Props) => {
   const dispatch = useDispatch();
   const analyticsOptInFeature = useFeature("analyticsOptIn");
   const { policyVersion } = resolveAnalyticsOptInParams(analyticsOptInFeature);
-  const { continueOnboarding, flow, shouldWeTrack, navigation, clickOnLearnMore } =
-    useAnalyticsOptInPromptLogic({ entryPoint, variant });
-
-  const goToPersonalizedRecommendationsStep = () => {
-    navigation.navigate(NavigatorName.AnalyticsOptInPrompt, {
-      screen: ScreenName.AnalyticsOptInPromptDetails,
-      params: {
-        entryPoint,
-      },
-    });
-  };
+  const {
+    continueOnboarding,
+    flow,
+    shouldWeTrack,
+    clickOnLearnMore,
+    goToPersonalizedRecommendationsStep,
+  } = useAnalyticsOptInPromptLogic({ entryPoint, variant });
 
   const updateAnalyticsConsentInfo = () => {
     dispatch(

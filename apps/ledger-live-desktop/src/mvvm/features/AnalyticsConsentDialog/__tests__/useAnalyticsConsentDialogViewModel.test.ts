@@ -1,4 +1,4 @@
-import { FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
+import { FEATURE_FLAGS_DEFAULTS, FEATURE_FLAGS_INITIAL_STATE } from "@shared/feature-flags";
 import { act, renderHook } from "tests/testSetup";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import { track } from "~/renderer/analytics/segment";
@@ -33,15 +33,18 @@ type SettingsOverrides = Partial<SettingsState> & {
   analyticsConsentInfo?: Partial<SettingsState["analyticsConsentInfo"]>;
 };
 
+const analyticsOptInOverrides = {
+  ...FEATURE_FLAGS_INITIAL_STATE.overrides,
+  analyticsOptIn: {
+    ...(FEATURE_FLAGS_INITIAL_STATE.overrides.analyticsOptIn ?? {}),
+    enabled: true,
+  },
+};
 const featureFlagsWithAnalyticsOptIn = {
   ...FEATURE_FLAGS_INITIAL_STATE,
-  overrides: {
-    ...FEATURE_FLAGS_INITIAL_STATE.overrides,
-    analyticsOptIn: {
-      ...(FEATURE_FLAGS_INITIAL_STATE.overrides.analyticsOptIn ?? {}),
-      enabled: true,
-    },
-  },
+  overrides: analyticsOptInOverrides,
+  // Mirror slice resolution so hooks reading from `resolved` see the override.
+  resolved: { ...FEATURE_FLAGS_DEFAULTS, ...analyticsOptInOverrides },
 };
 
 const defaultSettings: SettingsState = {

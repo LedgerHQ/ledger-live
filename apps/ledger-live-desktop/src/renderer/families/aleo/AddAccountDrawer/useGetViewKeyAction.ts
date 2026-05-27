@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@features/platform-feature-flags";
 import {
   createAction,
   getViewKeyExec,

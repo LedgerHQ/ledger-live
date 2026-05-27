@@ -7,7 +7,7 @@ import {
   AmountRequired,
   DustLimit,
 } from "@ledgerhq/errors";
-import type { Transaction } from "@ledgerhq/coin-bitcoin/types";
+import type { FeeItems, Transaction } from "@ledgerhq/coin-bitcoin/types";
 import {
   makeAccountBridgeReceive,
   scanAccounts,
@@ -26,7 +26,6 @@ import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-liv
 import cryptoFactory from "@ledgerhq/coin-bitcoin/wallet-btc/crypto/factory";
 import { Currency } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
 import { computeDustAmount } from "@ledgerhq/coin-bitcoin/wallet-btc/utils";
-import { getFeeItems } from "./api";
 import { validateAddress } from "../../../bridge/validateAddress";
 
 const receive = makeAccountBridgeReceive();
@@ -104,14 +103,21 @@ const getTransactionStatus = (account, t) => {
 };
 
 const prepareTransaction = async (
-  account: Account,
+  _account: Account,
   transaction: Transaction,
 ): Promise<Transaction> => {
   // TODO it needs to set the fee if not in t as well
   let nextTx = transaction;
 
   if (!nextTx.networkInfo) {
-    const feeItems = await getFeeItems(account.currency);
+    const feeItems: FeeItems = {
+      items: [
+        { key: "1", speed: "fast", feePerByte: new BigNumber(4) },
+        { key: "3", speed: "medium", feePerByte: new BigNumber(3) },
+        { key: "6", speed: "slow", feePerByte: new BigNumber(2) },
+      ],
+      defaultFeePerByte: new BigNumber(0),
+    };
     nextTx = {
       ...nextTx,
       networkInfo: {

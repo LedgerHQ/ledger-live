@@ -6,7 +6,7 @@ description: When typecheck finds an error importing from a lib in the monorepo,
 When typecheck finds an error importing from a lib in the monorepo rebuild the lib using the command below:
 
 ```shell
-pnpm turbo build --filter=@ledgerhq/name_of_lib_here
+nx run @ledgerhq/name_of_lib_here:build
 ```
 
 ## Example
@@ -21,5 +21,5 @@ We run `typecheck` and get the following error:
 We need to rebuild `@ledgerhq/live-countervalues-react`
 
 ```shell
-pnpm turbo build --filter=@ledgerhq/live-countervalues-react
+nx run @ledgerhq/live-countervalues-react:build
 ```

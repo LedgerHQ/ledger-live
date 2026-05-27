@@ -1,5 +1,55 @@
 # @ledgerhq/coin-evm
 
+## 3.7.0
+
+### Minor Changes
+
+- [#17124](https://github.com/LedgerHQ/ledger-live/pull/17124) [`559f321`](https://github.com/LedgerHQ/ledger-live/commit/559f321e3704b0ba0c4460cf868fbb7a984cd192) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(lwm): add start staking evm native staking sei
+
+- [#17227](https://github.com/LedgerHQ/ledger-live/pull/17227) [`4fc786d`](https://github.com/LedgerHQ/ledger-live/commit/4fc786d9a00f9e6601a8ac3082ced230bde8fb58) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - chore(ADR-037): make finalization level configurable in coin-evm `lastBlock`
+
+- [#16952](https://github.com/LedgerHQ/ledger-live/pull/16952) [`483bc1c`](https://github.com/LedgerHQ/ledger-live/commit/483bc1c5aa432dac9ab0413d7b7ee27e5ebb0b34) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - chore(BACK-11212): update code base after `alpaca` -> `coin-service` renaming
+
+- [#17411](https://github.com/LedgerHQ/ledger-live/pull/17411) [`912e673`](https://github.com/LedgerHQ/ledger-live/commit/912e673368baa0342316c882653768d570b71262) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Use `BigNumber` comparison methods (`.gt` / `.lt`) instead of `>` / `<` operators.
+  Similar to #17377.
+
+- [#17149](https://github.com/LedgerHQ/ledger-live/pull/17149) [`6ebf340`](https://github.com/LedgerHQ/ledger-live/commit/6ebf34025630a0caf892b5df88a290b1a76ca1b7) Thanks [@dilaouid](https://github.com/dilaouid)! - fix(coin-evm): no console error when no delegation exists
+
+### Patch Changes
+
+- Updated dependencies [[`3b746ee`](https://github.com/LedgerHQ/ledger-live/commit/3b746eea7f3f2be633947e8e9112987457c864a5), [`1368afd`](https://github.com/LedgerHQ/ledger-live/commit/1368afdc7218a68c803672e6e412f8f9f6e62142), [`abdb866`](https://github.com/LedgerHQ/ledger-live/commit/abdb8662fba3784399a747ece63a11cc4f6e23bb), [`5177d5e`](https://github.com/LedgerHQ/ledger-live/commit/5177d5e6311047cc7485a66dbcb8971c9a8c0a5c), [`912e673`](https://github.com/LedgerHQ/ledger-live/commit/912e673368baa0342316c882653768d570b71262), [`6e832a0`](https://github.com/LedgerHQ/ledger-live/commit/6e832a044bd7abb704f0a45ea782e55c1b25487c), [`2257d43`](https://github.com/LedgerHQ/ledger-live/commit/2257d43630933127549300f39ade1e2b01f94cb8), [`08762c2`](https://github.com/LedgerHQ/ledger-live/commit/08762c286e38136293108c19efa72ae8fbd1286b)]:
+  - @ledgerhq/ledger-wallet-framework@1.5.0
+  - @ledgerhq/cryptoassets@13.48.0
+  - @ledgerhq/live-env@2.35.0
+  - @ledgerhq/domain-service@1.8.3
+  - @ledgerhq/evm-tools@1.12.6
+  - @ledgerhq/live-network@2.6.1
+
+## 3.7.0-next.0
+
+### Minor Changes
+
+- [#17124](https://github.com/LedgerHQ/ledger-live/pull/17124) [`559f321`](https://github.com/LedgerHQ/ledger-live/commit/559f321e3704b0ba0c4460cf868fbb7a984cd192) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(lwm): add start staking evm native staking sei
+
+- [#17227](https://github.com/LedgerHQ/ledger-live/pull/17227) [`4fc786d`](https://github.com/LedgerHQ/ledger-live/commit/4fc786d9a00f9e6601a8ac3082ced230bde8fb58) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - chore(ADR-037): make finalization level configurable in coin-evm `lastBlock`
+
+- [#16952](https://github.com/LedgerHQ/ledger-live/pull/16952) [`483bc1c`](https://github.com/LedgerHQ/ledger-live/commit/483bc1c5aa432dac9ab0413d7b7ee27e5ebb0b34) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - chore(BACK-11212): update code base after `alpaca` -> `coin-service` renaming
+
+- [#17411](https://github.com/LedgerHQ/ledger-live/pull/17411) [`912e673`](https://github.com/LedgerHQ/ledger-live/commit/912e673368baa0342316c882653768d570b71262) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Use `BigNumber` comparison methods (`.gt` / `.lt`) instead of `>` / `<` operators.
+  Similar to #17377.
+
+- [#17149](https://github.com/LedgerHQ/ledger-live/pull/17149) [`6ebf340`](https://github.com/LedgerHQ/ledger-live/commit/6ebf34025630a0caf892b5df88a290b1a76ca1b7) Thanks [@dilaouid](https://github.com/dilaouid)! - fix(coin-evm): no console error when no delegation exists
+
+### Patch Changes
+
+- Updated dependencies [[`3b746ee`](https://github.com/LedgerHQ/ledger-live/commit/3b746eea7f3f2be633947e8e9112987457c864a5), [`1368afd`](https://github.com/LedgerHQ/ledger-live/commit/1368afdc7218a68c803672e6e412f8f9f6e62142), [`abdb866`](https://github.com/LedgerHQ/ledger-live/commit/abdb8662fba3784399a747ece63a11cc4f6e23bb), [`5177d5e`](https://github.com/LedgerHQ/ledger-live/commit/5177d5e6311047cc7485a66dbcb8971c9a8c0a5c), [`912e673`](https://github.com/LedgerHQ/ledger-live/commit/912e673368baa0342316c882653768d570b71262), [`6e832a0`](https://github.com/LedgerHQ/ledger-live/commit/6e832a044bd7abb704f0a45ea782e55c1b25487c), [`2257d43`](https://github.com/LedgerHQ/ledger-live/commit/2257d43630933127549300f39ade1e2b01f94cb8), [`08762c2`](https://github.com/LedgerHQ/ledger-live/commit/08762c286e38136293108c19efa72ae8fbd1286b)]:
+  - @ledgerhq/ledger-wallet-framework@1.5.0-next.0
+  - @ledgerhq/cryptoassets@13.48.0-next.0
+  - @ledgerhq/live-env@2.35.0-next.0
+  - @ledgerhq/domain-service@1.8.3-next.0
+  - @ledgerhq/evm-tools@1.12.6-next.0
+  - @ledgerhq/live-network@2.6.1-next.0
+
 ## 3.6.0
 
 ### Minor Changes

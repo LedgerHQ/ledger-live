@@ -4,6 +4,12 @@ import type { Account } from "@ledgerhq/types-live";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { useBatchMaybeAccountName } from "~/renderer/reducers/wallet";
 import { useExportOperationsCsv } from "~/renderer/hooks/useExportOperationsCsv";
+import { track } from "~/renderer/analytics/segment";
+import {
+  HISTORY_EXPORT_DIALOG_SUCCESS_TRACKING_PAGE_NAME,
+  HISTORY_EXPORT_DIALOG_TRACKING_BUTTON,
+  HISTORY_EXPORT_DIALOG_TRACKING_PAGE_NAME,
+} from "./constants";
 
 export type ExportAccount = {
   id: string;
@@ -23,6 +29,7 @@ export type HistoryExportDialogViewModel = {
   toggleAccount: (id: string) => void;
   onSelectAllToggle: () => void;
   exportCsv: () => Promise<void>;
+  onDoneClick: () => void;
   resetState: () => void;
 };
 
@@ -74,6 +81,21 @@ export function useHistoryExportDialogViewModel({
     setCheckedIds(prev => (prev.length === rawAccounts.length ? [] : rawAccounts.map(a => a.id)));
   }, [rawAccounts]);
 
+  const handleExportCsv = useCallback(async () => {
+    track("button_clicked", {
+      button: HISTORY_EXPORT_DIALOG_TRACKING_BUTTON.export,
+      page: HISTORY_EXPORT_DIALOG_TRACKING_PAGE_NAME,
+    });
+    await exportCsv();
+  }, [exportCsv]);
+
+  const onDoneClick = useCallback(() => {
+    track("button_clicked", {
+      button: HISTORY_EXPORT_DIALOG_TRACKING_BUTTON.done,
+      page: HISTORY_EXPORT_DIALOG_SUCCESS_TRACKING_PAGE_NAME,
+    });
+  }, []);
+
   const resetState = useCallback(() => {
     resetExportState();
     setCheckedIds([]);
@@ -90,7 +112,8 @@ export function useHistoryExportDialogViewModel({
     isLoading,
     toggleAccount,
     onSelectAllToggle,
-    exportCsv,
+    exportCsv: handleExportCsv,
+    onDoneClick,
     resetState,
   };
 }

@@ -1,5 +1,4 @@
 import { verifyAppValidationSendInfo } from "../../models/send";
-import { device } from "detox";
 import { TransactionType } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { AccountType } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Addresses } from "@ledgerhq/live-common/e2e/enum/Addresses";
@@ -60,8 +59,6 @@ export function runSendSPL(transaction: TransactionType, tmsLinks: string[], tag
       await verifyAppValidationSendInfo(transaction, amountWithCode);
 
       await app.speculos.signSendTransaction(transaction);
-
-      await device.disableSynchronization();
       await app.common.successViewDetails();
 
       await app.operationDetails.checkOperationInfos(transaction, true, "OUT");

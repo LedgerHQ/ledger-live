@@ -5,7 +5,7 @@ import { useTranslation } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
 import StepHeader from "~/components/StepHeader";
 import { ScreenName } from "~/const";
-import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import { getStackNavigatorConfig, bridgeSuspenseScreenLayout } from "~/navigation/navigatorConfig";
 import DelegationStarted from "./Started";
 import DelegationSummary from "./Summary";
 import DelegationSelectValidator from "./SelectValidator";
@@ -29,6 +29,7 @@ function DelegationFlow() {
         ...stackNavigationConfig,
         gestureEnabled: Platform.OS === "ios",
       }}
+      screenLayout={bridgeSuspenseScreenLayout}
     >
       <Stack.Screen
         name={ScreenName.DelegationStarted}

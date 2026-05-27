@@ -10,6 +10,8 @@ type ActionBarProps = Readonly<{
   ledgerCurrency?: CryptoOrTokenCurrency;
   marketCurrencyData?: MarketCurrencyData;
   tickerHint: string;
+  isDistributionLoading: boolean;
+  isMarketLoading: boolean;
 }>;
 
 export function ActionBar({
@@ -17,13 +19,21 @@ export function ActionBar({
   ledgerCurrency,
   marketCurrencyData,
   tickerHint,
+  isDistributionLoading,
+  isMarketLoading,
 }: ActionBarProps) {
   const viewModel = useActionBarViewModel({
     distributionItem,
     ledgerCurrency,
     marketCurrencyData,
     tickerHint,
+    isDistributionLoading,
+    isMarketLoading,
   });
+
+  if (viewModel.showSkeleton) {
+    return null;
+  }
 
   return <ActionBarView viewModel={viewModel} />;
 }

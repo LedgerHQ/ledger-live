@@ -1,10 +1,10 @@
 import React from "react";
 import { fireEvent, render, screen } from "tests/testSetup";
+import type { GenericAwarenessModalCarouselSlide } from "@ledgerhq/live-common/genericAwarenessModal";
 import CarouselContent from "../CarouselContent";
 
-const slides = [
+const slides: GenericAwarenessModalCarouselSlide[] = [
   {
-    id: "slide-a",
     title: "First slide title",
     subtitle: "First slide subtitle",
     imageUrl: "https://example.com/a.png",
@@ -12,19 +12,18 @@ const slides = [
     primaryButtonLink: "https://www.ledger.com",
   },
   {
-    id: "slide-b",
     title: "Second slide title",
     subtitle: "Second slide subtitle",
     imageUrl: "https://example.com/b.png",
     primaryButtonLabel: "Primary B",
     primaryButtonLink: "https://www.ledger.com",
   },
-] as const;
+];
 
 describe("CarouselContent", () => {
   it("should render the first slide copy and primary label", () => {
     const onSlidePrimaryClick = jest.fn();
-    render(<CarouselContent slides={[...slides]} onSlidePrimaryClick={onSlidePrimaryClick} />);
+    render(<CarouselContent slides={slides} onSlidePrimaryClick={onSlidePrimaryClick} />);
 
     expect(screen.getByText("First slide title")).toBeVisible();
     expect(screen.getByText("First slide subtitle")).toBeVisible();
@@ -36,7 +35,7 @@ describe("CarouselContent", () => {
   it("should advance visible slide after Continue and slide-out animation start", async () => {
     const onSlidePrimaryClick = jest.fn();
     const { user } = render(
-      <CarouselContent slides={[...slides]} onSlidePrimaryClick={onSlidePrimaryClick} />,
+      <CarouselContent slides={slides} onSlidePrimaryClick={onSlidePrimaryClick} />,
     );
 
     await user.click(screen.getByTestId("generic-awareness-modal-continue-button"));
@@ -57,19 +56,19 @@ describe("CarouselContent", () => {
   it("should invoke onSlidePrimaryClick with the current slide", async () => {
     const onSlidePrimaryClick = jest.fn();
     const { user } = render(
-      <CarouselContent slides={[...slides]} onSlidePrimaryClick={onSlidePrimaryClick} />,
+      <CarouselContent slides={slides} onSlidePrimaryClick={onSlidePrimaryClick} />,
     );
 
     await user.click(screen.getByTestId("generic-awareness-modal-primary-button"));
 
     expect(onSlidePrimaryClick).toHaveBeenCalledTimes(1);
-    expect(onSlidePrimaryClick).toHaveBeenCalledWith(expect.objectContaining({ id: "slide-a" }));
+    expect(onSlidePrimaryClick).toHaveBeenCalledWith(slides[0]);
   });
 
   it("should return to the first slide when Go to first slide is clicked on the last slide", async () => {
     const onSlidePrimaryClick = jest.fn();
     const { user } = render(
-      <CarouselContent slides={[...slides]} onSlidePrimaryClick={onSlidePrimaryClick} />,
+      <CarouselContent slides={slides} onSlidePrimaryClick={onSlidePrimaryClick} />,
     );
 
     await user.click(screen.getByTestId("generic-awareness-modal-continue-button"));

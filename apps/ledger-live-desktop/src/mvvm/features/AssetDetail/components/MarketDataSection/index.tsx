@@ -6,10 +6,11 @@ import { useMarketDataSectionCurrencyData } from "./hooks/useMarketDataSectionCu
 
 type MarketDataSectionProps = Readonly<{
   marketData: AssetMarketData;
+  isDistributionLoading: boolean;
 }>;
 
-export function MarketDataSection({ marketData }: MarketDataSectionProps) {
-  const currencyData = useMarketDataSectionCurrencyData(marketData);
+export function MarketDataSection({ marketData, isDistributionLoading }: MarketDataSectionProps) {
+  const currencyData = useMarketDataSectionCurrencyData(marketData, isDistributionLoading);
 
   return (
     <div className="grid grid-cols-2 gap-24" data-testid="asset-detail-market-data-section">

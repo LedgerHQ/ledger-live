@@ -92,9 +92,11 @@ export class Application {
       await loadAccounts(this.testAccounts);
     }
 
-    if (featureFlags) {
-      await setFeatureFlags(featureFlags);
-    }
+    // NOTE: KEEP WALLET 4.0 disabled for legacy mocks
+    await setFeatureFlags({
+      lwmWallet40: { enabled: false },
+      ...featureFlags,
+    });
   }
 
   public get assetAccountsPage() {

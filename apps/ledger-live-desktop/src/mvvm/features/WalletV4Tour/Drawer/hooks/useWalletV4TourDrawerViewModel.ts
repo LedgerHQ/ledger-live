@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "LLD/hooks/redux";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { hasSeenWalletV4TourSelector } from "~/renderer/reducers/settings";
 import { setHasSeenWalletV4Tour } from "~/renderer/actions/settings";
 import { track, trackPage } from "~/renderer/analytics/segment";

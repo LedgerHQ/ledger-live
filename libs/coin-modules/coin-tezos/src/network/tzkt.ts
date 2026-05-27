@@ -10,6 +10,7 @@ import {
   APIStakingType,
   APITokenTransfer,
   APITransactionType,
+  APIUnstakeRequest,
   AccountsGetOperationsOptions,
   TokenTransfersGetOptions,
   APITokenBalance,
@@ -105,6 +106,23 @@ const api = {
       },
     });
     return data.reduce<bigint>((sum, n) => sum + BigInt(n), 0n);
+  },
+
+  /**
+   * Returns pending and finalizable unstake requests, ordered by TzKT request id
+   * ascending. Excludes already-finalized requests.
+   */
+  async getUnstakeRequests(address: string): Promise<APIUnstakeRequest[]> {
+    const { data } = await network<APIUnstakeRequest[]>({
+      url: `${getExplorerUrl()}/v1/staking/unstake_requests`,
+      params: {
+        "staker.eq": address,
+        "status.in": "pending,finalizable",
+        "sort.asc": "id",
+        limit: 1000,
+      },
+    });
+    return data;
   },
   // https://api.tzkt.io/#operation/Accounts_GetOperations
   async getAccountOperations(

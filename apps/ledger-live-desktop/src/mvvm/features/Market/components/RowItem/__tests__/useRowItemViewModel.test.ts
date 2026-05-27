@@ -32,7 +32,8 @@ jest.mock("~/renderer/hooks/useGetStakeLabelLocaleBased", () => ({
 }));
 
 const mockShouldDisplayAggregatedAssets = jest.fn(() => true);
-jest.mock("@ledgerhq/live-common/featureFlags/walletFeaturesConfig/index", () => ({
+jest.mock("@features/platform-feature-flags", () => ({
+  ...jest.requireActual("@features/platform-feature-flags"),
   useWalletFeaturesConfig: () => ({
     shouldDisplayAggregatedAssets: mockShouldDisplayAggregatedAssets(),
     shouldDisplayAssetSection: true,

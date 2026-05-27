@@ -7,10 +7,9 @@ const baseProps = {
   subtitle: "Test subtitle",
   items: [
     {
-      id: "item-1",
       title: "Item title",
-      description: "Item description",
-      iconName: "HandCoins" as const,
+      subtitle: "Item description",
+      icon: "HandCoins" as const,
     },
   ],
   primaryButtonLabel: "Primary",

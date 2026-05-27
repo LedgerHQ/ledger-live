@@ -57,6 +57,6 @@ pnpm exec nx run-many -t typecheck --projects=tag:scope:no-apps
 
 ## CI vs local
 
-CI often uses **pnpm/turbo dependency selectors** (e.g. `ledger-live-desktop^...`). In Nx, run an app target with **`--with-deps`** (or depend on the graph via `dependsOn` in targets) instead of memorising those filters.
+CI often used **pnpm/turbo dependency selectors** (e.g. `ledger-live-desktop^...`). In Nx, run an app target with **`--with-deps`** (or depend on the graph via `dependsOn` in targets) instead of memorising those filters.
 
 Path-based CI jobs map to **`tag:scope:*`** and **`tag:type:*`** as in the tables above.

@@ -39,8 +39,8 @@ const rmDir = dir => {
 
 const cleaningTasks = _args => [
   {
-    title: "Remove `.turbo/cache` folder",
-    task: () => rmDir(".turbo/cache"),
+    title: "Remove `.cache/desktop-native-deps` folder",
+    task: () => rmDir(".cache/desktop-native-deps"),
   },
   {
     title: "Remove `.webpack` folder",

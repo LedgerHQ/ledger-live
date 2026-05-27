@@ -157,13 +157,13 @@ pnpm mobile pod
 
 ### Tools
 
-We use [**pnpm workspaces**](https://pnpm.io/) and [**turborepo**](https://turborepo.org/) under the hood to handle local and external dependencies, orchestrate tasks and perform various optimizations like package hoisting or [**remote caching**](https://turbo.build/repo/docs/core-concepts/remote-caching).
+We use [**pnpm workspaces**](https://pnpm.io/) and [**Nx**](https://nx.dev/) under the hood to handle local and external dependencies, orchestrate tasks and perform various optimizations like package hoisting or [**remote caching**](https://nx.dev/docs/features/cache-task-results).
 
 For changelog generation releases and package publishing we rely on the [**changesets**](https://github.com/changesets/changesets) library.
 
 ### Root scripts
 
-The scripts that are defined inside the root [`/package.json`](https://github.com/LedgerHQ/ledger-live/blob/develop/package.json) file will use _turborepo_ under the hood and automatically perform needed tasks before running the action.
+The scripts that are defined inside the root [`/package.json`](https://github.com/LedgerHQ/ledger-live/blob/develop/package.json) file use _Nx_ under the hood and automatically perform needed tasks before running the action.
 
 ```sh
 # This command will first build all the local dependencies needed in the right order.
@@ -188,11 +188,11 @@ pnpm desktop test
 
 ### Scoping
 
-You can scope any _pnpm_ or _turborepo_ based script by using the `--filter` flag.
+You can scope _pnpm_ scripts with `--filter`, and run tasks on specific projects with `nx run` / `nx run-many`.
 
 **This is a very powerful feature that you should look into if you are a frequent contributor.**
 
-Please check out the [_pnpm_](https://pnpm.io/filtering) or [_turborepo_](https://turborepo.org/docs/core-concepts/filtering) documentation for more details (the syntax is almost similar albeit _pnpm_ being a bit more powerful).
+Please check out the [_pnpm_](https://pnpm.io/filtering) and [_Nx_](https://nx.dev/docs/features/run-tasks) documentation for more details.
 
 Here are some examples:
 

@@ -238,8 +238,10 @@ function convertSignature(signature: string, exchangeType: ExchangeTypes): Buffe
 }
 
 /**
- * FUND: firmware expects the raw base64url string bytes and will
- * base64-decode them internally before running pb_decode (see process_transaction.c).
+ * All legacy paths (Sell and Fund) receive `binaryPayload` as a hex-encoded string.
+ * For Fund: hex-decoding yields the raw base64url string bytes that the firmware
+ * then base64-decodes internally before running pb_decode (see process_transaction.c).
+ * For Sell: hex-decoding yields the raw protobuf bytes directly.
  * @param transactionType
  * @param binaryPayload
  * @returns
@@ -249,23 +251,10 @@ function buildProcessTransactionPayload(
   binaryPayload: string,
 ): { payload: Buffer; format: PayloadSignatureComputedFormat } {
   if (isExchangeTypeNg(transactionType)) {
-    return {
-      payload: Buffer.from("." + binaryPayload),
-      format: "jws",
-    };
+    return { payload: Buffer.from("." + binaryPayload), format: "jws" };
   }
 
-  if (transactionType === ExchangeTypes.Fund) {
-    return {
-      payload: Buffer.from(binaryPayload),
-      format: "raw",
-    };
-  }
-
-  return {
-    payload: Buffer.from(binaryPayload, "hex"),
-    format: "raw",
-  };
+  return { payload: Buffer.from(binaryPayload, "hex"), format: "raw" };
 }
 
 export default completeExchange;

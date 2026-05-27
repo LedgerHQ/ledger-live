@@ -1,6 +1,4 @@
 import { useMemo } from "react";
-import { useSelector } from "~/context/hooks";
-import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 import { Asset } from "~/types/asset";
 import { useDefaultAssetsByCategory } from "LLM/hooks/useDefaultAssetsByCategory";
 import { useReadOnlyCoins } from "~/hooks/useReadOnlyCoins";
@@ -40,20 +38,11 @@ const usePortfolioCryptosSectionViewModel = ({
   const isLimitedView = isEmptyState || (isReadOnly && shouldDisplayAssetSection);
   const isLegacyReadOnly = isReadOnly && !shouldDisplayAssetSection;
 
-  const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
-  const blacklistedTokenIdsSet = useMemo(() => new Set(blacklistedTokenIds), [blacklistedTokenIds]);
-
   const { categorizedAssets, stablecoinTickers } = useCategorizedAssetsFromPortfolio();
 
   const filteredAssets = useMemo(
-    () =>
-      categorizedAssets.cryptos
-        .filter(
-          ({ currency }) =>
-            currency.type !== "TokenCurrency" || !blacklistedTokenIdsSet.has(currency.id),
-        )
-        .map(toAsset),
-    [categorizedAssets.cryptos, blacklistedTokenIdsSet],
+    () => categorizedAssets.cryptos.map(toAsset),
+    [categorizedAssets.cryptos],
   );
 
   const needsDefaultAssets = isLimitedView || filteredAssets.length < EMPTY_STATE_MAX_ASSETS;

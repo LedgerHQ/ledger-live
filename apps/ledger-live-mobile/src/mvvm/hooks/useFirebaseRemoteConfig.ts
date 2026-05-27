@@ -4,16 +4,16 @@ import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { FirebaseRemoteConfigProvider } from "@ledgerhq/live-config/providers/index";
 import { firebaseRemoteConfigApi } from "../api/firebaseRemoteConfigApi";
 
-const FETCH_INTERVAL = 5 * 60 * 1000; // 5 minutes
-
+/**
+ * Returns `firebaseIsReady` for the initial-queries boot gate. Setup and
+ * polling now happen in `~/firebase/remoteConfig`, driven by the feature-flags
+ * middleware; this hook only installs the LiveConfig provider bridge and waits
+ * for the module's first-fetch signal via the RTK Query mutation.
+ */
 export function useFirebaseRemoteConfig() {
   const rcRef = useRef(getRemoteConfig());
 
   const [init, initResult] = firebaseRemoteConfigApi.useInitMutation();
-  const fetchQuery = firebaseRemoteConfigApi.useFetchAndActivateQuery(rcRef.current, {
-    pollingInterval: FETCH_INTERVAL,
-    skip: !initResult.isSuccess,
-  });
 
   useEffect(() => {
     LiveConfig.setProvider(
@@ -21,15 +21,14 @@ export function useFirebaseRemoteConfig() {
         getValue: (key: string) => rcRef.current.getValue(key),
       }),
     );
-    init(rcRef.current);
+    init();
   }, [init]);
 
-  const error = initResult.error || fetchQuery.error;
   useEffect(() => {
-    if (error) {
-      console.error(`Failed to fetch Firebase remote config with error:`, error);
+    if (initResult.error) {
+      console.error("Failed to fetch Firebase remote config with error:", initResult.error);
     }
-  }, [error]);
+  }, [initResult.error]);
 
-  return !initResult.isLoading && (initResult.isError || !fetchQuery.isLoading);
+  return initResult.isSuccess || initResult.isError;
 }

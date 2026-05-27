@@ -8,7 +8,7 @@ import SignTransactionSummary from "~/screens/SendFunds/04-Summary";
 import SelectDevice from "~/screens/SelectDevice";
 import SignTransactionConnectDevice from "~/screens/SignTransaction/02-ConnectDevice";
 import SignTransactionValidationError from "~/screens/SignTransaction/03-ValidationError";
-import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import { getStackNavigatorConfig, bridgeSuspenseScreenLayout } from "~/navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
 import { SignTransactionNavigatorParamList } from "./types/SignTransactionNavigator";
 
@@ -22,7 +22,10 @@ export default function SignTransactionNavigator() {
 
   return (
     <DomainServiceProvider>
-      <Stack.Navigator screenOptions={stackNavigationConfig}>
+      <Stack.Navigator
+        screenOptions={stackNavigationConfig}
+        screenLayout={bridgeSuspenseScreenLayout}
+      >
         <Stack.Screen
           name={ScreenName.SignTransactionSummary}
           component={SignTransactionSummary}

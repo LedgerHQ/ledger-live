@@ -181,7 +181,6 @@ jobs:
       CI_OS: "ubuntu-latest"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       npm_config_loglevel: warn
-      TURBO_TELEMETRY_DISABLED: 1
       DO_NOT_TRACK: 1
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ matrix.device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'latest' }}
       SPECULOS_DEVICE: ${{ matrix.device }}
@@ -226,14 +225,12 @@ jobs:
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
-          skip-turbo-cache: "false"
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
           cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
           nx-key: ${{ secrets.NX_KEY }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
 
       - name: Pull Speculos docker image
         run: docker pull ${{ env.SPECULOS_IMAGE_TAG }}
@@ -423,6 +420,54 @@ jobs:
         with:
           allure-results-path: ${{ env.ALLURE_RESULTS }}
           platform: linux-${{ needs.prepare-devices.outputs.device_2 }}
+
+  qaa-allure-upload:
+    name: "QAA Allure Upload - ${{ needs.prepare-devices.outputs.device_1 }} (Experimental)"
+    runs-on: [ledger-live-medium]
+    needs: [prepare-devices, e2e-tests]
+    if: ${{ !cancelled() }}
+    continue-on-error: true
+    timeout-minutes: 15
+    env:
+      ALLURE_RESULTS: "allure-results"
+    steps:
+      - name: Download Allure results from test job
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          name: allure-results
+          path: ${{ env.ALLURE_RESULTS }}
+
+      - name: Upload to qaa-allure (sandbox)
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@develop
+        with:
+          api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
+          path: ${{ env.ALLURE_RESULTS }}
+          name: "desktop-e2e-${{ needs.prepare-devices.outputs.device_1 }}-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}-#${{ github.run_id }}"
+          tags: ${{ format('["desktop","speculos",{0},{1},{2}]', toJSON(needs.prepare-devices.outputs.device_1), toJSON(github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual')), toJSON(inputs.ref || github.ref_name)) }}
+
+  qaa-allure-upload-device2:
+    name: "QAA Allure Upload - device 2 (Experimental)"
+    runs-on: [ledger-live-medium]
+    needs: [prepare-devices, e2e-tests]
+    if: ${{ !cancelled() && needs.prepare-devices.outputs.is_dual == 'true' }}
+    continue-on-error: true
+    timeout-minutes: 15
+    env:
+      ALLURE_RESULTS: "allure-results-device2"
+    steps:
+      - name: Download Allure results from device2 test job
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          name: allure-results-${{ needs.prepare-devices.outputs.device_2 }}
+          path: ${{ env.ALLURE_RESULTS }}
+
+      - name: Upload to qaa-allure (sandbox)
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@develop
+        with:
+          api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
+          path: ${{ env.ALLURE_RESULTS }}
+          name: "desktop-e2e-${{ needs.prepare-devices.outputs.device_2 }}-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}-#${{ github.run_id }}"
+          tags: ${{ format('["desktop","speculos",{0},{1},{2}]', toJSON(needs.prepare-devices.outputs.device_2), toJSON(github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual')), toJSON(inputs.ref || github.ref_name)) }}
 
   upload-to-xray:
     name: "Upload to Xray"

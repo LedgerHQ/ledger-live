@@ -9,6 +9,8 @@ import {
   verifyAmountsAndAcceptSwap,
   verifyAmountsAndAcceptSwapForDifferentSeed,
   verifyAmountsAndRejectSwap,
+  approveToken,
+  signTypedMessage as signTypedMessageDevice,
 } from "@ledgerhq/live-common/e2e/speculos";
 import { setExchangeDependencies } from "../utils/speculosUtils";
 import { TransactionType } from "@ledgerhq/live-common/e2e/models/Transaction";
@@ -68,6 +70,16 @@ export default class SpeculosPage {
   @Step("Verify amounts and reject swap")
   async verifyAmountsAndRejectSwap(swap: SwapType, amount: string) {
     await verifyAmountsAndRejectSwap(swap, amount);
+  }
+
+  @Step("Sign token approval on device")
+  async signTokenApproval() {
+    await approveToken();
+  }
+
+  @Step("Sign typed message on device")
+  async signTypedMessage() {
+    await signTypedMessageDevice();
   }
 
   async setExchangeDependencies(swapOrFromAccount: SwapType | Account, toAccount?: Account) {

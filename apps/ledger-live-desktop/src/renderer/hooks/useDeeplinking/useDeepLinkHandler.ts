@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useSelector, useDispatch } from "LLD/hooks/redux";
 import { useLocation, useNavigate } from "react-router";
-import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";

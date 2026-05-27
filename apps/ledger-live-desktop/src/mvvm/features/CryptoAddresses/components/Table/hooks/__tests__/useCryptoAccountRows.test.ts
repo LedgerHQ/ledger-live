@@ -1,16 +1,13 @@
-import { renderHook, withFlagOverrides } from "tests/testSetup";
+import { renderHook } from "tests/testSetup";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import {
   BTC_ACCOUNT,
   ETH_ACCOUNT,
   ETH_ACCOUNT_WITH_USDC,
 } from "LLD/features/__mocks__/accounts.mock";
+import { aggregatedAssetsFlags } from "../../../../testUtils/aggregatedAssetsFlags";
 import { createWalletState } from "../../../../testUtils/createWalletState";
 import { useCryptoAccountRows } from "../useCryptoAccountRows";
-
-const aggregatedFlags = withFlagOverrides({
-  lwdWallet40: { enabled: true, params: { aggregatedAssets: true } },
-});
 
 describe("useCryptoAccountRows", () => {
   it("should return lookupParentAccount that resolves a main account by id", () => {
@@ -141,7 +138,7 @@ describe("useCryptoAccountRows", () => {
       const { result } = renderHook(() => useCryptoAccountRows(""), {
         initialState: {
           accounts: [parent],
-          ...aggregatedFlags,
+          ...aggregatedAssetsFlags,
           ...createWalletState(
             new Map([
               [parent.id, "Ethereum main"],
@@ -162,7 +159,7 @@ describe("useCryptoAccountRows", () => {
       const { result } = renderHook(() => useCryptoAccountRows("usdc"), {
         initialState: {
           accounts: [parent],
-          ...aggregatedFlags,
+          ...aggregatedAssetsFlags,
           ...createWalletState(
             new Map([
               [parent.id, "Ethereum main"],

@@ -15,7 +15,11 @@ import { validateAddress, ValidationResult } from "@taquito/utils";
 import api from "../network/tzkt";
 import type { APIAccount } from "../network/types";
 import { InvalidAddressBecauseAlreadyDelegated, MustDelegateBeforeStaking } from "../types/errors";
-import { parseTezosTokenAsset, resolveTezosOperationMode } from "../utils";
+import {
+  parseTezosTokenAsset,
+  resolveTezosOperationMode,
+  STAKE_USE_ALL_RESERVE_MUTEZ,
+} from "../utils";
 import { estimateFees } from "./estimateFees";
 import type { TezosOperationMode } from "../types/model";
 
@@ -93,6 +97,9 @@ function validateStakeConstraints(
   if (!senderInfo.delegate?.address) {
     return { amount: new MustDelegateBeforeStaking() };
   }
+  if (intent.useAllAmount) {
+    return {};
+  }
   const amountError = validateStrictlyPositiveAmount(intent.amount);
   return amountError ? { amount: amountError } : {};
 }
@@ -104,6 +111,9 @@ function validateUnstakeConstraints(
   const stakedBalance = BigInt(senderInfo.stakedBalance ?? 0);
   if (stakedBalance <= 0n) {
     return { amount: new NotEnoughBalance() };
+  }
+  if (intent.useAllAmount) {
+    return {};
   }
   const amountError = validateStrictlyPositiveAmount(intent.amount);
   if (amountError) {
@@ -190,11 +200,23 @@ function calculateAmounts(
   tokenBalanceForSendMax?: bigint,
 ): { amount: bigint; totalSpent: bigint } {
   if (intent.type === "stake") {
-    return { amount: intent.amount, totalSpent: intent.amount + estimatedFees };
+    if (!intent.useAllAmount) {
+      return { amount: intent.amount, totalSpent: intent.amount + estimatedFees };
+    }
+    if (estimatedAmount !== undefined) {
+      return { amount: estimatedAmount, totalSpent: estimatedAmount + estimatedFees };
+    }
+    // Mirrors estimateFees() stake-max formula for the !revealed short-circuit path.
+    const balance = BigInt(senderInfo.balance);
+    const reserved = estimatedFees + STAKE_USE_ALL_RESERVE_MUTEZ;
+    const amount = balance > reserved ? balance - reserved : 0n;
+    return { amount, totalSpent: amount + estimatedFees };
   }
 
   if (intent.type === "unstake") {
-    return { amount: intent.amount, totalSpent: estimatedFees };
+    const stakedBalance = BigInt(senderInfo.stakedBalance ?? 0);
+    const amount = intent.useAllAmount ? stakedBalance : intent.amount;
+    return { amount, totalSpent: estimatedFees };
   }
 
   if (intent.type === "finalize_unstake") {
@@ -354,6 +376,10 @@ export async function validateIntent(intent: TransactionIntent): Promise<Transac
     );
     amount = amounts.amount;
     totalSpent = amounts.totalSpent;
+
+    if (intent.type === "stake" && intent.useAllAmount && amount === 0n && !errors.amount) {
+      errors.amount = new NotEnoughBalanceToDelegate();
+    }
 
     const balanceErrors = validateBalanceCoverage(senderInfo, totalSpent);
     Object.assign(errors, balanceErrors);

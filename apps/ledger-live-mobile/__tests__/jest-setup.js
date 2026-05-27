@@ -266,9 +266,22 @@ jest.mock("@react-native-firebase/remote-config", () => {
     setConfigSettings: jest.fn().mockResolvedValue(null),
     setDefaults: jest.fn().mockResolvedValue(null),
     fetchAndActivate: jest.fn().mockResolvedValue(null),
+    getAll: jest.fn().mockReturnValue({}),
   };
   return { getRemoteConfig: jest.fn().mockReturnValue(rc) };
 });
+
+// Default mock for the new remote-config bridge module. Tests that need finer
+// control (e.g. delayed whenReady to assert boot-gate behavior) override this
+// per-file via their own `jest.mock("~/firebase/remoteConfig", ...)`. By default
+// whenReady resolves immediately so any test exercising the existing
+// `useFirebaseRemoteConfig` / `WaitForAppReady` boot path sees firebaseIsReady=true
+// without the feature-flags middleware being wired in.
+jest.mock("~/firebase/remoteConfig", () => ({
+  fetchRemoteFlags: jest.fn().mockResolvedValue({}),
+  subscribeToRemoteFlags: jest.fn(() => () => {}),
+  whenReady: jest.fn().mockResolvedValue(undefined),
+}));
 
 jest.mock("@braze/react-native-sdk", () => ({}));
 

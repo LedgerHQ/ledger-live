@@ -1,5 +1,23 @@
 # @ledgerhq/live-signer-evm
 
+## 0.18.1
+
+### Patch Changes
+
+- Updated dependencies [[`4625078`](https://github.com/LedgerHQ/ledger-live/commit/462507883d8bb586d243ed7815081830a1de3b4c), [`559f321`](https://github.com/LedgerHQ/ledger-live/commit/559f321e3704b0ba0c4460cf868fbb7a984cd192), [`4fc786d`](https://github.com/LedgerHQ/ledger-live/commit/4fc786d9a00f9e6601a8ac3082ced230bde8fb58), [`d285678`](https://github.com/LedgerHQ/ledger-live/commit/d28567854ca5ebf7c02c66403d8b2c7406c7abff), [`483bc1c`](https://github.com/LedgerHQ/ledger-live/commit/483bc1c5aa432dac9ab0413d7b7ee27e5ebb0b34), [`1c92446`](https://github.com/LedgerHQ/ledger-live/commit/1c92446d0b82e8b239d1739dd046cfbf6360f5c4), [`912e673`](https://github.com/LedgerHQ/ledger-live/commit/912e673368baa0342316c882653768d570b71262), [`6ebf340`](https://github.com/LedgerHQ/ledger-live/commit/6ebf34025630a0caf892b5df88a290b1a76ca1b7), [`fffc4a3`](https://github.com/LedgerHQ/ledger-live/commit/fffc4a37b4a1ef2a2bc6c77e706bf22bed574329)]:
+  - @ledgerhq/live-dmk-shared@0.24.0
+  - @ledgerhq/coin-evm@3.7.0
+  - @ledgerhq/hw-app-eth@7.8.3
+
+## 0.18.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`4625078`](https://github.com/LedgerHQ/ledger-live/commit/462507883d8bb586d243ed7815081830a1de3b4c), [`559f321`](https://github.com/LedgerHQ/ledger-live/commit/559f321e3704b0ba0c4460cf868fbb7a984cd192), [`4fc786d`](https://github.com/LedgerHQ/ledger-live/commit/4fc786d9a00f9e6601a8ac3082ced230bde8fb58), [`d285678`](https://github.com/LedgerHQ/ledger-live/commit/d28567854ca5ebf7c02c66403d8b2c7406c7abff), [`483bc1c`](https://github.com/LedgerHQ/ledger-live/commit/483bc1c5aa432dac9ab0413d7b7ee27e5ebb0b34), [`1c92446`](https://github.com/LedgerHQ/ledger-live/commit/1c92446d0b82e8b239d1739dd046cfbf6360f5c4), [`912e673`](https://github.com/LedgerHQ/ledger-live/commit/912e673368baa0342316c882653768d570b71262), [`6ebf340`](https://github.com/LedgerHQ/ledger-live/commit/6ebf34025630a0caf892b5df88a290b1a76ca1b7), [`fffc4a3`](https://github.com/LedgerHQ/ledger-live/commit/fffc4a37b4a1ef2a2bc6c77e706bf22bed574329)]:
+  - @ledgerhq/live-dmk-shared@0.24.0-next.0
+  - @ledgerhq/coin-evm@3.7.0-next.0
+  - @ledgerhq/hw-app-eth@7.8.3-next.0
+
 ## 0.18.0
 
 ### Minor Changes

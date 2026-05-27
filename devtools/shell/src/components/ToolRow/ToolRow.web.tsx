@@ -9,23 +9,35 @@ import {
 } from "@ledgerhq/lumen-ui-react";
 import type { MouseEventHandler, ReactNode } from "react";
 
-interface ToolRowProps {
+type ToolRowProps = Readonly<{
   title: string;
   description?: string;
   owner?: string;
   trailing?: ReactNode;
   onClick?: MouseEventHandler<HTMLDivElement>;
   isActive?: boolean;
-}
+  // Currently unused by ToolRowItem (the only consumer). Kept because the
+  // underlying ListItem supports a disabled state and future callers may need it.
+  disabled?: boolean;
+}>;
 
-export function ToolRow({ title, description, owner, trailing, onClick, isActive }: ToolRowProps) {
+export function ToolRow({
+  title,
+  description,
+  owner,
+  trailing,
+  onClick,
+  isActive,
+  disabled,
+}: ToolRowProps) {
   return (
     <div className="relative">
       <ListItem
         density="compact"
-        onClick={onClick}
+        onClick={disabled ? undefined : onClick}
         aria-current={isActive ? "page" : undefined}
-        className={`rounded-md ${isActive ? "bg-active/10" : ""}`}
+        aria-disabled={disabled}
+        className={`rounded-md ${isActive ? "bg-active/10" : ""} ${disabled ? "opacity-50 pointer-events-none" : ""}`}
       >
         {isActive && (
           <ListItemLeading className="absolute left-2 top-2 bottom-2" aria-hidden="true">

@@ -319,8 +319,10 @@ export type Features = CurrencyFeatures & {
   llmOnboardingEnableSync: Feature_OnboardingEnableSync;
   lldOnboardingEnableSync: Feature_OnboardingEnableSync;
   lwdGenericAwarenessModal: DefaultFeature;
+  lwdOnboardingCounterfeitWarning: DefaultFeature;
   lwmAnalyticsConsentOnboarding: DefaultFeature;
   lwmGenericAwarenessModal: DefaultFeature;
+  lwmOnboardingCounterfeitWarning: DefaultFeature;
   lwmNotificationsOptIn: DefaultFeature;
   lwmProductTour: DefaultFeature;
   lwmWallet40: Feature_LwmWallet40;

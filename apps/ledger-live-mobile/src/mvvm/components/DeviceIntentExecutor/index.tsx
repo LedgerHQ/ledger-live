@@ -16,6 +16,12 @@ import DeviceContextInitializerComponentLWM, {
 } from "./DeviceContextInitializerComponentLWM";
 import type { InitializationInput } from "./types";
 
+export {
+  buildDeviceInitializationInput,
+  type BuildDeviceInitializationInputParams,
+} from "./DeviceContextInitializerComponentLWM/utils/buildDeviceInitializationInput";
+export type { InitializationInput } from "./types";
+
 type Props<JobState, Input, ExtraProps> = DeviceIntentExecutorProps<
   JobState,
   Input,

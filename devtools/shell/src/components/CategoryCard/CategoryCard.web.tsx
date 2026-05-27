@@ -1,12 +1,12 @@
 import { ChevronRight } from "@ledgerhq/lumen-ui-react/symbols";
-import { Category } from "../../types";
-import type { Tool } from "../../types";
+import { Category } from "@devtools/registry";
+import type { Tool, ToolId } from "@devtools/registry";
 import { IconSquare } from "../IconSquare/IconSquare.web";
 
 interface CategoryCardProps {
   category: Category;
   tools: Tool[];
-  onSelect: (id: string) => void;
+  onSelect: (id: ToolId) => void;
 }
 
 export function CategoryCard({ category, tools, onSelect }: CategoryCardProps) {

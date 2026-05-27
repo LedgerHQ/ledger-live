@@ -5,6 +5,8 @@ export enum LocationContentCard {
   BottomPortfolio = "bottom_portfolio",
   Action = "action",
   NotificationCenter = "notification_center",
+  /** Generic Awareness Modal */
+  GenericAwarenessModal = "generic_awareness_modal",
 }
 
 export enum Platform {

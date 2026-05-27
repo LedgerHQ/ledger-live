@@ -12,11 +12,7 @@ import type { ZCashClient } from "./types";
 import type { BtcOperation } from "../../types";
 import { removeReplaced } from "../../synchronisation";
 import type { ZcashAccount } from "./types";
-import {
-  convertShieldedTransactionsToOperations,
-  computeProtocolDeltas,
-  computeOutgoingFees,
-} from "./operations";
+import { convertShieldedTransactionsToOperations, computeProtocolDeltas } from "./operations";
 
 // ─── Zcash native sync (formerly familyConfig.ts) ───────────────────────────
 
@@ -147,16 +143,6 @@ export function reduceShieldedSyncResult(
   const saplingBalance = prevSapling.plus(deltaSapling);
   const orchardBalance = prevOrchard.plus(deltaOrchard);
 
-  const newFeesPaid = computeOutgoingFees(newTransactions);
-
-  const baseBalance =
-    accumulated.accountUpdate.balance || info.initialAccount?.balance || new BigNumber(0);
-  const transparentPortion = baseBalance.minus(prevSapling).minus(prevOrchard);
-  const balance = (transparentPortion.isNegative() ? new BigNumber(0) : transparentPortion)
-    .plus(saplingBalance)
-    .plus(orchardBalance)
-    .minus(newFeesPaid);
-
   const totalBlocks = result.processedBlocks + result.remainingBlocks;
   const privateInfo: ZcashPrivateInfo = {
     saplingBalance,
@@ -194,8 +180,6 @@ export function reduceShieldedSyncResult(
       ...accumulated.accountUpdate,
       operations,
       operationsCount: missingOpsCount + operations.length,
-      balance,
-      spendableBalance: balance,
       blockHeight: result.lastProcessedBlock ?? info.initialAccount?.blockHeight ?? 0,
       privateInfo,
     },
@@ -218,7 +202,6 @@ export function createShieldedSyncObservable(
 
   const initialAccountUpdate: ShieldedScanAccumulated["accountUpdate"] = {
     operations: (info.initialAccount?.operations || []) as BtcOperation[],
-    ...(info.initialAccount?.balance !== undefined && { balance: info.initialAccount.balance }),
     ...(info.initialAccount?.blockHeight !== undefined && {
       blockHeight: info.initialAccount.blockHeight,
     }),

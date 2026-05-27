@@ -47,6 +47,7 @@ nsis:
 files:
   # Include files
   - .webpack/**/*
+  - "node_modules/@ledgerhq/zcash-utils/**/*"
   - from: "dist/node_modules"
     to: "node_modules"
     filter:
@@ -83,3 +84,6 @@ files:
 # Disable native module rebuilding since we removed all native dependencies (node-hid, usb)
 buildDependenciesFromSource: false
 npmRebuild: false
+
+asarUnpack:
+  - "node_modules/@ledgerhq/zcash-utils/**/*"

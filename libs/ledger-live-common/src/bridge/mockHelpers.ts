@@ -8,7 +8,7 @@ import { loadMockAccountForFamily } from "../coin-modules/registry";
 import { genAccount } from "../mock/account";
 import { getOperationAmountNumber } from "../operation";
 import { delay } from "../promise";
-import { Result } from "@ledgerhq/ledger-wallet-framework/derivation";
+import { type GetAddressResult } from "@ledgerhq/ledger-wallet-framework/derivation";
 const MOCK_DATA_SEED = "MOCK";
 const broadcasted: Record<string, Operation[]> = {};
 const syncTimeouts = {};
@@ -174,7 +174,7 @@ export const makeAccountBridgeReceive: () => (
     deviceId: string;
     subAccountId?: string;
   },
-) => Observable<Result> = () => account =>
+) => Observable<GetAddressResult> = () => account =>
   of({
     address: account.freshAddress,
     path: account.freshAddressPath,

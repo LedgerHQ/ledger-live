@@ -81,6 +81,30 @@ export function getRange(range: PortfolioRange | string) {
   }
 }
 
+export type ChartRangeSegment = "1h" | "1d" | "1w" | "1m" | "1y" | "all";
+
+export function getChartRangeSegment(range: PortfolioRange | string): ChartRangeSegment {
+  switch (range) {
+    case "1h":
+      return "1h";
+    case "7d":
+    case "week":
+      return "1w";
+    case "30d":
+    case "month":
+      return "1m";
+    case "1y":
+    case "year":
+      return "1y";
+    case "all":
+      return "all";
+    case "24h":
+    case "day":
+    default:
+      return "1d";
+  }
+}
+
 /** @FIXME workaround for main tokens & also until we have asset aggregation */
 export function dadaIdToMarketId(id: string): string {
   if (!id.includes(":")) return id;

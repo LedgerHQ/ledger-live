@@ -25,7 +25,7 @@ const rebuildDeps = async (folder, file) => {
 };
 
 async function main() {
-  const folder = ".turbo/cache/";
+  const folder = ".cache/desktop-native-deps/";
   const file = "LEDGER_HASH_pnpm-lock.yaml.hash";
   const fullPath = `${folder}${file}`;
 

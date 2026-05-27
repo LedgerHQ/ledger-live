@@ -55,6 +55,7 @@ import { PORTFOLIO_VIEW_ID, TOP_CHAINS } from "~/utils/constants";
 import { buildFeatureFlagTags } from "~/utils/datadogUtils";
 import { renderItem } from "LLM/utils/renderItem";
 import RecoverBanner from "LLM/features/Portfolio/components/RecoverBanner";
+import { GenericAwarenessModalDrawer } from "LLM/features/GenericAwarenessModal/screens/GenericAwarenessModalDrawer";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<WalletTabNavigatorStackParamList, ScreenName.Portfolio>
@@ -279,6 +280,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
           doesNotHaveAccount={!showAssets}
         />
       </Animated.View>
+      <GenericAwarenessModalDrawer />
     </>
   );
 }

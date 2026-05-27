@@ -1,13 +1,30 @@
 import React from "react";
 import type { DistributionItem } from "@ledgerhq/types-live";
-import { useStakingSectionViewModel } from "./useStakingSectionViewModel";
-import { StakingSectionView } from "./StakingSectionView";
+import { AssetDetailSectionSkeleton } from "../AssetDetailSectionSkeleton";
+import { StakingSection as StakingSectionComponent } from "./StakingSection";
+import { shouldShowAssetDetailSectionSkeleton } from "../../utils/shouldShowAssetDetailSectionSkeleton";
 
 type StakingSectionProps = Readonly<{
-  distributionItem: DistributionItem;
+  distributionItem?: DistributionItem;
+  pnlVisible?: boolean;
+  isLoading: boolean;
 }>;
 
-export function StakingSection({ distributionItem }: StakingSectionProps) {
-  const viewModel = useStakingSectionViewModel(distributionItem);
-  return <StakingSectionView {...viewModel} />;
+export function StakingSection({
+  distributionItem,
+  pnlVisible = false,
+  isLoading,
+}: StakingSectionProps) {
+  if (shouldShowAssetDetailSectionSkeleton(isLoading, distributionItem != null)) {
+    return (
+      <AssetDetailSectionSkeleton
+        testId="asset-detail-staking-skeleton"
+        contentClassName="h-24 w-full rounded-12"
+      />
+    );
+  }
+
+  if (!distributionItem) return null;
+
+  return <StakingSectionComponent distributionItem={distributionItem} pnlVisible={pnlVisible} />;
 }

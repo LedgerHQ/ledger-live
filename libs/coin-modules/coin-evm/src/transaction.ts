@@ -94,6 +94,17 @@ export const fromTransactionRaw = (rawTx: EvmTransactionRaw): EvmTransaction => 
     type: rawTx.type ?? 0, // if rawTx.type is undefined, transaction will be considered legacy and therefore type 0
   };
 
+  // Restore assetReference and assetOwner when present in the raw.
+  // These fields can be present in the transactionRaw produced by `toGenericTransactionRaw`
+  // (used in buildOptimisticOperation), so we map them back to the transaction here to
+  // support the edit-transaction flow on previously-broadcast token operations.
+  if (rawTx.assetReference) {
+    (tx as Record<string, unknown>).assetReference = rawTx.assetReference;
+  }
+  if (rawTx.assetOwner) {
+    (tx as Record<string, unknown>).assetOwner = rawTx.assetOwner;
+  }
+
   if (rawTx.data) {
     tx.data = Buffer.from(rawTx.data, "hex");
   }

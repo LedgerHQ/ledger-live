@@ -2,7 +2,7 @@ import { Account, AccountLike } from "@ledgerhq/types-live";
 import { useCallback } from "react";
 import { openModal } from "~/renderer/actions/modals";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { canDelegate } from "@ledgerhq/live-common/families/evm/staking/logic";
 import { isStakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";

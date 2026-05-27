@@ -1,5 +1,47 @@
 # @ledgerhq/coin-sui
 
+## 0.34.0
+
+### Minor Changes
+
+- [#16646](https://github.com/LedgerHQ/ledger-live/pull/16646) [`6e7bdb1`](https://github.com/LedgerHQ/ledger-live/commit/6e7bdb11df81744f154db465375140474994e06f) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Prevent Sui errors from being silently swallowed, instead make sure they are thrown up through the stack
+
+- [#17096](https://github.com/LedgerHQ/ledger-live/pull/17096) [`abdb866`](https://github.com/LedgerHQ/ledger-live/commit/abdb8662fba3784399a747ece63a11cc4f6e23bb) Thanks [@ishaba](https://github.com/ishaba)! - Add GraphQL read-side transport for Sui (balances, stakes, lastBlock, checkpoint) behind the `suiGraphqlTransport` feature flag.
+
+- [#17646](https://github.com/LedgerHQ/ledger-live/pull/17646) [`4e37300`](https://github.com/LedgerHQ/ledger-live/commit/4e373002bdfef0109376be395b5131940dc85792) Thanks [@amaslakov](https://github.com/amaslakov)! - fix(coin-sui): forward stakedSuiId and useAllAmount in getFeesForTransaction to fix undelegate modal crash (TypeError reading 'Object')
+
+### Patch Changes
+
+- Updated dependencies [[`f39fede`](https://github.com/LedgerHQ/ledger-live/commit/f39fede0a6eb4e427a15219e5a3c8fbc3302815f), [`b812751`](https://github.com/LedgerHQ/ledger-live/commit/b8127519474e63c543b1b937a2d3b11ad162a78e), [`3b746ee`](https://github.com/LedgerHQ/ledger-live/commit/3b746eea7f3f2be633947e8e9112987457c864a5), [`1368afd`](https://github.com/LedgerHQ/ledger-live/commit/1368afdc7218a68c803672e6e412f8f9f6e62142), [`abdb866`](https://github.com/LedgerHQ/ledger-live/commit/abdb8662fba3784399a747ece63a11cc4f6e23bb), [`5177d5e`](https://github.com/LedgerHQ/ledger-live/commit/5177d5e6311047cc7485a66dbcb8971c9a8c0a5c), [`3cd7abb`](https://github.com/LedgerHQ/ledger-live/commit/3cd7abb4d6f6072bad62073108d797faf23f9e8c), [`c6170d7`](https://github.com/LedgerHQ/ledger-live/commit/c6170d7b61bc37ef80f8d3e5e608611f9b8ecd67), [`912e673`](https://github.com/LedgerHQ/ledger-live/commit/912e673368baa0342316c882653768d570b71262), [`6e832a0`](https://github.com/LedgerHQ/ledger-live/commit/6e832a044bd7abb704f0a45ea782e55c1b25487c), [`2257d43`](https://github.com/LedgerHQ/ledger-live/commit/2257d43630933127549300f39ade1e2b01f94cb8), [`08762c2`](https://github.com/LedgerHQ/ledger-live/commit/08762c286e38136293108c19efa72ae8fbd1286b)]:
+  - @ledgerhq/types-live@6.108.0
+  - @ledgerhq/ledger-wallet-framework@1.5.0
+  - @ledgerhq/cryptoassets@13.48.0
+  - @ledgerhq/live-env@2.35.0
+  - @ledgerhq/live-network@2.6.1
+
+## 0.34.0-next.1
+
+### Minor Changes
+
+- [#17646](https://github.com/LedgerHQ/ledger-live/pull/17646) [`4e37300`](https://github.com/LedgerHQ/ledger-live/commit/4e373002bdfef0109376be395b5131940dc85792) Thanks [@amaslakov](https://github.com/amaslakov)! - fix(coin-sui): forward stakedSuiId and useAllAmount in getFeesForTransaction to fix undelegate modal crash (TypeError reading 'Object')
+
+## 0.34.0-next.0
+
+### Minor Changes
+
+- [#16646](https://github.com/LedgerHQ/ledger-live/pull/16646) [`6e7bdb1`](https://github.com/LedgerHQ/ledger-live/commit/6e7bdb11df81744f154db465375140474994e06f) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Prevent Sui errors from being silently swallowed, instead make sure they are thrown up through the stack
+
+- [#17096](https://github.com/LedgerHQ/ledger-live/pull/17096) [`abdb866`](https://github.com/LedgerHQ/ledger-live/commit/abdb8662fba3784399a747ece63a11cc4f6e23bb) Thanks [@ishaba](https://github.com/ishaba)! - Add GraphQL read-side transport for Sui (balances, stakes, lastBlock, checkpoint) behind the `suiGraphqlTransport` feature flag.
+
+### Patch Changes
+
+- Updated dependencies [[`f39fede`](https://github.com/LedgerHQ/ledger-live/commit/f39fede0a6eb4e427a15219e5a3c8fbc3302815f), [`b812751`](https://github.com/LedgerHQ/ledger-live/commit/b8127519474e63c543b1b937a2d3b11ad162a78e), [`3b746ee`](https://github.com/LedgerHQ/ledger-live/commit/3b746eea7f3f2be633947e8e9112987457c864a5), [`1368afd`](https://github.com/LedgerHQ/ledger-live/commit/1368afdc7218a68c803672e6e412f8f9f6e62142), [`abdb866`](https://github.com/LedgerHQ/ledger-live/commit/abdb8662fba3784399a747ece63a11cc4f6e23bb), [`5177d5e`](https://github.com/LedgerHQ/ledger-live/commit/5177d5e6311047cc7485a66dbcb8971c9a8c0a5c), [`3cd7abb`](https://github.com/LedgerHQ/ledger-live/commit/3cd7abb4d6f6072bad62073108d797faf23f9e8c), [`c6170d7`](https://github.com/LedgerHQ/ledger-live/commit/c6170d7b61bc37ef80f8d3e5e608611f9b8ecd67), [`912e673`](https://github.com/LedgerHQ/ledger-live/commit/912e673368baa0342316c882653768d570b71262), [`6e832a0`](https://github.com/LedgerHQ/ledger-live/commit/6e832a044bd7abb704f0a45ea782e55c1b25487c), [`2257d43`](https://github.com/LedgerHQ/ledger-live/commit/2257d43630933127549300f39ade1e2b01f94cb8), [`08762c2`](https://github.com/LedgerHQ/ledger-live/commit/08762c286e38136293108c19efa72ae8fbd1286b)]:
+  - @ledgerhq/types-live@6.108.0-next.0
+  - @ledgerhq/ledger-wallet-framework@1.5.0-next.0
+  - @ledgerhq/cryptoassets@13.48.0-next.0
+  - @ledgerhq/live-env@2.35.0-next.0
+  - @ledgerhq/live-network@2.6.1-next.0
+
 ## 0.33.0
 
 ### Minor Changes

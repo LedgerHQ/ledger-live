@@ -11,13 +11,6 @@ inputs:
   install_node_gyp:
     description: "install node-gyp"
     required: false
-  turborepo-server-port:
-    description: "turborepo server port"
-    required: false
-  turbo-server-token:
-    description: "custom token for local s3 server"
-    required: false
-    default: "yolo"
 
 runs:
   using: "composite"

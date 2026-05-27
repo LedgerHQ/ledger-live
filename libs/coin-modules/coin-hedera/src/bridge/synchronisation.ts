@@ -4,7 +4,7 @@ import type {
   IterateResultBuilder,
 } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
-import type { Result } from "@ledgerhq/ledger-wallet-framework/derivation";
+import type { GetAddressResult } from "@ledgerhq/ledger-wallet-framework/derivation";
 import {
   getDerivationScheme,
   runDerivationScheme,
@@ -309,7 +309,7 @@ export const buildIterateResult: IterateResultBuilder = async ({ result: rootRes
           address: addresses[index],
           publicKey: addresses[index],
           path: freshAddressPath,
-        } satisfies Result)
+        } satisfies GetAddressResult)
       : null;
   };
 };

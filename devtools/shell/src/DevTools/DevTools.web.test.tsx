@@ -1,6 +1,11 @@
 import { render, screen } from "jest/render";
 import { DevTools } from "./DevTools.web";
 
+jest.mock("@devtools/registry", () => ({
+  ...jest.requireActual("@devtools/registry"),
+  tools: {},
+}));
+
 beforeEach(() => {
   localStorage.clear();
 });
@@ -14,7 +19,7 @@ describe("DevTools (web)", () => {
 
   it("shows empty state when no tool is selected", () => {
     render(<DevTools />);
-    expect(screen.getByTestId("devtools-empty")).toBeInTheDocument();
+    expect(screen.getByText(/What do you need to inspect/i)).toBeInTheDocument();
   });
 
   it("shows the internal tools warning strip", () => {

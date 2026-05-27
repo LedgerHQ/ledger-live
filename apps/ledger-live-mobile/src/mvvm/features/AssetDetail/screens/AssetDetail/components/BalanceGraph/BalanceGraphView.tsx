@@ -14,7 +14,7 @@ import type { FormattedValue } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { ArrowDown } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "~/context/Locale";
-import { Trend } from "LLM/components/Trend";
+import { TrendSection } from "LLM/components/TrendSection";
 import { ASSET_DETAIL_TEST_IDS } from "LLM/features/AssetDetail/testIds";
 
 type Range = Readonly<{ label: string; value: string }>;
@@ -57,7 +57,7 @@ export function BalanceGraphView({
         <Skeleton lx={{ height: "s56", width: "s256", borderRadius: "md" }} />
       ) : (
         <Box lx={headerStyle}>
-          <Text typography="body3" lx={{ color: "muted" }}>
+          <Text typography="body2" lx={{ color: "muted" }}>
             {t("assetDetail.balanceGraph.marketPrice")}
           </Text>
 
@@ -69,7 +69,7 @@ export function BalanceGraphView({
                 testID={ASSET_DETAIL_TEST_IDS.marketPrice}
               />
 
-              <Trend
+              <TrendSection
                 percentage={priceChangePercentage}
                 formattedChange={formattedPriceChange}
                 timeLabel={rangeTimeLabel}

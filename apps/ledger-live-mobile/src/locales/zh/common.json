@@ -169,6 +169,9 @@
     "CeloAllFundsWarning" : {
       "title" : "确保您留有足够的余额，以便缴纳未来的交易费"
     },
+    "CeloGroupNotVotable" : {
+      "title" : "该验证者组无法接收投票。可能已满或不再符合条件。"
+    },
     "CeloMissingWithdrawalsError" : {
       "title" : "出错了，无法获取任何要提取的资金"
     },
@@ -889,6 +892,9 @@
     "RecommendUndelegation" : {
       "title" : "请在清空账户之前将其解除委托"
     },
+    "MustDelegateBeforeStaking" : {
+      "title" : "请先委托您的账户，然后再进行质押"
+    },
     "RecommendSubAccountsToEmpty" : {
       "title" : "请先清空所有子账户"
     },
@@ -1321,6 +1327,13 @@
     "tryEnablingAgain" : "重新尝试启用位置",
     "noInfos" : "Ledger 并不会获取您的位置信息。"
   },
+  "borrow" : {
+    "title" : "借入",
+    "appNotFound" : "未找到借贷应用程序",
+    "infoModal" : {
+      "close" : "关闭"
+    }
+  },
   "earn" : {
     "deposit" : {
       "protocolInfoModal" : {
@@ -1667,6 +1680,23 @@
     "headerTitle" : "购买成功",
     "title" : "感谢您对 Ledger 的信任",
     "desc" : "您的订单正在处理中。\n请查收您的电子邮件以确认订单。"
+  },
+  "productTour" : {
+    "swap" : {
+      "cta" : "探索互换"
+    },
+    "stake" : {
+      "cta" : "探索赚取功能"
+    },
+    "card" : {
+      "cta" : "获取您的卡"
+    },
+    "portfolio" : {
+      "cta" : "查看您的资产组合"
+    },
+    "done" : {
+      "cta" : "重新开始"
+    }
   },
   "discover" : {
     "title" : "探索",
@@ -2743,6 +2773,12 @@
       "title" : "永续合约",
       "description" : "杠杆交易"
     },
+    "borrowEntry" : {
+      "title" : "贷款",
+      "cardTitle" : "借入稳定币",
+      "cardDescription" : "释放流动性",
+      "cta" : "探索"
+    },
     "recommended" : {
       "title" : "推荐"
     },
@@ -2803,15 +2839,8 @@
       }
     },
     "recoverBanner" : {
-      "subscribeDone" : {
-        "title" : "提醒：完成订阅 Ledger Recover 服务"
-      },
-      "verifyIdentity" : {
-        "title" : "您尚未备份钱包访问权限"
-      },
-      "connectDevice" : {
-        "title" : "您尚未备份钱包访问权限"
-      }
+      "title" : "完成保护您的备份",
+      "description" : "完成激活 Ledger Recover"
     },
     "refreshStatus" : {
       "refreshing" : "刷新中...",
@@ -2933,7 +2962,8 @@
   },
   "operationsList" : {
     "to" : "到",
-    "from" : "从"
+    "from" : "从",
+    "pending" : "待处理"
   },
   "operationDetails" : {
     "title" : "交易详情",
@@ -3217,7 +3247,9 @@
     "title" : "账户",
     "addAccount" : "添加账户",
     "emptyState" : "尚无账户",
-    "errorState" : "加载您的账户时出错"
+    "errorState" : "加载您的账户时出错",
+    "assetsCount" : "{{count}} 个资产",
+    "assetsCount_one" : "{{count}} 个资产"
   },
   "crypto" : {
     "title" : "加密货币",
@@ -3348,7 +3380,7 @@
       "analytics" : "应用性能",
       "analyticsDesc" : "允许 Ledger 收集应用程序使用数据以优化用户体验",
       "mevProtection" : "MEV 保护",
-      "mevProtectionDesc" : "启用 MEV Protection，确保以太坊上的交易更加可靠。",
+      "mevProtectionDesc" : "启用 MEV 保护，确保交易更加可靠。",
       "mevProtectionLearnMore" : "隐私声明",
       "personalizedRecommendations" : "个性化体验",
       "personalizedRecommendationsDesc" : "允许 Ledger 收集应用程序使用情况，以便提供个性化内容",
@@ -5464,7 +5496,11 @@
     "undelegation" : {
       "undelegate" : "解除委托",
       "undelegationMessage" : "取消委托后，您不会获得目前和后续周期的任何奖励",
-      "verificationSuccessTitle" : "您已经将资产成功解除委托"
+      "verificationSuccessTitle" : "您已经将资产成功解除委托",
+      "dRepDelegationSelfTransactionDrawer" : {
+        "title" : "准备解除委托",
+        "description" : "要关闭您的质押账户并取回 ADA 存款：\n\nCardano 卡尔达诺的治理现在要求您在解除委托之前先定义您的投票状态。\n\n此步骤涉及向您自己的 Ledger 地址发送交易，该交易仅用于登记您选择弃权的投票。只需标准网络费用，您的 ADA 仍保留在您的钱包中。\n\n该偏好被记录后，您便可以像往常一样解除委托。"
+      }
     },
     "delegation" : {
       "pool" : "池",
@@ -6235,6 +6271,208 @@
     },
     "delegation" : {
       "addCustomValidator" : "+ 添加自定义验证者"
+    }
+  },
+  "evm" : {
+    "info" : {
+      "available" : {
+        "title" : "{{currencyTicker}} 可用",
+        "description" : "该数额可自由支配。"
+      },
+      "delegated" : {
+        "title" : "已委托资产",
+        "description" : "委托资产用于 {{currencyName}} 投票。这是您的总得票数。"
+      },
+      "undelegating" : {
+        "title" : "正在解除委托",
+        "description" : "取消委托的资产在 {{numberOfDays}} 天锁定期后才能使用。"
+      },
+      "delegationUnavailable" : {
+        "title" : "委托不可用",
+        "description" : "您的账户中没有足够的可用余额来开始新的委托。"
+      }
+    },
+    "delegation" : {
+      "delegationEarn" : "您可以通过委托资产赚取 {{ticker}} 奖励。",
+      "info" : "委托机制如何运作",
+      "claimRewards" : "申领奖励",
+      "claimAvailableRewards" : "申领 {{amount}}",
+      "commission" : "佣金",
+      "header" : "委托",
+      "Amount" : "数额",
+      "noRewards" : "没有奖励可用",
+      "delegate" : "委托",
+      "undelegate" : "解除委托",
+      "redelegate" : "重新委托",
+      "reward" : "申领奖励",
+      "totalStake" : "质押总额",
+      "stepperHeader" : {
+        "starter" : "赚取奖励",
+        "validator" : "委托资产",
+        "amountSubTitle" : "要委托的数额",
+        "summary" : "概要",
+        "verification" : "验证",
+        "selectDevice" : "选择设备",
+        "connectDevice" : "连接设备",
+        "stepRange" : "步骤 {{currentStep}} 之 {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "委托 {{ticker}} 可安全赚取奖励，时刻掌控您的资产。",
+            "steps" : {
+              "0" : "委托出去的资产依旧为您所有。",
+              "1" : "取消委托过程必须等待 {{numberOfDays}} 天才能完成。",
+              "2" : "使用您的 Ledger 设备安全地进行委托。"
+            },
+            "warning" : {
+              "description" : "请明智地选择验证者：如果验证者表现不当，您可能会不可挽回地损失部分已委托资产。"
+            },
+            "cta" : "继续"
+          },
+          "validator" : {
+            "validators" : "验证者",
+            "myDelegations" : "我的委托",
+            "cta" : "继续",
+            "estYield" : "预估收益：{{amount}}",
+            "totalAvailable" : "可用总额：<0>{{amount}}</0>",
+            "allAssetsUsed" : "已使用所有资产",
+            "noResultsFound" : "未找到 \"<0>{{search}}</0>\" 验证者",
+            "currentAmount" : "(+ <0>{{amount}}</0>)"
+          },
+          "amount" : {
+            "assetsRemaining" : "剩余资产：<0>{{amount}}</0>",
+            "allAssetsUsed" : "已使用所有资产",
+            "minAmount" : "最小数额：<0>{{min}}</0>",
+            "incorrectAmount" : "最大数额：<0>{{max}}</0>",
+            "cta" : "继续"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "您的资产已经成功委托。",
+              "text" : "交易一经网络确认，您的账户余额就会更新。",
+              "cta" : "查看详情"
+            },
+            "pending" : {
+              "title" : "正在播送交易……"
+            },
+            "broadcastError" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。"
+          }
+        }
+      },
+      "drawer" : {
+        "status" : "状态",
+        "rewards" : "奖励",
+        "active" : "活跃",
+        "inactive" : "不活跃",
+        "completionDate" : "完成日期",
+        "redelegatedFrom" : "已重新委托自"
+      }
+    },
+    "redelegation" : {
+      "estYield" : "预估收益",
+      "stepperHeader" : {
+        "validator" : "选择新的验证者",
+        "amountSubTitle" : "要重新委托的数额",
+        "amountTitle" : "{{from}} → {{to}}",
+        "summary" : "概要",
+        "selectDevice" : "选择设备",
+        "connectDevice" : "连接设备",
+        "stepRange" : "步骤 {{currentStep}} 之 {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "validator" : {
+            "validators" : "验证者",
+            "myDelegations" : "我的委托",
+            "cta" : "继续",
+            "estYield" : "预估收益：{{amount}}",
+            "totalAvailable" : "可用总额：<0>{{amount}}</0>",
+            "allAssetsUsed" : "已使用所有资产",
+            "noResultsFound" : "未找到 \"<0>{{search}}</0>\" 验证者"
+          },
+          "amount" : {
+            "newRedelegatedBalance" : "操作后，<0>{{name}}</0> 的新总额：<0>{{amount}}</0>",
+            "allAssetsUsed" : "已使用所有资产"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "您的资产已成功重新委托",
+              "text" : "该交易一经网络确认，就会更新您的账户余额。",
+              "cta" : "查看详情"
+            },
+            "pending" : {
+              "title" : "正在播送交易……"
+            },
+            "broadcastError" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。"
+          }
+        }
+      }
+    },
+    "undelegation" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "要解除委托的数额",
+        "summary" : "概要",
+        "selectDevice" : "选择设备",
+        "connectDevice" : "连接设备",
+        "stepRange" : "步骤 {{currentStep}} 之 {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "allAssetsUsed" : "所有资产都已解除委托"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "您已经将资产成功解除委托",
+              "text" : "该交易一经网络确认，就会更新您的账户余额。",
+              "cta" : "查看详情"
+            },
+            "pending" : {
+              "title" : "正在播送交易……"
+            },
+            "broadcastError" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。"
+          }
+        }
+      }
+    },
+    "claimRewards" : {
+      "stepperHeader" : {
+        "validator" : "选择要收集的奖励",
+        "method" : "申领奖励",
+        "summary" : "概要",
+        "selectDevice" : "选择设备",
+        "connectDevice" : "连接设备",
+        "stepRange" : "步骤 {{currentStep}} 之 {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "method" : {
+            "youEarned" : "您赚取了",
+            "byDelegationAssetsTo" : "通过将资产委托给",
+            "claimReward" : "兑现",
+            "claimRewardCompound" : "复利",
+            "claimRewardInfo" : "它们现在将被申领并被添加到您的可用余额。",
+            "claimRewardCompoundInfo" : "它们现在将被申领并被自动委托给同一个验证者。",
+            "compoundOrCashIn" : "复利或兑现？",
+            "claimRewardTooltip" : "奖励将被添加至可用余额",
+            "claimRewardCompoundTooltip" : "奖励将被添加至已委托的数额",
+            "cta" : "继续"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "您已成功申领您的奖励。已将其添加到您的可用余额。",
+              "titleCompound" : "您的奖励已委托给同一个验证者。",
+              "text" : "该交易一经网络确认，就会更新您的账户余额。",
+              "cta" : "查看详情"
+            },
+            "pending" : {
+              "title" : "正在播送交易……"
+            },
+            "broadcastError" : "您的交易可能失败了。请稍等片刻后检查交易记录，然后重试。"
+          }
+        }
+      }
     }
   },
   "tron" : {
@@ -7211,6 +7449,11 @@
         "redelegate" : "取消委托的资产必须等待 {{numberOfDays}} 天才能返还至可用余额。",
         "undelegate" : "取消委托的资产必须等待 {{numberOfDays}} 天才能返还至可用余额。"
       },
+      "evm" : {
+        "claimReward" : "如果已选的验证者有待领取的奖励，它们将被自动申领。",
+        "redelegate" : "取消委托的资产必须等待 {{numberOfDays}} 天才能返还至可用余额。",
+        "undelegate" : "取消委托的资产必须等待 {{numberOfDays}} 天才能返还至可用余额。"
+      },
       "lending" : "发送之前，请在您的设备上核对操作详情。"
     },
     "amount" : "数额",
@@ -7809,27 +8052,48 @@
   "postOnboarding" : {
     "hub" : {
       "title" : "接下来呢？",
-      "areAllPostOnboardingActionsCompletedTitle" : "一切准备就绪！继续探索您的资产组合",
+      "areAllPostOnboardingActionsCompletedTitle" : "一切准备就绪！",
       "skip" : "以后再说",
-      "viewWallet" : "探索我的资产组合"
+      "viewWallet" : "探索我的资产组合",
+      "deviceStepComplete" : "完成"
     },
-    "entryPointCard" : {
-      "title" : "使用 {{productName}} 的下一步操作是什么？",
-      "description" : "保护您的资产，探索更多可能。",
-      "buttonLabel" : "查看后续步骤"
+    "drawer" : {
+      "title" : "接着，完成钱包设置",
+      "titleCompleted" : "一切准备就绪！",
+      "primaryLabel" : "知道了",
+      "actionCompletedLabel" : "完成",
+      "actions" : {
+        "deviceOnboarded" : {
+          "title" : "设置 Ledger 设备"
+        },
+        "assetsTransfer" : {
+          "title" : "添加加密",
+          "description" : "接收或买入加密货币，为您的钱包提供资金"
+        },
+        "syncAccounts" : {
+          "title" : "同步您的钱包",
+          "description" : "保持您的加密货币账户同步"
+        },
+        "customImage" : {
+          "title" : "自定义锁屏界面",
+          "description" : "将您最喜欢的数字艺术或照片设置为设备锁屏界面。"
+        },
+        "recover" : {
+          "title" : "完成保护您的备份",
+          "description" : "完成激活 Ledger Recover"
+        }
+      }
     },
     "widget" : {
       "title" : "接着，完成钱包设置",
-      "subtitle" : "首先为您的钱包充值。"
+      "subtitle" : "保护您的资产，探索更多可能。"
     },
     "actions" : {
       "deviceOnboarded" : {
-        "titleCompleted" : "设置您的 Ledger 设备"
+        "titleCompleted" : "设置 Ledger 设备"
       },
       "assetsTransfer" : {
-        "title" : "转移您的资产",
         "titleCompleted" : "资产已转入 Ledger",
-        "description" : "从任意交易所或钱包转移资产。",
         "popupLabel" : "资产已转移"
       },
       "buyCrypto" : {
@@ -7839,21 +8103,15 @@
         "popupLabel" : "已购买的加密货币"
       },
       "customImage" : {
-        "title" : "自定义锁屏界面",
         "titleCompleted" : "已自定义锁屏界面",
-        "description" : "将您最喜欢的数字艺术或照片设置为设备锁屏界面。",
         "popupLabel" : "已成功自定义锁屏界面"
       },
       "recover" : {
-        "title" : "完成保护您的备份",
         "titleCompleted" : "备份已受保护",
-        "description" : "完成激活 Ledger Recover",
         "popupLabel" : "已成功订阅 Ledger Recover"
       },
       "syncAccounts" : {
-        "title" : "同步您的加密货币账户",
         "titleCompleted" : "您的账户已同步",
-        "description" : "启用 Ledger Sync 以同步您的加密货币账户",
         "popupLabel" : "账户已同步"
       }
     }
@@ -8400,6 +8658,64 @@
       }
     }
   },
+  "assetDetail" : {
+    "balanceGraph" : {
+      "marketPrice" : "市场价格",
+      "timeframeSelector" : "时间范围",
+      "timeLabel" : {
+        "24h" : "1 天",
+        "7d" : "1 周",
+        "30d" : "1 个月",
+        "1y" : "1 年"
+      },
+      "chartPlaceholder" : "图形"
+    },
+    "addresses" : {
+      "title" : "地址",
+      "addAccount" : "添加",
+      "empty" : "暂无地址点按“添加”开始。"
+    },
+    "marketStats" : {
+      "title" : "市场数据",
+      "marketCap" : "市值",
+      "marketRank" : "市场排名",
+      "circulatingSupply" : "流通供应量",
+      "circulatingSupplyTooltip" : "市场上目前可供交易和流通的加密货币数量。",
+      "maxSupply" : "最大供应量",
+      "maxSupplyTooltip" : "该加密货币最终可存在的最大货币数量。",
+      "tradingVolume" : "24 小时交易量",
+      "error" : "无法加载市场数据"
+    },
+    "pricePerformance" : {
+      "title" : "价格表现",
+      "allTimeHigh" : "历史最高",
+      "allTimeLow" : "历史最低",
+      "yearsAgo" : "{{count}} 年前",
+      "monthsAgo" : "{{count}} 个月前",
+      "daysAgo" : "{{count}} 天前",
+      "hoursAgo" : "{{count}} 小时前",
+      "minutesAgo" : "{{count}} 分钟前",
+      "justNow" : "刚刚",
+      "error" : "无法加载价格表现。"
+    },
+    "transactions" : {
+      "title" : "交易"
+    },
+    "fallbackBanner" : {
+      "title" : "不支持对此资产的互换和买入。"
+    },
+    "balanceDetails" : {
+      "totalBalance" : "总余额",
+      "transfer" : "转移",
+      "availableBalance" : "可用余额",
+      "earnDeposit" : "赚取存款收益",
+      "earnBanner" : "赚取高达 {{apy}}% {{type}}",
+      "earnBannerGeneric" : "通过此资产赚取收益",
+      "earnBannerSubtitle" : "持有此资产并赚取收益",
+      "earnBannerAction" : "前往“赚取”",
+      "availableBalanceTooltip" : "可立即使用的资金，不包括权益质押或委托的数额。"
+    }
+  },
   "assetSelection" : {
     "selectCrypto" : {
       "title" : "选择资产"
@@ -8617,6 +8933,36 @@
       "lockedBalanceTooltip" : "您的资金锁定在您发送给他人的要约中。您可以随时取消这些要约，或者等待接收方接受或拒绝。",
       "withdrawableBalance" : "可提取",
       "withdrawableBalanceTooltip" : "您可以从过期要约中收回的资金。提取即可将这些资金转回您的可用余额。"
+    },
+    "disclaimer" : {
+      "title" : "设置 Canton 网络",
+      "intro" : "Canton 拥有独特的特性，在继续之前需要您了解：",
+      "bullets" : {
+        "utxo" : {
+          "title" : "基于 UTXO 的余额",
+          "body" : "余额以单个加密货币合约形式存在，每次转账上限为 100。闲置合约会随着时间的推移而失去价值，并在费用超过其余额时失效。"
+        },
+        "offers" : {
+          "title" : "基于报价的转账",
+          "body" : "不会有任何内容自动结算。已发送的转账可以提取；接收的转账需要手动接受或拒绝。通过 Canton 功能面板管理报价。"
+        },
+        "dualValidator" : {
+          "title" : "双验证者安全性",
+          "body" : "交易需要 Ledger 和 Kiln 的共同签名。任何一方都不能代表您单独行事。"
+        },
+        "tokenLiability" : {
+          "title" : "标准代币责任 ⚠️",
+          "body" : "在故障场景中恢复代币是代币发行方的责任，与 Ledger 无关。"
+        }
+      },
+      "agreeLabel" : "我同意 <1>Canton 网络条款和 Ledger 的免责声明</1>",
+      "cancel" : "取消",
+      "agree" : "同意",
+      "terms" : {
+        "title" : "Canton 网络条款",
+        "sectionTitle" : "标准代币责任与恢复",
+        "body" : "Ledger 仅支持通过 Digital Asset (DA) 注册处发行的标准代币。Ledger 不是这些代币的发行者，也不对其价值、管理、或基础智能合约承担任何责任。\n\n如果 Ledger 服务中断或“灾难恢复”失败，Ledger 将无法恢复您的资产。您必须直接联系相应的代币发行方（资产管理员），通过其“资产冻结”或“注册表恢复”流程发起资产恢复。您只能依据代币发行方现有的服务等级协议（SLA）寻求解决方案。继续操作即表示您承认，Ledger 及其关联公司不承担因丢失、恢复或无法恢复这些代币而引起的一切责任。"
+      }
     },
     "onboard" : {
       "account" : "账户",
@@ -8900,7 +9246,8 @@
       "addDevice" : "添加 Ledger 设备",
       "exploreAllDevices" : "探索所有 Ledger 设备",
       "available" : "可用",
-      "unavailable" : "未连接"
+      "unavailable" : "未连接",
+      "menuAccessibilityLabel" : "设备选项"
     }
   }
 }

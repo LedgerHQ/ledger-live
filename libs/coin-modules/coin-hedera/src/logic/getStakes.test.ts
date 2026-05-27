@@ -55,6 +55,7 @@ describe("getStakes", () => {
         amount: BigInt(balance) + BigInt(pendingReward),
         amountDeposited: BigInt(balance),
         amountRewarded: BigInt(pendingReward),
+        actions: [],
         details: {
           stakedNodeId: -1,
           overstaked: null,
@@ -94,6 +95,7 @@ describe("getStakes", () => {
         amount: BigInt(balance) + BigInt(pendingReward),
         amountDeposited: BigInt(balance),
         amountRewarded: BigInt(pendingReward),
+        actions: [],
         details: {
           stakedNodeId,
           overstaked: null,
@@ -141,6 +143,7 @@ describe("getStakes", () => {
         amountDeposited: BigInt(balance),
         amountRewarded: BigInt(pendingReward),
         delegate: nodeAccountId,
+        actions: [],
         details: {
           stakedNodeId: nodeId,
           overstaked: false,

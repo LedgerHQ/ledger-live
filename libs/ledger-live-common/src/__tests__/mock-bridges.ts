@@ -7,7 +7,7 @@ import { getAccountBridge, getCurrencyBridge } from "../bridge";
 import { setEnv } from "@ledgerhq/live-env";
 import { getCryptoCurrencyById } from "../currencies";
 import { toAccountRaw, flattenAccounts } from "../account";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, CurrencyBridge } from "@ledgerhq/types-live";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { firstValueFrom } from "rxjs";
 jest.setTimeout(120000);
@@ -25,9 +25,15 @@ const mockedCoins: CryptoCurrencyId[] = [
 
 mockedCoins.map(getCryptoCurrencyById).forEach(currency => {
   describe("mock " + currency.id, () => {
-    setEnv("MOCK", "true");
-    const bridge = getCurrencyBridge(currency);
-    setEnv("MOCK", "false");
+    let bridge: CurrencyBridge;
+    beforeAll(async () => {
+      setEnv("MOCK", "true");
+      try {
+        bridge = await getCurrencyBridge(currency);
+      } finally {
+        setEnv("MOCK", "false");
+      }
+    });
     test("scanAccounts", async () => {
       const accounts = await firstValueFrom(
         bridge
@@ -52,7 +58,7 @@ mockedCoins.map(getCryptoCurrencyById).forEach(currency => {
       expect(operationIdCollisions).toEqual([]);
       const [first, second] = await Promise.all(
         accounts.map(async a => {
-          const bridge = getAccountBridge(a, null);
+          const bridge = await getAccountBridge(a, null);
           const synced = await firstValueFrom(
             bridge
               .sync(a, {
@@ -69,7 +75,7 @@ mockedCoins.map(getCryptoCurrencyById).forEach(currency => {
       );
 
       if (first && second) {
-        const bridge = getAccountBridge(first, null);
+        const bridge = await getAccountBridge(first, null);
         let t = bridge.createTransaction(first);
         t = await bridge.prepareTransaction(first, t);
         t = bridge.updateTransaction(t, {

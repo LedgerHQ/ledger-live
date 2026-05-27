@@ -1,5 +1,7 @@
-import { useCurrencyChartData } from "@ledgerhq/live-common/cg-client/hooks/useCoingeckoDataProvider";
-import { useCurrencyData } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
+import {
+  useAssetChartData,
+  useCurrencyData,
+} from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
 
 import { useSelector } from "~/context/hooks";
 import { marketParamsSelector } from "~/reducers/market";
@@ -35,7 +37,7 @@ export const useMarketCoinDataWithChart = ({ currencyId }: HookProps) => {
 
   const { counterCurrency = "usd", range = "24h" } = marketParams;
 
-  const { data: dataChart, isFetching: loadingChart } = useCurrencyChartData({
+  const { data: dataChart, isFetching: loadingChart } = useAssetChartData({
     counterCurrency,
     id: currencyId,
     range,

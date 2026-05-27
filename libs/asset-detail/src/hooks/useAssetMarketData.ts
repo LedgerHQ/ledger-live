@@ -10,6 +10,7 @@ import { REFETCH_TIME_ONE_MINUTE, BASIC_REFETCH } from "@ledgerhq/live-common/ma
 import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
 import { selectCurrency } from "@ledgerhq/live-common/dada-client/utils/currencySelection";
 import { useUsdToFiatRate } from "@ledgerhq/live-common/counterValues/hooks/useUsdToFiatRate";
+import { applyDadaMarketFallback } from "../utils/applyDadaMarketFallback";
 import type { AssetMarketDataInput, AssetMarketDataResult } from "../types";
 
 export function useAssetMarketData({
@@ -61,11 +62,12 @@ export function useAssetMarketData({
   const marketCurrencyData = useMemo<MarketCurrencyData | undefined>(() => {
     if (dadaMarket) {
       const formattedDadaMarket = format(dadaMarket as MarketItemResponse);
+      const merged = applyDadaMarketFallback(formattedDadaMarket, marketFromHook);
       if (rateStatus === "ready" && rate != null) {
-        return applyUsdRateToMarket(formattedDadaMarket, rate);
+        return applyUsdRateToMarket(merged, rate);
       }
       // Return USD-formatted data while rate is loading/errored, instead of falling back to undefined
-      return formattedDadaMarket;
+      return merged;
     }
     return marketFromHook;
   }, [dadaMarket, marketFromHook, rateStatus, rate]);

@@ -4,7 +4,7 @@ The **Ledger Live developer tools platform** — a cross-platform debug componen
 
 ## Overview
 
-DevTools is a self-contained React component that surfaces developer tooling at runtime. It is completely isolated from the host application: it declares its own dependencies, accepts external state via parameters, and never reaches into the host's internals.
+DevTools is a self-contained React component that surfaces developer tooling at runtime. It is completely isolated from the host application: it declares its own dependencies, accepts host state via props, and never reaches into the host's internals.
 
 The goal is to replace the fragmented debug screens found in Desktop (Settings > Developer, ~30 tools) and Mobile (Settings > Debug, ~42 screens) with a single, extensible platform that every team can contribute to.
 
@@ -16,26 +16,39 @@ DevTools is unaware of its environment. Every piece of host-specific information
 
 ### Package structure
 
-Each tool is an independent package. The shell is a separate package whose only responsibility is navigation, layout, and wiring tools together. Tools know nothing about the shell; the shell depends on tools.
-
 ```
 devtools/
 ├── shell/            # @devtools/shell — <DevTools /> entry point, navigation, layout
+├── registry/         # @devtools/registry — static tool metadata + DevToolsConfig union
 ├── feature-flags/    # @devtools/feature-flags — Feature Flags tool
-├── <tool-name>/      # @devtools/<tool-name> — any future tool
-└── tsconfig.json
+└── <tool-name>/      # @devtools/<tool-name> — any future tool
 ```
 
-Each tool package is fully self-contained: its own `package.json`, types, logic, and platform-specific UI. Nothing from one tool leaks into another.
+Each tool package is fully self-contained: its own `package.json`, types, logic, and UI. Nothing from one tool leaks into another.
 
-**All packages must have `"private": true`** 
+**All packages must have `"private": true`.**
 
-## Internal structure
+### How a tool is wired
 
-The internal folder layout of a package is free — organise it however fits the tool's complexity. The example below is a reference, not a requirement:
+The shell never imports a specific tool. Tools are connected through `@devtools/registry`:
+
+- **Registry** declares each tool's metadata (`label`, `category`, `owner`, `platform`, …) plus a `loader: () => import("@devtools/<tool>")`. It also extends the `DevToolConfig` discriminated union with the tool's id and props type.
+- **Shell** receives a `DevToolsConfig` (array of `{ id, config }`) from the host. For each entry it looks the id up in the registry, wraps the tool component in `React.lazy(loader)`, and renders it inside `<Suspense>`. Props from the entry are exposed through `useToolProps(id)`.
+- **Tool packages** default-export a plain React component that takes its own props. They know nothing about the shell or the registry.
+- **Host app** builds the `DevToolsConfig`, wiring each tool's props from its own state.
 
 ```
-my-package/
+host app ──config──▶ <DevTools /> (shell) ──looks up id──▶ @devtools/registry ──loader()──▶ @devtools/<tool>
+```
+
+The `import()` lives in the registry, not the host or shell — the bundler resolves each tool package against the registry's own dependency graph, and tool packages stay completely decoupled.
+
+## Internal structure of a tool package
+
+The internal folder layout is free; organise it however fits the tool's complexity. The example below is a reference, not a requirement:
+
+```
+my-tool/
 └── src/
     ├── components/
     │   └── MyComponent/
@@ -49,10 +62,12 @@ my-package/
     ├── utils/
     │   ├── myUtils.ts
     │   └── myUtils.test.ts
-    └── types.ts
+    ├── MyTool.tsx          ← default-exported from src/index.ts
+    ├── types.ts            ← exports MyToolProps
+    └── index.ts            ← `export default MyTool;` + public type/hook exports
 ```
 
-A few rules should be respected as they help maintaining tools and adding new ones.
+A few rules:
 
 ### Maximize shared logic
 
@@ -70,46 +85,48 @@ Test files live next to the file they test, not in a separate `__tests__` folder
 
 For any component with non-trivial interaction logic, extract a `useXxxViewModel` hook that owns all state and derived values. The view component calls the hook and maps the result to JSX — it contains no logic of its own. When the view model logic diverges per platform, add the platform suffix to the view model file too.
 
-```
-MyComponent/
-├── MyComponent.web.tsx             ← thin view, calls useMyComponentViewModel
-├── MyComponent.native.tsx          ← thin view, calls useMyComponentViewModel
-├── useMyComponentViewModel.ts      ← shared logic
-└── useMyComponentViewModel.web.ts  ← when web logic diverges from mobile
-```
-
 ### Tool boundaries
 
-A tool is almost entirely driven by props passed by the host. It must not reach into external state on its own.
-
-- **Tools never import other tools.** There are no cross-tool dependencies, ever.
+- **Tools never import other tools.** No cross-tool dependencies, ever.
 - **External dependencies are limited to `shared/`, `domain/`, and `features/`** for truly generic types or utilities (Zod schemas, RTK slices, selectors). If the import feels specific to your tool's domain, it belongs in the tool itself.
-- **The only consumer of a tool's exports is `tools.config.ts`** in the shell, which stores the component entry point. Nothing else imports from a tool package.
+- **A tool's component never imports from `@devtools/shell` or `@devtools/registry`.** It takes its props directly so it can also be rendered standalone, outside the shell.
+
+### Lazy loading
+
+The shell calls `React.lazy(metadata.loader)` for each enabled tool and renders it inside a `<Suspense fallback={<Loading />}>` boundary. The tool package is fetched on first activation, not on shell mount.
+
+## Packages
+
+- `@devtools/shell` — `<DevTools />`, navigation, layout, lazy-load runtime, `DevToolsProvider` / `useToolProps`
+- `@devtools/registry` — static map of tool metadata + `loader`s, and the `DevToolConfig` discriminated union that types host configs
+- `@devtools/<tool>` — each tool package, default-exporting its React component
 
 ## Usage
 
-```tsx
-import { DevTools } from "@devtools/shell";
+The host imports `DevTools` and `DevToolsConfig` from the shell, and builds a typed config array:
 
-export default function DebugPage() {
-  return <DevTools />;
+```tsx
+import { DevTools, type DevToolsConfig } from "@devtools/shell";
+import { useFeatureFlagsToolProps } from "../hooks/useFeatureFlagsToolProps";
+
+export default function DevToolsPage() {
+  const featureFlagsProps = useFeatureFlagsToolProps();
+  const config: DevToolsConfig = [
+    { id: "feature-flags", config: featureFlagsProps },
+  ];
+
+  return (
+    <div style={{ height: "100vh" }}>
+      <DevTools config={config} />
+    </div>
+  );
 }
 ```
+
+`DevToolsConfig` is a discriminated union: TypeScript narrows `config` by `id`, so each entry's `config` has the right props type. Adding a new tool to the registry widens the union — existing host configs keep type-checking unchanged.
+
+A tool the host doesn't list is simply not loaded. If a tool requires props, TypeScript will refuse a host config that omits it — the discriminated union enforces the wiring at compile time.
 
 ## Adding a new tool
 
-1. Create a package at `devtools/my-tool/` with its own `package.json` (`@devtools/my-tool`).
-2. Implement the tool entirely inside that package — types, logic, and UI. Use `.web` / `.native` suffixes for platform-specific files.
-3. Add `@devtools/my-tool` as a workspace dependency of `@devtools/shell`.
-4. Register the tool in `shell/src/tools.config.ts` — descriptor and component entry point. The shell renders tools from this config; it does not import tool packages anywhere else.
-
-```ts
-{
-  id: "my-tool",
-  label: "My Tool",
-  category: Category.DEBUGGING,
-  owner: "YourTeam",
-  desc: "One-line description.",
-  component: MyTool, // imported from @devtools/my-tool
-}
-```
+See [`addTool.md`](./addTool.md) for the full walk-through.

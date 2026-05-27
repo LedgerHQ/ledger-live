@@ -32,13 +32,8 @@ jest.mock("~/renderer/components/DropDownSelector", () => {
           ReactActual.createElement(ReactActual.Fragment, { key: item.key }, renderItem({ item })),
         ),
       ),
-    DropDownItem: ({
-      children,
-      onClick,
-    }: {
-      children: React.ReactNode;
-      onClick?: () => void;
-    }) => ReactActual.createElement("button", { type: "button", onClick }, children),
+    DropDownItem: ({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) =>
+      ReactActual.createElement("button", { type: "button", onClick }, children),
   };
 });
 
@@ -79,7 +74,7 @@ describe("Delegation/ContextMenu (tezos)", () => {
 
   describe("when account is not staked", () => {
     it("redelegate item opens MODAL_DELEGATE in redelegate mode", async () => {
-      const { user, store } = render(<ContextMenu account={account} />);
+      const { user, store } = render(<ContextMenu account={account} stakingEnabled={false} />);
 
       await act(async () => {
         await user.click(screen.getByRole("button", { name: /Change validator/i }));
@@ -94,7 +89,7 @@ describe("Delegation/ContextMenu (tezos)", () => {
     });
 
     it("stopDelegation item opens MODAL_DELEGATE in undelegate mode", async () => {
-      const { user, store } = render(<ContextMenu account={account} />);
+      const { user, store } = render(<ContextMenu account={account} stakingEnabled={false} />);
 
       await act(async () => {
         await user.click(screen.getByRole("button", { name: /End delegation/i }));
@@ -115,7 +110,7 @@ describe("Delegation/ContextMenu (tezos)", () => {
     });
 
     it("redelegate item opens MODAL_TEZOS_UNSTAKE_REQUIRED with reason changeBaker", async () => {
-      const { user, store } = render(<ContextMenu account={account} />);
+      const { user, store } = render(<ContextMenu account={account} stakingEnabled={false} />);
 
       await act(async () => {
         await user.click(screen.getByRole("button", { name: /Change validator/i }));
@@ -130,7 +125,7 @@ describe("Delegation/ContextMenu (tezos)", () => {
     });
 
     it("stopDelegation item opens MODAL_TEZOS_UNSTAKE_REQUIRED with reason endDelegation", async () => {
-      const { user, store } = render(<ContextMenu account={account} />);
+      const { user, store } = render(<ContextMenu account={account} stakingEnabled={false} />);
 
       await act(async () => {
         await user.click(screen.getByRole("button", { name: /End delegation/i }));
@@ -146,12 +141,49 @@ describe("Delegation/ContextMenu (tezos)", () => {
   });
 
   it("topUp item opens MODAL_RECEIVE regardless of staking state", async () => {
-    const { user, store } = render(<ContextMenu account={account} />);
+    const { user, store } = render(<ContextMenu account={account} stakingEnabled={false} />);
 
     await act(async () => {
       await user.click(screen.getByRole("button", { name: /Receive more/i }));
     });
 
     expect(store.getState().modals.MODAL_RECEIVE?.isOpened).toBe(true);
+  });
+
+  describe("Stake your XTZ item (lldTezosStaking-gated)", () => {
+    it("is hidden when stakingEnabled is false, even when delegated and not staked", () => {
+      render(<ContextMenu account={account} stakingEnabled={false} />);
+      expect(screen.queryByRole("button", { name: /Stake your XTZ/i })).not.toBeInTheDocument();
+    });
+
+    it("is hidden when stakingEnabled but the account is already staked", () => {
+      mockedStakingInfo.mockReturnValue(stakingInfo(true) as never);
+      render(<ContextMenu account={account} stakingEnabled={true} />);
+      expect(screen.queryByRole("button", { name: /Stake your XTZ/i })).not.toBeInTheDocument();
+    });
+
+    it("is hidden when stakingEnabled but the account is not delegated", () => {
+      mockedStakingInfo.mockReturnValue({ ...stakingInfo(false), isDelegated: false } as never);
+      render(<ContextMenu account={account} stakingEnabled={true} />);
+      expect(screen.queryByRole("button", { name: /Stake your XTZ/i })).not.toBeInTheDocument();
+    });
+
+    it("appears when stakingEnabled, the account is delegated and not yet staked", () => {
+      render(<ContextMenu account={account} stakingEnabled={true} />);
+      expect(screen.getByRole("button", { name: /Stake your XTZ/i })).toBeInTheDocument();
+    });
+
+    it("dispatches MODAL_TEZOS_STAKE with skipDelegation: true when clicked", async () => {
+      const { user, store } = render(<ContextMenu account={account} stakingEnabled={true} />);
+
+      await act(async () => {
+        await user.click(screen.getByRole("button", { name: /Stake your XTZ/i }));
+      });
+
+      expect(store.getState().modals.MODAL_TEZOS_STAKE).toMatchObject({
+        isOpened: true,
+        data: { skipDelegation: true },
+      });
+    });
   });
 });

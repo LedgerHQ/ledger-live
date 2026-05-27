@@ -1,5 +1,19 @@
 # @ledgerhq/coin-stellar
 
+## 6.22.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-network@2.6.1
+
+## 6.22.1-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-network@2.6.1-next.0
+
 ## 6.22.0
 
 ### Minor Changes

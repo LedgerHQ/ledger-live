@@ -1,11 +1,13 @@
 import { configureStore, Middleware, ThunkDispatch } from "@reduxjs/toolkit";
 import { UnknownAction } from "redux";
+import { getEnv } from "@ledgerhq/live-env";
 import logger from "~/renderer/middlewares/logger";
 import reducers, { State } from "~/renderer/reducers";
 import { applyLldRTKApiMiddlewares } from "~/renderer/reducers/rtkQueryApi";
 import { createIdentitiesSyncMiddleware } from "@ledgerhq/client-ids/store";
-import { trackingEnabledSelector } from "~/renderer/reducers/settings";
-import { createFeatureFlagsMiddleware } from "@shared/feature-flags";
+import { canPushDeviceIdsSelector } from "~/renderer/reducers/settings";
+import { createFeatureFlagsMiddleware, type PartialFeatures } from "@shared/feature-flags";
+import { fetchRemoteFlags } from "~/firebase/remoteConfig";
 type Props = {
   state?: State;
   dbMiddleware?: Middleware;
@@ -26,12 +28,17 @@ const customCreateStore = ({ state, dbMiddleware, analyticsMiddleware }: Props) 
         .concat(
           createIdentitiesSyncMiddleware({
             getIdentitiesState: (state: State) => state.identities,
-            getAnalyticsConsent: (state: State) => trackingEnabledSelector(state),
+            getAnalyticsConsent: canPushDeviceIdsSelector,
           }),
         )
         .concat(
           createFeatureFlagsMiddleware({
-            resolutionConfig: { platform: "desktop", appVersion: __APP_VERSION__ },
+            resolutionConfig: {
+              platform: "desktop",
+              appVersion: __APP_VERSION__,
+              envFlags: getEnv("FEATURE_FLAGS") as PartialFeatures,
+            },
+            fetchRemoteFlags,
           }),
         ),
     devTools: __DEV__,

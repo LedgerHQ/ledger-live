@@ -1,118 +1,128 @@
-import BigNumber from "bignumber.js";
-import React, { useCallback, useState, useMemo } from "react";
-import { View, StyleSheet, Linking } from "react-native";
-import { useTheme, useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { ScreenName, NavigatorName } from "~/const";
-import { useTranslation } from "~/context/Locale";
-import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
-import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
+import { BigNumber } from "bignumber.js";
+import React, { useCallback, useMemo, useState } from "react";
+import { Linking, StyleSheet, View } from "react-native";
+import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import {
-  useEvmFamilyMappedDelegations,
-  useEvmFamilyPreloadData,
-} from "@ledgerhq/live-common/families/evm/staking/react";
-import type {
+  canDelegate,
+  canRedelegate,
+  canUndelegate,
+  getRedelegation,
+  getValidatorExplorerUrl,
+  mapDelegations,
+  mapUnbondings,
+} from "@ledgerhq/live-common/families/evm/staking/logic";
+import {
+  isStakingAccount,
   StakingAccount,
   StakingMappedDelegation,
   StakingMappedUnbonding,
 } from "@ledgerhq/live-common/families/evm/staking/types";
-import {
-  mapUnbondings,
-  canRedelegate,
-  getRedelegation,
-  canUndelegate,
-  canDelegate,
-} from "@ledgerhq/live-common/families/evm/staking/logic";
-import { Text } from "@ledgerhq/native-ui";
-import { AccountLike } from "@ledgerhq/types-live";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import type { AccountLike } from "@ledgerhq/types-live";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import AccountDelegationInfo from "~/components/AccountDelegationInfo";
-import IlluRewards from "~/icons/images/Rewards";
-import { urls } from "~/utils/urls";
 import AccountSectionLabel from "~/components/AccountSectionLabel";
-import DelegationDrawer from "~/components/DelegationDrawer";
-import type { IconProps } from "~/components/DelegationDrawer";
-import Touchable from "~/components/Touchable";
-import { rgba } from "../../../colors";
 import Circle from "~/components/Circle";
+import DateFromNow from "~/components/DateFromNow";
+import DelegationDrawer, { IconProps } from "~/components/DelegationDrawer";
 import LText from "~/components/LText";
-import Button from "~/components/Button";
+import Touchable from "~/components/Touchable";
+import { NavigatorName, ScreenName } from "~/const";
+import { useTranslation } from "~/context/Locale";
+import IlluRewards from "~/icons/images/Rewards";
 import RedelegateIcon from "~/icons/Redelegate";
 import UndelegateIcon from "~/icons/Undelegate";
-import ClaimRewardIcon from "~/icons/ClaimReward";
-import DelegationRow from "./Row";
-import DelegationLabelRight from "./LabelRight";
-import CurrencyUnitValue from "~/components/CurrencyUnitValue";
-import CounterValue from "~/components/CounterValue";
-import DateFromNow from "~/components/DateFromNow";
-import ValidatorImage from "../shared/ValidatorImage";
+import { urls } from "~/utils/urls";
 import { useAccountName } from "~/reducers/wallet";
 import { useAccountUnit } from "LLM/hooks/useAccountUnit";
-import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
-
-type Props = {
-  account: StakingAccount;
-};
+import DelegationLabelRight from "./LabelRight";
+import DelegationRow from "./Row";
+import ValidatorImage from "../shared/ValidatorImage";
 
 type DelegationDrawerProps = React.ComponentProps<typeof DelegationDrawer>;
 type DelegationDrawerActions = DelegationDrawerProps["actions"];
 
-function Delegations({ account }: Props) {
+function Delegations({ account }: { account: StakingAccount }) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const mainAccount = getMainAccount(account) as StakingAccount;
-  const delegations: StakingMappedDelegation[] = useEvmFamilyMappedDelegations(mainAccount);
-  const currency = getAccountCurrency(mainAccount);
   const navigation = useNavigation();
+  const route = useRoute();
+  const accountName = useAccountName(account);
   const unit = useAccountUnit(account);
-  const { validators } = useEvmFamilyPreloadData(account.currency.id);
-
-  const { stakingResources } = mainAccount;
-
-  const undelegations =
-    stakingResources &&
-    stakingResources.unbondings &&
-    mapUnbondings(stakingResources.unbondings, validators, unit);
+  const currency = getAccountCurrency(account);
   const [delegation, setDelegation] = useState<StakingMappedDelegation>();
   const [undelegation, setUndelegation] = useState<StakingMappedUnbonding>();
 
-  const totalRewardsAvailable = delegations.reduce(
-    (sum, d) => sum.plus(d.pendingRewards || 0),
-    BigNumber(0),
+  const validators = useMemo(
+    () => account.stakingResources.validators ?? [],
+    [account.stakingResources.validators],
+  );
+  const delegations = useMemo(
+    () => mapDelegations(account.stakingResources.delegations, validators, unit),
+    [account.stakingResources.delegations, unit, validators],
+  );
+  const undelegations = useMemo(
+    () => mapUnbondings(account.stakingResources.unbondings, validators, unit),
+    [account.stakingResources.unbondings, unit, validators],
   );
 
   const onNavigate = useCallback(
     ({
-      route,
+      navigator = NavigatorName.EvmDelegationFlow,
       screen,
       params,
     }: {
-      route: string;
-      screen?: string;
+      navigator?: NavigatorName;
+      screen: ScreenName;
       params?: { [key: string]: unknown };
     }) => {
       setDelegation(undefined);
-      // This is complicated (even impossible?) to type properly…
-      (navigation as NativeStackNavigationProp<{ [key: string]: object }>).navigate(route, {
-        screen,
-        params: { ...params, accountId: account.id },
-      });
+      setUndelegation(undefined);
+      (navigation as NativeStackNavigationProp<{ [key: string]: object }>).navigate(
+        String(navigator),
+        {
+          screen,
+          params: { ...params, accountId: account.id },
+        },
+      );
     },
-    [navigation, account.id],
+    [account.id, navigation],
   );
 
-  const onDelegate = useCallback(() => {}, []);
-  const onRedelegate = useCallback(() => {}, []);
-  const onCollectRewards = useCallback(() => {}, []);
-  const onUndelegate = useCallback(() => {
+  const onDelegate = useCallback(() => {
     onNavigate({
-      route: NavigatorName.EvmUndelegationFlow,
+      screen: ScreenName.EvmDelegationValidator,
+      params: {
+        source: route,
+      },
+    });
+  }, [onNavigate, route]);
+
+  const onRedelegate = useCallback(() => {
+    if (!delegation) return;
+    onNavigate({
+      screen: ScreenName.EvmRedelegationValidator,
+      params: {
+        source: route,
+        validatorName: delegation.validator?.name,
+        validatorSrcAddress: delegation.validatorAddress,
+      },
+    });
+  }, [delegation, onNavigate, route]);
+
+  const onUndelegate = useCallback(() => {
+    if (!delegation) return;
+    onNavigate({
+      navigator: NavigatorName.EvmUndelegationFlow,
       screen: ScreenName.EvmUndelegationAmount,
       params: {
-        accountId: account.id,
         delegation,
       },
     });
-  }, [onNavigate, delegation, account]);
+  }, [delegation, onNavigate]);
+
   const onCloseDrawer = useCallback(() => {
     setDelegation(undefined);
     setUndelegation(undefined);
@@ -120,256 +130,188 @@ function Delegations({ account }: Props) {
 
   const onOpenExplorer = useCallback(
     (address: string) => {
-      const url = getAddressExplorer(getDefaultExplorerView(account.currency), address);
+      const explorerView = getDefaultExplorerView(account.currency);
+      const url =
+        getValidatorExplorerUrl(account.currency.id, address) ||
+        (explorerView && getAddressExplorer(explorerView, address));
       if (url) Linking.openURL(url);
     },
     [account.currency],
   );
 
-  const accountName = useAccountName(account);
-
   const data = useMemo<DelegationDrawerProps["data"]>(() => {
-    const d = delegation || undelegation;
-
+    const selected = delegation || undelegation;
     const redelegation = delegation && getRedelegation(account, delegation);
+    if (!selected) return [];
+    const validatorName = selected.validator?.name ?? selected.validatorAddress;
 
-    return d
-      ? [
-          {
-            label: t("delegation.validator"),
-            Component: (
-              <LText
-                numberOfLines={1}
-                semiBold
-                ellipsizeMode="middle"
-                style={[styles.valueText]}
-                color="live"
-              >
-                {d.validator?.name ?? d.validatorAddress ?? ""}
-              </LText>
-            ),
-          },
-          {
-            label: t("delegation.validatorAddress"),
-            Component: (
-              <Touchable
-                onPress={() => onOpenExplorer(d.validatorAddress)}
-                event="DelegationOpenExplorer"
-              >
-                <LText
-                  numberOfLines={1}
-                  semiBold
-                  ellipsizeMode="middle"
-                  style={[styles.valueText]}
-                  color="live"
-                >
-                  {d.validatorAddress}
+    return [
+      {
+        label: t("delegation.validator"),
+        Component: (
+          <LText numberOfLines={1} semiBold ellipsizeMode="middle" style={styles.valueText}>
+            {validatorName}
+          </LText>
+        ),
+      },
+      {
+        label: t("delegation.validatorAddress"),
+        Component: (
+          <Touchable
+            onPress={() => onOpenExplorer(selected.validatorAddress)}
+            event="DelegationOpenExplorer"
+          >
+            <LText
+              numberOfLines={1}
+              semiBold
+              ellipsizeMode="middle"
+              style={styles.valueText}
+              color="live"
+            >
+              {selected.validatorAddress}
+            </LText>
+          </Touchable>
+        ),
+      },
+      {
+        label: t("delegation.delegatedAccount"),
+        Component: (
+          <LText numberOfLines={1} semiBold ellipsizeMode="middle" style={styles.valueText}>
+            {accountName}
+          </LText>
+        ),
+      },
+      ...(delegation
+        ? [
+            {
+              label: t("evm.delegation.drawer.status"),
+              Component: (
+                <LText numberOfLines={1} semiBold ellipsizeMode="middle" style={styles.valueText}>
+                  {delegation.status === "bonded"
+                    ? t("evm.delegation.drawer.active")
+                    : t("evm.delegation.drawer.inactive")}
                 </LText>
-              </Touchable>
-            ),
-          },
-          {
-            label: t("delegation.delegatedAccount"),
-            Component: (
-              <LText
-                numberOfLines={1}
-                semiBold
-                ellipsizeMode="middle"
-                style={[styles.valueText]}
-                color="live"
-              >
-                {accountName}{" "}
-              </LText>
-            ),
-          },
-          {
-            label: t("evm.delegation.drawer.status"),
-            Component: (
-              <LText
-                numberOfLines={1}
-                semiBold
-                ellipsizeMode="middle"
-                style={[styles.valueText]}
-                color="live"
-              >
-                {(d as StakingMappedDelegation).status === "bonded"
-                  ? t("evm.delegation.drawer.active")
-                  : t("evm.delegation.drawer.inactive")}
-              </LText>
-            ),
-          },
-          ...(delegation
-            ? [
-                {
-                  label: t("evm.delegation.drawer.rewards"),
-                  Component: (
-                    <LText numberOfLines={1} semiBold style={[styles.valueText]}>
-                      {delegation.formattedPendingRewards ?? ""}
-                    </LText>
-                  ),
-                },
-              ]
-            : []),
-          ...(undelegation
-            ? [
-                {
-                  label: t("evm.delegation.drawer.completionDate"),
-                  Component: (
-                    <LText numberOfLines={1} semiBold>
-                      <DateFromNow date={new Date(undelegation.completionDate).getTime()} />
-                    </LText>
-                  ),
-                },
-              ]
-            : []),
-          ...(redelegation
-            ? [
-                {
-                  label: t("evm.delegation.drawer.redelegatedFrom"),
-                  Component: (
-                    <Touchable
-                      onPress={() => onOpenExplorer(redelegation.validatorSrcAddress)}
-                      event="DelegationOpenExplorer"
-                    >
-                      <LText
-                        numberOfLines={1}
-                        semiBold
-                        ellipsizeMode="middle"
-                        style={[styles.valueText]}
-                        color="live"
-                      >
-                        {redelegation.validatorSrcAddress}
-                      </LText>
-                    </Touchable>
-                  ),
-                },
-                {
-                  label: t("evm.delegation.drawer.completionDate"),
-                  Component: (
-                    <LText numberOfLines={1} semiBold>
-                      <DateFromNow date={new Date(redelegation.completionDate).getTime()} />
-                    </LText>
-                  ),
-                },
-              ]
-            : []),
-        ]
-      : [];
-  }, [delegation, t, account, accountName, onOpenExplorer, undelegation]);
+              ),
+            },
+            {
+              label: t("evm.delegation.drawer.rewards"),
+              Component: (
+                <LText numberOfLines={1} semiBold style={styles.valueText}>
+                  {delegation.formattedPendingRewards}
+                </LText>
+              ),
+            },
+          ]
+        : []),
+      ...(undelegation
+        ? [
+            {
+              label: t("evm.delegation.drawer.completionDate"),
+              Component: (
+                <LText numberOfLines={1} semiBold>
+                  <DateFromNow date={new Date(undelegation.completionDate).getTime()} />
+                </LText>
+              ),
+            },
+          ]
+        : []),
+      ...(redelegation
+        ? [
+            {
+              label: t("evm.delegation.drawer.redelegatedFrom"),
+              Component: (
+                <Touchable
+                  onPress={() => onOpenExplorer(redelegation.validatorSrcAddress)}
+                  event="DelegationOpenExplorer"
+                >
+                  <LText
+                    numberOfLines={1}
+                    semiBold
+                    ellipsizeMode="middle"
+                    style={styles.valueText}
+                    color="live"
+                  >
+                    {redelegation.validatorSrcAddress}
+                  </LText>
+                </Touchable>
+              ),
+            },
+            {
+              label: t("evm.delegation.drawer.completionDate"),
+              Component: (
+                <LText numberOfLines={1} semiBold>
+                  <DateFromNow date={new Date(redelegation.completionDate).getTime()} />
+                </LText>
+              ),
+            },
+          ]
+        : []),
+    ];
+  }, [account, accountName, delegation, onOpenExplorer, t, undelegation]);
 
   const actions = useMemo<DelegationDrawerActions>(() => {
-    const rewardsDisabled = !delegation?.pendingRewards || delegation.pendingRewards.isZero();
-    const redelegateEnabled = delegation && canRedelegate(account, delegation);
+    if (!delegation) return [];
+    const result: DelegationDrawerActions = [];
 
-    const undelegationEnabled = canUndelegate(account);
+    if (canUndelegate(account)) {
+      result.push({
+        label: t("delegation.actions.undelegate"),
+        Icon: (props: IconProps) => (
+          <Circle {...props} bg={colors.fog}>
+            <UndelegateIcon />
+          </Circle>
+        ),
+        onPress: onUndelegate,
+        event: "DelegationActionUndelegate",
+      });
+    }
 
-    return delegation
-      ? [
-          {
-            label: t("delegation.actions.redelegate"),
-            Icon: (props: IconProps) => (
-              <Circle {...props} bg={!redelegateEnabled ? colors.lightFog : colors.fog}>
-                <RedelegateIcon color={!redelegateEnabled ? colors.grey : undefined} />
-              </Circle>
-            ),
-            disabled: !redelegateEnabled,
-            onPress: onRedelegate,
-            event: "DelegationActionRedelegate",
-          },
-          {
-            label: t("delegation.actions.collectRewards"),
-            Icon: (props: IconProps) => (
-              <Circle {...props} bg={rewardsDisabled ? colors.lightFog : rgba(colors.yellow, 0.2)}>
-                <ClaimRewardIcon color={rewardsDisabled ? colors.grey : undefined} />
-              </Circle>
-            ),
-            disabled: rewardsDisabled,
-            onPress: onCollectRewards,
-            event: "DelegationActionCollectRewards",
-          },
-          {
-            label: t("delegation.actions.undelegate"),
-            Icon: (props: IconProps) => (
-              <Circle
-                {...props}
-                bg={!undelegationEnabled ? colors.lightFog : rgba(colors.alert, 0.2)}
-              >
-                <UndelegateIcon color={!undelegationEnabled ? colors.grey : undefined} />
-              </Circle>
-            ),
-            disabled: !undelegationEnabled,
-            onPress: onUndelegate,
-            event: "DelegationActionUndelegate",
-          },
-        ]
-      : [];
-  }, [
-    delegation,
-    account,
-    t,
-    onRedelegate,
-    onCollectRewards,
-    onUndelegate,
-    colors.lightFog,
-    colors.fog,
-    colors.grey,
-    colors.yellow,
-    colors.alert,
-  ]);
+    if (canRedelegate(account, delegation)) {
+      result.push({
+        label: t("delegation.actions.redelegate"),
+        Icon: (props: IconProps) => (
+          <Circle {...props} bg={colors.fog}>
+            <RedelegateIcon />
+          </Circle>
+        ),
+        onPress: onRedelegate,
+        event: "DelegationActionRedelegate",
+      });
+    }
+
+    return result;
+  }, [account, colors.fog, delegation, onRedelegate, onUndelegate, t]);
 
   const delegationDisabled = delegations.length <= 0 || !canDelegate(account);
+  const selected = delegation || undelegation;
 
   return (
     <View style={styles.root}>
       <DelegationDrawer
-        isOpen={data && data.length > 0}
+        isOpen={data.length > 0}
         onClose={onCloseDrawer}
         account={account}
         ValidatorImage={({ size }) => (
           <ValidatorImage
             isLedger={false}
             name={
-              (delegation || undelegation)?.validator?.name ??
-              (delegation || undelegation)?.validatorAddress ??
-              ""
+              selected?.validator?.name ?? selected?.validatorAddress ?? account.currency.ticker
             }
             size={size}
           />
         )}
-        amount={delegation?.amount ?? new BigNumber(0)}
+        amount={selected?.amount ?? new BigNumber(0)}
         data={data}
         actions={actions}
       />
-      {totalRewardsAvailable.gt(0) && (
-        <>
-          <AccountSectionLabel name={t("account.claimReward.sectionLabel")} />
-          <View style={[styles.rewardsWrapper]}>
-            <View style={styles.column}>
-              <Text fontWeight={"semiBold"} variant={"h4"}>
-                <CurrencyUnitValue value={totalRewardsAvailable} unit={unit} />
-              </Text>
-              <LText semiBold style={styles.subLabel} color="grey">
-                <CounterValue currency={currency} value={totalRewardsAvailable} withPlaceholder />
-              </LText>
-            </View>
-            <Button
-              event="EvmDelegation AccountClaimRewardsBtn Click"
-              onPress={onCollectRewards}
-              type="primary"
-              title={t("account.claimReward.cta")}
-            />
-          </View>
-        </>
-      )}
       {delegations.length === 0 ? (
         <AccountDelegationInfo
           title={t("account.delegation.info.title")}
           image={<IlluRewards style={styles.illustration} />}
           description={t("evm.delegation.delegationEarn", {
-            name: account.currency.name,
             ticker: account.currency.ticker,
           })}
-          infoUrl={urls.evmNativeStaking}
+          infoUrl={urls.discover.earn}
           infoTitle={t("evm.delegation.info")}
           onPress={onDelegate}
           ctaTitle={t("account.delegation.info.cta")}
@@ -377,13 +319,13 @@ function Delegations({ account }: Props) {
       ) : (
         <View style={styles.wrapper}>
           <AccountSectionLabel
-            name={t("account.delegation.sectionLabel")}
+            name={t("evm.delegation.header")}
             RightComponent={
               <DelegationLabelRight disabled={delegationDisabled} onPress={onDelegate} />
             }
           />
           {delegations.map((d, i) => (
-            <View key={d.validatorAddress} style={[styles.delegationsWrapper]}>
+            <View key={d.validatorAddress} style={styles.delegationsWrapper}>
               <DelegationRow
                 delegation={d}
                 currency={currency}
@@ -394,13 +336,12 @@ function Delegations({ account }: Props) {
           ))}
         </View>
       )}
-
-      {undelegations && undelegations.length > 0 && (
+      {undelegations.length > 0 ? (
         <View style={styles.wrapper}>
           <AccountSectionLabel name={t("account.undelegation.sectionLabel")} />
           {undelegations.map((d, i) => (
             <View
-              key={d.validatorAddress}
+              key={`${d.validatorAddress}-${d.completionDate.valueOf()}`}
               style={[styles.delegationsWrapper, { backgroundColor: colors.card }]}
             >
               <DelegationRow
@@ -412,56 +353,65 @@ function Delegations({ account }: Props) {
             </View>
           ))}
         </View>
-      )}
+      ) : null}
     </View>
   );
 }
 
-export default function EvmDelegations({ account }: { account: AccountLike<StakingAccount> }) {
-  if (account.type !== "Account" || !account.stakingResources) return null;
+export default function EvmDelegations({ account }: { account: AccountLike }) {
+  const { enabled, params } = useFeature("evmNativeStaking") ?? {};
+  const isSupported =
+    account.type === "Account" &&
+    params?.supportedCurrencyIds?.some(id => id === account.currency.id) === true;
 
-  const coinConfig = getCurrencyConfiguration(account.currency.id);
-  if ("disableDelegation" in coinConfig && coinConfig.disableDelegation === true) {
+  if (!enabled || !isSupported || account.type !== "Account" || !isStakingAccount(account)) {
     return null;
   }
 
-  return <Delegations account={account as StakingAccount} />;
+  return <Delegations account={account} />;
 }
 
 const styles = StyleSheet.create({
   root: {
     marginHorizontal: 16,
   },
-  illustration: { alignSelf: "center", marginBottom: 16 },
-  rewardsWrapper: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignContent: "center",
-    paddingVertical: 16,
+  illustration: {
+    alignSelf: "center",
     marginBottom: 16,
-
-    borderRadius: 4,
-  },
-  label: {
-    fontSize: 20,
-    flex: 1,
-  },
-  subLabel: {
-    fontSize: 14,
-
-    flex: 1,
-  },
-  column: {
-    flexDirection: "column",
   },
   wrapper: {},
   delegationsWrapper: {
     borderRadius: 4,
   },
-  valueText: {
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  delegationRow: {
+    paddingVertical: 16,
+  },
+  borderBottom: {
+    borderBottomWidth: 1,
+  },
+  icon: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: 36,
+    height: 36,
+    borderRadius: 5,
+    marginRight: 12,
+  },
+  nameWrapper: {
+    flex: 1,
+    marginRight: 8,
+  },
+  rightWrapper: {
+    alignItems: "flex-end",
+  },
+  seeMore: {
     fontSize: 14,
   },
-  banner: {
-    marginBottom: 16,
+  valueText: {
+    fontSize: 14,
   },
 });

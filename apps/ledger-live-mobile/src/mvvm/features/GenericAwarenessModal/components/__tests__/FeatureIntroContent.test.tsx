@@ -1,12 +1,17 @@
 import React from "react";
 import { render, screen } from "@tests/test-renderer";
 import { FeatureIntroContent } from "../FeatureIntroContent";
-import type { FeatureIntroContent as FeatureIntroContentData } from "../../types";
+import {
+  GenericAwarenessModalLayout,
+  type GenericAwarenessModalFeatureIntro,
+} from "@ledgerhq/live-common/genericAwarenessModal";
 
-const content: FeatureIntroContentData = {
+const content: GenericAwarenessModalFeatureIntro = {
+  id: "featureIntro",
+  layout: GenericAwarenessModalLayout.FeatureIntro,
   imageUrl: "https://example.com/feature-intro.png",
   title: "Connect a Ledger device",
-  description: "Connect a device to unlock Ledger Wallet features.",
+  subtitle: "Connect a device to unlock Ledger Wallet features.",
   primaryButtonLabel: "Connect",
   primaryButtonLink: "",
   secondaryButtonLabel: "Buy your Ledger device",
@@ -15,12 +20,12 @@ const content: FeatureIntroContentData = {
     {
       icon: "HandCoins",
       title: "Full ownership",
-      description: "Your private keys never leave the device.",
+      subtitle: "Your private keys never leave the device.",
     },
     {
       icon: "ShieldLock",
       title: "Trade securely",
-      description: "Verify transactions on a secure screen.",
+      subtitle: "Verify transactions on a secure screen.",
     },
   ],
 };
@@ -50,13 +55,13 @@ describe("FeatureIntroContent", () => {
   });
 
   it("should render with fallback icon when icon name is invalid", () => {
-    const contentWithInvalidIcon: FeatureIntroContentData = {
+    const contentWithInvalidIcon: GenericAwarenessModalFeatureIntro = {
       ...content,
       items: [
         {
-          icon: "InvalidIcon" as FeatureIntroContentData["items"][number]["icon"],
+          icon: "InvalidIcon",
           title: "Fallback icon item",
-          description: "This item still renders.",
+          subtitle: "This item still renders.",
         },
       ],
     };

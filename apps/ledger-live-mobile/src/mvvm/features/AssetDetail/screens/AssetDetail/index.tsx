@@ -37,7 +37,7 @@ export default function AssetDetail() {
     const opts: Partial<LumenNativeStackNavigationOptions> = {
       lumenNavBar: {
         coinCapsule: {
-          ticker: currency.name,
+          ticker: currency.ticker,
           icon: <CurrencyIcon currency={currency} hideNetwork size={24} />,
         },
         renderTrailing,

@@ -5,28 +5,24 @@
 import { renderHook } from "@testing-library/react";
 import {
   useMarketDataProvider,
-  useCurrencyChartData,
   useSupportedCounterCurrencies,
   useSupportedCurrencies,
 } from "../useCoingeckoDataProvider";
 import {
   useGetSupportedCoinsListQuery,
   useGetSupportedCounterCurrenciesQuery,
-  useGetCurrencyChartDataQuery,
 } from "../../state-manager/api";
-import { REFETCH_TIME_ONE_MINUTE, BASIC_REFETCH, ONE_DAY } from "../../constants";
+import { ONE_DAY } from "../../constants";
 
 jest.mock("../../state-manager/api", () => ({
   useGetSupportedCoinsListQuery: jest.fn(),
   useGetSupportedCounterCurrenciesQuery: jest.fn(),
-  useGetCurrencyChartDataQuery: jest.fn(),
 }));
 
 const mockUseGetSupportedCoinsListQuery = jest.mocked(useGetSupportedCoinsListQuery);
 const mockUseGetSupportedCounterCurrenciesQuery = jest.mocked(
   useGetSupportedCounterCurrenciesQuery,
 );
-const mockUseGetCurrencyChartDataQuery = jest.mocked(useGetCurrencyChartDataQuery);
 
 const mockQueryReturn = <TQuery extends (...args: any[]) => any>(
   data?: ReturnType<TQuery>["data"],
@@ -41,9 +37,6 @@ describe("useCoingeckoDataProvider", () => {
     );
     mockUseGetSupportedCounterCurrenciesQuery.mockReturnValue(
       mockQueryReturn<typeof useGetSupportedCounterCurrenciesQuery>(),
-    );
-    mockUseGetCurrencyChartDataQuery.mockReturnValue(
-      mockQueryReturn<typeof useGetCurrencyChartDataQuery>(),
     );
   });
 
@@ -64,19 +57,6 @@ describe("useCoingeckoDataProvider", () => {
       expect(mockUseGetSupportedCounterCurrenciesQuery).toHaveBeenCalledWith(undefined, {
         pollingInterval: ONE_DAY,
       });
-    });
-  });
-
-  describe("useCurrencyChartData", () => {
-    it("should forward params and poll every 3 minutes", () => {
-      renderHook(() =>
-        useCurrencyChartData({ id: "bitcoin", counterCurrency: "usd", range: "7d" }),
-      );
-
-      expect(mockUseGetCurrencyChartDataQuery).toHaveBeenCalledWith(
-        { id: "bitcoin", counterCurrency: "usd", range: "7d" },
-        { pollingInterval: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH },
-      );
     });
   });
 

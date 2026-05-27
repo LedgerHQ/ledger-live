@@ -2,7 +2,10 @@ import { act, renderHook } from "@tests/test-renderer";
 import { State } from "~/reducers/types";
 import { NavigatorName } from "~/const/navigation";
 import { track } from "~/analytics";
-import { useProductTourDrawerViewModel } from "../useProductTourDrawerViewModel";
+import {
+  __resetProductTourAutoOpenForTests,
+  useProductTourDrawerViewModel,
+} from "../useProductTourDrawerViewModel";
 import { PAGE_TRACKING_PRODUCT_TOUR } from "../../const";
 import { productTourCompletedSelector } from "~/reducers/settings";
 import { setProductTourCompleted } from "~/actions/settings";
@@ -34,6 +37,7 @@ const mockUseWalletFeaturesConfig = jest.spyOn(featureFlagsModule, "useWalletFea
 describe("useProductTourDrawerViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    __resetProductTourAutoOpenForTests();
     mockUseWalletFeaturesConfig.mockReturnValue({
       shouldDisplayWallet40MainNav: true,
     } as WalletFeaturesConfig);
@@ -60,6 +64,21 @@ describe("useProductTourDrawerViewModel", () => {
       });
 
       expect(result.current.isDrawerOpen).toBe(false);
+    });
+
+    it("should not re-auto-open when the hook remounts after the user has dismissed it", () => {
+      const first = renderHook(() => useProductTourDrawerViewModel(), {
+        overrideInitialState: withFeatureEnabled,
+      });
+      expect(first.result.current.isDrawerOpen).toBe(true);
+      act(() => first.result.current.onCloseButtonPress());
+      expect(first.result.current.isDrawerOpen).toBe(false);
+      first.unmount();
+
+      const second = renderHook(() => useProductTourDrawerViewModel(), {
+        overrideInitialState: withFeatureEnabled,
+      });
+      expect(second.result.current.isDrawerOpen).toBe(false);
     });
   });
 
@@ -218,22 +237,29 @@ describe("useProductTourDrawerViewModel", () => {
   });
 
   describe("onPrimaryAction", () => {
-    it.each([
-      ["stake", NavigatorName.Earn],
-      ["card", NavigatorName.Card],
-    ] as const)(
-      'should navigate to the correct navigator and close drawer for "%s" action',
-      (action, navigator) => {
-        const { result } = renderHook(() => useProductTourDrawerViewModel(), {
-          overrideInitialState: withFeatureEnabled,
-        });
+    it('should navigate to Earn via Main navigator and close drawer for "stake" action', () => {
+      const { result } = renderHook(() => useProductTourDrawerViewModel(), {
+        overrideInitialState: withFeatureEnabled,
+      });
 
-        act(() => result.current.onPrimaryAction(action));
+      act(() => result.current.onPrimaryAction("stake"));
 
-        expect(result.current.isDrawerOpen).toBe(false);
-        expect(mockNavigate).toHaveBeenCalledWith(navigator);
-      },
-    );
+      expect(result.current.isDrawerOpen).toBe(false);
+      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Main, {
+        screen: NavigatorName.Earn,
+      });
+    });
+
+    it('should navigate to the correct navigator and close drawer for "card" action', () => {
+      const { result } = renderHook(() => useProductTourDrawerViewModel(), {
+        overrideInitialState: withFeatureEnabled,
+      });
+
+      act(() => result.current.onPrimaryAction("card"));
+
+      expect(result.current.isDrawerOpen).toBe(false);
+      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Card);
+    });
 
     it('should navigate to Swap via Main navigator when Wallet40 main nav is enabled for "swap" action', () => {
       mockUseWalletFeaturesConfig.mockReturnValue({

@@ -3,26 +3,46 @@ import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { getValidCryptoIconSize } from "~/renderer/utils/cryptoIconSize";
 import { AssetHeader } from "./components/AssetHeader";
 import { ActionBar } from "./components/ActionBar";
+import { HiddenBanner } from "./components/HiddenBanner";
 import { MarketPriceSection } from "./components/MarketPriceSection";
+import { AddressListSection } from "./components/AddressList";
 import { MarketDataSection } from "./components/MarketDataSection";
-import { PortfolioSection } from "./components/PortfolioSection/PortfolioSection";
-import { StakingSection } from "./components/StakingSection";
+import { MetricsRowSection } from "./components/MetricsRowSection";
+import { TotalBalance } from "./components/TotalBalance";
 import { TransactionsSection } from "./components/TransactionsSection";
 import type { AssetDetailReady } from "./types";
-import { PnLSection } from "./components/PnL";
+import { resolveAssetDetailSectionLoading } from "./utils/resolveAssetDetailSectionLoading";
 
 type AssetDetailViewProps = Readonly<{
   viewModel: AssetDetailReady;
 }>;
 
 export function AssetDetailView({ viewModel }: AssetDetailViewProps) {
-  const { distributionItem, marketData, displayName, displayTicker, ledgerId, ledgerCurrency } =
-    viewModel;
+  const {
+    distributionItem,
+    marketData,
+    displayTicker,
+    ledgerId,
+    ledgerCurrency,
+    isDistributionLoading,
+  } = viewModel;
+
+  const { isLoading: isMarketLoading, marketCurrencyData } = marketData;
+  const hasDistributionItem = distributionItem != null;
+  const hasPortfolioAccounts = (distributionItem?.accounts.length ?? 0) > 0;
+  const portfolioSectionLoading = resolveAssetDetailSectionLoading(
+    isDistributionLoading,
+    isMarketLoading,
+    hasDistributionItem,
+  );
+  const showPortfolioSections = portfolioSectionLoading || hasPortfolioAccounts;
+  const showMarketDataSection =
+    marketCurrencyData != null || isDistributionLoading || isMarketLoading;
 
   return (
     <div className="flex w-full shrink-0 flex-col gap-24 pb-32">
       <AssetHeader
-        assetLabel={displayName}
+        assetTicker={displayTicker}
         icon={
           ledgerId && (
             <CryptoIcon
@@ -37,29 +57,53 @@ export function AssetDetailView({ viewModel }: AssetDetailViewProps) {
         ledgerCurrency={ledgerCurrency}
       />
 
+      {ledgerCurrency && <HiddenBanner currency={ledgerCurrency} />}
+
       <MarketPriceSection
         distributionItem={distributionItem}
         ledgerId={ledgerId}
         marketData={marketData}
+        isDistributionLoading={isDistributionLoading}
       />
 
       <ActionBar
         distributionItem={distributionItem}
         ledgerCurrency={ledgerCurrency}
-        marketCurrencyData={marketData.marketCurrencyData}
+        marketCurrencyData={marketCurrencyData}
         tickerHint={displayTicker}
+        isDistributionLoading={isDistributionLoading}
+        isMarketLoading={isMarketLoading}
       />
 
       <div className="flex flex-col gap-32">
-        {distributionItem && <PortfolioSection distributionItem={distributionItem} />}
+        {showPortfolioSections && (
+          <TotalBalance distributionItem={distributionItem} isLoading={portfolioSectionLoading} />
+        )}
 
-        {distributionItem && <PnLSection distributionItem={distributionItem} />}
+        <MetricsRowSection
+          distributionItem={distributionItem}
+          isDistributionLoading={isDistributionLoading}
+          isMarketLoading={isMarketLoading}
+        />
 
-        {distributionItem && <StakingSection distributionItem={distributionItem} />}
+        {showPortfolioSections && (
+          <AddressListSection
+            distributionItem={distributionItem}
+            isLoading={portfolioSectionLoading}
+          />
+        )}
 
-        {marketData.marketCurrencyData && <MarketDataSection marketData={marketData} />}
+        {showMarketDataSection && (
+          <MarketDataSection
+            marketData={marketData}
+            isDistributionLoading={isDistributionLoading}
+          />
+        )}
 
-        {distributionItem && <TransactionsSection distributionItem={distributionItem} />}
+        <TransactionsSection
+          distributionItem={distributionItem}
+          isLoading={portfolioSectionLoading}
+        />
       </div>
     </div>
   );

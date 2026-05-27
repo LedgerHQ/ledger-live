@@ -40,7 +40,6 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: setup-caches
         with:
-          skip-turbo-cache: "false"
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
@@ -49,16 +48,11 @@ jobs:
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
-          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
 
       - name: Install dependencies
         run: pnpm i --filter="./features/**" --filter="./shared/**" --filter="./domain/**"
 
       - name: Run coverage on feature packages
-        env:
-          TURBO_API: "http://127.0.0.1:${{ steps.setup-caches.outputs.port }}"
-          TURBO_TOKEN: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          TURBO_TEAM: "foo"
         run: |
           mkdir -p ${{ github.workspace }}/coverage
           touch ${{ github.workspace }}/coverage/lcov.info

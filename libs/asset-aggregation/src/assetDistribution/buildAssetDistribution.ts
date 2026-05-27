@@ -3,6 +3,7 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import { calculate } from "@ledgerhq/live-countervalues/logic";
+import BigNumber from "bignumber.js";
 import { toSlug } from "./toSlug";
 import type {
   AssetsDataLike,
@@ -52,6 +53,21 @@ function buildSlugIndex(list: DistributionItem[]): Record<string, DistributionIt
     if (item.slug) index[item.slug] = item;
   }
   return index;
+}
+
+function sumNetworkAmountsAtReferenceMagnitude(
+  networks: MetaGroup["networks"],
+  referenceMagnitude: number,
+): number {
+  return Array.from(networks.values())
+    .reduce((total, network) => {
+      const currentMagnitude = network.currency.units[0]?.magnitude ?? 0;
+      const normalizedAmount = new BigNumber(network.amount).shiftedBy(
+        referenceMagnitude - currentMagnitude,
+      );
+      return total.plus(normalizedAmount);
+    }, new BigNumber(0))
+    .toNumber();
 }
 
 const EMPTY_DISTRIBUTION: AssetsDistribution = Object.freeze({
@@ -106,7 +122,6 @@ export function buildAssetDistribution(
     }
 
     group.accounts.push(account);
-    group.amount += balance;
     group.marketId ??= assetsData.markets[apiId]?.id;
 
     let network = group.networks.get(currency.id);
@@ -132,6 +147,9 @@ export function buildAssetDistribution(
       if (primaryCurrency) group.currency = primaryCurrency;
       group.marketId ??= assetsData.markets[primaryAssetId]?.id;
     }
+
+    const referenceMagnitude = group.currency.units[0]?.magnitude ?? 0;
+    group.amount = sumNetworkAmountsAtReferenceMagnitude(group.networks, referenceMagnitude);
 
     let groupCountervalue = 0;
     for (const network of group.networks.values()) {

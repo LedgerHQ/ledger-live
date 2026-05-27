@@ -133,9 +133,7 @@ export async function exportSelector(state: State): Promise<{
         if (!accountUserData) return null;
         return accountModel.encode([account, accountUserData]);
       })
-      .filter(
-        (p): p is Promise<{ data: AccountRaw; version: number }> => p !== null,
-      ),
+      .filter((p): p is Promise<{ data: AccountRaw; version: number }> => p !== null),
   );
   return { active };
 }
@@ -157,7 +155,7 @@ export const accountsSelector = (s: State): Account[] => s.accounts.active;
 // NB some components don't need to refresh every time an account is updated, usually it's only
 // when the balance/name/length/starred/swapHistory of accounts changes.
 const accountHash = (a: AccountLike) =>
-  `${a.id}-${a.balance.toString()}-swapHistory(${a.swapHistory.length})`;
+  `${a.id}-${a.balance.toString()}-swapHistory(${a.swapHistory.length})-pending(${a.pendingOperations.length})`;
 
 // TODO can we share with desktop in common?
 const shallowAccountsSelectorCreator = createSelectorCreator(lruMemoize, (a, b): boolean =>

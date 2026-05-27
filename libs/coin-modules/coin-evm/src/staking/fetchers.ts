@@ -147,6 +147,7 @@ const createStakeFromContract = async (stakingContract: StakeCreate): Promise<St
             unit: currency.units[0],
           },
           amount,
+          actions: [],
           details: {
             contractAddress: config.contractAddress,
             validator: validatorAddress,

@@ -2,7 +2,7 @@ import React from "react";
 import { Route, Routes } from "react-router";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { PostOnboardingActionId, type PostOnboardingState } from "@ledgerhq/types-live";
-import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/defaultFeatures";
+import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import { initialState as postOnboardingInitialState } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { render, screen, waitFor, withFlagOverrides } from "tests/testSetup";
 import { getStoreValue } from "~/renderer/store";
@@ -26,7 +26,7 @@ const mockGetStoreValue = jest.mocked(getStoreValue);
 const RECOVER_UPSELL_PATH = "/protect/upsell";
 const RECOVER_UPSELL_LEDGER_LIVE_URI = "ledgerlive://protect/upsell";
 
-const protectDesktopDefaultParams = DEFAULT_FEATURES.protectServicesDesktop.params!;
+const protectDesktopDefaultParams = FEATURE_FLAGS_DEFAULTS.protectServicesDesktop.params!;
 
 type ProtectFeatureOverrides = {
   onboardingUpsellUri?: string;

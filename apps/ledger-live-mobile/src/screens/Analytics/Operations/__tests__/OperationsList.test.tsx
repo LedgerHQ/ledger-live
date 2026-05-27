@@ -6,11 +6,24 @@ import {
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { setSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import BigNumber from "bignumber.js";
-import type { AccountLike, TokenAccount } from "@ledgerhq/types-live";
+import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { render, screen } from "@tests/test-renderer";
 import LoadingFooter from "~/components/LoadingFooter";
 import { OperationsList } from "../OperationsList";
+
+jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => {
+  const {
+    defaultIsAccountEmpty,
+  } = jest.requireActual("@ledgerhq/live-common/bridge/defaultBridgeExtensions");
+  return {
+    useAccountBridge: jest.fn(),
+    useAccountBridgeOrNull: jest.fn(),
+    useAccountBridgeMany: jest.fn((accounts: Account[]) =>
+      accounts.map(() => ({ isAccountEmpty: defaultIsAccountEmpty })),
+    ),
+  };
+});
 
 jest.mock("~/screens/Portfolio/EmptyStatePortfolio", () => {
   const { View } = jest.requireActual("react-native");

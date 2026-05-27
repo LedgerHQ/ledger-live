@@ -4,7 +4,7 @@
       "{workspaceRoot}/nx.json",
       "{workspaceRoot}/nx.workspace.json",
       "{workspaceRoot}/nx.s3.defaults.json",
-      "{workspaceRoot}/turbo.json",
+      "{workspaceRoot}/sonar-project.properties",
       "{workspaceRoot}/tsconfig.base.json",
       "{workspaceRoot}/pnpm-lock.yaml",
       "{workspaceRoot}/package.json",

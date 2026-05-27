@@ -1,5 +1,51 @@
 # @ledgerhq/coin-aleo
 
+## 1.12.0
+
+### Minor Changes
+
+- [#17164](https://github.com/LedgerHQ/ledger-live/pull/17164) [`6a50a01`](https://github.com/LedgerHQ/ledger-live/commit/6a50a01fb073cec9c9c77d57f14106c4909a815d) Thanks [@vtaranushenko-ext-ledger](https://github.com/vtaranushenko-ext-ledger)! - Support multi-record private transfer intents in coin-aleo
+
+- [#17206](https://github.com/LedgerHQ/ledger-live/pull/17206) [`3c3f0cc`](https://github.com/LedgerHQ/ledger-live/commit/3c3f0cc853ee29278eb2ce3fd78ba27aca75f761) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - fix: ignore unnecessary aleo transitions in listOperations
+
+- [#17088](https://github.com/LedgerHQ/ledger-live/pull/17088) [`a1deb69`](https://github.com/LedgerHQ/ledger-live/commit/a1deb694261add0d43446b13ee3363e5ab8a882b) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: support validation for more than one aleo record
+
+- [#17248](https://github.com/LedgerHQ/ledger-live/pull/17248) [`5d6707e`](https://github.com/LedgerHQ/ledger-live/commit/5d6707e03dfc469193865d12c877f209ab977d2a) Thanks [@vtaranushenko-ext-ledger](https://github.com/vtaranushenko-ext-ledger)! - Add an Aleo `enableTokens` config flag.
+
+- [#17187](https://github.com/LedgerHQ/ledger-live/pull/17187) [`729b3b4`](https://github.com/LedgerHQ/ledger-live/commit/729b3b481f0e5db3a0a795e99af9863d5c4f44b2) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - updated stepAmount for Aleo
+
+### Patch Changes
+
+- Updated dependencies [[`f39fede`](https://github.com/LedgerHQ/ledger-live/commit/f39fede0a6eb4e427a15219e5a3c8fbc3302815f), [`b812751`](https://github.com/LedgerHQ/ledger-live/commit/b8127519474e63c543b1b937a2d3b11ad162a78e), [`3b746ee`](https://github.com/LedgerHQ/ledger-live/commit/3b746eea7f3f2be633947e8e9112987457c864a5), [`1368afd`](https://github.com/LedgerHQ/ledger-live/commit/1368afdc7218a68c803672e6e412f8f9f6e62142), [`abdb866`](https://github.com/LedgerHQ/ledger-live/commit/abdb8662fba3784399a747ece63a11cc4f6e23bb), [`5177d5e`](https://github.com/LedgerHQ/ledger-live/commit/5177d5e6311047cc7485a66dbcb8971c9a8c0a5c), [`3cd7abb`](https://github.com/LedgerHQ/ledger-live/commit/3cd7abb4d6f6072bad62073108d797faf23f9e8c), [`c6170d7`](https://github.com/LedgerHQ/ledger-live/commit/c6170d7b61bc37ef80f8d3e5e608611f9b8ecd67), [`912e673`](https://github.com/LedgerHQ/ledger-live/commit/912e673368baa0342316c882653768d570b71262), [`6e832a0`](https://github.com/LedgerHQ/ledger-live/commit/6e832a044bd7abb704f0a45ea782e55c1b25487c), [`2257d43`](https://github.com/LedgerHQ/ledger-live/commit/2257d43630933127549300f39ade1e2b01f94cb8), [`08762c2`](https://github.com/LedgerHQ/ledger-live/commit/08762c286e38136293108c19efa72ae8fbd1286b)]:
+  - @ledgerhq/types-live@6.108.0
+  - @ledgerhq/ledger-wallet-framework@1.5.0
+  - @ledgerhq/cryptoassets@13.48.0
+  - @ledgerhq/live-env@2.35.0
+  - @ledgerhq/live-network@2.6.1
+
+## 1.12.0-next.0
+
+### Minor Changes
+
+- [#17164](https://github.com/LedgerHQ/ledger-live/pull/17164) [`6a50a01`](https://github.com/LedgerHQ/ledger-live/commit/6a50a01fb073cec9c9c77d57f14106c4909a815d) Thanks [@vtaranushenko-ext-ledger](https://github.com/vtaranushenko-ext-ledger)! - Support multi-record private transfer intents in coin-aleo
+
+- [#17206](https://github.com/LedgerHQ/ledger-live/pull/17206) [`3c3f0cc`](https://github.com/LedgerHQ/ledger-live/commit/3c3f0cc853ee29278eb2ce3fd78ba27aca75f761) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - fix: ignore unnecessary aleo transitions in listOperations
+
+- [#17088](https://github.com/LedgerHQ/ledger-live/pull/17088) [`a1deb69`](https://github.com/LedgerHQ/ledger-live/commit/a1deb694261add0d43446b13ee3363e5ab8a882b) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - feat: support validation for more than one aleo record
+
+- [#17248](https://github.com/LedgerHQ/ledger-live/pull/17248) [`5d6707e`](https://github.com/LedgerHQ/ledger-live/commit/5d6707e03dfc469193865d12c877f209ab977d2a) Thanks [@vtaranushenko-ext-ledger](https://github.com/vtaranushenko-ext-ledger)! - Add an Aleo `enableTokens` config flag.
+
+- [#17187](https://github.com/LedgerHQ/ledger-live/pull/17187) [`729b3b4`](https://github.com/LedgerHQ/ledger-live/commit/729b3b481f0e5db3a0a795e99af9863d5c4f44b2) Thanks [@mateuszpalosz-ext](https://github.com/mateuszpalosz-ext)! - updated stepAmount for Aleo
+
+### Patch Changes
+
+- Updated dependencies [[`f39fede`](https://github.com/LedgerHQ/ledger-live/commit/f39fede0a6eb4e427a15219e5a3c8fbc3302815f), [`b812751`](https://github.com/LedgerHQ/ledger-live/commit/b8127519474e63c543b1b937a2d3b11ad162a78e), [`3b746ee`](https://github.com/LedgerHQ/ledger-live/commit/3b746eea7f3f2be633947e8e9112987457c864a5), [`1368afd`](https://github.com/LedgerHQ/ledger-live/commit/1368afdc7218a68c803672e6e412f8f9f6e62142), [`abdb866`](https://github.com/LedgerHQ/ledger-live/commit/abdb8662fba3784399a747ece63a11cc4f6e23bb), [`5177d5e`](https://github.com/LedgerHQ/ledger-live/commit/5177d5e6311047cc7485a66dbcb8971c9a8c0a5c), [`3cd7abb`](https://github.com/LedgerHQ/ledger-live/commit/3cd7abb4d6f6072bad62073108d797faf23f9e8c), [`c6170d7`](https://github.com/LedgerHQ/ledger-live/commit/c6170d7b61bc37ef80f8d3e5e608611f9b8ecd67), [`912e673`](https://github.com/LedgerHQ/ledger-live/commit/912e673368baa0342316c882653768d570b71262), [`6e832a0`](https://github.com/LedgerHQ/ledger-live/commit/6e832a044bd7abb704f0a45ea782e55c1b25487c), [`2257d43`](https://github.com/LedgerHQ/ledger-live/commit/2257d43630933127549300f39ade1e2b01f94cb8), [`08762c2`](https://github.com/LedgerHQ/ledger-live/commit/08762c286e38136293108c19efa72ae8fbd1286b)]:
+  - @ledgerhq/types-live@6.108.0-next.0
+  - @ledgerhq/ledger-wallet-framework@1.5.0-next.0
+  - @ledgerhq/cryptoassets@13.48.0-next.0
+  - @ledgerhq/live-env@2.35.0-next.0
+  - @ledgerhq/live-network@2.6.1-next.0
+
 ## 1.11.0
 
 ### Minor Changes

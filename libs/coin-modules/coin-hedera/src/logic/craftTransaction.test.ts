@@ -14,6 +14,9 @@ import { craftTransaction } from "./craftTransaction";
 import { serializeTransaction, toEVMAddress } from "./utils";
 
 jest.mock("./utils");
+jest.mock("../network/rpc", () => ({
+  rpcClient: require("../test/fixtures/rpc.fixture").getMockedRpcClient(),
+}));
 
 describe("craftTransaction", () => {
   const defaultConfig = getMockedConfig();

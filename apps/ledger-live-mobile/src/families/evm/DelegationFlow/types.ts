@@ -44,4 +44,38 @@ export type EvmDelegationFlowParamList = {
     result: Operation;
     validatorName?: StakingValidatorItem["name"];
   };
+  [ScreenName.EvmRedelegationValidator]: AccountRouteParams & {
+    validatorSrcAddress: string;
+    validatorName?: StakingValidatorItem["name"];
+  };
+  [ScreenName.EvmRedelegationAmount]: AccountRouteParams & {
+    transaction: Transaction;
+    validator: StakingValidatorItem;
+    validatorSrc?: StakingValidatorItem;
+  };
+  [ScreenName.EvmRedelegationSelectDevice]: AccountRouteParams & {
+    transaction: Transaction;
+    status: TransactionStatus;
+    validatorName?: StakingValidatorItem["name"];
+  };
+  [ScreenName.EvmRedelegationConnectDevice]: AccountRouteParams & {
+    device: Device;
+    transaction: Transaction;
+    status: TransactionStatus;
+    appName?: string;
+    onSuccess?: (payload: unknown) => void;
+    onError?: (error: Error) => void;
+    analyticsPropertyFlow?: string;
+    forceSelectDevice?: boolean;
+    validatorName?: StakingValidatorItem["name"];
+  };
+  [ScreenName.EvmRedelegationValidationError]: AccountRouteParams & {
+    transaction: Transaction;
+    error: Error;
+  };
+  [ScreenName.EvmRedelegationValidationSuccess]: AccountRouteParams & {
+    transaction: Transaction;
+    result: Operation;
+    validatorName?: StakingValidatorItem["name"];
+  };
 };

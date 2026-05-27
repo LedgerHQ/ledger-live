@@ -1,43 +1,59 @@
-import { getRemoteConfig } from "@react-native-firebase/remote-config";
+let resolveReady: (() => void) | null = null;
+let rejectReady: ((error: Error) => void) | null = null;
+let readyPromise: Promise<void>;
+
+const resetReady = () => {
+  readyPromise = new Promise<void>((resolve, reject) => {
+    resolveReady = resolve;
+    rejectReady = reject;
+  });
+};
+resetReady();
+
+jest.mock("~/firebase/remoteConfig", () => ({
+  whenReady: () => readyPromise,
+}));
+
+const setProviderMock = jest.fn();
+jest.mock("@ledgerhq/live-config/LiveConfig", () => ({
+  LiveConfig: {
+    setProvider: (...args: unknown[]) => setProviderMock(...args),
+  },
+}));
+
+jest.mock("@ledgerhq/live-config/providers/index", () => ({
+  FirebaseRemoteConfigProvider: jest.fn().mockImplementation(args => args),
+}));
+
 import { renderHook, waitFor } from "@tests/test-renderer";
 import { useFirebaseRemoteConfig } from "../useFirebaseRemoteConfig";
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-const { setDefaults, setConfigSettings, fetchAndActivate } = getRemoteConfig() as jest.Mocked<
-  ReturnType<typeof getRemoteConfig>
->;
-
 describe("useFirebaseRemoteConfig", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    setConfigSettings.mockResolvedValue();
-    setDefaults.mockResolvedValue(null);
-    fetchAndActivate.mockResolvedValue(true);
+    setProviderMock.mockClear();
+    resetReady();
   });
 
-  it("returns true once setConfigSettings, setDefaults, and fetchAndActivate are resolved", async () => {
-    const { result } = renderHook(() => useFirebaseRemoteConfig());
-    await waitFor(() => expect(result.current).toBe(true));
-    expect(setConfigSettings).toHaveBeenCalledWith({ minimumFetchIntervalMillis: 0 });
-    expect(setDefaults).toHaveBeenCalled();
-    expect(fetchAndActivate).toHaveBeenCalled();
+  it("installs the LiveConfig provider on mount", async () => {
+    renderHook(() => useFirebaseRemoteConfig());
+    expect(setProviderMock).toHaveBeenCalledTimes(1);
   });
 
-  it("still returns true if one of the firebase initialization calls fail", async () => {
-    setConfigSettings.mockRejectedValue(new Error("Request failed"));
+  it("returns true once whenReady resolves", async () => {
     const { result } = renderHook(() => useFirebaseRemoteConfig());
+    expect(result.current).toBe(false);
+
+    resolveReady?.();
+
     await waitFor(() => expect(result.current).toBe(true));
-    expect(setConfigSettings).toHaveBeenCalledWith({ minimumFetchIntervalMillis: 0 });
-    expect(setDefaults).toHaveBeenCalled();
-    expect(fetchAndActivate).not.toHaveBeenCalled();
   });
 
-  it("still returns true if fetchAndActivate fails", async () => {
-    fetchAndActivate.mockRejectedValue(new Error("Request failed"));
+  it("returns true even when whenReady rejects so the app boot is not blocked", async () => {
     const { result } = renderHook(() => useFirebaseRemoteConfig());
+    expect(result.current).toBe(false);
+
+    rejectReady?.(new Error("whenReady failed"));
+
     await waitFor(() => expect(result.current).toBe(true));
-    expect(setConfigSettings).toHaveBeenCalledWith({ minimumFetchIntervalMillis: 0 });
-    expect(setDefaults).toHaveBeenCalled();
-    expect(fetchAndActivate).toHaveBeenCalled();
   });
 });

@@ -20,7 +20,7 @@ import {
   TermsAndConditionsText,
   StyledLink,
 } from "./components/WelcomeStyles";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 export function Welcome() {
   const {

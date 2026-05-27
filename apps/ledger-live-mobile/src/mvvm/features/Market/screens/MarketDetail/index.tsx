@@ -1,5 +1,6 @@
 import {
   KeysPriceChange,
+  MarketAssetChartDataRequestParams,
   MarketCoinDataChart,
   MarketCurrencyData,
 } from "@ledgerhq/live-common/market/utils/types";
@@ -27,12 +28,11 @@ import MarketStats from "./components/MarketStats";
 import TitleWithTooltip from "./components/TitleWithTooltip";
 import useMarketDetailViewModel from "./useMarketDetailViewModel";
 import Icon from "@ledgerhq/crypto-icons/native";
-import { MarketCurrencyChartDataRequestParams } from "@ledgerhq/live-common/cg-client/utils/types";
 
 interface ViewProps {
   loading: boolean;
   loadingChart: boolean;
-  updateMarketParams: (param?: MarketCurrencyChartDataRequestParams) => void;
+  updateMarketParams: (param?: MarketAssetChartDataRequestParams) => void;
   toggleStar: () => void;
   isStarred: boolean;
   accounts: AccountLike[];

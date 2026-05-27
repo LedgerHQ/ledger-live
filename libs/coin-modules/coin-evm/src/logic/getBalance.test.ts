@@ -52,6 +52,7 @@ describe("getBalance", () => {
             state: "active",
             asset: { type: "native" },
             amount: BigInt("10000000000000000000000"),
+            actions: [],
           },
         },
       ], // expected
@@ -77,6 +78,7 @@ describe("getBalance", () => {
             state: "active",
             asset: { type: "native" },
             amount: BigInt("10000000000000000000000"),
+            actions: [],
           },
         }, // stake
         {
@@ -111,6 +113,7 @@ describe("getBalance", () => {
           state: "active",
           asset: { type: "native" },
           amount: BigInt("10000000000000000000000"),
+          actions: [],
         },
       ],
     });

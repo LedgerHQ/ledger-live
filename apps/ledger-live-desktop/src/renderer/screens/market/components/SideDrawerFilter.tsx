@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { TFunction } from "i18next";
 import Dropdown from "./DropDown";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 export default function SideDrawerFilter({
   refresh,

@@ -3,7 +3,7 @@ import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import type { Account, DeviceId, SignOperationEvent, AccountBridge } from "@ledgerhq/types-live";
 import { getCoinModuleApi } from "./api";
 import { buildOptimisticOperation } from "./utils";
-import { Result } from "@ledgerhq/ledger-wallet-framework/derivation";
+import { type GetAddressResult } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import type { GenericTransaction } from "./types";
@@ -28,7 +28,7 @@ export const genericSignRawOperation =
         const coinModuleApi = await getCoinModuleApi(account.currency.id, kind);
         const signedInfo = await signerContext(deviceId, async signer => {
           const derivationPath = account.freshAddressPath;
-          const { publicKey } = (await signer.getAddress(derivationPath)) as Result;
+          const { publicKey } = (await signer.getAddress(derivationPath)) as GetAddressResult;
 
           const sender = account.freshAddress;
 

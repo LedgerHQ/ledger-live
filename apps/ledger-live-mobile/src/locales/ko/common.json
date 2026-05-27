@@ -169,6 +169,9 @@
     "CeloAllFundsWarning" : {
       "title" : "향후 트랜잭션 수수료 지불에 필요한 잔액을 충분히 남겨 두세요"
     },
+    "CeloGroupNotVotable" : {
+      "title" : "이 검증인 그룹에는 투표할 수 없습니다. 위임 한도가 초과되었거나 자격이 없는 상태일 수 있습니다."
+    },
     "CeloMissingWithdrawalsError" : {
       "title" : "문제가 발생하여 출금할 자금을 불러올 수 없습니다"
     },
@@ -889,6 +892,9 @@
     "RecommendUndelegation" : {
       "title" : "계정 위임을 해제한 후에 계정을 비우세요"
     },
+    "MustDelegateBeforeStaking" : {
+      "title" : "스테이킹 전 계정 위임이 필요합니다"
+    },
     "RecommendSubAccountsToEmpty" : {
       "title" : "먼저 부계정을 모두 비워주세요"
     },
@@ -1321,6 +1327,13 @@
     "tryEnablingAgain" : "위치를 다시 활성화해보세요",
     "noInfos" : "Ledger는 사용자의 위치 정보를 사용하지 않습니다."
   },
+  "borrow" : {
+    "title" : "대출하기",
+    "appNotFound" : "대출 앱을 찾을 수 없습니다",
+    "infoModal" : {
+      "close" : "닫기"
+    }
+  },
   "earn" : {
     "deposit" : {
       "protocolInfoModal" : {
@@ -1667,6 +1680,23 @@
     "headerTitle" : "구매 완료",
     "title" : "Ledger를 선택해 주셔서 감사합니다.",
     "desc" : "주문을 처리 중입니다.\n주문 확인 이메일을 확인해 주세요."
+  },
+  "productTour" : {
+    "swap" : {
+      "cta" : "스왑 살펴보기"
+    },
+    "stake" : {
+      "cta" : "수익 창출 살펴보기"
+    },
+    "card" : {
+      "cta" : "카드 신청하기"
+    },
+    "portfolio" : {
+      "cta" : "포트폴리오 확인하기"
+    },
+    "done" : {
+      "cta" : "다시 시작하기"
+    }
   },
   "discover" : {
     "title" : "탐색",
@@ -2743,6 +2773,12 @@
       "title" : "무기한 선물",
       "description" : "레버리지로 거래하기"
     },
+    "borrowEntry" : {
+      "title" : "대출",
+      "cardTitle" : "스테이블코인 대출하기",
+      "cardDescription" : "유동성 활용하기",
+      "cta" : "탐색"
+    },
     "recommended" : {
       "title" : "추천"
     },
@@ -2803,15 +2839,8 @@
       }
     },
     "recoverBanner" : {
-      "subscribeDone" : {
-        "title" : "알림: Ledger Recover 구독을 완료하세요"
-      },
-      "verifyIdentity" : {
-        "title" : "지갑에 대한 액세스가 아직 백업되지 않았습니다"
-      },
-      "connectDevice" : {
-        "title" : "지갑에 대한 액세스가 아직 백업되지 않았습니다"
-      }
+      "title" : "백업 보안 설정 마무리",
+      "description" : "Ledger Recover 활성화 완료"
     },
     "refreshStatus" : {
       "refreshing" : "새로고침 중",
@@ -2933,7 +2962,8 @@
   },
   "operationsList" : {
     "to" : "입금 주소",
-    "from" : "출금 주소"
+    "from" : "출금 주소",
+    "pending" : "Pending(대기 중)"
   },
   "operationDetails" : {
     "title" : "트랜잭션 세부 사항",
@@ -3217,7 +3247,9 @@
     "title" : "계정",
     "addAccount" : "계정 추가",
     "emptyState" : "아직 계정이 없습니다",
-    "errorState" : "계정을 불러오는 동안 오류가 발생했습니다."
+    "errorState" : "계정을 불러오는 동안 오류가 발생했습니다.",
+    "assetsCount" : "{{count}}개 자산",
+    "assetsCount_one" : "{{count}}개 자산"
   },
   "crypto" : {
     "title" : "암호화폐",
@@ -3348,7 +3380,7 @@
       "analytics" : "앱 성능",
       "analyticsDesc" : "사용자 환경 개선을 위해 Ledger의 앱 사용 데이터 수집을 허용합니다.",
       "mevProtection" : "MEV 보호",
-      "mevProtectionDesc" : "MEV 보호 기능을 활성화하여 이더리움을 보다 안정적으로 거래하세요",
+      "mevProtectionDesc" : "더 안정적인 거래를 위해 MEV 보호 기능을 활성화하세요.",
       "mevProtectionLearnMore" : "개인정보 관련 고지",
       "personalizedRecommendations" : "사용자 맞춤 설정",
       "personalizedRecommendationsDesc" : "맞춤형 콘텐츠 제공을 위해 Ledger의 앱 사용 데이터 수집을 허용합니다.",
@@ -5464,7 +5496,11 @@
     "undelegation" : {
       "undelegate" : "위임 해제",
       "undelegationMessage" : "위임을 취소하면 현재 및 향후 에포크에 대한 보상을 받을 수 없습니다.",
-      "verificationSuccessTitle" : "귀하의 자산을 성공적으로 위임 해제했습니다."
+      "verificationSuccessTitle" : "귀하의 자산을 성공적으로 위임 해제했습니다.",
+      "dRepDelegationSelfTransactionDrawer" : {
+        "title" : "위임 해제 준비",
+        "description" : "스테이킹을 종료 및 ADA 예치금 회수 방법:\n\n 변경된 카르다노 거버넌스 정책에 따라, 위임을 해제하려면 먼저 투표 상태(Voting status)를 설정해야 합니다/\n\n이 단계에서는 사용자가 기권 의사를 등록하기 위해 자신의 Ledger 주소로 트랜잭션을 전송하는 과정을 포함합니다. 표준 네트워크 수수료만 지불하면 ADA는 지갑에 그대로 보관됩니다.\n\n이 기본 설정이 기록되면 평소처럼 위임 해제를 진행할 수 있습니다."
+      }
     },
     "delegation" : {
       "pool" : "풀",
@@ -6235,6 +6271,208 @@
     },
     "delegation" : {
       "addCustomValidator" : "+ 커스텀 검증인 추가"
+    }
+  },
+  "evm" : {
+    "info" : {
+      "available" : {
+        "title" : "{{currencyTicker}} 이용 가능",
+        "description" : "자유롭게 사용할 수 있는 수량입니다."
+      },
+      "delegated" : {
+        "title" : "위임된 자산",
+        "description" : "위임된 자산은 {{currencyName}} 투표에 사용됩니다. 이는 사용차의 총 투표 수입니다."
+      },
+      "undelegating" : {
+        "title" : "위임 해제",
+        "description" : "위임 해제 자산은 {{numberOfDays}}일 후 타임락이 해제되면 사용 가능합니다."
+      },
+      "delegationUnavailable" : {
+        "title" : "위임할 수 없습니다",
+        "description" : "계정에 이용 가능 잔액이 부족하여 새로운 위임을 시작할 수 없습니다."
+      }
+    },
+    "delegation" : {
+      "delegationEarn" : "자산을 위임하여 {{ticker}} 보상을 받을 수 있습니다.",
+      "info" : "위임은 어떤 원리인가요?",
+      "claimRewards" : "보상 수령",
+      "claimAvailableRewards" : "{{amount}} 수령",
+      "commission" : "수수료",
+      "header" : "위임",
+      "Amount" : "수량",
+      "noRewards" : "이용 가능한 보상이 없습니다",
+      "delegate" : "위임하기",
+      "undelegate" : "위임 해제",
+      "redelegate" : "재위임",
+      "reward" : "보상 수령",
+      "totalStake" : "총 스테이킹",
+      "stepperHeader" : {
+        "starter" : "보상 받기",
+        "validator" : "자산 위임하기",
+        "amountSubTitle" : "위임할 수량",
+        "summary" : "요약",
+        "verification" : "인증",
+        "selectDevice" : "장치 선택",
+        "connectDevice" : "장치 연결",
+        "stepRange" : "{{totalSteps}} 중 {{currentStep}} 단계"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "{{ticker}}를 위임하여 안전하게 보상을 받으면서, 자산에 대한 통제 권한도 유지하세요.",
+            "steps" : {
+              "0" : "위임된 자산도 여전히 사용자 소유입니다.",
+              "1" : "위임 해제가 완료되려면 {{numberOfDays}}일을 기다려야 합니다.",
+              "2" : "Ledger 장치로 안전하게 위임하세요."
+            },
+            "warning" : {
+              "description" : "검증인을 현명하게 선택하세요. 검증인이 부적절한 행동을 하는 경우 위임된 자산의 일부가 영구 손실될 수 있습니다."
+            },
+            "cta" : "계속"
+          },
+          "validator" : {
+            "validators" : "검증인",
+            "myDelegations" : "내 위임",
+            "cta" : "계속",
+            "estYield" : "추정 수익: {{amount}}",
+            "totalAvailable" : "총 이용 가능 금액: <0>{{amount}}</0>",
+            "allAssetsUsed" : "사용된 모든 자산",
+            "noResultsFound" : "<0>{{search}}</0>에 대한 검증인이 없습니다",
+            "currentAmount" : "(+ <0>{{amount}}</0>)"
+          },
+          "amount" : {
+            "assetsRemaining" : "나머지 자산: <0>{{amount}}</0>",
+            "allAssetsUsed" : "사용된 모든 자산",
+            "minAmount" : "최소 금액: <0>{{min}}</0>",
+            "incorrectAmount" : "최대 금액: <0>{{max}}</0>",
+            "cta" : "계속"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "자산을 성공적으로 위임했습니다",
+              "text" : "네트워크가 트랜잭션을 검증 완료하면 계정 잔액이 업데이트됩니다.",
+              "cta" : "세부사항 보기"
+            },
+            "pending" : {
+              "title" : "트랜잭션 브로드캐스팅 중..."
+            },
+            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+          }
+        }
+      },
+      "drawer" : {
+        "status" : "상태",
+        "rewards" : "보상",
+        "active" : "활성",
+        "inactive" : "비활성",
+        "completionDate" : "완료 날짜",
+        "redelegatedFrom" : "다음으로부터 재위임됨"
+      }
+    },
+    "redelegation" : {
+      "estYield" : "추산 수익",
+      "stepperHeader" : {
+        "validator" : "새 검증인을 선택하세요",
+        "amountSubTitle" : "재위임할 금액",
+        "amountTitle" : "{{from}} → {{to}}",
+        "summary" : "요약",
+        "selectDevice" : "장치 선택",
+        "connectDevice" : "장치 연결",
+        "stepRange" : "{{totalSteps}} 중 {{currentStep}} 단계"
+      },
+      "flow" : {
+        "steps" : {
+          "validator" : {
+            "validators" : "검증인",
+            "myDelegations" : "내 위임",
+            "cta" : "계속",
+            "estYield" : "추정 수익: {{amount}}",
+            "totalAvailable" : "총 이용 가능 금액: <0>{{amount}}</0>",
+            "allAssetsUsed" : "사용된 모든 자산",
+            "noResultsFound" : "<0>{{search}}</0>에 대한 검증인이 없습니다"
+          },
+          "amount" : {
+            "newRedelegatedBalance" : "거래 후 <0>{{name}}</0> 새 총계: <0>{{amount}}</0>",
+            "allAssetsUsed" : "사용된 모든 자산"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "귀하의 자산을 성공적으로 재위임했습니다",
+              "text" : "네트워크가 트랜잭션을 검증 완료하면 계정 잔액이 업데이트됩니다.",
+              "cta" : "세부사항 보기"
+            },
+            "pending" : {
+              "title" : "트랜잭션 브로드캐스팅 중..."
+            },
+            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+          }
+        }
+      }
+    },
+    "undelegation" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "위임 해제 수량",
+        "summary" : "요약",
+        "selectDevice" : "장치 선택",
+        "connectDevice" : "장치 연결",
+        "stepRange" : "{{totalSteps}} 중 {{currentStep}} 단계"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "allAssetsUsed" : "위임되지 않은 모든 자산"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "자산을 성공적으로 위임 해제했습니다.",
+              "text" : "네트워크가 트랜잭션을 검증 완료하면 계정 잔액이 업데이트됩니다.",
+              "cta" : "세부사항 보기"
+            },
+            "pending" : {
+              "title" : "트랜잭션 브로드캐스팅 중..."
+            },
+            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+          }
+        }
+      }
+    },
+    "claimRewards" : {
+      "stepperHeader" : {
+        "validator" : "수령할 보상 선택",
+        "method" : "보상 수령",
+        "summary" : "요약",
+        "selectDevice" : "장치 선택",
+        "connectDevice" : "장치 연결",
+        "stepRange" : "{{totalSteps}} 중 {{currentStep}} 단계"
+      },
+      "flow" : {
+        "steps" : {
+          "method" : {
+            "youEarned" : "획득한 보상",
+            "byDelegationAssetsTo" : "자산 위임 대상",
+            "claimReward" : "현금화",
+            "claimRewardCompound" : "컴파운드(Compound)",
+            "claimRewardInfo" : "바로 보상을 수령하여 사용 가능한 잔액에 추가됩니다.",
+            "claimRewardCompoundInfo" : "바로 보상을 수령하여 동일한 검증인에게 자동 위임합니다.",
+            "compoundOrCashIn" : "컴파운드 또는 현금화",
+            "claimRewardTooltip" : "보상이 이용 가능 잔액에 추가됩니다",
+            "claimRewardCompoundTooltip" : "위임된 금액에 보상이 추가됩니다",
+            "cta" : "계속"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "보상을 성공적으로 수령했습니다. 보상이 이용 가능 잔액에 추가되었습니다.",
+              "titleCompound" : "보상이 동일한 검증인에게 위임되었습니다.",
+              "text" : "네트워크가 트랜잭션을 검증 완료하면 계정 잔액이 업데이트됩니다.",
+              "cta" : "세부사항 보기"
+            },
+            "pending" : {
+              "title" : "트랜잭션 브로드캐스팅 중..."
+            },
+            "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요."
+          }
+        }
+      }
     }
   },
   "tron" : {
@@ -7211,6 +7449,11 @@
         "redelegate" : "위임 해제 자산은 {{numberOfDays}}일 후에 이용 가능 잔액으로 되돌아옵니다.",
         "undelegate" : "위임 해제 자산은 {{numberOfDays}}일 후에 이용 가능 잔액으로 되돌아옵니다."
       },
+      "evm" : {
+        "claimReward" : "선택된 검증인에게 대기 중 보상이 있으면, 자동으로 수령됩니다.",
+        "redelegate" : "위임 해제 자산은 {{numberOfDays}}일 후에 이용 가능 잔액으로 되돌아옵니다.",
+        "undelegate" : "위임 해제 자산은 {{numberOfDays}}일 후에 이용 가능 잔액으로 되돌아옵니다."
+      },
       "lending" : "장치에서 거래 세부사항을 확인한 후 전송하세요."
     },
     "amount" : "금액",
@@ -7809,27 +8052,48 @@
   "postOnboarding" : {
     "hub" : {
       "title" : "이제 다음 단계는?",
-      "areAllPostOnboardingActionsCompletedTitle" : "설정이 모두 완료되었습니다. 계속해서 내 포트폴리오를 살펴보세요.",
+      "areAllPostOnboardingActionsCompletedTitle" : "모든 준비가 완료되었습니다!",
       "skip" : "나중에 할께요",
-      "viewWallet" : "내 포트폴리오 살펴보기"
+      "viewWallet" : "내 포트폴리오 살펴보기",
+      "deviceStepComplete" : "완료"
     },
-    "entryPointCard" : {
-      "title" : "{{productName}}의 다음 단계는 무엇인가요?",
-      "description" : "자산을 안전하게 관리하며 수익을 창출해 보세요.",
-      "buttonLabel" : "다음 단계를 확인하세요"
+    "drawer" : {
+      "title" : "다음 단계: 지갑 설정 마무리",
+      "titleCompleted" : "모든 준비가 완료되었습니다!",
+      "primaryLabel" : "확인",
+      "actionCompletedLabel" : "완료",
+      "actions" : {
+        "deviceOnboarded" : {
+          "title" : "Ledger 설정"
+        },
+        "assetsTransfer" : {
+          "title" : "암호화폐 추가",
+          "description" : "암호화폐 전송이나 매수로 지갑에 자산을 충전하세요"
+        },
+        "syncAccounts" : {
+          "title" : "지갑 동기화",
+          "description" : "암호화폐 계정을 동기화 상태로 유지하세요"
+        },
+        "customImage" : {
+          "title" : "잠금화면을 취향대로 꾸며보세요",
+          "description" : "좋아하는 디지털 아트나 사진을 장치 잠금 화면으로 설정할 수 있어요."
+        },
+        "recover" : {
+          "title" : "백업 보안 설정 마무리",
+          "description" : "Ledger Recover 활성화 완료"
+        }
+      }
     },
     "widget" : {
       "title" : "다음 단계: 지갑 설정 마무리",
-      "subtitle" : "먼저, 자산 충전부터 시작해 보세요."
+      "subtitle" : "자산을 안전하게 관리하며 수익을 창출해 보세요."
     },
     "actions" : {
       "deviceOnboarded" : {
-        "titleCompleted" : "Ledger 장치 설정하기"
+        "titleCompleted" : "Ledger 설정"
       },
       "assetsTransfer" : {
-        "title" : "자산 이체",
         "titleCompleted" : "Ledger로 자산 이체 완료",
-        "description" : "거래소나 지갑에서 자산을 이체하세요.",
         "popupLabel" : "자산 이체 완료"
       },
       "buyCrypto" : {
@@ -7839,21 +8103,15 @@
         "popupLabel" : "구매한 암호화폐"
       },
       "customImage" : {
-        "title" : "잠금화면을 취향대로 꾸며보세요",
         "titleCompleted" : "잠금화면 꾸미기 완료",
-        "description" : "좋아하는 디지털 아트나 사진을 장치 잠금 화면으로 설정할 수 있어요.",
         "popupLabel" : "잠금 화면 맞춤설정이 완료되었습니다"
       },
       "recover" : {
-        "title" : "백업 보안 설정 마무리",
         "titleCompleted" : "백업 보안 설정 완료",
-        "description" : "Ledger Recover 활성화 완료",
         "popupLabel" : "Ledger Recover를 성공적으로 구독했습니다"
       },
       "syncAccounts" : {
-        "title" : "암호화폐 계정 동기화",
         "titleCompleted" : "사용자 계정이 동기화되었습니다",
-        "description" : "Ledger Sync를 활성화하여 암호화폐 계정을 동기화하세요",
         "popupLabel" : "계정 동기화 완료"
       }
     }
@@ -8400,6 +8658,64 @@
       }
     }
   },
+  "assetDetail" : {
+    "balanceGraph" : {
+      "marketPrice" : "시장가",
+      "timeframeSelector" : "기간",
+      "timeLabel" : {
+        "24h" : "1일",
+        "7d" : "1주",
+        "30d" : "1달",
+        "1y" : "1년"
+      },
+      "chartPlaceholder" : "차트"
+    },
+    "addresses" : {
+      "title" : "주소",
+      "addAccount" : "추가",
+      "empty" : "아직 등록된 주소가 없습니다. 추가를 탭하여 시작하세요."
+    },
+    "marketStats" : {
+      "title" : "시장 통계",
+      "marketCap" : "시가총액",
+      "marketRank" : "시장 순위",
+      "circulatingSupply" : "유통량",
+      "circulatingSupplyTooltip" : "현재 거래 가능하며 시장에서 유통 중인 코인의 수",
+      "maxSupply" : "최대 공급량",
+      "maxSupplyTooltip" : "해당 암호화폐로 발행될 수 있는 최대 코인 수",
+      "tradingVolume" : "24시간 거래량",
+      "error" : "시장 통계를 불러올 수 없습니다"
+    },
+    "pricePerformance" : {
+      "title" : "가격 변동 추이",
+      "allTimeHigh" : "사상 최고치",
+      "allTimeLow" : "사상 최저치",
+      "yearsAgo" : "{{count}}년 전",
+      "monthsAgo" : "{{count}}분 전",
+      "daysAgo" : "{{count}}일 전",
+      "hoursAgo" : "{{count}}시간 전",
+      "minutesAgo" : "{{count}}분 전",
+      "justNow" : "방금 전",
+      "error" : "가격 변동 추이를 불러올 수 없습니다."
+    },
+    "transactions" : {
+      "title" : "트랜잭션"
+    },
+    "fallbackBanner" : {
+      "title" : "스왑 및 매수가 지원되지 않는 자산입니다."
+    },
+    "balanceDetails" : {
+      "totalBalance" : "총 잔액",
+      "transfer" : "전송",
+      "availableBalance" : "이용 가능 수량",
+      "earnDeposit" : "수익 예치금",
+      "earnBanner" : "최대 수익 {{apy}}% {{type}}",
+      "earnBannerGeneric" : "이 자산으로 수익 창출",
+      "earnBannerSubtitle" : "이 자산을 보유하고 추가 수익 창출하기",
+      "earnBannerAction" : "수익 창출로 이동",
+      "availableBalanceTooltip" : "스테이킹되거나 위임된 금액을 제외한 즉시 사용 가능한 자산."
+    }
+  },
   "assetSelection" : {
     "selectCrypto" : {
       "title" : "자산 선택"
@@ -8617,6 +8933,36 @@
       "lockedBalanceTooltip" : "자산이 다른 사람에게 보낸 제안에 락업되어 있습니다. 언제든지 해당 제안을 취소할 수도 있고, 상대방이 수락/거절할 때까지 기다릴 수도 있습니다.",
       "withdrawableBalance" : "출금 가능",
       "withdrawableBalanceTooltip" : "기한이 만료된 제안에서 회수 가능한 자산입니다. 인출하여 가용 수량으로 되돌릴 수 있습니다."
+    },
+    "disclaimer" : {
+      "title" : "Canton 네트워크 설정",
+      "intro" : "Canton은 고유한 특성을 가지고 있으며, 계속 진행하려면 다음 사항을 숙지하셔야 합니다.",
+      "bullets" : {
+        "utxo" : {
+          "title" : "UTXO 기반 잔액(UTXO-based balance)",
+          "body" : "잔액은 개별 코인 컨트랙트(계약)로 존재하며, 1회 전송당 최대 100개로 제한됩니다. 유휴 상태의 컨트랙트는 시간이 지남에 따라 가치가 하락하며, 수수료가 잔액을 초과할 경우 만료됩니다."
+        },
+        "offers" : {
+          "title" : "오퍼 기반 전송(Offer-based transfers)",
+          "body" : "어떠한 항목도 자동으로 정산되지 않습니다. 보낸 전송은 철회할 수 있으며, 받은 전송은 수동으로 수락하거나 거절해야 합니다. Canton 대시보드에서 오퍼를 관리하세요."
+        },
+        "dualValidator" : {
+          "title" : "이중 검증인 보안(Dual-validator security)",
+          "body" : "트랜잭션을 처리하려면 Ledger와 Klin 양측의 공동 서명이 필요합니다. 어느 한쪽도 단독으로는 사용자를 대신하여 권한을 행사할 수 없습니다."
+        },
+        "tokenLiability" : {
+          "title" : "표준 토큰 관련 책임(Standard token liability) ⚠️",
+          "body" : "재해 복구 상황 발생 시, 토큰 복구 책임은 Ledger가 아닌 토큰 발행자에게 있습니다."
+        }
+      },
+      "agreeLabel" : "본인은 <1>Canton 네트워크 이용약관 및 Ledger의 면책 조항</1>에 동의합니다.",
+      "cancel" : "취소",
+      "agree" : "허용",
+      "terms" : {
+        "title" : "Canton 네트워크 약관",
+        "sectionTitle" : "표준 토큰 관련 책임 및 복구",
+        "body" : "Ledger는 디지털 자산(DA) 레지스트리를 통해 발행된 표준 토큰만을 지원합니다. Ledger는 해당 토큰의 발행자가 아니며, 토큰의 가치, 관리 또는 기반 스마트 컨트랙트에 대해 어떠한 책임도 지지 않습니다.\n\nLedger 서비스 중단 또는 \"재해 복구(disaster recovery)\" 실패가 발생할 경우, Ledger는 사용자의 자산을 복구할 수 없습니다 자산을 복구하려면 특정 토큰 발행자(자산 관리자)에게 직접 연락하여, 해당 발행자의 \"자산 동결(Asset Freeze)\" 또는 \"레지스트리 복구(Registry Recovery)\" 프로토콜을 통해 복구 절차를 시작해야 합니다. 사용자의 구제 수단은 전적으로 토큰 발행자의 기존 서비스 수준 계약(SLA)에 따라 해당 발행자에게만 있습니다. 본 절차를 진행하는 것은 해당 토큰의 손실, 복구 과정 또는 복구 불가 상황으로 인해 발생하는 모든 책임으로부터 Ledger 및 그 계열사가 면제된다는 사실을 인지하고 동의하는 행위로 간주됩니다."
+      }
     },
     "onboard" : {
       "account" : "계정",
@@ -8900,7 +9246,8 @@
       "addDevice" : "Ledger 장치 추가",
       "exploreAllDevices" : "모든 Ledger 장치 살펴보기",
       "available" : "이용 가능",
-      "unavailable" : "연결되지 않음"
+      "unavailable" : "연결되지 않음",
+      "menuAccessibilityLabel" : "장치 옵션"
     }
   }
 }

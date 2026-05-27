@@ -1,10 +1,12 @@
-import { MakeModalsType } from "~/renderer/modals/types";
-import { EditTransactionModal, EditTransactionModalProps } from "./EditTransaction/Modal";
-import MODAL_EVM_STAKE from "./StakeFlowModal";
 import { AccountLike } from "@ledgerhq/types-live";
+import { MakeModalsType } from "~/renderer/modals/types";
+import MODAL_EVM_CLAIM_REWARDS from "./ClaimRewardsFlowModal";
+import { Data as ClaimRewardsProps } from "./ClaimRewardsFlowModal/Body";
 import MODAL_EVM_DELEGATE from "./DelegationFlowModal";
 import { Data as DelegationProps } from "./DelegationFlowModal/Body";
 import MODAL_EVM_REWARDS_INFO, { Props as RewardsInfoProps } from "./DelegationFlowModal/Info";
+import { EditTransactionModal, EditTransactionModalProps } from "./EditTransaction/Modal";
+import MODAL_EVM_STAKE from "./StakeFlowModal";
 import MODAL_EVM_UNDELEGATE from "./UndelegationFlowModal";
 import { Data as UndelegationProps } from "./UndelegationFlowModal/Body";
 import MODAL_EVM_REDELEGATE from "./RedelegationFlowModal";
@@ -24,6 +26,7 @@ export type ModalsData = {
   MODAL_EVM_REWARDS_INFO: RewardsInfoProps;
   MODAL_EVM_UNDELEGATE: UndelegationProps;
   MODAL_EVM_REDELEGATE: RedelegationProps;
+  MODAL_EVM_CLAIM_REWARDS: ClaimRewardsProps;
 };
 
 const modals: MakeModalsType<ModalsData> = {
@@ -33,6 +36,7 @@ const modals: MakeModalsType<ModalsData> = {
   MODAL_EVM_REWARDS_INFO,
   MODAL_EVM_UNDELEGATE,
   MODAL_EVM_REDELEGATE,
+  MODAL_EVM_CLAIM_REWARDS,
 };
 
 export default modals;

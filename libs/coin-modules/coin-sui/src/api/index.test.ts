@@ -131,6 +131,7 @@ describe("api/index", () => {
           amount: 3n,
           amountDeposited: 1n,
           amountRewarded: 2n,
+          actions: [],
           details: { foo: "bar" },
         },
       ],

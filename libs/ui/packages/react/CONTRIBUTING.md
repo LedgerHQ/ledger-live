@@ -45,7 +45,7 @@ If you need to use the locally installed version of this package, you will need 
 ## From the root of the monorepo:
 
 # Build the react components library and its dependencies.
-pnpm turbo build --filter=@ledgerhq/react-ui
+nx run @ledgerhq/react-ui:build
 ```
 
 ```sh

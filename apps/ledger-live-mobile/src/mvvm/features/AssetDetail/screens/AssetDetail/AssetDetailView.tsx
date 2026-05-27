@@ -82,7 +82,7 @@ export function AssetDetailView({
         </Box>
       </ScrollView>
       <Footer currency={currency} />
-      <TransferDrawer />
+      <TransferDrawer currency={currency} />
       <AssetCoinOptionsSheetView
         isOpen={coinOptions.isCoinOptionsSheetOpen}
         onClose={coinOptions.closeCoinOptions}

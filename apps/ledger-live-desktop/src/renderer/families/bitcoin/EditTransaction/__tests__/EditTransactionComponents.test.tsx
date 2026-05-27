@@ -93,6 +93,10 @@ describe("Bitcoin EditTransaction components", () => {
       ...account,
       currency: { ...account.currency, family: "bitcoin", id: "bitcoin", ticker: "BTC" },
     });
+    const { useAccountBridge } = jest.requireMock("@ledgerhq/live-common/bridge/useAccountBridge");
+    useAccountBridge.mockReturnValue({
+      getStuckAccountAndOperation: mockGetStuckAccountAndOperation,
+    });
   });
 
   it("StepFees renders formatted network fee info", () => {

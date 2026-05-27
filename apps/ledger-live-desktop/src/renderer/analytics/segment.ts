@@ -9,6 +9,8 @@ import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { getEnv } from "@ledgerhq/live-env";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+// `Feature, FeatureId, Features` stay on types-live: `analyticsFeatureFlagMethod` is set by
+// FirebaseFeatureFlagsProvider whose prop type uses live-common's `GetFeature` shape (LIVE-31228).
 import type { AccountLike, Feature, FeatureId, Features } from "@ledgerhq/types-live";
 import { idsToLanguage } from "@ledgerhq/types-live";
 import invariant from "invariant";

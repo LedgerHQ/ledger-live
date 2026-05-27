@@ -1,5 +1,19 @@
 # @ledgerhq/live-dmk-speculos
 
+## 0.8.7
+
+### Patch Changes
+
+- Updated dependencies [[`abdb866`](https://github.com/LedgerHQ/ledger-live/commit/abdb8662fba3784399a747ece63a11cc4f6e23bb), [`5177d5e`](https://github.com/LedgerHQ/ledger-live/commit/5177d5e6311047cc7485a66dbcb8971c9a8c0a5c)]:
+  - @ledgerhq/live-env@2.35.0
+
+## 0.8.7-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`abdb866`](https://github.com/LedgerHQ/ledger-live/commit/abdb8662fba3784399a747ece63a11cc4f6e23bb), [`5177d5e`](https://github.com/LedgerHQ/ledger-live/commit/5177d5e6311047cc7485a66dbcb8971c9a8c0a5c)]:
+  - @ledgerhq/live-env@2.35.0-next.0
+
 ## 0.8.6
 
 ### Patch Changes

@@ -3,7 +3,12 @@ import type { ChainAPI } from "../network";
 import { PARSED_PROGRAMS } from "../network/chain/program/constants";
 import type { ParsedOnChainTokenAccount } from "../network/chain/web3";
 import type { SolanaTokenProgram } from "../types";
-import { computeUnstakeReserve, getStakeAccounts, type StakeAccount } from "./getStakes";
+import {
+  computeFrameworkStakeActions,
+  computeUnstakeReserve,
+  getStakeAccounts,
+  type StakeAccount,
+} from "./getStakes";
 
 export async function getBalance(
   api: ChainAPI,
@@ -12,16 +17,23 @@ export async function getBalance(
 ): Promise<Balance[]> {
   const token2022Enabled = options?.token2022Enabled ?? false;
 
-  const [balanceLamports, rentExemptMin, splTokenAccounts, token2022Accounts, stakeAccounts] =
-    await Promise.all([
-      api.getBalance(address),
-      api.getMinimumBalanceForRentExemption(0),
-      api.getParsedTokenAccountsByOwner(address).then(r => r.value),
-      token2022Enabled
-        ? api.getParsedToken2022AccountsByOwner(address).then(r => r.value)
-        : Promise.resolve([]),
-      getStakeAccounts(api, address),
-    ]);
+  const [
+    balanceLamports,
+    rentExemptMin,
+    splTokenAccounts,
+    token2022Accounts,
+    stakeAccounts,
+    { epoch },
+  ] = await Promise.all([
+    api.getBalance(address),
+    api.getMinimumBalanceForRentExemption(0),
+    api.getParsedTokenAccountsByOwner(address).then(r => r.value),
+    token2022Enabled
+      ? api.getParsedToken2022AccountsByOwner(address).then(r => r.value)
+      : Promise.resolve([]),
+    getStakeAccounts(api, address),
+    api.getEpochInfo(),
+  ]);
 
   const stakedLamports = stakeAccounts.reduce(
     (sum, sa) => sum + BigInt(sa.account.onChainAcc.account.lamports),
@@ -43,7 +55,7 @@ export async function getBalance(
     locked: rawLocked > totalBalance ? totalBalance : rawLocked,
   };
 
-  const stakeBalances = mapStakeAccountsToBalances(stakeAccounts);
+  const stakeBalances = mapStakeAccountsToBalances(stakeAccounts, address, epoch);
 
   const splBalances = mapTokenAccountsToBalances(
     splTokenAccounts,
@@ -59,8 +71,13 @@ export async function getBalance(
   return [nativeBalance, ...stakeBalances, ...splBalances, ...token2022Balances];
 }
 
-function mapStakeAccountsToBalances(stakeAccounts: StakeAccount[]): Balance[] {
-  return stakeAccounts.map(({ account, activation }) => {
+function mapStakeAccountsToBalances(
+  stakeAccounts: StakeAccount[],
+  mainAccountAddress: string,
+  epoch: number,
+): Balance[] {
+  return stakeAccounts.map(stakeAccount => {
+    const { account, activation } = stakeAccount;
     const delegation = account.info.stake?.delegation;
     const delegateAddress = delegation?.voter.toBase58();
     const amount = BigInt(account.onChainAcc.account.lamports);
@@ -71,6 +88,7 @@ function mapStakeAccountsToBalances(stakeAccounts: StakeAccount[]): Balance[] {
       state: activation.state as StakeState,
       asset: { type: "native" },
       amount,
+      actions: computeFrameworkStakeActions(stakeAccount, mainAccountAddress, epoch),
     };
 
     if (delegateAddress) {

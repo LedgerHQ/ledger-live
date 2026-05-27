@@ -10,6 +10,7 @@ import {
   DUST_MARGIN_MUTEZ,
   MIN_SUGGESTED_FEE_SMALL_TRANSFER,
   OP_SIZE_XTZ_TRANSFER,
+  STAKE_USE_ALL_RESERVE_MUTEZ,
   normalizePublicKeyForAddress,
 } from "../utils";
 import { getTezosToolkit } from "./tezosToolkit";
@@ -80,10 +81,13 @@ export async function estimateFees({
 
   let amount = transaction.amount;
   const coerceMinAmountForEstimation =
-    (transaction.useAllAmount && transaction.mode === "send") ||
+    (transaction.useAllAmount &&
+      (transaction.mode === "send" ||
+        transaction.mode === "stake" ||
+        transaction.mode === "unstake")) ||
     (amount === 0n && transaction.mode !== "send_token");
   if (coerceMinAmountForEstimation) {
-    amount = 1n; // send max / zero-amount pre-estimation (taquito refuses 0); not used for FA2 send_token
+    amount = 1n; // send/stake max or zero-amount pre-estimation (taquito refuses 0); not used for FA2 send_token
   }
 
   try {
@@ -164,44 +168,35 @@ export async function estimateFees({
 
     const minFees = coinConfig.getCoinConfig().fees.minFees ?? 0;
     const mainOpFee = Math.max(minFees, estimate.suggestedFeeMutez);
+    const revealFee = account.revealed ? 0n : BigInt(getRevealFeeForEstimation(account.address));
 
     // NOTE: send-max only applies to native XTZ transfer, not FA2
     if (transaction.useAllAmount && transaction.mode === "send") {
-      let totalFees: number;
-      if (estimate.burnFeeMutez > 0) {
-        // NOTE: from https://github.com/ecadlabs/taquito/blob/master/integration-tests/__tests__/contract/empty-implicit-account-into-new-implicit-account.spec.ts#L37
-        totalFees = estimate.suggestedFeeMutez + estimate.burnFeeMutez - 20 * COST_PER_BYTE; // 20 is storage buffer
-      } else {
-        totalFees = estimate.suggestedFeeMutez;
-      }
-      const maxAmount =
-        parseInt(account.balance.toString()) -
-        (totalFees + (account.revealed ? 0 : getRevealFeeForEstimation(account.address)));
+      // NOTE: from https://github.com/ecadlabs/taquito/blob/master/integration-tests/__tests__/contract/empty-implicit-account-into-new-implicit-account.spec.ts#L37
+      const totalFees =
+        estimate.burnFeeMutez > 0
+          ? estimate.suggestedFeeMutez + estimate.burnFeeMutez - 20 * COST_PER_BYTE // 20 is storage buffer
+          : estimate.suggestedFeeMutez;
+      const maxAmount = parseInt(account.balance.toString()) - (totalFees + Number(revealFee));
       // NOTE: from https://github.com/ecadlabs/taquito/blob/a70c64c4b105381bb9f1d04c9c70e8ef26e9241c/integration-tests/contract-empty-implicit-account-into-new-implicit-account.spec.ts#L33
       // Temporary fix, see https://gitlab.com/tezos/tezos/-/issues/1754
       // we need to increase the gasLimit and fee returned by the estimation
       const MINIMAL_FEE_PER_GAS_MUTEZ = 0.1;
-      const increasedFee = (gasBuffer: number, opSize: number) => {
-        return gasBuffer * MINIMAL_FEE_PER_GAS_MUTEZ + opSize;
-      };
-      const incr = increasedFee(DUST_MARGIN_MUTEZ, Number(estimate.opSize));
-
+      const incr = DUST_MARGIN_MUTEZ * MINIMAL_FEE_PER_GAS_MUTEZ + Number(estimate.opSize);
       const maxMinusBuff = maxAmount - (DUST_MARGIN_MUTEZ - incr);
       estimation.amount = maxMinusBuff > 0 ? BigInt(maxMinusBuff) : 0n;
-      estimation.fees = BigInt(mainOpFee);
-      estimation.gasLimit = BigInt(estimate.gasLimit);
+    } else if (transaction.useAllAmount && transaction.mode === "stake") {
+      const maxStakable =
+        BigInt(account.balance) - BigInt(mainOpFee) - revealFee - STAKE_USE_ALL_RESERVE_MUTEZ;
+      estimation.amount = maxStakable > 0n ? maxStakable : 0n;
     } else {
-      estimation.fees = BigInt(mainOpFee);
-      estimation.gasLimit = BigInt(estimate.gasLimit);
       estimation.amount = transaction.amount;
     }
 
+    estimation.fees = BigInt(mainOpFee);
+    estimation.gasLimit = BigInt(estimate.gasLimit);
     estimation.storageLimit = BigInt(estimate.storageLimit);
-    estimation.estimatedFees = estimation.fees;
-    if (!account.revealed) {
-      estimation.estimatedFees =
-        estimation.estimatedFees + BigInt(getRevealFeeForEstimation(account.address));
-    }
+    estimation.estimatedFees = estimation.fees + revealFee;
   } catch (e) {
     if (typeof e !== "object" || !e) throw e;
     if ("id" in e) {

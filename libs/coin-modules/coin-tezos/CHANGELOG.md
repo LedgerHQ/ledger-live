@@ -1,5 +1,79 @@
 # @ledgerhq/coin-tezos
 
+## 7.2.0
+
+### Minor Changes
+
+- [#17354](https://github.com/LedgerHQ/ledger-live/pull/17354) [`8e80e39`](https://github.com/LedgerHQ/ledger-live/commit/8e80e39c2e1cf0edcd2ca3079d75b302604c4359) Thanks [@cted-ledger](https://github.com/cted-ledger)! - fix(coin-tezos): include tokenId in FA2 assetReference format (LIVE-30344)
+
+- [#17213](https://github.com/LedgerHQ/ledger-live/pull/17213) [`df45280`](https://github.com/LedgerHQ/ledger-live/commit/df45280fc0a148d4138308b9ee1d7076c576f749) Thanks [@YazhuEth](https://github.com/YazhuEth)! - chore: remove @taquito/ledger-signer dependency, replace with direct hw-app-tezos calls
+
+- [#17067](https://github.com/LedgerHQ/ledger-live/pull/17067) [`53ad83a`](https://github.com/LedgerHQ/ledger-live/commit/53ad83ada17bba367a841c55d5772ac844cc5923) Thanks [@UmbrellaHoodies](https://github.com/UmbrellaHoodies)! - validateIntent staking
+
+- [#17298](https://github.com/LedgerHQ/ledger-live/pull/17298) [`d20d764`](https://github.com/LedgerHQ/ledger-live/commit/d20d764d3485572353b17690581ee59f8d029afe) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-tezos): move `computeIntentType` to `BridgeApi`
+
+- [#17174](https://github.com/LedgerHQ/ledger-live/pull/17174) [`6e832a0`](https://github.com/LedgerHQ/ledger-live/commit/6e832a044bd7abb704f0a45ea782e55c1b25487c) Thanks [@amaslakov](https://github.com/amaslakov)! - Surface Tezos staking positions on the synced account: the generic alpaca `getAccountShape` now branches on a new opt-in `BridgeApi.usesStakingPositions` flag and emits per-position entries (with `delegation-*` / `stake-*` / `unstaking-*` / `finalizable-*` uid prefixes from the Paris upgrade) on `account.stakingPositions` instead of the EVM-shaped `stakingResources` aggregate. Amounts are exposed as `BigNumber` to match the Account-side convention used by `balance`, `spendableBalance`, and `stakingResources`. Adds `coin-tezos` `assignTo/FromAccountRaw` hooks to round-trip these positions through persistence.
+
+- [#17067](https://github.com/LedgerHQ/ledger-live/pull/17067) [`88fc364`](https://github.com/LedgerHQ/ledger-live/commit/88fc364c5b33f2a3116dc9d79c9a078d4efa9c02) Thanks [@UmbrellaHoodies](https://github.com/UmbrellaHoodies)! - Add support for the `finalize_unstake` Tezos intent in transaction crafting, and fix stake-related amount handling so stake, unstake, and finalize_unstake intents are passed through correctly.
+
+- [#17382](https://github.com/LedgerHQ/ledger-live/pull/17382) [`d3c63ef`](https://github.com/LedgerHQ/ledger-live/commit/d3c63ef360b4380487b560672098eb86c4600e11) Thanks [@ypolishchuk-ledger](https://github.com/ypolishchuk-ledger)! - Fix "Unable to normalize sender public key" on tz1 first-tx delegation/send
+
+  normalizePublicKeyForAddress did not strip the leading curve-prefix byte from
+  the 33-byte ED25519 payload returned by the Ledger Tezos app, producing a b58
+  string without the `edpk` prefix that craftTransaction rejected before any APDU
+  was sent. The function is now curve-aware and explicitly handles the 33-byte
+  ED25519 format (introduced when `@taquito/ledger-signer` was removed in favor
+  of `hw-app-tezos`), the 32-byte raw ED25519 form, and SEC1 33/65-byte shapes
+  for tz2/tz3. Malformed tz1 inputs now return undefined rather than emitting
+  a bogus key. Regression tests cover the production payload captured from CI.
+
+- [#17319](https://github.com/LedgerHQ/ledger-live/pull/17319) [`eb13300`](https://github.com/LedgerHQ/ledger-live/commit/eb133007ea71c087b4707b5e7d5d83019e66d29c) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Fix pagination when native and tokens pages are not full
+
+### Patch Changes
+
+- Updated dependencies [[`f39fede`](https://github.com/LedgerHQ/ledger-live/commit/f39fede0a6eb4e427a15219e5a3c8fbc3302815f), [`b812751`](https://github.com/LedgerHQ/ledger-live/commit/b8127519474e63c543b1b937a2d3b11ad162a78e), [`3b746ee`](https://github.com/LedgerHQ/ledger-live/commit/3b746eea7f3f2be633947e8e9112987457c864a5), [`1368afd`](https://github.com/LedgerHQ/ledger-live/commit/1368afdc7218a68c803672e6e412f8f9f6e62142), [`abdb866`](https://github.com/LedgerHQ/ledger-live/commit/abdb8662fba3784399a747ece63a11cc4f6e23bb), [`3cd7abb`](https://github.com/LedgerHQ/ledger-live/commit/3cd7abb4d6f6072bad62073108d797faf23f9e8c), [`c6170d7`](https://github.com/LedgerHQ/ledger-live/commit/c6170d7b61bc37ef80f8d3e5e608611f9b8ecd67), [`912e673`](https://github.com/LedgerHQ/ledger-live/commit/912e673368baa0342316c882653768d570b71262), [`6e832a0`](https://github.com/LedgerHQ/ledger-live/commit/6e832a044bd7abb704f0a45ea782e55c1b25487c), [`2257d43`](https://github.com/LedgerHQ/ledger-live/commit/2257d43630933127549300f39ade1e2b01f94cb8), [`08762c2`](https://github.com/LedgerHQ/ledger-live/commit/08762c286e38136293108c19efa72ae8fbd1286b)]:
+  - @ledgerhq/types-live@6.108.0
+  - @ledgerhq/ledger-wallet-framework@1.5.0
+  - @ledgerhq/cryptoassets@13.48.0
+  - @ledgerhq/live-network@2.6.1
+
+## 7.2.0-next.0
+
+### Minor Changes
+
+- [#17354](https://github.com/LedgerHQ/ledger-live/pull/17354) [`8e80e39`](https://github.com/LedgerHQ/ledger-live/commit/8e80e39c2e1cf0edcd2ca3079d75b302604c4359) Thanks [@cted-ledger](https://github.com/cted-ledger)! - fix(coin-tezos): include tokenId in FA2 assetReference format (LIVE-30344)
+
+- [#17213](https://github.com/LedgerHQ/ledger-live/pull/17213) [`df45280`](https://github.com/LedgerHQ/ledger-live/commit/df45280fc0a148d4138308b9ee1d7076c576f749) Thanks [@YazhuEth](https://github.com/YazhuEth)! - chore: remove @taquito/ledger-signer dependency, replace with direct hw-app-tezos calls
+
+- [#17067](https://github.com/LedgerHQ/ledger-live/pull/17067) [`53ad83a`](https://github.com/LedgerHQ/ledger-live/commit/53ad83ada17bba367a841c55d5772ac844cc5923) Thanks [@UmbrellaHoodies](https://github.com/UmbrellaHoodies)! - validateIntent staking
+
+- [#17298](https://github.com/LedgerHQ/ledger-live/pull/17298) [`d20d764`](https://github.com/LedgerHQ/ledger-live/commit/d20d764d3485572353b17690581ee59f8d029afe) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-tezos): move `computeIntentType` to `BridgeApi`
+
+- [#17174](https://github.com/LedgerHQ/ledger-live/pull/17174) [`6e832a0`](https://github.com/LedgerHQ/ledger-live/commit/6e832a044bd7abb704f0a45ea782e55c1b25487c) Thanks [@amaslakov](https://github.com/amaslakov)! - Surface Tezos staking positions on the synced account: the generic alpaca `getAccountShape` now branches on a new opt-in `BridgeApi.usesStakingPositions` flag and emits per-position entries (with `delegation-*` / `stake-*` / `unstaking-*` / `finalizable-*` uid prefixes from the Paris upgrade) on `account.stakingPositions` instead of the EVM-shaped `stakingResources` aggregate. Amounts are exposed as `BigNumber` to match the Account-side convention used by `balance`, `spendableBalance`, and `stakingResources`. Adds `coin-tezos` `assignTo/FromAccountRaw` hooks to round-trip these positions through persistence.
+
+- [#17067](https://github.com/LedgerHQ/ledger-live/pull/17067) [`88fc364`](https://github.com/LedgerHQ/ledger-live/commit/88fc364c5b33f2a3116dc9d79c9a078d4efa9c02) Thanks [@UmbrellaHoodies](https://github.com/UmbrellaHoodies)! - Add support for the `finalize_unstake` Tezos intent in transaction crafting, and fix stake-related amount handling so stake, unstake, and finalize_unstake intents are passed through correctly.
+
+- [#17382](https://github.com/LedgerHQ/ledger-live/pull/17382) [`d3c63ef`](https://github.com/LedgerHQ/ledger-live/commit/d3c63ef360b4380487b560672098eb86c4600e11) Thanks [@ypolishchuk-ledger](https://github.com/ypolishchuk-ledger)! - Fix "Unable to normalize sender public key" on tz1 first-tx delegation/send
+
+  normalizePublicKeyForAddress did not strip the leading curve-prefix byte from
+  the 33-byte ED25519 payload returned by the Ledger Tezos app, producing a b58
+  string without the `edpk` prefix that craftTransaction rejected before any APDU
+  was sent. The function is now curve-aware and explicitly handles the 33-byte
+  ED25519 format (introduced when `@taquito/ledger-signer` was removed in favor
+  of `hw-app-tezos`), the 32-byte raw ED25519 form, and SEC1 33/65-byte shapes
+  for tz2/tz3. Malformed tz1 inputs now return undefined rather than emitting
+  a bogus key. Regression tests cover the production payload captured from CI.
+
+- [#17319](https://github.com/LedgerHQ/ledger-live/pull/17319) [`eb13300`](https://github.com/LedgerHQ/ledger-live/commit/eb133007ea71c087b4707b5e7d5d83019e66d29c) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Fix pagination when native and tokens pages are not full
+
+### Patch Changes
+
+- Updated dependencies [[`f39fede`](https://github.com/LedgerHQ/ledger-live/commit/f39fede0a6eb4e427a15219e5a3c8fbc3302815f), [`b812751`](https://github.com/LedgerHQ/ledger-live/commit/b8127519474e63c543b1b937a2d3b11ad162a78e), [`3b746ee`](https://github.com/LedgerHQ/ledger-live/commit/3b746eea7f3f2be633947e8e9112987457c864a5), [`1368afd`](https://github.com/LedgerHQ/ledger-live/commit/1368afdc7218a68c803672e6e412f8f9f6e62142), [`abdb866`](https://github.com/LedgerHQ/ledger-live/commit/abdb8662fba3784399a747ece63a11cc4f6e23bb), [`3cd7abb`](https://github.com/LedgerHQ/ledger-live/commit/3cd7abb4d6f6072bad62073108d797faf23f9e8c), [`c6170d7`](https://github.com/LedgerHQ/ledger-live/commit/c6170d7b61bc37ef80f8d3e5e608611f9b8ecd67), [`912e673`](https://github.com/LedgerHQ/ledger-live/commit/912e673368baa0342316c882653768d570b71262), [`6e832a0`](https://github.com/LedgerHQ/ledger-live/commit/6e832a044bd7abb704f0a45ea782e55c1b25487c), [`2257d43`](https://github.com/LedgerHQ/ledger-live/commit/2257d43630933127549300f39ade1e2b01f94cb8), [`08762c2`](https://github.com/LedgerHQ/ledger-live/commit/08762c286e38136293108c19efa72ae8fbd1286b)]:
+  - @ledgerhq/types-live@6.108.0-next.0
+  - @ledgerhq/ledger-wallet-framework@1.5.0-next.0
+  - @ledgerhq/cryptoassets@13.48.0-next.0
+  - @ledgerhq/live-network@2.6.1-next.0
+
 ## 7.1.0
 
 ### Minor Changes

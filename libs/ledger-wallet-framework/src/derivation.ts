@@ -23,7 +23,7 @@ type ModeSpec = {
   addressFormat?: string;
 };
 
-export type Result = {
+export type GetAddressResult = {
   address: string;
   path: string;
   publicKey: string;

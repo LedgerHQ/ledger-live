@@ -3,7 +3,11 @@ import { Platform } from "react-native";
 import { useTranslation } from "~/context/Locale";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "@react-navigation/native";
-import { getStackNavigatorConfig, defaultNavigationOptions } from "~/navigation/navigatorConfig";
+import {
+  getStackNavigatorConfig,
+  defaultNavigationOptions,
+  bridgeSuspenseScreenLayout,
+} from "~/navigation/navigatorConfig";
 import StepHeader from "~/components/StepHeader";
 import { ScreenName } from "~/const";
 import RedelegationSelectValidator from "./01-SelectValidator";
@@ -29,6 +33,7 @@ function RedelegationFlow() {
         ...stackNavigationConfig,
         gestureEnabled: Platform.OS === "ios",
       }}
+      screenLayout={bridgeSuspenseScreenLayout}
     >
       <Stack.Screen
         name={ScreenName.CosmosRedelegationValidator}

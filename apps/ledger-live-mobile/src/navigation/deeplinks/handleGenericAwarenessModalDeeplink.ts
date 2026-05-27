@@ -1,6 +1,6 @@
 import { getStateFromPath } from "@react-navigation/native";
 import type { AppDispatch } from "~/state-manager/configureStore";
-import { openGenericAwarenessModal } from "~/reducers/genericAwarenessModal";
+import { setGenericAwarenessModalCampaignId } from "~/reducers/genericAwarenessModal";
 
 export function handleGenericAwarenessModalDeeplink({
   isGenericAwarenessModalEnabled,
@@ -17,11 +17,10 @@ export function handleGenericAwarenessModalDeeplink({
 }): ReturnType<typeof getStateFromPath> | undefined {
   if (!isGenericAwarenessModalEnabled) return undefined;
   if (!hasCompletedOnboarding) return undefined;
+  const campaignId = searchParams.get("id");
+  if (!campaignId) return undefined;
 
-  dispatch(
-    openGenericAwarenessModal({
-      campaignId: searchParams.get("id") ?? undefined,
-    }),
-  );
+  dispatch(setGenericAwarenessModalCampaignId(campaignId));
+
   return getStateFromPath("portfolio", config);
 }

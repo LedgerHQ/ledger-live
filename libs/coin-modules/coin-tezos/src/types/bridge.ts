@@ -86,12 +86,6 @@ export type Delegation = {
   sendShouldWarnDelegation: boolean;
 };
 
-/**
- * Tezos staking position as exposed on the synced account (front-side shape).
- * Mirrors the framework `Stake` populated by `buildStakesForAccount` but uses
- * `BigNumber` to match the Account-side convention shared with `balance`,
- * `spendableBalance`, and the `stakingResources` aggregate used by other coins.
- */
 export type StakingPosition = Omit<Stake, "amount" | "amountDeposited" | "amountRewarded"> & {
   amount: BigNumber;
   amountDeposited?: BigNumber;
@@ -99,29 +93,25 @@ export type StakingPosition = Omit<Stake, "amount" | "amountDeposited" | "amount
 };
 
 export type TezosAccount = Account & {
-  tezosResources: TezosResources;
-  stakingPositions: StakingPosition[];
+  tezosResources?: TezosResources;
+  stakingPositions?: StakingPosition[];
 };
+// Paris-upgrade accounts may lack tezosResources until first sync — classify by family.
 export function isTezosAccount(account: Account): account is TezosAccount {
-  return "tezosResources" in account;
+  return account.currency.family === "tezos";
 }
 
-/**
- * Persistable shape of a Tezos {@link StakingPosition}. uid prefix encodes the
- * staking kind: delegation-* / stake-* / unstaking-* / finalizable-*; `BigNumber`
- * amounts are serialized as decimal strings, and `asset` is omitted because Tezos
- * stakes are always native and the field is reconstructed on read.
- */
 export type StakingPositionRaw = {
   uid: string;
   address: string;
   delegate?: string;
   state: "inactive" | "activating" | "active" | "deactivating";
   amount: string;
+  createdAt?: string;
 };
 
 export type TezosAccountRaw = AccountRaw & {
-  tezosResources: TezosResourcesRaw;
+  tezosResources?: TezosResourcesRaw;
   stakingPositions?: StakingPositionRaw[];
 };
 

@@ -11,7 +11,7 @@ const ETH = getCryptoCurrencyById("ethereum");
 setSupportedCurrencies(["bitcoin", "ethereum"]);
 
 describe("wrapAccountBridge — extension routing", () => {
-  test("bitcoin clearAccount resets bitcoinResources (coin-specific override)", () => {
+  test("bitcoin clearAccount resets bitcoinResources (coin-specific override)", async () => {
     const account = genAccount("btc-clear-routing", { currency: BTC }) as BitcoinAccount;
     // Mutate to simulate state that the family-specific clearAccount must wipe.
     account.bitcoinResources = {
@@ -21,7 +21,7 @@ describe("wrapAccountBridge — extension routing", () => {
     account.operations = [{ id: "op1" } as unknown as BitcoinAccount["operations"][0]];
     account.blockHeight = 999;
 
-    const bridge = getAccountBridge(account);
+    const bridge = await getAccountBridge(account);
     const cleared = bridge.clearAccount(account) as BitcoinAccount;
 
     expect(cleared.bitcoinResources).toEqual(initialBitcoinResourcesValue);
@@ -29,26 +29,26 @@ describe("wrapAccountBridge — extension routing", () => {
     expect(cleared.blockHeight).toBe(0);
   });
 
-  test("clearAccount on a family without override falls back to framework default", () => {
+  test("clearAccount on a family without override falls back to framework default", async () => {
     const account = genAccount("eth-clear-default", { currency: ETH });
     account.operations = [{ id: "op1" } as unknown as (typeof account.operations)[0]];
     account.blockHeight = 42;
 
-    const bridge = getAccountBridge(account);
+    const bridge = await getAccountBridge(account);
     const cleared = bridge.clearAccount(account);
 
     expect(cleared.operations).toEqual([]);
     expect(cleared.blockHeight).toBe(0);
   });
 
-  test("isAccountEmpty default returns true for an empty account", () => {
+  test("isAccountEmpty default returns true for an empty account", async () => {
     const account = genAccount("eth-empty", { currency: ETH });
     account.operations = [];
     account.operationsCount = 0;
     account.balance = new BigNumber(0);
     account.subAccounts = [];
 
-    const bridge = getAccountBridge(account);
+    const bridge = await getAccountBridge(account);
     expect(bridge.isAccountEmpty(account)).toBe(true);
   });
 });

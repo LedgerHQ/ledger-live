@@ -25,7 +25,7 @@ jest.mock("../../generated/accountActions", () => ({
 }));
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
-  getAccountBridge: jest.fn(() => mockBridge),
+  getAccountBridge: jest.fn(() => Promise.resolve(mockBridge)),
 }));
 
 jest.mock("@ledgerhq/ledger-wallet-framework/account/helpers", () => ({
@@ -50,7 +50,7 @@ describe("useStakingDrawer", () => {
     jest.clearAllMocks();
   });
 
-  it("passes resolved bridge to family getMainActions", () => {
+  it("passes resolved bridge to family getMainActions", async () => {
     mockGetMainActions.mockReturnValue([
       { id: "stake", navigationParams: ["Stake", { screen: "StakeScreen", params: {} }] },
     ]);
@@ -59,7 +59,7 @@ describe("useStakingDrawer", () => {
       useStakingDrawer({ navigation, parentRoute, alwaysShowNoFunds: false }),
     );
 
-    result.current(bitcoinAccount as never);
+    await result.current(bitcoinAccount as never);
 
     expect(mockGetMainActions).toHaveBeenCalledTimes(1);
     expect(mockGetMainActions).toHaveBeenCalledWith(
@@ -67,7 +67,7 @@ describe("useStakingDrawer", () => {
     );
   });
 
-  it("navigates to the family stake flow returned by getMainActions", () => {
+  it("navigates to the family stake flow returned by getMainActions", async () => {
     mockGetMainActions.mockReturnValue([
       {
         id: "stake",
@@ -79,7 +79,7 @@ describe("useStakingDrawer", () => {
       useStakingDrawer({ navigation, parentRoute, alwaysShowNoFunds: false }),
     );
 
-    result.current(bitcoinAccount as never);
+    await result.current(bitcoinAccount as never);
 
     expect(navigation.navigate).toHaveBeenCalledWith(NavigatorName.Base, {
       screen: "StakeNavigator",

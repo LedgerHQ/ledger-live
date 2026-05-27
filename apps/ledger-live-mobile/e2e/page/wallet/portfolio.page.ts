@@ -1,4 +1,4 @@
-import { expect } from "detox";
+import { by, element, expect, waitFor } from "detox";
 import { Step } from "jest-allure2-reporter/api";
 import { openDeeplink } from "../../helpers/commonHelpers";
 
@@ -18,7 +18,10 @@ export default class PortfolioPage {
   portfolioSettingsButtonId = "topbar-settings";
   portfolioSettingsButton = () => getElementById(this.portfolioSettingsButtonId);
   addAccountCta = "add-account-cta";
-  lastTransactionAmount = () => getElementById(this.transactionAmountId, 0);
+  // Match the operation row by its amount text rather than position 0:
+  // background-synced incoming ops from other accounts can sit above the just-completed one.
+  transactionByAmount = (amount: string) =>
+    element(by.id(this.transactionAmountId).and(by.text(amount)));
   assetItemId = (currencyName: string) => `assetItem-${currencyName}`;
   allocationSectionTitleId = "portfolio-allocation-section";
 
@@ -69,11 +72,13 @@ export default class PortfolioPage {
   }
 
   async expectLastTransactionAmount(amount: string) {
-    await expect(this.lastTransactionAmount()).toHaveText(amount);
+    await waitFor(this.transactionByAmount(amount))
+      .toBeVisible()
+      .withTimeout(60000);
   }
 
-  async openLastTransaction() {
-    await tapByElement(this.lastTransactionAmount());
+  async openLastTransaction(amount: string) {
+    await tapByElement(this.transactionByAmount(amount));
   }
 
   @Step("Go to asset's accounts from portfolio")

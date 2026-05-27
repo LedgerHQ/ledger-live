@@ -1,0 +1,26 @@
+{
+  "name": "@devtools/registry",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Static registry of lazy-loaded DevTools modules",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "sideEffects": false,
+  "scripts": {
+    "format": "prettier --write 'src/**/*.ts'",
+    "typecheck": "tsc --noEmit",
+    "coverage": "echo \"no tests in @devtools/registry\""
+  },
+  "dependencies": {
+    "@devtools/feature-flags": "workspace:*",
+    "zod": "catalog:"
+  },
+  "peerDependencies": {
+    "react": ">=19"
+  },
+  "devDependencies": {
+    "@types/react": "catalog:",
+    "react": "catalog:",
+    "typescript": "catalog:"
+  }
+}

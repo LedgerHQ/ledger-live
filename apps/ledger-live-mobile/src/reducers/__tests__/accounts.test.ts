@@ -11,6 +11,19 @@ import {
 } from "../accounts";
 import type { State } from "../types";
 
+jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => {
+  const {
+    defaultIsAccountEmpty,
+  } = jest.requireActual("@ledgerhq/live-common/bridge/defaultBridgeExtensions");
+  return {
+    useAccountBridge: jest.fn(),
+    useAccountBridgeOrNull: jest.fn(),
+    useAccountBridgeMany: jest.fn((accounts: Account[]) =>
+      accounts.map(() => ({ isAccountEmpty: defaultIsAccountEmpty })),
+    ),
+  };
+});
+
 setSupportedCurrencies(["bitcoin", "ethereum"]);
 
 const bitcoin = getCryptoCurrencyById("bitcoin");

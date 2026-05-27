@@ -1,7 +1,6 @@
 import { setEnv } from "@ledgerhq/live-env";
 import { verifyAppValidationSendInfo } from "../../models/send";
 
-import { device } from "detox";
 import invariant from "invariant";
 import { TransactionType } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
@@ -85,7 +84,6 @@ export async function verifySendAndOperationDetails(
 
   await verifyAppValidationSendInfo(transaction, amountWithCode);
 
-  await device.disableSynchronization();
   await app.speculos.signSendTransaction(transaction);
   await app.common.successViewDetails();
 
@@ -297,7 +295,6 @@ export function runSendENSTest(transaction: TransactionType, tmsLinks: string[],
 
       await verifyAppValidationSendInfo(transaction, amountWithCode);
 
-      await device.disableSynchronization();
       await app.speculos.signSendTransaction(transaction);
       await app.common.successViewDetails();
 

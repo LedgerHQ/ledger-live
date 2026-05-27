@@ -548,8 +548,8 @@ describe("validateIntent", () => {
       const res = await validateIntent(
         stakingCurrency,
         stakingIntent({
+          amount: 0n,
           mode: "claimReward",
-          amount: 1n,
           valAddress: "seivaloper1y82m5y3wevjneamzg0pmx87dzanyxzht0kepvn",
         }),
         [{ value: 50n, asset: { type: "native" } }],
@@ -568,8 +568,8 @@ describe("validateIntent", () => {
       const res = await validateIntent(
         stakingCurrency,
         stakingIntent({
+          amount: 0n,
           mode: "claimReward",
-          amount: 1n,
           valAddress: "",
         }),
         [{ value: 500n, asset: { type: "native" } }],
@@ -588,8 +588,8 @@ describe("validateIntent", () => {
       const res = await validateIntent(
         stakingCurrency,
         stakingIntent({
+          amount: 0n,
           mode: "claimReward",
-          amount: 1n,
           valAddress: "seivaloper1y82m5y3wevjneamzg0pmx87dzanyxzht0kepvn",
         }),
         [{ value: 500n, asset: { type: "native" } }],

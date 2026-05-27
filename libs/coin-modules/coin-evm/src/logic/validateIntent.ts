@@ -29,7 +29,7 @@ import { getFeesUnit } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { getGasTracker } from "../network/gasTracker";
-import { isNative, TransactionTypes } from "../types";
+import { isNative, StakingOperation, TransactionTypes } from "../types";
 import { DEFAULT_GAS_LIMIT, isEthAddress, isStakingIntent } from "../utils";
 import {
   getTransactionType,
@@ -63,11 +63,17 @@ async function validateAmount(
   amount: bigint,
   totalSpent: bigint,
   isSmartContractInteraction: boolean,
+  intentStakingMode?: StakingOperation,
 ): Promise<Pick<TransactionValidation, "errors" | "warnings">> {
-  // Smart contract transactions crafted outside of Ledger Wallet
-  // (e.g. Magic Eden) can have no amount
-  if (!amount && !isSmartContractInteraction) {
-    return { errors: { amount: new AmountRequired() }, warnings: {} };
+  // Smart contract transactions crafted outside of Ledger Wallet (e.g. Magic Eden)
+  // And claim reward transaction
+  // can have no amount
+  if (!amount) {
+    if (intentStakingMode === "claimReward") {
+      return { errors: {}, warnings: {} };
+    } else if (!isSmartContractInteraction) {
+      return { errors: { amount: new AmountRequired() }, warnings: {} };
+    }
   }
 
   const available = balance.value - (balance.locked ?? 0n);
@@ -365,6 +371,7 @@ export async function validateIntent(
     amount,
     totalSpent,
     !!intent.data?.value?.length,
+    isStakingIntent(intent) ? intent.mode : undefined,
   );
   const { errors: gasErr, warnings: gasWarn } = await validateGas(
     currency,

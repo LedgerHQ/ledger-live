@@ -7,17 +7,15 @@ import {
 } from "~/renderer/reducers/settings";
 import { themeSelector } from "~/renderer/actions/general";
 import { useAccountStatus } from "LLD/hooks/useAccountStatus";
-import { usePortfolioBalance } from "LLD/hooks/usePortfolioBalance";
+import { usePortfolioBalanceDisplayState } from "LLD/hooks/usePortfolioBalanceDisplayState";
 import { BalanceViewModelResult } from "../components/Balance/types";
 import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/index";
-import { useBalanceSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import type { FormattedValue } from "@ledgerhq/lumen-ui-react";
 import { useNavigate } from "react-router";
 import BigNumber from "bignumber.js";
 import { track } from "~/renderer/analytics/segment";
 import { PORTFOLIO_TRACKING_PAGE_NAME } from "LLD/utils/constants";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 
 interface UseBalanceViewModelOptions {
   readonly legacyRange?: boolean;
@@ -26,8 +24,6 @@ interface UseBalanceViewModelOptions {
 export const useBalanceViewModel = (
   options: UseBalanceViewModelOptions = {},
 ): BalanceViewModelResult => {
-  const { shouldDisplayBalanceRefreshRework } = useWalletFeaturesConfig("desktop");
-  const { legacyRange = false } = options;
   const navigate = useNavigate();
   const locale = useSelector(localeSelector);
   const discreet = useSelector(discreetModeSelector);
@@ -36,27 +32,16 @@ export const useBalanceViewModel = (
   const { hasAccount } = useAccountStatus();
 
   const {
-    portfolio,
     counterValue,
+    displayedBalance,
+    balanceAvailable,
+    isLoading,
     isColdStart,
-    balanceAvailable: rawBalanceAvailable,
-    syncPhase,
-    isCvPending,
-  } = usePortfolioBalance({ legacyRange });
-
-  const latestBalanceValue =
-    portfolio.balanceHistory[portfolio.balanceHistory.length - 1]?.value ?? 0;
-
-  const { balanceAvailable, displayedBalance, isLoading } = useBalanceSyncState({
-    rawBalanceAvailable,
-    syncPhase,
-    latestBalance: latestBalanceValue,
-    shouldFreezeOnSync: shouldDisplayBalanceRefreshRework,
-    cvPending: shouldDisplayBalanceRefreshRework ? isCvPending : undefined,
-  });
+    valueChange,
+    shouldDisplayBalanceRefreshRework,
+  } = usePortfolioBalanceDisplayState(options);
 
   const unit = counterValue.units[0];
-  const valueChange = portfolio.countervalueChange;
 
   const navigateToAnalytics = useCallback(() => {
     setTrackingSource(PORTFOLIO_TRACKING_PAGE_NAME);

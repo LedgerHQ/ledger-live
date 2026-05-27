@@ -1660,6 +1660,7 @@ export const toStakes = (address: string, delegation: DelegatedStake): Stake[] =
       amount: deposited + rewarded,
       amountDeposited: deposited,
       amountRewarded: rewarded,
+      actions: [],
       details: {
         activeEpoch: Number(stake.stakeActiveEpoch),
         requestEpoch: Number(stake.stakeRequestEpoch),

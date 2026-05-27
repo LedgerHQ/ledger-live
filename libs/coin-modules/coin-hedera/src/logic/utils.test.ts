@@ -92,6 +92,9 @@ import {
 } from "./utils";
 
 jest.mock("../network/api");
+jest.mock("../network/rpc", () => ({
+  rpcClient: require("../test/fixtures/rpc.fixture").getMockedRpcClient(),
+}));
 
 describe("logic utils", () => {
   let oldStakingLedgerNodeIdEnv: number;

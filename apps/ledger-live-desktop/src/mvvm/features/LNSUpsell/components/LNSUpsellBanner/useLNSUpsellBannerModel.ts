@@ -1,4 +1,4 @@
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useLNSUpsellBannerState } from "LLD/features/LNSUpsell/hooks/useLNSUpsellBannerState";
 import type { LNSBannerLocation, LNSBannerState } from "LLD/features/LNSUpsell/types";
 import { track } from "~/renderer/analytics/segment";

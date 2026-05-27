@@ -1,5 +1,6 @@
 import {
   getChangePercentage,
+  getChartRangeSegment,
   isAvailableForTrading,
   filterMarketPerformersByAvailability,
   dadaIdToMarketId,
@@ -263,5 +264,26 @@ describe("filterMarketPerformersByAvailability", () => {
 
     expect(result).toHaveLength(1);
     expect(result[0].id).toBe("bitcoin");
+  });
+});
+
+describe("getChartRangeSegment", () => {
+  it.each([
+    ["1h", "1h"],
+    ["24h", "1d"],
+    ["day", "1d"],
+    ["7d", "1w"],
+    ["week", "1w"],
+    ["30d", "1m"],
+    ["month", "1m"],
+    ["1y", "1y"],
+    ["year", "1y"],
+    ["all", "all"],
+  ])("maps UI range '%s' to URL segment '%s'", (input, expected) => {
+    expect(getChartRangeSegment(input)).toBe(expected);
+  });
+
+  it("falls back to '1d' for unknown ranges", () => {
+    expect(getChartRangeSegment("unknown-range")).toBe("1d");
   });
 });

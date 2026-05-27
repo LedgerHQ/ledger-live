@@ -10,7 +10,7 @@ import {
   useLedgerSyncAnalytics,
 } from "../../hooks/useLedgerSyncAnalytics";
 import { LogoWrapper } from "../../components/LogoWrapper";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 import { openURL } from "~/renderer/linking";
 
 type Props = {

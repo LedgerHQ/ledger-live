@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { Dialog, DialogContent, DialogHeader, ThemeProvider } from "@ledgerhq/lumen-ui-react";
+import { Dialog, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { Slides } from "LLD/components/Slides";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { ProductTourFooter } from "./components/ProductTourFooter";
@@ -39,32 +39,30 @@ export const ProductTourDialog = ({
   );
 
   return (
-    <ThemeProvider colorScheme="dark">
-      <Dialog open={isOpen} onOpenChange={() => {}}>
-        <DialogContent
-          className="flex h-screen min-h-0 flex-col"
-          onPointerDownOutside={onDismiss}
-          onEscapeKeyDown={onDismiss}
+    <Dialog open={isOpen} onOpenChange={() => {}}>
+      <DialogContent
+        className="dark flex h-screen min-h-0 flex-col"
+        onPointerDownOutside={onDismiss}
+        onEscapeKeyDown={onDismiss}
+      >
+        {isOpen && <TrackPage category={PAGE_TRACKING_PRODUCT_TOUR} />}
+        <DialogHeader density="compact" onClose={onClose} />
+        <Slides
+          key={isOpen ? "reset" : "closed"}
+          initialSlideIndex={0}
+          onSlideChange={onSlideChange}
         >
-          {isOpen && <TrackPage category={PAGE_TRACKING_PRODUCT_TOUR} />}
-          <DialogHeader density="compact" onClose={onClose} />
-          <Slides
-            key={isOpen ? "reset" : "closed"}
-            initialSlideIndex={0}
-            onSlideChange={onSlideChange}
-          >
-            <Slides.Content>{slideItems}</Slides.Content>
+          <Slides.Content>{slideItems}</Slides.Content>
 
-            <Slides.ProgressIndicator>
-              <ProductTourProgressIndicator />
-            </Slides.ProgressIndicator>
+          <Slides.ProgressIndicator>
+            <ProductTourProgressIndicator />
+          </Slides.ProgressIndicator>
 
-            <Slides.Footer>
-              <ProductTourFooter onPrimaryAction={onPrimaryAction} onComplete={onComplete} />
-            </Slides.Footer>
-          </Slides>
-        </DialogContent>
-      </Dialog>
-    </ThemeProvider>
+          <Slides.Footer>
+            <ProductTourFooter onPrimaryAction={onPrimaryAction} onComplete={onComplete} />
+          </Slides.Footer>
+        </Slides>
+      </DialogContent>
+    </Dialog>
   );
 };

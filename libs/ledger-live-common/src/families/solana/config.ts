@@ -14,6 +14,7 @@ export const solanaConfig: CurrencyLiveConfigDefinition = {
       },
       token2022Enabled: false,
       legacyOCMSMaxVersion: "1.8.0",
+      validatorsUrl: "https://validators-solana.coin.ledger.com/api/v1/validators/mainnet.json",
     } satisfies SolanaCoinConfig,
   },
 };

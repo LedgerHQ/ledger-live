@@ -39,7 +39,7 @@ export const pushDevicesApi = createApi({
       query: body => {
         const baseUrl = getEnv("PUSH_DEVICES_SERVICE_URL");
         return {
-          url: `${baseUrl}/pushdevices`,
+          url: `${baseUrl}/v2/pushdevices`,
           method: "POST",
           body,
         };

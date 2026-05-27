@@ -14,3 +14,11 @@
 
 - Before finishing any agentic code change, run static checks for the affected scope
 - See [/docs/validate-before-finishing.md](/docs/validate-before-finishing.md)
+
+## Read READMEs for packages where you're working
+
+See examples:
+
+- **Entity packages** (`domain/entity/`): read `domain/entity/README.md`
+- **API packages** (`domain/api/`): read `domain/api/README.md`
+- **Shared packages** (`shared/**`): read `shared/README.md`

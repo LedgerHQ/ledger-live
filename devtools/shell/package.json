@@ -1,6 +1,6 @@
 {
   "name": "@devtools/shell",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Ledger Live DevTools — cross-platform debug component",
   "main": "src/index.ts",
@@ -13,7 +13,12 @@
     "test:native": "jest --config jest.native.config.js",
     "test:web": "jest --config jest.config.js",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage"
+    "coverage": "pnpm run coverage:web && pnpm run coverage:native && bash -c 'cat coverage/lcov.native.info >> coverage/lcov.info' --",
+    "coverage:web": "jest --config jest.config.js --coverage",
+    "coverage:native": "jest --config jest.native.config.js --coverage"
+  },
+  "dependencies": {
+    "@devtools/registry": "workspace:*"
   },
   "peerDependencies": {
     "@ledgerhq/lumen-design-core": "catalog:",

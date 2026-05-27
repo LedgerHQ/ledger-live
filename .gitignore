@@ -1,6 +1,5 @@
 .DS_Store
 node_modules
-.turbo
 .vscode/*
 !.vscode/launch.json
 !.vscode/extensions.json
@@ -24,7 +23,6 @@ libs/ui/packages/react/rsbuild.config.js.map
 
 .claude/settings.local.json
 .claude/worktrees/
-.cursor/rules/trial/*
 
 .nx/cache
 .nx/workspace-data

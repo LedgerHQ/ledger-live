@@ -1,4 +1,5 @@
 import Braze from "@braze/react-native-sdk";
+import { processGenericAwarenessModalBrazeCards } from "@ledgerhq/live-common/genericAwarenessModal";
 import { useCallback } from "react";
 import { useSelector, useDispatch } from "~/context/hooks";
 import {
@@ -26,6 +27,7 @@ import { ContentCardLocation, ContentCardsType, BrazeContentCard } from "./types
 import { dismissedContentCardsSelector } from "~/reducers/settings";
 import { getOldCampaignIds } from "@ledgerhq/live-common/braze/anonymousUsers";
 import { clearDismissedContentCards } from "~/actions/settings";
+import { appendGenericAwarenessModalContentCards } from "~/reducers/genericAwarenessModal";
 
 export const useDynamicContentLogic = () => {
   const dispatch = useDispatch();
@@ -76,12 +78,17 @@ export const useDynamicContentLogic = () => {
       .map(card => mapAsLandingPageStickyCtaContentCard(card))
       .sort(compareCards);
 
+    const genericAwarenessModalContentCards = processGenericAwarenessModalBrazeCards(
+      filterByPage(mobileContentCards, ContentCardLocation.GenericAwarenessModal),
+    );
+
     dispatch(setDynamicContentCategoriesCards(categoriesCards));
     dispatch(setDynamicContentMobileCards(mobileContentCards));
     dispatch(setDynamicContentWalletCards(walletCards));
     dispatch(setDynamicContentAssetsCards(assetCards));
     dispatch(setDynamicContentNotificationCards(notificationCards));
     dispatch(setDynamicContentLandingPageStickyCtaCards(landingPageStickyCtaCards));
+    dispatch(appendGenericAwarenessModalContentCards(genericAwarenessModalContentCards));
     dispatch(setIsDynamicContentLoading(false));
   }, [dismissedContentCardsIds, dispatch]);
 

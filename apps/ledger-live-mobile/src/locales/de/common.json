@@ -169,6 +169,9 @@
     "CeloAllFundsWarning" : {
       "title" : "Vergewissere dich, dass ausreichend Guthaben für künftige Transaktionsgebühren verbleibt"
     },
+    "CeloGroupNotVotable" : {
+      "title" : "Diese Validatorgruppe kann keine Stimmen empfangen. Sie kann voll oder nicht mehr berechtigt sein."
+    },
     "CeloMissingWithdrawalsError" : {
       "title" : "Etwas ist schief gelaufen, ich kann kein Guthaben abheben"
     },
@@ -889,6 +892,9 @@
     "RecommendUndelegation" : {
       "title" : "Bitte hebe die Delegierung des Kontos auf, bevor du es leerst"
     },
+    "MustDelegateBeforeStaking" : {
+      "title" : "Bitte delegiere dein Konto vor dem Staking"
+    },
     "RecommendSubAccountsToEmpty" : {
       "title" : "Bitte leere zuerst alle Unterkonten"
     },
@@ -1321,6 +1327,13 @@
     "tryEnablingAgain" : "Aktiviere die Standortdienste versuchsweise neu",
     "noInfos" : "Ledger greift nicht auf deine Standortinformationen zu."
   },
+  "borrow" : {
+    "title" : "Ausleihen",
+    "appNotFound" : "Ausleih-App nicht gefunden",
+    "infoModal" : {
+      "close" : "Schließen"
+    }
+  },
   "earn" : {
     "deposit" : {
       "protocolInfoModal" : {
@@ -1667,6 +1680,23 @@
     "headerTitle" : "Kauf erfolgreich",
     "title" : "Vielen Dank für dein Vertrauen in Ledger",
     "desc" : "Deine Bestellung wird bearbeitet.\nEine Auftragsbestätigung erhältst du per E-Mail."
+  },
+  "productTour" : {
+    "swap" : {
+      "cta" : "Entdecke Swapping"
+    },
+    "stake" : {
+      "cta" : "Verdienen entdecken"
+    },
+    "card" : {
+      "cta" : "Karte bestellen"
+    },
+    "portfolio" : {
+      "cta" : "Dein Portfolio im Blick"
+    },
+    "done" : {
+      "cta" : "Nochmal starten"
+    }
   },
   "discover" : {
     "title" : "Neues entdecken",
@@ -2743,6 +2773,12 @@
       "title" : "Perpetuals",
       "description" : "Traden mit Hebelwirkung"
     },
+    "borrowEntry" : {
+      "title" : "Darlehen",
+      "cardTitle" : "Stablecoin leihen",
+      "cardDescription" : "Liquidität freisetzen",
+      "cta" : "Entdecken"
+    },
     "recommended" : {
       "title" : "Empfohlen"
     },
@@ -2803,15 +2839,8 @@
       }
     },
     "recoverBanner" : {
-      "subscribeDone" : {
-        "title" : "Erinnerung: Schließe die Anmeldung für Ledger Recover ab"
-      },
-      "verifyIdentity" : {
-        "title" : "Der Zugang zu deiner Wallet ist noch nicht per Backup abgesichert."
-      },
-      "connectDevice" : {
-        "title" : "Der Zugang zu deiner Wallet ist noch nicht per Backup abgesichert."
-      }
+      "title" : "Schutz deines Backups vervollständigen",
+      "description" : "Aktivierung von Ledger Recover vornehmen"
     },
     "refreshStatus" : {
       "refreshing" : "Wird neu geladen...",
@@ -2933,7 +2962,8 @@
   },
   "operationsList" : {
     "to" : "An",
-    "from" : "Von"
+    "from" : "Von",
+    "pending" : "Ausstehend"
   },
   "operationDetails" : {
     "title" : "Transaktionsdetails",
@@ -3217,7 +3247,9 @@
     "title" : "Konten",
     "addAccount" : "Konto hinzufügen",
     "emptyState" : "Noch keine Konten",
-    "errorState" : "Beim Laden deiner Konten ist ein Fehler aufgetreten."
+    "errorState" : "Beim Laden deiner Konten ist ein Fehler aufgetreten.",
+    "assetsCount" : "{{count}} Assets",
+    "assetsCount_one" : "{{count}} Assets"
   },
   "crypto" : {
     "title" : "Krypto",
@@ -3348,7 +3380,7 @@
       "analytics" : "App-Leistung",
       "analyticsDesc" : "Ermöglicht Ledger, die App-Nutzung zu erfassen, um das Nutzungserlebnis zu optimieren.",
       "mevProtection" : "MEV-Schutz",
-      "mevProtectionDesc" : "Aktiviere den MEV-Schutz, um die Zuverlässigkeit von Ethereum-Transaktionen zu verbessern.",
+      "mevProtectionDesc" : "Aktiviere den MEV-Schutz, um Transaktionen zuverlässiger zu machen.",
       "mevProtectionLearnMore" : "Datenschutzerklärung",
       "personalizedRecommendations" : "Personalisierte Nutzung",
       "personalizedRecommendationsDesc" : "Ermöglicht Ledger, die App-Nutzung zu erfassen, um personalisierte Inhalte bereitzustellen",
@@ -5464,7 +5496,11 @@
     "undelegation" : {
       "undelegate" : "Delegierung aufheben",
       "undelegationMessage" : "Wenn du die Delegierung aufhebst, erhältst du keine Prämien für laufende und kommende Epochen",
-      "verificationSuccessTitle" : "Du hast die Delegierung deiner Vermögenswerte erfolgreich aufgehoben."
+      "verificationSuccessTitle" : "Du hast die Delegierung deiner Vermögenswerte erfolgreich aufgehoben.",
+      "dRepDelegationSelfTransactionDrawer" : {
+        "title" : "Delegierung aufheben vorbereiten",
+        "description" : "Um dein Staking-Konto zu schließen und deine ADA-Einzahlung zurückzuerhalten: Cardanos Governance erfordert nun, dass du deinen Stimmstatus definierst, bevor du undelegieren kannst.\n\nBei diesem Schritt wird eine Transaktion an deine eigene Ledger-Adresse gesendet, die lediglich dazu dient, deine Entscheidung nicht abzustimmen, zu registrieren. Es kostet nur die Standard-Netzwerkgebühr und deine ADA bleiben in deiner Wallet.\n\nSobald diese Präferenz erfasst ist, kannst du wie gewohnt undelegieren."
+      }
     },
     "delegation" : {
       "pool" : "Pool",
@@ -6235,6 +6271,208 @@
     },
     "delegation" : {
       "addCustomValidator" : "+ Benutzerdefinierten Validator hinzufügen"
+    }
+  },
+  "evm" : {
+    "info" : {
+      "available" : {
+        "title" : "{{currencyTicker}} verfügbar",
+        "description" : "Dieser Betrag ist verfügbar."
+      },
+      "delegated" : {
+        "title" : "Delegierte Assets",
+        "description" : "Delegierte Assets werden für das {{currencyName}}-Voting verwendet. Dies ist die Gesamtzahl deiner Votes."
+      },
+      "undelegating" : {
+        "title" : "Delegierung aufheben",
+        "description" : "Nicht delegierte Assets werden erst nach einer Sperrfrist von {{numberOfDays}} Tagen verfügbar."
+      },
+      "delegationUnavailable" : {
+        "title" : "Übertragung nicht verfügbar",
+        "description" : "Nicht genügend verfügbares Guthaben auf deinem Konto, um eine neue Delegierung zu starten."
+      }
+    },
+    "delegation" : {
+      "delegationEarn" : "Du kannst {{ticker}}-Prämien erhalten, indem du deine Assets delegierst.",
+      "info" : "So funktioniert Delegierung",
+      "claimRewards" : "Prämien beanspruchen",
+      "claimAvailableRewards" : "Anspruch {{amount}}",
+      "commission" : "Provision",
+      "header" : "Delegierung(en)",
+      "Amount" : "Betrag",
+      "noRewards" : "Keine Prämien verfügbar",
+      "delegate" : "Delegieren",
+      "undelegate" : "Delegierung aufheben",
+      "redelegate" : "Erneut delegieren",
+      "reward" : "Prämien beanspruchen",
+      "totalStake" : "Staking-Gesamtbetrag",
+      "stepperHeader" : {
+        "starter" : "Prämien verdienen",
+        "validator" : "Delegierte Vermögenswerte",
+        "amountSubTitle" : "Zu delegierender Betrag",
+        "summary" : "Zusammenfassung",
+        "verification" : "Verifizierung",
+        "selectDevice" : "Gerät wählen",
+        "connectDevice" : "Gerät verbinden",
+        "stepRange" : "Schritt {{currentStep}} von {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "starter" : {
+            "description" : "Delegiere deine {{ticker}}, um sicher Prämien zu verdienen, und behalte die Kontrolle über dein Vermögen.",
+            "steps" : {
+              "0" : "Delegierte Assets bleiben dein Eigentum.",
+              "1" : "Du musst {{numberOfDays}} Tage warten, bis die Aufhebung der Delegierung abgeschlossen ist.",
+              "2" : "Delegiere sicher mit deinem Ledger-Gerät."
+            },
+            "warning" : {
+              "description" : "Wähle deinen Validator mit Bedacht: Ein Teil deiner delegierten Assets kann unwiderruflich verloren gehen, wenn sich der Validator nicht angemessen verhält."
+            },
+            "cta" : "Weiter"
+          },
+          "validator" : {
+            "validators" : "Validatoren",
+            "myDelegations" : "Meine Delegierungen",
+            "cta" : "Weiter",
+            "estYield" : "Geschätzter Ertrag {{amount}}",
+            "totalAvailable" : "Insgesamt verfügbar: <0>{{amount}}</0>",
+            "allAssetsUsed" : "Alle verwendeten Vermögenswerte",
+            "noResultsFound" : "Kein Validator für \"<0>{{search}}</0>\" gefunden.",
+            "currentAmount" : "(+ <0>{{amount}}</0>)"
+          },
+          "amount" : {
+            "assetsRemaining" : "Verbleibende Vermögenswerte: <0>{{amount}}</0>",
+            "allAssetsUsed" : "Alle verwendeten Vermögenswerte",
+            "minAmount" : "Mindestbetrag: <0>{{min}}</0>",
+            "incorrectAmount" : "Maximaler Betrag: <0>{{max}}</0>",
+            "cta" : "Weiter"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Du hast deine Assets erfolgreich delegiert",
+              "text" : "Dein Guthaben wird aktualisiert, sobald das Netzwerk die Transaktion bestätigt.",
+              "cta" : "Details anzeigen"
+            },
+            "pending" : {
+              "title" : "Sende Transaktion..."
+            },
+            "broadcastError" : "Deine Transaktion ist möglicherweise fehlgeschlagen. Bitte warte einen Moment und prüfe vor einem erneuten Versuch zunächst den Transaktionsverlauf."
+          }
+        }
+      },
+      "drawer" : {
+        "status" : "Status",
+        "rewards" : "Prämien",
+        "active" : "Aktiv",
+        "inactive" : "Inaktiv",
+        "completionDate" : "Datum der Fertigstellung",
+        "redelegatedFrom" : "Zurückdelegiert von"
+      }
+    },
+    "redelegation" : {
+      "estYield" : "geschätzter Ertrag",
+      "stepperHeader" : {
+        "validator" : "Neuen Validator auswählen",
+        "amountSubTitle" : "Erneut zu delegierender Betrag",
+        "amountTitle" : "{{from}} → {{to}}",
+        "summary" : "Zusammenfassung",
+        "selectDevice" : "Gerät wählen",
+        "connectDevice" : "Gerät verbinden",
+        "stepRange" : "Schritt {{currentStep}} von {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "validator" : {
+            "validators" : "Validatoren",
+            "myDelegations" : "Meine Delegierungen",
+            "cta" : "Weiter",
+            "estYield" : "Geschätzter Ertrag {{amount}}",
+            "totalAvailable" : "Insgesamt verfügbar: <0>{{amount}}</0>",
+            "allAssetsUsed" : "Alle verwendeten Vermögenswerte",
+            "noResultsFound" : "Kein Validator für \"<0>{{search}}</0>\" gefunden."
+          },
+          "amount" : {
+            "newRedelegatedBalance" : "Neue Summe für <0>{{name}}</0> nach Aktion: <0>{{amount}}</0>",
+            "allAssetsUsed" : "Alle verwendeten Vermögenswerte"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Du hast deine Assets erfolgreich redelegiert",
+              "text" : "Dein Guthaben wird aktualisiert, sobald das Netzwerk die Transaktion bestätigt.",
+              "cta" : "Details anzeigen"
+            },
+            "pending" : {
+              "title" : "Sende Transaktion..."
+            },
+            "broadcastError" : "Deine Transaktion ist möglicherweise fehlgeschlagen. Bitte warte einen Moment und prüfe vor einem erneuten Versuch zunächst den Transaktionsverlauf."
+          }
+        }
+      }
+    },
+    "undelegation" : {
+      "stepperHeader" : {
+        "amountSubTitle" : "Nicht zu delegierender Betrag",
+        "summary" : "Zusammenfassung",
+        "selectDevice" : "Gerät wählen",
+        "connectDevice" : "Gerät verbinden",
+        "stepRange" : "Schritt {{currentStep}} von {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "amount" : {
+            "allAssetsUsed" : "Alle nicht delegierten Vermögenswerte"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Du hast die Delegierung deiner Assets erfolgreich aufgehoben",
+              "text" : "Dein Guthaben wird aktualisiert, sobald das Netzwerk die Transaktion bestätigt.",
+              "cta" : "Details anzeigen"
+            },
+            "pending" : {
+              "title" : "Sende Transaktion..."
+            },
+            "broadcastError" : "Deine Transaktion ist möglicherweise fehlgeschlagen. Bitte warte einen Moment und prüfe vor einem erneuten Versuch zunächst den Transaktionsverlauf."
+          }
+        }
+      }
+    },
+    "claimRewards" : {
+      "stepperHeader" : {
+        "validator" : "Prämie auswählen",
+        "method" : "Prämien beanspruchen",
+        "summary" : "Zusammenfassung",
+        "selectDevice" : "Gerät wählen",
+        "connectDevice" : "Gerät verbinden",
+        "stepRange" : "Schritt {{currentStep}} von {{totalSteps}}"
+      },
+      "flow" : {
+        "steps" : {
+          "method" : {
+            "youEarned" : "Du hast verdient",
+            "byDelegationAssetsTo" : "durch delegieren von Assets an",
+            "claimReward" : "Einzahlen",
+            "claimRewardCompound" : "Compound",
+            "claimRewardInfo" : "Die Prämie wird jetzt eingefordert und deinem verfügbaren Guthaben gutgeschrieben.",
+            "claimRewardCompoundInfo" : "Die Prämie wird jetzt eingefordert und automatisch an denselben Validator delegiert.",
+            "compoundOrCashIn" : "Zusammenrechnen oder einzahlen?",
+            "claimRewardTooltip" : "Die Prämien werden dem verfügbaren Guthaben hinzugefügt",
+            "claimRewardCompoundTooltip" : "Prämien werden zum delegierten Betrag hinzugefügt",
+            "cta" : "Weiter"
+          },
+          "verification" : {
+            "success" : {
+              "title" : "Du hast deine Prämien erfolgreich eingefordert. Diese wurden deinem verfügbaren Guthaben gutgeschrieben.",
+              "titleCompound" : "Deine Belohnungen wurden an denselben Validator delegiert.",
+              "text" : "Dein Guthaben wird aktualisiert, sobald das Netzwerk die Transaktion bestätigt.",
+              "cta" : "Details anzeigen"
+            },
+            "pending" : {
+              "title" : "Sende Transaktion..."
+            },
+            "broadcastError" : "Deine Transaktion ist möglicherweise fehlgeschlagen. Bitte warte einen Moment und prüfe vor einem erneuten Versuch zunächst den Transaktionsverlauf."
+          }
+        }
+      }
     }
   },
   "tron" : {
@@ -7211,6 +7449,11 @@
         "redelegate" : "Du musst {{numberOfDays}} Tage warten, bis die nicht delegierten Vermögenswerte wieder auf dem verfügbaren Guthaben erscheinen.",
         "undelegate" : "Du musst {{numberOfDays}} Tage warten, bis die nicht delegierten Vermögenswerte wieder auf dem verfügbaren Guthaben erscheinen."
       },
+      "evm" : {
+        "claimReward" : "Wenn der ausgewählte Validator ausstehende Prämien hat, werden diese automatisch eingefordert.",
+        "redelegate" : "Du musst {{numberOfDays}} Tage warten, bis die nicht delegierten Vermögenswerte wieder auf dem verfügbaren Guthaben erscheinen.",
+        "undelegate" : "Du musst {{numberOfDays}} Tage warten, bis die nicht delegierten Vermögenswerte wieder auf dem verfügbaren Guthaben erscheinen."
+      },
       "lending" : "Verifiziere vor dem Senden die Vorgangsdetails auf deinem Gerät."
     },
     "amount" : "Betrag",
@@ -7809,27 +8052,48 @@
   "postOnboarding" : {
     "hub" : {
       "title" : "Wie geht es weiter?",
-      "areAllPostOnboardingActionsCompletedTitle" : "Alles eingerichtet! Lerne jetzt dein Portfolio kennen",
+      "areAllPostOnboardingActionsCompletedTitle" : "Alles eingerichtet!",
       "skip" : "Ich mache das später",
-      "viewWallet" : "Portfolio entdecken"
+      "viewWallet" : "Portfolio entdecken",
+      "deviceStepComplete" : "Fertig"
     },
-    "entryPointCard" : {
-      "title" : "Was gibt es noch für deine {{productName}}?",
-      "description" : "Schütze deine Assets und entwickle dich weiter.",
-      "buttonLabel" : "Schaue, was als nächstes kommt"
+    "drawer" : {
+      "title" : "Schließe nun die Wallet-Einrichtung ab",
+      "titleCompleted" : "Alles eingerichtet!",
+      "primaryLabel" : "Verstanden",
+      "actionCompletedLabel" : "Fertig",
+      "actions" : {
+        "deviceOnboarded" : {
+          "title" : "Dein Ledger-Gerät einrichten"
+        },
+        "assetsTransfer" : {
+          "title" : "Krypto hinzufügen",
+          "description" : "Empfange oder kaufe Krypto für deine Wallet"
+        },
+        "syncAccounts" : {
+          "title" : "Wallet synchronisieren",
+          "description" : "Halte deine Kryptokonten synchronisiert"
+        },
+        "customImage" : {
+          "title" : "Sperrbildschirm anpassen",
+          "description" : "Zeige dein digitales Lieblingskunstwerk oder -foto als Sperrbildschirm deines Geräts an."
+        },
+        "recover" : {
+          "title" : "Schutz deines Backups vervollständigen",
+          "description" : "Aktivierung von Ledger Recover vornehmen"
+        }
+      }
     },
     "widget" : {
       "title" : "Schließe nun die Wallet-Einrichtung ab",
-      "subtitle" : "Beginne mit Einzahlungen in deine Wallet."
+      "subtitle" : "Schütze deine Assets und entwickle dich weiter."
     },
     "actions" : {
       "deviceOnboarded" : {
-        "titleCompleted" : "Ledger-Gerät einrichten"
+        "titleCompleted" : "Dein Ledger-Gerät einrichten"
       },
       "assetsTransfer" : {
-        "title" : "Assets übertragen",
         "titleCompleted" : "Assets an dein Ledger-Gerät übertragen",
-        "description" : "Überweise von beliebigen Börsen oder Wallets.",
         "popupLabel" : "Vermögenswerte übertragen"
       },
       "buyCrypto" : {
@@ -7839,21 +8103,15 @@
         "popupLabel" : "Gekaufte Kryptos"
       },
       "customImage" : {
-        "title" : "Sperrbildschirm anpassen",
         "titleCompleted" : "Sperrbildschirm angepasst",
-        "description" : "Zeige dein digitales Lieblingskunstwerk oder -foto als Sperrbildschirm deines Geräts an.",
         "popupLabel" : "Sperrbildschirm erfolgreich angepasst"
       },
       "recover" : {
-        "title" : "Schutz deines Backups vervollständigen",
         "titleCompleted" : "Backup abgesichert",
-        "description" : "Aktivierung von Ledger Recover vornehmen",
         "popupLabel" : "Du hast erfolgreich Ledger Recover abonniert"
       },
       "syncAccounts" : {
-        "title" : "Deine Kryptokonten synchronisieren",
         "titleCompleted" : "Deine Konten sind synchronisiert",
-        "description" : "Ledger Sync aktivieren, um deine Kryptokonten zu synchronisieren",
         "popupLabel" : "Konten synchronisiert"
       }
     }
@@ -8400,6 +8658,64 @@
       }
     }
   },
+  "assetDetail" : {
+    "balanceGraph" : {
+      "marketPrice" : "Marktpreis",
+      "timeframeSelector" : "Zeitrahmen",
+      "timeLabel" : {
+        "24h" : "1 Tag",
+        "7d" : "1 Woche",
+        "30d" : "1 Monat",
+        "1y" : "1 Jahr"
+      },
+      "chartPlaceholder" : "Grafik"
+    },
+    "addresses" : {
+      "title" : "Adressen",
+      "addAccount" : "Hinzufügen",
+      "empty" : "Noch keine Adressen Tippe auf Hinzufügen, um loszulegen."
+    },
+    "marketStats" : {
+      "title" : "Marktstatistik",
+      "marketCap" : "Marktkapitalisierung",
+      "marketRank" : "Marktrang",
+      "circulatingSupply" : "Angebot im Umlauf",
+      "circulatingSupplyTooltip" : "Die Anzahl der Coins, die derzeit zum Handel verfügbar und auf dem Markt im Umlauf sind.",
+      "maxSupply" : "Max. Angebot",
+      "maxSupplyTooltip" : "Die maximale Anzahl von Coins, die es jemals für diese Kryptowährung geben wird.",
+      "tradingVolume" : "24h Handelsvolumen",
+      "error" : "Die Marktstatistiken können nicht geladen werden."
+    },
+    "pricePerformance" : {
+      "title" : "Preis-Performance",
+      "allTimeHigh" : "Allzeithoch",
+      "allTimeLow" : "Allzeittief",
+      "yearsAgo" : "vor {{count}}J",
+      "monthsAgo" : "vor {{count}}M",
+      "daysAgo" : "vor {{count}}T",
+      "hoursAgo" : "vor {{count}}S",
+      "minutesAgo" : "vor {{count}} Min.",
+      "justNow" : "Jetzt gerade",
+      "error" : "Die Preisentwicklung kann nicht geladen werden."
+    },
+    "transactions" : {
+      "title" : "Transaktionen"
+    },
+    "fallbackBanner" : {
+      "title" : "Swappen und Kaufen werden für dieses Asset nicht unterstützt."
+    },
+    "balanceDetails" : {
+      "totalBalance" : "Gesamtsaldo",
+      "transfer" : "Übertragen",
+      "availableBalance" : "Verfügbares Guthaben",
+      "earnDeposit" : "Verdienen Einzahlung",
+      "earnBanner" : "Verdiene bis zu {{apy}}% {{type}}",
+      "earnBannerGeneric" : "Verdiene mit diesem Asset",
+      "earnBannerSubtitle" : "Halte dieses Asset und verdiene",
+      "earnBannerAction" : "Gehe zu Verdienen",
+      "availableBalanceTooltip" : "Sofort verfügbare Guthaben, mit Ausnahme gestaketer oder delegierter Beträge."
+    }
+  },
   "assetSelection" : {
     "selectCrypto" : {
       "title" : "Vermögenswert auswählen"
@@ -8617,6 +8933,36 @@
       "lockedBalanceTooltip" : "Deine Assets sind in Angeboten blockiert, die du an Dritte gesendet hast. Du kannst diese Angebote jederzeit stornieren oder aber abwarten, bis der Empfänger sie annimmt oder ablehnt.",
       "withdrawableBalance" : "Auszahlbar",
       "withdrawableBalanceTooltip" : "Assets, die du aus abgelaufenen Angeboten zurückfordern kannst. Hole sie zurück, damit sie dir wieder als Guthaben zur Verfügung stehen."
+    },
+    "disclaimer" : {
+      "title" : "Canton Network einrichten",
+      "intro" : "Canton verfügt über einzigartige Eigenschaften, die du beachten musst, bevor du fortfährst:",
+      "bullets" : {
+        "utxo" : {
+          "title" : "UTXO-basierter Kontostand",
+          "body" : "Der Kontostand besteht aus einzelnen Coin-Verträgen, die auf 100 pro Überweisung begrenzt sind. Inaktive Verträge verlieren im Laufe der Zeit an Wert und verfallen, wenn die Gebühren ihren Kontostand übersteigen."
+        },
+        "offers" : {
+          "title" : "Angebotsbasierte Überweisungen",
+          "body" : "Nichts erledigt sich automatisch. Gesendete Überweisungen können abgehoben werden; empfangene Überweisungen müssen manuell akzeptiert oder abgelehnt werden. Verwalte Angebote über dein Canton-Dashboard."
+        },
+        "dualValidator" : {
+          "title" : "Sicherheit durch Doppel-Validator",
+          "body" : "Transaktionen erfordern eine Co-Signatur sowohl von Ledger als auch von Klin. Keiner kann allein in deinem Namen handeln."
+        },
+        "tokenLiability" : {
+          "title" : "Standard-Token-Haftung ⚠️",
+          "body" : "Die Wiederherstellung von Token im Fehlerszenario liegt in der Verantwortung des Token-Ausstellers, nicht in der von Ledger."
+        }
+      },
+      "agreeLabel" : "Ich stimme den <1>Nutzungsbedingungen von Canton Network und dem Haftungsausschluss von Ledger zu</1>",
+      "cancel" : "Abbrechen",
+      "agree" : "Zustimmen",
+      "terms" : {
+        "title" : "Nutzungsbedingungen von Canton Network",
+        "sectionTitle" : "Standard-Haftung und Rückgewinnung von Token",
+        "body" : "Ledger unterstützt nur Standard-Token, die über das Digital-Asset-Register (DA) ausgegeben werden. Ledger ist nicht der Emittent dieser Token und übernimmt keine Haftung für deren Wert, ihre Verwaltung oder die zugrunde liegenden Smart Contracts.\n\nIm Falle einer Unterbrechung des Ledger-Dienstes oder eines „Disaster-Recovery“-Fehlers kann Ledger deine Assets nicht wiederherstellen. Du musst dich direkt an den jeweiligen Tokenaussteller (Asset Administrator) wenden, um die Wiederherstellung über die Protokolle „Asset Freeze“ oder „Registry Recovery“ zu veranlassen. Dein Rechtsanspruch liegt ausschließlich beim Tokenaussteller im Rahmen seiner bestehenden Service Level Agreements (SLAs). Indem du fortfährst, erkennst du an, dass Ledger und seine Affiliates von jeglicher Haftung ausgeschlossen sind, die sich aus dem Verlust, der Wiederbeschaffung oder der Unfähigkeit, diese Token zurückzuholen, ergibt."
+      }
     },
     "onboard" : {
       "account" : "Konto",
@@ -8900,7 +9246,8 @@
       "addDevice" : "Füge ein Ledger-Gerät hinzu",
       "exploreAllDevices" : "Alle Ledger-Geräte entdecken",
       "available" : "Verfügbar",
-      "unavailable" : "Nicht verbunden"
+      "unavailable" : "Nicht verbunden",
+      "menuAccessibilityLabel" : "Geräteoptionen"
     }
   }
 }

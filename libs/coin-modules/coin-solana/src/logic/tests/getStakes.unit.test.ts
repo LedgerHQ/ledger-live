@@ -23,8 +23,11 @@ const mockEstimateTxFee = estimateTxFee as jest.MockedFunction<typeof estimateTx
 const TEST_ADDRESS = "HxCvgjSbF8HMt3fj8P3j49jmajNCMwKAqBu79HUDPtkM";
 const STAKE_PUBKEY = new PublicKey("AjmMiagw33Ad4WdPR3y2QWsDXaLxmsiSZEpMfpT1Q9uZ");
 const VOTER_PUBKEY = new PublicKey("EvnRmnMrd69kFdbLMxWkTn1icZ7DCceRhvmb2SJXqDo4");
+const EPOCH = 400;
 
-const api = {} as ChainAPI;
+const api = {
+  getEpochInfo: jest.fn().mockResolvedValue({ epoch: EPOCH }),
+} as unknown as ChainAPI;
 
 function makeStakeAccount(overrides?: {
   state?: StakeActivationData["state"];
@@ -117,6 +120,70 @@ describe("getStakes", () => {
 
     await expect(getStakes(api, TEST_ADDRESS)).rejects.toThrow("RPC error");
   });
+
+  describe("actions", () => {
+    it.each<[string[], string, Parameters<typeof makeStakeAccount>[0]]>([
+      [["undelegate"], "active with no inactive lamports", { state: "active" }],
+      [
+        ["claim_reward", "undelegate"],
+        "active with inactive lamports",
+        { state: "active", lamports: 5_000_000_000, active: 4_000_000_000 },
+      ],
+      [
+        ["undelegate"],
+        "activating with no inactive lamports",
+        { state: "activating", active: 4_997_717_120, inactive: 0 },
+      ],
+      [
+        ["claim_reward", "delegate"],
+        "deactivating with inactive lamports",
+        { state: "deactivating", lamports: 5_000_000_000, active: 2_000_000_000 },
+      ],
+      [
+        ["claim_reward", "delegate"],
+        "inactive",
+        { state: "inactive", active: 0, inactive: 5_000_000_000 },
+      ],
+    ])("returns %j for a stake that is %s", async (expected, _case, overrides) => {
+      mockGetStakeAccounts.mockResolvedValue([makeStakeAccount(overrides)]);
+
+      const result = await getStakes(api, TEST_ADDRESS);
+
+      expect(result.items[0].actions).toStrictEqual(expected);
+    });
+
+    it("omits 'claim_reward' when the main address is not the withdraw authority", async () => {
+      const stakeAccount = makeStakeAccount({
+        state: "inactive",
+        active: 0,
+        inactive: 5_000_000_000,
+      });
+      stakeAccount.account!.info!.meta!.authorized!.withdrawer = new PublicKey(VOTER_PUBKEY);
+      mockGetStakeAccounts.mockResolvedValue([stakeAccount]);
+
+      const result = await getStakes(api, TEST_ADDRESS);
+
+      expect(result.items[0].actions).toStrictEqual(["delegate"]);
+    });
+
+    it("omits 'claim_reward' when the stake is locked up at the current epoch", async () => {
+      const stakeAccount = makeStakeAccount({
+        state: "inactive",
+        active: 0,
+        inactive: 5_000_000_000,
+      });
+      stakeAccount.account!.info!.meta!.lockup = {
+        unixTimestamp: Math.floor(Date.now() / 1000) + 100_000,
+        epoch: EPOCH + 100,
+        custodian: PublicKey.default,
+      };
+      mockGetStakeAccounts.mockResolvedValue([stakeAccount]);
+
+      const result = await getStakes(api, TEST_ADDRESS);
+
+      expect(result.items[0].actions).toStrictEqual(["delegate"]);
+    });
+  });
 });
 
 describe("computeUnstakeReserve", () => {
@@ -171,8 +238,6 @@ describe("computeUnstakeReserve", () => {
 });
 
 describe("mapStakeAccountsToSolanaStakes", () => {
-  const EPOCH = 400;
-
   it("should map an active delegated stake account", () => {
     const stakeAccounts = [makeStakeAccount()];
     const result = mapStakeAccountsToSolanaStakes(

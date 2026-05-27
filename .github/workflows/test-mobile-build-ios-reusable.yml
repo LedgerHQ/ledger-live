@@ -8,8 +8,8 @@ on:
         required: true
         type: string
         default: "general-pool"
-      disable-turbo-cache:
-        description: Disable turbo caching
+      disable-nx-cache:
+        description: Skip Nx cache for nx-step runs
         required: false
         type: boolean
         default: false
@@ -126,7 +126,6 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
           skip-pod-cache: "true"
-          skip-turbo-cache: "true"
           skip-pnpm-cache: "false"
           use-mise: "true"
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
@@ -166,7 +165,7 @@ jobs:
           PRODUCTION: ${{ inputs.production_firebase }}
         with:
           command: pnpm exec nx run live-mobile:e2e:ci -- -p ios -b $([[ "$PRODUCTION" == "true" ]] && printf %s '--production')
-          disable_cache: ${{ inputs.disable-turbo-cache || false }}
+          disable_cache: ${{ inputs.disable-nx-cache || false }}
 
       - name: Upload Detox Build
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
@@ -213,7 +212,6 @@ jobs:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
           skip-pod-cache: "true"
-          skip-turbo-cache: "true"
           skip-pnpm-cache: "false"
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
           cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
@@ -235,7 +233,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
         with:
           command: pnpm exec nx run live-mobile:e2e:ci -- -p ios --bundle --bundle-size
-          disable_cache: ${{ inputs.disable-turbo-cache || false }}
+          disable_cache: ${{ inputs.disable-nx-cache || false }}
 
       - name: Output bundle size for analysis
         id: output-js-bundle-size

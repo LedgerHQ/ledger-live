@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
+import type BigNumber from "bignumber.js";
 import {
   getMainAccount,
   getAccountCurrency,
@@ -26,6 +27,8 @@ type Props = {
   delegation: Delegation;
   account: TezosAccount | TokenAccount;
   parentAccount: TezosAccount | undefined | null;
+  stakingEnabled: boolean;
+  delegatedAmount: BigNumber;
 };
 const Wrapper = styled.div<{
   isPending: boolean;
@@ -75,7 +78,7 @@ const CTA = styled.div`
   display: flex;
   justify-content: flex-end;
 `;
-const Row = ({ account, parentAccount, delegation }: Props) => {
+const Row = ({ account, parentAccount, delegation, stakingEnabled, delegatedAmount }: Props) => {
   const unit = useAccountUnit(account);
   const currency = getAccountCurrency(account);
   const mainAccount = getMainAccount(account, parentAccount);
@@ -109,7 +112,7 @@ const Row = ({ account, parentAccount, delegation }: Props) => {
       <Base>
         <FormattedVal
           ff="Inter|SemiBold"
-          val={account.balance}
+          val={delegatedAmount}
           unit={unit}
           showCode
           fontSize={3}
@@ -122,7 +125,7 @@ const Row = ({ account, parentAccount, delegation }: Props) => {
           color="neutral.c80"
           fontSize={3}
           currency={currency}
-          value={account.balance}
+          value={delegatedAmount}
         />
       </Base>
       <Base>
@@ -142,7 +145,7 @@ const Row = ({ account, parentAccount, delegation }: Props) => {
       </Base>
       {account.type === "Account" && !delegation.isPending ? (
         <CTA>
-          <ContextMenu account={account} />
+          <ContextMenu account={account} stakingEnabled={stakingEnabled} />
         </CTA>
       ) : (
         <CTA />

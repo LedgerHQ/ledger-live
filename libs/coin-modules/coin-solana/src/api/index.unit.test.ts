@@ -24,6 +24,7 @@ import { lastBlock } from "../logic/lastBlock";
 import { listOperations } from "../logic/listOperations";
 import { validateAddress } from "../logic/validateAddress";
 import { validateIntent } from "../logic/validateIntent";
+import { getValidators } from "../logic/getValidators";
 import { ChainAPI } from "../network";
 
 const mockChainAPI = {} as unknown as ChainAPI;
@@ -80,11 +81,16 @@ jest.mock("../logic/validateAddress", () => ({
   validateAddress: jest.fn(),
 }));
 
+jest.mock("../logic/getValidators", () => ({
+  getValidators: jest.fn(),
+}));
+
 describe("createApi", () => {
   const mockConfig: SolanaCoinConfig = {
     token2022Enabled: false,
     legacyOCMSMaxVersion: "1.0.0",
     status: { type: "active" },
+    validatorsUrl: "https://solana-validators.com",
   };
 
   afterEach(() => {
@@ -298,13 +304,44 @@ describe("createApi", () => {
     expect(result).toBe(true);
   });
 
+  it("should delegate getValidators to the logic function", async () => {
+    jest.mocked(getValidators).mockResolvedValueOnce({
+      items: [
+        {
+          address: "validator",
+          name: "validator",
+          balance: 10n,
+          commissionRate: "0",
+          apy: 0.05,
+        },
+      ],
+      next: undefined,
+    });
+
+    const api = createApi(mockConfig, "solana");
+    const result = await api.getValidators();
+
+    expect(getValidators).toHaveBeenCalledWith("https://solana-validators.com");
+    expect(result).toEqual({
+      items: [
+        {
+          address: "validator",
+          name: "validator",
+          balance: 10n,
+          commissionRate: "0",
+          apy: 0.05,
+        },
+      ],
+      next: undefined,
+    });
+  });
+
   it("should throw for unsupported methods", () => {
     const api = createApi(mockConfig, "solana");
 
     expect(() => api.getBlock(1)).toThrow("getBlock is not supported");
     expect(() => api.getBlockInfo(1)).toThrow("getBlockInfo is not supported");
     expect(() => api.getRewards("addr")).toThrow("getRewards is not supported");
-    expect(() => api.getValidators()).toThrow("getValidators is not supported");
   });
 
   describe("getBalance", () => {

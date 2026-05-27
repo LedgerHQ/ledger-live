@@ -190,13 +190,13 @@ const testSync = async (currencyId: string, xpubOrAddress: string) => {
   console.log("starting sync on", currencyId, xpubOrAddress);
   const mockAccount = getMockAccount(currencyId, xpubOrAddress);
   const currency = getCryptoCurrencyById(currencyId);
-  const currencyBrige = getCurrencyBridge(currency);
-  const data = await currencyBrige.preload(currency);
-  currencyBrige.hydrate(data, currency);
-  const accountBrige = getAccountBridgeByFamily(mockAccount.currency!.family, mockAccount.id);
+  const currencyBridge = await getCurrencyBridge(currency);
+  const data = await currencyBridge.preload(currency);
+  currencyBridge.hydrate(data, currency);
+  const accountBridge = await getAccountBridgeByFamily(mockAccount.currency!.family, mockAccount.id);
 
   const syncedAccount = await firstValueFrom(
-    accountBrige
+    accountBridge
       .sync(mockAccount, { paginationConfig: {}, blacklistedTokenIds: [] })
       .pipe(reduce((acc, f: (arg0: Account) => Account) => f(acc), mockAccount)),
   );
@@ -210,13 +210,13 @@ const testSync = async (currencyId: string, xpubOrAddress: string) => {
 const testSyncAccount = async (account: Account) => {
   console.log("starting sync on", account.currency.id, account.xpub ?? account.freshAddress);
   const currency = getCryptoCurrencyById(account.currency.id);
-  const currencyBrige = getCurrencyBridge(currency);
-  const data = await currencyBrige.preload(currency);
-  currencyBrige.hydrate(data, currency);
-  const accountBrige = getAccountBridgeByFamily(account.currency!.family, account.id);
+  const currencyBridge = await getCurrencyBridge(currency);
+  const data = await currencyBridge.preload(currency);
+  currencyBridge.hydrate(data, currency);
+  const accountBridge = await getAccountBridgeByFamily(account.currency!.family, account.id);
 
   const syncedAccount = await firstValueFrom(
-    accountBrige
+    accountBridge
       .sync(account, { paginationConfig: {}, blacklistedTokenIds: [] })
       .pipe(reduce((acc, f: (arg0: Account) => Account) => f(acc), account)),
   );

@@ -1,7 +1,10 @@
-import { Category } from "../types";
-import type { Tool } from "../types";
+import type { Category, Tool, ToolId, ToolPlatform } from "@devtools/registry";
 
 type CategoryEntry = { category: Category; tools: Tool[] };
+
+export function filterToolsByPlatform(tools: Tool[], platform: ToolPlatform): Tool[] {
+  return tools.filter(t => !t.platform || t.platform === platform);
+}
 
 export function filterToolsByQuery(categories: CategoryEntry[], query: string): CategoryEntry[] {
   const q = query.trim().toLowerCase();
@@ -17,7 +20,7 @@ export function filterToolsByQuery(categories: CategoryEntry[], query: string): 
 
 export function findCategoryForToolId(
   categories: CategoryEntry[],
-  toolId: string | undefined,
+  toolId: ToolId | undefined,
 ): Category | null {
   if (!toolId) return null;
   return categories.find(({ tools }) => tools.some(t => t.id === toolId))?.category ?? null;

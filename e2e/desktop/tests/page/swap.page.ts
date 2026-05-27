@@ -49,6 +49,9 @@ export class SwapPage extends WebViewAppPage {
   private insufficientFundsBuyButton = "insufficient-funds-buy-button";
   private insufficientFundsWarning = "insufficient-funds-warning";
   private executeButtonDisabled = "execute-button-disabled";
+  // Swap Steps Approval components
+  private readonly giveApprovalButton = "give-approval-button";
+  private readonly signPermitButton = "sign-permit-button";
 
   // History Components
   readonly historyButton = this.page.getByTestId("History-tab-button");
@@ -569,5 +572,38 @@ export class SwapPage extends WebViewAppPage {
     }
     const remaining = await getTokenAllowanceCommand(fromAccount, provider.contractAddress);
     expect(remaining).toBe("0");
+  }
+
+  @step("Expect TwoStepApproval screen to be displayed")
+  async expectTwoStepApprovalScreen() {
+    await this.verifyElementIsVisible(this.giveApprovalButton);
+  }
+
+  @step("Click Give Approval button")
+  async clickGiveApprovalButton() {
+    const webview = await this.getWebView();
+    const approvalButton = webview.getByTestId(this.giveApprovalButton);
+    await expect(approvalButton).toBeVisible();
+    await expect(approvalButton).toBeEnabled();
+    await approvalButton.click();
+  }
+
+  @step("Expect TwoStepSign screen to be displayed")
+  async expectTwoStepSignScreen() {
+    await this.verifyElementIsVisible(this.executeSwapBtn);
+  }
+
+  @step("Click Give Authorization button")
+  async clickGiveAuthorizationButton() {
+    const webview = await this.getWebView();
+    const authorizationButton = webview.getByTestId(this.signPermitButton);
+    await expect(authorizationButton).toBeVisible();
+    await expect(authorizationButton).toBeEnabled();
+    await authorizationButton.click();
+  }
+
+  @step("Selected provider: $0")
+  async logSelectedProvider(providerName: string) {
+    expect(providerName).toBeDefined();
   }
 }

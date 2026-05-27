@@ -20,6 +20,7 @@ import { accountsSelector } from "~/renderer/reducers/accounts";
 import { openModal } from "~/renderer/actions/modals";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
 import { ASSET_DETAIL_TRACKING_PAGE_NAME } from "LLD/features/AssetDetail/constants";
+import { isAssetDetailPageLoading } from "LLD/features/AssetDetail/utils/isAssetDetailPageLoading";
 import { useTranslation } from "react-i18next";
 import { track } from "~/renderer/analytics/segment";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
@@ -31,9 +32,12 @@ type UseActionBarViewModelProps = Readonly<{
   ledgerCurrency?: CryptoOrTokenCurrency;
   marketCurrencyData?: MarketCurrencyData;
   tickerHint: string;
+  isDistributionLoading: boolean;
+  isMarketLoading: boolean;
 }>;
 
 export type ActionBarViewModel = Readonly<{
+  showSkeleton: boolean;
   receiveLabel: string;
   buyLabel: string;
   sellLabel: string;
@@ -99,6 +103,8 @@ export function useActionBarViewModel({
   ledgerCurrency,
   marketCurrencyData,
   tickerHint,
+  isDistributionLoading,
+  isMarketLoading,
 }: UseActionBarViewModelProps): ActionBarViewModel {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -164,6 +170,12 @@ export function useActionBarViewModel({
     return hasAccounts && (hasBalance || hasPositiveBalanceWithZeroSpendable);
   }, [distributionItem]);
 
+  const isPageLoading = isAssetDetailPageLoading(
+    isDistributionLoading,
+    isMarketLoading,
+    Boolean(marketCurrencyData),
+  );
+
   const { isBuyEnabled, isSellEnabled, isSendEnabled } = useMemo(
     () => ({
       isBuyEnabled: canBuyOnRamp,
@@ -223,6 +235,7 @@ export function useActionBarViewModel({
   }, [dispatch, primaryAccount, primaryParentAccount, ledgerCurrency?.ticker, tickerHint]);
 
   return {
+    showSkeleton: isPageLoading,
     receiveLabel: t("quickActions.receive"),
     buyLabel: t("quickActions.buy"),
     sellLabel: t("quickActions.sell"),

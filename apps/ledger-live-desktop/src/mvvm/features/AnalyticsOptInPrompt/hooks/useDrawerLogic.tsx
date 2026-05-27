@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { EntryPoint } from "../types/AnalyticsOptInPromptNavigator";
-import { ABTestingVariants } from "@ledgerhq/types-live";
+import { AB_TESTING_VARIANTS, type ABTestingVariants } from "../types/variants";
 import { track } from "~/renderer/analytics/segment";
 import { getVariant, useAnalyticsOptInPrompt } from "./useCommonLogic";
 
@@ -15,7 +15,7 @@ export const useDrawerLogic = ({ entryPoint, variant, onClose }: UseDrawerLogicP
   const [preventClosable, setPreventClosable] = useState(false);
 
   const isNotOnBoarding = entryPoint !== EntryPoint.onboarding;
-  const isVariantB = getVariant(variant) === ABTestingVariants.variantB;
+  const isVariantB = getVariant(variant) === AB_TESTING_VARIANTS.B;
 
   const { shouldWeTrack } = useAnalyticsOptInPrompt({ entryPoint });
 

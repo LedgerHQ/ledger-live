@@ -60,6 +60,7 @@ enum ContentCardLocation {
   MyLedger = "my_ledger",
   NotificationCenter = "notification_center",
   LandingPageStickyCta = "landing_page_sticky_cta",
+  GenericAwarenessModal = "generic_awareness_modal",
 }
 
 type AllLocations = ContentCardLocation | LandingPageUseCase;

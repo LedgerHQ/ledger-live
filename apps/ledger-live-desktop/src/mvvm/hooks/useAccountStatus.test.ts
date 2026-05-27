@@ -2,7 +2,18 @@ import { renderHook } from "tests/testSetup";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import BigNumber from "bignumber.js";
+import type { Account } from "@ledgerhq/types-live";
 import { useAccountStatus } from "./useAccountStatus";
+
+jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
+  useAccountBridge: jest.fn(),
+  useAccountBridgeOrNull: jest.fn(),
+  useAccountBridgeMany: jest.fn((accounts: Account[]) =>
+    accounts.map(() => ({
+      isAccountEmpty: (a: Account) => a.balance.isZero(),
+    })),
+  ),
+}));
 
 const ethereumCurrency = getCryptoCurrencyById("ethereum");
 

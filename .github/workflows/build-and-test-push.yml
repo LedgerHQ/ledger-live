@@ -34,9 +34,9 @@ jobs:
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-mock-reusable.yml@develop
     secrets: inherit
     with:
-      macos-specificity-runner-label: "performance-pool"
+      macos-specificity-runner-label: "general-pool"
       skip-bundle-size-reporting: true
-      max-shards: 1
+      max-shards: 2
       skip-pod-checks: "true"
 
   # Tests

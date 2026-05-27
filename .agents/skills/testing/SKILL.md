@@ -1,6 +1,9 @@
 ---
 name: testing
-description: Write unit and integration tests for Ledger Wallet apps. Use for Jest tests (Desktop/Mobile), MSW handlers, or testing best practices.
+description: |
+  Write unit and integration tests for Ledger Wallet apps. 
+  Use for Jest tests (Desktop/Mobile), MSW handlers and testing best practices.
+  Applies to "*.test.*", "*.spec.*", "**/tests/**", "**/__tests__/**", "**/__integrations__/**", "**/jest-setup*"
 ---
 
 # Ledger Wallet Testing Skill
@@ -144,9 +147,7 @@ jest.spyOn(UseMyViewModel, "useMyViewModel").mockImplementation(() => ({
 }));
 
 // MSW override for error case
-server.use(
-  http.get("/api/data", () => HttpResponse.json({ error: "Not found" }, { status: 404 }))
-);
+server.use(http.get("/api/data", () => HttpResponse.json({ error: "Not found" }, { status: 404 })));
 ```
 
 ---
@@ -155,14 +156,14 @@ server.use(
 
 Before creating anything, check these locations:
 
-| Location | What's there |
-| --- | --- |
-| `@ledgerhq/ledger-wallet-framework/mocks/account` | `genAccount()`, `genTokenAccount()` |
-| `@ledgerhq/live-common/currencies` | `getCryptoCurrencyById()`, `getTokenById()` |
-| `tests/handlers/` | MSW handlers (market, assets, countervalues, cryptoIcons) |
-| `tests/handlers/fixtures/` | JSON fixtures for API responses |
-| `tests/fixtures/` | `mockedAccountList`, `expectedCurrencyList` |
-| `tests/mocks/` | Mock components, assets, countervalues |
+| Location                                          | What's there                                              |
+| ------------------------------------------------- | --------------------------------------------------------- |
+| `@ledgerhq/ledger-wallet-framework/mocks/account` | `genAccount()`, `genTokenAccount()`                       |
+| `@ledgerhq/live-common/currencies`                | `getCryptoCurrencyById()`, `getTokenById()`               |
+| `tests/handlers/`                                 | MSW handlers (market, assets, countervalues, cryptoIcons) |
+| `tests/handlers/fixtures/`                        | JSON fixtures for API responses                           |
+| `tests/fixtures/`                                 | `mockedAccountList`, `expectedCurrencyList`               |
+| `tests/mocks/`                                    | Mock components, assets, countervalues                    |
 
 ```bash
 # Run BEFORE writing new mocks
@@ -183,7 +184,7 @@ These cause flaky tests and mock cannibalization when running with parallel work
 
 **`jest.restoreAllMocks()`** — Never use this; it restores global mocks from jest-setup and breaks other tests. Use `jest.clearAllMocks()` or `mock.mockRestore()` for specific spies only.
 
-**Wrong `beforeEach` order** — Call `jest.clearAllMocks()` *before* `mockReturnValue()` or other mock configuration — not after (calling clear after wipes the setup).
+**Wrong `beforeEach` order** — Call `jest.clearAllMocks()` _before_ `mockReturnValue()` or other mock configuration — not after (calling clear after wipes the setup).
 
 ---
 

@@ -1,34 +1,10 @@
-import { useSelector, useDispatch } from "~/context/hooks";
-import {
-  completeOnboarding,
-  setAnalyticsConsentInfo,
-  setHasSeenAnalyticsOptInPrompt,
-  setIsReborn,
-  setOnboardingHasDevice,
-  setReadOnlyMode,
-} from "~/actions/settings";
-import { useNavigation } from "@react-navigation/native";
-import { NavigatorName, ScreenName } from "~/const";
-import {
-  RootNavigationComposite,
-  StackNavigatorNavigation,
-} from "~/components/RootNavigator/types/helpers";
-import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import { Linking } from "react-native";
 import { urls } from "~/utils/urls";
 import { useLocale } from "~/context/Locale";
-import { track, updateIdentify } from "~/analytics";
-import { hasSeenAnalyticsOptInPromptSelector, trackingEnabledSelector } from "~/reducers/settings";
+import { track } from "~/analytics";
 import { EntryPoint } from "~/components/RootNavigator/types/AnalyticsOptInPromptNavigator";
 import { ABTestingVariants } from "@ledgerhq/types-live";
-import { useFeature, useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
-import { useNotifications } from "LLM/features/NotificationsPrompt";
-import { resolveAnalyticsOptInParams } from "@ledgerhq/live-common/analyticsConsent/index";
-
-const trackingKeysByFlow: Record<EntryPoint, string> = {
-  Onboarding: "consent onboarding",
-  Portfolio: "consent existing users",
-};
+import useAnalyticsConsentLogic from "./useAnalyticsConsentLogic";
 
 type Props = {
   entryPoint: EntryPoint;
@@ -37,19 +13,15 @@ type Props = {
 
 const useAnalyticsOptInPromptLogic = ({ entryPoint, variant }: Props) => {
   const { locale } = useLocale();
-  const dispatch = useDispatch();
-  const navigation =
-    useNavigation<
-      RootNavigationComposite<StackNavigatorNavigation<OnboardingNavigatorParamList>>
-    >();
-  const isTrackingEnabled = useSelector(trackingEnabledSelector);
-  const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
-  const shouldWeTrack = isTrackingEnabled || !hasSeenAnalyticsOptInPrompt;
-  const { shouldUseLazyOnboarding } = useWalletFeaturesConfig("mobile");
-  const { tryTriggerPushNotificationDrawerAfterAction } = useNotifications();
-  const analyticsOptInFeature = useFeature("analyticsOptIn");
-  const { policyVersion } = resolveAnalyticsOptInParams(analyticsOptInFeature);
-  const flow = trackingKeysByFlow?.[entryPoint];
+  const {
+    navigation,
+    shouldWeTrack,
+    flow,
+    continueOnboarding,
+    handleAcceptAll,
+    handleRefuseAll,
+    goToPersonalizedRecommendationsStep,
+  } = useAnalyticsConsentLogic({ entryPoint });
 
   const privacyPolicyUrl =
     (urls.privacyPolicy as Record<string, string>)[locale] || urls.privacyPolicy.en;
@@ -60,70 +32,6 @@ const useAnalyticsOptInPromptLogic = ({ entryPoint, variant }: Props) => {
   const urlByVariant = {
     [ABTestingVariants.variantA]: trackingPolicyUrl,
     [ABTestingVariants.variantB]: privacyPolicyUrl,
-  };
-
-  const enableRebornState = () => {
-    dispatch(setReadOnlyMode(true));
-    dispatch(setIsReborn(true));
-  };
-
-  const skipDeviceOnboarding = () => {
-    dispatch(completeOnboarding());
-    dispatch(setOnboardingHasDevice(false));
-
-    enableRebornState();
-
-    navigation.navigate(NavigatorName.Base, {
-      screen: NavigatorName.Main,
-      params: {
-        screen: NavigatorName.Portfolio,
-        params: {
-          screen: NavigatorName.WalletTab,
-        },
-      },
-    });
-
-    tryTriggerPushNotificationDrawerAfterAction("onboarding");
-  };
-
-  const continueOnboarding = () => {
-    dispatch(setHasSeenAnalyticsOptInPrompt(true));
-    dispatch(
-      setAnalyticsConsentInfo({
-        consentDate: new Date().toISOString(),
-        privacyPolicyVersion: policyVersion,
-      }),
-    );
-
-    switch (entryPoint) {
-      case "Portfolio":
-        navigation.navigate(NavigatorName.Base, {
-          screen: NavigatorName.Main,
-          params: {
-            screen: NavigatorName.Portfolio,
-            params: {
-              screen: NavigatorName.WalletTab,
-            },
-          },
-        });
-        break;
-      case "Onboarding":
-        if (shouldUseLazyOnboarding) {
-          skipDeviceOnboarding();
-        } else {
-          navigation.navigate(NavigatorName.BaseOnboarding, {
-            screen: NavigatorName.Onboarding,
-            params: {
-              screen: ScreenName.OnboardingPostWelcomeSelection,
-              params: {
-                userHasDevice: true,
-              },
-            },
-          });
-        }
-        break;
-    }
-    updateIdentify(undefined, shouldWeTrack);
   };
 
   const clickOnLearnMore = () => {
@@ -145,6 +53,9 @@ const useAnalyticsOptInPromptLogic = ({ entryPoint, variant }: Props) => {
     continueOnboarding,
     clickOnLearnMore,
     flow,
+    handleAcceptAll,
+    handleRefuseAll,
+    goToPersonalizedRecommendationsStep,
   };
 };
 

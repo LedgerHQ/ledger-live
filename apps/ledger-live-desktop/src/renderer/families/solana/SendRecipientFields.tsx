@@ -8,7 +8,7 @@ import {
   Transaction,
   SolanaAccount,
 } from "@ledgerhq/live-common/families/solana/types";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@features/platform-feature-flags";
 
 type Props = {
   onChange: (t: Transaction) => void;

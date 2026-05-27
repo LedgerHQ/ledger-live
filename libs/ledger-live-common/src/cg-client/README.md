@@ -32,12 +32,6 @@ Fetches the list of supported fiat/counter currencies.
 
 **Cache duration**: 1 day
 
-### Currency Chart Data
-
-Fetches historical chart data for a specific coin.
-
-**Cache duration**: Default RTK Query behavior
-
 ## Usage
 
 ### Setup
@@ -60,7 +54,6 @@ const store = configureStore({
 ```typescript
 import {
   useMarketDataProvider,
-  useCurrencyChartData,
   useSupportedCounterCurrencies,
   useSupportedCurrencies,
 } from "@ledgerhq/live-common/cg-client/hooks/useCoingeckoDataProvider";
@@ -83,19 +76,15 @@ function MarketOverview() {
 import {
   useGetSupportedCoinsListQuery,
   useGetSupportedCounterCurrenciesQuery,
-  useGetCurrencyChartDataQuery,
 } from "@ledgerhq/live-common/cg-client/state-manager/api";
 
 const { data: coins } = useGetSupportedCoinsListQuery();
 const { data: currencies } = useGetSupportedCounterCurrenciesQuery();
-const { data: chartData } = useGetCurrencyChartDataQuery({
-  id: "bitcoin",
-  counterCurrency: "usd",
-  range: "24h",
-});
 ```
 
 ### Direct API Functions
+
+For chart data, use the direct fetch helper (used by `useLargeMoverChartData`):
 
 ```typescript
 import {
@@ -110,3 +99,5 @@ const chartData = await fetchCurrencyChartData({
   range: "7d",
 });
 ```
+
+For market coin detail charts, use `useAssetChartData` from `@ledgerhq/live-common/market/hooks/useMarketDataProvider` instead.

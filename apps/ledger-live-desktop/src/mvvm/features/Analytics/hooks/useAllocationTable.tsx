@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { TableCellContent, useLumenDataTable } from "@ledgerhq/lumen-ui-react";
-import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/walletFeaturesConfig/index";
+import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { getValidCryptoIconSize } from "~/renderer/utils/cryptoIconSize";
