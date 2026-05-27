@@ -118,12 +118,16 @@ export function runSwapWithDifferentSeedTest(
       const provider = await app.swapLiveApp.selectExchange();
       await app.swapLiveApp.checkExchangeButtonHasProviderName(provider.uiName);
       await app.common.disableSynchronizationForiOS();
-      await app.swapLiveApp.tapExecuteSwap(provider.uiName);
-      if (errorMessage) {
-        await app.swapLiveApp.checkErrorMessage(errorMessage);
-      } else {
-        await app.swap.verifyAmountsAndAcceptSwapForDifferentSeed(swap, minAmount, errorMessage);
-        await app.swap.waitForSuccessAndContinue();
+      try {
+        await app.swapLiveApp.tapExecuteSwap(provider.uiName);
+        if (errorMessage) {
+          await app.swapLiveApp.checkErrorMessage(errorMessage);
+        } else {
+          await app.swap.verifyAmountsAndAcceptSwapForDifferentSeed(swap, minAmount, errorMessage);
+          await app.swap.waitForSuccessAndContinue();
+        }
+      } finally {
+        await app.common.enableSynchronizationForiOS();
       }
     });
   });
@@ -326,9 +330,13 @@ export function runUserRefusesTransactionTest(
       );
       const provider = await app.swapLiveApp.selectExchange();
       await app.common.disableSynchronizationForiOS();
-      await app.swapLiveApp.tapExecuteSwap(provider.uiName);
-      await app.swap.verifyAmountsAndRejectSwap(rejectedSwap, minAmount);
-      await app.swapLiveApp.checkErrorMessage("Please retry or contact Ledger Support if in doubt");
+      try {
+        await app.swapLiveApp.tapExecuteSwap(provider.uiName);
+        await app.swap.verifyAmountsAndRejectSwap(rejectedSwap, minAmount);
+        await app.swapLiveApp.checkErrorMessage("Please retry or contact Ledger Support if in doubt");
+      } finally {
+        await app.common.enableSynchronizationForiOS();
+      }
     });
   });
 }
@@ -479,12 +487,15 @@ export function runSwapWithSendMaxTest(
 
       const provider = await app.swapLiveApp.selectExchange();
       await app.common.disableSynchronizationForiOS();
+      try {
+        await app.swapLiveApp.tapExecuteSwap(provider.uiName);
 
-      await app.swapLiveApp.tapExecuteSwap(provider.uiName);
-
-      const swap = new Swap(fromAccount, toAccount, amountToSend);
-      await app.swap.verifyAmountsAndAcceptSwap(swap, amountToSend);
-      await app.swap.waitForSuccessAndContinue();
+        const swap = new Swap(fromAccount, toAccount, amountToSend);
+        await app.swap.verifyAmountsAndAcceptSwap(swap, amountToSend);
+        await app.swap.waitForSuccessAndContinue();
+      } finally {
+        await app.common.enableSynchronizationForiOS();
+      }
     });
   });
 }

@@ -63,6 +63,7 @@ export default class ModularDrawer {
 
   @Step("Select first account in modular drawer")
   async selectFirstAccount() {
+    await waitForElementById(this.accountItem);
     await tapById(this.accountItem, 0);
   }
 

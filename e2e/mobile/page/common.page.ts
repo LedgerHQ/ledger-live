@@ -137,8 +137,8 @@ export default class CommonPage {
     if (isIos()) await device.disableSynchronization();
   }
 
-  async enableSynchronization() {
-    await device.enableSynchronization();
+  async enableSynchronizationForiOS() {
+    if (isIos()) await device.enableSynchronization();
   }
 
   @Step("Press on see all operations button")

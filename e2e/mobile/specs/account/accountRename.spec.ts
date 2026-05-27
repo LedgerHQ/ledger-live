@@ -43,9 +43,12 @@ describe("Account name change", () => {
     await device.terminateApp();
     await launchApp();
     await device.disableSynchronization();
-    await loadConfig("skip-onboarding", true);
-    await app.portfolio.waitForPortfolioPageToLoad();
-    await device.enableSynchronization();
+    try {
+      await loadConfig("skip-onboarding", true);
+      await app.portfolio.waitForPortfolioPageToLoad();
+    } finally {
+      await device.enableSynchronization();
+    }
     await app.portfolio.goToSpecificAsset(account.currency.name);
     await app.common.expectAccountName(newAccountName);
   });
