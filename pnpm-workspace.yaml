@@ -217,3 +217,5 @@ minimumReleaseAgeExclude:
   - "@types/node"
   # hw-app-sui 0.8.0 fixes the mega-bundle issue (published same day)
   - "@mysten/ledgerjs-hw-app-sui"
+  # Renovate security update: electron@40.7.0
+  - electron@40.7.0
