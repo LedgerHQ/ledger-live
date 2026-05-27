@@ -44,7 +44,7 @@ export function runSwapTokenReapprovalFlow(
     tags.forEach(tag => $Tag(tag));
 
     it("Swap - token reapproval flow", async () => {
-      await app.swap.getSelectedProvider(provider.uiName);
+      await app.swap.logSelectedProvider(provider.uiName);
       await revokeTokenApproval(fromAccount, provider);
       const minAmount = await app.swapLiveApp.getMinimumAmount(fromAccount, toAccount);
       const smallAmount = new BigNumber(minAmount).div(4).toFixed();

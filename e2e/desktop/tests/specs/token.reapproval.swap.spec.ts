@@ -61,7 +61,7 @@ test.describe("Token reapproval - flow", () => {
       ],
     },
     async ({ app }) => {
-      await app.swap.getSelectedProvider(provider.uiName);
+      await app.swap.logSelectedProvider(provider.uiName);
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await revokeTokenApproval(fromAccount, provider);
       const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
