@@ -326,7 +326,8 @@
       "@callstack/repack@5.2.5": "patches/@callstack__repack@5.2.5.patch",
       "bigint-buffer@1.1.5": "patches/bigint-buffer@1.1.5.patch",
       "usb@2.17.0": "patches/usb@2.17.0.patch",
-      "react-native-worklets@0.8.1": "patches/react-native-worklets@0.8.1.patch"
+      "react-native-worklets@0.8.1": "patches/react-native-worklets@0.8.1.patch",
+      "@ledgerhq/lumen-ui-rnative@0.1.36": "patches/@ledgerhq__lumen-ui-rnative@0.1.36.patch"
     },
     "packageExtensions": {
       "eslint-config-next@*": {

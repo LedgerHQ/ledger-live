@@ -1,0 +1,69 @@
+diff --git a/src/lib/Components/Switch/BaseSwitch.tsx b/src/lib/Components/Switch/BaseSwitch.tsx
+--- a/src/lib/Components/Switch/BaseSwitch.tsx
++++ b/src/lib/Components/Switch/BaseSwitch.tsx
+@@ -1,18 +1,13 @@
+ import { createSafeContext } from '@ledgerhq/lumen-utils-shared';
+-import { useCallback, useEffect } from 'react';
++import { useCallback, useEffect, useRef } from 'react';
+ import {
++  Animated,
++  Easing as RNEasing,
+   Pressable,
+   StyleSheet,
+   type GestureResponderEvent,
+ } from 'react-native';
+-import Animated, {
+-  cancelAnimation,
+-  useAnimatedStyle,
+-  useSharedValue,
+-  withTiming,
+-} from 'react-native-reanimated';
+-import { useStyleSheet } from '../../../styles';
+-import { useTimingConfig } from '../../Animations/useTimingConfig';
++import { useStyleSheet, useTheme } from '../../../styles';
+
+ import type { SlottablePressableProps, SlottableViewProps } from '../../types';
+ import { SlotPressable, SlotView } from '../Slot';
+@@ -101,23 +96,28 @@
+   checked: boolean | undefined;
+   size: Size;
+ }) => {
+-  const timingConfig = useTimingConfig({ duration: 200, easing: 'easeInOut' });
+-  const translateX = useSharedValue(checked ? THUMB_TRANSLATE[size] : 0);
++  // PATCH (ledger-live): Reanimated v4 worklet transform isn't reliable on this
++  // file after the RN 0.81 upgrade — the thumb stops animating. Use RN's built-in
++  // Animated API (native driver) which doesn't depend on the worklets babel plugin.
++  // Revert once @ledgerhq/lumen-ui-rnative is bumped to a version aligned with our RN.
++  const { theme } = useTheme();
++  const translateX = useRef(
++    new Animated.Value(checked ? THUMB_TRANSLATE[size] : 0),
++  ).current;
+
+   useEffect(() => {
+-    translateX.value = withTiming(
+-      checked ? THUMB_TRANSLATE[size] : 0,
+-      timingConfig,
+-    );
+-    return () => cancelAnimation(translateX);
+-  }, [checked, size, translateX, timingConfig]);
++    const bezier = theme.motion.easings.easeInOut;
++    const animation = Animated.timing(translateX, {
++      toValue: checked ? THUMB_TRANSLATE[size] : 0,
++      duration: theme.motion.durations[200],
++      easing: RNEasing.bezier(bezier[0], bezier[1], bezier[2], bezier[3]),
++      useNativeDriver: true,
++    });
++    animation.start();
++    return () => animation.stop();
++  }, [checked, size, translateX, theme]);
+
+-  const animatedStyle = useAnimatedStyle(
+-    () => ({
+-      transform: [{ translateX: translateX.value }],
+-    }),
+-    [translateX],
+-  );
++  const animatedStyle = { transform: [{ translateX }] };
+
+   return { animatedStyle };
+ };
