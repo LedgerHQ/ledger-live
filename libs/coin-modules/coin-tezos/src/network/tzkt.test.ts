@@ -368,9 +368,9 @@ describe("tzkt network API", () => {
         "level.ge": 10,
         "sort.asc": "id",
         "anyof.from.to": "tz1x",
-        "token.tokenId": "0",
         "token.standard": "fa2",
       });
+      expect(firstCall.params).not.toHaveProperty("token.tokenId");
     });
 
     it("joins operation hashes and uses empty string when no match", async () => {
@@ -703,7 +703,7 @@ describe("tzkt network API", () => {
   // -------------------------------------------------------------------------
 
   describe("api.getTokensBalances", () => {
-    it("requests FA2 tokenId 0 balances for the account", async () => {
+    it("requests all FA2 balances for the account when no filter is passed", async () => {
       const balances = [{ id: 1 } as APITokenBalance];
       mockedNetwork.mockReturnValue(networkResponse(balances) as ReturnType<typeof network>);
 
@@ -716,7 +716,6 @@ describe("tzkt network API", () => {
           params: {
             account: "tz1bal",
             "token.standard": "fa2",
-            "token.tokenId": "0",
           },
         }),
       );
