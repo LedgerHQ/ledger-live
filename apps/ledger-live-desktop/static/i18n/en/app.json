@@ -13,7 +13,7 @@
       "broadcast": {
         "toast": {
           "title": "Transaction sent !",
-          "text": "Click here to see operation details"
+          "text": "Click here to see operation details - Testing translation ingress"
         }
       }
     },
