@@ -200,6 +200,8 @@ export async function withApi<T>(
         const fetchReq = new FetchRequest(nodeConfig.uri);
         // Disable ethers' built-in HTTP-level retries: withRetries handles all retry logic.
         fetchReq.setThrottleParams({ maxAttempts: 1 });
+        // Hard cap per-request duration so a hanging RPC can't block the caller.
+        fetchReq.timeout = 30_000;
         PROVIDERS_BY_RPC[key] = new JsonRpcProvider(fetchReq, chainId);
       }
       const provider = PROVIDERS_BY_RPC[key];

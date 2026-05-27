@@ -33,11 +33,15 @@ export type EvmConfig = {
          */
         maxLimit?: number | undefined;
         uri: string;
+        /** Number of retries for explorer API calls. Set to 0 for no retries. */
+        retries?: number;
       }
     | {
         type: "ledger";
         explorerId: LedgerExplorerId;
         batchSize?: number | undefined;
+        /** Number of retries for explorer API calls. Set to 0 for no retries. */
+        retries?: number;
       }
     | {
         type: "none";

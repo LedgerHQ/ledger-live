@@ -19,6 +19,7 @@ import { BlockByHeightResult, NodeApi, TransactionInfo } from "./types";
 const LEDGER_TIMEOUT = 10_000; // 10s for network call timeout
 const LEDGER_TIME_BETWEEN_TRIES = 200; // 200ms between 2 calls
 const DEFAULT_RETRIES_API = 2;
+const REQUEST_TIMEOUT_MS = 30_000; // 30s hard cap per HTTP request
 
 type LedgerFetch = <T>(params: AxiosRequestConfig) => Promise<T>;
 
@@ -28,6 +29,7 @@ function makeFetchWithRetries(config: LedgerNodeConfig): LedgerFetch {
     return withRetries(
       async () => {
         const { data } = await axios.request<T>({
+          timeout: REQUEST_TIMEOUT_MS,
           ...params,
           headers: {
             ...(params.headers || {}),

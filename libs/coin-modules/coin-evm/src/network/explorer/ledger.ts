@@ -18,6 +18,7 @@ import { ExplorerApi, isLedgerExplorerConfig, NO_TOKEN } from "./types";
 export const DEFAULT_BATCH_SIZE = 10_000;
 export const LEDGER_TIMEOUT = 200; // 200ms between 2 calls
 export const DEFAULT_RETRIES_API = 2;
+export const REQUEST_TIMEOUT_MS = 30_000; // 30s hard cap per HTTP request
 
 type OperationsRequestParams = {
   explorerId: string;
@@ -43,6 +44,7 @@ export async function fetchPaginatedOpsWithRetries(
       data: LedgerExplorerOperation[];
       token: string;
     }>({
+      timeout: REQUEST_TIMEOUT_MS,
       headers: { "X-Ledger-Client-Version": getEnv("LEDGER_CLIENT_VERSION") },
       method: "GET",
       url: `${getEnv("EXPLORER")}/blockchain/v4/${params.explorerId}/address/${params.address}/txs`,
@@ -75,17 +77,77 @@ export async function fetchPaginatedOpsWithRetries(
 }
 
 /**
- * Returns all operation types from an address
+ * Fetch operations until `limit` is reached. The server enforces its own page
+ * size so a single page may return fewer items than requested; we walk the
+ * pagination token until we have at least `limit` ops or run out of pages.
+ */
+async function fetchUpToLimitWithRetries(
+  params: Required<OperationsRequestParams>,
+  limit: number,
+  retries = DEFAULT_RETRIES_API,
+): Promise<LedgerExplorerOperation[]> {
+  let collected: LedgerExplorerOperation[] = [];
+  let paginationToken: string | null = null;
+  while (collected.length < limit) {
+    const page = await fetchOnePageWithRetries(params, paginationToken, retries);
+    collected = collected.concat(page.operations);
+    if (!page.token) break;
+    paginationToken = page.token;
+  }
+  return collected
+    .slice(0, limit)
+    .sort((a, b) => new Date(b.block.time).getTime() - new Date(a.block.time).getTime());
+}
+
+async function fetchOnePageWithRetries(
+  params: Required<OperationsRequestParams>,
+  paginationToken: string | null,
+  retries: number,
+): Promise<{ operations: LedgerExplorerOperation[]; token: string }> {
+  try {
+    const {
+      data: { data: operations, token },
+    } = await axios.request<{
+      data: LedgerExplorerOperation[];
+      token: string;
+    }>({
+      timeout: REQUEST_TIMEOUT_MS,
+      headers: { "X-Ledger-Client-Version": getEnv("LEDGER_CLIENT_VERSION") },
+      method: "GET",
+      url: `${getEnv("EXPLORER")}/blockchain/v4/${params.explorerId}/address/${params.address}/txs`,
+      params: {
+        filtering: true,
+        from_height: params.fromBlock ?? 0,
+        order: "ascending",
+        batch_size: params.batchSize,
+        token: paginationToken,
+      },
+    });
+    return { operations, token };
+  } catch (e) {
+    if (retries) {
+      await delay(LEDGER_TIMEOUT);
+      return fetchOnePageWithRetries(params, paginationToken, retries - 1);
+    }
+    throw e;
+  }
+}
+
+/**
+ * Returns all operation types from an address.
  *
- * Note: Ledger explorer fetches all pages recursively internally,
- * so pagination parameters are ignored and nextPagingToken is always empty.
- * Pagination may be supported in the future.
+ * When `limit` is provided, only one page sized to `limit` is fetched
+ * (no recursive pagination). Useful for cheap existence probes.
+ * Otherwise all pages are walked through pagination tokens.
  */
 export const getOperations: ExplorerApi["getOperations"] = async (
   currency,
   address,
   accountId,
   fromBlock,
+  _toBlock,
+  _pagingToken,
+  limit,
 ) => {
   const config = getCoinConfig(currency.id).info;
   const { explorer } = config || /* istanbul ignore next */ {};
@@ -95,12 +157,26 @@ export const getOperations: ExplorerApi["getOperations"] = async (
     );
   }
 
-  const ledgerExplorerOps = await fetchPaginatedOpsWithRetries({
-    explorerId: explorer.explorerId,
-    address,
-    fromBlock,
-    batchSize: explorer.batchSize ?? DEFAULT_BATCH_SIZE,
-  });
+  const batchSize = explorer.batchSize ?? DEFAULT_BATCH_SIZE;
+  const retries = explorer.retries ?? DEFAULT_RETRIES_API;
+  const ledgerExplorerOps =
+    limit !== undefined
+      ? await fetchUpToLimitWithRetries(
+          { explorerId: explorer.explorerId, address, fromBlock, batchSize },
+          limit,
+          retries,
+        )
+      : await fetchPaginatedOpsWithRetries(
+          {
+            explorerId: explorer.explorerId,
+            address,
+            fromBlock,
+            batchSize,
+          },
+          null,
+          [],
+          retries,
+        );
 
   const lastCoinOperations: Operation[] = [];
   const lastTokenOperations: Operation[] = [];

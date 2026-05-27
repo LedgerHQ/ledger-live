@@ -166,6 +166,9 @@ interface SendReceiveAccountBridge<
   // initialAccount parameter is used to point which account is the synchronization on, but it should not be used in the emitted values.
   // the sync can be stopped at any time using Observable's subscription.unsubscribe()
   sync(initialAccount: A, syncConfig: SyncConfig): Observable<(arg0: A) => A>;
+  // Lightweight existence check: true if the address has no operations at all on the given currency.
+  // Implemented via the coin module's listOperations with limit=1 — much cheaper than a full sync.
+  isEmpty?: (currency: CryptoCurrency, address: string) => Promise<boolean>;
   receive(
     account: A,
     arg1: {

@@ -10,6 +10,7 @@ import {
   isObservable,
   lastValueFrom,
   map,
+  mergeMap,
   of,
   takeLast,
   takeUntil,
@@ -380,11 +381,15 @@ export const makeScanAccounts =
     buildIterateResult,
     getAddressFn,
     postSync = (_, a) => a,
+    isEmpty,
   }: {
     getAccountShape: GetAccountShape<A> | GetAccountShapeStream<A>;
     buildIterateResult?: IterateResultBuilder;
     getAddressFn: GetAddressFn;
     postSync?: (initial: A, synced: A) => A;
+    // Optional fast-path. When provided and it returns true for the iterated address,
+    // we skip the expensive getAccountShape and emit a minimal empty account skeleton.
+    isEmpty?: (currency: CryptoCurrency, address: string) => Promise<boolean>;
   }): CurrencyBridge["scanAccounts"] =>
   ({ currency, deviceId, syncConfig, scheme }): Observable<ScanAccountEvent> =>
     new Observable((outerObs: Observer<{ type: "discovered"; account: Account }>) => {
@@ -413,21 +418,49 @@ export const makeScanAccounts =
 
         const { address, path: freshAddressPath, ...rest } = res;
 
-        const accountShapeResult = getAccountShape(
-          {
-            currency,
-            index,
-            address,
-            derivationPath: freshAddressPath,
-            derivationMode,
-            rest,
-            deviceId,
-          },
-          syncConfig,
-        );
+        const fullShape$ = (): Observable<Partial<Account>> =>
+          normalizeToObservable(
+            getAccountShape(
+              {
+                currency,
+                index,
+                address,
+                derivationPath: freshAddressPath,
+                derivationMode,
+                rest,
+                deviceId,
+              },
+              syncConfig,
+            ),
+          );
 
-        const accountShape$: Observable<Partial<Account>> =
-          normalizeToObservable(accountShapeResult);
+        // Fast-path: skip the full sync when the address has no history at all.
+        // Returns a minimal empty account skeleton; downstream still applies
+        // `shouldShowNewAccount` and the empty-skip-counter logic.
+        const accountShape$: Observable<Partial<Account>> = isEmpty
+          ? from(isEmpty(currency, address)).pipe(
+              mergeMap(empty =>
+                empty
+                  ? of<Partial<Account>>({
+                      id: encodeAccountId({
+                        type: "js",
+                        version: "2",
+                        currencyId: currency.id,
+                        xpubOrAddress: address,
+                        derivationMode,
+                      }),
+                      xpub: address,
+                      balance: new BigNumber(0),
+                      spendableBalance: new BigNumber(0),
+                      operations: [],
+                      operationsCount: 0,
+                      blockHeight: 0,
+                      used: false,
+                    })
+                  : fullShape$(),
+              ),
+            )
+          : fullShape$();
 
         function accountShapePipe(accountShape: Partial<Account>): Account {
           const freshAddress = address;
