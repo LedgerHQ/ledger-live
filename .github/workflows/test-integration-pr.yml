@@ -42,7 +42,6 @@ jobs:
 
   integration-tests:
     name: "Integration Tests"
-    needs: is-affected
     if: ${{ needs.is-affected.outputs.is-affected == 'true' }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
