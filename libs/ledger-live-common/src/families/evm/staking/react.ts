@@ -38,7 +38,7 @@ export function useEvmStakingValidators(
   // Single read avoids redundant work and inconsistent TTL boundary at init.
   const [fetchState, setFetchState] = useState<FetchState>(() => {
     const cached = getCachedValidators(currencyId);
-    return { items: cached ?? [], loading: !cached, error: null };
+    return { items: cached?.items ?? [], loading: !cached, error: null };
   });
 
   useEffect(() => {
@@ -46,12 +46,12 @@ export function useEvmStakingValidators(
     let cancelled = false;
 
     const cached = getCachedValidators(currencyId);
-    setFetchState({ items: cached ?? [], loading: !cached, error: null });
+    setFetchState({ items: cached?.items ?? [], loading: !cached, error: null });
 
     getValidators(currencyId)
-      .then(items => {
+      .then(page => {
         if (cancelled) return;
-        setFetchState(s => ({ ...s, items }));
+        setFetchState(s => ({ ...s, items: page.items }));
       })
       .catch(err => {
         if (cancelled) return;

@@ -2,10 +2,10 @@ import network from "@ledgerhq/live-network";
 import {
   clearValidatorsCache,
   getCachedValidators,
+  getFrameworkValidators,
   getUnbondingPeriodDays,
   getValidatorExplorerUrl,
   getValidators,
-  getValidatorsPage,
   hasUnbondingPeriod,
   prefetchValidators,
 } from "./validators";
@@ -56,7 +56,8 @@ describe("staking/validators", () => {
           method: "GET",
         }),
       );
-      expect(first).toEqual([
+      expect(first.next).toBeUndefined();
+      expect(first.items).toEqual([
         expect.objectContaining({
           validatorAddress: "seivaloper1abc",
           name: "John",
@@ -86,14 +87,6 @@ describe("staking/validators", () => {
       expect(mockedNetwork).toHaveBeenCalledTimes(1);
     });
 
-    it("deduplicates concurrent in-flight fetches", async () => {
-      mockedNetwork.mockResolvedValue(cosmosValidatorsPayload);
-
-      await Promise.all([getValidators("sei_evm"), getValidators("sei_evm")]);
-
-      expect(mockedNetwork).toHaveBeenCalledTimes(1);
-    });
-
     it("does not cache an empty validator list", async () => {
       mockedNetwork.mockResolvedValue({ status: 200, data: { validators: [] } });
 
@@ -102,48 +95,44 @@ describe("staking/validators", () => {
       expect(getCachedValidators("sei_evm")).toBeUndefined();
     });
 
-    it("bypasses cache when apiConfig is passed explicitly", async () => {
-      mockedNetwork.mockResolvedValue(cosmosValidatorsPayload);
-
-      await getValidators("sei_evm");
-      await getValidators("sei_evm", { baseUrl: "https://x", validatorsEndpoint: "/y" });
-
-      expect(mockedNetwork).toHaveBeenCalledTimes(2);
-    });
-
-    it("returns [] for currencies without a validator API", async () => {
+    it("returns an empty page for currencies without a validator API", async () => {
       const result = await getValidators("ethereum");
 
-      expect(result).toEqual([]);
+      expect(result.items).toEqual([]);
+      expect(result.next).toBeUndefined();
       expect(mockedNetwork).not.toHaveBeenCalled();
       expect(getCachedValidators("ethereum")).toBeUndefined();
     });
 
-    it("clearValidatorsCache removes an in-flight entry so the next call starts a fresh fetch", async () => {
-      let releaseFirst!: (value: typeof cosmosValidatorsPayload) => void;
-      const firstPending = new Promise<typeof cosmosValidatorsPayload>(resolve => {
-        releaseFirst = resolve;
-      });
-
-      mockedNetwork.mockImplementationOnce(() => firstPending);
+    it("clearValidatorsCache drops cached entries for the given currency", async () => {
       mockedNetwork.mockResolvedValue(cosmosValidatorsPayload);
 
-      const firstCall = getValidators("sei_evm");
+      await getValidators("sei_evm");
+      expect(getCachedValidators("sei_evm")).toEqual({
+        items: [
+          {
+            validatorAddress: "seivaloper1abc",
+            name: "John",
+            commission: 0.05,
+            tokens: 100,
+            votingPower: 0,
+            estimatedYearlyRewardsRate: 0,
+          },
+          {
+            validatorAddress: "seivaloper1def",
+            name: "Doe",
+            commission: 1,
+            tokens: 999,
+            votingPower: 1,
+            estimatedYearlyRewardsRate: 0,
+          },
+        ],
+        next: undefined,
+      });
 
       clearValidatorsCache("sei_evm");
 
-      const second = await getValidators("sei_evm");
-
-      expect(second).toEqual([
-        expect.objectContaining({ validatorAddress: "seivaloper1abc" }),
-        expect.objectContaining({ validatorAddress: "seivaloper1def" }),
-      ]);
-      expect(mockedNetwork).toHaveBeenCalledTimes(2);
-
-      releaseFirst(cosmosValidatorsPayload);
-      await firstCall;
-
-      expect(mockedNetwork).toHaveBeenCalledTimes(2);
+      expect(getCachedValidators("sei_evm")).toBeUndefined();
     });
   });
 
@@ -159,7 +148,27 @@ describe("staking/validators", () => {
       mockedNetwork.mockResolvedValue(cosmosValidatorsPayload);
 
       await getValidators("sei_evm");
-      expect(getCachedValidators("sei_evm")).not.toBeUndefined();
+      expect(getCachedValidators("sei_evm")).toEqual({
+        items: [
+          {
+            validatorAddress: "seivaloper1abc",
+            name: "John",
+            commission: 0.05,
+            tokens: 100,
+            votingPower: 0,
+            estimatedYearlyRewardsRate: 0,
+          },
+          {
+            validatorAddress: "seivaloper1def",
+            name: "Doe",
+            commission: 1,
+            tokens: 999,
+            votingPower: 1,
+            estimatedYearlyRewardsRate: 0,
+          },
+        ],
+        next: undefined,
+      });
 
       jest.advanceTimersByTime(31_000);
 
@@ -175,7 +184,27 @@ describe("staking/validators", () => {
       await Promise.resolve();
       await Promise.resolve();
 
-      expect(getCachedValidators("sei_evm")).not.toBeUndefined();
+      expect(getCachedValidators("sei_evm")).toEqual({
+        items: [
+          {
+            validatorAddress: "seivaloper1abc",
+            name: "John",
+            commission: 0.05,
+            tokens: 100,
+            votingPower: 0,
+            estimatedYearlyRewardsRate: 0,
+          },
+          {
+            validatorAddress: "seivaloper1def",
+            name: "Doe",
+            commission: 1,
+            tokens: 999,
+            votingPower: 1,
+            estimatedYearlyRewardsRate: 0,
+          },
+        ],
+        next: undefined,
+      });
     });
 
     it("is a no-op when cache is already fresh", async () => {
@@ -221,8 +250,8 @@ describe("staking/validators", () => {
     );
   });
 
-  describe("getValidatorsPage", () => {
-    it("maps staking items to the generic Validator page shape", async () => {
+  describe("getFrameworkValidators", () => {
+    it("maps staking items to the framework Validator page shape", async () => {
       mockedNetwork.mockResolvedValue({
         status: 200,
         data: {
@@ -237,7 +266,7 @@ describe("staking/validators", () => {
         },
       });
 
-      const page = await getValidatorsPage("sei_evm");
+      const page = await getFrameworkValidators("sei_evm");
 
       expect(page.next).toBeUndefined();
       expect(page.items).toEqual([

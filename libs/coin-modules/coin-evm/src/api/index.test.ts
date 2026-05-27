@@ -1,9 +1,9 @@
 import { EvmConfig } from "../config";
 import { createApi } from "./index";
-import { getValidatorsPage } from "../staking/validators";
+import { getFrameworkValidators } from "../staking/validators";
 
 jest.mock("../staking/validators", () => ({
-  getValidatorsPage: jest.fn(),
+  getFrameworkValidators: jest.fn(),
 }));
 
 describe.each([
@@ -73,7 +73,7 @@ describe("staking support capability", () => {
   });
 
   it("exposes validators through the api when staking validators are available", async () => {
-    const mockGetValidatorsPage = jest.mocked(getValidatorsPage);
+    const mockGetValidatorsPage = jest.mocked(getFrameworkValidators);
     const expectedPage = {
       items: [
         {

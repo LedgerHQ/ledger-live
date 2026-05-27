@@ -105,10 +105,10 @@ describe("EVM Staking - getStakes", () => {
   it("should handle multiple validators and filter zero amounts", async () => {
     const currency = getCryptoCurrencyById("sei_evm");
 
-    mockGetValidators.mockResolvedValue([
-      makeValidator("seivaloper1abc"),
-      makeValidator("seivaloper1def"),
-    ]);
+    mockGetValidators.mockResolvedValue({
+      items: [makeValidator("seivaloper1abc"), makeValidator("seivaloper1def")],
+      next: undefined,
+    });
 
     mockWithApi.mockImplementation(async (_cur, fn) => {
       const api = { call: jest.fn().mockResolvedValue("0x") } as unknown as JsonRpcProvider;
