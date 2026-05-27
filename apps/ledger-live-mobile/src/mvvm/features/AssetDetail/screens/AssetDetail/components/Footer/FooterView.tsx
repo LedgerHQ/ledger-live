@@ -1,10 +1,12 @@
 import React from "react";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box, Button, LinearGradient } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useTranslation } from "~/context/Locale";
 import type { SecondaryButtonType } from "./useFooterViewModel";
 import { ASSET_DETAIL_TEST_IDS } from "../../../../testIds";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+const FADE_ZONE_HEIGHT = 48;
 
 type Props = Readonly<{
   isBuyAvailable: boolean;
@@ -27,16 +29,16 @@ export function FooterView({
   if (!isBuyAvailable && !secondaryButton) return null;
 
   return (
-    <LinearGradient
-      stops={[
-        { color: "base", opacity: 0 },
-        { offset: 0.1, color: "base", opacity: 1 },
-        { offset: 1, color: "base", opacity: 1 },
-      ]}
-      direction="to-bottom"
-      testID={ASSET_DETAIL_TEST_IDS.ctas}
-      lx={containerStyle}
-    >
+    <Box testID={ASSET_DETAIL_TEST_IDS.ctas} lx={containerStyle}>
+      <LinearGradient
+        stops={[
+          { offset: 0, color: "base", opacity: 0 },
+          { offset: 1, color: "base", opacity: 1 },
+        ]}
+        direction="to-bottom"
+        style={fadeZoneStyle}
+        pointerEvents="none"
+      />
       <Box lx={rowStyle} style={{ paddingBottom: bottom + 16 }}>
         {isBuyAvailable && (
           <Box lx={buttonSlotStyle}>
@@ -80,22 +82,27 @@ export function FooterView({
           </Box>
         )}
       </Box>
-    </LinearGradient>
+    </Box>
   );
 }
-
-const rowStyle: LumenViewStyle = {
-  paddingHorizontal: "s16",
-  paddingTop: "s16",
-  flexDirection: "row",
-  gap: "s8",
-};
 
 const containerStyle: LumenViewStyle = {
   position: "absolute",
   bottom: "s0",
   left: "s0",
   right: "s0",
+};
+
+const fadeZoneStyle = {
+  height: FADE_ZONE_HEIGHT,
+};
+
+const rowStyle: LumenViewStyle = {
+  paddingHorizontal: "s16",
+  paddingTop: "s16",
+  flexDirection: "row",
+  gap: "s8",
+  backgroundColor: "base",
 };
 
 const buttonSlotStyle: LumenViewStyle = {
