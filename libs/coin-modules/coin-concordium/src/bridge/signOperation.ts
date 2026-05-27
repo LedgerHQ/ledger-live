@@ -49,7 +49,12 @@ export const buildSignOperation =
             },
           );
 
-          const result = await signer.signTransaction(structuredTransaction, derivationPath);
+          const maxFee = BigInt(estimation.cost.toString());
+          const result = await signer.signTransaction(
+            structuredTransaction,
+            derivationPath,
+            maxFee,
+          );
 
           return combine(result.serialized, result.signature);
         });
