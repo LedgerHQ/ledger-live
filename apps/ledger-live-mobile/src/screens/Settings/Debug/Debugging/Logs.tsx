@@ -25,7 +25,7 @@ export default function Logs() {
   );
 
   return (
-    <SafeAreaView>
+    <SafeAreaView edges={["left", "right", "bottom"]}>
       <Flex p={4} flexDirection="row" justifyContent="space-between">
         <Flex flex={1}>
           <TextInput

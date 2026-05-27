@@ -107,6 +107,7 @@ export default function RequestAccountsSelectCrypto({ navigation, route }: Props
   );
   return (
     <SafeAreaView
+      edges={["left", "right", "bottom"]}
       style={[
         styles.root,
         {

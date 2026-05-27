@@ -80,7 +80,7 @@ const WebReceivePlayer = ({ manifest, inputs }: Props) => {
   );
 
   return (
-    <SafeAreaView style={[styles.root, { paddingTop: 0 }]}>
+    <SafeAreaView edges={["left", "right", "bottom"]} style={[styles.root]}>
       <Web3AppWebview
         ref={webviewAPIRef}
         manifest={manifest}

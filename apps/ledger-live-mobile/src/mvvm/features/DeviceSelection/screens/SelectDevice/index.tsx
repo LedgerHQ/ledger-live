@@ -78,6 +78,7 @@ export default function SelectDeviceScreen({
 
   return (
     <SafeAreaView
+      edges={["left", "right", "bottom"]}
       style={[
         styles.root,
         {

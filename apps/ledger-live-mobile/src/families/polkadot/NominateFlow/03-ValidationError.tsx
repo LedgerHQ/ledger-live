@@ -26,6 +26,7 @@ export default function ValidationError({ navigation, route }: Props) {
   }, [navigation]);
   return (
     <SafeAreaView
+      edges={["left", "right", "bottom"]}
       style={[
         styles.root,
         {

@@ -30,6 +30,7 @@ export default function PolkadotBondStarted({ navigation, route }: Props) {
   }, []);
   return (
     <SafeAreaView
+      edges={["left", "right", "bottom"]}
       style={[
         styles.root,
         {

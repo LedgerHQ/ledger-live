@@ -126,7 +126,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
   }, [customACREHandlers, customPTXHandlers, customDeeplinkHandlers, customLiveAppModalHandlers]);
 
   return (
-    <SafeAreaView style={[styles.root]}>
+    <SafeAreaView edges={["left", "right", "bottom"]} style={[styles.root]}>
       <Web3AppWebview
         ref={webviewAPIRef}
         manifest={manifest}

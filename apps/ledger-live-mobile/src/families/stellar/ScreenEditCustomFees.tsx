@@ -68,7 +68,7 @@ function StellarEditCustomFees({ navigation, route }: NavigationProps) {
     });
   }, [customFee, account, bridge, route.params, navigation, transaction]);
   return (
-    <SafeAreaView style={styles.root}>
+    <SafeAreaView edges={["left", "right", "bottom"]} style={styles.root}>
       <KeyboardView
         style={[
           styles.body,

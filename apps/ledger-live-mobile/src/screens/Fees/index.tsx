@@ -22,7 +22,7 @@ export function FeesScreen({ route: { params } }: Props) {
   });
   const { t } = useTranslation();
   return (
-    <SafeAreaView>
+    <SafeAreaView edges={["left", "right", "bottom"]}>
       <Flex flexDirection="column" rowGap={12} margin={16} alignItems="stretch">
         <Text color={"neutral.c70"} fontSize={14} fontWeight="medium">
           {t("transfer.swap2.form.details.label.feesDescription")}

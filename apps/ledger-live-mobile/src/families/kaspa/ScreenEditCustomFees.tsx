@@ -70,6 +70,7 @@ function KaspaEditCustomFees({ navigation, route }: Props) {
   }, [setSompiPerByte, ownSompiPerByte, account, bridge, route.params, navigation, transaction]);
   return (
     <SafeAreaView
+      edges={["left", "right", "bottom"]}
       style={{
         flex: 1,
       }}

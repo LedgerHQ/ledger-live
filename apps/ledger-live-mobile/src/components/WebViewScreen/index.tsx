@@ -121,7 +121,7 @@ const WebViewScreen = ({
   );
 
   return (
-    <SafeContainer>
+    <SafeContainer edges={["left", "right", "bottom"]}>
       {renderHeader && renderHeader()}
       {trackEventName && <Track onMount event={trackEventName} />}
 

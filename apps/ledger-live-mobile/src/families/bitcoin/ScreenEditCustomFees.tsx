@@ -93,6 +93,7 @@ function BitcoinEditCustomFees({ navigation, route }: Props) {
   }, [setSatPerByte, ownSatPerByte, account, bridge, route.params, navigation, transaction]);
   return (
     <SafeAreaView
+      edges={["left", "right", "bottom"]}
       style={{
         flex: 1,
       }}

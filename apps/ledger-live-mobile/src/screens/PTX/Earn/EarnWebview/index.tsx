@@ -163,20 +163,24 @@ export const EarnWebview = ({
     };
   }, [customEarnHandlers, customDeeplinkHandlers, customLiveAppModalHandlers]);
 
-  const Container = isLwm40Enabled ? View : SafeAreaView;
+  const webview = (
+    <Web3AppWebview
+      ref={webviewAPIRef}
+      manifest={manifest}
+      inputs={inputs}
+      onStateChange={handleStateChange}
+      customHandlers={customHandlers}
+      onScroll={onScroll}
+      Loader={() => <Loading backgroundColor="transparent" />}
+    />
+  );
 
-  return (
-    <Container style={[styles.root]}>
-      <Web3AppWebview
-        ref={webviewAPIRef}
-        manifest={manifest}
-        inputs={inputs}
-        onStateChange={handleStateChange}
-        customHandlers={customHandlers}
-        onScroll={onScroll}
-        Loader={() => <Loading backgroundColor="transparent" />}
-      />
-    </Container>
+  return isLwm40Enabled ? (
+    <View style={[styles.root]}>{webview}</View>
+  ) : (
+    <SafeAreaView edges={["left", "right", "bottom"]} style={[styles.root]}>
+      {webview}
+    </SafeAreaView>
   );
 };
 

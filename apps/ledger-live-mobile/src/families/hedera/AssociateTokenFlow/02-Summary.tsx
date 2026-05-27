@@ -67,7 +67,7 @@ export default function Summary({ navigation, route }: Props) {
   const error = status.errors[Object.keys(status.errors)[0]];
 
   return (
-    <SafeAreaView style={styles.root}>
+    <SafeAreaView edges={["left", "right", "bottom"]} style={styles.root}>
       <TrackScreen category="AssociateTokenFlow" name="Summary" currency="hedera" />
       <NavigationScrollView style={styles.body}>
         <SummaryFromSection token={token} />
