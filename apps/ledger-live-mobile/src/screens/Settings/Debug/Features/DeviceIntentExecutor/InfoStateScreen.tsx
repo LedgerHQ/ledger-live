@@ -7,7 +7,15 @@ import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBot
 import { InfoState } from "LLM/components/InfoState";
 import type { InfoStatePreset, InfoStateProps } from "LLM/components/InfoState/types";
 
-const presetOptions: InfoStatePreset[] = ["illustration", "spot", "success", "error", "info", "text"];
+const presetOptions: InfoStatePreset[] = [
+  "illustration",
+  "spot",
+  "success",
+  "error",
+  "info",
+  "loader",
+  "text",
+];
 const sizeOptions: Array<NonNullable<InfoStateProps["size"]>> = ["full-height", "hug"];
 
 export default function DebugInfoStateScreen() {
@@ -193,6 +201,8 @@ function renderInfoStatePreview({
       return <InfoState {...commonProps} preset="error" testID="info-state-preview" />;
     case "info":
       return <InfoState {...commonProps} preset="info" testID="info-state-preview" />;
+    case "loader":
+      return <InfoState {...commonProps} preset="loader" testID="info-state-preview" />;
     case "text":
       return <InfoState {...commonProps} preset="text" testID="info-state-preview" />;
     default:

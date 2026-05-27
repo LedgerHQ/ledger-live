@@ -1,20 +1,36 @@
 import React from "react";
-import { Flex, Text } from "@ledgerhq/native-ui";
+import { InfoState } from "LLM/components/InfoState";
 import type { BroadcastEvmIntentExtraProps, BroadcastEvmJobState } from "./types";
 
-function describe(jobState: BroadcastEvmJobState | undefined): string {
-  if (!jobState) return "Preparing broadcast…";
+function describeLoader(jobState: BroadcastEvmJobState | undefined): {
+  title: string;
+  description: string;
+} {
+  if (!jobState) {
+    return { title: "Broadcasting transaction", description: "Preparing broadcast\u2026" };
+  }
   switch (jobState.type) {
     case "broadcasting":
-      return "Broadcasting transaction to the network…";
+      return {
+        title: "Broadcasting transaction",
+        description: "Broadcasting transaction to the network\u2026",
+      };
     case "broadcasted":
-      return `Transaction broadcasted (${jobState.hash.slice(0, 10)}…)`;
     case "waiting-receipt":
-      return `Waiting for confirmation… (attempt ${jobState.pollCount})`;
+      return {
+        title: "Confirming transaction",
+        description: "Waiting for confirmation\u2026",
+      };
     case "confirmed":
-      return `Transaction confirmed in block ${jobState.blockHeight}`;
+      return {
+        title: "Transaction confirmed",
+        description: `Confirmed in block ${jobState.blockHeight}`,
+      };
     case "failed":
-      return "Broadcast failed";
+      return {
+        title: "Broadcast failed",
+        description: jobState.error.message,
+      };
   }
 }
 
@@ -25,26 +41,11 @@ export function BroadcastEvmIntentComponentLWM({
   extraProps: BroadcastEvmIntentExtraProps;
   onClose: () => void;
 }) {
-  return (
-    <Flex p={4}>
-      <Text variant="h5" mb={3}>
-        Broadcast
-      </Text>
-      <Text variant="body" mb={2}>
-        {describe(jobState)}
-      </Text>
-      {jobState?.type === "failed" && (
-        <Text variant="small" color="error.c60" numberOfLines={3}>
-          {jobState.error.message}
-        </Text>
-      )}
-      {(jobState?.type === "broadcasted" ||
-        jobState?.type === "waiting-receipt" ||
-        jobState?.type === "confirmed") && (
-        <Text variant="small" fontFamily="monospace" color="neutral.c70" numberOfLines={2}>
-          {jobState.hash}
-        </Text>
-      )}
-    </Flex>
-  );
+  if (jobState?.type === "failed") {
+    const { title, description } = describeLoader(jobState);
+    return <InfoState preset="error" size="hug" title={title} description={description} />;
+  }
+
+  const { title, description } = describeLoader(jobState);
+  return <InfoState preset="loader" size="hug" title={title} description={description} />;
 }

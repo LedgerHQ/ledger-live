@@ -54,7 +54,7 @@ describe("InfoState", () => {
     expect(screen.queryByText("Secondary action")).toBeNull();
   });
 
-  it.each(["success", "error", "info", "spot", "illustration"] as const)(
+  it.each(["success", "error", "info", "loader", "spot", "illustration"] as const)(
     "renders the %s preset visual",
     preset => {
       render(
@@ -93,6 +93,7 @@ function getPresetProps(preset: VisualInfoStatePreset): React.ComponentProps<typ
     case "success":
     case "error":
     case "info":
+    case "loader":
       return { preset };
     default:
       return assertNever(preset);
