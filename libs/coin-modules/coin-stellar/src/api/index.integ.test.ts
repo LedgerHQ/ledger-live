@@ -78,101 +78,103 @@ describe("Stellar Api", () => {
     // Same reasoning as the beforeAll: this does another full-history scan
     // (now in desc order), and the supplement makes it heavy against public
     // testnet Horizon.
-    it(
-      "returns all operations from the latest, but in asc order",
-      async () => {
-        const { items: txsDesc } = await module.listOperations(ADDRESS, {
-          minHeight: 0,
-          order: "desc",
-        });
-        expect(txsDesc[0]).toStrictEqual(txs[0]);
-      },
-      360_000,
-    );
+    it("returns all operations from the latest, but in asc order", async () => {
+      const { items: txsDesc } = await module.listOperations(ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
+      expect(txsDesc[0]).toStrictEqual(txs[0]);
+    }, 360_000);
   });
 
   /**
-   * Regression coverage for the Horizon recipient-gap (see
+   * Regression coverage for the Horizon `forAccount` recipient-gap (see
    * {@link operationsFromHeight}). `GAIH3ULL…` is a long-lived testnet faucet
-   * account that previously surfaced the mismatch: `listOperations` (built on
-   * `/accounts/{id}/operations`) returned a different count than `getBlock`
-   * (built on `/ledgers/{seq}/operations`) for the same ledger sequence.
+   * account where Horizon's `/accounts/{id}/operations` (and
+   * `/accounts/{id}/payments`) endpoints — both backed by
+   * `history_operation_participants` — omit 19 incoming payments where the
+   * faucet is only the recipient (the fee payer is a different account).
+   * Without the supplement, `listOperations` returns 3437 ops for this
+   * address; per-ledger fetches via `/ledgers/{seq}/operations` (which
+   * `getBlock` uses) yield 3456.
    *
-   * The fix supplements forAccount results with per-ledger fetches, so for any
-   * ledger we surface in `listOperations` the address-involving op count must
-   * equal `getBlock`'s count for that same ledger. The window is bounded
-   * (relative to `lastBlock`) so we paginate at most one Horizon page even
-   * though the address has thousands of historical ops.
+   * Those missing ops are concentrated in testnet ledgers
+   * 2_673_006–2_673_016. We pin that range so the test exercises the actual
+   * reported gap deterministically: the previous "last N ledgers" window was
+   * only meaningful when the faucet happened to be active right before the
+   * test ran, which rarely overlapped the buggy ledgers.
    */
-  describe("listOperations / getBlock parity", () => {
+  describe("listOperations supplements Horizon forAccount gap", () => {
     const PARITY_ADDRESS = "GAIH3ULLFQ4DGSECF2AR555KZ4KNDGEKN4AFI4SU2M7B43MGK3QJZNSR";
-    // Recent-ledger window: large enough that the faucet account has activity
-    // most of the time (Stellar ledgers close ~every 5s, so ~1.5min of history),
-    // small enough that the supplement + per-ledger getBlock fan-out stays
-    // well below Horizon's public testnet rate-limit burst threshold.
-    const LEDGER_WINDOW = 20;
+    const KNOWN_GAP_MIN_HEIGHT = 2_673_006;
+    const KNOWN_GAP_MAX_HEIGHT = 2_673_016;
+    // Bug report listed exactly 19 incoming payments missed by forAccount in
+    // this ledger range. Asserting the ground-truth count meets this floor
+    // guards against a stale assumption (e.g. Horizon backfilling its index,
+    // upstream testnet history mutation) silently turning the test vacuous.
+    const REPORTED_MISSING_OPS = 19;
 
-    it("matches getBlock's address-involving op count for each touched ledger", async () => {
-      const { height: latest } = await module.lastBlock();
-      const minHeight = Math.max(latest - LEDGER_WINDOW, 1);
-
-      const { items } = await module.listOperations(PARITY_ADDRESS, {
-        minHeight,
-        order: "desc",
-      });
-
-      // Sanity-check the precondition: the window must contain some activity,
-      // otherwise the parity claim is vacuously true and the test isn't
-      // meaningful. PARITY_ADDRESS is a long-lived testnet faucet, so this
-      // should hold unless testnet was reset right before the test ran.
-      expect(items.length).toBeGreaterThan(0);
-
-      const opsPerLedger = new Map<number, number>();
-      for (const op of items) {
-        const h = op.tx.block.height;
-        opsPerLedger.set(h, (opsPerLedger.get(h) ?? 0) + 1);
-      }
-
-      // Serialize the per-ledger getBlock calls to stay polite with public
-      // Horizon: even with a small window, fanning out via Promise.all on top
-      // of the supplement's per-ledger fetches has tipped the rate limiter.
-      const heights = Array.from(opsPerLedger.keys());
-      const blocks: Awaited<ReturnType<typeof module.getBlock>>[] = [];
-      for (const h of heights) {
-        blocks.push(await module.getBlock(h));
-      }
-
-      const blockAddressOpCount = new Map<number, number>();
-      heights.forEach((height, i) => {
-        let count = 0;
-        for (const tx of blocks[i].transactions) {
-          for (const op of tx.operations) {
-            // Each Horizon op involving PARITY_ADDRESS yields exactly one
-            // address-keyed BlockOperation: a `transfer` leg for that address,
-            // or an `other` op whose `trustor` is the address (change_trust).
-            // PARITY_ADDRESS is a one-way faucet so self-payments (which would
-            // surface both transfer legs against the same address) aren't a
-            // concern here; if that ever changes the comparison would need to
-            // dedupe by Horizon op id.
-            if (op.type === "transfer" && op.address === PARITY_ADDRESS) {
-              count++;
-            } else if (
-              op.type === "other" &&
-              (op as { trustor?: string }).trustor === PARITY_ADDRESS
-            ) {
-              count++;
+    it(
+      "recovers the 19 incoming faucet payments Horizon forAccount index drops",
+      async () => {
+        // Ground truth: per-ledger fetch (same source `getBlock` uses) across
+        // the pinned range, counting only ops that involve PARITY_ADDRESS.
+        const expectedPerLedger = new Map<number, number>();
+        for (let h = KNOWN_GAP_MIN_HEIGHT; h <= KNOWN_GAP_MAX_HEIGHT; h++) {
+          const block = await module.getBlock(h);
+          let count = 0;
+          for (const tx of block.transactions) {
+            for (const op of tx.operations) {
+              // Each Horizon op involving PARITY_ADDRESS yields exactly one
+              // address-keyed BlockOperation: a `transfer` leg for that
+              // address, or an `other` op whose `trustor` is the address
+              // (change_trust). PARITY_ADDRESS is a one-way faucet so
+              // self-payments (which would surface both transfer legs
+              // against the same address) aren't a concern here.
+              if (op.type === "transfer" && op.address === PARITY_ADDRESS) {
+                count++;
+              } else if (
+                op.type === "other" &&
+                (op as { trustor?: string }).trustor === PARITY_ADDRESS
+              ) {
+                count++;
+              }
             }
           }
+          if (count > 0) {
+            expectedPerLedger.set(h, count);
+          }
         }
-        blockAddressOpCount.set(height, count);
-      });
+        const expectedTotal = Array.from(expectedPerLedger.values()).reduce((a, b) => a + b, 0);
+        expect(expectedTotal).toBeGreaterThanOrEqual(REPORTED_MISSING_OPS);
 
-      // Per-ledger equality first so a failing diff points at the specific
-      // ledger that desynced; total is a defensive cross-check.
-      expect(Object.fromEntries(blockAddressOpCount)).toEqual(Object.fromEntries(opsPerLedger));
-      const blockOpsTotal = Array.from(blockAddressOpCount.values()).reduce((a, b) => a + b, 0);
-      expect(blockOpsTotal).toBe(items.length);
-    });
+        // Paginate `forAccount` desc from latest back to KNOWN_GAP_MIN_HEIGHT
+        // and run the per-ledger supplement. Bounding via `minHeight` keeps
+        // the scan + supplement cost roughly proportional to the faucet's
+        // recent (post-2_673_006) activity rather than its full history.
+        const { items } = await module.listOperations(PARITY_ADDRESS, {
+          minHeight: KNOWN_GAP_MIN_HEIGHT,
+          order: "desc",
+        });
+
+        // Filter to the pinned range so we compare the same slice as ground
+        // truth above. Without the supplement, this map would be missing
+        // (or under-counting) entries for the buggy ledgers.
+        const actualPerLedger = new Map<number, number>();
+        for (const op of items) {
+          const h = op.tx.block.height;
+          if (h < KNOWN_GAP_MIN_HEIGHT || h > KNOWN_GAP_MAX_HEIGHT) continue;
+          actualPerLedger.set(h, (actualPerLedger.get(h) ?? 0) + 1);
+        }
+
+        // Per-ledger equality so a failing diff points at the specific
+        // ledger that still desyncs (and how many ops are still missing).
+        expect(Object.fromEntries(actualPerLedger)).toEqual(
+          Object.fromEntries(expectedPerLedger),
+        );
+      },
+      600_000,
+    );
   });
 
   describe("lastBlock", () => {
