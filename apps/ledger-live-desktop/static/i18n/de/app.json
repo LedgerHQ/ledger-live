@@ -1360,6 +1360,10 @@
           "title" : "Sperrbildschirm anpassen",
           "description" : "Zeige dein digitales Lieblingskunstwerk oder -foto als Sperrbildschirm deines Geräts an."
         },
+        "discoverWallet" : {
+          "title" : "Entdecke, was deine Wallet kann",
+          "description" : "Lerne die Funktionen deiner Wallet kennen"
+        },
         "recover" : {
           "title" : "Schutz deines Backups vervollständigen",
           "description" : "Aktivierung von Ledger Recover vornehmen"
@@ -1400,9 +1404,16 @@
         "description" : "Ledger Sync aktivieren, um deine Kryptokonten zu synchronisieren",
         "actionCompletedPopupLabel" : "Konten synchronisiert"
       },
+      "discoverWallet" : {
+        "title" : "Entdecke, was deine Wallet kann",
+        "titleCompleted" : "Entdeckt, was deine Wallet kann",
+        "description" : "Entdecke die Funktionen deiner Wallet",
+        "actionCompletedPopupLabel" : "Produkttour abgeschlossen"
+      },
       "recover" : {
-        "title" : "Ledger Recover abonnieren",
-        "description" : "Stelle den Zugriff auf deine Wallet auch ohne deine geheime Wiederherstellungsphrase wieder her.",
+        "title" : "Schutz deines Backups vervollständigen",
+        "titleCompleted" : "Backup abgesichert",
+        "description" : "Aktivierung von Ledger Recover vornehmen",
         "actionCompletedPopupLabel" : "Du hast erfolgreich Ledger Recover abonniert"
       }
     }
@@ -1781,6 +1792,8 @@
       "votesAddress" : "<0>{{votes}}</0>zu <2>{{name}}</2>",
       "validators" : "Validatoren",
       "redelegated" : "Erneut delegiert",
+      "delegatedTo" : "delegiert an",
+      "delegatedAmount" : "Delegierter Betrag",
       "redelegatedFrom" : "Zurückdelegiert von",
       "redelegatedTo" : "Zurückdelegiert zu",
       "redelegatedAmount" : "Zurückdelegierter Betrag",
@@ -2890,6 +2903,14 @@
               "cta" : "Details anzeigen"
             },
             "broadcastError" : "Deine Transaktion ist möglicherweise fehlgeschlagen. Bitte warte einen Moment und prüfe den Transaktionsverlauf, bevor du es noch einmal versuchst."
+          }
+        }
+      },
+      "selfTransactionFlow" : {
+        "title" : "Delegierung aufheben vorbereiten",
+        "steps" : {
+          "starter" : {
+            "description" : ["So kannst du dein Staking-Konto schließen und deine ADA-Einzahlung zurückerhalten:", "Cardanos Governance erfordert nun, dass du deinen Abstimmungsstatus definierst, bevor du die Delegierung aufheben kannst.", "Bei diesem Schritt wird eine Transaktion an deine eigene Ledger-Adresse gesendet, die lediglich dazu dient, deine Entscheidung, nicht abzustimmen, zu registrieren. Es kostet nur die Standard-Netzwerkgebühr und Ihre ADA bleiben in deiner Wallet.", "Sobald diese Präferenz erfasst ist, kannst du wie gewohnt undelegieren."]
           }
         }
       }
@@ -4278,7 +4299,38 @@
         }
       },
       "redelegation" : {
-        "header" : "Redelegierung(en)"
+        "header" : "Redelegierung(en)",
+        "flow" : {
+          "title" : "Vermögenswerte zurückübertragen",
+          "steps" : {
+            "starter" : {
+              "title" : "Erneute Delegierung",
+              "description" : "Verwende die erneute Delegierung, um einfach von einem Validator zu einem anderen zu wechseln. Wenn du es dir jedoch noch einmal anders überlegst, musst du warten, da die erneute Delegierung eine {{ numberOfDays }}-tägige Sperrzeit auslöst.",
+              "warning" : "Wähle deinen Validator mit Bedacht: Ein Teil deiner delegierten Assets kann unwiderruflich verloren gehen, wenn sich der Validator nicht angemessen verhält. Du kannst maximal <0>{{maxRedelegations}} ausstehende Redelegierungen</0> durchführen.",
+              "howDelegationWorks" : "Wie funktioniert die Delegierung?"
+            },
+            "validators" : {
+              "title" : "Validatoren",
+              "currentDelegation" : "Aktuelle Delegierung",
+              "newDelegation" : "Neue Delegierung",
+              "chooseValidator" : "Validator auswählen",
+              "warning" : "Du musst <0>{{numberOfDays}} Tage</0> warten, um vom neuen Validator zu redelegieren, wenn du es dir noch einmal anders überlegst",
+              "amountLabel" : "Erneut zu delegierender Betrag"
+            },
+            "connectDevice" : {
+              "title" : "Gerät"
+            },
+            "confirmation" : {
+              "title" : "Bestätigung",
+              "success" : {
+                "title" : "Du hast deine Assets erfolgreich redelegiert",
+                "text" : "Die erneute Übertragung wird aktualisiert, sobald die Blockchain die Transaktion bestätigt hat",
+                "cta" : "Details anzeigen"
+              },
+              "broadcastError" : "Deine Transaktion ist möglicherweise fehlgeschlagen. Bitte warte einen Moment und prüfe vor einem erneuten Versuch zunächst den Transaktionsverlauf."
+            }
+          }
+        }
       },
       "undelegation" : {
         "header" : "Aufgehobene Delegierung(en)",
@@ -4316,6 +4368,19 @@
   },
   "graph" : {
     "noGraphWarning" : "Der Graph für dieses Token ist nicht verfügbar"
+  },
+  "lineChart" : {
+    "error" : "Unable to load chart",
+    "rangeSelectorLabel" : "Select time range",
+    "range" : {
+      "1D" : "1T",
+      "1W" : "1W",
+      "1M" : "1M",
+      "6M" : "6M",
+      "1Y" : "1J",
+      "5Y" : "5Y",
+      "ALL" : "Alle"
+    }
   },
   "near" : {
     "account" : {
@@ -4552,6 +4617,137 @@
           }
         }
       }
+    }
+  },
+  "tezos" : {
+    "earnChoice" : {
+      "title" : "Verdiene Tezos Rewards: Delegieren oder Staking",
+      "description" : "Verdiene Rewards auf deine Tezos (XTZ), indem du an einen Baker delegierst und die volle Kontrolle behältst. Um höhere Renditen zu erzielen, stake deine XTZ, da das damit verbundene Risiko gering ist. Wähle den besten Weg, deine Assets zu vermehren.",
+      "howItWorks" : "So funktioniert's",
+      "delegate" : {
+        "header" : "Delegieren",
+        "bullet" : {
+          "0" : "Keine Sperrung",
+          "1" : "Dein gesamtes Guthaben ist delegiert",
+          "2" : "Sende/Swappe deine XTZ jederzeit",
+          "3" : "Ohne Risiko"
+        },
+        "cta" : "Delegieren"
+      },
+      "stake" : {
+        "header" : "Staken",
+        "bullet" : {
+          "0" : "Einnahmen steigern (2-3x)",
+          "1" : "XTZ ist für Staking gesperrt",
+          "2" : "Staken beenden: 4 Tage",
+          "3" : "Risiko: Niedrig (Slashing)"
+        },
+        "cta" : "Staken"
+      }
+    },
+    "unstake" : {
+      "flow" : {
+        "title" : "XTZ Unstaken",
+        "steps" : {
+          "amount" : {
+            "title" : "Betrag",
+            "amountLabel" : "Aufzuhebender Staking-Betrag",
+            "availableLabel" : "Gestaket",
+            "maxLabel" : "Max.",
+            "unbondingNotice" : "Das Unstaking dauert 4 Tage. Während der Wartezeit bleiben deine XTZ delegiert und verdienen keine Staking-Rewards mehr."
+          },
+          "device" : {
+            "title" : "Gerät"
+          },
+          "confirmation" : {
+            "title" : "Bestätigung",
+            "broadcastError" : "Deine Unstaking-Transaktion konnte nicht an das Netzwerk gesendet werden. Bitte versuche es noch einmal.",
+            "success" : {
+              "title" : "Unstaking übermittelt",
+              "text" : "Das Staking deiner XTZ wird aufgehoben und wird in etwa vier Tagen zur Abhebung verfügbar sein.",
+              "cta" : "Details anzeigen"
+            }
+          }
+        }
+      }
+    },
+    "stake" : {
+      "flow" : {
+        "title" : "Staken",
+        "preparingTransaction" : "Transaktion wird vorbereitet…",
+        "amount" : {
+          "disclaimer" : "Das Unstaking dauert 4 Tage.",
+          "awaitingDelegation" : "Bestätigung deiner Delegierung. Dies dauert normalerweise weniger als eine Minute."
+        },
+        "steps" : {
+          "validator" : {
+            "title" : "Validator",
+            "description" : "Wähle einen Baker, an den du delegieren möchtest. Du kannst deine XTZ staken, nachdem die Delegierung bestätigt wurde."
+          },
+          "deviceDelegation" : {
+            "title" : "Bestätige die Delegierung"
+          },
+          "amount" : {
+            "title" : "Betrag"
+          },
+          "deviceStaking" : {
+            "title" : "Staking bestätigen"
+          },
+          "confirmation" : {
+            "title" : "Bestätigung",
+            "success" : {
+              "title" : "Du hast deine Assets erfolgreich gestaket",
+              "text" : "Du hast {{amount}} gestaket. Dein Kontostand wird aktualisiert, sobald die Transaktion durch das Blockchain-Netzwerk bestätigt wurde.",
+              "cta" : "Zum Verdienen-Dashboard"
+            },
+            "broadcastError" : "Deine Transaktion ist möglicherweise fehlgeschlagen. Bitte warte einen Moment und prüfe vor einem erneuten Versuch zunächst den Transaktionsverlauf.",
+            "howItWorks" : "So funktioniert Staking"
+          }
+        }
+      }
+    },
+    "unstakeRequired" : {
+      "changeBaker" : {
+        "title" : "Beende das Staking, bevor du den Baker wechselst",
+        "description" : "Du hast XTZ mit deinem aktuellen Baker gestaked. Beende das Staking deiner Assets, bevor du sie an einen neuen Validator delegierst."
+      },
+      "endDelegation" : {
+        "title" : "Beende das Staking, bevor du die Delegierung beendest",
+        "description" : "Du hast XTZ mit deinem aktuellen Baker gestakt. Beende das Staken deiner Assets, bevor du die Delegierung beendest."
+      },
+      "steps" : {
+        "0" : "Öffne das Verdienen-Menü und wähle Unstake aus.",
+        "1" : "Bestätige den Betrag und sende die Unstaking Transaktion auf deinem Gerät.",
+        "2" : "Warte etwa 4 Tage, bis das Unstaking abgeschlossen ist.",
+        "3" : "Nach der Abhebung kannst du den Baker wechseln oder die Delegierung beenden."
+      },
+      "learnMore" : "Mehr über Tezos-Staking erfahren",
+      "close" : "Schließen"
+    },
+    "account" : {
+      "delegatedAssetsTooltip" : "XTZ an einen Baker delegiert. Das Guthaben bleibt in deiner Wallet und kann jederzeit gesendet werden.",
+      "stakedAssets" : "Vermögenswerte im Staking",
+      "stakedAssetsTooltip" : "XTZ gesperrt unter deinem Baker. Staking beenden, um sie nach ca. 4 Tagen auszahlen zu lassen.",
+      "pendingWithdrawable" : "Ausstehende Abhebung",
+      "pendingWithdrawableTooltip" : "Das Staking von XTZ ist derzeit aufgehoben. Zur Abhebung in ca. 4 Tagen verfügbar.",
+      "withdrawableAssets" : "Abhebbare Assets",
+      "withdrawableAssetsTooltip" : "XTZ, das die Unstaking-Periode abgeschlossen hat und zur Abhebung bereit ist."
+    },
+    "delegation" : {
+      "contextMenu" : {
+        "stake" : "Stake deine XTZ"
+      }
+    },
+    "staking" : {
+      "header" : "Staking",
+      "contextMenu" : {
+        "stakeMore" : "Mehr staken",
+        "unstake" : "Unstake"
+      }
+    },
+    "unstaking" : {
+      "header" : "Unstaking",
+      "processing" : "In Bearbeitung"
     }
   },
   "delegation" : {
@@ -4874,6 +5070,13 @@
           "completed" : "Die Produkttour ist als abgeschlossen markiert.",
           "notCompleted" : "Die Produkt-Tour ist noch nicht vollständig.",
           "open" : "Öffnen"
+        },
+        "recover" : {
+          "title" : "Recover",
+          "description" : "Lege den lokalen Ledger-Recover-Abonnementstatus fest, um den Post-Onboarding-Hub und das Recover-Banner zu testen.",
+          "noSubscription" : "Kein Abonnement",
+          "inProgress" : "In Bearbeitung",
+          "backupDone" : "Backup abgeschlossen"
         }
       },
       "walletFeaturesDevTool" : {
@@ -6158,6 +6361,36 @@
       "topologyChangeError" : {
         "message" : "Topologieänderung festgestellt. Onboarding-Wiederholung ist erforderlich."
       },
+      "disclaimer" : {
+        "title" : "Canton Network einrichten",
+        "intro" : "Canton verfügt über einzigartige Eigenschaften, die du beachten musst, bevor du fortfährst:",
+        "bullets" : {
+          "utxo" : {
+            "title" : "UTXO-basierter Kontostand",
+            "body" : "Der Kontostand besteht aus einzelnen Coin-Verträgen, die auf 100 pro Überweisung begrenzt sind. Inaktive Verträge verlieren im Laufe der Zeit an Wert und verfallen, wenn die Gebühren ihren Kontostand übersteigen."
+          },
+          "offers" : {
+            "title" : "Angebotsbasierte Überweisungen",
+            "body" : "Nichts erledigt sich automatisch. Gesendete Überweisungen können abgehoben werden; empfangene Überweisungen müssen manuell akzeptiert oder abgelehnt werden. Verwalte Angebote über dein Canton-Dashboard."
+          },
+          "dualValidator" : {
+            "title" : "Sicherheit durch Doppel-Validator",
+            "body" : "Transaktionen erfordern eine Co-Signatur sowohl von Ledger als auch von Klin. Keiner kann allein in deinem Namen handeln."
+          },
+          "tokenLiability" : {
+            "title" : "Standard-Token-Haftung ⚠️",
+            "body" : "Die Wiederherstellung von Token im Fehlerszenario liegt in der Verantwortung des Token-Ausstellers, nicht in der von Ledger."
+          }
+        },
+        "agreeLabel" : "Ich stimme den <1>Nutzungsbedingungen von Canton Network und dem Haftungsausschluss von Ledger zu</1>",
+        "cancel" : "Abbrechen",
+        "agree" : "Zustimmen",
+        "terms" : {
+          "title" : "Nutzungsbedingungen von Canton Network",
+          "sectionTitle" : "Standard-Haftung und Rückgewinnung von Token",
+          "body" : "Ledger unterstützt nur Standard-Token, die über das Digital-Asset-Register (DA) ausgegeben werden. Ledger ist nicht der Emittent dieser Token und übernimmt keine Haftung für deren Wert, ihre Verwaltung oder die zugrunde liegenden Smart Contracts.\n\nIm Falle einer Unterbrechung des Ledger-Dienstes oder eines „Disaster-Recovery“-Fehlers kann Ledger deine Assets nicht wiederherstellen. Du musst dich direkt an den jeweiligen Tokenaussteller (Asset Administrator) wenden, um die Wiederherstellung über die Protokolle „Asset Freeze“ oder „Registry Recovery“ zu veranlassen. Dein Rechtsanspruch liegt ausschließlich beim Tokenaussteller im Rahmen seiner bestehenden Service Level Agreements (SLAs). Indem du fortfährst, erkennst du an, dass Ledger und seine Affiliates von jeglicher Haftung ausgeschlossen sind, die sich aus dem Verlust, der Wiederbeschaffung oder der Unfähigkeit, diese Token zurückzuholen, ergibt."
+        }
+      },
       "tooManyUtxos" : {
         "title" : "Handlungsbedarf: Zu viele UTXOs",
         "description" : "Auf deinem Konto sind zu viele kleine UTXOs, um diese Überweisung abwickeln zu können. Führe sie jetzt zusammen, um ein Ablaufen aufgrund anfallender Haltegebühren zu vermeiden und Übertragungen zu ermöglichen.",
@@ -6944,6 +7177,9 @@
     "RecommendUndelegation" : {
       "title" : "Bitte hebe die Delegierung des Kontos auf, bevor du es leerst"
     },
+    "MustDelegateBeforeStaking" : {
+      "title" : "Bitte delegiere dein Konto vor dem Staking"
+    },
     "RecommendSubAccountsToEmpty" : {
       "title" : "Bitte leere zuerst alle Unterkonten"
     },
@@ -7404,6 +7640,14 @@
     "AleoAmountRecordRequired" : {
       "title" : "Wähle einen gültigen privaten Eintrag für den Betrag aus.",
       "description" : "Wähle eine deiner verfügbaren privaten Aufzeichnungen aus, um den Überweisungsbetrag bereitzustellen."
+    },
+    "AleoTooManyRecordsSelected" : {
+      "title" : "Zu viele private Datensätze ausgewählt.",
+      "description" : "Du kannst maximal {{count}} private Einträge pro Transaktion verwenden."
+    },
+    "AleoAmountTooLargeForTransaction" : {
+      "title" : "Betrag zu groß für eine Transaktion",
+      "description" : "Deine privaten Datensätze können diesen Betrag nicht in einer einzigen Transaktion abdecken. Versuche es mit einem kleineren Betrag."
     },
     "AleoFeeRecordRequired" : {
       "title" : "Eine weitere private Aufzeichnung ist erforderlich, um die Netzwerkgebühr zu decken.",
@@ -8401,20 +8645,18 @@
     "title" : "Konten",
     "tableActions" : {
       "searchAddress" : "Nach Name oder Adresse suchen",
-      "addAddress" : "Adresse hinzufügen"
+      "addAccount" : "Konto hinzufügen"
     },
     "table" : {
       "columns" : {
         "name" : "Name",
         "address" : "Adresse",
+        "asset" : "Vermögenswert",
         "value" : "Wert"
       },
       "editName" : "Name bearbeiten",
       "emptyState" : "Noch keine Krypto-Adresse",
-      "emptySearchState" : "Es wurden keine Konten gefunden, die deiner Suche entsprechen",
-      "assetCount_zero" : "{{count}} Assets",
-      "assetCount_one" : "{{count}} Assets",
-      "assetCount_other" : "{{count}} Assets"
+      "emptySearchState" : "Es wurden keine Konten gefunden, die deiner Suche entsprechen"
     },
     "editName" : {
       "title" : "Adressnamen bearbeiten",
@@ -8439,8 +8681,7 @@
   },
   "topBar" : {
     "history" : {
-      "cta" : "Verlauf",
-      "tooltip" : "Verlauf"
+      "cta" : "Transaktionen"
     },
     "activityIndicator" : {
       "errorToolTip" : "Deine Assets sind sicher. Dies ist ein vorübergehendes Synchronisierungsproblem.\n Betroffene Konten: {{accounts}}. Zum Wiederholen tippen",
@@ -8579,6 +8820,21 @@
       }
     },
     "shared" : {
+      "quickAmountSelector" : {
+        "strategies" : {
+          "fast" : "Schnell",
+          "balanced" : "Ausgeglichen",
+          "full" : "Voll"
+        },
+        "recordCount_one" : "{{count}} Eintrag",
+        "recordCount_other" : "{{count}} Einträge",
+        "unavailable" : "Nicht verfügbar",
+        "spendableBalance" : "Maximal ausgabefähiger Betrag:"
+      },
+      "infoBanner" : {
+        "descPartOne" : "Absender, Betrag und Empfänger sind on-chain verborgen.",
+        "descPartTwo" : "Bis zu {{max}} Einträge pro Sendung."
+      },
       "sponsoredByProvable" : "Gesponsert von Provable",
       "balanceSelector" : {
         "private" : "Privater Saldo",
@@ -8620,7 +8876,9 @@
         "selectLabel" : "Senden von"
       },
       "summary" : {
-        "proofGenerationWarning" : "Eine Aleo-Transaktion erfordert die Generierung von Beweisen. Dieser Vorgang kann einige Zeit dauern."
+        "proofGenerationWarning" : "Eine Aleo-Transaktion erfordert die Generierung von Beweisen. Dieser Vorgang kann einige Zeit dauern.",
+        "recordsUsed" : "Genutzte Einträge",
+        "signingTime" : "Signierzeit"
       },
       "mandatoryPrivateSync" : {
         "title" : "Synchronisierung deines privaten Guthabens ({{percentage}}%)",
@@ -8665,10 +8923,32 @@
       "growYourRewards" : "Vermehre deine Rewards",
       "spendYourCrypto" : "Kryptos ausgeben",
       "everythingAtAGlance" : "Alles auf einen Blick"
+    },
+    "slides" : {
+      "fund" : {
+        "title" : "Beginne, indem du deine Wallet auflädst",
+        "subTitle" : "Lade dein Ledger Wallet auf wie du willst: transferiere, kaufe oder konvertiere Geld in Stablecoins."
+      },
+      "portfolio" : {
+        "title" : "Sei dem Markt voraus",
+        "subTitle" : "Behalte den Überblick über deine Assets, Prämien und Markttrends."
+      },
+      "earn" : {
+        "title" : "Genieße Prämien für deine Kryptos",
+        "subTitle" : "Lass dein Krypto über den Verdienen-Bereich arbeiten."
+      },
+      "card" : {
+        "title" : "Gib Krypto im echten Leben aus",
+        "subTitle" : "Bezahle mit deiner Krypto-Karte und verdiene Cashback – online oder im Geschäft"
+      },
+      "swap" : {
+        "title" : "Swappe ohne Apps zu wechseln",
+        "subTitle" : "Genieße grenzenlosen Handel mit Tausenden von Assets über unsere vertrauenswürdigen Swap-Partner."
+      }
     }
   },
   "history" : {
-    "title" : "Transaktionen",
+    "title" : "Transaktionsverlauf",
     "pending" : "Schwebende Transaktion",
     "pending_other" : "Schwebende Transaktionen",
     "columns" : {
@@ -8686,11 +8966,10 @@
       "description" : "Komme später zurück, um deine Transaktionen zu sehen."
     },
     "actionsBar" : {
-      "csv" : "CSV"
+      "csv" : "Exportieren"
     },
     "exportDialog" : {
-      "title" : "Transaktionsverlauf",
-      "description" : "Wähle die Konten aus, die exportiert werden sollen.",
+      "title" : "Transaktionsverlauf exportieren",
       "disclaimer" : "Nur geschätzte Werte. Gegenwerte werden von Kaiko nur zu Informationszwecken bereitgestellt. Verwende diese Daten nicht für steuerliche, rechtliche oder buchhalterische Zwecke.",
       "accountsToInclude" : "Einzuschließende Konten",
       "selectAll" : "Alle auswählen ({{count}})",
@@ -8723,6 +9002,92 @@
     "explore" : "Alle Ledger-Geräte entdecken"
   },
   "assetDetails" : {
-    "totalBalance" : "Gesamtsaldo"
+    "header" : {
+      "optionsMenu" : "Assets-Optionen",
+      "addFavourite" : "Zu Favoriten hinzufügen",
+      "removeFavourite" : "Aus Favoriten entfernen",
+      "hideFromPortfolio" : "Aus Portfolio ausblenden",
+      "showInPortfolio" : "Im Portfolio anzeigen"
+    },
+    "hiddenBanner" : {
+      "description" : "Dieses Assets ist in deinem Portfolio ausgeblendet.",
+      "showAsset" : "Asset anzeigen"
+    },
+    "totalBalance" : "Gesamtsaldo",
+    "marketPrice" : "Marktpreis",
+    "addresses" : "Adressen",
+    "addressesDialog" : {
+      "title" : "Adressen",
+      "description" : "Alle deine Adressen mit {{ticker}}."
+    },
+    "add" : "Hinzufügen",
+    "notFound" : "Asset-Verteilerelement nicht gefunden.",
+    "marketStats" : "Marktstatistik",
+    "marketStatsTooltip" : "Marktkennzahlen für dieses Asset.",
+    "pricePerformance" : "Preis-Performance",
+    "marketRank" : "Marktrang",
+    "tradingVolume24h" : "24h Handelsvolumen",
+    "day" : "1 Tag",
+    "staking" : {
+      "availableBalance" : "Verfügbares Guthaben",
+      "availableBalanceTooltip" : "Der Teil deines Guthabens, den du gerade nutzen kannst, um ihn jederzeit zu senden, zu swappen oder abzuheben.",
+      "earnDeposit" : "Verdienen Einzahlung",
+      "earnBanner" : "Verdiene bis zu {{apy}}% {{type}}",
+      "earnBannerDefault" : "Verdiene mit diesem Asset",
+      "earnBannerSubtitle" : "Halte dieses Asset und verdiene",
+      "earnBannerAction" : "Gehe zu Verdienen"
+    }
+  },
+  "pnl" : {
+    "asset" : {
+      "entry" : {
+        "title" : "Durchschnittlicher Einstiegspreis",
+        "tooltip" : "Der durchschnittliche Preis, den du für dieses Asset in dieser Wallet gezahlt hast, einschließlich aller Käufe oder Empfänge aus anderen Wallets. Dies wird verwendet, um deinen Gewinn oder Verlust zu verfolgen."
+      },
+      "return" : {
+        "title" : "Nicht realisierte Rendite"
+      },
+      "dialog" : {
+        "title" : "Gewinn und Verlust",
+        "description" : "Eine Übersicht über die Entwicklung dieses Assets in deinem Portfolio.",
+        "totalReturn" : {
+          "title" : "Gesamtrendite",
+          "description" : "Die Summe der nicht realisierten und realisierten Renditen."
+        },
+        "unrealisedReturn" : {
+          "title" : "Nicht realisierter Ertrag",
+          "description" : "Der geschätzte Gewinn oder Verlust bei Verkauf zum heutigen Kurs."
+        },
+        "realisedReturn" : {
+          "title" : "Realisierte Rendite",
+          "description" : "Bestätigter Gewinn oder Verlust aus früheren Verkäufen oder Überweisungen."
+        }
+      }
+    },
+    "portfolio" : {
+      "return" : {
+        "title" : "Nicht realisierter Ertrag"
+      },
+      "costBasis" : {
+        "title" : "Kostenbasis",
+        "tooltip" : "Der Gesamtbetrag, den du für den Erwerb deiner aktuellen Bestände gezahlt hast, einschließlich Gebühren."
+      },
+      "dialog" : {
+        "title" : "Gewinn und Verlust",
+        "description" : "Die Performance deines Portfolios, aufgeschlüsselt in realisierte und nicht realisierte Renditen.",
+        "totalReturn" : {
+          "title" : "Gesamtrendite",
+          "description" : "Die Kombination aus realisierten und nicht realisierten Renditen, die deine Gesamtposition widerspiegeln."
+        },
+        "unrealisedReturn" : {
+          "title" : "Nicht realisierter Ertrag",
+          "description" : "Geschätzter Gewinn oder Verlust deiner aktuellen Bestände."
+        },
+        "realisedReturn" : {
+          "title" : "Realisierte Rendite",
+          "description" : "Bestätigter Gewinn oder Verlust aus früheren Verkäufen oder ausgehenden Überweisungen."
+        }
+      }
+    }
   }
 }
