@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { log } from "@ledgerhq/logs";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, OperationType, TokenAccount } from "@ledgerhq/types-live";
 import { encodeTokenAccountId, emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account";
@@ -8,80 +9,28 @@ import type { AleoOperation, AleoOperationExtra, AleoTokenAccount } from "../typ
 import type { AleoPrivateTokenBalance } from "../types/logic";
 import { apiClient } from "../network/api";
 import { sdkClient } from "../network/sdk";
-import { PROGRAM_ID } from "../constants";
+import { PROGRAM_ID, EXPLORER_TRANSFER_TYPES, AMOUNT_ARG_INDEX } from "../constants";
 import { mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 
-/**
- * Strips the trailing `field` type suffix that Aleo appends to token IDs
- * (e.g. `"...049field"` → `"...049"`). Used to normalise IDs before comparison
- * so that a mismatch in suffix presence never causes a lookup miss.
- */
-function normalizeTokenId(tokenId: string): string {
-  const base = tokenId.trim().split(".")[0];
-  return base.endsWith("field") ? base.slice(0, -"field".length).trimEnd() : base;
-}
-
-async function computeTokenBalanceKey(tokenId: string, ownerAddress: string): Promise<string> {
-  const { BHP256, Plaintext } = await import("@provablehq/sdk/mainnet.js");
-
-  const hasher = new BHP256();
-  const fieldTokenId = tokenId.endsWith("field") ? tokenId : `${tokenId}field`;
-  const hashPlaintext = `{ account: ${ownerAddress}, token_id: ${fieldTokenId} }`;
-  const structPlaintext = Plaintext.fromString(hashPlaintext);
-  const bits = structPlaintext.toBitsLe();
-
-  return hasher.hash(bits).toString();
-}
-
-/** Registry tokens are those managed by the token_registry.aleo program. */
-function isRegistryToken(token: AleoVerifiedToken): boolean {
-  return token.program_name === PROGRAM_ID.TOKEN_REGISTRY;
-}
-
-interface VerifiedTokenMaps {
-  registryTokensMap: Map<string, AleoVerifiedToken>;
-  customProgramTokensMap: Map<string, AleoVerifiedToken>;
-}
-
-function buildVerifiedTokenMaps(verifiedTokens: AleoVerifiedToken[]): VerifiedTokenMaps {
-  const relevant = verifiedTokens.filter(t => t.program_name !== PROGRAM_ID.CREDITS);
-  return {
-    registryTokensMap: new Map(
-      relevant.filter(isRegistryToken).map(t => [normalizeTokenId(t.token_id), t]),
-    ),
-    customProgramTokensMap: new Map(
-      relevant.filter(t => !isRegistryToken(t)).map(t => [t.program_name, t]),
-    ),
-  };
-}
-
-function resolveVerifiedToken(
-  tokenInfo: { programId: string; tokenId: string | null },
-  { registryTokensMap, customProgramTokensMap }: VerifiedTokenMaps,
-): AleoVerifiedToken | undefined {
-  if (tokenInfo.programId !== PROGRAM_ID.TOKEN_REGISTRY) {
-    return customProgramTokensMap.get(tokenInfo.programId);
-  }
-
-  return tokenInfo.tokenId && tokenInfo.tokenId !== "0"
-    ? registryTokensMap.get(normalizeTokenId(tokenInfo.tokenId))
-    : undefined;
+function buildTokenMap(verifiedTokens: AleoVerifiedToken[]): Map<string, AleoVerifiedToken> {
+  return new Map(
+    verifiedTokens
+      .filter(
+        t => t.program_name !== PROGRAM_ID.CREDITS && t.program_name !== PROGRAM_ID.TOKEN_REGISTRY,
+      )
+      .map(t => [t.program_name, t]),
+  );
 }
 
 function buildTokenCurrencyFromVerifiedToken(
   parentCurrency: CryptoCurrency,
   token: AleoVerifiedToken,
 ): TokenCurrency {
-  const isRegistry = isRegistryToken(token);
-  const contractAddress = isRegistry ? token.token_id : token.program_name;
-  // Stable id: strip trailing "field" suffix for registry token ids.
-  const idKey = isRegistry ? normalizeTokenId(contractAddress) : contractAddress;
-
   return {
     type: "TokenCurrency",
-    id: `aleo/aleo_token/${idKey}`,
-    contractAddress,
+    id: `aleo/aleo_token/${token.program_name}`,
+    contractAddress: token.program_name,
     parentCurrency,
     tokenType: "aleo_token",
     name: token.display,
@@ -98,56 +47,9 @@ function buildTokenCurrencyFromVerifiedToken(
   };
 }
 
-interface DiscoveredToken {
-  tokenCurrency: TokenCurrency;
-  verifiedToken: AleoVerifiedToken;
-}
-
-function discoverTokensFromOperations(
-  tokenOperations: AleoOperation[],
-  verifiedTokens: AleoVerifiedToken[],
-  currency: CryptoCurrency,
-): DiscoveredToken[] {
-  // FIXME: MOCKED CAL LIST BASED ON VERIFIED TOKENS LIST
-  const tokenMaps = buildVerifiedTokenMaps(verifiedTokens);
-  const seen = new Set<string>();
-  const discovered: DiscoveredToken[] = [];
-
-  for (const op of tokenOperations) {
-    const tokenInfo = op.extra?.tokenInfo;
-    if (!tokenInfo) continue; // null = native, undefined = legacy
-
-    const verifiedToken = resolveVerifiedToken(tokenInfo, tokenMaps);
-    if (!verifiedToken) continue;
-
-    const tokenCurrency = buildTokenCurrencyFromVerifiedToken(currency, verifiedToken);
-    if (seen.has(tokenCurrency.id)) continue;
-
-    seen.add(tokenCurrency.id);
-    discovered.push({ tokenCurrency, verifiedToken });
-  }
-
-  return discovered;
-}
-
-async function fetchTokenBalance(
-  token: DiscoveredToken,
-  address: string,
-  currency: CryptoCurrency,
-): Promise<BigNumber> {
-  if (isRegistryToken(token.verifiedToken)) {
-    const mappingKey = await computeTokenBalanceKey(token.verifiedToken.token_id, address);
-    return parseTokenBalance(await apiClient.getRegistryTokenBalance(currency, mappingKey));
-  }
-  return parseTokenBalance(
-    await apiClient.getProgramTokenBalance(currency, token.verifiedToken.program_name, address),
-  );
-}
-
 /**
  * Parses Aleo token balance payloads into BigNumber.
- * Supports direct balances (e.g. "123u128", "123u128.private", "123u128.public")
- * and token_registry structs (e.g. "{ ..., balance: 2u128, authorized_until: ... }").
+ * Supports direct balances (e.g. "123u128", "123u128.private", "123u128.public").
  * Aleo decrypted record fields include a visibility suffix (.private/.public/.constant)
  * which is stripped before parsing.
  * Returns zero if the input is null or cannot be parsed.
@@ -163,42 +65,7 @@ function parseTokenBalance(balanceStr: string | null): BigNumber {
     return new BigNumber(directBalanceMatch[1]);
   }
 
-  const structBalanceMatch = normalized.match(/\bbalance\s*:\s*(\d+)u\d+/);
-  if (structBalanceMatch) {
-    return new BigNumber(structBalanceMatch[1]);
-  }
-
   return new BigNumber(0);
-}
-
-/**
- * Builds token sub-accounts from `tokenOperations` (operations already known to be token
- * transfers), matching against `verifiedTokens`. Each sub-account appears at most once
- * (deduplication across existing and new).
- */
-async function buildSubAccountsFromOperations({
-  address,
-  tokenOperations,
-  verifiedTokens,
-  ledgerAccountId,
-  currency,
-}: {
-  address: string;
-  tokenOperations: AleoOperation[];
-  verifiedTokens: AleoVerifiedToken[];
-  ledgerAccountId: string;
-  currency: CryptoCurrency;
-}): Promise<TokenAccount[]> {
-  const discovered = discoverTokensFromOperations(tokenOperations, verifiedTokens, currency);
-
-  const results = await Promise.allSettled(
-    discovered.map(async token => {
-      const balance = await fetchTokenBalance(token, address, currency);
-      const id = encodeTokenAccountId(ledgerAccountId, token.tokenCurrency);
-      return buildTokenAccount(id, ledgerAccountId, token.tokenCurrency, balance);
-    }),
-  );
-  return results.flatMap(r => (r.status === "fulfilled" ? [r.value] : []));
 }
 
 export async function getAleoSubAccounts({
@@ -215,29 +82,43 @@ export async function getAleoSubAccounts({
   if (tokenOperations.length === 0) return [];
 
   const allVerified = await apiClient.getVerifiedTokens({ currency });
+  const tokenMap = buildTokenMap(allVerified);
+  const seen = new Set<string>();
+  const discovered: Array<{ tokenCurrency: TokenCurrency; verifiedToken: AleoVerifiedToken }> = [];
 
-  return buildSubAccountsFromOperations({
-    address,
-    tokenOperations,
-    verifiedTokens: allVerified,
-    ledgerAccountId,
-    currency,
-  });
+  for (const op of tokenOperations) {
+    const tokenInfo = op.extra?.tokenInfo;
+    if (!tokenInfo) continue;
+
+    const verifiedToken = tokenMap.get(tokenInfo.programId);
+    if (!verifiedToken) continue;
+
+    const tokenCurrency = buildTokenCurrencyFromVerifiedToken(currency, verifiedToken);
+    if (seen.has(tokenCurrency.id)) continue;
+
+    seen.add(tokenCurrency.id);
+    discovered.push({ tokenCurrency, verifiedToken });
+  }
+
+  const results = await Promise.allSettled(
+    discovered.map(async ({ tokenCurrency, verifiedToken }) => {
+      const balance = parseTokenBalance(
+        await apiClient.getProgramTokenBalance(currency, verifiedToken.program_name, address),
+      );
+      const id = encodeTokenAccountId(ledgerAccountId, tokenCurrency);
+      return buildTokenAccount(id, ledgerAccountId, tokenCurrency, balance);
+    }),
+  );
+
+  return results.flatMap(r => (r.status === "fulfilled" ? [r.value] : []));
 }
-
-type TokenAccountId = string;
 
 type CoinOperationWithSubOps = AleoOperation & Required<Pick<AleoOperation, "subOperations">>;
 
-/** Creates a NONE coin operation to act as a parent for an orphan token operation. */
-function makeNoneParentForOrphanTokenOp(
+function buildNoneParentOp(
   ledgerAccountId: string,
   tokenOp: AleoOperation,
 ): CoinOperationWithSubOps {
-  const extra: AleoOperationExtra = {
-    functionId: tokenOp.extra?.functionId ?? "",
-    transactionType: tokenOp.extra?.transactionType ?? "public",
-  };
   return {
     id: encodeOperationId(ledgerAccountId, tokenOp.hash, "NONE"),
     hash: tokenOp.hash,
@@ -250,7 +131,10 @@ function makeNoneParentForOrphanTokenOp(
     blockHash: tokenOp.blockHash,
     accountId: ledgerAccountId,
     date: tokenOp.date,
-    extra,
+    extra: {
+      functionId: tokenOp.extra?.functionId ?? "",
+      transactionType: tokenOp.extra?.transactionType ?? "public",
+    },
     subOperations: [],
     nftOperations: [],
     internalOperations: [],
@@ -287,9 +171,9 @@ export async function prepareTokenOperations({
   tokenOperations: AleoOperation[];
 }): Promise<{
   updatedCoinOperations: AleoOperation[];
-  tokenOperationsBySubAccountId: Map<TokenAccountId, AleoOperation[]>;
+  tokenOperationsBySubAccountId: Map<string, AleoOperation[]>;
 }> {
-  const tokenOperationsBySubAccountId = new Map<TokenAccountId, AleoOperation[]>();
+  const tokenOperationsBySubAccountId = new Map<string, AleoOperation[]>();
 
   if (tokenOperations.length === 0) {
     return {
@@ -299,7 +183,7 @@ export async function prepareTokenOperations({
   }
 
   const allVerified = await apiClient.getVerifiedTokens({ currency });
-  const tokenMaps = buildVerifiedTokenMaps(allVerified);
+  const tokenMap = buildTokenMap(allVerified);
 
   // shallow-copy coin operations so we can mutate subOperations without side effects
   const updatedCoinOperations: CoinOperationWithSubOps[] = coinOperations.map(op => ({
@@ -315,7 +199,7 @@ export async function prepareTokenOperations({
     const tokenInfo = tokenOp.extra?.tokenInfo;
     if (!tokenInfo) continue;
 
-    const verifiedToken = resolveVerifiedToken(tokenInfo, tokenMaps);
+    const verifiedToken = tokenMap.get(tokenInfo.programId);
     if (!verifiedToken) continue;
 
     const tokenCurrency = buildTokenCurrencyFromVerifiedToken(currency, verifiedToken);
@@ -336,7 +220,7 @@ export async function prepareTokenOperations({
     // Get or create the single parent coin op for this transaction hash.
     let parentCoinOp = coinOpsByHash.get(tokenOp.hash);
     if (!parentCoinOp) {
-      parentCoinOp = makeNoneParentForOrphanTokenOp(ledgerAccountId, tokenOp);
+      parentCoinOp = buildNoneParentOp(ledgerAccountId, tokenOp);
       updatedCoinOperations.push(parentCoinOp);
       coinOpsByHash.set(tokenOp.hash, parentCoinOp);
     }
@@ -449,6 +333,28 @@ export const mergeSubAccounts = (
   return [...updatedSubAccounts, ...newSubAccountsToAdd];
 };
 
+/** Merges transparent + private balances into a sub-account, picking fresh transparent from the API map. */
+export function applyTransparentBalance(
+  subAccount: TokenAccount,
+  freshTransparentById: Map<string, BigNumber>,
+): AleoTokenAccount {
+  const aleoSubAccount = subAccount as AleoTokenAccount;
+  const transparentBalance =
+    freshTransparentById.get(subAccount.id) ??
+    aleoSubAccount.transparentBalance ??
+    subAccount.balance;
+  const privateBalance = aleoSubAccount.privateBalance ?? null;
+  const total = transparentBalance.plus(privateBalance ?? 0);
+  return {
+    ...subAccount,
+    transparentBalance,
+    privateBalance,
+    unspentPrivateRecords: aleoSubAccount.unspentPrivateRecords ?? null,
+    balance: total,
+    spendableBalance: total,
+  };
+}
+
 /**
  * Prepares sub-accounts and the updated coin operations for a public sync cycle.
  *
@@ -518,35 +424,205 @@ export async function resolveTokenSubAccounts({
   //   - matched accounts: use fresh transparent from API
   //   - unmatched (dropped from current ops window): use stored transparentBalance to avoid
   //     treating the previous total as the transparent base and double-counting private balance
-  const subAccounts: TokenAccount[] = merged.map(sa => {
-    const aleoSa = sa as AleoTokenAccount;
-    const transparentBalance =
-      freshTransparentById.get(sa.id) ?? aleoSa.transparentBalance ?? sa.balance;
-    const privateBalance = aleoSa.privateBalance ?? null;
-    const total = transparentBalance.plus(privateBalance ?? 0);
-    return { ...sa, transparentBalance, balance: total, spendableBalance: total };
-  });
+  const subAccounts: TokenAccount[] = merged.map(sa =>
+    applyTransparentBalance(sa, freshTransparentById),
+  );
 
   return { updatedCoinOperations, subAccounts };
 }
 
 /**
  * Builds token sub-accounts discovered from private records and computes their
- * private balances from unspent records in a single pass.
+ * private balances from unspent records in a single pass. Also builds private
+ * transaction history for each token sub-account from all historical records.
  *
- * - `allPrivateRecords` (formerly rawTokenPrivateRecords): used for sub-account
- *   discovery (all historical records, including spent ones).
- * - `unspentPrivateRecords` (formerly filteredUnspentTokenRecords): used for
- *   balance computation — decrypted and summed per token.
+ * - `allPrivateRecords`: used for sub-account discovery, operation history, and
+ *   (when spent records are present) full transaction history.
+ * - `unspentPrivateRecords`: used for balance computation — decrypted and summed per token.
  * - `baseSubAccounts`: existing token sub-accounts (e.g. from public sync) whose
- *   private balance fields will be updated.
+ *   private balance and operation fields will be updated.
+ * - `address`: the account address, used to populate operation recipients.
  *
  * Returns `subAccounts`: the merged list of all AleoTokenAccounts with private
- * balances, transparent balances, and unspent records already applied.
- *
- * - Custom-program token records carry the balance in `data.amount`.
- * - token_registry.aleo records carry both `data.token_id` and `data.amount`.
+ * balances, transparent balances, unspent records, and private operations applied.
  */
+
+/**
+ * For an outgoing (OUT) private token transfer, the spent input record's own `amount`
+ * is the full pre-send balance — NOT the amount that was sent to the recipient.
+ * Reads the actual sent amount from the transition inputs instead.
+ *
+ * Returns null if the transition data is unavailable or the input cannot be parsed,
+ * in which case the caller should fall back to the record amount.
+ */
+async function getTokenOutAmountFromTransition({
+  currency,
+  record,
+  viewKey,
+}: {
+  currency: CryptoCurrency;
+  record: AleoPrivateRecord;
+  viewKey: string;
+}): Promise<BigNumber | null> {
+  const txDetails = await apiClient.getTransactionById(currency, record.transaction_id.trim());
+  const transition = txDetails.execution?.transitions[record.transition_index];
+
+  if (!transition) return null;
+
+  // For private_to_public the amount argument is already in plaintext at AMOUNT_ARG_INDEX.
+  if (record.function_name === EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC) {
+    const amountInput = transition.inputs[AMOUNT_ARG_INDEX] ?? null;
+    if (!amountInput || !("value" in amountInput)) return null;
+    return parseTokenBalance(amountInput.value);
+  }
+
+  // Fully private transfer: decrypt all inputs in parallel and pick the one whose
+  // plaintext is a plain integer amount ("1u128", "500u64", etc.).
+  const decryptedInputs = await Promise.all(
+    transition.inputs.map(async (inp, idx) => {
+      if (!("value" in inp) || !inp.value) return { idx, raw: inp };
+      try {
+        const dec = await sdkClient.decryptCiphertext({
+          currency,
+          ciphertext: inp.value,
+          tpk: transition.tpk,
+          viewKey,
+          programId: record.program_name,
+          functionName: record.function_name,
+          outputIndex: idx,
+        });
+        return { idx, raw: inp, decrypted: dec };
+      } catch (e) {
+        return { idx, raw: inp, error: String(e) };
+      }
+    }),
+  );
+
+  const amountEntry = decryptedInputs.find(
+    entry => "decrypted" in entry && /^\d+u\d+/.test((entry.decrypted?.plaintext ?? "").trim()),
+  );
+  if (!amountEntry || !("decrypted" in amountEntry)) return null;
+
+  return parseTokenBalance(amountEntry.decrypted!.plaintext);
+}
+
+type TxOpEntry = {
+  amount: BigNumber;
+  record: AleoPrivateRecord;
+  tokenInfo: NonNullable<AleoOperationExtra["tokenInfo"]>;
+};
+
+/**
+ * Deduplicates private records by commitment and excludes unspent change records
+ * (sender === address, not yet re-spent) since those represent current balance only.
+ */
+export function filterHistoryRecords(
+  records: AleoPrivateRecord[],
+  address: string,
+): AleoPrivateRecord[] {
+  return [
+    ...new Map(
+      records.filter(r => r.spent || r.sender !== address).map(r => [r.commitment, r]),
+    ).values(),
+  ];
+}
+
+/** Builds a single private AleoOperation from a per-transaction accumulator entry. */
+export function buildPrivateTokenOp(
+  tokenAccountId: string,
+  txId: string,
+  { amount, record, tokenInfo }: TxOpEntry,
+  address: string,
+): AleoOperation {
+  const type: OperationType = record.sender === address ? "OUT" : "IN";
+  const senders = type === "OUT" ? [address] : [record.sender];
+  const recipients = type === "OUT" ? [] : [address];
+  return {
+    id: encodeOperationId(tokenAccountId, txId, type),
+    hash: txId,
+    type,
+    value: amount,
+    fee: new BigNumber(0),
+    senders,
+    recipients,
+    blockHeight: record.block_height,
+    blockHash: "",
+    accountId: tokenAccountId,
+    date: new Date(Number(record.block_timestamp) * 1000),
+    extra: {
+      functionId: record.function_name,
+      transactionType: "private",
+      tokenInfo,
+    },
+    hasFailed: false,
+    subOperations: [],
+    nftOperations: [],
+    internalOperations: [],
+  };
+}
+
+export function getOrCreateBalanceEntry(
+  balanceEntriesById: Map<string, AleoPrivateTokenBalance>,
+  id: string,
+  contractAddress: string,
+): AleoPrivateTokenBalance {
+  let entry = balanceEntriesById.get(id);
+  if (!entry) {
+    entry = { id, contractAddress, balance: new BigNumber(0), unspentRecords: [] };
+    balanceEntriesById.set(id, entry);
+  }
+  return entry;
+}
+
+export function withPrivateBalance(
+  subAccount: TokenAccount,
+  isExisting: boolean,
+  balanceEntriesById: Map<string, AleoPrivateTokenBalance>,
+  privateTokenOpsByAccountId: Map<string, AleoOperation[]>,
+): AleoTokenAccount {
+  const entry = balanceEntriesById.get(subAccount.id);
+  const privateBalance = entry?.balance ?? new BigNumber(0);
+  const unspentRecs = entry?.unspentRecords ?? [];
+  const aleoSubAccount = subAccount as AleoTokenAccount;
+  const transparentBalance = isExisting
+    ? aleoSubAccount.transparentBalance ?? subAccount.balance
+    : new BigNumber(0);
+  const total = transparentBalance.plus(privateBalance);
+  const newPrivateOps = privateTokenOpsByAccountId.get(subAccount.id) ?? [];
+  const mergedOps =
+    isExisting && subAccount.operations.length > 0
+      ? (mergeOps(subAccount.operations, newPrivateOps) as AleoOperation[])
+      : newPrivateOps;
+  return {
+    ...subAccount,
+    transparentBalance,
+    privateBalance,
+    unspentPrivateRecords: unspentRecs,
+    balance: total,
+    spendableBalance: total,
+    operations: mergedOps,
+    operationsCount: mergedOps.length,
+  };
+}
+
+export function accumulateOp(
+  opAccumulator: Map<string, Map<string, TxOpEntry>>,
+  tokenAccountId: string,
+  txId: string,
+  amount: BigNumber,
+  record: AleoPrivateRecord,
+  tokenInfo: NonNullable<AleoOperationExtra["tokenInfo"]>,
+): void {
+  if (!opAccumulator.has(tokenAccountId)) opAccumulator.set(tokenAccountId, new Map());
+  const txMap = opAccumulator.get(tokenAccountId)!;
+  const existing = txMap.get(txId);
+  if (existing) {
+    existing.amount = existing.amount.plus(amount);
+  } else {
+    txMap.set(txId, { amount, record, tokenInfo });
+  }
+}
+
 export async function buildSubAccountsFromPrivateRecords({
   currency,
   ledgerAccountId,
@@ -554,6 +630,7 @@ export async function buildSubAccountsFromPrivateRecords({
   unspentPrivateRecords,
   baseSubAccounts,
   viewKey,
+  address,
 }: {
   currency: CryptoCurrency;
   ledgerAccountId: string;
@@ -561,49 +638,21 @@ export async function buildSubAccountsFromPrivateRecords({
   unspentPrivateRecords: AleoPrivateRecord[];
   baseSubAccounts: TokenAccount[];
   viewKey: string;
+  address: string;
 }): Promise<{ subAccounts: AleoTokenAccount[] }> {
   const existingSubAccountIds = new Set(baseSubAccounts.map(sa => sa.id));
 
   const allVerified = await apiClient.getVerifiedTokens({ currency });
-  const { customProgramTokensMap, registryTokensMap } = buildVerifiedTokenMaps(allVerified);
+  const tokenMap = buildTokenMap(allVerified);
 
   const balanceEntriesById = new Map<string, AleoPrivateTokenBalance>();
-
-  function getOrCreateBalanceEntry(id: string, contractAddress: string) {
-    let entry = balanceEntriesById.get(id);
-    if (!entry) {
-      entry = { id, contractAddress, balance: new BigNumber(0), unspentRecords: [] };
-      balanceEntriesById.set(id, entry);
-    }
-    return entry;
-  }
-
-  function withPrivateBalance(sa: TokenAccount, isExisting: boolean): AleoTokenAccount {
-    const entry = balanceEntriesById.get(sa.id);
-    const privateBalance = entry?.balance ?? new BigNumber(0);
-    const unspentPrivateRecords = entry?.unspentRecords ?? [];
-    const aleoSa = sa as AleoTokenAccount;
-    const transparentBalance = isExisting
-      ? aleoSa.transparentBalance ?? sa.balance
-      : new BigNumber(0);
-    const total = transparentBalance.plus(privateBalance);
-    return {
-      ...sa,
-      transparentBalance,
-      privateBalance,
-      unspentPrivateRecords,
-      balance: total,
-      spendableBalance: total,
-    };
-  }
+  // Per-token operations built from all historical records (including spent).
+  // Keyed by token account id → operations sorted descending by date.
+  const privateTokenOpsByAccountId = new Map<string, AleoOperation[]>();
 
   if (unspentPrivateRecords.length > 0) {
-    const customUnspent = unspentPrivateRecords.filter(
-      r => r.program_name !== PROGRAM_ID.TOKEN_REGISTRY,
-    );
-
-    await promiseAllBatched(4, customUnspent, async record => {
-      const verifiedToken = customProgramTokensMap.get(record.program_name);
+    await promiseAllBatched(4, unspentPrivateRecords, async record => {
+      const verifiedToken = tokenMap.get(record.program_name);
       if (!verifiedToken) return;
 
       const decrypted = await sdkClient.decryptRecord({
@@ -611,47 +660,13 @@ export async function buildSubAccountsFromPrivateRecords({
         ciphertext: record.record_ciphertext,
         viewKey,
       });
-
-      const rawAmount = decrypted.data?.amount ?? decrypted.data?.balance;
+      const rawAmount =
+        decrypted.data?.amount ?? decrypted.data?.balance ?? decrypted.data?.microcredits;
       const amount = parseTokenBalance(rawAmount ?? null);
 
       const tokenCurrency = buildTokenCurrencyFromVerifiedToken(currency, verifiedToken);
       const id = encodeTokenAccountId(ledgerAccountId, tokenCurrency);
-      const entry = getOrCreateBalanceEntry(id, tokenCurrency.contractAddress);
-      entry.balance = entry.balance.plus(amount);
-      entry.unspentRecords.push({
-        ...record,
-        microcredits: amount.toString(),
-        decryptedData: decrypted,
-      });
-    });
-
-    const registryUnspent = unspentPrivateRecords.filter(
-      r => r.program_name === PROGRAM_ID.TOKEN_REGISTRY,
-    );
-    const uniqueRegistryUnspent = [
-      ...new Map(registryUnspent.map(r => [r.commitment, r])).values(),
-    ];
-
-    await promiseAllBatched(4, uniqueRegistryUnspent, async record => {
-      const decrypted = await sdkClient.decryptRecord({
-        currency,
-        ciphertext: record.record_ciphertext,
-        viewKey,
-      });
-
-      const rawTokenId = decrypted.data?.token_id;
-      if (!rawTokenId) return;
-
-      const verifiedToken = registryTokensMap.get(normalizeTokenId(rawTokenId));
-      if (!verifiedToken) return;
-
-      const rawAmount = decrypted.data?.amount ?? decrypted.data?.balance;
-      const amount = parseTokenBalance(rawAmount ?? null);
-
-      const tokenCurrency = buildTokenCurrencyFromVerifiedToken(currency, verifiedToken);
-      const id = encodeTokenAccountId(ledgerAccountId, tokenCurrency);
-      const entry = getOrCreateBalanceEntry(id, tokenCurrency.contractAddress);
+      const entry = getOrCreateBalanceEntry(balanceEntriesById, id, tokenCurrency.contractAddress);
       entry.balance = entry.balance.plus(amount);
       entry.unspentRecords.push({
         ...record,
@@ -661,70 +676,85 @@ export async function buildSubAccountsFromPrivateRecords({
     });
   }
 
-  // ── Sub-account discovery from all historical records ─────────────────────
+  // ── Sub-account discovery and operation history from all historical records ─
 
   if (allPrivateRecords.length === 0) {
-    return { subAccounts: baseSubAccounts.map(sa => withPrivateBalance(sa, true)) };
+    return {
+      subAccounts: baseSubAccounts.map(sa =>
+        withPrivateBalance(sa, true, balanceEntriesById, privateTokenOpsByAccountId),
+      ),
+    };
   }
 
   const newSubAccounts: TokenAccount[] = [];
   const seenIds = new Set<string>();
 
-  // Custom-program tokens — identified directly by program_name, no decryption needed
-  const uniqueCustomPrograms = [
-    ...new Set(
-      allPrivateRecords
-        .filter(r => r.program_name !== PROGRAM_ID.TOKEN_REGISTRY)
-        .map(r => r.program_name),
+  // Per-token, per-transaction accumulator used to build one operation per tx.
+  // Multiple records from the same tx for the same token have their amounts summed.
+  const opAccumulator = new Map<string, Map<string, TxOpEntry>>();
+
+  const uniqueAllRecords = filterHistoryRecords(allPrivateRecords, address);
+
+  await promiseAllBatched(4, uniqueAllRecords, async record => {
+    const verifiedToken = tokenMap.get(record.program_name);
+    if (!verifiedToken) return;
+
+    let amount: BigNumber;
+    if (record.sender === address) {
+      // OUT: the spent input record's own amount is the full pre-send balance, not what
+      // was sent. Read the actual sent amount from the transition inputs instead.
+      const outAmount = await getTokenOutAmountFromTransition({ currency, record, viewKey });
+      if (outAmount === null) {
+        log(
+          "aleo/buildSubAccountsFromPrivateRecords",
+          `Could not determine OUT amount for record ${record.commitment} (tx ${record.transaction_id}), falling back to 0`,
+        );
+      }
+      amount = outAmount ?? new BigNumber(0);
+    } else {
+      // IN: the received record's amount is correct.
+      const decrypted = await sdkClient.decryptRecord({
+        currency,
+        ciphertext: record.record_ciphertext,
+        viewKey,
+      });
+      const rawAmount =
+        decrypted.data?.amount ?? decrypted.data?.balance ?? decrypted.data?.microcredits;
+      amount = parseTokenBalance(rawAmount ?? null);
+    }
+
+    const tokenCurrency = buildTokenCurrencyFromVerifiedToken(currency, verifiedToken);
+    const id = encodeTokenAccountId(ledgerAccountId, tokenCurrency);
+
+    if (!existingSubAccountIds.has(id) && !seenIds.has(id)) {
+      seenIds.add(id);
+      newSubAccounts.push(buildTokenAccount(id, ledgerAccountId, tokenCurrency));
+    }
+
+    accumulateOp(opAccumulator, id, record.transaction_id.trim(), amount, record, {
+      programId: record.program_name,
+      tokenId: null,
+    });
+  });
+
+  // Build one operation per (token, transaction) from the accumulator.
+  for (const [tokenAccountId, txMap] of opAccumulator) {
+    const ops = [...txMap.entries()].map(([txId, entry]) =>
+      buildPrivateTokenOp(tokenAccountId, txId, entry, address),
+    );
+    ops.sort((a, b) => b.date.getTime() - a.date.getTime());
+    privateTokenOpsByAccountId.set(tokenAccountId, ops);
+  }
+
+  const finalSubAccounts = [
+    ...baseSubAccounts.map(sa =>
+      withPrivateBalance(sa, true, balanceEntriesById, privateTokenOpsByAccountId),
+    ),
+    ...newSubAccounts.map(sa =>
+      withPrivateBalance(sa, false, balanceEntriesById, privateTokenOpsByAccountId),
     ),
   ];
-
-  for (const programId of uniqueCustomPrograms) {
-    const verifiedToken = customProgramTokensMap.get(programId);
-    if (!verifiedToken) continue;
-
-    const tokenCurrency = buildTokenCurrencyFromVerifiedToken(currency, verifiedToken);
-    const id = encodeTokenAccountId(ledgerAccountId, tokenCurrency);
-    if (existingSubAccountIds.has(id) || seenIds.has(id)) continue;
-
-    seenIds.add(id);
-    newSubAccounts.push(buildTokenAccount(id, ledgerAccountId, tokenCurrency));
-  }
-
-  // token_registry.aleo records — decrypt each to extract token_id from record data
-  const registryRecords = allPrivateRecords.filter(
-    r => r.program_name === PROGRAM_ID.TOKEN_REGISTRY,
-  );
-  // Dedupe by commitment to avoid re-decrypting the same physical record
-  const uniqueRegistryRecords = [...new Map(registryRecords.map(r => [r.commitment, r])).values()];
-  const decryptedRegistry = await promiseAllBatched(4, uniqueRegistryRecords, record =>
-    sdkClient.decryptRecord({ currency, ciphertext: record.record_ciphertext, viewKey }),
-  );
-
-  const seenTokenIds = new Set<string>();
-
-  for (const decrypted of decryptedRegistry) {
-    const rawTokenId = decrypted.data?.token_id;
-    if (!rawTokenId) continue;
-
-    if (seenTokenIds.has(rawTokenId)) continue;
-    seenTokenIds.add(rawTokenId);
-
-    const verifiedToken = registryTokensMap.get(normalizeTokenId(rawTokenId));
-    if (!verifiedToken) continue;
-
-    const tokenCurrency = buildTokenCurrencyFromVerifiedToken(currency, verifiedToken);
-    const id = encodeTokenAccountId(ledgerAccountId, tokenCurrency);
-    if (existingSubAccountIds.has(id) || seenIds.has(id)) continue;
-
-    seenIds.add(id);
-    newSubAccounts.push(buildTokenAccount(id, ledgerAccountId, tokenCurrency));
-  }
-
   return {
-    subAccounts: [
-      ...baseSubAccounts.map(sa => withPrivateBalance(sa, true)),
-      ...newSubAccounts.map(sa => withPrivateBalance(sa, false)),
-    ],
+    subAccounts: finalSubAccounts,
   };
 }
