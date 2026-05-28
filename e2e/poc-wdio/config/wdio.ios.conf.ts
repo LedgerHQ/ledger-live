@@ -1,4 +1,5 @@
 import { config as baseConfig } from "./wdio.shared.conf.js";
+import { resolveIosPlatformVersion } from "./resolve-ios-platform-version.js";
 
 export const config: WebdriverIO.Config = {
   ...baseConfig,
@@ -13,6 +14,7 @@ export const config: WebdriverIO.Config = {
       // For W3C the appium capabilities need to have an extension prefix
       // This is `appium:` for all Appium Capabilities
       "appium:deviceName": "iOS Simulator",
+      "appium:platformVersion": resolveIosPlatformVersion(),
       "appium:automationName": "XCUITest",
       "appium:app":
         "../../apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app",
