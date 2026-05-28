@@ -7,12 +7,32 @@ import { useSelector } from "~/context/hooks";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import { track } from "~/analytics";
-import { RANGES } from "LLM/features/Market/utils";
-import { rangeDataTable } from "@ledgerhq/live-common/cg-client/utils/rangeDataTable";
 import { useTranslation, useLocale } from "~/context/Locale";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
-import { RANGE_TO_PRICE_CHANGE_KEY, type RangeKey } from "../../utils/rangeMapping";
+import {
+  resolveLineChartColorFromPercentChange,
+  type LineChartSeries,
+} from "LLM/components/LineChart";
+import {
+  BALANCE_GRAPH_RANGES,
+  RANGE_TO_PRICE_CHANGE_KEY,
+  isRangeKey,
+  type RangeKey,
+} from "../../utils/rangeMapping";
 import { useAssetMarketData } from "../../hooks/useAssetMarketData";
+
+// Placeholder data until range-driven price series are wired in.
+// `stroke` is overridden by the shared LineChart from the `color` prop.
+const PLACEHOLDER_SERIES: LineChartSeries[] = [
+  {
+    id: "asset-detail-price-preview",
+    data: [
+      1, 2, 5, 12, 56, 3, 33, 34, 56, 55, 100, 101, 102, 103, 12, 105, 106, 107, 108, 109, 110,
+    ],
+    label: "Price",
+    stroke: "",
+  },
+];
 
 type Params = {
   currency?: AssetDetailCurrencyProps;
@@ -39,30 +59,27 @@ export function useBalanceGraphViewModel({
     knownMarketId,
   });
 
-  const [range, setRange] = useState<RangeKey>("24h");
+  const [range, setRange] = useState<RangeKey>("1d");
 
   const ranges = useMemo(
     () =>
-      RANGES.map(r => ({
-        label: t(`market.range.${rangeDataTable[r].label}`),
+      BALANCE_GRAPH_RANGES.map(r => ({
+        label: t(`assetDetail.balanceGraph.range.${r}`),
         value: r,
-      })).reverse(),
+      })),
     [t],
   );
 
-  const isRangeKey = (value: string): value is RangeKey => value in RANGE_TO_PRICE_CHANGE_KEY;
-
   const onRangeChange = useCallback(
-    (value: string) => {
-      if (value !== range && isRangeKey(value)) {
-        setRange(value);
-        track("button_clicked", {
-          button: "timeframe",
-          timeframe: value,
-          page: "Asset Detail",
-          currency: currency?.id,
-        });
-      }
+    (value: RangeKey) => {
+      if (value === range) return;
+      setRange(value);
+      track("button_clicked", {
+        button: "timeframe",
+        timeframe: value,
+        page: "Asset Detail",
+        currency: currency?.id,
+      });
     },
     [range, currency?.id],
   );
@@ -115,6 +132,9 @@ export function useBalanceGraphViewModel({
     handleOpenReceiveDrawer();
   }, [handleOpenReceiveDrawer, currency?.id]);
 
+  const series = PLACEHOLDER_SERIES;
+  const chartColor = resolveLineChartColorFromPercentChange(priceChangePercentage);
+
   return {
     price: price ?? 0,
     priceFormatter,
@@ -125,8 +145,11 @@ export function useBalanceGraphViewModel({
     ranges,
     selectedRange: range,
     onRangeChange,
+    isRangeValue: isRangeKey,
     showReceive,
     onReceivePress,
     isLoading,
+    series,
+    chartColor,
   };
 }

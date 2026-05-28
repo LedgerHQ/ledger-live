@@ -144,12 +144,12 @@ describe("AssetDetail screen layout", () => {
     });
   });
 
-  it("renders the BalanceGraph with chart placeholder", () => {
+  it("renders the BalanceGraph chart", () => {
     render(<AssetDetailTestNavigator />);
 
     // While market data is loading, the header is rendered as a skeleton (no
-    // "Market price" text). The chart placeholder is still mounted.
-    expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.chartPlaceholder)).toBeVisible();
+    // "Market price" text). The chart container is still mounted.
+    expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.chart)).toBeVisible();
     expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.receiveButton)).toBeNull();
   });
 
