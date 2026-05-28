@@ -102,6 +102,11 @@ async function executeSignOperation(
   const expiryHeight = perCoin?.hasExpiryHeight ? Buffer.from([0x00, 0x00, 0x00, 0x00]) : undefined;
 
   const hasExtraData = perCoin?.hasExtraData || false;
+  const inputs = txInfo.inputs.flatMap(i =>
+    i.output_hash !== undefined && i.address !== undefined
+      ? [{ hash: i.output_hash, outputIndex: i.output_index, address: i.address }]
+      : [],
+  );
 
   const signature: string = await signerContext(deviceId, currency, signer =>
     wallet.signAccountTx({
@@ -138,6 +143,7 @@ async function executeSignOperation(
     value: new BigNumber(transaction.amount).plus(fee),
     senders: Array.from(senders),
     recipients,
+    extra: { inputs },
   });
 
   o.next({
