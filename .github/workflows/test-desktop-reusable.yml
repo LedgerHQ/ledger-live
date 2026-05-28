@@ -4,7 +4,7 @@ on:
   workflow_call:
     outputs:
       coverage_generated:
-        value: ${{ jobs.unit-tests.outputs.coverage_generated }}
+        value: ${{ jobs.unit-tests-coverage.outputs.coverage_generated }}
 
   workflow_dispatch:
     inputs:
@@ -80,16 +80,18 @@ jobs:
         run: pnpm desktop knip-check
 
   unit-tests:
-    name: "Desktop Unit Tests"
-    timeout-minutes: 40
+    name: "Desktop Unit Tests (${{ matrix.shard }}, ${{ strategy.job-total }})"
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168 --no-network-family-autoselection"
       FORCE_COLOR: 3
       CI_OS: ubuntu-22.04
       JEST_MAX_WORKERS: "75%"
     runs-on: ubuntu-22.04
-    outputs:
-      coverage_generated: ${{ contains(steps.generate_coverage.outcome, 'success') }}
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
@@ -120,7 +122,7 @@ jobs:
           set -euo pipefail
           CPUS="$(nproc 2>/dev/null || echo "?")"
           echo "::group::Jest CI metrics (desktop coverage)"
-          echo "runner_os=${CI_OS:-unknown} cpu_count=${CPUS} JEST_MAX_WORKERS=${JEST_MAX_WORKERS:-}"
+          echo "runner_os=${CI_OS:-unknown} cpu_count=${CPUS} JEST_MAX_WORKERS=${JEST_MAX_WORKERS:-} shard=${{ matrix.shard }}/${{ strategy.job-total }}"
           node -e '
             const os = require("os");
             const n = os.cpus().length;
@@ -137,17 +139,54 @@ jobs:
           '
           echo "::endgroup::"
           START_TS=$(date +%s)
-          pnpm desktop test:jest:coverage
+          nx run ledger-live-desktop:test:jest:coverage -- --shard=${{ matrix.shard }}/${{ strategy.job-total }}
           END_TS=$(date +%s)
-          echo "::notice::jest_ci_metrics app=ledger-live-desktop jest_wall_seconds=$((END_TS - START_TS)) cpu_count=${CPUS} JEST_MAX_WORKERS=${JEST_MAX_WORKERS:-}"
+          echo "::notice::jest_ci_metrics app=ledger-live-desktop shard=${{ matrix.shard }}/${{ strategy.job-total }} jest_wall_seconds=$((END_TS - START_TS)) cpu_count=${CPUS} JEST_MAX_WORKERS=${JEST_MAX_WORKERS:-}"
 
       - name: Upload unit test coverage
-        id: generate_coverage
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
-          name: coverage-desktop
+          name: coverage-desktop-shard-${{ matrix.shard }}
           path: ${{ github.workspace }}/apps/ledger-live-desktop/coverage
+
+  unit-tests-coverage:
+    name: "Desktop Unit Tests Coverage"
+    needs: unit-tests
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-22.04
+    outputs:
+      coverage_generated: ${{ contains(steps.upload_coverage.outcome, 'success') }}
+    steps:
+      - name: Download per-shard coverage
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          pattern: coverage-desktop-shard-*
+          path: coverage-shards
+
+      - name: Merge per-shard coverage
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p coverage-merged
+          for dir in coverage-shards/coverage-desktop-shard-*; do
+            [ -d "$dir" ] || continue
+            echo "Merging $(basename "$dir")"
+            if [ -f "$dir/lcov.info" ]; then
+              cat "$dir/lcov.info" >> coverage-merged/lcov.info
+            fi
+            if [ -f "$dir/sonar-executionTests-report.xml" ]; then
+              cat "$dir/sonar-executionTests-report.xml" >> coverage-merged/sonar-executionTests-report.xml
+            fi
+          done
+          ls -la coverage-merged
+
+      - name: Upload merged unit test coverage
+        id: upload_coverage
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: coverage-desktop
+          path: coverage-merged
 
   speculos-e2e-tests-linux:
     name: "UI e2e smoke tests NanoSP"
