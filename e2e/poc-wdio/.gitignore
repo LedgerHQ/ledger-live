@@ -10,4 +10,4 @@ logs/
 allure-*/
 
 // artifacts
-artifacts/
+artifacts
