@@ -71,19 +71,38 @@ export function SwapDeviceIntentPocHost({
                 description={
                   successScreen.nextStep === "permit"
                     ? "Sign the permit on your device to authorize the swap"
-                    : "You can now initiate your swap"
+                    : successScreen.nextStep === "rfq-order"
+                      ? "Sign the swap order on your device to authorize the partner"
+                      : "You can now initiate your swap"
                 }
                 primaryCta={{
-                  label: successScreen.nextStep === "permit" ? "Sign permit" : "Swap",
+                  label:
+                    successScreen.nextStep === "permit"
+                      ? "Sign permit"
+                      : successScreen.nextStep === "rfq-order"
+                        ? "Sign order"
+                        : "Swap",
                   onPress: successScreen.onPrimaryPress,
                 }}
                 size="hug"
               />
-            ) : (
+            ) : successScreen.kind === "swap" ? (
               <InfoState
                 preset="success"
                 title="Swap completed"
                 description="Your swap transaction was confirmed on-chain."
+                primaryCta={{ label: "Done", onPress: successScreen.onDonePress }}
+                size="hug"
+              />
+            ) : (
+              <InfoState
+                preset={successScreen.status === "finished" ? "success" : "info"}
+                title={successScreen.status === "finished" ? "Swap completed" : "Swap refunded"}
+                description={
+                  successScreen.status === "finished"
+                    ? "Your RFQ swap was filled by the partner."
+                    : "The partner could not fill your RFQ order. You have been refunded."
+                }
                 primaryCta={{ label: "Done", onPress: successScreen.onDonePress }}
                 size="hug"
               />

@@ -39,6 +39,16 @@ import type {
   SignPermit2EvmJobState,
 } from "./intents/signPermit2EvmIntent/types";
 import type {
+  SignRfqOrderEvmIntent,
+  SignRfqOrderEvmIntentInput,
+  SignRfqOrderEvmJobState,
+} from "./intents/signRfqOrderEvmIntent/types";
+import type {
+  SubmitRfqOrderEvmIntent,
+  SubmitRfqOrderEvmIntentInput,
+  SubmitRfqOrderEvmJobState,
+} from "./intents/submitRfqOrderEvmIntent/types";
+import type {
   BroadcastEvmIntent,
   BroadcastEvmIntentInput,
   BroadcastEvmJobState,
@@ -79,17 +89,23 @@ type AnyJobState =
   | SignApprovalEvmJobState
   | SignSwapEvmJobState
   | SignPermit2EvmJobState
+  | SignRfqOrderEvmJobState
+  | SubmitRfqOrderEvmJobState
   | BroadcastEvmJobState;
 type AnyInput =
   | SignApprovalEvmIntentInput
   | SignSwapEvmIntentInput
   | SignPermit2EvmIntentInput
+  | SignRfqOrderEvmIntentInput
+  | SubmitRfqOrderEvmIntentInput
   | BroadcastEvmIntentInput;
 type AnyExtraProps = Record<string, never>;
 type AnyIntent =
   | SignApprovalEvmIntent
   | SignSwapEvmIntent
   | SignPermit2EvmIntent
+  | SignRfqOrderEvmIntent
+  | SubmitRfqOrderEvmIntent
   | BroadcastEvmIntent;
 
 /**
@@ -106,12 +122,13 @@ export type SwapPocSuccessScreen =
       kind: "approval";
       /**
        * Next on-device step the primary CTA will trigger. Mirrors the
-       * swap-live-app `useSwapLabels` ordering (approve → sign_permit →
-       * swap) so the button copy matches what tapping it actually does:
-       * for an `approval-then-permit-then-swap` plan the next step is
-       * the Permit2 typed-data signature, not the swap calldata sign.
+       * swap-live-app `useSwapLabels` ordering (approve → sign_permit
+       * / rfq → swap) so the button copy matches what tapping it
+       * actually does: for an `approval-then-permit-then-swap` plan the
+       * next step is Permit2, for `approval-then-rfq-order` it's the
+       * RFQ order signing, otherwise it's the swap calldata sign.
        */
-      nextStep: "permit" | "swap";
+      nextStep: "permit" | "rfq-order" | "swap";
       /** Hash of the broadcast-and-confirmed approval transaction. */
       approvalTxHash: string;
       /** Called when the user taps the primary CTA (kicks off the next step). */
@@ -125,6 +142,23 @@ export type SwapPocSuccessScreen =
       approvalTxHash: string | null;
       /** Hash of the broadcast-and-confirmed swap transaction. */
       swapTxHash: string;
+      /** Called when the user taps the primary "Done" CTA. */
+      onDonePress: () => void;
+      /** Called when the user dismisses the sheet (X or backdrop). */
+      onClose: () => void;
+    }
+  | {
+      kind: "rfq";
+      /** Hash of the broadcast-and-confirmed approval transaction (null when no approval was needed). */
+      approvalTxHash: string | null;
+      /** Terminal RFQ status reported by the partner's `/swap/status` endpoint. */
+      status: "finished" | "refunded";
+      /** On-chain transaction hash, when the partner reported one. */
+      txHash?: string;
+      /** Partner-side swap id, when reported. */
+      swapId?: string;
+      /** Final filled amount, when reported. */
+      finalAmount?: string;
       /** Called when the user taps the primary "Done" CTA. */
       onDonePress: () => void;
       /** Called when the user dismisses the sheet (X or backdrop). */
@@ -233,6 +267,35 @@ const LWM_SWAP_FLOW_PORTS: SwapFlowPorts<AnyIntent, InitializationInput> = {
     }),
     initInput: ETHEREUM_INITIALIZATION_INPUT,
   }),
+  createSignRfqOrderIntent: ({ account, typedData, currencyId, derivationPath }) => ({
+    intent: createIntent(SWAP_POC_INTENT_DEFS.signRfqOrder, {
+      account,
+      typedData,
+      currencyId,
+      derivationPath,
+    }),
+    initInput: ETHEREUM_INITIALIZATION_INPUT,
+  }),
+  createSubmitRfqOrderIntent: ({
+    provider,
+    submitBody,
+    precomputedOrderId,
+    network,
+    initInput,
+  }) => ({
+    intent: createIntent(SWAP_POC_INTENT_DEFS.submitRfqOrder, {
+      provider,
+      submitBody,
+      network,
+      // Spread the optional field instead of passing `undefined` so the
+      // resulting Intent input matches `SubmitRfqOrderEvmIntentInput`'s
+      // optional-property shape under `exactOptionalPropertyTypes`.
+      ...(precomputedOrderId !== undefined ? { precomputedOrderId } : {}),
+    }),
+    // Re-use the previous phase's init input so the executor absorbs the
+    // intent change as a self-transition (see device-intent README).
+    initInput,
+  }),
   createBroadcastIntent: ({ signedTxHex, currencyId, initInput }) => ({
     intent: createIntent(SWAP_POC_INTENT_DEFS.broadcast, { signedTxHex, currencyId }),
     // Re-use the previous phase's init input so the executor absorbs the
@@ -280,17 +343,48 @@ export function useSwapDeviceIntentPocOrchestration({
       switch (jobState.type) {
         case "signed":
           // Sign-approval / sign-swap jobs emit `signedTxHex`; the
-          // Permit2 job emits `signatureHex`. Discriminate on the
-          // payload shape so the host doesn't need to know which phase
-          // is currently active.
+          // Permit2 and RFQ-order jobs emit `signatureHex`. Discriminate
+          // on the payload shape and on the current machine phase so the
+          // host doesn't need to know which phase is currently active.
           if ("signedTxHex" in jobState) {
             send({ type: "JOB_SIGNED", signedTxHex: jobState.signedTxHex });
           } else if ("signatureHex" in jobState) {
-            send({ type: "JOB_PERMIT_SIGNED", signatureHex: jobState.signatureHex });
+            // The Permit2 and RFQ-order phases share the same
+            // `{ type: "signed", signatureHex }` shape; the machine
+            // state tells us which event to dispatch.
+            const snapshot = actorRef.getSnapshot();
+            if (snapshot.matches("signRfqOrder")) {
+              send({
+                type: "JOB_RFQ_SIGNED",
+                signatureHex: jobState.signatureHex,
+              });
+            } else {
+              send({
+                type: "JOB_PERMIT_SIGNED",
+                signatureHex: jobState.signatureHex,
+              });
+            }
           }
           break;
         case "confirmed":
-          send({ type: "JOB_CONFIRMED", hash: jobState.hash });
+          // The `confirmed` shape is shared by the EVM broadcast job
+          // (`{ hash, blockHeight }`) and the RFQ submit job
+          // (`{ status, orderId, txHash?, swapId?, finalAmount? }`).
+          // Discriminate on payload shape: only the RFQ confirmed
+          // state carries `status`.
+          if ("status" in jobState) {
+            send({
+              type: "JOB_RFQ_SUBMITTED",
+              outcome: {
+                status: jobState.status,
+                txHash: jobState.txHash,
+                swapId: jobState.swapId,
+                finalAmount: jobState.finalAmount,
+              },
+            });
+          } else {
+            send({ type: "JOB_CONFIRMED", hash: jobState.hash });
+          }
           break;
         case "failed":
           send({ type: "JOB_FAILED", error: jobState.error });
@@ -299,7 +393,7 @@ export function useSwapDeviceIntentPocOrchestration({
           break;
       }
     },
-    [send],
+    [actorRef, send],
   );
 
   const handleJobComplete = useCallback(() => {
@@ -384,7 +478,9 @@ export function useSwapDeviceIntentPocOrchestration({
       state.matches("broadcastApproval") ||
       state.matches("signPermit2") ||
       state.matches("signSwap") ||
-      state.matches("broadcastSwap");
+      state.matches("broadcastSwap") ||
+      state.matches("signRfqOrder") ||
+      state.matches("submitRfqOrder");
     if (!isDevicePhase) return null;
     const { currentIntent, currentInitInput } = state.context;
     if (!currentIntent || !currentInitInput) return null;
@@ -413,13 +509,16 @@ export function useSwapDeviceIntentPocOrchestration({
 
   const successScreen = useMemo<SwapPocSuccessScreen | null>(() => {
     if (state.matches("approvalSuccess") && state.context.approvalTxHash) {
-      // The machine already routes `SWAP_PRESSED` to `signPermit2` vs
-      // `buildSwap` via `planContinuesToPermit`; we mirror that decision
-      // here so the host can label the CTA after the actual next phase.
-      const nextStep =
-        state.context.plan?.kind === "approval-then-permit-then-swap"
-          ? "permit"
-          : "swap";
+      // The machine already routes `SWAP_PRESSED` to `signPermit2` /
+      // `signRfqOrder` / `buildSwap` via its plan guards; mirror that
+      // decision here so the host can label the CTA after the actual
+      // next phase.
+      let nextStep: "permit" | "rfq-order" | "swap" = "swap";
+      if (state.context.plan?.kind === "approval-then-permit-then-swap") {
+        nextStep = "permit";
+      } else if (state.context.plan?.kind === "approval-then-rfq-order") {
+        nextStep = "rfq-order";
+      }
       return {
         kind: "approval",
         nextStep,
@@ -434,6 +533,20 @@ export function useSwapDeviceIntentPocOrchestration({
         kind: "swap",
         approvalTxHash: state.context.approvalTxHash,
         swapTxHash: state.context.swapTxHash,
+        onDonePress: dismiss,
+        onClose: dismiss,
+      };
+    }
+    if (state.matches("rfqSuccess") && state.context.rfqOutcome) {
+      const dismiss = () => send({ type: "SWAP_DISMISSED" });
+      const outcome = state.context.rfqOutcome;
+      return {
+        kind: "rfq",
+        approvalTxHash: state.context.approvalTxHash,
+        status: outcome.status,
+        txHash: outcome.txHash,
+        swapId: outcome.swapId,
+        finalAmount: outcome.finalAmount,
         onDonePress: dismiss,
         onClose: dismiss,
       };
