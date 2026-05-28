@@ -9100,12 +9100,17 @@
       "marketPrice": "Market price",
       "timeframeSelector": "Timeframe",
       "timeLabel": {
-        "24h": "1 day",
-        "7d": "1 week",
-        "30d": "1 month",
+        "1d": "1 day",
+        "1w": "1 week",
+        "1m": "1 month",
         "1y": "1 year"
       },
-      "chartPlaceholder": "Graphic"
+      "range": {
+        "1d": "1D",
+        "1w": "1W",
+        "1m": "1M",
+        "1y": "1Y"
+      }
     },
     "addresses": {
       "title": "Addresses",
