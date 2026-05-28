@@ -12,9 +12,26 @@ import {
 } from "../../../apps/ledger-live-mobile/e2e/bridge/types";
 import type { PartialFeatures, FeatureId } from "@shared/feature-flags";
 import { FeatureIdSchema } from "@shared/feature-flags";
-import { log as detoxLog } from "detox";
 import { getSpeculosModel } from "@ledgerhq/live-common/e2e/speculosAppVersion";
 import { v4 as uuid } from "uuid";
+
+// Detox is an optional runtime dependency of this bridge: Detox callers get the
+// full structured logger, while non-Detox callers (e.g. Maestro) fall back to
+// console.* without needing Detox installed.
+type BridgeLogger = {
+  info: (...args: unknown[]) => void;
+  error: (...args: unknown[]) => void;
+};
+let detoxLog: BridgeLogger;
+try {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  detoxLog = require("detox").log;
+} catch {
+  detoxLog = {
+    info: (...args: unknown[]) => console.info(...args),
+    error: (...args: unknown[]) => console.error(...args),
+  };
+}
 
 const RESPONSE_TIMEOUT = 10000;
 
@@ -99,12 +116,17 @@ export function close() {
   }
 }
 
-export async function loadConfig(fileName: string, agreed: true = true): Promise<void> {
+export async function loadConfig(
+  fileName: string,
+  agreed: true = true,
+  options: { userdataDir?: string } = {},
+): Promise<void> {
   if (agreed) {
     await acceptTerms();
   }
 
-  const f = fs.readFileSync(path.resolve("userdata", `${fileName}.json`), "utf8");
+  const userdataDir = options.userdataDir ?? path.resolve("userdata");
+  const f = fs.readFileSync(path.join(userdataDir, `${fileName}.json`), "utf8");
 
   const { data } = JSON.parse(f.toString());
 
@@ -149,6 +171,72 @@ export async function swapSetup() {
     console.warn("[swapSetup] SWAP_API_BASE env var is not set, will use client-side default");
   }
   return fetchData({ type: "swapSetup", id: uniqueId(), swapApiBase: process.env.SWAP_API_BASE });
+}
+
+/**
+ * Toggle the wallet-api `account.request` auto-pick mode in the running app.
+ *
+ * When enabled, account.request bypasses the modular drawer and returns the
+ * first account whose currency / token id matches the request. Used by
+ * Maestro on iOS to work around an XCUITest crash when the modular drawer
+ * overlays a WebView. Detox tests should NOT enable this — they drive the
+ * drawer natively.
+ */
+export async function setAutoPickAccount(enabled: boolean) {
+  postMessage({
+    type: "setAutoPickAccount",
+    id: uniqueId(),
+    payload: { enabled },
+  });
+}
+
+export type WebviewDriverOpPayload =
+  | { op: "tapByTestId"; testId: string }
+  | { op: "waitForTestId"; testId: string; timeoutMs?: number }
+  | { op: "getText"; testId: string }
+  | { op: "typeText"; testId: string; value: string }
+  | { op: "querySelectorAllText"; selector: string };
+
+export type WebviewDriverResult =
+  | { ok: true; data?: unknown }
+  | { ok: false; error: string };
+
+export async function webviewDriver(
+  driver: string,
+  op: WebviewDriverOpPayload,
+  timeoutMs = RESPONSE_TIMEOUT,
+): Promise<WebviewDriverResult> {
+  const id = uniqueId();
+  const message = {
+    type: "webviewDriver" as const,
+    id,
+    payload: { driver, op },
+  };
+
+  return new Promise<WebviewDriverResult>(resolve => {
+    postMessage(message);
+    const callbackKey = `webviewDriver:${id}`;
+    const timeoutId = setTimeout(() => {
+      global.pendingCallbacks?.delete(callbackKey);
+      delete webSocket.messages[id];
+      resolve({ ok: false, error: `Webview driver op timed out after ${timeoutMs}ms` });
+    }, timeoutMs);
+
+    global.pendingCallbacks.set(callbackKey, {
+      callback: (data: string) => {
+        clearTimeout(timeoutId);
+        global.pendingCallbacks?.delete(callbackKey);
+        try {
+          resolve(JSON.parse(data));
+        } catch (parseError) {
+          resolve({
+            ok: false,
+            error: `Failed to parse webview driver result: ${String(parseError)}`,
+          });
+        }
+      },
+    });
+  });
 }
 
 export async function waitSwapReady() {
@@ -244,6 +332,15 @@ function onMessage(messageStr: string) {
       if (pending) {
         global.pendingCallbacks.delete("swapSetup");
         pending.callback("swapSetup done");
+      }
+      break;
+    }
+    case "webviewDriverResult": {
+      const callbackKey = `webviewDriver:${msg.id}`;
+      const pending = global.pendingCallbacks?.get(callbackKey);
+      if (pending) {
+        global.pendingCallbacks.delete(callbackKey);
+        pending.callback(msg.payload);
       }
       break;
     }

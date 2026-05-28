@@ -1,8 +1,14 @@
 import Config from "react-native-config";
 
 export const SYNC_DELAY = 2500;
-export const DETOX_ENABLED = Config.DETOX === "1" || Config.DETOX === "true";
-export const BLE_SCANNING_NOTHING_TIMEOUT = (DETOX_ENABLED ? 60 : 30) * 1000;
+export const E2E_BRIDGE_ENABLED =
+  Config.E2E_BRIDGE === "1" ||
+  Config.E2E_BRIDGE === "true" ||
+  Config.DETOX === "1" ||
+  Config.DETOX === "true";
+// Backward-compatible alias for callers that still read DETOX_ENABLED.
+export const DETOX_ENABLED = E2E_BRIDGE_ENABLED;
+export const BLE_SCANNING_NOTHING_TIMEOUT = (E2E_BRIDGE_ENABLED ? 60 : 30) * 1000;
 export const GENUINE_CHECK_TIMEOUT = 120 * 1000;
 export const VIBRATION_PATTERN_ERROR = [0, 150];
 export const LEDGER_APPLE_WARNING_EXPLAINER_LINK =

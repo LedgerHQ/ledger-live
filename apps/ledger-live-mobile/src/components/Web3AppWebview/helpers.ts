@@ -33,7 +33,7 @@ import { mevProtectionSelector, trackingEnabledSelector } from "../../reducers/s
 import storage from "LLM/storage";
 import { track } from "../../analytics";
 import { userIdSelector } from "@ledgerhq/client-ids/store";
-import { sendWalletAPIResponse } from "../../../e2e/bridge/client";
+import { sendWalletAPIResponse, sendWebviewDriverResult } from "../../../e2e/bridge/client";
 import Config from "react-native-config";
 import { setOriginFlow } from "~/analytics/originFlow";
 import {
@@ -41,6 +41,9 @@ import {
   E2E_WEBVIEW_NETWORK_LOG_TYPE,
 } from "../../e2e/webviewNetworkLogCapture";
 import { webviewLogStore } from "../../e2e/webviewLogStore";
+import { E2E_WEBVIEW_DRIVER_RESULT_TYPE, webviewDriverStore } from "../../e2e/webviewDriverStore";
+import { autoPickAccountStore } from "../../e2e/autoPickAccountStore";
+import { E2E_BRIDGE_ENABLED } from "../../utils/constants";
 import { currentRouteNameRef } from "../../analytics/screenRefs";
 import { walletSelector } from "~/reducers/wallet";
 import {
@@ -196,6 +199,10 @@ export function useWebView(
         try {
           const msg = JSON.parse(e.nativeEvent.data);
 
+          if (E2E_BRIDGE_ENABLED && msg.type === E2E_WEBVIEW_DRIVER_RESULT_TYPE) {
+            sendWebviewDriverResult(msg.id, JSON.stringify(msg.payload));
+            return;
+          }
           if (Config.DETOX && msg.type === E2E_WEBVIEW_NETWORK_LOG_TYPE) {
             webviewLogStore.addNetworkLog(msg.payload);
             return;
@@ -219,6 +226,19 @@ export function useWebView(
     },
     [onDappMessage, onMessageRaw],
   );
+
+  useEffect(() => {
+    if (!E2E_BRIDGE_ENABLED) return;
+    const driverName = manifest.id || "wallet-api-webview";
+    const unregister = webviewDriverStore.register(driverName, (js: string) => {
+      try {
+        webviewRef.current?.injectJavaScript(js);
+      } catch (error) {
+        console.warn(`[e2e webview-driver] injection failed for ${driverName}`, error);
+      }
+    });
+    return unregister;
+  }, [manifest.id, webviewRef]);
 
   const onOpenWindow = useCallback((event: WebViewOpenWindowEvent) => {
     const { targetUrl } = event.nativeEvent;
@@ -477,6 +497,7 @@ function useUiHook({ manifest, onTransactionBroadcast }: Props): UiHook {
   const [device, setDevice] = useState<Device>();
   const { createDrawerConfiguration } = useDrawerConfiguration();
   const { openDrawer: openModularDrawer } = useModularDrawerController();
+  const accountsForAutoPick = useSelector(flattenAccountsSelector);
 
   const source =
     currentRouteNameRef.current === "Platform Catalog"
@@ -495,6 +516,40 @@ function useUiHook({ manifest, onTransactionBroadcast }: Props): UiHook {
         uiUseCase,
         drawerConfiguration,
       }) => {
+        // E2E auto-pick: when the bridge enables it (Maestro on iOS, where the
+        // modular drawer overlays the WebView and crashes XCUITest's view
+        // hierarchy snapshot), bypass the drawer entirely and resolve the
+        // first account whose currency / token id matches the request.
+        if (E2E_BRIDGE_ENABLED && autoPickAccountStore.isEnabled()) {
+          const requested = currencyIds ?? [];
+          const matchesRequested = (idCandidates: string[]) =>
+            requested.length === 0 || requested.some(c => idCandidates.includes(c));
+
+          const found = accountsForAutoPick.find(account => {
+            if (account.type === "TokenAccount") {
+              return matchesRequested([account.token.id]);
+            }
+            return matchesRequested([account.currency.id]);
+          });
+
+          if (found) {
+            const parent =
+              found.type === "TokenAccount"
+                ? (accountsForAutoPick.find(a => a.id === found.parentId) as Account | undefined)
+                : undefined;
+            // eslint-disable-next-line no-console
+            console.info(
+              `[E2E auto-pick] account.request currencies=${requested.join(",")} → ${found.id}`,
+            );
+            onSuccess(found, parent);
+            return;
+          }
+          // eslint-disable-next-line no-console
+          console.warn(
+            `[E2E auto-pick] No account matches currencies=${requested.join(",")}; falling through to modular drawer`,
+          );
+        }
+
         // We agree that for useCase, we should send max 50 currencies if provided else use only useCase (e.g. buy)
         const shouldUseCurrencies =
           (useCase && currencyIds && currencyIds.length <= 50) || !useCase;
@@ -692,6 +747,7 @@ function useUiHook({ manifest, onTransactionBroadcast }: Props): UiHook {
       device,
       createDrawerConfiguration,
       onTransactionBroadcast,
+      accountsForAutoPick,
     ],
   );
 }

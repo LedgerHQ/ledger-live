@@ -1,20 +1,15 @@
 import { getProject } from "../config/projects";
 import { MaestroContext } from "../context";
-import { runAddAccountSpec } from "../specs/addAccount";
 import { initBridgeGlobals } from "../runtime/bridge";
-
-type SpecName = "addAccount";
+import { specs, SpecName } from "../specs";
 
 function getArg(name: string): string | undefined {
   const index = process.argv.indexOf(`--${name}`);
   return index >= 0 ? process.argv[index + 1] : undefined;
 }
 
-async function runSpec(ctx: MaestroContext, spec: SpecName) {
-  switch (spec) {
-    case "addAccount":
-      return runAddAccountSpec(ctx);
-  }
+function isSpecName(value: string | undefined): value is SpecName {
+  return Boolean(value && value in specs);
 }
 
 async function main() {
@@ -23,12 +18,12 @@ async function main() {
   const project = getProject(getArg("project"));
   const spec = getArg("spec");
 
-  if (spec !== "addAccount") {
-    throw new Error("Missing or invalid --spec. Use: addAccount");
+  if (!isSpecName(spec)) {
+    throw new Error(`Missing or invalid --spec. Use one of: ${Object.keys(specs).join(", ")}`);
   }
 
   const ctx = new MaestroContext(project);
-  await runSpec(ctx, spec);
+  await specs[spec](ctx);
 }
 
 void main().catch(error => {

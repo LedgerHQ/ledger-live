@@ -17,6 +17,9 @@ import { LaunchArguments } from "react-native-launch-arguments";
 import { DeviceEventEmitter } from "react-native";
 import logReport from "../../src/log-report";
 import { webviewLogStore } from "../../src/e2e/webviewLogStore";
+import { webviewDriverStore } from "../../src/e2e/webviewDriverStore";
+import { buildWebviewDriverScript } from "../../src/e2e/webviewDriverScripts";
+import { autoPickAccountStore } from "../../src/e2e/autoPickAccountStore";
 import { MessageData, ServerData, mockDeviceEventSubject } from "./types";
 import { getAllEnvs, setEnv } from "@ledgerhq/live-env";
 import { getAllFeatureFlags } from "@ledgerhq/live-common/e2e/index";
@@ -198,6 +201,28 @@ async function onMessage(event: WebSocketMessageEvent) {
         setEnv("SWAP_API_BASE", msg.swapApiBase ?? "https://swap-stg.ledger-test.com/v5");
         postMessage({ type: "swapSetupDone" });
         break;
+      case "webviewDriver": {
+        const { driver, op } = msg.payload;
+        const injector = webviewDriverStore.getInjector(driver);
+        if (!injector) {
+          postMessage({
+            type: "webviewDriverResult",
+            id: msg.id,
+            payload: JSON.stringify({
+              ok: false,
+              error: `No webview registered with name "${driver}"`,
+            }),
+          });
+          break;
+        }
+        injector(buildWebviewDriverScript(msg.id, op));
+        // Result is delivered asynchronously when the WebView posts back via the
+        // E2E driver result message type; that is forwarded by sendWebviewDriverResult.
+        break;
+      }
+      case "setAutoPickAccount":
+        autoPickAccountStore.setEnabled(msg.payload.enabled);
+        break;
       default:
         break;
     }
@@ -224,6 +249,14 @@ export function sendFile(payload: { fileName: string; fileContent: string }) {
 export function sendSwapLiveAppReady() {
   postMessage({
     type: "swapLiveAppReady",
+  });
+}
+
+export function sendWebviewDriverResult(id: string, payload: string) {
+  postMessage({
+    type: "webviewDriverResult",
+    id,
+    payload,
   });
 }
 

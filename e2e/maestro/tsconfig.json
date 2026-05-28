@@ -1,0 +1,23 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "checkJs": false,
+    "jsx": "react-native",
+    "lib": ["es2017", "DOM"],
+    "types": ["node"],
+    "skipLibCheck": true,
+    "noEmit": true,
+    "typeRoots": ["./types", "./node_modules/@types"],
+    "paths": {
+      "*": ["./*"],
+      "@shared/feature-flags": ["../../shared/feature-flags/src"],
+      "@ledgerhq/live-common/e2e/*": ["../../libs/ledger-live-common/src/e2e/*"],
+      "@ledgerhq/live-common/lib/e2e/*": ["../../libs/ledger-live-common/src/e2e/*"],
+      "@ledgerhq/live-common/hw/index": ["../../libs/ledger-live-common/src/hw/index"],
+      "@ledgerhq/live-common/hw/deviceAccess": ["../../libs/ledger-live-common/src/hw/deviceAccess"]
+    }
+  },
+  "include": ["types", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules", "jest.config.js", "**/*.js"]
+}

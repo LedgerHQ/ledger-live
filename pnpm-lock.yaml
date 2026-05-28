@@ -3210,6 +3210,59 @@ importers:
         specifier: 1.51.0
         version: 1.51.0
 
+  e2e/maestro:
+    dependencies:
+      rxjs:
+        specifier: 'catalog:'
+        version: 7.8.2
+    devDependencies:
+      '@ledgerhq/live-common':
+        specifier: workspace:^
+        version: link:../../libs/ledger-live-common
+      '@ledgerhq/live-dmk-speculos':
+        specifier: workspace:^
+        version: link:../../libs/live-dmk-speculos
+      '@ledgerhq/live-env':
+        specifier: workspace:^
+        version: link:../../libs/env
+      '@shared/feature-flags':
+        specifier: workspace:*
+        version: link:../../shared/feature-flags
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      bignumber.js:
+        specifier: 9.1.2
+        version: 9.1.2
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.36.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.51.0
+      ts-node:
+        specifier: 10.9.2
+        version: 10.9.2(@types/node@24.12.0)(typescript@6.0.2)
+      tsconfig-paths:
+        specifier: ^4.2.0
+        version: 4.2.0
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.2
+    optionalDependencies:
+      '@oxlint/binding-darwin-arm64':
+        specifier: 1.51.0
+        version: 1.51.0
+      '@oxlint/binding-darwin-x64':
+        specifier: 1.51.0
+        version: 1.51.0
+      '@oxlint/binding-linux-x64-gnu':
+        specifier: 1.51.0
+        version: 1.51.0
+      '@oxlint/binding-win32-x64-msvc':
+        specifier: 1.51.0
+        version: 1.51.0
+
   e2e/mobile:
     dependencies:
       '@ledgerhq/logs':

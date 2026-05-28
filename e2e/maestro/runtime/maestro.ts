@@ -68,8 +68,10 @@ function withFastTapDefaults(command: MaestroCommand): MaestroCommand {
   return command;
 }
 
+const PACKAGE_ROOT = path.resolve(__dirname, "..");
+
 export class MaestroRuntime {
-  private readonly tmpDir = path.resolve("artifacts", "maestro", "tmp");
+  private readonly tmpDir = path.join(PACKAGE_ROOT, "artifacts", "maestro", "tmp");
   private flowCount = 0;
 
   constructor(private readonly project: MaestroProject) {}

@@ -19,6 +19,13 @@ import type { FeatureId, Feature, PartialFeatures } from "@shared/feature-flags"
 
 export type OverrideFeatureFlagPayload = { id: FeatureId; value: Feature | undefined };
 
+export type WebviewDriverOpPayload =
+  | { op: "tapByTestId"; testId: string }
+  | { op: "waitForTestId"; testId: string; timeoutMs?: number }
+  | { op: "getText"; testId: string }
+  | { op: "typeText"; testId: string; value: string }
+  | { op: "querySelectorAllText"; selector: string };
+
 export type ServerData =
   | {
       type: "walletAPIResponse";
@@ -38,6 +45,11 @@ export type ServerData =
     }
   | {
       type: "appEnvs";
+      payload: string;
+    }
+  | {
+      type: "webviewDriverResult";
+      id: string;
       payload: string;
     }
   | { type: "ACK"; id: string }
@@ -77,6 +89,25 @@ export type MessageData =
   | { type: "swapSetup"; id: string; swapApiBase?: string }
   | { type: "waitSwapReady"; id: string }
   | { type: "waitEarnReady"; id: string }
+  | {
+      type: "webviewDriver";
+      id: string;
+      payload: { driver: string; op: WebviewDriverOpPayload };
+    }
+  | {
+      /**
+       * Toggle the wallet-api `account.request` auto-pick mode. When enabled,
+       * the live-app account picker doesn't open the modular drawer; instead
+       * the first account matching the requested currency is selected.
+       *
+       * Used by Maestro on iOS to bypass the drawer-over-WebView combo that
+       * crashes XCUITest. Detox doesn't enable it because Detox can drive
+       * the drawer natively.
+       */
+      type: "setAutoPickAccount";
+      id: string;
+      payload: { enabled: boolean };
+    }
   | { type: "ACK"; id: string };
 
 export type MockDeviceEvent =

@@ -1,0 +1,39 @@
+{
+  "name": "ledger-live-mobile-maestro-tests",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "lint": "oxlint .",
+    "lint:fix": "oxfmt . && oxlint . --fix",
+    "typecheck": "node ./scripts/typecheck.js",
+    "maestro": "TS_NODE_COMPILER_OPTIONS='{\"rootDir\":\".\",\"jsx\":\"react\"}' ts-node --transpile-only -r tsconfig-paths/register scripts/run.ts",
+    "maestro:ios": "pnpm maestro -- --project ios --spec addAccount",
+    "maestro:android": "pnpm maestro -- --project android --spec addAccount",
+    "maestro:ios:debug": "pnpm maestro -- --project ios.debug --spec addAccount",
+    "maestro:android:debug": "pnpm maestro -- --project android.debug --spec addAccount",
+    "maestro:swap:ios": "pnpm maestro -- --project ios --spec swapEthUsdt",
+    "maestro:swap:android": "pnpm maestro -- --project android --spec swapEthUsdt"
+  },
+  "dependencies": {
+    "rxjs": "catalog:"
+  },
+  "devDependencies": {
+    "@ledgerhq/live-common": "workspace:^",
+    "@ledgerhq/live-dmk-speculos": "workspace:^",
+    "@ledgerhq/live-env": "workspace:^",
+    "@shared/feature-flags": "workspace:*",
+    "@types/node": "catalog:",
+    "bignumber.js": "9.1.2",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "ts-node": "10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "catalog:"
+  },
+  "optionalDependencies": {
+    "@oxlint/binding-darwin-arm64": "1.51.0",
+    "@oxlint/binding-darwin-x64": "1.51.0",
+    "@oxlint/binding-linux-x64-gnu": "1.51.0",
+    "@oxlint/binding-win32-x64-msvc": "1.51.0"
+  }
+}

@@ -1,12 +1,13 @@
 import { execFileSync } from "child_process";
 import { setEnv } from "@ledgerhq/live-env";
 import {
+  setExchangeDependencies,
   specs,
   SpeculosDevice,
   startSpeculos,
   stopSpeculos,
 } from "@ledgerhq/live-common/e2e/speculos";
-import { CLI } from "../../utils/cliUtils";
+import { CLI } from "../../mobile/utils/cliUtils";
 import { MaestroProject } from "../config/projects";
 
 export type SpeculosName = keyof typeof specs;
@@ -24,6 +25,11 @@ export class SpeculosDeviceManager {
 
     this.devices.push(speculos);
     return speculos;
+  }
+
+  async startExchangeWith(deps: SpeculosName[], testName: string) {
+    setExchangeDependencies(deps.map(name => ({ name: String(name).replace(/ /g, "_") })));
+    return this.start("Exchange", testName);
   }
 
   registerForCli(port: number) {
@@ -66,5 +72,6 @@ export class SpeculosDeviceManager {
       }
       await stopSpeculos(speculos.id);
     }
+    this.devices.length = 0;
   }
 }

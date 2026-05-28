@@ -61,7 +61,8 @@ function attachSpeculosOutputToAllure(message: string): Promise<void> {
 export { setExchangeDependencies };
 
 type SpeculosId = { deviceId: string };
-export const SPECULOS_TRACKING_FILE = path.resolve("artifacts/speculos-instances.json");
+export const SPECULOS_TRACKING_FILE =
+  process.env.SPECULOS_TRACKING_FILE || path.resolve("artifacts/speculos-instances.json");
 
 // Register in tracking file for cross-process cleanup
 async function writeSpeculosInFile(deviceId: string) {
