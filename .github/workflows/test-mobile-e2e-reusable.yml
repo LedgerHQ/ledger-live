@@ -161,6 +161,8 @@ env:
   MOBILE_ARTIFACTS_ROOT: e2e/poc-wdio/artifacts
   E2E_TEST_RESULTS_PREFIX_IOS: e2e-test-results-ios
   E2E_TEST_RESULTS_PREFIX_ANDROID: e2e-test-results-android
+  # Workaround for missing lsof in path:
+  PATH: /usr/sbin:${{ env.PATH }}
 
 jobs:
   determine-builds:
