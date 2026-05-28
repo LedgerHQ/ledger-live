@@ -2,7 +2,10 @@ import { act, renderHook } from "@tests/test-renderer";
 import { State } from "~/reducers/types";
 import { NavigatorName, ScreenName } from "~/const/navigation";
 import { track } from "~/analytics";
-import { useProductTourDrawerViewModel } from "../useProductTourDrawerViewModel";
+import {
+  __resetProductTourAutoOpenForTests,
+  useProductTourDrawerViewModel,
+} from "../useProductTourDrawerViewModel";
 import { PAGE_TRACKING_PRODUCT_TOUR, PRODUCT_TOUR_LAST_SLIDE_INDEX } from "../../const";
 import { productTourCompletedSelector } from "~/reducers/settings";
 import { setProductTourCompleted } from "~/actions/settings";
@@ -31,15 +34,16 @@ const withProductTourCompleted = (state: State): State => ({
 describe("useProductTourDrawerViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    __resetProductTourAutoOpenForTests();
   });
 
   describe("initial drawer state", () => {
-    it("should keep drawer closed on mount even when feature is enabled and tour is not completed", () => {
+    it("should auto-open on mount when feature is enabled and tour is not completed", () => {
       const { result } = renderHook(() => useProductTourDrawerViewModel(), {
         overrideInitialState: withFeatureEnabled,
       });
 
-      expect(result.current.isDrawerOpen).toBe(false);
+      expect(result.current.isDrawerOpen).toBe(true);
     });
 
     it("should keep drawer closed when feature flag is disabled", () => {
@@ -54,6 +58,21 @@ describe("useProductTourDrawerViewModel", () => {
       });
 
       expect(result.current.isDrawerOpen).toBe(false);
+    });
+
+    it("should not re-auto-open when the hook remounts after the user has dismissed it", () => {
+      const first = renderHook(() => useProductTourDrawerViewModel(), {
+        overrideInitialState: withFeatureEnabled,
+      });
+      expect(first.result.current.isDrawerOpen).toBe(true);
+      act(() => first.result.current.onCloseButtonPress());
+      expect(first.result.current.isDrawerOpen).toBe(false);
+      first.unmount();
+
+      const second = renderHook(() => useProductTourDrawerViewModel(), {
+        overrideInitialState: withFeatureEnabled,
+      });
+      expect(second.result.current.isDrawerOpen).toBe(false);
     });
   });
 
