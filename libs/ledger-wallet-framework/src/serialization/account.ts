@@ -29,19 +29,6 @@ import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 // TODO: REMOVE - Temporary hardcoded tokens until CAL supports them
 const HARDCODED_TOKENS: Record<string, () => TokenCurrency> = {
-  "aleo/aleo_token/4697275201844475848710842677807162058146139844643350200269139278887318953049":
-    () => ({
-      type: "TokenCurrency",
-      id: "aleo/aleo_token/4697275201844475848710842677807162058146139844643350200269139278887318953049",
-      contractAddress:
-        "4697275201844475848710842677807162058146139844643350200269139278887318953049",
-      parentCurrency: getCryptoCurrencyById("aleo"),
-      tokenType: "aleo_token",
-      name: "USDC",
-      ticker: "USDC",
-      units: [{ name: "USDC", code: "USDC", magnitude: 6 }],
-      disableCountervalue: true,
-    }),
   "aleo/aleo_token/usad_stablecoin.aleo": () => ({
     type: "TokenCurrency",
     id: "aleo/aleo_token/usad_stablecoin.aleo",
@@ -64,19 +51,6 @@ const HARDCODED_TOKENS: Record<string, () => TokenCurrency> = {
     units: [{ name: "USDCx", code: "USDCx", magnitude: 6 }],
     disableCountervalue: true,
   }),
-  "aleo/aleo_token/2045969100091121326225168054634646230244820821909676777152465722877810201564":
-    () => ({
-      type: "TokenCurrency",
-      id: "aleo/aleo_token/2045969100091121326225168054634646230244820821909676777152465722877810201564",
-      contractAddress:
-        "2045969100091121326225168054634646230244820821909676777152465722877810201564",
-      parentCurrency: getCryptoCurrencyById("aleo"),
-      tokenType: "aleo_token",
-      name: "Solana",
-      ticker: "SOL",
-      units: [{ name: "Solana", code: "SOL", magnitude: 9 }],
-      disableCountervalue: true,
-    }),
 };
 
 export type FromFamiliyRaw = {

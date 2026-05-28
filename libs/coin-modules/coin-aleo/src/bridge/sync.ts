@@ -422,6 +422,7 @@ export async function performPrivateSync(
       unspentPrivateRecords: filteredUnspentTokenRecords,
       baseSubAccounts,
       viewKey,
+      address,
     });
 
     mergedSubAccounts = subAccounts;

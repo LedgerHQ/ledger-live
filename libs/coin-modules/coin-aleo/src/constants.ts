@@ -5,11 +5,7 @@ export const PROGRAM_ID = {
   USDCX: "usdcx_stablecoin.aleo",
 };
 
-export const TOKENS_PROGRAMS = [
-  PROGRAM_ID.TOKEN_REGISTRY,
-  PROGRAM_ID.USAD,
-  PROGRAM_ID.USDCX,
-] as const;
+export const TOKENS_PROGRAMS = [PROGRAM_ID.USAD, PROGRAM_ID.USDCX] as const;
 
 export const EXPLORER_TRANSFER_TYPES = {
   PRIVATE: "transfer_private",
