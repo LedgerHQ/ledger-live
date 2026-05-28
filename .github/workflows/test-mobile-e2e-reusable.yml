@@ -158,7 +158,7 @@ env:
   AVD_RAM_SIZE: 3072
   AVD_HEAP_SIZE: 1024
   AVD_OPTIONS: -no-window -gpu swiftshader_indirect -accel on -no-audio -no-boot-anim -camera-back none -camera-front none -no-metrics
-  MOBILE_ARTIFACTS_ROOT: e2e/mobile/artifacts
+  MOBILE_ARTIFACTS_ROOT: e2e/poc-wdio/artifacts
   E2E_TEST_RESULTS_PREFIX_IOS: e2e-test-results-ios
   E2E_TEST_RESULTS_PREFIX_ANDROID: e2e-test-results-android
 
