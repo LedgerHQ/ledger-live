@@ -1360,6 +1360,10 @@
           "title" : "ロック画面をカスタマイズ",
           "description" : "お気に入りのデジタルアートや写真を、デバイスのロック画面に表示しましょう。"
         },
+        "discoverWallet" : {
+          "title" : "ウォレットで何ができるか探ってみよう",
+          "description" : "ウォレットの機能を探ってみましょう"
+        },
         "recover" : {
           "title" : "バックアップの保護を完了",
           "description" : "Ledger Recoverの有効化を完了してください"
@@ -1400,9 +1404,16 @@
         "description" : "Ledger Syncを有効にして、暗号資産アカウントを同期してください。",
         "actionCompletedPopupLabel" : "アカウント同期済み"
       },
+      "discoverWallet" : {
+        "title" : "ウォレットで何ができるか探ってみよう",
+        "titleCompleted" : "ウォレットで何ができるか分かった",
+        "description" : "ウォレットの機能を探求する",
+        "actionCompletedPopupLabel" : "製品ツアーが完了しました"
+      },
       "recover" : {
-        "title" : "Ledger Recoverのサブスクリプション契約をする",
-        "description" : "シークレットリカバリーフレーズを使用せずに、ウォレットへのアクセスを復元します。",
+        "title" : "バックアップの保護を完了",
+        "titleCompleted" : "バックアップ保護完了",
+        "description" : "Ledger Recoverの有効化を完了してください",
         "actionCompletedPopupLabel" : "Ledger Recoverのサブスクリプション契約を正常に行いました"
       }
     }
@@ -1781,6 +1792,8 @@
       "votesAddress" : "<2>{{name}}</2>に<0>{{votes}}</0>",
       "validators" : "バリデーター",
       "redelegated" : "再デリゲート済み",
+      "delegatedTo" : "デリゲート先：",
+      "delegatedAmount" : "デリゲート数",
       "redelegatedFrom" : "再デリゲート元",
       "redelegatedTo" : "再デリゲート先",
       "redelegatedAmount" : "再デリゲート数",
@@ -2890,6 +2903,14 @@
               "cta" : "詳細を表示"
             },
             "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+          }
+        }
+      },
+      "selfTransactionFlow" : {
+        "title" : "デリゲート解除の準備",
+        "steps" : {
+          "starter" : {
+            "description" : ["ステーキングアカウントを閉鎖して、ADAのデポジットを取り戻す方法：", "Cardanoのガバナンスでは、デリゲート解除する前に投票ステータスを定義する必要があります。", "このステップでは、投票を棄権する選択を登録するために、自分のLedgerアドレスに送信トランザクションを行います。費用は標準的なネットワーク手数料のみで、ADAはウォレットにそのまま保管されます。", "この設定が記録されると、通常どおりデリゲート解除できるようになります。"]
           }
         }
       }
@@ -4278,7 +4299,38 @@
         }
       },
       "redelegation" : {
-        "header" : "再デリゲート"
+        "header" : "再デリゲート",
+        "flow" : {
+          "title" : "資産を再デリゲートする",
+          "steps" : {
+            "starter" : {
+              "title" : "再デリゲート",
+              "description" : "再デリゲートを使用すると、別のバリデーターに簡単に変更できます。しかし、再度変更する場合は、再デリゲートによって{{ numberOfDays }}日間ロックされるため、待機する必要があります。",
+              "warning" : "バリデーターは慎重に選択してください。不適切なバリデーターに資産を預けると、資産の一部がペナルティによって失われてしまう危険があります。<0>保留中の最大再デリゲート数は</0>{{maxRedelegations}}件です。",
+              "howDelegationWorks" : "デリゲートの仕組み"
+            },
+            "validators" : {
+              "title" : "バリデーター",
+              "currentDelegation" : "現在のデリゲート",
+              "newDelegation" : "新しいデリゲート",
+              "chooseValidator" : "バリデーターを選ぶ",
+              "warning" : "新しいバリデーターから再デリゲートを希望する場合には<0>{{numberOfDays}}日間</0>待機する必要があります。",
+              "amountLabel" : "再デリゲート額"
+            },
+            "connectDevice" : {
+              "title" : "デバイス"
+            },
+            "confirmation" : {
+              "title" : "確認",
+              "success" : {
+                "title" : "資産を正常に再デリゲートしました。",
+                "text" : "ブロックチェーンがトランザクションを承認後、デリゲートが更新されます",
+                "cta" : "詳細を表示"
+              },
+              "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+            }
+          }
+        }
       },
       "undelegation" : {
         "header" : "デリゲート解除",
@@ -4316,6 +4368,19 @@
   },
   "graph" : {
     "noGraphWarning" : "このトークンでは、グラフを使用できません"
+  },
+  "lineChart" : {
+    "error" : "Unable to load chart",
+    "rangeSelectorLabel" : "Select time range",
+    "range" : {
+      "1D" : "1日",
+      "1W" : "1週",
+      "1M" : "1月",
+      "6M" : "6M",
+      "1Y" : "1年",
+      "5Y" : "5Y",
+      "ALL" : "全て"
+    }
   },
   "near" : {
     "account" : {
@@ -4552,6 +4617,137 @@
           }
         }
       }
+    }
+  },
+  "tezos" : {
+    "earnChoice" : {
+      "title" : "Tezosの報酬獲得：デリゲートまたはステーキング",
+      "description" : "完全な主導権を握りながら、ベーカーにデリゲートしてTezos（XTZ）で報酬を獲得しましょう。より高いリターンを得るには、リスクが低いことを理解した上で、XTZをステーキングしてください。資産を運用するために最適な方法を選びましょう。",
+      "howItWorks" : "仕組み",
+      "delegate" : {
+        "header" : "デリゲート",
+        "bullet" : {
+          "0" : "ロックアップなし",
+          "1" : "残高のすべてが委任されています",
+          "2" : "いつでもXTZを送付・スワップ",
+          "3" : "リスクなし"
+        },
+        "cta" : "デリゲート"
+      },
+      "stake" : {
+        "header" : "ステーキング",
+        "bullet" : {
+          "0" : "収益増加（2～3倍）",
+          "1" : "XTZはステーキングのためにロックされています",
+          "2" : "ステーキング解除：4日",
+          "3" : "リスク：低（スラッシング）"
+        },
+        "cta" : "ステーキング"
+      }
+    },
+    "unstake" : {
+      "flow" : {
+        "title" : "XTZのステーキング解除",
+        "steps" : {
+          "amount" : {
+            "title" : "数量",
+            "amountLabel" : "ステーキングを解除する数量",
+            "availableLabel" : "ステーキング済み",
+            "maxLabel" : "最大",
+            "unbondingNotice" : "ステーキング解除には4日かかります。この期間中、XTZはデリゲートされたままとなり、ステーキング報酬を獲得することはできなくなります。"
+          },
+          "device" : {
+            "title" : "デバイス"
+          },
+          "confirmation" : {
+            "title" : "確認",
+            "broadcastError" : "ステーキング解除のトランザクションをネットワークに送信できませんでした。もう一度お試しください。",
+            "success" : {
+              "title" : "ステーキング解除が送信されました。",
+              "text" : "XTZはステーキング解除されており、最大4日後に出金可能になります。",
+              "cta" : "詳細を表示"
+            }
+          }
+        }
+      }
+    },
+    "stake" : {
+      "flow" : {
+        "title" : "ステーキング",
+        "preparingTransaction" : "トランザクションを準備中…",
+        "amount" : {
+          "disclaimer" : "ステーキング解除には4日かかります。",
+          "awaitingDelegation" : "デリゲートを確定します。通常、1分以内で終了します。"
+        },
+        "steps" : {
+          "validator" : {
+            "title" : "バリデータ",
+            "description" : "デリゲートするベーカーを選ぶ。デリゲートが確認された後、XTZをステーキングできるようになります。"
+          },
+          "deviceDelegation" : {
+            "title" : "デリゲートを確定する"
+          },
+          "amount" : {
+            "title" : "数量"
+          },
+          "deviceStaking" : {
+            "title" : "ステーキングを確定"
+          },
+          "confirmation" : {
+            "title" : "確認",
+            "success" : {
+              "title" : "資産が正常にステーキングされました",
+              "text" : "{{amount}}をステーキングしました。ブロックチェーンによるトランザクションの承認後、アカウント残高が更新されます。",
+              "cta" : "報酬獲得ダッシュボードを開く"
+            },
+            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。",
+            "howItWorks" : "ステーキングの仕組み"
+          }
+        }
+      }
+    },
+    "unstakeRequired" : {
+      "changeBaker" : {
+        "title" : "ベーカーを変更する前にステーキング解除してください",
+        "description" : "現在のベーカーでXTZをステーキングしました。新しいベーカーにデリゲートする前に、資金のステーキングを解除してください。"
+      },
+      "endDelegation" : {
+        "title" : "デリゲートを終了する前にステーキング解除する",
+        "description" : "現在のベーカーでXTZをステーキングしました。デリゲーションを終了する前に、資金のステーキング解除をしてください。"
+      },
+      "steps" : {
+        "0" : "報酬獲得メニューを開き、ステーキング解除を選択する。",
+        "1" : "デバイスで数量を確認し、ステーキング解除のトランザクションを送信する。",
+        "2" : "ステーキング解除期間が完了するまで約4日待機してください。",
+        "3" : "引き出した後は、ベーカーを変更したりデリゲートを解除したりできます。"
+      },
+      "learnMore" : "Tezosのステーキングの詳細を知る",
+      "close" : "閉じる"
+    },
+    "account" : {
+      "delegatedAssetsTooltip" : "XTZをベーカーにデリゲート。資金はウォレットに保持され、いつでも送付することができます。",
+      "stakedAssets" : "ステーキングされた資産",
+      "stakedAssetsTooltip" : "XTZはベーカーの下にロックされています。ステーキング解除すると、約4日後に引き出し可能になります。",
+      "pendingWithdrawable" : "保留中の引き出し可能額",
+      "pendingWithdrawableTooltip" : "XTZは現在ステーキングしていません。4日以内に出金可能。",
+      "withdrawableAssets" : "引き出し可能な資産",
+      "withdrawableAssetsTooltip" : "ステーキング解除期間を終了し、引き出す準備ができたXTZ。"
+    },
+    "delegation" : {
+      "contextMenu" : {
+        "stake" : "XTZをステーキングする"
+      }
+    },
+    "staking" : {
+      "header" : "ステーキング",
+      "contextMenu" : {
+        "stakeMore" : "さらにステーキング",
+        "unstake" : "ステーキング解除"
+      }
+    },
+    "unstaking" : {
+      "header" : "ステーキング解除",
+      "processing" : "処理中"
     }
   },
   "delegation" : {
@@ -4874,6 +5070,13 @@
           "completed" : "製品ツアーは完了済みです。",
           "notCompleted" : "製品ツアーはまだ完了していません。",
           "open" : "開く"
+        },
+        "recover" : {
+          "title" : "Recover",
+          "description" : "ローカルのLedger Recoverサブスクリプションの状態を設定し、オンボーディング後のハブとリカバリーバナーをテストします。",
+          "noSubscription" : "サブスクリプションなし",
+          "inProgress" : "処理中",
+          "backupDone" : "バックアップ完了"
         }
       },
       "walletFeaturesDevTool" : {
@@ -6158,6 +6361,36 @@
       "topologyChangeError" : {
         "message" : "トポロジーの変更を検出しました。再オンボーディング（設定）が必要です。"
       },
+      "disclaimer" : {
+        "title" : "Canton Networkの設定",
+        "intro" : "Cantonには、続行する前に認識が必要な特性があります。",
+        "bullets" : {
+          "utxo" : {
+            "title" : "UTXOベースの残高",
+            "body" : "残高は個々のコインコントラクトとして存在し、転送あたりの上限は100です。休眠中のコントラクトは時間の経過とともに価値が減少し、手数料が残高を上回った場合は失効します。"
+          },
+          "offers" : {
+            "title" : "オファー型送金",
+            "body" : "自動的に決済されることはありません。送信した送金は引き出すことができます。受け取った送金は、手動で承認または拒否する必要があります。Cantonダッシュボードからオファーを管理しましょう。"
+          },
+          "dualValidator" : {
+            "title" : "デュアルバリデーターのセキュリティ",
+            "body" : "トランザクションには、LedgerとKlinの両方の連署が必要です。いずれも単独でお客様の代わりに行動することはできません。"
+          },
+          "tokenLiability" : {
+            "title" : "標準トークンの責任 ⚠️",
+            "body" : "失敗した場合のトークンの復元は、トークン発行者の責任であり、Ledgerの責任ではありません。"
+          }
+        },
+        "agreeLabel" : "私は<1>Canton Network規約とLedgerの免責事項</1>に同意します",
+        "cancel" : "キャンセル",
+        "agree" : "同意する",
+        "terms" : {
+          "title" : "Canton Network規約",
+          "sectionTitle" : "標準トークンの責任と復旧",
+          "body" : "Ledgerは、暗号資産 (DA) 登録を通じて発行された標準トークンのみをサポートしています。Ledgerはこれらのトークンの発行者ではなく、その価値、管理、および基盤となるスマートコントラクトについて一切責任を負いません。\n\nLedgerのサービス停止や「障害復旧」の障害が発生した場合、Ledgerはお客様の資産を復元することができません。「Asset 凍結」または「Registry Recovery」プロトコルを介して復元を開始するには、特定のトークン発行者（資産管理者）に直接連絡する必要があります。お客様の救済措置は、既存のサービス水準合意（SLA）に基づき、トークン発行者にのみ存在します。手続きを進めることにより、お客様は、Ledgerとそのアフィリエイトが、これらのトークンの損失、復元、または復元不能によって生じるすべての責任から除外されることを了承するものとします。"
+        }
+      },
       "tooManyUtxos" : {
         "title" : "対応が必要です：UTXOが多すぎます",
         "description" : "この送金を処理するには、アカウント内に少額のUTXOが多すぎます。累積保有手数料によるUTXOの失効を避け、送金を可能にするため、今すぐ統合してください。",
@@ -6944,6 +7177,9 @@
     "RecommendUndelegation" : {
       "title" : "アカウントを空にする前に、デリゲートを解除してください。"
     },
+    "MustDelegateBeforeStaking" : {
+      "title" : "ステーキングする前に、アカウントをデリゲートしてください"
+    },
     "RecommendSubAccountsToEmpty" : {
       "title" : "まず、すべてのサブアカウントを空にしてください。"
     },
@@ -7404,6 +7640,14 @@
     "AleoAmountRecordRequired" : {
       "title" : "数量についての有効なプライベート記録を選択します。",
       "description" : "送金金額は、利用可能な個人記録から1つ選択してください。"
+    },
+    "AleoTooManyRecordsSelected" : {
+      "title" : "選択された非公開記録が多すぎます",
+      "description" : "1回のトランザクションで最大{{count}}件のプライベートレコードを使用できます。"
+    },
+    "AleoAmountTooLargeForTransaction" : {
+      "title" : "1回のトランザクションには数量が大きすぎます",
+      "description" : "個人記録は、1回のトランザクションでこれをカバーすることはできません。数量を減らしてください。"
     },
     "AleoFeeRecordRequired" : {
       "title" : "ネットワーク手数料を補うために、別のプライベート記録が必要です。",
@@ -8401,20 +8645,18 @@
     "title" : "アカウント",
     "tableActions" : {
       "searchAddress" : "名前、アドレスで検索",
-      "addAddress" : "アドレスを追加"
+      "addAccount" : "アカウントを追加"
     },
     "table" : {
       "columns" : {
         "name" : "名前",
         "address" : "アドレス",
+        "asset" : "資産",
         "value" : "価値"
       },
       "editName" : "名前を編集",
       "emptyState" : "暗号資産アドレスがありません",
-      "emptySearchState" : "検索条件に一致するアカウントがありません。",
-      "assetCount_zero" : "{{count}}資産",
-      "assetCount_one" : "{{count}}資産",
-      "assetCount_other" : "{{count}}資産"
+      "emptySearchState" : "検索条件に一致するアカウントがありません。"
     },
     "editName" : {
       "title" : "アドレス名を編集",
@@ -8439,8 +8681,7 @@
   },
   "topBar" : {
     "history" : {
-      "cta" : "履歴",
-      "tooltip" : "履歴"
+      "cta" : "トランザクション"
     },
     "activityIndicator" : {
       "errorToolTip" : "資産は安全です。これは一時的な同期の問題です。\n影響を受けるアカウント： {{accounts}}クリックして再試行",
@@ -8579,6 +8820,21 @@
       }
     },
     "shared" : {
+      "quickAmountSelector" : {
+        "strategies" : {
+          "fast" : "高速",
+          "balanced" : "残高",
+          "full" : "全て"
+        },
+        "recordCount_one" : "{{count}}記録",
+        "recordCount_other" : "{{count}}記録",
+        "unavailable" : "使用不可",
+        "spendableBalance" : "最大利用可能残高："
+      },
+      "infoBanner" : {
+        "descPartOne" : "送信者、金額、受取人がオンチェーンで非表示になります。",
+        "descPartTwo" : "1回で最大{{max}}件の記録を送信。"
+      },
       "sponsoredByProvable" : "Provable提供",
       "balanceSelector" : {
         "private" : "プライベート残高",
@@ -8620,7 +8876,9 @@
         "selectLabel" : "送付元"
       },
       "summary" : {
-        "proofGenerationWarning" : "Aleoのトランザクションにはプルーフの生成が必要です。少し時間がかかる場合があります。"
+        "proofGenerationWarning" : "Aleoのトランザクションにはプルーフの生成が必要です。少し時間がかかる場合があります。",
+        "recordsUsed" : "使用された記録",
+        "signingTime" : "署名する時間"
       },
       "mandatoryPrivateSync" : {
         "title" : "プライベート残高を同期中（{{percentage}}％）",
@@ -8665,10 +8923,32 @@
       "growYourRewards" : "報酬を運用する",
       "spendYourCrypto" : "暗号資産で決済",
       "everythingAtAGlance" : "すべてを一目で把握"
+    },
+    "slides" : {
+      "fund" : {
+        "title" : "まずはウォレットへの入金から始めましょう",
+        "subTitle" : "お好きな方法でLedger Walletに入金—送金、購入または現金をステーブルコインに交換。"
+      },
+      "portfolio" : {
+        "title" : "常に市場の一歩先へ",
+        "subTitle" : "資産や報酬、市場動向を簡単にチェックできます。"
+      },
+      "earn" : {
+        "title" : "お持ちの暗号資産で報酬を楽しみましょう",
+        "subTitle" : "報酬獲得セクションを通じて暗号資産を運用しましょう。"
+      },
+      "card" : {
+        "title" : "実生活で暗号資産を送付",
+        "subTitle" : "オンラインまたは店頭で、暗号資産カードで支払って、キャッシュバックを獲得"
+      },
+      "swap" : {
+        "title" : "アプリを切り替えずにスワップする",
+        "subTitle" : "当社の信頼できるスワップパートナーを通じて、数千種類の資産で無限のトレードをお楽しみください。"
+      }
     }
   },
   "history" : {
-    "title" : "トランザクション",
+    "title" : "取引履歴",
     "pending" : "保留中のトランザクション",
     "pending_other" : "保留中のトランザクション",
     "columns" : {
@@ -8686,11 +8966,10 @@
       "description" : "後ほど、トランザクションをご確認ください。"
     },
     "actionsBar" : {
-      "csv" : "CSV"
+      "csv" : "エクスポート"
     },
     "exportDialog" : {
-      "title" : "取引履歴",
-      "description" : "エクスポートに含めるアカウントを選択する",
+      "title" : "トランザクション履歴をエクスポート",
       "disclaimer" : "推定値のみ。カウンターバリューは、情報提供の目的でKaikoによって提供されます。このデータを税務、法務、または会計の目的に使用しないでください。",
       "accountsToInclude" : "含まれるアカウント",
       "selectAll" : "すべてを選択 ({{count}})",
@@ -8723,6 +9002,92 @@
     "explore" : "すべてのLedgerデバイスを探索する"
   },
   "assetDetails" : {
-    "totalBalance" : "総資産"
+    "header" : {
+      "optionsMenu" : "資産オプション",
+      "addFavourite" : "お気に入りに追加",
+      "removeFavourite" : "お気に入りから削除",
+      "hideFromPortfolio" : "ポートフォリオで非表示にする",
+      "showInPortfolio" : "ポートフォリオに表示する"
+    },
+    "hiddenBanner" : {
+      "description" : "この資産はポートフォリオで非表示です。",
+      "showAsset" : "資産を表示"
+    },
+    "totalBalance" : "総資産",
+    "marketPrice" : "市場価格",
+    "addresses" : "アドレス",
+    "addressesDialog" : {
+      "title" : "アドレス",
+      "description" : "すべてのアドレスは{{ticker}}を保持しています。"
+    },
+    "add" : "追加",
+    "notFound" : "資産配分項目が見つかりません。",
+    "marketStats" : "マーケット統計",
+    "marketStatsTooltip" : "この資産の市場指標。",
+    "pricePerformance" : "価格パフォーマンス",
+    "marketRank" : "マーケットランキング",
+    "tradingVolume24h" : "24時間取引量",
+    "day" : "1日間",
+    "staking" : {
+      "availableBalance" : "利用可能残高",
+      "availableBalanceTooltip" : "今すぐ利用でき、いつでも自由に送金・スワップ・出金可能な保有資産の金額。",
+      "earnDeposit" : "報酬獲得デポジット",
+      "earnBanner" : "最大{{apy}}％{{type}}を獲得",
+      "earnBannerDefault" : "この資産で報酬獲得",
+      "earnBannerSubtitle" : "この資産を保有して稼ぐ",
+      "earnBannerAction" : "報酬獲得へ移動"
+    }
+  },
+  "pnl" : {
+    "asset" : {
+      "entry" : {
+        "title" : "平均取得価格",
+        "tooltip" : "他のウォレットから購入したり、受け取ったすべてを含む、このウォレットでこの資産に対して支払った平均価格。利益または損失をチェックするために使用されます。"
+      },
+      "return" : {
+        "title" : "未実現利益"
+      },
+      "dialog" : {
+        "title" : "利益と損失",
+        "description" : "この資産がお客様のポートフォリオでどのように運用されたかをまとめたものです。",
+        "totalReturn" : {
+          "title" : "総リターン",
+          "description" : "未実現リターンと実現リターンの合計。"
+        },
+        "unrealisedReturn" : {
+          "title" : "未実現利益",
+          "description" : "本日の価格で売却した場合の利益または損失の見積もり。"
+        },
+        "realisedReturn" : {
+          "title" : "リターンの実現",
+          "description" : "以前の売却または譲渡で確認された利益または損失。"
+        }
+      }
+    },
+    "portfolio" : {
+      "return" : {
+        "title" : "未実現利益"
+      },
+      "costBasis" : {
+        "title" : "取得価格",
+        "tooltip" : "手数料を含む、現在の保有資産を取得するために支払った合計金額。"
+      },
+      "dialog" : {
+        "title" : "利益と損失",
+        "description" : "ポートフォリオのパフォーマンスを、実現収益と未実現収益に分類しました。",
+        "totalReturn" : {
+          "title" : "総リターン",
+          "description" : "実現利益と未実現利益を組み合わせ、全体的なポジションを反映します。"
+        },
+        "unrealisedReturn" : {
+          "title" : "未実現利益",
+          "description" : "現在の保有資産に対する利益または損失の推定値。"
+        },
+        "realisedReturn" : {
+          "title" : "リターンの実現",
+          "description" : "以前の売却または外部への送金で確認された利益または損失。"
+        }
+      }
+    }
   }
 }
