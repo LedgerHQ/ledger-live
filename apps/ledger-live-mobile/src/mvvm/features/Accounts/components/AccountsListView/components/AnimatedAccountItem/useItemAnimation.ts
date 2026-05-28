@@ -9,10 +9,8 @@ import {
 } from "react-native-reanimated";
 
 const ANIMATION_CONFIG = {
-  size: {
+  opacity: {
     duration: 500,
-    from: 0,
-    to: 100,
   },
   position: {
     duration: 350,
@@ -34,7 +32,6 @@ const DEFAULT_TIMING_CONFIG: WithTimingConfig = {
 };
 
 export default function useItemAnimation(index: number = 0) {
-  const height = useSharedValue(ANIMATION_CONFIG.size.from);
   const opacity = useSharedValue(0);
   const y = useSharedValue(ANIMATION_CONFIG.position.from);
   const centerY = useSharedValue(ANIMATION_CONFIG.position.from);
@@ -49,19 +46,19 @@ export default function useItemAnimation(index: number = 0) {
 
   const baseDelay = index * ANIMATION_CONFIG.itemDelay;
 
+  // height intentionally omitted: a percent-based height inside a FlatList row
+  // whose parent has no explicit height collapses on Android and breaks
+  // virtualization (LIVE-30528).
   const animatedStyle = useAnimatedStyle(
     () => ({
-      height: `${height.value}%`,
       opacity: opacity.value,
       transform: [{ translateY: y.value }, { translateY: centerY.value }, { scale: scale.value }],
-      flex: 1,
     }),
-    [height, opacity, y, centerY, scale],
+    [opacity, y, centerY, scale],
   );
 
   const startAnimation = useCallback(() => {
-    animate(height, ANIMATION_CONFIG.size.to, ANIMATION_CONFIG.size.duration, baseDelay);
-    animate(opacity, 1, ANIMATION_CONFIG.size.duration, baseDelay);
+    animate(opacity, 1, ANIMATION_CONFIG.opacity.duration, baseDelay);
     animate(
       y,
       ANIMATION_CONFIG.position.to,
@@ -80,7 +77,7 @@ export default function useItemAnimation(index: number = 0) {
       ANIMATION_CONFIG.scale.duration,
       baseDelay + ANIMATION_CONFIG.scale.delay,
     );
-  }, [animate, height, baseDelay, opacity, y, centerY, scale]);
+  }, [animate, baseDelay, opacity, y, centerY, scale]);
 
   return { animatedStyle, startAnimation };
 }
