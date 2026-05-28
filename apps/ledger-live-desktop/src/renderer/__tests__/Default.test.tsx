@@ -71,7 +71,7 @@ describe("Default", () => {
       },
       { timeout: 10000 },
     );
-  }, 15_000); // Default mounts a large tree; CI runners need extra time
+  }, 15000);
 
   describe("analytics consent", () => {
     beforeEach(() => {
