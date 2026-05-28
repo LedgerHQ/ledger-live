@@ -6,13 +6,11 @@ import com.braze.BrazeActivityLifecycleCallbackListener
 import com.facebook.react.PackageList
 import com.facebook.react.ReactApplication
 import com.facebook.react.ReactHost
+import com.facebook.react.ReactNativeApplicationEntryPoint.loadReactNative
 import com.facebook.react.ReactNativeHost
 import com.facebook.react.ReactPackage
-import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.load
 import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 import com.facebook.react.defaults.DefaultReactNativeHost
-import com.facebook.react.soloader.OpenSourceMergedSoMapping
-import com.facebook.soloader.SoLoader
 import expo.modules.ApplicationLifecycleDispatcher
 import expo.modules.ReactNativeHostWrapper
 import cl.json.ShareApplication
@@ -57,14 +55,9 @@ class MainApplication : Application(), ReactApplication, ShareApplication {
     override fun onCreate() {
     super.onCreate()
 
-    SoLoader.init(this, OpenSourceMergedSoMapping)
+    loadReactNative(this)
 
     registerActivityLifecycleCallbacks(BrazeActivityLifecycleCallbackListener())
-    
-    if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-      // Override RN feature flags after SoLoader is ready, before using RN instances.
-      load()
-    }
 
       ApplicationLifecycleDispatcher.onApplicationCreate(this)
 
