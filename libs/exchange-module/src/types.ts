@@ -225,13 +225,17 @@ export type QuotePermit2Types = {
 /**
  * Partial Permit2 typed-data payload. UniswapX populates `values`; 1inch-fusion
  * populates `message`. Consumers must tolerate missing fields.
+ *
+ * `primaryType` is widened to a free-form string: classic AMM Permit2 quotes
+ * use `"PermitSingle"`, UniswapX RFQ orders use `"PermitWitnessTransferFrom"`,
+ * and 1inch-fusion forwards its provider-supplied primary type as-is.
  */
 export type QuotePermit2Message = {
   values?: QuotePermit2Single;
   message?: QuotePermit2Single;
   domain?: QuotePermit2Domain;
   types?: QuotePermit2Types;
-  primaryType?: "PermitSingle";
+  primaryType?: string;
 };
 
 /**
@@ -343,14 +347,22 @@ export type CustomSwapParams = {
 };
 
 /**
- * Result of `custom.swap`. Only the approval transaction hash is reported
- * for now; submit/broadcast hashes will be added when those steps land.
+ * Result of `custom.swap`. Fields are additive: classic AMM swaps populate
+ * `approvalTxHash` / `swapTxHash`; RFQ swaps additionally populate
+ * `swapId`, `finalAmount`, and `rfqStatus` once the partner-submitted
+ * order resolves.
  */
 export type CustomSwapResult = {
   /** Hash of the broadcast-and-confirmed approval transaction, when one was needed. */
   approvalTxHash?: string;
   /** Hash of the broadcast-and-confirmed swap transaction, when the swap step ran. */
   swapTxHash?: string;
+  /** Partner-side swap id returned by the RFQ submit/status endpoints. */
+  swapId?: string;
+  /** Final filled amount reported by the RFQ status endpoint, when available. */
+  finalAmount?: string;
+  /** Terminal RFQ status reported by the swap-api `/swap/status` endpoint. */
+  rfqStatus?: "finished" | "refunded";
 };
 
 /** Error rows returned next to quotes (swap API error objects). */

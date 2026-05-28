@@ -43,6 +43,7 @@ function makeQuote(overrides: {
   isApproved?: boolean;
   hasApprovalBlob?: boolean;
   permitTypedData?: QuotePermit2Message | null;
+  permitOrderHash?: string;
   customFields?: Record<string, unknown>;
 } = {}): Quote {
   const {
@@ -53,8 +54,17 @@ function makeQuote(overrides: {
     isApproved = false,
     hasApprovalBlob = true,
     permitTypedData = null,
+    permitOrderHash,
     customFields,
   } = overrides;
+
+  const permitData =
+    permitTypedData || permitOrderHash
+      ? {
+          ...(permitTypedData ? { typedData: permitTypedData } : {}),
+          ...(permitOrderHash ? { orderHash: permitOrderHash } : {}),
+        }
+      : undefined;
 
   return {
     key: `${provider}-test`,
@@ -84,7 +94,7 @@ function makeQuote(overrides: {
             approvalTransaction: hasApprovalBlob ? APPROVAL_TX : undefined,
           }
         : undefined,
-      permitData: permitTypedData ? { typedData: permitTypedData } : undefined,
+      permitData,
     },
     warning: null,
     error: null,
@@ -197,8 +207,122 @@ describe("planSwapFlow", () => {
     });
   });
 
-  describe("RFQ skip-guard (Task 8 territory)", () => {
-    it("skips UniswapX quotes whose approval is already done", () => {
+  describe("RFQ flows", () => {
+    const RFQ_TYPED_DATA: QuotePermit2Message = {
+      values: PERMIT_TYPED_DATA.values,
+      domain: PERMIT_TYPED_DATA.domain,
+      types: PERMIT_TYPED_DATA.types,
+    };
+
+    it("returns rfq-order for a UniswapX quote whose approval is already done", () => {
+      const result = plan(
+        makeQuote({
+          provider: "uniswap",
+          isUniswapX: true,
+          isTokenApprovalRequired: true,
+          isApproved: true,
+          permitTypedData: RFQ_TYPED_DATA,
+        }),
+      );
+      expect(result.kind).toBe("rfq-order");
+      if (result.kind === "rfq-order") {
+        expect(result.rfqProvider).toBe("uniswapx");
+        expect(result.provider).toBe("uniswap");
+        expect(result.orderTypedData.primaryType).toBe(
+          "PermitWitnessTransferFrom",
+        );
+      }
+    });
+
+    it("returns rfq-order for a oneinchfusion quote that ships a `quoteResponse` customField", () => {
+      const oneInchTypedData: QuotePermit2Message = {
+        ...RFQ_TYPED_DATA,
+        message: RFQ_TYPED_DATA.values,
+        values: undefined,
+        primaryType: "Order",
+      };
+      const result = plan(
+        makeQuote({
+          provider: "oneinchfusion",
+          providerType: "DEX",
+          permitTypedData: oneInchTypedData,
+          permitOrderHash: "0xdeadbeef",
+          customFields: {
+            quoteResponse: { orderHash: "0xdeadbeef" },
+          },
+        }),
+      );
+      expect(result.kind).toBe("rfq-order");
+      if (result.kind === "rfq-order") {
+        expect(result.rfqProvider).toBe("oneinchfusion");
+        expect(result.provider).toBe("oneinchfusion");
+        expect(result.precomputedOrderId).toBe("0xdeadbeef");
+        expect(result.orderTypedData.primaryType).toBe("Order");
+      }
+    });
+
+    it("returns approval-then-rfq-order for a UniswapX quote that still requires an approval", () => {
+      const result = plan(
+        makeQuote({
+          provider: "uniswap",
+          isUniswapX: true,
+          isTokenApprovalRequired: true,
+          isApproved: false,
+          hasApprovalBlob: true,
+          permitTypedData: RFQ_TYPED_DATA,
+        }),
+      );
+      expect(result.kind).toBe("approval-then-rfq-order");
+      if (result.kind === "approval-then-rfq-order") {
+        expect(result.approvalTransaction).toEqual(APPROVAL_TX);
+        expect(result.rfqProvider).toBe("uniswapx");
+      }
+    });
+
+    it("populates the UniswapX submit body with the routing override", () => {
+      const result = plan(
+        makeQuote({
+          provider: "uniswap",
+          isUniswapX: true,
+          isTokenApprovalRequired: true,
+          isApproved: true,
+          permitTypedData: RFQ_TYPED_DATA,
+          customFields: { "@type": "UniswapDutchCustomFields" },
+        }),
+      );
+      expect(result.kind).toBe("rfq-order");
+      if (result.kind === "rfq-order") {
+        expect(result.submitBody).toEqual({
+          "@type": "UniswapDutchCustomFields",
+          routing: "DUTCH_V2",
+        });
+      }
+    });
+
+    it("forwards the oneinchfusion customFields verbatim in the submit body", () => {
+      const result = plan(
+        makeQuote({
+          provider: "oneinchfusion",
+          providerType: "DEX",
+          permitTypedData: {
+            ...RFQ_TYPED_DATA,
+            message: RFQ_TYPED_DATA.values,
+            values: undefined,
+            primaryType: "Order",
+          },
+          permitOrderHash: "0xdead",
+          customFields: { quoteResponse: { orderHash: "0xdead" } },
+        }),
+      );
+      expect(result.kind).toBe("rfq-order");
+      if (result.kind === "rfq-order") {
+        expect(result.submitBody).toEqual({
+          quoteResponse: { orderHash: "0xdead" },
+        });
+      }
+    });
+
+    it("skips with `rfq-typed-data-missing` when an RFQ quote omits typed data", () => {
       const result = plan(
         makeQuote({
           provider: "uniswap",
@@ -207,33 +331,26 @@ describe("planSwapFlow", () => {
           isApproved: true,
         }),
       );
-      expect(result).toEqual({ kind: "skip", reason: "rfq-not-supported" });
+      expect(result).toEqual({
+        kind: "skip",
+        reason: "rfq-typed-data-missing",
+      });
     });
 
-    it("skips oneinchfusion quotes that ship a `quoteResponse` customField", () => {
-      const result = plan(
-        makeQuote({
-          provider: "oneinchfusion",
-          providerType: "DEX",
-          customFields: { quoteResponse: { orderHash: "0xabc" } },
-        }),
-      );
-      expect(result).toEqual({ kind: "skip", reason: "rfq-not-supported" });
-    });
-
-    it("does NOT skip a UniswapX quote that still requires approval (it routes as approval-then-swap)", () => {
-      // Mirrors live-app helpers.ts#isRfq: UniswapX + needsTokenApproval is
-      // treated as a pre-RFQ approval step, not a true RFQ.
+    it("uses the network-fee currency id as the status-polling network", () => {
       const result = plan(
         makeQuote({
           provider: "uniswap",
           isUniswapX: true,
           isTokenApprovalRequired: true,
-          isApproved: false,
-          hasApprovalBlob: true,
+          isApproved: true,
+          permitTypedData: RFQ_TYPED_DATA,
         }),
       );
-      expect(result.kind).toBe("approval-then-swap");
+      expect(result.kind).toBe("rfq-order");
+      if (result.kind === "rfq-order") {
+        expect(result.network).toBe("ethereum");
+      }
     });
   });
 

@@ -40,3 +40,26 @@ export type {
   SignPermit2EvmIntentInput,
   SignPermit2EvmJobState,
 } from "./signPermit2Evm";
+
+export {
+  signRfqOrderEvmIntentDefinition,
+  signRfqOrderEvmJob,
+  toRfqEIP712Message,
+} from "./signRfqOrderEvm";
+export type {
+  RfqProvider,
+  SignRfqOrderEvmIntentDefinition,
+  SignRfqOrderEvmIntentInput,
+  SignRfqOrderEvmJobState,
+} from "./signRfqOrderEvm";
+
+export {
+  submitRfqOrderEvmIntentDefinition,
+  submitRfqOrderEvmJob,
+} from "./submitRfqOrderEvm";
+export type {
+  SubmitRfqOrderEvmIntentDefinition,
+  SubmitRfqOrderEvmIntentInput,
+  SubmitRfqOrderEvmJobState,
+  SubmitRfqOrderTerminalStatus,
+} from "./submitRfqOrderEvm";

@@ -1,97 +1,10 @@
-import { concat, defer, of, type Observable } from "rxjs";
-import { catchError, filter, finalize, map } from "rxjs/operators";
-import {
-  DeviceActionStatus,
-  UserInteractionRequired,
-} from "@ledgerhq/device-management-kit";
-import {
-  SignTypedDataDAStateStep,
-  type Signature,
-} from "@ledgerhq/device-signer-kit-ethereum";
-import type { DeviceConnectionResult, Job } from "@ledgerhq/device-intent";
-import { DmkSignerEth } from "@ledgerhq/live-signer-evm";
+import { concat, of } from "rxjs";
+import type { Job } from "@ledgerhq/device-intent";
+import { runSignTypedDataEvm } from "../shared/signTypedDataEvm";
 import type {
   SignPermit2EvmIntentInput,
   SignPermit2EvmJobState,
 } from "./types";
-
-/**
- * Serialise a DMK `Signature` ({ r, s, v }) into the canonical 65-byte
- * EVM signature hex string (`0x` + r + s + v) that Permit2 spenders
- * expect. Mirrors what `walletAPI.message.sign` returns in the live-app
- * (`Buffer.toString("hex")` already concatenates the same r||s||v
- * bytes).
- */
-function serializeSignature(signature: Signature): string {
-  const r = signature.r.startsWith("0x") ? signature.r.slice(2) : signature.r;
-  const s = signature.s.startsWith("0x") ? signature.s.slice(2) : signature.s;
-  const v = signature.v.toString(16).padStart(2, "0");
-  return `0x${r}${s}${v}`;
-}
-
-function runSignPermit2(
-  connectionResult: DeviceConnectionResult,
-  input: SignPermit2EvmIntentInput,
-): Observable<SignPermit2EvmJobState> {
-  const { dmk, sessionId } = connectionResult;
-  // Use the production CAL-backed signer so EIP-712 typed-data filters
-  // load on-device (Permit2 spender, token symbols, …) and the user
-  // doesn't see the blind-signing fallback.
-  // Reuse the production CAL-wired SignerEth so EIP-712 typed-data
-  // filters load on-device (Permit2 spender, token symbols, …)
-  // instead of falling back to blind signing.
-  const signer = new DmkSignerEth(dmk, sessionId).signer;
-  const { observable, cancel } = signer.signTypedData(
-    input.derivationPath,
-    input.typedData,
-    { skipOpenApp: true },
-  );
-
-  return observable.pipe(
-    finalize(cancel),
-    map((state): SignPermit2EvmJobState | null => {
-      if (state.status === DeviceActionStatus.Error) {
-        const tag = (state.error as { _tag?: string })._tag;
-        return {
-          type: "failed",
-          error: tag ? new Error(tag) : new Error("Sign permit failed"),
-        };
-      }
-      if (state.status === DeviceActionStatus.Completed) {
-        return { type: "signed", signatureHex: serializeSignature(state.output) };
-      }
-      if (state.status === DeviceActionStatus.Pending) {
-        const { step, requiredUserInteraction } = state.intermediateValue;
-        if (
-          step === SignTypedDataDAStateStep.GET_APP_CONFIG ||
-          step === SignTypedDataDAStateStep.GET_ADDRESS ||
-          step === SignTypedDataDAStateStep.BUILD_CONTEXT ||
-          step === SignTypedDataDAStateStep.PROVIDE_CONTEXT ||
-          step === SignTypedDataDAStateStep.PROVIDE_GENERIC_CONTEXT
-        ) {
-          return { type: "loading-context" };
-        }
-        if (requiredUserInteraction === UserInteractionRequired.SignTypedData) {
-          return { type: "awaiting-confirmation" };
-        }
-        if (
-          step === SignTypedDataDAStateStep.SIGN_TYPED_DATA ||
-          step === SignTypedDataDAStateStep.SIGN_TYPED_DATA_LEGACY
-        ) {
-          return { type: "signing" };
-        }
-      }
-      return null;
-    }),
-    filter((s): s is SignPermit2EvmJobState => s !== null),
-    catchError(err =>
-      of<SignPermit2EvmJobState>({
-        type: "failed",
-        error: err instanceof Error ? err : new Error(String(err)),
-      }),
-    ),
-  );
-}
 
 /**
  * Job for the Permit2 EIP-712 signing intent.
@@ -101,6 +14,11 @@ function runSignPermit2(
  * synchronously, surfaces device-driven progress as the DMK signer does,
  * and converts errors into a terminal `failed` state instead of an
  * observable error.
+ *
+ * The DMK plumbing is shared with the RFQ signing intent through
+ * {@link runSignTypedDataEvm}; this job just adapts the shared run
+ * states into `SignPermit2EvmJobState` and prepends the synchronous
+ * `preparing` value the executor expects.
  */
 export const signPermit2EvmJob: Job<
   SignPermit2EvmJobState,
@@ -108,5 +26,10 @@ export const signPermit2EvmJob: Job<
 > = ({ deviceConnectionResult, input }) =>
   concat(
     of<SignPermit2EvmJobState>({ type: "preparing" }),
-    defer(() => runSignPermit2(deviceConnectionResult, input)),
+    runSignTypedDataEvm(
+      deviceConnectionResult,
+      input.typedData,
+      input.derivationPath,
+      "Sign permit failed",
+    ),
   );

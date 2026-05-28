@@ -9,6 +9,7 @@ import type {
   DexProvider,
   DexTransactionData,
 } from "../dex";
+import type { RfqProvider } from "../intents/signRfqOrderEvm/rfqTypedData";
 
 /**
  * Plan produced by {@link planSwapFlow}: tells the machine which sub-paths
@@ -36,6 +37,7 @@ export type SwapFlowPlan =
         | "no-approval-non-dex"
         | "already-approved-non-dex"
         | "rfq-not-supported"
+        | "rfq-typed-data-missing"
         | "dex-approval-blob-missing";
     }
   | {
@@ -88,6 +90,41 @@ export type SwapFlowPlan =
       permitTypedData: EIP712Message;
       provider: DexProvider;
       buildContext: DexBuildContext;
+    }
+  | {
+      /**
+       * RFQ flow without an approval step: sign an off-chain EIP-712
+       * order then submit it to the partner's `/{provider}/submit`
+       * endpoint and poll `/swap/status` until the partner fills or
+       * refunds the order. Mirrors the swap-live-app `handleRfqOrder`
+       * action for UniswapX and 1inch Fusion.
+       */
+      kind: "rfq-order";
+      rfqProvider: RfqProvider;
+      /** Live-app provider id forwarded to the swap-api submit endpoint. */
+      provider: string;
+      orderTypedData: EIP712Message;
+      submitBody: Record<string, unknown>;
+      /** Order id when known up-front (1inch Fusion ships it on the quote). */
+      precomputedOrderId?: string;
+      /** Network slug forwarded to `/swap/status` (`ethereum`, `polygon`, …). */
+      network: string;
+    }
+  | {
+      /**
+       * RFQ flow gated by an approval step: approve_token →
+       * sign_rfq_order → submit_rfq_order. Used when UniswapX (or
+       * another RFQ provider) requires an ERC-20 allowance for the
+       * Permit2 spender before the order can be filled.
+       */
+      kind: "approval-then-rfq-order";
+      approvalTransaction: QuoteApprovalTransaction;
+      rfqProvider: RfqProvider;
+      provider: string;
+      orderTypedData: EIP712Message;
+      submitBody: Record<string, unknown>;
+      precomputedOrderId?: string;
+      network: string;
     };
 
 /**
@@ -172,6 +209,22 @@ export type SignPermit2IntentInput = {
   derivationPath: string;
 };
 
+export type SignRfqOrderIntentInput = {
+  account: Account;
+  typedData: EIP712Message;
+  currencyId: string;
+  derivationPath: string;
+};
+
+export type SubmitRfqOrderIntentInput = {
+  account: Account;
+  provider: string;
+  /** Already-signed submit body, with the EIP-712 signature spliced in. */
+  submitBody: Record<string, unknown>;
+  precomputedOrderId?: string;
+  network: string;
+};
+
 export type BroadcastIntentInput = {
   signedTxHex: string;
   currencyId: string;
@@ -203,6 +256,21 @@ export type SwapFlowPorts<TIntent, TInitInput> = {
     intent: TIntent;
     initInput: TInitInput;
   };
+  /** Build an RFQ-order EIP-712 signing intent runtime instance + matching device init payload. */
+  createSignRfqOrderIntent: (input: SignRfqOrderIntentInput) => {
+    intent: TIntent;
+    initInput: TInitInput;
+  };
+  /**
+   * Build the RFQ submit-and-poll intent runtime instance. No device
+   * interaction is performed; the machine forwards the previous phase's
+   * `initInput` so the executor absorbs the intent change as a
+   * self-transition (the device stays connected so the executor doesn't
+   * tear down between the signing and the submit/poll phases).
+   */
+  createSubmitRfqOrderIntent: (
+    input: SubmitRfqOrderIntentInput & { initInput: TInitInput },
+  ) => { intent: TIntent; initInput: TInitInput };
   /**
    * Build a broadcast intent runtime instance. The machine forwards the
    * `initInput` from the previous phase so the executor absorbs the
@@ -246,5 +314,7 @@ export type SwapFlowExecutorSnapshot<TIntent, TInitInput> = {
     | "broadcast-approval"
     | "sign-permit2"
     | "sign-swap"
-    | "broadcast-swap";
+    | "broadcast-swap"
+    | "sign-rfq-order"
+    | "submit-rfq-order";
 };

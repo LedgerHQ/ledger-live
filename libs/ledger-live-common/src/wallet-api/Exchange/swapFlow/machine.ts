@@ -4,12 +4,21 @@ import type { DexBuildContext, DexTransactionData } from "../dex";
 import type {
   SignApprovalIntentInput,
   SignPermit2IntentInput,
+  SignRfqOrderIntentInput,
   SignSwapIntentInput,
+  SubmitRfqOrderIntentInput,
   SwapFlowPlan,
   SwapFlowPorts,
   SwapFlowResolvers,
   SwapFlowResult,
 } from "./types";
+
+type RfqSubmitOutcome = {
+  status: "finished" | "refunded";
+  txHash?: string;
+  swapId?: string;
+  finalAmount?: string;
+};
 
 /**
  * Headless XState machine that drives the wallet-side device-intent swap
@@ -72,6 +81,14 @@ export type SwapFlowContext<TIntent, TInitInput> = {
   swapHwAppId: string | null;
   /** Hash of the broadcast-and-confirmed swap transaction. */
   swapTxHash: string | null;
+  /**
+   * 65-byte EIP-712 signature produced by the RFQ order-signing phase.
+   * Spliced into the partner submit body as `signature` before the
+   * submit intent posts it.
+   */
+  rfqOrderSignature: string | null;
+  /** RFQ outcome populated when the submit intent's polling resolves. */
+  rfqOutcome: RfqSubmitOutcome | null;
   error: Error | null;
 };
 
@@ -79,6 +96,8 @@ export type SwapFlowEvent<TIntent, TInitInput> =
   | { type: "START"; input: SwapFlowStartInput<TIntent, TInitInput> }
   | { type: "JOB_SIGNED"; signedTxHex: string }
   | { type: "JOB_PERMIT_SIGNED"; signatureHex: string }
+  | { type: "JOB_RFQ_SIGNED"; signatureHex: string }
+  | { type: "JOB_RFQ_SUBMITTED"; outcome: RfqSubmitOutcome }
   | { type: "JOB_CONFIRMED"; hash: string }
   | { type: "JOB_FAILED"; error: Error }
   | { type: "JOB_ERROR"; error: Error }
@@ -122,6 +141,8 @@ function initialContext<TIntent, TInitInput>(): SwapFlowContext<
     swapBuildResult: null,
     swapHwAppId: null,
     swapTxHash: null,
+    rfqOrderSignature: null,
+    rfqOutcome: null,
     error: null,
   };
 }
@@ -171,6 +192,8 @@ export function createSwapFlowMachine<TIntent, TInitInput>(
           swapBuildResult: null,
           swapHwAppId: null,
           swapTxHash: null,
+          rfqOrderSignature: null,
+          rfqOutcome: null,
           error: null,
         };
       }),
@@ -180,7 +203,8 @@ export function createSwapFlowMachine<TIntent, TInitInput>(
           !plan ||
           (plan.kind !== "approval-only" &&
             plan.kind !== "approval-then-swap" &&
-            plan.kind !== "approval-then-permit-then-swap")
+            plan.kind !== "approval-then-permit-then-swap" &&
+            plan.kind !== "approval-then-rfq-order")
         ) {
           return {};
         }
@@ -218,6 +242,56 @@ export function createSwapFlowMachine<TIntent, TInitInput>(
         };
         const { intent, initInput } = ports.createSignPermit2Intent(portInput);
         return { currentIntent: intent, currentInitInput: initInput };
+      }),
+      buildSignRfqOrderIntent: assign(({ context }) => {
+        const plan = context.plan;
+        if (
+          !plan ||
+          (plan.kind !== "rfq-order" &&
+            plan.kind !== "approval-then-rfq-order")
+        ) {
+          return {};
+        }
+        const account = context.mainAccount;
+        const currencyId = context.currencyId;
+        const derivationPath = context.derivationPath;
+        if (!account || !currencyId || !derivationPath) return {};
+        const portInput: SignRfqOrderIntentInput = {
+          account,
+          typedData: plan.orderTypedData,
+          currencyId,
+          derivationPath,
+        };
+        const { intent, initInput } = ports.createSignRfqOrderIntent(portInput);
+        return { currentIntent: intent, currentInitInput: initInput };
+      }),
+      buildSubmitRfqOrderIntent: assign(({ context }) => {
+        const plan = context.plan;
+        if (
+          !plan ||
+          (plan.kind !== "rfq-order" &&
+            plan.kind !== "approval-then-rfq-order")
+        ) {
+          return {};
+        }
+        const account = context.mainAccount;
+        const signature = context.rfqOrderSignature;
+        const initInput = context.currentInitInput ?? context.defaultInitInput;
+        if (!account || !signature || !initInput) return {};
+        const submitBody: Record<string, unknown> = {
+          ...plan.submitBody,
+          signature,
+        };
+        const portInput: SubmitRfqOrderIntentInput = {
+          account,
+          provider: plan.provider,
+          submitBody,
+          precomputedOrderId: plan.precomputedOrderId,
+          network: plan.network,
+        };
+        const { intent, initInput: nextInitInput } =
+          ports.createSubmitRfqOrderIntent({ ...portInput, initInput });
+        return { currentIntent: intent, currentInitInput: nextInitInput };
       }),
       buildBroadcastIntent: assign(({ context }) => {
         const signedTxHex = context.signedTxHex;
@@ -266,6 +340,14 @@ export function createSwapFlowMachine<TIntent, TInitInput>(
         if (event.type !== "JOB_PERMIT_SIGNED") return {};
         return { permitSignature: event.signatureHex, currentIntent: null };
       }),
+      storeRfqSignature: assign(({ event }) => {
+        if (event.type !== "JOB_RFQ_SIGNED") return {};
+        return { rfqOrderSignature: event.signatureHex, currentIntent: null };
+      }),
+      storeRfqOutcome: assign(({ event }) => {
+        if (event.type !== "JOB_RFQ_SUBMITTED") return {};
+        return { rfqOutcome: event.outcome, currentIntent: null };
+      }),
       storeApprovalHash: assign(({ event }) => {
         if (event.type !== "JOB_CONFIRMED") return {};
         return { approvalTxHash: event.hash, currentIntent: null };
@@ -306,6 +388,18 @@ export function createSwapFlowMachine<TIntent, TInitInput>(
         if (context.swapTxHash) result.swapTxHash = context.swapTxHash;
         context.resolvers?.resolve(result);
       },
+      resolveWithRfqCompleted: ({ context }) => {
+        const result: SwapFlowResult = {};
+        if (context.approvalTxHash) result.approvalTxHash = context.approvalTxHash;
+        const outcome = context.rfqOutcome;
+        if (outcome) {
+          if (outcome.txHash) result.swapTxHash = outcome.txHash;
+          if (outcome.swapId) result.swapId = outcome.swapId;
+          if (outcome.finalAmount) result.finalAmount = outcome.finalAmount;
+          result.rfqStatus = outcome.status;
+        }
+        context.resolvers?.resolve(result);
+      },
       rejectWithError: ({ context }) => {
         const err = context.error ?? new Error("Swap flow failed");
         context.resolvers?.reject(err);
@@ -323,7 +417,8 @@ export function createSwapFlowMachine<TIntent, TInitInput>(
         return (
           k === "approval-only" ||
           k === "approval-then-swap" ||
-          k === "approval-then-permit-then-swap"
+          k === "approval-then-permit-then-swap" ||
+          k === "approval-then-rfq-order"
         );
       },
       planIsDirectSwap: ({ event }) => {
@@ -334,12 +429,18 @@ export function createSwapFlowMachine<TIntent, TInitInput>(
         if (event.type !== "START") return false;
         return event.input.plan.kind === "permit-then-swap";
       },
+      planIsRfqOrder: ({ event }) => {
+        if (event.type !== "START") return false;
+        return event.input.plan.kind === "rfq-order";
+      },
       planEndsAtApproval: ({ context }) =>
         context.plan?.kind === "approval-only",
       planContinuesToSwap: ({ context }) =>
         context.plan?.kind === "approval-then-swap",
       planContinuesToPermit: ({ context }) =>
         context.plan?.kind === "approval-then-permit-then-swap",
+      planContinuesToRfqOrder: ({ context }) =>
+        context.plan?.kind === "approval-then-rfq-order",
     },
   }).createMachine({
     id: "swapFlow",
@@ -362,6 +463,11 @@ export function createSwapFlowMachine<TIntent, TInitInput>(
             {
               guard: "planIsPermitThenSwap",
               target: "signPermit2",
+              actions: "acceptStart",
+            },
+            {
+              guard: "planIsRfqOrder",
+              target: "signRfqOrder",
               actions: "acceptStart",
             },
             {
@@ -405,6 +511,11 @@ export function createSwapFlowMachine<TIntent, TInitInput>(
               target: "approvalSuccess",
               actions: "storeApprovalHash",
             },
+            {
+              guard: "planContinuesToRfqOrder",
+              target: "approvalSuccess",
+              actions: "storeApprovalHash",
+            },
           ],
           JOB_FAILED: { target: "failed", actions: "storeJobError" },
           JOB_ERROR: { target: "failed", actions: "storeJobError" },
@@ -418,6 +529,10 @@ export function createSwapFlowMachine<TIntent, TInitInput>(
             {
               guard: "planContinuesToPermit",
               target: "signPermit2",
+            },
+            {
+              guard: "planContinuesToRfqOrder",
+              target: "signRfqOrder",
             },
             {
               target: "buildSwap",
@@ -496,6 +611,39 @@ export function createSwapFlowMachine<TIntent, TInitInput>(
         },
       },
 
+      signRfqOrder: {
+        entry: "buildSignRfqOrderIntent",
+        on: {
+          JOB_RFQ_SIGNED: {
+            target: "submitRfqOrder",
+            actions: "storeRfqSignature",
+          },
+          JOB_FAILED: { target: "failed", actions: "storeJobError" },
+          JOB_ERROR: { target: "failed", actions: "storeJobError" },
+          CANCEL: { target: "cancelled", actions: "storeCancelError" },
+        },
+      },
+
+      submitRfqOrder: {
+        entry: "buildSubmitRfqOrderIntent",
+        on: {
+          JOB_RFQ_SUBMITTED: {
+            target: "rfqSuccess",
+            actions: "storeRfqOutcome",
+          },
+          JOB_FAILED: { target: "failed", actions: "storeJobError" },
+          JOB_ERROR: { target: "failed", actions: "storeJobError" },
+          CANCEL: { target: "cancelled", actions: "storeCancelError" },
+        },
+      },
+
+      rfqSuccess: {
+        on: {
+          SWAP_DISMISSED: { target: "resolvingRfqCompleted" },
+          CANCEL: { target: "cancelled", actions: "storeCancelError" },
+        },
+      },
+
       signSwap: {
         entry: "buildSignSwapIntent",
         on: {
@@ -541,6 +689,11 @@ export function createSwapFlowMachine<TIntent, TInitInput>(
 
       resolvingCompleted: {
         entry: ["resolveWithCompletedSwap", "clearRunState"],
+        always: { target: "idle" },
+      },
+
+      resolvingRfqCompleted: {
+        entry: ["resolveWithRfqCompleted", "clearRunState"],
         always: { target: "idle" },
       },
 

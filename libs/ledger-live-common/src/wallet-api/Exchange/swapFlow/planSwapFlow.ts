@@ -2,6 +2,10 @@ import BigNumber from "bignumber.js";
 import type { EIP712Message } from "@ledgerhq/types-live";
 import { isDexExecutionProvider, type DexBuildContext } from "../dex";
 import { toEIP712Message } from "../intents/signPermit2Evm/permit2";
+import {
+  toRfqEIP712Message,
+  type RfqProvider,
+} from "../intents/signRfqOrderEvm/rfqTypedData";
 import type {
   Quote,
   QuoteApprovalTransaction,
@@ -56,27 +60,29 @@ function getApprovalTransaction(
 }
 
 /**
- * Mirrors `apps/live-app/src/executeSwap/helpers.ts#isRfq`. RFQ quotes
- * (UniswapX, 1inch-Fusion, Velora-Fusion) need an off-chain order
- * signing + relay-fill path which the wallet doesn't yet implement
- * (Task 8 Shape B). Today they're routed to `kind: "skip"` so the
- * live-app can fall through to its legacy execution path instead of
- * silently mis-routing into `direct-swap` / `approval-then-swap`.
+ * Identifies the RFQ provider for a quote, or `null` for classic AMM /
+ * non-RFQ quotes. Mirrors `apps/live-app/src/executeSwap/helpers.ts#isRfq`
+ * and `apps/live-app/src/components/ApprovalHandlers/approvalHandlers.ts`.
+ *
+ * Unlike the previous `isRfqQuote` predicate, this also returns the
+ * provider tag for UniswapX quotes that still need a token approval —
+ * those run an `approval-then-rfq-order` plan rather than the classic
+ * `approval-then-swap` AMM path (mirrors live-app `determineFlowSteps`
+ * which only short-circuits on `executionFlowType === "rfq"`).
  */
-function isRfqQuote(quote: Quote): boolean {
-  const isUniswapX = quote.providerDetails?.isUniswapX === true;
-  if (isUniswapX && !quoteNeedsApproval(quote)) {
-    return true;
+function getRfqProvider(quote: Quote): RfqProvider | null {
+  if (quote.providerDetails?.isUniswapX === true) {
+    return "uniswapx";
   }
-  if (
-    quote.provider === "oneinchfusion" &&
-    Boolean(
-      (quote.customFields as Record<string, unknown> | undefined)?.quoteResponse,
-    )
-  ) {
-    return true;
+  if (quote.provider === "oneinchfusion") {
+    const cf = quote.customFields as
+      | { quoteResponse?: unknown }
+      | undefined;
+    if (cf?.quoteResponse) {
+      return "oneinchfusion";
+    }
   }
-  return false;
+  return null;
 }
 
 /**
@@ -87,10 +93,70 @@ function isRfqQuote(quote: Quote): boolean {
  * {@link DexBuildContext.permitSignature}.
  */
 function getPermitTypedData(quote: Quote): EIP712Message | null {
-  if (isRfqQuote(quote)) return null;
+  if (getRfqProvider(quote) !== null) return null;
   const typedData = quote.quoteDetails.permitData?.typedData;
   if (!typedData) return null;
   return toEIP712Message(typedData);
+}
+
+/**
+ * Build the submit-endpoint body for an RFQ provider. Mirrors the
+ * `getCustomFieldsOverrides` adapters in the live-app:
+ * - UniswapX appends `routing: "DUTCH_V2"`;
+ * - 1inch Fusion forwards `customFields` verbatim.
+ *
+ * The wallet-side machine splices in the `signature` field once the
+ * device signs the order, so the planner returns the body without it.
+ */
+function buildRfqSubmitBody(
+  quote: Quote,
+  provider: RfqProvider,
+): Record<string, unknown> {
+  const customFields = quote.customFields ?? {};
+  if (provider === "uniswapx") {
+    return { ...customFields, routing: "DUTCH_V2" };
+  }
+  return { ...customFields };
+}
+
+function buildRfqPlan(
+  quote: Quote,
+  rfqProvider: RfqProvider,
+  approvalTransaction: QuoteApprovalTransaction | null,
+): SwapFlowPlan {
+  const typedData = quote.quoteDetails.permitData?.typedData;
+  if (!typedData) {
+    return { kind: "skip", reason: "rfq-typed-data-missing" };
+  }
+  const orderTypedData = toRfqEIP712Message(typedData, rfqProvider);
+  const submitBody = buildRfqSubmitBody(quote, rfqProvider);
+  const network = quote.quoteDetails.networkFees.currencyId;
+  const precomputedOrderId =
+    rfqProvider === "oneinchfusion"
+      ? quote.quoteDetails.permitData?.orderHash
+      : undefined;
+
+  if (approvalTransaction) {
+    return {
+      kind: "approval-then-rfq-order",
+      approvalTransaction,
+      rfqProvider,
+      provider: quote.provider,
+      orderTypedData,
+      submitBody,
+      precomputedOrderId,
+      network,
+    };
+  }
+  return {
+    kind: "rfq-order",
+    rfqProvider,
+    provider: quote.provider,
+    orderTypedData,
+    submitBody,
+    precomputedOrderId,
+    network,
+  };
 }
 
 /**
@@ -103,24 +169,28 @@ function getPermitTypedData(quote: Quote): EIP712Message | null {
  * - `approve_token` → `signApproval` + `broadcastApproval`
  * - `sign_permit`   → `signPermit2`
  * - `swap`          → `buildSwap` + `signSwap` + `broadcastSwap`
+ * - RFQ `swap`      → `signRfqOrder` + `submitRfqOrder`
  *
- * RFQ and revoke flows fall back to `skip` — Task 8 widens this once
- * the matching wallet intents land. Throws if the planner-side
- * Permit2 normalisation fails (caller wraps in try/catch and rejects
- * the live-app `customSwap` promise).
+ * Throws if the planner-side EIP-712 normalisation fails (caller wraps
+ * in try/catch and rejects the live-app `customSwap` promise).
  */
 export function planSwapFlow(input: PlanSwapFlowInput): SwapFlowPlan {
   const { quote } = input;
 
-  if (isRfqQuote(quote)) {
-    return { kind: "skip", reason: "rfq-not-supported" };
+  const approvalTransaction = getApprovalTransaction(quote);
+  const rfqProvider = getRfqProvider(quote);
+
+  if (rfqProvider !== null) {
+    if (quoteNeedsApproval(quote) && !approvalTransaction) {
+      return { kind: "skip", reason: "dex-approval-blob-missing" };
+    }
+    return buildRfqPlan(quote, rfqProvider, approvalTransaction);
   }
 
   const candidate = {
     provider: quote.provider,
     providerType: quote.providerDetails?.type,
   };
-  const approvalTransaction = getApprovalTransaction(quote);
   const permitTypedData = getPermitTypedData(quote);
 
   if (isDexExecutionProvider(candidate)) {
