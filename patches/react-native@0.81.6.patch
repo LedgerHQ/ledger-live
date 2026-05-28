@@ -1,5 +1,4 @@
 diff --git a/Libraries/Pressability/Pressability.js b/Libraries/Pressability/Pressability.js
-index 24614858116e00f028829b008cb11124b02eff8b..29e59860cb15175f6234713fa4634d6f205832a1 100644
 --- a/Libraries/Pressability/Pressability.js
 +++ b/Libraries/Pressability/Pressability.js
 @@ -23,6 +23,7 @@ import {type RectOrSize, normalizeRect} from '../StyleSheet/Rect';
@@ -16,18 +15,18 @@ index 24614858116e00f028829b008cb11124b02eff8b..29e59860cb15175f6234713fa4634d6f
      } else {
 -      this._responderID.measure(this._measureCallback);
 +      const MeasureTransform = NativeModules.MeasureTransform;
-+      
++
 +      if (MeasureTransform && typeof this._responderID.__nativeTag === 'number') {
 +        const reactTag = this._responderID.__nativeTag;
 +        let surfaceId = reactTag;
-+        
++
 +        try {
 +          const internalHandle = this._responderID.__internalInstanceHandle;
 +          if (internalHandle && typeof internalHandle.rootTag === 'number') {
 +            surfaceId = internalHandle.rootTag;
 +          }
 +        } catch (e) {}
-+        
++
 +        MeasureTransform.measureWithTransform(
 +          surfaceId,
 +          reactTag,
@@ -38,9 +37,8 @@ index 24614858116e00f028829b008cb11124b02eff8b..29e59860cb15175f6234713fa4634d6f
 +      }
      }
    }
- 
+
 diff --git a/third-party-podspecs/fmt.podspec b/third-party-podspecs/fmt.podspec
-index 2f38990e226c13f483aaf1b986302d4094243814..9b02e481e290299be20a6f09c42056ff51695e9b 100644
 --- a/third-party-podspecs/fmt.podspec
 +++ b/third-party-podspecs/fmt.podspec
 @@ -26,4 +26,11 @@ Pod::Spec.new do |spec|
