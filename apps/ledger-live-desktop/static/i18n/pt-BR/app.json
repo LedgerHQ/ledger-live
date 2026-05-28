@@ -1360,6 +1360,10 @@
           "title" : "Personalizar a tela de bloqueio",
           "description" : "Defina sua arte digital ou foto favorita como tela de bloqueio do seu dispositivo."
         },
+        "discoverWallet" : {
+          "title" : "Descubra o que sua carteira pode fazer",
+          "description" : "Explore os recursos da sua carteira"
+        },
         "recover" : {
           "title" : "Conclua a proteção do seu backup",
           "description" : "Concluir ativação do Ledger Recover"
@@ -1400,9 +1404,16 @@
         "description" : "Ative o Ledger Sync para sincronizar suas contas cripto",
         "actionCompletedPopupLabel" : "Contas sincronizadas"
       },
+      "discoverWallet" : {
+        "title" : "Descubra o que sua carteira pode fazer",
+        "titleCompleted" : "Descubra o que sua carteira pode fazer",
+        "description" : "Explore os recursos da sua carteira",
+        "actionCompletedPopupLabel" : "Tour do produto concluído"
+      },
       "recover" : {
-        "title" : "Inscrever-se no Ledger Recover",
-        "description" : "Restaure o acesso à sua carteira sem precisar de sua Frase de Recuperação Secreta.",
+        "title" : "Conclua a proteção do seu backup",
+        "titleCompleted" : "Backup protegido",
+        "description" : "Concluir ativação do Ledger Recover",
         "actionCompletedPopupLabel" : "Você se inscreveu com sucesso no Ledger Recover"
       }
     }
@@ -1781,6 +1792,8 @@
       "votesAddress" : "<0>{{votes}}</0> para <2>{{name}}</2>",
       "validators" : "Validadores",
       "redelegated" : "Redelegado",
+      "delegatedTo" : "Delegado a",
+      "delegatedAmount" : "Quantia Delegada",
       "redelegatedFrom" : "Redelegado de",
       "redelegatedTo" : "Redelegado para",
       "redelegatedAmount" : "Quantia Redelegada",
@@ -2890,6 +2903,14 @@
               "cta" : "Ver detalhes"
             },
             "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
+          }
+        }
+      },
+      "selfTransactionFlow" : {
+        "title" : "Preparar Desdelegação",
+        "steps" : {
+          "starter" : {
+            "description" : ["Para fechar sua conta de staking e recuperar o depósito de ADA:", "A governança da Cardano agora exige que você defina seu status de voto antes de poder desdelegar.", "Essa etapa envolve o envio de uma transação para seu próprio endereço na Ledger, que serve apenas para registrar sua escolha de se abster de votar. Ela custará apenas a taxa de rede padrão e sua ADA permanecerá em sua carteira.", "Depois que essa preferência for registrada, você poderá desdelegar normalmente."]
           }
         }
       }
@@ -4278,7 +4299,38 @@
         }
       },
       "redelegation" : {
-        "header" : "Redelegações"
+        "header" : "Redelegações",
+        "flow" : {
+          "title" : "Redelegar ativos",
+          "steps" : {
+            "starter" : {
+              "title" : "Redelegação",
+              "description" : "Use a redelegação para trocar de validadores de um jeito fácil. Contudo, se mudar de ideia novamente, terá que esperar porque a redelegação aciona um bloqueio temporal de {{ numberOfDays }}.",
+              "warning" : "Escolha o seu validador com muito cuidado: parte dos seus ativos delegados pode ser irrevogavelmente perdida se o validador não se comportar adequadamente. Você pode ter no máximo 7 <0>{{maxRedelegations}} delegações pendentes</0>.",
+              "howDelegationWorks" : "Como funciona a delegação?"
+            },
+            "validators" : {
+              "title" : "Validadores",
+              "currentDelegation" : "Delegação Atual",
+              "newDelegation" : "Nova Delegação",
+              "chooseValidator" : "Escolha um validador",
+              "warning" : "Você terá que esperar <0>{{numberOfDays}} dias</0> para redelegar do novo validador, se mudar de ideia novamente",
+              "amountLabel" : "Quantia a redelegar"
+            },
+            "connectDevice" : {
+              "title" : "Dispositivo"
+            },
+            "confirmation" : {
+              "title" : "Confirmação",
+              "success" : {
+                "title" : "Você redelegou seus ativos com sucesso",
+                "text" : "A redelegação será atualizada assim que a blockchain confirmar a transação",
+                "cta" : "Ver detalhes"
+              },
+              "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
+            }
+          }
+        }
       },
       "undelegation" : {
         "header" : "Remoções de delegação",
@@ -4316,6 +4368,19 @@
   },
   "graph" : {
     "noGraphWarning" : "O gráfico não está disponível para esse token"
+  },
+  "lineChart" : {
+    "error" : "Unable to load chart",
+    "rangeSelectorLabel" : "Select time range",
+    "range" : {
+      "1D" : "1D",
+      "1W" : "1S",
+      "1M" : "1M",
+      "6M" : "6M",
+      "1Y" : "1A",
+      "5Y" : "5Y",
+      "ALL" : "Todos"
+    }
   },
   "near" : {
     "account" : {
@@ -4552,6 +4617,137 @@
           }
         }
       }
+    }
+  },
+  "tezos" : {
+    "earnChoice" : {
+      "title" : "Ganhe Recompensas Tezos: Delegar ou Fazer Staking",
+      "description" : "Ganhe recompensas em seu Tezos (XTZ) delegando a um Baker, mantendo o controle total. Para retornos mais altos, faça staking de sua XTZ, entendendo o baixo risco associado. Escolha a melhor maneira de multiplicar seus ativos.",
+      "howItWorks" : "Como isso funciona",
+      "delegate" : {
+        "header" : "Delegar",
+        "bullet" : {
+          "0" : "Sem bloqueio",
+          "1" : "Todo o seu saldo está delegado",
+          "2" : "Envie ou troque seu XTZ a qualquer momento",
+          "3" : "Sem riscos"
+        },
+        "cta" : "Delegar"
+      },
+      "stake" : {
+        "header" : "Aplicar",
+        "bullet" : {
+          "0" : "Aumente seus ganhos (2–3x)",
+          "1" : "XTZ está bloqueado para staking",
+          "2" : "Desaplicação: 4 dias",
+          "3" : "Risco: Baixo (Corte)"
+        },
+        "cta" : "Aplicar"
+      }
+    },
+    "unstake" : {
+      "flow" : {
+        "title" : "Desaplicar XTZ",
+        "steps" : {
+          "amount" : {
+            "title" : "Quantia",
+            "amountLabel" : "Quantia a desaplicar",
+            "availableLabel" : "Aplicado",
+            "maxLabel" : "Máximo",
+            "unbondingNotice" : "A desaplicação levará 4 dias. Durante esse período, sua XTZ permanece delegada e para de receber recompensas de staking."
+          },
+          "device" : {
+            "title" : "Dispositivo"
+          },
+          "confirmation" : {
+            "title" : "Confirmação",
+            "broadcastError" : "Sua transação de desaplicação não pôde ser enviada à rede. Tente novamente.",
+            "success" : {
+              "title" : "Desaplicação enviada",
+              "text" : "Sua XTZ está sendo desbloqueada e estará disponível para saque em aproximadamente quatro dias.",
+              "cta" : "Ver detalhes"
+            }
+          }
+        }
+      }
+    },
+    "stake" : {
+      "flow" : {
+        "title" : "Aplicar",
+        "preparingTransaction" : "Preparando a transação…",
+        "amount" : {
+          "disclaimer" : "A desaplicação levará 4 dias.",
+          "awaitingDelegation" : "Confirmando sua delegação. Isso geralmente leva menos de um minuto…"
+        },
+        "steps" : {
+          "validator" : {
+            "title" : "Validador",
+            "description" : "Escolha um baker a quem delegar. Você poderá fazer staking de XTZ após a confirmação da delegação."
+          },
+          "deviceDelegation" : {
+            "title" : "Confirmar Delegação"
+          },
+          "amount" : {
+            "title" : "Quantia"
+          },
+          "deviceStaking" : {
+            "title" : "Confirmar Staking"
+          },
+          "confirmation" : {
+            "title" : "Confirmação",
+            "success" : {
+              "title" : "Você fez staking de seus ativos com sucesso",
+              "text" : "Você fez staking de {{amount}}. O saldo de sua conta será atualizado quando a blockchain confirmar a transação.",
+              "cta" : "Visitar o Painel Ganhar"
+            },
+            "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente.",
+            "howItWorks" : "Como o Staking Funciona"
+          }
+        }
+      }
+    },
+    "unstakeRequired" : {
+      "changeBaker" : {
+        "title" : "Desaplicar antes de mudar de baker",
+        "description" : "Você fez staking de XTZ com o seu baker atual. Desaplique seus fundos antes de delegá-los a um novo baker."
+      },
+      "endDelegation" : {
+        "title" : "Desaplicar antes de encerrar a delegação",
+        "description" : "Você fez staking de XTZ com o seu baker atual. Desaplique seus fundos antes de encerrar a delegação."
+      },
+      "steps" : {
+        "0" : "Abra o painel Ganhar e selecione Desaplicar.",
+        "1" : "Confirme a quantia e envie a transação de desaplicação em seu dispositivo.",
+        "2" : "Aguarde cerca de 4 dias para que o período de desaplicação seja concluído.",
+        "3" : "Uma vez sacado, você pode mudar o baker ou encerrar a delegação."
+      },
+      "learnMore" : "Saiba mais sobre o staking de Tezos",
+      "close" : "Fechar"
+    },
+    "account" : {
+      "delegatedAssetsTooltip" : "XTZ delegada a um baker. Os fundos permanecem em sua carteira e podem ser enviados a qualquer momento.",
+      "stakedAssets" : "Ativos aplicados",
+      "stakedAssetsTooltip" : "XTZ bloqueado sob seu baker. Desaplique para torná-los disponíveis para saque após cerca de 4 dias.",
+      "pendingWithdrawable" : "Sacável pendente",
+      "pendingWithdrawableTooltip" : "XTZ está sendo desbloqueada no momento. Disponível para saque em cerca de 4 dias.",
+      "withdrawableAssets" : "Ativos sacáveis",
+      "withdrawableAssetsTooltip" : "XTZ que terminou o período de desbloqueio e está pronto para ser retirado."
+    },
+    "delegation" : {
+      "contextMenu" : {
+        "stake" : "Aplique sua XTZ"
+      }
+    },
+    "staking" : {
+      "header" : "Staking",
+      "contextMenu" : {
+        "stakeMore" : "Aplicar mais",
+        "unstake" : "Desaplicar"
+      }
+    },
+    "unstaking" : {
+      "header" : "Desaplicando",
+      "processing" : "Processando"
     }
   },
   "delegation" : {
@@ -4874,6 +5070,13 @@
           "completed" : "O tour do produto foi marcado como concluído.",
           "notCompleted" : "O tour do produto ainda não foi concluído.",
           "open" : "Abrir"
+        },
+        "recover" : {
+          "title" : "Recover",
+          "description" : "Defina o estado da inscrição no Ledger Recover para testar o hub pós-onboarding e recuperar o banner.",
+          "noSubscription" : "Sem inscrição",
+          "inProgress" : "Em progresso",
+          "backupDone" : "Backup concluído"
         }
       },
       "walletFeaturesDevTool" : {
@@ -6158,6 +6361,36 @@
       "topologyChangeError" : {
         "message" : "Alteração de topologia detectada. É necessário realizar uma nova integração."
       },
+      "disclaimer" : {
+        "title" : "Configurar Rede Canton",
+        "intro" : "Canton tem propriedades exclusivas que requerem sua atenção antes de continuar:",
+        "bullets" : {
+          "utxo" : {
+            "title" : "Saldo baseado em UTXO",
+            "body" : "O saldo existe como contratos individuais de moedas, limitado a 100 por transferência. Contratos ociosos perdem valor com o tempo e expiram se as taxas excederem seu saldo."
+          },
+          "offers" : {
+            "title" : "Transferências baseadas em ofertas",
+            "body" : "Nada se resolve automaticamente. Transferências enviadas podem ser sacadas; as transferências recebidas precisam ser aceitas ou rejeitadas manualmente. Gerencie as ofertas em seu painel Canton."
+          },
+          "dualValidator" : {
+            "title" : "Segurança de validador duplo",
+            "body" : "As transações exigem a co-assinatura tanto da Ledger como da Klin. Nenhum dos dois pode agir sozinho em seu nome."
+          },
+          "tokenLiability" : {
+            "title" : "Responsabilidade padrão do token ⚠️",
+            "body" : "A recuperação do token em um cenário de falha é de responsabilidade do emissor, não da Ledger."
+          }
+        },
+        "agreeLabel" : "Concordo com os <1>Termos da Rede Canton e com a exclusão de responsabilidade da Ledger</1>",
+        "cancel" : "Cancelar",
+        "agree" : "Concordo",
+        "terms" : {
+          "title" : "Termos da Rede Canton",
+          "sectionTitle" : "Responsabilidade e Recuperação de Token Padrão",
+          "body" : "A Ledger só é compatível com tokens padrão emitidos por meio do Registro de Ativos Digitais (DA). A Ledger não é a emissora desses tokens e não assume responsabilidade por seu valor, gestão ou contratos inteligentes subjacentes.\n\nNo caso de uma interrupção de um serviço da Ledger ou uma falha de “recuperação de desastres”, a Ledger não poderá recuperar seus ativos. Você deve entrar em contato diretamente com o emissor do token específico (administrador dos ativos) para iniciar a recuperação por meio de seus protocolos “Asset Freeze” (“Congelamento de Ativos”) ou “Registry Recovery” (“Recuperação de Registro”). Seu recurso está exclusivamente com o Emissor do Token sob os Contratos de Nível de Serviço (SLAs) existentes dele. Ao prosseguir, você reconhece que a Ledger e suas afiliadas estão isentas de qualquer responsabilidade decorrente da perda, recuperação ou incapacidade de recuperar esses tokens."
+        }
+      },
       "tooManyUtxos" : {
         "title" : "Ação necessária: UTXOs em excesso",
         "description" : "Sua conta possui muitas UTXOs pequenas para processar esta transferência. Junte-as agora para evitar a expiração devido às taxas de manutenção acumuladas e habilitar transferências.",
@@ -6944,6 +7177,9 @@
     "RecommendUndelegation" : {
       "title" : "Desdelegue a conta antes de esvaziá-la"
     },
+    "MustDelegateBeforeStaking" : {
+      "title" : "Delegue sua conta antes de fazer staking"
+    },
     "RecommendSubAccountsToEmpty" : {
       "title" : "Esvazie todas as subcontas primeiro"
     },
@@ -7404,6 +7640,14 @@
     "AleoAmountRecordRequired" : {
       "title" : "Selecione um registro privado válido para a quantia.",
       "description" : "Escolha um de seus registros privados disponíveis para financiar a quantia da transferência."
+    },
+    "AleoTooManyRecordsSelected" : {
+      "title" : "Muitos registros privados selecionados",
+      "description" : "Você pode usar no máximo {{count}} registros privados por transação."
+    },
+    "AleoAmountTooLargeForTransaction" : {
+      "title" : "Quantia muito grande para uma transação",
+      "description" : "Seus registros privados não conseguem cobrir esta quantia em uma única transação. Tente uma quantia menor."
     },
     "AleoFeeRecordRequired" : {
       "title" : "Outro registro privado é necessário para cobrir a taxa de rede.",
@@ -8401,20 +8645,18 @@
     "title" : "Contas",
     "tableActions" : {
       "searchAddress" : "Pesquisar por nome e endereço",
-      "addAddress" : "Adicionar endereço"
+      "addAccount" : "Adicionar conta"
     },
     "table" : {
       "columns" : {
         "name" : "Nome",
         "address" : "Endereço",
+        "asset" : "Ativo",
         "value" : "Valor"
       },
       "editName" : "Editar Nome",
       "emptyState" : "Ainda não há endereço cripto",
-      "emptySearchState" : "Nenhuma conta corresponde à sua pesquisa.",
-      "assetCount_zero" : "{{count}} ativo",
-      "assetCount_one" : "{{count}} ativo",
-      "assetCount_other" : "{{count}} ativos"
+      "emptySearchState" : "Nenhuma conta corresponde à sua pesquisa."
     },
     "editName" : {
       "title" : "Editar nome do endereço",
@@ -8439,8 +8681,7 @@
   },
   "topBar" : {
     "history" : {
-      "cta" : "Histórico",
-      "tooltip" : "Histórico"
+      "cta" : "Transações"
     },
     "activityIndicator" : {
       "errorToolTip" : "Seus ativos estão seguros. Este é um problema temporário de sincronização.\n Contas afetadas: {{accounts}}. Toque para tentar novamente",
@@ -8579,6 +8820,21 @@
       }
     },
     "shared" : {
+      "quickAmountSelector" : {
+        "strategies" : {
+          "fast" : "Rápido",
+          "balanced" : "Equilibrado",
+          "full" : "Completo"
+        },
+        "recordCount_one" : "{{count}} registro",
+        "recordCount_other" : "{{count}} registros",
+        "unavailable" : "Não disponível",
+        "spendableBalance" : "Saldo máximo a ser gasto:"
+      },
+      "infoBanner" : {
+        "descPartOne" : "Remetente, quantia e destinatário ocultos na cadeia.",
+        "descPartTwo" : "Até {{max}} registros por envio."
+      },
       "sponsoredByProvable" : "Patrocinado por Provable",
       "balanceSelector" : {
         "private" : "Saldo privado",
@@ -8620,7 +8876,9 @@
         "selectLabel" : "Enviar de"
       },
       "summary" : {
-        "proofGenerationWarning" : "A transação Aleo requer gerar uma prova. Isso pode levar algum tempo"
+        "proofGenerationWarning" : "A transação Aleo requer gerar uma prova. Isso pode levar algum tempo",
+        "recordsUsed" : "Registros utilizados",
+        "signingTime" : "Tempo da assinatura"
       },
       "mandatoryPrivateSync" : {
         "title" : "Sincronizando seu saldo privado ({{percentage}}%)",
@@ -8665,10 +8923,32 @@
       "growYourRewards" : "Multiplique suas recompensas",
       "spendYourCrypto" : "Gaste sua cripto",
       "everythingAtAGlance" : "Tudo em um piscar de olhos"
+    },
+    "slides" : {
+      "fund" : {
+        "title" : "Comece depositando fundos na sua carteira",
+        "subTitle" : "Deposite fundos na sua Ledger Wallet do seu jeito — transfira, compre ou converta dinheiro em stablecoins."
+      },
+      "portfolio" : {
+        "title" : "Mantenha-se à frente do mercado",
+        "subTitle" : "Acompanhe seus ativos, recompensas e tendências do mercado facilmente."
+      },
+      "earn" : {
+        "title" : "Aproveite recompensas com sua cripto.",
+        "subTitle" : "Coloque sua cripto para rentabilizar na seção Ganhar."
+      },
+      "card" : {
+        "title" : "Use cripto no dia a dia",
+        "subTitle" : "Pague com seu cartão cripto e ganhe cashback, online ou em lojas físicas"
+      },
+      "swap" : {
+        "title" : "Troque sem mudar de aplicativo",
+        "subTitle" : "Negocie milhares de ativos ilimitadamente através dos nossos provedores de trocas confiáveis."
+      }
     }
   },
   "history" : {
-    "title" : "Transações",
+    "title" : "Histórico de transações",
     "pending" : "Transação pendente",
     "pending_other" : "Transações pendentes",
     "columns" : {
@@ -8686,11 +8966,10 @@
       "description" : "Volte mais tarde para ver suas transações."
     },
     "actionsBar" : {
-      "csv" : "CSV"
+      "csv" : "Exportar"
     },
     "exportDialog" : {
-      "title" : "Histórico de transações",
-      "description" : "Escolha as contas a serem incluídas na exportação",
+      "title" : "Exportar histórico de transações",
       "disclaimer" : "Apenas valores estimados. Os contravalores são fornecidos pela Kaiko apenas para fins informativos. Não use esses dados para fins fiscais, legais ou contábeis.",
       "accountsToInclude" : "Contas a incluir",
       "selectAll" : "Selecionar Tudo ({{count}})",
@@ -8723,6 +9002,92 @@
     "explore" : "Explore todos os dispositivos Ledger"
   },
   "assetDetails" : {
-    "totalBalance" : "Saldo Total"
+    "header" : {
+      "optionsMenu" : "Opções de ativos",
+      "addFavourite" : "Adicionar aos favoritos",
+      "removeFavourite" : "Remover dos favoritos",
+      "hideFromPortfolio" : "Ocultar do portfólio",
+      "showInPortfolio" : "Mostrar no portfólio"
+    },
+    "hiddenBanner" : {
+      "description" : "Este ativo está oculto em seu portfolio.",
+      "showAsset" : "Mostrar ativo"
+    },
+    "totalBalance" : "Saldo Total",
+    "marketPrice" : "Preço de mercado",
+    "addresses" : "Endereços",
+    "addressesDialog" : {
+      "title" : "Endereços",
+      "description" : "Todos os seus endereços que possuem {{ticker}}."
+    },
+    "add" : "Adicionar",
+    "notFound" : "Item de distribuição de ativos não encontrado.",
+    "marketStats" : "Estatísticas de mercado",
+    "marketStatsTooltip" : "Métricas de mercado para este ativo.",
+    "pricePerformance" : "Desempenho de preço",
+    "marketRank" : "Posição no mercado",
+    "tradingVolume24h" : "Volume de negociação 24h",
+    "day" : "1 dia",
+    "staking" : {
+      "availableBalance" : "Saldo disponível",
+      "availableBalanceTooltip" : "A parte de seus ativos que você pode usar agora, livre para enviar, trocar ou sacar a qualquer momento.",
+      "earnDeposit" : "Depositar para Ganhar",
+      "earnBanner" : "Rende até {{apy}}% {{type}}",
+      "earnBannerDefault" : "Rentabilizar este ativo",
+      "earnBannerSubtitle" : "Guarde e rentabilize este ativo",
+      "earnBannerAction" : "Ir para a aba Ganhar"
+    }
+  },
+  "pnl" : {
+    "asset" : {
+      "entry" : {
+        "title" : "Preço médio de entrada",
+        "tooltip" : "O preço médio que você pagou por este ativo nesta carteira, incluindo tudo o que você comprou ou recebeu de outras carteiras. Isto é usado para rastrear seu lucro ou prejuízo."
+      },
+      "return" : {
+        "title" : "Retorno não realizado"
+      },
+      "dialog" : {
+        "title" : "Ganhos e perdas",
+        "description" : "Um resumo do desempenho desse ativo em seu portfólio.",
+        "totalReturn" : {
+          "title" : "Retorno total",
+          "description" : "A soma dos retornos não realizados e realizados."
+        },
+        "unrealisedReturn" : {
+          "title" : "Retorno não realizado",
+          "description" : "O ganho ou perda estimados se for vendido ao preço de hoje."
+        },
+        "realisedReturn" : {
+          "title" : "Retorno realizado",
+          "description" : "Lucro ou prejuízo confirmado a partir de vendas ou transferências anteriores."
+        }
+      }
+    },
+    "portfolio" : {
+      "return" : {
+        "title" : "Retorno não realizado"
+      },
+      "costBasis" : {
+        "title" : "Base de custo",
+        "tooltip" : "A quantia total que você pagou para adquirir suas participações atuais, incluindo taxas."
+      },
+      "dialog" : {
+        "title" : "Ganhos e perdas",
+        "description" : "O desempenho do seu portfólio está detalhado em retornos realizados e não realizados.",
+        "totalReturn" : {
+          "title" : "Retorno total",
+          "description" : "Retornos realizados e não realizados combinados, refletindo a sua posição geral."
+        },
+        "unrealisedReturn" : {
+          "title" : "Retorno não realizado",
+          "description" : "Ganho ou perda estimada de seus investimentos atuais."
+        },
+        "realisedReturn" : {
+          "title" : "Retorno realizado",
+          "description" : "Lucro ou prejuízo confirmado a partir de vendas ou transferências de saída anteriores."
+        }
+      }
+    }
   }
 }
