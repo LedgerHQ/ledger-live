@@ -14,7 +14,7 @@ export const config: WebdriverIO.Config = {
       // For W3C the appium capabilities need to have an extension prefix
       // This is `appium:` for all Appium Capabilities
       "appium:deviceName": "iOS Simulator",
-      "appium:platformVersion": resolveIosPlatformVersion(),
+      "appium:platformVersion": process.env.CI ? "26.3" : "26.2",
       "appium:automationName": "XCUITest",
       "appium:app":
         "../../apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app",
