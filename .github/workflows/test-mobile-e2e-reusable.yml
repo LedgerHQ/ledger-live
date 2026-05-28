@@ -161,8 +161,6 @@ env:
   MOBILE_ARTIFACTS_ROOT: e2e/poc-wdio/artifacts
   E2E_TEST_RESULTS_PREFIX_IOS: e2e-test-results-ios
   E2E_TEST_RESULTS_PREFIX_ANDROID: e2e-test-results-android
-  # Workaround for missing lsof in path:
-  PATH: /usr/sbin:${{ env.PATH }}
 
 jobs:
   determine-builds:
@@ -603,6 +601,8 @@ jobs:
           DEVICE_INFO: ${{ env.DEVICE_INFO }}
           NX_SKIP_NX_CACHE: true
           SPECULOS_IMAGE_TAG: ${{ env.SPECULOS_IMAGE_TAG_IOS }}
+          # Workaround for missing lsof in path:
+          PATH: /usr/sbin:/usr/bin:/bin:/sbin:${{ env.PATH }}
         run: pnpm e2e:mobile:wdio ios
 
       - name: Upload iOS artifacts
