@@ -43,14 +43,14 @@ catalog:
   "@ledgerhq/lumen-ui-react-visualization": 0.1.20
   "@ledgerhq/zcash-utils": 0.3.1
   # React Native
-  react-native: 0.79.7
-  "@react-native/assets-registry": 0.79.7
-  "@react-native/babel-plugin-codegen": 0.79.7
-  "@react-native/babel-preset": 0.79.7
-  "@react-native/codegen": 0.79.7
-  "@react-native/dev-middleware": 0.79.7
-  "@react-native/gradle-plugin": 0.79.7
-  "@react-native/metro-config": 0.79.7
+  react-native: 0.81.6
+  "@react-native/assets-registry": 0.81.6
+  "@react-native/babel-plugin-codegen": 0.81.6
+  "@react-native/babel-preset": 0.81.6
+  "@react-native/codegen": 0.81.6
+  "@react-native/dev-middleware": 0.81.6
+  "@react-native/gradle-plugin": 0.81.6
+  "@react-native/metro-config": 0.81.6
   # React Navigation
   "@react-navigation/native": 7.1.17
   "@react-navigation/native-stack": 7.3.26
@@ -60,18 +60,18 @@ catalog:
   "@react-native-community/cli-platform-android": 18.0.1
   "@react-native-community/cli-platform-ios": 18.0.1
   # Expo
-  expo: 53.0.25
-  expo-constants: 17.1.8
-  expo-asset: 11.1.7
-  expo-font: 13.3.2
-  expo-crypto: 14.1.5
-  expo-file-system: 18.1.11
-  expo-image-loader: 5.0.0
-  expo-image-manipulator: 13.1.7
-  expo-haptics: 14.1.4
-  expo-keep-awake: 14.1.4
-  expo-modules-autolinking: 2.1.14
-  expo-modules-core: 2.5.0
+  expo: 54.0.33
+  expo-constants: 18.0.13
+  expo-asset: 12.0.12
+  expo-font: 14.0.11
+  expo-crypto: 15.0.8
+  expo-file-system: 19.0.21
+  expo-image-loader: 6.0.0
+  expo-image-manipulator: 14.0.8
+  expo-haptics: 15.0.8
+  expo-keep-awake: 15.0.8
+  expo-modules-autolinking: 3.0.24
+  expo-modules-core: 3.0.29
   "@jest/reporters": 30.2.0
   "@reduxjs/toolkit": 2.11.2
   "@rsbuild/core": 2.0.9
@@ -158,17 +158,17 @@ catalog:
   jest-environment-node: 30.2.0
   jest-file-snapshot: 0.7.0
   jest-util: 30.2.0
-  react: 19.0.0
-  react-dom: 19.0.0
+  react: 19.1.4
+  react-dom: 19.1.4
   react-i18next: 16.5.0
   react-native-config: 1.5.3
-  react-native-reanimated: 4.1.6
-  react-native-worklets: 0.7.2
+  react-native-reanimated: 4.3.0
+  react-native-worklets: 0.8.1
   react-native-safe-area-context: 5.6.1
   react-native-svg: 15.15.1
   react-redux: ^9.2.0
   redux: ^5.0.1
-  react-test-renderer: 19.0.0
+  react-test-renderer: 19.1.4
   "@types/react": 19.0.14
   "@types/react-dom": 19.0.0
   reselect: 5.1.1
