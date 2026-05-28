@@ -121,7 +121,7 @@ describe("useBalanceGraphViewModel", () => {
     it("uses the correct priceChangePercentage key after range change", () => {
       const { result } = renderHook(() => useBalanceGraphViewModel(mockBtcCryptoCurrency));
 
-      act(() => result.current.onRangeChange("7d"));
+      act(() => result.current.onRangeChange("1w"));
       expect(result.current.priceChangePercentage).toBe(-5.12);
 
       act(() => result.current.onRangeChange("1y"));
@@ -162,7 +162,7 @@ describe("useBalanceGraphViewModel", () => {
     it("returns a minus-prefixed string for a negative change", () => {
       const { result } = renderHook(() => useBalanceGraphViewModel(mockBtcCryptoCurrency));
 
-      act(() => result.current.onRangeChange("7d"));
+      act(() => result.current.onRangeChange("1w"));
 
       expect(result.current.formattedPriceChange).toMatch(/^-/);
     });
@@ -194,14 +194,14 @@ describe("useBalanceGraphViewModel", () => {
     it("updates selectedRange and fires analytics", () => {
       const { result } = renderHook(() => useBalanceGraphViewModel(mockBtcCryptoCurrency));
 
-      expect(result.current.selectedRange).toBe("24h");
+      expect(result.current.selectedRange).toBe("1d");
 
-      act(() => result.current.onRangeChange("30d"));
+      act(() => result.current.onRangeChange("1m"));
 
-      expect(result.current.selectedRange).toBe("30d");
+      expect(result.current.selectedRange).toBe("1m");
       expect(track).toHaveBeenCalledWith("button_clicked", {
         button: "timeframe",
-        timeframe: "30d",
+        timeframe: "1m",
         page: "Asset Detail",
         currency: "bitcoin",
       });
@@ -210,7 +210,7 @@ describe("useBalanceGraphViewModel", () => {
     it("does not fire analytics when selecting the same range", () => {
       const { result } = renderHook(() => useBalanceGraphViewModel(mockBtcCryptoCurrency));
 
-      act(() => result.current.onRangeChange("24h"));
+      act(() => result.current.onRangeChange("1d"));
 
       expect(track).not.toHaveBeenCalled();
     });
@@ -297,11 +297,58 @@ describe("useBalanceGraphViewModel", () => {
   });
 
   describe("ranges", () => {
-    it("exposes translated range options in chronological order (24h first, 1y last)", () => {
+    it("exposes the full range list in chronological order (1d → 1y)", () => {
       const { result } = renderHook(() => useBalanceGraphViewModel(mockBtcCryptoCurrency));
 
       const values = result.current.ranges.map(r => r.value);
-      expect(values).toEqual(["24h", "7d", "30d", "1y"]);
+      expect(values).toEqual(["1d", "1w", "1m", "1y"]);
+    });
+
+    it("exposes a runtime guard that accepts only known range keys", () => {
+      const { result } = renderHook(() => useBalanceGraphViewModel(mockBtcCryptoCurrency));
+
+      expect(result.current.isRangeValue("1d")).toBe(true);
+      expect(result.current.isRangeValue("1y")).toBe(true);
+      expect(result.current.isRangeValue("99y")).toBe(false);
+    });
+  });
+
+  describe("series and chartColor", () => {
+    it("exposes a non-empty placeholder series with stable identity across renders", () => {
+      const { result, rerender } = renderHook(() =>
+        useBalanceGraphViewModel(mockBtcCryptoCurrency),
+      );
+
+      const initial = result.current.series;
+      expect(initial.length).toBeGreaterThan(0);
+      expect(initial[0]?.data?.length).toBeGreaterThan(0);
+
+      rerender({});
+      expect(result.current.series).toBe(initial);
+    });
+
+    it("returns chartColor='success' when the selected range has a positive % change", () => {
+      const { result } = renderHook(() => useBalanceGraphViewModel(mockBtcCryptoCurrency));
+
+      expect(result.current.chartColor).toBe("success");
+    });
+
+    it("returns chartColor='error' when the selected range has a negative % change", () => {
+      const { result } = renderHook(() => useBalanceGraphViewModel(mockBtcCryptoCurrency));
+
+      act(() => result.current.onRangeChange("1w"));
+      expect(result.current.chartColor).toBe("error");
+    });
+
+    it("returns chartColor='muted' when no market data is available", () => {
+      mockUseGetCurrencyDataQuery.mockReturnValue({
+        data: undefined,
+        isFetching: false,
+      } as unknown as ReturnType<typeof useGetCurrencyDataQuery>);
+
+      const { result } = renderHook(() => useBalanceGraphViewModel(mockBtcCryptoCurrency));
+
+      expect(result.current.chartColor).toBe("muted");
     });
   });
 
