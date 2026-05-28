@@ -1,23 +1,16 @@
 import React from "react";
-import { StyleSheet } from "react-native";
-import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
-import {
-  AmountDisplay,
-  Box,
-  Button,
-  SegmentedControl,
-  SegmentedControlButton,
-  Skeleton,
-  Text,
-} from "@ledgerhq/lumen-ui-rnative";
+import { AmountDisplay, Box, Button, Skeleton, Text } from "@ledgerhq/lumen-ui-rnative";
 import type { FormattedValue } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { ArrowDown } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "~/context/Locale";
 import { TrendSection } from "LLM/components/TrendSection";
+import { LineChart } from "LLM/components/LineChart";
+import type { LineChartColor, LineChartSeries } from "LLM/components/LineChart";
 import { ASSET_DETAIL_TEST_IDS } from "LLM/features/AssetDetail/testIds";
+import type { RangeKey } from "../../utils/rangeMapping";
 
-type Range = Readonly<{ label: string; value: string }>;
+type Range = Readonly<{ label: string; value: RangeKey }>;
 
 type Props = Readonly<{
   price: number;
@@ -27,11 +20,14 @@ type Props = Readonly<{
   formattedPriceChange: string | undefined;
   rangeTimeLabel: string;
   ranges: Range[];
-  selectedRange: string;
-  onRangeChange: (value: string) => void;
+  selectedRange: RangeKey;
+  onRangeChange: (value: RangeKey) => void;
+  isRangeValue: (value: string) => value is RangeKey;
   showReceive: boolean;
   onReceivePress: () => void;
   isLoading: boolean;
+  series: LineChartSeries[];
+  chartColor: LineChartColor;
 }>;
 
 export function BalanceGraphView({
@@ -44,15 +40,17 @@ export function BalanceGraphView({
   ranges,
   selectedRange,
   onRangeChange,
+  isRangeValue,
   showReceive,
   onReceivePress,
   isLoading,
+  series,
+  chartColor,
 }: Props) {
   const { t } = useTranslation();
 
   return (
     <Box testID={ASSET_DETAIL_TEST_IDS.balanceGraph} lx={containerStyle}>
-      {/* Box 1 — Header: label + price + trend */}
       {isLoading && !hasMarketData ? (
         <Skeleton lx={{ height: "s56", width: "s256", borderRadius: "md" }} />
       ) : (
@@ -79,40 +77,17 @@ export function BalanceGraphView({
         </Box>
       )}
 
-      {/* Box 2 — Chart placeholder */}
-      <Box
-        lx={chartPlaceholderLx}
-        style={chartPlaceholderRaw}
-        testID={ASSET_DETAIL_TEST_IDS.chartPlaceholder}
-      >
-        <Svg style={StyleSheet.absoluteFill}>
-          <Defs>
-            <LinearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
-              <Stop offset="0" stopColor="#898FBC" stopOpacity="0.35" />
-              <Stop offset="1" stopColor="#3F4156" stopOpacity="0.35" />
-            </LinearGradient>
-          </Defs>
-          <Rect x="0" y="0" width="100%" height="100%" fill="url(#chartGradient)" />
-        </Svg>
-        <Text typography="body3" lx={{ color: "muted" }}>
-          {t("assetDetail.balanceGraph.chartPlaceholder")}
-        </Text>
-      </Box>
-
-      {/* Box 3 — Timeframe selector */}
-      <SegmentedControl
-        selectedValue={selectedRange}
-        onSelectedChange={onRangeChange}
-        appearance="background"
-        tabLayout="fixed"
+      <LineChart<RangeKey>
+        series={series}
+        selectedRange={selectedRange}
+        onRangeChange={onRangeChange}
+        ranges={ranges}
+        isRangeValue={isRangeValue}
+        color={chartColor}
+        isLoading={isLoading}
         accessibilityLabel={t("assetDetail.balanceGraph.timeframeSelector")}
-      >
-        {ranges.map(({ label, value }) => (
-          <SegmentedControlButton key={value} value={value}>
-            {label}
-          </SegmentedControlButton>
-        ))}
-      </SegmentedControl>
+        testID={ASSET_DETAIL_TEST_IDS.chart}
+      />
 
       {showReceive && (
         <Box lx={receiveContainerStyle}>
@@ -139,15 +114,6 @@ const containerStyle: LumenViewStyle = {
 const headerStyle: LumenViewStyle = {
   gap: "s8",
 };
-
-const chartPlaceholderLx: LumenViewStyle = {
-  alignItems: "center",
-  justifyContent: "center",
-  overflow: "hidden",
-  borderRadius: "md",
-};
-
-const chartPlaceholderRaw = { height: 203 } as const;
 
 const receiveContainerStyle: LumenViewStyle = {
   marginTop: "s8",

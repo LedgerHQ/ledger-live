@@ -1,0 +1,1 @@
+export const DEFAULT_LINE_CHART_HEIGHT = 203;
