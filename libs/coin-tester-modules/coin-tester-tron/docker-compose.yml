@@ -1,0 +1,30 @@
+services:
+  tron:
+    container_name: coin-tester-tron-quickstart
+    image: trontools/quickstart
+    platform: linux/amd64
+    environment:
+      # `useDefaultPrivateKey=true` binds the documented deployer private key
+      # (`da146374…`) to accounts[0], so our WITNESS_PRIVATE_KEY_HEX maps to a
+      # funded account on every container start. Without this flag, the
+      # quickstart regenerates a fresh mnemonic each launch — non-deterministic.
+      - useDefaultPrivateKey=true
+      - defaultBalance=100000
+      - accounts=2
+      - mnemonic=test test test test test test test test test test test junk
+      - formatJson=true
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget -qO- http://127.0.0.1:9090/wallet/getnowblock || exit 1",
+        ]
+      interval: 5s
+      timeout: 10s
+      retries: 24
+    ports:
+      - "9090:9090"
+    # trontools/quickstart bundles FullNode + SolidityNode + EventServer behind a
+    # single HTTP API on port 9090. The container cannot be restarted (per upstream
+    # README) — it must be recreated.
+    # Reference: https://github.com/TRON-US/docker-tron-quickstart
