@@ -35,38 +35,46 @@ const PlatformCompleteExchange: React.FC<Props> = ({
 
   if (account.type === "TokenAccount") tokenCurrency = account.token;
 
+  const broadcastConfig = useMemo(
+    () => ({
+      mevProtected,
+      sponsored: request.sponsored,
+      source: { type: "swap" as const, name: request.provider },
+    }),
+    [mevProtected, request.sponsored, request.provider],
+  );
+
   const broadcast = useBroadcast({
     account,
     parentAccount,
-    broadcastConfig: {
-      mevProtected,
-      sponsored: request.sponsored,
-      source: { type: "swap", name: request.provider },
-    },
+    broadcastConfig,
     logger: broadcastLogger,
   });
   const [transaction, setTransaction] = useState<Transaction>();
   const [signedOperation, setSignedOperation] = useState<SignedOperation>();
   const [error, setError] = useState<Error>();
   const hasPopped = useRef(false);
+  const broadcastRef = useRef(false);
 
   useEffect(() => {
-    if (signedOperation) {
-      broadcast(signedOperation).then(
-        operation => {
-          onResult({ operation });
-        },
-        error => {
-          const shouldRestart = shouldRestartFlow(error);
+    if (broadcastRef.current || !signedOperation) return;
+    // Guard must be set synchronously before the async call to prevent
+    // a second broadcast if deps change while the first is still in progress.
+    broadcastRef.current = true;
+    broadcast(signedOperation).then(
+      operation => {
+        onResult({ operation });
+      },
+      error => {
+        const shouldRestart = shouldRestartFlow(error);
 
-          if (shouldRestart) {
-            onResult({ error });
-            return;
-          }
-          setError(error);
-        },
-      );
-    }
+        if (shouldRestart) {
+          onResult({ error });
+          return;
+        }
+        setError(error);
+      },
+    );
   }, [broadcast, onResult, signedOperation]);
 
   useEffect(() => {

@@ -1,7 +1,7 @@
 import invariant from "invariant";
 import { concat, of, from, Subscription } from "rxjs";
 import { concatMap, filter } from "rxjs/operators";
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import { InteractionManager, Platform } from "react-native";
 import { log } from "@ledgerhq/logs";
 import { useRoute, useNavigation } from "@react-navigation/native";
@@ -320,16 +320,28 @@ export function useSignedTxHandler({
   const mainAccount = getMainAccount(account, parentAccount);
   const { isEnabledForFamily } = useNewSendFlowFeature();
   const newSendFlow = isEnabledForFamily(mainAccount.currency.family, mainAccount.currency.id);
+  const broadcastConfig = useMemo(
+    () => ({
+      mevProtected,
+      source: {
+        type: "coin-module" as const,
+        name: "ledger-live-mobile",
+        flags: { newSendFlow },
+      },
+    }),
+    [mevProtected, newSendFlow],
+  );
   const broadcast = useBroadcast({
     account,
     parentAccount,
-    broadcastConfig: {
-      mevProtected,
-      source: { type: "coin-module", name: "ledger-live-mobile", flags: { newSendFlow } },
-    },
+    broadcastConfig,
     logger: broadcastLogger,
   });
   const dispatch = useDispatch();
+  // Guards against double broadcast when the device action emits its result
+  // more than once (e.g. RenderOnResultCallback remount triggered by an
+  // upstream payload null/truthy cycle in `transaction.ts`).
+  const broadcastRef = useRef(false);
   return useCallback(
     // TODO: fix type error
 
@@ -340,11 +352,15 @@ export function useSignedTxHandler({
       signedOperation: SignedOperation;
       transactionSignError?: Error;
     }) => {
+      if (broadcastRef.current) return;
       try {
         if (transactionSignError) {
           throw transactionSignError;
         }
 
+        // Set guard synchronously before the async call to prevent
+        // a second broadcast while the first is still in progress.
+        broadcastRef.current = true;
         const operation = await broadcast(signedOperation).catch((err: Error) => {
           if (shouldRestartFlow(err)) {
             throw err;
