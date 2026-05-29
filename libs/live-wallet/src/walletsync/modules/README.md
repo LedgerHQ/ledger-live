@@ -1,12 +1,17 @@
-For more information about writing a new module, please this follow tutorial: https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/4862509091/TODO+how+to+develop+a+new+WalletSync+module
+# WalletSync Modules
 
-### Template for a new module
+This directory contains WalletSync module implementations. For broader design
+context, see the internal
+[WalletSync module tutorial](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/4862509091/TODO+how+to+develop+a+new+WalletSync+module).
+
+## New Module Template
 
 ```ts
 import { WalletSyncDataManager } from "../types";
 import { z } from "zod";
 
-// schema of the distant data. IMPORTANT: Once the module is written, the schema must not change over time – if you still want to change the schema, only do it by adding optional fields and make sure that any module implementation (from v1) was keeping the unknown properties = the schema must be backward compatible.
+// Schema of the distant data. Once a module ships, keep the schema backward
+// compatible: add optional fields instead of changing existing fields.
 const schema = z.record(z.string());
 
 const manager: WalletSyncDataManager<
@@ -30,12 +35,13 @@ const manager: WalletSyncDataManager<
   },
 
   async resolveIncrementalUpdate(_ctx, localData, latestState, incomingState) {
-    // if incoming state is null, it means the data is no longer available
+    // If incoming state is null, the data is no longer available.
     if (!incomingState) {
       return { hasChanges: false };
     }
 
-    // this module don't need to manage any "local increment update" so we must bail out from doing anything during localIncrementalUpdate() step
+    // Bail out if the module does not need to process a local incremental
+    // update.
     if (latestState === incomingState) {
       return { hasChanges: false };
     }

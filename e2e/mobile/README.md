@@ -1,9 +1,9 @@
 # E2E Tests - Mobile
 
-This folder contains the end-to-end (E2E) tests for the **Ledger Wallet Mobile** app.  
+This folder contains the end-to-end (E2E) tests for the **Ledger Wallet Mobile** app.
 Dev teams are responsible for **adding/updating tests** for new features.
 
-> **Cursor users:** Run the `/e2e-mobile-onboard` command for an interactive setup wizard.
+> Run the `/e2e-mobile-onboard` skill for an interactive setup wizard.
 > It checks every prerequisite on your machine, validates environment variables, and guides you through fixes step by step.
 
 ---
@@ -66,7 +66,7 @@ pnpm mobile e2e:build -c ios.sim.debug
 - iOS: Create a simulator named `iOS Simulator` in Xcode
 - Android: Create an emulator named `Android_Emulator` in Android Studio
 
-Follow the full wiki if you need setup details.
+Use `/e2e-mobile-onboard` if you need setup details checked interactively.
 
 ### 5. Run Tests
 
@@ -92,14 +92,7 @@ pnpm test:android <testFileName>         # single file
 
 > Android debug (`pnpm test:android:debug`) does not work locally due to a known Detox/Espresso bug. Always use the release configuration.
 
-> For CI, sharding, and advanced flags, see [the full wiki](https://github.com/LedgerHQ/ledger-live/wiki/LLM:End-to-end-testing).
-
-### 6. Full Documentation
-
-For complete setup, debugging, workflow, writing tests, and CI integration, see the official wiki:
-[Ledger Wallet Mobile E2E Wiki](https://github.com/LedgerHQ/ledger-live/wiki/LLM:End-to-end-testing)
-
-### 7. Custom feature flags with E2E_FEATURE_FLAGS_JSON
+### 6. Custom feature flags with E2E_FEATURE_FLAGS_JSON
 
 You can inject extra feature flags globally for Mobile E2E by setting `E2E_FEATURE_FLAGS_JSON`.
 

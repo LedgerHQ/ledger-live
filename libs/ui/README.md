@@ -1,24 +1,24 @@
-# `ui` <br/> [![react storybook](https://img.shields.io/badge/storybook%20📚-react-61DBFB)](https://react-ui-storybook.vercel.app) [![native storybook](https://img.shields.io/badge/storybook%20📚-native-9665B7)](https://native-ui-storybook.vercel.app)
+# UI Packages
 
-### Design and interface resources for React and React Native projects.
+Design and interface resources for React and React Native projects.
 
-##### Status: while perfectly useable the libraries are still in alpha state and are subject to breaking changes without notice :fire:.
+Storybooks:
 
-## About
+- [React UI](https://react-ui-storybook.vercel.app)
+- [Native UI](https://native-ui-storybook.vercel.app)
 
-**The `ui` umbrella is a comprised of the following packages:**
+Status: these libraries are still in alpha and can include breaking changes.
 
-- [**`@ledgerhq/react-ui`**](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ui/packages/react): [React](https://reactjs.org/) components and styles.
+## Packages
 
-- [**`@ledgerhq/native-ui`**](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ui/packages/native): [React Native](https://reactnative.dev/) components and styles
-
-- [**`@ledgerhq/ui-shared`**](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ui/packages/shared): Shared assets and code shared between react and native modules.
-
-- [**`@ledgerhq/icons-ui`**](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ui/packages/icons): Shared SVG icons.
+- [@ledgerhq/react-ui](packages/react/README.md): React components and styles.
+- [@ledgerhq/native-ui](packages/native/README.md): React Native components and styles.
+- [@ledgerhq/ui-shared](packages/shared/README.md): shared assets and code used by React and Native packages.
+- [@ledgerhq/icons-ui](packages/icons/README.md): shared SVG icons.
 
 ## Installation
 
-> Reminder: all commands should be run at the root of the monorepository
+Run commands from the repository root.
 
 ```sh
 pnpm i
@@ -26,23 +26,18 @@ pnpm i
 
 ## Usage
 
-Several aliases to the `pnpm --filter` command can be used for convenience.
+Use package aliases as `pnpm --filter` shortcuts.
 
 ```sh
-# pnpm --filter react-ui
 pnpm ui:react
-# pnpm --filter native-ui
 pnpm ui:native
-# pnpm --filter icons-ui
 pnpm ui:icons
-# pnpm --filter shared-ui
 pnpm ui:shared
 ```
 
-You can use them as prefixes to set the scope and run a command for a given submodule.
+Use them as prefixes to run a command for a given package.
 
 ```sh
-# Prefix the command you want to run with an alias like this:
 pnpm ui:react add -D package
 pnpm ui:native storybook
 pnpm ui:shared clean

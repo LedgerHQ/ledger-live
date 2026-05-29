@@ -22,7 +22,9 @@ The public key is the account main identifier, expressed as uncompress hex: `02e
 
 This public key is needed for making transaction and also is used to hash the account address. (`tz1PTxfn1fge2tJwGGpW9zNuYf6BseM3GJXt` in this case)
 
-The Account type as defined in https://github.com/LedgerHQ/ledger-live/wiki/LLC:account will be used with:
+The Ledger account model is defined in
+[`@ledgerhq/types-live`](../../../ledgerjs/packages/types-live/src/account.ts)
+and is used with:
 
 - `.id` to be the id explained as above
 - `.xpub` to be the public key

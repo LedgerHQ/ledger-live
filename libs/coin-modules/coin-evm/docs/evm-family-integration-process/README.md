@@ -28,14 +28,14 @@ Here is an example PR of an EVM currency integration: https://github.com/LedgerH
 
 _Common steps for all new EVM currency integration_
 
-1. Add a new config entry for the new currency under [`libs/ledgerjs/packages/cryptoassets/src/currencies.ts`](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/ledgerjs/packages/cryptoassets/src/currencies.ts) (the `CryptoCurrencyId` type is auto-generated)
-2. Add an entry for the new currency in the `abandonSeedAddresses` (using the currency ID as key and `EVM_DEAD_ADDRESS` as value) under [`libs/ledgerjs/packages/cryptoassets/src/abandonseed.ts`](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/ledgerjs/packages/cryptoassets/src/abandonseed.ts)
-3. Add the new currency ID to the `setSupportedCurrencies` function param on each relevant project ([CLI](https://github.com/LedgerHQ/ledger-live/blob/develop/apps/cli/src/live-common-setup-base.ts), [LLD](https://github.com/LedgerHQ/ledger-live/blob/develop/apps/ledger-live-desktop/src/live-common-set-supported-currencies.ts), [LLM](https://github.com/LedgerHQ/ledger-live/blob/develop/apps/ledger-live-mobile/src/live-common-setup.ts), [LLC test environment](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/ledger-live-common/src/__tests__/test-helpers/environment.ts), [web-tools](https://github.com/LedgerHQ/ledger-live/blob/develop/apps/web-tools/src/live-common-setup.ts) and [account-migration tests](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/ledger-live-common/src/__tests__/migration/account-migration.ts))
+1. Add a new config entry for the new currency under [`libs/ledgerjs/packages/cryptoassets/src/currencies.ts`](../../../../../libs/ledgerjs/packages/cryptoassets/src/currencies.ts) (the `CryptoCurrencyId` type is auto-generated)
+2. Add an entry for the new currency in the `abandonSeedAddresses` (using the currency ID as key and `EVM_DEAD_ADDRESS` as value) under [`libs/ledgerjs/packages/cryptoassets/src/abandonseed.ts`](../../../../../libs/ledgerjs/packages/cryptoassets/src/abandonseed.ts)
+3. Add the new currency ID to the `setSupportedCurrencies` function param on each relevant project ([CLI](../../../../../apps/cli/src/live-common-setup-base.ts), [LLD](../../../../../apps/ledger-live-desktop/src/live-common-set-supported-currencies.ts), [LLM](../../../../../apps/ledger-live-mobile/src/live-common-setup.ts), [LLC test environment](../../../../../libs/ledger-live-common/src/__tests__/test-helpers/environment.ts), [web-tools](../../../../../apps/web-tools/src/live-common-setup.ts) and [account-migration tests](../../../../../libs/ledger-live-common/src/__tests__/migration/account-migration.ts))
 4. Add a new feature flag config for this currency:
-   1. The new feature flag type in the [`CurrencyFeatures`](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/ledgerjs/packages/types-live/src/feature.ts) type under `libs/ledgerjs/packages/types-live/src/feature.ts`
-   2. The new feature flag definition with default value in the [`CURRENCY_DEFAULT_FEATURES`](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/ledger-live-common/src/featureFlags/defaultFeatures.ts) mapping under `libs/ledger-live-common/src/featureFlags/defaultFeatures.ts`
-   3. Use this new feature flag in [`useCurrenciesUnderFeatureFlag.ts`](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/ledger-live-common/src/modularDrawer/hooks/useCurrenciesUnderFeatureFlag.ts)
-5. Add the EVM config for RPC node and explorer under [`libs/ledger-live-common/src/families/evm/config.ts`](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/ledger-live-common/src/families/evm/config.ts)
+   1. The new feature flag type in the [`CurrencyFeatures`](../../../../../libs/ledgerjs/packages/types-live/src/feature.ts) type under `libs/ledgerjs/packages/types-live/src/feature.ts`
+   2. The new feature flag definition with default value in the [`CURRENCY_DEFAULT_FEATURES`](../../../../../libs/ledger-live-common/src/featureFlags/defaultFeatures.ts) mapping under `libs/ledger-live-common/src/featureFlags/defaultFeatures.ts`
+   3. Use this new feature flag in [`useCurrenciesUnderFeatureFlag.ts`](../../../../../libs/ledger-live-common/src/modularDrawer/hooks/useCurrenciesUnderFeatureFlag.ts)
+5. Add the EVM config for RPC node and explorer under [`libs/ledger-live-common/src/families/evm/config.ts`](../../../../../libs/ledger-live-common/src/families/evm/config.ts)
 6. Update snapshot files:
    1. `pnpm test -- -u` from `libs/coin-framework` to update `formatCurrencyUnit.test.ts` snapshots
    2. `pnpm test:playwright tests/specs/services/wallet-api.spec.ts` from `apps/ledger-live-desktop` and update `tests/fixtures/wallet-api.ts` with new currencies
@@ -46,23 +46,21 @@ _Common steps for all new EVM currency integration_
 _Optional / extra steps that might be needed on a case-by-case basis depending on the integration_
 
 - If the related currency public explorer is not an etherscan-like, you might need to add a new implementation for this currency explorer
-  - If needed, create a new explorer implementation of this explorer API in a new file under the [`libs/coin-modules/coin-evm/src/network/explorer`](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-modules/coin-evm/src/network/explorer) folder
+  - If needed, create a new explorer implementation of this explorer API in a new file under the [`libs/coin-modules/coin-evm/src/network/explorer`](../../src/network/explorer) folder
   - Add the new explorer type to:
-    - the `getExplorerApi` function under [`libs/coin-modules/coin-evm/src/network/explorer/index.ts`](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/coin-modules/coin-evm/src/network/explorer/index.ts)
-    - the `EthereumLikeInfo.explorer.type` type under [`libs/ledgerjs/packages/types-cryptoassets/src/index.ts`](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/ledgerjs/packages/types-cryptoassets/src/index.ts)
-    - if the new explorer type follows the etherscan-like API, add it to the `isEtherscanLikeExplorerConfig` type guard under [`libs/coin-modules/coin-evm/src/network/explorer/types.ts`](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/coin-modules/coin-evm/src/network/explorer/types.ts) (this is the case for some custom made explorers that are not blockscan white label implementation, but are still compatible with the blockscan/etherscan API)
+    - the `getExplorerApi` function under [`libs/coin-modules/coin-evm/src/network/explorer/index.ts`](../../src/network/explorer/index.ts)
+    - the `EthereumLikeInfo.explorer.type` type under [`libs/ledgerjs/packages/types-cryptoassets/src/index.ts`](../../../../../libs/ledgerjs/packages/types-cryptoassets/src/index.ts)
+    - if the new explorer type follows the etherscan-like API, add it to the `isEtherscanLikeExplorerConfig` type guard under [`libs/coin-modules/coin-evm/src/network/explorer/types.ts`](../../src/network/explorer/types.ts) (this is the case for some custom made explorers that are not blockscan white label implementation, but are still compatible with the blockscan/etherscan API)
 
 ## Tokens support
 
 Here are the steps to handle the new currencies (ERC20) tokens, if relevant:
 
 - add the new tokens config to the [CAL](https://github.com/LedgerHQ/crypto-assets) (historically handled by @adrienlacombe-ledger)
-- after this update of the CAL, check that the tokens are present on the CDN, replacing `{chainId}` with the actual currency chain ID, specified under `ethereumLikeInfo.chainId` in the currency config (under [libs/ledgerjs/packages/cryptoassets/src/currencies.ts](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/ledgerjs/packages/cryptoassets/src/currencies.ts)) which would be `1` for ethereum mainnet for example, using https://cdn.live.ledger.com/cryptoassets/evm/{chainId}/erc20.json
+- after this update of the CAL, check that the tokens are present on the CDN, replacing `{chainId}` with the actual currency chain ID, specified under `ethereumLikeInfo.chainId` in the currency config (under [libs/ledgerjs/packages/cryptoassets/src/currencies.ts](../../../../../libs/ledgerjs/packages/cryptoassets/src/currencies.ts)) which would be `1` for ethereum mainnet for example, using https://cdn.live.ledger.com/cryptoassets/evm/{chainId}/erc20.json
 
-No change should be needed on Ledger Live side since tokens are automatically imported from CAL at the release stage, cf:
-
-- this GitHub Action [`.github/workflows/test-release-create.yml`](https://github.com/LedgerHQ/ledger-live/blob/develop/.github/workflows/test-release-create.yml)
-- the `import:cal-tokens` job in the [`ledger-js` package](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/ledgerjs/package.json)
+No change should be needed on Ledger Live side since token data is consumed from
+CAL/CDN during the release flow.
 
 ## Counter values support (fiat prices)
 
@@ -78,17 +76,17 @@ Make sure the network being added is present under the `network_info_t` mapping 
 
 In Ledger Live, make sure the ethereum nano app version requirements match the latest version of the ethereum app handling the network being added:
 
-- `appVersion` in `getAppQuery` under [`libs/coin-modules/coin-evm/src/specs.ts`](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/coin-modules/coin-evm/src/specs.ts)
-- `Ethereum` in `appVersionsRequired` under [`libs/ledger-live-common/src/apps/support.ts`](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/ledger-live-common/src/apps/support.ts)
-- related tests for the ethereum app version under [`libs/ledger-live-common/src/apps/support.test.ts`](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/ledger-live-common/src/apps/support.test.ts)
+- `appVersion` in `getAppQuery` under [`libs/coin-modules/coin-evm/src/specs.ts`](../../src/specs.ts)
+- `Ethereum` in `appVersionsRequired` under [`libs/ledger-live-common/src/apps/support.ts`](../../../../../libs/ledger-live-common/src/apps/support.ts)
+- related tests for the ethereum app version under [`libs/ledger-live-common/src/apps/support.test.ts`](../../../../../libs/ledger-live-common/src/apps/support.test.ts)
 
 ## Tests
 
 ### Bot
 
-- Make sure to fund the appropriate bot(s) with coins and tokens of the new network being added (cf. [The different bots](https://github.com/LedgerHQ/ledger-live/wiki/LLC:bot#the-different-bots))
+- Make sure to fund the appropriate bot(s) with coins and tokens of the new network being added. For local portfolio bot context, see [`libs/ledger-live-common/src/bot/portfolio/README.md`](../../../../../libs/ledger-live-common/src/bot/portfolio/README.md).
 - Make sure to make the bot run multiple times on your PR to make sure everything works fine with the new network
-- If the coin related to the network you are adding is somewhat expensive, you can tailor the minimum balance needed to test this coin by updating `minBalancePerCurrencyId` under [`libs/coin-modules/coin-evm/src/specs.ts`](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/coin-modules/coin-evm/src/specs.ts)
+- If the coin related to the network you are adding is somewhat expensive, you can tailor the minimum balance needed to test this coin by updating `minBalancePerCurrencyId` under [`libs/coin-modules/coin-evm/src/specs.ts`](../../src/specs.ts)
 
 ### Manual testing
 
