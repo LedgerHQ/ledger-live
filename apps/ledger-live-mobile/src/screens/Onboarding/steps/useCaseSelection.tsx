@@ -2,7 +2,7 @@ import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { useFeature, isRecoverDisplayed } from "@ledgerhq/live-common/featureFlags/index";
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useTranslation } from "~/context/Locale";
 import { Linking } from "react-native";
 import { useDispatch } from "~/context/hooks";
@@ -14,6 +14,9 @@ import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/O
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
 import { OnboardingType } from "~/reducers/types";
+import { urls } from "~/utils/urls";
+import CounterfeitWarningDrawer from "LLM/features/Onboarding/components/CounterfeitWarningDrawer";
+import { isLegacyNano } from "LLM/features/Onboarding/utils/isLegacyNano";
 import { SelectionCards } from "./Cards/SelectionCard";
 import OnboardingView from "./OnboardingView";
 
@@ -22,6 +25,8 @@ type NavigationProps = StackNavigatorProps<
   ScreenName.OnboardingUseCase
 >;
 
+type UseCaseAction = "new" | "restore" | "protect";
+
 const OnboardingStepUseCaseSelection = () => {
   const { t } = useTranslation();
   const route = useRoute<NavigationProps["route"]>();
@@ -29,10 +34,13 @@ const OnboardingStepUseCaseSelection = () => {
   const { colors } = useTheme();
   const dispatch = useDispatch();
   const [isProtectDrawerOpen, setIsProtectDrawerOpen] = useState(false);
+  const [pendingAction, setPendingAction] = useState<UseCaseAction | null>(null);
 
   const servicesConfig = useFeature("protectServicesMobile");
-
   const deviceModelId = route?.params?.deviceModelId;
+  const counterfeitWarningFeature = useFeature("lwmOnboardingCounterfeitWarning");
+  const shouldGate = counterfeitWarningFeature?.enabled === true && isLegacyNano(deviceModelId);
+
   const getProductName = (modelId: DeviceModelId) =>
     getDeviceModel(modelId)?.productName.replace("Ledger", "").trimStart() || modelId;
 
@@ -41,30 +49,30 @@ const OnboardingStepUseCaseSelection = () => {
   };
 
   const onBuyNanoX = () => {
-    Linking.openURL("https://shop.ledger.com/pages/ledger-nano-x");
+    Linking.openURL(urls.buyNanoXPage);
   };
 
   const onDiscoverBenefits = () => {
-    Linking.openURL("http://ledger.com");
+    Linking.openURL(urls.ledger);
   };
 
-  const onPressNew = () => {
+  const runNew = useCallback(() => {
     dispatch(setOnboardingType(OnboardingType.setupNew));
     navigation.navigate(ScreenName.OnboardingModalSetupNewDevice, {
       deviceModelId,
     });
-  };
+  }, [deviceModelId, dispatch, navigation]);
 
-  const onPressRecoveryPhrase = () => {
+  const runRestore = useCallback(() => {
     dispatch(setOnboardingType(OnboardingType.restore));
     navigation.navigate(ScreenName.OnboardingRecoveryPhrase, {
       deviceModelId,
       showSeedWarning: true,
     });
-  };
+  }, [deviceModelId, dispatch, navigation]);
 
-  const onPressProtect = () => {
-    if (deviceModelId === "nanoX") {
+  const runProtect = useCallback(() => {
+    if (deviceModelId === DeviceModelId.nanoX) {
       const deeplink = servicesConfig?.params?.deeplink;
 
       if (deeplink) {
@@ -79,7 +87,53 @@ const OnboardingStepUseCaseSelection = () => {
     } else {
       setIsProtectDrawerOpen(true);
     }
-  };
+  }, [deviceModelId, navigation, servicesConfig?.params?.deeplink]);
+
+  const runWithGate = useCallback(
+    (action: UseCaseAction, runner: () => void) => {
+      if (shouldGate) {
+        setPendingAction(action);
+        return;
+      }
+      runner();
+    },
+    [shouldGate],
+  );
+
+  const onPressNew = useCallback(() => runWithGate("new", runNew), [runNew, runWithGate]);
+  const onPressRecoveryPhrase = useCallback(
+    () => runWithGate("restore", runRestore),
+    [runRestore, runWithGate],
+  );
+  const onPressProtect = useCallback(
+    () => runWithGate("protect", runProtect),
+    [runProtect, runWithGate],
+  );
+
+  const handleCounterfeitWarningProceed = useCallback(() => {
+    const action = pendingAction;
+    setPendingAction(null);
+
+    if (!action) {
+      return;
+    }
+
+    switch (action) {
+      case "new":
+        runNew();
+        return;
+      case "restore":
+        runRestore();
+        return;
+      case "protect":
+        runProtect();
+        return;
+    }
+  }, [pendingAction, runNew, runProtect, runRestore]);
+
+  const handleCounterfeitWarningDismiss = useCallback(() => {
+    setPendingAction(null);
+  }, []);
 
   return (
     <OnboardingView
@@ -141,6 +195,15 @@ const OnboardingStepUseCaseSelection = () => {
             : []),
         ]}
       />
+
+      {shouldGate && deviceModelId ? (
+        <CounterfeitWarningDrawer
+          isOpen={pendingAction !== null}
+          deviceModelId={deviceModelId}
+          onProceed={handleCounterfeitWarningProceed}
+          onDismiss={handleCounterfeitWarningDismiss}
+        />
+      ) : null}
 
       <QueuedDrawer isRequestingToBeOpened={isProtectDrawerOpen} onClose={onCloseProtectDrawer}>
         <Flex>

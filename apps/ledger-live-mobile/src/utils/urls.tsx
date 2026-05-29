@@ -63,6 +63,7 @@ export const urls = {
   ratingsContact: "https://support.ledger.com/article/4423020306705-zd",
   buyNanoX:
     "https://shop.ledger.com/products/ledger-nano-x?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=onboarding",
+  buyNanoXPage: "https://shop.ledger.com/pages/ledger-nano-x",
   buyFlex:
     "https://shop.ledger.com/products/ledger-flex?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=onboarding",
   exploreLedgerDevices:
@@ -297,6 +298,8 @@ export const urls = {
   genuineCheck: {
     learnMore: "https://support.ledger.com/article/4404389367057-zd",
   },
+  ledger: "https://www.ledger.com",
+  ledgerReseller: "https://www.ledger.com/reseller",
   updateLedgerLive: "https://support.ledger.com/article/4410960111889-zd",
 
   // Node errors

@@ -1909,6 +1909,14 @@
         }
       }
     },
+    "counterfeitWarning": {
+      "title": "Before you start",
+      "body": "We recommend buying from <ledgerCom>Ledger.com</ledgerCom> or our <resellerLink>official reseller network</resellerLink>. This helps ensure your device is genuine and ready to use.",
+      "cta": {
+        "primary": "Continue setup",
+        "secondary": "Learn more"
+      }
+    },
     "stepNewDevice": {
       "0": {
         "label": "Basics",
