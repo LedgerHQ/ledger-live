@@ -80,6 +80,8 @@
     "run:cli": "./apps/cli/bin/index.js",
     "lint": "nx run-many -t lint",
     "lint:fix": "nx run-many -t lint:fix",
+    "format": "nx run-many -t format",
+    "format:check": "nx run-many -t format:check",
     "typecheck": "nx run-many -t typecheck",
     "validate:renovate": "npx --yes --package renovate -- renovate-config-validator",
     "knip-check": "nx run-many -t knip-check",

@@ -5,6 +5,8 @@
   "scripts": {
     "lint": "oxlint .",
     "lint:fix": "oxfmt . && oxlint . --fix",
+    "format": "oxfmt .",
+    "format:check": "oxfmt . --check",
     "typecheck": "node ./scripts/typecheck.js",
     "test:detox": "pnpm detox test",
     "test:ios": "pnpm test:detox --configuration ios.sim.release",

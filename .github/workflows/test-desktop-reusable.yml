@@ -67,6 +67,9 @@ jobs:
         with:
           skip_builds: true
 
+      - name: format check
+        run: pnpm desktop format:check
+
       - name: lint
         run: pnpm desktop lint:ci
 

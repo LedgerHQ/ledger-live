@@ -35,5 +35,5 @@ jobs:
       - name: Install dependencies
         run: pnpm i --filter="ledger-live-mobile-e2e-tests..." --no-frozen-lockfile --unsafe-perm
 
-      - name: Run lint and typecheck
-        run: pnpm exec nx run-many -t lint,typecheck --projects=ledger-live-mobile-e2e-tests
+      - name: Run format check, lint and typecheck
+        run: pnpm exec nx run-many -t format:check,lint,typecheck --projects=ledger-live-mobile-e2e-tests

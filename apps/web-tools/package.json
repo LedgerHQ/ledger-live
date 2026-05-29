@@ -13,6 +13,8 @@
     "build": "rsbuild build",
     "preview": "rsbuild preview",
     "test": "jest",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit --customConditions node",
     "coverage": "jest --coverage"
   },

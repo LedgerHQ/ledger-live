@@ -24,6 +24,8 @@
     "typecheck": "tsc --project src/tsconfig.json --noEmit --customConditions node",
     "lint": "oxlint .",
     "lint:fix": "oxfmt . && oxlint . --fix",
+    "format": "oxfmt .",
+    "format:check": "oxfmt . --check",
     "test": "zx ./scripts/test.mjs"
   },
   "dependencies": {

@@ -45,6 +45,8 @@ jobs:
         run: pnpm i -F "live-cli*..." -F "ledger-live"
       - name: build cli
         run: pnpm exec nx run @ledgerhq/live-cli:build
+      - name: format check cli
+        run: pnpm exec nx run @ledgerhq/live-cli:format:check
       - name: lint cli
         run: pnpm exec nx run @ledgerhq/live-cli:lint -- --quiet
       - name: typecheck cli
