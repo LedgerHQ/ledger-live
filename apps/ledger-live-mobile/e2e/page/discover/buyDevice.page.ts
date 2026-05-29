@@ -12,6 +12,7 @@ export default class BuyDevicePage {
   async expectBuyNanoWebPage() {
     // Webview testing is flaky on Android
     if (!isAndroid()) {
+      await waitWebElementById("__next");
       const url = await getWebElementById("__next").getCurrentUrl();
       jestExpect(url).toContain(this.expectedUrl);
     } else {

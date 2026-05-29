@@ -72,6 +72,21 @@ export const ElementHelpers = {
     throw new Error(`Element with data-testid "${id}" not found in ${timeout} ms`);
   },
 
+  async waitWebElementById(id: string, timeout = DEFAULT_TIMEOUT) {
+    const startTime = Date.now();
+    const element = web.element(by.web.id(id));
+
+    while (Date.now() - startTime < timeout) {
+      try {
+        await element.getText();
+        return element;
+      } catch {
+        await delay(200);
+      }
+    }
+    throw new Error(`Web element with id "${id}" not found in ${timeout} ms`);
+  },
+
   async tapWebElementByTestId(id: string, index = 0) {
     await getWebElementByTestId(id).atIndex(index).tap();
   },

@@ -48,6 +48,7 @@ export default class DiscoverPage {
   }
 
   async expect1inchParams() {
+    await waitWebElementById("__next");
     const title = await getWebElementById("__next").getTitle();
     jestExpect(title).toBe("Ledger Platform Apps");
 

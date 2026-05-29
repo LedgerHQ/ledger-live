@@ -26,9 +26,11 @@ export default class DummyWalletApp {
   }
 
   async expectApp(theme: string = "light") {
+    await waitWebElementById("image-container");
     const title = await getWebElementById("image-container").getTitle();
     jestExpect(title).toBe("Dummy Wallet API App");
 
+    await waitWebElementById("param-container");
     const url = await getWebElementById("param-container").getCurrentUrl();
     jestExpect(url).toBe(
       `http://localhost:${port}/?theme=${theme}&lang=en&name=Dummy+Wallet+API+Live+App`,
