@@ -1,13 +1,13 @@
-**[We are hiring, join us! 👨‍💻👩‍💻](https://jobs.lever.co/ledger/?department=Tech)**
+# Ledger Live Desktop
 
-# Ledger Live (desktop)
+Ledger Live Desktop is the Electron app for Ledger hardware wallets on macOS,
+Windows, and Linux. Users can manage crypto assets, install apps on Ledger
+devices, update firmware, verify public addresses, and sign transactions.
 
-- Related: [ledger-live-mobile](https://github.com/LedgerHQ/ledger-live/tree/develop/apps/ledger-live-mobile)
-- Backed by: [ledger-live-common](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledger-live-common)
-
-> Ledger Live is a desktop companion app for Ledger hardware wallets. It allows users to manage their crypto assets securely, such as Bitcoin, Ethereum, XRP and many others. Ledger Live desktop is available for Mac, Windows (x64) and Linux (x64). It can be downloaded from [ledger.com/ledger-live](https://www.ledger.com/ledger-live/).
-
-Minimum system requirements can be found on [Ledger Support website](https://support.ledger.com/hc/en-us/articles/4403310017041-Ledger-Live-system-requirements-?docs=true).
+- Related app: [Ledger Live Mobile](../ledger-live-mobile/README.md)
+- Shared business logic: [ledger-live-common](../../libs/ledger-live-common/README.md)
+- Download: [ledger.com/ledger-live](https://www.ledger.com/ledger-live/)
+- System requirements: [Ledger Support](https://support.ledger.com/hc/en-us/articles/4403310017041-Ledger-Live-system-requirements-?docs=true)
 
 <a href="https://github.com/LedgerHQ/ledger-live-desktop/releases">
   <p align="center">
@@ -17,115 +17,80 @@ Minimum system requirements can be found on [Ledger Support website](https://sup
 
 ## Architecture
 
-Ledger Live desktop is an hybrid application built using Electron, React, Redux, RxJS. It communicates with [Ledger hardware wallet devices](https://shop.ledger.com/pages/hardware-wallets-comparison) to manage installed applications, update the device firmware, verify public addresses and sign transactions with [ledgerjs](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs).
+The app is built with Electron, React, Redux, and RxJS. It uses LedgerJS and
+shared Ledger Wallet logic to communicate with devices, synchronize accounts,
+and prepare transactions.
 
-We also share core business logic with Ledger Live mobile through [@ledgerhq/live-common](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledger-live-common) package.
+Main source areas:
 
-## Signed hashes
+| Path                    | Purpose                                                                 |
+| ----------------------- | ----------------------------------------------------------------------- |
+| `src/main`              | Electron main process                                                   |
+| `src/internal`          | Internal worker process for commands and device logic                   |
+| `src/renderer`          | React UI, screens, modals, bridges, analytics, i18n, and renderer setup |
+| `src/renderer/families` | Per-currency UI logic                                                   |
+| `tests`                 | App-local Playwright/component test helpers and specs                   |
 
-Ledger Live releases are signed. The automatic update mechanism makes use of the signature to verify that each subsequent update is authentic. Instructions for verifying the hash and signatures of the installation packages are available on [Ledger Live tools website](https://live.ledger.tools/lld-signatures), which will be integrated into the [official download page](https://www.ledger.com/ledger-live).
+Releases are signed, and the updater verifies signatures before applying a new
+version. Hash/signature verification details are available on
+[live.ledger.tools/lld-signatures](https://live.ledger.tools/lld-signatures).
 
-# Development
+## Development
 
-## Setup
+Run commands from the repository root.
 
-### Requirements
-
-- [NodeJS](https://nodejs.org) `lts/gallium` (v16.x) + [npm](https://www.npmjs.com/)
-- [PnPm](https://pnpm.io) (v7.x)
-- [Python](https://www.python.org/) (v3.5+)
-- A C/C++ toolchain (see [node-gyp documentation](https://github.com/nodejs/node-gyp#on-unix))
-- On Linux: `sudo apt-get update && sudo apt-get install libudev-dev libusb-1.0-0-dev`
-
-## Install
-
-> Reminder: all commands should be run at the root of the monorepository
+Use the repo root setup first:
 
 ```bash
-# install dependencies
+mise install
 pnpm i
 ```
 
-## Run
+Linux also needs USB/HID native dependencies:
 
 ```bash
-# launch the app in dev mode
+sudo apt-get update
+sudo apt-get install libudev-dev libusb-1.0-0-dev
+```
+
+Common desktop commands:
+
+```bash
 pnpm dev:lld
-```
-
-```bash
-# launch the app in dev mode with MSW
 pnpm dev:lld:msw
-```
-
-## Watch deps
-
-In another terminal and in parallel to `pnpm dev:lld`, you can watch different libs from the monorepo
-LLD is using vite and will import in priority the esm libs so we need to watch and build for esm in some libs
-
-```bash
-# watch common
-pnpm watch:es:common
-
-# watch ljs
-pnpm watch:es:ljs
-
-# watch coin integrations
-pnpm watch:es:coin
-
-# watch specific lib
-nx run @ledgerhq/hw-app-btc:watch:es
-
-# watch specific coin integration
-nx run @ledgerhq/coin-bitcoin:watch:es
-```
-
-## Build
-
-```bash
-# Build & package the whole app
-# Creates a .dmg for Mac, .exe installer for Windows, or .AppImage for Linux
-# Output files will be created in dist/ folder
-
-# build all the required dependencies
-pnpm build:lld:deps
-# then use alias to trigger the `dist` script in ledger-live-desktop project
-pnpm desktop build
-
-# or you can use the top level script (pnpm build:lld:deps not required in this case)
 pnpm build:lld
+pnpm desktop test:jest
+pnpm desktop lint
+pnpm desktop lint:guardrails
+pnpm desktop typecheck
 ```
 
-## Debug
+See the repo-level [common commands](../../docs/common-commands.md) and
+[validation guidance](../../docs/validate-before-finishing.md) for maintained
+command coverage.
 
-If you are using [Visual Studio Code](https://code.visualstudio.com/) IDE, we provide a [default debug configuration](https://github.com/LedgerHQ/ledger-live/tree/develop/.vscode/launch.json) that you can use to debug the main and renderer processes of the application.
+## Watching Dependencies
 
-### Tips
+In another terminal, run the relevant watcher when changing shared packages used
+by Desktop:
 
-- #### **Can't find Node.js binary "pnpm": path does not exist. Make sure Node.js is installed and in your PATH, or set the "runtimeExecutable" in your launch.json\***
+```bash
+pnpm watch:es:common
+pnpm watch:es:ljs
+pnpm watch:es:coin
+pnpm turbo run watch:es --filter="./libs/ledgerjs/packages/hw-app-btc"
+pnpm turbo run watch:es --filter="./libs/coin-modules/coin-bitcoin"
+```
 
-  Add your terminal PATH as environment variable.
+## Testing
 
-  ```json
-    "env": {
-      "ELECTRON_ARGS": "--remote-debugging-port=8315",
-      "PATH": "...",
-    }
-  ```
+- Jest: `pnpm desktop test:jest`
+- App-local Playwright helpers/specs: [tests/README.md](tests/README.md)
+- Full Desktop E2E setup and Speculos flows: [../../e2e/desktop/README.md](../../e2e/desktop/README.md)
 
-  To get the PATH, run in your terminal:
+## Local Notes
 
-  ```bash
-  echo $PATH
-  ```
-
----
-
-## Config (optional helpers)
-
-### Environment variables
-
-(you can use a .env or export environment variables)
+Optional debug environment variables can be set in `.env`:
 
 ```bash
 NO_DEBUG_DB=1
@@ -138,87 +103,14 @@ NO_DEBUG_DEVICE=1
 NO_DEBUG_COUNTERVALUES=1
 ```
 
-Other environment variables can be found in [libs/src/env.ts](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/env/src/env.ts)
+Other environment variables are defined in
+[libs/env/src/env.ts](../../libs/env/src/env.ts).
 
-### Run tests
+Linting uses oxlint for most rules and `pnpm desktop lint:guardrails` for the
+remaining ESLint-only security guardrail around external links.
 
-> Reminder: all commands should be run at the root of the monorepository
+Translations are handled internally. If a translation string is broken, report
+it to Ledger support rather than editing localized content directly.
 
-```bash
-pnpm desktop test
-```
-
-### Run code quality checks
-
-```bash
-pnpm desktop lint          # oxlint (main linter)
-pnpm desktop lint:guardrails   # ESLint guardrails (one rule only)
-pnpm desktop typecheck
-```
-
-### Linting setup
-
-Linting has been migrated from ESLint to **oxlint** for speed and consistency. Almost all rules now live in [`.oxlintrc.json`](.oxlintrc.json) (restricted imports, React/TypeScript/Jest rules, etc.).
-
-**ESLint guardrails** ([`.eslintrc.guardrails.js`](.eslintrc.guardrails.js)) are still run via `pnpm desktop lint:guardrails`. One rule remains there because oxlint does not support it: **`no-restricted-syntax`** with complex AST selectors. That rule forbids direct use of `shell.openExternal()` outside the safe wrappers (`~/renderer/linking` and `src/main/openURL.ts`) for security (RCE prevention). Oxlint’s `no-restricted-syntax` only supports simple node-type selectors, not the property-based selectors needed for this check.
-
-Going forward, when adding or changing lint rules:
-
-- Prefer oxlint; add or adjust rules in `.oxlintrc.json`.
-- If a rule truly requires ESLint-only features (e.g. `excludedFiles` or complex selectors), add it to `.eslintrc.guardrails.js` and document why.
-- Re-evaluate guardrails periodically: as oxlint gains support for more selector types or overrides, rules should be moved from ESLint to oxlint when possible.
-
-The goal is to use oxlint for everything and remove ESLint from this app once the remaining guardrail can be expressed in oxlint or replaced by an equivalent.
-
-## File structure
-
-```
-src
-├── main : the main process is the mother of all process. it boots internal and renderer process and starts the window.
-├── internal : related to internal thread that runs commands, device logic, libcore,..
-├── renderer : everything related to the UI.
-│   ├── screens
-│   ├── modals
-│   ├── components : all components that are not screens or modals, flattened.
-│   ├── animations
-│   ├── icons
-│   ├── images
-│   ├── styles
-│   ├── bridge : logic related to interacting with accounts and currencies.
-│   ├── families : per currency specific logic and components
-│   ├── actions : redux actions
-│   ├── reducers : redux reducers
-│   ├── middlewares
-│   ├── analytics
-│   ├── fonts
-│   ├── hooks
-│   ├── i18n : all translation files
-|   ├── logger : internal logging library. Can be exported through the "save logs" feature.
-│   ├── index.html : html entry point
-│   ├── index.ts : js entry point
-│   ├── init.tsx : initialize rendering
-│   ├── live-common-setup.ts : set up live-common for renderer specific parts
-│   └── ... other files related to renderer
-├── config : constants files. DEPRECATED. Will be moved to live-common.
-├── helpers : helpers. DEPRECATED. Will be moved to live-common or in relevant places.
-├── live-common-set-supported-currencies.ts : generic set up of supported coins
-├── live-common-setup-base.ts : generic set up of live-common
-└── sentry : related to bug report API
-```
-
-## Localization / Translations
-
-Translations from English to other languages are handled internally so it is not possible to directly contribute to them, however if you spot a bug (e.g. a wrong variable name) or any issue in translation files, feel free to report a bug to Ledger's support team and it will be taken care of.
-
----
-
-## Are you adding the support of a blockchain to Ledger Live?
-
-This part of the repository is where you will add the support of your blockchain for the desktop app.
-
-For a smooth and quick integration:
-
-- See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/coin/general-process/) and
-- Go on [Discord](https://developers.ledger.com/discord-pro/) to chat with developer support and the developer community.
-
----
+For blockchain integration guidance, use the
+[Ledger Developer Portal](https://developers.ledger.com/docs/coin/general-process/).
