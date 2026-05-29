@@ -33,7 +33,7 @@ import { lastConnectedDeviceSelector } from "~/reducers/settings";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import SafeAreaViewFixed from "~/components/SafeAreaView";
 import { getFreshAccountAddress } from "~/utils/address";
-import byFamily from "../../generated/VerifyAddress";
+import { useVerifyAddress } from "~/families/hooks";
 
 const illustrations = {
   dark: require("~/images/illustration/Dark/_080.webp"),
@@ -133,9 +133,10 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
 
   const mainAccount = account && getMainAccount(account, parentAccount);
   const currency = route.params?.currency || (account && getAccountCurrency(account));
-  const CustomVerifyAddress = mainAccount
-    ? byFamily[mainAccount.currency.family as keyof typeof byFamily]
-    : undefined;
+  const CustomVerifyAddress = useVerifyAddress(
+    mainAccount ? mainAccount.currency.family : undefined,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ) as React.ComponentType<any> | undefined;
 
   const onRetry = useCallback(() => {
     track("button_clicked", {

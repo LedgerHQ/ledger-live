@@ -8,7 +8,11 @@ import { RouteProp, useRoute } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 import { useSelector } from "~/context/hooks";
 import { ScreenName, NavigatorName } from "~/const";
-import * as families from "~/families";
+import {
+  familyNavigatorScreens,
+  EvmEditTransactionNavigator,
+  BitcoinEditTransactionNavigator,
+} from "~/families/nav-loaders";
 import OperationDetails from "~/screens/OperationDetails";
 import EditDeviceName from "~/screens/EditDeviceName";
 import ScanRecipient from "~/screens/SendFunds/ScanRecipient";
@@ -37,7 +41,7 @@ import PerpsNavigator from "./PerpsNavigator";
 import NotificationCenterNavigator from "./NotificationCenterNavigator";
 import AnalyticsAllocation from "~/screens/Analytics/Allocation";
 import AnalyticsOperations from "~/screens/Analytics/Operations";
-import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import { getStackNavigatorConfig, bridgeSuspenseScreenLayout } from "~/navigation/navigatorConfig";
 import Account from "~/screens/Account";
 import ReadOnlyAccount from "~/screens/Account/ReadOnly/ReadOnlyAccount";
 import TransparentHeaderNavigationOptions from "~/navigation/TransparentHeaderNavigationOptions";
@@ -76,8 +80,6 @@ import {
   NavigationHeaderCloseButtonAdvanced,
 } from "../NavigationHeaderCloseButton";
 import { RootDrawer } from "../RootDrawer/RootDrawer";
-import EditTransactionNavigator from "~/families/evm/EditTransactionFlow/EditTransactionNavigator";
-import BitcoinEditTransactionNavigator from "~/families/bitcoin/EditTransactionFlow/EditTransactionNavigator";
 import { DrawerProps } from "../RootDrawer/types";
 import AnalyticsOptInPromptNavigator from "./AnalyticsOptInPromptNavigator";
 import LandingPagesNavigator from "./LandingPagesNavigator";
@@ -187,7 +189,10 @@ export default function BaseNavigator() {
   return (
     <>
       <RootDrawer drawer={route.params?.drawer} />
-      <Stack.Navigator screenOptions={nativeStackScreenOptions}>
+      <Stack.Navigator
+        screenOptions={nativeStackScreenOptions}
+        screenLayout={bridgeSuspenseScreenLayout}
+      >
         <Stack.Screen name={NavigatorName.Main} component={Main} options={{ headerShown: false }} />
         <Stack.Screen
           name={NavigatorName.MyLedger}
@@ -523,21 +528,14 @@ export default function BaseNavigator() {
           component={CustomImageNavigator}
           options={{ headerShown: false }}
         />
-        {/* This is a freaking hack… */}
-        {Object.keys(families).map(name => {
-          /* eslint-disable @typescript-eslint/consistent-type-assertions */
-          const { component, options } = families[name as keyof typeof families];
-          const screenName = name as keyof BaseNavigatorStackParamList;
-          const screenComponent = component as React.ComponentType;
-          const screenOptions = options as NativeStackNavigationOptions;
-          /* eslint-enable @typescript-eslint/consistent-type-assertions */
-
+        {Object.keys(familyNavigatorScreens).map(name => {
+          const Screen = familyNavigatorScreens[name as keyof typeof familyNavigatorScreens];
           return (
             <Stack.Screen
               key={name}
-              name={screenName}
-              component={screenComponent}
-              options={screenOptions}
+              name={name as keyof BaseNavigatorStackParamList}
+              component={Screen}
+              options={Screen.navigationOptions}
             />
           );
         })}
@@ -634,7 +632,7 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={NavigatorName.EvmEditTransaction}
           options={{ headerShown: false }}
-          component={EditTransactionNavigator}
+          component={EvmEditTransactionNavigator}
         />
         <Stack.Screen
           name={NavigatorName.BitcoinEditTransaction}

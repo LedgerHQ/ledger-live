@@ -10,7 +10,7 @@ import ReceiveConnectDevice, {
   connectDeviceHeaderOptions,
 } from "~/screens/ReceiveFunds/03a-ConnectDevice";
 import ReceiveVerifyAddress from "~/screens/ReceiveFunds/03b-VerifyAddress";
-import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import { getStackNavigatorConfig, bridgeSuspenseScreenLayout } from "~/navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
 import { NavigationHeaderCloseButtonAdvanced } from "../NavigationHeaderCloseButton";
 import { track } from "~/analytics";
@@ -86,6 +86,7 @@ export default function ReceiveFundsNavigator() {
         ...stackNavigationConfig,
         gestureEnabled: Platform.OS === "ios",
       }}
+      screenLayout={bridgeSuspenseScreenLayout}
     >
       <Stack.Screen
         name={ScreenName.ReceiveProvider}

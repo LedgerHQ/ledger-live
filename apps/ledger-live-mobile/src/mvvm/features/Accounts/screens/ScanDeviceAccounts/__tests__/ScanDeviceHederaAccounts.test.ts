@@ -4,6 +4,7 @@ import { Observable, of, EMPTY } from "rxjs";
 import type { Account, ScanAccountEvent } from "@ledgerhq/types-live";
 import { renderHook, waitFor } from "@tests/test-renderer";
 import { ScreenName } from "~/const";
+import { useNoAssociatedAccounts } from "~/families/hooks";
 import useScanDeviceAccountsViewModel from "../useScanDeviceAccountsViewModel";
 
 const {
@@ -47,6 +48,11 @@ const createHederaAccount = (overrides?: Partial<Account>): Account => {
 };
 
 describe("ScanDeviceHederaAccounts", () => {
+  // Warm the lazy slot cache so the suspending use() resolves synchronously (renderHook has no Suspense boundary).
+  beforeAll(async () => {
+    await useNoAssociatedAccounts.preload("hedera");
+  });
+
   beforeEach(() => {
     resetSpies();
     setRouteParams("hedera");

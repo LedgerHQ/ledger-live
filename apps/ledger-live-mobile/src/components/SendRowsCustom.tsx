@@ -1,7 +1,7 @@
 import React from "react";
 import type { Account } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
-import perFamily from "../generated/SendRowsCustom";
+import { useSendRowsCustom } from "~/families/hooks";
 import type { BaseComposite, StackNavigatorProps } from "./RootNavigator/types/helpers";
 import type { SendFundsNavigatorStackParamList } from "./RootNavigator/types/SendFundsNavigator";
 import type { SignTransactionNavigatorParamList } from "./RootNavigator/types/SignTransactionNavigator";
@@ -23,7 +23,8 @@ export default ({
   transaction: Transaction;
   account: Account;
 } & Navigation) => {
-  const C = perFamily[account.currency.family as keyof typeof perFamily];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const C = useSendRowsCustom(account.currency.family) as React.ComponentType<any> | undefined;
   return C ? (
     <C transaction={transaction} account={account} navigation={navigation} route={route} />
   ) : null;

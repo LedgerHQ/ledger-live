@@ -17,12 +17,19 @@ jest.mock("LLM/hooks/useStake/useStake", () => ({
   }),
 }));
 
-jest.mock("../../generated/accountActions", () => ({
-  __esModule: true,
-  default: {
-    bitcoin: { getMainActions: (...args: unknown[]) => mockGetMainActions(...args) },
-  },
-}));
+jest.mock("~/families/hooks", () => {
+  const bitcoinDecorators = {
+    getMainActions: (...args: unknown[]) => mockGetMainActions(...args),
+  };
+  return {
+    useAccountActions: {
+      getCached: (family: string | undefined) =>
+        family === "bitcoin" ? bitcoinDecorators : undefined,
+      preload: (family: string | undefined) =>
+        Promise.resolve(family === "bitcoin" ? bitcoinDecorators : undefined),
+    },
+  };
+});
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
   getAccountBridge: jest.fn(() => Promise.resolve(mockBridge)),

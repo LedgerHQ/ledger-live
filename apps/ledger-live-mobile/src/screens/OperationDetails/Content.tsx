@@ -26,8 +26,10 @@ import { useCurrencySettingsForAccount } from "LLM/hooks/useCurrencySettingsForA
 import DataList from "./DataList";
 import Modal from "./Modal";
 import Section, { styles as sectionStyles } from "./Section";
-import byFamiliesOperationDetails from "../../generated/operationDetails";
-import byFamiliesEditOperationPanel from "../../generated/EditOperationPanel";
+import {
+  useOperationDetails as useOperationDetailsSlot,
+  useEditOperationPanel as useEditOperationPanelSlot,
+} from "~/families/hooks";
 import DefaultOperationDetailsExtra from "./Extra";
 import Title from "./Title";
 import FormatDate from "~/components/DateFormat/FormatDate";
@@ -125,15 +127,13 @@ export default function Content({
   const isEditable = bridge.isEditableOperation(mainAccount, operation);
   const isOperationStuck = bridge.isStuckOperation(operation);
 
-  const specificOperationDetails =
-    byFamiliesOperationDetails[
-      mainAccount.currency.family as keyof typeof byFamiliesOperationDetails
-    ];
+  const specificOperationDetails = useOperationDetailsSlot(mainAccount.currency.family);
 
-  const { EditOperationPanel: SpecificEditOperationPanel = undefined } =
-    byFamiliesEditOperationPanel[
-      mainAccount.currency.family as keyof typeof byFamiliesEditOperationPanel
-    ] || {};
+  const editOperationPanelSlot = useEditOperationPanelSlot(mainAccount.currency.family);
+  const SpecificEditOperationPanel =
+    editOperationPanelSlot &&
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (editOperationPanelSlot as { EditOperationPanel?: React.ComponentType<any> }).EditOperationPanel;
 
   const urlFeesInfo =
     specificOperationDetails &&

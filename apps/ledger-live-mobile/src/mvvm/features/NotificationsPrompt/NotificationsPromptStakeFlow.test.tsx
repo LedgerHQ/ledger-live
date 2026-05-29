@@ -10,6 +10,7 @@ import { AuthorizationStatus } from "@react-native-firebase/messaging";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import {
   act,
+  LONG_TIMEOUT,
   renderWithReactQuery as render,
   screen,
   waitFor,
@@ -17,7 +18,7 @@ import {
 } from "@tests/test-renderer";
 import storage from "LLM/storage";
 import { MockedAccounts } from "LLM/features/Accounts/__integrations__/mockedAccounts";
-import * as MobileFamilies from "~/families";
+import { familyNavigatorScreens } from "~/families/nav-loaders";
 import GlobalDrawers from "~/GlobalDrawers";
 import { NavigatorName, ScreenName } from "~/const";
 import { track } from "~/analytics";
@@ -51,11 +52,7 @@ type StakePromptBucket =
   | "withdrawing/withdraw"
   | "revoke/claim/lifecycle";
 
-type MobileFamilyFlowExport = keyof typeof MobileFamilies;
-
-type MobileFamilyFlow = {
-  component: ComponentType;
-};
+type MobileFamilyFlowExport = keyof typeof familyNavigatorScreens;
 
 type StakePromptCase = {
   label: string;
@@ -70,17 +67,12 @@ type StakePromptCase = {
   params?: Record<string, unknown>;
 };
 
-const hasComponent = (familyExport: unknown): familyExport is MobileFamilyFlow => {
-  const component = (familyExport as { component?: unknown } | null)?.component;
-  return component !== null && (typeof component === "function" || typeof component === "object");
-};
-
-const getMobileFamilyFlow = (familyExportKey: MobileFamilyFlowExport): MobileFamilyFlow => {
-  const familyExport = MobileFamilies[familyExportKey];
-  if (!hasComponent(familyExport)) {
+const getMobileFamilyFlowComponent = (familyExportKey: MobileFamilyFlowExport): ComponentType => {
+  const component = familyNavigatorScreens[familyExportKey];
+  if (typeof component !== "function") {
     throw new Error(`${familyExportKey} is not a registered mobile family flow`);
   }
-  return familyExport;
+  return component as ComponentType;
 };
 
 const stakePromptFlowNamePattern =
@@ -89,14 +81,12 @@ const stakePromptFlowNamePattern =
 const nonStakePromptFlowExports = new Set<MobileFamilyFlowExport>(["TronVoteFlow"]);
 
 const findRegisteredStakePromptFlowExports = () =>
-  Object.entries(MobileFamilies)
+  Object.keys(familyNavigatorScreens)
     .filter(
-      ([familyExportKey, familyExport]) =>
+      familyExportKey =>
         stakePromptFlowNamePattern.test(familyExportKey) &&
-        !nonStakePromptFlowExports.has(familyExportKey as MobileFamilyFlowExport) &&
-        hasComponent(familyExport),
+        !nonStakePromptFlowExports.has(familyExportKey as MobileFamilyFlowExport),
     )
-    .map(([familyExportKey]) => familyExportKey)
     .sort();
 
 const accountsByKey = {
@@ -613,7 +603,13 @@ const stakePromptErrorCasesByBucket = stakePromptCases.reduce(
 let useTezosBakerSpy: jest.SpiedFunction<typeof TezosReact.useBaker>;
 
 describe("NotificationsPrompt stake flow", () => {
-  beforeAll(() => {
+  // Cold-start heavy: boots a full navigator + redux. Family screens are now lazy
+  // (defer-load), so warm their chunks up front instead of loading inside a timed render.
+  jest.setTimeout(LONG_TIMEOUT);
+
+  beforeAll(async () => {
+    const flowExportKeys = [...new Set(stakePromptCases.map(c => c.familyExportKey))];
+    await Promise.all(flowExportKeys.map(key => familyNavigatorScreens[key].preload()));
     jest.useFakeTimers();
     useTezosBakerSpy = jest.spyOn(TezosReact, "useBaker").mockReturnValue({
       address: "tz1-validator",
@@ -650,7 +646,7 @@ describe("NotificationsPrompt stake flow", () => {
         stakePromptCase.flowName,
         {
           flowName: stakePromptCase.flowName,
-          component: getMobileFamilyFlow(stakePromptCase.familyExportKey).component,
+          component: getMobileFamilyFlowComponent(stakePromptCase.familyExportKey),
         },
       ]),
     ).values(),

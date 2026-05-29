@@ -10,7 +10,7 @@ import type { SendFundsNavigatorStackParamList } from "~/components/RootNavigato
 import type { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
 import type { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 import { ScreenName } from "~/const";
-import memoTagSummaryRow from "~/generated/MemoTagSummary";
+import { useMemoTagSummary as useMemoTagSummarySlot } from "~/families/hooks";
 
 type Navigation = BaseComposite<
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
@@ -27,8 +27,8 @@ export default function MemoTagSummary({
   transaction: Transaction;
   account: Account;
 } & Navigation) {
-  const MemoTagSummaryRow =
-    memoTagSummaryRow[account.currency.family as keyof typeof memoTagSummaryRow];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const MemoTagSummaryRow = useMemoTagSummarySlot(account.currency.family) as React.ComponentType<any> | undefined;
 
   if (!MemoTagSummaryRow) return null;
 

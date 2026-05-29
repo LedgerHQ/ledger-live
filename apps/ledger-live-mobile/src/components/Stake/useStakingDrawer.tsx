@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { NavigationProp, ParamListBase, RouteProp } from "@react-navigation/native";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { NavigatorName, ScreenName } from "~/const";
-import perFamilyAccountActions from "../../generated/accountActions";
+import { useAccountActions } from "~/families/hooks";
 import { useSelector } from "~/context/hooks";
 import { walletSelector } from "~/reducers/wallet";
 import { useStake } from "LLM/hooks/useStake/useStake";
@@ -57,8 +57,7 @@ export function useStakingDrawer({
         account.type === "TokenAccount"
           ? account?.token?.parentCurrency?.family
           : account?.currency?.family;
-      // @ts-expect-error issue in typing
-      const decorators = perFamilyAccountActions[family];
+      const decorators = await useAccountActions.preload(family);
 
       // get the stake flow for the specific currency
 

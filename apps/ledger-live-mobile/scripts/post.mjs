@@ -91,8 +91,6 @@ if (os.platform() === "win32") {
 
 cd(path.join(__dirname, ".."));
 
-const syncFamilies = async () => await $`zx ./scripts/sync-families-dispatch.mjs`;
-
 const final = async () => {
   // Had to remove the following because we already have the AsyncSocket lib as a dependency from Flipper 🐬
   // Why would anyone bundle an external lib available on CocoaPods anyway?
@@ -187,5 +185,4 @@ BRAZE_CUSTOM_ENDPOINT="sdk.fra-02.braze.eu"`;
   }
 };
 
-await syncFamilies();
 await final();

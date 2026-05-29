@@ -1,5 +1,5 @@
 import { Currency } from "@ledgerhq/types-cryptoassets";
-import perFamily from "~/generated/MemoTagInput";
+import { memoTagInputFamilies } from "~/families/loaders";
 import { MEMO_TAG_COINS } from "../constants";
 
 const getFamily = (coin: Currency): string => {
@@ -14,7 +14,7 @@ const getFamily = (coin: Currency): string => {
 };
 
 export function hasMemoTag(coin: Currency) {
-  return getFamily(coin) in perFamily;
+  return memoTagInputFamilies.has(getFamily(coin));
 }
 
 export function hasMemoDisclaimer(coin: Currency) {

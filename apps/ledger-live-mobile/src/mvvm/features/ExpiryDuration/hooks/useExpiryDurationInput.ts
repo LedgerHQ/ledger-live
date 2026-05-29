@@ -2,14 +2,14 @@ import { FC, useMemo, useState } from "react";
 
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import perFamily from "~/generated/ExpiryDurationInput";
+import { useExpiryDurationInput as useExpiryDurationInputFamily } from "~/families/hooks";
 import { ExpiryDurationInputProps, TxPatch } from "../types";
 
 export const useExpiryDurationInput = (
   family: CryptoCurrency["family"],
   updateTransaction: (patch: TxPatch<Transaction>) => void,
 ) => {
-  const familyModule = perFamily[family as keyof typeof perFamily];
+  const familyModule = useExpiryDurationInputFamily(family);
   const Input = (familyModule as FC<ExpiryDurationInputProps> | undefined) ?? null;
 
   const [value, setValue] = useState<number | undefined>();
