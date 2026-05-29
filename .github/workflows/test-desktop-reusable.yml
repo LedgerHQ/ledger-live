@@ -68,6 +68,9 @@ jobs:
           skip_builds: true
 
       - name: format check
+        # TODO(LIVE-31553): remove continue-on-error once format:check exists on
+        # release HEAD (~2 weeks); kept non-blocking to not break release flows.
+        continue-on-error: true
         run: pnpm desktop format:check
 
       - name: lint

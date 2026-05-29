@@ -62,6 +62,9 @@ jobs:
       - name: Install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
       - name: Run format check
+        # TODO(LIVE-31553): remove continue-on-error once format:check exists on
+        # release HEAD (~2 weeks); kept non-blocking to not break release flows.
+        continue-on-error: true
         run: pnpm exec nx run live-mobile:format:check
       - name: Run linter
         run: pnpm exec nx run live-mobile:lint -- --quiet

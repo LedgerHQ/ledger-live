@@ -94,6 +94,9 @@ jobs:
           production: ${{ inputs.vercel-production }}
 
       - name: Check formatting web-tools
+        # TODO(LIVE-31553): remove continue-on-error once format:check exists on
+        # release HEAD (~2 weeks); kept non-blocking to not break release flows.
+        continue-on-error: true
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
         with:
           command: pnpm exec nx run @ledgerhq/web-tools:format:check

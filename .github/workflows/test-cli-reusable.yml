@@ -46,6 +46,9 @@ jobs:
       - name: build cli
         run: pnpm exec nx run @ledgerhq/live-cli:build
       - name: format check cli
+        # TODO(LIVE-31553): remove continue-on-error once format:check exists on
+        # release HEAD (~2 weeks); kept non-blocking to not break release flows.
+        continue-on-error: true
         run: pnpm exec nx run @ledgerhq/live-cli:format:check
       - name: lint cli
         run: pnpm exec nx run @ledgerhq/live-cli:lint -- --quiet
