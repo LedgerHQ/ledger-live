@@ -1,26 +1,40 @@
-Each module need to declare mocks under **mocks**/modules with data generators for tests to be testing the modules with them. Here are the object and functions to export:
+# WalletSync Module Mocks
+
+Each WalletSync module declares mocks under `__mocks__/modules`. Tests use these
+generators to exercise module sync behavior deterministically.
+
+Export the objects and functions below for each module.
 
 ### `emptyState`
 
-This is the initial state of the module. It should be an empty object or array.
+Initial module state. It should be an empty object or array.
 
-The module need to consider that this emptyState have no diff with `null`.
+The module should treat `emptyState` as having no diff with `null`.
 
 ### `genState(index)`
 
-This function should generate a deterministic state for a given index. Each state must differ from each other and represent a wide variety of possible states. genState must not return emptyState. It's a good practice to have intersection between states. It is conventional that higher index have more data than lower index. For instance `genState(0)` on accounts have 1 account.
+Generate a deterministic state for a given index. Each state must differ from
+the others and represent a wide variety of possible states. `genState` must not
+return `emptyState`.
+
+Prefer some intersection between states. By convention, higher indexes contain
+more data than lower indexes. For instance, `genState(0)` on accounts has one
+account.
 
 ### `convertLocalToDistantState(localState)`
 
-This function should convert the local state to the distant state. The distant state is the state that is sent to the distant server.
+Convert the local state to the distant state sent to the distant server.
 
 ### `convertDistantToLocalState(distantState)`
 
-This function should guess a conversion of the distant state to the local state. NB: this is a guess because in real life it is not always possible to resolve this synchronously, but we are making so in context of our mocks.
+Guess a conversion from distant state to local state. This is a guess because in
+production it is not always possible to resolve synchronously, but mocks keep it
+synchronous.
 
 ### `similarLocalState(a, b)`
 
-Compare two local state and tells if they are "similar", ignoring possible diff related to Distant<>Local translations or possible change of orders that are acceptable for each module.
+Compare two local states and return whether they are similar, ignoring accepted
+differences from distant/local translations or order changes.
 
 ## Template
 
@@ -28,21 +42,21 @@ Compare two local state and tells if they are "similar", ignoring possible diff 
 type LocalState = ...
 type DistantState = ...
 
-export const emptyState: LocalState = TODO;
+export const emptyState: LocalState = ...
 
 export const genState = (index: number): LocalState => {
-  TODO;
+  ...
 };
 
 export const convertLocalToDistantState = (localState: LocalState): DistantState => {
-  TODO;
+  ...
 };
 
 export const convertDistantToLocalState = (distantState: DistantState): LocalState => {
-  TODO;
+  ...
 };
 
 export const similarLocalState = (a: LocalState, b: LocalState) => {
-  TODO;
+  ...
 };
 ```
