@@ -64,16 +64,13 @@ describe("resolveTrendPercentAndVariant", () => {
 
 describe("getPriceChangeKeyForRange", () => {
   it("maps each chart range to a price-change key", () => {
-    expect(getPriceChangeKeyForRange("1h")).toBe(KeysPriceChange.hour);
     expect(getPriceChangeKeyForRange("1d")).toBe(KeysPriceChange.day);
     expect(getPriceChangeKeyForRange("1w")).toBe(KeysPriceChange.week);
     expect(getPriceChangeKeyForRange("1m")).toBe(KeysPriceChange.month);
+    expect(getPriceChangeKeyForRange("1y")).toBe(KeysPriceChange.year);
   });
 
   it("folds longer ranges into the yearly key (the broadest series available)", () => {
-    expect(getPriceChangeKeyForRange("6m")).toBe(KeysPriceChange.year);
-    expect(getPriceChangeKeyForRange("1y")).toBe(KeysPriceChange.year);
-    expect(getPriceChangeKeyForRange("5y")).toBe(KeysPriceChange.year);
     expect(getPriceChangeKeyForRange("all")).toBe(KeysPriceChange.year);
   });
 });

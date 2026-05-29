@@ -10,3 +10,10 @@ export const LINE_CHART_COLOR_TO_STROKE = {
   error: cssVar("var(--color-background-error-strong)"),
   muted: cssVar("var(--color-background-muted-strong)"),
 } as const satisfies Record<LineChartColor, string>;
+
+export const LINE_CHART_POINT_SIZE = 10;
+
+export const LINE_CHART_EXTREMA_COLORS = {
+  max: "success",
+  min: "error",
+} as const satisfies { max: LineChartColor; min: LineChartColor };

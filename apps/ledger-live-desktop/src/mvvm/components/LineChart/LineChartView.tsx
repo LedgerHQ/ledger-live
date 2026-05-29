@@ -15,6 +15,16 @@ export function LineChartView({
   handleSelectedChange,
   rangeSelectorLabel,
   rangeButtons,
+  points,
+  enableScrubber,
+  formatValue,
+  tooltipTitle,
+  onScrubberPositionChange,
+  showArea,
+  showXAxis,
+  showYAxis,
+  xAxis,
+  yAxis,
 }: LineChartViewProps) {
   return (
     <div className="flex w-full min-w-0 flex-col gap-24" data-testid="line-chart">
@@ -24,6 +34,16 @@ export function LineChartView({
         isError={isError}
         errorMessage={errorMessage}
         chartSeries={chartSeries}
+        points={points}
+        enableScrubber={enableScrubber}
+        formatValue={formatValue}
+        tooltipTitle={tooltipTitle}
+        onScrubberPositionChange={onScrubberPositionChange}
+        showArea={showArea}
+        showXAxis={showXAxis}
+        showYAxis={showYAxis}
+        xAxis={xAxis}
+        yAxis={yAxis}
       />
 
       <SegmentedControl

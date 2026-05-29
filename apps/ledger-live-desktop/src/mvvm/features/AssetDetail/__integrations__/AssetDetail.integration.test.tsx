@@ -14,6 +14,7 @@ import {
   makeIntegrationTokenCurrency,
   setupDistributionRouteMocks,
 } from "tests/utils/distributionTestUtils";
+import { hoverChartSvg, mockLumenChartResizeObserver } from "tests/utils/lumenChartTestUtils";
 import { mockDada, mockMarket } from "tests/utils/assetDetailMocks";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import type { DistributionItem } from "@ledgerhq/types-live";
@@ -361,6 +362,16 @@ describe("AssetDetail integration", () => {
     });
 
     describe("chart section", () => {
+      const originalResizeObserver = global.ResizeObserver;
+
+      beforeEach(() => {
+        mockLumenChartResizeObserver();
+      });
+
+      afterEach(() => {
+        global.ResizeObserver = originalResizeObserver;
+      });
+
       it("renders with the 1D range selected by default and switches range on click", async () => {
         mockMarket.withData(MarketMockedResponse.bitcoinDetail);
         setupRoute("bitcoin", OWNED_ASSETS[0].buildDistribution());
@@ -413,6 +424,40 @@ describe("AssetDetail integration", () => {
         });
         // BTC fixture has a +118.89% 1y change.
         expect(screen.getByTestId(TEST_ID.MARKET_PRICE_PERCENT)).toHaveTextContent(/^\+/);
+      });
+
+      it("renders the price chart with min/max markers and x-axis only", async () => {
+        mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+        setupRoute("bitcoin", OWNED_ASSETS[0].buildDistribution());
+
+        renderWithMockedCounterValuesProvider(<AssetDetail />);
+
+        const section = await screen.findByTestId(TEST_ID.CHART_SECTION);
+
+        await waitFor(() => {
+          expect(within(section).getByTestId("chart-svg")).toBeVisible();
+        });
+
+        expect(within(section).queryByTestId("y-axis")).not.toBeInTheDocument();
+        expect(within(section).getByTestId("x-axis")).toBeVisible();
+        expect(within(section).getAllByTestId("point-group")).toHaveLength(2);
+      });
+
+      it("shows the scrubber tooltip when hovering the chart", async () => {
+        mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+        setupRoute("bitcoin", OWNED_ASSETS[0].buildDistribution());
+
+        renderWithMockedCounterValuesProvider(<AssetDetail />);
+
+        const section = await screen.findByTestId(TEST_ID.CHART_SECTION);
+        const chart = await waitFor(() => within(section).getByTestId("chart-svg"));
+
+        hoverChartSvg(chart);
+
+        await waitFor(() => {
+          expect(within(section).getByTestId("scrubber")).toBeVisible();
+          expect(within(section).getByTestId("chart-tooltip")).toBeVisible();
+        });
       });
     });
 

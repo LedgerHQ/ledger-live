@@ -5,7 +5,20 @@ import {
   LINE_CHART_COLOR_TO_STROKE,
   LINE_CHART_RANGES,
 } from "./constants";
-import type { LineChartProps, LineChartRange, LineChartSeries } from "./types";
+import type {
+  LineChartPointMarker,
+  LineChartProps,
+  LineChartRange,
+  LineChartScrubberPositionChange,
+  LineChartSeries,
+  LineChartTooltipTitle,
+  LineChartValueFormatter,
+  LineChartXAxisConfig,
+  LineChartYAxisConfig,
+} from "./types";
+import { getExtremaPointMarkers } from "./utils/getExtremaPointMarkers";
+
+const defaultFormatValue: LineChartValueFormatter = value => String(value);
 
 export type LineChartViewModelResult = Readonly<{
   chartSeries: LineChartSeries[];
@@ -17,6 +30,16 @@ export type LineChartViewModelResult = Readonly<{
   handleSelectedChange: (value: string) => void;
   rangeSelectorLabel: string;
   rangeButtons: ReadonlyArray<{ value: LineChartRange; label: string }>;
+  points: LineChartPointMarker[];
+  enableScrubber: boolean;
+  formatValue: LineChartValueFormatter;
+  tooltipTitle?: LineChartTooltipTitle;
+  onScrubberPositionChange?: LineChartScrubberPositionChange;
+  showArea: boolean;
+  showXAxis: boolean;
+  showYAxis: boolean;
+  xAxis?: LineChartXAxisConfig;
+  yAxis?: LineChartYAxisConfig;
 }>;
 
 export function useLineChartViewModel({
@@ -28,6 +51,16 @@ export function useLineChartViewModel({
   isError = false,
   errorMessage,
   height = DEFAULT_LINE_CHART_HEIGHT,
+  points,
+  enableScrubber = true,
+  formatValue = defaultFormatValue,
+  tooltipTitle,
+  onScrubberPositionChange,
+  showArea = true,
+  showXAxis = true,
+  showYAxis = true,
+  xAxis,
+  yAxis,
 }: LineChartProps): LineChartViewModelResult {
   const { t } = useTranslation();
   const stroke = LINE_CHART_COLOR_TO_STROKE[color];
@@ -48,6 +81,11 @@ export function useLineChartViewModel({
     [series, stroke],
   );
 
+  const resolvedPoints = useMemo(
+    () => points ?? getExtremaPointMarkers(chartSeries),
+    [points, chartSeries],
+  );
+
   const rangeButtons = useMemo(
     () => LINE_CHART_RANGES.map(range => ({ value: range, label: t(`lineChart.range.${range}`) })),
     [t],
@@ -63,5 +101,15 @@ export function useLineChartViewModel({
     handleSelectedChange,
     rangeSelectorLabel: t("lineChart.rangeSelectorLabel"),
     rangeButtons,
+    points: resolvedPoints,
+    enableScrubber,
+    formatValue,
+    tooltipTitle,
+    onScrubberPositionChange,
+    showArea,
+    showXAxis,
+    showYAxis,
+    xAxis,
+    yAxis,
   };
 }

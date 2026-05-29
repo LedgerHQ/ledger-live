@@ -11,6 +11,12 @@ export function ChartSectionView({
   color,
   isLoading,
   isError,
+  formatValue,
+  tooltipTitle,
+  showXAxis,
+  showYAxis,
+  xAxis,
+  yAxis,
 }: ChartSectionViewProps) {
   return (
     <div className="w-full min-w-0" data-testid="asset-detail-chart-section">
@@ -21,6 +27,12 @@ export function ChartSectionView({
         color={color}
         isLoading={isLoading}
         isError={isError}
+        formatValue={formatValue}
+        tooltipTitle={tooltipTitle}
+        showXAxis={showXAxis}
+        showYAxis={showYAxis}
+        xAxis={xAxis}
+        yAxis={yAxis}
       />
     </div>
   );

@@ -40,13 +40,10 @@ type UseMarketPriceSectionViewModelResult = Readonly<{
 }>;
 
 const RANGE_I18N_KEY: Record<LineChartRange, string> = {
-  "1h": "assetDetails.day",
   "1d": "assetDetails.day",
   "1w": "assetDetails.week",
   "1m": "assetDetails.month",
-  "6m": "assetDetails.year",
   "1y": "assetDetails.year",
-  "5y": "assetDetails.allTime",
   all: "assetDetails.allTime",
 };
 
