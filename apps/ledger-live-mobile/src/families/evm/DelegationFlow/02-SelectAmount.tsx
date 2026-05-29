@@ -18,6 +18,7 @@ import invariant from "invariant";
 import React, { useCallback, useMemo } from "react";
 import { useTheme } from "styled-components/native";
 import {
+  SafeAreaView,
   Keyboard,
   KeyboardAvoidingViewProps,
   Platform,
@@ -117,7 +118,7 @@ export default function SelectAmount({ navigation, route }: Props) {
   }
 
   return (
-    <View style={[styles.root, { backgroundColor: colors.background.main }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background.main }]}>
       <KeyboardView behavior={behaviorParam}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.container}>
@@ -208,7 +209,7 @@ export default function SelectAmount({ navigation, route }: Props) {
           </View>
         </TouchableWithoutFeedback>
       </KeyboardView>
-    </View>
+    </SafeAreaView>
   );
 }
 
