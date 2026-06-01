@@ -37,9 +37,10 @@ beforeEach(() => {
 });
 
 describe("fetchRemoteFlags", () => {
-  it("filters out non-feature keys, strips feature_ prefix, and camelCases", async () => {
+  it("maps feature_<snake_case> keys to their registered FeatureId and ignores other keys", async () => {
     mockGetAll.mockReturnValue({
       feature_mock_feature: value(JSON.stringify({ enabled: true })),
+      // Not a registered FeatureId — must be dropped, not invented via camelCase.
       feature_some_other_flag: value(JSON.stringify({ enabled: false, params: { x: 1 } })),
       config_unrelated: value("\"ignored\""),
       stranger_key: value("\"ignored\""),
@@ -50,20 +51,32 @@ describe("fetchRemoteFlags", () => {
 
     expect(result).toEqual({
       mockFeature: { enabled: true },
-      someOtherFlag: { enabled: false, params: { x: 1 } },
     });
   });
 
-  it("silently drops keys whose value is not valid JSON", async () => {
+  it("preserves acronym capitalization in FeatureIds (round-trip via snakeCase, not camelCase)", async () => {
+    // Regression: camelCase("llm_account_list_ui") = "llmAccountListUi" ≠ "llmAccountListUI".
+    // Going id→snake (the legacy direction) is acronym-safe.
     mockGetAll.mockReturnValue({
-      feature_good: value(JSON.stringify({ enabled: true })),
-      feature_bad: value("not json"),
+      feature_llm_account_list_ui: value(JSON.stringify({ enabled: true })),
     });
 
     const { fetchRemoteFlags } = await loadModule();
     const result = await fetchRemoteFlags();
 
-    expect(result).toEqual({ good: { enabled: true } });
+    expect(result).toEqual({ llmAccountListUI: { enabled: true } });
+    expect(result).not.toHaveProperty("llmAccountListUi");
+  });
+
+  it("silently drops keys whose value is not valid JSON", async () => {
+    mockGetAll.mockReturnValue({
+      feature_mock_feature: value("not json"),
+    });
+
+    const { fetchRemoteFlags } = await loadModule();
+    const result = await fetchRemoteFlags();
+
+    expect(result).toEqual({});
   });
 
   it("propagates the fetchAndActivate failure (middleware swallows it)", async () => {

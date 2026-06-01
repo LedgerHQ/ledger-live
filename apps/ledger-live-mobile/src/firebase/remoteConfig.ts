@@ -1,8 +1,8 @@
 import { getRemoteConfig } from "@react-native-firebase/remote-config";
-import camelCase from "lodash/camelCase";
+import snakeCase from "lodash/snakeCase";
 import { formatDefaultFeatures } from "@ledgerhq/live-common/featureFlags/index";
-import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
-import type { PartialFeatures } from "@shared/feature-flags";
+import { FEATURE_FLAGS_DEFAULTS, FeatureIdSchema } from "@shared/feature-flags";
+import type { FeatureId, PartialFeatures } from "@shared/feature-flags";
 
 type Subscriber = (event: { fetchedAt: number }) => void;
 
@@ -64,16 +64,34 @@ export function whenReady(): Promise<void> {
 }
 
 /**
+ * Reverse lookup from the Firebase remote-config key (snake_case after the
+ * `feature_` prefix) to the canonical registered FeatureId. Built once from
+ * `FeatureIdSchema.options` so it always matches the legacy
+ * `formatToFirebaseFeatureId(id) = "feature_" + snakeCase(id)` mapping.
+ *
+ * Why this exists: naïvely inverting with `camelCase(rcKey)` does not
+ * round-trip for IDs containing acronyms — `snakeCase("llmAccountListUI")` is
+ * `"llm_account_list_ui"` but `camelCase("llm_account_list_ui")` is
+ * `"llmAccountListUi"` (lowercase `i`), which does not match the registered
+ * `llmAccountListUI`. Going id→snake (the same direction the legacy resolver
+ * used to look the flag up) is unambiguous and acronym-safe.
+ */
+const featureIdByRcKey: Map<string, FeatureId> = new Map(
+  FeatureIdSchema.options.map(id => [snakeCase(id), id]),
+);
+
+/**
  * Single source of truth for fetching Firebase remote feature flags. Wired into
  * `createFeatureFlagsMiddleware` so the Redux slice's `state.featureFlags.remote`
  * stays in sync, and exposed via {@link subscribeToRemoteFlags} so legacy
  * consumers hydrate from the same payload at the same tick.
  *
  * Filters out `config_*` keys (owned by `LiveConfig`), strips the `feature_`
- * prefix, camelCases the remainder, and JSON-parses each value. Malformed JSON
- * values are dropped silently — at worst the slice falls back to defaults for
- * that key. Unknown feature IDs are dropped at runtime inside `resolveAll`, so
- * the closing cast to {@link PartialFeatures} is safe.
+ * prefix, resolves the canonical FeatureId via {@link featureIdByRcKey}, and
+ * JSON-parses each value. Malformed JSON values are dropped silently — at
+ * worst the slice falls back to defaults for that key. Unknown feature keys
+ * (no matching registered ID) are dropped, so the closing cast to
+ * {@link PartialFeatures} is safe.
  */
 export async function fetchRemoteFlags(): Promise<PartialFeatures> {
   try {
@@ -83,7 +101,8 @@ export async function fetchRemoteFlags(): Promise<PartialFeatures> {
     const flags: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(all)) {
       if (!key.startsWith("feature_")) continue;
-      const featureId = camelCase(key.slice("feature_".length));
+      const featureId = featureIdByRcKey.get(key.slice("feature_".length));
+      if (!featureId) continue;
       try {
         flags[featureId] = JSON.parse(value.asString());
       } catch {
