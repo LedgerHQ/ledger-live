@@ -1,4 +1,4 @@
-import { execFileSync } from "child_process";
+import { execFileSync, spawnSync } from "child_process";
 import { setEnv } from "@ledgerhq/live-env";
 import {
   setExchangeDependencies,
@@ -45,9 +45,8 @@ export class SpeculosDeviceManager {
   }
 
   unreversePort(port: number) {
-    if (this.project.platform === "android") {
-      execFileSync("adb", ["reverse", "--remove", `tcp:${port}`], { stdio: "ignore" });
-    }
+    if (this.project.platform !== "android") return;
+    spawnSync("adb", ["reverse", "--remove", `tcp:${port}`], { stdio: "ignore" });
   }
 
   address(port: number) {
@@ -65,11 +64,7 @@ export class SpeculosDeviceManager {
 
   async cleanup() {
     for (const speculos of this.devices) {
-      try {
-        this.unreversePort(speculos.port);
-      } catch {
-        // Best effort cleanup; the reverse may not exist if the run failed early.
-      }
+      this.unreversePort(speculos.port);
       await stopSpeculos(speculos.id);
     }
     this.devices.length = 0;

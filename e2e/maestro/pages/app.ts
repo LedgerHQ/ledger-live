@@ -1,13 +1,10 @@
-import { execFileSync, execSync } from "child_process";
+import { execFileSync, execSync, spawnSync } from "child_process";
 import { existsSync } from "fs";
 import path from "path";
 import { MaestroProject } from "../config/projects";
+import { E2EBridge } from "../runtime/bridge";
 import { MaestroCommand, MaestroRuntime } from "../runtime/maestro";
 
-// All four iOS bundle IDs the project may install side-by-side. We uninstall
-// every one before each run so the simulator can never end up with two apps
-// that share the same display name ("LL [DEV]") but different bundle IDs —
-// which causes Maestro to launch the wrong build.
 const IOS_BUNDLE_IDS = [
   "com.ledger.live",
   "com.ledger.live.debug",
@@ -25,6 +22,7 @@ export class MaestroApp {
   constructor(
     private readonly project: MaestroProject,
     private readonly maestro: MaestroRuntime,
+    private readonly bridge: E2EBridge,
   ) {}
 
   install() {
@@ -99,11 +97,7 @@ export class MaestroApp {
   }
 
   private execFileSyncQuietly(command: string, args: string[]) {
-    try {
-      execFileSync(command, args, { stdio: "ignore" });
-    } catch {
-      // Best effort cleanup: uninstall fails when the app is not installed yet.
-    }
+    spawnSync(command, args, { stdio: "ignore" });
   }
 
   async launch(arguments_: Record<string, string | number | boolean>) {
@@ -117,16 +111,8 @@ export class MaestroApp {
     ]);
   }
 
-  openDeepLink(url: string) {
-    if (this.project.platform === "ios") {
-      execFileSync("xcrun", ["simctl", "openurl", "booted", url], { stdio: "inherit" });
-    } else {
-      execFileSync(
-        "adb",
-        ["shell", "am", "start", "-W", "-a", "android.intent.action.VIEW", "-d", url],
-        { stdio: "inherit" },
-      );
-    }
+  async openDeepLink(url: string) {
+    await this.bridge.openDeeplink(url);
   }
 
   async runNativeFlow(name: string, commands: MaestroCommand[], env?: Record<string, string>) {

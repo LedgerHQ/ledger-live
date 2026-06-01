@@ -221,7 +221,7 @@ async function onMessage(event: WebSocketMessageEvent) {
         break;
       }
       case "setAutoPickAccount":
-        autoPickAccountStore.setEnabled(msg.payload.enabled);
+        autoPickAccountStore.setEnabled(msg.payload.enabled, msg.payload.currencyId);
         break;
       default:
         break;

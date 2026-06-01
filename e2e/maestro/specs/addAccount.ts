@@ -9,8 +9,8 @@ export async function runAddAccountSpec(ctx: MaestroContext) {
       mainSpeculos: { name: "Bitcoin", testName: "maestro-add-account" },
     },
     async () => {
-      ctx.app.openDeepLink("ledgerlive://portfolio");
-      ctx.portfolio.openAddAccount();
+      await ctx.app.openDeepLink("ledgerlive://portfolio");
+      await ctx.portfolio.openAddAccount();
 
       await ctx.modularDrawer.selectAssetForAddAccount("BTC");
       await ctx.modularDrawer.confirmAddAccount();

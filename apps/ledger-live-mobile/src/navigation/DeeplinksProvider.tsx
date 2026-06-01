@@ -53,6 +53,8 @@ import { handleGenericAwarenessModalDeeplink } from "./deeplinks/handleGenericAw
 import { handleProductTourDeeplink } from "./deeplinks/handleProductTourDeeplink";
 import { SplashScreenHandle } from "LLM/features/LaunchScreen/SplashScreenHandle";
 import { useDeeplinkDrawerCleanup } from "./deeplinks/useDeeplinkDrawerCleanup";
+import { e2eBridgeClient } from "../../e2e/bridge/client";
+import { filter } from "rxjs/operators";
 
 const themes: {
   [key: string]: Theme;
@@ -594,7 +596,7 @@ export const DeeplinksProvider = ({
             }
           : getOnboardingLinkingOptions(!!userAcceptedTerms)),
         subscribe(listener) {
-          const sub = Linking.addEventListener("url", ({ url }) => {
+          const handleDeeplink = ({ url }: { url: string }) => {
             // Track deeplink session when app comes from background
             track("Start", { isDeeplinkSession: true });
             triggeredAppStartRef.current = false;
@@ -618,10 +620,23 @@ export const DeeplinksProvider = ({
             }
 
             listener(getProxyURL(url, buySellUiManifestId));
-          });
+          };
+
+          const sub = Linking.addEventListener("url", handleDeeplink);
+
+          const bridgeSub =
+            Config.E2E_BRIDGE || Config.DETOX
+              ? e2eBridgeClient.pipe(filter(msg => msg.type === "openDeeplink")).subscribe(msg => {
+                  if (msg.type === "openDeeplink") {
+                    handleDeeplink({ url: msg.payload });
+                  }
+                })
+              : undefined;
+
           // Clean up the event listeners
           return () => {
             sub.remove();
+            bridgeSub?.unsubscribe();
           };
         },
         getStateFromPath: (path, config) => {

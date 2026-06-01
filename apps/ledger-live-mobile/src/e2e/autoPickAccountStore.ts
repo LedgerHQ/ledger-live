@@ -9,12 +9,17 @@
  */
 
 let enabled = false;
+let currencyId: string | undefined;
 
 export const autoPickAccountStore = {
-  setEnabled(value: boolean) {
+  setEnabled(value: boolean, targetCurrencyId?: string) {
     enabled = value;
+    currencyId = targetCurrencyId;
   },
   isEnabled(): boolean {
     return enabled;
+  },
+  getCurrencyId(): string | undefined {
+    return currencyId;
   },
 };

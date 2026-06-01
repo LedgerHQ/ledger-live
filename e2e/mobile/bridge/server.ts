@@ -166,6 +166,14 @@ async function navigate(name: string) {
   });
 }
 
+export async function openDeeplink(url: string) {
+  postMessage({
+    type: "openDeeplink",
+    id: uniqueId(),
+    payload: url,
+  });
+}
+
 export async function swapSetup() {
   if (!process.env.SWAP_API_BASE) {
     console.warn("[swapSetup] SWAP_API_BASE env var is not set, will use client-side default");
@@ -182,24 +190,25 @@ export async function swapSetup() {
  * overlays a WebView. Detox tests should NOT enable this — they drive the
  * drawer natively.
  */
-export async function setAutoPickAccount(enabled: boolean) {
+export async function setAutoPickAccount(enabled: boolean, currencyId?: string) {
   postMessage({
     type: "setAutoPickAccount",
     id: uniqueId(),
-    payload: { enabled },
+    payload: { enabled, currencyId },
   });
 }
 
 export type WebviewDriverOpPayload =
   | { op: "tapByTestId"; testId: string }
+  | { op: "tapByTestIdWhenEnabled"; testId: string; timeoutMs?: number }
   | { op: "waitForTestId"; testId: string; timeoutMs?: number }
+  | { op: "waitForTestIdText"; testId: string; text: string; timeoutMs?: number }
+  | { op: "waitForTestIdNumberAtLeast"; testId: string; min: number; timeoutMs?: number }
   | { op: "getText"; testId: string }
   | { op: "typeText"; testId: string; value: string }
   | { op: "querySelectorAllText"; selector: string };
 
-export type WebviewDriverResult =
-  | { ok: true; data?: unknown }
-  | { ok: false; error: string };
+export type WebviewDriverResult = { ok: true; data?: unknown } | { ok: false; error: string };
 
 export async function webviewDriver(
   driver: string,
@@ -381,6 +390,10 @@ function onMessage(messageStr: string) {
 }
 
 function log(message: string) {
+  // The Maestro runner sets E2E_BRIDGE_QUIET to suppress the very verbose
+  // per-message tracing (every send/receive/ACK) that floods its stdout.
+  // Detox leaves it unset and keeps the full trace.
+  if (process.env.E2E_BRIDGE_QUIET === "1") return;
   detoxLog.info(`[E2E Bridge Server]: ${message}`);
 }
 

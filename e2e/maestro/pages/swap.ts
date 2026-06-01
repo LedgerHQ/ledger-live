@@ -7,31 +7,29 @@ export class SwapPage {
 
   constructor(private readonly app: MaestroApp) {}
 
-  openViaDeeplink() {
-    this.app.openDeepLink("ledgerlive://swap");
+  async openViaDeeplink() {
+    await this.app.openDeepLink("ledgerlive://swap");
   }
 
-  async expectWalletApiWebview(timeoutMs: number = 60_000) {
+  async expectWalletApiWebview() {
     await this.app.runNativeFlow("swap-webview-ready", [
       {
         extendedWaitUntil: {
           visible: {
             id: this.walletApiWebviewId,
           },
-          timeout: timeoutMs,
         },
       },
     ]);
   }
 
-  async waitForSuccessAndContinue(timeoutMs: number = 120_000) {
+  async waitForSuccessAndContinue() {
     await this.app.runNativeFlow("swap-success-and-continue", [
       {
         extendedWaitUntil: {
           visible: {
             id: this.swapSuccessTitleId,
           },
-          timeout: timeoutMs,
         },
       },
       {

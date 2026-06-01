@@ -522,15 +522,15 @@ function useUiHook({ manifest, onTransactionBroadcast }: Props): UiHook {
         // first account whose currency / token id matches the request.
         if (E2E_BRIDGE_ENABLED && autoPickAccountStore.isEnabled()) {
           const requested = currencyIds ?? [];
-          const matchesRequested = (idCandidates: string[]) =>
-            requested.length === 0 || requested.some(c => idCandidates.includes(c));
 
-          const found = accountsForAutoPick.find(account => {
-            if (account.type === "TokenAccount") {
-              return matchesRequested([account.token.id]);
-            }
-            return matchesRequested([account.currency.id]);
-          });
+          const target = autoPickAccountStore.getCurrencyId();
+          const candidateId = (account: (typeof accountsForAutoPick)[number]) =>
+            account.type === "TokenAccount" ? account.token.id : account.currency.id;
+          const matchesRequested = (id: string) => requested.length === 0 || requested.includes(id);
+
+          const found = accountsForAutoPick.find(account =>
+            target ? candidateId(account) === target : matchesRequested(candidateId(account)),
+          );
 
           if (found) {
             const parent =
@@ -539,14 +539,14 @@ function useUiHook({ manifest, onTransactionBroadcast }: Props): UiHook {
                 : undefined;
             // eslint-disable-next-line no-console
             console.info(
-              `[E2E auto-pick] account.request currencies=${requested.join(",")} → ${found.id}`,
+              `[E2E auto-pick] account.request target=${target ?? "(first match)"} currencies=${requested.join(",")} → ${found.id}`,
             );
             onSuccess(found, parent);
             return;
           }
           // eslint-disable-next-line no-console
           console.warn(
-            `[E2E auto-pick] No account matches currencies=${requested.join(",")}; falling through to modular drawer`,
+            `[E2E auto-pick] No account matches target=${target ?? "(first match)"} currencies=${requested.join(",")}; falling through to modular drawer`,
           );
         }
 

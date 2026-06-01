@@ -21,7 +21,10 @@ export type OverrideFeatureFlagPayload = { id: FeatureId; value: Feature | undef
 
 export type WebviewDriverOpPayload =
   | { op: "tapByTestId"; testId: string }
+  | { op: "tapByTestIdWhenEnabled"; testId: string; timeoutMs?: number }
   | { op: "waitForTestId"; testId: string; timeoutMs?: number }
+  | { op: "waitForTestIdText"; testId: string; text: string; timeoutMs?: number }
+  | { op: "waitForTestIdNumberAtLeast"; testId: string; min: number; timeoutMs?: number }
   | { op: "getText"; testId: string }
   | { op: "typeText"; testId: string; value: string }
   | { op: "querySelectorAllText"; selector: string };
@@ -73,6 +76,7 @@ export type MessageData =
   | { type: "getFlags"; id: string }
   | { type: "getEnvs"; id: string }
   | { type: "navigate"; id: string; payload: string }
+  | { type: "openDeeplink"; id: string; payload: string }
   | { type: "importSettings"; id: string; payload: Partial<SettingsState> }
   | {
       type: "importAccounts";
@@ -106,7 +110,7 @@ export type MessageData =
        */
       type: "setAutoPickAccount";
       id: string;
-      payload: { enabled: boolean };
+      payload: { enabled: boolean; currencyId?: string };
     }
   | { type: "ACK"; id: string };
 

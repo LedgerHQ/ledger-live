@@ -9,6 +9,7 @@ type YamlValue = Scalar | YamlValue[] | { [key: string]: YamlValue };
 export type MaestroCommand = { [key: string]: YamlValue };
 
 const DEFAULT_TAP_SETTLE_TIMEOUT_MS = 250;
+const DEFAULT_WAIT_TIMEOUT_MS = 60_000;
 
 function quoteString(value: string): string {
   return JSON.stringify(value);
@@ -68,6 +69,14 @@ function withFastTapDefaults(command: MaestroCommand): MaestroCommand {
   return command;
 }
 
+function withWaitDefaults(command: MaestroCommand): MaestroCommand {
+  const wait = command.extendedWaitUntil;
+  if (wait && typeof wait === "object" && !Array.isArray(wait) && !("timeout" in wait)) {
+    return { ...command, extendedWaitUntil: { ...wait, timeout: DEFAULT_WAIT_TIMEOUT_MS } };
+  }
+  return command;
+}
+
 const PACKAGE_ROOT = path.resolve(__dirname, "..");
 
 export class MaestroRuntime {
@@ -80,7 +89,9 @@ export class MaestroRuntime {
     mkdirSync(this.tmpDir, { recursive: true });
 
     const flowPath = path.join(this.tmpDir, `${name}-${randomUUID()}.yaml`);
-    const body = commands.map(command => toYaml([withFastTapDefaults(command)])).join("\n");
+    const body = commands
+      .map(command => toYaml([withWaitDefaults(withFastTapDefaults(command))]))
+      .join("\n");
     const contents = [`appId: ${this.project.appId}`, `name: ${name}`, "---", body, ""].join("\n");
 
     writeFileSync(flowPath, contents);

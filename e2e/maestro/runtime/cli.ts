@@ -15,24 +15,20 @@ export type CliCommandOnApp = {
 
 async function executeCliCommand(
   cmd: CliCommand,
+  userdataPath?: string,
   speculosAddress?: string,
 ): Promise<unknown> {
-  const resultOrPromise = await cmd(undefined, speculosAddress);
+  const resultOrPromise = await cmd(userdataPath, speculosAddress);
   if (isObservable(resultOrPromise)) {
     return lastValueFrom(resultOrPromise);
   }
   return resultOrPromise;
 }
 
-/**
- * For each unique speculos app referenced in `cliCommandsOnApp`, launch a
- * dedicated Speculos instance, run the matching CLI commands against it,
- * then stop it. Cleanup happens in finally so a failing command still
- * tears down its Speculos.
- */
 export async function runCliCommandsOnApp(
   ctx: MaestroContext,
   cliCommandsOnApp: CliCommandOnApp[],
+  userdataPath?: string,
 ): Promise<void> {
   if (cliCommandsOnApp.length === 0) return;
 
@@ -52,16 +48,13 @@ export async function runCliCommandsOnApp(
     const speculosAddress = ctx.speculos.address(speculos.port);
     try {
       for (const cmd of cmds) {
-        await executeCliCommand(cmd, speculosAddress);
+        await executeCliCommand(cmd, userdataPath, speculosAddress);
       }
     } finally {
       try {
         await ctx.speculos.cleanup();
       } catch (error) {
-        console.warn(
-          `[cli] cleanup of ${appName} CLI Speculos failed:`,
-          sanitizeError(error),
-        );
+        console.warn(`[cli] cleanup of ${appName} CLI Speculos failed:`, sanitizeError(error));
       }
     }
   }
