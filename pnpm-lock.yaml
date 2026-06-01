@@ -3428,14 +3428,14 @@ importers:
         specifier: 9.27.1
         version: 9.27.1
       appium:
-        specifier: 3.4.2
-        version: 3.4.2
+        specifier: 3.5.0
+        version: 3.5.0
       appium-uiautomator2-driver:
-        specifier: ^7.5.2
-        version: 7.5.2(appium@3.4.2)
+        specifier: 7.5.2
+        version: 7.5.2(appium@3.5.0)
       appium-xcuitest-driver:
         specifier: 11.3.0
-        version: 11.3.0(appium@3.4.2)
+        version: 11.3.0(appium@3.5.0)
       expect-webdriverio:
         specifier: 5.6.5
         version: 5.6.5(@wdio/globals@9.27.1)(@wdio/logger@9.18.0)(webdriverio@9.27.1)
@@ -13188,12 +13188,16 @@ packages:
     resolution: {integrity: sha512-nTsGHbE9fwi9BxMzD2mBv2EFZgRDAiNqZn6NMLTs1bD/lc3tNflqelq6tEVhrbHwpyWDkaorNACKNz5u/e6BEw==}
     engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0, npm: '>=10'}
 
-  '@appium/base-plugin@3.2.4':
-    resolution: {integrity: sha512-0F6O0VCC6qN7NhdnBNvs0aWVqHZo1OBD8Uirn2mKnZGw9ofpiE0bhav0qfKpVPem2sBo30JSQJam4VkzjWhpRg==}
+  '@appium/base-driver@10.6.0':
+    resolution: {integrity: sha512-UP37xbRVrdfO0QPkDNVdFhLWc4M817K8mvJsGHWMZe1P//tPYio4lqmsA3baF10Fe5jcwYEoQZDROJLodAivKw==}
     engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0, npm: '>=10'}
 
-  '@appium/docutils@2.4.2':
-    resolution: {integrity: sha512-NV7rSZohVDFUg8+dkbU6HsGmVv6fOQV2HPmZpQH9vOtY+FdKYkMpc2PtZfC/OOvC5kT/eeXWssE5aPwujjSksg==}
+  '@appium/base-plugin@3.3.0':
+    resolution: {integrity: sha512-3xhkU+oBnMWSIJbq1x+oYgvV4dJyLkslQ8ONwH2Dbvr63bUdjgSmiXZ4vbY7aiNEQZv+A5aBWFS5NVMA8zRd5Q==}
+    engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0, npm: '>=10'}
+
+  '@appium/docutils@2.4.3':
+    resolution: {integrity: sha512-2267rmUqsA/Tam+tmZNhmGxq2UN2lXWK3xZOYX5a9+oc0y19IB6LFJ9+dRxHh4jRgdLJrtxzqqGPUfs4hBjLgQ==}
     engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0, npm: '>=10'}
     hasBin: true
 
@@ -13201,8 +13205,16 @@ packages:
     resolution: {integrity: sha512-WqagwYDZlPsSkICrXL9wB1E7qgErnwmYc/Q6NLVAC2ckXkWioh3fZ49AK5zevbJCnnkQbU2y8497Mk4xWDetkg==}
     engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0, npm: '>=10'}
 
+  '@appium/logger@2.0.8':
+    resolution: {integrity: sha512-G5uYRq97Kn1CEdgI2eq237NkgUMrxKecSsuagGiI5usNH8ttjFN+LP95QJi9JERxMW/djfXKv7dz6eJ0ZY3SbA==}
+    engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0, npm: '>=10'}
+
   '@appium/schema@1.1.1':
     resolution: {integrity: sha512-u2dHLEqnI5oHWYVsKUv3yypeu0a82+6N39awkFz5jKcxVCSbssr+Rvh0/0LOa/gwePGxi1OzjHpZzNXlr7hI7Q==}
+    engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0, npm: '>=10'}
+
+  '@appium/schema@1.2.0':
+    resolution: {integrity: sha512-6MqniwVPLSM5qkP0Azi0ktLIC4hMwUa1R4JWNDDqicZcWQmPUCUJF4keqZl1rGAbNdbQQ3++BIiTVm1Duvl/5A==}
     engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0, npm: '>=10'}
 
   '@appium/strongbox@1.1.1':
@@ -13213,12 +13225,20 @@ packages:
     resolution: {integrity: sha512-SfaFg0tAy0cqHQixtyB3BdZSyv287381McIq4/Zd6J070KFGNjXhF2wDGO3f2uN5VaYugwBYz/ZQEgozh6tK8g==}
     engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0, npm: '>=10'}
 
+  '@appium/support@7.2.3':
+    resolution: {integrity: sha512-/NVMUffjnH9rNrxE+DyM811B1hd0pZl8RT+DlZfqXVyAWzhUjBWw3U2VwSycowDoV9dBpXSpWQ3S+zfRnrMcTg==}
+    engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0, npm: '>=10'}
+
   '@appium/tsconfig@1.1.2':
     resolution: {integrity: sha512-lHKBm7hXCROc1Ha/cBxS4o3iQkeY96Pz7qM9Uh9vFDkdpTGBk56V1lmc3iGcgBYKBlaRT/LZmTsqClvHoiXhvw==}
     engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0, npm: '>=10'}
 
   '@appium/types@1.4.0':
     resolution: {integrity: sha512-GeYnDMj1yOIFA8ujOHv0/ZKoZe42F9ldCVSlnEOheYnxqA5ueHGwRI11ifZoIfMBsq7hpU77MAzmu+v9NV1vig==}
+    engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0, npm: '>=10'}
+
+  '@appium/types@1.5.0':
+    resolution: {integrity: sha512-xo7ahFernVOi/GK5Pnid7ewJL16TyP9lINwe+tmoRsNcNhr2hxa2yn4pAx9BjyvM5gNZrlH6GIsmq+5gDPsgKw==}
     engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0, npm: '>=10'}
 
   '@aptos-labs/aptos-cli@1.0.2':
@@ -24215,8 +24235,8 @@ packages:
     peerDependencies:
       appium: ^3.0.0-rc.2
 
-  appium@3.4.2:
-    resolution: {integrity: sha512-c3v2klHLuKBKFgvcKiZ88gGDNJQmSFhEbutjKSWrXuMlfl2rV3TPuYvQPb4TNfXTm1B96Uw130ND1RRpmBLgfw==}
+  appium@3.5.0:
+    resolution: {integrity: sha512-G9m4J2qlWeP8gutlk6DZv2qkxwWjQ+mfhmHxJDxXcY9nsAi3zbMScod5orn2s8GciBNrsp5To/4EavDH4uO8dw==}
     engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0, npm: '>=10'}
     hasBin: true
 
@@ -24244,6 +24264,10 @@ packages:
   archiver@7.0.1:
     resolution: {integrity: sha512-ZcbTaIqJOfCc03QwD468Unz/5Ir8ATtvAHsK+FdXbDIbGfihqh9mrvdcYunQzqn4HrvWWaFyaxJhGZagaJJpPQ==}
     engines: {node: '>= 14'}
+
+  archiver@8.0.0:
+    resolution: {integrity: sha512-fV1orZfsnPn9BaSByR/qE67rJCLJEy2Ox5bq7nJh+jquWaNh6Sfec75kJ2T6PtdGUbPQlrVoSVCEOa5SdiTQ1g==}
+    engines: {node: '>=18'}
 
   archy@1.0.0:
     resolution: {integrity: sha512-Xg+9RwCg/0p32teKdGMPTPnVXKD0w3DfHnFTficozsAgsvq2XenPJq/MYpzzQ/v8zrOyJn6Ds39VA4JIDwFfqw==}
@@ -24509,6 +24533,9 @@ packages:
   axios@1.16.0:
     resolution: {integrity: sha512-6hp5CwvTPlN2A31g5dxnwAX0orzM7pmCRDLnZSX772mv8WDqICwFjowHuPs04Mc8deIld1+ejhtaMn5vp6b+1w==}
 
+  axios@1.16.1:
+    resolution: {integrity: sha512-caYkukvroVPO8KrzuJEb50Hm07KwfBZPEC3VeFHTsqWHvKTsy54hjJz9BS/cdaypROE2rH6xvm9mHX4fgWkr3A==}
+
   axobject-query@3.2.4:
     resolution: {integrity: sha512-aPTElBrbifBU1krmZxGZOlBkslORe7Ll7+BDnI50Wy4LgOt69luMgevkDfTq1O/ZgprooPCtWpjCwKSZw/iZ4A==}
     engines: {node: '>= 0.4'}
@@ -24689,9 +24716,6 @@ packages:
   balanced-match@4.0.4:
     resolution: {integrity: sha512-BLrgEcRTwX2o6gGxGOCNyMvGSp35YofuYzw9h1IMTRmKqttAZZVU67bdb9Pr2vUHA8+j3i2tJfjO6C6+4myGTA==}
     engines: {node: 18 || 20 || >=22}
-
-  bare-events@2.4.2:
-    resolution: {integrity: sha512-qMKFd2qG/36aA4GwvKq8MxnPgCQAmBWmSyLWsJcbn8v03wvIPQ/hG1Ms8bPzndZxMDoHpxez5VOS+gC9Yi24/Q==}
 
   bare-events@2.8.2:
     resolution: {integrity: sha512-riJjyv1/mHLIPX4RwiK+oW9/4c3TEUeORHKefKAKnZ5kyslbN+HXowtbaVEqt4IMUB7OXlfixcs6gsFeo/jhiQ==}
@@ -25788,6 +25812,10 @@ packages:
     resolution: {integrity: sha512-6FqVXeETqWPoGcfzrXb37E50NP0LXT8kAMu5ooZayhWWdgEY4lBEEcbQNXtkuKQsGduxiIcI4gOTsxTmuq/bSg==}
     engines: {node: '>= 14'}
 
+  compress-commons@7.0.1:
+    resolution: {integrity: sha512-g0S8KAD8qf4+V//pr3BfB1aBnARLXNz2Gx+jmHU0LEriUuoQUOPOulVquHKTJ8+EAIIO7fhseNDr9wK5Q9FKBQ==}
+    engines: {node: '>=18'}
+
   compressible@2.0.18:
     resolution: {integrity: sha512-AF3r7P5dWxL8MxyITRMlORQNaOA2IkAFaTr4k7BUumjPtRpGDTZpl0Pb1XCO6JeDCBdp126Cgs9sMxqSjgYyRg==}
     engines: {node: '>= 0.6'}
@@ -26178,6 +26206,10 @@ packages:
   crc32-stream@6.0.0:
     resolution: {integrity: sha512-piICUB6ei4IlTv1+653yq5+KoqfBYmj9bw6LqXoOneTMDXk5nM1qt12mFW1caG3LlJXEKW1Bp0WggEmIfQB34g==}
     engines: {node: '>= 14'}
+
+  crc32-stream@7.0.1:
+    resolution: {integrity: sha512-IBWsY8xznyQrcHn8h4bC8/4ErNke5elzgG8GcqF4RFPw6aHkWWRc7Tgw6upjaTX/CT/yQgqYENkxYsTYN+hW2g==}
+    engines: {node: '>=18'}
 
   crc@3.8.0:
     resolution: {integrity: sha512-iX3mfgcTMIq3ZKLIsVFAbv7+Mc10kxabAGQb8HvjA1o3T1PIYprbakQ65d3I+2HGHt6nSKkM9PYjgoJO2KcFBQ==}
@@ -31242,6 +31274,10 @@ packages:
     resolution: {integrity: sha512-NxVFwLAnrd9i7KUBxC4DrUhmgjzOs+1Qm50D3oF1/oL+r1NpZ4gA7xvG0/zJ8evR7zIKn4vLf7qTNduWFtCrRw==}
     engines: {node: 20 || >=22}
 
+  lru-cache@11.5.0:
+    resolution: {integrity: sha512-5YgH9UJd7wVb9hIouI2adWpgqrrICkt070Dnj8EUY1+B4B2P9eRLPAkAAo6NICA7CEhOIeBHl46u9zSNpNu7zA==}
+    engines: {node: 20 || >=22}
+
   lru-cache@4.1.5:
     resolution: {integrity: sha512-sWZlbEP2OsHNkXrMl5GYk/jKk70MBng6UU4YI/qGDYbgf6YbP4EvmqISbXCoJiRKs+1bSpFHVgQxvJ17F2li5g==}
 
@@ -34063,9 +34099,6 @@ packages:
   queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
 
-  queue-tick@1.0.1:
-    resolution: {integrity: sha512-kJt5qhMxoszgU/62PLP1CJytzd2NKetjSRnyuj31fDd3Rlcz3fzlFdFLD1SItunPwyqEOkca6GbV612BWfaBag==}
-
   queue@6.0.2:
     resolution: {integrity: sha512-iHZWu+q3IdFZFX36ro/lKBkSvfkztY5Y7HMiPlOUjhupPcG2JMfst2KKEpu5XndviX/3UhFbRngUPNKtgvtZiA==}
 
@@ -34764,6 +34797,10 @@ packages:
   readdir-glob@1.1.3:
     resolution: {integrity: sha512-v05I2k7xN8zXvPD9N+z/uhXPaj0sUFCe2rcWZIpBsqxfP7xXFQ0tipAd/wjj1YxWyWtUS5IDJpOG82JKt2EAVA==}
 
+  readdir-glob@3.0.0:
+    resolution: {integrity: sha512-AhNB2KgKeVJr16nK9LLZbJNWnYoT23ZrumNKFDebHBdkC8KHSqWo871JAUhoWC/RtjEVdqNMFpM6qrwRbaUqpw==}
+    engines: {node: '>=18'}
+
   readdirp@3.6.0:
     resolution: {integrity: sha512-hOS089on8RduqdbhvQ5Z37A0ESjsqz6qnRcffsMU3495FuTdqSm+7bhJ29JvIOsBDEEnan5DPu9t3To9VRlMzA==}
     engines: {node: '>=8.10.0'}
@@ -35379,6 +35416,11 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
+  semver@7.8.1:
+    resolution: {integrity: sha512-rkVq3IXh+4FDGch+KwzX3aV9W3kO54GyEgpvBzSyctDA6Xtd7RJQV1xmXbeQp5v7+VzLOfVqiutSE6GICgPFvg==}
+    engines: {node: '>=10'}
+    hasBin: true
+
   send@0.18.0:
     resolution: {integrity: sha512-qqWzuOjSFOuqPjFe4NOsMLafToQQwBSOEpS+FwEt3A2V3vKubTquT3vmLTQpFgMXp8AlFWFuP1qKaJZOtPpVXg==}
     engines: {node: '>= 0.8.0'}
@@ -35519,6 +35561,10 @@ packages:
 
   shell-quote@1.8.3:
     resolution: {integrity: sha512-ObmnIF4hXNg1BqhnHmgbDETF8dLPCggZWBjkQfhZpbszZnYur5DUljTcCHii5LC3J5E0yeO/1LIMyH+UvHQgyw==}
+    engines: {node: '>= 0.4'}
+
+  shell-quote@1.8.4:
+    resolution: {integrity: sha512-VsC6n6vz1ihYYyZZwX7YZSF5l5x36ca17OC+a69h94YqB7X6XLwf+5MOgynYir2SLFUbl8gIYvBo8K8RoNQ6bQ==}
     engines: {node: '>= 0.4'}
 
   shimmer@1.2.1:
@@ -35947,9 +35993,6 @@ packages:
   streamsearch@0.1.2:
     resolution: {integrity: sha512-jos8u++JKm0ARcSUTAZXOVC0mSox7Bhn6sBgty73P1f3JGf7yG2clTbBNHUdde/kdvP2FESam+vM6l8jBrNxHA==}
     engines: {node: '>=0.8.0'}
-
-  streamx@2.18.0:
-    resolution: {integrity: sha512-LLUC1TWdjVdn1weXGcSxyTR3T4+acB6tVGXT95y0nGbca4t4o/ng1wKAGTljm9VicuCVLvRlqFYXYy5GwgM7sQ==}
 
   streamx@2.25.0:
     resolution: {integrity: sha512-0nQuG6jf1w+wddNEEXCF4nTg3LtufWINB5eFEN+5TNZW7KWJp6x87+JFL43vaAUPyCfH1wID+mNVyW6OHtFamg==}
@@ -37978,6 +38021,18 @@ packages:
       utf-8-validate:
         optional: true
 
+  ws@8.21.0:
+    resolution: {integrity: sha512-Vsp28b7DRcimFQvrqu2Wek3z1iYxDCWqHYB8Qsnk/S4RfaCQzPGPyBNuVjJV3cd6UiKtUtp6sNM77gWvzcCH+g==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: '>=5.0.2'
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+
   wsl-utils@0.1.0:
     resolution: {integrity: sha512-h3Fbisa2nKGPxCpm89Hk33lBLsnaGBvctQopaBSOW/uIs6FTe1ATyAnKFJrzVs9vpGdsTe73WF3V4lIsk4Gacw==}
     engines: {node: '>=18'}
@@ -38093,8 +38148,8 @@ packages:
     engines: {node: '>= 14.6'}
     hasBin: true
 
-  yaml@2.8.4:
-    resolution: {integrity: sha512-ml/JPOj9fOQK8RNnWojA67GbZ0ApXAUlN2UQclwv2eVgTgn7O9gg9o7paZWKMp4g0H3nTLtS9LVzhkpOFIKzog==}
+  yaml@2.9.0:
+    resolution: {integrity: sha512-2AvhNX3mb8zd6Zy7INTtSpl1F15HW6Wnqj0srWlkKLcpYl/gMIMJiyuGq2KeI2YFxUPjdlB+3Lc10seMLtL4cA==}
     engines: {node: '>= 14.6'}
     hasBin: true
 
@@ -38148,6 +38203,10 @@ packages:
     resolution: {integrity: sha512-PtGEvEP30p7sbIBJKUBjUnqgTVOyMURc4dLo9iNyAJnNIEz9pm88cCXF21w94Kg3k6RXkeZh5DHOGS0qEONvNQ==}
     engines: {node: '>=12'}
 
+  yauzl@3.3.1:
+    resolution: {integrity: sha512-RNPCUkiE/ZgO4w8i9U5yDQVHaFDdnzaFANElRvpJteCspvmv2VqrRb9lvS6odVD+jqI/zDsxAHJVsafpcheVQQ==}
+    engines: {node: '>=12'}
+
   ylru@1.4.0:
     resolution: {integrity: sha512-2OQsPNEmBCvXuFlIni/a+Rn+R2pHW9INm0BxXJ4hVDA8TirqMj+J/Rp9ItLatT/5pZqWwefVrTQcHpixsxnVlA==}
     engines: {node: '>= 4.0.0'}
@@ -38192,6 +38251,10 @@ packages:
   zip-stream@6.0.1:
     resolution: {integrity: sha512-zK7YHHz4ZXpW89AHXUPbQVGKI7uvkd3hzusTdotCg1UxyaVtg0zFJSTfW/Dq5f7OBBVnq6cZIaC8Ti4hb6dtCA==}
     engines: {node: '>= 14'}
+
+  zip-stream@7.0.5:
+    resolution: {integrity: sha512-dSvYKdvLsAHCDqPOhIwk/q5CvuWtTB3Dgpoe0uVEFjTzIOAmsQpprX25InCvrvJsirEbu1OHyy67n/kAj1Sw/w==}
+    engines: {node: '>=18'}
 
   zod-validation-error@3.4.0:
     resolution: {integrity: sha512-ZOPR9SVY6Pb2qqO5XHt+MkkTRxGXb4EVtnjc9JpXUOtUB1T9Ru7mZOT361AN3MsetVe7R0a1KZshJDZdgp9miQ==}
@@ -38440,30 +38503,57 @@ snapshots:
     optionalDependencies:
       spdy: 4.0.2
     transitivePeerDependencies:
+      - bare-abort-controller
       - supports-color
 
-  '@appium/base-plugin@3.2.4':
+  '@appium/base-driver@10.6.0':
     dependencies:
-      '@appium/base-driver': 10.5.2
-      '@appium/support': 7.2.2
-      '@appium/types': 1.4.0
+      '@appium/support': 7.2.3
+      '@appium/types': 1.5.0
+      '@colors/colors': 1.6.0
+      async-lock: 1.4.1
+      asyncbox: 6.3.0
+      axios: 1.16.1
+      body-parser: 2.2.2
+      express: 5.2.1
+      fastest-levenshtein: 1.0.16
+      http-status-codes: 2.3.0
+      lru-cache: 11.5.0
+      method-override: 3.0.0
+      morgan: 1.10.1
+      path-to-regexp: 8.4.2
+      serve-favicon: 2.5.1
+      type-fest: 5.6.0
+    optionalDependencies:
+      spdy: 4.0.2
     transitivePeerDependencies:
+      - bare-abort-controller
       - supports-color
 
-  '@appium/docutils@2.4.2':
+  '@appium/base-plugin@3.3.0':
     dependencies:
-      '@appium/support': 7.2.2
+      '@appium/base-driver': 10.6.0
+      '@appium/support': 7.2.3
+      '@appium/types': 1.5.0
+    transitivePeerDependencies:
+      - bare-abort-controller
+      - supports-color
+
+  '@appium/docutils@2.4.3':
+    dependencies:
+      '@appium/support': 7.2.3
       consola: 3.4.2
       diff: 9.0.0
       lilconfig: 3.1.3
-      lodash: 4.18.1
       package-directory: 8.2.0
       read-pkg: 10.1.0
       teen_process: 4.1.3
       type-fest: 5.6.0
-      yaml: 2.8.4
+      yaml: 2.9.0
       yargs: 18.0.0
       yargs-parser: 22.0.0
+    transitivePeerDependencies:
+      - bare-abort-controller
 
   '@appium/logger@2.0.7':
     dependencies:
@@ -38472,7 +38562,17 @@ snapshots:
       lru-cache: 11.3.5
       set-blocking: 2.0.0
 
+  '@appium/logger@2.0.8':
+    dependencies:
+      console-control-strings: 1.1.0
+      lru-cache: 11.5.0
+      set-blocking: 2.0.0
+
   '@appium/schema@1.1.1':
+    dependencies:
+      json-schema: 0.4.0
+
+  '@appium/schema@1.2.0':
     dependencies:
       json-schema: 0.4.0
 
@@ -38518,6 +38618,48 @@ snapshots:
       yauzl: 3.3.0
     optionalDependencies:
       sharp: 0.34.5
+    transitivePeerDependencies:
+      - bare-abort-controller
+
+  '@appium/support@7.2.3':
+    dependencies:
+      '@appium/logger': 2.0.8
+      '@appium/tsconfig': 1.1.2
+      '@appium/types': 1.5.0
+      '@colors/colors': 1.6.0
+      archiver: 8.0.0
+      asyncbox: 6.3.0
+      axios: 1.16.1(supports-color@10.2.2)
+      base64-stream: 1.0.0
+      bluebird: 3.7.2
+      bplist-creator: 0.1.1
+      bplist-parser: 0.3.2
+      form-data: 4.0.5
+      get-stream: 9.0.1
+      glob: 13.0.6
+      jsftp: 2.1.3(supports-color@10.2.2)
+      klaw: 4.1.0
+      lockfile: 1.0.4
+      log-symbols: 7.0.1
+      ncp: 2.0.0
+      package-directory: 8.2.0
+      plist: 4.0.0
+      pluralize: 8.0.0
+      read-pkg: 10.1.0
+      resolve-from: 5.0.0
+      sanitize-filename: 1.6.4
+      semver: 7.8.1
+      shell-quote: 1.8.4
+      supports-color: 10.2.2
+      teen_process: 4.1.3
+      type-fest: 5.6.0
+      uuid: 14.0.0
+      which: 6.0.1
+      yauzl: 3.3.1
+    optionalDependencies:
+      sharp: 0.34.5
+    transitivePeerDependencies:
+      - bare-abort-controller
 
   '@appium/tsconfig@1.1.2':
     dependencies:
@@ -38527,6 +38669,13 @@ snapshots:
     dependencies:
       '@appium/logger': 2.0.7
       '@appium/schema': 1.1.1
+      '@appium/tsconfig': 1.1.2
+      type-fest: 5.6.0
+
+  '@appium/types@1.5.0':
+    dependencies:
+      '@appium/logger': 2.0.8
+      '@appium/schema': 1.2.0
       '@appium/tsconfig': 1.1.2
       type-fest: 5.6.0
 
@@ -47547,6 +47696,7 @@ snapshots:
       tar-stream: 3.1.7
     transitivePeerDependencies:
       - aws-crt
+      - bare-abort-controller
 
   '@octokit/auth-token@4.0.0': {}
 
@@ -55634,7 +55784,7 @@ snapshots:
       '@wdio/types': 9.27.1
       '@wdio/utils': 9.27.1
       '@xmldom/xmldom': 0.9.10
-      appium: 3.4.2
+      appium: 3.5.0
       change-case: 5.4.4
       get-port: 7.1.0
       import-meta-resolve: 4.2.0
@@ -56234,6 +56384,12 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  agent-base@6.0.2(supports-color@10.2.2):
+    dependencies:
+      debug: 4.4.3(supports-color@10.2.2)
+    transitivePeerDependencies:
+      - supports-color
+
   agent-base@7.1.3: {}
 
   agentkeepalive@4.6.0:
@@ -56447,12 +56603,14 @@ snapshots:
       lru-cache: 11.3.5
       semver: 7.8.0
       teen_process: 4.1.3
+    transitivePeerDependencies:
+      - bare-abort-controller
 
-  appium-android-driver@13.2.3(appium@3.4.2):
+  appium-android-driver@13.2.3(appium@3.5.0):
     dependencies:
       '@appium/support': 7.2.2
       '@colors/colors': 1.6.0
-      appium: 3.4.2
+      appium: 3.5.0
       appium-adb: 15.0.0
       appium-chromedriver: 8.4.5
       asyncbox: 6.3.0
@@ -56467,6 +56625,7 @@ snapshots:
       teen_process: 4.1.3
       ws: 8.20.0
     transitivePeerDependencies:
+      - bare-abort-controller
       - bufferutil
       - supports-color
       - utf-8-validate
@@ -56484,6 +56643,7 @@ snapshots:
       teen_process: 4.1.3
       xpath: 0.0.34
     transitivePeerDependencies:
+      - bare-abort-controller
       - supports-color
 
   appium-ios-device@3.1.14:
@@ -56491,10 +56651,12 @@ snapshots:
       '@appium/support': 7.2.2
       asyncbox: 6.3.0
       axios: 1.16.0
-      bplist-creator: 0.1.0
+      bplist-creator: 0.1.1
       bplist-parser: 0.3.2
       lodash: 4.17.21
       semver: 7.8.0
+    transitivePeerDependencies:
+      - bare-abort-controller
 
   appium-ios-remotexpc@1.1.8:
     dependencies:
@@ -56509,6 +56671,8 @@ snapshots:
       node-devicectl: 1.3.1
       npm-run-all2: 8.0.4
       path-to-regexp: 8.4.2
+    transitivePeerDependencies:
+      - bare-abort-controller
     optional: true
 
   appium-ios-simulator@8.1.3:
@@ -56521,6 +56685,8 @@ snapshots:
       node-simctl: 8.2.3
       semver: 7.8.0
       teen_process: 4.1.3
+    transitivePeerDependencies:
+      - bare-abort-controller
 
   appium-ios-tuntap@0.2.3:
     dependencies:
@@ -56528,6 +56694,8 @@ snapshots:
       node-addon-api: 8.7.0
       node-gyp-build: 4.8.4
       typescript: 6.0.2
+    transitivePeerDependencies:
+      - bare-abort-controller
     optional: true
 
   appium-remote-debugger@15.10.1:
@@ -56542,13 +56710,14 @@ snapshots:
     optionalDependencies:
       appium-ios-remotexpc: 1.1.8
     transitivePeerDependencies:
+      - bare-abort-controller
       - supports-color
 
-  appium-uiautomator2-driver@7.5.2(appium@3.4.2):
+  appium-uiautomator2-driver@7.5.2(appium@3.5.0):
     dependencies:
-      appium: 3.4.2
+      appium: 3.5.0
       appium-adb: 15.0.0
-      appium-android-driver: 13.2.3(appium@3.4.2)
+      appium-android-driver: 13.2.3(appium@3.5.0)
       appium-uiautomator2-server: 10.2.1
       asyncbox: 6.3.0
       axios: 1.16.0
@@ -56557,6 +56726,7 @@ snapshots:
       portscanner: 2.2.0
       teen_process: 4.1.3
     transitivePeerDependencies:
+      - bare-abort-controller
       - bufferutil
       - supports-color
       - utf-8-validate
@@ -56575,6 +56745,7 @@ snapshots:
       axios: 1.16.0
       teen_process: 4.1.3
     transitivePeerDependencies:
+      - bare-abort-controller
       - supports-color
 
   appium-xcode@6.2.2:
@@ -56583,12 +56754,14 @@ snapshots:
       asyncbox: 6.3.0
       semver: 7.8.0
       teen_process: 4.1.3
+    transitivePeerDependencies:
+      - bare-abort-controller
 
-  appium-xcuitest-driver@11.3.0(appium@3.4.2):
+  appium-xcuitest-driver@11.3.0(appium@3.5.0):
     dependencies:
       '@appium/strongbox': 1.1.1
       '@colors/colors': 1.6.0
-      appium: 3.4.2
+      appium: 3.5.0
       appium-ios-device: 3.1.14
       appium-ios-simulator: 8.1.3
       appium-remote-debugger: 15.10.1
@@ -56614,39 +56787,41 @@ snapshots:
     optionalDependencies:
       appium-ios-remotexpc: 1.1.8
     transitivePeerDependencies:
+      - bare-abort-controller
       - bufferutil
       - supports-color
       - utf-8-validate
 
-  appium@3.4.2:
+  appium@3.5.0:
     dependencies:
-      '@appium/base-driver': 10.5.2
-      '@appium/base-plugin': 3.2.4
-      '@appium/docutils': 2.4.2
-      '@appium/logger': 2.0.7
-      '@appium/schema': 1.1.1
-      '@appium/support': 7.2.2
-      '@appium/types': 1.4.0
+      '@appium/base-driver': 10.6.0
+      '@appium/base-plugin': 3.3.0
+      '@appium/docutils': 2.4.3
+      '@appium/logger': 2.0.8
+      '@appium/schema': 1.2.0
+      '@appium/support': 7.2.3
+      '@appium/types': 1.5.0
       '@colors/colors': 1.6.0
       '@sidvind/better-ajv-errors': 5.0.0(ajv@8.20.0)
       ajv: 8.20.0
       ajv-formats: 3.0.1
       argparse: 2.0.1
-      axios: 1.16.0
-      bluebird: 3.7.2
+      asyncbox: 6.3.0
+      axios: 1.16.1
       lilconfig: 3.1.3
       lodash: 4.18.1
-      lru-cache: 11.3.5
+      lru-cache: 11.5.0
       ora: 5.4.1
       package-changed: 3.0.0
       resolve-from: 5.0.0
-      semver: 7.7.4
+      semver: 7.8.1
       teen_process: 4.1.3
       type-fest: 5.6.0
       winston: 3.19.0
-      ws: 8.20.0
-      yaml: 2.8.4
+      ws: 8.21.0
+      yaml: 2.9.0
     transitivePeerDependencies:
+      - bare-abort-controller
       - bufferutil
       - supports-color
       - utf-8-validate
@@ -56686,6 +56861,8 @@ snapshots:
       readdir-glob: 1.1.3
       tar-stream: 3.1.7
       zip-stream: 5.0.2
+    transitivePeerDependencies:
+      - bare-abort-controller
 
   archiver@7.0.1:
     dependencies:
@@ -56696,6 +56873,22 @@ snapshots:
       readdir-glob: 1.1.3
       tar-stream: 3.1.7
       zip-stream: 6.0.1
+    transitivePeerDependencies:
+      - bare-abort-controller
+
+  archiver@8.0.0:
+    dependencies:
+      async: 3.2.5
+      buffer-crc32: 1.0.0
+      is-stream: 4.0.1
+      lazystream: 1.0.1
+      normalize-path: 3.0.0
+      readable-stream: 4.7.0
+      readdir-glob: 3.0.0
+      tar-stream: 3.1.7
+      zip-stream: 7.0.5
+    transitivePeerDependencies:
+      - bare-abort-controller
 
   archy@1.0.0: {}
 
@@ -56991,6 +57184,24 @@ snapshots:
       follow-redirects: 1.16.0
       form-data: 4.0.5
       proxy-from-env: 2.1.0
+
+  axios@1.16.1:
+    dependencies:
+      follow-redirects: 1.16.0
+      form-data: 4.0.5
+      https-proxy-agent: 5.0.1
+      proxy-from-env: 2.1.0
+    transitivePeerDependencies:
+      - supports-color
+
+  axios@1.16.1(supports-color@10.2.2):
+    dependencies:
+      follow-redirects: 1.16.0
+      form-data: 4.0.5
+      https-proxy-agent: 5.0.1(supports-color@10.2.2)
+      proxy-from-env: 2.1.0
+    transitivePeerDependencies:
+      - supports-color
 
   axobject-query@3.2.4: {}
 
@@ -57441,11 +57652,7 @@ snapshots:
 
   balanced-match@4.0.4: {}
 
-  bare-events@2.4.2:
-    optional: true
-
-  bare-events@2.8.2:
-    optional: true
+  bare-events@2.8.2: {}
 
   bare-fs@4.7.1:
     dependencies:
@@ -58762,6 +58969,14 @@ snapshots:
       normalize-path: 3.0.0
       readable-stream: 4.7.0
 
+  compress-commons@7.0.1:
+    dependencies:
+      crc-32: 1.2.2
+      crc32-stream: 7.0.1
+      is-stream: 4.0.1
+      normalize-path: 3.0.0
+      readable-stream: 4.7.0
+
   compressible@2.0.18:
     dependencies:
       mime-db: 1.54.0
@@ -59030,6 +59245,11 @@ snapshots:
       readable-stream: 3.6.2
 
   crc32-stream@6.0.0:
+    dependencies:
+      crc-32: 1.2.2
+      readable-stream: 4.7.0
+
+  crc32-stream@7.0.1:
     dependencies:
       crc-32: 1.2.2
       readable-stream: 4.7.0
@@ -59599,6 +59819,12 @@ snapshots:
     dependencies:
       ms: 2.1.3
 
+  debug@4.4.3(supports-color@10.2.2):
+    dependencies:
+      ms: 2.1.3
+    optionalDependencies:
+      supports-color: 10.2.2
+
   debug@4.4.3(supports-color@5.5.0):
     dependencies:
       ms: 2.1.3
@@ -59797,6 +60023,8 @@ snapshots:
       screenkitten: 1.0.0
       tslib: 2.6.2
       videokitten: 1.0.1
+    transitivePeerDependencies:
+      - bare-abort-controller
 
   detox-allure2-adapter@1.0.0-alpha.42(patch_hash=c0c5e6419e53a25ed902cac4ce3608f467d0332b34c90b669fed2089e2bf97ba)(detox@20.51.1(patch_hash=6b1689c8f2f12516e3e1130fd1eef40799da1f07d3c7d30c754548d8a34d4c61)(jest@30.2.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.17))(@types/node@24.12.0)(typescript@6.0.2))))(jest-allure2-reporter@2.2.8(@jest/reporters@30.2.0)(jest-docblock@30.2.0)(jest-environment-node@30.2.0)(jest@30.2.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.17))(@types/node@24.12.0)(typescript@6.0.2)))):
     dependencies:
@@ -59807,6 +60035,8 @@ snapshots:
       screenkitten: 1.0.0
       tslib: 2.6.2
       videokitten: 1.0.1
+    transitivePeerDependencies:
+      - bare-abort-controller
 
   detox@20.51.1(patch_hash=6b1689c8f2f12516e3e1130fd1eef40799da1f07d3c7d30c754548d8a34d4c61)(@jest/types@30.2.0)(jest@30.2.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11)(@types/node@24.12.0)(typescript@6.0.2))):
     dependencies:
@@ -61018,7 +61248,6 @@ snapshots:
       bare-events: 2.8.2
     transitivePeerDependencies:
       - bare-abort-controller
-    optional: true
 
   events@1.1.1: {}
 
@@ -62803,7 +63032,7 @@ snapshots:
 
   hosted-git-info@9.0.3:
     dependencies:
-      lru-cache: 11.3.5
+      lru-cache: 11.5.0
 
   hpack.js@2.1.6:
     dependencies:
@@ -63043,6 +63272,13 @@ snapshots:
     dependencies:
       agent-base: 6.0.2
       debug: 4.4.3
+    transitivePeerDependencies:
+      - supports-color
+
+  https-proxy-agent@5.0.1(supports-color@10.2.2):
+    dependencies:
+      agent-base: 6.0.2(supports-color@10.2.2)
+      debug: 4.4.3(supports-color@10.2.2)
     transitivePeerDependencies:
       - supports-color
 
@@ -65834,6 +66070,8 @@ snapshots:
 
   lru-cache@11.3.5: {}
 
+  lru-cache@11.5.0: {}
+
   lru-cache@4.1.5:
     dependencies:
       pseudomap: 1.0.2
@@ -67865,7 +68103,7 @@ snapshots:
   normalize-package-data@8.0.0:
     dependencies:
       hosted-git-info: 9.0.3
-      semver: 7.8.0
+      semver: 7.8.1
       validate-npm-package-license: 3.0.4
 
   normalize-path@3.0.0: {}
@@ -68602,7 +68840,7 @@ snapshots:
 
   path-scurry@2.0.2:
     dependencies:
-      lru-cache: 11.2.6
+      lru-cache: 11.5.0
       minipass: 7.1.3
 
   path-to-regexp@0.1.12: {}
@@ -69670,8 +69908,6 @@ snapshots:
   querystringify@2.2.0: {}
 
   queue-microtask@1.2.3: {}
-
-  queue-tick@1.0.1: {}
 
   queue@6.0.2:
     dependencies:
@@ -70783,6 +71019,10 @@ snapshots:
     dependencies:
       minimatch: 5.1.6
 
+  readdir-glob@3.0.0:
+    dependencies:
+      minimatch: 10.2.5
+
   readdirp@3.6.0:
     dependencies:
       picomatch: 2.3.1
@@ -71443,6 +71683,8 @@ snapshots:
 
   semver@7.8.0: {}
 
+  semver@7.8.1: {}
+
   send@0.18.0:
     dependencies:
       debug: 2.6.9
@@ -71662,7 +71904,7 @@ snapshots:
     dependencies:
       '@img/colour': 1.1.0
       detect-libc: 2.1.2
-      semver: 7.8.0
+      semver: 7.8.1
     optionalDependencies:
       '@img/sharp-darwin-arm64': 0.34.5
       '@img/sharp-darwin-x64': 0.34.5
@@ -71707,6 +71949,8 @@ snapshots:
   shell-quote@1.8.1: {}
 
   shell-quote@1.8.3: {}
+
+  shell-quote@1.8.4: {}
 
   shimmer@1.2.1: {}
 
@@ -72430,14 +72674,6 @@ snapshots:
 
   streamsearch@0.1.2: {}
 
-  streamx@2.18.0:
-    dependencies:
-      fast-fifo: 1.3.2
-      queue-tick: 1.0.1
-      text-decoder: 1.1.0
-    optionalDependencies:
-      bare-events: 2.4.2
-
   streamx@2.25.0:
     dependencies:
       events-universal: 1.0.1
@@ -72445,7 +72681,6 @@ snapshots:
       text-decoder: 1.1.0
     transitivePeerDependencies:
       - bare-abort-controller
-    optional: true
 
   strict-event-emitter-types@2.0.0: {}
 
@@ -72933,7 +73168,9 @@ snapshots:
     dependencies:
       b4a: 1.6.6
       fast-fifo: 1.3.2
-      streamx: 2.18.0
+      streamx: 2.25.0
+    transitivePeerDependencies:
+      - bare-abort-controller
 
   tar@6.2.1:
     dependencies:
@@ -73901,7 +74138,7 @@ snapshots:
       chokidar: 5.0.0
       destr: 2.0.5
       h3: 1.15.5
-      lru-cache: 11.2.6
+      lru-cache: 11.3.5
       node-fetch-native: 1.6.7
       ofetch: 1.5.1
       ufo: 1.6.3
@@ -74769,7 +75006,7 @@ snapshots:
   winston@3.17.0:
     dependencies:
       '@colors/colors': 1.6.0
-      '@dabh/diagnostics': 2.0.3
+      '@dabh/diagnostics': 2.0.8
       async: 3.2.5
       is-stream: 2.0.1
       logform: 2.7.0
@@ -74892,6 +75129,8 @@ snapshots:
       bufferutil: 4.1.0
       utf-8-validate: 6.0.6
 
+  ws@8.21.0: {}
+
   wsl-utils@0.1.0:
     dependencies:
       is-wsl: 3.1.0
@@ -74971,7 +75210,7 @@ snapshots:
 
   yaml@2.8.3: {}
 
-  yaml@2.8.4: {}
+  yaml@2.9.0: {}
 
   yamux-js@0.1.2: {}
 
@@ -75050,6 +75289,11 @@ snapshots:
       buffer-crc32: 0.2.13
       pend: 1.2.0
 
+  yauzl@3.3.1:
+    dependencies:
+      buffer-crc32: 0.2.13
+      pend: 1.2.0
+
   ylru@1.4.0: {}
 
   yn@3.1.1: {}
@@ -75084,6 +75328,12 @@ snapshots:
     dependencies:
       archiver-utils: 5.0.2
       compress-commons: 6.0.2
+      readable-stream: 4.7.0
+
+  zip-stream@7.0.5:
+    dependencies:
+      compress-commons: 7.0.1
+      normalize-path: 3.0.0
       readable-stream: 4.7.0
 
   zod-validation-error@3.4.0(zod@3.25.76):
