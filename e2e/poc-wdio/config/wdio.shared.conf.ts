@@ -1,5 +1,6 @@
 import { setEnv } from "@ledgerhq/live-env";
 import { init } from "../bridge/server";
+import { SpeculosUtils } from "../utils/SpeculosUtils.ts";
 
 const NANO_APP_CATALOG_PATH = "artifacts/appVersion/nano-app-catalog.json";
 
@@ -288,8 +289,9 @@ export const config: WebdriverIO.Config = {
    * @param {Array.<Object>} capabilities list of capabilities details
    * @param {Array.<String>} specs List of spec file paths that ran
    */
-  // after: function (result, capabilities, specs) {
-  // },
+  after: async function (result, capabilities, specs) {
+    await SpeculosUtils.removeSpeculosAndDeregisterKnownSpeculos();
+  },
   /**
    * Gets executed right after terminating the webdriver session.
    * @param {object} config wdio configuration object
@@ -306,7 +308,7 @@ export const config: WebdriverIO.Config = {
    * @param {Array.<Object>} capabilities list of capabilities details
    * @param {<Object>} results object containing test results
    */
-  // onComplete: function(exitCode, config, capabilities, results) {
+  // onComplete: function (exitCode, config, capabilities, results) {
   // },
   /**
    * Gets executed when a refresh happens.

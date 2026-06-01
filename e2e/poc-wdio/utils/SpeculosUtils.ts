@@ -248,6 +248,8 @@ export class SpeculosUtils {
     */
     // REVERT CUSTOM IF
     if (speculosPort) {
+      const deviceID = driver.capabilities.deviceUDID ?? driver.capabilities["appium:deviceName"];
+      execSync(`adb -s ${deviceID} reverse --remove tcp:${speculosPort}`);
       const knownAddress = SpeculosUtils.getKnownSpeculosAddress(speculosPort);
       await removeKnownSpeculos(knownAddress);
     }
