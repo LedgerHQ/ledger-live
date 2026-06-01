@@ -3431,8 +3431,8 @@ importers:
         specifier: 3.4.2
         version: 3.4.2
       appium-uiautomator2-driver:
-        specifier: ^7.2.2
-        version: 7.3.0(appium@3.4.2)
+        specifier: ^7.5.2
+        version: 7.5.2(appium@3.4.2)
       appium-xcuitest-driver:
         specifier: 11.3.0
         version: 11.3.0(appium@3.4.2)
@@ -24157,18 +24157,18 @@ packages:
     resolution: {integrity: sha512-7yeyCEurROLQJFv5Xj4lEGTy0borxepjFv1g22oAdqFu//SrAlDl1O1Nxx15SH1RoliUml6p8dwJW9jvZughhg==}
     engines: {node: '>=8'}
 
-  appium-adb@14.5.0:
-    resolution: {integrity: sha512-7o+zmfSqODMH98YrCd1ryaJGv5KTr7mmLLalPp8DJzbtuncuuTrFI5R+WfSWs10WEWxxsT3Kqfv7s8f/OmB8sQ==}
+  appium-adb@15.0.0:
+    resolution: {integrity: sha512-RIRCcBzVlFlO2VHXmXPzComPFQL05fs+qEtK1ftVtB4kEggk+ewfD8VSI0ZuUGOD8NQlNusDgRQV8p/LKlNryg==}
     engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0, npm: '>=10'}
 
-  appium-android-driver@13.2.2:
-    resolution: {integrity: sha512-Mblt0QrV7HVrj++WWwArJXvI+jGQ+Fj4jLd+6p3a2rjwVvyTuygm1tr/8C8UBQQoqoBm4WViYDHBFmScTCaDfw==}
+  appium-android-driver@13.2.3:
+    resolution: {integrity: sha512-U3Qp0rDvLM7RZc2XnN7h7xYos78g9pVkWSXi96tGpZAr0MH952XLerc1mpKMnTUxxtniN0+9VeuyiDel0q8+2w==}
     engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0, npm: '>=10'}
     peerDependencies:
       appium: ^3.0.0-rc.2
 
-  appium-chromedriver@8.4.1:
-    resolution: {integrity: sha512-GGftJvpu2L6wJFNZ/WbRDhRZhP5AUchYoQnokDL0gLQVwsAcil/6AMPI1YUv+AJzjEnCtBSlGyTgSo+AuoeQ2A==}
+  appium-chromedriver@8.4.5:
+    resolution: {integrity: sha512-wSt8iBNMvyB5tz7bsxNjcp74RMmsNN3/o6qOafda7PcuFzhby88It1NwRyvXaSlLJFFi2Hnu25MwhD+Lmwj96g==}
     engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0, npm: '>=10'}
 
   appium-ios-device@3.1.14:
@@ -24191,14 +24191,14 @@ packages:
     resolution: {integrity: sha512-IcEXCuUNUIZVmOLiC6gmpBarh4ZM1ESQkSLD8Yb6v3oC6ksUHUFPRDdpdH48G38AgseGSnTFD15RSv4FqWwasw==}
     engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0, npm: '>=10'}
 
-  appium-uiautomator2-driver@7.3.0:
-    resolution: {integrity: sha512-YerFEUeCzq2c/eXmpfm2fWiw+xufzGow0vgKtGC93dYw0s2me8c2/z2xlTeKlVfb0DqtcCPCq3QaLKxXhK0zbQ==}
+  appium-uiautomator2-driver@7.5.2:
+    resolution: {integrity: sha512-0eg51hP8gv85JbLbzPYSW7eIj0OokQJ7GR37W3RkPXGJ3ZDWvdS2hJ4ag0d3ibZ5qqtO5RsIGgsZhKlp6DfGLw==}
     engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0, npm: '>=10'}
     peerDependencies:
       appium: ^3.0.0-rc.2
 
-  appium-uiautomator2-server@10.1.0:
-    resolution: {integrity: sha512-4YvWcyTTn1UtWvB3giNtGCo0yaji2c+7mcDwsOyk6dMoQ1JO0noxJ3rqpqTD7Kq14cXGcuR2OXwaVz5RGruXFg==}
+  appium-uiautomator2-server@10.2.1:
+    resolution: {integrity: sha512-2ggpibmF0IJLUFOmTo4K9MlcAQLEkNevMJ3wahJHVP/qg28hX73V+tD3tLY6vwynpPNaUCXClqS+Q5gv+5UicQ==}
     engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0, npm: '>=10'}
 
   appium-webdriveragent@12.2.2:
@@ -29450,8 +29450,8 @@ packages:
     peerDependencies:
       reflect-metadata: ~0.2.2
 
-  io.appium.settings@7.1.1:
-    resolution: {integrity: sha512-C4iA0a50jGwUuUSwk+Gu0oXKHBur5XZHn20+cHMgtlscrAl+K+7JyySuUzkpxq9MDjRsQD309c89k95MpcNgDw==}
+  io.appium.settings@7.1.3:
+    resolution: {integrity: sha512-GHyn/eHctGVY/OHO8VoWFFCVAbNWOn+b4QiTMYTyFnRmaVuMVvotZYxlgQgs3pUxRrqG1U755gZ4Nyw18OrpUA==}
     engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0, npm: '>=10'}
 
   ip-address@10.0.1:
@@ -56438,28 +56438,28 @@ snapshots:
     dependencies:
       default-require-extensions: 3.0.1
 
-  appium-adb@14.5.0:
+  appium-adb@15.0.0:
     dependencies:
       '@appium/support': 7.2.2
       async-lock: 1.4.1
       asyncbox: 6.3.0
       ini: 6.0.0
-      lru-cache: 11.2.6
+      lru-cache: 11.3.5
       semver: 7.8.0
       teen_process: 4.1.3
 
-  appium-android-driver@13.2.2(appium@3.4.2):
+  appium-android-driver@13.2.3(appium@3.4.2):
     dependencies:
       '@appium/support': 7.2.2
       '@colors/colors': 1.6.0
       appium: 3.4.2
-      appium-adb: 14.5.0
-      appium-chromedriver: 8.4.1
+      appium-adb: 15.0.0
+      appium-chromedriver: 8.4.5
       asyncbox: 6.3.0
       axios: 1.16.0
-      io.appium.settings: 7.1.1
+      io.appium.settings: 7.1.3
       lodash: 4.17.21
-      lru-cache: 11.2.6
+      lru-cache: 11.3.5
       moment: 2.30.1
       moment-timezone: 0.6.2
       portscanner: 2.2.0
@@ -56471,12 +56471,12 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  appium-chromedriver@8.4.1:
+  appium-chromedriver@8.4.5:
     dependencies:
       '@appium/base-driver': 10.5.2
       '@appium/support': 7.2.2
-      '@xmldom/xmldom': 0.8.10
-      appium-adb: 14.5.0
+      '@xmldom/xmldom': 0.9.10
+      appium-adb: 15.0.0
       asyncbox: 6.3.0
       axios: 1.16.0
       compare-versions: 6.1.1
@@ -56544,17 +56544,16 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  appium-uiautomator2-driver@7.3.0(appium@3.4.2):
+  appium-uiautomator2-driver@7.5.2(appium@3.4.2):
     dependencies:
       appium: 3.4.2
-      appium-adb: 14.5.0
-      appium-android-driver: 13.2.2(appium@3.4.2)
-      appium-uiautomator2-server: 10.1.0
+      appium-adb: 15.0.0
+      appium-android-driver: 13.2.3(appium@3.4.2)
+      appium-uiautomator2-server: 10.2.1
       asyncbox: 6.3.0
       axios: 1.16.0
       css-selector-parser: 3.3.0
-      io.appium.settings: 7.1.1
-      lodash: 4.17.21
+      io.appium.settings: 7.1.3
       portscanner: 2.2.0
       teen_process: 4.1.3
     transitivePeerDependencies:
@@ -56562,7 +56561,7 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  appium-uiautomator2-server@10.1.0: {}
+  appium-uiautomator2-server@10.2.1: {}
 
   appium-webdriveragent@12.2.2:
     dependencies:
@@ -63297,7 +63296,7 @@ snapshots:
       '@inversifyjs/core': 5.2.0(reflect-metadata@0.2.2)
       reflect-metadata: 0.2.2
 
-  io.appium.settings@7.1.1:
+  io.appium.settings@7.1.3:
     dependencies:
       '@appium/logger': 2.0.7
       asyncbox: 6.3.0
@@ -68598,7 +68597,7 @@ snapshots:
 
   path-scurry@2.0.0:
     dependencies:
-      lru-cache: 11.2.6
+      lru-cache: 11.3.5
       minipass: 7.1.2
 
   path-scurry@2.0.2:

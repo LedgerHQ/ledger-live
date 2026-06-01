@@ -281,7 +281,7 @@ export const config: WebdriverIO.Config = {
    * @param {object} error error object if any
    */
   afterCommand: async function (commandName, args, result, error) {
-    await driver.pause(3_000);
+    await driver.pause(1_000);
     if (result === 1) {
       console.log(`Command ${commandName} with args ${args} failed with error: ${error}`);
     }
