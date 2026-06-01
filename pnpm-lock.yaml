@@ -2076,6 +2076,9 @@ importers:
       '@babel/plugin-transform-class-static-block':
         specifier: 7.28.3
         version: 7.28.3(@babel/core@7.28.5)
+      '@babel/plugin-transform-dynamic-import':
+        specifier: 7.27.1
+        version: 7.27.1(@babel/core@7.28.5)
       '@babel/plugin-transform-export-namespace-from':
         specifier: 7.27.1
         version: 7.27.1(@babel/core@7.28.5)

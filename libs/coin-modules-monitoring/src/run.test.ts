@@ -5,6 +5,25 @@ import { encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/accou
 import BigNumber from "bignumber.js";
 import run from "./run";
 
+jest.mock("@ledgerhq/live-common/bridge/impl", () => {
+  const actual = jest.requireActual("@ledgerhq/live-common/bridge/impl");
+  const mocked: Record<string, unknown> = { __esModule: true };
+  for (const key of Object.keys(actual)) {
+    let value: unknown;
+    let assigned = false;
+    Object.defineProperty(mocked, key, {
+      configurable: true,
+      enumerable: true,
+      get: () => (assigned ? value : actual[key]),
+      set: v => {
+        value = v;
+        assigned = true;
+      },
+    });
+  }
+  return mocked;
+});
+
 describe("Coin Modules Monitoring", () => {
   beforeAll(() => {
     global.console = require("console");

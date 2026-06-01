@@ -23,6 +23,11 @@ import { NavigatorName, ScreenName } from "~/const";
 import { track } from "~/analytics";
 import { createNotificationsPromptFeatureFlags } from "./testUtils";
 
+jest.mock("@ledgerhq/live-common/families/tezos/react", () => ({
+  __esModule: true,
+  ...jest.requireActual("@ledgerhq/live-common/families/tezos/react"),
+}));
+
 const featureFlagsForStakePrompt = createNotificationsPromptFeatureFlags();
 
 type AccountKey =

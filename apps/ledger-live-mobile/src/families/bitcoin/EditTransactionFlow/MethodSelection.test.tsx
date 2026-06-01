@@ -16,14 +16,6 @@ jest.mock("@ledgerhq/ledger-wallet-framework/operation", () => ({
   isOldestBitcoinPendingOperation: jest.fn().mockReturnValue(true),
 }));
 
-jest.mock("@ledgerhq/live-common/account/index", () => {
-  const actual = jest.requireActual("@ledgerhq/live-common/account/index");
-  return {
-    ...actual,
-    getMainAccount: jest.fn(),
-  };
-});
-
 jest.mock("@ledgerhq/live-common/bridge/index", () => {
   const bridge = { updateTransaction: jest.fn() };
   const settledPromise = Object.assign(Promise.resolve(bridge), {
@@ -68,8 +60,6 @@ jest.mock("~/components/EditTransaction/MethodSelectionList", () => {
   };
 });
 
-const mockedGetMainAccount = jest.requireMock("@ledgerhq/live-common/account/index")
-  .getMainAccount as jest.Mock;
 const mockedUseBridgeTransaction = jest.requireMock(
   "@ledgerhq/live-common/bridge/useBridgeTransaction",
 ).default as jest.Mock;
@@ -77,15 +67,16 @@ const mockedUseBridgeTransaction = jest.requireMock(
 describe("Bitcoin MethodSelection", () => {
   it("navigates to already validated error when tx gets confirmed", async () => {
     const navigate = jest.fn();
-    const account = { id: "account-id" };
-    const parentAccount = { id: "parent-id" };
-    const operation = { hash: "op-hash", date: new Date().toISOString() };
-
-    mockedGetMainAccount.mockReturnValue({
+    const account = {
+      type: "Account",
+      id: "account-id",
       freshAddress: "mock-address",
       currency: { ticker: "BTC", blockAvgTime: 1 },
       bitcoinResources: { walletAccount: {} },
-    });
+    };
+    const parentAccount = { id: "parent-id" };
+    const operation = { hash: "op-hash", date: new Date().toISOString() };
+
     mockedUseBridgeTransaction.mockReturnValue({
       transaction: { family: "bitcoin" },
       setTransaction: jest.fn(),

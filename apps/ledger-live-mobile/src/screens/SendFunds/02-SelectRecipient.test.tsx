@@ -8,6 +8,10 @@ import { RouteProp } from "@react-navigation/core";
 import { ScreenName } from "~/const";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 
+jest.mock("@ledgerhq/live-common/bridge/useBridgeTransaction", () => ({
+  __esModule: true,
+  ...jest.requireActual("@ledgerhq/live-common/bridge/useBridgeTransaction"),
+}));
 jest.mock("react-native-safe-area-context", () => ({
   useSafeAreaInsets: jest.fn().mockReturnValue({}),
 }));

@@ -7,6 +7,14 @@ import Body from "../Body";
 import { StepId } from "../types";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 
+jest.mock("@ledgerhq/live-common/bridge/index", () => {
+  const actual = jest.requireActual<Record<PropertyKey, unknown>>(
+    "@ledgerhq/live-common/bridge/index",
+  );
+  const overrides: Record<PropertyKey, unknown> = { __esModule: true, getAccountBridge: jest.fn() };
+  return new Proxy(overrides, { get: (o, k) => (k in o ? o[k] : actual[k]) });
+});
+
 // Mock useConnectAppAction to prevent actual device connection attempts
 jest.mock("~/renderer/hooks/useConnectAppAction", () => {
   const mockDevice: Device = {
@@ -151,7 +159,9 @@ describe("ZCash Export UFVK Flow", () => {
     const bridge = { getFullViewingKey: mockGetFullViewingKey };
     jest
       .spyOn(require("@ledgerhq/live-common/bridge/index"), "getAccountBridge")
-      .mockReturnValue(Object.assign(Promise.resolve(bridge), { status: "fulfilled", value: bridge }));
+      .mockReturnValue(
+        Object.assign(Promise.resolve(bridge), { status: "fulfilled", value: bridge }),
+      );
 
     render(
       <Body
