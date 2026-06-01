@@ -6,6 +6,8 @@ import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
 import { setTeamOwner } from "../../helpers/allure/allure-helper";
 import { beforeAllFunctionSwap } from "./swap.setup";
+import { isIos } from "../../helpers/commonHelpers";
+import { device } from "detox";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
@@ -56,13 +58,13 @@ export function runSwapTest(
 
       const provider = await app.swapLiveApp.selectExchange();
       await app.swapLiveApp.checkExchangeButtonHasProviderName(provider.uiName);
-      await app.common.disableSynchronizationForiOS();
+      await app.swapLiveApp.tapExecuteSwap(provider.uiName);
+      if (isIos()) await device.disableSynchronization();
       try {
-        await app.swapLiveApp.tapExecuteSwap(provider.uiName);
         await app.swap.verifyAmountsAndAcceptSwap(swap, swapAmount);
         await app.swap.waitForSuccessAndContinue();
       } finally {
-        await app.common.enableSynchronizationForiOS();
+        if (isIos()) await device.enableSynchronization();
       }
     });
   });

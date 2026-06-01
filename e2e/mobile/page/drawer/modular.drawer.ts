@@ -64,6 +64,7 @@ export default class ModularDrawer {
   async selectFirstAccount() {
     await waitForElementById(this.accountItem);
     await tapById(this.accountItem, 0);
+    await waitForElementNotVisible(this.accountTitleIdMAD);
   }
 
   @Step("Select Account")
