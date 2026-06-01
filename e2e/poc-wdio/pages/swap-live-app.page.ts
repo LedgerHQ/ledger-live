@@ -80,6 +80,8 @@ export class SwapLiveAppPage {
     // await detoxExpect(getWebElementByTestId(this.quotesButtonDisabled)).toExist();
 
     // WDIO:
+    await driver.pause(15_000);
+    console.log("Checking Swap Live App is displayed");
     await this.switchTo();
     await expect(this.fromSelector).toBeDisplayed();
     await expect(this.toSelector).toBeDisplayed();

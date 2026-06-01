@@ -14,6 +14,8 @@ describe("Swap", async () => {
   });
 
   it(`${swapToTest.accountToDebit.currency.name} to ${swapToTest.accountToCredit.currency.name} (without broadcast)`, async () => {
+    await driver.pause(30_000);
+    console.log("Starting Swap test");
     await runSwapTest(swapToTest);
   });
 });
