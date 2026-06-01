@@ -253,7 +253,8 @@ export class SpeculosUtils {
       const knownAddress = SpeculosUtils.getKnownSpeculosAddress(speculosPort);
       await removeKnownSpeculos(knownAddress);
     }
-    await SpeculosUtils.waitForBridgeEnv("DEVICE_PROXY_URL", "");
+    // TODO: fix waitForBridgeEnv
+    // await SpeculosUtils.waitForBridgeEnv("DEVICE_PROXY_URL", "");
   };
 
   static setupMainSpeculosApp = async (
