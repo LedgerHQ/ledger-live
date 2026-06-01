@@ -280,8 +280,12 @@ export const config: WebdriverIO.Config = {
    * @param {number} result 0 - command success, 1 - command error
    * @param {object} error error object if any
    */
-  // afterCommand: function (commandName, args, result, error) {
-  // },
+  afterCommand: async function (commandName, args, result, error) {
+    await driver.pause(3_000);
+    if (result === 1) {
+      console.log(`Command ${commandName} with args ${args} failed with error: ${error}`);
+    }
+  },
   /**
    * Gets executed after all tests are done. You still have access to all global variables from
    * the test.
