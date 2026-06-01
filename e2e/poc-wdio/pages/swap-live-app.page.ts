@@ -63,8 +63,16 @@ export class SwapLiveAppPage {
   async switchTo() {
     await driver.waitUntil(
       async () => {
-        await driver.switchContext({ title: /swap/i });
-        return true;
+        const contexts = await driver.getContexts();
+        const webviews = contexts.filter(context => context.toLowerCase().includes("webview"));
+        for (const webview of webviews) {
+          await driver.switchContext(webview);
+          const title = await driver.getTitle();
+          if (/swap/i.test(title)) {
+            return true;
+          }
+        }
+        return false;
       },
       {
         timeout: 300_000,
@@ -80,7 +88,6 @@ export class SwapLiveAppPage {
     // await detoxExpect(getWebElementByTestId(this.quotesButtonDisabled)).toExist();
 
     // WDIO:
-    await driver.pause(15_000);
     console.log("Checking Swap Live App is displayed");
     await this.switchTo();
     await expect(this.fromSelector).toBeDisplayed();
