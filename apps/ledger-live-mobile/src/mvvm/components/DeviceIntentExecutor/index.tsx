@@ -7,23 +7,14 @@ import { BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
 import QueuedDrawerBottomSheet from "LLM/components/QueuedDrawer/QueuedDrawerBottomSheet";
 import React from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { DeviceDisconnected } from "./components/DeviceDisconnected";
+import { ConnectionError } from "./components/ConnectionError";
 import { IntentError } from "./components/IntentError";
 import { InvalidOperation } from "./components/InvalidOperation";
 import DeviceConnectionComponentLWM from "./DeviceConnectionComponentLWM";
 import DeviceContextInitializerComponentLWM, {
   InitializerConfig,
 } from "./DeviceContextInitializerComponentLWM";
-import { SourceFlowProvider, type SourceFlow } from "./utils/SourceFlowContext";
 import type { InitializationInput } from "./types";
-import { useDeviceIntentExecutorLWMViewModel } from "./useDeviceIntentExecutorLWMViewModel";
-
-export {
-  buildDeviceInitializationInput,
-  type BuildDeviceInitializationInputParams,
-} from "./DeviceContextInitializerComponentLWM/utils/buildDeviceInitializationInput";
-export type { InitializationInput } from "./types";
-export type { SourceFlow } from "./utils/SourceFlowContext";
 
 type Props<JobState, Input, ExtraProps> = DeviceIntentExecutorProps<
   JobState,
@@ -32,47 +23,56 @@ type Props<JobState, Input, ExtraProps> = DeviceIntentExecutorProps<
   InitializationInput
 > & {
   initializerConfig?: InitializerConfig;
-  /**
-   * Originating user intent that initiated the device flow. Required for analytics.
-   */
-  sourceFlow: SourceFlow;
 };
 
-const platformConfig: ExecutorPlatformConfiguration<InitializationInput, InitializerConfig> = {
+/**
+ * Platform configuration for the cross-platform `DeviceIntentExecutor` on
+ * mobile (LWM). Exported so consumers that need to render the executor
+ * inside their own drawer (instead of {@link DeviceIntentExecutorLWM}) can
+ * reuse the exact same component set.
+ */
+export const LWM_EXECUTOR_PLATFORM_CONFIG: ExecutorPlatformConfiguration<
+  InitializationInput,
+  InitializerConfig
+> = {
   DeviceConnectionComponent: DeviceConnectionComponentLWM,
   DeviceContextInitializerComponent: DeviceContextInitializerComponentLWM,
-  DeviceDisconnectedComponent: DeviceDisconnected,
+  ConnectionErrorComponent: ConnectionError,
   IntentErrorComponent: IntentError,
   InvalidOperationComponent: InvalidOperation,
 };
 
 /**
- * LWM wrapper around `@ledgerhq/device-intent`'s `DeviceIntentExecutor`.
+ * NOTE: this is a work in progress. It does not yet follow mvvm architecture and has no tests,
+ * the point for now it to allow manual testing of the DeviceIntentExecutor component.
+ *
+ * Initial implementation of the DeviceIntentExecutor for LWM.
+ *
+ * TODO (final version):
+ * - Use Lumen UI components instead of hardcoded Native UI components
+ * - MVVM architecture
+ * - Tests
  */
 export function DeviceIntentExecutorLWM<JobState, Input, ExtraProps>(
   props: Props<JobState, Input, ExtraProps>,
 ): React.ReactElement {
   const { bottom: bottomInset } = useSafeAreaInsets();
-  const { sourceFlow, wrappedProps } = useDeviceIntentExecutorLWMViewModel(props);
 
   return (
     <QueuedDrawerBottomSheet
-      isRequestingToBeOpened={wrappedProps.enabled}
-      onClose={wrappedProps.onUserCancel}
-      preventBackdropClick={!wrappedProps.cancellableUI}
-      hideHandle
+      isRequestingToBeOpened={props.enabled}
+      onClose={props.onUserCancel}
+      preventBackdropClick={!props.cancellableUI}
       enableDynamicSizing
     >
-      <SourceFlowProvider value={sourceFlow}>
-        <BottomSheetView style={{ paddingBottom: bottomInset + 16 }}>
-          {wrappedProps.cancellableUI && <BottomSheetHeader density="expanded" />}
-          <DeviceIntentExecutor
-            {...wrappedProps}
-            platformConfig={platformConfig}
-            initializerConfig={wrappedProps.initializerConfig}
-          />
-        </BottomSheetView>
-      </SourceFlowProvider>
+      <BottomSheetView style={{ paddingBottom: bottomInset + 16 }}>
+        {props.cancellableUI && <BottomSheetHeader density="expanded" />}
+        <DeviceIntentExecutor
+          {...props}
+          platformConfig={LWM_EXECUTOR_PLATFORM_CONFIG}
+          initializerConfig={props.initializerConfig}
+        />
+      </BottomSheetView>
     </QueuedDrawerBottomSheet>
   );
 }

@@ -4,7 +4,14 @@ import type { SpotProps } from "@ledgerhq/lumen-ui-rnative";
 type LumenIconSpotProps = Extract<SpotProps, { appearance: "icon" }>;
 
 /** Preset that controls the visual rendered above the title and description. */
-export type InfoStatePreset = "illustration" | "spot" | "success" | "error" | "info" | "text";
+export type InfoStatePreset =
+  | "illustration"
+  | "spot"
+  | "success"
+  | "error"
+  | "info"
+  | "loader"
+  | "text";
 
 /** CTA displayed in the action stack below the content and optional banner. */
 export type InfoStateCta = Readonly<{
@@ -82,6 +89,10 @@ export type InfoStateProps =
   | (InfoStateBaseProps & {
       /** Renders an info status Spot. */
       preset: "info";
+    })
+  | (InfoStateBaseProps & {
+      /** Renders a loader Spot for in-progress states. */
+      preset: "loader";
     })
   | (InfoStateBaseProps & {
       /** Renders only title, description, banner, and actions without visual spacing. */

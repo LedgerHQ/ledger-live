@@ -1,9 +1,10 @@
 import React from "react";
-import { Box, Spot } from "@ledgerhq/lumen-ui-rnative";
+import { Box, Spinner, Spot } from "@ledgerhq/lumen-ui-rnative";
 import type { InfoStateProps } from "../types";
 import { illustrationSlotStyle } from "../styles";
 
 const SPOT_SIZE = 72;
+const SPINNER_SIZE = 56;
 
 export function PresetVisual(props: InfoStateProps) {
   switch (props.preset) {
@@ -17,6 +18,8 @@ export function PresetVisual(props: InfoStateProps) {
       return <Spot appearance="error" size={SPOT_SIZE} />;
     case "info":
       return <Spot appearance="info" size={SPOT_SIZE} />;
+    case "loader":
+      return <Spinner size={SPINNER_SIZE} />;
     case "text":
       return null;
     default:

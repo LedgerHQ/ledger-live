@@ -13,10 +13,10 @@ const presetOptions: InfoStatePreset[] = [
   "success",
   "error",
   "info",
+  "loader",
   "text",
 ];
 const sizeOptions: Array<NonNullable<InfoStateProps["size"]>> = ["full-height", "hug"];
-const cyclePresets: InfoStatePreset[] = ["error", "info", "success", "text"];
 
 export default function DebugInfoStateScreen() {
   const { bottom: bottomInset } = useSafeAreaInsets();
@@ -30,8 +30,6 @@ export default function DebugInfoStateScreen() {
   const [useLongTitle, setUseLongTitle] = useState(false);
   const [useLongDescription, setUseLongDescription] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [isCyclePreviewOpen, setIsCyclePreviewOpen] = useState(false);
-  const [cycleIndex, setCycleIndex] = useState(0);
 
   const title = useLongTitle ? longTitle : `${formatPresetLabel(preset)} state title`;
   const description = useLongDescription
@@ -123,25 +121,12 @@ export default function DebugInfoStateScreen() {
           >
             Open preview
           </Button>
-
-          <Button
-            appearance="gray"
-            size="lg"
-            onPress={() => {
-              setCycleIndex(0);
-              setIsCyclePreviewOpen(true);
-            }}
-            testID="info-state-open-cycle-preview"
-          >
-            Open tone cycle preview
-          </Button>
         </Box>
       </ScrollView>
 
       <QueuedDrawerBottomSheet
         isRequestingToBeOpened={isPreviewOpen}
         onClose={() => setIsPreviewOpen(false)}
-        hideHandle
         enableDynamicSizing
         testID="info-state-preview-sheet"
       >
@@ -176,59 +161,8 @@ export default function DebugInfoStateScreen() {
           })}
         </BottomSheetView>
       </QueuedDrawerBottomSheet>
-
-      <QueuedDrawerBottomSheet
-        isRequestingToBeOpened={isCyclePreviewOpen}
-        onClose={() => setIsCyclePreviewOpen(false)}
-        hideHandle
-        enableDynamicSizing
-        testID="info-state-cycle-preview-sheet"
-      >
-        <BottomSheetView style={[styles.sheetContent, { paddingBottom: bottomInset + 24 }]}>
-          <BottomSheetHeader />
-          {renderCycleInfoState({
-            preset: cyclePresets[cycleIndex],
-            nextPreset: cyclePresets[(cycleIndex + 1) % cyclePresets.length],
-            onNext: () => setCycleIndex(index => (index + 1) % cyclePresets.length),
-          })}
-        </BottomSheetView>
-      </QueuedDrawerBottomSheet>
     </>
   );
-}
-
-function renderCycleInfoState({
-  preset,
-  nextPreset,
-  onNext,
-}: Readonly<{
-  preset: InfoStatePreset;
-  nextPreset: InfoStatePreset;
-  onNext: () => void;
-}>) {
-  const commonProps: Pick<InfoStateProps, "size" | "title" | "description" | "primaryCta"> = {
-    size: "hug",
-    title: `${formatPresetLabel(preset)} state`,
-    description: "Tap the primary action to cycle to the next tone without closing the drawer.",
-    primaryCta: {
-      label: `Next: ${formatPresetLabel(nextPreset)}`,
-      onPress: onNext,
-      testID: "info-state-cycle-next-cta",
-    },
-  };
-
-  switch (preset) {
-    case "success":
-      return <InfoState {...commonProps} preset="success" testID="info-state-cycle-preview" />;
-    case "error":
-      return <InfoState {...commonProps} preset="error" testID="info-state-cycle-preview" />;
-    case "info":
-      return <InfoState {...commonProps} preset="info" testID="info-state-cycle-preview" />;
-    case "text":
-      return <InfoState {...commonProps} preset="text" testID="info-state-cycle-preview" />;
-    default:
-      throw new Error(`Unsupported cycle preset: ${preset}`);
-  }
 }
 
 function renderInfoStatePreview({
@@ -267,6 +201,8 @@ function renderInfoStatePreview({
       return <InfoState {...commonProps} preset="error" testID="info-state-preview" />;
     case "info":
       return <InfoState {...commonProps} preset="info" testID="info-state-preview" />;
+    case "loader":
+      return <InfoState {...commonProps} preset="loader" testID="info-state-preview" />;
     case "text":
       return <InfoState {...commonProps} preset="text" testID="info-state-preview" />;
     default:
