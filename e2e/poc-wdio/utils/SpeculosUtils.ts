@@ -117,7 +117,8 @@ export class SpeculosUtils {
   static registerSpeculos = async (speculosPort: number) => {
     const speculosAddress = process.env.SPECULOS_ADDRESS;
     if (driver.isAndroid) {
-      execSync(`adb reverse tcp:${speculosPort} tcp:${speculosPort}`);
+      const deviceID = driver.capabilities.deviceUDID ?? driver.capabilities["appium:deviceName"];
+      execSync(`adb -s ${deviceID} reverse tcp:${speculosPort} tcp:${speculosPort}`);
     }
     process.env.SPECULOS_API_PORT = speculosPort.toString();
     delete process.env.DEVICE_PROXY_URL;

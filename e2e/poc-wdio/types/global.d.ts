@@ -11,6 +11,13 @@ declare global {
   };
 
   var pendingCallbacks: Map<string, { callback: (data: string) => void }>;
+
+  namespace WebdriverIO {
+    interface Capabilities {
+      /** Set by Appium UiAutomator2 in returned session caps */
+      deviceUDID?: string;
+    }
+  }
 }
 
 export {};
