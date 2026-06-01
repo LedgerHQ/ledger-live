@@ -1,5 +1,6 @@
 import React from "react";
 import type { AssetMarketData } from "@ledgerhq/asset-detail";
+import type { DistributionItem } from "@ledgerhq/types-live";
 import type { LineChartRange } from "LLD/components/LineChart";
 import { ChartSectionView } from "./ChartSectionView";
 import { useChartSectionViewModel } from "./useChartSectionViewModel";
@@ -11,6 +12,7 @@ type ChartSectionProps = Readonly<{
   isDistributionLoading: boolean;
   selectedRange: LineChartRange;
   onRangeChange: (range: LineChartRange) => void;
+  distributionItem?: DistributionItem;
 }>;
 
 export function ChartSection(props: ChartSectionProps) {

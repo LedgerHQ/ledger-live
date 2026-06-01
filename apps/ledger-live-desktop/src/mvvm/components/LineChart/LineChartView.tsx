@@ -16,10 +16,12 @@ export function LineChartView({
   rangeSelectorLabel,
   rangeButtons,
   points,
+  pointTooltips,
   enableScrubber,
   formatValue,
   tooltipTitle,
   showScrubberTooltip,
+  pointTooltipsOnly,
   onScrubberPositionChange,
   showArea,
   showXAxis,
@@ -36,10 +38,12 @@ export function LineChartView({
         errorMessage={errorMessage}
         chartSeries={chartSeries}
         points={points}
+        pointTooltips={pointTooltips}
         enableScrubber={enableScrubber}
         formatValue={formatValue}
         tooltipTitle={tooltipTitle}
         showScrubberTooltip={showScrubberTooltip}
+        pointTooltipsOnly={pointTooltipsOnly}
         onScrubberPositionChange={onScrubberPositionChange}
         showArea={showArea}
         showXAxis={showXAxis}

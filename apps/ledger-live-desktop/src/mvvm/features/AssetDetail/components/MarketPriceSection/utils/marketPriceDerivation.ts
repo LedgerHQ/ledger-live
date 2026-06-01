@@ -9,7 +9,9 @@ const RANGE_TO_PRICE_CHANGE_KEY: Record<LineChartRange, KeysPriceChange> = {
   "1d": KeysPriceChange.day,
   "1w": KeysPriceChange.week,
   "1m": KeysPriceChange.month,
+  "6m": KeysPriceChange.month,
   "1y": KeysPriceChange.year,
+  "5y": KeysPriceChange.year,
   all: KeysPriceChange.year,
 };
 
@@ -37,6 +39,19 @@ export function clampDayChangePercentPointsNearZero(
 ): number | null | undefined {
   if (dayPercentage == null) return dayPercentage;
   return Math.abs(dayPercentage) < epsilon ? 0 : dayPercentage;
+}
+
+/**
+ * Variation between the start of the selected range and a scrubbed point.
+ * `percentage` is a fraction (e.g. 0.05 = +5%); `variationFiat` is the raw delta.
+ */
+export function getScrubVariation(
+  baselinePrice: number,
+  scrubbedPrice: number,
+): { percentage: number; variationFiat: number } {
+  const variationFiat = scrubbedPrice - baselinePrice;
+  const percentage = baselinePrice !== 0 ? variationFiat / baselinePrice : 0;
+  return { percentage, variationFiat };
 }
 
 export function resolveTrendPercentAndVariant(options: {

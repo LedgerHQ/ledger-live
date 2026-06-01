@@ -3,5 +3,6 @@ export {
   clampDayChangePercentPointsNearZero,
   getFiatPriceVariationFromPercentChange,
   getPriceChangeKeyForRange,
+  getScrubVariation,
   resolveTrendPercentAndVariant,
 } from "./marketPriceDerivation";

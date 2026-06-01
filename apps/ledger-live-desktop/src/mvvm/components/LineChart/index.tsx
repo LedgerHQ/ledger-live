@@ -13,6 +13,7 @@ export type {
   LineChartColor,
   LineChartPointMarker,
   LineChartPointLabelPosition,
+  LineChartPointTooltip,
   LineChartValueFormatter,
   LineChartTooltipTitle,
   LineChartScrubberPositionChange,

@@ -8,6 +8,10 @@ import React, { createContext, useContext, useMemo, useState, type ReactNode } f
 export type ScrubSelection = Readonly<{
   price: number;
   timestamp: number;
+  /** Fraction change from the start of the selected range to this point (e.g. 0.05 = +5%). */
+  percentage: number;
+  /** Fiat delta from the start of the selected range to this point, in the same units as `price`. */
+  variationFiat: number;
 }>;
 
 type ScrubbedPriceContextValue = Readonly<{

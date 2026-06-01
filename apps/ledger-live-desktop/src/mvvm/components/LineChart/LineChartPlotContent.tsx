@@ -7,6 +7,7 @@ import { LineChartPoints } from "./LineChartPoints";
 import { LineChartScrubber } from "./LineChartScrubber";
 import type {
   LineChartPointMarker,
+  LineChartPointTooltip as LineChartPointTooltipData,
   LineChartScrubberPositionChange,
   LineChartSeries,
   LineChartTooltipTitle,
@@ -22,10 +23,12 @@ export type LineChartPlotContentProps = Readonly<{
   errorMessage?: string;
   chartSeries: LineChartSeries[];
   points: LineChartPointMarker[];
+  pointTooltips: ReadonlyMap<number, LineChartPointTooltipData>;
   enableScrubber: boolean;
   formatValue: LineChartValueFormatter;
   tooltipTitle?: LineChartTooltipTitle;
   showScrubberTooltip: boolean;
+  pointTooltipsOnly: boolean;
   onScrubberPositionChange?: LineChartScrubberPositionChange;
   showArea: boolean;
   showXAxis: boolean;
@@ -41,10 +44,12 @@ export function LineChartPlotContent({
   errorMessage,
   chartSeries,
   points,
+  pointTooltips,
   enableScrubber,
   formatValue,
   tooltipTitle,
   showScrubberTooltip,
+  pointTooltipsOnly,
   onScrubberPositionChange,
   showArea,
   showXAxis,
@@ -85,6 +90,8 @@ export function LineChartPlotContent({
             formatValue={formatValue}
             tooltipTitle={tooltipTitle}
             showTooltip={showScrubberTooltip}
+            pointTooltips={pointTooltips}
+            pointTooltipsOnly={pointTooltipsOnly}
           />
         )}
       </LumenLineChart>

@@ -4405,8 +4405,10 @@
       "1d": "1D",
       "1w": "1W",
       "1m": "1M",
+      "6m": "6M",
       "1y": "1Y",
-      "all": "All"
+      "5y": "5Y",
+      "all": "ALL"
     }
   },
   "near": {
@@ -9085,8 +9087,15 @@
     "day": "1 day",
     "week": "1 week",
     "month": "1 month",
+    "sixMonths": "6 months",
     "year": "1 year",
+    "fiveYears": "5 years",
     "allTime": "All time",
+    "chart": {
+      "received": "Received",
+      "sent": "Sent",
+      "transactionsCount": "{{count}} transactions"
+    },
     "staking": {
       "availableBalance": "Available balance",
       "availableBalanceTooltip": "The portion of your holdings you can use right now, free to send, swap, or withdraw at any time.",

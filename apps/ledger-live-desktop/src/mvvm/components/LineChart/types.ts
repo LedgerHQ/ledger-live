@@ -3,7 +3,7 @@ import type {
   Series,
 } from "@ledgerhq/lumen-ui-react-visualization";
 
-export type LineChartRange = "1d" | "1w" | "1m" | "1y" | "all";
+export type LineChartRange = "1d" | "1w" | "1m" | "6m" | "1y" | "5y" | "all";
 
 export type LineChartXAxisConfig = NonNullable<LumenLineChartProps["xAxis"]>;
 
@@ -15,6 +15,11 @@ export type LineChartSeries = Series;
 
 export type LineChartPointLabelPosition = "top" | "bottom";
 
+export type LineChartPointTooltip = Readonly<{
+  title?: string;
+  rows: ReadonlyArray<{ label: string; value: string }>;
+}>;
+
 export type LineChartPointMarker = Readonly<{
   index: number;
   value: number;
@@ -22,6 +27,8 @@ export type LineChartPointMarker = Readonly<{
   color?: LineChartColor | (string & {});
   labelPosition?: LineChartPointLabelPosition;
   hidePoint?: boolean;
+  hideLabel?: boolean;
+  tooltip?: LineChartPointTooltip;
 }>;
 
 export type LineChartValueFormatter = (value: number) => string;
@@ -52,6 +59,12 @@ export type LineChartProps = Readonly<{
   tooltipTitle?: LineChartTooltipTitle;
   /** Renders the scrubber tooltip on hover/scrub. @default true */
   showScrubberTooltip?: boolean;
+  /**
+   * Restricts the scrubber tooltip to point markers that carry a `tooltip`: it appears
+   * only when the scrubbed index resolves to such a marker, and the standard per-series
+   * value tooltip is suppressed. @default false
+   */
+  pointTooltipsOnly?: boolean;
   onScrubberPositionChange?: LineChartScrubberPositionChange;
   /** Fills the area under the line. @default true */
   showArea?: boolean;

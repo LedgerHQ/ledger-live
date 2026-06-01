@@ -1,7 +1,15 @@
 import { cssVar } from "@ledgerhq/lumen-design-core";
 import type { LineChartColor, LineChartRange } from "./types";
 
-export const LINE_CHART_RANGES: readonly LineChartRange[] = ["1d", "1w", "1m", "1y", "all"];
+export const LINE_CHART_RANGES: readonly LineChartRange[] = [
+  "1d",
+  "1w",
+  "1m",
+  "6m",
+  "1y",
+  "5y",
+  "all",
+];
 
 export const DEFAULT_LINE_CHART_HEIGHT = 240;
 

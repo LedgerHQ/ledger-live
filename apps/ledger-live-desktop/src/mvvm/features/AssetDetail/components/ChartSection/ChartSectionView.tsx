@@ -6,6 +6,7 @@ type ChartSectionViewProps = Readonly<ChartSectionViewModelResult>;
 
 function ChartSectionViewComponent({
   series,
+  height,
   selectedRange,
   onRangeChange,
   color,
@@ -18,6 +19,7 @@ function ChartSectionViewComponent({
   showYAxis,
   xAxis,
   yAxis,
+  points,
 }: ChartSectionViewProps) {
   return (
     <div className="w-full min-w-0" data-testid="asset-detail-chart-section">
@@ -26,17 +28,19 @@ function ChartSectionViewComponent({
         selectedRange={selectedRange}
         onRangeChange={onRangeChange}
         color={color}
-        height={325}
+        height={height}
         isLoading={isLoading}
         isError={isError}
         formatValue={formatValue}
         tooltipTitle={tooltipTitle}
-        showScrubberTooltip={false}
+        showScrubberTooltip={true}
+        pointTooltipsOnly={true}
         onScrubberPositionChange={onScrubberPositionChange}
         showXAxis={showXAxis}
         showYAxis={showYAxis}
         xAxis={xAxis}
         yAxis={yAxis}
+        points={points}
       />
     </div>
   );

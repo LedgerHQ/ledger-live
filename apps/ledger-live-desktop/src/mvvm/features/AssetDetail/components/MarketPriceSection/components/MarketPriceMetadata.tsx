@@ -71,14 +71,11 @@ export function MarketPriceMetadata({
 
   return (
     <div className="flex flex-row items-center gap-4">
-      {/* While scrubbing, % and fiat variation are hidden; only price and date show. */}
-      {!isScrubbing && (
-        <PriceVariationMetrics
-          percentageText={percentageText}
-          variationText={variationText}
-          variationVariant={variationVariant}
-        />
-      )}
+      <PriceVariationMetrics
+        percentageText={percentageText}
+        variationText={variationText}
+        variationVariant={variationVariant}
+      />
       <RangeLabel isScrubbing={isScrubbing} label={dateLabel} />
     </div>
   );

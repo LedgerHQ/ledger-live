@@ -5,7 +5,7 @@ import {
   LINE_CHART_COLOR_TO_STROKE,
 } from "../constants";
 import { useLineChartViewModel } from "../useLineChartViewModel";
-import type { LineChartProps, LineChartSeries } from "../types";
+import type { LineChartPointMarker, LineChartProps, LineChartSeries } from "../types";
 
 const MOCK_SERIES: LineChartSeries[] = [
   {
@@ -89,7 +89,10 @@ describe("useLineChartViewModel", () => {
 
     expect(result.current.rangeButtons).toHaveLength(LINE_CHART_RANGES.length);
     expect(result.current.rangeButtons.map(button => button.value)).toEqual([...LINE_CHART_RANGES]);
-    expect(result.current.rangeButtons.find(button => button.value === "all")?.label).toBe("All");
+    expect(result.current.rangeButtons.find(button => button.value === "all")?.label).toBe("ALL");
+    expect(result.current.rangeButtons.find(button => button.value === "1d")?.label).toBe("24h");
+    expect(result.current.rangeButtons.find(button => button.value === "6m")?.label).toBe("6M");
+    expect(result.current.rangeButtons.find(button => button.value === "5y")?.label).toBe("5Y");
     expect(result.current.rangeSelectorLabel).toBe("Select time range");
   });
 
@@ -97,5 +100,18 @@ describe("useLineChartViewModel", () => {
     const { result } = renderHook(() => useLineChartViewModel(defaultProps));
 
     expect(result.current.height).toBe(DEFAULT_LINE_CHART_HEIGHT);
+  });
+
+  it("derives a pointTooltips map keyed by index for markers that carry a tooltip", () => {
+    const points: LineChartPointMarker[] = [
+      { index: 0, value: 1, tooltip: { rows: [{ label: "Received", value: "$1" }] } },
+      { index: 2, value: 3 },
+    ];
+
+    const { result } = renderHook(() => useLineChartViewModel({ ...defaultProps, points }));
+
+    expect(result.current.pointTooltips.size).toBe(1);
+    expect(result.current.pointTooltips.get(0)?.rows).toEqual([{ label: "Received", value: "$1" }]);
+    expect(result.current.pointTooltips.has(2)).toBe(false);
   });
 });

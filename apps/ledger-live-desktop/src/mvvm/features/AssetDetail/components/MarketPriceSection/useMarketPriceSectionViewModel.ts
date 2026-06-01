@@ -47,7 +47,9 @@ const RANGE_I18N_KEY: Record<LineChartRange, string> = {
   "1d": "assetDetails.day",
   "1w": "assetDetails.week",
   "1m": "assetDetails.month",
+  "6m": "assetDetails.sixMonths",
   "1y": "assetDetails.year",
+  "5y": "assetDetails.fiveYears",
   all: "assetDetails.allTime",
 };
 
@@ -85,30 +87,39 @@ export function useMarketPriceSectionViewModel({
     [fiatUnit, locale],
   );
 
+  const { selection } = useScrubbedPrice();
+  const isScrubbing = selection != null;
+
   const hasVariationData = hasPriceData && normalizedPercentage != null && variationFiat != null;
-  const variationText = hasVariationData
-    ? formatSignedFiatVariation(variationFiat, fiatUnit, locale)
-    : "—";
+  // While scrubbing, the trend reflects the change from the start of the range to the scrubbed point.
+  const hasVariation = isScrubbing || hasVariationData;
+  const variationText = isScrubbing
+    ? formatSignedFiatVariation(selection.variationFiat, fiatUnit, locale)
+    : hasVariationData
+      ? formatSignedFiatVariation(variationFiat, fiatUnit, locale)
+      : "—";
 
   const valueChange: ValueChange = useMemo(
     () => ({
-      percentage: hasVariationData ? normalizedPercentage / 100 : 0,
+      percentage: isScrubbing
+        ? selection.percentage
+        : hasVariationData
+          ? normalizedPercentage / 100
+          : 0,
       value: 0,
     }),
-    [hasVariationData, normalizedPercentage],
+    [isScrubbing, selection, hasVariationData, normalizedPercentage],
   );
   const { percentageText: trendPercentageText, variant: trendVariant } = useTrendViewModel({
     valueChange,
     useDiscreetMasking: false,
   });
   const { percentageText, variationVariant } = resolveTrendPercentAndVariant({
-    hasVariationData,
+    hasVariationData: hasVariation,
     trendPercentageText,
     trendVariant,
   });
 
-  const { selection } = useScrubbedPrice();
-  const isScrubbing = selection != null;
   const formatDate = useAssetChartDateFormatter(selectedRange);
 
   return {

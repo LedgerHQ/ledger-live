@@ -86,6 +86,7 @@ export function AssetDetailView({ viewModel }: AssetDetailViewProps) {
         isDistributionLoading={isDistributionLoading}
         selectedRange={selectedRange}
         onRangeChange={onRangeChange}
+        distributionItem={distributionItem}
       />
 
       <div className="flex flex-col gap-32">

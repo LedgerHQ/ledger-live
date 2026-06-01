@@ -7,6 +7,7 @@ import {
 } from "./constants";
 import type {
   LineChartPointMarker,
+  LineChartPointTooltip,
   LineChartProps,
   LineChartRange,
   LineChartScrubberPositionChange,
@@ -31,10 +32,12 @@ export type LineChartViewModelResult = Readonly<{
   rangeSelectorLabel: string;
   rangeButtons: ReadonlyArray<{ value: LineChartRange; label: string }>;
   points: LineChartPointMarker[];
+  pointTooltips: ReadonlyMap<number, LineChartPointTooltip>;
   enableScrubber: boolean;
   formatValue: LineChartValueFormatter;
   tooltipTitle?: LineChartTooltipTitle;
   showScrubberTooltip: boolean;
+  pointTooltipsOnly: boolean;
   onScrubberPositionChange?: LineChartScrubberPositionChange;
   showArea: boolean;
   showXAxis: boolean;
@@ -57,6 +60,7 @@ export function useLineChartViewModel({
   formatValue = defaultFormatValue,
   tooltipTitle,
   showScrubberTooltip = true,
+  pointTooltipsOnly = false,
   onScrubberPositionChange,
   showArea = true,
   showXAxis = true,
@@ -88,6 +92,14 @@ export function useLineChartViewModel({
     [points, chartSeries],
   );
 
+  const pointTooltips = useMemo(() => {
+    const map = new Map<number, LineChartPointTooltip>();
+    for (const marker of resolvedPoints) {
+      if (marker.tooltip) map.set(marker.index, marker.tooltip);
+    }
+    return map;
+  }, [resolvedPoints]);
+
   const rangeButtons = useMemo(
     () => LINE_CHART_RANGES.map(range => ({ value: range, label: t(`lineChart.range.${range}`) })),
     [t],
@@ -104,10 +116,12 @@ export function useLineChartViewModel({
     rangeSelectorLabel: t("lineChart.rangeSelectorLabel"),
     rangeButtons,
     points: resolvedPoints,
+    pointTooltips,
     enableScrubber,
     formatValue,
     tooltipTitle,
     showScrubberTooltip,
+    pointTooltipsOnly,
     onScrubberPositionChange,
     showArea,
     showXAxis,
