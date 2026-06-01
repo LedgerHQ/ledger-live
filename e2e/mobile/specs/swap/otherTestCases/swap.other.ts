@@ -7,8 +7,9 @@ import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { Team } from "@ledgerhq/live-common/e2e/enum/Team";
 import { setEnv } from "@ledgerhq/live-env";
 import { beforeAllFunctionSwap } from "../swap.setup";
-import { isWallet40 } from "../../../helpers/commonHelpers";
+import { isIos, isWallet40 } from "../../../helpers/commonHelpers";
 import { setTeamOwner } from "../../../helpers/allure/allure-helper";
+import { device } from "detox";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
@@ -117,9 +118,9 @@ export function runSwapWithDifferentSeedTest(
       );
       const provider = await app.swapLiveApp.selectExchange();
       await app.swapLiveApp.checkExchangeButtonHasProviderName(provider.uiName);
-      await app.common.disableSynchronizationForiOS();
+      await app.swapLiveApp.tapExecuteSwap(provider.uiName);
+      if (isIos()) await device.disableSynchronization();
       try {
-        await app.swapLiveApp.tapExecuteSwap(provider.uiName);
         if (errorMessage) {
           await app.swapLiveApp.checkErrorMessage(errorMessage);
         } else {
@@ -127,7 +128,7 @@ export function runSwapWithDifferentSeedTest(
           await app.swap.waitForSuccessAndContinue();
         }
       } finally {
-        await app.common.enableSynchronizationForiOS();
+        if (isIos()) await device.enableSynchronization();
       }
     });
   });
@@ -329,13 +330,13 @@ export function runUserRefusesTransactionTest(
         minAmount,
       );
       const provider = await app.swapLiveApp.selectExchange();
-      await app.common.disableSynchronizationForiOS();
+      await app.swapLiveApp.tapExecuteSwap(provider.uiName);
+      if (isIos()) await device.disableSynchronization();
       try {
-        await app.swapLiveApp.tapExecuteSwap(provider.uiName);
         await app.swap.verifyAmountsAndRejectSwap(rejectedSwap, minAmount);
         await app.swapLiveApp.checkErrorMessage("Please retry or contact Ledger Support if in doubt");
       } finally {
-        await app.common.enableSynchronizationForiOS();
+        if (isIos()) await device.enableSynchronization();
       }
     });
   });
@@ -486,15 +487,14 @@ export function runSwapWithSendMaxTest(
       await app.swapLiveApp.waitForQuotes();
 
       const provider = await app.swapLiveApp.selectExchange();
-      await app.common.disableSynchronizationForiOS();
+      await app.swapLiveApp.tapExecuteSwap(provider.uiName);
+      if (isIos()) await device.disableSynchronization();
       try {
-        await app.swapLiveApp.tapExecuteSwap(provider.uiName);
-
         const swap = new Swap(fromAccount, toAccount, amountToSend);
         await app.swap.verifyAmountsAndAcceptSwap(swap, amountToSend);
         await app.swap.waitForSuccessAndContinue();
       } finally {
-        await app.common.enableSynchronizationForiOS();
+        if (isIos()) await device.enableSynchronization();
       }
     });
   });
