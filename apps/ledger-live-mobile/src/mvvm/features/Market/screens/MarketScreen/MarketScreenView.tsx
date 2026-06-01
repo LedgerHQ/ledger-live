@@ -4,7 +4,9 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { TrackScreen } from "~/analytics";
+import { FearAndGreed } from "~/mvvm/components/FearAndGreed";
 import { MARKET_SCREEN_TEST_IDS } from "./testIds";
+import { HighlightsSkeleton } from "./components/HighlightsSkeleton";
 import type { MarketScreenHighlightCard, MarketScreenViewModel } from "./useMarketScreenViewModel";
 
 const HORIZONTAL_PADDING = 16;
@@ -20,18 +22,30 @@ function HighlightCardSeparator() {
   return <Box style={{ width: CARD_GAP }} />;
 }
 
-export function MarketScreenView({ cardWidth, snapToInterval, highlightCards }: Props) {
+export function MarketScreenView({
+  cardWidth,
+  snapToInterval,
+  highlightCards,
+  isHighlightsLoading,
+}: Props) {
   const { bottom } = useSafeAreaInsets();
 
   const renderHighlightCard = useCallback(
-    ({ item }: ListRenderItemInfo<MarketScreenHighlightCard>) => (
-      <Box
-        key={item.key}
-        testID={MARKET_SCREEN_TEST_IDS.highlightCard}
-        lx={highlightCardStyle}
-        style={{ width: cardWidth, height: HIGHLIGHT_CARD_HEIGHT }}
-      />
-    ),
+    ({ item }: ListRenderItemInfo<MarketScreenHighlightCard>) => {
+      const cardSize = { width: cardWidth, height: HIGHLIGHT_CARD_HEIGHT };
+
+      if (item.type === "fearAndGreed") {
+        return (
+          <Box style={cardSize}>
+            <FearAndGreed appearance="expanded" />
+          </Box>
+        );
+      }
+
+      return (
+        <Box testID={MARKET_SCREEN_TEST_IDS.highlightCard} lx={highlightCardStyle} style={cardSize} />
+      );
+    },
     [cardWidth],
   );
 
@@ -45,21 +59,26 @@ export function MarketScreenView({ cardWidth, snapToInterval, highlightCards }: 
         contentContainerStyle={{ paddingBottom: bottom + SECTION_GAP }}
       >
         <Box lx={contentStyle}>
-          {/* Block 2: horizontal carousel of placeholder cards (~2 cards + a peek of the third). */}
-          <FlatList
-            horizontal
-            testID={MARKET_SCREEN_TEST_IDS.highlights}
-            data={highlightCards}
-            keyExtractor={item => item.key}
-            renderItem={renderHighlightCard}
-            ItemSeparatorComponent={HighlightCardSeparator}
-            showsHorizontalScrollIndicator={false}
-            snapToInterval={snapToInterval}
-            snapToAlignment="start"
-            decelerationRate="fast"
-            disableIntervalMomentum
-            contentContainerStyle={{ paddingHorizontal: HORIZONTAL_PADDING }}
-          />
+          {/* Block 2: Fear & Greed card first, then a horizontal carousel of placeholder cards.
+              While the cards' data loads, the whole block is replaced by a generic skeleton. */}
+          {isHighlightsLoading ? (
+            <HighlightsSkeleton cardWidth={cardWidth} />
+          ) : (
+            <FlatList
+              horizontal
+              testID={MARKET_SCREEN_TEST_IDS.highlights}
+              data={highlightCards}
+              keyExtractor={item => item.key}
+              renderItem={renderHighlightCard}
+              ItemSeparatorComponent={HighlightCardSeparator}
+              showsHorizontalScrollIndicator={false}
+              snapToInterval={snapToInterval}
+              snapToAlignment="start"
+              decelerationRate="fast"
+              disableIntervalMomentum
+              contentContainerStyle={{ paddingHorizontal: HORIZONTAL_PADDING }}
+            />
+          )}
           {/* Block 3: placeholder for the upcoming market list. */}
           <Box testID={MARKET_SCREEN_TEST_IDS.list} lx={listStyle} style={listSize} />
         </Box>

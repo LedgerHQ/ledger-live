@@ -3,5 +3,6 @@ export const MARKET_SCREEN_TEST_IDS = {
   searchBar: "market-screen-search-bar",
   highlights: "market-screen-highlights",
   highlightCard: "market-screen-highlight-card",
+  highlightsSkeleton: "market-screen-highlights-skeleton",
   list: "market-screen-list",
 } as const;

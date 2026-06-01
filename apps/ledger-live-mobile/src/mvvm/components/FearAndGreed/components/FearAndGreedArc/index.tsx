@@ -23,9 +23,11 @@ const ANIMATION_DURATION = 1200;
 
 interface FearAndGreedArcProps {
   readonly value: number;
+  /** Multiplier applied to the intrinsic 44x32 arc, e.g. for the expanded card. */
+  readonly scale?: number;
 }
 
-export default function FearAndGreedArc({ value }: FearAndGreedArcProps) {
+export default function FearAndGreedArc({ value, scale = 1 }: FearAndGreedArcProps) {
   const { theme } = useTheme();
   const animatedValue = useSharedValue(0);
   const [displayValue, setDisplayValue] = useState(0);
@@ -81,7 +83,15 @@ export default function FearAndGreedArc({ value }: FearAndGreedArcProps) {
   const cursorSize = (CURSOR_RADIUS + CURSOR_STROKE_WIDTH) * 2;
 
   return (
-    <View style={{ width: WIDTH, height: HEIGHT, position: "relative" }}>
+    <View
+      style={{
+        width: WIDTH * scale,
+        height: HEIGHT * scale,
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <View style={{ width: WIDTH, height: HEIGHT, position: "relative", transform: [{ scale }] }}>
       <Svg width={WIDTH} height={HEIGHT} viewBox={`0 0 ${WIDTH} ${HEIGHT}`}>
         <Defs>
           <LinearGradient
@@ -127,6 +137,7 @@ export default function FearAndGreedArc({ value }: FearAndGreedArcProps) {
           />
         </Svg>
       </Animated.View>
+      </View>
     </View>
   );
 }

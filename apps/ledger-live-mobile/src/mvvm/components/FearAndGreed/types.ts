@@ -1,5 +1,7 @@
 import type { FearAndGreedIndex } from "@ledgerhq/live-common/cmc-client/state-manager/types";
 
+export type FearAndGreedAppearance = "compact" | "expanded";
+
 export interface FearAndGreedViewModel {
   readonly data: FearAndGreedIndex | undefined;
   readonly isError: boolean | undefined;
@@ -8,4 +10,6 @@ export interface FearAndGreedViewModel {
   readonly handleCloseDrawer: () => void;
 }
 
-export type FearAndGreedViewProps = FearAndGreedViewModel;
+export type FearAndGreedViewProps = FearAndGreedViewModel & {
+  readonly appearance?: FearAndGreedAppearance;
+};
