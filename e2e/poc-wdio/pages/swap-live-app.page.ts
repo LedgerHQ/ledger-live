@@ -63,7 +63,6 @@ export class SwapLiveAppPage {
   async switchTo() {
     await driver.waitUntil(
       async () => {
-        console.log("Available contexts:", await driver.getContexts());
         await driver.switchContext({ title: /swap/i });
         return true;
       },
