@@ -204,6 +204,26 @@ export type WebviewDriverOpPayload =
   | { op: "waitForTestId"; testId: string; timeoutMs?: number }
   | { op: "waitForTestIdText"; testId: string; text: string; timeoutMs?: number }
   | { op: "waitForTestIdNumberAtLeast"; testId: string; min: number; timeoutMs?: number }
+  | {
+      op: "waitForTestIdNumberInRange";
+      testId: string;
+      min: number;
+      max: number;
+      timeoutMs?: number;
+    }
+  | {
+      op: "waitForSelectorMatches";
+      selector: string;
+      pattern: string;
+      flags?: string;
+      timeoutMs?: number;
+    }
+  | {
+      op: "waitForSelectorTextsMatchingCount";
+      countTestId: string;
+      selector: string;
+      timeoutMs?: number;
+    }
   | { op: "getText"; testId: string }
   | { op: "typeText"; testId: string; value: string }
   | { op: "querySelectorAllText"; selector: string };

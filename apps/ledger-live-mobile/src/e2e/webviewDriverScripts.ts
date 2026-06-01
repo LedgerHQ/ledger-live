@@ -6,6 +6,26 @@ export type WebviewDriverOp =
   | { op: "waitForTestId"; testId: string; timeoutMs?: number }
   | { op: "waitForTestIdText"; testId: string; text: string; timeoutMs?: number }
   | { op: "waitForTestIdNumberAtLeast"; testId: string; min: number; timeoutMs?: number }
+  | {
+      op: "waitForTestIdNumberInRange";
+      testId: string;
+      min: number;
+      max: number;
+      timeoutMs?: number;
+    }
+  | {
+      op: "waitForSelectorMatches";
+      selector: string;
+      pattern: string;
+      flags?: string;
+      timeoutMs?: number;
+    }
+  | {
+      op: "waitForSelectorTextsMatchingCount";
+      countTestId: string;
+      selector: string;
+      timeoutMs?: number;
+    }
   | { op: "getText"; testId: string }
   | { op: "typeText"; testId: string; value: string }
   | { op: "querySelectorAllText"; selector: string };
@@ -21,6 +41,8 @@ export type WebviewDriverResult = { ok: true; data?: unknown } | { ok: false; er
 export function buildWebviewDriverScript(id: string, op: WebviewDriverOp): string {
   return `
 (function() {
+  var DEFAULT_TIMEOUT_MS = 30000;
+  var POLL_INTERVAL_MS = 100;
   function postResult(result) {
     try {
       var msg = JSON.stringify({
@@ -36,61 +58,23 @@ export function buildWebviewDriverScript(id: string, op: WebviewDriverOp): strin
   function findByTestId(testId) {
     return document.querySelector('[data-testid="' + testId + '"]');
   }
-  function waitFor(testId, timeoutMs) {
-    var deadline = Date.now() + (timeoutMs || 30000);
+  // Generic poll loop shared by every "wait until ..." op. check() returns a
+  // truthy value (often the element) on success; onSuccess defaults to posting
+  // { ok: true } but tap-when-enabled overrides it to tap in the same tick.
+  function poll(check, timeoutMs, timeoutError, onSuccess) {
+    var deadline = Date.now() + (timeoutMs || DEFAULT_TIMEOUT_MS);
     function tick() {
-      var el = findByTestId(testId);
-      if (el) {
-        postResult({ ok: true });
+      var hit = check();
+      if (hit) {
+        if (onSuccess) onSuccess(hit);
+        else postResult({ ok: true });
         return;
       }
       if (Date.now() > deadline) {
-        postResult({ ok: false, error: 'Timeout waiting for [data-testid="' + testId + '"]' });
+        postResult({ ok: false, error: timeoutError() });
         return;
       }
-      setTimeout(tick, 100);
-    }
-    tick();
-  }
-  function waitForText(testId, text, timeoutMs) {
-    var deadline = Date.now() + (timeoutMs || 30000);
-    function tick() {
-      var el = findByTestId(testId);
-      if (el && (el.textContent || "").indexOf(text) !== -1) {
-        postResult({ ok: true });
-        return;
-      }
-      if (Date.now() > deadline) {
-        postResult({
-          ok: false,
-          error: 'Timeout waiting for [data-testid="' + testId + '"] to contain "' + text + '"',
-        });
-        return;
-      }
-      setTimeout(tick, 100);
-    }
-    tick();
-  }
-  function waitForNumberAtLeast(testId, min, timeoutMs) {
-    var deadline = Date.now() + (timeoutMs || 30000);
-    function tick() {
-      var el = findByTestId(testId);
-      if (el) {
-        var digits = (el.textContent || "").replace(/[^0-9]/g, "");
-        var value = digits ? parseInt(digits, 10) : NaN;
-        if (!isNaN(value) && value >= min) {
-          postResult({ ok: true });
-          return;
-        }
-      }
-      if (Date.now() > deadline) {
-        postResult({
-          ok: false,
-          error: 'Timeout waiting for [data-testid="' + testId + '"] number >= ' + min,
-        });
-        return;
-      }
-      setTimeout(tick, 100);
+      setTimeout(tick, POLL_INTERVAL_MS);
     }
     tick();
   }
@@ -184,36 +168,114 @@ export function buildWebviewDriverScript(id: string, op: WebviewDriverOp): strin
         // tap it in the same script. Doing the wait + tap atomically avoids a
         // race where the button re-disables (e.g. while a quote refreshes)
         // between a separate "wait" and "tap" round-trip over the bridge.
-        var enabledDeadline = Date.now() + (op.timeoutMs || 30000);
-        var attempt = function () {
-          var node = findByTestId(op.testId);
-          if (node && isEnabled(node)) {
-            performTap(node);
-            postResult({ ok: true });
-            return;
-          }
-          if (Date.now() > enabledDeadline) {
-            postResult({
-              ok: false,
-              error: 'Timeout waiting for enabled [data-testid="' + op.testId + '"]',
-            });
-            return;
-          }
-          setTimeout(attempt, 100);
-        };
-        attempt();
+        poll(
+          function () { var node = findByTestId(op.testId); return node && isEnabled(node) ? node : null; },
+          op.timeoutMs,
+          function () { return 'Timeout waiting for enabled [data-testid="' + op.testId + '"]'; },
+          function (node) { performTap(node); postResult({ ok: true }); }
+        );
         return;
       }
       case "waitForTestId": {
-        waitFor(op.testId, op.timeoutMs);
+        poll(
+          function () { return findByTestId(op.testId); },
+          op.timeoutMs,
+          function () { return 'Timeout waiting for [data-testid="' + op.testId + '"]'; }
+        );
         return;
       }
       case "waitForTestIdText": {
-        waitForText(op.testId, op.text, op.timeoutMs);
+        poll(
+          function () {
+            var el = findByTestId(op.testId);
+            return el && (el.textContent || "").indexOf(op.text) !== -1;
+          },
+          op.timeoutMs,
+          function () {
+            return 'Timeout waiting for [data-testid="' + op.testId + '"] to contain "' + op.text + '"';
+          }
+        );
         return;
       }
       case "waitForTestIdNumberAtLeast": {
-        waitForNumberAtLeast(op.testId, op.min, op.timeoutMs);
+        poll(
+          function () {
+            var el = findByTestId(op.testId);
+            if (!el) return false;
+            var digits = (el.textContent || "").replace(/[^0-9]/g, "");
+            var value = digits ? parseInt(digits, 10) : NaN;
+            return !isNaN(value) && value >= op.min;
+          },
+          op.timeoutMs,
+          function () {
+            return 'Timeout waiting for [data-testid="' + op.testId + '"] number >= ' + op.min;
+          }
+        );
+        return;
+      }
+      case "waitForTestIdNumberInRange": {
+        poll(
+          function () {
+            var el = findByTestId(op.testId);
+            if (!el) return false;
+            var digits = (el.textContent || "").replace(/[^0-9]/g, "");
+            var value = digits ? parseInt(digits, 10) : NaN;
+            return !isNaN(value) && value >= op.min && value <= op.max;
+          },
+          op.timeoutMs,
+          function () {
+            return (
+              'Timeout waiting for [data-testid="' +
+              op.testId +
+              '"] number in [' + op.min + ", " + op.max + "]"
+            );
+          }
+        );
+        return;
+      }
+      case "waitForSelectorMatches": {
+        var matchRe = new RegExp(op.pattern, op.flags || "");
+        poll(
+          function () {
+            var node = document.querySelector(op.selector);
+            if (!node) return null;
+            var text = (node.innerText || node.textContent || "").trim();
+            return matchRe.test(text) ? text : null;
+          },
+          op.timeoutMs,
+          function () {
+            return 'Timeout waiting for "' + op.selector + '" text to match /' + op.pattern + "/";
+          },
+          function (text) { postResult({ ok: true, data: text }); }
+        );
+        return;
+      }
+      case "waitForSelectorTextsMatchingCount": {
+        poll(
+          function () {
+            var countEl = findByTestId(op.countTestId);
+            if (!countEl) return null;
+            var countDigits = (countEl.textContent || "").replace(/[^0-9]/g, "");
+            var expected = countDigits ? parseInt(countDigits, 10) : NaN;
+            if (isNaN(expected) || expected <= 0) return null;
+            var matched = document.querySelectorAll(op.selector);
+            if (matched.length !== expected) return null;
+            var collected = [];
+            for (var m = 0; m < matched.length; m++) {
+              collected.push((matched[m].innerText || matched[m].textContent || "").trim());
+            }
+            return collected;
+          },
+          op.timeoutMs,
+          function () {
+            return (
+              'Timeout waiting for "' +
+              op.selector +
+              '" count to match [data-testid="' + op.countTestId + '"]'
+            );
+          },
+          function (texts) { postResult({ ok: true, data: texts }); }
+        );
         return;
       }
       case "getText": {

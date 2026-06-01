@@ -13,8 +13,8 @@ async function selectCurrency(
   const currentText = await ctx.swapLiveApp.getCurrencyText(field);
   if (currentText.includes(ticker)) return;
 
-  await ctx.bridge.setAutoPickAccount(true, account.currency.id);
   await ctx.swapLiveApp.tapCurrency(field);
+  await ctx.modularDrawer.selectAsset(account);
   await ctx.swapLiveApp.waitForCurrency(field, ticker);
 }
 
@@ -29,6 +29,7 @@ export async function performSwapUntilQuoteSelectionStep(
 
   await ctx.switchToLiveApp();
   await ctx.swapLiveApp.inputAmount(amount);
+  await ctx.swapLiveApp.waitForReceiveAmountEstimate();
   await ctx.swapLiveApp.tapGetQuotes();
   await ctx.swapLiveApp.waitForQuotes();
 }

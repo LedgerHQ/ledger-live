@@ -5,13 +5,6 @@ import { webviewDriver, WebviewDriverOpPayload } from "../../mobile/bridge/serve
 const POLL_TIMEOUT_MS = 60_000;
 const HOST_TIMEOUT_MS = POLL_TIMEOUT_MS + 5_000;
 
-// Host-side cadence for non-throwing "did this element show up?" probes.
-const EXISTENCE_POLL_INTERVAL_MS = 300;
-
-function sleep(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 export class WebViewDriverError extends Error {
   constructor(message: string) {
     super(message);
@@ -44,6 +37,35 @@ export class WebViewHelper {
     return this.run({ op: "waitForTestIdNumberAtLeast", testId, min, timeoutMs: POLL_TIMEOUT_MS });
   }
 
+  waitForTestIdNumberInRange(testId: string, min: number, max: number): Promise<void> {
+    return this.run({
+      op: "waitForTestIdNumberInRange",
+      testId,
+      min,
+      max,
+      timeoutMs: POLL_TIMEOUT_MS,
+    });
+  }
+
+  waitForSelectorMatches(selector: string, pattern: string, flags?: string): Promise<string> {
+    return this.run<string>({
+      op: "waitForSelectorMatches",
+      selector,
+      pattern,
+      flags,
+      timeoutMs: POLL_TIMEOUT_MS,
+    });
+  }
+
+  waitForSelectorTextsMatchingCount(countTestId: string, selector: string): Promise<string[]> {
+    return this.run<string[]>({
+      op: "waitForSelectorTextsMatchingCount",
+      countTestId,
+      selector,
+      timeoutMs: POLL_TIMEOUT_MS,
+    });
+  }
+
   async getText(testId: string): Promise<string> {
     await this.waitForTestId(testId);
     return this.run<string>({ op: "getText", testId });
@@ -56,21 +78,6 @@ export class WebViewHelper {
 
   querySelectorAllText(selector: string): Promise<string[]> {
     return this.run<string[]>({ op: "querySelectorAllText", selector });
-  }
-
-  /** Resolve true when at least one element currently matches the testId. */
-  async testIdExists(testId: string): Promise<boolean> {
-    const matches = await this.querySelectorAllText(`[data-testid="${testId}"]`);
-    return matches.length > 0;
-  }
-
-  async waitForTestIdToAppear(testId: string, timeoutMs: number): Promise<boolean> {
-    const deadline = Date.now() + timeoutMs;
-    for (;;) {
-      if (await this.testIdExists(testId)) return true;
-      if (Date.now() >= deadline) return false;
-      await sleep(EXISTENCE_POLL_INTERVAL_MS);
-    }
   }
 
   private async run<T = void>(op: WebviewDriverOpPayload): Promise<T> {

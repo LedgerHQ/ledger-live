@@ -64,11 +64,12 @@ flowchart TD
 - **Speculos + CLI** — [devices/speculos.ts](devices/speculos.ts) starts/stops Speculos devices
   (and reverses ports on Android), while [runtime/cli.ts](runtime/cli.ts) runs `wallet-cli` commands
   against dedicated Speculos instances (e.g. to seed account data before a swap).
-- **iOS drawer workaround** — on iOS the modular drawer renders as a sheet over the swap WebView,
-  which crashes XCUITest's view-hierarchy snapshot. When `swapSetup: true`, the session enables an
-  `autoPickAccount` bridge flag so the in-app wallet-api `account.request` resolves the first
-  matching account without opening the drawer. Detox does not need this (it drives the drawer
-  natively).
+- **Modular drawer on swap** — tapping a currency field in the swap WebView makes the in-app
+  wallet-api `account.request` open the native modular drawer. The swap spec drives it natively via
+  [pages/modularDrawer.ts](pages/modularDrawer.ts) `selectAsset` (search -> asset -> network if asked
+  -> first account), the same way Detox does. The `setAutoPickAccount` bridge flag is still available
+  as a fallback (it resolves the first matching account without opening the drawer) in case the iOS
+  XCUITest view-hierarchy snapshot struggles with the drawer overlaying the WebView.
 
 ### Folder layout
 
@@ -223,5 +224,3 @@ This is a POC; judged as a Detox replacement it is still early. Notable gaps:
   [runtime/bridge.ts](runtime/bridge.ts), and the Android project is coupled to the `detox` build
   variant.
 - **Temp flow files** — generated `.yaml` flows under `artifacts/maestro/tmp` are not cleaned up.
-- **Lower drawer fidelity on swap** — the iOS `autoPickAccount` bypass means the swap path does not
-  exercise the modular drawer the way Detox does.

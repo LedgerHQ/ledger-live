@@ -55,6 +55,7 @@ export async function runSwapEthUsdtSpec(ctx: MaestroContext) {
       await ctx.switchToLiveApp();
       const provider = await ctx.swapLiveApp.selectExchange();
       console.info(`[swapEthUsdt] selected provider: ${provider.uiName}`);
+      await ctx.swapLiveApp.checkExchangeButtonHasProviderName(provider.uiName);
       await ctx.swapLiveApp.tapExecuteSwap();
 
       await verifyAmountsAndAcceptSwap(swap, minAmount);

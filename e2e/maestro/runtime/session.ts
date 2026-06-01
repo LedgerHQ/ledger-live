@@ -67,7 +67,6 @@ export async function withMaestroSession(
 
     if (options.swapSetup) {
       await bridgeSwapSetup();
-      await ctx.bridge.setAutoPickAccount(true);
     }
 
     await body();

@@ -1,4 +1,5 @@
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { floatNumberRegex } from "@ledgerhq/live-common/e2e/data/regexes";
 import { WebViewHelper } from "../runtime/webView";
 
 export type CurrencyField = "from" | "to";
@@ -7,12 +8,8 @@ export type CurrencyField = "from" | "to";
 // built and reaches the device before the quote expires (otherwise the device
 // never receives the transaction). The quote counts down from ~20s.
 const MIN_QUOTE_SECONDS_FOR_EXECUTE = 12;
-
-// After tapping "execute", RFQ / floating-rate quotes route through a "Complete
-// steps" two-step approval screen; fixed-rate quotes skip it and go straight to
-// the device. Bound how long we probe for that screen so the fixed-rate path is
-// not penalised when it never appears.
-const STEP_APPROVAL_DETECT_TIMEOUT_MS = 15_000;
+const QUOTE_COUNTDOWN_MIN_SECONDS = 2;
+const QUOTE_COUNTDOWN_MAX_SECONDS = 19;
 
 export class SwapLiveAppPage {
   private readonly coinSelector: Record<CurrencyField, string> = {
@@ -20,18 +17,25 @@ export class SwapLiveAppPage {
     to: "to-account-coin-selector",
   };
   private readonly fromAmountInput = "from-account-amount-input";
+  private readonly toAmountInput = "to-account-amount-input";
   private readonly getQuotesButton = "mobile-get-quotes-button";
+  private readonly getQuotesButtonDisabled = "mobile-get-quotes-button-disabled";
   private readonly numberOfQuotes = "number-of-quotes";
   private readonly quotesCountdown = "quotes-countdown";
   private readonly quoteCardProviderSelector = "[data-testid^='compact-quote-card-provider-']";
   private readonly executeSwapButton = "execute-button";
-  private readonly executeSwapButtonStepApproval = "execute-swap-button-step-approval";
+
+  private providerExecuteButtonSelector(providerUiName: string): string {
+    const providerName = Provider.getNameByUiName(providerUiName);
+    return `[data-testid^="quote-container-${providerName}"] [data-testid="${this.executeSwapButton}"]`;
+  }
 
   constructor(private readonly webView: WebViewHelper) {}
 
   async expectSwapLiveApp(): Promise<void> {
     await this.webView.waitForTestId(this.coinSelector.from);
     await this.webView.waitForTestId(this.coinSelector.to);
+    await this.webView.waitForTestId(this.getQuotesButtonDisabled);
   }
 
   getCurrencyText(field: CurrencyField): Promise<string> {
@@ -50,16 +54,30 @@ export class SwapLiveAppPage {
     return this.webView.typeText(this.fromAmountInput, amount);
   }
 
+  waitForReceiveAmountEstimate(): Promise<string> {
+    return this.webView.waitForSelectorMatches(
+      `[data-testid="${this.toAmountInput}"]`,
+      floatNumberRegex.source,
+    );
+  }
+
   tapGetQuotes(): Promise<void> {
     return this.webView.tapByTestIdWhenEnabled(this.getQuotesButton);
   }
 
-  waitForQuotes(): Promise<void> {
-    return this.webView.waitForTestId(this.numberOfQuotes);
+  async waitForQuotes(): Promise<void> {
+    await this.webView.waitForTestId(this.numberOfQuotes);
+    await this.webView.waitForTestIdNumberInRange(
+      this.quotesCountdown,
+      QUOTE_COUNTDOWN_MIN_SECONDS,
+      QUOTE_COUNTDOWN_MAX_SECONDS,
+    );
   }
 
   async selectExchange(): Promise<Provider> {
-    const providers = (await this.listProviders()).filter(name => name !== Provider.LIFI.uiName);
+    const providers = (await this.getProviderList()).filter(
+      name => name && name !== Provider.LIFI.uiName,
+    );
 
     for (const providerName of providers) {
       const provider = Object.values(Provider).find(p => p.uiName === providerName);
@@ -73,23 +91,24 @@ export class SwapLiveAppPage {
     );
   }
 
+  getProviderList(): Promise<string[]> {
+    return this.webView.waitForSelectorTextsMatchingCount(
+      this.numberOfQuotes,
+      this.quoteCardProviderSelector,
+    );
+  }
+
+  checkExchangeButtonHasProviderName(providerUiName: string): Promise<string> {
+    return this.webView.waitForSelectorMatches(
+      this.providerExecuteButtonSelector(providerUiName),
+      `^(Swap|Continue) with ${providerUiName}$`,
+      "i",
+    );
+  }
+
   async tapExecuteSwap(): Promise<void> {
     await this.waitForFreshQuote();
     await this.webView.tapByTestIdWhenEnabled(this.executeSwapButton);
-    await this.confirmTwoStepApprovalIfPresent();
-  }
-
-  private async confirmTwoStepApprovalIfPresent(): Promise<void> {
-    const onApprovalStep = await this.webView.waitForTestIdToAppear(
-      this.executeSwapButtonStepApproval,
-      STEP_APPROVAL_DETECT_TIMEOUT_MS,
-    );
-    if (!onApprovalStep) return;
-
-    if (await this.webView.testIdExists(this.quotesCountdown)) {
-      await this.waitForFreshQuote();
-    }
-    await this.webView.tapByTestIdWhenEnabled(this.executeSwapButtonStepApproval);
   }
 
   private waitForFreshQuote(): Promise<void> {
@@ -97,9 +116,5 @@ export class SwapLiveAppPage {
       this.quotesCountdown,
       MIN_QUOTE_SECONDS_FOR_EXECUTE,
     );
-  }
-
-  private listProviders(): Promise<string[]> {
-    return this.webView.querySelectorAllText(this.quoteCardProviderSelector);
   }
 }
