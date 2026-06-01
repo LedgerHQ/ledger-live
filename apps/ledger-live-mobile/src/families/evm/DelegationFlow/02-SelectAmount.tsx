@@ -84,7 +84,10 @@ export default function SelectAmount({ navigation, route }: Props) {
   const canContinue =
     !bridgePending && !bridgeError && !hasErrors && amount.gt(0) && maxSpendable.gte(amount);
   const showLockUpWarning = hasUnbondingPeriod(account.currency.id);
-  const showSeiAssociationWarning = useMemo(() => isSeiAccountUnassociated(account), [account]);
+  const showSeiAssociationWarning = useMemo(
+    () => isSeiAccountUnassociated(account.currency.id, account.freshAddress, account.operations),
+    [account],
+  );
 
   const updateAmount = useCallback(
     (amount: BigNumber, useAllAmount = false) => {

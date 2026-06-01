@@ -6,7 +6,6 @@ import invariant from "invariant";
 import { getStakingABI } from "./abis";
 import { STAKING_CONTRACTS } from "./contracts";
 import type {
-  Account,
   StakingAccount,
   StakingDelegation,
   StakingDelegationInfo,
@@ -214,10 +213,14 @@ export function parseAmountStringToNumber(amountString: string, unitCode: string
  *
  * Only applies to `sei_evm`; returns false for every other currency.
  */
-export function isSeiAccountUnassociated(account: Account): boolean {
-  if (account.currency.id !== "sei_evm") return false;
-  const addressLower = account.freshAddress.toLowerCase();
-  return !account.operations.some(
+export function isSeiAccountUnassociated(
+  currencyId: string,
+  freshAddress: string,
+  operations: ReadonlyArray<{ blockHeight: number | null | undefined; senders: string[] }>,
+): boolean {
+  if (currencyId !== "sei_evm") return false;
+  const addressLower = freshAddress.toLowerCase();
+  return !operations.some(
     op =>
       op.blockHeight !== null &&
       op.blockHeight !== undefined &&

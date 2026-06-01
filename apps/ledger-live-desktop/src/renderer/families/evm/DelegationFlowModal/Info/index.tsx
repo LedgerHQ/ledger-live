@@ -31,7 +31,11 @@ export default function EvmEarnRewardsInfoModal({ account }: Props) {
   }, [account, dispatch]);
 
   const showLockupWarning = hasUnbondingPeriod(currencyId);
-  const showSeiAssociationWarning = isSeiAccountUnassociated(account);
+  const showSeiAssociationWarning = isSeiAccountUnassociated(
+    account.currency.id,
+    account.freshAddress,
+    account.operations,
+  );
 
   return (
     <EarnRewardsInfoModal

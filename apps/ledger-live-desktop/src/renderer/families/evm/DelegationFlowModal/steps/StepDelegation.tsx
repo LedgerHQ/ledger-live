@@ -48,6 +48,7 @@ export default function StepDelegation({
       />
       {error && <ErrorBanner error={error} />}
       {status.errors.sender && <ErrorBanner error={status.errors.sender} />}
+      {status.errors.gasLimit && <ErrorBanner error={status.errors.gasLimit} />}
       <ValidatorField
         account={account}
         status={status}
@@ -71,6 +72,7 @@ export function StepDelegationFooter({
   const canNext =
     !bridgePending &&
     !errors.valAddress &&
+    !errors.gasLimit &&
     transaction &&
     !!transaction.valAddress &&
     !errors.sender;
