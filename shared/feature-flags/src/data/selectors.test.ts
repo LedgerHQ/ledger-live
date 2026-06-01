@@ -3,6 +3,7 @@ import {
   selectFeature,
   featureFlagsOverridesSelector,
   featureFlagsBannerVisibleSelector,
+  selectRemoteFlagsHydrated,
 } from "./selectors";
 import type { FeatureFlagsState } from "./schema";
 import { FEATURE_FLAGS_DEFAULTS } from "../constants";
@@ -17,6 +18,7 @@ const state: { featureFlags: FeatureFlagsState } = {
       mockFeature: { enabled: true, params: { color: "blue" } },
     } as FeatureFlagsState["resolved"],
     bannerVisible: false,
+    lastRemoteSyncAt: null,
   },
 };
 
@@ -38,5 +40,16 @@ describe("feature-flags selectors", () => {
 
   it("featureFlagsBannerVisibleSelector returns bannerVisible", () => {
     expect(featureFlagsBannerVisibleSelector(state)).toBe(false);
+  });
+
+  it("selectRemoteFlagsHydrated is false when lastRemoteSyncAt is null", () => {
+    expect(selectRemoteFlagsHydrated(state)).toBe(false);
+  });
+
+  it("selectRemoteFlagsHydrated is true once lastRemoteSyncAt is set", () => {
+    const hydrated = {
+      featureFlags: { ...state.featureFlags, lastRemoteSyncAt: 1700000000000 },
+    };
+    expect(selectRemoteFlagsHydrated(hydrated)).toBe(true);
   });
 });

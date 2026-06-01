@@ -7,6 +7,7 @@ import {
   setBannerVisible,
   importState,
 } from "./slice";
+import { selectRemoteFlagsHydrated } from "./selectors";
 import { createFeatureFlagsMiddleware, type FeatureFlagsMiddlewareConfig } from "./middleware";
 import type { ResolutionConfig, FeatureFlagsState, PartialFeatures } from "./schema";
 import { FEATURE_FLAGS_DEFAULTS, FEATURE_FLAGS_REMOTE_POLLING_INTERVAL_MS } from "../constants";
@@ -64,6 +65,7 @@ describe("featureFlagsSlice reducers", () => {
       overrides: {},
       resolved: defaults,
       bannerVisible: false,
+      lastRemoteSyncAt: null,
     });
   });
 
@@ -80,6 +82,7 @@ describe("featureFlagsSlice reducers", () => {
         overrides: { mockFeature: { enabled: true } },
         resolved: { ...defaults, mockFeature: { enabled: true } },
         bannerVisible: false,
+        lastRemoteSyncAt: null,
       });
       store.dispatch(
         setOverride({ key: "mockFeature", value: { enabled: false, params: { x: 1 } } }),
@@ -95,6 +98,7 @@ describe("featureFlagsSlice reducers", () => {
         overrides: { mockFeature: { enabled: true } },
         resolved: { ...defaults, mockFeature: { enabled: true } },
         bannerVisible: false,
+        lastRemoteSyncAt: null,
       });
       store.dispatch(setOverride({ key: "mockFeature", value: undefined }));
       expect(store.getState().featureFlags.overrides.mockFeature).toBeUndefined();
@@ -114,6 +118,7 @@ describe("featureFlagsSlice reducers", () => {
         overrides: { mockFeature: { enabled: true } },
         resolved: { ...defaults, mockFeature: { enabled: true } },
         bannerVisible: false,
+        lastRemoteSyncAt: null,
       });
       store.dispatch(setAllOverrides({ ptxCard: { enabled: false } }));
       expect(store.getState().featureFlags.overrides).toEqual({ ptxCard: { enabled: false } });
@@ -136,6 +141,7 @@ describe("featureFlagsSlice reducers", () => {
         overrides: { mockFeature: { enabled: true, params: "test" } },
         resolved: { ...defaults, mockFeature: { enabled: true, params: "test" } },
         bannerVisible: true,
+        lastRemoteSyncAt: 1700000000000,
       };
       store.dispatch(importState(newState));
       expect(store.getState().featureFlags).toEqual(newState);
@@ -334,5 +340,30 @@ describe("middleware behavior", () => {
       params: { v: 1 },
     });
     expect(store.getState().featureFlags.resolved.ptxCard.enabled).toBe(true);
+  });
+});
+
+describe("remote hydration signal", () => {
+  it("lastRemoteSyncAt is null on initial state", () => {
+    const store = createStore();
+    expect(store.getState().featureFlags.lastRemoteSyncAt).toBeNull();
+    expect(selectRemoteFlagsHydrated(store.getState())).toBe(false);
+  });
+
+  it("syncRemoteConfig sets lastRemoteSyncAt and flips the selector to true", async () => {
+    jest.setSystemTime(new Date("2026-06-01T12:00:00Z"));
+    const store = await createStoreWithRemote({ mockFeature: { enabled: true } });
+    expect(store.getState().featureFlags.lastRemoteSyncAt).toBe(
+      new Date("2026-06-01T12:00:00Z").getTime(),
+    );
+    expect(selectRemoteFlagsHydrated(store.getState())).toBe(true);
+  });
+
+  it("does not set lastRemoteSyncAt when fetchRemoteFlags rejects", async () => {
+    const fetcher = jest.fn().mockRejectedValue(new Error("network down"));
+    const store = createStore(undefined, { fetchRemoteFlags: fetcher });
+    await flushPromises();
+    expect(store.getState().featureFlags.lastRemoteSyncAt).toBeNull();
+    expect(selectRemoteFlagsHydrated(store.getState())).toBe(false);
   });
 });

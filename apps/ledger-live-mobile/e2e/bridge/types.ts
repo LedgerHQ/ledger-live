@@ -43,7 +43,19 @@ export type ServerData =
   | { type: "ACK"; id: string }
   | { type: "swapSetupDone" }
   | { type: "swapLiveAppReady" }
-  | { type: "earnLiveAppReady" };
+  | { type: "earnLiveAppReady" }
+  | {
+      type: "featureFlagsReady";
+      payload: {
+        hydrated: boolean;
+        waitedMs: number;
+        lastRemoteSyncAt: number | null;
+        /** Snapshot of `state.featureFlags.resolved` after the wait completes. */
+        resolved: PartialFeatures;
+        /** Local overrides currently held by the slice. */
+        overrides: PartialFeatures;
+      };
+    };
 
 export type MessageData =
   | {
@@ -77,6 +89,7 @@ export type MessageData =
   | { type: "swapSetup"; id: string; swapApiBase?: string }
   | { type: "waitSwapReady"; id: string }
   | { type: "waitEarnReady"; id: string }
+  | { type: "waitForFeatureFlagsReady"; id: string; timeoutMs?: number }
   | { type: "ACK"; id: string };
 
 export type MockDeviceEvent =

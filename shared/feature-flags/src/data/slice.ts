@@ -55,6 +55,7 @@ const featureFlagsSlice = createSlice({
       reducer(state, action: PayloadActionWithMeta<void>) {
         const { resolutionConfig, remoteFlags } = action.meta;
         state.resolved = resolveAll(state.overrides, remoteFlags, resolutionConfig);
+        state.lastRemoteSyncAt = Date.now();
       },
     },
 

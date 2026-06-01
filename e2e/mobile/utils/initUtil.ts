@@ -1,4 +1,4 @@
-import { loadConfig, setFeatureFlags } from "../bridge/server";
+import { loadConfig, setFeatureFlags, waitForFeatureFlagsReady } from "../bridge/server";
 import { isObservable, lastValueFrom, Observable } from "rxjs";
 import { log } from "detox";
 import { allure } from "jest-allure2-reporter/api";
@@ -370,5 +370,59 @@ export class InitializationManager {
       "application/json",
     );
     await setFeatureFlags(mergedFeatureFlags);
+
+    // Block until the new feature-flags slice has consumed its first Firebase
+    // remote-config fetch. Components migrated off live-common read from the
+    // slice, so this gate prevents specs from observing initial defaults while
+    // remote values are still in flight. A non-hydrated reply is logged so the
+    // failure mode (network, Firebase config) is visible in CI.
+    log.info(`[FF] Awaiting feature-flags slice hydration...`);
+    const readyReply = await waitForFeatureFlagsReady();
+    if (readyReply) {
+      const { hydrated, waitedMs, lastRemoteSyncAt, resolved, overrides } = JSON.parse(
+        readyReply,
+      ) as {
+        hydrated: boolean;
+        waitedMs: number;
+        lastRemoteSyncAt: number | null;
+        resolved: PartialFeatures;
+        overrides: PartialFeatures;
+      };
+      const resolvedKeys = Object.keys(resolved);
+      const enabledKeys = resolvedKeys.filter(k => resolved[k as keyof PartialFeatures]?.enabled);
+      const overrideKeys = Object.keys(overrides);
+      const summary = {
+        hydrated,
+        waitedMs,
+        lastRemoteSyncAt,
+        resolvedCount: resolvedKeys.length,
+        enabledCount: enabledKeys.length,
+        overrideCount: overrideKeys.length,
+        llmAccountListUI: resolved.llmAccountListUI ?? null,
+      };
+
+      if (!hydrated) {
+        log.warn(
+          `[FF] Feature-flags slice did NOT hydrate before timeout (${waitedMs}ms). ` +
+            `Non-overridden flags will resolve from bundled defaults. Summary: ${JSON.stringify(summary)}`,
+        );
+      } else {
+        log.info(
+          `[FF] Feature-flags slice hydrated in ${waitedMs}ms. Summary: ${JSON.stringify(summary)}`,
+        );
+      }
+      log.info(`[FF] Overrides (${overrideKeys.length}): ${overrideKeys.join(", ") || "(none)"}`);
+      log.info(
+        `[FF] Enabled resolved flags (${enabledKeys.length}): ${enabledKeys.join(", ") || "(none)"}`,
+      );
+
+      await allure.attachment(
+        "Feature flags slice — resolved snapshot",
+        JSON.stringify({ hydrated, waitedMs, lastRemoteSyncAt, overrides, resolved }, null, 2),
+        "application/json",
+      );
+    } else {
+      log.warn(`[FF] waitForFeatureFlagsReady returned empty payload — bridge response timed out.`);
+    }
   }
 }

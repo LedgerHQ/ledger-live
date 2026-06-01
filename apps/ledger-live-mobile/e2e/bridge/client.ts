@@ -3,7 +3,12 @@ import invariant from "invariant";
 import { Subject } from "rxjs";
 import { store } from "~/state-manager/configureStore";
 import { importSettings, setLastConnectedDevice } from "~/actions/settings";
-import { setOverride, setAllOverrides, featureFlagsOverridesSelector } from "@shared/feature-flags";
+import {
+  setOverride,
+  setAllOverrides,
+  featureFlagsOverridesSelector,
+  selectRemoteFlagsHydrated,
+} from "@shared/feature-flags";
 import { importStore as importAccountsRaw } from "~/actions/accounts";
 import { acceptGeneralTerms } from "~/logic/terms";
 import { navigate } from "~/rootnavigation";
@@ -198,6 +203,10 @@ async function onMessage(event: WebSocketMessageEvent) {
         setEnv("SWAP_API_BASE", msg.swapApiBase ?? "https://swap-stg.ledger-test.com/v5");
         postMessage({ type: "swapSetupDone" });
         break;
+      case "waitForFeatureFlagsReady": {
+        await waitForFeatureFlagsReady(msg.timeoutMs ?? 10_000);
+        break;
+      }
       default:
         break;
     }
@@ -205,6 +214,76 @@ async function onMessage(event: WebSocketMessageEvent) {
   } catch (error) {
     log(`Error processing message: ${error}`);
   }
+}
+
+/**
+ * Resolves once the feature-flags slice has received its first
+ * `syncRemoteConfig` dispatch (i.e. `state.featureFlags.resolved` reflects
+ * Firebase remote-config values instead of bundled defaults), then posts
+ * `featureFlagsReady`. Falls back to an unhydrated reply after `timeoutMs`
+ * so the harness never blocks indefinitely — that path is the signal that
+ * remote-config never landed (network down, Firebase misconfigured, etc.).
+ *
+ * Why this exists: components migrated off `@ledgerhq/live-common/featureFlags`
+ * read flag values from this slice. Without an explicit wait, specs can
+ * assert on UI before remote values arrive and observe initial defaults.
+ */
+async function waitForFeatureFlagsReady(timeoutMs: number): Promise<void> {
+  const start = Date.now();
+  const initiallyHydrated = selectRemoteFlagsHydrated(store.getState());
+  log(
+    `[FF] waitForFeatureFlagsReady: initiallyHydrated=${initiallyHydrated}, timeoutMs=${timeoutMs}`,
+  );
+  if (initiallyHydrated) {
+    sendReady(true, 0);
+    return;
+  }
+  await new Promise<void>(resolve => {
+    let settled = false;
+    const finish = (hydrated: boolean) => {
+      if (settled) return;
+      settled = true;
+      unsubscribe();
+      clearTimeout(timer);
+      sendReady(hydrated, Date.now() - start);
+      resolve();
+    };
+    const unsubscribe = store.subscribe(() => {
+      if (selectRemoteFlagsHydrated(store.getState())) finish(true);
+    });
+    const timer = setTimeout(() => finish(false), timeoutMs);
+  });
+}
+
+/**
+ * Posts the `featureFlagsReady` payload including a full snapshot of the
+ * slice's `resolved` and `overrides` maps so the harness can attach them to
+ * the test report and log per-flag values. Without this snapshot the only
+ * way to inspect what the slice held at handshake time would be to add ad
+ * hoc logs to every spec.
+ */
+function sendReady(hydrated: boolean, waitedMs: number): void {
+  const state = store.getState().featureFlags;
+  const resolved = state.resolved as unknown as PartialFeatures;
+  const overrides = state.overrides;
+  const enabledCount = Object.values(resolved).filter(f => f?.enabled).length;
+  log(
+    `[FF] featureFlagsReady: hydrated=${hydrated}, waitedMs=${waitedMs}, ` +
+      `lastRemoteSyncAt=${state.lastRemoteSyncAt}, ` +
+      `resolvedFlags=${Object.keys(resolved).length}, ` +
+      `enabledFlags=${enabledCount}, ` +
+      `overrides=${Object.keys(overrides).length}`,
+  );
+  postMessage({
+    type: "featureFlagsReady",
+    payload: {
+      hydrated,
+      waitedMs,
+      lastRemoteSyncAt: state.lastRemoteSyncAt,
+      resolved,
+      overrides,
+    },
+  });
 }
 
 export function sendWalletAPIResponse(payload: Record<string, unknown>) {

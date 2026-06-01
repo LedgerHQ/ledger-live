@@ -167,6 +167,34 @@ export async function getFlags() {
   return fetchData({ type: "getFlags", id: uniqueId() });
 }
 
+/**
+ * Awaits the app's signal that the feature-flags slice has received its first
+ * successful remote-config sync. Components migrated to the new slice read
+ * from `state.featureFlags.resolved`, which is empty until `fetchRemoteFlags`
+ * resolves — without this gate, specs can assert on UI before remote values
+ * arrive and observe bundled defaults.
+ *
+ * The reply payload (JSON-encoded string) carries:
+ *   - `hydrated`: whether `syncRemoteConfig` fired before the timeout.
+ *   - `waitedMs`: how long the wait took.
+ *   - `lastRemoteSyncAt`: slice timestamp at reply time, or `null`.
+ *   - `resolved`: full snapshot of `state.featureFlags.resolved`.
+ *   - `overrides`: local overrides currently held by the slice.
+ *
+ * `hydrated: false` means the timeout elapsed without a sync — surface it in
+ * logs so the cause (network down, Firebase misconfigured) is visible rather
+ * than silently passing through to default-valued flags.
+ */
+export async function waitForFeatureFlagsReady(timeoutMs = 10_000): Promise<string> {
+  detoxLog.info(`[FF Bridge] -> waitForFeatureFlagsReady (timeoutMs=${timeoutMs})`);
+  const reply = await fetchData(
+    { type: "waitForFeatureFlagsReady", id: uniqueId(), timeoutMs },
+    timeoutMs + RESPONSE_TIMEOUT,
+  );
+  detoxLog.info(`[FF Bridge] <- waitForFeatureFlagsReady (payload bytes=${reply.length})`);
+  return reply;
+}
+
 export async function getEnvs() {
   return fetchData({ type: "getEnvs", id: uniqueId() });
 }
@@ -260,6 +288,14 @@ function onMessage(messageStr: string) {
       if (pending) {
         global.pendingCallbacks.delete("waitEarnReady");
         pending.callback("Earn Live App is ready");
+      }
+      break;
+    }
+    case "featureFlagsReady": {
+      const pending = global.pendingCallbacks?.get("waitForFeatureFlagsReady");
+      if (pending) {
+        global.pendingCallbacks.delete("waitForFeatureFlagsReady");
+        pending.callback(JSON.stringify(msg.payload));
       }
       break;
     }

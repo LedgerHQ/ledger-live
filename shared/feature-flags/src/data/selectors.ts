@@ -37,3 +37,15 @@ export function featureFlagsOverridesSelector(s: WithFeatureFlags): PartialFeatu
 export function featureFlagsBannerVisibleSelector(s: WithFeatureFlags) {
   return s.featureFlags.bannerVisible;
 }
+
+/**
+ * Whether the slice has received at least one successful remote-flag sync.
+ * Returns `false` until `syncRemoteConfig` has fired (i.e. while `resolved`
+ * still reflects bundled defaults rather than Firebase values).
+ *
+ * @param s
+ * Any store state containing the `featureFlags` slice.
+ */
+export function selectRemoteFlagsHydrated(s: WithFeatureFlags): boolean {
+  return s.featureFlags.lastRemoteSyncAt !== null;
+}

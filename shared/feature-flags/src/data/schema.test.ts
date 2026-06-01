@@ -38,6 +38,7 @@ describe("FeatureFlagsStateSchema", () => {
       overrides: { mockFeature: { enabled: true } },
       resolved: { ...FEATURE_FLAGS_DEFAULTS, mockFeature: { enabled: true } },
       bannerVisible: false,
+      lastRemoteSyncAt: 1700000000000,
     };
     expect(FeatureFlagsStateSchema.parse(input)).toEqual(input);
   });
@@ -47,6 +48,7 @@ describe("FeatureFlagsStateSchema", () => {
       overrides: {},
       resolved: FEATURE_FLAGS_DEFAULTS,
       bannerVisible: false,
+      lastRemoteSyncAt: null,
     };
     expect(FeatureFlagsStateSchema.parse(input)).toEqual(input);
   });
@@ -59,6 +61,15 @@ describe("FeatureFlagsStateSchema", () => {
     });
     expect(result.resolved).toEqual(FEATURE_FLAGS_DEFAULTS);
     expect(result.overrides).toEqual({});
+  });
+
+  it("defaults lastRemoteSyncAt to null when omitted", () => {
+    const result = FeatureFlagsStateSchema.parse({
+      overrides: {},
+      resolved: FEATURE_FLAGS_DEFAULTS,
+      bannerVisible: false,
+    });
+    expect(result.lastRemoteSyncAt).toBeNull();
   });
 
   it("rejects when resolved is missing", () => {

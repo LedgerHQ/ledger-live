@@ -28,6 +28,13 @@ export interface FeatureFlagsState {
   resolved: Features;
   /** Whether the developer feature flags banner/button is visible in the UI. */
   bannerVisible: boolean;
+  /**
+   * Wall-clock timestamp of the last `syncRemoteConfig` dispatch, or `null`
+   * until the first remote-flag fetch has populated the slice. Observable
+   * signal for callers that need to know remote values are resolved (e.g. e2e
+   * harness handshake) rather than reading initial defaults.
+   */
+  lastRemoteSyncAt: number | null;
 }
 
 /** Represents the resolved values of all feature flags. */
@@ -55,6 +62,7 @@ export const FeatureFlagsStateSchema = z.object({
   overrides: z.record(z.string(), OverrideValueSchema.optional()).default({}),
   resolved: z.object(flagRegistry),
   bannerVisible: z.boolean(),
+  lastRemoteSyncAt: z.number().nullable().default(null),
 }) as z.ZodType<FeatureFlagsState>;
 
 /** Schema that validates the resolution configuration. */
