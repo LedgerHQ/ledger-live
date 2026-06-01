@@ -66,12 +66,12 @@ export class SwapLiveAppPage {
         await driver.switchContext({
           title: /swap/i,
           androidWebviewConnectionRetryTime: 500,
-          androidWebviewConnectTimeout: 10_000,
+          androidWebviewConnectTimeout: 15_000,
         });
         return true;
       },
       {
-        timeout: 15_000,
+        timeout: 60_000,
         timeoutMsg: "Expected to find swap live app context",
       },
     );

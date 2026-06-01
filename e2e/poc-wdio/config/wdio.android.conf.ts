@@ -16,7 +16,7 @@ export const config: WebdriverIO.Config = {
       "appium:platformVersion": "16.0",
       "appium:automationName": "UiAutomator2",
       "appium:app": `../../apps/ledger-live-mobile/android/app/build/outputs/apk/detox/app-${process.env.CI ? "x86_64" : "arm64-v8a"}-detox.apk`,
-      "appium:adbExecTimeout": 60000,
+      "appium:adbExecTimeout": 60_000,
       // react-native-launch-arguments reads intent extras (Appium path)
       "appium:optionalIntentArguments": [
         `-e mock "0"`,
