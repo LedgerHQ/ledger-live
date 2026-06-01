@@ -15,14 +15,15 @@ Maestro CLI: specs are written in TypeScript, use Page Objects, and reuse the ex
 
 ## How it works
 
-A run is started by `scripts/run.ts` with a `--project` (which build/platform) and a `--spec`
-(which test). It builds a `MaestroContext` (a composition root that wires every page object and
-runtime helper together) and executes the chosen spec inside `withMaestroSession`, which owns the
-full lifecycle: app install -> Speculos -> bridge -> app launch -> test body -> cleanup.
+A run is started by `scripts/run.ts` with a `--project` (which build/platform) and an optional
+positional spec selector (which test; omit it to run every spec). It builds a `MaestroContext` (a
+composition root that wires every page object and runtime helper together) and executes the chosen
+spec(s) inside `withMaestroSession`, which owns the full lifecycle: app install -> Speculos ->
+bridge -> app launch -> test body -> cleanup.
 
 ```mermaid
 flowchart TD
-  CLI["pnpm maestro -- --project ios --spec swapEthUsdt"] --> Run["scripts/run.ts"]
+  CLI["pnpm maestro:ios swapEthUsdt"] --> Run["scripts/run.ts"]
   Run --> Ctx["MaestroContext (composition root)"]
   Run --> Session["withMaestroSession (lifecycle)"]
 
@@ -42,8 +43,9 @@ flowchart TD
 
 ### Key pieces
 
-- **Entry point** — [scripts/run.ts](scripts/run.ts) parses `--project` / `--spec`, initializes the
-  bridge globals, and runs one spec.
+- **Entry point** — [scripts/run.ts](scripts/run.ts) parses `--project` and an optional positional
+  spec selector, initializes the bridge globals, and runs the selected spec (or every spec when none
+  is given), reporting a per-spec PASS/FAIL summary.
 - **Composition root** — [context.ts](context.ts) instantiates and wires the runtime, page objects,
   bridge and Speculos manager. It also exposes `switchToLiveApp()`, which confirms the live-app
   WebView is loaded (once) before its DOM is driven.
@@ -143,16 +145,20 @@ pnpm mobile e2e:build -c android.emu.release
 
 ### 4. Run tests
 
-From the **`e2e/maestro/`** directory:
+Each `maestro:<project>` script runs on one build/platform. Append a spec name (or path) to run
+just that test — Playwright/Detox style — or omit it to run **every** spec on that project. From the
+**`e2e/maestro/`** directory:
 
 ```bash
-pnpm maestro:ios            # addAccount on iOS (release)
-pnpm maestro:android        # addAccount on Android (release)
-pnpm maestro:ios:debug      # addAccount on iOS (debug, needs Metro)
-pnpm maestro:android:debug  # addAccount on Android (debug, needs Metro)
-pnpm maestro:swap:ios       # swapEthUsdt on iOS
-pnpm maestro:swap:android   # swapEthUsdt on Android
+pnpm maestro:ios                  # run ALL specs on iOS (release)
+pnpm maestro:ios addAccount       # run only addAccount on iOS
+pnpm maestro:ios swapEthUsdt      # run only swapEthUsdt on iOS
+pnpm maestro:android              # run ALL specs on Android (release)
+pnpm maestro:ios:debug            # all specs on iOS (debug, needs Metro)
+pnpm maestro:android:debug        # all specs on Android (debug, needs Metro)
 ```
+
+The spec selector accepts a name (`swapEthUsdt`) or a path (`specs/swapEthUsdt.ts`).
 
 Debug projects need the Metro bundler running in another terminal (from repo root):
 
@@ -160,16 +166,17 @@ Debug projects need the Metro bundler running in another terminal (from repo roo
 pnpm mobile start
 ```
 
-Generic form — pick any `--project` and `--spec`:
+Generic form — pick any `--project`, then optionally a spec (no spec = run all):
 
 ```bash
-pnpm maestro -- --project <ios|ios.debug|android|android.debug> --spec <addAccount|swapEthUsdt>
+pnpm maestro -- --project <ios|ios.debug|android|android.debug> [spec]
 ```
 
 From the **repo root** you can target the package by name instead of `cd`-ing in:
 
 ```bash
-pnpm --filter ledger-live-mobile-maestro-tests maestro:ios
+pnpm --filter ledger-live-mobile-maestro-tests maestro:ios               # all specs on iOS
+pnpm --filter ledger-live-mobile-maestro-tests maestro:ios swapEthUsdt   # one spec on iOS
 ```
 
 - Valid projects: see [config/projects.ts](config/projects.ts).
@@ -189,11 +196,12 @@ pnpm typecheck   # tsc via scripts/typecheck.js
 1. Create `specs/<name>.ts` exporting an `async (ctx: MaestroContext) => Promise<void>` runner that
    wraps its body in [`withMaestroSession`](runtime/session.ts) (declare the userdata fixture, the
    main Speculos app + any deps, feature flags, and CLI commands it needs).
-2. Register it in [specs/index.ts](specs/index.ts) so `--spec <name>` resolves.
+2. Register it in [specs/index.ts](specs/index.ts) so the spec selector (`maestro:ios <name>`) resolves.
 3. Reuse the existing Page Objects in `pages/`, or add a new one and expose it on
    [context.ts](context.ts). Drive native UI via the page objects and live-app DOM via
    `WebViewHelper`.
-4. Optionally add a `package.json` script for convenience.
+4. No new `package.json` script is needed — run it with `pnpm maestro:<project> <name>` (e.g.
+   `pnpm maestro:ios <name>`).
 
 ---
 

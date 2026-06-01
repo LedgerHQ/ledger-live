@@ -7,12 +7,10 @@
     "lint:fix": "oxfmt . && oxlint . --fix",
     "typecheck": "node ./scripts/typecheck.js",
     "maestro": "TS_NODE_COMPILER_OPTIONS='{\"rootDir\":\".\",\"jsx\":\"react\"}' ts-node --transpile-only -r tsconfig-paths/register scripts/run.ts",
-    "maestro:ios": "pnpm maestro -- --project ios --spec addAccount",
-    "maestro:android": "pnpm maestro -- --project android --spec addAccount",
-    "maestro:ios:debug": "pnpm maestro -- --project ios.debug --spec addAccount",
-    "maestro:android:debug": "pnpm maestro -- --project android.debug --spec addAccount",
-    "maestro:swap:ios": "pnpm maestro -- --project ios --spec swapEthUsdt",
-    "maestro:swap:android": "pnpm maestro -- --project android --spec swapEthUsdt"
+    "maestro:ios": "pnpm maestro -- --project ios",
+    "maestro:android": "pnpm maestro -- --project android",
+    "maestro:ios:debug": "pnpm maestro -- --project ios.debug",
+    "maestro:android:debug": "pnpm maestro -- --project android.debug"
   },
   "dependencies": {
     "rxjs": "catalog:"

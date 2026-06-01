@@ -100,12 +100,12 @@ export class MaestroApp {
     spawnSync(command, args, { stdio: "ignore" });
   }
 
-  async launch(arguments_: Record<string, string | number | boolean>) {
+  async launch(launchArgs: Record<string, string | number | boolean>) {
     await this.maestro.runFlow("launch-app", [
       {
         launchApp: {
           appId: this.project.appId,
-          arguments: arguments_,
+          arguments: launchArgs,
         },
       },
     ]);

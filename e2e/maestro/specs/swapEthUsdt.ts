@@ -5,11 +5,9 @@ import { liveDataWithAddressCommand } from "@ledgerhq/live-common/e2e/cliCommand
 import { verifyAmountsAndAcceptSwap } from "@ledgerhq/live-common/e2e/speculos";
 import { getMinimumSwapAmount } from "@ledgerhq/live-common/e2e/swap";
 import { MaestroContext } from "../context";
+import { SWAP_LIVE_APP_MANIFEST_ID } from "../config/swap";
 import { withMaestroSession } from "../runtime/session";
 import { performSwapUntilQuoteSelectionStep } from "../utils/swapUtils";
-
-const SWAP_MANIFEST_ID =
-  process.env.PRODUCTION === "true" ? "swap-live-app-aws" : "swap-live-app-stg-aws";
 
 export async function runSwapEthUsdtSpec(ctx: MaestroContext) {
   const accountToDebit = Account.ETH_1;
@@ -29,7 +27,7 @@ export async function runSwapEthUsdtSpec(ctx: MaestroContext) {
       featureFlags: {
         ptxSwapLiveAppMobile: {
           enabled: true,
-          params: { manifest_id: SWAP_MANIFEST_ID },
+          params: { manifest_id: SWAP_LIVE_APP_MANIFEST_ID },
         },
       },
       cliCommandsOnApp: [

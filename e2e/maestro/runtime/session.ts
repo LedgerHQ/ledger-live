@@ -2,7 +2,8 @@ import type { PartialFeatures } from "@shared/feature-flags";
 import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
 import { swapSetup as bridgeSwapSetup } from "../../mobile/bridge/server";
 import { MaestroContext } from "../context";
-import { createTempUserdata, removeTempUserdata, setupE2EEnvironment } from "./bridge";
+import { setupE2EEnvironment } from "./env";
+import { createTempUserdata, removeTempUserdata } from "./userdata";
 import { CliCommandOnApp, runCliCommandsOnApp } from "./cli";
 import { SpeculosName } from "../devices/speculos";
 

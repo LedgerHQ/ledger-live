@@ -1,4 +1,5 @@
 import { MaestroProject } from "./config/projects";
+import { SWAP_LIVE_APP_MANIFEST_ID } from "./config/swap";
 import { MaestroRuntime } from "./runtime/maestro";
 import { MaestroApp } from "./pages/app";
 import { PortfolioPage } from "./pages/portfolio";
@@ -8,9 +9,6 @@ import { SwapLiveAppPage } from "./pages/swapLiveApp";
 import { E2EBridge } from "./runtime/bridge";
 import { WebViewHelper } from "./runtime/webView";
 import { SpeculosDeviceManager } from "./devices/speculos";
-
-const SWAP_DRIVER =
-  process.env.PRODUCTION === "true" ? "swap-live-app-aws" : "swap-live-app-stg-aws";
 
 export class MaestroContext {
   readonly app: MaestroApp;
@@ -30,7 +28,7 @@ export class MaestroContext {
     this.portfolio = new PortfolioPage(this.app);
     this.modularDrawer = new ModularDrawerPage(this.app);
     this.swap = new SwapPage(this.app);
-    this.swapLiveApp = new SwapLiveAppPage(new WebViewHelper(SWAP_DRIVER));
+    this.swapLiveApp = new SwapLiveAppPage(new WebViewHelper(SWAP_LIVE_APP_MANIFEST_ID));
     this.speculos = new SpeculosDeviceManager(project);
   }
 

@@ -1,8 +1,3 @@
-import fs from "fs";
-import path from "path";
-import { randomUUID } from "crypto";
-import { Subject } from "rxjs";
-import { setEnv } from "@ledgerhq/live-env";
 import {
   addKnownSpeculos,
   close as closeBridge,
@@ -15,54 +10,8 @@ import {
   setAutoPickAccount,
   setFeatureFlags,
 } from "../../mobile/bridge/server";
-import { ServerData } from "../../../apps/ledger-live-mobile/e2e/bridge/types";
-import { NANO_APP_CATALOG_PATH } from "../../mobile/utils/constants";
-
-declare global {
-  // eslint-disable-next-line no-var
-  var pendingCallbacks: Map<string, { callback: (data: string) => void }>;
-}
-
-const PACKAGE_ROOT = path.resolve(__dirname, "..");
-const USERDATA_DIR = path.join(PACKAGE_ROOT, "userdata");
-const ARTIFACTS_DIR = path.join(PACKAGE_ROOT, "artifacts");
-
-export function initBridgeGlobals() {
-  global.webSocket = {
-    wss: undefined,
-    ws: undefined,
-    messages: {},
-    e2eBridgeServer: new Subject<ServerData>(),
-  };
-  global.pendingCallbacks = new Map();
-}
-
-export function setupE2EEnvironment() {
-  setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
-  setEnv("MOCK", "");
-  setEnv("DETOX", "1");
-  setEnv("E2E_NANO_APP_VERSION_PATH", NANO_APP_CATALOG_PATH);
-  setEnv("DISABLE_TRANSACTION_BROADCAST", true);
-  process.env.E2E_BRIDGE = "1";
-  process.env.DETOX = "1";
-  process.env.MOCK = "";
-  process.env.DISABLE_TRANSACTION_BROADCAST = "1";
-  process.env.E2E_BRIDGE_QUIET = "1";
-  if (!process.env.SPECULOS_TRACKING_FILE) {
-    process.env.SPECULOS_TRACKING_FILE = path.join(ARTIFACTS_DIR, "speculos-instances.json");
-  }
-}
-
-export function createTempUserdata(baseName: string): { name: string; path: string } {
-  const name = `temp-userdata-${randomUUID()}`;
-  const targetPath = path.join(USERDATA_DIR, `${name}.json`);
-  fs.copyFileSync(path.join(USERDATA_DIR, `${baseName}.json`), targetPath);
-  return { name, path: targetPath };
-}
-
-export function removeTempUserdata(filePath: string): void {
-  fs.rmSync(filePath, { force: true });
-}
+import { DEFAULT_MODULAR_DRAWER_FLAGS } from "../config/featureFlags";
+import { USERDATA_DIR } from "./paths";
 
 export type BridgeSetupOptions = {
   userdata: string;
@@ -75,7 +24,18 @@ export type BridgeStartResult = {
   ready: Promise<void>;
 };
 
+/**
+ * Facade over the reused e2e/mobile WebSocket bridge server. It is the single
+ * injected seam the session and page objects use to talk to the running app
+ * (`ctx.bridge.*`), so Maestro code never imports the bridge server functions
+ * directly.
+ */
 export class E2EBridge {
+  /**
+   * Opens the bridge on a free port and resolves `ready` once the app has
+   * connected and the session-wide setup (config, default flags, known
+   * Speculos, broadcast guard) has run.
+   */
   async start({
     userdata,
     knownSpeculosAddress,
@@ -85,41 +45,27 @@ export class E2EBridge {
 
     const ready = new Promise<void>((resolve, reject) => {
       initBridge(resolvedPort, () => {
-        void (async () => {
-          try {
-            await loadConfig(userdata, true, { userdataDir: USERDATA_DIR });
-            await setFeatureFlags({
-              llmModularDrawer: {
-                enabled: true,
-                params: {
-                  add_account: true,
-                  live_app: true,
-                  live_apps_allowlist: [],
-                  live_apps_blocklist: ["revoke-cash"],
-                  receive_flow: true,
-                  send_flow: false,
-                  enableModularization: true,
-                  searchDebounceTime: 300,
-                  backendEnvironment: "PROD",
-                },
-              },
-            });
-            if (knownSpeculosAddress) {
-              await addKnownSpeculos(knownSpeculosAddress);
-            }
-            await this.assertBroadcastDisabled();
-            resolve();
-          } catch (error) {
-            reject(error);
-          }
-        })();
+        void this.onAppConnected(userdata, knownSpeculosAddress).then(resolve, reject);
       });
     });
 
     return { port: resolvedPort, ready };
   }
 
-  async assertBroadcastDisabled() {
+  private async onAppConnected(userdata: string, knownSpeculosAddress?: string): Promise<void> {
+    await loadConfig(userdata, true, { userdataDir: USERDATA_DIR });
+    await setFeatureFlags(DEFAULT_MODULAR_DRAWER_FLAGS);
+    await this.registerKnownSpeculos(knownSpeculosAddress);
+    await this.assertBroadcastDisabled();
+  }
+
+  private async registerKnownSpeculos(address?: string): Promise<void> {
+    if (address) {
+      await addKnownSpeculos(address);
+    }
+  }
+
+  private async assertBroadcastDisabled(): Promise<void> {
     const envsRaw = await getEnvs();
     const envs: Record<string, unknown> = JSON.parse(envsRaw || "{}");
     if (envs.DISABLE_TRANSACTION_BROADCAST !== true) {
@@ -129,23 +75,25 @@ export class E2EBridge {
     }
   }
 
-  async setFeatureFlags(flags: Parameters<typeof setFeatureFlags>[0]) {
+  // --- Pass-throughs to the bridge server (the injected app-control surface) ---
+
+  async setFeatureFlags(flags: Parameters<typeof setFeatureFlags>[0]): Promise<void> {
     await setFeatureFlags(flags);
   }
 
-  async setAutoPickAccount(enabled: boolean, currencyId?: string) {
+  async setAutoPickAccount(enabled: boolean, currencyId?: string): Promise<void> {
     await setAutoPickAccount(enabled, currencyId);
   }
 
-  async openDeeplink(url: string) {
+  async openDeeplink(url: string): Promise<void> {
     await openDeeplink(url);
   }
 
-  async removeKnownSpeculos(address: string) {
+  async removeKnownSpeculos(address: string): Promise<void> {
     await removeKnownSpeculos(address);
   }
 
-  close() {
+  close(): void {
     closeBridge();
   }
 }

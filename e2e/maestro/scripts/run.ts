@@ -1,29 +1,78 @@
-import { getProject } from "../config/projects";
+import { getProject, MaestroProject } from "../config/projects";
 import { MaestroContext } from "../context";
-import { initBridgeGlobals } from "../runtime/bridge";
+import { initBridgeGlobals } from "../runtime/globals";
 import { specs, SpecName } from "../specs";
 
-function getArg(name: string): string | undefined {
-  const index = process.argv.indexOf(`--${name}`);
-  return index >= 0 ? process.argv[index + 1] : undefined;
+type CliArgs = { project?: string; spec?: string };
+
+function parseArgs(argv: string[]): CliArgs {
+  const args = argv.slice(2).filter(arg => arg !== "--");
+  const result: CliArgs = {};
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+    if (arg === "--project") {
+      result.project = args[++i];
+    } else if (arg.startsWith("--project=")) {
+      result.project = arg.slice("--project=".length);
+    } else if (arg.startsWith("--")) {
+      i++; // skip an unknown flag's value
+    } else if (result.spec === undefined) {
+      result.spec = arg;
+    }
+  }
+  return result;
 }
 
-function isSpecName(value: string | undefined): value is SpecName {
-  return Boolean(value && value in specs);
+function resolveSpecName(selector: string): SpecName {
+  const name = selector.replace(/.*[/\\]/, "").replace(/\.tsx?$/, "");
+  if (!(name in specs)) {
+    throw new Error(`Unknown spec "${selector}". Use one of: ${Object.keys(specs).join(", ")}`);
+  }
+  return name as SpecName;
+}
+
+function formatDuration(ms: number): string {
+  const totalSeconds = Math.round(ms / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds}s`;
+}
+
+async function runSpec(project: MaestroProject, name: SpecName): Promise<void> {
+  initBridgeGlobals();
+  const ctx = new MaestroContext(project);
+  await specs[name](ctx);
 }
 
 async function main() {
-  initBridgeGlobals();
+  const { project: projectId, spec: selector } = parseArgs(process.argv);
+  const project = getProject(projectId);
+  const names: SpecName[] = selector
+    ? [resolveSpecName(selector)]
+    : (Object.keys(specs) as SpecName[]);
 
-  const project = getProject(getArg("project"));
-  const spec = getArg("spec");
-
-  if (!isSpecName(spec)) {
-    throw new Error(`Missing or invalid --spec. Use one of: ${Object.keys(specs).join(", ")}`);
+  const failed: SpecName[] = [];
+  const startedAll = Date.now();
+  for (const name of names) {
+    console.info(`\n[maestro] ${name} on ${project.id} - start`);
+    const startedAt = Date.now();
+    try {
+      await runSpec(project, name);
+      console.info(`[maestro] ${name} - PASS (${formatDuration(Date.now() - startedAt)})`);
+    } catch (error) {
+      failed.push(name);
+      console.error(`[maestro] ${name} - FAIL (${formatDuration(Date.now() - startedAt)})`);
+      console.error(error);
+    }
   }
 
-  const ctx = new MaestroContext(project);
-  await specs[spec](ctx);
+  const total = formatDuration(Date.now() - startedAll);
+  if (failed.length > 0) {
+    throw new Error(
+      `${failed.length}/${names.length} spec(s) failed in ${total}: ${failed.join(", ")}`,
+    );
+  }
+  console.info(`\n[maestro] ${names.length} spec(s) passed on ${project.id} in ${total}.`);
 }
 
 void main().catch(error => {

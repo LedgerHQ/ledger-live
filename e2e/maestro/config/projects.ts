@@ -7,7 +7,6 @@ export type MaestroProject = {
   platform: MaestroPlatform;
   appId: string;
   appPath: string;
-  needsMetro: boolean;
 };
 
 const androidArch = process.env.CI ? "x86_64" : "arm64-v8a";
@@ -19,7 +18,6 @@ export const projects: Record<MaestroProjectId, MaestroProject> = {
     appId: "com.ledger.live",
     appPath:
       "../../apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app",
-    needsMetro: false,
   },
   "ios.debug": {
     id: "ios.debug",
@@ -27,21 +25,18 @@ export const projects: Record<MaestroProjectId, MaestroProject> = {
     appId: "com.ledger.live.debug",
     appPath:
       "../../apps/ledger-live-mobile/ios/build/Build/Products/Debug-iphonesimulator/ledgerlivemobile.app",
-    needsMetro: true,
   },
   android: {
     id: "android",
     platform: "android",
     appId: "com.ledger.live.detox",
     appPath: `../../apps/ledger-live-mobile/android/app/build/outputs/apk/detox/app-${androidArch}-detox.apk`,
-    needsMetro: false,
   },
   "android.debug": {
     id: "android.debug",
     platform: "android",
     appId: "com.ledger.live.debug",
     appPath: `../../apps/ledger-live-mobile/android/app/build/outputs/apk/debug/app-${androidArch}-debug.apk`,
-    needsMetro: true,
   },
 };
 

@@ -74,10 +74,7 @@ export class SwapLiveAppPage {
   }
 
   async tapExecuteSwap(): Promise<void> {
-    await this.webView.waitForTestIdNumberAtLeast(
-      this.quotesCountdown,
-      MIN_QUOTE_SECONDS_FOR_EXECUTE,
-    );
+    await this.waitForFreshQuote();
     await this.webView.tapByTestIdWhenEnabled(this.executeSwapButton);
     await this.confirmTwoStepApprovalIfPresent();
   }
@@ -90,12 +87,16 @@ export class SwapLiveAppPage {
     if (!onApprovalStep) return;
 
     if (await this.webView.testIdExists(this.quotesCountdown)) {
-      await this.webView.waitForTestIdNumberAtLeast(
-        this.quotesCountdown,
-        MIN_QUOTE_SECONDS_FOR_EXECUTE,
-      );
+      await this.waitForFreshQuote();
     }
     await this.webView.tapByTestIdWhenEnabled(this.executeSwapButtonStepApproval);
+  }
+
+  private waitForFreshQuote(): Promise<void> {
+    return this.webView.waitForTestIdNumberAtLeast(
+      this.quotesCountdown,
+      MIN_QUOTE_SECONDS_FOR_EXECUTE,
+    );
   }
 
   private listProviders(): Promise<string[]> {
