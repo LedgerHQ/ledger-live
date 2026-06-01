@@ -5,8 +5,11 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
 import { makeEmptyTokenAccount } from "@ledgerhq/live-common/account/index";
 import { findCryptoCurrencyById, parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { getQuotes } from "@ledgerhq/live-common/wallet-api/Exchange/index";
+import type { Quote } from "@ledgerhq/live-common/wallet-api/Exchange/quotes/types";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCurrencyForAccount, type AccountLike } from "@ledgerhq/types-live";
+import { getCurrencyForAccount, type Account, type AccountLike } from "@ledgerhq/types-live";
+import { getMainAccount, getParentAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { integrateNewAccountDescriptor } from "@ledgerhq/live-wallet/walletsync/modules/accounts";
 import { createCommandOutput } from "../../output";
 import {
@@ -17,12 +20,19 @@ import {
   resolveOutputFormat,
 } from "../inputs";
 import { networkStringFromCurrencyId } from "../../shared/accountDescriptor";
+import { writeStdout } from "../../shared/ui";
 import { OutputFormatSchema } from "../../wallet/models";
 import { runFullSwapPipeline as runFullSwapPipelineDefault } from "./cli-swap-pipeline";
+import { runCliSwapDie as runCliSwapDiePipelineDefault } from "./cli-swap-die-pipeline";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
-import { resolveSwapProvider, WALLET_CLI_DEFAULT_SWAP_PROVIDERS } from "./providers";
+import {
+  isDieExecutionProvider,
+  resolveSwapProvider,
+  WALLET_CLI_DEFAULT_SWAP_PROVIDERS,
+} from "./providers";
 
 type RunFullSwapPipeline = typeof runFullSwapPipelineDefault;
+type RunCliSwapDiePipeline = typeof runCliSwapDiePipelineDefault;
 
 type CryptoOrTokenCurrency = CryptoCurrency | TokenCurrency;
 type FindTokenById = (id: string) => Promise<TokenCurrency | null | undefined>;
@@ -83,6 +93,7 @@ export type SwapExecuteFlags = z.infer<typeof swapExecuteFlagsSchema>;
 
 export type SwapExecuteDependencies = {
   runFullSwapPipeline: RunFullSwapPipeline;
+  runCliSwapDiePipeline?: RunCliSwapDiePipeline;
   resolveAccountDescriptor?: typeof resolveAccountDescriptor;
   integrateNewAccountDescriptor?: typeof integrateNewAccountDescriptor;
   getAccountBridge?: typeof getAccountBridge;
@@ -90,10 +101,47 @@ export type SwapExecuteDependencies = {
   findTokenById?: FindTokenById;
 };
 
+async function selectDieQuote(args: {
+  provider: string;
+  from: string;
+  to: string;
+  amount: string;
+  sendAddress: string;
+  receiveAddress: string;
+}): Promise<Quote> {
+  const { quotes, errors } = await getQuotes(
+    {
+      providers: [args.provider],
+      data: {
+        amount: args.amount,
+        uniswapOrderType: "all",
+        sendCurrencyId: args.from,
+        receiveCurrencyId: args.to,
+        sendAddress: args.sendAddress,
+        receiveAddress: args.receiveAddress,
+        sendAccountId: "",
+        receiveAccountId: "",
+      },
+    },
+    { accounts: [], spotPrices: {}, locale: "en", counterValueCurrency: "USD" },
+  );
+
+  const match = quotes.find(q => q.provider === args.provider) ?? quotes[0];
+  if (!match) {
+    const summary =
+      errors.length > 0
+        ? errors.map(e => `${e.provider}: ${e.message}`).join("; ")
+        : "no quotes returned";
+    throw new Error(`No quote from '${args.provider}': ${summary}`);
+  }
+  return match;
+}
+
 export async function executeSwapCommand({
   flags,
   positional,
   runFullSwapPipeline,
+  runCliSwapDiePipeline = runCliSwapDiePipelineDefault,
   resolveAccountDescriptor: resolveDescriptor = resolveAccountDescriptor,
   integrateNewAccountDescriptor: integrateDescriptor = integrateNewAccountDescriptor,
   getAccountBridge: getBridge = getAccountBridge,
@@ -133,7 +181,7 @@ export async function executeSwapCommand({
 
     const toAccountArg = flags["to-account"];
     if (typeof toAccountArg !== "string" || toAccountArg.trim().length === 0) {
-      throw new Error("Swap execute requires --to-account <session-label>.");
+      throw new Error("Swap execute requires --to-account <descriptor-or-session-label>.");
     }
     const toDescriptor = await resolveDescriptor(toAccountArg);
 
@@ -155,6 +203,73 @@ export async function executeSwapCommand({
     const toAccount = resolveSwapAccountForCurrency(toParentAccount, flags.to, toCurrency, "to");
 
     const amountInAtomicUnit: BigNumber = parseCurrencyUnit(fromCurrency.units[0], flags.amount);
+
+    const accounts: AccountLike[] = [
+      fromAccount,
+      toParentAccount,
+      fromParentAccount,
+      toAccount,
+    ].filter((a): a is AccountLike => a != null);
+    const fromParent = getParentAccount(fromAccount, accounts);
+    const mainFromAccount: Account = getMainAccount(fromAccount, fromParent);
+
+    if (isDieExecutionProvider(provider) && mainFromAccount.currency.family === "evm") {
+      out.swapExecuteProgress(
+        `[i] Using device-intent (DIE) pipeline for provider=${provider}; fetching quote…`,
+      );
+
+      const receiveAddress =
+        toParentAccount.type === "Account"
+          ? toParentAccount.freshAddress
+          : getMainAccount(toParentAccount, getParentAccount(toParentAccount, [toParentAccount]))
+              .freshAddress;
+
+      const quote = await selectDieQuote({
+        provider,
+        from: flags.from,
+        to: flags.to,
+        amount: flags.amount,
+        sendAddress: mainFromAccount.freshAddress,
+        receiveAddress,
+      });
+
+      const dieResult = await runCliSwapDiePipeline({
+        out,
+        quote,
+        mainAccount: mainFromAccount,
+        fromCurrencyId:
+          fromAccount.type === "TokenAccount" ? fromAccount.token.id : fromAccount.currency.id,
+        toCurrencyId: flags.to,
+      });
+
+      if (dieResult.plan !== "skip") {
+        writeStdout(
+          JSON.stringify(
+            {
+              ok: true,
+              command: "swap execute",
+              pipeline: "die",
+              network,
+              plan: dieResult.plan,
+              provider: quote.provider,
+              from: flags.from,
+              to: flags.to,
+              amount: flags.amount,
+              quoteId: quote.id ?? null,
+              approvalTxHash: dieResult.result.approvalTxHash,
+              swapTxHash: dieResult.result.swapTxHash,
+            },
+            null,
+            2,
+          ),
+        );
+        return;
+      }
+
+      out.swapExecuteProgress(
+        `[i] DIE planner returned skip (${dieResult.skipReason ?? "no reason"}); falling back to legacy Exchange-app pipeline.`,
+      );
+    }
 
     const result = await runFullSwapPipeline({
       out,
@@ -187,7 +302,7 @@ export async function executeSwapCommand({
 export default defineCommand({
   name: "execute",
   description:
-    "Swap flow with Ledger device + API pipeline (nonce → payload → complete exchange → sign/broadcast).",
+    "Swap flow on the connected Ledger. DEX providers (uniswap, 1inch/oneinch, velora, okx) run end-to-end through the device-intent (DIE) pipeline in the partner's embedded coin app; every other provider runs the legacy Exchange-app pipeline (nonce → payload → complete exchange → sign/broadcast).",
   options: {
     from: option(swapExecuteFlagsSchema.shape.from, {
       description:
@@ -206,7 +321,7 @@ export default defineCommand({
       description: "Swap source amount in human units",
     }),
     "to-account": option(swapExecuteFlagsSchema.shape["to-account"], {
-      description: "Destination account session label (required for full pipeline)",
+      description: "Destination account descriptor or session label (required for full pipeline)",
     }),
     account: accountOption,
     "fee-strategy": option(swapExecuteFlagsSchema.shape["fee-strategy"], {
@@ -219,6 +334,7 @@ export default defineCommand({
       flags,
       positional,
       runFullSwapPipeline: runFullSwapPipelineDefault,
+      runCliSwapDiePipeline: runCliSwapDiePipelineDefault,
     });
   },
 });
