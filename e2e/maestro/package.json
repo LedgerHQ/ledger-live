@@ -10,9 +10,13 @@
     "maestro:ios": "pnpm maestro -- --project ios",
     "maestro:android": "pnpm maestro -- --project android",
     "maestro:ios:debug": "pnpm maestro -- --project ios.debug",
-    "maestro:android:debug": "pnpm maestro -- --project android.debug"
+    "maestro:android:debug": "pnpm maestro -- --project android.debug",
+    "allure:generate": "allure generate ./allure-results --clean -o ./allure-report",
+    "allure:open": "allure open ./allure-report",
+    "allure": "pnpm run allure:generate && pnpm run allure:open"
   },
   "dependencies": {
+    "allure-js-commons": "catalog:",
     "rxjs": "catalog:"
   },
   "devDependencies": {
@@ -21,6 +25,7 @@
     "@ledgerhq/live-env": "workspace:^",
     "@shared/feature-flags": "workspace:*",
     "@types/node": "catalog:",
+    "allure-commandline": "2.28.0",
     "bignumber.js": "9.1.2",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",

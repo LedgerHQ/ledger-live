@@ -61,6 +61,13 @@ flowchart TD
     (`webviewDriver`) and matching on `data-testid`.
 - **Reused bridge** — [../mobile/bridge/server.ts](../mobile/bridge/server.ts), the same WebSocket
   bridge the Detox suite uses (load userdata, set feature flags, register Speculos, drive WebViews).
+- **Allure reporting** — [runtime/allure.ts](runtime/allure.ts) (`MaestroAllureReporter`) emits one
+  Allure result per spec, the same way the Detox suite does (Jira `issue`/`tms` link templates,
+  `environment.properties`, platform-stamped `historyId`, `broken`→`failed` status). It is built
+  directly on the Allure JS reporter SDK (`allure-js-commons`) because the POC has no test framework
+  to host `jest-allure2-reporter`. Native flows ([runtime/maestro.ts](runtime/maestro.ts)) and
+  WebView driver ops ([runtime/webView.ts](runtime/webView.ts)) are recorded as steps, and each
+  native flow attaches its generated `.yaml`.
 - **Speculos + CLI** — [devices/speculos.ts](devices/speculos.ts) starts/stops Speculos devices
   (and reverses ports on Android), while [runtime/cli.ts](runtime/cli.ts) runs `wallet-cli` commands
   against dedicated Speculos instances (e.g. to seed account data before a swap).
@@ -76,7 +83,7 @@ flowchart TD
 | Path | Purpose |
 | --- | --- |
 | `scripts/` | CLI entry point (`run.ts`) and standalone `typecheck.js`. |
-| `runtime/` | Core glue: Maestro process driver, bridge, session, CLI runner, WebView driver. |
+| `runtime/` | Core glue: Maestro process driver, bridge, session, CLI runner, WebView driver, Allure reporter. |
 | `pages/` | Page Objects (`app`, `portfolio`, `modularDrawer`, `swap`, `swapLiveApp`). |
 | `specs/` | The tests, registered in `specs/index.ts`. |
 | `config/` | Project definitions (platform, appId, app path, Metro need). |
@@ -183,7 +190,20 @@ pnpm --filter ledger-live-mobile-maestro-tests maestro:ios swapEthUsdt   # one s
 - Valid projects: see [config/projects.ts](config/projects.ts).
 - Valid specs: see [specs/index.ts](specs/index.ts).
 
-### 5. Lint & typecheck
+### 5. Reports (Allure)
+
+Every run writes Allure results to `allure-results/` (one result per spec, plus
+`environment.properties`). The scripts mirror the Detox suite:
+
+```bash
+pnpm allure:generate   # allure-results -> ./allure-report
+pnpm allure:open       # open the generated report
+pnpm allure            # generate + open
+```
+
+Override the output directory with `ALLURE_RESULTS_DIR` (e.g. to collect results in CI).
+
+### 6. Lint & typecheck
 
 ```bash
 pnpm lint        # oxlint
@@ -211,11 +231,12 @@ pnpm typecheck   # tsc via scripts/typecheck.js
 This is a POC; judged as a Detox replacement it is still early. Notable gaps:
 
 - **No test framework** — specs are plain async functions that `throw`; there is no assertion
-  library, no `describe`/`it`, and no per-step pass/fail reporting.
+  library and no `describe`/`it`. Allure does capture per-spec results and per-step (native flow /
+  WebView op) pass/fail, but step granularity is whatever the page objects happen to emit.
 - **Single-spec runner** — `run.ts` runs exactly one spec; there is no suite running, tagging,
   filtering, sharding, or parallelism.
-- **No CI integration** — no workflow, no Allure/JUnit output (despite `allure-results` being
-  gitignored), and no screenshot/video capture on failure.
+- **No CI integration** — no workflow and no JUnit output. Allure results are now produced (see
+  [Reports](#5-reports-allure)) but no screenshot/video is captured on failure, unlike Detox.
 - **Hand-rolled YAML** — `MaestroRuntime` serializes flows with a small custom serializer rather
   than a YAML library.
 - **Still rides the `DETOX` flag** — `setupE2EEnvironment` sets `DETOX=1` as a legacy alias because

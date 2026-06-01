@@ -3,6 +3,7 @@ import { mkdirSync, writeFileSync } from "fs";
 import path from "path";
 import { randomUUID } from "crypto";
 import { MaestroProject } from "../config/projects";
+import { allureAttach, allureStep } from "./allure";
 
 type Scalar = string | number | boolean | null;
 type YamlValue = Scalar | YamlValue[] | { [key: string]: YamlValue };
@@ -96,15 +97,19 @@ export class MaestroRuntime {
 
     writeFileSync(flowPath, contents);
 
-    const maxAttempts = this.project.platform === "ios" ? 2 : 1;
-    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-      const exitCode = await this.runMaestroProcess(flowPath, env);
-      if (exitCode === 0) return;
-      if (attempt === maxAttempts) {
-        throw new Error(`Maestro flow "${name}" failed with exit code ${exitCode}`);
+    await allureStep(`native flow: ${name}`, async () => {
+      allureAttach(`${name}.yaml`, contents, "text/yaml");
+
+      const maxAttempts = this.project.platform === "ios" ? 2 : 1;
+      for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        const exitCode = await this.runMaestroProcess(flowPath, env);
+        if (exitCode === 0) return;
+        if (attempt === maxAttempts) {
+          throw new Error(`Maestro flow "${name}" failed with exit code ${exitCode}`);
+        }
+        console.warn(`Maestro flow "${name}" failed with exit code ${exitCode}; retrying once.`);
       }
-      console.warn(`Maestro flow "${name}" failed with exit code ${exitCode}; retrying once.`);
-    }
+    });
   }
 
   private async runMaestroProcess(flowPath: string, env: Record<string, string>): Promise<number> {

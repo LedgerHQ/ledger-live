@@ -1,4 +1,5 @@
 artifacts/
 node_modules/
 allure-results
+allure-report
 userdata/temp-userdata-*.json

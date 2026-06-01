@@ -1,5 +1,6 @@
 import { getProject, MaestroProject } from "../config/projects";
 import { MaestroContext } from "../context";
+import { MaestroAllureReporter, setActiveReporter } from "../runtime/allure";
 import { initBridgeGlobals } from "../runtime/globals";
 import { specs, SpecName } from "../specs";
 
@@ -51,20 +52,28 @@ async function main() {
     ? [resolveSpecName(selector)]
     : (Object.keys(specs) as SpecName[]);
 
+  const reporter = new MaestroAllureReporter(project);
+  setActiveReporter(reporter);
+  await reporter.writeEnvironmentInfo();
+
   const failed: SpecName[] = [];
   const startedAll = Date.now();
   for (const name of names) {
     console.info(`\n[maestro] ${name} on ${project.id} - start`);
     const startedAt = Date.now();
+    reporter.startTest(name);
     try {
       await runSpec(project, name);
+      reporter.endTest();
       console.info(`[maestro] ${name} - PASS (${formatDuration(Date.now() - startedAt)})`);
     } catch (error) {
+      reporter.endTest(error);
       failed.push(name);
       console.error(`[maestro] ${name} - FAIL (${formatDuration(Date.now() - startedAt)})`);
       console.error(error);
     }
   }
+  setActiveReporter(undefined);
 
   const total = formatDuration(Date.now() - startedAll);
   if (failed.length > 0) {

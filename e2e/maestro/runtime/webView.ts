@@ -1,4 +1,10 @@
 import { webviewDriver, WebviewDriverOpPayload } from "../../mobile/bridge/server";
+import { allureStep } from "./allure";
+
+function describeWebviewOp(op: WebviewDriverOpPayload): string {
+  const target = "testId" in op ? op.testId : "selector" in op ? op.selector : undefined;
+  return target ? `${op.op} (${target})` : op.op;
+}
 
 // Budget the in-WebView poll loops run for. The host waits a little longer so
 // the driver can surface its own (more descriptive) timeout error first.
@@ -80,11 +86,13 @@ export class WebViewHelper {
     return this.run<string[]>({ op: "querySelectorAllText", selector });
   }
 
-  private async run<T = void>(op: WebviewDriverOpPayload): Promise<T> {
-    const result = await webviewDriver(this.driver, op, HOST_TIMEOUT_MS);
-    if (!result.ok) {
-      throw new WebViewDriverError(result.error);
-    }
-    return result.data as T;
+  private run<T = void>(op: WebviewDriverOpPayload): Promise<T> {
+    return allureStep(`webview: ${describeWebviewOp(op)}`, async () => {
+      const result = await webviewDriver(this.driver, op, HOST_TIMEOUT_MS);
+      if (!result.ok) {
+        throw new WebViewDriverError(result.error);
+      }
+      return result.data as T;
+    });
   }
 }
