@@ -1,8 +1,7 @@
 import type { PartialFeatures } from "@shared/feature-flags";
 
-// Baseline feature flags applied to every Maestro session once the app
-// connects to the bridge. Specs layer their own flags on top via the session
-// `featureFlags` option.
+export const isWallet40 = process.env.E2E_ENABLE_WALLET40 !== "0";
+
 export const DEFAULT_MODULAR_DRAWER_FLAGS: PartialFeatures = {
   llmModularDrawer: {
     enabled: true,
@@ -18,4 +17,29 @@ export const DEFAULT_MODULAR_DRAWER_FLAGS: PartialFeatures = {
       backendEnvironment: "PROD",
     },
   },
+};
+
+export const WALLET_40_FEATURE_FLAGS: PartialFeatures = {
+  lwmWallet40: {
+    enabled: isWallet40,
+    params: {
+      mainNavigation: isWallet40,
+      marketBanner: isWallet40,
+      graphRework: isWallet40,
+      quickActionCtas: isWallet40,
+      tour: false,
+      lazyOnboarding: isWallet40,
+      balanceRefreshRework: isWallet40,
+      assetSection: false,
+      operationsList: false,
+      aggregatedAssets: false,
+      myWallet: isWallet40,
+      pnl: false,
+    },
+  },
+};
+
+export const DEFAULT_FEATURE_FLAGS: PartialFeatures = {
+  ...DEFAULT_MODULAR_DRAWER_FLAGS,
+  ...WALLET_40_FEATURE_FLAGS,
 };

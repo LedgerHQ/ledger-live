@@ -3,6 +3,7 @@ import { E2E_WEBVIEW_DRIVER_RESULT_TYPE } from "./webviewDriverStore";
 export type WebviewDriverOp =
   | { op: "tapByTestId"; testId: string }
   | { op: "tapByTestIdWhenEnabled"; testId: string; timeoutMs?: number }
+  | { op: "tapBySelectorWhenEnabled"; selector: string; timeoutMs?: number }
   | { op: "waitForTestId"; testId: string; timeoutMs?: number }
   | { op: "waitForTestIdText"; testId: string; text: string; timeoutMs?: number }
   | { op: "waitForTestIdNumberAtLeast"; testId: string; min: number; timeoutMs?: number }
@@ -172,6 +173,19 @@ export function buildWebviewDriverScript(id: string, op: WebviewDriverOp): strin
           function () { var node = findByTestId(op.testId); return node && isEnabled(node) ? node : null; },
           op.timeoutMs,
           function () { return 'Timeout waiting for enabled [data-testid="' + op.testId + '"]'; },
+          function (node) { performTap(node); postResult({ ok: true }); }
+        );
+        return;
+      }
+      case "tapBySelectorWhenEnabled": {
+        // Same atomic wait+tap as tapByTestIdWhenEnabled, but targeting an
+        // arbitrary CSS selector. Used to tap an element scoped to a parent
+        // (e.g. the execute button inside a specific swap quote container) when
+        // several elements share the same data-testid.
+        poll(
+          function () { var node = document.querySelector(op.selector); return node && isEnabled(node) ? node : null; },
+          op.timeoutMs,
+          function () { return 'Timeout waiting for enabled "' + op.selector + '"'; },
           function (node) { performTap(node); postResult({ ok: true }); }
         );
         return;

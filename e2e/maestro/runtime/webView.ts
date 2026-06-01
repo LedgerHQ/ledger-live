@@ -30,6 +30,10 @@ export class WebViewHelper {
     return this.run({ op: "tapByTestIdWhenEnabled", testId, timeoutMs: POLL_TIMEOUT_MS });
   }
 
+  tapBySelectorWhenEnabled(selector: string): Promise<void> {
+    return this.run({ op: "tapBySelectorWhenEnabled", selector, timeoutMs: POLL_TIMEOUT_MS });
+  }
+
   waitForTestId(testId: string): Promise<void> {
     return this.run({ op: "waitForTestId", testId, timeoutMs: POLL_TIMEOUT_MS });
   }

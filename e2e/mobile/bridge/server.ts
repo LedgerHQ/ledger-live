@@ -201,6 +201,7 @@ export async function setAutoPickAccount(enabled: boolean, currencyId?: string) 
 export type WebviewDriverOpPayload =
   | { op: "tapByTestId"; testId: string }
   | { op: "tapByTestIdWhenEnabled"; testId: string; timeoutMs?: number }
+  | { op: "tapBySelectorWhenEnabled"; selector: string; timeoutMs?: number }
   | { op: "waitForTestId"; testId: string; timeoutMs?: number }
   | { op: "waitForTestIdText"; testId: string; text: string; timeoutMs?: number }
   | { op: "waitForTestIdNumberAtLeast"; testId: string; min: number; timeoutMs?: number }

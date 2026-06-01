@@ -34,7 +34,7 @@ export class MaestroContext {
 
   async switchToLiveApp(): Promise<void> {
     if (this.liveAppReady) return;
-    await this.swap.expectWalletApiWebview();
+    await this.bridge.waitSwapReady();
     this.liveAppReady = true;
   }
 }

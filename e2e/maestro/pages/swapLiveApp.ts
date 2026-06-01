@@ -106,9 +106,9 @@ export class SwapLiveAppPage {
     );
   }
 
-  async tapExecuteSwap(): Promise<void> {
+  async tapExecuteSwap(providerUiName: string): Promise<void> {
     await this.waitForFreshQuote();
-    await this.webView.tapByTestIdWhenEnabled(this.executeSwapButton);
+    await this.webView.tapBySelectorWhenEnabled(this.providerExecuteButtonSelector(providerUiName));
   }
 
   private waitForFreshQuote(): Promise<void> {

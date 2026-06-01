@@ -9,8 +9,9 @@ import {
   removeKnownSpeculos,
   setAutoPickAccount,
   setFeatureFlags,
+  waitSwapReady,
 } from "../../mobile/bridge/server";
-import { DEFAULT_MODULAR_DRAWER_FLAGS } from "../config/featureFlags";
+import { DEFAULT_FEATURE_FLAGS } from "../config/featureFlags";
 import { USERDATA_DIR } from "./paths";
 
 export type BridgeSetupOptions = {
@@ -24,18 +25,7 @@ export type BridgeStartResult = {
   ready: Promise<void>;
 };
 
-/**
- * Facade over the reused e2e/mobile WebSocket bridge server. It is the single
- * injected seam the session and page objects use to talk to the running app
- * (`ctx.bridge.*`), so Maestro code never imports the bridge server functions
- * directly.
- */
 export class E2EBridge {
-  /**
-   * Opens the bridge on a free port and resolves `ready` once the app has
-   * connected and the session-wide setup (config, default flags, known
-   * Speculos, broadcast guard) has run.
-   */
   async start({
     userdata,
     knownSpeculosAddress,
@@ -54,7 +44,7 @@ export class E2EBridge {
 
   private async onAppConnected(userdata: string, knownSpeculosAddress?: string): Promise<void> {
     await loadConfig(userdata, true, { userdataDir: USERDATA_DIR });
-    await setFeatureFlags(DEFAULT_MODULAR_DRAWER_FLAGS);
+    await setFeatureFlags(DEFAULT_FEATURE_FLAGS);
     await this.registerKnownSpeculos(knownSpeculosAddress);
     await this.assertBroadcastDisabled();
   }
@@ -75,8 +65,6 @@ export class E2EBridge {
     }
   }
 
-  // --- Pass-throughs to the bridge server (the injected app-control surface) ---
-
   async setFeatureFlags(flags: Parameters<typeof setFeatureFlags>[0]): Promise<void> {
     await setFeatureFlags(flags);
   }
@@ -87,6 +75,12 @@ export class E2EBridge {
 
   async openDeeplink(url: string): Promise<void> {
     await openDeeplink(url);
+  }
+  async waitSwapReady(): Promise<void> {
+    const result = await waitSwapReady();
+    if (!result) {
+      throw new Error("Timed out waiting for the swap live app to signal it was ready");
+    }
   }
 
   async removeKnownSpeculos(address: string): Promise<void> {

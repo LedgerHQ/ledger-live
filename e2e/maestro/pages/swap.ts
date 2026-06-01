@@ -1,7 +1,6 @@
 import { MaestroApp } from "./app";
 
 export class SwapPage {
-  readonly walletApiWebviewId = "wallet-api-webview";
   readonly swapSuccessTitleId = "swap-success-title";
   readonly proceedButtonId = "proceed-button";
 
@@ -9,18 +8,6 @@ export class SwapPage {
 
   async openViaDeeplink() {
     await this.app.openDeepLink("ledgerlive://swap");
-  }
-
-  async expectWalletApiWebview() {
-    await this.app.runNativeFlow("swap-webview-ready", [
-      {
-        extendedWaitUntil: {
-          visible: {
-            id: this.walletApiWebviewId,
-          },
-        },
-      },
-    ]);
   }
 
   async waitForSuccessAndContinue() {
