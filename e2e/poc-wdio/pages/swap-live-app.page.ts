@@ -86,7 +86,7 @@ export class SwapLiveAppPage {
     await expect(this.fromSelector).toBeDisplayed();
     await expect(this.toSelector).toBeDisplayed();
     await expect(this.quotesButtonDisabled).toBeDisplayed();
-    await driver.switchContext("NATIVE_APP");
+    await driver.switchAppiumContext("NATIVE_APP");
   }
 
   async getMinimumAmount(fromAccount: Account, toAccount: Account, providersWhitelist?: string[]) {
@@ -98,59 +98,59 @@ export class SwapLiveAppPage {
   async getFromCurrencyTexts() {
     await this.switchTo();
     const text = await this.fromSelector.getText();
-    await driver.switchContext("NATIVE_APP");
+    await driver.switchAppiumContext("NATIVE_APP");
     return text;
   }
 
   async getToCurrencyTexts() {
     await this.switchTo();
     const text = await this.toSelector.getText();
-    await driver.switchContext("NATIVE_APP");
+    await driver.switchAppiumContext("NATIVE_APP");
     return text;
   }
 
   async tapFromCurrency() {
     await this.switchTo();
     await this.fromSelector.tap();
-    await driver.switchContext("NATIVE_APP");
+    await driver.switchAppiumContext("NATIVE_APP");
   }
 
   async tapToCurrency() {
     await this.switchTo();
     await this.toSelector.tap();
-    await driver.switchContext("NATIVE_APP");
+    await driver.switchAppiumContext("NATIVE_APP");
   }
 
   async verifyCurrencyIsSelected(ticker: string, isFromCurrency: boolean) {
     await this.switchTo();
     const selectorToValidate = isFromCurrency ? this.fromSelector : this.toSelector;
     await expect(selectorToValidate).toHaveText(expect.stringContaining(ticker));
-    await driver.switchContext("NATIVE_APP");
+    await driver.switchAppiumContext("NATIVE_APP");
   }
 
   async inputFromAmount(amount: string) {
     await this.switchTo();
     await this.fromAmountInput.setValue(amount);
-    await driver.switchContext("NATIVE_APP");
+    await driver.switchAppiumContext("NATIVE_APP");
   }
 
   async expectToAmountFloat() {
     await this.switchTo();
     await expect(this.toAmountInput).toHaveText(floatNumberRegex);
-    await driver.switchContext("NATIVE_APP");
+    await driver.switchAppiumContext("NATIVE_APP");
   }
 
   async tapGetQuotesButton() {
     await this.switchTo();
     await this.getQuotesButton.tap();
-    await driver.switchContext("NATIVE_APP");
+    await driver.switchAppiumContext("NATIVE_APP");
   }
 
   async waitForQuotes() {
     await this.switchTo();
     await this.numberOfQuotes.waitForDisplayed();
     await this.waitForQuotesStable();
-    await driver.switchContext("NATIVE_APP");
+    await driver.switchAppiumContext("NATIVE_APP");
   }
 
   async waitForQuotesStable(timeout: number = 20000) {
@@ -175,7 +175,7 @@ export class SwapLiveAppPage {
         timeoutMsg: `Expected countdown to stabilize within ${timeout}ms`,
       },
     );
-    await driver.switchContext("NATIVE_APP");
+    await driver.switchAppiumContext("NATIVE_APP");
   }
 
   async getProviderList() {
@@ -202,7 +202,7 @@ export class SwapLiveAppPage {
         timeoutMsg: "Expected provider list to be up to date within 30s",
       },
     );
-    await driver.switchContext("NATIVE_APP");
+    await driver.switchAppiumContext("NATIVE_APP");
     return providerList;
   }
 
@@ -233,7 +233,7 @@ export class SwapLiveAppPage {
     if (!selectedProvider) {
       throw new Error("No providers without KYC found");
     }
-    await driver.switchContext("NATIVE_APP");
+    await driver.switchAppiumContext("NATIVE_APP");
     return selectedProvider;
   }
 
@@ -243,13 +243,13 @@ export class SwapLiveAppPage {
       new RegExp(`^(Swap|Continue) with ${provider}$`, "i"),
     );
     const buttonText = await this.providerExecuteButton(provider).getText();
-    await driver.switchContext("NATIVE_APP");
+    await driver.switchAppiumContext("NATIVE_APP");
     return buttonText;
   }
 
   async tapExecuteSwap(provider: string) {
     await this.switchTo();
     await this.providerExecuteButton(provider).tap();
-    await driver.switchContext("NATIVE_APP");
+    await driver.switchAppiumContext("NATIVE_APP");
   }
 }
