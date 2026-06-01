@@ -26,7 +26,8 @@ export async function withMaestroSession(
   body: () => Promise<void>,
 ): Promise<void> {
   setupE2EEnvironment();
-  ctx.app.install();
+  const installed = ctx.app.install();
+  installed.catch(() => undefined);
 
   const tmpUserdata = createTempUserdata(options.userdata);
 
@@ -50,6 +51,8 @@ export async function withMaestroSession(
       knownSpeculosAddress: speculosAddress,
     });
     bridgeOpened = true;
+
+    await installed;
 
     await ctx.app.launch({
       IS_TEST: "true",

@@ -1,9 +1,24 @@
-import { execFileSync, execSync, spawnSync } from "child_process";
+import { execSync, spawn } from "child_process";
 import { existsSync } from "fs";
 import path from "path";
 import { MaestroProject } from "../config/projects";
 import { E2EBridge } from "../runtime/bridge";
 import { MaestroCommand, MaestroRuntime } from "../runtime/maestro";
+
+function runAsync(
+  command: string,
+  args: string[],
+  options: { ignoreErrors?: boolean } = {},
+): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const child = spawn(command, args, { stdio: options.ignoreErrors ? "ignore" : "inherit" });
+    child.on("error", error => (options.ignoreErrors ? resolve() : reject(error)));
+    child.on("exit", code => {
+      if (code === 0 || options.ignoreErrors) resolve();
+      else reject(new Error(`\`${command} ${args.join(" ")}\` exited with code ${code}`));
+    });
+  });
+}
 
 const IOS_BUNDLE_IDS = [
   "com.ledger.live",
@@ -25,15 +40,13 @@ export class MaestroApp {
     private readonly bridge: E2EBridge,
   ) {}
 
-  install() {
-    if (this.project.platform === "ios") {
-      this.installIos();
-    } else {
-      this.installAndroid();
-    }
+  // Validates the build synchronously (so a missing/mismatched build fails fast),
+  // then returns the async uninstall+install so it can run while Speculos boots.
+  install(): Promise<void> {
+    return this.project.platform === "ios" ? this.installIos() : this.installAndroid();
   }
 
-  private installIos() {
+  private installIos(): Promise<void> {
     const appPath = path.resolve(this.project.appPath);
     if (!existsSync(appPath)) {
       throw new Error(
@@ -56,14 +69,10 @@ export class MaestroApp {
     }
 
     console.info(`[maestro] Installing iOS app id=${actualBundleId}\n  from: ${appPath}`);
-
-    for (const bundleId of IOS_BUNDLE_IDS) {
-      this.execFileSyncQuietly("xcrun", ["simctl", "uninstall", "booted", bundleId]);
-    }
-    execFileSync("xcrun", ["simctl", "install", "booted", appPath], { stdio: "inherit" });
+    return this.reinstall("xcrun", IOS_BUNDLE_IDS, ["simctl", "install", "booted", appPath]);
   }
 
-  private installAndroid() {
+  private installAndroid(): Promise<void> {
     const apkPath = path.resolve(this.project.appPath);
     if (!existsSync(apkPath)) {
       throw new Error(
@@ -76,11 +85,20 @@ export class MaestroApp {
     console.info(
       `[maestro] Installing Android package id=${this.project.appId}\n  from: ${apkPath}`,
     );
+    return this.reinstall("adb", ANDROID_PACKAGE_IDS, ["install", "-r", apkPath]);
+  }
 
-    for (const pkg of ANDROID_PACKAGE_IDS) {
-      this.execFileSyncQuietly("adb", ["uninstall", pkg]);
+  private async reinstall(
+    tool: "xcrun" | "adb",
+    bundleIds: readonly string[],
+    installArgs: string[],
+  ): Promise<void> {
+    const uninstall = (id: string) =>
+      tool === "xcrun" ? ["simctl", "uninstall", "booted", id] : ["uninstall", id];
+    for (const id of bundleIds) {
+      await runAsync(tool, uninstall(id), { ignoreErrors: true });
     }
-    execFileSync("adb", ["install", "-r", apkPath], { stdio: "inherit" });
+    await runAsync(tool, installArgs);
   }
 
   private readIosBundleId(appPath: string): string {
@@ -94,10 +112,6 @@ export class MaestroApp {
         `[maestro] Failed to read CFBundleIdentifier from ${plist}: ${String(error)}`,
       );
     }
-  }
-
-  private execFileSyncQuietly(command: string, args: string[]) {
-    spawnSync(command, args, { stdio: "ignore" });
   }
 
   async launch(launchArgs: Record<string, string | number | boolean>) {
