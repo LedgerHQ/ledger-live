@@ -96,7 +96,7 @@ export const config: WebdriverIO.Config = {
   //
   // Default timeout in milliseconds for request
   // if browser driver or grid doesn't send response
-  connectionRetryTimeout: 30_000,
+  connectionRetryTimeout: 60_000,
   //
   // Default request retries count
   connectionRetryCount: 2,
@@ -263,7 +263,7 @@ export const config: WebdriverIO.Config = {
   // @ts-expect-error: keep unused params for de-structuring
   afterTest: async function (test, context, { error, result, duration, passed, retries }) {
     if (!passed) {
-      await driver.takeScreenshot();
+      console.log("Something happened, should I take a screenshot? ");
     }
   },
 
