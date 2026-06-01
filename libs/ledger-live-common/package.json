@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "34.71.0",
+  "version": "35.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -56,6 +56,11 @@
     ".": {
       "require": "./lib/index.js",
       "default": "./lib-es/index.js"
+    },
+    "./genericAwarenessModal": {
+      "@ledgerhq/source": "./src/genericAwarenessModal/index.ts",
+      "require": "./lib/genericAwarenessModal/index.js",
+      "default": "./lib-es/genericAwarenessModal/index.js"
     },
     "./currencies/*": {
       "@ledgerhq/source": "./src/currencies/*.ts",

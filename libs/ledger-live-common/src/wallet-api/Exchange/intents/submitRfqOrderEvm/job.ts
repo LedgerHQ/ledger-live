@@ -20,6 +20,18 @@ const DEFAULT_POLL_INTERVAL_MS = 5_000;
  */
 const DEFAULT_MAX_POLL_ATTEMPTS = 60;
 
+/**
+ * Known RFQ partners exposed by the Ledger swap-api `${baseURL}/${provider}/submit`
+ * routes. Constrains the dynamic path segment to a closed set so the URL
+ * cannot be redirected to an arbitrary route via the wallet-api input
+ * (CodeQL SSRF guard).
+ */
+const ALLOWED_RFQ_PROVIDERS = new Set<string>([
+  "uniswap",
+  "oneinch",
+  "oneinchfusion",
+]);
+
 function delay(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -67,7 +79,13 @@ function buildSubmitObservable(
     const baseURL = input.swapApiBaseURL ?? getSwapAPIBaseURL();
 
     (async () => {
-      subscriber.next({ type: "submitting" });
+      // The `submitting` state is emitted synchronously by the outer
+      // `concat(of(...), ...)` wrapper below; don't re-emit it here.
+      if (!ALLOWED_RFQ_PROVIDERS.has(input.provider)) {
+        throw new Error(
+          `Unsupported RFQ provider "${input.provider}" — refusing to issue swap-api submit request`,
+        );
+      }
       const submitResponse = await fetchImpl(
         `${baseURL}/${input.provider}/submit`,
         {

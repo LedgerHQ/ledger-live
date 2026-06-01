@@ -96,8 +96,8 @@ function makeQuote(overrides: {
         : undefined,
       permitData,
     },
-    warning: null,
-    error: null,
+    warnings: [],
+    errors: [],
     customFields,
   };
 }

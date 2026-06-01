@@ -45,9 +45,11 @@ export type SwapFlowStartInput<TIntent, TInitInput> = {
    * machine itself does not depend on this; we just keep it on context).
    */
   meta?: Record<string, unknown>;
-  // Phantom marker so TInitInput contributes to the inferred input shape
-  // even when `meta` is omitted; without it TS widens TInitInput to `unknown`.
-  _phantom?: TIntent;
+  // Phantom markers so both `TIntent` and `TInitInput` contribute to the
+  // inferred input shape even when `meta` is omitted; without them TS
+  // widens these type parameters to `unknown` at the call site.
+  _intent?: TIntent;
+  _initInput?: TInitInput;
 };
 
 export type SwapFlowContext<TIntent, TInitInput> = {

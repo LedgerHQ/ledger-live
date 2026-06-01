@@ -25,10 +25,12 @@ function buildBroadcastObservable(input: BroadcastEvmIntentInput): Observable<Br
     let cancelled = false;
 
     (async () => {
+      // The `broadcasting` state is emitted synchronously by the outer
+      // `concat(of(...), ...)` wrapper below; we go straight to the actual
+      // broadcast call here to avoid a duplicate transition.
       const currency = getCryptoCurrencyById(input.currencyId);
       const nodeApi = getNodeApi(currency);
 
-      subscriber.next({ type: "broadcasting" });
       const hash = await nodeApi.broadcastTransaction(currency, input.signedTxHex);
       if (cancelled) return;
       subscriber.next({ type: "broadcasted", hash });
