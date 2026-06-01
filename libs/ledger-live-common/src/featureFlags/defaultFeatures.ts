@@ -125,6 +125,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyUnichainSepolia: DEFAULT_FEATURE,
   currencyArc: { enabled: true },
   currencyArcTestnet: { enabled: true },
+  testFlag: { enabled: true },
 };
 
 /**

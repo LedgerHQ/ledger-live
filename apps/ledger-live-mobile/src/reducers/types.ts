@@ -192,6 +192,7 @@ export enum OnboardingType {
   connect = "connect",
   setupNew = "setup new",
   walletSync = "wallet sync",
+  test = "test",
 }
 
 export type CurrencySettings = {

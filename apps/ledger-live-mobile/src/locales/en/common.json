@@ -3,7 +3,7 @@
     "buyCTA": "Buy {{ currencyNameOrTicker }}"
   },
   "common": {
-    "cancel": "Cancel",
+    "cancel": "Cancel Test",
     "copy": "Copy",
     "copied": "Copied",
     "apply": "Apply",
