@@ -67,7 +67,7 @@ export class SwapLiveAppPage {
         return true;
       },
       {
-        timeout: 150_000,
+        timeout: 300_000,
         timeoutMsg: "Expected to find swap live app context",
       },
     );

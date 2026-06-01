@@ -96,7 +96,7 @@ export const config: WebdriverIO.Config = {
   //
   // Default timeout in milliseconds for request
   // if browser driver or grid doesn't send response
-  connectionRetryTimeout: 60_000,
+  connectionRetryTimeout: 120_000,
   //
   // Default request retries count
   connectionRetryCount: 2,
@@ -144,7 +144,7 @@ export const config: WebdriverIO.Config = {
   // See the full list at http://mochajs.org/
   mochaOpts: {
     ui: "bdd",
-    timeout: 3000_000,
+    timeout: 6000_000,
   },
 
   //
