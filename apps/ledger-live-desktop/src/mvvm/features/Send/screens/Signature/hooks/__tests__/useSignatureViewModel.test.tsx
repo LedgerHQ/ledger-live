@@ -204,6 +204,29 @@ describe("useSignatureViewModel", () => {
     expect(mockNavigation.goToNextStep).toHaveBeenCalledTimes(1);
   });
 
+  test("onDeviceActionResult: lets send features classify device user refusal errors", () => {
+    global.__isUserRefusedTransactionErrorMock.mockImplementation(
+      (_currency, error) => error instanceof Error && "errorCode" in error,
+    );
+
+    const ref = React.createRef<HookApi>();
+    render(<Harness ref={ref} />);
+    const error = Object.assign(new Error("Canceled by user"), {
+      _tag: "SolanaAppCommandError",
+      errorCode: "6985",
+    });
+
+    ref.current?.onDeviceActionResult({
+      transactionSignError: error,
+    });
+
+    expect(mockOperation.onTransactionError).toHaveBeenCalledTimes(1);
+    expect(mockOperation.onTransactionError).toHaveBeenCalledWith(error);
+    expect(mockStatus.resetStatus).toHaveBeenCalledTimes(1);
+    expect(mockStatus.setError).not.toHaveBeenCalled();
+    expect(mockNavigation.goToNextStep).toHaveBeenCalledTimes(1);
+  });
+
   test("onDeviceActionResult: missing signed operation triggers error", () => {
     mockState.account.currency = null;
 

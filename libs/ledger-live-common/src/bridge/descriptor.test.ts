@@ -66,7 +66,10 @@ describe("getDescriptor", () => {
           presets: {},
         },
         selfTransfer: "free",
-        errors: { userRefusedTransaction: "UserRefusedOnDevice" },
+        errors: {
+          userRefusedTransaction: "UserRefusedOnDevice",
+          userRefusedTransactionStatusCodes: ["6985"],
+        },
         amount: {},
       },
     });
@@ -95,6 +98,10 @@ describe("getDescriptor", () => {
         fees: {
           hasPresets: false,
           hasCustom: false,
+        },
+        errors: {
+          userRefusedTransaction: "UserRefusedOnDevice",
+          userRefusedTransactionStatusCodes: ["6985"],
         },
       },
     });
@@ -544,7 +551,7 @@ describe("sendFeatures", () => {
     ["ethereum", "UserRefusedOnDevice"],
     ["cosmos", "UserRefusedOnDevice"],
     ["bitcoin", "TransactionRefusedOnDevice"],
-    ["solana", "TransactionRefusedOnDevice"],
+    ["solana", "UserRefusedOnDevice"],
     ["tron", "TransactionRefusedOnDevice"],
     ["cardano", "TransactionRefusedOnDevice"],
     ["filecoin", "TransactionRefusedOnDevice"],
@@ -559,14 +566,33 @@ describe("sendFeatures", () => {
     );
   });
 
+  it("should get user refused transaction status codes from descriptor", () => {
+    const solana = getCryptoCurrencyById("solana");
+    const ethereum = getCryptoCurrencyById("ethereum");
+    const cosmos = getCryptoCurrencyById("cosmos");
+    const stellar = getCryptoCurrencyById("stellar");
+    const bitcoin = getCryptoCurrencyById("bitcoin");
+
+    expect(sendFeatures.getUserRefusedTransactionStatusCodes(solana)).toEqual(["6985"]);
+    expect(sendFeatures.getUserRefusedTransactionStatusCodes(ethereum)).toEqual(["6985"]);
+    expect(sendFeatures.getUserRefusedTransactionStatusCodes(cosmos)).toEqual(["6986"]);
+    expect(sendFeatures.getUserRefusedTransactionStatusCodes(stellar)).toEqual([]);
+    expect(sendFeatures.getUserRefusedTransactionStatusCodes(bitcoin)).toEqual([]);
+  });
+
   it.each([
     ["stellar", { name: "StellarUserRefusedError" }, true],
     ["ethereum", { name: "UserRefusedOnDevice" }, true],
+    ["ethereum", { _tag: "EvmAppCommandError", errorCode: "6985" }, true],
     ["cosmos", { name: "UserRefusedOnDevice" }, true],
+    ["cosmos", { _tag: "CosmosAppCommandError", errorCode: "6986" }, true],
     ["bitcoin", { name: "TransactionRefusedOnDevice" }, true],
-    ["solana", { name: "TransactionRefusedOnDevice" }, true],
+    ["solana", { name: "UserRefusedOnDevice" }, true],
+    ["solana", { _tag: "SolanaAppCommandError", errorCode: "6985" }, true],
+    ["solana", { _tag: "SolanaAppCommandError", originalError: { errorCode: "6985" } }, true],
     ["tron", { name: "TransactionRefusedOnDevice" }, true],
     ["bitcoin", { name: "UserRefusedOnDevice" }, false],
+    ["bitcoin", { _tag: "BitcoinAppCommandError", errorCode: "6985" }, false],
     ["ethereum", { name: "TransactionRefusedOnDevice" }, false],
     ["bitcoin", null, false],
     ["bitcoin", undefined, false],

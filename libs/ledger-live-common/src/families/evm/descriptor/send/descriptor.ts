@@ -72,5 +72,6 @@ export const evmSendDescriptor: SendDescriptor = {
   selfTransfer: "free",
   errors: {
     userRefusedTransaction: "UserRefusedOnDevice",
+    userRefusedTransactionStatusCodes: ["6985"],
   },
 };

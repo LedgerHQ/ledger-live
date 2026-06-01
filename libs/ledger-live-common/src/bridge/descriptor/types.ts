@@ -225,6 +225,7 @@ export type SelfTransferPolicy = "free" | "warning" | "impossible";
  */
 export type ErrorRegistry = {
   userRefusedTransaction?: string; // Error class name for when user refuses transaction on device
+  userRefusedTransactionStatusCodes?: readonly string[]; // Device status words mapped to user refusal
 };
 
 /**
