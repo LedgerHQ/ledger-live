@@ -38,12 +38,16 @@ describe("useProductTourDrawerViewModel", () => {
   });
 
   describe("initial drawer state", () => {
-    it("should auto-open on mount when feature is enabled and tour is not completed", () => {
+    it("should keep drawer closed on mount even when feature is enabled and tour is not completed", () => {
+      renderHook(() => useProductTourDrawerViewModel(), {
+        overrideInitialState: withFeatureEnabled,
+      }).unmount();
+
       const { result } = renderHook(() => useProductTourDrawerViewModel(), {
         overrideInitialState: withFeatureEnabled,
       });
 
-      expect(result.current.isDrawerOpen).toBe(true);
+      expect(result.current.isDrawerOpen).toBe(false);
     });
 
     it("should keep drawer closed when feature flag is disabled", () => {
