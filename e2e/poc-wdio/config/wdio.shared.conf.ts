@@ -221,8 +221,14 @@ export const config: WebdriverIO.Config = {
    */
   before: function (capabilities, specs) {
     if (driver.isAndroid) {
+      console.log(
+        "Clearing Google Search App from recent apps to prevent it from interfering with tests",
+      );
       const deviceID = driver.capabilities.deviceUDID ?? driver.capabilities["appium:deviceName"];
       execSync(`adb -s ${deviceID} shell am force-stop com.google.android.googlequicksearchbox`);
+      execSync(
+        `adb -s ${deviceID} shell am force-stop com.google.android.googlequicksearchbox:googleapp`,
+      );
     }
   },
   /**
@@ -268,7 +274,7 @@ export const config: WebdriverIO.Config = {
   // @ts-expect-error: keep unused params for de-structuring
   afterTest: async function (test, context, { error, result, duration, passed, retries }) {
     if (!passed) {
-      console.log("Something happened, should I take a screenshot? ");
+      await driver.takeScreenshot();
     }
   },
 
