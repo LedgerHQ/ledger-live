@@ -33,7 +33,7 @@ import {
 import {
   resolveTokenSubAccounts,
   buildSubAccountsFromPrivateRecords,
-  resolveTokenCurrenciesByProgram,
+  getCalTokens,
 } from "./tokens";
 import type { AleoPrivateRecord } from "../types/api";
 import type {
@@ -43,49 +43,9 @@ import type {
   Transaction as AleoTransaction,
 } from "../types";
 import { getPrivateBalance } from "../logic/getPrivateBalance";
-import {
-  collectConsumedPrivateRecordTags,
-  listPrivateOperations,
-} from "../logic/listPrivateOperations";
+import { listPrivateOperations } from "../logic/listPrivateOperations";
 
 const privateSyncInFlight = new Set<string>();
-
-async function resolvePrivateTokenRecordsForSync({
-  enabled,
-  allRecords,
-  unspentRecords,
-  currencyId,
-}: {
-  enabled: boolean;
-  allRecords: AleoPrivateRecord[];
-  unspentRecords: AleoPrivateRecord[];
-  currencyId: string;
-}): Promise<{
-  tokenPrivateRecords: AleoPrivateRecord[];
-  unspentTokenPrivateRecords: AleoPrivateRecord[];
-  tokensByProgram: Map<string, TokenCurrency>;
-}> {
-  if (!enabled) {
-    return {
-      tokenPrivateRecords: [],
-      unspentTokenPrivateRecords: [],
-      tokensByProgram: new Map(),
-    };
-  }
-
-  const programNames = [...allRecords, ...unspentRecords].map(record => record.program_name);
-  const tokensByProgram = await resolveTokenCurrenciesByProgram({
-    programNames,
-    currencyId,
-  });
-  const isKnownToken = (record: AleoPrivateRecord) => tokensByProgram.has(record.program_name);
-
-  return {
-    tokenPrivateRecords: allRecords.filter(isKnownToken),
-    unspentTokenPrivateRecords: unspentRecords.filter(isKnownToken),
-    tokensByProgram,
-  };
-}
 
 /**
  * Performs the public (transparent) portion of the Aleo account sync.
@@ -152,13 +112,6 @@ export async function performPublicSync(
   latestAccountPublicOperations.operations.sort((a, b) => b.date.getTime() - a.date.getTime());
   latestAccountPublicOperations.tokenOperations.sort((a, b) => b.date.getTime() - a.date.getTime());
 
-  const tokensByProgram = await resolveTokenCurrenciesByProgram({
-    programNames: latestAccountPublicOperations.tokenOperations
-      .map(op => op.extra?.tokenInfo?.programId)
-      .filter((programId): programId is string => typeof programId === "string"),
-    currencyId: currency.id,
-  });
-
   // Already-patched ops have modified senders/recipients that differ from raw API data.
   // Filter them from the incoming ops — mergeOps then simply keeps the patched version
   // from oldPublicOps untouched, and no patch-restoration pass is needed.
@@ -190,7 +143,7 @@ export async function performPublicSync(
       ledgerAccountId,
       coinOperations: publicOperations,
       tokenOperations: latestAccountPublicOperations.tokenOperations,
-      tokensByProgram,
+      calTokens: latestAccountPublicOperations.calTokens,
       shouldSyncFromScratch,
       initialAccount,
     });
@@ -334,8 +287,8 @@ export async function performPrivateSync(
     shouldFetchPrivateTokens && hasMigratedPrivateTokens ? lastPrivateBlockHeight : 0;
 
   const [
-    rawNewPrivateRecords,
-    rawUnspentPrivateRecords,
+    rawNewNativePrivateRecords,
+    rawUnspentNativePrivateRecords,
     rawTokenPrivateRecords,
     rawUnspentTokenRecords,
   ] = await Promise.all([
@@ -373,13 +326,21 @@ export async function performPrivateSync(
       : Promise.resolve([]),
   ]);
 
-  const { tokenPrivateRecords, unspentTokenPrivateRecords, tokensByProgram } =
-    await resolvePrivateTokenRecordsForSync({
-      enabled: shouldFetchPrivateTokens,
-      allRecords: rawTokenPrivateRecords,
-      unspentRecords: rawUnspentTokenRecords,
-      currencyId: currency.id,
-    });
+  const calTokens: Map<string, TokenCurrency> = shouldFetchPrivateTokens
+    ? await getCalTokens({
+        currencyId: currency.id,
+        programNames: [...rawTokenPrivateRecords, ...rawUnspentTokenRecords].map(
+          record => record.program_name,
+        ),
+      })
+    : new Map();
+
+  const isCalToken = (record: AleoPrivateRecord) => calTokens.has(record.program_name);
+
+  const calTokenRecords = shouldFetchPrivateTokens ? rawTokenPrivateRecords.filter(isCalToken) : [];
+  const unspentCalTokenRecords = shouldFetchPrivateTokens
+    ? rawUnspentTokenRecords.filter(isCalToken)
+    : [];
 
   signal?.throwIfAborted();
 
@@ -392,7 +353,8 @@ export async function performPrivateSync(
       viewKey,
       address,
       ledgerAccountId,
-      privateRecords: rawNewPrivateRecords,
+      privateRecords: rawNewNativePrivateRecords,
+      ...(calTokenRecords.length > 0 && { tokenRecords: calTokenRecords }),
       ...(onProgress
         ? {
             onProgress: (completed: number, total: number) =>
@@ -409,40 +371,25 @@ export async function performPrivateSync(
     patchPublicOperations({
       currency,
       publicOperations: currentPublicOps,
-      privateRecords: rawNewPrivateRecords,
+      privateRecords: rawNewNativePrivateRecords,
       address,
       ledgerAccountId,
       viewKey,
     }),
   ]);
 
-  const consumedTokenRecordTags =
-    shouldFetchPrivateTokens && tokenPrivateRecords.length > 0
-      ? await collectConsumedPrivateRecordTags({
-          currency,
-          viewKey,
-          address,
-          privateRecords: tokenPrivateRecords,
-          ...(signal && { signal }),
-        })
-      : new Set<string>();
-  const consumedRecordTags = new Set([
-    ...latestAccountPrivateOperations.consumedRecordTags,
-    ...consumedTokenRecordTags,
-  ]);
-
   // Record scanner API may return already-spent records even with "unspent: true" filter.
   // This is confirmed and expected behavior for now - scanner relies on two processes that can lag behind each other.
   // The workaround is to remove records whose tags appear as inputs in currently processed transactions.
   // Records spent before are expected to have been cleared from the scanner by then.
-  const filteredUnspentRecords = rawUnspentPrivateRecords.filter(
-    record => !consumedRecordTags.has(record.tag),
+  const filteredUnspentRecords = rawUnspentNativePrivateRecords.filter(
+    record => !latestAccountPrivateOperations.consumedRecordTags.has(record.tag),
   );
 
   // Unspent token records fetched separately (token programs are not returned by the
   // unfiltered unspent fetch). Apply the same consumed-tag filter as native credits.
-  const filteredUnspentTokenRecords = unspentTokenPrivateRecords.filter(
-    record => !consumedRecordTags.has(record.tag),
+  const filteredUnspentTokenRecords = unspentCalTokenRecords.filter(
+    record => !latestAccountPrivateOperations.consumedRecordTags.has(record.tag),
   );
 
   signal?.throwIfAborted();
@@ -494,12 +441,12 @@ export async function performPrivateSync(
     const { subAccounts } = await buildSubAccountsFromPrivateRecords({
       currency,
       ledgerAccountId,
-      allPrivateRecords: tokenPrivateRecords,
+      allPrivateRecords: calTokenRecords,
       unspentPrivateRecords: filteredUnspentTokenRecords,
       baseSubAccounts,
       viewKey,
       address,
-      tokensByProgram,
+      calTokens,
     });
 
     mergedSubAccounts = subAccounts;

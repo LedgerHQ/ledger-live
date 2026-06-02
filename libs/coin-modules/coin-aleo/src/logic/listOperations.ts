@@ -2,7 +2,7 @@ import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets
 import type { Operation, ListOperationsOptions } from "@ledgerhq/coin-module-framework/api/types";
 import type { AleoOperation } from "../types/bridge";
 import { fetchAccountTransactionsFromHeight } from "../network/utils";
-import { resolveTokenCurrenciesByProgram } from "../bridge/tokens";
+import { getCalTokens } from "../bridge/tokens";
 import { toCoinFrameworkOperation, toBridgeOperation } from "./utils";
 
 interface Params {
@@ -24,6 +24,7 @@ type Result<T> = {
   readonly operations: T[];
   readonly tokenOperations: T[];
   readonly nextCursor: string | null;
+  readonly calTokens: Map<string, TokenCurrency>;
 };
 
 export async function listOperations(params: BridgeParams): Promise<Result<AleoOperation>>;
@@ -46,12 +47,12 @@ export async function listOperations(
     ...(options.order && { order: options.order }),
   });
 
-  let tokensByProgram: Map<string, TokenCurrency> = new Map();
+  let calTokens: Map<string, TokenCurrency> = new Map();
 
   if (mode === "bridge") {
-    tokensByProgram = await resolveTokenCurrenciesByProgram({
-      programNames: result.transactions.map(rawTx => rawTx.program_id),
+    calTokens = await getCalTokens({
       currencyId: currency.id,
+      programNames: result.transactions.map(rawTx => rawTx.program_id),
     });
   }
 
@@ -59,10 +60,10 @@ export async function listOperations(
     if (mode === "coin-framework") {
       operations.push(toCoinFrameworkOperation(rawTx, address));
     } else {
-      const isToken = tokensByProgram.has(rawTx.program_id);
-      const op = toBridgeOperation(params.ledgerAccountId, rawTx, address, isToken);
+      const isTokenTx = calTokens.has(rawTx.program_id);
+      const op = toBridgeOperation(params.ledgerAccountId, rawTx, address, isTokenTx);
       operations.push(op);
-      if (isToken) {
+      if (isTokenTx) {
         tokenOperations.push(op);
       }
     }
@@ -72,5 +73,6 @@ export async function listOperations(
     operations,
     tokenOperations,
     nextCursor: result.nextCursor,
+    calTokens,
   };
 }

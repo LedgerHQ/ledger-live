@@ -37,6 +37,7 @@ describe("createApi", () => {
       operations: [mockOperation],
       tokenOperations: [],
       nextCursor: "next-cursor",
+      calTokens: new Map(),
     });
     mockedGetTransactionType.mockReturnValue("transfer_public");
   });
@@ -233,6 +234,7 @@ describe("createApi", () => {
         operations: [mockOperation],
         tokenOperations: [],
         nextCursor: null,
+        calTokens: new Map(),
       });
       const result = await api.listOperations("aleo1test", { minHeight: 1 });
 

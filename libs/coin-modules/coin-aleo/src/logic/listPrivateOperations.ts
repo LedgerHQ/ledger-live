@@ -15,11 +15,39 @@ function onlyRecordValue(
   return value.type === "record";
 }
 
-function collectConsumedRecordTagsFromEnriched(
-  enrichedRecords: (EnrichedPrivateRecord | null)[],
-  address: string,
-): Set<string> {
+export async function listPrivateOperations({
+  currency,
+  viewKey,
+  address,
+  ledgerAccountId,
+  privateRecords,
+  tokenRecords,
+  onProgress,
+  signal,
+}: {
+  currency: CryptoCurrency;
+  viewKey: string;
+  address: string;
+  ledgerAccountId: string;
+  privateRecords: AleoPrivateRecord[];
+  tokenRecords?: AleoPrivateRecord[];
+  onProgress?: (completed: number, total: number) => void;
+  signal?: AbortSignal;
+}): Promise<{
+  operations: AleoOperation[];
+  consumedRecordTags: Set<string>;
+}> {
+  const recordsToEnrich = tokenRecords ? [...privateRecords, ...tokenRecords] : privateRecords;
+  const nativeRecordTags = new Set(privateRecords.map(record => record.tag));
   const consumedRecordTags = new Set<string>();
+
+  let completed = 0;
+  const enrichedRecords = await promiseAllBatched(2, recordsToEnrich, async rawRecord => {
+    signal?.throwIfAborted();
+    const result = await enrichPrivateRecord({ currency, rawRecord, address, viewKey });
+    onProgress?.(++completed, recordsToEnrich.length);
+    return result;
+  });
 
   for (const enriched of enrichedRecords) {
     if (enriched?.rawRecord.sender !== address) continue;
@@ -36,96 +64,11 @@ function collectConsumedRecordTagsFromEnriched(
     }
   }
 
-  return consumedRecordTags;
-}
-
-async function enrichPrivateRecords({
-  currency,
-  viewKey,
-  address,
-  privateRecords,
-  onProgress,
-  signal,
-}: {
-  currency: CryptoCurrency;
-  viewKey: string;
-  address: string;
-  privateRecords: AleoPrivateRecord[];
-  onProgress?: (completed: number, total: number) => void;
-  signal?: AbortSignal;
-}): Promise<(EnrichedPrivateRecord | null)[]> {
-  let completed = 0;
-  return promiseAllBatched(2, privateRecords, async rawRecord => {
-    signal?.throwIfAborted();
-    const result = await enrichPrivateRecord({ currency, rawRecord, address, viewKey });
-    onProgress?.(++completed, privateRecords.length);
-    return result;
-  });
-}
-
-/**
- * Returns record tags consumed as transaction inputs in outgoing private transfers.
- * Used to filter scanner "unspent" records that are already spent in pending txs.
- */
-export async function collectConsumedPrivateRecordTags({
-  currency,
-  viewKey,
-  address,
-  privateRecords,
-  onProgress,
-  signal,
-}: {
-  currency: CryptoCurrency;
-  viewKey: string;
-  address: string;
-  privateRecords: AleoPrivateRecord[];
-  onProgress?: (completed: number, total: number) => void;
-  signal?: AbortSignal;
-}): Promise<Set<string>> {
-  const enrichedRecords = await enrichPrivateRecords({
-    currency,
-    viewKey,
-    address,
-    privateRecords,
-    ...(onProgress && { onProgress }),
-    ...(signal && { signal }),
-  });
-  return collectConsumedRecordTagsFromEnriched(enrichedRecords, address);
-}
-
-export async function listPrivateOperations({
-  currency,
-  viewKey,
-  address,
-  ledgerAccountId,
-  privateRecords,
-  onProgress,
-  signal,
-}: {
-  currency: CryptoCurrency;
-  viewKey: string;
-  address: string;
-  ledgerAccountId: string;
-  privateRecords: AleoPrivateRecord[];
-  onProgress?: (completed: number, total: number) => void;
-  signal?: AbortSignal;
-}): Promise<{
-  operations: AleoOperation[];
-  consumedRecordTags: Set<string>;
-}> {
-  const enrichedRecords = await enrichPrivateRecords({
-    currency,
-    viewKey,
-    address,
-    privateRecords,
-    ...(onProgress && { onProgress }),
-    ...(signal && { signal }),
-  });
-
-  const consumedRecordTags = collectConsumedRecordTagsFromEnriched(enrichedRecords, address);
-
   const operations = enrichedRecords
-    .filter((record): record is EnrichedPrivateRecord => record !== null)
+    .filter((record): record is EnrichedPrivateRecord => {
+      // exclude token records to avoid duplicates
+      return record !== null && nativeRecordTags.has(record.rawRecord.tag);
+    })
     .map(record => toPrivateBridgeOperation(ledgerAccountId, record, address));
 
   return { operations, consumedRecordTags };

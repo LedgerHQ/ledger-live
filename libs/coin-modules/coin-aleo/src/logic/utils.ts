@@ -190,7 +190,7 @@ export const toBridgeOperation = (
   ledgerAccountId: string,
   rawTx: AleoPublicTransaction,
   address: string,
-  isToken?: boolean,
+  isTokenTx?: boolean,
 ): AleoOperation => {
   const value = new BigNumber(rawTx.amount);
   const { type, fee, blockHash, transactionType, date, hasFailed } = parseTransactionFields(
@@ -218,7 +218,7 @@ export const toBridgeOperation = (
     extra: {
       functionId: rawTx.function_id,
       transactionType,
-      ...(isToken && {
+      ...(isTokenTx && {
         tokenInfo: {
           programId: rawTx.program_id,
           tokenId: rawTx.token_id && rawTx.token_id !== "0" ? rawTx.token_id : null,

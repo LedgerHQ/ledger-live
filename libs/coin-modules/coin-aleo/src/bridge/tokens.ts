@@ -14,30 +14,28 @@ import { promiseAllBatched } from "@ledgerhq/live-promise";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import type { AleoPrivateRecord } from "../types/api";
 
-/**
- * Resolves unique Aleo program names against CAL. Only programs that exist as
- * tokens for the parent currency are returned.
- */
-export async function resolveTokenCurrenciesByProgram({
-  programNames,
+/** CAL lookup by Aleo program name (contract address). Missing programs are omitted. */
+export async function getCalTokens({
   currencyId,
+  programNames,
 }: {
-  programNames: Iterable<string>;
   currencyId: string;
+  programNames: string[];
 }): Promise<Map<string, TokenCurrency>> {
-  const uniquePrograms = [...new Set(programNames)];
-  const tokensByProgram = new Map<string, TokenCurrency>();
+  const calTokens = new Map<string, TokenCurrency>();
 
-  await promiseAllBatched(4, uniquePrograms, async programName => {
-    const token = await getCryptoAssetsStore()
-      .findTokenByAddressInCurrency(programName, currencyId)
-      .catch(() => undefined);
+  await promiseAllBatched(4, [...new Set(programNames)], async programName => {
+    const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(
+      programName,
+      currencyId,
+    );
+
     if (token) {
-      tokensByProgram.set(programName, token);
+      calTokens.set(programName, token);
     }
   });
 
-  return tokensByProgram;
+  return calTokens;
 }
 
 /**
@@ -66,47 +64,21 @@ export async function getAleoSubAccounts({
   ledgerAccountId,
   address,
   tokenOperations,
-  tokensByProgram: providedTokensByProgram,
+  calTokens,
 }: {
   currency: CryptoCurrency;
   ledgerAccountId: string;
   address: string;
   tokenOperations: AleoOperation[];
-  tokensByProgram?: Map<string, TokenCurrency>;
+  calTokens: Map<string, TokenCurrency>;
 }): Promise<TokenAccount[]> {
-  if (tokenOperations.length === 0) return [];
+  if (tokenOperations.length === 0 || calTokens.size === 0) return [];
 
-  const programIds = tokenOperations
-    .map(op => op.extra?.tokenInfo?.programId)
-    .filter((programId): programId is string => typeof programId === "string");
-
-  const tokensByProgram =
-    providedTokensByProgram ??
-    (await resolveTokenCurrenciesByProgram({
-      programNames: programIds,
-      currencyId: currency.id,
-    }));
-
-  if (tokensByProgram.size === 0) return [];
-
-  // Build a set of contract addresses that have recorded operations so we can
-  // include zero-balance sub-accounts that still have transaction history.
-  const contractsWithOps = new Set(
-    tokenOperations
-      .map(op => op.extra?.tokenInfo?.programId)
-      .filter((programId): programId is string => typeof programId === "string"),
-  );
-
-  // CAL tokens are the primary source of sub-accounts (replacing the previous
-  // hardcoded token list). Include a sub-account when it has a non-zero balance
-  // or at least one recorded operation.
   const results = await Promise.allSettled(
-    [...tokensByProgram.values()].map(async tokenCurrency => {
+    [...calTokens.values()].map(async tokenCurrency => {
       const balance = parseTokenBalance(
         await apiClient.getProgramTokenBalance(currency, tokenCurrency.contractAddress, address),
       );
-
-      if (balance.isZero() && !contractsWithOps.has(tokenCurrency.contractAddress)) return null;
 
       const id = encodeTokenAccountId(ledgerAccountId, tokenCurrency);
       return buildTokenAccount(id, ledgerAccountId, tokenCurrency, balance);
@@ -161,19 +133,17 @@ function buildNoneParentOp(
  * @returns tokenOperationsBySubAccountId – map from token account id to its operations.
  */
 export async function prepareTokenOperations({
-  currency,
   address,
   ledgerAccountId,
   coinOperations,
   tokenOperations,
-  tokensByProgram: providedTokensByProgram,
+  calTokens,
 }: {
-  currency: CryptoCurrency;
   address: string;
   ledgerAccountId: string;
   coinOperations: AleoOperation[];
   tokenOperations: AleoOperation[];
-  tokensByProgram?: Map<string, TokenCurrency>;
+  calTokens: Map<string, TokenCurrency>;
 }): Promise<{
   updatedCoinOperations: AleoOperation[];
   tokenOperationsBySubAccountId: Map<string, AleoOperation[]>;
@@ -186,16 +156,6 @@ export async function prepareTokenOperations({
       tokenOperationsBySubAccountId,
     };
   }
-
-  const programIds = tokenOperations
-    .map(op => op.extra?.tokenInfo?.programId)
-    .filter((programId): programId is string => typeof programId === "string");
-  const tokensByProgram =
-    providedTokensByProgram ??
-    (await resolveTokenCurrenciesByProgram({
-      programNames: programIds,
-      currencyId: currency.id,
-    }));
 
   // shallow-copy coin operations so we can mutate subOperations without side effects
   const updatedCoinOperations: CoinOperationWithSubOps[] = coinOperations.map(op => ({
@@ -211,7 +171,7 @@ export async function prepareTokenOperations({
     const tokenInfo = tokenOp.extra?.tokenInfo;
     if (!tokenInfo) continue;
 
-    const tokenCurrency = tokensByProgram.get(tokenInfo.programId);
+    const tokenCurrency = calTokens.get(tokenInfo.programId);
     if (!tokenCurrency) continue;
 
     const tokenAccountId = encodeTokenAccountId(ledgerAccountId, tokenCurrency);
@@ -383,7 +343,7 @@ export async function resolveTokenSubAccounts({
   ledgerAccountId,
   coinOperations,
   tokenOperations,
-  tokensByProgram,
+  calTokens,
   shouldSyncFromScratch,
   initialAccount,
 }: {
@@ -393,7 +353,7 @@ export async function resolveTokenSubAccounts({
   ledgerAccountId: string;
   coinOperations: AleoOperation[];
   tokenOperations: AleoOperation[];
-  tokensByProgram: Map<string, TokenCurrency>;
+  calTokens: Map<string, TokenCurrency>;
   shouldSyncFromScratch: boolean;
   initialAccount: Account | undefined;
 }): Promise<{ updatedCoinOperations: AleoOperation[]; subAccounts: TokenAccount[] }> {
@@ -406,12 +366,11 @@ export async function resolveTokenSubAccounts({
   }
 
   const { updatedCoinOperations, tokenOperationsBySubAccountId } = await prepareTokenOperations({
-    currency,
     address,
     ledgerAccountId,
     coinOperations,
     tokenOperations,
-    tokensByProgram,
+    calTokens,
   });
 
   const fetchedSubAccounts = await getAleoSubAccounts({
@@ -419,7 +378,7 @@ export async function resolveTokenSubAccounts({
     ledgerAccountId,
     address,
     tokenOperations,
-    tokensByProgram,
+    calTokens,
   });
 
   const newSubAccounts = fetchedSubAccounts.map(subAccount => {
@@ -646,7 +605,7 @@ export async function buildSubAccountsFromPrivateRecords({
   baseSubAccounts,
   viewKey,
   address,
-  tokensByProgram,
+  calTokens,
 }: {
   currency: CryptoCurrency;
   ledgerAccountId: string;
@@ -655,7 +614,7 @@ export async function buildSubAccountsFromPrivateRecords({
   baseSubAccounts: TokenAccount[];
   viewKey: string;
   address: string;
-  tokensByProgram: Map<string, TokenCurrency>;
+  calTokens: Map<string, TokenCurrency>;
 }): Promise<{ subAccounts: AleoTokenAccount[] }> {
   const existingSubAccountIds = new Set(baseSubAccounts.map(sa => sa.id));
 
@@ -666,7 +625,7 @@ export async function buildSubAccountsFromPrivateRecords({
 
   if (unspentPrivateRecords.length > 0) {
     await promiseAllBatched(4, unspentPrivateRecords, async record => {
-      const tokenCurrency = tokensByProgram.get(record.program_name);
+      const tokenCurrency = calTokens.get(record.program_name);
       if (!tokenCurrency) return;
 
       const decrypted = await sdkClient.decryptRecord({
@@ -709,7 +668,7 @@ export async function buildSubAccountsFromPrivateRecords({
   const uniqueAllRecords = filterHistoryRecords(allPrivateRecords, address);
 
   await promiseAllBatched(4, uniqueAllRecords, async record => {
-    const tokenCurrency = tokensByProgram.get(record.program_name);
+    const tokenCurrency = calTokens.get(record.program_name);
     if (!tokenCurrency) return;
 
     let amount: BigNumber;
