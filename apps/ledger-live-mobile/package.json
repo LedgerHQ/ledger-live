@@ -74,7 +74,7 @@
     "test:jest": "NODE_OPTIONS=--max-old-space-size=8192 jest",
     "test:jest:watch": "pnpm test:jest --watch",
     "test:jest:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
-    "test:jest:coverage": "pnpm test:jest --ci --coverage",
+    "test:jest:coverage": "pnpm test:jest --ci",
     "sync-locales": "./scripts/sync-locales.sh",
     "test-deep-links": "ws --spa ./ledger-live-mobile-deeplinks.html",
     "download-hermes-profile": "zx ./scripts/download-hermes-profile.mjs",
