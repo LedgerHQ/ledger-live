@@ -79,6 +79,41 @@ describe("usePortfolioPnlViewModel", () => {
     expect(result.current.detail.items).toHaveLength(3);
   });
 
+  it("shows a neutral trend for a near-zero unrealised return (LIVE-31735)", () => {
+    // -0.3127 cents == -$0.003, which rounds to $0.00 — must not show a down arrow.
+    mockedUsePortfolioPnL.mockReturnValue({
+      unrealisedPnL: new BigNumber("-0.3127636356978839643489825554761258026868"),
+      realisedPnL: ZERO,
+      totalPnL: ZERO,
+      costBasis: ZERO,
+      lifetimeCost: ZERO,
+    });
+
+    const { result } = renderPortfolioPnlViewModel({
+      initialState: { ...flagsOn, ...stateWithAccounts },
+    });
+
+    const unrealised = result.current.items.find(i => i.id === "unrealisedReturn");
+    expect(unrealised?.trend).toBe("neutral");
+  });
+
+  it("keeps a down trend for a return above the rounding threshold", () => {
+    mockedUsePortfolioPnL.mockReturnValue({
+      unrealisedPnL: new BigNumber(-1234), // -$12.34
+      realisedPnL: ZERO,
+      totalPnL: ZERO,
+      costBasis: ZERO,
+      lifetimeCost: ZERO,
+    });
+
+    const { result } = renderPortfolioPnlViewModel({
+      initialState: { ...flagsOn, ...stateWithAccounts },
+    });
+
+    const unrealised = result.current.items.find(i => i.id === "unrealisedReturn");
+    expect(unrealised?.trend).toBe("down");
+  });
+
   it("opens the detail dialog when onOpen is called", () => {
     const { result } = renderPortfolioPnlViewModel({
       initialState: { ...flagsOn, ...stateWithAccounts },

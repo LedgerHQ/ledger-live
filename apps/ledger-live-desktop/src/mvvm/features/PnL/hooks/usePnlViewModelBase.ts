@@ -9,6 +9,7 @@ import {
   localeSelector,
 } from "~/renderer/reducers/settings";
 import { formatPrice } from "@ledgerhq/live-currency-format";
+import { roundFiatAtoms } from "@ledgerhq/wallet-pnl";
 import { buildPnlDetail } from "../builders/buildPnlDetail";
 import { buildUnrealisedReturnCard } from "../builders/buildUnrealisedReturnCard";
 import { buildInfoCard } from "../builders/buildInfoCard";
@@ -59,7 +60,23 @@ export function usePnlViewModelBase({
     });
   }, []);
 
-  const { unrealisedPnL = ZERO, realisedPnL = ZERO, totalPnL = ZERO } = pnlData ?? {};
+  const {
+    unrealisedPnL: rawUnrealisedPnL = ZERO,
+    realisedPnL: rawRealisedPnL = ZERO,
+    totalPnL: rawTotalPnL = ZERO,
+  } = pnlData ?? {};
+
+  // Round to the displayed precision so the amount and its trend indicator are
+  // derived from the same number: a sub-cent residual must render as 0.00 with
+  // a neutral trend, never an up/down arrow.
+  const { unrealisedPnL, realisedPnL, totalPnL } = useMemo(
+    () => ({
+      unrealisedPnL: roundFiatAtoms(rawUnrealisedPnL),
+      realisedPnL: roundFiatAtoms(rawRealisedPnL),
+      totalPnL: roundFiatAtoms(rawTotalPnL),
+    }),
+    [rawUnrealisedPnL, rawRealisedPnL, rawTotalPnL],
+  );
 
   const formatFiat = useCallback(
     (value: BigNumber) =>

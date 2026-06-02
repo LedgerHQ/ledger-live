@@ -2,6 +2,7 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import { BigNumber } from "bignumber.js";
 import { useWalletFeaturesConfig } from "@ledgerhq/live-common/featureFlags/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { roundFiatAtoms } from "@ledgerhq/wallet-pnl";
 import { useSelector } from "~/context/hooks";
 import { useLocale, useTranslation } from "~/context/Locale";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
@@ -45,7 +46,24 @@ export function usePnlViewModelBase({
   const discreet = useSelector(discreetModeSelector);
   const [openDrawer, setOpenDrawer] = useState<Drawer>(null);
 
-  const { unrealisedPnL = ZERO, realisedPnL = ZERO, totalPnL = ZERO } = pnlData ?? {};
+  const {
+    unrealisedPnL: rawUnrealisedPnL = ZERO,
+    realisedPnL: rawRealisedPnL = ZERO,
+    totalPnL: rawTotalPnL = ZERO,
+  } = pnlData ?? {};
+
+  // Round to the displayed precision so the amount and its trend indicator are
+  // derived from the same number: a sub-cent residual must render as 0.00 with
+  // a neutral trend, never an up/down arrow.
+  const { unrealisedPnL, realisedPnL, totalPnL } = useMemo(
+    () => ({
+      unrealisedPnL: roundFiatAtoms(rawUnrealisedPnL),
+      realisedPnL: roundFiatAtoms(rawRealisedPnL),
+      totalPnL: roundFiatAtoms(rawTotalPnL),
+    }),
+    [rawUnrealisedPnL, rawRealisedPnL, rawTotalPnL],
+  );
+  console.log("unrealisedPnL", unrealisedPnL);
 
   const formatFiat = useCallback(
     (value: BigNumber, alwaysShowSign?: boolean) =>

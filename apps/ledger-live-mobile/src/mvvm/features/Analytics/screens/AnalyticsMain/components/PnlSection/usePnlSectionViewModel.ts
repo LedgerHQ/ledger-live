@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState, useRef } from "react";
 import { BigNumber } from "bignumber.js";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { usePortfolioPnL } from "@ledgerhq/wallet-pnl/hooks";
+import { roundFiatAtoms } from "@ledgerhq/wallet-pnl";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useSelector } from "~/context/hooks";
 import { useLocale, useTranslation } from "~/context/Locale";
@@ -29,7 +30,23 @@ export function usePnlSectionViewModel(): PnlSectionViewModel {
 
   // Skip the (potentially expensive) portfolio walk when the section is hidden.
   const pnl = usePortfolioPnL(isPnlFlagOn ? accounts : EMPTY_ACCOUNTS, countervalues, fiat);
-  const { unrealisedPnL = ZERO, realisedPnL = ZERO, totalPnL = ZERO } = pnl ?? {};
+  const {
+    unrealisedPnL: rawUnrealisedPnL = ZERO,
+    realisedPnL: rawRealisedPnL = ZERO,
+    totalPnL: rawTotalPnL = ZERO,
+  } = pnl ?? {};
+
+  // Round to the displayed precision so the amount and its trend indicator are
+  // derived from the same number: a sub-cent residual must render as 0.00 with
+  // a neutral trend, never an up/down arrow.
+  const { unrealisedPnL, realisedPnL, totalPnL } = useMemo(
+    () => ({
+      unrealisedPnL: roundFiatAtoms(rawUnrealisedPnL),
+      realisedPnL: roundFiatAtoms(rawRealisedPnL),
+      totalPnL: roundFiatAtoms(rawTotalPnL),
+    }),
+    [rawUnrealisedPnL, rawRealisedPnL, rawTotalPnL],
+  );
 
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const openDrawer = useCallback(() => setDrawerOpen(true), []);

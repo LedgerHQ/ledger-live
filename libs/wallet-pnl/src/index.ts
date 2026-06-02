@@ -19,5 +19,6 @@ export { computeAssetPnL } from "./assetPnL";
 export { computeAssetGroupPnL } from "./assetGroupPnL";
 export { computePortfolioPnL } from "./portfolioPnL";
 export { pnlPercentage } from "./percentage";
+export { roundFiatAtoms } from "./roundFiat";
 export { trendFromSign } from "./trend";
 export type { PnlTrend } from "./trend";

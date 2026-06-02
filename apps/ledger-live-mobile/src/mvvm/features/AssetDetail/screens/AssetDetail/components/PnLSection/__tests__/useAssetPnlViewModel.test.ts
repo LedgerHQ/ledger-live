@@ -1,3 +1,4 @@
+import { BigNumber } from "bignumber.js";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { genMockAccount } from "@ledgerhq/live-common/mock/account";
 import type { Account, DistributionItem } from "@ledgerhq/types-live";
@@ -14,6 +15,18 @@ import {
 } from "LLM/features/Pnl/const";
 import { ASSET_DETAIL_PAGE } from "LLM/features/AssetDetail/const";
 import { useAssetPnlViewModel } from "../useAssetPnlViewModel";
+
+const ZERO = new BigNumber(0);
+
+const groupPnl = (unrealisedPnL: BigNumber) => ({
+  unrealisedPnL,
+  realisedPnL: ZERO,
+  totalPnL: unrealisedPnL,
+  costBasis: ZERO,
+  lifetimeCost: ZERO,
+  totalAmount: ZERO,
+  averageEntryPrice: ZERO,
+});
 
 const btc = getCryptoCurrencyById("bitcoin");
 let btcAccount: Account;
@@ -158,5 +171,26 @@ describe("useAssetPnlViewModel", () => {
       expect(result.current.secondaryDrawer.pageName).toBe(AVERAGE_PRICE_PAGE);
       expect(result.current.secondaryDrawer.source).toBe(ASSET_DETAIL_PAGE);
     });
+  });
+
+  it("shows a neutral trend for a near-zero unrealised return (LIVE-31735)", () => {
+    // -0.3127 cents == -$0.003, which rounds to $0.00 — must not show a down arrow.
+    spy.mockReturnValue(groupPnl(new BigNumber("-0.3127636356978839643489825554761258026868")));
+
+    const { result } = renderHook(() => useAssetPnlViewModel({ distributionItem, enabled: true }), {
+      overrideInitialState: withPnlFlag(true),
+    });
+
+    expect(result.current.unrealised.trend).toBe("neutral");
+  });
+
+  it("keeps a down trend for a return above the rounding threshold", () => {
+    spy.mockReturnValue(groupPnl(new BigNumber(-1234))); // -$12.34
+
+    const { result } = renderHook(() => useAssetPnlViewModel({ distributionItem, enabled: true }), {
+      overrideInitialState: withPnlFlag(true),
+    });
+
+    expect(result.current.unrealised.trend).toBe("down");
   });
 });
