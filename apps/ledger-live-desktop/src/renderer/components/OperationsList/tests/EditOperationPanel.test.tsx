@@ -1,11 +1,16 @@
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { Account, Operation } from "@ledgerhq/types-live";
 import React from "react";
 import { render, screen, withFlagOverrides } from "tests/testSetup";
 import { closeModal, openModal } from "~/renderer/actions/modals";
 import { getLLDCoinFamily } from "~/renderer/families";
 import EditOperationPanel from "../EditOperationPanel";
+
+jest.mock("@ledgerhq/live-common/account/index", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/account/index"),
+  getMainAccount: jest.fn(),
+}));
 
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
   useAccountBridge: () => ({}),
@@ -21,15 +26,7 @@ jest.mock("~/renderer/families", () => ({
   getLLDCoinFamily: jest.fn(() => ({})),
 }));
 
-const evmAccount = genAccount("edit-operation-panel-account", {
-  currency: getCryptoCurrencyById("ethereum"),
-}) as Account;
-const bitcoinAccount = {
-  ...genAccount("edit-operation-panel-bitcoin-account", {
-    currency: getCryptoCurrencyById("bitcoin"),
-  }),
-  freshAddress: "bc1qfreshaddress",
-} as Account;
+const account = genAccount("edit-operation-panel-account") as Account;
 const parentAccount = undefined;
 const operation = {
   hash: "tx-hash",
@@ -37,7 +34,7 @@ const operation = {
   transactionRaw: undefined,
 } as unknown as Operation;
 
-const renderComponent = (account: Account, overrideInitialState?: Record<string, unknown>) =>
+const renderComponent = (overrideInitialState?: Record<string, unknown>) =>
   render(
     <EditOperationPanel account={account} parentAccount={parentAccount} operation={operation} />,
     {
@@ -60,13 +57,21 @@ describe("EditOperationPanel", () => {
   });
 
   it("should not render panel when no edit flow is supported", () => {
-    renderComponent(evmAccount);
+    (getMainAccount as jest.Mock).mockReturnValue({
+      ...account,
+      currency: { ...account.currency, family: "evm", id: "ethereum" },
+    });
+    renderComponent();
 
     expect(screen.queryByRole("link")).not.toBeInTheDocument();
   });
 
   it("should open family modal with family params when supported by coin family", async () => {
     const familyParams = { accountId: "acc-1", transactionHash: "family-tx-hash" };
+    (getMainAccount as jest.Mock).mockReturnValue({
+      ...account,
+      currency: { ...account.currency, family: "evm", id: "ethereum" },
+    });
     (getLLDCoinFamily as jest.Mock).mockReturnValue({
       handlesEditTransaction: () => ({
         modalName: "MODAL_EVM_EDIT_TRANSACTION",
@@ -74,7 +79,7 @@ describe("EditOperationPanel", () => {
       }),
     });
 
-    const { user } = renderComponent(evmAccount);
+    const { user } = renderComponent();
 
     await user.click(screen.getByText("Speed up or Cancel"));
 
@@ -84,7 +89,7 @@ describe("EditOperationPanel", () => {
 
   it("should open bitcoin modal with family params", async () => {
     const familyParams = {
-      account: bitcoinAccount,
+      account,
       parentAccount,
       transactionRaw: {
         family: "bitcoin" as const,
@@ -98,6 +103,11 @@ describe("EditOperationPanel", () => {
       },
       transactionHash: "tx-hash",
     };
+    (getMainAccount as jest.Mock).mockReturnValue({
+      ...account,
+      freshAddress: "bc1qfreshaddress",
+      currency: { ...account.currency, family: "bitcoin", id: "bitcoin", ticker: "BTC" },
+    });
     (getLLDCoinFamily as jest.Mock).mockReturnValue({
       handlesEditTransaction: () => ({
         modalName: "MODAL_BITCOIN_EDIT_TRANSACTION",
@@ -105,10 +115,7 @@ describe("EditOperationPanel", () => {
       }),
     });
     const { user } = renderComponent(
-      bitcoinAccount,
-      withFlagOverrides({
-        editBitcoinTx: { enabled: true, params: { supportedCurrencyIds: ["bitcoin"] } },
-      }),
+      withFlagOverrides({ editBitcoinTx: { enabled: true, params: { supportedCurrencyIds: ["bitcoin"] } } }),
     );
 
     await user.click(screen.getByText("Speed up or Cancel"));

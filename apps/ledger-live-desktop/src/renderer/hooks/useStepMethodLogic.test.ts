@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { act, renderHook } from "tests/testSetup";
 import { urls } from "~/config/urls";
@@ -10,13 +11,15 @@ jest.mock("~/renderer/linking", () => ({
   openURL: jest.fn(),
 }));
 
-jest.mock("@ledgerhq/live-common/bridge/index", () => {
-  const actual = jest.requireActual<Record<PropertyKey, unknown>>(
-    "@ledgerhq/live-common/bridge/index",
-  );
-  const overrides: Record<PropertyKey, unknown> = { __esModule: true, getAccountBridge: jest.fn() };
-  return new Proxy(overrides, { get: (o, k) => (k in o ? o[k] : actual[k]) });
-});
+jest.mock("@ledgerhq/live-common/account/index", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/account/index"),
+  getMainAccount: jest.fn(),
+}));
+
+jest.mock("@ledgerhq/live-common/bridge/index", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/bridge/index"),
+  getAccountBridge: jest.fn(),
+}));
 
 describe("useStepMethodSelection", () => {
   it("sets edit type to speedup when speedup is available", () => {
@@ -110,6 +113,7 @@ describe("useStepMethodContinue", () => {
     const getPatch = jest.fn().mockResolvedValue(patch);
     const bridgeUpdateTransaction = jest.fn().mockReturnValue(updatedTransaction);
 
+    (getMainAccount as jest.Mock).mockReturnValue(account);
     const bridge = { updateTransaction: bridgeUpdateTransaction };
     (getAccountBridge as jest.Mock).mockReturnValue(
       Object.assign(Promise.resolve(bridge), { status: "fulfilled", value: bridge }),

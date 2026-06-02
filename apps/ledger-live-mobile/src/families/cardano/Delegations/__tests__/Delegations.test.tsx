@@ -72,6 +72,11 @@ jest.mock("LLM/hooks/useAccountUnit", () => ({
   useAccountUnit: () => ({ code: "ADA", magnitude: 6 }),
 }));
 
+jest.mock("@ledgerhq/live-common/account/index", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/account/index"),
+  getMainAccount: (account: unknown) => account,
+  flattenAccounts: (accounts: unknown[]) => accounts,
+}));
 jest.mock("@ledgerhq/live-common/explorers", () => ({
   getDefaultExplorerView: jest.fn(),
   getStakePoolExplorer: jest.fn(),

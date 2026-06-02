@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getFormattedFeeFields } from "@ledgerhq/coin-bitcoin/editTransaction/index";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import React from "react";
 import { render, screen, withFlagOverrides } from "tests/testSetup";
@@ -13,6 +13,11 @@ import type { StepProps } from "../types";
 jest.mock("@ledgerhq/coin-bitcoin/editTransaction/index", () => ({
   ...jest.requireActual("@ledgerhq/coin-bitcoin/editTransaction/index"),
   getFormattedFeeFields: jest.fn(),
+}));
+
+jest.mock("@ledgerhq/live-common/account/index", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/account/index"),
+  getMainAccount: jest.fn(),
 }));
 
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
@@ -40,9 +45,7 @@ jest.mock("~/renderer/components/OperationsList/EditOperationPanel", () => ({
   default: () => <div data-testid="edit-operation-panel" />,
 }));
 
-const account = genAccount("bitcoin-edit-components-account", {
-  currency: getCryptoCurrencyById("bitcoin"),
-});
+const account = genAccount("bitcoin-edit-components-account");
 
 const createStepProps = (overrides: Partial<StepProps> = {}): StepProps =>
   ({
@@ -86,6 +89,10 @@ const createStepProps = (overrides: Partial<StepProps> = {}): StepProps =>
 describe("Bitcoin EditTransaction components", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    (getMainAccount as jest.Mock).mockReturnValue({
+      ...account,
+      currency: { ...account.currency, family: "bitcoin", id: "bitcoin", ticker: "BTC" },
+    });
     const { useAccountBridge } = jest.requireMock("@ledgerhq/live-common/bridge/useAccountBridge");
     useAccountBridge.mockReturnValue({
       getStuckAccountAndOperation: mockGetStuckAccountAndOperation,
@@ -134,9 +141,7 @@ describe("Bitcoin EditTransaction components", () => {
     });
 
     render(<EditStuckTransactionPanelBodyHeader account={account} parentAccount={undefined} />, {
-      initialState: withFlagOverrides({
-        editBitcoinTx: { enabled: true, params: { supportedCurrencyIds: ["bitcoin"] } },
-      }),
+      initialState: withFlagOverrides({ editBitcoinTx: { enabled: true, params: { supportedCurrencyIds: ["bitcoin"] } } }),
     });
 
     expect(screen.getByTestId("edit-operation-panel")).toBeInTheDocument();
