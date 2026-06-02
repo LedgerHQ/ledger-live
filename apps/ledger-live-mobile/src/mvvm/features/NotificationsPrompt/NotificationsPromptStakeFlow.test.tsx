@@ -628,17 +628,6 @@ describe("NotificationsPrompt stake flow", () => {
     ...MockedAccounts,
     active: [...MockedAccounts.active, ...Object.values(accountsByKey)],
   };
-  const flowRoutes = Array.from(
-    new Map(
-      stakePromptCases.map(stakePromptCase => [
-        stakePromptCase.flowName,
-        {
-          flowName: stakePromptCase.flowName,
-          component: getMobileFamilyFlow(stakePromptCase.familyExportKey).component,
-        },
-      ]),
-    ).values(),
-  );
 
   const createParams = (stakePromptCase: StakePromptCase) => {
     const account = accountsByKey[stakePromptCase.accountKey];
@@ -680,14 +669,17 @@ describe("NotificationsPrompt stake flow", () => {
     ],
   });
 
-  function StakeFlowTestApp() {
+  // Each test exercises exactly one stake flow, so the test app registers only
+  // that flow's screen (plus a Home screen to land on). This keeps every render
+  // to a two-screen navigator instead of mounting all ~37 family flows, while
+  // still rendering the real flow component for the case under test.
+  function StakeFlowTestApp({ stakePromptCase }: { stakePromptCase: StakePromptCase }) {
+    const { component } = getMobileFamilyFlow(stakePromptCase.familyExportKey);
     return (
       <GlobalDrawers>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name={HOME_SCREEN} component={HomeScreen} />
-          {flowRoutes.map(({ flowName, component }) => (
-            <Stack.Screen key={flowName} name={flowName} component={component} />
-          ))}
+          <Stack.Screen name={stakePromptCase.flowName} component={component} />
         </Stack.Navigator>
       </GlobalDrawers>
     );
@@ -697,7 +689,7 @@ describe("NotificationsPrompt stake flow", () => {
     stakePromptCase: StakePromptCase,
     screenName: ScreenName = stakePromptCase.successScreenName,
   ) =>
-    render(<StakeFlowTestApp />, {
+    render(<StakeFlowTestApp stakePromptCase={stakePromptCase} />, {
       navigationInitialState: createFlowNavigationState(stakePromptCase, screenName),
       overrideInitialState: withFlagOverrides(featureFlagsForStakePrompt, state => ({
         ...state,
