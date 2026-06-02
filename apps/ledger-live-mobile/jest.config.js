@@ -99,6 +99,10 @@ module.exports = {
   ],
   testPathIgnorePatterns: ["<rootDir>/node_modules/"],
   moduleDirectories: ["node_modules"],
+  // Use V8's native coverage instead of babel/istanbul instrumentation: it avoids
+  // rewriting every loaded (and every collectCoverageFrom-matched) source file,
+  // which is the dominant per-suite penalty for render-heavy tests on CI.
+  coverageProvider: "v8",
   collectCoverageFrom: [
     "src/**/*.{ts,tsx}",
     "!src/**/*.test.{ts,tsx}",
