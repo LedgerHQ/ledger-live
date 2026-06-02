@@ -1,5 +1,12 @@
 import type { Contact } from "~/renderer/contacts/types";
-import { groupContacts, ME_CONTACT_NAME } from "../utils/groupContacts";
+import {
+  applyMeSuffix,
+  groupContacts,
+  isMeIdentity,
+  ME_CONTACT_NAME,
+  ME_DISPLAY_SUFFIX,
+  stripMeSuffix,
+} from "../utils/groupContacts";
 
 const stub = (name: string, entryCount = 0): Contact => ({
   name,
@@ -30,6 +37,9 @@ describe("groupContacts", () => {
             groupHandleHex: "",
             hmacNameHex: "",
             entries: [],
+            // Stable avatar seed baked into the placeholder so the Me
+            // pastel never depends on the (changing) display name.
+            colorKey: ME_CONTACT_NAME,
           },
         ],
       },
@@ -130,5 +140,59 @@ describe("groupContacts", () => {
   it("returns an empty array when filter removes everything (and the synthetic 'me' doesn't match)", () => {
     const result = groupContacts(asRecord([stub("Alice")]), "zzz");
     expect(result).toEqual([]);
+  });
+
+  it("still pins the Me row after promotion (canonical name carries the ' (Me)' suffix)", () => {
+    // Post-promotion the wallet key is e.g. "Hugo (Me)" and there's no
+    // rename overlay. The pinning helper has to recognise the suffix.
+    const result = groupContacts(
+      asRecord([stub("Alice"), stub("Hugo (Me)", 1), stub("Bob")]),
+      "",
+    );
+
+    expect(result[0]).toMatchObject({
+      kind: "pinned",
+      contacts: [expect.objectContaining({ name: "Hugo (Me)" })],
+    });
+    expect(result.slice(1).map(g => g.kind)).toEqual(["letter", "letter"]);
+  });
+});
+
+describe("isMeIdentity", () => {
+  it("matches the default 'me' placeholder (case-insensitive, trimmed)", () => {
+    expect(isMeIdentity("me")).toBe(true);
+    expect(isMeIdentity("ME")).toBe(true);
+    expect(isMeIdentity("  Me  ")).toBe(true);
+  });
+
+  it("matches any name ending with ' (Me)' (post-promotion / post-rename)", () => {
+    expect(isMeIdentity("Hugo (Me)")).toBe(true);
+    expect(isMeIdentity("Brian Bilson (Me)")).toBe(true);
+  });
+
+  it("does NOT match regular contacts", () => {
+    expect(isMeIdentity("Alice")).toBe(false);
+    expect(isMeIdentity("")).toBe(false);
+    // No leading space before the parens → not the canonical suffix.
+    expect(isMeIdentity("Hugo(Me)")).toBe(false);
+  });
+});
+
+describe("applyMeSuffix / stripMeSuffix", () => {
+  it("appends the ' (Me)' suffix to the user's chosen name", () => {
+    expect(applyMeSuffix("Hugo")).toBe(`Hugo${ME_DISPLAY_SUFFIX}`);
+  });
+
+  it("is idempotent — applying twice still produces a single suffix", () => {
+    expect(applyMeSuffix(applyMeSuffix("Hugo"))).toBe(`Hugo${ME_DISPLAY_SUFFIX}`);
+  });
+
+  it("trims whitespace before re-applying the suffix", () => {
+    expect(applyMeSuffix("  Hugo  ")).toBe(`Hugo${ME_DISPLAY_SUFFIX}`);
+  });
+
+  it("strips the suffix when present, leaves the name alone otherwise", () => {
+    expect(stripMeSuffix("Hugo (Me)")).toBe("Hugo");
+    expect(stripMeSuffix("Hugo")).toBe("Hugo");
   });
 });

@@ -66,6 +66,27 @@ describe("AddContactDialog", () => {
     expect(onSubmit).toHaveBeenCalledWith("Charlie");
   });
 
+  it("blocks names ending with ' (Me)' — the suffix is reserved for the Me identity", async () => {
+    const onSubmit = jest.fn();
+    const { user } = render(<AddContactDialog {...baseProps({ onSubmit })} />);
+
+    const input = screen.getByTestId("contacts-management-add-contact-name") as HTMLInputElement;
+    await user.type(input, "Brian (Me)");
+
+    // The aria-invalid flag is the contract here — the Lumen
+    // `errorMessage` prop is wired up but the pinned Lumen version
+    // doesn't actually render it (pre-existing type/render gap we
+    // hit elsewhere). Submit-disabled + aria-invalid is what guards
+    // the user.
+    expect(input).toHaveAttribute("aria-invalid", "true");
+    expect(screen.getByTestId("contacts-management-add-contact-submit")).toBeDisabled();
+
+    // Enter must also be inert — the keyboard path shouldn't bypass the
+    // disabled-button check.
+    await user.type(input, "{Enter}");
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
   it("does NOT fire onSubmit on Enter when the name is invalid", async () => {
     const onSubmit = jest.fn();
     const { user } = render(<AddContactDialog {...baseProps({ onSubmit })} />);

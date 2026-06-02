@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import {
   ListItem,
@@ -14,7 +14,7 @@ import type { ContactEntry } from "~/renderer/contacts/types";
 import type { CryptoOption } from "~/mvvm/features/Contacts/constants/topCryptos";
 import { getChainInfo } from "../utils/getChainInfo";
 import { truncateAddressLong } from "../utils/truncateAddressLong";
-import { AddressRowMenu } from "./AddressRowMenu";
+import { AddressRowMenu, type AddressRowMenuHandle } from "./AddressRowMenu";
 
 type Props = {
   entry: ContactEntry;
@@ -25,6 +25,18 @@ type Props = {
    */
   crypto: CryptoOption;
   onSelect: (entry: ContactEntry) => void;
+  /**
+   * Fired when the user picks "Delete address" from the trailing
+   * overflow menu. Optional so the row can be used in contexts that
+   * don't expose the delete affordance yet.
+   */
+  onDeleteAddress?: (entry: ContactEntry) => void;
+  /**
+   * Fired when the user picks "Rename address" from the trailing
+   * overflow menu. Optional so the row can be used in contexts that
+   * don't expose the rename affordance yet.
+   */
+  onRenameAddress?: (entry: ContactEntry) => void;
 };
 
 /**
@@ -33,9 +45,11 @@ type Props = {
  * Layout matches the Figma frame 13827:32002:
  * - Leading: the resolved crypto's icon (e.g. USDC) with a small
  *   network-chain badge (e.g. Ethereum) — `CryptoIcon`'s built-in
- *   `network` prop attaches the dot-symbol in the corner. Falls back
- *   to the chain's gas token when the crypto is the chain native
- *   (avoids the redundant ETH-on-ETH badge).
+ *   `network` prop attaches the dot-symbol in the corner. The badge
+ *   is rendered unconditionally, including for chain-native rows
+ *   (ETH on Ethereum), because the network is part of the address's
+ *   identity and the designer wants it visually consistent across
+ *   every row.
  * - Title row: `entry.scope` (the user's label) + a Lumen `Tag` with
  *   the network label, side-by-side via `ListItemContentRow`.
  * - Description: truncated 0x address (wider envelope than the inline
@@ -46,20 +60,35 @@ type Props = {
  * Clicking anywhere on the row (outside the trailing menu) opens the
  * address-detail dialog with the full address + QR code.
  */
-export function AddressRow({ entry, crypto, onSelect }: Props) {
+export function AddressRow({
+  entry,
+  crypto,
+  onSelect,
+  onDeleteAddress,
+  onRenameAddress,
+}: Props) {
   const chain = getChainInfo(entry.chainId);
 
-  // Don't render the chain badge when the crypto IS the chain native
-  // gas token — looks redundant (ETH icon with ETH dot, USDC icon
-  // with… still the chain it's on, so we always want the badge for
-  // tokens but skip for natives).
-  const isNativeOfChain = crypto.ticker.toLowerCase() === chain.ticker.toLowerCase();
-  const networkBadge = isNativeOfChain ? undefined : chain.ledgerId;
+  // The trailing menu exposes an `openAt(x, y)` imperative method —
+  // we drive it from up here on `contextmenu` so a right-click
+  // anywhere on the row body pops the menu at the cursor. The `…`
+  // IconButton inside the menu still self-opens (anchored to itself);
+  // both gestures end up at the same Popover, just anchored to
+  // different points.
+  const menuRef = useRef<AddressRowMenuHandle | null>(null);
 
   return (
     <ListItem
       density="expanded"
       onClick={() => onSelect(entry)}
+      onContextMenu={e => {
+        // Suppress the native browser context menu and open ours at
+        // the cursor coordinates instead. `preventDefault` also
+        // ensures the contextmenu event doesn't bleed into any
+        // accidental click selection.
+        e.preventDefault();
+        menuRef.current?.openAt(e.clientX, e.clientY);
+      }}
       data-testid="contacts-management-address-row"
     >
       <ListItemLeading>
@@ -72,7 +101,11 @@ export function AddressRow({ entry, crypto, onSelect }: Props) {
           // tokens it's the CAL format (`ethereum/erc20/usd__coin`).
           // See `constants/topCryptos.ts` for the resolution notes.
           ledgerId={crypto.ledgerId}
-          network={networkBadge}
+          // Always render the network badge — including the visually
+          // redundant ETH-on-Ethereum case — so the icon shape stays
+          // consistent across the row stack and the network is always
+          // legible at a glance.
+          network={chain.ledgerId}
           size={48}
           alt={crypto.name}
         />
@@ -93,7 +126,19 @@ export function AddressRow({ entry, crypto, onSelect }: Props) {
           (which would also open the address-detail dialog).
         */}
         <div onClick={e => e.stopPropagation()}>
-          <AddressRowMenu />
+          {/*
+            "See QR Code" routes through the same `onSelect` we use when
+            the row body itself is clicked — both surfaces open the
+            address-detail dialog with the QR + actions. Keeping a single
+            entry-point means the dialog's open/crypto state machinery
+            stays in one place (ContactDetails).
+          */}
+          <AddressRowMenu
+            ref={menuRef}
+            onShowQrCode={() => onSelect(entry)}
+            onDeleteAddress={onDeleteAddress ? () => onDeleteAddress(entry) : undefined}
+            onRenameAddress={onRenameAddress ? () => onRenameAddress(entry) : undefined}
+          />
         </div>
       </ListItemTrailing>
     </ListItem>

@@ -4,6 +4,8 @@ import { SearchInput } from "@ledgerhq/lumen-ui-react";
 import type { Contact } from "~/renderer/contacts/types";
 import type { ContactGroup } from "../utils/groupContacts";
 import { ContactListItem } from "./ContactListItem";
+import { EmptyContactsState } from "./EmptyContactsState";
+import { EmptySearchState } from "./EmptySearchState";
 import { LetterDivider } from "./LetterDivider";
 
 type Props = {
@@ -12,6 +14,12 @@ type Props = {
   selectedContactName: string;
   onSearchQueryChange: (next: string) => void;
   onSelectContact: (name: string) => void;
+  /**
+   * Fired by the empty-state "Add contact" CTA shown below the Me row
+   * when the user has no user-added contacts yet. Optional so the
+   * list can render in contexts that don't expose the dialog.
+   */
+  onAddContact?: () => void;
 };
 
 /**
@@ -40,6 +48,7 @@ export function ContactList({
   selectedContactName,
   onSearchQueryChange,
   onSelectContact,
+  onAddContact,
 }: Props) {
   const { t } = useTranslation();
 
@@ -64,6 +73,21 @@ export function ContactList({
     }
   }
 
+  // Two distinct empty states — pick at most one:
+  //
+  //   - `EmptyContactsState`  → no user-added contacts at all (only
+  //     the pinned Me row), AND the search query is empty. Renders
+  //     a title + body + Add-contact CTA (Figma `14157:15577`).
+  //
+  //   - `EmptySearchState`    → an active search query returns zero
+  //     rows (including Me — `groupContacts` filters the pinned row
+  //     when its name doesn't match the query). Renders a single
+  //     centred "No contacts found" label (Figma `14158:11604`).
+  const trimmedQuery = searchQuery.trim();
+  const hasNoOtherContacts = !groups.some(g => g.kind === "letter");
+  const showEmptyContacts = hasNoOtherContacts && trimmedQuery.length === 0;
+  const showEmptySearch = groups.length === 0 && trimmedQuery.length > 0;
+
   return (
     <div
       data-testid="contacts-management-list"
@@ -78,6 +102,8 @@ export function ContactList({
         data-testid="contacts-management-search"
       />
       {children}
+      {showEmptyContacts && <EmptyContactsState onAddContact={onAddContact} />}
+      {showEmptySearch && <EmptySearchState />}
     </div>
   );
 }

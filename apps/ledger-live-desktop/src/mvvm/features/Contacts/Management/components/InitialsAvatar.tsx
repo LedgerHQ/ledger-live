@@ -22,25 +22,39 @@ type Size = "sm" | "lg";
 type Props = {
   name: string;
   size: Size;
+  /**
+   * Stable seed for the background-colour hash. When omitted we fall
+   * back to hashing `name`, which used to be the original behaviour
+   * but caused the avatar to flicker on every rename.
+   *
+   * `useManagementViewModel` supplies this for every merged contact:
+   * `groupHandleHex || underlying-sidecar-key`, so the colour stays
+   * pinned to the contact's identity across L4 renames, device
+   * renames, and sidecar → canonical promotion.
+   */
+  colorKey?: string;
 };
 
 const SIZE_PX: Record<Size, number> = {
   sm: 40,
-  lg: 96,
+  lg: 72,
 };
 
 // Typography token for the centered initials.
 const TEXT_CLASS: Record<Size, string> = {
   sm: "body-2-semi-bold",
-  // 40px / line-height 48 / letter-spacing -2 / weight 600 — matches the
-  // `heading/1-semi-bold` token used in the Figma frame 13895:2191
-  // (large avatar in the details pane).
-  lg: "heading-1-semi-bold",
+  // `heading/2-semi-bold` matches the Figma spec for the details-pane
+  // avatar at 72px. (Previously 96px / `heading/1-semi-bold` — both
+  // bumped down a step.)
+  lg: "heading-2-semi-bold",
 };
 
-export function InitialsAvatar({ name, size }: Props) {
+export function InitialsAvatar({ name, size, colorKey }: Props) {
   const initials = getContactInitials(name);
-  const bg = getAvatarColor(name);
+  // Hash off the stable colour seed when supplied — keeps the bg
+  // pinned across renames. Falls back to `name` for callers that
+  // don't have an enrichment step (tests, the L1 panel).
+  const bg = getAvatarColor(colorKey ?? name);
   const px = SIZE_PX[size];
 
   return (

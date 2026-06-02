@@ -139,7 +139,8 @@ const RegisterExternalAddressSection = ({ contacts, run }: Props) => {
       // DEMO-only — see `Management/utils/cryptoMeta.ts` for the
       // rule-violation caveat and migration path.
       if (crypto) {
-        setCryptoMeta(normAddress, network.chainId, crypto.id);
+        // Key by `(chainId, address, scope)` — see cryptoMeta.ts.
+        setCryptoMeta(normAddress, network.chainId, label, crypto.id);
       }
       setPick({ mode: "new", name: "" });
       setCrypto(TOP_CRYPTOS[0] ?? null);

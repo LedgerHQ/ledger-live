@@ -47,7 +47,7 @@ describe("AddressDetailDialog", () => {
     expect(screen.queryByTestId("contacts-management-address-full")).not.toBeInTheDocument();
   });
 
-  it("shows the contact name, scope label, full untruncated address, and 3 action tiles", () => {
+  it("shows the contact name, network tag, scope label, full address, and 4 action tiles", () => {
     const entry = buildEntry({ scope: "Ethereum Main" });
     render(
       <AddressDetailDialog
@@ -63,15 +63,42 @@ describe("AddressDetailDialog", () => {
     expect(screen.getAllByText("Benoit Lucet").length).toBeGreaterThan(0);
     expect(screen.getByText("Ethereum Main")).toBeInTheDocument();
 
+    // Network tag — replaces the legacy chain text under the address.
+    // The label resolves from `getChainInfo(1)` to "Ethereum".
+    expect(
+      screen.getByTestId("contacts-management-address-network-tag"),
+    ).toBeInTheDocument();
+
     // The full address must be present, NOT the 6+8 truncated form.
     const fullAddress = screen.getByTestId("contacts-management-address-full");
     expect(fullAddress).toHaveTextContent(entry.addressHex);
 
-    // QR + 3 action tiles.
+    // QR + 4 action tiles (Send / Rename / Edit / Delete).
     expect(screen.getByTestId("contacts-management-address-qr")).toBeInTheDocument();
     expect(screen.getByTestId("contacts-management-address-dialog-send")).toBeInTheDocument();
+    expect(screen.getByTestId("contacts-management-address-dialog-rename")).toBeInTheDocument();
     expect(screen.getByTestId("contacts-management-address-dialog-edit")).toBeInTheDocument();
     expect(screen.getByTestId("contacts-management-address-dialog-delete")).toBeInTheDocument();
+  });
+
+  it("renders the action tiles in Figma 13844:10015 order (Send / Rename / Edit / Delete)", () => {
+    render(
+      <AddressDetailDialog
+        open
+        onOpenChange={jest.fn()}
+        contact={buildContact()}
+        entry={buildEntry()}
+      />,
+    );
+
+    const tiles = screen.getAllByTestId(/^contacts-management-address-dialog-/);
+    const ids = tiles.map(el => el.getAttribute("data-testid"));
+    expect(ids).toEqual([
+      "contacts-management-address-dialog-send",
+      "contacts-management-address-dialog-rename",
+      "contacts-management-address-dialog-edit",
+      "contacts-management-address-dialog-delete",
+    ]);
   });
 
   it("does not throw when an action tile is clicked (inert in L4)", async () => {
@@ -85,6 +112,7 @@ describe("AddressDetailDialog", () => {
     );
 
     await user.click(screen.getByTestId("contacts-management-address-dialog-send"));
+    await user.click(screen.getByTestId("contacts-management-address-dialog-rename"));
     await user.click(screen.getByTestId("contacts-management-address-dialog-edit"));
     await user.click(screen.getByTestId("contacts-management-address-dialog-delete"));
 

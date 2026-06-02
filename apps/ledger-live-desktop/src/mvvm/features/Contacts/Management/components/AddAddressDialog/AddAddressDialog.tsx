@@ -14,13 +14,13 @@ import {
 } from "~/mvvm/features/Contacts/constants/topCryptos";
 import type { NetworkOption } from "~/mvvm/features/Contacts/constants/networks";
 import { getNetworksForCrypto } from "~/mvvm/features/Contacts/utils/getNetworksForCrypto";
-import { normalizeAddressHex } from "~/mvvm/features/Contacts/validation";
 import RunDeviceAction from "~/mvvm/features/Contacts/components/RunDeviceAction";
 import { setCryptoMeta } from "../../utils/cryptoMeta";
+import { removeSidecarContact } from "../../utils/sidecarContacts";
 import {
-  isSidecarContact,
-  removeSidecarContact,
-} from "../../utils/sidecarContacts";
+  clearContactRename,
+  useContactRenames,
+} from "../../utils/sidecarOverrides";
 import { AssetStep } from "./AssetStep";
 import { NetworkStep } from "./NetworkStep";
 import { AddressStep, type AddressStepSubmit } from "./AddressStep";
@@ -72,13 +72,22 @@ const HEADER_KEY: Record<Step["kind"], string> = {
  *      verb. On success the dialog closes and the L4 list updates
  *      from the wallet snapshot + cryptoMeta sidecar.
  *
- * Verb selection:
- *   - If the contact is currently sidecar-only (no on-device HMAC),
- *     we use `addContact` — that DMK verb creates the contact AND
- *     its first address atomically. On success we drop the sidecar
- *     copy so the canonical wallet snapshot wins (no name collision
- *     in `useManagementViewModel`'s merge).
- *   - Otherwise we use `addAddressToContact` to append.
+ * Verb selection (routes on canonical wallet, not sidecar map):
+ *   - If the displayed row resolves to a canonical entry on device,
+ *     we use `addAddressToContact` to append. We pass the *underlying*
+ *     name (pre-rename) because the device knows the group by the
+ *     name it was registered with.
+ *   - Otherwise the row only exists locally (sidecar-only, possibly
+ *     renamed). We promote it with `addContact` — that DMK verb
+ *     creates the contact AND its first address atomically — and
+ *     drop any sidecar / rename-overlay traces so the merged view
+ *     doesn't shadow the new canonical row with a stale ghost.
+ *
+ * Routing this way avoids the "Contact not found in local store"
+ * error that the previous `isSidecarContact(displayName)` check hit
+ * for any sidecar contact the user had renamed in L4 (the sidecar
+ * map is keyed by the underlying name, so the display-name lookup
+ * silently missed and sent us into the canonical branch).
  *
  * Both paths also write the picked crypto into the `cryptoMeta`
  * sidecar so the L4 details pane's per-crypto grouping picks up the
@@ -87,6 +96,7 @@ const HEADER_KEY: Record<Step["kind"], string> = {
 export function AddAddressDialog({ open, onOpenChange, contact }: Props) {
   const { t } = useTranslation();
   const contacts = useContacts();
+  const renames = useContactRenames();
 
   // Local step state. Reset to `asset` when the dialog re-opens.
   const [step, setStep] = useState<Step>({ kind: "asset" });
@@ -121,49 +131,83 @@ export function AddAddressDialog({ open, onOpenChange, contact }: Props) {
       const { crypto, network } = step;
       if (typeof network.chainId !== "number") return; // gated upstream
 
-      const normAddress = normalizeAddressHex(addressHex);
+      // Preserve the user's input verbatim (just trim surrounding
+      // whitespace) so the stored entry shows back exactly what they
+      // typed — `0x` prefix kept, EIP-55 mixed case kept. DMK is fine
+      // with either form: `validateAddressHex` strips `0x` if present,
+      // and the TLV serialiser's `encodeTlvHex` does the same before
+      // packing the on-wire bytes (see `contactsTlvSerializer.js` →
+      // `encodeTlvHex`). The previous `normalizeAddressHex` call was
+      // lowercasing + dropping the prefix and the wallet ended up
+      // storing `aaff…` instead of `0xAAFF…`.
+      const addressForRegistration = addressHex.trim();
       const chainId = network.chainId;
-      const wasSidecar = isSidecarContact(contact.name);
+
+      // Resolve the underlying (pre-rename) name so we look up the
+      // right key in the canonical wallet — that map is keyed by the
+      // name the device registered the contact under, not the L4
+      // display name produced by the renames overlay.
+      const underlying =
+        Object.entries(renames).find(([, displayName]) => displayName === contact.name)?.[0] ??
+        contact.name;
+      const isCanonical = underlying in (contacts.wallet?.contacts ?? {});
 
       const verb = async (deviceId: string) => {
-        if (wasSidecar) {
-          // Promote: addContact creates the contact + first address.
+        if (isCanonical) {
+          await contacts.addAddressToContact(deviceId, {
+            contactName: underlying,
+            // `name` must be the CONTACT name — it goes into the
+            // device-side CONTACT_NAME TLV and is HMAC'd against
+            // `extension.hmacProofHex` (the previous HMAC chain
+            // value). If we accidentally pass the address label here
+            // the firmware HMAC reconstruction fails and the device
+            // rejects with SW 6982, which DMK then mislabels as
+            // "Canceled by user". `scope` is the per-address label.
+            name: underlying,
+            addressHex: addressForRegistration,
+            scope: addressName,
+            derivationPath: EXTERNAL_DERIVATION_PATH,
+            chainId,
+          });
+        } else {
+          // No canonical entry yet — create it on device under the
+          // user's current display name so the on-device prompt
+          // matches what they see in L4. addContact registers the
+          // contact + first address atomically.
           await contacts.addContact(deviceId, {
             name: contact.name,
-            addressHex: normAddress,
+            addressHex: addressForRegistration,
             scope: addressName,
             derivationPath: EXTERNAL_DERIVATION_PATH,
             chainId,
           });
-          // Drop the sidecar copy so the merged view doesn't show a
-          // ghost duplicate next to the canonical entry.
-          removeSidecarContact(contact.name);
-        } else {
-          await contacts.addAddressToContact(deviceId, {
-            contactName: contact.name,
-            name: addressName,
-            addressHex: normAddress,
-            scope: addressName,
-            derivationPath: EXTERNAL_DERIVATION_PATH,
-            chainId,
-          });
+          // Drop the local-only traces so the merged view doesn't
+          // shadow the freshly-registered canonical row.
+          removeSidecarContact(underlying);
+          clearContactRename(underlying);
         }
         // Sidecar cryptoMeta so the details pane groups under the
         // picked crypto's ticker rather than the chain-native gas
         // token (e.g. USDC on Ethereum stays USDC, not ETH).
-        setCryptoMeta(normAddress, chainId, crypto.id);
+        // Key by `(chainId, address, scope)` — the same EVM address
+        // can be registered twice on the same chain with different
+        // labels (e.g. once tagged ETH and once tagged USDT). Without
+        // `scope` in the key the writes collide and the latest one
+        // retroactively re-groups every existing entry sharing that
+        // address.
+        setCryptoMeta(addressForRegistration, chainId, addressName, crypto.id);
       };
 
       setStep({
         kind: "device",
         crypto,
         network,
-        addressHex: normAddress,
+        addressHex: addressForRegistration,
         addressName,
         verb,
       });
     },
-    [step, contact.name, contacts],
+    [step, contact.name, contacts, renames],
   );
 
   const handleDeviceDone = useCallback(
@@ -180,6 +224,27 @@ export function AddAddressDialog({ open, onOpenChange, contact }: Props) {
 
   const headerTitle = useMemo(() => t(HEADER_KEY[step.kind]), [t, step.kind]);
 
+  // Per-step back navigation. `asset` is the first step → no back.
+  // From `network` we always return to `asset`.
+  // From `address` we mirror the forward-path auto-advance: if the
+  // selected crypto has a single network we hid the network step on
+  // the way in, so we hide it on the way back too and jump straight
+  // to `asset`. Otherwise we return to `network` with the crypto
+  // preselected so the user lands where they came from.
+  const onBack = useMemo<(() => void) | undefined>(() => {
+    if (step.kind === "network") {
+      return () => setStep({ kind: "asset" });
+    }
+    if (step.kind === "address") {
+      const networks = getNetworksForCrypto(step.crypto.id);
+      if (networks.length === 1) {
+        return () => setStep({ kind: "asset" });
+      }
+      return () => setStep({ kind: "network", crypto: step.crypto });
+    }
+    return undefined;
+  }, [step]);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange} height="fit">
       <DialogContent>
@@ -188,6 +253,7 @@ export function AddAddressDialog({ open, onOpenChange, contact }: Props) {
             density="expanded"
             title={headerTitle}
             onClose={() => onOpenChange(false)}
+            onBack={onBack}
           />
         )}
         <DialogBody
