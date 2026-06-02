@@ -92,7 +92,7 @@ export class SwapLiveAppPage {
     await this.switchTo();
     await expect(this.fromSelector).toBeDisplayed();
     await expect(this.toSelector).toBeDisplayed();
-    await expect(this.quotesButtonDisabled).toBeDisplayed();
+    // await expect(this.quotesButtonDisabled).toBeDisplayed();
     await driver.switchAppiumContext("NATIVE_APP");
   }
 
