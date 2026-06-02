@@ -73,7 +73,9 @@ export class SwapLiveAppPage {
         //   }
         // }
         // return false;
-        await driver.switchAppiumContext("WEBVIEW_com.ledger.live.detox");
+        await driver.switchContext({
+          title: /swap/i,
+        });
         return true;
       },
       {
