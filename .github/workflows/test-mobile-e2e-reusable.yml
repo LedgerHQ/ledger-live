@@ -155,7 +155,7 @@ env:
   AVD_TARGET: google_apis
   AVD_NAME: "Android_Emulator"
   AVD_CORES: 4
-  AVD_RAM_SIZE: 5120
+  AVD_RAM_SIZE: 8192
   AVD_HEAP_SIZE: 1024
   AVD_OPTIONS: -no-window -gpu swiftshader_indirect -accel on -no-audio -no-boot-anim -camera-back none -camera-front none -no-metrics
   MOBILE_ARTIFACTS_ROOT: e2e/poc-wdio/artifacts
