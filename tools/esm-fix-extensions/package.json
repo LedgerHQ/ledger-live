@@ -1,0 +1,17 @@
+{
+  "name": "@ledgerhq/esm-fix-extensions",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "esm-fix-extensions": "index.mjs"
+  },
+  "scripts": {
+    "lint": "oxlint .",
+    "lint:fix": "oxfmt . && oxlint . --fix"
+  },
+  "dependencies": {
+    "es-module-lexer": "^1.7.0",
+    "magic-string": "^0.30.21"
+  }
+}
