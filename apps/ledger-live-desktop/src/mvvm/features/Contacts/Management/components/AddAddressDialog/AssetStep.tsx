@@ -79,17 +79,28 @@ export function AssetStep({ onPick }: Props) {
               data-disabled={enabled ? "false" : "true"}
             >
               <ListItemLeading>
-                <CryptoIcon
-                  ticker={c.ticker}
-                  // `c.ledgerId` is the Ledger Live canonical id resolved
-                  // against `crypto-icons.ledger.com/index.json` — using
-                  // the CoinGecko slug (`c.id`) misses the registry for
-                  // tokens like USDC / USDT / MANA / etc. and falls back
-                  // to the letter avatar. Same fix as `AddressRow.tsx`.
-                  ledgerId={c.ledgerId}
-                  size={40}
-                  alt={c.name}
-                />
+                {/*
+                  Disabled rows (non-EVM cryptos in L4) get a grayscale
+                  + 60% opacity filter on the icon so the row reads as
+                  fully muted at a glance — matches the dimmed title /
+                  ticker text Lumen already gives us via `disabled`.
+                  `CryptoIcon` doesn't accept a `className` for its
+                  internal SVG, so we apply the filter via a wrapper
+                  div — CSS filters cascade into children.
+                */}
+                <div className={enabled ? undefined : "grayscale opacity-60"}>
+                  <CryptoIcon
+                    ticker={c.ticker}
+                    // `c.ledgerId` is the Ledger Live canonical id resolved
+                    // against `crypto-icons.ledger.com/index.json` — using
+                    // the CoinGecko slug (`c.id`) misses the registry for
+                    // tokens like USDC / USDT / MANA / etc. and falls back
+                    // to the letter avatar. Same fix as `AddressRow.tsx`.
+                    ledgerId={c.ledgerId}
+                    size={40}
+                    alt={c.name}
+                  />
+                </div>
                 <ListItemContent>
                   <ListItemTitle>{c.name}</ListItemTitle>
                   <ListItemDescription>{c.ticker}</ListItemDescription>

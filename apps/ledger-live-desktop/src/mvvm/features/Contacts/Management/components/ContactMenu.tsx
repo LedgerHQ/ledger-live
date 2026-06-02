@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import type { ComponentType } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -65,11 +65,31 @@ type Props = {
 
 export function ContactMenu({ onEdit, onDelete, canDelete = true }: Props = {}) {
   const { t } = useTranslation();
+  // Controlled state so we can close the popover BEFORE the parent
+  // handler opens a dialog. With an uncontrolled popover the menu
+  // outlived the click and rendered on top of the dialog's overlay —
+  // looked broken because the overlay is supposed to dim everything
+  // behind it. See the previous bug report (Edit-contact dialog with
+  // a stuck "Edit / Delete" menu in front of the backdrop).
+  const [open, setOpen] = useState(false);
 
   const handlers: Record<ActionId, (() => void) | undefined> = {
     edit: onEdit,
     delete: onDelete,
   };
+
+  const handleAction = useCallback(
+    (id: ActionId) => () => {
+      setOpen(false);
+      handlers[id]?.();
+    },
+    // `handlers` is rebuilt each render from the latest props, so we
+    // intentionally inline it via the closure — depending on it would
+    // recreate this callback every render anyway. The only stable
+    // identities are the setOpen + the prop handlers themselves.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [onEdit, onDelete],
+  );
 
   // Filter out the Delete row entirely when the contact is protected.
   // We don't render a disabled row — the menu would look surprising
@@ -77,7 +97,7 @@ export function ContactMenu({ onEdit, onDelete, canDelete = true }: Props = {}) 
   const visibleActions = canDelete ? ACTIONS : ACTIONS.filter(a => a.id !== "delete");
 
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger
         render={
           <IconButton
@@ -107,7 +127,7 @@ export function ContactMenu({ onEdit, onDelete, canDelete = true }: Props = {}) 
             <button
               key={action.id}
               type="button"
-              onClick={handlers[action.id]}
+              onClick={handleAction(action.id)}
               data-testid={`contacts-management-contact-menu-${action.id}`}
               className={cn(
                 "flex h-44 w-full items-center gap-12 rounded-sm px-8",

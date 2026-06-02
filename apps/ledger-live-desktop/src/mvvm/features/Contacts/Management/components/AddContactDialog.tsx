@@ -14,6 +14,7 @@ import {
   isPrintableAscii,
 } from "~/mvvm/features/Contacts/validation";
 import CharCounter from "~/mvvm/features/Contacts/components/CharCounter";
+import { ME_DISPLAY_SUFFIX } from "../utils/groupContacts";
 
 type Props = {
   open: boolean;
@@ -66,7 +67,13 @@ export function AddContactDialog({ open, onOpenChange, onSubmit, takenNames }: P
   const duplicate =
     trimmed.length > 0 &&
     takenNames.some(taken => taken.toLowerCase() === trimmed.toLowerCase());
-  const canSubmit = trimmed.length > 0 && !tooLongOrNonAscii && !duplicate;
+  // ` (Me)` is reserved for the protected Me identity — any other
+  // contact ending with that suffix would collide with `isMeIdentity`
+  // (the post-promotion Me detector) and get pinned at the top of the
+  // list / become undeletable. Block it here at the source.
+  const meSuffixCollision = trimmed.endsWith(ME_DISPLAY_SUFFIX);
+  const canSubmit =
+    trimmed.length > 0 && !tooLongOrNonAscii && !duplicate && !meSuffixCollision;
 
   const submit = () => {
     if (!canSubmit) return;
@@ -109,13 +116,15 @@ export function AddContactDialog({ open, onOpenChange, onSubmit, takenNames }: P
                   submit();
                 }
               }}
-              aria-invalid={tooLongOrNonAscii || duplicate}
+              aria-invalid={tooLongOrNonAscii || duplicate || meSuffixCollision}
               errorMessage={
                 duplicate
                   ? t("contactsManagement.addContactDialog.errorDuplicate")
-                  : nonAsciiOnly
-                    ? t("contactsManagement.addContactDialog.errorAscii")
-                    : undefined
+                  : meSuffixCollision
+                    ? t("contactsManagement.addContactDialog.errorMeSuffix")
+                    : nonAsciiOnly
+                      ? t("contactsManagement.addContactDialog.errorAscii")
+                      : undefined
               }
               data-testid="contacts-management-add-contact-name"
               autoFocus

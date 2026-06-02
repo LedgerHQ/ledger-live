@@ -132,3 +132,14 @@ function subscribe(cb: () => void): () => void {
     subscribers.delete(cb);
   };
 }
+
+/**
+ * Test-only escape hatch. Re-reads the in-memory snapshot from
+ * `localStorage` (which the test's `beforeEach` typically clears) and
+ * notifies subscribers, so consecutive tests in the same file start
+ * from a pristine sidecar. Not for production callers.
+ */
+export function __resetForTests(): void {
+  snapshot = readFromStorage();
+  notify();
+}

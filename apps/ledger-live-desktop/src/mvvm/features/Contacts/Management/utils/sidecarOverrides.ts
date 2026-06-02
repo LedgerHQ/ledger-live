@@ -109,6 +109,22 @@ export function markContactDeleted(name: string): void {
   notifyDeleted();
 }
 
+/**
+ * Lift the deletion tombstone for a given name. Symmetric with
+ * `clearContactRename` — needed when the user recreates a contact
+ * with a previously-deleted name. Without this, the fresh sidecar
+ * entry gets immediately filtered out by the merge's `deleted`
+ * guard and the new contact never appears in the list.
+ */
+export function clearContactDeleted(name: string): void {
+  if (!(name in deletedSnapshot)) return;
+  const next = { ...deletedSnapshot };
+  delete next[name];
+  deletedSnapshot = next;
+  writeDeletedToStorage(deletedSnapshot);
+  notifyDeleted();
+}
+
 export function isContactDeleted(name: string): boolean {
   return deletedSnapshot[name] === true;
 }
@@ -144,6 +160,22 @@ export function setContactRename(oldName: string, newName: string): void {
   notifyRenames();
 }
 
+/**
+ * Drop a rename overlay entry. Called when a sidecar contact gets
+ * promoted to the canonical wallet under its display name — at that
+ * point the underlying→display mapping is dead weight that would
+ * otherwise re-apply to the freshly-registered canonical row and
+ * shadow it with the (now stale) sidecar entry in the merged view.
+ */
+export function clearContactRename(oldName: string): void {
+  if (!(oldName in renamesSnapshot)) return;
+  const next = { ...renamesSnapshot };
+  delete next[oldName];
+  renamesSnapshot = next;
+  writeRenamesToStorage(renamesSnapshot);
+  notifyRenames();
+}
+
 export function getContactRenames(): RenamesMap {
   return renamesSnapshot;
 }
@@ -159,4 +191,17 @@ export function useContactRenames(): RenamesMap {
     getContactRenames,
     () => ({}),
   );
+}
+
+/**
+ * Test-only escape hatch. Re-reads the in-memory snapshots from
+ * `localStorage` (which the test's `beforeEach` typically clears) and
+ * notifies subscribers, so consecutive tests start from pristine
+ * deletion + rename overlays. Not for production callers.
+ */
+export function __resetForTests(): void {
+  deletedSnapshot = readDeletedFromStorage();
+  renamesSnapshot = readRenamesFromStorage();
+  notifyDeleted();
+  notifyRenames();
 }

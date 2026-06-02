@@ -9078,17 +9078,19 @@
     "title": "Contacts",
     "searchPlaceholder": "Search contact",
     "addContact": "Add contact",
-    "addAddress": "Add address",
+    "addAddressLabel": "Add address",
     "contactActions": "More options",
     "addressActions": "Address options",
     "addressMenu": {
       "qrCode": "See QR Code",
       "send": "Send to this address",
+      "renameAddress": "Rename address",
       "editAddress": "Edit address",
       "delete": "Delete address"
     },
     "addressDialog": {
       "send": "Send",
+      "rename": "Rename",
       "edit": "Edit",
       "delete": "Delete"
     },
@@ -9101,16 +9103,45 @@
       "placeholder": "Contact name",
       "submit": "Save changes"
     },
+    "deleteContactDialog": {
+      "title": "Delete contact?",
+      "body": "Removing this contact will erase all associated addresses.",
+      "cancel": "Cancel",
+      "confirm": "Delete"
+    },
+    "deleteAddressDialog": {
+      "title": "Delete address?",
+      "body": "This address will be removed from this contact.",
+      "cancel": "Cancel",
+      "confirm": "Delete"
+    },
+    "renameAddressDialog": {
+      "title": "Rename address",
+      "placeholder": "Address name",
+      "submit": "Change address name"
+    },
     "addContactDialog": {
       "title": "Add contact",
       "placeholder": "Contact name",
       "submit": "Add contact",
       "errorAscii": "Use ASCII characters only.",
-      "errorDuplicate": "A contact with this name already exists."
+      "errorDuplicate": "A contact with this name already exists.",
+      "errorMeSuffix": "The '(Me)' suffix is reserved for your own contact."
     },
     "emptyAddresses": {
       "title": "No addresses for this contact",
       "cta": "Add address"
+    },
+    "emptyAddressesMe": {
+      "title": "No addresses",
+      "body": "Save addresses you own on other exchanges and wallets, so you can send to yourself quickly and safely."
+    },
+    "emptyContacts": {
+      "title": "Add contact",
+      "body": "Send to a name instead of an address"
+    },
+    "emptySearch": {
+      "title": "No contacts found"
     },
     "addAddress": {
       "selectAsset": "Select asset",

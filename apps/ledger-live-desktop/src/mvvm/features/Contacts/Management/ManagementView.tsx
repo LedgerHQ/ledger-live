@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import type { Contact } from "~/renderer/contacts/types";
+import type { DisplayContact } from "./utils/groupContacts";
 import type { ContactGroup } from "./utils/groupContacts";
 import { AddContactDialog } from "./components/AddContactDialog";
 import { ContactDetails } from "./components/ContactDetails";
@@ -10,13 +10,47 @@ export type ManagementViewProps = {
   groups: ContactGroup[];
   searchQuery: string;
   selectedContactName: string;
-  selectedContact: Contact;
+  selectedContact: DisplayContact;
   selectedContactIsMe: boolean;
+  /**
+   * True when editing the selected contact must run through the
+   * on-device change-name flow (≥1 address registered). False for
+   * sidecar / synthesized rows that can be renamed locally.
+   */
+  selectedContactRequiresDeviceConfirm: boolean;
   takenContactNames: string[];
   onSearchQueryChange: (next: string) => void;
   onSelectContact: (name: string) => void;
   onAddContact: (name: string) => void;
   onRenameContact: (currentDisplayName: string, newName: string) => void;
+  /**
+   * Drop one address entry from a contact. Threaded through to
+   * `ContactDetails` so the per-row Delete-address dialog can fire
+   * the actual removal on confirm.
+   */
+  onDeleteAddress: (
+    currentDisplayName: string,
+    entry: { addressHex: string; chainId: number; scope: string },
+  ) => Promise<void>;
+  /**
+   * Verb factory for the on-device rename of an address label.
+   * Threaded through to `ContactDetails` and then to
+   * `RenameAddressDialog`, which hands the returned closure to
+   * `RunDeviceAction.run`.
+   */
+  onRenameAddressLabelOnDevice: (
+    currentDisplayName: string,
+    entry: { addressHex: string; chainId: number; scope: string },
+    newScope: string,
+  ) => (deviceId: string) => Promise<unknown>;
+  /**
+   * Verb factory for renaming a canonical contact through the device.
+   * The dialog passes the returned closure to `RunDeviceAction.run`.
+   */
+  onRenameContactOnDevice: (
+    currentDisplayName: string,
+    newName: string,
+  ) => (deviceId: string) => Promise<void>;
   onDeleteContact: (displayName: string) => void;
 };
 
@@ -43,12 +77,16 @@ export function ManagementView({
   selectedContactName,
   selectedContact,
   selectedContactIsMe,
+  selectedContactRequiresDeviceConfirm,
   takenContactNames,
   onSearchQueryChange,
   onSelectContact,
   onAddContact,
   onRenameContact,
+  onRenameContactOnDevice,
   onDeleteContact,
+  onDeleteAddress,
+  onRenameAddressLabelOnDevice,
 }: ManagementViewProps) {
   const [addContactOpen, setAddContactOpen] = useState(false);
 
@@ -85,13 +123,21 @@ export function ManagementView({
           selectedContactName={selectedContactName}
           onSearchQueryChange={onSearchQueryChange}
           onSelectContact={onSelectContact}
+          // Share the AddContact dialog opener with the empty-state
+          // CTA so the header button and the inline button land on
+          // the same modal.
+          onAddContact={() => setAddContactOpen(true)}
         />
         <ContactDetails
           contact={selectedContact}
           takenContactNames={takenContactNames}
           isMe={selectedContactIsMe}
+          requiresDeviceConfirm={selectedContactRequiresDeviceConfirm}
           onRenameContact={onRenameContact}
+          onRenameContactOnDevice={onRenameContactOnDevice}
           onDeleteContact={onDeleteContact}
+          onDeleteAddress={onDeleteAddress}
+          onRenameAddressLabelOnDevice={onRenameAddressLabelOnDevice}
         />
       </div>
 

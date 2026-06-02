@@ -28,12 +28,16 @@ const baseProps = (overrides: Partial<React.ComponentProps<typeof ManagementView
     selectedContactName: ME_CONTACT_NAME,
     selectedContact: me,
     selectedContactIsMe: true,
+    selectedContactRequiresDeviceConfirm: false,
     takenContactNames: [me.name, alice.name, bob.name],
     onSearchQueryChange: jest.fn(),
     onSelectContact: jest.fn(),
     onAddContact: jest.fn(),
     onRenameContact: jest.fn(),
+    onRenameContactOnDevice: jest.fn(() => jest.fn().mockResolvedValue(undefined)),
     onDeleteContact: jest.fn(),
+    onDeleteAddress: jest.fn().mockResolvedValue(undefined),
+    onRenameAddressLabelOnDevice: jest.fn(() => jest.fn().mockResolvedValue(undefined)),
     ...overrides,
   };
 };
@@ -153,6 +157,93 @@ describe("ManagementView", () => {
     // baseProps() includes `bob` with 0 entries.
     expect(screen.getByText("0 address")).toBeInTheDocument();
     expect(screen.queryByText("0 addresses")).not.toBeInTheDocument();
+  });
+
+  it("renders the empty-contacts state when only the Me row is present, and the CTA opens AddContactDialog", async () => {
+    // Only Me — no user-added contacts → empty state below the pinned row.
+    const me = stub(ME_CONTACT_NAME, 0);
+    const groups = groupContacts({ [me.name]: me }, "");
+    const { user } = render(
+      <ManagementView
+        {...baseProps({
+          groups,
+          selectedContact: me,
+          selectedContactName: ME_CONTACT_NAME,
+          takenContactNames: [me.name],
+        })}
+      />,
+    );
+
+    const emptyRow = screen.getByTestId("contacts-management-empty-contacts");
+    expect(emptyRow).toBeInTheDocument();
+
+    // The empty state is now a clickable list-item row (Figma
+    // `14170:12350`) — the entire row opens the AddContactDialog,
+    // same surface the header `Add contact` button drives.
+    await user.click(emptyRow);
+
+    expect(
+      screen.getByTestId("contacts-management-add-contact-dialog"),
+    ).toBeInTheDocument();
+  });
+
+  it("does NOT render the empty-contacts state when other contacts exist", () => {
+    render(<ManagementView {...baseProps()} />);
+
+    expect(
+      screen.queryByTestId("contacts-management-empty-contacts"),
+    ).not.toBeInTheDocument();
+  });
+
+  it("hides the empty state during an active search (so 'no matches' doesn't read as 'no contacts')", () => {
+    const me = stub(ME_CONTACT_NAME, 0);
+    const groups = groupContacts({ [me.name]: me }, "zzz");
+    render(
+      <ManagementView
+        {...baseProps({
+          groups,
+          searchQuery: "zzz",
+          selectedContact: me,
+          selectedContactName: ME_CONTACT_NAME,
+        })}
+      />,
+    );
+
+    expect(
+      screen.queryByTestId("contacts-management-empty-contacts"),
+    ).not.toBeInTheDocument();
+  });
+
+  it("renders the empty-search state when an active query returns zero rows", () => {
+    // `groupContacts` filters the pinned Me row too when its name
+    // doesn't match the query, so the surviving group list is empty.
+    const me = stub(ME_CONTACT_NAME, 0);
+    const groups = groupContacts({ [me.name]: me }, "zzz");
+    render(
+      <ManagementView
+        {...baseProps({
+          groups,
+          searchQuery: "zzz",
+          selectedContact: me,
+          selectedContactName: ME_CONTACT_NAME,
+        })}
+      />,
+    );
+
+    expect(
+      screen.getByTestId("contacts-management-empty-search"),
+    ).toBeInTheDocument();
+    expect(screen.getByText("No contacts found")).toBeInTheDocument();
+  });
+
+  it("does NOT render the empty-search state when the query matches at least one contact", () => {
+    // Search for "ali" → Alice survives the filter. The empty-search
+    // surface must stay hidden.
+    render(<ManagementView {...baseProps({ searchQuery: "ali" })} />);
+
+    expect(
+      screen.queryByTestId("contacts-management-empty-search"),
+    ).not.toBeInTheDocument();
   });
 
   it("calls onSearchQueryChange as the user types in the search input", async () => {

@@ -41,7 +41,7 @@ function resolveCryptoId(
   meta: Readonly<Record<string, string>>,
 ): string | undefined {
   return (
-    getCryptoMeta(meta, entry.addressHex, entry.chainId) ??
+    getCryptoMeta(meta, entry.addressHex, entry.chainId, entry.scope) ??
     getNativeCryptoIdForChain(entry.chainId)
   );
 }

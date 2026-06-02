@@ -147,6 +147,73 @@ describe("AddAddressDialog", () => {
     expect(screen.getByTestId("run-device-action-stub")).toBeInTheDocument();
   });
 
+  it("back from the network step returns to the asset picker", async () => {
+    const { user } = render(<AddAddressDialog {...baseProps()} />);
+
+    // Pick USDC (multi-network) → lands on the network step.
+    await user.click(
+      screen.getByTestId("contacts-management-add-address-asset-usd-coin"),
+    );
+    expect(
+      screen.getByTestId("contacts-management-add-address-network-step"),
+    ).toBeInTheDocument();
+
+    // Lumen's `DialogHeader` renders the back affordance with
+    // `aria-label="Back"`. Click it.
+    await user.click(screen.getByRole("button", { name: "components.dialogHeader.goBackAriaLabel" }));
+
+    // Asset picker is back on screen.
+    expect(
+      screen.getByTestId("contacts-management-add-address-asset-step"),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByTestId("contacts-management-add-address-network-step"),
+    ).not.toBeInTheDocument();
+  });
+
+  it("back from the address step returns to the network step when the crypto has multiple networks", async () => {
+    const { user } = render(<AddAddressDialog {...baseProps()} />);
+
+    // USDC → network → ethereum → address step.
+    await user.click(
+      screen.getByTestId("contacts-management-add-address-asset-usd-coin"),
+    );
+    await user.click(
+      screen.getByTestId("contacts-management-add-address-network-ethereum"),
+    );
+    expect(
+      screen.getByTestId("contacts-management-add-address-address-step"),
+    ).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "components.dialogHeader.goBackAriaLabel" }));
+
+    // Back lands on the network step (NOT the asset picker), with
+    // the same crypto preselected.
+    expect(
+      screen.getByTestId("contacts-management-add-address-network-step"),
+    ).toBeInTheDocument();
+  });
+
+  it("back from the address step skips the network step when the crypto has a single network", async () => {
+    const { user } = render(<AddAddressDialog {...baseProps()} />);
+
+    // BNB on BSC — single-network crypto → forward-path auto-advance
+    // skipped the network step. Back should also skip it, jumping
+    // straight to the asset picker.
+    await user.click(
+      screen.getByTestId("contacts-management-add-address-asset-binancecoin"),
+    );
+    expect(
+      screen.getByTestId("contacts-management-add-address-address-step"),
+    ).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "components.dialogHeader.goBackAriaLabel" }));
+
+    expect(
+      screen.getByTestId("contacts-management-add-address-asset-step"),
+    ).toBeInTheDocument();
+  });
+
   it("closes the dialog on successful device confirmation", async () => {
     const onOpenChange = jest.fn();
     const { user } = render(<AddAddressDialog {...baseProps({ onOpenChange })} />);

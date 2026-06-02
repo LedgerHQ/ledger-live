@@ -49,6 +49,26 @@ describe("ContactMenu", () => {
     expect(onEdit).not.toHaveBeenCalled();
   });
 
+  it("dismisses itself when an item is clicked (so it sits behind any dialog the handler opens)", async () => {
+    // Repro of the previous bug: handlers that open a Dialog used to
+    // leave the popover stuck on top of the overlay because the
+    // Popover was uncontrolled. We now close `open` synchronously
+    // before calling the handler — assert the items unmount.
+    const onEdit = jest.fn();
+    const { user } = render(<ContactMenu onEdit={onEdit} />);
+
+    await user.click(screen.getByTestId("contacts-management-overflow"));
+    await user.click(screen.getByTestId("contacts-management-contact-menu-edit"));
+
+    expect(onEdit).toHaveBeenCalledTimes(1);
+    expect(
+      screen.queryByTestId("contacts-management-contact-menu-edit"),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("contacts-management-contact-menu-delete"),
+    ).not.toBeInTheDocument();
+  });
+
   it("hides the Delete row when `canDelete` is false (protected 'me' contact)", async () => {
     const onEdit = jest.fn();
     const onDelete = jest.fn();

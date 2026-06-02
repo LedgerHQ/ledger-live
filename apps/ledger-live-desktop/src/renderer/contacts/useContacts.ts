@@ -18,6 +18,7 @@ import {
   type RegisterLedgerAccountArgs,
 } from "@ledgerhq/device-signer-kit-ethereum";
 import { useContactsStore } from "./hooks";
+import { extractErrorMessage } from "./deviceErrors";
 import type { Contact, ContactEntry, ContactsWallet, LedgerAccount } from "./types";
 
 /**
@@ -50,6 +51,17 @@ export type UseContacts = {
     deviceId: string,
     args: AddLedgerAccountArgs,
   ) => Promise<LedgerAccount>;
+  /**
+   * Remove one address entry from a contact. Client-side only — there
+   * is no DMK address-removal verb yet, so this purely rewrites the
+   * local wallet snapshot. The on-device entry technically lingers
+   * until DMK ships the removal command; for L4 the user-visible row
+   * disappears, which is what the demo cares about.
+   *
+   * No-op when the contact doesn't exist or the matching entry isn't
+   * found — keeps callers simple.
+   */
+  removeAddressFromContact: (args: RemoveAddressFromContactArgs) => Promise<void>;
   reset: () => Promise<void>;
 };
 
@@ -67,6 +79,13 @@ export type EditAddressInput = Omit<
 >;
 export type RenameContactInput = Pick<RenameContactArgs, "oldName" | "newName">;
 export type AddLedgerAccountArgs = RegisterLedgerAccountArgs;
+export type RemoveAddressFromContactArgs = {
+  /** Canonical wallet key (the device-side name). */
+  contactName: string;
+  /** Identifies the entry to drop. */
+  entry: Pick<ContactEntry, "addressHex" | "chainId" | "scope">;
+};
+
 
 /**
  * Wait for the observable to complete, then resolve on the *final* state.
@@ -87,9 +106,20 @@ const finalize = async <Output>(returnType: {
   if (final.status === DeviceActionStatus.Completed) return final.output;
   if (final.status === DeviceActionStatus.Error) {
     const err = final.error as unknown;
-    throw err instanceof Error
-      ? err
-      : new Error(typeof err === "string" ? err : JSON.stringify(err));
+    // Real Error → rethrow as-is so stacks survive.
+    if (err instanceof Error) throw err;
+    // DMK tagged-object errors (e.g. `EthAppCommandError`) aren't Error
+    // instances. Wrap into a proper Error and copy the relevant
+    // discriminators so callers (UI) can still tell, e.g., a user-cancel
+    // (`errorCode === "6982"`) apart from a real failure without parsing
+    // the message string.
+    const enriched = new Error(extractErrorMessage(err));
+    if (err && typeof err === "object") {
+      const rec = err as Record<string, unknown>;
+      if ("errorCode" in rec) (enriched as Error & { errorCode?: unknown }).errorCode = rec.errorCode;
+      if ("_tag" in rec) (enriched as Error & { _tag?: unknown })._tag = rec._tag;
+    }
+    throw enriched;
   }
   throw new Error(`Device action ended with status: ${final.status}`);
 };
@@ -118,7 +148,10 @@ const withDmk = <T>(
 
 const lookupContact = (wallet: ContactsWallet, name: string): Contact => {
   const contact = wallet.contacts[name];
-  if (!contact) throw new Error(`Contact "${name}" not found in local store`);
+  if (!contact)
+    throw new Error(
+      `Contact "${name}" is not registered on device — use addContact first`,
+    );
   return contact;
 };
 
@@ -321,6 +354,38 @@ export const useContacts = (): UseContacts => {
     [commit, wallet],
   );
 
+  const removeAddressFromContact = useCallback(
+    async ({ contactName, entry }: RemoveAddressFromContactArgs): Promise<void> => {
+      // `wallet` can be undefined for a tick under jsdom (the
+      // contacts store hydrates asynchronously). Treat that as a
+      // no-op — same defensive shape the L4 viewmodel uses.
+      const existing = wallet?.contacts?.[contactName];
+      if (!existing) return;
+      // Identify the doomed entry by `(addressHex, chainId, scope)` —
+      // the same triple cryptoMeta uses, and the most specific tuple
+      // available without going through the hmac fingerprint (which
+      // the caller often doesn't have on hand).
+      const next: Contact = {
+        ...existing,
+        entries: existing.entries.filter(
+          e =>
+            !(
+              e.addressHex === entry.addressHex &&
+              e.chainId === entry.chainId &&
+              e.scope === entry.scope
+            ),
+        ),
+      };
+      // Nothing changed → skip the commit.
+      if (next.entries.length === existing.entries.length) return;
+      await commit({
+        contacts: { ...(wallet?.contacts ?? {}), [contactName]: next },
+        accounts: wallet?.accounts ?? {},
+      });
+    },
+    [commit, wallet],
+  );
+
   return {
     hydrated,
     wallet,
@@ -330,6 +395,7 @@ export const useContacts = (): UseContacts => {
     editAddress,
     renameContact,
     addLedgerAccount,
+    removeAddressFromContact,
     reset: async () => resetStore(),
   };
 };

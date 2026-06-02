@@ -9,6 +9,10 @@ import DeviceAction from "~/renderer/components/DeviceAction";
 import { renderVerifyUnwrapped } from "~/renderer/components/DeviceAction/rendering";
 import useConnectAppAction from "~/renderer/hooks/useConnectAppAction";
 import { themeSelector } from "~/renderer/actions/general";
+import {
+  extractErrorMessage,
+  prettyDeviceErrorMessage,
+} from "~/renderer/contacts/deviceErrors";
 
 type Phase =
   | { kind: "connect" }
@@ -56,10 +60,13 @@ const RunDeviceAction = ({ run, onDone }: Props) => {
         await run(result.device.deviceId);
         onDone(true);
       } catch (e) {
-        setPhase({
-          kind: "error",
-          message: e instanceof Error ? e.message : String(e),
-        });
+        // Always show feedback — silently bouncing back to the previous
+        // step would make the dialog look broken. We surface a single
+        // neutral "Something went wrong" screen with the extracted
+        // human-readable message: DMK turned out to use the
+        // "canceled by user" phrase for non-cancel failures too, so
+        // branding any of them as a cancel risks lying to the user.
+        setPhase({ kind: "error", message: extractErrorMessage(e) });
       }
     },
     [run, onDone],
@@ -96,7 +103,9 @@ const RunDeviceAction = ({ run, onDone }: Props) => {
   return (
     <div className="flex flex-1 min-h-0 flex-col items-center justify-center gap-16 px-16">
       <p className="body-2-semi-bold text-error text-center">{t("contacts.runner.error")}</p>
-      <p className="body-3 text-muted text-center break-all select-text">{phase.message}</p>
+      <p className="body-3 text-muted text-center break-all select-text">
+        {prettyDeviceErrorMessage(phase.message)}
+      </p>
       <div className="flex flex-col gap-8 w-full">
         <Button
           appearance="base"

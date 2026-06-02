@@ -2,6 +2,19 @@ import React from "react";
 import { render, screen } from "tests/testSetup";
 import { EditContactDialog } from "../components/EditContactDialog";
 
+// Stub the device runner — keeps the tests off DMK plumbing. The dialog
+// only needs to know the runner mounted and (optionally) trigger
+// `onDone` for the recovery path.
+jest.mock(
+  "~/mvvm/features/Contacts/components/RunDeviceAction",
+  () => ({
+    __esModule: true,
+    default: () => (
+      <div data-testid="contacts-management-edit-contact-device-stub" />
+    ),
+  }),
+);
+
 const baseProps = (overrides: Partial<React.ComponentProps<typeof EditContactDialog>> = {}) => ({
   open: true,
   onOpenChange: jest.fn(),
@@ -57,6 +70,63 @@ describe("EditContactDialog", () => {
     await user.click(screen.getByTestId("contacts-management-edit-contact-submit"));
 
     expect(onSubmit).toHaveBeenCalledWith("Alicia");
+  });
+
+  it("calls onSubmit (local path) when requiresDeviceConfirm is false", async () => {
+    const onSubmit = jest.fn();
+    const onDeviceRename = jest.fn();
+    const { user } = render(
+      <EditContactDialog
+        {...baseProps({
+          onSubmit,
+          requiresDeviceConfirm: false,
+          onDeviceRename,
+        })}
+      />,
+    );
+
+    const input = screen.getByTestId("contacts-management-edit-contact-name");
+    await user.clear(input);
+    await user.type(input, "Alicia");
+    await user.click(screen.getByTestId("contacts-management-edit-contact-submit"));
+
+    expect(onSubmit).toHaveBeenCalledWith("Alicia");
+    expect(onDeviceRename).not.toHaveBeenCalled();
+    expect(
+      screen.queryByTestId("contacts-management-edit-contact-device-stub"),
+    ).not.toBeInTheDocument();
+  });
+
+  it("switches to the device step when requiresDeviceConfirm is true", async () => {
+    const onSubmit = jest.fn();
+    const verb = jest.fn().mockResolvedValue(undefined);
+    const onDeviceRename = jest.fn(() => verb);
+    const { user } = render(
+      <EditContactDialog
+        {...baseProps({
+          onSubmit,
+          requiresDeviceConfirm: true,
+          onDeviceRename,
+        })}
+      />,
+    );
+
+    const input = screen.getByTestId("contacts-management-edit-contact-name");
+    await user.clear(input);
+    await user.type(input, "Alicia");
+    await user.click(screen.getByTestId("contacts-management-edit-contact-submit"));
+
+    // The dialog must NOT take the local path — it hands the verb to
+    // the runner instead.
+    expect(onSubmit).not.toHaveBeenCalled();
+    expect(onDeviceRename).toHaveBeenCalledWith("Alicia");
+    expect(
+      screen.getByTestId("contacts-management-edit-contact-device-stub"),
+    ).toBeInTheDocument();
+    // Name input must be unmounted — the body has swapped to the runner.
+    expect(
+      screen.queryByTestId("contacts-management-edit-contact-name"),
+    ).not.toBeInTheDocument();
   });
 
   it("re-primes the input when reopened with a different currentName", () => {
