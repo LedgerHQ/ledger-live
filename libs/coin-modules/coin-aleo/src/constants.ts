@@ -1,11 +1,7 @@
 export const PROGRAM_ID = {
   CREDITS: "credits.aleo",
   TOKEN_REGISTRY: "token_registry.aleo",
-  USAD: "usad_stablecoin.aleo",
-  USDCX: "usdcx_stablecoin.aleo",
 };
-
-export const TOKENS_PROGRAMS = [PROGRAM_ID.USAD, PROGRAM_ID.USDCX] as const;
 
 export const EXPLORER_TRANSFER_TYPES = {
   PRIVATE: "transfer_private",
@@ -49,3 +45,6 @@ export const MAX_PRIVATE_RECORDS_PER_TRANSACTION = 14;
 
 // The estimated time in milliseconds it takes to sign a single record during transaction signing.
 export const SINGLE_CALL_SIGNING_TIME = 12500;
+
+// Each record with this value in `record_name` field is a token record.
+export const TOKEN_RECORD_NAME = "Token";

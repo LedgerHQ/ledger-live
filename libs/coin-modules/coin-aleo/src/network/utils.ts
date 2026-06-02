@@ -600,7 +600,7 @@ export const patchPublicOperations = async ({
           ciphertext: recipientArgument.value,
           tpk: recordTransition.tpk,
           viewKey,
-          programId: PROGRAM_ID.CREDITS,
+          programId: recordTransition.program,
           functionName: EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE,
           outputIndex: 0,
         });

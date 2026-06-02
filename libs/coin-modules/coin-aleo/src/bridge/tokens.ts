@@ -4,47 +4,39 @@ import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets
 import type { Account, OperationType, TokenAccount } from "@ledgerhq/types-live";
 import { encodeTokenAccountId, emptyHistoryCache } from "@ledgerhq/ledger-wallet-framework/account";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
-import type { AleoVerifiedToken, AleoPrivateRecord } from "../types/api";
 import type { AleoOperation, AleoOperationExtra, AleoTokenAccount } from "../types/bridge";
 import type { AleoPrivateTokenBalance } from "../types/logic";
 import { apiClient } from "../network/api";
 import { sdkClient } from "../network/sdk";
-import { PROGRAM_ID, EXPLORER_TRANSFER_TYPES, AMOUNT_ARG_INDEX } from "../constants";
+import { EXPLORER_TRANSFER_TYPES, AMOUNT_ARG_INDEX } from "../constants";
 import { mergeOps } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
+import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
+import type { AleoPrivateRecord } from "../types/api";
 
-function buildTokenMap(verifiedTokens: AleoVerifiedToken[]): Map<string, AleoVerifiedToken> {
-  return new Map(
-    verifiedTokens
-      .filter(
-        t => t.program_name !== PROGRAM_ID.CREDITS && t.program_name !== PROGRAM_ID.TOKEN_REGISTRY,
-      )
-      .map(t => [t.program_name, t]),
-  );
-}
+/** CAL lookup by Aleo program name (contract address). Missing programs are omitted. */
+export async function getCalTokens({
+  currencyId,
+  programNames,
+}: {
+  currencyId: string;
+  programNames: string[];
+}): Promise<Map<string, TokenCurrency>> {
+  const calTokens = new Map<string, TokenCurrency>();
+  const uniqueProgramNames = [...new Set(programNames)];
 
-function buildTokenCurrencyFromVerifiedToken(
-  parentCurrency: CryptoCurrency,
-  token: AleoVerifiedToken,
-): TokenCurrency {
-  return {
-    type: "TokenCurrency",
-    id: `aleo/aleo_token/${token.program_name}`,
-    contractAddress: token.program_name,
-    parentCurrency,
-    tokenType: "aleo_token",
-    name: token.display,
-    ticker: token.symbol,
-    units: [
-      {
-        name: token.display,
-        code: token.symbol,
-        magnitude: token.decimals,
-        showAllDigits: false,
-        prefixCode: false,
-      },
-    ],
-  };
+  await promiseAllBatched(4, uniqueProgramNames, async programName => {
+    const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(
+      programName,
+      currencyId,
+    );
+
+    if (token) {
+      calTokens.set(programName, token);
+    }
+  });
+
+  return calTokens;
 }
 
 /**
@@ -73,44 +65,28 @@ export async function getAleoSubAccounts({
   ledgerAccountId,
   address,
   tokenOperations,
+  calTokens,
 }: {
   currency: CryptoCurrency;
   ledgerAccountId: string;
   address: string;
   tokenOperations: AleoOperation[];
+  calTokens: Map<string, TokenCurrency>;
 }): Promise<TokenAccount[]> {
-  if (tokenOperations.length === 0) return [];
-
-  const allVerified = await apiClient.getVerifiedTokens({ currency });
-  const tokenMap = buildTokenMap(allVerified);
-  const seen = new Set<string>();
-  const discovered: Array<{ tokenCurrency: TokenCurrency; verifiedToken: AleoVerifiedToken }> = [];
-
-  for (const op of tokenOperations) {
-    const tokenInfo = op.extra?.tokenInfo;
-    if (!tokenInfo) continue;
-
-    const verifiedToken = tokenMap.get(tokenInfo.programId);
-    if (!verifiedToken) continue;
-
-    const tokenCurrency = buildTokenCurrencyFromVerifiedToken(currency, verifiedToken);
-    if (seen.has(tokenCurrency.id)) continue;
-
-    seen.add(tokenCurrency.id);
-    discovered.push({ tokenCurrency, verifiedToken });
-  }
+  if (tokenOperations.length === 0 || calTokens.size === 0) return [];
 
   const results = await Promise.allSettled(
-    discovered.map(async ({ tokenCurrency, verifiedToken }) => {
+    [...calTokens.values()].map(async tokenCurrency => {
       const balance = parseTokenBalance(
-        await apiClient.getProgramTokenBalance(currency, verifiedToken.program_name, address),
+        await apiClient.getProgramTokenBalance(currency, tokenCurrency.contractAddress, address),
       );
+
       const id = encodeTokenAccountId(ledgerAccountId, tokenCurrency);
       return buildTokenAccount(id, ledgerAccountId, tokenCurrency, balance);
     }),
   );
 
-  return results.flatMap(r => (r.status === "fulfilled" ? [r.value] : []));
+  return results.flatMap(r => (r.status === "fulfilled" && r.value !== null ? [r.value] : []));
 }
 
 type CoinOperationWithSubOps = AleoOperation & Required<Pick<AleoOperation, "subOperations">>;
@@ -158,17 +134,17 @@ function buildNoneParentOp(
  * @returns tokenOperationsBySubAccountId – map from token account id to its operations.
  */
 export async function prepareTokenOperations({
-  currency,
   address,
   ledgerAccountId,
   coinOperations,
   tokenOperations,
+  calTokens,
 }: {
-  currency: CryptoCurrency;
   address: string;
   ledgerAccountId: string;
   coinOperations: AleoOperation[];
   tokenOperations: AleoOperation[];
+  calTokens: Map<string, TokenCurrency>;
 }): Promise<{
   updatedCoinOperations: AleoOperation[];
   tokenOperationsBySubAccountId: Map<string, AleoOperation[]>;
@@ -181,9 +157,6 @@ export async function prepareTokenOperations({
       tokenOperationsBySubAccountId,
     };
   }
-
-  const allVerified = await apiClient.getVerifiedTokens({ currency });
-  const tokenMap = buildTokenMap(allVerified);
 
   // shallow-copy coin operations so we can mutate subOperations without side effects
   const updatedCoinOperations: CoinOperationWithSubOps[] = coinOperations.map(op => ({
@@ -199,10 +172,9 @@ export async function prepareTokenOperations({
     const tokenInfo = tokenOp.extra?.tokenInfo;
     if (!tokenInfo) continue;
 
-    const verifiedToken = tokenMap.get(tokenInfo.programId);
-    if (!verifiedToken) continue;
+    const tokenCurrency = calTokens.get(tokenInfo.programId);
+    if (!tokenCurrency) continue;
 
-    const tokenCurrency = buildTokenCurrencyFromVerifiedToken(currency, verifiedToken);
     const tokenAccountId = encodeTokenAccountId(ledgerAccountId, tokenCurrency);
 
     // Derive IN/OUT for the sub-account from the raw operation's senders/recipients.
@@ -372,6 +344,7 @@ export async function resolveTokenSubAccounts({
   ledgerAccountId,
   coinOperations,
   tokenOperations,
+  calTokens,
   shouldSyncFromScratch,
   initialAccount,
 }: {
@@ -381,6 +354,7 @@ export async function resolveTokenSubAccounts({
   ledgerAccountId: string;
   coinOperations: AleoOperation[];
   tokenOperations: AleoOperation[];
+  calTokens: Map<string, TokenCurrency>;
   shouldSyncFromScratch: boolean;
   initialAccount: Account | undefined;
 }): Promise<{ updatedCoinOperations: AleoOperation[]; subAccounts: TokenAccount[] }> {
@@ -393,11 +367,11 @@ export async function resolveTokenSubAccounts({
   }
 
   const { updatedCoinOperations, tokenOperationsBySubAccountId } = await prepareTokenOperations({
-    currency,
     address,
     ledgerAccountId,
     coinOperations,
     tokenOperations,
+    calTokens,
   });
 
   const fetchedSubAccounts = await getAleoSubAccounts({
@@ -405,6 +379,7 @@ export async function resolveTokenSubAccounts({
     ledgerAccountId,
     address,
     tokenOperations,
+    calTokens,
   });
 
   const newSubAccounts = fetchedSubAccounts.map(subAccount => {
@@ -585,7 +560,7 @@ export function withPrivateBalance(
   const unspentRecs = entry?.unspentRecords ?? [];
   const aleoSubAccount = subAccount as AleoTokenAccount;
   const transparentBalance = isExisting
-    ? aleoSubAccount.transparentBalance ?? subAccount.balance
+    ? (aleoSubAccount.transparentBalance ?? subAccount.balance)
     : new BigNumber(0);
   const total = transparentBalance.plus(privateBalance);
   const newPrivateOps = privateTokenOpsByAccountId.get(subAccount.id) ?? [];
@@ -631,6 +606,7 @@ export async function buildSubAccountsFromPrivateRecords({
   baseSubAccounts,
   viewKey,
   address,
+  calTokens,
 }: {
   currency: CryptoCurrency;
   ledgerAccountId: string;
@@ -639,11 +615,9 @@ export async function buildSubAccountsFromPrivateRecords({
   baseSubAccounts: TokenAccount[];
   viewKey: string;
   address: string;
+  calTokens: Map<string, TokenCurrency>;
 }): Promise<{ subAccounts: AleoTokenAccount[] }> {
   const existingSubAccountIds = new Set(baseSubAccounts.map(sa => sa.id));
-
-  const allVerified = await apiClient.getVerifiedTokens({ currency });
-  const tokenMap = buildTokenMap(allVerified);
 
   const balanceEntriesById = new Map<string, AleoPrivateTokenBalance>();
   // Per-token operations built from all historical records (including spent).
@@ -652,8 +626,8 @@ export async function buildSubAccountsFromPrivateRecords({
 
   if (unspentPrivateRecords.length > 0) {
     await promiseAllBatched(4, unspentPrivateRecords, async record => {
-      const verifiedToken = tokenMap.get(record.program_name);
-      if (!verifiedToken) return;
+      const tokenCurrency = calTokens.get(record.program_name);
+      if (!tokenCurrency) return;
 
       const decrypted = await sdkClient.decryptRecord({
         currency,
@@ -664,7 +638,6 @@ export async function buildSubAccountsFromPrivateRecords({
         decrypted.data?.amount ?? decrypted.data?.balance ?? decrypted.data?.microcredits;
       const amount = parseTokenBalance(rawAmount ?? null);
 
-      const tokenCurrency = buildTokenCurrencyFromVerifiedToken(currency, verifiedToken);
       const id = encodeTokenAccountId(ledgerAccountId, tokenCurrency);
       const entry = getOrCreateBalanceEntry(balanceEntriesById, id, tokenCurrency.contractAddress);
       entry.balance = entry.balance.plus(amount);
@@ -696,8 +669,8 @@ export async function buildSubAccountsFromPrivateRecords({
   const uniqueAllRecords = filterHistoryRecords(allPrivateRecords, address);
 
   await promiseAllBatched(4, uniqueAllRecords, async record => {
-    const verifiedToken = tokenMap.get(record.program_name);
-    if (!verifiedToken) return;
+    const tokenCurrency = calTokens.get(record.program_name);
+    if (!tokenCurrency) return;
 
     let amount: BigNumber;
     if (record.sender === address) {
@@ -723,7 +696,6 @@ export async function buildSubAccountsFromPrivateRecords({
       amount = parseTokenBalance(rawAmount ?? null);
     }
 
-    const tokenCurrency = buildTokenCurrencyFromVerifiedToken(currency, verifiedToken);
     const id = encodeTokenAccountId(ledgerAccountId, tokenCurrency);
 
     if (!existingSubAccountIds.has(id) && !seenIds.has(id)) {

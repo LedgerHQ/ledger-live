@@ -7,13 +7,16 @@ import {
 } from "../__tests__/fixtures/operation.fixture";
 import { toCoinFrameworkOperation, toBridgeOperation } from "./utils";
 import { listOperations } from "./listOperations";
+import { getCalTokens } from "../bridge/tokens";
 
 jest.mock("../network/utils");
 jest.mock("./utils");
+jest.mock("../bridge/tokens");
 
 const mockFetchAccountTransactionsFromHeight = jest.mocked(fetchAccountTransactionsFromHeight);
 const mockToCoinFrameworkOperation = jest.mocked(toCoinFrameworkOperation);
 const mockToBridgeOperation = jest.mocked(toBridgeOperation);
+const mockGetCalTokens = jest.mocked(getCalTokens);
 
 describe("listOperations", () => {
   const mockCurrency = getMockedCurrency();
@@ -22,6 +25,7 @@ describe("listOperations", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockGetCalTokens.mockResolvedValue(new Map());
   });
 
   describe("bridge mode", () => {
@@ -57,6 +61,7 @@ describe("listOperations", () => {
       expect(mockToCoinFrameworkOperation).not.toHaveBeenCalled();
       expect(result.operations).toEqual([mockOp1, mockOp2]);
       expect(result.nextCursor).toBe(mockTx2.block_number.toString());
+      expect(result.calTokens).toEqual(new Map());
     });
 
     it("should call toBridgeOperation with ledgerAccountId, raw transaction, and address", async () => {
@@ -78,7 +83,12 @@ describe("listOperations", () => {
       });
 
       expect(mockToBridgeOperation).toHaveBeenCalledTimes(1);
-      expect(mockToBridgeOperation).toHaveBeenCalledWith(mockLedgerAccountId, mockTx, mockAddress);
+      expect(mockToBridgeOperation).toHaveBeenCalledWith(
+        mockLedgerAccountId,
+        mockTx,
+        mockAddress,
+        false,
+      );
     });
 
     it("should return empty operations when no transactions found", async () => {
@@ -97,6 +107,7 @@ describe("listOperations", () => {
 
       expect(result.operations).toEqual([]);
       expect(result.nextCursor).toBeNull();
+      expect(result.calTokens).toEqual(new Map());
     });
   });
 
@@ -131,6 +142,8 @@ describe("listOperations", () => {
       expect(mockToBridgeOperation).not.toHaveBeenCalled();
       expect(result.operations).toEqual([mockCoinFrameworkOp]);
       expect(result.nextCursor).toBeNull();
+      expect(result.calTokens).toEqual(new Map());
+      expect(mockGetCalTokens).not.toHaveBeenCalled();
     });
 
     it("should return empty operations when no transactions found", async () => {
@@ -148,6 +161,7 @@ describe("listOperations", () => {
 
       expect(result.operations).toEqual([]);
       expect(result.nextCursor).toBeNull();
+      expect(result.calTokens).toEqual(new Map());
     });
   });
 

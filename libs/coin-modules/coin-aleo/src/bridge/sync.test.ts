@@ -86,6 +86,7 @@ describe("sync.ts", () => {
       operations: [],
       tokenOperations: [],
       nextCursor: null,
+      calTokens: new Map(),
     });
     mockAccessProvableApi.mockResolvedValue(mockAleoResources.provableApi);
     mockFetchAllOwnedRecords.mockResolvedValue([]);
@@ -309,6 +310,7 @@ describe("sync.ts", () => {
         operations: [newOperation as any],
         tokenOperations: [],
         nextCursor: null,
+        calTokens: new Map(),
       });
 
       const result = await performPublicSync(
@@ -849,6 +851,7 @@ describe("sync.ts", () => {
         operations: [newPublicOp],
         tokenOperations: [],
         nextCursor: null,
+        calTokens: new Map(),
       });
       mockListPrivateOperations.mockResolvedValueOnce({
         operations: [newPrivateOp],
@@ -915,6 +918,7 @@ describe("sync.ts", () => {
         operations: [newPublicOp as any],
         tokenOperations: [],
         nextCursor: null,
+        calTokens: new Map(),
       });
       mockFetchAllOwnedRecords.mockResolvedValueOnce([privateRecord]).mockResolvedValueOnce([]);
 

@@ -25,33 +25,6 @@ import {
 } from "./operation";
 import { getCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import invariant from "invariant";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-
-// TODO: REMOVE - Temporary hardcoded tokens until CAL supports them
-const HARDCODED_TOKENS: Record<string, () => TokenCurrency> = {
-  "aleo/aleo_token/usad_stablecoin.aleo": () => ({
-    type: "TokenCurrency",
-    id: "aleo/aleo_token/usad_stablecoin.aleo",
-    contractAddress: "usad_stablecoin.aleo",
-    parentCurrency: getCryptoCurrencyById("aleo"),
-    tokenType: "aleo_token",
-    name: "USAD",
-    ticker: "USAD",
-    units: [{ name: "USAD", code: "USAD", magnitude: 6 }],
-    disableCountervalue: true,
-  }),
-  "aleo/aleo_token/usdcx_stablecoin.aleo": () => ({
-    type: "TokenCurrency",
-    id: "aleo/aleo_token/usdcx_stablecoin.aleo",
-    contractAddress: "usdcx_stablecoin.aleo",
-    parentCurrency: getCryptoCurrencyById("aleo"),
-    tokenType: "aleo_token",
-    name: "USDCx",
-    ticker: "USDCx",
-    units: [{ name: "USDCx", code: "USDCx", magnitude: 6 }],
-    disableCountervalue: true,
-  }),
-};
 
 export type FromFamiliyRaw = {
   assignFromAccountRaw?: AccountBridge<TransactionCommon>["assignFromAccountRaw"];
@@ -99,9 +72,7 @@ export async function fromAccountRaw(
         subAccountsRaw.map(async ta => {
           if (ta.type === "TokenAccountRaw") {
             // When we load AccountRaw from the DB, we don't want to fail in case bad things happen asynchronously. therefore, we will drop the TokenAccount temporarily to not drop the main account and it will be recovered later.
-            const token =
-              (await store.findTokenById(ta.tokenId).catch(() => undefined)) ??
-              HARDCODED_TOKENS[ta.tokenId]?.();
+            const token = await store.findTokenById(ta.tokenId).catch(() => undefined);
             if (token) {
               return await fromTokenAccountRaw(ta);
             } else {
@@ -302,8 +273,7 @@ async function fromTokenAccountRaw(
     swapHistory,
   } = raw;
   const store = getCryptoAssetsStore();
-  const token =
-    (await store.findTokenById(tokenId).catch(() => undefined)) ?? HARDCODED_TOKENS[tokenId]?.();
+  const token = await store.findTokenById(tokenId).catch(() => undefined);
   invariant(token, `Token with id ${tokenId} not found`);
 
   const convertOperation = (op: OperationRaw) =>

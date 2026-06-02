@@ -107,12 +107,14 @@ export const cryptoAssetsApi = createApi({
         const baseUrl = getEnv("CAL_SERVICE_URL");
         // Transform legacy ID to API format before querying
         const apiId = legacyIdToApiId(params.id);
+        const calRef = getEnv("CAL_REF") || undefined;
         return {
           url: `${baseUrl}/v1/tokens`,
           params: {
             id: apiId,
             limit: "1",
             output: TOKEN_OUTPUT_FIELDS.join(","),
+            ...(calRef && { ref: calRef }),
           },
         };
       },
@@ -126,6 +128,7 @@ export const cryptoAssetsApi = createApi({
     >({
       query: params => {
         const baseUrl = getEnv("CAL_SERVICE_URL");
+        const calRef = getEnv("CAL_REF") || undefined;
         return {
           url: `${baseUrl}/v1/tokens`,
           params: {
@@ -133,6 +136,7 @@ export const cryptoAssetsApi = createApi({
             network: params.network,
             limit: "1",
             output: TOKEN_OUTPUT_FIELDS.join(","),
+            ...(calRef && { ref: calRef }),
             ...(params.token_identifier === undefined
               ? {}
               : { token_identifier: params.token_identifier }),
@@ -151,6 +155,8 @@ export const cryptoAssetsApi = createApi({
           url.searchParams.set("output", "id");
           url.searchParams.set("limit", "1");
           url.searchParams.set("id", currencyId);
+          const calRef = getEnv("CAL_REF") || undefined;
+          if (calRef) url.searchParams.set("ref", calRef);
 
           const response = await fetch(url.toString(), {
             headers: {

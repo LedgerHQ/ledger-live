@@ -21,6 +21,10 @@ export async function listPrivateOperations({
   address,
   ledgerAccountId,
   privateRecords,
+  // TODO: probably something we should refactor when cleaning up the code
+  // this is used only to calculate consumed record tags
+  // we assume that records spent before are already cleared from the scanner
+  tokenRecords,
   onProgress,
   signal,
 }: {
@@ -29,19 +33,22 @@ export async function listPrivateOperations({
   address: string;
   ledgerAccountId: string;
   privateRecords: AleoPrivateRecord[];
+  tokenRecords?: AleoPrivateRecord[];
   onProgress?: (completed: number, total: number) => void;
   signal?: AbortSignal;
 }): Promise<{
   operations: AleoOperation[];
   consumedRecordTags: Set<string>;
 }> {
+  const recordsToEnrich = tokenRecords ? [...privateRecords, ...tokenRecords] : privateRecords;
+  const nativeRecordTags = new Set(privateRecords.map(record => record.tag));
   const consumedRecordTags = new Set<string>();
 
   let completed = 0;
-  const enrichedRecords = await promiseAllBatched(2, privateRecords, async rawRecord => {
+  const enrichedRecords = await promiseAllBatched(2, recordsToEnrich, async rawRecord => {
     signal?.throwIfAborted();
     const result = await enrichPrivateRecord({ currency, rawRecord, address, viewKey });
-    onProgress?.(++completed, privateRecords.length);
+    onProgress?.(++completed, recordsToEnrich.length);
     return result;
   });
 
@@ -63,7 +70,11 @@ export async function listPrivateOperations({
   }
 
   const operations = enrichedRecords
-    .filter((record): record is EnrichedPrivateRecord => record !== null)
+    .filter((record): record is EnrichedPrivateRecord => {
+      // we added token records to enrichedRecords just for calculating consumed record tags
+      // they were not on this level before, so now we need to exclude them
+      return record !== null && nativeRecordTags.has(record.rawRecord.tag);
+    })
     .map(record => toPrivateBridgeOperation(ledgerAccountId, record, address));
 
   return { operations, consumedRecordTags };
