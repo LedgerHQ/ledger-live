@@ -8,23 +8,24 @@ async function selectCurrency(account: Account, isFromCurrency: boolean = true) 
     ? await pages.swapLiveApp.getFromCurrencyTexts()
     : await pages.swapLiveApp.getToCurrencyTexts();
 
-  if (currentCurrencyText.includes(account.currency.ticker)) {
-    return;
+  if (!currentCurrencyText.includes(account.currency.ticker)) {
+    if (isFromCurrency) {
+      await pages.swapLiveApp.tapFromCurrency();
+    } else {
+      await pages.swapLiveApp.tapToCurrency();
+    }
+    if (await pages.modularDrawer.isFlowEnabled("live_app")) {
+      await driver.switchAppiumContext("NATIVE_APP");
+      await pages.modularDrawer.selectAsset(account);
+    } else {
+      // TODO: implement this
+      // await pages.common.performSearch(account.currency.name);
+      // await pages.stake.selectCurrency(account.currency.id);
+      // await pages.common.selectFirstAccount();
+    }
+    await pages.swapLiveApp.switchTo();
+    await pages.swapLiveApp.verifyCurrencyIsSelected(account.currency.ticker, isFromCurrency);
   }
-  if (isFromCurrency) {
-    await pages.swapLiveApp.tapFromCurrency();
-  } else {
-    await pages.swapLiveApp.tapToCurrency();
-  }
-  if (await pages.modularDrawer.isFlowEnabled("live_app")) {
-    await pages.modularDrawer.selectAsset(account);
-  } else {
-    // TODO: implement this
-    // await pages.common.performSearch(account.currency.name);
-    // await pages.stake.selectCurrency(account.currency.id);
-    // await pages.common.selectFirstAccount();
-  }
-  await pages.swapLiveApp.verifyCurrencyIsSelected(account.currency.ticker, isFromCurrency);
 }
 
 export async function performSwapUntilQuoteSelectionStep(
