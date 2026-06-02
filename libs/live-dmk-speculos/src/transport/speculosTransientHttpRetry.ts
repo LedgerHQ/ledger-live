@@ -10,6 +10,9 @@ const RETRYABLE_AXIOS_NETWORK_CODES = new Set([
   "ECONNREFUSED",
   "EPIPE",
   "ERR_BAD_RESPONSE",
+  // React Native surfaces a generic connection failure as ERR_NETWORK (no Node errno,
+  // no HTTP response). DMK wraps it as `originalError` on a GeneralDmkError.
+  "ERR_NETWORK",
 ]);
 
 export type TransientHttpRetryOptions = {
@@ -30,16 +33,19 @@ export function isRetryableSpeculosHttpError(error: unknown): boolean {
 
     const obj = e as Record<string, unknown>;
 
-    if (obj.isAxiosError === true) {
+    // DMK re-wraps the underlying AxiosError as `originalError`, which drops the
+    // non-enumerable `isAxiosError` flag — so also match Axios errors by shape (name).
+    const looksLikeAxiosError = obj.isAxiosError === true || obj.name === "AxiosError";
+    if (looksLikeAxiosError) {
       const status = (obj.response as { status?: number } | undefined)?.status;
       if (status != null && RETRYABLE_HTTP_STATUSES.has(status)) return true;
 
       const code = obj.code;
       if (typeof code === "string" && RETRYABLE_AXIOS_NETWORK_CODES.has(code)) return true;
 
-      // Node often uses ECONNRESET; some stacks only surface this on the Axios message.
+      // Node surfaces "socket hang up"; React Native surfaces "Network Error".
       const msg = String((obj as { message?: string }).message ?? "");
-      if (msg.includes("socket hang up")) return true;
+      if (msg.includes("socket hang up") || msg.includes("Network Error")) return true;
     }
 
     const errLike = e as Error & { cause?: unknown };
