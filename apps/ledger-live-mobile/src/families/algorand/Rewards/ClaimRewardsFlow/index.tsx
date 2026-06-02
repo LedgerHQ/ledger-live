@@ -18,12 +18,12 @@ import ClaimRewardsValidation from "./03-Validation";
 import ClaimRewardsValidationError from "./03-ValidationError";
 import ClaimRewardsValidationSuccess from "./03-ValidationSuccess";
 import type { AlgorandClaimRewardsFlowParamList } from "./type";
-import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
+import { useStakeFlowCompletionListeners } from "LLM/features/NotificationsPrompt";
 
 function ClaimRewardsFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const { notifyFlowCompleted } = useNotificationsContext();
+  const stakeCompletionListeners = useStakeFlowCompletionListeners();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   return (
     <Stack.Navigator
@@ -114,11 +114,7 @@ function ClaimRewardsFlow() {
           headerShown: false,
           gestureEnabled: false,
         }}
-        listeners={{
-          beforeRemove: () => {
-            notifyFlowCompleted("stake");
-          },
-        }}
+        listeners={stakeCompletionListeners}
       />
       <Stack.Screen
         name={ScreenName.AlgorandClaimRewardsInfo}

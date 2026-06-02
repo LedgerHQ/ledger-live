@@ -2,11 +2,9 @@ import React from "react";
 import type { ComponentType } from "react";
 import { View } from "react-native";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { AB_TESTING_VARIANTS } from "./types/variants";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
 import * as TezosReact from "@ledgerhq/live-common/families/tezos/react";
-import { AuthorizationStatus } from "@react-native-firebase/messaging";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import {
   act,
@@ -15,15 +13,22 @@ import {
   waitFor,
   withFlagOverrides,
 } from "@tests/test-renderer";
-import storage from "LLM/storage";
 import { MockedAccounts } from "LLM/features/Accounts/__integrations__/mockedAccounts";
+import { NotificationsPromptContext } from "LLM/features/NotificationsPrompt/new/NotificationsPromptProvider";
 import * as MobileFamilies from "~/families";
-import GlobalDrawers from "~/GlobalDrawers";
 import { NavigatorName, ScreenName } from "~/const";
-import { track } from "~/analytics";
 import { createNotificationsPromptFeatureFlags } from "./testUtils";
 
+// Lightweight per-flow wiring guard. Where the old NotificationsPromptStakeFlow
+// suite booted GlobalDrawers + the real opt-in drawer for every case (~147ms/case),
+// this renders each family flow inside only a spied NotificationsPrompt context and
+// asserts the flow fires `notifyFlowCompleted("stake")` on success-close (and not on
+// error-close). The drawer behaviour itself is covered by NotificationsPrompt.test.tsx;
+// the trigger logic by useStakeFlowCompletionListeners.test.tsx.
+
 const featureFlagsForStakePrompt = createNotificationsPromptFeatureFlags();
+const notifyFlowCompleted = jest.fn();
+const tryTriggerPushNotificationDrawerAfterInactivity = jest.fn();
 
 type AccountKey =
   | "algorand"
@@ -39,22 +44,13 @@ type AccountKey =
   | "sui"
   | "tezos";
 
-type StakePromptBucket =
-  | "delegation/staking"
-  | "redelegation/rebond"
-  | "undelegation/unstaking"
-  | "withdrawing/withdraw"
-  | "revoke/claim/lifecycle";
-
 type MobileFamilyFlowExport = keyof typeof MobileFamilies;
 
-type MobileFamilyFlow = {
-  component: ComponentType;
-};
+type MobileFamilyFlow = { component: ComponentType };
 
-type StakePromptCase = {
+type StakeCase = {
   label: string;
-  bucket: StakePromptBucket;
+  bucket?: string;
   flowName: NavigatorName;
   familyExportKey: MobileFamilyFlowExport;
   successScreenName: ScreenName;
@@ -101,57 +97,30 @@ const accountsByKey = {
   cardano: genAccount("notifications-prompt-cardano", {
     currency: getCryptoCurrencyById("cardano"),
   }),
-  celo: genAccount("notifications-prompt-celo", {
-    currency: getCryptoCurrencyById("celo"),
-  }),
-  cosmos: genAccount("notifications-prompt-cosmos", {
-    currency: getCryptoCurrencyById("cosmos"),
-  }),
+  celo: genAccount("notifications-prompt-celo", { currency: getCryptoCurrencyById("celo") }),
+  cosmos: genAccount("notifications-prompt-cosmos", { currency: getCryptoCurrencyById("cosmos") }),
   ethereum: genAccount("notifications-prompt-ethereum", {
     currency: getCryptoCurrencyById("ethereum"),
   }),
-  hedera: genAccount("notifications-prompt-hedera", {
-    currency: getCryptoCurrencyById("hedera"),
-  }),
+  hedera: genAccount("notifications-prompt-hedera", { currency: getCryptoCurrencyById("hedera") }),
   multiversx: genAccount("notifications-prompt-multiversx", {
     currency: getCryptoCurrencyById("elrond"),
   }),
-  near: genAccount("notifications-prompt-near", {
-    currency: getCryptoCurrencyById("near"),
-  }),
+  near: genAccount("notifications-prompt-near", { currency: getCryptoCurrencyById("near") }),
   polkadot: {
-    ...genAccount("notifications-prompt-polkadot", {
-      currency: getCryptoCurrencyById("polkadot"),
-    }),
-    polkadotResources: {
-      controller: "notifications-prompt-polkadot-controller",
-    },
+    ...genAccount("notifications-prompt-polkadot", { currency: getCryptoCurrencyById("polkadot") }),
+    polkadotResources: { controller: "notifications-prompt-polkadot-controller" },
   },
-  solana: genAccount("notifications-prompt-solana", {
-    currency: getCryptoCurrencyById("solana"),
-  }),
-  sui: genAccount("notifications-prompt-sui", {
-    currency: getCryptoCurrencyById("sui"),
-  }),
-  tezos: genAccount("notifications-prompt-tezos", {
-    currency: getCryptoCurrencyById("tezos"),
-  }),
+  solana: genAccount("notifications-prompt-solana", { currency: getCryptoCurrencyById("solana") }),
+  sui: genAccount("notifications-prompt-sui", { currency: getCryptoCurrencyById("sui") }),
+  tezos: genAccount("notifications-prompt-tezos", { currency: getCryptoCurrencyById("tezos") }),
 };
-
-const createOperation = (accountId: string, type: string) => ({
-  id: `${accountId}-${type.toLowerCase()}-operation`,
-  hash: `${type.toLowerCase()}-operation-hash`,
-  type,
-  accountId,
-});
 
 const stakePromptSource = { name: "NotificationsPromptStakeFlow" };
 
-function HomeScreen() {
-  return <View />;
-}
-
-const stakePromptCases: StakePromptCase[] = [
+// Every registered mobile family stake flow (kept 1:1 with the families barrel by
+// the "covers every registered ..." guard below).
+const stakeCases: StakeCase[] = [
   {
     label: "Algorand claim rewards",
     bucket: "revoke/claim/lifecycle",
@@ -577,26 +546,75 @@ const stakePromptCases: StakePromptCase[] = [
   },
 ];
 
-const stakePromptCasesByBucket = stakePromptCases.reduce(
-  (acc, stakePromptCase) => {
-    acc[stakePromptCase.bucket] = [...(acc[stakePromptCase.bucket] ?? []), stakePromptCase];
-    return acc;
-  },
-  {} as Record<StakePromptBucket, StakePromptCase[]>,
-);
+const stakeErrorCases = stakeCases.filter(stakeCase => stakeCase.errorScreenName);
 
-const stakePromptErrorCasesByBucket = stakePromptCases.reduce(
-  (acc, stakePromptCase) => {
-    if (!stakePromptCase.errorScreenName) return acc;
-    acc[stakePromptCase.bucket] = [...(acc[stakePromptCase.bucket] ?? []), stakePromptCase];
-    return acc;
-  },
-  {} as Record<StakePromptBucket, StakePromptCase[]>,
-);
+const createOperation = (accountId: string, type: string) => ({
+  id: `${accountId}-${type.toLowerCase()}-operation`,
+  hash: `${type.toLowerCase()}-operation-hash`,
+  type,
+  accountId,
+});
+
+const Stack = createNativeStackNavigator();
+const HOME_SCREEN = "Home";
+const HomeScreen = () => <View />;
+
+const accountsState = {
+  ...MockedAccounts,
+  active: [...MockedAccounts.active, ...Object.values(accountsByKey)],
+};
+
+const createParams = (stakeCase: StakeCase) => {
+  const account = accountsByKey[stakeCase.accountKey];
+  return {
+    accountId: account.id,
+    deviceId: "device-id",
+    error: { name: "Error", message: `${stakeCase.label} validation failed` } as Error,
+    result: createOperation(account.id, stakeCase.operationType),
+    transaction: stakeCase.transaction,
+    ...stakeCase.params,
+  };
+};
+
+const createFlowNavigationState = (stakeCase: StakeCase, screenName: ScreenName) => ({
+  index: 1,
+  routes: [
+    { name: HOME_SCREEN },
+    {
+      name: stakeCase.flowName,
+      state: { index: 0, routes: [{ name: screenName, params: createParams(stakeCase) }] },
+    },
+  ],
+});
+
+// Two-screen navigator wrapped only in a spied NotificationsPrompt context — no
+// GlobalDrawers, no real provider, no opt-in drawer.
+function StakeFlowTestApp({ stakeCase }: { stakeCase: StakeCase }) {
+  const { component } = getMobileFamilyFlow(stakeCase.familyExportKey);
+  return (
+    <NotificationsPromptContext.Provider
+      value={{ notifyFlowCompleted, tryTriggerPushNotificationDrawerAfterInactivity }}
+    >
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name={HOME_SCREEN} component={HomeScreen} />
+        <Stack.Screen name={stakeCase.flowName} component={component} />
+      </Stack.Navigator>
+    </NotificationsPromptContext.Provider>
+  );
+}
+
+const renderStakeFlow = (stakeCase: StakeCase, screenName: ScreenName) =>
+  render(<StakeFlowTestApp stakeCase={stakeCase} />, {
+    navigationInitialState: createFlowNavigationState(stakeCase, screenName),
+    overrideInitialState: withFlagOverrides(featureFlagsForStakePrompt, state => ({
+      ...state,
+      accounts: accountsState,
+    })),
+  });
 
 let useTezosBakerSpy: jest.SpiedFunction<typeof TezosReact.useBaker>;
 
-describe("NotificationsPrompt stake flow", () => {
+describe("stake flow completion wiring", () => {
   beforeAll(() => {
     jest.useFakeTimers();
     useTezosBakerSpy = jest.spyOn(TezosReact, "useBaker").mockReturnValue({
@@ -608,9 +626,9 @@ describe("NotificationsPrompt stake flow", () => {
     });
   });
 
-  beforeEach(async () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
     jest.setSystemTime(new Date("2025-01-01T00:00:00.000Z"));
-    await storage.deleteAll();
   });
 
   afterAll(() => {
@@ -618,201 +636,74 @@ describe("NotificationsPrompt stake flow", () => {
     useTezosBakerSpy.mockRestore();
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
-  const Stack = createNativeStackNavigator();
-  const HOME_SCREEN = "Home";
-  const accountsState = {
-    ...MockedAccounts,
-    active: [...MockedAccounts.active, ...Object.values(accountsByKey)],
-  };
-
-  const createParams = (stakePromptCase: StakePromptCase) => {
-    const account = accountsByKey[stakePromptCase.accountKey];
-
-    return {
-      accountId: account.id,
-      deviceId: "device-id",
-      error: {
-        name: "Error",
-        message: `${stakePromptCase.label} validation failed`,
-      } as Error,
-      result: createOperation(account.id, stakePromptCase.operationType),
-      transaction: stakePromptCase.transaction,
-      ...stakePromptCase.params,
-    };
-  };
-
-  const createFlowNavigationState = (
-    stakePromptCase: StakePromptCase,
-    screenName: ScreenName = stakePromptCase.successScreenName,
-  ) => ({
-    index: 1,
-    routes: [
-      {
-        name: HOME_SCREEN,
-      },
-      {
-        name: stakePromptCase.flowName,
-        state: {
-          index: 0,
-          routes: [
-            {
-              name: screenName,
-              params: createParams(stakePromptCase),
-            },
-          ],
-        },
-      },
-    ],
-  });
-
-  // Each test exercises exactly one stake flow, so the test app registers only
-  // that flow's screen (plus a Home screen to land on). This keeps every render
-  // to a two-screen navigator instead of mounting all ~37 family flows, while
-  // still rendering the real flow component for the case under test.
-  function StakeFlowTestApp({ stakePromptCase }: { stakePromptCase: StakePromptCase }) {
-    const { component } = getMobileFamilyFlow(stakePromptCase.familyExportKey);
-    return (
-      <GlobalDrawers>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name={HOME_SCREEN} component={HomeScreen} />
-          <Stack.Screen name={stakePromptCase.flowName} component={component} />
-        </Stack.Navigator>
-      </GlobalDrawers>
-    );
-  }
-
-  const renderStakeFlow = (
-    stakePromptCase: StakePromptCase,
-    screenName: ScreenName = stakePromptCase.successScreenName,
-  ) =>
-    render(<StakeFlowTestApp stakePromptCase={stakePromptCase} />, {
-      navigationInitialState: createFlowNavigationState(stakePromptCase, screenName),
-      overrideInitialState: withFlagOverrides(featureFlagsForStakePrompt, state => ({
-        ...state,
-        accounts: accountsState,
-        notifications: {
-          ...state.notifications,
-          permissionStatus: AuthorizationStatus.NOT_DETERMINED,
-        },
-        settings: {
-          ...state.settings,
-          readOnlyModeEnabled: false,
-          notifications: {
-            ...state.settings.notifications,
-            areNotificationsAllowed: true,
-          },
-        },
-      })),
-    });
-
   describe("coverage guards", () => {
     it("covers every registered mobile family stake prompt flow", () => {
-      const flowExportsCoveredByTheseTests = stakePromptCases
-        .map(stakePromptCase => stakePromptCase.familyExportKey)
-        .sort();
-      const registeredStakePromptFlowExports = findRegisteredStakePromptFlowExports();
-
-      expect(flowExportsCoveredByTheseTests).toEqual(registeredStakePromptFlowExports);
+      const covered = stakeCases.map(stakeCase => stakeCase.familyExportKey).sort();
+      expect(covered).toEqual(findRegisteredStakePromptFlowExports());
     });
 
-    it("uses ValidationSuccess screens for every stake prompt flow", () => {
-      const casesWithUnexpectedSuccessScreen = stakePromptCases
-        .filter(
-          stakePromptCase =>
-            !String(stakePromptCase.successScreenName).endsWith("ValidationSuccess"),
-        )
-        .map(stakePromptCase => stakePromptCase.label);
-
-      expect(casesWithUnexpectedSuccessScreen).toEqual([]);
+    it("covers a representative flow for every family in the AccountKey union", () => {
+      const coveredAccounts = [...new Set(stakeCases.map(stakeCase => stakeCase.accountKey))].sort();
+      expect(coveredAccounts).toEqual([
+        "algorand",
+        "cardano",
+        "celo",
+        "cosmos",
+        "ethereum",
+        "hedera",
+        "multiversx",
+        "near",
+        "polkadot",
+        "solana",
+        "sui",
+        "tezos",
+      ]);
     });
 
-    it("uses ValidationError screens for every stake prompt flow", () => {
-      const casesMissingErrorScreen = stakePromptCases
-        .filter(stakePromptCase => !stakePromptCase.errorScreenName)
-        .map(stakePromptCase => stakePromptCase.label);
-      const casesWithUnexpectedErrorScreen = stakePromptCases
-        .filter(
-          stakePromptCase => !String(stakePromptCase.errorScreenName).endsWith("ValidationError"),
-        )
-        .map(stakePromptCase => stakePromptCase.label);
+    it("uses ValidationSuccess and ValidationError screens for every flow", () => {
+      const badSuccess = stakeCases
+        .filter(stakeCase => !String(stakeCase.successScreenName).endsWith("ValidationSuccess"))
+        .map(stakeCase => stakeCase.label);
+      const missingError = stakeCases
+        .filter(stakeCase => !stakeCase.errorScreenName)
+        .map(stakeCase => stakeCase.label);
+      const badError = stakeCases
+        .filter(stakeCase => !String(stakeCase.errorScreenName).endsWith("ValidationError"))
+        .map(stakeCase => stakeCase.label);
 
-      expect(casesMissingErrorScreen).toEqual([]);
-      expect(casesWithUnexpectedErrorScreen).toEqual([]);
+      expect(badSuccess).toEqual([]);
+      expect(missingError).toEqual([]);
+      expect(badError).toEqual([]);
     });
   });
 
-  describe.each(Object.entries(stakePromptCasesByBucket))("%s flows", (bucket, bucketCases) => {
-    it.each(bucketCases)(
-      "should prompt the notifications drawer when closing $label validation success",
-      async stakePromptCase => {
-        const { user } = renderStakeFlow(stakePromptCase);
+  it.each(stakeCases)(
+    "$label success screen triggers the stake prompt on close",
+    async stakeCase => {
+      const { user } = renderStakeFlow(stakeCase, stakeCase.successScreenName);
 
-        expect(track).not.toHaveBeenCalledWith(
-          "attempt_to_trigger_push_notification_drawer_after_action",
-          expect.any(Object),
-        );
+      await waitFor(() => expect(screen.getByTestId("validate-success-screen")).toBeVisible());
+      await user.press(screen.getByTestId("enabled-success-close-button"));
+      await act(async () => {
+        await jest.runOnlyPendingTimersAsync();
+      });
 
-        await waitFor(() => expect(screen.getByTestId("validate-success-screen")).toBeVisible());
-        await user.press(screen.getByTestId("enabled-success-close-button"));
-        await act(async () => {
-          await jest.runOnlyPendingTimersAsync();
-        });
+      await waitFor(() => expect(notifyFlowCompleted).toHaveBeenCalledWith("stake"));
+    },
+  );
 
-        await waitFor(() => expect(screen.getByText(/allow notifications/i)).toBeVisible());
-        expect(track).toHaveBeenCalledWith(
-          "attempt_to_trigger_push_notification_drawer_after_action",
-          {
-            action: "stake",
-            shouldPrompt: true,
-            variant: AB_TESTING_VARIANTS.B,
-            repromptDelay: null,
-            dismissedCount: 0,
-            skipReason: undefined,
-          },
-        );
+  it.each(stakeErrorCases)(
+    "$label error screen does not trigger the stake prompt on close",
+    async stakeCase => {
+      const { user } = renderStakeFlow(stakeCase, stakeCase.errorScreenName!);
 
-        const allowNotificationsButton = screen.getByText(/allow notifications/i);
-        await user.press(allowNotificationsButton);
-        expect(track).toHaveBeenCalledWith("button_clicked", {
-          button: "allow notifications",
-          page: "Drawer push notification opt-in",
-          source: "stake",
-          repromptDelay: null,
-          dismissedCount: 0,
-          variant: AB_TESTING_VARIANTS.B,
-        });
-      },
-    );
+      await waitFor(() => expect(screen.getByTestId("SendErrorClose")).toBeVisible());
+      await user.press(screen.getByTestId("SendErrorClose"));
+      await act(async () => {
+        await jest.runOnlyPendingTimersAsync();
+      });
 
-    it.each(stakePromptErrorCasesByBucket[bucket as StakePromptBucket] ?? [])(
-      "should not prompt the notifications drawer when closing $label validation error",
-      async stakePromptCase => {
-        const { errorScreenName } = stakePromptCase;
-        if (!errorScreenName) return;
-
-        const { user } = renderStakeFlow(stakePromptCase, errorScreenName);
-
-        expect(track).not.toHaveBeenCalledWith(
-          "attempt_to_trigger_push_notification_drawer_after_action",
-          expect.any(Object),
-        );
-
-        await waitFor(() => expect(screen.getByTestId("SendErrorClose")).toBeVisible());
-        await user.press(screen.getByTestId("SendErrorClose"));
-        await act(async () => {
-          await jest.runOnlyPendingTimersAsync();
-        });
-
-        expect(track).not.toHaveBeenCalledWith(
-          "attempt_to_trigger_push_notification_drawer_after_action",
-          expect.any(Object),
-        );
-        expect(screen.queryByText(/allow notifications/i)).not.toBeOnTheScreen();
-      },
-    );
-  });
+      expect(notifyFlowCompleted).not.toHaveBeenCalled();
+    },
+  );
 });

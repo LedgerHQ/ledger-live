@@ -13,14 +13,14 @@ import DelegationSummary from "./Summary";
 import DelegationValidationError from "./ValidationError";
 import DelegationValidationSuccess from "./ValidationSuccess";
 import type { HederaDelegationFlowParamList } from "./types";
-import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
+import { useStakeFlowCompletionListeners } from "LLM/features/NotificationsPrompt";
 
 const totalSteps = "3";
 
 function DelegationFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const { notifyFlowCompleted } = useNotificationsContext();
+  const stakeCompletionListeners = useStakeFlowCompletionListeners();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
   return (
@@ -100,11 +100,7 @@ function DelegationFlow() {
           headerShown: false,
           gestureEnabled: false,
         }}
-        listeners={{
-          beforeRemove: () => {
-            notifyFlowCompleted("stake");
-          },
-        }}
+        listeners={stakeCompletionListeners}
       />
     </Stack.Navigator>
   );

@@ -18,14 +18,14 @@ import ConnectDevice from "~/screens/ConnectDevice";
 import RedelegationValidationError from "./04-ValidationError";
 import RedelegationValidationSuccess from "./04-ValidationSuccess";
 import type { CosmosRedelegationFlowParamList } from "./types";
-import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
+import { useStakeFlowCompletionListeners } from "LLM/features/NotificationsPrompt";
 
 const totalSteps = "3";
 
 function RedelegationFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const { notifyFlowCompleted } = useNotificationsContext();
+  const stakeCompletionListeners = useStakeFlowCompletionListeners();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   return (
     <Stack.Navigator
@@ -144,11 +144,7 @@ function RedelegationFlow() {
           headerTitle: "",
           gestureEnabled: false,
         }}
-        listeners={{
-          beforeRemove: () => {
-            notifyFlowCompleted("stake");
-          },
-        }}
+        listeners={stakeCompletionListeners}
       />
     </Stack.Navigator>
   );

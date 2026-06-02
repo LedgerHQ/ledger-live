@@ -11,14 +11,14 @@ import ConnectDevice from "~/screens/ConnectDevice";
 import ValidationSuccess from "./03-ValidationSuccess";
 import ValidationError from "./03-ValidationError";
 import { PolkadotSimpleOperationFlowParamList } from "./types";
-import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
+import { useStakeFlowCompletionListeners } from "LLM/features/NotificationsPrompt";
 
 const totalSteps = "2";
 
 function SimpleOperationFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const { notifyFlowCompleted } = useNotificationsContext();
+  const stakeCompletionListeners = useStakeFlowCompletionListeners();
   const stackNavigatorConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   return (
     <Stack.Navigator screenOptions={stackNavigatorConfig}>
@@ -71,11 +71,7 @@ function SimpleOperationFlow() {
           headerLeft: undefined,
           headerRight: undefined,
         }}
-        listeners={{
-          beforeRemove: () => {
-            notifyFlowCompleted("stake");
-          },
-        }}
+        listeners={stakeCompletionListeners}
       />
       <Stack.Screen
         name={ScreenName.PolkadotSimpleOperationValidationError}

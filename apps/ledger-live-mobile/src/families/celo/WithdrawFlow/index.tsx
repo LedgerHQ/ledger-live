@@ -12,14 +12,14 @@ import WithdrawAmount from "./WithdrawAmount";
 import ValidationError from "./ValidationError";
 import ValidationSuccess from "./ValidationSuccess";
 import { CeloWithdrawFlowParamList } from "./types";
-import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
+import { useStakeFlowCompletionListeners } from "LLM/features/NotificationsPrompt";
 
 const totalSteps = "3"; // Withdraw, Device, Confirmation
 
 function WithdrawFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const { notifyFlowCompleted } = useNotificationsContext();
+  const stakeCompletionListeners = useStakeFlowCompletionListeners();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   return (
     <Stack.Navigator
@@ -83,11 +83,7 @@ function WithdrawFlow() {
           headerTitle: "",
           gestureEnabled: false,
         }}
-        listeners={{
-          beforeRemove: () => {
-            notifyFlowCompleted("stake");
-          },
-        }}
+        listeners={stakeCompletionListeners}
       />
       <Stack.Screen
         name={ScreenName.CeloWithdrawValidationError}

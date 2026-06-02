@@ -16,7 +16,7 @@ import ValidationError from "./components/ValidationError";
 import ValidationSuccess from "./components/ValidationSuccess";
 
 import type { MultiversXWithdrawFlowParamList } from "./types";
-import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
+import { useStakeFlowCompletionListeners } from "LLM/features/NotificationsPrompt";
 
 const Stack = createNativeStackNavigator<MultiversXWithdrawFlowParamList>();
 const totalSteps = "3";
@@ -31,7 +31,7 @@ const options = {
 const Withdraw = () => {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const { notifyFlowCompleted } = useNotificationsContext();
+  const stakeCompletionListeners = useStakeFlowCompletionListeners();
 
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
@@ -107,11 +107,7 @@ const Withdraw = () => {
           headerTitle: "",
           gestureEnabled: false,
         }}
-        listeners={{
-          beforeRemove: () => {
-            notifyFlowCompleted("stake");
-          },
-        }}
+        listeners={stakeCompletionListeners}
       />
     </Stack.Navigator>
   );

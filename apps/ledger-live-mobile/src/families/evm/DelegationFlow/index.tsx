@@ -18,14 +18,14 @@ import RedelegationAmount from "./05-RedelegationAmount";
 import RedelegationValidationError from "./06-RedelegationValidationError";
 import RedelegationValidationSuccess from "./06-RedelegationValidationSuccess";
 import type { EvmDelegationFlowParamList } from "./types";
-import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
+import { useStakeFlowCompletionListeners } from "LLM/features/NotificationsPrompt";
 
 const totalSteps = "3";
 
 function DelegationFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const { notifyFlowCompleted } = useNotificationsContext();
+  const stakeCompletionListeners = useStakeFlowCompletionListeners();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
   return (
@@ -127,11 +127,7 @@ function DelegationFlow() {
           headerTitle: "",
           gestureEnabled: false,
         }}
-        listeners={{
-          beforeRemove: () => {
-            notifyFlowCompleted("stake");
-          },
-        }}
+        listeners={stakeCompletionListeners}
       />
       <Stack.Screen
         name={ScreenName.EvmRedelegationValidator}
@@ -220,11 +216,7 @@ function DelegationFlow() {
           headerTitle: "",
           gestureEnabled: false,
         }}
-        listeners={{
-          beforeRemove: () => {
-            notifyFlowCompleted("stake");
-          },
-        }}
+        listeners={stakeCompletionListeners}
       />
     </Stack.Navigator>
   );

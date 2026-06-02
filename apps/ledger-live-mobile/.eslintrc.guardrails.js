@@ -25,6 +25,16 @@ const featureFlagsRestrictions = {
   ],
 };
 
+// Family stake flows must not re-implement the push-notification "after action"
+// trigger inline. The wiring (a ValidationSuccess `beforeRemove` listener calling
+// notifyFlowCompleted("stake")) is centralized in useStakeFlowCompletionListeners,
+// so a single hook test covers the logic instead of rendering every family flow.
+const inlineStakeTriggerSelector =
+  'CallExpression[callee.name="notifyFlowCompleted"][arguments.0.value="stake"]';
+const inlineStakeTriggerMessage =
+  'Do not call notifyFlowCompleted("stake") inline. Attach `useStakeFlowCompletionListeners()` ' +
+  "to the ValidationSuccess <Stack.Screen listeners={...}> instead (LLM/features/NotificationsPrompt).";
+
 module.exports = {
   env: { browser: true, es2022: true, node: true },
   parser: "@typescript-eslint/parser",
@@ -41,6 +51,15 @@ module.exports = {
       excludedFiles: ["src/components/FirebaseFeatureFlags.tsx"],
       rules: {
         "no-restricted-imports": ["error", featureFlagsRestrictions],
+      },
+    },
+    {
+      files: ["src/families/**/*.tsx"],
+      rules: {
+        "no-restricted-syntax": [
+          "error",
+          { selector: inlineStakeTriggerSelector, message: inlineStakeTriggerMessage },
+        ],
       },
     },
   ],

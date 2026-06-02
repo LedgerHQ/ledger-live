@@ -13,14 +13,14 @@ import ActivateSummary from "./02-Summary";
 import DelegationValidationError from "./ValidationError";
 import DelegationValidationSuccess from "./ValidationSuccess";
 import type { CeloActivateFlowParamList } from "./types";
-import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
+import { useStakeFlowCompletionListeners } from "LLM/features/NotificationsPrompt";
 
 const totalSteps = "3";
 
 function ActivateFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const { notifyFlowCompleted } = useNotificationsContext();
+  const stakeCompletionListeners = useStakeFlowCompletionListeners();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   return (
     <Stack.Navigator
@@ -93,11 +93,7 @@ function ActivateFlow() {
           headerShown: false,
           gestureEnabled: false,
         }}
-        listeners={{
-          beforeRemove: () => {
-            notifyFlowCompleted("stake");
-          },
-        }}
+        listeners={stakeCompletionListeners}
       />
       <Stack.Screen
         name={ScreenName.CeloActivateValidationError}

@@ -17,7 +17,7 @@ import ValidationError from "./components/ValidationError";
 import ValidationSuccess from "./components/ValidationSuccess";
 
 import type { MultiversXClaimRewardsFlowParamList } from "./types";
-import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
+import { useStakeFlowCompletionListeners } from "LLM/features/NotificationsPrompt";
 
 const Stack = createNativeStackNavigator<MultiversXClaimRewardsFlowParamList>();
 const totalSteps = "3";
@@ -32,7 +32,7 @@ const options = {
 const Claim = () => {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const { notifyFlowCompleted } = useNotificationsContext();
+  const stakeCompletionListeners = useStakeFlowCompletionListeners();
 
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
@@ -127,11 +127,7 @@ const Claim = () => {
           headerTitle: "",
           gestureEnabled: false,
         }}
-        listeners={{
-          beforeRemove: () => {
-            notifyFlowCompleted("stake");
-          },
-        }}
+        listeners={stakeCompletionListeners}
       />
     </Stack.Navigator>
   );

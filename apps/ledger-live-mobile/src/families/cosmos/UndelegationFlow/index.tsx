@@ -13,14 +13,14 @@ import UndelegationValidationError from "./03-ValidationError";
 import UndelegationValidationSuccess from "./03-ValidationSuccess";
 import UndelegationBridgeTransaction from "../shared/03-BridgeTransaction";
 import type { CosmosUndelegationFlowParamList } from "./types";
-import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
+import { useStakeFlowCompletionListeners } from "LLM/features/NotificationsPrompt";
 
 const totalSteps = "3";
 
 function UndelegationFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const { notifyFlowCompleted } = useNotificationsContext();
+  const stakeCompletionListeners = useStakeFlowCompletionListeners();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   return (
     <Stack.Navigator
@@ -99,11 +99,7 @@ function UndelegationFlow() {
           headerRight: undefined,
           gestureEnabled: false,
         }}
-        listeners={{
-          beforeRemove: () => {
-            notifyFlowCompleted("stake");
-          },
-        }}
+        listeners={stakeCompletionListeners}
       />
     </Stack.Navigator>
   );

@@ -12,14 +12,14 @@ import ConnectDevice from "~/screens/ConnectDevice";
 import ValidationSuccess from "./ValidationSuccess";
 import ValidationError from "./ValidationError";
 import type { CeloRegistrationFlowParamList } from "./types";
-import { useNotificationsContext } from "LLM/features/NotificationsPrompt";
+import { useStakeFlowCompletionListeners } from "LLM/features/NotificationsPrompt";
 
 const totalSteps = "3";
 
 function RegisterAccountFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const { notifyFlowCompleted } = useNotificationsContext();
+  const stakeCompletionListeners = useStakeFlowCompletionListeners();
 
   const stackNavigatorConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
@@ -80,11 +80,7 @@ function RegisterAccountFlow() {
           headerLeft: undefined,
           headerRight: undefined,
         }}
-        listeners={{
-          beforeRemove: () => {
-            notifyFlowCompleted("stake");
-          },
-        }}
+        listeners={stakeCompletionListeners}
       />
       <Stack.Screen
         name={ScreenName.CeloRegistrationValidationError}

@@ -5,6 +5,7 @@ export { useNotificationsContext } from "./new/NotificationsPromptProvider";
 export { useNotificationsData } from "./hooks/useNotificationsData";
 export { useNotificationsPrompt } from "./hooks/useNotificationsPrompt";
 export { useNotificationsDrawer } from "./hooks/useNotificationsDrawer";
+export { useStakeFlowCompletionListeners } from "./new/hooks/useStakeFlowCompletionListeners";
 export {
   INACTIVITY_DRAWER_DELAY_MS,
   checkIsInactive,
