@@ -15,7 +15,6 @@ tools                                                   @ledgerhq/wallet-ci
 apps/ledger-live-mobile/fastlane/Fastfile               @ledgerhq/wallet-ci
 
 # Platform & Wallet XP teams catchall
-CODEOWNERS                                               @ledgerhq/platform
 apps/cli/src/commands/live                               @ledgerhq/platform
 apps/web-tools/                                          @ledgerhq/platform
 libs/ledger-live-common/src/                             @ledgerhq/platform
@@ -454,6 +453,9 @@ AGENTS.md                         @ledgerhq/platform
 /CLAUDE.md                        @ledgerhq/platform
 .agents/                          @ledgerhq/platform
 .github/copilot-instructions.md   @ledgerhq/platform
+
+# Internal teams
+CODEOWNERS                        @ledgerhq/platform @ledgerhq/wallet-xp @ledgerhq/coin-integration @ledgerhq/live-devices @ledgerhq/engagement @ledgerhq/qaa
 
 # Cross-team generic files can be opted out (no strict ownership when it concerns everyone)
 libs/ledger-live-common/src/featureFlags/defaultFeatures.ts
