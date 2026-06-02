@@ -22,6 +22,7 @@ jest.mock("LLM/components/LineChart", () => ({
 // Override AmountDisplay to expose the `animate` prop (the real one renders an
 // odometer that is awkward to assert against).
 let mockAmountDisplayAnimate: boolean | undefined;
+let mockAmountDisplaySize: "sm" | "md" | undefined;
 jest.mock("@ledgerhq/lumen-ui-rnative", () => {
   const actual = jest.requireActual("@ledgerhq/lumen-ui-rnative");
   const ReactActual = jest.requireActual("react");
@@ -31,13 +32,16 @@ jest.mock("@ledgerhq/lumen-ui-rnative", () => {
     AmountDisplay: ({
       value,
       animate,
+      size,
       testID,
     }: {
       value: number;
       animate?: boolean;
+      size?: "sm" | "md";
       testID?: string;
     }) => {
       mockAmountDisplayAnimate = animate;
+      mockAmountDisplaySize = size;
       return ReactActual.createElement(Text, { testID }, String(value));
     },
   };
@@ -68,7 +72,7 @@ const buildProps = (overrides: Partial<ViewProps> = {}): ViewProps => ({
   hasMarketData: true,
   priceChangePercentage: 2.35,
   formattedPriceChange: "+$1,000.00",
-  rangeTimeLabel: "Today",
+  timeLabel: "Today",
   ranges: [
     { label: "1D", value: "1d" },
     { label: "1W", value: "1w" },
@@ -81,12 +85,13 @@ const buildProps = (overrides: Partial<ViewProps> = {}): ViewProps => ({
   isLoading: false,
   series,
   chartColor: "success",
+  points: [],
+  pointTooltipsOnly: true,
   formatValue: (value: number) => String(value),
   tooltipTitle: () => undefined,
   onScrubberPositionChange: noopScrub,
   isScrubbing: false,
-  scrubbedDateLabel: undefined,
-  showXAxis: true,
+  showXAxis: false,
   showYAxis: false,
   xAxis,
   yAxis,
@@ -96,15 +101,20 @@ const buildProps = (overrides: Partial<ViewProps> = {}): ViewProps => ({
 describe("BalanceGraphView", () => {
   beforeEach(() => {
     mockAmountDisplayAnimate = undefined;
+    mockAmountDisplaySize = undefined;
     for (const key of Object.keys(mockLineChartProps)) delete mockLineChartProps[key];
   });
 
-  it("forwards the scrub callback and disables the floating tooltip", () => {
+  it("forwards the scrub callback, enables point-only tooltips and keeps beacons hidden", () => {
     const onScrubberPositionChange: LineChartScrubberPositionChange = jest.fn();
-    render(<BalanceGraphView {...buildProps({ onScrubberPositionChange })} />);
+    const points = [{ index: 1, value: 110, color: "success" as const, tooltip: { rows: [] } }];
+    render(<BalanceGraphView {...buildProps({ onScrubberPositionChange, points })} />);
 
     expect(mockLineChartProps.onScrubberPositionChange).toBe(onScrubberPositionChange);
-    expect(mockLineChartProps.showScrubberTooltip).toBe(false);
+    expect(mockLineChartProps.showScrubberTooltip).toBe(true);
+    expect(mockLineChartProps.showScrubberBeacons).toBe(false);
+    expect(mockLineChartProps.pointTooltipsOnly).toBe(true);
+    expect(mockLineChartProps.points).toBe(points);
   });
 
   describe("when not scrubbing", () => {
@@ -112,6 +122,7 @@ describe("BalanceGraphView", () => {
       render(<BalanceGraphView {...buildProps()} />);
 
       expect(mockAmountDisplayAnimate).toBe(true);
+      expect(mockAmountDisplaySize).toBe("md");
       expect(screen.getByText("Today")).toBeVisible();
       expect(screen.getByText("2.35%")).toBeVisible();
       expect(screen.getByText("+$1,000.00")).toBeVisible();
@@ -119,16 +130,23 @@ describe("BalanceGraphView", () => {
   });
 
   describe("while scrubbing", () => {
-    it("disables the amount animation and shows only the scrubbed date, hiding the variation and percentage", () => {
+    it("disables the amount animation and shows the scrubbed variation, fiat change and date", () => {
       render(
-        <BalanceGraphView {...buildProps({ isScrubbing: true, scrubbedDateLabel: "5/29/2026" })} />,
+        <BalanceGraphView
+          {...buildProps({
+            isScrubbing: true,
+            priceChangePercentage: 1.8,
+            formattedPriceChange: "+$220.00",
+            timeLabel: "5/29/2026",
+          })}
+        />,
       );
 
       expect(mockAmountDisplayAnimate).toBe(false);
+      expect(screen.getByText("1.80%")).toBeVisible();
+      expect(screen.getByText("+$220.00")).toBeVisible();
       expect(screen.getByText("5/29/2026")).toBeVisible();
       expect(screen.queryByText("Today")).toBeNull();
-      expect(screen.queryByText("2.35%")).toBeNull();
-      expect(screen.queryByText("+$1,000.00")).toBeNull();
     });
   });
 });

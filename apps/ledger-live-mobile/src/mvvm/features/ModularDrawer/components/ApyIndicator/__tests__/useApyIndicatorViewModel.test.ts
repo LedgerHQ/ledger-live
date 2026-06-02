@@ -5,6 +5,11 @@ import { useApyIndicatorViewModel } from "../useApyIndicatorViewModel";
 
 jest.mock("~/helpers/getStakeLabelLocaleBased");
 
+jest.mock("@ledgerhq/live-common/modularDrawer/utils/getApyAppearance", () => ({
+  __esModule: true,
+  ...jest.requireActual("@ledgerhq/live-common/modularDrawer/utils/getApyAppearance"),
+}));
+
 const mockGetCountryLocale = jest.spyOn(getStakeLabelLocaleBased, "getCountryLocale");
 
 describe("useApyIndicatorViewModel", () => {

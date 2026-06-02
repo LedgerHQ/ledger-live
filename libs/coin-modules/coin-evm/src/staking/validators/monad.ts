@@ -141,6 +141,18 @@ const resolveContext = (currencyId: string): ResolvedContext | undefined => {
   }
 };
 
+const callGetValidator = async (
+  provider: JsonRpcProvider,
+  iface: ethers.Interface,
+  contractAddress: string,
+  valId: bigint,
+): Promise<ValidatorRaw | null> => {
+  const data = iface.encodeFunctionData("getValidator", [valId]);
+  const raw = await provider.call({ to: contractAddress, data });
+  const decoded = iface.decodeFunctionResult("getValidator", raw);
+  return isValidatorRaw(decoded) ? decoded : null;
+};
+
 const fetchValidatorDetails = async (
   currencyId: string,
   provider: JsonRpcProvider,
@@ -154,10 +166,8 @@ const fetchValidatorDetails = async (
     const chunk = valIds.slice(i, i + DETAILS_BATCH_SIZE);
     const settled = await Promise.allSettled(
       chunk.map(async valId => {
-        const data = iface.encodeFunctionData("getValidator", [valId]);
-        const raw = await provider.call({ to: contractAddress, data });
-        const decoded = iface.decodeFunctionResult("getValidator", raw);
-        if (!isValidatorRaw(decoded)) return undefined;
+        const decoded = await callGetValidator(provider, iface, contractAddress, valId);
+        if (!decoded) return undefined;
 
         const [, , stake, , commission, , , , , , secpPubkey] = decoded;
         const secp = secpPubkey.toLowerCase().replace(/^0x/, "");
@@ -166,6 +176,7 @@ const fetchValidatorDetails = async (
 
         return {
           validatorAddress: ethers.computeAddress(secpPubkey),
+          validatorId: valId.toString(),
           name: name ?? `Validator ${valId.toString()}`,
           commission: Number.parseFloat(ethers.formatUnits(commission, COMMISSION_DECIMALS)),
           // StakingValidatorItem.tokens is a string (see LIVE-31520); the bigint
@@ -192,6 +203,35 @@ const fetchValidatorDetails = async (
   }
 
   return items;
+};
+
+export const getValidatorAddressById = async (
+  currencyId: string,
+  valId: bigint,
+): Promise<string | null> => {
+  const ctx = resolveContext(currencyId);
+  if (!ctx) return null;
+
+  try {
+    return await withApi(
+      ctx.currency,
+      async provider => {
+        const iface = new ethers.Interface(ctx.abi);
+        const decoded = await callGetValidator(provider, iface, ctx.contractAddress, valId);
+        if (!decoded) return null;
+        const [, , , , , , , , , , secpPubkey] = decoded;
+        return ethers.computeAddress(secpPubkey);
+      },
+      ctx.node,
+    );
+  } catch (error) {
+    log("coin-evm/staking", "getValidatorAddressById: getValidator call failed", {
+      currencyId,
+      valId: valId.toString(),
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return null;
+  }
 };
 
 const fetchPage = async (

@@ -24,13 +24,6 @@ jest.mock("@ledgerhq/live-common/bridge/index", () => {
   };
 });
 
-jest.mock("@ledgerhq/live-common/account/index", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/account/index"),
-  getMainAccount: (_account: unknown, parentAccount: unknown) => parentAccount ?? _account,
-  findSubAccountById: (account: { subAccounts?: { id: string }[] }, id: string | null) =>
-    account.subAccounts?.find(sub => sub.id === id) ?? null,
-}));
-
 const usdcContractAddress = "0xceba9300f2b948710d2653dd7b07f33a8b32118c";
 const unknownContractAddress = "0x0000000000000000000000000000000000000001";
 

@@ -19,6 +19,13 @@ import * as MobileFamilies from "~/families";
 import { NavigatorName, ScreenName } from "~/const";
 import { createNotificationsPromptFeatureFlags } from "./testUtils";
 
+// live-common is ESM-only, so its named exports are read-only; mocking the module
+// (spreading the real implementation) lets the useBaker spy below redefine it.
+jest.mock("@ledgerhq/live-common/families/tezos/react", () => ({
+  __esModule: true,
+  ...jest.requireActual("@ledgerhq/live-common/families/tezos/react"),
+}));
+
 // Lightweight per-flow wiring guard. Where the old NotificationsPromptStakeFlow
 // suite booted GlobalDrawers + the real opt-in drawer for every case (~147ms/case),
 // this renders each family flow inside only a spied NotificationsPrompt context and

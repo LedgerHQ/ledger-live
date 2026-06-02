@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { track } from "~/renderer/analytics/segment";
 import { ASSET_DETAIL_TRACKING_PAGE_NAME } from "LLD/features/AssetDetail/constants";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
+import { resolveMaxSupplyDisplay } from "@ledgerhq/asset-detail";
 import type { MarketDataSectionCurrencyData } from "../../hooks/useMarketDataSectionCurrencyData";
 import type { MarketStatRow } from "../../types";
 
@@ -30,11 +31,11 @@ export function useMarketStatsViewModel(currencyData: MarketDataSectionCurrencyD
       ticker: data?.ticker,
     });
 
-    const maxSupply = counterValueFormatter({
-      value: data?.maxSupply,
-      locale,
-      shorten: true,
-      ticker: data?.ticker,
+    const maxSupply = resolveMaxSupplyDisplay({
+      maxSupply: data?.maxSupply,
+      circulatingSupply: data?.circulatingSupply,
+      formatValue: value =>
+        counterValueFormatter({ value, locale, shorten: true, ticker: data?.ticker }),
     });
 
     const volume24h = counterValueFormatter({

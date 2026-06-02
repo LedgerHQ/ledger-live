@@ -161,4 +161,27 @@ describe("useLineChartViewModel", () => {
 
     expect(result.current.points).toEqual(points);
   });
+
+  it("defaults pointTooltipsOnly to false and exposes an empty pointTooltips map", () => {
+    const { result } = renderHook(() => useLineChartViewModel(buildProps()));
+
+    expect(result.current.pointTooltipsOnly).toBe(false);
+    expect(result.current.showScrubberBeacons).toBe(true);
+    expect(result.current.pointTooltips.size).toBe(0);
+  });
+
+  it("derives pointTooltips keyed by index from markers that carry a tooltip", () => {
+    const tooltip = { rows: [{ label: "Received", value: "$5" }] };
+    const points = [
+      { index: 0, value: 1, color: "muted" as const },
+      { index: 2, value: 3, color: "success" as const, tooltip },
+    ];
+    const { result } = renderHook(() =>
+      useLineChartViewModel(buildProps({ points, pointTooltipsOnly: true })),
+    );
+
+    expect(result.current.pointTooltipsOnly).toBe(true);
+    expect(result.current.pointTooltips.size).toBe(1);
+    expect(result.current.pointTooltips.get(2)).toEqual(tooltip);
+  });
 });

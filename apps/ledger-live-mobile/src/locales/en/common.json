@@ -9113,16 +9113,25 @@
       "marketPrice": "Market price",
       "timeframeSelector": "Timeframe",
       "timeLabel": {
-        "1d": "1 day",
+        "1d": "24 hours",
         "1w": "1 week",
         "1m": "1 month",
-        "1y": "1 year"
+        "6m": "6 months",
+        "1y": "1 year",
+        "all": "All time"
       },
       "range": {
         "1d": "1D",
         "1w": "1W",
         "1m": "1M",
-        "1y": "1Y"
+        "6m": "6M",
+        "1y": "1Y",
+        "all": "ALL"
+      },
+      "chart": {
+        "received": "Received",
+        "sent": "Sent",
+        "transactionsCount": "{{count}} transactions"
       }
     },
     "addresses": {
@@ -9579,11 +9588,11 @@
     "title": "Mood index",
     "description": "Shows overall market sentiment from 0 to 100, based on trends and activity. Use it to understand how the market is behaving: lower values indicate fear, higher values indicate greed.",
     "levels": {
+      "fearPlus": "Fear+",
       "fear": "Fear",
-      "cautious": "Cautious",
       "neutral": "Neutral",
-      "optimistic": "Optimistic",
-      "greedy": "Greedy"
+      "greed": "Greed",
+      "greedPlus": "Greed+"
     },
     "tileTitle": "Mood"
   },

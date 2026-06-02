@@ -94,4 +94,14 @@ describe("LineChart", () => {
 
     expect(screen.getByTestId("line-chart")).toBeOnTheScreen();
   });
+
+  it("renders with point-only tooltips and a tooltip-carrying marker without crashing", () => {
+    renderLineChart({
+      pointTooltipsOnly: true,
+      showScrubberBeacons: false,
+      points: [{ index: 2, value: 5, color: "success", hideLabel: true, tooltip: { rows: [] } }],
+    });
+
+    expect(screen.getByTestId("line-chart")).toBeOnTheScreen();
+  });
 });

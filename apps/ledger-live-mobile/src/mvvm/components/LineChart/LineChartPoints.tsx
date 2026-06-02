@@ -19,10 +19,14 @@ export function LineChartPoints({ points, formatValue }: LineChartPointsProps) {
     <>
       {points.map(marker => (
         <Point
-          key={`${marker.index}-${marker.value}-${marker.labelPosition ?? "top"}`}
+          // `hidePoint`/`color` discriminate markers that share an index, value and
+          // label position (e.g. a transaction dot landing on a min/max marker).
+          key={`${marker.index}-${marker.value}-${marker.labelPosition ?? "top"}-${
+            marker.hidePoint ? "h" : "v"
+          }-${marker.color ?? ""}`}
           dataX={marker.index}
           dataY={marker.value}
-          label={marker.label ?? formatValue(marker.value)}
+          label={marker.hideLabel ? undefined : marker.label ?? formatValue(marker.value)}
           labelPosition={marker.labelPosition ?? "top"}
           hidePoint={marker.hidePoint}
           size={LINE_CHART_POINT_SIZE}

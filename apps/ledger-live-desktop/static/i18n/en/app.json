@@ -8651,15 +8651,16 @@
   },
   "fearAndGreed": {
     "levels": {
+      "fearPlus": "Fear+",
       "fear": "Fear",
-      "cautious": "Cautious",
       "neutral": "Neutral",
-      "optimistic": "Optimistic",
-      "greedy": "Greedy"
+      "greed": "Greed",
+      "greedPlus": "Greed+"
     },
     "dialog": {
       "title": "Mood index",
-      "content": "Shows overall market sentiment from 0 to 100, based on trends and activity. Use it to understand how the market is behaving: lower values indicate fear, higher values indicate greed.",
+      "content": "Shows overall market sentiment from 0 to 100, based notably on volatility, market momentum and social trends. Lower values indicate fear, higher values indicate greed.",
+      "disclaimer": "Data is sourced from CoinMarketCap's Fear and Greed Index and provided for informational purposes only.",
       "cta": "Got it"
     }
   },
@@ -9084,6 +9085,7 @@
     "marketRank": "Market rank",
     "tradingVolume24h": "24h trading volume",
     "tradingVolume24hTooltip": "The total amount traded in the last 24 hours.",
+    "marketStatsDisclaimer": "Market stats sourced from CoinGecko",
     "day": "1 day",
     "week": "1 week",
     "month": "1 month",
@@ -9110,14 +9112,14 @@
     "asset": {
       "entry": {
         "title": "Average entry price",
-        "tooltip": "The average price you paid for this asset through Ledger Wallet, including everything you’ve bought or received from other wallets. This is used to track your profit or loss. "
+        "tooltip": "The average price you paid for this asset through Ledger Wallet, including everything you’ve bought or received from other wallets. This is used to track your profit or loss."
       },
       "return": {
         "title": "Unrealised return"
       },
       "dialog": {
         "title": "Profit and loss",
-        "description": "Your asset performance broken down into estimated unrealised and realised returns.",
+        "description": "A summary of how this asset has performed in your portfolio.",
         "totalReturn": {
           "title": "Total return",
           "description": "The sum of estimated unrealised and realised returns."
@@ -9128,7 +9130,7 @@
         },
         "realisedReturn": {
           "title": "Realised return",
-          "description": "Profit or loss estimated from previous sale, send, or swap."
+          "description": "Profit or loss estimated from previous sale, send or swap."
         }
       }
     },

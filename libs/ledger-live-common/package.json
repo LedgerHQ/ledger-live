@@ -10,31 +10,26 @@
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
   "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledger-live-common",
-  "main": "lib/index.js",
+  "main": "lib-es/index.js",
   "module": "lib-es/index.js",
-  "types": "lib/index.d.ts",
+  "types": "lib-es/index.d.ts",
   "typesVersions": {
     "*": {
       "*.json": [
         "*.json"
       ],
       "*": [
-        "lib/*"
-      ],
-      "lib/*": [
-        "lib/*"
+        "lib-es/*"
       ],
       "lib-es/*": [
         "lib-es/*"
       ],
       "test-helpers/*": [
-        "lib/test-helpers/*"
+        "lib-es/test-helpers/*"
       ]
     }
   },
   "exports": {
-    "./lib/*": "./lib/*.js",
-    "./lib/*.js": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
     "./lib-es/*.js": "./lib-es/*.js",
     "./*": {
@@ -42,7 +37,6 @@
         "./src/*.ts",
         "./src/*.tsx"
       ],
-      "require": "./lib/*.js",
       "default": "./lib-es/*.js"
     },
     "./*.js": {
@@ -50,93 +44,76 @@
         "./src/*.ts",
         "./src/*.tsx"
       ],
-      "require": "./lib/*.js",
       "default": "./lib-es/*.js"
     },
     ".": {
-      "require": "./lib/index.js",
       "default": "./lib-es/index.js"
     },
     "./genericAwarenessModal": {
       "@ledgerhq/source": "./src/genericAwarenessModal/index.ts",
-      "require": "./lib/genericAwarenessModal/index.js",
       "default": "./lib-es/genericAwarenessModal/index.js"
     },
     "./currencies/*": {
       "@ledgerhq/source": "./src/currencies/*.ts",
-      "require": "./lib/currencies/*.js",
       "default": "./lib-es/currencies/*.js"
     },
     "./device-action/*": {
       "@ledgerhq/source": "./src/device-action/*.ts",
-      "require": "./lib/device-action/*.js",
       "default": "./lib-es/device-action/*.js"
     },
     "./hooks": {
-      "require": "./lib/hooks/index.js",
       "default": "./lib-es/hooks/index.js"
     },
     "./e2e": {
       "@ledgerhq/source": "./src/e2e/index.ts",
-      "require": "./lib/e2e/index.js",
       "default": "./lib-es/e2e/index.js"
     },
     "./featureFlags": {
       "@ledgerhq/source": "./src/featureFlags/*.ts",
-      "require": "./lib/featureFlags/*.js",
       "default": "./lib-es/featureFlags/*.js"
     },
     "./bridge/descriptor/registry": {
       "@ledgerhq/source": "./src/bridge/descriptor/registry.ts",
-      "require": "./lib/bridge/descriptor/registry.js",
       "default": "./lib-es/bridge/descriptor/registry.js"
     },
     "./bridge/descriptor/types": {
       "@ledgerhq/source": "./src/bridge/descriptor/types.ts",
-      "require": "./lib/bridge/descriptor/types.js",
       "default": "./lib-es/bridge/descriptor/types.js"
     },
     "./bridge/descriptor/send/features": {
       "@ledgerhq/source": "./src/bridge/descriptor/send/features.ts",
-      "require": "./lib/bridge/descriptor/send/features.js",
       "default": "./lib-es/bridge/descriptor/send/features.js"
     },
     "./bridge/descriptor/send/memo": {
       "@ledgerhq/source": "./src/bridge/descriptor/send/memo.ts",
-      "require": "./lib/bridge/descriptor/send/memo.js",
       "default": "./lib-es/bridge/descriptor/send/memo.js"
     },
     "./test-helpers/cryptoAssetsStore": {
       "@ledgerhq/source": "./src/test-helpers/cryptoAssetsStore.ts",
-      "types": "./lib/test-helpers/cryptoAssetsStore.d.ts",
-      "require": "./lib/test-helpers/cryptoAssetsStore.js",
+      "types": "./lib-es/test-helpers/cryptoAssetsStore.d.ts",
       "default": "./lib-es/test-helpers/cryptoAssetsStore.js"
     },
     "./test-helpers/*": {
       "@ledgerhq/source": "./src/test-helpers/*.ts",
-      "types": "./lib/test-helpers/*.d.ts",
-      "require": "./lib/test-helpers/*.js",
+      "types": "./lib-es/test-helpers/*.d.ts",
       "default": "./lib-es/test-helpers/*.js"
     },
     "./modularDrawer/__mocks__/*": {
       "@ledgerhq/source": "./src/modularDrawer/__mocks__/*.ts",
-      "types": "./lib/modularDrawer/__mocks__/*.d.ts",
-      "require": "./lib/modularDrawer/__mocks__/*.js",
+      "types": "./lib-es/modularDrawer/__mocks__/*.d.ts",
       "default": "./lib-es/modularDrawer/__mocks__/*.js"
     },
     "./cmc-client/__mocks__/*": {
       "@ledgerhq/source": "./src/cmc-client/__mocks__/*.ts",
-      "types": "./lib/cmc-client/__mocks__/*.d.ts",
-      "require": "./lib/cmc-client/__mocks__/*.js",
+      "types": "./lib-es/cmc-client/__mocks__/*.d.ts",
       "default": "./lib-es/cmc-client/__mocks__/*.js"
     },
     "./package.json": "./package.json"
   },
   "license": "Apache-2.0",
   "scripts": {
-    "build": "zx ./scripts/build-ts.mjs",
-    "watch": "zx ./scripts/watch-ts.mjs",
-    "watch:es": "zx ./scripts/watch-ts-es.mjs",
+    "build": "rimraf lib lib-es && tsc --project src/tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "watch": "tsc --project src/tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es --watch",
     "updateAppSupportsQuitApp": "node scripts/updateAppSupportsQuitApp.js",
     "prettier": "prettier --write 'src/**/*.?s'",
     "lint": "oxlint src",
@@ -159,7 +136,6 @@
     "coverage": "env-cmd -f .ci.unit.env pnpm jest --coverage --ci"
   },
   "files": [
-    "lib",
     "lib-es",
     "src"
   ],

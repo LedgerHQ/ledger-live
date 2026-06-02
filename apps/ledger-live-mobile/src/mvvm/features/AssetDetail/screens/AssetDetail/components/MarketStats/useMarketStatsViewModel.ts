@@ -3,6 +3,7 @@ import type { AssetDetailCurrencyProps } from "LLM/features/AssetDetail/types";
 import { useTranslation, useLocale } from "~/context/Locale";
 import { track } from "~/analytics";
 import { counterValueFormatter } from "LLM/features/Market/utils";
+import { resolveMaxSupplyDisplay } from "@ledgerhq/asset-detail";
 import { useAssetMarketData } from "../../hooks/useAssetMarketData";
 
 type StatRow = {
@@ -83,15 +84,12 @@ export function useMarketStatsViewModel({
       {
         key: "max_supply",
         label: t("assetDetail.marketStats.maxSupply"),
-        value: maxSupply
-          ? counterValueFormatter({
-              value: maxSupply,
-              shorten: true,
-              locale,
-              t,
-              ticker: supplyTicker,
-            })
-          : "-",
+        value: resolveMaxSupplyDisplay({
+          maxSupply,
+          circulatingSupply,
+          formatValue: value =>
+            counterValueFormatter({ value, shorten: true, locale, t, ticker: supplyTicker }),
+        }),
         tooltip: {
           title: t("assetDetail.marketStats.maxSupply"),
           content: t("assetDetail.marketStats.maxSupplyTooltip"),

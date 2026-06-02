@@ -9,6 +9,11 @@ export type LineChartColor = "success" | "error" | "muted";
 
 export type LineChartPointLabelPosition = "top" | "bottom";
 
+export type LineChartPointTooltip = Readonly<{
+  title?: string;
+  rows: ReadonlyArray<{ label: string; value: string }>;
+}>;
+
 export type LineChartPointMarker = Readonly<{
   index: number;
   value: number;
@@ -16,6 +21,8 @@ export type LineChartPointMarker = Readonly<{
   color?: LineChartColor | (string & {});
   labelPosition?: LineChartPointLabelPosition;
   hidePoint?: boolean;
+  hideLabel?: boolean;
+  tooltip?: LineChartPointTooltip;
 }>;
 
 export type LineChartValueFormatter = (value: number) => string;
@@ -53,6 +60,14 @@ export type LineChartProps<TRange extends string = string> = Readonly<{
   enableScrubber?: boolean;
   /** Shows the floating tooltip while scrubbing. @default true */
   showScrubberTooltip?: boolean;
+  /** Shows the beacon dots on the scrubbed data point. @default true */
+  showScrubberBeacons?: boolean;
+  /**
+   * Restricts the scrubber tooltip to point markers that carry a `tooltip`: it
+   * appears only when the scrubbed index resolves to such a marker, and the
+   * standard per-series value tooltip is suppressed. @default false
+   */
+  pointTooltipsOnly?: boolean;
   /** Formats numeric values for point labels and the scrubber tooltip. @default String */
   formatValue?: LineChartValueFormatter;
   /** Returns the tooltip title for the given data index (e.g. a formatted date). */

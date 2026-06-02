@@ -71,6 +71,7 @@ export function AssetDetailView({
           <HiddenAssetBanner show={coinOptions.isHidden} onShowAsset={coinOptions.onShowAsset} />
           <BalanceGraph
             currency={currency}
+            distributionItem={distributionItem}
             marketApiId={marketApiId}
             knownLedgerIds={knownLedgerIds}
             knownMarketId={knownMarketId}

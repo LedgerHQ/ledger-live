@@ -8,6 +8,7 @@ import { TrendSection } from "LLM/components/TrendSection";
 import { LineChart } from "LLM/components/LineChart";
 import type {
   LineChartColor,
+  LineChartPointMarker,
   LineChartScrubberPositionChange,
   LineChartSeries,
   LineChartTooltipTitle,
@@ -18,6 +19,9 @@ import type {
 import { ASSET_DETAIL_TEST_IDS } from "LLM/features/AssetDetail/testIds";
 import type { RangeKey } from "../../utils/rangeMapping";
 
+/** Figma asset-detail chart height (343 × 208). Width follows the screen inset. */
+export const ASSET_DETAIL_CHART_HEIGHT = 208;
+
 type Range = Readonly<{ label: string; value: RangeKey }>;
 
 type Props = Readonly<{
@@ -26,7 +30,7 @@ type Props = Readonly<{
   hasMarketData: boolean;
   priceChangePercentage: number;
   formattedPriceChange: string | undefined;
-  rangeTimeLabel: string;
+  timeLabel: string | undefined;
   ranges: Range[];
   selectedRange: RangeKey;
   onRangeChange: (value: RangeKey) => void;
@@ -36,11 +40,12 @@ type Props = Readonly<{
   isLoading: boolean;
   series: LineChartSeries[];
   chartColor: LineChartColor;
+  points: LineChartPointMarker[];
+  pointTooltipsOnly: boolean;
   formatValue: LineChartValueFormatter;
   tooltipTitle: LineChartTooltipTitle;
   onScrubberPositionChange: LineChartScrubberPositionChange;
   isScrubbing: boolean;
-  scrubbedDateLabel: string | undefined;
   showXAxis: boolean;
   showYAxis: boolean;
   xAxis: LineChartXAxisConfig;
@@ -55,6 +60,8 @@ type ChartProps = Readonly<{
   isRangeValue: (value: string) => value is RangeKey;
   chartColor: LineChartColor;
   isLoading: boolean;
+  points: LineChartPointMarker[];
+  pointTooltipsOnly: boolean;
   formatValue: LineChartValueFormatter;
   tooltipTitle: LineChartTooltipTitle;
   onScrubberPositionChange: LineChartScrubberPositionChange;
@@ -78,6 +85,8 @@ const BalanceGraphChart = React.memo(function BalanceGraphChart({
   isRangeValue,
   chartColor,
   isLoading,
+  points,
+  pointTooltipsOnly,
   formatValue,
   tooltipTitle,
   onScrubberPositionChange,
@@ -96,17 +105,20 @@ const BalanceGraphChart = React.memo(function BalanceGraphChart({
       isRangeValue={isRangeValue}
       color={chartColor}
       isLoading={isLoading}
+      points={points}
       formatValue={formatValue}
       tooltipTitle={tooltipTitle}
       onScrubberPositionChange={onScrubberPositionChange}
-      showScrubberTooltip={false}
+      showScrubberTooltip
+      showScrubberBeacons={false}
+      pointTooltipsOnly={pointTooltipsOnly}
       showXAxis={showXAxis}
       showYAxis={showYAxis}
       xAxis={xAxis}
       yAxis={yAxis}
       accessibilityLabel={accessibilityLabel}
       testID={ASSET_DETAIL_TEST_IDS.chart}
-      height={275}
+      height={ASSET_DETAIL_CHART_HEIGHT}
     />
   );
 });
@@ -117,7 +129,7 @@ export function BalanceGraphView({
   hasMarketData,
   priceChangePercentage,
   formattedPriceChange,
-  rangeTimeLabel,
+  timeLabel,
   ranges,
   selectedRange,
   onRangeChange,
@@ -127,11 +139,12 @@ export function BalanceGraphView({
   isLoading,
   series,
   chartColor,
+  points,
+  pointTooltipsOnly,
   formatValue,
   tooltipTitle,
   onScrubberPositionChange,
   isScrubbing,
-  scrubbedDateLabel,
   showXAxis,
   showYAxis,
   xAxis,
@@ -158,20 +171,15 @@ export function BalanceGraphView({
                 value={price}
                 formatter={priceFormatter}
                 animate={!isScrubbing}
+                size="md"
                 testID={ASSET_DETAIL_TEST_IDS.marketPrice}
               />
 
-              {isScrubbing ? (
-                <Text typography="body2" lx={{ color: "muted" }}>
-                  {scrubbedDateLabel}
-                </Text>
-              ) : (
-                <TrendSection
-                  percentage={priceChangePercentage}
-                  formattedChange={formattedPriceChange}
-                  timeLabel={rangeTimeLabel}
-                />
-              )}
+              <TrendSection
+                percentage={priceChangePercentage}
+                formattedChange={formattedPriceChange}
+                timeLabel={timeLabel}
+              />
             </>
           )}
         </Box>
@@ -185,6 +193,8 @@ export function BalanceGraphView({
         isRangeValue={isRangeValue}
         chartColor={chartColor}
         isLoading={isLoading}
+        points={points}
+        pointTooltipsOnly={pointTooltipsOnly}
         formatValue={formatValue}
         tooltipTitle={tooltipTitle}
         onScrubberPositionChange={onScrubberPositionChange}
@@ -214,7 +224,7 @@ export function BalanceGraphView({
 }
 
 const containerStyle: LumenViewStyle = {
-  gap: "s16",
+  gap: "s24",
 };
 
 const headerStyle: LumenViewStyle = {

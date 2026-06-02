@@ -16,6 +16,7 @@ type DisplayCard = TrendCard & {
 type InfoCard = {
   type: "info";
   tooltipContent: string;
+  onTooltipOpenChange?: (open: boolean) => void;
 };
 
 type PnLCardProps = {

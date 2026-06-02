@@ -142,6 +142,34 @@ describe("useMarketStatsViewModel", () => {
     expect(result.current.rows.find(r => r.key === "circulating_supply")?.value).toMatch(/BTC$/);
     expect(result.current.rows.find(r => r.key === "max_supply")?.value).toMatch(/BTC$/);
   });
+
+  it("shows the ∞ symbol for max supply when the coin is uncapped but has market data", () => {
+    const { result } = renderHook(
+      () =>
+        useMarketStatsViewModel(
+          buildCurrencyData({
+            data: createMockMarketCurrencyData({ maxSupply: 0, circulatingSupply: 19_000_000 }),
+          }),
+        ),
+      hookOptions(),
+    );
+
+    expect(result.current.rows.find(r => r.key === "max_supply")?.value).toBe("∞");
+  });
+
+  it("shows a hyphen for max supply when no supply data is available", () => {
+    const { result } = renderHook(
+      () =>
+        useMarketStatsViewModel(
+          buildCurrencyData({
+            data: createMockMarketCurrencyData({ maxSupply: 0, circulatingSupply: 0 }),
+          }),
+        ),
+      hookOptions(),
+    );
+
+    expect(result.current.rows.find(r => r.key === "max_supply")?.value).toBe("-");
+  });
 });
 
 describe("usePricePerformanceViewModel", () => {

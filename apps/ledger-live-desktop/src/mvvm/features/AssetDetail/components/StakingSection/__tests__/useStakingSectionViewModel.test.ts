@@ -63,7 +63,7 @@ describe("useStakingSectionViewModel", () => {
 
     expect(mockStartStakeFlow).toHaveBeenCalledWith({
       currencies: ["bitcoin"],
-      source: "Asset detail",
+      source: "Asset",
     });
   });
 
@@ -236,12 +236,12 @@ describe("useStakingSectionViewModel", () => {
 
     expect(mockStartStakeFlow).toHaveBeenCalledWith({
       currencies: ["tron"],
-      source: "Asset detail",
+      source: "Asset",
     });
     expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "earn_banner",
       currency: "tron",
-      page: "Asset detail",
+      page: "Asset",
     });
   });
 
@@ -258,12 +258,12 @@ describe("useStakingSectionViewModel", () => {
 
     expect(mockStartStakeFlow).toHaveBeenCalledWith({
       currencies: ["bitcoin"],
-      source: "Asset detail",
+      source: "Asset",
     });
     expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "earn_deposit",
       currency: "bitcoin",
-      page: "Asset detail",
+      page: "Asset",
     });
   });
 });

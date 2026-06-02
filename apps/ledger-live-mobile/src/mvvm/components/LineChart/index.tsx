@@ -14,6 +14,7 @@ export type {
   LineChartRangeOption,
   LineChartSeries,
   LineChartPointMarker,
+  LineChartPointTooltip,
   LineChartPointLabelPosition,
   LineChartValueFormatter,
   LineChartTooltipTitle,

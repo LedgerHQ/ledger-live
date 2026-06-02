@@ -53,11 +53,19 @@ const CHART_DATA_BY_RANGE: Record<RangeKey, Array<[number, number]>> = {
     [2, 210],
   ],
   "1m": [[1, 300]],
+  "6m": [
+    [1, 350],
+    [2, 385],
+  ],
   "1y": [
     [1, 400],
     [2, 410],
     [3, 420],
     [4, 430],
+  ],
+  all: [
+    [1, 100],
+    [2, 220],
   ],
 };
 
@@ -141,7 +149,7 @@ describe("useBalanceGraphViewModel", () => {
 
       expect(result.current.price).toBe(0);
       expect(result.current.hasMarketData).toBe(false);
-      expect(result.current.priceChangePercentage).toBe(0);
+      expect(result.current.priceChangePercentage).toBeNaN();
     });
 
     it("uses the correct priceChangePercentage key after range change", () => {
@@ -350,11 +358,11 @@ describe("useBalanceGraphViewModel", () => {
   });
 
   describe("ranges", () => {
-    it("exposes the full range list in chronological order (1d → 1y)", () => {
+    it("exposes the full range list in chronological order (1d → all)", () => {
       const { result } = renderVM();
 
       const values = result.current.ranges.map(r => r.value);
-      expect(values).toEqual(["1d", "1w", "1m", "1y"]);
+      expect(values).toEqual(["1d", "1w", "1m", "6m", "1y", "all"]);
     });
 
     it("exposes a runtime guard that accepts only known range keys", () => {
@@ -446,10 +454,10 @@ describe("useBalanceGraphViewModel", () => {
       expect(result.current.tooltipTitle(99)).toBeUndefined();
     });
 
-    it("renders the x-axis and keeps the y-axis hidden", () => {
+    it("hides the x-axis and keeps the y-axis hidden", () => {
       const { result } = renderVM();
 
-      expect(result.current.showXAxis).toBe(true);
+      expect(result.current.showXAxis).toBe(false);
       expect(result.current.showYAxis).toBe(false);
     });
 
@@ -474,7 +482,7 @@ describe("useBalanceGraphViewModel", () => {
   });
 
   describe("scrubbing", () => {
-    it("drives the price and date from the hovered point and flags isScrubbing", () => {
+    it("drives the price, date and range-start variation from the hovered point", () => {
       const { result } = renderVM();
 
       // 1d series data is [100, 110, 120] with timestamps [1, 2, 3].
@@ -482,12 +490,17 @@ describe("useBalanceGraphViewModel", () => {
 
       expect(result.current.isScrubbing).toBe(true);
       expect(result.current.price).toBe(110);
-      expect(typeof result.current.scrubbedDateLabel).toBe("string");
-      expect(result.current.scrubbedDateLabel).not.toBe("");
+      // Variation from the range start (100) to the hovered point (110) = +10%.
+      expect(result.current.priceChangePercentage).toBeCloseTo(10);
+      expect(result.current.formattedPriceChange).toMatch(/^\+/);
+      expect(typeof result.current.timeLabel).toBe("string");
+      expect(result.current.timeLabel).not.toBe("");
     });
 
-    it("reverts to the live price and clears the date when scrubbing ends", () => {
+    it("reverts to the live price and range label when scrubbing ends", () => {
       const { result } = renderVM();
+
+      const rangeLabel = result.current.timeLabel;
 
       act(() => result.current.onScrubberPositionChange(2));
       expect(result.current.price).toBe(120);
@@ -496,7 +509,7 @@ describe("useBalanceGraphViewModel", () => {
 
       expect(result.current.isScrubbing).toBe(false);
       expect(result.current.price).toBe(50000);
-      expect(result.current.scrubbedDateLabel).toBeUndefined();
+      expect(result.current.timeLabel).toBe(rangeLabel);
     });
 
     it("ignores an out-of-range index (no scrub)", () => {
@@ -528,7 +541,7 @@ describe("useBalanceGraphViewModel", () => {
 
       expect(result.current.isScrubbing).toBe(true);
       expect(result.current.price).toBe(0);
-      expect(result.current.scrubbedDateLabel).toBeDefined();
+      expect(result.current.timeLabel).toBeDefined();
     });
 
     it("clears the selection when the range changes mid-scrub", () => {
@@ -541,6 +554,24 @@ describe("useBalanceGraphViewModel", () => {
 
       expect(result.current.isScrubbing).toBe(false);
       expect(result.current.price).toBe(50000);
+    });
+  });
+
+  describe("transaction points", () => {
+    it("always enables point-only tooltips", () => {
+      const { result } = renderVM();
+
+      expect(result.current.pointTooltipsOnly).toBe(true);
+    });
+
+    it("exposes the extrema markers when there are no scoped operations", () => {
+      const { result } = renderVM();
+
+      // 1d series data is [100, 110, 120] → min at index 0, max at index 2.
+      expect(result.current.points).toEqual([
+        { index: 2, value: 120, color: "success", labelPosition: "top", hidePoint: true },
+        { index: 0, value: 100, color: "error", labelPosition: "bottom", hidePoint: true },
+      ]);
     });
   });
 

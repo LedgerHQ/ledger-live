@@ -5,6 +5,7 @@ import monadAbi from "../../abis/monad.abi.json";
 import { getCoinConfig } from "../../config";
 import { withApi } from "../../network/node/rpc.common";
 import { clearValidatorsCache, getValidators } from "./index";
+import { getValidatorAddressById } from "./monad";
 
 jest.mock("../../config", () => ({
   __esModule: true,
@@ -123,6 +124,7 @@ describe("staking/validators/monad", () => {
       items: [
         {
           validatorAddress: ethers.computeAddress("0x036e44a092493800e427b2b08d3427d804348b1368ecd0a6af6510ae40ce507187"),
+          validatorId: "1",
           name: "Validator 1",
           commission: 0.1,
           tokens: "1000",
@@ -131,6 +133,7 @@ describe("staking/validators/monad", () => {
         },
         {
           validatorAddress: ethers.computeAddress("0x0316e0861acf92dc4c0e357f73fe07263a87b65513a4b73750ab9194f9a39a6a54"),
+          validatorId: "2",
           name: "Validator 2",
           commission: 0.05,
           tokens: "500",
@@ -315,6 +318,7 @@ describe("staking/validators/monad", () => {
         items: [
           {
             validatorAddress: ethers.computeAddress("0x036e44a092493800e427b2b08d3427d804348b1368ecd0a6af6510ae40ce507187"),
+            validatorId: "1",
             name: "Validator 1",
             commission: 0,
             tokens: "1",
@@ -353,6 +357,40 @@ describe("staking/validators/monad", () => {
       await getValidators("monad");
       await getValidators("monad", "100");
       expect(callMock.mock.calls.length).toBeGreaterThan(callsBeforeClear);
+    });
+  });
+
+  describe("getValidatorAddressById", () => {
+    it("resolves a validator id to its computed display address", async () => {
+      setupRpc(
+        routeByName({
+          getValidator: () =>
+            encodeGetValidator({
+              stake: 0n,
+              commission: 0n,
+              secpPubkey:
+                "0x036e44a092493800e427b2b08d3427d804348b1368ecd0a6af6510ae40ce507187",
+            }),
+        }),
+      );
+
+      expect(await getValidatorAddressById("monad", 7n)).toEqual(
+        ethers.computeAddress("0x036e44a092493800e427b2b08d3427d804348b1368ecd0a6af6510ae40ce507187"),
+      );
+    });
+
+    it("returns null when the node config is not external", async () => {
+      mockedGetCoinConfig.mockReturnValue({
+        info: { node: { type: "ledger" } },
+      } as unknown as ReturnType<typeof getCoinConfig>);
+
+      expect(await getValidatorAddressById("monad", 7n)).toBeNull();
+    });
+
+    it("returns null when the getValidator call fails", async () => {
+      setupRpc(routeByName({ getValidator: () => new Error("boom") }));
+
+      expect(await getValidatorAddressById("monad", 7n)).toBeNull();
     });
   });
 });

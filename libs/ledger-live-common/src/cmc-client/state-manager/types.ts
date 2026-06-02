@@ -34,7 +34,7 @@ export type FearAndGreedStatus = z.infer<typeof FearAndGreedStatusSchema>;
 export type FearAndGreedResponse = z.infer<typeof FearAndGreedResponseSchema>;
 export type FearAndGreedIndex = z.infer<typeof FearAndGreedIndexSchema>;
 
-export type FearAndGreedLevel = "fear" | "cautious" | "neutral" | "optimistic" | "greedy";
+export type FearAndGreedLevel = "fearPlus" | "fear" | "neutral" | "greed" | "greedPlus";
 
 export enum AltcoinSeasonIndexTags {
   Latest = "AltcoinSeasonIndexLatest",

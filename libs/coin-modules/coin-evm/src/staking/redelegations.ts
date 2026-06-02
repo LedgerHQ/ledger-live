@@ -7,6 +7,7 @@ import type { Operation, StakingRedelegation } from "@ledgerhq/types-live";
 import type { RedelegationStrategy } from "../types/staking";
 import { STAKING_CONTRACTS } from "./contracts";
 import { getStakingABI } from "./abis";
+import { getValidatorAddressById } from "./validators/monad";
 import { getCoinConfig } from "../config";
 import { withApi } from "../network/node/rpc.common";
 import { isExternalNodeConfig } from "../network/node/types";
@@ -285,8 +286,16 @@ export async function resolveStakingValidator(
   try {
     const iface = new ethers.Interface(abi);
     const d = iface.decodeFunctionData(functionName, payload);
-    const [validatorAddress, rawAmount] = d;
-    if (typeof validatorAddress !== "string") return null;
+    const [first, rawAmount] = d;
+
+    const validatorAddress =
+      typeof first === "string"
+        ? first
+        : typeof first === "bigint"
+          ? await getValidatorAddressById(currency.id, first)
+          : null;
+    if (!validatorAddress) return null;
+
     const scale = config.calldataAmountScale ?? 1n;
     const amount =
       rawAmount !== undefined

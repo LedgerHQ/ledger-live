@@ -3,6 +3,7 @@ import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { DistributionItem } from "@ledgerhq/types-live";
 import { PnLSection } from "../PnL";
 import { StakingSection } from "../StakingSection";
+import { METRICS_ROW_CLASS_NAME } from "./constants";
 import { MetricsRowSection as MetricsRowSectionComponent } from "./MetricsRowSection";
 import { buildStakeableDistributionItem } from "../../utils/buildStakeableDistributionItem";
 import { resolveAssetDetailSectionLoading } from "../../utils/resolveAssetDetailSectionLoading";
@@ -34,7 +35,7 @@ export function MetricsRowSection({
     if (!sectionLoading) return null;
 
     return (
-      <div className="flex items-stretch gap-12">
+      <div className={METRICS_ROW_CLASS_NAME}>
         <PnLSection isLoading />
         <StakingSection isLoading />
       </div>

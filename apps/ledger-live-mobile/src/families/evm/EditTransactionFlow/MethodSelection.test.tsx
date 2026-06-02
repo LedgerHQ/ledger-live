@@ -16,14 +16,6 @@ jest.mock("@ledgerhq/ledger-wallet-framework/operation", () => ({
   isOldestPendingOperation: jest.fn().mockReturnValue(true),
 }));
 
-jest.mock("@ledgerhq/live-common/account/index", () => {
-  const actual = jest.requireActual("@ledgerhq/live-common/account/index");
-  return {
-    ...actual,
-    getMainAccount: jest.fn(),
-  };
-});
-
 jest.mock("@ledgerhq/live-common/bridge/index", () => {
   const bridge = { updateTransaction: jest.fn() };
   const settledPromise = Object.assign(Promise.resolve(bridge), {
@@ -74,8 +66,6 @@ jest.mock("~/components/EditTransaction/MethodSelectionList", () => {
   };
 });
 
-const mockedGetMainAccount = jest.requireMock("@ledgerhq/live-common/account/index")
-  .getMainAccount as jest.Mock;
 const mockedUseBridgeTransaction = jest.requireMock(
   "@ledgerhq/live-common/bridge/useBridgeTransaction",
 ).default as jest.Mock;
@@ -83,14 +73,15 @@ const mockedUseBridgeTransaction = jest.requireMock(
 describe("EVM MethodSelection", () => {
   it("navigates to already validated error when tx gets confirmed", async () => {
     const navigate = jest.fn();
-    const account = { id: "account-id" };
+    const account = {
+      type: "Account",
+      id: "account-id",
+      currency: { ticker: "ETH", blockAvgTime: 1 },
+      balance: { toNumber: () => 10 },
+    };
     const parentAccount = { id: "parent-id" };
     const operation = { hash: "op-hash", transactionRaw: { family: "evm" } };
 
-    mockedGetMainAccount.mockReturnValue({
-      currency: { ticker: "ETH", blockAvgTime: 1 },
-      balance: { toNumber: () => 10 },
-    });
     mockedUseBridgeTransaction.mockReturnValue({
       transaction: { family: "evm", nonce: 1 },
       setTransaction: jest.fn(),

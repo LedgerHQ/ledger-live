@@ -56,6 +56,7 @@ export default function SelectValidator({ navigation, route }: Props) {
         transaction: bridge.updateTransaction(baseTransaction, {
           mode: "delegate",
           valAddress: validator.validatorAddress,
+          valId: validator.validatorId,
         }) as unknown as Transaction,
         validator,
       });

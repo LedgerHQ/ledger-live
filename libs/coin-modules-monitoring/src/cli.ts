@@ -116,8 +116,6 @@ async function runIsolatedMonitor(currency: string, accountType: string): Promis
     const child = spawn(
       "node",
       [
-        "--import",
-        path.join(__dirname, "..", "register.mjs"),
         path.join(__dirname, "cli.js"),
         "monitor",
         "--currencies",

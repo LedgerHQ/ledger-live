@@ -77,7 +77,7 @@ describe("useMarketStatsViewModel", () => {
 
     it("returns '-' for missing values", () => {
       mockMarketData({
-        marketCurrency: { ...marketCurrencyData, marketcap: undefined, maxSupply: 0 } as any,
+        marketCurrency: { ...marketCurrencyData, marketcap: undefined } as any,
       });
 
       const { result } = renderHook(() =>
@@ -85,6 +85,29 @@ describe("useMarketStatsViewModel", () => {
       );
 
       expect(result.current.stats.find(s => s.key === "market_cap")?.value).toBe("-");
+    });
+
+    it("returns the ∞ symbol for max supply when the coin is uncapped but has market data", () => {
+      mockMarketData({
+        marketCurrency: { ...marketCurrencyData, maxSupply: 0 } as any,
+      });
+
+      const { result } = renderHook(() =>
+        useMarketStatsViewModel({ currency: mockBtcCryptoCurrency }),
+      );
+
+      expect(result.current.stats.find(s => s.key === "max_supply")?.value).toBe("∞");
+    });
+
+    it("returns '-' for max supply when no supply data is available", () => {
+      mockMarketData({
+        marketCurrency: { ...marketCurrencyData, maxSupply: 0, circulatingSupply: 0 } as any,
+      });
+
+      const { result } = renderHook(() =>
+        useMarketStatsViewModel({ currency: mockBtcCryptoCurrency }),
+      );
+
       expect(result.current.stats.find(s => s.key === "max_supply")?.value).toBe("-");
     });
 

@@ -1,19 +1,20 @@
 import type { Account, AccountUserData } from "@ledgerhq/types-live";
-import { checkAccountSupported } from "@ledgerhq/live-common/account/index";
+import {
+  getCryptoCurrencyById,
+  setSupportedCurrencies,
+} from "@ledgerhq/live-common/currencies/index";
 import { initAccounts } from "./accounts";
 
-jest.mock("@ledgerhq/live-common/account/index", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/account/index"),
-  checkAccountSupported: jest.fn(),
-}));
-
-const mockCheckAccountSupported = checkAccountSupported as jest.Mock;
-
-function fakeTuple(id: string, currencyId: string): [Account, AccountUserData] {
+function fakeTuple(
+  id: string,
+  currencyId: string,
+  derivationMode = "",
+): [Account, AccountUserData] {
   const account = {
     id,
     type: "Account",
-    currency: { id: currencyId },
+    currency: getCryptoCurrencyById(currencyId),
+    derivationMode,
     name: `name-${id}`,
   } as unknown as Account;
   const userData = { id, name: `custom-${id}` } as unknown as AccountUserData;
@@ -21,14 +22,8 @@ function fakeTuple(id: string, currencyId: string): [Account, AccountUserData] {
 }
 
 describe("initAccounts", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
   it("drops accounts whose currency is not supported by this build", () => {
-    mockCheckAccountSupported.mockImplementation((a: { currency: { id: string } }) =>
-      a.currency.id === "bitcoin" ? null : new Error("currency not supported"),
-    );
+    setSupportedCurrencies(["bitcoin"]);
 
     const action = initAccounts([
       fakeTuple("btc-1", "bitcoin"),
@@ -42,7 +37,7 @@ describe("initAccounts", () => {
   });
 
   it("keeps all accounts when every currency is supported", () => {
-    mockCheckAccountSupported.mockReturnValue(null);
+    setSupportedCurrencies(["bitcoin", "ethereum"]);
 
     const action = initAccounts([fakeTuple("btc-1", "bitcoin"), fakeTuple("eth-1", "ethereum")]);
 
@@ -50,13 +45,11 @@ describe("initAccounts", () => {
   });
 
   it("drops accounts on any non-currency error (e.g. unsupported derivation mode)", () => {
-    mockCheckAccountSupported.mockImplementation((a: { id: string }) =>
-      a.id === "btc-segwit" ? null : new Error("derivation mode not supported"),
-    );
+    setSupportedCurrencies(["bitcoin"]);
 
     const action = initAccounts([
-      fakeTuple("btc-segwit", "bitcoin"),
-      fakeTuple("btc-legacy", "bitcoin"),
+      fakeTuple("btc-segwit", "bitcoin", ""),
+      fakeTuple("btc-legacy", "bitcoin", "unsupported_derivation_mode"),
     ]);
 
     expect(action.payload.accounts.map(a => a.id)).toEqual(["btc-segwit"]);

@@ -44,4 +44,9 @@ describe("LineChartPoints", () => {
     expect(typeof points[1].color).toBe("string");
     expect(points[2].color).toBe("#abc");
   });
+
+  it("omits the label when hideLabel is set, even if a label is provided", () => {
+    renderPoints([{ index: 1, value: 99, label: "Peak", hideLabel: true }]);
+    expect(points[0].label).toBeUndefined();
+  });
 });

@@ -38,11 +38,11 @@ describe("FearAndGreed Integration", () => {
 
   describe("Mood levels", () => {
     it.each([
-      { value: 15, label: "Fear", classification: "Extreme Fear" },
-      { value: 40, label: "Cautious", classification: "Fear" },
+      { value: 15, label: "Fear+", classification: "Extreme Fear" },
+      { value: 40, label: "Fear", classification: "Fear" },
       { value: 50, label: "Neutral", classification: "Neutral" },
-      { value: 70, label: "Optimistic", classification: "Greed" },
-      { value: 90, label: "Greedy", classification: "Extreme Greed" },
+      { value: 70, label: "Greed", classification: "Greed" },
+      { value: 90, label: "Greed+", classification: "Extreme Greed" },
     ])("should render $label when value is $value", async ({ value, label, classification }) => {
       server.use(
         http.get(API_ENDPOINT, () => HttpResponse.json(createMockResponse(value, classification))),

@@ -101,6 +101,25 @@ describe("buildTransactionParams", () => {
     });
   });
 
+  describe("Monad", () => {
+    it("builds params for delegate operation (valId as bigint, amount carried by msg.value)", () => {
+      const params = buildTransactionParams("monad", "delegate" as StakingOperation, {
+        valId: "42",
+        amount: 1000000000000000000n,
+      });
+
+      expect(params).toStrictEqual([42n]);
+    });
+
+    it("throws when monad staking is missing valId", () => {
+      expect(() => {
+        buildTransactionParams("monad", "delegate" as StakingOperation, {
+          amount: 1000000000000000000n,
+        });
+      }).toThrow("monad staking requires valId");
+    });
+  });
+
   describe("CELO", () => {
     const currencyId = "celo";
     const celoValidatorAddress = "0x123456789abcdef";

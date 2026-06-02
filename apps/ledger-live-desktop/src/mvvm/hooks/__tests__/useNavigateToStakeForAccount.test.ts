@@ -66,7 +66,7 @@ describe("useNavigateToStakeForAccount", () => {
     let outcome: ReturnType<typeof result.current.navigateToStakeForAccount> | undefined;
     act(() => {
       outcome = result.current.navigateToStakeForAccount(account, undefined, {
-        source: "Asset detail",
+        source: "Asset",
       });
     });
 

@@ -23,11 +23,12 @@ export default function StepDelegation({
 
   const bridge = useAccountBridge<GenericTransaction>(account, parentAccount);
   const updateValidator = useCallback(
-    (address: string) => {
+    (address: string, valId?: string) => {
       onUpdateTransaction(_tx =>
         bridge.updateTransaction(transaction, {
           mode: "delegate",
           valAddress: address,
+          valId,
         }),
       );
     },

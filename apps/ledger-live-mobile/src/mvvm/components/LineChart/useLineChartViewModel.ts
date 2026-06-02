@@ -3,6 +3,7 @@ import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { DEFAULT_LINE_CHART_HEIGHT } from "./constants";
 import type {
   LineChartPointMarker,
+  LineChartPointTooltip,
   LineChartProps,
   LineChartRangeOption,
   LineChartScrubberPositionChange,
@@ -27,8 +28,11 @@ export type LineChartViewModelResult<TRange extends string = string> = Readonly<
   isLoading: boolean;
   testID?: string;
   points: LineChartPointMarker[];
+  pointTooltips: ReadonlyMap<number, LineChartPointTooltip>;
   enableScrubber: boolean;
   showScrubberTooltip: boolean;
+  showScrubberBeacons: boolean;
+  pointTooltipsOnly: boolean;
   formatValue: LineChartValueFormatter;
   tooltipTitle?: LineChartTooltipTitle;
   onScrubberPositionChange?: LineChartScrubberPositionChange;
@@ -53,6 +57,8 @@ export function useLineChartViewModel<TRange extends string>({
   points,
   enableScrubber = true,
   showScrubberTooltip = true,
+  showScrubberBeacons = true,
+  pointTooltipsOnly = false,
   formatValue = defaultFormatValue,
   tooltipTitle,
   onScrubberPositionChange,
@@ -76,6 +82,14 @@ export function useLineChartViewModel<TRange extends string>({
     [points, chartSeries],
   );
 
+  const pointTooltips = useMemo(() => {
+    const map = new Map<number, LineChartPointTooltip>();
+    for (const marker of resolvedPoints) {
+      if (marker.tooltip) map.set(marker.index, marker.tooltip);
+    }
+    return map;
+  }, [resolvedPoints]);
+
   const handleSelectedChange = useCallback(
     (value: string) => {
       if (isRangeValue && !isRangeValue(value)) return;
@@ -94,8 +108,11 @@ export function useLineChartViewModel<TRange extends string>({
     isLoading,
     testID,
     points: resolvedPoints,
+    pointTooltips,
     enableScrubber,
     showScrubberTooltip,
+    showScrubberBeacons,
+    pointTooltipsOnly,
     formatValue,
     tooltipTitle,
     onScrubberPositionChange,

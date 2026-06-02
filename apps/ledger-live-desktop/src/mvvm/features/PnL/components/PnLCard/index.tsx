@@ -54,7 +54,7 @@ export const PnLCard = (props: PnLCardProps) => {
                 <span className="body-3">{title}</span>
               </CardContentTitle>
               {type === "info" && (
-                <Tooltip>
+                <Tooltip onOpenChange={props.onTooltipOpenChange}>
                   <TooltipTrigger asChild>
                     <span className="inline-flex cursor-help">
                       <Information size={16} />
