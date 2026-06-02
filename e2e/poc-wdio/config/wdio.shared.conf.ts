@@ -219,18 +219,8 @@ export const config: WebdriverIO.Config = {
    * @param {Array.<String>} specs        List of spec file paths that are to be run
    * @param {object}         browser      instance of created browser/device session
    */
-  before: function (capabilities, specs) {
-    if (driver.isAndroid) {
-      console.log(
-        "Clearing Google Search App from recent apps to prevent it from interfering with tests",
-      );
-      const deviceID = driver.capabilities.deviceUDID ?? driver.capabilities["appium:deviceName"];
-      execSync(`adb -s ${deviceID} shell am force-stop com.google.android.googlequicksearchbox`);
-      execSync(
-        `adb -s ${deviceID} shell am force-stop com.google.android.googlequicksearchbox:googleapp`,
-      );
-    }
-  },
+  // before: function (capabilities, specs) {
+  // },
   /**
    * Runs before a WebdriverIO command gets executed.
    * @param {string} commandName hook command name

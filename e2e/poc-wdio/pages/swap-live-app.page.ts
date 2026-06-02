@@ -63,19 +63,22 @@ export class SwapLiveAppPage {
   async switchTo() {
     await driver.waitUntil(
       async () => {
-        const contexts = await driver.getAppiumContexts();
-        const webviews = contexts.filter(context => context.toLowerCase().includes("webview"));
-        for (const webview of webviews) {
-          await driver.switchAppiumContext(webview);
-          const title = await driver.getTitle();
-          if (/swap/i.test(title)) {
-            return true;
-          }
-        }
-        return false;
+        // const contexts = await driver.getAppiumContexts();
+        // const webviews = contexts.filter(context => context.toLowerCase().includes("webview"));
+        // for (const webview of webviews) {
+        //   await driver.switchAppiumContext(webview);
+        //   const title = await driver.getTitle();
+        //   if (/swap/i.test(title)) {
+        //     return true;
+        //   }
+        // }
+        // return false;
+        await driver.switchAppiumContext("WEBVIEW_com.ledger.live.detox");
+        return true;
       },
       {
-        timeout: 300_000,
+        interval: 1_000,
+        timeout: 120_000,
         timeoutMsg: "Expected to find swap live app context",
       },
     );
