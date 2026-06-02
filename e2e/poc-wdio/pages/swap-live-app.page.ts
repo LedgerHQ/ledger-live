@@ -63,20 +63,16 @@ export class SwapLiveAppPage {
   async switchTo() {
     await driver.waitUntil(
       async () => {
-        // const contexts = await driver.getAppiumContexts();
-        // const webviews = contexts.filter(context => context.toLowerCase().includes("webview"));
-        // for (const webview of webviews) {
-        //   await driver.switchAppiumContext(webview);
-        //   const title = await driver.getTitle();
-        //   if (/swap/i.test(title)) {
-        //     return true;
-        //   }
-        // }
-        // return false;
-        await driver.switchContext({
-          title: /swap/i,
-        });
-        return true;
+        const contexts = await driver.getAppiumContexts();
+        const webviews = contexts.filter(context => context.toLowerCase().includes("webview"));
+        for (const webview of webviews) {
+          await driver.switchAppiumContext(webview);
+          const title = await driver.getTitle();
+          if (/swap/i.test(title)) {
+            return true;
+          }
+        }
+        return false;
       },
       {
         interval: 1_000,
