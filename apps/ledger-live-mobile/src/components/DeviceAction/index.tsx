@@ -804,7 +804,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   }
 
   if (renderOnResult) {
-    return renderOnResult(payload);
+    return <RenderOnResultWithJSX renderOnResult={renderOnResult} payload={payload} />;
   }
 
   return null;
@@ -823,4 +823,19 @@ const RenderOnResultCallback = <P,>({
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return null;
+};
+
+/**
+ * Calls renderOnResult exactly once (on mount) via useState lazy initializer,
+ * preventing re-renders from re-invoking side-effectful callbacks like broadcast.
+ */
+const RenderOnResultWithJSX = <P,>({
+  renderOnResult,
+  payload,
+}: {
+  renderOnResult: (_: NonNullable<P>) => React.JSX.Element | null;
+  payload: NonNullable<P>;
+}) => {
+  const [result] = useState<React.JSX.Element | null>(() => renderOnResult(payload));
+  return result;
 };
