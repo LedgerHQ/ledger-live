@@ -14,7 +14,6 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { Information } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "~/context/Locale";
 import { ASSET_DETAIL_TEST_IDS } from "LLM/features/AssetDetail/testIds";
 import { SectionContentState } from "../SectionContentState";
@@ -37,7 +36,6 @@ type Props = Readonly<{
 
 export function MarketStatsView({ stats, isLoading, isError, hasData, onTooltipOpen }: Props) {
   const { t } = useTranslation();
-  const { bottom } = useSafeAreaInsets();
 
   if (isLoading && !hasData) {
     return (
@@ -75,11 +73,9 @@ export function MarketStatsView({ stats, isLoading, isError, hasData, onTooltipO
                     <TooltipContent
                       title={stat.tooltip.title}
                       content={
-                        <Box style={{ paddingBottom: bottom + 24 }}>
-                          <Text typography="body1" lx={{ color: "base" }}>
-                            {stat.tooltip.content}
-                          </Text>
-                        </Box>
+                        <Text typography="body1" lx={{ color: "base" }}>
+                          {stat.tooltip.content}
+                        </Text>
                       }
                     />
                   </Tooltip>
