@@ -5,13 +5,13 @@
   "license": "Apache-2.0",
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "build": "rslib build && node scripts/postbuild.mjs",
     "lint": "eslint .",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
     "typecheck": "tsc --project ./tsconfig.json --noEmit --customConditions node",
-    "start": "node --import ./register.mjs lib/cli.js",
-    "start:debug": "node --import ./register.mjs --inspect-brk lib/cli.js"
+    "start": "node lib/cli.js",
+    "start:debug": "node --inspect-brk lib/cli.js"
   },
   "dependencies": {
     "@datadog/datadog-api-client": "^1.40",
@@ -28,6 +28,7 @@
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
+    "@rslib/core": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/command-line-args": "5.2.3",
