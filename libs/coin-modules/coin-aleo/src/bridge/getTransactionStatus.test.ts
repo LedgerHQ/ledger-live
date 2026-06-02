@@ -8,7 +8,9 @@ import {
 } from "@ledgerhq/errors";
 import {
   getMockedAccount,
+  getMockedTokenAccount,
   mockAleoResources,
+  mockTokenRecord1,
   mockUnspentRecord1,
   mockUnspentRecord2,
 } from "../__tests__/fixtures/account.fixture";
@@ -17,7 +19,11 @@ import { estimateFees, validateAddress } from "../logic";
 import { calculateAmount } from "../logic/utils";
 import type { Transaction } from "../types";
 import aleoCoinConfig from "../config";
-import { MAX_PRIVATE_RECORDS_PER_TRANSACTION, TRANSACTION_TYPE } from "../constants";
+import {
+  MAX_PRIVATE_RECORDS_PER_TRANSACTION,
+  MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
+  TRANSACTION_TYPE,
+} from "../constants";
 import {
   AleoAmountRecordRequired,
   AleoAmountTooLargeForTransaction,
@@ -55,6 +61,12 @@ describe("getTransactionStatus", () => {
       privateBalance: mockPrivateBalance,
     },
   });
+  const mockTokenAccount = getMockedTokenAccount();
+  const mockAccountWithTokenAccount = {
+    ...mockAccount,
+    id: mockAccount.id + "-token",
+    subAccounts: [mockTokenAccount],
+  };
   const mockTransaction: Transaction = {
     family: "aleo",
     amount: new BigNumber(500000),
@@ -215,34 +227,6 @@ describe("getTransactionStatus", () => {
       expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
     });
 
-    it("adds error during transfer with insufficient balance", async () => {
-      const mockTransparentBalance = new BigNumber(1000);
-      const mockPrivateBalance = new BigNumber(0);
-      const mockBalance = mockTransparentBalance.plus(mockPrivateBalance);
-      const poorAccount = getMockedAccount({
-        balance: mockBalance,
-        aleoResources: {
-          ...mockAleoResources,
-          transparentBalance: mockTransparentBalance,
-          privateBalance: mockPrivateBalance,
-        },
-      });
-
-      mockCalculateAmount.mockReturnValue({
-        amount: new BigNumber(990),
-        totalSpent: new BigNumber(1001),
-      });
-
-      const transaction: Transaction = {
-        ...mockTransaction,
-        mode: TRANSACTION_TYPE.TRANSFER_PUBLIC,
-      };
-
-      const result = await getTransactionStatus(poorAccount, transaction);
-
-      expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
-    });
-
     it("does not add error when balance equals total spent", async () => {
       const mockTransparentBalance = new BigNumber(1000);
       const mockPrivateBalance = new BigNumber(0);
@@ -365,6 +349,40 @@ describe("getTransactionStatus", () => {
       expect(result.errors.amount).toMatchObject({ count: MAX_PRIVATE_RECORDS_PER_TRANSACTION });
     });
 
+    it("adds error when more than MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION token records are selected", async () => {
+      const manyTokenRecords = Array.from(
+        { length: MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION + 1 },
+        (_, i) => ({
+          ...mockTokenRecord1,
+          commitment: `token-record-${i}`,
+        }),
+      );
+      const mockTokenAccountWithManyRecords = {
+        ...mockTokenAccount,
+        unspentPrivateRecords: manyTokenRecords,
+        privateBalance: new BigNumber(9999999),
+      };
+      const account = getMockedAccount({
+        subAccounts: [mockTokenAccountWithManyRecords],
+      });
+      const transaction: Transaction = {
+        ...mockTransaction,
+        mode: TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE,
+        subAccountId: mockTokenAccountWithManyRecords.id,
+        properties: {
+          amountRecordCommitments: manyTokenRecords.map(record => record.commitment),
+          feeRecordCommitment: null,
+        },
+      };
+
+      const result = await getTransactionStatus(account, transaction);
+
+      expect(result.errors.amount).toBeInstanceOf(AleoTooManyRecordsSelected);
+      expect(result.errors.amount).toMatchObject({
+        count: MAX_PRIVATE_TOKEN_RECORDS_PER_TRANSACTION,
+      });
+    });
+
     it("adds error when private fee record is missing and fee is not sponsored", async () => {
       mockAleoConfig.getCoinConfig.mockReturnValue({ ...mockConfig, isFeeSponsored: false });
 
@@ -411,6 +429,37 @@ describe("getTransactionStatus", () => {
       const result = await getTransactionStatus(privateAccount, transaction);
 
       expect(result.errors.feeRecord).toBeInstanceOf(AleoFeeRecordRequired);
+    });
+
+    it("allows token private fee record with same commitment as amount record", async () => {
+      const sharedCommitment = "shared-commitment";
+      const sharedNativeRecord = { ...mockUnspentRecord2, commitment: sharedCommitment };
+      const mockTokenAccountWithSharedRecord = getMockedTokenAccount({
+        unspentPrivateRecords: [{ ...mockTokenRecord1, commitment: sharedCommitment }],
+      });
+      const account = getMockedAccount({
+        aleoResources: {
+          ...mockAleoResources,
+          privateBalance: new BigNumber(2000000),
+          unspentPrivateRecords: [mockUnspentRecord1, sharedNativeRecord],
+        },
+        subAccounts: [mockTokenAccountWithSharedRecord],
+      });
+
+      mockAleoConfig.getCoinConfig.mockReturnValue({ ...mockConfig, isFeeSponsored: false });
+      mockCalculateAmount.mockReturnValue({ amount: mockAmount, totalSpent: mockAmount });
+
+      const result = await getTransactionStatus(account, {
+        ...mockTransaction,
+        mode: TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE,
+        subAccountId: mockTokenAccount.id,
+        properties: {
+          amountRecordCommitments: [sharedCommitment],
+          feeRecordCommitment: sharedCommitment,
+        },
+      });
+
+      expect(result.errors.feeRecord).toBeUndefined();
     });
 
     it("adds a two-records error when only one non-zero private record is available", async () => {
@@ -569,6 +618,135 @@ describe("getTransactionStatus", () => {
 
       expect(result.errors.amount).toBeUndefined();
       expect(result.errors.amountRecord).toBeUndefined();
+    });
+  });
+
+  describe("fee validation", () => {
+    it.each([
+      [
+        "public token transfer",
+        {
+          ...mockTransaction,
+          mode: TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC,
+          subAccountId: mockTokenAccount.id,
+        },
+      ],
+      [
+        "public native transfer",
+        {
+          ...mockTransaction,
+          mode: TRANSACTION_TYPE.TRANSFER_PUBLIC,
+        },
+      ],
+    ])("adds error when native balance cannot cover fees in %s", async (_, transaction) => {
+      mockAleoConfig.getCoinConfig.mockReturnValue({ ...mockConfig, isFeeSponsored: false });
+      mockCalculateAmount.mockReturnValue({ amount: mockAmount, totalSpent: mockAmount });
+
+      const insufficientAccount = getMockedAccount({
+        aleoResources: {
+          ...mockAleoResources,
+          transparentBalance: mockFees.minus(1),
+        },
+        subAccounts: [mockTokenAccount],
+      });
+
+      const result = await getTransactionStatus(insufficientAccount, transaction);
+
+      expect(result.errors.fees).toBeInstanceOf(NotEnoughBalance);
+    });
+
+    it("does not add fees error for token transaction when native balance covers fees", async () => {
+      const account = getMockedAccount({
+        aleoResources: {
+          ...mockAleoResources,
+          transparentBalance: mockFees,
+          privateBalance: new BigNumber(2000000),
+          unspentPrivateRecords: [mockUnspentRecord1, mockUnspentRecord2],
+        },
+        subAccounts: [mockTokenAccount],
+      });
+
+      mockAleoConfig.getCoinConfig.mockReturnValue({ ...mockConfig, isFeeSponsored: false });
+      mockCalculateAmount.mockReturnValue({ amount: mockAmount, totalSpent: mockAmount });
+
+      const result = await getTransactionStatus(account, {
+        ...mockTransaction,
+        mode: TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC,
+        subAccountId: mockTokenAccount.id,
+      });
+
+      expect(result.errors.fees).toBeUndefined();
+    });
+
+    it("does not add fees error for sponsored token transaction with low native balance", async () => {
+      mockAleoConfig.getCoinConfig.mockReturnValue({ ...mockConfig, isFeeSponsored: true });
+      mockCalculateAmount.mockReturnValue({ amount: mockAmount, totalSpent: mockAmount });
+
+      const result = await getTransactionStatus(mockAccountWithTokenAccount, {
+        ...mockTransaction,
+        mode: TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC,
+        subAccountId: mockTokenAccount.id,
+      });
+
+      expect(result.errors.fees).toBeUndefined();
+    });
+
+    it("does not add fees error for private transfer with low transparent balance when fee record is valid", async () => {
+      mockAleoConfig.getCoinConfig.mockReturnValue({ ...mockConfig, isFeeSponsored: false });
+      mockCalculateAmount.mockReturnValue({
+        amount: mockAmount,
+        totalSpent: mockAmount.plus(mockFees),
+      });
+
+      const account = getMockedAccount({
+        aleoResources: {
+          ...mockAleoResources,
+          transparentBalance: new BigNumber(100),
+          privateBalance: new BigNumber(2000000),
+          unspentPrivateRecords: [mockUnspentRecord1, mockUnspentRecord2],
+        },
+      });
+
+      const result = await getTransactionStatus(account, {
+        ...mockTransaction,
+        mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+        properties: {
+          amountRecordCommitments: [mockUnspentRecord1.commitment],
+          feeRecordCommitment: mockUnspentRecord2.commitment,
+        },
+      });
+
+      expect(result.errors.fees).toBeUndefined();
+      expect(result.errors.feeRecord).toBeUndefined();
+    });
+
+    it("does not add fees error for sponsored private transfer without fee record", async () => {
+      mockAleoConfig.getCoinConfig.mockReturnValue({ ...mockConfig, isFeeSponsored: true });
+      mockCalculateAmount.mockReturnValue({
+        amount: mockAmount,
+        totalSpent: mockAmount.plus(mockFees),
+      });
+
+      const account = getMockedAccount({
+        aleoResources: {
+          ...mockAleoResources,
+          transparentBalance: new BigNumber(100),
+          privateBalance: new BigNumber(2000000),
+          unspentPrivateRecords: [mockUnspentRecord1, mockUnspentRecord2],
+        },
+      });
+
+      const result = await getTransactionStatus(account, {
+        ...mockTransaction,
+        mode: TRANSACTION_TYPE.TRANSFER_PRIVATE,
+        properties: {
+          amountRecordCommitments: [mockUnspentRecord1.commitment],
+          feeRecordCommitment: null,
+        },
+      });
+
+      expect(result.errors.fees).toBeUndefined();
+      expect(result.errors.feeRecord).toBeUndefined();
     });
   });
 

@@ -4,9 +4,10 @@ import type {
   AleoAccountRaw,
   AleoResources,
   AleoResourcesRaw,
+  AleoTokenAccount,
   AleoUnspentRecord,
 } from "../../types";
-import { getMockedCurrency } from "./currency.fixture";
+import { getMockedCurrency, getMockedTokenCurrency } from "./currency.fixture";
 import { getMockedRecord } from "./api.fixture";
 
 const defaultMockedCurrency = getMockedCurrency();
@@ -58,6 +59,11 @@ export const mockUnspentRecord2: AleoUnspentRecord = {
     nonce: "7349790946519678882609199286010273702044020144797298963772495833343454197352group",
     version: 1,
   },
+};
+
+export const mockTokenRecord1: AleoUnspentRecord = {
+  ...mockUnspentRecord1,
+  commitment: "token-amount-record-1",
 };
 
 export const getMockedAccount = (overrides?: Partial<AleoAccount>): AleoAccount => {
@@ -119,3 +125,29 @@ export const getMockedAccountRaw = (overrides?: Partial<AleoAccountRaw>): AleoAc
     ...overrides,
   };
 };
+
+export function getMockedTokenAccount(overrides?: Partial<AleoTokenAccount>): AleoTokenAccount {
+  return {
+    type: "TokenAccount",
+    id: "js:2:aleo:token:usad",
+    parentId:
+      "js:2:aleo:aleo1zcwqycj02lccfuu57dzjhva7w5dpzc7pngl0sxjhp58t6vlnnqxs6lnp6f::AViewKey123",
+    token: getMockedTokenCurrency(),
+    balance: new BigNumber(500000),
+    spendableBalance: new BigNumber(500000),
+    creationDate: new Date(),
+    operations: [],
+    operationsCount: 0,
+    pendingOperations: [],
+    balanceHistoryCache: {
+      HOUR: { latestDate: null, balances: [] },
+      DAY: { latestDate: null, balances: [] },
+      WEEK: { latestDate: null, balances: [] },
+    },
+    swapHistory: [],
+    transparentBalance: new BigNumber(500000),
+    privateBalance: new BigNumber(2000000),
+    unspentPrivateRecords: [mockTokenRecord1],
+    ...overrides,
+  };
+}

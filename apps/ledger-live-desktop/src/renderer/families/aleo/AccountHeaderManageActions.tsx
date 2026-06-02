@@ -13,15 +13,10 @@ const AccountHeaderActions: AleoFamily["accountHeaderManageActions"] = ({
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const bridge = useAccountBridge(account, parentAccount);
-
-  if (account.type !== "Account") {
-    return [];
-  }
-
   const isSelfTransferDisabled = bridge.isAccountEmpty(account);
 
   const onClick = () => {
-    dispatch(openModal(AleoCustomModal.SELF_TRANSFER, { account }));
+    dispatch(openModal(AleoCustomModal.SELF_TRANSFER, { account, parentAccount }));
   };
 
   return [

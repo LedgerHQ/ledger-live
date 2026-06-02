@@ -49,7 +49,10 @@ const SelfTransferModal = ({ stepId: initialStepId, onClose }: ModalProps) => {
             : null;
 
           const defaultRecipient = mainAccount?.freshAddress ?? "";
-          const defaultTransactionMode = TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE;
+          const isTokenTx = data.account?.type === "TokenAccount";
+          const defaultTransactionMode = isTokenTx
+            ? TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE
+            : TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE;
 
           return (
             <DefaultSendBody
@@ -62,6 +65,7 @@ const SelfTransferModal = ({ stepId: initialStepId, onClose }: ModalProps) => {
               onChangeStepId={handleStepChange}
               params={{
                 account: data.account,
+                parentAccount: data.parentAccount,
                 transaction: {
                   family: "aleo",
                   amount: new BigNumber(0),
@@ -69,6 +73,7 @@ const SelfTransferModal = ({ stepId: initialStepId, onClose }: ModalProps) => {
                   recipient: defaultRecipient,
                   fees: new BigNumber(0),
                   mode: defaultTransactionMode,
+                  ...(isTokenTx && data.account && { subAccountId: data.account.id }),
                 },
               }}
             />

@@ -4,7 +4,23 @@ import {
   isPrivateTransaction,
 } from "@ledgerhq/live-common/families/aleo/utils";
 import { TRANSACTION_TYPE } from "@ledgerhq/live-common/families/aleo/constants";
+import type { Transaction as AleoTransaction } from "@ledgerhq/live-common/families/aleo/types";
 import type { StepProps } from "~/renderer/modals/Send/types";
+
+function getPublicMode(tx: AleoTransaction) {
+  const isSelfTransfer = isSelfTransferTransaction(tx);
+  const isTokenTx = !!tx.subAccountId;
+
+  if (isTokenTx) {
+    return isSelfTransfer
+      ? TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE
+      : TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC;
+  }
+
+  return isSelfTransfer
+    ? TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE
+    : TRANSACTION_TYPE.TRANSFER_PUBLIC;
+}
 
 /**
  * Returns a wrapped `onChangeAccount` that resets any private-mode Aleo transaction back to a
@@ -24,11 +40,11 @@ export const useAccountChangeGuard = (
       onChangeAccount(nextAccount, nextParentAccount);
       updateTransaction(tx => {
         if (tx.family !== "aleo" || !isPrivateTransaction(tx)) return tx;
-        const defaultMode = isSelfTransferTransaction(tx)
-          ? TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE
-          : TRANSACTION_TYPE.TRANSFER_PUBLIC;
+
+        const publicMode = getPublicMode(tx);
         const { properties: _drop, ...publicTx } = tx;
-        return { ...publicTx, mode: defaultMode };
+
+        return { ...publicTx, mode: publicMode };
       });
     },
     [onChangeAccount, updateTransaction],

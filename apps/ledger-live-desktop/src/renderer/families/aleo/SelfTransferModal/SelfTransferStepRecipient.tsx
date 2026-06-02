@@ -8,7 +8,6 @@ import Label from "~/renderer/components/Label";
 import SelectAccount from "~/renderer/components/SelectAccount";
 import type { StepProps } from "~/renderer/modals/Send/types";
 import type { AccountLike } from "@ledgerhq/types-live";
-import { useHandleChangeAccount } from "./useHandleChangeAccount";
 import BalanceSelector from "../shared/BalanceSelector";
 import { Trans } from "react-i18next";
 import { TRANSACTION_TYPE } from "@ledgerhq/live-common/families/aleo/constants";
@@ -25,9 +24,6 @@ export const SelfTransferStepRecipient = ({
   status,
   currencyName,
 }: StepProps) => {
-  // change account with updating "recipient" field that cannot be controlled manually
-  const handleChangeAccount = useHandleChangeAccount({ onChangeAccount, updateTransaction });
-
   if (!status || !account || transaction?.family !== "aleo") {
     return null;
   }
@@ -62,7 +58,7 @@ export const SelfTransferStepRecipient = ({
             withSubAccounts
             enforceHideEmptySubAccounts
             subAccountFilter={a => !a.balance.isZero()}
-            onChange={handleChangeAccount}
+            onChange={onChangeAccount}
             value={account}
             filter={accountFilter}
           />
@@ -75,22 +71,26 @@ export const SelfTransferStepRecipient = ({
             transaction={transaction}
             mainAccount={mainAccount}
             subAccount={account.type === "TokenAccount" ? account : undefined}
-            disablePrivate={account.type === "TokenAccount"}
             onChange={value => {
               updateTransaction(t => {
                 if (t.family !== "aleo") return t;
+                const isTokenTx = !!t.subAccountId;
 
                 if (value === "public") {
                   const { properties: _ignoredProperties, ...txWithoutProperties } = t;
                   return {
                     ...txWithoutProperties,
-                    mode: TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE,
+                    mode: isTokenTx
+                      ? TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE
+                      : TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE,
                   };
                 }
 
                 return {
                   ...t,
-                  mode: TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC,
+                  mode: isTokenTx
+                    ? TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC
+                    : TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC,
                   properties: {
                     amountRecordCommitments: [],
                     feeRecordCommitment: null,

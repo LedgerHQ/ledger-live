@@ -1,4 +1,4 @@
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 export const getMockedCurrency = (overrides?: Partial<CryptoCurrency>): CryptoCurrency => {
   return {
@@ -24,6 +24,20 @@ export const getMockedCurrency = (overrides?: Partial<CryptoCurrency>): CryptoCu
         address: "https://explorer.provable.com/address/$address",
       },
     ],
+    ...overrides,
+  };
+};
+
+export const getMockedTokenCurrency = (overrides?: Partial<TokenCurrency>): TokenCurrency => {
+  return {
+    type: "TokenCurrency",
+    id: "usad",
+    contractAddress: "usad_stablecoin.aleo",
+    parentCurrency: getMockedCurrency(),
+    tokenType: "arc22",
+    name: "USAD",
+    ticker: "USAD",
+    units: [{ name: "USAD", code: "USAD", magnitude: 6 }],
     ...overrides,
   };
 };
