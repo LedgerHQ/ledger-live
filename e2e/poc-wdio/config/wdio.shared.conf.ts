@@ -1,4 +1,6 @@
+import allureReporter from "@wdio/allure-reporter";
 import { setEnv } from "@ledgerhq/live-env";
+import { readFileSync } from "node:fs";
 import { init } from "../bridge/server";
 import { SpeculosUtils } from "../utils/SpeculosUtils.ts";
 import { ADBUtils } from "../utils/ADBUtils.ts";
@@ -212,16 +214,7 @@ export const config: WebdriverIO.Config = {
       e2eBridgeServer: undefined,
     };
     await init();
-  },
-  /**
-   * Gets executed before test execution begins. At this point you can access to all global
-   * variables like `browser`. It is the perfect place to define custom commands.
-   * @param {Array.<Object>} capabilities list of capabilities details
-   * @param {Array.<String>} specs        List of spec file paths that are to be run
-   * @param {object}         browser      instance of created browser/device session
-   */
-  before: async function (capabilities, specs) {
-    await ADBUtils.dumpLogcatToArtifacts("session-start");
+    ADBUtils.startLogcatStream(cid);
   },
   /**
    * Runs before a WebdriverIO command gets executed.
@@ -239,8 +232,9 @@ export const config: WebdriverIO.Config = {
   /**
    * Function to be executed before a test (in Mocha/Jasmine) starts.
    */
-  // beforeTest: function (test, context) {
-  // },
+  beforeTest: function (test) {
+    ADBUtils.markTestStart(test.title);
+  },
   /**
    * Hook that gets executed _before_ a hook within the suite starts (e.g. runs before calling
    * beforeEach in Mocha)
@@ -266,8 +260,25 @@ export const config: WebdriverIO.Config = {
   // @ts-expect-error: keep unused params for de-structuring
   afterTest: async function (test, context, { error, result, duration, passed, retries }) {
     if (!passed) {
-      await driver.takeScreenshot();
-      await ADBUtils.dumpLogcatToArtifacts(test.title.replace(/\s+/g, "-").toLowerCase());
+      try {
+        await driver.takeScreenshot();
+      } catch (screenshotErr) {
+        const message =
+          screenshotErr instanceof Error ? screenshotErr.message : String(screenshotErr);
+        console.warn(`Screenshot skipped (session may be dead): ${message}`);
+      }
+
+      const logcatFile = ADBUtils.snapshotLogcatToArtifacts(test.title);
+      if (logcatFile) {
+        try {
+          allureReporter.addAttachment("logcat", readFileSync(logcatFile, "utf8"), "text/plain");
+        } catch (attachErr) {
+          const message = attachErr instanceof Error ? attachErr.message : String(attachErr);
+          console.warn(`Allure logcat attachment skipped: ${message}`);
+        }
+      }
+
+      await ADBUtils.dumpLogcatViaDriver(test.title);
     }
   },
 
@@ -298,7 +309,8 @@ export const config: WebdriverIO.Config = {
    * @param {Array.<String>} specs List of spec file paths that ran
    */
   after: async function (result, capabilities, specs) {
-    await ADBUtils.dumpLogcatToArtifacts("session-end");
+    ADBUtils.snapshotLogcatToArtifacts("session-end");
+    ADBUtils.stopLogcatStream();
     await SpeculosUtils.removeSpeculosAndDeregisterKnownSpeculos();
   },
   /**
@@ -317,8 +329,9 @@ export const config: WebdriverIO.Config = {
    * @param {Array.<Object>} capabilities list of capabilities details
    * @param {<Object>} results object containing test results
    */
-  // onComplete: function (exitCode, config, capabilities, results) {
-  // },
+  onComplete: function () {
+    ADBUtils.stopLogcatStream();
+  },
   /**
    * Gets executed when a refresh happens.
    * @param {string} oldSessionId session ID of the old session
