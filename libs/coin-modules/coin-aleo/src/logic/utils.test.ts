@@ -11,7 +11,9 @@ import { getMockedCurrency } from "../__tests__/fixtures/currency.fixture";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
 import {
   getMockedAccount,
+  getMockedTokenAccount,
   mockAleoResources,
+  mockTokenRecord1,
   mockUnspentRecord1,
   mockUnspentRecord2,
 } from "../__tests__/fixtures/account.fixture";
@@ -1309,7 +1311,7 @@ describe("createTransactionIntent", () => {
     });
 
     expect(() => createTransactionIntent({ account: mockAccount, transaction })).toThrow(
-      `aleo: too many amount record commitments selected (max: ${MAX_PRIVATE_RECORDS_PER_TRANSACTION})`,
+      `aleo: too many amount records selected (max: ${MAX_PRIVATE_RECORDS_PER_TRANSACTION})`,
     );
   });
 });
@@ -1435,7 +1437,7 @@ describe("createFeeTransactionIntent", () => {
 });
 
 describe("getRecordByCommitment", () => {
-  it("should return the record matching the commitment", () => {
+  it("should return record matching the commitment for a native account", () => {
     const account = getMockedAccount({
       aleoResources: {
         ...mockAleoResources,
@@ -1449,6 +1451,25 @@ describe("getRecordByCommitment", () => {
     });
 
     expect(result).toEqual(mockUnspentRecord2);
+  });
+
+  it("should return record matching the commitment for a token account", () => {
+    const tokenAccount = { ...getMockedTokenAccount(), unspentPrivateRecords: [mockTokenRecord1] };
+    const account = getMockedAccount({
+      subAccounts: [tokenAccount],
+      aleoResources: {
+        ...mockAleoResources,
+        unspentPrivateRecords: [mockUnspentRecord1, mockUnspentRecord2],
+      },
+    });
+
+    const result = getRecordByCommitment({
+      account,
+      commitment: mockTokenRecord1.commitment,
+      tokenAccount,
+    });
+
+    expect(result).toEqual(mockTokenRecord1);
   });
 
   it("should return null when no record matches the commitment", () => {

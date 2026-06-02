@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 import BigNumber from "bignumber.js";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
@@ -8,6 +8,7 @@ import type {
   AleoAccount,
   AleoUnspentRecord,
   Transaction as AleoTransaction,
+  AleoTokenAccount,
 } from "@ledgerhq/live-common/families/aleo/types";
 import { isPublicTransaction } from "@ledgerhq/live-common/families/aleo/utils";
 import { useSelector } from "LLD/hooks/redux";
@@ -24,7 +25,7 @@ import { getAleoCurrencyConfig } from "../../../shared/utils";
 import { isAleoAccount } from "./utils";
 
 interface Props extends Pick<StepProps, "status" | "updateTransaction"> {
-  account: AleoAccount;
+  account: AleoAccount | AleoTokenAccount;
   transaction: AleoTransaction;
 }
 
@@ -102,19 +103,22 @@ const AleoStepRecordPicker = ({ account, transaction, status, updateTransaction 
   const unit = useAccountUnit(account);
   const formatDate = useDateFormatter(dayFormat);
   const formatHours = useDateFormatter(hourFormat);
-  const recordError = status.errors.amountRecord ?? status.errors.feeRecord;
 
-  const allUnspentRecords = (account.aleoResources?.unspentPrivateRecords ?? []).filter(r =>
+  const recordError = status.errors.amountRecord ?? status.errors.feeRecord;
+  const accountRecords =
+    (account.type === "TokenAccount"
+      ? account.unspentPrivateRecords
+      : account.aleoResources?.unspentPrivateRecords) ?? [];
+
+  const allUnspentRecords = accountRecords.filter(r =>
     new BigNumber(r.microcredits).isGreaterThan(0),
   );
-  const unspentRecords = useMemo(
-    () =>
-      (account.aleoResources?.unspentPrivateRecords ?? [])
-        .filter(r => new BigNumber(r.microcredits).isGreaterThan(0))
-        .sort((a, b) => new BigNumber(b.microcredits).comparedTo(new BigNumber(a.microcredits)))
-        .slice(0, MAX_RECORDS_DISPLAYED),
-    [account.aleoResources?.unspentPrivateRecords],
-  );
+
+  // TODO: check if useMemo is needed here
+  const unspentRecords = accountRecords
+    .filter(r => new BigNumber(r.microcredits).isGreaterThan(0))
+    .sort((a, b) => new BigNumber(b.microcredits).comparedTo(new BigNumber(a.microcredits)))
+    .slice(0, MAX_RECORDS_DISPLAYED);
 
   const formatConfig = {
     alwaysShowSign: false,
@@ -204,7 +208,9 @@ const AleoStepRecordPicker = ({ account, transaction, status, updateTransaction 
 const StepRecordPicker = ({ account, transaction, status, updateTransaction }: StepProps) => {
   if (transaction?.family !== "aleo" || !account || !isAleoAccount(account)) return null;
 
-  const config = getAleoCurrencyConfig(account.currency);
+  const currency = account.type === "Account" ? account.currency : account.token.parentCurrency;
+  const config = getAleoCurrencyConfig(currency);
+
   if (config?.recordPickingStrategy === "auto") return null;
 
   return (

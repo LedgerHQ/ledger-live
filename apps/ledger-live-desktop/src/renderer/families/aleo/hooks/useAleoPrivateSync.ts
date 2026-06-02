@@ -31,7 +31,7 @@ interface KeepAliveEntry {
 const keepAliveRegistry = new Map<string, KeepAliveEntry>();
 
 interface UseAleoPrivateSyncOptions {
-  account: Account | TokenAccount | null | undefined;
+  account: Account | null | undefined;
   /** If true, sync starts automatically on mount and cannot be stopped. */
   autoStart?: boolean;
   /** Called with the locally-computed updated account after each sync emission. */

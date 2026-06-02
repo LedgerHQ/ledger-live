@@ -30,7 +30,9 @@ export function fromTransactionRaw(tr: TransactionRaw): Transaction {
 
   if (
     tr.mode === TRANSACTION_TYPE.TRANSFER_PRIVATE ||
-    tr.mode === TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC
+    tr.mode === TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC ||
+    tr.mode === TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE ||
+    tr.mode === TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC
   ) {
     return {
       ...commonGeneric,
@@ -56,7 +58,9 @@ export function toTransactionRaw(t: Transaction): TransactionRaw {
 
   if (
     t.mode === TRANSACTION_TYPE.TRANSFER_PRIVATE ||
-    t.mode === TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC
+    t.mode === TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC ||
+    t.mode === TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE ||
+    t.mode === TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC
   ) {
     return {
       ...commonGeneric,

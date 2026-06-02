@@ -12,6 +12,7 @@ import type { AleoAccount, Transaction } from "@ledgerhq/live-common/families/al
 import type { AccountLike } from "@ledgerhq/types-live";
 import StepRecipientSeparator from "~/renderer/components/StepRecipientSeparator";
 import { useAccountUnit, useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { isAleoAccount } from "~/renderer/families/aleo/modals/send/steps/utils";
 import { useSelector } from "LLD/hooks/redux";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { dayFormat, hourFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
@@ -26,16 +27,9 @@ interface Props {
   mainAccount: AleoAccount;
   subAccount?: AccountLike | null;
   onChange: (value: Source) => void;
-  disablePrivate?: boolean;
 }
 
-const BalanceSelector = ({
-  mainAccount,
-  subAccount,
-  transaction,
-  onChange,
-  disablePrivate = false,
-}: Props) => {
+const BalanceSelector = ({ mainAccount, subAccount, transaction, onChange }: Props) => {
   const { t } = useTranslation();
   const mainUnit = useAccountUnit(mainAccount);
   const subAccountUnit = useMaybeAccountUnit(subAccount);
@@ -50,15 +44,21 @@ const BalanceSelector = ({
     locale,
   };
 
-  const privateBalance = subAccount ? null : mainAccount?.aleoResources?.privateBalance ?? null;
-  const transparentBalance = subAccount
-    ? subAccount.balance
-    : mainAccount?.aleoResources?.transparentBalance ?? new BigNumber(0);
+  const aleoTokenAccount =
+    subAccount?.type === "TokenAccount" && isAleoAccount(subAccount) ? subAccount : null;
+
+  const transparentBalance =
+    aleoTokenAccount?.transparentBalance ??
+    mainAccount?.aleoResources?.transparentBalance ??
+    new BigNumber(0);
+  const privateBalance =
+    aleoTokenAccount?.privateBalance ?? mainAccount?.aleoResources?.privateBalance ?? null;
+
+  const formattedTransparentBalance = formatCurrencyUnit(unit, transparentBalance, formatConfig);
   const formattedPrivateBalance =
     privateBalance !== null
       ? formatCurrencyUnit(unit, privateBalance, formatConfig)
       : PRIVATE_BALANCE_PLACEHOLDER;
-  const formattedTransparentBalance = formatCurrencyUnit(unit, transparentBalance, formatConfig);
 
   const publicSyncDate = t("aleo.shared.balanceSelector.recently");
   const privateSyncDate = mainAccount.aleoResources?.lastPrivateSyncDate
@@ -85,13 +85,12 @@ const BalanceSelector = ({
           lastSyncDate={publicSyncDate}
           balance={formattedTransparentBalance}
           checked={isPublicTransfer}
-          onClick={() => !disablePrivate && onChange("public")}
+          onClick={() => onChange("public")}
         />
         <BalanceOptionsSwitch
           onClick={() => {
             onChange(isPublicTransfer ? "private" : "public");
           }}
-          disabled={disablePrivate}
         />
         <BalanceOption
           isSelfTransfer={isSelfTransfer}
@@ -100,7 +99,6 @@ const BalanceSelector = ({
           lastSyncDate={privateSyncDate}
           lastSyncTime={privateSyncTime}
           checked={isPrivateTransfer}
-          disabled={disablePrivate}
           onClick={() => onChange("private")}
         />
       </Flex>
@@ -123,7 +121,6 @@ const BalanceSelector = ({
           lastSyncDate={privateSyncDate}
           lastSyncTime={privateSyncTime}
           checked={isPrivateTransfer}
-          disabled={disablePrivate}
           onClick={() => onChange("private")}
         />
       </Flex>

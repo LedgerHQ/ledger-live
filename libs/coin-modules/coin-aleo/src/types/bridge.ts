@@ -40,6 +40,28 @@ export type Transaction = TransactionCommon & {
           feeRecordCommitment: string | null;
         };
       }
+    | {
+        mode: typeof TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC;
+        properties?: never;
+      }
+    | {
+        mode: typeof TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE;
+        properties?: never;
+      }
+    | {
+        mode: typeof TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE;
+        properties: {
+          amountRecordCommitments: string[];
+          feeRecordCommitment: string | null;
+        };
+      }
+    | {
+        mode: typeof TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC;
+        properties: {
+          amountRecordCommitments: string[];
+          feeRecordCommitment: string | null;
+        };
+      }
   );
 
 export type TransactionRaw = TransactionCommonRaw & {
@@ -63,6 +85,28 @@ export type TransactionRaw = TransactionCommonRaw & {
       }
     | {
         mode: typeof TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC;
+        properties: {
+          amountRecordCommitments: string[];
+          feeRecordCommitment: string | null;
+        };
+      }
+    | {
+        mode: typeof TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC;
+        properties?: never;
+      }
+    | {
+        mode: typeof TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE;
+        properties?: never;
+      }
+    | {
+        mode: typeof TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE;
+        properties: {
+          amountRecordCommitments: string[];
+          feeRecordCommitment: string | null;
+        };
+      }
+    | {
+        mode: typeof TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC;
         properties: {
           amountRecordCommitments: string[];
           feeRecordCommitment: string | null;
@@ -137,7 +181,13 @@ export type AleoOperation = Operation<AleoOperationExtra>;
 export type TransactionTransfer = Extract<
   Transaction,
   {
-    mode: typeof TRANSACTION_TYPE.TRANSFER_PUBLIC | typeof TRANSACTION_TYPE.TRANSFER_PRIVATE;
+    mode:
+      | typeof TRANSACTION_TYPE.TRANSFER_PUBLIC
+      | typeof TRANSACTION_TYPE.TRANSFER_PRIVATE
+      | typeof TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC
+      | typeof TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE
+      | typeof TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC
+      | typeof TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE;
   }
 >;
 
@@ -155,7 +205,9 @@ export type TransactionPublic = Extract<
   {
     mode:
       | typeof TRANSACTION_TYPE.CONVERT_PUBLIC_TO_PRIVATE
-      | typeof TRANSACTION_TYPE.TRANSFER_PUBLIC;
+      | typeof TRANSACTION_TYPE.TRANSFER_PUBLIC
+      | typeof TRANSACTION_TYPE.TRANSFER_TOKEN_PUBLIC
+      | typeof TRANSACTION_TYPE.CONVERT_TOKEN_PUBLIC_TO_PRIVATE;
   }
 >;
 
@@ -164,6 +216,8 @@ export type TransactionPrivate = Extract<
   {
     mode:
       | typeof TRANSACTION_TYPE.CONVERT_PRIVATE_TO_PUBLIC
-      | typeof TRANSACTION_TYPE.TRANSFER_PRIVATE;
+      | typeof TRANSACTION_TYPE.TRANSFER_PRIVATE
+      | typeof TRANSACTION_TYPE.TRANSFER_TOKEN_PRIVATE
+      | typeof TRANSACTION_TYPE.CONVERT_TOKEN_PRIVATE_TO_PUBLIC;
   }
 >;
