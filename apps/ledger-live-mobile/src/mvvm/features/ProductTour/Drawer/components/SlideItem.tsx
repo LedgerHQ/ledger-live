@@ -63,21 +63,11 @@ export function SlideItem({ index }: SlideItemProps) {
 
 const styles = StyleSheet.create({
   container: {
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 24,
-    flexGrow: 1,
-    flexShrink: 0,
-    flexBasis: 0,
-    alignSelf: "stretch",
+    flex: 1,
+    gap: 48,
   },
   lottie: {
-    display: "flex",
-    width: 208,
-    height: 208,
-    justifyContent: "center",
-    alignItems: "center",
+    width: "100%",
+    height: 300,
   },
 });
