@@ -38,12 +38,6 @@ runs:
         packages: ${{ inputs.android_packages }}
         cmdline-tools-version: 14742923
 
-    - name: ADB version
-      shell: bash
-      run: |
-        /usr/local/lib/android/sdk/platform-tools/adb version
-        sdkmanager --list_installed | grep platform-tools || true
-
     - name: Enable Hardware Acceleration
       shell: bash
       run: |
