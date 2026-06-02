@@ -5,13 +5,13 @@
   "license": "Apache-2.0",
   "scripts": {
     "clean": "rimraf lib lib-es",
-    "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
+    "build": "rimraf lib lib-es && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "lint": "eslint .",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
     "typecheck": "tsc --project ./tsconfig.json --noEmit --customConditions node",
-    "start": "node --import ./register.mjs lib/cli.js",
-    "start:debug": "node --import ./register.mjs --inspect-brk lib/cli.js"
+    "start": "node --import ./register.mjs lib-es/cli.js",
+    "start:debug": "node --import ./register.mjs --inspect-brk lib-es/cli.js"
   },
   "dependencies": {
     "@datadog/datadog-api-client": "^1.40",
@@ -39,23 +39,18 @@
   },
   "typesVersions": {
     "*": {
-      "lib/*": [
-        "lib/*"
-      ],
       "lib-es/*": [
         "lib-es/*"
       ],
       "*": [
-        "lib/*"
+        "lib-es/*"
       ]
     }
   },
   "exports": {
-    "./lib/*": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
     "./*": {
       "@ledgerhq/source": "./src/*.ts",
-      "require": "./lib/*.js",
       "default": "./lib-es/*.js"
     },
     "./package.json": "./package.json"
