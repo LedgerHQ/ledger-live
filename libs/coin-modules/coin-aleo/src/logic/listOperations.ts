@@ -1,9 +1,9 @@
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Operation, ListOperationsOptions } from "@ledgerhq/coin-module-framework/api/types";
 import type { AleoOperation } from "../types/bridge";
 import { fetchAccountTransactionsFromHeight } from "../network/utils";
+import { resolveTokenCurrenciesByProgram } from "../bridge/tokens";
 import { toCoinFrameworkOperation, toBridgeOperation } from "./utils";
-import { TOKENS_PROGRAMS } from "../constants";
 
 interface Params {
   currency: CryptoCurrency;
@@ -46,15 +46,24 @@ export async function listOperations(
     ...(options.order && { order: options.order }),
   });
 
+  let tokensByProgram: Map<string, TokenCurrency> = new Map();
+
+  if (mode === "bridge") {
+    tokensByProgram = await resolveTokenCurrenciesByProgram({
+      programNames: result.transactions.map(rawTx => rawTx.program_id),
+      currencyId: currency.id,
+    });
+  }
+
   for (const rawTx of result.transactions) {
     if (mode === "coin-framework") {
       operations.push(toCoinFrameworkOperation(rawTx, address));
     } else {
-      operations.push(toBridgeOperation(params.ledgerAccountId, rawTx, address));
-
-      // FIXME: refactor + only supported in bridge
-      if (TOKENS_PROGRAMS.includes(rawTx.program_id)) {
-        tokenOperations.push(toBridgeOperation(params.ledgerAccountId, rawTx, address));
+      const isToken = tokensByProgram.has(rawTx.program_id);
+      const op = toBridgeOperation(params.ledgerAccountId, rawTx, address, isToken);
+      operations.push(op);
+      if (isToken) {
+        tokenOperations.push(op);
       }
     }
   }
