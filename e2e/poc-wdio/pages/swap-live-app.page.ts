@@ -2,6 +2,7 @@ import { getMinimumSwapAmount } from "@ledgerhq/live-common/e2e/swap";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { floatNumberRegex } from "@ledgerhq/live-common/e2e/data/regexes";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { getByTestId } from "../components/appiumSelector.ts";
 
 export class SwapLiveAppPage {
   // webview components
@@ -63,24 +64,20 @@ export class SwapLiveAppPage {
   async switchTo() {
     await driver.waitUntil(
       async () => {
-        const contexts = await driver.getAppiumContexts();
-        const webviews = contexts.filter(context => context.toLowerCase().includes("webview"));
-        for (const webview of webviews) {
-          await driver.switchAppiumContext(webview);
-          const title = await driver.getTitle();
-          if (/swap/i.test(title)) {
-            return true;
-          }
-        }
-        return false;
+        console.log("Waiting for Swap Live App webview to be displayed...");
+        await getByTestId("wallet-api-webview").waitForDisplayed();
+        console.log("Switching to Swap Live App webview context");
+        await driver.switchContext({ title: /swap/i });
+        return true;
       },
       {
-        interval: 1_000,
+        interval: 5_000,
         timeout: 120_000,
-        timeoutMsg: "Expected to find swap live app context",
+        timeoutMsg: "Expected to switch to swap live app webview",
       },
     );
   }
+
   async expectLiveApp() {
     // DETOX:
     // await waitWebElementByTestId(this.fromSelector);

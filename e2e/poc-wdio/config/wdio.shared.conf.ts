@@ -1,6 +1,7 @@
 import { setEnv } from "@ledgerhq/live-env";
 import { init } from "../bridge/server";
 import { SpeculosUtils } from "../utils/SpeculosUtils.ts";
+import { ADBUtils } from "../utils/ADBUtils.ts";
 
 const NANO_APP_CATALOG_PATH = "artifacts/appVersion/nano-app-catalog.json";
 
@@ -219,8 +220,9 @@ export const config: WebdriverIO.Config = {
    * @param {Array.<String>} specs        List of spec file paths that are to be run
    * @param {object}         browser      instance of created browser/device session
    */
-  // before: function (capabilities, specs) {
-  // },
+  before: async function (capabilities, specs) {
+    await ADBUtils.dumpLogcatToArtifacts("session-start");
+  },
   /**
    * Runs before a WebdriverIO command gets executed.
    * @param {string} commandName hook command name
@@ -265,6 +267,7 @@ export const config: WebdriverIO.Config = {
   afterTest: async function (test, context, { error, result, duration, passed, retries }) {
     if (!passed) {
       await driver.takeScreenshot();
+      await ADBUtils.dumpLogcatToArtifacts(test.title.replace(/\s+/g, "-").toLowerCase());
     }
   },
 
@@ -295,6 +298,7 @@ export const config: WebdriverIO.Config = {
    * @param {Array.<String>} specs List of spec file paths that ran
    */
   after: async function (result, capabilities, specs) {
+    await ADBUtils.dumpLogcatToArtifacts("session-end");
     await SpeculosUtils.removeSpeculosAndDeregisterKnownSpeculos();
   },
   /**
