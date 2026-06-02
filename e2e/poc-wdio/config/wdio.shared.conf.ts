@@ -219,8 +219,12 @@ export const config: WebdriverIO.Config = {
    * @param {Array.<String>} specs        List of spec file paths that are to be run
    * @param {object}         browser      instance of created browser/device session
    */
-  // before: function (capabilities, specs) {
-  // },
+  before: function (capabilities, specs) {
+    if (driver.isAndroid) {
+      const deviceID = driver.capabilities.deviceUDID ?? driver.capabilities["appium:deviceName"];
+      execSync(`adb -s ${deviceID} shell am force-stop com.google.android.googlequicksearchbox`);
+    }
+  },
   /**
    * Runs before a WebdriverIO command gets executed.
    * @param {string} commandName hook command name
