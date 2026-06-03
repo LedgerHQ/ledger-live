@@ -68,7 +68,6 @@ const QueuedDrawerBottomSheet = ({
     areDrawersLocked,
     handleUserClose,
     handleDismiss,
-    handleCloseAnimationStart,
     onBack: hookOnBack,
     enablePanDownToClose: computedEnablePanDownToClose,
     backgroundContextValue,
@@ -95,7 +94,6 @@ const QueuedDrawerBottomSheet = ({
       hideCloseButton={noCloseButton || areDrawersLocked}
       hideHandle={hideHandle}
       onBack={hasBackButton ? hookOnBack : undefined}
-      onAnimate={handleCloseAnimationStart}
       onDismiss={handleDismiss}
       backdropPressBehavior={preventBackdropClick || areDrawersLocked ? "none" : "close"}
       onBackdropPress={handleUserClose}
