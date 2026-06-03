@@ -471,6 +471,7 @@ export async function performPrivateSync(
       ledgerAccountId,
       address,
     });
+    operations.sort((a, b) => b.date.getTime() - a.date.getTime());
   }
 
   onProgress?.(PROGRESS_DONE);

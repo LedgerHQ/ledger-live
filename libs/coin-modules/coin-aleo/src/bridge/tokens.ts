@@ -44,6 +44,7 @@ function promoteCoinOpToFees({
   coinOp.id = encodeOperationId(ledgerAccountId, txHash, "FEES");
   coinOp.type = "FEES";
   coinOp.value = fee;
+  coinOp.fee = fee;
 }
 
 /** CAL lookup by Aleo program name (contract address). Missing programs are omitted. */
