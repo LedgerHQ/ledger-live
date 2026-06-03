@@ -59,7 +59,7 @@ export class SpeculosUtils {
 
   static launchSpeculos = async (appName: string) => {
     // const testName = jestExpect.getState().testPath || "unknown"; TODO: REVIEW
-    const testName = "DUMMY TEST NAME";
+    const testName = "unknown";
     let device;
     try {
       device = await startSpeculos(testName ?? "cli_speculos", specs[appName.replace(/ /g, "_")]);
