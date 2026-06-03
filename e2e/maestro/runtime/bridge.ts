@@ -5,8 +5,12 @@ import {
   getEnvs,
   init as initBridge,
   loadConfig,
+  openDeeplink,
   removeKnownSpeculos,
   setFeatureFlags,
+  webviewDriver as runWebviewDriver,
+  type WebviewDriverOpPayload,
+  type WebviewDriverResult,
 } from "../../mobile/bridge/server";
 import { DEFAULT_FEATURE_FLAGS } from "../config/featureFlags";
 import { USERDATA_DIR } from "./paths";
@@ -68,6 +72,15 @@ export class E2EBridge {
 
   async removeKnownSpeculos(address: string): Promise<void> {
     await removeKnownSpeculos(address);
+  }
+
+  /** Sends a deeplink over the bridge; the app navigates internally (no OS URL dispatch). */
+  async openDeeplink(url: string): Promise<void> {
+    await openDeeplink(url);
+  }
+
+  async webviewDriver(driver: string, op: WebviewDriverOpPayload): Promise<WebviewDriverResult> {
+    return runWebviewDriver(driver, op);
   }
 
   close(): void {

@@ -29,14 +29,11 @@ export async function runSwapEthUsdtSpec(ctx: MaestroContext) {
           params: { manifest_id: SWAP_LIVE_APP_MANIFEST_ID },
         },
       },
-      cliCommandsOnApp: [
-        { app: "Ethereum", cmd: liveDataWithAddressCommand(accountToDebit) },
-        { app: "Ethereum", cmd: liveDataWithAddressCommand(accountToCredit) },
-      ],
+      cliCommandsOnApp: [{ app: "Ethereum", cmd: liveDataWithAddressCommand(accountToDebit) }],
       swapSetup: true,
     },
     async () => {
-      ctx.swap.openViaDeeplink();
+      await ctx.swap.openViaDeeplink();
       await ctx.switchToLiveApp();
       await ctx.swapLiveApp.expectSwapLiveApp();
 

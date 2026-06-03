@@ -6,8 +6,8 @@ export class SwapPage {
 
   constructor(private readonly app: MaestroApp) {}
 
-  openViaDeeplink(): void {
-    this.app.openDeepLink("ledgerlive://swap");
+  async openViaDeeplink(): Promise<void> {
+    await this.app.openDeepLink("ledgerlive://swap");
   }
 
   waitForSuccessAndContinue(): void {

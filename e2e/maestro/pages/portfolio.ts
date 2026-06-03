@@ -5,8 +5,8 @@ export class PortfolioPage {
 
   constructor(private readonly app: MaestroApp) {}
 
-  openAddAccount(): void {
-    this.app.openDeepLink("ledgerlive://add-account");
+  async openAddAccount(): Promise<void> {
+    await this.app.openDeepLink("ledgerlive://add-account");
   }
 
   expectAsset(assetId: string): void {

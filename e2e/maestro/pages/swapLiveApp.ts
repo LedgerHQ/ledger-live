@@ -1,4 +1,5 @@
 import { SwapProvider } from "@ledgerhq/live-common/e2e/enum/Provider";
+import { E2EBridge } from "../runtime/bridge";
 import { FlowBuilder } from "../runtime/flowBuilder";
 import { MaestroCommand } from "../runtime/maestro";
 
@@ -43,7 +44,13 @@ function executeButtonLabel(provider: SwapProvider): { text: string } {
 }
 
 export class SwapLiveApp {
-  constructor(private readonly flow: FlowBuilder) {}
+  private readonly fromAmountInput = "from-account-amount-input";
+
+  constructor(
+    private readonly flow: FlowBuilder,
+    private readonly bridge: E2EBridge,
+    private readonly driver: string,
+  ) {}
 
   waitReady(): Promise<void> {
     this.flow.add({ extendedWaitUntil: { visible: text(SWAP_LABELS.coinSelector) } });
@@ -63,9 +70,16 @@ export class SwapLiveApp {
     return Promise.resolve();
   }
 
-  inputAmount(amount: string): Promise<void> {
-    this.flow.addStep("swap-input-amount", this.keypadTaps(amount));
-    return Promise.resolve();
+  async inputAmount(amount: string): Promise<void> {
+    await this.driveWebView({ op: "waitForTestId", testId: this.fromAmountInput });
+    await this.driveWebView({ op: "typeText", testId: this.fromAmountInput, value: amount });
+  }
+
+  private async driveWebView(op: Parameters<E2EBridge["webviewDriver"]>[1]): Promise<void> {
+    const result = await this.bridge.webviewDriver(this.driver, op);
+    if (!result.ok) {
+      throw new Error(`[swap-live-app] WebView op "${op.op}" failed: ${result.error}`);
+    }
   }
 
   waitForReceiveAmountEstimate(): Promise<void> {
@@ -106,24 +120,5 @@ export class SwapLiveApp {
 
     this.flow.add(...cascade, { assertTrue: "${output.swapProviderPicked != null}" });
     return Promise.resolve();
-  }
-
-  private keypadTaps(amount: string): MaestroCommand[] {
-    const [intPart = "0", fracPart = ""] = amount.split(".");
-    const taps: MaestroCommand[] = [];
-    if (intPart && intPart !== "0") {
-      for (const digit of intPart) taps.push(this.keyTap(digit));
-    }
-    if (fracPart) {
-      taps.push(this.keyTap("."));
-      for (const digit of fracPart) taps.push(this.keyTap(digit));
-    }
-    return taps;
-  }
-
-  private keyTap(key: string): MaestroCommand {
-    if (key === "0") return { tapOn: { text: "0", below: text("8") } };
-    if (key === ".") return { tapOn: { text: "\\.", below: text("7") } };
-    return { tapOn: text(key) };
   }
 }

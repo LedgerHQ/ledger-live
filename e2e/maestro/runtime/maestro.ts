@@ -1,15 +1,17 @@
 import { spawn } from "child_process";
-import { mkdirSync, writeFileSync } from "fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "fs";
+import os from "os";
 import path from "path";
 import { randomUUID } from "crypto";
 import { MaestroProject } from "../config/projects";
 import { allureAttach, allureStep } from "./allure";
+import { formatDuration } from "./timing";
 
 type Scalar = string | number | boolean | null;
 type YamlValue = Scalar | YamlValue[] | { [key: string]: YamlValue };
 export type MaestroCommand = { [key: string]: YamlValue };
 
-const DEFAULT_TAP_SETTLE_TIMEOUT_MS = 250;
+const DEFAULT_TAP_SETTLE_TIMEOUT_MS = 100;
 const DEFAULT_WAIT_TIMEOUT_MS = 60_000;
 
 function quoteString(value: string): string {
@@ -94,6 +96,8 @@ function deepNormalize(value: YamlValue): YamlValue {
 }
 
 const PACKAGE_ROOT = path.resolve(__dirname, "..");
+// Maestro writes per-run debug output (incl. a screenshot on a failed command) here.
+const MAESTRO_TESTS_DIR = path.join(os.homedir(), ".maestro", "tests");
 
 export type RunFlowOptions = {
   webViewHierarchy?: boolean;
@@ -121,16 +125,46 @@ export class MaestroRuntime {
     await allureStep(`native flow: ${name}`, async () => {
       allureAttach(`${name}.yaml`, contents, "text/yaml");
 
-      const maxAttempts = this.project.platform === "ios" ? 2 : 1;
-      for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-        const exitCode = await this.runMaestroProcess(flowPath, env);
-        if (exitCode === 0) return;
-        if (attempt === maxAttempts) {
-          throw new Error(`Maestro flow "${name}" failed with exit code ${exitCode}`);
+      const flowStart = Date.now();
+      try {
+        const maxAttempts = this.project.platform === "ios" ? 2 : 1;
+        for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+          const exitCode = await this.runMaestroProcess(flowPath, env);
+          if (exitCode === 0) return;
+          if (attempt === maxAttempts) {
+            throw new Error(`Maestro flow "${name}" failed with exit code ${exitCode}`);
+          }
+          console.warn(`Maestro flow "${name}" failed with exit code ${exitCode}; retrying once.`);
         }
-        console.warn(`Maestro flow "${name}" failed with exit code ${exitCode}; retrying once.`);
+      } finally {
+        this.attachScreenshots(name);
+        console.info(`time - flow[${name}]: ${formatDuration(Date.now() - flowStart)}`);
       }
     });
+  }
+
+  private attachScreenshots(name: string): void {
+    try {
+      if (!existsSync(MAESTRO_TESTS_DIR)) return;
+      const runDirs = readdirSync(MAESTRO_TESTS_DIR)
+        .map(entry => path.join(MAESTRO_TESTS_DIR, entry))
+        .filter(entry => statSync(entry).isDirectory());
+      if (runDirs.length === 0) return;
+
+      // Flows run sequentially, so the most recently modified dir belongs to this run.
+      const latestRunDir = runDirs.reduce((newest, candidate) =>
+        statSync(candidate).mtimeMs >= statSync(newest).mtimeMs ? candidate : newest,
+      );
+
+      const screenshots = readdirSync(latestRunDir).filter(file =>
+        file.toLowerCase().endsWith(".png"),
+      );
+      for (const file of screenshots) {
+        allureAttach(`${name} – ${file}`, readFileSync(path.join(latestRunDir, file)), "image/png");
+      }
+    } catch (error) {
+      console.warn(`[maestro] failed to attach screenshots for "${name}":`, String(error));
+    }
   }
 
   serialize(name: string, commands: MaestroCommand[], options: RunFlowOptions = {}): string {

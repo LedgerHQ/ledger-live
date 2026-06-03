@@ -3,6 +3,7 @@ import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import { verifyAmountsAndAcceptSwap } from "@ledgerhq/live-common/e2e/speculos";
 import { MaestroContext } from "../context";
 import { CurrencyField } from "../pages/swapLiveApp";
+import { timed } from "../runtime/timing";
 
 async function selectCurrency(
   ctx: MaestroContext,
@@ -23,8 +24,9 @@ export async function buildSwapUntilQuoteSelection(
   await selectCurrency(ctx, accountToDebit, "from");
   await selectCurrency(ctx, accountToCredit, "to");
 
-  await ctx.switchToLiveApp();
-  await ctx.swapLiveApp.inputAmount(amount);
+  await ctx.runFlow("swap-select-currencies");
+  await timed("swap-input-amount", () => ctx.swapLiveApp.inputAmount(amount));
+
   await ctx.swapLiveApp.waitForReceiveAmountEstimate();
   await ctx.swapLiveApp.tapGetQuotes();
   await ctx.swapLiveApp.waitForQuotes();

@@ -1,6 +1,7 @@
 import { Observable, isObservable, lastValueFrom } from "rxjs";
 import { sanitizeError } from "@ledgerhq/live-common/e2e/index";
 import { MaestroContext } from "../context";
+import { timed } from "./timing";
 import { SpeculosName } from "../devices/speculos";
 
 export type CliCommand = (
@@ -43,12 +44,16 @@ export async function runCliCommandsOnApp(
   }
 
   for (const [appName, cmds] of grouped.entries()) {
-    const speculos = await ctx.speculos.start(appName, `maestro-cli-${appName}`);
+    const speculos = await timed(`cli-speculos-start[${appName}]`, () =>
+      ctx.speculos.start(appName, `maestro-cli-${appName}`),
+    );
     ctx.speculos.registerForCli(speculos.port);
     const speculosAddress = ctx.speculos.address(speculos.port);
     try {
-      for (const cmd of cmds) {
-        await executeCliCommand(cmd, userdataPath, speculosAddress);
+      for (let i = 0; i < cmds.length; i++) {
+        await timed(`cli-cmd[${appName} ${i + 1}/${cmds.length}]`, () =>
+          executeCliCommand(cmds[i], userdataPath, speculosAddress),
+        );
       }
     } finally {
       try {

@@ -5,6 +5,7 @@ import { MaestroContext } from "../context";
 import { setupE2EEnvironment } from "./env";
 import { createTempUserdata, removeTempUserdata } from "./userdata";
 import { CliCommandOnApp, runCliCommandsOnApp } from "./cli";
+import { timed } from "./timing";
 import { SpeculosName } from "../devices/speculos";
 
 export type SessionOptions = {
@@ -34,45 +35,53 @@ export async function withMaestroSession(
   let bridgeOpened = false;
   let speculosAddress: string | undefined;
   try {
-    if (options.cliCommandsOnApp) {
-      await runCliCommandsOnApp(ctx, options.cliCommandsOnApp, tmpUserdata.path);
+    const cliCommands = options.cliCommandsOnApp;
+    if (cliCommands) {
+      await timed("cli-setup", () => runCliCommandsOnApp(ctx, cliCommands, tmpUserdata.path));
     }
 
     const main = options.mainSpeculos;
-    const speculos = main.deps?.length
-      ? await ctx.speculos.startExchangeWith(main.deps, main.testName)
-      : await ctx.speculos.start(main.name, main.testName);
+    const speculos = await timed("speculos-start", () =>
+      main.deps?.length
+        ? ctx.speculos.startExchangeWith(main.deps, main.testName)
+        : ctx.speculos.start(main.name, main.testName),
+    );
     ctx.speculos.reversePort(speculos.port);
     ctx.speculos.registerForCli(speculos.port);
     speculosAddress = ctx.speculos.address(speculos.port);
 
-    const { port: bridgePort, ready } = await ctx.bridge.start({
-      userdata: tmpUserdata.name,
-      knownSpeculosAddress: speculosAddress,
-    });
+    const { port: bridgePort, ready } = await timed("bridge-start", () =>
+      ctx.bridge.start({
+        userdata: tmpUserdata.name,
+        knownSpeculosAddress: speculosAddress,
+      }),
+    );
     bridgeOpened = true;
 
-    await installed;
+    await timed("app-install", () => installed);
 
-    await ctx.app.launch({
-      IS_TEST: "true",
-      mock: "0",
-      disable_broadcast: "1",
-      wsPort: String(bridgePort),
-      ...options.launchArgs,
-    });
+    await timed("app-launch", () =>
+      ctx.app.launch({
+        IS_TEST: "true",
+        mock: "0",
+        disable_broadcast: "1",
+        wsPort: String(bridgePort),
+        ...options.launchArgs,
+      }),
+    );
 
-    await ready;
+    await timed("bridge-ready", () => ready);
 
-    if (options.featureFlags) {
-      await ctx.bridge.setFeatureFlags(options.featureFlags);
+    const featureFlags = options.featureFlags;
+    if (featureFlags) {
+      await timed("feature-flags", () => ctx.bridge.setFeatureFlags(featureFlags));
     }
 
     if (options.swapSetup) {
-      await bridgeSwapSetup();
+      await timed("swap-setup", () => bridgeSwapSetup());
     }
 
-    await body();
+    await timed("test-body", () => body());
   } finally {
     if (bridgeOpened && speculosAddress) {
       await ctx.bridge.removeKnownSpeculos(speculosAddress).catch(() => undefined);

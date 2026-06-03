@@ -7,10 +7,14 @@ import {
   startSpeculos,
   stopSpeculos,
 } from "@ledgerhq/live-common/e2e/speculos";
+import { waitForSpeculosReady } from "@ledgerhq/live-common/e2e/speculosCI";
 import { CLI } from "../../mobile/utils/cliUtils";
 import { MaestroProject } from "../config/projects";
 
 export type SpeculosName = keyof typeof specs;
+
+// iOS CI runs against a remote Speculos (Speculinho); Android + local use Docker.
+const IS_REMOTE_SPECULOS = process.env.REMOTE_SPECULOS === "true";
 
 export class SpeculosDeviceManager {
   private readonly devices: SpeculosDevice[] = [];
@@ -24,6 +28,17 @@ export class SpeculosDeviceManager {
     }
 
     this.devices.push(speculos);
+
+    // Remote Speculos (Speculinho) acquires asynchronously: startSpeculos returns once
+    // `/acquire` is accepted, but process.env.SPECULOS_ADDRESS is only populated once the
+    // pod reports "ready". Wait here (after pushing, so cleanup still releases it on a
+    // timeout) so registerForCli()/address() resolve the real remote URL instead of the
+    // localhost fallback (which caused ECONNREFUSED 127.0.0.1:443). Mirrors the Detox flow
+    // in e2e/mobile/utils/initUtil.ts (waitForSpeculosReady before registerSpeculos).
+    if (IS_REMOTE_SPECULOS) {
+      await waitForSpeculosReady(speculos.id);
+    }
+
     return speculos;
   }
 

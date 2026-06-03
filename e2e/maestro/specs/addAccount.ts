@@ -10,8 +10,8 @@ export async function runAddAccountSpec(ctx: MaestroContext) {
     },
     async () => {
       // Build the YAML flow.
-      ctx.app.openDeepLink("ledgerlive://portfolio");
-      ctx.portfolio.openAddAccount();
+      await ctx.app.openDeepLink("ledgerlive://portfolio");
+      await ctx.portfolio.openAddAccount();
 
       ctx.modularDrawer.selectAssetForAddAccount("BTC");
       ctx.modularDrawer.confirmAddAccount();

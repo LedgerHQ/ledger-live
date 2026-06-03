@@ -8,6 +8,7 @@ import { SwapPage } from "./pages/swap";
 import { SwapLiveApp } from "./pages/swapLiveApp";
 import { E2EBridge } from "./runtime/bridge";
 import { SpeculosDeviceManager } from "./devices/speculos";
+import { SWAP_LIVE_APP_MANIFEST_ID } from "./config/swap";
 
 export class MaestroContext {
   readonly app: MaestroApp;
@@ -27,11 +28,11 @@ export class MaestroContext {
     this.flow = new FlowBuilder();
     this.maestro = new MaestroRuntime(project);
     this.bridge = new E2EBridge();
-    this.app = new MaestroApp(project, this.maestro, this.flow);
+    this.app = new MaestroApp(project, this.maestro, this.flow, this.bridge);
     this.portfolio = new PortfolioPage(this.app);
     this.modularDrawer = new ModularDrawerPage(this.app);
     this.swap = new SwapPage(this.app);
-    this.swapLiveApp = new SwapLiveApp(this.flow);
+    this.swapLiveApp = new SwapLiveApp(this.flow, this.bridge, SWAP_LIVE_APP_MANIFEST_ID);
     this.speculos = new SpeculosDeviceManager(project);
   }
 
