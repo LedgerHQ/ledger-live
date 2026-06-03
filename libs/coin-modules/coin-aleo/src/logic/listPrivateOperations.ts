@@ -21,6 +21,9 @@ export async function listPrivateOperations({
   address,
   ledgerAccountId,
   privateRecords,
+  // TODO: probably something we should refactor when cleaning up the code
+  // this is used only to calculate consumed record tags
+  // we assume that records spent before are already cleared from the scanner
   tokenRecords,
   onProgress,
   signal,
@@ -49,6 +52,8 @@ export async function listPrivateOperations({
     return result;
   });
 
+  // Build the set of record tags consumed as inputs in outgoing transactions.
+  // This is used to compensate for the record scanner returning already-spent records as unspent.
   for (const enriched of enrichedRecords) {
     if (enriched?.rawRecord.sender !== address) continue;
 
@@ -66,7 +71,8 @@ export async function listPrivateOperations({
 
   const operations = enrichedRecords
     .filter((record): record is EnrichedPrivateRecord => {
-      // exclude token records to avoid duplicates
+      // we added token records to enrichedRecords just for calculating consumed record tags
+      // they were not on this level before, so now we need to exclude them
       return record !== null && nativeRecordTags.has(record.rawRecord.tag);
     })
     .map(record => toPrivateBridgeOperation(ledgerAccountId, record, address));

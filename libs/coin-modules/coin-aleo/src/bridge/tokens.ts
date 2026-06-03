@@ -23,8 +23,9 @@ export async function getCalTokens({
   programNames: string[];
 }): Promise<Map<string, TokenCurrency>> {
   const calTokens = new Map<string, TokenCurrency>();
+  const uniqueProgramNames = [...new Set(programNames)];
 
-  await promiseAllBatched(4, [...new Set(programNames)], async programName => {
+  await promiseAllBatched(4, uniqueProgramNames, async programName => {
     const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(
       programName,
       currencyId,

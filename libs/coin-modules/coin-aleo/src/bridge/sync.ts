@@ -326,26 +326,36 @@ export async function performPrivateSync(
       : Promise.resolve([]),
   ]);
 
-  const calTokens: Map<string, TokenCurrency> = shouldFetchPrivateTokens
-    ? await getCalTokens({
-        currencyId: currency.id,
-        programNames: [...rawTokenPrivateRecords, ...rawUnspentTokenRecords].map(
-          record => record.program_name,
-        ),
-      })
-    : new Map();
-
-  const isCalToken = (record: AleoPrivateRecord) => calTokens.has(record.program_name);
-
-  const calTokenRecords = shouldFetchPrivateTokens ? rawTokenPrivateRecords.filter(isCalToken) : [];
-  const unspentCalTokenRecords = shouldFetchPrivateTokens
-    ? rawUnspentTokenRecords.filter(isCalToken)
-    : [];
-
   signal?.throwIfAborted();
 
   // Emits PROGRESS_AFTER_SCANNER% progress when all records are fetched
   onProgress?.(PROGRESS_AFTER_SCANNER);
+
+  let calTokens: Map<string, TokenCurrency> = new Map();
+  let calTokenRecords: AleoPrivateRecord[] = [];
+  let unspentCalTokenRecords: AleoPrivateRecord[] = [];
+  let newCalTokenRecords: AleoPrivateRecord[] = [];
+  const isCalToken = (record: AleoPrivateRecord) => calTokens.has(record.program_name);
+
+  if (shouldFetchPrivateTokens) {
+    calTokens = await getCalTokens({
+      currencyId: currency.id,
+      programNames: [...rawTokenPrivateRecords, ...rawUnspentTokenRecords].map(
+        record => record.program_name,
+      ),
+    });
+
+    calTokenRecords = rawTokenPrivateRecords.filter(isCalToken);
+    unspentCalTokenRecords = rawUnspentTokenRecords.filter(isCalToken);
+
+    // for now this is used only to calculate consumed record tags
+    // we assume that records spent before are already cleared from the scanner
+    newCalTokenRecords = calTokenRecords.filter(
+      record => record.block_height >= lastPrivateBlockHeight,
+    );
+  }
+
+  signal?.throwIfAborted();
 
   const [latestAccountPrivateOperations, patchedPublicOperations] = await Promise.all([
     listPrivateOperations({
@@ -354,7 +364,7 @@ export async function performPrivateSync(
       address,
       ledgerAccountId,
       privateRecords: rawNewNativePrivateRecords,
-      ...(calTokenRecords.length > 0 && { tokenRecords: calTokenRecords }),
+      ...(calTokenRecords.length > 0 && { tokenRecords: newCalTokenRecords }),
       ...(onProgress
         ? {
             onProgress: (completed: number, total: number) =>
@@ -425,7 +435,7 @@ export async function performPrivateSync(
   // otherwise fall back to what the account last recorded.
   const transparentBalance =
     freshTransparentBalance ?? initialAccount.aleoResources?.transparentBalance ?? new BigNumber(0);
-  const totalBalance = transparentBalance.plus(privateBalance ?? 0);
+  const totalBalance = transparentBalance.plus(privateBalance);
 
   log("aleo/performPrivateSync", "Private sync completed", {
     ledgerAccountId,
