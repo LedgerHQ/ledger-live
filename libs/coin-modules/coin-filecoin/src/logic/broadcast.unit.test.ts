@@ -1,7 +1,7 @@
-import { broadcastTx } from "../../api/api";
-import { broadcast } from "../broadcast";
+import { broadcastTx } from "../api/api";
+import { broadcast } from "./broadcast";
 
-jest.mock("../../api/api");
+jest.mock("../api/api");
 jest.mock("@ledgerhq/logs");
 
 const mockedBroadcastTx = broadcastTx as jest.MockedFunction<typeof broadcastTx>;

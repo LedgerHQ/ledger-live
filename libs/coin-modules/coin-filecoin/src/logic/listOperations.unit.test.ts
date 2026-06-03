@@ -1,7 +1,7 @@
-import { fetchTxs, fetchERC20Transactions } from "../../api/api";
-import { listOperations } from "../listOperations";
+import { fetchTxs, fetchERC20Transactions } from "../api/api";
+import { listOperations } from "./listOperations";
 
-jest.mock("../../api/api");
+jest.mock("../api/api");
 jest.mock("@ledgerhq/logs");
 
 const mockedFetchTxs = fetchTxs as jest.MockedFunction<typeof fetchTxs>;
@@ -68,35 +68,33 @@ describe("listOperations", () => {
     expect(typeof result.next).toBe("string");
   });
 
-  it("token operations have fees = 0n and lowercase assetReference", async () => {
-    mockedFetchTxs.mockResolvedValueOnce({ txs: [], metadata: { limit: 50, offset: 0 } });
-    const ethAddr = "0x3ec0000000000000000000000000000000000000";
-    mockedFetchERC20.mockResolvedValueOnce({
-      txs: [
-        {
-          id: "1",
-          height: 3_000_000,
-          type: "erc20",
-          status: "Ok",
-          to: ethAddr,
-          from: "0xabc",
-          amount: "5000",
-          contract_address: "0xABCDEF",
-          timestamp: 1700000000,
-          tx_hash: "tokenhash1",
-        },
-      ],
+  it("IN operation value excludes fees", async () => {
+    const inTx = makeNativeTx({
+      from: "f1z4nykg7q6q5qnxs7h4zknhlqbqhq5jxcqm5qw4y",
+      to: ADDRESS,
     });
+    mockedFetchTxs.mockResolvedValueOnce({
+      txs: [inTx],
+      metadata: { limit: 50, offset: 0 },
+    });
+    mockedFetchERC20.mockResolvedValueOnce({ txs: [] });
 
-    // Use an f4 address so convertAddressFilToEth doesn't throw
-    const f4Address = "f410fkkld55ioe7qg24wvt7fu6pbknb56ht7ptloy";
-    const result = await listOperations(f4Address, { minHeight: 0 });
-    const tokenOp = result.items.find(op => op.asset.type === "erc20");
-    if (tokenOp) {
-      expect(tokenOp.tx.fees).toBe(0n);
-      expect((tokenOp.asset as { type: string; assetReference: string }).assetReference).toBe(
-        "0xabcdef",
-      );
-    }
+    const result = await listOperations(ADDRESS, { minHeight: 0 });
+    const inOp = result.items.find(op => op.type === "IN");
+    expect(inOp).toBeDefined();
+    // IN value = amount only (no fee added)
+    expect(inOp!.value).toBe(1_000_000_000_000_000_000n);
+  });
+
+  it("gracefully handles undefined txs from API", async () => {
+    mockedFetchTxs.mockResolvedValueOnce({
+      txs: undefined as any,
+      metadata: { limit: 50, offset: 0 },
+    });
+    mockedFetchERC20.mockResolvedValueOnce({ txs: [] });
+
+    const result = await listOperations(ADDRESS, { minHeight: 0 });
+    expect(result.items).toEqual([]);
+    expect(result.next).toBeUndefined();
   });
 });

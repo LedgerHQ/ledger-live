@@ -1,7 +1,7 @@
-import { fetchEstimatedFees } from "../../api/api";
-import { getNextSequence } from "../getNextSequence";
+import { fetchEstimatedFees } from "../api/api";
+import { getNextSequence } from "./getNextSequence";
 
-jest.mock("../../api/api");
+jest.mock("../api/api");
 jest.mock("@ledgerhq/logs");
 
 const mockedFetch = fetchEstimatedFees as jest.MockedFunction<typeof fetchEstimatedFees>;

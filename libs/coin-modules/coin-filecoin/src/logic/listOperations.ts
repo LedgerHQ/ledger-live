@@ -37,7 +37,7 @@ export async function listOperations(
 
   // Fetch native FIL transactions
   const nativeResp = await fetchTxs(address, cur.fromHeight, cur.nativeOffset, limit);
-  const nativeTxs = nativeResp.txs;
+  const nativeTxs = nativeResp.txs ?? [];
 
   // Fetch ERC-20 transactions — convert FIL address to Ethereum-compatible address first
   let ethAddr: string | null = null;
@@ -119,9 +119,12 @@ export async function listOperations(
     const failed = status !== TxStatus.Ok;
     const contractAddr = contract_address.toLowerCase();
 
-    const addrLower = address.toLowerCase();
-    const isSending = addrLower === from.toLowerCase();
-    const isReceiving = addrLower === to.toLowerCase();
+    // ERC-20 transactions use ETH-format addresses (0x...) while the input
+    // address may be in Filecoin f4 format. Compare against ethAddr which was
+    // used to query the ERC-20 endpoint.
+    const ethAddrLower = ethAddr!.toLowerCase();
+    const isSending = ethAddrLower === from.toLowerCase();
+    const isReceiving = ethAddrLower === to.toLowerCase();
 
     if (isSending) {
       items.push({

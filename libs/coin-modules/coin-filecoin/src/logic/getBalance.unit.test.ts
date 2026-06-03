@@ -1,7 +1,7 @@
-import { fetchBalances, fetchERC20TokenBalance } from "../../api/api";
-import { getBalance } from "../getBalance";
+import { fetchBalances, fetchERC20TokenBalance } from "../api/api";
+import { getBalance } from "./getBalance";
 
-jest.mock("../../api/api");
+jest.mock("../api/api");
 jest.mock("@ledgerhq/logs");
 jest.mock("@ledgerhq/cryptoassets/state", () => ({
   getCryptoAssetsStore: () => ({
@@ -11,7 +11,7 @@ jest.mock("@ledgerhq/cryptoassets/state", () => ({
 // Mock convertAddressFilToEth so synthetic addresses can drive both code paths:
 // when the address starts with "f410f" -> returns a fake ETH equivalent,
 // otherwise -> throws (forcing the native-only fallback branch).
-jest.mock("../../network/addresses", () => ({
+jest.mock("../network/addresses", () => ({
   convertAddressFilToEth: (addr: string) => {
     if (addr.startsWith("f410f")) return "0x" + addr.slice(5);
     throw new Error("not convertible");
@@ -72,10 +72,10 @@ describe("getBalance", () => {
     mockedFetchERC20Balance.mockResolvedValueOnce("0");
     mockedFetchERC20Balance.mockResolvedValueOnce("42");
 
-    const result = await getBalance(
-      "f410fkkld55ioe7qg24wvt7fu6pbknb56ht7ptloy",
-      ["0xABCDEF", "0xDEADBEEF"],
-    );
+    const result = await getBalance("f410fkkld55ioe7qg24wvt7fu6pbknb56ht7ptloy", [
+      "0xABCDEF",
+      "0xDEADBEEF",
+    ]);
 
     expect(result).toHaveLength(3);
     const tokens = result.filter(b => b.asset.type === "erc20");
@@ -97,10 +97,7 @@ describe("getBalance", () => {
     });
 
     // f1 SECP256K1 addresses are not convertAddressFilToEth-compatible — should fall back
-    const result = await getBalance(
-      "f1abjxfbp274xpdqcpuaykwkfb43omjotacm2p3za",
-      ["0xabcdef"],
-    );
+    const result = await getBalance("f1abjxfbp274xpdqcpuaykwkfb43omjotacm2p3za", ["0xabcdef"]);
 
     expect(result).toHaveLength(1);
     expect(result[0].asset.type).toBe("native");

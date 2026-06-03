@@ -1,9 +1,9 @@
-import { validateIntent } from "../validateIntent";
+import { validateIntent } from "./validateIntent";
 
 jest.mock("@ledgerhq/logs");
 // Mock the iso-filecoin-backed validator so synthetic test addresses pass.
 // validateAddress.unit.test.ts exercises the real delegation path.
-jest.mock("../../network/addresses", () => ({
+jest.mock("../network/addresses", () => ({
   validateAddress: (input: string) => ({
     isValid: input !== "NOT-VALID",
     parsedAddress: { toString: () => input },

@@ -1,11 +1,11 @@
-import { fetchEstimatedFees } from "../../api/api";
-import { craftTransaction } from "../craftTransaction";
-import { combine } from "../combine";
+import { fetchEstimatedFees } from "../api/api";
+import { craftTransaction } from "./craftTransaction";
+import { combine } from "./combine";
 
-jest.mock("../../api/api");
+jest.mock("../api/api");
 jest.mock("@ledgerhq/logs");
 // Mock the iso-filecoin-backed validator so synthetic test addresses pass.
-jest.mock("../../network/addresses", () => ({
+jest.mock("../network/addresses", () => ({
   validateAddress: (input: string) => ({
     isValid: true,
     parsedAddress: { toString: () => input },

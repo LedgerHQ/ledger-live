@@ -1,10 +1,10 @@
 import {
   validateAddress as networkValidateAddress,
   ValidateAddressResult,
-} from "../../network/addresses";
-import { validateAddress } from "../validateAddress";
+} from "../network/addresses";
+import { validateAddress } from "./validateAddress";
 
-jest.mock("../../network/addresses");
+jest.mock("../network/addresses");
 jest.mock("@ledgerhq/logs");
 
 const mockedNetworkValidateAddress = jest.mocked(networkValidateAddress);

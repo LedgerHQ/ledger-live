@@ -1,4 +1,4 @@
-import { combine } from "../combine";
+import { combine } from "./combine";
 
 jest.mock("@ledgerhq/logs");
 
