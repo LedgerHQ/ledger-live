@@ -1,10 +1,4 @@
-import type {
-  AssetInfo,
-  Balance,
-  Stake,
-  StakeAction,
-  StakeState,
-} from "@ledgerhq/coin-module-framework/api/index";
+import type { Balance } from "@ledgerhq/coin-module-framework/api/index";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { types as TyphonTypes } from "@stricahq/typhonjs";
 import BigNumber from "bignumber.js";
@@ -13,15 +7,13 @@ import { getAllTransactionsByKeys } from "../api/fetchTransactions";
 import { getDelegationInfo } from "../api/getDelegationInfo";
 import { fetchNetworkInfo } from "../api/getNetworkInfo";
 import { calculateMinAdaForTokens, computeAdaBalance, deriveUtxos, mergeTokens } from "../logic";
-import { CardanoDelegation } from "../types";
 import {
   EMPTY_CREDENTIAL_KEY,
   extractPaymentKeyFromAddress,
   extractStakeKeyFromAddress,
   isByronAddress,
 } from "../utils";
-
-const NATIVE_ASSET: AssetInfo = { type: "native", name: "ADA" };
+import { NATIVE_ASSET, buildStake } from "./stake";
 
 async function computeMinAdaForTokens(
   currency: CryptoCurrency,
@@ -30,50 +22,6 @@ async function computeMinAdaForTokens(
 ): Promise<BigNumber> {
   const { protocolParams } = await fetchNetworkInfo(currency);
   return calculateMinAdaForTokens(address, tokens, protocolParams.utxoCostPerByte);
-}
-
-/**
- * Map a Cardano delegation to a framework {@link Stake}. Cardano delegation locks no
- * principal (the whole balance is delegated implicitly), so the only concrete amounts
- * are the stake-key deposit and the claimable rewards — modelled as amountDeposited /
- * amountRewarded respectively. Returns undefined when there is no staking position.
- */
-function buildStake(
-  address: string,
-  stakeKey: string | undefined,
-  delegation: CardanoDelegation | undefined,
-): Stake | undefined {
-  if (!stakeKey || !delegation) return undefined;
-
-  const rewards = delegation.rewards ?? new BigNumber(0);
-  if (!delegation.status && rewards.lte(0)) return undefined;
-
-  const amountDeposited = BigInt(new BigNumber(delegation.deposit || 0).toFixed(0));
-  const amountRewarded = BigInt(rewards.toFixed(0));
-  const state: StakeState = delegation.status ? "active" : "inactive";
-  // Rewards can only be withdrawn once the account is delegated to a dRep (Conway rule;
-  // the tx builder refuses a withdrawal otherwise). Don't advertise an action that can't
-  // succeed today.
-  const actions: StakeAction[] = amountRewarded > 0n && delegation.dRepHex ? ["claim_reward"] : [];
-
-  const details: Record<string, unknown> = {};
-  if (delegation.ticker) details.ticker = delegation.ticker;
-  if (delegation.name) details.name = delegation.name;
-  if (delegation.dRepHex) details.dRepHex = delegation.dRepHex;
-
-  const stake: Stake = {
-    uid: stakeKey,
-    address,
-    state,
-    asset: NATIVE_ASSET,
-    amount: amountDeposited + amountRewarded,
-    amountDeposited,
-    amountRewarded,
-    actions,
-  };
-  if (delegation.poolId) stake.delegate = delegation.poolId;
-  if (Object.keys(details).length > 0) stake.details = details;
-  return stake;
 }
 
 /**

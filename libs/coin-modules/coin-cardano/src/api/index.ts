@@ -28,6 +28,7 @@ import { combine } from "../logic/combine";
 import { craftTransaction } from "../logic/craftTransaction";
 import { estimateFees } from "../logic/estimateFees";
 import { getBalance } from "../logic/getBalance";
+import { getStakes } from "../logic/getStakes";
 import { getValidators } from "../logic/getValidators";
 import { lastBlock } from "../logic/lastBlock";
 import { listOperations } from "../logic/listOperations";
@@ -51,9 +52,8 @@ export function createApi(config: CardanoConfig, currencyId: string): CoinModule
       rejectBalanceOptions(() => getBalance(currency, address), options),
     listOperations: (address: string, options: ListOperationsOptions): Promise<Page<Operation>> =>
       listOperations(currency, address, options),
-    getStakes: (_address: string, _cursor?: Cursor): Promise<Page<Stake>> => {
-      throw new Error("getStakes is not supported");
-    },
+    getStakes: (address: string, cursor?: Cursor): Promise<Page<Stake>> =>
+      getStakes(currency, address, cursor),
     getRewards: (_address: string, _cursor?: Cursor): Promise<Page<Reward>> => {
       throw new Error("getRewards is not supported");
     },

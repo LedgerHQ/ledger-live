@@ -21,6 +21,7 @@
     "src/api/getTransactions.ts",
     "src/api/submitTransaction.ts",
     "src/fixtures/accounts.ts",
+    "src/fixtures/delegation.ts",
     "src/fixtures/protocolParams.ts",
     "src/getTransactionStatus.unit.test.ts",
     "src/hw-getAddress.ts",
