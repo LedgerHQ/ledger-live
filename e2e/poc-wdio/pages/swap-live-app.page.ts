@@ -66,6 +66,8 @@ export class SwapLiveAppPage {
       async () => {
         console.log("Waiting for Swap Live App webview to be displayed...");
         await getByTestId("wallet-api-webview").waitForDisplayed();
+        console.log("Webview is displayed, delay for context to be available...");
+        await driver.pause(15_000);
         console.log("Switching to Swap Live App webview context");
         await driver.switchContext({ title: /swap/i });
         return true;
