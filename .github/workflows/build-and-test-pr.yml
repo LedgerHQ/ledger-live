@@ -78,6 +78,13 @@ jobs:
     with:
       macos-specificity-runner-label: "performance-pool"
       skip-pod-checks: "false"
+      # Detox shards: 4-way (was default 2). Steady-state (warm timing cache)
+      # this cut the longest detox shard ~773s->~339s iOS / ~707s->~191s
+      # Android, ~7 min off the mobile merge-gate critical path. iOS caps at
+      # 3 shards regardless; Android uses 4. Timing cache is keyed by shard
+      # count, so the first develop run after this merges is cold (slow) until
+      # the per-shard timing data repopulates over a run or two.
+      max-shards: 4
 
   # Tests
   test-libraries:
