@@ -113,6 +113,8 @@ const AleoStepRecordPicker = ({ account, transaction, status, updateTransaction 
   const allUnspentRecords = accountRecords.filter(r =>
     new BigNumber(r.microcredits).isGreaterThan(0),
   );
+
+  // TODO: check if useMemo is needed here
   const unspentRecords = accountRecords
     .filter(r => new BigNumber(r.microcredits).isGreaterThan(0))
     .sort((a, b) => new BigNumber(b.microcredits).comparedTo(new BigNumber(a.microcredits)))

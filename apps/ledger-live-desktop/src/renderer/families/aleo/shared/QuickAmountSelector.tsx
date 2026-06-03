@@ -117,6 +117,8 @@ const QuickAmountSelector = ({ account, transaction, updateTransaction, onSelect
     (account.type === "TokenAccount"
       ? account.unspentPrivateRecords
       : account.aleoResources?.unspentPrivateRecords) ?? [];
+
+  // TODO: check if useMemo is needed here
   const sortedRecords: AleoUnspentRecord[] = [...accountRecords]
     .filter(r => new BigNumber(r.microcredits).isGreaterThan(0))
     .sort((a, b) => new BigNumber(b.microcredits).comparedTo(a.microcredits));
