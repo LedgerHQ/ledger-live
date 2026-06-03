@@ -1,6 +1,13 @@
 name: "[All Platforms] - Scan Sonar - Called"
 
 on:
+  # TEMPORARY (measurement only — remove before merge): allows dispatching the
+  # Sonar job standalone on a branch to benchmark checkout + analyzer timing.
+  workflow_dispatch:
+    inputs:
+      ref:
+        required: false
+        type: string
   workflow_call:
     inputs:
       should_download_desktop_coverage:
