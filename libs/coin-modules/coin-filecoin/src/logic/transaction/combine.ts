@@ -1,4 +1,4 @@
-import type { BroadcastTransactionRequest } from "../types";
+import type { BroadcastTransactionRequest } from "../../types";
 
 // Serialisation contract (symmetric with craftTransaction.ts):
 //   craftTransaction output: JSON.stringify({ cbor, message }) where

@@ -16,6 +16,7 @@ const NATIVE_BALANCES = [
 ];
 
 const baseIntent = {
+  intentType: "transaction" as const,
   type: "send" as const,
   sender: "f1abjxfbp274xpdqcpuaykwkfb43omjotacm2p3za",
   recipient: "f1z4nykg7q6q5qnxs7h4zknhlqbqhq5jxcqm5qw4y",

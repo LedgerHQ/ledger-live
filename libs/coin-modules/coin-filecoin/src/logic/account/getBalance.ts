@@ -1,7 +1,7 @@
 import type { Balance } from "@ledgerhq/coin-module-framework/api/index";
 import { log } from "@ledgerhq/logs";
-import { fetchBalances, fetchERC20TokenBalance } from "../api/api";
-import { convertAddressFilToEth } from "../network/addresses";
+import { fetchBalances, fetchERC20TokenBalance } from "../../network/api";
+import { convertAddressFilToEth } from "../../network/addresses";
 
 // getBalance returns the native FIL balance plus any ERC-20 token balances for
 // contracts passed in tokenContracts. The caller (e.g., the Alpaca generic sync

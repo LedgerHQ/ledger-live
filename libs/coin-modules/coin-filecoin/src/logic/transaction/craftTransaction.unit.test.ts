@@ -1,15 +1,19 @@
-import { fetchEstimatedFees } from "../api/api";
+import { fetchEstimatedFees } from "../../network/api";
 import { craftTransaction } from "./craftTransaction";
 import { combine } from "./combine";
 
-jest.mock("../api/api");
+jest.mock("../../network/api");
 jest.mock("@ledgerhq/logs");
 // Mock the iso-filecoin-backed validator so synthetic test addresses pass.
-jest.mock("../network/addresses", () => ({
+jest.mock("../../network/addresses", () => ({
   validateAddress: (input: string) => ({
-    isValid: true,
+    isValid: input !== "INVALID",
     parsedAddress: { toString: () => input },
   }),
+}));
+jest.mock("../../erc20/tokenAccounts", () => ({
+  abiEncodeTransferParams: (_recipient: string, _amount: string) => "0xencoded",
+  encodeTxnParams: (_data: string) => "encoded-params",
 }));
 // Mock iso-filecoin/message Message so we don't hit real address checksum
 // validation inside serialize() — that is covered by integration tests, not units.
@@ -62,6 +66,7 @@ describe("craftTransaction", () => {
 
   it("native intent produces a base64 string that combine can parse", async () => {
     const intent = {
+      intentType: "transaction" as const,
       type: "send" as const,
       sender: "f1abjxfbp274xpdqcpuaykwkfb43omjotacm2p3za",
       recipient: "f1z4nykg7q6q5qnxs7h4zknhlqbqhq5jxcqm5qw4y",
@@ -83,6 +88,7 @@ describe("craftTransaction", () => {
 
   it("throws on unknown asset type (no silent native fallback)", async () => {
     const intent = {
+      intentType: "transaction" as const,
       type: "send" as const,
       sender: "f1abjxfbp274xpdqcpuaykwkfb43omjotacm2p3za",
       recipient: "f1z4nykg7q6q5qnxs7h4zknhlqbqhq5jxcqm5qw4y",
@@ -96,6 +102,7 @@ describe("craftTransaction", () => {
 
   it("fetches nonce at craft time (via fetchEstimatedFees)", async () => {
     const intent = {
+      intentType: "transaction" as const,
       type: "send" as const,
       sender: "f1abjxfbp274xpdqcpuaykwkfb43omjotacm2p3za",
       recipient: "f1z4nykg7q6q5qnxs7h4zknhlqbqhq5jxcqm5qw4y",
@@ -107,5 +114,61 @@ describe("craftTransaction", () => {
     await craftTransaction(intent);
     // fetchEstimatedFees is called at least once: once for getNextSequence, once for gas
     expect(mockedFetch).toHaveBeenCalledTimes(2);
+  });
+
+  it("uses custom fees when provided (skips fetchEstimatedFees for gas)", async () => {
+    const intent = {
+      intentType: "transaction" as const,
+      type: "send" as const,
+      sender: "f1sender",
+      recipient: "f1recipient",
+      amount: 1_000n,
+      asset: { type: "native" as const },
+      useAllAmount: false,
+    };
+    const customFees = {
+      value: 100n,
+      parameters: { gasFeeCap: "200", gasLimit: "500000", gasPremium: "100" },
+    };
+
+    const crafted = await craftTransaction(intent, customFees);
+    const parsed = JSON.parse(crafted.transaction);
+    expect(parsed.message.gasFeeCap).toBe("200");
+    expect(parsed.message.gasLimit).toBe(500000);
+    expect(parsed.message.gasPremium).toBe("100");
+    // Only 1 call for nonce, none for gas
+    expect(mockedFetch).toHaveBeenCalledTimes(1);
+  });
+
+  it("crafts ERC-20 token transfer with InvokeEVM method", async () => {
+    const intent = {
+      intentType: "transaction" as const,
+      type: "send" as const,
+      sender: "f1sender",
+      recipient: "0xrecipient",
+      amount: 5_000n,
+      asset: { type: "erc20" as const, assetReference: "0xcontract" },
+      useAllAmount: false,
+    };
+
+    const crafted = await craftTransaction(intent);
+    const parsed = JSON.parse(crafted.transaction);
+    expect(parsed.message.method).toBe(3844450837);
+    expect(parsed.message.value).toBe("0");
+    expect(parsed.message.params).toBe("encoded-params");
+  });
+
+  it("throws on invalid sender address", async () => {
+    const intent = {
+      intentType: "transaction" as const,
+      type: "send" as const,
+      sender: "INVALID",
+      recipient: "f1recipient",
+      amount: 1_000n,
+      asset: { type: "native" as const },
+      useAllAmount: false,
+    };
+
+    await expect(craftTransaction(intent)).rejects.toThrow(/Invalid sender address/);
   });
 });

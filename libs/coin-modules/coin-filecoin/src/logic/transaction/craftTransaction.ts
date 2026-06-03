@@ -4,11 +4,11 @@ import type {
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { Message } from "iso-filecoin/message";
-import { abiEncodeTransferParams, encodeTxnParams } from "../erc20/tokenAccounts";
-import { validateAddress } from "../network/addresses";
-import { BroadcastBlockIncl } from "../types";
-import { fetchEstimatedFees } from "../api/api";
-import { getNextSequence } from "./getNextSequence";
+import { abiEncodeTransferParams, encodeTxnParams } from "../../erc20/tokenAccounts";
+import { validateAddress } from "../../network/addresses";
+import { BroadcastBlockIncl } from "../../types";
+import { fetchEstimatedFees } from "../../network/api";
+import { getNextSequence } from "../account/getNextSequence";
 
 // Inline method numbers from Filecoin spec (mirrors src/bridge/utils.ts Methods enum).
 // logic/ must not import from bridge/, so we inline the relevant constants here.

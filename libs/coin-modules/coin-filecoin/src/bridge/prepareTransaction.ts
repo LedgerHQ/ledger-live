@@ -1,7 +1,7 @@
 import { updateTransaction } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { AccountBridge } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { fetchEstimatedFees } from "../api/index";
+import { fetchEstimatedFees } from "../network";
 import { getAddress, getSubAccount } from "../common-logic/utils";
 import { encodeTxnParams, generateTokenTxnParams } from "../erc20/tokenAccounts";
 import { isEthereumConvertableAddr, isFilEthAddress, validateAddress } from "../network";

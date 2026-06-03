@@ -4,7 +4,7 @@
 // already applies a 1200-block safe-delta in getAccountShape. We follow the
 // same convention and let callers handle the safety delta if needed.
 import type { BlockInfo } from "@ledgerhq/coin-module-framework/api/index";
-import { fetchBlockHeight } from "../api/api";
+import { fetchBlockHeight } from "../../network/api";
 
 export async function lastBlock(): Promise<BlockInfo> {
   const status = await fetchBlockHeight();

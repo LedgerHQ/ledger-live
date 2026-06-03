@@ -5,8 +5,8 @@ describe("lastBlock (integration)", () => {
     const result = await lastBlock();
 
     expect(result.height).toBeGreaterThan(0);
-    expect(typeof result.hash).toBe("string");
-    expect(result.hash.length).toBeGreaterThan(0);
+    // Filecoin block hashes are CIDs — hex string of 76 characters
+    expect(result.hash).toMatch(/^[0-9a-f]{76}$/);
     expect(result.time).toBeInstanceOf(Date);
     expect(result.time.getTime()).toBeGreaterThan(0);
   });

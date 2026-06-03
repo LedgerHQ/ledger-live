@@ -1,7 +1,8 @@
-import { fetchTxs, fetchERC20Transactions } from "../api/api";
+import { fetchTxs, fetchERC20Transactions } from "../../network/api";
+import { TransactionResponse } from "../../types";
 import { listOperations } from "./listOperations";
 
-jest.mock("../api/api");
+jest.mock("../../network/api");
 jest.mock("@ledgerhq/logs");
 
 const mockedFetchTxs = fetchTxs as jest.MockedFunction<typeof fetchTxs>;
@@ -80,15 +81,30 @@ describe("listOperations", () => {
     mockedFetchERC20.mockResolvedValueOnce({ txs: [] });
 
     const result = await listOperations(ADDRESS, { minHeight: 0 });
-    const inOp = result.items.find(op => op.type === "IN");
-    expect(inOp).toBeDefined();
+    const inOp = result.items.find(op => op.type === "IN")!;
     // IN value = amount only (no fee added)
-    expect(inOp!.value).toBe(1_000_000_000_000_000_000n);
+    expect(inOp.value).toBe(1_000_000_000_000_000_000n);
+  });
+
+  it("recovers from malformed cursor JSON", async () => {
+    mockedFetchTxs.mockResolvedValueOnce({
+      txs: [makeNativeTx()],
+      metadata: { limit: 50, offset: 0 },
+    });
+    mockedFetchERC20.mockResolvedValueOnce({ txs: [] });
+
+    const result = await listOperations(ADDRESS, {
+      minHeight: 100,
+      cursor: "NOT-VALID-JSON",
+    });
+
+    // Should fall back to default cursor (minHeight=100, offset=0)
+    expect(result.items.length).toBeGreaterThan(0);
   });
 
   it("gracefully handles undefined txs from API", async () => {
     mockedFetchTxs.mockResolvedValueOnce({
-      txs: undefined as any,
+      txs: undefined as unknown as TransactionResponse[],
       metadata: { limit: 50, offset: 0 },
     });
     mockedFetchERC20.mockResolvedValueOnce({ txs: [] });

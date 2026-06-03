@@ -1,7 +1,7 @@
-import { fetchBalances, fetchERC20TokenBalance } from "../api/api";
+import { fetchBalances, fetchERC20TokenBalance } from "../../network/api";
 import { getBalance } from "./getBalance";
 
-jest.mock("../api/api");
+jest.mock("../../network/api");
 jest.mock("@ledgerhq/logs");
 jest.mock("@ledgerhq/cryptoassets/state", () => ({
   getCryptoAssetsStore: () => ({
@@ -11,7 +11,7 @@ jest.mock("@ledgerhq/cryptoassets/state", () => ({
 // Mock convertAddressFilToEth so synthetic addresses can drive both code paths:
 // when the address starts with "f410f" -> returns a fake ETH equivalent,
 // otherwise -> throws (forcing the native-only fallback branch).
-jest.mock("../network/addresses", () => ({
+jest.mock("../../network/addresses", () => ({
   convertAddressFilToEth: (addr: string) => {
     if (addr.startsWith("f410f")) return "0x" + addr.slice(5);
     throw new Error("not convertible");

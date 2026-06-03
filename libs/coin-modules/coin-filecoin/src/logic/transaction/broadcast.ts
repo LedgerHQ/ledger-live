@@ -1,6 +1,6 @@
 import type { BroadcastConfig } from "@ledgerhq/coin-module-framework/api/index";
-import { broadcastTx } from "../api/api";
-import type { BroadcastTransactionRequest } from "../types";
+import { broadcastTx } from "../../network/api";
+import type { BroadcastTransactionRequest } from "../../types";
 
 // The input tx is a JSON-serialised BroadcastTransactionRequest produced by combine().
 export async function broadcast(tx: string, _broadcastConfig?: BroadcastConfig): Promise<string> {

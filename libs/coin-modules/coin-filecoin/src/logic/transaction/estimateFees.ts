@@ -1,9 +1,9 @@
 import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import { log } from "@ledgerhq/logs";
-import { abiEncodeTransferParams, encodeTxnParams } from "../erc20/tokenAccounts";
-import { validateAddress } from "../network/addresses";
-import { BroadcastBlockIncl } from "../types";
-import { fetchEstimatedFees } from "../api/api";
+import { abiEncodeTransferParams, encodeTxnParams } from "../../erc20/tokenAccounts";
+import { validateAddress } from "../../network/addresses";
+import { BroadcastBlockIncl } from "../../types";
+import { fetchEstimatedFees } from "../../network/api";
 
 // Inline method numbers from Filecoin spec (mirrors src/bridge/utils.ts Methods enum).
 // logic/ must not import from bridge/, so we inline the relevant constants here.

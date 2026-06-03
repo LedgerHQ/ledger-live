@@ -1,7 +1,7 @@
-import { fetchBlockHeight } from "../api/api";
+import { fetchBlockHeight } from "../../network/api";
 import { lastBlock } from "./lastBlock";
 
-jest.mock("../api/api");
+jest.mock("../../network/api");
 jest.mock("@ledgerhq/logs");
 
 const mockedFetchBlockHeight = fetchBlockHeight as jest.MockedFunction<typeof fetchBlockHeight>;

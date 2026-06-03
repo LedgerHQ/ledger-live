@@ -1,4 +1,4 @@
-import { TEST_ADDRESSES } from "../test/fixtures";
+import { TEST_ADDRESSES } from "../../test/fixtures";
 import { getNextSequence } from "./getNextSequence";
 
 describe("getNextSequence (integration)", () => {

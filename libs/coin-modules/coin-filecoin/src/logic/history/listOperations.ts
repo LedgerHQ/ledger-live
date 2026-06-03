@@ -3,9 +3,9 @@ import type {
   Operation,
   Page,
 } from "@ledgerhq/coin-module-framework/api/index";
-import { fetchTxs, fetchERC20Transactions } from "../api/api";
-import { convertAddressFilToEth } from "../network/addresses";
-import { TxStatus } from "../types";
+import { fetchTxs, fetchERC20Transactions } from "../../network/api";
+import { convertAddressFilToEth } from "../../network/addresses";
+import { TxStatus } from "../../types";
 
 // Cursor encodes pagination state for both native and ERC-20 streams separately.
 // Format: JSON { nativeOffset: number, tokenOffset: number, fromHeight: number }
@@ -49,7 +49,7 @@ export async function listOperations(
   }
 
   const tokenTxs = ethAddr
-    ? (await fetchERC20Transactions(ethAddr, cur.fromHeight, cur.tokenOffset, limit)).txs
+    ? (await fetchERC20Transactions(ethAddr, cur.fromHeight, cur.tokenOffset, limit)).txs ?? []
     : [];
 
   const items: Operation[] = [];

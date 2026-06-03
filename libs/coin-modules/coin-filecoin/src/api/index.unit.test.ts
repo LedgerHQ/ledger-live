@@ -19,7 +19,7 @@ import {
   broadcastTx,
   fetchERC20TokenBalance,
   fetchERC20TransactionsWithPages,
-} from "./api";
+} from "../network/api";
 
 // Mock dependencies
 jest.mock("@ledgerhq/logs");

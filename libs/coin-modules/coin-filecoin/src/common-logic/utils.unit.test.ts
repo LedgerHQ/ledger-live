@@ -1,6 +1,6 @@
 import { DerivationMode } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import * as api from "../api/api";
+import * as api from "../network/api";
 import * as tokenAccounts from "../erc20/tokenAccounts";
 import {
   createMockAccount,
@@ -22,7 +22,7 @@ import {
 } from "./utils";
 
 // Mock API and token account modules
-jest.mock("../api/api");
+jest.mock("../network/api");
 jest.mock("../erc20/tokenAccounts");
 
 describe("common-logic/utils", () => {

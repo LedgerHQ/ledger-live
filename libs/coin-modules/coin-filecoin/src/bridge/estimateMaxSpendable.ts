@@ -6,7 +6,7 @@ import {
 import { getMainAccount } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { AccountBridge, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { fetchBalances, fetchEstimatedFees } from "../api";
+import { fetchBalances, fetchEstimatedFees } from "../network";
 import { getAddress, getSubAccount } from "../common-logic";
 import { encodeTxnParams, generateTokenTxnParams } from "../erc20/tokenAccounts";
 import { isFilEthAddress, validateAddress } from "../network";

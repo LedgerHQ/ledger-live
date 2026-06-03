@@ -1,4 +1,4 @@
-import { fetchEstimatedFees } from "../api/api";
+import { fetchEstimatedFees } from "../../network/api";
 
 // The Filecoin REST API has no standalone nonce endpoint. We derive the nonce
 // from the fee-estimation response, which includes the current account nonce.
