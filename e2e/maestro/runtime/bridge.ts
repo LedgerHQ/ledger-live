@@ -5,11 +5,8 @@ import {
   getEnvs,
   init as initBridge,
   loadConfig,
-  openDeeplink,
   removeKnownSpeculos,
-  setAutoPickAccount,
   setFeatureFlags,
-  waitSwapReady,
 } from "../../mobile/bridge/server";
 import { DEFAULT_FEATURE_FLAGS } from "../config/featureFlags";
 import { USERDATA_DIR } from "./paths";
@@ -67,20 +64,6 @@ export class E2EBridge {
 
   async setFeatureFlags(flags: Parameters<typeof setFeatureFlags>[0]): Promise<void> {
     await setFeatureFlags(flags);
-  }
-
-  async setAutoPickAccount(enabled: boolean, currencyId?: string): Promise<void> {
-    await setAutoPickAccount(enabled, currencyId);
-  }
-
-  async openDeeplink(url: string): Promise<void> {
-    await openDeeplink(url);
-  }
-  async waitSwapReady(): Promise<void> {
-    const result = await waitSwapReady();
-    if (!result) {
-      throw new Error("Timed out waiting for the swap live app to signal it was ready");
-    }
   }
 
   async removeKnownSpeculos(address: string): Promise<void> {

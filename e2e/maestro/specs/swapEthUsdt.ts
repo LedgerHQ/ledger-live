@@ -2,12 +2,11 @@ import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-common/e2e/cliCommandsUtils";
-import { verifyAmountsAndAcceptSwap } from "@ledgerhq/live-common/e2e/speculos";
 import { getMinimumSwapAmount } from "@ledgerhq/live-common/e2e/swap";
 import { MaestroContext } from "../context";
 import { SWAP_LIVE_APP_MANIFEST_ID } from "../config/swap";
 import { withMaestroSession } from "../runtime/session";
-import { performSwapUntilQuoteSelectionStep } from "../utils/swapUtils";
+import { buildSwapUntilQuoteSelection, executeSwapAndAccept } from "../utils/swapUtils";
 
 export async function runSwapEthUsdtSpec(ctx: MaestroContext) {
   const accountToDebit = Account.ETH_1;
@@ -37,8 +36,7 @@ export async function runSwapEthUsdtSpec(ctx: MaestroContext) {
       swapSetup: true,
     },
     async () => {
-      await ctx.swap.openViaDeeplink();
-
+      ctx.swap.openViaDeeplink();
       await ctx.switchToLiveApp();
       await ctx.swapLiveApp.expectSwapLiveApp();
 
@@ -50,17 +48,9 @@ export async function runSwapEthUsdtSpec(ctx: MaestroContext) {
       }
       const minAmount = String(min);
 
-      await performSwapUntilQuoteSelectionStep(ctx, accountToDebit, accountToCredit, minAmount);
+      await buildSwapUntilQuoteSelection(ctx, accountToDebit, accountToCredit, minAmount);
 
-      await ctx.switchToLiveApp();
-      const provider = await ctx.swapLiveApp.selectExchange();
-      console.info(`[swapEthUsdt] selected provider: ${provider.uiName}`);
-      await ctx.swapLiveApp.checkExchangeButtonHasProviderName(provider.uiName);
-      await ctx.swapLiveApp.tapExecuteSwap(provider.uiName);
-
-      await verifyAmountsAndAcceptSwap(swap, minAmount);
-
-      await ctx.swap.waitForSuccessAndContinue();
+      await executeSwapAndAccept(ctx, swap, minAmount);
     },
   );
 }

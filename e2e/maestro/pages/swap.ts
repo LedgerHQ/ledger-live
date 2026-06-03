@@ -6,12 +6,12 @@ export class SwapPage {
 
   constructor(private readonly app: MaestroApp) {}
 
-  async openViaDeeplink() {
-    await this.app.openDeepLink("ledgerlive://swap");
+  openViaDeeplink(): void {
+    this.app.openDeepLink("ledgerlive://swap");
   }
 
-  async waitForSuccessAndContinue() {
-    await this.app.runNativeFlow("swap-success-and-continue", [
+  waitForSuccessAndContinue(): void {
+    this.app.addStep("swap-success-and-continue", [
       {
         extendedWaitUntil: {
           visible: {

@@ -2,7 +2,7 @@ import { execSync, spawn } from "child_process";
 import { existsSync } from "fs";
 import path from "path";
 import { MaestroProject } from "../config/projects";
-import { E2EBridge } from "../runtime/bridge";
+import { FlowBuilder } from "../runtime/flowBuilder";
 import { MaestroCommand, MaestroRuntime } from "../runtime/maestro";
 
 function runAsync(
@@ -37,7 +37,7 @@ export class MaestroApp {
   constructor(
     private readonly project: MaestroProject,
     private readonly maestro: MaestroRuntime,
-    private readonly bridge: E2EBridge,
+    private readonly flow: FlowBuilder,
   ) {}
 
   // Validates the build synchronously (so a missing/mismatched build fails fast),
@@ -125,11 +125,11 @@ export class MaestroApp {
     ]);
   }
 
-  async openDeepLink(url: string) {
-    await this.bridge.openDeeplink(url);
+  openDeepLink(url: string): void {
+    this.flow.add({ openLink: url });
   }
 
-  async runNativeFlow(name: string, commands: MaestroCommand[], env?: Record<string, string>) {
-    await this.maestro.runFlow(name, commands, env);
+  addStep(label: string, commands: MaestroCommand[]): void {
+    this.flow.addStep(label, commands);
   }
 }

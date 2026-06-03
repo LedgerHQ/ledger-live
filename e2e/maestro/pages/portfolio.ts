@@ -5,12 +5,12 @@ export class PortfolioPage {
 
   constructor(private readonly app: MaestroApp) {}
 
-  async openAddAccount() {
-    await this.app.openDeepLink("ledgerlive://add-account");
+  openAddAccount(): void {
+    this.app.openDeepLink("ledgerlive://add-account");
   }
 
-  async expectAsset(assetId: string) {
-    await this.app.runNativeFlow(`portfolio-asset-${assetId}`, [
+  expectAsset(assetId: string): void {
+    this.app.addStep(`portfolio-asset-${assetId}`, [
       {
         extendedWaitUntil: {
           visible: {

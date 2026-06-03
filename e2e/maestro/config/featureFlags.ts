@@ -31,6 +31,7 @@ export const WALLET_40_FEATURE_FLAGS: PartialFeatures = {
       lazyOnboarding: isWallet40,
       balanceRefreshRework: isWallet40,
       assetSection: false,
+      assetDiscoverability: false,
       operationsList: false,
       aggregatedAssets: false,
       myWallet: isWallet40,

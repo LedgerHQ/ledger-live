@@ -78,7 +78,26 @@ function withWaitDefaults(command: MaestroCommand): MaestroCommand {
   return command;
 }
 
+function deepNormalize(value: YamlValue): YamlValue {
+  if (Array.isArray(value)) {
+    return value.map(deepNormalize);
+  }
+  if (value !== null && typeof value === "object") {
+    const normalized = withWaitDefaults(withFastTapDefaults(value));
+    const out: { [key: string]: YamlValue } = {};
+    for (const [key, entry] of Object.entries(normalized)) {
+      out[key] = deepNormalize(entry);
+    }
+    return out;
+  }
+  return value;
+}
+
 const PACKAGE_ROOT = path.resolve(__dirname, "..");
+
+export type RunFlowOptions = {
+  webViewHierarchy?: boolean;
+};
 
 export class MaestroRuntime {
   private readonly tmpDir = path.join(PACKAGE_ROOT, "artifacts", "maestro", "tmp");
@@ -86,14 +105,16 @@ export class MaestroRuntime {
 
   constructor(private readonly project: MaestroProject) {}
 
-  async runFlow(name: string, commands: MaestroCommand[], env: Record<string, string> = {}) {
+  async runFlow(
+    name: string,
+    commands: MaestroCommand[],
+    env: Record<string, string> = {},
+    options: RunFlowOptions = {},
+  ) {
     mkdirSync(this.tmpDir, { recursive: true });
 
     const flowPath = path.join(this.tmpDir, `${name}-${randomUUID()}.yaml`);
-    const body = commands
-      .map(command => toYaml([withWaitDefaults(withFastTapDefaults(command))]))
-      .join("\n");
-    const contents = [`appId: ${this.project.appId}`, `name: ${name}`, "---", body, ""].join("\n");
+    const contents = this.serialize(name, commands, options);
 
     writeFileSync(flowPath, contents);
 
@@ -110,6 +131,15 @@ export class MaestroRuntime {
         console.warn(`Maestro flow "${name}" failed with exit code ${exitCode}; retrying once.`);
       }
     });
+  }
+
+  serialize(name: string, commands: MaestroCommand[], options: RunFlowOptions = {}): string {
+    const config = [`appId: ${this.project.appId}`, `name: ${name}`];
+    if (options.webViewHierarchy && this.project.platform === "android") {
+      config.push("androidWebViewHierarchy: devtools");
+    }
+    const body = toYaml(commands.map(deepNormalize));
+    return [...config, "---", body, ""].join("\n");
   }
 
   private async runMaestroProcess(flowPath: string, env: Record<string, string>): Promise<number> {

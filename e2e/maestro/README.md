@@ -21,31 +21,45 @@ optional spec name (omit it to run every spec). Each spec runs inside
 Speculos, start the bridge, launch the app and wait for `ready`, run the test body, then tear
 everything down.
 
-Each test step drives one of two surfaces:
+The test body doesn't run Maestro step-by-step. Page Objects **build**: each call appends commands to
+a shared [`FlowBuilder`](runtime/flowBuilder.ts). The spec then calls `ctx.runFlow(name)` once, which
+serializes the whole buffer into a single `.yaml` and runs one `maestro test`
+([runtime/maestro.ts](runtime/maestro.ts)).
 
-- **Native UI** via [runtime/maestro.ts](runtime/maestro.ts) — turns JS commands into a temporary
-  `.yaml` flow and runs `maestro test`.
-- **Live-app WebView DOM** via [runtime/webView.ts](runtime/webView.ts) — Maestro can't see inside
-  the swap live-app's DOM, so it drives it by injecting JS over the bridge and matching on
-  `data-testid`.
+Native UI is always Maestro commands in that one flow, located by `id` / `text` (eg
+`{ tapOn: { id } }`). The **live-app WebView** is driven the same way on both platforms: Maestro matches
+its elements by their **visible label** (`text:`, `pages/swapLiveApp.ts`), and everything stays inside
+the single flow. (`data-testid`s are not used — the live app does not expose them as `id`.)
 
-Everything is wired together in [context.ts](context.ts) (the composition root), and the bridge
-itself ([../mobile/bridge/server.ts](../mobile/bridge/server.ts)) is the same one the Detox suite
-uses. Each run also writes Allure results via [runtime/allure.ts](runtime/allure.ts).
+- **iOS (≤ 18.x)** — the WKWebView projects its content into the accessibility tree Maestro reads, so
+  `text:` matches directly. Verified end-to-end on an iPhone 16 Pro / iOS 18.6.
+- **Android** — WebView content is **not** exposed to the native accessibility APIs, so the runtime adds
+  `androidWebViewHierarchy: devtools` automatically; Maestro then reads the DOM via Chrome DevTools and
+  `text:` matches the DOM text.
+
+> **iOS 26 is not supported.** Apple stopped exposing WebView content to the accessibility tree Maestro
+> reads ([Maestro #2891](https://github.com/mobile-dev-inc/Maestro/issues/2891)), so `text:` no longer
+> reaches the swap WebView there, and there is no fallback.
+
+The **bridge** ([../mobile/bridge/server.ts](../mobile/bridge/server.ts), the same one the Detox suite
+uses) is used only for non-UI bootstrap: userdata, feature flags, and registering Speculos. **Speculos
+device signing** runs in TS, concurrently with the single flow (the device only receives the tx once the
+flow taps Execute). Everything is wired together in [context.ts](context.ts) (the composition root), and
+each run writes Allure results via [runtime/allure.ts](runtime/allure.ts).
 
 ### Folder layout
 
-| Path | Purpose |
-| --- | --- |
-| `scripts/` | CLI entry point (`run.ts`) and standalone `typecheck.js`. |
-| `runtime/` | Core glue: Maestro driver, bridge, session, CLI runner, WebView driver, Allure reporter. |
-| `pages/` | Page Objects (`app`, `portfolio`, `modularDrawer`, `swap`, `swapLiveApp`). |
-| `specs/` | The tests, registered in `specs/index.ts`. |
-| `config/` | Project definitions (platform, appId, app path). |
-| `devices/` | Speculos device manager. |
-| `utils/` | Spec helpers (e.g. `swapUtils`). |
-| `userdata/` | Importable app state fixtures (e.g. `skip-onboarding.json`). |
-| `types/` | Ambient TypeScript declarations. |
+| Path        | Purpose                                                                                                                                            |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `scripts/`  | CLI entry point (`run.ts`) and standalone `typecheck.js`.                                                                                          |
+| `runtime/`  | Core glue: Maestro driver, flow builder, bridge, session, CLI runner, Allure reporter.                                                             |
+| `pages/`    | Page Objects (`app`, `portfolio`, `modularDrawer`, `swap`, and the swap WebView page object `swapLiveApp`, matched by `text:` on both platforms). |
+| `specs/`    | The tests, registered in `specs/index.ts`.                                                                                                         |
+| `config/`   | Project definitions (platform, appId, app path).                                                                                                   |
+| `devices/`  | Speculos device manager.                                                                                                                           |
+| `utils/`    | Spec helpers (e.g. `swapUtils`).                                                                                                                   |
+| `userdata/` | Importable app state fixtures (e.g. `skip-onboarding.json`).                                                                                       |
+| `types/`    | Ambient TypeScript declarations.                                                                                                                   |
 
 ---
 
@@ -149,3 +163,11 @@ This is a POC; judged as a Detox replacement it is still early. Notable gaps:
 - **Still rides the `DETOX` flag** — `DETOX=1` is set as a legacy alias because shared libs still
   gate on it.
 - **Temp flow files** — generated `.yaml` flows under `artifacts/maestro/tmp` are not cleaned up.
+- **WebView automation is iOS ≤ 18.x + Android only** — the swap WebView is matched by `text:` on both
+  platforms (`pages/swapLiveApp.ts`): iOS exposes WebView content to the accessibility tree natively,
+  while Android needs `androidWebViewHierarchy: devtools` (added automatically) to read the DOM via
+  Chrome DevTools. **iOS 26 is unsupported**: Apple no longer exposes WebView content to that tree
+  ([Maestro #2891](https://github.com/mobile-dev-inc/Maestro/issues/2891)) and there is no fallback.
+- **Swap/Speculos timing** — the single flow runs concurrently with the device-accept step; if the
+  device prompt timing proves unreliable, split the swap into two runs around signing (see
+  `executeSwapAndAccept` in `utils/swapUtils.ts`).

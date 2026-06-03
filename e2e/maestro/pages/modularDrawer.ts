@@ -16,11 +16,10 @@ export class ModularDrawerPage {
       : account.parentAccount.currency.name;
   }
 
-  async selectAsset(account: Account) {
+  selectAsset(account: Account): void {
     const ticker = account.currency.ticker;
     const network = this.getNetworkName(account);
-    await this.app.runNativeFlow(`mad-select-${ticker}`, [
-      { extendedWaitUntil: { visible: { id: this.searchInputId } } },
+    this.app.addStep(`mad-select-${ticker}`, [
       { tapOn: { id: this.searchInputId } },
       { inputText: ticker },
       { tapOn: { id: this.assetItemId(ticker), index: 0, retryTapIfNoChange: true } },
@@ -36,45 +35,13 @@ export class ModularDrawerPage {
     ]);
   }
 
-  async selectAssetForAddAccount(ticker: string) {
-    await this.app.runNativeFlow(`select-${ticker}-for-add-account`, [
-      {
-        extendedWaitUntil: {
-          visible: {
-            id: this.searchInputId,
-          },
-        },
-      },
-      {
-        extendedWaitUntil: {
-          visible: {
-            id: this.assetItemId(ticker),
-          },
-        },
-      },
-      {
-        tapOn: {
-          id: this.assetItemId(ticker),
-          retryTapIfNoChange: true,
-        },
-      },
+  selectAssetForAddAccount(ticker: string): void {
+    this.app.addStep(`select-${ticker}-for-add-account`, [
+      { tapOn: { id: this.assetItemId(ticker), retryTapIfNoChange: true } },
     ]);
   }
 
-  async confirmAddAccount() {
-    await this.app.runNativeFlow("confirm-add-account", [
-      {
-        extendedWaitUntil: {
-          visible: {
-            id: this.addAccountsContinueButtonId,
-          },
-        },
-      },
-      {
-        tapOn: {
-          id: this.addAccountsContinueButtonId,
-        },
-      },
-    ]);
+  confirmAddAccount(): void {
+    this.app.addStep("confirm-add-account", [{ tapOn: { id: this.addAccountsContinueButtonId } }]);
   }
 }
