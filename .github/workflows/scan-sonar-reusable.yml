@@ -49,6 +49,10 @@ jobs:
         with:
           ref: ${{ inputs.ref || github.sha }}
           fetch-depth: 0
+          # Partial clone: keep full history (Sonar needs it for SCM blame /
+          # new-code detection) but lazy-fetch blobs instead of downloading
+          # every file's content up front — much faster checkout on this repo.
+          filter: blob:none
           persist-credentials: false
 
       - name: fetch develop
