@@ -29,6 +29,7 @@ import {
   PROGRESS_AFTER_LIST_OPS,
   PROGRESS_AFTER_PARSING_RECORDS,
   PROGRESS_DONE,
+  TOKEN_RECORD_NAME,
 } from "../constants";
 import {
   resolveTokenSubAccounts,
@@ -97,6 +98,7 @@ export async function performPublicSync(
     shouldSyncFromScratch || isTokenMigrationRequired ? 0 : (oldPublicOps[0]?.blockHeight ?? 0);
 
   const latestAccountPublicOperations = await listOperations({
+    config,
     currency,
     address,
     ledgerAccountId,
@@ -340,9 +342,9 @@ export async function performPrivateSync(
   if (shouldFetchPrivateTokens) {
     calTokens = await getCalTokens({
       currencyId: currency.id,
-      programNames: [...rawTokenPrivateRecords, ...rawUnspentTokenRecords].map(
-        record => record.program_name,
-      ),
+      programNames: [...rawTokenPrivateRecords, ...rawUnspentTokenRecords]
+        .filter(record => record.record_name.toLowerCase() === TOKEN_RECORD_NAME.toLowerCase())
+        .map(record => record.program_name),
     });
 
     calTokenRecords = rawTokenPrivateRecords.filter(isCalToken);

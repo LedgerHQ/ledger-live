@@ -4,11 +4,13 @@ import type { AleoOperation } from "../types/bridge";
 import { fetchAccountTransactionsFromHeight } from "../network/utils";
 import { getCalTokens } from "../bridge/tokens";
 import { toCoinFrameworkOperation, toBridgeOperation } from "./utils";
+import type { AleoCoinConfig } from "../types";
 
 interface Params {
   currency: CryptoCurrency;
   address: string;
   options: ListOperationsOptions;
+  config: AleoCoinConfig;
 }
 
 interface BridgeParams extends Params {
@@ -32,7 +34,7 @@ export async function listOperations(params: CoinFrameworkParams): Promise<Resul
 export async function listOperations(
   params: BridgeParams | CoinFrameworkParams,
 ): Promise<Result<AleoOperation | Operation>> {
-  const { mode, currency, address, options } = params;
+  const { mode, currency, address, options, config } = params;
   const operations: Array<AleoOperation | Operation> = [];
   const tokenOperations: Array<AleoOperation | Operation> = [];
   const fetchAllPages = mode === "bridge";
@@ -49,7 +51,7 @@ export async function listOperations(
 
   let calTokens: Map<string, TokenCurrency> = new Map();
 
-  if (mode === "bridge") {
+  if (config.enableTokens && mode === "bridge") {
     calTokens = await getCalTokens({
       currencyId: currency.id,
       programNames: result.transactions.map(rawTx => rawTx.program_id),

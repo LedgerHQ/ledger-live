@@ -45,3 +45,6 @@ export const MAX_PRIVATE_RECORDS_PER_TRANSACTION = 14;
 
 // The estimated time in milliseconds it takes to sign a single record during transaction signing.
 export const SINGLE_CALL_SIGNING_TIME = 12500;
+
+// Each record with this value in `record_name` field is a token record.
+export const TOKEN_RECORD_NAME = "Token";
