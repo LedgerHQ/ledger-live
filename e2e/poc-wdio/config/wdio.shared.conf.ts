@@ -69,7 +69,7 @@ export const config: WebdriverIO.Config = {
   //
   // Level of logging verbosity: trace | debug | info | warn | error | silent
   logLevel: "info",
-  outputDir: "artifacts/logs",
+  // outputDir: "artifacts/logs",
   //
   // Set specific log levels per logger
   // loggers:
@@ -97,6 +97,7 @@ export const config: WebdriverIO.Config = {
   //
   // Default timeout for all waitFor* commands.
   waitforTimeout: 15_000,
+  waitforInterval: 1_000,
   //
   // Default timeout in milliseconds for request
   // if browser driver or grid doesn't send response

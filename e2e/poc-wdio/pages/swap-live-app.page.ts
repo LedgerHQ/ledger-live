@@ -62,15 +62,23 @@ export class SwapLiveAppPage {
 
   // steps
   async switchTo() {
+    console.log("Waiting for Swap Live App webview to be displayed...");
+    await getByTestId("wallet-api-webview").waitForDisplayed();
     await driver.waitUntil(
       async () => {
-        console.log("Waiting for Swap Live App webview to be displayed...");
-        await getByTestId("wallet-api-webview").waitForDisplayed();
-        console.log("Webview is displayed, delay for context to be available...");
-        await driver.pause(15_000);
-        console.log("Switching to Swap Live App webview context");
-        await driver.switchContext({ title: /swap/i });
-        return true;
+        try {
+          await driver.switchContext({
+            title: /swap/i,
+            androidWebviewConnectionRetryTime: 5_000,
+            androidWebviewConnectTimeout: 30_000,
+          });
+          // Proof: Chromedriver can query the live app DOM
+          await this.fromSelector.waitForDisplayed({ timeout: 5_000 });
+          return true;
+        } catch {
+          await driver.switchAppiumContext("NATIVE_APP"); // reset before retry
+          return false;
+        }
       },
       {
         interval: 5_000,

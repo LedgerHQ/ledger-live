@@ -134,16 +134,16 @@ export class SpeculosUtils {
       }
 
       for (const [deviceId, port] of globalThis.speculosDevices.entries()) {
-          try {
-            console.info("E2E", `Stopping Speculos with device ${deviceId} and port ${port}`);
-            await SpeculosUtils.deleteSpeculos(deviceId);
-          } catch (error) {
-            console.error(
-              "E2E",
-              `Failed to stop Speculos with device ${deviceId} port ${port}}: ${sanitizeError(error)}`,
-            );
-          }
+        try {
+          console.info("E2E", `Stopping Speculos with device ${deviceId} and port ${port}`);
+          await SpeculosUtils.deleteSpeculos(deviceId);
+        } catch (error) {
+          console.error(
+            "E2E",
+            `Failed to stop Speculos with device ${deviceId} port ${port}}: ${sanitizeError(error)}`,
+          );
         }
+      }
       return;
     }
 

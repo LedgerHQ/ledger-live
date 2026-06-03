@@ -19,7 +19,8 @@ export const config: WebdriverIO.Config = {
       "appium:adbExecTimeout": 30_000,
       "appium:skipLogcatCapture": true,
       "appium:clearDeviceLogsOnStart": true, // optional: clean buffer per run
-      "appium:ensureWebviewsHavePages": false, // optional: stabilize webview context detection
+      "appium:ensureWebviewsHavePages": true, // optional: stabilize webview context detection
+      "appium:disableWindowAnimation": true, // optional: disable window animations to speed up tests
       // react-native-launch-arguments reads intent extras (Appium path)
       "appium:optionalIntentArguments": [
         `-e mock "0"`,

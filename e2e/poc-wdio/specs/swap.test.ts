@@ -57,7 +57,7 @@ export const runSwapTest = async (swap: Swap) => {
   await pages.portfolio.waitForPageToLoad();
   console.log("Portfolio page loaded, forced wait for app sync...");
   await driver.pause(15_000)
-  await swapSetup();
+  // await swapSetup();
   console.log("Opening Swap Live App");
   await pages.swap.openDeeplink();
   await pages.swapLiveApp.switchTo();
