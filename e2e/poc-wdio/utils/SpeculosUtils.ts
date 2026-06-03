@@ -116,7 +116,7 @@ export class SpeculosUtils {
 
   static registerSpeculos = async (speculosPort: number) => {
     const speculosAddress = process.env.SPECULOS_ADDRESS;
-    if (driver.isAndroid) {
+    if (driver.isAndroid && !SpeculosUtils.isSpeculosRemote()) {
       const deviceID = driver.capabilities.deviceUDID ?? driver.capabilities["appium:deviceName"];
       execSync(`adb -s ${deviceID} reverse tcp:${speculosPort} tcp:${speculosPort}`);
     }
@@ -248,8 +248,10 @@ export class SpeculosUtils {
     */
     // REVERT CUSTOM IF
     if (speculosPort) {
-      const deviceID = driver.capabilities.deviceUDID ?? driver.capabilities["appium:deviceName"];
-      execSync(`adb -s ${deviceID} reverse --remove tcp:${speculosPort}`);
+      if (driver.isAndroid && !SpeculosUtils.isSpeculosRemote()) {
+        const deviceID = driver.capabilities.deviceUDID ?? driver.capabilities["appium:deviceName"];
+        execSync(`adb -s ${deviceID} reverse --remove tcp:${speculosPort}`);
+      }
       const knownAddress = SpeculosUtils.getKnownSpeculosAddress(speculosPort);
       await removeKnownSpeculos(knownAddress);
     }
