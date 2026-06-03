@@ -35,6 +35,8 @@ import {
   resolveTokenSubAccounts,
   buildSubAccountsFromPrivateRecords,
   getCalTokens,
+  patchTokenSubAccountOps,
+  attachPrivateTokenOpsToParent,
 } from "./tokens";
 import type { AleoPrivateRecord } from "../types/api";
 import type {
@@ -450,7 +452,7 @@ export async function performPrivateSync(
   if (config.enableTokens) {
     const baseSubAccounts = publicSubAccounts ?? initialAccount.subAccounts ?? [];
 
-    const { subAccounts } = await buildSubAccountsFromPrivateRecords({
+    const { subAccounts, privateTokenOpsByAccountId } = await buildSubAccountsFromPrivateRecords({
       currency,
       ledgerAccountId,
       allPrivateRecords: calTokenRecords,
@@ -461,7 +463,14 @@ export async function performPrivateSync(
       calTokens,
     });
 
-    mergedSubAccounts = subAccounts;
+    mergedSubAccounts = patchTokenSubAccountOps({ subAccounts });
+
+    attachPrivateTokenOpsToParent({
+      operations,
+      privateTokenOpsByAccountId,
+      ledgerAccountId,
+      address,
+    });
   }
 
   onProgress?.(PROGRESS_DONE);

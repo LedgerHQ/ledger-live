@@ -10,6 +10,7 @@ import {
   EXPLORER_TRANSFER_TYPES,
   PROGRAM_ID,
   RECIPIENT_ARG_INDEX,
+  TOKEN_RECORD_NAME,
 } from "../constants";
 import { sdkClient } from "../network/sdk";
 import type {
@@ -362,6 +363,10 @@ async function enrichOutgoingRecord({
     };
   }
 
+  const isTokenRecord = rawRecord.record_name.toLowerCase() === TOKEN_RECORD_NAME.toLowerCase();
+  const recipientOutputIndex = isTokenRecord ? RECIPIENT_ARG_INDEX - 1 : RECIPIENT_ARG_INDEX;
+  const amountOutputIndex = isTokenRecord ? AMOUNT_ARG_INDEX - 1 : AMOUNT_ARG_INDEX;
+
   const [recipientData, amountData] = await Promise.all([
     sdkClient.decryptCiphertext({
       currency,
@@ -370,7 +375,7 @@ async function enrichOutgoingRecord({
       viewKey,
       programId: rawRecord.program_name,
       functionName: rawRecord.function_name,
-      outputIndex: RECIPIENT_ARG_INDEX,
+      outputIndex: recipientOutputIndex,
     }),
     sdkClient.decryptCiphertext({
       currency,
@@ -379,7 +384,7 @@ async function enrichOutgoingRecord({
       viewKey,
       programId: rawRecord.program_name,
       functionName: rawRecord.function_name,
-      outputIndex: AMOUNT_ARG_INDEX,
+      outputIndex: amountOutputIndex,
     }),
   ]);
 
@@ -437,6 +442,15 @@ export async function enrichPrivateRecord({
   viewKey: string;
 }): Promise<EnrichedPrivateRecord | null> {
   const transactionId = rawRecord.transaction_id.trim();
+
+  // Fee records (fee_private / fee_public) are not transfer operations.
+  // Their transition lives in details.fee, not details.execution.transitions,
+  // so transition_index may resolve to the wrong execution transition (e.g. the
+  // token transfer), leading to wrong decryption or a crash. Skip them explicitly.
+  if (rawRecord.function_name === "fee_private" || rawRecord.function_name === "fee_public") {
+    return null;
+  }
+
   const details = await apiClient.getTransactionById(currency, transactionId);
 
   if (shouldSkipPublicToPrivateRecord(rawRecord, address)) {
@@ -595,12 +609,15 @@ export const patchPublicOperations = async ({
         operation.extra.functionId === EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE
       ) {
         const shouldMarkAsPatched = latestPrivateRecordBlockHeight >= txDetails.block_height;
+        const programId =
+          operation.extra.tokenInfo?.programId ?? recordTransition.program ?? PROGRAM_ID.CREDITS;
+
         const recipientData = await sdkClient.decryptCiphertext({
           currency,
           ciphertext: recipientArgument.value,
           tpk: recordTransition.tpk,
           viewKey,
-          programId: recordTransition.program,
+          programId,
           functionName: EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE,
           outputIndex: 0,
         });
